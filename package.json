@@ -5,6 +5,13 @@
   "main": "dist/svelte-ui-lib.umd.js",
   "module": "dist/svelte-ui-lib.es.js",
   "svelte": "src/lib/index.ts",
+  "exports": {
+    ".": {
+      "svelte": "./src/lib/index.js",
+      "import": "./dist/svelte-ui-lib.es.js",
+      "require": "./dist/svelte-ui-lib.umd.js"
+    }
+  },
   "scripts": {
     "build": "vite build",
     "prepublishOnly": "npm run build"
