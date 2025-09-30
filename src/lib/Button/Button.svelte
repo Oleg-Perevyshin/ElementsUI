@@ -1,17 +1,17 @@
 <!-- $lib/ElementsUI/Button.svelte -->
 <script lang="ts">
   import { onMount } from 'svelte'
- 
-  /* Интерфейс обработчика для UI компонента */
-  export interface IUIComponentHandler {
-    Action: string // Действие (имя функции, как правило отправка в WebSocket)
-    Header?: string // Заголовок пакета
-    Argument?: string // Аргумент
-    Variables?: string[] // Массив переменных
+  // import { type IButtonProps } from '../types'
+  import { fly } from 'svelte/transition'
+
+  interface IUIComponentHandler {
+    Header?: string
+    Argument?: string
+    Value?: string
+    Variables?: string[]
   }
 
-  /* Интерфейс кнопки */
-  export interface IButtonProps {
+  interface IButtonProps {
     id?: { value?: string; name?: string }
     wrapperClass?: string
     label?: { name?: string; class?: string }
@@ -21,6 +21,7 @@
       component?: ConstructorOfATypedSvelteComponent | null
       properties?: Record<string, unknown>
     }
+    info?: string
     keyBind?: {
       key?: string
       ctrlKey?: boolean
@@ -30,33 +31,33 @@
     }
     disabled?: boolean
     eventHandler?: IUIComponentHandler
-    onClick?: (id: string, eventHandler: IUIComponentHandler) => void
-    onKeyBind?: (id: string, eventHandler: IUIComponentHandler) => void
+    onClick?: () => void
   }
 
   let {
     id = { value: crypto.randomUUID(), name: '' },
-    wrapperClass = '',
+    wrapperClass = 'bg-blue',
     label = { name: '', class: '' },
     name = '',
     componentClass = '',
     icon = { component: null, properties: {} },
+    info = '',
     disabled = false,
     keyBind,
-    eventHandler = { Action: 'none' },
     onClick,
-    onKeyBind,
   }: IButtonProps = $props()
+
+  let showInfo = $state(false)
 
   /* Обработчик клика */
   const handleClick = () => {
     if (disabled || !onClick) return
-    onClick(id.value ?? '', eventHandler)
+    onClick()
   }
 
   /* Обработчик горячих клавиш */
   const handleKeyDown = (event: KeyboardEvent) => {
-    if (disabled || !keyBind || !onKeyBind) return
+    if (disabled || !keyBind || !onClick) return
 
     const isKeyMatch = event.key === keyBind.key
     const isCtrlMatch = keyBind.ctrlKey === undefined || event.ctrlKey === keyBind.ctrlKey
@@ -66,7 +67,7 @@
 
     if (isKeyMatch && isCtrlMatch && isShiftMatch && isAltMatch && isMetaMatch) {
       event.preventDefault()
-      onKeyBind(id.value ?? '', eventHandler)
+      onClick()
     }
   }
 
@@ -92,16 +93,22 @@
     <button
       id={id.value}
       class={`
-        relative m-0 inline-block w-full items-center rounded-2xl border border-[var(--border-color)] bg-[var(--bg-color)]
+        relative m-0 inline-block w-full items-center rounded-2xl border border-[var(--bg-color)] bg-[var(--bg-color)]
         px-2 py-1 font-semibold transition duration-200 select-none
-        ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:shadow-md active:scale-95'}
+        ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:shadow-md active:scale-97'}
         ${componentClass}
       `}
       onclick={handleClick}
       {disabled}
       aria-label={name || label.name}
+      onmouseenter={() => {
+        if (info) showInfo = true
+      }}
+      onmouseleave={() => {
+        if (info) showInfo = false
+      }}
     >
-      <span class="flex flex-row items-center justify-center gap-4">
+      <span class="flex flex-row items-center justify-center gap-2">
         {#if icon?.component}
           {@const IconComponent = icon?.component}
           <IconComponent {...icon?.properties} />
@@ -111,15 +118,27 @@
             {name}
             {#if keyBind}
               <div class="text-xs opacity-70">
-                ({keyBind.ctrlKey ? 'Ctrl+' : ''}
-                {keyBind.shiftKey ? 'Shift+' : ''}
-                {keyBind.altKey ? 'Alt+' : ''}
-                {keyBind.key})
+                ({keyBind.ctrlKey ? 'Ctrl+' : ''}{keyBind.shiftKey ? 'Shift+' : ''}{keyBind.altKey ? 'Alt+' : ''}{keyBind.key})
               </div>
             {/if}
           </div>
         {/if}
       </span>
     </button>
+
+    {#if showInfo}
+      <div
+        transition:fly={{ y: -15, duration: 300 }}
+        class="absolute bottom-full left-1/2 z-50 mb-2 w-max max-w-xs rounded-md px-3 py-1 text-sm shadow-lg"
+        style="background: color-mix(in srgb, var(--yellow-color) 30%, var(--back-color)); transform: translateX(-50%);"
+      >
+        {info}
+        <!-- Треугольная стрелка -->
+        <div
+          class="absolute top-full left-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rotate-45 transform"
+          style="background: color-mix(in srgb, var(--yellow-color) 30%, var(--back-color));"
+        ></div>
+      </div>
+    {/if}
   </div>
 </div>
