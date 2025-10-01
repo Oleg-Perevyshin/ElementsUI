@@ -1,5 +1,5 @@
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
-import adapter from '@sveltejs/adapter-auto';
+import adapter from '@sveltejs/adapter-static';
 
 export default {
   preprocess: vitePreprocess(),
@@ -7,7 +7,7 @@ export default {
     runes: true
   },
   kit: {
-    adapter: adapter()
+    adapter: adapter({pages: 'docs'})
   },
   
 };

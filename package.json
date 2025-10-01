@@ -1,7 +1,7 @@
 {
   "name": "poe-svelte-ui-lib",
   "version": "1.0.1",
-  "license": "MIT", 
+  "license": "MIT",
   "type": "module",
   "scripts": {
     "dev": "vite dev",
@@ -31,7 +31,7 @@
     "svelte": "^5.0.0"
   },
   "dependencies": {
-    "@sveltejs/adapter-auto": "^6.1.0",
+    "@sveltejs/adapter-static": "^3.0.9",
     "@tailwindcss/vite": "^4.1.13",
     "tailwindcss": "^4.1.13",
     "typescript": "^5.9.3"
