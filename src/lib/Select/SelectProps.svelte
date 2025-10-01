@@ -4,8 +4,8 @@
   import { t } from '../locales/i18n'
   import type { UIComponent, ISelectProps, ISelectOption } from '../types.js'
   import * as UI from '../index'
-  import ButtonDelete from '../appIcons/ButtonDelete.svelte'
-  import ButtonAdd from '../appIcons/ButtonAdd.svelte'
+  import ButtonDelete from '../libIcons/ButtonDelete.svelte'
+  import ButtonAdd from '../libIcons/ButtonAdd.svelte'
 
   import { optionsStore } from '../options.js'
 

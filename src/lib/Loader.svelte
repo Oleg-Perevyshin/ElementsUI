@@ -1,6 +1,6 @@
 <!-- $lib/ElementsUI/Loader.svelte -->
 <script lang="ts">
-  import LoaderRotate from './appIcons/LoaderRotate.svelte'
+  import LoaderRotate from './libIcons/LoaderRotate.svelte'
 
   let { show = false } = $props()
 </script>

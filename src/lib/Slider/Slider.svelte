@@ -213,7 +213,7 @@
   </div>
 </div>
 
-<!-- <style>
+<style>
   input[type='range'] {
     -webkit-appearance: none;
     appearance: none;
@@ -257,4 +257,4 @@
     background: var(--gray-color);
     cursor: not-allowed;
   }
-</style> -->
+</style>

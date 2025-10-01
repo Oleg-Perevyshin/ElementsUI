@@ -4,8 +4,8 @@
   import { t } from '../locales/i18n'
   import type { UIComponent, ITableProps, ITableHeader } from '../types'
   import * as UI from '../index'
-  import ButtonDelete from '../appIcons/ButtonDelete.svelte'
-  import ButtonAdd from '../appIcons/ButtonAdd.svelte'
+  import ButtonDelete from '../libIcons/ButtonDelete.svelte'
+  import ButtonAdd from '../libIcons/ButtonAdd.svelte'
   import { optionsStore } from '../options'
 
   const { component, onPropertyChange } = $props<{
