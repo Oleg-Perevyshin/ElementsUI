@@ -9,5 +9,9 @@ export default {
   },
   kit: {
     adapter: adapter({ pages: 'docs', assets: 'docs' }),
+    paths: {
+      base:  process.argv.includes('dev') ? '' : '/ElementsUI',
+      relative: false,
+    },
   },
 }
