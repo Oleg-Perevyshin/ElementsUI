@@ -79,7 +79,7 @@
               wrapperClass="!w-auto"
               name={item.name}
               componentClass=" border-none text-left text-lg"
-              onClick={() => goto(`ElementsUI/components/${item.page}`)}
+              onClick={() => goto(`/components/${item.page}`)}
             />
           {/each}
         </ul>
