@@ -5,6 +5,7 @@
   import Menu from '../appIcons/Menu.svelte'
   import IconLightDark from '../appIcons/IconLightDark.svelte'
   import GitHub from '../appIcons/GitHub.svelte'
+  import { goto } from '$app/navigation'
 
   let { children } = $props()
   let currentTheme: boolean = $state(true)
@@ -27,7 +28,7 @@
   ]
 
   /* Переключение темы */
-  const toggleTheme = () => {
+  function toggleTheme() {
     currentTheme = !currentTheme
     document.body.classList.toggle('dark-theme', !currentTheme)
     document.body.classList.toggle('light-theme', currentTheme)
@@ -78,7 +79,7 @@
               wrapperClass="!w-auto"
               name={item.name}
               componentClass=" border-none text-left text-lg"
-              onClick={() => window.open(`/components/${item.page}`, '_self')}
+              onClick={() => goto(`/components/${item.page}`)}
             />
           {/each}
         </ul>
@@ -88,8 +89,6 @@
       {@render children()}
     </div>
   </div>
-
-  <UI.Button name="Смена темы" onClick={toggleTheme} />
 </div>
 
 <style>

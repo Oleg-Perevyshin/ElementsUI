@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
+    "preview": "vite preview",
     "package": "svelte-package && publint",
     "prepack": "svelte-kit sync && npm run package",
     "CheckUpdate": "npx npm-check-updates -u && npm install"

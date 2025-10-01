@@ -7,7 +7,10 @@ export default {
     runes: true
   },
   kit: {
-    adapter: adapter({pages: 'docs'})
+    adapter: adapter({pages: 'docs'}),
+		paths: {
+			base: process.argv.includes('dev') ? '' : process.env.BASE_PATH
+		}
   },
   
 };
