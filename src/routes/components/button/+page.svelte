@@ -1,6 +1,5 @@
 <script lang="ts">
   import { Button } from '$lib'
-  import ButtonProps from '$lib/Button/ButtonProps.svelte'
   import type { IButtonProps, Position, UIComponent } from '$lib/types'
 
   let buttonComponent: UIComponent = $state({
@@ -36,10 +35,6 @@
 <div>
   <Button {...buttonComponent.properties as IButtonProps} />
 
-  <ButtonProps
-    component={buttonComponent as UIComponent & { properties: Partial<IButtonProps> }}
-    onPropertyChange={(value) => updateComponent(buttonComponent!.id, { properties: value } as object)}
-  />
 </div>
 
 <div class="code-block">

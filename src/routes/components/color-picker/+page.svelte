@@ -1,6 +1,5 @@
 <script lang="ts">
   import ColorPicker from '$lib/ColorPicker/ColorPicker.svelte'
-  import ColorPickerProps from '$lib/ColorPicker/ColorPickerProps.svelte'
   import type { IColorPickerProps, UIComponent } from '$lib/types'
 
   let colorPickerComponent: UIComponent = $state({
@@ -29,9 +28,9 @@
 <div>
   <ColorPicker {...colorPickerComponent.properties as IColorPickerProps} />
 
-  <ColorPickerProps
+  <!-- <ColorPickerProps
     component={colorPickerComponent as UIComponent & { properties: Partial<IColorPickerProps> }}
     onPropertyChange={(value) => updateComponent(colorPickerComponent.id, { properties: value } as object)}
     forConstructor={false}
-  />
+  /> -->
 </div>

@@ -1,8 +1,6 @@
 <script lang="ts">
   import { Button } from '$lib'
-
-  import ButtonProps from '$lib/Button/ButtonProps.svelte'
-  import type { IButtonProps, Position, UIComponent } from '$lib/types'
+  import type { IButtonProps, UIComponent } from '$lib/types'
 
   let buttonComponent: UIComponent = $state({
     id: crypto.randomUUID(),
