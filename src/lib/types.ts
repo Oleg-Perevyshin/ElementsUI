@@ -264,7 +264,7 @@ export interface ITableProps<T extends object> {
   label?: { name?: string; class?: string }
   tableHeader: ITableHeader<T>[]
   tableBody: T[]
-  showInfo?: boolean
+  info?: string
   cursor?: string | null
   loader?: Writable<boolean>
   getData?: () => void

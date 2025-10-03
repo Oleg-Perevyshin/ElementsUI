@@ -1,38 +1,8 @@
 <!-- $lib/ElementsUI/Button.svelte -->
 <script lang="ts">
   import { onMount } from 'svelte'
-  // import { type IButtonProps } from '../types'
+  import type { IButtonProps } from '../types'
   import { fly } from 'svelte/transition'
-
-  interface IUIComponentHandler {
-    Header?: string
-    Argument?: string
-    Value?: string
-    Variables?: string[]
-  }
-
-  interface IButtonProps {
-    id?: { value?: string; name?: string }
-    wrapperClass?: string
-    label?: { name?: string; class?: string }
-    componentClass?: string
-    name?: string
-    icon?: {
-      component?: ConstructorOfATypedSvelteComponent | null
-      properties?: Record<string, unknown>
-    }
-    info?: string
-    keyBind?: {
-      key?: string
-      ctrlKey?: boolean
-      shiftKey?: boolean
-      altKey?: boolean
-      metaKey?: boolean /* Поддержка Meta (Cmd на Mac) */
-    }
-    disabled?: boolean
-    eventHandler?: IUIComponentHandler
-    onClick?: () => void
-  }
 
   let {
     id = { value: crypto.randomUUID(), name: '' },
@@ -94,7 +64,7 @@
       id={id.value}
       class={`
         relative m-0 inline-block w-full items-center rounded-2xl border border-[var(--bg-color)] bg-[var(--bg-color)]
-        px-2 py-1 font-semibold transition duration-200 select-none
+        px-2 py-1 font-semibold shadow-sm transition duration-200 select-none
         ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:shadow-md active:scale-97'}
         ${componentClass}
       `}
@@ -129,15 +99,12 @@
     {#if showInfo}
       <div
         transition:fly={{ y: -15, duration: 300 }}
-        class="absolute bottom-full left-1/2 z-50 mb-2 w-max max-w-xs rounded-md px-3 py-1 text-sm shadow-lg"
-        style="background: color-mix(in srgb, var(--yellow-color) 30%, var(--back-color)); transform: translateX(-50%);"
+        class="absolute bottom-full left-1/2 z-50 mb-2 w-max max-w-xs rounded-md bg-[var(--conteiner-color)] px-3 py-1 text-sm shadow-lg"
+        style="transform: translateX(-50%);"
       >
         {info}
         <!-- Треугольная стрелка -->
-        <div
-          class="absolute top-full left-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rotate-45 transform"
-          style="background: color-mix(in srgb, var(--yellow-color) 30%, var(--back-color));"
-        ></div>
+        <div class="absolute top-full left-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rotate-45 transform bg-[var(--conteiner-color)]"></div>
       </div>
     {/if}
   </div>

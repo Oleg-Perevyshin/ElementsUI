@@ -1,6 +1,5 @@
 <!-- $lib/ElementsUI/ColorPicker.svelte -->
 <script lang="ts">
-  import { t } from '../locales/i18n'
   import type { IColorPickerProps } from '../types'
 
   let {
@@ -175,9 +174,8 @@
       </div>
 
       <!-- Яркость белого цвета -->
-      <p class="h-4 px-4 text-start font-bold">{$t('component.colorpicker.whitehue')}</p>
       <div
-        class="white-slider relative h-4 w-full cursor-pointer overflow-hidden rounded-full border border-gray-400"
+        class="white-slider mt-4 relative h-4 w-full cursor-pointer overflow-hidden rounded-full border border-gray-400"
         role="slider"
         aria-valuenow={null}
         tabindex={null}

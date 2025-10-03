@@ -3,7 +3,6 @@
   import { onMount } from 'svelte'
   import { fly } from 'svelte/transition'
   import type { IInputProps } from '../types'
-  import { t } from '../locales/i18n'
 
   let {
     id = { name: '', value: crypto.randomUUID() },
@@ -127,19 +126,22 @@
         aria-label={showPassword ? 'Скрыть пароль' : 'Показать пароль'}
       >
         {#if showPassword}
-          <svg xmlns="http://www.w3.org/2000/svg" width="1.5rem" height="1.5rem" viewBox="0 0 24 24">
-            <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
-              <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0-4 0" />
-              <path d="M21 12q-3.6 6-9 6t-9-6q3.6-6 9-6t9 6" />
-            </g>
-          </svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="1.5rem" height="1.5rem" viewBox="0 0 24 24"
+            ><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+              ><path d="M15 12a3 3 0 1 1-6 0a3 3 0 0 1 6 0" /><path
+                d="M2 12c1.6-4.097 5.336-7 10-7s8.4 2.903 10 7c-1.6 4.097-5.336 7-10 7s-8.4-2.903-10-7"
+              /></g
+            ></svg
+          >
         {:else}
-          <svg xmlns="http://www.w3.org/2000/svg" width="1.5rem" height="1.5rem" viewBox="0 0 24 24">
-            <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
-              <path d="M10.585 10.587a2 2 0 0 0 2.829 2.828" />
-              <path d="M16.681 16.673A8.7 8.7 0 0 1 12 18q-5.4 0-9-6q1.908-3.18 4.32-4.674m2.86-1.146A9 9 0 0 1 12 6q5.4 0 9 6q-1 1.665-2.138 2.87M3 3l18 18" />
-            </g>
-          </svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="1.5rem" height="1.5rem" viewBox="0 0 24 24"
+            ><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+              ><path
+                stroke-linejoin="round"
+                d="M10.73 5.073A11 11 0 0 1 12 5c4.664 0 8.4 2.903 10 7a11.6 11.6 0 0 1-1.555 2.788M6.52 6.519C4.48 7.764 2.9 9.693 2 12c1.6 4.097 5.336 7 10 7a10.44 10.44 0 0 0 5.48-1.52m-7.6-7.6a3 3 0 1 0 4.243 4.243"
+              /><path d="m4 4l16 16" /></g
+            ></svg
+          >
         {/if}
       </button>
     {/if}
@@ -171,7 +173,7 @@
           class="absolute top-1/2 right-10 -translate-y-1/2 transform rounded-md bg-[var(--green-color)] px-2 py-1 text-sm shadow-lg"
           transition:fly={{ x: 10, duration: 200 }}
         >
-          {$t('component.input.copy')}
+          ✔
         </div>
       {/if}
     {/if}
@@ -217,12 +219,11 @@
         onclick={() => (showInfo = !showInfo)}
         aria-label={showInfo ? 'Скрыть инфо' : 'Показать инфо'}
       >
-        <svg xmlns="http://www.w3.org/2000/svg" height="1.5rem" width="1.5rem" viewBox="0 0 24 24">
-          <path
-            fill="currentColor"
-            d="M12 16.5q.214 0 .357-.144T12.5 16v-4.5q0-.213-.144-.356T11.999 11t-.356.144t-.143.356V16q0 .213.144.356t.357.144M12 9.577q.262 0 .439-.177t.176-.438t-.177-.439T12 8.346t-.438.177t-.177.439t.177.438t.438.177M12.003 21q-1.867 0-3.51-.708q-1.643-.709-2.859-1.924t-1.925-2.856T3 12.003t.709-3.51Q4.417 6.85 5.63 5.634t2.857-1.925T11.997 3t3.51.709q1.643.708 2.859 1.922t1.925 2.857t.709 3.509t-.708 3.51t-1.924 2.859t-2.856 1.925t-3.509.709M12 20q3.35 0 5.675-2.325T20 12t-2.325-5.675T12 4T6.325 6.325T4 12t2.325 5.675T12 20m0-8"
-          />
-        </svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="1.5rem" height="1.5rem" viewBox="0 0 24 24"
+          ><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+            ><circle cx="12" cy="12" r="10" stroke-width="1.3" /><path stroke-width="1.5" d="M12 16v-4.5" /><path stroke-width="1.8" d="M12 8.012v-.01" /></g
+          ></svg
+        >
       </button>
 
       {#if showInfo}

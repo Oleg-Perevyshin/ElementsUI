@@ -54,7 +54,10 @@
   >
     <div class="flex items-center gap-2">
       <UI.Button onClick={toggleSideBar} wrapperClass="!w-10" icon={{ component: Menu }} componentClass="border-none bg-stone-400/50 md:hidden" />
-      <h1 class="text-xl font-bold">POE-Svelte-UI-Lib</h1>
+      <button class="text-xl font-bold" onclick={() => goto(`/`)}>
+        <!-- goto(`/ElementsUI`) -->
+        <h1>POE-Svelte-UI-Lib</h1>
+      </button>
     </div>
     <div class="flex items-center gap-4">
       <UI.Button wrapperClass="!w-12" icon={{ component: IconLightDark }} componentClass=" border-none " onClick={toggleTheme} />
@@ -79,8 +82,9 @@
               wrapperClass="!w-auto"
               name={item.name}
               componentClass=" border-none text-left text-lg"
-              onClick={() => goto(`/ElementsUI/components/${item.page}`)}
+              onClick={() => goto(`/components/${item.page}`)}
             />
+            <!-- onClick={() => goto(`/ElementsUI/components/${item.page}`)} -->
           {/each}
         </ul>
       </nav>

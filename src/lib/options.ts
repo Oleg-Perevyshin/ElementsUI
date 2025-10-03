@@ -16,43 +16,43 @@ export const optionsStore = derived(t, ($t) => {
     ],
 
     SHORT_ARGUMENT_OPTION: [
-      { id: id(), value: 'NoSave', name: $t('service.constructor.props.action.update'), class: '!w-1/3' },
-      { id: id(), value: 'Save', name: $t('service.constructor.props.action.save'), class: '!w-1/3' },
-      { id: id(), value: 'NoSend', name: $t('service.constructor.props.action.nosend'), class: '!w-1/3' },
+      { id: id(), value: 'NoSave', name: $t('constructor.props.action.update'), class: '!w-1/3' },
+      { id: id(), value: 'Save', name: $t('constructor.props.action.save'), class: '!w-1/3' },
+      { id: id(), value: 'NoSend', name: $t('constructor.props.action.nosend'), class: '!w-1/3' },
     ],
 
     FULL_ARGUMENT_OPTION: [
-      { id: id(), value: 'NoSave', name: $t('service.constructor.props.action.update'), class: '!w-1/3' },
-      { id: id(), value: 'Save', name: $t('service.constructor.props.action.save'), class: '!w-1/3' },
-      { id: id(), value: '', name: $t('service.constructor.props.action.custom'), class: '!w-1/3' },
+      { id: id(), value: 'NoSave', name: $t('constructor.props.action.update'), class: '!w-1/3' },
+      { id: id(), value: 'Save', name: $t('constructor.props.action.save'), class: '!w-1/3' },
+      { id: id(), value: '', name: $t('constructor.props.action.custom'), class: '!w-1/3' },
     ],
 
     INPUT_TYPE_OPTIONS: [
-      { id: id(), value: 'text', name: $t('service.constructor.props.type.text') },
-      { id: id(), value: 'password', name: $t('service.constructor.props.type.password') },
-      { id: id(), value: 'number', name: $t('service.constructor.props.type.number') },
-      { id: id(), value: 'text-area', name: $t('service.constructor.props.type.textarea') },
+      { id: id(), value: 'text', name: $t('constructor.props.type.text') },
+      { id: id(), value: 'password', name: $t('constructor.props.type.password') },
+      { id: id(), value: 'number', name: $t('constructor.props.type.number') },
+      { id: id(), value: 'text-area', name: $t('constructor.props.type.textarea') },
     ],
 
     SELECT_TYPE_OPTIONS: [
-      { id: id(), value: 'select', name: $t('service.constructor.props.type.select'), class: '!w-1/2' },
-      { id: id(), value: 'buttons', name: $t('service.constructor.props.type.buttons'), class: '!w-1/2' },
+      { id: id(), value: 'select', name: $t('constructor.props.type.select'), class: '!w-1/2' },
+      { id: id(), value: 'buttons', name: $t('constructor.props.type.buttons'), class: '!w-1/2' },
     ],
 
     SELECT_VALUE_TYPE_OPTIONS: [
-      { id: id(), value: 'text' as const, name: $t('service.constructor.props.valuetype.text'), class: '!w-1/2' },
-      { id: id(), value: 'number' as const, name: $t('service.constructor.props.valuetype.number'), class: '!w-1/2' },
+      { id: id(), value: 'text' as const, name: $t('constructor.props.valuetype.text'), class: '!w-1/2' },
+      { id: id(), value: 'number' as const, name: $t('constructor.props.valuetype.number'), class: '!w-1/2' },
     ],
 
     SLIDER_TYPE_OPTIONS: [
-      { id: id(), value: 'single', name: $t('service.constructor.props.type.single'), class: '!w-1/2' },
-      { id: id(), value: 'range', name: $t('service.constructor.props.type.range'), class: '!w-1/2' },
+      { id: id(), value: 'single', name: $t('constructor.props.type.single'), class: '!w-1/2' },
+      { id: id(), value: 'range', name: $t('constructor.props.type.range'), class: '!w-1/2' },
     ],
 
     TEXTFIELD_SIZE_OPTIONS: [
-      { id: id(), value: 'small', name: $t('service.constructor.props.type.small'), class: '!w-1/3' },
-      { id: id(), value: 'medium', name: $t('service.constructor.props.type.medium'), class: '!w-1/3' },
-      { id: id(), value: 'xlarge', name: $t('service.constructor.props.type.xlarge'), class: '!w-1/3' },
+      { id: id(), value: 'small', name: $t('constructor.props.type.small'), class: '!w-1/3' },
+      { id: id(), value: 'medium', name: $t('constructor.props.type.medium'), class: '!w-1/3' },
+      { id: id(), value: 'xlarge', name: $t('constructor.props.type.xlarge'), class: '!w-1/3' },
     ],
 
     COLOR_OPTIONS: [
@@ -65,20 +65,20 @@ export const optionsStore = derived(t, ($t) => {
     ],
 
     ALIGN_OPTIONS: [
-      { id: id(), value: 'text-left', name: $t('service.constructor.props.align.left'), class: '!w-1/3' },
-      { id: id(), value: 'text-center', name: $t('service.constructor.props.align.center'), class: '!w-1/3' },
-      { id: id(), value: 'text-right', name: $t('service.constructor.props.align.right'), class: '!w-1/3' },
+      { id: id(), value: 'text-left', name: $t('constructor.props.align.left'), class: '!w-1/3' },
+      { id: id(), value: 'text-center', name: $t('constructor.props.align.center'), class: '!w-1/3' },
+      { id: id(), value: 'text-right', name: $t('constructor.props.align.right'), class: '!w-1/3' },
     ],
 
     HEIGHT_OPTIONS: [
-      { id: id(), value: 'py-1', name: $t('service.constructor.props.height.small'), class: '!w-1/3' },
-      { id: id(), value: 'py-2', name: $t('service.constructor.props.height.medium'), class: '!w-1/3' },
-      { id: id(), value: 'py-3', name: $t('service.constructor.props.height.large'), class: '!w-1/3' },
+      { id: id(), value: 'py-1', name: $t('constructor.props.height.small'), class: '!w-1/3' },
+      { id: id(), value: 'py-2', name: $t('constructor.props.height.medium'), class: '!w-1/3' },
+      { id: id(), value: 'py-3', name: $t('constructor.props.height.large'), class: '!w-1/3' },
     ],
 
     ACCORDION_TYPE_OPTIONS: [
-      { id: id(), value: 'main', name: $t('service.constructor.props.type.main'), class: '!w-1/2' },
-      { id: id(), value: 'sub', name: $t('service.constructor.props.type.sub'), class: '!w-1/2' },
+      { id: id(), value: 'main', name: $t('constructor.props.type.main'), class: '!w-1/2' },
+      { id: id(), value: 'sub', name: $t('constructor.props.type.sub'), class: '!w-1/2' },
     ],
   }
 })

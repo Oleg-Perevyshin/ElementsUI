@@ -3,7 +3,6 @@
   import { slide } from 'svelte/transition'
   import { onMount } from 'svelte'
   import type { ISelectOption, ISelectProps } from '../types'
-  import { t } from '../locales/i18n'
 
   let isDropdownOpen = $state(false)
   let dropdownElement: HTMLDivElement
@@ -102,7 +101,7 @@
       aria-expanded={isDropdownOpen}
       {disabled}
     >
-      {value?.name || $t('common.select_tag')}
+      {value?.name || ''}
     </button>
 
     {#if isDropdownOpen}
@@ -131,10 +130,9 @@
       {#each options as option, index (option.id)}
         <button
           id={option.id}
-          class="m-0 inline-block min-w-0 flex-1 items-center border
-      border-[var(--border-color)] bg-[var(--bg-color)] px-2 py-1 font-semibold transition-all duration-200 select-none
-      {option.disabled || disabled ? 'opacity-50' : 'cursor-pointer hover:shadow-lg'}
-      {option.value === value?.value && value !== null ? 'z-10 text-blue-600 ring-2 ring-[var(--blue-color)]' : ''}   
+           class="m-0 inline-block min-w-0 flex-1 items-center bg-[var(--bg-color)] px-2 py-1 font-semibold shadow-sm transition-all duration-200 select-none
+      {option.disabled || disabled ? 'opacity-50' : 'cursor-pointer hover:shadow-md'}
+      {option.value === value?.value && value !== null ? 'z-10 !border-[var(--blue-color)] text-cyan-500 ring-3 ring-[var(--blue-color)]' : ''}  
       {option.class} {options.length > 0 && index === 0 ? 'rounded-l-2xl' : ''} {index === options.length - 1 ? 'rounded-r-2xl' : ''}"
           onclick={(e) => selectOption(option, e)}
           disabled={option.disabled}

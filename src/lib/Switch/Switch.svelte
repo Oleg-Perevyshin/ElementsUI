@@ -43,12 +43,12 @@
   )
 </script>
 
-<div class="bg-blue relative flex w-full flex-col items-center justify-center {wrapperClass}">
+<div class="relative flex w-full flex-col items-center justify-center {wrapperClass}">
   {#if label.name}
     <h5 class={`w-full px-4 text-center ${label.class}`}>{label.name}</h5>
   {/if}
 
-  <div class="relative flex w-full grow items-center justify-center !bg-transparent" id={id.value}>
+  <div class="relative flex w-full grow items-center justify-center !bg-transparent">
     <button class="mr-2 {disabled ? 'opacity-60' : 'cursor-pointer'}" style="width: {maxCaptionWidth}; text-align: end;" onclick={() => handleCaptionClick(1)}
       >{label.captionLeft}</button
     >
@@ -58,6 +58,7 @@
       {disabled ? 'opacity-60' : ''}"
     >
       <input
+        id={id.value}
         type="checkbox"
         class="absolute left-1/2 h-full w-full -translate-x-1/2 cursor-pointer appearance-none rounded-md"
         bind:checked

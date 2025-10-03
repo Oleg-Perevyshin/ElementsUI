@@ -1,6 +1,5 @@
 <!-- $lib/ElementsUI/Table.svelte -->
 <script lang="ts">
-  import { t } from '../locales/i18n'
   import { get } from 'svelte/store'
   import type { ITableHeader, ITableProps } from '../types'
   import { fly } from 'svelte/transition'
@@ -14,7 +13,7 @@
     cursor = null,
     loader,
     getData = () => {},
-    showInfo = true,
+    info = '',
     modalData = $bindable({ isOpen: false, rawData: '', formattedData: '' }),
     onClick,
   }: ITableProps<any> = $props()
@@ -152,7 +151,7 @@
           {#each tableHeader as column (column)}
             <div
               class="relative flex w-full min-w-0 items-center px-2 py-1 break-words
-              {index % 2 ? '!bg-[var(--field-color)]' : ''}
+              {index % 2 ? '!bg-[var(--back-color)]/40' : ''}
               {column.cellClass}
               {column.align === 'center'
                 ? 'flex justify-center text-center'
@@ -243,7 +242,7 @@
                       class="absolute top-1/2 right-10 -translate-y-1/2 transform rounded-md bg-[var(--green-color)] px-2 py-1 text-sm shadow-lg"
                       transition:fly={{ x: 10, duration: 200 }}
                     >
-                      {$t('component.input.copy')}
+                      ✔
                     </div>
                   {/if}
                 {/if}
@@ -267,9 +266,9 @@
     {/if}
 
     <!-- Нижнее поле для сводной информации -->
-    {#if showInfo}
+    {#if info != ''}
       <div class="flex h-8 items-center justify-center bg-[var(--bg-color)]">
-        <h5>{$t('catalog.nums')} {tableBody.length}</h5>
+        <h5>{info}</h5>
       </div>
     {/if}
   </div>
