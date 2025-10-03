@@ -1,10 +1,9 @@
 # .github/workflows/npm_publish.yaml
-name: Publish to NPM
+name: Публикация в NPM
 
 on:
   push:
-    branches:
-      - main
+    branches: ["main"]
   workflow_dispatch:
 
 jobs:
