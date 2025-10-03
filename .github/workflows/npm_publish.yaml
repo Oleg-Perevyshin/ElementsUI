@@ -30,7 +30,7 @@ jobs:
       - name: Сборка библиотеки
         run: npm run build
 
-      # - name: Публикация в NPM
-      #   run: npm publish --access public
-      #   env:
-      #     NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Публикация в NPM
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
