@@ -18,6 +18,7 @@
     type = 'select',
     value = $bindable(),
     options = [],
+    placeholder= '---', 
     onUpdate,
   }: ISelectProps<T> = $props()
 
@@ -101,7 +102,7 @@
       aria-expanded={isDropdownOpen}
       {disabled}
     >
-      {value?.name || ''}
+      {value?.name || placeholder}
     </button>
 
     {#if isDropdownOpen}

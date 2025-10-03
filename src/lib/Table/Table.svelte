@@ -8,12 +8,12 @@
     id = { value: crypto.randomUUID(), name: '' },
     wrapperClass = 'bg-blue',
     label = { name: '', class: '' },
-    tableBody = [],
-    tableHeader = [],
+    body = [],
+    header = [],
+    footer = '',
     cursor = null,
     loader,
     getData = () => {},
-    info = '',
     modalData = $bindable({ isOpen: false, rawData: '', formattedData: '' }),
     onClick,
   }: ITableProps<any> = $props()
@@ -36,7 +36,7 @@
       sortState.direction = 'asc'
     }
 
-    tableBody = [...tableBody].sort((a, b) => {
+    body = [...body].sort((a, b) => {
       const aValue = a[key]
       const bValue = b[key]
       if (typeof aValue === 'number' && typeof bValue === 'number') {
@@ -126,8 +126,8 @@
 
   <div class="flex h-full flex-col overflow-hidden rounded-xl border-[var(--border-color)]">
     <!-- Table Header -->
-    <div class="grid font-semibold" style={`grid-template-columns: ${tableHeader.map((c) => c.width || 'minmax(0, 1fr)').join(' ')};`}>
-      {#each tableHeader as column (column)}
+    <div class="grid font-semibold" style={`grid-template-columns: ${header.map((c) => c.width || 'minmax(0, 1fr)').join(' ')};`}>
+      {#each header as column (column)}
         <div class="justify-center bg-[var(--bg-color)] p-2 text-center">
           <div class="flex items-center justify-start gap-2">
             <span>{column.label}</span>
@@ -146,9 +146,9 @@
 
     <!-- Table Body с прокруткой -->
     <div class="flex-1 overflow-y-auto bg-[var(--conteiner-color)]/50" bind:this={container} onscroll={handleScroll}>
-      <div class="grid min-w-0" style={`grid-template-columns: ${tableHeader.map((c) => c.width || 'minmax(0, 1fr)').join(' ')};`}>
-        {#each tableBody as row, index (row)}
-          {#each tableHeader as column (column)}
+      <div class="grid min-w-0" style={`grid-template-columns: ${header.map((c) => c.width || 'minmax(0, 1fr)').join(' ')};`}>
+        {#each body as row, index (row)}
+          {#each header as column (column)}
             <div
               class="relative flex w-full min-w-0 items-center px-2 py-1 break-words
               {index % 2 ? '!bg-[var(--back-color)]/40' : ''}
@@ -266,9 +266,9 @@
     {/if}
 
     <!-- Нижнее поле для сводной информации -->
-    {#if info != ''}
+    {#if footer != ''}
       <div class="flex h-8 items-center justify-center bg-[var(--bg-color)]">
-        <h5>{info}</h5>
+        <h5>{footer}</h5>
       </div>
     {/if}
   </div>

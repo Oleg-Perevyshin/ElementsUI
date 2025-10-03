@@ -136,6 +136,7 @@ export interface ISelectProps<T = unknown> {
   type?: 'select' | 'buttons' | 'input'
   value?: ISelectOption<T> | null
   options?: ISelectOption<T>[]
+  placeholder?: string
   eventHandler?: IUIComponentHandler
   onUpdate?: (value: ISelectOption<T>) => void
 }
@@ -262,13 +263,13 @@ export interface ITableProps<T extends object> {
   id?: { value?: string; name?: string }
   wrapperClass?: string
   label?: { name?: string; class?: string }
-  tableHeader: ITableHeader<T>[]
-  tableBody: T[]
-  info?: string
+  header: ITableHeader<T>[]
+  body: T[]
+  footer?: string
   cursor?: string | null
   loader?: Writable<boolean>
   getData?: () => void
-      modalData?: { isOpen?: boolean; rawData?: string; formattedData?: string }
+  modalData?: { isOpen?: boolean; rawData?: string; formattedData?: string }
   onClick?: (eventHandler: IUIComponentHandler) => void
 
 }
