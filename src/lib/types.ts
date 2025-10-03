@@ -80,6 +80,10 @@ export interface IButtonProps {
 export interface IAccordionProps {
   id?: { value?: string; name?: string }
   label?: { name?: string; class?: string }
+  icon?: {
+    component?: ConstructorOfATypedSvelteComponent | null
+    properties?: Record<string, unknown>
+  }
   isOpen: boolean
   componentClass?: string
   type?: 'main' | 'sub'

@@ -94,7 +94,7 @@
   {/if}
 
   <!-- Слайдер -->
-  <div class="relative flex h-2 w-full justify-center {disabled ? 'opacity-50' : ''}" id={id.value}>
+  <div class="relative flex h-2 w-full justify-center {disabled ? 'opacity-50 cursor-not-allowed' : ''}" id={id.value}>
     {#if isRange}
       <!-- Трек и активная зона -->
       <div

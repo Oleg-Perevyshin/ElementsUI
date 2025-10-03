@@ -21,7 +21,11 @@
     {props.type === 'sub' ? 'border-b border-[var(--border-color)]' : ''}"
     onclick={toggle}
   >
-    <span class="toggle m-0 cursor-pointer text-lg font-semibold {props.label?.class}">
+    <span class="toggle m-0 cursor-pointer text-lg flex items-center gap-2 font-semibold {props.label?.class}">
+      {#if props.icon?.component}
+        {@const IconComponent = props.icon?.component}
+        <IconComponent {...props.icon?.properties} />
+      {/if}
       {props.label?.name}
     </span>
     <svg

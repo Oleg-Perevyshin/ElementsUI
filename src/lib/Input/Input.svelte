@@ -173,7 +173,7 @@
           class="absolute top-1/2 right-10 -translate-y-1/2 transform rounded-md bg-[var(--green-color)] px-2 py-1 text-sm shadow-lg"
           transition:fly={{ x: 10, duration: 200 }}
         >
-          ✔
+          ✓
         </div>
       {/if}
     {/if}
