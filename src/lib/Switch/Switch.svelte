@@ -15,7 +15,7 @@
   const options = [1, 2]
   let checked = $derived(value === options[1])
 
-  let knobTransform = $derived(checked ? `translateX(calc(${height} * 0.9))` : 'translateX(0)')
+  let knobTransform = $derived(checked ? `translateX(calc(${height}))` : 'translateX(0)')
 
   $effect(() => {
     if (value === undefined || value === null) value = options[0]
@@ -66,14 +66,15 @@
         onchange={handleToggle}
       />
       <span
-        class="relative flex items-center rounded-full transition-all duration-250 {checked ? '!bg-[var(--bg-color)]' : '!bg-[var(--gray-color)]'} {disabled
-          ? ''
-          : 'cursor-pointer'}"
+        class="relative flex items-center rounded-full transition-all duration-250
+        {checked ? '!bg-[var(--bg-color)]' : '!bg-[var(--gray-color)]'}
+        {disabled ? '' : 'cursor-pointer'}"
         style="width: {`calc(${height} * 2)`}; height: {height};"
       >
         <span
-          class="absolute rounded-full bg-[var(--back-color)] transition-all duration-250 {disabled ? 'opacity-60' : 'cursor-pointer'}"
-          style="width: {`calc(${height} * 0.8)`}; height: {`calc(${height} * 0.8)`}; margin: 0 {`calc(${height} * 0.1)`}; transform: {knobTransform};"
+          class="absolute rounded-full bg-[var(--back-color)] transition-all duration-250
+          {disabled ? 'opacity-60' : 'cursor-pointer'}"
+          style="width: {`calc(${height} * 0.75)`}; height: {`calc(${height} * 0.75)`}; margin: 0 {`calc(${height} * 0.1)`}; transform: {knobTransform};"
         ></span>
       </span>
     </label>

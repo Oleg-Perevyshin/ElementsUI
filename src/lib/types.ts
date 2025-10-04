@@ -201,7 +201,7 @@ export interface ITextFieldProps {
   id?: { name?: string; value?: string }
   wrapperClass?: string
   label?: { name?: string; class?: string }
-  type?: 'small' | 'medium' | 'xlarge'
+  type?: 'xsmall' | 'small' | 'medium' | 'large' | 'xlarge' | 'xxlarge' | 'huge' | 'massive'
   bold?: boolean
   italic?: boolean
 }

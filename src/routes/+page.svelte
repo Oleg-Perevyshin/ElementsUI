@@ -1,8 +1,6 @@
 <script>
-
 </script>
-<h1>Welcome to your library project</h1>
-<p>Create your package using @sveltejs/package and preview/showcase your work with SvelteKit</p>
-<p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
 
-
+<h1>Добро пожаловать</h1>
+<p>Это библиотека UI компонентов и примитивов для Svelte</p>
+<p>Поситите тестовый ресурс <a href="https://cloud-dev.poe-gw.keenetic.pro/" target="_blank">PAS Cloud</a> для просмотра компонентов в использовании</p>

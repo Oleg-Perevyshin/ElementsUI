@@ -9,7 +9,6 @@
 
   let { children } = $props()
   let currentTheme: boolean = $state(true)
-  let sidebarOpen: boolean = $state(false)
 
   /* Список всех компонентов */
   const menuItems = [
@@ -28,39 +27,29 @@
   ]
 
   /* Переключение темы */
-  function toggleTheme() {
+  const switchTheme = () => {
     currentTheme = !currentTheme
     document.body.classList.toggle('dark-theme', !currentTheme)
     document.body.classList.toggle('light-theme', currentTheme)
     localStorage.setItem('AppTheme', currentTheme ? 'light' : 'dark')
   }
 
-  /* Видимость меню */
-  const toggleSideBar = () => {
-    sidebarOpen = !sidebarOpen
-  }
-
   onMount(() => {
-    const savedTheme = localStorage.getItem('AppTheme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark-theme' : 'light-theme')
+    const savedTheme = localStorage.getItem('AppTheme') || 'light'
+    localStorage.setItem('AppTheme', `${savedTheme}`)
     document.body.classList.toggle('dark-theme', savedTheme === 'dark')
     document.body.classList.toggle('light-theme', savedTheme === 'light')
     currentTheme = savedTheme === 'light'
   })
 </script>
 
-<div class="mx-auto h-screen max-w-[1400px]">
-  <header
-    class={`${currentTheme ? 'bg-[#cbcec7]' : 'bg-[#181d13]'} border rounded-3xl m-2 border-[var(--border-color)] p-4 flex items-center justify-between sticky top-0 z-50`}
-  >
+<div class="flex flex-col mx-auto h-screen max-w-[1400px]">
+  <header class={'bg-[var(--back-color)]/50 border rounded-xl m-2 p-4 border-[var(--border-color)] flex items-center justify-between sticky top-0 z-50'}>
     <div class="flex items-center gap-2">
-      <UI.Button onClick={toggleSideBar} wrapperClass="!w-10" icon={{ component: Menu }} componentClass="border-none bg-stone-400/50 md:hidden" />
-      <button class="text-xl font-bold" onclick={() => goto(`/`)}>
-        <!-- goto(`/ElementsUI`) -->
-        <h1>POE-Svelte-UI-Lib</h1>
-      </button>
+      <a href="/" class="!no-underline ml-2 hover:scale-103 transition"><h1>POE-Svelte-UI-Lib</h1></a>
     </div>
     <div class="flex items-center gap-4">
-      <UI.Button wrapperClass="!w-12" icon={{ component: IconLightDark }} componentClass=" border-none " onClick={toggleTheme} />
+      <UI.Button wrapperClass="!w-12" icon={{ component: IconLightDark }} componentClass=" border-none " onClick={switchTheme} />
       <UI.Button
         wrapperClass="!w-auto"
         icon={{ component: GitHub }}
@@ -70,26 +59,16 @@
     </div>
   </header>
 
-  <div class="flex">
-    <aside
-      class={`${currentTheme ? 'bg-[#cbcec7]' : 'bg-[#181d13]'} text-[var(--font-color)] w-64 min-h-[calc(100vh-4rem)] fixed md:static z-40 transform 
-      ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 transition-transform duration-300 border rounded-3xl m-2 border-[var(--border-color)]`}
-    >
-      <nav class="flex flex-col items-start mt-3 gap-2">
-        <ul>
-          {#each menuItems as item}
-            <UI.Button
-              wrapperClass="!w-auto"
-              name={item.name}
-              componentClass=" border-none text-left text-lg"
-              onClick={() => goto(`/components/${item.page}`)}
-            />
-            <!-- onClick={() => goto(`/ElementsUI/components/${item.page}`)} -->
-          {/each}
-        </ul>
+  <div class="flex flex-1 overflow-hidden">
+    <aside class={'m-2 p-4 bg-[var(--back-color)]/50 text-[var(--font-color)] w-64 overflow-y-auto fborder rounded-xl border-[var(--border-color)]'}>
+      <nav class="flex flex-col items-start gap-1">
+        {#each menuItems as item}
+          <UI.Button name={item.name} componentClass="h-10 bg-gray text-left" onClick={() => goto(`/components/${item.page}`)} />
+        {/each}
+        <UI.Button name="All in One" componentClass="h-10 bg-gray text-left" onClick={() => goto(`/components/all`)} />
       </nav>
     </aside>
-    <div class="w-full m-2">
+    <div class="flex-1 m-2 p-4 overflow-y-auto border rounded-xl border-[var(--border-color)]">
       {@render children()}
     </div>
   </div>
@@ -99,12 +78,12 @@
   /* Стили для светлой темы */
   :global(body.light-theme) {
     color: #333; /* Цвет текста для светлой темы */
-    background: #d8dbd4;
+    background: radial-gradient(circle, rgba(255, 221, 192, 1) 0%, rgba(215, 204, 208, 1) 67%, rgba(130, 205, 224, 1) 100%);
   }
 
   /* Стили для темной темы */
   :global(body.dark-theme) {
     color: #e2e3e7; /* Цвет текста для темной темы */
-    background: #1d2218;
+    background: radial-gradient(circle, rgba(43, 88, 118, 1) 0%, rgba(53, 56, 110, 1) 71%, rgba(78, 67, 118, 1) 100%);
   }
 </style>

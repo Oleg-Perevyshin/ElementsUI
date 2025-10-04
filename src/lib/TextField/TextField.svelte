@@ -11,10 +11,15 @@
   }: ITextFieldProps = $props()
 
   const textSize = {
+    xsmall: 'text-sm',
     small: 'text-base',
-    medium: 'text-xl',
+    medium: 'text-lg',
+    large: 'text-xl',
     xlarge: 'text-2xl',
-  }
+    xxlarge: 'text-3xl',
+    huge: 'text-4xl',
+    massive: 'text-5xl',
+  } as const
 </script>
 
 <div id={id.value} class="relative flex w-full flex-col items-center {wrapperClass}">

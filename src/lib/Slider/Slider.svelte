@@ -1,6 +1,9 @@
 <!-- $lib/ElementsUI/Slider.svelte -->
 <script lang="ts">
   import type { ISliderProps } from '../types'
+  import IconGripVerticalLeft from '../../appIcons/IconGripVerticalLeft.svelte'
+  import IconGripVerticalRight from '../../appIcons/IconGripVerticalRight.svelte'
+  import IconGripVerticalDual from '../../appIcons/IconGripVerticalDual.svelte'
 
   let {
     id = { name: '', value: crypto.randomUUID() },
@@ -94,17 +97,17 @@
   {/if}
 
   <!-- Слайдер -->
-  <div class="relative flex h-2 w-full justify-center {disabled ? 'opacity-50 cursor-not-allowed' : ''}" id={id.value}>
+  <div class="relative flex h-8 rounded-full w-full justify-center {disabled ? 'opacity-50 cursor-not-allowed' : ''}" id={id.value}>
     {#if isRange}
       <!-- Трек и активная зона -->
       <div
-        class={`absolute h-full w-full rounded bg-gray-400 ${disabled ? '' : 'cursor-pointer'}`}
+        class={`absolute h-full w-full rounded-full bg-[var(--gray-color)] ${disabled ? '' : 'cursor-pointer'}`}
         role="button"
         tabindex={null}
         onkeydown={null}
         onclick={disabled ? undefined : handleTrackClick}
       >
-        <div class="absolute h-full rounded" style={`left: ${lowerPosition}%; right: ${100 - upperPosition}%; background-color: var(--bg-color)`}></div>
+        <div class="absolute h-full rounded-full bg-[var(--bg-color)]" style={`left: ${lowerPosition}%; right: ${100 - upperPosition}%;`}></div>
       </div>
 
       <!-- Ползунки -->
@@ -125,6 +128,12 @@
         {disabled}
         class={`absolute h-full w-full appearance-none bg-transparent ${activeThumb === 'lower' ? 'z-30' : 'z-20'}`}
       />
+      <div
+        class="absolute z-40 pointer-events-none rounded-full bg-[var(--field-color)]"
+        style={`left: calc(${lowerPosition}% + 0rem); top: 50%; transform: translateY(-50%)`}
+      >
+        <IconGripVerticalLeft />
+      </div>
 
       <input
         type="range"
@@ -143,16 +152,25 @@
         {disabled}
         class={`absolute h-full w-full appearance-none bg-transparent ${activeThumb === 'upper' ? 'z-30' : 'z-20'}`}
       />
+      <div
+        class="absolute z-40 pointer-events-none rounded-full bg-[var(--field-color)]"
+        style={`left: calc(${upperPosition}% - 2rem); top: 50%; transform: translateY(-50%)`}
+      >
+        <IconGripVerticalRight />
+      </div>
     {:else}
       <!-- Одиночный слайдер -->
       <div
-        class={`absolute h-full w-full rounded bg-gray-400 ${disabled ? '' : 'cursor-pointer'}`}
+        class={`absolute h-full w-full rounded-full bg-[var(--gray-color)] ${disabled ? '' : 'cursor-pointer'}`}
         role="button"
         tabindex={null}
         onkeydown={null}
         onclick={disabled ? undefined : handleTrackClick}
       >
-        <div class="absolute h-full rounded" style={`width: ${singlePosition}%; background-color: var(--bg-color)`}></div>
+        <div
+          class="absolute h-full {singlePosition === 100 ? 'rounded-full z-10' : 'rounded-l-full z-10'}"
+          style={`width: ${singlePosition}%; background-color: var(--bg-color)`}
+        ></div>
       </div>
 
       <input
@@ -168,8 +186,14 @@
             }}
         onmouseup={disabled ? undefined : () => onUpdate(singleValue)}
         {disabled}
-        class="absolute z-30 h-full w-full appearance-none bg-transparent"
+        class="absolute z-20 h-full w-full appearance-none bg-transparent"
       />
+      <div
+        class="absolute z-30 pointer-events-none rounded-full bg-[var(--field-color)]"
+        style={`left: clamp(1rem, ${singlePosition}%, calc(100% - 1rem)); top: 50%; transform: translate(-50%, -50%)`}
+      >
+        <IconGripVerticalDual />
+      </div>
     {/if}
   </div>
 
@@ -220,41 +244,56 @@
     margin: 0;
     padding: 0;
     pointer-events: none;
+    outline: none;
   }
 
-  input[type='range']:disabled::-webkit-slider-thumb {
-    cursor: auto;
-  }
-
+  /* Webkit thumb */
   input[type='range']::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    width: 1rem;
-    height: 1rem;
+    width: 2rem;
+    height: 2rem;
     border-radius: 50%;
-    background: var(--border-color);
-    cursor: pointer;
-    pointer-events: auto;
-    transition: all 0.2s ease;
-  }
-
-  input[type='range']:disabled::-webkit-slider-thumb {
-    background: var(--gray-color);
-  }
-
-  input[type='range']::-moz-range-thumb {
-    width: 1rem;
-    height: 1rem;
-    border-radius: 50%;
-    background: var(--border-color);
+    background: transparent;
     cursor: pointer;
     pointer-events: auto;
     border: none;
-    transition: all 0.2s ease;
+  }
+
+  /* Firefox thumb */
+  input[type='range']::-moz-range-thumb {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background: transparent;
+    cursor: pointer;
+    pointer-events: auto;
+    border: none;
+  }
+
+  /* Webkit track */
+  input[type='range']::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border-radius: 0;
+    border: none;
+  }
+
+  /* Firefox track */
+  input[type='range']::-moz-range-track {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border-radius: 0;
+    border: none;
+  }
+
+  input[type='range']:disabled::-webkit-slider-thumb {
+    cursor: not-allowed;
   }
 
   input[type='range']:disabled::-moz-range-thumb {
-    background: var(--gray-color);
     cursor: not-allowed;
   }
 </style>

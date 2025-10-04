@@ -134,31 +134,31 @@ a:hover {
 .light-theme {
   --back-color: #ffffff; /* Белый */
   --border-color: #b2bbca; /* Светлые серо-голубые границы */
-  --conteiner-color: #f8f1f1; /* Очень светлый фон контейнеров, например аккордеона */
+  --conteiner-color: #f3f4f6; /* gray-100 */
   --field-color: #ecf2fa; /*цвет маленьких полей, например полей ввода*/
 
-  --gray-color: #cfd2d8; /* gray-300 */
-  --red-color: #fd7a7a; /* red-300 */
-  --yellow-color: #fadf5b; /* amber-300 */
-  --green-color: #79eca0; /* green-300 */
-  --blue-color: #81c4eb; /* blue-300 */
-  --purple-color: #b2a2f1; /* purple-300 */
-  --pink-color: #f89ccf; /* pink-300 */
+  --gray-color: #d1d5db; /* gray-300 */
+  --red-color: #fca5a5; /* red-300 */
+  --yellow-color: #fde047; /* yellow-300 */
+  --green-color: #86efac; /* green-300 */
+  --blue-color: #93c5fd; /* blue-300 */
+  --purple-color: #d8b4fe; /* purple-300 */
+  --pink-color: #f9a8d4; /* pink-300 */
 }
 
 .dark-theme {
-  --back-color: #1f2937; /* gray-800 */
+  --back-color: #111827; /* gray-900 */
   --border-color: #585c63; /* Границы - темный серо-синий */
-  --conteiner-color: #334155; /* Основные контейнеры - темный шифер */
+  --conteiner-color: #1f2937; /* gray-800 */
   --field-color: #2d3748; /*цвет маленьких полей, например полей ввода*/
 
-  --gray-color: #1f2937; /* gray-800 */
-  --red-color: #922727; /* red-800 */
-  --yellow-color: #8f672b; /* yellow-800 */
-  --green-color: #166534; /* green-800 */
-  --blue-color: #221c79; /* blue-800 */
-  --purple-color: #6b21a8; /* purple-800 */
-  --pink-color: #9d174d; /* pink-800 */
+  --gray-color: #374151; /* gray-700 */
+  --red-color: #b91c1c; /* red-700 */
+  --yellow-color: #a16207; /* yellow-700 */
+  --green-color: #15803d; /* green-700 */
+  --blue-color: #2563eb; /* blue-600 */
+  --purple-color: #7e22ce; /* purple-700 */
+  --pink-color: #be185d; /* pink-700 */
 }
 
 .bg-max {

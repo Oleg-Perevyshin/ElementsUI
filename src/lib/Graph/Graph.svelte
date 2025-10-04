@@ -34,7 +34,6 @@
     { id: 'RefreshOption-1000', name: '1000', value: 1000, class: '' },
     { id: 'RefreshOption-5000', name: '5000', value: 5000, class: '' },
   ]
-  // const REFRESH_OPTIONS = [10, 25, 50, 100, 250, 500, 1000, 5000]
   const SCALE_OPTIONS: ISelectOption[] = [
     { id: 'ScaleOption-50', name: '50', value: 50, class: '' },
     { id: 'ScaleOption-100', name: '100', value: 100, class: '' },
@@ -42,7 +41,6 @@
     { id: 'ScaleOption-1000', name: '1000', value: 1000, class: '' },
     { id: 'ScaleOption-2000', name: '2000', value: 2000, class: '' },
   ]
-  // const SCALE_OPTIONS = [50, 100, 500, 1000, 2000]
   let selectedRefreshRate = $state(0)
   let selectedScale = $state(100)
   const maxDataPoints = $derived(selectedRefreshRate == 0 ? 20 : 100)
@@ -246,7 +244,7 @@
       <Select
         label={{ name: 'Scale' }}
         options={SCALE_OPTIONS}
-        value={REFRESH_OPTIONS.find((o) => o.value == selectedScale)}
+        value={SCALE_OPTIONS.find((o) => o.value == selectedScale)}
         onUpdate={(value) => (selectedScale = value.value as number)}
       />
 
