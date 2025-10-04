@@ -8,10 +8,18 @@ export default {
     runes: true,
   },
   kit: {
-    adapter: adapter({ pages: 'docs', assets: 'docs' }),
+    adapter: adapter({
+      pages: 'docs',
+      assets: 'docs',
+      fallback: null,
+      precompress: false,
+    }),
     paths: {
       base: process.argv.includes('dev') ? '' : '/ElementsUI',
       relative: false,
+    },
+    prerender: {
+      handleHttpError: 'warn',
     },
   },
 }

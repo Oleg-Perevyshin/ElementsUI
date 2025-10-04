@@ -6,4 +6,13 @@ export default defineConfig({
   plugins: [
     tailwindcss(), sveltekit()
   ],
+  base: '/ElementsUI/',
+  build: {
+    sourcemap: false,
+    rollupOptions: {
+      output: {
+        manualChunks: undefined
+      }
+    }
+  }
 })
