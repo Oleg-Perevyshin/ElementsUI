@@ -3,7 +3,7 @@ import { vitePreprocess } from '@sveltejs/vite-plugin-svelte'
 import adapter from '@sveltejs/adapter-static'
 
 export default {
-  preprocess: vitePreprocess({ postcss: true }),
+  preprocess: vitePreprocess(),
   compilerOptions: { runes: true },
   kit: {
     adapter: adapter({ pages: 'docs', assets: 'docs', fallback: null, precompress: false }),

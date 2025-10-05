@@ -8,14 +8,14 @@ export default defineConfig({
   plugins: [
     tailwindcss(),
     sveltekit(),
-    compression({
-      verbose: true,
-      disable: false,
-      threshold: 10240,
-      algorithm: 'gzip',
-      ext: '.gz',
-      deleteOriginFile: true,
-    }),
+    // compression({
+    //   verbose: true,
+    //   disable: false,
+    //   threshold: 10240,
+    //   algorithm: 'gzip',
+    //   ext: '.gz',
+    //   deleteOriginFile: true,
+    // }),
   ],
   build: {
     emptyOutDir: true,
