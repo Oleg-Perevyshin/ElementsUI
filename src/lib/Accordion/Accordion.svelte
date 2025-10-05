@@ -17,17 +17,27 @@
   transition:slide={{ duration: 250 }}
 >
   <button
-    class="flex w-full cursor-pointer items-center justify-between transition-shadow duration-250 sm:p-4 sm:px-6
+    class="flex p-4 w-full cursor-pointer items-center justify-between transition-shadow duration-250
     {props.type === 'sub' ? 'border-b border-[var(--border-color)]' : ''}"
     onclick={toggle}
   >
-    <span class="toggle m-0 cursor-pointer text-lg flex items-center gap-2 font-semibold {props.label?.class}">
-      {#if props.icon?.component}
-        {@const IconComponent = props.icon?.component}
-        <IconComponent {...props.icon?.properties} />
-      {/if}
-      {props.label?.name}
-    </span>
+    <div class="flex items-center w-full">
+      <span class={`flex items-center justify-center w-8 h-8 shrink-0 overflow-visible [&_svg]:w-full [&_svg]:h-full [&_svg]:max-w-full [&_svg]:max-h-full`}>
+        {#if props.icon?.svg}
+          {@html props.icon.svg}
+        {:else if props.icon?.component}
+          {@const IconComponent = props.icon?.component}
+          <IconComponent />
+        {/if}
+      </span>
+      <h4
+        class="{props.label?.class}
+        {props.label?.align === 'center' ? 'text-center flex-1' : props.label?.align === 'right' ? 'text-right flex-1 mr-2' : 'text-left flex-1 ml-2'}"
+      >
+        {props.label?.name}
+      </h4>
+    </div>
+
     <svg
       xmlns="http://www.w3.org/2000/svg"
       class="h-[1.1rem] w-[1.1rem] transition-transform duration-250"
@@ -48,8 +58,9 @@
 
   {#if isOpen}
     <div
-      class="flex w-full flex-wrap items-start justify-around p-4 sm:p-3 {props.type === 'sub' ? '' : 'border-t border-[var(--border-color)]'}"
+      class="flex w-full flex-wrap items-start justify-around p-2 {props.type === 'sub' ? '' : 'border-t border-[var(--border-color)]'}"
       transition:slide={{ duration: 250 }}
+      style={props.image ? `background-image: url('${props.image}'); background-size: cover;` : ''}
     >
       {@render props.children?.()}
     </div>

@@ -78,11 +78,11 @@ export interface IButtonProps {
 /* ********************************************************** */
 /* Интерфейс аккордиона */
 export interface IAccordionProps {
-  id?: { value?: string; name?: string }
-  label?: { name?: string; class?: string }
+  id: { value?: string; name?: string }
+  label?: { name?: string; class?: string; align?: 'left' | 'center' | 'right' }
   icon?: {
+    svg?: string
     component?: ConstructorOfATypedSvelteComponent | null
-    properties?: Record<string, unknown>
   }
   isOpen: boolean
   componentClass?: string
