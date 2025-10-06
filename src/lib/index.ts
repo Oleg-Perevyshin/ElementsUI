@@ -11,6 +11,7 @@ export { default as Slider } from './Slider/Slider.svelte'
 export { default as Switch } from './Switch/Switch.svelte'
 export { default as Table } from './Table/Table.svelte'
 export { default as TextField } from './TextField/TextField.svelte'
+export { default as TextFieldProps } from './TextField/TextFieldProps.svelte'
 
 export { default as Loader } from './Loader.svelte'
 export { default as MessageModal } from './MessageModal.svelte'

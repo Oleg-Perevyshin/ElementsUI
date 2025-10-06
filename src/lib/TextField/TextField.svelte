@@ -1,14 +1,7 @@
 <script lang="ts">
   import type { ITextFieldProps } from '../types'
 
-  let {
-    id = { value: crypto.randomUUID(), name: '' },
-    wrapperClass = '',
-    label = { name: '', class: '' },
-    type = 'small',
-    bold = false,
-    italic = false,
-  }: ITextFieldProps = $props()
+  let { id = crypto.randomUUID(), wrapperClass = '', label = { name: '', bold: false, italic: false, color: '' }, type = 'small' }: ITextFieldProps = $props()
 
   const textSize = {
     xsmall: 'text-sm',
@@ -22,6 +15,6 @@
   } as const
 </script>
 
-<div id={id.value} class="relative flex w-full flex-col items-center {wrapperClass}">
-  <p class="w-full text-center {label.class} {textSize[type]} {bold ? 'font-bold' : ''} {italic ? 'italic' : ''}">{label.name}</p>
+<div {id} class="relative flex w-full flex-col items-center {wrapperClass}">
+  <p class="w-full text-center {label.color} {textSize[type]} {label.bold ? 'font-bold' : ''} {label.italic ? 'italic' : ''}">{label.name}</p>
 </div>

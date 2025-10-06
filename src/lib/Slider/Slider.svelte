@@ -1,9 +1,9 @@
 <!-- $lib/ElementsUI/Slider.svelte -->
 <script lang="ts">
   import type { ISliderProps } from '../types'
-  import IconGripVerticalLeft from '../../appIcons/IconGripVerticalLeft.svelte'
-  import IconGripVerticalRight from '../../appIcons/IconGripVerticalRight.svelte'
-  import IconGripVerticalDual from '../../appIcons/IconGripVerticalDual.svelte'
+  import IconGripVerticalLeft from '../libIcons/IconGripVerticalLeft.svelte'
+  import IconGripVerticalRight from '../libIcons/IconGripVerticalRight.svelte'
+  import IconGripVerticalDual from '../libIcons/IconGripVerticalDual.svelte'
 
   let {
     id = { name: '', value: crypto.randomUUID() },

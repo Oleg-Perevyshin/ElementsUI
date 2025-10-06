@@ -198,12 +198,10 @@ export interface ISliderProps {
 }
 /* ********************************************************** */
 export interface ITextFieldProps {
-  id?: { name?: string; value?: string }
+  id?: string
   wrapperClass?: string
-  label?: { name?: string; class?: string }
+  label?: { name?: string; bold?: boolean; italic ?: boolean; color?: string }
   type?: 'xsmall' | 'small' | 'medium' | 'large' | 'xlarge' | 'xxlarge' | 'huge' | 'massive'
-  bold?: boolean
-  italic?: boolean
 }
 /* ********************************************************** */
 export interface IProgressBarProps {
