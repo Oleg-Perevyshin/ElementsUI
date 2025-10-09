@@ -1,5 +1,6 @@
 <script lang="ts">
   import { Button } from '$lib'
+  import ButtonProps from '$lib/Button/ButtonProps.svelte'
   import type { IButtonProps, Position, UIComponent } from '$lib/types'
 
   let buttonComponent: UIComponent = $state({
@@ -7,12 +8,11 @@
     type: 'Button',
     component: null,
     properties: {
-      id: { name: '', value: crypto.randomUUID() },
-      wrapperClass: '',
-      label: { name: 'Label', class: 'text-center' },
-      name: 'Button',
-      componentClass: 'py-1 bg-blue',
-      disabled: false,
+      id: crypto.randomUUID(),
+      componentClass: 'bg-red py-1',
+      content: {
+        name: 'Button',
+      },
       eventHandler: { Header: 'SET', Argument: 'Save', Variables: [] },
     },
     position: { row: 0, col: 0, width: 0, height: 0 },
@@ -22,7 +22,10 @@
   // let selectedComponentId = $state<string | null>(components[0].id)
   // let selectedComponent = $derived(selectedComponentId ? components.find((c) => c.id === selectedComponentId) : null)
 
-  const updateComponent = (id: string, updates: Partial<{ position: Partial<Position>; parentId: string; properties: Partial<UIComponent['properties']> }>) => {
+  const updateComponent = (
+    id: string,
+    updates: Partial<{ position: Partial<Position>; parentId: string; properties: Partial<UIComponent['properties']> }>,
+  ) => {
     buttonComponent = {
       ...buttonComponent,
       position: updates.position ? { ...buttonComponent.position, ...updates.position } : buttonComponent.position,
@@ -32,15 +35,17 @@
   }
 </script>
 
-<div>
-  <Button {...buttonComponent.properties as IButtonProps} />
+<Button {...buttonComponent.properties as IButtonProps} />
 
-</div>
+<ButtonProps
+  component={buttonComponent as UIComponent & { properties: Partial<IButtonProps> }}
+  onPropertyChange={(value) => updateComponent(buttonComponent.id, { properties: value } as object)}
+/>
 
-<div class="code-block">
+<!-- <div class="code-block">
   <pre>{`
   <Button 
   name={${(buttonComponent.properties as IButtonProps).name ?? ''}} 
   />
   `}</pre>
-</div>
+</div> -->

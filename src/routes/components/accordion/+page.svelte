@@ -1,21 +1,31 @@
 <script lang="ts">
   import { Accordion, FileAttach } from '$lib'
-  import type { IAccordionProps, UIComponent } from '$lib/types'
+  import AccordionProps from '$lib/Accordion/AccordionProps.svelte'
+  import type { IAccordionProps, Position, UIComponent } from '$lib/types'
   import GitHub from '../../../appIcons/GitHub.svelte'
 
-  let accordionComponent: IAccordionProps = $state({
-    id: { value: crypto.randomUUID(), name: 'AccordionComponent' },
-    label: { name: 'Test Accordion Component', class: '', align: 'left' },
-    icon: {
-      svg: undefined,
-      component: GitHub,
+  let accordionComponent: UIComponent = $state({
+    id: crypto.randomUUID(),
+    type: 'Accordion',
+    component: null,
+    properties: {
+      id: crypto.randomUUID(),
+      isOpen: true,
+      outline: true,
+      size: {
+        height: 1,
+        width: 1,
+      },
+      label: {
+        name: ',kdf,;sdedfewfrterg',
+        class: 'text-center',
+        icon: null,
+      },
+      image: '',
+      children: undefined,
     },
-    isOpen: true,
-    componentClass: '',
-    type: 'main',
-    components: undefined,
-    image: '',
-    children: undefined,
+    position: { row: 0, col: 0, width: 0, height: 0 },
+    parentId: '',
   })
 
   const handleImageUpload = (event: Event) => {
@@ -25,55 +35,55 @@
     const reader = new FileReader()
     reader.onload = (e) => {
       const base64String = e.target?.result as string
-      accordionComponent.image = base64String
+      ;(accordionComponent.properties as IAccordionProps).image = base64String
     }
     reader.readAsDataURL(file)
+  }
+
+  const updateComponent = (
+    id: string,
+    updates: Partial<{ position: Partial<Position>; parentId: string; properties: Partial<UIComponent['properties']> }>,
+  ) => {
+    accordionComponent = {
+      ...accordionComponent,
+      position: updates.position ? { ...accordionComponent.position, ...updates.position } : accordionComponent.position,
+      parentId: updates.parentId ?? accordionComponent.parentId,
+      properties: updates.properties ? { ...accordionComponent.properties, ...updates.properties } : accordionComponent.properties,
+    }
   }
 </script>
 
 <!-- Панель для изменения свойств и предпросмотра -->
-<div class="flex flex-col mb-4 p-4 border border-[var(--border-color)] rounded-2xl gap-2">
-  <h3 class="font-bold text-lg">Настройка компонента</h3>
+<!-- <div class="mb-4 flex flex-col gap-2 rounded-2xl border border-[var(--border-color)] p-4">
+  <h3 class="text-lg font-bold">Настройка компонента</h3> -->
 
-  <!-- Превью -->
-  <Accordion {...accordionComponent as IAccordionProps}>
-    <div class="flex flex-col">
-      <h1>Содержимое компонента</h1>
-      <h1>Содержимое компонента</h1>
-      <h1>Содержимое компонента</h1>
-      <h1>Содержимое компонента</h1>
-      <h1>Содержимое компонента</h1>
-      <h1>Содержимое компонента</h1>
-      <h1>Содержимое компонента</h1>
-      <h1>Содержимое компонента</h1>
-      <h1>Содержимое компонента</h1>
-      <h1>Содержимое компонента</h1>
-    </div>
-  </Accordion>
+<!-- Превью -->
+<Accordion {...accordionComponent.properties as IAccordionProps}>
+  <div class="flex flex-col">
+    <h1>Содержимое компонента</h1>
+    <h1>Содержимое компонента</h1>
+  </div>
+</Accordion>
 
-  <!-- Редактор свойств -->
-  <div class="grid grid-cols-3 gap-2 mt-4">
+<AccordionProps
+  component={accordionComponent as UIComponent & { properties: Partial<IAccordionProps> }}
+  onPropertyChange={(value) => updateComponent(accordionComponent.id, { properties: value } as object)}
+/>
+
+<!-- Редактор свойств -->
+<!-- <div class="mt-4 grid grid-cols-3 gap-2">
     <label class="flex flex-col">
-      <span>Тип</span>
-      <select class="border rounded-2xl px-2 py-1 bg-[var(--back-color)]" bind:value={accordionComponent.type}>
-        <option value="main">Main</option>
-        <option value="sub">Sub</option>
-      </select>
       <span>ID Value</span>
-      <input type="text" class="border rounded-2xl px-2 py-1 bg-[var(--back-color)]" bind:value={accordionComponent.id.value} />
-      <span>ID Name</span>
-      <input type="text" class="border rounded-2xl px-2 py-1 bg-[var(--back-color)]" bind:value={accordionComponent.id.name} />
+      <input type="text" class="rounded-2xl border bg-[var(--back-color)] px-2 py-1" bind:value={accordionComponent.id} />
       <span>Открыт по умолчанию</span>
       <input type="checkbox" bind:checked={accordionComponent.isOpen} />
-    </label>
-
+    </label> -->
+<!-- 
     <label class="flex flex-col">
       <span>Label Name</span>
-      <input type="text" class="border rounded-2xl px-2 py-1 bg-[var(--back-color)]" bind:value={accordionComponent.label.name} />
-      <span>Label Class</span>
-      <input type="text" class="border rounded-2xl px-2 py-1 bg-[var(--back-color)]" bind:value={accordionComponent.label.class} />
+      <input type="text" class="rounded-2xl border bg-[var(--back-color)] px-2 py-1" bind:value={accordionComponent.header!.name} />
       <span>Label Align</span>
-      <select class="border rounded-2xl px-2 py-1 bg-[var(--back-color)]" bind:value={accordionComponent.label.align}>
+      <select class="rounded-2xl border bg-[var(--back-color)] px-2 py-1" bind:value={accordionComponent.header!.align}>
         <option value="left">Слева</option>
         <option value="center">По центру</option>
         <option value="right">Справа</option>
@@ -81,20 +91,40 @@
     </label>
 
     <label class="flex flex-col">
-      <span>Доп. классы CSS</span>
-      <input type="text" class="border rounded-2xl px-2 py-1 bg-[var(--back-color)]" bind:value={accordionComponent.componentClass} />
       <span>SVG иконка (строка)</span>
-      <textarea rows="3" class="border rounded-2xl px-2 py-1 bg-[var(--back-color)]" bind:value={accordionComponent.icon.svg}></textarea>
+      <textarea rows="3" class="rounded-2xl border bg-[var(--back-color)] px-2 py-1" bind:value={accordionComponent.header!.icon!.svg}></textarea>
       <FileAttach type="file" label={{ name: 'Image' }} accept="image/png, image/jpeg, image/webp" onChange={handleImageUpload} />
-    </label>
-  </div>
-</div>
+    </label> -->
+<!-- </div>
+</div> -->
+<Accordion label={{ name: 'Accordion MAIN' }} size={{ width: 5 }} isOpen={false} wrapperClass="w-1/2">
+  <Accordion label={{ name: 'Accordion 1 SUB', class: '' }} isOpen={false} outline wrapperClass=" col-span-5">
+    <h6 class="col-span-10">Содержимое вложенного Accordion 1</h6>
+    <h4 class="col-span-10">Содержимое вложенного Accordion 1</h4>
+    <h2 class="col-span-10">Содержимое вложенного Accordion 1</h2>
+  </Accordion>
+</Accordion>
+
+<Accordion label={{ name: 'Accordion MAIN', class: 'text-center' }} isOpen={false}>
+  <Accordion label={{ name: 'Accordion 1 SUB', class: '' }} isOpen={false} outline wrapperClass="col-span-5">
+    <h6 class="col-span-10">Содержимое вложенного Accordion 1</h6>
+    <h4 class="col-span-10">Содержимое вложенного Accordion 1</h4>
+    <h2 class="col-span-10">Содержимое вложенного Accordion 1</h2>
+  </Accordion>
+</Accordion>
+
+<Accordion label={{ name: 'Accordion MAIN', class: 'text-right' }} isOpen={false}>
+  <Accordion label={{ name: 'Accordion 1 SUB', class: '' }} isOpen={false} outline wrapperClass="col-span-5">
+    <h6 class="col-span-10">Содержимое вложенного Accordion 1</h6>
+    <h4 class="col-span-10">Содержимое вложенного Accordion 1</h4>
+    <h2 class="col-span-10">Содержимое вложенного Accordion 1</h2>
+  </Accordion>
+</Accordion>
 
 <!-- Панель примеров -->
-<div class="flex flex-col p-2 border border-[var(--border-color)] rounded-2xl">
-  <h3 class="font-bold text-lg mb-2">Примеры</h3>
+<!-- <div class="flex flex-col rounded-2xl border border-[var(--border-color)] p-2">
+  <h3 class="mb-2 text-lg font-bold">Примеры</h3>
   <Accordion
-    id={{ value: crypto.randomUUID() }}
     label={{ name: 'Accordion MAIN', align: 'center' }}
     isOpen={false}
     type="main"
@@ -104,7 +134,6 @@
     }}
   >
     <Accordion
-      id={{ value: crypto.randomUUID() }}
       label={{ name: 'Accordion 1 SUB', class: '' }}
       isOpen={false}
       type="sub"
@@ -118,7 +147,6 @@
       <h2>Содержимое вложенного Accordion 1</h2>
     </Accordion>
     <Accordion
-      id={{ value: crypto.randomUUID() }}
       label={{ name: 'Accordion 2 SUB', align: 'right' }}
       isOpen={false}
       type="sub"
@@ -135,7 +163,6 @@
 
   <div class="flex flex-row gap-2">
     <Accordion
-      id={{ value: crypto.randomUUID() }}
       label={{ name: 'Accordion 3 MAIN', align: 'center' }}
       isOpen={false}
       type="main"
@@ -147,7 +174,6 @@
       <h3>Содержимое вложенного Accordion 3</h3>
     </Accordion>
     <Accordion
-      id={{ value: crypto.randomUUID() }}
       label={{ name: 'Accordion 4 MAIN', align: 'left' }}
       isOpen={false}
       type="main"
@@ -158,12 +184,12 @@
       <h6>Содержимое вложенного Accordion 4</h6>
     </Accordion>
   </div>
-</div>
+</div> -->
 
 <!-- Панель TODO -->
-<div class="mt-8 border border-[var(--border-color)] rounded-2xl sticky bottom-0 bg-[var(--back-color)]">
-  <h3 class="font-bold text-lg mb-2">Todo List:</h3>
-  <div class="flex flex-col ml-8 text-left">
+<div class="sticky bottom-0 mt-8 rounded-2xl border border-[var(--border-color)] bg-[var(--back-color)]">
+  <h3 class="mb-2 text-lg font-bold">Todo List:</h3>
+  <div class="ml-8 flex flex-col text-left">
     <h5>1. Разобраться с прикреплением иконки к заголовку как svg поток</h5>
     <h5>2. Сделать автоматическое масштабирование иконки</h5>
     <h5>3. Разобраться со сварачиванием 3 и 4 аккордиона (Инна)</h5>

@@ -1,5 +1,36 @@
 <script lang="ts">
-    import type { PageProps } from './$types';
+  import { type ITextFieldProps, type UIComponent } from '$lib'
+  import TextField from '$lib/TextField/TextField.svelte'
+  import TextFieldProps from '$lib/TextField/TextFieldProps.svelte'
 
-    let { data }: PageProps = $props();
+  let textFieldComponent: UIComponent = $state({
+    id: crypto.randomUUID(),
+    type: 'TextField',
+    component: null,
+    properties: {
+      id: crypto.randomUUID(),
+      wrapperClass: 'text-[#333] dark:text-[#e2e3e7]',
+      content: {
+        name: 'Supporting text',
+        class: 'text-center',
+        size: 'small',
+      },
+    },
+    position: { row: 0, col: 0, width: 0, height: 0 },
+    parentId: '',
+  })
+
+  const updateComponent = (id: string, updates: Partial<{ properties: Partial<UIComponent['properties']> }>) => {
+    textFieldComponent = {
+      ...textFieldComponent,
+      properties: updates.properties ? { ...textFieldComponent.properties, ...updates.properties } : textFieldComponent.properties,
+    }
+  }
 </script>
+
+<TextField {...textFieldComponent.properties as ITextFieldProps} />
+
+<TextFieldProps
+  component={textFieldComponent as UIComponent & { properties: Partial<ITextFieldProps> }}
+  onPropertyChange={(value) => updateComponent(textFieldComponent.id, { properties: value } as object)}
+/>

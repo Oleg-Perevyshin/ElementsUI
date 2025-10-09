@@ -2,6 +2,24 @@
 import type { Component, Snippet } from 'svelte'
 import type { Writable } from 'svelte/store'
 
+export const updateProperty = (
+  path: string,
+  value: string | number | boolean | object | string[],
+  component: UIComponent & { properties: Partial<UIComponent['properties']> },
+  onPropertyChange: (value: string | object) => void,
+) => {
+  const newProperties = JSON.parse(JSON.stringify(component.properties))
+  const parts = path.split('.')
+  let obj = newProperties
+  for (let i = 0; i < parts.length - 1; i++) {
+    const part = parts[i]
+    if (!obj[part]) obj[part] = {}
+    obj = obj[part]
+  }
+  obj[parts[parts.length - 1]] = value
+  onPropertyChange(newProperties)
+}
+
 /* Интерфейс полного компонента */
 export interface UIComponent {
   id: string
@@ -53,16 +71,15 @@ export interface IUIComponentHandler {
 /* ********************************************************** */
 /* Интерфейс кнопки */
 export interface IButtonProps {
-  id?: { value?: string; name?: string }
+  id?: string
   wrapperClass?: string
-  label?: { name?: string; class?: string }
   componentClass?: string
-  name?: string
-  icon?: {
-    component?: ConstructorOfATypedSvelteComponent | null
-    properties?: Record<string, unknown>
+  disabled?: boolean
+  content?: {
+    name?: string
+    info?: string
+    icon?: ConstructorOfATypedSvelteComponent | null
   }
-  info?: string
   keyBind?: {
     key?: string
     ctrlKey?: boolean
@@ -70,7 +87,6 @@ export interface IButtonProps {
     altKey?: boolean
     metaKey?: boolean /* Поддержка Meta (Cmd на Mac) */
   }
-  disabled?: boolean
   eventHandler?: IUIComponentHandler
   onClick?: () => void
 }
@@ -78,54 +94,60 @@ export interface IButtonProps {
 /* ********************************************************** */
 /* Интерфейс аккордиона */
 export interface IAccordionProps {
-  id: { value?: string; name?: string }
-  label?: { name?: string; class?: string; align?: 'left' | 'center' | 'right' }
-  icon?: {
-    svg?: string
-    component?: ConstructorOfATypedSvelteComponent | null
-  }
+  id?: string
   isOpen: boolean
-  componentClass?: string
-  type?: 'main' | 'sub'
-  components?: UIComponent[]
-  image?: string
+  outline?: boolean
+  wrapperClass?: string
+  size?: {
+    height?: number
+    width?: number
+  }
+  label?: {
+    name?: string
+    class?: string
+    icon?: ConstructorOfATypedSvelteComponent | null
+  }
   children?: Snippet
+  image?: string
 }
 
 /* ********************************************************** */
 /* Интерфейс поля ввода */
 export interface IInputProps {
-  id?: { value?: string; name?: string }
+  id?: string
+  type?: 'text' | 'password' | 'number' | 'text-area'
   wrapperClass?: string
   label?: { name?: string; class?: string }
+  componentClass?: string
   disabled?: boolean
   readonly?: boolean
   value?: string | number
-  type?: 'text' | 'password' | 'number' | 'text-area'
-  autocomplete?:
-    | 'on'
-    | 'off'
-    | 'given-name'
-    | 'family-name'
-    | 'name'
-    | 'email'
-    | 'username'
-    | 'new-password'
-    | 'current-password'
-    | 'tel'
-    | 'country-name'
-    | 'address-level1'
-    | 'address-level2'
-    | 'street-address'
-    | 'postal-code'
-    | null
-  componentClass?: string
   maxlength?: number
-  number?: { minNum?: number; maxNum?: number; step?: number }
   textareaRows?: number
-  regExp?: string | RegExp
-  help?: { placeholder?: string; info?: string }
-  copyButton?: boolean
+  placeholder?: string
+  number?: { minNum?: number; maxNum?: number; step?: number }
+  help?: {
+    info?: string
+    copyButton?: boolean
+    regExp?: string | RegExp
+    autocomplete?:
+      | 'on'
+      | 'off'
+      | 'given-name'
+      | 'family-name'
+      | 'name'
+      | 'email'
+      | 'username'
+      | 'new-password'
+      | 'current-password'
+      | 'tel'
+      | 'country-name'
+      | 'address-level1'
+      | 'address-level2'
+      | 'street-address'
+      | 'postal-code'
+      | null
+  }
   eventHandler?: IUIComponentHandler
   onUpdate?: (value: string | number) => void
 }
@@ -133,42 +155,38 @@ export interface IInputProps {
 /* ********************************************************** */
 /* Интерфейс элемента выбора и его опций */
 export interface ISelectProps<T = unknown> {
-  id?: { value?: string; name?: string }
+  id?: string
   wrapperClass?: string
   disabled?: boolean
   label?: { name?: string; class?: string }
+  componentClass?: string
   type?: 'select' | 'buttons' | 'input'
   value?: ISelectOption<T> | null
   options?: ISelectOption<T>[]
-  placeholder?: string
   eventHandler?: IUIComponentHandler
   onUpdate?: (value: ISelectOption<T>) => void
 }
+
 export interface ISelectOption<T = unknown> {
   id: string
   value?: T
   name?: string
   class?: string
-  icon?: {
-    component?: ConstructorOfATypedSvelteComponent | null
-    properties?: Record<string, unknown>
-  }
   disabled?: boolean
 }
 
 /* ********************************************************** */
 /* Интерфейс переключателя */
 export interface ISwitchProps {
-  id?: { value?: string; name?: string }
+  id?: string
+  height?: string
   wrapperClass?: string
   disabled?: boolean
   label?: {
     name?: string
     captionLeft?: string
     captionRight?: string
-    class?: string
   }
-  height?: string
   value?: number
   eventHandler?: IUIComponentHandler
   onChange?: (value: number) => void
@@ -176,7 +194,7 @@ export interface ISwitchProps {
 
 /* ********************************************************** */
 export interface IColorPickerProps {
-  id?: { name?: string; value?: string }
+  id?: string
   wrapperClass?: string
   label?: { name?: string; class?: string }
   value?: number[]
@@ -186,7 +204,7 @@ export interface IColorPickerProps {
 
 /* ********************************************************** */
 export interface ISliderProps {
-  id?: { name?: string; value?: string }
+  id?: string
   wrapperClass?: string
   label?: { name?: string; class?: string }
   value?: number | [number, number]
@@ -200,45 +218,48 @@ export interface ISliderProps {
 export interface ITextFieldProps {
   id?: string
   wrapperClass?: string
-  label?: { name?: string; bold?: boolean; italic ?: boolean; color?: string }
-  type?: 'xsmall' | 'small' | 'medium' | 'large' | 'xlarge' | 'xxlarge' | 'huge' | 'massive'
+  background?: boolean
+  content?: {
+    name?: string
+    class?: string
+    size?: 'small' | 'base' | 'large' | 'huge' | 'massive'
+  }
 }
 /* ********************************************************** */
 export interface IProgressBarProps {
-  id?: { name?: string; value?: string }
+  id?: string
   label?: { name?: string; class?: string }
-  value?: boolean | string | number | number[] | object | null
-  range?: {
-    min?: number
-    max?: number
+  value?: number | null
+  number?: {
+    minNum?: number
+    maxNum?: number
     units?: string
   }
   wrapperClass?: string
 }
+
 /* ********************************************************** */
 export interface IGraphDataObject {
   name: string
   value: number
-  timeshamp?: Date
-  color?: string
+  timestamp?: Date
 }
 export interface IGraphProps {
-  id?: { value: string; name?: string }
+  id?: string
   wrapperClass?: string
   label?: { name?: string; class?: string }
-  streamingData?: { data: IGraphDataObject[] | string | null; timestamp?: number }
+  streamingData?: { data: IGraphDataObject[] | null; timestamp?: number }
   isTest?: boolean
 }
+
 /* ********************************************************** */
 
 export interface ITableHeader<T extends object> {
-  wrapperClass?: string
-  label?: string
+  label?: { name?: string; class?: string }
   key: keyof T
-  width?: string
   sortable?: boolean
+  width?: string
   align?: 'left' | 'center' | 'right'
-  cellClass?: string
   overflow?: {
     truncated?: boolean
     formatting?: (text: string) => string
@@ -262,7 +283,7 @@ export interface ITableHeader<T extends object> {
 }
 
 export interface ITableProps<T extends object> {
-  id?: { value?: string; name?: string }
+  id?: string
   wrapperClass?: string
   label?: { name?: string; class?: string }
   header: ITableHeader<T>[]
@@ -273,5 +294,4 @@ export interface ITableProps<T extends object> {
   getData?: () => void
   modalData?: { isOpen?: boolean; rawData?: string; formattedData?: string }
   onClick?: (eventHandler: IUIComponentHandler) => void
-
 }

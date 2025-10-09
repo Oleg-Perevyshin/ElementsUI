@@ -29,47 +29,55 @@
   /* Переключение темы */
   const switchTheme = () => {
     currentTheme = !currentTheme
-    document.body.classList.toggle('dark-theme', !currentTheme)
-    document.body.classList.toggle('light-theme', currentTheme)
+    document.body.classList.toggle('dark', !currentTheme)
+    document.body.classList.toggle('light', currentTheme)
     localStorage.setItem('AppTheme', currentTheme ? 'light' : 'dark')
   }
 
   onMount(() => {
     const savedTheme = localStorage.getItem('AppTheme') || 'light'
     localStorage.setItem('AppTheme', `${savedTheme}`)
-    document.body.classList.toggle('dark-theme', savedTheme === 'dark')
-    document.body.classList.toggle('light-theme', savedTheme === 'light')
+    document.body.classList.toggle('dark', savedTheme === 'dark')
+    document.body.classList.toggle('light', savedTheme === 'light')
     currentTheme = savedTheme === 'light'
   })
 </script>
 
-<div class="flex flex-col mx-auto h-screen max-w-[1400px]">
+<div class="mx-auto flex h-screen max-w-[1400px] flex-col">
   <!-- Верхняя панель -->
-  <header class={'bg-[var(--back-color)]/50 rounded-xl m-1 mt-2 p-4 border border-[var(--border-color)] flex items-center justify-between sticky top-0 z-50'}>
+  <header
+    class={'sticky top-0 z-50 m-1 mt-2 flex items-center justify-between rounded-xl border border-[var(--border-color)] bg-[var(--back-color)]/50 p-4'}
+  >
     <div class="flex items-center gap-2">
-      <a href="/ElementsUI/" class="!no-underline ml-2 hover:scale-101 transition"><h1>POE-Svelte-UI-Lib</h1></a>
+      <a href="/ElementsUI/" class="ml-2 !no-underline transition hover:scale-101"><h1>POE-Svelte-UI-Lib</h1></a>
     </div>
     <div class="flex items-center gap-4">
-      <UI.Button wrapperClass="!w-12" icon={{ component: IconLightDark }} componentClass=" border-none " onClick={switchTheme} />
+      <UI.Button wrapperClass="!w-12" content={{ icon: IconLightDark }} componentClass="bg-transparent border-none " onClick={switchTheme} />
       <UI.Button
-        wrapperClass="!w-auto"
-        icon={{ component: GitHub }}
-        componentClass=" border-none "
+        wrapperClass="!w-12"
+        content={{ icon: GitHub }}
+        componentClass="bg-transparent border-none "
         onClick={() => window.open('https://github.com/Oleg-Perevyshin/ElementsUI', '_blank')}
       />
     </div>
   </header>
 
-  <div class="flex flex-1 overflow-hidden mb-2">
+  <div class="mb-2 flex flex-1 overflow-hidden">
     <!-- Панель навигации -->
-    <nav class="flex flex-col items-start gap-2 m-1 p-4 bg-[var(--back-color)]/50 w-64 overflow-y-auto rounded-xl border border-[var(--border-color)]">
-      <UI.Button name="ALL in ONE" componentClass="h-10 text-left" onClick={() => goto(`/ElementsUI/components/all`)} />
+    <nav
+      class="m-1 flex w-64 flex-col items-start gap-2 overflow-y-auto rounded-xl border border-[var(--border-color)] bg-[var(--back-color)]/50 p-4"
+    >
+      <UI.Button content={{ name: 'ALL in ONE' }} componentClass="h-10 text-left" onClick={() => goto(`/ElementsUI/components/all`)} />
       {#each menuItems as item}
-        <UI.Button name={item.name} componentClass="h-10 bg-gray text-left" onClick={() => goto(`/ElementsUI/components/${item.page}`)} />
+        <UI.Button
+          content={{ name: item.name }}
+          componentClass="h-10 bg-gray text-left"
+          onClick={() => goto(`/ElementsUI/components/${item.page}`)}
+        />
       {/each}
     </nav>
     <!-- Панель контента -->
-    <div class="flex-1 m-1 p-4 bg-[var(--back-color)]/50 overflow-y-auto border rounded-xl border-[var(--border-color)]">
+    <div class="m-1 flex-1 overflow-y-auto rounded-xl border border-[var(--border-color)] bg-[var(--back-color)]/50 p-4">
       {@render children()}
     </div>
   </div>
@@ -77,13 +85,13 @@
 
 <style>
   /* Стили для светлой темы */
-  :global(body.light-theme) {
+  :global(body.light) {
     color: #333; /* Цвет текста для светлой темы */
     background: radial-gradient(circle, rgba(255, 221, 192, 1) 0%, rgba(215, 204, 208, 1) 67%, rgba(130, 205, 224, 1) 100%);
   }
 
   /* Стили для темной темы */
-  :global(body.dark-theme) {
+  :global(body.dark) {
     color: #e2e3e7; /* Цвет текста для темной темы */
     background: radial-gradient(circle, rgba(43, 88, 118, 1) 0%, rgba(53, 56, 110, 1) 71%, rgba(78, 67, 118, 1) 100%);
   }

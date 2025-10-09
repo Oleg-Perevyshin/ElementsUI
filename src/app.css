@@ -1,6 +1,8 @@
 /* src/app.css */
 @import 'tailwindcss';
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   font-family:
     -apple-system,
@@ -91,7 +93,7 @@ pre {
   padding-left: 0.5rem;
   padding-right: 0.5rem;
   text-align: left;
-  background-color: var(--conteiner-color);
+  background-color: var(--container-color);
   border: 1px solid var(--border-color);
   border-radius: 0.5rem;
   white-space: pre;
@@ -101,7 +103,7 @@ code {
   padding-left: 0.5rem;
   padding-right: 0.5rem;
   text-align: left;
-  background-color: var(--conteiner-color);
+  background-color: var(--container-color);
   border-radius: 0.5rem;
   white-space: pre;
   font-family: monospace;
@@ -131,32 +133,38 @@ a:hover {
 }
 
 /* Цветовая гамма */
-.light-theme {
+.light {
   --back-color: #ffffff; /* Белый */
   --border-color: #b2bbca; /* Светлые серо-голубые границы */
-  --conteiner-color: #f3f4f6; /* gray-100 */
+  --container-color: #f3f4f6; /* gray-100 */
   --field-color: #ecf2fa; /*цвет маленьких полей, например полей ввода*/
+  --shadow-color: #34343a;
 
   --gray-color: #d1d5db; /* gray-300 */
   --red-color: #fca5a5; /* red-300 */
+  --orange-color: #fdba74; /* orange-300 */
   --yellow-color: #fde047; /* yellow-300 */
   --green-color: #86efac; /* green-300 */
+  --cyan-color: #67e8f9; /* cyan-300 */
   --blue-color: #93c5fd; /* blue-300 */
   --purple-color: #d8b4fe; /* purple-300 */
   --pink-color: #f9a8d4; /* pink-300 */
 }
 
-.dark-theme {
+.dark {
   --back-color: #111827; /* gray-900 */
   --border-color: #585c63; /* Границы - темный серо-синий */
-  --conteiner-color: #1f2937; /* gray-800 */
+  --container-color: #1f2937; /* gray-800 */
   --field-color: #2d3748; /*цвет маленьких полей, например полей ввода*/
+  --shadow-color: #d4d4d8;
 
   --gray-color: #374151; /* gray-700 */
   --red-color: #b91c1c; /* red-700 */
-  --yellow-color: #a16207; /* yellow-700 */
+  --orange-color: #c2410c; /* orange-700 */
+  --yellow-color: #ca8a04; /* yellow-600 */
   --green-color: #15803d; /* green-700 */
-  --blue-color: #2563eb; /* blue-600 */
+  --cyan-color: #0e7490; /* cyan-700 */
+  --blue-color: #1d4ed8; /* blue-600 */
   --purple-color: #7e22ce; /* purple-700 */
   --pink-color: #be185d; /* pink-700 */
 }

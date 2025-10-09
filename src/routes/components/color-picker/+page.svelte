@@ -1,5 +1,6 @@
 <script lang="ts">
   import ColorPicker from '$lib/ColorPicker/ColorPicker.svelte'
+  import ColorPickerProps from '$lib/ColorPicker/ColorPickerProps.svelte'
   import type { IColorPickerProps, UIComponent } from '$lib/types'
 
   let colorPickerComponent: UIComponent = $state({
@@ -7,14 +8,14 @@
     type: 'ColorPicker',
     component: null,
     properties: {
-      id: { name: '', value: crypto.randomUUID() },
+      id: crypto.randomUUID(),
       wrapperClass: '',
       label: { name: 'Label', class: 'text-center' },
       value: [0, 0, 0],
+      eventHandler: { Header: 'SET', Argument: 'NoSave', Variables: [] },
     },
     position: { row: 0, col: 0, width: 0, height: 0 },
     parentId: '',
-    eventHandler: { Header: 'SET', Argument: 'NoSave', Variables: [] },
   })
 
   const updateComponent = (id: string, updates: Partial<{ properties: Partial<UIComponent['properties']> }>) => {
@@ -28,9 +29,8 @@
 <div>
   <ColorPicker {...colorPickerComponent.properties as IColorPickerProps} />
 
-  <!-- <ColorPickerProps
+  <ColorPickerProps
     component={colorPickerComponent as UIComponent & { properties: Partial<IColorPickerProps> }}
     onPropertyChange={(value) => updateComponent(colorPickerComponent.id, { properties: value } as object)}
-    forConstructor={false}
-  /> -->
+  />
 </div>

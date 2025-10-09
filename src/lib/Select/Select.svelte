@@ -3,6 +3,8 @@
   import { slide } from 'svelte/transition'
   import { onMount } from 'svelte'
   import type { ISelectOption, ISelectProps } from '../types'
+  import { twMerge } from 'tailwind-merge'
+  import { t } from '$lib/locales/i18n'
 
   let isDropdownOpen = $state(false)
   let dropdownElement: HTMLDivElement
@@ -11,14 +13,13 @@
   let filteredOptions = $state<ISelectOption<T>[]>([])
 
   let {
-    id = { name: '', value: crypto.randomUUID() },
-    wrapperClass = 'bg-max',
+    id = crypto.randomUUID(),
+    wrapperClass = '',
     disabled = false,
     label = { name: '', class: '' },
     type = 'select',
     value = $bindable(),
     options = [],
-    placeholder= '---', 
     onUpdate,
   }: ISelectProps<T> = $props()
 
@@ -86,23 +87,26 @@
   }
 </script>
 
-<div class={`bg-max relative flex w-full flex-col items-center ${wrapperClass}`} bind:this={dropdownElement}>
+<div class={twMerge(`bg-max relative flex w-full flex-col items-center `, wrapperClass)} bind:this={dropdownElement}>
   {#if label.name}
-    <h5 class={`w-full px-4 ${label.class}`}>{label.name}</h5>
+    <h5 class={twMerge(`w-full px-4`, label.class)}>{label.name}</h5>
   {/if}
   {#if type === 'select'}
     <button
-      id={id.value}
+      {id}
       value={value?.value ? String(value.value) : ''}
-      class="w-full rounded-2xl border border-[var(--border-color)] p-1 text-center duration-250
-      {value?.class} {disabled ? 'opacity-50' : 'cursor-pointer hover:shadow-lg'}"
+      class={twMerge(
+        `w-full rounded-2xl border border-[var(--border-color)] p-1 text-center duration-250
+        ${disabled ? 'opacity-50' : 'cursor-pointer hover:shadow-lg'}`,
+        value?.class,
+      )}
       style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"
       onclick={toggleDropdown}
       aria-haspopup="true"
       aria-expanded={isDropdownOpen}
       {disabled}
     >
-      {value?.name || placeholder}
+      {value?.name || $t('common.select_tag')}
     </button>
 
     {#if isDropdownOpen}
@@ -115,8 +119,11 @@
           <button
             id={option.id}
             value={option?.value ? String(option.value) : ''}
-            class="flex h-full w-full cursor-pointer items-center justify-center p-1 duration-250 hover:!bg-[var(--field-color)]
-            {option.class} {index === options.length - 1 ? 'rounded-b-2xl' : ''} "
+            class={twMerge(
+              `flex h-full w-full cursor-pointer items-center justify-center p-1 duration-250 hover:!bg-[var(--field-color)]
+              ${index === options.length - 1 ? 'rounded-b-2xl' : ''} `,
+              option.class,
+            )}
             onclick={(e) => selectOption(option, e)}
             {disabled}
             style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"
@@ -127,22 +134,21 @@
       </div>
     {/if}
   {:else if type === 'buttons'}
-    <div id={id.value} class="flex h-full w-full flex-row justify-center">
+    <div {id} class="flex h-full w-full flex-row justify-center">
       {#each options as option, index (option.id)}
         <button
           id={option.id}
-           class="m-0 inline-block min-w-0 flex-1 items-center bg-[var(--bg-color)] px-2 py-1 font-semibold shadow-sm transition-all duration-200 select-none
-      {option.disabled || disabled ? 'opacity-50' : 'cursor-pointer hover:shadow-md'}
-      {option.value === value?.value && value !== null ? 'z-10 !border-[var(--blue-color)] text-cyan-500 ring-3 ring-[var(--blue-color)]' : ''}  
-      {option.class} {options.length > 0 && index === 0 ? 'rounded-l-2xl' : ''} {index === options.length - 1 ? 'rounded-r-2xl' : ''}"
+          class="{twMerge(
+            `m-0 inline-block min-w-0 flex-1 items-center px-2 py-1 font-semibold shadow-sm transition-all duration-300 select-none
+            ${option.disabled || disabled ? 'opacity-50' : 'cursor-pointer hover:shadow-md'}
+            ${option.value === value?.value && value !== null ? 'z-10 py-0 text-[1.1rem] shadow-[0_0_10px_var(--shadow-color)] hover:shadow-[0_0_15px_var(--shadow-color)]' : ''}  
+            ${options.length > 0 && index === 0 ? 'rounded-l-2xl' : ''} ${index === options.length - 1 ? 'rounded-r-2xl' : ''}`,
+            option.class,
+          )} bg-[var(--bg-color)]"
           onclick={(e) => selectOption(option, e)}
           disabled={option.disabled}
         >
           <span class="flex flex-row items-center justify-center gap-4">
-            {#if option.icon?.component}
-              {@const IconComponent = option.icon?.component}
-              <IconComponent {...option.icon?.properties} />
-            {/if}
             {#if option.name}
               <div class="flex-1">
                 {option.name}
@@ -160,9 +166,15 @@
           [&::-webkit-inner-spin-button]:hidden [&::-webkit-outer-spin-button]:hidden
           {disabled ? 'cursor-not-allowed opacity-50' : 'cursor-text'} border-[var(--border-color)]"
       style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"
-      id={id.value}
+      {id}
       {disabled}
       oninput={(e) => handleSearch((e.currentTarget as HTMLInputElement).value)}
+      onclick={(e) => {
+        if (searchValue == '') {
+          filteredOptions = options
+          isDropdownOpen = true
+        }
+      }}
     />
 
     {#if isDropdownOpen}
@@ -175,8 +187,11 @@
           <button
             id={option.id}
             value={option?.value ? String(option.value) : ''}
-            class="flex h-full w-full cursor-pointer items-center justify-center p-1 duration-250 hover:!bg-[var(--field-color)]
-            {option.class} {index === filteredOptions.length - 1 ? 'rounded-b-2xl' : ''} "
+            class={twMerge(
+              `flex h-full w-full cursor-pointer items-center justify-center p-1 duration-250 hover:!bg-[var(--field-color)]
+              ${index === filteredOptions.length - 1 ? 'rounded-b-2xl' : ''} `,
+              option.class,
+            )}
             onclick={(e) => selectOption(option, e)}
             {disabled}
             style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"

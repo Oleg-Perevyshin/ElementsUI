@@ -3,10 +3,13 @@
   import { get } from 'svelte/store'
   import type { ITableHeader, ITableProps } from '../types'
   import { fly } from 'svelte/transition'
+  import { twMerge } from 'tailwind-merge'
+  import { Button, Modal } from '$lib'
+  import { t } from '$lib/locales/i18n'
 
   let {
-    id = { value: crypto.randomUUID(), name: '' },
-    wrapperClass = 'bg-blue',
+    id = crypto.randomUUID(),
+    wrapperClass = '',
     label = { name: '', class: '' },
     body = [],
     header = [],
@@ -14,9 +17,10 @@
     cursor = null,
     loader,
     getData = () => {},
-    modalData = $bindable({ isOpen: false, rawData: '', formattedData: '' }),
     onClick,
   }: ITableProps<any> = $props()
+
+  let modalData = $state({ isOpen: false, rawData: '', formattedData: '' })
 
   /* Сортировка */
   let sortState: {
@@ -119,40 +123,37 @@
   }
 </script>
 
-<div id={id.value} class={`flex h-full w-full flex-col overflow-hidden ${wrapperClass}`}>
+<div {id} class={twMerge(`bg-blue flex h-full w-full flex-col overflow-hidden`, wrapperClass)}>
   {#if label.name}
-    <h5 class={`w-full px-4 text-center ${label.class}`}>{label.name}</h5>
+    <h5 class={twMerge(`w-full px-4 text-center`, label.class)}>{label.name}</h5>
   {/if}
 
   <div class="flex h-full flex-col overflow-hidden rounded-xl border-[var(--border-color)]">
     <!-- Table Header -->
     <div class="grid font-semibold" style={`grid-template-columns: ${header.map((c) => c.width || 'minmax(0, 1fr)').join(' ')};`}>
       {#each header as column (column)}
-        <div class="justify-center bg-[var(--bg-color)] p-2 text-center">
-          <div class="flex items-center justify-start gap-2">
-            <span>{column.label}</span>
-            {#if column.sortable}
-              <button
-                class="cursor-pointer font-bold transition-transform duration-75 hover:scale-110 active:scale-95"
-                onclick={() => sortRows(column.key as string)}
-              >
-                ↑↓
-              </button>
-            {/if}
-          </div>
+        <div class={twMerge(`justify-center bg-[var(--bg-color)] p-2 text-left`, column.label?.class)}>
+          <span>{column.label?.name}</span>
+          {#if column.sortable}
+            <button
+              class="inline-block cursor-pointer font-bold transition-transform duration-75 hover:scale-110 active:scale-95"
+              onclick={() => sortRows(column.key as string)}
+            >
+              ↑↓
+            </button>
+          {/if}
         </div>
       {/each}
     </div>
 
     <!-- Table Body с прокруткой -->
-    <div class="flex-1 overflow-y-auto bg-[var(--conteiner-color)]/50" bind:this={container} onscroll={handleScroll}>
+    <div class="flex-1 overflow-y-auto bg-[var(--container-color)]/50" bind:this={container} onscroll={handleScroll}>
       <div class="grid min-w-0" style={`grid-template-columns: ${header.map((c) => c.width || 'minmax(0, 1fr)').join(' ')};`}>
         {#each body as row, index (row)}
           {#each header as column (column)}
             <div
               class="relative flex w-full min-w-0 items-center px-2 py-1 break-words
               {index % 2 ? '!bg-[var(--back-color)]/40' : ''}
-              {column.cellClass}
               {column.align === 'center'
                 ? 'flex justify-center text-center'
                 : column.align === 'right'
@@ -163,11 +164,9 @@
                 <div class="flex w-full flex-col gap-1">
                   {#each column.buttons as button (button)}
                     <button
-                      class="
-                          cursor-pointer rounded-full !bg-[var(--bg-color)] px-4 py-1 font-medium
-                          transition-shadow outline-none select-none hover:shadow-md
-                          {typeof button.class === 'function' ? button.class(row) : button.class}
-                          "
+                      class="{twMerge(`cursor-pointer rounded-full
+                           px-4 py-1 font-medium transition-shadow outline-none select-none hover:shadow-md
+                          ${typeof button.class === 'function' ? button.class(row) : button.class}`)} bg-[var(--bg-color)]"
                       onclick={() => buttonClick(row, button)}
                     >
                       {typeof button.name === 'function' ? button.name(row) : button.name}
@@ -175,12 +174,15 @@
                   {/each}
                 </div>
               {:else if column.image}
-                <div class="flex items-center justify-center" style={`width: ${column.image.width || '5rem'}; height: ${column.image.height || '5rem'};`}>
+                <div
+                  class="flex items-center justify-center"
+                  style={`width: ${column.image.width || '5rem'}; height: ${column.image.height || '5rem'};`}
+                >
                   {#if hasImage(column, row)}
                     <img
                       src={typeof column.image?.src === 'function' ? column.image.src(row) : column.image?.src || ''}
                       alt={column.image.alt ?? 'Image'}
-                      class="h-full w-full object-cover {column.image.class || ''}"
+                      class={twMerge(`h-full w-full object-cover ${column.image.class || ''}`)}
                       loading="lazy"
                     />
                   {:else if column.image.defaultIcon}
@@ -189,7 +191,9 @@
                 </div>
               {:else}
                 <div
-                  class="w-full max-w-full break-words {column.overflow?.truncated ? 'overflow-hidden text-ellipsis whitespace-nowrap' : 'whitespace-normal'}"
+                  class="w-full max-w-full break-words {column.overflow?.truncated
+                    ? 'overflow-hidden text-ellipsis whitespace-nowrap'
+                    : 'whitespace-normal'}"
                   onmouseenter={column.overflow?.truncated ? (e) => showTooltip(e, row[column.key], column.overflow?.formatting) : undefined}
                   onmouseleave={column.overflow?.truncated ? hideTooltip : undefined}
                   onmousemove={column.overflow?.truncated
@@ -228,17 +232,21 @@
                     aria-label="Копировать текст"
                   >
                     {#if copiedCell.y === index && copiedCell.x === column.key}
-                      ✅
-                    {:else}
-                      <svg xmlns="http://www.w3.org/2000/svg" width="1.3em" height="1.3em" viewBox="0 0 24 24">
-                        <g fill="none" stroke="currentColor" stroke-width="1.5">
-                          <path
-                            d="M6 11c0-2.828 0-4.243.879-5.121C7.757 5 9.172 5 12 5h3c2.828 0 4.243 0 5.121.879C21 6.757 21 8.172 21 11v5c0 2.828 0 4.243-.879 5.121C19.243 22 17.828 22 15 22h-3c-2.828 0-4.243 0-5.121-.879C6 20.243 6 18.828 6 16z"
-                          />
-                          <path d="M6 19a3 3 0 0 1-3-3v-6c0-3.771 0-5.657 1.172-6.828S7.229 2 11 2h4a3 3 0 0 1 3 3" />
-                        </g>
-                      </svg>
+                      <div
+                        class="absolute top-1/2 right-10 -translate-y-1/2 transform rounded-md bg-[var(--green-color)] px-2 py-1 text-sm shadow-lg"
+                        transition:fly={{ x: 10, duration: 200 }}
+                      >
+                        ✓
+                      </div>
                     {/if}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                      <g fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path
+                          d="M6 11c0-2.828 0-4.243.879-5.121C7.757 5 9.172 5 12 5h3c2.828 0 4.243 0 5.121.879C21 6.757 21 8.172 21 11v5c0 2.828 0 4.243-.879 5.121C19.243 22 17.828 22 15 22h-3c-2.828 0-4.243 0-5.121-.879C6 20.243 6 18.828 6 16z"
+                        />
+                        <path d="M6 19a3 3 0 0 1-3-3v-6c0-3.771 0-5.657 1.172-6.828S7.229 2 11 2h4a3 3 0 0 1 3 3" />
+                      </g>
+                    </svg>
                   </button>
                 {/if}
               {/if}
@@ -261,10 +269,26 @@
     {/if}
 
     <!-- Нижнее поле для сводной информации -->
-    {#if footer != ''}
+    {#if footer}
       <div class="flex h-8 items-center justify-center bg-[var(--bg-color)]">
         <h5>{footer}</h5>
       </div>
     {/if}
   </div>
 </div>
+
+<Modal isOpen={modalData.isOpen} title={$t('debug.baud_rate_data')}>
+  {#snippet main()}
+    {@html modalData.formattedData}
+  {/snippet}
+  {#snippet footer()}
+    <Button
+      content={{ name: 'Copy' }}
+      wrapperClass="w-20 bg-pink"
+      onClick={() => {
+        navigator.clipboard.writeText(modalData.rawData)
+        modalData.isOpen = false
+      }}
+    />
+  {/snippet}
+</Modal>

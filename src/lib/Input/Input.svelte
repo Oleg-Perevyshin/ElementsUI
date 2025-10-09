@@ -3,43 +3,28 @@
   import { onMount } from 'svelte'
   import { fly } from 'svelte/transition'
   import type { IInputProps } from '../types'
+  import { twMerge } from 'tailwind-merge'
 
   let {
-    id = { name: '', value: crypto.randomUUID() },
+    id = crypto.randomUUID(),
     wrapperClass = '',
     label = { name: '', class: '' },
     disabled = false,
     readonly = false,
     value = $bindable(),
     type = 'text',
-    autocomplete = 'off',
+    placeholder = '',
     componentClass = '',
     maxlength = 100,
-    number = { minNum: -1000000, maxNum: 1000000, step: 1 },
     textareaRows = 3,
-    copyButton = false,
-    regExp = '^[\\s\\S]*$',
-    help = { placeholder: '', info: '' },
+    number = { minNum: -1000000, maxNum: Infinity, step: 1 },
+    help = { info: '', autocomplete: 'off', copyButton: false, regExp: '^[\\s\\S]*$' },
     onUpdate = () => {},
   }: IInputProps = $props()
 
   let showPassword = $state(false)
   let showInfo = $state(false)
   let isCopied = $state(false)
-
-  /* Закрытие INFO при клике вне компонента */
-  onMount(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as HTMLElement
-      if (!target.closest('.info-container') && !target.closest('.button-info')) {
-        showInfo = false
-      }
-    }
-    window.addEventListener('click', handleClickOutside)
-    return () => {
-      window.removeEventListener('click', handleClickOutside)
-    }
-  })
 
   $effect(() => {
     if (type === 'number') {
@@ -53,7 +38,7 @@
     const match = pattern.match(/^\/(.*)\/([gimsuy]*)$/)
     return match ? new RegExp(match[1], match[2]) : new RegExp(pattern)
   }
-  let RegExpObj = $derived(() => parseRegExp(regExp))
+  let RegExpObj = $derived(() => parseRegExp(help.regExp ?? ''))
   let isValid = $derived(RegExpObj().test(typeof value === 'string' ? value : String(value)))
 
   const handleInputChange = (value: string | number) => {
@@ -67,28 +52,30 @@
   }
 </script>
 
-<div class="bg-max relative flex w-full flex-col items-center {type === 'text-area' ? 'h-full' : ''} {wrapperClass}">
+<div class={twMerge(`bg-max ${type === 'text-area' ? 'h-full' : ''} relative flex w-full flex-col items-center`, wrapperClass)}>
   {#if label.name}
-    <h5 class={`w-full px-4 text-center ${label.class}`}>{label.name}</h5>
+    <h5 class={twMerge(`w-full px-4 text-center`, label.class)}>{label.name}</h5>
   {/if}
 
   <div class="relative flex w-full items-center {type === 'text-area' ? 'h-full' : ''}">
     {#if type === 'text' || type === 'password' || type === 'number'}
       <input
         bind:value
-        class="w-full rounded-2xl border px-4 py-1 text-center transition-all duration-300 outline-none focus:border-blue-400
+        class={twMerge(
+          `w-full rounded-2xl border px-4 py-1 text-center transition-all duration-300 outline-none focus:border-blue-400
               [&::-webkit-inner-spin-button]:hidden [&::-webkit-outer-spin-button]:hidden
-              {isValid ? 'border-[var(--border-color)]' : '!border-red-400 shadow-[0_0_6px_var(--red-color)]'}
-              {disabled ? 'opacity-50' : 'hover:shadow-md'} 
-              {readonly ? '' : 'hover:shadow-md'}
-              {help?.info ? 'pl-8' : ''} 
-              {copyButton || type === 'password' || type === 'number' ? 'pr-8' : ''}
-              {componentClass}"
+              ${isValid ? 'border-[var(--border-color)]' : '!border-red-400 shadow-[0_0_6px_var(--red-color)]'}
+              ${disabled ? 'opacity-50' : 'hover:shadow-md'} 
+              ${readonly ? '' : 'hover:shadow-md'}
+              ${help?.info ? 'pl-8' : ''} 
+              ${help.copyButton || type === 'password' || type === 'number' ? 'pr-8' : ''}`,
+          componentClass,
+        )}
         style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"
-        id={id.value}
-        placeholder={help?.placeholder}
+        {id}
+        {placeholder}
         {disabled}
-        {autocomplete}
+        autocomplete={help?.autocomplete}
         oninput={(e) => handleInputChange((e.currentTarget as HTMLInputElement).value)}
         type={type === 'password' ? (showPassword ? 'text' : 'password') : type === 'number' ? 'number' : 'text'}
         {maxlength}
@@ -100,19 +87,21 @@
     {:else if type === 'text-area'}
       <textarea
         bind:value
-        class="h-full w-full resize-y rounded-2xl border border-[var(--border-color)] px-2 py-1 text-center font-mono transition-all duration-300 outline-none focus:border-blue-400
-            {isValid ? 'border-[var(--border-color)]' : '!border-red-400 shadow-[0_0_6px_var(--red-color)]'}
-            {disabled ? 'opacity-50' : 'hover:shadow-md'} 
-            {readonly ? '' : 'hover:shadow-md'}
-            {help?.info ? 'pl-8' : ''}
-            {copyButton ? 'pr-8' : ''}
-            {componentClass}"
+        class={twMerge(
+          `h-full w-full resize-y rounded-2xl border border-[var(--border-color)] px-2 py-1 text-center font-mono transition-all duration-300 outline-none focus:border-blue-400
+            ${isValid ? 'border-[var(--border-color)]' : '!border-red-400 shadow-[0_0_6px_var(--red-color)]'}
+            ${disabled ? 'opacity-50' : 'hover:shadow-md'} 
+            ${readonly ? '' : 'hover:shadow-md'}
+            ${help?.info ? 'pl-8' : ''}
+            ${help.copyButton ? 'pr-8' : ''}`,
+          componentClass,
+        )}
         style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"
-        id={id.value}
+        {id}
         {disabled}
         {maxlength}
         rows={textareaRows}
-        placeholder={help?.placeholder}
+        {placeholder}
         {readonly}
         oninput={(e) => handleInputChange((e.currentTarget as HTMLTextAreaElement).value)}
       ></textarea>
@@ -146,7 +135,7 @@
       </button>
     {/if}
 
-    {#if copyButton && (type === 'text' || type === 'text-area')}
+    {#if help.copyButton && (type === 'text' || type === 'text-area')}
       <button
         type="button"
         class="absolute right-2 flex cursor-pointer border-none bg-transparent {type === 'text-area' ? 'top-2' : ''}"
@@ -215,13 +204,19 @@
     {#if help.info}
       <button
         type="button"
-        class="button-info absolute left-2 flex border-none bg-transparent {type === 'text-area' ? 'top-2' : ''} {disabled ? 'opacity-50' : 'cursor-pointer'}"
-        onclick={() => (showInfo = !showInfo)}
+        class="button-info absolute left-2 flex border-none bg-transparent {type === 'text-area' ? 'top-2' : ''} {disabled
+          ? 'opacity-50'
+          : 'cursor-pointer'}"
+        onmouseenter={() => (showInfo = true)}
+        onmouseleave={() => (showInfo = false)}
         aria-label={showInfo ? 'Скрыть инфо' : 'Показать инфо'}
       >
         <svg xmlns="http://www.w3.org/2000/svg" width="1.5rem" height="1.5rem" viewBox="0 0 24 24"
           ><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-            ><circle cx="12" cy="12" r="10" stroke-width="1.3" /><path stroke-width="1.5" d="M12 16v-4.5" /><path stroke-width="1.8" d="M12 8.012v-.01" /></g
+            ><circle cx="12" cy="12" r="10" stroke-width="1.3" /><path stroke-width="1.5" d="M12 16v-4.5" /><path
+              stroke-width="1.8"
+              d="M12 8.012v-.01"
+            /></g
           ></svg
         >
       </button>
@@ -229,8 +224,7 @@
       {#if showInfo}
         <div
           transition:fly={{ x: -15, duration: 250 }}
-          class="info-container absolute z-50 w-auto rounded px-2 py-1 shadow-lg"
-          style="left: 2.5rem; top: 50%; transform: translateY(-50%); background: color-mix(in srgb, var(--yellow-color) 20%, var(--back-color));"
+          class="absolute top-1/2 left-10 z-50 w-auto -translate-y-1/2 rounded bg-[var(--container-color)] px-2 py-1 shadow-lg"
         >
           {help?.info}
         </div>

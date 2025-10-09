@@ -1,12 +1,13 @@
 <!-- $lib/ElementsUI/Switch.svelte -->
 <script lang="ts">
+  import { twMerge } from 'tailwind-merge'
   import type { ISwitchProps } from '../types'
 
   let {
-    id = { name: '', value: crypto.randomUUID() },
-    wrapperClass = '',
+    id = crypto.randomUUID(),
     disabled = false,
-    label = { name: '', captionLeft: '', captionRight: '', class: '' },
+    wrapperClass = '',
+    label = { name: '', captionLeft: '', captionRight: '' },
     height = '2rem',
     value = $bindable(),
     onChange = () => {},
@@ -43,14 +44,16 @@
   )
 </script>
 
-<div class="relative flex w-full flex-col items-center justify-center {wrapperClass}">
+<div class={twMerge(`bg-blue relative flex w-full flex-col items-center justify-center`, wrapperClass)}>
   {#if label.name}
-    <h5 class={`w-full px-4 text-center ${label.class}`}>{label.name}</h5>
+    <h5 class={`w-full px-4 text-center`}>{label.name}</h5>
   {/if}
 
   <div class="relative flex w-full grow items-center justify-center !bg-transparent">
-    <button class="mr-2 {disabled ? 'opacity-60' : 'cursor-pointer'}" style="width: {maxCaptionWidth}; text-align: end;" onclick={() => handleCaptionClick(1)}
-      >{label.captionLeft}</button
+    <button
+      class="mr-2 {disabled ? 'opacity-60' : 'cursor-pointer'}"
+      style="width: {maxCaptionWidth}; text-align: end;"
+      onclick={() => handleCaptionClick(1)}>{label.captionLeft}</button
     >
     <label
       class="relative flex items-center justify-between rounded-full border-1
@@ -58,7 +61,7 @@
       {disabled ? 'opacity-60' : ''}"
     >
       <input
-        id={id.value}
+        {id}
         type="checkbox"
         class="absolute left-1/2 h-full w-full -translate-x-1/2 cursor-pointer appearance-none rounded-md"
         bind:checked
@@ -78,8 +81,10 @@
         ></span>
       </span>
     </label>
-    <button class="ml-2 {disabled ? 'opacity-60' : 'cursor-pointer'}" style="width: {maxCaptionWidth}; text-align: start;" onclick={() => handleCaptionClick(2)}
-      >{label.captionRight}</button
+    <button
+      class="ml-2 {disabled ? 'opacity-60' : 'cursor-pointer'}"
+      style="width: {maxCaptionWidth}; text-align: start;"
+      onclick={() => handleCaptionClick(2)}>{label.captionRight}</button
     >
   </div>
 </div>

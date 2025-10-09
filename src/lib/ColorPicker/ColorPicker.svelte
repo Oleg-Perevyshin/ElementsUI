@@ -1,9 +1,10 @@
 <!-- $lib/ElementsUI/ColorPicker.svelte -->
 <script lang="ts">
+  import { twMerge } from 'tailwind-merge'
   import type { IColorPickerProps } from '../types'
 
   let {
-    id = { name: '', value: crypto.randomUUID() },
+    id = crypto.randomUUID(),
     wrapperClass = '',
     label = { name: '', class: '' },
     value = [0, 0, 0],
@@ -108,14 +109,18 @@
     window.addEventListener('mouseup', onUp)
   }
 
-  const rgb = $derived(() => (mode === 'white' ? [whiteValue, whiteValue, whiteValue].map((v) => Math.round((v / 100) * 255)) : hsvToRgb(hsv.h, hsv.s, hsv.v)))
+  const rgb = $derived(() =>
+    mode === 'white' ? [whiteValue, whiteValue, whiteValue].map((v) => Math.round((v / 100) * 255)) : hsvToRgb(hsv.h, hsv.s, hsv.v),
+  )
   const hex = $derived(() =>
     rgb()
       .map((v) => v.toString(16).padStart(2, '0'))
       .join(' ')
       .toUpperCase(),
   )
-  const previewBaseColor = $derived(() => (mode === 'white' ? [255, 255, 255].map((c) => Math.round((whiteValue / 100) * c)) : hsvToRgb(hsv.h, hsv.s, 100)))
+  const previewBaseColor = $derived(() =>
+    mode === 'white' ? [255, 255, 255].map((c) => Math.round((whiteValue / 100) * c)) : hsvToRgb(hsv.h, hsv.s, 100),
+  )
 
   const textColor = $derived(() => {
     const [r, g, b] = rgb()
@@ -124,9 +129,9 @@
   })
 </script>
 
-<div id={id.value} class="relative flex w-full flex-col items-center {wrapperClass}">
+<div {id} class={twMerge(`relative flex w-full flex-col items-center`, wrapperClass)}>
   {#if label.name}
-    <h5 class={`mb-2 w-full px-4 text-center ${label.class}`}>{label.name}</h5>
+    <h5 class={twMerge(`mb-2 w-full px-4 text-center`, label.class)}>{label.name}</h5>
   {/if}
 
   <div class="flex w-full flex-row items-center gap-2">
@@ -134,7 +139,7 @@
     <div class="flex w-full flex-col gap-2">
       <!-- Выбор цвета -->
       <div
-        class="hue-slider relative h-7 w-full cursor-pointer overflow-hidden rounded-full border border-gray-400"
+        class="hue-slider relative h-7 w-full cursor-pointer overflow-hidden rounded-full shadow-md"
         role="slider"
         aria-valuenow={null}
         tabindex={null}
@@ -157,14 +162,17 @@
 
       <!-- Яркость цвета -->
       <div
-        class="brightness-slider relative h-4 w-full cursor-pointer overflow-hidden rounded-full border border-gray-400"
+        class="brightness-slider relative h-4 w-full cursor-pointer overflow-hidden rounded-full {mode === 'hsv' ? 'shadow-md' : ''}"
         role="slider"
         aria-valuenow={null}
         tabindex={null}
         onmousedown={(e) => handleDrag(e, 'brightness')}
       >
         {#if mode === 'hsv'}
-          <div class="absolute inset-0" style={`background: linear-gradient(to right, rgb(0,0,0), rgb(${hsvToRgb(hsv.h, hsv.s, 100).join(',')}))`}></div>
+          <div
+            class="absolute inset-0"
+            style={`background: linear-gradient(to right, rgb(0,0,0), rgb(${hsvToRgb(hsv.h, hsv.s, 100).join(',')}))`}
+          ></div>
 
           <div
             class="pointer-events-none absolute top-1/2 h-7 w-1 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white"
@@ -175,7 +183,7 @@
 
       <!-- Яркость белого цвета -->
       <div
-        class="white-slider mt-4 relative h-4 w-full cursor-pointer overflow-hidden rounded-full border border-gray-400"
+        class="white-slider relative mt-4 h-4 w-full cursor-pointer overflow-hidden rounded-full shadow-sm"
         role="slider"
         aria-valuenow={null}
         tabindex={null}
@@ -192,14 +200,19 @@
     </div>
 
     <!-- Превью цвета -->
-    <div
-      class={`flex h-26 w-28 flex-col justify-center gap-1 rounded-2xl border border-gray-400 px-2 font-mono text-sm select-none ${textColor()}`}
-      style={`background: rgb(${previewBaseColor().join(',')})`}
-    >
+
+    <div class="flex w-24 flex-col items-center">
+      <div
+        class={`flex size-15 flex-col justify-center gap-1 rounded-full px-2 font-mono text-sm shadow-md select-none ${textColor()}`}
+        style={`background: rgb(${previewBaseColor().join(',')})`}
+      ></div>
+      <div class="w-full text-center font-semibold">{hex()}</div>
+    </div>
+    <!-- <div>
       <div class="flex flex-col items-center">
         <span class="w-full flex-shrink-0">{mode === 'white' ? 'White' : 'RGB'}</span>
         <div class="пфз-1 w-full text-center tracking-wide">{hex()}</div>
       </div>
-    </div>
+    </div> -->
   </div>
 </div>

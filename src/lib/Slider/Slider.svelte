@@ -4,9 +4,10 @@
   import IconGripVerticalLeft from '../libIcons/IconGripVerticalLeft.svelte'
   import IconGripVerticalRight from '../libIcons/IconGripVerticalRight.svelte'
   import IconGripVerticalDual from '../libIcons/IconGripVerticalDual.svelte'
+  import { twMerge } from 'tailwind-merge'
 
   let {
-    id = { name: '', value: crypto.randomUUID() },
+    id = crypto.randomUUID(),
     wrapperClass = '',
     label = { name: '', class: '' },
     type = 'single',
@@ -91,13 +92,13 @@
   }
 </script>
 
-<div class={`relative flex w-full flex-col items-center gap-2 ${wrapperClass}`}>
+<div class={twMerge(`relative flex w-full flex-col items-center gap-2`, wrapperClass)}>
   {#if label.name}
-    <h5 class={`w-full px-4 text-center ${label.class}`}>{label.name}</h5>
+    <h5 class={twMerge(`w-full px-4 text-center`, label.class)}>{label.name}</h5>
   {/if}
 
   <!-- Слайдер -->
-  <div class="relative flex h-8 rounded-full w-full justify-center {disabled ? 'opacity-50 cursor-not-allowed' : ''}" id={id.value}>
+  <div {id} class="relative flex h-8 w-full justify-center rounded-full {disabled ? 'cursor-not-allowed opacity-50' : ''}">
     {#if isRange}
       <!-- Трек и активная зона -->
       <div
@@ -129,7 +130,7 @@
         class={`absolute h-full w-full appearance-none bg-transparent ${activeThumb === 'lower' ? 'z-30' : 'z-20'}`}
       />
       <div
-        class="absolute z-40 pointer-events-none rounded-full bg-[var(--field-color)]"
+        class="pointer-events-none absolute z-40 rounded-full bg-[var(--field-color)]"
         style={`left: calc(${lowerPosition}% + 0rem); top: 50%; transform: translateY(-50%)`}
       >
         <IconGripVerticalLeft />
@@ -153,7 +154,7 @@
         class={`absolute h-full w-full appearance-none bg-transparent ${activeThumb === 'upper' ? 'z-30' : 'z-20'}`}
       />
       <div
-        class="absolute z-40 pointer-events-none rounded-full bg-[var(--field-color)]"
+        class="pointer-events-none absolute z-40 rounded-full bg-[var(--field-color)]"
         style={`left: calc(${upperPosition}% - 2rem); top: 50%; transform: translateY(-50%)`}
       >
         <IconGripVerticalRight />
@@ -168,7 +169,7 @@
         onclick={disabled ? undefined : handleTrackClick}
       >
         <div
-          class="absolute h-full {singlePosition === 100 ? 'rounded-full z-10' : 'rounded-l-full z-10'}"
+          class="absolute h-full {singlePosition === 100 ? 'z-10 rounded-full' : 'z-10 rounded-l-full'}"
           style={`width: ${singlePosition}%; background-color: var(--bg-color)`}
         ></div>
       </div>
@@ -189,7 +190,7 @@
         class="absolute z-20 h-full w-full appearance-none bg-transparent"
       />
       <div
-        class="absolute z-30 pointer-events-none rounded-full bg-[var(--field-color)]"
+        class="pointer-events-none absolute z-30 rounded-full bg-[var(--field-color)]"
         style={`left: clamp(1rem, ${singlePosition}%, calc(100% - 1rem)); top: 50%; transform: translate(-50%, -50%)`}
       >
         <IconGripVerticalDual />
@@ -201,7 +202,10 @@
   <div class={`flex w-full ${isRange ? 'justify-between' : 'justify-center'} gap-2`}>
     {#if isRange}
       {#each ['lower', 'upper'] as type (type)}
-        <div class={`flex items-center justify-center gap-2 rounded-full px-2 ${disabled ? 'opacity-70' : ''}`} style="background-color: var(--bg-color)">
+        <div
+          class={`flex items-center justify-center gap-2 rounded-full px-2 ${disabled ? 'opacity-70' : ''}`}
+          style="background-color: var(--bg-color)"
+        >
           <button
             class="h-full w-4 {disabled ? '' : 'cursor-pointer'}"
             onclick={disabled ? undefined : () => adjustValue(type as 'lower' | 'upper', 'decrement')}
@@ -218,7 +222,10 @@
         </div>
       {/each}
     {:else}
-      <div class={`flex items-center justify-center gap-2 rounded-full px-2 ${disabled ? 'opacity-70' : ''}`} style="background-color: var(--bg-color)">
+      <div
+        class={`flex items-center justify-center gap-2 rounded-full px-2 ${disabled ? 'opacity-70' : ''}`}
+        style="background-color: var(--bg-color)"
+      >
         <button
           class="h-full w-4 {disabled ? '' : 'cursor-pointer'}"
           onclick={disabled ? undefined : () => adjustValue('single', 'decrement')}

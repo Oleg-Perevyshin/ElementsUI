@@ -3,16 +3,18 @@
   import { onMount } from 'svelte'
   import type { IButtonProps } from '../types'
   import { fly } from 'svelte/transition'
+  import { twMerge } from 'tailwind-merge'
 
   let {
-    id = { value: crypto.randomUUID(), name: '' },
-    wrapperClass = 'bg-blue',
-    label = { name: '', class: '' },
-    name = '',
+    id = crypto.randomUUID(),
+    wrapperClass = '',
     componentClass = '',
-    icon = { component: null, properties: {} },
-    info = '',
     disabled = false,
+    content = {
+      name: '',
+      info: '',
+      icon: null,
+    },
     keyBind,
     onClick,
   }: IButtonProps = $props()
@@ -43,49 +45,41 @@
 
   /* Подписка на события клавиатуры */
   onMount(() => {
-    if (keyBind) {
-      window.addEventListener('keydown', handleKeyDown)
-    }
+    if (keyBind) window.addEventListener('keydown', handleKeyDown)
     return () => {
-      if (keyBind) {
-        window.removeEventListener('keydown', handleKeyDown)
-      }
+      if (keyBind) window.removeEventListener('keydown', handleKeyDown)
     }
   })
 </script>
 
-<div class={`relative flex w-full flex-col items-center ${wrapperClass}`}>
-  {#if label.name}
-    <h5 class={`w-full px-4 text-center ${label.class}`}>{label.name}</h5>
-  {/if}
-
+<div class={twMerge(`bg-blue relative flex w-full flex-col items-center`, wrapperClass)}>
   <div class="relative flex w-full grow items-center">
     <button
-      id={id.value}
-      class={`
-        relative m-0 inline-block w-full items-center rounded-2xl border border-[var(--bg-color)] bg-[var(--bg-color)]
+      {id}
+      class="{twMerge(
+        `relative m-0 inline-block w-full items-center rounded-2xl border border-[var(--bg-color)] 
         px-2 py-1 font-semibold shadow-sm transition duration-200 select-none
-        ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:shadow-md active:scale-97'}
-        ${componentClass}
-      `}
+        ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:shadow-md active:scale-97'} `,
+        componentClass,
+      )} bg-[var(--bg-color)]"
       onclick={handleClick}
       {disabled}
-      aria-label={name || label.name}
+      aria-label={content.name}
       onmouseenter={() => {
-        if (info) showInfo = true
+        if (content.info) showInfo = true
       }}
       onmouseleave={() => {
-        if (info) showInfo = false
+        if (content.info) showInfo = false
       }}
     >
       <span class="flex flex-row items-center justify-center gap-2">
-        {#if icon?.component}
-          {@const IconComponent = icon?.component}
-          <IconComponent {...icon?.properties} />
+        {#if content.icon}
+          {@const IconComponent = content.icon}
+          <IconComponent />
         {/if}
-        {#if name}
+        {#if content.name}
           <div class="flex-1">
-            {name}
+            {content.name}
             {#if keyBind}
               <div class="text-xs opacity-70">
                 ({keyBind.ctrlKey ? 'Ctrl+' : ''}{keyBind.shiftKey ? 'Shift+' : ''}{keyBind.altKey ? 'Alt+' : ''}{keyBind.key})
@@ -99,12 +93,12 @@
     {#if showInfo}
       <div
         transition:fly={{ y: -15, duration: 300 }}
-        class="absolute bottom-full left-1/2 z-50 mb-2 w-max max-w-xs rounded-md bg-[var(--conteiner-color)] px-3 py-1 text-sm shadow-lg"
+        class="absolute bottom-full left-1/2 z-50 mb-2 w-max max-w-xs rounded-md bg-[var(--container-color)] px-3 py-1 text-sm shadow-lg"
         style="transform: translateX(-50%);"
       >
-        {info}
+        {content.info}
         <!-- Треугольная стрелка -->
-        <div class="absolute top-full left-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rotate-45 transform bg-[var(--conteiner-color)]"></div>
+        <div class="absolute top-full left-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rotate-45 transform bg-[var(--container-color)]"></div>
       </div>
     {/if}
   </div>

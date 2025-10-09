@@ -9,22 +9,22 @@ function id() {
 export const optionsStore = derived(t, ($t) => {
   return {
     HEADER_OPTIONS: [
-      { id: id(), name: 'GET', value: 'GET', class: '!w-1/4' },
-      { id: id(), name: 'SET', value: 'SET', class: '!w-1/4' },
-      { id: id(), name: 'OK!', value: 'OK!', class: '!w-1/4' },
-      { id: id(), name: 'ER!', value: 'ER!', class: '!w-1/4' },
+      { id: id(), name: 'GET', value: 'GET' },
+      { id: id(), name: 'SET', value: 'SET' },
+      { id: id(), name: 'OK!', value: 'OK!' },
+      { id: id(), name: 'ER!', value: 'ER!' },
     ],
 
     SHORT_ARGUMENT_OPTION: [
-      { id: id(), value: 'NoSave', name: $t('constructor.props.action.update'), class: '!w-1/3' },
-      { id: id(), value: 'Save', name: $t('constructor.props.action.save'), class: '!w-1/3' },
-      { id: id(), value: 'NoSend', name: $t('constructor.props.action.nosend'), class: '!w-1/3' },
+      { id: id(), value: 'NoSave', name: $t('constructor.props.action.update') },
+      { id: id(), value: 'Save', name: $t('constructor.props.action.save') },
+      { id: id(), value: 'NoSend', name: $t('constructor.props.action.nosend') },
     ],
 
     FULL_ARGUMENT_OPTION: [
-      { id: id(), value: 'NoSave', name: $t('constructor.props.action.update'), class: '!w-1/3' },
-      { id: id(), value: 'Save', name: $t('constructor.props.action.save'), class: '!w-1/3' },
-      { id: id(), value: '', name: $t('constructor.props.action.custom'), class: '!w-1/3' },
+      { id: id(), value: 'NoSave', name: $t('constructor.props.action.update') },
+      { id: id(), value: 'Save', name: $t('constructor.props.action.save') },
+      { id: id(), value: '', name: $t('constructor.props.action.custom') },
     ],
 
     INPUT_TYPE_OPTIONS: [
@@ -35,50 +35,62 @@ export const optionsStore = derived(t, ($t) => {
     ],
 
     SELECT_TYPE_OPTIONS: [
-      { id: id(), value: 'select', name: $t('constructor.props.type.select'), class: '!w-1/2' },
-      { id: id(), value: 'buttons', name: $t('constructor.props.type.buttons'), class: '!w-1/2' },
+      { id: id(), value: 'select', name: $t('constructor.props.type.select') },
+      { id: id(), value: 'buttons', name: $t('constructor.props.type.buttons') },
+      { id: id(), value: 'input', name: $t('constructor.props.type.selectput') },
     ],
 
     SELECT_VALUE_TYPE_OPTIONS: [
-      { id: id(), value: 'text' as const, name: $t('constructor.props.valuetype.text'), class: '!w-1/2' },
-      { id: id(), value: 'number' as const, name: $t('constructor.props.valuetype.number'), class: '!w-1/2' },
+      { id: id(), value: 'text' as const, name: $t('constructor.props.valuetype.text') },
+      { id: id(), value: 'number' as const, name: $t('constructor.props.valuetype.number') },
     ],
 
     SLIDER_TYPE_OPTIONS: [
-      { id: id(), value: 'single', name: $t('constructor.props.type.single'), class: '!w-1/2' },
-      { id: id(), value: 'range', name: $t('constructor.props.type.range'), class: '!w-1/2' },
+      { id: id(), value: 'single', name: $t('constructor.props.type.single') },
+      { id: id(), value: 'range', name: $t('constructor.props.type.range') },
     ],
 
     TEXTFIELD_SIZE_OPTIONS: [
-      { id: id(), value: 'small', name: $t('constructor.props.type.small'), class: '!w-1/3' },
-      { id: id(), value: 'medium', name: $t('constructor.props.type.medium'), class: '!w-1/3' },
-      { id: id(), value: 'xlarge', name: $t('constructor.props.type.xlarge'), class: '!w-1/3' },
+      { id: id(), value: 'small', name: $t('constructor.props.type.small') },
+      { id: id(), value: 'base', name: $t('constructor.props.type.base') },
+      { id: id(), value: 'large', name: $t('constructor.props.type.large') },
+      { id: id(), value: 'huge', name: $t('constructor.props.type.huge') },
+      { id: id(), value: 'massive', name: $t('constructor.props.type.massive') },
     ],
 
     COLOR_OPTIONS: [
-      { id: id(), name: '', value: 'bg-gray', class: '!w-1/6 bg-gray' },
-      { id: id(), name: '', value: 'bg-max', class: '!w-1/6 bg-max' },
-      { id: id(), name: '', value: 'bg-red', class: '!w-1/6 bg-red' },
-      { id: id(), name: '', value: 'bg-yellow', class: '!w-1/6 bg-yellow' },
-      { id: id(), name: '', value: 'bg-green', class: '!w-1/6 bg-green' },
-      { id: id(), name: '', value: 'bg-blue', class: '!w-1/6 bg-blue' },
+      { id: id(), name: '', value: 'bg-gray', class: 'bg-gray' },
+      { id: id(), name: '', value: 'bg-max', class: 'bg-max' },
+      { id: id(), name: '', value: 'bg-red', class: 'bg-red' },
+      { id: id(), name: '', value: 'bg-yellow', class: 'bg-yellow' },
+      { id: id(), name: '', value: 'bg-green', class: 'bg-green' },
+      { id: id(), name: '', value: 'bg-blue', class: 'bg-blue' },
+    ],
+
+    TEXT_COLOR_OPTIONS: [
+      { id: id(), name: '', value: 'text-[#333] dark:text-[#e2e3e7]', class: 'bg-[var(--shadow-color)] dark:bg-[#e2e3e7] ' },
+      { id: id(), name: '', value: 'text-red-500 dark:text-red-400', class: 'bg-red-500 dark:bg-red-400' },
+      { id: id(), name: '', value: 'text-yellow-500 dark:text-yellow-400', class: 'bg-yellow-500 dark:bg-yellow-400' },
+      { id: id(), name: '', value: 'text-green-500 dark:text-green-400', class: 'bg-green-500 dark:bg-green-400' },
+      { id: id(), name: '', value: 'text-blue-500 dark:text-blue-400', class: 'bg-blue-500 dark:bg-blue-400' },
+      { id: id(), name: '', value: 'text-gray-500 dark:text-gray-400', class: 'bg-gray-500 dark:bg-gray-400' },
     ],
 
     ALIGN_OPTIONS: [
-      { id: id(), value: 'text-left', name: $t('constructor.props.align.left'), class: '!w-1/3' },
-      { id: id(), value: 'text-center', name: $t('constructor.props.align.center'), class: '!w-1/3' },
-      { id: id(), value: 'text-right', name: $t('constructor.props.align.right'), class: '!w-1/3' },
+      { id: id(), value: 'text-left', name: $t('constructor.props.align.left') },
+      { id: id(), value: 'text-center', name: $t('constructor.props.align.center') },
+      { id: id(), value: 'text-right', name: $t('constructor.props.align.right') },
     ],
 
     HEIGHT_OPTIONS: [
-      { id: id(), value: 'py-1', name: $t('constructor.props.height.small'), class: '!w-1/3' },
-      { id: id(), value: 'py-2', name: $t('constructor.props.height.medium'), class: '!w-1/3' },
-      { id: id(), value: 'py-3', name: $t('constructor.props.height.large'), class: '!w-1/3' },
+      { id: id(), value: 'py-1', name: $t('constructor.props.height.small') },
+      { id: id(), value: 'py-2', name: $t('constructor.props.height.medium') },
+      { id: id(), value: 'py-3', name: $t('constructor.props.height.large') },
     ],
 
     ACCORDION_TYPE_OPTIONS: [
-      { id: id(), value: 'main', name: $t('constructor.props.type.main'), class: '!w-1/2' },
-      { id: id(), value: 'sub', name: $t('constructor.props.type.sub'), class: '!w-1/2' },
+      { id: id(), value: false, name: $t('constructor.props.type.main') },
+      { id: id(), value: true, name: $t('constructor.props.type.sub') },
     ],
   }
 })

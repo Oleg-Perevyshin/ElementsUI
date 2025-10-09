@@ -6,7 +6,7 @@
 
   /* Инициализация пропсов с дефолтными значениями */
   let {
-    id = { name: '', value: crypto.randomUUID() },
+    id = crypto.randomUUID(),
     wrapperClass = '',
     label = { name: '', class: '' },
     streamingData = { data: [], timestamp: Date.now() },
@@ -63,7 +63,7 @@
       return {
         id: existingData?.id || crypto.randomUUID(),
         points: existingData?.points || [],
-        color: d.color || defaultColors[i % defaultColors.length],
+        color: defaultColors[i % defaultColors.length],
         name: d.name || `Value ${i}`,
       }
     })
@@ -219,7 +219,7 @@
   }
 </script>
 
-<div id={id.value} class={`relative flex w-full flex-col items-center justify-center ${wrapperClass}`}>
+<div {id} class={`relative flex w-full flex-col items-center justify-center ${wrapperClass}`}>
   {#if label.name}
     <h5 class={`w-full px-4 text-center ${label.class}`}>{label.name}</h5>
   {/if}

@@ -1,0 +1,113 @@
+<!-- $lib/ElementsUI/ButtonProps.svelte -->
+<script lang="ts">
+  import { t } from '$lib/locales/i18n'
+  import { type UIComponent, type IButtonProps, type ISelectOption, updateProperty } from '../types'
+  import * as UI from '$lib'
+  import { optionsStore } from '../options'
+
+  const { component, onPropertyChange } = $props<{
+    component: UIComponent & { properties: Partial<IButtonProps> }
+    onPropertyChange: (value: string | object) => void
+  }>()
+
+  let Header: ISelectOption = $derived(
+    $optionsStore.HEADER_OPTIONS.find((h) => h.value === component.properties.eventHandler.Header) ?? {
+      id: '',
+      name: '',
+      value: '',
+      class: '!w-1/4',
+    },
+  )
+
+  const initialColor = $derived(
+    $optionsStore.COLOR_OPTIONS.find((c) =>
+      (c.value as string).includes(component.properties.componentClass?.split(' ').find((cls: string) => cls.startsWith('bg-'))),
+    ),
+  )
+
+  const initialHeight = $derived(
+    $optionsStore.HEIGHT_OPTIONS.find((h) =>
+      (h.value as string).includes(component.properties.componentClass?.split(' ').find((cls: string) => cls.startsWith('py-'))),
+    ),
+  )
+</script>
+
+{#if component && component.properties}
+  <div class="relative flex flex-row items-start justify-center">
+    <!-- Сообщение для отправки в ws по нажатию кнопки -->
+    <div class="flex w-1/3 flex-col items-center px-2">
+      <UI.Select
+        wrapperClass="w-full"
+        label={{ name: $t('constructor.props.header') }}
+        type="buttons"
+        value={Header}
+        options={$optionsStore.HEADER_OPTIONS}
+        onUpdate={(option) => {
+          Header = option
+          updateProperty('eventHandler.Header', Header.value as string, component, onPropertyChange)
+        }}
+      />
+      {#if Header.value === 'SET'}
+        <UI.Select
+          wrapperClass="w-full"
+          label={{ name: $t('constructor.props.argument') }}
+          type="buttons"
+          value={$optionsStore.FULL_ARGUMENT_OPTION.find((h) => h.value === component.properties.eventHandler.Argument)}
+          options={$optionsStore.FULL_ARGUMENT_OPTION}
+          onUpdate={(option) => {
+            updateProperty('eventHandler.Argument', option.value as string, component, onPropertyChange)
+          }}
+        />
+      {/if}
+      {#if (component.properties.eventHandler.Argument !== 'Save' && component.properties.eventHandler.Argument !== 'NoSave') || Header.value !== 'SET'}
+        <UI.Input
+          wrapperClass={Header.value === 'SET' ? 'mt-1' : ''}
+          label={{ name: Header.value === 'SET' ? '' : $t('constructor.props.argument') }}
+          value={component.properties.eventHandler.Argument}
+          help={{ info: $t('constructor.props.argument.info'), autocomplete: 'on', regExp: /^[a-zA-Z0-9\-_]{0,32}$/ }}
+          maxlength={32}
+          onUpdate={(value) => updateProperty('eventHandler.Argument', value as string, component, onPropertyChange)}
+        />
+        <UI.Input
+          label={{ name: $t('constructor.props.value') }}
+          value={component.properties.eventHandler.Value}
+          type="text"
+          maxlength={500}
+          onUpdate={(value) => updateProperty('eventHandler.Value', value as string, component, onPropertyChange)}
+        />
+      {/if}
+      <UI.Input
+        label={{ name: $t('constructor.props.variables') }}
+        value={component.properties.eventHandler.Variables.join(' ')}
+        help={{ info: $t('constructor.props.variables.info'), autocomplete: 'on', regExp: /^[a-zA-Z0-9\-_ ":{}]{0,500}$/ }}
+        maxlength={500}
+        onUpdate={(value) => {
+          const parts = (value as string).trim().split(/\s+/)
+          updateProperty('eventHandler.Variables', parts, component, onPropertyChange)
+        }}
+      />
+    </div>
+    <div class="flex w-1/3 flex-col px-2">
+      <UI.Input
+        label={{ name: $t('constructor.props.name') }}
+        value={component.properties.content.name}
+        onUpdate={(value) => updateProperty('content.name', value as string, component, onPropertyChange)}
+      />
+      <UI.Select
+        label={{ name: $t('constructor.props.height') }}
+        type="buttons"
+        options={$optionsStore.HEIGHT_OPTIONS}
+        value={initialHeight}
+        onUpdate={(option) => updateProperty('componentClass', `${component.properties.componentClass} ${option.value}`, component, onPropertyChange)}
+      />
+      <UI.Select
+        wrapperClass="h-14"
+        label={{ name: $t('constructor.props.colors') }}
+        type="buttons"
+        options={$optionsStore.COLOR_OPTIONS}
+        value={initialColor}
+        onUpdate={(option) => updateProperty('componentClass', `${component.properties.componentClass} ${option.value}`, component, onPropertyChange)}
+      />
+    </div>
+  </div>
+{/if}
