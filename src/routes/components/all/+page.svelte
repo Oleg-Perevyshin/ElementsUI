@@ -143,12 +143,12 @@
     </UI.Accordion>
 
     <!-- Компонент BUTTON -->
-    <UI.Accordion label={{ name: 'Button' }} isOpen={false} wrapperClass="mb-2">
+    <UI.Accordion label={{ name: 'Button' }} isOpen={true} wrapperClass="mb-2">
       <UI.Button content={{ name: 'Button 1', icon: IconGripHorizontalUp }} componentClass="h-20 bg-gray" />
       <UI.Button content={{ icon: IconGripVerticalLeft }} componentClass="h-9 w-9 bg-red border-none rounded-full" />
       <UI.Button content={{ icon: IconGripVerticalRight }} componentClass="h-15 w-50 bg-blue rounded-full" />
-      <UI.Button content={{ icon: IconGripVerticalDual }} componentClass="h-20 bg-green rounded-full" />
-      <UI.Button content={{ icon: IconGripHorizontalUp }} componentClass="h-20 w-20 rounded-full" />
+      <UI.Button wrapperClass="w-50" content={{ icon: IconGripVerticalDual }} componentClass="h-10 bg-green rounded-full" />
+      <UI.Button content={{ icon: IconGripHorizontalUp }} componentClass="h-15 w-20 rounded-full" />
       <UI.Button content={{ icon: IconGripHorizontalDown }} componentClass="h-15 rounded-full" />
       <UI.Button content={{ icon: IconGripHorizontalDual }} componentClass="h-15 rounded-full" />
       <UI.Button content={{ icon: GitHub }} componentClass="w-15 rounded-full" />

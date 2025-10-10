@@ -21,6 +21,20 @@
 
   let showInfo = $state(false)
 
+  const svgSize = $derived(() => {
+    const widthClass = twMerge(
+      wrapperClass.split(' ').find((cls: string) => cls.startsWith('w-')),
+      componentClass.split(' ').find((cls: string) => cls.startsWith('w-')),
+    )
+    const heightClass = twMerge(
+      wrapperClass.split(' ').find((cls: string) => cls.startsWith('h-')),
+      componentClass.split(' ').find((cls: string) => cls.startsWith('h-')),
+    )
+    console.log(widthClass)
+
+    return `${widthClass} ${heightClass}`
+  })
+
   /* Обработчик клика */
   const handleClick = () => {
     if (disabled || !onClick) return
@@ -77,7 +91,7 @@
         {#if content?.icon}
           <span
             class={`flex items-center justify-center overflow-visible 
-            ${content.name ? 'h-8 w-8' : `${wrapperClass}`} [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full`}
+            ${content.name ? 'h-8 w-8' : `${svgSize()}`} [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full`}
           >
             {#if content?.icon}
               {@const IconComponent = content?.icon}
