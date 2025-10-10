@@ -59,7 +59,7 @@
       class="{twMerge(
         `relative m-0 inline-block w-full items-center rounded-2xl 
         px-2 py-1 font-semibold  transition duration-200 select-none
-        ${content.icon && !content.name ? 'bg-transparent p-0' : 'border border-[var(--bg-color)] '}
+        ${content.icon && !content.name ? 'bg-transparent p-0' : 'bg-blue border border-[var(--bg-color)] '}
         ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer  active:scale-97'} `,
         componentClass,
       )} bg-[var(--bg-color)]"
