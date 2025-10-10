@@ -77,7 +77,7 @@
         {#if content?.icon}
           <span
             class={`flex items-center justify-center overflow-visible 
-            ${content.name ? 'h-8 w-8' : `${componentClass}`} [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full`}
+            ${content.name ? 'h-8 w-8' : `${wrapperClass}`} [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full`}
           >
             {#if content?.icon}
               {@const IconComponent = content?.icon}
