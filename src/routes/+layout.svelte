@@ -52,11 +52,10 @@
       <a href="/ElementsUI/" class="ml-2 !no-underline transition hover:scale-101"><h1>POE-Svelte-UI-Lib</h1></a>
     </div>
     <div class="flex items-center gap-4">
-      <UI.Button wrapperClass="!w-12" content={{ icon: IconLightDark }} componentClass="bg-transparent border-none " onClick={switchTheme} />
+      <UI.Button wrapperClass="!w-12" content={{ icon: IconLightDark }} onClick={switchTheme} />
       <UI.Button
         wrapperClass="!w-12"
         content={{ icon: GitHub }}
-        componentClass="bg-transparent border-none "
         onClick={() => window.open('https://github.com/Oleg-Perevyshin/ElementsUI', '_blank')}
       />
     </div>
