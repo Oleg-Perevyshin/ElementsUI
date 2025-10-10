@@ -30,6 +30,8 @@
     }
     reader.readAsDataURL(file)
   }
+
+  let currentImage = $derived(component.properties.image)
 </script>
 
 {#if component && component.properties}
@@ -63,7 +65,7 @@
         type="image"
         label={{ name: $t('constructor.props.image') }}
         accept="image/png, image/jpeg, image/webp"
-        bind:currentImage={component.properties.image}
+        bind:currentImage
         onChange={handleImageUpload}
       />
       <UI.Button

@@ -70,7 +70,7 @@
       class="grid w-full p-4 sm:p-3 {image ? 'gap-x-2' : 'gap-2'} {outline ? '' : 'border-t border-[var(--border-color)]'}"
       transition:slide={{ duration: 250 }}
       style="grid-template-columns: repeat({size.width || 10}, minmax(0, 1fr)); 
-          grid-template-rows: repeat({size.height || 2}, {image ? 'minmax(6rem, auto)' : 'auto'});
+          grid-template-rows: repeat({size.height || 2}, {image ? 'minmax(6.5rem, auto)' : 'auto'});
           {image ? `background-image: url(${image}); background-size: cover; background-position: center;` : ''}"
     >
       {@render children?.()}
