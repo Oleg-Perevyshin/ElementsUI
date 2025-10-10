@@ -52,7 +52,7 @@
   })
 </script>
 
-<div class={twMerge(`bg-blue relative flex w-full flex-col items-center`, wrapperClass)}>
+<div class={twMerge(`relative flex w-full flex-col items-center`, wrapperClass)}>
   <div class="relative flex w-full grow items-center">
     <button
       {id}
