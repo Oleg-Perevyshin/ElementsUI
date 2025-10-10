@@ -92,7 +92,7 @@
   }
 </script>
 
-<div class={twMerge(`relative flex w-full flex-col items-center gap-2`, wrapperClass)}>
+<div class={twMerge(`relative flex w-full flex-col items-center `, wrapperClass)}>
   {#if label.name}
     <h5 class={twMerge(`w-full px-4 text-center`, label.class)}>{label.name}</h5>
   {/if}
@@ -199,7 +199,7 @@
   </div>
 
   <!-- Кнопки управления -->
-  <div class={`flex w-full ${isRange ? 'justify-between' : 'justify-center'} gap-2`}>
+  <div class={`mt-3 flex w-full ${isRange ? 'justify-between' : 'justify-center'} gap-2`}>
     {#if isRange}
       {#each ['lower', 'upper'] as type (type)}
         <div

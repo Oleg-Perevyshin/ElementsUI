@@ -58,9 +58,9 @@
       {id}
       class="{twMerge(
         `relative m-0 inline-block w-full items-center rounded-2xl 
-        px-2 py-1 font-semibold shadow-sm transition duration-200 select-none
-        ${content.icon && !content.name ? 'bg-transparent' : 'border border-[var(--bg-color)] '}
-        ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:shadow-md active:scale-97'} `,
+        px-2 py-1 font-semibold  transition duration-200 select-none
+        ${content.icon && !content.name ? 'bg-transparent p-0' : 'border border-[var(--bg-color)] '}
+        ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer  active:scale-97'} `,
         componentClass,
       )} bg-[var(--bg-color)]"
       onclick={handleClick}
@@ -73,10 +73,11 @@
         if (content.info) showInfo = false
       }}
     >
-      <span class="flex flex-row items-center justify-center gap-2">
+      <span class=" flex flex-row items-center justify-center gap-2">
         {#if content?.icon}
           <span
-            class={`flex h-8 w-8 shrink-0 items-center justify-center overflow-visible [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full`}
+            class={`flex items-center justify-center overflow-visible 
+            ${content.name ? 'h-8 w-8' : `${componentClass}`} [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full`}
           >
             {#if content?.icon}
               {@const IconComponent = content?.icon}

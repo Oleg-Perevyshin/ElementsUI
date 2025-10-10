@@ -117,7 +117,6 @@
         }
       }, 10)
     }
-    console.log(streamingData.data)
     return () => clearInterval(intervalId)
   })
 

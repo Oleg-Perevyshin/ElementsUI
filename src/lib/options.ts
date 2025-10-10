@@ -64,7 +64,8 @@ export const optionsStore = derived(t, ($t) => {
       { id: id(), name: '', value: 'bg-red', class: 'bg-red' },
       { id: id(), name: '', value: 'bg-yellow', class: 'bg-yellow' },
       { id: id(), name: '', value: 'bg-green', class: 'bg-green' },
-      { id: id(), name: '', value: 'bg-blue', class: 'bg-blue' },
+      { id: id(), name: '', value: 'bg-cyan', class: 'bg-cyan' },
+      { id: id(), name: '', value: 'bg-purple', class: 'bg-purple' },
     ],
 
     TEXT_COLOR_OPTIONS: [

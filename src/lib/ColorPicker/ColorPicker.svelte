@@ -131,7 +131,7 @@
 
 <div {id} class={twMerge(`relative flex w-full flex-col items-center`, wrapperClass)}>
   {#if label.name}
-    <h5 class={twMerge(`mb-2 w-full px-4 text-center`, label.class)}>{label.name}</h5>
+    <h5 class={twMerge(`w-full px-4 text-center`, label.class)}>{label.name}</h5>
   {/if}
 
   <div class="flex w-full flex-row items-center gap-2">
@@ -201,18 +201,12 @@
 
     <!-- Превью цвета -->
 
-    <div class="flex w-24 flex-col items-center">
+    <div class="flex w-25 flex-col items-center">
       <div
         class={`flex size-15 flex-col justify-center gap-1 rounded-full px-2 font-mono text-sm shadow-md select-none ${textColor()}`}
         style={`background: rgb(${previewBaseColor().join(',')})`}
       ></div>
       <div class="w-full text-center font-semibold">{hex()}</div>
     </div>
-    <!-- <div>
-      <div class="flex flex-col items-center">
-        <span class="w-full flex-shrink-0">{mode === 'white' ? 'White' : 'RGB'}</span>
-        <div class="пфз-1 w-full text-center tracking-wide">{hex()}</div>
-      </div>
-    </div> -->
   </div>
 </div>

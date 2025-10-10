@@ -12,13 +12,13 @@
   }>()
 
   let isValidRegExp = $state(true)
-  const DeviceVariables = getContext<{ value: string; name: string }[]>('DeviceVariables')
-  let VARIABLE_OPTIONS: ISelectOption<string>[] = $derived(
+  const DeviceVariables = getContext<string[]>('DeviceVariables')
+  let VARIABLE_OPTIONS = $derived(
     DeviceVariables && Array.isArray(DeviceVariables)
       ? DeviceVariables.map((variable) => ({
-          id: variable.name,
-          value: variable.value,
-          name: `${variable.value} | ${variable.name}`,
+          id: variable,
+          value: variable,
+          name: variable,
         }))
       : [],
   )
@@ -97,7 +97,7 @@
       <UI.Select
         label={{ name: $t('constructor.props.variable') }}
         options={VARIABLE_OPTIONS}
-        value={VARIABLE_OPTIONS.find((opt) => opt.value === component.properties.id.value)}
+        value={VARIABLE_OPTIONS.find((opt) => opt.value === component.properties.id)}
         onUpdate={(selectedOption) => {
           if (selectedOption && selectedOption.name) {
             updateProperty('id', selectedOption.value as string)

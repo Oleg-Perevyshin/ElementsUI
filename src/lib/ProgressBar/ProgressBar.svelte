@@ -33,17 +33,21 @@
     })(),
   )
 
-  let progressPercent = $derived((((value as number) - min) / (max - min)) * 100)
+  const progressPercent = $derived(() => {
+    if (value) {
+      return (((Math.min(Math.max(value, min), max) - min) / (max - min)) * 100) as number
+    }
+  })
 </script>
 
 <div {id} class={twMerge(`relative flex w-full flex-col items-center`, wrapperClass)}>
   {#if label.name}
-    <h5 class={twMerge(`mb-1 w-full px-4 text-center`, label.class)}>{label.name}</h5>
+    <h5 class={twMerge(` w-full px-4 text-center`, label.class)}>{label.name}</h5>
   {/if}
 
   <div class="flex w-full flex-col items-center">
     <div class="relative h-2 w-full rounded bg-gray-400">
-      <div class="absolute top-0 left-0 h-full rounded bg-[var(--bg-color)]" style="width: {progressPercent}%;"></div>
+      <div class="absolute top-0 left-0 h-full rounded bg-[var(--bg-color)]" style="width: {progressPercent()}%;"></div>
     </div>
     <span class="ml-2 font-semibold">{numericValue?.toFixed(2)}{number.units}</span>
   </div>

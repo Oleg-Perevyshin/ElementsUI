@@ -13,13 +13,13 @@
     onPropertyChange: (value: string | object) => void
   }>()
 
-  const DeviceVariables = getContext<{ value: string; name: string }[]>('DeviceVariables')
+  const DeviceVariables = getContext<string[]>('DeviceVariables')
   let VARIABLE_OPTIONS = $derived(
     DeviceVariables && Array.isArray(DeviceVariables)
       ? DeviceVariables.map((variable) => ({
-          id: variable.name,
-          value: variable.value,
-          name: `${variable.value} | ${variable.name}`,
+          id: variable,
+          value: variable,
+          name: variable,
         }))
       : [],
   )
@@ -65,7 +65,7 @@
       <UI.Select
         label={{ name: $t('constructor.props.variable') }}
         options={VARIABLE_OPTIONS}
-        value={VARIABLE_OPTIONS.find((opt) => opt.value === component.properties.id.value)}
+        value={VARIABLE_OPTIONS.find((opt) => opt.value === component.properties.id)}
         onUpdate={(value) => {
           updateProperty('id', value.value as string, component, onPropertyChange)
           updateProperty('eventHandler.Variables', value.value as string, component, onPropertyChange)
@@ -154,7 +154,7 @@
           componentClass="bg-transparent h-10 w-10 border-none !shadow-none hover:shadow-none"
           onClick={() => {
             const newButton = {
-              name: `button${(component.properties.header[columnIndex].buttons.length || 0) + 1}`,
+              name: `button${(component.properties.header[columnIndex].buttons ? component.properties.header[columnIndex].buttons.length : 0) + 1}`,
               class: 'bg-blue',
               eventHandler: { Header: 'SET', Argument: 'Save', Variables: [] },
               onClick: () => {},

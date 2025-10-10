@@ -9,7 +9,6 @@
   import IconGripVerticalLeft from '../../../appIcons/IconGripVerticalLeft.svelte'
   import IconGripVerticalRight from '../../../appIcons/IconGripVerticalRight.svelte'
   import IconGripVerticalDual from '../../../appIcons/IconGripVerticalDual.svelte'
-  import Test from '../../../appIcons/Test.svelte'
 
   const componentMap = {
     Button: { component: UI.Button },
@@ -119,7 +118,7 @@
 
   <div class="flex w-full flex-col">
     <!-- Компонент ACCORDION -->
-    <UI.Accordion label={{ name: 'Accordion', icon: Test }} isOpen={false} wrapperClass="mb-2">
+    <UI.Accordion label={{ name: 'Accordion' }} isOpen={false} wrapperClass="mb-2">
       <UI.Accordion label={{ name: 'Accordion 1', class: '' }} isOpen={false} outline={true} wrapperClass="col-span-3">
         <h6>Содержимое вложенного Accordion 1</h6>
         <h5>Содержимое вложенного Accordion 1</h5>
@@ -145,14 +144,14 @@
 
     <!-- Компонент BUTTON -->
     <UI.Accordion label={{ name: 'Button' }} isOpen={false} wrapperClass="mb-2">
-      <UI.Button content={{ name: 'Button 1', icon: GitHub }} componentClass="h-10 bg-gray" />
-      <UI.Button content={{ icon: IconGripVerticalLeft }} componentClass="h-15 w-15 bg-transparent border-none rounded-full" />
-      <UI.Button content={{ icon: IconGripVerticalRight }} componentClass="h-15 rounded-full" />
-      <UI.Button content={{ icon: IconGripVerticalDual }} componentClass="h-15 rounded-full" />
-      <UI.Button content={{ icon: IconGripHorizontalUp }} componentClass="h-15 rounded-full" />
+      <UI.Button content={{ name: 'Button 1', icon: IconGripHorizontalUp }} componentClass="h-20 bg-gray" />
+      <UI.Button content={{ icon: IconGripVerticalLeft }} componentClass="h-9 w-9 bg-red border-none rounded-full" />
+      <UI.Button content={{ icon: IconGripVerticalRight }} componentClass="h-15 w-50 bg-blue rounded-full" />
+      <UI.Button content={{ icon: IconGripVerticalDual }} componentClass="h-20 bg-green rounded-full" />
+      <UI.Button content={{ icon: IconGripHorizontalUp }} componentClass="h-20 w-20 rounded-full" />
       <UI.Button content={{ icon: IconGripHorizontalDown }} componentClass="h-15 rounded-full" />
       <UI.Button content={{ icon: IconGripHorizontalDual }} componentClass="h-15 rounded-full" />
-      <UI.Button content={{ icon: GitHub }} componentClass="h-15 rounded-full" />
+      <UI.Button content={{ icon: GitHub }} componentClass="w-15 rounded-full" />
       <UI.Button content={{ name: 'Button 3', info: 'button for send to server' }} componentClass="bg-yellow" />
       <UI.Button content={{ name: 'Button 4' }} componentClass="bg-blue h-12 rounded-xl" />
       <UI.Button content={{ name: 'Button 5' }} componentClass="bg-green" />
@@ -160,7 +159,7 @@
     </UI.Accordion>
 
     <!-- Компонент COLOR PICKER -->
-    <UI.Accordion label={{ name: 'Color Picker' }} isOpen={true} wrapperClass="mb-2">
+    <UI.Accordion label={{ name: 'Color Picker' }} isOpen={false} wrapperClass="mb-2">
       <UI.ColorPicker wrapperClass="!w-100" label={{ name: 'Выбор цвета из палитры' }} value={[186, 25, 255]} />
     </UI.Accordion>
 
@@ -246,7 +245,9 @@
     <UI.Accordion label={{ name: 'Select' }} isOpen={false} wrapperClass="mb-2">
       <div class="col-span-10 flex flex-col items-center">
         <UI.Select type="input" label={{ name: 'Компоненты' }} options={COMPONENT_OPTIONS} onUpdate={(option) => (selectOption = option)} />
-        <p>{selectOption ? JSON.stringify(selectOption) : '---'}</p>
+        <p>{JSON.stringify(selectOption)}</p>
+        <UI.Select label={{ name: 'Компоненты' }} options={COMPONENT_OPTIONS} onUpdate={(option) => (selectOption = option)} />
+        <UI.Select type="buttons" label={{ name: 'Компоненты' }} options={COMPONENT_OPTIONS} onUpdate={(option) => (selectOption = option)} />
       </div>
     </UI.Accordion>
 

@@ -10,6 +10,8 @@
   let { children } = $props()
   let currentTheme: boolean = $state(true)
 
+  let currentTab = $state('')
+
   /* Список всех компонентов */
   const menuItems = [
     { page: 'accordion', name: 'Accordion' },
@@ -51,10 +53,10 @@
     <div class="flex items-center gap-2">
       <a href="/ElementsUI/" class="ml-2 !no-underline transition hover:scale-101"><h1>POE-Svelte-UI-Lib</h1></a>
     </div>
-    <div class="flex items-center gap-4">
-      <UI.Button wrapperClass="!w-12" content={{ icon: IconLightDark }} onClick={switchTheme} />
+    <div class="flex items-center gap-6">
+      <UI.Button componentClass="w-8" content={{ icon: IconLightDark }} onClick={switchTheme} />
       <UI.Button
-        wrapperClass="!w-12"
+        componentClass="w-8"
         content={{ icon: GitHub }}
         onClick={() => window.open('https://github.com/Oleg-Perevyshin/ElementsUI', '_blank')}
       />
@@ -66,13 +68,44 @@
     <nav
       class="m-1 flex w-64 flex-col items-start gap-2 overflow-y-auto rounded-xl border border-[var(--border-color)] bg-[var(--back-color)]/50 p-4"
     >
-      <UI.Button content={{ name: 'ALL in ONE' }} componentClass="h-10 text-left" onClick={() => goto(`/ElementsUI/components/all`)} />
-      {#each menuItems as item}
+      <div class="flex w-full">
         <UI.Button
-          content={{ name: item.name }}
-          componentClass="h-10 bg-gray text-left"
-          onClick={() => goto(`/ElementsUI/components/${item.page}`)}
+          content={{ name: 'ALL in ONE' }}
+          componentClass="h-10 text-left"
+          onClick={() => {
+            goto(`/ElementsUI/components/all`)
+            currentTab = 'all'
+          }}
         />
+        {#if currentTab === 'all'}
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
+            ><path
+              fill="currentColor"
+              d="M12.6 12L8.7 8.1q-.275-.275-.275-.7t.275-.7t.7-.275t.7.275l4.6 4.6q.15.15.213.325t.062.375t-.062.375t-.213.325l-4.6 4.6q-.275.275-.7.275t-.7-.275t-.275-.7t.275-.7z"
+            /></svg
+          >
+        {/if}
+      </div>
+
+      {#each menuItems as item}
+        <div class="flex w-full">
+          <UI.Button
+            content={{ name: item.name }}
+            componentClass="h-10 bg-gray text-left"
+            onClick={() => {
+              goto(`/ElementsUI/components/${item.page}`)
+              currentTab = item.name
+            }}
+          />
+          {#if currentTab === item.name}
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
+              ><path
+                fill="currentColor"
+                d="M12.6 12L8.7 8.1q-.275-.275-.275-.7t.275-.7t.7-.275t.7.275l4.6 4.6q.15.15.213.325t.062.375t-.062.375t-.213.325l-4.6 4.6q-.275.275-.7.275t-.7-.275t-.275-.7t.275-.7z"
+              /></svg
+            >
+          {/if}
+        </div>
       {/each}
     </nav>
     <!-- Панель контента -->

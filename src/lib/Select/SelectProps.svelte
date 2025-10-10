@@ -13,13 +13,13 @@
     onPropertyChange: (path: string, value: string | object) => void
   }>()
 
-  const DeviceVariables = getContext<{ value: string; name: string }[]>('DeviceVariables')
+  const DeviceVariables = getContext<string[]>('DeviceVariables')
   let VARIABLE_OPTIONS = $derived(
     DeviceVariables && Array.isArray(DeviceVariables)
       ? DeviceVariables.map((variable) => ({
-          id: variable.name,
-          value: variable.value,
-          name: `${variable.value} | ${variable.name}`,
+          id: variable,
+          value: variable,
+          name: variable,
         }))
       : [],
   )
@@ -86,7 +86,7 @@
       <UI.Select
         label={{ name: $t('constructor.props.variable') }}
         options={VARIABLE_OPTIONS}
-        value={VARIABLE_OPTIONS.find((opt) => opt.value === component.properties.id.value)}
+        value={VARIABLE_OPTIONS.find((opt) => opt.value === component.properties.id)}
         onUpdate={(value) => {
           updateProperty('id', value.value as string, component, onPropertyChange)
           updateProperty('eventHandler.Variables', value.value as string, component, onPropertyChange)

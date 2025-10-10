@@ -10,7 +10,7 @@
       id: crypto.randomUUID(),
       wrapperClass: 'bg-blue',
       label: { name: 'Label', class: 'text-center' },
-      value: 40,
+      value: 500,
       number: { minNum: 0, maxNum: 100, units: '%' },
     },
     position: { row: 0, col: 0, width: 0, height: 0 },

@@ -4,12 +4,23 @@
   import { updateProperty, type ITextFieldProps, type UIComponent } from '../types'
   import * as UI from '$lib/index'
   import { optionsStore } from '$lib/options'
+  import { getContext } from 'svelte'
 
   const { component, onPropertyChange } = $props<{
     component: UIComponent & { properties: Partial<ITextFieldProps> }
     onPropertyChange: (value: string | object) => void
   }>()
 
+  const DeviceVariables = getContext<string[]>('DeviceVariables')
+  let VARIABLE_OPTIONS = $derived(
+    DeviceVariables && Array.isArray(DeviceVariables)
+      ? DeviceVariables.map((variable) => ({
+          id: variable,
+          value: variable,
+          name: variable,
+        }))
+      : [],
+  )
   let currentType = $derived($optionsStore.TEXTFIELD_SIZE_OPTIONS.find((t) => t.value === component.properties.content.size))
 
   const initialAlign = $derived(
@@ -29,6 +40,15 @@
 {#if component && component.properties}
   <div class="relative flex flex-row items-start justify-center">
     <div class="flex w-1/3 flex-col px-2">
+      <UI.Select
+        label={{ name: $t('constructor.props.variable') }}
+        options={VARIABLE_OPTIONS}
+        value={VARIABLE_OPTIONS.find((opt) => opt.value === component.properties.id)}
+        onUpdate={(value) => {
+          updateProperty('id', value.value as string, component, onPropertyChange)
+          updateProperty('eventHandler.Variables', value.value as string, component, onPropertyChange)
+        }}
+      />
       <UI.Input
         label={{ name: $t('constructor.props.label') }}
         value={component.properties.content.name}
