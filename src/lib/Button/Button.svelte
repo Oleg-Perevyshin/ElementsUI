@@ -74,14 +74,17 @@
       }}
     >
       <span class="flex flex-row items-center justify-center gap-2">
-        <span
-          class={`flex h-8 w-8 shrink-0 items-center justify-center overflow-visible [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full`}
-        >
-          {#if content?.icon}
-            {@const IconComponent = content?.icon}
-            <IconComponent />
-          {/if}
-        </span>
+        {#if content?.icon}
+          <span
+            class={`flex h-8 w-8 shrink-0 items-center justify-center overflow-visible [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full`}
+          >
+            {#if content?.icon}
+              {@const IconComponent = content?.icon}
+              <IconComponent />
+            {/if}
+          </span>
+        {/if}
+
         {#if content.name}
           <div class="flex-1">
             {content.name}
