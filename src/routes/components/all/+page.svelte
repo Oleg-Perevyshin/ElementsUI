@@ -143,7 +143,7 @@
     </UI.Accordion>
 
     <!-- Компонент BUTTON -->
-    <UI.Accordion label={{ name: 'Button' }} isOpen={true} wrapperClass="mb-2">
+    <UI.Accordion label={{ name: 'Button' }} isOpen={false} wrapperClass="mb-2">
       <UI.Button content={{ name: 'Button 1', icon: IconGripHorizontalUp }} componentClass="h-20 bg-gray" />
       <UI.Button content={{ icon: IconGripVerticalLeft }} componentClass="h-9 w-9 bg-red border-none rounded-full" />
       <UI.Button content={{ icon: IconGripVerticalRight }} componentClass="h-15 w-50 bg-blue rounded-full" />
@@ -252,7 +252,7 @@
     </UI.Accordion>
 
     <!-- Компонент SLIDER -->
-    <UI.Accordion label={{ name: 'Slider' }} isOpen={false} wrapperClass="mb-2">
+    <UI.Accordion label={{ name: 'Slider' }} isOpen={true} wrapperClass="mb-2">
       <UI.Slider
         wrapperClass="!w-1/3 bg-red px-2"
         label={{ name: 'Слайдер' }}

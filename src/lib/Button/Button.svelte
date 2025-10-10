@@ -30,8 +30,6 @@
       wrapperClass.split(' ').find((cls: string) => cls.startsWith('h-')),
       componentClass.split(' ').find((cls: string) => cls.startsWith('h-')),
     )
-    console.log(widthClass)
-
     return `${widthClass} ${heightClass}`
   })
 

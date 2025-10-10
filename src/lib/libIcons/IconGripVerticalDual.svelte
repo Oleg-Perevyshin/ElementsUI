@@ -1,7 +1,7 @@
 <!-- appIcons/IconGripVerticalDual.svelte -->
 <script lang="ts"></script>
 
-<svg xmlns="http://www.w3.org/2000/svg" width="2rem" height="2rem" viewBox="0 0 24 24">
+<svg xmlns="http://www.w3.org/2000/svg" width="1.75rem" height="1.75rem" viewBox="0 0 24 24">
   <g stroke="currentColor" stroke-linecap="round" stroke-width="1.5" fill="none">
     <line x1="4" y1="11" x2="4" y2="13" />
     <line x1="8" y1="9" x2="8" y2="15" />

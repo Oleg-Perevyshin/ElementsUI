@@ -98,7 +98,7 @@
   {/if}
 
   <!-- Слайдер -->
-  <div {id} class="relative flex h-8 w-full justify-center rounded-full {disabled ? 'cursor-not-allowed opacity-50' : ''}">
+  <div {id} class="relative flex h-7 w-full justify-center rounded-full {disabled ? 'cursor-not-allowed opacity-50' : ''}">
     {#if isRange}
       <!-- Трек и активная зона -->
       <div
@@ -199,7 +199,7 @@
   </div>
 
   <!-- Кнопки управления -->
-  <div class={`mt-3 flex w-full ${isRange ? 'justify-between' : 'justify-center'} gap-2`}>
+  <div class={`mt-2 flex w-full ${isRange ? 'justify-between' : 'justify-center'} gap-2`}>
     {#if isRange}
       {#each ['lower', 'upper'] as type (type)}
         <div
