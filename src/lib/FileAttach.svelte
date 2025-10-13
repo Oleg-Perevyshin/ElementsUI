@@ -1,6 +1,7 @@
-<!-- $lib/ElementsUI/FileAttach.svelte -->
 <script lang="ts">
-  interface FileInputProps {
+  import { twMerge } from 'tailwind-merge'
+
+  export interface IFileInputProps {
     id?: string
     wrapperClass?: string
     label?: { name?: string; class?: string }
@@ -22,7 +23,7 @@
     disabled = false,
     currentImage = $bindable(null),
     onChange = () => {},
-  }: FileInputProps = $props()
+  }: IFileInputProps = $props()
 
   let selectedFile = $state<File | null>(null)
   let previewUrl = $derived(currentImage ? (currentImage.startsWith('data:') ? currentImage : `data:image/png;base64,${currentImage}`) : null)
@@ -48,7 +49,7 @@
   }
 </script>
 
-<div class={`flex flex-col items-center ${wrapperClass}`}>
+<div class={twMerge(`flex flex-col items-center`, wrapperClass)}>
   {#if label.name}
     <h5 class={`${label.class}`}>{label.name}</h5>
   {/if}

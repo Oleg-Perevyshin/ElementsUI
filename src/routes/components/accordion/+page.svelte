@@ -17,7 +17,7 @@
         width: 1,
       },
       label: {
-        name: ',kdf,;sdedfewfrterg',
+        name: 'Accordion',
         class: 'text-center',
         icon: null,
       },
@@ -185,14 +185,3 @@
     </Accordion>
   </div>
 </div> -->
-
-<!-- Панель TODO -->
-<div class="sticky bottom-0 mt-8 rounded-2xl border border-[var(--border-color)] bg-[var(--back-color)]">
-  <h3 class="mb-2 text-lg font-bold">Todo List:</h3>
-  <div class="ml-8 flex flex-col text-left">
-    <h5>1. Разобраться с прикреплением иконки к заголовку как svg поток</h5>
-    <h5>2. Сделать автоматическое масштабирование иконки</h5>
-    <h5>3. Разобраться со сварачиванием 3 и 4 аккордиона (Инна)</h5>
-    <h5>4. Разобраться с прикреплением фона (добавил в isOpen style самого компонента, не уверен в правильности)</h5>
-  </div>
-</div>

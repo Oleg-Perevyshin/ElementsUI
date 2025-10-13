@@ -168,7 +168,10 @@
         onkeydown={null}
         onclick={disabled ? undefined : handleTrackClick}
       >
-        <div class="absolute z-10 h-full rounded-full" style={`width: ${singlePosition}%; background-color: var(--bg-color)`}></div>
+        <div
+          class="absolute z-10 h-full {singlePosition === 100 ? ' rounded-full' : 'rounded-l-full'}"
+          style={`width: ${singlePosition}%; background-color: var(--bg-color)`}
+        ></div>
       </div>
 
       <input
@@ -184,7 +187,7 @@
             }}
         onmouseup={disabled ? undefined : () => onUpdate(singleValue)}
         {disabled}
-        class="absolute z-20 h-full w-full appearance-none bg-transparent"
+        class="absolute z-20 h-full w-full appearance-none"
       />
       <div
         class="pointer-events-none absolute z-30 rounded-full bg-[var(--field-color)]"

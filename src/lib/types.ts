@@ -105,7 +105,7 @@ export interface IAccordionProps {
   label?: {
     name?: string
     class?: string
-    icon?: ConstructorOfATypedSvelteComponent | null
+    icon?: string | null
   }
   children?: Snippet
   image?: string

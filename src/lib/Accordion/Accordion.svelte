@@ -36,8 +36,7 @@
         class={`flex h-8 w-8 shrink-0 items-center justify-center overflow-visible [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full`}
       >
         {#if label?.icon}
-          {@const IconComponent = label?.icon}
-          <IconComponent />
+          {@html label.icon}
         {/if}
       </span>
       <span class="{twMerge('m-0 w-full cursor-pointer text-left font-semibold', label.class)} text-lg">

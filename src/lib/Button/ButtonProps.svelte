@@ -4,11 +4,14 @@
   import { type UIComponent, type IButtonProps, type ISelectOption, updateProperty } from '../types'
   import * as UI from '$lib'
   import { optionsStore } from '../options'
+  import { twMerge } from 'tailwind-merge'
 
   const { component, onPropertyChange } = $props<{
     component: UIComponent & { properties: Partial<IButtonProps> }
     onPropertyChange: (value: string | object) => void
   }>()
+
+  let hasValue: boolean = $derived(component.properties.eventHandler.Value)
 
   let Header: ISelectOption = $derived(
     $optionsStore.HEADER_OPTIONS.find((h) => h.value === component.properties.eventHandler.Header) ?? {
@@ -37,7 +40,6 @@
     <!-- Сообщение для отправки в ws по нажатию кнопки -->
     <div class="flex w-1/3 flex-col items-center px-2">
       <UI.Select
-        wrapperClass="w-full"
         label={{ name: $t('constructor.props.header') }}
         type="buttons"
         value={Header}
@@ -49,10 +51,10 @@
       />
       {#if Header.value === 'SET'}
         <UI.Select
-          wrapperClass="w-full"
           label={{ name: $t('constructor.props.argument') }}
           type="buttons"
-          value={$optionsStore.FULL_ARGUMENT_OPTION.find((h) => h.value === component.properties.eventHandler.Argument)}
+          value={$optionsStore.FULL_ARGUMENT_OPTION.find((h) => h.value === component.properties.eventHandler.Argument) ??
+            $optionsStore.FULL_ARGUMENT_OPTION.find((h) => h.value === '')}
           options={$optionsStore.FULL_ARGUMENT_OPTION}
           onUpdate={(option) => {
             updateProperty('eventHandler.Argument', option.value as string, component, onPropertyChange)
@@ -71,13 +73,14 @@
         <UI.Input
           label={{ name: $t('constructor.props.value') }}
           value={component.properties.eventHandler.Value}
-          type="text"
+          help={{ info: $t('constructor.props.value.info') }}
           maxlength={500}
           onUpdate={(value) => updateProperty('eventHandler.Value', value as string, component, onPropertyChange)}
         />
       {/if}
       <UI.Input
         label={{ name: $t('constructor.props.variables') }}
+        disabled={hasValue}
         value={component.properties.eventHandler.Variables.join(' ')}
         help={{ info: $t('constructor.props.variables.info'), autocomplete: 'on', regExp: /^[a-zA-Z0-9\-_ ":{}]{0,500}$/ }}
         maxlength={500}
@@ -98,7 +101,8 @@
         type="buttons"
         options={$optionsStore.HEIGHT_OPTIONS}
         value={initialHeight}
-        onUpdate={(option) => updateProperty('componentClass', `${component.properties.componentClass} ${option.value}`, component, onPropertyChange)}
+        onUpdate={(option) =>
+          updateProperty('componentClass', twMerge(component.properties.componentClass, option.value), component, onPropertyChange)}
       />
       <UI.Select
         wrapperClass="h-14"
@@ -106,7 +110,8 @@
         type="buttons"
         options={$optionsStore.COLOR_OPTIONS}
         value={initialColor}
-        onUpdate={(option) => updateProperty('componentClass', `${component.properties.componentClass} ${option.value}`, component, onPropertyChange)}
+        onUpdate={(option) =>
+          updateProperty('componentClass', twMerge(component.properties.componentClass, option.value), component, onPropertyChange)}
       />
     </div>
   </div>

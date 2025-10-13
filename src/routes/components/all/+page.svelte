@@ -277,7 +277,7 @@
       <UI.Slider
         wrapperClass="!w-1/2 bg-green px-2"
         label={{ name: 'Слайдер' }}
-        value={-40}
+        value={-10}
         number={{ minNum: -25, maxNum: 25, step: 1 }}
         disabled={false}
       />

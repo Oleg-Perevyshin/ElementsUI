@@ -59,13 +59,13 @@ export const optionsStore = derived(t, ($t) => {
     ],
 
     COLOR_OPTIONS: [
-      { id: id(), name: '', value: 'bg-gray', class: 'bg-gray' },
       { id: id(), name: '', value: 'bg-max', class: 'bg-max' },
       { id: id(), name: '', value: 'bg-red', class: 'bg-red' },
       { id: id(), name: '', value: 'bg-yellow', class: 'bg-yellow' },
       { id: id(), name: '', value: 'bg-green', class: 'bg-green' },
-      { id: id(), name: '', value: 'bg-cyan', class: 'bg-cyan' },
+      { id: id(), name: '', value: 'bg-blue', class: 'bg-blue' },
       { id: id(), name: '', value: 'bg-purple', class: 'bg-purple' },
+      { id: id(), name: '', value: 'bg-gray', class: 'bg-gray' },
     ],
 
     TEXT_COLOR_OPTIONS: [
@@ -74,6 +74,7 @@ export const optionsStore = derived(t, ($t) => {
       { id: id(), name: '', value: 'text-yellow-500 dark:text-yellow-400', class: 'bg-yellow-500 dark:bg-yellow-400' },
       { id: id(), name: '', value: 'text-green-500 dark:text-green-400', class: 'bg-green-500 dark:bg-green-400' },
       { id: id(), name: '', value: 'text-blue-500 dark:text-blue-400', class: 'bg-blue-500 dark:bg-blue-400' },
+      { id: id(), name: '', value: 'text-purple-500 dark:text-purple-400', class: 'bg-purple-500 dark:bg-purple-400' },
       { id: id(), name: '', value: 'text-gray-500 dark:text-gray-400', class: 'bg-gray-500 dark:bg-gray-400' },
     ],
 

@@ -5,6 +5,7 @@
   import * as UI from '$lib/index'
   import { optionsStore } from '$lib/options'
   import { getContext } from 'svelte'
+  import { twMerge } from 'tailwind-merge'
 
   const { component, onPropertyChange } = $props<{
     component: UIComponent & { properties: Partial<ITextFieldProps> }
@@ -68,15 +69,15 @@
         type="buttons"
         value={initialAlign}
         options={$optionsStore.ALIGN_OPTIONS}
-        onUpdate={(option) => updateProperty('content.class', `${component.properties.content.class} ${option.value}`, component, onPropertyChange)}
+        onUpdate={(option) => updateProperty('content.class', twMerge(component.properties.content.class, option.value), component, onPropertyChange)}
       />
       <UI.Select
         wrapperClass="!h-14"
-        label={{ name: $t('constructor.props.colors') }}
+        label={{ name: $t('constructor.props.textcolors') }}
         type="buttons"
         options={$optionsStore.TEXT_COLOR_OPTIONS}
         value={initialColor}
-        onUpdate={(option) => updateProperty('wrapperClass', `${component.properties.wrapperClass} ${option.value}`, component, onPropertyChange)}
+        onUpdate={(option) => updateProperty('wrapperClass', twMerge(component.properties.wrapperClass, option.value), component, onPropertyChange)}
       />
     </div>
     <div class="flex w-1/3 flex-col px-2">

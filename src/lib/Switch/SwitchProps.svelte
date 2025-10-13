@@ -5,6 +5,7 @@
   import { type UIComponent, type ISwitchProps, updateProperty, type ISelectOption } from '../types'
   import * as UI from '$lib'
   import { optionsStore } from '../options'
+  import { twMerge } from 'tailwind-merge'
 
   const { component, onPropertyChange } = $props<{
     component: UIComponent & { properties: Partial<ISwitchProps> }
@@ -82,9 +83,9 @@
         wrapperClass="!h-14"
         label={{ name: $t('constructor.props.colors') }}
         type="buttons"
-        options={$optionsStore.COLOR_OPTIONS.filter((option) => option.value !== 'bg-max')}
+        options={$optionsStore.COLOR_OPTIONS.filter((option) => option.value !== 'bg-max' && option.value !== 'bg-gray')}
         value={initialColor}
-        onUpdate={(option) => updateProperty('wrapperClass', `${component.properties.wrapperClass} ${option.value}`, component, onPropertyChange)}
+        onUpdate={(option) => updateProperty('wrapperClass', twMerge(component.properties.wrapperClass, option.value), component, onPropertyChange)}
       />
     </div>
   </div>

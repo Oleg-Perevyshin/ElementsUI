@@ -7,6 +7,7 @@
   import ButtonDelete from '../libIcons/ButtonDelete.svelte'
   import ButtonAdd from '../libIcons/ButtonAdd.svelte'
   import { optionsStore } from '../options.js'
+  import { twMerge } from 'tailwind-merge'
 
   const { component, onPropertyChange } = $props<{
     component: UIComponent & { properties: Partial<ISelectProps> }
@@ -68,7 +69,8 @@
       <UI.Select
         label={{ name: $t('constructor.props.argument') }}
         type="buttons"
-        value={$optionsStore.FULL_ARGUMENT_OPTION.find((h) => h.value === component.properties.eventHandler.Argument)}
+        value={$optionsStore.FULL_ARGUMENT_OPTION.find((h) => h.value === component.properties.eventHandler.Argument) ??
+          $optionsStore.FULL_ARGUMENT_OPTION.find((h) => h.value === '')}
         options={$optionsStore.FULL_ARGUMENT_OPTION}
         onUpdate={(option) => {
           updateProperty('eventHandler.Argument', option.value as string, component, onPropertyChange)
@@ -124,7 +126,7 @@
         type="buttons"
         options={$optionsStore.COLOR_OPTIONS}
         value={initialColor}
-        onUpdate={(option) => updateProperty('wrapperClass', `${component.properties.wrapperClass} ${option.value}`, component, onPropertyChange)}
+        onUpdate={(option) => updateProperty('wrapperClass', twMerge(component.properties.wrapperClass, option.value), component, onPropertyChange)}
       />
     </div>
     <div class="flex w-1/3 flex-col items-center px-2">
@@ -138,7 +140,7 @@
         type="buttons"
         value={initialAlign}
         options={$optionsStore.ALIGN_OPTIONS}
-        onUpdate={(option) => updateProperty('label.class', `${component.properties.label.class} ${option.value}`, component, onPropertyChange)}
+        onUpdate={(option) => updateProperty('label.class', twMerge(component.properties.label.class, option.value), component, onPropertyChange)}
       />
     </div>
   </div>
@@ -150,9 +152,8 @@
     <div class="m-0 flex items-center justify-center gap-2">
       <h4>{$t('constructor.props.options.title')}</h4>
       <UI.Button
-        wrapperClass="!w-10"
+        wrapperClass="w-8"
         content={{ icon: ButtonAdd }}
-        componentClass="bg-transparent h-10 border-none !shadow-none hover:shadow-none"
         onClick={() => {
           const newOption: ISelectOption = {
             id: crypto.randomUUID(),
@@ -201,9 +202,8 @@
           }}
         />
         <UI.Button
-          wrapperClass="!w-1/10"
+          wrapperClass="w-8"
           content={{ icon: ButtonDelete }}
-          componentClass="bg-transparent h-10 w-10 border-none !shadow-none hover:shadow-none"
           onClick={() => {
             const options = [...(component.properties?.options || [])]
             options.splice(index, 1)

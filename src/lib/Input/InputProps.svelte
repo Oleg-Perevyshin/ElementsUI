@@ -5,6 +5,7 @@
   import type { IInputProps, UIComponent, ISelectOption } from '../types'
   import * as UI from '$lib'
   import { optionsStore } from '../options'
+  import { twMerge } from 'tailwind-merge'
 
   const { component, onPropertyChange } = $props<{
     component: UIComponent & { properties: Partial<IInputProps> }
@@ -132,9 +133,6 @@
           value={component.properties.number.minNum as number}
           type="number"
           onUpdate={(value) => {
-            // if ((value as number) >= component.properties.number.maxNum) {
-            //   value = component.properties.number.maxNum - component.properties.number.step
-            // }
             updateProperty('number.minNum', Number(value))
           }}
         />
@@ -143,9 +141,6 @@
           value={component.properties.number.maxNum as number}
           type="number"
           onUpdate={(value) => {
-            // if ((value as number) <= component.properties.number.minNum) {
-            //   value = component.properties.number.minNum + component.properties.number.step
-            // }
             updateProperty('number.maxNum', Number(value))
           }}
         />
@@ -190,7 +185,7 @@
         type="buttons"
         value={initialAlign}
         options={$optionsStore.ALIGN_OPTIONS}
-        onUpdate={(option) => updateProperty('label.class', `${component.properties.label.class} ${option.value}`)}
+        onUpdate={(option) => updateProperty('label.class', twMerge(component.properties.label.class, option.value))}
       />
       <UI.Select
         wrapperClass="h-14"

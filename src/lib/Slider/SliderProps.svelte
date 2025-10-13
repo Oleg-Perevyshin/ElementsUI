@@ -5,6 +5,7 @@
   import { type UIComponent, type ISliderProps, updateProperty } from '../types'
   import * as UI from '$lib'
   import { optionsStore } from '../options'
+  import { twMerge } from 'tailwind-merge'
 
   const { component, onPropertyChange } = $props<{
     component: UIComponent & { properties: Partial<ISliderProps> }
@@ -98,7 +99,7 @@
         type="buttons"
         value={initialAlign}
         options={$optionsStore.ALIGN_OPTIONS}
-        onUpdate={(option) => updateProperty('label.class', `${component.properties.label.class} ${option.value}`, component, onPropertyChange)}
+        onUpdate={(option) => updateProperty('label.class', twMerge(component.properties.label.class, option.value), component, onPropertyChange)}
       />
       <UI.Select
         wrapperClass="!h-14"
@@ -106,7 +107,7 @@
         type="buttons"
         options={$optionsStore.COLOR_OPTIONS}
         value={initialColor}
-        onUpdate={(option) => updateProperty('wrapperClass', `${component.properties.wrapperClass} ${option.value}`, component, onPropertyChange)}
+        onUpdate={(option) => updateProperty('wrapperClass', twMerge(component.properties.wrapperClass, option.value), component, onPropertyChange)}
       />
     </div>
   </div>

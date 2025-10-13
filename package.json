@@ -8,7 +8,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "prepack": "svelte-kit sync && svelte-package && publint",
-    "CheckUpdate": "npx npm-check-updates -u && npm install"
+    "CheckUpdate": "npx npm-check-updates -u && npm install",
+    "FiLeS": "tsx src/lib/Accordion/IconsLib/iconsLib.ts"
   },
   "svelte": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -38,12 +39,14 @@
     "prettier-plugin-tailwindcss": "^0.6.14",
     "tailwind-merge": "^3.3.1",
     "tailwindcss": "^4.1.14",
+    "tsx": "^4.20.6",
     "typescript": "^5.9.3"
   },
   "devDependencies": {
     "@sveltejs/kit": "^2.46.4",
     "@sveltejs/package": "^2.5.4",
     "@sveltejs/vite-plugin-svelte": "^6.2.1",
+    "@types/node": "^24.7.2",
     "publint": "^0.3.14",
     "svelte": "^5.39.11",
     "svelte-preprocess": "^6.0.3",

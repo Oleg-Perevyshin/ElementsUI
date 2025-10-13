@@ -4,11 +4,15 @@
   import { updateProperty, type IAccordionProps, type UIComponent } from '../types'
   import * as UI from '$lib'
   import { optionsStore } from '../options'
+  import { fly } from 'svelte/transition'
+  import { ICONS } from './icons'
 
   const { component, onPropertyChange } = $props<{
     component: UIComponent & { properties: Partial<IAccordionProps> }
     onPropertyChange: (value: string | object) => void
   }>()
+
+  let showIconLib = $state(true)
 
   const initialType = $derived($optionsStore.ACCORDION_TYPE_OPTIONS.find((t) => t.value === component.properties.outline))
 
@@ -51,7 +55,7 @@
         onUpdate={(option) => updateProperty('label.class', option.value as string, component, onPropertyChange)}
       />
     </div>
-    <div class="flex w-1/3 flex-col items-center px-2">
+    <div class="flex w-1/3 flex-col items-center gap-6 px-2">
       <UI.Select
         label={{ name: $t('constructor.props.type') }}
         type="buttons"
@@ -59,6 +63,26 @@
         options={$optionsStore.ACCORDION_TYPE_OPTIONS}
         onUpdate={(item) => updateProperty('outline', item.value as boolean, component, onPropertyChange)}
       />
+      <div class="relative w-full">
+        <UI.Button content={{ name: 'Иконка заголовка' }} onClick={() => (showIconLib = !showIconLib)} />
+        {#if showIconLib}
+          <div
+            transition:fly={{ duration: 350 }}
+            class="emoji-container absolute right-6 bottom-full z-10 m-2 flex max-h-60 max-w-md flex-wrap gap-1 overflow-auto rounded-2xl bg-[var(--field-color)] p-2 shadow-lg"
+          >
+            {#each ICONS as icon}
+              <button
+                class="h-8 w-8 cursor-pointer [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
+                onclick={() => {
+                  updateProperty('label.icon', icon as string, component, onPropertyChange)
+                }}
+              >
+                {@html icon}
+              </button>
+            {/each}
+          </div>
+        {/if}
+      </div>
     </div>
     <div class="flex w-1/3 flex-col items-center gap-2 px-2">
       <UI.FileAttach

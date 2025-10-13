@@ -6,14 +6,16 @@
   import IconLightDark from '../appIcons/IconLightDark.svelte'
   import GitHub from '../appIcons/GitHub.svelte'
   import { goto } from '$app/navigation'
+  import { page } from '$app/state'
 
   let { children } = $props()
   let currentTheme: boolean = $state(true)
 
-  let currentTab = $state('')
+  let activePage = $derived(page.url.pathname)
 
   /* Список всех компонентов */
   const menuItems = [
+    { page: 'all', name: 'ALL in ONE' },
     { page: 'accordion', name: 'Accordion' },
     { page: 'button', name: 'Button' },
     { page: 'color-picker', name: 'ColorPicker' },
@@ -68,36 +70,14 @@
     <nav
       class="m-1 flex w-64 flex-col items-start gap-2 overflow-y-auto rounded-xl border border-[var(--border-color)] bg-[var(--back-color)]/50 p-4"
     >
-      <div class="flex w-full">
-        <UI.Button
-          content={{ name: 'ALL in ONE' }}
-          componentClass="h-10 text-left"
-          onClick={() => {
-            goto(`/ElementsUI/components/all`)
-            currentTab = 'all'
-          }}
-        />
-        {#if currentTab === 'all'}
-          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
-            ><path
-              fill="currentColor"
-              d="M12.6 12L8.7 8.1q-.275-.275-.275-.7t.275-.7t.7-.275t.7.275l4.6 4.6q.15.15.213.325t.062.375t-.062.375t-.213.325l-4.6 4.6q-.275.275-.7.275t-.7-.275t-.275-.7t.275-.7z"
-            /></svg
-          >
-        {/if}
-      </div>
-
       {#each menuItems as item}
         <div class="flex w-full">
           <UI.Button
             content={{ name: item.name }}
-            componentClass="h-10 bg-gray text-left"
-            onClick={() => {
-              goto(`/ElementsUI/components/${item.page}`)
-              currentTab = item.name
-            }}
+            componentClass="h-10  text-left {item.page === 'all' ? '' : 'bg-gray'}"
+            onClick={() => goto(`/ElementsUI/components/${item.page}`)}
           />
-          {#if currentTab === item.name}
+          {#if activePage.startsWith(`/ElementsUI/components/${item.page}`)}
             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
               ><path
                 fill="currentColor"

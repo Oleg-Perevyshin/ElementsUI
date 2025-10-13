@@ -13,19 +13,32 @@
       label: { name: 'Label', class: 'text-center' },
       header: [
         {
-          key: 'column1',
-          label: { name: 'Column 1', class: 'text-center' },
+          key: 'id',
+          label: { name: 'ID' },
           width: '40%',
           sortable: true,
         } as ITableHeader<any>,
         {
-          key: 'column2',
-          label: { name: 'Column 2' },
+          key: 'device',
+          label: { name: 'Device' },
           width: '60%',
           sortable: false,
         } as ITableHeader<any>,
       ],
-      body: [],
+      body: [
+        {
+          id: 'Value of id',
+          device: 'Value of device',
+        },
+        {
+          id: 'Value of id',
+          device: 'Value of device',
+        },
+        {
+          id: 'Value of id',
+          device: 'Value of device',
+        },
+      ],
       footer: '',
     },
     position: { row: 0, col: 0, width: 0, height: 0 },
