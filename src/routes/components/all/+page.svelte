@@ -278,7 +278,7 @@
         wrapperClass="!w-1/2 bg-green px-2"
         label={{ name: 'Слайдер' }}
         value={-40}
-        number={{ minNum: -50, maxNum: 50, step: 1 }}
+        number={{ minNum: -25, maxNum: 25, step: 1 }}
         disabled={false}
       />
       <UI.Slider

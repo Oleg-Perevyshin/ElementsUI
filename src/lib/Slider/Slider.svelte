@@ -168,10 +168,7 @@
         onkeydown={null}
         onclick={disabled ? undefined : handleTrackClick}
       >
-        <div
-          class="absolute h-full {singlePosition === 100 ? 'z-10 rounded-full' : 'z-10 rounded-l-full'}"
-          style={`width: ${singlePosition}%; background-color: var(--bg-color)`}
-        ></div>
+        <div class="absolute z-10 h-full rounded-full" style={`width: ${singlePosition}%; background-color: var(--bg-color)`}></div>
       </div>
 
       <input
