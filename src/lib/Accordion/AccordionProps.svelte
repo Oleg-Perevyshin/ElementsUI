@@ -69,25 +69,27 @@
         {#if showIconLib}
           <Modal isOpen={true}>
             {#snippet main()}
-              <div class="flex">
-                {#each ICONS as icon}
-                  <button
-                    class="h-8 w-8 cursor-pointer [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
-                    onclick={() => {
-                      updateProperty('label.icon', icon as string, component, onPropertyChange)
-                    }}
-                  >
-                    {@html icon}
-                  </button>
-                {/each}
-              </div>
+              {#each ICONS as category}
+                {category[0]}
+                <div class="flex gap-3">
+                  {#each category[1] as icon}
+                    <button
+                      class="h-8 w-8 cursor-pointer [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
+                      onclick={() => {
+                        updateProperty('label.icon', icon as string, component, onPropertyChange)
+                      }}
+                    >
+                      {@html icon}
+                    </button>{/each}
+                </div>
+              {/each}
             {/snippet}
           </Modal>
 
-          <div
+          <!-- <div
             transition:fly={{ duration: 350 }}
             class="emoji-container absolute right-6 bottom-full z-10 m-2 flex max-h-60 max-w-md flex-wrap gap-1 overflow-auto rounded-2xl bg-[var(--field-color)] p-2 shadow-lg"
-          ></div>
+          ></div> -->
         {/if}
       </div>
     </div>

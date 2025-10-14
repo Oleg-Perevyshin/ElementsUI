@@ -28,21 +28,19 @@ const scanAllIcons = async () => {
       categories[category].push(svgContent)
     })
 
-  const entries = Object.entries(categories)
-    .map(([category, svgs]) => {
-      const svgArray = svgs.map((svg) => JSON.stringify(svg)).join(',\n    ')
-      return `  ${JSON.stringify(category)}: [\n    ${svgArray}\n  ]`
-    })
-    .join(',\n')
+  const content = `export const ICONS: [string, string[]][] = [
+${Object.entries(categories)
+  .map(([category, svgs]) => {
+    const svgArray = svgs.map((svg) => JSON.stringify(svg)).join(',\n    ')
+    return `  [${JSON.stringify(category)}, [\n    ${svgArray}\n  ]]`
+  })
+  .join(',\n')}
+]
 
-  const content = `export const ICONS: Record<string, string[]> = {
-${entries}
-}
 `
 
   fs.writeFileSync('src/lib/Accordion/icons.ts', content)
 
   console.log('icons.ts создан:', Object.keys(categories))
 }
-
 scanAllIcons()
