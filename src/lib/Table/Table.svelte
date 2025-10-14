@@ -222,7 +222,7 @@
 
                 {#if column.overflow?.copy}
                   <button
-                    class="m-2 flex cursor-pointer border-none bg-transparent text-2xl"
+                    class="mx-2 flex cursor-pointer border-none bg-transparent text-2xl"
                     onclick={(e) => {
                       e.preventDefault()
                       navigator.clipboard.writeText(row[column.key])

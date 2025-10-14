@@ -39,12 +39,6 @@
       label: { name: 'Image' },
       key: 'imageUrl',
       width: '20%',
-      image: {
-        src: (row: ITableRow) => row.imageUrl,
-        alt: 'Image',
-        width: '5rem',
-        height: '5rem',
-      },
     },
     { label: { name: 'Name' }, key: 'name', width: '12%', sortable: true },
     {
