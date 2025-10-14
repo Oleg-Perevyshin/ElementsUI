@@ -34,10 +34,6 @@
           id: 'Value of id',
           device: 'Value of device',
         },
-        {
-          id: 'Value of id',
-          device: 'Value of device',
-        },
       ],
       footer: '',
     },

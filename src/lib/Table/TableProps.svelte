@@ -43,6 +43,18 @@
     updateProperty('header', headers, component, onPropertyChange)
   }
 
+  const updateTableBody = () => {
+    const newBody = component.properties.body.map((row: object) => {
+      const newRow: Partial<object> = {}
+      component.properties.header.forEach((col: ITableHeader<any>) => {
+        const key = col.key as keyof object
+        newRow[key] = row[key] ?? `Value of ${key}`
+      })
+      return newRow
+    })
+    updateProperty('body', newBody, component, onPropertyChange)
+  }
+
   const updateButtonProperty = (columnIndex: number, buttonIndex: number, field: string, value: any) => {
     const headers = [...component.properties.header]
     const buttons = [...headers[columnIndex].buttons]
@@ -117,6 +129,7 @@
           }
           const headers = [...(component.properties.header || []), newColumn]
           updateProperty('header', headers, component, onPropertyChange)
+          updateTableBody()
         }}
       />
     </div>
@@ -129,21 +142,15 @@
           help={{ regExp: /^[0-9a-zA-Z_-]{0,16}$/ }}
           onUpdate={(value) => {
             updateTableHeader(columnIndex, 'key', value)
-            let newBody = component.properties.body.map((row: object) => {
-              const newRow: Partial<object> = {}
-              component.properties.header.forEach((col: ITableHeader<any>) => {
-                const key = col.key as keyof object
-                newRow[key] = row[key] ?? `Value of ${key}`
-              })
-              return newRow
-            })
-            updateProperty('body', newBody, component, onPropertyChange)
+            updateTableBody()
           }}
         />
         <UI.Input
           label={{ name: $t('constructor.props.table.columns.label') }}
           value={column.label.name}
-          onUpdate={(value) => updateTableHeader(columnIndex, 'label.name', value)}
+          onUpdate={(value) => {
+            updateTableHeader(columnIndex, 'label', { ['name']: value })
+          }}
         />
         <UI.Input
           label={{ name: $t('constructor.props.table.columns.width') }}

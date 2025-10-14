@@ -6,6 +6,7 @@
   import { optionsStore } from '../options'
   import { fly } from 'svelte/transition'
   import { ICONS } from './icons'
+  import Modal from '$lib/Modal.svelte'
 
   const { component, onPropertyChange } = $props<{
     component: UIComponent & { properties: Partial<IAccordionProps> }
@@ -66,21 +67,27 @@
       <div class="relative w-full">
         <UI.Button content={{ name: 'Иконка заголовка' }} onClick={() => (showIconLib = !showIconLib)} />
         {#if showIconLib}
+          <Modal isOpen={true}>
+            {#snippet main()}
+              <div class="flex">
+                {#each ICONS as icon}
+                  <button
+                    class="h-8 w-8 cursor-pointer [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
+                    onclick={() => {
+                      updateProperty('label.icon', icon as string, component, onPropertyChange)
+                    }}
+                  >
+                    {@html icon}
+                  </button>
+                {/each}
+              </div>
+            {/snippet}
+          </Modal>
+
           <div
             transition:fly={{ duration: 350 }}
             class="emoji-container absolute right-6 bottom-full z-10 m-2 flex max-h-60 max-w-md flex-wrap gap-1 overflow-auto rounded-2xl bg-[var(--field-color)] p-2 shadow-lg"
-          >
-            {#each ICONS as icon}
-              <button
-                class="h-8 w-8 cursor-pointer [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
-                onclick={() => {
-                  updateProperty('label.icon', icon as string, component, onPropertyChange)
-                }}
-              >
-                {@html icon}
-              </button>
-            {/each}
-          </div>
+          ></div>
         {/if}
       </div>
     </div>
