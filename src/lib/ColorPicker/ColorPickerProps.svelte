@@ -11,16 +11,8 @@
     onPropertyChange: (value: string | object, name?: string) => void
   }>()
 
-  const DeviceVariables = getContext<string[]>('DeviceVariables')
-  let VARIABLE_OPTIONS = $derived(
-    DeviceVariables && Array.isArray(DeviceVariables)
-      ? DeviceVariables.map((variable) => ({
-          id: variable,
-          value: variable,
-          name: variable,
-        }))
-      : [],
-  )
+  const DeviceVariables = getContext<{ id: string; value: string; name: string }[]>('DeviceVariables')
+  let VARIABLE_OPTIONS = $derived(DeviceVariables && Array.isArray(DeviceVariables) ? DeviceVariables : [])
 
   const initialAlign = $derived(
     $optionsStore.ALIGN_OPTIONS.find((a) =>
