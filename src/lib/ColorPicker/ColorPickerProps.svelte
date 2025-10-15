@@ -8,7 +8,7 @@
 
   const { component, onPropertyChange } = $props<{
     component: UIComponent & { properties: Partial<IColorPickerProps> }
-    onPropertyChange: (value: string | object) => void
+    onPropertyChange: (value: string | object, name?: string) => void
   }>()
 
   const DeviceVariables = getContext<string[]>('DeviceVariables')
@@ -38,7 +38,7 @@
         options={VARIABLE_OPTIONS}
         value={VARIABLE_OPTIONS.find((opt) => opt.value === component.properties.id)}
         onUpdate={(value) => {
-          updateProperty('id', value.value as string, component, onPropertyChange)
+          updateProperty('id', value.value as string, component, onPropertyChange, value.name?.split('|')[1].trim())
           updateProperty('eventHandler.Variables', value.value as string, component, onPropertyChange)
         }}
       />

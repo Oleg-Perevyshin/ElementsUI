@@ -21,7 +21,10 @@
   } = $props()
 
   const handleKeyDown = (event: KeyboardEvent) => {
-    if (event.key === 'Escape') isOpen = false
+    if (event.key === 'Escape') {
+      isOpen = false
+      onCancel()
+    }
   }
 
   onMount(() => {

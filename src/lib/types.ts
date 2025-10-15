@@ -6,7 +6,8 @@ export const updateProperty = (
   path: string,
   value: string | number | boolean | object | string[],
   component: UIComponent & { properties: Partial<UIComponent['properties']> },
-  onPropertyChange: (value: string | object) => void,
+  onPropertyChange: (value: string | object, name?: string) => void,
+  name?: string,
 ) => {
   const newProperties = JSON.parse(JSON.stringify(component.properties))
   const parts = path.split('.')
@@ -17,12 +18,13 @@ export const updateProperty = (
     obj = obj[part]
   }
   obj[parts[parts.length - 1]] = value
-  onPropertyChange(newProperties)
+  onPropertyChange(newProperties, name)
 }
 
 /* Интерфейс полного компонента */
 export interface UIComponent {
   id: string
+  name?: string
   type: 'Button' | 'Accordion' | 'Input' | 'Select' | 'Switch' | 'ColorPicker' | 'Slider' | 'TextField' | 'ProgressBar' | 'Graph' | 'Table'
   component:
     | Component<IButtonProps>

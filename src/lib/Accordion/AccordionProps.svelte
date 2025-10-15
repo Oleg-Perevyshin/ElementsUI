@@ -4,16 +4,17 @@
   import { updateProperty, type IAccordionProps, type UIComponent } from '../types'
   import * as UI from '$lib'
   import { optionsStore } from '../options'
-  import { fly } from 'svelte/transition'
   import { ICONS } from './icons'
   import Modal from '$lib/Modal.svelte'
+  import Button from '$lib/Button/Button.svelte'
+  import CrossIcon from '$lib/libIcons/CrossIcon.svelte'
 
   const { component, onPropertyChange } = $props<{
     component: UIComponent & { properties: Partial<IAccordionProps> }
     onPropertyChange: (value: string | object) => void
   }>()
 
-  let showIconLib = $state(true)
+  let showIconLib = $state(false)
 
   const initialType = $derived($optionsStore.ACCORDION_TYPE_OPTIONS.find((t) => t.value === component.properties.outline))
 
@@ -64,32 +65,41 @@
         options={$optionsStore.ACCORDION_TYPE_OPTIONS}
         onUpdate={(item) => updateProperty('outline', item.value as boolean, component, onPropertyChange)}
       />
-      <div class="relative w-full">
-        <UI.Button content={{ name: 'Иконка заголовка' }} onClick={() => (showIconLib = !showIconLib)} />
+      <div class="relative flex w-full gap-2">
+        <UI.Button content={{ name: 'Иконка заголовка' }} onClick={() => (showIconLib = true)} />
         {#if showIconLib}
-          <Modal isOpen={true}>
+          <Modal bind:isOpen={showIconLib} wrapperClass="w-150">
             {#snippet main()}
-              {#each ICONS as category}
-                {category[0]}
-                <div class="flex gap-3">
-                  {#each category[1] as icon}
-                    <button
-                      class="h-8 w-8 cursor-pointer [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
-                      onclick={() => {
-                        updateProperty('label.icon', icon as string, component, onPropertyChange)
-                      }}
-                    >
-                      {@html icon}
-                    </button>{/each}
-                </div>
-              {/each}
+              <div class="grid grid-cols-3">
+                {#each ICONS as category}
+                  <div class="relative m-1.5 rounded-xl border-2 border-[var(--border-color)] p-3">
+                    <div class="absolute -top-3.5 bg-[var(--back-color)] px-1">{category[0]}</div>
+                    <div class="grid grid-cols-3 place-items-center gap-2">
+                      {#each category[1] as icon}
+                        <button
+                          class="h-8 w-8 cursor-pointer [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
+                          onclick={() => {
+                            updateProperty('label.icon', icon as string, component, onPropertyChange)
+                          }}
+                        >
+                          {@html icon}
+                        </button>{/each}
+                    </div>
+                  </div>
+                {/each}
+              </div>
             {/snippet}
           </Modal>
-
-          <!-- <div
-            transition:fly={{ duration: 350 }}
-            class="emoji-container absolute right-6 bottom-full z-10 m-2 flex max-h-60 max-w-md flex-wrap gap-1 overflow-auto rounded-2xl bg-[var(--field-color)] p-2 shadow-lg"
-          ></div> -->
+        {/if}
+        {#if component.properties.label.icon}
+          <Button
+            wrapperClass="w-8.5 "
+            componentClass="p-0.5 bg-red"
+            content={{ icon: CrossIcon }}
+            onClick={() => {
+              updateProperty('label.icon', '', component, onPropertyChange)
+            }}
+          />
         {/if}
       </div>
     </div>

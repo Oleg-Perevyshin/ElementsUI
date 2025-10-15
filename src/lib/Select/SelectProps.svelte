@@ -126,7 +126,15 @@
         type="buttons"
         options={$optionsStore.COLOR_OPTIONS}
         value={initialColor}
-        onUpdate={(option) => updateProperty('wrapperClass', twMerge(component.properties.wrapperClass, option.value), component, onPropertyChange)}
+        onUpdate={(option) => {
+          updateProperty('wrapperClass', twMerge(component.properties.wrapperClass, option.value), component, onPropertyChange)
+          const options = [...(component.properties?.options || [])]
+          options.forEach((o) => {
+            o['class'] = option.value
+          })
+          updateProperty('options', options, component, onPropertyChange)
+          console.log(component.properties.wrapperClass, component.properties.options)
+        }}
       />
     </div>
     <div class="flex w-1/3 flex-col items-center px-2">
@@ -194,7 +202,9 @@
           label={{ name: $t('constructor.props.colors') }}
           type="buttons"
           options={$optionsStore.COLOR_OPTIONS}
-          value={initialColor}
+          value={$optionsStore.COLOR_OPTIONS.find((c) =>
+            (c.value as string).includes(option.class.split(' ').find((cls: string) => cls.startsWith('bg-'))),
+          )}
           onUpdate={(option) => {
             const options = [...(component.properties?.options || [])]
             options[index]['class'] = option.value

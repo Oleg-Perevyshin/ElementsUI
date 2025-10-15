@@ -68,7 +68,7 @@
               ${disabled ? 'opacity-50' : 'hover:shadow-md'} 
               ${readonly ? '' : 'hover:shadow-md'}
               ${help?.info ? 'pl-8' : ''} 
-              ${help.copyButton || type === 'password' || type === 'number' ? 'pr-8' : ''}`,
+              ${help.copyButton || type === 'password' || (type === 'number' && !readonly) ? 'pr-8' : ''}`,
           componentClass,
         )}
         style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"

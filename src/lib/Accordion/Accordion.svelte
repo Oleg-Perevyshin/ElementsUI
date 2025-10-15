@@ -32,14 +32,14 @@
     onclick={toggle}
   >
     <div class="flex w-full items-center">
-      <span
-        class={`flex h-8 w-8 shrink-0 items-center justify-center overflow-visible [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full`}
-      >
-        {#if label?.icon}
+      {#if label?.icon}
+        <span
+          class={`flex h-7 w-7 shrink-0 items-center justify-center overflow-visible [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full`}
+        >
           {@html label.icon}
-        {/if}
-      </span>
-      <span class="{twMerge('m-0 w-full cursor-pointer text-left font-semibold', label.class)} text-lg">
+        </span>
+      {/if}
+      <span class="{twMerge('m-0 w-full cursor-pointer px-3 text-left font-semibold', label.class)} text-lg">
         {label?.name}
       </span>
     </div>
