@@ -9,19 +9,11 @@
 
   const { component, onPropertyChange } = $props<{
     component: UIComponent & { properties: Partial<ISliderProps> }
-    onPropertyChange: (value: string | object) => void
+    onPropertyChange: (value: string | object, name?: string) => void
   }>()
 
-  const DeviceVariables = getContext<string[]>('DeviceVariables')
-  let VARIABLE_OPTIONS = $derived(
-    DeviceVariables && Array.isArray(DeviceVariables)
-      ? DeviceVariables.map((variable) => ({
-          id: variable,
-          value: variable,
-          name: variable,
-        }))
-      : [],
-  )
+  const DeviceVariables = getContext<{ id: string; value: string; name: string }[]>('DeviceVariables')
+  let VARIABLE_OPTIONS = $derived(DeviceVariables && Array.isArray(DeviceVariables) ? DeviceVariables : [])
 
   const initialAlign = $derived(
     $optionsStore.ALIGN_OPTIONS.find((a) =>
@@ -44,7 +36,7 @@
         options={VARIABLE_OPTIONS}
         value={VARIABLE_OPTIONS.find((opt) => opt.value === component.properties.id)}
         onUpdate={(value) => {
-          updateProperty('id', value.value as string, component, onPropertyChange)
+          updateProperty('id', value.value as string, component, onPropertyChange, value.name?.split('|')[1].trim())
           updateProperty('eventHandler.Variables', value.value as string, component, onPropertyChange)
         }}
       />

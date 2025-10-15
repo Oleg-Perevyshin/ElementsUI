@@ -11,19 +11,11 @@
 
   const { component, onPropertyChange } = $props<{
     component: UIComponent & { properties: Partial<ISelectProps> }
-    onPropertyChange: (path: string, value: string | object) => void
+    onPropertyChange: (value: string | object, name?: string) => void
   }>()
 
-  const DeviceVariables = getContext<string[]>('DeviceVariables')
-  let VARIABLE_OPTIONS = $derived(
-    DeviceVariables && Array.isArray(DeviceVariables)
-      ? DeviceVariables.map((variable) => ({
-          id: variable,
-          value: variable,
-          name: variable,
-        }))
-      : [],
-  )
+  const DeviceVariables = getContext<{ id: string; value: string; name: string }[]>('DeviceVariables')
+  let VARIABLE_OPTIONS = $derived(DeviceVariables && Array.isArray(DeviceVariables) ? DeviceVariables : [])
 
   type ValueTypeOption = {
     id: string
@@ -67,13 +59,12 @@
   <div class="relative mb-4 flex flex-row items-start justify-center">
     <div class="flex w-1/3 flex-col items-center px-2">
       <UI.Select
-        label={{ name: $t('constructor.props.argument') }}
-        type="buttons"
-        value={$optionsStore.FULL_ARGUMENT_OPTION.find((h) => h.value === component.properties.eventHandler.Argument) ??
-          $optionsStore.FULL_ARGUMENT_OPTION.find((h) => h.value === '')}
-        options={$optionsStore.FULL_ARGUMENT_OPTION}
-        onUpdate={(option) => {
-          updateProperty('eventHandler.Argument', option.value as string, component, onPropertyChange)
+        label={{ name: $t('constructor.props.variable') }}
+        options={VARIABLE_OPTIONS}
+        value={VARIABLE_OPTIONS.find((opt) => opt.value === component.properties.id)}
+        onUpdate={(value) => {
+          updateProperty('id', value.value as string, component, onPropertyChange, value.name?.split('|')[1].trim())
+          updateProperty('eventHandler.Variables', value.value as string, component, onPropertyChange)
         }}
       />
 

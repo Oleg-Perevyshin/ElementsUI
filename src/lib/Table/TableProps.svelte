@@ -11,19 +11,11 @@
 
   const { component, onPropertyChange } = $props<{
     component: UIComponent & { properties: Partial<ITableProps<object>> }
-    onPropertyChange: (value: string | object) => void
+    onPropertyChange: (value: string | object, name?: string) => void
   }>()
 
-  const DeviceVariables = getContext<string[]>('DeviceVariables')
-  let VARIABLE_OPTIONS = $derived(
-    DeviceVariables && Array.isArray(DeviceVariables)
-      ? DeviceVariables.map((variable) => ({
-          id: variable,
-          value: variable,
-          name: variable,
-        }))
-      : [],
-  )
+  const DeviceVariables = getContext<{ id: string; value: string; name: string }[]>('DeviceVariables')
+  let VARIABLE_OPTIONS = $derived(DeviceVariables && Array.isArray(DeviceVariables) ? DeviceVariables : [])
 
   const initialColor = $derived(
     $optionsStore.COLOR_OPTIONS.find((c) =>
@@ -74,17 +66,15 @@
 
 {#if component && component.properties}
   <div class="relative flex flex-row items-start justify-center">
-    <div class="flex w-1/3 flex-col items-center px-2">
-      <UI.Select
-        label={{ name: $t('constructor.props.variable') }}
-        options={VARIABLE_OPTIONS}
-        value={VARIABLE_OPTIONS.find((opt) => opt.value === component.properties.id)}
-        onUpdate={(value) => {
-          updateProperty('id', value.value as string, component, onPropertyChange)
-          updateProperty('eventHandler.Variables', value.value as string, component, onPropertyChange)
-        }}
-      />
-    </div>
+    <UI.Select
+      label={{ name: $t('constructor.props.variable') }}
+      options={VARIABLE_OPTIONS}
+      value={VARIABLE_OPTIONS.find((opt) => opt.value === component.properties.id)}
+      onUpdate={(value) => {
+        updateProperty('id', value.value as string, component, onPropertyChange, value.name?.split('|')[1].trim())
+        updateProperty('eventHandler.Variables', value.value as string, component, onPropertyChange)
+      }}
+    />
     <div class="flex w-1/3 flex-col px-2">
       <UI.Select
         wrapperClass="!h-14"

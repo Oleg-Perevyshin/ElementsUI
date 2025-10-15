@@ -9,20 +9,12 @@
 
   const { component, onPropertyChange } = $props<{
     component: UIComponent & { properties: Partial<IInputProps> }
-    onPropertyChange: (value: string | object) => void
+    onPropertyChange: (value: string | object, name?: string) => void
   }>()
 
   let isValidRegExp = $state(true)
-  const DeviceVariables = getContext<string[]>('DeviceVariables')
-  let VARIABLE_OPTIONS = $derived(
-    DeviceVariables && Array.isArray(DeviceVariables)
-      ? DeviceVariables.map((variable) => ({
-          id: variable,
-          value: variable,
-          name: variable,
-        }))
-      : [],
-  )
+  const DeviceVariables = getContext<{ id: string; value: string; name: string }[]>('DeviceVariables')
+  let VARIABLE_OPTIONS = $derived(DeviceVariables && Array.isArray(DeviceVariables) ? DeviceVariables : [])
 
   const initialColor = $derived(
     $optionsStore.COLOR_OPTIONS.find((c) =>
@@ -37,7 +29,7 @@
   )
 
   /* Обновление свойства */
-  const updateProperty = (path: string, value: string | object | boolean | number | RegExp) => {
+  const updateProperty = (path: string, value: string | object | boolean | number | RegExp, name?: string) => {
     const newProperties = JSON.parse(JSON.stringify(component.properties))
     if (path === 'regExp') {
       try {
@@ -72,7 +64,7 @@
     }
 
     obj[parts[parts.length - 1]] = value
-    onPropertyChange(newProperties)
+    onPropertyChange(newProperties, name)
   }
 
   const handleOptionColorChange = (color: string) => {
@@ -99,11 +91,9 @@
         label={{ name: $t('constructor.props.variable') }}
         options={VARIABLE_OPTIONS}
         value={VARIABLE_OPTIONS.find((opt) => opt.value === component.properties.id)}
-        onUpdate={(selectedOption) => {
-          if (selectedOption && selectedOption.name) {
-            updateProperty('id', selectedOption.value as string)
-            updateProperty('eventHandler.Variables', selectedOption.value as string)
-          }
+        onUpdate={(value) => {
+          updateProperty('id', value.value as string, value.name?.split('|')[1].trim())
+          updateProperty('eventHandler.Variables', value.value as string)
         }}
       />
       <UI.Select
