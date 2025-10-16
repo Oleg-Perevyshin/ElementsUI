@@ -1,6 +1,5 @@
 <!-- $lib/ElementsUI/Input.svelte -->
 <script lang="ts">
-  import { onMount } from 'svelte'
   import { fly } from 'svelte/transition'
   import type { IInputProps } from '../types'
   import { twMerge } from 'tailwind-merge'
@@ -17,7 +16,7 @@
     componentClass = '',
     maxlength = 100,
     textareaRows = 3,
-    number = { minNum: -1000000, maxNum: Infinity, step: 1 },
+    number = { minNum: -1000000, maxNum: 1000000, step: 1 },
     help = { info: '', autocomplete: 'off', copyButton: false, regExp: '^[\\s\\S]*$' },
     onUpdate = () => {},
   }: IInputProps = $props()

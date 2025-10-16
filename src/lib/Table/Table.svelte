@@ -2,9 +2,9 @@
 <script lang="ts">
   import { get } from 'svelte/store'
   import type { ITableHeader, ITableProps } from '../types'
-  import { fade, fly, slide } from 'svelte/transition'
+  import { fly } from 'svelte/transition'
   import { twMerge } from 'tailwind-merge'
-  import { Button, Modal, Slider } from '$lib'
+  import { Button, Modal } from '$lib'
   import { t } from '$lib/locales/i18n'
 
   let {

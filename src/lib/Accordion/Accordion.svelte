@@ -11,7 +11,7 @@
     size = { width: 1, height: 1 },
     label = { name: '', class: 'text-left', icon: null },
     children,
-    image,
+    image = '',
   }: IAccordionProps = $props()
 
   const toggle = () => (isOpen = !isOpen)
@@ -32,13 +32,14 @@
     onclick={toggle}
   >
     <div class="flex w-full items-center">
-      {#if label?.icon}
-        <span
-          class={`flex h-7 w-7 shrink-0 items-center justify-center overflow-visible [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full`}
-        >
+      <span
+        class={`flex h-7 w-7 shrink-0 items-center justify-center overflow-visible [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full`}
+      >
+        {#if label?.icon}
           {@html label.icon}
-        </span>
-      {/if}
+        {/if}
+      </span>
+
       <span class="{twMerge('m-0 w-full cursor-pointer px-3 text-left font-semibold', label.class)} text-lg">
         {label?.name}
       </span>

@@ -1,4 +1,3 @@
-<!-- $lib/ElementsUI/TableProps.svelte -->
 <script lang="ts">
   import { getContext } from 'svelte'
   import { t } from '$lib/locales/i18n'
@@ -9,9 +8,14 @@
   import { optionsStore } from '../options'
   import { twMerge } from 'tailwind-merge'
 
-  const { component, onPropertyChange } = $props<{
+  const {
+    component,
+    onPropertyChange,
+    forConstructor = true,
+  } = $props<{
     component: UIComponent & { properties: Partial<ITableProps<object>> }
-    onPropertyChange: (value: string | object, name?: string) => void
+    onPropertyChange: (value: string | object) => void
+    forConstructor?: boolean
   }>()
 
   const DeviceVariables = getContext<{ id: string; value: string; name: string }[]>('DeviceVariables')

@@ -6,9 +6,14 @@
   import { optionsStore } from '../options'
   import { twMerge } from 'tailwind-merge'
 
-  const { component, onPropertyChange } = $props<{
+  const {
+    component,
+    onPropertyChange,
+    forConstructor = true,
+  } = $props<{
     component: UIComponent & { properties: Partial<IButtonProps> }
     onPropertyChange: (value: string | object) => void
+    forConstructor?: boolean
   }>()
 
   let hasValue: boolean = $derived(component.properties.eventHandler.Value)
@@ -35,7 +40,7 @@
   )
 </script>
 
-{#if component && component.properties}
+{#if forConstructor}
   <div class="relative flex flex-row items-start justify-center">
     <!-- Сообщение для отправки в ws по нажатию кнопки -->
     <div class="flex w-1/3 flex-col items-center px-2">
@@ -96,6 +101,72 @@
         label={{ name: $t('constructor.props.name') }}
         value={component.properties.content.name}
         onUpdate={(value) => updateProperty('content.name', value as string, component, onPropertyChange)}
+      />
+      <UI.Select
+        label={{ name: $t('constructor.props.height') }}
+        type="buttons"
+        options={$optionsStore.HEIGHT_OPTIONS}
+        value={initialHeight}
+        onUpdate={(option) =>
+          updateProperty('componentClass', twMerge(component.properties.componentClass, option.value), component, onPropertyChange)}
+      />
+      <UI.Select
+        wrapperClass="h-14"
+        label={{ name: $t('constructor.props.colors') }}
+        type="buttons"
+        options={$optionsStore.COLOR_OPTIONS}
+        value={initialColor}
+        onUpdate={(option) =>
+          updateProperty('componentClass', twMerge(component.properties.componentClass, option.value), component, onPropertyChange)}
+      />
+    </div>
+  </div>
+{:else}
+  <div class="relative flex flex-row items-start justify-center">
+    <!-- Сообщение для отправки в ws по нажатию кнопки -->
+    <div class="flex w-1/3 flex-col items-center px-2">
+      <UI.Input
+        label={{ name: $t('constructor.props.id') }}
+        value={component.properties.id}
+        onUpdate={(value) => updateProperty('id', value as string, component, onPropertyChange)}
+      />
+      <UI.Input
+        label={{ name: $t('constructor.props.wrapperclass') }}
+        value={component.properties.wrapperClass}
+        onUpdate={(value) => updateProperty('wrapperClass', value as string, component, onPropertyChange)}
+      />
+
+      <UI.Switch
+        wrapperClass="bg-blue"
+        label={{ name: $t('constructor.props.disabled') }}
+        value={component.properties.disabled ? 2 : 1}
+        onChange={(value) => updateProperty('disabled', value === 2, component, onPropertyChange)}
+      />
+    </div>
+    <div class="flex w-1/3 flex-col px-2">
+      <UI.Input
+        label={{ name: $t('constructor.props.name') }}
+        value={component.properties.content.name}
+        onUpdate={(value) => updateProperty('content.name', value as string, component, onPropertyChange)}
+      />
+      <UI.Input
+        label={{ name: $t('constructor.props.info') }}
+        value={component.properties.content.info}
+        onUpdate={(value) => updateProperty('content.info', value as string, component, onPropertyChange)}
+      />
+      <UI.Input
+        label={{ name: $t('constructor.props.svgicon') }}
+        type="text-area"
+        maxlength={100000}
+        value={component.properties.content.icon}
+        onUpdate={(value) => updateProperty('content.icon', value as string, component, onPropertyChange)}
+      />
+    </div>
+    <div class="flex w-1/3 flex-col px-2">
+      <UI.Input
+        label={{ name: $t('constructor.props.componentclass') }}
+        value={component.properties.componentClass}
+        onUpdate={(value) => updateProperty('componentClass', value as string, component, onPropertyChange)}
       />
       <UI.Select
         label={{ name: $t('constructor.props.height') }}

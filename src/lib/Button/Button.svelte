@@ -91,7 +91,9 @@
             class={`flex items-center justify-center overflow-visible 
             ${content.name ? 'h-8 w-8' : `${svgSize()}`} [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full`}
           >
-            {#if content?.icon}
+            {#if typeof content?.icon === 'string'}
+              {@html content.icon}
+            {:else}
               {@const IconComponent = content?.icon}
               <IconComponent />
             {/if}

@@ -17,7 +17,7 @@
       readonly: false,
       maxlength: 32,
       number: { minNum: 0, maxNum: 10, step: 1 },
-      textareaRows: 1,
+      textareaRows: 3,
       placeholder: '',
       help: { copyButton: false, info: '', autocomplete: 'off' },
       eventHandler: { Header: 'SET', Argument: 'NoSend', Variables: [] },
@@ -34,11 +34,11 @@
   }
 </script>
 
-<div class="h-50">
+<div>
   <Input {...inputComponent.properties as IInputProps} />
-</div>
 
-<InputProps
-  component={inputComponent as UIComponent & { properties: Partial<IInputProps> }}
-  onPropertyChange={(value) => updateComponent(inputComponent.id, { properties: value } as object)}
-/>
+  <InputProps
+    component={inputComponent as UIComponent & { properties: Partial<IInputProps> }}
+    onPropertyChange={(value) => updateComponent(inputComponent.id, { properties: value } as object)}
+  />
+</div>

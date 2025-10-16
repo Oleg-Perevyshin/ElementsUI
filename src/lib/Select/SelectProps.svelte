@@ -1,4 +1,3 @@
-<!-- $lib/ElementsUI/SelectProps.svelte -->
 <script lang="ts">
   import { getContext } from 'svelte'
   import { t } from '$lib/locales/i18n'
@@ -9,9 +8,14 @@
   import { optionsStore } from '../options.js'
   import { twMerge } from 'tailwind-merge'
 
-  const { component, onPropertyChange } = $props<{
+  const {
+    component,
+    onPropertyChange,
+    forConstructor = true,
+  } = $props<{
     component: UIComponent & { properties: Partial<ISelectProps> }
-    onPropertyChange: (value: string | object, name?: string) => void
+    onPropertyChange: (value: string | object) => void
+    forConstructor?: boolean
   }>()
 
   const DeviceVariables = getContext<{ id: string; value: string; name: string }[]>('DeviceVariables')
@@ -124,7 +128,6 @@
             o['class'] = option.value
           })
           updateProperty('options', options, component, onPropertyChange)
-          console.log(component.properties.wrapperClass, component.properties.options)
         }}
       />
     </div>

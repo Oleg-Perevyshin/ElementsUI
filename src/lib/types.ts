@@ -80,7 +80,7 @@ export interface IButtonProps {
   content?: {
     name?: string
     info?: string
-    icon?: ConstructorOfATypedSvelteComponent | null
+    icon?: ConstructorOfATypedSvelteComponent | string | null
   }
   keyBind?: {
     key?: string

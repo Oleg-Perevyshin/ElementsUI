@@ -1,7 +1,9 @@
 <script lang="ts">
-  import { Button } from '$lib'
+  import { Accordion, Button } from '$lib'
   import ButtonProps from '$lib/Button/ButtonProps.svelte'
   import type { IButtonProps, Position, UIComponent } from '$lib/types'
+  import { formatObjectToString } from '../../common'
+  import CopyButton from '$lib/libIcons/CopyButton.svelte'
 
   let buttonComponent: UIComponent = $state({
     id: crypto.randomUUID(),
@@ -19,33 +21,35 @@
     parentId: '',
   })
 
-  // let selectedComponentId = $state<string | null>(components[0].id)
-  // let selectedComponent = $derived(selectedComponentId ? components.find((c) => c.id === selectedComponentId) : null)
+  let codeText = $derived(`
+<UI.Button
+${formatObjectToString(buttonComponent.properties as IButtonProps)} 
+/>`)
 
-  const updateComponent = (
-    id: string,
-    updates: Partial<{ position: Partial<Position>; parentId: string; properties: Partial<UIComponent['properties']> }>,
-  ) => {
+  const updateComponent = (updates: Partial<{ position: Partial<Position>; parentId: string; properties: Partial<UIComponent['properties']> }>) => {
     buttonComponent = {
       ...buttonComponent,
-      position: updates.position ? { ...buttonComponent.position, ...updates.position } : buttonComponent.position,
-      parentId: updates.parentId ?? buttonComponent.parentId,
       properties: updates.properties ? { ...buttonComponent.properties, ...updates.properties } : buttonComponent.properties,
     }
   }
 </script>
 
-<Button {...buttonComponent.properties as IButtonProps} />
+<div class="relative h-full">
+  <div class="py-6">
+    <Button {...buttonComponent.properties as IButtonProps} />
+  </div>
 
-<ButtonProps
-  component={buttonComponent as UIComponent & { properties: Partial<IButtonProps> }}
-  onPropertyChange={(value) => updateComponent(buttonComponent.id, { properties: value } as object)}
-/>
+  <div class="absolute inset-x-0 bottom-0 w-full">
+    <ButtonProps
+      component={buttonComponent as UIComponent & { properties: Partial<IButtonProps> }}
+      onPropertyChange={(value) => updateComponent({ properties: value } as object)}
+      forConstructor={false}
+    />
 
-<!-- <div class="code-block">
-  <pre>{`
-  <Button 
-  name={${(buttonComponent.properties as IButtonProps).name ?? ''}} 
-  />
-  `}</pre>
-</div> -->
+    <div class="relative my-4">
+      <Button wrapperClass="absolute top-3 right-5 w-6" content={{ icon: CopyButton }} onClick={() => navigator.clipboard.writeText(codeText)} />
+      <pre class="overflow-x-auto">{codeText}
+  </pre>
+    </div>
+  </div>
+</div>

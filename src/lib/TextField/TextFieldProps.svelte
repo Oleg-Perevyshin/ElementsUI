@@ -1,4 +1,3 @@
-<!-- $lib/ElementsUI/GridAccordionProps.svelte -->
 <script lang="ts">
   import { t } from '$lib/locales/i18n'
   import { updateProperty, type ITextFieldProps, type UIComponent } from '../types'
@@ -7,11 +6,15 @@
   import { getContext } from 'svelte'
   import { twMerge } from 'tailwind-merge'
 
-  const { component, onPropertyChange } = $props<{
+  const {
+    component,
+    onPropertyChange,
+    forConstructor = true,
+  } = $props<{
     component: UIComponent & { properties: Partial<ITextFieldProps> }
-    onPropertyChange: (value: string | object, name?: string) => void
+    onPropertyChange: (value: string | object) => void
+    forConstructor?: boolean
   }>()
-
   const DeviceVariables = getContext<{ id: string; value: string; name: string }[]>('DeviceVariables')
   let VARIABLE_OPTIONS = $derived(DeviceVariables && Array.isArray(DeviceVariables) ? DeviceVariables : [])
 

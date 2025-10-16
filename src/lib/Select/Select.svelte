@@ -71,7 +71,6 @@
       isDropdownOpen = filteredOptions.length > 0
 
       const selectedFromList = options.some((option) => option.name?.toString() === searchValue)
-      console.log(selectedFromList)
 
       if (!selectedFromList) {
         const newOption: ISelectOption<T> = {
@@ -134,7 +133,7 @@
       </div>
     {/if}
   {:else if type === 'buttons'}
-    <div {id} class="flex h-full w-full flex-row justify-center">
+    <div {id} class="flex h-full w-full flex-row justify-center rounded-full border border-[var(--bg-color)]">
       {#each options as option, index (option.id)}
         <button
           id={option.id}

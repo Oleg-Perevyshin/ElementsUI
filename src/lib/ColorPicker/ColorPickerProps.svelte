@@ -6,9 +6,14 @@
   import { getContext } from 'svelte'
   import { optionsStore } from '../options'
 
-  const { component, onPropertyChange } = $props<{
+  const {
+    component,
+    onPropertyChange,
+    forConstructor = true,
+  } = $props<{
     component: UIComponent & { properties: Partial<IColorPickerProps> }
-    onPropertyChange: (value: string | object, name?: string) => void
+    onPropertyChange: (value: string | object) => void
+    forConstructor?: boolean
   }>()
 
   const DeviceVariables = getContext<{ id: string; value: string; name: string }[]>('DeviceVariables')

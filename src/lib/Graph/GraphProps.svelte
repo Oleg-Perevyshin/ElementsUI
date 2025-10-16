@@ -1,13 +1,17 @@
-<!-- $lib/ElementsUI/SwitchProps.svelte -->
 <script lang="ts">
   import { getContext } from 'svelte'
   import { t } from '$lib/locales/i18n'
   import { type UIComponent, type IGraphProps, updateProperty } from '../types'
   import * as UI from '$lib'
 
-  const { component, onPropertyChange } = $props<{
+  const {
+    component,
+    onPropertyChange,
+    forConstructor = true,
+  } = $props<{
     component: UIComponent & { properties: Partial<IGraphProps> }
-    onPropertyChange: (value: string | object, name?: string) => void
+    onPropertyChange: (value: string | object) => void
+    forConstructor?: boolean
   }>()
 
   const DeviceVariables = getContext<{ id: string; value: string; name: string }[]>('DeviceVariables')
