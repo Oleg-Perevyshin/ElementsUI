@@ -62,14 +62,6 @@
       />
     </div>
     <div class="flex w-1/3 flex-col items-center px-2">
-      <UI.Select
-        label={{ name: $t('constructor.props.type') }}
-        type="buttons"
-        value={initialType}
-        options={$optionsStore.ACCORDION_TYPE_OPTIONS}
-        onUpdate={(item) => updateProperty('outline', item.value as boolean, component, onPropertyChange)}
-      />
-
       <div class="relative mt-6 flex w-full gap-2">
         <UI.Button content={{ name: 'Иконка заголовка' }} onClick={() => (showIconLib = true)} />
         {#if showIconLib}
@@ -107,6 +99,13 @@
           />
         {/if}
       </div>
+      <UI.Select
+        label={{ name: $t('constructor.props.type') }}
+        type="buttons"
+        value={initialType}
+        options={$optionsStore.ACCORDION_TYPE_OPTIONS}
+        onUpdate={(item) => updateProperty('outline', item.value as boolean, component, onPropertyChange)}
+      />
     </div>
     <div class="flex w-1/3 flex-col items-center gap-2 px-2">
       <div class="flex">
@@ -167,21 +166,6 @@
       />
     </div>
     <div class="flex w-1/3 flex-col items-center px-2">
-      <UI.Input
-        label={{ name: $t('constructor.props.wrapperclass') }}
-        value={component.properties.wrapperClass}
-        onUpdate={(value) => updateProperty('wrapperClass', value as string, component, onPropertyChange)}
-      />
-      <UI.Input
-        label={{ name: $t('constructor.props.label') }}
-        value={component.properties.label.name}
-        onUpdate={(value) => updateProperty('label.name', value as string, component, onPropertyChange)}
-      />
-      <UI.Input
-        label={{ name: $t('constructor.props.label.class') }}
-        value={component.properties.label.class}
-        onUpdate={(value) => updateProperty('label.class', value as string, component, onPropertyChange)}
-      />
       <div class="relative mt-5 flex w-full gap-2">
         <UI.Button content={{ name: 'Иконка заголовка' }} onClick={() => (showIconLib = true)} />
         {#if showIconLib}
@@ -219,6 +203,21 @@
           />
         {/if}
       </div>
+      <UI.Input
+        label={{ name: $t('constructor.props.wrapperclass') }}
+        value={component.properties.wrapperClass}
+        onUpdate={(value) => updateProperty('wrapperClass', value as string, component, onPropertyChange)}
+      />
+      <UI.Input
+        label={{ name: $t('constructor.props.label') }}
+        value={component.properties.label.name}
+        onUpdate={(value) => updateProperty('label.name', value as string, component, onPropertyChange)}
+      />
+      <UI.Input
+        label={{ name: $t('constructor.props.label.class') }}
+        value={component.properties.label.class}
+        onUpdate={(value) => updateProperty('label.class', value as string, component, onPropertyChange)}
+      />
     </div>
     <div class="flex w-1/3 flex-col items-center gap-2 px-2">
       <div class="flex">

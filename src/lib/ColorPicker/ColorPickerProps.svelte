@@ -26,7 +26,7 @@
   )
 </script>
 
-{#if component && component.properties}
+{#if forConstructor}
   <div class="relative flex flex-row items-start justify-center">
     <!-- Сообщение для отправки в ws по нажатию кнопки -->
     <div class="flex w-1/3 flex-col items-center px-2">
@@ -53,7 +53,6 @@
       <UI.Input
         label={{ name: $t('constructor.props.label') }}
         value={component.properties.label.name}
-        type="text"
         onUpdate={(value) => updateProperty('label.name', value as string, component, onPropertyChange)}
       />
       <UI.Select
@@ -62,6 +61,47 @@
         value={initialAlign}
         options={$optionsStore.ALIGN_OPTIONS}
         onUpdate={(option) => updateProperty('label.class', option.value as string, component, onPropertyChange)}
+      />
+    </div>
+  </div>
+{:else}
+  <div class="relative flex flex-row items-start justify-center">
+    <!-- Сообщение для отправки в ws по нажатию кнопки -->
+    <div class="flex w-1/3 flex-col items-center px-2">
+      <UI.Input
+        label={{ name: $t('constructor.props.id') }}
+        value={component.properties.id}
+        onUpdate={(value) => updateProperty('id', value as string, component, onPropertyChange)}
+      />
+      <UI.Input
+        label={{ name: $t('constructor.props.wrapperclass') }}
+        value={component.properties.wrapperClass}
+        onUpdate={(value) => updateProperty('wrapperClass', value as string, component, onPropertyChange)}
+      />
+    </div>
+    <div class="flex w-1/3 flex-col px-2">
+      <UI.Input
+        label={{ name: $t('constructor.props.label') }}
+        value={component.properties.label.name}
+        onUpdate={(value) => updateProperty('label.name', value as string, component, onPropertyChange)}
+      />
+      <UI.Input
+        label={{ name: $t('constructor.props.label.class') }}
+        value={component.properties.label.class}
+        onUpdate={(value) => updateProperty('label.class', value as string, component, onPropertyChange)}
+      />
+    </div>
+    <div class="flex w-1/3 flex-col px-2">
+      <UI.TextField content={{ name: $t('constructor.props.defaultcolor'), class: 'font-bold' }} />
+      <UI.Input
+        label={{ name: $t('constructor.props.label') }}
+        value={component.properties.label.name}
+        onUpdate={(value) => updateProperty('label.name', value as string, component, onPropertyChange)}
+      />
+      <UI.Input
+        label={{ name: $t('constructor.props.label.class') }}
+        value={component.properties.label.class}
+        onUpdate={(value) => updateProperty('label.class', value as string, component, onPropertyChange)}
       />
     </div>
   </div>

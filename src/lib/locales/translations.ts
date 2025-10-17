@@ -48,6 +48,7 @@ const translations: Translations = {
     'constructor.props.componentclass': 'Стили компонента',
     'constructor.props.svgicon': 'SVG-иконка (строка)',
     'constructor.props.open': 'Разворачивание',
+    'constructor.props.defaultcolor': 'Первоначальный цвет',
     'constructor.props.type': 'Тип',
     'constructor.props.size': 'Размер',
     'constructor.props.header': 'Заголовок пакета',

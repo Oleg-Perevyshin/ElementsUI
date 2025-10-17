@@ -1,9 +1,9 @@
 <script lang="ts">
   import { Accordion, Button } from '$lib'
-  import ButtonProps from '$lib/Button/ButtonProps.svelte'
   import type { IButtonProps, Position, UIComponent } from '$lib/types'
   import { formatObjectToString } from '../../common'
-  import CopyButton from '$lib/libIcons/CopyButton.svelte'
+  import ComponentExample from '$lib/ComponentExample.svelte'
+  import ButtonProps from '$lib/Button/ButtonProps.svelte'
 
   let buttonComponent: UIComponent = $state({
     id: crypto.randomUUID(),
@@ -24,6 +24,7 @@
   let codeText = $derived(`
 <UI.Button
 ${formatObjectToString(buttonComponent.properties as IButtonProps)} 
+  onClick={() => {}}
 />`)
 
   const updateComponent = (updates: Partial<{ position: Partial<Position>; parentId: string; properties: Partial<UIComponent['properties']> }>) => {
@@ -34,22 +35,17 @@ ${formatObjectToString(buttonComponent.properties as IButtonProps)}
   }
 </script>
 
-<div class="relative h-full">
-  <div class="py-6">
-    <Button {...buttonComponent.properties as IButtonProps} />
-  </div>
-
-  <div class="absolute inset-x-0 bottom-0 w-full">
+<ComponentExample {codeText}>
+  {#snippet component()}
+    <div class="my-10">
+      <Button {...buttonComponent.properties as IButtonProps} />
+    </div>
+  {/snippet}
+  {#snippet componentProps()}
     <ButtonProps
       component={buttonComponent as UIComponent & { properties: Partial<IButtonProps> }}
       onPropertyChange={(value) => updateComponent({ properties: value } as object)}
       forConstructor={false}
     />
-
-    <div class="relative my-4">
-      <Button wrapperClass="absolute top-3 right-5 w-6" content={{ icon: CopyButton }} onClick={() => navigator.clipboard.writeText(codeText)} />
-      <pre class="overflow-x-auto">{codeText}
-  </pre>
-    </div>
-  </div>
-</div>
+  {/snippet}
+</ComponentExample>

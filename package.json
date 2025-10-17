@@ -1,6 +1,6 @@
 {
   "name": "poe-svelte-ui-lib",
-  "version": "1.1.9",
+  "version": "1.1.10",
   "license": "MIT",
   "type": "module",
   "scripts": {
@@ -46,9 +46,9 @@
     "@sveltejs/kit": "^2.47.0",
     "@sveltejs/package": "^2.5.4",
     "@sveltejs/vite-plugin-svelte": "^6.2.1",
-    "@types/node": "^24.7.2",
+    "@types/node": "^24.8.1",
     "publint": "^0.3.14",
-    "svelte": "^5.40.1",
+    "svelte": "^5.40.2",
     "svelte-preprocess": "^6.0.3",
     "vite": "^7.1.10",
     "vite-plugin-compression": "^0.5.1"

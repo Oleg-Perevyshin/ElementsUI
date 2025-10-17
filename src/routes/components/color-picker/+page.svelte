@@ -1,7 +1,9 @@
 <script lang="ts">
   import ColorPicker from '$lib/ColorPicker/ColorPicker.svelte'
   import ColorPickerProps from '$lib/ColorPicker/ColorPickerProps.svelte'
+  import ComponentExample from '$lib/ComponentExample.svelte'
   import type { IColorPickerProps, UIComponent } from '$lib/types'
+  import { formatObjectToString } from '../../common'
 
   let colorPickerComponent: UIComponent = $state({
     id: crypto.randomUUID(),
@@ -9,7 +11,6 @@
     component: null,
     properties: {
       id: crypto.randomUUID(),
-      wrapperClass: '',
       label: { name: 'Label', class: 'text-center' },
       value: [0, 0, 0],
       eventHandler: { Header: 'SET', Argument: 'NoSave', Variables: [] },
@@ -18,7 +19,13 @@
     parentId: '',
   })
 
-  const updateComponent = (id: string, updates: Partial<{ properties: Partial<UIComponent['properties']> }>) => {
+  let codeText = $derived(`
+<UI.ColorPicker
+${formatObjectToString(colorPickerComponent.properties as IColorPickerProps)} 
+  onChange={() => {}}
+/>`)
+
+  const updateComponent = (updates: Partial<{ properties: Partial<UIComponent['properties']> }>) => {
     colorPickerComponent = {
       ...colorPickerComponent,
       properties: updates.properties ? { ...colorPickerComponent.properties, ...updates.properties } : colorPickerComponent.properties,
@@ -26,11 +33,15 @@
   }
 </script>
 
-<div>
-  <ColorPicker {...colorPickerComponent.properties as IColorPickerProps} />
-
-  <ColorPickerProps
-    component={colorPickerComponent as UIComponent & { properties: Partial<IColorPickerProps> }}
-    onPropertyChange={(value) => updateComponent(colorPickerComponent.id, { properties: value } as object)}
-  />
-</div>
+<ComponentExample {codeText}>
+  {#snippet component()}
+    <ColorPicker {...colorPickerComponent.properties as IColorPickerProps} />
+  {/snippet}
+  {#snippet componentProps()}
+    <ColorPickerProps
+      component={colorPickerComponent as UIComponent & { properties: Partial<IColorPickerProps> }}
+      onPropertyChange={(value) => updateComponent({ properties: value } as object)}
+      forConstructor={false}
+    />
+  {/snippet}
+</ComponentExample>

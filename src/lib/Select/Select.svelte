@@ -140,7 +140,7 @@
           class="{twMerge(
             `m-0 inline-block min-w-0 flex-1 items-center px-2 py-1 font-semibold shadow-sm transition-all duration-300 select-none
             ${option.disabled || disabled ? 'opacity-50' : 'cursor-pointer hover:shadow-md'}
-            ${option.value === value?.value && value !== null ? 'z-10 py-0 shadow-[0_0_10px_var(--shadow-color)] hover:shadow-[0_0_15px_var(--shadow-color)]' : ''}  
+            ${option.value === value?.value && value !== null ? 'z-10 py-1 shadow-[0_0_10px_var(--shadow-color)] hover:shadow-[0_0_15px_var(--shadow-color)]' : ''}  
             ${options.length > 0 && index === 0 ? 'rounded-l-2xl' : ''} ${index === options.length - 1 ? 'rounded-r-2xl' : ''}`,
             option.class,
           )} bg-[var(--bg-color)]"

@@ -50,6 +50,7 @@ export const formatObjectToString = (properties: UIComponent['properties']): str
 
   const lines: string[] = []
   for (const [key, value] of Object.entries(obj)) {
+    if (key === 'eventHandler') continue
     let formattedValue = formatValue(value)
 
     if (typeof value === 'object' && value !== null) {
