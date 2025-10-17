@@ -20,8 +20,8 @@
 <div
   {id}
   class={twMerge(
-    `w-full border border-[var(--border-color)] bg-[var(--container-color)] p-0 transition-shadow duration-250 
-    ${outline ? 'border-[var(--bg-color)]' : 'rounded-xl hover:shadow-md'}`,
+    `${outline ? 'border-none' : 'rounded-xl hover:shadow-md'} w-full
+    border border-[var(--border-color)] bg-[var(--container-color)] p-0 transition-shadow duration-250`,
     wrapperClass,
   )}
   transition:slide={{ duration: 250 }}
