@@ -10,7 +10,7 @@
     forConstructor = true,
   } = $props<{
     component: UIComponent & { properties: Partial<IGraphProps> }
-    onPropertyChange: (value: string | object) => void
+    onPropertyChange: (value: string | object, name?: string) => void
     forConstructor?: boolean
   }>()
 

@@ -15,7 +15,7 @@
     forConstructor = true,
   } = $props<{
     component: UIComponent & { properties: Partial<IAccordionProps> }
-    onPropertyChange: (value: string | object) => void
+    onPropertyChange: (value: string | object, name?: string) => void
     forConstructor?: boolean
   }>()
 
