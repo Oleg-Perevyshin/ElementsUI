@@ -40,6 +40,13 @@ const translations: Translations = {
     'constructor.props.valuetype.text': 'Строка',
     'constructor.props.valuetype.number': 'Число',
 
+    'constructor.props.type.file': 'Файл',
+    'constructor.props.type.image': 'Изображение',
+    'constructor.props.type.cover': 'Урезанный',
+    'constructor.props.type.contain': 'Полный',
+    'constructor.props.type.square': 'Квадрат',
+    'constructor.props.type.circle': 'Круг',
+
     /* Общие для редактора свойств */
     'constructor.props.id': 'Идентификатор',
     'constructor.props.label': 'Текст надписи',
@@ -49,6 +56,11 @@ const translations: Translations = {
     'constructor.props.svgicon': 'SVG-иконка (строка)',
     'constructor.props.open': 'Разворачивание',
     'constructor.props.defaultcolor': 'Первоначальный цвет',
+    'constructor.props.file.accept': 'Допустимые файлы',
+    'constructor.props.imageSize.height': 'Высота',
+    'constructor.props.imageSize.width': 'Ширина',
+    'constructor.props.fitmode': 'Вид',
+    'constructor.props.form': 'Форма',
     'constructor.props.type': 'Тип',
     'constructor.props.size': 'Размер',
     'constructor.props.header': 'Заголовок пакета',

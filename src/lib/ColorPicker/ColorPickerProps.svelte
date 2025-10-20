@@ -93,16 +93,32 @@
     </div>
     <div class="flex w-1/3 flex-col px-2">
       <UI.TextField content={{ name: $t('constructor.props.defaultcolor'), class: 'font-bold' }} />
-      <UI.Input
-        label={{ name: $t('constructor.props.label') }}
-        value={component.properties.label.name}
-        onUpdate={(value) => updateProperty('label.name', value as string, component, onPropertyChange)}
-      />
-      <UI.Input
-        label={{ name: $t('constructor.props.label.class') }}
-        value={component.properties.label.class}
-        onUpdate={(value) => updateProperty('label.class', value as string, component, onPropertyChange)}
-      />
+      <div class="flex items-center gap-3">
+        <UI.TextField wrapperClass="w-4" content={{ name: 'R', class: 'font-bold' }} />
+        <UI.Input
+          value={component.properties.value[0]}
+          type="number"
+          number={{ minNum: 0, maxNum: 255, step: 1 }}
+          onUpdate={(value) =>
+            updateProperty('value', [value as number, component.properties.value[1], component.properties.value[2]], component, onPropertyChange)}
+        />
+        <UI.TextField wrapperClass="w-4" content={{ name: 'G', class: 'font-bold' }} />
+        <UI.Input
+          value={component.properties.value[1]}
+          type="number"
+          number={{ minNum: 0, maxNum: 255, step: 1 }}
+          onUpdate={(value) =>
+            updateProperty('value', [component.properties.value[0], value as number, component.properties.value[2]], component, onPropertyChange)}
+        />
+        <UI.TextField wrapperClass="w-4" content={{ name: 'B', class: 'font-bold' }} />
+        <UI.Input
+          value={component.properties.value[2]}
+          type="number"
+          number={{ minNum: 0, maxNum: 255, step: 1 }}
+          onUpdate={(value) =>
+            updateProperty('value', [component.properties.value[0], component.properties.value[1], value as number], component, onPropertyChange)}
+        />
+      </div>
     </div>
   </div>
 {/if}

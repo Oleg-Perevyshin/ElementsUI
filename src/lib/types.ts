@@ -1,6 +1,7 @@
 // $lib/ElementsUI/types.ts
 import type { Component, Snippet } from 'svelte'
 import type { Writable } from 'svelte/store'
+import type { IFileInputProps } from './FileAttach/FileAttach.svelte'
 
 export const updateProperty = (
   path: string,
@@ -25,7 +26,19 @@ export const updateProperty = (
 export interface UIComponent {
   id: string
   name?: string
-  type: 'Button' | 'Accordion' | 'Input' | 'Select' | 'Switch' | 'ColorPicker' | 'Slider' | 'TextField' | 'ProgressBar' | 'Graph' | 'Table'
+  type:
+    | 'Button'
+    | 'Accordion'
+    | 'Input'
+    | 'Select'
+    | 'Switch'
+    | 'ColorPicker'
+    | 'Slider'
+    | 'TextField'
+    | 'ProgressBar'
+    | 'Graph'
+    | 'Table'
+    | 'FileAttach'
   component:
     | Component<IButtonProps>
     | Component<IInputProps>
@@ -37,6 +50,7 @@ export interface UIComponent {
     | Component<IProgressBarProps>
     | Component<IGraphProps>
     | Component<ITableProps<object>>
+    | Component<IFileInputProps>
     | null
   properties:
     | IAccordionProps
@@ -50,6 +64,7 @@ export interface UIComponent {
     | IProgressBarProps
     | IGraphProps
     | ITableProps<object>
+    | IFileInputProps
   position: Position
   parentId: string
 }

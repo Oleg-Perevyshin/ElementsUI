@@ -116,14 +116,16 @@
           bind:currentImage
           onChange={handleImageUpload}
         />
-        <Button
-          wrapperClass="w-8.5 mt-6"
-          componentClass="p-0.5 bg-red"
-          content={{ icon: CrossIcon }}
-          onClick={() => {
-            updateProperty('image', '', component, onPropertyChange)
-          }}
-        />
+        {#if currentImage}
+          <Button
+            wrapperClass="w-8.5 mt-6"
+            componentClass="p-0.5 bg-red"
+            content={{ icon: CrossIcon }}
+            onClick={() => {
+              updateProperty('image', '', component, onPropertyChange)
+            }}
+          />
+        {/if}
       </div>
     </div>
   </div>
@@ -166,6 +168,11 @@
       />
     </div>
     <div class="flex w-1/3 flex-col items-center px-2">
+      <UI.Input
+        label={{ name: $t('constructor.props.wrapperclass') }}
+        value={component.properties.wrapperClass}
+        onUpdate={(value) => updateProperty('wrapperClass', value as string, component, onPropertyChange)}
+      />
       <div class="relative mt-5 flex w-full gap-2">
         <UI.Button content={{ name: 'Иконка заголовка' }} onClick={() => (showIconLib = true)} />
         {#if showIconLib}
@@ -203,11 +210,7 @@
           />
         {/if}
       </div>
-      <UI.Input
-        label={{ name: $t('constructor.props.wrapperclass') }}
-        value={component.properties.wrapperClass}
-        onUpdate={(value) => updateProperty('wrapperClass', value as string, component, onPropertyChange)}
-      />
+
       <UI.Input
         label={{ name: $t('constructor.props.label') }}
         value={component.properties.label.name}
@@ -228,14 +231,16 @@
           bind:currentImage
           onChange={handleImageUpload}
         />
-        <Button
-          wrapperClass="w-8.5 mt-6"
-          componentClass="p-0.5 bg-red"
-          content={{ icon: CrossIcon }}
-          onClick={() => {
-            updateProperty('image', '', component, onPropertyChange)
-          }}
-        />
+        {#if currentImage}
+          <Button
+            wrapperClass="w-8.5 mt-6"
+            componentClass="p-0.5 bg-red"
+            content={{ icon: CrossIcon }}
+            onClick={() => {
+              updateProperty('image', '', component, onPropertyChange)
+            }}
+          />
+        {/if}
       </div>
     </div>
   </div>

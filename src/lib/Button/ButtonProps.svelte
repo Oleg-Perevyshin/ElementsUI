@@ -65,16 +65,18 @@
             updateProperty('eventHandler.Argument', option.value as string, component, onPropertyChange)
           }}
         />
-
-        <UI.Input
-          wrapperClass="{Header.value === 'SET' ? 'mt-1' : ''} "
-          value={component.properties.eventHandler.Argument}
-          maxlength={32}
-          disabled={component.properties.eventHandler.Argument == 'Save' || component.properties.eventHandler.Argument == 'NoSave'}
-          help={{ info: $t('constructor.props.argument.info'), autocomplete: 'on', regExp: /^[a-zA-Z0-9\-_]{0,32}$/ }}
-          onUpdate={(value) => updateProperty('eventHandler.Argument', value as string, component, onPropertyChange)}
-        />
       {/if}
+      <UI.Input
+        label={{ name: Header.value !== 'SET' ? $t('constructor.props.argument') : '' }}
+        wrapperClass="{Header.value === 'SET' ? 'mt-1' : ''} "
+        value={component.properties.eventHandler.Argument}
+        maxlength={32}
+        disabled={Header.value === 'SET' &&
+          (component.properties.eventHandler.Argument == 'Save' || component.properties.eventHandler.Argument == 'NoSave')}
+        help={{ info: $t('constructor.props.argument.info'), autocomplete: 'on', regExp: /^[a-zA-Z0-9\-_]{0,32}$/ }}
+        onUpdate={(value) => updateProperty('eventHandler.Argument', value as string, component, onPropertyChange)}
+      />
+
       {#if (component.properties.eventHandler.Argument !== 'Save' && component.properties.eventHandler.Argument !== 'NoSave') || Header.value !== 'SET'}
         <UI.Input
           label={{ name: $t('constructor.props.value') }}

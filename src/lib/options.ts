@@ -94,5 +94,20 @@ export const optionsStore = derived(t, ($t) => {
       { id: id(), value: false, name: $t('constructor.props.type.main') },
       { id: id(), value: true, name: $t('constructor.props.type.sub') },
     ],
+
+    FILE_ATTACH_TYPE_OPTIONS: [
+      { id: id(), value: 'file', name: $t('constructor.props.type.file') },
+      { id: id(), value: 'image', name: $t('constructor.props.type.image') },
+    ],
+
+    FITMODE_OPTIONS: [
+      { id: id(), value: 'cover', name: $t('constructor.props.type.cover') },
+      { id: id(), value: 'contain', name: $t('constructor.props.type.contain') },
+    ],
+
+    FORM_OPTIONS: [
+      { id: id(), value: 'square', name: $t('constructor.props.type.square') },
+      { id: id(), value: 'circle', name: $t('constructor.props.type.circle') },
+    ],
   }
 })

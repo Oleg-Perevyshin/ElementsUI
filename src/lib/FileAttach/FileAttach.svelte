@@ -21,7 +21,7 @@
     accept = '*/*',
     imageSize = { height: '10rem', width: '10rem', fitMode: 'cover', form: 'square' },
     disabled = false,
-    currentImage = $bindable(null),
+    currentImage = $bindable(''),
     onChange = () => {},
   }: IFileInputProps = $props()
 
@@ -41,6 +41,7 @@
     if (file.type.startsWith('image/')) previewUrl = URL.createObjectURL(file)
 
     onChange(event, file)
+    // console.log('!!! curr:', currentImage, 'prev:', previewUrl)
   }
 
   const triggerFileInput = () => {

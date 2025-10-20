@@ -2,6 +2,7 @@
   import * as UI from '$lib'
   import type { Snippet } from 'svelte'
   import CopyButton from './libIcons/CopyButton.svelte'
+  import { fade, fly, slide } from 'svelte/transition'
 
   let { component, componentProps, codeText }: { component: Snippet; componentProps: Snippet; codeText: string } = $props()
 
@@ -13,7 +14,7 @@
     {@render component()}
   </div>
   <div class=" border-t border-gray-500"></div>
-  <div class="h-fit">
+  <div class="h-fit" transition:fade={{ duration: 200 }}>
     {@render componentProps()}
     <div class="relative mt-3">
       <UI.Button
