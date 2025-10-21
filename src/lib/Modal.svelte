@@ -34,7 +34,7 @@
 </script>
 
 {#if isOpen}
-  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50" transition:fade={{ duration: 200 }}>
+  <div class="fixed inset-0 z-60 flex items-center justify-center bg-black/50" transition:fade={{ duration: 200 }}>
     <div
       class={twMerge(`flex w-300 flex-col overflow-hidden rounded-2xl bg-[var(--back-color)] text-center`, wrapperClass)}
       transition:scale={{ duration: 250, start: 0.8 }}

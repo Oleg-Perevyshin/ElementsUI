@@ -45,7 +45,7 @@ ${formatObjectToString(buttonComponent.properties as IButtonProps)}
     <ButtonProps
       component={buttonComponent as UIComponent & { properties: Partial<IButtonProps> }}
       onPropertyChange={(value) => updateComponent({ properties: value } as object)}
-      forConstructor={true}
+      forConstructor={false}
     />
   {/snippet}
 </ComponentExample>

@@ -1,6 +1,6 @@
 {
   "name": "poe-svelte-ui-lib",
-  "version": "1.1.14",
+  "version": "1.1.15",
   "license": "MIT",
   "type": "module",
   "scripts": {
@@ -33,12 +33,12 @@
   },
   "dependencies": {
     "@sveltejs/adapter-static": "^3.0.10",
-    "@tailwindcss/vite": "^4.1.14",
+    "@tailwindcss/vite": "^4.1.15",
     "prettier": "^3.6.2",
     "prettier-plugin-svelte": "^3.4.0",
     "prettier-plugin-tailwindcss": "^0.7.1",
     "tailwind-merge": "^3.3.1",
-    "tailwindcss": "^4.1.14",
+    "tailwindcss": "^4.1.15",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3"
   },
@@ -46,9 +46,9 @@
     "@sveltejs/kit": "^2.47.2",
     "@sveltejs/package": "^2.5.4",
     "@sveltejs/vite-plugin-svelte": "^6.2.1",
-    "@types/node": "^24.8.1",
-    "publint": "^0.3.14",
-    "svelte": "^5.41.0",
+    "@types/node": "^24.9.1",
+    "publint": "^0.3.15",
+    "svelte": "^5.41.1",
     "svelte-preprocess": "^6.0.3",
     "vite": "^7.1.11",
     "vite-plugin-compression": "^0.5.1"

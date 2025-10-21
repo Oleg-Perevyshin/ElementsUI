@@ -109,6 +109,8 @@
   let selectOption = $state()
   let COMPONENT_OPTIONS = Object.keys(componentMap).map((name) => ({ id: name, name: name, value: name }))
   let switchValue = $state(1)
+
+  let modalData = $state({ isOpen: false, rawData: '', formattedData: '' })
 </script>
 
 <div class="flex h-full flex-col items-center overflow-hidden overflow-y-visible">
@@ -252,7 +254,7 @@
     </UI.Accordion>
 
     <!-- Компонент SLIDER -->
-    <UI.Accordion label={{ name: 'Slider' }} isOpen={true} wrapperClass="mb-2">
+    <UI.Accordion label={{ name: 'Slider' }} isOpen={false} wrapperClass="mb-2">
       <UI.Slider
         wrapperClass="!w-1/3 bg-red px-2"
         label={{ name: 'Слайдер' }}
@@ -317,14 +319,30 @@
     </UI.Accordion>
 
     <!-- Компонент TABLE -->
-    <UI.Accordion label={{ name: 'Table' }} isOpen={false} wrapperClass="mb-2">
+    <UI.Accordion label={{ name: 'Table' }} isOpen={true} wrapperClass="mb-2">
       <UI.Table
         label={{ name: 'Devices' }}
         header={columns}
         body={rows}
         onClick={(eventHandler) => console.log(eventHandler)}
         footer={`rows: ${rows.length}`}
+        bind:modalData
       />
+      <UI.Modal isOpen={modalData.isOpen} title="Full data">
+        {#snippet main()}
+          {@html modalData.formattedData}
+        {/snippet}
+        {#snippet footer()}
+          <UI.Button
+            content={{ name: 'Copy' }}
+            wrapperClass="w-20 bg-pink"
+            onClick={() => {
+              navigator.clipboard.writeText(modalData.rawData)
+              modalData.isOpen = false
+            }}
+          />
+        {/snippet}
+      </UI.Modal>
     </UI.Accordion>
 
     <!-- Компонент TEXT FIELD -->

@@ -1,12 +1,15 @@
 <script lang="ts">
   import type { IGraphProps, UIComponent } from '$lib'
+  import ComponentExample from '$lib/ComponentExample.svelte'
   import Graph from '$lib/Graph/Graph.svelte'
   import GraphProps from '$lib/Graph/GraphProps.svelte'
+  import { formatObjectToString } from '../../common'
 
   const dataForGraph = [
-    { name: 'Roll', value: 0 },
-    { name: 'Pitch', value: 0 },
-    { name: 'Yay', value: 0 },
+    { name: 'Roll', value: 10 },
+    { name: 'Pitch', value: 20 },
+    { name: '1', value: 100 },
+    { name: '2', value: -75 },
   ]
 
   let graphComponent: UIComponent = $state({
@@ -25,6 +28,12 @@
     parentId: '',
   })
 
+  let codeText = $derived(`
+<UI.Graph
+${formatObjectToString(graphComponent.properties as IGraphProps)} 
+  onChange={() => {}}
+/>`)
+
   const updateComponent = (id: string, updates: Partial<{ properties: Partial<UIComponent['properties']> }>) => {
     graphComponent = {
       ...graphComponent,
@@ -33,9 +42,15 @@
   }
 </script>
 
-<Graph {...graphComponent.properties as IGraphProps} />
-
-<GraphProps
-  component={graphComponent as UIComponent & { properties: Partial<IGraphProps> }}
-  onPropertyChange={(value) => updateComponent(graphComponent.id, { properties: value } as object)}
-/>
+<ComponentExample {codeText}>
+  {#snippet component()}
+    <Graph {...graphComponent.properties as IGraphProps} />
+  {/snippet}
+  {#snippet componentProps()}
+    <GraphProps
+      component={graphComponent as UIComponent & { properties: Partial<IGraphProps> }}
+      onPropertyChange={(value) => updateComponent(graphComponent.id, { properties: value } as object)}
+      forConstructor={false}
+    />
+  {/snippet}
+</ComponentExample>

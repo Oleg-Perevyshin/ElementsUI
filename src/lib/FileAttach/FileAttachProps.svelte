@@ -1,9 +1,8 @@
 <!-- $lib/ElementsUI/ButtonProps.svelte -->
 <script lang="ts">
   import { t } from '$lib/locales/i18n'
-  import { type UIComponent, type IColorPickerProps, updateProperty } from '../types'
+  import { type UIComponent, updateProperty } from '../types'
   import * as UI from '$lib'
-  import { getContext } from 'svelte'
   import { optionsStore } from '../options'
   import type { IFileInputProps } from './FileAttach.svelte'
 
@@ -44,6 +43,11 @@
       />
     </div>
     <div class="flex w-1/3 flex-col px-2">
+      <UI.Input
+        label={{ name: $t('constructor.props.file.accept') }}
+        value={component.properties.accept}
+        onUpdate={(value) => updateProperty('accept', value as string, component, onPropertyChange)}
+      />
       <UI.Select
         label={{ name: $t('constructor.props.type') }}
         type="buttons"
@@ -51,11 +55,7 @@
         options={$optionsStore.FILE_ATTACH_TYPE_OPTIONS}
         onUpdate={(option) => updateProperty('type', option.value as string, component, onPropertyChange)}
       />
-      <UI.Input
-        label={{ name: $t('constructor.props.file.accept') }}
-        value={component.properties.accept}
-        onUpdate={(value) => updateProperty('accept', value as string, component, onPropertyChange)}
-      />
+
       {#if component.properties.type === 'image'}
         <div class="flex gap-4">
           <UI.Input
@@ -86,13 +86,6 @@
           />
         </div>
       {/if}
-    </div>
-    <div class="flex w-1/3 flex-col px-2">
-      <UI.Input
-        label={{ name: $t('constructor.props.currentImage') }}
-        value={component.properties.currentImage}
-        onUpdate={(value) => updateProperty('currentImage', value as string, component, onPropertyChange)}
-      />
     </div>
   </div>
 {/if}

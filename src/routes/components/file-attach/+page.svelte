@@ -12,10 +12,10 @@
     properties: {
       id: crypto.randomUUID(),
       wrapperClass: '',
+      label: { name: '', class: '' },
+      accept: '*/*',
       type: 'image',
       imageSize: { height: '10rem', width: '10rem', fitMode: 'cover', form: 'square' },
-      accept: '*/*',
-      label: { name: '', class: '' },
       disabled: false,
       onChange: () => {},
     },

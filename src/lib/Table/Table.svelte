@@ -4,8 +4,6 @@
   import type { ITableHeader, ITableProps } from '../types'
   import { fly } from 'svelte/transition'
   import { twMerge } from 'tailwind-merge'
-  import { Button, Modal } from '$lib'
-  import { t } from '$lib/locales/i18n'
 
   let {
     id = crypto.randomUUID(),
@@ -17,10 +15,9 @@
     cursor = null,
     loader,
     getData = () => {},
+    modalData = $bindable(),
     onClick,
   }: ITableProps<any> = $props()
-
-  let modalData = $state({ isOpen: false, rawData: '', formattedData: '' })
 
   /* Сортировка */
   let sortState: {
@@ -100,6 +97,7 @@
       rawData: text,
       formattedData: formatting ? formatting(text) : (text ?? ''),
     }
+    // console.log(modalData)
   }
 
   const showTooltip = (event: MouseEvent, text: string, formatting?: (text: string) => string) => {
@@ -274,19 +272,3 @@
     {/if}
   </div>
 </div>
-
-<Modal isOpen={modalData.isOpen} title={$t('debug.baud_rate_data')}>
-  {#snippet main()}
-    {@html modalData.formattedData}
-  {/snippet}
-  {#snippet footer()}
-    <Button
-      content={{ name: 'Copy' }}
-      wrapperClass="w-20 bg-pink"
-      onClick={() => {
-        navigator.clipboard.writeText(modalData.rawData)
-        modalData.isOpen = false
-      }}
-    />
-  {/snippet}
-</Modal>
