@@ -71,10 +71,10 @@
       class="{twMerge(
         `relative m-0 inline-block w-full items-center rounded-2xl 
         px-2 py-1 font-semibold  transition duration-200 select-none
-        ${content.icon && !content.name ? 'bg-transparent p-0' : 'bg-blue border border-[var(--bg-color)] '}
+        ${content.icon && !content.name ? 'bg-transparent p-0' : 'bg-blue border border-(--bg-color) '}
         ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer  active:scale-97'} `,
         componentClass,
-      )} bg-[var(--bg-color)]"
+      )} bg-(--bg-color)"
       onclick={handleClick}
       {disabled}
       aria-label={content.name}
@@ -116,12 +116,12 @@
     {#if showInfo}
       <div
         transition:fly={{ y: -15, duration: 300 }}
-        class="absolute bottom-full left-1/2 z-50 mb-2 w-max max-w-xs rounded-md bg-[var(--container-color)] px-3 py-1 text-sm shadow-lg"
+        class="absolute bottom-full left-1/2 z-50 mb-2 w-max max-w-xs rounded-md bg-(--container-color) px-3 py-1 text-sm shadow-lg"
         style="transform: translateX(-50%);"
       >
         {content.info}
         <!-- Треугольная стрелка -->
-        <div class="absolute top-full left-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rotate-45 transform bg-[var(--container-color)]"></div>
+        <div class="absolute top-full left-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rotate-45 transform bg-(--container-color)"></div>
       </div>
     {/if}
   </div>

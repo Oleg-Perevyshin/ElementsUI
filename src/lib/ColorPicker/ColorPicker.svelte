@@ -189,7 +189,7 @@
         tabindex={null}
         onmousedown={(e) => handleDrag(e, 'white')}
       >
-        <div class="absolute inset-0 bg-gradient-to-r from-black to-white"></div>
+        <div class="absolute inset-0 bg-linear-to-r from-black to-white"></div>
         {#if mode === 'white'}
           <div
             class="pointer-events-none absolute top-1/2 h-7 w-1 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white"

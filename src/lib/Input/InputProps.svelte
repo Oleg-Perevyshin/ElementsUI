@@ -87,7 +87,7 @@
   }
 </script>
 
-{#if component && component.properties}
+{#if forConstructor}
   <div class="relative flex flex-row items-start justify-center">
     <!-- Сообщение для отправки в ws по нажатию кнопки -->
     <div class="flex w-1/3 flex-col items-center px-2">
@@ -188,6 +188,138 @@
         options={$optionsStore.COLOR_OPTIONS}
         value={initialColor}
         onUpdate={(option) => handleOptionColorChange(option.value as string)}
+      />
+    </div>
+  </div>
+{:else}
+  <div class="relative flex flex-row items-start justify-center">
+    <!-- Сообщение для отправки в ws по нажатию кнопки -->
+    <div class="flex w-1/3 flex-col items-center px-2">
+      <UI.Input
+        label={{ name: $t('constructor.props.id') }}
+        value={component.properties.id}
+        onUpdate={(value) => updateProperty('id', value as string)}
+      />
+      <UI.Input
+        label={{ name: $t('constructor.props.wrapperclass') }}
+        value={component.properties.wrapperClass}
+        onUpdate={(value) => updateProperty('wrapperClass', value as string)}
+      />
+      <UI.Input
+        label={{ name: $t('constructor.props.label') }}
+        value={component.properties.label.name}
+        onUpdate={(value) => updateProperty('label.name', value as string)}
+      />
+      <UI.Input
+        label={{ name: $t('constructor.props.label.class') }}
+        value={component.properties.label.class}
+        onUpdate={(value) => updateProperty('label.class', value as string)}
+      />
+      <UI.Input
+        label={{ name: $t('constructor.props.componentclass') }}
+        value={component.properties.componentClass}
+        onUpdate={(value) => updateProperty('componentClass', value as string)}
+      />
+      <UI.Select
+        wrapperClass="h-14"
+        label={{ name: $t('constructor.props.colors') }}
+        type="buttons"
+        options={$optionsStore.COLOR_OPTIONS}
+        value={initialColor}
+        onUpdate={(option) => handleOptionColorChange(option.value as string)}
+      />
+    </div>
+    <div class="flex w-1/3 flex-col px-2">
+      <UI.Input
+        label={{ name: $t('constructor.props.value') }}
+        value={component.properties.value}
+        onUpdate={(value) => updateProperty('value', value as string)}
+      />
+      <UI.Select
+        label={{ name: $t('constructor.props.type') }}
+        options={$optionsStore.INPUT_TYPE_OPTIONS}
+        type="buttons"
+        value={$optionsStore.INPUT_TYPE_OPTIONS.find((opt) => opt.value === (component.properties.type || 'text'))}
+        onUpdate={(selectedOption) => updateProperty('type', selectedOption.value as string)}
+      />
+      {#if component.properties.type === 'text' || component.properties.type === 'password' || component.properties.type === 'text-area'}
+        <UI.Input
+          label={{ name: $t('constructor.props.maxlenght') }}
+          value={component.properties.maxlength}
+          onUpdate={(value) => updateProperty('maxlength', value as string)}
+        />
+        <UI.Input
+          label={{ name: $t('constructor.props.regexp') }}
+          value={component.properties.help.regExp}
+          maxlength={150}
+          help={{ info: $t('constructor.props.regexp.info') }}
+          componentClass={isValidRegExp === false ? '!border-2 !border-red-400' : ''}
+          onUpdate={(value) => updateProperty('help.regExp', value)}
+        />
+        {#if component.properties.type === 'text-area'}
+          <UI.Input
+            label={{ name: $t('constructor.props.textarea.rows') }}
+            value={component.properties.textareaRows}
+            onUpdate={(value) => updateProperty('textareaRows', value as string)}
+          />
+        {/if}
+      {:else if component.properties.type === 'number' && !component.properties.readonly && !component.properties.disabled}
+        <UI.Input
+          label={{ name: $t('constructor.props.minnum') }}
+          value={component.properties.number.minNum as number}
+          type="number"
+          onUpdate={(value) => {
+            updateProperty('number.minNum', Number(value))
+          }}
+        />
+        <UI.Input
+          label={{ name: $t('constructor.props.maxnum') }}
+          value={component.properties.number.maxNum as number}
+          type="number"
+          onUpdate={(value) => {
+            updateProperty('number.maxNum', Number(value))
+          }}
+        />
+        <UI.Input
+          label={{ name: $t('constructor.props.step') }}
+          value={component.properties.number.step as number}
+          type="number"
+          onUpdate={(value) => updateProperty('number.step', Number(value))}
+        />
+      {/if}
+    </div>
+    <div class="flex w-1/3 flex-col px-2">
+      <UI.Input
+        label={{ name: $t('constructor.props.placeholder') }}
+        value={component.properties.placeholder as string}
+        onUpdate={(value) => updateProperty('placeholder', value)}
+      />
+      <UI.Input
+        label={{ name: $t('constructor.props.info') }}
+        value={component.properties.help.info as string}
+        onUpdate={(value) => updateProperty('help.info', value)}
+      />
+      <UI.Select
+        label={{ name: $t('constructor.props.autocomplete') }}
+        options={$optionsStore.AUTOCOMPLETE_OPTIONS}
+        value={$optionsStore.AUTOCOMPLETE_OPTIONS.find((opt) => opt.value === (component.properties.help.autocomplete || 'off'))}
+        onUpdate={(selectedOption) => updateProperty('help.autocomplete', selectedOption.value as string)}
+      />
+
+      <UI.Switch
+        label={{ name: $t('constructor.props.readonly') }}
+        value={component.properties.readonly ? 2 : 1}
+        onChange={(value) => updateProperty('readonly', value === 2)}
+      />
+      <UI.Switch
+        label={{ name: $t('constructor.props.copy') }}
+        value={component.properties.help.copyButton ? 2 : 1}
+        onChange={(value) => updateProperty('help.copyButton', value === 2)}
+      />
+      <UI.Switch
+        label={{ name: $t('constructor.props.disabled') }}
+        value={component.properties.disabled ? 2 : 1}
+        onChange={(value) => updateProperty('disabled', value === 2)}
       />
     </div>
   </div>

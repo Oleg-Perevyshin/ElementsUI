@@ -1,7 +1,9 @@
 <script lang="ts">
   import { type ISelectOption, type ISelectProps, type UIComponent } from '$lib'
+  import ComponentExample from '$lib/ComponentExample.svelte'
   import Select from '$lib/Select/Select.svelte'
   import SelectProps from '$lib/Select/SelectProps.svelte'
+  import { formatObjectToString } from '../../common'
 
   let selectComponent: UIComponent = $state({
     id: crypto.randomUUID(),
@@ -20,7 +22,13 @@
     parentId: '',
   })
 
-  const updateComponent = (id: string, updates: Partial<{ properties: Partial<UIComponent['properties']> }>) => {
+  let codeText = $derived(`
+<UI.Select
+${formatObjectToString(selectComponent.properties as ISelectProps)} 
+  onUpdate={() => {}}
+/>`)
+
+  const updateComponent = (updates: Partial<{ properties: Partial<UIComponent['properties']> }>) => {
     selectComponent = {
       ...selectComponent,
       properties: updates.properties ? { ...selectComponent.properties, ...updates.properties } : selectComponent.properties,
@@ -28,9 +36,22 @@
   }
 </script>
 
-<Select {...selectComponent.properties as ISelectProps} />
-
-<SelectProps
-  component={selectComponent as UIComponent & { properties: Partial<ISelectProps> }}
-  onPropertyChange={(value) => updateComponent(selectComponent.id, { properties: value } as object)}
-/>
+<ComponentExample {codeText}>
+  {#snippet component()}
+    <Select
+      {...selectComponent.properties as ISelectProps}
+      onUpdate={(value) => {
+        updateComponent({
+          properties: { value: value },
+        })
+      }}
+    />
+  {/snippet}
+  {#snippet componentProps()}
+    <SelectProps
+      component={selectComponent as UIComponent & { properties: Partial<ISelectProps> }}
+      onPropertyChange={(value) => updateComponent({ properties: value } as object)}
+      forConstructor={false}
+    />
+  {/snippet}
+</ComponentExample>

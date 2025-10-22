@@ -1,7 +1,9 @@
 <script lang="ts">
   import { type ITableHeader, type ITableProps, type UIComponent } from '$lib'
+  import ComponentExample from '$lib/ComponentExample.svelte'
   import Table from '$lib/Table/Table.svelte'
   import TableProps from '$lib/Table/TableProps.svelte'
+  import { formatObjectToString } from '../../common'
 
   let tableComponent: UIComponent = $state({
     id: crypto.randomUUID(),
@@ -41,7 +43,13 @@
     parentId: '',
   })
 
-  const updateComponent = (id: string, updates: Partial<{ properties: Partial<UIComponent['properties']> }>) => {
+  let codeText = $derived(`
+<UI.Table
+${formatObjectToString(tableComponent.properties as ITableProps<object>)} 
+  onClick={() => {}}
+/>`)
+
+  const updateComponent = (updates: Partial<{ properties: Partial<UIComponent['properties']> }>) => {
     tableComponent = {
       ...tableComponent,
       properties: updates.properties ? { ...tableComponent.properties, ...updates.properties } : tableComponent.properties,
@@ -49,11 +57,17 @@
   }
 </script>
 
-<div class="h-100">
-  <Table {...tableComponent.properties as ITableProps<object>} />
-</div>
-
-<TableProps
-  component={tableComponent as UIComponent & { properties: Partial<ITableProps<object>> }}
-  onPropertyChange={(value) => updateComponent(tableComponent.id, { properties: value } as object)}
-/>
+<ComponentExample {codeText}>
+  {#snippet component()}
+    <div>
+      <Table {...tableComponent.properties as ITableProps<object>} />
+    </div>
+  {/snippet}
+  {#snippet componentProps()}
+    <TableProps
+      component={tableComponent as UIComponent & { properties: Partial<ITableProps<object>> }}
+      onPropertyChange={(value) => updateComponent({ properties: value } as object)}
+      forConstructor={false}
+    />
+  {/snippet}
+</ComponentExample>

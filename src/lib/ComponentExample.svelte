@@ -13,13 +13,13 @@
   <div class="flex-1 overflow-y-auto">
     {@render component()}
   </div>
-  <div class=" border-t border-gray-500"></div>
-  <div class="h-fit" transition:fade={{ duration: 200 }}>
+  <div class="border-t border-gray-500"></div>
+  <div class="max-h-[70%]" transition:fade={{ duration: 200 }}>
     {@render componentProps()}
     <div class="relative mt-3">
       <UI.Button
         wrapperClass="absolute top-3 right-5 w-6"
-        content={{ icon: isCopied ? '<div class="rounded-md bg-[var(--green-color)] shadow-lg px-1">✓</div>' : CopyButton }}
+        content={{ icon: isCopied ? '<div class="rounded-md bg-(--green-color) shadow-lg px-1">✓</div>' : CopyButton }}
         onClick={() => {
           isCopied = true
           setTimeout(() => (isCopied = false), 1000)

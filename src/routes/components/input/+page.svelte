@@ -1,7 +1,9 @@
 <script lang="ts">
-  import type { IInputProps, UIComponent } from '$lib'
+  import { Graph, type IInputProps, type UIComponent } from '$lib'
+  import ComponentExample from '$lib/ComponentExample.svelte'
   import Input from '$lib/Input/Input.svelte'
   import InputProps from '$lib/Input/InputProps.svelte'
+  import { formatObjectToString } from '../../common'
 
   let inputComponent: UIComponent = $state({
     id: crypto.randomUUID(),
@@ -9,16 +11,12 @@
     component: null,
     properties: {
       id: crypto.randomUUID(),
-      wrapperClass: '',
       label: { name: 'Label', class: 'text-center' },
-      type: 'text',
       componentClass: 'bg-max !resize-none',
-      disabled: false,
-      readonly: false,
+      type: 'text',
       maxlength: 32,
       number: { minNum: 0, maxNum: 10, step: 1 },
       textareaRows: 3,
-      placeholder: '',
       help: { copyButton: false, info: '', autocomplete: 'off' },
       eventHandler: { Header: 'SET', Argument: 'NoSend', Variables: [] },
     },
@@ -26,7 +24,13 @@
     parentId: '',
   })
 
-  const updateComponent = (id: string, updates: Partial<{ properties: Partial<UIComponent['properties']> }>) => {
+  let codeText = $derived(`
+<UI.Input
+${formatObjectToString(inputComponent.properties as IInputProps)} 
+  onUpdate={() => {}}
+/>`)
+
+  const updateComponent = (updates: Partial<{ properties: Partial<UIComponent['properties']> }>) => {
     inputComponent = {
       ...inputComponent,
       properties: updates.properties ? { ...inputComponent.properties, ...updates.properties } : inputComponent.properties,
@@ -34,11 +38,24 @@
   }
 </script>
 
-<div>
-  <Input {...inputComponent.properties as IInputProps} />
-
-  <InputProps
-    component={inputComponent as UIComponent & { properties: Partial<IInputProps> }}
-    onPropertyChange={(value) => updateComponent(inputComponent.id, { properties: value } as object)}
-  />
-</div>
+<ComponentExample {codeText}>
+  {#snippet component()}
+    <div>
+      <Input
+        {...inputComponent.properties as IInputProps}
+        onUpdate={(value) => {
+          updateComponent({
+            properties: { value: value },
+          })
+        }}
+      />
+    </div>
+  {/snippet}
+  {#snippet componentProps()}
+    <InputProps
+      component={inputComponent as UIComponent & { properties: Partial<IInputProps> }}
+      onPropertyChange={(value) => updateComponent({ properties: value } as object)}
+      forConstructor={false}
+    />
+  {/snippet}
+</ComponentExample>

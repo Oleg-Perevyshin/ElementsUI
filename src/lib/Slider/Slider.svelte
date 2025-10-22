@@ -102,13 +102,13 @@
     {#if isRange}
       <!-- Трек и активная зона -->
       <div
-        class={`absolute h-full w-full rounded-full bg-[var(--gray-color)] ${disabled ? '' : 'cursor-pointer'}`}
+        class={`absolute h-full w-full rounded-full bg-(--gray-color) ${disabled ? '' : 'cursor-pointer'}`}
         role="button"
         tabindex={null}
         onkeydown={null}
         onclick={disabled ? undefined : handleTrackClick}
       >
-        <div class="absolute h-full rounded-full bg-[var(--bg-color)]" style={`left: ${lowerPosition}%; right: ${100 - upperPosition}%;`}></div>
+        <div class="absolute h-full rounded-full bg-(--bg-color)" style={`left: ${lowerPosition}%; right: ${100 - upperPosition}%;`}></div>
       </div>
 
       <!-- Ползунки -->
@@ -130,7 +130,7 @@
         class={`absolute h-full w-full appearance-none bg-transparent ${activeThumb === 'lower' ? 'z-30' : 'z-20'}`}
       />
       <div
-        class="pointer-events-none absolute z-40 rounded-full bg-[var(--field-color)]"
+        class="pointer-events-none absolute z-40 rounded-full bg-(--field-color)"
         style={`left: calc(${lowerPosition}% + 0rem); top: 50%; transform: translateY(-50%)`}
       >
         <IconGripVerticalLeft />
@@ -154,7 +154,7 @@
         class={`absolute h-full w-full appearance-none bg-transparent ${activeThumb === 'upper' ? 'z-30' : 'z-20'}`}
       />
       <div
-        class="pointer-events-none absolute z-40 rounded-full bg-[var(--field-color)]"
+        class="pointer-events-none absolute z-40 rounded-full bg-(--field-color)"
         style={`left: calc(${upperPosition}% - 2rem); top: 50%; transform: translateY(-50%)`}
       >
         <IconGripVerticalRight />
@@ -162,7 +162,7 @@
     {:else}
       <!-- Одиночный слайдер -->
       <div
-        class={`absolute h-full w-full rounded-full bg-[var(--gray-color)] ${disabled ? '' : 'cursor-pointer'}`}
+        class={`absolute h-full w-full rounded-full bg-(--gray-color) ${disabled ? '' : 'cursor-pointer'}`}
         role="button"
         tabindex={null}
         onkeydown={null}
@@ -190,7 +190,7 @@
         class="absolute z-20 h-full w-full appearance-none"
       />
       <div
-        class="pointer-events-none absolute z-30 rounded-full bg-[var(--field-color)]"
+        class="pointer-events-none absolute z-30 rounded-full bg-(--field-color)"
         style={`left: clamp(1rem, ${singlePosition}%, calc(100% - 1rem)); top: 50%; transform: translate(-50%, -50%)`}
       >
         <IconGripVerticalDual />

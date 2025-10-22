@@ -21,14 +21,14 @@
   {id}
   class={twMerge(
     `${outline ? 'border-none' : 'rounded-xl hover:shadow-md'} w-full
-    border border-[var(--border-color)] bg-[var(--container-color)] p-0 transition-shadow duration-250`,
+    border border-(--border-color) bg-(--container-color) p-0 transition-shadow duration-250`,
     wrapperClass,
   )}
   transition:slide={{ duration: 250 }}
 >
   <button
     class="flex w-full cursor-pointer items-center justify-between p-4 transition-shadow duration-250
-    {outline ? 'border-b border-[var(--border-color)]' : ''}"
+    {outline ? 'border-b border-(--border-color)' : ''}"
     onclick={toggle}
   >
     <div class="flex w-full items-center">
@@ -67,7 +67,7 @@
 
   {#if isOpen}
     <div
-      class="grid w-full p-4 sm:p-3 {image ? 'gap-x-2' : 'gap-2'} {outline ? '' : 'border-t border-[var(--border-color)]'}"
+      class="grid w-full p-4 sm:p-3 {image ? 'gap-x-2' : 'gap-2'} {outline ? '' : 'border-t border-(--border-color)'}"
       transition:slide={{ duration: 250 }}
       style="grid-template-columns: repeat({size.width || 10}, minmax(0, 1fr)); 
           grid-template-rows: repeat({size.height || 2}, {image ? 'minmax(6.5rem, auto)' : 'auto'});

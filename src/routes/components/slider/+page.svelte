@@ -1,7 +1,9 @@
 <script lang="ts">
   import { type ISliderProps, type UIComponent } from '$lib'
+  import ComponentExample from '$lib/ComponentExample.svelte'
   import Slider from '$lib/Slider/Slider.svelte'
   import SliderProps from '$lib/Slider/SliderProps.svelte'
+  import { formatObjectToString } from '../../common'
 
   let sliderComponent: UIComponent = $state({
     id: crypto.randomUUID(),
@@ -20,7 +22,13 @@
     parentId: '',
   })
 
-  const updateComponent = (id: string, updates: Partial<{ properties: Partial<UIComponent['properties']> }>) => {
+  let codeText = $derived(`
+<UI.Slider
+${formatObjectToString(sliderComponent.properties as ISliderProps)} 
+  onUpdate={() => {}}
+/>`)
+
+  const updateComponent = (updates: Partial<{ properties: Partial<UIComponent['properties']> }>) => {
     sliderComponent = {
       ...sliderComponent,
       properties: updates.properties ? { ...sliderComponent.properties, ...updates.properties } : sliderComponent.properties,
@@ -28,9 +36,15 @@
   }
 </script>
 
-<Slider {...sliderComponent.properties as ISliderProps} />
-
-<SliderProps
-  component={sliderComponent as UIComponent & { properties: Partial<ISliderProps> }}
-  onPropertyChange={(value) => updateComponent(sliderComponent.id, { properties: value } as object)}
-/>
+<ComponentExample {codeText}>
+  {#snippet component()}
+    <Slider {...sliderComponent.properties as ISliderProps} />
+  {/snippet}
+  {#snippet componentProps()}
+    <SliderProps
+      component={sliderComponent as UIComponent & { properties: Partial<ISliderProps> }}
+      onPropertyChange={(value) => updateComponent({ properties: value } as object)}
+      forConstructor={false}
+    />
+  {/snippet}
+</ComponentExample>

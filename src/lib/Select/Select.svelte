@@ -95,7 +95,7 @@
       {id}
       value={value?.value ? String(value.value) : ''}
       class={twMerge(
-        `w-full rounded-2xl border border-[var(--border-color)] p-1 text-center duration-250
+        `w-full rounded-2xl border border-(--border-color) p-1 text-center duration-250
         ${disabled ? 'opacity-50' : 'cursor-pointer hover:shadow-lg'}`,
         value?.class,
       )}
@@ -110,7 +110,7 @@
 
     {#if isDropdownOpen}
       <div
-        class="absolute top-full left-1/2 z-50 -translate-x-1/2 rounded-b-2xl border border-t-0 border-[var(--border-color)]"
+        class="absolute top-full left-1/2 z-50 -translate-x-1/2 rounded-b-2xl border border-t-0 border-(--border-color)"
         style="width: calc(100% - 1.8rem);"
         transition:slide={{ duration: 250 }}
       >
@@ -119,7 +119,7 @@
             id={option.id}
             value={option?.value ? String(option.value) : ''}
             class={twMerge(
-              `flex h-full w-full cursor-pointer items-center justify-center p-1 duration-250 hover:!bg-[var(--field-color)]
+              `flex h-full w-full cursor-pointer items-center justify-center p-1 duration-250 hover:bg-(--field-color)
               ${index === options.length - 1 ? 'rounded-b-2xl' : ''} `,
               option.class,
             )}
@@ -133,7 +133,7 @@
       </div>
     {/if}
   {:else if type === 'buttons'}
-    <div {id} class="flex h-full w-full flex-row justify-center rounded-full border border-[var(--bg-color)]">
+    <div {id} class="flex h-full w-full flex-row justify-center rounded-full border border-(--bg-color)">
       {#each options as option, index (option.id)}
         <button
           id={option.id}
@@ -143,7 +143,7 @@
             ${option.value === value?.value && value !== null ? 'z-10 py-1 shadow-[0_0_10px_var(--shadow-color)] hover:shadow-[0_0_15px_var(--shadow-color)]' : ''}  
             ${options.length > 0 && index === 0 ? 'rounded-l-2xl' : ''} ${index === options.length - 1 ? 'rounded-r-2xl' : ''}`,
             option.class,
-          )} bg-[var(--bg-color)]"
+          )} bg-(--bg-color)"
           onclick={(e) => selectOption(option, e)}
           disabled={option.disabled}
         >
@@ -163,7 +163,7 @@
       class="w-full appearance-none rounded-2xl border px-4 py-1 text-center transition-shadow
           outline-none hover:shadow-md focus:border-blue-400
           [&::-webkit-inner-spin-button]:hidden [&::-webkit-outer-spin-button]:hidden
-          {disabled ? 'cursor-not-allowed opacity-50' : 'cursor-text'} border-[var(--border-color)]"
+          {disabled ? 'cursor-not-allowed opacity-50' : 'cursor-text'} border-(--border-color)"
       style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"
       {id}
       {disabled}
@@ -178,7 +178,7 @@
 
     {#if isDropdownOpen}
       <div
-        class="absolute top-full left-1/2 z-50 -translate-x-1/2 rounded-b-2xl border border-t-0 border-[var(--border-color)]"
+        class="absolute top-full left-1/2 z-50 -translate-x-1/2 rounded-b-2xl border border-t-0 border-(--border-color)"
         style="width: calc(100% - 1.8rem);"
         transition:slide={{ duration: 250 }}
       >
@@ -187,7 +187,7 @@
             id={option.id}
             value={option?.value ? String(option.value) : ''}
             class={twMerge(
-              `flex h-full w-full cursor-pointer items-center justify-center p-1 duration-250 hover:!bg-[var(--field-color)]
+              `flex h-full w-full cursor-pointer items-center justify-center p-1 duration-250 hover:bg-(--field-color)
               ${index === filteredOptions.length - 1 ? 'rounded-b-2xl' : ''} `,
               option.class,
             )}

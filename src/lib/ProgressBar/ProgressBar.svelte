@@ -5,6 +5,7 @@
 
   let {
     id = crypto.randomUUID(),
+    wrapperClass = '',
     label = { name: '', class: '' },
     value = $bindable(0),
     number = {
@@ -12,7 +13,6 @@
       maxNum: 100,
       units: '%',
     },
-    wrapperClass = '',
   }: IProgressBarProps = $props()
 
   const min = $derived(number.minNum ?? 0)
@@ -24,6 +24,7 @@
         return Math.max(min, Math.min(max, value))
       } else if (typeof value === 'string') {
         const parsedValue = parseFloat(value)
+        console.log(value)
         if (!isNaN(parsedValue)) {
           return Math.max(min, Math.min(max, parsedValue))
         }
@@ -47,7 +48,7 @@
 
   <div class="flex w-full flex-col items-center">
     <div class="relative h-2 w-full rounded bg-gray-400">
-      <div class="absolute top-0 left-0 h-full rounded bg-[var(--bg-color)]" style="width: {progressPercent()}%;"></div>
+      <div class="absolute top-0 left-0 h-full rounded bg-(--bg-color)" style="width: {progressPercent()}%;"></div>
     </div>
     <span class="ml-2 font-semibold">{numericValue?.toFixed(2)}{number.units}</span>
   </div>

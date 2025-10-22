@@ -59,7 +59,7 @@
     <div class="relative">
       <button
         class="flex items-center justify-center overflow-hidden {imageSize.form === 'circle' ? 'rounded-full' : 'rounded-2xl'} 
-        bg-[var(--back-color)] shadow-sm transition duration-250 hover:shadow-md
+        bg-(--back-color) shadow-sm transition duration-250 hover:shadow-md
         {disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}"
         style={`height: ${imageSize.height}; width: ${imageSize.width}`}
         onclick={triggerFileInput}
@@ -85,9 +85,9 @@
       <input
         {id}
         type="file"
-        class={`h-8.5 w-full rounded-2xl bg-[var(--back-color)] font-semibold shadow-sm transition duration-250 hover:shadow-md
-          ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'} file:h-full file:w-1/3 file:cursor-pointer 
-          file:border-none file:bg-[var(--blue-color)] invalid:border-red-400 invalid:shadow-[0_0_6px_var(--red-color)]`}
+        class={`h-8.5 w-full rounded-2xl bg-(--back-color) font-semibold shadow-sm transition duration-250 hover:shadow-md
+          ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'} invalid:shadow-[0_0_6px(--red-color) file:h-full file:w-1/3 
+          file:cursor-pointer file:border-none file:bg-(--blue-color) invalid:border-red-400`}
         {accept}
         {disabled}
         onchange={handleFileChange}

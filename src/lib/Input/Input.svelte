@@ -63,7 +63,7 @@
         class={twMerge(
           `w-full rounded-2xl border px-4 py-1 text-center transition-all duration-300 outline-none focus:border-blue-400
               [&::-webkit-inner-spin-button]:hidden [&::-webkit-outer-spin-button]:hidden
-              ${isValid ? 'border-[var(--border-color)]' : '!border-red-400 shadow-[0_0_6px_var(--red-color)]'}
+              ${isValid ? 'border-(--border-color)' : 'border-red-400 shadow-[0_0_6px_var(--red-color)]'}
               ${disabled ? 'opacity-50' : 'hover:shadow-md'} 
               ${readonly ? '' : 'hover:shadow-md'}
               ${help?.info ? 'pl-8' : ''} 
@@ -87,8 +87,8 @@
       <textarea
         bind:value
         class={twMerge(
-          `h-full w-full resize-y rounded-2xl border border-[var(--border-color)] px-2 py-1 text-center font-mono transition-all duration-300 outline-none focus:border-blue-400
-            ${isValid ? 'border-[var(--border-color)]' : '!border-red-400 shadow-[0_0_6px_var(--red-color)]'}
+          `h-full w-full resize-y rounded-2xl border border-(--border-color) px-2 py-1 text-center font-mono transition-all duration-300 outline-none focus:border-blue-400
+            ${isValid ? 'border-(--border-color)' : 'border-red-400 shadow-[0_0_6px_var(--red-color)]'}
             ${disabled ? 'opacity-50' : 'hover:shadow-md'} 
             ${readonly ? '' : 'hover:shadow-md'}
             ${help?.info ? 'pl-8' : ''}
@@ -158,7 +158,7 @@
 
       {#if isCopied}
         <div
-          class="absolute top-1/2 right-10 -translate-y-1/2 transform rounded-md bg-[var(--green-color)] px-2 py-1 text-sm shadow-lg"
+          class="absolute top-1/2 right-10 -translate-y-1/2 transform rounded-md bg-(--green-color) px-2 py-1 text-sm shadow-lg"
           transition:fly={{ x: 10, duration: 200 }}
         >
           ✓
@@ -167,9 +167,9 @@
     {/if}
 
     {#if type === 'number' && !readonly && !disabled}
-      <div class="absolute right-0 flex h-full w-8 flex-col items-center justify-center rounded-r-2xl border-l border-[var(--border-color)]">
+      <div class="absolute right-0 flex h-full w-8 flex-col items-center justify-center rounded-r-2xl border-l border-(--border-color)">
         <button
-          class="flex h-1/2 w-full items-center rounded-tr-2xl border-b border-[var(--border-color)] pl-2 transition-colors duration-150 hover:bg-[var(--gray-color)]/30 active:bg-[var(--gray-color)]/10"
+          class="flex h-1/2 w-full items-center rounded-tr-2xl border-b border-(--border-color) pl-2 transition-colors duration-150 hover:bg-(--gray-color)/30 active:bg-(--gray-color)/10"
           onclick={() => {
             if (!number.maxNum || !number.step) return
             if (Number(value) + number.step >= number.maxNum) {
@@ -184,7 +184,7 @@
         >
 
         <button
-          class="flex h-1/2 w-full items-center rounded-br-2xl pl-2 transition-colors duration-150 hover:bg-[var(--gray-color)]/30 active:bg-[var(--gray-color)]/10"
+          class="flex h-1/2 w-full items-center rounded-br-2xl pl-2 transition-colors duration-150 hover:bg-(--gray-color)/30 active:bg-(--gray-color)/10"
           onclick={() => {
             if (number.minNum === null || number.minNum === undefined || !number.step) return
             if (Number(value) - number.step <= number.minNum) {
@@ -223,7 +223,7 @@
       {#if showInfo}
         <div
           transition:fly={{ x: -15, duration: 250 }}
-          class="absolute top-1/2 left-10 z-50 w-auto -translate-y-1/2 rounded bg-[var(--container-color)] px-2 py-1 shadow-lg"
+          class="absolute top-1/2 left-10 z-50 w-auto -translate-y-1/2 rounded bg-(--container-color) px-2 py-1 shadow-lg"
         >
           {help?.info}
         </div>

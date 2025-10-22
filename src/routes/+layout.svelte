@@ -49,11 +49,9 @@
 
 <div class="mx-auto flex h-screen max-w-[1400px] flex-col">
   <!-- Верхняя панель -->
-  <header
-    class={'sticky top-0 z-50 m-1 mt-2 flex items-center justify-between rounded-xl border border-[var(--border-color)] bg-[var(--back-color)]/50 p-4'}
-  >
+  <header class={'sticky top-0 z-50 m-1 mt-2 flex items-center justify-between rounded-xl border border-(--border-color) bg-(--back-color)/50 p-4'}>
     <div class="flex items-center gap-2">
-      <a href="/ElementsUI/" class="ml-2 !no-underline transition hover:scale-101"><h1>POE-Svelte-UI-Lib</h1></a>
+      <a href="/ElementsUI/" class="ml-2 no-underline! transition hover:scale-101"><h1>POE-Svelte-UI-Lib</h1></a>
     </div>
     <div class="flex items-center gap-6">
       <UI.Button componentClass="w-8" content={{ icon: IconLightDark }} onClick={switchTheme} />
@@ -67,9 +65,7 @@
 
   <div class="mb-2 flex flex-1 overflow-hidden">
     <!-- Панель навигации -->
-    <nav
-      class="m-1 flex w-64 flex-col items-start gap-2 overflow-y-auto rounded-xl border border-[var(--border-color)] bg-[var(--back-color)]/50 p-4"
-    >
+    <nav class="m-1 flex w-64 flex-col items-start gap-2 overflow-y-auto rounded-xl border border-(--border-color) bg-(--back-color)/50 p-4">
       {#each menuItems as item}
         <div class="flex w-full">
           <UI.Button
@@ -89,7 +85,7 @@
       {/each}
     </nav>
     <!-- Панель контента -->
-    <div class="m-1 flex-1 overflow-y-auto rounded-xl border border-[var(--border-color)] bg-[var(--back-color)]/50 p-4">
+    <div class="m-1 flex-1 overflow-y-auto rounded-xl border border-(--border-color) bg-(--back-color)/50 p-4">
       {@render children()}
     </div>
   </div>

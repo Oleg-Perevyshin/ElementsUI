@@ -34,7 +34,7 @@
   const initialItalic = $derived(component.properties.content?.class?.split(' ').find((cls: string) => cls.startsWith('italic')))
 </script>
 
-{#if component && component.properties}
+{#if forConstructor}
   <div class="relative flex flex-row items-start justify-center">
     <div class="flex w-1/3 flex-col px-2">
       <UI.Select
@@ -74,6 +74,85 @@
         options={$optionsStore.TEXT_COLOR_OPTIONS}
         value={initialColor}
         onUpdate={(option) => updateProperty('wrapperClass', twMerge(component.properties.wrapperClass, option.value), component, onPropertyChange)}
+      />
+    </div>
+    <div class="flex w-1/3 flex-col px-2">
+      <UI.Switch
+        label={{ name: $t('constructor.props.bold') }}
+        value={initialBold ? 2 : 1}
+        onChange={(value) =>
+          updateProperty(
+            'content.class',
+            `${component.properties.content.class} ${value === 2 ? 'font-bold' : 'font-normal'}`,
+            component,
+            onPropertyChange,
+          )}
+      />
+      <UI.Switch
+        label={{ name: $t('constructor.props.italic') }}
+        value={initialItalic ? 2 : 1}
+        onChange={(value) =>
+          updateProperty(
+            'content.class',
+            `${component.properties.content.class} ${value === 2 ? 'italic' : 'not-italic'}`,
+            component,
+            onPropertyChange,
+          )}
+      />
+      <UI.Switch
+        label={{ name: $t('constructor.props.background') }}
+        value={component.properties.background ? 2 : 1}
+        onChange={(value) => updateProperty('background', value === 2, component, onPropertyChange)}
+      />
+    </div>
+  </div>
+{:else}
+  <div class="relative flex flex-row items-start justify-center">
+    <div class="flex w-1/3 flex-col px-2">
+      <UI.Input
+        label={{ name: $t('constructor.props.id') }}
+        value={component.properties.id}
+        onUpdate={(value) => updateProperty('id', value as string, component, onPropertyChange)}
+      />
+      <UI.Input
+        label={{ name: $t('constructor.props.wrapperclass') }}
+        value={component.properties.wrapperClass}
+        onUpdate={(value) => updateProperty('wrapperClass', value as string, component, onPropertyChange)}
+      />
+
+      <UI.Select
+        wrapperClass="!h-14"
+        label={{ name: $t('constructor.props.textcolors') }}
+        type="buttons"
+        options={$optionsStore.TEXT_COLOR_OPTIONS}
+        value={initialColor}
+        onUpdate={(option) => updateProperty('wrapperClass', twMerge(component.properties.wrapperClass, option.value), component, onPropertyChange)}
+      />
+    </div>
+    <div class="flex w-1/3 flex-col px-2">
+      <UI.Input
+        label={{ name: $t('constructor.props.label') }}
+        value={component.properties.content.name}
+        onUpdate={(value) => updateProperty('content.name', value as string, component, onPropertyChange)}
+      />
+      <UI.Select
+        label={{ name: $t('constructor.props.size') }}
+        type="buttons"
+        value={currentType}
+        options={$optionsStore.TEXTFIELD_SIZE_OPTIONS}
+        onUpdate={(item) => updateProperty('content.size', item.value as string, component, onPropertyChange)}
+      />
+      <UI.Input
+        label={{ name: $t('constructor.props.componentclass') }}
+        value={component.properties.content.class}
+        onUpdate={(value) => updateProperty('content.class', value as string, component, onPropertyChange)}
+      />
+      <UI.Select
+        label={{ name: $t('constructor.props.align') }}
+        type="buttons"
+        value={initialAlign}
+        options={$optionsStore.ALIGN_OPTIONS}
+        onUpdate={(option) => updateProperty('content.class', twMerge(component.properties.content.class, option.value), component, onPropertyChange)}
       />
     </div>
     <div class="flex w-1/3 flex-col px-2">

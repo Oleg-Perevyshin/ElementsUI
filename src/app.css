@@ -119,6 +119,10 @@ a:hover {
   text-decoration: underline;
 }
 
+input::placeholder {
+  opacity: 0.5;
+}
+
 /* Стили полосы прокрутки */
 ::-webkit-scrollbar {
   width: 8px;

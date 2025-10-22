@@ -68,17 +68,19 @@
   }
 </script>
 
-{#if component && component.properties}
+{#if forConstructor}
   <div class="relative flex flex-row items-start justify-center">
-    <UI.Select
-      label={{ name: $t('constructor.props.variable') }}
-      options={VARIABLE_OPTIONS}
-      value={VARIABLE_OPTIONS.find((opt) => opt.value === component.properties.id)}
-      onUpdate={(value) => {
-        updateProperty('id', value.value as string, component, onPropertyChange, value.name?.split('—')[1].trim())
-        updateProperty('eventHandler.Variables', value.value as string, component, onPropertyChange)
-      }}
-    />
+    <div class="flex w-1/3 flex-col px-2">
+      <UI.Select
+        label={{ name: $t('constructor.props.variable') }}
+        options={VARIABLE_OPTIONS}
+        value={VARIABLE_OPTIONS.find((opt) => opt.value === component.properties.id)}
+        onUpdate={(value) => {
+          updateProperty('id', value.value as string, component, onPropertyChange, value.name?.split('—')[1].trim())
+          updateProperty('eventHandler.Variables', value.value as string, component, onPropertyChange)
+        }}
+      />
+    </div>
     <div class="flex w-1/3 flex-col px-2">
       <UI.Select
         wrapperClass="!h-14"
@@ -105,7 +107,183 @@
     </div>
   </div>
 
-  <hr class="border-[var(--border-color)]" />
+  <hr class="border-(--border-color)" />
+
+  <!-- Настройки столбцов таблицы -->
+  <div>
+    <div class=" flex items-center justify-center gap-2">
+      <h4>{$t('constructor.props.table.columns')}</h4>
+      <UI.Button
+        wrapperClass="w-8"
+        content={{ icon: ButtonAdd }}
+        onClick={() => {
+          const newColumn: ITableHeader<any> = {
+            key: `column${(component.properties.header?.length || 0) + 1}`,
+            label: { name: `Column ${(component.properties.header?.length || 0) + 1}`, class: '' },
+            width: '10%',
+            sortable: false,
+          }
+          const headers = [...(component.properties.header || []), newColumn]
+          updateProperty('header', headers, component, onPropertyChange)
+          updateTableBody()
+        }}
+      />
+    </div>
+
+    {#each component.properties.header as column, columnIndex (columnIndex)}
+      <div class="mr-2 flex items-end justify-around gap-6">
+        <UI.Input
+          label={{ name: $t('constructor.props.table.columns.key') }}
+          value={column.key}
+          help={{ regExp: /^[0-9a-zA-Z_-]{0,16}$/ }}
+          onUpdate={(value) => {
+            updateTableHeader(columnIndex, 'key', value)
+            updateTableBody()
+          }}
+        />
+        <UI.Input
+          label={{ name: $t('constructor.props.table.columns.label') }}
+          value={column.label.name}
+          onUpdate={(value) => {
+            updateTableHeader(columnIndex, 'label', { ['name']: value })
+          }}
+        />
+        <UI.Input
+          label={{ name: $t('constructor.props.table.columns.width') }}
+          type="number"
+          value={Number(column.width.replace('%', ''))}
+          onUpdate={(value) => updateTableHeader(columnIndex, 'width', `${value}%`)}
+        />
+        <UI.Switch
+          wrapperClass="w-2/10"
+          label={{ name: $t('constructor.props.table.columns.sortable') }}
+          value={column.sortable ? 2 : 1}
+          onChange={(value) => updateTableHeader(columnIndex, 'sortable', value === 2)}
+        />
+        <UI.Button
+          wrapperClass="w-8"
+          content={{ icon: ButtonAdd, info: $t('constructor.props.table.addaction') }}
+          onClick={() => {
+            const newButton = {
+              name: `button${(component.properties.header[columnIndex].buttons ? component.properties.header[columnIndex].buttons.length : 0) + 1}`,
+              class: 'bg-blue',
+              eventHandler: { Header: 'SET', Argument: 'Save', Variables: [] },
+              onClick: () => {},
+            }
+            const buttons = [...(component.properties.header[columnIndex].buttons || []), newButton]
+            updateTableHeader(columnIndex, 'buttons', buttons)
+          }}
+        />
+        <UI.Button
+          wrapperClass="w-8"
+          content={{ icon: ButtonDelete }}
+          onClick={() => {
+            const headers = [...(component.properties.header || [])]
+            headers.splice(columnIndex, 1)
+            updateProperty('header', headers, component, onPropertyChange)
+          }}
+        />
+      </div>
+      {#if column.buttons && column.buttons.length > 0}
+        <div class="mb-5 rounded-lg p-1">
+          {#each column.buttons as button, buttonIndex (buttonIndex)}
+            <div class="mx-14 flex items-end justify-around gap-2">
+              <UI.Input
+                label={{ name: $t('constructor.props.name') }}
+                wrapperClass="!w-3/10"
+                value={button.name}
+                onUpdate={(value) => updateButtonProperty(columnIndex, buttonIndex, 'name', value)}
+              />
+              <UI.Select
+                wrapperClass="!w-2/10"
+                label={{ name: $t('constructor.props.header') }}
+                type="buttons"
+                value={$optionsStore.HEADER_OPTIONS.find((h) => h.value === button.eventHandler?.Header)}
+                options={$optionsStore.HEADER_OPTIONS}
+                onUpdate={(option) => {
+                  const handler = button.eventHandler
+                  handler.Header = option.value as string
+                  updateButtonProperty(columnIndex, buttonIndex, 'eventHandler', handler)
+                }}
+              />
+              <UI.Input
+                wrapperClass="!w-2/10"
+                label={{ name: $t('constructor.props.argument') }}
+                value={button.eventHandler?.Argument}
+                onUpdate={(value) => {
+                  const handler = button.eventHandler
+                  handler.Argument = value as string
+                  updateButtonProperty(columnIndex, buttonIndex, 'eventHandler', handler)
+                }}
+              />
+              <UI.Input
+                wrapperClass="!w-2/10"
+                label={{ name: $t('constructor.props.table.keys') }}
+                value={button.eventHandler?.Variables.join(' ')}
+                maxlength={500}
+                help={{ info: $t('constructor.props.table.keys.info'), regExp: /^[a-zA-Z0-9\-_ ]{0,500}$/ }}
+                onUpdate={(value) => {
+                  const handler = { ...button.eventHandler }
+                  handler.Variables = (value as string).trim().split(/\s+/)
+                  updateButtonProperty(columnIndex, buttonIndex, 'eventHandler', handler)
+                }}
+              />
+              <UI.Button wrapperClass="w-8" content={{ icon: ButtonDelete }} onClick={() => removeButtonFromColumn(columnIndex, buttonIndex)} />
+            </div>
+          {/each}
+        </div>
+      {/if}
+    {/each}
+  </div>
+{:else}
+  <div class="relative flex flex-row items-start justify-center">
+    <div class="flex w-1/3 flex-col px-2">
+      <UI.Input
+        label={{ name: $t('constructor.props.id') }}
+        value={component.properties.id}
+        onUpdate={(value) => updateProperty('id', value as string, component, onPropertyChange)}
+      />
+      <UI.Input
+        label={{ name: $t('constructor.props.wrapperclass') }}
+        value={component.properties.wrapperClass}
+        onUpdate={(value) => updateProperty('wrapperClass', value as string, component, onPropertyChange)}
+      />
+      <UI.Select
+        wrapperClass=" h-14"
+        label={{ name: $t('constructor.props.colors') }}
+        type="buttons"
+        options={$optionsStore.COLOR_OPTIONS}
+        value={initialColor}
+        onUpdate={(option) => {
+          updateProperty('wrapperClass', twMerge(component.properties.wrapperClass, option.value), component, onPropertyChange)
+          const options = [...(component.properties?.options || [])]
+          options.forEach((o) => {
+            o['class'] = option.value
+          })
+          updateProperty('options', options, component, onPropertyChange)
+        }}
+      />
+    </div>
+    <div class="flex w-1/3 flex-col px-2">
+      <UI.Input
+        label={{ name: $t('constructor.props.label') }}
+        value={component.properties.label.name}
+        onUpdate={(value) => updateProperty('label.name', value as string, component, onPropertyChange)}
+      />
+      <UI.Input
+        label={{ name: $t('constructor.props.label.class') }}
+        value={component.properties.label.class}
+        onUpdate={(value) => updateProperty('label.class', value as string, component, onPropertyChange)}
+      />
+      <UI.Input
+        label={{ name: $t('constructor.props.footer') }}
+        value={component.properties.footer}
+        onUpdate={(value) => updateProperty('footer', value as string, component, onPropertyChange)}
+      />
+    </div>
+  </div>
+
+  <hr class="border-(--border-color)" />
 
   <!-- Настройки столбцов таблицы -->
   <div>

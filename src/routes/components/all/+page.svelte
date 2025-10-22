@@ -100,7 +100,7 @@
   const dataForGraph = [
     { name: 'Roll', value: 0 },
     { name: 'Pitch', value: 0 },
-    { name: 'Yay', value: 0 },
+    { name: 'Yaw', value: 0 },
   ]
 
   let inputString: string = $state('String Data')

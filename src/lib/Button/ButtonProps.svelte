@@ -77,7 +77,7 @@
         onUpdate={(value) => updateProperty('eventHandler.Argument', value as string, component, onPropertyChange)}
       />
 
-      {#if (component.properties.eventHandler.Argument !== 'Save' && component.properties.eventHandler.Argument !== 'NoSave') || Header.value !== 'SET'}
+      {#if (component.properties.eventHandler.Argument !== 'Save' && component.properties.eventHandler.Argument !== 'NoSave') || Header.value === 'SET'}
         <UI.Input
           label={{ name: $t('constructor.props.value') }}
           value={component.properties.eventHandler.Value}

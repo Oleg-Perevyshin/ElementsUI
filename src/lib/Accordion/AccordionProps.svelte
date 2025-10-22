@@ -69,8 +69,8 @@
             {#snippet main()}
               <div class="grid grid-cols-3">
                 {#each ICONS as category}
-                  <div class="relative m-1.5 rounded-xl border-2 border-[var(--border-color)] p-3">
-                    <div class="absolute -top-3.5 bg-[var(--back-color)] px-1">{$t(`constructor.props.icon.${category[0]}`)}</div>
+                  <div class="relative m-1.5 rounded-xl border-2 border-(--border-color) p-3">
+                    <div class="absolute -top-3.5 bg-(--back-color) px-1">{$t(`constructor.props.icon.${category[0]}`)}</div>
                     <div class="grid grid-cols-3 place-items-center gap-2">
                       {#each category[1] as icon}
                         <button
@@ -180,8 +180,8 @@
             {#snippet main()}
               <div class="grid grid-cols-3">
                 {#each ICONS as category}
-                  <div class="relative m-1.5 rounded-xl border-2 border-[var(--border-color)] p-3">
-                    <div class="absolute -top-3.5 bg-[var(--back-color)] px-1">{$t(`constructor.props.icon.${category[0]}`)}</div>
+                  <div class="relative m-1.5 rounded-xl border-2 border-(--border-color) p-3">
+                    <div class="absolute -top-3.5 bg-(--back-color) px-1">{$t(`constructor.props.icon.${category[0]}`)}</div>
                     <div class="grid grid-cols-3 place-items-center gap-2">
                       {#each category[1] as icon}
                         <button

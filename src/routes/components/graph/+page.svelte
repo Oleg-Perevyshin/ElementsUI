@@ -6,10 +6,9 @@
   import { formatObjectToString } from '../../common'
 
   const dataForGraph = [
-    { name: 'Roll', value: 10 },
-    { name: 'Pitch', value: 20 },
-    { name: '1', value: 100 },
-    { name: '2', value: -75 },
+    { name: 'Roll', value: 0 },
+    { name: 'Pitch', value: 0 },
+    { name: 'Yaw', value: 0 },
   ]
 
   let graphComponent: UIComponent = $state({
@@ -31,10 +30,9 @@
   let codeText = $derived(`
 <UI.Graph
 ${formatObjectToString(graphComponent.properties as IGraphProps)} 
-  onChange={() => {}}
 />`)
 
-  const updateComponent = (id: string, updates: Partial<{ properties: Partial<UIComponent['properties']> }>) => {
+  const updateComponent = (updates: Partial<{ properties: Partial<UIComponent['properties']> }>) => {
     graphComponent = {
       ...graphComponent,
       properties: updates.properties ? { ...graphComponent.properties, ...updates.properties } : graphComponent.properties,
@@ -49,7 +47,7 @@ ${formatObjectToString(graphComponent.properties as IGraphProps)}
   {#snippet componentProps()}
     <GraphProps
       component={graphComponent as UIComponent & { properties: Partial<IGraphProps> }}
-      onPropertyChange={(value) => updateComponent(graphComponent.id, { properties: value } as object)}
+      onPropertyChange={(value) => updateComponent({ properties: value } as object)}
       forConstructor={false}
     />
   {/snippet}

@@ -49,15 +49,15 @@
     <h5 class={`w-full px-4 text-center`}>{label.name}</h5>
   {/if}
 
-  <div class="relative flex w-full grow items-center justify-center !bg-transparent">
+  <div class="relative flex w-full grow items-center justify-center bg-transparent">
     <button
       class="mr-2 {disabled ? 'opacity-60' : 'cursor-pointer'}"
       style="width: {maxCaptionWidth}; text-align: end;"
       onclick={() => handleCaptionClick(1)}>{label.captionLeft}</button
     >
     <label
-      class="relative flex items-center justify-between rounded-full border-1
-      {checked ? '!border-[var(--bg-color)]' : '!border-[var(--gray-color)]'}
+      class="relative flex items-center justify-between rounded-full border
+      {checked ? 'border-(--bg-color)' : 'border-(--gray-color)'}
       {disabled ? 'opacity-60' : ''}"
     >
       <input
@@ -70,12 +70,12 @@
       />
       <span
         class="relative flex items-center rounded-full transition-all duration-250
-        {checked ? '!bg-[var(--bg-color)]' : '!bg-[var(--gray-color)]'}
+        {checked ? 'bg-(--bg-color)' : 'bg-(--gray-color)'}
         {disabled ? '' : 'cursor-pointer'}"
         style="width: {`calc(${height} * 2)`}; height: {height};"
       >
         <span
-          class="absolute rounded-full bg-[var(--back-color)] transition-all duration-250
+          class="absolute rounded-full bg-(--back-color) transition-all duration-250
           {disabled ? 'opacity-60' : 'cursor-pointer'}"
           style="width: {`calc(${height} * 0.75)`}; height: {`calc(${height} * 0.75)`}; margin: 0 {`calc(${height} * 0.1)`}; transform: {knobTransform};"
         ></span>

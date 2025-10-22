@@ -225,8 +225,8 @@
 
   <div class="flex w-full flex-row gap-4">
     <!-- График -->
-    <div bind:this={container} class="h-64 flex-grow overflow-hidden rounded-md border border-gray-200">
-      <canvas class="h-full w-full bg-[var(--back-color)]" bind:this={canvas}></canvas>
+    <div bind:this={container} class="h-64 grow overflow-hidden rounded-md border border-gray-200">
+      <canvas class="h-full w-full bg-(--back-color)" bind:this={canvas}></canvas>
     </div>
 
     <!-- Панель настроек -->

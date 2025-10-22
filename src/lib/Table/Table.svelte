@@ -126,11 +126,11 @@
     <h5 class={twMerge(`w-full px-4 text-center`, label.class)}>{label.name}</h5>
   {/if}
 
-  <div class="flex h-full flex-col overflow-hidden rounded-xl border-[var(--border-color)]">
+  <div class="flex h-full flex-col overflow-hidden rounded-xl border-(--border-color)">
     <!-- Table Header -->
     <div class="grid font-semibold" style={`grid-template-columns: ${header.map((c) => c.width || 'minmax(0, 1fr)').join(' ')};`}>
       {#each header as column (column)}
-        <div class={twMerge(`justify-center bg-[var(--bg-color)] p-2 text-left`, column.label?.class)}>
+        <div class={twMerge(`justify-center bg-(--bg-color) p-2 text-left`, column.label?.class)}>
           <span>{column.label?.name}</span>
           {#if column.sortable}
             <button
@@ -145,13 +145,13 @@
     </div>
 
     <!-- Table Body с прокруткой -->
-    <div class="flex-1 overflow-y-auto bg-[var(--container-color)]/50" bind:this={container} onscroll={handleScroll}>
+    <div class="flex-1 overflow-y-auto bg-(--container-color)/50" bind:this={container} onscroll={handleScroll}>
       <div class="grid min-w-0" style={`grid-template-columns: ${header.map((c) => c.width || 'minmax(0, 1fr)').join(' ')};`}>
         {#each body as row, index (row)}
           {#each header as column (column)}
             <div
-              class="relative flex w-full min-w-0 items-center px-2 py-1 break-words
-              {index % 2 ? '!bg-[var(--back-color)]/40' : ''}
+              class="relative flex w-full min-w-0 items-center px-2 py-1 wrap-break-word
+              {index % 2 ? 'bg-(--back-color)/40' : 'bg-[#edeef3] dark:bg-[#1f2a3a]'}
               {column.align === 'center'
                 ? 'flex justify-center text-center'
                 : column.align === 'right'
@@ -164,7 +164,7 @@
                     <button
                       class="{twMerge(`cursor-pointer rounded-full
                            px-4 py-1 font-medium transition-shadow outline-none select-none hover:shadow-md
-                          ${typeof button.class === 'function' ? button.class(row) : button.class}`)} bg-[var(--bg-color)]"
+                          ${typeof button.class === 'function' ? button.class(row) : button.class}`)} bg-(--bg-color)"
                       onclick={() => buttonClick(row, button)}
                     >
                       {typeof button.name === 'function' ? button.name(row) : button.name}
@@ -189,7 +189,7 @@
                 </div>
               {:else}
                 <div
-                  class="w-full max-w-full break-words {column.overflow?.truncated
+                  class="w-full max-w-full wrap-break-word {column.overflow?.truncated
                     ? 'overflow-hidden text-ellipsis whitespace-nowrap'
                     : 'whitespace-normal'}"
                   onmouseenter={column.overflow?.truncated ? (e) => showTooltip(e, row[column.key], column.overflow?.formatting) : undefined}
@@ -231,7 +231,7 @@
                   >
                     <div class=" size-5 text-sm [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full">
                       {#if copiedCell.y === index && copiedCell.x === column.key}
-                        <div class="rounded-md bg-[var(--green-color)] shadow-lg">✓</div>
+                        <div class="rounded-md bg-(--green-color) shadow-lg">✓</div>
                       {:else}
                         <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
                           <g fill="none" stroke="currentColor" stroke-width="1.5">
@@ -266,7 +266,7 @@
 
     <!-- Нижнее поле для сводной информации -->
     {#if footer}
-      <div class="flex h-8 items-center justify-center bg-[var(--bg-color)]">
+      <div class="flex h-8 items-center justify-center bg-(--bg-color)">
         <h5>{footer}</h5>
       </div>
     {/if}

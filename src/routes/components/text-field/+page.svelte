@@ -1,7 +1,9 @@
 <script lang="ts">
   import { type ITextFieldProps, type UIComponent } from '$lib'
+  import ComponentExample from '$lib/ComponentExample.svelte'
   import TextField from '$lib/TextField/TextField.svelte'
   import TextFieldProps from '$lib/TextField/TextFieldProps.svelte'
+  import { formatObjectToString } from '../../common'
 
   let textFieldComponent: UIComponent = $state({
     id: crypto.randomUUID(),
@@ -20,7 +22,12 @@
     parentId: '',
   })
 
-  const updateComponent = (id: string, updates: Partial<{ properties: Partial<UIComponent['properties']> }>) => {
+  let codeText = $derived(`
+<UI.TextField
+${formatObjectToString(textFieldComponent.properties as ITextFieldProps)} 
+/>`)
+
+  const updateComponent = (updates: Partial<{ properties: Partial<UIComponent['properties']> }>) => {
     textFieldComponent = {
       ...textFieldComponent,
       properties: updates.properties ? { ...textFieldComponent.properties, ...updates.properties } : textFieldComponent.properties,
@@ -28,9 +35,17 @@
   }
 </script>
 
-<TextField {...textFieldComponent.properties as ITextFieldProps} />
-
-<TextFieldProps
-  component={textFieldComponent as UIComponent & { properties: Partial<ITextFieldProps> }}
-  onPropertyChange={(value) => updateComponent(textFieldComponent.id, { properties: value } as object)}
-/>
+<ComponentExample {codeText}>
+  {#snippet component()}
+    <div>
+      <TextField {...textFieldComponent.properties as ITextFieldProps} />
+    </div>
+  {/snippet}
+  {#snippet componentProps()}
+    <TextFieldProps
+      component={textFieldComponent as UIComponent & { properties: Partial<ITextFieldProps> }}
+      onPropertyChange={(value) => updateComponent({ properties: value } as object)}
+      forConstructor={false}
+    />
+  {/snippet}
+</ComponentExample>

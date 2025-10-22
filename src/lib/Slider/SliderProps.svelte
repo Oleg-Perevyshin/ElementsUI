@@ -32,7 +32,7 @@
   )
 </script>
 
-{#if component && component.properties}
+{#if forConstructor}
   <div class="relative flex flex-row items-start justify-center">
     <div class="flex w-1/3 flex-col items-center px-2">
       <UI.Select
@@ -104,6 +104,89 @@
         options={$optionsStore.COLOR_OPTIONS}
         value={initialColor}
         onUpdate={(option) => updateProperty('wrapperClass', twMerge(component.properties.wrapperClass, option.value), component, onPropertyChange)}
+      />
+    </div>
+  </div>
+{:else}
+  <div class="relative flex flex-row items-start justify-center">
+    <div class="flex w-1/3 flex-col items-center px-2">
+      <UI.Input
+        label={{ name: $t('constructor.props.id') }}
+        value={component.properties.id}
+        onUpdate={(value) => updateProperty('id', value as string, component, onPropertyChange)}
+      />
+      <UI.Input
+        label={{ name: $t('constructor.props.wrapperclass') }}
+        value={component.properties.wrapperClass}
+        onUpdate={(value) => updateProperty('wrapperClass', value as string, component, onPropertyChange)}
+      />
+      <UI.Select
+        wrapperClass=" h-14"
+        label={{ name: $t('constructor.props.colors') }}
+        type="buttons"
+        options={$optionsStore.COLOR_OPTIONS}
+        value={initialColor}
+        onUpdate={(option) => {
+          updateProperty('wrapperClass', twMerge(component.properties.wrapperClass, option.value), component, onPropertyChange)
+          const options = [...(component.properties?.options || [])]
+          options.forEach((o) => {
+            o['class'] = option.value
+          })
+          updateProperty('options', options, component, onPropertyChange)
+        }}
+      />
+      <UI.Switch
+        wrapperClass="bg-blue"
+        label={{ name: $t('constructor.props.disabled') }}
+        value={component.properties.disabled ? 2 : 1}
+        onChange={(value) => updateProperty('disabled', value === 2, component, onPropertyChange)}
+      />
+    </div>
+    <div class="flex w-1/3 flex-col px-2">
+      <UI.Input
+        label={{ name: $t('constructor.props.label') }}
+        value={component.properties.label.name}
+        onUpdate={(value) => updateProperty('label.name', value as string, component, onPropertyChange)}
+      />
+      <UI.Input
+        label={{ name: $t('constructor.props.label.class') }}
+        value={component.properties.label.class}
+        onUpdate={(value) => updateProperty('label.class', value as string, component, onPropertyChange)}
+      />
+      <UI.Input
+        label={{ name: $t('constructor.props.value') }}
+        value={component.properties.value}
+        onUpdate={(value) => updateProperty('value', value as string, component, onPropertyChange)}
+      />
+    </div>
+    <div class="flex w-1/3 flex-col px-2">
+      <UI.Select
+        label={{ name: $t('constructor.props.type') }}
+        type="buttons"
+        value={$optionsStore.SLIDER_TYPE_OPTIONS.find((opt) => opt.value === (component.properties.type || 'single'))}
+        options={$optionsStore.SLIDER_TYPE_OPTIONS}
+        onUpdate={(type) => {
+          updateProperty('value', type.value === 'single' ? 5 : [2, 7], component, onPropertyChange)
+          updateProperty('type', type.value as string, component, onPropertyChange)
+        }}
+      />
+      <UI.Input
+        label={{ name: $t('constructor.props.minnum') }}
+        value={component.properties.number.minNum as number}
+        type="number"
+        onUpdate={(value) => updateProperty('number.minNum', Number(value), component, onPropertyChange)}
+      />
+      <UI.Input
+        label={{ name: $t('constructor.props.maxnum') }}
+        value={component.properties.number.maxNum as number}
+        type="number"
+        onUpdate={(value) => updateProperty('number.maxNum', Number(value), component, onPropertyChange)}
+      />
+      <UI.Input
+        label={{ name: $t('constructor.props.step') }}
+        value={component.properties.number.step as number}
+        type="number"
+        onUpdate={(value) => updateProperty('number.step', Number(value), component, onPropertyChange)}
       />
     </div>
   </div>

@@ -3,8 +3,6 @@
   import { t } from '$lib/locales/i18n'
   import { type UIComponent, type IGraphProps, updateProperty } from '../types'
   import * as UI from '$lib'
-  import ButtonAdd from '$lib/libIcons/ButtonAdd.svelte'
-  import ButtonDelete from '$lib/libIcons/ButtonDelete.svelte'
 
   const {
     component,
