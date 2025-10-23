@@ -14,7 +14,9 @@
       componentClass: 'bg-red py-1',
       content: {
         name: 'Button',
+        info: { text: 'fvgfvz', side: 'left' },
       },
+
       eventHandler: { Header: 'SET', Argument: 'Save', Variables: [] },
     },
     position: { row: 0, col: 0, width: 0, height: 0 },
@@ -37,7 +39,7 @@ ${formatObjectToString(buttonComponent.properties as IButtonProps)}
 
 <ComponentExample {codeText}>
   {#snippet component()}
-    <div class="my-10">
+    <div class="relative mx-40 my-40">
       <Button {...buttonComponent.properties as IButtonProps} />
     </div>
   {/snippet}

@@ -78,10 +78,16 @@ export const optionsStore = derived(t, ($t) => {
       { id: id(), name: '', value: 'text-gray-500 dark:text-gray-400', class: 'bg-gray-500 dark:bg-gray-400' },
     ],
 
-    ALIGN_OPTIONS: [
+    TEXT_ALIGN_OPTIONS: [
       { id: id(), value: 'text-left', name: $t('constructor.props.align.left') },
       { id: id(), value: 'text-center', name: $t('constructor.props.align.center') },
       { id: id(), value: 'text-right', name: $t('constructor.props.align.right') },
+    ],
+
+    ALIGN_OPTIONS: [
+      { id: id(), value: 'left', name: $t('constructor.props.align.left') },
+      { id: id(), value: 'center', name: $t('constructor.props.align.center') },
+      { id: id(), value: 'right', name: $t('constructor.props.align.right') },
     ],
 
     HEIGHT_OPTIONS: [

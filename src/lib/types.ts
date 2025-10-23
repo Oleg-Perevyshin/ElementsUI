@@ -94,7 +94,7 @@ export interface IButtonProps {
   disabled?: boolean
   content?: {
     name?: string
-    info?: string
+    info?: { text: string; side: 'top' | 'bottom' | 'left' | 'right' }
     icon?: ConstructorOfATypedSvelteComponent | string | null
   }
   keyBind?: {

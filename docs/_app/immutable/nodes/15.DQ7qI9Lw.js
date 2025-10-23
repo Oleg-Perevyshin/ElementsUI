@@ -1,1 +1,232 @@
-import"../chunks/NZTpNUN0.js";import{p as B,k as q,l as L,a as P,e as H,f as z,h,g as t,i as n,j as m,r as x,s as J,c as K,d as M}from"../chunks/C8jWV29K.js";import{i as Q,s as V,c as d,a as F,d as Y}from"../chunks/CFB23tc5.js";import{T as $}from"../chunks/CIT14Csp.js";import{I as ee,S as I,f as O,o as te,d as ne}from"../chunks/CuZzhwEb.js";import{u}from"../chunks/BoP6aUrK.js";var oe=z('<div class="relative flex flex-row items-start justify-center"><div class="flex w-1/3 flex-col px-2"><!> <!></div> <div class="flex w-1/3 flex-col px-2"><!> <!></div> <div class="flex w-1/3 flex-col px-2"><!> <!> <!></div></div>');function re(C,e){B(e,!0);const c=()=>F(te,"$optionsStore",v),l=()=>F(ne,"$t",v),[v,b]=V();let f=n(()=>c().TEXTFIELD_SIZE_OPTIONS.find(o=>o.value===e.component.properties.content.size));const _=n(()=>c().ALIGN_OPTIONS.find(o=>o.value.includes(e.component.properties.content?.class?.split(" ").find(p=>p.startsWith("text-"))))),D=n(()=>c().TEXT_COLOR_OPTIONS.find(o=>o.value.includes(e.component.properties.wrapperClass?.split(" ").find(p=>p.startsWith("text-"))))),W=n(()=>e.component.properties.content?.class?.split(" ").find(o=>o.startsWith("font-bold"))),X=n(()=>e.component.properties.content?.class?.split(" ").find(o=>o.startsWith("italic")));var S=q(),A=L(S);{var j=o=>{var p=oe(),T=h(p),w=h(T);{let r=n(()=>({name:l()("constructor.props.label")}));d(w,()=>ee,(a,s)=>{s(a,{get label(){return t(r)},get value(){return e.component.properties.content.name},onUpdate:i=>u("content.name",i,e.component,e.onPropertyChange)})})}var G=m(w,2);{let r=n(()=>({name:l()("constructor.props.size")}));d(G,()=>I,(a,s)=>{s(a,{get label(){return t(r)},type:"buttons",get value(){return t(f)},get options(){return c().TEXTFIELD_SIZE_OPTIONS},onUpdate:i=>u("content.size",i.value,e.component,e.onPropertyChange)})})}x(T);var y=m(T,2),E=h(y);{let r=n(()=>({name:l()("constructor.props.align")}));d(E,()=>I,(a,s)=>{s(a,{get label(){return t(r)},type:"buttons",get value(){return t(_)},get options(){return c().ALIGN_OPTIONS},onUpdate:i=>u("content.class",`${e.component.properties.content.class} ${i.value}`,e.component,e.onPropertyChange)})})}var R=m(E,2);{let r=n(()=>({name:l()("constructor.props.colors")}));d(R,()=>I,(a,s)=>{s(a,{wrapperClass:"!h-14",get label(){return t(r)},type:"buttons",get options(){return c().TEXT_COLOR_OPTIONS},get value(){return t(D)},onUpdate:i=>u("wrapperClass",`${e.component.properties.wrapperClass} ${i.value}`,e.component,e.onPropertyChange)})})}x(y);var N=m(y,2),U=h(N);{let r=n(()=>({name:l()("constructor.props.bold")})),a=n(()=>t(W)?2:1);d(U,()=>O,(s,i)=>{i(s,{get label(){return t(r)},get value(){return t(a)},onChange:g=>u("content.class",`${e.component.properties.content.class} ${g===2?"font-bold":"font-normal"}`,e.component,e.onPropertyChange)})})}var k=m(U,2);{let r=n(()=>({name:l()("constructor.props.italic")})),a=n(()=>t(X)?2:1);d(k,()=>O,(s,i)=>{i(s,{get label(){return t(r)},get value(){return t(a)},onChange:g=>u("content.class",`${e.component.properties.content.class} ${g===2?"italic":"not-italic"}`,e.component,e.onPropertyChange)})})}var Z=m(k,2);{let r=n(()=>({name:l()("constructor.props.background")})),a=n(()=>e.component.properties.background?2:1);d(Z,()=>O,(s,i)=>{i(s,{get label(){return t(r)},get value(){return t(a)},onChange:g=>u("background",g===2,e.component,e.onPropertyChange)})})}x(N),x(p),P(o,p)};Q(A,o=>{e.component&&e.component.properties&&o(j)})}P(C,S),H(),b()}var ae=z("<!> <!>",1);function ue(C){let e=J(K({id:crypto.randomUUID(),type:"TextField",component:null,properties:{id:crypto.randomUUID(),wrapperClass:"text-[#333] dark:text-[#e2e3e7]",content:{name:"Supporting text",class:"text-center",size:"small"}},position:{row:0,col:0,width:0,height:0},parentId:""}));const c=(f,_)=>{M(e,{...t(e),properties:_.properties?{...t(e).properties,..._.properties}:t(e).properties},!0)};var l=ae(),v=L(l);$(v,Y(()=>t(e).properties));var b=m(v,2);re(b,{get component(){return t(e)},onPropertyChange:f=>c(t(e).id,{properties:f})}),P(C,l)}export{ue as component};
+import '../chunks/NZTpNUN0.js'
+import { p as B, k as q, l as L, a as P, e as H, f as z, h, g as t, i as n, j as m, r as x, s as J, c as K, d as M } from '../chunks/C8jWV29K.js'
+import { i as Q, s as V, c as d, a as F, d as Y } from '../chunks/CFB23tc5.js'
+import { T as $ } from '../chunks/CIT14Csp.js'
+import { I as ee, S as I, f as O, o as te, d as ne } from '../chunks/CuZzhwEb.js'
+import { u } from '../chunks/BoP6aUrK.js'
+var oe = z(
+  '<div class="relative flex flex-row items-start justify-center"><div class="flex w-1/3 flex-col px-2"><!> <!></div> <div class="flex w-1/3 flex-col px-2"><!> <!></div> <div class="flex w-1/3 flex-col px-2"><!> <!> <!></div></div>',
+)
+function re(C, e) {
+  B(e, !0)
+  const c = () => F(te, '$optionsStore', v),
+    l = () => F(ne, '$t', v),
+    [v, b] = V()
+  let f = n(() => c().TEXTFIELD_SIZE_OPTIONS.find((o) => o.value === e.component.properties.content.size))
+  const _ = n(() =>
+      c().TEXT_ALIGN_OPTIONS.find((o) => o.value.includes(e.component.properties.content?.class?.split(' ').find((p) => p.startsWith('text-')))),
+    ),
+    D = n(() =>
+      c().TEXT_COLOR_OPTIONS.find((o) => o.value.includes(e.component.properties.wrapperClass?.split(' ').find((p) => p.startsWith('text-')))),
+    ),
+    W = n(() => e.component.properties.content?.class?.split(' ').find((o) => o.startsWith('font-bold'))),
+    X = n(() => e.component.properties.content?.class?.split(' ').find((o) => o.startsWith('italic')))
+  var S = q(),
+    A = L(S)
+  {
+    var j = (o) => {
+      var p = oe(),
+        T = h(p),
+        w = h(T)
+      {
+        let r = n(() => ({ name: l()('constructor.props.label') }))
+        d(
+          w,
+          () => ee,
+          (a, s) => {
+            s(a, {
+              get label() {
+                return t(r)
+              },
+              get value() {
+                return e.component.properties.content.name
+              },
+              onUpdate: (i) => u('content.name', i, e.component, e.onPropertyChange),
+            })
+          },
+        )
+      }
+      var G = m(w, 2)
+      {
+        let r = n(() => ({ name: l()('constructor.props.size') }))
+        d(
+          G,
+          () => I,
+          (a, s) => {
+            s(a, {
+              get label() {
+                return t(r)
+              },
+              type: 'buttons',
+              get value() {
+                return t(f)
+              },
+              get options() {
+                return c().TEXTFIELD_SIZE_OPTIONS
+              },
+              onUpdate: (i) => u('content.size', i.value, e.component, e.onPropertyChange),
+            })
+          },
+        )
+      }
+      x(T)
+      var y = m(T, 2),
+        E = h(y)
+      {
+        let r = n(() => ({ name: l()('constructor.props.align') }))
+        d(
+          E,
+          () => I,
+          (a, s) => {
+            s(a, {
+              get label() {
+                return t(r)
+              },
+              type: 'buttons',
+              get value() {
+                return t(_)
+              },
+              get options() {
+                return c().TEXT_ALIGN_OPTIONS
+              },
+              onUpdate: (i) => u('content.class', `${e.component.properties.content.class} ${i.value}`, e.component, e.onPropertyChange),
+            })
+          },
+        )
+      }
+      var R = m(E, 2)
+      {
+        let r = n(() => ({ name: l()('constructor.props.colors') }))
+        d(
+          R,
+          () => I,
+          (a, s) => {
+            s(a, {
+              wrapperClass: '!h-14',
+              get label() {
+                return t(r)
+              },
+              type: 'buttons',
+              get options() {
+                return c().TEXT_COLOR_OPTIONS
+              },
+              get value() {
+                return t(D)
+              },
+              onUpdate: (i) => u('wrapperClass', `${e.component.properties.wrapperClass} ${i.value}`, e.component, e.onPropertyChange),
+            })
+          },
+        )
+      }
+      x(y)
+      var N = m(y, 2),
+        U = h(N)
+      {
+        let r = n(() => ({ name: l()('constructor.props.bold') })),
+          a = n(() => (t(W) ? 2 : 1))
+        d(
+          U,
+          () => O,
+          (s, i) => {
+            i(s, {
+              get label() {
+                return t(r)
+              },
+              get value() {
+                return t(a)
+              },
+              onChange: (g) =>
+                u(
+                  'content.class',
+                  `${e.component.properties.content.class} ${g === 2 ? 'font-bold' : 'font-normal'}`,
+                  e.component,
+                  e.onPropertyChange,
+                ),
+            })
+          },
+        )
+      }
+      var k = m(U, 2)
+      {
+        let r = n(() => ({ name: l()('constructor.props.italic') })),
+          a = n(() => (t(X) ? 2 : 1))
+        d(
+          k,
+          () => O,
+          (s, i) => {
+            i(s, {
+              get label() {
+                return t(r)
+              },
+              get value() {
+                return t(a)
+              },
+              onChange: (g) =>
+                u('content.class', `${e.component.properties.content.class} ${g === 2 ? 'italic' : 'not-italic'}`, e.component, e.onPropertyChange),
+            })
+          },
+        )
+      }
+      var Z = m(k, 2)
+      {
+        let r = n(() => ({ name: l()('constructor.props.background') })),
+          a = n(() => (e.component.properties.background ? 2 : 1))
+        d(
+          Z,
+          () => O,
+          (s, i) => {
+            i(s, {
+              get label() {
+                return t(r)
+              },
+              get value() {
+                return t(a)
+              },
+              onChange: (g) => u('background', g === 2, e.component, e.onPropertyChange),
+            })
+          },
+        )
+      }
+      ;(x(N), x(p), P(o, p))
+    }
+    Q(A, (o) => {
+      e.component && e.component.properties && o(j)
+    })
+  }
+  ;(P(C, S), H(), b())
+}
+var ae = z('<!> <!>', 1)
+function ue(C) {
+  let e = J(
+    K({
+      id: crypto.randomUUID(),
+      type: 'TextField',
+      component: null,
+      properties: {
+        id: crypto.randomUUID(),
+        wrapperClass: 'text-[#333] dark:text-[#e2e3e7]',
+        content: { name: 'Supporting text', class: 'text-center', size: 'small' },
+      },
+      position: { row: 0, col: 0, width: 0, height: 0 },
+      parentId: '',
+    }),
+  )
+  const c = (f, _) => {
+    M(e, { ...t(e), properties: _.properties ? { ...t(e).properties, ..._.properties } : t(e).properties }, !0)
+  }
+  var l = ae(),
+    v = L(l)
+  $(
+    v,
+    Y(() => t(e).properties),
+  )
+  var b = m(v, 2)
+  ;(re(b, {
+    get component() {
+      return t(e)
+    },
+    onPropertyChange: (f) => c(t(e).id, { properties: f }),
+  }),
+    P(C, l))
+}
+export { ue as component }

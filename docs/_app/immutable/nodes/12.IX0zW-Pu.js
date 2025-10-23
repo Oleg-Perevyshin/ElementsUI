@@ -1,1 +1,295 @@
-import"../chunks/NZTpNUN0.js";import{p as q,m as z,k as F,l as D,a as x,e as J,f as V,h as y,g as n,i as l,j as c,r as P,s as K,c as Q,d as X}from"../chunks/C8jWV29K.js";import{i as Z,s as $,c as m,a as H,d as ee}from"../chunks/CFB23tc5.js";import{S as f,I as O,o as te,d as ne,g as re}from"../chunks/CuZzhwEb.js";import{u as p}from"../chunks/BoP6aUrK.js";var oe=V('<div class="relative flex flex-row items-start justify-center"><div class="flex w-1/3 flex-col items-center px-2"><!> <!></div> <div class="flex w-1/3 flex-col px-2"><!> <!> <!> <!></div> <div class="flex w-1/3 flex-col px-2"><!> <!> <!></div></div>');function ae(h,e){q(e,!0);const u=()=>H(te,"$optionsStore",b),s=()=>H(ne,"$t",b),[b,C]=$(),g=z("DeviceVariables");let _=l(()=>g&&Array.isArray(g)?g.map(i=>({id:i.name,value:i.value,name:`${i.value} | ${i.name}`})):[]);const G=l(()=>u().ALIGN_OPTIONS.find(i=>i.value.includes(e.component.properties.label?.class?.split(" ").find(d=>d.startsWith("text-"))))),j=l(()=>u().COLOR_OPTIONS.find(i=>i.value.includes(e.component.properties.wrapperClass?.split(" ").find(d=>d.startsWith("bg-")))));var I=F(),k=D(I);{var M=i=>{var d=oe(),N=y(d),T=y(N);{let r=l(()=>({name:s()("constructor.props.variable")})),o=l(()=>n(_).find(t=>t.value===e.component.properties.id.value));m(T,()=>f,(t,a)=>{a(t,{get label(){return n(r)},get options(){return n(_)},get value(){return n(o)},onUpdate:v=>{p("id",v.value,e.component,e.onPropertyChange),p("eventHandler.Variables",v.value,e.component,e.onPropertyChange)}})})}var W=c(T,2);{let r=l(()=>({name:s()("constructor.props.action")})),o=l(()=>u().SHORT_ARGUMENT_OPTION.find(t=>t.value===e.component.properties.eventHandler.Argument));m(W,()=>f,(t,a)=>{a(t,{get label(){return n(r)},type:"buttons",get value(){return n(o)},get options(){return u().SHORT_ARGUMENT_OPTION},onUpdate:v=>{p("eventHandler.Argument",v.value,e.component,e.onPropertyChange)}})})}P(N);var S=c(N,2),U=y(S);{let r=l(()=>({name:s()("constructor.props.type")})),o=l(()=>u().SLIDER_TYPE_OPTIONS.find(t=>t.value===(e.component.properties.type||"single")));m(U,()=>f,(t,a)=>{a(t,{get label(){return n(r)},type:"buttons",get value(){return n(o)},get options(){return u().SLIDER_TYPE_OPTIONS},onUpdate:v=>{p("value",v.value==="single"?5:[2,7],e.component,e.onPropertyChange),p("type",v.value,e.component,e.onPropertyChange)}})})}var A=c(U,2);{let r=l(()=>({name:s()("constructor.props.minnum")}));m(A,()=>O,(o,t)=>{t(o,{get label(){return n(r)},get value(){return e.component.properties.number.minNum},type:"number",onUpdate:a=>p("number.minNum",Number(a),e.component,e.onPropertyChange)})})}var w=c(A,2);{let r=l(()=>({name:s()("constructor.props.maxnum")}));m(w,()=>O,(o,t)=>{t(o,{get label(){return n(r)},get value(){return e.component.properties.number.maxNum},type:"number",onUpdate:a=>p("number.maxNum",Number(a),e.component,e.onPropertyChange)})})}var Y=c(w,2);{let r=l(()=>({name:s()("constructor.props.step")}));m(Y,()=>O,(o,t)=>{t(o,{get label(){return n(r)},get value(){return e.component.properties.number.step},type:"number",onUpdate:a=>p("number.step",Number(a),e.component,e.onPropertyChange)})})}P(S);var R=c(S,2),E=y(R);{let r=l(()=>({name:s()("constructor.props.label")}));m(E,()=>O,(o,t)=>{t(o,{get label(){return n(r)},get value(){return e.component.properties.label.name},onUpdate:a=>p("label.name",a,e.component,e.onPropertyChange)})})}var L=c(E,2);{let r=l(()=>({name:s()("constructor.props.align")}));m(L,()=>f,(o,t)=>{t(o,{get label(){return n(r)},type:"buttons",get value(){return n(G)},get options(){return u().ALIGN_OPTIONS},onUpdate:a=>p("label.class",`${e.component.properties.label.class} ${a.value}`,e.component,e.onPropertyChange)})})}var B=c(L,2);{let r=l(()=>({name:s()("constructor.props.colors")}));m(B,()=>f,(o,t)=>{t(o,{wrapperClass:"!h-14",get label(){return n(r)},type:"buttons",get options(){return u().COLOR_OPTIONS},get value(){return n(j)},onUpdate:a=>p("wrapperClass",`${e.component.properties.wrapperClass} ${a.value}`,e.component,e.onPropertyChange)})})}P(R),P(d),x(i,d)};Z(k,i=>{e.component&&e.component.properties&&i(M)})}x(h,I),J(),C()}var le=V("<!> <!>",1);function ce(h){let e=K(Q({id:crypto.randomUUID(),type:"Slider",component:null,properties:{id:crypto.randomUUID(),wrapperClass:"bg-blue",label:{name:"Label",class:"text-center"},value:5,number:{minNum:0,maxNum:10,step:1},disabled:!1,eventHandler:{Header:"SET",Argument:"NoSave",Variables:[]}},position:{row:0,col:0,width:0,height:0},parentId:""}));const u=(g,_)=>{X(e,{...n(e),properties:_.properties?{...n(e).properties,..._.properties}:n(e).properties},!0)};var s=le(),b=D(s);re(b,ee(()=>n(e).properties));var C=c(b,2);ae(C,{get component(){return n(e)},onPropertyChange:g=>u(n(e).id,{properties:g})}),x(h,s)}export{ce as component};
+import '../chunks/NZTpNUN0.js'
+import {
+  p as q,
+  m as z,
+  k as F,
+  l as D,
+  a as x,
+  e as J,
+  f as V,
+  h as y,
+  g as n,
+  i as l,
+  j as c,
+  r as P,
+  s as K,
+  c as Q,
+  d as X,
+} from '../chunks/C8jWV29K.js'
+import { i as Z, s as $, c as m, a as H, d as ee } from '../chunks/CFB23tc5.js'
+import { S as f, I as O, o as te, d as ne, g as re } from '../chunks/CuZzhwEb.js'
+import { u as p } from '../chunks/BoP6aUrK.js'
+var oe = V(
+  '<div class="relative flex flex-row items-start justify-center"><div class="flex w-1/3 flex-col items-center px-2"><!> <!></div> <div class="flex w-1/3 flex-col px-2"><!> <!> <!> <!></div> <div class="flex w-1/3 flex-col px-2"><!> <!> <!></div></div>',
+)
+function ae(h, e) {
+  q(e, !0)
+  const u = () => H(te, '$optionsStore', b),
+    s = () => H(ne, '$t', b),
+    [b, C] = $(),
+    g = z('DeviceVariables')
+  let _ = l(() => (g && Array.isArray(g) ? g.map((i) => ({ id: i.name, value: i.value, name: `${i.value} | ${i.name}` })) : []))
+  const G = l(() =>
+      u().TEXT_ALIGN_OPTIONS.find((i) => i.value.includes(e.component.properties.label?.class?.split(' ').find((d) => d.startsWith('text-')))),
+    ),
+    j = l(() => u().COLOR_OPTIONS.find((i) => i.value.includes(e.component.properties.wrapperClass?.split(' ').find((d) => d.startsWith('bg-')))))
+  var I = F(),
+    k = D(I)
+  {
+    var M = (i) => {
+      var d = oe(),
+        N = y(d),
+        T = y(N)
+      {
+        let r = l(() => ({ name: s()('constructor.props.variable') })),
+          o = l(() => n(_).find((t) => t.value === e.component.properties.id.value))
+        m(
+          T,
+          () => f,
+          (t, a) => {
+            a(t, {
+              get label() {
+                return n(r)
+              },
+              get options() {
+                return n(_)
+              },
+              get value() {
+                return n(o)
+              },
+              onUpdate: (v) => {
+                ;(p('id', v.value, e.component, e.onPropertyChange), p('eventHandler.Variables', v.value, e.component, e.onPropertyChange))
+              },
+            })
+          },
+        )
+      }
+      var W = c(T, 2)
+      {
+        let r = l(() => ({ name: s()('constructor.props.action') })),
+          o = l(() => u().SHORT_ARGUMENT_OPTION.find((t) => t.value === e.component.properties.eventHandler.Argument))
+        m(
+          W,
+          () => f,
+          (t, a) => {
+            a(t, {
+              get label() {
+                return n(r)
+              },
+              type: 'buttons',
+              get value() {
+                return n(o)
+              },
+              get options() {
+                return u().SHORT_ARGUMENT_OPTION
+              },
+              onUpdate: (v) => {
+                p('eventHandler.Argument', v.value, e.component, e.onPropertyChange)
+              },
+            })
+          },
+        )
+      }
+      P(N)
+      var S = c(N, 2),
+        U = y(S)
+      {
+        let r = l(() => ({ name: s()('constructor.props.type') })),
+          o = l(() => u().SLIDER_TYPE_OPTIONS.find((t) => t.value === (e.component.properties.type || 'single')))
+        m(
+          U,
+          () => f,
+          (t, a) => {
+            a(t, {
+              get label() {
+                return n(r)
+              },
+              type: 'buttons',
+              get value() {
+                return n(o)
+              },
+              get options() {
+                return u().SLIDER_TYPE_OPTIONS
+              },
+              onUpdate: (v) => {
+                ;(p('value', v.value === 'single' ? 5 : [2, 7], e.component, e.onPropertyChange), p('type', v.value, e.component, e.onPropertyChange))
+              },
+            })
+          },
+        )
+      }
+      var A = c(U, 2)
+      {
+        let r = l(() => ({ name: s()('constructor.props.minnum') }))
+        m(
+          A,
+          () => O,
+          (o, t) => {
+            t(o, {
+              get label() {
+                return n(r)
+              },
+              get value() {
+                return e.component.properties.number.minNum
+              },
+              type: 'number',
+              onUpdate: (a) => p('number.minNum', Number(a), e.component, e.onPropertyChange),
+            })
+          },
+        )
+      }
+      var w = c(A, 2)
+      {
+        let r = l(() => ({ name: s()('constructor.props.maxnum') }))
+        m(
+          w,
+          () => O,
+          (o, t) => {
+            t(o, {
+              get label() {
+                return n(r)
+              },
+              get value() {
+                return e.component.properties.number.maxNum
+              },
+              type: 'number',
+              onUpdate: (a) => p('number.maxNum', Number(a), e.component, e.onPropertyChange),
+            })
+          },
+        )
+      }
+      var Y = c(w, 2)
+      {
+        let r = l(() => ({ name: s()('constructor.props.step') }))
+        m(
+          Y,
+          () => O,
+          (o, t) => {
+            t(o, {
+              get label() {
+                return n(r)
+              },
+              get value() {
+                return e.component.properties.number.step
+              },
+              type: 'number',
+              onUpdate: (a) => p('number.step', Number(a), e.component, e.onPropertyChange),
+            })
+          },
+        )
+      }
+      P(S)
+      var R = c(S, 2),
+        E = y(R)
+      {
+        let r = l(() => ({ name: s()('constructor.props.label') }))
+        m(
+          E,
+          () => O,
+          (o, t) => {
+            t(o, {
+              get label() {
+                return n(r)
+              },
+              get value() {
+                return e.component.properties.label.name
+              },
+              onUpdate: (a) => p('label.name', a, e.component, e.onPropertyChange),
+            })
+          },
+        )
+      }
+      var L = c(E, 2)
+      {
+        let r = l(() => ({ name: s()('constructor.props.align') }))
+        m(
+          L,
+          () => f,
+          (o, t) => {
+            t(o, {
+              get label() {
+                return n(r)
+              },
+              type: 'buttons',
+              get value() {
+                return n(G)
+              },
+              get options() {
+                return u().TEXT_ALIGN_OPTIONS
+              },
+              onUpdate: (a) => p('label.class', `${e.component.properties.label.class} ${a.value}`, e.component, e.onPropertyChange),
+            })
+          },
+        )
+      }
+      var B = c(L, 2)
+      {
+        let r = l(() => ({ name: s()('constructor.props.colors') }))
+        m(
+          B,
+          () => f,
+          (o, t) => {
+            t(o, {
+              wrapperClass: '!h-14',
+              get label() {
+                return n(r)
+              },
+              type: 'buttons',
+              get options() {
+                return u().COLOR_OPTIONS
+              },
+              get value() {
+                return n(j)
+              },
+              onUpdate: (a) => p('wrapperClass', `${e.component.properties.wrapperClass} ${a.value}`, e.component, e.onPropertyChange),
+            })
+          },
+        )
+      }
+      ;(P(R), P(d), x(i, d))
+    }
+    Z(k, (i) => {
+      e.component && e.component.properties && i(M)
+    })
+  }
+  ;(x(h, I), J(), C())
+}
+var le = V('<!> <!>', 1)
+function ce(h) {
+  let e = K(
+    Q({
+      id: crypto.randomUUID(),
+      type: 'Slider',
+      component: null,
+      properties: {
+        id: crypto.randomUUID(),
+        wrapperClass: 'bg-blue',
+        label: { name: 'Label', class: 'text-center' },
+        value: 5,
+        number: { minNum: 0, maxNum: 10, step: 1 },
+        disabled: !1,
+        eventHandler: { Header: 'SET', Argument: 'NoSave', Variables: [] },
+      },
+      position: { row: 0, col: 0, width: 0, height: 0 },
+      parentId: '',
+    }),
+  )
+  const u = (g, _) => {
+    X(e, { ...n(e), properties: _.properties ? { ...n(e).properties, ..._.properties } : n(e).properties }, !0)
+  }
+  var s = le(),
+    b = D(s)
+  re(
+    b,
+    ee(() => n(e).properties),
+  )
+  var C = c(b, 2)
+  ;(ae(C, {
+    get component() {
+      return n(e)
+    },
+    onPropertyChange: (g) => u(n(e).id, { properties: g }),
+  }),
+    x(h, s))
+}
+export { ce as component }

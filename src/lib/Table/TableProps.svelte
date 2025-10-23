@@ -28,7 +28,7 @@
   )
 
   const initialAlign = $derived(
-    $optionsStore.ALIGN_OPTIONS.find((a) =>
+    $optionsStore.TEXT_ALIGN_OPTIONS.find((a) =>
       (a.value as string).includes(component.properties.label?.class?.split(' ').find((cls: string) => cls.startsWith('text-'))),
     ),
   )
@@ -49,6 +49,19 @@
       return newRow
     })
     updateProperty('body', newBody, component, onPropertyChange)
+  }
+
+  const handleImageUpload = (columnIndex: number, event: Event) => {
+    const target = event.target as HTMLInputElement
+    const file = target.files?.[0]
+    if (!file) return
+
+    const reader = new FileReader()
+    reader.onload = () => {
+      const base64WithPrefix = reader.result as string
+      updateTableHeader(columnIndex, 'image', { ['src']: base64WithPrefix })
+    }
+    reader.readAsDataURL(file)
   }
 
   const updateButtonProperty = (columnIndex: number, buttonIndex: number, field: string, value: any) => {
@@ -101,7 +114,7 @@
         label={{ name: $t('constructor.props.align') }}
         type="buttons"
         value={initialAlign}
-        options={$optionsStore.ALIGN_OPTIONS}
+        options={$optionsStore.TEXT_ALIGN_OPTIONS}
         onUpdate={(option) => updateProperty('label.class', twMerge(component.properties.label.class, option.value), component, onPropertyChange)}
       />
     </div>
@@ -159,6 +172,12 @@
           label={{ name: $t('constructor.props.table.columns.sortable') }}
           value={column.sortable ? 2 : 1}
           onChange={(value) => updateTableHeader(columnIndex, 'sortable', value === 2)}
+        />
+        <UI.Switch
+          wrapperClass="w-2/10"
+          label={{ name: $t('constructor.props.copy') }}
+          value={column.overflow?.copy ? 2 : 1}
+          onChange={(value) => updateTableHeader(columnIndex, 'overflow', { copy: value === 2 })}
         />
         <UI.Button
           wrapperClass="w-8"
@@ -307,59 +326,113 @@
     </div>
 
     {#each component.properties.header as column, columnIndex (columnIndex)}
-      <div class="mr-2 flex items-end justify-around gap-6">
-        <UI.Input
-          label={{ name: $t('constructor.props.table.columns.key') }}
-          value={column.key}
-          help={{ regExp: /^[0-9a-zA-Z_-]{0,16}$/ }}
-          onUpdate={(value) => {
-            updateTableHeader(columnIndex, 'key', value)
-            updateTableBody()
-          }}
-        />
-        <UI.Input
-          label={{ name: $t('constructor.props.table.columns.label') }}
-          value={column.label.name}
-          onUpdate={(value) => {
-            updateTableHeader(columnIndex, 'label', { ['name']: value })
-          }}
-        />
-        <UI.Input
-          label={{ name: $t('constructor.props.table.columns.width') }}
-          type="number"
-          value={Number(column.width.replace('%', ''))}
-          onUpdate={(value) => updateTableHeader(columnIndex, 'width', `${value}%`)}
-        />
-        <UI.Switch
-          wrapperClass="w-2/10"
-          label={{ name: $t('constructor.props.table.columns.sortable') }}
-          value={column.sortable ? 2 : 1}
-          onChange={(value) => updateTableHeader(columnIndex, 'sortable', value === 2)}
-        />
-        <UI.Button
-          wrapperClass="w-8"
-          content={{ icon: ButtonAdd, info: $t('constructor.props.table.addaction') }}
-          onClick={() => {
-            const newButton = {
-              name: `button${(component.properties.header[columnIndex].buttons ? component.properties.header[columnIndex].buttons.length : 0) + 1}`,
-              class: 'bg-blue',
-              eventHandler: { Header: 'SET', Argument: 'Save', Variables: [] },
-              onClick: () => {},
-            }
-            const buttons = [...(component.properties.header[columnIndex].buttons || []), newButton]
-            updateTableHeader(columnIndex, 'buttons', buttons)
-          }}
-        />
-        <UI.Button
-          wrapperClass="w-8"
-          content={{ icon: ButtonDelete }}
-          onClick={() => {
-            const headers = [...(component.properties.header || [])]
-            headers.splice(columnIndex, 1)
-            updateProperty('header', headers, component, onPropertyChange)
-          }}
-        />
+      <div class="mb-5">
+        <div class="mr-2 flex items-end justify-around gap-6">
+          <UI.Input
+            label={{ name: $t('constructor.props.table.columns.key') }}
+            value={column.key}
+            help={{ regExp: /^[0-9a-zA-Z_-]{0,16}$/ }}
+            onUpdate={(value) => {
+              updateTableHeader(columnIndex, 'key', value)
+              updateTableBody()
+            }}
+          />
+          <UI.Input
+            label={{ name: $t('constructor.props.table.columns.label') }}
+            value={column.label.name}
+            onUpdate={(value) => {
+              updateTableHeader(columnIndex, 'label', { ['name']: value })
+            }}
+          />
+          <UI.Input
+            label={{ name: $t('constructor.props.table.columns.width') }}
+            type="number"
+            value={Number(column.width.replace('%', ''))}
+            onUpdate={(value) => updateTableHeader(columnIndex, 'width', `${value}%`)}
+          />
+          <UI.Switch
+            wrapperClass="w-2/10"
+            label={{ name: $t('constructor.props.table.columns.sortable') }}
+            value={column.sortable ? 2 : 1}
+            onChange={(value) => updateTableHeader(columnIndex, 'sortable', value === 2)}
+          />
+          <UI.Switch
+            wrapperClass="w-2/10"
+            label={{ name: $t('constructor.props.copy') }}
+            value={column.overflow?.copy ? 2 : 1}
+            onChange={(value) => updateTableHeader(columnIndex, 'overflow', { copy: value === 2 })}
+          />
+          <UI.Button
+            wrapperClass="w-8"
+            content={{ icon: ButtonAdd, info: $t('constructor.props.table.addaction') }}
+            onClick={() => {
+              const newButton = {
+                name: `button${(component.properties.header[columnIndex].buttons ? component.properties.header[columnIndex].buttons.length : 0) + 1}`,
+                class: 'bg-blue',
+                eventHandler: { Header: 'SET', Argument: 'Save', Variables: [] },
+                onClick: () => {},
+              }
+              const buttons = [...(component.properties.header[columnIndex].buttons || []), newButton]
+              updateTableHeader(columnIndex, 'buttons', buttons)
+            }}
+          />
+          <UI.Button
+            wrapperClass="w-8"
+            content={{ icon: ButtonDelete }}
+            onClick={() => {
+              const headers = [...(component.properties.header || [])]
+              headers.splice(columnIndex, 1)
+              updateProperty('header', headers, component, onPropertyChange)
+            }}
+          />
+        </div>
+        <div class="mr-2 flex items-end justify-around gap-6">
+          <UI.Select
+            label={{ name: $t('constructor.props.align') }}
+            type="buttons"
+            value={$optionsStore.ALIGN_OPTIONS.find((a) => (a.value as string).includes(column.align) || 'left')}
+            options={$optionsStore.ALIGN_OPTIONS}
+            onUpdate={(option) => updateTableHeader(columnIndex, 'align', option.value)}
+          />
+          <UI.Switch
+            wrapperClass="w-2/10"
+            label={{ name: $t('constructor.props.table.columns.truncated') }}
+            value={column.overflow?.truncated ? 2 : 1}
+            onChange={(value) => updateTableHeader(columnIndex, 'overflow', { ['truncated']: value === 2 })}
+          />
+          <UI.Input
+            label={{ name: $t('constructor.props.table.columns.alt') }}
+            value={column.image?.alt}
+            onUpdate={(value) => {
+              updateTableHeader(columnIndex, 'image', { ['alt']: value })
+            }}
+          />
+          <UI.Input
+            label={{ name: $t('constructor.props.table.columns.class') }}
+            value={column.image?.class}
+            onUpdate={(value) => {
+              updateTableHeader(columnIndex, 'image', { ['class']: value })
+            }}
+          />
+          <UI.Input
+            label={{ name: $t('constructor.props.table.columns.image.width'), class: 'px-0' }}
+            wrapperClass="w-150"
+            value={column.image?.width}
+            onUpdate={(value) => {
+              updateTableHeader(columnIndex, 'image', { ['width']: value })
+            }}
+          />
+          <UI.Input
+            label={{ name: $t('constructor.props.table.columns.image.height'), class: 'px-0' }}
+            wrapperClass="w-150"
+            value={column.image?.height}
+            onUpdate={(value) => {
+              updateTableHeader(columnIndex, 'image', { ['height']: value })
+            }}
+          />
+        </div>
       </div>
+
       {#if column.buttons && column.buttons.length > 0}
         <div class="mb-5 rounded-lg p-1">
           {#each column.buttons as button, buttonIndex (buttonIndex)}

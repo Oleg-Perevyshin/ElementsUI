@@ -12,7 +12,7 @@
     disabled = false,
     content = {
       name: '',
-      info: '',
+      info: { text: '', side: 'top' },
       icon: null,
     },
     keyBind,
@@ -64,7 +64,7 @@
   })
 </script>
 
-<div class={twMerge(`relative flex w-full flex-col items-center`, wrapperClass)}>
+<div class={twMerge(`relative flex w-full flex-col items-center `, wrapperClass)}>
   <div class="relative flex w-full grow items-center">
     <button
       {id}
@@ -79,10 +79,10 @@
       {disabled}
       aria-label={content.name}
       onmouseenter={() => {
-        if (content.info) showInfo = true
+        if (content.info?.text) showInfo = true
       }}
       onmouseleave={() => {
-        if (content.info) showInfo = false
+        if (content.info?.text) showInfo = false
       }}
     >
       <span class=" flex flex-row items-center justify-center gap-2">
@@ -113,15 +113,41 @@
       </span>
     </button>
 
-    {#if showInfo}
+    {#if showInfo && content.info?.side === 'top'}
       <div
         transition:fly={{ y: -15, duration: 300 }}
-        class="absolute bottom-full left-1/2 z-50 mb-2 w-max max-w-xs rounded-md bg-(--container-color) px-3 py-1 text-sm shadow-lg"
+        class="absolute bottom-full left-1/2 z-50 mb-2 max-w-min min-w-fit rounded-md bg-(--container-color) px-3 py-1 text-sm shadow-lg"
         style="transform: translateX(-50%);"
       >
-        {content.info}
-        <!-- Треугольная стрелка -->
+        {content.info?.text}
         <div class="absolute top-full left-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rotate-45 transform bg-(--container-color)"></div>
+      </div>
+    {:else if showInfo && content.info?.side === 'bottom'}
+      <div
+        transition:fly={{ y: 15, duration: 300 }}
+        class="absolute top-full left-1/2 z-50 mt-2 max-w-min min-w-fit rounded-md bg-(--container-color) px-3 py-1 text-sm shadow-lg"
+        style="transform: translateX(-50%);"
+      >
+        {content.info?.text}
+        <div class="absolute bottom-full left-1/2 h-2 w-2 -translate-x-1/2 translate-y-1/2 rotate-45 transform bg-(--container-color)"></div>
+      </div>
+    {:else if showInfo && content.info?.side === 'left'}
+      <div
+        transition:fly={{ x: 15, duration: 300 }}
+        class="absolute top-1/2 right-full z-50 mr-2 max-w-min min-w-fit rounded-md bg-(--container-color) px-3 py-1 text-sm shadow-lg"
+        style="transform: translateY(-50%);"
+      >
+        {content.info?.text}
+        <div class="absolute top-1/2 -right-2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rotate-45 transform bg-(--container-color)"></div>
+      </div>
+    {:else if showInfo && content.info?.side === 'right'}
+      <div
+        transition:fly={{ x: -15, duration: 300 }}
+        class="absolute top-1/2 left-full z-50 ml-2 max-w-min min-w-fit rounded-md bg-(--container-color) px-3 py-1 text-sm shadow-lg"
+        style="transform: translateY(-50%);"
+      >
+        {content.info?.text}
+        <div class="absolute top-1/2 -left-2 h-2 w-2 translate-x-1/2 -translate-y-1/2 -rotate-45 transform bg-(--container-color)"></div>
       </div>
     {/if}
   </div>

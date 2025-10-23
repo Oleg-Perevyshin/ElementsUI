@@ -21,7 +21,7 @@
   let currentType = $derived($optionsStore.TEXTFIELD_SIZE_OPTIONS.find((t) => t.value === component.properties.content.size))
 
   const initialAlign = $derived(
-    $optionsStore.ALIGN_OPTIONS.find((a) =>
+    $optionsStore.TEXT_ALIGN_OPTIONS.find((a) =>
       (a.value as string).includes(component.properties.content?.class?.split(' ').find((cls: string) => cls.startsWith('text-'))),
     ),
   )
@@ -64,7 +64,7 @@
         label={{ name: $t('constructor.props.align') }}
         type="buttons"
         value={initialAlign}
-        options={$optionsStore.ALIGN_OPTIONS}
+        options={$optionsStore.TEXT_ALIGN_OPTIONS}
         onUpdate={(option) => updateProperty('content.class', twMerge(component.properties.content.class, option.value), component, onPropertyChange)}
       />
       <UI.Select
@@ -151,7 +151,7 @@
         label={{ name: $t('constructor.props.align') }}
         type="buttons"
         value={initialAlign}
-        options={$optionsStore.ALIGN_OPTIONS}
+        options={$optionsStore.TEXT_ALIGN_OPTIONS}
         onUpdate={(option) => updateProperty('content.class', twMerge(component.properties.content.class, option.value), component, onPropertyChange)}
       />
     </div>
@@ -162,7 +162,7 @@
         onChange={(value) =>
           updateProperty(
             'content.class',
-            `${component.properties.content.class} ${value === 2 ? 'font-bold' : 'font-normal'}`,
+            twMerge(`${component.properties.content.class} ${value === 2 ? 'font-bold' : 'font-normal'}`),
             component,
             onPropertyChange,
           )}
@@ -173,7 +173,7 @@
         onChange={(value) =>
           updateProperty(
             'content.class',
-            `${component.properties.content.class} ${value === 2 ? 'italic' : 'not-italic'}`,
+            twMerge(`${component.properties.content.class} ${value === 2 ? 'italic' : 'not-italic'}`),
             component,
             onPropertyChange,
           )}

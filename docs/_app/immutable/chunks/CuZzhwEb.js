@@ -1,48 +1,3936 @@
-import"./NZTpNUN0.js";import{A as tt,o as At,aP as ot,y as fr,q as we,av as or,v as Er,g as i,Z as zt,w as Rt,H as Ot,x as Hr,z as xr,I as Ke,ac as at,aD as Pt,B as Tr,D as Lt,aQ as pr,aR as gr,C as Ye,ab as Kr,Q as jt,a9 as Wr,aA as nt,at as Bt,F as st,G as Dt,aS as Ut,aT as _r,M as Lr,al as it,aU as Gt,aq as lt,aV as Vt,az as Ft,aW as Ht,W as jr,t as Q,aX as Kt,aE as Wt,ax as Xt,aC as Xr,aF as Yt,aY as qt,aZ as Zt,a_ as Jt,a$ as Qt,b0 as $t,E as eo,b1 as ro,b2 as to,J as oo,b3 as ao,as as ct,a0 as no,P as Ue,L as Br,b4 as dt,K as ut,a6 as so,b5 as io,p as Se,f as U,h as M,a as I,e as Ee,j as J,r as x,k as ye,l as ue,i as pe,s as xe,d as W,n as ft,c as ar,u as nr,b6 as lo,b as Je}from"./C8jWV29K.js";import{c as co,d as Te,s as le,a as Ir,o as Dr,e as We,f as vt,w as uo,g as fo}from"./D7KfncB_.js";import{p as R,i as ee,c as Ur,b as mt,s as pt,a as gt}from"./CFB23tc5.js";function is(e,r){return r}function vo(e,r,t){for(var o=e.items,u=[],l=r.length,s=0;s<l;s++)Vt(r[s].e,u,!0);var a=l>0&&u.length===0&&t!==null;if(a){var c=t.parentNode;Ft(c),c.append(t),o.clear(),Me(e,r[0].prev,r[l-1].next)}Ht(u,()=>{for(var g=0;g<l;g++){var m=r[g];a||(o.delete(m.k),Me(e,m.prev,m.next)),it(m.e,!a)}})}function Ge(e,r,t,o,u,l=null){var s=e,a={flags:r,items:new Map,first:null},c=(r&ot)!==0;if(c){var g=e;s=we?fr(or(g)):g.appendChild(tt())}we&&Er();var m=null,k=!1,j=new Map,E=zt(()=>{var P=t();return Bt(P)?P:P==null?[]:nt(P)}),f,p;function z(){mo(p,f,a,j,s,u,r,o,t),l!==null&&(f.length===0?m?st(m):m=Tr(()=>l(s)):m!==null&&Dt(m,()=>{m=null}))}At(()=>{p??=jr,f=i(E);var P=f.length;if(k&&P===0)return;k=P===0;let X=!1;if(we){var A=Rt(s)===Ot;A!==(P===0)&&(s=Hr(),fr(s),xr(!1),X=!0)}if(we){for(var C=null,h,_=0;_<P;_++){if(Ke.nodeType===at&&Ke.data===Pt){s=Ke,X=!0,xr(!1);break}var O=f[_],w=o(O,_);h=Ar(Ke,a,C,null,O,w,_,u,r,t),a.items.set(w,h),C=h}P>0&&fr(Hr())}if(we)P===0&&l&&(m=Tr(()=>l(s)));else if(Lt()){var L=new Set,F=Ye;for(_=0;_<P;_+=1){O=f[_],w=o(O,_);var H=a.items.get(w)??j.get(w);H?(r&(pr|gr))!==0&&bt(H,O,_,r):(h=Ar(null,a,null,null,O,w,_,u,r,t,!0),j.set(w,h)),L.add(w)}for(const[ne,de]of a.items)L.has(ne)||F.skipped_effects.add(de.e);F.add_callback(z)}else z();X&&xr(!0),i(E)}),we&&(s=Ke)}function mo(e,r,t,o,u,l,s,a,c){var g=(s&Gt)!==0,m=(s&(pr|gr))!==0,k=r.length,j=t.items,E=t.first,f=E,p,z=null,P,X=[],A=[],C,h,_,O;if(g)for(O=0;O<k;O+=1)C=r[O],h=a(C,O),_=j.get(h),_!==void 0&&(_.a?.measure(),(P??=new Set).add(_));for(O=0;O<k;O+=1){if(C=r[O],h=a(C,O),_=j.get(h),_===void 0){var w=o.get(h);if(w!==void 0){o.delete(h),j.set(h,w);var L=z?z.next:f;Me(t,z,w),Me(t,w,L),yr(w,L,u),z=w}else{var F=f?f.e.nodes_start:u;z=Ar(F,t,z,z===null?t.first:z.next,C,h,O,l,s,c)}j.set(h,z),X=[],A=[],f=z.next;continue}if(m&&bt(_,C,O,s),(_.e.f&_r)!==0&&(st(_.e),g&&(_.a?.unfix(),(P??=new Set).delete(_))),_!==f){if(p!==void 0&&p.has(_)){if(X.length<A.length){var H=A[0],ne;z=H.prev;var de=X[0],se=X[X.length-1];for(ne=0;ne<X.length;ne+=1)yr(X[ne],H,u);for(ne=0;ne<A.length;ne+=1)p.delete(A[ne]);Me(t,de.prev,se.next),Me(t,z,de),Me(t,se,H),f=H,z=se,O-=1,X=[],A=[]}else p.delete(_),yr(_,f,u),Me(t,_.prev,_.next),Me(t,_,z===null?t.first:z.next),Me(t,z,_),z=_;continue}for(X=[],A=[];f!==null&&f.k!==h;)(f.e.f&_r)===0&&(p??=new Set).add(f),A.push(f),f=f.next;if(f===null)continue;_=f}X.push(_),z=_,f=_.next}if(f!==null||p!==void 0){for(var oe=p===void 0?[]:nt(p);f!==null;)(f.e.f&_r)===0&&oe.push(f),f=f.next;var ae=oe.length;if(ae>0){var G=(s&ot)!==0&&k===0?u:null;if(g){for(O=0;O<ae;O+=1)oe[O].a?.measure();for(O=0;O<ae;O+=1)oe[O].a?.fix()}vo(t,oe,G)}}g&&Lr(()=>{if(P!==void 0)for(_ of P)_.a?.apply()}),e.first=t.first&&t.first.e,e.last=z&&z.e;for(var b of o.values())it(b.e);o.clear()}function bt(e,r,t,o){(o&pr)!==0&&Kr(e.v,r),(o&gr)!==0?Kr(e.i,t):e.i=t}function Ar(e,r,t,o,u,l,s,a,c,g,m){var k=(c&pr)!==0,j=(c&Ut)===0,E=k?j?jt(u,!1,!1):Wr(u):u,f=(c&gr)===0?s:Wr(s),p={i:f,v:E,k:l,a:null,e:null,prev:t,next:o};try{if(e===null){var z=document.createDocumentFragment();z.append(e=tt())}return p.e=Tr(()=>a(e,E,f,g),we),p.e.prev=t&&t.e,p.e.next=o&&o.e,t===null?m||(r.first=p):(t.next=p,t.e.next=p.e),o!==null&&(o.prev=p,o.e.prev=p.e),p}finally{}}function yr(e,r,t){for(var o=e.next?e.next.e.nodes_start:t,u=r?r.e.nodes_start:t,l=e.e.nodes_start;l!==null&&l!==o;){var s=lt(l);u.before(l),l=s}}function Me(e,r,t){r===null?e.first=t:(r.next=t,r.e.next=t&&t.e),t!==null&&(t.prev=r,t.e.prev=r&&r.e)}function lr(e,r,t=!1,o=!1,u=!1){var l=e,s="";Q(()=>{var a=jr;if(s===(s=r()??"")){we&&Er();return}if(a.nodes_start!==null&&(Kt(a.nodes_start,a.nodes_end),a.nodes_start=a.nodes_end=null),s!==""){if(we){Ke.data;for(var c=Er(),g=c;c!==null&&(c.nodeType!==at||c.data!=="");)g=c,c=lt(c);if(c===null)throw Wt(),Xt;Xr(Ke,g),l=fr(c);return}var m=s+"";t?m=`<svg>${m}</svg>`:o&&(m=`<math>${m}</math>`);var k=Yt(m);if((t||o)&&(k=or(k)),Xr(or(k),k.lastChild),t||o)for(;or(k);)l.before(or(k));else l.before(k)}})}function ht(e){var r,t,o="";if(typeof e=="string"||typeof e=="number")o+=e;else if(typeof e=="object")if(Array.isArray(e)){var u=e.length;for(r=0;r<u;r++)e[r]&&(t=ht(e[r]))&&(o&&(o+=" "),o+=t)}else for(t in e)e[t]&&(o&&(o+=" "),o+=t);return o}function po(){for(var e,r,t=0,o="",u=arguments.length;t<u;t++)(e=arguments[t])&&(r=ht(e))&&(o&&(o+=" "),o+=r);return o}function ve(e){return typeof e=="object"?po(e):e??""}function go(e,r,t){var o=e==null?"":""+e;return r&&(o=o?o+" "+r:r),o===""?null:o}function bo(e,r){return e==null?null:String(e)}function V(e,r,t,o,u,l){var s=e.__className;if(we||s!==t||s===void 0){var a=go(t,o);(!we||a!==e.getAttribute("class"))&&(a==null?e.removeAttribute("class"):e.className=a),e.__className=t}return l}function ce(e,r,t,o){var u=e.__style;if(we||u!==r){var l=bo(r);(!we||l!==e.getAttribute("style"))&&(l==null?e.removeAttribute("style"):e.style.cssText=l),e.__style=r}return o}const ho=Symbol("is custom element"),wo=Symbol("is html");function qe(e){if(we){var r=!1,t=()=>{if(!r){if(r=!0,e.hasAttribute("value")){var o=e.value;Y(e,"value",null),e.value=o}if(e.hasAttribute("checked")){var u=e.checked;Y(e,"checked",null),e.checked=u}}};e.__on_r=t,Lr(t),$t()}}function kr(e,r){var t=wt(e);t.value===(t.value=r??void 0)||e.value===r&&(r!==0||e.nodeName!=="PROGRESS")||(e.value=r??"")}function Y(e,r,t,o){var u=wt(e);we&&(u[r]=e.getAttribute(r),r==="src"||r==="srcset"||r==="href"&&e.nodeName==="LINK")||u[r]!==(u[r]=t)&&(r==="loading"&&(e[qt]=t),t==null?e.removeAttribute(r):typeof t!="string"&&xo(e).includes(r)?e[r]=t:e.setAttribute(r,t))}function wt(e){return e.__attributes??={[ho]:e.nodeName.includes("-"),[wo]:e.namespaceURI===Zt}}var Yr=new Map;function xo(e){var r=e.getAttribute("is")||e.nodeName,t=Yr.get(r);if(t)return t;Yr.set(r,t=[]);for(var o,u=e,l=Element.prototype;l!==u;){o=Qt(u);for(var s in o)o[s].set&&t.push(s);u=Jt(u)}return t}const _o=()=>performance.now(),Pe={tick:e=>requestAnimationFrame(e),now:()=>_o(),tasks:new Set};function xt(){const e=Pe.now();Pe.tasks.forEach(r=>{r.c(e)||(Pe.tasks.delete(r),r.f())}),Pe.tasks.size!==0&&Pe.tick(xt)}function yo(e){let r;return Pe.tasks.size===0&&Pe.tick(xt),{promise:new Promise(t=>{Pe.tasks.add(r={c:e,f:t})}),abort(){Pe.tasks.delete(r)}}}function cr(e,r){ct(()=>{e.dispatchEvent(new CustomEvent(r))})}function ko(e){if(e==="float")return"cssFloat";if(e==="offset")return"cssOffset";if(e.startsWith("--"))return e;const r=e.split("-");return r.length===1?r[0]:r[0]+r.slice(1).map(t=>t[0].toUpperCase()+t.slice(1)).join("")}function qr(e){const r={},t=e.split(";");for(const o of t){const[u,l]=o.split(":");if(!u||l===void 0)break;const s=ko(u.trim());r[s]=l.trim()}return r}const Co=e=>e;function Ce(e,r,t,o){var u=(e&ao)!==0,l="both",s,a=r.inert,c=r.style.overflow,g,m;function k(){return ct(()=>s??=t()(r,o?.()??{},{direction:l}))}var j={is_global:u,in(){r.inert=a,cr(r,"introstart"),g=zr(r,k(),m,1,()=>{cr(r,"introend"),g?.abort(),g=s=void 0,r.style.overflow=c})},out(z){r.inert=!0,cr(r,"outrostart"),m=zr(r,k(),g,0,()=>{cr(r,"outroend"),z?.()})},stop:()=>{g?.abort(),m?.abort()}},E=jr;if((E.transitions??=[]).push(j),co){var f=u;if(!f){for(var p=E.parent;p&&(p.f&eo)!==0;)for(;(p=p.parent)&&(p.f&ro)===0;);f=!p||(p.f&to)!==0}f&&oo(()=>{Br(()=>j.in())})}}function zr(e,r,t,o,u){var l=o===1;if(no(r)){var s,a=!1;return Lr(()=>{if(!a){var z=r({direction:l?"in":"out"});s=zr(e,z,t,o,u)}}),{abort:()=>{a=!0,s?.abort()},deactivate:()=>s.deactivate(),reset:()=>s.reset(),t:()=>s.t()}}if(t?.deactivate(),!r?.duration)return u(),{abort:Ue,deactivate:Ue,reset:Ue,t:()=>o};const{delay:c=0,css:g,tick:m,easing:k=Co}=r;var j=[];if(l&&t===void 0&&(m&&m(0,1),g)){var E=qr(g(0,1));j.push(E,E)}var f=()=>1-o,p=e.animate(j,{duration:c,fill:"forwards"});return p.onfinish=()=>{p.cancel();var z=t?.t()??1-o;t?.abort();var P=o-z,X=r.duration*Math.abs(P),A=[];if(X>0){var C=!1;if(g)for(var h=Math.ceil(X/16.666666666666668),_=0;_<=h;_+=1){var O=z+P*k(_/h),w=qr(g(O,1-O));A.push(w),C||=w.overflow==="hidden"}C&&(e.style.overflow="hidden"),f=()=>{var L=p.currentTime;return z+P*k(L/X)},m&&yo(()=>{if(p.playState!=="running")return!1;var L=f();return m(L,1-L),!0})}p=e.animate(A,{duration:X,fill:"forwards"}),p.onfinish=()=>{f=()=>o,m?.(o,1-o),u()}},{abort:()=>{p&&(p.cancel(),p.effect=null,p.onfinish=Ue)},deactivate:()=>{u=Ue},reset:()=>{o===0&&m?.(1,0)},t:()=>f()}}function Ze(e,r,t=r){var o=new WeakSet;dt(e,"input",async u=>{var l=u?e.defaultValue:e.value;if(l=Cr(e)?Nr(l):l,t(l),Ye!==null&&o.add(Ye),await so(),l!==(l=r())){var s=e.selectionStart,a=e.selectionEnd;e.value=l??"",a!==null&&(e.selectionStart=s,e.selectionEnd=Math.min(a,e.value.length))}}),(we&&e.defaultValue!==e.value||Br(r)==null&&e.value)&&(t(Cr(e)?Nr(e.value):e.value),Ye!==null&&o.add(Ye)),ut(()=>{var u=r();if(e===document.activeElement){var l=io??Ye;if(o.has(l))return}Cr(e)&&u===Nr(e.value)||e.type==="date"&&!u&&!e.value||u!==e.value&&(e.value=u??"")})}function No(e,r,t=r){dt(e,"change",o=>{var u=o?e.defaultChecked:e.checked;t(u)}),(we&&e.defaultChecked!==e.checked||Br(r)==null)&&t(e.checked),ut(()=>{var o=r();e.checked=!!o})}function Cr(e){var r=e.type;return r==="number"||r==="range"}function Nr(e){return e===""?null:+e}const Mo=e=>e;function Gr(e){const r=e-1;return r*r*r+1}function Zr(e){const r=typeof e=="string"&&e.match(/^\s*(-?[\d.]+)([^\s]*)\s*$/);return r?[parseFloat(r[1]),r[2]||"px"]:[e,"px"]}function So(e,{delay:r=0,duration:t=400,easing:o=Mo}={}){const u=+getComputedStyle(e).opacity;return{delay:r,duration:t,easing:o,css:l=>`opacity: ${l*u}`}}function sr(e,{delay:r=0,duration:t=400,easing:o=Gr,x:u=0,y:l=0,opacity:s=0}={}){const a=getComputedStyle(e),c=+a.opacity,g=a.transform==="none"?"":a.transform,m=c*(1-s),[k,j]=Zr(u),[E,f]=Zr(l);return{delay:r,duration:t,easing:o,css:(p,z)=>`
-			transform: ${g} translate(${(1-p)*k}${j}, ${(1-p)*E}${f});
-			opacity: ${c-m*z}`}}function mr(e,{delay:r=0,duration:t=400,easing:o=Gr,axis:u="y"}={}){const l=getComputedStyle(e),s=+l.opacity,a=u==="y"?"height":"width",c=parseFloat(l[a]),g=u==="y"?["top","bottom"]:["left","right"],m=g.map(P=>`${P[0].toUpperCase()}${P.slice(1)}`),k=parseFloat(l[`padding${m[0]}`]),j=parseFloat(l[`padding${m[1]}`]),E=parseFloat(l[`margin${m[0]}`]),f=parseFloat(l[`margin${m[1]}`]),p=parseFloat(l[`border${m[0]}Width`]),z=parseFloat(l[`border${m[1]}Width`]);return{delay:r,duration:t,easing:o,css:P=>`overflow: hidden;opacity: ${Math.min(P*20,1)*s};${a}: ${P*c}px;padding-${g[0]}: ${P*k}px;padding-${g[1]}: ${P*j}px;margin-${g[0]}: ${P*E}px;margin-${g[1]}: ${P*f}px;border-${g[0]}-width: ${P*p}px;border-${g[1]}-width: ${P*z}px;min-${a}: 0`}}function Eo(e,{delay:r=0,duration:t=400,easing:o=Gr,start:u=0,opacity:l=0}={}){const s=getComputedStyle(e),a=+s.opacity,c=s.transform==="none"?"":s.transform,g=1-u,m=a*(1-l);return{delay:r,duration:t,easing:o,css:(k,j)=>`
-			transform: ${c} scale(${1-g*j});
-			opacity: ${a-m*j}
-		`}}const Vr="-",To=e=>{const r=Ao(e),{conflictingClassGroups:t,conflictingClassGroupModifiers:o}=e;return{getClassGroupId:s=>{const a=s.split(Vr);return a[0]===""&&a.length!==1&&a.shift(),_t(a,r)||Io(s)},getConflictingClassGroupIds:(s,a)=>{const c=t[s]||[];return a&&o[s]?[...c,...o[s]]:c}}},_t=(e,r)=>{if(e.length===0)return r.classGroupId;const t=e[0],o=r.nextPart.get(t),u=o?_t(e.slice(1),o):void 0;if(u)return u;if(r.validators.length===0)return;const l=e.join(Vr);return r.validators.find(({validator:s})=>s(l))?.classGroupId},Jr=/^\[(.+)\]$/,Io=e=>{if(Jr.test(e)){const r=Jr.exec(e)[1],t=r?.substring(0,r.indexOf(":"));if(t)return"arbitrary.."+t}},Ao=e=>{const{theme:r,classGroups:t}=e,o={nextPart:new Map,validators:[]};for(const u in t)Rr(t[u],o,u,r);return o},Rr=(e,r,t,o)=>{e.forEach(u=>{if(typeof u=="string"){const l=u===""?r:Qr(r,u);l.classGroupId=t;return}if(typeof u=="function"){if(zo(u)){Rr(u(o),r,t,o);return}r.validators.push({validator:u,classGroupId:t});return}Object.entries(u).forEach(([l,s])=>{Rr(s,Qr(r,l),t,o)})})},Qr=(e,r)=>{let t=e;return r.split(Vr).forEach(o=>{t.nextPart.has(o)||t.nextPart.set(o,{nextPart:new Map,validators:[]}),t=t.nextPart.get(o)}),t},zo=e=>e.isThemeGetter,Ro=e=>{if(e<1)return{get:()=>{},set:()=>{}};let r=0,t=new Map,o=new Map;const u=(l,s)=>{t.set(l,s),r++,r>e&&(r=0,o=t,t=new Map)};return{get(l){let s=t.get(l);if(s!==void 0)return s;if((s=o.get(l))!==void 0)return u(l,s),s},set(l,s){t.has(l)?t.set(l,s):u(l,s)}}},Or="!",Pr=":",Oo=Pr.length,Po=e=>{const{prefix:r,experimentalParseClassName:t}=e;let o=u=>{const l=[];let s=0,a=0,c=0,g;for(let f=0;f<u.length;f++){let p=u[f];if(s===0&&a===0){if(p===Pr){l.push(u.slice(c,f)),c=f+Oo;continue}if(p==="/"){g=f;continue}}p==="["?s++:p==="]"?s--:p==="("?a++:p===")"&&a--}const m=l.length===0?u:u.substring(c),k=Lo(m),j=k!==m,E=g&&g>c?g-c:void 0;return{modifiers:l,hasImportantModifier:j,baseClassName:k,maybePostfixModifierPosition:E}};if(r){const u=r+Pr,l=o;o=s=>s.startsWith(u)?l(s.substring(u.length)):{isExternal:!0,modifiers:[],hasImportantModifier:!1,baseClassName:s,maybePostfixModifierPosition:void 0}}if(t){const u=o;o=l=>t({className:l,parseClassName:u})}return o},Lo=e=>e.endsWith(Or)?e.substring(0,e.length-1):e.startsWith(Or)?e.substring(1):e,jo=e=>{const r=Object.fromEntries(e.orderSensitiveModifiers.map(o=>[o,!0]));return o=>{if(o.length<=1)return o;const u=[];let l=[];return o.forEach(s=>{s[0]==="["||r[s]?(u.push(...l.sort(),s),l=[]):l.push(s)}),u.push(...l.sort()),u}},Bo=e=>({cache:Ro(e.cacheSize),parseClassName:Po(e),sortModifiers:jo(e),...To(e)}),Do=/\s+/,Uo=(e,r)=>{const{parseClassName:t,getClassGroupId:o,getConflictingClassGroupIds:u,sortModifiers:l}=r,s=[],a=e.trim().split(Do);let c="";for(let g=a.length-1;g>=0;g-=1){const m=a[g],{isExternal:k,modifiers:j,hasImportantModifier:E,baseClassName:f,maybePostfixModifierPosition:p}=t(m);if(k){c=m+(c.length>0?" "+c:c);continue}let z=!!p,P=o(z?f.substring(0,p):f);if(!P){if(!z){c=m+(c.length>0?" "+c:c);continue}if(P=o(f),!P){c=m+(c.length>0?" "+c:c);continue}z=!1}const X=l(j).join(":"),A=E?X+Or:X,C=A+P;if(s.includes(C))continue;s.push(C);const h=u(P,z);for(let _=0;_<h.length;++_){const O=h[_];s.push(A+O)}c=m+(c.length>0?" "+c:c)}return c};function Go(){let e=0,r,t,o="";for(;e<arguments.length;)(r=arguments[e++])&&(t=yt(r))&&(o&&(o+=" "),o+=t);return o}const yt=e=>{if(typeof e=="string")return e;let r,t="";for(let o=0;o<e.length;o++)e[o]&&(r=yt(e[o]))&&(t&&(t+=" "),t+=r);return t};function Vo(e,...r){let t,o,u,l=s;function s(c){const g=r.reduce((m,k)=>k(m),e());return t=Bo(g),o=t.cache.get,u=t.cache.set,l=a,a(c)}function a(c){const g=o(c);if(g)return g;const m=Uo(c,t);return u(c,m),m}return function(){return l(Go.apply(null,arguments))}}const be=e=>{const r=t=>t[e]||[];return r.isThemeGetter=!0,r},kt=/^\[(?:(\w[\w-]*):)?(.+)\]$/i,Ct=/^\((?:(\w[\w-]*):)?(.+)\)$/i,Fo=/^\d+\/\d+$/,Ho=/^(\d+(\.\d+)?)?(xs|sm|md|lg|xl)$/,Ko=/\d+(%|px|r?em|[sdl]?v([hwib]|min|max)|pt|pc|in|cm|mm|cap|ch|ex|r?lh|cq(w|h|i|b|min|max))|\b(calc|min|max|clamp)\(.+\)|^0$/,Wo=/^(rgba?|hsla?|hwb|(ok)?(lab|lch)|color-mix)\(.+\)$/,Xo=/^(inset_)?-?((\d+)?\.?(\d+)[a-z]+|0)_-?((\d+)?\.?(\d+)[a-z]+|0)/,Yo=/^(url|image|image-set|cross-fade|element|(repeating-)?(linear|radial|conic)-gradient)\(.+\)$/,Xe=e=>Fo.test(e),te=e=>!!e&&!Number.isNaN(Number(e)),De=e=>!!e&&Number.isInteger(Number(e)),Mr=e=>e.endsWith("%")&&te(e.slice(0,-1)),Oe=e=>Ho.test(e),qo=()=>!0,Zo=e=>Ko.test(e)&&!Wo.test(e),Nt=()=>!1,Jo=e=>Xo.test(e),Qo=e=>Yo.test(e),$o=e=>!B(e)&&!D(e),ea=e=>Qe(e,Et,Nt),B=e=>kt.test(e),He=e=>Qe(e,Tt,Zo),Sr=e=>Qe(e,na,te),$r=e=>Qe(e,Mt,Nt),ra=e=>Qe(e,St,Qo),dr=e=>Qe(e,It,Jo),D=e=>Ct.test(e),tr=e=>$e(e,Tt),ta=e=>$e(e,sa),et=e=>$e(e,Mt),oa=e=>$e(e,Et),aa=e=>$e(e,St),ur=e=>$e(e,It,!0),Qe=(e,r,t)=>{const o=kt.exec(e);return o?o[1]?r(o[1]):t(o[2]):!1},$e=(e,r,t=!1)=>{const o=Ct.exec(e);return o?o[1]?r(o[1]):t:!1},Mt=e=>e==="position"||e==="percentage",St=e=>e==="image"||e==="url",Et=e=>e==="length"||e==="size"||e==="bg-size",Tt=e=>e==="length",na=e=>e==="number",sa=e=>e==="family-name",It=e=>e==="shadow",ia=()=>{const e=be("color"),r=be("font"),t=be("text"),o=be("font-weight"),u=be("tracking"),l=be("leading"),s=be("breakpoint"),a=be("container"),c=be("spacing"),g=be("radius"),m=be("shadow"),k=be("inset-shadow"),j=be("text-shadow"),E=be("drop-shadow"),f=be("blur"),p=be("perspective"),z=be("aspect"),P=be("ease"),X=be("animate"),A=()=>["auto","avoid","all","avoid-page","page","left","right","column"],C=()=>["center","top","bottom","left","right","top-left","left-top","top-right","right-top","bottom-right","right-bottom","bottom-left","left-bottom"],h=()=>[...C(),D,B],_=()=>["auto","hidden","clip","visible","scroll"],O=()=>["auto","contain","none"],w=()=>[D,B,c],L=()=>[Xe,"full","auto",...w()],F=()=>[De,"none","subgrid",D,B],H=()=>["auto",{span:["full",De,D,B]},De,D,B],ne=()=>[De,"auto",D,B],de=()=>["auto","min","max","fr",D,B],se=()=>["start","end","center","between","around","evenly","stretch","baseline","center-safe","end-safe"],oe=()=>["start","end","center","stretch","center-safe","end-safe"],ae=()=>["auto",...w()],G=()=>[Xe,"auto","full","dvw","dvh","lvw","lvh","svw","svh","min","max","fit",...w()],b=()=>[e,D,B],q=()=>[...C(),et,$r,{position:[D,B]}],$=()=>["no-repeat",{repeat:["","x","y","space","round"]}],T=()=>["auto","cover","contain",oa,ea,{size:[D,B]}],d=()=>[Mr,tr,He],n=()=>["","none","full",g,D,B],v=()=>["",te,tr,He],S=()=>["solid","dashed","dotted","double"],K=()=>["normal","multiply","screen","overlay","darken","lighten","color-dodge","color-burn","hard-light","soft-light","difference","exclusion","hue","saturation","color","luminosity"],y=()=>[te,Mr,et,$r],N=()=>["","none",f,D,B],Z=()=>["none",te,D,B],ge=()=>["none",te,D,B],he=()=>[te,D,B],_e=()=>[Xe,"full",...w()];return{cacheSize:500,theme:{animate:["spin","ping","pulse","bounce"],aspect:["video"],blur:[Oe],breakpoint:[Oe],color:[qo],container:[Oe],"drop-shadow":[Oe],ease:["in","out","in-out"],font:[$o],"font-weight":["thin","extralight","light","normal","medium","semibold","bold","extrabold","black"],"inset-shadow":[Oe],leading:["none","tight","snug","normal","relaxed","loose"],perspective:["dramatic","near","normal","midrange","distant","none"],radius:[Oe],shadow:[Oe],spacing:["px",te],text:[Oe],"text-shadow":[Oe],tracking:["tighter","tight","normal","wide","wider","widest"]},classGroups:{aspect:[{aspect:["auto","square",Xe,B,D,z]}],container:["container"],columns:[{columns:[te,B,D,a]}],"break-after":[{"break-after":A()}],"break-before":[{"break-before":A()}],"break-inside":[{"break-inside":["auto","avoid","avoid-page","avoid-column"]}],"box-decoration":[{"box-decoration":["slice","clone"]}],box:[{box:["border","content"]}],display:["block","inline-block","inline","flex","inline-flex","table","inline-table","table-caption","table-cell","table-column","table-column-group","table-footer-group","table-header-group","table-row-group","table-row","flow-root","grid","inline-grid","contents","list-item","hidden"],sr:["sr-only","not-sr-only"],float:[{float:["right","left","none","start","end"]}],clear:[{clear:["left","right","both","none","start","end"]}],isolation:["isolate","isolation-auto"],"object-fit":[{object:["contain","cover","fill","none","scale-down"]}],"object-position":[{object:h()}],overflow:[{overflow:_()}],"overflow-x":[{"overflow-x":_()}],"overflow-y":[{"overflow-y":_()}],overscroll:[{overscroll:O()}],"overscroll-x":[{"overscroll-x":O()}],"overscroll-y":[{"overscroll-y":O()}],position:["static","fixed","absolute","relative","sticky"],inset:[{inset:L()}],"inset-x":[{"inset-x":L()}],"inset-y":[{"inset-y":L()}],start:[{start:L()}],end:[{end:L()}],top:[{top:L()}],right:[{right:L()}],bottom:[{bottom:L()}],left:[{left:L()}],visibility:["visible","invisible","collapse"],z:[{z:[De,"auto",D,B]}],basis:[{basis:[Xe,"full","auto",a,...w()]}],"flex-direction":[{flex:["row","row-reverse","col","col-reverse"]}],"flex-wrap":[{flex:["nowrap","wrap","wrap-reverse"]}],flex:[{flex:[te,Xe,"auto","initial","none",B]}],grow:[{grow:["",te,D,B]}],shrink:[{shrink:["",te,D,B]}],order:[{order:[De,"first","last","none",D,B]}],"grid-cols":[{"grid-cols":F()}],"col-start-end":[{col:H()}],"col-start":[{"col-start":ne()}],"col-end":[{"col-end":ne()}],"grid-rows":[{"grid-rows":F()}],"row-start-end":[{row:H()}],"row-start":[{"row-start":ne()}],"row-end":[{"row-end":ne()}],"grid-flow":[{"grid-flow":["row","col","dense","row-dense","col-dense"]}],"auto-cols":[{"auto-cols":de()}],"auto-rows":[{"auto-rows":de()}],gap:[{gap:w()}],"gap-x":[{"gap-x":w()}],"gap-y":[{"gap-y":w()}],"justify-content":[{justify:[...se(),"normal"]}],"justify-items":[{"justify-items":[...oe(),"normal"]}],"justify-self":[{"justify-self":["auto",...oe()]}],"align-content":[{content:["normal",...se()]}],"align-items":[{items:[...oe(),{baseline:["","last"]}]}],"align-self":[{self:["auto",...oe(),{baseline:["","last"]}]}],"place-content":[{"place-content":se()}],"place-items":[{"place-items":[...oe(),"baseline"]}],"place-self":[{"place-self":["auto",...oe()]}],p:[{p:w()}],px:[{px:w()}],py:[{py:w()}],ps:[{ps:w()}],pe:[{pe:w()}],pt:[{pt:w()}],pr:[{pr:w()}],pb:[{pb:w()}],pl:[{pl:w()}],m:[{m:ae()}],mx:[{mx:ae()}],my:[{my:ae()}],ms:[{ms:ae()}],me:[{me:ae()}],mt:[{mt:ae()}],mr:[{mr:ae()}],mb:[{mb:ae()}],ml:[{ml:ae()}],"space-x":[{"space-x":w()}],"space-x-reverse":["space-x-reverse"],"space-y":[{"space-y":w()}],"space-y-reverse":["space-y-reverse"],size:[{size:G()}],w:[{w:[a,"screen",...G()]}],"min-w":[{"min-w":[a,"screen","none",...G()]}],"max-w":[{"max-w":[a,"screen","none","prose",{screen:[s]},...G()]}],h:[{h:["screen","lh",...G()]}],"min-h":[{"min-h":["screen","lh","none",...G()]}],"max-h":[{"max-h":["screen","lh",...G()]}],"font-size":[{text:["base",t,tr,He]}],"font-smoothing":["antialiased","subpixel-antialiased"],"font-style":["italic","not-italic"],"font-weight":[{font:[o,D,Sr]}],"font-stretch":[{"font-stretch":["ultra-condensed","extra-condensed","condensed","semi-condensed","normal","semi-expanded","expanded","extra-expanded","ultra-expanded",Mr,B]}],"font-family":[{font:[ta,B,r]}],"fvn-normal":["normal-nums"],"fvn-ordinal":["ordinal"],"fvn-slashed-zero":["slashed-zero"],"fvn-figure":["lining-nums","oldstyle-nums"],"fvn-spacing":["proportional-nums","tabular-nums"],"fvn-fraction":["diagonal-fractions","stacked-fractions"],tracking:[{tracking:[u,D,B]}],"line-clamp":[{"line-clamp":[te,"none",D,Sr]}],leading:[{leading:[l,...w()]}],"list-image":[{"list-image":["none",D,B]}],"list-style-position":[{list:["inside","outside"]}],"list-style-type":[{list:["disc","decimal","none",D,B]}],"text-alignment":[{text:["left","center","right","justify","start","end"]}],"placeholder-color":[{placeholder:b()}],"text-color":[{text:b()}],"text-decoration":["underline","overline","line-through","no-underline"],"text-decoration-style":[{decoration:[...S(),"wavy"]}],"text-decoration-thickness":[{decoration:[te,"from-font","auto",D,He]}],"text-decoration-color":[{decoration:b()}],"underline-offset":[{"underline-offset":[te,"auto",D,B]}],"text-transform":["uppercase","lowercase","capitalize","normal-case"],"text-overflow":["truncate","text-ellipsis","text-clip"],"text-wrap":[{text:["wrap","nowrap","balance","pretty"]}],indent:[{indent:w()}],"vertical-align":[{align:["baseline","top","middle","bottom","text-top","text-bottom","sub","super",D,B]}],whitespace:[{whitespace:["normal","nowrap","pre","pre-line","pre-wrap","break-spaces"]}],break:[{break:["normal","words","all","keep"]}],wrap:[{wrap:["break-word","anywhere","normal"]}],hyphens:[{hyphens:["none","manual","auto"]}],content:[{content:["none",D,B]}],"bg-attachment":[{bg:["fixed","local","scroll"]}],"bg-clip":[{"bg-clip":["border","padding","content","text"]}],"bg-origin":[{"bg-origin":["border","padding","content"]}],"bg-position":[{bg:q()}],"bg-repeat":[{bg:$()}],"bg-size":[{bg:T()}],"bg-image":[{bg:["none",{linear:[{to:["t","tr","r","br","b","bl","l","tl"]},De,D,B],radial:["",D,B],conic:[De,D,B]},aa,ra]}],"bg-color":[{bg:b()}],"gradient-from-pos":[{from:d()}],"gradient-via-pos":[{via:d()}],"gradient-to-pos":[{to:d()}],"gradient-from":[{from:b()}],"gradient-via":[{via:b()}],"gradient-to":[{to:b()}],rounded:[{rounded:n()}],"rounded-s":[{"rounded-s":n()}],"rounded-e":[{"rounded-e":n()}],"rounded-t":[{"rounded-t":n()}],"rounded-r":[{"rounded-r":n()}],"rounded-b":[{"rounded-b":n()}],"rounded-l":[{"rounded-l":n()}],"rounded-ss":[{"rounded-ss":n()}],"rounded-se":[{"rounded-se":n()}],"rounded-ee":[{"rounded-ee":n()}],"rounded-es":[{"rounded-es":n()}],"rounded-tl":[{"rounded-tl":n()}],"rounded-tr":[{"rounded-tr":n()}],"rounded-br":[{"rounded-br":n()}],"rounded-bl":[{"rounded-bl":n()}],"border-w":[{border:v()}],"border-w-x":[{"border-x":v()}],"border-w-y":[{"border-y":v()}],"border-w-s":[{"border-s":v()}],"border-w-e":[{"border-e":v()}],"border-w-t":[{"border-t":v()}],"border-w-r":[{"border-r":v()}],"border-w-b":[{"border-b":v()}],"border-w-l":[{"border-l":v()}],"divide-x":[{"divide-x":v()}],"divide-x-reverse":["divide-x-reverse"],"divide-y":[{"divide-y":v()}],"divide-y-reverse":["divide-y-reverse"],"border-style":[{border:[...S(),"hidden","none"]}],"divide-style":[{divide:[...S(),"hidden","none"]}],"border-color":[{border:b()}],"border-color-x":[{"border-x":b()}],"border-color-y":[{"border-y":b()}],"border-color-s":[{"border-s":b()}],"border-color-e":[{"border-e":b()}],"border-color-t":[{"border-t":b()}],"border-color-r":[{"border-r":b()}],"border-color-b":[{"border-b":b()}],"border-color-l":[{"border-l":b()}],"divide-color":[{divide:b()}],"outline-style":[{outline:[...S(),"none","hidden"]}],"outline-offset":[{"outline-offset":[te,D,B]}],"outline-w":[{outline:["",te,tr,He]}],"outline-color":[{outline:b()}],shadow:[{shadow:["","none",m,ur,dr]}],"shadow-color":[{shadow:b()}],"inset-shadow":[{"inset-shadow":["none",k,ur,dr]}],"inset-shadow-color":[{"inset-shadow":b()}],"ring-w":[{ring:v()}],"ring-w-inset":["ring-inset"],"ring-color":[{ring:b()}],"ring-offset-w":[{"ring-offset":[te,He]}],"ring-offset-color":[{"ring-offset":b()}],"inset-ring-w":[{"inset-ring":v()}],"inset-ring-color":[{"inset-ring":b()}],"text-shadow":[{"text-shadow":["none",j,ur,dr]}],"text-shadow-color":[{"text-shadow":b()}],opacity:[{opacity:[te,D,B]}],"mix-blend":[{"mix-blend":[...K(),"plus-darker","plus-lighter"]}],"bg-blend":[{"bg-blend":K()}],"mask-clip":[{"mask-clip":["border","padding","content","fill","stroke","view"]},"mask-no-clip"],"mask-composite":[{mask:["add","subtract","intersect","exclude"]}],"mask-image-linear-pos":[{"mask-linear":[te]}],"mask-image-linear-from-pos":[{"mask-linear-from":y()}],"mask-image-linear-to-pos":[{"mask-linear-to":y()}],"mask-image-linear-from-color":[{"mask-linear-from":b()}],"mask-image-linear-to-color":[{"mask-linear-to":b()}],"mask-image-t-from-pos":[{"mask-t-from":y()}],"mask-image-t-to-pos":[{"mask-t-to":y()}],"mask-image-t-from-color":[{"mask-t-from":b()}],"mask-image-t-to-color":[{"mask-t-to":b()}],"mask-image-r-from-pos":[{"mask-r-from":y()}],"mask-image-r-to-pos":[{"mask-r-to":y()}],"mask-image-r-from-color":[{"mask-r-from":b()}],"mask-image-r-to-color":[{"mask-r-to":b()}],"mask-image-b-from-pos":[{"mask-b-from":y()}],"mask-image-b-to-pos":[{"mask-b-to":y()}],"mask-image-b-from-color":[{"mask-b-from":b()}],"mask-image-b-to-color":[{"mask-b-to":b()}],"mask-image-l-from-pos":[{"mask-l-from":y()}],"mask-image-l-to-pos":[{"mask-l-to":y()}],"mask-image-l-from-color":[{"mask-l-from":b()}],"mask-image-l-to-color":[{"mask-l-to":b()}],"mask-image-x-from-pos":[{"mask-x-from":y()}],"mask-image-x-to-pos":[{"mask-x-to":y()}],"mask-image-x-from-color":[{"mask-x-from":b()}],"mask-image-x-to-color":[{"mask-x-to":b()}],"mask-image-y-from-pos":[{"mask-y-from":y()}],"mask-image-y-to-pos":[{"mask-y-to":y()}],"mask-image-y-from-color":[{"mask-y-from":b()}],"mask-image-y-to-color":[{"mask-y-to":b()}],"mask-image-radial":[{"mask-radial":[D,B]}],"mask-image-radial-from-pos":[{"mask-radial-from":y()}],"mask-image-radial-to-pos":[{"mask-radial-to":y()}],"mask-image-radial-from-color":[{"mask-radial-from":b()}],"mask-image-radial-to-color":[{"mask-radial-to":b()}],"mask-image-radial-shape":[{"mask-radial":["circle","ellipse"]}],"mask-image-radial-size":[{"mask-radial":[{closest:["side","corner"],farthest:["side","corner"]}]}],"mask-image-radial-pos":[{"mask-radial-at":C()}],"mask-image-conic-pos":[{"mask-conic":[te]}],"mask-image-conic-from-pos":[{"mask-conic-from":y()}],"mask-image-conic-to-pos":[{"mask-conic-to":y()}],"mask-image-conic-from-color":[{"mask-conic-from":b()}],"mask-image-conic-to-color":[{"mask-conic-to":b()}],"mask-mode":[{mask:["alpha","luminance","match"]}],"mask-origin":[{"mask-origin":["border","padding","content","fill","stroke","view"]}],"mask-position":[{mask:q()}],"mask-repeat":[{mask:$()}],"mask-size":[{mask:T()}],"mask-type":[{"mask-type":["alpha","luminance"]}],"mask-image":[{mask:["none",D,B]}],filter:[{filter:["","none",D,B]}],blur:[{blur:N()}],brightness:[{brightness:[te,D,B]}],contrast:[{contrast:[te,D,B]}],"drop-shadow":[{"drop-shadow":["","none",E,ur,dr]}],"drop-shadow-color":[{"drop-shadow":b()}],grayscale:[{grayscale:["",te,D,B]}],"hue-rotate":[{"hue-rotate":[te,D,B]}],invert:[{invert:["",te,D,B]}],saturate:[{saturate:[te,D,B]}],sepia:[{sepia:["",te,D,B]}],"backdrop-filter":[{"backdrop-filter":["","none",D,B]}],"backdrop-blur":[{"backdrop-blur":N()}],"backdrop-brightness":[{"backdrop-brightness":[te,D,B]}],"backdrop-contrast":[{"backdrop-contrast":[te,D,B]}],"backdrop-grayscale":[{"backdrop-grayscale":["",te,D,B]}],"backdrop-hue-rotate":[{"backdrop-hue-rotate":[te,D,B]}],"backdrop-invert":[{"backdrop-invert":["",te,D,B]}],"backdrop-opacity":[{"backdrop-opacity":[te,D,B]}],"backdrop-saturate":[{"backdrop-saturate":[te,D,B]}],"backdrop-sepia":[{"backdrop-sepia":["",te,D,B]}],"border-collapse":[{border:["collapse","separate"]}],"border-spacing":[{"border-spacing":w()}],"border-spacing-x":[{"border-spacing-x":w()}],"border-spacing-y":[{"border-spacing-y":w()}],"table-layout":[{table:["auto","fixed"]}],caption:[{caption:["top","bottom"]}],transition:[{transition:["","all","colors","opacity","shadow","transform","none",D,B]}],"transition-behavior":[{transition:["normal","discrete"]}],duration:[{duration:[te,"initial",D,B]}],ease:[{ease:["linear","initial",P,D,B]}],delay:[{delay:[te,D,B]}],animate:[{animate:["none",X,D,B]}],backface:[{backface:["hidden","visible"]}],perspective:[{perspective:[p,D,B]}],"perspective-origin":[{"perspective-origin":h()}],rotate:[{rotate:Z()}],"rotate-x":[{"rotate-x":Z()}],"rotate-y":[{"rotate-y":Z()}],"rotate-z":[{"rotate-z":Z()}],scale:[{scale:ge()}],"scale-x":[{"scale-x":ge()}],"scale-y":[{"scale-y":ge()}],"scale-z":[{"scale-z":ge()}],"scale-3d":["scale-3d"],skew:[{skew:he()}],"skew-x":[{"skew-x":he()}],"skew-y":[{"skew-y":he()}],transform:[{transform:[D,B,"","none","gpu","cpu"]}],"transform-origin":[{origin:h()}],"transform-style":[{transform:["3d","flat"]}],translate:[{translate:_e()}],"translate-x":[{"translate-x":_e()}],"translate-y":[{"translate-y":_e()}],"translate-z":[{"translate-z":_e()}],"translate-none":["translate-none"],accent:[{accent:b()}],appearance:[{appearance:["none","auto"]}],"caret-color":[{caret:b()}],"color-scheme":[{scheme:["normal","dark","light","light-dark","only-dark","only-light"]}],cursor:[{cursor:["auto","default","pointer","wait","text","move","help","not-allowed","none","context-menu","progress","cell","crosshair","vertical-text","alias","copy","no-drop","grab","grabbing","all-scroll","col-resize","row-resize","n-resize","e-resize","s-resize","w-resize","ne-resize","nw-resize","se-resize","sw-resize","ew-resize","ns-resize","nesw-resize","nwse-resize","zoom-in","zoom-out",D,B]}],"field-sizing":[{"field-sizing":["fixed","content"]}],"pointer-events":[{"pointer-events":["auto","none"]}],resize:[{resize:["none","","y","x"]}],"scroll-behavior":[{scroll:["auto","smooth"]}],"scroll-m":[{"scroll-m":w()}],"scroll-mx":[{"scroll-mx":w()}],"scroll-my":[{"scroll-my":w()}],"scroll-ms":[{"scroll-ms":w()}],"scroll-me":[{"scroll-me":w()}],"scroll-mt":[{"scroll-mt":w()}],"scroll-mr":[{"scroll-mr":w()}],"scroll-mb":[{"scroll-mb":w()}],"scroll-ml":[{"scroll-ml":w()}],"scroll-p":[{"scroll-p":w()}],"scroll-px":[{"scroll-px":w()}],"scroll-py":[{"scroll-py":w()}],"scroll-ps":[{"scroll-ps":w()}],"scroll-pe":[{"scroll-pe":w()}],"scroll-pt":[{"scroll-pt":w()}],"scroll-pr":[{"scroll-pr":w()}],"scroll-pb":[{"scroll-pb":w()}],"scroll-pl":[{"scroll-pl":w()}],"snap-align":[{snap:["start","end","center","align-none"]}],"snap-stop":[{snap:["normal","always"]}],"snap-type":[{snap:["none","x","y","both"]}],"snap-strictness":[{snap:["mandatory","proximity"]}],touch:[{touch:["auto","none","manipulation"]}],"touch-x":[{"touch-pan":["x","left","right"]}],"touch-y":[{"touch-pan":["y","up","down"]}],"touch-pz":["touch-pinch-zoom"],select:[{select:["none","text","all","auto"]}],"will-change":[{"will-change":["auto","scroll","contents","transform",D,B]}],fill:[{fill:["none",...b()]}],"stroke-w":[{stroke:[te,tr,He,Sr]}],stroke:[{stroke:["none",...b()]}],"forced-color-adjust":[{"forced-color-adjust":["auto","none"]}]},conflictingClassGroups:{overflow:["overflow-x","overflow-y"],overscroll:["overscroll-x","overscroll-y"],inset:["inset-x","inset-y","start","end","top","right","bottom","left"],"inset-x":["right","left"],"inset-y":["top","bottom"],flex:["basis","grow","shrink"],gap:["gap-x","gap-y"],p:["px","py","ps","pe","pt","pr","pb","pl"],px:["pr","pl"],py:["pt","pb"],m:["mx","my","ms","me","mt","mr","mb","ml"],mx:["mr","ml"],my:["mt","mb"],size:["w","h"],"font-size":["leading"],"fvn-normal":["fvn-ordinal","fvn-slashed-zero","fvn-figure","fvn-spacing","fvn-fraction"],"fvn-ordinal":["fvn-normal"],"fvn-slashed-zero":["fvn-normal"],"fvn-figure":["fvn-normal"],"fvn-spacing":["fvn-normal"],"fvn-fraction":["fvn-normal"],"line-clamp":["display","overflow"],rounded:["rounded-s","rounded-e","rounded-t","rounded-r","rounded-b","rounded-l","rounded-ss","rounded-se","rounded-ee","rounded-es","rounded-tl","rounded-tr","rounded-br","rounded-bl"],"rounded-s":["rounded-ss","rounded-es"],"rounded-e":["rounded-se","rounded-ee"],"rounded-t":["rounded-tl","rounded-tr"],"rounded-r":["rounded-tr","rounded-br"],"rounded-b":["rounded-br","rounded-bl"],"rounded-l":["rounded-tl","rounded-bl"],"border-spacing":["border-spacing-x","border-spacing-y"],"border-w":["border-w-x","border-w-y","border-w-s","border-w-e","border-w-t","border-w-r","border-w-b","border-w-l"],"border-w-x":["border-w-r","border-w-l"],"border-w-y":["border-w-t","border-w-b"],"border-color":["border-color-x","border-color-y","border-color-s","border-color-e","border-color-t","border-color-r","border-color-b","border-color-l"],"border-color-x":["border-color-r","border-color-l"],"border-color-y":["border-color-t","border-color-b"],translate:["translate-x","translate-y","translate-none"],"translate-none":["translate","translate-x","translate-y","translate-z"],"scroll-m":["scroll-mx","scroll-my","scroll-ms","scroll-me","scroll-mt","scroll-mr","scroll-mb","scroll-ml"],"scroll-mx":["scroll-mr","scroll-ml"],"scroll-my":["scroll-mt","scroll-mb"],"scroll-p":["scroll-px","scroll-py","scroll-ps","scroll-pe","scroll-pt","scroll-pr","scroll-pb","scroll-pl"],"scroll-px":["scroll-pr","scroll-pl"],"scroll-py":["scroll-pt","scroll-pb"],touch:["touch-x","touch-y","touch-pz"],"touch-x":["touch"],"touch-y":["touch"],"touch-pz":["touch"]},conflictingClassGroupModifiers:{"font-size":["leading"]},orderSensitiveModifiers:["*","**","after","backdrop","before","details-content","file","first-letter","first-line","marker","placeholder","selection"]}},ie=Vo(ia),la=(e,r)=>r(!r());var ca=U("<div><!></div>"),da=U('<div><button><div class="flex w-full items-center"><span><!></span> <span> </span></div> <div class="w-10 pl-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-[1.1rem] w-[1.1rem] transition-transform duration-250" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 12.5s-4.419 6-6 6s-6-6-6-6m12-7s-4.419 6-6 6s-6-6-6-6" color="currentColor"></path></svg></div></button> <!></div>');function ls(e,r){Se(r,!0);let t=R(r,"id",19,()=>crypto.randomUUID()),o=R(r,"isOpen",7,!1),u=R(r,"outline",3,!1),l=R(r,"wrapperClass",3,""),s=R(r,"size",19,()=>({width:1,height:1})),a=R(r,"label",19,()=>({name:"",class:"text-left",icon:null}));var c=da(),g=M(c);g.__click=[la,o];var m=M(g),k=M(m);V(k,1,"flex h-8 w-8 shrink-0 items-center justify-center overflow-visible [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full");var j=M(k);{var E=C=>{const h=pe(()=>a()?.icon);var _=ye(),O=ue(_);Ur(O,()=>i(h),(w,L)=>{L(w,{})}),I(C,_)};ee(j,C=>{a()?.icon&&C(E)})}x(k);var f=J(k,2),p=M(f,!0);x(f),x(m);var z=J(m,2),P=M(z);x(z),x(g);var X=J(g,2);{var A=C=>{var h=ca(),_=M(h);Ir(_,()=>r.children??Ue),x(h),Q(()=>{V(h,1,`grid w-full p-4 sm:p-3 ${r.image?"gap-x-2":"gap-2"} ${u()?"":"border-t border-[var(--border-color)]"}`),ce(h,`grid-template-columns: repeat(${s().width||10}, minmax(0, 1fr)); 
-          grid-template-rows: repeat(${s().height||2}, ${r.image?"minmax(6rem, auto)":"auto"});
-          ${r.image?`background-image: url(${r.image}); background-size: cover; background-position: center;`:""}`)}),Ce(3,h,()=>mr,()=>({duration:250})),I(C,h)};ee(X,C=>{o()&&C(A)})}x(c),Q((C,h)=>{Y(c,"id",t()),V(c,1,C),V(g,1,`flex w-full cursor-pointer items-center justify-between p-4 transition-shadow duration-250
-    ${u()?"border-b border-[var(--border-color)]":""}`),V(f,1,`${h??""} text-lg`),le(p,a()?.name),ce(P,`transform: rotate(${o()?180:0}deg)`)},[()=>ve(ie(`${u()?"border-none":"rounded-xl hover:shadow-md"} w-full
-    border border-[var(--border-color)] bg-[var(--container-color)] p-0 transition-shadow duration-250`,l())),()=>ie("m-0 w-full cursor-pointer text-left font-semibold",a().class)]),Ce(3,c,()=>mr,()=>({duration:250})),I(e,c),Ee()}Te(["click"]);const ua=(e,r,t)=>{r()||!t.onClick||t.onClick()};var fa=U('<div class="text-xs opacity-70"> </div>'),va=U('<div class="flex-1"> <!></div>'),ma=U('<div class="absolute bottom-full left-1/2 z-50 mb-2 w-max max-w-xs rounded-md bg-[var(--container-color)] px-3 py-1 text-sm shadow-lg" style="transform: translateX(-50%);"> <div class="absolute top-full left-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rotate-45 transform bg-[var(--container-color)]"></div></div>'),pa=U('<div><div class="relative flex w-full grow items-center"><button><span class="flex flex-row items-center justify-center gap-2"><!> <!></span></button> <!></div></div>');function ga(e,r){Se(r,!0);let t=R(r,"id",19,()=>crypto.randomUUID()),o=R(r,"wrapperClass",3,""),u=R(r,"componentClass",3,""),l=R(r,"disabled",3,!1),s=R(r,"content",19,()=>({name:"",info:"",icon:null})),a=xe(!1);const c=A=>{if(l()||!r.keyBind||!r.onClick)return;const C=A.key===r.keyBind.key,h=r.keyBind.ctrlKey===void 0||A.ctrlKey===r.keyBind.ctrlKey,_=r.keyBind.shiftKey===void 0||A.shiftKey===r.keyBind.shiftKey,O=r.keyBind.altKey===void 0||A.altKey===r.keyBind.altKey,w=r.keyBind.metaKey===void 0||A.metaKey===r.keyBind.metaKey;C&&h&&_&&O&&w&&(A.preventDefault(),r.onClick())};Dr(()=>(r.keyBind&&window.addEventListener("keydown",c),()=>{r.keyBind&&window.removeEventListener("keydown",c)}));var g=pa(),m=M(g),k=M(m);k.__click=[ua,l,r];var j=M(k),E=M(j);{var f=A=>{const C=pe(()=>s().icon);var h=ye(),_=ue(h);Ur(_,()=>i(C),(O,w)=>{w(O,{})}),I(A,h)};ee(E,A=>{s().icon&&A(f)})}var p=J(E,2);{var z=A=>{var C=va(),h=M(C),_=J(h);{var O=w=>{var L=fa(),F=M(L);x(L),Q(()=>le(F,`(${r.keyBind.ctrlKey?"Ctrl+":""}${r.keyBind.shiftKey?"Shift+":""}${r.keyBind.altKey?"Alt+":""}${r.keyBind.key??""})`)),I(w,L)};ee(_,w=>{r.keyBind&&w(O)})}x(C),Q(()=>le(h,`${s().name??""} `)),I(A,C)};ee(p,A=>{s().name&&A(z)})}x(j),x(k);var P=J(k,2);{var X=A=>{var C=ma(),h=M(C);ft(),x(C),Q(()=>le(h,`${s().info??""} `)),Ce(3,C,()=>sr,()=>({y:-15,duration:300})),I(A,C)};ee(P,A=>{i(a)&&A(X)})}x(m),x(g),Q((A,C)=>{V(g,1,A),Y(k,"id",t()),V(k,1,`${C??""} bg-[var(--bg-color)]`),k.disabled=l(),Y(k,"aria-label",s().name)},[()=>ve(ie("bg-blue relative flex w-full flex-col items-center",o())),()=>ie(`relative m-0 inline-block w-full items-center rounded-2xl border border-[var(--bg-color)] 
+import './NZTpNUN0.js'
+import {
+  A as tt,
+  o as At,
+  aP as ot,
+  y as fr,
+  q as we,
+  av as or,
+  v as Er,
+  g as i,
+  Z as zt,
+  w as Rt,
+  H as Ot,
+  x as Hr,
+  z as xr,
+  I as Ke,
+  ac as at,
+  aD as Pt,
+  B as Tr,
+  D as Lt,
+  aQ as pr,
+  aR as gr,
+  C as Ye,
+  ab as Kr,
+  Q as jt,
+  a9 as Wr,
+  aA as nt,
+  at as Bt,
+  F as st,
+  G as Dt,
+  aS as Ut,
+  aT as _r,
+  M as Lr,
+  al as it,
+  aU as Gt,
+  aq as lt,
+  aV as Vt,
+  az as Ft,
+  aW as Ht,
+  W as jr,
+  t as Q,
+  aX as Kt,
+  aE as Wt,
+  ax as Xt,
+  aC as Xr,
+  aF as Yt,
+  aY as qt,
+  aZ as Zt,
+  a_ as Jt,
+  a$ as Qt,
+  b0 as $t,
+  E as eo,
+  b1 as ro,
+  b2 as to,
+  J as oo,
+  b3 as ao,
+  as as ct,
+  a0 as no,
+  P as Ue,
+  L as Br,
+  b4 as dt,
+  K as ut,
+  a6 as so,
+  b5 as io,
+  p as Se,
+  f as U,
+  h as M,
+  a as I,
+  e as Ee,
+  j as J,
+  r as x,
+  k as ye,
+  l as ue,
+  i as pe,
+  s as xe,
+  d as W,
+  n as ft,
+  c as ar,
+  u as nr,
+  b6 as lo,
+  b as Je,
+} from './C8jWV29K.js'
+import { c as co, d as Te, s as le, a as Ir, o as Dr, e as We, f as vt, w as uo, g as fo } from './D7KfncB_.js'
+import { p as R, i as ee, c as Ur, b as mt, s as pt, a as gt } from './CFB23tc5.js'
+function is(e, r) {
+  return r
+}
+function vo(e, r, t) {
+  for (var o = e.items, u = [], l = r.length, s = 0; s < l; s++) Vt(r[s].e, u, !0)
+  var a = l > 0 && u.length === 0 && t !== null
+  if (a) {
+    var c = t.parentNode
+    ;(Ft(c), c.append(t), o.clear(), Me(e, r[0].prev, r[l - 1].next))
+  }
+  Ht(u, () => {
+    for (var g = 0; g < l; g++) {
+      var m = r[g]
+      ;(a || (o.delete(m.k), Me(e, m.prev, m.next)), it(m.e, !a))
+    }
+  })
+}
+function Ge(e, r, t, o, u, l = null) {
+  var s = e,
+    a = { flags: r, items: new Map(), first: null },
+    c = (r & ot) !== 0
+  if (c) {
+    var g = e
+    s = we ? fr(or(g)) : g.appendChild(tt())
+  }
+  we && Er()
+  var m = null,
+    k = !1,
+    j = new Map(),
+    E = zt(() => {
+      var P = t()
+      return Bt(P) ? P : P == null ? [] : nt(P)
+    }),
+    f,
+    p
+  function z() {
+    ;(mo(p, f, a, j, s, u, r, o, t),
+      l !== null &&
+        (f.length === 0
+          ? m
+            ? st(m)
+            : (m = Tr(() => l(s)))
+          : m !== null &&
+            Dt(m, () => {
+              m = null
+            })))
+  }
+  ;(At(() => {
+    ;((p ??= jr), (f = i(E)))
+    var P = f.length
+    if (k && P === 0) return
+    k = P === 0
+    let X = !1
+    if (we) {
+      var A = Rt(s) === Ot
+      A !== (P === 0) && ((s = Hr()), fr(s), xr(!1), (X = !0))
+    }
+    if (we) {
+      for (var C = null, h, _ = 0; _ < P; _++) {
+        if (Ke.nodeType === at && Ke.data === Pt) {
+          ;((s = Ke), (X = !0), xr(!1))
+          break
+        }
+        var O = f[_],
+          w = o(O, _)
+        ;((h = Ar(Ke, a, C, null, O, w, _, u, r, t)), a.items.set(w, h), (C = h))
+      }
+      P > 0 && fr(Hr())
+    }
+    if (we) P === 0 && l && (m = Tr(() => l(s)))
+    else if (Lt()) {
+      var L = new Set(),
+        F = Ye
+      for (_ = 0; _ < P; _ += 1) {
+        ;((O = f[_]), (w = o(O, _)))
+        var H = a.items.get(w) ?? j.get(w)
+        ;(H ? (r & (pr | gr)) !== 0 && bt(H, O, _, r) : ((h = Ar(null, a, null, null, O, w, _, u, r, t, !0)), j.set(w, h)), L.add(w))
+      }
+      for (const [ne, de] of a.items) L.has(ne) || F.skipped_effects.add(de.e)
+      F.add_callback(z)
+    } else z()
+    ;(X && xr(!0), i(E))
+  }),
+    we && (s = Ke))
+}
+function mo(e, r, t, o, u, l, s, a, c) {
+  var g = (s & Gt) !== 0,
+    m = (s & (pr | gr)) !== 0,
+    k = r.length,
+    j = t.items,
+    E = t.first,
+    f = E,
+    p,
+    z = null,
+    P,
+    X = [],
+    A = [],
+    C,
+    h,
+    _,
+    O
+  if (g) for (O = 0; O < k; O += 1) ((C = r[O]), (h = a(C, O)), (_ = j.get(h)), _ !== void 0 && (_.a?.measure(), (P ??= new Set()).add(_)))
+  for (O = 0; O < k; O += 1) {
+    if (((C = r[O]), (h = a(C, O)), (_ = j.get(h)), _ === void 0)) {
+      var w = o.get(h)
+      if (w !== void 0) {
+        ;(o.delete(h), j.set(h, w))
+        var L = z ? z.next : f
+        ;(Me(t, z, w), Me(t, w, L), yr(w, L, u), (z = w))
+      } else {
+        var F = f ? f.e.nodes_start : u
+        z = Ar(F, t, z, z === null ? t.first : z.next, C, h, O, l, s, c)
+      }
+      ;(j.set(h, z), (X = []), (A = []), (f = z.next))
+      continue
+    }
+    if ((m && bt(_, C, O, s), (_.e.f & _r) !== 0 && (st(_.e), g && (_.a?.unfix(), (P ??= new Set()).delete(_))), _ !== f)) {
+      if (p !== void 0 && p.has(_)) {
+        if (X.length < A.length) {
+          var H = A[0],
+            ne
+          z = H.prev
+          var de = X[0],
+            se = X[X.length - 1]
+          for (ne = 0; ne < X.length; ne += 1) yr(X[ne], H, u)
+          for (ne = 0; ne < A.length; ne += 1) p.delete(A[ne])
+          ;(Me(t, de.prev, se.next), Me(t, z, de), Me(t, se, H), (f = H), (z = se), (O -= 1), (X = []), (A = []))
+        } else (p.delete(_), yr(_, f, u), Me(t, _.prev, _.next), Me(t, _, z === null ? t.first : z.next), Me(t, z, _), (z = _))
+        continue
+      }
+      for (X = [], A = []; f !== null && f.k !== h; ) ((f.e.f & _r) === 0 && (p ??= new Set()).add(f), A.push(f), (f = f.next))
+      if (f === null) continue
+      _ = f
+    }
+    ;(X.push(_), (z = _), (f = _.next))
+  }
+  if (f !== null || p !== void 0) {
+    for (var oe = p === void 0 ? [] : nt(p); f !== null; ) ((f.e.f & _r) === 0 && oe.push(f), (f = f.next))
+    var ae = oe.length
+    if (ae > 0) {
+      var G = (s & ot) !== 0 && k === 0 ? u : null
+      if (g) {
+        for (O = 0; O < ae; O += 1) oe[O].a?.measure()
+        for (O = 0; O < ae; O += 1) oe[O].a?.fix()
+      }
+      vo(t, oe, G)
+    }
+  }
+  ;(g &&
+    Lr(() => {
+      if (P !== void 0) for (_ of P) _.a?.apply()
+    }),
+    (e.first = t.first && t.first.e),
+    (e.last = z && z.e))
+  for (var b of o.values()) it(b.e)
+  o.clear()
+}
+function bt(e, r, t, o) {
+  ;((o & pr) !== 0 && Kr(e.v, r), (o & gr) !== 0 ? Kr(e.i, t) : (e.i = t))
+}
+function Ar(e, r, t, o, u, l, s, a, c, g, m) {
+  var k = (c & pr) !== 0,
+    j = (c & Ut) === 0,
+    E = k ? (j ? jt(u, !1, !1) : Wr(u)) : u,
+    f = (c & gr) === 0 ? s : Wr(s),
+    p = { i: f, v: E, k: l, a: null, e: null, prev: t, next: o }
+  try {
+    if (e === null) {
+      var z = document.createDocumentFragment()
+      z.append((e = tt()))
+    }
+    return (
+      (p.e = Tr(() => a(e, E, f, g), we)),
+      (p.e.prev = t && t.e),
+      (p.e.next = o && o.e),
+      t === null ? m || (r.first = p) : ((t.next = p), (t.e.next = p.e)),
+      o !== null && ((o.prev = p), (o.e.prev = p.e)),
+      p
+    )
+  } finally {
+  }
+}
+function yr(e, r, t) {
+  for (var o = e.next ? e.next.e.nodes_start : t, u = r ? r.e.nodes_start : t, l = e.e.nodes_start; l !== null && l !== o; ) {
+    var s = lt(l)
+    ;(u.before(l), (l = s))
+  }
+}
+function Me(e, r, t) {
+  ;(r === null ? (e.first = t) : ((r.next = t), (r.e.next = t && t.e)), t !== null && ((t.prev = r), (t.e.prev = r && r.e)))
+}
+function lr(e, r, t = !1, o = !1, u = !1) {
+  var l = e,
+    s = ''
+  Q(() => {
+    var a = jr
+    if (s === (s = r() ?? '')) {
+      we && Er()
+      return
+    }
+    if ((a.nodes_start !== null && (Kt(a.nodes_start, a.nodes_end), (a.nodes_start = a.nodes_end = null)), s !== '')) {
+      if (we) {
+        Ke.data
+        for (var c = Er(), g = c; c !== null && (c.nodeType !== at || c.data !== ''); ) ((g = c), (c = lt(c)))
+        if (c === null) throw (Wt(), Xt)
+        ;(Xr(Ke, g), (l = fr(c)))
+        return
+      }
+      var m = s + ''
+      t ? (m = `<svg>${m}</svg>`) : o && (m = `<math>${m}</math>`)
+      var k = Yt(m)
+      if (((t || o) && (k = or(k)), Xr(or(k), k.lastChild), t || o)) for (; or(k); ) l.before(or(k))
+      else l.before(k)
+    }
+  })
+}
+function ht(e) {
+  var r,
+    t,
+    o = ''
+  if (typeof e == 'string' || typeof e == 'number') o += e
+  else if (typeof e == 'object')
+    if (Array.isArray(e)) {
+      var u = e.length
+      for (r = 0; r < u; r++) e[r] && (t = ht(e[r])) && (o && (o += ' '), (o += t))
+    } else for (t in e) e[t] && (o && (o += ' '), (o += t))
+  return o
+}
+function po() {
+  for (var e, r, t = 0, o = '', u = arguments.length; t < u; t++) (e = arguments[t]) && (r = ht(e)) && (o && (o += ' '), (o += r))
+  return o
+}
+function ve(e) {
+  return typeof e == 'object' ? po(e) : (e ?? '')
+}
+function go(e, r, t) {
+  var o = e == null ? '' : '' + e
+  return (r && (o = o ? o + ' ' + r : r), o === '' ? null : o)
+}
+function bo(e, r) {
+  return e == null ? null : String(e)
+}
+function V(e, r, t, o, u, l) {
+  var s = e.__className
+  if (we || s !== t || s === void 0) {
+    var a = go(t, o)
+    ;((!we || a !== e.getAttribute('class')) && (a == null ? e.removeAttribute('class') : (e.className = a)), (e.__className = t))
+  }
+  return l
+}
+function ce(e, r, t, o) {
+  var u = e.__style
+  if (we || u !== r) {
+    var l = bo(r)
+    ;((!we || l !== e.getAttribute('style')) && (l == null ? e.removeAttribute('style') : (e.style.cssText = l)), (e.__style = r))
+  }
+  return o
+}
+const ho = Symbol('is custom element'),
+  wo = Symbol('is html')
+function qe(e) {
+  if (we) {
+    var r = !1,
+      t = () => {
+        if (!r) {
+          if (((r = !0), e.hasAttribute('value'))) {
+            var o = e.value
+            ;(Y(e, 'value', null), (e.value = o))
+          }
+          if (e.hasAttribute('checked')) {
+            var u = e.checked
+            ;(Y(e, 'checked', null), (e.checked = u))
+          }
+        }
+      }
+    ;((e.__on_r = t), Lr(t), $t())
+  }
+}
+function kr(e, r) {
+  var t = wt(e)
+  t.value === (t.value = r ?? void 0) || (e.value === r && (r !== 0 || e.nodeName !== 'PROGRESS')) || (e.value = r ?? '')
+}
+function Y(e, r, t, o) {
+  var u = wt(e)
+  ;(we && ((u[r] = e.getAttribute(r)), r === 'src' || r === 'srcset' || (r === 'href' && e.nodeName === 'LINK'))) ||
+    (u[r] !== (u[r] = t) &&
+      (r === 'loading' && (e[qt] = t),
+      t == null ? e.removeAttribute(r) : typeof t != 'string' && xo(e).includes(r) ? (e[r] = t) : e.setAttribute(r, t)))
+}
+function wt(e) {
+  return (e.__attributes ??= { [ho]: e.nodeName.includes('-'), [wo]: e.namespaceURI === Zt })
+}
+var Yr = new Map()
+function xo(e) {
+  var r = e.getAttribute('is') || e.nodeName,
+    t = Yr.get(r)
+  if (t) return t
+  Yr.set(r, (t = []))
+  for (var o, u = e, l = Element.prototype; l !== u; ) {
+    o = Qt(u)
+    for (var s in o) o[s].set && t.push(s)
+    u = Jt(u)
+  }
+  return t
+}
+const _o = () => performance.now(),
+  Pe = { tick: (e) => requestAnimationFrame(e), now: () => _o(), tasks: new Set() }
+function xt() {
+  const e = Pe.now()
+  ;(Pe.tasks.forEach((r) => {
+    r.c(e) || (Pe.tasks.delete(r), r.f())
+  }),
+    Pe.tasks.size !== 0 && Pe.tick(xt))
+}
+function yo(e) {
+  let r
+  return (
+    Pe.tasks.size === 0 && Pe.tick(xt),
+    {
+      promise: new Promise((t) => {
+        Pe.tasks.add((r = { c: e, f: t }))
+      }),
+      abort() {
+        Pe.tasks.delete(r)
+      },
+    }
+  )
+}
+function cr(e, r) {
+  ct(() => {
+    e.dispatchEvent(new CustomEvent(r))
+  })
+}
+function ko(e) {
+  if (e === 'float') return 'cssFloat'
+  if (e === 'offset') return 'cssOffset'
+  if (e.startsWith('--')) return e
+  const r = e.split('-')
+  return r.length === 1
+    ? r[0]
+    : r[0] +
+        r
+          .slice(1)
+          .map((t) => t[0].toUpperCase() + t.slice(1))
+          .join('')
+}
+function qr(e) {
+  const r = {},
+    t = e.split(';')
+  for (const o of t) {
+    const [u, l] = o.split(':')
+    if (!u || l === void 0) break
+    const s = ko(u.trim())
+    r[s] = l.trim()
+  }
+  return r
+}
+const Co = (e) => e
+function Ce(e, r, t, o) {
+  var u = (e & ao) !== 0,
+    l = 'both',
+    s,
+    a = r.inert,
+    c = r.style.overflow,
+    g,
+    m
+  function k() {
+    return ct(() => (s ??= t()(r, o?.() ?? {}, { direction: l })))
+  }
+  var j = {
+      is_global: u,
+      in() {
+        ;((r.inert = a),
+          cr(r, 'introstart'),
+          (g = zr(r, k(), m, 1, () => {
+            ;(cr(r, 'introend'), g?.abort(), (g = s = void 0), (r.style.overflow = c))
+          })))
+      },
+      out(z) {
+        ;((r.inert = !0),
+          cr(r, 'outrostart'),
+          (m = zr(r, k(), g, 0, () => {
+            ;(cr(r, 'outroend'), z?.())
+          })))
+      },
+      stop: () => {
+        ;(g?.abort(), m?.abort())
+      },
+    },
+    E = jr
+  if (((E.transitions ??= []).push(j), co)) {
+    var f = u
+    if (!f) {
+      for (var p = E.parent; p && (p.f & eo) !== 0; ) for (; (p = p.parent) && (p.f & ro) === 0; );
+      f = !p || (p.f & to) !== 0
+    }
+    f &&
+      oo(() => {
+        Br(() => j.in())
+      })
+  }
+}
+function zr(e, r, t, o, u) {
+  var l = o === 1
+  if (no(r)) {
+    var s,
+      a = !1
+    return (
+      Lr(() => {
+        if (!a) {
+          var z = r({ direction: l ? 'in' : 'out' })
+          s = zr(e, z, t, o, u)
+        }
+      }),
+      {
+        abort: () => {
+          ;((a = !0), s?.abort())
+        },
+        deactivate: () => s.deactivate(),
+        reset: () => s.reset(),
+        t: () => s.t(),
+      }
+    )
+  }
+  if ((t?.deactivate(), !r?.duration)) return (u(), { abort: Ue, deactivate: Ue, reset: Ue, t: () => o })
+  const { delay: c = 0, css: g, tick: m, easing: k = Co } = r
+  var j = []
+  if (l && t === void 0 && (m && m(0, 1), g)) {
+    var E = qr(g(0, 1))
+    j.push(E, E)
+  }
+  var f = () => 1 - o,
+    p = e.animate(j, { duration: c, fill: 'forwards' })
+  return (
+    (p.onfinish = () => {
+      p.cancel()
+      var z = t?.t() ?? 1 - o
+      t?.abort()
+      var P = o - z,
+        X = r.duration * Math.abs(P),
+        A = []
+      if (X > 0) {
+        var C = !1
+        if (g)
+          for (var h = Math.ceil(X / 16.666666666666668), _ = 0; _ <= h; _ += 1) {
+            var O = z + P * k(_ / h),
+              w = qr(g(O, 1 - O))
+            ;(A.push(w), (C ||= w.overflow === 'hidden'))
+          }
+        ;(C && (e.style.overflow = 'hidden'),
+          (f = () => {
+            var L = p.currentTime
+            return z + P * k(L / X)
+          }),
+          m &&
+            yo(() => {
+              if (p.playState !== 'running') return !1
+              var L = f()
+              return (m(L, 1 - L), !0)
+            }))
+      }
+      ;((p = e.animate(A, { duration: X, fill: 'forwards' })),
+        (p.onfinish = () => {
+          ;((f = () => o), m?.(o, 1 - o), u())
+        }))
+    }),
+    {
+      abort: () => {
+        p && (p.cancel(), (p.effect = null), (p.onfinish = Ue))
+      },
+      deactivate: () => {
+        u = Ue
+      },
+      reset: () => {
+        o === 0 && m?.(1, 0)
+      },
+      t: () => f(),
+    }
+  )
+}
+function Ze(e, r, t = r) {
+  var o = new WeakSet()
+  ;(dt(e, 'input', async (u) => {
+    var l = u ? e.defaultValue : e.value
+    if (((l = Cr(e) ? Nr(l) : l), t(l), Ye !== null && o.add(Ye), await so(), l !== (l = r()))) {
+      var s = e.selectionStart,
+        a = e.selectionEnd
+      ;((e.value = l ?? ''), a !== null && ((e.selectionStart = s), (e.selectionEnd = Math.min(a, e.value.length))))
+    }
+  }),
+    ((we && e.defaultValue !== e.value) || (Br(r) == null && e.value)) && (t(Cr(e) ? Nr(e.value) : e.value), Ye !== null && o.add(Ye)),
+    ut(() => {
+      var u = r()
+      if (e === document.activeElement) {
+        var l = io ?? Ye
+        if (o.has(l)) return
+      }
+      ;(Cr(e) && u === Nr(e.value)) || (e.type === 'date' && !u && !e.value) || (u !== e.value && (e.value = u ?? ''))
+    }))
+}
+function No(e, r, t = r) {
+  ;(dt(e, 'change', (o) => {
+    var u = o ? e.defaultChecked : e.checked
+    t(u)
+  }),
+    ((we && e.defaultChecked !== e.checked) || Br(r) == null) && t(e.checked),
+    ut(() => {
+      var o = r()
+      e.checked = !!o
+    }))
+}
+function Cr(e) {
+  var r = e.type
+  return r === 'number' || r === 'range'
+}
+function Nr(e) {
+  return e === '' ? null : +e
+}
+const Mo = (e) => e
+function Gr(e) {
+  const r = e - 1
+  return r * r * r + 1
+}
+function Zr(e) {
+  const r = typeof e == 'string' && e.match(/^\s*(-?[\d.]+)([^\s]*)\s*$/)
+  return r ? [parseFloat(r[1]), r[2] || 'px'] : [e, 'px']
+}
+function So(e, { delay: r = 0, duration: t = 400, easing: o = Mo } = {}) {
+  const u = +getComputedStyle(e).opacity
+  return { delay: r, duration: t, easing: o, css: (l) => `opacity: ${l * u}` }
+}
+function sr(e, { delay: r = 0, duration: t = 400, easing: o = Gr, x: u = 0, y: l = 0, opacity: s = 0 } = {}) {
+  const a = getComputedStyle(e),
+    c = +a.opacity,
+    g = a.transform === 'none' ? '' : a.transform,
+    m = c * (1 - s),
+    [k, j] = Zr(u),
+    [E, f] = Zr(l)
+  return {
+    delay: r,
+    duration: t,
+    easing: o,
+    css: (p, z) => `
+			transform: ${g} translate(${(1 - p) * k}${j}, ${(1 - p) * E}${f});
+			opacity: ${c - m * z}`,
+  }
+}
+function mr(e, { delay: r = 0, duration: t = 400, easing: o = Gr, axis: u = 'y' } = {}) {
+  const l = getComputedStyle(e),
+    s = +l.opacity,
+    a = u === 'y' ? 'height' : 'width',
+    c = parseFloat(l[a]),
+    g = u === 'y' ? ['top', 'bottom'] : ['left', 'right'],
+    m = g.map((P) => `${P[0].toUpperCase()}${P.slice(1)}`),
+    k = parseFloat(l[`padding${m[0]}`]),
+    j = parseFloat(l[`padding${m[1]}`]),
+    E = parseFloat(l[`margin${m[0]}`]),
+    f = parseFloat(l[`margin${m[1]}`]),
+    p = parseFloat(l[`border${m[0]}Width`]),
+    z = parseFloat(l[`border${m[1]}Width`])
+  return {
+    delay: r,
+    duration: t,
+    easing: o,
+    css: (P) =>
+      `overflow: hidden;opacity: ${Math.min(P * 20, 1) * s};${a}: ${P * c}px;padding-${g[0]}: ${P * k}px;padding-${g[1]}: ${P * j}px;margin-${g[0]}: ${P * E}px;margin-${g[1]}: ${P * f}px;border-${g[0]}-width: ${P * p}px;border-${g[1]}-width: ${P * z}px;min-${a}: 0`,
+  }
+}
+function Eo(e, { delay: r = 0, duration: t = 400, easing: o = Gr, start: u = 0, opacity: l = 0 } = {}) {
+  const s = getComputedStyle(e),
+    a = +s.opacity,
+    c = s.transform === 'none' ? '' : s.transform,
+    g = 1 - u,
+    m = a * (1 - l)
+  return {
+    delay: r,
+    duration: t,
+    easing: o,
+    css: (k, j) => `
+			transform: ${c} scale(${1 - g * j});
+			opacity: ${a - m * j}
+		`,
+  }
+}
+const Vr = '-',
+  To = (e) => {
+    const r = Ao(e),
+      { conflictingClassGroups: t, conflictingClassGroupModifiers: o } = e
+    return {
+      getClassGroupId: (s) => {
+        const a = s.split(Vr)
+        return (a[0] === '' && a.length !== 1 && a.shift(), _t(a, r) || Io(s))
+      },
+      getConflictingClassGroupIds: (s, a) => {
+        const c = t[s] || []
+        return a && o[s] ? [...c, ...o[s]] : c
+      },
+    }
+  },
+  _t = (e, r) => {
+    if (e.length === 0) return r.classGroupId
+    const t = e[0],
+      o = r.nextPart.get(t),
+      u = o ? _t(e.slice(1), o) : void 0
+    if (u) return u
+    if (r.validators.length === 0) return
+    const l = e.join(Vr)
+    return r.validators.find(({ validator: s }) => s(l))?.classGroupId
+  },
+  Jr = /^\[(.+)\]$/,
+  Io = (e) => {
+    if (Jr.test(e)) {
+      const r = Jr.exec(e)[1],
+        t = r?.substring(0, r.indexOf(':'))
+      if (t) return 'arbitrary..' + t
+    }
+  },
+  Ao = (e) => {
+    const { theme: r, classGroups: t } = e,
+      o = { nextPart: new Map(), validators: [] }
+    for (const u in t) Rr(t[u], o, u, r)
+    return o
+  },
+  Rr = (e, r, t, o) => {
+    e.forEach((u) => {
+      if (typeof u == 'string') {
+        const l = u === '' ? r : Qr(r, u)
+        l.classGroupId = t
+        return
+      }
+      if (typeof u == 'function') {
+        if (zo(u)) {
+          Rr(u(o), r, t, o)
+          return
+        }
+        r.validators.push({ validator: u, classGroupId: t })
+        return
+      }
+      Object.entries(u).forEach(([l, s]) => {
+        Rr(s, Qr(r, l), t, o)
+      })
+    })
+  },
+  Qr = (e, r) => {
+    let t = e
+    return (
+      r.split(Vr).forEach((o) => {
+        ;(t.nextPart.has(o) || t.nextPart.set(o, { nextPart: new Map(), validators: [] }), (t = t.nextPart.get(o)))
+      }),
+      t
+    )
+  },
+  zo = (e) => e.isThemeGetter,
+  Ro = (e) => {
+    if (e < 1) return { get: () => {}, set: () => {} }
+    let r = 0,
+      t = new Map(),
+      o = new Map()
+    const u = (l, s) => {
+      ;(t.set(l, s), r++, r > e && ((r = 0), (o = t), (t = new Map())))
+    }
+    return {
+      get(l) {
+        let s = t.get(l)
+        if (s !== void 0) return s
+        if ((s = o.get(l)) !== void 0) return (u(l, s), s)
+      },
+      set(l, s) {
+        t.has(l) ? t.set(l, s) : u(l, s)
+      },
+    }
+  },
+  Or = '!',
+  Pr = ':',
+  Oo = Pr.length,
+  Po = (e) => {
+    const { prefix: r, experimentalParseClassName: t } = e
+    let o = (u) => {
+      const l = []
+      let s = 0,
+        a = 0,
+        c = 0,
+        g
+      for (let f = 0; f < u.length; f++) {
+        let p = u[f]
+        if (s === 0 && a === 0) {
+          if (p === Pr) {
+            ;(l.push(u.slice(c, f)), (c = f + Oo))
+            continue
+          }
+          if (p === '/') {
+            g = f
+            continue
+          }
+        }
+        p === '[' ? s++ : p === ']' ? s-- : p === '(' ? a++ : p === ')' && a--
+      }
+      const m = l.length === 0 ? u : u.substring(c),
+        k = Lo(m),
+        j = k !== m,
+        E = g && g > c ? g - c : void 0
+      return { modifiers: l, hasImportantModifier: j, baseClassName: k, maybePostfixModifierPosition: E }
+    }
+    if (r) {
+      const u = r + Pr,
+        l = o
+      o = (s) =>
+        s.startsWith(u)
+          ? l(s.substring(u.length))
+          : { isExternal: !0, modifiers: [], hasImportantModifier: !1, baseClassName: s, maybePostfixModifierPosition: void 0 }
+    }
+    if (t) {
+      const u = o
+      o = (l) => t({ className: l, parseClassName: u })
+    }
+    return o
+  },
+  Lo = (e) => (e.endsWith(Or) ? e.substring(0, e.length - 1) : e.startsWith(Or) ? e.substring(1) : e),
+  jo = (e) => {
+    const r = Object.fromEntries(e.orderSensitiveModifiers.map((o) => [o, !0]))
+    return (o) => {
+      if (o.length <= 1) return o
+      const u = []
+      let l = []
+      return (
+        o.forEach((s) => {
+          s[0] === '[' || r[s] ? (u.push(...l.sort(), s), (l = [])) : l.push(s)
+        }),
+        u.push(...l.sort()),
+        u
+      )
+    }
+  },
+  Bo = (e) => ({ cache: Ro(e.cacheSize), parseClassName: Po(e), sortModifiers: jo(e), ...To(e) }),
+  Do = /\s+/,
+  Uo = (e, r) => {
+    const { parseClassName: t, getClassGroupId: o, getConflictingClassGroupIds: u, sortModifiers: l } = r,
+      s = [],
+      a = e.trim().split(Do)
+    let c = ''
+    for (let g = a.length - 1; g >= 0; g -= 1) {
+      const m = a[g],
+        { isExternal: k, modifiers: j, hasImportantModifier: E, baseClassName: f, maybePostfixModifierPosition: p } = t(m)
+      if (k) {
+        c = m + (c.length > 0 ? ' ' + c : c)
+        continue
+      }
+      let z = !!p,
+        P = o(z ? f.substring(0, p) : f)
+      if (!P) {
+        if (!z) {
+          c = m + (c.length > 0 ? ' ' + c : c)
+          continue
+        }
+        if (((P = o(f)), !P)) {
+          c = m + (c.length > 0 ? ' ' + c : c)
+          continue
+        }
+        z = !1
+      }
+      const X = l(j).join(':'),
+        A = E ? X + Or : X,
+        C = A + P
+      if (s.includes(C)) continue
+      s.push(C)
+      const h = u(P, z)
+      for (let _ = 0; _ < h.length; ++_) {
+        const O = h[_]
+        s.push(A + O)
+      }
+      c = m + (c.length > 0 ? ' ' + c : c)
+    }
+    return c
+  }
+function Go() {
+  let e = 0,
+    r,
+    t,
+    o = ''
+  for (; e < arguments.length; ) (r = arguments[e++]) && (t = yt(r)) && (o && (o += ' '), (o += t))
+  return o
+}
+const yt = (e) => {
+  if (typeof e == 'string') return e
+  let r,
+    t = ''
+  for (let o = 0; o < e.length; o++) e[o] && (r = yt(e[o])) && (t && (t += ' '), (t += r))
+  return t
+}
+function Vo(e, ...r) {
+  let t,
+    o,
+    u,
+    l = s
+  function s(c) {
+    const g = r.reduce((m, k) => k(m), e())
+    return ((t = Bo(g)), (o = t.cache.get), (u = t.cache.set), (l = a), a(c))
+  }
+  function a(c) {
+    const g = o(c)
+    if (g) return g
+    const m = Uo(c, t)
+    return (u(c, m), m)
+  }
+  return function () {
+    return l(Go.apply(null, arguments))
+  }
+}
+const be = (e) => {
+    const r = (t) => t[e] || []
+    return ((r.isThemeGetter = !0), r)
+  },
+  kt = /^\[(?:(\w[\w-]*):)?(.+)\]$/i,
+  Ct = /^\((?:(\w[\w-]*):)?(.+)\)$/i,
+  Fo = /^\d+\/\d+$/,
+  Ho = /^(\d+(\.\d+)?)?(xs|sm|md|lg|xl)$/,
+  Ko = /\d+(%|px|r?em|[sdl]?v([hwib]|min|max)|pt|pc|in|cm|mm|cap|ch|ex|r?lh|cq(w|h|i|b|min|max))|\b(calc|min|max|clamp)\(.+\)|^0$/,
+  Wo = /^(rgba?|hsla?|hwb|(ok)?(lab|lch)|color-mix)\(.+\)$/,
+  Xo = /^(inset_)?-?((\d+)?\.?(\d+)[a-z]+|0)_-?((\d+)?\.?(\d+)[a-z]+|0)/,
+  Yo = /^(url|image|image-set|cross-fade|element|(repeating-)?(linear|radial|conic)-gradient)\(.+\)$/,
+  Xe = (e) => Fo.test(e),
+  te = (e) => !!e && !Number.isNaN(Number(e)),
+  De = (e) => !!e && Number.isInteger(Number(e)),
+  Mr = (e) => e.endsWith('%') && te(e.slice(0, -1)),
+  Oe = (e) => Ho.test(e),
+  qo = () => !0,
+  Zo = (e) => Ko.test(e) && !Wo.test(e),
+  Nt = () => !1,
+  Jo = (e) => Xo.test(e),
+  Qo = (e) => Yo.test(e),
+  $o = (e) => !B(e) && !D(e),
+  ea = (e) => Qe(e, Et, Nt),
+  B = (e) => kt.test(e),
+  He = (e) => Qe(e, Tt, Zo),
+  Sr = (e) => Qe(e, na, te),
+  $r = (e) => Qe(e, Mt, Nt),
+  ra = (e) => Qe(e, St, Qo),
+  dr = (e) => Qe(e, It, Jo),
+  D = (e) => Ct.test(e),
+  tr = (e) => $e(e, Tt),
+  ta = (e) => $e(e, sa),
+  et = (e) => $e(e, Mt),
+  oa = (e) => $e(e, Et),
+  aa = (e) => $e(e, St),
+  ur = (e) => $e(e, It, !0),
+  Qe = (e, r, t) => {
+    const o = kt.exec(e)
+    return o ? (o[1] ? r(o[1]) : t(o[2])) : !1
+  },
+  $e = (e, r, t = !1) => {
+    const o = Ct.exec(e)
+    return o ? (o[1] ? r(o[1]) : t) : !1
+  },
+  Mt = (e) => e === 'position' || e === 'percentage',
+  St = (e) => e === 'image' || e === 'url',
+  Et = (e) => e === 'length' || e === 'size' || e === 'bg-size',
+  Tt = (e) => e === 'length',
+  na = (e) => e === 'number',
+  sa = (e) => e === 'family-name',
+  It = (e) => e === 'shadow',
+  ia = () => {
+    const e = be('color'),
+      r = be('font'),
+      t = be('text'),
+      o = be('font-weight'),
+      u = be('tracking'),
+      l = be('leading'),
+      s = be('breakpoint'),
+      a = be('container'),
+      c = be('spacing'),
+      g = be('radius'),
+      m = be('shadow'),
+      k = be('inset-shadow'),
+      j = be('text-shadow'),
+      E = be('drop-shadow'),
+      f = be('blur'),
+      p = be('perspective'),
+      z = be('aspect'),
+      P = be('ease'),
+      X = be('animate'),
+      A = () => ['auto', 'avoid', 'all', 'avoid-page', 'page', 'left', 'right', 'column'],
+      C = () => [
+        'center',
+        'top',
+        'bottom',
+        'left',
+        'right',
+        'top-left',
+        'left-top',
+        'top-right',
+        'right-top',
+        'bottom-right',
+        'right-bottom',
+        'bottom-left',
+        'left-bottom',
+      ],
+      h = () => [...C(), D, B],
+      _ = () => ['auto', 'hidden', 'clip', 'visible', 'scroll'],
+      O = () => ['auto', 'contain', 'none'],
+      w = () => [D, B, c],
+      L = () => [Xe, 'full', 'auto', ...w()],
+      F = () => [De, 'none', 'subgrid', D, B],
+      H = () => ['auto', { span: ['full', De, D, B] }, De, D, B],
+      ne = () => [De, 'auto', D, B],
+      de = () => ['auto', 'min', 'max', 'fr', D, B],
+      se = () => ['start', 'end', 'center', 'between', 'around', 'evenly', 'stretch', 'baseline', 'center-safe', 'end-safe'],
+      oe = () => ['start', 'end', 'center', 'stretch', 'center-safe', 'end-safe'],
+      ae = () => ['auto', ...w()],
+      G = () => [Xe, 'auto', 'full', 'dvw', 'dvh', 'lvw', 'lvh', 'svw', 'svh', 'min', 'max', 'fit', ...w()],
+      b = () => [e, D, B],
+      q = () => [...C(), et, $r, { position: [D, B] }],
+      $ = () => ['no-repeat', { repeat: ['', 'x', 'y', 'space', 'round'] }],
+      T = () => ['auto', 'cover', 'contain', oa, ea, { size: [D, B] }],
+      d = () => [Mr, tr, He],
+      n = () => ['', 'none', 'full', g, D, B],
+      v = () => ['', te, tr, He],
+      S = () => ['solid', 'dashed', 'dotted', 'double'],
+      K = () => [
+        'normal',
+        'multiply',
+        'screen',
+        'overlay',
+        'darken',
+        'lighten',
+        'color-dodge',
+        'color-burn',
+        'hard-light',
+        'soft-light',
+        'difference',
+        'exclusion',
+        'hue',
+        'saturation',
+        'color',
+        'luminosity',
+      ],
+      y = () => [te, Mr, et, $r],
+      N = () => ['', 'none', f, D, B],
+      Z = () => ['none', te, D, B],
+      ge = () => ['none', te, D, B],
+      he = () => [te, D, B],
+      _e = () => [Xe, 'full', ...w()]
+    return {
+      cacheSize: 500,
+      theme: {
+        animate: ['spin', 'ping', 'pulse', 'bounce'],
+        aspect: ['video'],
+        blur: [Oe],
+        breakpoint: [Oe],
+        color: [qo],
+        container: [Oe],
+        'drop-shadow': [Oe],
+        ease: ['in', 'out', 'in-out'],
+        font: [$o],
+        'font-weight': ['thin', 'extralight', 'light', 'normal', 'medium', 'semibold', 'bold', 'extrabold', 'black'],
+        'inset-shadow': [Oe],
+        leading: ['none', 'tight', 'snug', 'normal', 'relaxed', 'loose'],
+        perspective: ['dramatic', 'near', 'normal', 'midrange', 'distant', 'none'],
+        radius: [Oe],
+        shadow: [Oe],
+        spacing: ['px', te],
+        text: [Oe],
+        'text-shadow': [Oe],
+        tracking: ['tighter', 'tight', 'normal', 'wide', 'wider', 'widest'],
+      },
+      classGroups: {
+        aspect: [{ aspect: ['auto', 'square', Xe, B, D, z] }],
+        container: ['container'],
+        columns: [{ columns: [te, B, D, a] }],
+        'break-after': [{ 'break-after': A() }],
+        'break-before': [{ 'break-before': A() }],
+        'break-inside': [{ 'break-inside': ['auto', 'avoid', 'avoid-page', 'avoid-column'] }],
+        'box-decoration': [{ 'box-decoration': ['slice', 'clone'] }],
+        box: [{ box: ['border', 'content'] }],
+        display: [
+          'block',
+          'inline-block',
+          'inline',
+          'flex',
+          'inline-flex',
+          'table',
+          'inline-table',
+          'table-caption',
+          'table-cell',
+          'table-column',
+          'table-column-group',
+          'table-footer-group',
+          'table-header-group',
+          'table-row-group',
+          'table-row',
+          'flow-root',
+          'grid',
+          'inline-grid',
+          'contents',
+          'list-item',
+          'hidden',
+        ],
+        sr: ['sr-only', 'not-sr-only'],
+        float: [{ float: ['right', 'left', 'none', 'start', 'end'] }],
+        clear: [{ clear: ['left', 'right', 'both', 'none', 'start', 'end'] }],
+        isolation: ['isolate', 'isolation-auto'],
+        'object-fit': [{ object: ['contain', 'cover', 'fill', 'none', 'scale-down'] }],
+        'object-position': [{ object: h() }],
+        overflow: [{ overflow: _() }],
+        'overflow-x': [{ 'overflow-x': _() }],
+        'overflow-y': [{ 'overflow-y': _() }],
+        overscroll: [{ overscroll: O() }],
+        'overscroll-x': [{ 'overscroll-x': O() }],
+        'overscroll-y': [{ 'overscroll-y': O() }],
+        position: ['static', 'fixed', 'absolute', 'relative', 'sticky'],
+        inset: [{ inset: L() }],
+        'inset-x': [{ 'inset-x': L() }],
+        'inset-y': [{ 'inset-y': L() }],
+        start: [{ start: L() }],
+        end: [{ end: L() }],
+        top: [{ top: L() }],
+        right: [{ right: L() }],
+        bottom: [{ bottom: L() }],
+        left: [{ left: L() }],
+        visibility: ['visible', 'invisible', 'collapse'],
+        z: [{ z: [De, 'auto', D, B] }],
+        basis: [{ basis: [Xe, 'full', 'auto', a, ...w()] }],
+        'flex-direction': [{ flex: ['row', 'row-reverse', 'col', 'col-reverse'] }],
+        'flex-wrap': [{ flex: ['nowrap', 'wrap', 'wrap-reverse'] }],
+        flex: [{ flex: [te, Xe, 'auto', 'initial', 'none', B] }],
+        grow: [{ grow: ['', te, D, B] }],
+        shrink: [{ shrink: ['', te, D, B] }],
+        order: [{ order: [De, 'first', 'last', 'none', D, B] }],
+        'grid-cols': [{ 'grid-cols': F() }],
+        'col-start-end': [{ col: H() }],
+        'col-start': [{ 'col-start': ne() }],
+        'col-end': [{ 'col-end': ne() }],
+        'grid-rows': [{ 'grid-rows': F() }],
+        'row-start-end': [{ row: H() }],
+        'row-start': [{ 'row-start': ne() }],
+        'row-end': [{ 'row-end': ne() }],
+        'grid-flow': [{ 'grid-flow': ['row', 'col', 'dense', 'row-dense', 'col-dense'] }],
+        'auto-cols': [{ 'auto-cols': de() }],
+        'auto-rows': [{ 'auto-rows': de() }],
+        gap: [{ gap: w() }],
+        'gap-x': [{ 'gap-x': w() }],
+        'gap-y': [{ 'gap-y': w() }],
+        'justify-content': [{ justify: [...se(), 'normal'] }],
+        'justify-items': [{ 'justify-items': [...oe(), 'normal'] }],
+        'justify-self': [{ 'justify-self': ['auto', ...oe()] }],
+        'align-content': [{ content: ['normal', ...se()] }],
+        'align-items': [{ items: [...oe(), { baseline: ['', 'last'] }] }],
+        'align-self': [{ self: ['auto', ...oe(), { baseline: ['', 'last'] }] }],
+        'place-content': [{ 'place-content': se() }],
+        'place-items': [{ 'place-items': [...oe(), 'baseline'] }],
+        'place-self': [{ 'place-self': ['auto', ...oe()] }],
+        p: [{ p: w() }],
+        px: [{ px: w() }],
+        py: [{ py: w() }],
+        ps: [{ ps: w() }],
+        pe: [{ pe: w() }],
+        pt: [{ pt: w() }],
+        pr: [{ pr: w() }],
+        pb: [{ pb: w() }],
+        pl: [{ pl: w() }],
+        m: [{ m: ae() }],
+        mx: [{ mx: ae() }],
+        my: [{ my: ae() }],
+        ms: [{ ms: ae() }],
+        me: [{ me: ae() }],
+        mt: [{ mt: ae() }],
+        mr: [{ mr: ae() }],
+        mb: [{ mb: ae() }],
+        ml: [{ ml: ae() }],
+        'space-x': [{ 'space-x': w() }],
+        'space-x-reverse': ['space-x-reverse'],
+        'space-y': [{ 'space-y': w() }],
+        'space-y-reverse': ['space-y-reverse'],
+        size: [{ size: G() }],
+        w: [{ w: [a, 'screen', ...G()] }],
+        'min-w': [{ 'min-w': [a, 'screen', 'none', ...G()] }],
+        'max-w': [{ 'max-w': [a, 'screen', 'none', 'prose', { screen: [s] }, ...G()] }],
+        h: [{ h: ['screen', 'lh', ...G()] }],
+        'min-h': [{ 'min-h': ['screen', 'lh', 'none', ...G()] }],
+        'max-h': [{ 'max-h': ['screen', 'lh', ...G()] }],
+        'font-size': [{ text: ['base', t, tr, He] }],
+        'font-smoothing': ['antialiased', 'subpixel-antialiased'],
+        'font-style': ['italic', 'not-italic'],
+        'font-weight': [{ font: [o, D, Sr] }],
+        'font-stretch': [
+          {
+            'font-stretch': [
+              'ultra-condensed',
+              'extra-condensed',
+              'condensed',
+              'semi-condensed',
+              'normal',
+              'semi-expanded',
+              'expanded',
+              'extra-expanded',
+              'ultra-expanded',
+              Mr,
+              B,
+            ],
+          },
+        ],
+        'font-family': [{ font: [ta, B, r] }],
+        'fvn-normal': ['normal-nums'],
+        'fvn-ordinal': ['ordinal'],
+        'fvn-slashed-zero': ['slashed-zero'],
+        'fvn-figure': ['lining-nums', 'oldstyle-nums'],
+        'fvn-spacing': ['proportional-nums', 'tabular-nums'],
+        'fvn-fraction': ['diagonal-fractions', 'stacked-fractions'],
+        tracking: [{ tracking: [u, D, B] }],
+        'line-clamp': [{ 'line-clamp': [te, 'none', D, Sr] }],
+        leading: [{ leading: [l, ...w()] }],
+        'list-image': [{ 'list-image': ['none', D, B] }],
+        'list-style-position': [{ list: ['inside', 'outside'] }],
+        'list-style-type': [{ list: ['disc', 'decimal', 'none', D, B] }],
+        'text-alignment': [{ text: ['left', 'center', 'right', 'justify', 'start', 'end'] }],
+        'placeholder-color': [{ placeholder: b() }],
+        'text-color': [{ text: b() }],
+        'text-decoration': ['underline', 'overline', 'line-through', 'no-underline'],
+        'text-decoration-style': [{ decoration: [...S(), 'wavy'] }],
+        'text-decoration-thickness': [{ decoration: [te, 'from-font', 'auto', D, He] }],
+        'text-decoration-color': [{ decoration: b() }],
+        'underline-offset': [{ 'underline-offset': [te, 'auto', D, B] }],
+        'text-transform': ['uppercase', 'lowercase', 'capitalize', 'normal-case'],
+        'text-overflow': ['truncate', 'text-ellipsis', 'text-clip'],
+        'text-wrap': [{ text: ['wrap', 'nowrap', 'balance', 'pretty'] }],
+        indent: [{ indent: w() }],
+        'vertical-align': [{ align: ['baseline', 'top', 'middle', 'bottom', 'text-top', 'text-bottom', 'sub', 'super', D, B] }],
+        whitespace: [{ whitespace: ['normal', 'nowrap', 'pre', 'pre-line', 'pre-wrap', 'break-spaces'] }],
+        break: [{ break: ['normal', 'words', 'all', 'keep'] }],
+        wrap: [{ wrap: ['break-word', 'anywhere', 'normal'] }],
+        hyphens: [{ hyphens: ['none', 'manual', 'auto'] }],
+        content: [{ content: ['none', D, B] }],
+        'bg-attachment': [{ bg: ['fixed', 'local', 'scroll'] }],
+        'bg-clip': [{ 'bg-clip': ['border', 'padding', 'content', 'text'] }],
+        'bg-origin': [{ 'bg-origin': ['border', 'padding', 'content'] }],
+        'bg-position': [{ bg: q() }],
+        'bg-repeat': [{ bg: $() }],
+        'bg-size': [{ bg: T() }],
+        'bg-image': [
+          {
+            bg: ['none', { linear: [{ to: ['t', 'tr', 'r', 'br', 'b', 'bl', 'l', 'tl'] }, De, D, B], radial: ['', D, B], conic: [De, D, B] }, aa, ra],
+          },
+        ],
+        'bg-color': [{ bg: b() }],
+        'gradient-from-pos': [{ from: d() }],
+        'gradient-via-pos': [{ via: d() }],
+        'gradient-to-pos': [{ to: d() }],
+        'gradient-from': [{ from: b() }],
+        'gradient-via': [{ via: b() }],
+        'gradient-to': [{ to: b() }],
+        rounded: [{ rounded: n() }],
+        'rounded-s': [{ 'rounded-s': n() }],
+        'rounded-e': [{ 'rounded-e': n() }],
+        'rounded-t': [{ 'rounded-t': n() }],
+        'rounded-r': [{ 'rounded-r': n() }],
+        'rounded-b': [{ 'rounded-b': n() }],
+        'rounded-l': [{ 'rounded-l': n() }],
+        'rounded-ss': [{ 'rounded-ss': n() }],
+        'rounded-se': [{ 'rounded-se': n() }],
+        'rounded-ee': [{ 'rounded-ee': n() }],
+        'rounded-es': [{ 'rounded-es': n() }],
+        'rounded-tl': [{ 'rounded-tl': n() }],
+        'rounded-tr': [{ 'rounded-tr': n() }],
+        'rounded-br': [{ 'rounded-br': n() }],
+        'rounded-bl': [{ 'rounded-bl': n() }],
+        'border-w': [{ border: v() }],
+        'border-w-x': [{ 'border-x': v() }],
+        'border-w-y': [{ 'border-y': v() }],
+        'border-w-s': [{ 'border-s': v() }],
+        'border-w-e': [{ 'border-e': v() }],
+        'border-w-t': [{ 'border-t': v() }],
+        'border-w-r': [{ 'border-r': v() }],
+        'border-w-b': [{ 'border-b': v() }],
+        'border-w-l': [{ 'border-l': v() }],
+        'divide-x': [{ 'divide-x': v() }],
+        'divide-x-reverse': ['divide-x-reverse'],
+        'divide-y': [{ 'divide-y': v() }],
+        'divide-y-reverse': ['divide-y-reverse'],
+        'border-style': [{ border: [...S(), 'hidden', 'none'] }],
+        'divide-style': [{ divide: [...S(), 'hidden', 'none'] }],
+        'border-color': [{ border: b() }],
+        'border-color-x': [{ 'border-x': b() }],
+        'border-color-y': [{ 'border-y': b() }],
+        'border-color-s': [{ 'border-s': b() }],
+        'border-color-e': [{ 'border-e': b() }],
+        'border-color-t': [{ 'border-t': b() }],
+        'border-color-r': [{ 'border-r': b() }],
+        'border-color-b': [{ 'border-b': b() }],
+        'border-color-l': [{ 'border-l': b() }],
+        'divide-color': [{ divide: b() }],
+        'outline-style': [{ outline: [...S(), 'none', 'hidden'] }],
+        'outline-offset': [{ 'outline-offset': [te, D, B] }],
+        'outline-w': [{ outline: ['', te, tr, He] }],
+        'outline-color': [{ outline: b() }],
+        shadow: [{ shadow: ['', 'none', m, ur, dr] }],
+        'shadow-color': [{ shadow: b() }],
+        'inset-shadow': [{ 'inset-shadow': ['none', k, ur, dr] }],
+        'inset-shadow-color': [{ 'inset-shadow': b() }],
+        'ring-w': [{ ring: v() }],
+        'ring-w-inset': ['ring-inset'],
+        'ring-color': [{ ring: b() }],
+        'ring-offset-w': [{ 'ring-offset': [te, He] }],
+        'ring-offset-color': [{ 'ring-offset': b() }],
+        'inset-ring-w': [{ 'inset-ring': v() }],
+        'inset-ring-color': [{ 'inset-ring': b() }],
+        'text-shadow': [{ 'text-shadow': ['none', j, ur, dr] }],
+        'text-shadow-color': [{ 'text-shadow': b() }],
+        opacity: [{ opacity: [te, D, B] }],
+        'mix-blend': [{ 'mix-blend': [...K(), 'plus-darker', 'plus-lighter'] }],
+        'bg-blend': [{ 'bg-blend': K() }],
+        'mask-clip': [{ 'mask-clip': ['border', 'padding', 'content', 'fill', 'stroke', 'view'] }, 'mask-no-clip'],
+        'mask-composite': [{ mask: ['add', 'subtract', 'intersect', 'exclude'] }],
+        'mask-image-linear-pos': [{ 'mask-linear': [te] }],
+        'mask-image-linear-from-pos': [{ 'mask-linear-from': y() }],
+        'mask-image-linear-to-pos': [{ 'mask-linear-to': y() }],
+        'mask-image-linear-from-color': [{ 'mask-linear-from': b() }],
+        'mask-image-linear-to-color': [{ 'mask-linear-to': b() }],
+        'mask-image-t-from-pos': [{ 'mask-t-from': y() }],
+        'mask-image-t-to-pos': [{ 'mask-t-to': y() }],
+        'mask-image-t-from-color': [{ 'mask-t-from': b() }],
+        'mask-image-t-to-color': [{ 'mask-t-to': b() }],
+        'mask-image-r-from-pos': [{ 'mask-r-from': y() }],
+        'mask-image-r-to-pos': [{ 'mask-r-to': y() }],
+        'mask-image-r-from-color': [{ 'mask-r-from': b() }],
+        'mask-image-r-to-color': [{ 'mask-r-to': b() }],
+        'mask-image-b-from-pos': [{ 'mask-b-from': y() }],
+        'mask-image-b-to-pos': [{ 'mask-b-to': y() }],
+        'mask-image-b-from-color': [{ 'mask-b-from': b() }],
+        'mask-image-b-to-color': [{ 'mask-b-to': b() }],
+        'mask-image-l-from-pos': [{ 'mask-l-from': y() }],
+        'mask-image-l-to-pos': [{ 'mask-l-to': y() }],
+        'mask-image-l-from-color': [{ 'mask-l-from': b() }],
+        'mask-image-l-to-color': [{ 'mask-l-to': b() }],
+        'mask-image-x-from-pos': [{ 'mask-x-from': y() }],
+        'mask-image-x-to-pos': [{ 'mask-x-to': y() }],
+        'mask-image-x-from-color': [{ 'mask-x-from': b() }],
+        'mask-image-x-to-color': [{ 'mask-x-to': b() }],
+        'mask-image-y-from-pos': [{ 'mask-y-from': y() }],
+        'mask-image-y-to-pos': [{ 'mask-y-to': y() }],
+        'mask-image-y-from-color': [{ 'mask-y-from': b() }],
+        'mask-image-y-to-color': [{ 'mask-y-to': b() }],
+        'mask-image-radial': [{ 'mask-radial': [D, B] }],
+        'mask-image-radial-from-pos': [{ 'mask-radial-from': y() }],
+        'mask-image-radial-to-pos': [{ 'mask-radial-to': y() }],
+        'mask-image-radial-from-color': [{ 'mask-radial-from': b() }],
+        'mask-image-radial-to-color': [{ 'mask-radial-to': b() }],
+        'mask-image-radial-shape': [{ 'mask-radial': ['circle', 'ellipse'] }],
+        'mask-image-radial-size': [{ 'mask-radial': [{ closest: ['side', 'corner'], farthest: ['side', 'corner'] }] }],
+        'mask-image-radial-pos': [{ 'mask-radial-at': C() }],
+        'mask-image-conic-pos': [{ 'mask-conic': [te] }],
+        'mask-image-conic-from-pos': [{ 'mask-conic-from': y() }],
+        'mask-image-conic-to-pos': [{ 'mask-conic-to': y() }],
+        'mask-image-conic-from-color': [{ 'mask-conic-from': b() }],
+        'mask-image-conic-to-color': [{ 'mask-conic-to': b() }],
+        'mask-mode': [{ mask: ['alpha', 'luminance', 'match'] }],
+        'mask-origin': [{ 'mask-origin': ['border', 'padding', 'content', 'fill', 'stroke', 'view'] }],
+        'mask-position': [{ mask: q() }],
+        'mask-repeat': [{ mask: $() }],
+        'mask-size': [{ mask: T() }],
+        'mask-type': [{ 'mask-type': ['alpha', 'luminance'] }],
+        'mask-image': [{ mask: ['none', D, B] }],
+        filter: [{ filter: ['', 'none', D, B] }],
+        blur: [{ blur: N() }],
+        brightness: [{ brightness: [te, D, B] }],
+        contrast: [{ contrast: [te, D, B] }],
+        'drop-shadow': [{ 'drop-shadow': ['', 'none', E, ur, dr] }],
+        'drop-shadow-color': [{ 'drop-shadow': b() }],
+        grayscale: [{ grayscale: ['', te, D, B] }],
+        'hue-rotate': [{ 'hue-rotate': [te, D, B] }],
+        invert: [{ invert: ['', te, D, B] }],
+        saturate: [{ saturate: [te, D, B] }],
+        sepia: [{ sepia: ['', te, D, B] }],
+        'backdrop-filter': [{ 'backdrop-filter': ['', 'none', D, B] }],
+        'backdrop-blur': [{ 'backdrop-blur': N() }],
+        'backdrop-brightness': [{ 'backdrop-brightness': [te, D, B] }],
+        'backdrop-contrast': [{ 'backdrop-contrast': [te, D, B] }],
+        'backdrop-grayscale': [{ 'backdrop-grayscale': ['', te, D, B] }],
+        'backdrop-hue-rotate': [{ 'backdrop-hue-rotate': [te, D, B] }],
+        'backdrop-invert': [{ 'backdrop-invert': ['', te, D, B] }],
+        'backdrop-opacity': [{ 'backdrop-opacity': [te, D, B] }],
+        'backdrop-saturate': [{ 'backdrop-saturate': [te, D, B] }],
+        'backdrop-sepia': [{ 'backdrop-sepia': ['', te, D, B] }],
+        'border-collapse': [{ border: ['collapse', 'separate'] }],
+        'border-spacing': [{ 'border-spacing': w() }],
+        'border-spacing-x': [{ 'border-spacing-x': w() }],
+        'border-spacing-y': [{ 'border-spacing-y': w() }],
+        'table-layout': [{ table: ['auto', 'fixed'] }],
+        caption: [{ caption: ['top', 'bottom'] }],
+        transition: [{ transition: ['', 'all', 'colors', 'opacity', 'shadow', 'transform', 'none', D, B] }],
+        'transition-behavior': [{ transition: ['normal', 'discrete'] }],
+        duration: [{ duration: [te, 'initial', D, B] }],
+        ease: [{ ease: ['linear', 'initial', P, D, B] }],
+        delay: [{ delay: [te, D, B] }],
+        animate: [{ animate: ['none', X, D, B] }],
+        backface: [{ backface: ['hidden', 'visible'] }],
+        perspective: [{ perspective: [p, D, B] }],
+        'perspective-origin': [{ 'perspective-origin': h() }],
+        rotate: [{ rotate: Z() }],
+        'rotate-x': [{ 'rotate-x': Z() }],
+        'rotate-y': [{ 'rotate-y': Z() }],
+        'rotate-z': [{ 'rotate-z': Z() }],
+        scale: [{ scale: ge() }],
+        'scale-x': [{ 'scale-x': ge() }],
+        'scale-y': [{ 'scale-y': ge() }],
+        'scale-z': [{ 'scale-z': ge() }],
+        'scale-3d': ['scale-3d'],
+        skew: [{ skew: he() }],
+        'skew-x': [{ 'skew-x': he() }],
+        'skew-y': [{ 'skew-y': he() }],
+        transform: [{ transform: [D, B, '', 'none', 'gpu', 'cpu'] }],
+        'transform-origin': [{ origin: h() }],
+        'transform-style': [{ transform: ['3d', 'flat'] }],
+        translate: [{ translate: _e() }],
+        'translate-x': [{ 'translate-x': _e() }],
+        'translate-y': [{ 'translate-y': _e() }],
+        'translate-z': [{ 'translate-z': _e() }],
+        'translate-none': ['translate-none'],
+        accent: [{ accent: b() }],
+        appearance: [{ appearance: ['none', 'auto'] }],
+        'caret-color': [{ caret: b() }],
+        'color-scheme': [{ scheme: ['normal', 'dark', 'light', 'light-dark', 'only-dark', 'only-light'] }],
+        cursor: [
+          {
+            cursor: [
+              'auto',
+              'default',
+              'pointer',
+              'wait',
+              'text',
+              'move',
+              'help',
+              'not-allowed',
+              'none',
+              'context-menu',
+              'progress',
+              'cell',
+              'crosshair',
+              'vertical-text',
+              'alias',
+              'copy',
+              'no-drop',
+              'grab',
+              'grabbing',
+              'all-scroll',
+              'col-resize',
+              'row-resize',
+              'n-resize',
+              'e-resize',
+              's-resize',
+              'w-resize',
+              'ne-resize',
+              'nw-resize',
+              'se-resize',
+              'sw-resize',
+              'ew-resize',
+              'ns-resize',
+              'nesw-resize',
+              'nwse-resize',
+              'zoom-in',
+              'zoom-out',
+              D,
+              B,
+            ],
+          },
+        ],
+        'field-sizing': [{ 'field-sizing': ['fixed', 'content'] }],
+        'pointer-events': [{ 'pointer-events': ['auto', 'none'] }],
+        resize: [{ resize: ['none', '', 'y', 'x'] }],
+        'scroll-behavior': [{ scroll: ['auto', 'smooth'] }],
+        'scroll-m': [{ 'scroll-m': w() }],
+        'scroll-mx': [{ 'scroll-mx': w() }],
+        'scroll-my': [{ 'scroll-my': w() }],
+        'scroll-ms': [{ 'scroll-ms': w() }],
+        'scroll-me': [{ 'scroll-me': w() }],
+        'scroll-mt': [{ 'scroll-mt': w() }],
+        'scroll-mr': [{ 'scroll-mr': w() }],
+        'scroll-mb': [{ 'scroll-mb': w() }],
+        'scroll-ml': [{ 'scroll-ml': w() }],
+        'scroll-p': [{ 'scroll-p': w() }],
+        'scroll-px': [{ 'scroll-px': w() }],
+        'scroll-py': [{ 'scroll-py': w() }],
+        'scroll-ps': [{ 'scroll-ps': w() }],
+        'scroll-pe': [{ 'scroll-pe': w() }],
+        'scroll-pt': [{ 'scroll-pt': w() }],
+        'scroll-pr': [{ 'scroll-pr': w() }],
+        'scroll-pb': [{ 'scroll-pb': w() }],
+        'scroll-pl': [{ 'scroll-pl': w() }],
+        'snap-align': [{ snap: ['start', 'end', 'center', 'align-none'] }],
+        'snap-stop': [{ snap: ['normal', 'always'] }],
+        'snap-type': [{ snap: ['none', 'x', 'y', 'both'] }],
+        'snap-strictness': [{ snap: ['mandatory', 'proximity'] }],
+        touch: [{ touch: ['auto', 'none', 'manipulation'] }],
+        'touch-x': [{ 'touch-pan': ['x', 'left', 'right'] }],
+        'touch-y': [{ 'touch-pan': ['y', 'up', 'down'] }],
+        'touch-pz': ['touch-pinch-zoom'],
+        select: [{ select: ['none', 'text', 'all', 'auto'] }],
+        'will-change': [{ 'will-change': ['auto', 'scroll', 'contents', 'transform', D, B] }],
+        fill: [{ fill: ['none', ...b()] }],
+        'stroke-w': [{ stroke: [te, tr, He, Sr] }],
+        stroke: [{ stroke: ['none', ...b()] }],
+        'forced-color-adjust': [{ 'forced-color-adjust': ['auto', 'none'] }],
+      },
+      conflictingClassGroups: {
+        overflow: ['overflow-x', 'overflow-y'],
+        overscroll: ['overscroll-x', 'overscroll-y'],
+        inset: ['inset-x', 'inset-y', 'start', 'end', 'top', 'right', 'bottom', 'left'],
+        'inset-x': ['right', 'left'],
+        'inset-y': ['top', 'bottom'],
+        flex: ['basis', 'grow', 'shrink'],
+        gap: ['gap-x', 'gap-y'],
+        p: ['px', 'py', 'ps', 'pe', 'pt', 'pr', 'pb', 'pl'],
+        px: ['pr', 'pl'],
+        py: ['pt', 'pb'],
+        m: ['mx', 'my', 'ms', 'me', 'mt', 'mr', 'mb', 'ml'],
+        mx: ['mr', 'ml'],
+        my: ['mt', 'mb'],
+        size: ['w', 'h'],
+        'font-size': ['leading'],
+        'fvn-normal': ['fvn-ordinal', 'fvn-slashed-zero', 'fvn-figure', 'fvn-spacing', 'fvn-fraction'],
+        'fvn-ordinal': ['fvn-normal'],
+        'fvn-slashed-zero': ['fvn-normal'],
+        'fvn-figure': ['fvn-normal'],
+        'fvn-spacing': ['fvn-normal'],
+        'fvn-fraction': ['fvn-normal'],
+        'line-clamp': ['display', 'overflow'],
+        rounded: [
+          'rounded-s',
+          'rounded-e',
+          'rounded-t',
+          'rounded-r',
+          'rounded-b',
+          'rounded-l',
+          'rounded-ss',
+          'rounded-se',
+          'rounded-ee',
+          'rounded-es',
+          'rounded-tl',
+          'rounded-tr',
+          'rounded-br',
+          'rounded-bl',
+        ],
+        'rounded-s': ['rounded-ss', 'rounded-es'],
+        'rounded-e': ['rounded-se', 'rounded-ee'],
+        'rounded-t': ['rounded-tl', 'rounded-tr'],
+        'rounded-r': ['rounded-tr', 'rounded-br'],
+        'rounded-b': ['rounded-br', 'rounded-bl'],
+        'rounded-l': ['rounded-tl', 'rounded-bl'],
+        'border-spacing': ['border-spacing-x', 'border-spacing-y'],
+        'border-w': ['border-w-x', 'border-w-y', 'border-w-s', 'border-w-e', 'border-w-t', 'border-w-r', 'border-w-b', 'border-w-l'],
+        'border-w-x': ['border-w-r', 'border-w-l'],
+        'border-w-y': ['border-w-t', 'border-w-b'],
+        'border-color': [
+          'border-color-x',
+          'border-color-y',
+          'border-color-s',
+          'border-color-e',
+          'border-color-t',
+          'border-color-r',
+          'border-color-b',
+          'border-color-l',
+        ],
+        'border-color-x': ['border-color-r', 'border-color-l'],
+        'border-color-y': ['border-color-t', 'border-color-b'],
+        translate: ['translate-x', 'translate-y', 'translate-none'],
+        'translate-none': ['translate', 'translate-x', 'translate-y', 'translate-z'],
+        'scroll-m': ['scroll-mx', 'scroll-my', 'scroll-ms', 'scroll-me', 'scroll-mt', 'scroll-mr', 'scroll-mb', 'scroll-ml'],
+        'scroll-mx': ['scroll-mr', 'scroll-ml'],
+        'scroll-my': ['scroll-mt', 'scroll-mb'],
+        'scroll-p': ['scroll-px', 'scroll-py', 'scroll-ps', 'scroll-pe', 'scroll-pt', 'scroll-pr', 'scroll-pb', 'scroll-pl'],
+        'scroll-px': ['scroll-pr', 'scroll-pl'],
+        'scroll-py': ['scroll-pt', 'scroll-pb'],
+        touch: ['touch-x', 'touch-y', 'touch-pz'],
+        'touch-x': ['touch'],
+        'touch-y': ['touch'],
+        'touch-pz': ['touch'],
+      },
+      conflictingClassGroupModifiers: { 'font-size': ['leading'] },
+      orderSensitiveModifiers: [
+        '*',
+        '**',
+        'after',
+        'backdrop',
+        'before',
+        'details-content',
+        'file',
+        'first-letter',
+        'first-line',
+        'marker',
+        'placeholder',
+        'selection',
+      ],
+    }
+  },
+  ie = Vo(ia),
+  la = (e, r) => r(!r())
+var ca = U('<div><!></div>'),
+  da = U(
+    '<div><button><div class="flex w-full items-center"><span><!></span> <span> </span></div> <div class="w-10 pl-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-[1.1rem] w-[1.1rem] transition-transform duration-250" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 12.5s-4.419 6-6 6s-6-6-6-6m12-7s-4.419 6-6 6s-6-6-6-6" color="currentColor"></path></svg></div></button> <!></div>',
+  )
+function ls(e, r) {
+  Se(r, !0)
+  let t = R(r, 'id', 19, () => crypto.randomUUID()),
+    o = R(r, 'isOpen', 7, !1),
+    u = R(r, 'outline', 3, !1),
+    l = R(r, 'wrapperClass', 3, ''),
+    s = R(r, 'size', 19, () => ({ width: 1, height: 1 })),
+    a = R(r, 'label', 19, () => ({ name: '', class: 'text-left', icon: null }))
+  var c = da(),
+    g = M(c)
+  g.__click = [la, o]
+  var m = M(g),
+    k = M(m)
+  V(k, 1, 'flex h-8 w-8 shrink-0 items-center justify-center overflow-visible [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full')
+  var j = M(k)
+  {
+    var E = (C) => {
+      const h = pe(() => a()?.icon)
+      var _ = ye(),
+        O = ue(_)
+      ;(Ur(
+        O,
+        () => i(h),
+        (w, L) => {
+          L(w, {})
+        },
+      ),
+        I(C, _))
+    }
+    ee(j, (C) => {
+      a()?.icon && C(E)
+    })
+  }
+  x(k)
+  var f = J(k, 2),
+    p = M(f, !0)
+  ;(x(f), x(m))
+  var z = J(m, 2),
+    P = M(z)
+  ;(x(z), x(g))
+  var X = J(g, 2)
+  {
+    var A = (C) => {
+      var h = ca(),
+        _ = M(h)
+      ;(Ir(_, () => r.children ?? Ue),
+        x(h),
+        Q(() => {
+          ;(V(h, 1, `grid w-full p-4 sm:p-3 ${r.image ? 'gap-x-2' : 'gap-2'} ${u() ? '' : 'border-t border-[var(--border-color)]'}`),
+            ce(
+              h,
+              `grid-template-columns: repeat(${s().width || 10}, minmax(0, 1fr)); 
+          grid-template-rows: repeat(${s().height || 2}, ${r.image ? 'minmax(6rem, auto)' : 'auto'});
+          ${r.image ? `background-image: url(${r.image}); background-size: cover; background-position: center;` : ''}`,
+            ))
+        }),
+        Ce(
+          3,
+          h,
+          () => mr,
+          () => ({ duration: 250 }),
+        ),
+        I(C, h))
+    }
+    ee(X, (C) => {
+      o() && C(A)
+    })
+  }
+  ;(x(c),
+    Q(
+      (C, h) => {
+        ;(Y(c, 'id', t()),
+          V(c, 1, C),
+          V(
+            g,
+            1,
+            `flex w-full cursor-pointer items-center justify-between p-4 transition-shadow duration-250
+    ${u() ? 'border-b border-[var(--border-color)]' : ''}`,
+          ),
+          V(f, 1, `${h ?? ''} text-lg`),
+          le(p, a()?.name),
+          ce(P, `transform: rotate(${o() ? 180 : 0}deg)`))
+      },
+      [
+        () =>
+          ve(
+            ie(
+              `${u() ? 'border-none' : 'rounded-xl hover:shadow-md'} w-full
+    border border-[var(--border-color)] bg-[var(--container-color)] p-0 transition-shadow duration-250`,
+              l(),
+            ),
+          ),
+        () => ie('m-0 w-full cursor-pointer text-left font-semibold', a().class),
+      ],
+    ),
+    Ce(
+      3,
+      c,
+      () => mr,
+      () => ({ duration: 250 }),
+    ),
+    I(e, c),
+    Ee())
+}
+Te(['click'])
+const ua = (e, r, t) => {
+  r() || !t.onClick || t.onClick()
+}
+var fa = U('<div class="text-xs opacity-70"> </div>'),
+  va = U('<div class="flex-1"> <!></div>'),
+  ma = U(
+    '<div class="absolute bottom-full left-1/2 z-50 mb-2 w-max max-w-xs rounded-md bg-[var(--container-color)] px-3 py-1 text-sm shadow-lg" style="transform: translateX(-50%);"> <div class="absolute top-full left-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rotate-45 transform bg-[var(--container-color)]"></div></div>',
+  ),
+  pa = U(
+    '<div><div class="relative flex w-full grow items-center"><button><span class="flex flex-row items-center justify-center gap-2"><!> <!></span></button> <!></div></div>',
+  )
+function ga(e, r) {
+  Se(r, !0)
+  let t = R(r, 'id', 19, () => crypto.randomUUID()),
+    o = R(r, 'wrapperClass', 3, ''),
+    u = R(r, 'componentClass', 3, ''),
+    l = R(r, 'disabled', 3, !1),
+    s = R(r, 'content', 19, () => ({ name: '', info: '', icon: null })),
+    a = xe(!1)
+  const c = (A) => {
+    if (l() || !r.keyBind || !r.onClick) return
+    const C = A.key === r.keyBind.key,
+      h = r.keyBind.ctrlKey === void 0 || A.ctrlKey === r.keyBind.ctrlKey,
+      _ = r.keyBind.shiftKey === void 0 || A.shiftKey === r.keyBind.shiftKey,
+      O = r.keyBind.altKey === void 0 || A.altKey === r.keyBind.altKey,
+      w = r.keyBind.metaKey === void 0 || A.metaKey === r.keyBind.metaKey
+    C && h && _ && O && w && (A.preventDefault(), r.onClick())
+  }
+  Dr(
+    () => (
+      r.keyBind && window.addEventListener('keydown', c),
+      () => {
+        r.keyBind && window.removeEventListener('keydown', c)
+      }
+    ),
+  )
+  var g = pa(),
+    m = M(g),
+    k = M(m)
+  k.__click = [ua, l, r]
+  var j = M(k),
+    E = M(j)
+  {
+    var f = (A) => {
+      const C = pe(() => s().icon)
+      var h = ye(),
+        _ = ue(h)
+      ;(Ur(
+        _,
+        () => i(C),
+        (O, w) => {
+          w(O, {})
+        },
+      ),
+        I(A, h))
+    }
+    ee(E, (A) => {
+      s().icon && A(f)
+    })
+  }
+  var p = J(E, 2)
+  {
+    var z = (A) => {
+      var C = va(),
+        h = M(C),
+        _ = J(h)
+      {
+        var O = (w) => {
+          var L = fa(),
+            F = M(L)
+          ;(x(L),
+            Q(() =>
+              le(
+                F,
+                `(${r.keyBind.ctrlKey ? 'Ctrl+' : ''}${r.keyBind.shiftKey ? 'Shift+' : ''}${r.keyBind.altKey ? 'Alt+' : ''}${r.keyBind.key ?? ''})`,
+              ),
+            ),
+            I(w, L))
+        }
+        ee(_, (w) => {
+          r.keyBind && w(O)
+        })
+      }
+      ;(x(C), Q(() => le(h, `${s().name ?? ''} `)), I(A, C))
+    }
+    ee(p, (A) => {
+      s().name && A(z)
+    })
+  }
+  ;(x(j), x(k))
+  var P = J(k, 2)
+  {
+    var X = (A) => {
+      var C = ma(),
+        h = M(C)
+      ;(ft(),
+        x(C),
+        Q(() => le(h, `${s().info ?? ''} `)),
+        Ce(
+          3,
+          C,
+          () => sr,
+          () => ({ y: -15, duration: 300 }),
+        ),
+        I(A, C))
+    }
+    ee(P, (A) => {
+      i(a) && A(X)
+    })
+  }
+  ;(x(m),
+    x(g),
+    Q(
+      (A, C) => {
+        ;(V(g, 1, A), Y(k, 'id', t()), V(k, 1, `${C ?? ''} bg-[var(--bg-color)]`), (k.disabled = l()), Y(k, 'aria-label', s().name))
+      },
+      [
+        () => ve(ie('bg-blue relative flex w-full flex-col items-center', o())),
+        () =>
+          ie(
+            `relative m-0 inline-block w-full items-center rounded-2xl border border-[var(--bg-color)] 
         px-2 py-1 font-semibold shadow-sm transition duration-200 select-none
-        ${l()?"cursor-not-allowed opacity-50":"cursor-pointer hover:shadow-md active:scale-97"} `,u())]),We("mouseenter",k,()=>{s().info&&W(a,!0)}),We("mouseleave",k,()=>{s().info&&W(a,!1)}),I(e,g),Ee()}Te(["click"]);var ba=U("<h5> </h5>"),ha=(e,r)=>r(e,"hue"),wa=U('<div class="pointer-events-none absolute top-1/2 h-7 w-1 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white"></div>'),xa=(e,r)=>r(e,"brightness"),_a=U('<div class="absolute inset-0"></div> <div class="pointer-events-none absolute top-1/2 h-7 w-1 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white"></div>',1),ya=(e,r)=>r(e,"white"),ka=U('<div class="pointer-events-none absolute top-1/2 h-7 w-1 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white"></div>'),Ca=U('<div><!> <div class="flex w-full flex-row items-center gap-2"><div class="flex w-full flex-col gap-2"><div class="hue-slider relative h-7 w-full cursor-pointer overflow-hidden rounded-full shadow-md" role="slider"><div class="absolute inset-0"></div> <!></div> <div role="slider"><!></div> <div class="white-slider relative mt-4 h-4 w-full cursor-pointer overflow-hidden rounded-full shadow-sm" role="slider"><div class="absolute inset-0 bg-gradient-to-r from-black to-white"></div> <!></div></div> <div class="flex w-24 flex-col items-center"><div></div> <div class="w-full text-center font-semibold"> </div></div></div></div>');function cs(e,r){Se(r,!0);let t=R(r,"id",19,()=>crypto.randomUUID()),o=R(r,"wrapperClass",3,""),u=R(r,"label",19,()=>({name:"",class:""})),l=R(r,"value",19,()=>[0,0,0]),s=R(r,"onChange",3,()=>{});const a=ar({h:0,s:100,v:100});let c=xe(0),g=xe(100),m=xe("hsv"),k=xe(100);nr(()=>{if(l().length!==3)return;const[T,d,n]=l(),v=T===d&&d===n;if(W(m,v?"white":"hsv",!0),v){W(k,Math.round(T/255*100),!0);return}const S=l().map(_e=>_e/255),K=Math.max(...S),y=Math.min(...S),N=K-y;let Z=0;if(N!==0){const[_e,Ne,Ie]=S;K===_e?Z=(Ne-Ie)/N%6:K===Ne?Z=(Ie-_e)/N+2:Z=(_e-Ne)/N+4,Z*=60,Z<0&&(Z+=360)}const ge=K?N/K*100:0,he=K*100;a.h=Math.round(Z),a.s=Math.round(ge),a.v=Math.round(he),W(c,Z/360*100),W(g,he)});const j=(T,d,n)=>{d/=100,n/=100;const v=n*d,S=v*(1-Math.abs(T/60%2-1)),K=n-v;let y=0,N=0,Z=0;return T<60?[y,N,Z]=[v,S,0]:T<120?[y,N,Z]=[S,v,0]:T<180?[y,N,Z]=[0,v,S]:T<240?[y,N,Z]=[0,S,v]:T<300?[y,N,Z]=[S,0,v]:[y,N,Z]=[v,0,S],[Math.round((y+K)*255),Math.round((N+K)*255),Math.round((Z+K)*255)]},E=(T,d)=>{const v=document.querySelector(`.${d}-slider`).getBoundingClientRect();let S={...a},K=i(k);d==="hue"||d==="brightness"?(i(m)==="white"&&(a.s=100),W(m,"hsv")):W(m,"white");const y=Z=>{const ge=Math.max(0,Math.min(Z.clientX-v.left,v.width)),he=ge/v.width*100;d==="hue"?(W(c,he),S.h=ge/v.width*360,a.h=S.h):d==="brightness"?(W(g,he),S.v=he,a.v=S.v):d==="white"&&(K=he,W(k,K,!0))},N=()=>{if(window.removeEventListener("mousemove",y),window.removeEventListener("mouseup",N),i(m)==="hsv")s()(j(S.h,a.s,S.v));else{const Z=Math.round(K/100*255);s()([Z,Z,Z])}};y(T),window.addEventListener("mousemove",y),window.addEventListener("mouseup",N)},f=pe(()=>()=>i(m)==="white"?[i(k),i(k),i(k)].map(T=>Math.round(T/100*255)):j(a.h,a.s,a.v)),p=pe(()=>()=>i(f)().map(T=>T.toString(16).padStart(2,"0")).join(" ").toUpperCase()),z=pe(()=>()=>i(m)==="white"?[255,255,255].map(T=>Math.round(i(k)/100*T)):j(a.h,a.s,100)),P=pe(()=>()=>{const[T,d,n]=i(f)();return(T*299+d*587+n*114)/1e3>128?"text-black":"text-white"});var X=Ca(),A=M(X);{var C=T=>{var d=ba(),n=M(d,!0);x(d),Q(v=>{V(d,1,v),le(n,u().name)},[()=>ve(ie("mb-2 w-full px-4 text-center",u().class))]),I(T,d)};ee(A,T=>{u().name&&T(C)})}var h=J(A,2),_=M(h),O=M(_);Y(O,"aria-valuenow",null),Y(O,"tabindex",null),O.__mousedown=[ha,E];var w=M(O),L=J(w,2);{var F=T=>{var d=wa();Q(n=>ce(d,n),[()=>`left: ${i(c)}%; background: rgb(${j(a.h,100,100).join(",")})`]),I(T,d)};ee(L,T=>{i(m)==="hsv"&&T(F)})}x(O);var H=J(O,2);Y(H,"aria-valuenow",null),Y(H,"tabindex",null),H.__mousedown=[xa,E];var ne=M(H);{var de=T=>{var d=_a(),n=ue(d),v=J(n,2);Q((S,K)=>{ce(n,S),ce(v,K)},[()=>`background: linear-gradient(to right, rgb(0,0,0), rgb(${j(a.h,a.s,100).join(",")}))`,()=>`left: ${i(g)}%; background: rgb(${j(a.h,a.s,a.v).join(",")})`]),I(T,d)};ee(ne,T=>{i(m)==="hsv"&&T(de)})}x(H);var se=J(H,2);Y(se,"aria-valuenow",null),Y(se,"tabindex",null),se.__mousedown=[ya,E];var oe=J(M(se),2);{var ae=T=>{var d=ka();Q(n=>ce(d,n),[()=>`left: ${i(k)}%; background: rgb(${[255,255,255].map(n=>Math.round(i(k)/100*n)).join(",")})`]),I(T,d)};ee(oe,T=>{i(m)==="white"&&T(ae)})}x(se),x(_);var G=J(_,2),b=M(G),q=J(b,2),$=M(q,!0);x(q),x(G),x(h),x(X),Q((T,d,n,v,S)=>{Y(X,"id",t()),V(X,1,T),ce(w,d),V(H,1,`brightness-slider relative h-4 w-full cursor-pointer overflow-hidden rounded-full ${i(m)==="hsv"?"shadow-md":""}`),V(b,1,n),ce(b,v),le($,S)},[()=>ve(ie("relative flex w-full flex-col items-center",o())),()=>`background: linear-gradient(to right, ${Array.from({length:7},(T,d)=>{const[n,v,S]=j(d*60,100,100);return`rgb(${n},${v},${S})`}).join(", ")})`,()=>`flex size-15 flex-col justify-center gap-1 rounded-full px-2 font-mono text-sm shadow-md select-none ${i(P)()}`,()=>`background: rgb(${i(z)().join(",")})`,()=>i(p)()]),I(e,X),Ee()}Te(["mousedown"]);const rt=(e,r,t,o)=>{const u=e.target;if(!u.files||u.files.length===0){r()(e,null);return}const l=u.files[0];W(t,l,!0),l.type.startsWith("image/")&&W(o,URL.createObjectURL(l)),r()(e,l)},Na=(e,r)=>{document.getElementById(r())?.click()};var Ma=U("<h5> </h5>"),Sa=U('<img alt="Preview"/>'),Ea=U('<span class="text-sm text-gray-500">Image</span>'),Ta=U('<div class="relative"><button><!></button> <input type="file" class="absolute -z-10 h-0 w-0 overflow-hidden opacity-0"/></div>'),Ia=U('<label class="relative inline-block w-full"><input type="file"/></label>'),Aa=U("<div><!> <!></div>");function ds(e,r){Se(r,!0);let t=R(r,"id",19,()=>crypto.randomUUID()),o=R(r,"wrapperClass",3,""),u=R(r,"label",19,()=>({name:"",class:""})),l=R(r,"type",3,"file"),s=R(r,"accept",3,"*/*"),a=R(r,"imageSize",19,()=>({height:"10rem",width:"10rem",fitMode:"cover",form:"square"})),c=R(r,"disabled",3,!1),g=R(r,"currentImage",11,null),m=R(r,"onChange",3,()=>{}),k=xe(null),j=pe(()=>g()?g().startsWith("data:")?g():`data:image/png;base64,${g()}`:null);var E=Aa(),f=M(E);{var p=A=>{var C=Ma(),h=M(C,!0);x(C),Q(()=>{V(C,1,`${u().class}`),le(h,u().name)}),I(A,C)};ee(f,A=>{u().name&&A(p)})}var z=J(f,2);{var P=A=>{var C=Ta(),h=M(C);h.__click=[Na,t];var _=M(h);{var O=F=>{var H=Sa();Q(ne=>{Y(H,"src",ne),V(H,1,`
+        ${l() ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:shadow-md active:scale-97'} `,
+            u(),
+          ),
+      ],
+    ),
+    We('mouseenter', k, () => {
+      s().info && W(a, !0)
+    }),
+    We('mouseleave', k, () => {
+      s().info && W(a, !1)
+    }),
+    I(e, g),
+    Ee())
+}
+Te(['click'])
+var ba = U('<h5> </h5>'),
+  ha = (e, r) => r(e, 'hue'),
+  wa = U('<div class="pointer-events-none absolute top-1/2 h-7 w-1 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white"></div>'),
+  xa = (e, r) => r(e, 'brightness'),
+  _a = U(
+    '<div class="absolute inset-0"></div> <div class="pointer-events-none absolute top-1/2 h-7 w-1 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white"></div>',
+    1,
+  ),
+  ya = (e, r) => r(e, 'white'),
+  ka = U('<div class="pointer-events-none absolute top-1/2 h-7 w-1 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white"></div>'),
+  Ca = U(
+    '<div><!> <div class="flex w-full flex-row items-center gap-2"><div class="flex w-full flex-col gap-2"><div class="hue-slider relative h-7 w-full cursor-pointer overflow-hidden rounded-full shadow-md" role="slider"><div class="absolute inset-0"></div> <!></div> <div role="slider"><!></div> <div class="white-slider relative mt-4 h-4 w-full cursor-pointer overflow-hidden rounded-full shadow-sm" role="slider"><div class="absolute inset-0 bg-gradient-to-r from-black to-white"></div> <!></div></div> <div class="flex w-24 flex-col items-center"><div></div> <div class="w-full text-center font-semibold"> </div></div></div></div>',
+  )
+function cs(e, r) {
+  Se(r, !0)
+  let t = R(r, 'id', 19, () => crypto.randomUUID()),
+    o = R(r, 'wrapperClass', 3, ''),
+    u = R(r, 'label', 19, () => ({ name: '', class: '' })),
+    l = R(r, 'value', 19, () => [0, 0, 0]),
+    s = R(r, 'onChange', 3, () => {})
+  const a = ar({ h: 0, s: 100, v: 100 })
+  let c = xe(0),
+    g = xe(100),
+    m = xe('hsv'),
+    k = xe(100)
+  nr(() => {
+    if (l().length !== 3) return
+    const [T, d, n] = l(),
+      v = T === d && d === n
+    if ((W(m, v ? 'white' : 'hsv', !0), v)) {
+      W(k, Math.round((T / 255) * 100), !0)
+      return
+    }
+    const S = l().map((_e) => _e / 255),
+      K = Math.max(...S),
+      y = Math.min(...S),
+      N = K - y
+    let Z = 0
+    if (N !== 0) {
+      const [_e, Ne, Ie] = S
+      ;(K === _e ? (Z = ((Ne - Ie) / N) % 6) : K === Ne ? (Z = (Ie - _e) / N + 2) : (Z = (_e - Ne) / N + 4), (Z *= 60), Z < 0 && (Z += 360))
+    }
+    const ge = K ? (N / K) * 100 : 0,
+      he = K * 100
+    ;((a.h = Math.round(Z)), (a.s = Math.round(ge)), (a.v = Math.round(he)), W(c, (Z / 360) * 100), W(g, he))
+  })
+  const j = (T, d, n) => {
+      ;((d /= 100), (n /= 100))
+      const v = n * d,
+        S = v * (1 - Math.abs(((T / 60) % 2) - 1)),
+        K = n - v
+      let y = 0,
+        N = 0,
+        Z = 0
+      return (
+        T < 60
+          ? ([y, N, Z] = [v, S, 0])
+          : T < 120
+            ? ([y, N, Z] = [S, v, 0])
+            : T < 180
+              ? ([y, N, Z] = [0, v, S])
+              : T < 240
+                ? ([y, N, Z] = [0, S, v])
+                : T < 300
+                  ? ([y, N, Z] = [S, 0, v])
+                  : ([y, N, Z] = [v, 0, S]),
+        [Math.round((y + K) * 255), Math.round((N + K) * 255), Math.round((Z + K) * 255)]
+      )
+    },
+    E = (T, d) => {
+      const v = document.querySelector(`.${d}-slider`).getBoundingClientRect()
+      let S = { ...a },
+        K = i(k)
+      d === 'hue' || d === 'brightness' ? (i(m) === 'white' && (a.s = 100), W(m, 'hsv')) : W(m, 'white')
+      const y = (Z) => {
+          const ge = Math.max(0, Math.min(Z.clientX - v.left, v.width)),
+            he = (ge / v.width) * 100
+          d === 'hue'
+            ? (W(c, he), (S.h = (ge / v.width) * 360), (a.h = S.h))
+            : d === 'brightness'
+              ? (W(g, he), (S.v = he), (a.v = S.v))
+              : d === 'white' && ((K = he), W(k, K, !0))
+        },
+        N = () => {
+          if ((window.removeEventListener('mousemove', y), window.removeEventListener('mouseup', N), i(m) === 'hsv')) s()(j(S.h, a.s, S.v))
+          else {
+            const Z = Math.round((K / 100) * 255)
+            s()([Z, Z, Z])
+          }
+        }
+      ;(y(T), window.addEventListener('mousemove', y), window.addEventListener('mouseup', N))
+    },
+    f = pe(() => () => (i(m) === 'white' ? [i(k), i(k), i(k)].map((T) => Math.round((T / 100) * 255)) : j(a.h, a.s, a.v))),
+    p = pe(
+      () => () =>
+        i(f)()
+          .map((T) => T.toString(16).padStart(2, '0'))
+          .join(' ')
+          .toUpperCase(),
+    ),
+    z = pe(() => () => (i(m) === 'white' ? [255, 255, 255].map((T) => Math.round((i(k) / 100) * T)) : j(a.h, a.s, 100))),
+    P = pe(() => () => {
+      const [T, d, n] = i(f)()
+      return (T * 299 + d * 587 + n * 114) / 1e3 > 128 ? 'text-black' : 'text-white'
+    })
+  var X = Ca(),
+    A = M(X)
+  {
+    var C = (T) => {
+      var d = ba(),
+        n = M(d, !0)
+      ;(x(d),
+        Q(
+          (v) => {
+            ;(V(d, 1, v), le(n, u().name))
+          },
+          [() => ve(ie('mb-2 w-full px-4 text-center', u().class))],
+        ),
+        I(T, d))
+    }
+    ee(A, (T) => {
+      u().name && T(C)
+    })
+  }
+  var h = J(A, 2),
+    _ = M(h),
+    O = M(_)
+  ;(Y(O, 'aria-valuenow', null), Y(O, 'tabindex', null), (O.__mousedown = [ha, E]))
+  var w = M(O),
+    L = J(w, 2)
+  {
+    var F = (T) => {
+      var d = wa()
+      ;(Q((n) => ce(d, n), [() => `left: ${i(c)}%; background: rgb(${j(a.h, 100, 100).join(',')})`]), I(T, d))
+    }
+    ee(L, (T) => {
+      i(m) === 'hsv' && T(F)
+    })
+  }
+  x(O)
+  var H = J(O, 2)
+  ;(Y(H, 'aria-valuenow', null), Y(H, 'tabindex', null), (H.__mousedown = [xa, E]))
+  var ne = M(H)
+  {
+    var de = (T) => {
+      var d = _a(),
+        n = ue(d),
+        v = J(n, 2)
+      ;(Q(
+        (S, K) => {
+          ;(ce(n, S), ce(v, K))
+        },
+        [
+          () => `background: linear-gradient(to right, rgb(0,0,0), rgb(${j(a.h, a.s, 100).join(',')}))`,
+          () => `left: ${i(g)}%; background: rgb(${j(a.h, a.s, a.v).join(',')})`,
+        ],
+      ),
+        I(T, d))
+    }
+    ee(ne, (T) => {
+      i(m) === 'hsv' && T(de)
+    })
+  }
+  x(H)
+  var se = J(H, 2)
+  ;(Y(se, 'aria-valuenow', null), Y(se, 'tabindex', null), (se.__mousedown = [ya, E]))
+  var oe = J(M(se), 2)
+  {
+    var ae = (T) => {
+      var d = ka()
+      ;(Q((n) => ce(d, n), [() => `left: ${i(k)}%; background: rgb(${[255, 255, 255].map((n) => Math.round((i(k) / 100) * n)).join(',')})`]), I(T, d))
+    }
+    ee(oe, (T) => {
+      i(m) === 'white' && T(ae)
+    })
+  }
+  ;(x(se), x(_))
+  var G = J(_, 2),
+    b = M(G),
+    q = J(b, 2),
+    $ = M(q, !0)
+  ;(x(q),
+    x(G),
+    x(h),
+    x(X),
+    Q(
+      (T, d, n, v, S) => {
+        ;(Y(X, 'id', t()),
+          V(X, 1, T),
+          ce(w, d),
+          V(H, 1, `brightness-slider relative h-4 w-full cursor-pointer overflow-hidden rounded-full ${i(m) === 'hsv' ? 'shadow-md' : ''}`),
+          V(b, 1, n),
+          ce(b, v),
+          le($, S))
+      },
+      [
+        () => ve(ie('relative flex w-full flex-col items-center', o())),
+        () =>
+          `background: linear-gradient(to right, ${Array.from({ length: 7 }, (T, d) => {
+            const [n, v, S] = j(d * 60, 100, 100)
+            return `rgb(${n},${v},${S})`
+          }).join(', ')})`,
+        () => `flex size-15 flex-col justify-center gap-1 rounded-full px-2 font-mono text-sm shadow-md select-none ${i(P)()}`,
+        () => `background: rgb(${i(z)().join(',')})`,
+        () => i(p)(),
+      ],
+    ),
+    I(e, X),
+    Ee())
+}
+Te(['mousedown'])
+const rt = (e, r, t, o) => {
+    const u = e.target
+    if (!u.files || u.files.length === 0) {
+      r()(e, null)
+      return
+    }
+    const l = u.files[0]
+    ;(W(t, l, !0), l.type.startsWith('image/') && W(o, URL.createObjectURL(l)), r()(e, l))
+  },
+  Na = (e, r) => {
+    document.getElementById(r())?.click()
+  }
+var Ma = U('<h5> </h5>'),
+  Sa = U('<img alt="Preview"/>'),
+  Ea = U('<span class="text-sm text-gray-500">Image</span>'),
+  Ta = U('<div class="relative"><button><!></button> <input type="file" class="absolute -z-10 h-0 w-0 overflow-hidden opacity-0"/></div>'),
+  Ia = U('<label class="relative inline-block w-full"><input type="file"/></label>'),
+  Aa = U('<div><!> <!></div>')
+function ds(e, r) {
+  Se(r, !0)
+  let t = R(r, 'id', 19, () => crypto.randomUUID()),
+    o = R(r, 'wrapperClass', 3, ''),
+    u = R(r, 'label', 19, () => ({ name: '', class: '' })),
+    l = R(r, 'type', 3, 'file'),
+    s = R(r, 'accept', 3, '*/*'),
+    a = R(r, 'imageSize', 19, () => ({ height: '10rem', width: '10rem', fitMode: 'cover', form: 'square' })),
+    c = R(r, 'disabled', 3, !1),
+    g = R(r, 'currentImage', 11, null),
+    m = R(r, 'onChange', 3, () => {}),
+    k = xe(null),
+    j = pe(() => (g() ? (g().startsWith('data:') ? g() : `data:image/png;base64,${g()}`) : null))
+  var E = Aa(),
+    f = M(E)
+  {
+    var p = (A) => {
+      var C = Ma(),
+        h = M(C, !0)
+      ;(x(C),
+        Q(() => {
+          ;(V(C, 1, `${u().class}`), le(h, u().name))
+        }),
+        I(A, C))
+    }
+    ee(f, (A) => {
+      u().name && A(p)
+    })
+  }
+  var z = J(f, 2)
+  {
+    var P = (A) => {
+        var C = Ta(),
+          h = M(C)
+        h.__click = [Na, t]
+        var _ = M(h)
+        {
+          var O = (F) => {
+              var H = Sa()
+              ;(Q(
+                (ne) => {
+                  ;(Y(H, 'src', ne),
+                    V(
+                      H,
+                      1,
+                      `
               h-full w-full
-              ${a().fitMode==="cover"?"object-cover":"object-contain"}
-            `)},[()=>i(j)??(g()?.startsWith("data:")?g():`data:image/png;base64,${g()}`)]),I(F,H)},w=F=>{var H=Ea();I(F,H)};ee(_,F=>{i(j)||g()?F(O):F(w,!1)})}x(h);var L=J(h,2);L.__change=[rt,m,k,j],x(C),Q(()=>{V(h,1,`flex items-center justify-center overflow-hidden ${a().form==="circle"?"rounded-full":"rounded-2xl"} 
+              ${a().fitMode === 'cover' ? 'object-cover' : 'object-contain'}
+            `,
+                    ))
+                },
+                [() => i(j) ?? (g()?.startsWith('data:') ? g() : `data:image/png;base64,${g()}`)],
+              ),
+                I(F, H))
+            },
+            w = (F) => {
+              var H = Ea()
+              I(F, H)
+            }
+          ee(_, (F) => {
+            i(j) || g() ? F(O) : F(w, !1)
+          })
+        }
+        x(h)
+        var L = J(h, 2)
+        ;((L.__change = [rt, m, k, j]),
+          x(C),
+          Q(() => {
+            ;(V(
+              h,
+              1,
+              `flex items-center justify-center overflow-hidden ${a().form === 'circle' ? 'rounded-full' : 'rounded-2xl'} 
         bg-[var(--back-color)] shadow-sm transition duration-250 hover:shadow-md
-        ${c()?"cursor-not-allowed opacity-50":"cursor-pointer"}`),ce(h,`height: ${a().height}; width: ${a().width}`),h.disabled=c(),Y(L,"id",t()),Y(L,"accept",s()),L.disabled=c()}),I(A,C)},X=A=>{var C=Ia(),h=M(C);h.__change=[rt,m,k,j],x(C),Q(()=>{Y(h,"id",t()),V(h,1,`h-8.5 w-full rounded-2xl bg-[var(--back-color)] font-semibold shadow-sm transition duration-250 hover:shadow-md
-          ${c()?"cursor-not-allowed opacity-50":"cursor-pointer"} file:h-full file:w-1/3 file:cursor-pointer 
-          file:border-none file:bg-[var(--blue-color)] invalid:border-red-400 invalid:shadow-[0_0_6px_var(--red-color)]`),Y(h,"accept",s()),h.disabled=c()}),I(A,C)};ee(z,A=>{l()==="image"?A(P):A(X,!1)})}x(E),Q(()=>V(E,1,`flex flex-col items-center ${o()}`)),I(e,E),Ee()}Te(["click","change"]);const za={ru:{"common.select_tag":"Сделайте выбор","debug.baud_rate_data":"Данные","constructor.props.action.update":"Обновить","constructor.props.action.save":"Сохранить","constructor.props.action.nosend":"Без отправки","constructor.props.action.custom":"Свой аргумент","constructor.props.height.small":"Авто","constructor.props.height.medium":"Средняя","constructor.props.height.large":"Большая","constructor.props.align.left":"Слева","constructor.props.align.center":"По центру","constructor.props.align.right":"Справа","constructor.props.type.main":"Основной","constructor.props.type.sub":"Вложенный","constructor.props.type.text":"Текст","constructor.props.type.password":"Пароль","constructor.props.type.number":"Число","constructor.props.type.textarea":"Область ","constructor.props.type.single":"Простой","constructor.props.type.range":"Диапазон","constructor.props.type.small":"XS","constructor.props.type.base":"S","constructor.props.type.large":"M","constructor.props.type.huge":"L","constructor.props.type.massive":"XL","constructor.props.type.select":"Список","constructor.props.type.buttons":"Группа кнопок","constructor.props.type.selectput":"Список+ввод","constructor.props.valuetype.text":"Строка","constructor.props.valuetype.number":"Число","constructor.props.label":"Текст надписи","constructor.props.type":"Тип","constructor.props.size":"Размер","constructor.props.header":"Заголовок пакета","constructor.props.argument":"Аргумент","constructor.props.argument.info":"Пользовтельский аргумент (a-z, A-Z, 0-9, -_!)","constructor.props.variables":"Перечень переменных","constructor.props.variables.info":"Поле для ввода имён переменных, разделенных пробелами","constructor.props.value":"Значение","constructor.props.value.info":"Поле для ввода Value пакета","constructor.props.align":"Выравнивание","constructor.props.image":"Фоновое изображение","constructor.props.removeimage":"Удалить изображение","constructor.props.name":"Текст","constructor.props.height":"Высота","constructor.props.colors":"Цвет фона","constructor.props.maxlenght":"Максимальная длина","constructor.props.regexp":"Выражение валидации","constructor.props.regexp.info":"Введите RegExp без /.../ (например: ^\\d+$)","constructor.props.minnum":"Минимальное значение","constructor.props.maxnum":"Максимальное значение","constructor.props.step":"Шаг","constructor.props.rows":"Количество строк","constructor.props.placeholder":"Заполнитель","constructor.props.info":"Подсказка","constructor.props.disabled":"Отключить","constructor.props.readonly":"Только для чтения","constructor.props.variable":"Имя переменной","constructor.props.widthMode":"Ширина кнопок","constructor.props.options.title":"Опции компонента","constructor.props.valuetype":"Тип значения","constructor.props.action":"Действие при переключении","constructor.props.caption.left":"Надпись слева","constructor.props.caption.right":"Надпись справа","constructor.props.bold":"Жирный","constructor.props.italic":"Курсив","constructor.props.background":"Фон","constructor.props.min":"Минимальное значение","constructor.props.max":"Максимальное значение","constructor.props.units":"Единица измерения","constructor.props.optionclass":"Стили кнопки","constructor.props.optionvalue":"Значение","constructor.props.optionname":"Текст","constructor.props.copy":"Копирование","constructor.props.table.columns":"Колонки таблицы","constructor.props.table.columns.key":"Имя ключа","constructor.props.table.columns.label":"Название","constructor.props.table.columns.width":"Ширина","constructor.props.table.columns.sortable":"Сортировка","constructor.props.table.deletecolumn":"Удалить колонку","constructor.props.table.deletebutton":"Удалить кнопку","constructor.props.table.addaction":"Добавить кнопку","constructor.props.table.keys":"Перечень ключей","constructor.props.table.keys.info":"Ключи таблицы, значения которых будут возвращаться"},en:{},zh:{}};let vr="ru";typeof window<"u"&&(vr=localStorage.getItem("AppLanguage")||navigator.language?.split("-")[0]?.toLowerCase()||"ru",["ru","en","zh"].includes(vr)||(vr="ru"));const Ra=uo(vr);function Oa(e,r){return za[e]?.[r]||r}const Fr=vt(Ra,e=>r=>Oa(e,r)),Pa=(e,r,t,o)=>{e.stopPropagation(),r()||(W(t,!i(t)),W(o,[],!0))};var La=U("<h5> </h5>"),ja=(e,r,t)=>r(i(t),e),Ba=U('<button style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"> </button>'),Da=U('<div class="absolute top-full left-1/2 z-50 -translate-x-1/2 rounded-b-2xl border border-t-0 border-[var(--border-color)]" style="width: calc(100% - 1.8rem);"></div>'),Ua=U('<button style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);" aria-haspopup="true"> </button> <!>',1),Ga=(e,r,t)=>r(i(t),e),Va=U('<div class="flex-1"> </div>'),Fa=U('<button><span class="flex flex-row items-center justify-center gap-4"><!></span></button>'),Ha=U('<div class="flex h-full w-full flex-row justify-center"></div>'),Ka=(e,r)=>r(e.currentTarget.value),Wa=(e,r,t,o,u)=>{i(r)==""&&(W(t,o(),!0),W(u,!0))},Xa=(e,r,t)=>r(i(t),e),Ya=U('<button style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"> </button>'),qa=U('<div class="absolute top-full left-1/2 z-50 -translate-x-1/2 rounded-b-2xl border border-t-0 border-[var(--border-color)]" style="width: calc(100% - 1.8rem);"></div>'),Za=U('<input style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"/> <!>',1),Ja=U("<div><!> <!></div>");function us(e,r){Se(r,!0);const t=()=>gt(Fr,"$t",o),[o,u]=pt();let l=xe(!1),s,a=xe(""),c=xe(ar([])),g=R(r,"id",19,()=>crypto.randomUUID()),m=R(r,"wrapperClass",3,""),k=R(r,"disabled",3,!1),j=R(r,"label",19,()=>({name:"",class:""})),E=R(r,"type",3,"select"),f=R(r,"value",15),p=R(r,"options",19,()=>[]);const z=L=>{s&&!s.contains(L.target)&&W(l,!1)};Dr(()=>((E()==="select"||E()==="input")&&document.addEventListener("click",z),E()==="input"&&W(a,f()?.name??"",!0),()=>{(E()==="select"||E()==="input")&&document.removeEventListener("click",z)}));const P=(L,F)=>{F.stopPropagation(),k()||(f(L),W(l,!1),W(a,L.name?.toString()??"",!0),W(c,[],!0),r.onUpdate?.(f()))},X=L=>{if(W(a,L,!0),L.trim()==="")W(l,!1),W(c,[],!0);else{W(c,p().filter(H=>(H.name?.toString()||"").toLowerCase().includes(L.toLowerCase())),!0),W(l,i(c).length>0);const F=p().some(H=>H.name?.toString()===i(a));if(console.log(F),!F){const H={id:`input-${i(a)}`,name:i(a),value:i(a)};f(H),r.onUpdate?.(H)}}};var A=Ja(),C=M(A);{var h=L=>{var F=La(),H=M(F,!0);x(F),Q(ne=>{V(F,1,ne),le(H,j().name)},[()=>ve(ie("w-full px-4",j().class))]),I(L,F)};ee(C,L=>{j().name&&L(h)})}var _=J(C,2);{var O=L=>{var F=Ua(),H=ue(F);H.__click=[Pa,k,l,c];var ne=M(H,!0);x(H);var de=J(H,2);{var se=oe=>{var ae=Da();Ge(ae,23,p,G=>G.id,(G,b,q)=>{var $=Ba();$.__click=[ja,P,b];var T=M($,!0);x($),Q((d,n)=>{Y($,"id",i(b).id),kr($,d),V($,1,n),$.disabled=k(),le(T,i(b).name)},[()=>i(b)?.value?String(i(b).value):"",()=>ve(ie(`flex h-full w-full cursor-pointer items-center justify-center p-1 duration-250 hover:!bg-[var(--field-color)]
-              ${i(q)===p().length-1?"rounded-b-2xl":""} `,i(b).class))]),I(G,$)}),x(ae),Ce(3,ae,()=>mr,()=>({duration:250})),I(oe,ae)};ee(de,oe=>{i(l)&&oe(se)})}Q((oe,ae,G)=>{Y(H,"id",g()),kr(H,oe),V(H,1,ae),Y(H,"aria-expanded",i(l)),H.disabled=k(),le(ne,G)},[()=>f()?.value?String(f().value):"",()=>ve(ie(`w-full rounded-2xl border border-[var(--border-color)] p-1 text-center duration-250
-        ${k()?"opacity-50":"cursor-pointer hover:shadow-lg"}`,f()?.class)),()=>f()?.name||t()("common.select_tag")]),I(L,F)},w=L=>{var F=ye(),H=ue(F);{var ne=se=>{var oe=Ha();Ge(oe,23,p,ae=>ae.id,(ae,G,b)=>{var q=Fa();q.__click=[Ga,P,G];var $=M(q),T=M($);{var d=n=>{var v=Va(),S=M(v,!0);x(v),Q(()=>le(S,i(G).name)),I(n,v)};ee(T,n=>{i(G).name&&n(d)})}x($),x(q),Q(n=>{Y(q,"id",i(G).id),V(q,1,`${n??""} bg-[var(--bg-color)]`),q.disabled=i(G).disabled},[()=>ie(`m-0 inline-block min-w-0 flex-1 items-center px-2 py-1 font-semibold shadow-sm transition-all duration-300 select-none
-            ${i(G).disabled||k()?"opacity-50":"cursor-pointer hover:shadow-md"}
-            ${i(G).value===f()?.value&&f()!==null?"z-10 py-0 text-[1.1rem] shadow-[0_0_10px_var(--shadow-color)] hover:shadow-[0_0_15px_var(--shadow-color)]":""}  
-            ${p().length>0&&i(b)===0?"rounded-l-2xl":""} ${i(b)===p().length-1?"rounded-r-2xl":""}`,i(G).class)]),I(ae,q)}),x(oe),Q(()=>Y(oe,"id",g())),I(se,oe)},de=se=>{var oe=ye(),ae=ue(oe);{var G=b=>{var q=Za(),$=ue(q);qe($),$.__input=[Ka,X],$.__click=[Wa,a,c,p,l];var T=J($,2);{var d=n=>{var v=qa();Ge(v,23,()=>i(c),S=>S.id,(S,K,y)=>{var N=Ya();N.__click=[Xa,P,K];var Z=M(N,!0);x(N),Q((ge,he)=>{Y(N,"id",i(K).id),kr(N,ge),V(N,1,he),N.disabled=k(),le(Z,i(K).name)},[()=>i(K)?.value?String(i(K).value):"",()=>ve(ie(`flex h-full w-full cursor-pointer items-center justify-center p-1 duration-250 hover:!bg-[var(--field-color)]
-              ${i(y)===i(c).length-1?"rounded-b-2xl":""} `,i(K).class))]),I(S,N)}),x(v),Ce(3,v,()=>mr,()=>({duration:250})),I(n,v)};ee(T,n=>{i(l)&&n(d)})}Q(()=>{V($,1,`w-full appearance-none rounded-2xl border px-4 py-1 text-center transition-shadow
+        ${c() ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`,
+            ),
+              ce(h, `height: ${a().height}; width: ${a().width}`),
+              (h.disabled = c()),
+              Y(L, 'id', t()),
+              Y(L, 'accept', s()),
+              (L.disabled = c()))
+          }),
+          I(A, C))
+      },
+      X = (A) => {
+        var C = Ia(),
+          h = M(C)
+        ;((h.__change = [rt, m, k, j]),
+          x(C),
+          Q(() => {
+            ;(Y(h, 'id', t()),
+              V(
+                h,
+                1,
+                `h-8.5 w-full rounded-2xl bg-[var(--back-color)] font-semibold shadow-sm transition duration-250 hover:shadow-md
+          ${c() ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'} file:h-full file:w-1/3 file:cursor-pointer 
+          file:border-none file:bg-[var(--blue-color)] invalid:border-red-400 invalid:shadow-[0_0_6px_var(--red-color)]`,
+              ),
+              Y(h, 'accept', s()),
+              (h.disabled = c()))
+          }),
+          I(A, C))
+      }
+    ee(z, (A) => {
+      l() === 'image' ? A(P) : A(X, !1)
+    })
+  }
+  ;(x(E), Q(() => V(E, 1, `flex flex-col items-center ${o()}`)), I(e, E), Ee())
+}
+Te(['click', 'change'])
+const za = {
+  ru: {
+    'common.select_tag': 'Сделайте выбор',
+    'debug.baud_rate_data': 'Данные',
+    'constructor.props.action.update': 'Обновить',
+    'constructor.props.action.save': 'Сохранить',
+    'constructor.props.action.nosend': 'Без отправки',
+    'constructor.props.action.custom': 'Свой аргумент',
+    'constructor.props.height.small': 'Авто',
+    'constructor.props.height.medium': 'Средняя',
+    'constructor.props.height.large': 'Большая',
+    'constructor.props.align.left': 'Слева',
+    'constructor.props.align.center': 'По центру',
+    'constructor.props.align.right': 'Справа',
+    'constructor.props.type.main': 'Основной',
+    'constructor.props.type.sub': 'Вложенный',
+    'constructor.props.type.text': 'Текст',
+    'constructor.props.type.password': 'Пароль',
+    'constructor.props.type.number': 'Число',
+    'constructor.props.type.textarea': 'Область ',
+    'constructor.props.type.single': 'Простой',
+    'constructor.props.type.range': 'Диапазон',
+    'constructor.props.type.small': 'XS',
+    'constructor.props.type.base': 'S',
+    'constructor.props.type.large': 'M',
+    'constructor.props.type.huge': 'L',
+    'constructor.props.type.massive': 'XL',
+    'constructor.props.type.select': 'Список',
+    'constructor.props.type.buttons': 'Группа кнопок',
+    'constructor.props.type.selectput': 'Список+ввод',
+    'constructor.props.valuetype.text': 'Строка',
+    'constructor.props.valuetype.number': 'Число',
+    'constructor.props.label': 'Текст надписи',
+    'constructor.props.type': 'Тип',
+    'constructor.props.size': 'Размер',
+    'constructor.props.header': 'Заголовок пакета',
+    'constructor.props.argument': 'Аргумент',
+    'constructor.props.argument.info': 'Пользовтельский аргумент (a-z, A-Z, 0-9, -_!)',
+    'constructor.props.variables': 'Перечень переменных',
+    'constructor.props.variables.info': 'Поле для ввода имён переменных, разделенных пробелами',
+    'constructor.props.value': 'Значение',
+    'constructor.props.value.info': 'Поле для ввода Value пакета',
+    'constructor.props.align': 'Выравнивание',
+    'constructor.props.image': 'Фоновое изображение',
+    'constructor.props.removeimage': 'Удалить изображение',
+    'constructor.props.name': 'Текст',
+    'constructor.props.height': 'Высота',
+    'constructor.props.colors': 'Цвет фона',
+    'constructor.props.maxlenght': 'Максимальная длина',
+    'constructor.props.regexp': 'Выражение валидации',
+    'constructor.props.regexp.info': 'Введите RegExp без /.../ (например: ^\\d+$)',
+    'constructor.props.minnum': 'Минимальное значение',
+    'constructor.props.maxnum': 'Максимальное значение',
+    'constructor.props.step': 'Шаг',
+    'constructor.props.rows': 'Количество строк',
+    'constructor.props.placeholder': 'Заполнитель',
+    'constructor.props.info': 'Подсказка',
+    'constructor.props.disabled': 'Отключить',
+    'constructor.props.readonly': 'Только для чтения',
+    'constructor.props.variable': 'Имя переменной',
+    'constructor.props.widthMode': 'Ширина кнопок',
+    'constructor.props.options.title': 'Опции компонента',
+    'constructor.props.valuetype': 'Тип значения',
+    'constructor.props.action': 'Действие при переключении',
+    'constructor.props.caption.left': 'Надпись слева',
+    'constructor.props.caption.right': 'Надпись справа',
+    'constructor.props.bold': 'Жирный',
+    'constructor.props.italic': 'Курсив',
+    'constructor.props.background': 'Фон',
+    'constructor.props.min': 'Минимальное значение',
+    'constructor.props.max': 'Максимальное значение',
+    'constructor.props.units': 'Единица измерения',
+    'constructor.props.optionclass': 'Стили кнопки',
+    'constructor.props.optionvalue': 'Значение',
+    'constructor.props.optionname': 'Текст',
+    'constructor.props.copy': 'Копирование',
+    'constructor.props.table.columns': 'Колонки таблицы',
+    'constructor.props.table.columns.key': 'Имя ключа',
+    'constructor.props.table.columns.label': 'Название',
+    'constructor.props.table.columns.width': 'Ширина',
+    'constructor.props.table.columns.sortable': 'Сортировка',
+    'constructor.props.table.deletecolumn': 'Удалить колонку',
+    'constructor.props.table.deletebutton': 'Удалить кнопку',
+    'constructor.props.table.addaction': 'Добавить кнопку',
+    'constructor.props.table.keys': 'Перечень ключей',
+    'constructor.props.table.keys.info': 'Ключи таблицы, значения которых будут возвращаться',
+  },
+  en: {},
+  zh: {},
+}
+let vr = 'ru'
+typeof window < 'u' &&
+  ((vr = localStorage.getItem('AppLanguage') || navigator.language?.split('-')[0]?.toLowerCase() || 'ru'),
+  ['ru', 'en', 'zh'].includes(vr) || (vr = 'ru'))
+const Ra = uo(vr)
+function Oa(e, r) {
+  return za[e]?.[r] || r
+}
+const Fr = vt(Ra, (e) => (r) => Oa(e, r)),
+  Pa = (e, r, t, o) => {
+    ;(e.stopPropagation(), r() || (W(t, !i(t)), W(o, [], !0)))
+  }
+var La = U('<h5> </h5>'),
+  ja = (e, r, t) => r(i(t), e),
+  Ba = U('<button style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"> </button>'),
+  Da = U(
+    '<div class="absolute top-full left-1/2 z-50 -translate-x-1/2 rounded-b-2xl border border-t-0 border-[var(--border-color)]" style="width: calc(100% - 1.8rem);"></div>',
+  ),
+  Ua = U('<button style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);" aria-haspopup="true"> </button> <!>', 1),
+  Ga = (e, r, t) => r(i(t), e),
+  Va = U('<div class="flex-1"> </div>'),
+  Fa = U('<button><span class="flex flex-row items-center justify-center gap-4"><!></span></button>'),
+  Ha = U('<div class="flex h-full w-full flex-row justify-center"></div>'),
+  Ka = (e, r) => r(e.currentTarget.value),
+  Wa = (e, r, t, o, u) => {
+    i(r) == '' && (W(t, o(), !0), W(u, !0))
+  },
+  Xa = (e, r, t) => r(i(t), e),
+  Ya = U('<button style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"> </button>'),
+  qa = U(
+    '<div class="absolute top-full left-1/2 z-50 -translate-x-1/2 rounded-b-2xl border border-t-0 border-[var(--border-color)]" style="width: calc(100% - 1.8rem);"></div>',
+  ),
+  Za = U('<input style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"/> <!>', 1),
+  Ja = U('<div><!> <!></div>')
+function us(e, r) {
+  Se(r, !0)
+  const t = () => gt(Fr, '$t', o),
+    [o, u] = pt()
+  let l = xe(!1),
+    s,
+    a = xe(''),
+    c = xe(ar([])),
+    g = R(r, 'id', 19, () => crypto.randomUUID()),
+    m = R(r, 'wrapperClass', 3, ''),
+    k = R(r, 'disabled', 3, !1),
+    j = R(r, 'label', 19, () => ({ name: '', class: '' })),
+    E = R(r, 'type', 3, 'select'),
+    f = R(r, 'value', 15),
+    p = R(r, 'options', 19, () => [])
+  const z = (L) => {
+    s && !s.contains(L.target) && W(l, !1)
+  }
+  Dr(
+    () => (
+      (E() === 'select' || E() === 'input') && document.addEventListener('click', z),
+      E() === 'input' && W(a, f()?.name ?? '', !0),
+      () => {
+        ;(E() === 'select' || E() === 'input') && document.removeEventListener('click', z)
+      }
+    ),
+  )
+  const P = (L, F) => {
+      ;(F.stopPropagation(), k() || (f(L), W(l, !1), W(a, L.name?.toString() ?? '', !0), W(c, [], !0), r.onUpdate?.(f())))
+    },
+    X = (L) => {
+      if ((W(a, L, !0), L.trim() === '')) (W(l, !1), W(c, [], !0))
+      else {
+        ;(W(
+          c,
+          p().filter((H) => (H.name?.toString() || '').toLowerCase().includes(L.toLowerCase())),
+          !0,
+        ),
+          W(l, i(c).length > 0))
+        const F = p().some((H) => H.name?.toString() === i(a))
+        if ((console.log(F), !F)) {
+          const H = { id: `input-${i(a)}`, name: i(a), value: i(a) }
+          ;(f(H), r.onUpdate?.(H))
+        }
+      }
+    }
+  var A = Ja(),
+    C = M(A)
+  {
+    var h = (L) => {
+      var F = La(),
+        H = M(F, !0)
+      ;(x(F),
+        Q(
+          (ne) => {
+            ;(V(F, 1, ne), le(H, j().name))
+          },
+          [() => ve(ie('w-full px-4', j().class))],
+        ),
+        I(L, F))
+    }
+    ee(C, (L) => {
+      j().name && L(h)
+    })
+  }
+  var _ = J(C, 2)
+  {
+    var O = (L) => {
+        var F = Ua(),
+          H = ue(F)
+        H.__click = [Pa, k, l, c]
+        var ne = M(H, !0)
+        x(H)
+        var de = J(H, 2)
+        {
+          var se = (oe) => {
+            var ae = Da()
+            ;(Ge(
+              ae,
+              23,
+              p,
+              (G) => G.id,
+              (G, b, q) => {
+                var $ = Ba()
+                $.__click = [ja, P, b]
+                var T = M($, !0)
+                ;(x($),
+                  Q(
+                    (d, n) => {
+                      ;(Y($, 'id', i(b).id), kr($, d), V($, 1, n), ($.disabled = k()), le(T, i(b).name))
+                    },
+                    [
+                      () => (i(b)?.value ? String(i(b).value) : ''),
+                      () =>
+                        ve(
+                          ie(
+                            `flex h-full w-full cursor-pointer items-center justify-center p-1 duration-250 hover:!bg-[var(--field-color)]
+              ${i(q) === p().length - 1 ? 'rounded-b-2xl' : ''} `,
+                            i(b).class,
+                          ),
+                        ),
+                    ],
+                  ),
+                  I(G, $))
+              },
+            ),
+              x(ae),
+              Ce(
+                3,
+                ae,
+                () => mr,
+                () => ({ duration: 250 }),
+              ),
+              I(oe, ae))
+          }
+          ee(de, (oe) => {
+            i(l) && oe(se)
+          })
+        }
+        ;(Q(
+          (oe, ae, G) => {
+            ;(Y(H, 'id', g()), kr(H, oe), V(H, 1, ae), Y(H, 'aria-expanded', i(l)), (H.disabled = k()), le(ne, G))
+          },
+          [
+            () => (f()?.value ? String(f().value) : ''),
+            () =>
+              ve(
+                ie(
+                  `w-full rounded-2xl border border-[var(--border-color)] p-1 text-center duration-250
+        ${k() ? 'opacity-50' : 'cursor-pointer hover:shadow-lg'}`,
+                  f()?.class,
+                ),
+              ),
+            () => f()?.name || t()('common.select_tag'),
+          ],
+        ),
+          I(L, F))
+      },
+      w = (L) => {
+        var F = ye(),
+          H = ue(F)
+        {
+          var ne = (se) => {
+              var oe = Ha()
+              ;(Ge(
+                oe,
+                23,
+                p,
+                (ae) => ae.id,
+                (ae, G, b) => {
+                  var q = Fa()
+                  q.__click = [Ga, P, G]
+                  var $ = M(q),
+                    T = M($)
+                  {
+                    var d = (n) => {
+                      var v = Va(),
+                        S = M(v, !0)
+                      ;(x(v), Q(() => le(S, i(G).name)), I(n, v))
+                    }
+                    ee(T, (n) => {
+                      i(G).name && n(d)
+                    })
+                  }
+                  ;(x($),
+                    x(q),
+                    Q(
+                      (n) => {
+                        ;(Y(q, 'id', i(G).id), V(q, 1, `${n ?? ''} bg-[var(--bg-color)]`), (q.disabled = i(G).disabled))
+                      },
+                      [
+                        () =>
+                          ie(
+                            `m-0 inline-block min-w-0 flex-1 items-center px-2 py-1 font-semibold shadow-sm transition-all duration-300 select-none
+            ${i(G).disabled || k() ? 'opacity-50' : 'cursor-pointer hover:shadow-md'}
+            ${i(G).value === f()?.value && f() !== null ? 'z-10 py-0 text-[1.1rem] shadow-[0_0_10px_var(--shadow-color)] hover:shadow-[0_0_15px_var(--shadow-color)]' : ''}  
+            ${p().length > 0 && i(b) === 0 ? 'rounded-l-2xl' : ''} ${i(b) === p().length - 1 ? 'rounded-r-2xl' : ''}`,
+                            i(G).class,
+                          ),
+                      ],
+                    ),
+                    I(ae, q))
+                },
+              ),
+                x(oe),
+                Q(() => Y(oe, 'id', g())),
+                I(se, oe))
+            },
+            de = (se) => {
+              var oe = ye(),
+                ae = ue(oe)
+              {
+                var G = (b) => {
+                  var q = Za(),
+                    $ = ue(q)
+                  ;(qe($), ($.__input = [Ka, X]), ($.__click = [Wa, a, c, p, l]))
+                  var T = J($, 2)
+                  {
+                    var d = (n) => {
+                      var v = qa()
+                      ;(Ge(
+                        v,
+                        23,
+                        () => i(c),
+                        (S) => S.id,
+                        (S, K, y) => {
+                          var N = Ya()
+                          N.__click = [Xa, P, K]
+                          var Z = M(N, !0)
+                          ;(x(N),
+                            Q(
+                              (ge, he) => {
+                                ;(Y(N, 'id', i(K).id), kr(N, ge), V(N, 1, he), (N.disabled = k()), le(Z, i(K).name))
+                              },
+                              [
+                                () => (i(K)?.value ? String(i(K).value) : ''),
+                                () =>
+                                  ve(
+                                    ie(
+                                      `flex h-full w-full cursor-pointer items-center justify-center p-1 duration-250 hover:!bg-[var(--field-color)]
+              ${i(y) === i(c).length - 1 ? 'rounded-b-2xl' : ''} `,
+                                      i(K).class,
+                                    ),
+                                  ),
+                              ],
+                            ),
+                            I(S, N))
+                        },
+                      ),
+                        x(v),
+                        Ce(
+                          3,
+                          v,
+                          () => mr,
+                          () => ({ duration: 250 }),
+                        ),
+                        I(n, v))
+                    }
+                    ee(T, (n) => {
+                      i(l) && n(d)
+                    })
+                  }
+                  ;(Q(() => {
+                    ;(V(
+                      $,
+                      1,
+                      `w-full appearance-none rounded-2xl border px-4 py-1 text-center transition-shadow
           outline-none hover:shadow-md focus:border-blue-400
           [&::-webkit-inner-spin-button]:hidden [&::-webkit-outer-spin-button]:hidden
-          ${k()?"cursor-not-allowed opacity-50":"cursor-text"} border-[var(--border-color)]`),Y($,"id",g()),$.disabled=k()}),Ze($,()=>i(a),n=>W(a,n)),I(b,q)};ee(ae,b=>{E()==="input"&&b(G)},!0)}I(se,oe)};ee(H,se=>{E()==="buttons"?se(ne):se(de,!1)},!0)}I(L,F)};ee(_,L=>{E()==="select"?L(O):L(w,!1)})}x(A),mt(A,L=>s=L,()=>s),Q(L=>V(A,1,L),[()=>ve(ie("bg-max relative flex w-full flex-col items-center ",m()))]),I(e,A),Ee(),u()}Te(["click","input"]);var Qa=U("<h5> </h5>"),$a=(e,r)=>r(e.currentTarget.value),en=U('<input style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"/>'),rn=(e,r)=>r(e.currentTarget.value),tn=U('<textarea style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"></textarea>'),on=(e,r)=>W(r,!i(r)),an=Je('<svg xmlns="http://www.w3.org/2000/svg" width="1.5rem" height="1.5rem" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="M15 12a3 3 0 1 1-6 0a3 3 0 0 1 6 0"></path><path d="M2 12c1.6-4.097 5.336-7 10-7s8.4 2.903 10 7c-1.6 4.097-5.336 7-10 7s-8.4-2.903-10-7"></path></g></svg>'),nn=Je('<svg xmlns="http://www.w3.org/2000/svg" width="1.5rem" height="1.5rem" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path stroke-linejoin="round" d="M10.73 5.073A11 11 0 0 1 12 5c4.664 0 8.4 2.903 10 7a11.6 11.6 0 0 1-1.555 2.788M6.52 6.519C4.48 7.764 2.9 9.693 2 12c1.6 4.097 5.336 7 10 7a10.44 10.44 0 0 0 5.48-1.52m-7.6-7.6a3 3 0 1 0 4.243 4.243"></path><path d="m4 4l16 16"></path></g></svg>'),sn=U('<button type="button" class="absolute right-2 flex cursor-pointer border-none bg-transparent"><!></button>'),ln=(e,r,t)=>{e.preventDefault(),navigator.clipboard.writeText(r()),W(t,!0),setTimeout(()=>W(t,!1),1e3)},cn=U('<div class="absolute top-1/2 right-10 -translate-y-1/2 transform rounded-md bg-[var(--green-color)] px-2 py-1 text-sm shadow-lg">✓</div>'),dn=U('<button type="button" aria-label="Копировать текст"><svg xmlns="http://www.w3.org/2000/svg" width="1.3em" height="1.3em" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 11c0-2.828 0-4.243.879-5.121C7.757 5 9.172 5 12 5h3c2.828 0 4.243 0 5.121.879C21 6.757 21 8.172 21 11v5c0 2.828 0 4.243-.879 5.121C19.243 22 17.828 22 15 22h-3c-2.828 0-4.243 0-5.121-.879C6 20.243 6 18.828 6 16z"></path><path d="M6 19a3 3 0 0 1-3-3v-6c0-3.771 0-5.657 1.172-6.828S7.229 2 11 2h4a3 3 0 0 1 3 3"></path></g></svg></button> <!>',1),un=(e,r,t,o)=>{if(!(!r().maxNum||!r().step)){if(Number(t())+r().step>=r().maxNum){t(r().maxNum),o()?.(t());return}t(Number(t())+(r().step??1)),o()?.(t())}},fn=(e,r,t,o)=>{if(!(r().minNum===null||r().minNum===void 0||!r().step)){if(Number(t())-r().step<=r().minNum){t(r().minNum),o()?.(t());return}t(Number(t())-(r().step??1)),o()?.(t())}},vn=U('<div class="absolute right-0 flex h-full w-8 flex-col items-center justify-center rounded-r-2xl border-l border-[var(--border-color)]"><button class="flex h-1/2 w-full items-center rounded-tr-2xl border-b border-[var(--border-color)] pl-2 transition-colors duration-150 hover:bg-[var(--gray-color)]/30 active:bg-[var(--gray-color)]/10" aria-label="Увеличить">+</button> <button class="flex h-1/2 w-full items-center rounded-br-2xl pl-2 transition-colors duration-150 hover:bg-[var(--gray-color)]/30 active:bg-[var(--gray-color)]/10" aria-label="Уменьшить">−</button></div>'),mn=U('<div class="absolute top-1/2 left-10 z-50 w-auto -translate-y-1/2 rounded bg-[var(--container-color)] px-2 py-1 shadow-lg"> </div>'),pn=U('<button type="button"><svg xmlns="http://www.w3.org/2000/svg" width="1.5rem" height="1.5rem" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" stroke-width="1.3"></circle><path stroke-width="1.5" d="M12 16v-4.5"></path><path stroke-width="1.8" d="M12 8.012v-.01"></path></g></svg></button> <!>',1),gn=U("<div><!> <div><!> <!> <!> <!> <!></div></div>");function fs(e,r){Se(r,!0);let t=R(r,"id",19,()=>crypto.randomUUID()),o=R(r,"wrapperClass",3,""),u=R(r,"label",19,()=>({name:"",class:""})),l=R(r,"disabled",3,!1),s=R(r,"readonly",3,!1),a=R(r,"value",15),c=R(r,"type",3,"text"),g=R(r,"placeholder",3,""),m=R(r,"componentClass",3,""),k=R(r,"maxlength",3,100),j=R(r,"textareaRows",3,3),E=R(r,"number",19,()=>({minNum:-1e6,maxNum:1/0,step:1})),f=R(r,"help",19,()=>({info:"",autocomplete:"off",copyButton:!1,regExp:"^[\\s\\S]*$"})),p=R(r,"onUpdate",3,()=>{}),z=xe(!1),P=xe(!1),X=xe(!1);nr(()=>{c()==="number"&&(a()===void 0||a()===null||a()==="")&&a(E().minNum)});const A=d=>{if(d instanceof RegExp)return d;const n=d.match(/^\/(.*)\/([gimsuy]*)$/);return n?new RegExp(n[1],n[2]):new RegExp(d)};let C=pe(()=>()=>A(f().regExp??"")),h=pe(()=>i(C)().test(typeof a()=="string"?a():String(a())));const _=d=>{if(c()==="number"){const n=typeof d=="string"?parseFloat(d.replace(",",".")):Number(d);isNaN(n)?p()?.(d):p()?.(n)}else p()?.(d)};var O=gn(),w=M(O);{var L=d=>{var n=Qa(),v=M(n,!0);x(n),Q(S=>{V(n,1,S),le(v,u().name)},[()=>ve(ie("w-full px-4 text-center",u().class))]),I(d,n)};ee(w,d=>{u().name&&d(L)})}var F=J(w,2),H=M(F);{var ne=d=>{var n=en();qe(n),n.__input=[$a,_],Q(v=>{V(n,1,v),Y(n,"id",t()),Y(n,"placeholder",g()),n.disabled=l(),Y(n,"autocomplete",f()?.autocomplete),Y(n,"type",c()==="password"?i(z)?"text":"password":c()==="number"?"number":"text"),Y(n,"maxlength",k()),Y(n,"min",E()?.minNum),Y(n,"max",E()?.maxNum),Y(n,"step",E()?.step),n.readOnly=s()},[()=>ve(ie(`w-full rounded-2xl border px-4 py-1 text-center transition-all duration-300 outline-none focus:border-blue-400
+          ${k() ? 'cursor-not-allowed opacity-50' : 'cursor-text'} border-[var(--border-color)]`,
+                    ),
+                      Y($, 'id', g()),
+                      ($.disabled = k()))
+                  }),
+                    Ze(
+                      $,
+                      () => i(a),
+                      (n) => W(a, n),
+                    ),
+                    I(b, q))
+                }
+                ee(
+                  ae,
+                  (b) => {
+                    E() === 'input' && b(G)
+                  },
+                  !0,
+                )
+              }
+              I(se, oe)
+            }
+          ee(
+            H,
+            (se) => {
+              E() === 'buttons' ? se(ne) : se(de, !1)
+            },
+            !0,
+          )
+        }
+        I(L, F)
+      }
+    ee(_, (L) => {
+      E() === 'select' ? L(O) : L(w, !1)
+    })
+  }
+  ;(x(A),
+    mt(
+      A,
+      (L) => (s = L),
+      () => s,
+    ),
+    Q((L) => V(A, 1, L), [() => ve(ie('bg-max relative flex w-full flex-col items-center ', m()))]),
+    I(e, A),
+    Ee(),
+    u())
+}
+Te(['click', 'input'])
+var Qa = U('<h5> </h5>'),
+  $a = (e, r) => r(e.currentTarget.value),
+  en = U('<input style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"/>'),
+  rn = (e, r) => r(e.currentTarget.value),
+  tn = U('<textarea style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"></textarea>'),
+  on = (e, r) => W(r, !i(r)),
+  an = Je(
+    '<svg xmlns="http://www.w3.org/2000/svg" width="1.5rem" height="1.5rem" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="M15 12a3 3 0 1 1-6 0a3 3 0 0 1 6 0"></path><path d="M2 12c1.6-4.097 5.336-7 10-7s8.4 2.903 10 7c-1.6 4.097-5.336 7-10 7s-8.4-2.903-10-7"></path></g></svg>',
+  ),
+  nn = Je(
+    '<svg xmlns="http://www.w3.org/2000/svg" width="1.5rem" height="1.5rem" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path stroke-linejoin="round" d="M10.73 5.073A11 11 0 0 1 12 5c4.664 0 8.4 2.903 10 7a11.6 11.6 0 0 1-1.555 2.788M6.52 6.519C4.48 7.764 2.9 9.693 2 12c1.6 4.097 5.336 7 10 7a10.44 10.44 0 0 0 5.48-1.52m-7.6-7.6a3 3 0 1 0 4.243 4.243"></path><path d="m4 4l16 16"></path></g></svg>',
+  ),
+  sn = U('<button type="button" class="absolute right-2 flex cursor-pointer border-none bg-transparent"><!></button>'),
+  ln = (e, r, t) => {
+    ;(e.preventDefault(), navigator.clipboard.writeText(r()), W(t, !0), setTimeout(() => W(t, !1), 1e3))
+  },
+  cn = U('<div class="absolute top-1/2 right-10 -translate-y-1/2 transform rounded-md bg-[var(--green-color)] px-2 py-1 text-sm shadow-lg">✓</div>'),
+  dn = U(
+    '<button type="button" aria-label="Копировать текст"><svg xmlns="http://www.w3.org/2000/svg" width="1.3em" height="1.3em" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 11c0-2.828 0-4.243.879-5.121C7.757 5 9.172 5 12 5h3c2.828 0 4.243 0 5.121.879C21 6.757 21 8.172 21 11v5c0 2.828 0 4.243-.879 5.121C19.243 22 17.828 22 15 22h-3c-2.828 0-4.243 0-5.121-.879C6 20.243 6 18.828 6 16z"></path><path d="M6 19a3 3 0 0 1-3-3v-6c0-3.771 0-5.657 1.172-6.828S7.229 2 11 2h4a3 3 0 0 1 3 3"></path></g></svg></button> <!>',
+    1,
+  ),
+  un = (e, r, t, o) => {
+    if (!(!r().maxNum || !r().step)) {
+      if (Number(t()) + r().step >= r().maxNum) {
+        ;(t(r().maxNum), o()?.(t()))
+        return
+      }
+      ;(t(Number(t()) + (r().step ?? 1)), o()?.(t()))
+    }
+  },
+  fn = (e, r, t, o) => {
+    if (!(r().minNum === null || r().minNum === void 0 || !r().step)) {
+      if (Number(t()) - r().step <= r().minNum) {
+        ;(t(r().minNum), o()?.(t()))
+        return
+      }
+      ;(t(Number(t()) - (r().step ?? 1)), o()?.(t()))
+    }
+  },
+  vn = U(
+    '<div class="absolute right-0 flex h-full w-8 flex-col items-center justify-center rounded-r-2xl border-l border-[var(--border-color)]"><button class="flex h-1/2 w-full items-center rounded-tr-2xl border-b border-[var(--border-color)] pl-2 transition-colors duration-150 hover:bg-[var(--gray-color)]/30 active:bg-[var(--gray-color)]/10" aria-label="Увеличить">+</button> <button class="flex h-1/2 w-full items-center rounded-br-2xl pl-2 transition-colors duration-150 hover:bg-[var(--gray-color)]/30 active:bg-[var(--gray-color)]/10" aria-label="Уменьшить">−</button></div>',
+  ),
+  mn = U('<div class="absolute top-1/2 left-10 z-50 w-auto -translate-y-1/2 rounded bg-[var(--container-color)] px-2 py-1 shadow-lg"> </div>'),
+  pn = U(
+    '<button type="button"><svg xmlns="http://www.w3.org/2000/svg" width="1.5rem" height="1.5rem" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" stroke-width="1.3"></circle><path stroke-width="1.5" d="M12 16v-4.5"></path><path stroke-width="1.8" d="M12 8.012v-.01"></path></g></svg></button> <!>',
+    1,
+  ),
+  gn = U('<div><!> <div><!> <!> <!> <!> <!></div></div>')
+function fs(e, r) {
+  Se(r, !0)
+  let t = R(r, 'id', 19, () => crypto.randomUUID()),
+    o = R(r, 'wrapperClass', 3, ''),
+    u = R(r, 'label', 19, () => ({ name: '', class: '' })),
+    l = R(r, 'disabled', 3, !1),
+    s = R(r, 'readonly', 3, !1),
+    a = R(r, 'value', 15),
+    c = R(r, 'type', 3, 'text'),
+    g = R(r, 'placeholder', 3, ''),
+    m = R(r, 'componentClass', 3, ''),
+    k = R(r, 'maxlength', 3, 100),
+    j = R(r, 'textareaRows', 3, 3),
+    E = R(r, 'number', 19, () => ({ minNum: -1e6, maxNum: 1 / 0, step: 1 })),
+    f = R(r, 'help', 19, () => ({ info: '', autocomplete: 'off', copyButton: !1, regExp: '^[\\s\\S]*$' })),
+    p = R(r, 'onUpdate', 3, () => {}),
+    z = xe(!1),
+    P = xe(!1),
+    X = xe(!1)
+  nr(() => {
+    c() === 'number' && (a() === void 0 || a() === null || a() === '') && a(E().minNum)
+  })
+  const A = (d) => {
+    if (d instanceof RegExp) return d
+    const n = d.match(/^\/(.*)\/([gimsuy]*)$/)
+    return n ? new RegExp(n[1], n[2]) : new RegExp(d)
+  }
+  let C = pe(() => () => A(f().regExp ?? '')),
+    h = pe(() => i(C)().test(typeof a() == 'string' ? a() : String(a())))
+  const _ = (d) => {
+    if (c() === 'number') {
+      const n = typeof d == 'string' ? parseFloat(d.replace(',', '.')) : Number(d)
+      isNaN(n) ? p()?.(d) : p()?.(n)
+    } else p()?.(d)
+  }
+  var O = gn(),
+    w = M(O)
+  {
+    var L = (d) => {
+      var n = Qa(),
+        v = M(n, !0)
+      ;(x(n),
+        Q(
+          (S) => {
+            ;(V(n, 1, S), le(v, u().name))
+          },
+          [() => ve(ie('w-full px-4 text-center', u().class))],
+        ),
+        I(d, n))
+    }
+    ee(w, (d) => {
+      u().name && d(L)
+    })
+  }
+  var F = J(w, 2),
+    H = M(F)
+  {
+    var ne = (d) => {
+        var n = en()
+        ;(qe(n),
+          (n.__input = [$a, _]),
+          Q(
+            (v) => {
+              ;(V(n, 1, v),
+                Y(n, 'id', t()),
+                Y(n, 'placeholder', g()),
+                (n.disabled = l()),
+                Y(n, 'autocomplete', f()?.autocomplete),
+                Y(n, 'type', c() === 'password' ? (i(z) ? 'text' : 'password') : c() === 'number' ? 'number' : 'text'),
+                Y(n, 'maxlength', k()),
+                Y(n, 'min', E()?.minNum),
+                Y(n, 'max', E()?.maxNum),
+                Y(n, 'step', E()?.step),
+                (n.readOnly = s()))
+            },
+            [
+              () =>
+                ve(
+                  ie(
+                    `w-full rounded-2xl border px-4 py-1 text-center transition-all duration-300 outline-none focus:border-blue-400
               [&::-webkit-inner-spin-button]:hidden [&::-webkit-outer-spin-button]:hidden
-              ${i(h)?"border-[var(--border-color)]":"!border-red-400 shadow-[0_0_6px_var(--red-color)]"}
-              ${l()?"opacity-50":"hover:shadow-md"} 
-              ${s()?"":"hover:shadow-md"}
-              ${f()?.info?"pl-8":""} 
-              ${f().copyButton||c()==="password"||c()==="number"?"pr-8":""}`,m()))]),Ze(n,a),I(d,n)},de=d=>{var n=ye(),v=ue(n);{var S=K=>{var y=tn();lo(y),y.__input=[rn,_],Q(N=>{V(y,1,N),Y(y,"id",t()),y.disabled=l(),Y(y,"maxlength",k()),Y(y,"rows",j()),Y(y,"placeholder",g()),y.readOnly=s()},[()=>ve(ie(`h-full w-full resize-y rounded-2xl border border-[var(--border-color)] px-2 py-1 text-center font-mono transition-all duration-300 outline-none focus:border-blue-400
-            ${i(h)?"border-[var(--border-color)]":"!border-red-400 shadow-[0_0_6px_var(--red-color)]"}
-            ${l()?"opacity-50":"hover:shadow-md"} 
-            ${s()?"":"hover:shadow-md"}
-            ${f()?.info?"pl-8":""}
-            ${f().copyButton?"pr-8":""}`,m()))]),Ze(y,a),I(K,y)};ee(v,K=>{c()==="text-area"&&K(S)},!0)}I(d,n)};ee(H,d=>{c()==="text"||c()==="password"||c()==="number"?d(ne):d(de,!1)})}var se=J(H,2);{var oe=d=>{var n=sn();n.__click=[on,z];var v=M(n);{var S=y=>{var N=an();I(y,N)},K=y=>{var N=nn();I(y,N)};ee(v,y=>{i(z)?y(S):y(K,!1)})}x(n),Q(()=>Y(n,"aria-label",i(z)?"Скрыть пароль":"Показать пароль")),I(d,n)};ee(se,d=>{c()==="password"&&!l()&&d(oe)})}var ae=J(se,2);{var G=d=>{var n=dn(),v=ue(n);v.__click=[ln,a,X];var S=J(v,2);{var K=y=>{var N=cn();Ce(3,N,()=>sr,()=>({x:10,duration:200})),I(y,N)};ee(S,y=>{i(X)&&y(K)})}Q(()=>V(v,1,`absolute right-2 flex cursor-pointer border-none bg-transparent ${c()==="text-area"?"top-2":""}`)),I(d,n)};ee(ae,d=>{f().copyButton&&(c()==="text"||c()==="text-area")&&d(G)})}var b=J(ae,2);{var q=d=>{var n=vn(),v=M(n);v.__click=[un,E,a,p];var S=J(v,2);S.__click=[fn,E,a,p],x(n),I(d,n)};ee(b,d=>{c()==="number"&&!s()&&!l()&&d(q)})}var $=J(b,2);{var T=d=>{var n=pn(),v=ue(n),S=J(v,2);{var K=y=>{var N=mn(),Z=M(N,!0);x(N),Q(()=>le(Z,f()?.info)),Ce(3,N,()=>sr,()=>({x:-15,duration:250})),I(y,N)};ee(S,y=>{i(P)&&y(K)})}Q(()=>{V(v,1,`button-info absolute left-2 flex border-none bg-transparent ${c()==="text-area"?"top-2":""} ${l()?"opacity-50":"cursor-pointer"}`),Y(v,"aria-label",i(P)?"Скрыть инфо":"Показать инфо")}),We("mouseenter",v,()=>W(P,!0)),We("mouseleave",v,()=>W(P,!1)),I(d,n)};ee($,d=>{f().info&&d(T)})}x(F),x(O),Q(d=>{V(O,1,d),V(F,1,`relative flex w-full items-center ${c()==="text-area"?"h-full":""}`)},[()=>ve(ie(`bg-max ${c()==="text-area"?"h-full":""} relative flex w-full flex-col items-center`,o()))]),I(e,O),Ee()}Te(["input","click"]);var bn=Je('<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 24 24"><g fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"><path d="M5.47 5.47a.75.75 0 0 1 1.06 0l12 12a.75.75 0 1 1-1.06 1.06l-12-12a.75.75 0 0 1 0-1.06"></path><path d="M18.53 5.47a.75.75 0 0 1 0 1.06l-12 12a.75.75 0 0 1-1.06-1.06l12-12a.75.75 0 0 1 1.06 0"></path></g></svg>');function hn(e){var r=bn();I(e,r)}var wn=U('<div class="flex flex-row-reverse justify-between bg-[var(--field-color)] p-1.5"><!></div>'),xn=U('<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"><div><div class="flex items-end justify-between bg-[var(--field-color)] px-6 py-3"><h4> </h4> <button class="h-6 w-6 cursor-pointer"><!></button></div> <div class="flex h-full w-full flex-col overflow-auto p-2"><!></div> <!></div></div>');function _n(e,r){Se(r,!0);let t=R(r,"isOpen",15,!1),o=R(r,"wrapperClass",3,""),u=R(r,"onCancel",3,()=>t(!1));const l=g=>{g.key==="Escape"&&t(!1)};Dr(()=>(document.addEventListener("keydown",l),()=>document.removeEventListener("keydown",l)));var s=ye(),a=ue(s);{var c=g=>{var m=xn(),k=M(m),j=M(k),E=M(j),f=M(E,!0);x(E);var p=J(E,2);p.__click=function(...h){u()?.apply(this,h)};var z=M(p);hn(z),x(p),x(j);var P=J(j,2),X=M(P);Ir(X,()=>r.main??Ue),x(P);var A=J(P,2);{var C=h=>{var _=wn(),O=M(_);Ir(O,()=>r.footer??Ue),x(_),I(h,_)};ee(A,h=>{r.footer&&h(C)})}x(k),x(m),Q(h=>{V(k,1,h),le(f,r.title)},[()=>ve(ie("flex w-300 flex-col overflow-hidden rounded-2xl bg-[var(--back-color)] text-center",o()))]),Ce(3,k,()=>Eo,()=>({duration:250,start:.8})),Ce(3,m,()=>So,()=>({duration:200})),I(g,m)};ee(a,g=>{t()&&g(c)})}I(e,s),Ee()}Te(["click"]);var yn=Je('<svg xmlns="http://www.w3.org/2000/svg" width="2rem" height="2rem" viewBox="0 0 24 24"><g stroke="currentColor" stroke-linecap="round" stroke-width="1.5" fill="none"><line x1="8" y1="11" x2="8" y2="13"></line><line x1="12" y1="9" x2="12" y2="15"></line><line x1="16" y1="6" x2="16" y2="18"></line></g></svg>');function kn(e){var r=yn();I(e,r)}var Cn=Je('<svg xmlns="http://www.w3.org/2000/svg" width="2rem" height="2rem" viewBox="0 0 24 24"><g stroke="currentColor" stroke-linecap="round" stroke-width="1.5" fill="none"><line x1="8" y1="6" x2="8" y2="18"></line><line x1="12" y1="9" x2="12" y2="15"></line><line x1="16" y1="11" x2="16" y2="13"></line></g></svg>');function Nn(e){var r=Cn();I(e,r)}var Mn=Je('<svg xmlns="http://www.w3.org/2000/svg" width="2rem" height="2rem" viewBox="0 0 24 24"><g stroke="currentColor" stroke-linecap="round" stroke-width="1.5" fill="none"><line x1="4" y1="11" x2="4" y2="13"></line><line x1="8" y1="9" x2="8" y2="15"></line><line x1="12" y1="6" x2="12" y2="18"></line><line x1="16" y1="9" x2="16" y2="15"></line><line x1="20" y1="11" x2="20" y2="13"></line></g></svg>');function Sn(e){var r=Mn();I(e,r)}var En=U("<h5> </h5>"),Tn=U('<div role="button"><div class="absolute h-full rounded-full bg-[var(--bg-color)]"></div></div> <input type="range"/> <div class="pointer-events-none absolute z-40 rounded-full bg-[var(--field-color)]"><!></div> <input type="range"/> <div class="pointer-events-none absolute z-40 rounded-full bg-[var(--field-color)]"><!></div>',1),In=U('<div role="button"><div></div></div> <input type="range" class="absolute z-20 h-full w-full appearance-none bg-transparent svelte-17e64va"/> <div class="pointer-events-none absolute z-30 rounded-full bg-[var(--field-color)]"><!></div>',1),An=U('<div style="background-color: var(--bg-color)"><button>−</button> <span class="inline-block text-center tabular-nums"> </span> <button>+</button></div>'),zn=U('<div style="background-color: var(--bg-color)"><button>−</button> <span class="inline-block text-center tabular-nums"> </span> <button>+</button></div>'),Rn=U("<div><!> <div><!></div> <div><!></div></div>");function vs(e,r){Se(r,!0);let t=R(r,"id",19,()=>crypto.randomUUID()),o=R(r,"wrapperClass",3,""),u=R(r,"label",19,()=>({name:"",class:""})),l=R(r,"type",3,"single"),s=R(r,"value",7,0),a=R(r,"number",19,()=>({minNum:0,maxNum:10,step:1})),c=R(r,"disabled",3,!1),g=R(r,"onUpdate",3,()=>{});const m=pe(()=>l()==="range"||Array.isArray(s())&&s().length===2),j=`${String(a().maxNum??100).length+1}ch`;let E=pe(()=>!i(m)&&typeof s()=="number"?s():a().minNum),f=pe(()=>i(m)&&Array.isArray(s())?s()[0]:a().minNum),p=pe(()=>i(m)&&Array.isArray(s())?s()[1]:a().maxNum);const z=pe(()=>(i(E)-a().minNum)/(a().maxNum-a().minNum)*100),P=pe(()=>(i(f)-a().minNum)/(a().maxNum-a().minNum)*100),X=pe(()=>(i(p)-a().minNum)/(a().maxNum-a().minNum)*100);nr(()=>{(s()===void 0||s()===null)&&(l()==="single"&&!s()&&s(a().minNum),l()==="range"&&!s()&&s([a().minNum,a().maxNum]))});const A=(G,b)=>{const q=b==="increment"?a().step:-a().step;i(m)&&G!=="single"?(G==="lower"?W(f,Math.max(a().minNum,Math.min(i(f)+q,i(p)))):W(p,Math.min(a().maxNum,Math.max(i(p)+q,i(f)))),g()([i(f),i(p)])):(W(E,Math.max(a().minNum,Math.min(i(E)+q,a().maxNum))),g()(i(E)))};nr(()=>{Array.isArray(s())?(W(f,s()[0]),W(p,s()[1])):typeof s()=="number"&&W(E,s())});let C=xe("lower");const h=G=>{G.stopPropagation();const q=G.currentTarget.getBoundingClientRect(),$=(G.clientX-q.left)/q.width*100,T=a().minNum+$/100*(a().maxNum-a().minNum),d=Math.round((T-a().minNum)/a().step)*a().step+a().minNum;if(i(m)){const n=Math.abs(d-i(f)),v=Math.abs(d-i(p));W(C,n<v?"lower":"upper",!0),i(C)==="lower"?W(f,Math.max(a().minNum,Math.min(d,i(p)))):W(p,Math.min(a().maxNum,Math.max(d,i(f)))),g()([i(f),i(p)])}else W(E,Math.max(a().minNum,Math.min(d,a().maxNum))),g()(i(E))};var _=Rn(),O=M(_);{var w=G=>{var b=En(),q=M(b,!0);x(b),Q($=>{V(b,1,$),le(q,u().name)},[()=>ve(ie("w-full px-4 text-center",u().class))]),I(G,b)};ee(O,G=>{u().name&&G(w)})}var L=J(O,2),F=M(L);{var H=G=>{var b=Tn(),q=ue(b);Y(q,"tabindex",null),q.__keydown=function(...y){},q.__click=function(...y){(c()?void 0:h)?.apply(this,y)};var $=M(q);x(q);var T=J(q,2);qe(T),T.__input=function(...y){(c()?void 0:N=>{const Z=Math.min(Number(N.target.value),i(p));W(f,Z),W(C,"lower")})?.apply(this,y)},T.__mouseup=function(...y){(c()?void 0:()=>g()([i(f),i(p)]))?.apply(this,y)};var d=J(T,2),n=M(d);kn(n),x(d);var v=J(d,2);qe(v),v.__input=function(...y){(c()?void 0:N=>{const Z=Math.max(Number(N.target.value),i(f));W(p,Z),W(C,"upper")})?.apply(this,y)},v.__mouseup=function(...y){(c()?void 0:()=>g()([i(f),i(p)]))?.apply(this,y)};var S=J(v,2),K=M(S);Nn(K),x(S),Q(()=>{V(q,1,`absolute h-full w-full rounded-full bg-[var(--gray-color)] ${c()?"":"cursor-pointer"}`),ce($,`left: ${i(P)}%; right: ${100-i(X)}%;`),Y(T,"min",a().minNum),Y(T,"max",a().maxNum),Y(T,"step",a().step),T.disabled=c(),V(T,1,`absolute h-full w-full appearance-none bg-transparent ${i(C)==="lower"?"z-30":"z-20"}`,"svelte-17e64va"),ce(d,`left: calc(${i(P)}% + 0rem); top: 50%; transform: translateY(-50%)`),Y(v,"min",a().minNum),Y(v,"max",a().maxNum),Y(v,"step",a().step),v.disabled=c(),V(v,1,`absolute h-full w-full appearance-none bg-transparent ${i(C)==="upper"?"z-30":"z-20"}`,"svelte-17e64va"),ce(S,`left: calc(${i(X)}% - 2rem); top: 50%; transform: translateY(-50%)`)}),Ze(T,()=>i(f),y=>W(f,y)),Ze(v,()=>i(p),y=>W(p,y)),I(G,b)},ne=G=>{var b=In(),q=ue(b);Y(q,"tabindex",null),q.__keydown=function(...v){},q.__click=function(...v){(c()?void 0:h)?.apply(this,v)};var $=M(q);x(q);var T=J(q,2);qe(T),T.__input=function(...v){(c()?void 0:S=>{W(E,Number(S.target.value))})?.apply(this,v)},T.__mouseup=function(...v){(c()?void 0:()=>g()(i(E)))?.apply(this,v)};var d=J(T,2),n=M(d);Sn(n),x(d),Q(()=>{V(q,1,`absolute h-full w-full rounded-full bg-[var(--gray-color)] ${c()?"":"cursor-pointer"}`),V($,1,`absolute h-full ${i(z)===100?"z-10 rounded-full":"z-10 rounded-l-full"}`),ce($,`width: ${i(z)}%; background-color: var(--bg-color)`),Y(T,"min",a().minNum),Y(T,"max",a().maxNum),Y(T,"step",a().step),T.disabled=c(),ce(d,`left: clamp(1rem, ${i(z)}%, calc(100% - 1rem)); top: 50%; transform: translate(-50%, -50%)`)}),Ze(T,()=>i(E),v=>W(E,v)),I(G,b)};ee(F,G=>{i(m)?G(H):G(ne,!1)})}x(L);var de=J(L,2),se=M(de);{var oe=G=>{var b=ye(),q=ue(b);Ge(q,16,()=>["lower","upper"],$=>$,($,T,d,n)=>{var v=An(),S=M(v);S.__click=function(...Z){(c()?void 0:()=>A(T,"decrement"))?.apply(this,Z)};var K=J(S,2),y=M(K,!0);x(K);var N=J(K,2);N.__click=function(...Z){(c()?void 0:()=>A(T,"increment"))?.apply(this,Z)},x(v),Q(()=>{V(v,1,`flex items-center justify-center gap-2 rounded-full px-2 ${c()?"opacity-70":""}`),V(S,1,`h-full w-4 ${c()?"":"cursor-pointer"}`),S.disabled=c()||(T==="lower"?i(f)<=a().minNum:i(p)<=i(f)),ce(K,`width: ${j}`),le(y,T==="lower"?i(f):i(p)),V(N,1,`h-full w-4 ${c()?"":"cursor-pointer"}`),N.disabled=c()||(T==="lower"?i(f)>=i(p):i(p)>=a().maxNum)}),I($,v)}),I(G,b)},ae=G=>{var b=zn(),q=M(b);q.__click=function(...n){(c()?void 0:()=>A("single","decrement"))?.apply(this,n)};var $=J(q,2),T=M($,!0);x($);var d=J($,2);d.__click=function(...n){(c()?void 0:()=>A("single","increment"))?.apply(this,n)},x(b),Q(()=>{V(b,1,`flex items-center justify-center gap-2 rounded-full px-2 ${c()?"opacity-70":""}`),V(q,1,`h-full w-4 ${c()?"":"cursor-pointer"}`),q.disabled=c()||i(E)<=a().minNum,ce($,`width: ${j}`),le(T,i(E)),V(d,1,`h-full w-4 ${c()?"":"cursor-pointer"}`),d.disabled=c()||i(E)>=a().maxNum}),I(G,b)};ee(se,G=>{i(m)?G(oe):G(ae,!1)})}x(de),x(_),Q(G=>{V(_,1,G),Y(L,"id",t()),V(L,1,`relative flex h-8 w-full justify-center rounded-full ${c()?"cursor-not-allowed opacity-50":""}`),V(de,1,`flex w-full ${i(m)?"justify-between":"justify-center"} gap-2`)},[()=>ve(ie("relative flex w-full flex-col items-center gap-2",o()))]),I(e,_),Ee()}Te(["keydown","click","input","mouseup"]);const On=(e,r,t,o,u,l)=>{if(r())return;const s=i(t)?o[1]:o[0];u(s),l()(s)};var Pn=U("<h5> </h5>"),Ln=(e,r)=>r(1),jn=(e,r)=>r(2),Bn=U('<div><!> <div class="relative flex w-full grow items-center justify-center !bg-transparent"><button> </button> <label><input type="checkbox" class="absolute left-1/2 h-full w-full -translate-x-1/2 cursor-pointer appearance-none rounded-md"/> <span><span></span></span></label> <button> </button></div></div>');function ms(e,r){Se(r,!0);let t=R(r,"id",19,()=>crypto.randomUUID()),o=R(r,"disabled",3,!1),u=R(r,"wrapperClass",3,""),l=R(r,"label",19,()=>({name:"",captionLeft:"",captionRight:""})),s=R(r,"height",3,"2rem"),a=R(r,"value",15),c=R(r,"onChange",3,()=>{});const g=[1,2];let m=pe(()=>a()===g[1]),k=pe(()=>i(m)?`translateX(calc(${s()}))`:"translateX(0)");nr(()=>{(a()===void 0||a()===null)&&a(g[0])});const j=F=>{o()||a()===F||(a(F),c()(F))},E=pe(()=>Math.max(l().captionLeft?.length??0,l().captionRight?.length??0)>0?`${Math.max(l().captionLeft?.length??0,l().captionRight?.length??0)}ch`:"auto");var f=Bn(),p=M(f);{var z=F=>{var H=Pn();V(H,1,"w-full px-4 text-center");var ne=M(H,!0);x(H),Q(()=>le(ne,l().name)),I(F,H)};ee(p,F=>{l().name&&F(z)})}var P=J(p,2),X=M(P);X.__click=[Ln,j];var A=M(X,!0);x(X);var C=J(X,2),h=M(C);qe(h),h.__change=[On,o,m,g,a,c];var _=J(h,2),O=M(_);x(_),x(C);var w=J(C,2);w.__click=[jn,j];var L=M(w,!0);x(w),x(P),x(f),Q(F=>{V(f,1,F),V(X,1,`mr-2 ${o()?"opacity-60":"cursor-pointer"}`),ce(X,`width: ${i(E)??""}; text-align: end;`),le(A,l().captionLeft),V(C,1,`relative flex items-center justify-between rounded-full border-1
-      ${i(m)?"!border-[var(--bg-color)]":"!border-[var(--gray-color)]"}
-      ${o()?"opacity-60":""}`),Y(h,"id",t()),h.disabled=o(),V(_,1,`relative flex items-center rounded-full transition-all duration-250
-        ${i(m)?"!bg-[var(--bg-color)]":"!bg-[var(--gray-color)]"}
-        ${o()?"":"cursor-pointer"}`),ce(_,`width: ${`calc(${s()} * 2)`}; height: ${s()??""};`),V(O,1,`absolute rounded-full bg-[var(--back-color)] transition-all duration-250
-          ${o()?"opacity-60":"cursor-pointer"}`),ce(O,`width: ${`calc(${s()} * 0.75)`}; height: ${`calc(${s()} * 0.75)`}; margin: 0 ${`calc(${s()} * 0.1)`}; transform: ${i(k)??""};`),V(w,1,`ml-2 ${o()?"opacity-60":"cursor-pointer"}`),ce(w,`width: ${i(E)??""}; text-align: start;`),le(L,l().captionRight)},[()=>ve(ie("bg-blue relative flex w-full flex-col items-center justify-center",u()))]),No(h,()=>i(m),F=>W(m,F)),I(e,f),Ee()}Te(["click","change"]);var Dn=U("<h5> </h5>"),Un=(e,r,t)=>r(t.key),Gn=U('<button class="inline-block cursor-pointer font-bold transition-transform duration-75 hover:scale-110 active:scale-95">↑↓</button>'),Vn=U("<div><span> </span> <!></div>"),Fn=(e,r,t,o)=>r(t,o),Hn=U("<button> </button>"),Kn=U('<div class="flex w-full flex-col gap-1"></div>'),Wn=U('<img loading="lazy"/>'),Xn=U('<div class="flex items-center justify-center"><!></div>'),Yn=(e,r,t,o)=>{e.stopPropagation(),r(t[o.key],o.overflow?.formatting)},qn=U('<button class="w-full cursor-pointer overflow-hidden text-left text-ellipsis whitespace-nowrap"><!></button>'),Zn=U('<div class="absolute top-1/2 right-10 -translate-y-1/2 transform rounded-md bg-[var(--green-color)] px-2 py-1 text-sm shadow-lg">✓</div>'),Jn=U('<button class="m-2 flex cursor-pointer border-none bg-transparent text-2xl" aria-label="Копировать текст"><!> <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 11c0-2.828 0-4.243.879-5.121C7.757 5 9.172 5 12 5h3c2.828 0 4.243 0 5.121.879C21 6.757 21 8.172 21 11v5c0 2.828 0 4.243-.879 5.121C19.243 22 17.828 22 15 22h-3c-2.828 0-4.243 0-5.121-.879C6 20.243 6 18.828 6 16z"></path><path d="M6 19a3 3 0 0 1-3-3v-6c0-3.771 0-5.657 1.172-6.828S7.229 2 11 2h4a3 3 0 0 1 3 3"></path></g></svg></button>'),Qn=U('<div role="columnheader"><!></div> <!>',1),$n=U("<div><!></div>"),es=U('<div class="fixed z-50 max-w-xs rounded-md px-2 py-1 text-sm whitespace-pre-wrap shadow-lg" role="tooltip"><!></div>'),rs=U('<div class="flex h-8 items-center justify-center bg-[var(--bg-color)]"><h5> </h5></div>'),ts=U('<div><!> <div class="flex h-full flex-col overflow-hidden rounded-xl border-[var(--border-color)]"><div class="grid font-semibold"></div> <div class="flex-1 overflow-y-auto bg-[var(--container-color)]/50"><div class="grid min-w-0"></div></div> <!> <!></div></div> <!>',1);function ps(e,r){Se(r,!0);const t=()=>gt(Fr,"$t",o),[o,u]=pt();let l=R(r,"id",19,()=>crypto.randomUUID()),s=R(r,"wrapperClass",3,""),a=R(r,"label",19,()=>({name:"",class:""})),c=R(r,"body",23,()=>[]),g=R(r,"header",19,()=>[]),m=R(r,"footer",3,""),k=R(r,"cursor",3,null),j=R(r,"getData",3,()=>{}),E=xe(ar({isOpen:!1,rawData:"",formattedData:""})),f={key:null,direction:null};const p=d=>{f.key===d?f.direction=f.direction==="asc"?"desc":"asc":(f.key=d,f.direction="asc"),c([...c()].sort((n,v)=>{const S=n[d],K=v[d];if(typeof S=="number"&&typeof K=="number")return f.direction==="asc"?S-K:K-S;if(S instanceof Date&&K instanceof Date)return f.direction==="asc"?S.getTime()-K.getTime():K.getTime()-S.getTime();const y=String(S).toLowerCase(),N=String(K).toLowerCase(),Z=y.match(/\d+/g)?.[0]||"",ge=N.match(/\d+/g)?.[0]||"";if(Z&&ge){const _e=parseInt(Z,10)-parseInt(ge,10);if(_e!==0)return f.direction==="asc"?_e:-_e}const he=y.localeCompare(N);return f.direction==="asc"?he:-he}))};let z=xe(null);function P(){if(!i(z))return;const{scrollTop:d,clientHeight:n,scrollHeight:v}=i(z);d+n>=v-50&&k()!==null&&r.loader&&!fo(r.loader)&&j()()}function X(d,n){if(n.onClick)n.onClick(d);else if(n.eventHandler&&r.onClick){let v={};n.eventHandler.Variables.forEach(S=>{v[S]=d[S]}),n.eventHandler.Value=JSON.stringify(v),r.onClick(n.eventHandler)}}let A=xe(ar({x:"",y:-1})),C=xe(ar({show:!1,text:"",x:0,y:0}));const h=async(d,n)=>{W(E,{isOpen:!i(E).isOpen,rawData:d,formattedData:n?n(d):d??""},!0)},_=(d,n,v)=>{W(C,{show:!0,text:v?v(n):n??"",x:d.clientX,y:d.clientY},!0)},O=()=>{i(C).show=!1},w=(d,n)=>!!(typeof d.image?.src=="function"?d.image.src(n):d.image?.src);var L=ts(),F=ue(L),H=M(F);{var ne=d=>{var n=Dn(),v=M(n,!0);x(n),Q(S=>{V(n,1,S),le(v,a().name)},[()=>ve(ie("w-full px-4 text-center",a().class))]),I(d,n)};ee(H,d=>{a().name&&d(ne)})}var de=J(H,2),se=M(de);Ge(se,20,g,d=>d,(d,n)=>{var v=Vn(),S=M(v),K=M(S,!0);x(S);var y=J(S,2);{var N=Z=>{var ge=Gn();ge.__click=[Un,p,n],I(Z,ge)};ee(y,Z=>{n.sortable&&Z(N)})}x(v),Q(Z=>{V(v,1,Z),le(K,n.label?.name)},[()=>ve(ie("justify-center bg-[var(--bg-color)] p-2 text-left",n.label?.class))]),I(d,v)}),x(se);var oe=J(se,2),ae=M(oe);Ge(ae,22,c,d=>d,(d,n,v)=>{var S=ye(),K=ue(S);Ge(K,16,g,y=>y,(y,N)=>{var Z=$n(),ge=M(Z);{var he=Ne=>{var Ie=Kn();Ge(Ie,20,()=>N.buttons,er=>er,(er,Ae)=>{var Ve=Hn();Ve.__click=[Fn,X,n,Ae];var Le=M(Ve,!0);x(Ve),Q((ze,ke)=>{V(Ve,1,`${ze??""} bg-[var(--bg-color)]`),le(Le,ke)},[()=>ie(`cursor-pointer rounded-full
+              ${i(h) ? 'border-[var(--border-color)]' : '!border-red-400 shadow-[0_0_6px_var(--red-color)]'}
+              ${l() ? 'opacity-50' : 'hover:shadow-md'} 
+              ${s() ? '' : 'hover:shadow-md'}
+              ${f()?.info ? 'pl-8' : ''} 
+              ${f().copyButton || c() === 'password' || c() === 'number' ? 'pr-8' : ''}`,
+                    m(),
+                  ),
+                ),
+            ],
+          ),
+          Ze(n, a),
+          I(d, n))
+      },
+      de = (d) => {
+        var n = ye(),
+          v = ue(n)
+        {
+          var S = (K) => {
+            var y = tn()
+            ;(lo(y),
+              (y.__input = [rn, _]),
+              Q(
+                (N) => {
+                  ;(V(y, 1, N),
+                    Y(y, 'id', t()),
+                    (y.disabled = l()),
+                    Y(y, 'maxlength', k()),
+                    Y(y, 'rows', j()),
+                    Y(y, 'placeholder', g()),
+                    (y.readOnly = s()))
+                },
+                [
+                  () =>
+                    ve(
+                      ie(
+                        `h-full w-full resize-y rounded-2xl border border-[var(--border-color)] px-2 py-1 text-center font-mono transition-all duration-300 outline-none focus:border-blue-400
+            ${i(h) ? 'border-[var(--border-color)]' : '!border-red-400 shadow-[0_0_6px_var(--red-color)]'}
+            ${l() ? 'opacity-50' : 'hover:shadow-md'} 
+            ${s() ? '' : 'hover:shadow-md'}
+            ${f()?.info ? 'pl-8' : ''}
+            ${f().copyButton ? 'pr-8' : ''}`,
+                        m(),
+                      ),
+                    ),
+                ],
+              ),
+              Ze(y, a),
+              I(K, y))
+          }
+          ee(
+            v,
+            (K) => {
+              c() === 'text-area' && K(S)
+            },
+            !0,
+          )
+        }
+        I(d, n)
+      }
+    ee(H, (d) => {
+      c() === 'text' || c() === 'password' || c() === 'number' ? d(ne) : d(de, !1)
+    })
+  }
+  var se = J(H, 2)
+  {
+    var oe = (d) => {
+      var n = sn()
+      n.__click = [on, z]
+      var v = M(n)
+      {
+        var S = (y) => {
+            var N = an()
+            I(y, N)
+          },
+          K = (y) => {
+            var N = nn()
+            I(y, N)
+          }
+        ee(v, (y) => {
+          i(z) ? y(S) : y(K, !1)
+        })
+      }
+      ;(x(n), Q(() => Y(n, 'aria-label', i(z) ? 'Скрыть пароль' : 'Показать пароль')), I(d, n))
+    }
+    ee(se, (d) => {
+      c() === 'password' && !l() && d(oe)
+    })
+  }
+  var ae = J(se, 2)
+  {
+    var G = (d) => {
+      var n = dn(),
+        v = ue(n)
+      v.__click = [ln, a, X]
+      var S = J(v, 2)
+      {
+        var K = (y) => {
+          var N = cn()
+          ;(Ce(
+            3,
+            N,
+            () => sr,
+            () => ({ x: 10, duration: 200 }),
+          ),
+            I(y, N))
+        }
+        ee(S, (y) => {
+          i(X) && y(K)
+        })
+      }
+      ;(Q(() => V(v, 1, `absolute right-2 flex cursor-pointer border-none bg-transparent ${c() === 'text-area' ? 'top-2' : ''}`)), I(d, n))
+    }
+    ee(ae, (d) => {
+      f().copyButton && (c() === 'text' || c() === 'text-area') && d(G)
+    })
+  }
+  var b = J(ae, 2)
+  {
+    var q = (d) => {
+      var n = vn(),
+        v = M(n)
+      v.__click = [un, E, a, p]
+      var S = J(v, 2)
+      ;((S.__click = [fn, E, a, p]), x(n), I(d, n))
+    }
+    ee(b, (d) => {
+      c() === 'number' && !s() && !l() && d(q)
+    })
+  }
+  var $ = J(b, 2)
+  {
+    var T = (d) => {
+      var n = pn(),
+        v = ue(n),
+        S = J(v, 2)
+      {
+        var K = (y) => {
+          var N = mn(),
+            Z = M(N, !0)
+          ;(x(N),
+            Q(() => le(Z, f()?.info)),
+            Ce(
+              3,
+              N,
+              () => sr,
+              () => ({ x: -15, duration: 250 }),
+            ),
+            I(y, N))
+        }
+        ee(S, (y) => {
+          i(P) && y(K)
+        })
+      }
+      ;(Q(() => {
+        ;(V(
+          v,
+          1,
+          `button-info absolute left-2 flex border-none bg-transparent ${c() === 'text-area' ? 'top-2' : ''} ${l() ? 'opacity-50' : 'cursor-pointer'}`,
+        ),
+          Y(v, 'aria-label', i(P) ? 'Скрыть инфо' : 'Показать инфо'))
+      }),
+        We('mouseenter', v, () => W(P, !0)),
+        We('mouseleave', v, () => W(P, !1)),
+        I(d, n))
+    }
+    ee($, (d) => {
+      f().info && d(T)
+    })
+  }
+  ;(x(F),
+    x(O),
+    Q(
+      (d) => {
+        ;(V(O, 1, d), V(F, 1, `relative flex w-full items-center ${c() === 'text-area' ? 'h-full' : ''}`))
+      },
+      [() => ve(ie(`bg-max ${c() === 'text-area' ? 'h-full' : ''} relative flex w-full flex-col items-center`, o()))],
+    ),
+    I(e, O),
+    Ee())
+}
+Te(['input', 'click'])
+var bn = Je(
+  '<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 24 24"><g fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"><path d="M5.47 5.47a.75.75 0 0 1 1.06 0l12 12a.75.75 0 1 1-1.06 1.06l-12-12a.75.75 0 0 1 0-1.06"></path><path d="M18.53 5.47a.75.75 0 0 1 0 1.06l-12 12a.75.75 0 0 1-1.06-1.06l12-12a.75.75 0 0 1 1.06 0"></path></g></svg>',
+)
+function hn(e) {
+  var r = bn()
+  I(e, r)
+}
+var wn = U('<div class="flex flex-row-reverse justify-between bg-[var(--field-color)] p-1.5"><!></div>'),
+  xn = U(
+    '<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"><div><div class="flex items-end justify-between bg-[var(--field-color)] px-6 py-3"><h4> </h4> <button class="h-6 w-6 cursor-pointer"><!></button></div> <div class="flex h-full w-full flex-col overflow-auto p-2"><!></div> <!></div></div>',
+  )
+function _n(e, r) {
+  Se(r, !0)
+  let t = R(r, 'isOpen', 15, !1),
+    o = R(r, 'wrapperClass', 3, ''),
+    u = R(r, 'onCancel', 3, () => t(!1))
+  const l = (g) => {
+    g.key === 'Escape' && t(!1)
+  }
+  Dr(() => (document.addEventListener('keydown', l), () => document.removeEventListener('keydown', l)))
+  var s = ye(),
+    a = ue(s)
+  {
+    var c = (g) => {
+      var m = xn(),
+        k = M(m),
+        j = M(k),
+        E = M(j),
+        f = M(E, !0)
+      x(E)
+      var p = J(E, 2)
+      p.__click = function (...h) {
+        u()?.apply(this, h)
+      }
+      var z = M(p)
+      ;(hn(z), x(p), x(j))
+      var P = J(j, 2),
+        X = M(P)
+      ;(Ir(X, () => r.main ?? Ue), x(P))
+      var A = J(P, 2)
+      {
+        var C = (h) => {
+          var _ = wn(),
+            O = M(_)
+          ;(Ir(O, () => r.footer ?? Ue), x(_), I(h, _))
+        }
+        ee(A, (h) => {
+          r.footer && h(C)
+        })
+      }
+      ;(x(k),
+        x(m),
+        Q(
+          (h) => {
+            ;(V(k, 1, h), le(f, r.title))
+          },
+          [() => ve(ie('flex w-300 flex-col overflow-hidden rounded-2xl bg-[var(--back-color)] text-center', o()))],
+        ),
+        Ce(
+          3,
+          k,
+          () => Eo,
+          () => ({ duration: 250, start: 0.8 }),
+        ),
+        Ce(
+          3,
+          m,
+          () => So,
+          () => ({ duration: 200 }),
+        ),
+        I(g, m))
+    }
+    ee(a, (g) => {
+      t() && g(c)
+    })
+  }
+  ;(I(e, s), Ee())
+}
+Te(['click'])
+var yn = Je(
+  '<svg xmlns="http://www.w3.org/2000/svg" width="2rem" height="2rem" viewBox="0 0 24 24"><g stroke="currentColor" stroke-linecap="round" stroke-width="1.5" fill="none"><line x1="8" y1="11" x2="8" y2="13"></line><line x1="12" y1="9" x2="12" y2="15"></line><line x1="16" y1="6" x2="16" y2="18"></line></g></svg>',
+)
+function kn(e) {
+  var r = yn()
+  I(e, r)
+}
+var Cn = Je(
+  '<svg xmlns="http://www.w3.org/2000/svg" width="2rem" height="2rem" viewBox="0 0 24 24"><g stroke="currentColor" stroke-linecap="round" stroke-width="1.5" fill="none"><line x1="8" y1="6" x2="8" y2="18"></line><line x1="12" y1="9" x2="12" y2="15"></line><line x1="16" y1="11" x2="16" y2="13"></line></g></svg>',
+)
+function Nn(e) {
+  var r = Cn()
+  I(e, r)
+}
+var Mn = Je(
+  '<svg xmlns="http://www.w3.org/2000/svg" width="2rem" height="2rem" viewBox="0 0 24 24"><g stroke="currentColor" stroke-linecap="round" stroke-width="1.5" fill="none"><line x1="4" y1="11" x2="4" y2="13"></line><line x1="8" y1="9" x2="8" y2="15"></line><line x1="12" y1="6" x2="12" y2="18"></line><line x1="16" y1="9" x2="16" y2="15"></line><line x1="20" y1="11" x2="20" y2="13"></line></g></svg>',
+)
+function Sn(e) {
+  var r = Mn()
+  I(e, r)
+}
+var En = U('<h5> </h5>'),
+  Tn = U(
+    '<div role="button"><div class="absolute h-full rounded-full bg-[var(--bg-color)]"></div></div> <input type="range"/> <div class="pointer-events-none absolute z-40 rounded-full bg-[var(--field-color)]"><!></div> <input type="range"/> <div class="pointer-events-none absolute z-40 rounded-full bg-[var(--field-color)]"><!></div>',
+    1,
+  ),
+  In = U(
+    '<div role="button"><div></div></div> <input type="range" class="absolute z-20 h-full w-full appearance-none bg-transparent svelte-17e64va"/> <div class="pointer-events-none absolute z-30 rounded-full bg-[var(--field-color)]"><!></div>',
+    1,
+  ),
+  An = U(
+    '<div style="background-color: var(--bg-color)"><button>−</button> <span class="inline-block text-center tabular-nums"> </span> <button>+</button></div>',
+  ),
+  zn = U(
+    '<div style="background-color: var(--bg-color)"><button>−</button> <span class="inline-block text-center tabular-nums"> </span> <button>+</button></div>',
+  ),
+  Rn = U('<div><!> <div><!></div> <div><!></div></div>')
+function vs(e, r) {
+  Se(r, !0)
+  let t = R(r, 'id', 19, () => crypto.randomUUID()),
+    o = R(r, 'wrapperClass', 3, ''),
+    u = R(r, 'label', 19, () => ({ name: '', class: '' })),
+    l = R(r, 'type', 3, 'single'),
+    s = R(r, 'value', 7, 0),
+    a = R(r, 'number', 19, () => ({ minNum: 0, maxNum: 10, step: 1 })),
+    c = R(r, 'disabled', 3, !1),
+    g = R(r, 'onUpdate', 3, () => {})
+  const m = pe(() => l() === 'range' || (Array.isArray(s()) && s().length === 2)),
+    j = `${String(a().maxNum ?? 100).length + 1}ch`
+  let E = pe(() => (!i(m) && typeof s() == 'number' ? s() : a().minNum)),
+    f = pe(() => (i(m) && Array.isArray(s()) ? s()[0] : a().minNum)),
+    p = pe(() => (i(m) && Array.isArray(s()) ? s()[1] : a().maxNum))
+  const z = pe(() => ((i(E) - a().minNum) / (a().maxNum - a().minNum)) * 100),
+    P = pe(() => ((i(f) - a().minNum) / (a().maxNum - a().minNum)) * 100),
+    X = pe(() => ((i(p) - a().minNum) / (a().maxNum - a().minNum)) * 100)
+  nr(() => {
+    ;(s() === void 0 || s() === null) && (l() === 'single' && !s() && s(a().minNum), l() === 'range' && !s() && s([a().minNum, a().maxNum]))
+  })
+  const A = (G, b) => {
+    const q = b === 'increment' ? a().step : -a().step
+    i(m) && G !== 'single'
+      ? (G === 'lower' ? W(f, Math.max(a().minNum, Math.min(i(f) + q, i(p)))) : W(p, Math.min(a().maxNum, Math.max(i(p) + q, i(f)))),
+        g()([i(f), i(p)]))
+      : (W(E, Math.max(a().minNum, Math.min(i(E) + q, a().maxNum))), g()(i(E)))
+  }
+  nr(() => {
+    Array.isArray(s()) ? (W(f, s()[0]), W(p, s()[1])) : typeof s() == 'number' && W(E, s())
+  })
+  let C = xe('lower')
+  const h = (G) => {
+    G.stopPropagation()
+    const q = G.currentTarget.getBoundingClientRect(),
+      $ = ((G.clientX - q.left) / q.width) * 100,
+      T = a().minNum + ($ / 100) * (a().maxNum - a().minNum),
+      d = Math.round((T - a().minNum) / a().step) * a().step + a().minNum
+    if (i(m)) {
+      const n = Math.abs(d - i(f)),
+        v = Math.abs(d - i(p))
+      ;(W(C, n < v ? 'lower' : 'upper', !0),
+        i(C) === 'lower' ? W(f, Math.max(a().minNum, Math.min(d, i(p)))) : W(p, Math.min(a().maxNum, Math.max(d, i(f)))),
+        g()([i(f), i(p)]))
+    } else (W(E, Math.max(a().minNum, Math.min(d, a().maxNum))), g()(i(E)))
+  }
+  var _ = Rn(),
+    O = M(_)
+  {
+    var w = (G) => {
+      var b = En(),
+        q = M(b, !0)
+      ;(x(b),
+        Q(
+          ($) => {
+            ;(V(b, 1, $), le(q, u().name))
+          },
+          [() => ve(ie('w-full px-4 text-center', u().class))],
+        ),
+        I(G, b))
+    }
+    ee(O, (G) => {
+      u().name && G(w)
+    })
+  }
+  var L = J(O, 2),
+    F = M(L)
+  {
+    var H = (G) => {
+        var b = Tn(),
+          q = ue(b)
+        ;(Y(q, 'tabindex', null),
+          (q.__keydown = function (...y) {}),
+          (q.__click = function (...y) {
+            ;(c() ? void 0 : h)?.apply(this, y)
+          }))
+        var $ = M(q)
+        x(q)
+        var T = J(q, 2)
+        ;(qe(T),
+          (T.__input = function (...y) {
+            ;(c()
+              ? void 0
+              : (N) => {
+                  const Z = Math.min(Number(N.target.value), i(p))
+                  ;(W(f, Z), W(C, 'lower'))
+                }
+            )?.apply(this, y)
+          }),
+          (T.__mouseup = function (...y) {
+            ;(c() ? void 0 : () => g()([i(f), i(p)]))?.apply(this, y)
+          }))
+        var d = J(T, 2),
+          n = M(d)
+        ;(kn(n), x(d))
+        var v = J(d, 2)
+        ;(qe(v),
+          (v.__input = function (...y) {
+            ;(c()
+              ? void 0
+              : (N) => {
+                  const Z = Math.max(Number(N.target.value), i(f))
+                  ;(W(p, Z), W(C, 'upper'))
+                }
+            )?.apply(this, y)
+          }),
+          (v.__mouseup = function (...y) {
+            ;(c() ? void 0 : () => g()([i(f), i(p)]))?.apply(this, y)
+          }))
+        var S = J(v, 2),
+          K = M(S)
+        ;(Nn(K),
+          x(S),
+          Q(() => {
+            ;(V(q, 1, `absolute h-full w-full rounded-full bg-[var(--gray-color)] ${c() ? '' : 'cursor-pointer'}`),
+              ce($, `left: ${i(P)}%; right: ${100 - i(X)}%;`),
+              Y(T, 'min', a().minNum),
+              Y(T, 'max', a().maxNum),
+              Y(T, 'step', a().step),
+              (T.disabled = c()),
+              V(T, 1, `absolute h-full w-full appearance-none bg-transparent ${i(C) === 'lower' ? 'z-30' : 'z-20'}`, 'svelte-17e64va'),
+              ce(d, `left: calc(${i(P)}% + 0rem); top: 50%; transform: translateY(-50%)`),
+              Y(v, 'min', a().minNum),
+              Y(v, 'max', a().maxNum),
+              Y(v, 'step', a().step),
+              (v.disabled = c()),
+              V(v, 1, `absolute h-full w-full appearance-none bg-transparent ${i(C) === 'upper' ? 'z-30' : 'z-20'}`, 'svelte-17e64va'),
+              ce(S, `left: calc(${i(X)}% - 2rem); top: 50%; transform: translateY(-50%)`))
+          }),
+          Ze(
+            T,
+            () => i(f),
+            (y) => W(f, y),
+          ),
+          Ze(
+            v,
+            () => i(p),
+            (y) => W(p, y),
+          ),
+          I(G, b))
+      },
+      ne = (G) => {
+        var b = In(),
+          q = ue(b)
+        ;(Y(q, 'tabindex', null),
+          (q.__keydown = function (...v) {}),
+          (q.__click = function (...v) {
+            ;(c() ? void 0 : h)?.apply(this, v)
+          }))
+        var $ = M(q)
+        x(q)
+        var T = J(q, 2)
+        ;(qe(T),
+          (T.__input = function (...v) {
+            ;(c()
+              ? void 0
+              : (S) => {
+                  W(E, Number(S.target.value))
+                }
+            )?.apply(this, v)
+          }),
+          (T.__mouseup = function (...v) {
+            ;(c() ? void 0 : () => g()(i(E)))?.apply(this, v)
+          }))
+        var d = J(T, 2),
+          n = M(d)
+        ;(Sn(n),
+          x(d),
+          Q(() => {
+            ;(V(q, 1, `absolute h-full w-full rounded-full bg-[var(--gray-color)] ${c() ? '' : 'cursor-pointer'}`),
+              V($, 1, `absolute h-full ${i(z) === 100 ? 'z-10 rounded-full' : 'z-10 rounded-l-full'}`),
+              ce($, `width: ${i(z)}%; background-color: var(--bg-color)`),
+              Y(T, 'min', a().minNum),
+              Y(T, 'max', a().maxNum),
+              Y(T, 'step', a().step),
+              (T.disabled = c()),
+              ce(d, `left: clamp(1rem, ${i(z)}%, calc(100% - 1rem)); top: 50%; transform: translate(-50%, -50%)`))
+          }),
+          Ze(
+            T,
+            () => i(E),
+            (v) => W(E, v),
+          ),
+          I(G, b))
+      }
+    ee(F, (G) => {
+      i(m) ? G(H) : G(ne, !1)
+    })
+  }
+  x(L)
+  var de = J(L, 2),
+    se = M(de)
+  {
+    var oe = (G) => {
+        var b = ye(),
+          q = ue(b)
+        ;(Ge(
+          q,
+          16,
+          () => ['lower', 'upper'],
+          ($) => $,
+          ($, T, d, n) => {
+            var v = An(),
+              S = M(v)
+            S.__click = function (...Z) {
+              ;(c() ? void 0 : () => A(T, 'decrement'))?.apply(this, Z)
+            }
+            var K = J(S, 2),
+              y = M(K, !0)
+            x(K)
+            var N = J(K, 2)
+            ;((N.__click = function (...Z) {
+              ;(c() ? void 0 : () => A(T, 'increment'))?.apply(this, Z)
+            }),
+              x(v),
+              Q(() => {
+                ;(V(v, 1, `flex items-center justify-center gap-2 rounded-full px-2 ${c() ? 'opacity-70' : ''}`),
+                  V(S, 1, `h-full w-4 ${c() ? '' : 'cursor-pointer'}`),
+                  (S.disabled = c() || (T === 'lower' ? i(f) <= a().minNum : i(p) <= i(f))),
+                  ce(K, `width: ${j}`),
+                  le(y, T === 'lower' ? i(f) : i(p)),
+                  V(N, 1, `h-full w-4 ${c() ? '' : 'cursor-pointer'}`),
+                  (N.disabled = c() || (T === 'lower' ? i(f) >= i(p) : i(p) >= a().maxNum)))
+              }),
+              I($, v))
+          },
+        ),
+          I(G, b))
+      },
+      ae = (G) => {
+        var b = zn(),
+          q = M(b)
+        q.__click = function (...n) {
+          ;(c() ? void 0 : () => A('single', 'decrement'))?.apply(this, n)
+        }
+        var $ = J(q, 2),
+          T = M($, !0)
+        x($)
+        var d = J($, 2)
+        ;((d.__click = function (...n) {
+          ;(c() ? void 0 : () => A('single', 'increment'))?.apply(this, n)
+        }),
+          x(b),
+          Q(() => {
+            ;(V(b, 1, `flex items-center justify-center gap-2 rounded-full px-2 ${c() ? 'opacity-70' : ''}`),
+              V(q, 1, `h-full w-4 ${c() ? '' : 'cursor-pointer'}`),
+              (q.disabled = c() || i(E) <= a().minNum),
+              ce($, `width: ${j}`),
+              le(T, i(E)),
+              V(d, 1, `h-full w-4 ${c() ? '' : 'cursor-pointer'}`),
+              (d.disabled = c() || i(E) >= a().maxNum))
+          }),
+          I(G, b))
+      }
+    ee(se, (G) => {
+      i(m) ? G(oe) : G(ae, !1)
+    })
+  }
+  ;(x(de),
+    x(_),
+    Q(
+      (G) => {
+        ;(V(_, 1, G),
+          Y(L, 'id', t()),
+          V(L, 1, `relative flex h-8 w-full justify-center rounded-full ${c() ? 'cursor-not-allowed opacity-50' : ''}`),
+          V(de, 1, `flex w-full ${i(m) ? 'justify-between' : 'justify-center'} gap-2`))
+      },
+      [() => ve(ie('relative flex w-full flex-col items-center gap-2', o()))],
+    ),
+    I(e, _),
+    Ee())
+}
+Te(['keydown', 'click', 'input', 'mouseup'])
+const On = (e, r, t, o, u, l) => {
+  if (r()) return
+  const s = i(t) ? o[1] : o[0]
+  ;(u(s), l()(s))
+}
+var Pn = U('<h5> </h5>'),
+  Ln = (e, r) => r(1),
+  jn = (e, r) => r(2),
+  Bn = U(
+    '<div><!> <div class="relative flex w-full grow items-center justify-center !bg-transparent"><button> </button> <label><input type="checkbox" class="absolute left-1/2 h-full w-full -translate-x-1/2 cursor-pointer appearance-none rounded-md"/> <span><span></span></span></label> <button> </button></div></div>',
+  )
+function ms(e, r) {
+  Se(r, !0)
+  let t = R(r, 'id', 19, () => crypto.randomUUID()),
+    o = R(r, 'disabled', 3, !1),
+    u = R(r, 'wrapperClass', 3, ''),
+    l = R(r, 'label', 19, () => ({ name: '', captionLeft: '', captionRight: '' })),
+    s = R(r, 'height', 3, '2rem'),
+    a = R(r, 'value', 15),
+    c = R(r, 'onChange', 3, () => {})
+  const g = [1, 2]
+  let m = pe(() => a() === g[1]),
+    k = pe(() => (i(m) ? `translateX(calc(${s()}))` : 'translateX(0)'))
+  nr(() => {
+    ;(a() === void 0 || a() === null) && a(g[0])
+  })
+  const j = (F) => {
+      o() || a() === F || (a(F), c()(F))
+    },
+    E = pe(() =>
+      Math.max(l().captionLeft?.length ?? 0, l().captionRight?.length ?? 0) > 0
+        ? `${Math.max(l().captionLeft?.length ?? 0, l().captionRight?.length ?? 0)}ch`
+        : 'auto',
+    )
+  var f = Bn(),
+    p = M(f)
+  {
+    var z = (F) => {
+      var H = Pn()
+      V(H, 1, 'w-full px-4 text-center')
+      var ne = M(H, !0)
+      ;(x(H), Q(() => le(ne, l().name)), I(F, H))
+    }
+    ee(p, (F) => {
+      l().name && F(z)
+    })
+  }
+  var P = J(p, 2),
+    X = M(P)
+  X.__click = [Ln, j]
+  var A = M(X, !0)
+  x(X)
+  var C = J(X, 2),
+    h = M(C)
+  ;(qe(h), (h.__change = [On, o, m, g, a, c]))
+  var _ = J(h, 2),
+    O = M(_)
+  ;(x(_), x(C))
+  var w = J(C, 2)
+  w.__click = [jn, j]
+  var L = M(w, !0)
+  ;(x(w),
+    x(P),
+    x(f),
+    Q(
+      (F) => {
+        ;(V(f, 1, F),
+          V(X, 1, `mr-2 ${o() ? 'opacity-60' : 'cursor-pointer'}`),
+          ce(X, `width: ${i(E) ?? ''}; text-align: end;`),
+          le(A, l().captionLeft),
+          V(
+            C,
+            1,
+            `relative flex items-center justify-between rounded-full border-1
+      ${i(m) ? '!border-[var(--bg-color)]' : '!border-[var(--gray-color)]'}
+      ${o() ? 'opacity-60' : ''}`,
+          ),
+          Y(h, 'id', t()),
+          (h.disabled = o()),
+          V(
+            _,
+            1,
+            `relative flex items-center rounded-full transition-all duration-250
+        ${i(m) ? '!bg-[var(--bg-color)]' : '!bg-[var(--gray-color)]'}
+        ${o() ? '' : 'cursor-pointer'}`,
+          ),
+          ce(_, `width: ${`calc(${s()} * 2)`}; height: ${s() ?? ''};`),
+          V(
+            O,
+            1,
+            `absolute rounded-full bg-[var(--back-color)] transition-all duration-250
+          ${o() ? 'opacity-60' : 'cursor-pointer'}`,
+          ),
+          ce(O, `width: ${`calc(${s()} * 0.75)`}; height: ${`calc(${s()} * 0.75)`}; margin: 0 ${`calc(${s()} * 0.1)`}; transform: ${i(k) ?? ''};`),
+          V(w, 1, `ml-2 ${o() ? 'opacity-60' : 'cursor-pointer'}`),
+          ce(w, `width: ${i(E) ?? ''}; text-align: start;`),
+          le(L, l().captionRight))
+      },
+      [() => ve(ie('bg-blue relative flex w-full flex-col items-center justify-center', u()))],
+    ),
+    No(
+      h,
+      () => i(m),
+      (F) => W(m, F),
+    ),
+    I(e, f),
+    Ee())
+}
+Te(['click', 'change'])
+var Dn = U('<h5> </h5>'),
+  Un = (e, r, t) => r(t.key),
+  Gn = U('<button class="inline-block cursor-pointer font-bold transition-transform duration-75 hover:scale-110 active:scale-95">↑↓</button>'),
+  Vn = U('<div><span> </span> <!></div>'),
+  Fn = (e, r, t, o) => r(t, o),
+  Hn = U('<button> </button>'),
+  Kn = U('<div class="flex w-full flex-col gap-1"></div>'),
+  Wn = U('<img loading="lazy"/>'),
+  Xn = U('<div class="flex items-center justify-center"><!></div>'),
+  Yn = (e, r, t, o) => {
+    ;(e.stopPropagation(), r(t[o.key], o.overflow?.formatting))
+  },
+  qn = U('<button class="w-full cursor-pointer overflow-hidden text-left text-ellipsis whitespace-nowrap"><!></button>'),
+  Zn = U('<div class="absolute top-1/2 right-10 -translate-y-1/2 transform rounded-md bg-[var(--green-color)] px-2 py-1 text-sm shadow-lg">✓</div>'),
+  Jn = U(
+    '<button class="m-2 flex cursor-pointer border-none bg-transparent text-2xl" aria-label="Копировать текст"><!> <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 11c0-2.828 0-4.243.879-5.121C7.757 5 9.172 5 12 5h3c2.828 0 4.243 0 5.121.879C21 6.757 21 8.172 21 11v5c0 2.828 0 4.243-.879 5.121C19.243 22 17.828 22 15 22h-3c-2.828 0-4.243 0-5.121-.879C6 20.243 6 18.828 6 16z"></path><path d="M6 19a3 3 0 0 1-3-3v-6c0-3.771 0-5.657 1.172-6.828S7.229 2 11 2h4a3 3 0 0 1 3 3"></path></g></svg></button>',
+  ),
+  Qn = U('<div role="columnheader"><!></div> <!>', 1),
+  $n = U('<div><!></div>'),
+  es = U('<div class="fixed z-50 max-w-xs rounded-md px-2 py-1 text-sm whitespace-pre-wrap shadow-lg" role="tooltip"><!></div>'),
+  rs = U('<div class="flex h-8 items-center justify-center bg-[var(--bg-color)]"><h5> </h5></div>'),
+  ts = U(
+    '<div><!> <div class="flex h-full flex-col overflow-hidden rounded-xl border-[var(--border-color)]"><div class="grid font-semibold"></div> <div class="flex-1 overflow-y-auto bg-[var(--container-color)]/50"><div class="grid min-w-0"></div></div> <!> <!></div></div> <!>',
+    1,
+  )
+function ps(e, r) {
+  Se(r, !0)
+  const t = () => gt(Fr, '$t', o),
+    [o, u] = pt()
+  let l = R(r, 'id', 19, () => crypto.randomUUID()),
+    s = R(r, 'wrapperClass', 3, ''),
+    a = R(r, 'label', 19, () => ({ name: '', class: '' })),
+    c = R(r, 'body', 23, () => []),
+    g = R(r, 'header', 19, () => []),
+    m = R(r, 'footer', 3, ''),
+    k = R(r, 'cursor', 3, null),
+    j = R(r, 'getData', 3, () => {}),
+    E = xe(ar({ isOpen: !1, rawData: '', formattedData: '' })),
+    f = { key: null, direction: null }
+  const p = (d) => {
+    ;(f.key === d ? (f.direction = f.direction === 'asc' ? 'desc' : 'asc') : ((f.key = d), (f.direction = 'asc')),
+      c(
+        [...c()].sort((n, v) => {
+          const S = n[d],
+            K = v[d]
+          if (typeof S == 'number' && typeof K == 'number') return f.direction === 'asc' ? S - K : K - S
+          if (S instanceof Date && K instanceof Date) return f.direction === 'asc' ? S.getTime() - K.getTime() : K.getTime() - S.getTime()
+          const y = String(S).toLowerCase(),
+            N = String(K).toLowerCase(),
+            Z = y.match(/\d+/g)?.[0] || '',
+            ge = N.match(/\d+/g)?.[0] || ''
+          if (Z && ge) {
+            const _e = parseInt(Z, 10) - parseInt(ge, 10)
+            if (_e !== 0) return f.direction === 'asc' ? _e : -_e
+          }
+          const he = y.localeCompare(N)
+          return f.direction === 'asc' ? he : -he
+        }),
+      ))
+  }
+  let z = xe(null)
+  function P() {
+    if (!i(z)) return
+    const { scrollTop: d, clientHeight: n, scrollHeight: v } = i(z)
+    d + n >= v - 50 && k() !== null && r.loader && !fo(r.loader) && j()()
+  }
+  function X(d, n) {
+    if (n.onClick) n.onClick(d)
+    else if (n.eventHandler && r.onClick) {
+      let v = {}
+      ;(n.eventHandler.Variables.forEach((S) => {
+        v[S] = d[S]
+      }),
+        (n.eventHandler.Value = JSON.stringify(v)),
+        r.onClick(n.eventHandler))
+    }
+  }
+  let A = xe(ar({ x: '', y: -1 })),
+    C = xe(ar({ show: !1, text: '', x: 0, y: 0 }))
+  const h = async (d, n) => {
+      W(E, { isOpen: !i(E).isOpen, rawData: d, formattedData: n ? n(d) : (d ?? '') }, !0)
+    },
+    _ = (d, n, v) => {
+      W(C, { show: !0, text: v ? v(n) : (n ?? ''), x: d.clientX, y: d.clientY }, !0)
+    },
+    O = () => {
+      i(C).show = !1
+    },
+    w = (d, n) => !!(typeof d.image?.src == 'function' ? d.image.src(n) : d.image?.src)
+  var L = ts(),
+    F = ue(L),
+    H = M(F)
+  {
+    var ne = (d) => {
+      var n = Dn(),
+        v = M(n, !0)
+      ;(x(n),
+        Q(
+          (S) => {
+            ;(V(n, 1, S), le(v, a().name))
+          },
+          [() => ve(ie('w-full px-4 text-center', a().class))],
+        ),
+        I(d, n))
+    }
+    ee(H, (d) => {
+      a().name && d(ne)
+    })
+  }
+  var de = J(H, 2),
+    se = M(de)
+  ;(Ge(
+    se,
+    20,
+    g,
+    (d) => d,
+    (d, n) => {
+      var v = Vn(),
+        S = M(v),
+        K = M(S, !0)
+      x(S)
+      var y = J(S, 2)
+      {
+        var N = (Z) => {
+          var ge = Gn()
+          ;((ge.__click = [Un, p, n]), I(Z, ge))
+        }
+        ee(y, (Z) => {
+          n.sortable && Z(N)
+        })
+      }
+      ;(x(v),
+        Q(
+          (Z) => {
+            ;(V(v, 1, Z), le(K, n.label?.name))
+          },
+          [() => ve(ie('justify-center bg-[var(--bg-color)] p-2 text-left', n.label?.class))],
+        ),
+        I(d, v))
+    },
+  ),
+    x(se))
+  var oe = J(se, 2),
+    ae = M(oe)
+  ;(Ge(
+    ae,
+    22,
+    c,
+    (d) => d,
+    (d, n, v) => {
+      var S = ye(),
+        K = ue(S)
+      ;(Ge(
+        K,
+        16,
+        g,
+        (y) => y,
+        (y, N) => {
+          var Z = $n(),
+            ge = M(Z)
+          {
+            var he = (Ne) => {
+                var Ie = Kn()
+                ;(Ge(
+                  Ie,
+                  20,
+                  () => N.buttons,
+                  (er) => er,
+                  (er, Ae) => {
+                    var Ve = Hn()
+                    Ve.__click = [Fn, X, n, Ae]
+                    var Le = M(Ve, !0)
+                    ;(x(Ve),
+                      Q(
+                        (ze, ke) => {
+                          ;(V(Ve, 1, `${ze ?? ''} bg-[var(--bg-color)]`), le(Le, ke))
+                        },
+                        [
+                          () =>
+                            ie(`cursor-pointer rounded-full
                            px-4 py-1 font-medium transition-shadow outline-none select-none hover:shadow-md
-                          ${typeof Ae.class=="function"?Ae.class(n):Ae.class}`),()=>typeof Ae.name=="function"?Ae.name(n):Ae.name]),I(er,Ve)}),x(Ie),I(Ne,Ie)},_e=Ne=>{var Ie=ye(),er=ue(Ie);{var Ae=Le=>{var ze=Xn(),ke=M(ze);{var br=je=>{var Re=Wn();Q((rr,me)=>{Y(Re,"src",rr),Y(Re,"alt",N.image.alt??"Image"),V(Re,1,me)},[()=>typeof N.image?.src=="function"?N.image.src(n):N.image?.src||"",()=>ve(ie(`h-full w-full object-cover ${N.image.class||""}`))]),I(je,Re)},hr=je=>{var Re=ye(),rr=ue(Re);{var me=fe=>{var Be=ye(),wr=ue(Be);Ur(wr,()=>N.image.defaultIcon,(Fe,ir)=>{ir(Fe,{})}),I(fe,Be)};ee(rr,fe=>{N.image.defaultIcon&&fe(me)},!0)}I(je,Re)};ee(ke,je=>{w(N,n)?je(br):je(hr,!1)})}x(ze),Q(()=>ce(ze,`width: ${N.image.width||"5rem"}; height: ${N.image.height||"5rem"};`)),I(Le,ze)},Ve=Le=>{var ze=Qn(),ke=ue(ze);ke.__mousemove=function(...me){(N.overflow?.truncated?fe=>{i(C).x=fe.clientX,i(C).y=fe.clientY}:void 0)?.apply(this,me)},Y(ke,"tabindex",null);var br=M(ke);{var hr=me=>{var fe=qn();fe.__click=[Yn,h,n,N];var Be=M(fe);lr(Be,()=>n[N.key]),x(fe),I(me,fe)},je=me=>{var fe=ye(),Be=ue(fe);lr(Be,()=>n[N.key]),I(me,fe)};ee(br,me=>{N.overflow?.modal?me(hr):me(je,!1)})}x(ke);var Re=J(ke,2);{var rr=me=>{var fe=Jn();fe.__click=Fe=>{Fe.preventDefault(),navigator.clipboard.writeText(n[N.key]),W(A,{x:N.key,y:i(v)},!0),setTimeout(()=>W(A,{x:"",y:-1},!0),1e3)};var Be=M(fe);{var wr=Fe=>{var ir=Zn();Ce(3,ir,()=>sr,()=>({x:10,duration:200})),I(Fe,ir)};ee(Be,Fe=>{i(A).y===i(v)&&i(A).x===N.key&&Fe(wr)})}ft(2),x(fe),I(me,fe)};ee(Re,me=>{N.overflow?.copy&&me(rr)})}Q(()=>V(ke,1,`w-full max-w-full break-words ${N.overflow?.truncated?"overflow-hidden text-ellipsis whitespace-nowrap":"whitespace-normal"}`)),We("mouseenter",ke,function(...me){(N.overflow?.truncated?fe=>_(fe,n[N.key],N.overflow?.formatting):void 0)?.apply(this,me)}),We("mouseleave",ke,function(...me){(N.overflow?.truncated?O:void 0)?.apply(this,me)}),I(Le,ze)};ee(er,Le=>{N.image?Le(Ae):Le(Ve,!1)},!0)}I(Ne,Ie)};ee(ge,Ne=>{N.buttons?Ne(he):Ne(_e,!1)})}x(Z),Q(()=>V(Z,1,`relative flex w-full min-w-0 items-center px-2 py-1 break-words
-              ${i(v)%2?"!bg-[var(--back-color)]/40":""}
-              ${N.align==="center"?"flex justify-center text-center":N.align==="right"?"flex justify-end text-right":"flex justify-start text-left"}`)),I(y,Z)}),I(d,S)}),x(ae),x(oe),mt(oe,d=>W(z,d),()=>i(z));var G=J(oe,2);{var b=d=>{var n=es(),v=M(n);lr(v,()=>i(C).text),x(n),Q(()=>ce(n,`background: color-mix(in srgb, var(--yellow-color) 30%, var(--back-color)); transform: translateX(-50%); left: ${i(C).x+10}px; top: ${i(C).y+10}px;`)),Ce(3,n,()=>sr,()=>({y:10,duration:200})),I(d,n)};ee(G,d=>{i(C).show&&d(b)})}var q=J(G,2);{var $=d=>{var n=rs(),v=M(n),S=M(v,!0);x(v),x(n),Q(()=>le(S,m())),I(d,n)};ee(q,d=>{m()&&d($)})}x(de),x(F);var T=J(F,2);{const d=S=>{var K=ye(),y=ue(K);lr(y,()=>i(E).formattedData),I(S,K)},n=S=>{ga(S,{content:{name:"Copy"},wrapperClass:"w-20 bg-pink",onClick:()=>{navigator.clipboard.writeText(i(E).rawData),i(E).isOpen=!1}})};let v=pe(()=>t()("debug.baud_rate_data"));_n(T,{get isOpen(){return i(E).isOpen},get title(){return i(v)},main:d,footer:n,$$slots:{main:!0,footer:!0}})}Q((d,n,v)=>{Y(F,"id",l()),V(F,1,d),ce(se,n),ce(ae,v)},[()=>ve(ie("bg-blue flex h-full w-full flex-col overflow-hidden",s())),()=>`grid-template-columns: ${g().map(d=>d.width||"minmax(0, 1fr)").join(" ")};`,()=>`grid-template-columns: ${g().map(d=>d.width||"minmax(0, 1fr)").join(" ")};`]),We("scroll",oe,P),I(e,L),Ee(),u()}Te(["click","mousemove"]);function re(){return crypto.randomUUID()}const gs=vt(Fr,e=>({HEADER_OPTIONS:[{id:re(),name:"GET",value:"GET"},{id:re(),name:"SET",value:"SET"},{id:re(),name:"OK!",value:"OK!"},{id:re(),name:"ER!",value:"ER!"}],SHORT_ARGUMENT_OPTION:[{id:re(),value:"NoSave",name:e("constructor.props.action.update")},{id:re(),value:"Save",name:e("constructor.props.action.save")},{id:re(),value:"NoSend",name:e("constructor.props.action.nosend")}],FULL_ARGUMENT_OPTION:[{id:re(),value:"NoSave",name:e("constructor.props.action.update")},{id:re(),value:"Save",name:e("constructor.props.action.save")},{id:re(),value:"",name:e("constructor.props.action.custom")}],INPUT_TYPE_OPTIONS:[{id:re(),value:"text",name:e("constructor.props.type.text")},{id:re(),value:"password",name:e("constructor.props.type.password")},{id:re(),value:"number",name:e("constructor.props.type.number")},{id:re(),value:"text-area",name:e("constructor.props.type.textarea")}],SELECT_TYPE_OPTIONS:[{id:re(),value:"select",name:e("constructor.props.type.select")},{id:re(),value:"buttons",name:e("constructor.props.type.buttons")},{id:re(),value:"input",name:e("constructor.props.type.selectput")}],SELECT_VALUE_TYPE_OPTIONS:[{id:re(),value:"text",name:e("constructor.props.valuetype.text")},{id:re(),value:"number",name:e("constructor.props.valuetype.number")}],SLIDER_TYPE_OPTIONS:[{id:re(),value:"single",name:e("constructor.props.type.single")},{id:re(),value:"range",name:e("constructor.props.type.range")}],TEXTFIELD_SIZE_OPTIONS:[{id:re(),value:"small",name:e("constructor.props.type.small")},{id:re(),value:"base",name:e("constructor.props.type.base")},{id:re(),value:"large",name:e("constructor.props.type.large")},{id:re(),value:"huge",name:e("constructor.props.type.huge")},{id:re(),value:"massive",name:e("constructor.props.type.massive")}],COLOR_OPTIONS:[{id:re(),name:"",value:"bg-gray",class:"bg-gray"},{id:re(),name:"",value:"bg-max",class:"bg-max"},{id:re(),name:"",value:"bg-red",class:"bg-red"},{id:re(),name:"",value:"bg-yellow",class:"bg-yellow"},{id:re(),name:"",value:"bg-green",class:"bg-green"},{id:re(),name:"",value:"bg-blue",class:"bg-blue"}],TEXT_COLOR_OPTIONS:[{id:re(),name:"",value:"text-[#333] dark:text-[#e2e3e7]",class:"bg-[var(--shadow-color)] dark:bg-[#e2e3e7] "},{id:re(),name:"",value:"text-red-500 dark:text-red-400",class:"bg-red-500 dark:bg-red-400"},{id:re(),name:"",value:"text-yellow-500 dark:text-yellow-400",class:"bg-yellow-500 dark:bg-yellow-400"},{id:re(),name:"",value:"text-green-500 dark:text-green-400",class:"bg-green-500 dark:bg-green-400"},{id:re(),name:"",value:"text-blue-500 dark:text-blue-400",class:"bg-blue-500 dark:bg-blue-400"},{id:re(),name:"",value:"text-gray-500 dark:text-gray-400",class:"bg-gray-500 dark:bg-gray-400"}],ALIGN_OPTIONS:[{id:re(),value:"text-left",name:e("constructor.props.align.left")},{id:re(),value:"text-center",name:e("constructor.props.align.center")},{id:re(),value:"text-right",name:e("constructor.props.align.right")}],HEIGHT_OPTIONS:[{id:re(),value:"py-1",name:e("constructor.props.height.small")},{id:re(),value:"py-2",name:e("constructor.props.height.medium")},{id:re(),value:"py-3",name:e("constructor.props.height.large")}],ACCORDION_TYPE_OPTIONS:[{id:re(),value:!1,name:e("constructor.props.type.main")},{id:re(),value:!0,name:e("constructor.props.type.sub")}]}));export{ls as A,ga as B,cs as C,ds as F,fs as I,_n as M,us as S,ps as T,V as a,ce as b,ve as c,Fr as d,Ge as e,ms as f,vs as g,is as i,gs as o,Y as s,ie as t};
+                          ${typeof Ae.class == 'function' ? Ae.class(n) : Ae.class}`),
+                          () => (typeof Ae.name == 'function' ? Ae.name(n) : Ae.name),
+                        ],
+                      ),
+                      I(er, Ve))
+                  },
+                ),
+                  x(Ie),
+                  I(Ne, Ie))
+              },
+              _e = (Ne) => {
+                var Ie = ye(),
+                  er = ue(Ie)
+                {
+                  var Ae = (Le) => {
+                      var ze = Xn(),
+                        ke = M(ze)
+                      {
+                        var br = (je) => {
+                            var Re = Wn()
+                            ;(Q(
+                              (rr, me) => {
+                                ;(Y(Re, 'src', rr), Y(Re, 'alt', N.image.alt ?? 'Image'), V(Re, 1, me))
+                              },
+                              [
+                                () => (typeof N.image?.src == 'function' ? N.image.src(n) : N.image?.src || ''),
+                                () => ve(ie(`h-full w-full object-cover ${N.image.class || ''}`)),
+                              ],
+                            ),
+                              I(je, Re))
+                          },
+                          hr = (je) => {
+                            var Re = ye(),
+                              rr = ue(Re)
+                            {
+                              var me = (fe) => {
+                                var Be = ye(),
+                                  wr = ue(Be)
+                                ;(Ur(
+                                  wr,
+                                  () => N.image.defaultIcon,
+                                  (Fe, ir) => {
+                                    ir(Fe, {})
+                                  },
+                                ),
+                                  I(fe, Be))
+                              }
+                              ee(
+                                rr,
+                                (fe) => {
+                                  N.image.defaultIcon && fe(me)
+                                },
+                                !0,
+                              )
+                            }
+                            I(je, Re)
+                          }
+                        ee(ke, (je) => {
+                          w(N, n) ? je(br) : je(hr, !1)
+                        })
+                      }
+                      ;(x(ze), Q(() => ce(ze, `width: ${N.image.width || '5rem'}; height: ${N.image.height || '5rem'};`)), I(Le, ze))
+                    },
+                    Ve = (Le) => {
+                      var ze = Qn(),
+                        ke = ue(ze)
+                      ;((ke.__mousemove = function (...me) {
+                        ;(N.overflow?.truncated
+                          ? (fe) => {
+                              ;((i(C).x = fe.clientX), (i(C).y = fe.clientY))
+                            }
+                          : void 0
+                        )?.apply(this, me)
+                      }),
+                        Y(ke, 'tabindex', null))
+                      var br = M(ke)
+                      {
+                        var hr = (me) => {
+                            var fe = qn()
+                            fe.__click = [Yn, h, n, N]
+                            var Be = M(fe)
+                            ;(lr(Be, () => n[N.key]), x(fe), I(me, fe))
+                          },
+                          je = (me) => {
+                            var fe = ye(),
+                              Be = ue(fe)
+                            ;(lr(Be, () => n[N.key]), I(me, fe))
+                          }
+                        ee(br, (me) => {
+                          N.overflow?.modal ? me(hr) : me(je, !1)
+                        })
+                      }
+                      x(ke)
+                      var Re = J(ke, 2)
+                      {
+                        var rr = (me) => {
+                          var fe = Jn()
+                          fe.__click = (Fe) => {
+                            ;(Fe.preventDefault(),
+                              navigator.clipboard.writeText(n[N.key]),
+                              W(A, { x: N.key, y: i(v) }, !0),
+                              setTimeout(() => W(A, { x: '', y: -1 }, !0), 1e3))
+                          }
+                          var Be = M(fe)
+                          {
+                            var wr = (Fe) => {
+                              var ir = Zn()
+                              ;(Ce(
+                                3,
+                                ir,
+                                () => sr,
+                                () => ({ x: 10, duration: 200 }),
+                              ),
+                                I(Fe, ir))
+                            }
+                            ee(Be, (Fe) => {
+                              i(A).y === i(v) && i(A).x === N.key && Fe(wr)
+                            })
+                          }
+                          ;(ft(2), x(fe), I(me, fe))
+                        }
+                        ee(Re, (me) => {
+                          N.overflow?.copy && me(rr)
+                        })
+                      }
+                      ;(Q(() =>
+                        V(
+                          ke,
+                          1,
+                          `w-full max-w-full break-words ${N.overflow?.truncated ? 'overflow-hidden text-ellipsis whitespace-nowrap' : 'whitespace-normal'}`,
+                        ),
+                      ),
+                        We('mouseenter', ke, function (...me) {
+                          ;(N.overflow?.truncated ? (fe) => _(fe, n[N.key], N.overflow?.formatting) : void 0)?.apply(this, me)
+                        }),
+                        We('mouseleave', ke, function (...me) {
+                          ;(N.overflow?.truncated ? O : void 0)?.apply(this, me)
+                        }),
+                        I(Le, ze))
+                    }
+                  ee(
+                    er,
+                    (Le) => {
+                      N.image ? Le(Ae) : Le(Ve, !1)
+                    },
+                    !0,
+                  )
+                }
+                I(Ne, Ie)
+              }
+            ee(ge, (Ne) => {
+              N.buttons ? Ne(he) : Ne(_e, !1)
+            })
+          }
+          ;(x(Z),
+            Q(() =>
+              V(
+                Z,
+                1,
+                `relative flex w-full min-w-0 items-center px-2 py-1 break-words
+              ${i(v) % 2 ? '!bg-[var(--back-color)]/40' : ''}
+              ${N.align === 'center' ? 'flex justify-center text-center' : N.align === 'right' ? 'flex justify-end text-right' : 'flex justify-start text-left'}`,
+              ),
+            ),
+            I(y, Z))
+        },
+      ),
+        I(d, S))
+    },
+  ),
+    x(ae),
+    x(oe),
+    mt(
+      oe,
+      (d) => W(z, d),
+      () => i(z),
+    ))
+  var G = J(oe, 2)
+  {
+    var b = (d) => {
+      var n = es(),
+        v = M(n)
+      ;(lr(v, () => i(C).text),
+        x(n),
+        Q(() =>
+          ce(
+            n,
+            `background: color-mix(in srgb, var(--yellow-color) 30%, var(--back-color)); transform: translateX(-50%); left: ${i(C).x + 10}px; top: ${i(C).y + 10}px;`,
+          ),
+        ),
+        Ce(
+          3,
+          n,
+          () => sr,
+          () => ({ y: 10, duration: 200 }),
+        ),
+        I(d, n))
+    }
+    ee(G, (d) => {
+      i(C).show && d(b)
+    })
+  }
+  var q = J(G, 2)
+  {
+    var $ = (d) => {
+      var n = rs(),
+        v = M(n),
+        S = M(v, !0)
+      ;(x(v), x(n), Q(() => le(S, m())), I(d, n))
+    }
+    ee(q, (d) => {
+      m() && d($)
+    })
+  }
+  ;(x(de), x(F))
+  var T = J(F, 2)
+  {
+    const d = (S) => {
+        var K = ye(),
+          y = ue(K)
+        ;(lr(y, () => i(E).formattedData), I(S, K))
+      },
+      n = (S) => {
+        ga(S, {
+          content: { name: 'Copy' },
+          wrapperClass: 'w-20 bg-pink',
+          onClick: () => {
+            ;(navigator.clipboard.writeText(i(E).rawData), (i(E).isOpen = !1))
+          },
+        })
+      }
+    let v = pe(() => t()('debug.baud_rate_data'))
+    _n(T, {
+      get isOpen() {
+        return i(E).isOpen
+      },
+      get title() {
+        return i(v)
+      },
+      main: d,
+      footer: n,
+      $$slots: { main: !0, footer: !0 },
+    })
+  }
+  ;(Q(
+    (d, n, v) => {
+      ;(Y(F, 'id', l()), V(F, 1, d), ce(se, n), ce(ae, v))
+    },
+    [
+      () => ve(ie('bg-blue flex h-full w-full flex-col overflow-hidden', s())),
+      () =>
+        `grid-template-columns: ${g()
+          .map((d) => d.width || 'minmax(0, 1fr)')
+          .join(' ')};`,
+      () =>
+        `grid-template-columns: ${g()
+          .map((d) => d.width || 'minmax(0, 1fr)')
+          .join(' ')};`,
+    ],
+  ),
+    We('scroll', oe, P),
+    I(e, L),
+    Ee(),
+    u())
+}
+Te(['click', 'mousemove'])
+function re() {
+  return crypto.randomUUID()
+}
+const gs = vt(Fr, (e) => ({
+  HEADER_OPTIONS: [
+    { id: re(), name: 'GET', value: 'GET' },
+    { id: re(), name: 'SET', value: 'SET' },
+    { id: re(), name: 'OK!', value: 'OK!' },
+    { id: re(), name: 'ER!', value: 'ER!' },
+  ],
+  SHORT_ARGUMENT_OPTION: [
+    { id: re(), value: 'NoSave', name: e('constructor.props.action.update') },
+    { id: re(), value: 'Save', name: e('constructor.props.action.save') },
+    { id: re(), value: 'NoSend', name: e('constructor.props.action.nosend') },
+  ],
+  FULL_ARGUMENT_OPTION: [
+    { id: re(), value: 'NoSave', name: e('constructor.props.action.update') },
+    { id: re(), value: 'Save', name: e('constructor.props.action.save') },
+    { id: re(), value: '', name: e('constructor.props.action.custom') },
+  ],
+  INPUT_TYPE_OPTIONS: [
+    { id: re(), value: 'text', name: e('constructor.props.type.text') },
+    { id: re(), value: 'password', name: e('constructor.props.type.password') },
+    { id: re(), value: 'number', name: e('constructor.props.type.number') },
+    { id: re(), value: 'text-area', name: e('constructor.props.type.textarea') },
+  ],
+  SELECT_TYPE_OPTIONS: [
+    { id: re(), value: 'select', name: e('constructor.props.type.select') },
+    { id: re(), value: 'buttons', name: e('constructor.props.type.buttons') },
+    { id: re(), value: 'input', name: e('constructor.props.type.selectput') },
+  ],
+  SELECT_VALUE_TYPE_OPTIONS: [
+    { id: re(), value: 'text', name: e('constructor.props.valuetype.text') },
+    { id: re(), value: 'number', name: e('constructor.props.valuetype.number') },
+  ],
+  SLIDER_TYPE_OPTIONS: [
+    { id: re(), value: 'single', name: e('constructor.props.type.single') },
+    { id: re(), value: 'range', name: e('constructor.props.type.range') },
+  ],
+  TEXTFIELD_SIZE_OPTIONS: [
+    { id: re(), value: 'small', name: e('constructor.props.type.small') },
+    { id: re(), value: 'base', name: e('constructor.props.type.base') },
+    { id: re(), value: 'large', name: e('constructor.props.type.large') },
+    { id: re(), value: 'huge', name: e('constructor.props.type.huge') },
+    { id: re(), value: 'massive', name: e('constructor.props.type.massive') },
+  ],
+  COLOR_OPTIONS: [
+    { id: re(), name: '', value: 'bg-gray', class: 'bg-gray' },
+    { id: re(), name: '', value: 'bg-max', class: 'bg-max' },
+    { id: re(), name: '', value: 'bg-red', class: 'bg-red' },
+    { id: re(), name: '', value: 'bg-yellow', class: 'bg-yellow' },
+    { id: re(), name: '', value: 'bg-green', class: 'bg-green' },
+    { id: re(), name: '', value: 'bg-blue', class: 'bg-blue' },
+  ],
+  TEXT_COLOR_OPTIONS: [
+    { id: re(), name: '', value: 'text-[#333] dark:text-[#e2e3e7]', class: 'bg-[var(--shadow-color)] dark:bg-[#e2e3e7] ' },
+    { id: re(), name: '', value: 'text-red-500 dark:text-red-400', class: 'bg-red-500 dark:bg-red-400' },
+    { id: re(), name: '', value: 'text-yellow-500 dark:text-yellow-400', class: 'bg-yellow-500 dark:bg-yellow-400' },
+    { id: re(), name: '', value: 'text-green-500 dark:text-green-400', class: 'bg-green-500 dark:bg-green-400' },
+    { id: re(), name: '', value: 'text-blue-500 dark:text-blue-400', class: 'bg-blue-500 dark:bg-blue-400' },
+    { id: re(), name: '', value: 'text-gray-500 dark:text-gray-400', class: 'bg-gray-500 dark:bg-gray-400' },
+  ],
+  TEXT_ALIGN_OPTIONS: [
+    { id: re(), value: 'text-left', name: e('constructor.props.align.left') },
+    { id: re(), value: 'text-center', name: e('constructor.props.align.center') },
+    { id: re(), value: 'text-right', name: e('constructor.props.align.right') },
+  ],
+  HEIGHT_OPTIONS: [
+    { id: re(), value: 'py-1', name: e('constructor.props.height.small') },
+    { id: re(), value: 'py-2', name: e('constructor.props.height.medium') },
+    { id: re(), value: 'py-3', name: e('constructor.props.height.large') },
+  ],
+  ACCORDION_TYPE_OPTIONS: [
+    { id: re(), value: !1, name: e('constructor.props.type.main') },
+    { id: re(), value: !0, name: e('constructor.props.type.sub') },
+  ],
+}))
+export {
+  ls as A,
+  ga as B,
+  cs as C,
+  ds as F,
+  fs as I,
+  _n as M,
+  us as S,
+  ps as T,
+  V as a,
+  ce as b,
+  ve as c,
+  Fr as d,
+  Ge as e,
+  ms as f,
+  vs as g,
+  is as i,
+  gs as o,
+  Y as s,
+  ie as t,
+}

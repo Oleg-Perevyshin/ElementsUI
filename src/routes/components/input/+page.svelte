@@ -12,7 +12,7 @@
     properties: {
       id: crypto.randomUUID(),
       label: { name: 'Label', class: 'text-center' },
-      componentClass: 'bg-max !resize-none',
+      componentClass: 'bg-max resize-none',
       type: 'text',
       maxlength: 32,
       number: { minNum: 0, maxNum: 10, step: 1 },

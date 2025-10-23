@@ -153,8 +153,8 @@
       />
       <UI.Input
         label={{ name: $t('constructor.props.info') }}
-        value={component.properties.content.info}
-        onUpdate={(value) => updateProperty('content.info', value as string, component, onPropertyChange)}
+        value={component.properties.content.info.text}
+        onUpdate={(value) => updateProperty('content.info.text', value as string, component, onPropertyChange)}
       />
       <UI.Input
         label={{ name: $t('constructor.props.svgicon') }}

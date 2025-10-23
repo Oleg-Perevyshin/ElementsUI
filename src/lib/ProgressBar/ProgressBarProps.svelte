@@ -20,7 +20,7 @@
   let VARIABLE_OPTIONS = $derived(DeviceVariables && Array.isArray(DeviceVariables) ? DeviceVariables : [])
 
   const initialAlign = $derived(
-    $optionsStore.ALIGN_OPTIONS.find((a) =>
+    $optionsStore.TEXT_ALIGN_OPTIONS.find((a) =>
       (a.value as string).includes(component.properties.label?.class?.split(' ').find((cls: string) => cls.startsWith('text-'))),
     ),
   )
@@ -96,7 +96,7 @@
         label={{ name: $t('constructor.props.align') }}
         type="buttons"
         value={initialAlign}
-        options={$optionsStore.ALIGN_OPTIONS}
+        options={$optionsStore.TEXT_ALIGN_OPTIONS}
         onUpdate={(option) => updateProperty('label.class', twMerge(component.properties.label.class, option.value), component, onPropertyChange)}
       />
       <UI.Select

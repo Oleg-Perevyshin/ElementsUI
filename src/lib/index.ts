@@ -24,6 +24,9 @@ export { default as TableProps } from './Table/TableProps.svelte'
 export { default as TextField } from './TextField/TextField.svelte'
 export { default as TextFieldProps } from './TextField/TextFieldProps.svelte'
 
+export * from './locales/i18n'
+export * from './locales/translations'
+
 export {
   type UIComponent,
   type Position,

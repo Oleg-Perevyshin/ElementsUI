@@ -36,7 +36,7 @@ ${formatObjectToString(fileAttachComponent.properties as IFileInputProps)}
     }
   }
 
-  const handleImageUpload = (event: Event, fieldName: string) => {
+  const handleImageUpload = (event: Event) => {
     const target = event.target as HTMLInputElement
     const file = target.files?.[0]
     if (!file) return
@@ -45,7 +45,7 @@ ${formatObjectToString(fileAttachComponent.properties as IFileInputProps)}
     reader.onload = () => {
       const base64WithPrefix = reader.result as string
       updateComponent({
-        properties: { [fieldName]: base64WithPrefix },
+        properties: { ['currentImage']: base64WithPrefix },
       })
     }
     reader.readAsDataURL(file)
@@ -54,7 +54,7 @@ ${formatObjectToString(fileAttachComponent.properties as IFileInputProps)}
 
 <ComponentExample {codeText}>
   {#snippet component()}
-    <FileAttach {...fileAttachComponent.properties as IFileInputProps} onChange={(event) => handleImageUpload(event, 'currentImage')} />
+    <FileAttach {...fileAttachComponent.properties as IFileInputProps} onChange={(event) => handleImageUpload(event)} />
   {/snippet}
   {#snippet componentProps()}
     <FileAttachProps
