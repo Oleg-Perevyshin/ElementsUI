@@ -111,6 +111,13 @@ export const optionsStore = derived(t, ($t) => {
       { id: id(), value: 'contain', name: $t('constructor.props.type.contain') },
     ],
 
+    INFO_SIDE_OPTIONS: [
+      { id: id(), value: 'top', name: $t('constructor.props.info.top') },
+      { id: id(), value: 'bottom', name: $t('constructor.props.info.bottom') },
+      { id: id(), value: 'left', name: $t('constructor.props.info.left') },
+      { id: id(), value: 'right', name: $t('constructor.props.info.right') },
+    ],
+
     FORM_OPTIONS: [
       { id: id(), value: 'square', name: $t('constructor.props.type.square') },
       { id: id(), value: 'circle', name: $t('constructor.props.type.circle') },

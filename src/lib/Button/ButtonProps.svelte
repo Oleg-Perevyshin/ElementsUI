@@ -159,10 +159,9 @@
       <UI.Select
         label={{ name: $t('constructor.props.info.side') }}
         type="buttons"
-        options={$optionsStore.HEIGHT_OPTIONS}
-        value={initialHeight}
-        onUpdate={(option) =>
-          updateProperty('componentClass', twMerge(component.properties.componentClass, option.value), component, onPropertyChange)}
+        options={$optionsStore.INFO_SIDE_OPTIONS}
+        value={$optionsStore.INFO_SIDE_OPTIONS.find((h) => h.value === component.properties.content.info.side)}
+        onUpdate={(option) => updateProperty('content.info.side', option.value as string, component, onPropertyChange)}
       />
       <UI.Input
         label={{ name: $t('constructor.props.svgicon') }}
