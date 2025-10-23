@@ -113,10 +113,10 @@
       </span>
     </button>
 
-    {#if showInfo && content.info?.side === 'top'}
+    {#if content.info?.side === 'top'}
       <div
         transition:fly={{ y: -15, duration: 300 }}
-        class="absolute bottom-full left-1/2 z-50 mb-2 max-w-min min-w-fit rounded-md bg-(--container-color) px-3 py-1 text-sm shadow-lg"
+        class="absolute bottom-full left-1/2 z-50 mb-2 w-max max-w-min rounded-md bg-(--container-color) px-3 py-1 text-sm shadow-lg"
         style="transform: translateX(-50%);"
       >
         {content.info?.text}
@@ -125,7 +125,7 @@
     {:else if showInfo && content.info?.side === 'bottom'}
       <div
         transition:fly={{ y: 15, duration: 300 }}
-        class="absolute top-full left-1/2 z-50 mt-2 max-w-min min-w-fit rounded-md bg-(--container-color) px-3 py-1 text-sm shadow-lg"
+        class="absolute top-full left-1/2 z-50 mt-2 w-max max-w-min rounded-md bg-(--container-color) px-3 py-1 text-sm shadow-lg"
         style="transform: translateX(-50%);"
       >
         {content.info?.text}
@@ -134,7 +134,7 @@
     {:else if showInfo && content.info?.side === 'left'}
       <div
         transition:fly={{ x: 15, duration: 300 }}
-        class="absolute top-1/2 right-full z-50 mr-2 max-w-min min-w-fit rounded-md bg-(--container-color) px-3 py-1 text-sm shadow-lg"
+        class="absolute top-1/2 right-full z-50 mr-2 w-max max-w-min rounded-md bg-(--container-color) px-3 py-1 text-sm shadow-lg"
         style="transform: translateY(-50%);"
       >
         {content.info?.text}
@@ -143,7 +143,7 @@
     {:else if showInfo && content.info?.side === 'right'}
       <div
         transition:fly={{ x: -15, duration: 300 }}
-        class="absolute top-1/2 left-full z-50 ml-2 max-w-min min-w-fit rounded-md bg-(--container-color) px-3 py-1 text-sm shadow-lg"
+        class="absolute top-1/2 left-full z-50 ml-2 w-max max-w-min rounded-md bg-(--container-color) px-3 py-1 text-sm shadow-lg"
         style="transform: translateY(-50%);"
       >
         {content.info?.text}

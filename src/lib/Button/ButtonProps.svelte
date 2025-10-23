@@ -156,6 +156,14 @@
         value={component.properties.content.info.text}
         onUpdate={(value) => updateProperty('content.info.text', value as string, component, onPropertyChange)}
       />
+      <UI.Select
+        label={{ name: $t('constructor.props.info.side') }}
+        type="buttons"
+        options={$optionsStore.HEIGHT_OPTIONS}
+        value={initialHeight}
+        onUpdate={(option) =>
+          updateProperty('componentClass', twMerge(component.properties.componentClass, option.value), component, onPropertyChange)}
+      />
       <UI.Input
         label={{ name: $t('constructor.props.svgicon') }}
         type="text-area"

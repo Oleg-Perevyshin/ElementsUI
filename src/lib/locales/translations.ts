@@ -90,6 +90,7 @@ const translations: Translations = {
     'constructor.props.rows': 'Количество строк',
     'constructor.props.placeholder': 'Заполнитель',
     'constructor.props.info': 'Подсказка',
+    'constructor.props.info.side': 'Положение подсказки',
     'constructor.props.disabled': 'Отключить',
     'constructor.props.readonly': 'Только для чтения',
     'constructor.props.istest': 'Тестовые данные',
