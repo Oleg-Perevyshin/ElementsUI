@@ -87,7 +87,7 @@
       <textarea
         bind:value
         class={twMerge(
-          `h-full w-full resize-y rounded-2xl border border-(--border-color) px-2 py-1 text-center font-mono transition-all duration-300 outline-none focus:border-blue-400
+          `h-full w-full resize-y rounded-2xl border border-(--border-color) px-2 py-1 text-center font-mono outline-none focus:border-blue-400
             ${isValid ? 'border-(--border-color)' : 'border-red-400 shadow-[0_0_6px_var(--red-color)]'}
             ${disabled ? 'opacity-50' : 'hover:shadow-md'} 
             ${readonly ? '' : 'hover:shadow-md'}

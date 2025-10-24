@@ -2208,7 +2208,7 @@ const za = {
     'constructor.props.name': 'Текст',
     'constructor.props.height': 'Высота',
     'constructor.props.colors': 'Цвет фона',
-    'constructor.props.maxlenght': 'Максимальная длина',
+    'constructor.props.maxlength': 'Максимальная длина',
     'constructor.props.regexp': 'Выражение валидации',
     'constructor.props.regexp.info': 'Введите RegExp без /.../ (например: ^\\d+$)',
     'constructor.props.minnum': 'Минимальное значение',

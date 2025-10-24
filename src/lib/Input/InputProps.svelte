@@ -109,7 +109,9 @@
       />
       {#if component.properties.type === 'text' || component.properties.type === 'password' || component.properties.type === 'text-area'}
         <UI.Input
-          label={{ name: $t('constructor.props.maxlenght') }}
+          label={{ name: $t('constructor.props.maxlength') }}
+          type="number"
+          number={{ minNum: 1, maxNum: 1000000, step: 1 }}
           value={component.properties.maxlength}
           onUpdate={(value) => updateProperty('maxlength', value as string)}
         />
@@ -182,6 +184,12 @@
         onUpdate={(option) => updateProperty('label.class', twMerge(component.properties.label.class, option.value))}
       />
       <UI.Select
+        label={{ name: $t('constructor.props.autocomplete') }}
+        options={$optionsStore.AUTOCOMPLETE_CONSTRUCTOR_OPTIONS}
+        value={$optionsStore.AUTOCOMPLETE_CONSTRUCTOR_OPTIONS.find((opt) => opt.value === (component.properties.help.autocomplete || 'off'))}
+        onUpdate={(selectedOption) => updateProperty('help.autocomplete', selectedOption.value as string)}
+      />
+      <UI.Select
         wrapperClass="h-14"
         label={{ name: $t('constructor.props.colors') }}
         type="buttons"
@@ -244,7 +252,9 @@
       />
       {#if component.properties.type === 'text' || component.properties.type === 'password' || component.properties.type === 'text-area'}
         <UI.Input
-          label={{ name: $t('constructor.props.maxlenght') }}
+          label={{ name: $t('constructor.props.maxlength') }}
+          type="number"
+          number={{ minNum: 1, maxNum: 1000000, step: 1 }}
           value={component.properties.maxlength}
           onUpdate={(value) => updateProperty('maxlength', value as string)}
         />
@@ -259,6 +269,8 @@
         {#if component.properties.type === 'text-area'}
           <UI.Input
             label={{ name: $t('constructor.props.textarea.rows') }}
+            type="number"
+            number={{ minNum: 1, maxNum: 1000000, step: 1 }}
             value={component.properties.textareaRows}
             onUpdate={(value) => updateProperty('textareaRows', value as string)}
           />

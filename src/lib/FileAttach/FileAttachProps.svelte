@@ -60,13 +60,15 @@
         <div class="flex gap-4">
           <UI.Input
             label={{ name: $t('constructor.props.imageSize.height') }}
-            value={component.properties.imageSize.height}
-            onUpdate={(value) => updateProperty('imageSize.height', value as string, component, onPropertyChange)}
+            type="number"
+            value={component.properties.imageSize.height.replace('rem', '')}
+            onUpdate={(value) => updateProperty('imageSize.height', `${value as string}rem`, component, onPropertyChange)}
           />
           <UI.Input
             label={{ name: $t('constructor.props.imageSize.width') }}
-            value={component.properties.imageSize.width}
-            onUpdate={(value) => updateProperty('imageSize.width', value as string, component, onPropertyChange)}
+            type="number"
+            value={component.properties.imageSize.width.replace('rem', '')}
+            onUpdate={(value) => updateProperty('imageSize.width', `${value as string}rem`, component, onPropertyChange)}
           />
         </div>
         <div class="flex gap-4">

@@ -15,7 +15,7 @@
       content: {
         name: 'Supporting text',
         class: 'text-center',
-        size: 'small',
+        size: 'large',
       },
     },
     position: { row: 0, col: 0, width: 0, height: 0 },

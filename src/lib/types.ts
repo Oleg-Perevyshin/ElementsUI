@@ -293,8 +293,8 @@ export interface ITableHeader<T extends object> {
     src: string | ((row: T) => string)
     alt?: string
     class?: string
-    width?: number | string
-    height?: number | string
+    width?: string
+    height?: string
     defaultIcon?: ConstructorOfATypedSvelteComponent
   }
 }

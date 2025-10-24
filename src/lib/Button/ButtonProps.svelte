@@ -38,10 +38,6 @@
       (h.value as string).includes(component.properties.componentClass?.split(' ').find((cls: string) => cls.startsWith('py-'))),
     ),
   )
-
-  $effect(() => {
-    console.log(Language)
-  })
 </script>
 
 {#if forConstructor}

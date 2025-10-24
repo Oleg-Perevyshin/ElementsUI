@@ -130,7 +130,7 @@ function he(D, e) {
             var o = be(),
               r = A(o)
             {
-              let u = a(() => ({ name: s()('constructor.props.maxlenght') }))
+              let u = a(() => ({ name: s()('constructor.props.maxlength') }))
               m(
                 r,
                 () => b,

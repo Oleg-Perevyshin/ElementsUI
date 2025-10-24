@@ -123,6 +123,24 @@ export const optionsStore = derived(t, ($t) => {
       { id: id(), value: 'circle', name: $t('constructor.props.type.circle') },
     ],
 
+    AUTOCOMPLETE_CONSTRUCTOR_OPTIONS: [
+      { id: id(), value: 'on', name: $t('constructor.props.autocomplete.on') },
+      { id: id(), value: 'off', name: $t('constructor.props.autocomplete.off') },
+      { id: id(), value: 'given-name', name: $t('constructor.props.autocomplete.given-name') },
+      { id: id(), value: 'family-name', name: $t('constructor.props.autocomplete.family-name') },
+      { id: id(), value: 'name', name: $t('constructor.props.autocomplete.name') },
+      { id: id(), value: 'email', name: $t('constructor.props.autocomplete.email') },
+      { id: id(), value: 'username', name: $t('constructor.props.autocomplete.username') },
+      { id: id(), value: 'new-password', name: $t('constructor.props.autocomplete.new-password') },
+      { id: id(), value: 'current-password', name: $t('constructor.props.autocomplete.current-password') },
+      { id: id(), value: 'tel', name: $t('constructor.props.autocomplete.tel') },
+      { id: id(), value: 'country-name', name: $t('constructor.props.autocomplete.country-name') },
+      { id: id(), value: 'address-level1', name: $t('constructor.props.autocomplete.address-level1') },
+      { id: id(), value: 'address-level2', name: $t('constructor.props.autocomplete.address-level2') },
+      { id: id(), value: 'street-address', name: $t('constructor.props.autocomplete.street-address') },
+      { id: id(), value: 'postal-code', name: $t('constructor.props.autocomplete.postal-code') },
+    ],
+
     AUTOCOMPLETE_OPTIONS: [
       { id: id(), value: 'on', name: $t('constructor.props.autocomplete.on') },
       { id: id(), value: 'off', name: $t('constructor.props.autocomplete.off') },

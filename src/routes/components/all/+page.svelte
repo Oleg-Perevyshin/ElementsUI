@@ -114,8 +114,6 @@
 </script>
 
 <div class="flex h-full flex-col items-center overflow-hidden overflow-y-visible">
-  <UI.Modal>{#snippet main()}{/snippet}</UI.Modal>
-
   <h2>Обзорная страница компонентов</h2>
 
   <div class="flex w-full flex-col">
@@ -154,7 +152,7 @@
       <UI.Button content={{ icon: IconGripHorizontalDown }} componentClass="h-15 rounded-full" />
       <UI.Button content={{ icon: IconGripHorizontalDual }} componentClass="h-15 rounded-full" />
       <UI.Button content={{ icon: GitHub }} componentClass="w-15 rounded-full" />
-      <UI.Button content={{ name: 'Button 3', info: 'button for send to server' }} componentClass="bg-yellow" />
+      <UI.Button content={{ name: 'Button 3', info: { text: 'button for send to server', side: 'top' } }} componentClass="bg-yellow" />
       <UI.Button content={{ name: 'Button 4' }} componentClass="bg-blue h-12 rounded-xl" />
       <UI.Button content={{ name: 'Button 5' }} componentClass="bg-green" />
       <UI.Button content={{ name: 'Button 6' }} componentClass="bg-purple" />

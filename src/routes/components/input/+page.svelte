@@ -16,7 +16,7 @@
       type: 'text',
       maxlength: 32,
       number: { minNum: 0, maxNum: 10, step: 1 },
-      textareaRows: 3,
+      textareaRows: 5,
       help: { copyButton: false, info: '', autocomplete: 'off' },
       eventHandler: { Header: 'SET', Argument: 'NoSend', Variables: [] },
     },

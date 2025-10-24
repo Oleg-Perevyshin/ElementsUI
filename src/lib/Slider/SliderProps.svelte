@@ -101,7 +101,7 @@
         wrapperClass="!h-14"
         label={{ name: $t('constructor.props.colors') }}
         type="buttons"
-        options={$optionsStore.COLOR_OPTIONS}
+        options={$optionsStore.COLOR_OPTIONS.filter((option) => option.value !== 'bg-gray')}
         value={initialColor}
         onUpdate={(option) => updateProperty('wrapperClass', twMerge(component.properties.wrapperClass, option.value), component, onPropertyChange)}
       />
@@ -124,7 +124,7 @@
         wrapperClass=" h-14"
         label={{ name: $t('constructor.props.colors') }}
         type="buttons"
-        options={$optionsStore.COLOR_OPTIONS}
+        options={$optionsStore.COLOR_OPTIONS.filter((option) => option.value !== 'bg-gray')}
         value={initialColor}
         onUpdate={(option) => {
           updateProperty('wrapperClass', twMerge(component.properties.wrapperClass, option.value), component, onPropertyChange)
