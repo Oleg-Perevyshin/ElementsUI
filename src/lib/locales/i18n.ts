@@ -5,13 +5,16 @@ import translations from './translations'
 /* Язык по умолчанию */
 let initialLanguage = 'ru'
 
-/* Проверяем, доступен ли localStorage */
-if (typeof window !== 'undefined') {
-  initialLanguage = localStorage.getItem('AppLanguage') || navigator.language?.split('-')[0]?.toLowerCase() || 'ru'
-  const supported = ['ru', 'en', 'zh']
-  if (!supported.includes(initialLanguage)) {
-    initialLanguage = 'ru'
+export const getInitLanguage = () => {
+  /* Проверяем, доступен ли localStorage */
+  if (typeof window !== 'undefined') {
+    initialLanguage = localStorage.getItem('AppLanguage') || navigator.language?.split('-')[0]?.toLowerCase() || 'ru'
+    const supported = ['ru', 'en', 'zh']
+    if (!supported.includes(initialLanguage)) {
+      initialLanguage = 'ru'
+    }
   }
+  return initialLanguage
 }
 
 /* Создаем хранилище с начальным значением языка */

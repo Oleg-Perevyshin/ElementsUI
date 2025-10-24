@@ -58,6 +58,7 @@
   /* Подписка на события клавиатуры */
   onMount(() => {
     if (keyBind) window.addEventListener('keydown', handleKeyDown)
+
     return () => {
       if (keyBind) window.removeEventListener('keydown', handleKeyDown)
     }

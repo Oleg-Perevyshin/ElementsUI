@@ -1,6 +1,6 @@
 <!-- $lib/ElementsUI/ButtonProps.svelte -->
 <script lang="ts">
-  import { t } from '$lib/locales/i18n'
+  import { Language, t } from '../locales/i18n'
   import { type UIComponent, type IButtonProps, type ISelectOption, updateProperty } from '../types'
   import * as UI from '$lib'
   import { optionsStore } from '../options'
@@ -38,6 +38,10 @@
       (h.value as string).includes(component.properties.componentClass?.split(' ').find((cls: string) => cls.startsWith('py-'))),
     ),
   )
+
+  $effect(() => {
+    console.log(Language)
+  })
 </script>
 
 {#if forConstructor}
