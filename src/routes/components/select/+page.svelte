@@ -15,7 +15,7 @@
       disabled: false,
       label: { name: 'Label', class: 'text-center' },
       type: 'select',
-      options: [{ id: crypto.randomUUID(), value: '0', name: 'Option', class: 'bg-max' }],
+      options: [{ id: crypto.randomUUID(), value: '1', name: 'Option 1', class: 'bg-max' }],
       eventHandler: { Header: 'SET', Argument: '', Variables: [] },
     },
     position: { row: 0, col: 0, width: 0, height: 0 },

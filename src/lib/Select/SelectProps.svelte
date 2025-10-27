@@ -90,7 +90,8 @@
         help={{ info: $t('constructor.props.argument.info'), autocomplete: 'on', regExp: /^[a-zA-Z0-9\-_]{0,32}$/ }}
         onUpdate={(value) => updateProperty('eventHandler.Argument', value as string, component, onPropertyChange)}
       />
-
+    </div>
+    <div class="flex w-1/3 flex-col items-center px-2">
       <UI.Select
         label={{ name: $t('constructor.props.type') }}
         type="buttons"
@@ -98,8 +99,6 @@
         options={$optionsStore.SELECT_TYPE_OPTIONS}
         onUpdate={(item) => updateProperty('type', item.value as string, component, onPropertyChange)}
       />
-    </div>
-    <div class="flex w-1/3 flex-col items-center px-2">
       <UI.Select
         wrapperClass="h-14"
         label={{ name: $t('constructor.props.valuetype') }}
@@ -113,21 +112,6 @@
           options.forEach((option) => {
             if (newType === 'number') option.value = option.value !== undefined ? Number(option.value) : 0
             else option.value = option.value !== undefined ? String(option.value) : ''
-          })
-          updateProperty('options', options, component, onPropertyChange)
-        }}
-      />
-      <UI.Select
-        wrapperClass=" h-14"
-        label={{ name: $t('constructor.props.colors') }}
-        type="buttons"
-        options={$optionsStore.COLOR_OPTIONS}
-        value={initialColor}
-        onUpdate={(option) => {
-          updateProperty('wrapperClass', twMerge(component.properties.wrapperClass, option.value), component, onPropertyChange)
-          const options = [...(component.properties?.options || [])]
-          options.forEach((o) => {
-            o['class'] = option.value
           })
           updateProperty('options', options, component, onPropertyChange)
         }}
@@ -161,7 +145,8 @@
         onClick={() => {
           const newOption: ISelectOption = {
             id: crypto.randomUUID(),
-            name: 'New Button',
+            name: `Option ${component.properties?.options.length + 1}`,
+            value: component.properties?.options.length + 1,
             class: 'bg-max',
           }
           const options = [...(component.properties?.options || []), newOption]
@@ -232,21 +217,6 @@
         value={component.properties.wrapperClass}
         onUpdate={(value) => updateProperty('wrapperClass', value as string, component, onPropertyChange)}
       />
-      <UI.Select
-        wrapperClass=" h-14"
-        label={{ name: $t('constructor.props.colors') }}
-        type="buttons"
-        options={$optionsStore.COLOR_OPTIONS}
-        value={initialColor}
-        onUpdate={(option) => {
-          updateProperty('wrapperClass', twMerge(component.properties.wrapperClass, option.value), component, onPropertyChange)
-          const options = [...(component.properties?.options || [])]
-          options.forEach((o) => {
-            o['class'] = option.value
-          })
-          updateProperty('options', options, component, onPropertyChange)
-        }}
-      />
     </div>
     <div class="flex w-1/3 flex-col items-center px-2">
       <UI.Input
@@ -258,6 +228,12 @@
         label={{ name: $t('constructor.props.label.class') }}
         value={component.properties.label.class}
         onUpdate={(value) => updateProperty('label.class', value as string, component, onPropertyChange)}
+      />
+      <UI.Switch
+        wrapperClass="bg-blue"
+        label={{ name: $t('constructor.props.disabled') }}
+        value={component.properties.disabled ? 2 : 1}
+        onChange={(value) => updateProperty('disabled', value === 2, component, onPropertyChange)}
       />
     </div>
     <div class="flex w-1/3 flex-col items-center px-2">
@@ -285,12 +261,6 @@
           updateProperty('options', options, component, onPropertyChange)
         }}
       />
-      <UI.Switch
-        wrapperClass="bg-blue"
-        label={{ name: $t('constructor.props.disabled') }}
-        value={component.properties.disabled ? 2 : 1}
-        onChange={(value) => updateProperty('disabled', value === 2, component, onPropertyChange)}
-      />
     </div>
   </div>
 
@@ -306,7 +276,8 @@
         onClick={() => {
           const newOption: ISelectOption = {
             id: crypto.randomUUID(),
-            name: 'New Button',
+            name: `Option ${component.properties?.options.length + 1}`,
+            value: component.properties?.options.length + 1,
             class: 'bg-max',
           }
           const options = [...(component.properties?.options || []), newOption]

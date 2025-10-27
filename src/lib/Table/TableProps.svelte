@@ -103,6 +103,11 @@
         value={initialColor}
         onUpdate={(option) => updateProperty('wrapperClass', twMerge(component.properties.wrapperClass, option.value), component, onPropertyChange)}
       />
+      <UI.Switch
+        label={{ name: $t('constructor.props.outline') }}
+        value={component.properties.outline ? 2 : 1}
+        onChange={(value) => updateProperty('outline', value === 2, component, onPropertyChange)}
+      />
     </div>
     <div class="flex w-1/3 flex-col px-2">
       <UI.Input
@@ -163,6 +168,7 @@
         />
         <UI.Input
           label={{ name: $t('constructor.props.table.columns.width') }}
+          wrapperClass="w-120"
           type="number"
           value={Number(column.width.replace('%', ''))}
           onUpdate={(value) => updateTableHeader(columnIndex, 'width', `${value}%`)}
@@ -181,7 +187,7 @@
         />
         <UI.Button
           wrapperClass="w-8"
-          content={{ icon: ButtonAdd, info: $t('constructor.props.table.addaction') }}
+          content={{ icon: ButtonAdd, info: { text: $t('constructor.props.table.addaction'), side: 'top' } }}
           onClick={() => {
             const newButton = {
               name: `button${(component.properties.header[columnIndex].buttons ? component.properties.header[columnIndex].buttons.length : 0) + 1}`,
@@ -204,9 +210,9 @@
         />
       </div>
       {#if column.buttons && column.buttons.length > 0}
-        <div class="mb-5 rounded-lg p-1">
+        <div class="mb-5 rounded-lg py-1">
           {#each column.buttons as button, buttonIndex (buttonIndex)}
-            <div class="mx-14 flex items-end justify-around gap-2">
+            <div class="ml-14 flex items-end justify-around gap-2">
               <UI.Input
                 label={{ name: $t('constructor.props.name') }}
                 wrapperClass="!w-3/10"
@@ -294,10 +300,18 @@
         value={component.properties.label.class}
         onUpdate={(value) => updateProperty('label.class', value as string, component, onPropertyChange)}
       />
+    </div>
+
+    <div class="flex w-1/3 flex-col px-2">
       <UI.Input
         label={{ name: $t('constructor.props.footer') }}
         value={component.properties.footer}
         onUpdate={(value) => updateProperty('footer', value as string, component, onPropertyChange)}
+      />
+      <UI.Switch
+        label={{ name: $t('constructor.props.outline') }}
+        value={component.properties.outline ? 2 : 1}
+        onChange={(value) => updateProperty('outline', value === 2, component, onPropertyChange)}
       />
     </div>
   </div>
@@ -330,6 +344,7 @@
         <div class="mr-2 flex items-end justify-around gap-6">
           <UI.Input
             label={{ name: $t('constructor.props.table.columns.key') }}
+            wrapperClass="w-150"
             value={column.key}
             help={{ regExp: /^[0-9a-zA-Z_-]{0,16}$/ }}
             onUpdate={(value) => {
@@ -345,26 +360,34 @@
             }}
           />
           <UI.Input
-            label={{ name: $t('constructor.props.table.columns.width') }}
+            label={{ name: $t('constructor.props.table.columns.width'), class: 'px-0' }}
+            wrapperClass="w-150"
             type="number"
             value={Number(column.width.replace('%', ''))}
             onUpdate={(value) => updateTableHeader(columnIndex, 'width', `${value}%`)}
           />
+          <UI.Select
+            label={{ name: $t('constructor.props.align.header') }}
+            type="buttons"
+            value={$optionsStore.ALIGN_OPTIONS.find((a) => (a.value as string).includes(column.align?.header) || 'left')}
+            options={$optionsStore.ALIGN_OPTIONS}
+            onUpdate={(option) => updateTableHeader(columnIndex, 'align', { header: option.value, content: column.align?.content })}
+          />
           <UI.Switch
-            wrapperClass="w-2/10"
-            label={{ name: $t('constructor.props.table.columns.sortable') }}
+            label={{ name: $t('constructor.props.table.columns.sortable'), class: 'px-0' }}
+            wrapperClass="w-30"
             value={column.sortable ? 2 : 1}
             onChange={(value) => updateTableHeader(columnIndex, 'sortable', value === 2)}
           />
           <UI.Switch
-            wrapperClass="w-2/10"
-            label={{ name: $t('constructor.props.copy') }}
+            label={{ name: $t('constructor.props.copy'), class: 'px-0' }}
+            wrapperClass="w-30"
             value={column.overflow?.copy ? 2 : 1}
-            onChange={(value) => updateTableHeader(columnIndex, 'overflow', { copy: value === 2 })}
+            onChange={(value) => updateTableHeader(columnIndex, 'overflow', { copy: value === 2, truncated: column.overflow?.truncated })}
           />
           <UI.Button
             wrapperClass="w-8"
-            content={{ icon: ButtonAdd, info: $t('constructor.props.table.addaction') }}
+            content={{ icon: ButtonAdd, info: { text: $t('constructor.props.table.addaction'), side: 'top' } }}
             onClick={() => {
               const newButton = {
                 name: `button${(component.properties.header[columnIndex].buttons ? component.properties.header[columnIndex].buttons.length : 0) + 1}`,
@@ -388,30 +411,24 @@
         </div>
         <div class="mr-2 flex items-end justify-around gap-6">
           <UI.Select
-            label={{ name: $t('constructor.props.align') }}
+            label={{ name: $t('constructor.props.align.content') }}
             type="buttons"
-            value={$optionsStore.ALIGN_OPTIONS.find((a) => (a.value as string).includes(column.align) || 'left')}
+            value={$optionsStore.ALIGN_OPTIONS.find((a) => (a.value as string).includes(column.align?.content) || 'left')}
             options={$optionsStore.ALIGN_OPTIONS}
-            onUpdate={(option) => updateTableHeader(columnIndex, 'align', option.value)}
+            onUpdate={(option) => updateTableHeader(columnIndex, 'align', { header: column.align?.header, content: option.value })}
           />
           <UI.Switch
             wrapperClass="w-2/10"
             label={{ name: $t('constructor.props.table.columns.truncated') }}
             value={column.overflow?.truncated ? 2 : 1}
-            onChange={(value) => updateTableHeader(columnIndex, 'overflow', { ['truncated']: value === 2 })}
+            onChange={(value) => updateTableHeader(columnIndex, 'overflow', { truncated: value === 2, copy: column.overflow?.copy })}
           />
-          <UI.Input
-            label={{ name: $t('constructor.props.table.columns.alt') }}
-            value={column.image?.alt}
-            onUpdate={(value) => {
-              updateTableHeader(columnIndex, 'image', { ['alt']: value })
-            }}
-          />
+
           <UI.Input
             label={{ name: $t('constructor.props.table.columns.class') }}
             value={column.image?.class}
             onUpdate={(value) => {
-              updateTableHeader(columnIndex, 'image', { ['class']: value })
+              updateTableHeader(columnIndex, 'image', { class: value, width: column.image?.width, height: column.image?.height })
             }}
           />
           <UI.Input
@@ -419,7 +436,7 @@
             wrapperClass="w-150"
             value={column.image?.width}
             onUpdate={(value) => {
-              updateTableHeader(columnIndex, 'image', { ['width']: value })
+              updateTableHeader(columnIndex, 'image', { class: column.image?.class, width: value, height: column.image?.height })
             }}
           />
           <UI.Input
@@ -427,7 +444,7 @@
             wrapperClass="w-150"
             value={column.image?.height}
             onUpdate={(value) => {
-              updateTableHeader(columnIndex, 'image', { ['height']: value })
+              updateTableHeader(columnIndex, 'image', { class: column.image?.class, width: column.image?.width, height: value })
             }}
           />
         </div>

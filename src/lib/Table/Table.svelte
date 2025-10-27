@@ -12,6 +12,7 @@
     body = [],
     header = [],
     footer = '',
+    outline = false,
     cursor = null,
     loader,
     getData = () => {},
@@ -126,11 +127,22 @@
     <h5 class={twMerge(`w-full px-4 text-center`, label.class)}>{label.name}</h5>
   {/if}
 
-  <div class="flex h-full flex-col overflow-hidden rounded-xl border-(--border-color)">
+  <div class="flex h-full flex-col overflow-hidden rounded-xl border {outline ? ' border-(--border-color)' : 'border-transparent'} ">
     <!-- Table Header -->
     <div class="grid font-semibold" style={`grid-template-columns: ${header.map((c) => c.width || 'minmax(0, 1fr)').join(' ')};`}>
-      {#each header as column (column)}
-        <div class={twMerge(`justify-center bg-(--bg-color) p-2 text-left`, column.label?.class)}>
+      {#each header as column, index (column)}
+        <div
+          class={twMerge(
+            `justify-center border-l ${outline && index !== 0 ? ' border-(--border-color)' : 'border-transparent'} ${
+              column.align?.header === 'center'
+                ? 'flex justify-center text-center'
+                : column.align?.header === 'right'
+                  ? 'flex justify-end text-right'
+                  : 'flex justify-start text-left'
+            } bg-(--bg-color) p-2 text-left`,
+            column.label?.class,
+          )}
+        >
           <span>{column.label?.name}</span>
           {#if column.sortable}
             <button
@@ -148,21 +160,24 @@
     <div class="flex-1 overflow-y-auto bg-(--container-color)/50" bind:this={container} onscroll={handleScroll}>
       <div class="grid min-w-0" style={`grid-template-columns: ${header.map((c) => c.width || 'minmax(0, 1fr)').join(' ')};`}>
         {#each body as row, index (row)}
-          {#each header as column (column)}
+          {#each header as column, j (column)}
             <div
               class="relative flex w-full min-w-0 items-center px-2 py-1 wrap-break-word
               {index % 2 ? 'bg-(--back-color)/40' : 'bg-[#edeef3] dark:bg-[#1f2a3a]'}
-              {column.align === 'center'
+              {column.align?.content === 'center'
                 ? 'flex justify-center text-center'
-                : column.align === 'right'
+                : column.align?.content === 'right'
                   ? 'flex justify-end text-right'
-                  : 'flex justify-start text-left'}"
+                  : 'flex justify-start text-left'}
+              border-t
+              {j !== 0 ? ' border-l ' : ''}
+              {outline ? 'border-(--border-color)' : 'border-transparent'}  "
             >
               {#if column.buttons}
                 <div class="flex w-full flex-col gap-1">
                   {#each column.buttons as button (button)}
                     <button
-                      class="{twMerge(`cursor-pointer rounded-full
+                      class="{twMerge(`cursor-pointer rounded-full 
                            px-4 py-1 font-medium transition-shadow outline-none select-none hover:shadow-md
                           ${typeof button.class === 'function' ? button.class(row) : button.class}`)} bg-(--bg-color)"
                       onclick={() => buttonClick(row, button)}
@@ -191,7 +206,7 @@
                 <div
                   class="w-full max-w-full wrap-break-word {column.overflow?.truncated
                     ? 'overflow-hidden text-ellipsis whitespace-nowrap'
-                    : 'whitespace-normal'}"
+                    : 'whitespace-normal '}"
                   onmouseenter={column.overflow?.truncated ? (e) => showTooltip(e, row[column.key], column.overflow?.formatting) : undefined}
                   onmouseleave={column.overflow?.truncated ? hideTooltip : undefined}
                   onmousemove={column.overflow?.truncated

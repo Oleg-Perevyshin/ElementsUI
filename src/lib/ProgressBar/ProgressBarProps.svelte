@@ -144,6 +144,8 @@
       />
       <UI.Input
         label={{ name: $t('constructor.props.value') }}
+        type="number"
+        number={{ minNum: component.properties.number.minNum, maxNum: component.properties.number.maxNum, step: 1 }}
         value={component.properties.value}
         onUpdate={(value) => updateProperty('value', value as string, component, onPropertyChange)}
       />

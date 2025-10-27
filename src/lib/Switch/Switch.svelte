@@ -7,7 +7,7 @@
     id = crypto.randomUUID(),
     disabled = false,
     wrapperClass = '',
-    label = { name: '', captionLeft: '', captionRight: '' },
+    label = { name: '', class: '', captionLeft: '', captionRight: '' },
     height = '2rem',
     value = $bindable(),
     onChange = () => {},
@@ -46,7 +46,7 @@
 
 <div class={twMerge(`bg-blue relative flex w-full flex-col items-center justify-center`, wrapperClass)}>
   {#if label.name}
-    <h5 class={`w-full px-4 text-center`}>{label.name}</h5>
+    <h5 class={twMerge(`w-full px-4 text-center`, label.class)}>{label.name}</h5>
   {/if}
 
   <div class="relative flex w-full grow items-center justify-center bg-transparent">

@@ -152,17 +152,18 @@ export interface IInputProps {
       | 'off'
       | 'given-name'
       | 'family-name'
-      | 'name'
-      | 'email'
+      | 'nickname'
       | 'username'
       | 'new-password'
       | 'current-password'
-      | 'tel'
+      | 'organization-title'
       | 'country-name'
       | 'address-level1'
       | 'address-level2'
       | 'street-address'
       | 'postal-code'
+      | 'email'
+      | 'tel'
       | null
   }
   eventHandler?: IUIComponentHandler
@@ -201,6 +202,7 @@ export interface ISwitchProps {
   disabled?: boolean
   label?: {
     name?: string
+    class?: string
     captionLeft?: string
     captionRight?: string
   }
@@ -276,7 +278,7 @@ export interface ITableHeader<T extends object> {
   key: keyof T
   sortable?: boolean
   width?: string
-  align?: 'left' | 'center' | 'right'
+  align?: { header?: 'left' | 'center' | 'right'; content?: 'left' | 'center' | 'right' }
   overflow?: {
     truncated?: boolean
     formatting?: (text: string) => string
@@ -306,6 +308,7 @@ export interface ITableProps<T extends object> {
   header: ITableHeader<T>[]
   body: T[]
   footer?: string
+  outline?: boolean
   cursor?: string | null
   loader?: Writable<boolean>
   getData?: () => void

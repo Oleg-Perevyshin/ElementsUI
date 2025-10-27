@@ -47,9 +47,10 @@
   {/if}
 
   <div class="flex w-full flex-col items-center">
-    <div class="relative h-2 w-full rounded bg-gray-400">
-      <div class="absolute top-0 left-0 h-full rounded bg-(--bg-color)" style="width: {progressPercent()}%;"></div>
+    <div class="relative h-7 w-full rounded-full bg-gray-400">
+      <div class="absolute top-0 left-0 flex h-full rounded-full bg-(--bg-color)" style="width: {progressPercent()}%;">
+        <span class="m-auto font-semibold">{numericValue?.toFixed(2)}{number.units}</span>
+      </div>
     </div>
-    <span class="ml-2 font-semibold">{numericValue?.toFixed(2)}{number.units}</span>
   </div>
 </div>
