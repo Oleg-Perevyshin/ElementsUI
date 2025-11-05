@@ -14,7 +14,7 @@
       wrapperClass: '',
       label: { name: '', class: '' },
       accept: '*/*',
-      type: 'image',
+      type: 'file',
       imageSize: { height: '10rem', width: '10rem', fitMode: 'cover', form: 'square' },
       disabled: false,
       onChange: () => {},

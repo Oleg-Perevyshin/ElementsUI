@@ -24,7 +24,6 @@
         return Math.max(min, Math.min(max, value))
       } else if (typeof value === 'string') {
         const parsedValue = parseFloat(value)
-        console.log(value)
         if (!isNaN(parsedValue)) {
           return Math.max(min, Math.min(max, parsedValue))
         }
@@ -46,11 +45,10 @@
     <h5 class={twMerge(` w-full px-4 text-center`, label.class)}>{label.name}</h5>
   {/if}
 
-  <div class="flex w-full flex-col items-center">
-    <div class="relative h-7 w-full rounded-full bg-gray-400">
-      <div class="absolute top-0 left-0 flex h-full rounded-full bg-(--bg-color)" style="width: {progressPercent()}%;">
-        <span class="m-auto font-semibold">{numericValue?.toFixed(2)}{number.units}</span>
-      </div>
+  <div class="flex h-7 w-full items-center gap-2 rounded-full bg-(--bg-color) px-2">
+    <span class="m-auto font-semibold">{numericValue?.toFixed(2)}{number.units}</span>
+    <div class="relative my-auto h-3.5 w-[85%] rounded-full bg-(--back-color)/40">
+      <div class="absolute top-0 left-0 flex h-full rounded-full bg-(--field-color)" style="width: {progressPercent()}%;"></div>
     </div>
   </div>
 </div>

@@ -41,7 +41,6 @@
     if (file.type.startsWith('image/')) previewUrl = URL.createObjectURL(file)
 
     onChange(event, file)
-    // console.log('!!! curr:', currentImage, 'prev:', previewUrl)
   }
 
   const triggerFileInput = () => {

@@ -14,8 +14,6 @@
     forConstructor?: boolean
   }>()
 
-  console.log(component.properties.streamingData)
-
   const DeviceVariables = getContext<{ id: string; value: string; name: string }[]>('DeviceVariables')
   let VARIABLE_OPTIONS = $derived(DeviceVariables && Array.isArray(DeviceVariables) ? DeviceVariables : [])
 </script>

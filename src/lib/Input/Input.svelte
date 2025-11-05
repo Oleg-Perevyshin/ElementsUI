@@ -223,7 +223,7 @@
       {#if showInfo}
         <div
           transition:fly={{ x: -15, duration: 250 }}
-          class="absolute top-1/2 left-10 z-50 w-auto -translate-y-1/2 rounded bg-(--container-color) px-2 py-1 shadow-lg"
+          class="absolute top-5 left-10 z-50 w-auto -translate-y-1/2 rounded bg-(--container-color) px-2 py-1 shadow-lg"
         >
           {help?.info}
         </div>

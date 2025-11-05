@@ -98,7 +98,6 @@
       rawData: text,
       formattedData: formatting ? formatting(text) : (text ?? ''),
     }
-    // console.log(modalData)
   }
 
   const showTooltip = (event: MouseEvent, text: string, formatting?: (text: string) => string) => {
@@ -186,7 +185,7 @@
                     </button>
                   {/each}
                 </div>
-              {:else if column.image}
+              {:else if column.image?.src || column.image?.defaultIcon}
                 <div
                   class="flex items-center justify-center"
                   style={`width: ${column.image.width || '5rem'}; height: ${column.image.height || '5rem'};`}
@@ -199,14 +198,16 @@
                       loading="lazy"
                     />
                   {:else if column.image.defaultIcon}
-                    <column.image.defaultIcon />
+                    {#if typeof column.image.defaultIcon === 'string'}
+                      {@html column.image.defaultIcon}
+                    {:else}
+                      <column.image.defaultIcon />
+                    {/if}
                   {/if}
                 </div>
               {:else}
                 <div
-                  class="w-full max-w-full wrap-break-word {column.overflow?.truncated
-                    ? 'overflow-hidden text-ellipsis whitespace-nowrap'
-                    : 'whitespace-normal '}"
+                  class=" w-full max-w-full wrap-break-word {column.overflow?.truncated ? 'truncate' : ' whitespace-normal'}"
                   onmouseenter={column.overflow?.truncated ? (e) => showTooltip(e, row[column.key], column.overflow?.formatting) : undefined}
                   onmouseleave={column.overflow?.truncated ? hideTooltip : undefined}
                   onmousemove={column.overflow?.truncated
@@ -232,6 +233,9 @@
                     {@html row[column.key]}
                   {/if}
                 </div>
+                <!-- {#if column.overflow?.truncated}
+                  <div class="whitespace-nowrap">{row[column.key].slice(-5)}</div>
+                {/if} -->
 
                 {#if column.overflow?.copy}
                   <button

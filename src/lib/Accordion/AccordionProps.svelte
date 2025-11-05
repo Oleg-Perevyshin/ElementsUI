@@ -4,7 +4,7 @@
   import { updateProperty, type IAccordionProps, type UIComponent } from '../types'
   import * as UI from '$lib'
   import { optionsStore } from '../options'
-  import { ICONS } from './icons'
+  import { ICONS } from '../icons'
   import Modal from '$lib/Modal.svelte'
   import Button from '$lib/Button/Button.svelte'
   import CrossIcon from '$lib/libIcons/CrossIcon.svelte'
@@ -63,7 +63,7 @@
     </div>
     <div class="flex w-1/3 flex-col items-center px-2">
       <div class="relative mt-6 flex w-full gap-2">
-        <UI.Button content={{ name: 'Иконка заголовка' }} onClick={() => (showIconLib = true)} />
+        <UI.Button content={{ name: $t('constructor.props.labelicon') }} onClick={() => (showIconLib = true)} />
         {#if showIconLib}
           <Modal bind:isOpen={showIconLib} wrapperClass="w-130">
             {#snippet main()}
@@ -174,7 +174,7 @@
         onUpdate={(value) => updateProperty('wrapperClass', value as string, component, onPropertyChange)}
       />
       <div class="relative mt-5 flex w-full gap-2">
-        <UI.Button content={{ name: 'Иконка заголовка' }} onClick={() => (showIconLib = true)} />
+        <UI.Button content={{ name: $t('constructor.props.labelicon') }} onClick={() => (showIconLib = true)} />
         {#if showIconLib}
           <Modal bind:isOpen={showIconLib} wrapperClass="w-130">
             {#snippet main()}

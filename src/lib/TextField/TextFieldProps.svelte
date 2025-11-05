@@ -115,11 +115,10 @@
         onUpdate={(value) => updateProperty('id', value as string, component, onPropertyChange)}
       />
       <UI.Input
-        label={{ name: $t('constructor.props.wrapperclass') }}
-        value={component.properties.wrapperClass}
-        onUpdate={(value) => updateProperty('wrapperClass', value as string, component, onPropertyChange)}
+        label={{ name: $t('constructor.props.label') }}
+        value={component.properties.content.name}
+        onUpdate={(value) => updateProperty('content.name', value as string, component, onPropertyChange)}
       />
-
       <UI.Select
         wrapperClass="!h-14"
         label={{ name: $t('constructor.props.textcolors') }}
@@ -130,11 +129,6 @@
       />
     </div>
     <div class="flex w-1/3 flex-col px-2">
-      <UI.Input
-        label={{ name: $t('constructor.props.label') }}
-        value={component.properties.content.name}
-        onUpdate={(value) => updateProperty('content.name', value as string, component, onPropertyChange)}
-      />
       <UI.Select
         label={{ name: $t('constructor.props.size') }}
         type="buttons"

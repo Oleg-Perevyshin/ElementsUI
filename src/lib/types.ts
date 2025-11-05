@@ -292,12 +292,12 @@ export interface ITableHeader<T extends object> {
     onClick?: (row: T) => void
   }[]
   image?: {
-    src: string | ((row: T) => string)
+    src?: string | ((row: T) => string)
     alt?: string
     class?: string
     width?: string
     height?: string
-    defaultIcon?: ConstructorOfATypedSvelteComponent
+    defaultIcon?: ConstructorOfATypedSvelteComponent | string
   }
 }
 

@@ -19,12 +19,20 @@
           label: { name: 'ID' },
           width: '40%',
           sortable: true,
+          image: {
+            width: '0rem',
+            height: '0rem',
+          },
         } as ITableHeader<any>,
         {
           key: 'device',
           label: { name: 'Device' },
           width: '60%',
           sortable: false,
+          image: {
+            width: '0rem',
+            height: '0rem',
+          },
         } as ITableHeader<any>,
       ],
       body: [
