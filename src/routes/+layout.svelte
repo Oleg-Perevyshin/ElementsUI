@@ -22,6 +22,7 @@
     { page: 'file-attach', name: 'FileAttach' },
     { page: 'graph', name: 'Graph' },
     { page: 'input', name: 'Input' },
+    { page: 'joystick', name: 'Joystick' },
     { page: 'progress-bar', name: 'ProgressBar' },
     { page: 'select', name: 'Select' },
     { page: 'slider', name: 'Slider' },
