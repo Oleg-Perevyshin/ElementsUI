@@ -35,7 +35,7 @@
   let angle = 360 / directions.length
 </script>
 
-<div {id} class={twMerge(`bg-red relative flex w-full flex-col items-center`, wrapperClass)}>
+<div {id} class={twMerge(`bg-red relative flex w-full flex-col items-center justify-center`, wrapperClass)}>
   {#if label.name}
     <h5 class={twMerge(` w-full px-4 text-center`, label.class)}>{label.name}</h5>
   {/if}
@@ -67,7 +67,7 @@
         </button>
       {/each}
     </div>
-    <div class=" pointer-events-none absolute h-full w-full overflow-hidden rounded-full">
+    <div class="pointer-events-none absolute h-full w-full overflow-hidden rounded-full">
       {#each directions as direction, index}
         <span
           class=" absolute top-1/2 left-1/2 h-0 w-[52%] origin-left border-b border-(--bg-color) {index % 2 == 0
@@ -84,6 +84,36 @@
           ><path
             fill="currentColor"
             d="M6 19h3v-5q0-.425.288-.712T10 13h4q.425 0 .713.288T15 14v5h3v-9l-6-4.5L6 10zm-2 0v-9q0-.475.213-.9t.587-.7l6-4.5q.525-.4 1.2-.4t1.2.4l6 4.5q.375.275.588.7T20 10v9q0 .825-.588 1.413T18 21h-4q-.425 0-.712-.288T13 20v-5h-2v5q0 .425-.288.713T10 21H6q-.825 0-1.412-.587T4 19m8-6.75"
+          /></svg
+        ></button
+      >
+    </div>
+
+    <div
+      class="absolute -z-20 flex h-20 w-80 items-center justify-between rounded-full px-3"
+      style="background: color-mix(in srgb, var(--bg-color), var(--shadow-color) 50%)"
+    >
+      <button class="cursor-pointer" title=""
+        ><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
+          ><path
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M11 18h3.75a5.25 5.25 0 1 0 0-10.5H5M7.5 4L4 7.5L7.5 11"
+          /></svg
+        ></button
+      >
+      <button class="cursor-pointer" title=""
+        ><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
+          ><path
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M13 18H9.25a5.25 5.25 0 1 1 0-10.5H19M16.5 4L20 7.5L16.5 11"
           /></svg
         ></button
       >
