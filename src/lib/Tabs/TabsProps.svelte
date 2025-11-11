@@ -126,7 +126,7 @@
           if (value === 2) {
             component.properties.items.forEach((_item: any, index: number) => {
               const items = [...(component.properties?.items || [])]
-              items[index]['class'] = twMerge(items[index].class, `w-1/${items.length}`)
+              items[index]['class'] = twMerge(items[index].class, `w-1/${items.length}!`)
               updateProperty('items', items, component, onPropertyChange)
             })
           } else {
