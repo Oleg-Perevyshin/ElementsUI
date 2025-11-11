@@ -48,5 +48,6 @@ export {
   type IGraphProps,
   type IGraphDataObject,
   type ITableHeader,
+  type ITableProps,
   type ITabsProps,
 } from './types'
