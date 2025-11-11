@@ -15,9 +15,9 @@
         width: 1,
       },
       items: [
-        { name: 'wwwwwwwww', class: ' flex-row' },
-        { name: 'dfvdf', class: ' flex-row' },
-        { name: 'gbhggh', class: ' flex-row' },
+        { name: 'Tab 1', class: ' flex-row' },
+        { name: 'Tab 2', class: ' flex-row' },
+        { name: 'Tab 3', class: ' flex-row' },
       ],
     },
     position: { row: 0, col: 0, width: 0, height: 0 },
