@@ -8,7 +8,7 @@
   let textFieldComponent: UIComponent = $state({
     id: crypto.randomUUID(),
     type: 'TextField',
-    component: null,
+
     properties: {
       id: crypto.randomUUID(),
       wrapperClass: 'text-[#333] dark:text-[#e2e3e7]',

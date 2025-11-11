@@ -10,8 +10,8 @@ export { default as Graph } from './Graph/Graph.svelte'
 export { default as GraphProps } from './Graph/GraphProps.svelte'
 export { default as Input } from './Input/Input.svelte'
 export { default as InputProps } from './Input/InputProps.svelte'
-export { default as Joystick } from './Joystick/Joystick.svelte'
-export { default as JoystickProps } from './Joystick/JoystickProps.svelte'
+// export { default as Joystick } from './Joystick/Joystick.svelte'
+// export { default as JoystickProps } from './Joystick/JoystickProps.svelte'
 export { default as Modal } from './Modal.svelte'
 export { default as ProgressBar } from './ProgressBar/ProgressBar.svelte'
 export { default as ProgressBarProps } from './ProgressBar/ProgressBarProps.svelte'
@@ -23,6 +23,8 @@ export { default as Switch } from './Switch/Switch.svelte'
 export { default as SwitchProps } from './Switch/SwitchProps.svelte'
 export { default as Table } from './Table/Table.svelte'
 export { default as TableProps } from './Table/TableProps.svelte'
+export { default as Tabs } from './Tabs/Tabs.svelte'
+export { default as TabsProps } from './Tabs/TabsProps.svelte'
 export { default as TextField } from './TextField/TextField.svelte'
 export { default as TextFieldProps } from './TextField/TextFieldProps.svelte'
 
@@ -46,5 +48,5 @@ export {
   type IGraphProps,
   type IGraphDataObject,
   type ITableHeader,
-  type ITableProps,
+  type ITabsProps,
 } from './types'

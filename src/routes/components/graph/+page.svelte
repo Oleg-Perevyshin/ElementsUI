@@ -14,7 +14,7 @@
   let graphComponent: UIComponent = $state({
     id: crypto.randomUUID(),
     type: 'Graph',
-    component: null,
+
     properties: {
       id: crypto.randomUUID(),
       wrapperClass: '',

@@ -121,6 +121,8 @@ const translations: Translations = {
     'constructor.props.copy': 'Копирование',
     'constructor.props.size.height': 'Высота сетки',
     'constructor.props.size.width': 'Ширина сетки',
+    'constructor.props.icon.text.position': 'Положение иконки',
+    'constructor.props.equal': 'Равные',
 
     'constructor.props.table.columns': 'Колонки таблицы',
     'constructor.props.table.columns.key': 'Ключ',

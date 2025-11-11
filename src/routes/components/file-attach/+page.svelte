@@ -8,7 +8,7 @@
   let fileAttachComponent: UIComponent = $state({
     id: crypto.randomUUID(),
     type: 'FileAttach',
-    component: null,
+
     properties: {
       id: crypto.randomUUID(),
       wrapperClass: '',

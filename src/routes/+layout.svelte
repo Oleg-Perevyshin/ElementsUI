@@ -28,6 +28,7 @@
     { page: 'slider', name: 'Slider' },
     { page: 'switch', name: 'Switch' },
     { page: 'table', name: 'Table' },
+    { page: 'tabs', name: 'Tabs' },
     { page: 'text-field', name: 'TextField' },
   ]
 

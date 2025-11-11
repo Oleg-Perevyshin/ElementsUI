@@ -8,7 +8,7 @@
   let sliderComponent: UIComponent = $state({
     id: crypto.randomUUID(),
     type: 'Slider',
-    component: null,
+
     properties: {
       id: crypto.randomUUID(),
       wrapperClass: 'bg-blue',

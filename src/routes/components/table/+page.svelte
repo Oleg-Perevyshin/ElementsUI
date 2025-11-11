@@ -8,7 +8,7 @@
   let tableComponent: UIComponent = $state({
     id: crypto.randomUUID(),
     type: 'Table',
-    component: null,
+
     properties: {
       id: crypto.randomUUID(),
       wrapperClass: 'bg-blue',

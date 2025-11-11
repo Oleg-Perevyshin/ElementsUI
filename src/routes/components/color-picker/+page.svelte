@@ -8,7 +8,7 @@
   let colorPickerComponent: UIComponent = $state({
     id: crypto.randomUUID(),
     type: 'ColorPicker',
-    component: null,
+
     properties: {
       id: crypto.randomUUID(),
       label: { name: 'Label', class: 'text-center' },

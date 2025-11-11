@@ -8,7 +8,7 @@
   let buttonComponent: UIComponent = $state({
     id: crypto.randomUUID(),
     type: 'Button',
-    component: null,
+
     properties: {
       id: crypto.randomUUID(),
       componentClass: 'bg-red py-1',

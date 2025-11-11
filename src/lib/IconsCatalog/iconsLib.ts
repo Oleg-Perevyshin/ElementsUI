@@ -2,7 +2,7 @@ import fs from 'fs'
 import { join } from 'path'
 
 const scanAllIcons = async () => {
-  const dirPath = 'src/lib/IconsLib'
+  const dirPath = 'src/lib/IconsCatalog'
   const files = fs.readdirSync(dirPath)
 
   const categories: Record<string, string[]> = {}

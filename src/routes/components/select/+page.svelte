@@ -8,7 +8,7 @@
   let selectComponent: UIComponent = $state({
     id: crypto.randomUUID(),
     type: 'Select',
-    component: null,
+
     properties: {
       id: crypto.randomUUID(),
       wrapperClass: 'bg-max',

@@ -35,23 +35,12 @@ export interface UIComponent {
     | 'ColorPicker'
     | 'Slider'
     | 'TextField'
+    | 'Joystick'
     | 'ProgressBar'
     | 'Graph'
     | 'Table'
+    | 'Tabs'
     | 'FileAttach'
-  component:
-    | Component<IButtonProps>
-    | Component<IInputProps>
-    | Component<ISelectProps>
-    | Component<ISwitchProps>
-    | Component<IColorPickerProps>
-    | Component<ISliderProps>
-    | Component<ITextFieldProps>
-    | Component<IProgressBarProps>
-    | Component<IGraphProps>
-    | Component<ITableProps<object>>
-    | Component<IFileInputProps>
-    | null
   properties:
     | IAccordionProps
     | IButtonProps
@@ -64,6 +53,7 @@ export interface UIComponent {
     | IProgressBarProps
     | IGraphProps
     | ITableProps<object>
+    | ITabsProps
     | IFileInputProps
   position: Position
   parentId: string
@@ -314,4 +304,19 @@ export interface ITableProps<T extends object> {
   getData?: () => void
   modalData?: { isOpen?: boolean; rawData?: string; formattedData?: string }
   onClick?: (eventHandler: IUIComponentHandler) => void
+}
+
+/* ********************************************************** */
+
+export interface ITabsProps {
+  id?: string
+  wrapperClass?: string
+  size?: {
+    height?: number
+    width?: number
+  }
+  activeTab?: number
+  items: { name?: string; icon?: string; class?: string; children?: Snippet }[]
+  apiArray?: UIComponent[]
+  Components?: Snippet<[component: UIComponent, fixedHeight: boolean]>
 }

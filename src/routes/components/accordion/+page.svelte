@@ -11,7 +11,6 @@
   let accordionComponent: UIComponent = $state({
     id: crypto.randomUUID(),
     type: 'Accordion',
-    component: null,
     properties: {
       id: crypto.randomUUID(),
       isOpen: true,

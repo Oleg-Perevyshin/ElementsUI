@@ -1,13 +1,13 @@
 <script lang="ts">
-  import { Joystick, type IProgressBarProps, type UIComponent } from '$lib'
+  import { type IProgressBarProps, type UIComponent } from '$lib'
   import ComponentExample from '$lib/ComponentExample.svelte'
-  import ProgressBarProps from '$lib/ProgressBar/ProgressBarProps.svelte'
+  import Joystick from '$lib/Joystick/Joystick.svelte'
   import { formatObjectToString } from '../../common'
 
   let progressBarComponent: UIComponent = $state({
     id: crypto.randomUUID(),
     type: 'ProgressBar',
-    component: null,
+
     properties: {
       id: crypto.randomUUID(),
       wrapperClass: 'bg-blue',
@@ -34,7 +34,7 @@ ${formatObjectToString(progressBarComponent.properties as IProgressBarProps)}
 
 <ComponentExample {codeText}>
   {#snippet component()}
-    <Joystick label={{ name: 'dscfdjkcf' }} />
+    <Joystick label={{ name: 'Joystick' }} />
   {/snippet}
   {#snippet componentProps()}
     <!-- <ProgressBarProps

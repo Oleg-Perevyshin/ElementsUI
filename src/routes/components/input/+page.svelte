@@ -8,7 +8,7 @@
   let inputComponent: UIComponent = $state({
     id: crypto.randomUUID(),
     type: 'Input',
-    component: null,
+
     properties: {
       id: crypto.randomUUID(),
       label: { name: 'Label', class: 'text-center' },

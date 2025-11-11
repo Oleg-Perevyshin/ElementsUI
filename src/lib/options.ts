@@ -90,6 +90,19 @@ export const optionsStore = derived(t, ($t) => {
       { id: id(), value: 'right', name: $t('constructor.props.align.right') },
     ],
 
+    JUSTIFY_ALIGN_OPTIONS: [
+      { id: id(), value: 'justify-start', name: $t('constructor.props.align.left') },
+      { id: id(), value: 'justify-center', name: $t('constructor.props.align.center') },
+      { id: id(), value: 'justify-end', name: $t('constructor.props.align.right') },
+    ],
+
+    ICON_TEXT_POSITION_OPTIONS: [
+      { id: id(), value: 'flex-row', name: '←' },
+      { id: id(), value: 'flex-col', name: '↑' },
+      { id: id(), value: 'flex-row-reverse', name: '→' },
+      { id: id(), value: 'flex-col-reverse', name: '↓' },
+    ],
+
     HEIGHT_OPTIONS: [
       { id: id(), value: 'py-1', name: $t('constructor.props.height.small') },
       { id: id(), value: 'py-2', name: $t('constructor.props.height.medium') },

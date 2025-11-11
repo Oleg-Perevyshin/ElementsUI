@@ -7,7 +7,7 @@
   let progressBarComponent: UIComponent = $state({
     id: crypto.randomUUID(),
     type: 'ProgressBar',
-    component: null,
+
     properties: {
       id: crypto.randomUUID(),
       wrapperClass: 'bg-blue',

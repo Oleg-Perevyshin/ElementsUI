@@ -9,7 +9,7 @@
   let switchComponent: UIComponent = $state({
     id: crypto.randomUUID(),
     type: 'Switch',
-    component: null,
+
     properties: {
       id: crypto.randomUUID(),
       wrapperClass: 'bg-blue',
