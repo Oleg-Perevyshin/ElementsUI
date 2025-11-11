@@ -20,7 +20,7 @@
     Components,
   }: ITabsProps = $props()
 
-  const isCol = $derived(items.find((item) => item.class?.startsWith('flex-col')))
+  const isCol = $derived(!!items.find((item) => item.class?.startsWith('flex-col')))
 
   let currentTabIndex: number = $state(activeTab)
 </script>
@@ -28,13 +28,13 @@
 <div {id} class="w-full rounded-2xl bg-(--back-color)">
   <!-- Вкладки -->
   <div
-    class="{twMerge('bg-blue sticky top-0 z-50 flex h-fit items-center overflow-x-auto rounded-t-2xl px-1 pt-1', wrapperClass)} 
+    class="{twMerge('bg-blue sticky top-0 z-50 flex h-fit items-center overflow-x-auto rounded-t-2xl px-1', wrapperClass)} 
      bg-(--bg-color)"
   >
     {#each items as item, index}
       <button
         class={twMerge(
-          `tab mt-1 flex min-w-fit cursor-pointer items-center justify-center gap-0 self-end rounded-t-2xl px-5 py-2.5 ${!isCol && 'gap-2'}`,
+          `tab mt-1 flex min-w-fit cursor-pointer items-center justify-center gap-0 self-end rounded-t-2xl px-5 py-2.5 ${isCol && items.find((item) => item.icon) ? 'h-20' : 'gap-2'}`,
           item.class,
           index === currentTabIndex ? twMerge('bg-(--back-color) text-blue-500', item.class) : 'bg-(--bg-color) text-gray-500',
         )}
@@ -50,7 +50,7 @@
         {/if}
       </button>
       <span
-        class="h-[{isCol && items.find((item) => item.icon) ? 35 : 16}px] w-0 border border-l {index !== items.length - 1 &&
+        class="{isCol && items.find((item) => item.icon) ? 'h-9' : 'h-4'} w-0 border border-l {index !== items.length - 1 &&
         index !== currentTabIndex &&
         index !== currentTabIndex - 1
           ? 'border-gray-500'

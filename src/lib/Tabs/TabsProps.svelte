@@ -137,7 +137,6 @@
               updateProperty('items', items, component, onPropertyChange)
             })
           }
-          console.log(component.properties?.items)
         }}
       />
     </div>
@@ -323,7 +322,6 @@
               updateProperty('items', items, component, onPropertyChange)
             })
           }
-          console.log(component.properties?.items)
         }}
       />
     </div>
