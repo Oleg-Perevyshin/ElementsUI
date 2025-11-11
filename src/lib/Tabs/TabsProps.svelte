@@ -125,9 +125,14 @@
         onChange={(value) => {
           if (value === 2) {
             component.properties.items.forEach((_item: any, index: number) => {
-              let tabWidth = Math.max(...Array.from(document.body.querySelectorAll('.tab')).map((item) => (item as HTMLElement).offsetWidth))
+              let tabWidth = Math.ceil(
+                (Math.max(...Array.from(document.body.querySelectorAll('.tab')).map((item) => (item as HTMLElement).offsetWidth)) /
+                  parseFloat(getComputedStyle(document.documentElement).fontSize)) *
+                  4,
+              )
+
               const items = [...(component.properties?.items || [])]
-              items[index]['class'] = twMerge(items[index].class, `w-[${tabWidth}px]`)
+              items[index]['class'] = twMerge(items[index].class, `w-${tabWidth}`)
               updateProperty('items', items, component, onPropertyChange)
             })
           } else {
