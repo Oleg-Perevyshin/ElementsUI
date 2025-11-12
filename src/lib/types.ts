@@ -318,7 +318,7 @@ export interface ITabsProps {
     width?: number
   }
   activeTab?: number
-  items: { name?: string; icon?: string; class?: string; children?: Snippet; width?: string }[]
+  items: { name?: string; icon?: string; class?: string; children?: Snippet }[]
   apiArray?: UIComponent[]
   Components?: Snippet<[component: UIComponent, fixedHeight: boolean]>
 }
