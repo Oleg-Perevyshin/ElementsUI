@@ -9,7 +9,7 @@
     wrapperClass = '',
     label = { name: '', class: '', captionLeft: '', captionRight: '' },
     height = '2rem',
-    type = 'vertical',
+    type = 'horizontal',
     value = $bindable(),
     onChange = () => {},
   }: ISwitchProps = $props()
