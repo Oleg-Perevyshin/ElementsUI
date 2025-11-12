@@ -10,8 +10,8 @@ export { default as Graph } from './Graph/Graph.svelte'
 export { default as GraphProps } from './Graph/GraphProps.svelte'
 export { default as Input } from './Input/Input.svelte'
 export { default as InputProps } from './Input/InputProps.svelte'
-// export { default as Joystick } from './Joystick/Joystick.svelte'
-// export { default as JoystickProps } from './Joystick/JoystickProps.svelte'
+export { default as Joystick } from './Joystick/Joystick.svelte'
+export { default as JoystickProps } from './Joystick/JoystickProps.svelte'
 export { default as Modal } from './Modal.svelte'
 export { default as ProgressBar } from './ProgressBar/ProgressBar.svelte'
 export { default as ProgressBarProps } from './ProgressBar/ProgressBarProps.svelte'
@@ -50,4 +50,5 @@ export {
   type ITableHeader,
   type ITableProps,
   type ITabsProps,
+  type IJoystickProps,
 } from './types'

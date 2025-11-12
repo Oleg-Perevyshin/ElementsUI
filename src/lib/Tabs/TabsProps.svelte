@@ -69,8 +69,6 @@
     }
     reader.readAsDataURL(file)
   }
-
-  let currentImage = $derived(component.properties.image ?? '')
 </script>
 
 {#if forConstructor}
@@ -126,7 +124,7 @@
           if (value === 2) {
             component.properties.items.forEach((_item: any, index: number) => {
               const items = [...(component.properties?.items || [])]
-              items[index]['class'] = twMerge(items[index].class, `w-1/${items.length}`)
+              items[index]['class'] = twMerge(items[index].class, `w-[${(1 / items.length) * 100}%]`)
               updateProperty('items', items, component, onPropertyChange)
             })
           } else {
@@ -143,7 +141,7 @@
 
   <div class="space-y-4">
     <div class="m-0 flex items-center justify-center gap-2">
-      <h4>{$t('constructor.props.options.title')}</h4>
+      <h4>{$t('constructor.props.tabs.title')}</h4>
       <UI.Button
         wrapperClass="w-8"
         content={{ icon: ButtonAdd }}
@@ -328,7 +326,7 @@
 
   <div class="space-y-4">
     <div class="m-0 flex items-center justify-center gap-2">
-      <h4>{$t('constructor.props.options.title')}</h4>
+      <h4>{$t('constructor.props.tabs.title')}</h4>
       <UI.Button
         wrapperClass="w-8"
         content={{ icon: ButtonAdd }}

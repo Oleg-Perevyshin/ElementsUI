@@ -55,6 +55,7 @@ export interface UIComponent {
     | ITableProps<object>
     | ITabsProps
     | IFileInputProps
+    | IJoystickProps
   position: Position
   parentId: string
 }
@@ -196,6 +197,7 @@ export interface ISwitchProps {
     captionLeft?: string
     captionRight?: string
   }
+  type?: 'horizontal' | 'vertical' | 'checkbox'
   value?: number
   eventHandler?: IUIComponentHandler
   onChange?: (value: number) => void
@@ -316,7 +318,18 @@ export interface ITabsProps {
     width?: number
   }
   activeTab?: number
-  items: { name?: string; icon?: string; class?: string; children?: Snippet }[]
+  items: { name?: string; icon?: string; class?: string; children?: Snippet; width?: string }[]
   apiArray?: UIComponent[]
   Components?: Snippet<[component: UIComponent, fixedHeight: boolean]>
+}
+
+/* ********************************************************** */
+
+export interface IJoystickProps {
+  id?: string
+  wrapperClass?: string
+  label?: { name?: string; class?: string }
+  value?: number[]
+  limits?: { minNum: number; maxNum: number }[]
+  onUpdate?: (value: number[]) => void
 }

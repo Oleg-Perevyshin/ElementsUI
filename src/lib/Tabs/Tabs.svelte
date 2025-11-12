@@ -38,6 +38,11 @@
           item.class,
           index === currentTabIndex ? twMerge('bg-(--back-color) text-blue-500', item.class) : 'bg-(--bg-color) text-gray-500',
         )}
+        style="width: {item.class
+          ?.split(' ')
+          .find((cls: string) => cls.startsWith('w-'))
+          ?.replace('w-[', '')
+          .slice(0, -1)};"
         onclick={() => (currentTabIndex = index)}
       >
         {#if item?.icon}

@@ -105,6 +105,7 @@ const translations: Translations = {
     'constructor.props.widthMode': 'Ширина кнопок',
     'constructor.props.graphdata.title': 'Начальные данные ',
     'constructor.props.options.title': 'Опции компонента',
+    'constructor.props.tabs.title': 'Вкладки меню',
     'constructor.props.valuetype': 'Тип значения',
     'constructor.props.action': 'Действие при переключении',
     'constructor.props.caption.left': 'Надпись слева',

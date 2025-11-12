@@ -174,11 +174,11 @@
             if (!number.maxNum || !number.step) return
             if (Number(value) + number.step >= number.maxNum) {
               value = number.maxNum
-              onUpdate?.(value as number)
+              onUpdate(value as number)
               return
             }
             value = Number(value) + (number.step ?? 1)
-            onUpdate?.(value as number)
+            onUpdate(value as number)
           }}
           aria-label="Увеличить">+</button
         >
@@ -189,11 +189,11 @@
             if (number.minNum === null || number.minNum === undefined || !number.step) return
             if (Number(value) - number.step <= number.minNum) {
               value = number.minNum
-              onUpdate?.(value as number)
+              onUpdate(value as number)
               return
             }
             value = Number(value) - (number.step ?? 1)
-            onUpdate?.(value as number)
+            onUpdate(value as number)
           }}
           aria-label="Уменьшить">−</button
         >
