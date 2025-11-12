@@ -51,7 +51,7 @@ ${formatObjectToString(selectComponent.properties as ISelectProps)}
     <SelectProps
       component={selectComponent as UIComponent & { properties: Partial<ISelectProps> }}
       onPropertyChange={(value) => updateComponent({ properties: value } as object)}
-      forConstructor={false}
+      forConstructor={true}
     />
   {/snippet}
 </ComponentExample>

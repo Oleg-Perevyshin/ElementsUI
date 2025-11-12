@@ -1,6 +1,6 @@
 <!-- src/routes/+layout.svelte -->
 <script lang="ts">
-  import { onMount } from 'svelte'
+  import { onMount, setContext } from 'svelte'
   import '../app.css'
   import * as UI from '$lib/index'
   import IconLightDark from '../appIcons/IconLightDark.svelte'
@@ -39,6 +39,14 @@
     document.body.classList.toggle('light', currentTheme)
     localStorage.setItem('AppTheme', currentTheme ? 'light' : 'dark')
   }
+
+  let DeviceVariables = $state<{ id: string; value: string; name: string; class: string }[]>([
+    { id: crypto.randomUUID(), value: 'DevSN', name: 'DevSN — Серийный номер устройства', class: 'justify-start' },
+    { id: crypto.randomUUID(), value: 'DevName', name: 'DevName — Название устройства', class: 'justify-start' },
+    { id: crypto.randomUUID(), value: 'DevFW', name: 'DevFW — Версия прошивки', class: 'justify-start' },
+  ])
+
+  setContext('DeviceVariables', DeviceVariables)
 
   onMount(() => {
     const savedTheme = localStorage.getItem('AppTheme') || 'light'
