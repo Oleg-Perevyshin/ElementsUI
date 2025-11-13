@@ -56,19 +56,6 @@
     updateProperty('body', newBody, component, onPropertyChange)
   }
 
-  const handleImageUpload = (columnIndex: number, event: Event) => {
-    const target = event.target as HTMLInputElement
-    const file = target.files?.[0]
-    if (!file) return
-
-    const reader = new FileReader()
-    reader.onload = () => {
-      const base64WithPrefix = reader.result as string
-      updateTableHeader(columnIndex, 'image', { ['src']: base64WithPrefix })
-    }
-    reader.readAsDataURL(file)
-  }
-
   const updateButtonProperty = (columnIndex: number, buttonIndex: number, field: string, value: any) => {
     const headers = [...component.properties.header]
     const buttons = [...headers[columnIndex].buttons]

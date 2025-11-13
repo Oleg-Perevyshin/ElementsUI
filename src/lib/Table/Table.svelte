@@ -31,7 +31,7 @@
     direction: null,
   }
 
-  let isAutoscroll = $state(autoscroll)
+  let isAutoscroll = $state(false)
 
   /* Сортировка столбцов */
   const sortRows = (key: string) => {
@@ -142,10 +142,15 @@
   }
 
   onMount(() => {
-    container?.addEventListener('scroll', handleAutoScroll)
-    scrollToBottom()
+    if (autoscroll) {
+      container?.addEventListener('scroll', handleAutoScroll)
+      scrollToBottom()
+    }
+
     return () => {
-      container?.removeEventListener('scroll', handleAutoScroll)
+      if (autoscroll) {
+        container?.removeEventListener('scroll', handleAutoScroll)
+      }
     }
   })
 </script>

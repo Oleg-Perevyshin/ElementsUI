@@ -1,5 +1,6 @@
 <script lang="ts">
   import { type ITableHeader, type ITableProps, type UIComponent } from '$lib'
+  import Button from '$lib/Button/Button.svelte'
   import ComponentExample from '$lib/ComponentExample.svelte'
   import Table from '$lib/Table/Table.svelte'
   import TableProps from '$lib/Table/TableProps.svelte'
@@ -46,6 +47,7 @@
         },
       ],
       footer: '',
+      autoscroll: true,
     },
     position: { row: 0, col: 0, width: 0, height: 0 },
     parentId: '',
@@ -72,6 +74,15 @@ ${formatObjectToString(tableComponent.properties as ITableProps<object>)}
     </div>
   {/snippet}
   {#snippet componentProps()}
+    <!-- <Button
+      content={{ name: 'Добавить строку' }}
+      onClick={() => {
+        ;(tableComponent.properties as ITableProps<object>).body.push({
+          id: 'Value of id',
+          device: 'Value of device',
+        })
+      }}
+    /> -->
     <TableProps
       component={tableComponent as UIComponent & { properties: Partial<ITableProps<object>> }}
       onPropertyChange={(value) => updateComponent({ properties: value } as object)}
