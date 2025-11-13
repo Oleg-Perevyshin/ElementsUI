@@ -34,6 +34,7 @@
             width: '0rem',
             height: '0rem',
           },
+          overflow: { truncated: true },
         } as ITableHeader<any>,
       ],
       body: [

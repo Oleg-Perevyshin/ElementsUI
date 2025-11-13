@@ -307,7 +307,7 @@
 
     {#if tooltip.show}
       <div
-        class="fixed z-50 w-max max-w-min rounded-md px-2 py-1 text-sm whitespace-pre-wrap shadow-lg"
+        class="fixed z-50 w-max max-w-[20%] rounded-md px-2 py-1 text-sm whitespace-pre-wrap shadow-lg"
         style="background: color-mix(in srgb, var(--yellow-color) 30%, var(--back-color)); transform: translateX(-50%); left: {tooltip.x +
           10}px; top: {tooltip.y + 10}px;"
         transition:fly={{ y: 10, duration: 200 }}
