@@ -303,6 +303,7 @@ export interface ITableProps<T extends object> {
   outline?: boolean
   cursor?: string | null
   loader?: Writable<boolean>
+  autoscroll?: boolean
   getData?: () => void
   modalData?: { isOpen?: boolean; rawData?: string; formattedData?: string }
   onClick?: (eventHandler: IUIComponentHandler) => void

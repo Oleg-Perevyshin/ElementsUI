@@ -4,6 +4,7 @@
   import type { ITableHeader, ITableProps } from '../types'
   import { fly } from 'svelte/transition'
   import { twMerge } from 'tailwind-merge'
+  import { onMount } from 'svelte'
 
   let {
     id = crypto.randomUUID(),
@@ -15,6 +16,7 @@
     outline = false,
     cursor = null,
     loader,
+    autoscroll = false,
     getData = () => {},
     modalData = $bindable(),
     onClick,
@@ -28,6 +30,8 @@
     key: null,
     direction: null,
   }
+
+  let isAutoscroll = $state(autoscroll)
 
   /* Сортировка столбцов */
   const sortRows = (key: string) => {
@@ -71,6 +75,23 @@
       getData()
     }
   }
+
+  /* Обработчик автоскролла */
+  const handleAutoScroll = () => {
+    if (!container) return
+
+    isAutoscroll = !(container.scrollHeight - container.scrollTop <= container.clientHeight + 50)
+  }
+  const scrollToBottom = () => {
+    if (!isAutoscroll && container) {
+      container.scrollTop = container.scrollHeight
+    }
+  }
+  $effect(() => {
+    if (body.length > 0) {
+      scrollToBottom()
+    }
+  })
 
   function buttonClick(row: any, button: any) {
     if (button.onClick) button.onClick(row)
@@ -119,6 +140,14 @@
     const src = typeof column.image?.src === 'function' ? column.image.src(row) : column.image?.src
     return !!src
   }
+
+  onMount(() => {
+    container?.addEventListener('scroll', handleAutoScroll)
+    scrollToBottom()
+    return () => {
+      container?.removeEventListener('scroll', handleAutoScroll)
+    }
+  })
 </script>
 
 <div {id} class={twMerge(`bg-blue flex h-full w-full flex-col overflow-hidden`, wrapperClass)}>
