@@ -321,6 +321,7 @@ export interface ITabsProps {
   }
   activeTab?: number
   items: { name?: string; icon?: string; class?: string; children?: Snippet }[]
+  children?: Snippet<[any]>
   apiArray?: UIComponent[]
   Components?: Snippet<[component: UIComponent, fixedHeight: boolean]>
 }

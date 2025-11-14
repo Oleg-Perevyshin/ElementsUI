@@ -16,6 +16,7 @@
       },
       { name: 'tab 2', icon: '', class: 'bg-red' },
     ],
+    children,
     apiArray = [],
     Components,
   }: ITabsProps = $props()
@@ -72,6 +73,10 @@
     {#if Components}
       {#each (apiArray ?? []).filter((c) => c.id.endsWith(`${currentTabIndex}`)) as comp}
         {@render Components(comp, false)}
+      {/each}
+    {:else if children}
+      {#each items as item}
+        {@render children(item)}
       {/each}
     {:else}
       {@render items[currentTabIndex]?.children?.()}

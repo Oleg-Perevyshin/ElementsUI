@@ -5,7 +5,7 @@
   import InputProps from '$lib/Input/InputProps.svelte'
   import { formatObjectToString } from '../../common'
 
-  let valid = $state(true)
+  let valid = $state(false)
 
   let inputComponent: UIComponent = $state({
     id: crypto.randomUUID(),
