@@ -74,7 +74,7 @@
           componentClass,
         )}
         style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"
-        {id}
+        id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
         {placeholder}
         {disabled}
         autocomplete={help?.autocomplete}
@@ -99,7 +99,7 @@
           componentClass,
         )}
         style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"
-        {id}
+        id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
         {disabled}
         {maxlength}
         rows={textareaRows}

@@ -166,7 +166,7 @@
   let angle = 360 / directions.length
 </script>
 
-<div {id} class={twMerge(`bg-blue relative flex w-full flex-col items-center`, wrapperClass)}>
+<div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class={twMerge(`bg-blue relative flex w-full flex-col items-center`, wrapperClass)}>
   {#if label.name}
     <h5 class={twMerge(` w-full px-4 text-center`, label.class)}>{label.name}</h5>
   {/if}
@@ -292,7 +292,7 @@
   <p>{value[1]}</p>
   <p>{value[2]}</p>
 
-  <div {id} class="flex h-full w-full flex-row justify-center rounded-full p-10">
+  <div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class="flex h-full w-full flex-row justify-center rounded-full p-10">
     {#each sensitivityOptions as option, index}
       <button
         id={crypto.randomUUID()}

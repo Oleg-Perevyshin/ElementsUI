@@ -92,7 +92,7 @@
   {/if}
   {#if type === 'select'}
     <button
-      {id}
+      id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
       value={value?.value ? String(value.value) : ''}
       class={twMerge(
         `w-full rounded-2xl border border-(--border-color) p-1 text-center duration-250
@@ -133,7 +133,7 @@
       </div>
     {/if}
   {:else if type === 'buttons'}
-    <div {id} class="flex h-full w-full flex-row justify-center rounded-full border border-(--bg-color)">
+    <div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class="flex h-full w-full flex-row justify-center rounded-full border border-(--bg-color)">
       {#each options as option, index (option.id)}
         <button
           id={option.id}
@@ -165,7 +165,7 @@
           [&::-webkit-inner-spin-button]:hidden [&::-webkit-outer-spin-button]:hidden
           {disabled ? 'cursor-not-allowed opacity-50' : 'cursor-text'} border-(--border-color)"
       style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"
-      {id}
+      id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
       {disabled}
       oninput={(e) => handleSearch((e.currentTarget as HTMLInputElement).value)}
       onclick={(e) => {

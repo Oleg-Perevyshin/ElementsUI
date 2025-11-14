@@ -77,12 +77,19 @@
           <span class="text-sm text-gray-500">Image</span>
         {/if}
       </button>
-      <input {id} type="file" class="absolute -z-10 h-0 w-0 overflow-hidden opacity-0" {accept} {disabled} onchange={handleFileChange} />
+      <input
+        id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
+        type="file"
+        class="absolute -z-10 h-0 w-0 overflow-hidden opacity-0"
+        {accept}
+        {disabled}
+        onchange={handleFileChange}
+      />
     </div>
   {:else}
     <label class="relative inline-block w-full">
       <input
-        {id}
+        id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
         type="file"
         class={`h-8.5 w-full rounded-2xl bg-(--back-color) font-semibold shadow-sm transition duration-250 hover:shadow-md
           ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'} invalid:shadow-[0_0_6px(--red-color) file:h-full file:w-1/3 

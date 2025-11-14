@@ -218,7 +218,7 @@
   }
 </script>
 
-<div {id} class={`relative flex w-full flex-col items-center justify-center ${wrapperClass}`}>
+<div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class={`relative flex w-full flex-col items-center justify-center ${wrapperClass}`}>
   {#if label.name}
     <h5 class={`w-full px-4 text-center ${label.class}`}>{label.name}</h5>
   {/if}

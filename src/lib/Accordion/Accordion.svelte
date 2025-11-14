@@ -18,7 +18,7 @@
 </script>
 
 <div
-  {id}
+  id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
   class={twMerge(
     `${outline ? 'border-none' : 'rounded-xl hover:shadow-md'} w-full
     border border-(--border-color) bg-(--container-color) p-0 transition-shadow duration-250`,

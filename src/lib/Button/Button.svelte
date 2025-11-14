@@ -67,7 +67,7 @@
 
 <div class={twMerge(`relative flex w-full flex-col items-center `, wrapperClass)}>
   <button
-    {id}
+    id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
     class="{twMerge(
       `relative m-0 inline-block w-full items-center rounded-2xl 
         px-2 py-1 font-semibold  transition duration-200 select-none

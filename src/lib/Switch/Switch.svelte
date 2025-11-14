@@ -16,6 +16,7 @@
 
   const options = [1, 2]
   let checked = $derived(value === options[1])
+  let ID = $derived(`${id}-${crypto.randomUUID().slice(0, 6)}`)
 
   let knobTransform = $derived(
     checked
@@ -30,9 +31,7 @@
   const handleToggle = () => {
     if (disabled) return
     const newValue = checked ? options[1] : options[0]
-
     value = newValue
-
     onChange(newValue)
   }
 
@@ -70,7 +69,7 @@
       {disabled ? 'opacity-60' : ''}"
       >
         <input
-          {id}
+          id={ID}
           type="checkbox"
           class="absolute left-1/2 h-full w-full -translate-x-1/2 cursor-pointer appearance-none rounded-md"
           bind:checked
@@ -102,7 +101,7 @@
 {:else}
   <div class={twMerge('bg-blue m-1 flex items-center justify-center gap-2', wrapperClass)}>
     <input
-      {id}
+      id={ID}
       type="checkbox"
       bind:checked
       {disabled}
