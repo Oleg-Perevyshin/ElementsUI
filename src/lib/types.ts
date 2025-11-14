@@ -320,7 +320,7 @@ export interface ITabsProps {
     width?: number
   }
   activeTab?: number
-  items: { name?: string; icon?: string; class?: string; children?: Snippet<[any]> }[]
+  items: { name?: string; icon?: string; class?: string; children?: Snippet }[]
   children?: Snippet<[any]>
   apiArray?: UIComponent[]
   Components?: Snippet<[component: UIComponent, fixedHeight: boolean]>

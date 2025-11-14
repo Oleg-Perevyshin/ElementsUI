@@ -75,9 +75,7 @@
         {@render Components(comp, false)}
       {/each}
     {:else if children}
-      {#each items as item}
-        {@render children(item)}
-      {/each}
+      {@render children(items[activeTab])}
     {:else}
       {@render items[currentTabIndex]?.children?.()}
     {/if}
