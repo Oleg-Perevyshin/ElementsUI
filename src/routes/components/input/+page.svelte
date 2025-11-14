@@ -5,6 +5,8 @@
   import InputProps from '$lib/Input/InputProps.svelte'
   import { formatObjectToString } from '../../common'
 
+  let valid = $state(true)
+
   let inputComponent: UIComponent = $state({
     id: crypto.randomUUID(),
     type: 'Input',
@@ -17,7 +19,7 @@
       maxlength: 32,
       number: { minNum: 0, maxNum: 10, step: 1 },
       textareaRows: 5,
-      help: { copyButton: false, info: '', autocomplete: 'off' },
+      help: { copyButton: false, info: '', autocomplete: 'off', regExp: /^(?!^(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])$)[^<>:"/\\|?*]*$|^(?!.)$/i },
       eventHandler: { Header: 'SET', Argument: 'NoSend', Variables: [] },
     },
     position: { row: 0, col: 0, width: 0, height: 0 },
@@ -48,7 +50,9 @@ ${formatObjectToString(inputComponent.properties as IInputProps)}
             properties: { value: value },
           })
         }}
+        bind:isValid={valid}
       />
+      <span>{valid}</span>
     </div>
   {/snippet}
   {#snippet componentProps()}

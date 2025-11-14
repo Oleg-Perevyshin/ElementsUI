@@ -16,6 +16,7 @@
     componentClass = '',
     maxlength = 100,
     textareaRows = 3,
+    isValid = $bindable(true),
     number = { minNum: -1000000, maxNum: 1000000, step: 1 },
     help = { info: '', autocomplete: 'off', copyButton: false, regExp: '^[\\s\\S]*$' },
     onUpdate = () => {},
@@ -38,7 +39,9 @@
     return match ? new RegExp(match[1], match[2]) : new RegExp(pattern)
   }
   let RegExpObj = $derived(() => parseRegExp(help.regExp ?? ''))
-  let isValid = $derived(RegExpObj().test(typeof value === 'string' ? value : String(value)))
+  $effect(() => {
+    isValid = RegExpObj().test(typeof value === 'string' ? value : String(value))
+  })
 
   const handleInputChange = (value: string | number) => {
     if (type === 'number') {
@@ -63,7 +66,7 @@
         class={twMerge(
           `w-full rounded-2xl border px-4 py-1 text-center transition-all duration-300 outline-none focus:border-blue-400
               [&::-webkit-inner-spin-button]:hidden [&::-webkit-outer-spin-button]:hidden
-              ${isValid ? 'border-(--border-color)' : 'border-red-400 shadow-[0_0_6px_var(--red-color)]'}
+              ${isValid ? 'border-(--border-color)' : 'border-red-400 shadow-[0_0_6px_var(--red-color)] focus:border-red-400'}
               ${disabled ? 'opacity-50' : 'hover:shadow-md'} 
               ${readonly ? '' : 'hover:shadow-md'}
               ${help?.info ? 'pl-8' : ''} 

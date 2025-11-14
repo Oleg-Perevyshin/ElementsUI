@@ -133,6 +133,7 @@ export interface IInputProps {
   maxlength?: number
   textareaRows?: number
   placeholder?: string
+  isValid?: boolean
   number?: { minNum?: number; maxNum?: number; step?: number }
   help?: {
     info?: string
