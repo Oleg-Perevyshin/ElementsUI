@@ -52,9 +52,9 @@
   const initialWidth = $derived(() => {
     let width = component.properties.items.find((item: ISelectOption) => item.class?.split(' ').find((cls: string) => cls.startsWith('w-')))
     if (!width) {
-      return 1
-    } else if (width.class.includes('w-auto')) return 1
-    else return 2
+      return 0
+    } else if (width.class.includes('w-auto')) return 0
+    else return 1
   })
 </script>
 
@@ -107,10 +107,11 @@
           captionRight: $t('constructor.props.equal'),
         }}
         value={initialWidth()}
+        options={[{ id: crypto.randomUUID(), value: 0, class: '' }]}
         onChange={(value) => {
           component.properties.items.forEach((_item: any, index: number) => {
             const items = [...(component.properties?.items || [])]
-            items[index]['class'] = twMerge(items[index].class, value === 2 ? `w-[${(1 / items.length) * 100}%]` : 'w-auto')
+            items[index]['class'] = twMerge(items[index].class, value ? `w-[${(1 / items.length) * 100}%]` : 'w-auto')
             updateProperty('items', items, component, onPropertyChange)
           })
         }}
@@ -132,7 +133,7 @@
           }
           const items = [...(component.properties?.items || []), newItem]
           items.forEach((_item: any, index: number) => {
-            items[index]['class'] = twMerge(items[index].class, initialWidth() === 2 ? `w-[${(1 / items.length) * 100}%]` : 'w-auto')
+            items[index]['class'] = twMerge(items[index].class, initialWidth() ? `w-[${(1 / items.length) * 100}%]` : 'w-auto')
             updateProperty('items', items, component, onPropertyChange)
           })
         }}
@@ -176,7 +177,7 @@
               const items = [...(component.properties?.items || [])]
               items.splice(index, 1)
               items.forEach((_item: any, index: number) => {
-                items[index]['class'] = twMerge(items[index].class, initialWidth() === 2 ? `w-[${(1 / items.length) * 100}%]` : 'w-auto')
+                items[index]['class'] = twMerge(items[index].class, initialWidth() ? `w-[${(1 / items.length) * 100}%]` : 'w-auto')
                 updateProperty('items', items, component, onPropertyChange)
               })
               updateProperty('items', items, component, onPropertyChange)
@@ -289,6 +290,7 @@
           captionRight: $t('constructor.props.equal'),
         }}
         value={initialWidth()}
+        options={[{ id: crypto.randomUUID(), value: 0, class: '' }]}
         onChange={(value) => {
           if (value === 2) {
             component.properties.items.forEach((_item: any, index: number) => {
@@ -319,7 +321,7 @@
           let tabWidth = Math.max(...Array.from(document.body.querySelectorAll('.tab')).map((item) => (item as HTMLElement).offsetWidth))
           const newItem: { name: string; icon: string; class: string } = {
             name: `Tab ${component.properties?.items.length + 1}`,
-            class: `w-${initialWidth() === 2 ? `[${tabWidth}px]` : 'auto'} text-${initialColor?.value.slice(3)}-500 ${initialPosition?.value}`,
+            class: `w-${initialWidth() ? `[${tabWidth}px]` : 'auto'} text-${initialColor?.value.slice(3)}-500 ${initialPosition?.value}`,
             icon: '',
           }
           const items = [...(component.properties?.items || []), newItem]

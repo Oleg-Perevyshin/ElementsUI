@@ -67,8 +67,9 @@
       <UI.Switch
         wrapperClass="bg-blue"
         label={{ name: $t('constructor.props.istest') }}
-        value={component.properties.isTest ? 2 : 1}
-        onChange={(value) => updateProperty('isTest', value === 2, component, onPropertyChange)}
+        value={component.properties.isTest}
+        options={[{ id: crypto.randomUUID(), value: 0, class: '' }]}
+        onChange={(value) => updateProperty('isTest', value, component, onPropertyChange)}
       />
     </div>
   </div>

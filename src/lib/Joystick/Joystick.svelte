@@ -166,13 +166,14 @@
   let angle = 360 / directions.length
 </script>
 
-<div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class={twMerge(`bg-blue relative flex w-full flex-col items-center`, wrapperClass)}>
+<div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class={twMerge(`bg-red relative flex w-full flex-col items-center`, wrapperClass)}>
   {#if label.name}
     <h5 class={twMerge(` w-full px-4 text-center`, label.class)}>{label.name}</h5>
   {/if}
 
-  <div class=" flex items-center justify-center">
+  <div class=" flex w-1/2 items-center justify-center">
     <div class="relative z-10 flex size-40 items-center justify-center rounded-full bg-(--bg-color) shadow-[0_0_20px_rgb(0_0_0_/0.25)]">
+      <!-- Основные кнопки (оси pitch и yaw) -->
       <div class="absolute h-full w-full overflow-hidden rounded-full">
         {#each directions as direction, index}
           <button
@@ -205,6 +206,7 @@
           </button>
         {/each}
       </div>
+      <!-- Линии для разделения на сектора -->
       <div class="pointer-events-none absolute h-full w-full overflow-hidden rounded-full">
         {#each directions as direction, index}
           <span
@@ -216,6 +218,7 @@
           </span>
         {/each}
       </div>
+      <!-- Кнопка домой -->
       <div
         class="z-20 flex size-20 items-center justify-center rounded-full bg-(--bg-color) shadow-[0_0_15px_rgb(0_0_0_/0.25)] transition hover:scale-103"
       >
@@ -235,6 +238,7 @@
         >
       </div>
     </div>
+    <!-- Боковые кнопки (ось roll) -->
     <div
       class="absolute flex h-15 w-65 items-center justify-between rounded-full shadow-[0_0_15px_rgb(0_0_0_/0.25)]"
       style="background: color-mix(in srgb, var(--bg-color), var(--shadow-color) 10%)"
@@ -288,40 +292,50 @@
     </div>
   </div>
 
-  <p>{value[0]}</p>
-  <p>{value[1]}</p>
-  <p>{value[2]}</p>
-
-  <div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class="flex h-full w-full flex-row justify-center rounded-full p-10">
-    {#each sensitivityOptions as option, index}
-      <button
-        id={crypto.randomUUID()}
-        class={twMerge(`m-0 inline-block min-w-0 flex-1 cursor-pointer items-center px-2 py-1 font-semibold shadow-sm transition-all duration-300
+  <div class="absolute right-10 flex items-center">
+    <div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class="flex h-full flex-col justify-center rounded-full p-10">
+      {#each sensitivityOptions as option, index}
+        <button
+          id={crypto.randomUUID()}
+          class={twMerge(`m-0 inline-block min-w-0 flex-1 cursor-pointer items-center px-2 py-1 font-semibold shadow-sm transition-all duration-300
             select-none hover:shadow-md
             ${
               option === sensitivity && sensitivity !== null
                 ? 'z-10 py-1 shadow-[0_0_10px_var(--shadow-color)] hover:shadow-[0_0_15px_var(--shadow-color)]'
                 : ''
             }  
-            ${sensitivityOptions.length > 0 && index === 0 ? 'rounded-l-2xl' : ''} ${
-              index === sensitivityOptions.length - 1 ? 'rounded-r-2xl' : ''
+            ${sensitivityOptions.length > 0 && index === 0 ? 'rounded-t-2xl' : ''} ${
+              index === sensitivityOptions.length - 1 ? 'rounded-b-2xl' : ''
             } bg-(--back-color)`)}
-        onclick={() => {
-          sensitivity = option
-        }}
-      >
-        <span class="flex flex-row items-center justify-center gap-4">
-          {#if option}
-            <div class="flex-1">
-              {option}
-            </div>
-          {/if}
-        </span>
-      </button>
-    {/each}
+          onclick={() => {
+            sensitivity = option
+          }}
+        >
+          <span class="flex flex-row items-center justify-center gap-4">
+            {#if option}
+              <div class="flex-1">
+                {option}
+              </div>
+            {/if}
+          </span>
+        </button>
+      {/each}
+    </div>
+
+    <div>
+      {#each [0, 1, 2] as num}
+        <h5 class={twMerge(` w-full px-4 text-center`, label.class)}>{num == 0 ? 'Roll' : num == 1 ? 'Pitch' : 'Yaw'}</h5>
+        <input
+          class={`w-20 rounded-2xl border border-(--border-color) px-4 py-1 text-center transition-all duration-300 outline-none
+              hover:shadow-md 
+              [&::-webkit-inner-spin-button]:hidden
+              [&::-webkit-outer-spin-button]:hidden`}
+          style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"
+          value={sensitivity == 0.01 ? value[num].toFixed(2) : sensitivity == 0.1 ? value[num].toFixed(1) : value[num].toFixed(0)}
+          id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
+          readonly
+        />
+      {/each}
+    </div>
   </div>
-  <!-- {direction.content ? 2 * 6.25 * Math.sin((Math.PI * 65) / 360) : 2 * 6.25 * Math.sin((Math.PI * 25) / 360)} -->
-  <!-- angle / 2 + angle * index -->
-  <!--             ? 'shadow-[0_-2px_5px_rgb(254_202_202)] '
-            : 'shadow-[0_2px_5px_rgb(254_202_202)]'}" -->
 </div>

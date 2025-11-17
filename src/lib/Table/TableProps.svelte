@@ -97,8 +97,9 @@
       />
       <UI.Switch
         label={{ name: $t('constructor.props.outline') }}
-        value={component.properties.outline ? 2 : 1}
-        onChange={(value) => updateProperty('outline', value === 2, component, onPropertyChange)}
+        value={component.properties.outline}
+        options={[{ id: crypto.randomUUID(), value: 0, class: '' }]}
+        onChange={(value) => updateProperty('outline', value, component, onPropertyChange)}
       />
     </div>
     <div class="flex w-1/3 flex-col px-2">
@@ -168,14 +169,16 @@
         <UI.Switch
           wrapperClass="w-2/10"
           label={{ name: $t('constructor.props.table.columns.sortable') }}
-          value={column.sortable ? 2 : 1}
-          onChange={(value) => updateTableHeader(columnIndex, 'sortable', value === 2)}
+          options={[{ id: crypto.randomUUID(), value: 0, class: '' }]}
+          value={column.sortable}
+          onChange={(value) => updateTableHeader(columnIndex, 'sortable', value)}
         />
         <UI.Switch
           wrapperClass="w-2/10"
           label={{ name: $t('constructor.props.copy') }}
-          value={column.overflow?.copy ? 2 : 1}
-          onChange={(value) => updateTableHeader(columnIndex, 'overflow', { copy: value === 2 })}
+          options={[{ id: crypto.randomUUID(), value: 0, class: '' }]}
+          value={column.overflow?.copy}
+          onChange={(value) => updateTableHeader(columnIndex, 'overflow', { copy: value })}
         />
         <UI.Button
           wrapperClass="w-8"
@@ -302,8 +305,9 @@
       />
       <UI.Switch
         label={{ name: $t('constructor.props.outline') }}
-        value={component.properties.outline ? 2 : 1}
-        onChange={(value) => updateProperty('outline', value === 2, component, onPropertyChange)}
+        value={component.properties.outline}
+        options={[{ id: crypto.randomUUID(), value: 0, class: '' }]}
+        onChange={(value) => updateProperty('outline', value, component, onPropertyChange)}
       />
     </div>
   </div>
@@ -370,14 +374,16 @@
               <UI.Switch
                 label={{ name: $t('constructor.props.table.columns.sortable'), class: 'px-0' }}
                 wrapperClass="w-30"
-                value={column.sortable ? 2 : 1}
-                onChange={(value) => updateTableHeader(columnIndex, 'sortable', value === 2)}
+                options={[{ id: crypto.randomUUID(), value: 0, class: '' }]}
+                value={column.sortable}
+                onChange={(value) => updateTableHeader(columnIndex, 'sortable', value)}
               />
               <UI.Switch
                 label={{ name: $t('constructor.props.copy'), class: 'px-0' }}
                 wrapperClass="w-30"
-                value={column.overflow?.copy ? 2 : 1}
-                onChange={(value) => updateTableHeader(columnIndex, 'overflow', { copy: value === 2, truncated: column.overflow?.truncated })}
+                options={[{ id: crypto.randomUUID(), value: 0, class: '' }]}
+                value={column.overflow?.copy}
+                onChange={(value) => updateTableHeader(columnIndex, 'overflow', { copy: value, truncated: column.overflow?.truncated })}
               />
               <UI.Button
                 wrapperClass="w-8"
@@ -414,8 +420,9 @@
               <UI.Switch
                 wrapperClass="w-2/10"
                 label={{ name: $t('constructor.props.table.columns.truncated') }}
-                value={column.overflow?.truncated ? 2 : 1}
-                onChange={(value) => updateTableHeader(columnIndex, 'overflow', { truncated: value === 2, copy: column.overflow?.copy })}
+                options={[{ id: crypto.randomUUID(), value: 0, class: '' }]}
+                value={column.overflow?.truncated}
+                onChange={(value) => updateTableHeader(columnIndex, 'overflow', { truncated: value, copy: column.overflow?.copy })}
               />
               <div class="relative mt-6 flex w-full gap-2">
                 <UI.Button

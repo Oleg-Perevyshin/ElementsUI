@@ -173,6 +173,7 @@ export interface ISelectProps<T = unknown> {
   type?: 'select' | 'buttons' | 'input'
   value?: ISelectOption<T> | null
   options?: ISelectOption<T>[]
+  bitMode?: boolean
   eventHandler?: IUIComponentHandler
   onUpdate?: (value: ISelectOption<T>) => void
 }
@@ -198,6 +199,8 @@ export interface ISwitchProps {
     captionLeft?: string
     captionRight?: string
   }
+  options?: ISelectOption<number>[]
+  bitMode?: boolean
   type?: 'horizontal' | 'vertical' | 'checkbox'
   value?: number
   eventHandler?: IUIComponentHandler

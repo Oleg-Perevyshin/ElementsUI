@@ -138,8 +138,9 @@
       <UI.Switch
         wrapperClass="bg-blue"
         label={{ name: $t('constructor.props.disabled') }}
-        value={component.properties.disabled ? 2 : 1}
-        onChange={(value) => updateProperty('disabled', value === 2, component, onPropertyChange)}
+        value={component.properties.disabled}
+        options={[{ id: crypto.randomUUID(), value: 0, class: '' }]}
+        onChange={(value) => updateProperty('disabled', value, component, onPropertyChange)}
       />
     </div>
     <div class="flex w-1/3 flex-col px-2">

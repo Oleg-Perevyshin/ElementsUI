@@ -47,6 +47,10 @@ const translations: Translations = {
     'constructor.props.type.square': 'Квадрат',
     'constructor.props.type.circle': 'Круг',
 
+    'constructor.props.type.horizontal': 'Горизонтально',
+    'constructor.props.type.vertical': 'Вертикально',
+    'constructor.props.type.checkbox': 'Галочка',
+
     /* Общие для редактора свойств */
     'constructor.props.id': 'Идентификатор',
     'constructor.props.label': 'Текст надписи',
@@ -105,6 +109,7 @@ const translations: Translations = {
     'constructor.props.widthMode': 'Ширина кнопок',
     'constructor.props.graphdata.title': 'Начальные данные ',
     'constructor.props.options.title': 'Опции компонента',
+    'constructor.props.bits.title': 'Биты',
     'constructor.props.tabs.title': 'Вкладки меню',
     'constructor.props.valuetype': 'Тип значения',
     'constructor.props.action': 'Действие при переключении',
@@ -124,6 +129,7 @@ const translations: Translations = {
     'constructor.props.size.width': 'Ширина сетки',
     'constructor.props.icon.text.position': 'Положение иконки',
     'constructor.props.equal': 'Равные',
+    'constructor.props.bitmode': 'Битовый режим',
 
     'constructor.props.table.columns': 'Колонки таблицы',
     'constructor.props.table.columns.key': 'Ключ',

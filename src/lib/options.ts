@@ -124,6 +124,12 @@ export const optionsStore = derived(t, ($t) => {
       { id: id(), value: 'contain', name: $t('constructor.props.type.contain') },
     ],
 
+    SWITCH_OPTIONS: [
+      { id: id(), value: 'horizontal', name: $t('constructor.props.type.horizontal') },
+      { id: id(), value: 'vertical', name: $t('constructor.props.type.vertical') },
+      { id: id(), value: 'checkbox', name: $t('constructor.props.type.checkbox') },
+    ],
+
     INFO_SIDE_OPTIONS: [
       { id: id(), value: 'top', name: $t('constructor.props.info.top') },
       { id: id(), value: 'bottom', name: $t('constructor.props.info.bottom') },

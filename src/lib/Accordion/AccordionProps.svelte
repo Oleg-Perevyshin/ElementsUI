@@ -163,8 +163,9 @@
 
       <UI.Switch
         label={{ name: $t('constructor.props.open') }}
-        value={component.properties.isOpen ? 2 : 1}
-        onChange={(value) => updateProperty('isOpen', value === 2, component, onPropertyChange)}
+        value={component.properties.isOpen}
+        options={[{ id: crypto.randomUUID(), value: 0, class: '' }]}
+        onChange={(value) => updateProperty('isOpen', value, component, onPropertyChange)}
       />
     </div>
     <div class="flex w-1/3 flex-col items-center px-2">

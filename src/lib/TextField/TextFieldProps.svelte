@@ -79,30 +79,28 @@
     <div class="flex w-1/3 flex-col px-2">
       <UI.Switch
         label={{ name: $t('constructor.props.bold') }}
-        value={initialBold ? 2 : 1}
+        value={initialBold}
+        options={[{ id: crypto.randomUUID(), value: 0, class: '' }]}
         onChange={(value) =>
           updateProperty(
             'content.class',
-            `${component.properties.content.class} ${value === 2 ? 'font-bold' : 'font-normal'}`,
+            `${component.properties.content.class} ${value ? 'font-bold' : 'font-normal'}`,
             component,
             onPropertyChange,
           )}
       />
       <UI.Switch
         label={{ name: $t('constructor.props.italic') }}
-        value={initialItalic ? 2 : 1}
+        value={initialItalic}
+        options={[{ id: crypto.randomUUID(), value: 0, class: '' }]}
         onChange={(value) =>
-          updateProperty(
-            'content.class',
-            `${component.properties.content.class} ${value === 2 ? 'italic' : 'not-italic'}`,
-            component,
-            onPropertyChange,
-          )}
+          updateProperty('content.class', `${component.properties.content.class} ${value ? 'italic' : 'not-italic'}`, component, onPropertyChange)}
       />
       <UI.Switch
         label={{ name: $t('constructor.props.background') }}
-        value={component.properties.background ? 2 : 1}
-        onChange={(value) => updateProperty('background', value === 2, component, onPropertyChange)}
+        value={component.properties.background}
+        options={[{ id: crypto.randomUUID(), value: 0, class: '' }]}
+        onChange={(value) => updateProperty('background', value, component, onPropertyChange)}
       />
     </div>
   </div>
@@ -152,30 +150,33 @@
     <div class="flex w-1/3 flex-col px-2">
       <UI.Switch
         label={{ name: $t('constructor.props.bold') }}
-        value={initialBold ? 2 : 1}
+        value={initialBold}
+        options={[{ id: crypto.randomUUID(), value: 0, class: '' }]}
         onChange={(value) =>
           updateProperty(
             'content.class',
-            twMerge(`${component.properties.content.class} ${value === 2 ? 'font-bold' : 'font-normal'}`),
+            twMerge(`${component.properties.content.class} ${value ? 'font-bold' : 'font-normal'}`),
             component,
             onPropertyChange,
           )}
       />
       <UI.Switch
         label={{ name: $t('constructor.props.italic') }}
-        value={initialItalic ? 2 : 1}
+        value={initialItalic}
+        options={[{ id: crypto.randomUUID(), value: 0, class: '' }]}
         onChange={(value) =>
           updateProperty(
             'content.class',
-            twMerge(`${component.properties.content.class} ${value === 2 ? 'italic' : 'not-italic'}`),
+            twMerge(`${component.properties.content.class} ${value ? 'italic' : 'not-italic'}`),
             component,
             onPropertyChange,
           )}
       />
       <UI.Switch
         label={{ name: $t('constructor.props.background') }}
-        value={component.properties.background ? 2 : 1}
-        onChange={(value) => updateProperty('background', value === 2, component, onPropertyChange)}
+        value={component.properties.background}
+        options={[{ id: crypto.randomUUID(), value: 0, class: '' }]}
+        onChange={(value) => updateProperty('background', value, component, onPropertyChange)}
       />
     </div>
   </div>

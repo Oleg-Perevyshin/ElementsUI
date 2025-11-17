@@ -161,13 +161,15 @@
       />
       <UI.Switch
         label={{ name: $t('constructor.props.readonly') }}
-        value={component.properties.readonly ? 2 : 1}
-        onChange={(value) => updateProperty('readonly', value === 2)}
+        value={component.properties.readonly}
+        options={[{ id: crypto.randomUUID(), value: 0, class: '' }]}
+        onChange={(value) => updateProperty('readonly', value)}
       />
       <UI.Switch
         label={{ name: $t('constructor.props.copy') }}
-        value={component.properties.help.copyButton ? 2 : 1}
-        onChange={(value) => updateProperty('help.copyButton', value === 2)}
+        value={component.properties.help.copyButton}
+        options={[{ id: crypto.randomUUID(), value: 0, class: '' }]}
+        onChange={(value) => updateProperty('help.copyButton', value)}
       />
     </div>
     <div class="flex w-1/3 flex-col px-2">
@@ -320,18 +322,21 @@
 
       <UI.Switch
         label={{ name: $t('constructor.props.readonly') }}
-        value={component.properties.readonly ? 2 : 1}
-        onChange={(value) => updateProperty('readonly', value === 2)}
+        value={component.properties.readonly}
+        options={[{ id: crypto.randomUUID(), value: 0, class: '' }]}
+        onChange={(value) => updateProperty('readonly', value)}
       />
       <UI.Switch
         label={{ name: $t('constructor.props.copy') }}
-        value={component.properties.help.copyButton ? 2 : 1}
-        onChange={(value) => updateProperty('help.copyButton', value === 2)}
+        value={component.properties.help.copyButton}
+        options={[{ id: crypto.randomUUID(), value: 0, class: '' }]}
+        onChange={(value) => updateProperty('help.copyButton', value)}
       />
       <UI.Switch
         label={{ name: $t('constructor.props.disabled') }}
-        value={component.properties.disabled ? 2 : 1}
-        onChange={(value) => updateProperty('disabled', value === 2)}
+        value={component.properties.disabled}
+        options={[{ id: crypto.randomUUID(), value: 0, class: '' }]}
+        onChange={(value) => updateProperty('disabled', value)}
       />
     </div>
   </div>

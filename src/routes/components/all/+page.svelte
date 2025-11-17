@@ -108,7 +108,7 @@
   let progressBarValue = $state(40)
   let selectOption = $state()
   let COMPONENT_OPTIONS = Object.keys(componentMap).map((name) => ({ id: name, name: name, value: name }))
-  let switchValue = $state(1)
+  let switchValue = $state(0)
 
   let modalData = $state({ isOpen: false, rawData: '', formattedData: '' })
 </script>
