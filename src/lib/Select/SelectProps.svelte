@@ -46,10 +46,8 @@
 
   let currentType = $derived($optionsStore.SELECT_TYPE_OPTIONS.find((t) => t.value === component.properties.type))
 
-  let range = $state({ start: 0, end: 0 })
-
-  const generateBitOptions = () => {
-    const bitsNeeded = range.end - range.start + 1
+  const generateBitOptions = (start: number, end: number) => {
+    const bitsNeeded = end - start + 1
     const count = Math.pow(2, bitsNeeded)
 
     const options: ISelectOption<number>[] = []
@@ -59,7 +57,7 @@
 
       options.push({
         id: crypto.randomUUID(),
-        value: parseInt(binary, 2) << range.start,
+        value: parseInt(binary, 2) << start,
         name: binary,
         class: 'bg-max',
       })
@@ -136,10 +134,10 @@
         <div class="flex w-full gap-4">
           <UI.Input
             label={{ name: $t('constructor.props.range.start') }}
-            value={range.start}
+            value={component.properties.range.start}
             onUpdate={(value) => {
-              range.start = value as number
-              generateBitOptions()
+              updateProperty('range.start', value as number, component, onPropertyChange)
+              generateBitOptions(component.properties.range.start, component.properties.range.end)
             }}
             number={{ minNum: 0, maxNum: 31, step: 1 }}
             help={{ info: $t('constructor.props.range.start.help') }}
@@ -147,10 +145,10 @@
           />
           <UI.Input
             label={{ name: $t('constructor.props.range.end') }}
-            value={range.end}
+            value={component.properties.range.end}
             onUpdate={(value) => {
-              range.end = value as number
-              generateBitOptions()
+              updateProperty('range.end', value as number, component, onPropertyChange)
+              generateBitOptions(component.properties.range.start, component.properties.range.end)
             }}
             number={{ minNum: 0, maxNum: 31, step: 1 }}
             help={{ info: $t('constructor.props.range.end.help') }}
@@ -187,7 +185,7 @@
             else option.value = option.value !== undefined ? String(option.value) : ''
           })
           updateProperty('options', options, component, onPropertyChange)
-          if (value) generateBitOptions()
+          if (value) generateBitOptions(component.properties.range.start, component.properties.range.end)
         }}
       />
     </div>

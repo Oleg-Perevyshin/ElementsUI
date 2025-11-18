@@ -21,6 +21,7 @@
     type = 'select',
     value = $bindable(),
     bitMode = false,
+    range = { start: 0, end: 31 },
     options = [],
     onUpdate,
   }: ISelectProps<T> = $props()

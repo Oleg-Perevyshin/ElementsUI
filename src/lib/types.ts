@@ -174,6 +174,7 @@ export interface ISelectProps<T = unknown> {
   value?: ISelectOption<T> | null
   options?: ISelectOption<T>[]
   bitMode?: boolean
+  range?: { start: number; end: number }
   eventHandler?: IUIComponentHandler
   onUpdate?: (value: ISelectOption<T>) => void
 }
