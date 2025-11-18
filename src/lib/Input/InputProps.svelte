@@ -12,7 +12,7 @@
     forConstructor = true,
   } = $props<{
     component: UIComponent & { properties: Partial<IInputProps> }
-    onPropertyChange: (value: string | object, name?: string) => void
+    onPropertyChange: (value?: string | object, name?: string, access?: string) => void
     forConstructor?: boolean
   }>()
 

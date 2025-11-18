@@ -14,7 +14,7 @@
     forConstructor = true,
   } = $props<{
     component: UIComponent & { properties: Partial<ISwitchProps> }
-    onPropertyChange: (value: string | object, name?: string) => void
+    onPropertyChange: (value?: string | object, name?: string, access?: string) => void
     forConstructor?: boolean
   }>()
   const DeviceVariables = getContext<{ id: string; value: string; name: string }[]>('DeviceVariables')
@@ -133,7 +133,7 @@
           onClick={() => {
             const newOption: ISelectOption = {
               id: crypto.randomUUID(),
-              name: ``,
+              name: component.properties?.options.length,
               value: component.properties?.options.length,
               class: 'bg-blue',
             }
@@ -149,6 +149,7 @@
             label={{ name: $t('constructor.props.optionname') }}
             wrapperClass="!w-3/10"
             value={option.name}
+            maxlength={4}
             onUpdate={(value) => {
               const options = [...(component.properties?.options || [])]
               options[index]['name'] = value

@@ -14,7 +14,7 @@
     forConstructor = true,
   } = $props<{
     component: UIComponent & { properties: Partial<ISelectProps> }
-    onPropertyChange: (value: string | object, name?: string) => void
+    onPropertyChange: (value?: string | object, name?: string, access?: string) => void
     forConstructor?: boolean
   }>()
 
@@ -229,6 +229,7 @@
           label={{ name: $t('constructor.props.optionvalue') }}
           wrapperClass="!w-3/10"
           value={option.value}
+          readonly={component.properties.bitMode}
           type={currentValueType.value}
           onUpdate={(value) => {
             const options = [...(component.properties?.options || [])]

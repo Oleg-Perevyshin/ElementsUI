@@ -15,7 +15,7 @@
     forConstructor = true,
   } = $props<{
     component: UIComponent & { properties: Partial<IAccordionProps> }
-    onPropertyChange: (value: string | object, name?: string) => void
+    onPropertyChange: (value?: string | object, name?: string, access?: string) => void
     forConstructor?: boolean
   }>()
 
@@ -48,6 +48,13 @@
 {#if forConstructor}
   <div class="flex items-center justify-center gap-8">
     <div class="flex w-1/3 flex-col items-center px-2">
+      <UI.Select
+        label={{ name: $t('constructor.props.icon.access') }}
+        type="buttons"
+        options={$optionsStore.ACCESS_OPTION}
+        value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.access)}
+        onUpdate={(option) => onPropertyChange(null, null, option.value)}
+      />
       <UI.Input
         label={{ name: $t('constructor.props.label') }}
         value={component.properties.label.name}

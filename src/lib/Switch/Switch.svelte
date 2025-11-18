@@ -57,7 +57,7 @@
     {#if label.name}
       <h5 class={twMerge(`w-full px-4 text-center`, label.class)}>{label.name}</h5>
     {/if}
-    <div class="flex w-full flex-wrap justify-center gap-5">
+    <div class="flex w-full flex-wrap items-end justify-around gap-5">
       {#each localOptions as option, index}
         <div class={twMerge(`bg-blue flex flex-col`, option.class)}>
           {#if option.name}

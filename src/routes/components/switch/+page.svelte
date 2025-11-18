@@ -11,7 +11,6 @@
     type: 'Switch',
     properties: {
       id: crypto.randomUUID(),
-      wrapperClass: 'bg-blue',
       disabled: false,
       height: '2rem',
       type: 'horizontal',
@@ -19,8 +18,8 @@
       label: { name: 'Label', captionLeft: 'Off', captionRight: 'On' },
       value: 1,
       options: [
-        { id: crypto.randomUUID(), value: 0, name: '', class: 'bg-red', disabled: false },
-        { id: crypto.randomUUID(), value: 5, name: '', class: 'bg-green', disabled: false },
+        { id: crypto.randomUUID(), value: 0, name: '0', class: 'bg-red', disabled: false },
+        { id: crypto.randomUUID(), value: 5, name: '5', class: 'bg-green', disabled: false },
       ],
       eventHandler: { Header: 'SET', Argument: 'NoSend', Variables: [] },
     },
@@ -44,7 +43,9 @@ ${formatObjectToString(switchComponent.properties as ISwitchProps)}
 
 <ComponentExample {codeText}>
   {#snippet component()}
-    <Switch {...switchComponent.properties as ISwitchProps} />
+    <div class=" flex w-full justify-center">
+      <Switch wrapperClass={(switchComponent.properties as ISwitchProps).bitMode ? 'w-50' : ''} {...switchComponent.properties as ISwitchProps} />
+    </div>
   {/snippet}
   {#snippet componentProps()}
     <SwitchProps

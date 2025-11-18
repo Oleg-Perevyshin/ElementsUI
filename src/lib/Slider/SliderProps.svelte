@@ -12,7 +12,7 @@
     forConstructor = true,
   } = $props<{
     component: UIComponent & { properties: Partial<ISliderProps> }
-    onPropertyChange: (value: string | object, name?: string) => void
+    onPropertyChange: (value?: string | object, name?: string, access?: string) => void
     forConstructor?: boolean
   }>()
 

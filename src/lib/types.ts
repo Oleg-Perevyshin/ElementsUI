@@ -1,5 +1,5 @@
 // $lib/ElementsUI/types.ts
-import type { Component, Snippet } from 'svelte'
+import type { Snippet } from 'svelte'
 import type { Writable } from 'svelte/store'
 import type { IFileInputProps } from './FileAttach/FileAttach.svelte'
 
@@ -7,8 +7,7 @@ export const updateProperty = (
   path: string,
   value: string | number | boolean | object | string[],
   component: UIComponent & { properties: Partial<UIComponent['properties']> },
-  onPropertyChange: (value: string | object, name?: string) => void,
-  name?: string,
+  onPropertyChange: (value?: string | object, name?: string, access?: string) => void,
 ) => {
   const newProperties = JSON.parse(JSON.stringify(component.properties))
   const parts = path.split('.')
@@ -19,13 +18,14 @@ export const updateProperty = (
     obj = obj[part]
   }
   obj[parts[parts.length - 1]] = value
-  onPropertyChange(newProperties, name)
+  onPropertyChange(newProperties)
 }
 
 /* Интерфейс полного компонента */
 export interface UIComponent {
   id: string
   name?: string
+  access?: 'full' | 'viewOnly' | 'hidden'
   type:
     | 'Button'
     | 'Accordion'

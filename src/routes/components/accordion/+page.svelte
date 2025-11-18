@@ -1,16 +1,14 @@
 <script lang="ts">
   import { Accordion } from '$lib'
   import AccordionProps from '$lib/Accordion/AccordionProps.svelte'
-  import Button from '$lib/Button/Button.svelte'
-  import CopyButton from '$lib/libIcons/CopyButton.svelte'
   import type { IAccordionProps, Position, UIComponent } from '$lib/types'
-  import { fade, fly, slide } from 'svelte/transition'
   import { formatObjectToString } from '../../common'
   import ComponentExample from '$lib/ComponentExample.svelte'
 
   let accordionComponent: UIComponent = $state({
     id: crypto.randomUUID(),
     type: 'Accordion',
+    access: 'full',
     properties: {
       id: crypto.randomUUID(),
       isOpen: true,
@@ -27,6 +25,8 @@
     parentId: '',
   })
 
+  $effect(() => console.log(accordionComponent))
+
   let codeText = $derived(`
 <UI.Accordion
 ${formatObjectToString(accordionComponent.properties as IAccordionProps)} 
@@ -37,9 +37,17 @@ ${formatObjectToString(accordionComponent.properties as IAccordionProps)}
 
   let isPropsCollapsed = $state(false)
 
-  const updateComponent = (updates: Partial<{ position: Partial<Position>; parentId: string; properties: Partial<UIComponent['properties']> }>) => {
+  const updateComponent = (
+    updates: Partial<{
+      name: string
+      access: 'full' | 'viewOnly' | 'hidden'
+      properties: Partial<UIComponent['properties']>
+    }>,
+  ) => {
     accordionComponent = {
       ...accordionComponent,
+      access: updates.access ?? accordionComponent.access,
+      name: updates.name ?? accordionComponent.name,
       properties: updates.properties ? { ...accordionComponent.properties, ...updates.properties } : accordionComponent.properties,
     }
   }
@@ -58,7 +66,7 @@ ${formatObjectToString(accordionComponent.properties as IAccordionProps)}
   {#snippet componentProps()}
     <AccordionProps
       component={accordionComponent as UIComponent & { properties: Partial<IAccordionProps> }}
-      onPropertyChange={(value) => updateComponent({ properties: value } as object)}
+      onPropertyChange={(value, name, access) => updateComponent({ access, name, properties: value } as object)}
       forConstructor={true}
     />
     <hr />
