@@ -101,6 +101,13 @@
         }}
       />
       <UI.Select
+        label={{ name: $t('constructor.props.icon.access') }}
+        type="buttons"
+        options={$optionsStore.ACCESS_OPTION}
+        value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.properties.access)}
+        onUpdate={(option) => updateProperty('acces', option.value as string)}
+      />
+      <UI.Select
         label={{ name: $t('constructor.props.type') }}
         options={$optionsStore.INPUT_TYPE_OPTIONS}
         type="buttons"

@@ -13,6 +13,7 @@
 
     properties: {
       id: crypto.randomUUID(),
+
       label: { name: 'Label', class: 'text-center' },
       componentClass: 'bg-max resize-none',
       type: 'text',
@@ -56,6 +57,12 @@ ${formatObjectToString(inputComponent.properties as IInputProps)}
     </div>
   {/snippet}
   {#snippet componentProps()}
+    <InputProps
+      component={inputComponent as UIComponent & { properties: Partial<IInputProps> }}
+      onPropertyChange={(value) => updateComponent({ properties: value } as object)}
+      forConstructor={true}
+    />
+    <hr />
     <InputProps
       component={inputComponent as UIComponent & { properties: Partial<IInputProps> }}
       onPropertyChange={(value) => updateComponent({ properties: value } as object)}

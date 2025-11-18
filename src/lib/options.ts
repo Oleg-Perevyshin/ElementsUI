@@ -27,6 +27,12 @@ export const optionsStore = derived(t, ($t) => {
       { id: id(), value: '', name: $t('constructor.props.action.custom') },
     ],
 
+    ACCESS_OPTION: [
+      { id: id(), value: 'full', name: $t('constructor.props.type.full') },
+      { id: id(), value: 'viewOnly', name: $t('constructor.props.type.viewOnly') },
+      { id: id(), value: 'hidden', name: $t('constructor.props.type.hidden') },
+    ],
+
     INPUT_TYPE_OPTIONS: [
       { id: id(), value: 'text', name: $t('constructor.props.type.text') },
       { id: id(), value: 'password', name: $t('constructor.props.type.password') },

@@ -59,6 +59,12 @@ ${formatObjectToString(accordionComponent.properties as IAccordionProps)}
     <AccordionProps
       component={accordionComponent as UIComponent & { properties: Partial<IAccordionProps> }}
       onPropertyChange={(value) => updateComponent({ properties: value } as object)}
+      forConstructor={true}
+    />
+    <hr />
+    <AccordionProps
+      component={accordionComponent as UIComponent & { properties: Partial<IAccordionProps> }}
+      onPropertyChange={(value) => updateComponent({ properties: value } as object)}
       forConstructor={false}
     />
   {/snippet}

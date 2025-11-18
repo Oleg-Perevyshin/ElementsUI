@@ -14,13 +14,13 @@
       wrapperClass: 'bg-blue',
       disabled: false,
       height: '2rem',
-      type: 'vertical',
-      bitMode: true,
+      type: 'horizontal',
+      bitMode: false,
       label: { name: 'Label', captionLeft: 'Off', captionRight: 'On' },
       value: 1,
       options: [
-        { id: crypto.randomUUID(), value: 0, name: 'Option 1', class: 'bg-red', disabled: false },
-        { id: crypto.randomUUID(), value: 5, name: 'Option 2', class: 'bg-red', disabled: false },
+        { id: crypto.randomUUID(), value: 0, name: '', class: 'bg-red', disabled: false },
+        { id: crypto.randomUUID(), value: 5, name: '', class: 'bg-green', disabled: false },
       ],
       eventHandler: { Header: 'SET', Argument: 'NoSend', Variables: [] },
     },
@@ -50,7 +50,7 @@ ${formatObjectToString(switchComponent.properties as ISwitchProps)}
     <SwitchProps
       component={switchComponent as UIComponent & { properties: Partial<ISwitchProps> }}
       onPropertyChange={(value) => updateComponent({ properties: value } as object)}
-      forConstructor={false}
+      forConstructor={true}
     />
 
     <!-- <SwitchProps

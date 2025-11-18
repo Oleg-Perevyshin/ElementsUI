@@ -99,6 +99,13 @@
       />
     </div>
     <div class="flex w-1/3 flex-col px-2">
+      <UI.Select
+        label={{ name: $t('constructor.props.icon.access') }}
+        type="buttons"
+        options={$optionsStore.ACCESS_OPTION}
+        value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.properties.access)}
+        onUpdate={(option) => updateProperty('acces', option.value as string, component, onPropertyChange)}
+      />
       <UI.Input
         label={{ name: $t('constructor.props.name') }}
         value={component.properties.content.name}

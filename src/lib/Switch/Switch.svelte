@@ -74,8 +74,8 @@
             {/if}
 
             <label
-              class="relative flex items-center justify-between rounded-full border
-      {checkedOptions[index] ? 'border-(--bg-color)' : 'border-(--gray-color)'}
+              class="relative flex items-center justify-between rounded-full shadow-md
+      {checkedOptions[index] ? 'border-(--bg-color)' : 'border-(--bg-color)'}
       {option.disabled ? 'opacity-60' : ''}"
             >
               <input
@@ -87,13 +87,14 @@
                 onchange={() => handleToggle(index)}
               />
               <span
-                class="relative flex items-center rounded-full transition-all duration-250
-        {checkedOptions[index] ? 'bg-(--bg-color)' : 'bg-(--gray-color)'}
+                class="relative flex items-center rounded-full border-(--bg-color) transition-all duration-250
+        {checkedOptions[index] ? 'bg-(--bg-color)' : 'bg-(--back-color)'}
         {option.disabled ? '' : 'cursor-pointer'}"
                 style="{type === 'horizontal' ? 'width' : 'height'}: {`calc(${height} * 2)`}; {type === 'horizontal' ? 'height' : 'width'}: {height};"
               >
                 <span
-                  class="absolute rounded-full bg-(--back-color) transition-all duration-250
+                  class="absolute rounded-full transition-all duration-250
+                  {checkedOptions[index] ? 'bg-(--back-color)' : 'bg-(--bg-color)'}
           {option.disabled ? 'opacity-60' : 'cursor-pointer'}"
                   style="width: {`calc(${height} * 0.8)`}; height: {`calc(${height} * 0.8)`}; margin: 0 {`calc(${height} * 0.1)`}; transform: {checkedOptions[
                     index
@@ -121,13 +122,13 @@
     <input
       id={ID}
       type="checkbox"
-      bind:checked={checkedOptions[0]}
+      checked={checkedOptions[0]}
       disabled={localOptions[0].disabled}
       class="
       relative size-8 cursor-pointer appearance-none rounded-2xl border border-(--bg-color)
       bg-white transition duration-300 after:origin-bottom-left after:opacity-0
       checked:border-(--bg-color)
-      checked:bg-(--bg-color) checked:after:absolute checked:after:-top-px checked:after:left-[5.5px]
+      checked:bg-(--bg-color) checked:after:absolute checked:after:-top-px checked:after:left-[5px]
       checked:after:h-[13.5px] checked:after:w-[7.5px] checked:after:rotate-43
       checked:after:border-2 checked:after:border-t-0
       checked:after:border-l-0 checked:after:border-solid

@@ -299,6 +299,7 @@ export interface ITableHeader<T extends object> {
 
 export interface ITableProps<T extends object> {
   id?: string
+
   wrapperClass?: string
   label?: { name?: string; class?: string }
   header: ITableHeader<T>[]

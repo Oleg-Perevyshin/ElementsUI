@@ -11,10 +11,13 @@
 
     properties: {
       id: crypto.randomUUID(),
+
       wrapperClass: 'bg-max',
       disabled: false,
       label: { name: 'Label', class: 'text-center' },
       type: 'select',
+      bitMode: true,
+      range: { start: 0, end: 0 },
       options: [{ id: crypto.randomUUID(), value: '1', name: 'Option 1', class: 'bg-max' }],
       eventHandler: { Header: 'SET', Argument: '', Variables: [] },
     },
@@ -53,5 +56,11 @@ ${formatObjectToString(selectComponent.properties as ISelectProps)}
       onPropertyChange={(value) => updateComponent({ properties: value } as object)}
       forConstructor={true}
     />
+    <!-- <hr />
+    <SelectProps
+      component={selectComponent as UIComponent & { properties: Partial<ISelectProps> }}
+      onPropertyChange={(value) => updateComponent({ properties: value } as object)}
+      forConstructor={false}
+    /> -->
   {/snippet}
 </ComponentExample>

@@ -49,16 +49,15 @@
           updateProperty('eventHandler.Argument', option.value as string, component, onPropertyChange)
         }}
       />
-      {#if !component.properties.bitMode}
-        <UI.Select
-          wrapperClass="!h-14"
-          label={{ name: $t('constructor.props.type') }}
-          type="buttons"
-          options={$optionsStore.SWITCH_OPTIONS}
-          value={$optionsStore.SWITCH_OPTIONS.find((option) => option.value == component.properties.type)}
-          onUpdate={(option) => updateProperty('type', option.value as string, component, onPropertyChange)}
-        />
-      {/if}
+      <UI.Select
+        wrapperClass="!h-14"
+        label={{ name: $t('constructor.props.type') }}
+        disabled={component.properties.bitMode}
+        type="buttons"
+        options={$optionsStore.SWITCH_OPTIONS}
+        value={$optionsStore.SWITCH_OPTIONS.find((option) => option.value == component.properties.type)}
+        onUpdate={(option) => updateProperty('type', option.value as string, component, onPropertyChange)}
+      />
     </div>
     {#if !component.properties.bitMode}
       <div class="flex w-1/3 flex-col px-2">
@@ -98,7 +97,9 @@
           label={{ name: $t('constructor.props.colors') }}
           type="buttons"
           options={$optionsStore.COLOR_OPTIONS.filter((option) => option.value !== 'bg-max' && option.value !== 'bg-gray')}
-          value={initialColor}
+          value={$optionsStore.COLOR_OPTIONS.find((c) =>
+            (c.value as string).includes(component.properties.options[0].class.split(' ').find((cls: string) => cls.startsWith('bg-'))),
+          )}
           onUpdate={(option) => {
             const options = [...(component.properties?.options || [])]
             options[0]['class'] = option.value
@@ -113,7 +114,8 @@
         options={[{ id: crypto.randomUUID(), value: 0, class: '' }]}
         onChange={(value) => {
           updateProperty('bitMode', value, component, onPropertyChange)
-          updateProperty('value', 1, component, onPropertyChange)
+          if (!component.properties.bitMode) updateProperty('value', 1, component, onPropertyChange)
+          if (component.properties.bitMode) updateProperty('type', 'vertical', component, onPropertyChange)
         }}
       />
     </div>
@@ -131,7 +133,7 @@
           onClick={() => {
             const newOption: ISelectOption = {
               id: crypto.randomUUID(),
-              name: `Option ${component.properties?.options.length + 1}`,
+              name: ``,
               value: component.properties?.options.length,
               class: 'bg-blue',
             }
@@ -154,7 +156,7 @@
             }}
           />
           <UI.Input
-            label={{ name: $t('constructor.props.optionvalue') }}
+            label={{ name: $t('constructor.props.optionposition') }}
             wrapperClass="!w-3/10"
             value={option.value}
             type="number"
@@ -222,7 +224,7 @@
         label={{ name: $t('constructor.props.colors') }}
         type="buttons"
         options={$optionsStore.COLOR_OPTIONS.filter((option) => option.value !== 'bg-max' && option.value !== 'bg-gray')}
-        value={initialColor}
+        value={component.properties.options[0].class.split(' ').find((cls: string) => cls.startsWith('bg-'))}
         onUpdate={(option) => {
           updateProperty('wrapperClass', twMerge(component.properties.wrapperClass, option.value), component, onPropertyChange)
           const options = [...(component.properties?.options || [])]
@@ -285,7 +287,8 @@
         options={[{ id: crypto.randomUUID(), value: 0, class: '' }]}
         onChange={(value) => {
           updateProperty('bitMode', value, component, onPropertyChange)
-          updateProperty('value', 1, component, onPropertyChange)
+          if (!component.properties.bitMode) updateProperty('value', 1, component, onPropertyChange)
+          if (component.properties.bitMode) updateProperty('type', 'vertical', component, onPropertyChange)
         }}
       />
     </div>

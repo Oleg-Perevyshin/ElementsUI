@@ -10,6 +10,7 @@
 
     properties: {
       id: crypto.randomUUID(),
+
       wrapperClass: 'bg-blue',
       label: { name: 'Label', class: 'text-center' },
     },
@@ -17,12 +18,14 @@
     parentId: '',
   })
 
+  let value: number[] = $state([0, 0, 0])
+
   let codeText = $derived(`
 <UI.Joystick
 ${formatObjectToString(joystickComponent.properties as IJoystickProps)} 
 />`)
 
-  const updateComponent = (id: string, updates: Partial<{ properties: Partial<UIComponent['properties']> }>) => {
+  const updateComponent = (updates: Partial<{ properties: Partial<UIComponent['properties']> }>) => {
     joystickComponent = {
       ...joystickComponent,
       properties: updates.properties ? { ...joystickComponent.properties, ...updates.properties } : joystickComponent.properties,
@@ -32,12 +35,13 @@ ${formatObjectToString(joystickComponent.properties as IJoystickProps)}
 
 <ComponentExample {codeText}>
   {#snippet component()}
-    <Joystick label={{ name: 'Joystick' }} />
+    <Joystick label={{ name: 'Joystick' }} bind:value />
   {/snippet}
   {#snippet componentProps()}
+    <p>{value}</p>
     <!-- <ProgressBarProps
       component={joystickComponent as UIComponent & { properties: Partial<IProgressBarProps> }}
-      onPropertyChange={(value) => updateComponent(joystickComponent.id, { properties: value } as object)}
+      onPropertyChange={(value) => updateComponent({ properties: value } as object)}
       forConstructor={false}
     /> -->
   {/snippet}

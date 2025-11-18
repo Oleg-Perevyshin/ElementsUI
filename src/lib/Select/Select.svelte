@@ -14,11 +14,13 @@
 
   let {
     id = crypto.randomUUID(),
+
     wrapperClass = '',
     disabled = false,
     label = { name: '', class: '' },
     type = 'select',
     value = $bindable(),
+    bitMode = false,
     options = [],
     onUpdate,
   }: ISelectProps<T> = $props()

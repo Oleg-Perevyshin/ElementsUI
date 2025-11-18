@@ -5,6 +5,7 @@
 
   let {
     id = crypto.randomUUID(),
+
     wrapperClass = '',
     label = { name: '', class: '' },
     value = [0, 0, 0],

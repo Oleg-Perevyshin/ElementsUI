@@ -6,6 +6,7 @@
 
   let {
     id = crypto.randomUUID(),
+
     wrapperClass = '',
     label = { name: '', class: '' },
     disabled = false,

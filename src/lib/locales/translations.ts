@@ -51,6 +51,10 @@ const translations: Translations = {
     'constructor.props.type.vertical': 'Вертикально',
     'constructor.props.type.checkbox': 'Галочка',
 
+    'constructor.props.type.full': 'Полный',
+    'constructor.props.type.viewOnly': 'Только просмотр',
+    'constructor.props.type.hidden': 'Скрыто',
+
     /* Общие для редактора свойств */
     'constructor.props.id': 'Идентификатор',
     'constructor.props.label': 'Текст надписи',
@@ -123,10 +127,15 @@ const translations: Translations = {
     'constructor.props.units': 'Единица измерения',
     'constructor.props.optionclass': 'Стили кнопки',
     'constructor.props.optionvalue': 'Значение',
+    'constructor.props.optionposition': 'Позиция',
     'constructor.props.optionname': 'Текст',
     'constructor.props.copy': 'Копирование',
     'constructor.props.size.height': 'Высота сетки',
     'constructor.props.size.width': 'Ширина сетки',
+    'constructor.props.range.start': 'Начальный бит ',
+    'constructor.props.range.end': 'Последний бит',
+    'constructor.props.range.start.help': 'Позиция начального бита диапазона ',
+    'constructor.props.range.end.help': 'Позиция последнего бита диапазона',
     'constructor.props.icon.text.position': 'Положение иконки',
     'constructor.props.equal': 'Равные',
     'constructor.props.bitmode': 'Битовый режим',

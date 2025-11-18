@@ -11,6 +11,7 @@
 
     properties: {
       id: crypto.randomUUID(),
+
       label: { name: 'Label', class: 'text-center' },
       value: [0, 0, 0],
       eventHandler: { Header: 'SET', Argument: 'NoSave', Variables: [] },
@@ -38,6 +39,12 @@ ${formatObjectToString(colorPickerComponent.properties as IColorPickerProps)}
     <ColorPicker {...colorPickerComponent.properties as IColorPickerProps} />
   {/snippet}
   {#snippet componentProps()}
+    <ColorPickerProps
+      component={colorPickerComponent as UIComponent & { properties: Partial<IColorPickerProps> }}
+      onPropertyChange={(value) => updateComponent({ properties: value } as object)}
+      forConstructor={true}
+    />
+    <hr />
     <ColorPickerProps
       component={colorPickerComponent as UIComponent & { properties: Partial<IColorPickerProps> }}
       onPropertyChange={(value) => updateComponent({ properties: value } as object)}

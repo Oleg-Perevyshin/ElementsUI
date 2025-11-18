@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getContext } from 'svelte'
+  import { getContext, onMount } from 'svelte'
   import { t } from '$lib/locales/i18n'
   import { type UIComponent, type ISelectProps, type ISelectOption, updateProperty } from '../types'
   import * as UI from '$lib'
@@ -46,11 +46,26 @@
 
   let currentType = $derived($optionsStore.SELECT_TYPE_OPTIONS.find((t) => t.value === component.properties.type))
 
-  const initialColor = $derived(
-    $optionsStore.COLOR_OPTIONS.find((c) =>
-      (c.value as string).includes(component.properties.wrapperClass?.split(' ').find((cls: string) => cls.startsWith('bg-'))),
-    ),
-  )
+  let range = $state({ start: 0, end: 0 })
+
+  const generateBitOptions = () => {
+    const bitsNeeded = range.end - range.start + 1
+    const count = Math.pow(2, bitsNeeded)
+
+    const options: ISelectOption<number>[] = []
+
+    for (let i = 0; i < count; i++) {
+      const binary = i.toString(2).padStart(bitsNeeded, '0')
+
+      options.push({
+        id: crypto.randomUUID(),
+        value: parseInt(binary, 2) << range.start,
+        name: binary,
+        class: 'bg-max',
+      })
+    }
+    updateProperty('options', options, component, onPropertyChange)
+  }
 
   const initialAlign = $derived(
     $optionsStore.TEXT_ALIGN_OPTIONS.find((a) =>
@@ -103,6 +118,7 @@
         wrapperClass="h-14"
         label={{ name: $t('constructor.props.valuetype') }}
         type="buttons"
+        disabled={component.properties.bitMode}
         options={$optionsStore.SELECT_VALUE_TYPE_OPTIONS}
         value={currentValueType}
         onUpdate={(value) => {
@@ -116,6 +132,32 @@
           updateProperty('options', options, component, onPropertyChange)
         }}
       />
+      {#if component.properties.bitMode}
+        <div class="flex w-full gap-4">
+          <UI.Input
+            label={{ name: $t('constructor.props.range.start') }}
+            value={range.start}
+            onUpdate={(value) => {
+              range.start = value as number
+              generateBitOptions()
+            }}
+            number={{ minNum: 0, maxNum: 31, step: 1 }}
+            help={{ info: $t('constructor.props.range.start.help') }}
+            type="number"
+          />
+          <UI.Input
+            label={{ name: $t('constructor.props.range.end') }}
+            value={range.end}
+            onUpdate={(value) => {
+              range.end = value as number
+              generateBitOptions()
+            }}
+            number={{ minNum: 0, maxNum: 31, step: 1 }}
+            help={{ info: $t('constructor.props.range.end.help') }}
+            type="number"
+          />
+        </div>
+      {/if}
     </div>
     <div class="flex w-1/3 flex-col items-center px-2">
       <UI.Input
@@ -129,6 +171,24 @@
         value={initialAlign}
         options={$optionsStore.TEXT_ALIGN_OPTIONS}
         onUpdate={(option) => updateProperty('label.class', twMerge(component.properties.label.class, option.value), component, onPropertyChange)}
+      />
+      <UI.Switch
+        wrapperClass="bg-blue"
+        label={{ name: $t('constructor.props.bitmode') }}
+        value={component.properties.bitMode}
+        options={[{ id: crypto.randomUUID(), value: 0, class: '' }]}
+        onChange={(value) => {
+          updateProperty('bitMode', value, component, onPropertyChange)
+          currentValueType = $optionsStore.SELECT_VALUE_TYPE_OPTIONS[1] as ValueTypeOption
+          const options = [...(component.properties?.options || [])]
+          const newType = $optionsStore.SELECT_VALUE_TYPE_OPTIONS[1].value
+          options.forEach((option) => {
+            if (newType === 'number') option.value = option.value !== undefined ? Number(option.value) : 0
+            else option.value = option.value !== undefined ? String(option.value) : ''
+          })
+          updateProperty('options', options, component, onPropertyChange)
+          if (value) generateBitOptions()
+        }}
       />
     </div>
   </div>
@@ -232,9 +292,9 @@
       <UI.Switch
         wrapperClass="bg-blue"
         label={{ name: $t('constructor.props.disabled') }}
-        value={component.properties.disabled }
-                options={[{ id: crypto.randomUUID(), value: 0, class: '' }]}
-        onChange={(value) => updateProperty('disabled', value , component, onPropertyChange)}
+        value={component.properties.disabled}
+        options={[{ id: crypto.randomUUID(), value: 0, class: '' }]}
+        onChange={(value) => updateProperty('disabled', value, component, onPropertyChange)}
       />
     </div>
     <div class="flex w-1/3 flex-col items-center px-2">

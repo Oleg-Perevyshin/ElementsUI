@@ -8,9 +8,10 @@
   let buttonComponent: UIComponent = $state({
     id: crypto.randomUUID(),
     type: 'Button',
-
+    access: 'full',
     properties: {
       id: crypto.randomUUID(),
+
       componentClass: 'bg-red py-1',
       content: {
         name: 'Button',
@@ -48,6 +49,12 @@ ${formatObjectToString(buttonComponent.properties as IButtonProps)}
       component={buttonComponent as UIComponent & { properties: Partial<IButtonProps> }}
       onPropertyChange={(value) => updateComponent({ properties: value } as object)}
       forConstructor={false}
+    />
+    <hr />
+    <ButtonProps
+      component={buttonComponent as UIComponent & { properties: Partial<IButtonProps> }}
+      onPropertyChange={(value) => updateComponent({ properties: value } as object)}
+      forConstructor={true}
     />
   {/snippet}
 </ComponentExample>

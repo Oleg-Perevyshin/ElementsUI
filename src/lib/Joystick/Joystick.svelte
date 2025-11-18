@@ -4,6 +4,7 @@
 
   let {
     id = crypto.randomUUID(),
+
     wrapperClass = '',
     label = { name: '', class: '' },
     value = $bindable([0, 0, 0]),
@@ -27,7 +28,7 @@
           return
         }
 
-        value[2] += sensitivity
+        value[2] = roundToClean(value[2] + sensitivity)
         onUpdate(value)
       },
     },
@@ -40,14 +41,14 @@
           value[2] = limits[2].maxNum
           onUpdate(value)
         } else {
-          value[2] += sensitivity
+          value[2] = roundToClean(value[2] + sensitivity)
           onUpdate(value)
         }
         if (value[1] - sensitivity <= limits[1].minNum) {
           value[1] = limits[1].minNum
           onUpdate(value)
         } else {
-          value[1] -= sensitivity
+          value[1] = roundToClean(value[1] - sensitivity)
           onUpdate(value)
         }
       },
@@ -62,7 +63,7 @@
           onUpdate(value)
           return
         }
-        value[1] -= sensitivity
+        value[1] = roundToClean(value[1] - sensitivity)
         onUpdate(value)
       },
     },
@@ -75,14 +76,14 @@
           value[2] = limits[2].minNum
           onUpdate(value)
         } else {
-          value[2] -= sensitivity
+          value[2] = roundToClean(value[2] - sensitivity)
           onUpdate(value)
         }
         if (value[1] - sensitivity <= limits[1].minNum) {
           value[1] = limits[1].minNum
           onUpdate(value)
         } else {
-          value[1] -= sensitivity
+          value[1] = roundToClean(value[1] - sensitivity)
           onUpdate(value)
         }
       },
@@ -97,7 +98,7 @@
           onUpdate(value)
           return
         }
-        value[2] -= sensitivity
+        value[2] = roundToClean(value[2] - sensitivity)
         onUpdate(value)
       },
     },
@@ -110,14 +111,14 @@
           value[1] = limits[1].maxNum
           onUpdate(value)
         } else {
-          value[1] += sensitivity
+          value[1] = roundToClean(value[1] + sensitivity)
           onUpdate(value)
         }
         if (value[2] - sensitivity <= limits[2].minNum) {
           value[2] = limits[2].minNum
           onUpdate(value)
         } else {
-          value[2] -= sensitivity
+          value[2] = roundToClean(value[2] - sensitivity)
           onUpdate(value)
         }
       },
@@ -132,7 +133,7 @@
           onUpdate(value)
           return
         }
-        value[1] += sensitivity
+        value[1] = roundToClean(value[1] + sensitivity)
         onUpdate(value)
       },
     },
@@ -145,14 +146,14 @@
           value[1] = limits[1].maxNum
           onUpdate(value)
         } else {
-          value[1] += sensitivity
+          value[1] = roundToClean(value[1] + sensitivity)
           onUpdate(value)
         }
         if (value[2] + sensitivity >= limits[2].maxNum) {
           value[2] = limits[2].maxNum
           onUpdate(value)
         } else {
-          value[2] += sensitivity
+          value[2] = roundToClean(value[2] + sensitivity)
           onUpdate(value)
         }
       },
@@ -164,6 +165,18 @@
 
   let clipPos = Math.cos(Math.PI / directions.length) * 100
   let angle = 360 / directions.length
+
+  const roundToClean = (num: number): number => {
+    if (Number.isInteger(num)) return num
+
+    const rounded1 = Number(num.toFixed(1))
+    if (Math.abs(rounded1 - num) < 1e-10) return rounded1
+
+    const rounded2 = Number(num.toFixed(2))
+    if (Math.abs(rounded2 - num) < 1e-10) return rounded2
+
+    return rounded2
+  }
 </script>
 
 <div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class={twMerge(`bg-red relative flex w-full flex-col items-center`, wrapperClass)}>
@@ -331,7 +344,7 @@
               [&::-webkit-inner-spin-button]:hidden
               [&::-webkit-outer-spin-button]:hidden`}
           style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"
-          value={sensitivity == 0.01 ? value[num].toFixed(2) : sensitivity == 0.1 ? value[num].toFixed(1) : value[num].toFixed(0)}
+          value={value[num]}
           id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
           readonly
         />
@@ -339,3 +352,4 @@
     </div>
   </div>
 </div>
+<!-- sensitivity == 0.01 ? value[num].toFixed(2) : sensitivity == 0.1 ? value[num].toFixed(1) : value[num].toFixed(0) -->
