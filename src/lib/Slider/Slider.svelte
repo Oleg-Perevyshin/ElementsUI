@@ -267,6 +267,7 @@
     height: 10rem;
     border-radius: 50%;
     background: #000;
+    opacity: 0.8;
     cursor: pointer;
     pointer-events: auto;
     border: none;
