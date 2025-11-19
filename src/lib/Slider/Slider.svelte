@@ -263,8 +263,8 @@
   input[type='range']::-webkit-slider-thumb {
     /*     -webkit-appearance: none;
     appearance: none;*/
-    width: 10rem;
-    height: 10rem;
+    width: 2rem;
+    height: 2rem;
     border-radius: 50%;
     background: color-mix(in srgb, black 20, transparent);
     cursor: pointer;
