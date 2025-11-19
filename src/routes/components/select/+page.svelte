@@ -8,10 +8,9 @@
   let selectComponent: UIComponent = $state({
     id: crypto.randomUUID(),
     type: 'Select',
-
+    access: 'full',
     properties: {
       id: crypto.randomUUID(),
-
       wrapperClass: 'bg-max',
       disabled: false,
       label: { name: 'Label', class: 'text-center' },
@@ -31,9 +30,17 @@ ${formatObjectToString(selectComponent.properties as ISelectProps)}
   onUpdate={() => {}}
 />`)
 
-  const updateComponent = (updates: Partial<{ properties: Partial<UIComponent['properties']> }>) => {
+  const updateComponent = (
+    updates: Partial<{
+      name: string
+      access: 'full' | 'viewOnly' | 'hidden'
+      properties: Partial<UIComponent['properties']>
+    }>,
+  ) => {
     selectComponent = {
       ...selectComponent,
+      access: updates.access ?? selectComponent.access,
+      name: updates.name ?? selectComponent.name,
       properties: updates.properties ? { ...selectComponent.properties, ...updates.properties } : selectComponent.properties,
     }
   }
@@ -53,14 +60,14 @@ ${formatObjectToString(selectComponent.properties as ISelectProps)}
   {#snippet componentProps()}
     <SelectProps
       component={selectComponent as UIComponent & { properties: Partial<ISelectProps> }}
-      onPropertyChange={(value) => updateComponent({ properties: value } as object)}
+      onPropertyChange={(value, name, access) => updateComponent({ access, name, properties: value } as object)}
       forConstructor={true}
     />
-    <!-- <hr />
+    <hr />
     <SelectProps
       component={selectComponent as UIComponent & { properties: Partial<ISelectProps> }}
-      onPropertyChange={(value) => updateComponent({ properties: value } as object)}
+      onPropertyChange={(value, name, access) => updateComponent({ access, name, properties: value } as object)}
       forConstructor={false}
-    /> -->
+    />
   {/snippet}
 </ComponentExample>

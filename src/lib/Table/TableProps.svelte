@@ -81,9 +81,17 @@
         options={VARIABLE_OPTIONS}
         value={VARIABLE_OPTIONS.find((opt) => opt.value === component.properties.id)}
         onUpdate={(value) => {
-          updateProperty('id', value.value as string, component, onPropertyChange, value.name?.split('—')[1].trim())
+          updateProperty('id', value.value as string, component, onPropertyChange)
           updateProperty('eventHandler.Variables', value.value as string, component, onPropertyChange)
+          onPropertyChange(null, value.name?.split('—')[1].trim(), null)
         }}
+      />
+      <UI.Select
+        label={{ name: $t('constructor.props.access') }}
+        type="buttons"
+        options={$optionsStore.ACCESS_OPTION}
+        value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.access)}
+        onUpdate={(option) => onPropertyChange(null, null, option.value)}
       />
     </div>
     <div class="flex w-1/3 flex-col px-2">
@@ -145,6 +153,7 @@
       <div class="mr-2 flex items-end justify-around gap-6">
         <UI.Input
           label={{ name: $t('constructor.props.table.columns.key') }}
+          wrapperClass="w-170"
           value={column.key}
           help={{ regExp: /^[0-9a-zA-Z_-]{0,16}$/ }}
           onUpdate={(value) => {
@@ -161,21 +170,30 @@
         />
         <UI.Input
           label={{ name: $t('constructor.props.table.columns.width') }}
-          wrapperClass="w-120"
+          wrapperClass="w-150"
           type="number"
           value={Number(column.width.replace('%', ''))}
           onUpdate={(value) => updateTableHeader(columnIndex, 'width', `${value}%`)}
         />
+        <UI.Select
+          label={{ name: $t('constructor.props.align.content') }}
+          type="buttons"
+          value={$optionsStore.ALIGN_OPTIONS.find((a) => (a.value as string).includes(column.align?.content) || 'left')}
+          options={$optionsStore.ALIGN_OPTIONS}
+          onUpdate={(option) => {
+            updateTableHeader(columnIndex, 'align', { header: option.value, content: option.value })
+          }}
+        />
         <UI.Switch
-          wrapperClass="w-2/10"
-          label={{ name: $t('constructor.props.table.columns.sortable') }}
+          wrapperClass="w-30"
+          label={{ name: $t('constructor.props.table.columns.sortable'), class: 'px-0' }}
           options={[{ id: crypto.randomUUID(), value: 0, class: '' }]}
           value={column.sortable}
           onChange={(value) => updateTableHeader(columnIndex, 'sortable', value)}
         />
         <UI.Switch
-          wrapperClass="w-2/10"
-          label={{ name: $t('constructor.props.copy') }}
+          wrapperClass="w-30"
+          label={{ name: $t('constructor.props.copy'), class: 'px-0' }}
           options={[{ id: crypto.randomUUID(), value: 0, class: '' }]}
           value={column.overflow?.copy}
           onChange={(value) => updateTableHeader(columnIndex, 'overflow', { copy: value })}
@@ -263,6 +281,7 @@
         value={component.properties.id}
         onUpdate={(value) => updateProperty('id', value as string, component, onPropertyChange)}
       />
+
       <UI.Input
         label={{ name: $t('constructor.props.wrapperclass') }}
         value={component.properties.wrapperClass}
@@ -285,6 +304,13 @@
       />
     </div>
     <div class="flex w-1/3 flex-col px-2">
+      <UI.Select
+        label={{ name: $t('constructor.props.access') }}
+        type="buttons"
+        options={$optionsStore.ACCESS_OPTION}
+        value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.access)}
+        onUpdate={(option) => onPropertyChange(null, null, option.value)}
+      />
       <UI.Input
         label={{ name: $t('constructor.props.label') }}
         value={component.properties.label.name}

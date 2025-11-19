@@ -9,6 +9,7 @@
   let switchComponent: UIComponent = $state({
     id: crypto.randomUUID(),
     type: 'Switch',
+    access: 'full',
     properties: {
       id: crypto.randomUUID(),
       disabled: false,
@@ -33,9 +34,17 @@ ${formatObjectToString(switchComponent.properties as ISwitchProps)}
   onChange={() => {}}
 />`)
 
-  const updateComponent = (updates: Partial<{ properties: Partial<UIComponent['properties']> }>) => {
+  const updateComponent = (
+    updates: Partial<{
+      name: string
+      access: 'full' | 'viewOnly' | 'hidden'
+      properties: Partial<UIComponent['properties']>
+    }>,
+  ) => {
     switchComponent = {
       ...switchComponent,
+      access: updates.access ?? switchComponent.access,
+      name: updates.name ?? switchComponent.name,
       properties: updates.properties ? { ...switchComponent.properties, ...updates.properties } : switchComponent.properties,
     }
   }
@@ -50,14 +59,14 @@ ${formatObjectToString(switchComponent.properties as ISwitchProps)}
   {#snippet componentProps()}
     <SwitchProps
       component={switchComponent as UIComponent & { properties: Partial<ISwitchProps> }}
-      onPropertyChange={(value) => updateComponent({ properties: value } as object)}
+      onPropertyChange={(value, name, access) => updateComponent({ access, name, properties: value } as object)}
       forConstructor={true}
     />
-
-    <!-- <SwitchProps
+    <hr />
+    <SwitchProps
       component={switchComponent as UIComponent & { properties: Partial<ISwitchProps> }}
-      onPropertyChange={(value) => updateComponent({ properties: value } as object)}
-      forConstructor={true}
-    /> -->
+      onPropertyChange={(value, name, access) => updateComponent({ access, name, properties: value } as object)}
+      forConstructor={false}
+    />
   {/snippet}
 </ComponentExample>

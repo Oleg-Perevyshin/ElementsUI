@@ -9,7 +9,7 @@
   let tableComponent: UIComponent = $state({
     id: crypto.randomUUID(),
     type: 'Table',
-
+    access: 'full',
     properties: {
       id: crypto.randomUUID(),
       wrapperClass: 'bg-blue',
@@ -17,8 +17,8 @@
       header: [
         {
           key: 'id',
-          label: { name: 'ID' },
-          width: '40%',
+          label: { name: 'IDWWWW WWWWWW' },
+          width: '10%',
           sortable: true,
           image: {
             width: '0rem',
@@ -29,7 +29,7 @@
           key: 'device',
           label: { name: 'Device' },
           width: '60%',
-          sortable: false,
+          sortable: true,
           image: {
             width: '0rem',
             height: '0rem',
@@ -62,9 +62,17 @@ ${formatObjectToString(tableComponent.properties as ITableProps<object>)}
   onClick={() => {}}
 />`)
 
-  const updateComponent = (updates: Partial<{ properties: Partial<UIComponent['properties']> }>) => {
+  const updateComponent = (
+    updates: Partial<{
+      name: string
+      access: 'full' | 'viewOnly' | 'hidden'
+      properties: Partial<UIComponent['properties']>
+    }>,
+  ) => {
     tableComponent = {
       ...tableComponent,
+      access: updates.access ?? tableComponent.access,
+      name: updates.name ?? tableComponent.name,
       properties: updates.properties ? { ...tableComponent.properties, ...updates.properties } : tableComponent.properties,
     }
   }
@@ -88,13 +96,13 @@ ${formatObjectToString(tableComponent.properties as ITableProps<object>)}
     /> -->
     <TableProps
       component={tableComponent as UIComponent & { properties: Partial<ITableProps<object>> }}
-      onPropertyChange={(value) => updateComponent({ properties: value } as object)}
+      onPropertyChange={(value, name, access) => updateComponent({ access, name, properties: value } as object)}
       forConstructor={true}
     />
     <hr />
     <TableProps
       component={tableComponent as UIComponent & { properties: Partial<ITableProps<object>> }}
-      onPropertyChange={(value) => updateComponent({ properties: value } as object)}
+      onPropertyChange={(value, name, access) => updateComponent({ access, name, properties: value } as object)}
       forConstructor={false}
     />
   {/snippet}

@@ -11,13 +11,11 @@
     access: 'full',
     properties: {
       id: crypto.randomUUID(),
-
       componentClass: 'bg-red py-1',
       content: {
         name: 'Button',
         info: { text: '', side: 'top' },
       },
-
       eventHandler: { Header: 'SET', Argument: 'Save', Variables: [] },
     },
     position: { row: 0, col: 0, width: 0, height: 0 },
@@ -30,9 +28,17 @@ ${formatObjectToString(buttonComponent.properties as IButtonProps)}
   onClick={() => {}}
 />`)
 
-  const updateComponent = (updates: Partial<{ position: Partial<Position>; parentId: string; properties: Partial<UIComponent['properties']> }>) => {
+  const updateComponent = (
+    updates: Partial<{
+      name: string
+      access: 'full' | 'viewOnly' | 'hidden'
+      properties: Partial<UIComponent['properties']>
+    }>,
+  ) => {
     buttonComponent = {
       ...buttonComponent,
+      access: updates.access ?? buttonComponent.access,
+      name: updates.name ?? buttonComponent.name,
       properties: updates.properties ? { ...buttonComponent.properties, ...updates.properties } : buttonComponent.properties,
     }
   }
@@ -47,13 +53,13 @@ ${formatObjectToString(buttonComponent.properties as IButtonProps)}
   {#snippet componentProps()}
     <ButtonProps
       component={buttonComponent as UIComponent & { properties: Partial<IButtonProps> }}
-      onPropertyChange={(value) => updateComponent({ properties: value } as object)}
+      onPropertyChange={(value, name, access) => updateComponent({ access, name, properties: value } as object)}
       forConstructor={false}
     />
     <hr />
     <ButtonProps
       component={buttonComponent as UIComponent & { properties: Partial<IButtonProps> }}
-      onPropertyChange={(value) => updateComponent({ properties: value } as object)}
+      onPropertyChange={(value, name, access) => updateComponent({ access, name, properties: value } as object)}
       forConstructor={true}
     />
   {/snippet}

@@ -25,8 +25,6 @@
     parentId: '',
   })
 
-  $effect(() => console.log(accordionComponent))
-
   let codeText = $derived(`
 <UI.Accordion
 ${formatObjectToString(accordionComponent.properties as IAccordionProps)} 
@@ -72,7 +70,7 @@ ${formatObjectToString(accordionComponent.properties as IAccordionProps)}
     <hr />
     <AccordionProps
       component={accordionComponent as UIComponent & { properties: Partial<IAccordionProps> }}
-      onPropertyChange={(value) => updateComponent({ properties: value } as object)}
+      onPropertyChange={(value, name, access) => updateComponent({ access, name, properties: value } as object)}
       forConstructor={false}
     />
   {/snippet}

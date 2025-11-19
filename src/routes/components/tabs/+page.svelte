@@ -7,6 +7,7 @@
   let tabsComponent: UIComponent = $state({
     id: crypto.randomUUID(),
     type: 'Tabs',
+    access: 'full',
     properties: {
       id: crypto.randomUUID(),
       wrapperClass: 'justify-start bg-blue ',
@@ -30,9 +31,17 @@ ${formatObjectToString(tabsComponent.properties as ITabsProps)}
   onClick={() => {}}
 />`)
 
-  const updateComponent = (updates: Partial<{ properties: Partial<UIComponent['properties']> }>) => {
+  const updateComponent = (
+    updates: Partial<{
+      name: string
+      access: 'full' | 'viewOnly' | 'hidden'
+      properties: Partial<UIComponent['properties']>
+    }>,
+  ) => {
     tabsComponent = {
       ...tabsComponent,
+      access: updates.access ?? tabsComponent.access,
+      name: updates.name ?? tabsComponent.name,
       properties: updates.properties ? { ...tabsComponent.properties, ...updates.properties } : tabsComponent.properties,
     }
   }
@@ -45,8 +54,14 @@ ${formatObjectToString(tabsComponent.properties as ITabsProps)}
   {#snippet componentProps()}
     <TabsProps
       component={tabsComponent as UIComponent & { properties: Partial<ITabsProps> }}
-      onPropertyChange={(value) => updateComponent({ properties: value } as object)}
+      onPropertyChange={(value, name, access) => updateComponent({ access, name, properties: value } as object)}
       forConstructor={true}
+    />
+    <hr />
+    <TabsProps
+      component={tabsComponent as UIComponent & { properties: Partial<ITabsProps> }}
+      onPropertyChange={(value, name, access) => updateComponent({ access, name, properties: value } as object)}
+      forConstructor={false}
     />
   {/snippet}
 </ComponentExample>

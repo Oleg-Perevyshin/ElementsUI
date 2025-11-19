@@ -8,7 +8,7 @@
   let fileAttachComponent: UIComponent = $state({
     id: crypto.randomUUID(),
     type: 'FileAttach',
-
+    access: 'full',
     properties: {
       id: crypto.randomUUID(),
       wrapperClass: '',
@@ -29,9 +29,17 @@ ${formatObjectToString(fileAttachComponent.properties as IFileInputProps)}
   onChange={() => {}}
 />`)
 
-  const updateComponent = (updates: Partial<{ properties: Partial<UIComponent['properties']> }>) => {
+  const updateComponent = (
+    updates: Partial<{
+      name: string
+      access: 'full' | 'viewOnly' | 'hidden'
+      properties: Partial<UIComponent['properties']>
+    }>,
+  ) => {
     fileAttachComponent = {
       ...fileAttachComponent,
+      access: updates.access ?? fileAttachComponent.access,
+      name: updates.name ?? fileAttachComponent.name,
       properties: updates.properties ? { ...fileAttachComponent.properties, ...updates.properties } : fileAttachComponent.properties,
     }
   }
@@ -59,7 +67,7 @@ ${formatObjectToString(fileAttachComponent.properties as IFileInputProps)}
   {#snippet componentProps()}
     <FileAttachProps
       component={fileAttachComponent as UIComponent & { properties: Partial<IFileInputProps> }}
-      onPropertyChange={(value) => updateComponent({ properties: value } as object)}
+      onPropertyChange={(value, name, access) => updateComponent({ access, name, properties: value } as object)}
       forConstructor={false}
     />
   {/snippet}

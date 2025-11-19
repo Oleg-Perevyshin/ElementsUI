@@ -111,7 +111,7 @@
         onkeydown={null}
         onclick={disabled ? undefined : handleTrackClick}
       >
-        <div class="absolute h-full rounded-full bg-(--bg-color)" style={`left: ${lowerPosition}%; right: ${100 - upperPosition}%;`}></div>
+        <div class="bg-blue absolute h-full rounded-full bg-(--bg-color)" style={`left: ${lowerPosition}%; right: ${100 - upperPosition}%;`}></div>
       </div>
 
       <!-- Ползунки -->
@@ -130,13 +130,13 @@
             }}
         onmouseup={disabled ? undefined : () => onUpdate([lowerValue, upperValue])}
         {disabled}
-        class={`absolute h-full w-full appearance-none bg-transparent ${activeThumb === 'lower' ? 'z-30' : 'z-20'}`}
+        class={`absolute -z-10 h-full w-full ${activeThumb === 'lower' ? 'z-30' : 'z-20'}`}
       />
       <div
-        class="pointer-events-none absolute z-40 rounded-full bg-(--field-color)"
+        class="pointer-events-none absolute z-40 size-8 rounded-full border bg-(--field-color)"
         style={`left: calc(${lowerPosition}% + 0rem); top: 50%; transform: translateY(-50%)`}
       >
-        <IconGripVerticalLeft />
+        <!-- <IconGripVerticalLeft /> -->
       </div>
 
       <input
@@ -157,22 +157,22 @@
         class={`absolute h-full w-full appearance-none bg-transparent ${activeThumb === 'upper' ? 'z-30' : 'z-20'}`}
       />
       <div
-        class="pointer-events-none absolute z-40 rounded-full bg-(--field-color)"
+        class="pointer-events-none absolute z-40 size-8 rounded-full border bg-(--field-color)"
         style={`left: calc(${upperPosition}% - 2rem); top: 50%; transform: translateY(-50%)`}
       >
-        <IconGripVerticalRight />
+        <!-- <IconGripVerticalRight /> -->
       </div>
     {:else}
       <!-- Одиночный слайдер -->
       <div
-        class={`absolute h-full w-full rounded-full bg-(--gray-color) ${disabled ? '' : 'cursor-pointer'}`}
+        class={`absolute h-full w-full rounded-full bg-(--gray-color)/20 ${disabled ? '' : 'cursor-pointer'}`}
         role="button"
         tabindex={null}
         onkeydown={null}
         onclick={disabled ? undefined : handleTrackClick}
       >
         <div
-          class="absolute z-10 h-full {singlePosition === 100 ? ' rounded-full' : 'rounded-l-full'}"
+          class="absolute -z-10 h-full {singlePosition === 100 ? ' rounded-full' : 'rounded-l-full'}"
           style={`width: ${singlePosition}%; background-color: var(--bg-color)`}
         ></div>
       </div>
@@ -190,13 +190,13 @@
             }}
         onmouseup={disabled ? undefined : () => onUpdate(singleValue)}
         {disabled}
-        class="absolute z-20 h-full w-full appearance-none"
+        class="absolute z-20 h-full w-full"
       />
       <div
-        class="pointer-events-none absolute z-30 rounded-full bg-(--field-color)"
+        class="pointer-events-none absolute z-30 size-8 rounded-full border bg-(--field-color)/20"
         style={`left: clamp(1rem, ${singlePosition}%, calc(100% - 1rem)); top: 50%; transform: translate(-50%, -50%)`}
       >
-        <IconGripVerticalDual />
+        <!-- <IconGripVerticalDual /> -->
       </div>
     {/if}
   </div>
@@ -249,22 +249,24 @@
 
 <style>
   input[type='range'] {
-    -webkit-appearance: none;
-    appearance: none;
+    /* -webkit-appearance: none;
+    appearance: none; */
     margin: 0;
     padding: 0;
     pointer-events: none;
     outline: none;
+    color: #000;
   }
 
   /* Webkit thumb */
+
   input[type='range']::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 2rem;
-    height: 2rem;
+    /*     -webkit-appearance: none;
+    appearance: none;*/
+    width: 10rem;
+    height: 10rem;
     border-radius: 50%;
-    background: transparent;
+    background: #000;
     cursor: pointer;
     pointer-events: auto;
     border: none;
@@ -285,7 +287,7 @@
   input[type='range']::-webkit-slider-runnable-track {
     width: 100%;
     height: 100%;
-    background: transparent;
+    /* background: transparent; */
     border-radius: 0;
     border: none;
   }

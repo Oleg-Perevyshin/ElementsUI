@@ -40,8 +40,9 @@
         options={VARIABLE_OPTIONS}
         value={VARIABLE_OPTIONS.find((opt) => opt.value === component.properties.id)}
         onUpdate={(value) => {
-          updateProperty('id', value.value as string, component, onPropertyChange, value.name?.split('—')[1].trim())
+          updateProperty('id', value.value as string, component, onPropertyChange)
           updateProperty('eventHandler.Variables', value.value as string, component, onPropertyChange)
+          onPropertyChange(null, value.name?.split('—')[1].trim(), null)
         }}
       />
       <UI.Select
@@ -52,6 +53,13 @@
         onUpdate={(option) => {
           updateProperty('eventHandler.Argument', option.value as string, component, onPropertyChange)
         }}
+      />
+      <UI.Select
+        label={{ name: $t('constructor.props.access') }}
+        type="buttons"
+        options={$optionsStore.ACCESS_OPTION}
+        value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.access)}
+        onUpdate={(option) => onPropertyChange(null, null, option.value)}
       />
     </div>
     <div class="flex w-1/3 flex-col px-2">
@@ -144,6 +152,13 @@
       />
     </div>
     <div class="flex w-1/3 flex-col px-2">
+      <UI.Select
+        label={{ name: $t('constructor.props.access') }}
+        type="buttons"
+        options={$optionsStore.ACCESS_OPTION}
+        value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.access)}
+        onUpdate={(option) => onPropertyChange(null, null, option.value)}
+      />
       <UI.Input
         label={{ name: $t('constructor.props.label') }}
         value={component.properties.label.name}

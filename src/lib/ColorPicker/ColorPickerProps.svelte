@@ -35,8 +35,9 @@
         options={VARIABLE_OPTIONS}
         value={VARIABLE_OPTIONS.find((opt) => opt.value === component.properties.id)}
         onUpdate={(value) => {
-          updateProperty('id', value.value as string, component, onPropertyChange, value.name?.split('—')[1].trim())
+          updateProperty('id', value.value as string, component, onPropertyChange)
           updateProperty('eventHandler.Variables', value.value as string, component, onPropertyChange)
+          onPropertyChange(null, value.name?.split('—')[1].trim(), null)
         }}
       />
       <UI.Select
@@ -51,11 +52,11 @@
     </div>
     <div class="flex w-1/3 flex-col items-center px-2">
       <UI.Select
-        label={{ name: $t('constructor.props.icon.access') }}
+        label={{ name: $t('constructor.props.access') }}
         type="buttons"
         options={$optionsStore.ACCESS_OPTION}
-        value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.properties.access)}
-        onUpdate={(option) => updateProperty('acces', option.value as string, component, onPropertyChange)}
+        value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.access)}
+        onUpdate={(option) => onPropertyChange(null, null, option.value)}
       />
     </div>
     <div class="flex w-1/3 flex-col px-2">
@@ -82,10 +83,12 @@
         value={component.properties.id}
         onUpdate={(value) => updateProperty('id', value as string, component, onPropertyChange)}
       />
-      <UI.Input
-        label={{ name: $t('constructor.props.wrapperclass') }}
-        value={component.properties.wrapperClass}
-        onUpdate={(value) => updateProperty('wrapperClass', value as string, component, onPropertyChange)}
+      <UI.Select
+        label={{ name: $t('constructor.props.access') }}
+        type="buttons"
+        options={$optionsStore.ACCESS_OPTION}
+        value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.access)}
+        onUpdate={(option) => onPropertyChange(null, null, option.value)}
       />
     </div>
     <div class="flex w-1/3 flex-col px-2">
@@ -101,6 +104,11 @@
       />
     </div>
     <div class="flex w-1/3 flex-col px-2">
+      <UI.Input
+        label={{ name: $t('constructor.props.wrapperclass') }}
+        value={component.properties.wrapperClass}
+        onUpdate={(value) => updateProperty('wrapperClass', value as string, component, onPropertyChange)}
+      />
       <UI.TextField content={{ name: $t('constructor.props.defaultcolor'), class: 'font-bold' }} />
       <div class="flex items-center gap-3">
         <UI.TextField wrapperClass="w-4" content={{ name: 'R', class: 'font-bold' }} />

@@ -36,8 +36,9 @@
         options={VARIABLE_OPTIONS}
         value={VARIABLE_OPTIONS.find((opt) => opt.value === component.properties.id)}
         onUpdate={(value) => {
-          updateProperty('id', value.value as string, component, onPropertyChange, value.name?.split('—')[1].trim())
+          updateProperty('id', value.value as string, component, onPropertyChange)
           updateProperty('eventHandler.Variables', value.value as string, component, onPropertyChange)
+          onPropertyChange(null, value.name?.split('—')[1].trim(), null)
         }}
       />
       <UI.Select
@@ -50,6 +51,16 @@
         }}
       />
       <UI.Select
+        label={{ name: $t('constructor.props.access') }}
+        type="buttons"
+        options={$optionsStore.ACCESS_OPTION}
+        value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.access)}
+        onUpdate={(option) => onPropertyChange(null, null, option.value)}
+      />
+    </div>
+
+    <div class="flex w-1/3 flex-col px-2">
+      <UI.Select
         wrapperClass="!h-14"
         label={{ name: $t('constructor.props.type') }}
         disabled={component.properties.bitMode}
@@ -58,9 +69,7 @@
         value={$optionsStore.SWITCH_OPTIONS.find((option) => option.value == component.properties.type)}
         onUpdate={(option) => updateProperty('type', option.value as string, component, onPropertyChange)}
       />
-    </div>
-    {#if !component.properties.bitMode}
-      <div class="flex w-1/3 flex-col px-2">
+      {#if !component.properties.bitMode}
         <UI.Input
           label={{ name: $t('constructor.props.caption.left') }}
           value={component.properties.label.captionLeft}
@@ -83,8 +92,9 @@
             updateProperty('options', options, component, onPropertyChange)
           }}
         />
-      </div>
-    {/if}
+      {/if}
+    </div>
+
     <div class="flex w-1/3 flex-col px-2">
       <UI.Input
         label={{ name: $t('constructor.props.label') }}
@@ -214,6 +224,13 @@
         label={{ name: $t('constructor.props.id') }}
         value={component.properties.id}
         onUpdate={(value) => updateProperty('id', value as string, component, onPropertyChange)}
+      />
+      <UI.Select
+        label={{ name: $t('constructor.props.access') }}
+        type="buttons"
+        options={$optionsStore.ACCESS_OPTION}
+        value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.access)}
+        onUpdate={(option) => onPropertyChange(null, null, option.value)}
       />
       <UI.Input
         label={{ name: $t('constructor.props.wrapperclass') }}

@@ -76,7 +76,8 @@
         help={{ info: $t('constructor.props.argument.info'), autocomplete: 'on', regExp: /^[a-zA-Z0-9\-_]{0,32}$/ }}
         onUpdate={(value) => updateProperty('eventHandler.Argument', value as string, component, onPropertyChange)}
       />
-
+    </div>
+    <div class="flex w-1/3 flex-col items-center px-2">
       {#if (component.properties.eventHandler.Argument !== 'Save' && component.properties.eventHandler.Argument !== 'NoSave') || Header.value === 'SET'}
         <UI.Input
           label={{ name: $t('constructor.props.value') }}
@@ -97,15 +98,15 @@
           updateProperty('eventHandler.Variables', parts, component, onPropertyChange)
         }}
       />
-    </div>
-    <div class="flex w-1/3 flex-col px-2">
       <UI.Select
-        label={{ name: $t('constructor.props.icon.access') }}
+        label={{ name: $t('constructor.props.access') }}
         type="buttons"
         options={$optionsStore.ACCESS_OPTION}
-        value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.properties.access)}
-        onUpdate={(option) => updateProperty('acces', option.value as string, component, onPropertyChange)}
+        value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.access)}
+        onUpdate={(option) => onPropertyChange(null, null, option.value)}
       />
+    </div>
+    <div class="flex w-1/3 flex-col items-center px-2">
       <UI.Input
         label={{ name: $t('constructor.props.name') }}
         value={component.properties.content.name}
@@ -138,6 +139,13 @@
         label={{ name: $t('constructor.props.id') }}
         value={component.properties.id}
         onUpdate={(value) => updateProperty('id', value as string, component, onPropertyChange)}
+      />
+      <UI.Select
+        label={{ name: $t('constructor.props.access') }}
+        type="buttons"
+        options={$optionsStore.ACCESS_OPTION}
+        value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.access)}
+        onUpdate={(option) => onPropertyChange(null, null, option.value)}
       />
       <UI.Input
         label={{ name: $t('constructor.props.wrapperclass') }}

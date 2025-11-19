@@ -106,6 +106,13 @@
     </div>
     <div class="flex w-1/3 flex-col items-center px-2">
       <UI.Select
+        label={{ name: $t('constructor.props.access') }}
+        type="buttons"
+        options={$optionsStore.ACCESS_OPTION}
+        value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.access)}
+        onUpdate={(option) => onPropertyChange(null, null, option.value)}
+      />
+      <UI.Select
         label={{ name: $t('constructor.props.type') }}
         type="buttons"
         value={currentType}
@@ -131,30 +138,17 @@
         }}
       />
       {#if component.properties.bitMode}
-        <div class="flex w-full gap-4">
-          <UI.Input
-            label={{ name: $t('constructor.props.range.start') }}
-            value={component.properties.range.start}
-            onUpdate={(value) => {
-              updateProperty('range.start', value as number, component, onPropertyChange)
-              generateBitOptions(component.properties.range.start, component.properties.range.end)
-            }}
-            number={{ minNum: 0, maxNum: 31, step: 1 }}
-            help={{ info: $t('constructor.props.range.start.help') }}
-            type="number"
-          />
-          <UI.Input
-            label={{ name: $t('constructor.props.range.end') }}
-            value={component.properties.range.end}
-            onUpdate={(value) => {
-              updateProperty('range.end', value as number, component, onPropertyChange)
-              generateBitOptions(component.properties.range.start, component.properties.range.end)
-            }}
-            number={{ minNum: 0, maxNum: 31, step: 1 }}
-            help={{ info: $t('constructor.props.range.end.help') }}
-            type="number"
-          />
-        </div>
+        <UI.Slider
+          label={{ name: $t('constructor.props.range') }}
+          type="range"
+          number={{ minNum: 0, maxNum: 31, step: 1 }}
+          value={[0, 4]}
+          onUpdate={(value) => {
+            updateProperty('range.start', value as number[][0], component, onPropertyChange)
+            updateProperty('range.end', value as number[][1], component, onPropertyChange)
+            generateBitOptions(component.properties.range.start, component.properties.range.end)
+          }}
+        />
       {/if}
     </div>
     <div class="flex w-1/3 flex-col items-center px-2">
@@ -270,6 +264,13 @@
         label={{ name: $t('constructor.props.id') }}
         value={component.properties.id}
         onUpdate={(value) => updateProperty('id', value as string, component, onPropertyChange)}
+      />
+      <UI.Select
+        label={{ name: $t('constructor.props.access') }}
+        type="buttons"
+        options={$optionsStore.ACCESS_OPTION}
+        value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.access)}
+        onUpdate={(option) => onPropertyChange(null, null, option.value)}
       />
       <UI.Input
         label={{ name: $t('constructor.props.wrapperclass') }}

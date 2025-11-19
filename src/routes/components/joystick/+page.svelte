@@ -7,10 +7,9 @@
   let joystickComponent: UIComponent = $state({
     id: crypto.randomUUID(),
     type: 'Joystick',
-
+    access: 'full',
     properties: {
       id: crypto.randomUUID(),
-
       wrapperClass: 'bg-blue',
       label: { name: 'Label', class: 'text-center' },
     },
@@ -25,9 +24,17 @@
 ${formatObjectToString(joystickComponent.properties as IJoystickProps)} 
 />`)
 
-  const updateComponent = (updates: Partial<{ properties: Partial<UIComponent['properties']> }>) => {
+  const updateComponent = (
+    updates: Partial<{
+      name: string
+      access: 'full' | 'viewOnly' | 'hidden'
+      properties: Partial<UIComponent['properties']>
+    }>,
+  ) => {
     joystickComponent = {
       ...joystickComponent,
+      access: updates.access ?? joystickComponent.access,
+      name: updates.name ?? joystickComponent.name,
       properties: updates.properties ? { ...joystickComponent.properties, ...updates.properties } : joystickComponent.properties,
     }
   }
@@ -41,7 +48,7 @@ ${formatObjectToString(joystickComponent.properties as IJoystickProps)}
     <p>{value}</p>
     <!-- <ProgressBarProps
       component={joystickComponent as UIComponent & { properties: Partial<IProgressBarProps> }}
-      onPropertyChange={(value) => updateComponent({ properties: value } as object)}
+      onPropertyChange={(value, name, access) => updateComponent({ access, name, properties: value } as object)}
       forConstructor={false}
     /> -->
   {/snippet}

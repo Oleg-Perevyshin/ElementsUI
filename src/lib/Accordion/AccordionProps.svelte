@@ -46,10 +46,10 @@
 </script>
 
 {#if forConstructor}
-  <div class="flex items-center justify-center gap-8">
+  <div class="flex items-start justify-center gap-8">
     <div class="flex w-1/3 flex-col items-center px-2">
       <UI.Select
-        label={{ name: $t('constructor.props.icon.access') }}
+        label={{ name: $t('constructor.props.access') }}
         type="buttons"
         options={$optionsStore.ACCESS_OPTION}
         value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.access)}
@@ -137,12 +137,19 @@
     </div>
   </div>
 {:else}
-  <div class="flex items-center justify-center gap-8">
+  <div class="flex items-start justify-center gap-8">
     <div class="flex w-1/3 flex-col items-center px-2">
       <UI.Input
         label={{ name: $t('constructor.props.id') }}
         value={component.properties.id}
         onUpdate={(value) => updateProperty('id', value as string, component, onPropertyChange)}
+      />
+      <UI.Select
+        label={{ name: $t('constructor.props.access') }}
+        type="buttons"
+        options={$optionsStore.ACCESS_OPTION}
+        value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.access)}
+        onUpdate={(option) => onPropertyChange(null, null, option.value)}
       />
       <UI.Select
         label={{ name: $t('constructor.props.type') }}
@@ -175,7 +182,7 @@
         onChange={(value) => updateProperty('isOpen', value, component, onPropertyChange)}
       />
     </div>
-    <div class="flex w-1/3 flex-col items-center px-2">
+    <div class="flex w-1/3 flex-col px-2">
       <UI.Input
         label={{ name: $t('constructor.props.wrapperclass') }}
         value={component.properties.wrapperClass}

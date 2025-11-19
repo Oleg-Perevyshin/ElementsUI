@@ -8,12 +8,13 @@
   let sliderComponent: UIComponent = $state({
     id: crypto.randomUUID(),
     type: 'Slider',
-
+    access: 'full',
     properties: {
       id: crypto.randomUUID(),
       wrapperClass: 'bg-blue',
       label: { name: 'Label', class: 'text-center' },
-      value: 5,
+      type: 'range',
+      value: [2, 5],
       number: { minNum: 0, maxNum: 10, step: 1 },
       disabled: false,
       eventHandler: { Header: 'SET', Argument: 'NoSave', Variables: [] },
@@ -28,9 +29,17 @@ ${formatObjectToString(sliderComponent.properties as ISliderProps)}
   onUpdate={() => {}}
 />`)
 
-  const updateComponent = (updates: Partial<{ properties: Partial<UIComponent['properties']> }>) => {
+  const updateComponent = (
+    updates: Partial<{
+      name: string
+      access: 'full' | 'viewOnly' | 'hidden'
+      properties: Partial<UIComponent['properties']>
+    }>,
+  ) => {
     sliderComponent = {
       ...sliderComponent,
+      access: updates.access ?? sliderComponent.access,
+      name: updates.name ?? sliderComponent.name,
       properties: updates.properties ? { ...sliderComponent.properties, ...updates.properties } : sliderComponent.properties,
     }
   }
@@ -43,8 +52,8 @@ ${formatObjectToString(sliderComponent.properties as ISliderProps)}
   {#snippet componentProps()}
     <SliderProps
       component={sliderComponent as UIComponent & { properties: Partial<ISliderProps> }}
-      onPropertyChange={(value) => updateComponent({ properties: value } as object)}
-      forConstructor={false}
+      onPropertyChange={(value, name, access) => updateComponent({ access, name, properties: value } as object)}
+      forConstructor={true}
     />
   {/snippet}
 </ComponentExample>

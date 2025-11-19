@@ -166,13 +166,13 @@
       {#each header as column, index (column)}
         <div
           class={twMerge(
-            `justify-center border-l ${outline && index !== 0 ? ' border-(--border-color)' : 'border-transparent'} ${
+            `items-center justify-center border-l ${outline && index !== 0 ? ' border-(--border-color)' : 'border-transparent'} ${
               column.align?.header === 'center'
                 ? 'flex justify-center text-center'
                 : column.align?.header === 'right'
                   ? 'flex justify-end text-right'
                   : 'flex justify-start text-left'
-            } bg-(--bg-color) p-2 text-left`,
+            } gap-1 bg-(--bg-color) p-2 text-left`,
             column.label?.class,
           )}
         >

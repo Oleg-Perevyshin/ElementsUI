@@ -8,7 +8,7 @@
   let textFieldComponent: UIComponent = $state({
     id: crypto.randomUUID(),
     type: 'TextField',
-
+    access: 'full',
     properties: {
       id: crypto.randomUUID(),
       wrapperClass: 'text-[#333] dark:text-[#e2e3e7]',
@@ -27,9 +27,17 @@
 ${formatObjectToString(textFieldComponent.properties as ITextFieldProps)} 
 />`)
 
-  const updateComponent = (updates: Partial<{ properties: Partial<UIComponent['properties']> }>) => {
+  const updateComponent = (
+    updates: Partial<{
+      name: string
+      access: 'full' | 'viewOnly' | 'hidden'
+      properties: Partial<UIComponent['properties']>
+    }>,
+  ) => {
     textFieldComponent = {
       ...textFieldComponent,
+      access: updates.access ?? textFieldComponent.access,
+      name: updates.name ?? textFieldComponent.name,
       properties: updates.properties ? { ...textFieldComponent.properties, ...updates.properties } : textFieldComponent.properties,
     }
   }
@@ -44,7 +52,13 @@ ${formatObjectToString(textFieldComponent.properties as ITextFieldProps)}
   {#snippet componentProps()}
     <TextFieldProps
       component={textFieldComponent as UIComponent & { properties: Partial<ITextFieldProps> }}
-      onPropertyChange={(value) => updateComponent({ properties: value } as object)}
+      onPropertyChange={(value, name, access) => updateComponent({ access, name, properties: value } as object)}
+      forConstructor={true}
+    />
+    <hr />
+    <TextFieldProps
+      component={textFieldComponent as UIComponent & { properties: Partial<ITextFieldProps> }}
+      onPropertyChange={(value, name, access) => updateComponent({ access, name, properties: value } as object)}
       forConstructor={false}
     />
   {/snippet}

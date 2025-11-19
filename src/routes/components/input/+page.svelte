@@ -10,10 +10,9 @@
   let inputComponent: UIComponent = $state({
     id: crypto.randomUUID(),
     type: 'Input',
-
+    access: 'full',
     properties: {
       id: crypto.randomUUID(),
-
       label: { name: 'Label', class: 'text-center' },
       componentClass: 'bg-max resize-none',
       type: 'text',
@@ -33,9 +32,17 @@ ${formatObjectToString(inputComponent.properties as IInputProps)}
   onUpdate={() => {}}
 />`)
 
-  const updateComponent = (updates: Partial<{ properties: Partial<UIComponent['properties']> }>) => {
+  const updateComponent = (
+    updates: Partial<{
+      name: string
+      access: 'full' | 'viewOnly' | 'hidden'
+      properties: Partial<UIComponent['properties']>
+    }>,
+  ) => {
     inputComponent = {
       ...inputComponent,
+      access: updates.access ?? inputComponent.access,
+      name: updates.name ?? inputComponent.name,
       properties: updates.properties ? { ...inputComponent.properties, ...updates.properties } : inputComponent.properties,
     }
   }
@@ -53,19 +60,18 @@ ${formatObjectToString(inputComponent.properties as IInputProps)}
         }}
         bind:isValid={valid}
       />
-      <span>{valid}</span>
     </div>
   {/snippet}
   {#snippet componentProps()}
     <InputProps
       component={inputComponent as UIComponent & { properties: Partial<IInputProps> }}
-      onPropertyChange={(value) => updateComponent({ properties: value } as object)}
+      onPropertyChange={(value, name, access) => updateComponent({ access, name, properties: value } as object)}
       forConstructor={true}
     />
     <hr />
     <InputProps
       component={inputComponent as UIComponent & { properties: Partial<IInputProps> }}
-      onPropertyChange={(value) => updateComponent({ properties: value } as object)}
+      onPropertyChange={(value, name, access) => updateComponent({ access, name, properties: value } as object)}
       forConstructor={false}
     />
   {/snippet}

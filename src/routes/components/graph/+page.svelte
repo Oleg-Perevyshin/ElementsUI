@@ -14,7 +14,7 @@
   let graphComponent: UIComponent = $state({
     id: crypto.randomUUID(),
     type: 'Graph',
-
+    access: 'full',
     properties: {
       id: crypto.randomUUID(),
       wrapperClass: '',
@@ -32,9 +32,17 @@
 ${formatObjectToString(graphComponent.properties as IGraphProps)} 
 />`)
 
-  const updateComponent = (updates: Partial<{ properties: Partial<UIComponent['properties']> }>) => {
+  const updateComponent = (
+    updates: Partial<{
+      name: string
+      access: 'full' | 'viewOnly' | 'hidden'
+      properties: Partial<UIComponent['properties']>
+    }>,
+  ) => {
     graphComponent = {
       ...graphComponent,
+      access: updates.access ?? graphComponent.access,
+      name: updates.name ?? graphComponent.name,
       properties: updates.properties ? { ...graphComponent.properties, ...updates.properties } : graphComponent.properties,
     }
   }
@@ -47,7 +55,7 @@ ${formatObjectToString(graphComponent.properties as IGraphProps)}
   {#snippet componentProps()}
     <GraphProps
       component={graphComponent as UIComponent & { properties: Partial<IGraphProps> }}
-      onPropertyChange={(value) => updateComponent({ properties: value } as object)}
+      onPropertyChange={(value, name, access) => updateComponent({ access, name, properties: value } as object)}
       forConstructor={false}
     />
   {/snippet}

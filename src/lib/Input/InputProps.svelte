@@ -101,11 +101,11 @@
         }}
       />
       <UI.Select
-        label={{ name: $t('constructor.props.icon.access') }}
+        label={{ name: $t('constructor.props.access') }}
         type="buttons"
         options={$optionsStore.ACCESS_OPTION}
-        value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.properties.access)}
-        onUpdate={(option) => updateProperty('acces', option.value as string)}
+        value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.access)}
+        onUpdate={(option) => onPropertyChange(null, null, option.value)}
       />
       <UI.Select
         label={{ name: $t('constructor.props.type') }}
@@ -247,6 +247,13 @@
       />
     </div>
     <div class="flex w-1/3 flex-col px-2">
+      <UI.Select
+        label={{ name: $t('constructor.props.access') }}
+        type="buttons"
+        options={$optionsStore.ACCESS_OPTION}
+        value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.access)}
+        onUpdate={(option) => onPropertyChange(null, null, option.value)}
+      />
       <UI.Input
         label={{ name: $t('constructor.props.value') }}
         value={component.properties.value}

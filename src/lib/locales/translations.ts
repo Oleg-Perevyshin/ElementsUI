@@ -52,7 +52,7 @@ const translations: Translations = {
     'constructor.props.type.checkbox': 'Галочка',
 
     'constructor.props.type.full': 'Полный',
-    'constructor.props.type.viewOnly': 'Только просмотр',
+    'constructor.props.type.viewOnly': 'Просмотр',
     'constructor.props.type.hidden': 'Скрыто',
 
     /* Общие для редактора свойств */
@@ -79,7 +79,7 @@ const translations: Translations = {
     'constructor.props.variables.info': 'Поле для ввода имён переменных, разделенных пробелами',
     'constructor.props.value': 'Значение',
     'constructor.props.value.info': 'Поле для ввода Value пакета в формате JSON',
-    'constructor.props.align': 'Выравнивание',
+    'constructor.props.align': 'Выравнивание надписи',
     'constructor.props.align.header': 'Выравнивание заголовка',
     'constructor.props.align.content': 'Выравнивание контента',
     'constructor.props.image': 'Фоновое изображение',
@@ -132,13 +132,11 @@ const translations: Translations = {
     'constructor.props.copy': 'Копирование',
     'constructor.props.size.height': 'Высота сетки',
     'constructor.props.size.width': 'Ширина сетки',
-    'constructor.props.range.start': 'Начальный бит ',
-    'constructor.props.range.end': 'Последний бит',
-    'constructor.props.range.start.help': 'Позиция начального бита диапазона ',
-    'constructor.props.range.end.help': 'Позиция последнего бита диапазона',
+    'constructor.props.range': 'Диапазон позиции битов ',
     'constructor.props.icon.text.position': 'Положение иконки',
     'constructor.props.equal': 'Равные',
     'constructor.props.bitmode': 'Битовый режим',
+    'constructor.props.access': 'Доступ (не для владельца)',
 
     'constructor.props.table.columns': 'Колонки таблицы',
     'constructor.props.table.columns.key': 'Ключ',
