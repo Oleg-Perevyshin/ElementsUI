@@ -100,7 +100,7 @@
   <!-- Слайдер -->
   <div
     id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
-    class="relative flex h-7 w-full justify-center rounded-full {disabled ? 'cursor-not-allowed opacity-50' : ''}"
+    class="relative flex h-8 w-full justify-center rounded-full {disabled ? 'cursor-not-allowed opacity-50' : ''}"
   >
     {#if isRange}
       <!-- Трек и активная зона -->
