@@ -176,27 +176,26 @@
           style={`width: ${singlePosition}%; background-color: var(--bg-color)`}
         ></div>
       </div>
-
+      <!-- oninput={disabled
+          ? undefined
+          : (e) => {
+              singleValue = Number((e.target as HTMLInputElement).value)
+            }} -->
       <input
         type="range"
         min={number.minNum}
         max={number.maxNum}
         step={number.step}
         bind:value={singleValue}
-        oninput={disabled
-          ? undefined
-          : (e) => {
-              singleValue = Number((e.target as HTMLInputElement).value)
-            }}
         onmouseup={disabled ? undefined : () => onUpdate(singleValue)}
         {disabled}
         class="absolute z-20 h-full w-full"
       />
       <div
-        class="pointer-events-none absolute z-30 size-8 rounded-full border bg-(--field-color)/20"
-        style={`left: clamp(1rem, ${singlePosition}%, calc(100% - 1rem)); top: 50%; transform: translate(-50%, -50%)`}
+        class="pointer-events-none absolute z-30 size-8 origin-top rounded-full border bg-(--field-color)/20"
+        style={`left: ${singlePosition}%; top: 50%; transform: translate(-50%, -50%)`}
       >
-        <!-- <IconGripVerticalDual /> -->
+        <!-- <IconGripVerticalDual clamp(1rem, ${singlePosition}%, calc(100% - 1rem))/> -->
       </div>
     {/if}
   </div>
@@ -259,17 +258,15 @@
   }
 
   /* Webkit thumb */
-
   input[type='range']::-webkit-slider-thumb {
     /*     -webkit-appearance: none;
     appearance: none;*/
-    width: 2rem;
-    height: 2rem;
-    border-radius: 50%;
-    background: color-mix(in srgb, black 20, transparent);
+    background: color-mix(in srgb, green 20, transparent);
     cursor: pointer;
     pointer-events: auto;
     border: none;
+    scale: 160% 160%;
+    translate: var(--tw-translate-x) 32%;
   }
 
   /* Firefox thumb */
