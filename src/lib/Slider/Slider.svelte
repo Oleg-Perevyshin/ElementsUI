@@ -266,8 +266,7 @@
     width: 10rem;
     height: 10rem;
     border-radius: 50%;
-    background: #000;
-    opacity: 0.8;
+    background: color-mix(in srgb, black 20, transparent);
     cursor: pointer;
     pointer-events: auto;
     border: none;
