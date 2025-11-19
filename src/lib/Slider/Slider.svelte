@@ -186,8 +186,27 @@
           bind:value={singleValue}
           onmouseup={disabled ? undefined : () => onUpdate(singleValue)}
           {disabled}
-          class="w-[calc(100%-1rem)]"
+          class="slider w-[calc(100%-1rem)]"
         />
+
+        <div class="relative mt-10 w-full">
+          <input
+            type="range"
+            class={twMerge(
+              ` h-8 w-full appearance-none overflow-hidden rounded-full pl-3 accent-(--back-color) 
+            [&::-webkit-slider-thumb]:relative [&::-webkit-slider-thumb]:ml-[-0.4rem] [&::-webkit-slider-thumb]:h-4 
+            [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:cursor-pointer 
+            [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-(--bg-color) 
+            [&::-webkit-slider-thumb]:shadow-[var(--focus-shadow),] [&::-webkit-slider-thumb]:ring-[5px]`,
+              ' [&::-webkit-slider-thumb]:shadow-[calc(100rem*-1-0.5rem)_0_0_100rem] ',
+              '',
+            )}
+            min={number.minNum}
+            max={number.maxNum}
+            step={number.step}
+            bind:value={singleValue}
+          />
+        </div>
       </div>
 
       <!-- <div
@@ -246,28 +265,47 @@
 </div>
 
 <style>
-  input[type='range'] {
+  .slider {
     -webkit-appearance: none;
     appearance: none;
-    width: 100%;
-    border-radius: 999px;
     height: 2rem;
+    border-radius: 999px;
+    padding-left: 10px;
     overflow: hidden;
     accent-color: var(--back-color);
-    padding-left: 8px;
   }
 
-  input[type='range']::-webkit-slider-thumb {
-    /* -webkit-appearance: none;
-    appearance: none; */
+  /* Для WebKit (Chrome, Safari) */
+  .slider::-webkit-slider-thumb {
     height: 1rem;
     width: 1rem;
-
     border-radius: 50%;
     border: none;
     cursor: pointer;
     position: relative;
+    margin-left: -0.4rem;
 
+    color: var(--bg-color);
+    box-shadow:
+      inset var(--focus-shadow, 0 1px 2px rgba(0, 0, 0, 0.1)),
+      0 0,
+      calc(100rem * -1 - 0.5rem) 0 0 100rem,
+      0 0 0 5px var(--bg-color);
+  }
+
+  .slider::-webkit-slider-runnable-track {
+    border-radius: 0.5rem;
+    background: var(--gray-color);
+  }
+
+  /* Для Firefox */
+  .slider::-moz-range-thumb {
+    height: 1rem;
+    width: 1rem;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    position: relative;
     margin-left: -0.25rem;
     padding-right: 0.5rem;
     color: var(--bg-color);
@@ -276,10 +314,11 @@
       0 0,
       calc(100rem * -1 - 0.5rem) 0 0 100rem,
       0 0 0 5px var(--bg-color);
+    background: var(--bg-color);
   }
-  input[type='range']::-webkit-slider-runnable-track {
+
+  .slider::-moz-range-track {
     border-radius: 0.5rem;
-    /* margin-right: 0.5rem; */
     background: var(--gray-color);
   }
 
