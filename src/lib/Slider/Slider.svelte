@@ -100,7 +100,7 @@
   <!-- Слайдер -->
   <div
     id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
-    class="relative flex h-8 w-full justify-center rounded-full {disabled ? 'cursor-not-allowed opacity-50' : ''}"
+    class="relative flex h-6 w-full justify-center rounded-full {disabled ? 'cursor-not-allowed opacity-50' : ''}"
   >
     {#if isRange}
       <!-- Трек и активная зона -->
@@ -111,7 +111,7 @@
         onkeydown={null}
         onclick={disabled ? undefined : handleTrackClick}
       >
-        <div class="bg-blue absolute h-full rounded-full bg-(--bg-color)" style={`left: ${lowerPosition}%; right: ${100 - upperPosition}%;`}></div>
+        <div class=" absolute h-full rounded-full bg-(--bg-color)" style={`left: ${lowerPosition}%; right: ${100 - upperPosition}%;`}></div>
       </div>
 
       <!-- Ползунки -->
@@ -164,39 +164,38 @@
       </div>
     {:else}
       <!-- Одиночный слайдер -->
-      <div
-        class={`absolute h-full w-full rounded-full bg-(--gray-color)/20 ${disabled ? '' : 'cursor-pointer'}`}
+      <!-- <div
+        class={`absolute h-full w-full rounded-full bg-(--gray-color) ${disabled ? '' : 'cursor-pointer'}`}
         role="button"
         tabindex={null}
         onkeydown={null}
         onclick={disabled ? undefined : handleTrackClick}
       >
         <div
-          class="absolute -z-10 h-full {singlePosition === 100 ? ' rounded-full' : 'rounded-l-full'}"
-          style={`width: ${singlePosition}%; background-color: var(--bg-color)`}
+          class="absolute h-full {singlePosition === 100 ? ' rounded-full' : 'rounded-l-full'}"
+          style={`width: ${singlePosition}%; background-color: `}
         ></div>
+      </div> -->
+
+      <div class="slider-wrapper absolute h-full w-full">
+        <input
+          type="range"
+          min={number.minNum}
+          max={number.maxNum}
+          step={number.step}
+          bind:value={singleValue}
+          onmouseup={disabled ? undefined : () => onUpdate(singleValue)}
+          {disabled}
+          class="w-[calc(100%-1rem)]"
+        />
       </div>
-      <!-- oninput={disabled
-          ? undefined
-          : (e) => {
-              singleValue = Number((e.target as HTMLInputElement).value)
-            }} -->
-      <input
-        type="range"
-        min={number.minNum}
-        max={number.maxNum}
-        step={number.step}
-        bind:value={singleValue}
-        onmouseup={disabled ? undefined : () => onUpdate(singleValue)}
-        {disabled}
-        class="absolute z-20 h-full w-full"
-      />
-      <div
+
+      <!-- <div
         class="pointer-events-none absolute z-30 size-8 origin-top rounded-full border bg-(--field-color)/20"
         style={`left: ${singlePosition}%; top: 50%; transform: translate(-50%, -50%)`}
-      >
-        <!-- <IconGripVerticalDual clamp(1rem, ${singlePosition}%, calc(100% - 1rem))/> -->
-      </div>
+      > -->
+      <!-- <IconGripVerticalDual clamp(1rem, ${singlePosition}%, calc(100% - 1rem))/> -->
+      <!-- </div> -->
     {/if}
   </div>
 
@@ -248,20 +247,142 @@
 
 <style>
   input[type='range'] {
-    /* -webkit-appearance: none;
-    appearance: none; */
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    border-radius: 999px;
+    height: 1.75rem;
+    overflow: hidden;
+    accent-color: var(--back-color);
+  }
+
+  input[type='range']::-webkit-slider-thumb {
+    height: 1rem;
+    width: 1rem;
+
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    position: relative;
+
+    margin-left: -0.25rem;
+    color: var(--bg-color);
+    box-shadow:
+      inset var(--focus-shadow, 0 1px 2px rgba(0, 0, 0, 0.1)),
+      0 0,
+      calc(100rem * -1 - 0.5rem) 0 0 100rem,
+      0 0 0 4px var(--bg-color);
+  }
+  input[type='range']::-webkit-slider-runnable-track {
+    border-radius: 0.5rem;
+    /* margin-right: 0.5rem; */
+    background: var(--shadow-color);
+  }
+
+  /* input[type='range'] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 2rem;
+    background: transparent;
+    border-radius: 9999px;
+    overflow: hidden;
+    accent-color: var(--red-color);
+  }
+
+  input[type='range']::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 1rem;
+    width: 1rem;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    position: relative;
+
+    scale: 1.5;
+    translate: var(--tw-translate-x) 10%;
+    margin-left: 0.25rem;
+    box-shadow: 0 0 0 4px #dc2626;
+    color: bisque;
+    box-shadow:
+      inset var(--shadow-inset-info, 0 1px 2px rgba(0, 0, 0, 0.1)),
+      0 0,
+      calc(100rem * -1 - 0.5rem) 0 0 100rem;
+  }
+
+  input[type='range']::-moz-range-thumb {
+    height: 1rem;
+    width: 1rem;
+    border-radius: 50%;
+    border: none;
+    background: #fff;
+    cursor: pointer;
+    position: relative;
+    transform: translateY(-50%);
+    margin-left: 0.25rem;
+    box-shadow: 0 0 0 4px #dc2626;
+  }
+
+  input[type='range']::-webkit-slider-runnable-track {
+    height: 1.5rem;
+    width: 100%;
+    border-radius: 0.5rem;
+    margin-right: 0.5rem;
+    background: transparent;
+  }
+
+  input[type='range']::-moz-range-track {
+    height: 1.5rem;
+    width: 100%;
+    border-radius: 0.5rem;
+    margin-right: 0.5rem;
+    background: #e4e6eb;
+  } */
+  /* 
+  .slider-wrapper {
+    position: relative;
+    width: 100%;
+    background: transparent;
+    border-radius: 9999px;
+    overflow: hidden;
+  }
+
+  .slider-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 100%;
+    height: 0.5rem;
+    background: #000000;
+    border-radius: 0.5rem;
+  } */
+
+  /* input[type='range'] {
+    -webkit-appearance: none;
+    appearance: none; 
     margin: 0;
     padding: 0;
     pointer-events: none;
     outline: none;
-    accent-color: #c56fff;
+    accent-color: var(--back-color);
   }
 
-  /* Webkit thumb */
-  input[type='range']::-webkit-slider-thumb {
-    /*     -webkit-appearance: none;
-    appearance: none;*/
+  input[type='range']::before {
+    width: 100%;
+    height: 2rem;
+    scale: 160% 160%;
+    translate: var(--tw-translate-x) 32%;
     background: red;
+    z-index: 50;
+  }
+
+  Webkit thumb
+  input[type='range']::-webkit-slider-thumb {
+        -webkit-appearance: none;
+    appearance: none;
+    background: var(--back-color);
     cursor: pointer;
     pointer-events: auto;
     border: none;
@@ -269,7 +390,7 @@
     translate: var(--tw-translate-x) 32%;
   }
 
-  /* Firefox thumb */
+  Firefox thumb
   input[type='range']::-moz-range-thumb {
     width: 2rem;
     height: 2rem;
@@ -280,16 +401,16 @@
     border: none;
   }
 
-  /* Webkit track */
+  Webkit track
   input[type='range']::-webkit-slider-runnable-track {
     width: 100%;
     height: 100%;
-    /* background: transparent; */
+    background: transparent;
     border-radius: 0;
     border: none;
   }
 
-  /* Firefox track */
+  Firefox track
   input[type='range']::-moz-range-track {
     width: 100%;
     height: 100%;
@@ -305,4 +426,12 @@
   input[type='range']:disabled::-moz-range-thumb {
     cursor: not-allowed;
   }
+
+  input[type='range']:focus::-webkit-slider-thumb {
+    accent-color: var(--back-color);
+  }
+
+  input[type='range']:focus::-moz-range-thumb {
+    accent-color: var(--back-color);
+  } */
 </style>
