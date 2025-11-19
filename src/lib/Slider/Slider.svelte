@@ -254,14 +254,14 @@
     padding: 0;
     pointer-events: none;
     outline: none;
-    color: #000;
+    accent-color: #c56fff;
   }
 
   /* Webkit thumb */
   input[type='range']::-webkit-slider-thumb {
     /*     -webkit-appearance: none;
     appearance: none;*/
-    background: color-mix(in srgb, green 20, transparent);
+    background: red;
     cursor: pointer;
     pointer-events: auto;
     border: none;
