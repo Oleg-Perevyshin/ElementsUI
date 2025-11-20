@@ -163,6 +163,7 @@
         <!-- <IconGripVerticalRight /> -->
       </div>
     {:else}
+      {@const userAgent = navigator.userAgent}
       <!-- Одиночный слайдер -->
       <!-- <div
         class={`absolute h-full w-full rounded-full bg-(--gray-color) ${disabled ? '' : 'cursor-pointer'}`}
@@ -197,8 +198,8 @@
             [&::-webkit-slider-thumb]:relative [&::-webkit-slider-thumb]:ml-[-0.4rem] [&::-webkit-slider-thumb]:h-4 
             [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:cursor-pointer 
             [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-(--bg-color) 
-            [&::-webkit-slider-thumb]:shadow-[var(--focus-shadow),] [&::-webkit-slider-thumb]:ring-[6px]`,
-              ' [&::-webkit-slider-thumb]:shadow-[calc(100rem*-1-0.5rem)_0_0_100rem] ',
+            [&::-webkit-slider-thumb]:shadow-[var(--focus-shadow),] ${userAgent.includes('iOS') || userAgent.includes('iPhone') || userAgent.includes('iPad') ? '[&::-webkit-slider-thumb]:ring-[6.5px]' : '[&::-webkit-slider-thumb]:ring-[5px]'}`,
+              '[&::-webkit-slider-thumb]:shadow-[calc(100rem*-1-0.5rem)_0_0_100rem] ',
               '',
             )}
             min={number.minNum}
@@ -290,7 +291,7 @@
       inset var(--focus-shadow, 0 1px 2px rgba(0, 0, 0, 0.1)),
       0 0,
       calc(100rem * -1 - 0.5rem) 0 0 100rem,
-      0 0 0 6px var(--bg-color);
+      0 0 0 5px var(--bg-color);
   }
 
   .slider::-webkit-slider-runnable-track {
