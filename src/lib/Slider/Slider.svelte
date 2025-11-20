@@ -204,8 +204,9 @@
           class={twMerge(
             `slider-bg  h-8 w-full appearance-none overflow-hidden rounded-full accent-(--back-color) 
               [&::-webkit-slider-runnable-track]:rounded-lg 
-              [&::-webkit-slider-runnable-track]:bg-(--gray-color) 
+              [&::-webkit-slider-runnable-track]:bg-(--gray-color)
               [&::-webkit-slider-thumb]:relative 
+              
               [&::-webkit-slider-thumb]:ml-[-0.4rem] 
               [&::-webkit-slider-thumb]:h-4
               [&::-webkit-slider-thumb]:w-4
