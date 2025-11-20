@@ -4,6 +4,7 @@
   import IconGripVerticalDual from '../libIcons/IconGripVerticalDual.svelte'
   import { twMerge } from 'tailwind-merge'
   import IconGripVerticalRight from '$lib/libIcons/IconGripVerticalRight.svelte'
+  import { onDestroy, onMount } from 'svelte'
 
   let {
     id = crypto.randomUUID(),
@@ -73,29 +74,48 @@
     const clickPercent = ((e.clientX - rect.left) / rect.width) * 100
     const rawValue = number.minNum + (clickPercent / 100) * (number.maxNum - number.minNum)
     const clickValue = Math.round((rawValue - number.minNum) / number.step) * number.step + number.minNum
-    // console.log(clickValue)
 
     if (isRange) {
       const lowerDiff = Math.abs(clickValue - lowerValue)
-
       const upperDiff = Math.abs(clickValue - upperValue)
 
       activeThumb = lowerDiff < upperDiff ? 'lower' : 'upper'
 
       if (activeThumb === 'lower') {
         lowerValue = Math.max(number.minNum, Math.min(clickValue, upperValue))
-        // console.log('lower', lowerDiff, upperDiff, lowerValue)
       } else {
         upperValue = Math.min(number.maxNum, Math.max(clickValue, lowerValue))
-        // console.log('upper', lowerDiff, upperDiff, upperValue)
       }
-      console.log(activeThumb, lowerValue, upperValue)
       onUpdate([lowerValue, upperValue])
     } else {
       singleValue = Math.max(number.minNum, Math.min(clickValue, number.maxNum))
       onUpdate(singleValue)
     }
   }
+
+  let rangeRefLower: HTMLElement | null = $state(null)
+  let rangeRefUpper: HTMLElement | null = $state(null)
+  let shadowWidth = $state()
+
+  $effect(() => {
+    let thumbCenterLower
+    let thumbCenterUpper
+    if (rangeRefLower) {
+      const rect = rangeRefLower.getBoundingClientRect()
+      const percent = (lowerValue - number.minNum) / (number.maxNum - number.minNum)
+      const thumbX = rect.left + rect.width * percent
+      const thumbOffset = 0
+      thumbCenterLower = thumbX - thumbOffset
+    }
+    if (rangeRefUpper) {
+      const rect = rangeRefUpper.getBoundingClientRect()
+      const percent = (upperValue - number.minNum) / (number.maxNum - number.minNum)
+      const thumbX = rect.left + rect.width * percent
+      const thumbOffset = 0
+      thumbCenterUpper = thumbX - thumbOffset
+    }
+    if (thumbCenterUpper && thumbCenterLower) shadowWidth = (thumbCenterUpper - thumbCenterLower) / 3
+  })
 </script>
 
 <div class={twMerge(`relative flex w-full flex-col items-center `, wrapperClass)}>
@@ -112,7 +132,7 @@
       {@const userAgent = navigator.userAgent}
       <!-- Трек и активная зона -->
       <div
-        class={`absolute z-100 h-full w-full rounded-full bg-transparent ${disabled ? '' : 'cursor-pointer'}`}
+        class={`absolute z-10 h-full w-full rounded-full bg-transparent ${disabled ? '' : 'cursor-pointer'}`}
         role="button"
         tabindex={null}
         onkeydown={null}
@@ -125,11 +145,12 @@
 
       <!-- Ползунки -->
       <input
+        bind:this={rangeRefLower}
         type="range"
         min={number.minNum}
         max={number.maxNum}
         step={number.step}
-        value={lowerValue}
+        bind:value={lowerValue}
         oninput={disabled
           ? undefined
           : (e) => {
@@ -148,7 +169,7 @@
               [&::-webkit-slider-runnable-track]:rounded-lg 
               [&::-webkit-slider-runnable-track]:bg-(--gray-color)
               [&::-webkit-slider-thumb]:relative 
-
+              [&::-webkit-slider-thumb]:z-100 
               [&::-webkit-slider-thumb]:ml-[-0.4rem] 
               [&::-webkit-slider-thumb]:h-4
               [&::-webkit-slider-thumb]:w-4
@@ -171,7 +192,7 @@
             [&::-moz-range-track]:bg-(--gray-color)
              `,
           `[&::-moz-range-thumb]:shadow-[calc(100rem*-1-0.5rem)_0_0_100rem] 
-              [&::-webkit-slider-thumb]:shadow-[calc(2rem*-1-0.5rem)_0_0_2rem]`,
+              [&::-webkit-slider-thumb]:shadow-[calc(${shadowWidth}px+0.5rem)_0_0_${shadowWidth}px]`,
         )}
       />
 
@@ -185,16 +206,17 @@
       </div> -->
 
       <input
+        bind:this={rangeRefUpper}
         type="range"
         min={number.minNum}
         max={number.maxNum}
         step={number.step}
-        value={upperValue}
+        bind:value={upperValue}
         oninput={disabled
           ? undefined
           : (e) => {
-              // const newValue = Math.max(Number((e.target as HTMLInputElement).value), lowerValue)
-              // upperValue = newValue
+              const newValue = Math.max(Number((e.target as HTMLInputElement).value), lowerValue)
+              upperValue = newValue
               // activeThumb = 'lower'
               // console.log('upper')
             }}
@@ -207,7 +229,7 @@
           `slider-bg absolute h-8 w-full appearance-none overflow-hidden rounded-full accent-(--back-color) 
               [&::-webkit-slider-runnable-track]:rounded-lg 
               [&::-webkit-slider-thumb]:relative 
-
+              [&::-webkit-slider-thumb]:z-100
               [&::-webkit-slider-thumb]:ml-[-0.4rem] 
               [&::-webkit-slider-thumb]:h-4
               [&::-webkit-slider-thumb]:w-4
@@ -230,7 +252,7 @@
             [&::-moz-range-track]:bg-(--gray-color)
              `,
           `[&::-moz-range-thumb]:shadow-[calc(100rem*-1-0.5rem)_0_0_100rem] 
-              [&::-webkit-slider-thumb]:shadow-[calc(2rem*-1-0.5rem)_0_0_2rem]`,
+              [&::-webkit-slider-thumb]:shadow-[calc(${shadowWidth}px*-1-0.5rem)_0_0_${shadowWidth}px]`,
         )}
       />
 
@@ -256,7 +278,7 @@
         ></div>
       </div> -->
 
-      <div class="slider-wrapper absolute h-full w-full">
+      <div class="absolute h-full w-full">
         <input
           type="range"
           class={twMerge(
