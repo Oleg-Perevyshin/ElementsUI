@@ -118,7 +118,7 @@
     }
 
     if (thumbCenterUpper && thumbCenterLower) {
-      shadowWidth = (thumbCenterUpper - thumbCenterLower) / 4
+      shadowWidth = (thumbCenterUpper - thumbCenterLower) / 3.5
     }
   }
 
