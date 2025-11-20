@@ -194,7 +194,7 @@
           <input
             type="range"
             class={twMerge(
-              ` slider-bg h-8 w-full appearance-none overflow-hidden  rounded-full accent-(--back-color)
+              ` slider-bg h-8 w-full appearance-none overflow-hidden  rounded-full 
             [&::-webkit-slider-thumb]:relative [&::-webkit-slider-thumb]:ml-[-0.4rem] [&::-webkit-slider-thumb]:h-4 
             [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:cursor-pointer 
             [&::-webkit-slider-thumb]:rounded-full 
