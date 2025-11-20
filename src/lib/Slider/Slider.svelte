@@ -194,11 +194,11 @@
           <input
             type="range"
             class={twMerge(
-              ` h-8 w-full appearance-none overflow-hidden rounded-full pl-3 accent-(--back-color) 
+              ` h-8 w-full appearance-none overflow-hidden rounded-full  accent-(--back-color) 
             [&::-webkit-slider-thumb]:relative [&::-webkit-slider-thumb]:ml-[-0.4rem] [&::-webkit-slider-thumb]:h-4 
             [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:cursor-pointer 
             [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-(--bg-color) 
-            [&::-webkit-slider-thumb]:shadow-[var(--focus-shadow),] ${userAgent.includes('iOS') || userAgent.includes('iPhone') || userAgent.includes('iPad') ? '[&::-webkit-slider-thumb]:ring-[6.5px]' : '[&::-webkit-slider-thumb]:ring-[5px]'}`,
+            [&::-webkit-slider-thumb]:shadow-[var(--focus-shadow),] ${userAgent.includes('iOS') || userAgent.includes('iPhone') || userAgent.includes('iPad') ? 'pl-3.5 [&::-webkit-slider-thumb]:ring-[6.5px]' : 'pl-3 [&::-webkit-slider-thumb]:ring-[5px]'}`,
               '[&::-webkit-slider-thumb]:shadow-[calc(100rem*-1-0.5rem)_0_0_100rem] ',
               '',
             )}
