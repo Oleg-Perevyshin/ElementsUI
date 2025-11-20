@@ -106,21 +106,22 @@
   <!-- Слайдер -->
   <div
     id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
-    class="relative flex h-6 w-full justify-center rounded-full {disabled ? 'cursor-not-allowed opacity-50' : ''}"
+    class="relative flex h-9 w-full justify-center rounded-full {disabled ? 'cursor-not-allowed opacity-50' : ''}"
   >
     {#if isRange}
+      {@const userAgent = navigator.userAgent}
       <!-- Трек и активная зона -->
-      <!-- <div
-        class={`absolute h-full w-full rounded-full bg-(--gray-color) ${disabled ? '' : 'cursor-pointer'}`}
+      <div
+        class={`absolute z-100 h-full w-full rounded-full bg-transparent ${disabled ? '' : 'cursor-pointer'}`}
         role="button"
         tabindex={null}
         onkeydown={null}
-        onclick={() => {
-          disabled ? undefined : handleTrackClick
+        onclick={(e) => {
+          disabled ? undefined : handleTrackClick(e)
         }}
       >
-        <div class="absolute h-full rounded-full bg-(--bg-color)" style={`left: ${lowerPosition}%; right: ${100 - upperPosition}%;`}></div>
-      </div> -->
+        <!-- <div class="absolute h-full rounded-full bg-(--bg-color)" style={`left: ${lowerPosition}%; right: ${100 - upperPosition}%;`}></div> -->
+      </div>
 
       <!-- Ползунки -->
       <input
@@ -142,7 +143,36 @@
           disabled ? undefined : () => onUpdate([lowerValue, upperValue])
         }}
         {disabled}
-        class={`slider absolute h-full w-full appearance-none bg-transparent `}
+        class={twMerge(
+          `slider-bg absolute h-8 w-full appearance-none overflow-hidden rounded-full accent-(--back-color) 
+              [&::-webkit-slider-runnable-track]:rounded-lg 
+              [&::-webkit-slider-runnable-track]:bg-(--gray-color)
+              [&::-webkit-slider-thumb]:relative 
+
+              [&::-webkit-slider-thumb]:ml-[-0.4rem] 
+              [&::-webkit-slider-thumb]:h-4
+              [&::-webkit-slider-thumb]:w-4
+              [&::-webkit-slider-thumb]:cursor-pointer
+              [&::-webkit-slider-thumb]:rounded-full
+            [&::-webkit-slider-thumb]:shadow-[var(--focus-shadow),]
+            ${
+              userAgent.includes('iOS') || userAgent.includes('iPhone') || userAgent.includes('iPad')
+                ? 'pl-3.5 [&::-webkit-slider-thumb]:ring-[6.5px]'
+                : 'pl-3 [&::-webkit-slider-thumb]:ring-[5px]'
+            }
+            [&::-moz-range-thumb]:relative 
+            [&::-moz-range-thumb]:ml-[-0.4rem]
+            [&::-moz-range-thumb]:size-4 
+            [&::-moz-range-thumb]:cursor-pointer 
+            [&::-moz-range-thumb]:rounded-full
+            [&::-moz-range-thumb]:shadow-[var(--focus-shadow),] 
+            [&::-moz-range-thumb]:ring-[6px] 
+            [&::-moz-range-track]:rounded-lg 
+            [&::-moz-range-track]:bg-(--gray-color)
+             `,
+          `[&::-moz-range-thumb]:shadow-[calc(100rem*-1-0.5rem)_0_0_100rem] 
+              [&::-webkit-slider-thumb]:shadow-[calc(2rem*-1-0.5rem)_0_0_2rem]`,
+        )}
       />
 
       <!-- ${activeThumb === 'lower' ? 'z-30' : 'z-20'} -->
@@ -173,7 +203,35 @@
           disabled ? undefined : () => onUpdate([lowerValue, upperValue])
         }}
         {disabled}
-        class={`slider absolute h-full w-full appearance-none bg-transparent `}
+        class={twMerge(
+          `slider-bg absolute h-8 w-full appearance-none overflow-hidden rounded-full accent-(--back-color) 
+              [&::-webkit-slider-runnable-track]:rounded-lg 
+              [&::-webkit-slider-thumb]:relative 
+
+              [&::-webkit-slider-thumb]:ml-[-0.4rem] 
+              [&::-webkit-slider-thumb]:h-4
+              [&::-webkit-slider-thumb]:w-4
+              [&::-webkit-slider-thumb]:cursor-pointer
+              [&::-webkit-slider-thumb]:rounded-full
+            [&::-webkit-slider-thumb]:shadow-[var(--focus-shadow),]
+            ${
+              userAgent.includes('iOS') || userAgent.includes('iPhone') || userAgent.includes('iPad')
+                ? 'pl-3.5 [&::-webkit-slider-thumb]:ring-[6.5px]'
+                : 'pl-3 [&::-webkit-slider-thumb]:ring-[5px]'
+            }
+            [&::-moz-range-thumb]:relative 
+            [&::-moz-range-thumb]:ml-[-0.4rem]
+            [&::-moz-range-thumb]:size-4 
+            [&::-moz-range-thumb]:cursor-pointer 
+            [&::-moz-range-thumb]:rounded-full
+            [&::-moz-range-thumb]:shadow-[var(--focus-shadow),] 
+            [&::-moz-range-thumb]:ring-[6px] 
+            [&::-moz-range-track]:rounded-lg 
+            [&::-moz-range-track]:bg-(--gray-color)
+             `,
+          `[&::-moz-range-thumb]:shadow-[calc(100rem*-1-0.5rem)_0_0_100rem] 
+              [&::-webkit-slider-thumb]:shadow-[calc(2rem*-1-0.5rem)_0_0_2rem]`,
+        )}
       />
 
       <!-- <div
@@ -206,7 +264,7 @@
               [&::-webkit-slider-runnable-track]:rounded-lg 
               [&::-webkit-slider-runnable-track]:bg-(--gray-color)
               [&::-webkit-slider-thumb]:relative 
-              
+
               [&::-webkit-slider-thumb]:ml-[-0.4rem] 
               [&::-webkit-slider-thumb]:h-4
               [&::-webkit-slider-thumb]:w-4
