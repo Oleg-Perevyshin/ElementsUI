@@ -97,9 +97,10 @@
   let rangeRefUpper: HTMLElement | null = $state(null)
   let shadowWidth = $state()
 
-  $effect(() => {
+  const updateShadowWidth = () => {
     let thumbCenterLower
     let thumbCenterUpper
+
     if (rangeRefLower) {
       const rect = rangeRefLower.getBoundingClientRect()
       const percent = (lowerValue - number.minNum) / (number.maxNum - number.minNum)
@@ -107,6 +108,7 @@
       const thumbOffset = 0
       thumbCenterLower = thumbX - thumbOffset
     }
+
     if (rangeRefUpper) {
       const rect = rangeRefUpper.getBoundingClientRect()
       const percent = (upperValue - number.minNum) / (number.maxNum - number.minNum)
@@ -114,7 +116,34 @@
       const thumbOffset = 0
       thumbCenterUpper = thumbX - thumbOffset
     }
-    if (thumbCenterUpper && thumbCenterLower) shadowWidth = (thumbCenterUpper - thumbCenterLower) / 3.5
+
+    if (thumbCenterUpper && thumbCenterLower) {
+      shadowWidth = (thumbCenterUpper - thumbCenterLower) / 4
+    }
+  }
+
+  $effect(() => {
+    lowerValue
+    upperValue
+    updateShadowWidth()
+  })
+
+  const handleResize = () => {
+    updateShadowWidth()
+  }
+
+  onMount(() => {
+    if (window.visualViewport) {
+      const handleResize = () => {
+        updateShadowWidth() // или что-то другое
+      }
+
+      window.visualViewport.addEventListener('resize', handleResize)
+
+      onDestroy(() => {
+        if (window.visualViewport) window.visualViewport.removeEventListener('resize', handleResize)
+      })
+    }
   })
 </script>
 
