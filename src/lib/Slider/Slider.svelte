@@ -194,11 +194,13 @@
           <input
             type="range"
             class={twMerge(
-              ` h-8 w-full appearance-none overflow-hidden rounded-full  accent-(--back-color) 
+              ` slider-bg h-8 w-full appearance-none overflow-hidden  rounded-full accent-(--back-color)
             [&::-webkit-slider-thumb]:relative [&::-webkit-slider-thumb]:ml-[-0.4rem] [&::-webkit-slider-thumb]:h-4 
             [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:cursor-pointer 
-            [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-(--bg-color) 
-            [&::-webkit-slider-thumb]:shadow-[var(--focus-shadow),] ${userAgent.includes('iOS') || userAgent.includes('iPhone') || userAgent.includes('iPad') ? 'pl-3.5 [&::-webkit-slider-thumb]:ring-[6.5px]' : 'pl-3 [&::-webkit-slider-thumb]:ring-[5px]'}`,
+            [&::-webkit-slider-thumb]:rounded-full 
+            [&::-webkit-slider-thumb]:shadow-[var(--focus-shadow),] 
+            ${userAgent.includes('iOS') || userAgent.includes('iPhone') || userAgent.includes('iPad') ? 'pl-3.5 [&::-webkit-slider-thumb]:ring-[6.5px]' : 'pl-3 [&::-webkit-slider-thumb]:ring-[5px]'}
+           [&::-webkit-slider-runnable-track]:rounded-lg [&::-webkit-slider-runnable-track]:bg-(--gray-color)`,
               '[&::-webkit-slider-thumb]:shadow-[calc(100rem*-1-0.5rem)_0_0_100rem] ',
               '',
             )}
@@ -207,6 +209,8 @@
             step={number.step}
             bind:value={singleValue}
           />
+          <p class="text-(--back-color)">TEXT WWW</p>
+          <!-- [&::-webkit-slider-thumb]:bg-(--bg-color)  -->
         </div>
       </div>
 

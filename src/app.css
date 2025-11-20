@@ -208,6 +208,10 @@ input::placeholder {
   --bg-color: var(--pink-color);
 }
 
+.slider-bg {
+  color: var(--bg-color);
+}
+
 .border-max {
   --border-color: var(--back-color);
 }
