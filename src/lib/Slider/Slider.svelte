@@ -194,37 +194,65 @@
           <input
             type="range"
             class={twMerge(
-              ` slider-bg h-8 w-full appearance-none overflow-hidden  rounded-full  accent-(--back-color)
-            [&::-webkit-slider-thumb]:relative [&::-webkit-slider-thumb]:ml-[-0.4rem] [&::-webkit-slider-thumb]:h-4 
-            [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:cursor-pointer 
-            [&::-webkit-slider-thumb]:rounded-full 
-            [&::-webkit-slider-thumb]:shadow-[var(--focus-shadow),] 
-            ${userAgent.includes('iOS') || userAgent.includes('iPhone') || userAgent.includes('iPad') ? 'pl-3.5 [&::-webkit-slider-thumb]:ring-[6.5px]' : 'pl-3 [&::-webkit-slider-thumb]:ring-[5px]'}
-           [&::-webkit-slider-runnable-track]:rounded-lg [&::-webkit-slider-runnable-track]:bg-(--gray-color)`,
-              '[&::-webkit-slider-thumb]:shadow-[calc(100rem*-1-0.5rem)_0_0_100rem] ',
-              '',
+              ` slider-bg [&::-webkit-slider-thumb]:bg-[url(<svg xmlns="http://www.w3.org/2000/svg" width="1.75rem" height="1.75rem"  viewBox="0  0
+            24 
+            24"> 
+            <g 
+            stroke="currentColor" 
+            stroke-linecap="round" 
+            stroke-width="1.5" 
+            fill="none"> 
+            <line 
+            x1="4" y1="11" x2="4" y2="13" /> <line x1="8" y1="9"
+  x2="8" y2="15" /> <line x1="12"
+    y1="6" x2="12" y2="18" /> <line x1="16"
+    y1="9" x2="16" y2="15" /> <line x1="20"
+    y1="11" x2="20" y2="13" /> </g> </svg>
+    )] h-8 w-full appearance-none overflow-hidden rounded-full
+    accent-(--back-color) [&::-webkit-slider-runnable-track]:rounded-lg [&::-webkit-slider-runnable-track]:bg-(--gray-color) [&::-webkit-slider-thumb]:relative [&::-webkit-slider-thumb]:ml-[-0.4rem] [&::-webkit-slider-thumb]:h-4
+  [&::-webkit-slider-thumb]:w-4
+[&::-webkit-slider-thumb]:cursor-pointer
+[&::-webkit-slider-thumb]:rounded-full
+            [&::-webkit-slider-thumb]:shadow-[var(--focus-shadow),]
+            ${
+              userAgent.includes('iOS') || userAgent.includes('iPhone') || userAgent.includes('iPad')
+                ? 'pl-3.5 [&::-webkit-slider-thumb]:ring-[6.5px]'
+                : 'pl-3 [&::-webkit-slider-thumb]:ring-[5px]'
+            }
+            [&::-moz-range-thumb]:relative 
+            [&::-moz-range-thumb]:ml-[-0.4rem]
+            [&::-moz-range-thumb]:size-4 
+            [&::-moz-range-thumb]:w-4
+            [&::-moz-range-thumb]:cursor-pointer 
+            [&::-moz-range-thumb]:rounded-full
+            [&::-moz-range-thumb]:shadow-[var(--focus-shadow),] 
+            [&::-moz-range-thumb]:ring-[6px] 
+            [&::-moz-range-track]:rounded-lg 
+            [&::-moz-range-track]:bg-(--gray-color)
+             `,
+              `[&::-moz-range-thumb]:shadow-[calc(100rem*-1-0.5rem)_0_0_100rem] 
+              [&::-webkit-slider-thumb]:shadow-[calc(100rem*-1-0.5rem)_0_0_100rem]`,
             )}
             min={number.minNum}
             max={number.maxNum}
             step={number.step}
             bind:value={singleValue}
           />
-          <p class="text-(--back-color)">TEXT WWW</p>
           <!-- [&::-webkit-slider-thumb]:bg-(--bg-color)  -->
         </div>
       </div>
 
-      <!-- <div
+      <div
         class="pointer-events-none absolute z-30 size-8 origin-top rounded-full border bg-(--field-color)/20"
         style={`left: ${singlePosition}%; top: 50%; transform: translate(-50%, -50%)`}
-      > -->
-      <!-- <IconGripVerticalDual clamp(1rem, ${singlePosition}%, calc(100% - 1rem))/> -->
-      <!-- </div> -->
+      >
+        <IconGripVerticalDual />
+      </div>
     {/if}
   </div>
 
   <!-- Кнопки управления -->
-  <div class={`mt-2 flex w-full ${isRange ? 'justify-between' : 'justify-center'} gap-2`}>
+  <div class={`mt-4 flex w-full ${isRange ? 'justify-between' : 'justify-center'} gap-2`}>
     {#if isRange}
       {#each ['lower', 'upper'] as type (type)}
         <div
@@ -311,8 +339,7 @@
     border: none;
     cursor: pointer;
     position: relative;
-    margin-left: -0.25rem;
-    padding-right: 0.5rem;
+    margin-left: -0.4rem;
     color: var(--bg-color);
     box-shadow:
       inset var(--focus-shadow, 0 1px 2px rgba(0, 0, 0, 0.1)),
