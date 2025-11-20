@@ -142,10 +142,10 @@
           label={{ name: $t('constructor.props.range') }}
           type="range"
           number={{ minNum: 0, maxNum: 31, step: 1 }}
-          value={[0, 4]}
+          value={[component.properties.range.start, component.properties.range.end]}
           onUpdate={(value) => {
-            updateProperty('range.start', value as number[][0], component, onPropertyChange)
-            updateProperty('range.end', value as number[][1], component, onPropertyChange)
+            updateProperty('range.start', value[0] as [number, number], component, onPropertyChange)
+            updateProperty('range.end', value as number[][1] as number, component, onPropertyChange)
             generateBitOptions(component.properties.range.start, component.properties.range.end)
           }}
         />

@@ -30,8 +30,8 @@
       (c.value as string).includes(component.properties.wrapperClass?.split(' ').find((cls: string) => cls.startsWith('text-'))),
     ),
   )
-  const initialBold = $derived(component.properties.content?.class?.split(' ').find((cls: string) => cls.startsWith('font-bold')))
-  const initialItalic = $derived(component.properties.content?.class?.split(' ').find((cls: string) => cls.startsWith('italic')))
+  const initialBold = $derived(component.properties.content?.class?.split(' ').some((cls: string) => cls.includes('font-bold')))
+  const initialItalic = $derived(component.properties.content?.class?.split(' ').some((cls: string) => cls.startsWith('italic')))
 </script>
 
 {#if forConstructor}
@@ -78,6 +78,7 @@
       />
     </div>
     <div class="flex w-1/3 flex-col px-2">
+      <!-- <p>{component.properties.content?.class?.split(' ').includes((cls: string) => cls.startsWith('font-bold'))}</p> -->
       <UI.Switch
         label={{ name: $t('constructor.props.bold') }}
         value={initialBold}
@@ -85,7 +86,7 @@
         onChange={(value) =>
           updateProperty(
             'content.class',
-            `${component.properties.content.class} ${value ? 'font-bold' : 'font-normal'}`,
+            twMerge(`${component.properties.content.class} ${value ? 'font-bold' : 'font-normal'}`),
             component,
             onPropertyChange,
           )}
@@ -95,7 +96,12 @@
         value={initialItalic}
         options={[{ id: crypto.randomUUID(), value: 0, class: '' }]}
         onChange={(value) =>
-          updateProperty('content.class', `${component.properties.content.class} ${value ? 'italic' : 'not-italic'}`, component, onPropertyChange)}
+          updateProperty(
+            'content.class',
+            twMerge(`${component.properties.content.class} ${value ? 'italic' : 'not-italic'}`),
+            component,
+            onPropertyChange,
+          )}
       />
       <UI.Switch
         label={{ name: $t('constructor.props.background') }}

@@ -1,9 +1,7 @@
 <!-- $lib/ElementsUI/Slider.svelte -->
 <script lang="ts">
   import type { ISliderProps } from '../types'
-  import IconGripVerticalDual from '../libIcons/IconGripVerticalDual.svelte'
   import { twMerge } from 'tailwind-merge'
-  import IconGripVerticalRight from '$lib/libIcons/IconGripVerticalRight.svelte'
   import { onDestroy, onMount } from 'svelte'
 
   let {
@@ -27,14 +25,6 @@
   let lowerValue = $derived(isRange && Array.isArray(value) ? value[0] : number.minNum)
   let upperValue = $derived(isRange && Array.isArray(value) ? value[1] : number.maxNum)
 
-  /* Расчет позиций */
-  const singlePosition = $derived(((singleValue - number.minNum) / (number.maxNum - number.minNum)) * 100)
-  const lowerPosition = $derived(((lowerValue - number.minNum) / (number.maxNum - number.minNum)) * 100)
-  const upperPosition = $derived(((upperValue - number.minNum) / (number.maxNum - number.minNum)) * 100)
-
-  let rangeRef: HTMLElement | null = $state(null)
-  let steps = $derived(number.maxNum / number.step)
-
   $effect(() => {
     if (value === undefined || value === null) {
       if (type === 'single' && !value) value = number.minNum
@@ -47,8 +37,10 @@
     if (isRange && target !== 'single') {
       if (target === 'lower') {
         lowerValue = Math.max(number.minNum, Math.min(lowerValue + stepValue, upperValue))
+        lowerValue = lowerValue == upperValue ? upperValue - number.step : lowerValue
       } else {
         upperValue = Math.min(number.maxNum, Math.max(upperValue + stepValue, lowerValue))
+        upperValue = upperValue == lowerValue ? upperValue + number.step : upperValue
       }
       onUpdate([lowerValue, upperValue])
     } else {
@@ -83,8 +75,10 @@
 
       if (activeThumb === 'lower') {
         lowerValue = Math.max(number.minNum, Math.min(clickValue, upperValue))
+        lowerValue = lowerValue == upperValue ? upperValue - number.step : lowerValue
       } else {
         upperValue = Math.min(number.maxNum, Math.max(clickValue, lowerValue))
+        upperValue = upperValue == lowerValue ? upperValue + number.step : upperValue
       }
       onUpdate([lowerValue, upperValue])
     } else {
@@ -104,17 +98,13 @@
     if (rangeRefLower) {
       const rect = rangeRefLower.getBoundingClientRect()
       const percent = (lowerValue - number.minNum) / (number.maxNum - number.minNum)
-      const thumbX = rect.left + rect.width * percent
-      const thumbOffset = 0
-      thumbCenterLower = thumbX - thumbOffset
+      thumbCenterLower = rect.left + rect.width * percent
     }
 
     if (rangeRefUpper) {
       const rect = rangeRefUpper.getBoundingClientRect()
       const percent = (upperValue - number.minNum) / (number.maxNum - number.minNum)
-      const thumbX = rect.left + rect.width * percent
-      const thumbOffset = 0
-      thumbCenterUpper = thumbX - thumbOffset
+      thumbCenterUpper = rect.left + rect.width * percent
     }
 
     if (thumbCenterUpper && thumbCenterLower) {
@@ -128,14 +118,10 @@
     updateShadowWidth()
   })
 
-  const handleResize = () => {
-    updateShadowWidth()
-  }
-
   onMount(() => {
     if (window.visualViewport) {
       const handleResize = () => {
-        updateShadowWidth() // или что-то другое
+        updateShadowWidth()
       }
 
       window.visualViewport.addEventListener('resize', handleResize)
@@ -147,7 +133,7 @@
   })
 </script>
 
-<div class={twMerge(`relative flex w-full flex-col items-center `, wrapperClass)}>
+<div class={twMerge(`bg-blue relative flex w-full flex-col items-center `, wrapperClass)}>
   {#if label.name}
     <h5 class={twMerge(`w-full px-4 text-center`, label.class)}>{label.name}</h5>
   {/if}
@@ -168,9 +154,7 @@
         onclick={(e) => {
           disabled ? undefined : handleTrackClick(e)
         }}
-      >
-        <!-- <div class="absolute h-full rounded-full bg-(--bg-color)" style={`left: ${lowerPosition}%; right: ${100 - upperPosition}%;`}></div> -->
-      </div>
+      ></div>
 
       <!-- Ползунки -->
       <input
@@ -185,8 +169,7 @@
           : (e) => {
               const newValue = Math.min(Number((e.target as HTMLInputElement).value), upperValue)
               lowerValue = newValue
-              // activeThumb = 'upper'
-              // console.log('lower')
+              lowerValue = newValue == upperValue ? upperValue - number.step : newValue
             }}
         onmouseup={(e) => {
           handleTrackClick(e)
@@ -195,7 +178,7 @@
         {disabled}
         class={twMerge(
           `slider-bg absolute h-8 w-full appearance-none overflow-hidden rounded-full accent-(--back-color) 
-              [&::-webkit-slider-runnable-track]:rounded-lg 
+              [&::-webkit-slider-runnable-track]:rounded-full 
               [&::-webkit-slider-runnable-track]:bg-(--gray-color)
               [&::-webkit-slider-thumb]:relative 
               [&::-webkit-slider-thumb]:z-100 
@@ -217,22 +200,13 @@
             [&::-moz-range-thumb]:rounded-full
             [&::-moz-range-thumb]:shadow-[var(--focus-shadow),] 
             [&::-moz-range-thumb]:ring-[6px] 
-            [&::-moz-range-track]:rounded-lg 
+            [&::-moz-range-track]:rounded-full
             [&::-moz-range-track]:bg-(--gray-color)
              `,
           `[&::-moz-range-thumb]:shadow-[calc(100rem*-1-0.5rem)_0_0_100rem] 
               [&::-webkit-slider-thumb]:shadow-[calc(${shadowWidth}px+0.5rem)_0_0_${shadowWidth}px]`,
         )}
       />
-
-      <!-- ${activeThumb === 'lower' ? 'z-30' : 'z-20'} -->
-
-      <!-- <div
-        class="pointer-events-none absolute z-40 size-8 rounded-full border bg-(--field-color)"
-        style={`left: calc(${lowerPosition}% + 0rem); top: 50%; transform: translateY(-50%)`}
-      >
-        <IconGripVerticalLeft />
-      </div> -->
 
       <input
         bind:this={rangeRefUpper}
@@ -246,8 +220,7 @@
           : (e) => {
               const newValue = Math.max(Number((e.target as HTMLInputElement).value), lowerValue)
               upperValue = newValue
-              // activeThumb = 'lower'
-              // console.log('upper')
+              upperValue = newValue == lowerValue ? newValue + number.step : upperValue
             }}
         onmouseup={(e) => {
           handleTrackClick(e)
@@ -256,7 +229,7 @@
         {disabled}
         class={twMerge(
           `slider-bg absolute h-8 w-full appearance-none overflow-hidden rounded-full accent-(--back-color) 
-              [&::-webkit-slider-runnable-track]:rounded-lg 
+              [&::-webkit-slider-runnable-track]:rounded-full
               [&::-webkit-slider-thumb]:relative 
               [&::-webkit-slider-thumb]:z-100
               [&::-webkit-slider-thumb]:ml-[-0.4rem] 
@@ -277,42 +250,22 @@
             [&::-moz-range-thumb]:rounded-full
             [&::-moz-range-thumb]:shadow-[var(--focus-shadow),] 
             [&::-moz-range-thumb]:ring-[6px] 
-            [&::-moz-range-track]:rounded-lg 
+            [&::-moz-range-track]:rounded-full
             [&::-moz-range-track]:bg-(--gray-color)
              `,
           `[&::-moz-range-thumb]:shadow-[calc(100rem*-1-0.5rem)_0_0_100rem] 
-              [&::-webkit-slider-thumb]:shadow-[calc(${shadowWidth}px*-1-0.5rem)_0_0_${shadowWidth}px]`,
+            ${shadowWidth ? '' : ''}  [&::-webkit-slider-thumb]:shadow-[calc(${shadowWidth}px*-1-0.5rem)_0_0_${shadowWidth}px]`,
         )}
       />
-
-      <!-- <div
-        class="pointer-events-none absolute z-40 size-8 rounded-full border bg-(--field-color)"
-        style={`left: calc(${upperPosition}% - 2rem); top: 50%; transform: translateY(-50%)`}
-      >
-        <IconGripVerticalRight />
-      </div> -->
     {:else}
       {@const userAgent = navigator.userAgent}
       <!-- Одиночный слайдер -->
-      <!-- <div
-        class={`absolute h-full w-full rounded-full bg-(--gray-color) ${disabled ? '' : 'cursor-pointer'}`}
-        role="button"
-        tabindex={null}
-        onkeydown={null}
-        onclick={disabled ? undefined : handleTrackClick}
-      >
-        <div
-          class="absolute h-full {singlePosition === 100 ? ' rounded-full' : 'rounded-l-full'}"
-          style={`width: ${singlePosition}%; background-color: `}
-        ></div>
-      </div> -->
-
       <div class="absolute h-full w-full">
         <input
           type="range"
           class={twMerge(
             `slider-bg  h-8 w-full appearance-none overflow-hidden rounded-full accent-(--back-color) 
-              [&::-webkit-slider-runnable-track]:rounded-lg 
+              [&::-webkit-slider-runnable-track]:rounded-full
               [&::-webkit-slider-runnable-track]:bg-(--gray-color)
               [&::-webkit-slider-thumb]:relative 
 
@@ -334,7 +287,7 @@
             [&::-moz-range-thumb]:rounded-full
             [&::-moz-range-thumb]:shadow-[var(--focus-shadow),] 
             [&::-moz-range-thumb]:ring-[6px] 
-            [&::-moz-range-track]:rounded-lg 
+            [&::-moz-range-track]:rounded-full
             [&::-moz-range-track]:bg-(--gray-color)
              `,
             `[&::-moz-range-thumb]:shadow-[calc(100rem*-1-0.5rem)_0_0_100rem] 
@@ -345,21 +298,12 @@
           step={number.step}
           bind:value={singleValue}
         />
-
-        <div class="relative mt-10 w-full"></div>
       </div>
-      <!-- 
-      <div
-        class="pointer-events-none absolute z-30 size-8 origin-top rounded-full border bg-(--field-color)/20"
-        style={`left:${thumbCenterX}px; top: 50%; transform: translate(-50%, -50%)`}
-      >
-        <IconGripVerticalDual />
-      </div> -->
     {/if}
   </div>
 
   <!-- Кнопки управления -->
-  <div class={`mt-4 flex w-full ${isRange ? 'justify-between' : 'justify-center'} gap-2`}>
+  <div class={`mt-3 flex w-full ${isRange ? 'justify-between' : 'justify-center'} gap-2`}>
     {#if isRange}
       {#each ['lower', 'upper'] as type (type)}
         <div
@@ -403,218 +347,3 @@
     {/if}
   </div>
 </div>
-
-<style>
-  .slider {
-    /* -webkit-appearance: none;
-    appearance: none; */
-    height: 2rem;
-    border-radius: 999px;
-    padding-left: 10px;
-    overflow: hidden;
-    accent-color: var(--back-color);
-  }
-
-  /* Для WebKit (Chrome, Safari) */
-  .slider::-webkit-slider-thumb {
-    height: 1rem;
-    width: 1rem;
-    border-radius: 50%;
-    border: none;
-    z-index: 1000;
-    cursor: pointer;
-    position: relative;
-    margin-left: -0.4rem;
-    color: transparent;
-    /* color: var(--bg-color); */
-    box-shadow:
-      inset var(--focus-shadow, 0 1px 2px rgba(0, 0, 0, 0.1)),
-      0 0,
-      calc(100rem * -1 - 0.5rem) 0 0 100rem,
-      0 0 0 5px var(--bg-color);
-  }
-
-  .slider::-webkit-slider-runnable-track {
-    border-radius: 0.5rem;
-    background: var(--gray-color);
-  }
-
-  /* Для Firefox */
-  .slider::-moz-range-thumb {
-    height: 1rem;
-    width: 1rem;
-    border-radius: 50%;
-    border: none;
-    cursor: pointer;
-    position: relative;
-    margin-left: -0.4rem;
-    color: var(--bg-color);
-    box-shadow:
-      inset var(--focus-shadow, 0 1px 2px rgba(0, 0, 0, 0.1)),
-      0 0,
-      calc(100rem * -1 - 0.5rem) 0 0 100rem,
-      0 0 0 5px var(--bg-color);
-    background: var(--bg-color);
-  }
-
-  .slider::-moz-range-track {
-    border-radius: 0.5rem;
-    background: var(--gray-color);
-  }
-
-  /* input[type='range'] {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 100%;
-    height: 2rem;
-    background: transparent;
-    border-radius: 9999px;
-    overflow: hidden;
-    accent-color: var(--red-color);
-  }
-
-  input[type='range']::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    height: 1rem;
-    width: 1rem;
-    border-radius: 50%;
-    border: none;
-    cursor: pointer;
-    position: relative;
-
-    scale: 1.5;
-    translate: var(--tw-translate-x) 10%;
-    margin-left: 0.25rem;
-    box-shadow: 0 0 0 4px #dc2626;
-    color: bisque;
-    box-shadow:
-      inset var(--shadow-inset-info, 0 1px 2px rgba(0, 0, 0, 0.1)),
-      0 0,
-      calc(100rem * -1 - 0.5rem) 0 0 100rem;
-  }
-
-  input[type='range']::-moz-range-thumb {
-    height: 1rem;
-    width: 1rem;
-    border-radius: 50%;
-    border: none;
-    background: #fff;
-    cursor: pointer;
-    position: relative;
-    transform: translateY(-50%);
-    margin-left: 0.25rem;
-    box-shadow: 0 0 0 4px #dc2626;
-  }
-
-  input[type='range']::-webkit-slider-runnable-track {
-    height: 1.5rem;
-    width: 100%;
-    border-radius: 0.5rem;
-    margin-right: 0.5rem;
-    background: transparent;
-  }
-
-  input[type='range']::-moz-range-track {
-    height: 1.5rem;
-    width: 100%;
-    border-radius: 0.5rem;
-    margin-right: 0.5rem;
-    background: #e4e6eb;
-  } */
-  /* 
-  .slider-wrapper {
-    position: relative;
-    width: 100%;
-    background: transparent;
-    border-radius: 9999px;
-    overflow: hidden;
-  }
-
-  .slider-wrapper::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 100%;
-    height: 0.5rem;
-    background: #000000;
-    border-radius: 0.5rem;
-  } */
-
-  /* input[type='range'] {
-    -webkit-appearance: none;
-    appearance: none; 
-    margin: 0;
-    padding: 0;
-    pointer-events: none;
-    outline: none;
-    accent-color: var(--back-color);
-  }
-
-  input[type='range']::before {
-    width: 100%;
-    height: 2rem;
-    scale: 160% 160%;
-    translate: var(--tw-translate-x) 32%;
-    background: red;
-    z-index: 50;
-  }
-
-  Webkit thumb
-  input[type='range']::-webkit-slider-thumb {
-        -webkit-appearance: none;
-    appearance: none;
-    background: var(--back-color);
-    cursor: pointer;
-    pointer-events: auto;
-    border: none;
-    scale: 160% 160%;
-    translate: var(--tw-translate-x) 32%;
-  }
-
-  Firefox thumb
-  input[type='range']::-moz-range-thumb {
-    width: 2rem;
-    height: 2rem;
-    border-radius: 50%;
-    background: transparent;
-    cursor: pointer;
-    pointer-events: auto;
-    border: none;
-  }
-
-  Webkit track
-  input[type='range']::-webkit-slider-runnable-track {
-    width: 100%;
-    height: 100%;
-    background: transparent;
-    border-radius: 0;
-    border: none;
-  }
-
-  Firefox track
-  input[type='range']::-moz-range-track {
-    width: 100%;
-    height: 100%;
-    background: transparent;
-    border-radius: 0;
-    border: none;
-  }
-
-  input[type='range']:disabled::-webkit-slider-thumb {
-    cursor: not-allowed;
-  }
-
-  input[type='range']:disabled::-moz-range-thumb {
-    cursor: not-allowed;
-  }
-
-  input[type='range']:focus::-webkit-slider-thumb {
-    accent-color: var(--back-color);
-  }
-
-  input[type='range']:focus::-moz-range-thumb {
-    accent-color: var(--back-color);
-  } */
-</style>

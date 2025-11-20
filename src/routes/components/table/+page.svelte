@@ -17,8 +17,8 @@
       header: [
         {
           key: 'id',
-          label: { name: 'IDWWWW WWWWWW' },
-          width: '10%',
+          label: { name: 'ID' },
+          width: '40%',
           sortable: true,
           image: {
             width: '0rem',

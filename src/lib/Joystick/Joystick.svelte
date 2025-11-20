@@ -305,7 +305,7 @@
     </div>
   </div>
 
-  <div class="absolute right-10 flex items-center">
+  <div class="right-10 flex items-center md:absolute">
     <div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class="flex h-full flex-col justify-center rounded-full p-10">
       {#each sensitivityOptions as option, index}
         <button

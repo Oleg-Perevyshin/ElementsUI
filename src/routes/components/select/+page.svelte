@@ -16,7 +16,7 @@
       label: { name: 'Label', class: 'text-center' },
       type: 'select',
       bitMode: true,
-      range: { start: 0, end: 0 },
+      range: { start: 0, end: 1 },
       options: [{ id: crypto.randomUUID(), value: '1', name: 'Option 1', class: 'bg-max' }],
       eventHandler: { Header: 'SET', Argument: '', Variables: [] },
     },
