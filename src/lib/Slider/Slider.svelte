@@ -1,10 +1,9 @@
 <!-- $lib/ElementsUI/Slider.svelte -->
 <script lang="ts">
   import type { ISliderProps } from '../types'
-  import IconGripVerticalLeft from '../libIcons/IconGripVerticalLeft.svelte'
-  import IconGripVerticalRight from '../libIcons/IconGripVerticalRight.svelte'
   import IconGripVerticalDual from '../libIcons/IconGripVerticalDual.svelte'
   import { twMerge } from 'tailwind-merge'
+  import IconGripVerticalRight from '$lib/libIcons/IconGripVerticalRight.svelte'
 
   let {
     id = crypto.randomUUID(),
@@ -31,6 +30,9 @@
   const singlePosition = $derived(((singleValue - number.minNum) / (number.maxNum - number.minNum)) * 100)
   const lowerPosition = $derived(((lowerValue - number.minNum) / (number.maxNum - number.minNum)) * 100)
   const upperPosition = $derived(((upperValue - number.minNum) / (number.maxNum - number.minNum)) * 100)
+
+  let rangeRef: HTMLElement | null = $state(null)
+  let steps = $derived(number.maxNum / number.step)
 
   $effect(() => {
     if (value === undefined || value === null) {
@@ -71,19 +73,23 @@
     const clickPercent = ((e.clientX - rect.left) / rect.width) * 100
     const rawValue = number.minNum + (clickPercent / 100) * (number.maxNum - number.minNum)
     const clickValue = Math.round((rawValue - number.minNum) / number.step) * number.step + number.minNum
+    // console.log(clickValue)
 
     if (isRange) {
       const lowerDiff = Math.abs(clickValue - lowerValue)
+
       const upperDiff = Math.abs(clickValue - upperValue)
 
       activeThumb = lowerDiff < upperDiff ? 'lower' : 'upper'
 
       if (activeThumb === 'lower') {
         lowerValue = Math.max(number.minNum, Math.min(clickValue, upperValue))
+        // console.log('lower', lowerDiff, upperDiff, lowerValue)
       } else {
         upperValue = Math.min(number.maxNum, Math.max(clickValue, lowerValue))
+        // console.log('upper', lowerDiff, upperDiff, upperValue)
       }
-
+      console.log(activeThumb, lowerValue, upperValue)
       onUpdate([lowerValue, upperValue])
     } else {
       singleValue = Math.max(number.minNum, Math.min(clickValue, number.maxNum))
@@ -104,15 +110,17 @@
   >
     {#if isRange}
       <!-- Трек и активная зона -->
-      <div
+      <!-- <div
         class={`absolute h-full w-full rounded-full bg-(--gray-color) ${disabled ? '' : 'cursor-pointer'}`}
         role="button"
         tabindex={null}
         onkeydown={null}
-        onclick={disabled ? undefined : handleTrackClick}
+        onclick={() => {
+          disabled ? undefined : handleTrackClick
+        }}
       >
-        <div class=" absolute h-full rounded-full bg-(--bg-color)" style={`left: ${lowerPosition}%; right: ${100 - upperPosition}%;`}></div>
-      </div>
+        <div class="absolute h-full rounded-full bg-(--bg-color)" style={`left: ${lowerPosition}%; right: ${100 - upperPosition}%;`}></div>
+      </div> -->
 
       <!-- Ползунки -->
       <input
@@ -120,48 +128,60 @@
         min={number.minNum}
         max={number.maxNum}
         step={number.step}
-        bind:value={lowerValue}
+        value={lowerValue}
         oninput={disabled
           ? undefined
           : (e) => {
               const newValue = Math.min(Number((e.target as HTMLInputElement).value), upperValue)
               lowerValue = newValue
-              activeThumb = 'lower'
+              // activeThumb = 'upper'
+              // console.log('lower')
             }}
-        onmouseup={disabled ? undefined : () => onUpdate([lowerValue, upperValue])}
+        onmouseup={(e) => {
+          handleTrackClick(e)
+          disabled ? undefined : () => onUpdate([lowerValue, upperValue])
+        }}
         {disabled}
-        class={`absolute -z-10 h-full w-full ${activeThumb === 'lower' ? 'z-30' : 'z-20'}`}
+        class={`slider absolute h-full w-full appearance-none bg-transparent `}
       />
-      <div
+
+      <!-- ${activeThumb === 'lower' ? 'z-30' : 'z-20'} -->
+
+      <!-- <div
         class="pointer-events-none absolute z-40 size-8 rounded-full border bg-(--field-color)"
         style={`left: calc(${lowerPosition}% + 0rem); top: 50%; transform: translateY(-50%)`}
       >
-        <!-- <IconGripVerticalLeft /> -->
-      </div>
+        <IconGripVerticalLeft />
+      </div> -->
 
       <input
         type="range"
         min={number.minNum}
         max={number.maxNum}
         step={number.step}
-        bind:value={upperValue}
+        value={upperValue}
         oninput={disabled
           ? undefined
           : (e) => {
-              const newValue = Math.max(Number((e.target as HTMLInputElement).value), lowerValue)
-              upperValue = newValue
-              activeThumb = 'upper'
+              // const newValue = Math.max(Number((e.target as HTMLInputElement).value), lowerValue)
+              // upperValue = newValue
+              // activeThumb = 'lower'
+              // console.log('upper')
             }}
-        onmouseup={disabled ? undefined : () => onUpdate([lowerValue, upperValue])}
+        onmouseup={(e) => {
+          handleTrackClick(e)
+          disabled ? undefined : () => onUpdate([lowerValue, upperValue])
+        }}
         {disabled}
-        class={`absolute h-full w-full appearance-none bg-transparent ${activeThumb === 'upper' ? 'z-30' : 'z-20'}`}
+        class={`slider absolute h-full w-full appearance-none bg-transparent `}
       />
-      <div
+
+      <!-- <div
         class="pointer-events-none absolute z-40 size-8 rounded-full border bg-(--field-color)"
         style={`left: calc(${upperPosition}% - 2rem); top: 50%; transform: translateY(-50%)`}
       >
-        <!-- <IconGripVerticalRight /> -->
-      </div>
+        <IconGripVerticalRight />
+      </div> -->
     {:else}
       {@const userAgent = navigator.userAgent}
       <!-- Одиночный слайдер -->
@@ -181,38 +201,16 @@
       <div class="slider-wrapper absolute h-full w-full">
         <input
           type="range"
-          min={number.minNum}
-          max={number.maxNum}
-          step={number.step}
-          bind:value={singleValue}
-          onmouseup={disabled ? undefined : () => onUpdate(singleValue)}
-          {disabled}
-          class="slider w-[calc(100%-1rem)]"
-        />
-
-        <div class="relative mt-10 w-full">
-          <input
-            type="range"
-            class={twMerge(
-              ` slider-bg [&::-webkit-slider-thumb]:bg-[url(<svg xmlns="http://www.w3.org/2000/svg" width="1.75rem" height="1.75rem"  viewBox="0  0
-            24 
-            24"> 
-            <g 
-            stroke="currentColor" 
-            stroke-linecap="round" 
-            stroke-width="1.5" 
-            fill="none"> 
-            <line 
-            x1="4" y1="11" x2="4" y2="13" /> <line x1="8" y1="9"
-  x2="8" y2="15" /> <line x1="12"
-    y1="6" x2="12" y2="18" /> <line x1="16"
-    y1="9" x2="16" y2="15" /> <line x1="20"
-    y1="11" x2="20" y2="13" /> </g> </svg>
-    )] h-8 w-full appearance-none overflow-hidden rounded-full
-    accent-(--back-color) [&::-webkit-slider-runnable-track]:rounded-lg [&::-webkit-slider-runnable-track]:bg-(--gray-color) [&::-webkit-slider-thumb]:relative [&::-webkit-slider-thumb]:ml-[-0.4rem] [&::-webkit-slider-thumb]:h-4
-  [&::-webkit-slider-thumb]:w-4
-[&::-webkit-slider-thumb]:cursor-pointer
-[&::-webkit-slider-thumb]:rounded-full
+          class={twMerge(
+            `slider-bg  h-8 w-full appearance-none overflow-hidden rounded-full accent-(--back-color) 
+              [&::-webkit-slider-runnable-track]:rounded-lg 
+              [&::-webkit-slider-runnable-track]:bg-(--gray-color) 
+              [&::-webkit-slider-thumb]:relative 
+              [&::-webkit-slider-thumb]:ml-[-0.4rem] 
+              [&::-webkit-slider-thumb]:h-4
+              [&::-webkit-slider-thumb]:w-4
+              [&::-webkit-slider-thumb]:cursor-pointer
+              [&::-webkit-slider-thumb]:rounded-full
             [&::-webkit-slider-thumb]:shadow-[var(--focus-shadow),]
             ${
               userAgent.includes('iOS') || userAgent.includes('iPhone') || userAgent.includes('iPad')
@@ -222,7 +220,6 @@
             [&::-moz-range-thumb]:relative 
             [&::-moz-range-thumb]:ml-[-0.4rem]
             [&::-moz-range-thumb]:size-4 
-            [&::-moz-range-thumb]:w-4
             [&::-moz-range-thumb]:cursor-pointer 
             [&::-moz-range-thumb]:rounded-full
             [&::-moz-range-thumb]:shadow-[var(--focus-shadow),] 
@@ -230,24 +227,24 @@
             [&::-moz-range-track]:rounded-lg 
             [&::-moz-range-track]:bg-(--gray-color)
              `,
-              `[&::-moz-range-thumb]:shadow-[calc(100rem*-1-0.5rem)_0_0_100rem] 
+            `[&::-moz-range-thumb]:shadow-[calc(100rem*-1-0.5rem)_0_0_100rem] 
               [&::-webkit-slider-thumb]:shadow-[calc(100rem*-1-0.5rem)_0_0_100rem]`,
-            )}
-            min={number.minNum}
-            max={number.maxNum}
-            step={number.step}
-            bind:value={singleValue}
-          />
-          <!-- [&::-webkit-slider-thumb]:bg-(--bg-color)  -->
-        </div>
-      </div>
+          )}
+          min={number.minNum}
+          max={number.maxNum}
+          step={number.step}
+          bind:value={singleValue}
+        />
 
+        <div class="relative mt-10 w-full"></div>
+      </div>
+      <!-- 
       <div
         class="pointer-events-none absolute z-30 size-8 origin-top rounded-full border bg-(--field-color)/20"
-        style={`left: ${singlePosition}%; top: 50%; transform: translate(-50%, -50%)`}
+        style={`left:${thumbCenterX}px; top: 50%; transform: translate(-50%, -50%)`}
       >
         <IconGripVerticalDual />
-      </div>
+      </div> -->
     {/if}
   </div>
 
@@ -299,8 +296,8 @@
 
 <style>
   .slider {
-    -webkit-appearance: none;
-    appearance: none;
+    /* -webkit-appearance: none;
+    appearance: none; */
     height: 2rem;
     border-radius: 999px;
     padding-left: 10px;
@@ -314,11 +311,12 @@
     width: 1rem;
     border-radius: 50%;
     border: none;
+    z-index: 1000;
     cursor: pointer;
     position: relative;
     margin-left: -0.4rem;
-
-    color: var(--bg-color);
+    color: transparent;
+    /* color: var(--bg-color); */
     box-shadow:
       inset var(--focus-shadow, 0 1px 2px rgba(0, 0, 0, 0.1)),
       0 0,
