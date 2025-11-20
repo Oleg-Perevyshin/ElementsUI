@@ -114,7 +114,7 @@
       const thumbOffset = 0
       thumbCenterUpper = thumbX - thumbOffset
     }
-    if (thumbCenterUpper && thumbCenterLower) shadowWidth = (thumbCenterUpper - thumbCenterLower) / 3
+    if (thumbCenterUpper && thumbCenterLower) shadowWidth = (thumbCenterUpper - thumbCenterLower) / 3.5
   })
 </script>
 
