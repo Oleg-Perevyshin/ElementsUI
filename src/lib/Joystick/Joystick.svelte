@@ -4,7 +4,6 @@
 
   let {
     id = crypto.randomUUID(),
-
     wrapperClass = '',
     label = { name: '', class: '' },
     value = $bindable([0, 0, 0]),

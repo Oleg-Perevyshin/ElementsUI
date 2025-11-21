@@ -84,6 +84,7 @@ const translations: Translations = {
     'constructor.props.align.content': 'Выравнивание контента',
     'constructor.props.image': 'Фоновое изображение',
     'constructor.props.labelicon': 'Иконка заголовка',
+    'constructor.props.markerIcon': 'Иконка маркера',
     'constructor.props.removeimage': 'Удалить изображение',
     'constructor.props.name': 'Текст',
     'constructor.props.height': 'Высота',
@@ -137,6 +138,7 @@ const translations: Translations = {
     'constructor.props.equal': 'Равные',
     'constructor.props.bitmode': 'Битовый режим',
     'constructor.props.access': 'Доступ (не для владельца)',
+    'constructor.props.map.timeout': 'Таймаут маркеров:',
 
     'constructor.props.table.columns': 'Колонки таблицы',
     'constructor.props.table.columns.key': 'Ключ',

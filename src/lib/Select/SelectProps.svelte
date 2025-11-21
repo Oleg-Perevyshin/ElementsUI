@@ -144,9 +144,12 @@
           number={{ minNum: 0, maxNum: 31, step: 1 }}
           value={[component.properties.range.start, component.properties.range.end]}
           onUpdate={(value) => {
-            updateProperty('range.start', value[0] as [number, number], component, onPropertyChange)
-            updateProperty('range.end', value as number[][1] as number, component, onPropertyChange)
-            generateBitOptions(component.properties.range.start, component.properties.range.end)
+            if (Array.isArray(value)) {
+              if (value[1] - value[0] > 6) value = [value[0], value[0] + 6]
+              updateProperty('range.start', value[0] as number, component, onPropertyChange)
+              updateProperty('range.end', value[1] as number, component, onPropertyChange)
+              generateBitOptions(component.properties.range.start, component.properties.range.end)
+            }
           }}
         />
       {/if}

@@ -31,6 +31,8 @@
         value={component.properties.wrapperClass}
         onUpdate={(value) => updateProperty('wrapperClass', value as string, component, onPropertyChange)}
       />
+    </div>
+    <div class="flex w-1/3 flex-col px-2">
       <UI.Input
         label={{ name: $t('constructor.props.label') }}
         value={component.properties.label.name}

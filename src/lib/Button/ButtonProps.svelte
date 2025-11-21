@@ -179,27 +179,12 @@
         value={$optionsStore.INFO_SIDE_OPTIONS.find((h) => h.value === component.properties.content.info.side)}
         onUpdate={(option) => updateProperty('content.info.side', option.value as string, component, onPropertyChange)}
       />
-      <UI.Input
-        label={{ name: $t('constructor.props.svgicon') }}
-        type="text-area"
-        maxlength={100000}
-        value={component.properties.content.icon}
-        onUpdate={(value) => updateProperty('content.icon', value as string, component, onPropertyChange)}
-      />
     </div>
     <div class="flex w-1/3 flex-col px-2">
       <UI.Input
         label={{ name: $t('constructor.props.componentclass') }}
         value={component.properties.componentClass}
         onUpdate={(value) => updateProperty('componentClass', value as string, component, onPropertyChange)}
-      />
-      <UI.Select
-        label={{ name: $t('constructor.props.height') }}
-        type="buttons"
-        options={$optionsStore.HEIGHT_OPTIONS}
-        value={initialHeight}
-        onUpdate={(option) =>
-          updateProperty('componentClass', twMerge(component.properties.componentClass, option.value), component, onPropertyChange)}
       />
       <UI.Select
         wrapperClass="h-14"
@@ -209,6 +194,14 @@
         value={initialColor}
         onUpdate={(option) =>
           updateProperty('componentClass', twMerge(component.properties.componentClass, option.value), component, onPropertyChange)}
+      />
+
+      <UI.Input
+        label={{ name: $t('constructor.props.svgicon') }}
+        type="text-area"
+        maxlength={100000}
+        value={component.properties.content.icon}
+        onUpdate={(value) => updateProperty('content.icon', value as string, component, onPropertyChange)}
       />
     </div>
   </div>

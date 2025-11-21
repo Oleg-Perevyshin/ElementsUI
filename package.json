@@ -36,6 +36,7 @@
     "prettier": "^3.6.2",
     "prettier-plugin-svelte": "^3.4.0",
     "prettier-plugin-tailwindcss": "^0.7.1",
+    "svelte-maplibre-gl": "^1.0.2",
     "tailwind-merge": "^3.4.0",
     "tailwindcss": "^4.1.17",
     "tsx": "^4.20.6",
@@ -43,14 +44,14 @@
   },
   "devDependencies": {
     "@sveltejs/adapter-static": "^3.0.10",
-    "@sveltejs/kit": "^2.48.5",
-    "@sveltejs/package": "^2.5.4",
+    "@sveltejs/kit": "^2.49.0",
+    "@sveltejs/package": "^2.5.6",
     "@sveltejs/vite-plugin-svelte": "^6.2.1",
     "@types/node": "^24.10.1",
     "publint": "^0.3.15",
-    "svelte": "^5.43.12",
+    "svelte": "^5.43.14",
     "svelte-preprocess": "^6.0.3",
-    "vite": "^7.2.2",
+    "vite": "^7.2.4",
     "vite-plugin-compression": "^0.5.1"
   }
 }

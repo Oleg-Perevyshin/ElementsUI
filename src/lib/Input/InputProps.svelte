@@ -128,7 +128,10 @@
           maxlength={150}
           help={{ info: $t('constructor.props.regexp.info') }}
           componentClass={isValidRegExp === false ? '!border-2 !border-red-400' : ''}
-          onUpdate={(value) => updateProperty('help.regExp', value)}
+          onUpdate={(value) => {
+            console.log(value)
+            updateProperty('help.regExp', value as string)
+          }}
         />
       {:else if component.properties.type === 'number' && !component.properties.readonly && !component.properties.disabled}
         <UI.Input
@@ -170,7 +173,10 @@
         label={{ name: $t('constructor.props.readonly') }}
         value={component.properties.readonly}
         options={[{ id: crypto.randomUUID(), value: 0, class: '' }]}
-        onChange={(value) => updateProperty('readonly', value)}
+        onChange={(value) => {
+          updateProperty('readonly', value)
+          console.log(component.properties)
+        }}
       />
       <UI.Switch
         label={{ name: $t('constructor.props.copy') }}

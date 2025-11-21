@@ -41,6 +41,7 @@ export interface UIComponent {
     | 'Table'
     | 'Tabs'
     | 'FileAttach'
+    | 'Map'
   properties:
     | IAccordionProps
     | IButtonProps
@@ -56,6 +57,7 @@ export interface UIComponent {
     | ITabsProps
     | IFileInputProps
     | IJoystickProps
+    | IMapProps
   position: Position
   parentId: string
 }
@@ -340,4 +342,22 @@ export interface IJoystickProps {
   value?: number[]
   limits?: { minNum: number; maxNum: number }[]
   onUpdate?: (value: number[]) => void
+}
+
+/* ********************************************************** */
+
+export interface IDeviceGNSS {
+  NavLat: number
+  NavLon: number
+  NavAlt: number
+  DevName: string
+  DevSN: string
+  NavHeading: number
+  NavSatUse: number
+}
+export interface IMapProps {
+  id?: string
+  label?: { name?: string; class?: string }
+  data: IDeviceGNSS | null
+  markerIcon?: string
 }

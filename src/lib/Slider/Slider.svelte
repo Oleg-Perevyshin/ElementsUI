@@ -36,15 +36,15 @@
     const stepValue = direction === 'increment' ? number.step : -number.step
     if (isRange && target !== 'single') {
       if (target === 'lower') {
-        lowerValue = Math.max(number.minNum, Math.min(lowerValue + stepValue, upperValue))
-        lowerValue = lowerValue == upperValue ? upperValue - number.step : lowerValue
+        lowerValue = roundToClean(Math.max(number.minNum, Math.min(lowerValue + stepValue, upperValue)))
+        lowerValue = roundToClean(lowerValue == upperValue ? upperValue - number.step : lowerValue)
       } else {
-        upperValue = Math.min(number.maxNum, Math.max(upperValue + stepValue, lowerValue))
-        upperValue = upperValue == lowerValue ? upperValue + number.step : upperValue
+        upperValue = roundToClean(Math.min(number.maxNum, Math.max(upperValue + stepValue, lowerValue)))
+        upperValue = roundToClean(upperValue == lowerValue ? upperValue + number.step : upperValue)
       }
       onUpdate([lowerValue, upperValue])
     } else {
-      singleValue = Math.max(number.minNum, Math.min(singleValue + stepValue, number.maxNum))
+      singleValue = roundToClean(Math.max(number.minNum, Math.min(singleValue + stepValue, number.maxNum)))
       onUpdate(singleValue)
     }
   }
@@ -74,58 +74,68 @@
       activeThumb = lowerDiff < upperDiff ? 'lower' : 'upper'
 
       if (activeThumb === 'lower') {
-        lowerValue = Math.max(number.minNum, Math.min(clickValue, upperValue))
-        lowerValue = lowerValue == upperValue ? upperValue - number.step : lowerValue
+        lowerValue = roundToClean(Math.max(number.minNum, Math.min(clickValue, upperValue)))
+        lowerValue = roundToClean(lowerValue == upperValue ? upperValue - number.step : lowerValue)
       } else {
-        upperValue = Math.min(number.maxNum, Math.max(clickValue, lowerValue))
-        upperValue = upperValue == lowerValue ? upperValue + number.step : upperValue
+        upperValue = roundToClean(Math.min(number.maxNum, Math.max(clickValue, lowerValue)))
+        upperValue = roundToClean(upperValue == lowerValue ? upperValue + number.step : upperValue)
       }
       onUpdate([lowerValue, upperValue])
     } else {
-      singleValue = Math.max(number.minNum, Math.min(clickValue, number.maxNum))
+      singleValue = roundToClean(Math.max(number.minNum, Math.min(clickValue, number.maxNum)))
       onUpdate(singleValue)
     }
   }
 
   let rangeRefLower: HTMLElement | null = $state(null)
   let rangeRefUpper: HTMLElement | null = $state(null)
-  let shadowWidth = $state()
+  let rangeWidth: number = $state(0)
+  let rangePadding = $state(0)
 
-  const updateShadowWidth = () => {
-    let thumbCenterLower
-    let thumbCenterUpper
-
+  const updaterangeWidth = () => {
+    const percent = (upperValue - lowerValue) / (number.maxNum - number.minNum)
+    let rect
     if (rangeRefLower) {
-      const rect = rangeRefLower.getBoundingClientRect()
-      const percent = (lowerValue - number.minNum) / (number.maxNum - number.minNum)
-      thumbCenterLower = rect.left + rect.width * percent
+      rect = rangeRefLower.getBoundingClientRect()
+      rangeWidth = rect.width * percent
+      rangePadding = rect.width * ((lowerValue - number.minNum) / (number.maxNum - number.minNum))
     }
 
-    if (rangeRefUpper) {
-      const rect = rangeRefUpper.getBoundingClientRect()
-      const percent = (upperValue - number.minNum) / (number.maxNum - number.minNum)
-      thumbCenterUpper = rect.left + rect.width * percent
-    }
+    //  else if (thumbCenterUpper && thumbCenterLower && percent < 0.1) {
+    //   rangeWidth = (thumbCenterUpper - thumbCenterLower) / 10
+    //   shadowHeight = (thumbCenterUpper - thumbCenterLower) / 2
+    // } else if (thumbCenterUpper && thumbCenterLower && thumbCenterUpper - thumbCenterLower < 65) {
+    //   rangeWidth = (thumbCenterUpper - thumbCenterLower) / 1000
+    //   shadowHeight = (thumbCenterUpper - thumbCenterLower) / 3
+    // }
 
-    if (thumbCenterUpper && thumbCenterLower) {
-      shadowWidth = (thumbCenterUpper - thumbCenterLower) / 3.5
-    }
+    console.log(rangeWidth, percent)
+  }
+
+  const roundToClean = (num: number): number => {
+    if (Number.isInteger(num)) return num
+
+    const rounded1 = Number(num.toFixed(1))
+    if (Math.abs(rounded1 - num) < 1e-10) return rounded1
+
+    const rounded2 = Number(num.toFixed(2))
+    if (Math.abs(rounded2 - num) < 1e-10) return rounded2
+
+    return rounded2
   }
 
   $effect(() => {
     lowerValue
     upperValue
-    updateShadowWidth()
+    updaterangeWidth()
   })
 
   onMount(() => {
     if (window.visualViewport) {
       const handleResize = () => {
-        updateShadowWidth()
+        updaterangeWidth()
       }
-
       window.visualViewport.addEventListener('resize', handleResize)
-
       onDestroy(() => {
         if (window.visualViewport) window.visualViewport.removeEventListener('resize', handleResize)
       })
@@ -141,19 +151,32 @@
   <!-- Слайдер -->
   <div
     id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
-    class="relative flex h-9 w-full justify-center rounded-full {disabled ? 'cursor-not-allowed opacity-50' : ''}"
+    class="relative flex h-8 w-full items-center justify-center rounded-full {disabled ? 'cursor-not-allowed opacity-50' : ''}"
   >
     {#if isRange}
       {@const userAgent = navigator.userAgent}
       <!-- Трек и активная зона -->
       <div
-        class={`absolute z-10 h-full w-full rounded-full bg-transparent ${disabled ? '' : 'cursor-pointer'}`}
+        class={`absolute z-40 h-full w-full rounded-full bg-transparent ${disabled ? '' : 'cursor-pointer'}`}
         role="button"
         tabindex={null}
         onkeydown={null}
         onclick={(e) => {
           disabled ? undefined : handleTrackClick(e)
         }}
+      ></div>
+
+      <div
+        class={`absolute z-5 h-[70%] w-full rounded-full bg-stone-500/50 ${disabled ? '' : 'cursor-pointer'}`}
+        role="button"
+        tabindex={null}
+        onkeydown={null}
+      ></div>
+      <div
+        class={`absolute left-[calc(${rangePadding}px)] z-10 h-full w-[${rangeWidth}px] rounded-full bg-blue-500/50 ${disabled ? '' : 'cursor-pointer'}`}
+        role="button"
+        tabindex={null}
+        onkeydown={null}
       ></div>
 
       <!-- Ползунки -->
@@ -167,9 +190,10 @@
         oninput={disabled
           ? undefined
           : (e) => {
+              console.log('jfnhlzsdkfldk')
+
               const newValue = Math.min(Number((e.target as HTMLInputElement).value), upperValue)
-              lowerValue = newValue
-              lowerValue = newValue == upperValue ? upperValue - number.step : newValue
+              lowerValue = roundToClean(newValue == upperValue ? upperValue - number.step : newValue)
             }}
         onmouseup={(e) => {
           handleTrackClick(e)
@@ -177,17 +201,16 @@
         }}
         {disabled}
         class={twMerge(
-          `slider-bg absolute h-8 w-full appearance-none overflow-hidden rounded-full accent-(--back-color) 
+          `slider-bg pointer-events-none absolute z-50 h-8 w-full appearance-none rounded-full accent-(--back-color) 
               [&::-webkit-slider-runnable-track]:rounded-full 
-              [&::-webkit-slider-runnable-track]:bg-(--gray-color)
-              [&::-webkit-slider-thumb]:relative 
-              [&::-webkit-slider-thumb]:z-100 
+              [&::-webkit-slider-runnable-track]:bg-transparent
+              [&::-webkit-slider-thumb]:z-100
               [&::-webkit-slider-thumb]:ml-[-0.4rem] 
               [&::-webkit-slider-thumb]:h-4
               [&::-webkit-slider-thumb]:w-4
               [&::-webkit-slider-thumb]:cursor-pointer
               [&::-webkit-slider-thumb]:rounded-full
-            [&::-webkit-slider-thumb]:shadow-[var(--focus-shadow),]
+            [&::-webkit-slider-thumb]:shadow-red-500
             ${
               userAgent.includes('iOS') || userAgent.includes('iPhone') || userAgent.includes('iPad')
                 ? 'pl-3.5 [&::-webkit-slider-thumb]:ring-[6.5px]'
@@ -203,8 +226,6 @@
             [&::-moz-range-track]:rounded-full
             [&::-moz-range-track]:bg-(--gray-color)
              `,
-          `[&::-moz-range-thumb]:shadow-[calc(100rem*-1-0.5rem)_0_0_100rem] 
-              [&::-webkit-slider-thumb]:shadow-[calc(${shadowWidth}px+0.5rem)_0_0_${shadowWidth}px]`,
         )}
       />
 
@@ -219,8 +240,7 @@
           ? undefined
           : (e) => {
               const newValue = Math.max(Number((e.target as HTMLInputElement).value), lowerValue)
-              upperValue = newValue
-              upperValue = newValue == lowerValue ? newValue + number.step : upperValue
+              upperValue = roundToClean(newValue == lowerValue ? newValue + number.step : upperValue)
             }}
         onmouseup={(e) => {
           handleTrackClick(e)
@@ -228,16 +248,16 @@
         }}
         {disabled}
         class={twMerge(
-          `slider-bg absolute h-8 w-full appearance-none overflow-hidden rounded-full accent-(--back-color) 
-              [&::-webkit-slider-runnable-track]:rounded-full
-              [&::-webkit-slider-thumb]:relative 
+          `slider-bg pointer-events-none absolute z-50 h-8 w-full appearance-none rounded-full accent-(--back-color) 
+              [&::-webkit-slider-runnable-track]:rounded-full 
+              [&::-webkit-slider-runnable-track]:bg-transparent
               [&::-webkit-slider-thumb]:z-100
               [&::-webkit-slider-thumb]:ml-[-0.4rem] 
               [&::-webkit-slider-thumb]:h-4
               [&::-webkit-slider-thumb]:w-4
               [&::-webkit-slider-thumb]:cursor-pointer
               [&::-webkit-slider-thumb]:rounded-full
-            [&::-webkit-slider-thumb]:shadow-[var(--focus-shadow),]
+            [&::-webkit-slider-thumb]:shadow-red-500
             ${
               userAgent.includes('iOS') || userAgent.includes('iPhone') || userAgent.includes('iPad')
                 ? 'pl-3.5 [&::-webkit-slider-thumb]:ring-[6.5px]'
@@ -253,8 +273,6 @@
             [&::-moz-range-track]:rounded-full
             [&::-moz-range-track]:bg-(--gray-color)
              `,
-          `[&::-moz-range-thumb]:shadow-[calc(100rem*-1-0.5rem)_0_0_100rem] 
-            ${shadowWidth ? '' : ''}  [&::-webkit-slider-thumb]:shadow-[calc(${shadowWidth}px*-1-0.5rem)_0_0_${shadowWidth}px]`,
         )}
       />
     {:else}

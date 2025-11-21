@@ -23,6 +23,7 @@
     { page: 'graph', name: 'Graph' },
     { page: 'input', name: 'Input' },
     { page: 'joystick', name: 'Joystick' },
+    { page: 'map', name: 'Map' },
     { page: 'progress-bar', name: 'ProgressBar' },
     { page: 'select', name: 'Select' },
     { page: 'slider', name: 'Slider' },
@@ -38,6 +39,7 @@
     document.body.classList.toggle('dark', !currentTheme)
     document.body.classList.toggle('light', currentTheme)
     localStorage.setItem('AppTheme', currentTheme ? 'light' : 'dark')
+    window.dispatchEvent(new CustomEvent('ThemeChange', { detail: { currentTheme } }))
   }
 
   let DeviceVariables = $state<{ id: string; value: string; name: string; class: string }[]>([
