@@ -99,6 +99,7 @@
             : (e) => {
                 const newValue = Math.min(Number((e.target as HTMLInputElement).value), upperValue)
                 lowerValue = roundToClean(newValue == upperValue ? upperValue - number.step : newValue)
+                onUpdate([lowerValue, upperValue])
               }}
           onmousedown={() => (activeRound = 'ceil')}
           {disabled}
@@ -113,7 +114,7 @@
               [&::-webkit-slider-thumb]:size-4
               [&::-webkit-slider-thumb]:cursor-pointer
               [&::-webkit-slider-thumb]:rounded-full
-            [&::-webkit-slider-thumb]:shadow-red-500
+              [&::-webkit-slider-thumb]:shadow-[var(--focus-shadow),]
             ${
               userAgent.includes('iOS') || userAgent.includes('iPhone') || userAgent.includes('iPad')
                 ? '[&::-webkit-slider-thumb]:ring-[6.5px]'
@@ -132,6 +133,7 @@
             `[&::-moz-range-thumb]:shadow-[calc(100rem+0.5rem)_0_0_100rem] 
               [&::-webkit-slider-thumb]:shadow-[calc(100rem+0.5rem)_0_0_100rem]`,
           )}
+          style={`flex-basis: calc(${(centerNum / number.maxNum) * 100}%+2rem+5px)`}
         />
         <input
           type="range"
@@ -144,6 +146,7 @@
             : (e) => {
                 const newValue = Math.max(Number((e.target as HTMLInputElement).value), lowerValue)
                 upperValue = roundToClean(newValue == lowerValue ? newValue + number.step : upperValue)
+                onUpdate([lowerValue, upperValue])
               }}
           onmousedown={() => (activeRound = 'floor')}
           {disabled}
@@ -158,7 +161,7 @@
               [&::-webkit-slider-thumb]:size-4
               [&::-webkit-slider-thumb]:cursor-pointer
               [&::-webkit-slider-thumb]:rounded-full
-            [&::-webkit-slider-thumb]:shadow-red-500
+              [&::-webkit-slider-thumb]:shadow-[var(--focus-shadow),]
             ${
               userAgent.includes('iOS') || userAgent.includes('iPhone') || userAgent.includes('iPad')
                 ? '[&::-webkit-slider-thumb]:ring-[6.5px]'
@@ -177,6 +180,7 @@
             `[&::-moz-range-thumb]:shadow-[calc(100rem*-1-0.5rem)_0_0_100rem] 
               [&::-webkit-slider-thumb]:shadow-[calc(100rem*-1-0.5rem)_0_0_100rem]`,
           )}
+          style={`flex-basis: calc(${(centerNum / number.maxNum) * 100}%+2rem+5px)`}
         />
       </div>
     {:else}
@@ -185,6 +189,11 @@
       <div class="absolute h-full w-full">
         <input
           type="range"
+          min={number.minNum}
+          max={number.maxNum}
+          step={number.step}
+          bind:value={singleValue}
+          oninput={() => onUpdate(singleValue)}
           class={twMerge(
             `slider-bg  h-8 w-full appearance-none overflow-hidden rounded-full accent-(--back-color) 
               [&::-webkit-slider-runnable-track]:rounded-full
@@ -215,10 +224,6 @@
             `[&::-moz-range-thumb]:shadow-[calc(100rem*-1-0.5rem)_0_0_100rem] 
               [&::-webkit-slider-thumb]:shadow-[calc(100rem*-1-0.5rem)_0_0_100rem]`,
           )}
-          min={number.minNum}
-          max={number.maxNum}
-          step={number.step}
-          bind:value={singleValue}
         />
       </div>
     {/if}
