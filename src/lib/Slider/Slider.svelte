@@ -87,6 +87,7 @@
   >
     {#if isRange}
       {@const userAgent = navigator.userAgent}
+
       <div class="flex w-full">
         <input
           type="range"
@@ -133,7 +134,7 @@
             `[&::-moz-range-thumb]:shadow-[calc(100rem+0.5rem)_0_0_100rem] 
               [&::-webkit-slider-thumb]:shadow-[calc(100rem+0.5rem)_0_0_100rem]`,
           )}
-          style={`flex-basis: calc(${(centerNum / number.maxNum) * 100}%+2rem+5px)`}
+          style="color: var(--bg-color); flex-basis: {`calc(${(centerNum / number.maxNum) * 100}% + 2rem + 5px)`};"
         />
         <input
           type="range"
@@ -151,7 +152,7 @@
           onmousedown={() => (activeRound = 'floor')}
           {disabled}
           class={twMerge(
-            `slider-bg basis-[calc(${100 - (centerNum / number.maxNum) * 100}%+2rem+5px)] h-8 w-full  appearance-none overflow-hidden  
+            `basis-[calc(${100 - (centerNum / number.maxNum) * 100}%+2rem+5px)] h-8 w-full  appearance-none overflow-hidden  
               accent-(--back-color) 
               [&::-webkit-slider-runnable-track]:rounded-r-full
               [&::-webkit-slider-runnable-track]:bg-(--gray-color)
@@ -180,7 +181,7 @@
             `[&::-moz-range-thumb]:shadow-[calc(100rem*-1-0.5rem)_0_0_100rem] 
               [&::-webkit-slider-thumb]:shadow-[calc(100rem*-1-0.5rem)_0_0_100rem]`,
           )}
-          style={`flex-basis: calc(${(centerNum / number.maxNum) * 100}%+2rem+5px)`}
+          style="color: var(--bg-color); flex-basis: {`calc(${(1 - centerNum / number.maxNum) * 100}% + 2rem + 5px)`};"
         />
       </div>
     {:else}
@@ -195,7 +196,7 @@
           bind:value={singleValue}
           oninput={() => onUpdate(singleValue)}
           class={twMerge(
-            `slider-bg  h-8 w-full appearance-none overflow-hidden rounded-full accent-(--back-color) 
+            ` h-8 w-full appearance-none overflow-hidden rounded-full accent-(--back-color) 
               [&::-webkit-slider-runnable-track]:rounded-full
               [&::-webkit-slider-runnable-track]:bg-(--gray-color)
               [&::-webkit-slider-thumb]:relative 
