@@ -55,4 +55,5 @@ export {
   type ITableProps,
   type ITabsProps,
   type IJoystickProps,
+  type IFileAttachProps,
 } from './types'
