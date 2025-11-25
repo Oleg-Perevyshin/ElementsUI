@@ -27,7 +27,7 @@
 
   let activeRound: 'floor' | 'ceil' = $state('floor')
 
-  let centerNum = $derived(lowerValue + Math[activeRound]((upperValue - lowerValue) / 2 / number.step) * number.step)
+  let centerNum = $derived(lowerValue + Math[activeRound](Math.abs(upperValue - lowerValue) / 2 / number.step) * number.step)
 
   $effect(() => {
     if (value === undefined || value === null) {
@@ -105,13 +105,12 @@
           onmousedown={() => (activeRound = 'ceil')}
           {disabled}
           class={twMerge(
-            `basis-[calc(${(centerNum / number.maxNum) * 100}%+2rem+5px)] h-8 w-full appearance-none overflow-hidden 
+            `basis-[calc(${(Math.abs(centerNum - number.minNum) / Math.abs(number.maxNum - number.minNum)) * 100}%+2rem+5px)] h-8 w-full appearance-none overflow-hidden 
               accent-(--back-color) 
               [&::-webkit-slider-runnable-track]:rounded-l-full
               [&::-webkit-slider-runnable-track]:bg-(--gray-color)
               [&::-webkit-slider-runnable-track]:px-2
               [&::-webkit-slider-thumb]:relative
-              [&::-webkit-slider-thumb]:z-100
               [&::-webkit-slider-thumb]:size-4
               [&::-webkit-slider-thumb]:cursor-pointer
               [&::-webkit-slider-thumb]:rounded-full
@@ -134,7 +133,7 @@
             `[&::-moz-range-thumb]:shadow-[calc(100rem+0.5rem)_0_0_100rem] 
               [&::-webkit-slider-thumb]:shadow-[calc(100rem+0.5rem)_0_0_100rem]`,
           )}
-          style="color: var(--bg-color); flex-basis: {`calc(${(centerNum / number.maxNum) * 100}% + 2rem + 5px)`};"
+          style="color: var(--bg-color); flex-basis: {`calc(${(Math.abs(centerNum - number.minNum) / Math.abs(number.maxNum - number.minNum)) * 100}% + 2rem + 5px)`};"
         />
         <input
           type="range"
@@ -152,13 +151,12 @@
           onmousedown={() => (activeRound = 'floor')}
           {disabled}
           class={twMerge(
-            `basis-[calc(${100 - (centerNum / number.maxNum) * 100}%+2rem+5px)] h-8 w-full  appearance-none overflow-hidden  
+            `basis-[calc(${100 - (Math.abs(centerNum - number.minNum) / Math.abs(number.maxNum - number.minNum)) * 100}%+2rem+5px)] h-8 w-full  appearance-none overflow-hidden  
               accent-(--back-color) 
               [&::-webkit-slider-runnable-track]:rounded-r-full
               [&::-webkit-slider-runnable-track]:bg-(--gray-color)
               [&::-webkit-slider-runnable-track]:px-2
               [&::-webkit-slider-thumb]:relative
-              [&::-webkit-slider-thumb]:z-100
               [&::-webkit-slider-thumb]:size-4
               [&::-webkit-slider-thumb]:cursor-pointer
               [&::-webkit-slider-thumb]:rounded-full
@@ -181,7 +179,7 @@
             `[&::-moz-range-thumb]:shadow-[calc(100rem*-1-0.5rem)_0_0_100rem] 
               [&::-webkit-slider-thumb]:shadow-[calc(100rem*-1-0.5rem)_0_0_100rem]`,
           )}
-          style="color: var(--bg-color); flex-basis: {`calc(${(1 - centerNum / number.maxNum) * 100}% + 2rem + 5px)`};"
+          style="color: var(--bg-color); flex-basis: {`calc(${(1 - Math.abs(centerNum - number.minNum) / Math.abs(number.maxNum - number.minNum)) * 100}% + 2rem + 5px)`};"
         />
       </div>
     {:else}

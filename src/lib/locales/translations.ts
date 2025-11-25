@@ -85,6 +85,7 @@ const translations: Translations = {
     'constructor.props.image': 'Фоновое изображение',
     'constructor.props.labelicon': 'Иконка заголовка',
     'constructor.props.markerIcon': 'Иконка маркера',
+    'constructor.props.buttonIcon': 'Иконка кнопки',
     'constructor.props.removeimage': 'Удалить изображение',
     'constructor.props.name': 'Текст',
     'constructor.props.height': 'Высота',
@@ -139,6 +140,8 @@ const translations: Translations = {
     'constructor.props.bitmode': 'Битовый режим',
     'constructor.props.access': 'Доступ (не для владельца)',
     'constructor.props.map.timeout': 'Таймаут маркеров:',
+    'constructor.props.joystick.axes': 'Названия осей',
+    'constructor.props.joystick.axes.info': 'Поле для ввода названий осей, разделенных пробелами (2 или 3 названия)',
 
     'constructor.props.table.columns': 'Колонки таблицы',
     'constructor.props.table.columns.key': 'Ключ',

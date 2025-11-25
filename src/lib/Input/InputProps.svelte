@@ -33,7 +33,7 @@
   )
 
   /* Обновление свойства */
-  const updateProperty = (path: string, value: string | object | boolean | number | RegExp, name?: string) => {
+  const updateProperty = (path: string, value: string | object | boolean | number | RegExp) => {
     const newProperties = JSON.parse(JSON.stringify(component.properties))
     if (path === 'regExp') {
       try {
@@ -68,7 +68,7 @@
     }
 
     obj[parts[parts.length - 1]] = value
-    onPropertyChange({ properties: newProperties, name })
+    onPropertyChange({ properties: newProperties })
   }
 
   const handleOptionColorChange = (color: string) => {
@@ -96,8 +96,8 @@
         options={VARIABLE_OPTIONS}
         value={VARIABLE_OPTIONS.find((opt) => opt.value === component.properties.id)}
         onUpdate={(value) => {
-          updateProperty('id', value.value as string, value.name?.split('—')[1].trim())
-          onPropertyChange({ eventHandler: { Variables: value.value as string } })
+          updateProperty('id', value.value as string)
+          onPropertyChange({ name: value.name?.split('—')[1].trim(), eventHandler: { Variables: value.value as string } })
         }}
       />
       <UI.Select

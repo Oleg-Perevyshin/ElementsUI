@@ -14,6 +14,11 @@
       id: crypto.randomUUID(),
       wrapperClass: 'bg-blue',
       label: { name: 'Label', class: 'text-center' },
+      axes: [
+        { name: 'Roll', minNum: -100, maxNum: 100 },
+        { name: 'Pitch', minNum: -100, maxNum: 100 },
+        { name: 'Yaw', minNum: -100, maxNum: 100 },
+      ],
     },
     eventHandler: { Header: 'SET', Argument: 'Save', Variables: [] },
     position: { row: 0, col: 0, width: 0, height: 0 },

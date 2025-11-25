@@ -1,8 +1,8 @@
 <script lang="ts">
   import ComponentExample from '$lib/ComponentExample.svelte'
-  import FileAttach, { type IFileInputProps } from '$lib/FileAttach/FileAttach.svelte'
+  import FileAttach from '$lib/FileAttach/FileAttach.svelte'
   import FileAttachProps from '$lib/FileAttach/FileAttachProps.svelte'
-  import { updateComponent, type UIComponent } from '$lib/types'
+  import { updateComponent, type IFileAttachProps, type UIComponent } from '$lib/types'
   import { formatObjectToString } from '../../common'
 
   let fileAttachComponent: UIComponent = $state({
@@ -12,7 +12,7 @@
     properties: {
       id: crypto.randomUUID(),
       wrapperClass: '',
-      label: { name: '', class: '' },
+      label: { name: 'Label', class: 'text-center' },
       accept: '*/*',
       type: 'file',
       imageSize: { height: '10rem', width: '10rem', fitMode: 'cover', form: 'square' },
@@ -25,7 +25,7 @@
 
   let codeText = $derived(`
 <UI.FileAttach
-${formatObjectToString(fileAttachComponent.properties as IFileInputProps)} 
+${formatObjectToString(fileAttachComponent.properties as IFileAttachProps)} 
   onChange={() => {}}
 />`)
 
@@ -45,11 +45,17 @@ ${formatObjectToString(fileAttachComponent.properties as IFileInputProps)}
 
 <ComponentExample {codeText}>
   {#snippet component()}
-    <FileAttach {...fileAttachComponent.properties as IFileInputProps} onChange={(event) => handleImageUpload(event)} />
+    <FileAttach {...fileAttachComponent.properties as IFileAttachProps} onChange={(event) => handleImageUpload(event)} />
   {/snippet}
   {#snippet componentProps()}
     <FileAttachProps
-      component={fileAttachComponent as UIComponent & { properties: Partial<IFileInputProps> }}
+      component={fileAttachComponent as UIComponent & { properties: Partial<IFileAttachProps> }}
+      onPropertyChange={(updates) => (fileAttachComponent = updateComponent(fileAttachComponent, updates as object))}
+      forConstructor={true}
+    />
+    <hr />
+    <FileAttachProps
+      component={fileAttachComponent as UIComponent & { properties: Partial<IFileAttachProps> }}
       onPropertyChange={(updates) => (fileAttachComponent = updateComponent(fileAttachComponent, updates as object))}
       forConstructor={false}
     />

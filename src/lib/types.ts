@@ -1,7 +1,6 @@
 // $lib/ElementsUI/types.ts
 import type { Snippet } from 'svelte'
 import type { Writable } from 'svelte/store'
-import type { IFileInputProps } from './FileAttach/FileAttach.svelte'
 
 export const updateProperty = (
   path: string,
@@ -73,7 +72,7 @@ export interface UIComponent {
     | IGraphProps
     | ITableProps<object>
     | ITabsProps
-    | IFileInputProps
+    | IFileAttachProps
     | IJoystickProps
     | IMapProps
   position: Position
@@ -266,6 +265,7 @@ export interface IProgressBarProps {
     maxNum?: number
     units?: string
   }
+  type?: 'horizontal' | 'vertical'
   wrapperClass?: string
 }
 
@@ -350,11 +350,10 @@ export interface IJoystickProps {
   id?: string
   wrapperClass?: string
   label?: { name?: string; class?: string }
-  axesName?: [string, string, string?]
   value?: number[]
-  limits?: { minNum: number; maxNum: number }[]
+  axes?: { name: string; minNum: number; maxNum: number }[]
+  buttonIcon?: string
   onUpdate?: (value: number[]) => void
-  onClick?: (value: number[]) => void
 }
 
 /* ********************************************************** */
@@ -373,4 +372,18 @@ export interface IMapProps {
   label?: { name?: string; class?: string }
   data: IDeviceGNSS | null
   markerIcon?: string
+}
+
+/* ********************************************************** */
+
+export interface IFileAttachProps {
+  id?: string
+  wrapperClass?: string
+  label?: { name?: string; class?: string }
+  type?: 'file' | 'image'
+  accept?: string
+  imageSize?: { height?: string; width?: string; fitMode?: 'cover' | 'contain'; form?: 'square' | 'circle' }
+  disabled?: boolean
+  currentImage?: string | null
+  onChange?: (event: Event, file: File | null) => void
 }

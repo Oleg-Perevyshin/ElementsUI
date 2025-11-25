@@ -1,17 +1,6 @@
 <script lang="ts">
+  import type { IFileAttachProps } from '$lib/types'
   import { twMerge } from 'tailwind-merge'
-
-  export interface IFileInputProps {
-    id?: string
-    wrapperClass?: string
-    label?: { name?: string; class?: string }
-    type?: 'file' | 'image'
-    accept?: string
-    imageSize?: { height?: string; width?: string; fitMode?: 'cover' | 'contain'; form?: 'square' | 'circle' }
-    disabled?: boolean
-    currentImage?: string | null
-    onChange?: (event: Event, file: File | null) => void
-  }
 
   let {
     id = crypto.randomUUID(),
@@ -23,7 +12,7 @@
     disabled = false,
     currentImage = $bindable(''),
     onChange = () => {},
-  }: IFileInputProps = $props()
+  }: IFileAttachProps = $props()
 
   let ID = `${id}-${crypto.randomUUID().slice(0, 6)}`
   let selectedFile = $state<File | null>(null)

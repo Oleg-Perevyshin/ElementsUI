@@ -6,15 +6,14 @@
     id = crypto.randomUUID(),
     wrapperClass = '',
     label = { name: '', class: '' },
-    axesName = ['Roll', 'Pitch', 'Yaw'],
-    value = $bindable([0, 0, 0]),
-    limits = [
-      { minNum: -100, maxNum: 100 },
-      { minNum: -100, maxNum: 100 },
-      { minNum: -100, maxNum: 100 },
+    value = $bindable([0, 0, 0, 0]),
+    axes = [
+      { name: 'Roll', minNum: -100, maxNum: 100 },
+      { name: 'Pitch', minNum: -100, maxNum: 100 },
+      { name: 'Yaw', minNum: -100, maxNum: 100 },
     ],
+    buttonIcon,
     onUpdate = () => {},
-    onClick = () => {},
   }: IJoystickProps = $props()
 
   const directions = [
@@ -23,8 +22,8 @@
       angle: 30.5,
       content: true,
       onClick: () => {
-        if (value[2] + sensitivity >= limits[2].maxNum) {
-          value[2] = limits[2].maxNum
+        if (value[2] + sensitivity >= axes[2].maxNum) {
+          value[2] = axes[2].maxNum
           onUpdate(value)
           return
         }
@@ -38,15 +37,15 @@
       angle: 58,
       content: false,
       onClick: () => {
-        if (value[2] + sensitivity >= limits[2].maxNum) {
-          value[2] = limits[2].maxNum
+        if (value[2] + sensitivity >= axes[2].maxNum) {
+          value[2] = axes[2].maxNum
           onUpdate(value)
         } else {
           value[2] = roundToClean(value[2] + sensitivity)
           onUpdate(value)
         }
-        if (value[1] - sensitivity <= limits[1].minNum) {
-          value[1] = limits[1].minNum
+        if (value[1] - sensitivity <= axes[1].minNum) {
+          value[1] = axes[1].minNum
           onUpdate(value)
         } else {
           value[1] = roundToClean(value[1] - sensitivity)
@@ -59,8 +58,8 @@
       angle: 122,
       content: true,
       onClick: () => {
-        if (value[1] - sensitivity <= limits[1].minNum) {
-          value[1] = limits[1].minNum
+        if (value[1] - sensitivity <= axes[1].minNum) {
+          value[1] = axes[1].minNum
           onUpdate(value)
           return
         }
@@ -73,15 +72,15 @@
       angle: 149.5,
       content: false,
       onClick: () => {
-        if (value[2] - sensitivity <= limits[2].minNum) {
-          value[2] = limits[2].minNum
+        if (value[2] - sensitivity <= axes[2].minNum) {
+          value[2] = axes[2].minNum
           onUpdate(value)
         } else {
           value[2] = roundToClean(value[2] - sensitivity)
           onUpdate(value)
         }
-        if (value[1] - sensitivity <= limits[1].minNum) {
-          value[1] = limits[1].minNum
+        if (value[1] - sensitivity <= axes[1].minNum) {
+          value[1] = axes[1].minNum
           onUpdate(value)
         } else {
           value[1] = roundToClean(value[1] - sensitivity)
@@ -94,8 +93,8 @@
       angle: 212,
       content: true,
       onClick: () => {
-        if (value[2] - sensitivity <= limits[2].minNum) {
-          value[2] = limits[2].minNum
+        if (value[2] - sensitivity <= axes[2].minNum) {
+          value[2] = axes[2].minNum
           onUpdate(value)
           return
         }
@@ -108,15 +107,15 @@
       angle: 239,
       content: false,
       onClick: () => {
-        if (value[1] + sensitivity >= limits[1].maxNum) {
-          value[1] = limits[1].maxNum
+        if (value[1] + sensitivity >= axes[1].maxNum) {
+          value[1] = axes[1].maxNum
           onUpdate(value)
         } else {
           value[1] = roundToClean(value[1] + sensitivity)
           onUpdate(value)
         }
-        if (value[2] - sensitivity <= limits[2].minNum) {
-          value[2] = limits[2].minNum
+        if (value[2] - sensitivity <= axes[2].minNum) {
+          value[2] = axes[2].minNum
           onUpdate(value)
         } else {
           value[2] = roundToClean(value[2] - sensitivity)
@@ -129,8 +128,8 @@
       angle: 301,
       content: true,
       onClick: () => {
-        if (value[1] + sensitivity >= limits[1].maxNum) {
-          value[1] = limits[1].maxNum
+        if (value[1] + sensitivity >= axes[1].maxNum) {
+          value[1] = axes[1].maxNum
           onUpdate(value)
           return
         }
@@ -143,15 +142,15 @@
       angle: 328,
       content: false,
       onClick: () => {
-        if (value[1] + sensitivity >= limits[1].maxNum) {
-          value[1] = limits[1].maxNum
+        if (value[1] + sensitivity >= axes[1].maxNum) {
+          value[1] = axes[1].maxNum
           onUpdate(value)
         } else {
           value[1] = roundToClean(value[1] + sensitivity)
           onUpdate(value)
         }
-        if (value[2] + sensitivity >= limits[2].maxNum) {
-          value[2] = limits[2].maxNum
+        if (value[2] + sensitivity >= axes[2].maxNum) {
+          value[2] = axes[2].maxNum
           onUpdate(value)
         } else {
           value[2] = roundToClean(value[2] + sensitivity)
@@ -206,16 +205,12 @@
               onmouseenter={(e) => (e.currentTarget.style.backgroundColor = 'color-mix(in srgb, var(--bg-color), var(--shadow-color) 20%)')}
               onmouseleave={(e) => (e.currentTarget.style.backgroundColor = 'var(--bg-color)')}
             >
-              {#if direction.content}
-                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
-                  ><path
-                    fill="currentColor"
-                    d="M12.6 12L8.7 8.1q-.275-.275-.275-.7t.275-.7t.7-.275t.7.275l4.6 4.6q.15.15.213.325t.062.375t-.062.375t-.213.325l-4.6 4.6q-.275.275-.7.275t-.7-.275t-.275-.7t.275-.7z"
-                  /></svg
-                >
-              {:else}
-                •
-              {/if}
+              <svg xmlns="http://www.w3.org/2000/svg" width={direction.content ? 32 : 16} height={direction.content ? 32 : 16} viewBox="0 0 24 24"
+                ><path
+                  fill="currentColor"
+                  d="M12.6 12L8.7 8.1q-.275-.275-.275-.7t.275-.7t.7-.275t.7.275l4.6 4.6q.15.15.213.325t.062.375t-.062.375t-.213.325l-4.6 4.6q-.275.275-.7.275t-.7-.275t-.275-.7t.275-.7z"
+                /></svg
+              >
             </span>
           </button>
         {/each}
@@ -237,22 +232,20 @@
         class="z-20 flex size-20 items-center justify-center rounded-full bg-(--bg-color) shadow-[0_0_15px_rgb(0_0_0_/0.25)] transition hover:scale-103"
       >
         <button
-          class="flex size-18 cursor-pointer items-center justify-center rounded-full bg-(--bg-color)"
-          title=""
+          class="flex size-18 cursor-pointer items-center justify-center rounded-full"
+          style="background: {value[3] == 1 ? 'color-mix(in srgb, var(--bg-color), var(--shadow-color) 10%)' : 'var(--bg-color)'}"
           onclick={() => {
-            onClick(value)
+            value[3] = value[3] == 0 ? 1 : 0
           }}
-          ><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
-            ><path
-              fill="currentColor"
-              d="M6 19h3v-5q0-.425.288-.712T10 13h4q.425 0 .713.288T15 14v5h3v-9l-6-4.5L6 10zm-2 0v-9q0-.475.213-.9t.587-.7l6-4.5q.525-.4 1.2-.4t1.2.4l6 4.5q.375.275.588.7T20 10v9q0 .825-.588 1.413T18 21h-4q-.425 0-.712-.288T13 20v-5h-2v5q0 .425-.288.713T10 21H6q-.825 0-1.412-.587T4 19m8-6.75"
-            /></svg
-          ></button
         >
+          {@html buttonIcon
+            ? buttonIcon
+            : '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor"d="M6 19h3v-5q0-.425.288-.712T10 13h4q.425 0 .713.288T15 14v5h3v-9l-6-4.5L6 10zm-2 0v-9q0-.475.213-.9t.587-.7l6-4.5q.525-.4 1.2-.4t1.2.4l6 4.5q.375.275.588.7T20 10v9q0 .825-.588 1.413T18 21h-4q-.425 0-.712-.288T13 20v-5h-2v5q0 .425-.288.713T10 21H6q-.825 0-1.412-.587T4 19m8-6.75"/></svg>'}
+        </button>
       </div>
     </div>
     <!-- Боковые кнопки (ось roll) -->
-    {#if axesName.length == 3}
+    {#if axes.length == 3}
       <div
         class="absolute flex h-15 w-65 items-center justify-between rounded-full shadow-[0_0_15px_rgb(0_0_0_/0.25)]"
         style="background: color-mix(in srgb, var(--bg-color), var(--shadow-color) 10%)"
@@ -261,12 +254,12 @@
           class="h-full cursor-pointer rounded-l-full px-3.5"
           title=""
           onclick={() => {
-            if (value[0] - sensitivity <= limits[0].minNum) {
-              value[0] = limits[0].minNum
+            if (value[0] - sensitivity <= axes[0].minNum) {
+              value[0] = axes[0].minNum
               onUpdate(value)
               return
             }
-            value[0] -= sensitivity
+            value[0] = roundToClean(value[0] - sensitivity)
             onUpdate(value)
           }}
           onmouseenter={(e) => (e.currentTarget.style.backgroundColor = 'color-mix(in srgb, var(--bg-color), var(--shadow-color) 30%)')}
@@ -284,12 +277,12 @@
           class="h-full cursor-pointer rounded-r-full px-3.5"
           title=""
           onclick={() => {
-            if (value[0] + sensitivity >= limits[0].maxNum) {
-              value[0] = limits[0].maxNum
+            if (value[0] + sensitivity >= axes[0].maxNum) {
+              value[0] = axes[0].maxNum
               onUpdate(value)
               return
             }
-            value[0] += sensitivity
+            value[0] = roundToClean(value[0] + sensitivity)
             onUpdate(value)
           }}
           onmouseenter={(e) => (e.currentTarget.style.backgroundColor = 'color-mix(in srgb, var(--bg-color), var(--shadow-color) 30%)')}
@@ -307,7 +300,7 @@
     {/if}
   </div>
 
-  <div class="right-10 flex items-center md:absolute">
+  <div class="flex items-center md:absolute md:left-[calc(50%+120px)]">
     <div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class="flex h-full flex-col justify-center rounded-full p-10">
       {#each sensitivityOptions as option, index}
         <button
@@ -338,15 +331,15 @@
     </div>
 
     <div>
-      {#each axesName as axe, index}
-        <h5 class={twMerge(` w-full px-4 text-center`, label.class)}>{axe}</h5>
+      {#each axes as axe, index}
+        <h5 class="w-full px-4 text-center">{axe.name}</h5>
         <input
           class={`w-20 rounded-2xl border border-(--border-color) px-4 py-1 text-center transition-all duration-300 outline-none
               hover:shadow-md 
               [&::-webkit-inner-spin-button]:hidden
               [&::-webkit-outer-spin-button]:hidden`}
           style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"
-          value={value[index]}
+          value={value[axes.length == 3 ? index : index + 1]}
           id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
           readonly
         />
@@ -354,4 +347,3 @@
     </div>
   </div>
 </div>
-<!-- sensitivity == 0.01 ? value[num].toFixed(2) : sensitivity == 0.1 ? value[num].toFixed(1) : value[num].toFixed(0) -->
