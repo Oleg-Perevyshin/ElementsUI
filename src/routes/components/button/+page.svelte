@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Accordion, Button } from '$lib'
-  import type { IButtonProps, Position, UIComponent } from '$lib/types'
+  import { updateComponent, type IButtonProps, type IUIComponentHandler, type Position, type UIComponent } from '$lib/types'
   import { formatObjectToString } from '../../common'
   import ComponentExample from '$lib/ComponentExample.svelte'
   import ButtonProps from '$lib/Button/ButtonProps.svelte'
@@ -16,8 +16,8 @@
         name: 'Button',
         info: { text: '', side: 'top' },
       },
-      eventHandler: { Header: 'SET', Argument: 'Save', Variables: [] },
     },
+    eventHandler: { Header: 'SET', Argument: 'Save', Variables: [] },
     position: { row: 0, col: 0, width: 0, height: 0 },
     parentId: '',
   })
@@ -27,21 +27,6 @@
 ${formatObjectToString(buttonComponent.properties as IButtonProps)} 
   onClick={() => {}}
 />`)
-
-  const updateComponent = (
-    updates: Partial<{
-      name: string
-      access: 'full' | 'viewOnly' | 'hidden'
-      properties: Partial<UIComponent['properties']>
-    }>,
-  ) => {
-    buttonComponent = {
-      ...buttonComponent,
-      access: updates.access ?? buttonComponent.access,
-      name: updates.name ?? buttonComponent.name,
-      properties: updates.properties ? { ...buttonComponent.properties, ...updates.properties } : buttonComponent.properties,
-    }
-  }
 </script>
 
 <ComponentExample {codeText}>
@@ -53,13 +38,13 @@ ${formatObjectToString(buttonComponent.properties as IButtonProps)}
   {#snippet componentProps()}
     <ButtonProps
       component={buttonComponent as UIComponent & { properties: Partial<IButtonProps> }}
-      onPropertyChange={(value, name, access) => updateComponent({ access, name, properties: value } as object)}
+      onPropertyChange={(updates) => (buttonComponent = updateComponent(buttonComponent, updates as object))}
       forConstructor={false}
     />
     <hr />
     <ButtonProps
       component={buttonComponent as UIComponent & { properties: Partial<IButtonProps> }}
-      onPropertyChange={(value, name, access) => updateComponent({ access, name, properties: value } as object)}
+      onPropertyChange={(updates) => (buttonComponent = updateComponent(buttonComponent, updates as object))}
       forConstructor={true}
     />
   {/snippet}

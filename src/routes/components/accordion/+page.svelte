@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Accordion } from '$lib'
   import AccordionProps from '$lib/Accordion/AccordionProps.svelte'
-  import type { IAccordionProps, Position, UIComponent } from '$lib/types'
+  import { updateComponent, type IAccordionProps, type Position, type UIComponent } from '$lib/types'
   import { formatObjectToString } from '../../common'
   import ComponentExample from '$lib/ComponentExample.svelte'
 
@@ -19,6 +19,7 @@
       },
       label: {
         name: 'Accordion',
+        class: 'text-center',
       },
     },
     position: { row: 0, col: 0, width: 0, height: 0 },
@@ -32,23 +33,6 @@ ${formatObjectToString(accordionComponent.properties as IAccordionProps)}
   <h1>Содержимое компонента</h1>
   <h1>Содержимое компонента</h1>
 </UI.Accordion>`)
-
-  let isPropsCollapsed = $state(false)
-
-  const updateComponent = (
-    updates: Partial<{
-      name: string
-      access: 'full' | 'viewOnly' | 'hidden'
-      properties: Partial<UIComponent['properties']>
-    }>,
-  ) => {
-    accordionComponent = {
-      ...accordionComponent,
-      access: updates.access ?? accordionComponent.access,
-      name: updates.name ?? accordionComponent.name,
-      properties: updates.properties ? { ...accordionComponent.properties, ...updates.properties } : accordionComponent.properties,
-    }
-  }
 </script>
 
 <ComponentExample {codeText}>
@@ -64,13 +48,13 @@ ${formatObjectToString(accordionComponent.properties as IAccordionProps)}
   {#snippet componentProps()}
     <AccordionProps
       component={accordionComponent as UIComponent & { properties: Partial<IAccordionProps> }}
-      onPropertyChange={(value, name, access) => updateComponent({ access, name, properties: value } as object)}
+      onPropertyChange={(updates) => (accordionComponent = updateComponent(accordionComponent, updates as object))}
       forConstructor={true}
     />
     <hr />
     <AccordionProps
       component={accordionComponent as UIComponent & { properties: Partial<IAccordionProps> }}
-      onPropertyChange={(value, name, access) => updateComponent({ access, name, properties: value } as object)}
+      onPropertyChange={(updates) => (accordionComponent = updateComponent(accordionComponent, updates as object))}
       forConstructor={false}
     />
   {/snippet}

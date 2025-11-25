@@ -1,7 +1,7 @@
 <!-- $lib/ElementsUI/ButtonProps.svelte -->
 <script lang="ts">
   import { t } from '$lib/locales/i18n'
-  import { type UIComponent, type IColorPickerProps, updateProperty } from '../types'
+  import { type UIComponent, type IColorPickerProps, updateProperty, type IUIComponentHandler } from '../types'
   import * as UI from '$lib'
   import { getContext } from 'svelte'
   import { optionsStore } from '../options'
@@ -12,7 +12,7 @@
     forConstructor = true,
   } = $props<{
     component: UIComponent & { properties: Partial<IColorPickerProps> }
-    onPropertyChange: (value?: string | object, name?: string, access?: string) => void
+    onPropertyChange: (updates: Partial<{ properties?: string | object; name?: string; access?: string; eventHandler?: IUIComponentHandler }>) => void
     forConstructor?: boolean
   }>()
 
@@ -36,17 +36,16 @@
         value={VARIABLE_OPTIONS.find((opt) => opt.value === component.properties.id)}
         onUpdate={(value) => {
           updateProperty('id', value.value as string, component, onPropertyChange)
-          updateProperty('eventHandler.Variables', value.value as string, component, onPropertyChange)
-          onPropertyChange(null, value.name?.split('—')[1].trim(), null)
+          onPropertyChange({ name: value.name?.split('—')[1].trim(), eventHandler: { Variables: value.value as string } })
         }}
       />
       <UI.Select
         label={{ name: $t('constructor.props.action') }}
         type="buttons"
-        value={$optionsStore.SHORT_ARGUMENT_OPTION.find((h) => h.value === component.properties.eventHandler.Argument)}
+        value={$optionsStore.SHORT_ARGUMENT_OPTION.find((h) => h.value === component.eventHandler.Argument)}
         options={$optionsStore.SHORT_ARGUMENT_OPTION}
         onUpdate={(option) => {
-          updateProperty('eventHandler.Argument', option.value as string, component, onPropertyChange)
+          onPropertyChange({ eventHandler: { Argument: option.value as string } })
         }}
       />
     </div>
@@ -56,7 +55,7 @@
         type="buttons"
         options={$optionsStore.ACCESS_OPTION}
         value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.access)}
-        onUpdate={(option) => onPropertyChange(null, null, option.value)}
+        onUpdate={(option) => onPropertyChange({ access: option.value })}
       />
     </div>
     <div class="flex w-1/3 flex-col px-2">
@@ -88,7 +87,7 @@
         type="buttons"
         options={$optionsStore.ACCESS_OPTION}
         value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.access)}
-        onUpdate={(option) => onPropertyChange(null, null, option.value)}
+        onUpdate={(option) => onPropertyChange({ access: option.value })}
       />
     </div>
     <div class="flex w-1/3 flex-col px-2">

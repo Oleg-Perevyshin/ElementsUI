@@ -2,6 +2,7 @@
   import { TabsProps, type ITabsProps, type UIComponent } from '$lib'
   import ComponentExample from '$lib/ComponentExample.svelte'
   import Tabs from '$lib/Tabs/Tabs.svelte'
+  import { updateComponent } from '$lib/types'
   import { formatObjectToString } from '../../common'
 
   let tabsComponent: UIComponent = $state({
@@ -30,21 +31,6 @@
 ${formatObjectToString(tabsComponent.properties as ITabsProps)} 
   onClick={() => {}}
 />`)
-
-  const updateComponent = (
-    updates: Partial<{
-      name: string
-      access: 'full' | 'viewOnly' | 'hidden'
-      properties: Partial<UIComponent['properties']>
-    }>,
-  ) => {
-    tabsComponent = {
-      ...tabsComponent,
-      access: updates.access ?? tabsComponent.access,
-      name: updates.name ?? tabsComponent.name,
-      properties: updates.properties ? { ...tabsComponent.properties, ...updates.properties } : tabsComponent.properties,
-    }
-  }
 </script>
 
 <ComponentExample {codeText}>
@@ -54,13 +40,13 @@ ${formatObjectToString(tabsComponent.properties as ITabsProps)}
   {#snippet componentProps()}
     <TabsProps
       component={tabsComponent as UIComponent & { properties: Partial<ITabsProps> }}
-      onPropertyChange={(value, name, access) => updateComponent({ access, name, properties: value } as object)}
+      onPropertyChange={(updates) => (tabsComponent = updateComponent(tabsComponent, updates as object))}
       forConstructor={true}
     />
     <hr />
     <TabsProps
       component={tabsComponent as UIComponent & { properties: Partial<ITabsProps> }}
-      onPropertyChange={(value, name, access) => updateComponent({ access, name, properties: value } as object)}
+      onPropertyChange={(updates) => (tabsComponent = updateComponent(tabsComponent, updates as object))}
       forConstructor={false}
     />
   {/snippet}

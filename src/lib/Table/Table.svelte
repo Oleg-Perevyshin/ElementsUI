@@ -2,7 +2,7 @@
 <script lang="ts">
   import { get } from 'svelte/store'
   import type { ITableHeader, ITableProps } from '../types'
-  import { fly } from 'svelte/transition'
+  import { fade, fly } from 'svelte/transition'
   import { twMerge } from 'tailwind-merge'
   import { onMount } from 'svelte'
 
@@ -284,7 +284,12 @@
                   >
                     <div class=" size-5 text-sm [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full">
                       {#if copiedCell.y === index && copiedCell.x === column.key}
-                        <div class="rounded-md bg-(--green-color) shadow-lg">✓</div>
+                        <div
+                          class="absolute top-1/2 right-3.5 -translate-y-1/2 transform rounded-md bg-(--green-color) px-1.5 py-1 shadow-lg"
+                          transition:fade={{ duration: 200 }}
+                        >
+                          ✓
+                        </div>
                       {:else}
                         <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
                           <g fill="none" stroke="currentColor" stroke-width="1.5">

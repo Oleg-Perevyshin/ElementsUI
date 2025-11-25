@@ -3,6 +3,7 @@
   import ComponentExample from '$lib/ComponentExample.svelte'
   import Select from '$lib/Select/Select.svelte'
   import SelectProps from '$lib/Select/SelectProps.svelte'
+  import { updateComponent } from '$lib/types'
   import { formatObjectToString } from '../../common'
 
   let selectComponent: UIComponent = $state({
@@ -18,8 +19,8 @@
       bitMode: true,
       range: { start: 0, end: 1 },
       options: [{ id: crypto.randomUUID(), value: '1', name: 'Option 1', class: 'bg-max' }],
-      eventHandler: { Header: 'SET', Argument: '', Variables: [] },
     },
+    eventHandler: { Header: 'SET', Argument: '', Variables: [] },
     position: { row: 0, col: 0, width: 0, height: 0 },
     parentId: '',
   })
@@ -29,21 +30,6 @@
 ${formatObjectToString(selectComponent.properties as ISelectProps)} 
   onUpdate={() => {}}
 />`)
-
-  const updateComponent = (
-    updates: Partial<{
-      name: string
-      access: 'full' | 'viewOnly' | 'hidden'
-      properties: Partial<UIComponent['properties']>
-    }>,
-  ) => {
-    selectComponent = {
-      ...selectComponent,
-      access: updates.access ?? selectComponent.access,
-      name: updates.name ?? selectComponent.name,
-      properties: updates.properties ? { ...selectComponent.properties, ...updates.properties } : selectComponent.properties,
-    }
-  }
 </script>
 
 <ComponentExample {codeText}>
@@ -51,7 +37,7 @@ ${formatObjectToString(selectComponent.properties as ISelectProps)}
     <Select
       {...selectComponent.properties as ISelectProps}
       onUpdate={(value) => {
-        updateComponent({
+        updateComponent(selectComponent, {
           properties: { value: value },
         })
       }}
@@ -60,13 +46,13 @@ ${formatObjectToString(selectComponent.properties as ISelectProps)}
   {#snippet componentProps()}
     <SelectProps
       component={selectComponent as UIComponent & { properties: Partial<ISelectProps> }}
-      onPropertyChange={(value, name, access) => updateComponent({ access, name, properties: value } as object)}
+      onPropertyChange={(updates) => (selectComponent = updateComponent(selectComponent, updates as object))}
       forConstructor={true}
     />
     <hr />
     <SelectProps
       component={selectComponent as UIComponent & { properties: Partial<ISelectProps> }}
-      onPropertyChange={(value, name, access) => updateComponent({ access, name, properties: value } as object)}
+      onPropertyChange={(updates) => (selectComponent = updateComponent(selectComponent, updates as object))}
       forConstructor={false}
     />
   {/snippet}

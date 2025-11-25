@@ -1,7 +1,7 @@
 <script lang="ts">
   import { getContext, onMount } from 'svelte'
   import { t } from '$lib/locales/i18n'
-  import { type UIComponent, type ISelectProps, type ISelectOption, updateProperty } from '../types'
+  import { type UIComponent, type ISelectProps, type ISelectOption, updateProperty, type IUIComponentHandler } from '../types'
   import * as UI from '$lib'
   import ButtonDelete from '../libIcons/ButtonDelete.svelte'
   import ButtonAdd from '../libIcons/ButtonAdd.svelte'
@@ -14,7 +14,7 @@
     forConstructor = true,
   } = $props<{
     component: UIComponent & { properties: Partial<ISelectProps> }
-    onPropertyChange: (value?: string | object, name?: string, access?: string) => void
+    onPropertyChange: (updates: Partial<{ properties?: string | object; name?: string; access?: string; eventHandler?: IUIComponentHandler }>) => void
     forConstructor?: boolean
   }>()
 
@@ -36,7 +36,7 @@
   )
 
   let Header: ISelectOption = $derived(
-    $optionsStore.HEADER_OPTIONS.find((h) => h.value === component.properties.eventHandler.Header) ?? {
+    $optionsStore.HEADER_OPTIONS.find((h) => h.value === component.eventHandler.Header) ?? {
       id: '',
       name: '',
       value: '',
@@ -81,27 +81,27 @@
         value={VARIABLE_OPTIONS.find((opt) => opt.value === component.properties.id)}
         onUpdate={(value) => {
           updateProperty('id', value.value as string, component, onPropertyChange)
-          updateProperty('eventHandler.Variables', value.value as string, component, onPropertyChange)
+          onPropertyChange({ eventHandler: { Variables: value.value as string } })
         }}
       />
       <UI.Select
         label={{ name: $t('constructor.props.argument') }}
         type="buttons"
-        value={$optionsStore.FULL_ARGUMENT_OPTION.find((h) => h.value === component.properties.eventHandler.Argument) ??
+        value={$optionsStore.FULL_ARGUMENT_OPTION.find((h) => h.value === component.eventHandler.Argument) ??
           $optionsStore.FULL_ARGUMENT_OPTION.find((h) => h.value === '')}
         options={$optionsStore.FULL_ARGUMENT_OPTION}
         onUpdate={(option) => {
-          updateProperty('eventHandler.Argument', option.value as string, component, onPropertyChange)
+          onPropertyChange({ eventHandler: { Argument: option.value as string } })
         }}
       />
 
       <UI.Input
         wrapperClass="{Header.value === 'SET' ? 'mt-1' : ''} "
-        value={component.properties.eventHandler.Argument}
+        value={component.eventHandler.Argument}
         maxlength={32}
-        disabled={component.properties.eventHandler.Argument == 'Save' || component.properties.eventHandler.Argument == 'NoSave'}
+        disabled={component.eventHandler.Argument == 'Save' || component.eventHandler.Argument == 'NoSave'}
         help={{ info: $t('constructor.props.argument.info'), autocomplete: 'on', regExp: /^[a-zA-Z0-9\-_]{0,32}$/ }}
-        onUpdate={(value) => updateProperty('eventHandler.Argument', value as string, component, onPropertyChange)}
+        onUpdate={(value) => onPropertyChange({ eventHandler: { Argument: value as string } })}
       />
     </div>
     <div class="flex w-1/3 flex-col items-center px-2">
@@ -110,7 +110,7 @@
         type="buttons"
         options={$optionsStore.ACCESS_OPTION}
         value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.access)}
-        onUpdate={(option) => onPropertyChange(null, null, option.value)}
+        onUpdate={(option) => onPropertyChange({ access: option.value })}
       />
       <UI.Select
         label={{ name: $t('constructor.props.type') }}
@@ -273,7 +273,7 @@
         type="buttons"
         options={$optionsStore.ACCESS_OPTION}
         value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.access)}
-        onUpdate={(option) => onPropertyChange(null, null, option.value)}
+        onUpdate={(option) => onPropertyChange({ access: option.value })}
       />
       <UI.Input
         label={{ name: $t('constructor.props.wrapperclass') }}
@@ -297,7 +297,9 @@
         label={{ name: $t('constructor.props.disabled') }}
         value={component.properties.disabled}
         options={[{ id: crypto.randomUUID(), value: 0, class: '' }]}
-        onChange={(value) => updateProperty('disabled', value, component, onPropertyChange)}
+        onChange={(value) => {
+          updateProperty('disabled', value, component, onPropertyChange)
+        }}
       />
     </div>
     <div class="flex w-1/3 flex-col items-center px-2">
@@ -312,6 +314,7 @@
         wrapperClass="h-14"
         label={{ name: $t('constructor.props.valuetype') }}
         type="buttons"
+        disabled={component.properties.bitMode}
         options={$optionsStore.SELECT_VALUE_TYPE_OPTIONS}
         value={currentValueType}
         onUpdate={(value) => {
@@ -325,6 +328,41 @@
           updateProperty('options', options, component, onPropertyChange)
         }}
       />
+
+      <UI.Switch
+        wrapperClass="bg-blue"
+        label={{ name: $t('constructor.props.bitmode') }}
+        value={component.properties.bitMode}
+        options={[{ id: crypto.randomUUID(), value: 0, class: '' }]}
+        onChange={(value) => {
+          updateProperty('bitMode', value, component, onPropertyChange)
+          currentValueType = $optionsStore.SELECT_VALUE_TYPE_OPTIONS[1] as ValueTypeOption
+          const options = [...(component.properties?.options || [])]
+          const newType = $optionsStore.SELECT_VALUE_TYPE_OPTIONS[1].value
+          options.forEach((option) => {
+            if (newType === 'number') option.value = option.value !== undefined ? Number(option.value) : 0
+            else option.value = option.value !== undefined ? String(option.value) : ''
+          })
+          updateProperty('options', options, component, onPropertyChange)
+          if (value) generateBitOptions(component.properties.range.start, component.properties.range.end)
+        }}
+      />
+      {#if component.properties.bitMode}
+        <UI.Slider
+          label={{ name: $t('constructor.props.range') }}
+          type="range"
+          number={{ minNum: 0, maxNum: 31, step: 1 }}
+          value={[component.properties.range.start, component.properties.range.end]}
+          onUpdate={(value) => {
+            if (Array.isArray(value)) {
+              if (value[1] - value[0] > 6) value = [value[0], value[0] + 6]
+              updateProperty('range.start', value[0] as number, component, onPropertyChange)
+              updateProperty('range.end', value[1] as number, component, onPropertyChange)
+              generateBitOptions(component.properties.range.start, component.properties.range.end)
+            }
+          }}
+        />
+      {/if}
     </div>
   </div>
 
@@ -366,6 +404,7 @@
           label={{ name: $t('constructor.props.optionvalue') }}
           wrapperClass="!w-3/10"
           value={option.value}
+          readonly={component.properties.bitMode}
           type={currentValueType.value}
           onUpdate={(value) => {
             const options = [...(component.properties?.options || [])]

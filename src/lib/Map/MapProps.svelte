@@ -1,12 +1,14 @@
 <script lang="ts">
   import { getContext } from 'svelte'
   import { t } from '$lib/locales/i18n'
-  import { type UIComponent, type IGraphProps, updateProperty } from '../types'
+  import { type UIComponent, type IGraphProps, updateProperty, type IUIComponentHandler } from '../types'
   import * as UI from '$lib'
   import Modal from '$lib/Modal.svelte'
   import { ICONS } from '$lib/icons'
   import Button from '$lib/Button/Button.svelte'
   import CrossIcon from '$lib/libIcons/CrossIcon.svelte'
+  import { optionsStore } from '$lib/options'
+  import { twMerge } from 'tailwind-merge'
 
   const {
     component,
@@ -14,7 +16,7 @@
     forConstructor = true,
   } = $props<{
     component: UIComponent & { properties: Partial<IGraphProps> }
-    onPropertyChange: (value?: string | object, name?: string, access?: string) => void
+    onPropertyChange: (updates: Partial<{ properties?: string | object; name?: string; access?: string; eventHandler?: IUIComponentHandler }>) => void
     forConstructor?: boolean
   }>()
 
@@ -22,6 +24,12 @@
 
   const DeviceVariables = getContext<{ id: string; value: string; name: string }[]>('DeviceVariables')
   let VARIABLE_OPTIONS = $derived(DeviceVariables && Array.isArray(DeviceVariables) ? DeviceVariables : [])
+
+  const initialAlign = $derived(
+    $optionsStore.TEXT_ALIGN_OPTIONS.find((a) =>
+      (a.value as string).includes(component.properties.label?.class?.split(' ').find((cls: string) => cls.startsWith('text-'))),
+    ),
+  )
 </script>
 
 {#if forConstructor}
@@ -34,8 +42,7 @@
         value={VARIABLE_OPTIONS.find((opt) => opt.value === component.properties.id)}
         onUpdate={(value) => {
           updateProperty('id', value.value as string, component, onPropertyChange)
-          updateProperty('eventHandler.Variables', value.value as string, component, onPropertyChange)
-          onPropertyChange(null, value.name?.split('—')[1].trim(), null)
+          onPropertyChange({ name: value.name?.split('—')[1].trim(), eventHandler: { Variables: value.value as string } })
         }}
       />
     </div>
@@ -45,10 +52,12 @@
         value={component.properties.label.name}
         onUpdate={(value) => updateProperty('label.name', value as string, component, onPropertyChange)}
       />
-      <UI.Input
-        label={{ name: $t('constructor.props.label.class') }}
-        value={component.properties.label.class}
-        onUpdate={(value) => updateProperty('label.class', value as string, component, onPropertyChange)}
+      <UI.Select
+        label={{ name: $t('constructor.props.align') }}
+        type="buttons"
+        value={initialAlign}
+        options={$optionsStore.TEXT_ALIGN_OPTIONS}
+        onUpdate={(option) => updateProperty('label.class', twMerge(component.properties.label.class, option.value), component, onPropertyChange)}
       />
     </div>
     <div class="flex w-1/3 flex-col px-2">

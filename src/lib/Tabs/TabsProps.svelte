@@ -1,6 +1,6 @@
 <script lang="ts">
   import { t } from '$lib/locales/i18n'
-  import { updateProperty, type ISelectOption, type ITabsProps, type UIComponent } from '../types'
+  import { updateProperty, type ISelectOption, type ITabsProps, type IUIComponentHandler, type UIComponent } from '../types'
   import * as UI from '$lib'
   import { optionsStore } from '../options'
   import { ICONS } from '../icons'
@@ -17,7 +17,7 @@
     forConstructor = true,
   } = $props<{
     component: UIComponent & { properties: Partial<ITabsProps> }
-    onPropertyChange: (value?: string | object, name?: string, access?: string) => void
+    onPropertyChange: (updates: Partial<{ properties?: string | object; name?: string; access?: string; eventHandler?: IUIComponentHandler }>) => void
     forConstructor?: boolean
   }>()
 
@@ -62,13 +62,12 @@
   <div class="flex items-center justify-center gap-8">
     <div class="flex w-1/3 flex-col items-center px-2">
       <UI.Select
-        label={{ name: $t('constructor.props.align') }}
+        label={{ name: $t('constructor.props.access') }}
         type="buttons"
-        value={initialAlign}
-        options={$optionsStore.JUSTIFY_ALIGN_OPTIONS}
-        onUpdate={(option) => updateProperty('wrapperClass', twMerge(component.properties.wrapperClass, option.value), component, onPropertyChange)}
+        options={$optionsStore.ACCESS_OPTION}
+        value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.access)}
+        onUpdate={(option) => onPropertyChange({ access: option.value })}
       />
-
       <UI.Select
         wrapperClass="h-14"
         label={{ name: $t('constructor.props.colors') }}
@@ -245,11 +244,11 @@
     </div>
     <div class="flex w-1/3 flex-col items-center px-2">
       <UI.Select
-        label={{ name: $t('constructor.props.align') }}
+        label={{ name: $t('constructor.props.access') }}
         type="buttons"
-        value={initialAlign}
-        options={$optionsStore.JUSTIFY_ALIGN_OPTIONS}
-        onUpdate={(option) => updateProperty('wrapperClass', twMerge(component.properties.wrapperClass, option.value), component, onPropertyChange)}
+        options={$optionsStore.ACCESS_OPTION}
+        value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.access)}
+        onUpdate={(option) => onPropertyChange({ access: option.value })}
       />
 
       <UI.Select

@@ -2,7 +2,7 @@
   import ComponentExample from '$lib/ComponentExample.svelte'
   import FileAttach, { type IFileInputProps } from '$lib/FileAttach/FileAttach.svelte'
   import FileAttachProps from '$lib/FileAttach/FileAttachProps.svelte'
-  import type { UIComponent } from '$lib/types'
+  import { updateComponent, type UIComponent } from '$lib/types'
   import { formatObjectToString } from '../../common'
 
   let fileAttachComponent: UIComponent = $state({
@@ -29,21 +29,6 @@ ${formatObjectToString(fileAttachComponent.properties as IFileInputProps)}
   onChange={() => {}}
 />`)
 
-  const updateComponent = (
-    updates: Partial<{
-      name: string
-      access: 'full' | 'viewOnly' | 'hidden'
-      properties: Partial<UIComponent['properties']>
-    }>,
-  ) => {
-    fileAttachComponent = {
-      ...fileAttachComponent,
-      access: updates.access ?? fileAttachComponent.access,
-      name: updates.name ?? fileAttachComponent.name,
-      properties: updates.properties ? { ...fileAttachComponent.properties, ...updates.properties } : fileAttachComponent.properties,
-    }
-  }
-
   const handleImageUpload = (event: Event) => {
     const target = event.target as HTMLInputElement
     const file = target.files?.[0]
@@ -52,9 +37,7 @@ ${formatObjectToString(fileAttachComponent.properties as IFileInputProps)}
     const reader = new FileReader()
     reader.onload = () => {
       const base64WithPrefix = reader.result as string
-      updateComponent({
-        properties: { ['currentImage']: base64WithPrefix },
-      })
+      updateComponent(fileAttachComponent, { properties: { ['currentImage']: base64WithPrefix } })
     }
     reader.readAsDataURL(file)
   }
@@ -67,7 +50,7 @@ ${formatObjectToString(fileAttachComponent.properties as IFileInputProps)}
   {#snippet componentProps()}
     <FileAttachProps
       component={fileAttachComponent as UIComponent & { properties: Partial<IFileInputProps> }}
-      onPropertyChange={(value, name, access) => updateComponent({ access, name, properties: value } as object)}
+      onPropertyChange={(updates) => (fileAttachComponent = updateComponent(fileAttachComponent, updates as object))}
       forConstructor={false}
     />
   {/snippet}

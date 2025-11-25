@@ -1,7 +1,7 @@
 <!-- $lib/ElementsUI/ButtonProps.svelte -->
 <script lang="ts">
   import { Language, t } from '../locales/i18n'
-  import { type UIComponent, type IButtonProps, type ISelectOption, updateProperty } from '../types'
+  import { type UIComponent, type IButtonProps, type ISelectOption, updateProperty, type IUIComponentHandler } from '../types'
   import * as UI from '$lib'
   import { optionsStore } from '../options'
   import { twMerge } from 'tailwind-merge'
@@ -12,14 +12,14 @@
     forConstructor = true,
   } = $props<{
     component: UIComponent & { properties: Partial<IButtonProps> }
-    onPropertyChange: (value?: string | object, name?: string, access?: string) => void
+    onPropertyChange: (updates: Partial<{ properties?: string | object; name?: string; access?: string; eventHandler?: IUIComponentHandler }>) => void
     forConstructor?: boolean
   }>()
 
-  let hasValue: boolean = $derived(component.properties.eventHandler.Value)
+  let hasValue: boolean = $derived(component.eventHandler.Value)
 
   let Header: ISelectOption = $derived(
-    $optionsStore.HEADER_OPTIONS.find((h) => h.value === component.properties.eventHandler.Header) ?? {
+    $optionsStore.HEADER_OPTIONS.find((h) => h.value === component.eventHandler.Header) ?? {
       id: '',
       name: '',
       value: '',
@@ -50,52 +50,51 @@
         value={Header}
         options={$optionsStore.HEADER_OPTIONS}
         onUpdate={(option) => {
-          Header = option
-          updateProperty('eventHandler.Header', Header.value as string, component, onPropertyChange)
+          Header = { ...option }
+          onPropertyChange({ eventHandler: { Header: Header.value as string } })
         }}
       />
       {#if Header.value === 'SET'}
         <UI.Select
           label={{ name: $t('constructor.props.argument') }}
           type="buttons"
-          value={$optionsStore.FULL_ARGUMENT_OPTION.find((h) => h.value === component.properties.eventHandler.Argument) ??
+          value={$optionsStore.FULL_ARGUMENT_OPTION.find((h) => h.value === component.eventHandler.Argument) ??
             $optionsStore.FULL_ARGUMENT_OPTION.find((h) => h.value === '')}
           options={$optionsStore.FULL_ARGUMENT_OPTION}
           onUpdate={(option) => {
-            updateProperty('eventHandler.Argument', option.value as string, component, onPropertyChange)
+            onPropertyChange({ eventHandler: { Argument: option.value as string } })
           }}
         />
       {/if}
       <UI.Input
         label={{ name: Header.value !== 'SET' ? $t('constructor.props.argument') : '' }}
         wrapperClass="{Header.value === 'SET' ? 'mt-1' : ''} "
-        value={component.properties.eventHandler.Argument}
+        value={component.eventHandler.Argument}
         maxlength={32}
-        disabled={Header.value === 'SET' &&
-          (component.properties.eventHandler.Argument == 'Save' || component.properties.eventHandler.Argument == 'NoSave')}
+        disabled={Header.value === 'SET' && (component.eventHandler.Argument == 'Save' || component.eventHandler.Argument == 'NoSave')}
         help={{ info: $t('constructor.props.argument.info'), autocomplete: 'on', regExp: /^[a-zA-Z0-9\-_]{0,32}$/ }}
-        onUpdate={(value) => updateProperty('eventHandler.Argument', value as string, component, onPropertyChange)}
+        onUpdate={(value) => onPropertyChange({ eventHandler: { Argument: value as string } })}
       />
     </div>
     <div class="flex w-1/3 flex-col items-center px-2">
-      {#if (component.properties.eventHandler.Argument !== 'Save' && component.properties.eventHandler.Argument !== 'NoSave') || Header.value === 'SET'}
+      {#if (component.eventHandler.Argument !== 'Save' && component.eventHandler.Argument !== 'NoSave') || Header.value === 'SET'}
         <UI.Input
           label={{ name: $t('constructor.props.value') }}
-          value={component.properties.eventHandler.Value}
+          value={component.eventHandler.Value}
           help={{ info: $t('constructor.props.value.info') }}
           maxlength={500}
-          onUpdate={(value) => updateProperty('eventHandler.Value', value as string, component, onPropertyChange)}
+          onUpdate={(value) => onPropertyChange({ eventHandler: { Value: value as string } })}
         />
       {/if}
       <UI.Input
         label={{ name: $t('constructor.props.variables') }}
         disabled={hasValue}
-        value={component.properties.eventHandler.Variables.join(' ')}
+        value={component.eventHandler.Variables.join(' ')}
         help={{ info: $t('constructor.props.variables.info'), autocomplete: 'on', regExp: /^[a-zA-Z0-9\-_ ":{}]{0,500}$/ }}
         maxlength={500}
         onUpdate={(value) => {
           const parts = (value as string).trim().split(/\s+/)
-          updateProperty('eventHandler.Variables', parts, component, onPropertyChange)
+          onPropertyChange({ eventHandler: { Variables: parts } })
         }}
       />
       <UI.Select
@@ -103,7 +102,7 @@
         type="buttons"
         options={$optionsStore.ACCESS_OPTION}
         value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.access)}
-        onUpdate={(option) => onPropertyChange(null, null, option.value)}
+        onUpdate={(option) => onPropertyChange({ access: option.value })}
       />
     </div>
     <div class="flex w-1/3 flex-col items-center px-2">
@@ -145,7 +144,7 @@
         type="buttons"
         options={$optionsStore.ACCESS_OPTION}
         value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.access)}
-        onUpdate={(option) => onPropertyChange(null, null, option.value)}
+        onUpdate={(option) => onPropertyChange({ access: option.value })}
       />
       <UI.Input
         label={{ name: $t('constructor.props.wrapperclass') }}

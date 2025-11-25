@@ -2,6 +2,8 @@
   import { type IJoystickProps, type UIComponent } from '$lib'
   import ComponentExample from '$lib/ComponentExample.svelte'
   import Joystick from '$lib/Joystick/Joystick.svelte'
+  import JoystickProps from '$lib/Joystick/JoystickProps.svelte'
+  import { updateComponent } from '$lib/types'
   import { formatObjectToString } from '../../common'
 
   let joystickComponent: UIComponent = $state({
@@ -13,43 +15,32 @@
       wrapperClass: 'bg-blue',
       label: { name: 'Label', class: 'text-center' },
     },
+    eventHandler: { Header: 'SET', Argument: 'Save', Variables: [] },
     position: { row: 0, col: 0, width: 0, height: 0 },
     parentId: '',
   })
-
-  let value: number[] = $state([0, 0, 0])
 
   let codeText = $derived(`
 <UI.Joystick
 ${formatObjectToString(joystickComponent.properties as IJoystickProps)} 
 />`)
-
-  const updateComponent = (
-    updates: Partial<{
-      name: string
-      access: 'full' | 'viewOnly' | 'hidden'
-      properties: Partial<UIComponent['properties']>
-    }>,
-  ) => {
-    joystickComponent = {
-      ...joystickComponent,
-      access: updates.access ?? joystickComponent.access,
-      name: updates.name ?? joystickComponent.name,
-      properties: updates.properties ? { ...joystickComponent.properties, ...updates.properties } : joystickComponent.properties,
-    }
-  }
 </script>
 
 <ComponentExample {codeText}>
   {#snippet component()}
-    <Joystick label={{ name: 'Joystick' }} bind:value />
+    <Joystick {...joystickComponent.properties as IJoystickProps} />
   {/snippet}
   {#snippet componentProps()}
-    <p>{value}</p>
-    <!-- <ProgressBarProps
-      component={joystickComponent as UIComponent & { properties: Partial<IProgressBarProps> }}
-      onPropertyChange={(value, name, access) => updateComponent({ access, name, properties: value } as object)}
+    <JoystickProps
+      component={joystickComponent as UIComponent & { properties: Partial<IJoystickProps> }}
+      onPropertyChange={(updates) => (joystickComponent = updateComponent(joystickComponent, updates as object))}
+      forConstructor={true}
+    />
+    <hr />
+    <JoystickProps
+      component={joystickComponent as UIComponent & { properties: Partial<IJoystickProps> }}
+      onPropertyChange={(updates) => (joystickComponent = updateComponent(joystickComponent, updates as object))}
       forConstructor={false}
-    /> -->
+    />
   {/snippet}
 </ComponentExample>

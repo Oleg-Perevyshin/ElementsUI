@@ -60,7 +60,7 @@
     <div class="flex w-full flex-wrap items-end justify-around gap-5">
       {#each localOptions as option, index}
         <div class={twMerge(`bg-blue flex flex-col`, option.class)}>
-          {#if option.name}
+          {#if option.name && bitMode}
             <span>{option.name}</span>
           {/if}
 

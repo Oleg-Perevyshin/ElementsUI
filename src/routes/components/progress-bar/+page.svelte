@@ -2,6 +2,7 @@
   import { ProgressBar, type IProgressBarProps, type UIComponent } from '$lib'
   import ComponentExample from '$lib/ComponentExample.svelte'
   import ProgressBarProps from '$lib/ProgressBar/ProgressBarProps.svelte'
+  import { updateComponent } from '$lib/types'
   import { formatObjectToString } from '../../common'
 
   let progressBarComponent: UIComponent = $state({
@@ -23,21 +24,6 @@
 <UI.ProgressBar
 ${formatObjectToString(progressBarComponent.properties as IProgressBarProps)} 
 />`)
-
-  const updateComponent = (
-    updates: Partial<{
-      name: string
-      access: 'full' | 'viewOnly' | 'hidden'
-      properties: Partial<UIComponent['properties']>
-    }>,
-  ) => {
-    progressBarComponent = {
-      ...progressBarComponent,
-      access: updates.access ?? progressBarComponent.access,
-      name: updates.name ?? progressBarComponent.name,
-      properties: updates.properties ? { ...progressBarComponent.properties, ...updates.properties } : progressBarComponent.properties,
-    }
-  }
 </script>
 
 <ComponentExample {codeText}>
@@ -47,13 +33,13 @@ ${formatObjectToString(progressBarComponent.properties as IProgressBarProps)}
   {#snippet componentProps()}
     <ProgressBarProps
       component={progressBarComponent as UIComponent & { properties: Partial<IProgressBarProps> }}
-      onPropertyChange={(value, name, access) => updateComponent({ access, name, properties: value } as object)}
+      onPropertyChange={(updates) => (progressBarComponent = updateComponent(progressBarComponent, updates as object))}
       forConstructor={true}
     />
     <hr />
     <ProgressBarProps
       component={progressBarComponent as UIComponent & { properties: Partial<IProgressBarProps> }}
-      onPropertyChange={(value, name, access) => updateComponent({ access, name, properties: value } as object)}
+      onPropertyChange={(updates) => (progressBarComponent = updateComponent(progressBarComponent, updates as object))}
       forConstructor={false}
     />
   {/snippet}

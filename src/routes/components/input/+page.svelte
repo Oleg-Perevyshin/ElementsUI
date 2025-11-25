@@ -3,6 +3,7 @@
   import ComponentExample from '$lib/ComponentExample.svelte'
   import Input from '$lib/Input/Input.svelte'
   import InputProps from '$lib/Input/InputProps.svelte'
+  import { updateComponent } from '$lib/types'
   import { formatObjectToString } from '../../common'
 
   let valid = $state(false)
@@ -20,8 +21,8 @@
       number: { minNum: 0, maxNum: 10, step: 1 },
       textareaRows: 5,
       help: { copyButton: false, info: '', autocomplete: 'off', regExp: '/^[0-9a-zA-Z_-]{0,32}$/' },
-      eventHandler: { Header: 'SET', Argument: 'NoSend', Variables: [] },
     },
+    eventHandler: { Header: 'SET', Argument: 'NoSend', Variables: [] },
     position: { row: 0, col: 0, width: 0, height: 0 },
     parentId: '',
   })
@@ -31,21 +32,6 @@
 ${formatObjectToString(inputComponent.properties as IInputProps)} 
   onUpdate={() => {}}
 />`)
-
-  const updateComponent = (
-    updates: Partial<{
-      name: string
-      access: 'full' | 'viewOnly' | 'hidden'
-      properties: Partial<UIComponent['properties']>
-    }>,
-  ) => {
-    inputComponent = {
-      ...inputComponent,
-      access: updates.access ?? inputComponent.access,
-      name: updates.name ?? inputComponent.name,
-      properties: updates.properties ? { ...inputComponent.properties, ...updates.properties } : inputComponent.properties,
-    }
-  }
 </script>
 
 <ComponentExample {codeText}>
@@ -54,7 +40,7 @@ ${formatObjectToString(inputComponent.properties as IInputProps)}
       <Input
         {...inputComponent.properties as IInputProps}
         onUpdate={(value) => {
-          updateComponent({
+          updateComponent(inputComponent, {
             properties: { value: value },
           })
         }}
@@ -65,13 +51,13 @@ ${formatObjectToString(inputComponent.properties as IInputProps)}
   {#snippet componentProps()}
     <InputProps
       component={inputComponent as UIComponent & { properties: Partial<IInputProps> }}
-      onPropertyChange={(value, name, access) => updateComponent({ access, name, properties: value } as object)}
+      onPropertyChange={(updates) => (inputComponent = updateComponent(inputComponent, updates as object))}
       forConstructor={true}
     />
     <hr />
     <InputProps
       component={inputComponent as UIComponent & { properties: Partial<IInputProps> }}
-      onPropertyChange={(value, name, access) => updateComponent({ access, name, properties: value } as object)}
+      onPropertyChange={(updates) => (inputComponent = updateComponent(inputComponent, updates as object))}
       forConstructor={false}
     />
   {/snippet}

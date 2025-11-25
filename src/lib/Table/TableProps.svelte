@@ -1,7 +1,7 @@
 <script lang="ts">
   import { getContext } from 'svelte'
   import { t } from '$lib/locales/i18n'
-  import { type UIComponent, type ITableProps, type ITableHeader, updateProperty } from '../types'
+  import { type UIComponent, type ITableProps, type ITableHeader, updateProperty, type IUIComponentHandler } from '../types'
   import * as UI from '$lib'
   import ButtonDelete from '$lib/libIcons/ButtonDelete.svelte'
   import ButtonAdd from '$lib/libIcons/ButtonAdd.svelte'
@@ -17,7 +17,7 @@
     forConstructor = true,
   } = $props<{
     component: UIComponent & { properties: Partial<ITableProps<object>> }
-    onPropertyChange: (value?: string | object, name?: string, access?: string) => void
+    onPropertyChange: (updates: Partial<{ properties?: string | object; name?: string; access?: string; eventHandler?: IUIComponentHandler }>) => void
     forConstructor?: boolean
   }>()
 
@@ -57,11 +57,14 @@
   }
 
   const updateButtonProperty = (columnIndex: number, buttonIndex: number, field: string, value: any) => {
-    const headers = [...component.properties.header]
-    const buttons = [...headers[columnIndex].buttons]
-    buttons[buttonIndex] = { ...buttons[buttonIndex], [field]: value }
-    headers[columnIndex].buttons = buttons
-    updateProperty('header', headers, component, onPropertyChange)
+    if (field === 'eventHandler') {
+    } else {
+      const headers = [...component.properties.header]
+      const buttons = [...headers[columnIndex].buttons]
+      buttons[buttonIndex] = { ...buttons[buttonIndex], [field]: value }
+      headers[columnIndex].buttons = buttons
+      updateProperty('header', headers, component, onPropertyChange)
+    }
   }
 
   const removeButtonFromColumn = (columnIndex: number, buttonIndex: number) => {
@@ -82,8 +85,7 @@
         value={VARIABLE_OPTIONS.find((opt) => opt.value === component.properties.id)}
         onUpdate={(value) => {
           updateProperty('id', value.value as string, component, onPropertyChange)
-          updateProperty('eventHandler.Variables', value.value as string, component, onPropertyChange)
-          onPropertyChange(null, value.name?.split('—')[1].trim(), null)
+          onPropertyChange({ name: value.name?.split('—')[1].trim(), eventHandler: { Variables: value.value as string } })
         }}
       />
       <UI.Select
@@ -91,7 +93,7 @@
         type="buttons"
         options={$optionsStore.ACCESS_OPTION}
         value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.access)}
-        onUpdate={(option) => onPropertyChange(null, null, option.value)}
+        onUpdate={(option) => onPropertyChange({ access: option.value })}
       />
     </div>
     <div class="flex w-1/3 flex-col px-2">
@@ -144,6 +146,9 @@
           }
           const headers = [...(component.properties.header || []), newColumn]
           updateProperty('header', headers, component, onPropertyChange)
+          headers.forEach((h) => {
+            updateTableHeader(headers.indexOf(h), 'width', `${(100 / headers.length).toFixed(2)}%`)
+          })
           updateTableBody()
         }}
       />
@@ -219,6 +224,9 @@
             const headers = [...(component.properties.header || [])]
             headers.splice(columnIndex, 1)
             updateProperty('header', headers, component, onPropertyChange)
+            headers.forEach((h) => {
+              updateTableHeader(headers.indexOf(h), 'width', `${(100 / headers.length).toFixed(2)}%`)
+            })
           }}
         />
       </div>
@@ -266,7 +274,13 @@
                   updateButtonProperty(columnIndex, buttonIndex, 'eventHandler', handler)
                 }}
               />
-              <UI.Button wrapperClass="w-8" content={{ icon: ButtonDelete }} onClick={() => removeButtonFromColumn(columnIndex, buttonIndex)} />
+              <UI.Button
+                wrapperClass="w-8"
+                content={{ icon: ButtonDelete }}
+                onClick={() => {
+                  removeButtonFromColumn(columnIndex, buttonIndex)
+                }}
+              />
             </div>
           {/each}
         </div>
@@ -309,7 +323,7 @@
         type="buttons"
         options={$optionsStore.ACCESS_OPTION}
         value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.access)}
-        onUpdate={(option) => onPropertyChange(null, null, option.value)}
+        onUpdate={(option) => onPropertyChange({ access: option.value })}
       />
       <UI.Input
         label={{ name: $t('constructor.props.label') }}
@@ -357,6 +371,9 @@
           }
           const headers = [...(component.properties.header || []), newColumn]
           updateProperty('header', headers, component, onPropertyChange)
+          headers.forEach((h) => {
+            updateTableHeader(headers.indexOf(h), 'width', `${(100 / headers.length).toFixed(2)}%`)
+          })
           updateTableBody()
         }}
       />
@@ -432,6 +449,9 @@
                   const headers = [...(component.properties.header || [])]
                   headers.splice(columnIndex, 1)
                   updateProperty('header', headers, component, onPropertyChange)
+                  headers.forEach((h) => {
+                    updateTableHeader(headers.indexOf(h), 'width', `${(100 / headers.length).toFixed(2)}%`)
+                  })
                 }}
               />
             </div>

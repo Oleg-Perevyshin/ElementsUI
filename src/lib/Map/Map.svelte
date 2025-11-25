@@ -173,7 +173,7 @@
             </button>
             {#if isCopied}
               <div
-                class="absolute top-1/2 right-0 -translate-y-1/2 transform rounded-md bg-(--green-color) px-2 py-1 text-sm shadow-lg"
+                class="absolute top-1/2 right-0 -translate-y-1/2 transform rounded-md bg-(--green-color) px-1.5 py-1 text-sm shadow-lg"
                 transition:fade={{ duration: 200 }}
               >
                 ✓

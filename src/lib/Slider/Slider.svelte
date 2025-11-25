@@ -105,7 +105,7 @@
           onmousedown={() => (activeRound = 'ceil')}
           {disabled}
           class={twMerge(
-            `slider-bg basis-[calc(${(centerNum / number.maxNum) * 100}%+2rem+5px)] h-8 w-full appearance-none overflow-hidden 
+            `basis-[calc(${(centerNum / number.maxNum) * 100}%+2rem+5px)] h-8 w-full appearance-none overflow-hidden 
               accent-(--back-color) 
               [&::-webkit-slider-runnable-track]:rounded-l-full
               [&::-webkit-slider-runnable-track]:bg-(--gray-color)
@@ -196,7 +196,7 @@
           bind:value={singleValue}
           oninput={() => onUpdate(singleValue)}
           class={twMerge(
-            ` h-8 w-full appearance-none overflow-hidden rounded-full accent-(--back-color) 
+            `h-8 w-full appearance-none overflow-hidden rounded-full accent-(--back-color) 
               [&::-webkit-slider-runnable-track]:rounded-full
               [&::-webkit-slider-runnable-track]:bg-(--gray-color)
               [&::-webkit-slider-thumb]:relative 
@@ -225,6 +225,7 @@
             `[&::-moz-range-thumb]:shadow-[calc(100rem*-1-0.5rem)_0_0_100rem] 
               [&::-webkit-slider-thumb]:shadow-[calc(100rem*-1-0.5rem)_0_0_100rem]`,
           )}
+          style="color: var(--bg-color);"
         />
       </div>
     {/if}

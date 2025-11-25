@@ -1,8 +1,10 @@
 <script lang="ts">
   import { getContext } from 'svelte'
   import { t } from '$lib/locales/i18n'
-  import { type UIComponent, type IGraphProps, updateProperty } from '../types'
+  import { type UIComponent, type IGraphProps, updateProperty, type IUIComponentHandler } from '../types'
   import * as UI from '$lib'
+  import { optionsStore } from '$lib/options'
+  import { twMerge } from 'tailwind-merge'
 
   const {
     component,
@@ -10,12 +12,18 @@
     forConstructor = true,
   } = $props<{
     component: UIComponent & { properties: Partial<IGraphProps> }
-    onPropertyChange: (value?: string | object, name?: string, access?: string) => void
+    onPropertyChange: (updates: Partial<{ properties?: string | object; name?: string; access?: string; eventHandler?: IUIComponentHandler }>) => void
     forConstructor?: boolean
   }>()
 
   const DeviceVariables = getContext<{ id: string; value: string; name: string }[]>('DeviceVariables')
   let VARIABLE_OPTIONS = $derived(DeviceVariables && Array.isArray(DeviceVariables) ? DeviceVariables : [])
+
+  const initialAlign = $derived(
+    $optionsStore.TEXT_ALIGN_OPTIONS.find((a) =>
+      (a.value as string).includes(component.properties.label?.class?.split(' ').find((cls: string) => cls.startsWith('text-'))),
+    ),
+  )
 </script>
 
 {#if forConstructor}
@@ -28,13 +36,26 @@
         value={VARIABLE_OPTIONS.find((opt) => opt.value === component.properties.id)}
         onUpdate={(value) => {
           updateProperty('id', value.value as string, component, onPropertyChange)
-          updateProperty('eventHandler.Variables', value.value as string, component, onPropertyChange)
-          onPropertyChange(null, value.name?.split('—')[1].trim(), null)
+          onPropertyChange({ name: value.name?.split('—')[1].trim(), eventHandler: { Variables: value.value as string } })
         }}
       />
     </div>
-    <div class="flex w-1/3 flex-col px-2"></div>
-    <div class="flex w-1/3 flex-col px-2"></div>
+    <div class="flex w-1/3 flex-col px-2">
+      <UI.Input
+        label={{ name: $t('constructor.props.label') }}
+        value={component.properties.label.name}
+        onUpdate={(value) => updateProperty('label.name', value as string, component, onPropertyChange)}
+      />
+    </div>
+    <div class="flex w-1/3 flex-col px-2">
+      <UI.Select
+        label={{ name: $t('constructor.props.align') }}
+        type="buttons"
+        value={initialAlign}
+        options={$optionsStore.TEXT_ALIGN_OPTIONS}
+        onUpdate={(option) => updateProperty('label.class', twMerge(component.properties.label.class, option.value), component, onPropertyChange)}
+      />
+    </div>
   </div>
 {:else}
   <div class="relative mb-2 flex flex-row items-start justify-center">
@@ -74,46 +95,4 @@
       />
     </div>
   </div>
-  <!-- <hr class="border-gray-400" />
-  <div class="space-y-4">
-    <div class="m-0 flex items-center justify-center gap-2">
-      <h4>{$t('constructor.props.graphdata.title')}</h4>
-      <UI.Button wrapperClass="w-8" content={{ icon: ButtonAdd }} />
-    </div>
-
-    {#each component.properties.streamingData.data || [] as option, index (option.name)}
-      <div class="m-0 flex items-end justify-around gap-2 border-gray-400">
-        <UI.Input
-          label={{ name: $t('constructor.props.optionname') }}
-          wrapperClass="!w-3/10"
-          value={option.name}
-          onUpdate={(value) => {
-            const options = [...(component.properties?.streamingData.data || [])]
-            options[index]['name'] = value as string
-            updateProperty('streamingData.data', options, component, onPropertyChange)
-          }}
-        />
-        <UI.Input
-          label={{ name: $t('constructor.props.optionvalue') }}
-          wrapperClass="!w-3/10"
-          type="number"
-          value={option.value}
-          onUpdate={(value) => {
-            const options = [...(component.properties?.streamingData.data || [])]
-            options[index]['value'] = value as number
-            updateProperty('streamingData.data', options, component, onPropertyChange)
-          }}
-        />
-        <UI.Button
-          wrapperClass="w-8"
-          content={{ icon: ButtonDelete }}
-          onClick={() => {
-            const options = [...(component.properties?.streamingData.data || [])]
-            options.splice(index, 1)
-            updateProperty('streamingData.data', options, component, onPropertyChange)
-          }}
-        />
-      </div>
-    {/each}
-  </div> -->
 {/if}

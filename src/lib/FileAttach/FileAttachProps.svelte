@@ -1,7 +1,7 @@
 <!-- $lib/ElementsUI/ButtonProps.svelte -->
 <script lang="ts">
   import { t } from '$lib/locales/i18n'
-  import { type UIComponent, updateProperty } from '../types'
+  import { type IUIComponentHandler, type UIComponent, updateProperty } from '../types'
   import * as UI from '$lib'
   import { optionsStore } from '../options'
   import type { IFileInputProps } from './FileAttach.svelte'
@@ -12,7 +12,7 @@
     forConstructor = true,
   } = $props<{
     component: UIComponent & { properties: Partial<IFileInputProps> }
-    onPropertyChange: (value?: string | object, name?: string, access?: string) => void
+    onPropertyChange: (updates: Partial<{ properties?: string | object; name?: string; access?: string; eventHandler?: IUIComponentHandler }>) => void
     forConstructor?: boolean
   }>()
 </script>

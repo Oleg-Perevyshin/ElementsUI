@@ -1,6 +1,6 @@
 <script lang="ts">
   import { t } from '$lib/locales/i18n'
-  import { updateProperty, type ITextFieldProps, type UIComponent } from '../types'
+  import { updateProperty, type ITextFieldProps, type IUIComponentHandler, type UIComponent } from '../types'
   import * as UI from '$lib/index'
   import { optionsStore } from '$lib/options'
   import { getContext } from 'svelte'
@@ -12,7 +12,7 @@
     forConstructor = true,
   } = $props<{
     component: UIComponent & { properties: Partial<ITextFieldProps> }
-    onPropertyChange: (value?: string | object, name?: string, access?: string) => void
+    onPropertyChange: (updates: Partial<{ properties?: string | object; name?: string; access?: string; eventHandler?: IUIComponentHandler }>) => void
     forConstructor?: boolean
   }>()
   const DeviceVariables = getContext<{ id: string; value: string; name: string }[]>('DeviceVariables')
@@ -43,8 +43,7 @@
         value={VARIABLE_OPTIONS.find((opt) => opt.value === component.properties.id)}
         onUpdate={(value) => {
           updateProperty('id', value.value as string, component, onPropertyChange)
-          updateProperty('eventHandler.Variables', value.value as string, component, onPropertyChange)
-          onPropertyChange(null, value.name?.split('—')[1].trim(), null)
+          onPropertyChange({ name: value.name?.split('—')[1].trim(), eventHandler: { Variables: value.value as string } })
         }}
       />
       <UI.Input
@@ -78,7 +77,6 @@
       />
     </div>
     <div class="flex w-1/3 flex-col px-2">
-      <!-- <p>{component.properties.content?.class?.split(' ').includes((cls: string) => cls.startsWith('font-bold'))}</p> -->
       <UI.Switch
         label={{ name: $t('constructor.props.bold') }}
         value={initialBold}

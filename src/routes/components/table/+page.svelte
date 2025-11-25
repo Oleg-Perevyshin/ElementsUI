@@ -4,6 +4,7 @@
   import ComponentExample from '$lib/ComponentExample.svelte'
   import Table from '$lib/Table/Table.svelte'
   import TableProps from '$lib/Table/TableProps.svelte'
+  import { updateComponent } from '$lib/types'
   import { formatObjectToString } from '../../common'
 
   let tableComponent: UIComponent = $state({
@@ -61,21 +62,6 @@
 ${formatObjectToString(tableComponent.properties as ITableProps<object>)} 
   onClick={() => {}}
 />`)
-
-  const updateComponent = (
-    updates: Partial<{
-      name: string
-      access: 'full' | 'viewOnly' | 'hidden'
-      properties: Partial<UIComponent['properties']>
-    }>,
-  ) => {
-    tableComponent = {
-      ...tableComponent,
-      access: updates.access ?? tableComponent.access,
-      name: updates.name ?? tableComponent.name,
-      properties: updates.properties ? { ...tableComponent.properties, ...updates.properties } : tableComponent.properties,
-    }
-  }
 </script>
 
 <ComponentExample {codeText}>
@@ -96,13 +82,13 @@ ${formatObjectToString(tableComponent.properties as ITableProps<object>)}
     /> -->
     <TableProps
       component={tableComponent as UIComponent & { properties: Partial<ITableProps<object>> }}
-      onPropertyChange={(value, name, access) => updateComponent({ access, name, properties: value } as object)}
+      onPropertyChange={(updates) => (tableComponent = updateComponent(tableComponent, updates as object))}
       forConstructor={true}
     />
     <hr />
     <TableProps
       component={tableComponent as UIComponent & { properties: Partial<ITableProps<object>> }}
-      onPropertyChange={(value, name, access) => updateComponent({ access, name, properties: value } as object)}
+      onPropertyChange={(updates) => (tableComponent = updateComponent(tableComponent, updates as object))}
       forConstructor={false}
     />
   {/snippet}

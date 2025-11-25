@@ -14,7 +14,6 @@
 
   let {
     id = crypto.randomUUID(),
-
     wrapperClass = '',
     disabled = false,
     label = { name: '', class: '' },

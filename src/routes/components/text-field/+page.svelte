@@ -3,6 +3,7 @@
   import ComponentExample from '$lib/ComponentExample.svelte'
   import TextField from '$lib/TextField/TextField.svelte'
   import TextFieldProps from '$lib/TextField/TextFieldProps.svelte'
+  import { updateComponent } from '$lib/types'
   import { formatObjectToString } from '../../common'
 
   let textFieldComponent: UIComponent = $state({
@@ -26,21 +27,6 @@
 <UI.TextField
 ${formatObjectToString(textFieldComponent.properties as ITextFieldProps)} 
 />`)
-
-  const updateComponent = (
-    updates: Partial<{
-      name: string
-      access: 'full' | 'viewOnly' | 'hidden'
-      properties: Partial<UIComponent['properties']>
-    }>,
-  ) => {
-    textFieldComponent = {
-      ...textFieldComponent,
-      access: updates.access ?? textFieldComponent.access,
-      name: updates.name ?? textFieldComponent.name,
-      properties: updates.properties ? { ...textFieldComponent.properties, ...updates.properties } : textFieldComponent.properties,
-    }
-  }
 </script>
 
 <ComponentExample {codeText}>
@@ -52,13 +38,13 @@ ${formatObjectToString(textFieldComponent.properties as ITextFieldProps)}
   {#snippet componentProps()}
     <TextFieldProps
       component={textFieldComponent as UIComponent & { properties: Partial<ITextFieldProps> }}
-      onPropertyChange={(value, name, access) => updateComponent({ access, name, properties: value } as object)}
+      onPropertyChange={(updates) => (textFieldComponent = updateComponent(textFieldComponent, updates as object))}
       forConstructor={true}
     />
     <hr />
     <TextFieldProps
       component={textFieldComponent as UIComponent & { properties: Partial<ITextFieldProps> }}
-      onPropertyChange={(value, name, access) => updateComponent({ access, name, properties: value } as object)}
+      onPropertyChange={(updates) => (textFieldComponent = updateComponent(textFieldComponent, updates as object))}
       forConstructor={false}
     />
   {/snippet}

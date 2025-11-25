@@ -1,7 +1,7 @@
 <script lang="ts">
   import { getContext } from 'svelte'
   import { t } from '$lib/locales/i18n'
-  import { type UIComponent, type IProgressBarProps, updateProperty } from '../types'
+  import { type UIComponent, type IProgressBarProps, updateProperty, type IUIComponentHandler } from '../types'
   import * as UI from '$lib'
   import { optionsStore } from '../options'
   import { twMerge } from 'tailwind-merge'
@@ -12,7 +12,7 @@
     forConstructor = true,
   } = $props<{
     component: UIComponent & { properties: Partial<IProgressBarProps> }
-    onPropertyChange: (value?: string | object, name?: string, access?: string) => void
+    onPropertyChange: (updates: Partial<{ properties?: string | object; name?: string; access?: string; eventHandler?: IUIComponentHandler }>) => void
     forConstructor?: boolean
   }>()
 
@@ -40,8 +40,8 @@
         options={VARIABLE_OPTIONS}
         value={VARIABLE_OPTIONS.find((opt) => opt.value === component.properties.id)}
         onUpdate={(value) => {
-          updateProperty('id', value.value as string, component, onPropertyChange, value.name?.split('—')[1].trim())
-          updateProperty('eventHandler.Variables', value.value as string, component, onPropertyChange)
+          updateProperty('id', value.value as string, component, onPropertyChange)
+          onPropertyChange({ name: value.name?.split('—')[1].trim(), eventHandler: { Variables: value.value as string } })
         }}
       />
     </div>

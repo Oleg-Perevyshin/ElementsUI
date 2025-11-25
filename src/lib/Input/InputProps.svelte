@@ -1,7 +1,7 @@
 <script lang="ts">
   import { getContext } from 'svelte'
   import { t } from '$lib/locales/i18n'
-  import type { IInputProps, UIComponent, ISelectOption } from '../types'
+  import type { IInputProps, UIComponent, ISelectOption, IUIComponentHandler } from '../types'
   import * as UI from '$lib'
   import { optionsStore } from '../options'
   import { twMerge } from 'tailwind-merge'
@@ -12,7 +12,7 @@
     forConstructor = true,
   } = $props<{
     component: UIComponent & { properties: Partial<IInputProps> }
-    onPropertyChange: (value?: string | object, name?: string, access?: string) => void
+    onPropertyChange: (updates: Partial<{ properties?: string | object; name?: string; access?: string; eventHandler?: IUIComponentHandler }>) => void
     forConstructor?: boolean
   }>()
 
@@ -68,7 +68,7 @@
     }
 
     obj[parts[parts.length - 1]] = value
-    onPropertyChange(newProperties, name)
+    onPropertyChange({ properties: newProperties, name })
   }
 
   const handleOptionColorChange = (color: string) => {
@@ -97,7 +97,7 @@
         value={VARIABLE_OPTIONS.find((opt) => opt.value === component.properties.id)}
         onUpdate={(value) => {
           updateProperty('id', value.value as string, value.name?.split('—')[1].trim())
-          updateProperty('eventHandler.Variables', value.value as string)
+          onPropertyChange({ eventHandler: { Variables: value.value as string } })
         }}
       />
       <UI.Select
@@ -105,7 +105,7 @@
         type="buttons"
         options={$optionsStore.ACCESS_OPTION}
         value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.access)}
-        onUpdate={(option) => onPropertyChange(null, null, option.value)}
+        onUpdate={(option) => onPropertyChange({ access: option.value })}
       />
       <UI.Select
         label={{ name: $t('constructor.props.type') }}
@@ -128,10 +128,7 @@
           maxlength={150}
           help={{ info: $t('constructor.props.regexp.info') }}
           componentClass={isValidRegExp === false ? '!border-2 !border-red-400' : ''}
-          onUpdate={(value) => {
-            console.log(value)
-            updateProperty('help.regExp', value as string)
-          }}
+          onUpdate={(value) => updateProperty('help.regExp', value as string)}
         />
       {:else if component.properties.type === 'number' && !component.properties.readonly && !component.properties.disabled}
         <UI.Input
@@ -173,10 +170,7 @@
         label={{ name: $t('constructor.props.readonly') }}
         value={component.properties.readonly}
         options={[{ id: crypto.randomUUID(), value: 0, class: '' }]}
-        onChange={(value) => {
-          updateProperty('readonly', value)
-          console.log(component.properties)
-        }}
+        onChange={(value) => updateProperty('readonly', value)}
       />
       <UI.Switch
         label={{ name: $t('constructor.props.copy') }}
@@ -258,7 +252,7 @@
         type="buttons"
         options={$optionsStore.ACCESS_OPTION}
         value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.access)}
-        onUpdate={(option) => onPropertyChange(null, null, option.value)}
+        onUpdate={(option) => onPropertyChange({ access: option.value })}
       />
       <UI.Input
         label={{ name: $t('constructor.props.value') }}

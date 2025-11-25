@@ -2,7 +2,7 @@
   import { ProgressBar, type IMapProps, type UIComponent } from '$lib'
   import ComponentExample from '$lib/ComponentExample.svelte'
   import Map from '$lib/Map/Map.svelte'
-  import type { IDeviceGNSS } from '$lib/types'
+  import { updateComponent, type IDeviceGNSS } from '$lib/types'
   import { onDestroy, onMount } from 'svelte'
   import { formatObjectToString } from '../../common'
   import MapProps from '$lib/Map/MapProps.svelte'
@@ -64,13 +64,13 @@
     }
   }
 
-  let MapComponent: UIComponent = $state({
+  let mapComponent: UIComponent = $state({
     id: crypto.randomUUID(),
     type: 'Map',
     access: 'full',
     properties: {
       id: crypto.randomUUID(),
-      label: { name: 'Label', class: '' },
+      label: { name: 'Label', class: 'text-center' },
     },
     position: { row: 0, col: 0, width: 0, height: 0 },
     parentId: '',
@@ -90,42 +90,27 @@
 
   let codeText = $derived(`
 <UI.Map
-${formatObjectToString(MapComponent.properties as IMapProps)} 
+${formatObjectToString(mapComponent.properties as IMapProps)} 
   {data}
 />`)
-
-  const updateComponent = (
-    updates: Partial<{
-      name: string
-      access: 'full' | 'viewOnly' | 'hidden'
-      properties: Partial<UIComponent['properties']>
-    }>,
-  ) => {
-    MapComponent = {
-      ...MapComponent,
-      access: updates.access ?? MapComponent.access,
-      name: updates.name ?? MapComponent.name,
-      properties: updates.properties ? { ...MapComponent.properties, ...updates.properties } : MapComponent.properties,
-    }
-  }
 </script>
 
 <ComponentExample {codeText}>
   {#snippet component()}
     <div class="h-full">
-      <Map {...MapComponent.properties as IMapProps} {data} />
+      <Map {...mapComponent.properties as IMapProps} {data} />
     </div>
   {/snippet}
   {#snippet componentProps()}
     <MapProps
-      component={MapComponent as UIComponent & { properties: Partial<IMapProps> }}
-      onPropertyChange={(value, name, access) => updateComponent({ access, name, properties: value } as object)}
+      component={mapComponent as UIComponent & { properties: Partial<IMapProps> }}
+      onPropertyChange={(updates) => (mapComponent = updateComponent(mapComponent, updates as object))}
       forConstructor={true}
     />
     <hr />
     <MapProps
-      component={MapComponent as UIComponent & { properties: Partial<IMapProps> }}
-      onPropertyChange={(value, name, access) => updateComponent({ access, name, properties: value } as object)}
+      component={mapComponent as UIComponent & { properties: Partial<IMapProps> }}
+      onPropertyChange={(updates) => (mapComponent = updateComponent(mapComponent, updates as object))}
       forConstructor={false}
     />
   {/snippet}

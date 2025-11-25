@@ -7,7 +7,7 @@ export const updateProperty = (
   path: string,
   value: string | number | boolean | object | string[],
   component: UIComponent & { properties: Partial<UIComponent['properties']> },
-  onPropertyChange: (value?: string | object, name?: string, access?: string) => void,
+  onPropertyChange: (updates: Partial<{ properties?: string | object; name?: string; access?: string; eventHandler?: IUIComponentHandler }>) => void,
 ) => {
   const newProperties = JSON.parse(JSON.stringify(component.properties))
   const parts = path.split('.')
@@ -18,7 +18,25 @@ export const updateProperty = (
     obj = obj[part]
   }
   obj[parts[parts.length - 1]] = value
-  onPropertyChange(newProperties)
+  onPropertyChange({ properties: newProperties })
+}
+
+export const updateComponent = (
+  component: UIComponent,
+  updates: Partial<{
+    name: string
+    access: 'full' | 'viewOnly' | 'hidden'
+    properties: Partial<UIComponent['properties']>
+    eventHandler: IUIComponentHandler
+  }>,
+) => {
+  return {
+    ...component,
+    access: updates.access ?? component.access,
+    name: updates.name ?? component.name,
+    properties: updates.properties ? { ...component.properties, ...updates.properties } : component.properties,
+    eventHandler: updates.eventHandler ? { ...component.eventHandler, ...updates.eventHandler } : component.eventHandler,
+  }
 }
 
 /* Интерфейс полного компонента */
@@ -60,6 +78,7 @@ export interface UIComponent {
     | IMapProps
   position: Position
   parentId: string
+  eventHandler?: IUIComponentHandler
 }
 
 /* Координаты и размер компонента */
@@ -97,7 +116,6 @@ export interface IButtonProps {
     altKey?: boolean
     metaKey?: boolean /* Поддержка Meta (Cmd на Mac) */
   }
-  eventHandler?: IUIComponentHandler
   onClick?: () => void
 }
 
@@ -160,7 +178,6 @@ export interface IInputProps {
       | 'tel'
       | null
   }
-  eventHandler?: IUIComponentHandler
   onUpdate?: (value: string | number) => void
 }
 
@@ -177,7 +194,6 @@ export interface ISelectProps<T = unknown> {
   options?: ISelectOption<T>[]
   bitMode?: boolean
   range?: { start: number; end: number }
-  eventHandler?: IUIComponentHandler
   onUpdate?: (value: ISelectOption<T>) => void
 }
 
@@ -206,7 +222,6 @@ export interface ISwitchProps {
   bitMode?: boolean
   type?: 'horizontal' | 'vertical' | 'checkbox'
   value?: number
-  eventHandler?: IUIComponentHandler
   onChange?: (value: number) => void
 }
 
@@ -216,7 +231,6 @@ export interface IColorPickerProps {
   wrapperClass?: string
   label?: { name?: string; class?: string }
   value?: number[]
-  eventHandler?: IUIComponentHandler
   onChange?: (value: number[]) => void
 }
 
@@ -229,7 +243,6 @@ export interface ISliderProps {
   type?: 'single' | 'range'
   number?: { minNum: number; maxNum: number; step: number }
   disabled?: boolean
-  eventHandler?: IUIComponentHandler
   onUpdate?: (value: number | [number, number]) => void
 }
 /* ********************************************************** */
@@ -287,7 +300,6 @@ export interface ITableHeader<T extends object> {
   buttons?: {
     name: string | ((row: T) => string)
     class?: string | ((row: T) => string)
-    eventHandler?: IUIComponentHandler
     onClick?: (row: T) => void
   }[]
   image?: {
@@ -302,7 +314,6 @@ export interface ITableHeader<T extends object> {
 
 export interface ITableProps<T extends object> {
   id?: string
-
   wrapperClass?: string
   label?: { name?: string; class?: string }
   header: ITableHeader<T>[]
@@ -339,9 +350,11 @@ export interface IJoystickProps {
   id?: string
   wrapperClass?: string
   label?: { name?: string; class?: string }
+  axesName?: [string, string, string?]
   value?: number[]
   limits?: { minNum: number; maxNum: number }[]
   onUpdate?: (value: number[]) => void
+  onClick?: (value: number[]) => void
 }
 
 /* ********************************************************** */

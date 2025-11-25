@@ -7,7 +7,6 @@
 
   let {
     id = crypto.randomUUID(),
-
     wrapperClass = '',
     componentClass = '',
     disabled = false,

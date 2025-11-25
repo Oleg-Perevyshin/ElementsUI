@@ -1,7 +1,7 @@
 <!-- $lib/ElementsUI/AccordionProps.svelte -->
 <script lang="ts">
   import { t } from '$lib/locales/i18n'
-  import { updateProperty, type IAccordionProps, type UIComponent } from '../types'
+  import { updateProperty, type IAccordionProps, type IUIComponentHandler, type UIComponent } from '../types'
   import * as UI from '$lib'
   import { optionsStore } from '../options'
   import { ICONS } from '../icons'
@@ -15,7 +15,7 @@
     forConstructor = true,
   } = $props<{
     component: UIComponent & { properties: Partial<IAccordionProps> }
-    onPropertyChange: (value?: string | object, name?: string, access?: string) => void
+    onPropertyChange: (updates: Partial<{ properties?: string | object; name?: string; access?: string; eventHandler?: IUIComponentHandler }>) => void
     forConstructor?: boolean
   }>()
 
@@ -53,7 +53,7 @@
         type="buttons"
         options={$optionsStore.ACCESS_OPTION}
         value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.access)}
-        onUpdate={(option) => onPropertyChange(null, null, option.value)}
+        onUpdate={(option) => onPropertyChange({ access: option.value })}
       />
       <UI.Input
         label={{ name: $t('constructor.props.label') }}
@@ -149,7 +149,7 @@
         type="buttons"
         options={$optionsStore.ACCESS_OPTION}
         value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.access)}
-        onUpdate={(option) => onPropertyChange(null, null, option.value)}
+        onUpdate={(option) => onPropertyChange({ access: option.value })}
       />
       <UI.Select
         label={{ name: $t('constructor.props.type') }}

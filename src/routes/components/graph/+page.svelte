@@ -3,6 +3,7 @@
   import ComponentExample from '$lib/ComponentExample.svelte'
   import Graph from '$lib/Graph/Graph.svelte'
   import GraphProps from '$lib/Graph/GraphProps.svelte'
+  import { updateComponent } from '$lib/types'
   import { formatObjectToString } from '../../common'
 
   const dataForGraph = [
@@ -21,8 +22,8 @@
       label: { name: 'Label', class: 'text-center' },
       streamingData: { data: dataForGraph },
       isTest: true,
-      eventHandler: { Header: 'SET', Argument: 'NoSave', Variables: [] },
     },
+    eventHandler: { Header: 'SET', Argument: 'NoSave', Variables: [] },
     position: { row: 0, col: 0, width: 0, height: 0 },
     parentId: '',
   })
@@ -31,21 +32,6 @@
 <UI.Graph
 ${formatObjectToString(graphComponent.properties as IGraphProps)} 
 />`)
-
-  const updateComponent = (
-    updates: Partial<{
-      name: string
-      access: 'full' | 'viewOnly' | 'hidden'
-      properties: Partial<UIComponent['properties']>
-    }>,
-  ) => {
-    graphComponent = {
-      ...graphComponent,
-      access: updates.access ?? graphComponent.access,
-      name: updates.name ?? graphComponent.name,
-      properties: updates.properties ? { ...graphComponent.properties, ...updates.properties } : graphComponent.properties,
-    }
-  }
 </script>
 
 <ComponentExample {codeText}>
@@ -55,7 +41,13 @@ ${formatObjectToString(graphComponent.properties as IGraphProps)}
   {#snippet componentProps()}
     <GraphProps
       component={graphComponent as UIComponent & { properties: Partial<IGraphProps> }}
-      onPropertyChange={(value, name, access) => updateComponent({ access, name, properties: value } as object)}
+      onPropertyChange={(updates) => (graphComponent = updateComponent(graphComponent, updates as object))}
+      forConstructor={true}
+    />
+    <hr />
+    <GraphProps
+      component={graphComponent as UIComponent & { properties: Partial<IGraphProps> }}
+      onPropertyChange={(updates) => (graphComponent = updateComponent(graphComponent, updates as object))}
       forConstructor={false}
     />
   {/snippet}
