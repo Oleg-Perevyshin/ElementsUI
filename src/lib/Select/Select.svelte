@@ -9,9 +9,6 @@
   let isDropdownOpen = $state(false)
   let dropdownElement: HTMLDivElement
 
-  let searchValue = $state('')
-  let filteredOptions = $state<ISelectOption<T>[]>([])
-
   let {
     id = crypto.randomUUID(),
     wrapperClass = '',
@@ -23,12 +20,19 @@
     onUpdate,
   }: ISelectProps<T> = $props()
 
+  let searchValue = $state('')
+  let filteredOptions = $state<ISelectOption<T>[]>([])
+
   /* Закрытие при клике вне компонента */
   const handleClickOutside = (event: MouseEvent) => {
     if (dropdownElement && !dropdownElement.contains(event.target as Node)) {
       isDropdownOpen = false
     }
   }
+
+  $effect(() => {
+    searchValue = value?.name ?? ''
+  })
 
   onMount(() => {
     if (type === 'select' || type === 'input') document.addEventListener('click', handleClickOutside)

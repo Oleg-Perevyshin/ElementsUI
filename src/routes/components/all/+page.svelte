@@ -1,28 +1,114 @@
 <!-- src/routes/test/+page.svelte -->
 <script lang="ts">
   import * as UI from '$lib'
-  import type { ITableHeader } from '$lib/types'
-  import GitHub from '../../../appIcons/GitHub.svelte'
+  import type { IDeviceGNSS, ISelectOption, ITableHeader } from '$lib/types'
   import IconGripHorizontalUp from '../../../appIcons/IconGripHorizontalUp.svelte'
   import IconGripHorizontalDown from '../../../appIcons/IconGripHorizontalDown.svelte'
-  import IconGripHorizontalDual from '../../../appIcons/IconGripHorizontalDual.svelte'
-  import IconGripVerticalLeft from '../../../appIcons/IconGripVerticalLeft.svelte'
-  import IconGripVerticalRight from '../../../appIcons/IconGripVerticalRight.svelte'
   import IconGripVerticalDual from '../../../appIcons/IconGripVerticalDual.svelte'
+  import { onDestroy, onMount } from 'svelte'
 
   const componentMap = {
+    Accordion: { component: UI.Accordion },
     Button: { component: UI.Button },
     ColorPicker: { component: UI.ColorPicker },
-    Accordion: { component: null },
+    FileAttach: { component: UI.FileAttach },
+    Graph: { component: UI.Graph },
     Input: { component: UI.Input },
+    Joystick: { component: UI.Joystick },
+    Map: { component: UI.Map },
     ProgressBar: { component: UI.ProgressBar },
     Select: { component: UI.Select },
     Slider: { component: UI.Slider },
     Switch: { component: UI.Switch },
-    TextField: { component: UI.TextField },
-    Graph: { component: UI.Graph },
     Table: { component: UI.Table },
+    Tabs: { component: UI.Tabs },
+    TextField: { component: UI.TextField },
   }
+
+  const bitModeOptions = [
+    { id: crypto.randomUUID(), value: 0, name: '0000', class: 'bg-max' },
+    { id: crypto.randomUUID(), value: 1, name: '0001', class: 'bg-max' },
+    { id: crypto.randomUUID(), value: 2, name: '0010', class: 'bg-max' },
+    { id: crypto.randomUUID(), value: 3, name: '0011', class: 'bg-max' },
+    { id: crypto.randomUUID(), value: 4, name: '0100', class: 'bg-max' },
+    { id: crypto.randomUUID(), value: 5, name: '0101', class: 'bg-max' },
+    { id: crypto.randomUUID(), value: 6, name: '0110', class: 'bg-max' },
+    { id: crypto.randomUUID(), value: 7, name: '0111', class: 'bg-max' },
+    { id: crypto.randomUUID(), value: 8, name: '1000', class: 'bg-max' },
+    { id: crypto.randomUUID(), value: 9, name: '1001', class: 'bg-max' },
+    { id: crypto.randomUUID(), value: 10, name: '1010', class: 'bg-max' },
+    { id: crypto.randomUUID(), value: 11, name: '1011', class: 'bg-max' },
+    { id: crypto.randomUUID(), value: 12, name: '1100', class: 'bg-max' },
+    { id: crypto.randomUUID(), value: 13, name: '1101', class: 'bg-max' },
+    { id: crypto.randomUUID(), value: 14, name: '1110', class: 'bg-max' },
+    { id: crypto.randomUUID(), value: 15, name: '1111', class: 'bg-max' },
+  ]
+
+  /* Данные для карты */
+  let data: IDeviceGNSS | null = $state(null)
+  let intervalId: any | null = null
+
+  // Храним уже созданные устройства для возможного обновления
+  let existingDevices: string[] = []
+
+  const generateRandomDevice = (): IDeviceGNSS => {
+    const now = Date.now()
+
+    // С вероятностью 30% обновляем существующее устройство
+    if (existingDevices.length > 0 && Math.random() < 0.3) {
+      const randomDevSN = existingDevices[Math.floor(Math.random() * existingDevices.length)]
+
+      // Генерируем небольшое смещение от предыдущей позиции (чтобы было реалистично)
+      const lat = (Math.random() * 180 - 90).toFixed(6)
+      const lon = (Math.random() * 360 - 180).toFixed(6)
+      const head = Math.floor(Math.random() * 360)
+
+      return {
+        NavLat: parseFloat(lat),
+        NavLon: parseFloat(lon),
+        NavAlt: Math.floor(Math.random() * 5000),
+        DevName: randomDevSN.replace('SN-', 'Device-'), // опционально: сохранить имя
+        DevSN: randomDevSN, // ← тот же SN!
+        NavHeading: head,
+        NavSatUse: Math.floor(Math.random() * 20) + 4,
+      }
+    }
+
+    // Иначе — создаём новое устройство
+    const lat = 50 + (Math.random() - 0.5) * 30 // от 35 до 65
+    const lon = 30 + (Math.random() - 0.5) * 50 // от 5 до 55
+    const head = Math.floor(Math.random() * 360)
+
+    const newDevSN = `SN-${now.toString(36).slice(-8).toUpperCase()}`
+    existingDevices.push(newDevSN) // сохраняем для будущих обновлений
+
+    // Ограничиваем размер списка, чтобы не рос бесконечно
+    if (existingDevices.length > 10) {
+      existingDevices = existingDevices.slice(-10) // оставляем последние 20
+    }
+
+    return {
+      NavLat: parseFloat(lat.toFixed(6)),
+      NavLon: parseFloat(lon.toFixed(6)),
+      NavAlt: Math.floor(Math.random() * 5000),
+      DevName: `Device-${Math.floor(Math.random() * 100)}`,
+      DevSN: newDevSN,
+      NavHeading: head,
+      NavSatUse: Math.floor(Math.random() * 20) + 4,
+    }
+  }
+
+  // Запуск симуляции
+  onMount(() => {
+    data = generateRandomDevice()
+    intervalId = setInterval(() => {
+      data = generateRandomDevice()
+    }, 5000)
+  })
+
+  onDestroy(() => {
+    if (intervalId) clearInterval(intervalId)
+  })
 
   /* Интерфейс для строки таблицы (в таблицу передается желаемый массив объектов) */
   interface ITableRow {
@@ -106,9 +192,10 @@
   let inputString: string = $state('String Data')
   let inputNumber: number = $state(7)
   let progressBarValue = $state(40)
-  let selectOption = $state()
+  let selectOption: ISelectOption = $state({ id: 'Map', name: 'Map', value: 'Map' })
   let COMPONENT_OPTIONS = Object.keys(componentMap).map((name) => ({ id: name, name: name, value: name }))
   let switchValue = $state(0)
+  let fullSwitchValue = $state(10)
 
   let modalData = $state({ isOpen: false, rawData: '', formattedData: '' })
 </script>
@@ -253,23 +340,17 @@
     </UI.Accordion>
 
     <!-- Компонент MAP -->
-    <UI.Accordion label={{ name: 'Map' }} isOpen={true}>
-      <div class="flex">
-        <UI.Joystick label={{ name: 'Управление по 3 осям' }} />
-        <UI.Joystick
-          label={{ name: 'Управление по 2 осям' }}
-          axes={[
-            { name: 'Pitch', minNum: -100, maxNum: 100 },
-            { name: 'Yaw', minNum: -100, maxNum: 100 },
-          ]}
-        />
+    <UI.Accordion label={{ name: 'Map' }} isOpen={false}>
+      <div class="h-150">
+        <UI.Map label={{ name: 'Карта' }} {data} />
       </div>
     </UI.Accordion>
 
     <!-- Компонент PROGRESS BAR -->
     <UI.Accordion label={{ name: 'Progress Bar' }} isOpen={false}>
-      <UI.ProgressBar value={progressBarValue} wrapperClass="bg-yellow" />
-      <div class="flex">
+      <UI.ProgressBar value={progressBarValue} wrapperClass="bg-red" />
+      <UI.ProgressBar value={progressBarValue} type="vertical" wrapperClass="bg-red h-50" />
+      <div class="flex justify-center">
         <UI.Button
           wrapperClass="m-2 !w-10"
           content={{ name: '-' }}
@@ -287,81 +368,139 @@
 
     <!-- Компонент SELECT -->
     <UI.Accordion label={{ name: 'Select' }} isOpen={false}>
-      <div class="col-span-10 flex flex-col items-center">
-        <UI.Select type="input" label={{ name: 'Компоненты' }} options={COMPONENT_OPTIONS} onUpdate={(option) => (selectOption = option)} />
-        <p>{JSON.stringify(selectOption)}</p>
-        <UI.Select label={{ name: 'Компоненты' }} options={COMPONENT_OPTIONS} onUpdate={(option) => (selectOption = option)} />
-        <UI.Select type="buttons" label={{ name: 'Компоненты' }} options={COMPONENT_OPTIONS} onUpdate={(option) => (selectOption = option)} />
+      <p>{JSON.stringify(selectOption)}</p>
+      <UI.Select
+        type="input"
+        label={{ name: 'Компоненты' }}
+        options={COMPONENT_OPTIONS}
+        value={selectOption}
+        onUpdate={(option) => (selectOption = option)}
+      />
+      <UI.Select label={{ name: 'Компоненты' }} options={COMPONENT_OPTIONS} value={selectOption} onUpdate={(option) => (selectOption = option)} />
+      <UI.Select
+        type="buttons"
+        label={{ name: 'Компоненты' }}
+        options={COMPONENT_OPTIONS}
+        value={selectOption}
+        onUpdate={(option) => (selectOption = option)}
+      />
+      <div class="mt-4 flex items-end">
+        <UI.Select
+          label={{ name: 'Битовый режим', class: 'text-center' }}
+          bitMode={true}
+          range={{ start: 0, end: 3 }}
+          value={bitModeOptions.find((o) => o.value === fullSwitchValue)}
+          options={bitModeOptions}
+          onUpdate={() => {}}
+        />
+        <span>Выбранное значение: {fullSwitchValue}</span>
       </div>
     </UI.Accordion>
 
     <!-- Компонент SLIDER -->
     <UI.Accordion label={{ name: 'Slider' }} isOpen={false}>
-      <UI.Slider
-        wrapperClass="!w-1/3 bg-red px-2"
-        label={{ name: 'Слайдер' }}
-        value={0}
-        number={{ minNum: -50, maxNum: 50, step: 1 }}
-        disabled={false}
-      />
-      <UI.Slider
-        wrapperClass="!w-1/3 bg-blue px-2"
-        label={{ name: 'Слайдер с диапазоном' }}
-        value={[-12, 35]}
-        number={{ minNum: -50, maxNum: 50, step: 1 }}
-        disabled={false}
-      />
-      <UI.Slider
-        wrapperClass="!w-1/3 bg-blue px-2"
-        label={{ name: 'Слайдер с диапазоном (не активный)' }}
-        value={[-10, 12]}
-        number={{ minNum: -15, maxNum: 15, step: 1 }}
-        disabled={true}
-      />
-      <UI.Slider
-        wrapperClass="!w-1/2 bg-green px-2"
-        label={{ name: 'Слайдер' }}
-        value={-10}
-        number={{ minNum: -25, maxNum: 25, step: 1 }}
-        disabled={false}
-      />
-      <UI.Slider
-        wrapperClass="!w-1/2 bg-yellow px-2"
-        label={{ name: 'Слайдер' }}
-        value={-25}
-        number={{ minNum: -50, maxNum: 50, step: 1 }}
-        disabled={false}
-      />
-      <UI.Slider
-        wrapperClass="!w-1/2 bg-purple px-2"
-        label={{ name: 'Слайдер' }}
-        value={0}
-        number={{ minNum: -50, maxNum: 50, step: 1 }}
-        disabled={false}
-      />
-      <UI.Slider
-        wrapperClass="!w-1/2 bg-pink px-2"
-        label={{ name: 'Слайдер' }}
-        value={25}
-        number={{ minNum: -50, maxNum: 50, step: 1 }}
-        disabled={false}
-      />
-    </UI.Accordion>
-
-    <!-- Компонент SWITCH -->
-    <UI.Accordion label={{ name: 'Switch' }} isOpen={false}>
-      <div class="flex">
-        <UI.Switch
-          wrapperClass="bg-blue"
-          label={{ name: 'Switch', captionLeft: 'Off', captionRight: 'On' }}
-          bind:value={switchValue}
-          onChange={() => console.log(switchValue)}
+      <div class="flex gap-2">
+        <UI.Slider
+          wrapperClass="!w-1/3 bg-red px-2"
+          label={{ name: 'Слайдер' }}
+          value={0}
+          number={{ minNum: -50, maxNum: 50, step: 1 }}
+          disabled={false}
+        />
+        <UI.Slider
+          wrapperClass="!w-1/3 bg-blue px-2"
+          label={{ name: 'Слайдер с диапазоном' }}
+          value={[-12, 35]}
+          number={{ minNum: -50, maxNum: 50, step: 1 }}
+          disabled={false}
+        />
+        <UI.Slider
+          wrapperClass="!w-1/3 bg-blue px-2"
+          label={{ name: 'Слайдер с диапазоном (не активный)' }}
+          value={[-10, 12]}
+          number={{ minNum: -15, maxNum: 15, step: 1 }}
+          disabled={true}
+        />
+      </div>
+      <div class="flex gap-2">
+        <UI.Slider
+          wrapperClass="!w-1/2 bg-green px-2"
+          label={{ name: 'Слайдер' }}
+          value={-10}
+          number={{ minNum: -25, maxNum: 25, step: 1 }}
+          disabled={false}
+        />
+        <UI.Slider
+          wrapperClass="!w-1/2 bg-yellow px-2"
+          label={{ name: 'Слайдер' }}
+          value={-25}
+          number={{ minNum: -50, maxNum: 50, step: 1 }}
+          disabled={false}
+        />
+      </div>
+      <div class="flex gap-2">
+        <UI.Slider
+          wrapperClass="!w-1/2 bg-purple px-2"
+          label={{ name: 'Слайдер' }}
+          value={0}
+          number={{ minNum: -50, maxNum: 50, step: 1 }}
+          disabled={false}
+        />
+        <UI.Slider
+          wrapperClass="!w-1/2 bg-pink px-2"
+          label={{ name: 'Слайдер' }}
+          value={25}
+          number={{ minNum: -50, maxNum: 50, step: 1 }}
+          disabled={false}
         />
       </div>
     </UI.Accordion>
 
+    <!-- Компонент SWITCH -->
+    <UI.Accordion label={{ name: 'Switch' }} isOpen={false}>
+      <div class="flex items-center justify-between">
+        <UI.Switch
+          wrapperClass="w-1/3"
+          label={{ name: 'Переключатель 1', captionLeft: 'Off', captionRight: 'On' }}
+          bind:value={switchValue}
+          options={[{ id: crypto.randomUUID(), value: 0, class: 'bg-blue' }]}
+        />
+        <UI.Switch
+          wrapperClass="w-1/3"
+          label={{ name: 'Переключатель 2' }}
+          type="vertical"
+          bind:value={switchValue}
+          options={[{ id: crypto.randomUUID(), value: 0, class: 'bg-red' }]}
+        />
+        <UI.Switch
+          wrapperClass="bg-yellow w-1/3"
+          label={{ name: 'Галочка' }}
+          type="checkbox"
+          bind:value={switchValue}
+          options={[{ id: crypto.randomUUID(), value: 0, class: '' }]}
+        />
+      </div>
+      <span>Выбранное значение: {switchValue}</span>
+      <div class="mt-4 flex justify-center">
+        <UI.Switch
+          wrapperClass="bg-yellow w-1/3"
+          label={{ name: 'Битовый режим' }}
+          type="vertical"
+          bitMode
+          bind:value={fullSwitchValue}
+          options={[
+            { id: crypto.randomUUID(), value: 3, class: 'bg-green' },
+            { id: crypto.randomUUID(), value: 2, class: 'bg-green' },
+            { id: crypto.randomUUID(), value: 1, class: 'bg-purple' },
+            { id: crypto.randomUUID(), value: 0, class: 'bg-purple' },
+          ]}
+        />
+      </div>
+      <span> Выбранное значение в битовом режиме: {fullSwitchValue} </span>
+    </UI.Accordion>
+
     <!-- Компонент TABLE -->
-    <UI.Accordion label={{ name: 'Table' }} isOpen={true}>
+    <UI.Accordion label={{ name: 'Table' }} isOpen={false}>
       <UI.Table
         label={{ name: 'Devices' }}
         header={columns}
@@ -385,6 +524,11 @@
           />
         {/snippet}
       </UI.Modal>
+    </UI.Accordion>
+
+    <!-- Компонент TABS -->
+    <UI.Accordion label={{ name: 'Tabs' }} isOpen={true}>
+      <UI.Tabs items={[{ name: 'Tab1' }, { name: 'Tab2' }, { name: 'Tab3' }, { name: 'Tab4' }]} />
     </UI.Accordion>
 
     <!-- Компонент TEXT FIELD -->

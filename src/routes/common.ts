@@ -53,7 +53,7 @@ export const formatObjectToString = (properties: UIComponent['properties']): str
   for (const [key, value] of Object.entries(obj)) {
     if (key === 'eventHandler') continue
     if (key === 'id' && regExp.test(value as string)) {
-      lines.push(`  ${key}=crypto.randomUUID()`)
+      lines.push(`  ${key}={crypto.randomUUID()}`)
       continue
     }
     let formattedValue = formatValue(value)
