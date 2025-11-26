@@ -202,7 +202,6 @@
                   component,
                   onPropertyChange,
                 )
-                console.log(component.properties.axes)
               }
             }}
           />
@@ -336,7 +335,6 @@
                   component,
                   onPropertyChange,
                 )
-                console.log(component.properties.axes)
               }
             }}
           />

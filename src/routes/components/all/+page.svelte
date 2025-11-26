@@ -239,7 +239,21 @@
     </UI.Accordion>
 
     <!-- Компонент JOYSTICK -->
-    <UI.Accordion label={{ name: 'Joystick' }} isOpen={true}>
+    <UI.Accordion label={{ name: 'Joystick' }} isOpen={false}>
+      <div class="flex">
+        <UI.Joystick label={{ name: 'Управление по 3 осям' }} />
+        <UI.Joystick
+          label={{ name: 'Управление по 2 осям' }}
+          axes={[
+            { name: 'Pitch', minNum: -100, maxNum: 100 },
+            { name: 'Yaw', minNum: -100, maxNum: 100 },
+          ]}
+        />
+      </div>
+    </UI.Accordion>
+
+    <!-- Компонент MAP -->
+    <UI.Accordion label={{ name: 'Map' }} isOpen={true}>
       <div class="flex">
         <UI.Joystick label={{ name: 'Управление по 3 осям' }} />
         <UI.Joystick

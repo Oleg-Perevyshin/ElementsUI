@@ -8,7 +8,7 @@
     wrapperClass = '',
     label = { name: '', class: '' },
     value = $bindable(0),
-    type = 'vertical',
+    type = 'horizontal',
     number = {
       minNum: 0,
       maxNum: 100,

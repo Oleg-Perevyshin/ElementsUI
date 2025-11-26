@@ -97,8 +97,6 @@
 
   const updateValue = (index: number, delta: number) => {
     const axis = axes[axes.length == 2 ? index - 1 : index]
-    console.log(axis)
-
     const min = axis.minNum ?? -360
     const max = axis.maxNum ?? 360
 
@@ -198,7 +196,7 @@
         style="background: color-mix(in srgb, var(--bg-color), var(--shadow-color) 10%)"
       >
         <button
-          class="h-full cursor-pointer rounded-l-full px-3.5"
+          class="h-full rotate-270 cursor-pointer rounded-l-full px-3.5"
           title=""
           onclick={() => {
             if (value[0] - sensitivity <= (axes[0].minNum ?? -360)) {
@@ -221,7 +219,7 @@
           ></button
         >
         <button
-          class="h-full cursor-pointer rounded-r-full px-3.5"
+          class="h-full rotate-90 cursor-pointer rounded-r-full px-3.5"
           title=""
           onclick={() => {
             if (value[0] + sensitivity >= (axes[0].maxNum ?? 360)) {
@@ -248,7 +246,7 @@
   </div>
 
   <!-- Нижняя панель -->
-  <div class="mt-4 flex w-80 flex-col gap-2">
+  <div class="mt-3 flex w-80 flex-col gap-1">
     <div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class="flex w-full justify-center rounded-full">
       {#each sensitivityOptions as option, index}
         <button

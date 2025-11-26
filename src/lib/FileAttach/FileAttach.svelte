@@ -18,6 +18,7 @@
   let ID = `${id}-${crypto.randomUUID().slice(0, 6)}`
   let selectedFile = $state<File | null>(null)
   let previewUrl = $derived(currentImage ? (currentImage.startsWith('data:') ? currentImage : `data:image/png;base64,${currentImage}`) : null)
+  let fileName = $state('')
 
   const handleFileChange = (event: Event) => {
     const input = event.target as HTMLInputElement
@@ -39,9 +40,6 @@
     const input = document.getElementById(ID)
     input?.click()
   }
-
-  let fileName = $state('')
-  $effect(() => console.log(fileName))
 </script>
 
 <div class={twMerge(`flex flex-col items-center`, wrapperClass)}>
@@ -76,13 +74,24 @@
     </div>
   {:else}
     <label class="relative inline-block w-full">
-      <input id={ID} type="file" class="absolute left-0 z-1 h-8.5 w-full opacity-0" {accept} {disabled} onchange={handleFileChange} />
+      <input
+        id={ID}
+        type="file"
+        class="absolute left-0 z-1 h-8.5 w-full opacity-0 {disabled ? 'cursor-not-allowed' : 'cursor-pointer'}"
+        {accept}
+        {disabled}
+        onchange={handleFileChange}
+      />
       <div
         class="flex h-8.5 w-full overflow-hidden rounded-2xl font-semibold shadow-sm transition duration-250 hover:shadow-md
-              ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}"
+             "
       >
-        <div class="flex w-1/3 items-center justify-center bg-(--blue-color)">{$t('constructor.props.file.select')}</div>
-        <div class="flex w-2/3 items-center justify-start bg-(--back-color) px-2">{fileName || $t('constructor.props.file.notselected')}</div>
+        <div class="flex w-1/3 items-center justify-center bg-(--blue-color) {disabled ? 'opacity-50' : ''}">
+          {$t('constructor.props.file.select')}
+        </div>
+        <div class="flex w-2/3 items-center justify-start bg-(--back-color) px-2 {disabled ? 'opacity-50' : ''}">
+          {fileName || $t('constructor.props.file.notselected')}
+        </div>
       </div>
     </label>
   {/if}
