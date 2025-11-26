@@ -12,6 +12,7 @@
     properties: {
       id: crypto.randomUUID(),
       wrapperClass: 'bg-blue',
+      type: 'horizontal',
       label: { name: 'Label', class: 'text-center' },
       value: 80,
       number: { minNum: 0, maxNum: 100, units: '%' },

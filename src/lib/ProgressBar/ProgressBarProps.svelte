@@ -44,6 +44,15 @@
           onPropertyChange({ name: value.name?.split('—')[1].trim(), eventHandler: { Variables: value.value as string } })
         }}
       />
+      <UI.Select
+        wrapperClass="!h-14"
+        label={{ name: $t('constructor.props.type') }}
+        disabled={component.properties.bitMode}
+        type="buttons"
+        options={$optionsStore.SWITCH_OPTIONS.filter((o) => o.value !== 'checkbox')}
+        value={$optionsStore.SWITCH_OPTIONS.find((option) => option.value == component.properties.type)}
+        onUpdate={(option) => updateProperty('type', option.value as string, component, onPropertyChange)}
+      />
     </div>
     <div class="flex w-1/3 flex-col px-2">
       <UI.Input
@@ -116,6 +125,15 @@
         label={{ name: $t('constructor.props.id') }}
         value={component.properties.id}
         onUpdate={(value) => updateProperty('id', value as string, component, onPropertyChange)}
+      />
+      <UI.Select
+        wrapperClass="!h-14"
+        label={{ name: $t('constructor.props.type') }}
+        disabled={component.properties.bitMode}
+        type="buttons"
+        options={$optionsStore.SWITCH_OPTIONS.filter((o) => o.value !== 'checkbox')}
+        value={$optionsStore.SWITCH_OPTIONS.find((option) => option.value == component.properties.type)}
+        onUpdate={(option) => updateProperty('type', option.value as string, component, onPropertyChange)}
       />
       <UI.Input
         label={{ name: $t('constructor.props.wrapperclass') }}

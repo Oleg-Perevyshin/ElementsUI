@@ -8,9 +8,9 @@
     label = { name: '', class: '' },
     value = $bindable([0, 0, 0, 0]),
     axes = [
-      { name: 'Roll', minNum: -100, maxNum: 100 },
-      { name: 'Pitch', minNum: -100, maxNum: 100 },
-      { name: 'Yaw', minNum: -100, maxNum: 100 },
+      { name: 'Roll', minNum: -360, maxNum: 360 },
+      { name: 'Pitch', minNum: -360, maxNum: 360 },
+      { name: 'Yaw', minNum: -360, maxNum: 360 },
     ],
     buttonIcon,
     onUpdate = () => {},
@@ -22,13 +22,7 @@
       angle: 30.5,
       content: true,
       onClick: () => {
-        if (value[2] + sensitivity >= axes[2].maxNum) {
-          value[2] = axes[2].maxNum
-          onUpdate(value)
-          return
-        }
-
-        value[2] = roundToClean(value[2] + sensitivity)
+        updateValue(2, +sensitivity)
         onUpdate(value)
       },
     },
@@ -37,20 +31,9 @@
       angle: 58,
       content: false,
       onClick: () => {
-        if (value[2] + sensitivity >= axes[2].maxNum) {
-          value[2] = axes[2].maxNum
-          onUpdate(value)
-        } else {
-          value[2] = roundToClean(value[2] + sensitivity)
-          onUpdate(value)
-        }
-        if (value[1] - sensitivity <= axes[1].minNum) {
-          value[1] = axes[1].minNum
-          onUpdate(value)
-        } else {
-          value[1] = roundToClean(value[1] - sensitivity)
-          onUpdate(value)
-        }
+        updateValue(2, +sensitivity)
+        updateValue(1, -sensitivity)
+        onUpdate(value)
       },
     },
     {
@@ -58,12 +41,7 @@
       angle: 122,
       content: true,
       onClick: () => {
-        if (value[1] - sensitivity <= axes[1].minNum) {
-          value[1] = axes[1].minNum
-          onUpdate(value)
-          return
-        }
-        value[1] = roundToClean(value[1] - sensitivity)
+        updateValue(1, -sensitivity)
         onUpdate(value)
       },
     },
@@ -72,20 +50,9 @@
       angle: 149.5,
       content: false,
       onClick: () => {
-        if (value[2] - sensitivity <= axes[2].minNum) {
-          value[2] = axes[2].minNum
-          onUpdate(value)
-        } else {
-          value[2] = roundToClean(value[2] - sensitivity)
-          onUpdate(value)
-        }
-        if (value[1] - sensitivity <= axes[1].minNum) {
-          value[1] = axes[1].minNum
-          onUpdate(value)
-        } else {
-          value[1] = roundToClean(value[1] - sensitivity)
-          onUpdate(value)
-        }
+        updateValue(2, -sensitivity)
+        updateValue(1, -sensitivity)
+        onUpdate(value)
       },
     },
     {
@@ -93,12 +60,7 @@
       angle: 212,
       content: true,
       onClick: () => {
-        if (value[2] - sensitivity <= axes[2].minNum) {
-          value[2] = axes[2].minNum
-          onUpdate(value)
-          return
-        }
-        value[2] = roundToClean(value[2] - sensitivity)
+        updateValue(2, -sensitivity)
         onUpdate(value)
       },
     },
@@ -107,20 +69,9 @@
       angle: 239,
       content: false,
       onClick: () => {
-        if (value[1] + sensitivity >= axes[1].maxNum) {
-          value[1] = axes[1].maxNum
-          onUpdate(value)
-        } else {
-          value[1] = roundToClean(value[1] + sensitivity)
-          onUpdate(value)
-        }
-        if (value[2] - sensitivity <= axes[2].minNum) {
-          value[2] = axes[2].minNum
-          onUpdate(value)
-        } else {
-          value[2] = roundToClean(value[2] - sensitivity)
-          onUpdate(value)
-        }
+        updateValue(1, +sensitivity)
+        updateValue(2, -sensitivity)
+        onUpdate(value)
       },
     },
     {
@@ -128,12 +79,7 @@
       angle: 301,
       content: true,
       onClick: () => {
-        if (value[1] + sensitivity >= axes[1].maxNum) {
-          value[1] = axes[1].maxNum
-          onUpdate(value)
-          return
-        }
-        value[1] = roundToClean(value[1] + sensitivity)
+        updateValue(1, +sensitivity)
         onUpdate(value)
       },
     },
@@ -142,23 +88,22 @@
       angle: 328,
       content: false,
       onClick: () => {
-        if (value[1] + sensitivity >= axes[1].maxNum) {
-          value[1] = axes[1].maxNum
-          onUpdate(value)
-        } else {
-          value[1] = roundToClean(value[1] + sensitivity)
-          onUpdate(value)
-        }
-        if (value[2] + sensitivity >= axes[2].maxNum) {
-          value[2] = axes[2].maxNum
-          onUpdate(value)
-        } else {
-          value[2] = roundToClean(value[2] + sensitivity)
-          onUpdate(value)
-        }
+        updateValue(1, +sensitivity)
+        updateValue(2, +sensitivity)
+        onUpdate(value)
       },
     },
   ]
+
+  const updateValue = (index: number, delta: number) => {
+    const axis = axes[axes.length == 2 ? index - 1 : index]
+    console.log(axis)
+
+    const min = axis.minNum ?? -360
+    const max = axis.maxNum ?? 360
+
+    value[index] = Math.min(max, Math.max(min, roundToClean(value[index] + delta)))
+  }
 
   const sensitivityOptions = [0.01, 0.1, 1.0, 10, 100]
   let sensitivity = $state(1.0)
@@ -179,13 +124,15 @@
   }
 </script>
 
-<div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class={twMerge(`bg-red relative flex w-full flex-col items-center`, wrapperClass)}>
+<div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class={twMerge(`bg-blue relative container flex w-full flex-col items-center`, wrapperClass)}>
   {#if label.name}
     <h5 class={twMerge(`w-full px-4 text-center`, label.class)}>{label.name}</h5>
   {/if}
 
-  <div class=" flex w-1/2 items-center justify-center">
-    <div class="relative z-10 flex size-40 items-center justify-center rounded-full bg-(--bg-color) shadow-[0_0_20px_rgb(0_0_0_/0.25)]">
+  <div class="flex w-1/2 items-center justify-center">
+    <div
+      class="relative z-10 flex size-40 min-h-40 min-w-40 items-center justify-center rounded-full bg-(--bg-color) shadow-[0_0_20px_rgb(0_0_0_/0.25)]"
+    >
       <!-- Основные кнопки (оси pitch и yaw) -->
       <div class="absolute h-full w-full overflow-hidden rounded-full">
         {#each directions as direction, index}
@@ -254,8 +201,8 @@
           class="h-full cursor-pointer rounded-l-full px-3.5"
           title=""
           onclick={() => {
-            if (value[0] - sensitivity <= axes[0].minNum) {
-              value[0] = axes[0].minNum
+            if (value[0] - sensitivity <= (axes[0].minNum ?? -360)) {
+              value[0] = axes[0].minNum ?? -360
               onUpdate(value)
               return
             }
@@ -277,8 +224,8 @@
           class="h-full cursor-pointer rounded-r-full px-3.5"
           title=""
           onclick={() => {
-            if (value[0] + sensitivity >= axes[0].maxNum) {
-              value[0] = axes[0].maxNum
+            if (value[0] + sensitivity >= (axes[0].maxNum ?? 360)) {
+              value[0] = axes[0].maxNum ?? 360
               onUpdate(value)
               return
             }
@@ -300,8 +247,9 @@
     {/if}
   </div>
 
-  <div class="flex items-center md:absolute md:left-[calc(50%+120px)]">
-    <div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class="flex h-full flex-col justify-center rounded-full p-10">
+  <!-- Нижняя панель -->
+  <div class="mt-4 flex w-80 flex-col gap-2">
+    <div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class="flex w-full justify-center rounded-full">
       {#each sensitivityOptions as option, index}
         <button
           id={crypto.randomUUID()}
@@ -312,8 +260,8 @@
                 ? 'z-10 py-1 shadow-[0_0_10px_var(--shadow-color)] hover:shadow-[0_0_15px_var(--shadow-color)]'
                 : ''
             }  
-            ${sensitivityOptions.length > 0 && index === 0 ? 'rounded-t-2xl' : ''} ${
-              index === sensitivityOptions.length - 1 ? 'rounded-b-2xl' : ''
+            ${sensitivityOptions.length > 0 && index === 0 ? 'rounded-l-2xl' : ''} ${
+              index === sensitivityOptions.length - 1 ? 'rounded-r-2xl' : ''
             } bg-(--back-color)`)}
           onclick={() => {
             sensitivity = option
@@ -330,19 +278,21 @@
       {/each}
     </div>
 
-    <div>
+    <div class="flex justify-around">
       {#each axes as axe, index}
-        <h5 class="w-full px-4 text-center">{axe.name}</h5>
-        <input
-          class={`w-20 rounded-2xl border border-(--border-color) px-4 py-1 text-center transition-all duration-300 outline-none
+        <div>
+          <h5 class=" px-4 text-center">{axe.name}</h5>
+          <input
+            class={`w-20 rounded-2xl border border-(--border-color) px-4 py-1 text-center transition-all duration-300 outline-none
               hover:shadow-md 
               [&::-webkit-inner-spin-button]:hidden
               [&::-webkit-outer-spin-button]:hidden`}
-          style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"
-          value={value[axes.length == 3 ? index : index + 1]}
-          id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
-          readonly
-        />
+            style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"
+            value={value[axes.length == 3 ? index : index + 1]}
+            id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
+            readonly
+          />
+        </div>
       {/each}
     </div>
   </div>

@@ -56,4 +56,5 @@ export {
   type ITabsProps,
   type IJoystickProps,
   type IFileAttachProps,
+  type IDeviceGNSS,
 } from './types'

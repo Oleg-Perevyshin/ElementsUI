@@ -92,7 +92,7 @@
         class={twMerge(
           `h-full w-full resize-y rounded-2xl border border-(--border-color) px-2 py-1 text-center font-mono outline-none focus:border-blue-400
             ${isValid ? 'border-(--border-color)' : 'border-red-400 shadow-[0_0_6px_var(--red-color)]'}
-            ${disabled ? 'opacity-50' : 'hover:shadow-md'} 
+            ${disabled ? 'cursor-not-allowed opacity-50' : 'hover:shadow-md'} 
             ${readonly ? '' : 'hover:shadow-md'}
             ${help?.info ? 'pl-8' : ''}
             ${help.copyButton ? 'pr-8' : ''}`,
@@ -137,9 +137,9 @@
       </button>
     {/if}
 
-    {#if help.copyButton && (type === 'text' || type === 'text-area')}
+    {#if help.copyButton && (type === 'text' || type === 'text-area') && !disabled}
       <button
-        class="absolute right-3 flex cursor-pointer border-none bg-transparent {type === 'text-area' ? 'top-2' : ''}"
+        class="absolute right-3 flex border-none bg-transparent {type === 'text-area' ? 'top-2' : ''} cursor-pointer"
         onclick={(e) => {
           e.preventDefault()
           navigator.clipboard.writeText(value as string)

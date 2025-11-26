@@ -7,9 +7,13 @@
   import GitHub from '../appIcons/GitHub.svelte'
   import { goto } from '$app/navigation'
   import { page } from '$app/state'
+  import { fade } from 'svelte/transition'
+  import { Language, LOCALES } from '../lib/locales/i18n'
 
   let { children } = $props()
   let currentTheme: boolean = $state(true)
+  let showLanguageModal = $state(false)
+  let currentLanguage = $state(LOCALES[0])
 
   let activePage = $derived(page.url.pathname)
 
@@ -42,6 +46,18 @@
     window.dispatchEvent(new CustomEvent('ThemeChange', { detail: { currentTheme } }))
   }
 
+  /* Переключение языка */
+  const switchLanguage = (value: string) => {
+    const lang = LOCALES.find((lang) => lang.value === value)
+    if (lang) {
+      Language.set(lang.value)
+      UI.Language.set(lang.value)
+      currentLanguage = lang
+      localStorage.setItem('AppLanguage', lang.value)
+      showLanguageModal = false
+    }
+  }
+
   let DeviceVariables = $state<{ id: string; value: string; name: string; class: string }[]>([
     { id: crypto.randomUUID(), value: 'DevSN', name: 'DevSN — Серийный номер устройства', class: 'justify-start' },
     { id: crypto.randomUUID(), value: 'DevName', name: 'DevName — Название устройства', class: 'justify-start' },
@@ -65,7 +81,29 @@
     <div class="flex items-center gap-2">
       <a href="/ElementsUI/" class="ml-2 no-underline! transition hover:scale-101"><h1>POE-Svelte-UI-Lib</h1></a>
     </div>
-    <div class="flex items-center gap-6">
+    <div class="flex items-center gap-4">
+      <div class="relative mx-1 flex h-full items-center" role="button" tabindex="0">
+        <UI.Button
+          wrapperClass="lang-button w-9"
+          componentClass="p-1"
+          content={{ icon: currentLanguage.component }}
+          onClick={() => (showLanguageModal = !showLanguageModal)}
+        />
+        {#if showLanguageModal}
+          <div
+            class="absolute top-full left-full z-50 w-44 -translate-x-1/2 transform rounded-2xl bg-(--container-color) px-2 shadow-lg"
+            transition:fade={{ duration: 250 }}
+          >
+            {#each LOCALES as lang (lang.value)}
+              <UI.Button
+                content={{ name: lang.name, icon: lang.component }}
+                componentClass="h-12 border-0 text-center bg-transparent !shadow-none hover:translate-x-1 hover:shadow-none"
+                onClick={() => switchLanguage(lang.value)}
+              />
+            {/each}
+          </div>
+        {/if}
+      </div>
       <UI.Button componentClass="w-8" content={{ icon: IconLightDark }} onClick={switchTheme} />
       <UI.Button
         componentClass="w-8"

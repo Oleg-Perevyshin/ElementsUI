@@ -34,7 +34,7 @@
     action?: string
   }
   const columns: ITableHeader<ITableRow>[] = [
-    { label: { name: 'ID' }, key: 'id', width: '5%', sortable: true, align: 'center' },
+    { label: { name: 'ID' }, key: 'id', width: '5%', sortable: true, align: { content: 'center' } },
     {
       label: { name: 'Image' },
       key: 'imageUrl',
@@ -71,7 +71,7 @@
       label: { name: 'Actions' },
       key: 'action',
       width: '15%',
-      align: 'center',
+      align: { content: 'center' },
       buttons: [
         { name: 'Action 1 (id)', class: 'bg-blue', eventHandler: { Header: 'SET', Argument: 'save', Variables: ['name'] } },
         { name: 'Action 2 (name)', class: 'bg-green', onClick: (row) => console.log(row.name) },
@@ -116,9 +116,9 @@
 <div class="flex h-full flex-col items-center overflow-hidden overflow-y-visible">
   <h2>Обзорная страница компонентов</h2>
 
-  <div class="flex w-full flex-col">
+  <div class="flex w-full flex-col gap-2">
     <!-- Компонент ACCORDION -->
-    <UI.Accordion label={{ name: 'Accordion' }} isOpen={false} wrapperClass="mb-2">
+    <UI.Accordion label={{ name: 'Accordion' }} isOpen={false}>
       <UI.Accordion label={{ name: 'Accordion 1', class: '' }} isOpen={false} outline={true} wrapperClass="col-span-3">
         <h6>Содержимое вложенного Accordion 1</h6>
         <h5>Содержимое вложенного Accordion 1</h5>
@@ -143,29 +143,25 @@
     </UI.Accordion>
 
     <!-- Компонент BUTTON -->
-    <UI.Accordion label={{ name: 'Button' }} isOpen={false} wrapperClass="mb-2">
-      <UI.Button content={{ name: 'Button 1', icon: IconGripHorizontalUp }} componentClass="h-20 bg-gray" />
-      <UI.Button content={{ icon: IconGripVerticalLeft }} componentClass="h-9 w-9 bg-red border-none rounded-full" />
-      <UI.Button content={{ icon: IconGripVerticalRight }} componentClass="h-15 w-50 bg-blue rounded-full" />
-      <UI.Button wrapperClass="w-50" content={{ icon: IconGripVerticalDual }} componentClass="h-10 bg-green rounded-full" />
-      <UI.Button content={{ icon: IconGripHorizontalUp }} componentClass="h-15 w-20 rounded-full" />
-      <UI.Button content={{ icon: IconGripHorizontalDown }} componentClass="h-15 rounded-full" />
-      <UI.Button content={{ icon: IconGripHorizontalDual }} componentClass="h-15 rounded-full" />
-      <UI.Button content={{ icon: GitHub }} componentClass="w-15 rounded-full" />
-      <UI.Button content={{ name: 'Button 3', info: { text: 'button for send to server', side: 'top' } }} componentClass="bg-yellow" />
-      <UI.Button content={{ name: 'Button 4' }} componentClass="bg-blue h-12 rounded-xl" />
-      <UI.Button content={{ name: 'Button 5' }} componentClass="bg-green" />
-      <UI.Button content={{ name: 'Button 6' }} componentClass="bg-purple" />
+    <UI.Accordion label={{ name: 'Button' }} isOpen={false}>
+      <UI.Button content={{ name: 'Button 1' }} componentClass="bg-red" />
+      <UI.Button content={{ name: 'Button 2', info: { text: 'Info for Button 2', side: 'top' } }} componentClass="bg-yellow" />
+      <UI.Button content={{ name: 'Button 3' }} componentClass="bg-blue" disabled />
+      <UI.Button content={{ name: 'Button 4', icon: IconGripVerticalDual }} componentClass="bg-green h-12 rounded-3xl" />
+      <div class="flex h-10 items-center justify-around">
+        <UI.Button content={{ icon: IconGripHorizontalUp }} wrapperClass=" w-20 h-10 " componentClass="bg-purple rounded-full" />
+        <UI.Button content={{ icon: IconGripHorizontalDown, info: { text: 'Info for Icon Button', side: 'right' } }} wrapperClass="w-10" />
+      </div>
     </UI.Accordion>
 
     <!-- Компонент COLOR PICKER -->
-    <UI.Accordion label={{ name: 'Color Picker' }} isOpen={false} wrapperClass="mb-2">
-      <UI.ColorPicker wrapperClass="!w-100" label={{ name: 'Выбор цвета из палитры' }} value={[186, 25, 255]} />
+    <UI.Accordion label={{ name: 'Color Picker' }} isOpen={false}>
+      <UI.ColorPicker label={{ name: 'Выбор цвета из палитры' }} value={[186, 25, 255]} />
     </UI.Accordion>
 
     <!-- Компонент FILE ATTACH -->
-    <UI.Accordion label={{ name: 'File Attach' }} isOpen={false} wrapperClass="mb-2">
-      <div class="flex w-full flex-row items-start gap-4">
+    <UI.Accordion label={{ name: 'File Attach' }} isOpen={false}>
+      <div class="flex w-full flex-row items-center justify-between">
         <UI.FileAttach id={crypto.randomUUID()} label={{ name: 'Выберите файл' }} type="file" />
         <UI.FileAttach id={crypto.randomUUID()} label={{ name: 'Выберите файл' }} type="file" disabled />
         <UI.FileAttach
@@ -191,14 +187,34 @@
     </UI.Accordion>
 
     <!-- Компонент GRAPH -->
-    <UI.Accordion label={{ name: 'Graph' }} isOpen={false} wrapperClass="mb-2">
+    <UI.Accordion label={{ name: 'Graph' }} isOpen={false}>
       <UI.Graph label={{ name: 'Пример компонента график' }} streamingData={{ data: dataForGraph }} isTest={true} />
     </UI.Accordion>
 
     <!-- Компонент INPUT -->
-    <UI.Accordion label={{ name: 'Input' }} isOpen={false} wrapperClass="mb-2 ">
+    <UI.Accordion label={{ name: 'Input' }} isOpen={false}>
       <div class="flex w-full flex-col items-center gap-2">
-        <UI.Input wrapperClass="!w-60" help={{ copyButton: true, regExp: /^[\w\s-]{4,16}$/ }} bind:value={inputString} type="text" maxlength={20} />
+        <UI.Input wrapperClass="!w-60" help={{ regExp: /^[\w\s-]{4,16}$/ }} bind:value={inputString} type="text" maxlength={20} />
+        <div class="flex justify-between gap-4">
+          <UI.Input
+            wrapperClass="!w-60"
+            help={{ copyButton: true, regExp: /^[\w\s-]{4,16}$/ }}
+            bind:value={inputString}
+            readonly
+            type="text"
+            maxlength={20}
+          />
+          <UI.Input wrapperClass="!w-60" help={{ regExp: /^[\w\s-]{4,16}$/ }} placeholder={inputString} type="text" maxlength={20} />
+          <UI.Input
+            wrapperClass="!w-60"
+            help={{ copyButton: true, regExp: /^[\w\s-]{4,16}$/ }}
+            bind:value={inputString}
+            readonly
+            type="text"
+            maxlength={20}
+            disabled
+          />
+        </div>
         <UI.Input
           wrapperClass="!w-30 bg-green"
           value={inputNumber}
@@ -217,13 +233,27 @@
           maxlength={150}
           textareaRows={2}
         />
-        <p>bind:string: {inputString}</p>
+        <p>string: {inputString}</p>
         <p>number: {inputNumber}</p>
       </div>
     </UI.Accordion>
 
+    <!-- Компонент JOYSTICK -->
+    <UI.Accordion label={{ name: 'Joystick' }} isOpen={true}>
+      <div class="flex">
+        <UI.Joystick label={{ name: 'Управление по 3 осям' }} />
+        <UI.Joystick
+          label={{ name: 'Управление по 2 осям' }}
+          axes={[
+            { name: 'Pitch', minNum: -100, maxNum: 100 },
+            { name: 'Yaw', minNum: -100, maxNum: 100 },
+          ]}
+        />
+      </div>
+    </UI.Accordion>
+
     <!-- Компонент PROGRESS BAR -->
-    <UI.Accordion label={{ name: 'Progress Bar' }} isOpen={false} wrapperClass="mb-2">
+    <UI.Accordion label={{ name: 'Progress Bar' }} isOpen={false}>
       <UI.ProgressBar value={progressBarValue} wrapperClass="bg-yellow" />
       <div class="flex">
         <UI.Button
@@ -242,7 +272,7 @@
     </UI.Accordion>
 
     <!-- Компонент SELECT -->
-    <UI.Accordion label={{ name: 'Select' }} isOpen={false} wrapperClass="mb-2">
+    <UI.Accordion label={{ name: 'Select' }} isOpen={false}>
       <div class="col-span-10 flex flex-col items-center">
         <UI.Select type="input" label={{ name: 'Компоненты' }} options={COMPONENT_OPTIONS} onUpdate={(option) => (selectOption = option)} />
         <p>{JSON.stringify(selectOption)}</p>
@@ -252,7 +282,7 @@
     </UI.Accordion>
 
     <!-- Компонент SLIDER -->
-    <UI.Accordion label={{ name: 'Slider' }} isOpen={false} wrapperClass="mb-2">
+    <UI.Accordion label={{ name: 'Slider' }} isOpen={false}>
       <UI.Slider
         wrapperClass="!w-1/3 bg-red px-2"
         label={{ name: 'Слайдер' }}
@@ -305,7 +335,7 @@
     </UI.Accordion>
 
     <!-- Компонент SWITCH -->
-    <UI.Accordion label={{ name: 'Switch' }} isOpen={false} wrapperClass="mb-2">
+    <UI.Accordion label={{ name: 'Switch' }} isOpen={false}>
       <div class="flex">
         <UI.Switch
           wrapperClass="bg-blue"
@@ -317,7 +347,7 @@
     </UI.Accordion>
 
     <!-- Компонент TABLE -->
-    <UI.Accordion label={{ name: 'Table' }} isOpen={true} wrapperClass="mb-2">
+    <UI.Accordion label={{ name: 'Table' }} isOpen={true}>
       <UI.Table
         label={{ name: 'Devices' }}
         header={columns}
@@ -344,7 +374,7 @@
     </UI.Accordion>
 
     <!-- Компонент TEXT FIELD -->
-    <UI.Accordion label={{ name: 'Text Field' }} isOpen={false} wrapperClass="mb-2">
+    <UI.Accordion label={{ name: 'Text Field' }} isOpen={false}>
       <UI.TextField content={{ name: 'Random text', size: 'small', class: '' }} wrapperClass="text-gray-400" />
       <UI.TextField content={{ name: 'Random text', size: 'base', class: 'font-bold' }} wrapperClass="text-red-400" />
       <UI.TextField content={{ name: 'Random text', size: 'large', class: '' }} wrapperClass="text-lime-400" />

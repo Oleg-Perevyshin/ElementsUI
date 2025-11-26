@@ -300,6 +300,7 @@ export interface ITableHeader<T extends object> {
   buttons?: {
     name: string | ((row: T) => string)
     class?: string | ((row: T) => string)
+    eventHandler?: IUIComponentHandler
     onClick?: (row: T) => void
   }[]
   image?: {
@@ -351,7 +352,7 @@ export interface IJoystickProps {
   wrapperClass?: string
   label?: { name?: string; class?: string }
   value?: number[]
-  axes?: { name: string; minNum: number; maxNum: number }[]
+  axes?: { name: string; minNum?: number; maxNum?: number }[]
   buttonIcon?: string
   onUpdate?: (value: number[]) => void
 }

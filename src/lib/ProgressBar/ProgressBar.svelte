@@ -62,7 +62,7 @@
   {/if}
 
   {#if type == 'vertical'}
-    <div class="flex h-full w-fit min-w-16 flex-col items-center gap-2 rounded-full bg-(--bg-color) px-2">
+    <div class="flex h-full w-fit min-w-16 flex-col items-center gap-2 rounded-full bg-(--bg-color) p-2">
       <div class="relative my-auto h-[80%] w-[70%] rounded-full bg-(--back-color)/40">
         <div class="absolute bottom-0 left-0 flex w-full rounded-full bg-(--field-color)" style="height: {progressPercent()}%;"></div>
       </div>

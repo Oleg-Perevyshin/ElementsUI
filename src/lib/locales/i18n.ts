@@ -1,20 +1,20 @@
 import { derived, type Readable } from 'svelte/store'
 import { writable } from 'svelte/store'
 import translations from './translations'
+import FlagZh from './FlagZh.svelte'
+import FlagRu from './FlagRu.svelte'
+import FlagEn from './FlagEn.svelte'
 
 /* Язык по умолчанию */
 let initialLanguage = 'ru'
 
-export const getInitLanguage = () => {
-  /* Проверяем, доступен ли localStorage */
-  if (typeof window !== 'undefined') {
-    initialLanguage = localStorage.getItem('AppLanguage') || navigator.language?.split('-')[0]?.toLowerCase() || 'ru'
-    const supported = ['ru', 'en', 'zh']
-    if (!supported.includes(initialLanguage)) {
-      initialLanguage = 'ru'
-    }
+/* Проверяем, доступен ли localStorage */
+if (typeof window !== 'undefined') {
+  initialLanguage = localStorage.getItem('AppLanguage') || navigator.language?.split('-')[0]?.toLowerCase() || 'ru'
+  const supported = ['ru', 'en', 'zh']
+  if (!supported.includes(initialLanguage)) {
+    initialLanguage = 'ru'
   }
-  return initialLanguage
 }
 
 /* Создаем хранилище с начальным значением языка */
@@ -30,9 +30,9 @@ export function setLanguage(newLang: string) {
 
 /* Поддерживаемые языки (код, название языка, флаг) */
 export const LOCALES = [
-  { id: 'app-language-ru', name: 'РУС', value: 'ru' },
-  { id: 'app-language-en', name: 'ENG', value: 'en' },
-  { id: 'app-language-zh', name: '中文', value: 'zh' },
+  { id: 'app-language-ru', name: 'Русский', value: 'ru', component: FlagRu },
+  { id: 'app-language-en', name: 'English', value: 'en', component: FlagEn },
+  { id: 'app-language-zh', name: '中国人', value: 'zh', component: FlagZh },
 ]
 
 /* Функция для перевода для текущего языка */

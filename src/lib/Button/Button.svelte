@@ -85,10 +85,10 @@
       if (content.info?.text) showInfo = false
     }}
   >
-    <span class=" flex flex-row items-center justify-center gap-2">
+    <div class=" flex flex-row items-center justify-center gap-2">
       {#if content?.icon}
         <span
-          class={`flex items-center justify-center overflow-visible 
+          class={` ${content.name ? 'absolute left-3' : ''}  flex items-center justify-center overflow-visible 
             ${content.name ? 'h-8 w-8' : `${svgSize()}`} [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full`}
         >
           {#if typeof content?.icon === 'string'}
@@ -110,7 +110,7 @@
           {/if}
         </div>
       {/if}
-    </span>
+    </div>
   </button>
 
   {#if showInfo && content.info?.side === 'top'}

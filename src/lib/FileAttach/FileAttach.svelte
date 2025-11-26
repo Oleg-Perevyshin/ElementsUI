@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { t } from '$lib/locales/i18n'
   import type { IFileAttachProps } from '$lib/types'
   import { twMerge } from 'tailwind-merge'
 
@@ -27,6 +28,7 @@
 
     const file = input.files[0]
     selectedFile = file
+    fileName = file.name
 
     if (file.type.startsWith('image/')) previewUrl = URL.createObjectURL(file)
 
@@ -37,6 +39,9 @@
     const input = document.getElementById(ID)
     input?.click()
   }
+
+  let fileName = $state('')
+  $effect(() => console.log(fileName))
 </script>
 
 <div class={twMerge(`flex flex-col items-center`, wrapperClass)}>
@@ -71,16 +76,14 @@
     </div>
   {:else}
     <label class="relative inline-block w-full">
-      <input
-        id={ID}
-        type="file"
-        class={`h-8.5 w-full rounded-2xl bg-(--back-color) font-semibold shadow-sm transition duration-250 hover:shadow-md
-          ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'} invalid:shadow-[0_0_6px(--red-color) file:h-full file:w-1/3 
-          file:cursor-pointer file:border-none file:bg-(--blue-color) invalid:border-red-400`}
-        {accept}
-        {disabled}
-        onchange={handleFileChange}
-      />
+      <input id={ID} type="file" class="absolute left-0 z-1 h-8.5 w-full opacity-0" {accept} {disabled} onchange={handleFileChange} />
+      <div
+        class="flex h-8.5 w-full overflow-hidden rounded-2xl font-semibold shadow-sm transition duration-250 hover:shadow-md
+              ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}"
+      >
+        <div class="flex w-1/3 items-center justify-center bg-(--blue-color)">{$t('constructor.props.file.select')}</div>
+        <div class="flex w-2/3 items-center justify-start bg-(--back-color) px-2">{fileName || $t('constructor.props.file.notselected')}</div>
+      </div>
     </label>
   {/if}
 </div>
