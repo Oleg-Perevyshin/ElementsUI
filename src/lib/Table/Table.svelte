@@ -160,7 +160,11 @@
     <h5 class={twMerge(`w-full px-4 text-center`, label.class)}>{label.name}</h5>
   {/if}
 
-  <div class="flex h-full flex-col overflow-hidden rounded-xl border {outline ? ' border-(--border-color)' : 'border-transparent'} ">
+  <div
+    class="flex h-full flex-col overflow-hidden rounded-xl border shadow-sm transition duration-200 hover:shadow-md {outline
+      ? ' border-(--border-color)'
+      : 'border-transparent'} "
+  >
     <!-- Table Header -->
     <div class="grid font-semibold" style={`grid-template-columns: ${header.map((c) => c.width || 'minmax(0, 1fr)').join(' ')};`}>
       {#each header as column, index (column)}
@@ -211,7 +215,7 @@
                   {#each column.buttons as button (button)}
                     <button
                       class="{twMerge(`cursor-pointer rounded-full 
-                           px-4 py-1 font-medium transition-shadow outline-none select-none hover:shadow-md
+                           px-4 py-1 font-medium shadow-sm transition-shadow duration-200 outline-none select-none hover:shadow-md
                           ${typeof button.class === 'function' ? button.class(row) : button.class}`)} bg-(--bg-color)"
                       onclick={() => buttonClick(row, button)}
                     >

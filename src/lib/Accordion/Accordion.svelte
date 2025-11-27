@@ -20,8 +20,8 @@
 <div
   id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
   class={twMerge(
-    `${outline ? 'border-none' : 'rounded-xl hover:shadow-md'} w-full
-    border border-(--border-color) bg-(--container-color) p-0 transition-shadow duration-250`,
+    `${outline ? 'border-none' : 'rounded-xl shadow-sm hover:shadow-md'} w-full
+     bg-(--container-color) p-0 transition-shadow duration-250`,
     wrapperClass,
   )}
   transition:slide={{ duration: 250 }}
@@ -45,7 +45,11 @@
         {/if}
       </span>
 
-      <span class="{twMerge('m-0 w-full cursor-pointer px-3 text-left font-semibold', label.class)} text-lg">
+      <span
+        class="{twMerge('m-0 w-full cursor-pointer px-3 text-left font-semibold', label.class)} text-lg {isOpen
+          ? 'text-blue-500 dark:text-blue-400'
+          : ''}"
+      >
         {label?.name}
       </span>
     </div>

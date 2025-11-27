@@ -51,8 +51,8 @@
     <div class="relative">
       <button
         class="flex items-center justify-center overflow-hidden {imageSize.form === 'circle' ? 'rounded-full' : 'rounded-2xl'} 
-        bg-(--back-color) shadow-sm transition duration-250 hover:shadow-md
-        {disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}"
+        bg-(--back-color) shadow-sm transition duration-250
+        {disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:shadow-md'}"
         style={`height: ${imageSize.height}; width: ${imageSize.width}`}
         onclick={triggerFileInput}
         {disabled}
@@ -83,14 +83,14 @@
         onchange={handleFileChange}
       />
       <div
-        class="flex h-8.5 w-full overflow-hidden rounded-2xl font-semibold shadow-sm transition duration-250 hover:shadow-md
+        class="flex w-full overflow-hidden rounded-2xl font-semibold shadow-sm transition duration-250 {disabled ? '' : 'hover:shadow-md'}
              "
       >
-        <div class="flex w-1/3 items-center justify-center bg-(--blue-color) {disabled ? 'opacity-50' : ''}">
+        <div class="flex w-1/3 items-center justify-center bg-(--blue-color) p-2 py-1 {disabled ? 'opacity-50' : ''}">
           {$t('constructor.props.file.select')}
         </div>
-        <div class="flex w-2/3 items-center justify-start bg-(--back-color) px-2 {disabled ? 'opacity-50' : ''}">
-          {fileName || $t('constructor.props.file.notselected')}
+        <div class="flex flex-1 items-center justify-start truncate bg-(--back-color) px-2 {disabled ? 'opacity-50' : ''}">
+          <p class="truncate">{fileName || $t('constructor.props.file.notselected')}</p>
         </div>
       </div>
     </label>

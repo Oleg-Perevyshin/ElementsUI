@@ -99,8 +99,8 @@
       id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
       value={value?.value ? String(value.value) : ''}
       class={twMerge(
-        `w-full rounded-2xl border border-(--border-color) p-1 text-center duration-250
-        ${disabled ? 'opacity-50' : 'cursor-pointer hover:shadow-lg'}`,
+        `w-full rounded-2xl border border-(--border-color) p-1 text-center shadow-sm transition-shadow duration-200
+        ${disabled ? 'opacity-50' : 'cursor-pointer hover:shadow-md'}`,
         value?.class,
       )}
       style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"
@@ -164,10 +164,10 @@
   {:else if type === 'input'}
     <input
       bind:value={searchValue}
-      class="w-full appearance-none rounded-2xl border px-4 py-1 text-center transition-shadow
-          outline-none hover:shadow-md focus:border-blue-400
+      class="w-full appearance-none rounded-2xl border px-4 py-1 text-center shadow-sm
+          transition-shadow duration-200 outline-none focus:border-blue-400
           [&::-webkit-inner-spin-button]:hidden [&::-webkit-outer-spin-button]:hidden
-          {disabled ? 'cursor-not-allowed opacity-50' : 'cursor-text'} border-(--border-color)"
+          {disabled ? 'cursor-not-allowed opacity-50' : 'cursor-text'} border-(--border-color) hover:shadow-md"
       style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"
       id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
       {disabled}

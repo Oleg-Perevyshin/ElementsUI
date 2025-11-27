@@ -19,7 +19,7 @@
       },
       label: {
         name: 'Accordion',
-        class: 'text-center',
+        class: 'text-left',
       },
     },
     position: { row: 0, col: 0, width: 0, height: 0 },

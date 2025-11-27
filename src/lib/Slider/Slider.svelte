@@ -110,6 +110,7 @@
               [&::-webkit-slider-runnable-track]:rounded-l-full
               [&::-webkit-slider-runnable-track]:bg-(--gray-color)
               [&::-webkit-slider-runnable-track]:px-2
+              [&::-webkit-slider-runnable-track]:shadow-sm
               [&::-webkit-slider-thumb]:relative
               [&::-webkit-slider-thumb]:size-4
               [&::-webkit-slider-thumb]:cursor-pointer
@@ -156,6 +157,7 @@
               [&::-webkit-slider-runnable-track]:rounded-r-full
               [&::-webkit-slider-runnable-track]:bg-(--gray-color)
               [&::-webkit-slider-runnable-track]:px-2
+              [&::-webkit-slider-runnable-track]:shadow-sm
               [&::-webkit-slider-thumb]:relative
               [&::-webkit-slider-thumb]:size-4
               [&::-webkit-slider-thumb]:cursor-pointer
@@ -197,6 +199,7 @@
             `h-8 w-full appearance-none overflow-hidden rounded-full accent-(--back-color) 
               [&::-webkit-slider-runnable-track]:rounded-full
               [&::-webkit-slider-runnable-track]:bg-(--gray-color)
+              [&::-webkit-slider-runnable-track]:shadow-sm
               [&::-webkit-slider-thumb]:relative 
 
               [&::-webkit-slider-thumb]:ml-[-0.4rem] 

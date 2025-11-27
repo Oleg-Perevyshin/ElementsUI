@@ -64,8 +64,8 @@
       <input
         bind:value
         class={twMerge(
-          `w-full rounded-2xl border px-4 py-1 text-center transition-all duration-300 outline-none focus:border-blue-400
-              [&::-webkit-inner-spin-button]:hidden [&::-webkit-outer-spin-button]:hidden
+          `w-full rounded-2xl border px-4 py-1 text-center shadow-sm transition duration-200
+              outline-none focus:border-blue-400 [&::-webkit-inner-spin-button]:hidden [&::-webkit-outer-spin-button]:hidden
               ${isValid ? 'border-(--border-color)' : 'border-red-400 shadow-[0_0_6px_var(--red-color)] focus:border-red-400'}
               ${disabled ? 'opacity-50' : 'hover:shadow-md'} 
               ${readonly ? '' : 'hover:shadow-md'}
@@ -90,7 +90,8 @@
       <textarea
         bind:value
         class={twMerge(
-          `h-full w-full resize-y rounded-2xl border border-(--border-color) px-2 py-1 text-center font-mono outline-none focus:border-blue-400
+          `h-full w-full resize-y rounded-2xl border border-(--border-color) px-2 py-1 text-center font-mono shadow-sm transition
+          duration-200 outline-none focus:border-blue-400
             ${isValid ? 'border-(--border-color)' : 'border-red-400 shadow-[0_0_6px_var(--red-color)]'}
             ${disabled ? 'cursor-not-allowed opacity-50' : 'hover:shadow-md'} 
             ${readonly ? '' : 'hover:shadow-md'}

@@ -140,7 +140,7 @@
     <div class="flex w-full flex-col gap-2">
       <!-- Выбор цвета -->
       <div
-        class="hue-slider relative h-7 w-full cursor-pointer overflow-hidden rounded-full shadow-md"
+        class="hue-slider relative h-7 w-full cursor-pointer overflow-hidden rounded-full shadow-sm transition duration-200 hover:shadow-md"
         role="slider"
         aria-valuenow={null}
         tabindex={null}
@@ -163,7 +163,9 @@
 
       <!-- Яркость цвета -->
       <div
-        class="brightness-slider relative h-4 w-full cursor-pointer overflow-hidden rounded-full {mode === 'hsv' ? 'shadow-md' : ''}"
+        class="brightness-slider relative h-4 w-full cursor-pointer overflow-hidden rounded-full {mode === 'hsv'
+          ? 'shadow-sm transition duration-200 hover:shadow-md'
+          : ''}"
         role="slider"
         aria-valuenow={null}
         tabindex={null}
@@ -184,7 +186,7 @@
 
       <!-- Яркость белого цвета -->
       <div
-        class="white-slider relative mt-4 h-4 w-full cursor-pointer overflow-hidden rounded-full shadow-sm"
+        class="white-slider relative mt-4 h-4 w-full cursor-pointer overflow-hidden rounded-full shadow-sm transition duration-200 hover:shadow-md"
         role="slider"
         aria-valuenow={null}
         tabindex={null}
@@ -204,7 +206,7 @@
 
     <div class="flex w-25 flex-col items-center">
       <div
-        class={`flex size-15 flex-col justify-center gap-1 rounded-full px-2 font-mono text-sm shadow-md select-none ${textColor()}`}
+        class={`flex size-15 flex-col justify-center gap-1 rounded-full px-2 font-mono text-sm shadow-sm transition duration-200 select-none ${textColor()}`}
         style={`background: rgb(${previewBaseColor().join(',')})`}
       ></div>
       <div class="w-full text-center font-semibold">{hex()}</div>

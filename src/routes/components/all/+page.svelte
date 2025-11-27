@@ -250,7 +250,7 @@
 
     <!-- Компонент FILE ATTACH -->
     <UI.Accordion label={{ name: 'File Attach' }} isOpen={false}>
-      <div class="flex w-full flex-row items-center justify-between">
+      <div class="flex w-full flex-row items-center justify-between gap-3">
         <UI.FileAttach id={crypto.randomUUID()} label={{ name: 'Выберите файл' }} type="file" />
         <UI.FileAttach id={crypto.randomUUID()} label={{ name: 'Выберите файл' }} type="file" disabled />
         <UI.FileAttach

@@ -69,7 +69,7 @@
   {#if type == 'vertical'}
     <div class="flex h-full flex-wrap gap-3">
       {#each innerValue as val}
-        <div class="flex h-full w-fit min-w-16 flex-col items-center gap-2 rounded-full bg-(--bg-color) p-2">
+        <div class="flex h-full w-fit min-w-16 flex-col items-center gap-2 rounded-full bg-(--bg-color) p-2 shadow-sm">
           <div class="relative my-auto h-[80%] w-[70%] rounded-full bg-(--back-color)/40">
             <div class="absolute bottom-0 left-0 flex w-full rounded-full bg-(--field-color)" style="height: {progressPercent(val)}%;"></div>
           </div>
@@ -80,7 +80,7 @@
   {:else}
     <div class="flex w-full flex-col gap-2">
       {#each innerValue as val}
-        <div class="flex h-7 w-full items-center gap-2 rounded-full bg-(--bg-color) px-2">
+        <div class="flex h-7 w-full items-center gap-2 rounded-full bg-(--bg-color) px-2 shadow-sm">
           <span class="m-auto font-semibold">{roundToClean(Number(numericValue(val)))}{number.units}</span>
           <div class="relative my-auto h-3.5 w-[85%] rounded-full bg-(--back-color)/40">
             <div class="absolute top-0 left-0 flex h-full rounded-full bg-(--field-color)" style="width: {progressPercent(val)}%;"></div>

@@ -74,9 +74,9 @@
             {/if}
 
             <label
-              class="relative flex items-center justify-between rounded-full shadow-md
+              class="relative flex items-center justify-between rounded-full shadow-sm transition duration-200
       {checkedOptions[index] ? 'border-(--bg-color)' : 'border-(--bg-color)'}
-      {option.disabled ? 'opacity-60' : ''}"
+      {option.disabled ? 'opacity-60' : 'hover:shadow-md'}"
             >
               <input
                 id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
@@ -126,7 +126,7 @@
       disabled={localOptions[0].disabled}
       class="
       relative size-8 cursor-pointer appearance-none rounded-2xl border border-(--bg-color)
-      bg-white transition duration-300 after:origin-bottom-left after:opacity-0
+      bg-white shadow-sm transition duration-200 after:origin-bottom-left after:opacity-0
       checked:border-(--bg-color)
       checked:bg-(--bg-color) checked:after:absolute checked:after:-top-px checked:after:left-[5px]
       checked:after:h-[13.5px] checked:after:w-[7.5px] checked:after:rotate-43

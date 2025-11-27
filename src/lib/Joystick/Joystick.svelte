@@ -208,7 +208,7 @@
         style="background: color-mix(in srgb, var(--bg-color), var(--shadow-color) 10%)"
       >
         <button
-          class="h-full rotate-270 cursor-pointer rounded-l-full px-3.5"
+          class="h-full cursor-pointer rounded-l-full px-3.5"
           title=""
           onclick={() => {
             if (value[0] - sensitivity <= (axes[0].minNum ?? -360)) {
@@ -221,17 +221,20 @@
           }}
           onmouseenter={(e) => (e.currentTarget.style.backgroundColor = 'color-mix(in srgb, var(--bg-color), var(--shadow-color) 30%)')}
           onmouseleave={(e) => (e.currentTarget.style.backgroundColor = 'background: color-mix(in srgb, var(--bg-color), var(--shadow-color) 10%)')}
-          ><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-            ><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"
-              ><path
-                stroke-miterlimit="10"
-                d="M6.395 7.705A7.9 7.9 0 0 1 12 5.382a7.93 7.93 0 0 1 7.929 7.929A7.94 7.94 0 0 1 12 21.25a7.94 7.94 0 0 1-7.929-7.94"
-              /><path stroke-linejoin="round" d="m7.12 2.75l-.95 3.858a1.33 1.33 0 0 0 .97 1.609l3.869.948" /></g
-            ></svg
-          ></button
+        >
+          <div class="rotate-270">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+              ><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"
+                ><path
+                  stroke-miterlimit="10"
+                  d="M6.395 7.705A7.9 7.9 0 0 1 12 5.382a7.93 7.93 0 0 1 7.929 7.929A7.94 7.94 0 0 1 12 21.25a7.94 7.94 0 0 1-7.929-7.94"
+                /><path stroke-linejoin="round" d="m7.12 2.75l-.95 3.858a1.33 1.33 0 0 0 .97 1.609l3.869.948" /></g
+              ></svg
+            >
+          </div></button
         >
         <button
-          class="h-full rotate-90 cursor-pointer rounded-r-full px-3.5"
+          class="h-full cursor-pointer rounded-r-full px-3.5"
           title=""
           onclick={() => {
             if (value[0] + sensitivity >= (axes[0].maxNum ?? 360)) {
@@ -244,14 +247,17 @@
           }}
           onmouseenter={(e) => (e.currentTarget.style.backgroundColor = 'color-mix(in srgb, var(--bg-color), var(--shadow-color) 30%)')}
           onmouseleave={(e) => (e.currentTarget.style.backgroundColor = 'vabackground: color-mix(in srgb, var(--bg-color), var(--shadow-color) 10%)')}
-          ><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-            ><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"
-              ><path
-                stroke-miterlimit="10"
-                d="M17.605 7.705A7.9 7.9 0 0 0 12 5.382a7.93 7.93 0 0 0-7.929 7.929A7.94 7.94 0 0 0 12 21.25a7.94 7.94 0 0 0 7.929-7.94"
-              /><path stroke-linejoin="round" d="m16.88 2.75l.95 3.858a1.33 1.33 0 0 1-.97 1.609l-3.869.948" /></g
-            ></svg
-          ></button
+        >
+          <div class="rotate-90">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+              ><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"
+                ><path
+                  stroke-miterlimit="10"
+                  d="M17.605 7.705A7.9 7.9 0 0 0 12 5.382a7.93 7.93 0 0 0-7.929 7.929A7.94 7.94 0 0 0 12 21.25a7.94 7.94 0 0 0 7.929-7.94"
+                /><path stroke-linejoin="round" d="m16.88 2.75l.95 3.858a1.33 1.33 0 0 1-.97 1.609l-3.869.948" /></g
+              ></svg
+            >
+          </div></button
         >
       </div>
     {/if}
