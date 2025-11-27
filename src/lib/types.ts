@@ -122,7 +122,7 @@ export interface IButtonProps {
 /* Интерфейс аккордиона */
 export interface IAccordionProps {
   id?: string
-  isOpen: boolean
+  isOpen?: boolean
   outline?: boolean
   wrapperClass?: string
   size?: {
@@ -132,7 +132,7 @@ export interface IAccordionProps {
   label?: {
     name?: string
     class?: string
-    icon?: string | null
+    icon?: ConstructorOfATypedSvelteComponent | string | null
   }
   children?: Snippet
   image?: string
@@ -259,7 +259,7 @@ export interface ITextFieldProps {
 export interface IProgressBarProps {
   id?: string
   label?: { name?: string; class?: string }
-  value?: number | null
+  value?: number | number[] | null
   number?: {
     minNum?: number
     maxNum?: number
@@ -339,7 +339,7 @@ export interface ITabsProps {
     width?: number
   }
   activeTab?: number
-  items: { name?: string; icon?: string; class?: string; children?: Snippet }[]
+  items: { name?: string; icon?: ConstructorOfATypedSvelteComponent | string; class?: string; children?: Snippet }[]
   children?: Snippet<[any]>
   apiArray?: UIComponent[]
   Components?: Snippet<[component: UIComponent, fixedHeight: boolean]>
@@ -353,7 +353,7 @@ export interface IJoystickProps {
   label?: { name?: string; class?: string }
   value?: number[]
   axes?: { name: string; minNum?: number; maxNum?: number }[]
-  buttonIcon?: string
+  buttonIcon?: ConstructorOfATypedSvelteComponent | string
   onUpdate?: (value: number[]) => void
 }
 
@@ -372,7 +372,7 @@ export interface IMapProps {
   id?: string
   label?: { name?: string; class?: string }
   data: IDeviceGNSS | null
-  markerIcon?: string
+  markerIcon?: ConstructorOfATypedSvelteComponent | string
 }
 
 /* ********************************************************** */

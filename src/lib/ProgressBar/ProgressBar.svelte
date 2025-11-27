@@ -7,7 +7,7 @@
     id = crypto.randomUUID(),
     wrapperClass = '',
     label = { name: '', class: '' },
-    value = $bindable(0),
+    value = $bindable([0]),
     type = 'horizontal',
     number = {
       minNum: 0,
@@ -16,29 +16,35 @@
     },
   }: IProgressBarProps = $props()
 
-  const min = $derived(number.minNum ?? 0)
-  const max = $derived(number.maxNum ?? 100)
-
-  let numericValue = $derived(
+  let innerValue: number[] | null = $derived(
     (() => {
-      if (typeof value === 'number' && !isNaN(value)) {
-        return Math.max(min, Math.min(max, value))
-      } else if (typeof value === 'string') {
-        const parsedValue = parseFloat(value)
-        if (!isNaN(parsedValue)) {
-          return Math.max(min, Math.min(max, parsedValue))
-        }
-      } else {
-        return min
-      }
+      if (typeof value == 'number') {
+        return [value]
+      } else return value
     })(),
   )
 
-  const progressPercent = $derived(() => {
+  const min = $derived(number.minNum ?? 0)
+  const max = $derived(number.maxNum ?? 100)
+
+  const numericValue = (value: number) => {
+    if (typeof value === 'number' && !isNaN(value)) {
+      return Math.max(min, Math.min(max, value))
+    } else if (typeof value === 'string') {
+      const parsedValue = parseFloat(value)
+      if (!isNaN(parsedValue)) {
+        return Math.max(min, Math.min(max, parsedValue))
+      }
+    } else {
+      return min
+    }
+  }
+
+  const progressPercent = (value: number) => {
     if (value) {
       return (((Math.min(Math.max(value, min), max) - min) / (max - min)) * 100) as number
     }
-  })
+  }
 
   const roundToClean = (num: number): number => {
     if (Number.isInteger(num)) return num
@@ -60,20 +66,27 @@
   {#if label.name}
     <h5 class={twMerge(` w-full px-4 text-center`, label.class)}>{label.name}</h5>
   {/if}
-
   {#if type == 'vertical'}
-    <div class="flex h-full w-fit min-w-16 flex-col items-center gap-2 rounded-full bg-(--bg-color) p-2">
-      <div class="relative my-auto h-[80%] w-[70%] rounded-full bg-(--back-color)/40">
-        <div class="absolute bottom-0 left-0 flex w-full rounded-full bg-(--field-color)" style="height: {progressPercent()}%;"></div>
-      </div>
-      <span class="m-auto font-semibold">{roundToClean(Number(numericValue))}{number.units}</span>
+    <div class="flex h-full flex-wrap gap-3">
+      {#each innerValue as val}
+        <div class="flex h-full w-fit min-w-16 flex-col items-center gap-2 rounded-full bg-(--bg-color) p-2">
+          <div class="relative my-auto h-[80%] w-[70%] rounded-full bg-(--back-color)/40">
+            <div class="absolute bottom-0 left-0 flex w-full rounded-full bg-(--field-color)" style="height: {progressPercent(val)}%;"></div>
+          </div>
+          <span class="m-auto font-semibold">{roundToClean(Number(numericValue(val)))}{number.units}</span>
+        </div>
+      {/each}
     </div>
   {:else}
-    <div class="flex h-7 w-full items-center gap-2 rounded-full bg-(--bg-color) px-2">
-      <span class="m-auto font-semibold">{roundToClean(Number(numericValue))}{number.units}</span>
-      <div class="relative my-auto h-3.5 w-[85%] rounded-full bg-(--back-color)/40">
-        <div class="absolute top-0 left-0 flex h-full rounded-full bg-(--field-color)" style="width: {progressPercent()}%;"></div>
-      </div>
+    <div class="flex w-full flex-col gap-2">
+      {#each innerValue as val}
+        <div class="flex h-7 w-full items-center gap-2 rounded-full bg-(--bg-color) px-2">
+          <span class="m-auto font-semibold">{roundToClean(Number(numericValue(val)))}{number.units}</span>
+          <div class="relative my-auto h-3.5 w-[85%] rounded-full bg-(--back-color)/40">
+            <div class="absolute top-0 left-0 flex h-full rounded-full bg-(--field-color)" style="width: {progressPercent(val)}%;"></div>
+          </div>
+        </div>
+      {/each}
     </div>
   {/if}
 </div>

@@ -48,7 +48,12 @@
       >
         {#if item?.icon}
           <span class="flex h-7 w-7 items-center justify-center overflow-visible [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full">
-            {@html item.icon}
+            {#if typeof item.icon === 'string'}
+              {@html item.icon}
+            {:else}
+              {@const IconComponent = item.icon}
+              <IconComponent />
+            {/if}
           </span>
         {/if}
         {#if item?.name}

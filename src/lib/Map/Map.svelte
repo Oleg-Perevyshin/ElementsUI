@@ -136,10 +136,29 @@
             <div
               class="flex size-8 shrink-0 items-center justify-center [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full
             {device.isFresh ? 'text-green-500' : 'text-red-500'}"
-              style="rotate: {device.NavHeading - 90}deg;"
+              style="rotate: {device.NavHeading}deg;"
             >
-              {@html markerIcon ||
-                '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.76 12H6.832m0 0c0-.275-.057-.55-.17-.808L4.285 5.814c-.76-1.72 1.058-3.442 2.734-2.591L20.8 10.217c1.46.74 1.46 2.826 0 3.566L7.02 20.777c-1.677.851-3.495-.872-2.735-2.591l2.375-5.378A2 2 0 0 0 6.83 12"/></svg>'}
+              {#if markerIcon}
+                {#if typeof markerIcon === 'string'}
+                  {@html markerIcon}
+                {:else}
+                  {@const IconComponent = markerIcon}
+                  <IconComponent />
+                {/if}
+              {:else}
+                <div class="rotate-270">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
+                    <path
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="1.5"
+                      d="M14.76 12H6.832m0 0c0-.275-.057-.55-.17-.808L4.285 5.814c-.76-1.72 1.058-3.442 2.734-2.591L20.8 10.217c1.46.74 1.46 2.826 0 3.566L7.02 20.777c-1.677.851-3.495-.872-2.735-2.591l2.375-5.378A2 2 0 0 0 6.83 12"
+                    /></svg
+                  >
+                </div>
+              {/if}
             </div>
             <p class="font-bold">{device.DevName}</p>
           </div>

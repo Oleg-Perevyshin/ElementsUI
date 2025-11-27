@@ -25,8 +25,6 @@
       const lon = (Math.random() * 360 - 180).toFixed(6)
       const head = Math.floor(Math.random() * 360)
 
-      console.log('🔄 Обновление устройства:', randomDevSN, head)
-
       return {
         NavLat: parseFloat(lat),
         NavLon: parseFloat(lon),
@@ -50,8 +48,6 @@
     if (existingDevices.length > 10) {
       existingDevices = existingDevices.slice(-10) // оставляем последние 20
     }
-
-    console.log('🆕 Новое устройство:', newDevSN, head)
 
     return {
       NavLat: parseFloat(lat.toFixed(6)),
@@ -105,13 +101,13 @@ ${formatObjectToString(mapComponent.properties as IMapProps)}
     <MapProps
       component={mapComponent as UIComponent & { properties: Partial<IMapProps> }}
       onPropertyChange={(updates) => (mapComponent = updateComponent(mapComponent, updates as object))}
-      forConstructor={true}
+      forConstructor={false}
     />
-    <hr />
+    <!-- <hr />
     <MapProps
       component={mapComponent as UIComponent & { properties: Partial<IMapProps> }}
       onPropertyChange={(updates) => (mapComponent = updateComponent(mapComponent, updates as object))}
-      forConstructor={false}
-    />
+      
+    /> -->
   {/snippet}
 </ComponentExample>

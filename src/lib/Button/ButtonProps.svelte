@@ -5,6 +5,10 @@
   import * as UI from '$lib'
   import { optionsStore } from '../options'
   import { twMerge } from 'tailwind-merge'
+  import CrossIcon from '$lib/libIcons/CrossIcon.svelte'
+  import Modal from '$lib/Modal.svelte'
+  import { ICONS } from '$lib/icons'
+  import Button from './Button.svelte'
 
   const {
     component,
@@ -15,6 +19,8 @@
     onPropertyChange: (updates: Partial<{ properties?: string | object; name?: string; access?: string; eventHandler?: IUIComponentHandler }>) => void
     forConstructor?: boolean
   }>()
+
+  let showIconLib = $state(false)
 
   let hasValue: boolean = $derived(component.eventHandler.Value)
 
@@ -104,6 +110,43 @@
         value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.access)}
         onUpdate={(option) => onPropertyChange({ access: option.value })}
       />
+      <div class="relative mt-6 flex w-full gap-2">
+        <UI.Button content={{ name: $t('constructor.props.buttonIcon') }} onClick={() => (showIconLib = true)} />
+        {#if showIconLib}
+          <Modal bind:isOpen={showIconLib} wrapperClass="w-130">
+            {#snippet main()}
+              <div class="grid grid-cols-3">
+                {#each ICONS as category}
+                  <div class="relative m-1.5 rounded-xl border-2 border-(--border-color) p-3">
+                    <div class="absolute -top-3.5 bg-(--back-color) px-1">{$t(`constructor.props.icon.${category[0]}`)}</div>
+                    <div class="grid grid-cols-3 place-items-center gap-2">
+                      {#each category[1] as icon}
+                        <button
+                          class="h-8 w-8 cursor-pointer [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
+                          onclick={() => {
+                            updateProperty('content.icon', icon as string, component, onPropertyChange)
+                          }}
+                        >
+                          {@html icon}
+                        </button>{/each}
+                    </div>
+                  </div>
+                {/each}
+              </div>
+            {/snippet}
+          </Modal>
+        {/if}
+        {#if component.properties.content.icon}
+          <Button
+            wrapperClass="w-8.5 "
+            componentClass="p-0.5 bg-red"
+            content={{ icon: CrossIcon }}
+            onClick={() => {
+              updateProperty('content.icon', '', component, onPropertyChange)
+            }}
+          />
+        {/if}
+      </div>
     </div>
     <div class="flex w-1/3 flex-col items-center px-2">
       <UI.Input
@@ -194,14 +237,43 @@
         onUpdate={(option) =>
           updateProperty('componentClass', twMerge(component.properties.componentClass, option.value), component, onPropertyChange)}
       />
-
-      <UI.Input
-        label={{ name: $t('constructor.props.svgicon') }}
-        type="text-area"
-        maxlength={100000}
-        value={component.properties.content.icon}
-        onUpdate={(value) => updateProperty('content.icon', value as string, component, onPropertyChange)}
-      />
+      <div class="relative mt-6 flex w-full gap-2">
+        <UI.Button content={{ name: $t('constructor.props.buttonIcon') }} onClick={() => (showIconLib = true)} />
+        {#if showIconLib}
+          <Modal bind:isOpen={showIconLib} wrapperClass="w-130">
+            {#snippet main()}
+              <div class="grid grid-cols-3">
+                {#each ICONS as category}
+                  <div class="relative m-1.5 rounded-xl border-2 border-(--border-color) p-3">
+                    <div class="absolute -top-3.5 bg-(--back-color) px-1">{$t(`constructor.props.icon.${category[0]}`)}</div>
+                    <div class="grid grid-cols-3 place-items-center gap-2">
+                      {#each category[1] as icon}
+                        <button
+                          class="h-8 w-8 cursor-pointer [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
+                          onclick={() => {
+                            updateProperty('content.icon', icon as string, component, onPropertyChange)
+                          }}
+                        >
+                          {@html icon}
+                        </button>{/each}
+                    </div>
+                  </div>
+                {/each}
+              </div>
+            {/snippet}
+          </Modal>
+        {/if}
+        {#if component.properties.content.icon}
+          <Button
+            wrapperClass="w-8.5 "
+            componentClass="p-0.5 bg-red"
+            content={{ icon: CrossIcon }}
+            onClick={() => {
+              updateProperty('content.icon', '', component, onPropertyChange)
+            }}
+          />
+        {/if}
+      </div>
     </div>
   </div>
 {/if}

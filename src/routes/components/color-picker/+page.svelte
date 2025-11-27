@@ -34,13 +34,13 @@ ${formatObjectToString(colorPickerComponent.properties as IColorPickerProps)}
     <ColorPickerProps
       component={colorPickerComponent as UIComponent & { properties: Partial<IColorPickerProps> }}
       onPropertyChange={(updates) => (colorPickerComponent = updateComponent(colorPickerComponent, updates as object))}
-      forConstructor={true}
+      forConstructor={false}
     />
-    <hr />
+    <!-- <hr />
     <ColorPickerProps
       component={colorPickerComponent as UIComponent & { properties: Partial<IColorPickerProps> }}
       onPropertyChange={(updates) => (colorPickerComponent = updateComponent(colorPickerComponent, updates as object))}
-      forConstructor={false}
-    />
+      
+    /> -->
   {/snippet}
 </ComponentExample>

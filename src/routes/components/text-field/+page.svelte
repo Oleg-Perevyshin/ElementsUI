@@ -39,13 +39,13 @@ ${formatObjectToString(textFieldComponent.properties as ITextFieldProps)}
     <TextFieldProps
       component={textFieldComponent as UIComponent & { properties: Partial<ITextFieldProps> }}
       onPropertyChange={(updates) => (textFieldComponent = updateComponent(textFieldComponent, updates as object))}
-      forConstructor={true}
+      forConstructor={false}
     />
-    <hr />
+    <!-- <hr />
     <TextFieldProps
       component={textFieldComponent as UIComponent & { properties: Partial<ITextFieldProps> }}
       onPropertyChange={(updates) => (textFieldComponent = updateComponent(textFieldComponent, updates as object))}
-      forConstructor={false}
-    />
+      
+    /> -->
   {/snippet}
 </ComponentExample>

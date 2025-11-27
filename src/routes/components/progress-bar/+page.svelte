@@ -14,7 +14,7 @@
       wrapperClass: 'bg-blue',
       type: 'horizontal',
       label: { name: 'Label', class: 'text-center' },
-      value: 80,
+      value: [80, 60, 20, 10, 4],
       number: { minNum: 0, maxNum: 100, units: '%' },
     },
     position: { row: 0, col: 0, width: 0, height: 0 },
@@ -35,13 +35,12 @@ ${formatObjectToString(progressBarComponent.properties as IProgressBarProps)}
     <ProgressBarProps
       component={progressBarComponent as UIComponent & { properties: Partial<IProgressBarProps> }}
       onPropertyChange={(updates) => (progressBarComponent = updateComponent(progressBarComponent, updates as object))}
-      forConstructor={true}
+      forConstructor={false}
     />
     <hr />
     <ProgressBarProps
       component={progressBarComponent as UIComponent & { properties: Partial<IProgressBarProps> }}
       onPropertyChange={(updates) => (progressBarComponent = updateComponent(progressBarComponent, updates as object))}
-      forConstructor={false}
     />
   {/snippet}
 </ComponentExample>

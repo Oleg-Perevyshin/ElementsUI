@@ -45,13 +45,13 @@ ${formatObjectToString(switchComponent.properties as ISwitchProps)}
     <SwitchProps
       component={switchComponent as UIComponent & { properties: Partial<ISwitchProps> }}
       onPropertyChange={(updates) => (switchComponent = updateComponent(switchComponent, updates as object))}
-      forConstructor={true}
+      forConstructor={false}
     />
-    <hr />
+    <!-- <hr />
     <SwitchProps
       component={switchComponent as UIComponent & { properties: Partial<ISwitchProps> }}
       onPropertyChange={(updates) => (switchComponent = updateComponent(switchComponent, updates as object))}
-      forConstructor={false}
-    />
+      
+    /> -->
   {/snippet}
 </ComponentExample>

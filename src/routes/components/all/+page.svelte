@@ -6,6 +6,8 @@
   import IconGripHorizontalDown from '../../../appIcons/IconGripHorizontalDown.svelte'
   import IconGripVerticalDual from '../../../appIcons/IconGripVerticalDual.svelte'
   import { onDestroy, onMount } from 'svelte'
+  import IconGripVerticalRight from '../../../appIcons/IconGripVerticalRight.svelte'
+  import IconGripVerticalLeft from '../../../appIcons/IconGripVerticalLeft.svelte'
 
   const componentMap = {
     Accordion: { component: UI.Accordion },
@@ -335,6 +337,7 @@
             { name: 'Pitch', minNum: -100, maxNum: 100 },
             { name: 'Yaw', minNum: -100, maxNum: 100 },
           ]}
+          buttonIcon={IconGripVerticalDual}
         />
       </div>
     </UI.Accordion>
@@ -527,9 +530,36 @@
     </UI.Accordion>
 
     <!-- Компонент TABS -->
-    <UI.Accordion label={{ name: 'Tabs' }} isOpen={true}>
-      <UI.Tabs items={[{ name: 'Tab1' }, { name: 'Tab2' }, { name: 'Tab3' }, { name: 'Tab4' }]} />
+    <UI.Accordion label={{ name: 'Tabs' }} isOpen={false}>
+      <div class="flex flex-col gap-5">
+        <UI.Tabs items={[{ name: 'Tab1' }, { name: 'Tab2' }, { name: 'Tab3' }, { name: 'Tab4' }]} children={Tab} size={{ height: 1, width: 1 }} />
+        <UI.Tabs
+          items={[
+            { name: 'Tab1', class: 'w-1/4' },
+            { name: 'Tab2', class: 'w-1/4' },
+            { name: 'Tab3', class: 'w-1/4' },
+            { name: 'Tab4', class: 'w-1/4' },
+          ]}
+          children={Tab}
+          size={{ height: 1, width: 1 }}
+        />
+        <UI.Tabs
+          items={[
+            { name: 'Tab1', icon: IconGripHorizontalUp, class: 'flex-col' },
+            { name: 'Tab2', icon: IconGripVerticalRight, class: 'flex-row-reverse' },
+            { name: 'Tab3', icon: IconGripHorizontalDown, class: 'flex-col-reverse' },
+            { name: 'Tab4', icon: IconGripVerticalLeft, class: '' },
+          ]}
+          children={Tab}
+          size={{ height: 1, width: 1 }}
+        />
+      </div>
     </UI.Accordion>
+    {#snippet Tab(item: { name: string })}
+      <div>
+        <h5>Content of {item.name}</h5>
+      </div>
+    {/snippet}
 
     <!-- Компонент TEXT FIELD -->
     <UI.Accordion label={{ name: 'Text Field' }} isOpen={false}>

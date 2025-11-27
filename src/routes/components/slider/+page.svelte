@@ -39,13 +39,13 @@ ${formatObjectToString(sliderComponent.properties as ISliderProps)}
     <SliderProps
       component={sliderComponent as UIComponent & { properties: Partial<ISliderProps> }}
       onPropertyChange={(updates) => (sliderComponent = updateComponent(sliderComponent, updates as object))}
-      forConstructor={true}
+      forConstructor={false}
     />
-    <hr />
+    <!-- <hr />
     <SliderProps
       component={sliderComponent as UIComponent & { properties: Partial<ISliderProps> }}
       onPropertyChange={(updates) => (sliderComponent = updateComponent(sliderComponent, updates as object))}
-      forConstructor={false}
-    />
+      
+    /> -->
   {/snippet}
 </ComponentExample>

@@ -41,13 +41,13 @@ ${formatObjectToString(tabsComponent.properties as ITabsProps)}
     <TabsProps
       component={tabsComponent as UIComponent & { properties: Partial<ITabsProps> }}
       onPropertyChange={(updates) => (tabsComponent = updateComponent(tabsComponent, updates as object))}
-      forConstructor={true}
+      forConstructor={false}
     />
-    <hr />
+    <!-- <hr />
     <TabsProps
       component={tabsComponent as UIComponent & { properties: Partial<ITabsProps> }}
       onPropertyChange={(updates) => (tabsComponent = updateComponent(tabsComponent, updates as object))}
-      forConstructor={false}
-    />
+      
+    /> -->
   {/snippet}
 </ComponentExample>

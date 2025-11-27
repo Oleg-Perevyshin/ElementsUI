@@ -42,13 +42,13 @@ ${formatObjectToString(graphComponent.properties as IGraphProps)}
     <GraphProps
       component={graphComponent as UIComponent & { properties: Partial<IGraphProps> }}
       onPropertyChange={(updates) => (graphComponent = updateComponent(graphComponent, updates as object))}
-      forConstructor={true}
+      forConstructor={false}
     />
-    <hr />
+    <!-- <hr />
     <GraphProps
       component={graphComponent as UIComponent & { properties: Partial<IGraphProps> }}
       onPropertyChange={(updates) => (graphComponent = updateComponent(graphComponent, updates as object))}
-      forConstructor={false}
-    />
+      
+    /> -->
   {/snippet}
 </ComponentExample>
