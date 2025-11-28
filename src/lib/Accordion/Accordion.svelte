@@ -6,7 +6,6 @@
   let {
     id = crypto.randomUUID(),
     isOpen = false,
-    outline = false,
     wrapperClass = '',
     size = { width: 1, height: 1 },
     label = { name: '', class: 'text-left', icon: null },
@@ -20,17 +19,13 @@
 <div
   id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
   class={twMerge(
-    `${outline ? 'border-none' : 'rounded-xl shadow-sm hover:shadow-md'} w-full
-     bg-(--container-color) p-0 transition-shadow duration-250`,
+    `w-full rounded-xl bg-(--container-color) p-0
+     shadow-sm transition-shadow duration-250 hover:shadow-md`,
     wrapperClass,
   )}
   transition:slide={{ duration: 250 }}
 >
-  <button
-    class="flex w-full cursor-pointer items-center justify-between p-4 transition-shadow duration-250
-    {outline ? 'border-b border-(--border-color)' : ''}"
-    onclick={toggle}
-  >
+  <button class="flex w-full cursor-pointer items-center justify-between p-4 py-3.5 transition-shadow duration-250" onclick={toggle}>
     <div class="flex w-full items-center">
       <span
         class={`flex h-7 w-7 shrink-0 items-center justify-center overflow-visible [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full`}
@@ -45,13 +40,21 @@
         {/if}
       </span>
 
-      <span
-        class="{twMerge('m-0 w-full cursor-pointer px-3 text-left font-semibold', label.class)} text-lg {isOpen
-          ? 'text-blue-500 dark:text-blue-400'
-          : ''}"
+      <div
+        class="{twMerge(
+          'flex w-full justify-start ',
+          label.class?.split(' ').find((cls: string) => cls.startsWith('justify-')),
+        )} "
       >
-        {label?.name}
-      </span>
+        <span
+          class="{twMerge(
+            `m-0 origin-top-left cursor-pointer justify-end px-3 font-semibold transition duration-200 ${isOpen ? 'scale-110' : ''}`,
+            label.class,
+          )} text-lg"
+        >
+          {label?.name}
+        </span>
+      </div>
     </div>
 
     <div class="w-10 pl-4">
@@ -76,7 +79,7 @@
 
   {#if isOpen}
     <div
-      class="grid w-full p-4 sm:p-3 {image ? 'gap-x-2' : 'gap-2'} {outline ? '' : 'border-t border-(--border-color)'}"
+      class="grid w-full p-4 sm:p-3 {image ? 'gap-x-2' : 'gap-2'} inset-shadow-[0_10px_10px_-15px_rgb(0_0_0_/0.5)]"
       transition:slide={{ duration: 250 }}
       style="grid-template-columns: repeat({size.width || 10}, minmax(0, 1fr)); 
           grid-template-rows: repeat({size.height || 2}, {image ? 'minmax(6.5rem, auto)' : 'auto'});

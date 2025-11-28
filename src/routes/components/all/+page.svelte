@@ -207,8 +207,8 @@
 
   <div class="flex w-full flex-col gap-2">
     <!-- Компонент ACCORDION -->
-    <UI.Accordion label={{ name: 'Accordion' }} isOpen={false}>
-      <UI.Accordion label={{ name: 'Accordion 1', class: '' }} isOpen={false} outline={true} wrapperClass="col-span-3">
+    <UI.Accordion label={{ name: 'Accordion' }} isOpen={true}>
+      <UI.Accordion label={{ name: 'Accordion 1', class: '' }} isOpen={false}  wrapperClass="col-span-3">
         <h6>Содержимое вложенного Accordion 1</h6>
         <h5>Содержимое вложенного Accordion 1</h5>
         <h4>Содержимое вложенного Accordion 1</h4>
@@ -216,14 +216,14 @@
         <h2>Содержимое вложенного Accordion 1</h2>
         <h1>Содержимое вложенного Accordion 1</h1>
       </UI.Accordion>
-      <UI.Accordion label={{ name: 'Accordion 2', class: '' }} isOpen={false} outline={true} wrapperClass="col-span-3">
+      <UI.Accordion label={{ name: 'Accordion 2', class: '' }} isOpen={false}  wrapperClass="col-span-3">
         <h1>Содержимое вложенного Accordion 2</h1>
         <h2>Содержимое вложенного Accordion 2</h2>
         <h3>Содержимое вложенного Accordion 2</h3>
         <h4>Содержимое вложенного Accordion 2</h4>
         <h5>Содержимое вложенного Accordion 2</h5>
       </UI.Accordion>
-      <UI.Accordion label={{ name: 'Accordion 3', class: '' }} isOpen={false} outline={true} wrapperClass="col-span-3">
+      <UI.Accordion label={{ name: 'Accordion 3', class: '' }} isOpen={false}  wrapperClass="col-span-3">
         <h4>Содержимое вложенного Accordion 3</h4>
         <h3>Содержимое вложенного Accordion 3</h3>
         <h2>Содержимое вложенного Accordion 3</h2>

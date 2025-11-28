@@ -24,8 +24,8 @@
   const initialType = $derived($optionsStore.ACCORDION_TYPE_OPTIONS.find((t) => t.value === component.properties.outline))
 
   const initialAlign = $derived(
-    $optionsStore.TEXT_ALIGN_OPTIONS.find((a) =>
-      (a.value as string).includes(component.properties.label?.class?.split(' ').find((cls: string) => cls.startsWith('text-'))),
+    $optionsStore.JUSTIFY_ALIGN_OPTIONS.find((a) =>
+      (a.value as string).includes(component.properties.label?.class?.split(' ').find((cls: string) => cls.startsWith('justify-'))),
     ),
   )
 
@@ -64,7 +64,7 @@
         label={{ name: $t('constructor.props.align') }}
         type="buttons"
         value={initialAlign}
-        options={$optionsStore.TEXT_ALIGN_OPTIONS}
+        options={$optionsStore.JUSTIFY_ALIGN_OPTIONS}
         onUpdate={(option) => updateProperty('label.class', option.value as string, component, onPropertyChange)}
       />
     </div>

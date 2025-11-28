@@ -123,7 +123,6 @@ export interface IButtonProps {
 export interface IAccordionProps {
   id?: string
   isOpen?: boolean
-  outline?: boolean
   wrapperClass?: string
   size?: {
     height?: number

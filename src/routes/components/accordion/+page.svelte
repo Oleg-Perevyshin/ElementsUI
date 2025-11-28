@@ -19,7 +19,7 @@
       },
       label: {
         name: 'Accordion',
-        class: 'text-left',
+        class: 'justify-start',
       },
     },
     position: { row: 0, col: 0, width: 0, height: 0 },
@@ -51,10 +51,10 @@ ${formatObjectToString(accordionComponent.properties as IAccordionProps)}
       onPropertyChange={(updates) => (accordionComponent = updateComponent(accordionComponent, updates as object))}
       forConstructor={false}
     />
-    <!-- <hr />
+    <hr />
     <AccordionProps
       component={accordionComponent as UIComponent & { properties: Partial<IAccordionProps> }}
       onPropertyChange={(updates) => (accordionComponent = updateComponent(accordionComponent, updates as object))}
-    /> -->
+    />
   {/snippet}
 </ComponentExample>
