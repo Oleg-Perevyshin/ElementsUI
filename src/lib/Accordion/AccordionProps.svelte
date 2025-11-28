@@ -106,13 +106,6 @@
           />
         {/if}
       </div>
-      <UI.Select
-        label={{ name: $t('constructor.props.type') }}
-        type="buttons"
-        value={initialType}
-        options={$optionsStore.ACCORDION_TYPE_OPTIONS}
-        onUpdate={(item) => updateProperty('outline', item.value as boolean, component, onPropertyChange)}
-      />
     </div>
     <div class="flex w-1/3 flex-col items-center gap-2 px-2">
       <div class="flex">
@@ -150,13 +143,6 @@
         options={$optionsStore.ACCESS_OPTION}
         value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.access)}
         onUpdate={(option) => onPropertyChange({ access: option.value })}
-      />
-      <UI.Select
-        label={{ name: $t('constructor.props.type') }}
-        type="buttons"
-        value={initialType}
-        options={$optionsStore.ACCORDION_TYPE_OPTIONS}
-        onUpdate={(item) => updateProperty('outline', item.value as boolean, component, onPropertyChange)}
       />
       <div class="flex w-full gap-4">
         <UI.Input
