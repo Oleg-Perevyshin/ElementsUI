@@ -90,7 +90,7 @@
   }
 </script>
 
-<div class={twMerge(`bg-max relative flex w-full flex-col items-center `, wrapperClass)} bind:this={dropdownElement}>
+<div class={twMerge(`bg-max relative flex w-full flex-col items-center px-1`, wrapperClass)} bind:this={dropdownElement}>
   {#if label.name}
     <h5 class={twMerge(`w-full px-4`, label.class)}>{label.name}</h5>
   {/if}
@@ -99,8 +99,8 @@
       id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
       value={value?.value ? String(value.value) : ''}
       class={twMerge(
-        `w-full rounded-2xl border border-(--border-color) p-1 text-center shadow-sm transition-shadow duration-200
-        ${disabled ? 'opacity-50' : 'cursor-pointer hover:shadow-md'}`,
+        `w-full rounded-2xl border border-(--bg-color) p-1 text-center shadow-[0_0_3px_rgb(0_0_0_/0.25)] transition-shadow duration-200
+        ${disabled ? 'opacity-50' : 'cursor-pointer hover:shadow-[0_0_6px_rgb(0_0_0_/0.25)]'}`,
         value?.class,
       )}
       style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%); "
@@ -114,7 +114,7 @@
 
     {#if isDropdownOpen}
       <div
-        class="absolute top-full left-1/2 z-50 -translate-x-1/2 rounded-b-2xl border border-t-0 border-(--border-color)"
+        class="absolute top-full left-1/2 z-50 -translate-x-1/2 rounded-b-2xl border border-t-0 border-(--bg-color) shadow-[0_0_3px_rgb(0_0_0_/0.25)]"
         style="width: calc(100% - 1.8rem);"
         transition:slide={{ duration: 250 }}
       >
@@ -123,7 +123,7 @@
             id={option.id}
             value={option?.value ? String(option.value) : ''}
             class={twMerge(
-              `flex h-full w-full cursor-pointer items-center justify-center p-1 duration-250 hover:bg-(--field-color)
+              `flex h-full w-full cursor-pointer items-center justify-center p-1 inset-shadow-[0_10px_10px_-15px_rgb(0_0_0_/0.5)] duration-250 hover:bg-(--field-color)!
               ${index === options.length - 1 ? 'rounded-b-2xl' : ''} `,
               option.class,
             )}
@@ -143,8 +143,8 @@
         <button
           id={option.id}
           class="{twMerge(
-            `m-0 inline-block min-w-0 flex-1 items-center px-2 py-1 font-semibold shadow-sm transition-all duration-300 select-none
-            ${option.disabled || disabled ? 'opacity-50' : 'cursor-pointer hover:shadow-md'}
+            `m-0 inline-block min-w-0 flex-1 items-center px-2 py-1 font-semibold shadow-[0_0_3px_rgb(0_0_0_/0.25)] transition-all duration-300 select-none border border-(--bg-color)
+            ${option.disabled || disabled ? 'opacity-50' : 'cursor-pointer hover:shadow-[0_0_6px_rgb(0_0_0_/0.25)]'}
             ${option.value === value?.value && value !== null ? 'z-10 py-1 shadow-[0_0_10px_var(--shadow-color)] hover:shadow-[0_0_15px_var(--shadow-color)]' : ''}  
             ${options.length > 0 && index === 0 ? 'rounded-l-2xl' : ''} ${index === options.length - 1 ? 'rounded-r-2xl' : ''}`,
             option.class,
@@ -165,10 +165,12 @@
   {:else if type === 'input'}
     <input
       bind:value={searchValue}
-      class="w-full appearance-none rounded-2xl border px-4 py-1 text-center shadow-sm
-          transition-shadow duration-200 outline-none focus:border-blue-400
+      class="w-full appearance-none rounded-2xl border px-4 py-1 text-center shadow-[0_0_3px_rgb(0_0_0_/0.25)]
+          transition-shadow duration-200 outline-none focus:shadow-[0_0_6px_var(--blue-color)]
           [&::-webkit-inner-spin-button]:hidden [&::-webkit-outer-spin-button]:hidden
-          {disabled ? 'cursor-not-allowed opacity-50' : 'cursor-text'} border-(--border-color) hover:shadow-md"
+          {disabled
+        ? 'cursor-not-allowed opacity-50'
+        : 'cursor-text'} border-(--bg-color) focus:border-(--blue-color) hover:shadow-[0_0_6px_rgb(0_0_0_/0.25)]"
       style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"
       id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
       {disabled}
@@ -183,7 +185,7 @@
 
     {#if isDropdownOpen}
       <div
-        class="absolute top-full left-1/2 z-50 -translate-x-1/2 rounded-b-2xl border border-t-0 border-(--border-color)"
+        class="absolute top-full left-1/2 z-50 -translate-x-1/2 rounded-b-2xl border border-t-0 border-(--bg-color)"
         style="width: calc(100% - 1.8rem);"
         transition:slide={{ duration: 250 }}
       >
@@ -192,7 +194,7 @@
             id={option.id}
             value={option?.value ? String(option.value) : ''}
             class={twMerge(
-              `flex h-full w-full cursor-pointer items-center justify-center p-1 duration-250 hover:bg-(--field-color)
+              `flex h-full w-full cursor-pointer items-center justify-center p-1 inset-shadow-[0_10px_10px_-15px_rgb(0_0_0_/0.5)] duration-250 hover:bg-(--field-color)!
               ${index === filteredOptions.length - 1 ? 'rounded-b-2xl' : ''} `,
               option.class,
             )}

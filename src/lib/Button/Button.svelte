@@ -70,9 +70,9 @@
     id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
     class="{twMerge(
       `relative m-0 inline-block w-full items-center rounded-2xl px-2
-        py-1 font-semibold shadow-sm transition duration-200 select-none 
-        ${content.icon && !content.name ? 'bg-transparent p-0' : 'bg-blue border border-(--bg-color) '}
-        ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer  hover:shadow-md active:scale-97'} `,
+        py-1 font-semibold  transition duration-200 select-none 
+        ${content.icon && !content.name ? 'bg-transparent p-0' : 'bg-blue border border-(--bg-color) shadow-sm hover:shadow-md'}
+        ${disabled ? 'cursor-not-allowed opacity-50 hover:shadow-none' : 'cursor-pointer   active:scale-97'} `,
       componentClass,
     )} bg-(--bg-color)"
     onclick={handleClick}

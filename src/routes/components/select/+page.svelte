@@ -18,7 +18,7 @@
       type: 'select',
       bitMode: false,
       range: { start: 0, end: 1 },
-      options: [{ id: crypto.randomUUID(), value: '1', name: 'Option 1', class: 'border-red' }],
+      options: [{ id: crypto.randomUUID(), value: '1', name: 'Option 1', class: 'bg-max' }],
     },
     eventHandler: { Header: 'SET', Argument: '', Variables: [] },
     position: { row: 0, col: 0, width: 0, height: 0 },

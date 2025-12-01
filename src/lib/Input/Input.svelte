@@ -54,7 +54,7 @@
   }
 </script>
 
-<div class={twMerge(`bg-max ${type === 'text-area' ? 'h-full' : ''} relative flex w-full flex-col items-center`, wrapperClass)}>
+<div class={twMerge(`bg-max ${type === 'text-area' ? 'h-full' : ''} relative flex w-full flex-col px-1 items-center`, wrapperClass)}>
   {#if label.name}
     <h5 class={twMerge(`w-full px-4 text-center`, label.class)}>{label.name}</h5>
   {/if}
@@ -64,11 +64,11 @@
       <input
         bind:value
         class={twMerge(
-          `w-full rounded-2xl border px-4 py-1 text-center shadow-sm transition duration-200
-              outline-none focus:border-blue-400 [&::-webkit-inner-spin-button]:hidden [&::-webkit-outer-spin-button]:hidden
-              ${isValid ? 'border-(--border-color)' : 'border-red-400 shadow-[0_0_6px_var(--red-color)] focus:border-red-400'}
-              ${disabled ? 'opacity-50' : 'hover:shadow-md'} 
-              ${readonly ? '' : 'hover:shadow-md'}
+          `w-full rounded-2xl border px-4 py-1 text-center shadow-[0_0_3px_rgb(0_0_0_/0.25)] transition duration-200
+              outline-none focus:shadow-[0_0_6px_var(--blue-color)] focus:border-(--blue-color) [&::-webkit-inner-spin-button]:hidden [&::-webkit-outer-spin-button]:hidden
+              ${isValid ? 'border-(--bg-color)' : 'border-red-400 shadow-[0_0_6px_var(--red-color)] focus:border-red-400'}
+              ${disabled ? 'opacity-50' : 'hover:shadow-[0_0_6px_rgb(0_0_0_/0.25)]'} 
+              ${readonly ? '' : 'hover:shadow-[0_0_6px_rgb(0_0_0_/0.25)]'}
               ${help?.info ? 'pl-8' : ''} 
               ${help.copyButton || type === 'password' || (type === 'number' && !readonly) ? 'pr-8' : ''}`,
           componentClass,
