@@ -127,7 +127,7 @@ const translations: Translations = {
     'constructor.props.min': 'Минимальное значение',
     'constructor.props.max': 'Максимальное значение',
     'constructor.props.units': 'Единица измерения',
-    'constructor.props.optionclass': 'Стили кнопки',
+    'constructor.props.optionclass': 'Стили опции',
     'constructor.props.optionvalue': 'Значение',
     'constructor.props.optionposition': 'Позиция',
     'constructor.props.optionname': 'Текст',

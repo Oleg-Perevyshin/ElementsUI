@@ -412,17 +412,14 @@
             updateProperty('options', options, component, onPropertyChange)
           }}
         />
-        <UI.Select
-          wrapperClass="w-80 h-14.5"
-          label={{ name: $t('constructor.props.colors') }}
-          type="buttons"
-          options={$optionsStore.COLOR_OPTIONS}
-          value={$optionsStore.COLOR_OPTIONS.find((c) =>
-            (c.value as string).includes(option.class.split(' ').find((cls: string) => cls.startsWith('bg-'))),
-          )}
-          onUpdate={(option) => {
+        <UI.Input
+          label={{ name: $t('constructor.props.optionclass') }}
+          wrapperClass="!w-3/10"
+          value={option.class}
+          type={currentValueType.value}
+          onUpdate={(value) => {
             const options = [...(component.properties?.options || [])]
-            options[index]['class'] = option.value
+            options[index]['class'] = value as string
             updateProperty('options', options, component, onPropertyChange)
           }}
         />

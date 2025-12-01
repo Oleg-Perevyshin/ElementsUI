@@ -267,6 +267,7 @@
         }}
       />
     </div>
+
     <div class="flex w-1/3 flex-col items-center px-2">
       <UI.Select
         wrapperClass="h-14"
@@ -282,6 +283,7 @@
           })
         }}
       />
+
       <UI.Switch
         label={{
           name: $t('constructor.props.widthMode'),
@@ -291,20 +293,11 @@
         value={initialWidth()}
         options={[{ id: crypto.randomUUID(), value: 0, class: '' }]}
         onChange={(value) => {
-          if (value === 2) {
-            component.properties.items.forEach((_item: any, index: number) => {
-              let tabWidth = Math.max(...Array.from(document.body.querySelectorAll('.tab')).map((item) => (item as HTMLElement).offsetWidth))
-              const items = [...(component.properties?.items || [])]
-              items[index]['class'] = twMerge(items[index].class, `w-[${tabWidth}px]`)
-              updateProperty('items', items, component, onPropertyChange)
-            })
-          } else {
-            component.properties.items.forEach((_item: any, index: number) => {
-              const items = [...(component.properties?.items || [])]
-              items[index]['class'] = twMerge(items[index].class, 'w-auto')
-              updateProperty('items', items, component, onPropertyChange)
-            })
-          }
+          component.properties.items.forEach((_item: any, index: number) => {
+            const items = [...(component.properties?.items || [])]
+            items[index]['class'] = twMerge(items[index].class, value ? `w-[${(1 / items.length) * 100}%]` : 'w-auto')
+            updateProperty('items', items, component, onPropertyChange)
+          })
         }}
       />
     </div>

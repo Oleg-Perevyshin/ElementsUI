@@ -129,7 +129,14 @@
             )}
             onclick={(e) => selectOption(option, e)}
             {disabled}
-            style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"
+            style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%); 
+            {option.class?.split(' ').find((cls: string) => cls.startsWith('border-'))
+              ? `border-width: 1px;
+            border-color: var(--${option.class
+              ?.split(' ')
+              .find((cls: string) => cls.startsWith('border-'))
+              ?.replace('border-', '')}-color)`
+              : ''}"
           >
             {option.name}
           </button>
@@ -197,7 +204,14 @@
             )}
             onclick={(e) => selectOption(option, e)}
             {disabled}
-            style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"
+            style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%); 
+            {option.class?.split(' ').find((cls: string) => cls.startsWith('border-'))
+              ? `border-width: 1px;
+            border-color: var(--${option.class
+              ?.split(' ')
+              .find((cls: string) => cls.startsWith('border-'))
+              ?.replace('border-', '')}-color)`
+              : ''}"
           >
             {option.name}
           </button>
