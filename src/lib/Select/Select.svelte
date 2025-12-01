@@ -138,7 +138,7 @@
       </div>
     {/if}
   {:else if type === 'buttons'}
-    <div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class="flex h-full w-full flex-row justify-center rounded-full border border-(--bg-color)">
+    <div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class="flex h-full w-full flex-row justify-center rounded-full">
       {#each options as option, index (option.id)}
         <button
           id={option.id}
