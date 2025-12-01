@@ -103,7 +103,14 @@
         ${disabled ? 'opacity-50' : 'cursor-pointer hover:shadow-md'}`,
         value?.class,
       )}
-      style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"
+      style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%); 
+            {value?.class?.split(' ').find((cls: string) => cls.startsWith('border-'))
+        ? `border-width: 1px;
+            border-color: var(--${value.class
+              ?.split(' ')
+              .find((cls: string) => cls.startsWith('border-'))
+              ?.replace('border-', '')}-color)`
+        : ''}"
       onclick={toggleDropdown}
       aria-haspopup="true"
       aria-expanded={isDropdownOpen}
@@ -155,6 +162,14 @@
             ${options.length > 0 && index === 0 ? 'rounded-l-2xl' : ''} ${index === options.length - 1 ? 'rounded-r-2xl' : ''}`,
             option.class,
           )} bg-(--bg-color)"
+          style="
+            {option.class?.split(' ').find((cls: string) => cls.startsWith('border-'))
+            ? `border-width: 1px;
+            border-color: var(--${option.class
+              ?.split(' ')
+              .find((cls: string) => cls.startsWith('border-'))
+              ?.replace('border-', '')}-color)`
+            : ''}"
           onclick={(e) => selectOption(option, e)}
           disabled={option.disabled}
         >
