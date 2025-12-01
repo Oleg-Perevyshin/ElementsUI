@@ -114,7 +114,7 @@
 
     {#if isDropdownOpen}
       <div
-        class="absolute top-full left-1/2 z-50 -translate-x-1/2 rounded-b-2xl border border-t-0 border-(--bg-color) shadow-[0_0_3px_rgb(0_0_0_/0.25)]"
+        class="absolute top-full left-1/2 z-50 -translate-x-1/2 rounded-b-2xl shadow-[0_0_3px_rgb(0_0_0_/0.25)]"
         style="width: calc(100% - 1.8rem);"
         transition:slide={{ duration: 250 }}
       >

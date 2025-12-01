@@ -215,7 +215,7 @@
                   {#each column.buttons as button (button)}
                     <button
                       class="{twMerge(`cursor-pointer rounded-full 
-                           px-4 py-1 font-medium shadow-sm transition-shadow duration-200 outline-none select-none hover:shadow-md
+                           px-4 py-1 font-semibold shadow-sm transition-shadow duration-200 outline-none select-none hover:shadow-md
                           ${typeof button.class === 'function' ? button.class(row) : button.class}`)} bg-(--bg-color)"
                       onclick={() => buttonClick(row, button)}
                     >
