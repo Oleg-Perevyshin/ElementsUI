@@ -32,6 +32,7 @@ ${formatObjectToString(accordionComponent.properties as IAccordionProps)}
 >
   <h1>Содержимое компонента</h1>
   <h1>Содержимое компонента</h1>
+  <h1>Содержимое компонента</h1>
 </UI.Accordion>`)
 </script>
 
@@ -51,10 +52,10 @@ ${formatObjectToString(accordionComponent.properties as IAccordionProps)}
       onPropertyChange={(updates) => (accordionComponent = updateComponent(accordionComponent, updates as object))}
       forConstructor={false}
     />
-    <hr />
+    <!-- <hr />
     <AccordionProps
       component={accordionComponent as UIComponent & { properties: Partial<IAccordionProps> }}
       onPropertyChange={(updates) => (accordionComponent = updateComponent(accordionComponent, updates as object))}
-    />
+    /> -->
   {/snippet}
 </ComponentExample>
