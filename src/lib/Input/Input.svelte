@@ -66,7 +66,7 @@
         class={twMerge(
           `w-full rounded-2xl border px-4 py-1 text-center shadow-[0_0_3px_rgb(0_0_0_/0.25)] transition duration-200
               outline-none focus:shadow-[0_0_6px_var(--blue-color)] focus:border-(--blue-color) [&::-webkit-inner-spin-button]:hidden [&::-webkit-outer-spin-button]:hidden
-              ${isValid ? 'border-(--bg-color)' : 'border-red-400 shadow-[0_0_6px_var(--red-color)] focus:border-red-400'}
+              ${isValid ? 'border-(--bg-color)' : 'border-red-400 shadow-[0_0_6px_var(--red-color)] focus:shadow-[0_0_6px_var(--red-color)] focus:border-red-400'}
               ${disabled ? 'opacity-50' : 'hover:shadow-[0_0_6px_rgb(0_0_0_/0.25)]'} 
               ${readonly ? '' : 'hover:shadow-[0_0_6px_rgb(0_0_0_/0.25)]'}
               ${help?.info ? 'pl-8' : ''} 
@@ -92,7 +92,7 @@
         class={twMerge(
           `h-full w-full resize-y rounded-2xl border border-(--border-color) px-2 py-1 text-center shadow-[0_0_3px_rgb(0_0_0_/0.25)] transition
           duration-200 outline-none focus:border-blue-400
-            ${isValid ? 'border-(--bg-color)' : 'border-red-400 shadow-[0_0_6px_var(--red-color)]'}
+            ${isValid ? 'border-(--bg-color)' : 'border-red-400 shadow-[0_0_6px_var(--red-color)] focus:shadow-[0_0_6px_var(--red-color)] focus:border-red-400'}
             ${disabled ? 'cursor-not-allowed opacity-50' : 'hover:shadow-[0_0_6px_rgb(0_0_0_/0.25)]'} 
             ${readonly ? '' : 'hover:shadow-[0_0_6px_rgb(0_0_0_/0.25)]'}
             ${help?.info ? 'pl-8' : ''}

@@ -82,10 +82,10 @@ export interface UIComponent {
 
 /* Координаты и размер компонента */
 export interface Position {
-  row: number
-  col: number
-  width: number
-  height: number
+  row?: number
+  col?: number
+  width?: number
+  height?: number
 }
 
 /* Интерфейс обработчика для UI компонента */

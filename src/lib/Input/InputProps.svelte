@@ -112,7 +112,11 @@
         options={$optionsStore.INPUT_TYPE_OPTIONS}
         type="buttons"
         value={$optionsStore.INPUT_TYPE_OPTIONS.find((opt) => opt.value === (component.properties.type || 'text'))}
-        onUpdate={(selectedOption) => updateProperty('type', selectedOption.value as string)}
+        onUpdate={(selectedOption) => {
+          updateProperty('type', selectedOption.value as string)
+          if (selectedOption.value === 'text-area') updateProperty('componentClass', twMerge(component.properties.componentClass, 'font-mono'))
+          else updateProperty('componentClass', twMerge(component.properties.componentClass, 'font-[Montserrat]'))
+        }}
       />
       {#if component.properties.type === 'text' || component.properties.type === 'password' || component.properties.type === 'text-area'}
         <UI.Input
@@ -235,7 +239,7 @@
       <UI.Input
         label={{ name: $t('constructor.props.componentclass') }}
         value={component.properties.componentClass}
-        onUpdate={(value) => updateProperty('componentClass', value as string)}
+        onUpdate={(value) => updateProperty('componentClass', twMerge(component.properties.componentClass, value as string))}
       />
       <UI.Select
         wrapperClass="h-14"
