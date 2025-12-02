@@ -4,9 +4,22 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  font-family: 'Montserrat', sans-serif;
+  font-family:
+    'Montserrat',
+    -apple-system,
+    BlinkMacSystemFont,
+    segoe ui,
+    Roboto,
+    helvetica neue,
+    Arial,
+    noto sans,
+    sans-serif,
+    apple color emoji,
+    segoe ui emoji,
+    segoe ui symbol,
+    noto color emoji;
   font-optical-sizing: auto;
-  font-weight: 400;
+  font-weight: 450;
   font-style: normal;
   box-sizing: border-box;
   margin: 0;

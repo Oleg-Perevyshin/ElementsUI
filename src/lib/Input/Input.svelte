@@ -90,11 +90,11 @@
       <textarea
         bind:value
         class={twMerge(
-          `h-full w-full resize-y rounded-2xl border border-(--border-color) px-2 py-1 text-center font-mono shadow-sm transition
+          `h-full w-full resize-y rounded-2xl border border-(--border-color) px-2 py-1 text-center shadow-[0_0_3px_rgb(0_0_0_/0.25)] transition
           duration-200 outline-none focus:border-blue-400
-            ${isValid ? 'border-(--border-color)' : 'border-red-400 shadow-[0_0_6px_var(--red-color)]'}
-            ${disabled ? 'cursor-not-allowed opacity-50' : 'hover:shadow-md'} 
-            ${readonly ? '' : 'hover:shadow-md'}
+            ${isValid ? 'border-(--bg-color)' : 'border-red-400 shadow-[0_0_6px_var(--red-color)]'}
+            ${disabled ? 'cursor-not-allowed opacity-50' : 'hover:shadow-[0_0_6px_rgb(0_0_0_/0.25)]'} 
+            ${readonly ? '' : 'hover:shadow-[0_0_6px_rgb(0_0_0_/0.25)]'}
             ${help?.info ? 'pl-8' : ''}
             ${help.copyButton ? 'pr-8' : ''}`,
           componentClass,
