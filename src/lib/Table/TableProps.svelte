@@ -24,7 +24,7 @@
   const DeviceVariables = getContext<{ id: string; value: string; name: string }[]>('DeviceVariables')
   let VARIABLE_OPTIONS = $derived(DeviceVariables && Array.isArray(DeviceVariables) ? DeviceVariables : [])
 
-  let defaultIcon = $state({ isModalOpen: false, columnIndex: 0, column: component.properties.header[0] })
+  let defaultIcon = $derived({ isModalOpen: false, columnIndex: 0, column: component.properties.header[0] })
 
   const initialColor = $derived(
     $optionsStore.COLOR_OPTIONS.find((c) =>
@@ -77,7 +77,7 @@
 </script>
 
 {#if forConstructor}
-  <div class="relative flex flex-row items-start justify-center">
+  <div class="relative flex flex-row items-start justify-center pb-4">
     <div class="flex w-1/3 flex-col px-2">
       <UI.Select
         label={{ name: $t('constructor.props.variable') }}
@@ -183,11 +183,9 @@
         <UI.Select
           label={{ name: $t('constructor.props.align.content') }}
           type="buttons"
-          value={$optionsStore.ALIGN_OPTIONS.find((a) => (a.value as string).includes(column.align?.content) || 'left')}
+          value={$optionsStore.ALIGN_OPTIONS.find((a) => (a.value as string).includes(column.align))}
           options={$optionsStore.ALIGN_OPTIONS}
-          onUpdate={(option) => {
-            updateTableHeader(columnIndex, 'align', { header: option.value, content: option.value })
-          }}
+          onUpdate={(option) => updateTableHeader(columnIndex, 'align', option.value)}
         />
         <UI.Switch
           wrapperClass="w-30"
@@ -288,7 +286,7 @@
     {/each}
   </div>
 {:else}
-  <div class="relative flex flex-row items-start justify-center">
+  <div class="relative flex flex-row items-start justify-center pb-4">
     <div class="flex w-1/3 flex-col px-2">
       <UI.Input
         label={{ name: $t('constructor.props.id') }}
@@ -407,13 +405,6 @@
                 value={Number(column.width.replace('%', ''))}
                 onUpdate={(value) => updateTableHeader(columnIndex, 'width', `${value}%`)}
               />
-              <UI.Select
-                label={{ name: $t('constructor.props.align.header') }}
-                type="buttons"
-                value={$optionsStore.ALIGN_OPTIONS.find((a) => (a.value as string).includes(column.align?.header) || 'left')}
-                options={$optionsStore.ALIGN_OPTIONS}
-                onUpdate={(option) => updateTableHeader(columnIndex, 'align', { header: option.value, content: column.align?.content })}
-              />
               <UI.Switch
                 label={{ name: $t('constructor.props.table.columns.sortable'), class: 'px-0' }}
                 wrapperClass="w-30"
@@ -459,9 +450,9 @@
               <UI.Select
                 label={{ name: $t('constructor.props.align.content') }}
                 type="buttons"
-                value={$optionsStore.ALIGN_OPTIONS.find((a) => (a.value as string).includes(column.align?.content) || 'left')}
+                value={$optionsStore.ALIGN_OPTIONS.find((a) => (a.value as string).includes(column.align))}
                 options={$optionsStore.ALIGN_OPTIONS}
-                onUpdate={(option) => updateTableHeader(columnIndex, 'align', { header: column.align?.header, content: option.value })}
+                onUpdate={(option) => updateTableHeader(columnIndex, 'align', option.value)}
               />
               <UI.Switch
                 wrapperClass="w-2/10"

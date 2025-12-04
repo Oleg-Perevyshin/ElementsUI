@@ -12,6 +12,7 @@
 
 :root {
   font-family:
+    'Montserrat',
     -apple-system,
     BlinkMacSystemFont,
     segoe ui,
@@ -24,7 +25,9 @@
     segoe ui emoji,
     segoe ui symbol,
     noto color emoji;
-  font-weight: 400;
+  font-optical-sizing: auto;
+  font-weight: 450;
+  font-style: normal;
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -126,9 +129,14 @@ a:hover {
   text-decoration: underline;
 }
 
+input::placeholder {
+  opacity: 0.5;
+}
+
 /* Стили полосы прокрутки */
 ::-webkit-scrollbar {
   width: 8px;
+  height: 8px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
@@ -166,9 +174,9 @@ a:hover {
   --shadow-color: #d4d4d8;
 
   --gray-color: #374151; /* gray-700 */
-  --red-color: #b91c1c; /* red-700 */
+  --red-color: #991b1b; /* red-800 */
   --orange-color: #c2410c; /* orange-700 */
-  --yellow-color: #ca8a04; /* yellow-600 */
+  --yellow-color: #a16207; /* yellow-600 */
   --green-color: #15803d; /* green-700 */
   --cyan-color: #0e7490; /* cyan-700 */
   --blue-color: #1d4ed8; /* blue-600 */

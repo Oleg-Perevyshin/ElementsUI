@@ -289,7 +289,7 @@ export interface ITableHeader<T extends object> {
   key: keyof T
   sortable?: boolean
   width?: string
-  align?: { header?: 'left' | 'center' | 'right'; content?: 'left' | 'center' | 'right' }
+  align?: 'left' | 'center' | 'right'
   overflow?: {
     truncated?: boolean
     formatting?: (text: string) => string

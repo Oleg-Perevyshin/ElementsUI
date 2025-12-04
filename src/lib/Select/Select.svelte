@@ -99,7 +99,7 @@
       id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
       value={value?.value ? String(value.value) : ''}
       class={twMerge(
-        `w-full rounded-2xl border border-(--bg-color) p-1 text-center shadow-[0_0_3px_rgb(0_0_0_/0.25)] transition-shadow duration-200
+        `w-full rounded-2xl border border-(--bg-color) p-1 text-center shadow-[0_0_3px_rgb(0_0_0_/0.25)] transition duration-200
         ${disabled ? 'opacity-50' : 'cursor-pointer hover:shadow-[0_0_6px_rgb(0_0_0_/0.25)]'}`,
         value?.class,
       )}
@@ -143,7 +143,7 @@
         <button
           id={option.id}
           class="{twMerge(
-            `m-0 inline-block min-w-0 flex-1 items-center px-2 py-1 font-semibold shadow-[0_0_3px_rgb(0_0_0_/0.25)] transition-all duration-300 select-none border border-(--bg-color)
+            `m-0 inline-block min-w-0 flex-1 items-center px-2 py-1 font-semibold shadow-[0_0_3px_rgb(0_0_0_/0.25)] transition duration-300 select-none border border-(--bg-color)
             ${option.disabled || disabled ? 'opacity-50' : 'cursor-pointer hover:shadow-[0_0_6px_rgb(0_0_0_/0.25)]'}
             ${option.value === value?.value && value !== null ? 'z-10 py-1 shadow-[0_0_10px_var(--shadow-color)] hover:shadow-[0_0_15px_var(--shadow-color)]' : ''}  
             ${options.length > 0 && index === 0 ? 'rounded-l-2xl' : ''} ${index === options.length - 1 ? 'rounded-r-2xl' : ''}`,
@@ -166,7 +166,7 @@
     <input
       bind:value={searchValue}
       class="w-full appearance-none rounded-2xl border px-4 py-1 text-center shadow-[0_0_3px_rgb(0_0_0_/0.25)]
-          transition-shadow duration-200 outline-none focus:shadow-[0_0_6px_var(--blue-color)]
+          transition duration-200 outline-none focus:shadow-[0_0_6px_var(--blue-color)]
           [&::-webkit-inner-spin-button]:hidden [&::-webkit-outer-spin-button]:hidden
           {disabled
         ? 'cursor-not-allowed opacity-50'

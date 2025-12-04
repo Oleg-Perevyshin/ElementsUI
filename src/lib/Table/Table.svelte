@@ -171,9 +171,9 @@
         <div
           class={twMerge(
             `items-center justify-center border-l ${outline && index !== 0 ? ' border-(--border-color)' : 'border-transparent'} ${
-              column.align?.header === 'center'
+              column.align === 'center'
                 ? 'flex justify-center text-center'
-                : column.align?.header === 'right'
+                : column.align === 'right'
                   ? 'flex justify-end text-right'
                   : 'flex justify-start text-left'
             } gap-1 bg-(--bg-color) p-2 text-left`,
@@ -201,9 +201,9 @@
             <div
               class="relative flex w-full min-w-0 items-center px-2 py-1 wrap-break-word
               {index % 2 ? 'bg-(--back-color)/40' : 'bg-[#edeef3] dark:bg-[#1f2a3a]'}
-              {column.align?.content === 'center'
+              {column.align === 'center'
                 ? 'flex justify-center text-center'
-                : column.align?.content === 'right'
+                : column.align === 'right'
                   ? 'flex justify-end text-right'
                   : 'flex justify-start text-left'}
               border-t

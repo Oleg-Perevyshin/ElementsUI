@@ -23,7 +23,7 @@
 
   const isCol = $derived(!!items.find((item) => item.class?.startsWith('flex-col')))
 
-  let currentTabIndex: number = $state(activeTab)
+  let currentTabIndex: number = $derived(activeTab)
 </script>
 
 <div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class="w-full rounded-2xl bg-(--back-color)">

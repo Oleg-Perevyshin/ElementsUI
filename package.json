@@ -1,6 +1,6 @@
 {
   "name": "poe-svelte-ui-lib",
-  "version": "1.4.7",
+  "version": "1.4.8",
   "license": "MIT",
   "type": "module",
   "scripts": {
@@ -44,12 +44,12 @@
   },
   "devDependencies": {
     "@sveltejs/adapter-static": "^3.0.10",
-    "@sveltejs/kit": "^2.49.0",
+    "@sveltejs/kit": "^2.49.1",
     "@sveltejs/package": "^2.5.7",
     "@sveltejs/vite-plugin-svelte": "^6.2.1",
     "@types/node": "^24.10.1",
     "publint": "^0.3.15",
-    "svelte": "^5.45.3",
+    "svelte": "^5.45.4",
     "svelte-preprocess": "^6.0.3",
     "vite": "^7.2.6",
     "vite-plugin-compression": "^0.5.1"

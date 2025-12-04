@@ -25,6 +25,7 @@
             width: '0rem',
             height: '0rem',
           },
+          align: 'left',
         } as ITableHeader<any>,
         {
           key: 'device',
@@ -35,6 +36,7 @@
             width: '0rem',
             height: '0rem',
           },
+          align: 'left',
           overflow: {
             truncated: true,
           },
@@ -89,7 +91,6 @@ ${formatObjectToString(tableComponent.properties as ITableProps<object>)}
     <TableProps
       component={tableComponent as UIComponent & { properties: Partial<ITableProps<object>> }}
       onPropertyChange={(updates) => (tableComponent = updateComponent(tableComponent, updates as object))}
-      
     /> -->
   {/snippet}
 </ComponentExample>

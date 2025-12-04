@@ -32,15 +32,6 @@
     <!-- Сообщение для отправки в ws по нажатию кнопки -->
     <div class="flex w-1/3 flex-col items-center px-2">
       <UI.Select
-        label={{ name: $t('constructor.props.variable') }}
-        options={VARIABLE_OPTIONS}
-        value={VARIABLE_OPTIONS.find((opt) => opt.value === component.properties.id)}
-        onUpdate={(value) => {
-          updateProperty('id', value.value as string, component, onPropertyChange)
-          onPropertyChange({ name: value.name?.split('—')[1].trim(), eventHandler: { Variables: value.value as string } })
-        }}
-      />
-      <UI.Select
         label={{ name: $t('constructor.props.access') }}
         type="buttons"
         options={$optionsStore.ACCESS_OPTION}

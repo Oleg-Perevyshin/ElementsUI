@@ -192,9 +192,6 @@ input::placeholder {
 .bg-yellow {
   --bg-color: var(--yellow-color);
 }
-.bg-lime {
-  --bg-color: var(--lime-color);
-}
 .bg-green {
   --bg-color: var(--green-color);
 }
@@ -229,14 +226,11 @@ input::placeholder {
 .border-yellow {
   --border-color: var(--yellow-color);
 }
-.border-lime {
-  --border-color: var(--lime-color);
-}
 .border-green {
   --border-color: var(--green-color);
 }
-.border-sky {
-  --border-color: var(--sky-color);
+.border-cyan {
+  --border-color: var(--cyan-color);
 }
 .border-blue {
   --border-color: var(--blue-color);

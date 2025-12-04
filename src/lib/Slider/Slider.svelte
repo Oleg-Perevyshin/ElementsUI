@@ -17,8 +17,8 @@
 
   const isRange = $derived(type === 'range' || (Array.isArray(value) && value.length === 2))
 
-  const maxDigits = String(number.maxNum ?? 100).length
-  const valueWidth = `${maxDigits + 1}ch` /* +1 на запас */
+  const maxDigits = $derived(String(number.maxNum ?? 100).length)
+  const valueWidth = $derived(`${maxDigits + 1}ch`) /* +1 на запас */
 
   /* Инициализация значений с проверкой типа */
   let singleValue = $derived(!isRange && typeof value === 'number' ? value : number.minNum)

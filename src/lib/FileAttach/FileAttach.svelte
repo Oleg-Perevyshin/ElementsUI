@@ -15,7 +15,7 @@
     onChange = () => {},
   }: IFileAttachProps = $props()
 
-  let ID = `${id}-${crypto.randomUUID().slice(0, 6)}`
+  let ID = $derived(`${id}-${crypto.randomUUID().slice(0, 6)}`)
   let selectedFile = $state<File | null>(null)
   let previewUrl = $derived(currentImage ? (currentImage.startsWith('data:') ? currentImage : `data:image/png;base64,${currentImage}`) : null)
   let fileName = $state('')
