@@ -316,9 +316,12 @@ export interface ITableProps<T extends object> {
   id?: string
   wrapperClass?: string
   label?: { name?: string; class?: string }
-  header: ITableHeader<T>[]
-  body: T[]
+  header?: ITableHeader<T>[]
+  body: T[] | T | null
   footer?: string
+  type?: 'table' | 'logger'
+  stashData?: boolean
+  rowsAmmount?: number
   outline?: boolean
   cursor?: string | null
   loader?: Writable<boolean>

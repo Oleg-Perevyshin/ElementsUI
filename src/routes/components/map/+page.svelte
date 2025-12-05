@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { ProgressBar, type IMapProps, type UIComponent } from '$lib'
+  import { type IMapProps, type UIComponent } from '$lib'
   import ComponentExample from '$lib/ComponentExample.svelte'
   import Map from '$lib/Map/Map.svelte'
   import { updateComponent, type IDeviceGNSS } from '$lib/types'
@@ -99,7 +99,7 @@ ${formatObjectToString(mapComponent.properties as IMapProps)}
   {/snippet}
   {#snippet componentProps()}
     <MapProps
-      component={mapComponent as UIComponent & { properties: Partial<IMapProps> }}
+      component={mapComponent as UIComponent & { properties: Partial }}
       onPropertyChange={(updates) => (mapComponent = updateComponent(mapComponent, updates as object))}
       forConstructor={false}
     />

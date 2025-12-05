@@ -148,6 +148,11 @@ export const optionsStore = derived(t, ($t) => {
       { id: id(), value: 'circle', name: $t('constructor.props.type.circle') },
     ],
 
+    TABLE_TYPE_OPTIONS: [
+      { id: id(), value: 'table', name: $t('constructor.props.table.type.table') },
+      { id: id(), value: 'logger', name: $t('constructor.props.table.type.logger') },
+    ],
+
     AUTOCOMPLETE_CONSTRUCTOR_OPTIONS: [
       { id: id(), value: 'on', name: $t('constructor.props.autocomplete.on') },
       { id: id(), value: 'off', name: $t('constructor.props.autocomplete.off') },

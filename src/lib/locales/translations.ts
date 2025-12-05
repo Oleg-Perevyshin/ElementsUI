@@ -145,6 +145,9 @@ const translations: Translations = {
     'constructor.props.file.select': 'Выберите файл',
     'constructor.props.file.notselected': 'Файл не выбран',
 
+    'constructor.props.table.type': 'Тип таблицы',
+    'constructor.props.table.type.table': 'Статическая таблица',
+    'constructor.props.table.type.logger': 'Таблица для логов',
     'constructor.props.table.columns': 'Колонки таблицы',
     'constructor.props.table.columns.key': 'Ключ',
     'constructor.props.table.columns.label': 'Название колонки',
@@ -161,6 +164,8 @@ const translations: Translations = {
     'constructor.props.table.addaction': 'Добавить кнопку',
     'constructor.props.table.keys': 'Перечень ключей',
     'constructor.props.table.keys.info': 'Ключи таблицы, значения которых будут возвращаться',
+    'constructor.props.table.stashData': 'Накопление данных',
+    'constructor.props.table.buffersize': 'Размер буфера',
 
     'constructor.props.icon.access': 'Доступ',
     'constructor.props.icon.common': 'Общее',

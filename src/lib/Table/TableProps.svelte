@@ -24,7 +24,7 @@
   const DeviceVariables = getContext<{ id: string; value: string; name: string }[]>('DeviceVariables')
   let VARIABLE_OPTIONS = $derived(DeviceVariables && Array.isArray(DeviceVariables) ? DeviceVariables : [])
 
-  let defaultIcon = $derived({ isModalOpen: false, columnIndex: 0, column: component.properties.header[0] })
+  let defaultIcon = $derived({ isModalOpen: false, columnIndex: 0, column: component.properties.header ? component.properties.header[0] : '' })
 
   const initialColor = $derived(
     $optionsStore.COLOR_OPTIONS.find((c) =>
@@ -95,6 +95,16 @@
         value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.access)}
         onUpdate={(option) => onPropertyChange({ access: option.value })}
       />
+      <UI.Select
+        label={{ name: $t('constructor.props.table.type') }}
+        type="buttons"
+        options={$optionsStore.TABLE_TYPE_OPTIONS}
+        value={$optionsStore.TABLE_TYPE_OPTIONS.find((o) => o.value === component.properties.type)}
+        onUpdate={(option) => {
+          updateProperty('type', option.value as string, component, onPropertyChange)
+          if (option.value === 'logger') updateProperty('stashData', true, component, onPropertyChange)
+        }}
+      />
     </div>
     <div class="flex w-1/3 flex-col px-2">
       <UI.Select
@@ -111,6 +121,14 @@
         options={[{ id: crypto.randomUUID(), value: 0, class: '' }]}
         onChange={(value) => updateProperty('outline', value, component, onPropertyChange)}
       />
+      <UI.Switch
+        label={{ name: $t('constructor.props.table.stashData') }}
+        value={component.properties.stashData}
+        options={[{ id: crypto.randomUUID(), value: 0, class: '', disabled: component.properties.type === 'logger' }]}
+        onChange={(value) => {
+          updateProperty('stashData', value, component, onPropertyChange)
+        }}
+      />
     </div>
     <div class="flex w-1/3 flex-col px-2">
       <UI.Input
@@ -124,6 +142,12 @@
         value={initialAlign}
         options={$optionsStore.TEXT_ALIGN_OPTIONS}
         onUpdate={(option) => updateProperty('label.class', twMerge(component.properties.label.class, option.value), component, onPropertyChange)}
+      />
+      <UI.Input
+        label={{ name: $t('constructor.props.table.buffersize') }}
+        type="number"
+        value={component.properties.rowsAmmount}
+        onUpdate={(value) => updateProperty('rowsAmmount', value as string, component, onPropertyChange)}
       />
     </div>
   </div>

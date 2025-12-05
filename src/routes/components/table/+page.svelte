@@ -5,6 +5,7 @@
   import Table from '$lib/Table/Table.svelte'
   import TableProps from '$lib/Table/TableProps.svelte'
   import { updateComponent } from '$lib/types'
+  import { onDestroy, onMount } from 'svelte'
   import { formatObjectToString } from '../../common'
 
   let tableComponent: UIComponent = $state({
@@ -15,6 +16,8 @@
       id: crypto.randomUUID(),
       wrapperClass: 'bg-blue',
       label: { name: 'Label', class: 'text-center' },
+      type: 'table',
+      rowsAmmount: 10,
       header: [
         {
           key: 'id',
@@ -31,7 +34,7 @@
           key: 'device',
           label: { name: 'Device' },
           width: '60%',
-          sortable: true,
+          sortable: false,
           image: {
             width: '0rem',
             height: '0rem',
@@ -59,17 +62,47 @@
     parentId: '',
   })
 
+  let body: any | null = $state(null)
+  let intervalId: any | null = null
+
+  const generateLoggerString = (): { logLevel: string; payload: string } => {
+    let logLevel = ['info', 'warning', 'error'][Math.floor(Math.random() * 3)]
+    return { logLevel, payload: `${logLevel}` }
+  }
+
+  const generateStashingData = (): { id: string; device: string } => {
+    return {
+      id: `Value of id ${Math.floor(Math.random() * 10)}`,
+      device: `Value of device ${Math.floor(Math.random() * 10)}`,
+    }
+  }
+
   let codeText = $derived(`
 <UI.Table
 ${formatObjectToString(tableComponent.properties as ITableProps<object>)} 
   onClick={() => {}}
 />`)
+
+  onMount(() => {
+    body = (tableComponent.properties as ITableProps<object>).type == 'logger' ? generateLoggerString() : generateStashingData()
+
+    intervalId = setInterval(() => {
+      body = (tableComponent.properties as ITableProps<object>).type == 'logger' ? generateLoggerString() : generateStashingData()
+    }, 1000)
+  })
+
+  onDestroy(() => {
+    if (intervalId) clearInterval(intervalId)
+  })
 </script>
 
 <ComponentExample {codeText}>
   {#snippet component()}
-    <div>
-      <Table {...tableComponent.properties as ITableProps<object>} />
+    <div class="max-h-70">
+      <Table
+        {...tableComponent.properties as ITableProps<object>}
+        body={(tableComponent.properties as ITableProps<object>).stashData ? body : (tableComponent.properties as ITableProps<object>).body}
+      />
     </div>
   {/snippet}
   {#snippet componentProps()}
@@ -85,7 +118,7 @@ ${formatObjectToString(tableComponent.properties as ITableProps<object>)}
     <TableProps
       component={tableComponent as UIComponent & { properties: Partial<ITableProps<object>> }}
       onPropertyChange={(updates) => (tableComponent = updateComponent(tableComponent, updates as object))}
-      forConstructor={false}
+      forConstructor={true}
     />
     <!-- <hr />
     <TableProps

@@ -10,9 +10,12 @@
     id = crypto.randomUUID(),
     wrapperClass = '',
     label = { name: '', class: '' },
-    body = [],
+    body = $bindable(),
     header = [],
     footer = '',
+    stashData = false,
+    type = 'table',
+    rowsAmmount = 10,
     outline = false,
     cursor = null,
     loader,
@@ -21,6 +24,8 @@
     modalData = $bindable(),
     onClick,
   }: ITableProps<any> = $props()
+
+  let dataBuffer: any[] = $state([])
 
   /* Сортировка */
   let sortState: {
@@ -32,6 +37,13 @@
   }
 
   let isAutoscroll = $state(false)
+
+  const logTypeOptions = [
+    { id: crypto.randomUUID(), name: 'Error', value: 'error', color: 'bg-(--red-color)' },
+    { id: crypto.randomUUID(), name: 'Warning', value: 'warning', color: 'bg-(--yellow-color)' },
+    { id: crypto.randomUUID(), name: 'Info', value: 'info', color: 'bg-(--gray-color)' },
+  ]
+  let logType = $state(['error', 'info'])
 
   /* Сортировка столбцов */
   const sortRows = (key: string) => {
@@ -87,8 +99,9 @@
       container.scrollTop = container.scrollHeight
     }
   }
+
   $effect(() => {
-    if (body.length > 0) {
+    if (autoscroll && dataBuffer && dataBuffer.length > 0) {
       scrollToBottom()
     }
   })
@@ -141,10 +154,76 @@
     return !!src
   }
 
+  $effect(() => {
+    if (body && type == 'logger') {
+      dataBuffer = [
+        ...dataBuffer,
+        {
+          type: Object.entries(body)[0][1] as string,
+          color: `<div class='size-6 rounded-full ${logTypeOptions.find((o) => o.value == body.logLevel)?.color}'></div>`,
+          data: Object.entries(body)[1][1] as string,
+        },
+      ]
+
+      if (dataBuffer.length > rowsAmmount * 5) {
+        dataBuffer = dataBuffer.slice(-(rowsAmmount * 5))
+      }
+
+      body = null
+    }
+  })
+
+  $effect(() => {
+    if (body && stashData && type == 'table') {
+      dataBuffer = [...dataBuffer, body]
+      if (dataBuffer.length > rowsAmmount) {
+        dataBuffer = dataBuffer.slice(-rowsAmmount)
+      }
+
+      body = null
+    }
+  })
+
+  $effect(() => {
+    const currentType = type
+    if (type === 'logger') {
+      header = [
+        {
+          key: 'color',
+          label: { name: 'Type' },
+          width: '3rem',
+        } as ITableHeader<any>,
+        {
+          key: 'data',
+          label: { name: 'Data' },
+          width: 'calc(100% - 3rem)',
+        } as ITableHeader<any>,
+      ]
+    }
+    return () => {
+      dataBuffer = []
+    }
+  })
+
   onMount(() => {
     if (autoscroll) {
       container?.addEventListener('scroll', handleAutoScroll)
       scrollToBottom()
+    }
+
+    if (type === 'logger') {
+      header = [
+        {
+          key: 'color',
+          label: { name: 'Type' },
+          width: '3rem',
+        } as ITableHeader<any>,
+        {
+          key: 'data',
+          label: { name: 'Data' },
+          width: 'calc(100% - 3rem)',
+        } as ITableHeader<any>,
+      ]
     }
 
     return () => {
@@ -155,13 +234,51 @@
   })
 </script>
 
-<div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class={twMerge(`bg-blue flex h-full w-full flex-col overflow-hidden`, wrapperClass)}>
+<div
+  id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
+  class={twMerge(`bg-blue flex h-full w-full gap-2 items-center flex-col overflow-hidden`, wrapperClass)}
+>
   {#if label.name}
     <h5 class={twMerge(`w-full px-4 text-center`, label.class)}>{label.name}</h5>
   {/if}
 
+  {#if type == 'logger'}
+    <div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class="flex w-[50%] justify-center rounded-full">
+      {#each logTypeOptions as option, index}
+        <button
+          id={crypto.randomUUID()}
+          class={twMerge(`m-0 inline-block min-w-0 flex-1 cursor-pointer items-center px-2 py-1 font-semibold shadow-sm transition-all duration-300
+            select-none hover:shadow-md
+            ${
+              logType.includes(option.value) && logType !== null
+                ? 'z-10 py-1 shadow-[0_0_10px_var(--shadow-color)] hover:shadow-[0_0_15px_var(--shadow-color)]'
+                : ''
+            }  
+            ${logTypeOptions.length > 0 && index === 0 ? 'rounded-l-2xl' : ''} ${
+              index === logTypeOptions.length - 1 ? 'rounded-r-2xl' : ''
+            } ${option.color}`)}
+          onclick={() => {
+            if (logType.includes(option.value)) {
+              logType = logType.filter((type) => type !== option.value)
+            } else {
+              logType.push(option.value)
+            }
+          }}
+        >
+          <span class="flex flex-row items-center justify-center gap-4">
+            {#if option}
+              <div class="flex-1">
+                {option.name}
+              </div>
+            {/if}
+          </span>
+        </button>
+      {/each}
+    </div>
+  {/if}
+
   <div
-    class="flex h-full flex-col overflow-hidden rounded-xl border shadow-sm transition duration-200 hover:shadow-md {outline
+    class="flex h-full w-full flex-col overflow-hidden rounded-xl border shadow-sm transition duration-200 hover:shadow-md {outline
       ? ' border-(--border-color)'
       : 'border-transparent'} "
   >
@@ -193,126 +310,129 @@
       {/each}
     </div>
 
-    <!-- Table Body с прокруткой -->
-    <div class="flex-1 overflow-y-auto bg-(--container-color)/50" bind:this={container} onscroll={handleScroll}>
-      <div class="grid min-w-0" style={`grid-template-columns: ${header.map((c) => c.width || 'minmax(0, 1fr)').join(' ')};`}>
-        {#each body as row, index (row)}
-          {#each header as column, j (column)}
-            <div
-              class="relative flex w-full min-w-0 items-center px-2 py-1 wrap-break-word
+    {#if body || dataBuffer}
+      {@const rows = type == 'logger' ? dataBuffer.filter((str) => logType.includes(str.type)).slice(-rowsAmmount) : stashData ? dataBuffer : body}
+      <!-- Table Body с прокруткой -->
+      <div class="flex-1 overflow-y-auto bg-(--container-color)/50" bind:this={container} onscroll={handleScroll}>
+        <div class="grid min-w-0" style={`grid-template-columns: ${header.map((c) => c.width || 'minmax(0, 1fr)').join(' ')};`}>
+          {#each rows as row, index (row)}
+            {#each header as column, j (column)}
+              <div
+                class="relative flex w-full min-w-0 items-center px-2 py-1 wrap-break-word
               {index % 2 ? 'bg-(--back-color)/40' : 'bg-[#edeef3] dark:bg-[#1f2a3a]'}
               {column.align === 'center'
-                ? 'flex justify-center text-center'
-                : column.align === 'right'
-                  ? 'flex justify-end text-right'
-                  : 'flex justify-start text-left'}
+                  ? 'flex justify-center text-center'
+                  : column.align === 'right'
+                    ? 'flex justify-end text-right'
+                    : 'flex justify-start text-left'}
               border-t
               {j !== 0 ? ' border-l ' : ''}
               {outline ? 'border-(--border-color)' : 'border-transparent'}  "
-            >
-              {#if column.buttons}
-                <div class="flex w-full flex-col gap-1">
-                  {#each column.buttons as button (button)}
-                    <button
-                      class="{twMerge(`cursor-pointer rounded-full 
+              >
+                {#if column.buttons}
+                  <div class="flex w-full flex-col gap-1">
+                    {#each column.buttons as button (button)}
+                      <button
+                        class="{twMerge(`cursor-pointer rounded-full 
                            px-4 py-1 font-semibold shadow-sm transition-shadow duration-200 outline-none select-none hover:shadow-md
                           ${typeof button.class === 'function' ? button.class(row) : button.class}`)} bg-(--bg-color)"
-                      onclick={() => buttonClick(row, button)}
-                    >
-                      {typeof button.name === 'function' ? button.name(row) : button.name}
-                    </button>
-                  {/each}
-                </div>
-              {:else if column.image?.src || column.image?.defaultIcon}
-                <div
-                  class="flex items-center justify-center"
-                  style={`width: ${column.image.width || '5rem'}; height: ${column.image.height || '5rem'};`}
-                >
-                  {#if hasImage(column, row)}
-                    <img
-                      src={typeof column.image?.src === 'function' ? column.image.src(row) : column.image?.src || ''}
-                      alt={column.image.alt ?? 'Image'}
-                      class={twMerge(`h-full w-full object-cover ${column.image.class || ''}`)}
-                      loading="lazy"
-                    />
-                  {:else if column.image.defaultIcon}
-                    {#if typeof column.image.defaultIcon === 'string'}
-                      {@html column.image.defaultIcon}
-                    {:else}
-                      <column.image.defaultIcon />
+                        onclick={() => buttonClick(row, button)}
+                      >
+                        {typeof button.name === 'function' ? button.name(row) : button.name}
+                      </button>
+                    {/each}
+                  </div>
+                {:else if column.image?.src || column.image?.defaultIcon}
+                  <div
+                    class="flex items-center justify-center"
+                    style={`width: ${column.image.width || '5rem'}; height: ${column.image.height || '5rem'};`}
+                  >
+                    {#if hasImage(column, row)}
+                      <img
+                        src={typeof column.image?.src === 'function' ? column.image.src(row) : column.image?.src || ''}
+                        alt={column.image.alt ?? 'Image'}
+                        class={twMerge(`h-full w-full object-cover ${column.image.class || ''}`)}
+                        loading="lazy"
+                      />
+                    {:else if column.image.defaultIcon}
+                      {#if typeof column.image.defaultIcon === 'string'}
+                        {@html column.image.defaultIcon}
+                      {:else}
+                        <column.image.defaultIcon />
+                      {/if}
                     {/if}
-                  {/if}
-                </div>
-              {:else}
-                <div
-                  class=" w-full max-w-full wrap-break-word {column.overflow?.truncated ? 'truncate' : ' whitespace-normal'}"
-                  onmouseenter={column.overflow?.truncated ? (e) => showTooltip(e, row[column.key], column.overflow?.formatting) : undefined}
-                  onmouseleave={column.overflow?.truncated ? hideTooltip : undefined}
-                  onmousemove={column.overflow?.truncated
-                    ? (e) => {
-                        tooltip.x = e.clientX
-                        tooltip.y = e.clientY
-                      }
-                    : undefined}
-                  role="columnheader"
-                  tabindex={null}
-                >
-                  {#if column.overflow?.modal}
-                    <button
-                      class="w-full cursor-pointer overflow-hidden text-left text-ellipsis whitespace-nowrap"
-                      onclick={(e) => {
-                        e.stopPropagation()
-                        showModal(row[column.key], column.overflow?.formatting)
-                      }}
-                    >
+                  </div>
+                {:else}
+                  <div
+                    class=" w-full max-w-full wrap-break-word {column.overflow?.truncated ? 'truncate' : ' whitespace-normal'}"
+                    onmouseenter={column.overflow?.truncated ? (e) => showTooltip(e, row[column.key], column.overflow?.formatting) : undefined}
+                    onmouseleave={column.overflow?.truncated ? hideTooltip : undefined}
+                    onmousemove={column.overflow?.truncated
+                      ? (e) => {
+                          tooltip.x = e.clientX
+                          tooltip.y = e.clientY
+                        }
+                      : undefined}
+                    role="columnheader"
+                    tabindex={null}
+                  >
+                    {#if column.overflow?.modal}
+                      <button
+                        class="w-full cursor-pointer overflow-hidden text-left text-ellipsis whitespace-nowrap"
+                        onclick={(e) => {
+                          e.stopPropagation()
+                          showModal(row[column.key], column.overflow?.formatting)
+                        }}
+                      >
+                        {@html row[column.key]}
+                      </button>
+                    {:else}
                       {@html row[column.key]}
-                    </button>
-                  {:else}
-                    {@html row[column.key]}
-                  {/if}
-                </div>
-                <!-- {#if column.overflow?.truncated}
+                    {/if}
+                  </div>
+                  <!-- {#if column.overflow?.truncated}
                   <div class="whitespace-nowrap">{row[column.key].slice(-5)}</div>
                 {/if} -->
 
-                {#if column.overflow?.copy}
-                  <button
-                    class="mx-2 flex cursor-pointer border-none bg-transparent text-2xl"
-                    onclick={(e) => {
-                      e.preventDefault()
-                      navigator.clipboard.writeText(row[column.key])
-                      copiedCell = { x: column.key as string, y: index }
-                      setTimeout(() => (copiedCell = { x: '', y: -1 }), 1000)
-                    }}
-                    aria-label="Копировать текст"
-                  >
-                    <div class=" size-5 text-sm [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full">
-                      {#if copiedCell.y === index && copiedCell.x === column.key}
-                        <div
-                          class="absolute top-1/2 right-3.5 -translate-y-1/2 transform rounded-md bg-(--green-color) px-1.5 py-1 shadow-lg"
-                          transition:fade={{ duration: 200 }}
-                        >
-                          ✓
-                        </div>
-                      {:else}
-                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
-                          <g fill="none" stroke="currentColor" stroke-width="1.5">
-                            <path
-                              d="M6 11c0-2.828 0-4.243.879-5.121C7.757 5 9.172 5 12 5h3c2.828 0 4.243 0 5.121.879C21 6.757 21 8.172 21 11v5c0 2.828 0 4.243-.879 5.121C19.243 22 17.828 22 15 22h-3c-2.828 0-4.243 0-5.121-.879C6 20.243 6 18.828 6 16z"
-                            />
-                            <path d="M6 19a3 3 0 0 1-3-3v-6c0-3.771 0-5.657 1.172-6.828S7.229 2 11 2h4a3 3 0 0 1 3 3" />
-                          </g>
-                        </svg>
-                      {/if}
-                    </div>
-                  </button>
+                  {#if column.overflow?.copy}
+                    <button
+                      class="mx-2 flex cursor-pointer border-none bg-transparent text-2xl"
+                      onclick={(e) => {
+                        e.preventDefault()
+                        navigator.clipboard.writeText(row[column.key])
+                        copiedCell = { x: column.key as string, y: index }
+                        setTimeout(() => (copiedCell = { x: '', y: -1 }), 1000)
+                      }}
+                      aria-label="Копировать текст"
+                    >
+                      <div class=" size-5 text-sm [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full">
+                        {#if copiedCell.y === index && copiedCell.x === column.key}
+                          <div
+                            class="absolute top-1/2 right-3.5 -translate-y-1/2 transform rounded-md bg-(--green-color) px-1.5 py-1 shadow-lg"
+                            transition:fade={{ duration: 200 }}
+                          >
+                            ✓
+                          </div>
+                        {:else}
+                          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                            <g fill="none" stroke="currentColor" stroke-width="1.5">
+                              <path
+                                d="M6 11c0-2.828 0-4.243.879-5.121C7.757 5 9.172 5 12 5h3c2.828 0 4.243 0 5.121.879C21 6.757 21 8.172 21 11v5c0 2.828 0 4.243-.879 5.121C19.243 22 17.828 22 15 22h-3c-2.828 0-4.243 0-5.121-.879C6 20.243 6 18.828 6 16z"
+                              />
+                              <path d="M6 19a3 3 0 0 1-3-3v-6c0-3.771 0-5.657 1.172-6.828S7.229 2 11 2h4a3 3 0 0 1 3 3" />
+                            </g>
+                          </svg>
+                        {/if}
+                      </div>
+                    </button>
+                  {/if}
                 {/if}
-              {/if}
-            </div>
+              </div>
+            {/each}
           {/each}
-        {/each}
+        </div>
       </div>
-    </div>
+    {/if}
 
     {#if tooltip.show}
       <div
