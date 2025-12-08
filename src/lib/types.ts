@@ -75,7 +75,7 @@ export interface UIComponent {
     | IFileAttachProps
     | IJoystickProps
     | IMapProps
-  position: Position
+  position: Required<Position>
   parentId: string
   eventHandler?: IUIComponentHandler
 }

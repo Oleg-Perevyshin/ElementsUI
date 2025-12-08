@@ -57,14 +57,11 @@
   }
 
   const updateButtonProperty = (columnIndex: number, buttonIndex: number, field: string, value: any) => {
-    if (field === 'eventHandler') {
-    } else {
-      const headers = [...component.properties.header]
-      const buttons = [...headers[columnIndex].buttons]
-      buttons[buttonIndex] = { ...buttons[buttonIndex], [field]: value }
-      headers[columnIndex].buttons = buttons
-      updateProperty('header', headers, component, onPropertyChange)
-    }
+    const headers = [...component.properties.header]
+    const buttons = [...headers[columnIndex].buttons]
+    buttons[buttonIndex] = { ...buttons[buttonIndex], [field]: value }
+    headers[columnIndex].buttons = buttons
+    updateProperty('header', headers, component, onPropertyChange)
   }
 
   const removeButtonFromColumn = (columnIndex: number, buttonIndex: number) => {
@@ -143,12 +140,14 @@
         options={$optionsStore.TEXT_ALIGN_OPTIONS}
         onUpdate={(option) => updateProperty('label.class', twMerge(component.properties.label.class, option.value), component, onPropertyChange)}
       />
-      <UI.Input
-        label={{ name: $t('constructor.props.table.buffersize') }}
-        type="number"
-        value={component.properties.rowsAmmount}
-        onUpdate={(value) => updateProperty('rowsAmmount', value as string, component, onPropertyChange)}
-      />
+      {#if component.properties.stashData}
+        <UI.Input
+          label={{ name: $t('constructor.props.table.buffersize') }}
+          type="number"
+          value={component.properties.rowsAmmount}
+          onUpdate={(value) => updateProperty('rowsAmmount', value as string, component, onPropertyChange)}
+        />
+      {/if}
     </div>
   </div>
 
@@ -385,12 +384,14 @@
           updateProperty('stashData', value, component, onPropertyChange)
         }}
       />
-      <UI.Input
-        label={{ name: $t('constructor.props.table.buffersize') }}
-        type="number"
-        value={component.properties.rowsAmmount}
-        onUpdate={(value) => updateProperty('rowsAmmount', value as string, component, onPropertyChange)}
-      />
+      {#if component.properties.stashData}
+        <UI.Input
+          label={{ name: $t('constructor.props.table.buffersize') }}
+          type="number"
+          value={component.properties.rowsAmmount}
+          onUpdate={(value) => updateProperty('rowsAmmount', value as string, component, onPropertyChange)}
+        />
+      {/if}
     </div>
   </div>
 
@@ -606,6 +607,7 @@
                     onUpdate={(value) => {
                       const handler = { ...button.eventHandler }
                       handler.Variables = (value as string).trim().split(/\s+/)
+                      console.log(handler)
                       updateButtonProperty(columnIndex, buttonIndex, 'eventHandler', handler)
                     }}
                   />

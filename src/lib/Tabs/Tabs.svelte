@@ -26,10 +26,10 @@
   let currentTabIndex: number = $derived(activeTab)
 </script>
 
-<div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class="w-full rounded-2xl bg-(--back-color)">
+<div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class="w-full h-full flex flex-col rounded-2xl bg-(--back-color) overflow-hidden">
   <!-- Вкладки -->
   <div
-    class="{twMerge('bg-blue sticky top-0 z-50 flex h-fit items-center overflow-x-auto rounded-t-2xl px-1', wrapperClass)} 
+    class="{twMerge('bg-blue z-50 flex h-fit items-center rounded-t-2xl overflow-x-auto px-1', wrapperClass)} 
      bg-(--bg-color)"
   >
     {#each items as item, index}
@@ -72,7 +72,7 @@
 
   <!-- Контент вкладки -->
   <div
-    class="grid w-full gap-2 rounded-2xl bg-(--back-color) p-4"
+    class="grid flex-1 overflow-y-scroll w-full gap-2 rounded-2xl bg-(--back-color) p-4"
     style="grid-template-columns: repeat({size.width || 1}, minmax(0, 1fr)); grid-template-rows: repeat({size.height || 1}, auto);"
   >
     {#if Components}
@@ -89,7 +89,7 @@
 
 <style>
   ::-webkit-scrollbar-track {
-    background: var(--back-color);
+    background: var(--red-color);
   }
   ::-webkit-scrollbar-thumb {
     background-color: color-mix(in srgb, var(--bg-color), var(--back-color) 20%);
