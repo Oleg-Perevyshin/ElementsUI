@@ -43,7 +43,7 @@
     { id: crypto.randomUUID(), name: 'Warning', value: 'warning', color: 'bg-(--yellow-color)' },
     { id: crypto.randomUUID(), name: 'Info', value: 'info', color: 'bg-(--gray-color)' },
   ]
-  let logType = $state(['error', 'info'])
+  let logType = $state(['error', 'warning'])
 
   /* Сортировка столбцов */
   const sortRows = (key: string) => {

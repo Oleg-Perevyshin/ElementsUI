@@ -54,6 +54,30 @@
           id: 'Value of id',
           device: 'Value of device',
         },
+        {
+          id: 'Value of id',
+          device: 'Value of device',
+        },
+        {
+          id: 'Value of id',
+          device: 'Value of device',
+        },
+        {
+          id: 'Value of id',
+          device: 'Value of device',
+        },
+        {
+          id: 'Value of id',
+          device: 'Value of device',
+        },
+        {
+          id: 'Value of id',
+          device: 'Value of device',
+        },
+        {
+          id: 'Value of id',
+          device: 'Value of device',
+        },
       ],
       footer: '',
       autoscroll: true,
@@ -98,7 +122,7 @@ ${formatObjectToString(tableComponent.properties as ITableProps<object>)}
 
 <ComponentExample {codeText}>
   {#snippet component()}
-    <div class="max-h-70">
+    <div class="h-40">
       <Table
         {...tableComponent.properties as ITableProps<object>}
         body={(tableComponent.properties as ITableProps<object>).stashData ? body : (tableComponent.properties as ITableProps<object>).body}
@@ -118,7 +142,7 @@ ${formatObjectToString(tableComponent.properties as ITableProps<object>)}
     <TableProps
       component={tableComponent as UIComponent & { properties: Partial<ITableProps<object>> }}
       onPropertyChange={(updates) => (tableComponent = updateComponent(tableComponent, updates as object))}
-      forConstructor={true}
+      forConstructor={false}
     />
     <!-- <hr />
     <TableProps

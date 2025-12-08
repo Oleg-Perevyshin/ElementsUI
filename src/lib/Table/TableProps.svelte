@@ -179,10 +179,9 @@
     </div>
 
     {#each component.properties.header as column, columnIndex (columnIndex)}
-      <div class="mr-2 flex items-end justify-around gap-6">
+      <div class="mr-2 grid grid-cols-[minmax(5rem,10rem)_1fr_minmax(5rem,10rem)_minmax(10rem,21rem)_6rem_6rem_2rem_2rem] items-end gap-6">
         <UI.Input
           label={{ name: $t('constructor.props.table.columns.key') }}
-          wrapperClass="w-170"
           value={column.key}
           help={{ regExp: /^[0-9a-zA-Z_-]{0,16}$/ }}
           onUpdate={(value) => {
@@ -199,7 +198,6 @@
         />
         <UI.Input
           label={{ name: $t('constructor.props.table.columns.width') }}
-          wrapperClass="w-150"
           type="number"
           value={Number(column.width.replace('%', ''))}
           onUpdate={(value) => updateTableHeader(columnIndex, 'width', `${value}%`)}
@@ -212,14 +210,12 @@
           onUpdate={(option) => updateTableHeader(columnIndex, 'align', option.value)}
         />
         <UI.Switch
-          wrapperClass="w-30"
           label={{ name: $t('constructor.props.table.columns.sortable'), class: 'px-0' }}
           options={[{ id: crypto.randomUUID(), value: 0, class: '' }]}
           value={column.sortable}
           onChange={(value) => updateTableHeader(columnIndex, 'sortable', value)}
         />
         <UI.Switch
-          wrapperClass="w-30"
           label={{ name: $t('constructor.props.copy'), class: 'px-0' }}
           options={[{ id: crypto.randomUUID(), value: 0, class: '' }]}
           value={column.overflow?.copy}
@@ -338,6 +334,12 @@
           updateProperty('options', options, component, onPropertyChange)
         }}
       />
+      <UI.Switch
+        label={{ name: $t('constructor.props.outline') }}
+        value={component.properties.outline}
+        options={[{ id: crypto.randomUUID(), value: 0, class: '' }]}
+        onChange={(value) => updateProperty('outline', value, component, onPropertyChange)}
+      />
     </div>
     <div class="flex w-1/3 flex-col px-2">
       <UI.Select
@@ -357,19 +359,37 @@
         value={component.properties.label.class}
         onUpdate={(value) => updateProperty('label.class', value as string, component, onPropertyChange)}
       />
-    </div>
-
-    <div class="flex w-1/3 flex-col px-2">
       <UI.Input
         label={{ name: $t('constructor.props.footer') }}
         value={component.properties.footer}
         onUpdate={(value) => updateProperty('footer', value as string, component, onPropertyChange)}
       />
+    </div>
+
+    <div class="flex w-1/3 flex-col px-2">
+      <UI.Select
+        label={{ name: $t('constructor.props.table.type') }}
+        type="buttons"
+        options={$optionsStore.TABLE_TYPE_OPTIONS}
+        value={$optionsStore.TABLE_TYPE_OPTIONS.find((o) => o.value === component.properties.type)}
+        onUpdate={(option) => {
+          updateProperty('type', option.value as string, component, onPropertyChange)
+          if (option.value === 'logger') updateProperty('stashData', true, component, onPropertyChange)
+        }}
+      />
       <UI.Switch
-        label={{ name: $t('constructor.props.outline') }}
-        value={component.properties.outline}
-        options={[{ id: crypto.randomUUID(), value: 0, class: '' }]}
-        onChange={(value) => updateProperty('outline', value, component, onPropertyChange)}
+        label={{ name: $t('constructor.props.table.stashData') }}
+        value={component.properties.stashData}
+        options={[{ id: crypto.randomUUID(), value: 0, class: '', disabled: component.properties.type === 'logger' }]}
+        onChange={(value) => {
+          updateProperty('stashData', value, component, onPropertyChange)
+        }}
+      />
+      <UI.Input
+        label={{ name: $t('constructor.props.table.buffersize') }}
+        type="number"
+        value={component.properties.rowsAmmount}
+        onUpdate={(value) => updateProperty('rowsAmmount', value as string, component, onPropertyChange)}
       />
     </div>
   </div>
@@ -404,10 +424,9 @@
       {#each component.properties.header as column, columnIndex (columnIndex)}
         <div class="rounded-2xl border border-(--border-color) p-2">
           <div class="mb-5">
-            <div class="mr-2 flex items-end justify-around gap-6">
+            <div class="mr-2 grid grid-cols-[minmax(5rem,10rem)_1fr_minmax(5rem,10rem)_minmax(10rem,21rem)_6rem_6rem_2rem_2rem] items-end gap-6">
               <UI.Input
                 label={{ name: $t('constructor.props.table.columns.key') }}
-                wrapperClass="w-150"
                 value={column.key}
                 help={{ regExp: /^[0-9a-zA-Z_-]{0,16}$/ }}
                 onUpdate={(value) => {
@@ -424,21 +443,25 @@
               />
               <UI.Input
                 label={{ name: $t('constructor.props.table.columns.width'), class: 'px-0' }}
-                wrapperClass="w-150"
                 type="number"
                 value={Number(column.width.replace('%', ''))}
                 onUpdate={(value) => updateTableHeader(columnIndex, 'width', `${value}%`)}
               />
+              <UI.Select
+                label={{ name: $t('constructor.props.align.content') }}
+                type="buttons"
+                value={$optionsStore.ALIGN_OPTIONS.find((a) => (a.value as string).includes(column.align))}
+                options={$optionsStore.ALIGN_OPTIONS}
+                onUpdate={(option) => updateTableHeader(columnIndex, 'align', option.value)}
+              />
               <UI.Switch
                 label={{ name: $t('constructor.props.table.columns.sortable'), class: 'px-0' }}
-                wrapperClass="w-30"
                 options={[{ id: crypto.randomUUID(), value: 0, class: '' }]}
                 value={column.sortable}
                 onChange={(value) => updateTableHeader(columnIndex, 'sortable', value)}
               />
               <UI.Switch
                 label={{ name: $t('constructor.props.copy'), class: 'px-0' }}
-                wrapperClass="w-30"
                 options={[{ id: crypto.randomUUID(), value: 0, class: '' }]}
                 value={column.overflow?.copy}
                 onChange={(value) => updateTableHeader(columnIndex, 'overflow', { copy: value, truncated: column.overflow?.truncated })}
@@ -470,22 +493,14 @@
                 }}
               />
             </div>
-            <div class="mr-2 flex items-end justify-around gap-6">
-              <UI.Select
-                label={{ name: $t('constructor.props.align.content') }}
-                type="buttons"
-                value={$optionsStore.ALIGN_OPTIONS.find((a) => (a.value as string).includes(column.align))}
-                options={$optionsStore.ALIGN_OPTIONS}
-                onUpdate={(option) => updateTableHeader(columnIndex, 'align', option.value)}
-              />
+            <div class="mr-2 grid grid-cols-[5rem_minmax(8rem,16rem)_1fr_minmax(8rem,12rem)_minmax(8rem,12rem)] items-end justify-between gap-6">
               <UI.Switch
-                wrapperClass="w-2/10"
-                label={{ name: $t('constructor.props.table.columns.truncated') }}
+                label={{ name: $t('constructor.props.table.columns.truncated'), class: 'px-0' }}
                 options={[{ id: crypto.randomUUID(), value: 0, class: '' }]}
                 value={column.overflow?.truncated}
                 onChange={(value) => updateTableHeader(columnIndex, 'overflow', { truncated: value, copy: column.overflow?.copy })}
               />
-              <div class="relative mt-6 flex w-full gap-2">
+              <div class="relative mt-6 flex items-center w-full gap-2">
                 <UI.Button
                   content={{ name: $t('constructor.props.table.columns.defaultIcon') }}
                   onClick={() => (defaultIcon = { isModalOpen: true, columnIndex: columnIndex, column: column })}
@@ -522,7 +537,6 @@
                 label={{ name: $t('constructor.props.table.columns.image.width'), class: 'px-0' }}
                 type="number"
                 number={{ minNum: 0, maxNum: 1000, step: 1 }}
-                wrapperClass="w-150"
                 value={Number(column.image?.width.replace('rem', '')) ?? 0}
                 onUpdate={(value) => {
                   updateTableHeader(columnIndex, 'image', {
@@ -537,7 +551,6 @@
                 label={{ name: $t('constructor.props.table.columns.image.height'), class: 'px-0' }}
                 type="number"
                 number={{ minNum: 0, maxNum: 1000, step: 1 }}
-                wrapperClass="w-150"
                 value={Number(column.image?.height.replace('rem', ''))}
                 onUpdate={(value) => {
                   updateTableHeader(columnIndex, 'image', {

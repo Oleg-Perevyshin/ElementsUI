@@ -1,6 +1,6 @@
 {
   "name": "poe-svelte-ui-lib",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "license": "MIT",
   "type": "module",
   "scripts": {
@@ -8,7 +8,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "prepack": "svelte-kit sync && svelte-package && publint",
-    "CheckUpdate": "npx npm-check-updates -u && npm install",
+    "CheckUpdate": "npx npm-check-updates -u && npm install && npm install prettier@3.6.2",
     "UpdateIconsLib": "tsx src/lib/IconsCatalog/iconsLib.ts"
   },
   "svelte": "./dist/index.js",
@@ -49,9 +49,9 @@
     "@sveltejs/vite-plugin-svelte": "^6.2.1",
     "@types/node": "^24.10.1",
     "publint": "^0.3.15",
-    "svelte": "^5.45.5",
+    "svelte": "^5.45.6",
     "svelte-preprocess": "^6.0.3",
-    "vite": "^7.2.6",
+    "vite": "^7.2.7",
     "vite-plugin-compression": "^0.5.1"
   }
 }
