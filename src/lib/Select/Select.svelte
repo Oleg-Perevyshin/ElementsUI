@@ -74,7 +74,7 @@
       })
       isDropdownOpen = filteredOptions.length > 0
 
-      const selectedFromList = options.some((option) => option.name?.toString() === searchValue)
+      const selectedFromList = options.find((option) => option.name?.toString() === searchValue)
 
       if (!selectedFromList) {
         const newOption: ISelectOption<T> = {
@@ -85,6 +85,9 @@
 
         value = newOption
         onUpdate?.(newOption)
+      } else {
+        value = selectedFromList
+        onUpdate?.(selectedFromList)
       }
     }
   }

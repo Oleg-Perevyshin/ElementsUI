@@ -122,7 +122,7 @@ ${formatObjectToString(tableComponent.properties as ITableProps<object>)}
 
 <ComponentExample {codeText}>
   {#snippet component()}
-    <div class="h-40">
+    <div class="max-h-40">
       <Table
         {...tableComponent.properties as ITableProps<object>}
         body={(tableComponent.properties as ITableProps<object>).stashData ? body : (tableComponent.properties as ITableProps<object>).body}
