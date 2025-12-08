@@ -29,7 +29,7 @@
 <div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class="w-full h-full flex flex-col rounded-2xl bg-(--back-color) overflow-hidden">
   <!-- Вкладки -->
   <div
-    class="{twMerge('bg-blue z-50 flex h-fit items-center rounded-t-2xl overflow-x-auto px-1', wrapperClass)} 
+    class="{twMerge(`bg-blue z-50 flex h-fit items-center rounded-t-2xl overflow-x-auto px-1`, wrapperClass)} 
      bg-(--bg-color)"
   >
     {#each items as item, index}
@@ -89,10 +89,10 @@
 
 <style>
   ::-webkit-scrollbar-track {
-    background: var(--red-color);
+    background: var(--back-color);
   }
   ::-webkit-scrollbar-thumb {
-    background-color: color-mix(in srgb, var(--bg-color), var(--back-color) 20%);
+    background-color: color-mix(in srgb, var(--blue-color), white);
     border-radius: 8px;
     cursor: pointer;
   }

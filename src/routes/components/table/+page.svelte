@@ -98,7 +98,7 @@ ${formatObjectToString(tableComponent.properties as ITableProps<object>)}
 
 <ComponentExample {codeText}>
   {#snippet component()}
-    <div class="max-h-40">
+    <div class="h-60">
       <Table
         {...tableComponent.properties as ITableProps<object>}
         body={(tableComponent.properties as ITableProps<object>).stashData ? body : (tableComponent.properties as ITableProps<object>).body}
@@ -106,15 +106,6 @@ ${formatObjectToString(tableComponent.properties as ITableProps<object>)}
     </div>
   {/snippet}
   {#snippet componentProps()}
-    <!-- <Button
-      content={{ name: 'Добавить строку' }}
-      onClick={() => {
-        ;(tableComponent.properties as ITableProps<object>).body.push({
-          id: 'Value of id',
-          device: 'Value of device',
-        })
-      }}
-    /> -->
     <TableProps
       component={tableComponent as UIComponent & { properties: Partial<ITableProps<object>> }}
       onPropertyChange={(updates) => (tableComponent = updateComponent(tableComponent, updates as object))}

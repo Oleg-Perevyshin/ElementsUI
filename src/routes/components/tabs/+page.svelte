@@ -11,9 +11,9 @@
     access: 'full',
     properties: {
       id: crypto.randomUUID(),
-      wrapperClass: 'justify-start bg-blue ',
+      wrapperClass: ' bg-blue ',
       size: {
-        height: 100,
+        height: 1,
         width: 1,
       },
       items: [
@@ -35,84 +35,9 @@ ${formatObjectToString(tabsComponent.properties as ITabsProps)}
 
 <ComponentExample {codeText}>
   {#snippet component()}
-    <Tabs {...tabsComponent.properties as ITabsProps} children={Tab} />
-    {#snippet Tab(item: { name: string })}
-      <Input
-        label={{ name: 'TargetID', class: '!px-0' }}
-        wrapperClass="w-20"
-        type="text"
-        maxlength={3}
-        help={{ regExp: /^(?:[1-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/ }}
-      />
-      <Input
-        label={{ name: 'ReturnID', class: '!px-0' }}
-        wrapperClass="w-20"
-        type="text"
-        maxlength={3}
-        help={{ regExp: /^(?:[1-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/ }}
-      />
-      <Input label={{ name: 'Data', class: '!px-0' }} type="text" />
-      <Input
-        label={{ name: 'TargetID', class: '!px-0' }}
-        wrapperClass="w-20"
-        type="text"
-        maxlength={3}
-        help={{ regExp: /^(?:[1-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/ }}
-      />
-      <Input
-        label={{ name: 'ReturnID', class: '!px-0' }}
-        wrapperClass="w-20"
-        type="text"
-        maxlength={3}
-        help={{ regExp: /^(?:[1-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/ }}
-      />
-      <Input label={{ name: 'Data', class: '!px-0' }} type="text" />
-      <Input
-        label={{ name: 'TargetID', class: '!px-0' }}
-        wrapperClass="w-20"
-        type="text"
-        maxlength={3}
-        help={{ regExp: /^(?:[1-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/ }}
-      />
-      <Input
-        label={{ name: 'ReturnID', class: '!px-0' }}
-        wrapperClass="w-20"
-        type="text"
-        maxlength={3}
-        help={{ regExp: /^(?:[1-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/ }}
-      />
-      <Input label={{ name: 'Data', class: '!px-0' }} type="text" />
-      <Input
-        label={{ name: 'TargetID', class: '!px-0' }}
-        wrapperClass="w-20"
-        type="text"
-        maxlength={3}
-        help={{ regExp: /^(?:[1-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/ }}
-      />
-      <Input
-        label={{ name: 'ReturnID', class: '!px-0' }}
-        wrapperClass="w-20"
-        type="text"
-        maxlength={3}
-        help={{ regExp: /^(?:[1-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/ }}
-      />
-      <Input label={{ name: 'Data', class: '!px-0' }} type="text" />
-      <Input
-        label={{ name: 'TargetID', class: '!px-0' }}
-        wrapperClass="w-20"
-        type="text"
-        maxlength={3}
-        help={{ regExp: /^(?:[1-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/ }}
-      />
-      <Input
-        label={{ name: 'ReturnID', class: '!px-0' }}
-        wrapperClass="w-20"
-        type="text"
-        maxlength={3}
-        help={{ regExp: /^(?:[1-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/ }}
-      />
-      <Input label={{ name: 'Data', class: '!px-0' }} type="text" />
-    {/snippet}
+    <div class="h-60">
+      <Tabs {...tabsComponent.properties as ITabsProps} />
+    </div>
   {/snippet}
   {#snippet componentProps()}
     <TabsProps
