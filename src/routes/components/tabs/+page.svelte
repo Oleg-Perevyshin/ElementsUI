@@ -1,6 +1,7 @@
 <script lang="ts">
   import { Button, Input, Select, TabsProps, type ITabsProps, type UIComponent } from '$lib'
   import ComponentExample from '$lib/ComponentExample.svelte'
+  import Modal from '$lib/Modal.svelte'
   import Tabs from '$lib/Tabs/Tabs.svelte'
   import { updateComponent } from '$lib/types'
   import { formatObjectToString } from '../../common'

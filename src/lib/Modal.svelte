@@ -8,6 +8,7 @@
     isOpen = $bindable(false),
     title,
     wrapperClass = '',
+    mainClass = '',
     main,
     footer,
     onCancel = () => (isOpen = false),
@@ -15,6 +16,7 @@
     isOpen?: boolean
     title?: string
     wrapperClass?: string
+    mainClass?: string
     main: Snippet
     footer?: Snippet
     onCancel?: () => void
@@ -44,7 +46,7 @@
         <button class="h-6 w-6 cursor-pointer" onclick={onCancel}> <CrossIcon /> </button>
       </div>
 
-      <div class="flex h-full w-full flex-col overflow-auto p-2">
+      <div class={twMerge('flex h-full w-full flex-col overflow-auto p-2', mainClass)}>
         {@render main?.()}
       </div>
       {#if footer}
