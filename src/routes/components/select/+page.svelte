@@ -18,7 +18,16 @@
       type: 'select',
       bitMode: false,
       range: { start: 0, end: 1 },
-      options: [{ id: crypto.randomUUID(), value: '1', name: 'Option 1', class: 'bg-max' }],
+      options: [
+        { id: crypto.randomUUID(), value: '1', name: 'Option 1', class: 'bg-max' },
+        { id: crypto.randomUUID(), value: '1', name: 'Option 1', class: 'bg-max' },
+        { id: crypto.randomUUID(), value: '1', name: 'Option 1', class: 'bg-max' },
+        { id: crypto.randomUUID(), value: '1', name: 'Option 1', class: 'bg-max' },
+        { id: crypto.randomUUID(), value: '1', name: 'Option 1', class: 'bg-max' },
+        { id: crypto.randomUUID(), value: '1', name: 'Option 1', class: 'bg-max' },
+        { id: crypto.randomUUID(), value: '1', name: 'Option 1', class: 'bg-max' },
+        { id: crypto.randomUUID(), value: '1', name: 'Option 1', class: 'bg-max' },
+      ],
     },
     eventHandler: { Header: 'SET', Argument: '', Variables: [] },
     position: { row: 0, col: 0, width: 0, height: 0 },
@@ -34,14 +43,16 @@ ${formatObjectToString(selectComponent.properties as ISelectProps)}
 
 <ComponentExample {codeText}>
   {#snippet component()}
-    <Select
-      {...selectComponent.properties as ISelectProps}
-      onUpdate={(value) => {
-        updateComponent(selectComponent, {
-          properties: { value: value },
-        })
-      }}
-    />
+    <div class="bg-(--back-color) h-full">
+      <Select
+        {...selectComponent.properties as ISelectProps}
+        onUpdate={(value) => {
+          updateComponent(selectComponent, {
+            properties: { value: value },
+          })
+        }}
+      />
+    </div>
   {/snippet}
   {#snippet componentProps()}
     <SelectProps
