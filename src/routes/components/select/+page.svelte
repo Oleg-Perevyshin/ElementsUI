@@ -43,16 +43,14 @@ ${formatObjectToString(selectComponent.properties as ISelectProps)}
 
 <ComponentExample {codeText}>
   {#snippet component()}
-    <div class="bg-(--back-color) h-full">
-      <Select
-        {...selectComponent.properties as ISelectProps}
-        onUpdate={(value) => {
-          updateComponent(selectComponent, {
-            properties: { value: value },
-          })
-        }}
-      />
-    </div>
+    <Select
+      {...selectComponent.properties as ISelectProps}
+      onUpdate={(value) => {
+        updateComponent(selectComponent, {
+          properties: { value: value },
+        })
+      }}
+    />
   {/snippet}
   {#snippet componentProps()}
     <SelectProps

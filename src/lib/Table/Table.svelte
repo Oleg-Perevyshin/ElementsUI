@@ -311,12 +311,14 @@
     </div>
 
     {#if body || dataBuffer}
+      {@const isSliced = dataBuffer.length - rowsAmmount > 0 ? dataBuffer.length - (rowsAmmount % 2) !== 0 : false}
       {@const rows =
         type == 'logger'
           ? dataBuffer.filter((str) => logType.includes(str.type)).slice(-rowsAmmount)
           : stashData
             ? dataBuffer.slice(-rowsAmmount)
             : body}
+
       <!-- Table Body с прокруткой -->
       <div class="flex-1 overflow-y-auto bg-(--container-color)/50" bind:this={container} onscroll={handleScroll}>
         <div class="grid min-w-0" style={`grid-template-columns: ${header.map((c) => c.width || 'minmax(0, 1fr)').join(' ')};`}>

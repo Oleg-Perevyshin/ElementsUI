@@ -81,8 +81,8 @@
     <div class="flex w-full flex-col gap-2">
       {#each innerValue as val}
         <div class="flex h-7 w-full items-center gap-2 rounded-full bg-(--bg-color) px-2 shadow-sm">
-          <span class="m-auto font-semibold">{roundToClean(Number(numericValue(val)))}{number.units}</span>
-          <div class="relative my-auto h-3.5 w-[85%] rounded-full bg-(--back-color)/40">
+          <span class="m-auto w-20 font-semibold">{roundToClean(Number(numericValue(val)))}{number.units}</span>
+          <div class="relative my-auto h-3.5 flex-1 rounded-full bg-(--back-color)/40">
             <div class="absolute top-0 left-0 flex h-full rounded-full bg-(--field-color)" style="width: {progressPercent(val)}%;"></div>
           </div>
         </div>

@@ -20,7 +20,7 @@
     onUpdate,
   }: ISelectProps<T> = $props()
 
-  let searchValue = $state('')
+  let searchValue: any = $state('')
   let filteredOptions = $state<ISelectOption<T>[]>([])
 
   /* Закрытие при клике вне компонента */
@@ -31,7 +31,16 @@
   }
 
   $effect(() => {
-    searchValue = value?.name ?? ''
+    if (value?.name) {
+      searchValue = value?.name
+    } else if (value == undefined) {
+      const newOption: ISelectOption<T> = {
+        id: `input-${searchValue}`,
+        name: searchValue,
+        value: searchValue as T,
+      }
+      searchValue = newOption.value
+    }
   })
 
   onMount(() => {
