@@ -8,7 +8,7 @@
     id = crypto.randomUUID(),
     wrapperClass = '',
     label = { name: '', class: '', captionLeft: '', captionRight: '' },
-    hiddenInfo = '423r23',
+    hiddenInfo = '',
     height = '2rem',
     type = 'horizontal',
     options = [],
