@@ -216,6 +216,7 @@ export interface ISwitchProps {
     captionLeft?: string
     captionRight?: string
   }
+  hiddenInfo?: string
   options?: ISelectOption<number>[]
   bitMode?: boolean
   type?: 'horizontal' | 'vertical' | 'checkbox'

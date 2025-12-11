@@ -2,11 +2,13 @@
 <script lang="ts">
   import { twMerge } from 'tailwind-merge'
   import type { ISwitchProps } from '../types'
+  import { fly } from 'svelte/transition'
 
   let {
     id = crypto.randomUUID(),
     wrapperClass = '',
     label = { name: '', class: '', captionLeft: '', captionRight: '' },
+    hiddenInfo = '423r23',
     height = '2rem',
     type = 'horizontal',
     options = [],
@@ -14,6 +16,8 @@
     value = $bindable(),
     onChange = () => {},
   }: ISwitchProps = $props()
+
+  let showInfo = $state(false)
 
   let localOptions = $derived(bitMode ? options : options.slice(0, 1))
 
@@ -118,12 +122,12 @@
     </div>
   </div>
 {:else}
-  <div class={twMerge('bg-blue m-1 flex items-center justify-center gap-2', wrapperClass)}>
+  <div class={twMerge(' relative bg-blue m-1 flex items-center justify-center gap-2', wrapperClass)}>
     <input
       id={ID}
       type="checkbox"
       checked={checkedOptions[0]}
-      disabled={localOptions[0].disabled}
+      disabled={localOptions[0].disabled ?? false}
       class="
       relative size-8 cursor-pointer appearance-none rounded-2xl border border-(--bg-color)
       bg-white shadow-sm transition duration-200 after:origin-bottom-left after:opacity-0
@@ -137,9 +141,27 @@
       disabled:cursor-not-allowed disabled:opacity-70
     "
       onchange={() => handleToggle(0)}
+      onmouseenter={() => {
+        if (hiddenInfo) showInfo = true
+      }}
+      onmouseleave={() => {
+        if (hiddenInfo) showInfo = false
+      }}
     />
-    <label for={ID} class={twMerge("{disabled ? 'cursor-not-allowed opacity-70' : 'cursor-pointer'} ml-1 select-none", label.class)}>
-      {label.name}
-    </label>
+    {#if showInfo && hiddenInfo}
+      <div
+        transition:fly={{ y: -15, duration: 300 }}
+        class="absolute bottom-full left-1/2 z-50 mb-2 w-max max-w-xs rounded-md bg-(--container-color) px-3 py-1 text-sm shadow-lg"
+        style="transform: translateX(-50%);"
+      >
+        {hiddenInfo}
+        <div class="absolute top-full left-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rotate-45 transform bg-(--container-color)"></div>
+      </div>
+    {/if}
+    {#if label.name}
+      <label for={ID} class={twMerge("{disabled ? 'cursor-not-allowed opacity-70' : 'cursor-pointer'} ml-1 select-none", label.class)}>
+        {label.name}
+      </label>
+    {/if}
   </div>
 {/if}
