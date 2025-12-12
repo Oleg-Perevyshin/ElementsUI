@@ -99,9 +99,54 @@
         value={$optionsStore.TABLE_TYPE_OPTIONS.find((o) => o.value === component.properties.type)}
         onUpdate={(option) => {
           updateProperty('type', option.value as string, component, onPropertyChange)
-          if (option.value === 'logger') updateProperty('dataBuffer.stashData', true, component, onPropertyChange)
-          if (option.value === 'logger') updateProperty('dataBuffer.clearButton', true, component, onPropertyChange)
-          if (option.value === 'table') updateProperty('dataBuffer.clearButton', false, component, onPropertyChange)
+          if (option.value === 'logger') {
+            updateProperty('dataBuffer.stashData', true, component, onPropertyChange)
+            updateProperty('dataBuffer.clearButton', true, component, onPropertyChange)
+
+            const headers = [
+              {
+                key: 'color',
+                label: { name: 'Type' },
+                width: '3rem',
+              } as ITableHeader<any>,
+              {
+                key: 'data',
+                label: { name: 'Data' },
+                width: 'calc(100% - 3rem)',
+              } as ITableHeader<any>,
+            ]
+            updateProperty('header', headers, component, onPropertyChange)
+          } else {
+            updateProperty('dataBuffer.clearButton', false, component, onPropertyChange)
+            const headers = [
+              {
+                key: 'id',
+                label: { name: 'ID' },
+                width: '40%',
+                sortable: true,
+                image: {
+                  width: '0rem',
+                  height: '0rem',
+                },
+                align: 'left',
+              } as ITableHeader<any>,
+              {
+                key: 'device',
+                label: { name: 'Device' },
+                width: '60%',
+                sortable: false,
+                image: {
+                  width: '0rem',
+                  height: '0rem',
+                },
+                align: 'left',
+                overflow: {
+                  truncated: true,
+                },
+              } as ITableHeader<any>,
+            ]
+            updateProperty('header', headers, component, onPropertyChange)
+          }
         }}
       />
     </div>
@@ -143,11 +188,12 @@
         onUpdate={(option) => updateProperty('label.class', twMerge(component.properties.label.class, option.value), component, onPropertyChange)}
       />
       {#if component.properties.dataBuffer.stashData}
-        <UI.Input
+        <UI.Select
           label={{ name: $t('constructor.props.table.buffersize') }}
-          type="number"
-          value={component.properties.dataBuffer.rowsAmmount}
-          onUpdate={(value) => updateProperty('dataBuffer.rowsAmmount', value as string, component, onPropertyChange)}
+          type="buttons"
+          options={$optionsStore.BUFFER_SIFE_OPTIONS}
+          value={$optionsStore.BUFFER_SIFE_OPTIONS.find((o) => o.value === component.properties.dataBuffer.rowsAmmount)}
+          onUpdate={(value) => updateProperty('dataBuffer.rowsAmmount', value.value as number, component, onPropertyChange)}
         />
       {/if}
     </div>
@@ -376,8 +422,54 @@
         value={$optionsStore.TABLE_TYPE_OPTIONS.find((o) => o.value === component.properties.type)}
         onUpdate={(option) => {
           updateProperty('type', option.value as string, component, onPropertyChange)
-          if (option.value === 'logger') updateProperty('dataBuffer.stashData', true, component, onPropertyChange)
-          if (option.value === 'table') updateProperty('dataBuffer.clearButton', false, component, onPropertyChange)
+          if (option.value === 'logger') {
+            updateProperty('dataBuffer.stashData', true, component, onPropertyChange)
+            updateProperty('dataBuffer.clearButton', true, component, onPropertyChange)
+
+            const headers = [
+              {
+                key: 'color',
+                label: { name: 'Type' },
+                width: '3rem',
+              } as ITableHeader<any>,
+              {
+                key: 'data',
+                label: { name: 'Data' },
+                width: 'calc(100% - 3rem)',
+              } as ITableHeader<any>,
+            ]
+            updateProperty('header', headers, component, onPropertyChange)
+          } else {
+            updateProperty('dataBuffer.clearButton', false, component, onPropertyChange)
+            const headers = [
+              {
+                key: 'id',
+                label: { name: 'ID' },
+                width: '40%',
+                sortable: true,
+                image: {
+                  width: '0rem',
+                  height: '0rem',
+                },
+                align: 'left',
+              } as ITableHeader<any>,
+              {
+                key: 'device',
+                label: { name: 'Device' },
+                width: '60%',
+                sortable: false,
+                image: {
+                  width: '0rem',
+                  height: '0rem',
+                },
+                align: 'left',
+                overflow: {
+                  truncated: true,
+                },
+              } as ITableHeader<any>,
+            ]
+            updateProperty('header', headers, component, onPropertyChange)
+          }
         }}
       />
       <div class="flex">
