@@ -44,16 +44,34 @@
     updateProperty('header', headers, component, onPropertyChange)
   }
 
-  const updateTableBody = () => {
-    const newBody = component.properties.body.map((row: object) => {
-      const newRow: Partial<object> = {}
+  const updateTableBody = (typeChange?: boolean, loggerType?: boolean) => {
+    let newBody
+
+    if (typeChange) {
+      newBody = []
+      // if (loggerType) {
+      //   newBody.push({ loglevel: 'error', payload: 'error log' })
+      // }
+
+      const newRow: { [key: string]: any } = {}
       component.properties.header.forEach((col: ITableHeader<any>) => {
-        const key = col.key as keyof object
-        newRow[key] = row[key] ?? `Value of ${key}`
+        const key = col.key as string
+        newRow[key] = `Value of ${key}`
       })
-      return newRow
-    })
+      newBody.push(newRow)
+    } else {
+      newBody = component.properties.body.map((row: object) => {
+        const newRow: Partial<object> = {}
+        component.properties.header.forEach((col: ITableHeader<any>) => {
+          const key = col.key as keyof object
+          newRow[key] = row[key] ?? `Value of ${key}`
+        })
+        return newRow
+      })
+    }
+    console.log(newBody)
     updateProperty('body', newBody, component, onPropertyChange)
+    console.log(component)
   }
 
   const updateButtonProperty = (columnIndex: number, buttonIndex: number, field: string, value: any) => {
@@ -98,7 +116,6 @@
         options={$optionsStore.TABLE_TYPE_OPTIONS}
         value={$optionsStore.TABLE_TYPE_OPTIONS.find((o) => o.value === component.properties.type)}
         onUpdate={(option) => {
-          updateProperty('type', option.value as string, component, onPropertyChange)
           if (option.value === 'logger') {
             updateProperty('dataBuffer.stashData', true, component, onPropertyChange)
             updateProperty('dataBuffer.clearButton', true, component, onPropertyChange)
@@ -116,6 +133,7 @@
               } as ITableHeader<any>,
             ]
             updateProperty('header', headers, component, onPropertyChange)
+            updateTableBody(true, true)
           } else {
             updateProperty('dataBuffer.clearButton', false, component, onPropertyChange)
             const headers = [
@@ -146,7 +164,9 @@
               } as ITableHeader<any>,
             ]
             updateProperty('header', headers, component, onPropertyChange)
+            updateTableBody(true, false)
           }
+          updateProperty('type', option.value as string, component, onPropertyChange)
         }}
       />
     </div>

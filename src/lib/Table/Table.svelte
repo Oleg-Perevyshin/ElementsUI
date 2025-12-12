@@ -14,7 +14,7 @@
     body = $bindable(),
     header = [],
     footer = '',
-    dataBuffer = { stashData: false, rowsAmmount: 10, clearButton: true, clearClass: '' },
+    dataBuffer = { stashData: false, rowsAmmount: 10, clearButton: false, clearClass: '' },
     type = 'table',
     outline = false,
     cursor = null,
@@ -156,14 +156,16 @@
 
   $effect(() => {
     if (body && type == 'logger') {
+      console.log(Object.entries(body[0]))
       buffer = [
         ...buffer,
         {
-          type: Object.entries(body)[0][1] as string,
+          type: Object.entries(body[0])[0][1] as string,
           color: `<div class='size-6 rounded-full ${logTypeOptions.find((o) => o.value == body.logLevel)?.color}'></div>`,
-          data: Object.entries(body)[1][1] as string,
+          data: Object.entries(body[0])[1][1] as string,
         },
       ]
+      console.log(buffer)
 
       if (dataBuffer && buffer.length > (dataBuffer.rowsAmmount ?? 10)) {
         buffer = buffer.slice(-(dataBuffer.rowsAmmount ?? 10))
@@ -460,7 +462,7 @@
         {@html tooltip.text}
       </div>
     {/if}
-
+    <p>{JSON.stringify(body)}</p>
     <!-- Нижнее поле для сводной информации -->
     {#if footer}
       <div class="flex h-8 items-center justify-center bg-(--bg-color)">
