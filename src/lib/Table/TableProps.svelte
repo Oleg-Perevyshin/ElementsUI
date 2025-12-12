@@ -142,7 +142,7 @@
         options={$optionsStore.TEXT_ALIGN_OPTIONS}
         onUpdate={(option) => updateProperty('label.class', twMerge(component.properties.label.class, option.value), component, onPropertyChange)}
       />
-      {#if component.properties.stashData}
+      {#if component.properties.dataBuffer.stashData}
         <UI.Input
           label={{ name: $t('constructor.props.table.buffersize') }}
           type="number"

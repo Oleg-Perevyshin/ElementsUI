@@ -186,7 +186,7 @@
 
   $effect(() => {
     const currentType = type
-    if (type === 'logger') {
+    if (currentType === 'logger') {
       header = [
         {
           key: 'color',
