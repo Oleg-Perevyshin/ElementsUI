@@ -17,7 +17,7 @@
       wrapperClass: 'bg-blue',
       label: { name: 'Label', class: 'text-center' },
       type: 'table',
-      rowsAmmount: 10,
+      dataBuffer: { rowsAmmount: 10, cleanButton: true },
       header: [
         {
           key: 'id',
@@ -64,6 +64,7 @@
 
   let body: any | null = $state(null)
   let intervalId: any | null = null
+  let clear = $state(false)
 
   const generateLoggerString = (): { logLevel: string; payload: string } => {
     let logLevel = ['info', 'warning', 'error'][Math.floor(Math.random() * 3)]
@@ -101,7 +102,9 @@ ${formatObjectToString(tableComponent.properties as ITableProps<object>)}
     <div class="h-60">
       <Table
         {...tableComponent.properties as ITableProps<object>}
-        body={(tableComponent.properties as ITableProps<object>).stashData ? body : (tableComponent.properties as ITableProps<object>).body}
+        body={(tableComponent.properties as ITableProps<object>).dataBuffer?.stashData
+          ? body
+          : (tableComponent.properties as ITableProps<object>).body}
       />
     </div>
   {/snippet}

@@ -5,6 +5,7 @@
   import { fade, fly } from 'svelte/transition'
   import { twMerge } from 'tailwind-merge'
   import { onMount } from 'svelte'
+  import ButtonClear from '../libIcons/ButtonClear.svelte'
 
   let {
     id = crypto.randomUUID(),
@@ -13,9 +14,8 @@
     body = $bindable(),
     header = [],
     footer = '',
-    stashData = false,
+    dataBuffer = { stashData: false, rowsAmmount: 10, cleanButton: true, cleanClass: '' },
     type = 'table',
-    rowsAmmount = 10,
     outline = false,
     cursor = null,
     loader,
@@ -25,7 +25,7 @@
     onClick,
   }: ITableProps<any> = $props()
 
-  let dataBuffer: any[] = $state([])
+  let buffer: any[] = $state([])
 
   /* Сортировка */
   let sortState: {
@@ -101,7 +101,7 @@
   }
 
   $effect(() => {
-    if (autoscroll && dataBuffer && dataBuffer.length > 0) {
+    if (autoscroll && buffer && buffer.length > 0) {
       scrollToBottom()
     }
   })
@@ -156,8 +156,8 @@
 
   $effect(() => {
     if (body && type == 'logger') {
-      dataBuffer = [
-        ...dataBuffer,
+      buffer = [
+        ...buffer,
         {
           type: Object.entries(body)[0][1] as string,
           color: `<div class='size-6 rounded-full ${logTypeOptions.find((o) => o.value == body.logLevel)?.color}'></div>`,
@@ -165,8 +165,8 @@
         },
       ]
 
-      if (dataBuffer.length > rowsAmmount * 5) {
-        dataBuffer = dataBuffer.slice(-(rowsAmmount * 5))
+      if (dataBuffer && buffer.length > (dataBuffer.rowsAmmount ?? 10) * 5) {
+        buffer = buffer.slice(-((dataBuffer.rowsAmmount ?? 10) * 5))
       }
 
       body = null
@@ -174,10 +174,10 @@
   })
 
   $effect(() => {
-    if (body && stashData && type == 'table') {
-      dataBuffer = [...dataBuffer, body]
-      if (dataBuffer.length > rowsAmmount) {
-        dataBuffer = dataBuffer.slice(-rowsAmmount)
+    if (body && dataBuffer.stashData && type == 'table') {
+      buffer = [...buffer, body]
+      if (buffer.length > (dataBuffer.rowsAmmount ?? 10)) {
+        buffer = buffer.slice(-(dataBuffer.rowsAmmount ?? 10))
       }
 
       body = null
@@ -201,7 +201,7 @@
       ]
     }
     return () => {
-      dataBuffer = []
+      buffer = []
     }
   })
 
@@ -236,7 +236,7 @@
 
 <div
   id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
-  class={twMerge(`bg-blue flex h-full w-full gap-2 items-center flex-col overflow-hidden`, wrapperClass)}
+  class={twMerge(`bg-blue flex h-full w-full items-center ${type == 'logger' ? 'gap-2' : ''} flex-col overflow-hidden`, wrapperClass)}
 >
   {#if label.name}
     <h5 class={twMerge(`w-full px-4 text-center`, label.class)}>{label.name}</h5>
@@ -278,7 +278,7 @@
   {/if}
 
   <div
-    class="flex h-full w-full flex-col overflow-hidden rounded-xl border shadow-sm transition duration-200 hover:shadow-md {outline
+    class="relative flex h-full w-full flex-col overflow-hidden rounded-xl border shadow-sm transition duration-200 hover:shadow-md {outline
       ? ' border-(--border-color)'
       : 'border-transparent'} "
   >
@@ -309,14 +309,22 @@
         </div>
       {/each}
     </div>
+    {#if dataBuffer.cleanButton}
+      <button
+        class={twMerge('absolute right-2 bg-(--back-color) rounded-full p-1 cursor-pointer', dataBuffer.cleanClass)}
+        onclick={() => (buffer = [])}
+      >
+        <ButtonClear />
+      </button>
+    {/if}
 
-    {#if body || dataBuffer}
-      {@const isSliced = dataBuffer.length - rowsAmmount > 0 ? dataBuffer.length - (rowsAmmount % 2) !== 0 : false}
+    {#if body || buffer}
+      {@const isSliced = buffer.length - (dataBuffer.rowsAmmount ?? 10) > 0 ? buffer.length - ((dataBuffer.rowsAmmount ?? 10) % 2) !== 0 : false}
       {@const rows =
         type == 'logger'
-          ? dataBuffer.filter((str) => logType.includes(str.type)).slice(-rowsAmmount)
-          : stashData
-            ? dataBuffer.slice(-rowsAmmount)
+          ? buffer.filter((str) => logType.includes(str.type)).slice(-(dataBuffer.rowsAmmount ?? 10))
+          : dataBuffer.stashData
+            ? buffer.slice(-(dataBuffer.rowsAmmount ?? 10))
             : body}
 
       <!-- Table Body с прокруткой -->

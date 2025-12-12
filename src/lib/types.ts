@@ -321,8 +321,7 @@ export interface ITableProps<T extends object> {
   body: T[] | T | null
   footer?: string
   type?: 'table' | 'logger'
-  stashData?: boolean
-  rowsAmmount?: number
+  dataBuffer?: { stashData?: boolean; rowsAmmount?: number; cleanButton?: boolean; cleanClass?: string }
   outline?: boolean
   cursor?: string | null
   loader?: Writable<boolean>

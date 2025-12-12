@@ -99,7 +99,7 @@
         value={$optionsStore.TABLE_TYPE_OPTIONS.find((o) => o.value === component.properties.type)}
         onUpdate={(option) => {
           updateProperty('type', option.value as string, component, onPropertyChange)
-          if (option.value === 'logger') updateProperty('stashData', true, component, onPropertyChange)
+          if (option.value === 'logger') updateProperty('dataBuffer.stashData', true, component, onPropertyChange)
         }}
       />
     </div>
@@ -120,10 +120,10 @@
       />
       <UI.Switch
         label={{ name: $t('constructor.props.table.stashData') }}
-        value={component.properties.stashData}
+        value={component.properties.dataBuffer.stashData}
         options={[{ id: crypto.randomUUID(), value: 0, class: '', disabled: component.properties.type === 'logger' }]}
         onChange={(value) => {
-          updateProperty('stashData', value, component, onPropertyChange)
+          updateProperty('dataBuffer.stashData', value, component, onPropertyChange)
         }}
       />
     </div>
@@ -144,8 +144,8 @@
         <UI.Input
           label={{ name: $t('constructor.props.table.buffersize') }}
           type="number"
-          value={component.properties.rowsAmmount}
-          onUpdate={(value) => updateProperty('rowsAmmount', value as string, component, onPropertyChange)}
+          value={component.properties.dataBuffer.rowsAmmount}
+          onUpdate={(value) => updateProperty('dataBuffer.rowsAmmount', value as string, component, onPropertyChange)}
         />
       {/if}
     </div>
@@ -373,23 +373,23 @@
         value={$optionsStore.TABLE_TYPE_OPTIONS.find((o) => o.value === component.properties.type)}
         onUpdate={(option) => {
           updateProperty('type', option.value as string, component, onPropertyChange)
-          if (option.value === 'logger') updateProperty('stashData', true, component, onPropertyChange)
+          if (option.value === 'logger') updateProperty('dataBuffer.stashData', true, component, onPropertyChange)
         }}
       />
       <UI.Switch
         label={{ name: $t('constructor.props.table.stashData') }}
-        value={component.properties.stashData}
+        value={component.properties.dataBuffer.stashData}
         options={[{ id: crypto.randomUUID(), value: 0, class: '', disabled: component.properties.type === 'logger' }]}
         onChange={(value) => {
-          updateProperty('stashData', value, component, onPropertyChange)
+          updateProperty('dataBuffer.stashData', value, component, onPropertyChange)
         }}
       />
       {#if component.properties.stashData}
         <UI.Input
           label={{ name: $t('constructor.props.table.buffersize') }}
           type="number"
-          value={component.properties.rowsAmmount}
-          onUpdate={(value) => updateProperty('rowsAmmount', value as string, component, onPropertyChange)}
+          value={component.properties.dataBuffer.rowsAmmount}
+          onUpdate={(value) => updateProperty('dataBuffer.rowsAmmount', value as string, component, onPropertyChange)}
         />
       {/if}
     </div>
