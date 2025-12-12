@@ -17,7 +17,7 @@
       wrapperClass: 'bg-blue',
       label: { name: 'Label', class: 'text-center' },
       type: 'table',
-      dataBuffer: { rowsAmmount: 10, cleanButton: true },
+      dataBuffer: { rowsAmmount: 10 },
       header: [
         {
           key: 'id',
@@ -77,7 +77,6 @@
       device: `Value of device ${Math.floor(Math.random() * 10)}`,
     }
   }
-
   let codeText = $derived(`
 <UI.Table
 ${formatObjectToString(tableComponent.properties as ITableProps<object>)} 
@@ -100,6 +99,7 @@ ${formatObjectToString(tableComponent.properties as ITableProps<object>)}
 <ComponentExample {codeText}>
   {#snippet component()}
     <div class="h-60">
+      <!-- prettier-ignore -->
       <Table
         {...tableComponent.properties as ITableProps<object>}
         body={(tableComponent.properties as ITableProps<object>).dataBuffer?.stashData
@@ -108,6 +108,7 @@ ${formatObjectToString(tableComponent.properties as ITableProps<object>)}
       />
     </div>
   {/snippet}
+
   {#snippet componentProps()}
     <TableProps
       component={tableComponent as UIComponent & { properties: Partial<ITableProps<object>> }}

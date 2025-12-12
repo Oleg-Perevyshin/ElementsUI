@@ -153,6 +153,14 @@ export const optionsStore = derived(t, ($t) => {
       { id: id(), value: 'logger', name: $t('constructor.props.table.type.logger') },
     ],
 
+    BUFFER_SIFE_OPTIONS: [
+      { id: crypto.randomUUID(), value: 10, name: '10' },
+      { id: crypto.randomUUID(), value: 50, name: '50' },
+      { id: crypto.randomUUID(), value: 100, name: '100' },
+      { id: crypto.randomUUID(), value: 500, name: '500' },
+      { id: crypto.randomUUID(), value: 1000, name: '1000' },
+    ],
+
     AUTOCOMPLETE_CONSTRUCTOR_OPTIONS: [
       { id: id(), value: 'on', name: $t('constructor.props.autocomplete.on') },
       { id: id(), value: 'off', name: $t('constructor.props.autocomplete.off') },

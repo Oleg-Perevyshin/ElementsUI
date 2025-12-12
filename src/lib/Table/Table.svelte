@@ -14,7 +14,7 @@
     body = $bindable(),
     header = [],
     footer = '',
-    dataBuffer = { stashData: false, rowsAmmount: 10, cleanButton: true, cleanClass: '' },
+    dataBuffer = { stashData: false, rowsAmmount: 10, clearButton: true, clearClass: '' },
     type = 'table',
     outline = false,
     cursor = null,
@@ -165,8 +165,8 @@
         },
       ]
 
-      if (dataBuffer && buffer.length > (dataBuffer.rowsAmmount ?? 10) * 5) {
-        buffer = buffer.slice(-((dataBuffer.rowsAmmount ?? 10) * 5))
+      if (dataBuffer && buffer.length > (dataBuffer.rowsAmmount ?? 10)) {
+        buffer = buffer.slice(-(dataBuffer.rowsAmmount ?? 10))
       }
 
       body = null
@@ -309,9 +309,9 @@
         </div>
       {/each}
     </div>
-    {#if dataBuffer.cleanButton}
+    {#if dataBuffer.clearButton}
       <button
-        class={twMerge('absolute right-2 bg-(--back-color) rounded-full p-1 cursor-pointer', dataBuffer.cleanClass)}
+        class={twMerge('absolute right-2 bg-(--back-color) rounded-full p-1 cursor-pointer', dataBuffer.clearClass)}
         onclick={() => (buffer = [])}
       >
         <ButtonClear />

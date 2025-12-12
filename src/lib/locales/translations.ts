@@ -166,6 +166,7 @@ const translations: Translations = {
     'constructor.props.table.keys.info': 'Ключи таблицы, значения которых будут возвращаться',
     'constructor.props.table.stashData': 'Накопление данных',
     'constructor.props.table.buffersize': 'Размер буфера',
+    'constructor.props.table.clearButton': 'Кнопка очистки',
 
     'constructor.props.icon.access': 'Доступ',
     'constructor.props.icon.common': 'Общее',

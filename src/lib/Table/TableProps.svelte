@@ -374,22 +374,37 @@
         onUpdate={(option) => {
           updateProperty('type', option.value as string, component, onPropertyChange)
           if (option.value === 'logger') updateProperty('dataBuffer.stashData', true, component, onPropertyChange)
+          if (option.value === 'table') updateProperty('dataBuffer.clearButton', false, component, onPropertyChange)
         }}
       />
-      <UI.Switch
-        label={{ name: $t('constructor.props.table.stashData') }}
-        value={component.properties.dataBuffer.stashData}
-        options={[{ id: crypto.randomUUID(), value: 0, class: '', disabled: component.properties.type === 'logger' }]}
-        onChange={(value) => {
-          updateProperty('dataBuffer.stashData', value, component, onPropertyChange)
-        }}
-      />
-      {#if component.properties.stashData}
-        <UI.Input
+      <div class="flex">
+        <UI.Switch
+          label={{ name: $t('constructor.props.table.stashData') }}
+          value={component.properties.dataBuffer.stashData}
+          options={[{ id: crypto.randomUUID(), value: 0, class: '', disabled: component.properties.type === 'logger' }]}
+          onChange={(value) => {
+            updateProperty('dataBuffer.stashData', value, component, onPropertyChange)
+          }}
+        />
+        {#if component.properties.type === 'logger'}
+          <UI.Switch
+            label={{ name: $t('constructor.props.table.clearButton') }}
+            value={component.properties.dataBuffer.clearButton}
+            options={[{ id: crypto.randomUUID(), value: 0, class: '' }]}
+            onChange={(value) => {
+              updateProperty('dataBuffer.clearButton', value, component, onPropertyChange)
+            }}
+          />
+        {/if}
+      </div>
+
+      {#if component.properties.dataBuffer.stashData}
+        <UI.Select
           label={{ name: $t('constructor.props.table.buffersize') }}
-          type="number"
-          value={component.properties.dataBuffer.rowsAmmount}
-          onUpdate={(value) => updateProperty('dataBuffer.rowsAmmount', value as string, component, onPropertyChange)}
+          type="buttons"
+          options={$optionsStore.BUFFER_SIFE_OPTIONS}
+          value={$optionsStore.BUFFER_SIFE_OPTIONS.find((o) => o.value === component.properties.dataBuffer.rowsAmmount)}
+          onUpdate={(value) => updateProperty('dataBuffer.rowsAmmount', value.value as number, component, onPropertyChange)}
         />
       {/if}
     </div>
