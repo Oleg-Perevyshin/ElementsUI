@@ -100,6 +100,8 @@
         onUpdate={(option) => {
           updateProperty('type', option.value as string, component, onPropertyChange)
           if (option.value === 'logger') updateProperty('dataBuffer.stashData', true, component, onPropertyChange)
+          if (option.value === 'logger') updateProperty('dataBuffer.clearButton', true, component, onPropertyChange)
+          if (option.value === 'table') updateProperty('dataBuffer.clearButton', false, component, onPropertyChange)
         }}
       />
     </div>
@@ -150,160 +152,161 @@
       {/if}
     </div>
   </div>
+  {#if component.properties.type === 'table'}
+    <hr class="border-(--border-color)" />
 
-  <hr class="border-(--border-color)" />
-
-  <!-- Настройки столбцов таблицы -->
-  <div>
-    <div class=" flex items-center justify-center gap-2">
-      <h4>{$t('constructor.props.table.columns')}</h4>
-      <UI.Button
-        wrapperClass="w-8"
-        content={{ icon: ButtonAdd }}
-        onClick={() => {
-          const newColumn: ITableHeader<any> = {
-            key: `column${(component.properties.header?.length || 0) + 1}`,
-            label: { name: `Column ${(component.properties.header?.length || 0) + 1}`, class: '' },
-            width: '10%',
-            sortable: false,
-          }
-          const headers = [...(component.properties.header || []), newColumn]
-          updateProperty('header', headers, component, onPropertyChange)
-          headers.forEach((h) => {
-            updateTableHeader(headers.indexOf(h), 'width', `${(100 / headers.length).toFixed(2)}%`)
-          })
-          updateTableBody()
-        }}
-      />
-    </div>
-
-    {#each component.properties.header as column, columnIndex (columnIndex)}
-      <div class="mr-2 grid grid-cols-[minmax(5rem,10rem)_1fr_minmax(5rem,10rem)_minmax(10rem,21rem)_6rem_6rem_2rem_2rem] items-end gap-6">
-        <UI.Input
-          label={{ name: $t('constructor.props.table.columns.key') }}
-          value={column.key}
-          help={{ regExp: /^[0-9a-zA-Z_-]{0,16}$/ }}
-          onUpdate={(value) => {
-            updateTableHeader(columnIndex, 'key', value)
-            updateTableBody()
-          }}
-        />
-        <UI.Input
-          label={{ name: $t('constructor.props.table.columns.label') }}
-          value={column.label.name}
-          onUpdate={(value) => {
-            updateTableHeader(columnIndex, 'label', { ['name']: value })
-          }}
-        />
-        <UI.Input
-          label={{ name: $t('constructor.props.table.columns.width') }}
-          type="number"
-          value={Number(column.width.replace('%', ''))}
-          onUpdate={(value) => updateTableHeader(columnIndex, 'width', `${value}%`)}
-        />
-        <UI.Select
-          label={{ name: $t('constructor.props.align.content') }}
-          type="buttons"
-          value={$optionsStore.ALIGN_OPTIONS.find((a) => (a.value as string).includes(column.align))}
-          options={$optionsStore.ALIGN_OPTIONS}
-          onUpdate={(option) => updateTableHeader(columnIndex, 'align', option.value)}
-        />
-        <UI.Switch
-          label={{ name: $t('constructor.props.table.columns.sortable'), class: 'px-0' }}
-          options={[{ id: crypto.randomUUID(), value: 0, class: '' }]}
-          value={column.sortable}
-          onChange={(value) => updateTableHeader(columnIndex, 'sortable', value)}
-        />
-        <UI.Switch
-          label={{ name: $t('constructor.props.copy'), class: 'px-0' }}
-          options={[{ id: crypto.randomUUID(), value: 0, class: '' }]}
-          value={column.overflow?.copy}
-          onChange={(value) => updateTableHeader(columnIndex, 'overflow', { copy: value })}
-        />
+    <!-- Настройки столбцов таблицы -->
+    <div>
+      <div class=" flex items-center justify-center gap-2">
+        <h4>{$t('constructor.props.table.columns')}</h4>
         <UI.Button
           wrapperClass="w-8"
-          content={{ icon: ButtonAdd, info: { text: $t('constructor.props.table.addaction'), side: 'top' } }}
+          content={{ icon: ButtonAdd }}
           onClick={() => {
-            const newButton = {
-              name: `button${(component.properties.header[columnIndex].buttons ? component.properties.header[columnIndex].buttons.length : 0) + 1}`,
-              class: 'bg-blue',
-              eventHandler: { Header: 'SET', Argument: 'Save', Variables: [] },
-              onClick: () => {},
+            const newColumn: ITableHeader<any> = {
+              key: `column${(component.properties.header?.length || 0) + 1}`,
+              label: { name: `Column ${(component.properties.header?.length || 0) + 1}`, class: '' },
+              width: '10%',
+              sortable: false,
             }
-            const buttons = [...(component.properties.header[columnIndex].buttons || []), newButton]
-            updateTableHeader(columnIndex, 'buttons', buttons)
-          }}
-        />
-        <UI.Button
-          wrapperClass="w-8"
-          content={{ icon: ButtonDelete }}
-          onClick={() => {
-            const headers = [...(component.properties.header || [])]
-            headers.splice(columnIndex, 1)
+            const headers = [...(component.properties.header || []), newColumn]
             updateProperty('header', headers, component, onPropertyChange)
             headers.forEach((h) => {
               updateTableHeader(headers.indexOf(h), 'width', `${(100 / headers.length).toFixed(2)}%`)
             })
+            updateTableBody()
           }}
         />
       </div>
-      {#if column.buttons && column.buttons.length > 0}
-        <div class="mb-5 rounded-lg py-1">
-          {#each column.buttons as button, buttonIndex (buttonIndex)}
-            <div class="ml-14 flex items-end justify-around gap-2">
-              <UI.Input
-                label={{ name: $t('constructor.props.name') }}
-                wrapperClass="!w-3/10"
-                value={button.name}
-                onUpdate={(value) => updateButtonProperty(columnIndex, buttonIndex, 'name', value)}
-              />
-              <UI.Select
-                wrapperClass="!w-2/10"
-                label={{ name: $t('constructor.props.header') }}
-                type="buttons"
-                value={$optionsStore.HEADER_OPTIONS.find((h) => h.value === button.eventHandler?.Header)}
-                options={$optionsStore.HEADER_OPTIONS}
-                onUpdate={(option) => {
-                  const handler = button.eventHandler
-                  handler.Header = option.value as string
-                  updateButtonProperty(columnIndex, buttonIndex, 'eventHandler', handler)
-                }}
-              />
-              <UI.Input
-                wrapperClass="!w-2/10"
-                label={{ name: $t('constructor.props.argument') }}
-                value={button.eventHandler?.Argument}
-                onUpdate={(value) => {
-                  const handler = button.eventHandler
-                  handler.Argument = value as string
-                  updateButtonProperty(columnIndex, buttonIndex, 'eventHandler', handler)
-                }}
-              />
-              <UI.Input
-                wrapperClass="!w-2/10"
-                label={{ name: $t('constructor.props.table.keys') }}
-                value={button.eventHandler?.Variables.join(' ')}
-                maxlength={500}
-                help={{ info: $t('constructor.props.table.keys.info'), regExp: /^[a-zA-Z0-9\-_ ]{0,500}$/ }}
-                onUpdate={(value) => {
-                  const handler = { ...button.eventHandler }
-                  handler.Variables = (value as string).trim().split(/\s+/)
-                  updateButtonProperty(columnIndex, buttonIndex, 'eventHandler', handler)
-                }}
-              />
-              <UI.Button
-                wrapperClass="w-8"
-                content={{ icon: ButtonDelete }}
-                onClick={() => {
-                  removeButtonFromColumn(columnIndex, buttonIndex)
-                }}
-              />
-            </div>
-          {/each}
+
+      {#each component.properties.header as column, columnIndex (columnIndex)}
+        <div class="mr-2 grid grid-cols-[minmax(5rem,10rem)_1fr_minmax(5rem,10rem)_minmax(10rem,21rem)_6rem_6rem_2rem_2rem] items-end gap-6">
+          <UI.Input
+            label={{ name: $t('constructor.props.table.columns.key') }}
+            value={column.key}
+            help={{ regExp: /^[0-9a-zA-Z_-]{0,16}$/ }}
+            onUpdate={(value) => {
+              updateTableHeader(columnIndex, 'key', value)
+              updateTableBody()
+            }}
+          />
+          <UI.Input
+            label={{ name: $t('constructor.props.table.columns.label') }}
+            value={column.label.name}
+            onUpdate={(value) => {
+              updateTableHeader(columnIndex, 'label', { ['name']: value })
+            }}
+          />
+          <UI.Input
+            label={{ name: $t('constructor.props.table.columns.width') }}
+            type="number"
+            value={Number(column.width.replace('%', ''))}
+            onUpdate={(value) => updateTableHeader(columnIndex, 'width', `${value}%`)}
+          />
+          <UI.Select
+            label={{ name: $t('constructor.props.align.content') }}
+            type="buttons"
+            value={$optionsStore.ALIGN_OPTIONS.find((a) => (a.value as string).includes(column.align))}
+            options={$optionsStore.ALIGN_OPTIONS}
+            onUpdate={(option) => updateTableHeader(columnIndex, 'align', option.value)}
+          />
+          <UI.Switch
+            label={{ name: $t('constructor.props.table.columns.sortable'), class: 'px-0' }}
+            options={[{ id: crypto.randomUUID(), value: 0, class: '' }]}
+            value={column.sortable}
+            onChange={(value) => updateTableHeader(columnIndex, 'sortable', value)}
+          />
+          <UI.Switch
+            label={{ name: $t('constructor.props.copy'), class: 'px-0' }}
+            options={[{ id: crypto.randomUUID(), value: 0, class: '' }]}
+            value={column.overflow?.copy}
+            onChange={(value) => updateTableHeader(columnIndex, 'overflow', { copy: value })}
+          />
+          <UI.Button
+            wrapperClass="w-8"
+            content={{ icon: ButtonAdd, info: { text: $t('constructor.props.table.addaction'), side: 'top' } }}
+            onClick={() => {
+              const newButton = {
+                name: `button${(component.properties.header[columnIndex].buttons ? component.properties.header[columnIndex].buttons.length : 0) + 1}`,
+                class: 'bg-blue',
+                eventHandler: { Header: 'SET', Argument: 'Save', Variables: [] },
+                onClick: () => {},
+              }
+              const buttons = [...(component.properties.header[columnIndex].buttons || []), newButton]
+              updateTableHeader(columnIndex, 'buttons', buttons)
+            }}
+          />
+          <UI.Button
+            wrapperClass="w-8"
+            content={{ icon: ButtonDelete }}
+            onClick={() => {
+              const headers = [...(component.properties.header || [])]
+              headers.splice(columnIndex, 1)
+              updateProperty('header', headers, component, onPropertyChange)
+              headers.forEach((h) => {
+                updateTableHeader(headers.indexOf(h), 'width', `${(100 / headers.length).toFixed(2)}%`)
+              })
+            }}
+          />
         </div>
-      {/if}
-    {/each}
-  </div>
+        {#if column.buttons && column.buttons.length > 0}
+          <div class="mb-5 rounded-lg py-1">
+            {#each column.buttons as button, buttonIndex (buttonIndex)}
+              <div class="ml-14 flex items-end justify-around gap-2">
+                <UI.Input
+                  label={{ name: $t('constructor.props.name') }}
+                  wrapperClass="!w-3/10"
+                  value={button.name}
+                  onUpdate={(value) => updateButtonProperty(columnIndex, buttonIndex, 'name', value)}
+                />
+                <UI.Select
+                  wrapperClass="!w-2/10"
+                  label={{ name: $t('constructor.props.header') }}
+                  type="buttons"
+                  value={$optionsStore.HEADER_OPTIONS.find((h) => h.value === button.eventHandler?.Header)}
+                  options={$optionsStore.HEADER_OPTIONS}
+                  onUpdate={(option) => {
+                    const handler = button.eventHandler
+                    handler.Header = option.value as string
+                    updateButtonProperty(columnIndex, buttonIndex, 'eventHandler', handler)
+                  }}
+                />
+                <UI.Input
+                  wrapperClass="!w-2/10"
+                  label={{ name: $t('constructor.props.argument') }}
+                  value={button.eventHandler?.Argument}
+                  onUpdate={(value) => {
+                    const handler = button.eventHandler
+                    handler.Argument = value as string
+                    updateButtonProperty(columnIndex, buttonIndex, 'eventHandler', handler)
+                  }}
+                />
+                <UI.Input
+                  wrapperClass="!w-2/10"
+                  label={{ name: $t('constructor.props.table.keys') }}
+                  value={button.eventHandler?.Variables.join(' ')}
+                  maxlength={500}
+                  help={{ info: $t('constructor.props.table.keys.info'), regExp: /^[a-zA-Z0-9\-_ ]{0,500}$/ }}
+                  onUpdate={(value) => {
+                    const handler = { ...button.eventHandler }
+                    handler.Variables = (value as string).trim().split(/\s+/)
+                    updateButtonProperty(columnIndex, buttonIndex, 'eventHandler', handler)
+                  }}
+                />
+                <UI.Button
+                  wrapperClass="w-8"
+                  content={{ icon: ButtonDelete }}
+                  onClick={() => {
+                    removeButtonFromColumn(columnIndex, buttonIndex)
+                  }}
+                />
+              </div>
+            {/each}
+          </div>
+        {/if}
+      {/each}
+    </div>
+  {/if}
 {:else}
   <div class="relative flex flex-row items-start justify-center pb-4">
     <div class="flex w-1/3 flex-col px-2">

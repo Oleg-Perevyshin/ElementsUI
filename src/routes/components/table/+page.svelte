@@ -64,7 +64,6 @@
 
   let body: any | null = $state(null)
   let intervalId: any | null = null
-  let clear = $state(false)
 
   const generateLoggerString = (): { logLevel: string; payload: string } => {
     let logLevel = ['info', 'warning', 'error'][Math.floor(Math.random() * 3)]
@@ -85,7 +84,6 @@ ${formatObjectToString(tableComponent.properties as ITableProps<object>)}
 
   onMount(() => {
     body = (tableComponent.properties as ITableProps<object>).type == 'logger' ? generateLoggerString() : generateStashingData()
-
     intervalId = setInterval(() => {
       body = (tableComponent.properties as ITableProps<object>).type == 'logger' ? generateLoggerString() : generateStashingData()
     }, 1000)
@@ -99,7 +97,6 @@ ${formatObjectToString(tableComponent.properties as ITableProps<object>)}
 <ComponentExample {codeText}>
   {#snippet component()}
     <div class="h-60">
-      <!-- prettier-ignore -->
       <Table
         {...tableComponent.properties as ITableProps<object>}
         body={(tableComponent.properties as ITableProps<object>).dataBuffer?.stashData
@@ -113,7 +110,7 @@ ${formatObjectToString(tableComponent.properties as ITableProps<object>)}
     <TableProps
       component={tableComponent as UIComponent & { properties: Partial<ITableProps<object>> }}
       onPropertyChange={(updates) => (tableComponent = updateComponent(tableComponent, updates as object))}
-      forConstructor={false}
+      forConstructor={true}
     />
     <!-- <hr />
     <TableProps
