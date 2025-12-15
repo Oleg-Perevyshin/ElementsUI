@@ -14,7 +14,7 @@
       componentClass: 'bg-red py-1',
       content: {
         name: 'Button',
-        info: { text: 'gbhgth', side: 'topr' },
+        info: { text: '', side: 'top' },
       },
     },
     eventHandler: { Header: 'SET', Argument: 'Save', Variables: [] },
