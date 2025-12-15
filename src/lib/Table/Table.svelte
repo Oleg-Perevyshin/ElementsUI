@@ -155,38 +155,6 @@
   }
 
   $effect(() => {
-    if (body && type == 'logger') {
-      console.log(Object.entries(body[0]))
-      buffer = [
-        ...buffer,
-        {
-          type: Object.entries(body[0])[0][1] as string,
-          color: `<div class='size-6 rounded-full ${logTypeOptions.find((o) => o.value == body.logLevel)?.color}'></div>`,
-          data: Object.entries(body[0])[1][1] as string,
-        },
-      ]
-      console.log(buffer)
-
-      if (dataBuffer && buffer.length > (dataBuffer.rowsAmmount ?? 10)) {
-        buffer = buffer.slice(-(dataBuffer.rowsAmmount ?? 10))
-      }
-
-      body = null
-    }
-  })
-
-  $effect(() => {
-    if (body && dataBuffer.stashData && type == 'table') {
-      buffer = [...buffer, body]
-      if (buffer.length > (dataBuffer.rowsAmmount ?? 10)) {
-        buffer = buffer.slice(-(dataBuffer.rowsAmmount ?? 10))
-      }
-
-      body = null
-    }
-  })
-
-  $effect(() => {
     const currentType = type
     if (currentType === 'logger') {
       header = [
@@ -204,6 +172,49 @@
     }
     return () => {
       buffer = []
+    }
+  })
+
+  $effect(() => {
+    if (body && type == 'logger') {
+      if (Array.isArray(body)) {
+        for (let i = 0; i < body.length; i++) {
+          buffer = [
+            ...buffer,
+            {
+              type: Object.entries(body[i])[0][1] as string,
+              color: `<div class='size-6 rounded-full ${logTypeOptions.find((o) => o.value == Object.entries(body[i])[0][1])?.color}'></div>`,
+              data: Object.entries(body[i])[1][1] as string,
+            },
+          ]
+        }
+      } else {
+        buffer = [
+          ...buffer,
+          {
+            type: Object.entries(body)[0][1] as string,
+            color: `<div class='size-6 rounded-full ${logTypeOptions.find((o) => o.value == Object.entries(body)[0][1])?.color}'></div>`,
+            data: Object.entries(body)[1][1] as string,
+          },
+        ]
+      }
+
+      if (dataBuffer && buffer.length > (dataBuffer.rowsAmmount ?? 10)) {
+        buffer = buffer.slice(-(dataBuffer.rowsAmmount ?? 10))
+      }
+
+      body = null
+    }
+  })
+
+  $effect(() => {
+    if (body && dataBuffer.stashData && type == 'table') {
+      buffer = [...buffer, body]
+      if (buffer.length > (dataBuffer.rowsAmmount ?? 10)) {
+        buffer = buffer.slice(-(dataBuffer.rowsAmmount ?? 10))
+      }
+
+      body = null
     }
   })
 
@@ -328,7 +339,6 @@
           : dataBuffer.stashData
             ? buffer.slice(-(dataBuffer.rowsAmmount ?? 10))
             : body}
-
       <!-- Table Body с прокруткой -->
       <div class="flex-1 overflow-y-auto bg-(--container-color)/50" bind:this={container} onscroll={handleScroll}>
         <div class="grid min-w-0" style={`grid-template-columns: ${header.map((c) => c.width || 'minmax(0, 1fr)').join(' ')};`}>
@@ -462,7 +472,6 @@
         {@html tooltip.text}
       </div>
     {/if}
-    <p>{JSON.stringify(body)}</p>
     <!-- Нижнее поле для сводной информации -->
     {#if footer}
       <div class="flex h-8 items-center justify-center bg-(--bg-color)">

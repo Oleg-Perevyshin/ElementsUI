@@ -102,7 +102,6 @@
           const parts = (value as string).trim().split(/\s+/)
 
           onPropertyChange({ eventHandler: { Variables: parts } })
-          console.log(component.eventHandler)
         }}
       />
       <UI.Select

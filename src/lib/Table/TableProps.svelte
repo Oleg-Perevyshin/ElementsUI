@@ -49,16 +49,19 @@
 
     if (typeChange) {
       newBody = []
-      // if (loggerType) {
-      //   newBody.push({ loglevel: 'error', payload: 'error log' })
-      // }
-
-      const newRow: { [key: string]: any } = {}
-      component.properties.header.forEach((col: ITableHeader<any>) => {
-        const key = col.key as string
-        newRow[key] = `Value of ${key}`
-      })
-      newBody.push(newRow)
+      if (loggerType) {
+        newBody.push({ loglevel: 'error', payload: 'error log' })
+        newBody.push({ loglevel: 'warning', payload: 'warning log' })
+        newBody.push({ loglevel: 'info', payload: 'info log' })
+      } else {
+        const newRow: { [key: string]: any } = {}
+        component.properties.header.forEach((col: ITableHeader<any>) => {
+          const key = col.key as string
+          newRow[key] = `Value of ${key}`
+        })
+        newBody.push(newRow)
+        newBody.push(newRow)
+      }
     } else {
       newBody = component.properties.body.map((row: object) => {
         const newRow: Partial<object> = {}
@@ -69,9 +72,7 @@
         return newRow
       })
     }
-    console.log(newBody)
     updateProperty('body', newBody, component, onPropertyChange)
-    console.log(component)
   }
 
   const updateButtonProperty = (columnIndex: number, buttonIndex: number, field: string, value: any) => {
@@ -135,6 +136,7 @@
             updateProperty('header', headers, component, onPropertyChange)
             updateTableBody(true, true)
           } else {
+            updateProperty('dataBuffer.stashData', false, component, onPropertyChange)
             updateProperty('dataBuffer.clearButton', false, component, onPropertyChange)
             const headers = [
               {
@@ -184,14 +186,6 @@
         value={component.properties.outline}
         options={[{ id: crypto.randomUUID(), value: 0, class: '' }]}
         onChange={(value) => updateProperty('outline', value, component, onPropertyChange)}
-      />
-      <UI.Switch
-        label={{ name: $t('constructor.props.table.stashData') }}
-        value={component.properties.dataBuffer.stashData}
-        options={[{ id: crypto.randomUUID(), value: 0, class: '', disabled: component.properties.type === 'logger' }]}
-        onChange={(value) => {
-          updateProperty('dataBuffer.stashData', value, component, onPropertyChange)
-        }}
       />
     </div>
     <div class="flex w-1/3 flex-col px-2">
@@ -737,7 +731,6 @@
                     onUpdate={(value) => {
                       const handler = { ...button.eventHandler }
                       handler.Variables = (value as string).trim().split(/\s+/)
-                      console.log(handler)
                       updateButtonProperty(columnIndex, buttonIndex, 'eventHandler', handler)
                     }}
                   />

@@ -65,39 +65,44 @@
   let body: any | null = $state(null)
   let intervalId: any | null = null
 
-  // const generateLoggerString = (): { logLevel: string; payload: string } => {
-  //   let logLevel = ['info', 'warning', 'error'][Math.floor(Math.random() * 3)]
-  //   return { logLevel, payload: `${logLevel}` }
-  // }
+  const generateLoggerString = (): { logLevel: string; payload: string } => {
+    let logLevel = ['info', 'warning', 'error'][Math.floor(Math.random() * 3)]
+    return { logLevel, payload: `${logLevel}` }
+  }
 
-  // const generateStashingData = (): { id: string; device: string } => {
-  //   return {
-  //     id: `Value of id ${Math.floor(Math.random() * 10)}`,
-  //     device: `Value of device ${Math.floor(Math.random() * 10)}`,
-  //   }
-  // }
+  const generateStashingData = (): { id: string; device: string } => {
+    return {
+      id: `Value of id ${Math.floor(Math.random() * 10)}`,
+      device: `Value of device ${Math.floor(Math.random() * 10)}`,
+    }
+  }
   let codeText = $derived(`
 <UI.Table
 ${formatObjectToString(tableComponent.properties as ITableProps<object>)} 
   onClick={() => {}}
 />`)
 
-  // onMount(() => {
-  //   body = (tableComponent.properties as ITableProps<object>).type == 'logger' ? generateLoggerString() : generateStashingData()
-  //   intervalId = setInterval(() => {
-  //     body = (tableComponent.properties as ITableProps<object>).type == 'logger' ? generateLoggerString() : generateStashingData()
-  //   }, 1000)
-  // })
+  onMount(() => {
+    body = (tableComponent.properties as ITableProps<object>).type == 'logger' ? generateLoggerString() : generateStashingData()
+    intervalId = setInterval(() => {
+      body = (tableComponent.properties as ITableProps<object>).type == 'logger' ? generateLoggerString() : generateStashingData()
+    }, 1000)
+  })
 
-  // onDestroy(() => {
-  //   if (intervalId) clearInterval(intervalId)
-  // })
+  onDestroy(() => {
+    if (intervalId) clearInterval(intervalId)
+  })
 </script>
 
 <ComponentExample {codeText}>
   {#snippet component()}
     <div class="h-60">
-      <Table {...tableComponent.properties as ITableProps<object>} />
+      <Table
+        {...tableComponent.properties as ITableProps<object>}
+        body={(tableComponent.properties as ITableProps<object>).dataBuffer?.stashData
+          ? body
+          : (tableComponent.properties as ITableProps<object>).body}
+      />
     </div>
   {/snippet}
 
@@ -105,7 +110,7 @@ ${formatObjectToString(tableComponent.properties as ITableProps<object>)}
     <TableProps
       component={tableComponent as UIComponent & { properties: Partial<ITableProps<object>> }}
       onPropertyChange={(updates) => (tableComponent = updateComponent(tableComponent, updates as object))}
-      forConstructor={true}
+      forConstructor={false}
     />
     <!-- <hr />
     <TableProps
