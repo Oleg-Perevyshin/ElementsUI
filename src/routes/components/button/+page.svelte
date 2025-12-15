@@ -14,7 +14,7 @@
       componentClass: 'bg-red py-1',
       content: {
         name: 'Button',
-        info: { text: '', side: 'top' },
+        info: { text: 'gbhgth', side: 'topr' },
       },
     },
     eventHandler: { Header: 'SET', Argument: 'Save', Variables: [] },
@@ -39,7 +39,7 @@ ${formatObjectToString(buttonComponent.properties as IButtonProps)}
     <ButtonProps
       component={buttonComponent as UIComponent & { properties: Partial<IButtonProps> }}
       onPropertyChange={(updates) => (buttonComponent = updateComponent(buttonComponent, updates as object))}
-      forConstructor={true}
+      forConstructor={false}
     />
     <!-- <hr />
     <ButtonProps

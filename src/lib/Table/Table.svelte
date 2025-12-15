@@ -324,7 +324,10 @@
     </div>
     {#if dataBuffer.clearButton}
       <button
-        class={twMerge('absolute right-2 bg-(--back-color) rounded-full p-1 cursor-pointer', dataBuffer.clearClass)}
+        class={twMerge(
+          'absolute right-2 bg-(--back-color) rounded-full p-1 cursor-pointer [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full',
+          dataBuffer.clearClass,
+        )}
         onclick={() => (buffer = [])}
       >
         <ButtonClear />

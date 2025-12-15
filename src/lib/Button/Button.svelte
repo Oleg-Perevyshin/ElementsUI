@@ -21,6 +21,33 @@
 
   let showInfo = $state(false)
 
+  let tooltipConfig = $derived({
+    top: {
+      pos: 'bottom-full left-1/2 mb-2',
+      tr: 'translateX(-50%)',
+      arr: 'top-full left-1/2 -translate-x-1/2 -translate-y-1/2 rotate-45',
+      off: 'y:-15',
+    },
+    bottom: {
+      pos: 'top-full left-1/2 mt-2',
+      tr: 'translateX(-50%)',
+      arr: 'bottom-full left-1/2 -translate-x-1/2 translate-y-1/2 rotate-45',
+      off: 'y:15',
+    },
+    left: {
+      pos: 'top-1/2 right-full mr-2',
+      tr: 'translateY(-50%)',
+      arr: 'top-1/2 -right-2 -translate-x-1/2 -translate-y-1/2 rotate-45',
+      off: 'x:15',
+    },
+    right: {
+      pos: 'top-1/2 left-full ml-2',
+      tr: 'translateY(-50%)',
+      arr: 'top-1/2 -left-2 translate-x-1/2 -translate-y-1/2 rotate-45 ',
+      off: 'x:-15',
+    },
+  })
+
   const svgSize = $derived(() => {
     const widthClass = twMerge(
       wrapperClass.split(' ').find((cls: string) => cls.startsWith('w-')),
@@ -113,41 +140,15 @@
     </div>
   </button>
 
-  {#if showInfo && content.info?.side === 'top'}
+  {#if showInfo && content.info?.side && tooltipConfig[content.info?.side]}
+    {@const config = tooltipConfig[content.info?.side]}
     <div
-      transition:fly={{ y: -15, duration: 300 }}
-      class="absolute bottom-full left-1/2 z-50 mb-2 w-max max-w-xs rounded-md bg-(--container-color) px-3 py-1 text-sm shadow-lg"
-      style="transform: translateX(-50%);"
+      transition:fly={{ [config.off.split(':')[0]]: parseInt(config.off.split(':')[1]), duration: 300 }}
+      class={`absolute z-50 w-max max-w-xs rounded-md bg-(--container-color) px-3 py-1 text-sm shadow-lg ${config.pos}`}
+      style={`transform: ${config.tr};`}
     >
       {content.info?.text}
-      <div class="absolute top-full left-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rotate-45 transform bg-(--container-color)"></div>
-    </div>
-  {:else if showInfo && content.info?.side === 'bottom'}
-    <div
-      transition:fly={{ y: 15, duration: 300 }}
-      class="absolute top-full left-1/2 z-50 mt-2 w-max max-w-xs rounded-md bg-(--container-color) px-3 py-1 text-sm shadow-lg"
-      style="transform: translateX(-50%);"
-    >
-      {content.info?.text}
-      <div class="absolute bottom-full left-1/2 h-2 w-2 -translate-x-1/2 translate-y-1/2 rotate-45 transform bg-(--container-color)"></div>
-    </div>
-  {:else if showInfo && content.info?.side === 'left'}
-    <div
-      transition:fly={{ x: 15, duration: 300 }}
-      class="absolute top-1/2 right-full z-50 mr-2 w-max max-w-xs rounded-md bg-(--container-color) px-3 py-1 text-sm shadow-lg"
-      style="transform: translateY(-50%);"
-    >
-      {content.info?.text}
-      <div class="absolute top-1/2 -right-2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rotate-45 transform bg-(--container-color)"></div>
-    </div>
-  {:else if showInfo && content.info?.side === 'right'}
-    <div
-      transition:fly={{ x: -15, duration: 300 }}
-      class="absolute top-1/2 left-full z-50 ml-2 w-max max-w-xs rounded-md bg-(--container-color) px-3 py-1 text-sm shadow-lg"
-      style="transform: translateY(-50%);"
-    >
-      {content.info?.text}
-      <div class="absolute top-1/2 -left-2 h-2 w-2 translate-x-1/2 -translate-y-1/2 -rotate-45 transform bg-(--container-color)"></div>
+      <div class={`absolute ${config.arr} h-2 w-2 transform bg-(--container-color)`}></div>
     </div>
   {/if}
 </div>
