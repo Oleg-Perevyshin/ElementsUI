@@ -81,7 +81,7 @@
         value={VARIABLE_OPTIONS.find((opt) => opt.value === component.properties.id)}
         onUpdate={(value) => {
           updateProperty('id', value.value as string, component, onPropertyChange)
-          onPropertyChange({ eventHandler: { Variables: value.value as string } })
+          onPropertyChange({ eventHandler: { Variables: [value.value as string] } })
         }}
       />
       <UI.Select

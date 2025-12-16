@@ -22,14 +22,8 @@
 
   let showIconLib = $state(false)
 
-  let Header: ISelectOption = $derived(
-    $optionsStore.HEADER_OPTIONS.find((h) => h.value === component.eventHandler.Header) ?? {
-      id: '',
-      name: '',
-      value: '',
-      class: '!w-1/4',
-    },
-  )
+  const DeviceVariables = getContext<{ id: string; value: string; name: string }[]>('DeviceVariables')
+  let VARIABLE_OPTIONS = $derived(DeviceVariables && Array.isArray(DeviceVariables) ? DeviceVariables : [])
 
   const initialAlign = $derived(
     $optionsStore.TEXT_ALIGN_OPTIONS.find((a) =>
@@ -50,45 +44,25 @@
       <!-- Сообщение для отправки в ws по нажатию кнопки -->
       <div class="flex w-1/3 flex-col items-center px-2">
         <UI.Select
-          label={{ name: $t('constructor.props.header') }}
-          type="buttons"
-          value={Header}
-          options={$optionsStore.HEADER_OPTIONS}
-          onUpdate={(option) => {
-            Header = { ...option }
-            onPropertyChange({ eventHandler: { Header: Header.value as string } })
+          label={{ name: $t('constructor.props.variable') }}
+          options={VARIABLE_OPTIONS}
+          value={VARIABLE_OPTIONS.find((opt) => opt.value === component.properties.id)}
+          onUpdate={(value) => {
+            updateProperty('id', value.value as string, component, onPropertyChange)
+            onPropertyChange({ name: value.name?.split('—')[1].trim(), eventHandler: { Variables: [value.value as string] } })
           }}
         />
-        {#if Header.value === 'SET'}
-          <UI.Select
-            label={{ name: $t('constructor.props.argument') }}
-            type="buttons"
-            value={$optionsStore.FULL_ARGUMENT_OPTION.find((h) => h.value === component.eventHandler.Argument) ??
-              $optionsStore.FULL_ARGUMENT_OPTION.find((h) => h.value === '')}
-            options={$optionsStore.FULL_ARGUMENT_OPTION}
-            onUpdate={(option) => {
-              onPropertyChange({ eventHandler: { Argument: option.value as string } })
-            }}
-          />
-        {/if}
-        <UI.Input
-          label={{ name: Header.value !== 'SET' ? $t('constructor.props.argument') : '' }}
-          wrapperClass="{Header.value === 'SET' ? 'mt-1' : ''} "
-          value={component.eventHandler.Argument}
-          maxlength={32}
-          disabled={Header.value === 'SET' && (component.eventHandler.Argument == 'Save' || component.eventHandler.Argument == 'NoSave')}
-          help={{ info: $t('constructor.props.argument.info'), autocomplete: 'on', regExp: /^[a-zA-Z0-9\-_]{0,32}$/ }}
-          onUpdate={(value) => onPropertyChange({ eventHandler: { Argument: value as string } })}
+        <UI.Select
+          label={{ name: $t('constructor.props.action') }}
+          type="buttons"
+          value={$optionsStore.SHORT_ARGUMENT_OPTION.find((h) => h.value === component.eventHandler.Argument)}
+          options={$optionsStore.SHORT_ARGUMENT_OPTION}
+          onUpdate={(option) => {
+            updateProperty('eventHandler.Argument', option.value as string, component, onPropertyChange)
+
+            onPropertyChange({ eventHandler: { Argument: option.value as string } })
+          }}
         />
-        {#if (component.eventHandler.Argument !== 'Save' && component.eventHandler.Argument !== 'NoSave') || Header.value === 'SET'}
-          <UI.Input
-            label={{ name: $t('constructor.props.value') }}
-            value={component.eventHandler.Value}
-            help={{ info: $t('constructor.props.value.info') }}
-            maxlength={500}
-            onUpdate={(value) => onPropertyChange({ eventHandler: { Value: value as string } })}
-          />
-        {/if}
       </div>
       <div class="flex w-1/3 flex-col px-2">
         <UI.Select

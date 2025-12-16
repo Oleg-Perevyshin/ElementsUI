@@ -20,7 +20,7 @@
     {
       id: 'right',
       angle: 30.5,
-      content: true,
+      mainButton: true,
       onClick: () => {
         updateValue(2, +sensitivity)
         onUpdate(value)
@@ -29,7 +29,7 @@
     {
       id: 'bottom-right',
       angle: 58,
-      content: false,
+      mainButton: false,
       onClick: () => {
         updateValue(2, +sensitivity)
         updateValue(1, -sensitivity)
@@ -39,7 +39,7 @@
     {
       id: 'bottom',
       angle: 122,
-      content: true,
+      mainButton: true,
       onClick: () => {
         updateValue(1, -sensitivity)
         onUpdate(value)
@@ -48,7 +48,7 @@
     {
       id: 'bottom-left',
       angle: 149.5,
-      content: false,
+      mainButton: false,
       onClick: () => {
         updateValue(2, -sensitivity)
         updateValue(1, -sensitivity)
@@ -58,7 +58,7 @@
     {
       id: 'left',
       angle: 212,
-      content: true,
+      mainButton: true,
       onClick: () => {
         updateValue(2, -sensitivity)
         onUpdate(value)
@@ -67,7 +67,7 @@
     {
       id: 'top-left',
       angle: 239,
-      content: false,
+      mainButton: false,
       onClick: () => {
         updateValue(1, +sensitivity)
         updateValue(2, -sensitivity)
@@ -77,7 +77,7 @@
     {
       id: 'top',
       angle: 301,
-      content: true,
+      mainButton: true,
       onClick: () => {
         updateValue(1, +sensitivity)
         onUpdate(value)
@@ -86,7 +86,7 @@
     {
       id: 'top-right',
       angle: 328,
-      content: false,
+      mainButton: false,
       onClick: () => {
         updateValue(1, +sensitivity)
         updateValue(2, +sensitivity)
@@ -140,17 +140,23 @@
             title=""
           >
             <span
-              class="relative flex w-full origin-left items-center justify-center pl-[60%] h-[{direction.content
-                ? 2 * 5 * Math.sin((Math.PI * 65) / 360)
-                : 2 * 5 * Math.sin((Math.PI * 25) / 360)}rem] pointer-events-auto
-            {direction.content ? 'bg-(--bg-color)' : ''}
+              class="relative flex w-full origin-left items-center justify-center pl-[60%] pointer-events-auto
+            {direction.mainButton ? 'bg-(--bg-color)' : ''}
             "
-              style="transform: rotate({angle * index}deg); clip-path: polygon(100% 0, {clipPos}% 0, 0 50%, {clipPos}% 100%, 100% 100%)"
+              style=" height: {direction.mainButton
+                ? 2 * 5 * Math.sin((Math.PI * 65) / 360)
+                : 2 * 5 * Math.sin((Math.PI * 25) / 360)}rem; transform: rotate({angle *
+                index}deg); clip-path: polygon(100% 0, {clipPos}% 0, 0 50%, {clipPos}% 100%, 100% 100%)
+              "
               role="application"
               onmouseenter={(e) => (e.currentTarget.style.backgroundColor = 'color-mix(in srgb, var(--bg-color), var(--shadow-color) 20%)')}
               onmouseleave={(e) => (e.currentTarget.style.backgroundColor = 'var(--bg-color)')}
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width={direction.content ? 32 : 16} height={direction.content ? 32 : 16} viewBox="0 0 24 24"
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width={direction.mainButton ? 32 : 16}
+                height={direction.mainButton ? 32 : 16}
+                viewBox="0 0 24 24"
                 ><path
                   fill="currentColor"
                   d="M12.6 12L8.7 8.1q-.275-.275-.275-.7t.275-.7t.7-.275t.7.275l4.6 4.6q.15.15.213.325t.062.375t-.062.375t-.213.325l-4.6 4.6q-.275.275-.7.275t-.7-.275t-.275-.7t.275-.7z"

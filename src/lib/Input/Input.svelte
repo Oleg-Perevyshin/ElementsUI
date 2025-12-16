@@ -52,6 +52,24 @@
       onUpdate?.(value as string)
     }
   }
+
+  $effect(() => {
+    if (type === 'number' && typeof value == 'number') {
+      value = roundToClean(value)
+    }
+  })
+
+  const roundToClean = (num: number): number => {
+    if (Number.isInteger(num)) return num
+
+    const rounded1 = Number(num.toFixed(1))
+    if (Math.abs(rounded1 - num) < 1e-10) return rounded1
+
+    const rounded2 = Number(num.toFixed(2))
+    if (Math.abs(rounded2 - num) < 1e-10) return rounded2
+
+    return rounded2
+  }
 </script>
 
 <div class={twMerge(`bg-max ${type === 'text-area' ? 'h-full' : ''} relative flex w-full flex-col px-1 items-center`, wrapperClass)}>
