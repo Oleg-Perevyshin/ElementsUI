@@ -217,7 +217,6 @@
           buffer = [...buffer, body[i]]
         }
       } else buffer = [...buffer, body]
-      buffer = [...buffer, body]
       if (buffer.length > (dataBuffer.rowsAmmount ?? 10)) {
         buffer = buffer.slice(-(dataBuffer.rowsAmmount ?? 10))
       }

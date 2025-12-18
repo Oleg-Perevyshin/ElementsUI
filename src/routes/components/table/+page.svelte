@@ -70,11 +70,17 @@
     return { logLevel, payload: `${logLevel}` }
   }
 
-  const generateStashingData = (): { id: string; device: string } => {
-    return {
-      id: `Value of id ${Math.floor(Math.random() * 10)}`,
-      device: `Value of device ${Math.floor(Math.random() * 10)}`,
-    }
+  const generateStashingData = (): { id: string; device: string }[] => {
+    return [
+      {
+        id: `Value of id ${Math.floor(Math.random() * 10)}`,
+        device: `Value of device ${Math.floor(Math.random() * 10)}`,
+      },
+      {
+        id: `Value of id ${Math.floor(Math.random() * 10)}`,
+        device: `Value of device ${Math.floor(Math.random() * 10)}`,
+      },
+    ]
   }
   let codeText = $derived(`
 <UI.Table
