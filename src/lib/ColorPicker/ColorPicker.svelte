@@ -204,7 +204,7 @@
 
     <!-- Превью цвета -->
 
-    <div class="flex w-25 flex-col items-center">
+    <div class="flex flex-col items-center" style="width: 7rem;">
       <div
         class={`flex size-15 flex-col justify-center gap-1 rounded-full px-2 font-mono text-sm shadow-sm transition duration-200 select-none ${textColor()}`}
         style={`background: rgb(${previewBaseColor().join(',')})`}

@@ -212,6 +212,11 @@
 
   $effect(() => {
     if (body && dataBuffer.stashData && type == 'table') {
+      if (Array.isArray(body)) {
+        for (let i = 0; i < body.length; i++) {
+          buffer = [...buffer, body[i]]
+        }
+      } else buffer = [...buffer, body]
       buffer = [...buffer, body]
       if (buffer.length > (dataBuffer.rowsAmmount ?? 10)) {
         buffer = buffer.slice(-(dataBuffer.rowsAmmount ?? 10))
