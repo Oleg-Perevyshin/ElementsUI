@@ -1,21 +1,22 @@
 <!-- $lib/ElementsUI/Table.svelte -->
 <script lang="ts">
-  import { get } from 'svelte/store'
-  import type { ITableHeader, ITableProps } from '../types'
-  import { fade, fly } from 'svelte/transition'
-  import { twMerge } from 'tailwind-merge'
-  import { onMount } from 'svelte'
-  import ButtonClear from '../libIcons/ButtonClear.svelte'
+  import { get } from "svelte/store"
+  import type { ISelectOption, ITableHeader, ITableProps } from "../types"
+  import { fade, fly, slide } from "svelte/transition"
+  import { twMerge } from "tailwind-merge"
+  import { onMount } from "svelte"
+  import ButtonClear from "../libIcons/ButtonClear.svelte"
+  import { t } from "$lib/locales/i18n"
 
   let {
     id = crypto.randomUUID(),
-    wrapperClass = '',
-    label = { name: '', class: '' },
+    wrapperClass = "",
+    label = { name: "", class: "" },
     body = $bindable(),
     header = [],
-    footer = '',
-    dataBuffer = { stashData: false, rowsAmmount: 10, clearButton: false, clearClass: '' },
-    type = 'table',
+    footer = "",
+    dataBuffer = { stashData: false, rowsAmmount: 10, clearButton: false, clearClass: "" },
+    type = "table",
     outline = false,
     cursor = null,
     loader,
@@ -33,7 +34,7 @@
   /* Сортировка */
   let sortState: {
     key: string | null
-    direction: 'asc' | 'desc' | null
+    direction: "asc" | "desc" | null
   } = {
     key: null,
     direction: null,
@@ -42,42 +43,42 @@
   let isAutoscroll = $state(false)
 
   const logTypeOptions = [
-    { id: crypto.randomUUID(), name: 'Error', value: 'error', color: 'bg-(--red-color)' },
-    { id: crypto.randomUUID(), name: 'Warning', value: 'warning', color: 'bg-(--yellow-color)' },
-    { id: crypto.randomUUID(), name: 'Info', value: 'info', color: 'bg-(--gray-color)' },
+    { id: crypto.randomUUID(), name: "Error", value: "error", color: "bg-(--red-color)" },
+    { id: crypto.randomUUID(), name: "Warning", value: "warning", color: "bg-(--yellow-color)" },
+    { id: crypto.randomUUID(), name: "Info", value: "info", color: "bg-(--gray-color)" },
   ]
-  let logType = $state(['error', 'warning'])
+  let logType = $state(["error", "warning"])
 
   /* Сортировка столбцов */
   const sortRows = (key: string) => {
     if (sortState.key === key) {
-      sortState.direction = sortState.direction === 'asc' ? 'desc' : 'asc'
+      sortState.direction = sortState.direction === "asc" ? "desc" : "asc"
     } else {
       sortState.key = key
-      sortState.direction = 'asc'
+      sortState.direction = "asc"
     }
 
     body = [...body].sort((a, b) => {
       const aValue = a[key]
       const bValue = b[key]
-      if (typeof aValue === 'number' && typeof bValue === 'number') {
-        return sortState.direction === 'asc' ? aValue - bValue : bValue - aValue
+      if (typeof aValue === "number" && typeof bValue === "number") {
+        return sortState.direction === "asc" ? aValue - bValue : bValue - aValue
       }
       if (aValue instanceof Date && bValue instanceof Date) {
-        return sortState.direction === 'asc' ? aValue.getTime() - bValue.getTime() : bValue.getTime() - aValue.getTime()
+        return sortState.direction === "asc" ? aValue.getTime() - bValue.getTime() : bValue.getTime() - aValue.getTime()
       }
       const strA = String(aValue).toLowerCase()
       const strB = String(bValue).toLowerCase()
-      const numA = strA.match(/\d+/g)?.[0] || ''
-      const numB = strB.match(/\d+/g)?.[0] || ''
+      const numA = strA.match(/\d+/g)?.[0] || ""
+      const numB = strB.match(/\d+/g)?.[0] || ""
       if (numA && numB) {
         const numCompare = parseInt(numA, 10) - parseInt(numB, 10)
         if (numCompare !== 0) {
-          return sortState.direction === 'asc' ? numCompare : -numCompare
+          return sortState.direction === "asc" ? numCompare : -numCompare
         }
       }
       const stringCompare = strA.localeCompare(strB)
-      return sortState.direction === 'asc' ? stringCompare : -stringCompare
+      return sortState.direction === "asc" ? stringCompare : -stringCompare
     })
   }
 
@@ -113,18 +114,33 @@
     if (button.onClick) button.onClick(row)
     else if (button.eventHandler && onClick) {
       let value: Record<string, boolean | string | number | number[] | object | null> = {}
-      button.eventHandler.Variables.forEach((v: string) => {
-        value[v] = row[v]
-      })
+      button.eventHandler.Variables.forEach((v: string) => (value[v] = row[v]))
       button.eventHandler.Value = JSON.stringify(value)
       onClick(button.eventHandler)
     }
   }
 
-  let copiedCell = $state({ x: '', y: -1 })
+  let isDropdownOpen: number | null = $state(null)
+  let changedOptions: { index: number; options: ISelectOption<string | number>[] | null }[] = $state([])
+
+  const selectOption = (index: number, options: ISelectOption<string | number>[], option: ISelectOption<string | number>, event: MouseEvent) => {
+    event.stopPropagation()
+
+    const existingItem = changedOptions.find(item => item.index === index)
+
+    if (existingItem) {
+      existingItem.options = [option, ...options.filter(opt => opt.id !== option.id)]
+    } else {
+      changedOptions = [...changedOptions, { index, options: [option, ...options.filter(opt => opt.id !== option.id)] }]
+    }
+
+    isDropdownOpen = null
+  }
+
+  let copiedCell = $state({ x: "", y: -1 })
   let tooltip = $state({
     show: false,
-    text: '',
+    text: "",
     x: 0,
     y: 0,
   })
@@ -133,14 +149,14 @@
     modalData = {
       isOpen: true,
       rawData: text,
-      formattedData: formatting ? formatting(text) : (text ?? ''),
+      formattedData: formatting ? formatting(text) : (text ?? ""),
     }
   }
 
   const showTooltip = (event: MouseEvent, text: string, formatting?: (text: string) => string) => {
     tooltip = {
       show: true,
-      text: formatting ? formatting(text) : (text ?? ''),
+      text: formatting ? formatting(text) : (text ?? ""),
       x: event.clientX,
       y: event.clientY,
     }
@@ -153,23 +169,23 @@
   /* Для работы этой проверки в описании столбцов таблицы нужно явно указать что строка будет пустая при отсутствии иконки в БД -
      src: (row) => (row.icon ? `data:image/png;base64,${row.icon}` : '') */
   const hasImage = (column: ITableHeader<any>, row: any): boolean => {
-    const src = typeof column.image?.src === 'function' ? column.image.src(row) : column.image?.src
+    const src = typeof column.image?.src === "function" ? column.image.src(row) : column.image?.src
     return !!src
   }
 
   $effect(() => {
     const currentType = type
-    if (currentType === 'logger') {
+    if (currentType === "logger") {
       header = [
         {
-          key: 'color',
-          label: { name: 'Type' },
-          width: '3rem',
+          key: "color",
+          label: { name: "Type" },
+          width: "3rem",
         } as ITableHeader<any>,
         {
-          key: 'data',
-          label: { name: 'Data' },
-          width: 'calc(100% - 3rem)',
+          key: "data",
+          label: { name: "Data" },
+          width: "calc(100% - 3rem)",
         } as ITableHeader<any>,
       ]
     }
@@ -179,14 +195,14 @@
   })
 
   $effect(() => {
-    if (body && type == 'logger') {
+    if (body && type == "logger") {
       if (Array.isArray(body)) {
         for (let i = 0; i < body.length; i++) {
           buffer = [
             ...buffer,
             {
               type: Object.entries(body[i])[0][1] as string,
-              color: `<div class='size-6 rounded-full ${logTypeOptions.find((o) => o.value == Object.entries(body[i])[0][1])?.color}'></div>`,
+              color: `<div class='size-6 rounded-full ${logTypeOptions.find(o => o.value == Object.entries(body[i])[0][1])?.color}'></div>`,
               data: Object.entries(body[i])[1][1] as string,
             },
           ]
@@ -196,7 +212,7 @@
           ...buffer,
           {
             type: Object.entries(body)[0][1] as string,
-            color: `<div class='size-6 rounded-full ${logTypeOptions.find((o) => o.value == Object.entries(body)[0][1])?.color}'></div>`,
+            color: `<div class='size-6 rounded-full ${logTypeOptions.find(o => o.value == Object.entries(body)[0][1])?.color}'></div>`,
             data: Object.entries(body)[1][1] as string,
           },
         ]
@@ -211,7 +227,7 @@
   })
 
   $effect(() => {
-    if (body && dataBuffer.stashData && type == 'table') {
+    if (body && dataBuffer.stashData && type == "table") {
       if (Array.isArray(body)) {
         for (let i = 0; i < body.length; i++) {
           buffer = [...buffer, body[i]]
@@ -227,28 +243,28 @@
 
   onMount(() => {
     if (autoscroll) {
-      container?.addEventListener('scroll', handleAutoScroll)
+      container?.addEventListener("scroll", handleAutoScroll)
       scrollToBottom()
     }
 
-    if (type === 'logger') {
+    if (type === "logger") {
       header = [
         {
-          key: 'color',
-          label: { name: 'Type' },
-          width: '3rem',
+          key: "color",
+          label: { name: "Type" },
+          width: "3rem",
         } as ITableHeader<any>,
         {
-          key: 'data',
-          label: { name: 'Data' },
-          width: 'calc(100% - 3rem)',
+          key: "data",
+          label: { name: "Data" },
+          width: "calc(100% - 3rem)",
         } as ITableHeader<any>,
       ]
     }
 
     return () => {
       if (autoscroll) {
-        container?.removeEventListener('scroll', handleAutoScroll)
+        container?.removeEventListener("scroll", handleAutoScroll)
       }
     }
   })
@@ -256,13 +272,12 @@
 
 <div
   id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
-  class={twMerge(`bg-blue flex h-full w-full items-center ${type == 'logger' ? 'gap-2' : ''} flex-col overflow-hidden`, wrapperClass)}
->
+  class={twMerge(`bg-blue flex h-full w-full items-center ${type == "logger" ? "gap-2" : ""} flex-col overflow-hidden`, wrapperClass)}>
   {#if label.name}
     <h5 class={twMerge(`w-full px-4 text-center`, label.class)}>{label.name}</h5>
   {/if}
 
-  {#if type == 'logger'}
+  {#if type == "logger"}
     <div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class="flex w-[50%] justify-center rounded-full">
       {#each logTypeOptions as option, index}
         <button
@@ -271,20 +286,17 @@
             select-none hover:shadow-md
             ${
               logType.includes(option.value) && logType !== null
-                ? 'z-10 py-1 shadow-[0_0_10px_var(--shadow-color)] hover:shadow-[0_0_15px_var(--shadow-color)]'
-                : ''
+                ? "z-10 py-1 shadow-[0_0_10px_var(--shadow-color)] hover:shadow-[0_0_15px_var(--shadow-color)]"
+                : ""
             }  
-            ${logTypeOptions.length > 0 && index === 0 ? 'rounded-l-2xl' : ''} ${
-              index === logTypeOptions.length - 1 ? 'rounded-r-2xl' : ''
-            } ${option.color}`)}
+            ${logTypeOptions.length > 0 && index === 0 ? "rounded-l-2xl" : ""} ${index === logTypeOptions.length - 1 ? "rounded-r-2xl" : ""} ${option.color}`)}
           onclick={() => {
             if (logType.includes(option.value)) {
-              logType = logType.filter((type) => type !== option.value)
+              logType = logType.filter(type => type !== option.value)
             } else {
               logType.push(option.value)
             }
-          }}
-        >
+          }}>
           <span class="flex flex-row items-center justify-center gap-4">
             {#if option}
               <div class="flex-1">
@@ -300,29 +312,26 @@
   <div
     class="relative flex h-full w-full flex-col overflow-hidden rounded-xl border shadow-sm transition duration-200 hover:shadow-md {outline
       ? ' border-(--border-color)'
-      : 'border-transparent'} "
-  >
+      : 'border-transparent'} ">
     <!-- Table Header -->
-    <div class="grid font-semibold" style={`grid-template-columns: ${header.map((c) => c.width || 'minmax(0, 1fr)').join(' ')};`}>
+    <div class="grid font-semibold" style={`grid-template-columns: ${header.map(c => c.width || "minmax(0, 1fr)").join(" ")};`}>
       {#each header as column, index (column)}
         <div
           class={twMerge(
-            `items-center justify-center border-l ${outline && index !== 0 ? ' border-(--border-color)' : 'border-transparent'} ${
-              column.align === 'center'
-                ? 'flex justify-center text-center'
-                : column.align === 'right'
-                  ? 'flex justify-end text-right'
-                  : 'flex justify-start text-left'
+            `items-center justify-center border-l ${outline && index !== 0 ? " border-(--border-color)" : "border-transparent"} ${
+              column.align === "center"
+                ? "flex justify-center text-center"
+                : column.align === "right"
+                  ? "flex justify-end text-right"
+                  : "flex justify-start text-left"
             } gap-1 bg-(--bg-color) p-2 text-left`,
             column.label?.class,
-          )}
-        >
+          )}>
           <span>{column.label?.name}</span>
           {#if column.sortable}
             <button
               class="inline-block cursor-pointer font-bold transition-transform duration-75 hover:scale-110 active:scale-95"
-              onclick={() => sortRows(column.key as string)}
-            >
+              onclick={() => sortRows(column.key as string)}>
               ↑↓
             </button>
           {/if}
@@ -332,11 +341,10 @@
     {#if dataBuffer.clearButton}
       <button
         class={twMerge(
-          'absolute right-2 bg-(--back-color) rounded-full p-1 cursor-pointer [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full',
+          "absolute right-2 bg-(--back-color) rounded-full p-1 cursor-pointer [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full",
           dataBuffer.clearClass,
         )}
-        onclick={clearBuffer}
-      >
+        onclick={clearBuffer}>
         <ButtonClear />
       </button>
     {/if}
@@ -344,14 +352,14 @@
     {#if body || buffer}
       {@const isSliced = buffer.length - (dataBuffer.rowsAmmount ?? 10) > 0 ? buffer.length - ((dataBuffer.rowsAmmount ?? 10) % 2) !== 0 : false}
       {@const rows =
-        type == 'logger'
-          ? buffer.filter((str) => logType.includes(str.type)).slice(-(dataBuffer.rowsAmmount ?? 10))
+        type == "logger"
+          ? buffer.filter(str => logType.includes(str.type)).slice(-(dataBuffer.rowsAmmount ?? 10))
           : dataBuffer.stashData
             ? buffer.slice(-(dataBuffer.rowsAmmount ?? 10))
             : body}
       <!-- Table Body с прокруткой -->
       <div class="flex-1 overflow-y-auto bg-(--container-color)/50" bind:this={container} onscroll={handleScroll}>
-        <div class="grid min-w-0" style={`grid-template-columns: ${header.map((c) => c.width || 'minmax(0, 1fr)').join(' ')};`}>
+        <div class="grid min-w-0" style={`grid-template-columns: ${header.map(c => c.width || "minmax(0, 1fr)").join(" ")};`}>
           {#each rows as row, index (row)}
             {#each header as column, j (column)}
               <div
@@ -364,35 +372,70 @@
                     : 'flex justify-start text-left'}
               border-t
               {j !== 0 ? ' border-l ' : ''}
-              {outline ? 'border-(--border-color)' : 'border-transparent'}  "
-              >
-                {#if column.buttons}
+              {outline ? 'border-(--border-color)' : 'border-transparent'}  ">
+                {#if column.action?.type == "buttons" && column.action?.buttons}
                   <div class="flex w-full flex-col gap-1">
-                    {#each column.buttons as button (button)}
+                    {#each column.action?.buttons as button (button)}
                       <button
                         class="{twMerge(`cursor-pointer rounded-full 
                            px-4 py-1 font-semibold shadow-sm transition-shadow duration-200 outline-none select-none hover:shadow-md
                           ${typeof button.class === 'function' ? button.class(row) : button.class}`)} bg-(--bg-color)"
-                        onclick={() => buttonClick(row, button)}
-                      >
-                        {typeof button.name === 'function' ? button.name(row) : button.name}
+                        onclick={() => buttonClick(row, button)}>
+                        {typeof button.name === "function" ? button.name(row) : button.name}
                       </button>
                     {/each}
                   </div>
+                {:else if column.action?.type == "select" && column.action?.select}
+                  {@const currentOptions = changedOptions.find(item => item.index === index)?.options}
+                  {@const defaultOptions = Array.isArray(row[column.key])
+                    ? row[column.key].map((option: string | number) => ({
+                        id: crypto.randomUUID(),
+                        value: option,
+                        name: option,
+                        class: "",
+                        disabled: false,
+                      }))
+                    : []}
+                  {@const options = currentOptions || defaultOptions}
+                  <div class="relative w-full">
+                    <button
+                      class={`w-full rounded-2xl border border-(--blue-color) bg-(--back-color) p-1 text-center shadow-[0_0_3px_rgb(0_0_0_/0.25)] transition duration-200
+        cursor-pointer hover:shadow-[0_0_6px_rgb(0_0_0_/0.25)]`}
+                      onclick={() => (isDropdownOpen = isDropdownOpen === index ? null : index)}>
+                      {options[0]?.name || $t("common.select_tag")}
+                    </button>
+
+                    {#if isDropdownOpen === index}
+                      <div
+                        class="absolute top-full left-1/2 z-50 -translate-x-1/2 rounded-b-2xl shadow-[0_0_3px_rgb(0_0_0_/0.25)]"
+                        style="width: calc(100% - 1.8rem);"
+                        transition:slide={{ duration: 250 }}>
+                        {#each options as option, option_index (option.id)}
+                          <button
+                            id={option.id}
+                            value={option?.value ? String(option.value) : ""}
+                            class={twMerge(
+                              `flex h-full w-full cursor-pointer items-center justify-center p-1 inset-shadow-[0_10px_10px_-15px_rgb(0_0_0_/0.5)] duration-250 hover:bg-(--field-color)! bg-(--back-color)
+              ${option_index === options.length - 1 ? "rounded-b-2xl" : ""} `,
+                              option.class,
+                            )}
+                            onclick={e => selectOption(index, options, option, e)}>
+                            {option.name}
+                          </button>
+                        {/each}
+                      </div>
+                    {/if}
+                  </div>
                 {:else if column.image?.src || column.image?.defaultIcon}
-                  <div
-                    class="flex items-center justify-center"
-                    style={`width: ${column.image.width || '5rem'}; height: ${column.image.height || '5rem'};`}
-                  >
+                  <div class="flex items-center justify-center" style={`width: ${column.image.width || "5rem"}; height: ${column.image.height || "5rem"};`}>
                     {#if hasImage(column, row)}
                       <img
-                        src={typeof column.image?.src === 'function' ? column.image.src(row) : column.image?.src || ''}
-                        alt={column.image.alt ?? 'Image'}
-                        class={twMerge(`h-full w-full object-cover ${column.image.class || ''}`)}
-                        loading="lazy"
-                      />
+                        src={typeof column.image?.src === "function" ? column.image.src(row) : column.image?.src || ""}
+                        alt={column.image.alt ?? "Image"}
+                        class={twMerge(`h-full w-full object-cover ${column.image.class || ""}`)}
+                        loading="lazy" />
                     {:else if column.image.defaultIcon}
-                      {#if typeof column.image.defaultIcon === 'string'}
+                      {#if typeof column.image.defaultIcon === "string"}
                         {@html column.image.defaultIcon}
                       {:else}
                         <column.image.defaultIcon />
@@ -402,25 +445,23 @@
                 {:else}
                   <div
                     class=" w-full max-w-full wrap-break-word {column.overflow?.truncated ? 'truncate' : ' whitespace-normal'}"
-                    onmouseenter={column.overflow?.truncated ? (e) => showTooltip(e, row[column.key], column.overflow?.formatting) : undefined}
+                    onmouseenter={column.overflow?.truncated ? e => showTooltip(e, row[column.key], column.overflow?.formatting) : undefined}
                     onmouseleave={column.overflow?.truncated ? hideTooltip : undefined}
                     onmousemove={column.overflow?.truncated
-                      ? (e) => {
+                      ? e => {
                           tooltip.x = e.clientX
                           tooltip.y = e.clientY
                         }
                       : undefined}
                     role="columnheader"
-                    tabindex={null}
-                  >
+                    tabindex={null}>
                     {#if column.overflow?.modal}
                       <button
                         class="w-full cursor-pointer overflow-hidden text-left text-ellipsis whitespace-nowrap"
-                        onclick={(e) => {
+                        onclick={e => {
                           e.stopPropagation()
                           showModal(row[column.key], column.overflow?.formatting)
-                        }}
-                      >
+                        }}>
                         {@html row[column.key]}
                       </button>
                     {:else}
@@ -434,28 +475,25 @@
                   {#if column.overflow?.copy}
                     <button
                       class="mx-2 flex cursor-pointer border-none bg-transparent text-2xl"
-                      onclick={(e) => {
+                      onclick={e => {
                         e.preventDefault()
                         navigator.clipboard.writeText(row[column.key])
                         copiedCell = { x: column.key as string, y: index }
-                        setTimeout(() => (copiedCell = { x: '', y: -1 }), 1000)
+                        setTimeout(() => (copiedCell = { x: "", y: -1 }), 1000)
                       }}
-                      aria-label="Копировать текст"
-                    >
+                      aria-label="Копировать текст">
                       <div class=" size-5 text-sm [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full">
                         {#if copiedCell.y === index && copiedCell.x === column.key}
                           <div
                             class="absolute top-1/2 right-3.5 -translate-y-1/2 transform rounded-md bg-(--green-color) px-1.5 py-1 shadow-lg"
-                            transition:fade={{ duration: 200 }}
-                          >
+                            transition:fade={{ duration: 200 }}>
                             ✓
                           </div>
                         {:else}
                           <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
                             <g fill="none" stroke="currentColor" stroke-width="1.5">
                               <path
-                                d="M6 11c0-2.828 0-4.243.879-5.121C7.757 5 9.172 5 12 5h3c2.828 0 4.243 0 5.121.879C21 6.757 21 8.172 21 11v5c0 2.828 0 4.243-.879 5.121C19.243 22 17.828 22 15 22h-3c-2.828 0-4.243 0-5.121-.879C6 20.243 6 18.828 6 16z"
-                              />
+                                d="M6 11c0-2.828 0-4.243.879-5.121C7.757 5 9.172 5 12 5h3c2.828 0 4.243 0 5.121.879C21 6.757 21 8.172 21 11v5c0 2.828 0 4.243-.879 5.121C19.243 22 17.828 22 15 22h-3c-2.828 0-4.243 0-5.121-.879C6 20.243 6 18.828 6 16z" />
                               <path d="M6 19a3 3 0 0 1-3-3v-6c0-3.771 0-5.657 1.172-6.828S7.229 2 11 2h4a3 3 0 0 1 3 3" />
                             </g>
                           </svg>
@@ -477,8 +515,7 @@
         style="background: color-mix(in srgb, var(--yellow-color) 30%, var(--back-color)); transform: translateX(-50%); left: {tooltip.x +
           10}px; top: {tooltip.y + 10}px;"
         transition:fly={{ y: 10, duration: 200 }}
-        role="tooltip"
-      >
+        role="tooltip">
         {@html tooltip.text}
       </div>
     {/if}

@@ -1,15 +1,15 @@
 // $lib/ElementsUI/types.ts
-import type { Snippet } from 'svelte'
-import type { Writable } from 'svelte/store'
+import type { Snippet } from "svelte"
+import type { Writable } from "svelte/store"
 
 export const updateProperty = (
   path: string,
   value: string | number | boolean | object | string[],
-  component: UIComponent & { properties: Partial<UIComponent['properties']> },
+  component: UIComponent & { properties: Partial<UIComponent["properties"]> },
   onPropertyChange: (updates: Partial<{ properties?: string | object; name?: string; access?: string; eventHandler?: IUIComponentHandler }>) => void,
 ) => {
   const newProperties = JSON.parse(JSON.stringify(component.properties))
-  const parts = path.split('.')
+  const parts = path.split(".")
   let obj = newProperties
   for (let i = 0; i < parts.length - 1; i++) {
     const part = parts[i]
@@ -24,8 +24,8 @@ export const updateComponent = (
   component: UIComponent,
   updates: Partial<{
     name: string
-    access: 'full' | 'viewOnly' | 'hidden'
-    properties: Partial<UIComponent['properties']>
+    access: "full" | "viewOnly" | "hidden"
+    properties: Partial<UIComponent["properties"]>
     eventHandler: IUIComponentHandler
   }>,
 ) => {
@@ -42,23 +42,23 @@ export const updateComponent = (
 export interface UIComponent {
   id: string
   name?: string
-  access?: 'full' | 'viewOnly' | 'hidden'
+  access?: "full" | "viewOnly" | "hidden"
   type:
-    | 'Button'
-    | 'Accordion'
-    | 'Input'
-    | 'Select'
-    | 'Switch'
-    | 'ColorPicker'
-    | 'Slider'
-    | 'TextField'
-    | 'Joystick'
-    | 'ProgressBar'
-    | 'Graph'
-    | 'Table'
-    | 'Tabs'
-    | 'FileAttach'
-    | 'Map'
+    | "Button"
+    | "Accordion"
+    | "Input"
+    | "Select"
+    | "Switch"
+    | "ColorPicker"
+    | "Slider"
+    | "TextField"
+    | "Joystick"
+    | "ProgressBar"
+    | "Graph"
+    | "Table"
+    | "Tabs"
+    | "FileAttach"
+    | "Map"
   properties:
     | IAccordionProps
     | IButtonProps
@@ -105,7 +105,7 @@ export interface IButtonProps {
   disabled?: boolean
   content?: {
     name?: string
-    info?: { text: string; side: 'top' | 'bottom' | 'left' | 'right' }
+    info?: { text: string; side: "top" | "bottom" | "left" | "right" }
     icon?: ConstructorOfATypedSvelteComponent | string | null
   }
   keyBind?: {
@@ -141,7 +141,7 @@ export interface IAccordionProps {
 /* Интерфейс поля ввода */
 export interface IInputProps {
   id?: string
-  type?: 'text' | 'password' | 'number' | 'text-area'
+  type?: "text" | "password" | "number" | "text-area"
   wrapperClass?: string
   label?: { name?: string; class?: string }
   componentClass?: string
@@ -158,22 +158,22 @@ export interface IInputProps {
     copyButton?: boolean
     regExp?: string | RegExp
     autocomplete?:
-      | 'on'
-      | 'off'
-      | 'given-name'
-      | 'family-name'
-      | 'nickname'
-      | 'username'
-      | 'new-password'
-      | 'current-password'
-      | 'organization-title'
-      | 'country-name'
-      | 'address-level1'
-      | 'address-level2'
-      | 'street-address'
-      | 'postal-code'
-      | 'email'
-      | 'tel'
+      | "on"
+      | "off"
+      | "given-name"
+      | "family-name"
+      | "nickname"
+      | "username"
+      | "new-password"
+      | "current-password"
+      | "organization-title"
+      | "country-name"
+      | "address-level1"
+      | "address-level2"
+      | "street-address"
+      | "postal-code"
+      | "email"
+      | "tel"
       | null
   }
   onUpdate?: (value: string | number) => void
@@ -187,7 +187,7 @@ export interface ISelectProps<T = unknown> {
   disabled?: boolean
   label?: { name?: string; class?: string }
   componentClass?: string
-  type?: 'select' | 'buttons' | 'input'
+  type?: "select" | "buttons" | "input"
   value?: ISelectOption<T> | null
   options?: ISelectOption<T>[]
   bitMode?: boolean
@@ -219,7 +219,7 @@ export interface ISwitchProps {
   hiddenInfo?: string
   options?: ISelectOption<number>[]
   bitMode?: boolean
-  type?: 'horizontal' | 'vertical' | 'checkbox'
+  type?: "horizontal" | "vertical" | "checkbox"
   value?: number
   onChange?: (value: number) => void
 }
@@ -239,7 +239,7 @@ export interface ISliderProps {
   wrapperClass?: string
   label?: { name?: string; class?: string }
   value?: number | [number, number]
-  type?: 'single' | 'range'
+  type?: "single" | "range"
   number?: { minNum: number; maxNum: number; step: number }
   disabled?: boolean
   onUpdate?: (value: number | [number, number]) => void
@@ -252,7 +252,7 @@ export interface ITextFieldProps {
   content?: {
     name?: string
     class?: string
-    size?: 'small' | 'base' | 'large' | 'huge' | 'massive'
+    size?: "small" | "base" | "large" | "huge" | "massive"
   }
 }
 /* ********************************************************** */
@@ -265,7 +265,7 @@ export interface IProgressBarProps {
     maxNum?: number
     units?: string
   }
-  type?: 'horizontal' | 'vertical'
+  type?: "horizontal" | "vertical"
   wrapperClass?: string
 }
 
@@ -290,19 +290,26 @@ export interface ITableHeader<T extends object> {
   key: keyof T
   sortable?: boolean
   width?: string
-  align?: 'left' | 'center' | 'right'
+  align?: "left" | "center" | "right"
   overflow?: {
     truncated?: boolean
     formatting?: (text: string) => string
     copy?: boolean
     modal?: boolean
   }
-  buttons?: {
-    name: string | ((row: T) => string)
-    class?: string | ((row: T) => string)
-    eventHandler?: IUIComponentHandler
-    onClick?: (row: T) => void
-  }[]
+  action?: {
+    type: "buttons" | "select" | "none"
+    buttons?: {
+      name: string | ((row: T) => string)
+      class?: string | ((row: T) => string)
+      eventHandler?: IUIComponentHandler
+      onClick?: (row: T) => void
+    }[]
+    select?: {
+      key: string
+      onChange?: () => void
+    }
+  }
   image?: {
     src?: string | ((row: T) => string)
     alt?: string
@@ -320,7 +327,7 @@ export interface ITableProps<T extends object> {
   header?: ITableHeader<T>[]
   body: T[] | T | null
   footer?: string
-  type?: 'table' | 'logger'
+  type?: "table" | "logger"
   dataBuffer?: { stashData?: boolean; rowsAmmount?: number; clearButton?: boolean; clearClass?: string }
   outline?: boolean
   cursor?: string | null
@@ -383,9 +390,9 @@ export interface IFileAttachProps {
   id?: string
   wrapperClass?: string
   label?: { name?: string; class?: string }
-  type?: 'file' | 'image'
+  type?: "file" | "image"
   accept?: string
-  imageSize?: { height?: string; width?: string; fitMode?: 'cover' | 'contain'; form?: 'square' | 'circle' }
+  imageSize?: { height?: string; width?: string; fitMode?: "cover" | "contain"; form?: "square" | "circle" }
   disabled?: boolean
   currentImage?: string | null
   onChange?: (event: Event, file: File | null) => void

@@ -121,22 +121,24 @@
   <div class="space-y-4">
     <div class="m-0 flex items-center justify-center gap-2">
       <h4>{$t('constructor.props.tabs.title')}</h4>
-      <UI.Button
-        wrapperClass="w-8"
-        content={{ icon: ButtonAdd }}
-        onClick={() => {
-          const newItem: { name: string; icon: string; class: string } = {
-            name: `Tab ${component.properties?.items.length + 1}`,
-            class: `text-${initialColor?.value.slice(3)}-500 ${initialPosition?.value}`,
-            icon: '',
-          }
-          const items = [...(component.properties?.items || []), newItem]
-          items.forEach((_item: any, index: number) => {
-            items[index]['class'] = twMerge(items[index].class, initialWidth() ? `w-[${(1 / items.length) * 100}%]` : 'w-auto')
-            updateProperty('items', items, component, onPropertyChange)
-          })
-        }}
-      />
+      {#if component.properties?.items.length < 10}
+        <UI.Button
+          wrapperClass="w-8"
+          content={{ icon: ButtonAdd }}
+          onClick={() => {
+            const newItem: { name: string; icon: string; class: string } = {
+              name: `Tab ${component.properties?.items.length + 1}`,
+              class: `text-${initialColor?.value.slice(3)}-500 ${initialPosition?.value}`,
+              icon: '',
+            }
+            const items = [...(component.properties?.items || []), newItem]
+            items.forEach((_item: any, index: number) => {
+              items[index]['class'] = twMerge(items[index].class, initialWidth() ? `w-[${(1 / items.length) * 100}%]` : 'w-auto')
+              updateProperty('items', items, component, onPropertyChange)
+            })
+          }}
+        />
+      {/if}
     </div>
 
     {#each component.properties.items || [] as tab, index}
