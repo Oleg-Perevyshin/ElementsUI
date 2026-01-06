@@ -114,9 +114,15 @@
     if (button.onClick) button.onClick(row)
     else if (button.eventHandler && onClick) {
       let value: Record<string, boolean | string | number | number[] | object | null> = {}
-      button.eventHandler.Variables.forEach((v: string) => (value[v] = row[v]))
-      button.eventHandler.Value = JSON.stringify(value)
-      onClick(button.eventHandler)
+      button.eventHandler.Variables.forEach((v: string) => {
+        if (header.some(h => h.key === v && h.action?.type === "select")) {
+          value[v] = row[v][0]
+        } else {
+          value[v] = row[v]
+        }
+        button.eventHandler.Value = JSON.stringify(value)
+        onClick(button.eventHandler)
+      })
     }
   }
 
