@@ -397,3 +397,11 @@ export interface IFileAttachProps {
   currentImage?: string | null
   onChange?: (event: Event, file: File | null) => void
 }
+
+export interface ICarouselProps {
+  id?: string
+  wrapperClass?: string
+  label?: { name?: string; class?: string }
+  scrollValue?: number
+  children?: Snippet
+}
