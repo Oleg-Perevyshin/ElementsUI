@@ -95,10 +95,32 @@
 
   const removeButtonFromColumn = (columnIndex: number, buttonIndex: number) => {
     const headers = [...component.properties.header]
-    const buttons = [...headers[columnIndex].buttons]
+    const buttons = [...headers[columnIndex].action.buttons]
+
     buttons.splice(buttonIndex, 1)
-    headers[columnIndex].buttons = buttons.length ? buttons : undefined
+    headers[columnIndex].action.buttons = buttons.length ? buttons : undefined
     updateProperty("header", headers, component, onPropertyChange)
+  }
+
+  const addNewButton = (columnIndex: number) => {
+    const newButton = {
+      name: `button${(component.properties.header[columnIndex].action.buttons ? component.properties.header[columnIndex].action.buttons.length : 0) + 1}`,
+      class: "bg-blue",
+      eventHandler: { Header: "SET", Argument: "Save", Variables: [] },
+      onClick: () => {},
+    }
+    let action = { ...component.properties.header[columnIndex].action }
+
+    if (!action) {
+      action = { type: "buttons", buttons: [newButton], select: { key: "", onChange: () => {} } }
+    } else if (action.type === "buttons") {
+      const buttons = [...(action.buttons || []), newButton]
+      action = { ...action, buttons }
+    } else {
+      action = { type: "buttons", buttons: [newButton], select: action.select }
+    }
+
+    updateTableHeader(columnIndex, "action", action)
   }
 </script>
 
@@ -281,8 +303,9 @@
             wrapperClass="w-8 {column.action && column.action.type != 'none' ? 'invisible' : ''}"
             content={{ icon: ButtonAdd, info: { text: $t("constructor.props.table.addaction"), side: "top" } }}
             onClick={() => {
-              column.action = { type: "buttons", select: { key: "" } }
-              if (!(column.action && column.action.buttons)) {
+              updateTableHeader(columnIndex, "action", { type: "buttons", select: { key: "" } })
+              if (!column.action || column.action.buttons.length == 0) {
+                addNewButton(columnIndex)
               }
             }} />
           <UI.Button
@@ -313,24 +336,7 @@
               wrapperClass="w-8 {column.action.type == 'select' ? 'invisible' : ''}"
               content={{ icon: ButtonAdd, info: { text: $t("constructor.props.table.addbutton"), side: "top" } }}
               onClick={() => {
-                const newButton = {
-                  name: `button${(component.properties.header[columnIndex].action.buttons ? component.properties.header[columnIndex].action.buttons.length : 0) + 1}`,
-                  class: "bg-blue",
-                  eventHandler: { Header: "SET", Argument: "Save", Variables: [] },
-                  onClick: () => {},
-                }
-                let action = { ...component.properties.header[columnIndex].action }
-
-                if (!action) {
-                  action = { type: "buttons", buttons: [newButton], select: { key: "", onChange: () => {} } }
-                } else if (action.type === "buttons") {
-                  const buttons = [...(action.buttons || []), newButton]
-                  action = { ...action, buttons }
-                } else {
-                  action = { type: "buttons", buttons: [newButton], select: action.select }
-                }
-
-                updateTableHeader(columnIndex, "action", action)
+                addNewButton(columnIndex)
               }} />
 
             <UI.Button
@@ -385,14 +391,14 @@
                 </div>
               {/each}
             {:else if column.action.type == "select"}
-              <div class="ml-14 flex items-end justify-between gap-2">
-                <UI.Select
-                  label={{ name: $t("constructor.props.variable") }}
-                  options={VARIABLE_OPTIONS}
-                  value={VARIABLE_OPTIONS.find(opt => opt.value === column.action.select.key)}
+              <div class="flex items-end justify-between gap-2">
+                <UI.Input
+                  label={{ name: $t("constructor.props.table.select.keys") }}
+                  value={column.action.select.key ?? ""}
+                  maxlength={500}
+                  help={{ info: $t("constructor.props.table.select.keys.info"), regExp: /^[a-zA-Z0-9\-_ ]{0,500}$/ }}
                   onUpdate={value => {
-                    updateSelectProperty(columnIndex, "key", value.value as string)
-                    onPropertyChange({ name: value.name?.split("—")[1].trim(), eventHandler: { Variables: [value.value as string] } })
+                    updateSelectProperty(columnIndex, "key", value as string)
                   }} />
               </div>
             {/if}
@@ -556,6 +562,7 @@
           updateTableBody()
         }} />
     </div>
+
     <div class="flex flex-col gap-2">
       {#each component.properties.header as column, columnIndex (columnIndex)}
         <div class="rounded-2xl border border-(--border-color) p-2">
@@ -601,8 +608,9 @@
                 wrapperClass="w-8 {column.action && column.action.type != 'none' ? 'invisible' : ''}"
                 content={{ icon: ButtonAdd, info: { text: $t("constructor.props.table.addaction"), side: "top" } }}
                 onClick={() => {
-                  column.action = { type: "buttons", select: { key: "" } }
-                  if (!(column.action && column.action.buttons)) {
+                  updateTableHeader(columnIndex, "action", { type: "buttons", select: { key: "" } })
+                  if (!column.action || column.action.buttons.length == 0) {
+                    addNewButton(columnIndex)
                   }
                 }} />
 
@@ -699,24 +707,7 @@
                 wrapperClass="w-8 {column.action.type == 'select' ? 'invisible' : ''}"
                 content={{ icon: ButtonAdd, info: { text: $t("constructor.props.table.addbutton"), side: "top" } }}
                 onClick={() => {
-                  const newButton = {
-                    name: `button${(component.properties.header[columnIndex].action.buttons ? component.properties.header[columnIndex].action.buttons.length : 0) + 1}`,
-                    class: "bg-blue",
-                    eventHandler: { Header: "SET", Argument: "Save", Variables: [] },
-                    onClick: () => {},
-                  }
-                  let action = { ...component.properties.header[columnIndex].action }
-
-                  if (!action) {
-                    action = { type: "buttons", buttons: [newButton], select: { key: "", onChange: () => {} } }
-                  } else if (action.type === "buttons") {
-                    const buttons = [...(action.buttons || []), newButton]
-                    action = { ...action, buttons }
-                  } else {
-                    action = { type: "buttons", buttons: [newButton], select: action.select }
-                  }
-
-                  updateTableHeader(columnIndex, "action", action)
+                  addNewButton(columnIndex)
                 }} />
 
               <UI.Button
@@ -771,14 +762,14 @@
                   </div>
                 {/each}
               {:else if column.action.type == "select"}
-                <div class="ml-14 flex items-end justify-between gap-2">
-                  <UI.Select
-                    label={{ name: $t("constructor.props.variable") }}
-                    options={VARIABLE_OPTIONS}
-                    value={VARIABLE_OPTIONS.find(opt => opt.value === column.action.select.key)}
+                <div class="flex items-end justify-between gap-2">
+                  <UI.Input
+                    label={{ name: $t("constructor.props.table.select.keys") }}
+                    value={column.action.select.key ?? ""}
+                    maxlength={500}
+                    help={{ info: $t("constructor.props.table.select.keys.info"), regExp: /^[a-zA-Z0-9\-_ ]{0,500}$/ }}
                     onUpdate={value => {
-                      updateSelectProperty(columnIndex, "key", value.value as string)
-                      onPropertyChange({ name: value.name?.split("—")[1].trim(), eventHandler: { Variables: [value.value as string] } })
+                      updateSelectProperty(columnIndex, "key", value as string)
                     }} />
                 </div>{/if}
             </div>
