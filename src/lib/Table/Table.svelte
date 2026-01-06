@@ -32,13 +32,7 @@
     buffer = []
   }
   /* Сортировка */
-  let sortState: {
-    key: string | null
-    direction: "asc" | "desc" | null
-  } = {
-    key: null,
-    direction: null,
-  }
+  let sortState: { key: string | null; direction: "asc" | "desc" | null } = { key: null, direction: null }
 
   let isAutoscroll = $state(false)
 
@@ -73,9 +67,7 @@
       const numB = strB.match(/\d+/g)?.[0] || ""
       if (numA && numB) {
         const numCompare = parseInt(numA, 10) - parseInt(numB, 10)
-        if (numCompare !== 0) {
-          return sortState.direction === "asc" ? numCompare : -numCompare
-        }
+        if (numCompare !== 0) return sortState.direction === "asc" ? numCompare : -numCompare
       }
       const stringCompare = strA.localeCompare(strB)
       return sortState.direction === "asc" ? stringCompare : -stringCompare
@@ -95,19 +87,14 @@
   /* Обработчик автоскролла */
   const handleAutoScroll = () => {
     if (!container) return
-
     isAutoscroll = !(container.scrollHeight - container.scrollTop <= container.clientHeight + 50)
   }
   const scrollToBottom = () => {
-    if (!isAutoscroll && container) {
-      container.scrollTop = container.scrollHeight
-    }
+    if (!isAutoscroll && container) container.scrollTop = container.scrollHeight
   }
 
   $effect(() => {
-    if (autoscroll && buffer && buffer.length > 0) {
-      scrollToBottom()
-    }
+    if (autoscroll && buffer && buffer.length > 0) scrollToBottom()
   })
 
   function buttonClick(row: any, button: any) {
@@ -115,14 +102,11 @@
     else if (button.eventHandler && onClick) {
       let value: Record<string, boolean | string | number | number[] | object | null> = {}
       button.eventHandler.Variables.forEach((v: string) => {
-        if (header.some(h => h.key === v && h.action?.type === "select")) {
-          value[v] = row[v][0]
-        } else {
-          value[v] = row[v]
-        }
-        button.eventHandler.Value = JSON.stringify(value)
-        onClick(button.eventHandler)
+        if (header.some(h => h.key === v && h.action?.type === "select")) value[v] = row[v][0]
+        else value[v] = row[v]
       })
+      button.eventHandler.Value = JSON.stringify(value)
+      onClick(button.eventHandler)
     }
   }
 
@@ -131,25 +115,15 @@
 
   const selectOption = (index: number, options: ISelectOption<string | number>[], option: ISelectOption<string | number>, event: MouseEvent) => {
     event.stopPropagation()
-
     const existingItem = changedOptions.find(item => item.index === index)
-
-    if (existingItem) {
-      existingItem.options = [option, ...options.filter(opt => opt.id !== option.id)]
-    } else {
-      changedOptions = [...changedOptions, { index, options: [option, ...options.filter(opt => opt.id !== option.id)] }]
-    }
-
     isDropdownOpen = null
+
+    if (existingItem) existingItem.options = [option, ...options.filter(opt => opt.id !== option.id)]
+    else changedOptions = [...changedOptions, { index, options: [option, ...options.filter(opt => opt.id !== option.id)] }]
   }
 
   let copiedCell = $state({ x: "", y: -1 })
-  let tooltip = $state({
-    show: false,
-    text: "",
-    x: 0,
-    y: 0,
-  })
+  let tooltip = $state({ show: false, text: "", x: 0, y: 0 })
 
   const showModal = async (text: string, formatting?: (text: string) => string) => {
     modalData = {
@@ -183,21 +157,11 @@
     const currentType = type
     if (currentType === "logger") {
       header = [
-        {
-          key: "color",
-          label: { name: "Type" },
-          width: "3rem",
-        } as ITableHeader<any>,
-        {
-          key: "data",
-          label: { name: "Data" },
-          width: "calc(100% - 3rem)",
-        } as ITableHeader<any>,
+        { key: "color", label: { name: "Type" }, width: "3rem" } as ITableHeader<any>,
+        { key: "data", label: { name: "Data" }, width: "calc(100% - 3rem)" } as ITableHeader<any>,
       ]
     }
-    return () => {
-      buffer = []
-    }
+    return () => (buffer = [])
   })
 
   $effect(() => {
@@ -255,23 +219,13 @@
 
     if (type === "logger") {
       header = [
-        {
-          key: "color",
-          label: { name: "Type" },
-          width: "3rem",
-        } as ITableHeader<any>,
-        {
-          key: "data",
-          label: { name: "Data" },
-          width: "calc(100% - 3rem)",
-        } as ITableHeader<any>,
+        { key: "color", label: { name: "Type" }, width: "3rem" } as ITableHeader<any>,
+        { key: "data", label: { name: "Data" }, width: "calc(100% - 3rem)" } as ITableHeader<any>,
       ]
     }
 
     return () => {
-      if (autoscroll) {
-        container?.removeEventListener("scroll", handleAutoScroll)
-      }
+      if (autoscroll) container?.removeEventListener("scroll", handleAutoScroll)
     }
   })
 </script>
