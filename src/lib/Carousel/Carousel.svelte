@@ -47,7 +47,7 @@
     {#if !isAtStart}
       <button
         transition:slide={{ axis: "x" }}
-        class="absolute z-10 size-10 translate-y-1/2 cursor-pointer left-1 p-2 rounded-full bg-(--field-color) [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full shadow-[0_0_6px_var(--shadow-color)] rotate-180"
+        class="absolute z-10 size-10 -translate-y-1/2 cursor-pointer top-1/2 left-1 p-2 rounded-full bg-(--field-color) [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full shadow-[0_0_6px_var(--shadow-color)] rotate-180"
         onclick={() => scrollCarousel(-scrollValue)}>
         <ArrowIcon />
       </button>
@@ -55,13 +55,13 @@
     {#if !isAtEnd}
       <button
         transition:slide={{ axis: "x" }}
-        class="absolute z-10 size-10 translate-y-1/2 cursor-pointer right-1 p-2 rounded-full bg-(--field-color) [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full shadow-[0_0_6px_var(--shadow-color)]"
+        class="absolute z-10 size-10 -translate-y-1/2 cursor-pointer top-1/2 right-1 p-2 rounded-full bg-(--field-color) [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full shadow-[0_0_6px_var(--shadow-color)]"
         onclick={() => scrollCarousel(scrollValue)}>
         <ArrowIcon />
       </button>
     {/if}
 
-    <div {id} bind:this={carouselRef} class="flex overflow-y-hidden gap-2 p-2 h-24">
+    <div {id} bind:this={carouselRef} class="flex overflow-hidden gap-2 p-2">
       {@render children?.()}
     </div>
   </div>

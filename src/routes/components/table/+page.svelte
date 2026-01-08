@@ -28,6 +28,7 @@
             width: "0rem",
             height: "0rem",
           },
+          action: { type: "select", select: { key: "" } },
           align: "left",
         } as ITableHeader<any>,
         {
@@ -47,11 +48,11 @@
       ],
       body: [
         {
-          id: "Value of id",
+          id: ["Value of id1", "Value of id2", "Value of id3", "Value of id4"],
           device: "Value of device",
         },
         {
-          id: "Value of id",
+          id: ["Value of id1", "Value of id2", "Value of id3", "Value of id4"],
           device: "Value of device",
         },
       ],

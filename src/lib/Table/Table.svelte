@@ -111,15 +111,14 @@
   }
 
   let isDropdownOpen: number | null = $state(null)
-  let changedOptions: { index: number; options: ISelectOption<string | number>[] | null }[] = $state([])
 
-  const selectOption = (index: number, options: ISelectOption<string | number>[], option: ISelectOption<string | number>, event: MouseEvent) => {
+  const selectOption = (index: number, key: any, option: ISelectOption<string | number>, event: MouseEvent) => {
     event.stopPropagation()
-    const existingItem = changedOptions.find(item => item.index === index)
+
+    let existingItem = body[index][key]
     isDropdownOpen = null
 
-    if (existingItem) existingItem.options = [option, ...options.filter(opt => opt.id !== option.id)]
-    else changedOptions = [...changedOptions, { index, options: [option, ...options.filter(opt => opt.id !== option.id)] }]
+    if (existingItem) body[index][key] = [option.value, ...existingItem.filter((opt: string | number) => opt !== option.value)]
   }
 
   let copiedCell = $state({ x: "", y: -1 })
@@ -310,7 +309,7 @@
     {/if}
 
     {#if body || buffer}
-      {@const isSliced = buffer.length - (dataBuffer.rowsAmmount ?? 10) > 0 ? buffer.length - ((dataBuffer.rowsAmmount ?? 10) % 2) !== 0 : false}
+      <!-- {@const isSliced = buffer.length - (dataBuffer.rowsAmmount ?? 10) > 0 ? buffer.length - ((dataBuffer.rowsAmmount ?? 10) % 2) !== 0 : false} -->
       {@const rows =
         type == "logger"
           ? buffer.filter(str => logType.includes(str.type)).slice(-(dataBuffer.rowsAmmount ?? 10))
@@ -346,8 +345,7 @@
                     {/each}
                   </div>
                 {:else if column.action?.type == "select" && column.action?.select}
-                  {@const currentOptions = changedOptions.find(item => item.index === index)?.options}
-                  {@const defaultOptions = Array.isArray(row[column.key])
+                  {@const options = Array.isArray(row[column.key])
                     ? row[column.key].map((option: string | number) => ({
                         id: crypto.randomUUID(),
                         value: option,
@@ -356,7 +354,7 @@
                         disabled: false,
                       }))
                     : []}
-                  {@const options = currentOptions || defaultOptions}
+
                   <div class="relative w-full">
                     <button
                       class={`w-full rounded-2xl border border-(--blue-color) bg-(--back-color) p-1 text-center shadow-[0_0_3px_rgb(0_0_0_/0.25)] transition duration-200
@@ -379,7 +377,7 @@
               ${option_index === options.length - 1 ? "rounded-b-2xl" : ""} `,
                               option.class,
                             )}
-                            onclick={e => selectOption(index, options, option, e)}>
+                            onclick={e => selectOption(index, column.key, option, e)}>
                             {option.name}
                           </button>
                         {/each}
