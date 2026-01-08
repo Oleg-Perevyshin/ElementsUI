@@ -27,15 +27,12 @@
   }: ITableProps<any> = $props()
 
   let buffer: any[] = $state([])
-
   export const clearBuffer = () => {
     buffer = []
   }
   /* Сортировка */
   let sortState: { key: string | null; direction: "asc" | "desc" | null } = { key: null, direction: null }
-
   let isAutoscroll = $state(false)
-
   const logTypeOptions = [
     { id: crypto.randomUUID(), name: "Error", value: "error", color: "bg-(--red-color)" },
     { id: crypto.randomUUID(), name: "Warning", value: "warning", color: "bg-(--yellow-color)" },
@@ -118,7 +115,10 @@
     let existingItem = body[index][key]
     isDropdownOpen = null
 
-    if (existingItem) body[index][key] = [option.value, ...existingItem.filter((opt: string | number) => opt !== option.value)]
+    if (existingItem)
+      body = [...body].map((row, i) =>
+        i === index ? (row = { ...row, [key]: [option.value, ...existingItem.filter((opt: string | number) => opt !== option.value)] }) : row,
+      )
   }
 
   let copiedCell = $state({ x: "", y: -1 })
