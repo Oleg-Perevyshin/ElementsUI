@@ -107,8 +107,7 @@
     }
   }
 
-  let isDropdownOpen: number | null = $state(null)
-
+  let isDropdownOpen: { x: number; y: number } | null = $state(null)
   const selectOption = (index: number, key: any, option: ISelectOption<string | number>, event: MouseEvent) => {
     event.stopPropagation()
 
@@ -121,7 +120,7 @@
       )
   }
 
-  let copiedCell = $state({ x: "", y: -1 })
+  let copiedCell: { x: number; y: number } | null = $state(null)
   let tooltip = $state({ show: false, text: "", x: 0, y: 0 })
 
   const showModal = async (text: string, formatting?: (text: string) => string) => {
@@ -269,21 +268,15 @@
   {/if}
 
   <div
-    class="relative flex h-full w-full flex-col overflow-hidden rounded-xl border shadow-sm transition duration-200 hover:shadow-md {outline
-      ? ' border-(--border-color)'
-      : 'border-transparent'} ">
+    class="relative flex h-full w-full flex-col overflow-hidden rounded-xl border shadow-sm transition duration-200 hover:shadow-md
+    {outline ? ' border-(--border-color)' : 'border-transparent'} ">
     <!-- Table Header -->
     <div class="grid font-semibold" style={`grid-template-columns: ${header.map(c => c.width || "minmax(0, 1fr)").join(" ")};`}>
       {#each header as column, index (column)}
         <div
           class={twMerge(
-            `items-center justify-center border-l ${outline && index !== 0 ? " border-(--border-color)" : "border-transparent"} ${
-              column.align === "center"
-                ? "flex justify-center text-center"
-                : column.align === "right"
-                  ? "flex justify-end text-right"
-                  : "flex justify-start text-left"
-            } gap-1 bg-(--bg-color) p-2 text-left`,
+            `items-center justify-center flex border-l ${outline && index !== 0 ? " border-(--border-color)" : "border-transparent"} 
+            ${column.align === "center" ? "justify-center text-center" : column.align === "right" ? "justify-end text-right" : "justify-start text-left"} gap-1 bg-(--bg-color) p-2 text-left`,
             column.label?.class,
           )}>
           <span>{column.label?.name}</span>
@@ -309,7 +302,6 @@
     {/if}
 
     {#if body || buffer}
-      <!-- {@const isSliced = buffer.length - (dataBuffer.rowsAmmount ?? 10) > 0 ? buffer.length - ((dataBuffer.rowsAmmount ?? 10) % 2) !== 0 : false} -->
       {@const rows =
         type == "logger"
           ? buffer.filter(str => logType.includes(str.type)).slice(-(dataBuffer.rowsAmmount ?? 10))
@@ -319,19 +311,13 @@
       <!-- Table Body с прокруткой -->
       <div class="flex-1 overflow-y-auto bg-(--container-color)/50" bind:this={container} onscroll={handleScroll}>
         <div class="grid min-w-0" style={`grid-template-columns: ${header.map(c => c.width || "minmax(0, 1fr)").join(" ")};`}>
-          {#each rows as row, index (row)}
+          {#each rows as row, i (row)}
             {#each header as column, j (column)}
               <div
                 class="relative flex w-full min-w-0 items-center px-2 py-1 wrap-break-word
-              {index % 2 ? 'bg-(--back-color)/40' : 'bg-[#edeef3] dark:bg-[#1f2a3a]'}
-              {column.align === 'center'
-                  ? 'flex justify-center text-center'
-                  : column.align === 'right'
-                    ? 'flex justify-end text-right'
-                    : 'flex justify-start text-left'}
-              border-t
-              {j !== 0 ? ' border-l ' : ''}
-              {outline ? 'border-(--border-color)' : 'border-transparent'}  ">
+              {i % 2 ? 'bg-(--back-color)/40' : 'bg-[#edeef3] dark:bg-[#1f2a3a]'}
+              {column.align === 'center' ? 'justify-center text-center' : column.align === 'right' ? 'justify-end text-right' : 'justify-start text-left'}
+              border-t {j !== 0 ? ' border-l ' : ''} {outline ? 'border-(--border-color)' : 'border-transparent'}">
                 {#if column.action?.type == "buttons" && column.action?.buttons}
                   <div class="flex w-full flex-col gap-1">
                     {#each column.action?.buttons as button (button)}
@@ -346,24 +332,18 @@
                   </div>
                 {:else if column.action?.type == "select" && column.action?.select}
                   {@const options = Array.isArray(row[column.key])
-                    ? row[column.key].map((option: string | number) => ({
-                        id: crypto.randomUUID(),
-                        value: option,
-                        name: option,
-                        class: "",
-                        disabled: false,
-                      }))
+                    ? row[column.key].map((option: string | number) => ({ id: crypto.randomUUID(), value: option, name: option }))
                     : []}
 
                   <div class="relative w-full">
                     <button
-                      class={`w-full rounded-2xl border border-(--blue-color) bg-(--back-color) p-1 text-center shadow-[0_0_3px_rgb(0_0_0_/0.25)] transition duration-200
-        cursor-pointer hover:shadow-[0_0_6px_rgb(0_0_0_/0.25)]`}
-                      onclick={() => (isDropdownOpen = isDropdownOpen === index ? null : index)}>
+                      class="w-full rounded-2xl border border-(--blue-color) bg-(--back-color) p-1 text-center shadow-[0_0_3px_rgb(0_0_0_/0.25)] transition duration-200
+        cursor-pointer hover:shadow-[0_0_6px_rgb(0_0_0_/0.25)]"
+                      onclick={() => (isDropdownOpen = isDropdownOpen?.x === j && isDropdownOpen.y === i ? null : { x: j, y: i })}>
                       {options[0]?.name || $t("common.select_tag")}
                     </button>
 
-                    {#if isDropdownOpen === index}
+                    {#if isDropdownOpen?.x === j && isDropdownOpen.y === i}
                       <div
                         class="absolute top-full left-1/2 z-50 -translate-x-1/2 rounded-b-2xl shadow-[0_0_3px_rgb(0_0_0_/0.25)]"
                         style="width: calc(100% - 1.8rem);"
@@ -374,10 +354,10 @@
                             value={option?.value ? String(option.value) : ""}
                             class={twMerge(
                               `flex h-full w-full cursor-pointer items-center justify-center p-1 inset-shadow-[0_10px_10px_-15px_rgb(0_0_0_/0.5)] duration-250 hover:bg-(--field-color)! bg-(--back-color)
-              ${option_index === options.length - 1 ? "rounded-b-2xl" : ""} `,
+              ${option_index === options.length - 1 ? "rounded-b-2xl" : ""}`,
                               option.class,
                             )}
-                            onclick={e => selectOption(index, column.key, option, e)}>
+                            onclick={e => selectOption(i, column.key, option, e)}>
                             {option.name}
                           </button>
                         {/each}
@@ -436,12 +416,12 @@
                       onclick={e => {
                         e.preventDefault()
                         navigator.clipboard.writeText(row[column.key])
-                        copiedCell = { x: column.key as string, y: index }
-                        setTimeout(() => (copiedCell = { x: "", y: -1 }), 1000)
+                        copiedCell = { x: j, y: i }
+                        setTimeout(() => (copiedCell = null), 1000)
                       }}
                       aria-label="Копировать текст">
-                      <div class=" size-5 text-sm [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full">
-                        {#if copiedCell.y === index && copiedCell.x === column.key}
+                      <div class="size-5 text-sm [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full">
+                        {#if copiedCell?.y === i && copiedCell.x === j}
                           <div
                             class="absolute top-1/2 right-3.5 -translate-y-1/2 transform rounded-md bg-(--green-color) px-1.5 py-1 shadow-lg"
                             transition:fade={{ duration: 200 }}>
@@ -470,8 +450,8 @@
     {#if tooltip.show}
       <div
         class="fixed z-50 w-max max-w-[30%] rounded-md px-2 py-1 text-left text-sm whitespace-pre-wrap shadow-lg"
-        style="background: color-mix(in srgb, var(--yellow-color) 30%, var(--back-color)); transform: translateX(-50%); left: {tooltip.x +
-          10}px; top: {tooltip.y + 10}px;"
+        style="background: color-mix(in srgb, var(--yellow-color) 30%, var(--back-color)); transform: translateX(-50%); 
+        left: {tooltip.x + 10}px; top: {tooltip.y + 10}px;"
         transition:fly={{ y: 10, duration: 200 }}
         role="tooltip">
         {@html tooltip.text}
