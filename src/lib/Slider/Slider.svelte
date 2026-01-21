@@ -1,45 +1,44 @@
 <!-- $lib/ElementsUI/Slider.svelte -->
 <script lang="ts">
-  import type { ISliderProps } from '../types'
-  import { twMerge } from 'tailwind-merge'
-  import { onDestroy, onMount } from 'svelte'
+  import type { ISliderProps } from "../types"
+  import { twMerge } from "tailwind-merge"
 
   let {
     id = crypto.randomUUID(),
-    wrapperClass = '',
-    label = { name: '', class: '' },
-    type = 'single',
+    wrapperClass = "",
+    label = { name: "", class: "" },
+    type = "single",
     value = 0,
     number = { minNum: 0, maxNum: 10, step: 1 },
     disabled = false,
     onUpdate = () => {},
   }: ISliderProps = $props()
 
-  const isRange = $derived(type === 'range' || (Array.isArray(value) && value.length === 2))
+  const isRange = $derived(type === "range" || (Array.isArray(value) && value.length === 2))
 
   const maxDigits = $derived(String(number.maxNum ?? 100).length)
   const valueWidth = $derived(`${maxDigits + 1}ch`) /* +1 на запас */
 
   /* Инициализация значений с проверкой типа */
-  let singleValue = $derived(!isRange && typeof value === 'number' ? value : number.minNum)
+  let singleValue = $derived(!isRange && typeof value === "number" ? value : number.minNum)
   let lowerValue = $derived(isRange && Array.isArray(value) ? value[0] : number.minNum)
   let upperValue = $derived(isRange && Array.isArray(value) ? value[1] : number.maxNum)
 
-  let activeRound: 'floor' | 'ceil' = $state('floor')
+  let activeRound: "floor" | "ceil" = $state("floor")
 
   let centerNum = $derived(lowerValue + Math[activeRound](Math.abs(upperValue - lowerValue) / 2 / number.step) * number.step)
 
   $effect(() => {
     if (value === undefined || value === null) {
-      if (type === 'single' && !value) value = number.minNum
-      if (type === 'range' && !value) value = [number.minNum, number.maxNum]
+      if (type === "single" && !value) value = number.minNum
+      if (type === "range" && !value) value = [number.minNum, number.maxNum]
     }
   })
 
-  const adjustValue = (target: 'lower' | 'upper' | 'single', direction: 'increment' | 'decrement') => {
-    const stepValue = direction === 'increment' ? number.step : -number.step
-    if (isRange && target !== 'single') {
-      if (target === 'lower') {
+  const adjustValue = (target: "lower" | "upper" | "single", direction: "increment" | "decrement") => {
+    const stepValue = direction === "increment" ? number.step : -number.step
+    if (isRange && target !== "single") {
+      if (target === "lower") {
         lowerValue = roundToClean(Math.max(number.minNum, Math.min(lowerValue + stepValue, upperValue)))
         lowerValue = roundToClean(lowerValue == upperValue ? upperValue - number.step : lowerValue)
       } else {
@@ -57,7 +56,7 @@
     if (Array.isArray(value)) {
       lowerValue = value[0]
       upperValue = value[1]
-    } else if (typeof value === 'number') {
+    } else if (typeof value === "number") {
       singleValue = value
     }
   })
@@ -83,8 +82,7 @@
   <!-- Слайдер -->
   <div
     id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
-    class="relative flex h-8 w-full items-center justify-center rounded-full {disabled ? 'cursor-not-allowed opacity-50' : ''}"
-  >
+    class="relative flex h-8 w-full items-center justify-center rounded-full {disabled ? 'cursor-not-allowed opacity-50' : ''}">
     {#if isRange}
       {@const userAgent = navigator.userAgent}
 
@@ -97,12 +95,12 @@
           bind:value={lowerValue}
           oninput={disabled
             ? undefined
-            : (e) => {
+            : e => {
                 const newValue = Math.min(Number((e.target as HTMLInputElement).value), upperValue)
                 lowerValue = roundToClean(newValue == upperValue ? upperValue - number.step : newValue)
                 onUpdate([lowerValue, upperValue])
               }}
-          onmousedown={() => (activeRound = 'ceil')}
+          onmousedown={() => (activeRound = "ceil")}
           {disabled}
           class={twMerge(
             `basis-[calc(${(Math.abs(centerNum - number.minNum) / Math.abs(number.maxNum - number.minNum)) * 100}%+2rem+5px)] h-8 w-full appearance-none overflow-hidden 
@@ -117,9 +115,9 @@
               [&::-webkit-slider-thumb]:rounded-full
               [&::-webkit-slider-thumb]:shadow-[var(--focus-shadow),]
             ${
-              userAgent.includes('iOS') || userAgent.includes('iPhone') || userAgent.includes('iPad')
-                ? '[&::-webkit-slider-thumb]:ring-[6.5px]'
-                : '[&::-webkit-slider-thumb]:ring-[5px] '
+              userAgent.includes("iOS") || userAgent.includes("iPhone") || userAgent.includes("iPad")
+                ? "[&::-webkit-slider-thumb]:ring-[6.5px]"
+                : "[&::-webkit-slider-thumb]:ring-[5px] "
             }
             [&::-moz-range-thumb]:relative 
             [&::-moz-range-thumb]:ml-[-0.4rem]
@@ -134,8 +132,7 @@
             `[&::-moz-range-thumb]:shadow-[calc(100rem+0.5rem)_0_0_100rem] 
               [&::-webkit-slider-thumb]:shadow-[calc(100rem+0.5rem)_0_0_100rem]`,
           )}
-          style="color: var(--bg-color); flex-basis: {`calc(${(Math.abs(centerNum - number.minNum) / Math.abs(number.maxNum - number.minNum)) * 100}% + 2rem + 5px)`};"
-        />
+          style="color: var(--bg-color); flex-basis: {`calc(${(Math.abs(centerNum - number.minNum) / Math.abs(number.maxNum - number.minNum)) * 100}% + 2rem + 5px)`};" />
         <input
           type="range"
           min={centerNum}
@@ -144,12 +141,12 @@
           bind:value={upperValue}
           oninput={disabled
             ? undefined
-            : (e) => {
+            : e => {
                 const newValue = Math.max(Number((e.target as HTMLInputElement).value), lowerValue)
                 upperValue = roundToClean(newValue == lowerValue ? newValue + number.step : upperValue)
                 onUpdate([lowerValue, upperValue])
               }}
-          onmousedown={() => (activeRound = 'floor')}
+          onmousedown={() => (activeRound = "floor")}
           {disabled}
           class={twMerge(
             `basis-[calc(${100 - (Math.abs(centerNum - number.minNum) / Math.abs(number.maxNum - number.minNum)) * 100}%+2rem+5px)] h-8 w-full  appearance-none overflow-hidden  
@@ -164,9 +161,9 @@
               [&::-webkit-slider-thumb]:rounded-full
               [&::-webkit-slider-thumb]:shadow-[var(--focus-shadow),]
             ${
-              userAgent.includes('iOS') || userAgent.includes('iPhone') || userAgent.includes('iPad')
-                ? '[&::-webkit-slider-thumb]:ring-[6.5px]'
-                : '[&::-webkit-slider-thumb]:ring-[5px] '
+              userAgent.includes("iOS") || userAgent.includes("iPhone") || userAgent.includes("iPad")
+                ? "[&::-webkit-slider-thumb]:ring-[6.5px]"
+                : "[&::-webkit-slider-thumb]:ring-[5px] "
             }
             [&::-moz-range-thumb]:relative 
             [&::-moz-range-thumb]:ml-[-0.4rem]
@@ -181,8 +178,7 @@
             `[&::-moz-range-thumb]:shadow-[calc(100rem*-1-0.5rem)_0_0_100rem] 
               [&::-webkit-slider-thumb]:shadow-[calc(100rem*-1-0.5rem)_0_0_100rem]`,
           )}
-          style="color: var(--bg-color); flex-basis: {`calc(${(1 - Math.abs(centerNum - number.minNum) / Math.abs(number.maxNum - number.minNum)) * 100}% + 2rem + 5px)`};"
-        />
+          style="color: var(--bg-color); flex-basis: {`calc(${(1 - Math.abs(centerNum - number.minNum) / Math.abs(number.maxNum - number.minNum)) * 100}% + 2rem + 5px)`};" />
       </div>
     {:else}
       {@const userAgent = navigator.userAgent}
@@ -209,9 +205,9 @@
               [&::-webkit-slider-thumb]:rounded-full
             [&::-webkit-slider-thumb]:shadow-[var(--focus-shadow),]
             ${
-              userAgent.includes('iOS') || userAgent.includes('iPhone') || userAgent.includes('iPad')
-                ? 'pl-3.5 [&::-webkit-slider-thumb]:ring-[6.5px]'
-                : 'pl-3 [&::-webkit-slider-thumb]:ring-[5px]'
+              userAgent.includes("iOS") || userAgent.includes("iPhone") || userAgent.includes("iPad")
+                ? "pl-3.5 [&::-webkit-slider-thumb]:ring-[6.5px]"
+                : "pl-3 [&::-webkit-slider-thumb]:ring-[5px]"
             }
             [&::-moz-range-thumb]:relative 
             [&::-moz-range-thumb]:ml-[-0.4rem]
@@ -226,53 +222,42 @@
             `[&::-moz-range-thumb]:shadow-[calc(100rem*-1-0.5rem)_0_0_100rem] 
               [&::-webkit-slider-thumb]:shadow-[calc(100rem*-1-0.5rem)_0_0_100rem]`,
           )}
-          style="color: var(--bg-color);"
-        />
+          style="color: var(--bg-color);" />
       </div>
     {/if}
   </div>
 
   <!-- Кнопки управления -->
-  <div class={`mt-3 flex w-full ${isRange ? 'justify-between' : 'justify-center'} gap-2`}>
+  <div class={`mt-3 flex w-full ${isRange ? "justify-between" : "justify-center"} gap-2`}>
     {#if isRange}
-      {#each ['lower', 'upper'] as type (type)}
-        <div
-          class={`flex items-center justify-center gap-2 rounded-full px-2 ${disabled ? 'opacity-70' : ''}`}
-          style="background-color: var(--bg-color)"
-        >
+      {#each ["lower", "upper"] as type (type)}
+        <div class={`flex items-center justify-center gap-2 rounded-full px-2 ${disabled ? "opacity-70" : ""}`} style="background-color: var(--bg-color)">
           <button
             class="h-full w-4 {disabled ? '' : 'cursor-pointer'}"
-            onclick={disabled ? undefined : () => adjustValue(type as 'lower' | 'upper', 'decrement')}
-            disabled={disabled || (type === 'lower' ? lowerValue <= number.minNum : upperValue <= lowerValue)}>−</button
-          >
+            onclick={disabled ? undefined : () => adjustValue(type as "lower" | "upper", "decrement")}
+            disabled={disabled || (type === "lower" ? lowerValue <= number.minNum : upperValue <= lowerValue)}>−</button>
           <span class="inline-block text-center tabular-nums" style={`width: ${valueWidth}`}>
-            {type === 'lower' ? lowerValue : upperValue}
+            {type === "lower" ? lowerValue : upperValue}
           </span>
           <button
             class="h-full w-4 {disabled ? '' : 'cursor-pointer'}"
-            onclick={disabled ? undefined : () => adjustValue(type as 'lower' | 'upper', 'increment')}
-            disabled={disabled || (type === 'lower' ? lowerValue >= upperValue : upperValue >= number.maxNum)}>+</button
-          >
+            onclick={disabled ? undefined : () => adjustValue(type as "lower" | "upper", "increment")}
+            disabled={disabled || (type === "lower" ? lowerValue >= upperValue : upperValue >= number.maxNum)}>+</button>
         </div>
       {/each}
     {:else}
-      <div
-        class={`flex items-center justify-center gap-2 rounded-full px-2 ${disabled ? 'opacity-70' : ''}`}
-        style="background-color: var(--bg-color)"
-      >
+      <div class={`flex items-center justify-center gap-2 rounded-full px-2 ${disabled ? "opacity-70" : ""}`} style="background-color: var(--bg-color)">
         <button
           class="h-full w-4 {disabled ? '' : 'cursor-pointer'}"
-          onclick={disabled ? undefined : () => adjustValue('single', 'decrement')}
-          disabled={disabled || singleValue <= number.minNum}>−</button
-        >
+          onclick={disabled ? undefined : () => adjustValue("single", "decrement")}
+          disabled={disabled || singleValue <= number.minNum}>−</button>
         <span class="inline-block text-center tabular-nums" style={`width: ${valueWidth}`}>
           {singleValue}
         </span>
         <button
           class="h-full w-4 {disabled ? '' : 'cursor-pointer'}"
-          onclick={disabled ? undefined : () => adjustValue('single', 'increment')}
-          disabled={disabled || singleValue >= number.maxNum}>+</button
-        >
+          onclick={disabled ? undefined : () => adjustValue("single", "increment")}
+          disabled={disabled || singleValue >= number.maxNum}>+</button>
       </div>
     {/if}
   </div>

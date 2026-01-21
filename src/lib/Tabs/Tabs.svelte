@@ -1,27 +1,26 @@
 <script lang="ts">
-  import type { ITabsProps } from '$lib/types'
-  import { onMount } from 'svelte'
-  import { twMerge } from 'tailwind-merge'
+  import type { ITabsProps } from "$lib/types"
+  import { twMerge } from "tailwind-merge"
 
   let {
     id = crypto.randomUUID(),
-    wrapperClass = '',
+    wrapperClass = "",
     size = { width: 12, height: 6 },
     activeTab = 0,
     items = [
       {
-        name: 'tab 1',
+        name: "tab 1",
         icon: '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"\r\n  ><path\r\n    fill="none"\r\n    stroke="currentColor"\r\n    stroke-linecap="round"\r\n    stroke-linejoin="round"\r\n    stroke-width="1.5"\r\n    d="M14.44 5.78L4.198 16.02a2 2 0 0 0-.565 1.125l-.553 3.774l3.775-.553A2 2 0 0 0 7.98 19.8L18.22 9.56m-3.78-3.78l2.229-2.23a1.6 1.6 0 0 1 2.263 0l1.518 1.518a1.6 1.6 0 0 1 0 2.263l-2.23 2.23M14.44 5.78l3.78 3.78"\r\n  /></svg\r\n>\r\n',
-        class: '',
+        class: "",
       },
-      { name: 'tab 2', icon: '', class: 'bg-red' },
+      { name: "tab 2", icon: "", class: "bg-red" },
     ],
     children,
     apiArray = [],
     Components,
   }: ITabsProps = $props()
 
-  const isCol = $derived(!!items.find((item) => item.class?.startsWith('flex-col')))
+  const isCol = $derived(!!items.find(item => item.class?.startsWith("flex-col")))
 
   let currentTabIndex: number = $derived(activeTab)
 </script>
@@ -29,26 +28,24 @@
 <div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class="w-full h-full flex flex-col rounded-2xl bg-(--back-color) overflow-hidden">
   <!-- Вкладки -->
   <div
-    class="{twMerge(`bg-blue z-50 flex h-fit items-center rounded-t-2xl overflow-x-auto px-1`, wrapperClass)} 
-     bg-(--bg-color)"
-  >
+    class="{twMerge(`bg-blue z-40 flex h-fit items-center rounded-t-2xl overflow-x-auto px-1`, wrapperClass)} 
+     bg-(--bg-color)">
     {#each items as item, index}
       <button
         class={twMerge(
-          `tab mt-1 flex min-w-fit cursor-pointer items-center justify-center gap-0 self-end rounded-t-2xl px-5 py-2.5 ${isCol && items.find((item) => item.icon) ? 'h-20' : 'gap-2'}`,
+          `tab mt-1 flex min-w-fit cursor-pointer items-center justify-center gap-0 self-end rounded-t-2xl px-5 py-2.5 ${isCol && items.find(item => item.icon) ? "h-20" : "gap-2"}`,
           item.class,
-          index === currentTabIndex ? twMerge('bg-(--back-color) text-blue-500', item.class) : 'bg-(--bg-color) text-gray-500',
+          index === currentTabIndex ? twMerge("bg-(--back-color) text-blue-500", item.class) : "bg-(--bg-color) text-gray-500",
         )}
         style="width: {item.class
           ?.split(' ')
           .find((cls: string) => cls.startsWith('w-'))
           ?.replace('w-[', '')
           .slice(0, -1)};"
-        onclick={() => (currentTabIndex = index)}
-      >
+        onclick={() => (currentTabIndex = index)}>
         {#if item?.icon}
           <span class="flex h-7 w-7 items-center justify-center overflow-visible [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full">
-            {#if typeof item.icon === 'string'}
+            {#if typeof item.icon === "string"}
               {@html item.icon}
             {:else}
               {@const IconComponent = item.icon}
@@ -61,22 +58,20 @@
         {/if}
       </button>
       <span
-        class="{isCol && items.find((item) => item.icon) ? 'h-9' : 'h-4'} w-0 border border-l {index !== items.length - 1 &&
+        class="{isCol && items.find(item => item.icon) ? 'h-9' : 'h-4'} w-0 border border-l {index !== items.length - 1 &&
         index !== currentTabIndex &&
         index !== currentTabIndex - 1
           ? 'border-gray-500'
-          : 'border-(--bg-color)'}"
-      ></span>
+          : 'border-(--bg-color)'}"></span>
     {/each}
   </div>
 
   <!-- Контент вкладки -->
   <div
     class="grid flex-1 overflow-y-scroll w-full gap-2 rounded-2xl bg-(--back-color) p-4"
-    style="grid-template-columns: repeat({size.width || 1}, minmax(0, 1fr)); grid-template-rows: repeat({size.height || 1}, auto);"
-  >
+    style="grid-template-columns: repeat({size.width || 1}, minmax(0, 1fr)); grid-template-rows: repeat({size.height || 1}, auto);">
     {#if Components}
-      {#each (apiArray ?? []).filter((c) => c.id.endsWith(`${currentTabIndex}`)) as comp}
+      {#each (apiArray ?? []).filter(c => c.id.endsWith(`${currentTabIndex}`)) as comp}
         {@render Components(comp, false)}
       {/each}
     {:else if children}
