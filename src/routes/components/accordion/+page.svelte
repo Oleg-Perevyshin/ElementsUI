@@ -1,14 +1,14 @@
 <script lang="ts">
-  import { Accordion } from '$lib'
-  import AccordionProps from '$lib/Accordion/AccordionProps.svelte'
-  import { updateComponent, type IAccordionProps, type Position, type UIComponent } from '$lib/types'
-  import { formatObjectToString } from '../../common'
-  import ComponentExample from '$lib/ComponentExample.svelte'
+  import { Accordion } from "$lib"
+  import AccordionProps from "$lib/Accordion/AccordionProps.svelte"
+  import { updateComponent, type IAccordionProps, type Position, type UIComponent } from "$lib/types"
+  import { formatObjectToString } from "../../common"
+  import ComponentExample from "$lib/ComponentExample.svelte"
 
   let accordionComponent: UIComponent = $state({
     id: crypto.randomUUID(),
-    type: 'Accordion',
-    access: 'full',
+    type: "Accordion",
+    access: "full",
     properties: {
       id: crypto.randomUUID(),
       isOpen: true,
@@ -18,12 +18,12 @@
         width: 1,
       },
       label: {
-        name: 'Accordion',
-        class: 'justify-start',
+        name: "Accordion",
+        class: "justify-start",
       },
     },
     position: { row: 0, col: 0, width: 0, height: 0 },
-    parentId: '',
+    parentId: "",
   })
 
   let codeText = $derived(`

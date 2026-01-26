@@ -1,16 +1,16 @@
 <!-- $lib/ElementsUI/Switch.svelte -->
 <script lang="ts">
-  import { twMerge } from 'tailwind-merge'
-  import type { ISwitchProps } from '../types'
-  import { fly } from 'svelte/transition'
+  import { twMerge } from "tailwind-merge"
+  import type { ISwitchProps } from "../types"
+  import { fly } from "svelte/transition"
 
   let {
     id = crypto.randomUUID(),
-    wrapperClass = '',
-    label = { name: '', class: '', captionLeft: '', captionRight: '' },
-    hiddenInfo = '',
-    height = '2rem',
-    type = 'horizontal',
+    wrapperClass = "",
+    label = { name: "", class: "", captionLeft: "", captionRight: "" },
+    hiddenInfo = "",
+    height = "2rem",
+    type = "horizontal",
     options = [],
     bitMode = false,
     value = $bindable(),
@@ -52,11 +52,11 @@
   const maxCaptionWidth = $derived(
     Math.max(label.captionLeft?.length ?? 0, label.captionRight?.length ?? 0) > 0
       ? `${Math.max(label.captionLeft?.length ?? 0, label.captionRight?.length ?? 0)}ch`
-      : 'auto',
+      : "auto",
   )
 </script>
 
-{#if type !== 'checkbox'}
+{#if type !== "checkbox"}
   <div class={twMerge(`relative flex w-full flex-col items-center justify-center`, wrapperClass)}>
     {#if label.name}
       <h5 class={twMerge(`w-full px-4 text-center`, label.class)}>{label.name}</h5>
@@ -69,7 +69,7 @@
           {/if}
 
           <div class="relative flex w-full grow items-center justify-center bg-transparent">
-            {#if type === 'horizontal' && label.captionLeft}
+            {#if type === "horizontal" && label.captionLeft}
               <button
                 class="mr-2 {option.disabled ? 'opacity-60' : 'cursor-pointer'}"
                 style="width: {maxCaptionWidth}; text-align: end;"
@@ -109,7 +109,7 @@
               </span>
             </label>
 
-            {#if type === 'horizontal' && label.captionRight}
+            {#if type === "horizontal" && label.captionRight}
               <button
                 class="ml-2 {option.disabled ? 'opacity-60' : 'cursor-pointer'}"
                 style="width: {maxCaptionWidth}; text-align: start;"
@@ -122,7 +122,7 @@
     </div>
   </div>
 {:else}
-  <div class={twMerge(' relative bg-blue m-1 flex items-center justify-center gap-2', wrapperClass)}>
+  <div class={twMerge(" relative bg-blue m-1 flex items-center justify-center gap-2", wrapperClass)}>
     <input
       id={ID}
       type="checkbox"

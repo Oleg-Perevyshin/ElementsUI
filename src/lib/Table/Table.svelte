@@ -75,6 +75,7 @@
   let container: HTMLElement | null = $state(null)
   function handleScroll() {
     if (!container) return
+    updateThumb()
     const { scrollTop, clientHeight, scrollHeight } = container
     if (scrollTop + clientHeight >= scrollHeight - 50 && cursor !== null && loader && !get(loader)) {
       getData()
@@ -99,7 +100,7 @@
     else if (button.eventHandler && onClick) {
       let value: Record<string, boolean | string | number | number[] | object | null> = {}
       button.eventHandler.Variables.forEach((v: string) => {
-        if (header.some(h => h.key === v && h.action?.type === "select")) value[v] = row[v][0]
+        if (header.some((h) => h.key === v && h.action?.type === "select")) value[v] = row[v][0]
         else value[v] = row[v]
       })
       button.eventHandler.Value = JSON.stringify(value)
@@ -151,6 +152,35 @@
     return !!src
   }
 
+  let thumbHeight: number = $state(0)
+  let thumbTop = $state(0)
+  let isDragging = false
+
+  const updateThumb = () => {
+    if (!container) return
+    const { clientHeight, scrollHeight, scrollTop } = container
+    if (clientHeight != scrollHeight) {
+      const ratio = clientHeight / scrollHeight
+      thumbHeight = Math.max(ratio * clientHeight, 20) // мин. высота ползунка
+      thumbTop = scrollTop + (scrollTop / scrollHeight) * clientHeight
+    }
+  }
+
+  const handleThumbDrag = (e: MouseEvent) => {
+    if (!isDragging || !container) return
+    e.preventDefault()
+
+    const containerRect = container.getBoundingClientRect()
+    const containerHeight = container.clientHeight
+    const maxScroll = containerHeight - thumbHeight
+    const y = e.clientY - containerRect.top - thumbHeight / 2
+    const top = Math.min(Math.max(0, y), maxScroll)
+    thumbTop = top
+
+    const scrollMax = container.scrollHeight - container.clientHeight
+    container.scrollTop = (top / containerHeight) * scrollMax
+  }
+
   $effect(() => {
     const currentType = type
     if (currentType === "logger") {
@@ -170,7 +200,7 @@
             ...buffer,
             {
               type: Object.entries(body[i])[0][1] as string,
-              color: `<div class='size-6 rounded-full ${logTypeOptions.find(o => o.value == Object.entries(body[i])[0][1])?.color}'></div>`,
+              color: `<div class='size-6 rounded-full ${logTypeOptions.find((o) => o.value == Object.entries(body[i])[0][1])?.color}'></div>`,
               data: Object.entries(body[i])[1][1] as string,
             },
           ]
@@ -180,7 +210,7 @@
           ...buffer,
           {
             type: Object.entries(body)[0][1] as string,
-            color: `<div class='size-6 rounded-full ${logTypeOptions.find(o => o.value == Object.entries(body)[0][1])?.color}'></div>`,
+            color: `<div class='size-6 rounded-full ${logTypeOptions.find((o) => o.value == Object.entries(body)[0][1])?.color}'></div>`,
             data: Object.entries(body)[1][1] as string,
           },
         ]
@@ -210,6 +240,7 @@
   })
 
   onMount(() => {
+    updateThumb()
     if (autoscroll) {
       container?.addEventListener("scroll", handleAutoScroll)
       scrollToBottom()
@@ -230,7 +261,8 @@
 
 <div
   id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
-  class={twMerge(`bg-blue flex h-full w-full items-center ${type == "logger" ? "gap-2" : ""} flex-col overflow-hidden`, wrapperClass)}>
+  class={twMerge(`bg-blue flex h-full w-full items-center ${type == "logger" ? "gap-2" : ""} flex-col overflow-hidden`, wrapperClass)}
+>
   {#if label.name}
     <h5 class={twMerge(`w-full px-4 text-center`, label.class)}>{label.name}</h5>
   {/if}
@@ -250,11 +282,12 @@
             ${logTypeOptions.length > 0 && index === 0 ? "rounded-l-2xl" : ""} ${index === logTypeOptions.length - 1 ? "rounded-r-2xl" : ""} ${option.color}`)}
           onclick={() => {
             if (logType.includes(option.value)) {
-              logType = logType.filter(type => type !== option.value)
+              logType = logType.filter((type) => type !== option.value)
             } else {
               logType.push(option.value)
             }
-          }}>
+          }}
+        >
           <span class="flex flex-row items-center justify-center gap-4">
             {#if option}
               <div class="flex-1">
@@ -269,21 +302,24 @@
 
   <div
     class="relative flex h-full w-full flex-col overflow-hidden rounded-xl border shadow-sm transition duration-200 hover:shadow-md
-    {outline ? ' border-(--border-color)' : 'border-transparent'} ">
+    {outline ? ' border-(--border-color)' : 'border-transparent'} "
+  >
     <!-- Table Header -->
-    <div class="grid font-semibold" style={`grid-template-columns: ${header.map(c => c.width || "minmax(0, 1fr)").join(" ")};`}>
+    <div class="grid font-semibold" style={`grid-template-columns: ${header.map((c) => c.width || "minmax(0, 1fr)").join(" ")};`}>
       {#each header as column, index (column)}
         <div
           class={twMerge(
             `items-center justify-center flex border-l ${outline && index !== 0 ? " border-(--border-color)" : "border-transparent"} 
             ${column.align === "center" ? "justify-center text-center" : column.align === "right" ? "justify-end text-right" : "justify-start text-left"} gap-1 bg-(--bg-color) p-2 text-left`,
             column.label?.class,
-          )}>
+          )}
+        >
           <span>{column.label?.name}</span>
           {#if column.sortable}
             <button
               class="inline-block cursor-pointer font-bold transition-transform duration-75 hover:scale-110 active:scale-95"
-              onclick={() => sortRows(column.key as string)}>
+              onclick={() => sortRows(column.key as string)}
+            >
               ↑↓
             </button>
           {/if}
@@ -296,7 +332,8 @@
           "absolute right-2 bg-(--back-color) rounded-full p-1 cursor-pointer [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full",
           dataBuffer.clearClass,
         )}
-        onclick={clearBuffer}>
+        onclick={clearBuffer}
+      >
         <ButtonClear />
       </button>
     {/if}
@@ -304,20 +341,21 @@
     {#if body || buffer}
       {@const rows =
         type == "logger"
-          ? buffer.filter(str => logType.includes(str.type)).slice(-(dataBuffer.rowsAmmount ?? 10))
+          ? buffer.filter((str) => logType.includes(str.type)).slice(-(dataBuffer.rowsAmmount ?? 10))
           : dataBuffer.stashData
             ? buffer.slice(-(dataBuffer.rowsAmmount ?? 10))
             : body}
       <!-- Table Body с прокруткой -->
-      <div class="flex-1 overflow-y-auto bg-(--container-color)/50" bind:this={container} onscroll={handleScroll}>
-        <div class="grid min-w-0" style={`grid-template-columns: ${header.map(c => c.width || "minmax(0, 1fr)").join(" ")};`}>
+      <div class="flex-1 overflow-y-auto bg-(--container-color)/50 relative" bind:this={container} onscroll={handleScroll}>
+        <div class="grid min-w-0" style={`grid-template-columns: ${header.map((c) => c.width || "minmax(0, 1fr)").join(" ")};`}>
           {#each rows as row, i (row)}
             {#each header as column, j (column)}
               <div
                 class="relative flex w-full min-w-0 items-center px-2 py-1 wrap-break-word
               {i % 2 ? 'bg-(--back-color)/40' : 'bg-[#edeef3] dark:bg-[#1f2a3a]'}
               {column.align === 'center' ? 'justify-center text-center' : column.align === 'right' ? 'justify-end text-right' : 'justify-start text-left'}
-              border-t {j !== 0 ? ' border-l ' : ''} {outline ? 'border-(--border-color)' : 'border-transparent'}">
+              border-t {j !== 0 ? ' border-l ' : ''} {outline ? 'border-(--border-color)' : 'border-transparent'}"
+              >
                 {#if column.action?.type == "buttons" && column.action?.buttons}
                   <div class="flex w-full flex-col gap-1">
                     {#each column.action?.buttons as button (button)}
@@ -325,7 +363,8 @@
                         class="{twMerge(`cursor-pointer rounded-full 
                            px-4 py-1 font-semibold shadow-sm transition-shadow duration-200 outline-none select-none hover:shadow-md
                           ${typeof button.class === 'function' ? button.class(row) : button.class}`)} bg-(--bg-color)"
-                        onclick={() => buttonClick(row, button)}>
+                        onclick={() => buttonClick(row, button)}
+                      >
                         {typeof button.name === "function" ? button.name(row) : button.name}
                       </button>
                     {/each}
@@ -339,7 +378,8 @@
                     <button
                       class="w-full rounded-2xl border border-(--blue-color) bg-(--back-color) p-1 text-center shadow-[0_0_3px_rgb(0_0_0_/0.25)] transition duration-200
         cursor-pointer hover:shadow-[0_0_6px_rgb(0_0_0_/0.25)]"
-                      onclick={() => (isDropdownOpen = isDropdownOpen?.x === j && isDropdownOpen.y === i ? null : { x: j, y: i })}>
+                      onclick={() => (isDropdownOpen = isDropdownOpen?.x === j && isDropdownOpen.y === i ? null : { x: j, y: i })}
+                    >
                       {options[0]?.name || $t("common.select_tag")}
                     </button>
 
@@ -347,7 +387,8 @@
                       <div
                         class="absolute top-full left-1/2 z-50 -translate-x-1/2 rounded-b-2xl shadow-[0_0_3px_rgb(0_0_0_/0.25)]"
                         style="width: calc(100% - 1.8rem);"
-                        transition:slide={{ duration: 250 }}>
+                        transition:slide={{ duration: 250 }}
+                      >
                         {#each options as option, option_index (option.id)}
                           <button
                             id={option.id}
@@ -357,7 +398,8 @@
               ${option_index === options.length - 1 ? "rounded-b-2xl" : ""}`,
                               option.class,
                             )}
-                            onclick={e => selectOption(i, column.key, option, e)}>
+                            onclick={(e) => selectOption(i, column.key, option, e)}
+                          >
                             {option.name}
                           </button>
                         {/each}
@@ -371,7 +413,8 @@
                         src={typeof column.image?.src === "function" ? column.image.src(row) : column.image?.src || ""}
                         alt={column.image.alt ?? "Image"}
                         class={twMerge(`h-full w-full object-cover ${column.image.class || ""}`)}
-                        loading="lazy" />
+                        loading="lazy"
+                      />
                     {:else if column.image.defaultIcon}
                       {#if typeof column.image.defaultIcon === "string"}
                         {@html column.image.defaultIcon}
@@ -383,23 +426,25 @@
                 {:else}
                   <div
                     class=" w-full max-w-full wrap-break-word {column.overflow?.truncated ? 'truncate' : ' whitespace-normal'}"
-                    onmouseenter={column.overflow?.truncated ? e => showTooltip(e, row[column.key], column.overflow?.formatting) : undefined}
+                    onmouseenter={column.overflow?.truncated ? (e) => showTooltip(e, row[column.key], column.overflow?.formatting) : undefined}
                     onmouseleave={column.overflow?.truncated ? hideTooltip : undefined}
                     onmousemove={column.overflow?.truncated
-                      ? e => {
+                      ? (e) => {
                           tooltip.x = e.clientX
                           tooltip.y = e.clientY
                         }
                       : undefined}
                     role="columnheader"
-                    tabindex={null}>
+                    tabindex={null}
+                  >
                     {#if column.overflow?.modal}
                       <button
                         class="w-full cursor-pointer overflow-hidden text-left text-ellipsis whitespace-nowrap"
-                        onclick={e => {
+                        onclick={(e) => {
                           e.stopPropagation()
                           showModal(row[column.key], column.overflow?.formatting)
-                        }}>
+                        }}
+                      >
                         {@html row[column.key]}
                       </button>
                     {:else}
@@ -413,25 +458,28 @@
                   {#if column.overflow?.copy}
                     <button
                       class="mx-2 flex cursor-pointer border-none bg-transparent text-2xl"
-                      onclick={e => {
+                      onclick={(e) => {
                         e.preventDefault()
                         navigator.clipboard.writeText(row[column.key])
                         copiedCell = { x: j, y: i }
                         setTimeout(() => (copiedCell = null), 1000)
                       }}
-                      aria-label="Копировать текст">
+                      aria-label="Копировать текст"
+                    >
                       <div class="size-5 text-sm [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full">
                         {#if copiedCell?.y === i && copiedCell.x === j}
                           <div
                             class="absolute top-1/2 right-3.5 -translate-y-1/2 transform rounded-md bg-(--green-color) px-1.5 py-1 shadow-lg"
-                            transition:fade={{ duration: 200 }}>
+                            transition:fade={{ duration: 200 }}
+                          >
                             ✓
                           </div>
                         {:else}
                           <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
                             <g fill="none" stroke="currentColor" stroke-width="1.5">
                               <path
-                                d="M6 11c0-2.828 0-4.243.879-5.121C7.757 5 9.172 5 12 5h3c2.828 0 4.243 0 5.121.879C21 6.757 21 8.172 21 11v5c0 2.828 0 4.243-.879 5.121C19.243 22 17.828 22 15 22h-3c-2.828 0-4.243 0-5.121-.879C6 20.243 6 18.828 6 16z" />
+                                d="M6 11c0-2.828 0-4.243.879-5.121C7.757 5 9.172 5 12 5h3c2.828 0 4.243 0 5.121.879C21 6.757 21 8.172 21 11v5c0 2.828 0 4.243-.879 5.121C19.243 22 17.828 22 15 22h-3c-2.828 0-4.243 0-5.121-.879C6 20.243 6 18.828 6 16z"
+                              />
                               <path d="M6 19a3 3 0 0 1-3-3v-6c0-3.771 0-5.657 1.172-6.828S7.229 2 11 2h4a3 3 0 0 1 3 3" />
                             </g>
                           </svg>
@@ -444,16 +492,35 @@
             {/each}
           {/each}
         </div>
+        <!-- Кастомный скроллбар -->
+        <div
+          class="absolute right-1 top-0 w-2 bg-transparent rounded-lg"
+          tabindex={null}
+          role="button"
+          style={`height: ${container ? container.scrollHeight + "px" : "100%"};`}
+          onmousedown={() => (isDragging = true)}
+        >
+          <div
+            class="absolute left-0 w-full opacity-60 rounded-lg cursor-pointer bg-(--blue-color)"
+            style={`top: ${thumbTop}px; height: ${thumbHeight}px;`}
+            role="button"
+            tabindex={null}
+            onpointermove={handleThumbDrag}
+            onpointerup={() => (isDragging = false)}
+            onpointerleave={() => (isDragging = false)}
+          ></div>
+        </div>
       </div>
     {/if}
 
     {#if tooltip.show}
       <div
-        class="fixed z-50 w-max max-w-[30%] rounded-md px-2 py-1 text-left text-sm whitespace-pre-wrap shadow-lg"
+        class="fixed z-50 w-max max-w-[30%] break-all rounded-md px-2 py-1 text-left text-sm whitespace-pre-wrap shadow-lg"
         style="background: color-mix(in srgb, var(--yellow-color) 30%, var(--back-color)); transform: translateX(-50%); 
         left: {tooltip.x + 10}px; top: {tooltip.y + 10}px;"
         transition:fly={{ y: 10, duration: 200 }}
-        role="tooltip">
+        role="tooltip"
+      >
         {@html tooltip.text}
       </div>
     {/if}
@@ -465,3 +532,10 @@
     {/if}
   </div>
 </div>
+
+<style>
+  /* Стили полосы прокрутки */
+  ::-webkit-scrollbar {
+    display: none;
+  }
+</style>

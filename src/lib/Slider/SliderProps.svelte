@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { getContext } from 'svelte'
-  import { t } from '$lib/locales/i18n'
-  import { type UIComponent, type ISliderProps, updateProperty, type IUIComponentHandler } from '../types'
-  import * as UI from '$lib'
-  import { optionsStore } from '../options'
-  import { twMerge } from 'tailwind-merge'
+  import { getContext } from "svelte"
+  import { t } from "$lib/locales/i18n"
+  import { type UIComponent, type ISliderProps, updateProperty, type IUIComponentHandler } from "../types"
+  import * as UI from "$lib"
+  import { optionsStore } from "../options"
+  import { twMerge } from "tailwind-merge"
 
   const {
     component,
@@ -16,18 +16,18 @@
     forConstructor?: boolean
   }>()
 
-  const DeviceVariables = getContext<{ id: string; value: string; name: string }[]>('DeviceVariables')
+  const DeviceVariables = getContext<{ id: string; value: string; name: string }[]>("DeviceVariables")
   let VARIABLE_OPTIONS = $derived(DeviceVariables && Array.isArray(DeviceVariables) ? DeviceVariables : [])
 
   const initialAlign = $derived(
     $optionsStore.TEXT_ALIGN_OPTIONS.find((a) =>
-      (a.value as string).includes(component.properties.label?.class?.split(' ').find((cls: string) => cls.startsWith('text-'))),
+      (a.value as string).includes(component.properties.label?.class?.split(" ").find((cls: string) => cls.startsWith("text-"))),
     ),
   )
 
   const initialColor = $derived(
     $optionsStore.COLOR_OPTIONS.find((c) =>
-      (c.value as string).includes(component.properties.wrapperClass?.split(' ').find((cls: string) => cls.startsWith('bg-'))),
+      (c.value as string).includes(component.properties.wrapperClass?.split(" ").find((cls: string) => cls.startsWith("bg-"))),
     ),
   )
 </script>
@@ -36,27 +36,27 @@
   <div class="relative flex flex-row items-start justify-center">
     <div class="flex w-1/3 flex-col items-center px-2">
       <UI.Select
-        label={{ name: $t('constructor.props.variable') }}
+        label={{ name: $t("constructor.props.variable") }}
         options={VARIABLE_OPTIONS}
         value={VARIABLE_OPTIONS.find((opt) => opt.value === component.properties.id)}
         onUpdate={(value) => {
-          updateProperty('id', value.value as string, component, onPropertyChange)
-          onPropertyChange({ name: value.name?.split('—')[1].trim(), eventHandler: { Variables: [value.value as string] } })
+          updateProperty("id", value.value as string, component, onPropertyChange)
+          onPropertyChange({ name: value.name?.split("—")[1].trim(), eventHandler: { Variables: [value.value as string] } })
         }}
       />
       <UI.Select
-        label={{ name: $t('constructor.props.action') }}
+        label={{ name: $t("constructor.props.action") }}
         type="buttons"
         value={$optionsStore.SHORT_ARGUMENT_OPTION.find((h) => h.value === component.eventHandler.Argument)}
         options={$optionsStore.SHORT_ARGUMENT_OPTION}
         onUpdate={(option) => {
-          updateProperty('eventHandler.Argument', option.value as string, component, onPropertyChange)
+          updateProperty("eventHandler.Argument", option.value as string, component, onPropertyChange)
 
           onPropertyChange({ eventHandler: { Argument: option.value as string } })
         }}
       />
       <UI.Select
-        label={{ name: $t('constructor.props.access') }}
+        label={{ name: $t("constructor.props.access") }}
         type="buttons"
         options={$optionsStore.ACCESS_OPTION}
         value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.access)}
@@ -65,54 +65,54 @@
     </div>
     <div class="flex w-1/3 flex-col px-2">
       <UI.Select
-        label={{ name: $t('constructor.props.type') }}
+        label={{ name: $t("constructor.props.type") }}
         type="buttons"
-        value={$optionsStore.SLIDER_TYPE_OPTIONS.find((opt) => opt.value === (component.properties.type || 'single'))}
+        value={$optionsStore.SLIDER_TYPE_OPTIONS.find((opt) => opt.value === (component.properties.type || "single"))}
         options={$optionsStore.SLIDER_TYPE_OPTIONS}
         onUpdate={(type) => {
-          updateProperty('value', type.value === 'single' ? 5 : [2, 7], component, onPropertyChange)
-          updateProperty('type', type.value as string, component, onPropertyChange)
+          updateProperty("value", type.value === "single" ? 5 : [2, 7], component, onPropertyChange)
+          updateProperty("type", type.value as string, component, onPropertyChange)
         }}
       />
       <UI.Input
-        label={{ name: $t('constructor.props.minnum') }}
+        label={{ name: $t("constructor.props.minnum") }}
         value={component.properties.number.minNum as number}
         type="number"
-        onUpdate={(value) => updateProperty('number.minNum', Number(value), component, onPropertyChange)}
+        onUpdate={(value) => updateProperty("number.minNum", Number(value), component, onPropertyChange)}
       />
       <UI.Input
-        label={{ name: $t('constructor.props.maxnum') }}
+        label={{ name: $t("constructor.props.maxnum") }}
         value={component.properties.number.maxNum as number}
         type="number"
-        onUpdate={(value) => updateProperty('number.maxNum', Number(value), component, onPropertyChange)}
+        onUpdate={(value) => updateProperty("number.maxNum", Number(value), component, onPropertyChange)}
       />
       <UI.Input
-        label={{ name: $t('constructor.props.step') }}
+        label={{ name: $t("constructor.props.step") }}
         value={component.properties.number.step as number}
         type="number"
-        onUpdate={(value) => updateProperty('number.step', Number(value), component, onPropertyChange)}
+        onUpdate={(value) => updateProperty("number.step", Number(value), component, onPropertyChange)}
       />
     </div>
     <div class="flex w-1/3 flex-col px-2">
       <UI.Input
-        label={{ name: $t('constructor.props.label') }}
+        label={{ name: $t("constructor.props.label") }}
         value={component.properties.label.name}
-        onUpdate={(value) => updateProperty('label.name', value as string, component, onPropertyChange)}
+        onUpdate={(value) => updateProperty("label.name", value as string, component, onPropertyChange)}
       />
       <UI.Select
-        label={{ name: $t('constructor.props.align') }}
+        label={{ name: $t("constructor.props.align") }}
         type="buttons"
         value={initialAlign}
         options={$optionsStore.TEXT_ALIGN_OPTIONS}
-        onUpdate={(option) => updateProperty('label.class', twMerge(component.properties.label.class, option.value), component, onPropertyChange)}
+        onUpdate={(option) => updateProperty("label.class", twMerge(component.properties.label.class, option.value), component, onPropertyChange)}
       />
       <UI.Select
         wrapperClass="!h-14"
-        label={{ name: $t('constructor.props.colors') }}
+        label={{ name: $t("constructor.props.colors") }}
         type="buttons"
-        options={$optionsStore.COLOR_OPTIONS.filter((option) => option.value !== 'bg-gray')}
+        options={$optionsStore.COLOR_OPTIONS.filter((option) => option.value !== "bg-gray")}
         value={initialColor}
-        onUpdate={(option) => updateProperty('wrapperClass', twMerge(component.properties.wrapperClass, option.value), component, onPropertyChange)}
+        onUpdate={(option) => updateProperty("wrapperClass", twMerge(component.properties.wrapperClass, option.value), component, onPropertyChange)}
       />
     </div>
   </div>
@@ -120,90 +120,90 @@
   <div class="relative flex flex-row items-start justify-center">
     <div class="flex w-1/3 flex-col items-center px-2">
       <UI.Input
-        label={{ name: $t('constructor.props.id') }}
+        label={{ name: $t("constructor.props.id") }}
         value={component.properties.id}
-        onUpdate={(value) => updateProperty('id', value as string, component, onPropertyChange)}
+        onUpdate={(value) => updateProperty("id", value as string, component, onPropertyChange)}
       />
       <UI.Input
-        label={{ name: $t('constructor.props.wrapperclass') }}
+        label={{ name: $t("constructor.props.wrapperclass") }}
         value={component.properties.wrapperClass}
-        onUpdate={(value) => updateProperty('wrapperClass', value as string, component, onPropertyChange)}
+        onUpdate={(value) => updateProperty("wrapperClass", value as string, component, onPropertyChange)}
       />
       <UI.Select
         wrapperClass=" h-14"
-        label={{ name: $t('constructor.props.colors') }}
+        label={{ name: $t("constructor.props.colors") }}
         type="buttons"
-        options={$optionsStore.COLOR_OPTIONS.filter((option) => option.value !== 'bg-gray')}
+        options={$optionsStore.COLOR_OPTIONS.filter((option) => option.value !== "bg-gray")}
         value={initialColor}
         onUpdate={(option) => {
-          updateProperty('wrapperClass', twMerge(component.properties.wrapperClass, option.value), component, onPropertyChange)
+          updateProperty("wrapperClass", twMerge(component.properties.wrapperClass, option.value), component, onPropertyChange)
           const options = [...(component.properties?.options || [])]
           options.forEach((o) => {
-            o['class'] = option.value
+            o["class"] = option.value
           })
-          updateProperty('options', options, component, onPropertyChange)
+          updateProperty("options", options, component, onPropertyChange)
         }}
       />
       <UI.Switch
         wrapperClass="bg-blue"
-        label={{ name: $t('constructor.props.disabled') }}
+        label={{ name: $t("constructor.props.disabled") }}
         value={component.properties.disabled}
-        options={[{ id: crypto.randomUUID(), value: 0, class: '' }]}
-        onChange={(value) => updateProperty('disabled', value, component, onPropertyChange)}
+        options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
+        onChange={(value) => updateProperty("disabled", value, component, onPropertyChange)}
       />
     </div>
     <div class="flex w-1/3 flex-col px-2">
       <UI.Select
-        label={{ name: $t('constructor.props.access') }}
+        label={{ name: $t("constructor.props.access") }}
         type="buttons"
         options={$optionsStore.ACCESS_OPTION}
         value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.access)}
         onUpdate={(option) => onPropertyChange({ access: option.value })}
       />
       <UI.Input
-        label={{ name: $t('constructor.props.label') }}
+        label={{ name: $t("constructor.props.label") }}
         value={component.properties.label.name}
-        onUpdate={(value) => updateProperty('label.name', value as string, component, onPropertyChange)}
+        onUpdate={(value) => updateProperty("label.name", value as string, component, onPropertyChange)}
       />
       <UI.Input
-        label={{ name: $t('constructor.props.label.class') }}
+        label={{ name: $t("constructor.props.label.class") }}
         value={component.properties.label.class}
-        onUpdate={(value) => updateProperty('label.class', value as string, component, onPropertyChange)}
+        onUpdate={(value) => updateProperty("label.class", value as string, component, onPropertyChange)}
       />
       <UI.Input
-        label={{ name: $t('constructor.props.value') }}
+        label={{ name: $t("constructor.props.value") }}
         value={component.properties.value}
-        onUpdate={(value) => updateProperty('value', value as string, component, onPropertyChange)}
+        onUpdate={(value) => updateProperty("value", value as string, component, onPropertyChange)}
       />
     </div>
     <div class="flex w-1/3 flex-col px-2">
       <UI.Select
-        label={{ name: $t('constructor.props.type') }}
+        label={{ name: $t("constructor.props.type") }}
         type="buttons"
-        value={$optionsStore.SLIDER_TYPE_OPTIONS.find((opt) => opt.value === (component.properties.type || 'single'))}
+        value={$optionsStore.SLIDER_TYPE_OPTIONS.find((opt) => opt.value === (component.properties.type || "single"))}
         options={$optionsStore.SLIDER_TYPE_OPTIONS}
         onUpdate={(type) => {
-          updateProperty('value', type.value === 'single' ? 5 : [2, 7], component, onPropertyChange)
-          updateProperty('type', type.value as string, component, onPropertyChange)
+          updateProperty("value", type.value === "single" ? 5 : [2, 7], component, onPropertyChange)
+          updateProperty("type", type.value as string, component, onPropertyChange)
         }}
       />
       <UI.Input
-        label={{ name: $t('constructor.props.minnum') }}
+        label={{ name: $t("constructor.props.minnum") }}
         value={component.properties.number.minNum as number}
         type="number"
-        onUpdate={(value) => updateProperty('number.minNum', Number(value), component, onPropertyChange)}
+        onUpdate={(value) => updateProperty("number.minNum", Number(value), component, onPropertyChange)}
       />
       <UI.Input
-        label={{ name: $t('constructor.props.maxnum') }}
+        label={{ name: $t("constructor.props.maxnum") }}
         value={component.properties.number.maxNum as number}
         type="number"
-        onUpdate={(value) => updateProperty('number.maxNum', Number(value), component, onPropertyChange)}
+        onUpdate={(value) => updateProperty("number.maxNum", Number(value), component, onPropertyChange)}
       />
       <UI.Input
-        label={{ name: $t('constructor.props.step') }}
+        label={{ name: $t("constructor.props.step") }}
         value={component.properties.number.step as number}
         type="number"
-        onUpdate={(value) => updateProperty('number.step', Number(value), component, onPropertyChange)}
+        onUpdate={(value) => updateProperty("number.step", Number(value), component, onPropertyChange)}
       />
     </div>
   </div>

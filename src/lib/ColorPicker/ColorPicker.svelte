@@ -1,13 +1,13 @@
 <!-- $lib/ElementsUI/ColorPicker.svelte -->
 <script lang="ts">
-  import { twMerge } from 'tailwind-merge'
-  import type { IColorPickerProps } from '../types'
+  import { twMerge } from "tailwind-merge"
+  import type { IColorPickerProps } from "../types"
 
   let {
     id = crypto.randomUUID(),
 
-    wrapperClass = '',
-    label = { name: '', class: '' },
+    wrapperClass = "",
+    label = { name: "", class: "" },
     value = [0, 0, 0],
     onChange = () => {},
   }: IColorPickerProps = $props()
@@ -15,7 +15,7 @@
   const hsv = $state({ h: 0, s: 100, v: 100 })
   let huePointer = $state(0)
   let brightnessPointer = $state(100)
-  let mode = $state<'hsv' | 'white'>('hsv')
+  let mode = $state<"hsv" | "white">("hsv")
   let whiteValue = $state(100)
 
   $effect(() => {
@@ -23,7 +23,7 @@
 
     const [r, g, b] = value
     const isWhite = r === g && g === b
-    mode = isWhite ? 'white' : 'hsv'
+    mode = isWhite ? "white" : "hsv"
     if (isWhite) {
       whiteValue = Math.round((r / 255) * 100)
       return
@@ -69,36 +69,36 @@
     return [Math.round((r + m) * 255), Math.round((g + m) * 255), Math.round((b + m) * 255)]
   }
 
-  const handleDrag = (e: MouseEvent, target: 'hue' | 'brightness' | 'white') => {
+  const handleDrag = (e: MouseEvent, target: "hue" | "brightness" | "white") => {
     const slider = document.querySelector(`.${target}-slider`) as HTMLElement
     const rect = slider.getBoundingClientRect()
     let currentHSV = { ...hsv }
     let currentWhite = whiteValue
-    if (target === 'hue' || target === 'brightness') {
-      if (mode === 'white') hsv.s = 100
-      mode = 'hsv'
-    } else mode = 'white'
+    if (target === "hue" || target === "brightness") {
+      if (mode === "white") hsv.s = 100
+      mode = "hsv"
+    } else mode = "white"
     const onMove = (event: MouseEvent) => {
       const x = Math.max(0, Math.min(event.clientX - rect.left, rect.width))
       const percent = (x / rect.width) * 100
-      if (target === 'hue') {
+      if (target === "hue") {
         huePointer = percent
         currentHSV.h = (x / rect.width) * 360
         hsv.h = currentHSV.h
-      } else if (target === 'brightness') {
+      } else if (target === "brightness") {
         brightnessPointer = percent
         currentHSV.v = percent
         hsv.v = currentHSV.v
-      } else if (target === 'white') {
+      } else if (target === "white") {
         currentWhite = percent
         whiteValue = currentWhite
       }
     }
     const onUp = () => {
-      window.removeEventListener('mousemove', onMove)
-      window.removeEventListener('mouseup', onUp)
+      window.removeEventListener("mousemove", onMove)
+      window.removeEventListener("mouseup", onUp)
 
-      if (mode === 'hsv') {
+      if (mode === "hsv") {
         onChange(hsvToRgb(currentHSV.h, hsv.s, currentHSV.v))
       } else {
         const val = Math.round((currentWhite / 100) * 255)
@@ -106,27 +106,23 @@
       }
     }
     onMove(e)
-    window.addEventListener('mousemove', onMove)
-    window.addEventListener('mouseup', onUp)
+    window.addEventListener("mousemove", onMove)
+    window.addEventListener("mouseup", onUp)
   }
 
-  const rgb = $derived(() =>
-    mode === 'white' ? [whiteValue, whiteValue, whiteValue].map((v) => Math.round((v / 100) * 255)) : hsvToRgb(hsv.h, hsv.s, hsv.v),
-  )
+  const rgb = $derived(() => (mode === "white" ? [whiteValue, whiteValue, whiteValue].map((v) => Math.round((v / 100) * 255)) : hsvToRgb(hsv.h, hsv.s, hsv.v)))
   const hex = $derived(() =>
     rgb()
-      .map((v) => v.toString(16).padStart(2, '0'))
-      .join(' ')
+      .map((v) => v.toString(16).padStart(2, "0"))
+      .join(" ")
       .toUpperCase(),
   )
-  const previewBaseColor = $derived(() =>
-    mode === 'white' ? [255, 255, 255].map((c) => Math.round((whiteValue / 100) * c)) : hsvToRgb(hsv.h, hsv.s, 100),
-  )
+  const previewBaseColor = $derived(() => (mode === "white" ? [255, 255, 255].map((c) => Math.round((whiteValue / 100) * c)) : hsvToRgb(hsv.h, hsv.s, 100)))
 
   const textColor = $derived(() => {
     const [r, g, b] = rgb()
     const luminance = (r * 299 + g * 587 + b * 114) / 1000
-    return luminance > 128 ? 'text-black' : 'text-white'
+    return luminance > 128 ? "text-black" : "text-white"
   })
 </script>
 
@@ -144,19 +140,19 @@
         role="slider"
         aria-valuenow={null}
         tabindex={null}
-        onmousedown={(e) => handleDrag(e, 'hue')}
+        onmousedown={(e) => handleDrag(e, "hue")}
       >
         <div
           class="absolute inset-0"
           style={`background: linear-gradient(to right, ${Array.from({ length: 7 }, (_, i) => {
             const [r, g, b] = hsvToRgb(i * 60, 100, 100)
             return `rgb(${r},${g},${b})`
-          }).join(', ')})`}
+          }).join(", ")})`}
         ></div>
-        {#if mode === 'hsv'}
+        {#if mode === "hsv"}
           <div
             class="pointer-events-none absolute top-1/2 h-7 w-1 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white"
-            style={`left: ${huePointer}%; background: rgb(${hsvToRgb(hsv.h, 100, 100).join(',')})`}
+            style={`left: ${huePointer}%; background: rgb(${hsvToRgb(hsv.h, 100, 100).join(",")})`}
           ></div>
         {/if}
       </div>
@@ -169,17 +165,14 @@
         role="slider"
         aria-valuenow={null}
         tabindex={null}
-        onmousedown={(e) => handleDrag(e, 'brightness')}
+        onmousedown={(e) => handleDrag(e, "brightness")}
       >
-        {#if mode === 'hsv'}
-          <div
-            class="absolute inset-0"
-            style={`background: linear-gradient(to right, rgb(0,0,0), rgb(${hsvToRgb(hsv.h, hsv.s, 100).join(',')}))`}
-          ></div>
+        {#if mode === "hsv"}
+          <div class="absolute inset-0" style={`background: linear-gradient(to right, rgb(0,0,0), rgb(${hsvToRgb(hsv.h, hsv.s, 100).join(",")}))`}></div>
 
           <div
             class="pointer-events-none absolute top-1/2 h-7 w-1 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white"
-            style={`left: ${brightnessPointer}%; background: rgb(${hsvToRgb(hsv.h, hsv.s, hsv.v).join(',')})`}
+            style={`left: ${brightnessPointer}%; background: rgb(${hsvToRgb(hsv.h, hsv.s, hsv.v).join(",")})`}
           ></div>
         {/if}
       </div>
@@ -190,13 +183,13 @@
         role="slider"
         aria-valuenow={null}
         tabindex={null}
-        onmousedown={(e) => handleDrag(e, 'white')}
+        onmousedown={(e) => handleDrag(e, "white")}
       >
         <div class="absolute inset-0 bg-linear-to-r from-black to-white"></div>
-        {#if mode === 'white'}
+        {#if mode === "white"}
           <div
             class="pointer-events-none absolute top-1/2 h-7 w-1 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white"
-            style={`left: ${whiteValue}%; background: rgb(${[255, 255, 255].map((c) => Math.round((whiteValue / 100) * c)).join(',')})`}
+            style={`left: ${whiteValue}%; background: rgb(${[255, 255, 255].map((c) => Math.round((whiteValue / 100) * c)).join(",")})`}
           ></div>
         {/if}
       </div>
@@ -207,7 +200,7 @@
     <div class="flex flex-col items-center" style="width: 7rem;">
       <div
         class={`flex size-15 flex-col justify-center gap-1 rounded-full px-2 font-mono text-sm shadow-sm transition duration-200 select-none ${textColor()}`}
-        style={`background: rgb(${previewBaseColor().join(',')})`}
+        style={`background: rgb(${previewBaseColor().join(",")})`}
       ></div>
       <div class="w-full text-center font-semibold">{hex()}</div>
     </div>

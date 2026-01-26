@@ -1,14 +1,14 @@
 <!-- $lib/ElementsUI/Graph.svelte -->
 <script lang="ts">
-  import { onMount } from 'svelte'
-  import Select from '../Select/Select.svelte'
-  import type { IGraphDataObject, IGraphProps, ISelectOption } from '../types'
+  import { onMount } from "svelte"
+  import Select from "../Select/Select.svelte"
+  import type { IGraphDataObject, IGraphProps, ISelectOption } from "../types"
 
   /* Инициализация пропсов с дефолтными значениями */
   let {
     id = crypto.randomUUID(),
-    wrapperClass = '',
-    label = { name: '', class: '' },
+    wrapperClass = "",
+    label = { name: "", class: "" },
     streamingData = { data: [], timestamp: Date.now() },
     isTest = false,
   }: IGraphProps = $props()
@@ -24,33 +24,33 @@
 
   /* Константы и настройки */
   const REFRESH_OPTIONS: ISelectOption[] = [
-    { id: 'RefreshOption-AUTO', name: 'AUTO', value: 0, class: '' },
-    { id: 'RefreshOption-10', name: '10', value: 10, class: '' },
-    { id: 'RefreshOption-25', name: '25', value: 25, class: '' },
-    { id: 'RefreshOption-50', name: '50', value: 50, class: '' },
-    { id: 'RefreshOption-100', name: '100', value: 100, class: '' },
-    { id: 'RefreshOption-250', name: '250', value: 250, class: '' },
-    { id: 'RefreshOption-500', name: '500', value: 500, class: '' },
-    { id: 'RefreshOption-1000', name: '1000', value: 1000, class: '' },
-    { id: 'RefreshOption-5000', name: '5000', value: 5000, class: '' },
+    { id: "RefreshOption-AUTO", name: "AUTO", value: 0, class: "" },
+    { id: "RefreshOption-10", name: "10", value: 10, class: "" },
+    { id: "RefreshOption-25", name: "25", value: 25, class: "" },
+    { id: "RefreshOption-50", name: "50", value: 50, class: "" },
+    { id: "RefreshOption-100", name: "100", value: 100, class: "" },
+    { id: "RefreshOption-250", name: "250", value: 250, class: "" },
+    { id: "RefreshOption-500", name: "500", value: 500, class: "" },
+    { id: "RefreshOption-1000", name: "1000", value: 1000, class: "" },
+    { id: "RefreshOption-5000", name: "5000", value: 5000, class: "" },
   ]
   const SCALE_OPTIONS: ISelectOption[] = [
-    { id: 'ScaleOption-50', name: '50', value: 50, class: '' },
-    { id: 'ScaleOption-100', name: '100', value: 100, class: '' },
-    { id: 'ScaleOption-500', name: '500', value: 500, class: '' },
-    { id: 'ScaleOption-1000', name: '1000', value: 1000, class: '' },
-    { id: 'ScaleOption-2000', name: '2000', value: 2000, class: '' },
+    { id: "ScaleOption-50", name: "50", value: 50, class: "" },
+    { id: "ScaleOption-100", name: "100", value: 100, class: "" },
+    { id: "ScaleOption-500", name: "500", value: 500, class: "" },
+    { id: "ScaleOption-1000", name: "1000", value: 1000, class: "" },
+    { id: "ScaleOption-2000", name: "2000", value: 2000, class: "" },
   ]
   let selectedRefreshRate = $state(0)
   let selectedScale = $state(100)
   const maxDataPoints = $derived(selectedRefreshRate == 0 ? 20 : 100)
-  const defaultColors = ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899']
+  const defaultColors = ["#3b82f6", "#ef4444", "#10b981", "#f59e0b", "#8b5cf6", "#ec4899"]
 
   let previousDataTimestamp: number = $state(0)
 
   /* Инициализация данных графиков */
   const initializeGraphData = () => {
-    if (typeof streamingData === 'string') {
+    if (typeof streamingData === "string") {
       streamingData = JSON.parse(streamingData)
     }
     if (!streamingData.data || streamingData.data.length === 0) {
@@ -132,7 +132,7 @@
       canvas.height = height * dpr
       canvas.style.width = `${width}px`
       canvas.style.height = `${height}px`
-      ctx = canvas.getContext('2d')!
+      ctx = canvas.getContext("2d")!
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
       drawAllGraphs()
     })
@@ -164,11 +164,11 @@
     const getY = (y: number) => padding.top + graphHeight - (((y / selectedScale) * graphHeight) / 2 + graphHeight / 2)
 
     /* Сетка X */
-    ctx.strokeStyle = '#777'
-    ctx.fillStyle = '#777'
+    ctx.strokeStyle = "#777"
+    ctx.fillStyle = "#777"
     ctx.lineWidth = 0.5
-    ctx.font = '10px monospace'
-    ctx.textAlign = 'center'
+    ctx.font = "10px monospace"
+    ctx.textAlign = "center"
 
     const now = Date.now()
     for (let i = 0; i <= 10; i++) {
@@ -179,13 +179,13 @@
       ctx.moveTo(x, padding.top)
       ctx.lineTo(x, height - padding.bottom)
       ctx.stroke()
-      ctx.textBaseline = 'top'
+      ctx.textBaseline = "top"
       ctx.fillText(`${secondsAgo}s`, x, height - padding.bottom + 2)
     }
 
     /* Сетка Y */
-    ctx.textAlign = 'right'
-    ctx.textBaseline = 'middle'
+    ctx.textAlign = "right"
+    ctx.textBaseline = "middle"
     const ySteps = 8
     for (let i = 0; i <= ySteps; i++) {
       const yVal = selectedScale - (i * 2 * selectedScale) / ySteps
@@ -233,7 +233,7 @@
     <div class="flex w-48 flex-col gap-2">
       <!-- Развертка по горизонтали -->
       <Select
-        label={{ name: 'Refresh rate', class: '' }}
+        label={{ name: "Refresh rate", class: "" }}
         options={REFRESH_OPTIONS}
         value={REFRESH_OPTIONS.find((o) => o.value == selectedRefreshRate)}
         onUpdate={(value) => (selectedRefreshRate = value.value as number)}
@@ -241,7 +241,7 @@
 
       <!-- Масштаб по вертикали -->
       <Select
-        label={{ name: 'Scale' }}
+        label={{ name: "Scale" }}
         options={SCALE_OPTIONS}
         value={SCALE_OPTIONS.find((o) => o.value == selectedScale)}
         onUpdate={(value) => (selectedScale = value.value as number)}

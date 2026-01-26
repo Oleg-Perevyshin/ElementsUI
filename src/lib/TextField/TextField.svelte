@@ -1,23 +1,23 @@
 <script lang="ts">
-  import { twMerge } from 'tailwind-merge'
-  import type { ITextFieldProps } from '../types'
+  import { twMerge } from "tailwind-merge"
+  import type { ITextFieldProps } from "../types"
 
-  let { id = crypto.randomUUID(), wrapperClass = '', background = false, content = { name: '', class: '', size: 'base' } }: ITextFieldProps = $props()
+  let { id = crypto.randomUUID(), wrapperClass = "", background = false, content = { name: "", class: "", size: "base" } }: ITextFieldProps = $props()
 
   const textSize = {
-    small: 'text-sm',
-    base: 'text-base',
-    large: 'text-2xl',
-    huge: 'text-4xl',
-    massive: 'text-5xl',
+    small: "text-sm",
+    base: "text-base",
+    large: "text-2xl",
+    huge: "text-4xl",
+    massive: "text-5xl",
   } as const
 </script>
 
 <div
   id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
-  class={twMerge(`relative flex w-full flex-col items-center ${background ? 'rounded-2xl bg-(--back-color) px-6 py-2' : ''}`, wrapperClass)}
+  class={twMerge(`relative flex w-full flex-col items-center ${background ? "rounded-2xl bg-(--back-color) px-6 py-2" : ""}`, wrapperClass)}
 >
-  <p class={twMerge(`w-full text-center ${textSize[content.size ?? 'base']}`, content.class)}>
+  <p class={twMerge(`w-full text-center ${textSize[content.size ?? "base"]}`, content.class)}>
     {content.name}
   </p>
 </div>

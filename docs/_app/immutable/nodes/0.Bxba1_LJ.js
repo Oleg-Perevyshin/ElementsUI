@@ -1,1 +1,144 @@
-import{b as L,a as g,f as S}from"../chunks/Di61MV9l.js";import{o as O}from"../chunks/DXQ0fkFu.js";import{p as U,a as q,e as I,b as z,c as s,s as i,g as e,u as c,r}from"../chunks/CYmiEaEH.js";import{c as f,i as G}from"../chunks/_y1boTp2.js";import{b as F,e as D,j as H,B as b,i as N}from"../chunks/CnAfG7ip.js";import{G as W}from"../chunks/CM3_98JW.js";import{g as J}from"../chunks/Cl66iwDI.js";import{p as K}from"../chunks/ClwY0cp0.js";const Q=!0,R="always",ce=Object.freeze(Object.defineProperty({__proto__:null,prerender:Q,trailingSlash:R},Symbol.toStringTag,{value:"Module"}));var V=L('<svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="M9.173 14.83a4 4 0 1 1 5.657-5.657"></path><path d="m11.294 12.707l.174.247a7.5 7.5 0 0 0 8.845 2.492A9 9 0 0 1 5.642 18.36M3 12h1m8-9v1M5.6 5.6l.7.7M3 21L21 3"></path></g></svg>');function X(p){var d=V();g(p,d)}var Y=L('<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M12.6 12L8.7 8.1q-.275-.275-.275-.7t.275-.7t.7-.275t.7.275l4.6 4.6q.15.15.213.325t.062.375t-.062.375t-.213.325l-4.6 4.6q-.275.275-.7.275t-.7-.275t-.275-.7t.275-.7z"></path></svg>'),Z=S('<div class="flex w-full"><!> <!></div>'),ee=S('<div class="mx-auto flex h-screen max-w-[1400px] flex-col"><header><div class="flex items-center gap-2"><a href="/ElementsUI/" class="ml-2 no-underline! transition hover:scale-101"><h1>POE-Svelte-UI-Lib</h1></a></div> <div class="flex items-center gap-6"><!> <!></div></header> <div class="mb-2 flex flex-1 overflow-hidden"><nav class="m-1 flex w-64 flex-col items-start gap-2 overflow-y-auto rounded-xl border border-(--border-color) bg-(--back-color)/50 p-4"></nav> <div class="m-1 flex-1 overflow-y-auto rounded-xl border border-(--border-color) bg-(--back-color)/50 p-4"><!></div></div></div>');function de(p,d){U(d,!0);let l=z(!0),C=c(()=>K.url.pathname);const T=[{page:"all",name:"ALL in ONE"},{page:"accordion",name:"Accordion"},{page:"button",name:"Button"},{page:"color-picker",name:"ColorPicker"},{page:"file-attach",name:"FileAttach"},{page:"graph",name:"Graph"},{page:"input",name:"Input"},{page:"progress-bar",name:"ProgressBar"},{page:"select",name:"Select"},{page:"slider",name:"Slider"},{page:"switch",name:"Switch"},{page:"table",name:"Table"},{page:"text-field",name:"TextField"}],$=()=>{I(l,!e(l)),document.body.classList.toggle("dark",!e(l)),document.body.classList.toggle("light",e(l)),localStorage.setItem("AppTheme",e(l)?"light":"dark")};O(()=>{const t=localStorage.getItem("AppTheme")||"light";localStorage.setItem("AppTheme",`${t}`),document.body.classList.toggle("dark",t==="dark"),document.body.classList.toggle("light",t==="light"),I(l,t==="light")});var v=ee(),m=s(v);F(m,1,"sticky top-0 z-50 m-1 mt-2 flex items-center justify-between rounded-xl border border-(--border-color) bg-(--back-color)/50 p-4");var w=i(s(m),2),x=s(w);{let t=c(()=>({icon:X}));f(x,()=>b,(a,o)=>{o(a,{componentClass:"w-8",get content(){return e(t)},onClick:$})})}var A=i(x,2);{let t=c(()=>({icon:W}));f(A,()=>b,(a,o)=>{o(a,{componentClass:"w-8",get content(){return e(t)},onClick:()=>window.open("https://github.com/Oleg-Perevyshin/ElementsUI","_blank")})})}r(w),r(m);var _=i(m,2),h=s(_);D(h,21,()=>T,N,(t,a)=>{var o=Z(),y=s(o);{let n=c(()=>({name:e(a).name})),u=c(()=>e(a).page==="all"?"":"bg-gray");f(y,()=>b,(P,j)=>{j(P,{get content(){return e(n)},get componentClass(){return`h-10  text-left ${e(u)??""}`},onClick:()=>J(`/ElementsUI/components/${e(a).page}`)})})}var B=i(y,2);{var E=n=>{var u=Y();g(n,u)};G(B,n=>{e(C).startsWith(`/ElementsUI/components/${e(a).page}`)&&n(E)})}r(o),g(t,o)}),r(h);var k=i(h,2),M=s(k);H(M,()=>d.children),r(k),r(_),r(v),g(p,v),q()}export{de as component,ce as universal};
+import { b as L, a as g, f as S } from "../chunks/Di61MV9l.js"
+import { o as O } from "../chunks/DXQ0fkFu.js"
+import { p as U, a as q, e as I, b as z, c as s, s as i, g as e, u as c, r } from "../chunks/CYmiEaEH.js"
+import { c as f, i as G } from "../chunks/_y1boTp2.js"
+import { b as F, e as D, j as H, B as b, i as N } from "../chunks/CnAfG7ip.js"
+import { G as W } from "../chunks/CM3_98JW.js"
+import { g as J } from "../chunks/Cl66iwDI.js"
+import { p as K } from "../chunks/ClwY0cp0.js"
+const Q = !0,
+  R = "always",
+  ce = Object.freeze(Object.defineProperty({ __proto__: null, prerender: Q, trailingSlash: R }, Symbol.toStringTag, { value: "Module" }))
+var V = L(
+  '<svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="M9.173 14.83a4 4 0 1 1 5.657-5.657"></path><path d="m11.294 12.707l.174.247a7.5 7.5 0 0 0 8.845 2.492A9 9 0 0 1 5.642 18.36M3 12h1m8-9v1M5.6 5.6l.7.7M3 21L21 3"></path></g></svg>',
+)
+function X(p) {
+  var d = V()
+  g(p, d)
+}
+var Y = L(
+    '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M12.6 12L8.7 8.1q-.275-.275-.275-.7t.275-.7t.7-.275t.7.275l4.6 4.6q.15.15.213.325t.062.375t-.062.375t-.213.325l-4.6 4.6q-.275.275-.7.275t-.7-.275t-.275-.7t.275-.7z"></path></svg>',
+  ),
+  Z = S('<div class="flex w-full"><!> <!></div>'),
+  ee = S(
+    '<div class="mx-auto flex h-screen max-w-[1400px] flex-col"><header><div class="flex items-center gap-2"><a href="/ElementsUI/" class="ml-2 no-underline! transition hover:scale-101"><h1>POE-Svelte-UI-Lib</h1></a></div> <div class="flex items-center gap-6"><!> <!></div></header> <div class="mb-2 flex flex-1 overflow-hidden"><nav class="m-1 flex w-64 flex-col items-start gap-2 overflow-y-auto rounded-xl border border-(--border-color) bg-(--back-color)/50 p-4"></nav> <div class="m-1 flex-1 overflow-y-auto rounded-xl border border-(--border-color) bg-(--back-color)/50 p-4"><!></div></div></div>',
+  )
+function de(p, d) {
+  U(d, !0)
+  let l = z(!0),
+    C = c(() => K.url.pathname)
+  const T = [
+      { page: "all", name: "ALL in ONE" },
+      { page: "accordion", name: "Accordion" },
+      { page: "button", name: "Button" },
+      { page: "color-picker", name: "ColorPicker" },
+      { page: "file-attach", name: "FileAttach" },
+      { page: "graph", name: "Graph" },
+      { page: "input", name: "Input" },
+      { page: "progress-bar", name: "ProgressBar" },
+      { page: "select", name: "Select" },
+      { page: "slider", name: "Slider" },
+      { page: "switch", name: "Switch" },
+      { page: "table", name: "Table" },
+      { page: "text-field", name: "TextField" },
+    ],
+    $ = () => {
+      ;(I(l, !e(l)),
+        document.body.classList.toggle("dark", !e(l)),
+        document.body.classList.toggle("light", e(l)),
+        localStorage.setItem("AppTheme", e(l) ? "light" : "dark"))
+    }
+  O(() => {
+    const t = localStorage.getItem("AppTheme") || "light"
+    ;(localStorage.setItem("AppTheme", `${t}`),
+      document.body.classList.toggle("dark", t === "dark"),
+      document.body.classList.toggle("light", t === "light"),
+      I(l, t === "light"))
+  })
+  var v = ee(),
+    m = s(v)
+  F(m, 1, "sticky top-0 z-50 m-1 mt-2 flex items-center justify-between rounded-xl border border-(--border-color) bg-(--back-color)/50 p-4")
+  var w = i(s(m), 2),
+    x = s(w)
+  {
+    let t = c(() => ({ icon: X }))
+    f(
+      x,
+      () => b,
+      (a, o) => {
+        o(a, {
+          componentClass: "w-8",
+          get content() {
+            return e(t)
+          },
+          onClick: $,
+        })
+      },
+    )
+  }
+  var A = i(x, 2)
+  {
+    let t = c(() => ({ icon: W }))
+    f(
+      A,
+      () => b,
+      (a, o) => {
+        o(a, {
+          componentClass: "w-8",
+          get content() {
+            return e(t)
+          },
+          onClick: () => window.open("https://github.com/Oleg-Perevyshin/ElementsUI", "_blank"),
+        })
+      },
+    )
+  }
+  ;(r(w), r(m))
+  var _ = i(m, 2),
+    h = s(_)
+  ;(D(
+    h,
+    21,
+    () => T,
+    N,
+    (t, a) => {
+      var o = Z(),
+        y = s(o)
+      {
+        let n = c(() => ({ name: e(a).name })),
+          u = c(() => (e(a).page === "all" ? "" : "bg-gray"))
+        f(
+          y,
+          () => b,
+          (P, j) => {
+            j(P, {
+              get content() {
+                return e(n)
+              },
+              get componentClass() {
+                return `h-10  text-left ${e(u) ?? ""}`
+              },
+              onClick: () => J(`/ElementsUI/components/${e(a).page}`),
+            })
+          },
+        )
+      }
+      var B = i(y, 2)
+      {
+        var E = (n) => {
+          var u = Y()
+          g(n, u)
+        }
+        G(B, (n) => {
+          e(C).startsWith(`/ElementsUI/components/${e(a).page}`) && n(E)
+        })
+      }
+      ;(r(o), g(t, o))
+    },
+  ),
+    r(h))
+  var k = i(h, 2),
+    M = s(k)
+  ;(H(M, () => d.children), r(k), r(_), r(v), g(p, v), q())
+}
+export { de as component, ce as universal }

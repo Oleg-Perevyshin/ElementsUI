@@ -1,37 +1,852 @@
 <!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" href="/ElementsUI/favicon.png" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4">
-		</script>
-		
-		<link href="/ElementsUI/_app/immutable/assets/Table.B2l_Likj.css" rel="stylesheet">
-		<link href="/ElementsUI/_app/immutable/assets/0.DpGxqb08.css" rel="stylesheet">
-		<link rel="modulepreload" href="/ElementsUI/_app/immutable/entry/start.B0I87LBF.js">
-		<link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/Cl66iwDI.js">
-		<link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/CYmiEaEH.js">
-		<link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/DXQ0fkFu.js">
-		<link rel="modulepreload" href="/ElementsUI/_app/immutable/entry/app.CN_sVLv0.js">
-		<link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/cfR1Foc9.js">
-		<link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/Di61MV9l.js">
-		<link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/_y1boTp2.js">
-		<link rel="modulepreload" href="/ElementsUI/_app/immutable/nodes/0.Bxba1_LJ.js">
-		<link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/CnAfG7ip.js">
-		<link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/CM3_98JW.js">
-		<link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/ClwY0cp0.js">
-		<link rel="modulepreload" href="/ElementsUI/_app/immutable/nodes/11.DJS5kJPv.js">
-		<link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/BSX-LnOW.js">
-		<link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/COiuPzCY.js">
-	</head>
-	<body data-sveltekit-preload-data="hover">
-		<div><!--[--><!--[--><!----><div class="mx-auto flex h-screen max-w-[1400px] flex-col"><header class="sticky top-0 z-50 m-1 mt-2 flex items-center justify-between rounded-xl border border-(--border-color) bg-(--back-color)/50 p-4"><div class="flex items-center gap-2"><a href="/ElementsUI/" class="ml-2 no-underline! transition hover:scale-101"><h1>POE-Svelte-UI-Lib</h1></a></div> <div class="flex items-center gap-6"><!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="8ed1d9a4-b82f-43b3-a056-8d6c04606d16" class="relative m-0 inline-block items-center rounded-2xl font-semibold transition duration-200 select-none bg-transparent p-0 cursor-pointer active:scale-97 w-8 bg-(--bg-color)"><span class="flex flex-row items-center justify-center gap-2"><!--[--><span class="flex items-center justify-center overflow-visible 
-            w-8  [&amp;_svg]:h-full [&amp;_svg]:max-h-full [&amp;_svg]:w-full [&amp;_svg]:max-w-full"><!--[!--><!----><svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="M9.173 14.83a4 4 0 1 1 5.657-5.657"></path><path d="m11.294 12.707l.174.247a7.5 7.5 0 0 0 8.845 2.492A9 9 0 0 1 5.642 18.36M3 12h1m8-9v1M5.6 5.6l.7.7M3 21L21 3"></path></g></svg><!----><!--]--></span><!--]--> <!--[!--><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----> <!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="46d1eb39-0f0e-4fc0-b237-b020f7e4763b" class="relative m-0 inline-block items-center rounded-2xl font-semibold transition duration-200 select-none bg-transparent p-0 cursor-pointer active:scale-97 w-8 bg-(--bg-color)"><span class="flex flex-row items-center justify-center gap-2"><!--[--><span class="flex items-center justify-center overflow-visible 
-            w-8  [&amp;_svg]:h-full [&amp;_svg]:max-h-full [&amp;_svg]:w-full [&amp;_svg]:max-w-full"><!--[!--><!----><svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="M16 22.027v-2.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7a5.44 5.44 0 0 0-1.5-3.75a5.07 5.07 0 0 0-.09-3.77s-1.18-.35-3.91 1.48a13.4 13.4 0 0 0-7 0c-2.73-1.83-3.91-1.48-3.91-1.48A5.07 5.07 0 0 0 5 5.797a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7a3.37 3.37 0 0 0-.94 2.58v2.87"></path><path d="M9 20.027c-3 .973-5.5 0-7-3"></path></g></svg><!----><!--]--></span><!--]--> <!--[!--><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----></div></header> <div class="mb-2 flex flex-1 overflow-hidden"><nav class="m-1 flex w-64 flex-col items-start gap-2 overflow-y-auto rounded-xl border border-(--border-color) bg-(--back-color)/50 p-4"><!--[--><div class="flex w-full"><!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="a4444f80-c491-4175-98c5-e80d7281a52a" class="relative m-0 inline-block w-full items-center rounded-2xl px-2 py-1 font-semibold transition duration-200 select-none bg-blue border border-(--bg-color) cursor-pointer active:scale-97 h-10 text-left bg-(--bg-color)" aria-label="ALL in ONE"><span class="flex flex-row items-center justify-center gap-2"><!--[!--><!--]--> <!--[--><div class="flex-1">ALL in ONE <!--[!--><!--]--></div><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----> <!--[!--><!--]--></div><div class="flex w-full"><!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="c0ac19c0-b90e-4097-9df9-25bc11c9dfa9" class="relative m-0 inline-block w-full items-center rounded-2xl px-2 py-1 font-semibold transition duration-200 select-none border border-(--bg-color) cursor-pointer active:scale-97 h-10 text-left bg-gray bg-(--bg-color)" aria-label="Accordion"><span class="flex flex-row items-center justify-center gap-2"><!--[!--><!--]--> <!--[--><div class="flex-1">Accordion <!--[!--><!--]--></div><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----> <!--[!--><!--]--></div><div class="flex w-full"><!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="421af610-0462-47f2-a8de-a3c46c2e9aca" class="relative m-0 inline-block w-full items-center rounded-2xl px-2 py-1 font-semibold transition duration-200 select-none border border-(--bg-color) cursor-pointer active:scale-97 h-10 text-left bg-gray bg-(--bg-color)" aria-label="Button"><span class="flex flex-row items-center justify-center gap-2"><!--[!--><!--]--> <!--[--><div class="flex-1">Button <!--[!--><!--]--></div><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----> <!--[!--><!--]--></div><div class="flex w-full"><!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="1e128333-e7e8-41fc-ac2b-db66108f657e" class="relative m-0 inline-block w-full items-center rounded-2xl px-2 py-1 font-semibold transition duration-200 select-none border border-(--bg-color) cursor-pointer active:scale-97 h-10 text-left bg-gray bg-(--bg-color)" aria-label="ColorPicker"><span class="flex flex-row items-center justify-center gap-2"><!--[!--><!--]--> <!--[--><div class="flex-1">ColorPicker <!--[!--><!--]--></div><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----> <!--[!--><!--]--></div><div class="flex w-full"><!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="8058f91d-9db4-4309-9cc1-bb97852efc2d" class="relative m-0 inline-block w-full items-center rounded-2xl px-2 py-1 font-semibold transition duration-200 select-none border border-(--bg-color) cursor-pointer active:scale-97 h-10 text-left bg-gray bg-(--bg-color)" aria-label="FileAttach"><span class="flex flex-row items-center justify-center gap-2"><!--[!--><!--]--> <!--[--><div class="flex-1">FileAttach <!--[!--><!--]--></div><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----> <!--[!--><!--]--></div><div class="flex w-full"><!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="39ea1c6a-805b-4c8e-a41d-7967c0ee3bb6" class="relative m-0 inline-block w-full items-center rounded-2xl px-2 py-1 font-semibold transition duration-200 select-none border border-(--bg-color) cursor-pointer active:scale-97 h-10 text-left bg-gray bg-(--bg-color)" aria-label="Graph"><span class="flex flex-row items-center justify-center gap-2"><!--[!--><!--]--> <!--[--><div class="flex-1">Graph <!--[!--><!--]--></div><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----> <!--[!--><!--]--></div><div class="flex w-full"><!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="b25e7552-345d-4033-aacd-2e6b22c4c879" class="relative m-0 inline-block w-full items-center rounded-2xl px-2 py-1 font-semibold transition duration-200 select-none border border-(--bg-color) cursor-pointer active:scale-97 h-10 text-left bg-gray bg-(--bg-color)" aria-label="Input"><span class="flex flex-row items-center justify-center gap-2"><!--[!--><!--]--> <!--[--><div class="flex-1">Input <!--[!--><!--]--></div><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----> <!--[!--><!--]--></div><div class="flex w-full"><!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="4f9d1f8b-6069-48cd-ab62-4b3ecc0208f3" class="relative m-0 inline-block w-full items-center rounded-2xl px-2 py-1 font-semibold transition duration-200 select-none border border-(--bg-color) cursor-pointer active:scale-97 h-10 text-left bg-gray bg-(--bg-color)" aria-label="ProgressBar"><span class="flex flex-row items-center justify-center gap-2"><!--[!--><!--]--> <!--[--><div class="flex-1">ProgressBar <!--[!--><!--]--></div><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----> <!--[!--><!--]--></div><div class="flex w-full"><!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="a601dec8-7e92-4c2b-a7c3-abd4901f8ab9" class="relative m-0 inline-block w-full items-center rounded-2xl px-2 py-1 font-semibold transition duration-200 select-none border border-(--bg-color) cursor-pointer active:scale-97 h-10 text-left bg-gray bg-(--bg-color)" aria-label="Select"><span class="flex flex-row items-center justify-center gap-2"><!--[!--><!--]--> <!--[--><div class="flex-1">Select <!--[!--><!--]--></div><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----> <!--[--><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M12.6 12L8.7 8.1q-.275-.275-.275-.7t.275-.7t.7-.275t.7.275l4.6 4.6q.15.15.213.325t.062.375t-.062.375t-.213.325l-4.6 4.6q-.275.275-.7.275t-.7-.275t-.275-.7t.275-.7z"></path></svg><!--]--></div><div class="flex w-full"><!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="18280b2c-8291-4540-9087-f87ae035cfb9" class="relative m-0 inline-block w-full items-center rounded-2xl px-2 py-1 font-semibold transition duration-200 select-none border border-(--bg-color) cursor-pointer active:scale-97 h-10 text-left bg-gray bg-(--bg-color)" aria-label="Slider"><span class="flex flex-row items-center justify-center gap-2"><!--[!--><!--]--> <!--[--><div class="flex-1">Slider <!--[!--><!--]--></div><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----> <!--[!--><!--]--></div><div class="flex w-full"><!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="b1434e0f-4451-4b4e-bcaf-84d02dcb3295" class="relative m-0 inline-block w-full items-center rounded-2xl px-2 py-1 font-semibold transition duration-200 select-none border border-(--bg-color) cursor-pointer active:scale-97 h-10 text-left bg-gray bg-(--bg-color)" aria-label="Switch"><span class="flex flex-row items-center justify-center gap-2"><!--[!--><!--]--> <!--[--><div class="flex-1">Switch <!--[!--><!--]--></div><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----> <!--[!--><!--]--></div><div class="flex w-full"><!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="27a990e2-7a60-4a07-986f-0e6f3e24d8ff" class="relative m-0 inline-block w-full items-center rounded-2xl px-2 py-1 font-semibold transition duration-200 select-none border border-(--bg-color) cursor-pointer active:scale-97 h-10 text-left bg-gray bg-(--bg-color)" aria-label="Table"><span class="flex flex-row items-center justify-center gap-2"><!--[!--><!--]--> <!--[--><div class="flex-1">Table <!--[!--><!--]--></div><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----> <!--[!--><!--]--></div><div class="flex w-full"><!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="765e4662-00bb-449b-a5af-35f314a566ba" class="relative m-0 inline-block w-full items-center rounded-2xl px-2 py-1 font-semibold transition duration-200 select-none border border-(--bg-color) cursor-pointer active:scale-97 h-10 text-left bg-gray bg-(--bg-color)" aria-label="TextField"><span class="flex flex-row items-center justify-center gap-2"><!--[!--><!--]--> <!--[--><div class="flex-1">TextField <!--[!--><!--]--></div><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----> <!--[!--><!--]--></div><!--]--></nav> <div class="m-1 flex-1 overflow-y-auto rounded-xl border border-(--border-color) bg-(--back-color)/50 p-4"><!----><div class="flex h-[calc(100vh-9rem)] flex-col"><div class="flex-1 overflow-y-auto"><div class="relative flex w-full flex-col items-center bg-max"><!--[--><h5 class="w-full px-4 text-center">Label</h5><!--]--> <!--[--><button id="5c7e48fc-b789-4233-98fe-8117ec663d46" value="" class="w-full rounded-2xl border border-(--border-color) p-1 text-center duration-250 cursor-pointer hover:shadow-lg" style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);" aria-haspopup="true" aria-expanded="false">Сделайте выбор</button> <!--[!--><!--]--><!--]--></div><!----></div> <div class="border-t border-gray-500"></div> <div class="max-h-[70%]"><!--[!--><div class="relative mb-4 flex flex-row items-start justify-center"><div class="flex w-1/3 flex-col items-center px-2"><!----><div class="bg-max relative flex w-full flex-col items-center"><!--[--><h5 class="w-full px-4 text-center">Идентификатор</h5><!--]--> <div class="relative flex w-full items-center "><!--[--><input value="5c7e48fc-b789-4233-98fe-8117ec663d46" class="w-full rounded-2xl border px-4 py-1 text-center transition-all duration-300 outline-none focus:border-blue-400 [&amp;::-webkit-inner-spin-button]:hidden [&amp;::-webkit-outer-spin-button]:hidden border-(--border-color) hover:shadow-md" style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);" id="beb48c4d-dfa8-4a5a-9507-19e603f92580" placeholder="" autocomplete="off" type="text" maxlength="100" min="-1000000" max="1000000" step="1"/><!--]--> <!--[!--><!--]--> <!--[!--><!--]--> <!--[!--><!--]--> <!--[!--><!--]--></div></div><!----> <!----><div class="bg-max relative flex w-full flex-col items-center"><!--[--><h5 class="w-full px-4 text-center">Стили обёртки</h5><!--]--> <div class="relative flex w-full items-center "><!--[--><input value="bg-max" class="w-full rounded-2xl border px-4 py-1 text-center transition-all duration-300 outline-none focus:border-blue-400 [&amp;::-webkit-inner-spin-button]:hidden [&amp;::-webkit-outer-spin-button]:hidden border-(--border-color) hover:shadow-md" style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);" id="eb835c80-f9f6-4547-a0b1-da6390ae88e8" placeholder="" autocomplete="off" type="text" maxlength="100" min="-1000000" max="1000000" step="1"/><!--]--> <!--[!--><!--]--> <!--[!--><!--]--> <!--[!--><!--]--> <!--[!--><!--]--></div></div><!----></div> <div class="flex w-1/3 flex-col items-center px-2"><!----><div class="bg-max relative flex w-full flex-col items-center"><!--[--><h5 class="w-full px-4 text-center">Текст надписи</h5><!--]--> <div class="relative flex w-full items-center "><!--[--><input value="Label" class="w-full rounded-2xl border px-4 py-1 text-center transition-all duration-300 outline-none focus:border-blue-400 [&amp;::-webkit-inner-spin-button]:hidden [&amp;::-webkit-outer-spin-button]:hidden border-(--border-color) hover:shadow-md" style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);" id="2ac0d7d6-13fb-4a3b-a028-d8a7d08b6e3f" placeholder="" autocomplete="off" type="text" maxlength="100" min="-1000000" max="1000000" step="1"/><!--]--> <!--[!--><!--]--> <!--[!--><!--]--> <!--[!--><!--]--> <!--[!--><!--]--></div></div><!----> <!----><div class="bg-max relative flex w-full flex-col items-center"><!--[--><h5 class="w-full px-4 text-center">Стили надписи</h5><!--]--> <div class="relative flex w-full items-center "><!--[--><input value="text-center" class="w-full rounded-2xl border px-4 py-1 text-center transition-all duration-300 outline-none focus:border-blue-400 [&amp;::-webkit-inner-spin-button]:hidden [&amp;::-webkit-outer-spin-button]:hidden border-(--border-color) hover:shadow-md" style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);" id="8700a346-e677-4b8e-82a6-83f423861ea2" placeholder="" autocomplete="off" type="text" maxlength="100" min="-1000000" max="1000000" step="1"/><!--]--> <!--[!--><!--]--> <!--[!--><!--]--> <!--[!--><!--]--> <!--[!--><!--]--></div></div><!----> <!----><div class="relative flex w-full flex-col items-center justify-center bg-blue"><!--[--><h5 class="w-full px-4 text-center">Отключить</h5><!--]--> <div class="relative flex w-full grow items-center justify-center bg-transparent"><button class="mr-2 cursor-pointer" style="width: auto; text-align: end;"></button> <label class="relative flex items-center justify-between rounded-full border border-(--gray-color) "><input id="ce23002e-d225-435a-9b35-80d00a400bb5" type="checkbox" class="absolute left-1/2 h-full w-full -translate-x-1/2 cursor-pointer appearance-none rounded-md"/> <span class="relative flex items-center rounded-full transition-all duration-250 bg-(--gray-color) cursor-pointer" style="width: calc(2rem * 2); height: 2rem;"><span class="absolute rounded-full bg-(--back-color) transition-all duration-250 cursor-pointer" style="width: calc(2rem * 0.75); height: calc(2rem * 0.75); margin: 0 calc(2rem * 0.1); transform: translateX(0);"></span></span></label> <button class="ml-2 cursor-pointer" style="width: auto; text-align: start;"></button></div></div><!----></div> <div class="flex w-1/3 flex-col items-center px-2"><!----><div class="bg-max relative flex w-full flex-col items-center"><!--[--><h5 class="w-full px-4">Тип</h5><!--]--> <!--[!--><!--[--><div id="b8177f6d-8785-43ff-9465-a7c226ebb3cf" class="flex h-full w-full flex-row justify-center rounded-full border border-(--bg-color)"><!--[--><button id="91aa90a9-7e26-4e99-8825-576ddb83099d" class="m-0 inline-block min-w-0 flex-1 items-center px-2 font-semibold transition-all duration-300 select-none cursor-pointer z-10 py-1 shadow-[0_0_10px_var(--shadow-color)] hover:shadow-[0_0_15px_var(--shadow-color)] rounded-l-2xl bg-(--bg-color)"><span class="flex flex-row items-center justify-center gap-4"><!--[--><div class="flex-1">Список</div><!--]--></span></button><button id="c279258a-4390-4931-94a6-92702f23b8f3" class="m-0 inline-block min-w-0 flex-1 items-center px-2 py-1 font-semibold shadow-sm transition-all duration-300 select-none cursor-pointer hover:shadow-md bg-(--bg-color)"><span class="flex flex-row items-center justify-center gap-4"><!--[--><div class="flex-1">Группа кнопок</div><!--]--></span></button><button id="8fd59f10-be5f-438b-b1ba-06d4f9354fe8" class="m-0 inline-block min-w-0 flex-1 items-center px-2 py-1 font-semibold shadow-sm transition-all duration-300 select-none cursor-pointer hover:shadow-md rounded-r-2xl bg-(--bg-color)"><span class="flex flex-row items-center justify-center gap-4"><!--[--><div class="flex-1">Список+ввод</div><!--]--></span></button><!--]--></div><!--]--><!--]--></div><!----> <!----><div class="bg-max relative flex w-full flex-col items-center h-14"><!--[--><h5 class="w-full px-4">Тип значения</h5><!--]--> <!--[!--><!--[--><div id="22bc19f5-e305-4e58-9d84-1ac3ac42807c" class="flex h-full w-full flex-row justify-center rounded-full border border-(--bg-color)"><!--[--><button id="9f78dc6e-ebcf-4726-af7b-0939c94c9984" class="m-0 inline-block min-w-0 flex-1 items-center px-2 font-semibold transition-all duration-300 select-none cursor-pointer z-10 py-1 shadow-[0_0_10px_var(--shadow-color)] hover:shadow-[0_0_15px_var(--shadow-color)] rounded-l-2xl bg-(--bg-color)"><span class="flex flex-row items-center justify-center gap-4"><!--[--><div class="flex-1">Строка</div><!--]--></span></button><button id="3d811321-6f3c-4ea7-934e-836b03424385" class="m-0 inline-block min-w-0 flex-1 items-center px-2 py-1 font-semibold shadow-sm transition-all duration-300 select-none cursor-pointer hover:shadow-md rounded-r-2xl bg-(--bg-color)"><span class="flex flex-row items-center justify-center gap-4"><!--[--><div class="flex-1">Число</div><!--]--></span></button><!--]--></div><!--]--><!--]--></div><!----></div></div> <hr class="border-gray-400"/> <div class="space-y-4"><div class="m-0 flex items-center justify-center gap-2"><h4>Опции компонента</h4> <!----><div class="relative flex flex-col items-center w-8"><div class="relative flex w-full grow items-center"><button id="6d0972bb-b716-4293-b45a-25b1073220ae" class="relative m-0 inline-block w-full items-center rounded-2xl font-semibold transition duration-200 select-none bg-transparent p-0 cursor-pointer active:scale-97 bg-(--bg-color)"><span class="flex flex-row items-center justify-center gap-2"><!--[--><span class="flex items-center justify-center overflow-visible 
-            w-8  [&amp;_svg]:h-full [&amp;_svg]:max-h-full [&amp;_svg]:w-full [&amp;_svg]:max-w-full"><!--[!--><!----><svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 24 24"><path fill="currentColor" d="M12.75 9a.75.75 0 0 0-1.5 0v2.25H9a.75.75 0 0 0 0 1.5h2.25V15a.75.75 0 0 0 1.5 0v-2.25H15a.75.75 0 0 0 0-1.5h-2.25z"></path><path fill="currentColor" fill-rule="evenodd" d="M12.057 1.25h-.114c-2.309 0-4.118 0-5.53.19c-1.444.194-2.584.6-3.479 1.494c-.895.895-1.3 2.035-1.494 3.48c-.19 1.411-.19 3.22-.19 5.529v.114c0 2.309 0 4.118.19 5.53c.194 1.444.6 2.584 1.494 3.479c.895.895 2.035 1.3 3.48 1.494c1.411.19 3.22.19 5.529.19h.114c2.309 0 4.118 0 5.53-.19c1.444-.194 2.584-.6 3.479-1.494c.895-.895 1.3-2.035 1.494-3.48c.19-1.411.19-3.22.19-5.529v-.114c0-2.309 0-4.118-.19-5.53c-.194-1.444-.6-2.584-1.494-3.479c-.895-.895-2.035-1.3-3.48-1.494c-1.411-.19-3.22-.19-5.529-.19M3.995 3.995c.57-.57 1.34-.897 2.619-1.069c1.3-.174 3.008-.176 5.386-.176s4.086.002 5.386.176c1.279.172 2.05.5 2.62 1.069c.569.57.896 1.34 1.068 2.619c.174 1.3.176 3.008.176 5.386s-.002 4.086-.176 5.386c-.172 1.279-.5 2.05-1.069 2.62c-.57.569-1.34.896-2.619 1.068c-1.3.174-3.008.176-5.386.176s-4.086-.002-5.386-.176c-1.279-.172-2.05-.5-2.62-1.069c-.569-.57-.896-1.34-1.068-2.619c-.174-1.3-.176-3.008-.176-5.386s.002-4.086.176-5.386c.172-1.279.5-2.05 1.069-2.62" clip-rule="evenodd"></path></svg><!----><!--]--></span><!--]--> <!--[!--><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----></div> <!--[--><div class="m-0 flex items-end justify-around gap-2 border-gray-400"><!----><div class="bg-max relative flex w-full flex-col items-center !w-3/10"><!--[--><h5 class="w-full px-4 text-center">Текст</h5><!--]--> <div class="relative flex w-full items-center "><!--[--><input value="Option 1" class="w-full rounded-2xl border px-4 py-1 text-center transition-all duration-300 outline-none focus:border-blue-400 [&amp;::-webkit-inner-spin-button]:hidden [&amp;::-webkit-outer-spin-button]:hidden border-(--border-color) hover:shadow-md" style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);" id="4a8ad432-575b-4979-8ac5-b71f193b8dbf" placeholder="" autocomplete="off" type="text" maxlength="100" min="-1000000" max="1000000" step="1"/><!--]--> <!--[!--><!--]--> <!--[!--><!--]--> <!--[!--><!--]--> <!--[!--><!--]--></div></div><!----> <!----><div class="bg-max relative flex w-full flex-col items-center !w-3/10"><!--[--><h5 class="w-full px-4 text-center">Значение</h5><!--]--> <div class="relative flex w-full items-center "><!--[--><input value="1" class="w-full rounded-2xl border px-4 py-1 text-center transition-all duration-300 outline-none focus:border-blue-400 [&amp;::-webkit-inner-spin-button]:hidden [&amp;::-webkit-outer-spin-button]:hidden border-(--border-color) hover:shadow-md" style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);" id="56f7868f-b1fa-4411-820c-0f6f948e5871" placeholder="" autocomplete="off" type="text" maxlength="100" min="-1000000" max="1000000" step="1"/><!--]--> <!--[!--><!--]--> <!--[!--><!--]--> <!--[!--><!--]--> <!--[!--><!--]--></div></div><!----> <!----><div class="bg-max relative flex flex-col items-center w-80 h-14.5"><!--[--><h5 class="w-full px-4">Цвет фона</h5><!--]--> <!--[!--><!--[--><div id="60698b36-7770-4212-aa97-28485c21c9fd" class="flex h-full w-full flex-row justify-center rounded-full border border-(--bg-color)"><!--[--><button id="3455f0d3-9886-47ed-91e1-85b70ce7d2c2" class="m-0 inline-block min-w-0 flex-1 items-center px-2 font-semibold transition-all duration-300 select-none cursor-pointer z-10 py-1 shadow-[0_0_10px_var(--shadow-color)] hover:shadow-[0_0_15px_var(--shadow-color)] rounded-l-2xl bg-max bg-(--bg-color)"><span class="flex flex-row items-center justify-center gap-4"><!--[!--><!--]--></span></button><button id="2685dab2-6bdc-4430-9f6d-f9dd87c8987a" class="m-0 inline-block min-w-0 flex-1 items-center px-2 py-1 font-semibold shadow-sm transition-all duration-300 select-none cursor-pointer hover:shadow-md bg-red bg-(--bg-color)"><span class="flex flex-row items-center justify-center gap-4"><!--[!--><!--]--></span></button><button id="f5f74b25-ae9e-4bb4-b152-0f46b06f2f6e" class="m-0 inline-block min-w-0 flex-1 items-center px-2 py-1 font-semibold shadow-sm transition-all duration-300 select-none cursor-pointer hover:shadow-md bg-yellow bg-(--bg-color)"><span class="flex flex-row items-center justify-center gap-4"><!--[!--><!--]--></span></button><button id="1b4f525b-e4d7-47d0-8e1f-3de38d705e87" class="m-0 inline-block min-w-0 flex-1 items-center px-2 py-1 font-semibold shadow-sm transition-all duration-300 select-none cursor-pointer hover:shadow-md bg-green bg-(--bg-color)"><span class="flex flex-row items-center justify-center gap-4"><!--[!--><!--]--></span></button><button id="f586cf98-7436-4df5-84bf-b835fc34ff04" class="m-0 inline-block min-w-0 flex-1 items-center px-2 py-1 font-semibold shadow-sm transition-all duration-300 select-none cursor-pointer hover:shadow-md bg-blue bg-(--bg-color)"><span class="flex flex-row items-center justify-center gap-4"><!--[!--><!--]--></span></button><button id="1ef67dab-5ca2-4f56-b68e-04f2127e5db6" class="m-0 inline-block min-w-0 flex-1 items-center px-2 py-1 font-semibold shadow-sm transition-all duration-300 select-none cursor-pointer hover:shadow-md bg-purple bg-(--bg-color)"><span class="flex flex-row items-center justify-center gap-4"><!--[!--><!--]--></span></button><button id="14bb2787-c69e-4957-9c84-7d3ad19215dc" class="m-0 inline-block min-w-0 flex-1 items-center px-2 py-1 font-semibold shadow-sm transition-all duration-300 select-none cursor-pointer hover:shadow-md rounded-r-2xl bg-gray bg-(--bg-color)"><span class="flex flex-row items-center justify-center gap-4"><!--[!--><!--]--></span></button><!--]--></div><!--]--><!--]--></div><!----> <!----><div class="relative flex flex-col items-center w-8"><div class="relative flex w-full grow items-center"><button id="39a06277-0a5f-46c1-a366-9a39601b5701" class="relative m-0 inline-block w-full items-center rounded-2xl font-semibold transition duration-200 select-none bg-transparent p-0 cursor-pointer active:scale-97 bg-(--bg-color)"><span class="flex flex-row items-center justify-center gap-2"><!--[--><span class="flex items-center justify-center overflow-visible 
-            w-8  [&amp;_svg]:h-full [&amp;_svg]:max-h-full [&amp;_svg]:w-full [&amp;_svg]:max-w-full"><!--[!--><!----><svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m19.5 5.5l-.62 10.025c-.158 2.561-.237 3.842-.88 4.763a4 4 0 0 1-1.2 1.128c-.957.584-2.24.584-4.806.584c-2.57 0-3.855 0-4.814-.585a4 4 0 0 1-1.2-1.13c-.642-.922-.72-2.205-.874-4.77L4.5 5.5M3 5.5h18m-4.944 0l-.683-1.408c-.453-.936-.68-1.403-1.071-1.695a2 2 0 0 0-.275-.172C13.594 2 13.074 2 12.035 2c-1.066 0-1.599 0-2.04.234a2 2 0 0 0-.278.18c-.395.303-.616.788-1.058 1.757L8.053 5.5m1.447 11v-6m5 6v-6" color="currentColor"></path></svg><!----><!--]--></span><!--]--> <!--[!--><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----></div><!--]--></div><!--]--><!----> <div class="relative mt-3"><!----><div class="flex flex-col items-center absolute top-3 right-5 w-6"><div class="relative flex w-full grow items-center"><button id="5154aeab-e23a-4fac-bdc8-838d53d3cfed" class="relative m-0 inline-block w-full items-center rounded-2xl font-semibold transition duration-200 select-none bg-transparent p-0 cursor-pointer active:scale-97 bg-(--bg-color)"><span class="flex flex-row items-center justify-center gap-2"><!--[--><span class="flex items-center justify-center overflow-visible 
-            w-6  [&amp;_svg]:h-full [&amp;_svg]:max-h-full [&amp;_svg]:w-full [&amp;_svg]:max-w-full"><!--[!--><!----><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 11c0-2.828 0-4.243.879-5.121C7.757 5 9.172 5 12 5h3c2.828 0 4.243 0 5.121.879C21 6.757 21 8.172 21 11v5c0 2.828 0 4.243-.879 5.121C19.243 22 17.828 22 15 22h-3c-2.828 0-4.243 0-5.121-.879C6 20.243 6 18.828 6 16z"></path><path d="M6 19a3 3 0 0 1-3-3v-6c0-3.771 0-5.657 1.172-6.828S7.229 2 11 2h4a3 3 0 0 1 3 3"></path></g></svg><!----><!--]--></span><!--]--> <!--[!--><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----> <pre class="overflow-x-auto">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="/ElementsUI/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+    <link href="/ElementsUI/_app/immutable/assets/Table.B2l_Likj.css" rel="stylesheet" />
+    <link href="/ElementsUI/_app/immutable/assets/0.DpGxqb08.css" rel="stylesheet" />
+    <link rel="modulepreload" href="/ElementsUI/_app/immutable/entry/start.B0I87LBF.js" />
+    <link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/Cl66iwDI.js" />
+    <link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/CYmiEaEH.js" />
+    <link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/DXQ0fkFu.js" />
+    <link rel="modulepreload" href="/ElementsUI/_app/immutable/entry/app.CN_sVLv0.js" />
+    <link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/cfR1Foc9.js" />
+    <link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/Di61MV9l.js" />
+    <link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/_y1boTp2.js" />
+    <link rel="modulepreload" href="/ElementsUI/_app/immutable/nodes/0.Bxba1_LJ.js" />
+    <link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/CnAfG7ip.js" />
+    <link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/CM3_98JW.js" />
+    <link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/ClwY0cp0.js" />
+    <link rel="modulepreload" href="/ElementsUI/_app/immutable/nodes/11.DJS5kJPv.js" />
+    <link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/BSX-LnOW.js" />
+    <link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/COiuPzCY.js" />
+  </head>
+  <body data-sveltekit-preload-data="hover">
+    <div>
+      <!--[--><!--[--><!---->
+      <div class="mx-auto flex h-screen max-w-[1400px] flex-col">
+        <header class="sticky top-0 z-50 m-1 mt-2 flex items-center justify-between rounded-xl border border-(--border-color) bg-(--back-color)/50 p-4">
+          <div class="flex items-center gap-2">
+            <a href="/ElementsUI/" class="ml-2 no-underline! transition hover:scale-101"><h1>POE-Svelte-UI-Lib</h1></a>
+          </div>
+          <div class="flex items-center gap-6">
+            <!---->
+            <div class="relative flex w-full flex-col items-center">
+              <div class="relative flex w-full grow items-center">
+                <button
+                  id="8ed1d9a4-b82f-43b3-a056-8d6c04606d16"
+                  class="relative m-0 inline-block w-8 cursor-pointer items-center rounded-2xl bg-(--bg-color) bg-transparent p-0 font-semibold transition duration-200 select-none active:scale-97"
+                >
+                  <span class="flex flex-row items-center justify-center gap-2"
+                    ><!--[--><span
+                      class="[&amp;_svg]:h-full [&amp;_svg]:max-h-full [&amp;_svg]:w-full [&amp;_svg]:max-w-full flex w-8 items-center justify-center overflow-visible"
+                      ><!--[!--><!----><svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" viewBox="0 0 24 24">
+                        <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
+                          <path d="M9.173 14.83a4 4 0 1 1 5.657-5.657"></path>
+                          <path d="m11.294 12.707l.174.247a7.5 7.5 0 0 0 8.845 2.492A9 9 0 0 1 5.642 18.36M3 12h1m8-9v1M5.6 5.6l.7.7M3 21L21 3"></path>
+                        </g></svg
+                      ><!----><!--]--></span
+                    ><!--]-->
+                    <!--[!--><!--]--></span
+                  >
+                </button>
+                <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+              </div>
+            </div>
+            <!---->
+            <!---->
+            <div class="relative flex w-full flex-col items-center">
+              <div class="relative flex w-full grow items-center">
+                <button
+                  id="46d1eb39-0f0e-4fc0-b237-b020f7e4763b"
+                  class="relative m-0 inline-block w-8 cursor-pointer items-center rounded-2xl bg-(--bg-color) bg-transparent p-0 font-semibold transition duration-200 select-none active:scale-97"
+                >
+                  <span class="flex flex-row items-center justify-center gap-2"
+                    ><!--[--><span
+                      class="[&amp;_svg]:h-full [&amp;_svg]:max-h-full [&amp;_svg]:w-full [&amp;_svg]:max-w-full flex w-8 items-center justify-center overflow-visible"
+                      ><!--[!--><!----><svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 24 24">
+                        <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
+                          <path
+                            d="M16 22.027v-2.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7a5.44 5.44 0 0 0-1.5-3.75a5.07 5.07 0 0 0-.09-3.77s-1.18-.35-3.91 1.48a13.4 13.4 0 0 0-7 0c-2.73-1.83-3.91-1.48-3.91-1.48A5.07 5.07 0 0 0 5 5.797a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7a3.37 3.37 0 0 0-.94 2.58v2.87"
+                          ></path>
+                          <path d="M9 20.027c-3 .973-5.5 0-7-3"></path>
+                        </g></svg
+                      ><!----><!--]--></span
+                    ><!--]-->
+                    <!--[!--><!--]--></span
+                  >
+                </button>
+                <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+              </div>
+            </div>
+            <!---->
+          </div>
+        </header>
+        <div class="mb-2 flex flex-1 overflow-hidden">
+          <nav class="m-1 flex w-64 flex-col items-start gap-2 overflow-y-auto rounded-xl border border-(--border-color) bg-(--back-color)/50 p-4">
+            <!--[-->
+            <div class="flex w-full">
+              <!---->
+              <div class="relative flex w-full flex-col items-center">
+                <div class="relative flex w-full grow items-center">
+                  <button
+                    id="a4444f80-c491-4175-98c5-e80d7281a52a"
+                    class="bg-blue relative m-0 inline-block h-10 w-full cursor-pointer items-center rounded-2xl border border-(--bg-color) bg-(--bg-color) px-2 py-1 text-left font-semibold transition duration-200 select-none active:scale-97"
+                    aria-label="ALL in ONE"
+                  >
+                    <span class="flex flex-row items-center justify-center gap-2"
+                      ><!--[!--><!--]-->
+                      <!--[-->
+                      <div class="flex-1">
+                        ALL in ONE
+                        <!--[!--><!--]-->
+                      </div>
+                      <!--]--></span
+                    >
+                  </button>
+                  <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+                </div>
+              </div>
+              <!---->
+              <!--[!--><!--]-->
+            </div>
+            <div class="flex w-full">
+              <!---->
+              <div class="relative flex w-full flex-col items-center">
+                <div class="relative flex w-full grow items-center">
+                  <button
+                    id="c0ac19c0-b90e-4097-9df9-25bc11c9dfa9"
+                    class="bg-gray relative m-0 inline-block h-10 w-full cursor-pointer items-center rounded-2xl border border-(--bg-color) bg-(--bg-color) px-2 py-1 text-left font-semibold transition duration-200 select-none active:scale-97"
+                    aria-label="Accordion"
+                  >
+                    <span class="flex flex-row items-center justify-center gap-2"
+                      ><!--[!--><!--]-->
+                      <!--[-->
+                      <div class="flex-1">
+                        Accordion
+                        <!--[!--><!--]-->
+                      </div>
+                      <!--]--></span
+                    >
+                  </button>
+                  <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+                </div>
+              </div>
+              <!---->
+              <!--[!--><!--]-->
+            </div>
+            <div class="flex w-full">
+              <!---->
+              <div class="relative flex w-full flex-col items-center">
+                <div class="relative flex w-full grow items-center">
+                  <button
+                    id="421af610-0462-47f2-a8de-a3c46c2e9aca"
+                    class="bg-gray relative m-0 inline-block h-10 w-full cursor-pointer items-center rounded-2xl border border-(--bg-color) bg-(--bg-color) px-2 py-1 text-left font-semibold transition duration-200 select-none active:scale-97"
+                    aria-label="Button"
+                  >
+                    <span class="flex flex-row items-center justify-center gap-2"
+                      ><!--[!--><!--]-->
+                      <!--[-->
+                      <div class="flex-1">
+                        Button
+                        <!--[!--><!--]-->
+                      </div>
+                      <!--]--></span
+                    >
+                  </button>
+                  <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+                </div>
+              </div>
+              <!---->
+              <!--[!--><!--]-->
+            </div>
+            <div class="flex w-full">
+              <!---->
+              <div class="relative flex w-full flex-col items-center">
+                <div class="relative flex w-full grow items-center">
+                  <button
+                    id="1e128333-e7e8-41fc-ac2b-db66108f657e"
+                    class="bg-gray relative m-0 inline-block h-10 w-full cursor-pointer items-center rounded-2xl border border-(--bg-color) bg-(--bg-color) px-2 py-1 text-left font-semibold transition duration-200 select-none active:scale-97"
+                    aria-label="ColorPicker"
+                  >
+                    <span class="flex flex-row items-center justify-center gap-2"
+                      ><!--[!--><!--]-->
+                      <!--[-->
+                      <div class="flex-1">
+                        ColorPicker
+                        <!--[!--><!--]-->
+                      </div>
+                      <!--]--></span
+                    >
+                  </button>
+                  <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+                </div>
+              </div>
+              <!---->
+              <!--[!--><!--]-->
+            </div>
+            <div class="flex w-full">
+              <!---->
+              <div class="relative flex w-full flex-col items-center">
+                <div class="relative flex w-full grow items-center">
+                  <button
+                    id="8058f91d-9db4-4309-9cc1-bb97852efc2d"
+                    class="bg-gray relative m-0 inline-block h-10 w-full cursor-pointer items-center rounded-2xl border border-(--bg-color) bg-(--bg-color) px-2 py-1 text-left font-semibold transition duration-200 select-none active:scale-97"
+                    aria-label="FileAttach"
+                  >
+                    <span class="flex flex-row items-center justify-center gap-2"
+                      ><!--[!--><!--]-->
+                      <!--[-->
+                      <div class="flex-1">
+                        FileAttach
+                        <!--[!--><!--]-->
+                      </div>
+                      <!--]--></span
+                    >
+                  </button>
+                  <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+                </div>
+              </div>
+              <!---->
+              <!--[!--><!--]-->
+            </div>
+            <div class="flex w-full">
+              <!---->
+              <div class="relative flex w-full flex-col items-center">
+                <div class="relative flex w-full grow items-center">
+                  <button
+                    id="39ea1c6a-805b-4c8e-a41d-7967c0ee3bb6"
+                    class="bg-gray relative m-0 inline-block h-10 w-full cursor-pointer items-center rounded-2xl border border-(--bg-color) bg-(--bg-color) px-2 py-1 text-left font-semibold transition duration-200 select-none active:scale-97"
+                    aria-label="Graph"
+                  >
+                    <span class="flex flex-row items-center justify-center gap-2"
+                      ><!--[!--><!--]-->
+                      <!--[-->
+                      <div class="flex-1">
+                        Graph
+                        <!--[!--><!--]-->
+                      </div>
+                      <!--]--></span
+                    >
+                  </button>
+                  <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+                </div>
+              </div>
+              <!---->
+              <!--[!--><!--]-->
+            </div>
+            <div class="flex w-full">
+              <!---->
+              <div class="relative flex w-full flex-col items-center">
+                <div class="relative flex w-full grow items-center">
+                  <button
+                    id="b25e7552-345d-4033-aacd-2e6b22c4c879"
+                    class="bg-gray relative m-0 inline-block h-10 w-full cursor-pointer items-center rounded-2xl border border-(--bg-color) bg-(--bg-color) px-2 py-1 text-left font-semibold transition duration-200 select-none active:scale-97"
+                    aria-label="Input"
+                  >
+                    <span class="flex flex-row items-center justify-center gap-2"
+                      ><!--[!--><!--]-->
+                      <!--[-->
+                      <div class="flex-1">
+                        Input
+                        <!--[!--><!--]-->
+                      </div>
+                      <!--]--></span
+                    >
+                  </button>
+                  <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+                </div>
+              </div>
+              <!---->
+              <!--[!--><!--]-->
+            </div>
+            <div class="flex w-full">
+              <!---->
+              <div class="relative flex w-full flex-col items-center">
+                <div class="relative flex w-full grow items-center">
+                  <button
+                    id="4f9d1f8b-6069-48cd-ab62-4b3ecc0208f3"
+                    class="bg-gray relative m-0 inline-block h-10 w-full cursor-pointer items-center rounded-2xl border border-(--bg-color) bg-(--bg-color) px-2 py-1 text-left font-semibold transition duration-200 select-none active:scale-97"
+                    aria-label="ProgressBar"
+                  >
+                    <span class="flex flex-row items-center justify-center gap-2"
+                      ><!--[!--><!--]-->
+                      <!--[-->
+                      <div class="flex-1">
+                        ProgressBar
+                        <!--[!--><!--]-->
+                      </div>
+                      <!--]--></span
+                    >
+                  </button>
+                  <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+                </div>
+              </div>
+              <!---->
+              <!--[!--><!--]-->
+            </div>
+            <div class="flex w-full">
+              <!---->
+              <div class="relative flex w-full flex-col items-center">
+                <div class="relative flex w-full grow items-center">
+                  <button
+                    id="a601dec8-7e92-4c2b-a7c3-abd4901f8ab9"
+                    class="bg-gray relative m-0 inline-block h-10 w-full cursor-pointer items-center rounded-2xl border border-(--bg-color) bg-(--bg-color) px-2 py-1 text-left font-semibold transition duration-200 select-none active:scale-97"
+                    aria-label="Select"
+                  >
+                    <span class="flex flex-row items-center justify-center gap-2"
+                      ><!--[!--><!--]-->
+                      <!--[-->
+                      <div class="flex-1">
+                        Select
+                        <!--[!--><!--]-->
+                      </div>
+                      <!--]--></span
+                    >
+                  </button>
+                  <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+                </div>
+              </div>
+              <!---->
+              <!--[--><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
+                <path
+                  fill="currentColor"
+                  d="M12.6 12L8.7 8.1q-.275-.275-.275-.7t.275-.7t.7-.275t.7.275l4.6 4.6q.15.15.213.325t.062.375t-.062.375t-.213.325l-4.6 4.6q-.275.275-.7.275t-.7-.275t-.275-.7t.275-.7z"
+                ></path></svg
+              ><!--]-->
+            </div>
+            <div class="flex w-full">
+              <!---->
+              <div class="relative flex w-full flex-col items-center">
+                <div class="relative flex w-full grow items-center">
+                  <button
+                    id="18280b2c-8291-4540-9087-f87ae035cfb9"
+                    class="bg-gray relative m-0 inline-block h-10 w-full cursor-pointer items-center rounded-2xl border border-(--bg-color) bg-(--bg-color) px-2 py-1 text-left font-semibold transition duration-200 select-none active:scale-97"
+                    aria-label="Slider"
+                  >
+                    <span class="flex flex-row items-center justify-center gap-2"
+                      ><!--[!--><!--]-->
+                      <!--[-->
+                      <div class="flex-1">
+                        Slider
+                        <!--[!--><!--]-->
+                      </div>
+                      <!--]--></span
+                    >
+                  </button>
+                  <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+                </div>
+              </div>
+              <!---->
+              <!--[!--><!--]-->
+            </div>
+            <div class="flex w-full">
+              <!---->
+              <div class="relative flex w-full flex-col items-center">
+                <div class="relative flex w-full grow items-center">
+                  <button
+                    id="b1434e0f-4451-4b4e-bcaf-84d02dcb3295"
+                    class="bg-gray relative m-0 inline-block h-10 w-full cursor-pointer items-center rounded-2xl border border-(--bg-color) bg-(--bg-color) px-2 py-1 text-left font-semibold transition duration-200 select-none active:scale-97"
+                    aria-label="Switch"
+                  >
+                    <span class="flex flex-row items-center justify-center gap-2"
+                      ><!--[!--><!--]-->
+                      <!--[-->
+                      <div class="flex-1">
+                        Switch
+                        <!--[!--><!--]-->
+                      </div>
+                      <!--]--></span
+                    >
+                  </button>
+                  <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+                </div>
+              </div>
+              <!---->
+              <!--[!--><!--]-->
+            </div>
+            <div class="flex w-full">
+              <!---->
+              <div class="relative flex w-full flex-col items-center">
+                <div class="relative flex w-full grow items-center">
+                  <button
+                    id="27a990e2-7a60-4a07-986f-0e6f3e24d8ff"
+                    class="bg-gray relative m-0 inline-block h-10 w-full cursor-pointer items-center rounded-2xl border border-(--bg-color) bg-(--bg-color) px-2 py-1 text-left font-semibold transition duration-200 select-none active:scale-97"
+                    aria-label="Table"
+                  >
+                    <span class="flex flex-row items-center justify-center gap-2"
+                      ><!--[!--><!--]-->
+                      <!--[-->
+                      <div class="flex-1">
+                        Table
+                        <!--[!--><!--]-->
+                      </div>
+                      <!--]--></span
+                    >
+                  </button>
+                  <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+                </div>
+              </div>
+              <!---->
+              <!--[!--><!--]-->
+            </div>
+            <div class="flex w-full">
+              <!---->
+              <div class="relative flex w-full flex-col items-center">
+                <div class="relative flex w-full grow items-center">
+                  <button
+                    id="765e4662-00bb-449b-a5af-35f314a566ba"
+                    class="bg-gray relative m-0 inline-block h-10 w-full cursor-pointer items-center rounded-2xl border border-(--bg-color) bg-(--bg-color) px-2 py-1 text-left font-semibold transition duration-200 select-none active:scale-97"
+                    aria-label="TextField"
+                  >
+                    <span class="flex flex-row items-center justify-center gap-2"
+                      ><!--[!--><!--]-->
+                      <!--[-->
+                      <div class="flex-1">
+                        TextField
+                        <!--[!--><!--]-->
+                      </div>
+                      <!--]--></span
+                    >
+                  </button>
+                  <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+                </div>
+              </div>
+              <!---->
+              <!--[!--><!--]-->
+            </div>
+            <!--]-->
+          </nav>
+          <div class="m-1 flex-1 overflow-y-auto rounded-xl border border-(--border-color) bg-(--back-color)/50 p-4">
+            <!---->
+            <div class="flex h-[calc(100vh-9rem)] flex-col">
+              <div class="flex-1 overflow-y-auto">
+                <div class="bg-max relative flex w-full flex-col items-center">
+                  <!--[-->
+                  <h5 class="w-full px-4 text-center">Label</h5>
+                  <!--]-->
+                  <!--[--><button
+                    id="5c7e48fc-b789-4233-98fe-8117ec663d46"
+                    value=""
+                    class="w-full cursor-pointer rounded-2xl border border-(--border-color) p-1 text-center duration-250 hover:shadow-lg"
+                    style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%)"
+                    aria-haspopup="true"
+                    aria-expanded="false"
+                  >
+                    Сделайте выбор
+                  </button>
+                  <!--[!--><!--]--><!--]-->
+                </div>
+                <!---->
+              </div>
+              <div class="border-t border-gray-500"></div>
+              <div class="max-h-[70%]">
+                <!--[!-->
+                <div class="relative mb-4 flex flex-row items-start justify-center">
+                  <div class="flex w-1/3 flex-col items-center px-2">
+                    <!---->
+                    <div class="bg-max relative flex w-full flex-col items-center">
+                      <!--[-->
+                      <h5 class="w-full px-4 text-center">Идентификатор</h5>
+                      <!--]-->
+                      <div class="relative flex w-full items-center">
+                        <!--[--><input
+                          value="5c7e48fc-b789-4233-98fe-8117ec663d46"
+                          class="[&amp;::-webkit-inner-spin-button]:hidden [&amp;::-webkit-outer-spin-button]:hidden w-full rounded-2xl border border-(--border-color) px-4 py-1 text-center transition-all duration-300 outline-none hover:shadow-md focus:border-blue-400"
+                          style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%)"
+                          id="beb48c4d-dfa8-4a5a-9507-19e603f92580"
+                          placeholder=""
+                          autocomplete="off"
+                          type="text"
+                          maxlength="100"
+                          min="-1000000"
+                          max="1000000"
+                          step="1"
+                        /><!--]-->
+                        <!--[!--><!--]-->
+                        <!--[!--><!--]-->
+                        <!--[!--><!--]-->
+                        <!--[!--><!--]-->
+                      </div>
+                    </div>
+                    <!---->
+                    <!---->
+                    <div class="bg-max relative flex w-full flex-col items-center">
+                      <!--[-->
+                      <h5 class="w-full px-4 text-center">Стили обёртки</h5>
+                      <!--]-->
+                      <div class="relative flex w-full items-center">
+                        <!--[--><input
+                          value="bg-max"
+                          class="[&amp;::-webkit-inner-spin-button]:hidden [&amp;::-webkit-outer-spin-button]:hidden w-full rounded-2xl border border-(--border-color) px-4 py-1 text-center transition-all duration-300 outline-none hover:shadow-md focus:border-blue-400"
+                          style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%)"
+                          id="eb835c80-f9f6-4547-a0b1-da6390ae88e8"
+                          placeholder=""
+                          autocomplete="off"
+                          type="text"
+                          maxlength="100"
+                          min="-1000000"
+                          max="1000000"
+                          step="1"
+                        /><!--]-->
+                        <!--[!--><!--]-->
+                        <!--[!--><!--]-->
+                        <!--[!--><!--]-->
+                        <!--[!--><!--]-->
+                      </div>
+                    </div>
+                    <!---->
+                  </div>
+                  <div class="flex w-1/3 flex-col items-center px-2">
+                    <!---->
+                    <div class="bg-max relative flex w-full flex-col items-center">
+                      <!--[-->
+                      <h5 class="w-full px-4 text-center">Текст надписи</h5>
+                      <!--]-->
+                      <div class="relative flex w-full items-center">
+                        <!--[--><input
+                          value="Label"
+                          class="[&amp;::-webkit-inner-spin-button]:hidden [&amp;::-webkit-outer-spin-button]:hidden w-full rounded-2xl border border-(--border-color) px-4 py-1 text-center transition-all duration-300 outline-none hover:shadow-md focus:border-blue-400"
+                          style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%)"
+                          id="2ac0d7d6-13fb-4a3b-a028-d8a7d08b6e3f"
+                          placeholder=""
+                          autocomplete="off"
+                          type="text"
+                          maxlength="100"
+                          min="-1000000"
+                          max="1000000"
+                          step="1"
+                        /><!--]-->
+                        <!--[!--><!--]-->
+                        <!--[!--><!--]-->
+                        <!--[!--><!--]-->
+                        <!--[!--><!--]-->
+                      </div>
+                    </div>
+                    <!---->
+                    <!---->
+                    <div class="bg-max relative flex w-full flex-col items-center">
+                      <!--[-->
+                      <h5 class="w-full px-4 text-center">Стили надписи</h5>
+                      <!--]-->
+                      <div class="relative flex w-full items-center">
+                        <!--[--><input
+                          value="text-center"
+                          class="[&amp;::-webkit-inner-spin-button]:hidden [&amp;::-webkit-outer-spin-button]:hidden w-full rounded-2xl border border-(--border-color) px-4 py-1 text-center transition-all duration-300 outline-none hover:shadow-md focus:border-blue-400"
+                          style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%)"
+                          id="8700a346-e677-4b8e-82a6-83f423861ea2"
+                          placeholder=""
+                          autocomplete="off"
+                          type="text"
+                          maxlength="100"
+                          min="-1000000"
+                          max="1000000"
+                          step="1"
+                        /><!--]-->
+                        <!--[!--><!--]-->
+                        <!--[!--><!--]-->
+                        <!--[!--><!--]-->
+                        <!--[!--><!--]-->
+                      </div>
+                    </div>
+                    <!---->
+                    <!---->
+                    <div class="bg-blue relative flex w-full flex-col items-center justify-center">
+                      <!--[-->
+                      <h5 class="w-full px-4 text-center">Отключить</h5>
+                      <!--]-->
+                      <div class="relative flex w-full grow items-center justify-center bg-transparent">
+                        <button class="mr-2 cursor-pointer" style="width: auto; text-align: end"></button>
+                        <label class="relative flex items-center justify-between rounded-full border border-(--gray-color)"
+                          ><input
+                            id="ce23002e-d225-435a-9b35-80d00a400bb5"
+                            type="checkbox"
+                            class="absolute left-1/2 h-full w-full -translate-x-1/2 cursor-pointer appearance-none rounded-md" />
+                          <span
+                            class="relative flex cursor-pointer items-center rounded-full bg-(--gray-color) transition-all duration-250"
+                            style="width: calc(2rem * 2); height: 2rem"
+                            ><span
+                              class="absolute cursor-pointer rounded-full bg-(--back-color) transition-all duration-250"
+                              style="width: calc(2rem * 0.75); height: calc(2rem * 0.75); margin: 0 calc(2rem * 0.1); transform: translateX(0)"
+                            ></span></span
+                        ></label>
+                        <button class="ml-2 cursor-pointer" style="width: auto; text-align: start"></button>
+                      </div>
+                    </div>
+                    <!---->
+                  </div>
+                  <div class="flex w-1/3 flex-col items-center px-2">
+                    <!---->
+                    <div class="bg-max relative flex w-full flex-col items-center">
+                      <!--[-->
+                      <h5 class="w-full px-4">Тип</h5>
+                      <!--]-->
+                      <!--[!--><!--[-->
+                      <div id="b8177f6d-8785-43ff-9465-a7c226ebb3cf" class="flex h-full w-full flex-row justify-center rounded-full border border-(--bg-color)">
+                        <!--[--><button
+                          id="91aa90a9-7e26-4e99-8825-576ddb83099d"
+                          class="z-10 m-0 inline-block min-w-0 flex-1 cursor-pointer items-center rounded-l-2xl bg-(--bg-color) px-2 py-1 font-semibold shadow-[0_0_10px_var(--shadow-color)] transition-all duration-300 select-none hover:shadow-[0_0_15px_var(--shadow-color)]"
+                        >
+                          <span class="flex flex-row items-center justify-center gap-4"
+                            ><!--[-->
+                            <div class="flex-1">Список</div>
+                            <!--]--></span
+                          ></button
+                        ><button
+                          id="c279258a-4390-4931-94a6-92702f23b8f3"
+                          class="m-0 inline-block min-w-0 flex-1 cursor-pointer items-center bg-(--bg-color) px-2 py-1 font-semibold shadow-sm transition-all duration-300 select-none hover:shadow-md"
+                        >
+                          <span class="flex flex-row items-center justify-center gap-4"
+                            ><!--[-->
+                            <div class="flex-1">Группа кнопок</div>
+                            <!--]--></span
+                          ></button
+                        ><button
+                          id="8fd59f10-be5f-438b-b1ba-06d4f9354fe8"
+                          class="m-0 inline-block min-w-0 flex-1 cursor-pointer items-center rounded-r-2xl bg-(--bg-color) px-2 py-1 font-semibold shadow-sm transition-all duration-300 select-none hover:shadow-md"
+                        >
+                          <span class="flex flex-row items-center justify-center gap-4"
+                            ><!--[-->
+                            <div class="flex-1">Список+ввод</div>
+                            <!--]--></span
+                          ></button
+                        ><!--]-->
+                      </div>
+                      <!--]--><!--]-->
+                    </div>
+                    <!---->
+                    <!---->
+                    <div class="bg-max relative flex h-14 w-full flex-col items-center">
+                      <!--[-->
+                      <h5 class="w-full px-4">Тип значения</h5>
+                      <!--]-->
+                      <!--[!--><!--[-->
+                      <div id="22bc19f5-e305-4e58-9d84-1ac3ac42807c" class="flex h-full w-full flex-row justify-center rounded-full border border-(--bg-color)">
+                        <!--[--><button
+                          id="9f78dc6e-ebcf-4726-af7b-0939c94c9984"
+                          class="z-10 m-0 inline-block min-w-0 flex-1 cursor-pointer items-center rounded-l-2xl bg-(--bg-color) px-2 py-1 font-semibold shadow-[0_0_10px_var(--shadow-color)] transition-all duration-300 select-none hover:shadow-[0_0_15px_var(--shadow-color)]"
+                        >
+                          <span class="flex flex-row items-center justify-center gap-4"
+                            ><!--[-->
+                            <div class="flex-1">Строка</div>
+                            <!--]--></span
+                          ></button
+                        ><button
+                          id="3d811321-6f3c-4ea7-934e-836b03424385"
+                          class="m-0 inline-block min-w-0 flex-1 cursor-pointer items-center rounded-r-2xl bg-(--bg-color) px-2 py-1 font-semibold shadow-sm transition-all duration-300 select-none hover:shadow-md"
+                        >
+                          <span class="flex flex-row items-center justify-center gap-4"
+                            ><!--[-->
+                            <div class="flex-1">Число</div>
+                            <!--]--></span
+                          ></button
+                        ><!--]-->
+                      </div>
+                      <!--]--><!--]-->
+                    </div>
+                    <!---->
+                  </div>
+                </div>
+                <hr class="border-gray-400" />
+                <div class="space-y-4">
+                  <div class="m-0 flex items-center justify-center gap-2">
+                    <h4>Опции компонента</h4>
+                    <!---->
+                    <div class="relative flex w-8 flex-col items-center">
+                      <div class="relative flex w-full grow items-center">
+                        <button
+                          id="6d0972bb-b716-4293-b45a-25b1073220ae"
+                          class="relative m-0 inline-block w-full cursor-pointer items-center rounded-2xl bg-(--bg-color) bg-transparent p-0 font-semibold transition duration-200 select-none active:scale-97"
+                        >
+                          <span class="flex flex-row items-center justify-center gap-2"
+                            ><!--[--><span
+                              class="[&amp;_svg]:h-full [&amp;_svg]:max-h-full [&amp;_svg]:w-full [&amp;_svg]:max-w-full flex w-8 items-center justify-center overflow-visible"
+                              ><!--[!--><!----><svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 24 24">
+                                <path
+                                  fill="currentColor"
+                                  d="M12.75 9a.75.75 0 0 0-1.5 0v2.25H9a.75.75 0 0 0 0 1.5h2.25V15a.75.75 0 0 0 1.5 0v-2.25H15a.75.75 0 0 0 0-1.5h-2.25z"
+                                ></path>
+                                <path
+                                  fill="currentColor"
+                                  fill-rule="evenodd"
+                                  d="M12.057 1.25h-.114c-2.309 0-4.118 0-5.53.19c-1.444.194-2.584.6-3.479 1.494c-.895.895-1.3 2.035-1.494 3.48c-.19 1.411-.19 3.22-.19 5.529v.114c0 2.309 0 4.118.19 5.53c.194 1.444.6 2.584 1.494 3.479c.895.895 2.035 1.3 3.48 1.494c1.411.19 3.22.19 5.529.19h.114c2.309 0 4.118 0 5.53-.19c1.444-.194 2.584-.6 3.479-1.494c.895-.895 1.3-2.035 1.494-3.48c.19-1.411.19-3.22.19-5.529v-.114c0-2.309 0-4.118-.19-5.53c-.194-1.444-.6-2.584-1.494-3.479c-.895-.895-2.035-1.3-3.48-1.494c-1.411-.19-3.22-.19-5.529-.19M3.995 3.995c.57-.57 1.34-.897 2.619-1.069c1.3-.174 3.008-.176 5.386-.176s4.086.002 5.386.176c1.279.172 2.05.5 2.62 1.069c.569.57.896 1.34 1.068 2.619c.174 1.3.176 3.008.176 5.386s-.002 4.086-.176 5.386c-.172 1.279-.5 2.05-1.069 2.62c-.57.569-1.34.896-2.619 1.068c-1.3.174-3.008.176-5.386.176s-4.086-.002-5.386-.176c-1.279-.172-2.05-.5-2.62-1.069c-.569-.57-.896-1.34-1.068-2.619c-.174-1.3-.176-3.008-.176-5.386s.002-4.086.176-5.386c.172-1.279.5-2.05 1.069-2.62"
+                                  clip-rule="evenodd"
+                                ></path></svg
+                              ><!----><!--]--></span
+                            ><!--]-->
+                            <!--[!--><!--]--></span
+                          >
+                        </button>
+                        <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+                      </div>
+                    </div>
+                    <!---->
+                  </div>
+                  <!--[-->
+                  <div class="m-0 flex items-end justify-around gap-2 border-gray-400">
+                    <!---->
+                    <div class="bg-max relative flex !w-3/10 w-full flex-col items-center">
+                      <!--[-->
+                      <h5 class="w-full px-4 text-center">Текст</h5>
+                      <!--]-->
+                      <div class="relative flex w-full items-center">
+                        <!--[--><input
+                          value="Option 1"
+                          class="[&amp;::-webkit-inner-spin-button]:hidden [&amp;::-webkit-outer-spin-button]:hidden w-full rounded-2xl border border-(--border-color) px-4 py-1 text-center transition-all duration-300 outline-none hover:shadow-md focus:border-blue-400"
+                          style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%)"
+                          id="4a8ad432-575b-4979-8ac5-b71f193b8dbf"
+                          placeholder=""
+                          autocomplete="off"
+                          type="text"
+                          maxlength="100"
+                          min="-1000000"
+                          max="1000000"
+                          step="1"
+                        /><!--]-->
+                        <!--[!--><!--]-->
+                        <!--[!--><!--]-->
+                        <!--[!--><!--]-->
+                        <!--[!--><!--]-->
+                      </div>
+                    </div>
+                    <!---->
+                    <!---->
+                    <div class="bg-max relative flex !w-3/10 w-full flex-col items-center">
+                      <!--[-->
+                      <h5 class="w-full px-4 text-center">Значение</h5>
+                      <!--]-->
+                      <div class="relative flex w-full items-center">
+                        <!--[--><input
+                          value="1"
+                          class="[&amp;::-webkit-inner-spin-button]:hidden [&amp;::-webkit-outer-spin-button]:hidden w-full rounded-2xl border border-(--border-color) px-4 py-1 text-center transition-all duration-300 outline-none hover:shadow-md focus:border-blue-400"
+                          style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%)"
+                          id="56f7868f-b1fa-4411-820c-0f6f948e5871"
+                          placeholder=""
+                          autocomplete="off"
+                          type="text"
+                          maxlength="100"
+                          min="-1000000"
+                          max="1000000"
+                          step="1"
+                        /><!--]-->
+                        <!--[!--><!--]-->
+                        <!--[!--><!--]-->
+                        <!--[!--><!--]-->
+                        <!--[!--><!--]-->
+                      </div>
+                    </div>
+                    <!---->
+                    <!---->
+                    <div class="bg-max relative flex h-14.5 w-80 flex-col items-center">
+                      <!--[-->
+                      <h5 class="w-full px-4">Цвет фона</h5>
+                      <!--]-->
+                      <!--[!--><!--[-->
+                      <div id="60698b36-7770-4212-aa97-28485c21c9fd" class="flex h-full w-full flex-row justify-center rounded-full border border-(--bg-color)">
+                        <!--[--><button
+                          id="3455f0d3-9886-47ed-91e1-85b70ce7d2c2"
+                          class="bg-max z-10 m-0 inline-block min-w-0 flex-1 cursor-pointer items-center rounded-l-2xl bg-(--bg-color) px-2 py-1 font-semibold shadow-[0_0_10px_var(--shadow-color)] transition-all duration-300 select-none hover:shadow-[0_0_15px_var(--shadow-color)]"
+                        >
+                          <span class="flex flex-row items-center justify-center gap-4"><!--[!--><!--]--></span></button
+                        ><button
+                          id="2685dab2-6bdc-4430-9f6d-f9dd87c8987a"
+                          class="bg-red m-0 inline-block min-w-0 flex-1 cursor-pointer items-center bg-(--bg-color) px-2 py-1 font-semibold shadow-sm transition-all duration-300 select-none hover:shadow-md"
+                        >
+                          <span class="flex flex-row items-center justify-center gap-4"><!--[!--><!--]--></span></button
+                        ><button
+                          id="f5f74b25-ae9e-4bb4-b152-0f46b06f2f6e"
+                          class="bg-yellow m-0 inline-block min-w-0 flex-1 cursor-pointer items-center bg-(--bg-color) px-2 py-1 font-semibold shadow-sm transition-all duration-300 select-none hover:shadow-md"
+                        >
+                          <span class="flex flex-row items-center justify-center gap-4"><!--[!--><!--]--></span></button
+                        ><button
+                          id="1b4f525b-e4d7-47d0-8e1f-3de38d705e87"
+                          class="bg-green m-0 inline-block min-w-0 flex-1 cursor-pointer items-center bg-(--bg-color) px-2 py-1 font-semibold shadow-sm transition-all duration-300 select-none hover:shadow-md"
+                        >
+                          <span class="flex flex-row items-center justify-center gap-4"><!--[!--><!--]--></span></button
+                        ><button
+                          id="f586cf98-7436-4df5-84bf-b835fc34ff04"
+                          class="bg-blue m-0 inline-block min-w-0 flex-1 cursor-pointer items-center bg-(--bg-color) px-2 py-1 font-semibold shadow-sm transition-all duration-300 select-none hover:shadow-md"
+                        >
+                          <span class="flex flex-row items-center justify-center gap-4"><!--[!--><!--]--></span></button
+                        ><button
+                          id="1ef67dab-5ca2-4f56-b68e-04f2127e5db6"
+                          class="bg-purple m-0 inline-block min-w-0 flex-1 cursor-pointer items-center bg-(--bg-color) px-2 py-1 font-semibold shadow-sm transition-all duration-300 select-none hover:shadow-md"
+                        >
+                          <span class="flex flex-row items-center justify-center gap-4"><!--[!--><!--]--></span></button
+                        ><button
+                          id="14bb2787-c69e-4957-9c84-7d3ad19215dc"
+                          class="bg-gray m-0 inline-block min-w-0 flex-1 cursor-pointer items-center rounded-r-2xl bg-(--bg-color) px-2 py-1 font-semibold shadow-sm transition-all duration-300 select-none hover:shadow-md"
+                        >
+                          <span class="flex flex-row items-center justify-center gap-4"><!--[!--><!--]--></span></button
+                        ><!--]-->
+                      </div>
+                      <!--]--><!--]-->
+                    </div>
+                    <!---->
+                    <!---->
+                    <div class="relative flex w-8 flex-col items-center">
+                      <div class="relative flex w-full grow items-center">
+                        <button
+                          id="39a06277-0a5f-46c1-a366-9a39601b5701"
+                          class="relative m-0 inline-block w-full cursor-pointer items-center rounded-2xl bg-(--bg-color) bg-transparent p-0 font-semibold transition duration-200 select-none active:scale-97"
+                        >
+                          <span class="flex flex-row items-center justify-center gap-2"
+                            ><!--[--><span
+                              class="[&amp;_svg]:h-full [&amp;_svg]:max-h-full [&amp;_svg]:w-full [&amp;_svg]:max-w-full flex w-8 items-center justify-center overflow-visible"
+                              ><!--[!--><!----><svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 24 24">
+                                <path
+                                  fill="none"
+                                  stroke="currentColor"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  stroke-width="1.5"
+                                  d="m19.5 5.5l-.62 10.025c-.158 2.561-.237 3.842-.88 4.763a4 4 0 0 1-1.2 1.128c-.957.584-2.24.584-4.806.584c-2.57 0-3.855 0-4.814-.585a4 4 0 0 1-1.2-1.13c-.642-.922-.72-2.205-.874-4.77L4.5 5.5M3 5.5h18m-4.944 0l-.683-1.408c-.453-.936-.68-1.403-1.071-1.695a2 2 0 0 0-.275-.172C13.594 2 13.074 2 12.035 2c-1.066 0-1.599 0-2.04.234a2 2 0 0 0-.278.18c-.395.303-.616.788-1.058 1.757L8.053 5.5m1.447 11v-6m5 6v-6"
+                                  color="currentColor"
+                                ></path></svg
+                              ><!----><!--]--></span
+                            ><!--]-->
+                            <!--[!--><!--]--></span
+                          >
+                        </button>
+                        <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+                      </div>
+                    </div>
+                    <!---->
+                  </div>
+                  <!--]-->
+                </div>
+                <!--]--><!---->
+                <div class="relative mt-3">
+                  <!---->
+                  <div class="absolute top-3 right-5 flex w-6 flex-col items-center">
+                    <div class="relative flex w-full grow items-center">
+                      <button
+                        id="5154aeab-e23a-4fac-bdc8-838d53d3cfed"
+                        class="relative m-0 inline-block w-full cursor-pointer items-center rounded-2xl bg-(--bg-color) bg-transparent p-0 font-semibold transition duration-200 select-none active:scale-97"
+                      >
+                        <span class="flex flex-row items-center justify-center gap-2"
+                          ><!--[--><span
+                            class="[&amp;_svg]:h-full [&amp;_svg]:max-h-full [&amp;_svg]:w-full [&amp;_svg]:max-w-full flex w-6 items-center justify-center overflow-visible"
+                            ><!--[!--><!----><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                              <g fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path
+                                  d="M6 11c0-2.828 0-4.243.879-5.121C7.757 5 9.172 5 12 5h3c2.828 0 4.243 0 5.121.879C21 6.757 21 8.172 21 11v5c0 2.828 0 4.243-.879 5.121C19.243 22 17.828 22 15 22h-3c-2.828 0-4.243 0-5.121-.879C6 20.243 6 18.828 6 16z"
+                                ></path>
+                                <path d="M6 19a3 3 0 0 1-3-3v-6c0-3.771 0-5.657 1.172-6.828S7.229 2 11 2h4a3 3 0 0 1 3 3"></path>
+                              </g></svg
+                            ><!----><!--]--></span
+                          ><!--]-->
+                          <!--[!--><!--]--></span
+                        >
+                      </button>
+                      <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+                    </div>
+                  </div>
+                  <!---->
+                  <pre class="overflow-x-auto">
 &lt;UI.Select
   id=crypto.randomUUID()
   wrapperClass='bg-max'
@@ -41,30 +856,39 @@
   options={[{ id: 'e629cc97-bfbd-4856-9430-c102cd7a192f', value: '1', name: 'Option 1', class: 'bg-max' }]} 
   onUpdate={() => {}}
 />
-  </pre></div></div></div><!----><!----></div></div></div><!----><!--]--> <!--[!--><!--]--><!--]-->
-			
-			<script>
-				{
-					__sveltekit_wqriqn = {
-						base: "/ElementsUI",
-						assets: "/ElementsUI"
-					};
+  </pre
+                  >
+                </div>
+              </div>
+            </div>
+            <!----><!---->
+          </div>
+        </div>
+      </div>
+      <!----><!--]-->
+      <!--[!--><!--]--><!--]-->
 
-					const element = document.currentScript.parentElement;
+      <script>
+        {
+          __sveltekit_wqriqn = {
+            base: "/ElementsUI",
+            assets: "/ElementsUI",
+          }
 
-					Promise.all([
-						import("/ElementsUI/_app/immutable/entry/start.B0I87LBF.js"),
-						import("/ElementsUI/_app/immutable/entry/app.CN_sVLv0.js")
-					]).then(([kit, app]) => {
-						kit.start(app, element, {
-							node_ids: [0, 11],
-							data: [null,null],
-							form: null,
-							error: null
-						});
-					});
-				}
-			</script>
-		</div>
-	</body>
+          const element = document.currentScript.parentElement
+
+          Promise.all([import("/ElementsUI/_app/immutable/entry/start.B0I87LBF.js"), import("/ElementsUI/_app/immutable/entry/app.CN_sVLv0.js")]).then(
+            ([kit, app]) => {
+              kit.start(app, element, {
+                node_ids: [0, 11],
+                data: [null, null],
+                form: null,
+                error: null,
+              })
+            },
+          )
+        }
+      </script>
+    </div>
+  </body>
 </html>

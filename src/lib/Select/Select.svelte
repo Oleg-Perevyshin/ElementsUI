@@ -77,13 +77,13 @@
       isDropdownOpen = false
       filteredOptions = []
     } else {
-      filteredOptions = options.filter(option => {
+      filteredOptions = options.filter((option) => {
         const optionName = option.name?.toString() || ""
         return optionName.toLowerCase().includes(inputValue.toLowerCase())
       })
       isDropdownOpen = filteredOptions.length > 0
 
-      const selectedFromList = options.find(option => option.name?.toString() === searchValue)
+      const selectedFromList = options.find((option) => option.name?.toString() === searchValue)
 
       if (!selectedFromList) {
         const newOption: ISelectOption<T> = {
@@ -118,7 +118,8 @@
       onclick={toggleDropdown}
       aria-haspopup="true"
       aria-expanded={isDropdownOpen}
-      {disabled}>
+      {disabled}
+    >
       {value?.name || $t("common.select_tag")}
     </button>
 
@@ -126,7 +127,8 @@
       <div
         class="absolute top-full left-1/2 z-50 -translate-x-1/2 rounded-b-2xl shadow-[0_0_3px_rgb(0_0_0_/0.25)]"
         style="width: calc(100% - 1.8rem);"
-        transition:slide={{ duration: 250 }}>
+        transition:slide={{ duration: 250 }}
+      >
         {#each options as option, index (option.id)}
           <button
             id={option.id}
@@ -136,10 +138,11 @@
               ${index === options.length - 1 ? "rounded-b-2xl" : ""} `,
               option.class,
             )}
-            onclick={e => selectOption(option, e)}
+            onclick={(e) => selectOption(option, e)}
             {disabled}
             style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%); 
-            ">
+            "
+          >
             {option.name}
           </button>
         {/each}
@@ -157,8 +160,9 @@
             ${options.length > 0 && index === 0 ? 'rounded-l-2xl' : ''} ${index === options.length - 1 ? 'rounded-r-2xl' : ''}`,
             option.class,
           )} bg-(--bg-color)"
-          onclick={e => selectOption(option, e)}
-          disabled={option.disabled}>
+          onclick={(e) => selectOption(option, e)}
+          disabled={option.disabled}
+        >
           <span class="flex flex-row items-center justify-center gap-4">
             {#if option.name}
               <div class="flex-1">
@@ -179,19 +183,21 @@
       style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"
       id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
       {disabled}
-      oninput={e => handleSearch((e.currentTarget as HTMLInputElement).value)}
-      onclick={e => {
+      oninput={(e) => handleSearch((e.currentTarget as HTMLInputElement).value)}
+      onclick={(e) => {
         if (searchValue == "") {
           filteredOptions = options
           isDropdownOpen = true
         }
-      }} />
+      }}
+    />
 
     {#if isDropdownOpen}
       <div
         class="absolute top-full left-1/2 z-50 -translate-x-1/2 rounded-b-2xl border border-t-0 border-(--bg-color) shadow-[0_0_3px_rgb(0_0_0_/0.25)]"
         style="width: calc(100% - 1.8rem);"
-        transition:slide={{ duration: 250 }}>
+        transition:slide={{ duration: 250 }}
+      >
         {#each filteredOptions as option, index (option.id)}
           <button
             id={option.id}
@@ -201,10 +207,11 @@
               ${index === filteredOptions.length - 1 ? "rounded-b-2xl" : ""} `,
               option.class,
             )}
-            onclick={e => selectOption(option, e)}
+            onclick={(e) => selectOption(option, e)}
             {disabled}
             style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%); 
-            ">
+            "
+          >
             {option.name}
           </button>
         {/each}

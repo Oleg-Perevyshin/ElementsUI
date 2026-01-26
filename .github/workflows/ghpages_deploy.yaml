@@ -29,7 +29,7 @@ jobs:
       - name: Установка Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '24'
+          node-version: "24"
 
       - name: Установка зависимостей
         run: npm install
@@ -43,7 +43,7 @@ jobs:
       - name: Загрузка артефактов
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './docs'
+          path: "./docs"
 
       - name: Развертывание GitHub Pages
         id: deployment

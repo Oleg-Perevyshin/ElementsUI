@@ -42,21 +42,23 @@ ${formatObjectToString(inputComponent.properties as IInputProps)}
     <div>
       <Input
         {...inputComponent.properties as IInputProps}
-        onUpdate={value => {
+        onUpdate={(value) => {
           updateComponent(inputComponent, {
             properties: { value: value },
           })
         }}
         bind:value
-        bind:isValid={valid} />
+        bind:isValid={valid}
+      />
     </div>
     <p>{value}</p>
   {/snippet}
   {#snippet componentProps()}
     <InputProps
       component={inputComponent as UIComponent & { properties: Partial<IInputProps> }}
-      onPropertyChange={updates => (inputComponent = updateComponent(inputComponent, updates as object))}
-      forConstructor={false} />
+      onPropertyChange={(updates) => (inputComponent = updateComponent(inputComponent, updates as object))}
+      forConstructor={false}
+    />
     <!-- <hr />
     <InputProps
       component={inputComponent as UIComponent & { properties: Partial<IInputProps> }}

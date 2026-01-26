@@ -1,4 +1,453 @@
-import{c as K,a as R,f as X}from"../chunks/Di61MV9l.js";import{p as k,i as Q,f as Y,a as H,c as f,g as r,u as o,r as C,s as v,b as Z,d as $,e as ee}from"../chunks/CYmiEaEH.js";import{p as te,i as ne,a as re,c as i,d as W,s as oe}from"../chunks/_y1boTp2.js";import{u as l,S as B,I as d,t as V,o as ae,g as le}from"../chunks/CnAfG7ip.js";import{P as me}from"../chunks/Dudz0OOs.js";import{C as se,f as ue}from"../chunks/BSX-LnOW.js";var ie=X('<div class="relative flex flex-row items-start justify-center"><div class="flex w-1/3 flex-col items-center px-2"><!></div> <div class="flex w-1/3 flex-col px-2"><!> <!> <!></div> <div class="flex w-1/3 flex-col px-2"><!> <!> <!></div></div>'),ce=X('<div class="relative flex flex-row items-start justify-center"><div class="flex w-1/3 flex-col items-center px-2"><!> <!> <!></div> <div class="flex w-1/3 flex-col px-2"><!> <!> <!></div> <div class="flex w-1/3 flex-col px-2"><!> <!> <!></div></div>');function pe(D,e){k(e,!0);const p=()=>W(ae,"$optionsStore",U),m=()=>W(le,"$t",U),[U,E]=re(),N=te(e,"forConstructor",3,!0),x=Q("DeviceVariables");let O=o(()=>x&&Array.isArray(x)?x:[]);const M=o(()=>p().TEXT_ALIGN_OPTIONS.find(b=>b.value.includes(e.component.properties.label?.class?.split(" ").find(g=>g.startsWith("text-"))))),j=o(()=>p().COLOR_OPTIONS.find(b=>b.value.includes(e.component.properties.wrapperClass?.split(" ").find(g=>g.startsWith("bg-")))));var G=K(),q=Y(G);{var z=b=>{var g=ie(),_=f(g),I=f(_);{let u=o(()=>({name:m()("constructor.props.variable")})),c=o(()=>r(O).find(t=>t.value===e.component.properties.id));i(I,()=>B,(t,n)=>{n(t,{get label(){return r(u)},get options(){return r(O)},get value(){return r(c)},onUpdate:a=>{l("id",a.value,e.component,e.onPropertyChange,a.name?.split("—")[1].trim()),l("eventHandler.Variables",a.value,e.component,e.onPropertyChange)}})})}C(_);var y=v(_,2),T=f(y);{let u=o(()=>({name:m()("constructor.props.min")}));i(T,()=>d,(c,t)=>{t(c,{get label(){return r(u)},get value(){return e.component.properties.number.minNum},type:"number",onUpdate:n=>{l("number.minNum",Number(n),e.component,e.onPropertyChange),l("value",e.component.properties.number.minNum+(e.component.properties.number.maxNum-e.component.properties.number.minNum)/3,e.component,e.onPropertyChange)}})})}var P=v(T,2);{let u=o(()=>({name:m()("constructor.props.max")}));i(P,()=>d,(c,t)=>{t(c,{get label(){return r(u)},get value(){return e.component.properties.number.maxNum},type:"number",onUpdate:n=>{l("number.maxNum",Number(n),e.component,e.onPropertyChange),l("value",e.component.properties.number.minNum+(e.component.properties.number.maxNum-e.component.properties.number.minNum)/3,e.component,e.onPropertyChange)}})})}var S=v(P,2);{let u=o(()=>({name:m()("constructor.props.units")}));i(S,()=>d,(c,t)=>{t(c,{get label(){return r(u)},get value(){return e.component.properties.number.units},onUpdate:n=>l("number.units",n,e.component,e.onPropertyChange)})})}C(y);var h=v(y,2),A=f(h);{let u=o(()=>({name:m()("constructor.props.label")}));i(A,()=>d,(c,t)=>{t(c,{get label(){return r(u)},get value(){return e.component.properties.label.name},onUpdate:n=>l("label.name",n,e.component,e.onPropertyChange)})})}var w=v(A,2);{let u=o(()=>({name:m()("constructor.props.align")}));i(w,()=>B,(c,t)=>{t(c,{get label(){return r(u)},type:"buttons",get value(){return r(M)},get options(){return p().TEXT_ALIGN_OPTIONS},onUpdate:n=>l("label.class",V(e.component.properties.label.class,n.value),e.component,e.onPropertyChange)})})}var L=v(w,2);{let u=o(()=>({name:m()("constructor.props.colors")}));i(L,()=>B,(c,t)=>{t(c,{wrapperClass:"!h-14",get label(){return r(u)},type:"buttons",get options(){return p().COLOR_OPTIONS},get value(){return r(j)},onUpdate:n=>l("wrapperClass",V(e.component.properties.wrapperClass,n.value),e.component,e.onPropertyChange)})})}C(h),C(g),R(b,g)},F=b=>{var g=ce(),_=f(g),I=f(_);{let t=o(()=>({name:m()("constructor.props.id")}));i(I,()=>d,(n,a)=>{a(n,{get label(){return r(t)},get value(){return e.component.properties.id},onUpdate:s=>l("id",s,e.component,e.onPropertyChange)})})}var y=v(I,2);{let t=o(()=>({name:m()("constructor.props.wrapperclass")}));i(y,()=>d,(n,a)=>{a(n,{get label(){return r(t)},get value(){return e.component.properties.wrapperClass},onUpdate:s=>l("wrapperClass",s,e.component,e.onPropertyChange)})})}var T=v(y,2);{let t=o(()=>({name:m()("constructor.props.colors")}));i(T,()=>B,(n,a)=>{a(n,{wrapperClass:"!h-14",get label(){return r(t)},type:"buttons",get options(){return p().COLOR_OPTIONS},get value(){return r(j)},onUpdate:s=>l("wrapperClass",V(e.component.properties.wrapperClass,s.value),e.component,e.onPropertyChange)})})}C(_);var P=v(_,2),S=f(P);{let t=o(()=>({name:m()("constructor.props.label")}));i(S,()=>d,(n,a)=>{a(n,{get label(){return r(t)},get value(){return e.component.properties.label.name},onUpdate:s=>l("label.name",s,e.component,e.onPropertyChange)})})}var h=v(S,2);{let t=o(()=>({name:m()("constructor.props.label.class")}));i(h,()=>d,(n,a)=>{a(n,{get label(){return r(t)},get value(){return e.component.properties.label.class},onUpdate:s=>l("label.class",s,e.component,e.onPropertyChange)})})}var A=v(h,2);{let t=o(()=>({name:m()("constructor.props.value")})),n=o(()=>({minNum:e.component.properties.number.minNum,maxNum:e.component.properties.number.maxNum,step:1}));i(A,()=>d,(a,s)=>{s(a,{get label(){return r(t)},type:"number",get number(){return r(n)},get value(){return e.component.properties.value},onUpdate:J=>l("value",J,e.component,e.onPropertyChange)})})}C(P);var w=v(P,2),L=f(w);{let t=o(()=>({name:m()("constructor.props.min")}));i(L,()=>d,(n,a)=>{a(n,{get label(){return r(t)},get value(){return e.component.properties.number.minNum},type:"number",onUpdate:s=>{l("number.minNum",Number(s),e.component,e.onPropertyChange)}})})}var u=v(L,2);{let t=o(()=>({name:m()("constructor.props.max")}));i(u,()=>d,(n,a)=>{a(n,{get label(){return r(t)},get value(){return e.component.properties.number.maxNum},type:"number",onUpdate:s=>{l("number.maxNum",Number(s),e.component,e.onPropertyChange)}})})}var c=v(u,2);{let t=o(()=>({name:m()("constructor.props.units")}));i(c,()=>d,(n,a)=>{a(n,{get label(){return r(t)},get value(){return e.component.properties.number.units},onUpdate:s=>l("number.units",s,e.component,e.onPropertyChange)})})}C(w),C(g),R(b,g)};ne(q,b=>{N()?b(z):b(F,!1)})}R(D,G),H(),E()}function xe(D,e){k(e,!0);let p=Z($({id:crypto.randomUUID(),type:"ProgressBar",component:null,properties:{id:crypto.randomUUID(),wrapperClass:"bg-blue",label:{name:"Label",class:"text-center"},value:80,number:{minNum:0,maxNum:100,units:"%"}},position:{row:0,col:0,width:0,height:0},parentId:""})),m=o(()=>`
+import { c as K, a as R, f as X } from "../chunks/Di61MV9l.js"
+import { p as k, i as Q, f as Y, a as H, c as f, g as r, u as o, r as C, s as v, b as Z, d as $, e as ee } from "../chunks/CYmiEaEH.js"
+import { p as te, i as ne, a as re, c as i, d as W, s as oe } from "../chunks/_y1boTp2.js"
+import { u as l, S as B, I as d, t as V, o as ae, g as le } from "../chunks/CnAfG7ip.js"
+import { P as me } from "../chunks/Dudz0OOs.js"
+import { C as se, f as ue } from "../chunks/BSX-LnOW.js"
+var ie = X(
+    '<div class="relative flex flex-row items-start justify-center"><div class="flex w-1/3 flex-col items-center px-2"><!></div> <div class="flex w-1/3 flex-col px-2"><!> <!> <!></div> <div class="flex w-1/3 flex-col px-2"><!> <!> <!></div></div>',
+  ),
+  ce = X(
+    '<div class="relative flex flex-row items-start justify-center"><div class="flex w-1/3 flex-col items-center px-2"><!> <!> <!></div> <div class="flex w-1/3 flex-col px-2"><!> <!> <!></div> <div class="flex w-1/3 flex-col px-2"><!> <!> <!></div></div>',
+  )
+function pe(D, e) {
+  k(e, !0)
+  const p = () => W(ae, "$optionsStore", U),
+    m = () => W(le, "$t", U),
+    [U, E] = re(),
+    N = te(e, "forConstructor", 3, !0),
+    x = Q("DeviceVariables")
+  let O = o(() => (x && Array.isArray(x) ? x : []))
+  const M = o(() => p().TEXT_ALIGN_OPTIONS.find((b) => b.value.includes(e.component.properties.label?.class?.split(" ").find((g) => g.startsWith("text-"))))),
+    j = o(() => p().COLOR_OPTIONS.find((b) => b.value.includes(e.component.properties.wrapperClass?.split(" ").find((g) => g.startsWith("bg-")))))
+  var G = K(),
+    q = Y(G)
+  {
+    var z = (b) => {
+        var g = ie(),
+          _ = f(g),
+          I = f(_)
+        {
+          let u = o(() => ({ name: m()("constructor.props.variable") })),
+            c = o(() => r(O).find((t) => t.value === e.component.properties.id))
+          i(
+            I,
+            () => B,
+            (t, n) => {
+              n(t, {
+                get label() {
+                  return r(u)
+                },
+                get options() {
+                  return r(O)
+                },
+                get value() {
+                  return r(c)
+                },
+                onUpdate: (a) => {
+                  ;(l("id", a.value, e.component, e.onPropertyChange, a.name?.split("—")[1].trim()),
+                    l("eventHandler.Variables", a.value, e.component, e.onPropertyChange))
+                },
+              })
+            },
+          )
+        }
+        C(_)
+        var y = v(_, 2),
+          T = f(y)
+        {
+          let u = o(() => ({ name: m()("constructor.props.min") }))
+          i(
+            T,
+            () => d,
+            (c, t) => {
+              t(c, {
+                get label() {
+                  return r(u)
+                },
+                get value() {
+                  return e.component.properties.number.minNum
+                },
+                type: "number",
+                onUpdate: (n) => {
+                  ;(l("number.minNum", Number(n), e.component, e.onPropertyChange),
+                    l(
+                      "value",
+                      e.component.properties.number.minNum + (e.component.properties.number.maxNum - e.component.properties.number.minNum) / 3,
+                      e.component,
+                      e.onPropertyChange,
+                    ))
+                },
+              })
+            },
+          )
+        }
+        var P = v(T, 2)
+        {
+          let u = o(() => ({ name: m()("constructor.props.max") }))
+          i(
+            P,
+            () => d,
+            (c, t) => {
+              t(c, {
+                get label() {
+                  return r(u)
+                },
+                get value() {
+                  return e.component.properties.number.maxNum
+                },
+                type: "number",
+                onUpdate: (n) => {
+                  ;(l("number.maxNum", Number(n), e.component, e.onPropertyChange),
+                    l(
+                      "value",
+                      e.component.properties.number.minNum + (e.component.properties.number.maxNum - e.component.properties.number.minNum) / 3,
+                      e.component,
+                      e.onPropertyChange,
+                    ))
+                },
+              })
+            },
+          )
+        }
+        var S = v(P, 2)
+        {
+          let u = o(() => ({ name: m()("constructor.props.units") }))
+          i(
+            S,
+            () => d,
+            (c, t) => {
+              t(c, {
+                get label() {
+                  return r(u)
+                },
+                get value() {
+                  return e.component.properties.number.units
+                },
+                onUpdate: (n) => l("number.units", n, e.component, e.onPropertyChange),
+              })
+            },
+          )
+        }
+        C(y)
+        var h = v(y, 2),
+          A = f(h)
+        {
+          let u = o(() => ({ name: m()("constructor.props.label") }))
+          i(
+            A,
+            () => d,
+            (c, t) => {
+              t(c, {
+                get label() {
+                  return r(u)
+                },
+                get value() {
+                  return e.component.properties.label.name
+                },
+                onUpdate: (n) => l("label.name", n, e.component, e.onPropertyChange),
+              })
+            },
+          )
+        }
+        var w = v(A, 2)
+        {
+          let u = o(() => ({ name: m()("constructor.props.align") }))
+          i(
+            w,
+            () => B,
+            (c, t) => {
+              t(c, {
+                get label() {
+                  return r(u)
+                },
+                type: "buttons",
+                get value() {
+                  return r(M)
+                },
+                get options() {
+                  return p().TEXT_ALIGN_OPTIONS
+                },
+                onUpdate: (n) => l("label.class", V(e.component.properties.label.class, n.value), e.component, e.onPropertyChange),
+              })
+            },
+          )
+        }
+        var L = v(w, 2)
+        {
+          let u = o(() => ({ name: m()("constructor.props.colors") }))
+          i(
+            L,
+            () => B,
+            (c, t) => {
+              t(c, {
+                wrapperClass: "!h-14",
+                get label() {
+                  return r(u)
+                },
+                type: "buttons",
+                get options() {
+                  return p().COLOR_OPTIONS
+                },
+                get value() {
+                  return r(j)
+                },
+                onUpdate: (n) => l("wrapperClass", V(e.component.properties.wrapperClass, n.value), e.component, e.onPropertyChange),
+              })
+            },
+          )
+        }
+        ;(C(h), C(g), R(b, g))
+      },
+      F = (b) => {
+        var g = ce(),
+          _ = f(g),
+          I = f(_)
+        {
+          let t = o(() => ({ name: m()("constructor.props.id") }))
+          i(
+            I,
+            () => d,
+            (n, a) => {
+              a(n, {
+                get label() {
+                  return r(t)
+                },
+                get value() {
+                  return e.component.properties.id
+                },
+                onUpdate: (s) => l("id", s, e.component, e.onPropertyChange),
+              })
+            },
+          )
+        }
+        var y = v(I, 2)
+        {
+          let t = o(() => ({ name: m()("constructor.props.wrapperclass") }))
+          i(
+            y,
+            () => d,
+            (n, a) => {
+              a(n, {
+                get label() {
+                  return r(t)
+                },
+                get value() {
+                  return e.component.properties.wrapperClass
+                },
+                onUpdate: (s) => l("wrapperClass", s, e.component, e.onPropertyChange),
+              })
+            },
+          )
+        }
+        var T = v(y, 2)
+        {
+          let t = o(() => ({ name: m()("constructor.props.colors") }))
+          i(
+            T,
+            () => B,
+            (n, a) => {
+              a(n, {
+                wrapperClass: "!h-14",
+                get label() {
+                  return r(t)
+                },
+                type: "buttons",
+                get options() {
+                  return p().COLOR_OPTIONS
+                },
+                get value() {
+                  return r(j)
+                },
+                onUpdate: (s) => l("wrapperClass", V(e.component.properties.wrapperClass, s.value), e.component, e.onPropertyChange),
+              })
+            },
+          )
+        }
+        C(_)
+        var P = v(_, 2),
+          S = f(P)
+        {
+          let t = o(() => ({ name: m()("constructor.props.label") }))
+          i(
+            S,
+            () => d,
+            (n, a) => {
+              a(n, {
+                get label() {
+                  return r(t)
+                },
+                get value() {
+                  return e.component.properties.label.name
+                },
+                onUpdate: (s) => l("label.name", s, e.component, e.onPropertyChange),
+              })
+            },
+          )
+        }
+        var h = v(S, 2)
+        {
+          let t = o(() => ({ name: m()("constructor.props.label.class") }))
+          i(
+            h,
+            () => d,
+            (n, a) => {
+              a(n, {
+                get label() {
+                  return r(t)
+                },
+                get value() {
+                  return e.component.properties.label.class
+                },
+                onUpdate: (s) => l("label.class", s, e.component, e.onPropertyChange),
+              })
+            },
+          )
+        }
+        var A = v(h, 2)
+        {
+          let t = o(() => ({ name: m()("constructor.props.value") })),
+            n = o(() => ({ minNum: e.component.properties.number.minNum, maxNum: e.component.properties.number.maxNum, step: 1 }))
+          i(
+            A,
+            () => d,
+            (a, s) => {
+              s(a, {
+                get label() {
+                  return r(t)
+                },
+                type: "number",
+                get number() {
+                  return r(n)
+                },
+                get value() {
+                  return e.component.properties.value
+                },
+                onUpdate: (J) => l("value", J, e.component, e.onPropertyChange),
+              })
+            },
+          )
+        }
+        C(P)
+        var w = v(P, 2),
+          L = f(w)
+        {
+          let t = o(() => ({ name: m()("constructor.props.min") }))
+          i(
+            L,
+            () => d,
+            (n, a) => {
+              a(n, {
+                get label() {
+                  return r(t)
+                },
+                get value() {
+                  return e.component.properties.number.minNum
+                },
+                type: "number",
+                onUpdate: (s) => {
+                  l("number.minNum", Number(s), e.component, e.onPropertyChange)
+                },
+              })
+            },
+          )
+        }
+        var u = v(L, 2)
+        {
+          let t = o(() => ({ name: m()("constructor.props.max") }))
+          i(
+            u,
+            () => d,
+            (n, a) => {
+              a(n, {
+                get label() {
+                  return r(t)
+                },
+                get value() {
+                  return e.component.properties.number.maxNum
+                },
+                type: "number",
+                onUpdate: (s) => {
+                  l("number.maxNum", Number(s), e.component, e.onPropertyChange)
+                },
+              })
+            },
+          )
+        }
+        var c = v(u, 2)
+        {
+          let t = o(() => ({ name: m()("constructor.props.units") }))
+          i(
+            c,
+            () => d,
+            (n, a) => {
+              a(n, {
+                get label() {
+                  return r(t)
+                },
+                get value() {
+                  return e.component.properties.number.units
+                },
+                onUpdate: (s) => l("number.units", s, e.component, e.onPropertyChange),
+              })
+            },
+          )
+        }
+        ;(C(w), C(g), R(b, g))
+      }
+    ne(q, (b) => {
+      N() ? b(z) : b(F, !1)
+    })
+  }
+  ;(R(D, G), H(), E())
+}
+function xe(D, e) {
+  k(e, !0)
+  let p = Z(
+      $({
+        id: crypto.randomUUID(),
+        type: "ProgressBar",
+        component: null,
+        properties: {
+          id: crypto.randomUUID(),
+          wrapperClass: "bg-blue",
+          label: { name: "Label", class: "text-center" },
+          value: 80,
+          number: { minNum: 0, maxNum: 100, units: "%" },
+        },
+        position: { row: 0, col: 0, width: 0, height: 0 },
+        parentId: "",
+      }),
+    ),
+    m = o(
+      () => `
 <UI.ProgressBar
 ${ue(r(p).properties)} 
-/>`);const U=(E,N)=>{ee(p,{...r(p),properties:N.properties?{...r(p).properties,...N.properties}:r(p).properties},!0)};se(D,{get codeText(){return r(m)},component:x=>{me(x,oe(()=>r(p).properties))},componentProps:x=>{pe(x,{get component(){return r(p)},onPropertyChange:O=>U(r(p).id,{properties:O}),forConstructor:!1})}}),H()}export{xe as component};
+/>`,
+    )
+  const U = (E, N) => {
+    ee(p, { ...r(p), properties: N.properties ? { ...r(p).properties, ...N.properties } : r(p).properties }, !0)
+  }
+  ;(se(D, {
+    get codeText() {
+      return r(m)
+    },
+    component: (x) => {
+      me(
+        x,
+        oe(() => r(p).properties),
+      )
+    },
+    componentProps: (x) => {
+      pe(x, {
+        get component() {
+          return r(p)
+        },
+        onPropertyChange: (O) => U(r(p).id, { properties: O }),
+        forConstructor: !1,
+      })
+    },
+  }),
+    H())
+}
+export { xe as component }

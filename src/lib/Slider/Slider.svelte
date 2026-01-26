@@ -82,7 +82,8 @@
   <!-- Слайдер -->
   <div
     id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
-    class="relative flex h-8 w-full items-center justify-center rounded-full {disabled ? 'cursor-not-allowed opacity-50' : ''}">
+    class="relative flex h-8 w-full items-center justify-center rounded-full {disabled ? 'cursor-not-allowed opacity-50' : ''}"
+  >
     {#if isRange}
       {@const userAgent = navigator.userAgent}
 
@@ -95,7 +96,7 @@
           bind:value={lowerValue}
           oninput={disabled
             ? undefined
-            : e => {
+            : (e) => {
                 const newValue = Math.min(Number((e.target as HTMLInputElement).value), upperValue)
                 lowerValue = roundToClean(newValue == upperValue ? upperValue - number.step : newValue)
                 onUpdate([lowerValue, upperValue])
@@ -132,7 +133,8 @@
             `[&::-moz-range-thumb]:shadow-[calc(100rem+0.5rem)_0_0_100rem] 
               [&::-webkit-slider-thumb]:shadow-[calc(100rem+0.5rem)_0_0_100rem]`,
           )}
-          style="color: var(--bg-color); flex-basis: {`calc(${(Math.abs(centerNum - number.minNum) / Math.abs(number.maxNum - number.minNum)) * 100}% + 2rem + 5px)`};" />
+          style="color: var(--bg-color); flex-basis: {`calc(${(Math.abs(centerNum - number.minNum) / Math.abs(number.maxNum - number.minNum)) * 100}% + 2rem + 5px)`};"
+        />
         <input
           type="range"
           min={centerNum}
@@ -141,7 +143,7 @@
           bind:value={upperValue}
           oninput={disabled
             ? undefined
-            : e => {
+            : (e) => {
                 const newValue = Math.max(Number((e.target as HTMLInputElement).value), lowerValue)
                 upperValue = roundToClean(newValue == lowerValue ? newValue + number.step : upperValue)
                 onUpdate([lowerValue, upperValue])
@@ -178,7 +180,8 @@
             `[&::-moz-range-thumb]:shadow-[calc(100rem*-1-0.5rem)_0_0_100rem] 
               [&::-webkit-slider-thumb]:shadow-[calc(100rem*-1-0.5rem)_0_0_100rem]`,
           )}
-          style="color: var(--bg-color); flex-basis: {`calc(${(1 - Math.abs(centerNum - number.minNum) / Math.abs(number.maxNum - number.minNum)) * 100}% + 2rem + 5px)`};" />
+          style="color: var(--bg-color); flex-basis: {`calc(${(1 - Math.abs(centerNum - number.minNum) / Math.abs(number.maxNum - number.minNum)) * 100}% + 2rem + 5px)`};"
+        />
       </div>
     {:else}
       {@const userAgent = navigator.userAgent}
@@ -222,7 +225,8 @@
             `[&::-moz-range-thumb]:shadow-[calc(100rem*-1-0.5rem)_0_0_100rem] 
               [&::-webkit-slider-thumb]:shadow-[calc(100rem*-1-0.5rem)_0_0_100rem]`,
           )}
-          style="color: var(--bg-color);" />
+          style="color: var(--bg-color);"
+        />
       </div>
     {/if}
   </div>
@@ -235,14 +239,16 @@
           <button
             class="h-full w-4 {disabled ? '' : 'cursor-pointer'}"
             onclick={disabled ? undefined : () => adjustValue(type as "lower" | "upper", "decrement")}
-            disabled={disabled || (type === "lower" ? lowerValue <= number.minNum : upperValue <= lowerValue)}>−</button>
+            disabled={disabled || (type === "lower" ? lowerValue <= number.minNum : upperValue <= lowerValue)}>−</button
+          >
           <span class="inline-block text-center tabular-nums" style={`width: ${valueWidth}`}>
             {type === "lower" ? lowerValue : upperValue}
           </span>
           <button
             class="h-full w-4 {disabled ? '' : 'cursor-pointer'}"
             onclick={disabled ? undefined : () => adjustValue(type as "lower" | "upper", "increment")}
-            disabled={disabled || (type === "lower" ? lowerValue >= upperValue : upperValue >= number.maxNum)}>+</button>
+            disabled={disabled || (type === "lower" ? lowerValue >= upperValue : upperValue >= number.maxNum)}>+</button
+          >
         </div>
       {/each}
     {:else}
@@ -250,14 +256,16 @@
         <button
           class="h-full w-4 {disabled ? '' : 'cursor-pointer'}"
           onclick={disabled ? undefined : () => adjustValue("single", "decrement")}
-          disabled={disabled || singleValue <= number.minNum}>−</button>
+          disabled={disabled || singleValue <= number.minNum}>−</button
+        >
         <span class="inline-block text-center tabular-nums" style={`width: ${valueWidth}`}>
           {singleValue}
         </span>
         <button
           class="h-full w-4 {disabled ? '' : 'cursor-pointer'}"
           onclick={disabled ? undefined : () => adjustValue("single", "increment")}
-          disabled={disabled || singleValue >= number.maxNum}>+</button>
+          disabled={disabled || singleValue >= number.maxNum}>+</button
+        >
       </div>
     {/if}
   </div>

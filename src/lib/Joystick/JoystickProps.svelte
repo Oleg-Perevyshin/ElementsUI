@@ -1,14 +1,14 @@
 <script lang="ts">
-  import { getContext } from 'svelte'
-  import { t } from '$lib/locales/i18n'
-  import { type UIComponent, type IGraphProps, updateProperty, type ISelectOption, type IUIComponentHandler } from '../types'
-  import * as UI from '$lib'
-  import Modal from '$lib/Modal.svelte'
-  import { ICONS } from '$lib/icons'
-  import Button from '$lib/Button/Button.svelte'
-  import CrossIcon from '$lib/libIcons/CrossIcon.svelte'
-  import { optionsStore } from '$lib/options'
-  import { twMerge } from 'tailwind-merge'
+  import { getContext } from "svelte"
+  import { t } from "$lib/locales/i18n"
+  import { type UIComponent, type IGraphProps, updateProperty, type ISelectOption, type IUIComponentHandler } from "../types"
+  import * as UI from "$lib"
+  import Modal from "$lib/Modal.svelte"
+  import { ICONS } from "$lib/icons"
+  import Button from "$lib/Button/Button.svelte"
+  import CrossIcon from "$lib/libIcons/CrossIcon.svelte"
+  import { optionsStore } from "$lib/options"
+  import { twMerge } from "tailwind-merge"
 
   const {
     component,
@@ -22,18 +22,18 @@
 
   let showIconLib = $state(false)
 
-  const DeviceVariables = getContext<{ id: string; value: string; name: string }[]>('DeviceVariables')
+  const DeviceVariables = getContext<{ id: string; value: string; name: string }[]>("DeviceVariables")
   let VARIABLE_OPTIONS = $derived(DeviceVariables && Array.isArray(DeviceVariables) ? DeviceVariables : [])
 
   const initialAlign = $derived(
     $optionsStore.TEXT_ALIGN_OPTIONS.find((a) =>
-      (a.value as string).includes(component.properties.label?.class?.split(' ').find((cls: string) => cls.startsWith('text-'))),
+      (a.value as string).includes(component.properties.label?.class?.split(" ").find((cls: string) => cls.startsWith("text-"))),
     ),
   )
 
   const initialColor = $derived(
     $optionsStore.COLOR_OPTIONS.find((c) =>
-      (c.value as string).includes(component.properties.wrapperClass?.split(' ').find((cls: string) => cls.startsWith('bg-'))),
+      (c.value as string).includes(component.properties.wrapperClass?.split(" ").find((cls: string) => cls.startsWith("bg-"))),
     ),
   )
 </script>
@@ -44,21 +44,21 @@
       <!-- Сообщение для отправки в ws по нажатию кнопки -->
       <div class="flex w-1/3 flex-col items-center px-2">
         <UI.Select
-          label={{ name: $t('constructor.props.variable') }}
+          label={{ name: $t("constructor.props.variable") }}
           options={VARIABLE_OPTIONS}
           value={VARIABLE_OPTIONS.find((opt) => opt.value === component.properties.id)}
           onUpdate={(value) => {
-            updateProperty('id', value.value as string, component, onPropertyChange)
-            onPropertyChange({ name: value.name?.split('—')[1].trim(), eventHandler: { Variables: [value.value as string] } })
+            updateProperty("id", value.value as string, component, onPropertyChange)
+            onPropertyChange({ name: value.name?.split("—")[1].trim(), eventHandler: { Variables: [value.value as string] } })
           }}
         />
         <UI.Select
-          label={{ name: $t('constructor.props.action') }}
+          label={{ name: $t("constructor.props.action") }}
           type="buttons"
           value={$optionsStore.SHORT_ARGUMENT_OPTION.find((h) => h.value === component.eventHandler.Argument)}
           options={$optionsStore.SHORT_ARGUMENT_OPTION}
           onUpdate={(option) => {
-            updateProperty('eventHandler.Argument', option.value as string, component, onPropertyChange)
+            updateProperty("eventHandler.Argument", option.value as string, component, onPropertyChange)
 
             onPropertyChange({ eventHandler: { Argument: option.value as string } })
           }}
@@ -66,26 +66,26 @@
       </div>
       <div class="flex w-1/3 flex-col px-2">
         <UI.Select
-          label={{ name: $t('constructor.props.access') }}
+          label={{ name: $t("constructor.props.access") }}
           type="buttons"
           options={$optionsStore.ACCESS_OPTION}
           value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.access)}
           onUpdate={(option) => onPropertyChange({ access: option.value })}
         />
         <UI.Input
-          label={{ name: $t('constructor.props.label') }}
+          label={{ name: $t("constructor.props.label") }}
           value={component.properties.label.name}
-          onUpdate={(value) => updateProperty('label.name', value as string, component, onPropertyChange)}
+          onUpdate={(value) => updateProperty("label.name", value as string, component, onPropertyChange)}
         />
         <UI.Input
-          label={{ name: $t('constructor.props.label.class') }}
+          label={{ name: $t("constructor.props.label.class") }}
           value={component.properties.label.class}
-          onUpdate={(value) => updateProperty('label.class', value as string, component, onPropertyChange)}
+          onUpdate={(value) => updateProperty("label.class", value as string, component, onPropertyChange)}
         />
       </div>
       <div class="flex w-1/3 flex-col px-2">
         <div class="mt-6 flex gap-2">
-          <UI.Button content={{ name: $t('constructor.props.buttonIcon') }} onClick={() => (showIconLib = true)} />
+          <UI.Button content={{ name: $t("constructor.props.buttonIcon") }} onClick={() => (showIconLib = true)} />
           {#if showIconLib}
             <Modal bind:isOpen={showIconLib} wrapperClass="w-130">
               {#snippet main()}
@@ -98,7 +98,7 @@
                           <button
                             class="h-8 w-8 cursor-pointer [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
                             onclick={() => {
-                              updateProperty('buttonIcon', icon as string, component, onPropertyChange)
+                              updateProperty("buttonIcon", icon as string, component, onPropertyChange)
                             }}
                           >
                             {@html icon}
@@ -116,15 +116,15 @@
               componentClass="p-0.5 bg-red"
               content={{ icon: CrossIcon }}
               onClick={() => {
-                updateProperty('buttonIcon', '', component, onPropertyChange)
+                updateProperty("buttonIcon", "", component, onPropertyChange)
               }}
             />
           {/if}
         </div>
         <UI.Input
-          label={{ name: $t('constructor.props.joystick.axes') }}
-          value={component.properties.axes.map((axe: any) => axe.name).join(' ')}
-          help={{ info: $t('constructor.props.joystick.axes.info'), regExp: /^[\p{L}0-9\-_":{}]+ +[\p{L}0-9\-_":{}]+(?: +[\p{L}0-9\-_":{}]+)?$/u }}
+          label={{ name: $t("constructor.props.joystick.axes") }}
+          value={component.properties.axes.map((axe: any) => axe.name).join(" ")}
+          help={{ info: $t("constructor.props.joystick.axes.info"), regExp: /^[\p{L}0-9\-_":{}]+ +[\p{L}0-9\-_":{}]+(?: +[\p{L}0-9\-_":{}]+)?$/u }}
           maxlength={100}
           onUpdate={(value) => {
             const stringValue = value as string
@@ -134,7 +134,7 @@
             }
             const parts = stringValue.trim().split(/\s+/)
             updateProperty(
-              'axes',
+              "axes",
               parts.map((a: any, index: number) => {
                 let axeIndex = parts.length == 2 && component.properties.axes.length === 3 ? index + 1 : index
                 return {
@@ -150,11 +150,11 @@
         />
         <UI.Select
           wrapperClass="!h-14"
-          label={{ name: $t('constructor.props.colors') }}
+          label={{ name: $t("constructor.props.colors") }}
           type="buttons"
           options={$optionsStore.COLOR_OPTIONS}
           value={initialColor}
-          onUpdate={(option) => updateProperty('wrapperClass', twMerge(component.properties.wrapperClass, option.value), component, onPropertyChange)}
+          onUpdate={(option) => updateProperty("wrapperClass", twMerge(component.properties.wrapperClass, option.value), component, onPropertyChange)}
         />
       </div>
     </div>
@@ -171,7 +171,7 @@
                 const axes = component.properties.axes
 
                 updateProperty(
-                  'axes',
+                  "axes",
                   axes.map((a: any, i: number) => (i === index ? { ...a, minNum: value[0], maxNum: value[1] } : a)),
                   component,
                   onPropertyChange,
@@ -189,12 +189,12 @@
       <!-- Сообщение для отправки в ws по нажатию кнопки -->
       <div class="flex w-1/3 flex-col items-center px-2">
         <UI.Input
-          label={{ name: $t('constructor.props.id') }}
+          label={{ name: $t("constructor.props.id") }}
           value={component.properties.id}
-          onUpdate={(value) => updateProperty('id', value as string, component, onPropertyChange)}
+          onUpdate={(value) => updateProperty("id", value as string, component, onPropertyChange)}
         />
         <UI.Select
-          label={{ name: $t('constructor.props.access') }}
+          label={{ name: $t("constructor.props.access") }}
           type="buttons"
           options={$optionsStore.ACCESS_OPTION}
           value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.access)}
@@ -203,21 +203,21 @@
       </div>
       <div class="flex w-1/3 flex-col px-2">
         <UI.Input
-          label={{ name: $t('constructor.props.label') }}
+          label={{ name: $t("constructor.props.label") }}
           value={component.properties.label.name}
-          onUpdate={(value) => updateProperty('label.name', value as string, component, onPropertyChange)}
+          onUpdate={(value) => updateProperty("label.name", value as string, component, onPropertyChange)}
         />
         <UI.Select
-          label={{ name: $t('constructor.props.align') }}
+          label={{ name: $t("constructor.props.align") }}
           type="buttons"
           value={initialAlign}
           options={$optionsStore.TEXT_ALIGN_OPTIONS}
-          onUpdate={(option) => updateProperty('label.class', twMerge(component.properties.label.class, option.value), component, onPropertyChange)}
+          onUpdate={(option) => updateProperty("label.class", twMerge(component.properties.label.class, option.value), component, onPropertyChange)}
         />
       </div>
       <div class="flex w-1/3 flex-col px-2">
         <div class="mt-6 flex gap-2">
-          <UI.Button content={{ name: $t('constructor.props.buttonIcon') }} onClick={() => (showIconLib = true)} />
+          <UI.Button content={{ name: $t("constructor.props.buttonIcon") }} onClick={() => (showIconLib = true)} />
           {#if showIconLib}
             <Modal bind:isOpen={showIconLib} wrapperClass="w-130">
               {#snippet main()}
@@ -230,7 +230,7 @@
                           <button
                             class="h-8 w-8 cursor-pointer [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
                             onclick={() => {
-                              updateProperty('buttonIcon', icon as string, component, onPropertyChange)
+                              updateProperty("buttonIcon", icon as string, component, onPropertyChange)
                             }}
                           >
                             {@html icon}
@@ -248,15 +248,15 @@
               componentClass="p-0.5 bg-red"
               content={{ icon: CrossIcon }}
               onClick={() => {
-                updateProperty('buttonIcon', '', component, onPropertyChange)
+                updateProperty("buttonIcon", "", component, onPropertyChange)
               }}
             />
           {/if}
         </div>
         <UI.Input
-          label={{ name: $t('constructor.props.joystick.axes') }}
-          value={component.properties.axes.map((axe: any) => axe.name).join(' ')}
-          help={{ info: $t('constructor.props.joystick.axes.info'), regExp: /^[\p{L}0-9\-_":{}]+ +[\p{L}0-9\-_":{}]+(?: +[\p{L}0-9\-_":{}]+)?$/u }}
+          label={{ name: $t("constructor.props.joystick.axes") }}
+          value={component.properties.axes.map((axe: any) => axe.name).join(" ")}
+          help={{ info: $t("constructor.props.joystick.axes.info"), regExp: /^[\p{L}0-9\-_":{}]+ +[\p{L}0-9\-_":{}]+(?: +[\p{L}0-9\-_":{}]+)?$/u }}
           maxlength={100}
           onUpdate={(value) => {
             const stringValue = value as string
@@ -266,7 +266,7 @@
             }
             const parts = stringValue.trim().split(/\s+/)
             updateProperty(
-              'axes',
+              "axes",
               parts.map((a: any, index: number) => {
                 let axeIndex = parts.length == 2 && component.properties.axes.length === 3 ? index + 1 : index
                 return {
@@ -283,11 +283,11 @@
 
         <UI.Select
           wrapperClass="!h-14"
-          label={{ name: $t('constructor.props.colors') }}
+          label={{ name: $t("constructor.props.colors") }}
           type="buttons"
           options={$optionsStore.COLOR_OPTIONS}
           value={initialColor}
-          onUpdate={(option) => updateProperty('wrapperClass', twMerge(component.properties.wrapperClass, option.value), component, onPropertyChange)}
+          onUpdate={(option) => updateProperty("wrapperClass", twMerge(component.properties.wrapperClass, option.value), component, onPropertyChange)}
         />
       </div>
     </div>
@@ -304,7 +304,7 @@
                 const axes = component.properties.axes
 
                 updateProperty(
-                  'axes',
+                  "axes",
                   axes.map((a: any, i: number) => (i === index ? { ...a, minNum: value[0], maxNum: value[1] } : a)),
                   component,
                   onPropertyChange,

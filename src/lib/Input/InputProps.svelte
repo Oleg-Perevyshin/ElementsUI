@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { getContext } from 'svelte'
-  import { t } from '$lib/locales/i18n'
-  import type { IInputProps, UIComponent, ISelectOption, IUIComponentHandler } from '../types'
-  import * as UI from '$lib'
-  import { optionsStore } from '../options'
-  import { twMerge } from 'tailwind-merge'
+  import { getContext } from "svelte"
+  import { t } from "$lib/locales/i18n"
+  import type { IInputProps, UIComponent, ISelectOption, IUIComponentHandler } from "../types"
+  import * as UI from "$lib"
+  import { optionsStore } from "../options"
+  import { twMerge } from "tailwind-merge"
 
   const {
     component,
@@ -17,48 +17,48 @@
   }>()
 
   let isValidRegExp = $state(true)
-  const DeviceVariables = getContext<{ id: string; value: string; name: string }[]>('DeviceVariables')
+  const DeviceVariables = getContext<{ id: string; value: string; name: string }[]>("DeviceVariables")
   let VARIABLE_OPTIONS = $derived(DeviceVariables && Array.isArray(DeviceVariables) ? DeviceVariables : [])
 
   const initialColor = $derived(
     $optionsStore.COLOR_OPTIONS.find((c) =>
-      (c.value as string).includes(component.properties.componentClass?.split(' ').find((cls: string) => cls.startsWith('bg-'))),
+      (c.value as string).includes(component.properties.componentClass?.split(" ").find((cls: string) => cls.startsWith("bg-"))),
     ),
   )
 
   const initialAlign = $derived(
     $optionsStore.TEXT_ALIGN_OPTIONS.find((a) =>
-      (a.value as string).includes(component.properties.label?.class?.split(' ').find((cls: string) => cls.startsWith('text-'))),
+      (a.value as string).includes(component.properties.label?.class?.split(" ").find((cls: string) => cls.startsWith("text-"))),
     ),
   )
 
   /* Обновление свойства */
   const updateProperty = (path: string, value: string | object | boolean | number | RegExp) => {
     const newProperties = JSON.parse(JSON.stringify(component.properties))
-    if (path === 'regExp') {
+    if (path === "regExp") {
       try {
         let regex: RegExp
-        if (typeof value === 'string') {
+        if (typeof value === "string") {
           const pattern = value.match(/^\/(.*)\/([gimsuy]*)$/)
 
           regex = pattern ? new RegExp(pattern[1], pattern[2]) : new RegExp(value)
           if (pattern === null) return
-          regex.test('')
+          regex.test("")
         } else {
-          throw new Error('Invalid RegExp type')
+          throw new Error("Invalid RegExp type")
         }
 
         newProperties.regExp = regex
         isValidRegExp = true
       } catch (error) {
-        console.warn('Invalid RegExp:', error)
-        newProperties.regExp = typeof value === 'string' ? value : String(value)
+        console.warn("Invalid RegExp:", error)
+        newProperties.regExp = typeof value === "string" ? value : String(value)
         isValidRegExp = false
         return
       }
     }
 
-    const parts = path.split('.')
+    const parts = path.split(".")
     let obj = newProperties
 
     for (let i = 0; i < parts.length - 1; i++) {
@@ -72,18 +72,18 @@
   }
 
   const handleOptionColorChange = (color: string) => {
-    let componentClass = component.properties.componentClass || ''
+    let componentClass = component.properties.componentClass || ""
 
     componentClass = componentClass
-      .split(' ')
-      .filter((cls: string) => !cls.startsWith('bg-'))
-      .join(' ')
+      .split(" ")
+      .filter((cls: string) => !cls.startsWith("bg-"))
+      .join(" ")
 
     if (color) {
       componentClass += ` ${color}`
     }
 
-    updateProperty('componentClass', componentClass)
+    updateProperty("componentClass", componentClass)
   }
 </script>
 
@@ -92,119 +92,119 @@
     <!-- Сообщение для отправки в ws по нажатию кнопки -->
     <div class="flex w-1/3 flex-col items-center px-2">
       <UI.Select
-        label={{ name: $t('constructor.props.variable') }}
+        label={{ name: $t("constructor.props.variable") }}
         options={VARIABLE_OPTIONS}
         value={VARIABLE_OPTIONS.find((opt) => opt.value === component.properties.id)}
         onUpdate={(value) => {
-          updateProperty('id', value.value as string)
-          onPropertyChange({ name: value.name?.split('—')[1].trim(), eventHandler: { Variables: [value.value as string] } })
+          updateProperty("id", value.value as string)
+          onPropertyChange({ name: value.name?.split("—")[1].trim(), eventHandler: { Variables: [value.value as string] } })
         }}
       />
       <UI.Select
-        label={{ name: $t('constructor.props.access') }}
+        label={{ name: $t("constructor.props.access") }}
         type="buttons"
         options={$optionsStore.ACCESS_OPTION}
         value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.access)}
         onUpdate={(option) => onPropertyChange({ access: option.value })}
       />
       <UI.Select
-        label={{ name: $t('constructor.props.type') }}
+        label={{ name: $t("constructor.props.type") }}
         options={$optionsStore.INPUT_TYPE_OPTIONS}
         type="buttons"
-        value={$optionsStore.INPUT_TYPE_OPTIONS.find((opt) => opt.value === (component.properties.type || 'text'))}
+        value={$optionsStore.INPUT_TYPE_OPTIONS.find((opt) => opt.value === (component.properties.type || "text"))}
         onUpdate={(selectedOption) => {
-          updateProperty('type', selectedOption.value as string)
-          if (selectedOption.value === 'text-area') updateProperty('componentClass', twMerge(component.properties.componentClass, 'font-mono'))
-          else updateProperty('componentClass', twMerge(component.properties.componentClass, 'font-[Montserrat]'))
+          updateProperty("type", selectedOption.value as string)
+          if (selectedOption.value === "text-area") updateProperty("componentClass", twMerge(component.properties.componentClass, "font-mono"))
+          else updateProperty("componentClass", twMerge(component.properties.componentClass, "font-[Montserrat]"))
         }}
       />
-      {#if component.properties.type === 'text' || component.properties.type === 'password' || component.properties.type === 'text-area'}
+      {#if component.properties.type === "text" || component.properties.type === "password" || component.properties.type === "text-area"}
         <UI.Input
-          label={{ name: $t('constructor.props.maxlength') }}
+          label={{ name: $t("constructor.props.maxlength") }}
           type="number"
           number={{ minNum: 1, maxNum: 1000000, step: 1 }}
           value={component.properties.maxlength}
-          onUpdate={(value) => updateProperty('maxlength', value as string)}
+          onUpdate={(value) => updateProperty("maxlength", value as string)}
         />
         <UI.Input
-          label={{ name: $t('constructor.props.regexp') }}
+          label={{ name: $t("constructor.props.regexp") }}
           value={component.properties.help.regExp}
           maxlength={150}
-          help={{ info: $t('constructor.props.regexp.info') }}
-          componentClass={isValidRegExp === false ? '!border-2 !border-red-400' : ''}
-          onUpdate={(value) => updateProperty('help.regExp', value as string)}
+          help={{ info: $t("constructor.props.regexp.info") }}
+          componentClass={isValidRegExp === false ? "!border-2 !border-red-400" : ""}
+          onUpdate={(value) => updateProperty("help.regExp", value as string)}
         />
-      {:else if component.properties.type === 'number' && !component.properties.readonly && !component.properties.disabled}
+      {:else if component.properties.type === "number" && !component.properties.readonly && !component.properties.disabled}
         <UI.Input
-          label={{ name: $t('constructor.props.minnum') }}
+          label={{ name: $t("constructor.props.minnum") }}
           value={component.properties.number.minNum as number}
           type="number"
           onUpdate={(value) => {
-            updateProperty('number.minNum', Number(value))
+            updateProperty("number.minNum", Number(value))
           }}
         />
         <UI.Input
-          label={{ name: $t('constructor.props.maxnum') }}
+          label={{ name: $t("constructor.props.maxnum") }}
           value={component.properties.number.maxNum as number}
           type="number"
           onUpdate={(value) => {
-            updateProperty('number.maxNum', Number(value))
+            updateProperty("number.maxNum", Number(value))
           }}
         />
         <UI.Input
-          label={{ name: $t('constructor.props.step') }}
+          label={{ name: $t("constructor.props.step") }}
           value={component.properties.number.step as number}
           type="number"
-          onUpdate={(value) => updateProperty('number.step', Number(value))}
+          onUpdate={(value) => updateProperty("number.step", Number(value))}
         />
       {/if}
     </div>
     <div class="flex w-1/3 flex-col px-2">
       <UI.Input
-        label={{ name: $t('constructor.props.placeholder') }}
+        label={{ name: $t("constructor.props.placeholder") }}
         value={component.properties.placeholder as string}
-        onUpdate={(value) => updateProperty('placeholder', value)}
+        onUpdate={(value) => updateProperty("placeholder", value)}
       />
       <UI.Input
-        label={{ name: $t('constructor.props.info') }}
+        label={{ name: $t("constructor.props.info") }}
         value={component.properties.help.info as string}
-        onUpdate={(value) => updateProperty('help.info', value)}
+        onUpdate={(value) => updateProperty("help.info", value)}
       />
       <UI.Switch
-        label={{ name: $t('constructor.props.readonly') }}
+        label={{ name: $t("constructor.props.readonly") }}
         value={component.properties.readonly}
-        options={[{ id: crypto.randomUUID(), value: 0, class: '' }]}
-        onChange={(value) => updateProperty('readonly', value)}
+        options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
+        onChange={(value) => updateProperty("readonly", value)}
       />
       <UI.Switch
-        label={{ name: $t('constructor.props.copy') }}
+        label={{ name: $t("constructor.props.copy") }}
         value={component.properties.help.copyButton}
-        options={[{ id: crypto.randomUUID(), value: 0, class: '' }]}
-        onChange={(value) => updateProperty('help.copyButton', value)}
+        options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
+        onChange={(value) => updateProperty("help.copyButton", value)}
       />
     </div>
     <div class="flex w-1/3 flex-col px-2">
       <UI.Input
-        label={{ name: $t('constructor.props.label') }}
+        label={{ name: $t("constructor.props.label") }}
         value={component.properties.label.name}
-        onUpdate={(value) => updateProperty('label.name', value as string)}
+        onUpdate={(value) => updateProperty("label.name", value as string)}
       />
       <UI.Select
-        label={{ name: $t('constructor.props.align') }}
+        label={{ name: $t("constructor.props.align") }}
         type="buttons"
         value={initialAlign}
         options={$optionsStore.TEXT_ALIGN_OPTIONS}
-        onUpdate={(option) => updateProperty('label.class', twMerge(component.properties.label.class, option.value))}
+        onUpdate={(option) => updateProperty("label.class", twMerge(component.properties.label.class, option.value))}
       />
       <UI.Select
-        label={{ name: $t('constructor.props.autocomplete') }}
+        label={{ name: $t("constructor.props.autocomplete") }}
         options={$optionsStore.AUTOCOMPLETE_CONSTRUCTOR_OPTIONS}
-        value={$optionsStore.AUTOCOMPLETE_CONSTRUCTOR_OPTIONS.find((opt) => opt.value === (component.properties.help.autocomplete || 'off'))}
-        onUpdate={(selectedOption) => updateProperty('help.autocomplete', selectedOption.value as string)}
+        value={$optionsStore.AUTOCOMPLETE_CONSTRUCTOR_OPTIONS.find((opt) => opt.value === (component.properties.help.autocomplete || "off"))}
+        onUpdate={(selectedOption) => updateProperty("help.autocomplete", selectedOption.value as string)}
       />
       <UI.Select
         wrapperClass="h-14"
-        label={{ name: $t('constructor.props.colors') }}
+        label={{ name: $t("constructor.props.colors") }}
         type="buttons"
         options={$optionsStore.COLOR_OPTIONS}
         value={initialColor}
@@ -216,34 +216,30 @@
   <div class="relative flex flex-row items-start justify-center">
     <!-- Сообщение для отправки в ws по нажатию кнопки -->
     <div class="flex w-1/3 flex-col items-center px-2">
+      <UI.Input label={{ name: $t("constructor.props.id") }} value={component.properties.id} onUpdate={(value) => updateProperty("id", value as string)} />
       <UI.Input
-        label={{ name: $t('constructor.props.id') }}
-        value={component.properties.id}
-        onUpdate={(value) => updateProperty('id', value as string)}
-      />
-      <UI.Input
-        label={{ name: $t('constructor.props.wrapperclass') }}
+        label={{ name: $t("constructor.props.wrapperclass") }}
         value={component.properties.wrapperClass}
-        onUpdate={(value) => updateProperty('wrapperClass', value as string)}
+        onUpdate={(value) => updateProperty("wrapperClass", value as string)}
       />
       <UI.Input
-        label={{ name: $t('constructor.props.label') }}
+        label={{ name: $t("constructor.props.label") }}
         value={component.properties.label.name}
-        onUpdate={(value) => updateProperty('label.name', value as string)}
+        onUpdate={(value) => updateProperty("label.name", value as string)}
       />
       <UI.Input
-        label={{ name: $t('constructor.props.label.class') }}
+        label={{ name: $t("constructor.props.label.class") }}
         value={component.properties.label.class}
-        onUpdate={(value) => updateProperty('label.class', value as string)}
+        onUpdate={(value) => updateProperty("label.class", value as string)}
       />
       <UI.Input
-        label={{ name: $t('constructor.props.componentclass') }}
+        label={{ name: $t("constructor.props.componentclass") }}
         value={component.properties.componentClass}
-        onUpdate={(value) => updateProperty('componentClass', twMerge(component.properties.componentClass, value as string))}
+        onUpdate={(value) => updateProperty("componentClass", twMerge(component.properties.componentClass, value as string))}
       />
       <UI.Select
         wrapperClass="h-14"
-        label={{ name: $t('constructor.props.colors') }}
+        label={{ name: $t("constructor.props.colors") }}
         type="buttons"
         options={$optionsStore.COLOR_OPTIONS}
         value={initialColor}
@@ -252,109 +248,109 @@
     </div>
     <div class="flex w-1/3 flex-col px-2">
       <UI.Select
-        label={{ name: $t('constructor.props.access') }}
+        label={{ name: $t("constructor.props.access") }}
         type="buttons"
         options={$optionsStore.ACCESS_OPTION}
         value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.access)}
         onUpdate={(option) => onPropertyChange({ access: option.value })}
       />
       <UI.Input
-        label={{ name: $t('constructor.props.value') }}
+        label={{ name: $t("constructor.props.value") }}
         value={component.properties.value}
-        onUpdate={(value) => updateProperty('value', value as string)}
+        onUpdate={(value) => updateProperty("value", value as string)}
       />
       <UI.Select
-        label={{ name: $t('constructor.props.type') }}
+        label={{ name: $t("constructor.props.type") }}
         options={$optionsStore.INPUT_TYPE_OPTIONS}
         type="buttons"
-        value={$optionsStore.INPUT_TYPE_OPTIONS.find((opt) => opt.value === (component.properties.type || 'text'))}
-        onUpdate={(selectedOption) => updateProperty('type', selectedOption.value as string)}
+        value={$optionsStore.INPUT_TYPE_OPTIONS.find((opt) => opt.value === (component.properties.type || "text"))}
+        onUpdate={(selectedOption) => updateProperty("type", selectedOption.value as string)}
       />
-      {#if component.properties.type === 'text' || component.properties.type === 'password' || component.properties.type === 'text-area'}
+      {#if component.properties.type === "text" || component.properties.type === "password" || component.properties.type === "text-area"}
         <UI.Input
-          label={{ name: $t('constructor.props.maxlength') }}
+          label={{ name: $t("constructor.props.maxlength") }}
           type="number"
           number={{ minNum: 1, maxNum: 1000000, step: 1 }}
           value={component.properties.maxlength}
-          onUpdate={(value) => updateProperty('maxlength', value as string)}
+          onUpdate={(value) => updateProperty("maxlength", value as string)}
         />
         <UI.Input
-          label={{ name: $t('constructor.props.regexp') }}
+          label={{ name: $t("constructor.props.regexp") }}
           value={component.properties.help.regExp}
           maxlength={150}
-          help={{ info: $t('constructor.props.regexp.info') }}
-          componentClass={isValidRegExp === false ? '!border-2 !border-red-400' : ''}
-          onUpdate={(value) => updateProperty('help.regExp', value)}
+          help={{ info: $t("constructor.props.regexp.info") }}
+          componentClass={isValidRegExp === false ? "!border-2 !border-red-400" : ""}
+          onUpdate={(value) => updateProperty("help.regExp", value)}
         />
-        {#if component.properties.type === 'text-area'}
+        {#if component.properties.type === "text-area"}
           <UI.Input
-            label={{ name: $t('constructor.props.textarea.rows') }}
+            label={{ name: $t("constructor.props.textarea.rows") }}
             type="number"
             number={{ minNum: 1, maxNum: 1000000, step: 1 }}
             value={component.properties.textareaRows}
-            onUpdate={(value) => updateProperty('textareaRows', value as string)}
+            onUpdate={(value) => updateProperty("textareaRows", value as string)}
           />
         {/if}
-      {:else if component.properties.type === 'number' && !component.properties.readonly && !component.properties.disabled}
+      {:else if component.properties.type === "number" && !component.properties.readonly && !component.properties.disabled}
         <UI.Input
-          label={{ name: $t('constructor.props.minnum') }}
+          label={{ name: $t("constructor.props.minnum") }}
           value={component.properties.number.minNum as number}
           type="number"
           onUpdate={(value) => {
-            updateProperty('number.minNum', Number(value))
+            updateProperty("number.minNum", Number(value))
           }}
         />
         <UI.Input
-          label={{ name: $t('constructor.props.maxnum') }}
+          label={{ name: $t("constructor.props.maxnum") }}
           value={component.properties.number.maxNum as number}
           type="number"
           onUpdate={(value) => {
-            updateProperty('number.maxNum', Number(value))
+            updateProperty("number.maxNum", Number(value))
           }}
         />
         <UI.Input
-          label={{ name: $t('constructor.props.step') }}
+          label={{ name: $t("constructor.props.step") }}
           value={component.properties.number.step as number}
           type="number"
-          onUpdate={(value) => updateProperty('number.step', Number(value))}
+          onUpdate={(value) => updateProperty("number.step", Number(value))}
         />
       {/if}
     </div>
     <div class="flex w-1/3 flex-col px-2">
       <UI.Input
-        label={{ name: $t('constructor.props.placeholder') }}
+        label={{ name: $t("constructor.props.placeholder") }}
         value={component.properties.placeholder as string}
-        onUpdate={(value) => updateProperty('placeholder', value)}
+        onUpdate={(value) => updateProperty("placeholder", value)}
       />
       <UI.Input
-        label={{ name: $t('constructor.props.info') }}
+        label={{ name: $t("constructor.props.info") }}
         value={component.properties.help.info as string}
-        onUpdate={(value) => updateProperty('help.info', value)}
+        onUpdate={(value) => updateProperty("help.info", value)}
       />
       <UI.Select
-        label={{ name: $t('constructor.props.autocomplete') }}
+        label={{ name: $t("constructor.props.autocomplete") }}
         options={$optionsStore.AUTOCOMPLETE_OPTIONS}
-        value={$optionsStore.AUTOCOMPLETE_OPTIONS.find((opt) => opt.value === (component.properties.help.autocomplete || 'off'))}
-        onUpdate={(selectedOption) => updateProperty('help.autocomplete', selectedOption.value as string)}
+        value={$optionsStore.AUTOCOMPLETE_OPTIONS.find((opt) => opt.value === (component.properties.help.autocomplete || "off"))}
+        onUpdate={(selectedOption) => updateProperty("help.autocomplete", selectedOption.value as string)}
       />
 
       <UI.Switch
-        label={{ name: $t('constructor.props.readonly') }}
+        label={{ name: $t("constructor.props.readonly") }}
         value={component.properties.readonly}
-        options={[{ id: crypto.randomUUID(), value: 0, class: '' }]}
-        onChange={(value) => updateProperty('readonly', value)}
+        options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
+        onChange={(value) => updateProperty("readonly", value)}
       />
       <UI.Switch
-        label={{ name: $t('constructor.props.copy') }}
+        label={{ name: $t("constructor.props.copy") }}
         value={component.properties.help.copyButton}
-        options={[{ id: crypto.randomUUID(), value: 0, class: '' }]}
-        onChange={(value) => updateProperty('help.copyButton', value)}
+        options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
+        onChange={(value) => updateProperty("help.copyButton", value)}
       />
       <UI.Switch
-        label={{ name: $t('constructor.props.disabled') }}
+        label={{ name: $t("constructor.props.disabled") }}
         value={component.properties.disabled}
-        options={[{ id: crypto.randomUUID(), value: 0, class: '' }]}
-        onChange={(value) => updateProperty('disabled', value)}
+        options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
+        onChange={(value) => updateProperty("disabled", value)}
       />
     </div>
   </div>

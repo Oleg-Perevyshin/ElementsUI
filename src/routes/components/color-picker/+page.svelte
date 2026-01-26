@@ -1,22 +1,22 @@
 <script lang="ts">
-  import ColorPicker from '$lib/ColorPicker/ColorPicker.svelte'
-  import ColorPickerProps from '$lib/ColorPicker/ColorPickerProps.svelte'
-  import ComponentExample from '$lib/ComponentExample.svelte'
-  import { updateComponent, type IColorPickerProps, type UIComponent } from '$lib/types'
-  import { formatObjectToString } from '../../common'
+  import ColorPicker from "$lib/ColorPicker/ColorPicker.svelte"
+  import ColorPickerProps from "$lib/ColorPicker/ColorPickerProps.svelte"
+  import ComponentExample from "$lib/ComponentExample.svelte"
+  import { updateComponent, type IColorPickerProps, type UIComponent } from "$lib/types"
+  import { formatObjectToString } from "../../common"
 
   let colorPickerComponent: UIComponent = $state({
     id: crypto.randomUUID(),
-    type: 'ColorPicker',
-    access: 'full',
+    type: "ColorPicker",
+    access: "full",
     properties: {
       id: crypto.randomUUID(),
-      label: { name: 'Label', class: 'text-center' },
+      label: { name: "Label", class: "text-center" },
       value: [0, 0, 0],
     },
-    eventHandler: { Header: 'SET', Argument: 'NoSave', Variables: [] },
+    eventHandler: { Header: "SET", Argument: "NoSave", Variables: [] },
     position: { row: 0, col: 0, width: 0, height: 0 },
-    parentId: '',
+    parentId: "",
   })
 
   let codeText = $derived(`

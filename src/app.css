@@ -1,11 +1,11 @@
 /* src/app.css */
-@import 'tailwindcss';
+@import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
   font-family:
-    'Montserrat',
+    "Montserrat",
     -apple-system,
     BlinkMacSystemFont,
     segoe ui,

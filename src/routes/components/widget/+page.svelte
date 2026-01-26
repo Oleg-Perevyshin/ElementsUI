@@ -4,6 +4,7 @@
   import TextField from "$lib/TextField/TextField.svelte"
   import TextFieldProps from "$lib/TextField/TextFieldProps.svelte"
   import { updateComponent } from "$lib/types"
+  import Widget from "$lib/Widget/Widget.svelte"
   import { formatObjectToString } from "../../common"
 
   let textFieldComponent: UIComponent = $state({
@@ -31,16 +32,16 @@ ${formatObjectToString(textFieldComponent.properties as ITextFieldProps)}
 
 <ComponentExample {codeText}>
   {#snippet component()}
-    <div>
-      <TextField {...textFieldComponent.properties as ITextFieldProps} />
+    <div class="m-auto w-70 h-75">
+      <Widget />
     </div>
   {/snippet}
   {#snippet componentProps()}
-    <TextFieldProps
+    <!-- <TextFieldProps
       component={textFieldComponent as UIComponent & { properties: Partial<ITextFieldProps> }}
       onPropertyChange={(updates) => (textFieldComponent = updateComponent(textFieldComponent, updates as object))}
       forConstructor={false}
-    />
+    /> -->
     <!-- <hr />
     <TextFieldProps
       component={textFieldComponent as UIComponent & { properties: Partial<ITextFieldProps> }}

@@ -1,1 +1,48 @@
-input[type=range].svelte-17e64va{-webkit-appearance:none;appearance:none;margin:0;padding:0;pointer-events:none;outline:none}input[type=range].svelte-17e64va::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:2rem;height:2rem;border-radius:50%;background:transparent;cursor:pointer;pointer-events:auto;border:none}input[type=range].svelte-17e64va::-moz-range-thumb{width:2rem;height:2rem;border-radius:50%;background:transparent;cursor:pointer;pointer-events:auto;border:none}input[type=range].svelte-17e64va::-webkit-slider-runnable-track{width:100%;height:100%;background:transparent;border-radius:0;border:none}input[type=range].svelte-17e64va::-moz-range-track{width:100%;height:100%;background:transparent;border-radius:0;border:none}input[type=range].svelte-17e64va:disabled::-webkit-slider-thumb{cursor:not-allowed}input[type=range].svelte-17e64va:disabled::-moz-range-thumb{cursor:not-allowed}
+input[type="range"].svelte-17e64va {
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0;
+  padding: 0;
+  pointer-events: none;
+  outline: none;
+}
+input[type="range"].svelte-17e64va::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  pointer-events: auto;
+  border: none;
+}
+input[type="range"].svelte-17e64va::-moz-range-thumb {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  pointer-events: auto;
+  border: none;
+}
+input[type="range"].svelte-17e64va::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  border-radius: 0;
+  border: none;
+}
+input[type="range"].svelte-17e64va::-moz-range-track {
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  border-radius: 0;
+  border: none;
+}
+input[type="range"].svelte-17e64va:disabled::-webkit-slider-thumb {
+  cursor: not-allowed;
+}
+input[type="range"].svelte-17e64va:disabled::-moz-range-thumb {
+  cursor: not-allowed;
+}

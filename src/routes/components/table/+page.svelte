@@ -107,15 +107,17 @@ ${formatObjectToString(tableComponent.properties as ITableProps<object>)}
     <div class="h-60">
       <Table
         {...tableComponent.properties as ITableProps<object>}
-        body={(tableComponent.properties as ITableProps<object>).dataBuffer?.stashData ? body : (tableComponent.properties as ITableProps<object>).body} />
+        body={(tableComponent.properties as ITableProps<object>).dataBuffer?.stashData ? body : (tableComponent.properties as ITableProps<object>).body}
+      />
     </div>
   {/snippet}
 
   {#snippet componentProps()}
     <TableProps
       component={tableComponent as UIComponent & { properties: Partial<ITableProps<object>> }}
-      onPropertyChange={updates => (tableComponent = updateComponent(tableComponent, updates as object))}
-      forConstructor={false} />
+      onPropertyChange={(updates) => (tableComponent = updateComponent(tableComponent, updates as object))}
+      forConstructor={false}
+    />
     <!-- <hr />
     <TableProps
       component={tableComponent as UIComponent & { properties: Partial<ITableProps<object>> }}

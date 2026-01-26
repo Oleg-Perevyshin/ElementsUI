@@ -141,7 +141,7 @@
       width: "10%",
       overflow: {
         truncated: true,
-        formatting: text => {
+        formatting: (text) => {
           if (text === "online") {
             return "1"
           } else return "2"
@@ -151,20 +151,20 @@
     {
       label: { name: "Last Active" },
       key: "lastActive",
-      width: "auto",
+      width: "1fr",
       sortable: true,
       overflow: { truncated: true, copy: true, modal: true },
     },
     {
       label: { name: "Actions" },
       key: "action",
-      width: "15%",
-      align: "center",
+      width: "1fr",
+      align: "left",
       action: {
         type: "buttons",
         buttons: [
           { name: "Action 1 (id)", class: "bg-blue", eventHandler: { Header: "SET", Argument: "save", Variables: ["name"] } },
-          { name: "Action 2 (name)", class: "bg-green", onClick: row => console.log(row.name) },
+          { name: "Action 2 (name)", class: "bg-green", onClick: (row) => console.log(row.name) },
         ],
       },
     },
@@ -198,7 +198,7 @@
   let inputNumber: number = $state(7)
   let progressBarValue = $state(40)
   let selectOption: ISelectOption = $state({ id: "Map", name: "Map", value: "Map" })
-  let COMPONENT_OPTIONS = Object.keys(componentMap).map(name => ({ id: name, name: name, value: name }))
+  let COMPONENT_OPTIONS = Object.keys(componentMap).map((name) => ({ id: name, name: name, value: name }))
   let switchValue = $state(0)
   let fullSwitchValue = $state(10)
 
@@ -261,7 +261,7 @@
 
   <div class="flex w-full flex-col gap-2">
     <!-- Компонент ACCORDION -->
-    <UI.Accordion label={{ name: "Accordion" }} isOpen={true}>
+    <UI.Accordion label={{ name: "Accordion" }} isOpen={false}>
       <UI.Accordion label={{ name: "Accordion 1", class: "" }} isOpen={false} wrapperClass="col-span-3">
         <h6>Содержимое вложенного Accordion 1</h6>
         <h5>Содержимое вложенного Accordion 1</h5>
@@ -311,18 +311,21 @@
           id={crypto.randomUUID()}
           label={{ name: "Выберите изображение" }}
           type="image"
-          imageSize={{ height: "10rem", width: "10rem", fitMode: "contain" }} />
+          imageSize={{ height: "10rem", width: "10rem", fitMode: "contain" }}
+        />
         <UI.FileAttach
           id={crypto.randomUUID()}
           label={{ name: "Выберите изображение" }}
           type="image"
-          imageSize={{ height: "10rem", width: "10rem", fitMode: "cover" }} />
+          imageSize={{ height: "10rem", width: "10rem", fitMode: "cover" }}
+        />
         <UI.FileAttach
           id={crypto.randomUUID()}
           label={{ name: "Выберите изображение" }}
           type="image"
           disabled
-          imageSize={{ height: "10rem", width: "10rem", fitMode: "cover" }} />
+          imageSize={{ height: "10rem", width: "10rem", fitMode: "cover" }}
+        />
       </div>
     </UI.Accordion>
 
@@ -345,7 +348,8 @@
             readonly
             type="text"
             maxlength={20}
-            disabled />
+            disabled
+          />
         </div>
         <UI.Input
           wrapperClass="!w-30 bg-green"
@@ -354,7 +358,8 @@
           maxlength={3}
           number={{ maxNum: 100, minNum: 0, step: 10 }}
           help={{ info: "Информационная подсказка" }}
-          onUpdate={value => (inputNumber = value as number)} />
+          onUpdate={(value) => (inputNumber = value as number)}
+        />
         <UI.Input wrapperClass="w-100" bind:value={inputString} type="password" maxlength={20} />
         <UI.Input
           wrapperClass="w-150"
@@ -362,7 +367,8 @@
           help={{ copyButton: true, info: "Информационная подсказка. Может быть многострочной, если не вмещается!" }}
           type="text-area"
           maxlength={150}
-          textareaRows={2} />
+          textareaRows={2}
+        />
         <p>string: {inputString}</p>
         <p>number: {inputNumber}</p>
       </div>
@@ -378,7 +384,8 @@
             { name: "Pitch", minNum: -100, maxNum: 100 },
             { name: "Yaw", minNum: -100, maxNum: 100 },
           ]}
-          buttonIcon={IconGripVerticalDual} />
+          buttonIcon={IconGripVerticalDual}
+        />
       </div>
     </UI.Accordion>
 
@@ -402,17 +409,24 @@
     <!-- Компонент SELECT -->
     <UI.Accordion label={{ name: "Select" }} isOpen={false}>
       <p>{JSON.stringify(selectOption)}</p>
-      <UI.Select type="input" label={{ name: "Компоненты" }} options={COMPONENT_OPTIONS} value={selectOption} onUpdate={option => (selectOption = option)} />
-      <UI.Select label={{ name: "Компоненты" }} options={COMPONENT_OPTIONS} value={selectOption} onUpdate={option => (selectOption = option)} />
-      <UI.Select type="buttons" label={{ name: "Компоненты" }} options={COMPONENT_OPTIONS} value={selectOption} onUpdate={option => (selectOption = option)} />
+      <UI.Select type="input" label={{ name: "Компоненты" }} options={COMPONENT_OPTIONS} value={selectOption} onUpdate={(option) => (selectOption = option)} />
+      <UI.Select label={{ name: "Компоненты" }} options={COMPONENT_OPTIONS} value={selectOption} onUpdate={(option) => (selectOption = option)} />
+      <UI.Select
+        type="buttons"
+        label={{ name: "Компоненты" }}
+        options={COMPONENT_OPTIONS}
+        value={selectOption}
+        onUpdate={(option) => (selectOption = option)}
+      />
       <div class="mt-4 flex items-end">
         <UI.Select
           label={{ name: "Битовый режим", class: "text-center" }}
           bitMode={true}
           range={{ start: 0, end: 3 }}
-          value={bitModeOptions.find(o => o.value === fullSwitchValue)}
+          value={bitModeOptions.find((o) => o.value === fullSwitchValue)}
           options={bitModeOptions}
-          onUpdate={() => {}} />
+          onUpdate={() => {}}
+        />
         <span>Выбранное значение: {fullSwitchValue}</span>
       </div>
     </UI.Accordion>
@@ -426,13 +440,15 @@
           label={{ name: "Слайдер с диапазоном" }}
           value={[-12, 35]}
           number={{ minNum: -50, maxNum: 50, step: 1 }}
-          disabled={false} />
+          disabled={false}
+        />
         <UI.Slider
           wrapperClass="!w-1/3 bg-blue px-2"
           label={{ name: "Слайдер с диапазоном (не активный)" }}
           value={[-10, 12]}
           number={{ minNum: -15, maxNum: 15, step: 1 }}
-          disabled={true} />
+          disabled={true}
+        />
       </div>
       <div class="flex gap-2">
         <UI.Slider wrapperClass="!w-1/2 bg-green px-2" label={{ name: "Слайдер" }} value={-10} number={{ minNum: -25, maxNum: 25, step: 1 }} disabled={false} />
@@ -441,7 +457,8 @@
           label={{ name: "Слайдер" }}
           value={-25}
           number={{ minNum: -50, maxNum: 50, step: 1 }}
-          disabled={false} />
+          disabled={false}
+        />
       </div>
       <div class="flex gap-2">
         <UI.Slider wrapperClass="!w-1/2 bg-purple px-2" label={{ name: "Слайдер" }} value={0} number={{ minNum: -50, maxNum: 50, step: 1 }} disabled={false} />
@@ -456,19 +473,22 @@
           wrapperClass="w-1/3"
           label={{ name: "Переключатель 1", captionLeft: "Off", captionRight: "On" }}
           bind:value={switchValue}
-          options={[{ id: crypto.randomUUID(), value: 0, class: "bg-blue" }]} />
+          options={[{ id: crypto.randomUUID(), value: 0, class: "bg-blue" }]}
+        />
         <UI.Switch
           wrapperClass="w-1/3"
           label={{ name: "Переключатель 2" }}
           type="vertical"
           bind:value={switchValue}
-          options={[{ id: crypto.randomUUID(), value: 0, class: "bg-red" }]} />
+          options={[{ id: crypto.randomUUID(), value: 0, class: "bg-red" }]}
+        />
         <UI.Switch
           wrapperClass="bg-yellow w-1/3"
           label={{ name: "Галочка" }}
           type="checkbox"
           bind:value={switchValue}
-          options={[{ id: crypto.randomUUID(), value: 0, class: "" }]} />
+          options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
+        />
       </div>
       <span>Выбранное значение: {switchValue}</span>
       <div class="mt-4 flex justify-center">
@@ -483,34 +503,39 @@
             { id: crypto.randomUUID(), value: 2, class: "bg-green" },
             { id: crypto.randomUUID(), value: 1, class: "bg-purple" },
             { id: crypto.randomUUID(), value: 0, class: "bg-purple" },
-          ]} />
+          ]}
+        />
       </div>
       <span> Выбранное значение в битовом режиме: {fullSwitchValue} </span>
     </UI.Accordion>
 
     <!-- Компонент TABLE -->
-    <UI.Accordion label={{ name: "Table" }} isOpen={false}>
-      <UI.Table
-        label={{ name: "Devices" }}
-        header={columns}
-        body={rows}
-        onClick={eventHandler => console.log(eventHandler)}
-        footer={`rows: ${rows.length}`}
-        bind:modalData />
-      <UI.Modal isOpen={modalData.isOpen} title="Full data">
-        {#snippet main()}
-          {@html modalData.formattedData}
-        {/snippet}
-        {#snippet footer()}
-          <UI.Button
-            content={{ name: "Copy" }}
-            wrapperClass="w-20 bg-pink"
-            onClick={() => {
-              navigator.clipboard.writeText(modalData.rawData)
-              modalData.isOpen = false
-            }} />
-        {/snippet}
-      </UI.Modal>
+    <UI.Accordion label={{ name: "Table" }} isOpen={true}>
+      <div class="h-50">
+        <UI.Table
+          label={{ name: "Devices" }}
+          header={columns}
+          body={rows}
+          onClick={(eventHandler) => console.log(eventHandler)}
+          footer={`rows: ${rows.length}`}
+          bind:modalData
+        />
+        <UI.Modal isOpen={modalData.isOpen} title="Full data">
+          {#snippet main()}
+            {@html modalData.formattedData}
+          {/snippet}
+          {#snippet footer()}
+            <UI.Button
+              content={{ name: "Copy" }}
+              wrapperClass="w-20 bg-pink"
+              onClick={() => {
+                navigator.clipboard.writeText(modalData.rawData)
+                modalData.isOpen = false
+              }}
+            />
+          {/snippet}
+        </UI.Modal>
+      </div>
     </UI.Accordion>
 
     <!-- Компонент TABS -->
@@ -525,7 +550,8 @@
             { name: "Tab4", class: "w-1/4" },
           ]}
           children={Tab}
-          size={{ height: 1, width: 1 }} />
+          size={{ height: 1, width: 1 }}
+        />
         <UI.Tabs
           items={[
             { name: "Tab1", icon: IconGripHorizontalUp, class: "flex-col" },
@@ -534,7 +560,8 @@
             { name: "Tab4", icon: IconGripVerticalLeft, class: "" },
           ]}
           children={Tab}
-          size={{ height: 1, width: 1 }} />
+          size={{ height: 1, width: 1 }}
+        />
       </div>
     </UI.Accordion>
     {#snippet Tab(item: { name: string })}

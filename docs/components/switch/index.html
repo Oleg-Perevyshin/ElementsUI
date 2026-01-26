@@ -1,34 +1,751 @@
 <!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" href="/ElementsUI/favicon.png" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4">
-		</script>
-		
-		<link href="/ElementsUI/_app/immutable/assets/Table.B2l_Likj.css" rel="stylesheet">
-		<link href="/ElementsUI/_app/immutable/assets/0.DpGxqb08.css" rel="stylesheet">
-		<link rel="modulepreload" href="/ElementsUI/_app/immutable/entry/start.B0I87LBF.js">
-		<link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/Cl66iwDI.js">
-		<link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/CYmiEaEH.js">
-		<link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/DXQ0fkFu.js">
-		<link rel="modulepreload" href="/ElementsUI/_app/immutable/entry/app.CN_sVLv0.js">
-		<link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/cfR1Foc9.js">
-		<link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/Di61MV9l.js">
-		<link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/_y1boTp2.js">
-		<link rel="modulepreload" href="/ElementsUI/_app/immutable/nodes/0.Bxba1_LJ.js">
-		<link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/CnAfG7ip.js">
-		<link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/CM3_98JW.js">
-		<link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/ClwY0cp0.js">
-		<link rel="modulepreload" href="/ElementsUI/_app/immutable/nodes/13.J-FYjgBf.js">
-		<link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/BSX-LnOW.js">
-	</head>
-	<body data-sveltekit-preload-data="hover">
-		<div><!--[--><!--[--><!----><div class="mx-auto flex h-screen max-w-[1400px] flex-col"><header class="sticky top-0 z-50 m-1 mt-2 flex items-center justify-between rounded-xl border border-(--border-color) bg-(--back-color)/50 p-4"><div class="flex items-center gap-2"><a href="/ElementsUI/" class="ml-2 no-underline! transition hover:scale-101"><h1>POE-Svelte-UI-Lib</h1></a></div> <div class="flex items-center gap-6"><!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="9d311a25-8060-40d3-a4c5-45a383a44bbf" class="relative m-0 inline-block items-center rounded-2xl font-semibold transition duration-200 select-none bg-transparent p-0 cursor-pointer active:scale-97 w-8 bg-(--bg-color)"><span class="flex flex-row items-center justify-center gap-2"><!--[--><span class="flex items-center justify-center overflow-visible 
-            w-8  [&amp;_svg]:h-full [&amp;_svg]:max-h-full [&amp;_svg]:w-full [&amp;_svg]:max-w-full"><!--[!--><!----><svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="M9.173 14.83a4 4 0 1 1 5.657-5.657"></path><path d="m11.294 12.707l.174.247a7.5 7.5 0 0 0 8.845 2.492A9 9 0 0 1 5.642 18.36M3 12h1m8-9v1M5.6 5.6l.7.7M3 21L21 3"></path></g></svg><!----><!--]--></span><!--]--> <!--[!--><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----> <!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="05ef1ffb-2ed5-4bfc-91be-08a87d3ca17a" class="relative m-0 inline-block items-center rounded-2xl font-semibold transition duration-200 select-none bg-transparent p-0 cursor-pointer active:scale-97 w-8 bg-(--bg-color)"><span class="flex flex-row items-center justify-center gap-2"><!--[--><span class="flex items-center justify-center overflow-visible 
-            w-8  [&amp;_svg]:h-full [&amp;_svg]:max-h-full [&amp;_svg]:w-full [&amp;_svg]:max-w-full"><!--[!--><!----><svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="M16 22.027v-2.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7a5.44 5.44 0 0 0-1.5-3.75a5.07 5.07 0 0 0-.09-3.77s-1.18-.35-3.91 1.48a13.4 13.4 0 0 0-7 0c-2.73-1.83-3.91-1.48-3.91-1.48A5.07 5.07 0 0 0 5 5.797a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7a3.37 3.37 0 0 0-.94 2.58v2.87"></path><path d="M9 20.027c-3 .973-5.5 0-7-3"></path></g></svg><!----><!--]--></span><!--]--> <!--[!--><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----></div></header> <div class="mb-2 flex flex-1 overflow-hidden"><nav class="m-1 flex w-64 flex-col items-start gap-2 overflow-y-auto rounded-xl border border-(--border-color) bg-(--back-color)/50 p-4"><!--[--><div class="flex w-full"><!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="1a94e9ab-fe6e-46be-97b9-fdb2c6bf5f1f" class="relative m-0 inline-block w-full items-center rounded-2xl px-2 py-1 font-semibold transition duration-200 select-none bg-blue border border-(--bg-color) cursor-pointer active:scale-97 h-10 text-left bg-(--bg-color)" aria-label="ALL in ONE"><span class="flex flex-row items-center justify-center gap-2"><!--[!--><!--]--> <!--[--><div class="flex-1">ALL in ONE <!--[!--><!--]--></div><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----> <!--[!--><!--]--></div><div class="flex w-full"><!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="0d3d39e4-afc4-4e66-a1f0-b5fa50639ed1" class="relative m-0 inline-block w-full items-center rounded-2xl px-2 py-1 font-semibold transition duration-200 select-none border border-(--bg-color) cursor-pointer active:scale-97 h-10 text-left bg-gray bg-(--bg-color)" aria-label="Accordion"><span class="flex flex-row items-center justify-center gap-2"><!--[!--><!--]--> <!--[--><div class="flex-1">Accordion <!--[!--><!--]--></div><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----> <!--[!--><!--]--></div><div class="flex w-full"><!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="48887c9c-bcc3-4074-9635-aa17013981f1" class="relative m-0 inline-block w-full items-center rounded-2xl px-2 py-1 font-semibold transition duration-200 select-none border border-(--bg-color) cursor-pointer active:scale-97 h-10 text-left bg-gray bg-(--bg-color)" aria-label="Button"><span class="flex flex-row items-center justify-center gap-2"><!--[!--><!--]--> <!--[--><div class="flex-1">Button <!--[!--><!--]--></div><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----> <!--[!--><!--]--></div><div class="flex w-full"><!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="a25355dd-e620-4c1c-89ef-d87286181a93" class="relative m-0 inline-block w-full items-center rounded-2xl px-2 py-1 font-semibold transition duration-200 select-none border border-(--bg-color) cursor-pointer active:scale-97 h-10 text-left bg-gray bg-(--bg-color)" aria-label="ColorPicker"><span class="flex flex-row items-center justify-center gap-2"><!--[!--><!--]--> <!--[--><div class="flex-1">ColorPicker <!--[!--><!--]--></div><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----> <!--[!--><!--]--></div><div class="flex w-full"><!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="3b7c106e-d91d-42d2-8d40-d05b4e24ff4d" class="relative m-0 inline-block w-full items-center rounded-2xl px-2 py-1 font-semibold transition duration-200 select-none border border-(--bg-color) cursor-pointer active:scale-97 h-10 text-left bg-gray bg-(--bg-color)" aria-label="FileAttach"><span class="flex flex-row items-center justify-center gap-2"><!--[!--><!--]--> <!--[--><div class="flex-1">FileAttach <!--[!--><!--]--></div><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----> <!--[!--><!--]--></div><div class="flex w-full"><!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="fb524e92-c9c4-4d74-ac3a-a939fb121583" class="relative m-0 inline-block w-full items-center rounded-2xl px-2 py-1 font-semibold transition duration-200 select-none border border-(--bg-color) cursor-pointer active:scale-97 h-10 text-left bg-gray bg-(--bg-color)" aria-label="Graph"><span class="flex flex-row items-center justify-center gap-2"><!--[!--><!--]--> <!--[--><div class="flex-1">Graph <!--[!--><!--]--></div><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----> <!--[!--><!--]--></div><div class="flex w-full"><!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="35e02a9c-041d-43b5-ad59-2420386ec658" class="relative m-0 inline-block w-full items-center rounded-2xl px-2 py-1 font-semibold transition duration-200 select-none border border-(--bg-color) cursor-pointer active:scale-97 h-10 text-left bg-gray bg-(--bg-color)" aria-label="Input"><span class="flex flex-row items-center justify-center gap-2"><!--[!--><!--]--> <!--[--><div class="flex-1">Input <!--[!--><!--]--></div><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----> <!--[!--><!--]--></div><div class="flex w-full"><!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="d77a6537-9863-4db2-929a-19fac9d0a1d8" class="relative m-0 inline-block w-full items-center rounded-2xl px-2 py-1 font-semibold transition duration-200 select-none border border-(--bg-color) cursor-pointer active:scale-97 h-10 text-left bg-gray bg-(--bg-color)" aria-label="ProgressBar"><span class="flex flex-row items-center justify-center gap-2"><!--[!--><!--]--> <!--[--><div class="flex-1">ProgressBar <!--[!--><!--]--></div><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----> <!--[!--><!--]--></div><div class="flex w-full"><!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="8640d196-1bc1-4644-91b5-9f3d616e74e1" class="relative m-0 inline-block w-full items-center rounded-2xl px-2 py-1 font-semibold transition duration-200 select-none border border-(--bg-color) cursor-pointer active:scale-97 h-10 text-left bg-gray bg-(--bg-color)" aria-label="Select"><span class="flex flex-row items-center justify-center gap-2"><!--[!--><!--]--> <!--[--><div class="flex-1">Select <!--[!--><!--]--></div><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----> <!--[!--><!--]--></div><div class="flex w-full"><!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="7a882cc4-6634-48df-b86b-ea560696b8ab" class="relative m-0 inline-block w-full items-center rounded-2xl px-2 py-1 font-semibold transition duration-200 select-none border border-(--bg-color) cursor-pointer active:scale-97 h-10 text-left bg-gray bg-(--bg-color)" aria-label="Slider"><span class="flex flex-row items-center justify-center gap-2"><!--[!--><!--]--> <!--[--><div class="flex-1">Slider <!--[!--><!--]--></div><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----> <!--[!--><!--]--></div><div class="flex w-full"><!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="430fea30-4843-4153-9f12-480fa2ae2a49" class="relative m-0 inline-block w-full items-center rounded-2xl px-2 py-1 font-semibold transition duration-200 select-none border border-(--bg-color) cursor-pointer active:scale-97 h-10 text-left bg-gray bg-(--bg-color)" aria-label="Switch"><span class="flex flex-row items-center justify-center gap-2"><!--[!--><!--]--> <!--[--><div class="flex-1">Switch <!--[!--><!--]--></div><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----> <!--[--><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M12.6 12L8.7 8.1q-.275-.275-.275-.7t.275-.7t.7-.275t.7.275l4.6 4.6q.15.15.213.325t.062.375t-.062.375t-.213.325l-4.6 4.6q-.275.275-.7.275t-.7-.275t-.275-.7t.275-.7z"></path></svg><!--]--></div><div class="flex w-full"><!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="ddb30f88-0245-49cc-b42b-81c0261a20fe" class="relative m-0 inline-block w-full items-center rounded-2xl px-2 py-1 font-semibold transition duration-200 select-none border border-(--bg-color) cursor-pointer active:scale-97 h-10 text-left bg-gray bg-(--bg-color)" aria-label="Table"><span class="flex flex-row items-center justify-center gap-2"><!--[!--><!--]--> <!--[--><div class="flex-1">Table <!--[!--><!--]--></div><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----> <!--[!--><!--]--></div><div class="flex w-full"><!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="54a6a58c-207a-4d30-b7cd-1a21ec980bc0" class="relative m-0 inline-block w-full items-center rounded-2xl px-2 py-1 font-semibold transition duration-200 select-none border border-(--bg-color) cursor-pointer active:scale-97 h-10 text-left bg-gray bg-(--bg-color)" aria-label="TextField"><span class="flex flex-row items-center justify-center gap-2"><!--[!--><!--]--> <!--[--><div class="flex-1">TextField <!--[!--><!--]--></div><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----> <!--[!--><!--]--></div><!--]--></nav> <div class="m-1 flex-1 overflow-y-auto rounded-xl border border-(--border-color) bg-(--back-color)/50 p-4"><!----><div class="flex h-[calc(100vh-9rem)] flex-col"><div class="flex-1 overflow-y-auto"><div class="relative flex w-full flex-col items-center justify-center bg-blue"><!--[--><h5 class="w-full px-4 text-center">Label</h5><!--]--> <div class="relative flex w-full grow items-center justify-center bg-transparent"><button class="mr-2 cursor-pointer" style="width: 3ch; text-align: end;">Off</button> <label class="relative flex items-center justify-between rounded-full border border-(--bg-color) "><input id="8d2388b4-08af-4504-af42-86ce4fb30d91" type="checkbox" class="absolute left-1/2 h-full w-full -translate-x-1/2 cursor-pointer appearance-none rounded-md" checked/> <span class="relative flex items-center rounded-full transition-all duration-250 bg-(--bg-color) cursor-pointer" style="width: calc(2rem * 2); height: 2rem;"><span class="absolute rounded-full bg-(--back-color) transition-all duration-250 cursor-pointer" style="width: calc(2rem * 0.75); height: calc(2rem * 0.75); margin: 0 calc(2rem * 0.1); transform: translateX(calc(2rem));"></span></span></label> <button class="ml-2 cursor-pointer" style="width: 3ch; text-align: start;">On</button></div></div><!----></div> <div class="border-t border-gray-500"></div> <div class="max-h-[70%]"><!--[!--><div class="relative flex flex-row items-start justify-center"><div class="flex w-1/3 flex-col items-center px-2"><!----><div class="bg-max relative flex w-full flex-col items-center"><!--[--><h5 class="w-full px-4 text-center">Идентификатор</h5><!--]--> <div class="relative flex w-full items-center "><!--[--><input value="8d2388b4-08af-4504-af42-86ce4fb30d91" class="w-full rounded-2xl border px-4 py-1 text-center transition-all duration-300 outline-none focus:border-blue-400 [&amp;::-webkit-inner-spin-button]:hidden [&amp;::-webkit-outer-spin-button]:hidden border-(--border-color) hover:shadow-md" style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);" id="7b5ad952-5825-4188-ac35-f21e1d4739b8" placeholder="" autocomplete="off" type="text" maxlength="100" min="-1000000" max="1000000" step="1"/><!--]--> <!--[!--><!--]--> <!--[!--><!--]--> <!--[!--><!--]--> <!--[!--><!--]--></div></div><!----> <!----><div class="bg-max relative flex w-full flex-col items-center"><!--[--><h5 class="w-full px-4 text-center">Стили обёртки</h5><!--]--> <div class="relative flex w-full items-center "><!--[--><input value="bg-blue" class="w-full rounded-2xl border px-4 py-1 text-center transition-all duration-300 outline-none focus:border-blue-400 [&amp;::-webkit-inner-spin-button]:hidden [&amp;::-webkit-outer-spin-button]:hidden border-(--border-color) hover:shadow-md" style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);" id="dbc43de2-618d-4d17-b19e-65a671659fd3" placeholder="" autocomplete="off" type="text" maxlength="100" min="-1000000" max="1000000" step="1"/><!--]--> <!--[!--><!--]--> <!--[!--><!--]--> <!--[!--><!--]--> <!--[!--><!--]--></div></div><!----> <!----><div class="bg-max relative flex w-full flex-col items-center h-14"><!--[--><h5 class="w-full px-4">Цвет фона</h5><!--]--> <!--[!--><!--[--><div id="f5d5908e-9bd6-4885-9ec2-947a49eca249" class="flex h-full w-full flex-row justify-center rounded-full border border-(--bg-color)"><!--[--><button id="ef39b241-7818-405b-8f30-a91d6f943b31" class="m-0 inline-block min-w-0 flex-1 items-center px-2 py-1 font-semibold shadow-sm transition-all duration-300 select-none cursor-pointer hover:shadow-md rounded-l-2xl bg-red bg-(--bg-color)"><span class="flex flex-row items-center justify-center gap-4"><!--[!--><!--]--></span></button><button id="31551432-4684-462e-addc-98e5f0230cd6" class="m-0 inline-block min-w-0 flex-1 items-center px-2 py-1 font-semibold shadow-sm transition-all duration-300 select-none cursor-pointer hover:shadow-md bg-yellow bg-(--bg-color)"><span class="flex flex-row items-center justify-center gap-4"><!--[!--><!--]--></span></button><button id="199b0c5b-e0a5-4fe6-ad10-c38b76c3df6b" class="m-0 inline-block min-w-0 flex-1 items-center px-2 py-1 font-semibold shadow-sm transition-all duration-300 select-none cursor-pointer hover:shadow-md bg-green bg-(--bg-color)"><span class="flex flex-row items-center justify-center gap-4"><!--[!--><!--]--></span></button><button id="38935477-5efc-466d-80ee-655854c551d5" class="m-0 inline-block min-w-0 flex-1 items-center px-2 font-semibold transition-all duration-300 select-none cursor-pointer z-10 py-1 shadow-[0_0_10px_var(--shadow-color)] hover:shadow-[0_0_15px_var(--shadow-color)] bg-blue bg-(--bg-color)"><span class="flex flex-row items-center justify-center gap-4"><!--[!--><!--]--></span></button><button id="05b2d600-fb4d-4cef-909a-c014ead709c0" class="m-0 inline-block min-w-0 flex-1 items-center px-2 py-1 font-semibold shadow-sm transition-all duration-300 select-none cursor-pointer hover:shadow-md rounded-r-2xl bg-purple bg-(--bg-color)"><span class="flex flex-row items-center justify-center gap-4"><!--[!--><!--]--></span></button><!--]--></div><!--]--><!--]--></div><!----></div> <div class="flex w-1/3 flex-col px-2"><!----><div class="bg-max relative flex w-full flex-col items-center"><!--[--><h5 class="w-full px-4 text-center">Текст надписи</h5><!--]--> <div class="relative flex w-full items-center "><!--[--><input value="Label" class="w-full rounded-2xl border px-4 py-1 text-center transition-all duration-300 outline-none focus:border-blue-400 [&amp;::-webkit-inner-spin-button]:hidden [&amp;::-webkit-outer-spin-button]:hidden border-(--border-color) hover:shadow-md" style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);" id="718a5c4b-1262-41ad-b291-5be936e50f40" placeholder="" autocomplete="off" type="text" maxlength="100" min="-1000000" max="1000000" step="1"/><!--]--> <!--[!--><!--]--> <!--[!--><!--]--> <!--[!--><!--]--> <!--[!--><!--]--></div></div><!----> <!----><div class="bg-max relative flex w-full flex-col items-center"><!--[--><h5 class="w-full px-4 text-center">Надпись слева</h5><!--]--> <div class="relative flex w-full items-center "><!--[--><input value="Off" class="w-full rounded-2xl border px-4 py-1 text-center transition-all duration-300 outline-none focus:border-blue-400 [&amp;::-webkit-inner-spin-button]:hidden [&amp;::-webkit-outer-spin-button]:hidden border-(--border-color) hover:shadow-md" style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);" id="c82ef50c-019a-4353-9447-5754ec7d0cde" placeholder="" autocomplete="off" type="text" maxlength="100" min="-1000000" max="1000000" step="1"/><!--]--> <!--[!--><!--]--> <!--[!--><!--]--> <!--[!--><!--]--> <!--[!--><!--]--></div></div><!----> <!----><div class="bg-max relative flex w-full flex-col items-center"><!--[--><h5 class="w-full px-4 text-center">Надпись справа</h5><!--]--> <div class="relative flex w-full items-center "><!--[--><input value="On" class="w-full rounded-2xl border px-4 py-1 text-center transition-all duration-300 outline-none focus:border-blue-400 [&amp;::-webkit-inner-spin-button]:hidden [&amp;::-webkit-outer-spin-button]:hidden border-(--border-color) hover:shadow-md" style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);" id="4b38f748-b522-40cb-be1d-c24ca71072f2" placeholder="" autocomplete="off" type="text" maxlength="100" min="-1000000" max="1000000" step="1"/><!--]--> <!--[!--><!--]--> <!--[!--><!--]--> <!--[!--><!--]--> <!--[!--><!--]--></div></div><!----></div> <div class="flex w-1/3 flex-col px-2"><!----><div class="bg-max relative flex w-full flex-col items-center"><!--[--><h5 class="w-full px-4 text-center">Высота</h5><!--]--> <div class="relative flex w-full items-center "><!--[--><input value="2rem" class="w-full rounded-2xl border px-4 py-1 text-center transition-all duration-300 outline-none focus:border-blue-400 [&amp;::-webkit-inner-spin-button]:hidden [&amp;::-webkit-outer-spin-button]:hidden border-(--border-color) hover:shadow-md" style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);" id="9cae1f9c-d64c-4c00-9e40-954ec622066a" placeholder="" autocomplete="off" type="text" maxlength="100" min="-1000000" max="1000000" step="1"/><!--]--> <!--[!--><!--]--> <!--[!--><!--]--> <!--[!--><!--]--> <!--[!--><!--]--></div></div><!----> <!----><div class="bg-max relative flex w-full flex-col items-center"><!--[--><h5 class="w-full px-4 text-center">Значение</h5><!--]--> <div class="relative flex w-full items-center "><!--[--><input value="2" class="w-full rounded-2xl border px-4 py-1 text-center transition-all duration-300 outline-none focus:border-blue-400 [&amp;::-webkit-inner-spin-button]:hidden [&amp;::-webkit-outer-spin-button]:hidden border-(--border-color) hover:shadow-md pr-8" style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);" id="5314dee7-cf09-43b6-ba50-0208aa194a7b" placeholder="" autocomplete="off" type="number" maxlength="100" min="1" max="2" step="1"/><!--]--> <!--[!--><!--]--> <!--[!--><!--]--> <!--[--><div class="absolute right-0 flex h-full w-8 flex-col items-center justify-center rounded-r-2xl border-l border-(--border-color)"><button class="flex h-1/2 w-full items-center rounded-tr-2xl border-b border-(--border-color) pl-2 transition-colors duration-150 hover:bg-(--gray-color)/30 active:bg-(--gray-color)/10" aria-label="Увеличить">+</button> <button class="flex h-1/2 w-full items-center rounded-br-2xl pl-2 transition-colors duration-150 hover:bg-(--gray-color)/30 active:bg-(--gray-color)/10" aria-label="Уменьшить">−</button></div><!--]--> <!--[!--><!--]--></div></div><!----> <!----><div class="relative flex w-full flex-col items-center justify-center bg-blue"><!--[--><h5 class="w-full px-4 text-center">Отключить</h5><!--]--> <div class="relative flex w-full grow items-center justify-center bg-transparent"><button class="mr-2 cursor-pointer" style="width: auto; text-align: end;"></button> <label class="relative flex items-center justify-between rounded-full border border-(--gray-color) "><input id="a1e97e14-431a-4405-831f-a285136cdaa3" type="checkbox" class="absolute left-1/2 h-full w-full -translate-x-1/2 cursor-pointer appearance-none rounded-md"/> <span class="relative flex items-center rounded-full transition-all duration-250 bg-(--gray-color) cursor-pointer" style="width: calc(2rem * 2); height: 2rem;"><span class="absolute rounded-full bg-(--back-color) transition-all duration-250 cursor-pointer" style="width: calc(2rem * 0.75); height: calc(2rem * 0.75); margin: 0 calc(2rem * 0.1); transform: translateX(0);"></span></span></label> <button class="ml-2 cursor-pointer" style="width: auto; text-align: start;"></button></div></div><!----></div></div><!--]--><!----> <div class="relative mt-3"><!----><div class="flex flex-col items-center absolute top-3 right-5 w-6"><div class="relative flex w-full grow items-center"><button id="85f937e1-44a4-4da4-a4ba-af52b5e17cd3" class="relative m-0 inline-block w-full items-center rounded-2xl font-semibold transition duration-200 select-none bg-transparent p-0 cursor-pointer active:scale-97 bg-(--bg-color)"><span class="flex flex-row items-center justify-center gap-2"><!--[--><span class="flex items-center justify-center overflow-visible 
-            w-6  [&amp;_svg]:h-full [&amp;_svg]:max-h-full [&amp;_svg]:w-full [&amp;_svg]:max-w-full"><!--[!--><!----><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 11c0-2.828 0-4.243.879-5.121C7.757 5 9.172 5 12 5h3c2.828 0 4.243 0 5.121.879C21 6.757 21 8.172 21 11v5c0 2.828 0 4.243-.879 5.121C19.243 22 17.828 22 15 22h-3c-2.828 0-4.243 0-5.121-.879C6 20.243 6 18.828 6 16z"></path><path d="M6 19a3 3 0 0 1-3-3v-6c0-3.771 0-5.657 1.172-6.828S7.229 2 11 2h4a3 3 0 0 1 3 3"></path></g></svg><!----><!--]--></span><!--]--> <!--[!--><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----> <pre class="overflow-x-auto">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="/ElementsUI/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+    <link href="/ElementsUI/_app/immutable/assets/Table.B2l_Likj.css" rel="stylesheet" />
+    <link href="/ElementsUI/_app/immutable/assets/0.DpGxqb08.css" rel="stylesheet" />
+    <link rel="modulepreload" href="/ElementsUI/_app/immutable/entry/start.B0I87LBF.js" />
+    <link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/Cl66iwDI.js" />
+    <link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/CYmiEaEH.js" />
+    <link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/DXQ0fkFu.js" />
+    <link rel="modulepreload" href="/ElementsUI/_app/immutable/entry/app.CN_sVLv0.js" />
+    <link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/cfR1Foc9.js" />
+    <link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/Di61MV9l.js" />
+    <link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/_y1boTp2.js" />
+    <link rel="modulepreload" href="/ElementsUI/_app/immutable/nodes/0.Bxba1_LJ.js" />
+    <link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/CnAfG7ip.js" />
+    <link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/CM3_98JW.js" />
+    <link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/ClwY0cp0.js" />
+    <link rel="modulepreload" href="/ElementsUI/_app/immutable/nodes/13.J-FYjgBf.js" />
+    <link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/BSX-LnOW.js" />
+  </head>
+  <body data-sveltekit-preload-data="hover">
+    <div>
+      <!--[--><!--[--><!---->
+      <div class="mx-auto flex h-screen max-w-[1400px] flex-col">
+        <header class="sticky top-0 z-50 m-1 mt-2 flex items-center justify-between rounded-xl border border-(--border-color) bg-(--back-color)/50 p-4">
+          <div class="flex items-center gap-2">
+            <a href="/ElementsUI/" class="ml-2 no-underline! transition hover:scale-101"><h1>POE-Svelte-UI-Lib</h1></a>
+          </div>
+          <div class="flex items-center gap-6">
+            <!---->
+            <div class="relative flex w-full flex-col items-center">
+              <div class="relative flex w-full grow items-center">
+                <button
+                  id="9d311a25-8060-40d3-a4c5-45a383a44bbf"
+                  class="relative m-0 inline-block w-8 cursor-pointer items-center rounded-2xl bg-(--bg-color) bg-transparent p-0 font-semibold transition duration-200 select-none active:scale-97"
+                >
+                  <span class="flex flex-row items-center justify-center gap-2"
+                    ><!--[--><span
+                      class="[&amp;_svg]:h-full [&amp;_svg]:max-h-full [&amp;_svg]:w-full [&amp;_svg]:max-w-full flex w-8 items-center justify-center overflow-visible"
+                      ><!--[!--><!----><svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" viewBox="0 0 24 24">
+                        <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
+                          <path d="M9.173 14.83a4 4 0 1 1 5.657-5.657"></path>
+                          <path d="m11.294 12.707l.174.247a7.5 7.5 0 0 0 8.845 2.492A9 9 0 0 1 5.642 18.36M3 12h1m8-9v1M5.6 5.6l.7.7M3 21L21 3"></path>
+                        </g></svg
+                      ><!----><!--]--></span
+                    ><!--]-->
+                    <!--[!--><!--]--></span
+                  >
+                </button>
+                <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+              </div>
+            </div>
+            <!---->
+            <!---->
+            <div class="relative flex w-full flex-col items-center">
+              <div class="relative flex w-full grow items-center">
+                <button
+                  id="05ef1ffb-2ed5-4bfc-91be-08a87d3ca17a"
+                  class="relative m-0 inline-block w-8 cursor-pointer items-center rounded-2xl bg-(--bg-color) bg-transparent p-0 font-semibold transition duration-200 select-none active:scale-97"
+                >
+                  <span class="flex flex-row items-center justify-center gap-2"
+                    ><!--[--><span
+                      class="[&amp;_svg]:h-full [&amp;_svg]:max-h-full [&amp;_svg]:w-full [&amp;_svg]:max-w-full flex w-8 items-center justify-center overflow-visible"
+                      ><!--[!--><!----><svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 24 24">
+                        <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
+                          <path
+                            d="M16 22.027v-2.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7a5.44 5.44 0 0 0-1.5-3.75a5.07 5.07 0 0 0-.09-3.77s-1.18-.35-3.91 1.48a13.4 13.4 0 0 0-7 0c-2.73-1.83-3.91-1.48-3.91-1.48A5.07 5.07 0 0 0 5 5.797a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7a3.37 3.37 0 0 0-.94 2.58v2.87"
+                          ></path>
+                          <path d="M9 20.027c-3 .973-5.5 0-7-3"></path>
+                        </g></svg
+                      ><!----><!--]--></span
+                    ><!--]-->
+                    <!--[!--><!--]--></span
+                  >
+                </button>
+                <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+              </div>
+            </div>
+            <!---->
+          </div>
+        </header>
+        <div class="mb-2 flex flex-1 overflow-hidden">
+          <nav class="m-1 flex w-64 flex-col items-start gap-2 overflow-y-auto rounded-xl border border-(--border-color) bg-(--back-color)/50 p-4">
+            <!--[-->
+            <div class="flex w-full">
+              <!---->
+              <div class="relative flex w-full flex-col items-center">
+                <div class="relative flex w-full grow items-center">
+                  <button
+                    id="1a94e9ab-fe6e-46be-97b9-fdb2c6bf5f1f"
+                    class="bg-blue relative m-0 inline-block h-10 w-full cursor-pointer items-center rounded-2xl border border-(--bg-color) bg-(--bg-color) px-2 py-1 text-left font-semibold transition duration-200 select-none active:scale-97"
+                    aria-label="ALL in ONE"
+                  >
+                    <span class="flex flex-row items-center justify-center gap-2"
+                      ><!--[!--><!--]-->
+                      <!--[-->
+                      <div class="flex-1">
+                        ALL in ONE
+                        <!--[!--><!--]-->
+                      </div>
+                      <!--]--></span
+                    >
+                  </button>
+                  <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+                </div>
+              </div>
+              <!---->
+              <!--[!--><!--]-->
+            </div>
+            <div class="flex w-full">
+              <!---->
+              <div class="relative flex w-full flex-col items-center">
+                <div class="relative flex w-full grow items-center">
+                  <button
+                    id="0d3d39e4-afc4-4e66-a1f0-b5fa50639ed1"
+                    class="bg-gray relative m-0 inline-block h-10 w-full cursor-pointer items-center rounded-2xl border border-(--bg-color) bg-(--bg-color) px-2 py-1 text-left font-semibold transition duration-200 select-none active:scale-97"
+                    aria-label="Accordion"
+                  >
+                    <span class="flex flex-row items-center justify-center gap-2"
+                      ><!--[!--><!--]-->
+                      <!--[-->
+                      <div class="flex-1">
+                        Accordion
+                        <!--[!--><!--]-->
+                      </div>
+                      <!--]--></span
+                    >
+                  </button>
+                  <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+                </div>
+              </div>
+              <!---->
+              <!--[!--><!--]-->
+            </div>
+            <div class="flex w-full">
+              <!---->
+              <div class="relative flex w-full flex-col items-center">
+                <div class="relative flex w-full grow items-center">
+                  <button
+                    id="48887c9c-bcc3-4074-9635-aa17013981f1"
+                    class="bg-gray relative m-0 inline-block h-10 w-full cursor-pointer items-center rounded-2xl border border-(--bg-color) bg-(--bg-color) px-2 py-1 text-left font-semibold transition duration-200 select-none active:scale-97"
+                    aria-label="Button"
+                  >
+                    <span class="flex flex-row items-center justify-center gap-2"
+                      ><!--[!--><!--]-->
+                      <!--[-->
+                      <div class="flex-1">
+                        Button
+                        <!--[!--><!--]-->
+                      </div>
+                      <!--]--></span
+                    >
+                  </button>
+                  <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+                </div>
+              </div>
+              <!---->
+              <!--[!--><!--]-->
+            </div>
+            <div class="flex w-full">
+              <!---->
+              <div class="relative flex w-full flex-col items-center">
+                <div class="relative flex w-full grow items-center">
+                  <button
+                    id="a25355dd-e620-4c1c-89ef-d87286181a93"
+                    class="bg-gray relative m-0 inline-block h-10 w-full cursor-pointer items-center rounded-2xl border border-(--bg-color) bg-(--bg-color) px-2 py-1 text-left font-semibold transition duration-200 select-none active:scale-97"
+                    aria-label="ColorPicker"
+                  >
+                    <span class="flex flex-row items-center justify-center gap-2"
+                      ><!--[!--><!--]-->
+                      <!--[-->
+                      <div class="flex-1">
+                        ColorPicker
+                        <!--[!--><!--]-->
+                      </div>
+                      <!--]--></span
+                    >
+                  </button>
+                  <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+                </div>
+              </div>
+              <!---->
+              <!--[!--><!--]-->
+            </div>
+            <div class="flex w-full">
+              <!---->
+              <div class="relative flex w-full flex-col items-center">
+                <div class="relative flex w-full grow items-center">
+                  <button
+                    id="3b7c106e-d91d-42d2-8d40-d05b4e24ff4d"
+                    class="bg-gray relative m-0 inline-block h-10 w-full cursor-pointer items-center rounded-2xl border border-(--bg-color) bg-(--bg-color) px-2 py-1 text-left font-semibold transition duration-200 select-none active:scale-97"
+                    aria-label="FileAttach"
+                  >
+                    <span class="flex flex-row items-center justify-center gap-2"
+                      ><!--[!--><!--]-->
+                      <!--[-->
+                      <div class="flex-1">
+                        FileAttach
+                        <!--[!--><!--]-->
+                      </div>
+                      <!--]--></span
+                    >
+                  </button>
+                  <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+                </div>
+              </div>
+              <!---->
+              <!--[!--><!--]-->
+            </div>
+            <div class="flex w-full">
+              <!---->
+              <div class="relative flex w-full flex-col items-center">
+                <div class="relative flex w-full grow items-center">
+                  <button
+                    id="fb524e92-c9c4-4d74-ac3a-a939fb121583"
+                    class="bg-gray relative m-0 inline-block h-10 w-full cursor-pointer items-center rounded-2xl border border-(--bg-color) bg-(--bg-color) px-2 py-1 text-left font-semibold transition duration-200 select-none active:scale-97"
+                    aria-label="Graph"
+                  >
+                    <span class="flex flex-row items-center justify-center gap-2"
+                      ><!--[!--><!--]-->
+                      <!--[-->
+                      <div class="flex-1">
+                        Graph
+                        <!--[!--><!--]-->
+                      </div>
+                      <!--]--></span
+                    >
+                  </button>
+                  <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+                </div>
+              </div>
+              <!---->
+              <!--[!--><!--]-->
+            </div>
+            <div class="flex w-full">
+              <!---->
+              <div class="relative flex w-full flex-col items-center">
+                <div class="relative flex w-full grow items-center">
+                  <button
+                    id="35e02a9c-041d-43b5-ad59-2420386ec658"
+                    class="bg-gray relative m-0 inline-block h-10 w-full cursor-pointer items-center rounded-2xl border border-(--bg-color) bg-(--bg-color) px-2 py-1 text-left font-semibold transition duration-200 select-none active:scale-97"
+                    aria-label="Input"
+                  >
+                    <span class="flex flex-row items-center justify-center gap-2"
+                      ><!--[!--><!--]-->
+                      <!--[-->
+                      <div class="flex-1">
+                        Input
+                        <!--[!--><!--]-->
+                      </div>
+                      <!--]--></span
+                    >
+                  </button>
+                  <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+                </div>
+              </div>
+              <!---->
+              <!--[!--><!--]-->
+            </div>
+            <div class="flex w-full">
+              <!---->
+              <div class="relative flex w-full flex-col items-center">
+                <div class="relative flex w-full grow items-center">
+                  <button
+                    id="d77a6537-9863-4db2-929a-19fac9d0a1d8"
+                    class="bg-gray relative m-0 inline-block h-10 w-full cursor-pointer items-center rounded-2xl border border-(--bg-color) bg-(--bg-color) px-2 py-1 text-left font-semibold transition duration-200 select-none active:scale-97"
+                    aria-label="ProgressBar"
+                  >
+                    <span class="flex flex-row items-center justify-center gap-2"
+                      ><!--[!--><!--]-->
+                      <!--[-->
+                      <div class="flex-1">
+                        ProgressBar
+                        <!--[!--><!--]-->
+                      </div>
+                      <!--]--></span
+                    >
+                  </button>
+                  <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+                </div>
+              </div>
+              <!---->
+              <!--[!--><!--]-->
+            </div>
+            <div class="flex w-full">
+              <!---->
+              <div class="relative flex w-full flex-col items-center">
+                <div class="relative flex w-full grow items-center">
+                  <button
+                    id="8640d196-1bc1-4644-91b5-9f3d616e74e1"
+                    class="bg-gray relative m-0 inline-block h-10 w-full cursor-pointer items-center rounded-2xl border border-(--bg-color) bg-(--bg-color) px-2 py-1 text-left font-semibold transition duration-200 select-none active:scale-97"
+                    aria-label="Select"
+                  >
+                    <span class="flex flex-row items-center justify-center gap-2"
+                      ><!--[!--><!--]-->
+                      <!--[-->
+                      <div class="flex-1">
+                        Select
+                        <!--[!--><!--]-->
+                      </div>
+                      <!--]--></span
+                    >
+                  </button>
+                  <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+                </div>
+              </div>
+              <!---->
+              <!--[!--><!--]-->
+            </div>
+            <div class="flex w-full">
+              <!---->
+              <div class="relative flex w-full flex-col items-center">
+                <div class="relative flex w-full grow items-center">
+                  <button
+                    id="7a882cc4-6634-48df-b86b-ea560696b8ab"
+                    class="bg-gray relative m-0 inline-block h-10 w-full cursor-pointer items-center rounded-2xl border border-(--bg-color) bg-(--bg-color) px-2 py-1 text-left font-semibold transition duration-200 select-none active:scale-97"
+                    aria-label="Slider"
+                  >
+                    <span class="flex flex-row items-center justify-center gap-2"
+                      ><!--[!--><!--]-->
+                      <!--[-->
+                      <div class="flex-1">
+                        Slider
+                        <!--[!--><!--]-->
+                      </div>
+                      <!--]--></span
+                    >
+                  </button>
+                  <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+                </div>
+              </div>
+              <!---->
+              <!--[!--><!--]-->
+            </div>
+            <div class="flex w-full">
+              <!---->
+              <div class="relative flex w-full flex-col items-center">
+                <div class="relative flex w-full grow items-center">
+                  <button
+                    id="430fea30-4843-4153-9f12-480fa2ae2a49"
+                    class="bg-gray relative m-0 inline-block h-10 w-full cursor-pointer items-center rounded-2xl border border-(--bg-color) bg-(--bg-color) px-2 py-1 text-left font-semibold transition duration-200 select-none active:scale-97"
+                    aria-label="Switch"
+                  >
+                    <span class="flex flex-row items-center justify-center gap-2"
+                      ><!--[!--><!--]-->
+                      <!--[-->
+                      <div class="flex-1">
+                        Switch
+                        <!--[!--><!--]-->
+                      </div>
+                      <!--]--></span
+                    >
+                  </button>
+                  <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+                </div>
+              </div>
+              <!---->
+              <!--[--><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
+                <path
+                  fill="currentColor"
+                  d="M12.6 12L8.7 8.1q-.275-.275-.275-.7t.275-.7t.7-.275t.7.275l4.6 4.6q.15.15.213.325t.062.375t-.062.375t-.213.325l-4.6 4.6q-.275.275-.7.275t-.7-.275t-.275-.7t.275-.7z"
+                ></path></svg
+              ><!--]-->
+            </div>
+            <div class="flex w-full">
+              <!---->
+              <div class="relative flex w-full flex-col items-center">
+                <div class="relative flex w-full grow items-center">
+                  <button
+                    id="ddb30f88-0245-49cc-b42b-81c0261a20fe"
+                    class="bg-gray relative m-0 inline-block h-10 w-full cursor-pointer items-center rounded-2xl border border-(--bg-color) bg-(--bg-color) px-2 py-1 text-left font-semibold transition duration-200 select-none active:scale-97"
+                    aria-label="Table"
+                  >
+                    <span class="flex flex-row items-center justify-center gap-2"
+                      ><!--[!--><!--]-->
+                      <!--[-->
+                      <div class="flex-1">
+                        Table
+                        <!--[!--><!--]-->
+                      </div>
+                      <!--]--></span
+                    >
+                  </button>
+                  <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+                </div>
+              </div>
+              <!---->
+              <!--[!--><!--]-->
+            </div>
+            <div class="flex w-full">
+              <!---->
+              <div class="relative flex w-full flex-col items-center">
+                <div class="relative flex w-full grow items-center">
+                  <button
+                    id="54a6a58c-207a-4d30-b7cd-1a21ec980bc0"
+                    class="bg-gray relative m-0 inline-block h-10 w-full cursor-pointer items-center rounded-2xl border border-(--bg-color) bg-(--bg-color) px-2 py-1 text-left font-semibold transition duration-200 select-none active:scale-97"
+                    aria-label="TextField"
+                  >
+                    <span class="flex flex-row items-center justify-center gap-2"
+                      ><!--[!--><!--]-->
+                      <!--[-->
+                      <div class="flex-1">
+                        TextField
+                        <!--[!--><!--]-->
+                      </div>
+                      <!--]--></span
+                    >
+                  </button>
+                  <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+                </div>
+              </div>
+              <!---->
+              <!--[!--><!--]-->
+            </div>
+            <!--]-->
+          </nav>
+          <div class="m-1 flex-1 overflow-y-auto rounded-xl border border-(--border-color) bg-(--back-color)/50 p-4">
+            <!---->
+            <div class="flex h-[calc(100vh-9rem)] flex-col">
+              <div class="flex-1 overflow-y-auto">
+                <div class="bg-blue relative flex w-full flex-col items-center justify-center">
+                  <!--[-->
+                  <h5 class="w-full px-4 text-center">Label</h5>
+                  <!--]-->
+                  <div class="relative flex w-full grow items-center justify-center bg-transparent">
+                    <button class="mr-2 cursor-pointer" style="width: 3ch; text-align: end">Off</button>
+                    <label class="relative flex items-center justify-between rounded-full border border-(--bg-color)"
+                      ><input
+                        id="8d2388b4-08af-4504-af42-86ce4fb30d91"
+                        type="checkbox"
+                        class="absolute left-1/2 h-full w-full -translate-x-1/2 cursor-pointer appearance-none rounded-md"
+                        checked />
+                      <span
+                        class="relative flex cursor-pointer items-center rounded-full bg-(--bg-color) transition-all duration-250"
+                        style="width: calc(2rem * 2); height: 2rem"
+                        ><span
+                          class="absolute cursor-pointer rounded-full bg-(--back-color) transition-all duration-250"
+                          style="width: calc(2rem * 0.75); height: calc(2rem * 0.75); margin: 0 calc(2rem * 0.1); transform: translateX(calc(2rem))"
+                        ></span></span
+                    ></label>
+                    <button class="ml-2 cursor-pointer" style="width: 3ch; text-align: start">On</button>
+                  </div>
+                </div>
+                <!---->
+              </div>
+              <div class="border-t border-gray-500"></div>
+              <div class="max-h-[70%]">
+                <!--[!-->
+                <div class="relative flex flex-row items-start justify-center">
+                  <div class="flex w-1/3 flex-col items-center px-2">
+                    <!---->
+                    <div class="bg-max relative flex w-full flex-col items-center">
+                      <!--[-->
+                      <h5 class="w-full px-4 text-center">Идентификатор</h5>
+                      <!--]-->
+                      <div class="relative flex w-full items-center">
+                        <!--[--><input
+                          value="8d2388b4-08af-4504-af42-86ce4fb30d91"
+                          class="[&amp;::-webkit-inner-spin-button]:hidden [&amp;::-webkit-outer-spin-button]:hidden w-full rounded-2xl border border-(--border-color) px-4 py-1 text-center transition-all duration-300 outline-none hover:shadow-md focus:border-blue-400"
+                          style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%)"
+                          id="7b5ad952-5825-4188-ac35-f21e1d4739b8"
+                          placeholder=""
+                          autocomplete="off"
+                          type="text"
+                          maxlength="100"
+                          min="-1000000"
+                          max="1000000"
+                          step="1"
+                        /><!--]-->
+                        <!--[!--><!--]-->
+                        <!--[!--><!--]-->
+                        <!--[!--><!--]-->
+                        <!--[!--><!--]-->
+                      </div>
+                    </div>
+                    <!---->
+                    <!---->
+                    <div class="bg-max relative flex w-full flex-col items-center">
+                      <!--[-->
+                      <h5 class="w-full px-4 text-center">Стили обёртки</h5>
+                      <!--]-->
+                      <div class="relative flex w-full items-center">
+                        <!--[--><input
+                          value="bg-blue"
+                          class="[&amp;::-webkit-inner-spin-button]:hidden [&amp;::-webkit-outer-spin-button]:hidden w-full rounded-2xl border border-(--border-color) px-4 py-1 text-center transition-all duration-300 outline-none hover:shadow-md focus:border-blue-400"
+                          style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%)"
+                          id="dbc43de2-618d-4d17-b19e-65a671659fd3"
+                          placeholder=""
+                          autocomplete="off"
+                          type="text"
+                          maxlength="100"
+                          min="-1000000"
+                          max="1000000"
+                          step="1"
+                        /><!--]-->
+                        <!--[!--><!--]-->
+                        <!--[!--><!--]-->
+                        <!--[!--><!--]-->
+                        <!--[!--><!--]-->
+                      </div>
+                    </div>
+                    <!---->
+                    <!---->
+                    <div class="bg-max relative flex h-14 w-full flex-col items-center">
+                      <!--[-->
+                      <h5 class="w-full px-4">Цвет фона</h5>
+                      <!--]-->
+                      <!--[!--><!--[-->
+                      <div id="f5d5908e-9bd6-4885-9ec2-947a49eca249" class="flex h-full w-full flex-row justify-center rounded-full border border-(--bg-color)">
+                        <!--[--><button
+                          id="ef39b241-7818-405b-8f30-a91d6f943b31"
+                          class="bg-red m-0 inline-block min-w-0 flex-1 cursor-pointer items-center rounded-l-2xl bg-(--bg-color) px-2 py-1 font-semibold shadow-sm transition-all duration-300 select-none hover:shadow-md"
+                        >
+                          <span class="flex flex-row items-center justify-center gap-4"><!--[!--><!--]--></span></button
+                        ><button
+                          id="31551432-4684-462e-addc-98e5f0230cd6"
+                          class="bg-yellow m-0 inline-block min-w-0 flex-1 cursor-pointer items-center bg-(--bg-color) px-2 py-1 font-semibold shadow-sm transition-all duration-300 select-none hover:shadow-md"
+                        >
+                          <span class="flex flex-row items-center justify-center gap-4"><!--[!--><!--]--></span></button
+                        ><button
+                          id="199b0c5b-e0a5-4fe6-ad10-c38b76c3df6b"
+                          class="bg-green m-0 inline-block min-w-0 flex-1 cursor-pointer items-center bg-(--bg-color) px-2 py-1 font-semibold shadow-sm transition-all duration-300 select-none hover:shadow-md"
+                        >
+                          <span class="flex flex-row items-center justify-center gap-4"><!--[!--><!--]--></span></button
+                        ><button
+                          id="38935477-5efc-466d-80ee-655854c551d5"
+                          class="bg-blue z-10 m-0 inline-block min-w-0 flex-1 cursor-pointer items-center bg-(--bg-color) px-2 py-1 font-semibold shadow-[0_0_10px_var(--shadow-color)] transition-all duration-300 select-none hover:shadow-[0_0_15px_var(--shadow-color)]"
+                        >
+                          <span class="flex flex-row items-center justify-center gap-4"><!--[!--><!--]--></span></button
+                        ><button
+                          id="05b2d600-fb4d-4cef-909a-c014ead709c0"
+                          class="bg-purple m-0 inline-block min-w-0 flex-1 cursor-pointer items-center rounded-r-2xl bg-(--bg-color) px-2 py-1 font-semibold shadow-sm transition-all duration-300 select-none hover:shadow-md"
+                        >
+                          <span class="flex flex-row items-center justify-center gap-4"><!--[!--><!--]--></span></button
+                        ><!--]-->
+                      </div>
+                      <!--]--><!--]-->
+                    </div>
+                    <!---->
+                  </div>
+                  <div class="flex w-1/3 flex-col px-2">
+                    <!---->
+                    <div class="bg-max relative flex w-full flex-col items-center">
+                      <!--[-->
+                      <h5 class="w-full px-4 text-center">Текст надписи</h5>
+                      <!--]-->
+                      <div class="relative flex w-full items-center">
+                        <!--[--><input
+                          value="Label"
+                          class="[&amp;::-webkit-inner-spin-button]:hidden [&amp;::-webkit-outer-spin-button]:hidden w-full rounded-2xl border border-(--border-color) px-4 py-1 text-center transition-all duration-300 outline-none hover:shadow-md focus:border-blue-400"
+                          style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%)"
+                          id="718a5c4b-1262-41ad-b291-5be936e50f40"
+                          placeholder=""
+                          autocomplete="off"
+                          type="text"
+                          maxlength="100"
+                          min="-1000000"
+                          max="1000000"
+                          step="1"
+                        /><!--]-->
+                        <!--[!--><!--]-->
+                        <!--[!--><!--]-->
+                        <!--[!--><!--]-->
+                        <!--[!--><!--]-->
+                      </div>
+                    </div>
+                    <!---->
+                    <!---->
+                    <div class="bg-max relative flex w-full flex-col items-center">
+                      <!--[-->
+                      <h5 class="w-full px-4 text-center">Надпись слева</h5>
+                      <!--]-->
+                      <div class="relative flex w-full items-center">
+                        <!--[--><input
+                          value="Off"
+                          class="[&amp;::-webkit-inner-spin-button]:hidden [&amp;::-webkit-outer-spin-button]:hidden w-full rounded-2xl border border-(--border-color) px-4 py-1 text-center transition-all duration-300 outline-none hover:shadow-md focus:border-blue-400"
+                          style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%)"
+                          id="c82ef50c-019a-4353-9447-5754ec7d0cde"
+                          placeholder=""
+                          autocomplete="off"
+                          type="text"
+                          maxlength="100"
+                          min="-1000000"
+                          max="1000000"
+                          step="1"
+                        /><!--]-->
+                        <!--[!--><!--]-->
+                        <!--[!--><!--]-->
+                        <!--[!--><!--]-->
+                        <!--[!--><!--]-->
+                      </div>
+                    </div>
+                    <!---->
+                    <!---->
+                    <div class="bg-max relative flex w-full flex-col items-center">
+                      <!--[-->
+                      <h5 class="w-full px-4 text-center">Надпись справа</h5>
+                      <!--]-->
+                      <div class="relative flex w-full items-center">
+                        <!--[--><input
+                          value="On"
+                          class="[&amp;::-webkit-inner-spin-button]:hidden [&amp;::-webkit-outer-spin-button]:hidden w-full rounded-2xl border border-(--border-color) px-4 py-1 text-center transition-all duration-300 outline-none hover:shadow-md focus:border-blue-400"
+                          style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%)"
+                          id="4b38f748-b522-40cb-be1d-c24ca71072f2"
+                          placeholder=""
+                          autocomplete="off"
+                          type="text"
+                          maxlength="100"
+                          min="-1000000"
+                          max="1000000"
+                          step="1"
+                        /><!--]-->
+                        <!--[!--><!--]-->
+                        <!--[!--><!--]-->
+                        <!--[!--><!--]-->
+                        <!--[!--><!--]-->
+                      </div>
+                    </div>
+                    <!---->
+                  </div>
+                  <div class="flex w-1/3 flex-col px-2">
+                    <!---->
+                    <div class="bg-max relative flex w-full flex-col items-center">
+                      <!--[-->
+                      <h5 class="w-full px-4 text-center">Высота</h5>
+                      <!--]-->
+                      <div class="relative flex w-full items-center">
+                        <!--[--><input
+                          value="2rem"
+                          class="[&amp;::-webkit-inner-spin-button]:hidden [&amp;::-webkit-outer-spin-button]:hidden w-full rounded-2xl border border-(--border-color) px-4 py-1 text-center transition-all duration-300 outline-none hover:shadow-md focus:border-blue-400"
+                          style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%)"
+                          id="9cae1f9c-d64c-4c00-9e40-954ec622066a"
+                          placeholder=""
+                          autocomplete="off"
+                          type="text"
+                          maxlength="100"
+                          min="-1000000"
+                          max="1000000"
+                          step="1"
+                        /><!--]-->
+                        <!--[!--><!--]-->
+                        <!--[!--><!--]-->
+                        <!--[!--><!--]-->
+                        <!--[!--><!--]-->
+                      </div>
+                    </div>
+                    <!---->
+                    <!---->
+                    <div class="bg-max relative flex w-full flex-col items-center">
+                      <!--[-->
+                      <h5 class="w-full px-4 text-center">Значение</h5>
+                      <!--]-->
+                      <div class="relative flex w-full items-center">
+                        <!--[--><input
+                          value="2"
+                          class="[&amp;::-webkit-inner-spin-button]:hidden [&amp;::-webkit-outer-spin-button]:hidden w-full rounded-2xl border border-(--border-color) px-4 py-1 pr-8 text-center transition-all duration-300 outline-none hover:shadow-md focus:border-blue-400"
+                          style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%)"
+                          id="5314dee7-cf09-43b6-ba50-0208aa194a7b"
+                          placeholder=""
+                          autocomplete="off"
+                          type="number"
+                          maxlength="100"
+                          min="1"
+                          max="2"
+                          step="1"
+                        /><!--]-->
+                        <!--[!--><!--]-->
+                        <!--[!--><!--]-->
+                        <!--[-->
+                        <div class="absolute right-0 flex h-full w-8 flex-col items-center justify-center rounded-r-2xl border-l border-(--border-color)">
+                          <button
+                            class="flex h-1/2 w-full items-center rounded-tr-2xl border-b border-(--border-color) pl-2 transition-colors duration-150 hover:bg-(--gray-color)/30 active:bg-(--gray-color)/10"
+                            aria-label="Увеличить"
+                          >
+                            +
+                          </button>
+                          <button
+                            class="flex h-1/2 w-full items-center rounded-br-2xl pl-2 transition-colors duration-150 hover:bg-(--gray-color)/30 active:bg-(--gray-color)/10"
+                            aria-label="Уменьшить"
+                          >
+                            −
+                          </button>
+                        </div>
+                        <!--]-->
+                        <!--[!--><!--]-->
+                      </div>
+                    </div>
+                    <!---->
+                    <!---->
+                    <div class="bg-blue relative flex w-full flex-col items-center justify-center">
+                      <!--[-->
+                      <h5 class="w-full px-4 text-center">Отключить</h5>
+                      <!--]-->
+                      <div class="relative flex w-full grow items-center justify-center bg-transparent">
+                        <button class="mr-2 cursor-pointer" style="width: auto; text-align: end"></button>
+                        <label class="relative flex items-center justify-between rounded-full border border-(--gray-color)"
+                          ><input
+                            id="a1e97e14-431a-4405-831f-a285136cdaa3"
+                            type="checkbox"
+                            class="absolute left-1/2 h-full w-full -translate-x-1/2 cursor-pointer appearance-none rounded-md" />
+                          <span
+                            class="relative flex cursor-pointer items-center rounded-full bg-(--gray-color) transition-all duration-250"
+                            style="width: calc(2rem * 2); height: 2rem"
+                            ><span
+                              class="absolute cursor-pointer rounded-full bg-(--back-color) transition-all duration-250"
+                              style="width: calc(2rem * 0.75); height: calc(2rem * 0.75); margin: 0 calc(2rem * 0.1); transform: translateX(0)"
+                            ></span></span
+                        ></label>
+                        <button class="ml-2 cursor-pointer" style="width: auto; text-align: start"></button>
+                      </div>
+                    </div>
+                    <!---->
+                  </div>
+                </div>
+                <!--]--><!---->
+                <div class="relative mt-3">
+                  <!---->
+                  <div class="absolute top-3 right-5 flex w-6 flex-col items-center">
+                    <div class="relative flex w-full grow items-center">
+                      <button
+                        id="85f937e1-44a4-4da4-a4ba-af52b5e17cd3"
+                        class="relative m-0 inline-block w-full cursor-pointer items-center rounded-2xl bg-(--bg-color) bg-transparent p-0 font-semibold transition duration-200 select-none active:scale-97"
+                      >
+                        <span class="flex flex-row items-center justify-center gap-2"
+                          ><!--[--><span
+                            class="[&amp;_svg]:h-full [&amp;_svg]:max-h-full [&amp;_svg]:w-full [&amp;_svg]:max-w-full flex w-6 items-center justify-center overflow-visible"
+                            ><!--[!--><!----><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                              <g fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path
+                                  d="M6 11c0-2.828 0-4.243.879-5.121C7.757 5 9.172 5 12 5h3c2.828 0 4.243 0 5.121.879C21 6.757 21 8.172 21 11v5c0 2.828 0 4.243-.879 5.121C19.243 22 17.828 22 15 22h-3c-2.828 0-4.243 0-5.121-.879C6 20.243 6 18.828 6 16z"
+                                ></path>
+                                <path d="M6 19a3 3 0 0 1-3-3v-6c0-3.771 0-5.657 1.172-6.828S7.229 2 11 2h4a3 3 0 0 1 3 3"></path>
+                              </g></svg
+                            ><!----><!--]--></span
+                          ><!--]-->
+                          <!--[!--><!--]--></span
+                        >
+                      </button>
+                      <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+                    </div>
+                  </div>
+                  <!---->
+                  <pre class="overflow-x-auto">
 &lt;UI.Switch
   id=crypto.randomUUID()
   wrapperClass='bg-blue'
@@ -38,30 +755,39 @@
   value={2} 
   onChange={() => {}}
 />
-  </pre></div></div></div><!----><!----></div></div></div><!----><!--]--> <!--[!--><!--]--><!--]-->
-			
-			<script>
-				{
-					__sveltekit_wqriqn = {
-						base: "/ElementsUI",
-						assets: "/ElementsUI"
-					};
+  </pre
+                  >
+                </div>
+              </div>
+            </div>
+            <!----><!---->
+          </div>
+        </div>
+      </div>
+      <!----><!--]-->
+      <!--[!--><!--]--><!--]-->
 
-					const element = document.currentScript.parentElement;
+      <script>
+        {
+          __sveltekit_wqriqn = {
+            base: "/ElementsUI",
+            assets: "/ElementsUI",
+          }
 
-					Promise.all([
-						import("/ElementsUI/_app/immutable/entry/start.B0I87LBF.js"),
-						import("/ElementsUI/_app/immutable/entry/app.CN_sVLv0.js")
-					]).then(([kit, app]) => {
-						kit.start(app, element, {
-							node_ids: [0, 13],
-							data: [null,null],
-							form: null,
-							error: null
-						});
-					});
-				}
-			</script>
-		</div>
-	</body>
+          const element = document.currentScript.parentElement
+
+          Promise.all([import("/ElementsUI/_app/immutable/entry/start.B0I87LBF.js"), import("/ElementsUI/_app/immutable/entry/app.CN_sVLv0.js")]).then(
+            ([kit, app]) => {
+              kit.start(app, element, {
+                node_ids: [0, 13],
+                data: [null, null],
+                form: null,
+                error: null,
+              })
+            },
+          )
+        }
+      </script>
+    </div>
+  </body>
 </html>

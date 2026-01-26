@@ -1,1 +1,11 @@
-import{f as t,a}from"../chunks/Di61MV9l.js";import{n as p}from"../chunks/CYmiEaEH.js";var r=t('<h1>Добро пожаловать</h1> <p>Это библиотека UI компонентов и примитивов для Svelte</p> <p>Поситите тестовый ресурс <a href="https://cloud-dev.poe-gw.keenetic.pro/" target="_blank">PAS Cloud</a> для просмотра компонентов в использовании</p>',1);function f(e){var o=r();p(4),a(e,o)}export{f as component};
+import { f as t, a } from "../chunks/Di61MV9l.js"
+import { n as p } from "../chunks/CYmiEaEH.js"
+var r = t(
+  '<h1>Добро пожаловать</h1> <p>Это библиотека UI компонентов и примитивов для Svelte</p> <p>Поситите тестовый ресурс <a href="https://cloud-dev.poe-gw.keenetic.pro/" target="_blank">PAS Cloud</a> для просмотра компонентов в использовании</p>',
+  1,
+)
+function f(e) {
+  var o = r()
+  ;(p(4), a(e, o))
+}
+export { f as component }

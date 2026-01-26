@@ -1,24 +1,24 @@
 <script lang="ts">
-  import { t } from '$lib/locales/i18n'
-  import type { IFileAttachProps } from '$lib/types'
-  import { twMerge } from 'tailwind-merge'
+  import { t } from "$lib/locales/i18n"
+  import type { IFileAttachProps } from "$lib/types"
+  import { twMerge } from "tailwind-merge"
 
   let {
     id = crypto.randomUUID(),
-    wrapperClass = '',
-    label = { name: '', class: '' },
-    type = 'file',
-    accept = '*/*',
-    imageSize = { height: '10rem', width: '10rem', fitMode: 'cover', form: 'square' },
+    wrapperClass = "",
+    label = { name: "", class: "" },
+    type = "file",
+    accept = "*/*",
+    imageSize = { height: "10rem", width: "10rem", fitMode: "cover", form: "square" },
     disabled = false,
-    currentImage = $bindable(''),
+    currentImage = $bindable(""),
     onChange = () => {},
   }: IFileAttachProps = $props()
 
   let ID = $derived(`${id}-${crypto.randomUUID().slice(0, 6)}`)
   let selectedFile = $state<File | null>(null)
-  let previewUrl = $derived(currentImage ? (currentImage.startsWith('data:') ? currentImage : `data:image/png;base64,${currentImage}`) : null)
-  let fileName = $state('')
+  let previewUrl = $derived(currentImage ? (currentImage.startsWith("data:") ? currentImage : `data:image/png;base64,${currentImage}`) : null)
+  let fileName = $state("")
 
   const handleFileChange = (event: Event) => {
     const input = event.target as HTMLInputElement
@@ -31,7 +31,7 @@
     selectedFile = file
     fileName = file.name
 
-    if (file.type.startsWith('image/')) previewUrl = URL.createObjectURL(file)
+    if (file.type.startsWith("image/")) previewUrl = URL.createObjectURL(file)
 
     onChange(event, file)
   }
@@ -47,7 +47,7 @@
     <h5 class={`${label.class}`}>{label.name}</h5>
   {/if}
 
-  {#if type === 'image'}
+  {#if type === "image"}
     <div class="relative">
       <button
         class="flex items-center justify-center overflow-hidden {imageSize.form === 'circle' ? 'rounded-full' : 'rounded-2xl'} 
@@ -59,11 +59,11 @@
       >
         {#if previewUrl || currentImage}
           <img
-            src={previewUrl ?? (currentImage?.startsWith('data:') ? currentImage : `data:image/png;base64,${currentImage}`)}
+            src={previewUrl ?? (currentImage?.startsWith("data:") ? currentImage : `data:image/png;base64,${currentImage}`)}
             alt="Preview"
             class={`
               h-full w-full
-              ${imageSize.fitMode === 'cover' ? 'object-cover' : 'object-contain'}
+              ${imageSize.fitMode === "cover" ? "object-cover" : "object-contain"}
             `}
           />
         {:else}
@@ -87,10 +87,10 @@
              "
       >
         <div class="flex w-1/3 items-center justify-center bg-(--blue-color) p-2 py-1 {disabled ? 'opacity-50' : ''}">
-          {$t('constructor.props.file.select')}
+          {$t("constructor.props.file.select")}
         </div>
         <div class="flex flex-1 items-center justify-start truncate bg-(--back-color) px-2 {disabled ? 'opacity-50' : ''}">
-          <p class="truncate">{fileName || $t('constructor.props.file.notselected')}</p>
+          <p class="truncate">{fileName || $t("constructor.props.file.notselected")}</p>
         </div>
       </div>
     </label>

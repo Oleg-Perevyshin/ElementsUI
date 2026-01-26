@@ -41,8 +41,9 @@ ${formatObjectToString(graphComponent.properties as IGraphProps)}
   {#snippet componentProps()}
     <GraphProps
       component={graphComponent as UIComponent & { properties: Partial<IGraphProps> }}
-      onPropertyChange={updates => (graphComponent = updateComponent(graphComponent, updates as object))}
-      forConstructor={false} />
+      onPropertyChange={(updates) => (graphComponent = updateComponent(graphComponent, updates as object))}
+      forConstructor={false}
+    />
     <!-- <hr />
     <GraphProps
       component={graphComponent as UIComponent & { properties: Partial<IGraphProps> }}

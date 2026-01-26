@@ -1,37 +1,37 @@
 <script lang="ts">
-  import { type ISelectOption, type ISelectProps, type UIComponent } from '$lib'
-  import ComponentExample from '$lib/ComponentExample.svelte'
-  import Select from '$lib/Select/Select.svelte'
-  import SelectProps from '$lib/Select/SelectProps.svelte'
-  import { updateComponent } from '$lib/types'
-  import { formatObjectToString } from '../../common'
+  import { type ISelectOption, type ISelectProps, type UIComponent } from "$lib"
+  import ComponentExample from "$lib/ComponentExample.svelte"
+  import Select from "$lib/Select/Select.svelte"
+  import SelectProps from "$lib/Select/SelectProps.svelte"
+  import { updateComponent } from "$lib/types"
+  import { formatObjectToString } from "../../common"
 
   let selectComponent: UIComponent = $state({
     id: crypto.randomUUID(),
-    type: 'Select',
-    access: 'full',
+    type: "Select",
+    access: "full",
     properties: {
       id: crypto.randomUUID(),
-      wrapperClass: 'bg-max',
+      wrapperClass: "bg-max",
       disabled: false,
-      label: { name: 'Label', class: 'text-center' },
-      type: 'select',
+      label: { name: "Label", class: "text-center" },
+      type: "select",
       bitMode: false,
       range: { start: 0, end: 1 },
       options: [
-        { id: crypto.randomUUID(), value: '1', name: 'Option 1', class: 'bg-max' },
-        { id: crypto.randomUUID(), value: '1', name: 'Option 1', class: 'bg-max' },
-        { id: crypto.randomUUID(), value: '1', name: 'Option 1', class: 'bg-max' },
-        { id: crypto.randomUUID(), value: '1', name: 'Option 1', class: 'bg-max' },
-        { id: crypto.randomUUID(), value: '1', name: 'Option 1', class: 'bg-max' },
-        { id: crypto.randomUUID(), value: '1', name: 'Option 1', class: 'bg-max' },
-        { id: crypto.randomUUID(), value: '1', name: 'Option 1', class: 'bg-max' },
-        { id: crypto.randomUUID(), value: '1', name: 'Option 1', class: 'bg-max' },
+        { id: crypto.randomUUID(), value: "1", name: "Option 1", class: "bg-max" },
+        { id: crypto.randomUUID(), value: "1", name: "Option 1", class: "bg-max" },
+        { id: crypto.randomUUID(), value: "1", name: "Option 1", class: "bg-max" },
+        { id: crypto.randomUUID(), value: "1", name: "Option 1", class: "bg-max" },
+        { id: crypto.randomUUID(), value: "1", name: "Option 1", class: "bg-max" },
+        { id: crypto.randomUUID(), value: "1", name: "Option 1", class: "bg-max" },
+        { id: crypto.randomUUID(), value: "1", name: "Option 1", class: "bg-max" },
+        { id: crypto.randomUUID(), value: "1", name: "Option 1", class: "bg-max" },
       ],
     },
-    eventHandler: { Header: 'SET', Argument: '', Variables: [] },
+    eventHandler: { Header: "SET", Argument: "", Variables: [] },
     position: { row: 0, col: 0, width: 0, height: 0 },
-    parentId: '',
+    parentId: "",
   })
 
   let codeText = $derived(`

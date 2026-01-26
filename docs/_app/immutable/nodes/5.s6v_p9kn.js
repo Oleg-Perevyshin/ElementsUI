@@ -1,5 +1,541 @@
-import{c as M,a as O,f as W}from"../chunks/Di61MV9l.js";import{p as Q,f as k,a as X,c as C,e as Y,u as a,g as t,s as m,r as h,b as ne,d as oe}from"../chunks/CYmiEaEH.js";import{p as re,i as z,a as ae,c as u,d as K,s as le}from"../chunks/_y1boTp2.js";import{u as i,S as P,I as _,t as D,f as se,o as ce,g as pe,B as ue}from"../chunks/CnAfG7ip.js";import{C as ie,f as me}from"../chunks/BSX-LnOW.js";var ve=W('<div class="relative flex flex-row items-start justify-center"><div class="flex w-1/3 flex-col items-center px-2"><!> <!> <!> <!> <!></div> <div class="flex w-1/3 flex-col px-2"><!> <!> <!></div></div>'),de=W('<div class="relative flex flex-row items-start justify-center"><div class="flex w-1/3 flex-col items-center px-2"><!> <!> <!></div> <div class="flex w-1/3 flex-col px-2"><!> <!> <!> <!></div> <div class="flex w-1/3 flex-col px-2"><!> <!> <!></div></div>');function ge(G,e){Q(e,!0);const c=()=>K(ce,"$optionsStore",w),s=()=>K(pe,"$t",w),[w,S]=ae(),Z=re(e,"forConstructor",3,!0);let H=a(()=>e.component.properties.eventHandler.Value),d=a(()=>c().HEADER_OPTIONS.find(g=>g.value===e.component.properties.eventHandler.Header)??{id:"",name:"",value:"",class:"!w-1/4"});const A=a(()=>c().COLOR_OPTIONS.find(g=>g.value.includes(e.component.properties.componentClass?.split(" ").find(f=>f.startsWith("bg-"))))),q=a(()=>c().HEIGHT_OPTIONS.find(g=>g.value.includes(e.component.properties.componentClass?.split(" ").find(f=>f.startsWith("py-")))));var J=M(),$=k(J);{var ee=g=>{var f=ve(),b=C(f),T=C(b);{let p=a(()=>({name:s()("constructor.props.header")}));u(T,()=>P,(n,r)=>{r(n,{get label(){return t(p)},type:"buttons",get value(){return t(d)},get options(){return c().HEADER_OPTIONS},onUpdate:o=>{Y(d,o),i("eventHandler.Header",t(d).value,e.component,e.onPropertyChange)}})})}var U=m(T,2);{var F=p=>{var n=M(),r=k(n);{let o=a(()=>({name:s()("constructor.props.argument")})),l=a(()=>c().FULL_ARGUMENT_OPTION.find(v=>v.value===e.component.properties.eventHandler.Argument)??c().FULL_ARGUMENT_OPTION.find(v=>v.value===""));u(r,()=>P,(v,y)=>{y(v,{get label(){return t(o)},type:"buttons",get value(){return t(l)},get options(){return c().FULL_ARGUMENT_OPTION},onUpdate:j=>{i("eventHandler.Argument",j.value,e.component,e.onPropertyChange)}})})}O(p,n)};z(U,p=>{t(d).value==="SET"&&p(F)})}var x=m(U,2);{let p=a(()=>({name:t(d).value!=="SET"?s()("constructor.props.argument"):""})),n=a(()=>t(d).value==="SET"?"mt-1":""),r=a(()=>t(d).value==="SET"&&(e.component.properties.eventHandler.Argument=="Save"||e.component.properties.eventHandler.Argument=="NoSave")),o=a(()=>({info:s()("constructor.props.argument.info"),autocomplete:"on",regExp:/^[a-zA-Z0-9\-_]{0,32}$/}));u(x,()=>_,(l,v)=>{v(l,{get label(){return t(p)},get wrapperClass(){return`${t(n)??""} `},get value(){return e.component.properties.eventHandler.Argument},maxlength:32,get disabled(){return t(r)},get help(){return t(o)},onUpdate:y=>i("eventHandler.Argument",y,e.component,e.onPropertyChange)})})}var I=m(x,2);{var L=p=>{var n=M(),r=k(n);{let o=a(()=>({name:s()("constructor.props.value")})),l=a(()=>({info:s()("constructor.props.value.info")}));u(r,()=>_,(v,y)=>{y(v,{get label(){return t(o)},get value(){return e.component.properties.eventHandler.Value},get help(){return t(l)},maxlength:500,onUpdate:j=>i("eventHandler.Value",j,e.component,e.onPropertyChange)})})}O(p,n)};z(I,p=>{(e.component.properties.eventHandler.Argument!=="Save"&&e.component.properties.eventHandler.Argument!=="NoSave"||t(d).value==="SET")&&p(L)})}var R=m(I,2);{let p=a(()=>({name:s()("constructor.props.variables")})),n=a(()=>e.component.properties.eventHandler.Variables.join(" ")),r=a(()=>({info:s()("constructor.props.variables.info"),autocomplete:"on",regExp:/^[a-zA-Z0-9\-_ ":{}]{0,500}$/}));u(R,()=>_,(o,l)=>{l(o,{get label(){return t(p)},get disabled(){return t(H)},get value(){return t(n)},get help(){return t(r)},maxlength:500,onUpdate:v=>{const y=v.trim().split(/\s+/);i("eventHandler.Variables",y,e.component,e.onPropertyChange)}})})}h(b);var V=m(b,2),E=C(V);{let p=a(()=>({name:s()("constructor.props.name")}));u(E,()=>_,(n,r)=>{r(n,{get label(){return t(p)},get value(){return e.component.properties.content.name},onUpdate:o=>i("content.name",o,e.component,e.onPropertyChange)})})}var N=m(E,2);{let p=a(()=>({name:s()("constructor.props.height")}));u(N,()=>P,(n,r)=>{r(n,{get label(){return t(p)},type:"buttons",get options(){return c().HEIGHT_OPTIONS},get value(){return t(q)},onUpdate:o=>i("componentClass",D(e.component.properties.componentClass,o.value),e.component,e.onPropertyChange)})})}var B=m(N,2);{let p=a(()=>({name:s()("constructor.props.colors")}));u(B,()=>P,(n,r)=>{r(n,{wrapperClass:"h-14",get label(){return t(p)},type:"buttons",get options(){return c().COLOR_OPTIONS},get value(){return t(A)},onUpdate:o=>i("componentClass",D(e.component.properties.componentClass,o.value),e.component,e.onPropertyChange)})})}h(V),h(f),O(g,f)},te=g=>{var f=de(),b=C(f),T=C(b);{let n=a(()=>({name:s()("constructor.props.id")}));u(T,()=>_,(r,o)=>{o(r,{get label(){return t(n)},get value(){return e.component.properties.id},onUpdate:l=>i("id",l,e.component,e.onPropertyChange)})})}var U=m(T,2);{let n=a(()=>({name:s()("constructor.props.wrapperclass")}));u(U,()=>_,(r,o)=>{o(r,{get label(){return t(n)},get value(){return e.component.properties.wrapperClass},onUpdate:l=>i("wrapperClass",l,e.component,e.onPropertyChange)})})}var F=m(U,2);{let n=a(()=>({name:s()("constructor.props.disabled")})),r=a(()=>e.component.properties.disabled?2:1);u(F,()=>se,(o,l)=>{l(o,{wrapperClass:"bg-blue",get label(){return t(n)},get value(){return t(r)},onChange:v=>i("disabled",v===2,e.component,e.onPropertyChange)})})}h(b);var x=m(b,2),I=C(x);{let n=a(()=>({name:s()("constructor.props.name")}));u(I,()=>_,(r,o)=>{o(r,{get label(){return t(n)},get value(){return e.component.properties.content.name},onUpdate:l=>i("content.name",l,e.component,e.onPropertyChange)})})}var L=m(I,2);{let n=a(()=>({name:s()("constructor.props.info")}));u(L,()=>_,(r,o)=>{o(r,{get label(){return t(n)},get value(){return e.component.properties.content.info.text},onUpdate:l=>i("content.info.text",l,e.component,e.onPropertyChange)})})}var R=m(L,2);{let n=a(()=>({name:s()("constructor.props.info.side")})),r=a(()=>c().INFO_SIDE_OPTIONS.find(o=>o.value===e.component.properties.content.info.side));u(R,()=>P,(o,l)=>{l(o,{get label(){return t(n)},type:"buttons",get options(){return c().INFO_SIDE_OPTIONS},get value(){return t(r)},onUpdate:v=>i("content.info.side",v.value,e.component,e.onPropertyChange)})})}var V=m(R,2);{let n=a(()=>({name:s()("constructor.props.svgicon")}));u(V,()=>_,(r,o)=>{o(r,{get label(){return t(n)},type:"text-area",maxlength:1e5,get value(){return e.component.properties.content.icon},onUpdate:l=>i("content.icon",l,e.component,e.onPropertyChange)})})}h(x);var E=m(x,2),N=C(E);{let n=a(()=>({name:s()("constructor.props.componentclass")}));u(N,()=>_,(r,o)=>{o(r,{get label(){return t(n)},get value(){return e.component.properties.componentClass},onUpdate:l=>i("componentClass",l,e.component,e.onPropertyChange)})})}var B=m(N,2);{let n=a(()=>({name:s()("constructor.props.height")}));u(B,()=>P,(r,o)=>{o(r,{get label(){return t(n)},type:"buttons",get options(){return c().HEIGHT_OPTIONS},get value(){return t(q)},onUpdate:l=>i("componentClass",D(e.component.properties.componentClass,l.value),e.component,e.onPropertyChange)})})}var p=m(B,2);{let n=a(()=>({name:s()("constructor.props.colors")}));u(p,()=>P,(r,o)=>{o(r,{wrapperClass:"h-14",get label(){return t(n)},type:"buttons",get options(){return c().COLOR_OPTIONS},get value(){return t(A)},onUpdate:l=>i("componentClass",D(e.component.properties.componentClass,l.value),e.component,e.onPropertyChange)})})}h(E),h(f),O(g,f)};z($,g=>{Z()?g(ee):g(te,!1)})}O(G,J),X(),S()}var fe=W('<div class="relative mx-40 my-20"><!></div>');function Pe(G,e){Q(e,!0);let c=ne(oe({id:crypto.randomUUID(),type:"Button",component:null,properties:{id:crypto.randomUUID(),componentClass:"bg-red py-1",content:{name:"Button",info:{text:"",side:"top"}},eventHandler:{Header:"SET",Argument:"Save",Variables:[]}},position:{row:0,col:0,width:0,height:0},parentId:""})),s=a(()=>`
+import { c as M, a as O, f as W } from "../chunks/Di61MV9l.js"
+import { p as Q, f as k, a as X, c as C, e as Y, u as a, g as t, s as m, r as h, b as ne, d as oe } from "../chunks/CYmiEaEH.js"
+import { p as re, i as z, a as ae, c as u, d as K, s as le } from "../chunks/_y1boTp2.js"
+import { u as i, S as P, I as _, t as D, f as se, o as ce, g as pe, B as ue } from "../chunks/CnAfG7ip.js"
+import { C as ie, f as me } from "../chunks/BSX-LnOW.js"
+var ve = W(
+    '<div class="relative flex flex-row items-start justify-center"><div class="flex w-1/3 flex-col items-center px-2"><!> <!> <!> <!> <!></div> <div class="flex w-1/3 flex-col px-2"><!> <!> <!></div></div>',
+  ),
+  de = W(
+    '<div class="relative flex flex-row items-start justify-center"><div class="flex w-1/3 flex-col items-center px-2"><!> <!> <!></div> <div class="flex w-1/3 flex-col px-2"><!> <!> <!> <!></div> <div class="flex w-1/3 flex-col px-2"><!> <!> <!></div></div>',
+  )
+function ge(G, e) {
+  Q(e, !0)
+  const c = () => K(ce, "$optionsStore", w),
+    s = () => K(pe, "$t", w),
+    [w, S] = ae(),
+    Z = re(e, "forConstructor", 3, !0)
+  let H = a(() => e.component.properties.eventHandler.Value),
+    d = a(() => c().HEADER_OPTIONS.find((g) => g.value === e.component.properties.eventHandler.Header) ?? { id: "", name: "", value: "", class: "!w-1/4" })
+  const A = a(() => c().COLOR_OPTIONS.find((g) => g.value.includes(e.component.properties.componentClass?.split(" ").find((f) => f.startsWith("bg-"))))),
+    q = a(() => c().HEIGHT_OPTIONS.find((g) => g.value.includes(e.component.properties.componentClass?.split(" ").find((f) => f.startsWith("py-")))))
+  var J = M(),
+    $ = k(J)
+  {
+    var ee = (g) => {
+        var f = ve(),
+          b = C(f),
+          T = C(b)
+        {
+          let p = a(() => ({ name: s()("constructor.props.header") }))
+          u(
+            T,
+            () => P,
+            (n, r) => {
+              r(n, {
+                get label() {
+                  return t(p)
+                },
+                type: "buttons",
+                get value() {
+                  return t(d)
+                },
+                get options() {
+                  return c().HEADER_OPTIONS
+                },
+                onUpdate: (o) => {
+                  ;(Y(d, o), i("eventHandler.Header", t(d).value, e.component, e.onPropertyChange))
+                },
+              })
+            },
+          )
+        }
+        var U = m(T, 2)
+        {
+          var F = (p) => {
+            var n = M(),
+              r = k(n)
+            {
+              let o = a(() => ({ name: s()("constructor.props.argument") })),
+                l = a(
+                  () =>
+                    c().FULL_ARGUMENT_OPTION.find((v) => v.value === e.component.properties.eventHandler.Argument) ??
+                    c().FULL_ARGUMENT_OPTION.find((v) => v.value === ""),
+                )
+              u(
+                r,
+                () => P,
+                (v, y) => {
+                  y(v, {
+                    get label() {
+                      return t(o)
+                    },
+                    type: "buttons",
+                    get value() {
+                      return t(l)
+                    },
+                    get options() {
+                      return c().FULL_ARGUMENT_OPTION
+                    },
+                    onUpdate: (j) => {
+                      i("eventHandler.Argument", j.value, e.component, e.onPropertyChange)
+                    },
+                  })
+                },
+              )
+            }
+            O(p, n)
+          }
+          z(U, (p) => {
+            t(d).value === "SET" && p(F)
+          })
+        }
+        var x = m(U, 2)
+        {
+          let p = a(() => ({ name: t(d).value !== "SET" ? s()("constructor.props.argument") : "" })),
+            n = a(() => (t(d).value === "SET" ? "mt-1" : "")),
+            r = a(
+              () =>
+                t(d).value === "SET" && (e.component.properties.eventHandler.Argument == "Save" || e.component.properties.eventHandler.Argument == "NoSave"),
+            ),
+            o = a(() => ({ info: s()("constructor.props.argument.info"), autocomplete: "on", regExp: /^[a-zA-Z0-9\-_]{0,32}$/ }))
+          u(
+            x,
+            () => _,
+            (l, v) => {
+              v(l, {
+                get label() {
+                  return t(p)
+                },
+                get wrapperClass() {
+                  return `${t(n) ?? ""} `
+                },
+                get value() {
+                  return e.component.properties.eventHandler.Argument
+                },
+                maxlength: 32,
+                get disabled() {
+                  return t(r)
+                },
+                get help() {
+                  return t(o)
+                },
+                onUpdate: (y) => i("eventHandler.Argument", y, e.component, e.onPropertyChange),
+              })
+            },
+          )
+        }
+        var I = m(x, 2)
+        {
+          var L = (p) => {
+            var n = M(),
+              r = k(n)
+            {
+              let o = a(() => ({ name: s()("constructor.props.value") })),
+                l = a(() => ({ info: s()("constructor.props.value.info") }))
+              u(
+                r,
+                () => _,
+                (v, y) => {
+                  y(v, {
+                    get label() {
+                      return t(o)
+                    },
+                    get value() {
+                      return e.component.properties.eventHandler.Value
+                    },
+                    get help() {
+                      return t(l)
+                    },
+                    maxlength: 500,
+                    onUpdate: (j) => i("eventHandler.Value", j, e.component, e.onPropertyChange),
+                  })
+                },
+              )
+            }
+            O(p, n)
+          }
+          z(I, (p) => {
+            ;((e.component.properties.eventHandler.Argument !== "Save" && e.component.properties.eventHandler.Argument !== "NoSave") || t(d).value === "SET") &&
+              p(L)
+          })
+        }
+        var R = m(I, 2)
+        {
+          let p = a(() => ({ name: s()("constructor.props.variables") })),
+            n = a(() => e.component.properties.eventHandler.Variables.join(" ")),
+            r = a(() => ({ info: s()("constructor.props.variables.info"), autocomplete: "on", regExp: /^[a-zA-Z0-9\-_ ":{}]{0,500}$/ }))
+          u(
+            R,
+            () => _,
+            (o, l) => {
+              l(o, {
+                get label() {
+                  return t(p)
+                },
+                get disabled() {
+                  return t(H)
+                },
+                get value() {
+                  return t(n)
+                },
+                get help() {
+                  return t(r)
+                },
+                maxlength: 500,
+                onUpdate: (v) => {
+                  const y = v.trim().split(/\s+/)
+                  i("eventHandler.Variables", y, e.component, e.onPropertyChange)
+                },
+              })
+            },
+          )
+        }
+        h(b)
+        var V = m(b, 2),
+          E = C(V)
+        {
+          let p = a(() => ({ name: s()("constructor.props.name") }))
+          u(
+            E,
+            () => _,
+            (n, r) => {
+              r(n, {
+                get label() {
+                  return t(p)
+                },
+                get value() {
+                  return e.component.properties.content.name
+                },
+                onUpdate: (o) => i("content.name", o, e.component, e.onPropertyChange),
+              })
+            },
+          )
+        }
+        var N = m(E, 2)
+        {
+          let p = a(() => ({ name: s()("constructor.props.height") }))
+          u(
+            N,
+            () => P,
+            (n, r) => {
+              r(n, {
+                get label() {
+                  return t(p)
+                },
+                type: "buttons",
+                get options() {
+                  return c().HEIGHT_OPTIONS
+                },
+                get value() {
+                  return t(q)
+                },
+                onUpdate: (o) => i("componentClass", D(e.component.properties.componentClass, o.value), e.component, e.onPropertyChange),
+              })
+            },
+          )
+        }
+        var B = m(N, 2)
+        {
+          let p = a(() => ({ name: s()("constructor.props.colors") }))
+          u(
+            B,
+            () => P,
+            (n, r) => {
+              r(n, {
+                wrapperClass: "h-14",
+                get label() {
+                  return t(p)
+                },
+                type: "buttons",
+                get options() {
+                  return c().COLOR_OPTIONS
+                },
+                get value() {
+                  return t(A)
+                },
+                onUpdate: (o) => i("componentClass", D(e.component.properties.componentClass, o.value), e.component, e.onPropertyChange),
+              })
+            },
+          )
+        }
+        ;(h(V), h(f), O(g, f))
+      },
+      te = (g) => {
+        var f = de(),
+          b = C(f),
+          T = C(b)
+        {
+          let n = a(() => ({ name: s()("constructor.props.id") }))
+          u(
+            T,
+            () => _,
+            (r, o) => {
+              o(r, {
+                get label() {
+                  return t(n)
+                },
+                get value() {
+                  return e.component.properties.id
+                },
+                onUpdate: (l) => i("id", l, e.component, e.onPropertyChange),
+              })
+            },
+          )
+        }
+        var U = m(T, 2)
+        {
+          let n = a(() => ({ name: s()("constructor.props.wrapperclass") }))
+          u(
+            U,
+            () => _,
+            (r, o) => {
+              o(r, {
+                get label() {
+                  return t(n)
+                },
+                get value() {
+                  return e.component.properties.wrapperClass
+                },
+                onUpdate: (l) => i("wrapperClass", l, e.component, e.onPropertyChange),
+              })
+            },
+          )
+        }
+        var F = m(U, 2)
+        {
+          let n = a(() => ({ name: s()("constructor.props.disabled") })),
+            r = a(() => (e.component.properties.disabled ? 2 : 1))
+          u(
+            F,
+            () => se,
+            (o, l) => {
+              l(o, {
+                wrapperClass: "bg-blue",
+                get label() {
+                  return t(n)
+                },
+                get value() {
+                  return t(r)
+                },
+                onChange: (v) => i("disabled", v === 2, e.component, e.onPropertyChange),
+              })
+            },
+          )
+        }
+        h(b)
+        var x = m(b, 2),
+          I = C(x)
+        {
+          let n = a(() => ({ name: s()("constructor.props.name") }))
+          u(
+            I,
+            () => _,
+            (r, o) => {
+              o(r, {
+                get label() {
+                  return t(n)
+                },
+                get value() {
+                  return e.component.properties.content.name
+                },
+                onUpdate: (l) => i("content.name", l, e.component, e.onPropertyChange),
+              })
+            },
+          )
+        }
+        var L = m(I, 2)
+        {
+          let n = a(() => ({ name: s()("constructor.props.info") }))
+          u(
+            L,
+            () => _,
+            (r, o) => {
+              o(r, {
+                get label() {
+                  return t(n)
+                },
+                get value() {
+                  return e.component.properties.content.info.text
+                },
+                onUpdate: (l) => i("content.info.text", l, e.component, e.onPropertyChange),
+              })
+            },
+          )
+        }
+        var R = m(L, 2)
+        {
+          let n = a(() => ({ name: s()("constructor.props.info.side") })),
+            r = a(() => c().INFO_SIDE_OPTIONS.find((o) => o.value === e.component.properties.content.info.side))
+          u(
+            R,
+            () => P,
+            (o, l) => {
+              l(o, {
+                get label() {
+                  return t(n)
+                },
+                type: "buttons",
+                get options() {
+                  return c().INFO_SIDE_OPTIONS
+                },
+                get value() {
+                  return t(r)
+                },
+                onUpdate: (v) => i("content.info.side", v.value, e.component, e.onPropertyChange),
+              })
+            },
+          )
+        }
+        var V = m(R, 2)
+        {
+          let n = a(() => ({ name: s()("constructor.props.svgicon") }))
+          u(
+            V,
+            () => _,
+            (r, o) => {
+              o(r, {
+                get label() {
+                  return t(n)
+                },
+                type: "text-area",
+                maxlength: 1e5,
+                get value() {
+                  return e.component.properties.content.icon
+                },
+                onUpdate: (l) => i("content.icon", l, e.component, e.onPropertyChange),
+              })
+            },
+          )
+        }
+        h(x)
+        var E = m(x, 2),
+          N = C(E)
+        {
+          let n = a(() => ({ name: s()("constructor.props.componentclass") }))
+          u(
+            N,
+            () => _,
+            (r, o) => {
+              o(r, {
+                get label() {
+                  return t(n)
+                },
+                get value() {
+                  return e.component.properties.componentClass
+                },
+                onUpdate: (l) => i("componentClass", l, e.component, e.onPropertyChange),
+              })
+            },
+          )
+        }
+        var B = m(N, 2)
+        {
+          let n = a(() => ({ name: s()("constructor.props.height") }))
+          u(
+            B,
+            () => P,
+            (r, o) => {
+              o(r, {
+                get label() {
+                  return t(n)
+                },
+                type: "buttons",
+                get options() {
+                  return c().HEIGHT_OPTIONS
+                },
+                get value() {
+                  return t(q)
+                },
+                onUpdate: (l) => i("componentClass", D(e.component.properties.componentClass, l.value), e.component, e.onPropertyChange),
+              })
+            },
+          )
+        }
+        var p = m(B, 2)
+        {
+          let n = a(() => ({ name: s()("constructor.props.colors") }))
+          u(
+            p,
+            () => P,
+            (r, o) => {
+              o(r, {
+                wrapperClass: "h-14",
+                get label() {
+                  return t(n)
+                },
+                type: "buttons",
+                get options() {
+                  return c().COLOR_OPTIONS
+                },
+                get value() {
+                  return t(A)
+                },
+                onUpdate: (l) => i("componentClass", D(e.component.properties.componentClass, l.value), e.component, e.onPropertyChange),
+              })
+            },
+          )
+        }
+        ;(h(E), h(f), O(g, f))
+      }
+    z($, (g) => {
+      Z() ? g(ee) : g(te, !1)
+    })
+  }
+  ;(O(G, J), X(), S())
+}
+var fe = W('<div class="relative mx-40 my-20"><!></div>')
+function Pe(G, e) {
+  Q(e, !0)
+  let c = ne(
+      oe({
+        id: crypto.randomUUID(),
+        type: "Button",
+        component: null,
+        properties: {
+          id: crypto.randomUUID(),
+          componentClass: "bg-red py-1",
+          content: { name: "Button", info: { text: "", side: "top" } },
+          eventHandler: { Header: "SET", Argument: "Save", Variables: [] },
+        },
+        position: { row: 0, col: 0, width: 0, height: 0 },
+        parentId: "",
+      }),
+    ),
+    s = a(
+      () => `
 <UI.Button
 ${me(t(c).properties)} 
   onClick={() => {}}
-/>`);const w=S=>{Y(c,{...t(c),properties:S.properties?{...t(c).properties,...S.properties}:t(c).properties},!0)};ie(G,{get codeText(){return t(s)},component:H=>{var d=fe(),A=C(d);ue(A,le(()=>t(c).properties)),h(d),O(H,d)},componentProps:H=>{ge(H,{get component(){return t(c)},onPropertyChange:d=>w({properties:d}),forConstructor:!1})}}),X()}export{Pe as component};
+/>`,
+    )
+  const w = (S) => {
+    Y(c, { ...t(c), properties: S.properties ? { ...t(c).properties, ...S.properties } : t(c).properties }, !0)
+  }
+  ;(ie(G, {
+    get codeText() {
+      return t(s)
+    },
+    component: (H) => {
+      var d = fe(),
+        A = C(d)
+      ;(ue(
+        A,
+        le(() => t(c).properties),
+      ),
+        h(d),
+        O(H, d))
+    },
+    componentProps: (H) => {
+      ge(H, {
+        get component() {
+          return t(c)
+        },
+        onPropertyChange: (d) => w({ properties: d }),
+        forConstructor: !1,
+      })
+    },
+  }),
+    X())
+}
+export { Pe as component }

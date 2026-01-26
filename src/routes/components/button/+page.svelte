@@ -1,25 +1,25 @@
 <script lang="ts">
-  import { Accordion, Button } from '$lib'
-  import { updateComponent, type IButtonProps, type IUIComponentHandler, type Position, type UIComponent } from '$lib/types'
-  import { formatObjectToString } from '../../common'
-  import ComponentExample from '$lib/ComponentExample.svelte'
-  import ButtonProps from '$lib/Button/ButtonProps.svelte'
+  import { Accordion, Button } from "$lib"
+  import { updateComponent, type IButtonProps, type IUIComponentHandler, type Position, type UIComponent } from "$lib/types"
+  import { formatObjectToString } from "../../common"
+  import ComponentExample from "$lib/ComponentExample.svelte"
+  import ButtonProps from "$lib/Button/ButtonProps.svelte"
 
   let buttonComponent: UIComponent = $state({
     id: crypto.randomUUID(),
-    type: 'Button',
-    access: 'full',
+    type: "Button",
+    access: "full",
     properties: {
       id: crypto.randomUUID(),
-      componentClass: 'bg-red py-1',
+      componentClass: "bg-red py-1",
       content: {
-        name: 'Button',
-        info: { text: '', side: 'top' },
+        name: "Button",
+        info: { text: "", side: "top" },
       },
     },
-    eventHandler: { Header: 'SET', Argument: 'Save', Variables: [] },
+    eventHandler: { Header: "SET", Argument: "Save", Variables: [] },
     position: { row: 0, col: 0, width: 0, height: 0 },
-    parentId: '',
+    parentId: "",
   })
 
   let codeText = $derived(`

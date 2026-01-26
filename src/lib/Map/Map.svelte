@@ -1,13 +1,13 @@
 <!-- $lib/ElementsUI/Map.svelte -->
 <script lang="ts">
-  import { t } from '$lib/locales/i18n'
-  import type { IDeviceGNSS, IMapProps } from '$lib/types'
-  import { onDestroy, onMount } from 'svelte'
-  import { MapLibre, NavigationControl, ScaleControl, GeolocateControl, FullScreenControl, Marker, Popup, CustomControl } from 'svelte-maplibre-gl'
-  import { fade } from 'svelte/transition'
-  import { twMerge } from 'tailwind-merge'
+  import { t } from "$lib/locales/i18n"
+  import type { IDeviceGNSS, IMapProps } from "$lib/types"
+  import { onDestroy, onMount } from "svelte"
+  import { MapLibre, NavigationControl, ScaleControl, GeolocateControl, FullScreenControl, Marker, Popup, CustomControl } from "svelte-maplibre-gl"
+  import { fade } from "svelte/transition"
+  import { twMerge } from "tailwind-merge"
 
-  let { id = crypto.randomUUID(), label = { name: '', class: '' }, data = $bindable(), markerIcon }: IMapProps = $props()
+  let { id = crypto.randomUUID(), label = { name: "", class: "" }, data = $bindable(), markerIcon }: IMapProps = $props()
 
   interface MapDevice extends IDeviceGNSS {
     isFresh: boolean
@@ -63,14 +63,14 @@
   }
 
   onMount(() => {
-    if (typeof window !== 'undefined') {
-      isDarkMode = localStorage.getItem('AppTheme') !== 'light'
-      window.addEventListener('ThemeChange', handleThemeChange as EventListener)
+    if (typeof window !== "undefined") {
+      isDarkMode = localStorage.getItem("AppTheme") !== "light"
+      window.addEventListener("ThemeChange", handleThemeChange as EventListener)
     }
   })
 
   onDestroy(() => {
-    if (typeof window !== 'undefined') window.addEventListener('ThemeChange', handleThemeChange as EventListener)
+    if (typeof window !== "undefined") window.addEventListener("ThemeChange", handleThemeChange as EventListener)
 
     for (const device of devices) {
       if (device.timeoutId !== null) {
@@ -80,13 +80,13 @@
   })
 
   const timeoutOptions: { label: string; value: number }[] = [
-    { label: '30 sec', value: 30_000 },
-    { label: '1 min', value: 60_000 },
-    { label: '3 min', value: 180_000 },
-    { label: '5 min', value: 300_000 },
-    { label: '10 min', value: 600_000 },
-    { label: '30 min', value: 1_800_000 },
-    { label: '1 h', value: 3_600_000 },
+    { label: "30 sec", value: 30_000 },
+    { label: "1 min", value: 60_000 },
+    { label: "3 min", value: 180_000 },
+    { label: "5 min", value: 300_000 },
+    { label: "10 min", value: 600_000 },
+    { label: "30 min", value: 1_800_000 },
+    { label: "1 h", value: 3_600_000 },
   ]
 
   const changeTimeout = (val: number) => {
@@ -96,15 +96,13 @@
   }
 </script>
 
-<div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class="h-full min-h-[200px]">
+<div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class="h-full min-h-50">
   {#if label.name}
     <h5 class={twMerge(` w-full px-4 text-center`, label.class)}>{label.name}</h5>
   {/if}
   <MapLibre
-    class="h-[calc(100%-2rem)] min-h-[200px] overflow-hidden rounded-2xl shadow-sm transition duration-200 hover:shadow-md"
-    style={isDarkMode
-      ? 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json'
-      : 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json'}
+    class="h-[calc(100%-2rem)] min-h-50 overflow-hidden rounded-2xl shadow-sm transition duration-200 hover:shadow-md"
+    style={isDarkMode ? "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json" : "https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json"}
     zoom={1.5}
     center={{ lat: 30, lng: 0 }}
   >
@@ -115,7 +113,7 @@
 
     <CustomControl position="top-left">
       <div class="flex items-center gap-2 px-2 py-1 text-black">
-        <label for="timeout" class="text-sm font-medium">{$t('constructor.props.map.timeout')}</label>
+        <label for="timeout" class="text-sm font-medium">{$t("constructor.props.map.timeout")}</label>
         <select
           id="timeout"
           class="rounded px-2 py-1 text-sm"
@@ -139,7 +137,7 @@
               style="rotate: {device.NavHeading}deg;"
             >
               {#if markerIcon}
-                {#if typeof markerIcon === 'string'}
+                {#if typeof markerIcon === "string"}
                   {@html markerIcon}
                 {:else}
                   {@const IconComponent = markerIcon}
@@ -199,11 +197,7 @@
               </div>
             {/if}
 
-            <button
-              class="size-6 cursor-pointer"
-              aria-label="Удалить"
-              onclick={() => (devices = devices.filter((dev) => dev.DevSN !== device.DevSN))}
-            >
+            <button class="size-6 cursor-pointer" aria-label="Удалить" onclick={() => (devices = devices.filter((dev) => dev.DevSN !== device.DevSN))}>
               <svg xmlns="http://www.w3.org/2000/svg" width="1.5rem" height="1.5rem" viewBox="0 0 24 24"
                 ><path
                   fill="none"

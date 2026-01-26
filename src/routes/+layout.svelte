@@ -1,14 +1,14 @@
 <!-- src/routes/+layout.svelte -->
 <script lang="ts">
-  import { onMount, setContext } from 'svelte'
-  import '../app.css'
-  import * as UI from '$lib/index'
-  import IconLightDark from '../appIcons/IconLightDark.svelte'
-  import GitHub from '../appIcons/GitHub.svelte'
-  import { goto } from '$app/navigation'
-  import { page } from '$app/state'
-  import { fade } from 'svelte/transition'
-  import { Language, LOCALES } from '../lib/locales/i18n'
+  import { onMount, setContext } from "svelte"
+  import "../app.css"
+  import * as UI from "$lib/index"
+  import IconLightDark from "../appIcons/IconLightDark.svelte"
+  import GitHub from "../appIcons/GitHub.svelte"
+  import { goto } from "$app/navigation"
+  import { page } from "$app/state"
+  import { fade } from "svelte/transition"
+  import { Language, LOCALES } from "../lib/locales/i18n"
 
   let { children } = $props()
   let currentTheme: boolean = $state(true)
@@ -19,31 +19,32 @@
 
   /* Список всех компонентов */
   const menuItems = [
-    { page: 'all', name: 'ALL in ONE' },
-    { page: 'accordion', name: 'Accordion' },
-    { page: 'button', name: 'Button' },
-    { page: 'color-picker', name: 'ColorPicker' },
-    { page: 'file-attach', name: 'FileAttach' },
-    { page: 'graph', name: 'Graph' },
-    { page: 'input', name: 'Input' },
-    { page: 'joystick', name: 'Joystick' },
-    { page: 'map', name: 'Map' },
-    { page: 'progress-bar', name: 'ProgressBar' },
-    { page: 'select', name: 'Select' },
-    { page: 'slider', name: 'Slider' },
-    { page: 'switch', name: 'Switch' },
-    { page: 'table', name: 'Table' },
-    { page: 'tabs', name: 'Tabs' },
-    { page: 'text-field', name: 'TextField' },
+    { page: "all", name: "ALL in ONE" },
+    { page: "accordion", name: "Accordion" },
+    { page: "button", name: "Button" },
+    { page: "color-picker", name: "ColorPicker" },
+    { page: "file-attach", name: "FileAttach" },
+    { page: "graph", name: "Graph" },
+    { page: "input", name: "Input" },
+    { page: "joystick", name: "Joystick" },
+    { page: "map", name: "Map" },
+    { page: "progress-bar", name: "ProgressBar" },
+    { page: "select", name: "Select" },
+    { page: "slider", name: "Slider" },
+    { page: "switch", name: "Switch" },
+    { page: "table", name: "Table" },
+    { page: "tabs", name: "Tabs" },
+    { page: "text-field", name: "TextField" },
+    { page: "widget", name: "Widget" },
   ]
 
   /* Переключение темы */
   const switchTheme = () => {
     currentTheme = !currentTheme
-    document.body.classList.toggle('dark', !currentTheme)
-    document.body.classList.toggle('light', currentTheme)
-    localStorage.setItem('AppTheme', currentTheme ? 'light' : 'dark')
-    window.dispatchEvent(new CustomEvent('ThemeChange', { detail: { currentTheme } }))
+    document.body.classList.toggle("dark", !currentTheme)
+    document.body.classList.toggle("light", currentTheme)
+    localStorage.setItem("AppTheme", currentTheme ? "light" : "dark")
+    window.dispatchEvent(new CustomEvent("ThemeChange", { detail: { currentTheme } }))
   }
 
   /* Переключение языка */
@@ -53,31 +54,31 @@
       Language.set(lang.value)
       UI.Language.set(lang.value)
       currentLanguage = lang
-      localStorage.setItem('AppLanguage', lang.value)
+      localStorage.setItem("AppLanguage", lang.value)
       showLanguageModal = false
     }
   }
 
   let DeviceVariables = $state<{ id: string; value: string; name: string; class: string }[]>([
-    { id: crypto.randomUUID(), value: 'DevSN', name: 'DevSN — Серийный номер устройства', class: 'justify-start' },
-    { id: crypto.randomUUID(), value: 'DevName', name: 'DevName — Название устройства', class: 'justify-start' },
-    { id: crypto.randomUUID(), value: 'DevFW', name: 'DevFW — Версия прошивки', class: 'justify-start' },
+    { id: crypto.randomUUID(), value: "DevSN", name: "DevSN — Серийный номер устройства", class: "justify-start" },
+    { id: crypto.randomUUID(), value: "DevName", name: "DevName — Название устройства", class: "justify-start" },
+    { id: crypto.randomUUID(), value: "DevFW", name: "DevFW — Версия прошивки", class: "justify-start" },
   ])
 
-  setContext('DeviceVariables', DeviceVariables)
+  setContext("DeviceVariables", DeviceVariables)
 
   onMount(() => {
-    const savedTheme = localStorage.getItem('AppTheme') || 'light'
-    localStorage.setItem('AppTheme', `${savedTheme}`)
-    document.body.classList.toggle('dark', savedTheme === 'dark')
-    document.body.classList.toggle('light', savedTheme === 'light')
-    currentTheme = savedTheme === 'light'
+    const savedTheme = localStorage.getItem("AppTheme") || "light"
+    localStorage.setItem("AppTheme", `${savedTheme}`)
+    document.body.classList.toggle("dark", savedTheme === "dark")
+    document.body.classList.toggle("light", savedTheme === "light")
+    currentTheme = savedTheme === "light"
   })
 </script>
 
-<div class="mx-auto flex h-screen max-w-[1400px] flex-col">
+<div class="mx-auto flex h-screen max-w-450 flex-col">
   <!-- Верхняя панель -->
-  <header class={'sticky top-0 z-50 m-1 mt-2 flex h-14 items-center justify-between rounded-full bg-(--back-color)/50 p-4'}>
+  <header class={"sticky top-0 z-50 m-1 mt-2 flex h-14 items-center justify-between rounded-full bg-(--back-color)/50 p-4"}>
     <div class="flex items-center gap-2">
       <a href="/ElementsUI/" class="ml-2 no-underline! transition hover:scale-101"><h1>POE-Svelte-UI-Lib</h1></a>
     </div>
@@ -105,11 +106,7 @@
         {/if}
       </div>
       <UI.Button componentClass="w-8" content={{ icon: IconLightDark }} onClick={switchTheme} />
-      <UI.Button
-        componentClass="w-8"
-        content={{ icon: GitHub }}
-        onClick={() => window.open('https://github.com/Oleg-Perevyshin/ElementsUI', '_blank')}
-      />
+      <UI.Button componentClass="w-8" content={{ icon: GitHub }} onClick={() => window.open("https://github.com/Oleg-Perevyshin/ElementsUI", "_blank")} />
     </div>
   </header>
 

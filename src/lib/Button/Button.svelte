@@ -1,18 +1,18 @@
 <!-- $lib/ElementsUI/Button.svelte -->
 <script lang="ts">
-  import { onMount } from 'svelte'
-  import type { IButtonProps } from '../types'
-  import { fly } from 'svelte/transition'
-  import { twMerge } from 'tailwind-merge'
+  import { onMount } from "svelte"
+  import type { IButtonProps } from "../types"
+  import { fly } from "svelte/transition"
+  import { twMerge } from "tailwind-merge"
 
   let {
     id = crypto.randomUUID(),
-    wrapperClass = '',
-    componentClass = '',
+    wrapperClass = "",
+    componentClass = "",
     disabled = false,
     content = {
-      name: '',
-      info: { text: '', side: 'top' },
+      name: "",
+      info: { text: "", side: "top" },
       icon: null,
     },
     keyBind,
@@ -23,39 +23,39 @@
 
   let tooltipConfig = $derived({
     top: {
-      pos: 'bottom-full left-1/2 mb-2',
-      tr: 'translateX(-50%)',
-      arr: 'top-full left-1/2 -translate-x-1/2 -translate-y-1/2 rotate-45',
-      off: 'y:-15',
+      pos: "bottom-full left-1/2 mb-2",
+      tr: "translateX(-50%)",
+      arr: "top-full left-1/2 -translate-x-1/2 -translate-y-1/2 rotate-45",
+      off: "y:-15",
     },
     bottom: {
-      pos: 'top-full left-1/2 mt-2',
-      tr: 'translateX(-50%)',
-      arr: 'bottom-full left-1/2 -translate-x-1/2 translate-y-1/2 rotate-45',
-      off: 'y:15',
+      pos: "top-full left-1/2 mt-2",
+      tr: "translateX(-50%)",
+      arr: "bottom-full left-1/2 -translate-x-1/2 translate-y-1/2 rotate-45",
+      off: "y:15",
     },
     left: {
-      pos: 'top-1/2 right-full mr-2',
-      tr: 'translateY(-50%)',
-      arr: 'top-1/2 -right-2 -translate-x-1/2 -translate-y-1/2 rotate-45',
-      off: 'x:15',
+      pos: "top-1/2 right-full mr-2",
+      tr: "translateY(-50%)",
+      arr: "top-1/2 -right-2 -translate-x-1/2 -translate-y-1/2 rotate-45",
+      off: "x:15",
     },
     right: {
-      pos: 'top-1/2 left-full ml-2',
-      tr: 'translateY(-50%)',
-      arr: 'top-1/2 -left-2 translate-x-1/2 -translate-y-1/2 rotate-45 ',
-      off: 'x:-15',
+      pos: "top-1/2 left-full ml-2",
+      tr: "translateY(-50%)",
+      arr: "top-1/2 -left-2 translate-x-1/2 -translate-y-1/2 rotate-45 ",
+      off: "x:-15",
     },
   })
 
   const svgSize = $derived(() => {
     const widthClass = twMerge(
-      wrapperClass.split(' ').find((cls: string) => cls.startsWith('w-')),
-      componentClass.split(' ').find((cls: string) => cls.startsWith('w-')),
+      wrapperClass.split(" ").find((cls: string) => cls.startsWith("w-")),
+      componentClass.split(" ").find((cls: string) => cls.startsWith("w-")),
     )
     const heightClass = twMerge(
-      wrapperClass.split(' ').find((cls: string) => cls.startsWith('h-')),
-      componentClass.split(' ').find((cls: string) => cls.startsWith('h-')),
+      wrapperClass.split(" ").find((cls: string) => cls.startsWith("h-")),
+      componentClass.split(" ").find((cls: string) => cls.startsWith("h-")),
     )
     return `${widthClass} ${heightClass}`
   })
@@ -84,10 +84,10 @@
 
   /* Подписка на события клавиатуры */
   onMount(() => {
-    if (keyBind) window.addEventListener('keydown', handleKeyDown)
+    if (keyBind) window.addEventListener("keydown", handleKeyDown)
 
     return () => {
-      if (keyBind) window.removeEventListener('keydown', handleKeyDown)
+      if (keyBind) window.removeEventListener("keydown", handleKeyDown)
     }
   })
 </script>
@@ -115,10 +115,10 @@
     <div class=" flex flex-row items-center justify-center gap-2">
       {#if content?.icon}
         <span
-          class={` ${content.name ? 'absolute left-3' : ''} ${typeof content?.icon == 'string' ? 'p-0.5' : ''}  flex items-center justify-center overflow-visible 
-            ${content.name ? 'h-8 w-8' : `${svgSize()}`} [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full`}
+          class={` ${content.name ? "absolute left-3" : ""} ${typeof content?.icon == "string" ? "p-0.5" : ""}  flex items-center justify-center overflow-visible 
+            ${content.name ? "h-8 w-8" : `${svgSize()}`} [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full`}
         >
-          {#if typeof content?.icon === 'string'}
+          {#if typeof content?.icon === "string"}
             {@html content.icon}
           {:else}
             {@const IconComponent = content?.icon}
@@ -132,7 +132,7 @@
           {content.name}
           {#if keyBind}
             <div class="text-xs opacity-70">
-              ({keyBind.ctrlKey ? 'Ctrl+' : ''}{keyBind.shiftKey ? 'Shift+' : ''}{keyBind.altKey ? 'Alt+' : ''}{keyBind.key})
+              ({keyBind.ctrlKey ? "Ctrl+" : ""}{keyBind.shiftKey ? "Shift+" : ""}{keyBind.altKey ? "Alt+" : ""}{keyBind.key})
             </div>
           {/if}
         </div>
@@ -143,7 +143,7 @@
   {#if showInfo && content.info?.side && tooltipConfig[content.info?.side]}
     {@const config = tooltipConfig[content.info?.side]}
     <div
-      transition:fly={{ [config.off.split(':')[0]]: parseInt(config.off.split(':')[1]), duration: 300 }}
+      transition:fly={{ [config.off.split(":")[0]]: parseInt(config.off.split(":")[1]), duration: 300 }}
       class={`absolute z-50 w-max max-w-xs rounded-md bg-(--container-color) px-3 py-1 text-sm shadow-lg ${config.pos}`}
       style={`transform: ${config.tr};`}
     >

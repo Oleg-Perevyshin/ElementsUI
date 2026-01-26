@@ -1,14 +1,14 @@
 <script lang="ts">
-  import { onMount, type Snippet } from 'svelte'
-  import { fade, scale } from 'svelte/transition'
-  import { twMerge } from 'tailwind-merge'
-  import CrossIcon from './libIcons/CrossIcon.svelte'
+  import { onMount, type Snippet } from "svelte"
+  import { fade, scale } from "svelte/transition"
+  import { twMerge } from "tailwind-merge"
+  import CrossIcon from "./libIcons/CrossIcon.svelte"
 
   let {
     isOpen = $bindable(false),
     title,
-    wrapperClass = '',
-    mainClass = '',
+    wrapperClass = "",
+    mainClass = "",
     main,
     footer,
     onCancel = () => (isOpen = false),
@@ -23,15 +23,15 @@
   } = $props()
 
   const handleKeyDown = (event: KeyboardEvent) => {
-    if (event.key === 'Escape') {
+    if (event.key === "Escape") {
       isOpen = false
       onCancel()
     }
   }
 
   onMount(() => {
-    document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
+    document.addEventListener("keydown", handleKeyDown)
+    return () => document.removeEventListener("keydown", handleKeyDown)
   })
 </script>
 
@@ -46,7 +46,7 @@
         <button class="h-6 w-6 cursor-pointer" onclick={onCancel}> <CrossIcon /> </button>
       </div>
 
-      <div class={twMerge('flex h-full w-full flex-col overflow-auto p-2', mainClass)}>
+      <div class={twMerge("flex h-full w-full flex-col overflow-auto p-2", mainClass)}>
         {@render main?.()}
       </div>
       {#if footer}

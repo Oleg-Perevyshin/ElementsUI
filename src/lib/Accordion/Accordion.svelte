@@ -1,16 +1,16 @@
 <script lang="ts">
-  import { slide } from 'svelte/transition'
-  import type { IAccordionProps } from '../types'
-  import { twMerge } from 'tailwind-merge'
+  import { slide } from "svelte/transition"
+  import type { IAccordionProps } from "../types"
+  import { twMerge } from "tailwind-merge"
 
   let {
     id = crypto.randomUUID(),
     isOpen = false,
-    wrapperClass = '',
+    wrapperClass = "",
     size = { width: 1, height: 1 },
-    label = { name: '', class: 'text-left', icon: null },
+    label = { name: "", class: "text-left", icon: null },
     children,
-    image = '',
+    image = "",
   }: IAccordionProps = $props()
 
   const toggle = () => (isOpen = !isOpen)
@@ -34,7 +34,7 @@
             class={`flex h-7 w-7 shrink-0 items-center justify-center overflow-visible [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full`}
           >
             {#if label?.icon}
-              {#if typeof label?.icon === 'string'}
+              {#if typeof label?.icon === "string"}
                 {@html label.icon}
               {:else}
                 {@const IconComponent = label?.icon}

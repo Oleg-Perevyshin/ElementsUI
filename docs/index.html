@@ -1,55 +1,453 @@
 <!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" href="/ElementsUI/favicon.png" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4">
-		</script>
-		
-		<link href="/ElementsUI/_app/immutable/assets/Table.B2l_Likj.css" rel="stylesheet">
-		<link href="/ElementsUI/_app/immutable/assets/0.DpGxqb08.css" rel="stylesheet">
-		<link rel="modulepreload" href="/ElementsUI/_app/immutable/entry/start.B0I87LBF.js">
-		<link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/Cl66iwDI.js">
-		<link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/CYmiEaEH.js">
-		<link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/DXQ0fkFu.js">
-		<link rel="modulepreload" href="/ElementsUI/_app/immutable/entry/app.CN_sVLv0.js">
-		<link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/cfR1Foc9.js">
-		<link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/Di61MV9l.js">
-		<link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/_y1boTp2.js">
-		<link rel="modulepreload" href="/ElementsUI/_app/immutable/nodes/0.Bxba1_LJ.js">
-		<link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/CnAfG7ip.js">
-		<link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/CM3_98JW.js">
-		<link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/ClwY0cp0.js">
-		<link rel="modulepreload" href="/ElementsUI/_app/immutable/nodes/2.DxKFVR2J.js">
-	</head>
-	<body data-sveltekit-preload-data="hover">
-		<div><!--[--><!--[--><!----><div class="mx-auto flex h-screen max-w-[1400px] flex-col"><header class="sticky top-0 z-50 m-1 mt-2 flex items-center justify-between rounded-xl border border-(--border-color) bg-(--back-color)/50 p-4"><div class="flex items-center gap-2"><a href="/ElementsUI/" class="ml-2 no-underline! transition hover:scale-101"><h1>POE-Svelte-UI-Lib</h1></a></div> <div class="flex items-center gap-6"><!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="dd89aae7-d6e5-4d6b-b783-7bb094625c37" class="relative m-0 inline-block items-center rounded-2xl font-semibold transition duration-200 select-none bg-transparent p-0 cursor-pointer active:scale-97 w-8 bg-(--bg-color)"><span class="flex flex-row items-center justify-center gap-2"><!--[--><span class="flex items-center justify-center overflow-visible 
-            w-8  [&amp;_svg]:h-full [&amp;_svg]:max-h-full [&amp;_svg]:w-full [&amp;_svg]:max-w-full"><!--[!--><!----><svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="M9.173 14.83a4 4 0 1 1 5.657-5.657"></path><path d="m11.294 12.707l.174.247a7.5 7.5 0 0 0 8.845 2.492A9 9 0 0 1 5.642 18.36M3 12h1m8-9v1M5.6 5.6l.7.7M3 21L21 3"></path></g></svg><!----><!--]--></span><!--]--> <!--[!--><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----> <!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="6568b57e-26af-4431-b58e-ac84257bfee4" class="relative m-0 inline-block items-center rounded-2xl font-semibold transition duration-200 select-none bg-transparent p-0 cursor-pointer active:scale-97 w-8 bg-(--bg-color)"><span class="flex flex-row items-center justify-center gap-2"><!--[--><span class="flex items-center justify-center overflow-visible 
-            w-8  [&amp;_svg]:h-full [&amp;_svg]:max-h-full [&amp;_svg]:w-full [&amp;_svg]:max-w-full"><!--[!--><!----><svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="M16 22.027v-2.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7a5.44 5.44 0 0 0-1.5-3.75a5.07 5.07 0 0 0-.09-3.77s-1.18-.35-3.91 1.48a13.4 13.4 0 0 0-7 0c-2.73-1.83-3.91-1.48-3.91-1.48A5.07 5.07 0 0 0 5 5.797a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7a3.37 3.37 0 0 0-.94 2.58v2.87"></path><path d="M9 20.027c-3 .973-5.5 0-7-3"></path></g></svg><!----><!--]--></span><!--]--> <!--[!--><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----></div></header> <div class="mb-2 flex flex-1 overflow-hidden"><nav class="m-1 flex w-64 flex-col items-start gap-2 overflow-y-auto rounded-xl border border-(--border-color) bg-(--back-color)/50 p-4"><!--[--><div class="flex w-full"><!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="010571b9-373d-466b-b05c-39690ed93187" class="relative m-0 inline-block w-full items-center rounded-2xl px-2 py-1 font-semibold transition duration-200 select-none bg-blue border border-(--bg-color) cursor-pointer active:scale-97 h-10 text-left bg-(--bg-color)" aria-label="ALL in ONE"><span class="flex flex-row items-center justify-center gap-2"><!--[!--><!--]--> <!--[--><div class="flex-1">ALL in ONE <!--[!--><!--]--></div><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----> <!--[!--><!--]--></div><div class="flex w-full"><!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="7c685144-5852-4de7-ae21-24220081961f" class="relative m-0 inline-block w-full items-center rounded-2xl px-2 py-1 font-semibold transition duration-200 select-none border border-(--bg-color) cursor-pointer active:scale-97 h-10 text-left bg-gray bg-(--bg-color)" aria-label="Accordion"><span class="flex flex-row items-center justify-center gap-2"><!--[!--><!--]--> <!--[--><div class="flex-1">Accordion <!--[!--><!--]--></div><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----> <!--[!--><!--]--></div><div class="flex w-full"><!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="6bbb2107-8beb-4ba1-85b9-cb530b29d001" class="relative m-0 inline-block w-full items-center rounded-2xl px-2 py-1 font-semibold transition duration-200 select-none border border-(--bg-color) cursor-pointer active:scale-97 h-10 text-left bg-gray bg-(--bg-color)" aria-label="Button"><span class="flex flex-row items-center justify-center gap-2"><!--[!--><!--]--> <!--[--><div class="flex-1">Button <!--[!--><!--]--></div><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----> <!--[!--><!--]--></div><div class="flex w-full"><!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="c2ba91d9-b231-4c4e-baed-49eff38d2522" class="relative m-0 inline-block w-full items-center rounded-2xl px-2 py-1 font-semibold transition duration-200 select-none border border-(--bg-color) cursor-pointer active:scale-97 h-10 text-left bg-gray bg-(--bg-color)" aria-label="ColorPicker"><span class="flex flex-row items-center justify-center gap-2"><!--[!--><!--]--> <!--[--><div class="flex-1">ColorPicker <!--[!--><!--]--></div><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----> <!--[!--><!--]--></div><div class="flex w-full"><!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="f6f0c0e6-199b-4291-8fc8-c3374c7f0ec8" class="relative m-0 inline-block w-full items-center rounded-2xl px-2 py-1 font-semibold transition duration-200 select-none border border-(--bg-color) cursor-pointer active:scale-97 h-10 text-left bg-gray bg-(--bg-color)" aria-label="FileAttach"><span class="flex flex-row items-center justify-center gap-2"><!--[!--><!--]--> <!--[--><div class="flex-1">FileAttach <!--[!--><!--]--></div><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----> <!--[!--><!--]--></div><div class="flex w-full"><!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="f35826a6-1f38-400d-9410-8bbca340970a" class="relative m-0 inline-block w-full items-center rounded-2xl px-2 py-1 font-semibold transition duration-200 select-none border border-(--bg-color) cursor-pointer active:scale-97 h-10 text-left bg-gray bg-(--bg-color)" aria-label="Graph"><span class="flex flex-row items-center justify-center gap-2"><!--[!--><!--]--> <!--[--><div class="flex-1">Graph <!--[!--><!--]--></div><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----> <!--[!--><!--]--></div><div class="flex w-full"><!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="a60e2084-49d1-4a65-bda6-a5bc59a0fa85" class="relative m-0 inline-block w-full items-center rounded-2xl px-2 py-1 font-semibold transition duration-200 select-none border border-(--bg-color) cursor-pointer active:scale-97 h-10 text-left bg-gray bg-(--bg-color)" aria-label="Input"><span class="flex flex-row items-center justify-center gap-2"><!--[!--><!--]--> <!--[--><div class="flex-1">Input <!--[!--><!--]--></div><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----> <!--[!--><!--]--></div><div class="flex w-full"><!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="df229920-f8db-48cc-9350-185b22c57bb3" class="relative m-0 inline-block w-full items-center rounded-2xl px-2 py-1 font-semibold transition duration-200 select-none border border-(--bg-color) cursor-pointer active:scale-97 h-10 text-left bg-gray bg-(--bg-color)" aria-label="ProgressBar"><span class="flex flex-row items-center justify-center gap-2"><!--[!--><!--]--> <!--[--><div class="flex-1">ProgressBar <!--[!--><!--]--></div><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----> <!--[!--><!--]--></div><div class="flex w-full"><!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="b55fd43d-4368-4374-9047-9f4da0b78b34" class="relative m-0 inline-block w-full items-center rounded-2xl px-2 py-1 font-semibold transition duration-200 select-none border border-(--bg-color) cursor-pointer active:scale-97 h-10 text-left bg-gray bg-(--bg-color)" aria-label="Select"><span class="flex flex-row items-center justify-center gap-2"><!--[!--><!--]--> <!--[--><div class="flex-1">Select <!--[!--><!--]--></div><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----> <!--[!--><!--]--></div><div class="flex w-full"><!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="009700c8-c307-4785-ba6b-7a64994f9cd8" class="relative m-0 inline-block w-full items-center rounded-2xl px-2 py-1 font-semibold transition duration-200 select-none border border-(--bg-color) cursor-pointer active:scale-97 h-10 text-left bg-gray bg-(--bg-color)" aria-label="Slider"><span class="flex flex-row items-center justify-center gap-2"><!--[!--><!--]--> <!--[--><div class="flex-1">Slider <!--[!--><!--]--></div><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----> <!--[!--><!--]--></div><div class="flex w-full"><!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="ae5f585d-09c5-43eb-9f16-c8f22046db2d" class="relative m-0 inline-block w-full items-center rounded-2xl px-2 py-1 font-semibold transition duration-200 select-none border border-(--bg-color) cursor-pointer active:scale-97 h-10 text-left bg-gray bg-(--bg-color)" aria-label="Switch"><span class="flex flex-row items-center justify-center gap-2"><!--[!--><!--]--> <!--[--><div class="flex-1">Switch <!--[!--><!--]--></div><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----> <!--[!--><!--]--></div><div class="flex w-full"><!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="fb509cd4-7568-4c65-98b7-5cb37c37e10b" class="relative m-0 inline-block w-full items-center rounded-2xl px-2 py-1 font-semibold transition duration-200 select-none border border-(--bg-color) cursor-pointer active:scale-97 h-10 text-left bg-gray bg-(--bg-color)" aria-label="Table"><span class="flex flex-row items-center justify-center gap-2"><!--[!--><!--]--> <!--[--><div class="flex-1">Table <!--[!--><!--]--></div><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----> <!--[!--><!--]--></div><div class="flex w-full"><!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="68da07e7-7749-4f8f-81e3-0f1ced5b7fb8" class="relative m-0 inline-block w-full items-center rounded-2xl px-2 py-1 font-semibold transition duration-200 select-none border border-(--bg-color) cursor-pointer active:scale-97 h-10 text-left bg-gray bg-(--bg-color)" aria-label="TextField"><span class="flex flex-row items-center justify-center gap-2"><!--[!--><!--]--> <!--[--><div class="flex-1">TextField <!--[!--><!--]--></div><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----> <!--[!--><!--]--></div><!--]--></nav> <div class="m-1 flex-1 overflow-y-auto rounded-xl border border-(--border-color) bg-(--back-color)/50 p-4"><!----><h1>Добро пожаловать</h1> <p>Это библиотека UI компонентов и примитивов для Svelte</p> <p>Поситите тестовый ресурс <a href="https://cloud-dev.poe-gw.keenetic.pro/" target="_blank">PAS Cloud</a> для просмотра компонентов в использовании</p><!----><!----></div></div></div><!----><!--]--> <!--[!--><!--]--><!--]-->
-			
-			<script>
-				{
-					__sveltekit_wqriqn = {
-						base: "/ElementsUI",
-						assets: "/ElementsUI"
-					};
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="/ElementsUI/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 
-					const element = document.currentScript.parentElement;
+    <link href="/ElementsUI/_app/immutable/assets/Table.B2l_Likj.css" rel="stylesheet" />
+    <link href="/ElementsUI/_app/immutable/assets/0.DpGxqb08.css" rel="stylesheet" />
+    <link rel="modulepreload" href="/ElementsUI/_app/immutable/entry/start.B0I87LBF.js" />
+    <link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/Cl66iwDI.js" />
+    <link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/CYmiEaEH.js" />
+    <link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/DXQ0fkFu.js" />
+    <link rel="modulepreload" href="/ElementsUI/_app/immutable/entry/app.CN_sVLv0.js" />
+    <link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/cfR1Foc9.js" />
+    <link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/Di61MV9l.js" />
+    <link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/_y1boTp2.js" />
+    <link rel="modulepreload" href="/ElementsUI/_app/immutable/nodes/0.Bxba1_LJ.js" />
+    <link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/CnAfG7ip.js" />
+    <link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/CM3_98JW.js" />
+    <link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/ClwY0cp0.js" />
+    <link rel="modulepreload" href="/ElementsUI/_app/immutable/nodes/2.DxKFVR2J.js" />
+  </head>
+  <body data-sveltekit-preload-data="hover">
+    <div>
+      <!--[--><!--[--><!---->
+      <div class="mx-auto flex h-screen max-w-[1400px] flex-col">
+        <header class="sticky top-0 z-50 m-1 mt-2 flex items-center justify-between rounded-xl border border-(--border-color) bg-(--back-color)/50 p-4">
+          <div class="flex items-center gap-2">
+            <a href="/ElementsUI/" class="ml-2 no-underline! transition hover:scale-101"><h1>POE-Svelte-UI-Lib</h1></a>
+          </div>
+          <div class="flex items-center gap-6">
+            <!---->
+            <div class="relative flex w-full flex-col items-center">
+              <div class="relative flex w-full grow items-center">
+                <button
+                  id="dd89aae7-d6e5-4d6b-b783-7bb094625c37"
+                  class="relative m-0 inline-block w-8 cursor-pointer items-center rounded-2xl bg-(--bg-color) bg-transparent p-0 font-semibold transition duration-200 select-none active:scale-97"
+                >
+                  <span class="flex flex-row items-center justify-center gap-2"
+                    ><!--[--><span
+                      class="[&amp;_svg]:h-full [&amp;_svg]:max-h-full [&amp;_svg]:w-full [&amp;_svg]:max-w-full flex w-8 items-center justify-center overflow-visible"
+                      ><!--[!--><!----><svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" viewBox="0 0 24 24">
+                        <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
+                          <path d="M9.173 14.83a4 4 0 1 1 5.657-5.657"></path>
+                          <path d="m11.294 12.707l.174.247a7.5 7.5 0 0 0 8.845 2.492A9 9 0 0 1 5.642 18.36M3 12h1m8-9v1M5.6 5.6l.7.7M3 21L21 3"></path>
+                        </g></svg
+                      ><!----><!--]--></span
+                    ><!--]-->
+                    <!--[!--><!--]--></span
+                  >
+                </button>
+                <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+              </div>
+            </div>
+            <!---->
+            <!---->
+            <div class="relative flex w-full flex-col items-center">
+              <div class="relative flex w-full grow items-center">
+                <button
+                  id="6568b57e-26af-4431-b58e-ac84257bfee4"
+                  class="relative m-0 inline-block w-8 cursor-pointer items-center rounded-2xl bg-(--bg-color) bg-transparent p-0 font-semibold transition duration-200 select-none active:scale-97"
+                >
+                  <span class="flex flex-row items-center justify-center gap-2"
+                    ><!--[--><span
+                      class="[&amp;_svg]:h-full [&amp;_svg]:max-h-full [&amp;_svg]:w-full [&amp;_svg]:max-w-full flex w-8 items-center justify-center overflow-visible"
+                      ><!--[!--><!----><svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 24 24">
+                        <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
+                          <path
+                            d="M16 22.027v-2.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7a5.44 5.44 0 0 0-1.5-3.75a5.07 5.07 0 0 0-.09-3.77s-1.18-.35-3.91 1.48a13.4 13.4 0 0 0-7 0c-2.73-1.83-3.91-1.48-3.91-1.48A5.07 5.07 0 0 0 5 5.797a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7a3.37 3.37 0 0 0-.94 2.58v2.87"
+                          ></path>
+                          <path d="M9 20.027c-3 .973-5.5 0-7-3"></path>
+                        </g></svg
+                      ><!----><!--]--></span
+                    ><!--]-->
+                    <!--[!--><!--]--></span
+                  >
+                </button>
+                <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+              </div>
+            </div>
+            <!---->
+          </div>
+        </header>
+        <div class="mb-2 flex flex-1 overflow-hidden">
+          <nav class="m-1 flex w-64 flex-col items-start gap-2 overflow-y-auto rounded-xl border border-(--border-color) bg-(--back-color)/50 p-4">
+            <!--[-->
+            <div class="flex w-full">
+              <!---->
+              <div class="relative flex w-full flex-col items-center">
+                <div class="relative flex w-full grow items-center">
+                  <button
+                    id="010571b9-373d-466b-b05c-39690ed93187"
+                    class="bg-blue relative m-0 inline-block h-10 w-full cursor-pointer items-center rounded-2xl border border-(--bg-color) bg-(--bg-color) px-2 py-1 text-left font-semibold transition duration-200 select-none active:scale-97"
+                    aria-label="ALL in ONE"
+                  >
+                    <span class="flex flex-row items-center justify-center gap-2"
+                      ><!--[!--><!--]-->
+                      <!--[-->
+                      <div class="flex-1">
+                        ALL in ONE
+                        <!--[!--><!--]-->
+                      </div>
+                      <!--]--></span
+                    >
+                  </button>
+                  <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+                </div>
+              </div>
+              <!---->
+              <!--[!--><!--]-->
+            </div>
+            <div class="flex w-full">
+              <!---->
+              <div class="relative flex w-full flex-col items-center">
+                <div class="relative flex w-full grow items-center">
+                  <button
+                    id="7c685144-5852-4de7-ae21-24220081961f"
+                    class="bg-gray relative m-0 inline-block h-10 w-full cursor-pointer items-center rounded-2xl border border-(--bg-color) bg-(--bg-color) px-2 py-1 text-left font-semibold transition duration-200 select-none active:scale-97"
+                    aria-label="Accordion"
+                  >
+                    <span class="flex flex-row items-center justify-center gap-2"
+                      ><!--[!--><!--]-->
+                      <!--[-->
+                      <div class="flex-1">
+                        Accordion
+                        <!--[!--><!--]-->
+                      </div>
+                      <!--]--></span
+                    >
+                  </button>
+                  <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+                </div>
+              </div>
+              <!---->
+              <!--[!--><!--]-->
+            </div>
+            <div class="flex w-full">
+              <!---->
+              <div class="relative flex w-full flex-col items-center">
+                <div class="relative flex w-full grow items-center">
+                  <button
+                    id="6bbb2107-8beb-4ba1-85b9-cb530b29d001"
+                    class="bg-gray relative m-0 inline-block h-10 w-full cursor-pointer items-center rounded-2xl border border-(--bg-color) bg-(--bg-color) px-2 py-1 text-left font-semibold transition duration-200 select-none active:scale-97"
+                    aria-label="Button"
+                  >
+                    <span class="flex flex-row items-center justify-center gap-2"
+                      ><!--[!--><!--]-->
+                      <!--[-->
+                      <div class="flex-1">
+                        Button
+                        <!--[!--><!--]-->
+                      </div>
+                      <!--]--></span
+                    >
+                  </button>
+                  <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+                </div>
+              </div>
+              <!---->
+              <!--[!--><!--]-->
+            </div>
+            <div class="flex w-full">
+              <!---->
+              <div class="relative flex w-full flex-col items-center">
+                <div class="relative flex w-full grow items-center">
+                  <button
+                    id="c2ba91d9-b231-4c4e-baed-49eff38d2522"
+                    class="bg-gray relative m-0 inline-block h-10 w-full cursor-pointer items-center rounded-2xl border border-(--bg-color) bg-(--bg-color) px-2 py-1 text-left font-semibold transition duration-200 select-none active:scale-97"
+                    aria-label="ColorPicker"
+                  >
+                    <span class="flex flex-row items-center justify-center gap-2"
+                      ><!--[!--><!--]-->
+                      <!--[-->
+                      <div class="flex-1">
+                        ColorPicker
+                        <!--[!--><!--]-->
+                      </div>
+                      <!--]--></span
+                    >
+                  </button>
+                  <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+                </div>
+              </div>
+              <!---->
+              <!--[!--><!--]-->
+            </div>
+            <div class="flex w-full">
+              <!---->
+              <div class="relative flex w-full flex-col items-center">
+                <div class="relative flex w-full grow items-center">
+                  <button
+                    id="f6f0c0e6-199b-4291-8fc8-c3374c7f0ec8"
+                    class="bg-gray relative m-0 inline-block h-10 w-full cursor-pointer items-center rounded-2xl border border-(--bg-color) bg-(--bg-color) px-2 py-1 text-left font-semibold transition duration-200 select-none active:scale-97"
+                    aria-label="FileAttach"
+                  >
+                    <span class="flex flex-row items-center justify-center gap-2"
+                      ><!--[!--><!--]-->
+                      <!--[-->
+                      <div class="flex-1">
+                        FileAttach
+                        <!--[!--><!--]-->
+                      </div>
+                      <!--]--></span
+                    >
+                  </button>
+                  <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+                </div>
+              </div>
+              <!---->
+              <!--[!--><!--]-->
+            </div>
+            <div class="flex w-full">
+              <!---->
+              <div class="relative flex w-full flex-col items-center">
+                <div class="relative flex w-full grow items-center">
+                  <button
+                    id="f35826a6-1f38-400d-9410-8bbca340970a"
+                    class="bg-gray relative m-0 inline-block h-10 w-full cursor-pointer items-center rounded-2xl border border-(--bg-color) bg-(--bg-color) px-2 py-1 text-left font-semibold transition duration-200 select-none active:scale-97"
+                    aria-label="Graph"
+                  >
+                    <span class="flex flex-row items-center justify-center gap-2"
+                      ><!--[!--><!--]-->
+                      <!--[-->
+                      <div class="flex-1">
+                        Graph
+                        <!--[!--><!--]-->
+                      </div>
+                      <!--]--></span
+                    >
+                  </button>
+                  <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+                </div>
+              </div>
+              <!---->
+              <!--[!--><!--]-->
+            </div>
+            <div class="flex w-full">
+              <!---->
+              <div class="relative flex w-full flex-col items-center">
+                <div class="relative flex w-full grow items-center">
+                  <button
+                    id="a60e2084-49d1-4a65-bda6-a5bc59a0fa85"
+                    class="bg-gray relative m-0 inline-block h-10 w-full cursor-pointer items-center rounded-2xl border border-(--bg-color) bg-(--bg-color) px-2 py-1 text-left font-semibold transition duration-200 select-none active:scale-97"
+                    aria-label="Input"
+                  >
+                    <span class="flex flex-row items-center justify-center gap-2"
+                      ><!--[!--><!--]-->
+                      <!--[-->
+                      <div class="flex-1">
+                        Input
+                        <!--[!--><!--]-->
+                      </div>
+                      <!--]--></span
+                    >
+                  </button>
+                  <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+                </div>
+              </div>
+              <!---->
+              <!--[!--><!--]-->
+            </div>
+            <div class="flex w-full">
+              <!---->
+              <div class="relative flex w-full flex-col items-center">
+                <div class="relative flex w-full grow items-center">
+                  <button
+                    id="df229920-f8db-48cc-9350-185b22c57bb3"
+                    class="bg-gray relative m-0 inline-block h-10 w-full cursor-pointer items-center rounded-2xl border border-(--bg-color) bg-(--bg-color) px-2 py-1 text-left font-semibold transition duration-200 select-none active:scale-97"
+                    aria-label="ProgressBar"
+                  >
+                    <span class="flex flex-row items-center justify-center gap-2"
+                      ><!--[!--><!--]-->
+                      <!--[-->
+                      <div class="flex-1">
+                        ProgressBar
+                        <!--[!--><!--]-->
+                      </div>
+                      <!--]--></span
+                    >
+                  </button>
+                  <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+                </div>
+              </div>
+              <!---->
+              <!--[!--><!--]-->
+            </div>
+            <div class="flex w-full">
+              <!---->
+              <div class="relative flex w-full flex-col items-center">
+                <div class="relative flex w-full grow items-center">
+                  <button
+                    id="b55fd43d-4368-4374-9047-9f4da0b78b34"
+                    class="bg-gray relative m-0 inline-block h-10 w-full cursor-pointer items-center rounded-2xl border border-(--bg-color) bg-(--bg-color) px-2 py-1 text-left font-semibold transition duration-200 select-none active:scale-97"
+                    aria-label="Select"
+                  >
+                    <span class="flex flex-row items-center justify-center gap-2"
+                      ><!--[!--><!--]-->
+                      <!--[-->
+                      <div class="flex-1">
+                        Select
+                        <!--[!--><!--]-->
+                      </div>
+                      <!--]--></span
+                    >
+                  </button>
+                  <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+                </div>
+              </div>
+              <!---->
+              <!--[!--><!--]-->
+            </div>
+            <div class="flex w-full">
+              <!---->
+              <div class="relative flex w-full flex-col items-center">
+                <div class="relative flex w-full grow items-center">
+                  <button
+                    id="009700c8-c307-4785-ba6b-7a64994f9cd8"
+                    class="bg-gray relative m-0 inline-block h-10 w-full cursor-pointer items-center rounded-2xl border border-(--bg-color) bg-(--bg-color) px-2 py-1 text-left font-semibold transition duration-200 select-none active:scale-97"
+                    aria-label="Slider"
+                  >
+                    <span class="flex flex-row items-center justify-center gap-2"
+                      ><!--[!--><!--]-->
+                      <!--[-->
+                      <div class="flex-1">
+                        Slider
+                        <!--[!--><!--]-->
+                      </div>
+                      <!--]--></span
+                    >
+                  </button>
+                  <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+                </div>
+              </div>
+              <!---->
+              <!--[!--><!--]-->
+            </div>
+            <div class="flex w-full">
+              <!---->
+              <div class="relative flex w-full flex-col items-center">
+                <div class="relative flex w-full grow items-center">
+                  <button
+                    id="ae5f585d-09c5-43eb-9f16-c8f22046db2d"
+                    class="bg-gray relative m-0 inline-block h-10 w-full cursor-pointer items-center rounded-2xl border border-(--bg-color) bg-(--bg-color) px-2 py-1 text-left font-semibold transition duration-200 select-none active:scale-97"
+                    aria-label="Switch"
+                  >
+                    <span class="flex flex-row items-center justify-center gap-2"
+                      ><!--[!--><!--]-->
+                      <!--[-->
+                      <div class="flex-1">
+                        Switch
+                        <!--[!--><!--]-->
+                      </div>
+                      <!--]--></span
+                    >
+                  </button>
+                  <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+                </div>
+              </div>
+              <!---->
+              <!--[!--><!--]-->
+            </div>
+            <div class="flex w-full">
+              <!---->
+              <div class="relative flex w-full flex-col items-center">
+                <div class="relative flex w-full grow items-center">
+                  <button
+                    id="fb509cd4-7568-4c65-98b7-5cb37c37e10b"
+                    class="bg-gray relative m-0 inline-block h-10 w-full cursor-pointer items-center rounded-2xl border border-(--bg-color) bg-(--bg-color) px-2 py-1 text-left font-semibold transition duration-200 select-none active:scale-97"
+                    aria-label="Table"
+                  >
+                    <span class="flex flex-row items-center justify-center gap-2"
+                      ><!--[!--><!--]-->
+                      <!--[-->
+                      <div class="flex-1">
+                        Table
+                        <!--[!--><!--]-->
+                      </div>
+                      <!--]--></span
+                    >
+                  </button>
+                  <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+                </div>
+              </div>
+              <!---->
+              <!--[!--><!--]-->
+            </div>
+            <div class="flex w-full">
+              <!---->
+              <div class="relative flex w-full flex-col items-center">
+                <div class="relative flex w-full grow items-center">
+                  <button
+                    id="68da07e7-7749-4f8f-81e3-0f1ced5b7fb8"
+                    class="bg-gray relative m-0 inline-block h-10 w-full cursor-pointer items-center rounded-2xl border border-(--bg-color) bg-(--bg-color) px-2 py-1 text-left font-semibold transition duration-200 select-none active:scale-97"
+                    aria-label="TextField"
+                  >
+                    <span class="flex flex-row items-center justify-center gap-2"
+                      ><!--[!--><!--]-->
+                      <!--[-->
+                      <div class="flex-1">
+                        TextField
+                        <!--[!--><!--]-->
+                      </div>
+                      <!--]--></span
+                    >
+                  </button>
+                  <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+                </div>
+              </div>
+              <!---->
+              <!--[!--><!--]-->
+            </div>
+            <!--]-->
+          </nav>
+          <div class="m-1 flex-1 overflow-y-auto rounded-xl border border-(--border-color) bg-(--back-color)/50 p-4">
+            <!---->
+            <h1>Добро пожаловать</h1>
+            <p>Это библиотека UI компонентов и примитивов для Svelte</p>
+            <p>
+              Поситите тестовый ресурс <a href="https://cloud-dev.poe-gw.keenetic.pro/" target="_blank">PAS Cloud</a> для просмотра компонентов в использовании
+            </p>
+            <!----><!---->
+          </div>
+        </div>
+      </div>
+      <!----><!--]-->
+      <!--[!--><!--]--><!--]-->
 
-					Promise.all([
-						import("/ElementsUI/_app/immutable/entry/start.B0I87LBF.js"),
-						import("/ElementsUI/_app/immutable/entry/app.CN_sVLv0.js")
-					]).then(([kit, app]) => {
-						kit.start(app, element, {
-							node_ids: [0, 2],
-							data: [null,null],
-							form: null,
-							error: null
-						});
-					});
-				}
-			</script>
-		</div>
-	</body>
+      <script>
+        {
+          __sveltekit_wqriqn = {
+            base: "/ElementsUI",
+            assets: "/ElementsUI",
+          }
+
+          const element = document.currentScript.parentElement
+
+          Promise.all([import("/ElementsUI/_app/immutable/entry/start.B0I87LBF.js"), import("/ElementsUI/_app/immutable/entry/app.CN_sVLv0.js")]).then(
+            ([kit, app]) => {
+              kit.start(app, element, {
+                node_ids: [0, 2],
+                data: [null, null],
+                form: null,
+                error: null,
+              })
+            },
+          )
+        }
+      </script>
+    </div>
+  </body>
 </html>

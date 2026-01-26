@@ -105,14 +105,15 @@
         {placeholder}
         {disabled}
         autocomplete={help?.autocomplete}
-        oninput={e => handleInputChange((e.currentTarget as HTMLInputElement).value)}
+        oninput={(e) => handleInputChange((e.currentTarget as HTMLInputElement).value)}
         onkeydown={handleKeyDown}
         type={type === "password" ? (showPassword ? "text" : "password") : type === "number" ? "number" : "text"}
         {maxlength}
         min={number?.minNum}
         max={number?.maxNum}
         step={number?.step}
-        {readonly} />
+        {readonly}
+      />
     {:else if type === "text-area"}
       <textarea
         bind:value
@@ -133,7 +134,8 @@
         rows={textareaRows}
         {placeholder}
         {readonly}
-        oninput={e => handleInputChange((e.currentTarget as HTMLTextAreaElement).value)}></textarea>
+        oninput={(e) => handleInputChange((e.currentTarget as HTMLTextAreaElement).value)}
+      ></textarea>
     {/if}
 
     {#if type === "password" && !disabled}
@@ -141,21 +143,25 @@
         type="button"
         class="absolute right-2 flex cursor-pointer border-none bg-transparent"
         onclick={() => (showPassword = !showPassword)}
-        aria-label={showPassword ? "Скрыть пароль" : "Показать пароль"}>
+        aria-label={showPassword ? "Скрыть пароль" : "Показать пароль"}
+      >
         {#if showPassword}
           <svg xmlns="http://www.w3.org/2000/svg" width="1.5rem" height="1.5rem" viewBox="0 0 24 24"
             ><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
               ><path d="M15 12a3 3 0 1 1-6 0a3 3 0 0 1 6 0" /><path
-                d="M2 12c1.6-4.097 5.336-7 10-7s8.4 2.903 10 7c-1.6 4.097-5.336 7-10 7s-8.4-2.903-10-7" /></g
-            ></svg>
+                d="M2 12c1.6-4.097 5.336-7 10-7s8.4 2.903 10 7c-1.6 4.097-5.336 7-10 7s-8.4-2.903-10-7"
+              /></g
+            ></svg
+          >
         {:else}
           <svg xmlns="http://www.w3.org/2000/svg" width="1.5rem" height="1.5rem" viewBox="0 0 24 24"
             ><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
               ><path
                 stroke-linejoin="round"
-                d="M10.73 5.073A11 11 0 0 1 12 5c4.664 0 8.4 2.903 10 7a11.6 11.6 0 0 1-1.555 2.788M6.52 6.519C4.48 7.764 2.9 9.693 2 12c1.6 4.097 5.336 7 10 7a10.44 10.44 0 0 0 5.48-1.52m-7.6-7.6a3 3 0 1 0 4.243 4.243" /><path
-                d="m4 4l16 16" /></g
-            ></svg>
+                d="M10.73 5.073A11 11 0 0 1 12 5c4.664 0 8.4 2.903 10 7a11.6 11.6 0 0 1-1.555 2.788M6.52 6.519C4.48 7.764 2.9 9.693 2 12c1.6 4.097 5.336 7 10 7a10.44 10.44 0 0 0 5.48-1.52m-7.6-7.6a3 3 0 1 0 4.243 4.243"
+              /><path d="m4 4l16 16" /></g
+            ></svg
+          >
         {/if}
       </button>
     {/if}
@@ -163,25 +169,28 @@
     {#if help.copyButton && (type === "text" || type === "text-area") && !disabled}
       <button
         class="absolute right-3 flex border-none bg-transparent {type === 'text-area' ? 'top-2' : ''} cursor-pointer"
-        onclick={e => {
+        onclick={(e) => {
           e.preventDefault()
           navigator.clipboard.writeText(value as string)
           isCopied = true
           setTimeout(() => (isCopied = false), 1000)
         }}
-        aria-label="Копировать текст">
+        aria-label="Копировать текст"
+      >
         <div class=" size-5 text-sm [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full">
           {#if isCopied}
             <div
               class="right-1..5 absolute top-1/2 -translate-y-1/2 transform rounded-md bg-(--green-color) px-1.5 py-1 shadow-lg"
-              transition:fade={{ duration: 200 }}>
+              transition:fade={{ duration: 200 }}
+            >
               ✓
             </div>
           {:else}
             <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
               <g fill="none" stroke="currentColor" stroke-width="1.5">
                 <path
-                  d="M6 11c0-2.828 0-4.243.879-5.121C7.757 5 9.172 5 12 5h3c2.828 0 4.243 0 5.121.879C21 6.757 21 8.172 21 11v5c0 2.828 0 4.243-.879 5.121C19.243 22 17.828 22 15 22h-3c-2.828 0-4.243 0-5.121-.879C6 20.243 6 18.828 6 16z" />
+                  d="M6 11c0-2.828 0-4.243.879-5.121C7.757 5 9.172 5 12 5h3c2.828 0 4.243 0 5.121.879C21 6.757 21 8.172 21 11v5c0 2.828 0 4.243-.879 5.121C19.243 22 17.828 22 15 22h-3c-2.828 0-4.243 0-5.121-.879C6 20.243 6 18.828 6 16z"
+                />
                 <path d="M6 19a3 3 0 0 1-3-3v-6c0-3.771 0-5.657 1.172-6.828S7.229 2 11 2h4a3 3 0 0 1 3 3" />
               </g>
             </svg>
@@ -204,7 +213,8 @@
             value = Number(value) + (number.step ?? 1)
             onUpdate(value as number)
           }}
-          aria-label="Увеличить">+</button>
+          aria-label="Увеличить">+</button
+        >
 
         <button
           class="flex h-1/2 w-full items-center rounded-br-2xl pl-2 transition-colors duration-150 hover:bg-(--gray-color)/30 active:bg-(--gray-color)/10"
@@ -218,7 +228,8 @@
             value = Number(value) - (number.step ?? 1)
             onUpdate(value as number)
           }}
-          aria-label="Уменьшить">−</button>
+          aria-label="Уменьшить">−</button
+        >
       </div>
     {/if}
 
@@ -228,17 +239,20 @@
         class="button-info absolute left-2 flex border-none bg-transparent {type === 'text-area' ? 'top-2' : ''} {disabled ? 'opacity-50' : 'cursor-pointer'}"
         onmouseenter={() => (showInfo = true)}
         onmouseleave={() => (showInfo = false)}
-        aria-label={showInfo ? "Скрыть инфо" : "Показать инфо"}>
+        aria-label={showInfo ? "Скрыть инфо" : "Показать инфо"}
+      >
         <svg xmlns="http://www.w3.org/2000/svg" width="1.5rem" height="1.5rem" viewBox="0 0 24 24"
           ><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
             ><circle cx="12" cy="12" r="10" stroke-width="1.3" /><path stroke-width="1.5" d="M12 16v-4.5" /><path stroke-width="1.8" d="M12 8.012v-.01" /></g
-          ></svg>
+          ></svg
+        >
       </button>
 
       {#if showInfo}
         <div
           transition:fly={{ x: -15, duration: 250 }}
-          class="absolute top-5 left-10 z-50 w-auto -translate-y-1/2 rounded bg-(--container-color) px-2 py-1 shadow-lg">
+          class="absolute top-5 left-10 z-50 w-auto -translate-y-1/2 rounded bg-(--container-color) px-2 py-1 shadow-lg"
+        >
           {help?.info}
         </div>
       {/if}

@@ -6,7 +6,7 @@ function id() {
   return crypto.randomUUID() as string
 }
 
-export const optionsStore = derived(t, $t => {
+export const optionsStore = derived(t, ($t) => {
   return {
     HEADER_OPTIONS: [
       { id: id(), name: "GET", value: "GET" },

@@ -1,58 +1,1094 @@
 <!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" href="/ElementsUI/favicon.png" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4">
-		</script>
-		
-		<link href="/ElementsUI/_app/immutable/assets/Table.B2l_Likj.css" rel="stylesheet">
-		<link href="/ElementsUI/_app/immutable/assets/0.DpGxqb08.css" rel="stylesheet">
-		<link rel="modulepreload" href="/ElementsUI/_app/immutable/entry/start.B0I87LBF.js">
-		<link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/Cl66iwDI.js">
-		<link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/CYmiEaEH.js">
-		<link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/DXQ0fkFu.js">
-		<link rel="modulepreload" href="/ElementsUI/_app/immutable/entry/app.CN_sVLv0.js">
-		<link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/cfR1Foc9.js">
-		<link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/Di61MV9l.js">
-		<link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/_y1boTp2.js">
-		<link rel="modulepreload" href="/ElementsUI/_app/immutable/nodes/0.Bxba1_LJ.js">
-		<link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/CnAfG7ip.js">
-		<link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/CM3_98JW.js">
-		<link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/ClwY0cp0.js">
-		<link rel="modulepreload" href="/ElementsUI/_app/immutable/nodes/4.meLrf08y.js">
-		<link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/0UdDw6P-.js">
-		<link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/Dudz0OOs.js">
-		<link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/H79yRWWV.js">
-	</head>
-	<body data-sveltekit-preload-data="hover">
-		<div><!--[--><!--[--><!----><div class="mx-auto flex h-screen max-w-[1400px] flex-col"><header class="sticky top-0 z-50 m-1 mt-2 flex items-center justify-between rounded-xl border border-(--border-color) bg-(--back-color)/50 p-4"><div class="flex items-center gap-2"><a href="/ElementsUI/" class="ml-2 no-underline! transition hover:scale-101"><h1>POE-Svelte-UI-Lib</h1></a></div> <div class="flex items-center gap-6"><!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="16b43092-2490-43b4-b8c4-925270cf593f" class="relative m-0 inline-block items-center rounded-2xl font-semibold transition duration-200 select-none bg-transparent p-0 cursor-pointer active:scale-97 w-8 bg-(--bg-color)"><span class="flex flex-row items-center justify-center gap-2"><!--[--><span class="flex items-center justify-center overflow-visible 
-            w-8  [&amp;_svg]:h-full [&amp;_svg]:max-h-full [&amp;_svg]:w-full [&amp;_svg]:max-w-full"><!--[!--><!----><svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="M9.173 14.83a4 4 0 1 1 5.657-5.657"></path><path d="m11.294 12.707l.174.247a7.5 7.5 0 0 0 8.845 2.492A9 9 0 0 1 5.642 18.36M3 12h1m8-9v1M5.6 5.6l.7.7M3 21L21 3"></path></g></svg><!----><!--]--></span><!--]--> <!--[!--><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----> <!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="efc06907-ee1a-41d2-a938-c049154b8a78" class="relative m-0 inline-block items-center rounded-2xl font-semibold transition duration-200 select-none bg-transparent p-0 cursor-pointer active:scale-97 w-8 bg-(--bg-color)"><span class="flex flex-row items-center justify-center gap-2"><!--[--><span class="flex items-center justify-center overflow-visible 
-            w-8  [&amp;_svg]:h-full [&amp;_svg]:max-h-full [&amp;_svg]:w-full [&amp;_svg]:max-w-full"><!--[!--><!----><svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="M16 22.027v-2.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7a5.44 5.44 0 0 0-1.5-3.75a5.07 5.07 0 0 0-.09-3.77s-1.18-.35-3.91 1.48a13.4 13.4 0 0 0-7 0c-2.73-1.83-3.91-1.48-3.91-1.48A5.07 5.07 0 0 0 5 5.797a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7a3.37 3.37 0 0 0-.94 2.58v2.87"></path><path d="M9 20.027c-3 .973-5.5 0-7-3"></path></g></svg><!----><!--]--></span><!--]--> <!--[!--><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----></div></header> <div class="mb-2 flex flex-1 overflow-hidden"><nav class="m-1 flex w-64 flex-col items-start gap-2 overflow-y-auto rounded-xl border border-(--border-color) bg-(--back-color)/50 p-4"><!--[--><div class="flex w-full"><!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="4646e4b8-1fd0-42aa-a4e6-0e3a312cdef6" class="relative m-0 inline-block w-full items-center rounded-2xl px-2 py-1 font-semibold transition duration-200 select-none bg-blue border border-(--bg-color) cursor-pointer active:scale-97 h-10 text-left bg-(--bg-color)" aria-label="ALL in ONE"><span class="flex flex-row items-center justify-center gap-2"><!--[!--><!--]--> <!--[--><div class="flex-1">ALL in ONE <!--[!--><!--]--></div><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----> <!--[--><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M12.6 12L8.7 8.1q-.275-.275-.275-.7t.275-.7t.7-.275t.7.275l4.6 4.6q.15.15.213.325t.062.375t-.062.375t-.213.325l-4.6 4.6q-.275.275-.7.275t-.7-.275t-.275-.7t.275-.7z"></path></svg><!--]--></div><div class="flex w-full"><!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="7c2749f4-9483-4e6c-978f-341c2ca27f15" class="relative m-0 inline-block w-full items-center rounded-2xl px-2 py-1 font-semibold transition duration-200 select-none border border-(--bg-color) cursor-pointer active:scale-97 h-10 text-left bg-gray bg-(--bg-color)" aria-label="Accordion"><span class="flex flex-row items-center justify-center gap-2"><!--[!--><!--]--> <!--[--><div class="flex-1">Accordion <!--[!--><!--]--></div><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----> <!--[!--><!--]--></div><div class="flex w-full"><!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="ec9f080b-29c1-4f3e-98d9-0a1dd3341c04" class="relative m-0 inline-block w-full items-center rounded-2xl px-2 py-1 font-semibold transition duration-200 select-none border border-(--bg-color) cursor-pointer active:scale-97 h-10 text-left bg-gray bg-(--bg-color)" aria-label="Button"><span class="flex flex-row items-center justify-center gap-2"><!--[!--><!--]--> <!--[--><div class="flex-1">Button <!--[!--><!--]--></div><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----> <!--[!--><!--]--></div><div class="flex w-full"><!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="52a45dff-dab5-4cd7-81ea-fb6ef497fdfe" class="relative m-0 inline-block w-full items-center rounded-2xl px-2 py-1 font-semibold transition duration-200 select-none border border-(--bg-color) cursor-pointer active:scale-97 h-10 text-left bg-gray bg-(--bg-color)" aria-label="ColorPicker"><span class="flex flex-row items-center justify-center gap-2"><!--[!--><!--]--> <!--[--><div class="flex-1">ColorPicker <!--[!--><!--]--></div><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----> <!--[!--><!--]--></div><div class="flex w-full"><!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="6e2bf990-f50a-4d65-bc97-1b24d5ed739c" class="relative m-0 inline-block w-full items-center rounded-2xl px-2 py-1 font-semibold transition duration-200 select-none border border-(--bg-color) cursor-pointer active:scale-97 h-10 text-left bg-gray bg-(--bg-color)" aria-label="FileAttach"><span class="flex flex-row items-center justify-center gap-2"><!--[!--><!--]--> <!--[--><div class="flex-1">FileAttach <!--[!--><!--]--></div><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----> <!--[!--><!--]--></div><div class="flex w-full"><!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="5df3827a-bbf6-499a-a608-b804dc7aa4c1" class="relative m-0 inline-block w-full items-center rounded-2xl px-2 py-1 font-semibold transition duration-200 select-none border border-(--bg-color) cursor-pointer active:scale-97 h-10 text-left bg-gray bg-(--bg-color)" aria-label="Graph"><span class="flex flex-row items-center justify-center gap-2"><!--[!--><!--]--> <!--[--><div class="flex-1">Graph <!--[!--><!--]--></div><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----> <!--[!--><!--]--></div><div class="flex w-full"><!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="91191604-6f70-4228-939e-9fd1dea70707" class="relative m-0 inline-block w-full items-center rounded-2xl px-2 py-1 font-semibold transition duration-200 select-none border border-(--bg-color) cursor-pointer active:scale-97 h-10 text-left bg-gray bg-(--bg-color)" aria-label="Input"><span class="flex flex-row items-center justify-center gap-2"><!--[!--><!--]--> <!--[--><div class="flex-1">Input <!--[!--><!--]--></div><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----> <!--[!--><!--]--></div><div class="flex w-full"><!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="bc1911c4-3145-4752-922c-d3357fbf255d" class="relative m-0 inline-block w-full items-center rounded-2xl px-2 py-1 font-semibold transition duration-200 select-none border border-(--bg-color) cursor-pointer active:scale-97 h-10 text-left bg-gray bg-(--bg-color)" aria-label="ProgressBar"><span class="flex flex-row items-center justify-center gap-2"><!--[!--><!--]--> <!--[--><div class="flex-1">ProgressBar <!--[!--><!--]--></div><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----> <!--[!--><!--]--></div><div class="flex w-full"><!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="6228af60-0951-4721-a586-86a8afc18c99" class="relative m-0 inline-block w-full items-center rounded-2xl px-2 py-1 font-semibold transition duration-200 select-none border border-(--bg-color) cursor-pointer active:scale-97 h-10 text-left bg-gray bg-(--bg-color)" aria-label="Select"><span class="flex flex-row items-center justify-center gap-2"><!--[!--><!--]--> <!--[--><div class="flex-1">Select <!--[!--><!--]--></div><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----> <!--[!--><!--]--></div><div class="flex w-full"><!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="04aeeb56-fcf2-46c3-b53a-18e4e0a5d3b9" class="relative m-0 inline-block w-full items-center rounded-2xl px-2 py-1 font-semibold transition duration-200 select-none border border-(--bg-color) cursor-pointer active:scale-97 h-10 text-left bg-gray bg-(--bg-color)" aria-label="Slider"><span class="flex flex-row items-center justify-center gap-2"><!--[!--><!--]--> <!--[--><div class="flex-1">Slider <!--[!--><!--]--></div><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----> <!--[!--><!--]--></div><div class="flex w-full"><!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="3a3d8652-f24e-46ba-bf3c-a7fcd4cb0fd2" class="relative m-0 inline-block w-full items-center rounded-2xl px-2 py-1 font-semibold transition duration-200 select-none border border-(--bg-color) cursor-pointer active:scale-97 h-10 text-left bg-gray bg-(--bg-color)" aria-label="Switch"><span class="flex flex-row items-center justify-center gap-2"><!--[!--><!--]--> <!--[--><div class="flex-1">Switch <!--[!--><!--]--></div><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----> <!--[!--><!--]--></div><div class="flex w-full"><!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="0c9f9881-364b-48e0-b9f4-509f90b91b06" class="relative m-0 inline-block w-full items-center rounded-2xl px-2 py-1 font-semibold transition duration-200 select-none border border-(--bg-color) cursor-pointer active:scale-97 h-10 text-left bg-gray bg-(--bg-color)" aria-label="Table"><span class="flex flex-row items-center justify-center gap-2"><!--[!--><!--]--> <!--[--><div class="flex-1">Table <!--[!--><!--]--></div><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----> <!--[!--><!--]--></div><div class="flex w-full"><!----><div class="relative flex w-full flex-col items-center"><div class="relative flex w-full grow items-center"><button id="62050321-a225-4ca7-bc8e-3168ef2e2892" class="relative m-0 inline-block w-full items-center rounded-2xl px-2 py-1 font-semibold transition duration-200 select-none border border-(--bg-color) cursor-pointer active:scale-97 h-10 text-left bg-gray bg-(--bg-color)" aria-label="TextField"><span class="flex flex-row items-center justify-center gap-2"><!--[!--><!--]--> <!--[--><div class="flex-1">TextField <!--[!--><!--]--></div><!--]--></span></button> <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]--></div></div><!----> <!--[!--><!--]--></div><!--]--></nav> <div class="m-1 flex-1 overflow-y-auto rounded-xl border border-(--border-color) bg-(--back-color)/50 p-4"><!----><div class="flex h-full flex-col items-center overflow-hidden overflow-y-visible"><h2>Обзорная страница компонентов</h2> <div class="flex w-full flex-col"><!----><div id="d7a9ef33-c14b-406d-8469-88ebaae900c2" class="rounded-xl hover:shadow-md w-full border border-(--border-color) bg-(--container-color) p-0 transition-shadow duration-250 mb-2"><button class="flex w-full cursor-pointer items-center justify-between p-4 transition-shadow duration-250 "><div class="flex w-full items-center"><span class="flex h-7 w-7 shrink-0 items-center justify-center overflow-visible [&amp;_svg]:h-full [&amp;_svg]:max-h-full [&amp;_svg]:w-full [&amp;_svg]:max-w-full"><!--[!--><!--]--></span> <span class="m-0 w-full cursor-pointer px-3 text-left font-semibold text-lg">Accordion</span></div> <div class="w-10 pl-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-[1.1rem] w-[1.1rem] transition-transform duration-250" style="transform: rotate(0deg)" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 12.5s-4.419 6-6 6s-6-6-6-6m12-7s-4.419 6-6 6s-6-6-6-6" color="currentColor"></path></svg></div></button> <!--[!--><!--]--></div><!----> <!----><div id="800639d0-b1c2-4ecb-8f77-7ec94dd25d38" class="rounded-xl hover:shadow-md w-full border border-(--border-color) bg-(--container-color) p-0 transition-shadow duration-250 mb-2"><button class="flex w-full cursor-pointer items-center justify-between p-4 transition-shadow duration-250 "><div class="flex w-full items-center"><span class="flex h-7 w-7 shrink-0 items-center justify-center overflow-visible [&amp;_svg]:h-full [&amp;_svg]:max-h-full [&amp;_svg]:w-full [&amp;_svg]:max-w-full"><!--[!--><!--]--></span> <span class="m-0 w-full cursor-pointer px-3 text-left font-semibold text-lg">Button</span></div> <div class="w-10 pl-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-[1.1rem] w-[1.1rem] transition-transform duration-250" style="transform: rotate(0deg)" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 12.5s-4.419 6-6 6s-6-6-6-6m12-7s-4.419 6-6 6s-6-6-6-6" color="currentColor"></path></svg></div></button> <!--[!--><!--]--></div><!----> <!----><div id="8eb3c3f3-0821-41a7-9410-6270c9b55f33" class="rounded-xl hover:shadow-md w-full border border-(--border-color) bg-(--container-color) p-0 transition-shadow duration-250 mb-2"><button class="flex w-full cursor-pointer items-center justify-between p-4 transition-shadow duration-250 "><div class="flex w-full items-center"><span class="flex h-7 w-7 shrink-0 items-center justify-center overflow-visible [&amp;_svg]:h-full [&amp;_svg]:max-h-full [&amp;_svg]:w-full [&amp;_svg]:max-w-full"><!--[!--><!--]--></span> <span class="m-0 w-full cursor-pointer px-3 text-left font-semibold text-lg">Color Picker</span></div> <div class="w-10 pl-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-[1.1rem] w-[1.1rem] transition-transform duration-250" style="transform: rotate(0deg)" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 12.5s-4.419 6-6 6s-6-6-6-6m12-7s-4.419 6-6 6s-6-6-6-6" color="currentColor"></path></svg></div></button> <!--[!--><!--]--></div><!----> <!----><div id="78f191c8-b065-4cd5-8fbe-58373b98c0b6" class="rounded-xl hover:shadow-md w-full border border-(--border-color) bg-(--container-color) p-0 transition-shadow duration-250 mb-2"><button class="flex w-full cursor-pointer items-center justify-between p-4 transition-shadow duration-250 "><div class="flex w-full items-center"><span class="flex h-7 w-7 shrink-0 items-center justify-center overflow-visible [&amp;_svg]:h-full [&amp;_svg]:max-h-full [&amp;_svg]:w-full [&amp;_svg]:max-w-full"><!--[!--><!--]--></span> <span class="m-0 w-full cursor-pointer px-3 text-left font-semibold text-lg">File Attach</span></div> <div class="w-10 pl-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-[1.1rem] w-[1.1rem] transition-transform duration-250" style="transform: rotate(0deg)" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 12.5s-4.419 6-6 6s-6-6-6-6m12-7s-4.419 6-6 6s-6-6-6-6" color="currentColor"></path></svg></div></button> <!--[!--><!--]--></div><!----> <!----><div id="603ba8e3-4297-4861-ade4-ee4306ad108f" class="rounded-xl hover:shadow-md w-full border border-(--border-color) bg-(--container-color) p-0 transition-shadow duration-250 mb-2"><button class="flex w-full cursor-pointer items-center justify-between p-4 transition-shadow duration-250 "><div class="flex w-full items-center"><span class="flex h-7 w-7 shrink-0 items-center justify-center overflow-visible [&amp;_svg]:h-full [&amp;_svg]:max-h-full [&amp;_svg]:w-full [&amp;_svg]:max-w-full"><!--[!--><!--]--></span> <span class="m-0 w-full cursor-pointer px-3 text-left font-semibold text-lg">Graph</span></div> <div class="w-10 pl-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-[1.1rem] w-[1.1rem] transition-transform duration-250" style="transform: rotate(0deg)" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 12.5s-4.419 6-6 6s-6-6-6-6m12-7s-4.419 6-6 6s-6-6-6-6" color="currentColor"></path></svg></div></button> <!--[!--><!--]--></div><!----> <!----><div id="1764bcc6-81d9-44e9-8567-d51c6ea07d91" class="rounded-xl hover:shadow-md w-full border border-(--border-color) bg-(--container-color) p-0 transition-shadow duration-250 mb-2"><button class="flex w-full cursor-pointer items-center justify-between p-4 transition-shadow duration-250 "><div class="flex w-full items-center"><span class="flex h-7 w-7 shrink-0 items-center justify-center overflow-visible [&amp;_svg]:h-full [&amp;_svg]:max-h-full [&amp;_svg]:w-full [&amp;_svg]:max-w-full"><!--[!--><!--]--></span> <span class="m-0 w-full cursor-pointer px-3 text-left font-semibold text-lg">Input</span></div> <div class="w-10 pl-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-[1.1rem] w-[1.1rem] transition-transform duration-250" style="transform: rotate(0deg)" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 12.5s-4.419 6-6 6s-6-6-6-6m12-7s-4.419 6-6 6s-6-6-6-6" color="currentColor"></path></svg></div></button> <!--[!--><!--]--></div><!----> <!----><div id="91f134db-7d9d-423c-8396-d1bd5ccf07a3" class="rounded-xl hover:shadow-md w-full border border-(--border-color) bg-(--container-color) p-0 transition-shadow duration-250 mb-2"><button class="flex w-full cursor-pointer items-center justify-between p-4 transition-shadow duration-250 "><div class="flex w-full items-center"><span class="flex h-7 w-7 shrink-0 items-center justify-center overflow-visible [&amp;_svg]:h-full [&amp;_svg]:max-h-full [&amp;_svg]:w-full [&amp;_svg]:max-w-full"><!--[!--><!--]--></span> <span class="m-0 w-full cursor-pointer px-3 text-left font-semibold text-lg">Progress Bar</span></div> <div class="w-10 pl-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-[1.1rem] w-[1.1rem] transition-transform duration-250" style="transform: rotate(0deg)" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 12.5s-4.419 6-6 6s-6-6-6-6m12-7s-4.419 6-6 6s-6-6-6-6" color="currentColor"></path></svg></div></button> <!--[!--><!--]--></div><!----> <!----><div id="f291e8c8-cf2b-4e5e-909b-26378575185f" class="rounded-xl hover:shadow-md w-full border border-(--border-color) bg-(--container-color) p-0 transition-shadow duration-250 mb-2"><button class="flex w-full cursor-pointer items-center justify-between p-4 transition-shadow duration-250 "><div class="flex w-full items-center"><span class="flex h-7 w-7 shrink-0 items-center justify-center overflow-visible [&amp;_svg]:h-full [&amp;_svg]:max-h-full [&amp;_svg]:w-full [&amp;_svg]:max-w-full"><!--[!--><!--]--></span> <span class="m-0 w-full cursor-pointer px-3 text-left font-semibold text-lg">Select</span></div> <div class="w-10 pl-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-[1.1rem] w-[1.1rem] transition-transform duration-250" style="transform: rotate(0deg)" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 12.5s-4.419 6-6 6s-6-6-6-6m12-7s-4.419 6-6 6s-6-6-6-6" color="currentColor"></path></svg></div></button> <!--[!--><!--]--></div><!----> <!----><div id="d605bdf5-2894-4f9f-b098-d37add6d7c2b" class="rounded-xl hover:shadow-md w-full border border-(--border-color) bg-(--container-color) p-0 transition-shadow duration-250 mb-2"><button class="flex w-full cursor-pointer items-center justify-between p-4 transition-shadow duration-250 "><div class="flex w-full items-center"><span class="flex h-7 w-7 shrink-0 items-center justify-center overflow-visible [&amp;_svg]:h-full [&amp;_svg]:max-h-full [&amp;_svg]:w-full [&amp;_svg]:max-w-full"><!--[!--><!--]--></span> <span class="m-0 w-full cursor-pointer px-3 text-left font-semibold text-lg">Slider</span></div> <div class="w-10 pl-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-[1.1rem] w-[1.1rem] transition-transform duration-250" style="transform: rotate(0deg)" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 12.5s-4.419 6-6 6s-6-6-6-6m12-7s-4.419 6-6 6s-6-6-6-6" color="currentColor"></path></svg></div></button> <!--[!--><!--]--></div><!----> <!----><div id="dc905765-8799-4857-a2e6-f8a72b0b935a" class="rounded-xl hover:shadow-md w-full border border-(--border-color) bg-(--container-color) p-0 transition-shadow duration-250 mb-2"><button class="flex w-full cursor-pointer items-center justify-between p-4 transition-shadow duration-250 "><div class="flex w-full items-center"><span class="flex h-7 w-7 shrink-0 items-center justify-center overflow-visible [&amp;_svg]:h-full [&amp;_svg]:max-h-full [&amp;_svg]:w-full [&amp;_svg]:max-w-full"><!--[!--><!--]--></span> <span class="m-0 w-full cursor-pointer px-3 text-left font-semibold text-lg">Switch</span></div> <div class="w-10 pl-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-[1.1rem] w-[1.1rem] transition-transform duration-250" style="transform: rotate(0deg)" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 12.5s-4.419 6-6 6s-6-6-6-6m12-7s-4.419 6-6 6s-6-6-6-6" color="currentColor"></path></svg></div></button> <!--[!--><!--]--></div><!----> <!----><div id="7ce15b68-2896-4e60-8d2f-06274b3fbbd2" class="rounded-xl hover:shadow-md w-full border border-(--border-color) bg-(--container-color) p-0 transition-shadow duration-250 mb-2"><button class="flex w-full cursor-pointer items-center justify-between p-4 transition-shadow duration-250 "><div class="flex w-full items-center"><span class="flex h-7 w-7 shrink-0 items-center justify-center overflow-visible [&amp;_svg]:h-full [&amp;_svg]:max-h-full [&amp;_svg]:w-full [&amp;_svg]:max-w-full"><!--[!--><!--]--></span> <span class="m-0 w-full cursor-pointer px-3 text-left font-semibold text-lg">Table</span></div> <div class="w-10 pl-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-[1.1rem] w-[1.1rem] transition-transform duration-250" style="transform: rotate(180deg)" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 12.5s-4.419 6-6 6s-6-6-6-6m12-7s-4.419 6-6 6s-6-6-6-6" color="currentColor"></path></svg></div></button> <!--[--><div class="grid w-full p-4 sm:p-3 gap-2 border-t border-(--border-color)" style="grid-template-columns: repeat(1, minmax(0, 1fr)); grid-template-rows: repeat(1, auto); "><!----><div id="37cdb92e-1b66-4111-a196-6cc8ac77e84a" class="bg-blue flex h-full w-full flex-col overflow-hidden"><!--[--><h5 class="w-full px-4 text-center">Devices</h5><!--]--> <div class="flex h-full flex-col overflow-hidden rounded-xl border border-transparent "><div class="grid font-semibold" style="grid-template-columns: 5% 20% 12% 10% auto 15%;"><!--[--><div class="border-l border-transparent flex justify-start bg-(--bg-color) p-2 text-left"><span>ID</span> <!--[--><button class="inline-block cursor-pointer font-bold transition-transform duration-75 hover:scale-110 active:scale-95">↑↓</button><!--]--></div><div class="border-l border-transparent flex justify-start bg-(--bg-color) p-2 text-left"><span>Image</span> <!--[!--><!--]--></div><div class="border-l border-transparent flex justify-start bg-(--bg-color) p-2 text-left"><span>Name</span> <!--[--><button class="inline-block cursor-pointer font-bold transition-transform duration-75 hover:scale-110 active:scale-95">↑↓</button><!--]--></div><div class="border-l border-transparent flex justify-start bg-(--bg-color) p-2 text-left"><span>Status</span> <!--[!--><!--]--></div><div class="border-l border-transparent flex justify-start bg-(--bg-color) p-2 text-left"><span>Last Active</span> <!--[--><button class="inline-block cursor-pointer font-bold transition-transform duration-75 hover:scale-110 active:scale-95">↑↓</button><!--]--></div><div class="border-l border-transparent flex justify-start bg-(--bg-color) p-2 text-left"><span>Actions</span> <!--[!--><!--]--></div><!--]--></div> <div class="flex-1 overflow-y-auto bg-(--container-color)/50"><div class="grid min-w-0" style="grid-template-columns: 5% 20% 12% 10% auto 15%;"><!--[--><!--[--><div class="relative flex w-full min-w-0 items-center px-2 py-1 wrap-break-word bg-[#edeef3] dark:bg-[#1f2a3a] flex justify-start text-left border-t  border-transparent "><!--[!--><!--[!--><div class="w-full max-w-full wrap-break-word whitespace-normal " role="columnheader"><!--[!--><!----># 1<!----><!--]--></div> <!--[!--><!--]--><!--]--><!--]--></div><div class="relative flex w-full min-w-0 items-center px-2 py-1 wrap-break-word bg-[#edeef3] dark:bg-[#1f2a3a] flex justify-start text-left border-t  border-l  border-transparent "><!--[!--><!--[--><div class="flex items-center justify-center" style="width: 5rem; height: 5rem;"><!--[--><img src="data:image/svg+xml;base64,PHN2ZyBiYXNlUHJvZmlsZT0iZnVsbCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iNTIxIiBoZWlnaHQ9IjQ3NyI+DQo8ZGVmcz4NCjxzdHlsZT5jaXJjbGUscGF0aCxwb2x5bGluZXtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmR9PC9zdHlsZT4NCjwvZGVmcz4NCjxwYXRoIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzc3NyIgc3Ryb2tlLXdpZHRoPSIxMCIgZD0iTTExNi42MyAxODguNjJsODMgNTIiLz4NCjxjaXJjbGUgY3g9Ijg0LjgzIiBjeT0iMTY4LjgzIiByPSIzNi44MyIgZmlsbD0iIzIyMiIgc3Ryb2tlPSIjNzc3IiBzdHJva2Utd2lkdGg9IjEwIi8+DQo8cGF0aCBmaWxsPSJub25lIiBzdHJva2U9IiM3NzciIHN0cm9rZS13aWR0aD0iMTAiIGQ9Ik00MDkuMDMgMzgwLjAzbC04My01MiIvPg0KPGNpcmNsZSBjeD0iNDQwLjgzIiBjeT0iMzk5LjgzIiByPSIzNi44MyIgZmlsbD0iIzIyMiIgc3Ryb2tlPSIjNzc3IiBzdHJva2Utd2lkdGg9IjEwIi8+DQo8cGF0aCBmaWxsPSJub25lIiBzdHJva2U9IiM1OUYiIHN0cm9rZS13aWR0aD0iMTAiIGQ9Ik0xMTIuMDMgMzc5LjAzbDgzLTUyTTI2Mi4wMyAyMDQuMDN2LTg4Ii8+DQo8Y2lyY2xlIGN4PSIyNjEuMzMiIGN5PSIyODQuMzMiIHI9Ijc4LjMzIiBmaWxsPSIjZmZmIiBzdHJva2U9IiM1OUYiIHN0cm9rZS13aWR0aD0iMTUiLz4NCjxjaXJjbGUgY3g9Ijc2LjgzIiBjeT0iMzk5LjgzIiByPSIzNi44MyIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjNTlGIiBzdHJva2Utd2lkdGg9IjEwIi8+DQo8Y2lyY2xlIGN4PSIyNjAuODMiIGN5PSI3Ni44MyIgcj0iMzYuODMiIGZpbGw9IiNmZmYiIHN0cm9rZT0iIzU5RiIgc3Ryb2tlLXdpZHRoPSIxMCIvPg0KPHBhdGggZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNTlGIiBzdHJva2Utd2lkdGg9IjEwIiBkPSJNNDY1IDM0MEM1MTMgMTQyIDMyOSA3OSAzMjkgNzlNNDI3IDMzMWM0MC0xNjItMTEwLTIxMy0xMTAtMjEzTTM4OSAzMTljMzEtMTI1LTg2LTE2NS04Ni0xNjUiLz4NCjwvc3ZnPg==" alt="Image" class="h-full w-full object-cover" loading="lazy"/><!--]--></div><!--]--><!--]--></div><div class="relative flex w-full min-w-0 items-center px-2 py-1 wrap-break-word bg-[#edeef3] dark:bg-[#1f2a3a] flex justify-start text-left border-t  border-l  border-transparent "><!--[!--><!--[!--><div class="w-full max-w-full wrap-break-word whitespace-normal " role="columnheader"><!--[!--><!---->Device A<!----><!--]--></div> <!--[!--><!--]--><!--]--><!--]--></div><div class="relative flex w-full min-w-0 items-center px-2 py-1 wrap-break-word bg-[#edeef3] dark:bg-[#1f2a3a] flex justify-start text-left border-t  border-l  border-transparent "><!--[!--><!--[!--><div class="w-full max-w-full wrap-break-word overflow-hidden text-ellipsis whitespace-nowrap" role="columnheader"><!--[!--><!---->online<!----><!--]--></div> <!--[!--><!--]--><!--]--><!--]--></div><div class="relative flex w-full min-w-0 items-center px-2 py-1 wrap-break-word bg-[#edeef3] dark:bg-[#1f2a3a] flex justify-start text-left border-t  border-l  border-transparent "><!--[!--><!--[!--><div class="w-full max-w-full wrap-break-word overflow-hidden text-ellipsis whitespace-nowrap" role="columnheader"><!--[--><button class="w-full cursor-pointer overflow-hidden text-left text-ellipsis whitespace-nowrap"><!---->Tue Nov 04 2025 10:08:06 GMT+0300 (Москва, стандартное время)<!----></button><!--]--></div> <!--[--><button class="mx-2 flex cursor-pointer border-none bg-transparent text-2xl" aria-label="Копировать текст"><div class="size-5 text-sm [&amp;_svg]:h-full [&amp;_svg]:max-h-full [&amp;_svg]:w-full [&amp;_svg]:max-w-full"><!--[!--><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 11c0-2.828 0-4.243.879-5.121C7.757 5 9.172 5 12 5h3c2.828 0 4.243 0 5.121.879C21 6.757 21 8.172 21 11v5c0 2.828 0 4.243-.879 5.121C19.243 22 17.828 22 15 22h-3c-2.828 0-4.243 0-5.121-.879C6 20.243 6 18.828 6 16z"></path><path d="M6 19a3 3 0 0 1-3-3v-6c0-3.771 0-5.657 1.172-6.828S7.229 2 11 2h4a3 3 0 0 1 3 3"></path></g></svg><!--]--></div></button><!--]--><!--]--><!--]--></div><div class="relative flex w-full min-w-0 items-center px-2 py-1 wrap-break-word bg-[#edeef3] dark:bg-[#1f2a3a] flex justify-start text-left border-t  border-l  border-transparent "><!--[--><div class="flex w-full flex-col gap-1"><!--[--><button class="cursor-pointer rounded-full px-4 py-1 font-medium transition-shadow outline-none select-none hover:shadow-md bg-blue bg-(--bg-color)">Action 1 (id)</button><button class="cursor-pointer rounded-full px-4 py-1 font-medium transition-shadow outline-none select-none hover:shadow-md bg-green bg-(--bg-color)">Action 2 (name)</button><!--]--></div><!--]--></div><!--]--><!--[--><div class="relative flex w-full min-w-0 items-center px-2 py-1 wrap-break-word bg-(--back-color)/40 flex justify-start text-left border-t  border-transparent "><!--[!--><!--[!--><div class="w-full max-w-full wrap-break-word whitespace-normal " role="columnheader"><!--[!--><!----># 2<!----><!--]--></div> <!--[!--><!--]--><!--]--><!--]--></div><div class="relative flex w-full min-w-0 items-center px-2 py-1 wrap-break-word bg-(--back-color)/40 flex justify-start text-left border-t  border-l  border-transparent "><!--[!--><!--[--><div class="flex items-center justify-center" style="width: 5rem; height: 5rem;"><!--[--><img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+DQo8c3ZnDQogICB4bWxuczpkYz0iaHR0cDovL3B1cmwub3JnL2RjL2VsZW1lbnRzLzEuMS8iDQogICB4bWxuczpjYz0iaHR0cDovL2NyZWF0aXZlY29tbW9ucy5vcmcvbnMjIg0KICAgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIg0KICAgeG1sbnM6c3ZnPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyINCiAgIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyINCiAgIHhtbG5zOnNvZGlwb2RpPSJodHRwOi8vc29kaXBvZGkuc291cmNlZm9yZ2UubmV0L0RURC9zb2RpcG9kaS0wLmR0ZCINCiAgIHhtbG5zOmlua3NjYXBlPSJodHRwOi8vd3d3Lmlua3NjYXBlLm9yZy9uYW1lc3BhY2VzL2lua3NjYXBlIg0KICAgaWQ9InN2ZzgiDQogICB2ZXJzaW9uPSIxLjEiDQogICB2aWV3Qm94PSIwIDAgMTMuMjI5MTY2IDEzLjIyOTE2NiINCiAgIGhlaWdodD0iMTMuMjI5MTY2bW0iDQogICB3aWR0aD0iMTMuMjI5MTY2bW0iDQogICBzb2RpcG9kaTpkb2NuYW1lPSJNdWx0aSBTd2l0Y2ggdjEyLnN2ZyINCiAgIGlua3NjYXBlOnZlcnNpb249IjAuOTIuMSByMTUzNzEiDQogICBpbmtzY2FwZTpleHBvcnQtZmlsZW5hbWU9IkQ6XGFud29ya1zQmNC60L7QvdC60Lgg0YPRgdGC0YDQvtC50YHRgtCyXE11bHRpIFN3aXRjaCB2MTEucG5nIg0KICAgaW5rc2NhcGU6ZXhwb3J0LXhkcGk9IjIzMC40MDAwMSINCiAgIGlua3NjYXBlOmV4cG9ydC15ZHBpPSIyMzAuNDAwMDEiPg0KICA8c29kaXBvZGk6bmFtZWR2aWV3DQogICAgIHBhZ2Vjb2xvcj0iI2ZmZmZmZiINCiAgICAgYm9yZGVyY29sb3I9IiM2NjY2NjYiDQogICAgIGJvcmRlcm9wYWNpdHk9IjEiDQogICAgIG9iamVjdHRvbGVyYW5jZT0iMTAiDQogICAgIGdyaWR0b2xlcmFuY2U9IjEwIg0KICAgICBndWlkZXRvbGVyYW5jZT0iMTAiDQogICAgIGlua3NjYXBlOnBhZ2VvcGFjaXR5PSIwIg0KICAgICBpbmtzY2FwZTpwYWdlc2hhZG93PSIyIg0KICAgICBpbmtzY2FwZTp3aW5kb3ctd2lkdGg9IjE5MjAiDQogICAgIGlua3NjYXBlOndpbmRvdy1oZWlnaHQ9IjEwMTciDQogICAgIGlkPSJuYW1lZHZpZXcxOSINCiAgICAgc2hvd2dyaWQ9ImZhbHNlIg0KICAgICBpbmtzY2FwZTp6b29tPSIxMy4zNTAxNzciDQogICAgIGlua3NjYXBlOmN4PSI3LjkyNjAxMDYiDQogICAgIGlua3NjYXBlOmN5PSIyMi41NjgwMjIiDQogICAgIGlua3NjYXBlOndpbmRvdy14PSItOCINCiAgICAgaW5rc2NhcGU6d2luZG93LXk9Ii04Ig0KICAgICBpbmtzY2FwZTp3aW5kb3ctbWF4aW1pemVkPSIxIg0KICAgICBpbmtzY2FwZTpjdXJyZW50LWxheWVyPSJzdmc4IiAvPg0KICA8ZGVmcw0KICAgICBpZD0iZGVmczIiPg0KICAgIDxtYXJrZXINCiAgICAgICBpbmtzY2FwZTpzdG9ja2lkPSJFbXB0eVRyaWFuZ2xlT3V0TSINCiAgICAgICBvcmllbnQ9ImF1dG8iDQogICAgICAgcmVmWT0iMC4wIg0KICAgICAgIHJlZlg9IjAuMCINCiAgICAgICBpZD0ibWFya2VyNTQ3NSINCiAgICAgICBzdHlsZT0ib3ZlcmZsb3c6dmlzaWJsZSINCiAgICAgICBpbmtzY2FwZTppc3N0b2NrPSJ0cnVlIj4NCiAgICAgIDxwYXRoDQogICAgICAgICBpZD0icGF0aDU0NzMiDQogICAgICAgICBkPSJNIDUuNzcsMC4wIEwgLTIuODgsNS4wIEwgLTIuODgsLTUuMCBMIDUuNzcsMC4wIHogIg0KICAgICAgICAgc3R5bGU9ImZpbGwtcnVsZTpldmVub2RkO2ZpbGw6I2ZmZmZmZjtzdHJva2U6Izc3Nzc3NztzdHJva2Utd2lkdGg6MXB0O3N0cm9rZS1vcGFjaXR5OjEiDQogICAgICAgICB0cmFuc2Zvcm09InNjYWxlKDAuNCkgdHJhbnNsYXRlKC00LjUsMCkiIC8+DQogICAgPC9tYXJrZXI+DQogICAgPG1hcmtlcg0KICAgICAgIGlua3NjYXBlOmlzc3RvY2s9InRydWUiDQogICAgICAgc3R5bGU9Im92ZXJmbG93OnZpc2libGUiDQogICAgICAgaWQ9Im1hcmtlcjUxMTEiDQogICAgICAgcmVmWD0iMC4wIg0KICAgICAgIHJlZlk9IjAuMCINCiAgICAgICBvcmllbnQ9ImF1dG8iDQogICAgICAgaW5rc2NhcGU6c3RvY2tpZD0iRW1wdHlUcmlhbmdsZU91dE0iPg0KICAgICAgPHBhdGgNCiAgICAgICAgIHRyYW5zZm9ybT0ic2NhbGUoMC40KSB0cmFuc2xhdGUoLTQuNSwwKSINCiAgICAgICAgIHN0eWxlPSJmaWxsLXJ1bGU6ZXZlbm9kZDtmaWxsOiM3Nzc3Nzc7c3Ryb2tlOiM3Nzc3Nzc7c3Ryb2tlLXdpZHRoOjFwdDtzdHJva2Utb3BhY2l0eToxO2ZpbGwtb3BhY2l0eToxIg0KICAgICAgICAgZD0iTSA1Ljc3LDAuMCBMIC0yLjg4LDUuMCBMIC0yLjg4LC01LjAgTCA1Ljc3LDAuMCB6ICINCiAgICAgICAgIGlkPSJwYXRoNTEwOSIgLz4NCiAgICA8L21hcmtlcj4NCiAgICA8bWFya2VyDQogICAgICAgaW5rc2NhcGU6c3RvY2tpZD0iRW1wdHlUcmlhbmdsZU91dE0iDQogICAgICAgb3JpZW50PSJhdXRvIg0KICAgICAgIHJlZlk9IjAuMCINCiAgICAgICByZWZYPSIwLjAiDQogICAgICAgaWQ9IkVtcHR5VHJpYW5nbGVPdXRNIg0KICAgICAgIHN0eWxlPSJvdmVyZmxvdzp2aXNpYmxlIg0KICAgICAgIGlua3NjYXBlOmlzc3RvY2s9InRydWUiDQogICAgICAgaW5rc2NhcGU6Y29sbGVjdD0iYWx3YXlzIj4NCiAgICAgIDxwYXRoDQogICAgICAgICBpZD0icGF0aDQ5NzYiDQogICAgICAgICBkPSJNIDUuNzcsMC4wIEwgLTIuODgsNS4wIEwgLTIuODgsLTUuMCBMIDUuNzcsMC4wIHogIg0KICAgICAgICAgc3R5bGU9ImZpbGwtcnVsZTpldmVub2RkO2ZpbGw6Izc3Nzc3NztzdHJva2U6Izc3Nzc3NztzdHJva2Utd2lkdGg6MXB0O3N0cm9rZS1vcGFjaXR5OjE7ZmlsbC1vcGFjaXR5OjEiDQogICAgICAgICB0cmFuc2Zvcm09InNjYWxlKDAuNCkgdHJhbnNsYXRlKC00LjUsMCkiIC8+DQogICAgPC9tYXJrZXI+DQogICAgPGxpbmVhckdyYWRpZW50DQogICAgICAgaWQ9ImEiPg0KICAgICAgPHN0b3ANCiAgICAgICAgIGlkPSJzdG9wMTAiDQogICAgICAgICBzdG9wLWNvbG9yPSIjZDllYzAwIg0KICAgICAgICAgb2Zmc2V0PSIwIiAvPg0KICAgICAgPHN0b3ANCiAgICAgICAgIGlkPSJzdG9wMTIiDQogICAgICAgICBzdG9wLW9wYWNpdHk9IjAiDQogICAgICAgICBzdG9wLWNvbG9yPSIjZjdmZjk4Ig0KICAgICAgICAgb2Zmc2V0PSIxIiAvPg0KICAgIDwvbGluZWFyR3JhZGllbnQ+DQogIDwvZGVmcz4NCiAgPG1ldGFkYXRhDQogICAgIGlkPSJtZXRhZGF0YTUiPg0KICAgIDxyZGY6UkRGPg0KICAgICAgPGNjOldvcmsNCiAgICAgICAgIHJkZjphYm91dD0iIj4NCiAgICAgICAgPGRjOmZvcm1hdD5pbWFnZS9zdmcreG1sPC9kYzpmb3JtYXQ+DQogICAgICAgIDxkYzp0eXBlDQogICAgICAgICAgIHJkZjpyZXNvdXJjZT0iaHR0cDovL3B1cmwub3JnL2RjL2RjbWl0eXBlL1N0aWxsSW1hZ2UiIC8+DQogICAgICAgIDxkYzp0aXRsZT48L2RjOnRpdGxlPg0KICAgICAgPC9jYzpXb3JrPg0KICAgIDwvcmRmOlJERj4NCiAgPC9tZXRhZGF0YT4NCiAgPGNpcmNsZQ0KICAgICBzdHlsZT0ib3BhY2l0eToxO2ZpbGw6bm9uZTtmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6bm9uemVybztzdHJva2U6I2UwNjY2NjtzdHJva2Utd2lkdGg6MC43OTM3NTAwNTtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7c3Ryb2tlLW1pdGVybGltaXQ6NDtzdHJva2UtZGFzaGFycmF5Om5vbmU7c3Ryb2tlLW9wYWNpdHk6MTtwYWludC1vcmRlcjpzdHJva2UgZmlsbCBtYXJrZXJzIg0KICAgICBpZD0icGF0aDQ1MTYiDQogICAgIGN4PSI2LjYxNDU4MyINCiAgICAgY3k9IjYuNjE0NTgzIg0KICAgICByPSI2LjIxNzcwODYiDQogICAgIGlua3NjYXBlOmV4cG9ydC14ZHBpPSIyMzAuMzk5OTkiDQogICAgIGlua3NjYXBlOmV4cG9ydC15ZHBpPSIyMzAuMzk5OTkiIC8+DQogIDxjaXJjbGUNCiAgICAgaW5rc2NhcGU6ZXhwb3J0LXlkcGk9IjIzMC4zOTk5OSINCiAgICAgaW5rc2NhcGU6ZXhwb3J0LXhkcGk9IjIzMC4zOTk5OSINCiAgICAgcj0iNi41NDg0Mzc2Ig0KICAgICBjeT0iNi42MTQ1ODMiDQogICAgIGN4PSI2LjYxNDU4MyINCiAgICAgaWQ9ImNpcmNsZTQ0OTUiDQogICAgIHN0eWxlPSJvcGFjaXR5OjE7ZmlsbDpub25lO2ZpbGwtb3BhY2l0eToxO2ZpbGwtcnVsZTpub256ZXJvO3N0cm9rZTojNTU1NTU1O3N0cm9rZS13aWR0aDowLjEzMjI5MTY3O3N0cm9rZS1saW5lY2FwOnJvdW5kO3N0cm9rZS1saW5lam9pbjpyb3VuZDtzdHJva2UtbWl0ZXJsaW1pdDo0O3N0cm9rZS1kYXNoYXJyYXk6bm9uZTtzdHJva2Utb3BhY2l0eToxO3BhaW50LW9yZGVyOnN0cm9rZSBmaWxsIG1hcmtlcnMiIC8+DQogIDxwYXRoDQogICAgIHN0eWxlPSJmaWxsOm5vbmU7c3Ryb2tlOiNlMDY2NjY7c3Ryb2tlLXdpZHRoOjAuNjYxNDU4Mzc7c3Ryb2tlLWxpbmVjYXA6cm91bmQ7c3Ryb2tlLWxpbmVqb2luOnJvdW5kO3N0cm9rZS1taXRlcmxpbWl0OjQ7c3Ryb2tlLWRhc2hhcnJheTpub25lO3N0cm9rZS1vcGFjaXR5OjEiDQogICAgIGQ9Ik0gNi41NjgyNjEsMy43NjYxNzA2IFYgNi42MDQyMzQyIg0KICAgICBpZD0icGF0aDQ1MzEtOSINCiAgICAgaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCINCiAgICAgaW5rc2NhcGU6ZXhwb3J0LXhkcGk9IjIzMC40MDAwMSINCiAgICAgaW5rc2NhcGU6ZXhwb3J0LXlkcGk9IjIzMC40MDAwMSIgLz4NCiAgPHBhdGgNCiAgICAgc3R5bGU9ImZpbGw6bm9uZTtzdHJva2U6I2UwNjY2NjtzdHJva2Utd2lkdGg6MC42NjE0NTgzNztzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7c3Ryb2tlLW1pdGVybGltaXQ6NDtzdHJva2UtZGFzaGFycmF5Om5vbmU7c3Ryb2tlLW9wYWNpdHk6MSINCiAgICAgZD0iTSA5LjQ1NDY5Nyw2LjYwNDIzNDIgSCA2LjU2ODI2MSINCiAgICAgaWQ9InBhdGg0NTM3Ig0KICAgICBpbmtzY2FwZTpjb25uZWN0b3ItY3VydmF0dXJlPSIwIg0KICAgICBpbmtzY2FwZTpleHBvcnQteGRwaT0iMjMwLjQwMDAxIg0KICAgICBpbmtzY2FwZTpleHBvcnQteWRwaT0iMjMwLjQwMDAxIiAvPg0KICA8cmVjdA0KICAgICBzdHlsZT0ib3BhY2l0eToxO2ZpbGw6I2UwNjY2NjtmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6bm9uemVybztzdHJva2U6Izc3Nzc3NztzdHJva2Utd2lkdGg6MC41MjkxNjY2ODtzdHJva2UtbGluZWNhcDpzcXVhcmU7c3Ryb2tlLWxpbmVqb2luOm1pdGVyO3N0cm9rZS1taXRlcmxpbWl0OjQ7c3Ryb2tlLWRhc2hhcnJheTpub25lO3N0cm9rZS1vcGFjaXR5OjE7cGFpbnQtb3JkZXI6c3Ryb2tlIGZpbGwgbWFya2VycyINCiAgICAgaWQ9InJlY3Q0NTIyIg0KICAgICB3aWR0aD0iMS4zNjc0OTEyIg0KICAgICBoZWlnaHQ9IjEuMzY3NDkxMiINCiAgICAgeD0iOC44MzE3MjUxIg0KICAgICB5PSI4LjkxMTA0MTMiDQogICAgIHJ4PSIwLjIzODIzNzExIg0KICAgICByeT0iMC4yMzgyMzcxMSIgLz4NCiAgPHJlY3QNCiAgICAgc3R5bGU9Im9wYWNpdHk6MTtmaWxsOm5vbmU7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOm5vbnplcm87c3Ryb2tlOiM3Nzc3Nzc7c3Ryb2tlLXdpZHRoOjAuMjY0NTgzMzU7c3Ryb2tlLWxpbmVjYXA6c3F1YXJlO3N0cm9rZS1saW5lam9pbjptaXRlcjtzdHJva2UtbWl0ZXJsaW1pdDo0O3N0cm9rZS1kYXNoYXJyYXk6bm9uZTtzdHJva2Utb3BhY2l0eToxO3BhaW50LW9yZGVyOnN0cm9rZSBmaWxsIG1hcmtlcnMiDQogICAgIGlkPSJyZWN0NTk4MiINCiAgICAgd2lkdGg9IjEuNTkxNzE0NCINCiAgICAgaGVpZ2h0PSIxLjU5MTcxNDQiDQogICAgIHg9IjIuODYwNDYxNyINCiAgICAgeT0iMi45MTk3MzI2Ig0KICAgICByeD0iMC4yOTQyOTI5Ig0KICAgICByeT0iMC4yOTQyOTI5IiAvPg0KICA8cGF0aA0KICAgICBzdHlsZT0ib3BhY2l0eToxO2ZpbGw6bm9uZTtmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6bm9uemVybztzdHJva2U6Izc3Nzc3NztzdHJva2Utd2lkdGg6MC4yNjQ1ODMzNTtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7c3Ryb2tlLW1pdGVybGltaXQ6NDtzdHJva2UtZGFzaGFycmF5Om5vbmU7c3Ryb2tlLW9wYWNpdHk6MTttYXJrZXItZW5kOnVybCgjRW1wdHlUcmlhbmdsZU91dE0pO3BhaW50LW9yZGVyOnN0cm9rZSBmaWxsIG1hcmtlcnMiDQogICAgIGlkPSJjaXJjbGU0ODExIg0KICAgICBpbmtzY2FwZTpleHBvcnQteGRwaT0iMjMwLjM5OTk5Ig0KICAgICBpbmtzY2FwZTpleHBvcnQteWRwaT0iMjMwLjM5OTk5Ig0KICAgICBzb2RpcG9kaTp0eXBlPSJhcmMiDQogICAgIHNvZGlwb2RpOmN4PSI2LjYxNDU4MyINCiAgICAgc29kaXBvZGk6Y3k9IjYuNjE0NTgzIg0KICAgICBzb2RpcG9kaTpyeD0iNC4zNjIyNjE4Ig0KICAgICBzb2RpcG9kaTpyeT0iNC4zNjIyNjE4Ig0KICAgICBzb2RpcG9kaTpzdGFydD0iNC4zNDIxMDgxIg0KICAgICBzb2RpcG9kaTplbmQ9IjAuMzYzODY3MTIiDQogICAgIHNvZGlwb2RpOm9wZW49InRydWUiDQogICAgIGQ9Ik0gNS4wMzU5Nzk1LDIuNTQ3OTcwMyBBIDQuMzYyMjYxOCw0LjM2MjI2MTggMCAwIDEgOS42ODkyNjAyLDMuNTIwMTIyMSA0LjM2MjI2MTgsNC4zNjIyNjE4IDAgMCAxIDEwLjY5MTIzNyw4LjE2NzA3MTkiIC8+DQogIDxwYXRoDQogICAgIGQ9Im0gLTguMTY2NjMwMSwtMTAuODQ3NDU5IGEgNC4zNjIyNjE4LDQuMzYyMjYxOCAwIDAgMSA0LjYyNTg1ODYsMS4wMDU3MDM5IDQuMzYyMjYxOCw0LjM2MjI2MTggMCAwIDEgMC45ODUyNjUxLDQuNjMwMjU1Ig0KICAgICBzb2RpcG9kaTpvcGVuPSJ0cnVlIg0KICAgICBzb2RpcG9kaTplbmQ9IjAuMzYzODY3MTIiDQogICAgIHNvZGlwb2RpOnN0YXJ0PSI0LjM1MjkzODIiDQogICAgIHNvZGlwb2RpOnJ5PSI0LjM2MjI2MTgiDQogICAgIHNvZGlwb2RpOnJ4PSI0LjM2MjI2MTgiDQogICAgIHNvZGlwb2RpOmN5PSItNi43NjM5ODkiDQogICAgIHNvZGlwb2RpOmN4PSItNi42MzIxNjAyIg0KICAgICBzb2RpcG9kaTp0eXBlPSJhcmMiDQogICAgIGlua3NjYXBlOmV4cG9ydC15ZHBpPSIyMzAuMzk5OTkiDQogICAgIGlua3NjYXBlOmV4cG9ydC14ZHBpPSIyMzAuMzk5OTkiDQogICAgIGlkPSJwYXRoNTEwNyINCiAgICAgc3R5bGU9Im9wYWNpdHk6MTtmaWxsOm5vbmU7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOm5vbnplcm87c3Ryb2tlOiM3Nzc3Nzc7c3Ryb2tlLXdpZHRoOjAuMjY0NTgzMzU7c3Ryb2tlLWxpbmVjYXA6cm91bmQ7c3Ryb2tlLWxpbmVqb2luOnJvdW5kO3N0cm9rZS1taXRlcmxpbWl0OjQ7c3Ryb2tlLWRhc2hhcnJheTpub25lO3N0cm9rZS1vcGFjaXR5OjE7bWFya2VyLWVuZDp1cmwoI21hcmtlcjUxMTEpO3BhaW50LW9yZGVyOnN0cm9rZSBmaWxsIG1hcmtlcnMiDQogICAgIHRyYW5zZm9ybT0ic2NhbGUoLTEpIiAvPg0KPC9zdmc+DQo=" alt="Image" class="h-full w-full object-cover" loading="lazy"/><!--]--></div><!--]--><!--]--></div><div class="relative flex w-full min-w-0 items-center px-2 py-1 wrap-break-word bg-(--back-color)/40 flex justify-start text-left border-t  border-l  border-transparent "><!--[!--><!--[!--><div class="w-full max-w-full wrap-break-word whitespace-normal " role="columnheader"><!--[!--><!---->Device B<!----><!--]--></div> <!--[!--><!--]--><!--]--><!--]--></div><div class="relative flex w-full min-w-0 items-center px-2 py-1 wrap-break-word bg-(--back-color)/40 flex justify-start text-left border-t  border-l  border-transparent "><!--[!--><!--[!--><div class="w-full max-w-full wrap-break-word overflow-hidden text-ellipsis whitespace-nowrap" role="columnheader"><!--[!--><!---->offline<!----><!--]--></div> <!--[!--><!--]--><!--]--><!--]--></div><div class="relative flex w-full min-w-0 items-center px-2 py-1 wrap-break-word bg-(--back-color)/40 flex justify-start text-left border-t  border-l  border-transparent "><!--[!--><!--[!--><div class="w-full max-w-full wrap-break-word overflow-hidden text-ellipsis whitespace-nowrap" role="columnheader"><!--[--><button class="w-full cursor-pointer overflow-hidden text-left text-ellipsis whitespace-nowrap"><!---->Fri Oct 31 2025 10:08:06 GMT+0300 (Москва, стандартное время)<!----></button><!--]--></div> <!--[--><button class="mx-2 flex cursor-pointer border-none bg-transparent text-2xl" aria-label="Копировать текст"><div class="size-5 text-sm [&amp;_svg]:h-full [&amp;_svg]:max-h-full [&amp;_svg]:w-full [&amp;_svg]:max-w-full"><!--[!--><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 11c0-2.828 0-4.243.879-5.121C7.757 5 9.172 5 12 5h3c2.828 0 4.243 0 5.121.879C21 6.757 21 8.172 21 11v5c0 2.828 0 4.243-.879 5.121C19.243 22 17.828 22 15 22h-3c-2.828 0-4.243 0-5.121-.879C6 20.243 6 18.828 6 16z"></path><path d="M6 19a3 3 0 0 1-3-3v-6c0-3.771 0-5.657 1.172-6.828S7.229 2 11 2h4a3 3 0 0 1 3 3"></path></g></svg><!--]--></div></button><!--]--><!--]--><!--]--></div><div class="relative flex w-full min-w-0 items-center px-2 py-1 wrap-break-word bg-(--back-color)/40 flex justify-start text-left border-t  border-l  border-transparent "><!--[--><div class="flex w-full flex-col gap-1"><!--[--><button class="cursor-pointer rounded-full px-4 py-1 font-medium transition-shadow outline-none select-none hover:shadow-md bg-blue bg-(--bg-color)">Action 1 (id)</button><button class="cursor-pointer rounded-full px-4 py-1 font-medium transition-shadow outline-none select-none hover:shadow-md bg-green bg-(--bg-color)">Action 2 (name)</button><!--]--></div><!--]--></div><!--]--><!--]--></div></div> <!--[!--><!--]--> <!--[--><div class="flex h-8 items-center justify-center bg-(--bg-color)"><h5>rows: 2</h5></div><!--]--></div></div><!----> <!----><!--[!--><!--]--><!----><!----></div><!--]--></div><!----> <!----><div id="7012e166-727d-43dd-b63d-4cfae8024dce" class="rounded-xl hover:shadow-md w-full border border-(--border-color) bg-(--container-color) p-0 transition-shadow duration-250 mb-2"><button class="flex w-full cursor-pointer items-center justify-between p-4 transition-shadow duration-250 "><div class="flex w-full items-center"><span class="flex h-7 w-7 shrink-0 items-center justify-center overflow-visible [&amp;_svg]:h-full [&amp;_svg]:max-h-full [&amp;_svg]:w-full [&amp;_svg]:max-w-full"><!--[!--><!--]--></span> <span class="m-0 w-full cursor-pointer px-3 text-left font-semibold text-lg">Text Field</span></div> <div class="w-10 pl-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-[1.1rem] w-[1.1rem] transition-transform duration-250" style="transform: rotate(0deg)" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 12.5s-4.419 6-6 6s-6-6-6-6m12-7s-4.419 6-6 6s-6-6-6-6" color="currentColor"></path></svg></div></button> <!--[!--><!--]--></div><!----></div></div><!----><!----></div></div></div><!----><!--]--> <!--[!--><!--]--><!--]-->
-			
-			<script>
-				{
-					__sveltekit_wqriqn = {
-						base: "/ElementsUI",
-						assets: "/ElementsUI"
-					};
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="/ElementsUI/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 
-					const element = document.currentScript.parentElement;
+    <link href="/ElementsUI/_app/immutable/assets/Table.B2l_Likj.css" rel="stylesheet" />
+    <link href="/ElementsUI/_app/immutable/assets/0.DpGxqb08.css" rel="stylesheet" />
+    <link rel="modulepreload" href="/ElementsUI/_app/immutable/entry/start.B0I87LBF.js" />
+    <link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/Cl66iwDI.js" />
+    <link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/CYmiEaEH.js" />
+    <link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/DXQ0fkFu.js" />
+    <link rel="modulepreload" href="/ElementsUI/_app/immutable/entry/app.CN_sVLv0.js" />
+    <link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/cfR1Foc9.js" />
+    <link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/Di61MV9l.js" />
+    <link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/_y1boTp2.js" />
+    <link rel="modulepreload" href="/ElementsUI/_app/immutable/nodes/0.Bxba1_LJ.js" />
+    <link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/CnAfG7ip.js" />
+    <link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/CM3_98JW.js" />
+    <link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/ClwY0cp0.js" />
+    <link rel="modulepreload" href="/ElementsUI/_app/immutable/nodes/4.meLrf08y.js" />
+    <link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/0UdDw6P-.js" />
+    <link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/Dudz0OOs.js" />
+    <link rel="modulepreload" href="/ElementsUI/_app/immutable/chunks/H79yRWWV.js" />
+  </head>
+  <body data-sveltekit-preload-data="hover">
+    <div>
+      <!--[--><!--[--><!---->
+      <div class="mx-auto flex h-screen max-w-[1400px] flex-col">
+        <header class="sticky top-0 z-50 m-1 mt-2 flex items-center justify-between rounded-xl border border-(--border-color) bg-(--back-color)/50 p-4">
+          <div class="flex items-center gap-2">
+            <a href="/ElementsUI/" class="ml-2 no-underline! transition hover:scale-101"><h1>POE-Svelte-UI-Lib</h1></a>
+          </div>
+          <div class="flex items-center gap-6">
+            <!---->
+            <div class="relative flex w-full flex-col items-center">
+              <div class="relative flex w-full grow items-center">
+                <button
+                  id="16b43092-2490-43b4-b8c4-925270cf593f"
+                  class="relative m-0 inline-block w-8 cursor-pointer items-center rounded-2xl bg-(--bg-color) bg-transparent p-0 font-semibold transition duration-200 select-none active:scale-97"
+                >
+                  <span class="flex flex-row items-center justify-center gap-2"
+                    ><!--[--><span
+                      class="[&amp;_svg]:h-full [&amp;_svg]:max-h-full [&amp;_svg]:w-full [&amp;_svg]:max-w-full flex w-8 items-center justify-center overflow-visible"
+                      ><!--[!--><!----><svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" viewBox="0 0 24 24">
+                        <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
+                          <path d="M9.173 14.83a4 4 0 1 1 5.657-5.657"></path>
+                          <path d="m11.294 12.707l.174.247a7.5 7.5 0 0 0 8.845 2.492A9 9 0 0 1 5.642 18.36M3 12h1m8-9v1M5.6 5.6l.7.7M3 21L21 3"></path>
+                        </g></svg
+                      ><!----><!--]--></span
+                    ><!--]-->
+                    <!--[!--><!--]--></span
+                  >
+                </button>
+                <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+              </div>
+            </div>
+            <!---->
+            <!---->
+            <div class="relative flex w-full flex-col items-center">
+              <div class="relative flex w-full grow items-center">
+                <button
+                  id="efc06907-ee1a-41d2-a938-c049154b8a78"
+                  class="relative m-0 inline-block w-8 cursor-pointer items-center rounded-2xl bg-(--bg-color) bg-transparent p-0 font-semibold transition duration-200 select-none active:scale-97"
+                >
+                  <span class="flex flex-row items-center justify-center gap-2"
+                    ><!--[--><span
+                      class="[&amp;_svg]:h-full [&amp;_svg]:max-h-full [&amp;_svg]:w-full [&amp;_svg]:max-w-full flex w-8 items-center justify-center overflow-visible"
+                      ><!--[!--><!----><svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 24 24">
+                        <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
+                          <path
+                            d="M16 22.027v-2.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7a5.44 5.44 0 0 0-1.5-3.75a5.07 5.07 0 0 0-.09-3.77s-1.18-.35-3.91 1.48a13.4 13.4 0 0 0-7 0c-2.73-1.83-3.91-1.48-3.91-1.48A5.07 5.07 0 0 0 5 5.797a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7a3.37 3.37 0 0 0-.94 2.58v2.87"
+                          ></path>
+                          <path d="M9 20.027c-3 .973-5.5 0-7-3"></path>
+                        </g></svg
+                      ><!----><!--]--></span
+                    ><!--]-->
+                    <!--[!--><!--]--></span
+                  >
+                </button>
+                <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+              </div>
+            </div>
+            <!---->
+          </div>
+        </header>
+        <div class="mb-2 flex flex-1 overflow-hidden">
+          <nav class="m-1 flex w-64 flex-col items-start gap-2 overflow-y-auto rounded-xl border border-(--border-color) bg-(--back-color)/50 p-4">
+            <!--[-->
+            <div class="flex w-full">
+              <!---->
+              <div class="relative flex w-full flex-col items-center">
+                <div class="relative flex w-full grow items-center">
+                  <button
+                    id="4646e4b8-1fd0-42aa-a4e6-0e3a312cdef6"
+                    class="bg-blue relative m-0 inline-block h-10 w-full cursor-pointer items-center rounded-2xl border border-(--bg-color) bg-(--bg-color) px-2 py-1 text-left font-semibold transition duration-200 select-none active:scale-97"
+                    aria-label="ALL in ONE"
+                  >
+                    <span class="flex flex-row items-center justify-center gap-2"
+                      ><!--[!--><!--]-->
+                      <!--[-->
+                      <div class="flex-1">
+                        ALL in ONE
+                        <!--[!--><!--]-->
+                      </div>
+                      <!--]--></span
+                    >
+                  </button>
+                  <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+                </div>
+              </div>
+              <!---->
+              <!--[--><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
+                <path
+                  fill="currentColor"
+                  d="M12.6 12L8.7 8.1q-.275-.275-.275-.7t.275-.7t.7-.275t.7.275l4.6 4.6q.15.15.213.325t.062.375t-.062.375t-.213.325l-4.6 4.6q-.275.275-.7.275t-.7-.275t-.275-.7t.275-.7z"
+                ></path></svg
+              ><!--]-->
+            </div>
+            <div class="flex w-full">
+              <!---->
+              <div class="relative flex w-full flex-col items-center">
+                <div class="relative flex w-full grow items-center">
+                  <button
+                    id="7c2749f4-9483-4e6c-978f-341c2ca27f15"
+                    class="bg-gray relative m-0 inline-block h-10 w-full cursor-pointer items-center rounded-2xl border border-(--bg-color) bg-(--bg-color) px-2 py-1 text-left font-semibold transition duration-200 select-none active:scale-97"
+                    aria-label="Accordion"
+                  >
+                    <span class="flex flex-row items-center justify-center gap-2"
+                      ><!--[!--><!--]-->
+                      <!--[-->
+                      <div class="flex-1">
+                        Accordion
+                        <!--[!--><!--]-->
+                      </div>
+                      <!--]--></span
+                    >
+                  </button>
+                  <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+                </div>
+              </div>
+              <!---->
+              <!--[!--><!--]-->
+            </div>
+            <div class="flex w-full">
+              <!---->
+              <div class="relative flex w-full flex-col items-center">
+                <div class="relative flex w-full grow items-center">
+                  <button
+                    id="ec9f080b-29c1-4f3e-98d9-0a1dd3341c04"
+                    class="bg-gray relative m-0 inline-block h-10 w-full cursor-pointer items-center rounded-2xl border border-(--bg-color) bg-(--bg-color) px-2 py-1 text-left font-semibold transition duration-200 select-none active:scale-97"
+                    aria-label="Button"
+                  >
+                    <span class="flex flex-row items-center justify-center gap-2"
+                      ><!--[!--><!--]-->
+                      <!--[-->
+                      <div class="flex-1">
+                        Button
+                        <!--[!--><!--]-->
+                      </div>
+                      <!--]--></span
+                    >
+                  </button>
+                  <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+                </div>
+              </div>
+              <!---->
+              <!--[!--><!--]-->
+            </div>
+            <div class="flex w-full">
+              <!---->
+              <div class="relative flex w-full flex-col items-center">
+                <div class="relative flex w-full grow items-center">
+                  <button
+                    id="52a45dff-dab5-4cd7-81ea-fb6ef497fdfe"
+                    class="bg-gray relative m-0 inline-block h-10 w-full cursor-pointer items-center rounded-2xl border border-(--bg-color) bg-(--bg-color) px-2 py-1 text-left font-semibold transition duration-200 select-none active:scale-97"
+                    aria-label="ColorPicker"
+                  >
+                    <span class="flex flex-row items-center justify-center gap-2"
+                      ><!--[!--><!--]-->
+                      <!--[-->
+                      <div class="flex-1">
+                        ColorPicker
+                        <!--[!--><!--]-->
+                      </div>
+                      <!--]--></span
+                    >
+                  </button>
+                  <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+                </div>
+              </div>
+              <!---->
+              <!--[!--><!--]-->
+            </div>
+            <div class="flex w-full">
+              <!---->
+              <div class="relative flex w-full flex-col items-center">
+                <div class="relative flex w-full grow items-center">
+                  <button
+                    id="6e2bf990-f50a-4d65-bc97-1b24d5ed739c"
+                    class="bg-gray relative m-0 inline-block h-10 w-full cursor-pointer items-center rounded-2xl border border-(--bg-color) bg-(--bg-color) px-2 py-1 text-left font-semibold transition duration-200 select-none active:scale-97"
+                    aria-label="FileAttach"
+                  >
+                    <span class="flex flex-row items-center justify-center gap-2"
+                      ><!--[!--><!--]-->
+                      <!--[-->
+                      <div class="flex-1">
+                        FileAttach
+                        <!--[!--><!--]-->
+                      </div>
+                      <!--]--></span
+                    >
+                  </button>
+                  <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+                </div>
+              </div>
+              <!---->
+              <!--[!--><!--]-->
+            </div>
+            <div class="flex w-full">
+              <!---->
+              <div class="relative flex w-full flex-col items-center">
+                <div class="relative flex w-full grow items-center">
+                  <button
+                    id="5df3827a-bbf6-499a-a608-b804dc7aa4c1"
+                    class="bg-gray relative m-0 inline-block h-10 w-full cursor-pointer items-center rounded-2xl border border-(--bg-color) bg-(--bg-color) px-2 py-1 text-left font-semibold transition duration-200 select-none active:scale-97"
+                    aria-label="Graph"
+                  >
+                    <span class="flex flex-row items-center justify-center gap-2"
+                      ><!--[!--><!--]-->
+                      <!--[-->
+                      <div class="flex-1">
+                        Graph
+                        <!--[!--><!--]-->
+                      </div>
+                      <!--]--></span
+                    >
+                  </button>
+                  <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+                </div>
+              </div>
+              <!---->
+              <!--[!--><!--]-->
+            </div>
+            <div class="flex w-full">
+              <!---->
+              <div class="relative flex w-full flex-col items-center">
+                <div class="relative flex w-full grow items-center">
+                  <button
+                    id="91191604-6f70-4228-939e-9fd1dea70707"
+                    class="bg-gray relative m-0 inline-block h-10 w-full cursor-pointer items-center rounded-2xl border border-(--bg-color) bg-(--bg-color) px-2 py-1 text-left font-semibold transition duration-200 select-none active:scale-97"
+                    aria-label="Input"
+                  >
+                    <span class="flex flex-row items-center justify-center gap-2"
+                      ><!--[!--><!--]-->
+                      <!--[-->
+                      <div class="flex-1">
+                        Input
+                        <!--[!--><!--]-->
+                      </div>
+                      <!--]--></span
+                    >
+                  </button>
+                  <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+                </div>
+              </div>
+              <!---->
+              <!--[!--><!--]-->
+            </div>
+            <div class="flex w-full">
+              <!---->
+              <div class="relative flex w-full flex-col items-center">
+                <div class="relative flex w-full grow items-center">
+                  <button
+                    id="bc1911c4-3145-4752-922c-d3357fbf255d"
+                    class="bg-gray relative m-0 inline-block h-10 w-full cursor-pointer items-center rounded-2xl border border-(--bg-color) bg-(--bg-color) px-2 py-1 text-left font-semibold transition duration-200 select-none active:scale-97"
+                    aria-label="ProgressBar"
+                  >
+                    <span class="flex flex-row items-center justify-center gap-2"
+                      ><!--[!--><!--]-->
+                      <!--[-->
+                      <div class="flex-1">
+                        ProgressBar
+                        <!--[!--><!--]-->
+                      </div>
+                      <!--]--></span
+                    >
+                  </button>
+                  <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+                </div>
+              </div>
+              <!---->
+              <!--[!--><!--]-->
+            </div>
+            <div class="flex w-full">
+              <!---->
+              <div class="relative flex w-full flex-col items-center">
+                <div class="relative flex w-full grow items-center">
+                  <button
+                    id="6228af60-0951-4721-a586-86a8afc18c99"
+                    class="bg-gray relative m-0 inline-block h-10 w-full cursor-pointer items-center rounded-2xl border border-(--bg-color) bg-(--bg-color) px-2 py-1 text-left font-semibold transition duration-200 select-none active:scale-97"
+                    aria-label="Select"
+                  >
+                    <span class="flex flex-row items-center justify-center gap-2"
+                      ><!--[!--><!--]-->
+                      <!--[-->
+                      <div class="flex-1">
+                        Select
+                        <!--[!--><!--]-->
+                      </div>
+                      <!--]--></span
+                    >
+                  </button>
+                  <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+                </div>
+              </div>
+              <!---->
+              <!--[!--><!--]-->
+            </div>
+            <div class="flex w-full">
+              <!---->
+              <div class="relative flex w-full flex-col items-center">
+                <div class="relative flex w-full grow items-center">
+                  <button
+                    id="04aeeb56-fcf2-46c3-b53a-18e4e0a5d3b9"
+                    class="bg-gray relative m-0 inline-block h-10 w-full cursor-pointer items-center rounded-2xl border border-(--bg-color) bg-(--bg-color) px-2 py-1 text-left font-semibold transition duration-200 select-none active:scale-97"
+                    aria-label="Slider"
+                  >
+                    <span class="flex flex-row items-center justify-center gap-2"
+                      ><!--[!--><!--]-->
+                      <!--[-->
+                      <div class="flex-1">
+                        Slider
+                        <!--[!--><!--]-->
+                      </div>
+                      <!--]--></span
+                    >
+                  </button>
+                  <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+                </div>
+              </div>
+              <!---->
+              <!--[!--><!--]-->
+            </div>
+            <div class="flex w-full">
+              <!---->
+              <div class="relative flex w-full flex-col items-center">
+                <div class="relative flex w-full grow items-center">
+                  <button
+                    id="3a3d8652-f24e-46ba-bf3c-a7fcd4cb0fd2"
+                    class="bg-gray relative m-0 inline-block h-10 w-full cursor-pointer items-center rounded-2xl border border-(--bg-color) bg-(--bg-color) px-2 py-1 text-left font-semibold transition duration-200 select-none active:scale-97"
+                    aria-label="Switch"
+                  >
+                    <span class="flex flex-row items-center justify-center gap-2"
+                      ><!--[!--><!--]-->
+                      <!--[-->
+                      <div class="flex-1">
+                        Switch
+                        <!--[!--><!--]-->
+                      </div>
+                      <!--]--></span
+                    >
+                  </button>
+                  <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+                </div>
+              </div>
+              <!---->
+              <!--[!--><!--]-->
+            </div>
+            <div class="flex w-full">
+              <!---->
+              <div class="relative flex w-full flex-col items-center">
+                <div class="relative flex w-full grow items-center">
+                  <button
+                    id="0c9f9881-364b-48e0-b9f4-509f90b91b06"
+                    class="bg-gray relative m-0 inline-block h-10 w-full cursor-pointer items-center rounded-2xl border border-(--bg-color) bg-(--bg-color) px-2 py-1 text-left font-semibold transition duration-200 select-none active:scale-97"
+                    aria-label="Table"
+                  >
+                    <span class="flex flex-row items-center justify-center gap-2"
+                      ><!--[!--><!--]-->
+                      <!--[-->
+                      <div class="flex-1">
+                        Table
+                        <!--[!--><!--]-->
+                      </div>
+                      <!--]--></span
+                    >
+                  </button>
+                  <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+                </div>
+              </div>
+              <!---->
+              <!--[!--><!--]-->
+            </div>
+            <div class="flex w-full">
+              <!---->
+              <div class="relative flex w-full flex-col items-center">
+                <div class="relative flex w-full grow items-center">
+                  <button
+                    id="62050321-a225-4ca7-bc8e-3168ef2e2892"
+                    class="bg-gray relative m-0 inline-block h-10 w-full cursor-pointer items-center rounded-2xl border border-(--bg-color) bg-(--bg-color) px-2 py-1 text-left font-semibold transition duration-200 select-none active:scale-97"
+                    aria-label="TextField"
+                  >
+                    <span class="flex flex-row items-center justify-center gap-2"
+                      ><!--[!--><!--]-->
+                      <!--[-->
+                      <div class="flex-1">
+                        TextField
+                        <!--[!--><!--]-->
+                      </div>
+                      <!--]--></span
+                    >
+                  </button>
+                  <!--[!--><!--[!--><!--[!--><!--[!--><!--]--><!--]--><!--]--><!--]-->
+                </div>
+              </div>
+              <!---->
+              <!--[!--><!--]-->
+            </div>
+            <!--]-->
+          </nav>
+          <div class="m-1 flex-1 overflow-y-auto rounded-xl border border-(--border-color) bg-(--back-color)/50 p-4">
+            <!---->
+            <div class="flex h-full flex-col items-center overflow-hidden overflow-y-visible">
+              <h2>Обзорная страница компонентов</h2>
+              <div class="flex w-full flex-col">
+                <!---->
+                <div
+                  id="d7a9ef33-c14b-406d-8469-88ebaae900c2"
+                  class="mb-2 w-full rounded-xl border border-(--border-color) bg-(--container-color) p-0 transition-shadow duration-250 hover:shadow-md"
+                >
+                  <button class="flex w-full cursor-pointer items-center justify-between p-4 transition-shadow duration-250">
+                    <div class="flex w-full items-center">
+                      <span
+                        class="[&amp;_svg]:h-full [&amp;_svg]:max-h-full [&amp;_svg]:w-full [&amp;_svg]:max-w-full flex h-7 w-7 shrink-0 items-center justify-center overflow-visible"
+                        ><!--[!--><!--]--></span
+                      >
+                      <span class="m-0 w-full cursor-pointer px-3 text-left text-lg font-semibold">Accordion</span>
+                    </div>
+                    <div class="w-10 pl-4">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-[1.1rem] w-[1.1rem] transition-transform duration-250"
+                        style="transform: rotate(0deg)"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M18 12.5s-4.419 6-6 6s-6-6-6-6m12-7s-4.419 6-6 6s-6-6-6-6"
+                          color="currentColor"
+                        ></path>
+                      </svg>
+                    </div>
+                  </button>
+                  <!--[!--><!--]-->
+                </div>
+                <!---->
+                <!---->
+                <div
+                  id="800639d0-b1c2-4ecb-8f77-7ec94dd25d38"
+                  class="mb-2 w-full rounded-xl border border-(--border-color) bg-(--container-color) p-0 transition-shadow duration-250 hover:shadow-md"
+                >
+                  <button class="flex w-full cursor-pointer items-center justify-between p-4 transition-shadow duration-250">
+                    <div class="flex w-full items-center">
+                      <span
+                        class="[&amp;_svg]:h-full [&amp;_svg]:max-h-full [&amp;_svg]:w-full [&amp;_svg]:max-w-full flex h-7 w-7 shrink-0 items-center justify-center overflow-visible"
+                        ><!--[!--><!--]--></span
+                      >
+                      <span class="m-0 w-full cursor-pointer px-3 text-left text-lg font-semibold">Button</span>
+                    </div>
+                    <div class="w-10 pl-4">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-[1.1rem] w-[1.1rem] transition-transform duration-250"
+                        style="transform: rotate(0deg)"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M18 12.5s-4.419 6-6 6s-6-6-6-6m12-7s-4.419 6-6 6s-6-6-6-6"
+                          color="currentColor"
+                        ></path>
+                      </svg>
+                    </div>
+                  </button>
+                  <!--[!--><!--]-->
+                </div>
+                <!---->
+                <!---->
+                <div
+                  id="8eb3c3f3-0821-41a7-9410-6270c9b55f33"
+                  class="mb-2 w-full rounded-xl border border-(--border-color) bg-(--container-color) p-0 transition-shadow duration-250 hover:shadow-md"
+                >
+                  <button class="flex w-full cursor-pointer items-center justify-between p-4 transition-shadow duration-250">
+                    <div class="flex w-full items-center">
+                      <span
+                        class="[&amp;_svg]:h-full [&amp;_svg]:max-h-full [&amp;_svg]:w-full [&amp;_svg]:max-w-full flex h-7 w-7 shrink-0 items-center justify-center overflow-visible"
+                        ><!--[!--><!--]--></span
+                      >
+                      <span class="m-0 w-full cursor-pointer px-3 text-left text-lg font-semibold">Color Picker</span>
+                    </div>
+                    <div class="w-10 pl-4">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-[1.1rem] w-[1.1rem] transition-transform duration-250"
+                        style="transform: rotate(0deg)"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M18 12.5s-4.419 6-6 6s-6-6-6-6m12-7s-4.419 6-6 6s-6-6-6-6"
+                          color="currentColor"
+                        ></path>
+                      </svg>
+                    </div>
+                  </button>
+                  <!--[!--><!--]-->
+                </div>
+                <!---->
+                <!---->
+                <div
+                  id="78f191c8-b065-4cd5-8fbe-58373b98c0b6"
+                  class="mb-2 w-full rounded-xl border border-(--border-color) bg-(--container-color) p-0 transition-shadow duration-250 hover:shadow-md"
+                >
+                  <button class="flex w-full cursor-pointer items-center justify-between p-4 transition-shadow duration-250">
+                    <div class="flex w-full items-center">
+                      <span
+                        class="[&amp;_svg]:h-full [&amp;_svg]:max-h-full [&amp;_svg]:w-full [&amp;_svg]:max-w-full flex h-7 w-7 shrink-0 items-center justify-center overflow-visible"
+                        ><!--[!--><!--]--></span
+                      >
+                      <span class="m-0 w-full cursor-pointer px-3 text-left text-lg font-semibold">File Attach</span>
+                    </div>
+                    <div class="w-10 pl-4">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-[1.1rem] w-[1.1rem] transition-transform duration-250"
+                        style="transform: rotate(0deg)"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M18 12.5s-4.419 6-6 6s-6-6-6-6m12-7s-4.419 6-6 6s-6-6-6-6"
+                          color="currentColor"
+                        ></path>
+                      </svg>
+                    </div>
+                  </button>
+                  <!--[!--><!--]-->
+                </div>
+                <!---->
+                <!---->
+                <div
+                  id="603ba8e3-4297-4861-ade4-ee4306ad108f"
+                  class="mb-2 w-full rounded-xl border border-(--border-color) bg-(--container-color) p-0 transition-shadow duration-250 hover:shadow-md"
+                >
+                  <button class="flex w-full cursor-pointer items-center justify-between p-4 transition-shadow duration-250">
+                    <div class="flex w-full items-center">
+                      <span
+                        class="[&amp;_svg]:h-full [&amp;_svg]:max-h-full [&amp;_svg]:w-full [&amp;_svg]:max-w-full flex h-7 w-7 shrink-0 items-center justify-center overflow-visible"
+                        ><!--[!--><!--]--></span
+                      >
+                      <span class="m-0 w-full cursor-pointer px-3 text-left text-lg font-semibold">Graph</span>
+                    </div>
+                    <div class="w-10 pl-4">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-[1.1rem] w-[1.1rem] transition-transform duration-250"
+                        style="transform: rotate(0deg)"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M18 12.5s-4.419 6-6 6s-6-6-6-6m12-7s-4.419 6-6 6s-6-6-6-6"
+                          color="currentColor"
+                        ></path>
+                      </svg>
+                    </div>
+                  </button>
+                  <!--[!--><!--]-->
+                </div>
+                <!---->
+                <!---->
+                <div
+                  id="1764bcc6-81d9-44e9-8567-d51c6ea07d91"
+                  class="mb-2 w-full rounded-xl border border-(--border-color) bg-(--container-color) p-0 transition-shadow duration-250 hover:shadow-md"
+                >
+                  <button class="flex w-full cursor-pointer items-center justify-between p-4 transition-shadow duration-250">
+                    <div class="flex w-full items-center">
+                      <span
+                        class="[&amp;_svg]:h-full [&amp;_svg]:max-h-full [&amp;_svg]:w-full [&amp;_svg]:max-w-full flex h-7 w-7 shrink-0 items-center justify-center overflow-visible"
+                        ><!--[!--><!--]--></span
+                      >
+                      <span class="m-0 w-full cursor-pointer px-3 text-left text-lg font-semibold">Input</span>
+                    </div>
+                    <div class="w-10 pl-4">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-[1.1rem] w-[1.1rem] transition-transform duration-250"
+                        style="transform: rotate(0deg)"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M18 12.5s-4.419 6-6 6s-6-6-6-6m12-7s-4.419 6-6 6s-6-6-6-6"
+                          color="currentColor"
+                        ></path>
+                      </svg>
+                    </div>
+                  </button>
+                  <!--[!--><!--]-->
+                </div>
+                <!---->
+                <!---->
+                <div
+                  id="91f134db-7d9d-423c-8396-d1bd5ccf07a3"
+                  class="mb-2 w-full rounded-xl border border-(--border-color) bg-(--container-color) p-0 transition-shadow duration-250 hover:shadow-md"
+                >
+                  <button class="flex w-full cursor-pointer items-center justify-between p-4 transition-shadow duration-250">
+                    <div class="flex w-full items-center">
+                      <span
+                        class="[&amp;_svg]:h-full [&amp;_svg]:max-h-full [&amp;_svg]:w-full [&amp;_svg]:max-w-full flex h-7 w-7 shrink-0 items-center justify-center overflow-visible"
+                        ><!--[!--><!--]--></span
+                      >
+                      <span class="m-0 w-full cursor-pointer px-3 text-left text-lg font-semibold">Progress Bar</span>
+                    </div>
+                    <div class="w-10 pl-4">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-[1.1rem] w-[1.1rem] transition-transform duration-250"
+                        style="transform: rotate(0deg)"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M18 12.5s-4.419 6-6 6s-6-6-6-6m12-7s-4.419 6-6 6s-6-6-6-6"
+                          color="currentColor"
+                        ></path>
+                      </svg>
+                    </div>
+                  </button>
+                  <!--[!--><!--]-->
+                </div>
+                <!---->
+                <!---->
+                <div
+                  id="f291e8c8-cf2b-4e5e-909b-26378575185f"
+                  class="mb-2 w-full rounded-xl border border-(--border-color) bg-(--container-color) p-0 transition-shadow duration-250 hover:shadow-md"
+                >
+                  <button class="flex w-full cursor-pointer items-center justify-between p-4 transition-shadow duration-250">
+                    <div class="flex w-full items-center">
+                      <span
+                        class="[&amp;_svg]:h-full [&amp;_svg]:max-h-full [&amp;_svg]:w-full [&amp;_svg]:max-w-full flex h-7 w-7 shrink-0 items-center justify-center overflow-visible"
+                        ><!--[!--><!--]--></span
+                      >
+                      <span class="m-0 w-full cursor-pointer px-3 text-left text-lg font-semibold">Select</span>
+                    </div>
+                    <div class="w-10 pl-4">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-[1.1rem] w-[1.1rem] transition-transform duration-250"
+                        style="transform: rotate(0deg)"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M18 12.5s-4.419 6-6 6s-6-6-6-6m12-7s-4.419 6-6 6s-6-6-6-6"
+                          color="currentColor"
+                        ></path>
+                      </svg>
+                    </div>
+                  </button>
+                  <!--[!--><!--]-->
+                </div>
+                <!---->
+                <!---->
+                <div
+                  id="d605bdf5-2894-4f9f-b098-d37add6d7c2b"
+                  class="mb-2 w-full rounded-xl border border-(--border-color) bg-(--container-color) p-0 transition-shadow duration-250 hover:shadow-md"
+                >
+                  <button class="flex w-full cursor-pointer items-center justify-between p-4 transition-shadow duration-250">
+                    <div class="flex w-full items-center">
+                      <span
+                        class="[&amp;_svg]:h-full [&amp;_svg]:max-h-full [&amp;_svg]:w-full [&amp;_svg]:max-w-full flex h-7 w-7 shrink-0 items-center justify-center overflow-visible"
+                        ><!--[!--><!--]--></span
+                      >
+                      <span class="m-0 w-full cursor-pointer px-3 text-left text-lg font-semibold">Slider</span>
+                    </div>
+                    <div class="w-10 pl-4">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-[1.1rem] w-[1.1rem] transition-transform duration-250"
+                        style="transform: rotate(0deg)"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M18 12.5s-4.419 6-6 6s-6-6-6-6m12-7s-4.419 6-6 6s-6-6-6-6"
+                          color="currentColor"
+                        ></path>
+                      </svg>
+                    </div>
+                  </button>
+                  <!--[!--><!--]-->
+                </div>
+                <!---->
+                <!---->
+                <div
+                  id="dc905765-8799-4857-a2e6-f8a72b0b935a"
+                  class="mb-2 w-full rounded-xl border border-(--border-color) bg-(--container-color) p-0 transition-shadow duration-250 hover:shadow-md"
+                >
+                  <button class="flex w-full cursor-pointer items-center justify-between p-4 transition-shadow duration-250">
+                    <div class="flex w-full items-center">
+                      <span
+                        class="[&amp;_svg]:h-full [&amp;_svg]:max-h-full [&amp;_svg]:w-full [&amp;_svg]:max-w-full flex h-7 w-7 shrink-0 items-center justify-center overflow-visible"
+                        ><!--[!--><!--]--></span
+                      >
+                      <span class="m-0 w-full cursor-pointer px-3 text-left text-lg font-semibold">Switch</span>
+                    </div>
+                    <div class="w-10 pl-4">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-[1.1rem] w-[1.1rem] transition-transform duration-250"
+                        style="transform: rotate(0deg)"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M18 12.5s-4.419 6-6 6s-6-6-6-6m12-7s-4.419 6-6 6s-6-6-6-6"
+                          color="currentColor"
+                        ></path>
+                      </svg>
+                    </div>
+                  </button>
+                  <!--[!--><!--]-->
+                </div>
+                <!---->
+                <!---->
+                <div
+                  id="7ce15b68-2896-4e60-8d2f-06274b3fbbd2"
+                  class="mb-2 w-full rounded-xl border border-(--border-color) bg-(--container-color) p-0 transition-shadow duration-250 hover:shadow-md"
+                >
+                  <button class="flex w-full cursor-pointer items-center justify-between p-4 transition-shadow duration-250">
+                    <div class="flex w-full items-center">
+                      <span
+                        class="[&amp;_svg]:h-full [&amp;_svg]:max-h-full [&amp;_svg]:w-full [&amp;_svg]:max-w-full flex h-7 w-7 shrink-0 items-center justify-center overflow-visible"
+                        ><!--[!--><!--]--></span
+                      >
+                      <span class="m-0 w-full cursor-pointer px-3 text-left text-lg font-semibold">Table</span>
+                    </div>
+                    <div class="w-10 pl-4">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-[1.1rem] w-[1.1rem] transition-transform duration-250"
+                        style="transform: rotate(180deg)"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M18 12.5s-4.419 6-6 6s-6-6-6-6m12-7s-4.419 6-6 6s-6-6-6-6"
+                          color="currentColor"
+                        ></path>
+                      </svg>
+                    </div>
+                  </button>
+                  <!--[-->
+                  <div
+                    class="grid w-full gap-2 border-t border-(--border-color) p-4 sm:p-3"
+                    style="grid-template-columns: repeat(1, minmax(0, 1fr)); grid-template-rows: repeat(1, auto)"
+                  >
+                    <!---->
+                    <div id="37cdb92e-1b66-4111-a196-6cc8ac77e84a" class="bg-blue flex h-full w-full flex-col overflow-hidden">
+                      <!--[-->
+                      <h5 class="w-full px-4 text-center">Devices</h5>
+                      <!--]-->
+                      <div class="flex h-full flex-col overflow-hidden rounded-xl border border-transparent">
+                        <div class="grid font-semibold" style="grid-template-columns: 5% 20% 12% 10% auto 15%">
+                          <!--[-->
+                          <div class="flex justify-start border-l border-transparent bg-(--bg-color) p-2 text-left">
+                            <span>ID</span>
+                            <!--[--><button class="inline-block cursor-pointer font-bold transition-transform duration-75 hover:scale-110 active:scale-95">
+                              ↑↓</button
+                            ><!--]-->
+                          </div>
+                          <div class="flex justify-start border-l border-transparent bg-(--bg-color) p-2 text-left">
+                            <span>Image</span>
+                            <!--[!--><!--]-->
+                          </div>
+                          <div class="flex justify-start border-l border-transparent bg-(--bg-color) p-2 text-left">
+                            <span>Name</span>
+                            <!--[--><button class="inline-block cursor-pointer font-bold transition-transform duration-75 hover:scale-110 active:scale-95">
+                              ↑↓</button
+                            ><!--]-->
+                          </div>
+                          <div class="flex justify-start border-l border-transparent bg-(--bg-color) p-2 text-left">
+                            <span>Status</span>
+                            <!--[!--><!--]-->
+                          </div>
+                          <div class="flex justify-start border-l border-transparent bg-(--bg-color) p-2 text-left">
+                            <span>Last Active</span>
+                            <!--[--><button class="inline-block cursor-pointer font-bold transition-transform duration-75 hover:scale-110 active:scale-95">
+                              ↑↓</button
+                            ><!--]-->
+                          </div>
+                          <div class="flex justify-start border-l border-transparent bg-(--bg-color) p-2 text-left">
+                            <span>Actions</span>
+                            <!--[!--><!--]-->
+                          </div>
+                          <!--]-->
+                        </div>
+                        <div class="flex-1 overflow-y-auto bg-(--container-color)/50">
+                          <div class="grid min-w-0" style="grid-template-columns: 5% 20% 12% 10% auto 15%">
+                            <!--[--><!--[-->
+                            <div
+                              class="relative flex w-full min-w-0 items-center justify-start border-t border-transparent bg-[#edeef3] px-2 py-1 text-left wrap-break-word dark:bg-[#1f2a3a]"
+                            >
+                              <!--[!--><!--[!-->
+                              <div class="w-full max-w-full wrap-break-word whitespace-normal" role="columnheader"><!--[!--><!----># 1<!----><!--]--></div>
+                              <!--[!--><!--]--><!--]--><!--]-->
+                            </div>
+                            <div
+                              class="relative flex w-full min-w-0 items-center justify-start border-t border-l border-transparent bg-[#edeef3] px-2 py-1 text-left wrap-break-word dark:bg-[#1f2a3a]"
+                            >
+                              <!--[!--><!--[-->
+                              <div class="flex items-center justify-center" style="width: 5rem; height: 5rem">
+                                <!--[--><img
+                                  src="data:image/svg+xml;base64,PHN2ZyBiYXNlUHJvZmlsZT0iZnVsbCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iNTIxIiBoZWlnaHQ9IjQ3NyI+DQo8ZGVmcz4NCjxzdHlsZT5jaXJjbGUscGF0aCxwb2x5bGluZXtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmR9PC9zdHlsZT4NCjwvZGVmcz4NCjxwYXRoIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzc3NyIgc3Ryb2tlLXdpZHRoPSIxMCIgZD0iTTExNi42MyAxODguNjJsODMgNTIiLz4NCjxjaXJjbGUgY3g9Ijg0LjgzIiBjeT0iMTY4LjgzIiByPSIzNi44MyIgZmlsbD0iIzIyMiIgc3Ryb2tlPSIjNzc3IiBzdHJva2Utd2lkdGg9IjEwIi8+DQo8cGF0aCBmaWxsPSJub25lIiBzdHJva2U9IiM3NzciIHN0cm9rZS13aWR0aD0iMTAiIGQ9Ik00MDkuMDMgMzgwLjAzbC04My01MiIvPg0KPGNpcmNsZSBjeD0iNDQwLjgzIiBjeT0iMzk5LjgzIiByPSIzNi44MyIgZmlsbD0iIzIyMiIgc3Ryb2tlPSIjNzc3IiBzdHJva2Utd2lkdGg9IjEwIi8+DQo8cGF0aCBmaWxsPSJub25lIiBzdHJva2U9IiM1OUYiIHN0cm9rZS13aWR0aD0iMTAiIGQ9Ik0xMTIuMDMgMzc5LjAzbDgzLTUyTTI2Mi4wMyAyMDQuMDN2LTg4Ii8+DQo8Y2lyY2xlIGN4PSIyNjEuMzMiIGN5PSIyODQuMzMiIHI9Ijc4LjMzIiBmaWxsPSIjZmZmIiBzdHJva2U9IiM1OUYiIHN0cm9rZS13aWR0aD0iMTUiLz4NCjxjaXJjbGUgY3g9Ijc2LjgzIiBjeT0iMzk5LjgzIiByPSIzNi44MyIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjNTlGIiBzdHJva2Utd2lkdGg9IjEwIi8+DQo8Y2lyY2xlIGN4PSIyNjAuODMiIGN5PSI3Ni44MyIgcj0iMzYuODMiIGZpbGw9IiNmZmYiIHN0cm9rZT0iIzU5RiIgc3Ryb2tlLXdpZHRoPSIxMCIvPg0KPHBhdGggZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNTlGIiBzdHJva2Utd2lkdGg9IjEwIiBkPSJNNDY1IDM0MEM1MTMgMTQyIDMyOSA3OSAzMjkgNzlNNDI3IDMzMWM0MC0xNjItMTEwLTIxMy0xMTAtMjEzTTM4OSAzMTljMzEtMTI1LTg2LTE2NS04Ni0xNjUiLz4NCjwvc3ZnPg=="
+                                  alt="Image"
+                                  class="h-full w-full object-cover"
+                                  loading="lazy"
+                                /><!--]-->
+                              </div>
+                              <!--]--><!--]-->
+                            </div>
+                            <div
+                              class="relative flex w-full min-w-0 items-center justify-start border-t border-l border-transparent bg-[#edeef3] px-2 py-1 text-left wrap-break-word dark:bg-[#1f2a3a]"
+                            >
+                              <!--[!--><!--[!-->
+                              <div class="w-full max-w-full wrap-break-word whitespace-normal" role="columnheader"><!--[!--><!---->Device A<!----><!--]--></div>
+                              <!--[!--><!--]--><!--]--><!--]-->
+                            </div>
+                            <div
+                              class="relative flex w-full min-w-0 items-center justify-start border-t border-l border-transparent bg-[#edeef3] px-2 py-1 text-left wrap-break-word dark:bg-[#1f2a3a]"
+                            >
+                              <!--[!--><!--[!-->
+                              <div class="w-full max-w-full overflow-hidden wrap-break-word text-ellipsis whitespace-nowrap" role="columnheader">
+                                <!--[!--><!---->online<!----><!--]-->
+                              </div>
+                              <!--[!--><!--]--><!--]--><!--]-->
+                            </div>
+                            <div
+                              class="relative flex w-full min-w-0 items-center justify-start border-t border-l border-transparent bg-[#edeef3] px-2 py-1 text-left wrap-break-word dark:bg-[#1f2a3a]"
+                            >
+                              <!--[!--><!--[!-->
+                              <div class="w-full max-w-full overflow-hidden wrap-break-word text-ellipsis whitespace-nowrap" role="columnheader">
+                                <!--[--><button class="w-full cursor-pointer overflow-hidden text-left text-ellipsis whitespace-nowrap">
+                                  <!---->Tue Nov 04 2025 10:08:06 GMT+0300 (Москва, стандартное время)<!----></button
+                                ><!--]-->
+                              </div>
+                              <!--[--><button class="mx-2 flex cursor-pointer border-none bg-transparent text-2xl" aria-label="Копировать текст">
+                                <div class="[&amp;_svg]:h-full [&amp;_svg]:max-h-full [&amp;_svg]:w-full [&amp;_svg]:max-w-full size-5 text-sm">
+                                  <!--[!--><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                                    <g fill="none" stroke="currentColor" stroke-width="1.5">
+                                      <path
+                                        d="M6 11c0-2.828 0-4.243.879-5.121C7.757 5 9.172 5 12 5h3c2.828 0 4.243 0 5.121.879C21 6.757 21 8.172 21 11v5c0 2.828 0 4.243-.879 5.121C19.243 22 17.828 22 15 22h-3c-2.828 0-4.243 0-5.121-.879C6 20.243 6 18.828 6 16z"
+                                      ></path>
+                                      <path d="M6 19a3 3 0 0 1-3-3v-6c0-3.771 0-5.657 1.172-6.828S7.229 2 11 2h4a3 3 0 0 1 3 3"></path>
+                                    </g></svg
+                                  ><!--]-->
+                                </div></button
+                              ><!--]--><!--]--><!--]-->
+                            </div>
+                            <div
+                              class="relative flex w-full min-w-0 items-center justify-start border-t border-l border-transparent bg-[#edeef3] px-2 py-1 text-left wrap-break-word dark:bg-[#1f2a3a]"
+                            >
+                              <!--[-->
+                              <div class="flex w-full flex-col gap-1">
+                                <!--[--><button
+                                  class="bg-blue cursor-pointer rounded-full bg-(--bg-color) px-4 py-1 font-medium transition-shadow outline-none select-none hover:shadow-md"
+                                >
+                                  Action 1 (id)</button
+                                ><button
+                                  class="bg-green cursor-pointer rounded-full bg-(--bg-color) px-4 py-1 font-medium transition-shadow outline-none select-none hover:shadow-md"
+                                >
+                                  Action 2 (name)</button
+                                ><!--]-->
+                              </div>
+                              <!--]-->
+                            </div>
+                            <!--]--><!--[-->
+                            <div
+                              class="relative flex w-full min-w-0 items-center justify-start border-t border-transparent bg-(--back-color)/40 px-2 py-1 text-left wrap-break-word"
+                            >
+                              <!--[!--><!--[!-->
+                              <div class="w-full max-w-full wrap-break-word whitespace-normal" role="columnheader"><!--[!--><!----># 2<!----><!--]--></div>
+                              <!--[!--><!--]--><!--]--><!--]-->
+                            </div>
+                            <div
+                              class="relative flex w-full min-w-0 items-center justify-start border-t border-l border-transparent bg-(--back-color)/40 px-2 py-1 text-left wrap-break-word"
+                            >
+                              <!--[!--><!--[-->
+                              <div class="flex items-center justify-center" style="width: 5rem; height: 5rem">
+                                <!--[--><img
+                                  src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+DQo8c3ZnDQogICB4bWxuczpkYz0iaHR0cDovL3B1cmwub3JnL2RjL2VsZW1lbnRzLzEuMS8iDQogICB4bWxuczpjYz0iaHR0cDovL2NyZWF0aXZlY29tbW9ucy5vcmcvbnMjIg0KICAgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIg0KICAgeG1sbnM6c3ZnPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyINCiAgIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyINCiAgIHhtbG5zOnNvZGlwb2RpPSJodHRwOi8vc29kaXBvZGkuc291cmNlZm9yZ2UubmV0L0RURC9zb2RpcG9kaS0wLmR0ZCINCiAgIHhtbG5zOmlua3NjYXBlPSJodHRwOi8vd3d3Lmlua3NjYXBlLm9yZy9uYW1lc3BhY2VzL2lua3NjYXBlIg0KICAgaWQ9InN2ZzgiDQogICB2ZXJzaW9uPSIxLjEiDQogICB2aWV3Qm94PSIwIDAgMTMuMjI5MTY2IDEzLjIyOTE2NiINCiAgIGhlaWdodD0iMTMuMjI5MTY2bW0iDQogICB3aWR0aD0iMTMuMjI5MTY2bW0iDQogICBzb2RpcG9kaTpkb2NuYW1lPSJNdWx0aSBTd2l0Y2ggdjEyLnN2ZyINCiAgIGlua3NjYXBlOnZlcnNpb249IjAuOTIuMSByMTUzNzEiDQogICBpbmtzY2FwZTpleHBvcnQtZmlsZW5hbWU9IkQ6XGFud29ya1zQmNC60L7QvdC60Lgg0YPRgdGC0YDQvtC50YHRgtCyXE11bHRpIFN3aXRjaCB2MTEucG5nIg0KICAgaW5rc2NhcGU6ZXhwb3J0LXhkcGk9IjIzMC40MDAwMSINCiAgIGlua3NjYXBlOmV4cG9ydC15ZHBpPSIyMzAuNDAwMDEiPg0KICA8c29kaXBvZGk6bmFtZWR2aWV3DQogICAgIHBhZ2Vjb2xvcj0iI2ZmZmZmZiINCiAgICAgYm9yZGVyY29sb3I9IiM2NjY2NjYiDQogICAgIGJvcmRlcm9wYWNpdHk9IjEiDQogICAgIG9iamVjdHRvbGVyYW5jZT0iMTAiDQogICAgIGdyaWR0b2xlcmFuY2U9IjEwIg0KICAgICBndWlkZXRvbGVyYW5jZT0iMTAiDQogICAgIGlua3NjYXBlOnBhZ2VvcGFjaXR5PSIwIg0KICAgICBpbmtzY2FwZTpwYWdlc2hhZG93PSIyIg0KICAgICBpbmtzY2FwZTp3aW5kb3ctd2lkdGg9IjE5MjAiDQogICAgIGlua3NjYXBlOndpbmRvdy1oZWlnaHQ9IjEwMTciDQogICAgIGlkPSJuYW1lZHZpZXcxOSINCiAgICAgc2hvd2dyaWQ9ImZhbHNlIg0KICAgICBpbmtzY2FwZTp6b29tPSIxMy4zNTAxNzciDQogICAgIGlua3NjYXBlOmN4PSI3LjkyNjAxMDYiDQogICAgIGlua3NjYXBlOmN5PSIyMi41NjgwMjIiDQogICAgIGlua3NjYXBlOndpbmRvdy14PSItOCINCiAgICAgaW5rc2NhcGU6d2luZG93LXk9Ii04Ig0KICAgICBpbmtzY2FwZTp3aW5kb3ctbWF4aW1pemVkPSIxIg0KICAgICBpbmtzY2FwZTpjdXJyZW50LWxheWVyPSJzdmc4IiAvPg0KICA8ZGVmcw0KICAgICBpZD0iZGVmczIiPg0KICAgIDxtYXJrZXINCiAgICAgICBpbmtzY2FwZTpzdG9ja2lkPSJFbXB0eVRyaWFuZ2xlT3V0TSINCiAgICAgICBvcmllbnQ9ImF1dG8iDQogICAgICAgcmVmWT0iMC4wIg0KICAgICAgIHJlZlg9IjAuMCINCiAgICAgICBpZD0ibWFya2VyNTQ3NSINCiAgICAgICBzdHlsZT0ib3ZlcmZsb3c6dmlzaWJsZSINCiAgICAgICBpbmtzY2FwZTppc3N0b2NrPSJ0cnVlIj4NCiAgICAgIDxwYXRoDQogICAgICAgICBpZD0icGF0aDU0NzMiDQogICAgICAgICBkPSJNIDUuNzcsMC4wIEwgLTIuODgsNS4wIEwgLTIuODgsLTUuMCBMIDUuNzcsMC4wIHogIg0KICAgICAgICAgc3R5bGU9ImZpbGwtcnVsZTpldmVub2RkO2ZpbGw6I2ZmZmZmZjtzdHJva2U6Izc3Nzc3NztzdHJva2Utd2lkdGg6MXB0O3N0cm9rZS1vcGFjaXR5OjEiDQogICAgICAgICB0cmFuc2Zvcm09InNjYWxlKDAuNCkgdHJhbnNsYXRlKC00LjUsMCkiIC8+DQogICAgPC9tYXJrZXI+DQogICAgPG1hcmtlcg0KICAgICAgIGlua3NjYXBlOmlzc3RvY2s9InRydWUiDQogICAgICAgc3R5bGU9Im92ZXJmbG93OnZpc2libGUiDQogICAgICAgaWQ9Im1hcmtlcjUxMTEiDQogICAgICAgcmVmWD0iMC4wIg0KICAgICAgIHJlZlk9IjAuMCINCiAgICAgICBvcmllbnQ9ImF1dG8iDQogICAgICAgaW5rc2NhcGU6c3RvY2tpZD0iRW1wdHlUcmlhbmdsZU91dE0iPg0KICAgICAgPHBhdGgNCiAgICAgICAgIHRyYW5zZm9ybT0ic2NhbGUoMC40KSB0cmFuc2xhdGUoLTQuNSwwKSINCiAgICAgICAgIHN0eWxlPSJmaWxsLXJ1bGU6ZXZlbm9kZDtmaWxsOiM3Nzc3Nzc7c3Ryb2tlOiM3Nzc3Nzc7c3Ryb2tlLXdpZHRoOjFwdDtzdHJva2Utb3BhY2l0eToxO2ZpbGwtb3BhY2l0eToxIg0KICAgICAgICAgZD0iTSA1Ljc3LDAuMCBMIC0yLjg4LDUuMCBMIC0yLjg4LC01LjAgTCA1Ljc3LDAuMCB6ICINCiAgICAgICAgIGlkPSJwYXRoNTEwOSIgLz4NCiAgICA8L21hcmtlcj4NCiAgICA8bWFya2VyDQogICAgICAgaW5rc2NhcGU6c3RvY2tpZD0iRW1wdHlUcmlhbmdsZU91dE0iDQogICAgICAgb3JpZW50PSJhdXRvIg0KICAgICAgIHJlZlk9IjAuMCINCiAgICAgICByZWZYPSIwLjAiDQogICAgICAgaWQ9IkVtcHR5VHJpYW5nbGVPdXRNIg0KICAgICAgIHN0eWxlPSJvdmVyZmxvdzp2aXNpYmxlIg0KICAgICAgIGlua3NjYXBlOmlzc3RvY2s9InRydWUiDQogICAgICAgaW5rc2NhcGU6Y29sbGVjdD0iYWx3YXlzIj4NCiAgICAgIDxwYXRoDQogICAgICAgICBpZD0icGF0aDQ5NzYiDQogICAgICAgICBkPSJNIDUuNzcsMC4wIEwgLTIuODgsNS4wIEwgLTIuODgsLTUuMCBMIDUuNzcsMC4wIHogIg0KICAgICAgICAgc3R5bGU9ImZpbGwtcnVsZTpldmVub2RkO2ZpbGw6Izc3Nzc3NztzdHJva2U6Izc3Nzc3NztzdHJva2Utd2lkdGg6MXB0O3N0cm9rZS1vcGFjaXR5OjE7ZmlsbC1vcGFjaXR5OjEiDQogICAgICAgICB0cmFuc2Zvcm09InNjYWxlKDAuNCkgdHJhbnNsYXRlKC00LjUsMCkiIC8+DQogICAgPC9tYXJrZXI+DQogICAgPGxpbmVhckdyYWRpZW50DQogICAgICAgaWQ9ImEiPg0KICAgICAgPHN0b3ANCiAgICAgICAgIGlkPSJzdG9wMTAiDQogICAgICAgICBzdG9wLWNvbG9yPSIjZDllYzAwIg0KICAgICAgICAgb2Zmc2V0PSIwIiAvPg0KICAgICAgPHN0b3ANCiAgICAgICAgIGlkPSJzdG9wMTIiDQogICAgICAgICBzdG9wLW9wYWNpdHk9IjAiDQogICAgICAgICBzdG9wLWNvbG9yPSIjZjdmZjk4Ig0KICAgICAgICAgb2Zmc2V0PSIxIiAvPg0KICAgIDwvbGluZWFyR3JhZGllbnQ+DQogIDwvZGVmcz4NCiAgPG1ldGFkYXRhDQogICAgIGlkPSJtZXRhZGF0YTUiPg0KICAgIDxyZGY6UkRGPg0KICAgICAgPGNjOldvcmsNCiAgICAgICAgIHJkZjphYm91dD0iIj4NCiAgICAgICAgPGRjOmZvcm1hdD5pbWFnZS9zdmcreG1sPC9kYzpmb3JtYXQ+DQogICAgICAgIDxkYzp0eXBlDQogICAgICAgICAgIHJkZjpyZXNvdXJjZT0iaHR0cDovL3B1cmwub3JnL2RjL2RjbWl0eXBlL1N0aWxsSW1hZ2UiIC8+DQogICAgICAgIDxkYzp0aXRsZT48L2RjOnRpdGxlPg0KICAgICAgPC9jYzpXb3JrPg0KICAgIDwvcmRmOlJERj4NCiAgPC9tZXRhZGF0YT4NCiAgPGNpcmNsZQ0KICAgICBzdHlsZT0ib3BhY2l0eToxO2ZpbGw6bm9uZTtmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6bm9uemVybztzdHJva2U6I2UwNjY2NjtzdHJva2Utd2lkdGg6MC43OTM3NTAwNTtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7c3Ryb2tlLW1pdGVybGltaXQ6NDtzdHJva2UtZGFzaGFycmF5Om5vbmU7c3Ryb2tlLW9wYWNpdHk6MTtwYWludC1vcmRlcjpzdHJva2UgZmlsbCBtYXJrZXJzIg0KICAgICBpZD0icGF0aDQ1MTYiDQogICAgIGN4PSI2LjYxNDU4MyINCiAgICAgY3k9IjYuNjE0NTgzIg0KICAgICByPSI2LjIxNzcwODYiDQogICAgIGlua3NjYXBlOmV4cG9ydC14ZHBpPSIyMzAuMzk5OTkiDQogICAgIGlua3NjYXBlOmV4cG9ydC15ZHBpPSIyMzAuMzk5OTkiIC8+DQogIDxjaXJjbGUNCiAgICAgaW5rc2NhcGU6ZXhwb3J0LXlkcGk9IjIzMC4zOTk5OSINCiAgICAgaW5rc2NhcGU6ZXhwb3J0LXhkcGk9IjIzMC4zOTk5OSINCiAgICAgcj0iNi41NDg0Mzc2Ig0KICAgICBjeT0iNi42MTQ1ODMiDQogICAgIGN4PSI2LjYxNDU4MyINCiAgICAgaWQ9ImNpcmNsZTQ0OTUiDQogICAgIHN0eWxlPSJvcGFjaXR5OjE7ZmlsbDpub25lO2ZpbGwtb3BhY2l0eToxO2ZpbGwtcnVsZTpub256ZXJvO3N0cm9rZTojNTU1NTU1O3N0cm9rZS13aWR0aDowLjEzMjI5MTY3O3N0cm9rZS1saW5lY2FwOnJvdW5kO3N0cm9rZS1saW5lam9pbjpyb3VuZDtzdHJva2UtbWl0ZXJsaW1pdDo0O3N0cm9rZS1kYXNoYXJyYXk6bm9uZTtzdHJva2Utb3BhY2l0eToxO3BhaW50LW9yZGVyOnN0cm9rZSBmaWxsIG1hcmtlcnMiIC8+DQogIDxwYXRoDQogICAgIHN0eWxlPSJmaWxsOm5vbmU7c3Ryb2tlOiNlMDY2NjY7c3Ryb2tlLXdpZHRoOjAuNjYxNDU4Mzc7c3Ryb2tlLWxpbmVjYXA6cm91bmQ7c3Ryb2tlLWxpbmVqb2luOnJvdW5kO3N0cm9rZS1taXRlcmxpbWl0OjQ7c3Ryb2tlLWRhc2hhcnJheTpub25lO3N0cm9rZS1vcGFjaXR5OjEiDQogICAgIGQ9Ik0gNi41NjgyNjEsMy43NjYxNzA2IFYgNi42MDQyMzQyIg0KICAgICBpZD0icGF0aDQ1MzEtOSINCiAgICAgaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCINCiAgICAgaW5rc2NhcGU6ZXhwb3J0LXhkcGk9IjIzMC40MDAwMSINCiAgICAgaW5rc2NhcGU6ZXhwb3J0LXlkcGk9IjIzMC40MDAwMSIgLz4NCiAgPHBhdGgNCiAgICAgc3R5bGU9ImZpbGw6bm9uZTtzdHJva2U6I2UwNjY2NjtzdHJva2Utd2lkdGg6MC42NjE0NTgzNztzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7c3Ryb2tlLW1pdGVybGltaXQ6NDtzdHJva2UtZGFzaGFycmF5Om5vbmU7c3Ryb2tlLW9wYWNpdHk6MSINCiAgICAgZD0iTSA5LjQ1NDY5Nyw2LjYwNDIzNDIgSCA2LjU2ODI2MSINCiAgICAgaWQ9InBhdGg0NTM3Ig0KICAgICBpbmtzY2FwZTpjb25uZWN0b3ItY3VydmF0dXJlPSIwIg0KICAgICBpbmtzY2FwZTpleHBvcnQteGRwaT0iMjMwLjQwMDAxIg0KICAgICBpbmtzY2FwZTpleHBvcnQteWRwaT0iMjMwLjQwMDAxIiAvPg0KICA8cmVjdA0KICAgICBzdHlsZT0ib3BhY2l0eToxO2ZpbGw6I2UwNjY2NjtmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6bm9uemVybztzdHJva2U6Izc3Nzc3NztzdHJva2Utd2lkdGg6MC41MjkxNjY2ODtzdHJva2UtbGluZWNhcDpzcXVhcmU7c3Ryb2tlLWxpbmVqb2luOm1pdGVyO3N0cm9rZS1taXRlcmxpbWl0OjQ7c3Ryb2tlLWRhc2hhcnJheTpub25lO3N0cm9rZS1vcGFjaXR5OjE7cGFpbnQtb3JkZXI6c3Ryb2tlIGZpbGwgbWFya2VycyINCiAgICAgaWQ9InJlY3Q0NTIyIg0KICAgICB3aWR0aD0iMS4zNjc0OTEyIg0KICAgICBoZWlnaHQ9IjEuMzY3NDkxMiINCiAgICAgeD0iOC44MzE3MjUxIg0KICAgICB5PSI4LjkxMTA0MTMiDQogICAgIHJ4PSIwLjIzODIzNzExIg0KICAgICByeT0iMC4yMzgyMzcxMSIgLz4NCiAgPHJlY3QNCiAgICAgc3R5bGU9Im9wYWNpdHk6MTtmaWxsOm5vbmU7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOm5vbnplcm87c3Ryb2tlOiM3Nzc3Nzc7c3Ryb2tlLXdpZHRoOjAuMjY0NTgzMzU7c3Ryb2tlLWxpbmVjYXA6c3F1YXJlO3N0cm9rZS1saW5lam9pbjptaXRlcjtzdHJva2UtbWl0ZXJsaW1pdDo0O3N0cm9rZS1kYXNoYXJyYXk6bm9uZTtzdHJva2Utb3BhY2l0eToxO3BhaW50LW9yZGVyOnN0cm9rZSBmaWxsIG1hcmtlcnMiDQogICAgIGlkPSJyZWN0NTk4MiINCiAgICAgd2lkdGg9IjEuNTkxNzE0NCINCiAgICAgaGVpZ2h0PSIxLjU5MTcxNDQiDQogICAgIHg9IjIuODYwNDYxNyINCiAgICAgeT0iMi45MTk3MzI2Ig0KICAgICByeD0iMC4yOTQyOTI5Ig0KICAgICByeT0iMC4yOTQyOTI5IiAvPg0KICA8cGF0aA0KICAgICBzdHlsZT0ib3BhY2l0eToxO2ZpbGw6bm9uZTtmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6bm9uemVybztzdHJva2U6Izc3Nzc3NztzdHJva2Utd2lkdGg6MC4yNjQ1ODMzNTtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7c3Ryb2tlLW1pdGVybGltaXQ6NDtzdHJva2UtZGFzaGFycmF5Om5vbmU7c3Ryb2tlLW9wYWNpdHk6MTttYXJrZXItZW5kOnVybCgjRW1wdHlUcmlhbmdsZU91dE0pO3BhaW50LW9yZGVyOnN0cm9rZSBmaWxsIG1hcmtlcnMiDQogICAgIGlkPSJjaXJjbGU0ODExIg0KICAgICBpbmtzY2FwZTpleHBvcnQteGRwaT0iMjMwLjM5OTk5Ig0KICAgICBpbmtzY2FwZTpleHBvcnQteWRwaT0iMjMwLjM5OTk5Ig0KICAgICBzb2RpcG9kaTp0eXBlPSJhcmMiDQogICAgIHNvZGlwb2RpOmN4PSI2LjYxNDU4MyINCiAgICAgc29kaXBvZGk6Y3k9IjYuNjE0NTgzIg0KICAgICBzb2RpcG9kaTpyeD0iNC4zNjIyNjE4Ig0KICAgICBzb2RpcG9kaTpyeT0iNC4zNjIyNjE4Ig0KICAgICBzb2RpcG9kaTpzdGFydD0iNC4zNDIxMDgxIg0KICAgICBzb2RpcG9kaTplbmQ9IjAuMzYzODY3MTIiDQogICAgIHNvZGlwb2RpOm9wZW49InRydWUiDQogICAgIGQ9Ik0gNS4wMzU5Nzk1LDIuNTQ3OTcwMyBBIDQuMzYyMjYxOCw0LjM2MjI2MTggMCAwIDEgOS42ODkyNjAyLDMuNTIwMTIyMSA0LjM2MjI2MTgsNC4zNjIyNjE4IDAgMCAxIDEwLjY5MTIzNyw4LjE2NzA3MTkiIC8+DQogIDxwYXRoDQogICAgIGQ9Im0gLTguMTY2NjMwMSwtMTAuODQ3NDU5IGEgNC4zNjIyNjE4LDQuMzYyMjYxOCAwIDAgMSA0LjYyNTg1ODYsMS4wMDU3MDM5IDQuMzYyMjYxOCw0LjM2MjI2MTggMCAwIDEgMC45ODUyNjUxLDQuNjMwMjU1Ig0KICAgICBzb2RpcG9kaTpvcGVuPSJ0cnVlIg0KICAgICBzb2RpcG9kaTplbmQ9IjAuMzYzODY3MTIiDQogICAgIHNvZGlwb2RpOnN0YXJ0PSI0LjM1MjkzODIiDQogICAgIHNvZGlwb2RpOnJ5PSI0LjM2MjI2MTgiDQogICAgIHNvZGlwb2RpOnJ4PSI0LjM2MjI2MTgiDQogICAgIHNvZGlwb2RpOmN5PSItNi43NjM5ODkiDQogICAgIHNvZGlwb2RpOmN4PSItNi42MzIxNjAyIg0KICAgICBzb2RpcG9kaTp0eXBlPSJhcmMiDQogICAgIGlua3NjYXBlOmV4cG9ydC15ZHBpPSIyMzAuMzk5OTkiDQogICAgIGlua3NjYXBlOmV4cG9ydC14ZHBpPSIyMzAuMzk5OTkiDQogICAgIGlkPSJwYXRoNTEwNyINCiAgICAgc3R5bGU9Im9wYWNpdHk6MTtmaWxsOm5vbmU7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOm5vbnplcm87c3Ryb2tlOiM3Nzc3Nzc7c3Ryb2tlLXdpZHRoOjAuMjY0NTgzMzU7c3Ryb2tlLWxpbmVjYXA6cm91bmQ7c3Ryb2tlLWxpbmVqb2luOnJvdW5kO3N0cm9rZS1taXRlcmxpbWl0OjQ7c3Ryb2tlLWRhc2hhcnJheTpub25lO3N0cm9rZS1vcGFjaXR5OjE7bWFya2VyLWVuZDp1cmwoI21hcmtlcjUxMTEpO3BhaW50LW9yZGVyOnN0cm9rZSBmaWxsIG1hcmtlcnMiDQogICAgIHRyYW5zZm9ybT0ic2NhbGUoLTEpIiAvPg0KPC9zdmc+DQo="
+                                  alt="Image"
+                                  class="h-full w-full object-cover"
+                                  loading="lazy"
+                                /><!--]-->
+                              </div>
+                              <!--]--><!--]-->
+                            </div>
+                            <div
+                              class="relative flex w-full min-w-0 items-center justify-start border-t border-l border-transparent bg-(--back-color)/40 px-2 py-1 text-left wrap-break-word"
+                            >
+                              <!--[!--><!--[!-->
+                              <div class="w-full max-w-full wrap-break-word whitespace-normal" role="columnheader"><!--[!--><!---->Device B<!----><!--]--></div>
+                              <!--[!--><!--]--><!--]--><!--]-->
+                            </div>
+                            <div
+                              class="relative flex w-full min-w-0 items-center justify-start border-t border-l border-transparent bg-(--back-color)/40 px-2 py-1 text-left wrap-break-word"
+                            >
+                              <!--[!--><!--[!-->
+                              <div class="w-full max-w-full overflow-hidden wrap-break-word text-ellipsis whitespace-nowrap" role="columnheader">
+                                <!--[!--><!---->offline<!----><!--]-->
+                              </div>
+                              <!--[!--><!--]--><!--]--><!--]-->
+                            </div>
+                            <div
+                              class="relative flex w-full min-w-0 items-center justify-start border-t border-l border-transparent bg-(--back-color)/40 px-2 py-1 text-left wrap-break-word"
+                            >
+                              <!--[!--><!--[!-->
+                              <div class="w-full max-w-full overflow-hidden wrap-break-word text-ellipsis whitespace-nowrap" role="columnheader">
+                                <!--[--><button class="w-full cursor-pointer overflow-hidden text-left text-ellipsis whitespace-nowrap">
+                                  <!---->Fri Oct 31 2025 10:08:06 GMT+0300 (Москва, стандартное время)<!----></button
+                                ><!--]-->
+                              </div>
+                              <!--[--><button class="mx-2 flex cursor-pointer border-none bg-transparent text-2xl" aria-label="Копировать текст">
+                                <div class="[&amp;_svg]:h-full [&amp;_svg]:max-h-full [&amp;_svg]:w-full [&amp;_svg]:max-w-full size-5 text-sm">
+                                  <!--[!--><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                                    <g fill="none" stroke="currentColor" stroke-width="1.5">
+                                      <path
+                                        d="M6 11c0-2.828 0-4.243.879-5.121C7.757 5 9.172 5 12 5h3c2.828 0 4.243 0 5.121.879C21 6.757 21 8.172 21 11v5c0 2.828 0 4.243-.879 5.121C19.243 22 17.828 22 15 22h-3c-2.828 0-4.243 0-5.121-.879C6 20.243 6 18.828 6 16z"
+                                      ></path>
+                                      <path d="M6 19a3 3 0 0 1-3-3v-6c0-3.771 0-5.657 1.172-6.828S7.229 2 11 2h4a3 3 0 0 1 3 3"></path>
+                                    </g></svg
+                                  ><!--]-->
+                                </div></button
+                              ><!--]--><!--]--><!--]-->
+                            </div>
+                            <div
+                              class="relative flex w-full min-w-0 items-center justify-start border-t border-l border-transparent bg-(--back-color)/40 px-2 py-1 text-left wrap-break-word"
+                            >
+                              <!--[-->
+                              <div class="flex w-full flex-col gap-1">
+                                <!--[--><button
+                                  class="bg-blue cursor-pointer rounded-full bg-(--bg-color) px-4 py-1 font-medium transition-shadow outline-none select-none hover:shadow-md"
+                                >
+                                  Action 1 (id)</button
+                                ><button
+                                  class="bg-green cursor-pointer rounded-full bg-(--bg-color) px-4 py-1 font-medium transition-shadow outline-none select-none hover:shadow-md"
+                                >
+                                  Action 2 (name)</button
+                                ><!--]-->
+                              </div>
+                              <!--]-->
+                            </div>
+                            <!--]--><!--]-->
+                          </div>
+                        </div>
+                        <!--[!--><!--]-->
+                        <!--[-->
+                        <div class="flex h-8 items-center justify-center bg-(--bg-color)"><h5>rows: 2</h5></div>
+                        <!--]-->
+                      </div>
+                    </div>
+                    <!---->
+                    <!----><!--[!--><!--]--><!----><!---->
+                  </div>
+                  <!--]-->
+                </div>
+                <!---->
+                <!---->
+                <div
+                  id="7012e166-727d-43dd-b63d-4cfae8024dce"
+                  class="mb-2 w-full rounded-xl border border-(--border-color) bg-(--container-color) p-0 transition-shadow duration-250 hover:shadow-md"
+                >
+                  <button class="flex w-full cursor-pointer items-center justify-between p-4 transition-shadow duration-250">
+                    <div class="flex w-full items-center">
+                      <span
+                        class="[&amp;_svg]:h-full [&amp;_svg]:max-h-full [&amp;_svg]:w-full [&amp;_svg]:max-w-full flex h-7 w-7 shrink-0 items-center justify-center overflow-visible"
+                        ><!--[!--><!--]--></span
+                      >
+                      <span class="m-0 w-full cursor-pointer px-3 text-left text-lg font-semibold">Text Field</span>
+                    </div>
+                    <div class="w-10 pl-4">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-[1.1rem] w-[1.1rem] transition-transform duration-250"
+                        style="transform: rotate(0deg)"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M18 12.5s-4.419 6-6 6s-6-6-6-6m12-7s-4.419 6-6 6s-6-6-6-6"
+                          color="currentColor"
+                        ></path>
+                      </svg>
+                    </div>
+                  </button>
+                  <!--[!--><!--]-->
+                </div>
+                <!---->
+              </div>
+            </div>
+            <!----><!---->
+          </div>
+        </div>
+      </div>
+      <!----><!--]-->
+      <!--[!--><!--]--><!--]-->
 
-					Promise.all([
-						import("/ElementsUI/_app/immutable/entry/start.B0I87LBF.js"),
-						import("/ElementsUI/_app/immutable/entry/app.CN_sVLv0.js")
-					]).then(([kit, app]) => {
-						kit.start(app, element, {
-							node_ids: [0, 4],
-							data: [null,null],
-							form: null,
-							error: null
-						});
-					});
-				}
-			</script>
-		</div>
-	</body>
+      <script>
+        {
+          __sveltekit_wqriqn = {
+            base: "/ElementsUI",
+            assets: "/ElementsUI",
+          }
+
+          const element = document.currentScript.parentElement
+
+          Promise.all([import("/ElementsUI/_app/immutable/entry/start.B0I87LBF.js"), import("/ElementsUI/_app/immutable/entry/app.CN_sVLv0.js")]).then(
+            ([kit, app]) => {
+              kit.start(app, element, {
+                node_ids: [0, 4],
+                data: [null, null],
+                form: null,
+                error: null,
+              })
+            },
+          )
+        }
+      </script>
+    </div>
+  </body>
 </html>

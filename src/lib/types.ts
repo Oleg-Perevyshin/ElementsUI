@@ -405,3 +405,15 @@ export interface ICarouselProps {
   scrollValue?: number
   children?: Snippet
 }
+
+/* ********************************************************** */
+
+export interface IWidgetProps {
+  id?: string
+  wrapperClass?: string
+  label?: { name?: string; class?: string }
+  value?: number[]
+  axes?: { name: string; minNum?: number; maxNum?: number }[]
+  buttonIcon?: ConstructorOfATypedSvelteComponent | string
+  onUpdate?: (value: number[]) => void
+}

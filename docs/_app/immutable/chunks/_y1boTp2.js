@@ -1,1 +1,285 @@
-import{an as T,ao as q,Y as S,P as z,C as O,N as D,z as g,A as $,W as H,ap as K,K as k,B,a0 as N,aq as Z,M as G,Z as J,E as W,ab as I,ar as Q,H as V,k as L,J as X,as as w,a4 as ee,a6 as se,j as R,ak as te,e as x,g as b,at as m,au as re,av as ae,d as ie,y as ne,aw as fe,ax as ue,ay as ce,az as oe,aA as le,aB as de,aC as he,ai as Y,aD as _}from"./CYmiEaEH.js";import{s as _e,g as pe}from"./DXQ0fkFu.js";class C{anchor;#s=new Map;#t=new Map;#e=new Map;#r=!0;constructor(s,r=!0){this.anchor=s,this.#r=r}#a=()=>{var s=T;if(this.#s.has(s)){var r=this.#s.get(s),e=this.#t.get(r);if(e)q(e);else{var a=this.#e.get(r);a&&(this.#t.set(r,a.effect),this.#e.delete(r),a.fragment.lastChild.remove(),this.anchor.before(a.fragment),e=a.effect)}for(const[i,n]of this.#s){if(this.#s.delete(i),i===s)break;const f=this.#e.get(n);f&&(S(f.effect),this.#e.delete(n))}for(const[i,n]of this.#t){if(i===r)continue;const f=()=>{if(Array.from(this.#s.values()).includes(i)){var c=document.createDocumentFragment();H(n,c),c.append(O()),this.#e.set(i,{effect:n,fragment:c})}else S(n);this.#t.delete(i)};this.#r||!e?z(n,f,!1):f()}}};#i=s=>{this.#s.delete(s);const r=Array.from(this.#s.values());for(const[e,a]of this.#e)r.includes(e)||(S(a.effect),this.#e.delete(e))};ensure(s,r){var e=T,a=K();if(r&&!this.#t.has(s)&&!this.#e.has(s))if(a){var i=document.createDocumentFragment(),n=O();i.append(n),this.#e.set(s,{effect:D(()=>r(n)),fragment:i})}else this.#t.set(s,D(()=>r(this.anchor)));if(this.#s.set(e,s),a){for(const[f,u]of this.#t)f===s?e.skipped_effects.delete(u):e.skipped_effects.add(u);for(const[f,u]of this.#e)f===s?e.skipped_effects.delete(u.effect):e.skipped_effects.add(u.effect);e.oncommit(this.#a),e.ondiscard(this.#i)}else g&&(this.anchor=$),this.#a()}}function Se(t,s,r=!1){g&&B();var e=new C(t),a=r?N:0;function i(n,f){if(g){const c=Z(t)===G;if(n===c){var u=J();W(u),e.anchor=u,I(!1),e.ensure(n,f),I(!0);return}}e.ensure(n,f)}k(()=>{var n=!1;s((f,u=!0)=>{n=!0,i(u,f)}),n||i(!1,null)},a)}function me(t,s,r){g&&B();var e=new C(t);k(()=>{var a=s()??null;e.ensure(a,a&&(i=>r(i,a)))},N)}function M(t,s){return t===s||t?.[w]===s}function Pe(t={},s,r,e){return Q(()=>{var a,i;return V(()=>{a=i,i=[],L(()=>{t!==r(...i)&&(s(t,...i),a&&M(r(...a),t)&&s(null,...a))})}),()=>{X(()=>{i&&M(r(...i),t)&&s(null,...i)})}}),t}let v=!1,P=Symbol();function we(t,s,r){const e=r[s]??={store:null,source:te(void 0),unsubscribe:R};if(e.store!==t&&!(P in r))if(e.unsubscribe(),e.store=t??null,t==null)e.source.v=void 0,e.unsubscribe=R;else{var a=!0;e.unsubscribe=_e(t,i=>{a?e.source.v=i:x(e.source,i)}),a=!1}return t&&P in r?pe(t):b(e.source)}function Ae(){const t={};function s(){ee(()=>{for(var r in t)t[r].unsubscribe();se(t,P,{enumerable:!1,value:!0})})}return[t,s]}function ve(t){var s=v;try{return v=!1,[t(),v]}finally{v=s}}const be={get(t,s){let r=t.props.length;for(;r--;){let e=t.props[r];if(_(e)&&(e=e()),typeof e=="object"&&e!==null&&s in e)return e[s]}},set(t,s,r){let e=t.props.length;for(;e--;){let a=t.props[e];_(a)&&(a=a());const i=m(a,s);if(i&&i.set)return i.set(r),!0}return!1},getOwnPropertyDescriptor(t,s){let r=t.props.length;for(;r--;){let e=t.props[r];if(_(e)&&(e=e()),typeof e=="object"&&e!==null&&s in e){const a=m(e,s);return a&&!a.configurable&&(a.configurable=!0),a}}},has(t,s){if(s===w||s===Y)return!1;for(let r of t.props)if(_(r)&&(r=r()),r!=null&&s in r)return!0;return!1},ownKeys(t){const s=[];for(let r of t.props)if(_(r)&&(r=r()),!!r){for(const e in r)s.includes(e)||s.push(e);for(const e of Object.getOwnPropertySymbols(r))s.includes(e)||s.push(e)}return s}};function Ee(...t){return new Proxy({props:t},be)}function Te(t,s,r,e){var a=(r&oe)!==0,i=(r&de)!==0,n=e,f=!0,u=()=>(f&&(f=!1,n=i?L(e):e),n),c;if(a){var j=w in t||Y in t;c=m(t,s)?.set??(j&&s in t?o=>t[s]=o:void 0)}var l,A=!1;a?[l,A]=ve(()=>t[s]):l=t[s],l===void 0&&e!==void 0&&(l=u(),c&&(re(),c(l)));var d;if(d=()=>{var o=t[s];return o===void 0?u():(f=!0,o)},(r&ae)===0)return d;if(c){var F=t.$$legacy;return function(o,p){return arguments.length>0?((!p||F||A)&&c(p?d():o),o):d()}}var y=!1,h=((r&le)!==0?ue:ce)(()=>(y=!1,d()));a&&b(h);var U=ne;return function(o,p){if(arguments.length>0){const E=p?b(h):a?ie(o):o;return x(h,E),y=!0,n!==void 0&&(n=E),o}return he&&y||(U.f&fe)!==0?h.v:b(h)}}export{C as B,Ae as a,Pe as b,me as c,we as d,Se as i,Te as p,Ee as s};
+import {
+  an as T,
+  ao as q,
+  Y as S,
+  P as z,
+  C as O,
+  N as D,
+  z as g,
+  A as $,
+  W as H,
+  ap as K,
+  K as k,
+  B,
+  a0 as N,
+  aq as Z,
+  M as G,
+  Z as J,
+  E as W,
+  ab as I,
+  ar as Q,
+  H as V,
+  k as L,
+  J as X,
+  as as w,
+  a4 as ee,
+  a6 as se,
+  j as R,
+  ak as te,
+  e as x,
+  g as b,
+  at as m,
+  au as re,
+  av as ae,
+  d as ie,
+  y as ne,
+  aw as fe,
+  ax as ue,
+  ay as ce,
+  az as oe,
+  aA as le,
+  aB as de,
+  aC as he,
+  ai as Y,
+  aD as _,
+} from "./CYmiEaEH.js"
+import { s as _e, g as pe } from "./DXQ0fkFu.js"
+class C {
+  anchor
+  #s = new Map()
+  #t = new Map()
+  #e = new Map()
+  #r = !0
+  constructor(s, r = !0) {
+    ;((this.anchor = s), (this.#r = r))
+  }
+  #a = () => {
+    var s = T
+    if (this.#s.has(s)) {
+      var r = this.#s.get(s),
+        e = this.#t.get(r)
+      if (e) q(e)
+      else {
+        var a = this.#e.get(r)
+        a && (this.#t.set(r, a.effect), this.#e.delete(r), a.fragment.lastChild.remove(), this.anchor.before(a.fragment), (e = a.effect))
+      }
+      for (const [i, n] of this.#s) {
+        if ((this.#s.delete(i), i === s)) break
+        const f = this.#e.get(n)
+        f && (S(f.effect), this.#e.delete(n))
+      }
+      for (const [i, n] of this.#t) {
+        if (i === r) continue
+        const f = () => {
+          if (Array.from(this.#s.values()).includes(i)) {
+            var c = document.createDocumentFragment()
+            ;(H(n, c), c.append(O()), this.#e.set(i, { effect: n, fragment: c }))
+          } else S(n)
+          this.#t.delete(i)
+        }
+        this.#r || !e ? z(n, f, !1) : f()
+      }
+    }
+  }
+  #i = (s) => {
+    this.#s.delete(s)
+    const r = Array.from(this.#s.values())
+    for (const [e, a] of this.#e) r.includes(e) || (S(a.effect), this.#e.delete(e))
+  }
+  ensure(s, r) {
+    var e = T,
+      a = K()
+    if (r && !this.#t.has(s) && !this.#e.has(s))
+      if (a) {
+        var i = document.createDocumentFragment(),
+          n = O()
+        ;(i.append(n), this.#e.set(s, { effect: D(() => r(n)), fragment: i }))
+      } else
+        this.#t.set(
+          s,
+          D(() => r(this.anchor)),
+        )
+    if ((this.#s.set(e, s), a)) {
+      for (const [f, u] of this.#t) f === s ? e.skipped_effects.delete(u) : e.skipped_effects.add(u)
+      for (const [f, u] of this.#e) f === s ? e.skipped_effects.delete(u.effect) : e.skipped_effects.add(u.effect)
+      ;(e.oncommit(this.#a), e.ondiscard(this.#i))
+    } else (g && (this.anchor = $), this.#a())
+  }
+}
+function Se(t, s, r = !1) {
+  g && B()
+  var e = new C(t),
+    a = r ? N : 0
+  function i(n, f) {
+    if (g) {
+      const c = Z(t) === G
+      if (n === c) {
+        var u = J()
+        ;(W(u), (e.anchor = u), I(!1), e.ensure(n, f), I(!0))
+        return
+      }
+    }
+    e.ensure(n, f)
+  }
+  k(() => {
+    var n = !1
+    ;(s((f, u = !0) => {
+      ;((n = !0), i(u, f))
+    }),
+      n || i(!1, null))
+  }, a)
+}
+function me(t, s, r) {
+  g && B()
+  var e = new C(t)
+  k(() => {
+    var a = s() ?? null
+    e.ensure(a, a && ((i) => r(i, a)))
+  }, N)
+}
+function M(t, s) {
+  return t === s || t?.[w] === s
+}
+function Pe(t = {}, s, r, e) {
+  return (
+    Q(() => {
+      var a, i
+      return (
+        V(() => {
+          ;((a = i),
+            (i = []),
+            L(() => {
+              t !== r(...i) && (s(t, ...i), a && M(r(...a), t) && s(null, ...a))
+            }))
+        }),
+        () => {
+          X(() => {
+            i && M(r(...i), t) && s(null, ...i)
+          })
+        }
+      )
+    }),
+    t
+  )
+}
+let v = !1,
+  P = Symbol()
+function we(t, s, r) {
+  const e = (r[s] ??= { store: null, source: te(void 0), unsubscribe: R })
+  if (e.store !== t && !(P in r))
+    if ((e.unsubscribe(), (e.store = t ?? null), t == null)) ((e.source.v = void 0), (e.unsubscribe = R))
+    else {
+      var a = !0
+      ;((e.unsubscribe = _e(t, (i) => {
+        a ? (e.source.v = i) : x(e.source, i)
+      })),
+        (a = !1))
+    }
+  return t && P in r ? pe(t) : b(e.source)
+}
+function Ae() {
+  const t = {}
+  function s() {
+    ee(() => {
+      for (var r in t) t[r].unsubscribe()
+      se(t, P, { enumerable: !1, value: !0 })
+    })
+  }
+  return [t, s]
+}
+function ve(t) {
+  var s = v
+  try {
+    return ((v = !1), [t(), v])
+  } finally {
+    v = s
+  }
+}
+const be = {
+  get(t, s) {
+    let r = t.props.length
+    for (; r--; ) {
+      let e = t.props[r]
+      if ((_(e) && (e = e()), typeof e == "object" && e !== null && s in e)) return e[s]
+    }
+  },
+  set(t, s, r) {
+    let e = t.props.length
+    for (; e--; ) {
+      let a = t.props[e]
+      _(a) && (a = a())
+      const i = m(a, s)
+      if (i && i.set) return (i.set(r), !0)
+    }
+    return !1
+  },
+  getOwnPropertyDescriptor(t, s) {
+    let r = t.props.length
+    for (; r--; ) {
+      let e = t.props[r]
+      if ((_(e) && (e = e()), typeof e == "object" && e !== null && s in e)) {
+        const a = m(e, s)
+        return (a && !a.configurable && (a.configurable = !0), a)
+      }
+    }
+  },
+  has(t, s) {
+    if (s === w || s === Y) return !1
+    for (let r of t.props) if ((_(r) && (r = r()), r != null && s in r)) return !0
+    return !1
+  },
+  ownKeys(t) {
+    const s = []
+    for (let r of t.props)
+      if ((_(r) && (r = r()), !!r)) {
+        for (const e in r) s.includes(e) || s.push(e)
+        for (const e of Object.getOwnPropertySymbols(r)) s.includes(e) || s.push(e)
+      }
+    return s
+  },
+}
+function Ee(...t) {
+  return new Proxy({ props: t }, be)
+}
+function Te(t, s, r, e) {
+  var a = (r & oe) !== 0,
+    i = (r & de) !== 0,
+    n = e,
+    f = !0,
+    u = () => (f && ((f = !1), (n = i ? L(e) : e)), n),
+    c
+  if (a) {
+    var j = w in t || Y in t
+    c = m(t, s)?.set ?? (j && s in t ? (o) => (t[s] = o) : void 0)
+  }
+  var l,
+    A = !1
+  ;(a ? ([l, A] = ve(() => t[s])) : (l = t[s]), l === void 0 && e !== void 0 && ((l = u()), c && (re(), c(l))))
+  var d
+  if (
+    ((d = () => {
+      var o = t[s]
+      return o === void 0 ? u() : ((f = !0), o)
+    }),
+    (r & ae) === 0)
+  )
+    return d
+  if (c) {
+    var F = t.$$legacy
+    return function (o, p) {
+      return arguments.length > 0 ? ((!p || F || A) && c(p ? d() : o), o) : d()
+    }
+  }
+  var y = !1,
+    h = ((r & le) !== 0 ? ue : ce)(() => ((y = !1), d()))
+  a && b(h)
+  var U = ne
+  return function (o, p) {
+    if (arguments.length > 0) {
+      const E = p ? b(h) : a ? ie(o) : o
+      return (x(h, E), (y = !0), n !== void 0 && (n = E), o)
+    }
+    return (he && y) || (U.f & fe) !== 0 ? h.v : b(h)
+  }
+}
+export { C as B, Ae as a, Pe as b, me as c, we as d, Se as i, Te as p, Ee as s }

@@ -1,8 +1,8 @@
 // vite.config.ts
-import { defineConfig } from 'vite';
-import { sveltekit } from '@sveltejs/kit/vite';
-import tailwindcss from '@tailwindcss/vite';
-import compression from 'vite-plugin-compression'
+import { defineConfig } from "vite"
+import { sveltekit } from "@sveltejs/kit/vite"
+import tailwindcss from "@tailwindcss/vite"
+import compression from "vite-plugin-compression"
 
 export default defineConfig({
   plugins: [
@@ -23,7 +23,7 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: undefined,
-      }
-    }
-  }
+      },
+    },
+  },
 })

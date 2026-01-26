@@ -1,8 +1,8 @@
 <script lang="ts">
-  import * as UI from '$lib'
-  import type { Snippet } from 'svelte'
-  import CopyButton from './libIcons/CopyButton.svelte'
-  import { fade, fly, slide } from 'svelte/transition'
+  import * as UI from "$lib"
+  import type { Snippet } from "svelte"
+  import CopyButton from "./libIcons/CopyButton.svelte"
+  import { fade, fly, slide } from "svelte/transition"
 
   let { component, componentProps, codeText }: { component: Snippet; componentProps: Snippet; codeText: string } = $props()
 

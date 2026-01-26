@@ -1,16 +1,16 @@
 <script lang="ts">
-  import { twMerge } from 'tailwind-merge'
-  import type { IJoystickProps } from '../types'
+  import { twMerge } from "tailwind-merge"
+  import type { IJoystickProps } from "../types"
 
   let {
     id = crypto.randomUUID(),
-    wrapperClass = '',
-    label = { name: '', class: '' },
+    wrapperClass = "",
+    label = { name: "", class: "" },
     value = $bindable([0, 0, 0, 0]),
     axes = [
-      { name: 'Roll', minNum: -360, maxNum: 360 },
-      { name: 'Pitch', minNum: -360, maxNum: 360 },
-      { name: 'Yaw', minNum: -360, maxNum: 360 },
+      { name: "Roll", minNum: -360, maxNum: 360 },
+      { name: "Pitch", minNum: -360, maxNum: 360 },
+      { name: "Yaw", minNum: -360, maxNum: 360 },
     ],
     buttonIcon,
     onUpdate = () => {},
@@ -18,7 +18,7 @@
 
   const directions = [
     {
-      id: 'right',
+      id: "right",
       angle: 30.5,
       mainButton: true,
       onClick: () => {
@@ -27,7 +27,7 @@
       },
     },
     {
-      id: 'bottom-right',
+      id: "bottom-right",
       angle: 58,
       mainButton: false,
       onClick: () => {
@@ -37,7 +37,7 @@
       },
     },
     {
-      id: 'bottom',
+      id: "bottom",
       angle: 122,
       mainButton: true,
       onClick: () => {
@@ -46,7 +46,7 @@
       },
     },
     {
-      id: 'bottom-left',
+      id: "bottom-left",
       angle: 149.5,
       mainButton: false,
       onClick: () => {
@@ -56,7 +56,7 @@
       },
     },
     {
-      id: 'left',
+      id: "left",
       angle: 212,
       mainButton: true,
       onClick: () => {
@@ -65,7 +65,7 @@
       },
     },
     {
-      id: 'top-left',
+      id: "top-left",
       angle: 239,
       mainButton: false,
       onClick: () => {
@@ -75,7 +75,7 @@
       },
     },
     {
-      id: 'top',
+      id: "top",
       angle: 301,
       mainButton: true,
       onClick: () => {
@@ -84,7 +84,7 @@
       },
     },
     {
-      id: 'top-right',
+      id: "top-right",
       angle: 328,
       mainButton: false,
       onClick: () => {
@@ -128,17 +128,11 @@
   {/if}
 
   <div class="flex w-1/2 items-center justify-center">
-    <div
-      class="relative z-10 flex size-40 min-h-40 min-w-40 items-center justify-center rounded-full bg-(--bg-color) shadow-[0_0_20px_rgb(0_0_0_/0.25)]"
-    >
+    <div class="relative z-10 flex size-40 min-h-40 min-w-40 items-center justify-center rounded-full bg-(--bg-color) shadow-[0_0_20px_rgb(0_0_0_/0.25)]">
       <!-- Основные кнопки (оси pitch и yaw) -->
       <div class="absolute h-full w-full overflow-hidden rounded-full">
         {#each directions as direction, index}
-          <button
-            class="pointer-events-none absolute top-1/2 left-1/2 block w-1/2 -translate-y-1/2 cursor-pointer"
-            onclick={direction.onClick}
-            title=""
-          >
+          <button class="pointer-events-none absolute top-1/2 left-1/2 block w-1/2 -translate-y-1/2 cursor-pointer" onclick={direction.onClick} title="">
             <span
               class="relative flex w-full origin-left items-center justify-center pl-[60%] pointer-events-auto
             {direction.mainButton ? 'bg-(--bg-color)' : ''}
@@ -149,14 +143,10 @@
                 index}deg); clip-path: polygon(100% 0, {clipPos}% 0, 0 50%, {clipPos}% 100%, 100% 100%)
               "
               role="application"
-              onmouseenter={(e) => (e.currentTarget.style.backgroundColor = 'color-mix(in srgb, var(--bg-color), var(--shadow-color) 20%)')}
-              onmouseleave={(e) => (e.currentTarget.style.backgroundColor = 'var(--bg-color)')}
+              onmouseenter={(e) => (e.currentTarget.style.backgroundColor = "color-mix(in srgb, var(--bg-color), var(--shadow-color) 20%)")}
+              onmouseleave={(e) => (e.currentTarget.style.backgroundColor = "var(--bg-color)")}
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width={direction.mainButton ? 32 : 16}
-                height={direction.mainButton ? 32 : 16}
-                viewBox="0 0 24 24"
+              <svg xmlns="http://www.w3.org/2000/svg" width={direction.mainButton ? 32 : 16} height={direction.mainButton ? 32 : 16} viewBox="0 0 24 24"
                 ><path
                   fill="currentColor"
                   d="M12.6 12L8.7 8.1q-.275-.275-.275-.7t.275-.7t.7-.275t.7.275l4.6 4.6q.15.15.213.325t.062.375t-.062.375t-.213.325l-4.6 4.6q-.275.275-.7.275t-.7-.275t-.275-.7t.275-.7z"
@@ -179,9 +169,7 @@
         {/each}
       </div>
       <!-- Кнопка по центру -->
-      <div
-        class="z-20 flex size-20 items-center justify-center rounded-full bg-(--bg-color) shadow-[0_0_15px_rgb(0_0_0_/0.25)] transition hover:scale-103"
-      >
+      <div class="z-20 flex size-20 items-center justify-center rounded-full bg-(--bg-color) shadow-[0_0_15px_rgb(0_0_0_/0.25)] transition hover:scale-103">
         <button
           class="flex size-18 cursor-pointer items-center justify-center rounded-full p-3.5 [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
           style="background: {value[3] == 1 ? 'color-mix(in srgb, var(--bg-color), var(--shadow-color) 10%)' : 'var(--bg-color)'}"
@@ -190,7 +178,7 @@
           }}
         >
           {#if buttonIcon}
-            {#if typeof buttonIcon === 'string'}
+            {#if typeof buttonIcon === "string"}
               {@html buttonIcon}
             {:else}
               {@const IconComponent = buttonIcon}
@@ -225,8 +213,8 @@
             value[0] = roundToClean(value[0] - sensitivity)
             onUpdate(value)
           }}
-          onmouseenter={(e) => (e.currentTarget.style.backgroundColor = 'color-mix(in srgb, var(--bg-color), var(--shadow-color) 30%)')}
-          onmouseleave={(e) => (e.currentTarget.style.backgroundColor = 'background: color-mix(in srgb, var(--bg-color), var(--shadow-color) 10%)')}
+          onmouseenter={(e) => (e.currentTarget.style.backgroundColor = "color-mix(in srgb, var(--bg-color), var(--shadow-color) 30%)")}
+          onmouseleave={(e) => (e.currentTarget.style.backgroundColor = "background: color-mix(in srgb, var(--bg-color), var(--shadow-color) 10%)")}
         >
           <div class="rotate-270">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
@@ -251,8 +239,8 @@
             value[0] = roundToClean(value[0] + sensitivity)
             onUpdate(value)
           }}
-          onmouseenter={(e) => (e.currentTarget.style.backgroundColor = 'color-mix(in srgb, var(--bg-color), var(--shadow-color) 30%)')}
-          onmouseleave={(e) => (e.currentTarget.style.backgroundColor = 'vabackground: color-mix(in srgb, var(--bg-color), var(--shadow-color) 10%)')}
+          onmouseenter={(e) => (e.currentTarget.style.backgroundColor = "color-mix(in srgb, var(--bg-color), var(--shadow-color) 30%)")}
+          onmouseleave={(e) => (e.currentTarget.style.backgroundColor = "vabackground: color-mix(in srgb, var(--bg-color), var(--shadow-color) 10%)")}
         >
           <div class="rotate-90">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
@@ -279,11 +267,11 @@
             select-none hover:shadow-md
             ${
               option === sensitivity && sensitivity !== null
-                ? 'z-10 py-1 shadow-[0_0_10px_var(--shadow-color)] hover:shadow-[0_0_15px_var(--shadow-color)]'
-                : ''
+                ? "z-10 py-1 shadow-[0_0_10px_var(--shadow-color)] hover:shadow-[0_0_15px_var(--shadow-color)]"
+                : ""
             }  
-            ${sensitivityOptions.length > 0 && index === 0 ? 'rounded-l-2xl' : ''} ${
-              index === sensitivityOptions.length - 1 ? 'rounded-r-2xl' : ''
+            ${sensitivityOptions.length > 0 && index === 0 ? "rounded-l-2xl" : ""} ${
+              index === sensitivityOptions.length - 1 ? "rounded-r-2xl" : ""
             } bg-(--back-color)`)}
           onclick={() => {
             sensitivity = option

@@ -1,9 +1,9 @@
 <!-- src/routes/+page.svelte -->
 <script lang="ts">
-  import * as UI from '$lib'
-  import { fade } from 'svelte/transition'
-  import Settings from '../appIcons/Settings.svelte'
-  import Palette from '../appIcons/Palette.svelte'
+  import * as UI from "$lib"
+  import { fade } from "svelte/transition"
+  import Settings from "../appIcons/Settings.svelte"
+  import Palette from "../appIcons/Palette.svelte"
 
   let isCopied = $state(false)
   const cssStyle = `@import 'tailwindcss';
@@ -249,20 +249,20 @@ input::placeholder {
   --border-color: var(--pink-color);
 }`
   const palette = [
-    { name: '--back-color', lightColor: '#ffffff', darkColor: '#111827' },
-    { name: '--border-color', lightColor: '#b2bbca', darkColor: '#585c63' },
-    { name: '--container-color', lightColor: '#f3f4f6', darkColor: '#1f2937' },
-    { name: '--field-color', lightColor: '#ecf2fa', darkColor: '#2d3748' },
-    { name: '--shadow-color', lightColor: '#34343a', darkColor: '#d4d4d8' },
-    { name: '--gray-color', lightColor: '#d1d5db', darkColor: '#374151' },
-    { name: '--red-color', lightColor: '#fca5a5', darkColor: '#991b1b' },
-    { name: '--orange-color', lightColor: '#fdba74', darkColor: '#c2410c' },
-    { name: '--yellow-color', lightColor: '#fde047', darkColor: '#a16207' },
-    { name: '--green-color', lightColor: '#86efac', darkColor: '#15803d' },
-    { name: '--cyan-color', lightColor: '#67e8f9', darkColor: '#0e7490' },
-    { name: '--blue-color', lightColor: '#93c5fd', darkColor: '#1d4ed8' },
-    { name: '--purple-color', lightColor: '#d8b4fe', darkColor: '#7e22ce' },
-    { name: '--pink-color', lightColor: '#f9a8d4', darkColor: '#be185d' },
+    { name: "--back-color", lightColor: "#ffffff", darkColor: "#111827" },
+    { name: "--border-color", lightColor: "#b2bbca", darkColor: "#585c63" },
+    { name: "--container-color", lightColor: "#f3f4f6", darkColor: "#1f2937" },
+    { name: "--field-color", lightColor: "#ecf2fa", darkColor: "#2d3748" },
+    { name: "--shadow-color", lightColor: "#34343a", darkColor: "#d4d4d8" },
+    { name: "--gray-color", lightColor: "#d1d5db", darkColor: "#374151" },
+    { name: "--red-color", lightColor: "#fca5a5", darkColor: "#991b1b" },
+    { name: "--orange-color", lightColor: "#fdba74", darkColor: "#c2410c" },
+    { name: "--yellow-color", lightColor: "#fde047", darkColor: "#a16207" },
+    { name: "--green-color", lightColor: "#86efac", darkColor: "#15803d" },
+    { name: "--cyan-color", lightColor: "#67e8f9", darkColor: "#0e7490" },
+    { name: "--blue-color", lightColor: "#93c5fd", darkColor: "#1d4ed8" },
+    { name: "--purple-color", lightColor: "#d8b4fe", darkColor: "#7e22ce" },
+    { name: "--pink-color", lightColor: "#f9a8d4", darkColor: "#be185d" },
   ]
 </script>
 
@@ -272,10 +272,10 @@ input::placeholder {
   Посетите тестовый ресурс <a href="https://cloud-dev.poe-gw.keenetic.pro/" target="_blank">PAS Cloud</a> для просмотра компонентов в использовании
 </p>
 
-<UI.Accordion wrapperClass="mt-10" label={{ name: 'Настройка', icon: Settings }}
+<UI.Accordion wrapperClass="mt-10" label={{ name: "Настройка", icon: Settings }}
   ><p>
-    Для корректного отображения компонентов и использования встроенной цветовой палитры, добавьте следующие переменные в ваш файл app.css или в
-    глобальный файл стилей вашего приложения:
+    Для корректного отображения компонентов и использования встроенной цветовой палитры, добавьте следующие переменные в ваш файл app.css или в глобальный файл
+    стилей вашего приложения:
   </p>
   <div class="relative h-100">
     <pre class=" h-full overflow-y-auto bg-(--blue-color)/10!">
@@ -313,7 +313,7 @@ input::placeholder {
   </div>
 </UI.Accordion>
 
-<UI.Accordion wrapperClass="mt-2" label={{ name: 'Палитра', icon: Palette }} isOpen={false}>
+<UI.Accordion wrapperClass="mt-2" label={{ name: "Палитра", icon: Palette }} isOpen={false}>
   <div class="grid grid-cols-5 justify-center">
     <!-- Заголовки -->
     <div class="col-span-2 col-start-2 border-l border-(--border-color) font-semibold">Светлая тема</div>

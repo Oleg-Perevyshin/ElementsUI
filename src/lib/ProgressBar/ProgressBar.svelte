@@ -1,24 +1,24 @@
 <!-- $lib/ElementsUI/ProgressBar.svelte -->
 <script lang="ts">
-  import { twMerge } from 'tailwind-merge'
-  import type { IProgressBarProps } from '../types'
+  import { twMerge } from "tailwind-merge"
+  import type { IProgressBarProps } from "../types"
 
   let {
     id = crypto.randomUUID(),
-    wrapperClass = '',
-    label = { name: '', class: '' },
+    wrapperClass = "",
+    label = { name: "", class: "" },
     value = $bindable([0]),
-    type = 'horizontal',
+    type = "horizontal",
     number = {
       minNum: 0,
       maxNum: 100,
-      units: '%',
+      units: "%",
     },
   }: IProgressBarProps = $props()
 
   let innerValue: number[] | null = $derived(
     (() => {
-      if (typeof value == 'number') {
+      if (typeof value == "number") {
         return [value]
       } else return value
     })(),
@@ -28,9 +28,9 @@
   const max = $derived(number.maxNum ?? 100)
 
   const numericValue = (value: number) => {
-    if (typeof value === 'number' && !isNaN(value)) {
+    if (typeof value === "number" && !isNaN(value)) {
       return Math.max(min, Math.min(max, value))
-    } else if (typeof value === 'string') {
+    } else if (typeof value === "string") {
       const parsedValue = parseFloat(value)
       if (!isNaN(parsedValue)) {
         return Math.max(min, Math.min(max, parsedValue))
@@ -61,12 +61,12 @@
 
 <div
   id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
-  class={twMerge(`relative flex ${type == 'vertical' ? 'h-full' : ''} w-full flex-col items-center`, wrapperClass)}
+  class={twMerge(`relative flex ${type == "vertical" ? "h-full" : ""} w-full flex-col items-center`, wrapperClass)}
 >
   {#if label.name}
     <h5 class={twMerge(` w-full px-4 text-center`, label.class)}>{label.name}</h5>
   {/if}
-  {#if type == 'vertical'}
+  {#if type == "vertical"}
     <div class="flex h-full flex-wrap gap-3">
       {#each innerValue as val}
         <div class="flex h-full w-fit min-w-16 flex-col items-center gap-2 rounded-full bg-(--bg-color) p-2 shadow-sm">
