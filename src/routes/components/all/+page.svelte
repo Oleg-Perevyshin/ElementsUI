@@ -158,7 +158,7 @@
     {
       label: { name: "Actions" },
       key: "action",
-      width: "1fr",
+      width: "calc(20% + 8px)",
       align: "left",
       action: {
         type: "buttons",
@@ -518,6 +518,7 @@
           body={rows}
           onClick={(eventHandler) => console.log(eventHandler)}
           footer={`rows: ${rows.length}`}
+          outline
           bind:modalData
         />
         <UI.Modal isOpen={modalData.isOpen} title="Full data">
@@ -552,6 +553,18 @@
           children={Tab}
           size={{ height: 1, width: 1 }}
         />
+        <UI.Tabs
+          items={[
+            { name: "Tab1", icon: IconGripHorizontalUp, class: "flex-col" },
+            { name: "Tab2", icon: IconGripVerticalRight, class: "flex-row-reverse" },
+            { name: "Tab3", icon: IconGripHorizontalDown, class: "flex-col-reverse" },
+            { name: "Tab4", icon: IconGripVerticalLeft, class: "" },
+          ]}
+          children={Tab}
+          size={{ height: 1, width: 1 }}
+        />
+        /4" }, ]} children={Tab}
+        size={{ height: 1, width: 1 }} />
         <UI.Tabs
           items={[
             { name: "Tab1", icon: IconGripHorizontalUp, class: "flex-col" },

@@ -4,7 +4,7 @@
   import type { ISelectOption, ITableHeader, ITableProps } from "../types"
   import { fade, fly, slide } from "svelte/transition"
   import { twMerge } from "tailwind-merge"
-  import { onMount } from "svelte"
+  import { onMount, tick } from "svelte"
   import ButtonClear from "../libIcons/ButtonClear.svelte"
   import { t } from "$lib/locales/i18n"
 
@@ -26,19 +26,24 @@
     onClick,
   }: ITableProps<any> = $props()
 
-  let buffer: any[] = $state([])
-  export const clearBuffer = () => {
-    buffer = []
-  }
   /* Сортировка */
   let sortState: { key: string | null; direction: "asc" | "desc" | null } = { key: null, direction: null }
   let isAutoscroll = $state(false)
+  let container: HTMLElement | null = $state(null)
+  let buffer: any[] = $state([])
   const logTypeOptions = [
     { id: crypto.randomUUID(), name: "Error", value: "error", color: "bg-(--red-color)" },
     { id: crypto.randomUUID(), name: "Warning", value: "warning", color: "bg-(--yellow-color)" },
     { id: crypto.randomUUID(), name: "Info", value: "info", color: "bg-(--gray-color)" },
   ]
   let logType = $state(["error", "warning"])
+  let isDropdownOpen: { x: number; y: number } | null = $state(null)
+  let copiedCell: { x: number; y: number } | null = $state(null)
+  let tooltip = $state({ show: false, text: "", x: 0, y: 0 })
+  let thumbHeight: number = $state(0)
+  let thumbTop = $state(0)
+  let isDragging = $state(false)
+  let scrollbarHeight = $derived(() => (container ? container.scrollHeight + "px" : "100%"))
 
   /* Сортировка столбцов */
   const sortRows = (key: string) => {
@@ -71,9 +76,14 @@
     })
   }
 
-  /* Запрос данных, если в конце списка */
-  let container: HTMLElement | null = $state(null)
-  function handleScroll() {
+  export const clearBuffer = async () => {
+    buffer = []
+    updateThumb()
+    thumbHeight = 0
+    thumbTop = 0
+  }
+
+  const handleScroll = () => {
     if (!container) return
     updateThumb()
     const { scrollTop, clientHeight, scrollHeight } = container
@@ -95,7 +105,7 @@
     if (autoscroll && buffer && buffer.length > 0) scrollToBottom()
   })
 
-  function buttonClick(row: any, button: any) {
+  const buttonClick = (row: any, button: any) => {
     if (button.onClick) button.onClick(row)
     else if (button.eventHandler && onClick) {
       let value: Record<string, boolean | string | number | number[] | object | null> = {}
@@ -108,7 +118,6 @@
     }
   }
 
-  let isDropdownOpen: { x: number; y: number } | null = $state(null)
   const selectOption = (index: number, key: any, option: ISelectOption<string | number>, event: MouseEvent) => {
     event.stopPropagation()
 
@@ -120,9 +129,6 @@
         i === index ? (row = { ...row, [key]: [option.value, ...existingItem.filter((opt: string | number) => opt !== option.value)] }) : row,
       )
   }
-
-  let copiedCell: { x: number; y: number } | null = $state(null)
-  let tooltip = $state({ show: false, text: "", x: 0, y: 0 })
 
   const showModal = async (text: string, formatting?: (text: string) => string) => {
     modalData = {
@@ -152,13 +158,10 @@
     return !!src
   }
 
-  let thumbHeight: number = $state(0)
-  let thumbTop = $state(0)
-  let isDragging = false
-
   const updateThumb = () => {
     if (!container) return
     const { clientHeight, scrollHeight, scrollTop } = container
+    container.scrollHeight
     if (clientHeight != scrollHeight) {
       const ratio = clientHeight / scrollHeight
       thumbHeight = Math.max(ratio * clientHeight, 20) // мин. высота ползунка
@@ -175,6 +178,8 @@
     const maxScroll = containerHeight - thumbHeight
     const y = e.clientY - containerRect.top - thumbHeight / 2
     const top = Math.min(Math.max(0, y), maxScroll)
+    console.log(y, maxScroll)
+
     thumbTop = top
 
     const scrollMax = container.scrollHeight - container.clientHeight
@@ -194,6 +199,7 @@
 
   $effect(() => {
     if (body && type == "logger") {
+      updateThumb()
       if (Array.isArray(body)) {
         for (let i = 0; i < body.length; i++) {
           buffer = [
@@ -226,6 +232,7 @@
 
   $effect(() => {
     if (body && dataBuffer.stashData && type == "table") {
+      updateThumb()
       if (Array.isArray(body)) {
         for (let i = 0; i < body.length; i++) {
           buffer = [...buffer, body[i]]
@@ -241,6 +248,7 @@
 
   onMount(() => {
     updateThumb()
+
     if (autoscroll) {
       container?.addEventListener("scroll", handleAutoScroll)
       scrollToBottom()
@@ -305,7 +313,21 @@
     {outline ? ' border-(--border-color)' : 'border-transparent'} "
   >
     <!-- Table Header -->
-    <div class="grid font-semibold" style={`grid-template-columns: ${header.map((c) => c.width || "minmax(0, 1fr)").join(" ")};`}>
+    <div
+      class="grid font-semibold"
+      style={`grid-template-columns: ${
+        container?.scrollHeight === container?.clientHeight
+          ? (() => {
+              const widths = header.map((c) => c.width || "minmax(0, 1fr)")
+              const last = widths.length - 1
+              widths[last] = `calc(${widths[last]}+8px)`
+              console.log(widths)
+
+              return widths.join(" ")
+            })()
+          : header.map((c) => c.width || "minmax(0, 1fr)").join(" ")
+      };`}
+    >
       {#each header as column, index (column)}
         <div
           class={twMerge(
@@ -346,7 +368,17 @@
             ? buffer.slice(-(dataBuffer.rowsAmmount ?? 10))
             : body}
       <!-- Table Body с прокруткой -->
-      <div class="flex-1 overflow-y-auto bg-(--container-color)/50 relative" bind:this={container} onscroll={handleScroll}>
+      <div
+        class="flex-1 overflow-y-auto bg-(--container-color)/50 relative {isDragging ? 'select-none bg-red' : ''}"
+        onmousemove={handleThumbDrag}
+        role="button"
+        tabindex={null}
+        onmouseup={() => {
+          isDragging = false
+        }}
+        bind:this={container}
+        onscroll={handleScroll}
+      >
         <div class="grid min-w-0" style={`grid-template-columns: ${header.map((c) => c.width || "minmax(0, 1fr)").join(" ")};`}>
           {#each rows as row, i (row)}
             {#each header as column, j (column)}
@@ -497,7 +529,7 @@
           class="absolute right-1 top-0 w-2 bg-transparent rounded-lg"
           tabindex={null}
           role="button"
-          style={`height: ${container ? container.scrollHeight + "px" : "100%"};`}
+          style={`height: ${scrollbarHeight};`}
           onmousedown={() => (isDragging = true)}
         >
           <div
@@ -505,9 +537,14 @@
             style={`top: ${thumbTop}px; height: ${thumbHeight}px;`}
             role="button"
             tabindex={null}
-            onpointermove={handleThumbDrag}
-            onpointerup={() => (isDragging = false)}
-            onpointerleave={() => (isDragging = false)}
+            onmousedown={() => {
+              isDragging = true
+              console.log("isDragging = true")
+            }}
+            onmouseup={() => {
+              isDragging = false
+              console.log("isDragging = false")
+            }}
           ></div>
         </div>
       </div>
@@ -536,6 +573,17 @@
 <style>
   /* Стили полосы прокрутки */
   ::-webkit-scrollbar {
-    display: none;
+    position: absolute;
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+    position: absolute;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--blue-color);
+    border-radius: 8px;
+    cursor: pointer;
   }
 </style>

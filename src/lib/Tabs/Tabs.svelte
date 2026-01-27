@@ -4,7 +4,7 @@
 
   let {
     id = crypto.randomUUID(),
-    wrapperClass = "",
+    wrapperClass = "bg-blue",
     size = { width: 12, height: 6 },
     activeTab = 0,
     items = [
@@ -28,7 +28,7 @@
 <div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class="w-full h-full flex flex-col rounded-2xl bg-(--back-color) overflow-hidden">
   <!-- Вкладки -->
   <div
-    class="{twMerge(`bg-blue z-40 flex h-fit items-center rounded-t-2xl overflow-x-auto px-1`, wrapperClass)} 
+    class="{twMerge(`z-40 flex h-fit items-center rounded-t-2xl overflow-x-auto px-1`, wrapperClass)} 
      bg-(--bg-color)"
   >
     {#each items as item, index}
