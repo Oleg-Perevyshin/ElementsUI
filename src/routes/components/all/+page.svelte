@@ -158,7 +158,7 @@
     {
       label: { name: "Actions" },
       key: "action",
-      width: "calc(20% + 8px)",
+      width: "1fr",
       align: "left",
       action: {
         type: "buttons",
@@ -511,32 +511,29 @@
 
     <!-- Компонент TABLE -->
     <UI.Accordion label={{ name: "Table" }} isOpen={true}>
-      <div class="h-50">
-        <UI.Table
-          label={{ name: "Devices" }}
-          header={columns}
-          body={rows}
-          onClick={(eventHandler) => console.log(eventHandler)}
-          footer={`rows: ${rows.length}`}
-          outline
-          bind:modalData
-        />
-        <UI.Modal isOpen={modalData.isOpen} title="Full data">
-          {#snippet main()}
-            {@html modalData.formattedData}
-          {/snippet}
-          {#snippet footer()}
-            <UI.Button
-              content={{ name: "Copy" }}
-              wrapperClass="w-20 bg-pink"
-              onClick={() => {
-                navigator.clipboard.writeText(modalData.rawData)
-                modalData.isOpen = false
-              }}
-            />
-          {/snippet}
-        </UI.Modal>
-      </div>
+      <UI.Table
+        label={{ name: "Devices" }}
+        header={columns}
+        body={rows}
+        onClick={(eventHandler) => console.log(eventHandler)}
+        footer={`rows: ${rows.length}`}
+        bind:modalData
+      />
+      <UI.Modal isOpen={modalData.isOpen} title="Full data">
+        {#snippet main()}
+          {@html modalData.formattedData}
+        {/snippet}
+        {#snippet footer()}
+          <UI.Button
+            content={{ name: "Copy" }}
+            wrapperClass="w-20 bg-pink"
+            onClick={() => {
+              navigator.clipboard.writeText(modalData.rawData)
+              modalData.isOpen = false
+            }}
+          />
+        {/snippet}
+      </UI.Modal>
     </UI.Accordion>
 
     <!-- Компонент TABS -->

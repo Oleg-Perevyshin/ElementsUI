@@ -40,10 +40,6 @@
   let isDropdownOpen: { x: number; y: number } | null = $state(null)
   let copiedCell: { x: number; y: number } | null = $state(null)
   let tooltip = $state({ show: false, text: "", x: 0, y: 0 })
-  let thumbHeight: number = $state(0)
-  let thumbTop = $state(0)
-  let isDragging = $state(false)
-  let scrollbarHeight = $derived(() => (container ? container.scrollHeight + "px" : "100%"))
 
   /* Сортировка столбцов */
   const sortRows = (key: string) => {
@@ -76,16 +72,8 @@
     })
   }
 
-  export const clearBuffer = async () => {
-    buffer = []
-    updateThumb()
-    thumbHeight = 0
-    thumbTop = 0
-  }
-
   const handleScroll = () => {
     if (!container) return
-    updateThumb()
     const { scrollTop, clientHeight, scrollHeight } = container
     if (scrollTop + clientHeight >= scrollHeight - 50 && cursor !== null && loader && !get(loader)) {
       getData()
@@ -158,34 +146,6 @@
     return !!src
   }
 
-  const updateThumb = () => {
-    if (!container) return
-    const { clientHeight, scrollHeight, scrollTop } = container
-    container.scrollHeight
-    if (clientHeight != scrollHeight) {
-      const ratio = clientHeight / scrollHeight
-      thumbHeight = Math.max(ratio * clientHeight, 20) // мин. высота ползунка
-      thumbTop = scrollTop + (scrollTop / scrollHeight) * clientHeight
-    }
-  }
-
-  const handleThumbDrag = (e: MouseEvent) => {
-    if (!isDragging || !container) return
-    e.preventDefault()
-
-    const containerRect = container.getBoundingClientRect()
-    const containerHeight = container.clientHeight
-    const maxScroll = containerHeight - thumbHeight
-    const y = e.clientY - containerRect.top - thumbHeight / 2
-    const top = Math.min(Math.max(0, y), maxScroll)
-    console.log(y, maxScroll)
-
-    thumbTop = top
-
-    const scrollMax = container.scrollHeight - container.clientHeight
-    container.scrollTop = (top / containerHeight) * scrollMax
-  }
-
   $effect(() => {
     const currentType = type
     if (currentType === "logger") {
@@ -199,7 +159,6 @@
 
   $effect(() => {
     if (body && type == "logger") {
-      updateThumb()
       if (Array.isArray(body)) {
         for (let i = 0; i < body.length; i++) {
           buffer = [
@@ -232,7 +191,6 @@
 
   $effect(() => {
     if (body && dataBuffer.stashData && type == "table") {
-      updateThumb()
       if (Array.isArray(body)) {
         for (let i = 0; i < body.length; i++) {
           buffer = [...buffer, body[i]]
@@ -247,8 +205,6 @@
   })
 
   onMount(() => {
-    updateThumb()
-
     if (autoscroll) {
       container?.addEventListener("scroll", handleAutoScroll)
       scrollToBottom()
@@ -314,19 +270,8 @@
   >
     <!-- Table Header -->
     <div
-      class="grid font-semibold"
-      style={`grid-template-columns: ${
-        container?.scrollHeight === container?.clientHeight
-          ? (() => {
-              const widths = header.map((c) => c.width || "minmax(0, 1fr)")
-              const last = widths.length - 1
-              widths[last] = `calc(${widths[last]}+8px)`
-              console.log(widths)
-
-              return widths.join(" ")
-            })()
-          : header.map((c) => c.width || "minmax(0, 1fr)").join(" ")
-      };`}
+      class="grid font-semibold {container?.scrollHeight == container?.clientHeight ? '' : 'border-r-8 border-(--bg-color)'}"
+      style={`grid-template-columns: ${header.map((c) => c.width || "minmax(0, 1fr)").join(" ")};`}
     >
       {#each header as column, index (column)}
         <div
@@ -354,7 +299,7 @@
           "absolute right-2 bg-(--back-color) rounded-full p-1 cursor-pointer [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full",
           dataBuffer.clearClass,
         )}
-        onclick={clearBuffer}
+        onclick={() => (buffer = [])}
       >
         <ButtonClear />
       </button>
@@ -368,17 +313,7 @@
             ? buffer.slice(-(dataBuffer.rowsAmmount ?? 10))
             : body}
       <!-- Table Body с прокруткой -->
-      <div
-        class="flex-1 overflow-y-auto bg-(--container-color)/50 relative {isDragging ? 'select-none bg-red' : ''}"
-        onmousemove={handleThumbDrag}
-        role="button"
-        tabindex={null}
-        onmouseup={() => {
-          isDragging = false
-        }}
-        bind:this={container}
-        onscroll={handleScroll}
-      >
+      <div class="flex-1 overflow-y-auto bg-(--container-color)/50 relative" bind:this={container} onscroll={handleScroll}>
         <div class="grid min-w-0" style={`grid-template-columns: ${header.map((c) => c.width || "minmax(0, 1fr)").join(" ")};`}>
           {#each rows as row, i (row)}
             {#each header as column, j (column)}
@@ -524,29 +459,6 @@
             {/each}
           {/each}
         </div>
-        <!-- Кастомный скроллбар -->
-        <div
-          class="absolute right-1 top-0 w-2 bg-transparent rounded-lg"
-          tabindex={null}
-          role="button"
-          style={`height: ${scrollbarHeight};`}
-          onmousedown={() => (isDragging = true)}
-        >
-          <div
-            class="absolute left-0 w-full opacity-60 rounded-lg cursor-pointer bg-(--blue-color)"
-            style={`top: ${thumbTop}px; height: ${thumbHeight}px;`}
-            role="button"
-            tabindex={null}
-            onmousedown={() => {
-              isDragging = true
-              console.log("isDragging = true")
-            }}
-            onmouseup={() => {
-              isDragging = false
-              console.log("isDragging = false")
-            }}
-          ></div>
-        </div>
       </div>
     {/if}
 
@@ -571,19 +483,4 @@
 </div>
 
 <style>
-  /* Стили полосы прокрутки */
-  ::-webkit-scrollbar {
-    position: absolute;
-    width: 8px;
-    height: 8px;
-  }
-  ::-webkit-scrollbar-track {
-    background: transparent;
-    position: absolute;
-  }
-  ::-webkit-scrollbar-thumb {
-    background-color: var(--blue-color);
-    border-radius: 8px;
-    cursor: pointer;
-  }
 </style>
