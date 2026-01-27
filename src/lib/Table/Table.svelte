@@ -40,6 +40,7 @@
   let isDropdownOpen: { x: number; y: number } | null = $state(null)
   let copiedCell: { x: number; y: number } | null = $state(null)
   let tooltip = $state({ show: false, text: "", x: 0, y: 0 })
+  let isScrollable: boolean = $derived(container ? (container as HTMLElement).scrollHeight > (container as HTMLElement).clientHeight : false)
 
   export const clearBuffer = async () => {
     buffer = []
@@ -151,61 +152,76 @@
   }
 
   $effect(() => {
-    const currentType = type
-    if (currentType === "logger") {
-      header = [
-        { key: "color", label: { name: "Type" }, width: "3rem" } as ITableHeader<any>,
-        { key: "data", label: { name: "Data" }, width: "calc(100% - 3rem)" } as ITableHeader<any>,
-      ]
-    }
-    return () => (buffer = [])
-  })
-
-  $effect(() => {
-    if (body && type == "logger") {
-      if (Array.isArray(body)) {
-        for (let i = 0; i < body.length; i++) {
-          buffer = [
-            ...buffer,
-            {
-              type: Object.entries(body[i])[0][1] as string,
-              color: `<div class='size-6 rounded-full ${logTypeOptions.find((o) => o.value == Object.entries(body[i])[0][1])?.color}'></div>`,
-              data: Object.entries(body[i])[1][1] as string,
-            },
-          ]
-        }
-      } else {
-        buffer = [
-          ...buffer,
-          {
-            type: Object.entries(body)[0][1] as string,
-            color: `<div class='size-6 rounded-full ${logTypeOptions.find((o) => o.value == Object.entries(body)[0][1])?.color}'></div>`,
-            data: Object.entries(body)[1][1] as string,
-          },
+    ;(async () => {
+      const currentType = type
+      if (currentType === "logger") {
+        header = [
+          { key: "color", label: { name: "Type" }, width: "3rem" } as ITableHeader<any>,
+          { key: "data", label: { name: "Data" }, width: "calc(100% - 3rem)" } as ITableHeader<any>,
         ]
       }
 
-      if (dataBuffer && buffer.length > (dataBuffer.rowsAmmount ?? 10)) {
-        buffer = buffer.slice(-(dataBuffer.rowsAmmount ?? 10))
-      }
-
-      body = null
-    }
+      await tick()
+      isScrollable = container ? container.scrollHeight > container.clientHeight : false
+      return () => (buffer = [])
+    })()
   })
 
   $effect(() => {
-    if (body && dataBuffer.stashData && type == "table") {
-      if (Array.isArray(body)) {
-        for (let i = 0; i < body.length; i++) {
-          buffer = [...buffer, body[i]]
+    ;(async () => {
+      if (body && type == "logger") {
+        if (Array.isArray(body)) {
+          for (let i = 0; i < body.length; i++) {
+            buffer = [
+              ...buffer,
+              {
+                type: Object.entries(body[i])[0][1] as string,
+                color: `<div class='size-6 rounded-full ${logTypeOptions.find((o) => o.value == Object.entries(body[i])[0][1])?.color}'></div>`,
+                data: Object.entries(body[i])[1][1] as string,
+              },
+            ]
+          }
+        } else {
+          buffer = [
+            ...buffer,
+            {
+              type: Object.entries(body)[0][1] as string,
+              color: `<div class='size-6 rounded-full ${logTypeOptions.find((o) => o.value == Object.entries(body)[0][1])?.color}'></div>`,
+              data: Object.entries(body)[1][1] as string,
+            },
+          ]
         }
-      } else buffer = [...buffer, body]
-      if (buffer.length > (dataBuffer.rowsAmmount ?? 10)) {
-        buffer = buffer.slice(-(dataBuffer.rowsAmmount ?? 10))
-      }
 
-      body = null
-    }
+        if (dataBuffer && buffer.length > (dataBuffer.rowsAmmount ?? 10)) {
+          buffer = buffer.slice(-(dataBuffer.rowsAmmount ?? 10))
+        }
+
+        body = null
+
+        await tick()
+        isScrollable = container ? container.scrollHeight > container.clientHeight : false
+      }
+    })()
+  })
+
+  $effect(() => {
+    ;(async () => {
+      if (body && dataBuffer.stashData && type == "table") {
+        if (Array.isArray(body)) {
+          for (let i = 0; i < body.length; i++) {
+            buffer = [...buffer, body[i]]
+          }
+        } else buffer = [...buffer, body]
+        if (buffer.length > (dataBuffer.rowsAmmount ?? 10)) {
+          buffer = buffer.slice(-(dataBuffer.rowsAmmount ?? 10))
+        }
+
+        body = null
+
+        await tick()
+        isScrollable = container ? container.scrollHeight > container.clientHeight : false
+      }
+    })()
   })
 
   onMount(() => {
@@ -213,6 +229,7 @@
       container?.addEventListener("scroll", handleAutoScroll)
       scrollToBottom()
     }
+    isScrollable = container ? container.scrollHeight > container.clientHeight : false
 
     if (type === "logger") {
       header = [
@@ -274,7 +291,7 @@
   >
     <!-- Table Header -->
     <div
-      class="grid font-semibold {container?.scrollHeight == container?.clientHeight ? '' : 'border-r-8 border-(--bg-color)'}"
+      class="grid font-semibold {isScrollable ? 'border-r-8 border-(--bg-color)' : ''}"
       style={`grid-template-columns: ${header.map((c) => c.width || "minmax(0, 1fr)").join(" ")};`}
     >
       {#each header as column, index (column)}
