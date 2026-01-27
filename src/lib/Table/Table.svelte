@@ -41,6 +41,10 @@
   let copiedCell: { x: number; y: number } | null = $state(null)
   let tooltip = $state({ show: false, text: "", x: 0, y: 0 })
 
+  export const clearBuffer = async () => {
+    buffer = []
+  }
+
   /* Сортировка столбцов */
   const sortRows = (key: string) => {
     if (sortState.key === key) {
@@ -299,7 +303,7 @@
           "absolute right-2 bg-(--back-color) rounded-full p-1 cursor-pointer [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full",
           dataBuffer.clearClass,
         )}
-        onclick={() => (buffer = [])}
+        onclick={clearBuffer}
       >
         <ButtonClear />
       </button>
