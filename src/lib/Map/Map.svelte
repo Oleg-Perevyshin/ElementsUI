@@ -5,7 +5,7 @@
   import { onDestroy, onMount } from "svelte"
   import { fade } from "svelte/transition"
   import { twMerge } from "tailwind-merge"
-  import { MapLibre, NavigationControl, ScaleControl, GeolocateControl, FullScreenControl, Marker, Popup, CustomControl } from "./mapWrapper"
+  import { MapLibre, Marker, Popup, CustomControl } from "./mapWrapper"
 
   let { id = crypto.randomUUID(), label = { name: "", class: "" }, data = $bindable(), markerIcon }: IMapProps = $props()
 
@@ -106,11 +106,6 @@
     zoom={1.5}
     center={{ lat: 30, lng: 0 }}
   >
-    <NavigationControl />
-    <ScaleControl />
-    <GeolocateControl />
-    <FullScreenControl />
-
     <CustomControl position="top-left">
       <div class="flex items-center gap-2 px-2 py-1 text-black">
         <label for="timeout" class="text-sm font-medium">{$t("constructor.props.map.timeout")}</label>
