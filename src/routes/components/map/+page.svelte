@@ -1,8 +1,7 @@
 <script lang="ts">
   import { type IMapProps, type UIComponent } from "$lib"
   import ComponentExample from "$lib/ComponentExample.svelte"
-  import { Map, TileLayer, Marker, Popup } from "sveaflet"
-
+  import Map from "$lib/Map/Map.svelte"
   import { updateComponent, type IDeviceGNSS } from "$lib/types"
   import { onDestroy, onMount } from "svelte"
   import { formatObjectToString } from "../../common"
@@ -96,17 +95,7 @@ ${formatObjectToString(mapComponent.properties as IMapProps)}
   {#snippet component()}
     <div class="h-full">
       <!-- <Map {...mapComponent.properties as IMapProps} {data} /> -->
-      <div style="width:100%;height:500px;">
-        <Map
-          options={{
-            center: [51.505, -0.09],
-            zoom: 13,
-          }}
-        >
-          <TileLayer url={"https://tile.openstreetmap.org/{z}/{x}/{y}.png"} />
-          <Marker latLng={[51.505, -0.09]} />
-        </Map>
-      </div>
+      <Map />
     </div>
   {/snippet}
   {#snippet componentProps()}
