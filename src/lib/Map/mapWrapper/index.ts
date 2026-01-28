@@ -1,4 +1,8 @@
 export { default as MapLibre } from "./MapLibre.svelte"
+export { default as NavigationControl } from "./controls/NavigationControl.svelte"
+export { default as ScaleControl } from "./controls/ScaleControl.svelte"
+export { default as GeolocateControl } from "./controls/GeolocateControl.svelte"
+export { default as FullScreenControl } from "./controls/FullScreenControl.svelte"
 export { default as Marker } from "./Marker.svelte"
 export { default as Popup } from "./Popup.svelte"
 export { default as CustomControl } from "./controls/CustomControl.svelte"

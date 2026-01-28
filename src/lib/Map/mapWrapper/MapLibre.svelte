@@ -45,6 +45,7 @@
     mapCtx.map = map
   })
 
+  // Реактивное обновление style
   $effect(() => {
     if (map && style) {
       mapCtx.setStyle(style)
