@@ -3,9 +3,9 @@
   import { t } from "$lib/locales/i18n"
   import type { IDeviceGNSS, IMapProps } from "$lib/types"
   import { onDestroy, onMount } from "svelte"
-  import { MapLibre, NavigationControl, ScaleControl, GeolocateControl, FullScreenControl, Marker, Popup, CustomControl } from "svelte-maplibre-gl"
   import { fade } from "svelte/transition"
   import { twMerge } from "tailwind-merge"
+  import { MapLibre, NavigationControl, ScaleControl, GeolocateControl, FullScreenControl, Marker, Popup, CustomControl } from "./mapWrapper"
 
   let { id = crypto.randomUUID(), label = { name: "", class: "" }, data = $bindable(), markerIcon }: IMapProps = $props()
 
