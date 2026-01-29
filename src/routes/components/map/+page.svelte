@@ -94,8 +94,8 @@
 <ComponentExample {codeText}>
   {#snippet component()}
     <div class="h-full">
-      <!-- <Map {...mapComponent.properties as IMapProps} {data} />  -->
-      <Map />
+      <Map {...mapComponent.properties as IMapProps} {data} />
+      <!-- <Map /> -->
     </div>
   {/snippet}
   {#snippet componentProps()}

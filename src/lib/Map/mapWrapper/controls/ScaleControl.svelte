@@ -1,28 +1,14 @@
 <script lang="ts">
-	// https://maplibre.org/maplibre-gl-js/docs/API/classes/ScaleControl/
+  import { onDestroy } from "svelte"
+  import { getMapContext } from "../contexts.svelte.js"
 
-	import { onDestroy } from 'svelte';
-	import maplibregl from 'maplibre-gl';
-	import { getMapContext } from '../contexts.svelte.js';
+  const mapCtx = getMapContext()
+  if (!window.maplibregl || !mapCtx.map) throw new Error("Map instance is not initialized.")
 
-	interface Props extends maplibregl.ScaleControlOptions {
-		position?: maplibregl.ControlPosition;
-	}
-	let { position, ...options }: Props = $props();
+  const control = new window.maplibregl.ScaleControl()
+  mapCtx.map.addControl(control)
 
-	const mapCtx = getMapContext();
-	if (!mapCtx.map) throw new Error('Map instance is not initialized.');
-
-	let control: maplibregl.ScaleControl | null = null;
-	$effect(() => {
-		control && mapCtx.map?.removeControl(control);
-		control = new maplibregl.ScaleControl($state.snapshot(options));
-		mapCtx.map?.addControl(control, position);
-	});
-
-	onDestroy(() => {
-		if (control) {
-			mapCtx.map?.removeControl(control);
-		}
-	});
+  onDestroy(() => {
+    mapCtx.map?.removeControl(control)
+  })
 </script>

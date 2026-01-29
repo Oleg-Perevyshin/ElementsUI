@@ -1,13 +1,14 @@
 <script lang="ts">
   import { onDestroy, onMount, type Snippet } from "svelte"
   import { prepareMapContext } from "./contexts.svelte.js"
+  import { loadMapLibre } from "./utils.js"
 
   interface Props {
     class?: string
-    style?: maplibregl.StyleSpecification | string
+    style?: any | string
     zoom?: number
-    center?: maplibregl.LngLatLike
-    children?: Snippet<[maplibregl.Map]>
+    center?: any
+    children?: Snippet<[any]>
   }
 
   let {
@@ -18,24 +19,18 @@
     children,
   }: Props = $props()
 
-  // Автозагрузка CSS
-  if (globalThis.window && !document.querySelector('link[href$="/maplibre-gl.css"]')) {
-    const link = document.createElement("link")
-    link.rel = "stylesheet"
-    link.href = `https://unpkg.com/maplibre-gl@${maplibregl.getVersion()}/dist/maplibre-gl.css`
-    document.head.appendChild(link)
-  }
-
   let container: HTMLElement | undefined = $state()
-  let map: maplibregl.Map | undefined = $state()
+  let map: any | undefined = $state()
+  let isLoading = $state(false)
+  let hasConnection = $state(true)
 
   const mapCtx = prepareMapContext()
 
   // Инициализация карты
   $effect(() => {
-    if (map || !container) return
+    if (!window.maplibregl || map || !container) return
 
-    map = new maplibregl.Map({
+    map = new window.maplibregl.Map({
       container,
       style,
       zoom,
@@ -56,9 +51,23 @@
     map?.remove()
     map = undefined
   })
+
+  onMount(async () => {
+    isLoading = true
+    await loadMapLibre()
+    isLoading = false
+  })
 </script>
 
 <div class={className} bind:this={container}>
+  {#if isLoading}
+    <p>Загрузка карты...</p>
+  {/if}
+
+  {#if !hasConnection}
+    <p>Нет подключения к интернету.</p>
+  {/if}
+
   {#if map}
     {@render children?.(map)}
   {/if}

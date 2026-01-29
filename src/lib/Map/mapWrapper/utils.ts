@@ -1,61 +1,62 @@
-import maplibregl from "maplibre-gl"
+let isLoadingState = false
+let hasConnectionState = true
 
-let layerIdCounter = 0
-let sourceIdCounter = 0
+const CDN_URL = "https://cdn.jsdelivr.net/npm/maplibre-gl@5.17.0/dist/maplibre-gl.min.js"
+const CSS_URL = "https://cdn.jsdelivr.net/npm/maplibre-gl@5.17.0/dist/maplibre-gl.min.css"
 
-export function generateLayerID() {
-  return `svmlgl-layer-${layerIdCounter++}`
-}
+export const loadMapLibre = async (): Promise<void> => {
+  if (typeof window === "undefined") return
 
-export function generateSourceID() {
-  return `svmlgl-source-${sourceIdCounter++}`
-}
-
-/**
- * Set an event listener on an Evented object, and return a function that will remove the listener.
- *
- * Intended to be used within the $effect rune.
- */
-export function resetEventListener(evented: maplibregl.Evented | null | undefined, type: string, listener: maplibregl.Listener | undefined) {
-  if (listener) {
-    evented?.on(type, listener)
+  if (!navigator.onLine) {
+    hasConnectionState = false
+    return
   }
-  const prevListener = listener
-  return () => {
-    if (prevListener) {
-      evented?.off(type, prevListener)
+
+  isLoadingState = true
+
+  try {
+    if (!window.maplibregl) {
+      await loadScript(CDN_URL)
+      await loadCSS(CSS_URL)
+
+      if (!window.maplibregl) {
+        throw new Error("MapLibre GL не был загружен корректно.")
+      }
     }
+  } catch (err) {
+    console.error("Ошибка загрузки MapLibre GL:", err)
+    hasConnectionState = false
+  } finally {
+    isLoadingState = false
   }
 }
 
-/**
- * Set a Layer event listener on the Map object, and return a function that will remove the listener.
- *
- * Intended to be used within the $effect rune.
- */
-export function resetLayerEventListener(
-  map: maplibregl.Map | null,
-  type: keyof maplibregl.MapLayerEventType,
-  layer: string,
-  listener: maplibregl.Listener | undefined,
-) {
-  if (listener) {
-    map?.on(type, layer, listener)
-  }
-  const prevListener = listener
-  return () => {
-    if (prevListener) {
-      map?.off(type, layer, prevListener)
+const loadScript = (src: string): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    if (document.querySelector(`script[src="${src}"]`)) {
+      resolve()
+      return
     }
-  }
+    const script = document.createElement("script")
+    script.src = src
+    script.async = true
+    script.onload = () => resolve()
+    script.onerror = () => reject(new Error(`Не удалось загрузить скрипт ${src}`))
+    document.head.appendChild(script)
+  })
 }
 
-export function formatLngLat(target: maplibregl.LngLatLike, lnglat: maplibregl.LngLat): maplibregl.LngLatLike {
-  if (Array.isArray(target)) {
-    return [lnglat.lng, lnglat.lat]
-  } else if ("lon" in target) {
-    return { lon: lnglat.lng, lat: lnglat.lat }
-  } else {
-    return { lng: lnglat.lng, lat: lnglat.lat }
-  }
+const loadCSS = (href: string): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    if (document.querySelector(`link[href="${href}"]`)) {
+      resolve()
+      return
+    }
+    const link = document.createElement("link")
+    link.rel = "stylesheet"
+    link.href = href
+    link.onload = () => resolve()
+    link.onerror = () => reject(new Error(`Не удалось загрузить стиль ${href}`))
+    document.head.appendChild(link)
+  })
 }
