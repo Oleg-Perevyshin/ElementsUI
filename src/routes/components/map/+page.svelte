@@ -85,16 +85,16 @@
   })
 
   let codeText = $derived(`
-<UI.Map
-${formatObjectToString(mapComponent.properties as IMapProps)} 
-  {data}
-/>`)
+  <UI.Map
+  ${formatObjectToString(mapComponent.properties as IMapProps)}
+    {data}
+  />`)
 </script>
 
 <ComponentExample {codeText}>
   {#snippet component()}
     <div class="h-full">
-      <!-- <Map {...mapComponent.properties as IMapProps} {data} /> -->
+      <!-- <Map {...mapComponent.properties as IMapProps} {data} />  -->
       <Map />
     </div>
   {/snippet}
@@ -109,6 +109,6 @@ ${formatObjectToString(mapComponent.properties as IMapProps)}
       component={mapComponent as UIComponent & { properties: Partial<IMapProps> }}
       onPropertyChange={(updates) => (mapComponent = updateComponent(mapComponent, updates as object))}
       
-    /> -->
+    />  -->
   {/snippet}
 </ComponentExample>

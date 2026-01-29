@@ -1,6 +1,5 @@
 <script lang="ts">
-  import { onDestroy, type Snippet } from "svelte"
-  import maplibregl from "maplibre-gl"
+  import { onDestroy, onMount, type Snippet } from "svelte"
   import { prepareMapContext } from "./contexts.svelte.js"
 
   interface Props {

@@ -21,9 +21,7 @@ export default defineConfig({
     emptyOutDir: true,
     sourcemap: false,
     rollupOptions: {
-      output: {
-        manualChunks: undefined,
-      },
+      external: ["maplibre-gl"], // Это говорит Vite не включать её в сборку
     },
   },
 })

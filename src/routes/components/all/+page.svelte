@@ -8,6 +8,7 @@
   import { onDestroy, onMount } from "svelte"
   import IconGripVerticalRight from "../../../appIcons/IconGripVerticalRight.svelte"
   import IconGripVerticalLeft from "../../../appIcons/IconGripVerticalLeft.svelte"
+  import { importModule } from "../../common"
 
   const componentMap = {
     Accordion: { component: UI.Accordion },
@@ -102,6 +103,8 @@
 
   // Запуск симуляции
   onMount(() => {
+    console.log(window)
+
     data = generateRandomDevice()
     intervalId = setInterval(() => {
       data = generateRandomDevice()

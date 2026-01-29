@@ -75,3 +75,23 @@ export const formatObjectToString = (properties: UIComponent["properties"]): str
 
   return lines.join("\n")
 }
+
+const promises: Record<string, Promise<any>> = {}
+export const importModule = async (url: string): Promise<any> => {
+  if (await promises[url]) {
+    return promises[url]
+  }
+
+  promises[url] = new Promise<any>((resolve, reject) => {
+    const s = document.createElement("script")
+    s.src = url
+    s.type = "module"
+    s.addEventListener("load", () => {
+      resolve(undefined)
+    })
+    s.addEventListener("error", reject)
+    document.head.appendChild(s)
+  })
+
+  return promises[url]
+}
