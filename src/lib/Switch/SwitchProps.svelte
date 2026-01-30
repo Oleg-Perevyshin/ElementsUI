@@ -4,7 +4,6 @@
   import { type UIComponent, type ISwitchProps, updateProperty, type ISelectOption, type IUIComponentHandler } from "../types"
   import * as UI from "$lib"
   import { optionsStore } from "../options"
-  import { twMerge } from "tailwind-merge"
   import ButtonDelete from "$lib/libIcons/ButtonDelete.svelte"
   import ButtonAdd from "$lib/libIcons/ButtonAdd.svelte"
 

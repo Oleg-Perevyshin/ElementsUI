@@ -2,6 +2,7 @@
   import { onDestroy, onMount, type Snippet } from "svelte"
   import { prepareMapContext } from "./contexts.svelte.js"
   import { loadMapLibre } from "./utils.js"
+  import { t } from "$lib/locales/i18n"
 
   interface Props {
     class?: string
@@ -39,7 +40,6 @@
     mapCtx.map = map
   })
 
-  // Реактивное обновление style
   $effect(() => {
     if (map && style) {
       mapCtx.setStyle(style)
@@ -56,17 +56,24 @@
     isLoading = true
     await loadMapLibre()
     isLoading = false
+
+    if (!window.maplibregl || map || !container) return
+
+    // map = new window.maplibregl.Map({
+    //   container,
+    //   style,
+    //   zoom,
+    //   center,
+    // })
+    // mapCtx.map = map
   })
 </script>
 
-<div class={className} bind:this={container}>
-  {#if isLoading}
-    <p>Загрузка карты...</p>
-  {/if}
-
-  {#if !hasConnection}
-    <p>Нет подключения к интернету.</p>
-  {/if}
+<div class="{className} {!hasConnection ? 'bg-(--border-color)/50' : ''}" bind:this={container}>
+  {#if isLoading || !hasConnection}
+    <div class="h-full w-full flex items-center justify-center">
+      <h2>{isLoading ? $t("constructor.props.map.loading") : $t("constructor.props.map.noconnection")}</h2>
+    </div>{/if}
 
   {#if map}
     {@render children?.(map)}
