@@ -1,18 +1,13 @@
-let isLoadingState = false
-let hasConnectionState = true
-
 const CDN_URL = "https://cdn.jsdelivr.net/npm/maplibre-gl@5.17.0/dist/maplibre-gl.min.js"
 const CSS_URL = "https://cdn.jsdelivr.net/npm/maplibre-gl@5.17.0/dist/maplibre-gl.min.css"
 
-export const loadMapLibre = async (): Promise<void> => {
-  if (typeof window === "undefined") return
+export const loadMapLibre = async (hasConnectionState: boolean): Promise<boolean> => {
+  if (typeof window === "undefined") return false
 
   if (!navigator.onLine) {
     hasConnectionState = false
-    return
+    return false
   }
-
-  isLoadingState = true
 
   try {
     if (!window.maplibregl) {
@@ -26,9 +21,9 @@ export const loadMapLibre = async (): Promise<void> => {
   } catch (err) {
     console.error("Ошибка загрузки MapLibre GL:", err)
     hasConnectionState = false
-  } finally {
-    isLoadingState = false
+    return false
   }
+  return true
 }
 
 const loadScript = (src: string): Promise<void> => {

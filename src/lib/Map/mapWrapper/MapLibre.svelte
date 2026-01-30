@@ -54,7 +54,7 @@
 
   onMount(async () => {
     isLoading = true
-    await loadMapLibre()
+    hasConnection = await loadMapLibre(hasConnection)
     isLoading = false
 
     if (!window.maplibregl || map || !container) return
