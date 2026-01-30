@@ -59,13 +59,13 @@
 
     if (!window.maplibregl || map || !container) return
 
-    // map = new window.maplibregl.Map({
-    //   container,
-    //   style,
-    //   zoom,
-    //   center,
-    // })
-    // mapCtx.map = map
+    map = new window.maplibregl.Map({
+      container,
+      style,
+      zoom,
+      center,
+    })
+    mapCtx.map = map
   })
 </script>
 
