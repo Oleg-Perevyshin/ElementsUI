@@ -246,7 +246,7 @@
 
 <div
   id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
-  class={twMerge(`bg-blue flex h-full w-full items-center ${type == "logger" ? "gap-2" : ""} flex-col overflow-hidden`, wrapperClass)}
+  class={twMerge(`bg-blue flex h-full w-full items-center ${type == "logger" ? "gap-2" : ""} flex-col`, wrapperClass)}
 >
   {#if label.name}
     <h5 class={twMerge(`w-full px-4 text-center`, label.class)}>{label.name}</h5>
@@ -358,9 +358,7 @@
                     {/each}
                   </div>
                 {:else if column.action?.type == "select" && column.action?.select}
-                  {@const options = Array.isArray(row[column.key])
-                    ? row[column.key].map((option: string | number) => ({ id: crypto.randomUUID(), value: option, name: option }))
-                    : []}
+                  {@const options = Array.isArray(row[column.key]) ? row[column.key] : []}
 
                   <div class="relative w-full">
                     <button

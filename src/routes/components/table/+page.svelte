@@ -48,11 +48,21 @@
       ],
       body: [
         {
-          id: ["Value of id1", "Value of id2", "Value of id3", "Value of id4"],
+          id: [
+            { id: "Value of id1", name: "Value of id1", value: "Value of id1" },
+            { id: "Value of id2", name: "Value of id2", value: "Value of id2" },
+            { id: "Value of id3", name: "Value of id3", value: "Value of id3" },
+            { id: "Value of id4", name: "Value of id4", value: "Value of id4" },
+          ],
           device: "Value of device",
         },
         {
-          id: ["Value of id1", "Value of id2", "Value of id3", "Value of id4"],
+          id: [
+            { id: "Value of id1", name: "Value of id1", value: "Value of id1" },
+            { id: "Value of id2", name: "Value of id2", value: "Value of id2" },
+            { id: "Value of id3", name: "Value of id3", value: "Value of id3" },
+            { id: "Value of id4", name: "Value of id4", value: "Value of id4" },
+          ],
           device: "Value of device",
         },
       ],

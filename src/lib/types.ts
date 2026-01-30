@@ -188,6 +188,7 @@ export interface ISelectProps<T = unknown> {
   label?: { name?: string; class?: string }
   componentClass?: string
   type?: "select" | "buttons" | "input"
+  valueType?: "text" | "number"
   value?: ISelectOption<T> | null
   options?: ISelectOption<T>[]
   bitMode?: boolean
@@ -256,10 +257,15 @@ export interface ITextFieldProps {
   }
 }
 /* ********************************************************** */
+export interface IProgressDataObject {
+  name: string
+  value: number
+  timestamp?: Date
+}
 export interface IProgressBarProps {
   id?: string
   label?: { name?: string; class?: string }
-  value?: number | number[] | null
+  value?: IProgressDataObject[] | null
   number?: {
     minNum?: number
     maxNum?: number

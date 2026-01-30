@@ -21,20 +21,6 @@
   const DeviceVariables = getContext<{ id: string; value: string; name: string }[]>("DeviceVariables")
   let VARIABLE_OPTIONS = $derived(DeviceVariables && Array.isArray(DeviceVariables) ? DeviceVariables : [])
 
-  type ValueTypeOption = {
-    id: string
-    value: "text" | "number"
-    name: string
-    class: string
-  }
-  let currentValueType = $derived(
-    !component.properties.options[0]
-      ? ($optionsStore.SELECT_VALUE_TYPE_OPTIONS[0] as ValueTypeOption)
-      : typeof component.properties.options[0].value === "number"
-        ? $optionsStore.SELECT_VALUE_TYPE_OPTIONS[1]
-        : ($optionsStore.SELECT_VALUE_TYPE_OPTIONS[0] as ValueTypeOption),
-  )
-
   let Header: ISelectOption = $derived(
     $optionsStore.HEADER_OPTIONS.find((h) => h.value === component.eventHandler.Header) ?? {
       id: "",
@@ -125,16 +111,16 @@
         type="buttons"
         disabled={component.properties.bitMode}
         options={$optionsStore.SELECT_VALUE_TYPE_OPTIONS}
-        value={currentValueType}
+        value={$optionsStore.SELECT_VALUE_TYPE_OPTIONS.find((t) => t.value === component.properties.valueType)}
         onUpdate={(value) => {
-          currentValueType = value as ValueTypeOption
           const options = [...(component.properties?.options || [])]
-          const newType = value.value
+          const newType = value.value ?? "text"
           options.forEach((option) => {
             if (newType === "number") option.value = option.value !== undefined ? Number(option.value) : 0
             else option.value = option.value !== undefined ? String(option.value) : ""
           })
           updateProperty("options", options, component, onPropertyChange)
+          updateProperty("valueType", newType, component, onPropertyChange)
         }}
       />
       {#if component.properties.bitMode}
@@ -174,7 +160,7 @@
         options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
         onChange={(value) => {
           updateProperty("bitMode", value, component, onPropertyChange)
-          currentValueType = $optionsStore.SELECT_VALUE_TYPE_OPTIONS[1] as ValueTypeOption
+          updateProperty("valueType", "number", component, onPropertyChange)
           const options = [...(component.properties?.options || [])]
           const newType = $optionsStore.SELECT_VALUE_TYPE_OPTIONS[1].value
           options.forEach((option) => {
@@ -227,7 +213,7 @@
           wrapperClass="!w-3/10"
           value={option.value}
           readonly={component.properties.bitMode}
-          type={currentValueType.value}
+          type={component.properties.valueType}
           onUpdate={(value) => {
             const options = [...(component.properties?.options || [])]
             options[index]["value"] = value
@@ -314,16 +300,17 @@
         type="buttons"
         disabled={component.properties.bitMode}
         options={$optionsStore.SELECT_VALUE_TYPE_OPTIONS}
-        value={currentValueType}
+        value={$optionsStore.SELECT_VALUE_TYPE_OPTIONS.find((t) => t.value === component.properties.valueType)}
         onUpdate={(value) => {
-          currentValueType = value as ValueTypeOption
           const options = [...(component.properties?.options || [])]
-          const newType = value.value
+          const newType = value.value ?? "text"
+
           options.forEach((option) => {
             if (newType === "number") option.value = option.value !== undefined ? Number(option.value) : 0
             else option.value = option.value !== undefined ? String(option.value) : ""
           })
           updateProperty("options", options, component, onPropertyChange)
+          updateProperty("valueType", newType, component, onPropertyChange)
         }}
       />
 
@@ -334,7 +321,7 @@
         options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
         onChange={(value) => {
           updateProperty("bitMode", value, component, onPropertyChange)
-          currentValueType = $optionsStore.SELECT_VALUE_TYPE_OPTIONS[1] as ValueTypeOption
+          updateProperty("valueType", "number", component, onPropertyChange)
           const options = [...(component.properties?.options || [])]
           const newType = $optionsStore.SELECT_VALUE_TYPE_OPTIONS[1].value
           options.forEach((option) => {
@@ -403,7 +390,7 @@
           wrapperClass="!w-3/10"
           value={option.value}
           readonly={component.properties.bitMode}
-          type={currentValueType.value}
+          type={component.properties.valueType}
           onUpdate={(value) => {
             const options = [...(component.properties?.options || [])]
             options[index]["value"] = value
@@ -414,7 +401,7 @@
           label={{ name: $t("constructor.props.optionclass") }}
           wrapperClass="!w-3/10"
           value={option.class}
-          type={currentValueType.value}
+          type={component.properties.valueType}
           onUpdate={(value) => {
             const options = [...(component.properties?.options || [])]
             options[index]["class"] = value as string

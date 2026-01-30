@@ -75,13 +75,18 @@ export const optionsStore = derived(t, ($t) => {
     ],
 
     TEXT_COLOR_OPTIONS: [
-      { id: id(), name: "", value: "text-[#333] dark:text-[#e2e3e7]", class: "bg-[var(--shadow-color)] dark:bg-[#e2e3e7] " },
-      { id: id(), name: "", value: "text-red-500 dark:text-red-400", class: "bg-red-500 dark:bg-red-400" },
-      { id: id(), name: "", value: "text-yellow-500 dark:text-yellow-400", class: "bg-yellow-500 dark:bg-yellow-400" },
-      { id: id(), name: "", value: "text-green-500 dark:text-green-400", class: "bg-green-500 dark:bg-green-400" },
-      { id: id(), name: "", value: "text-blue-500 dark:text-blue-400", class: "bg-blue-500 dark:bg-blue-400" },
-      { id: id(), name: "", value: "text-purple-500 dark:text-purple-400", class: "bg-purple-500 dark:bg-purple-400" },
-      { id: id(), name: "", value: "text-gray-500 dark:text-gray-400", class: "bg-gray-500 dark:bg-gray-400" },
+      {
+        id: id(),
+        name: "",
+        value: "text-[#333] dark:text-[#e2e3e7]",
+        class: "bg-[var(--shadow-color)] dark:bg-[#e2e3e7] border-[var(--shadow-color)] dark:border-[#e2e3e7]",
+      },
+      { id: id(), name: "", value: "text-red-500 dark:text-red-400", class: "bg-red-500 dark:bg-red-400 border-red-500 dark:border-red-400" },
+      { id: id(), name: "", value: "text-yellow-500 dark:text-yellow-400", class: "bg-yellow-500 dark:bg-yellow-400 border-yellow-500 dark:border-yellow-400" },
+      { id: id(), name: "", value: "text-green-500 dark:text-green-400", class: "bg-green-500 dark:bg-green-400 border-green-500 dark:border-green-400" },
+      { id: id(), name: "", value: "text-blue-500 dark:text-blue-400", class: "bg-blue-500 dark:bg-blue-400 border-blue-500 dark:border-blue-400" },
+      { id: id(), name: "", value: "text-purple-500 dark:text-purple-400", class: "bg-purple-500 dark:bg-purple-400 border-purple-500 dark:border-purple-400" },
+      { id: id(), name: "", value: "text-gray-500 dark:text-gray-400", class: "bg-gray-500 dark:bg-gray-400 border-gray-500 dark:border-gray-400" },
     ],
 
     TEXT_ALIGN_OPTIONS: [

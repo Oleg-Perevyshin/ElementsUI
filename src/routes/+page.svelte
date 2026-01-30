@@ -322,10 +322,10 @@ input::placeholder {
     {#each palette as color}
       <div class="border-t border-(--border-color) py-2">{color.name}</div>
 
-      <div class="bg-[{color.lightColor}] border-x border-t border-(--border-color)"></div>
+      <div class="border-x border-t border-(--border-color)" style="background-color: {color.lightColor};"></div>
       <div class="border-t border-(--border-color) py-2">{color.lightColor}</div>
 
-      <div class="bg-[{color.darkColor}] border-x border-t border-(--border-color)"></div>
+      <div class="border-x border-t border-(--border-color)" style="background-color: {color.darkColor};"></div>
       <div class="border-t border-(--border-color) py-2">{color.darkColor}</div>
     {/each}
   </div>

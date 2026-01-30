@@ -25,7 +25,7 @@
   let currentTabIndex: number = $derived(activeTab)
 </script>
 
-<div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class="w-full h-full flex flex-col rounded-2xl bg-(--back-color) overflow-hidden">
+<div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class="w-full h-full flex flex-col rounded-xl bg-(--back-color) overflow-hidden">
   <!-- Вкладки -->
   <div
     class="{twMerge(`z-40 flex h-fit items-center rounded-t-2xl overflow-x-auto px-1`, wrapperClass)} 
