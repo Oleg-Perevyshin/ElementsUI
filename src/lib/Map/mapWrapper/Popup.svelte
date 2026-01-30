@@ -32,8 +32,9 @@
 
     popup = new window.maplibregl.Popup(options)
     popup.setDOMContent(container)
+  })
 
-    // Привязываем к маркеру
+  $effect(() => {
     if (markerContext?.marker) {
       markerContext.marker.setPopup(popup)
     }
