@@ -1,4 +1,0 @@
-import"../chunks/BkPaZSxt.js";import{p,b as m,d as i,g as o,a as c,u,e as l}from"../chunks/7KN1XG01.js";import{s as d}from"../chunks/jQt6__yx.js";import{J as f,f as g,u as x}from"../chunks/B63XpyKO.js";import{C as y,f as b}from"../chunks/gwbIRn5Y.js";function w(r,a){p(a,!0);let e=m(i({id:crypto.randomUUID(),type:"Joystick",access:"full",properties:{id:crypto.randomUUID(),wrapperClass:"bg-blue",label:{name:"Label",class:"text-center"},axes:[{name:"Roll",minNum:-100,maxNum:100},{name:"Pitch",minNum:-100,maxNum:100},{name:"Yaw",minNum:-100,maxNum:100}]},eventHandler:{Header:"SET",Argument:"Save",Variables:[]},position:{row:0,col:0,width:0,height:0},parentId:""})),s=u(()=>`
-<UI.Joystick
-${b(o(e).properties)} 
-/>`);y(r,{get codeText(){return o(s)},component:t=>{f(t,d(()=>o(e).properties))},componentProps:t=>{g(t,{get component(){return o(e)},onPropertyChange:n=>l(e,x(o(e),n),!0),forConstructor:!0})}}),c()}export{w as component};
