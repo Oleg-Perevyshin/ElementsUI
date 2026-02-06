@@ -6,6 +6,7 @@
   import { optionsStore } from "../options"
   import ButtonDelete from "$lib/libIcons/ButtonDelete.svelte"
   import ButtonAdd from "$lib/libIcons/ButtonAdd.svelte"
+  import CommonSnippets from "$lib/CommonSnippets.svelte"
 
   const {
     component,
@@ -26,367 +27,235 @@
   )
 </script>
 
-{#if forConstructor}
-  <div class="relative flex flex-row items-start justify-center">
-    <!-- Сообщение для отправки в ws по нажатию кнопки -->
-    <div class="flex w-1/3 flex-col items-center px-2">
-      <UI.Select
-        label={{ name: $t("constructor.props.variable") }}
-        options={VARIABLE_OPTIONS}
-        value={VARIABLE_OPTIONS.find((opt) => opt.value === component.properties.id)}
-        onUpdate={(value) => {
-          updateProperty("id", value.value as string, component, onPropertyChange)
-          onPropertyChange({ name: value.name?.split("—")[1].trim(), eventHandler: { Variables: [value.value as string] } })
+{#snippet SwitchType()}
+  <UI.Select
+    wrapperClass="!h-14"
+    label={{ name: $t("constructor.props.type") }}
+    disabled={component.properties.bitMode}
+    type="buttons"
+    options={$optionsStore.SWITCH_OPTIONS}
+    value={$optionsStore.SWITCH_OPTIONS.find((option) => option.value == component.properties.type)}
+    onUpdate={(option) => updateProperty("type", (option as UI.ISelectOption).value as string, component, onPropertyChange)}
+  />
+{/snippet}
+
+{#snippet SwitchCaptions()}
+  <UI.Input
+    label={{ name: $t("constructor.props.caption.left") }}
+    value={component.properties.label.captionLeft}
+    onUpdate={(value) => updateProperty("label.captionLeft", value as string, component, onPropertyChange)}
+  />
+  <UI.Input
+    label={{ name: $t("constructor.props.caption.right") }}
+    value={component.properties.label.captionRight}
+    onUpdate={(value) => updateProperty("label.captionRight", value as string, component, onPropertyChange)}
+  />
+{/snippet}
+
+{#snippet SwitchDisabled()}
+  <UI.Switch
+    wrapperClass="bg-blue"
+    label={{ name: $t("constructor.props.disabled") }}
+    value={component.properties.options[0].disabled}
+    options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
+    onChange={(value) => {
+      const options = [...(component.properties?.options || [])]
+      options[0]["disabled"] = value
+      updateProperty("options", options, component, onPropertyChange)
+    }}
+  />
+{/snippet}
+
+{#snippet SwitchColors()}
+  <UI.Select
+    wrapperClass="!h-14"
+    label={{ name: $t("constructor.props.colors") }}
+    type="buttons"
+    options={$optionsStore.COLOR_OPTIONS.filter((option) => option.value !== "bg-max" && option.value !== "bg-gray")}
+    value={$optionsStore.COLOR_OPTIONS.find((c) =>
+      (c.value as string).includes(component.properties.options[0].class.split(" ").find((cls: string) => cls.startsWith("bg-"))),
+    )}
+    onUpdate={(option) => {
+      const options = [...(component.properties?.options || [])]
+      options[0]["class"] = (option as UI.ISelectOption).value
+      updateProperty("options", options, component, onPropertyChange)
+    }}
+  />
+{/snippet}
+
+{#snippet SwitchBitmode()}
+  <UI.Switch
+    wrapperClass="bg-blue"
+    label={{ name: $t("constructor.props.bitmode") }}
+    value={component.properties.bitMode}
+    options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
+    onChange={(value) => {
+      updateProperty("bitMode", value, component, onPropertyChange)
+      if (!component.properties.bitMode) updateProperty("value", 1, component, onPropertyChange)
+      if (component.properties.bitMode) updateProperty("type", "vertical", component, onPropertyChange)
+    }}
+  />
+{/snippet}
+
+{#snippet SwitchOptions()}
+  <hr class="border-gray-400" />
+
+  <!-- Настройки опций -->
+  <div class="space-y-4">
+    <div class="m-0 flex items-center justify-center gap-2">
+      <h4>{$t("constructor.props.bits.title")}</h4>
+      <UI.Button
+        wrapperClass="w-8"
+        content={{ icon: ButtonAdd }}
+        onClick={() => {
+          const newOption: ISelectOption = {
+            id: crypto.randomUUID(),
+            name: component.properties?.options.length,
+            value: component.properties?.options.length,
+            class: "bg-blue",
+          }
+          const options = [...(component.properties?.options || []), newOption]
+          updateProperty("options", options, component, onPropertyChange)
         }}
-      />
-      <UI.Select
-        label={{ name: $t("constructor.props.action") }}
-        type="buttons"
-        value={$optionsStore.SHORT_ARGUMENT_OPTION.find((h) => h.value === component.eventHandler.Argument)}
-        options={$optionsStore.SHORT_ARGUMENT_OPTION}
-        onUpdate={(option) => {
-          onPropertyChange({ eventHandler: { Argument: option.value as string } })
-        }}
-      />
-      <UI.Select
-        label={{ name: $t("constructor.props.access") }}
-        type="buttons"
-        options={$optionsStore.ACCESS_OPTION}
-        value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.access)}
-        onUpdate={(option) => onPropertyChange({ access: option.value })}
       />
     </div>
 
-    <div class="flex w-1/3 flex-col px-2">
-      <UI.Select
-        wrapperClass="!h-14"
-        label={{ name: $t("constructor.props.type") }}
-        disabled={component.properties.bitMode}
-        type="buttons"
-        options={$optionsStore.SWITCH_OPTIONS}
-        value={$optionsStore.SWITCH_OPTIONS.find((option) => option.value == component.properties.type)}
-        onUpdate={(option) => updateProperty("type", option.value as string, component, onPropertyChange)}
-      />
-      {#if !component.properties.bitMode}
+    {#each component.properties.options || [] as option, index (option.id)}
+      <div class="m-0 flex items-end justify-around gap-2 border-gray-400">
         <UI.Input
-          label={{ name: $t("constructor.props.caption.left") }}
-          value={component.properties.label.captionLeft}
-          onUpdate={(value) => updateProperty("label.captionLeft", value as string, component, onPropertyChange)}
-        />
-        <UI.Input
-          label={{ name: $t("constructor.props.caption.right") }}
-          value={component.properties.label.captionRight}
-          onUpdate={(value) => updateProperty("label.captionRight", value as string, component, onPropertyChange)}
-        />
-
-        <UI.Switch
-          wrapperClass="bg-blue"
-          label={{ name: $t("constructor.props.disabled") }}
-          value={component.properties.options[0].disabled}
-          options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-          onChange={(value) => {
+          label={{ name: $t("constructor.props.optionname") }}
+          wrapperClass="!w-3/10"
+          value={option.name}
+          maxlength={4}
+          onUpdate={(value) => {
             const options = [...(component.properties?.options || [])]
-            options[0]["disabled"] = value
+            options[index]["name"] = value
             updateProperty("options", options, component, onPropertyChange)
           }}
         />
-      {/if}
-    </div>
-
-    <div class="flex w-1/3 flex-col px-2">
-      <UI.Input
-        label={{ name: $t("constructor.props.label") }}
-        value={component.properties.label.name}
-        onUpdate={(value) => updateProperty("label.name", value as string, component, onPropertyChange)}
-      />
-      {#if !component.properties.bitMode}
+        <UI.Input
+          label={{ name: $t("constructor.props.optionposition") }}
+          wrapperClass="!w-3/10"
+          value={option.value}
+          type="number"
+          number={{ minNum: 0, maxNum: 31, step: 1 }}
+          onUpdate={(value) => {
+            const options = [...(component.properties?.options || [])]
+            options[index]["value"] = value
+            updateProperty("options", options, component, onPropertyChange)
+          }}
+        />
         <UI.Select
-          wrapperClass="!h-14"
+          wrapperClass="w-80 h-14.5"
           label={{ name: $t("constructor.props.colors") }}
           type="buttons"
           options={$optionsStore.COLOR_OPTIONS.filter((option) => option.value !== "bg-max" && option.value !== "bg-gray")}
-          value={$optionsStore.COLOR_OPTIONS.find((c) =>
-            (c.value as string).includes(component.properties.options[0].class.split(" ").find((cls: string) => cls.startsWith("bg-"))),
-          )}
+          value={$optionsStore.COLOR_OPTIONS.find((c) => (c.value as string).includes(option.class.split(" ").find((cls: string) => cls.startsWith("bg-"))))}
           onUpdate={(option) => {
             const options = [...(component.properties?.options || [])]
-            options[0]["class"] = option.value
+            options[index]["class"] = (option as UI.ISelectOption).value
             updateProperty("options", options, component, onPropertyChange)
           }}
         />
-      {/if}
-      <UI.Switch
-        wrapperClass="bg-blue"
-        label={{ name: $t("constructor.props.bitmode") }}
-        value={component.properties.bitMode}
-        options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-        onChange={(value) => {
-          updateProperty("bitMode", value, component, onPropertyChange)
-          if (!component.properties.bitMode) updateProperty("value", 1, component, onPropertyChange)
-          if (component.properties.bitMode) updateProperty("type", "vertical", component, onPropertyChange)
-        }}
-      />
-    </div>
-  </div>
-  {#if component.properties.bitMode}
-    <hr class="border-gray-400" />
-
-    <!-- Настройки опций -->
-    <div class="space-y-4">
-      <div class="m-0 flex items-center justify-center gap-2">
-        <h4>{$t("constructor.props.bits.title")}</h4>
+        <UI.Switch
+          wrapperClass=" w-1/10 bg-blue"
+          label={{ name: $t("constructor.props.disabled") }}
+          value={option.disabled}
+          options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
+          onChange={(value) => {
+            const options = [...(component.properties?.options || [])]
+            options[index]["disabled"] = value
+            updateProperty("options", options, component, onPropertyChange)
+          }}
+        />
         <UI.Button
           wrapperClass="w-8"
-          content={{ icon: ButtonAdd }}
+          content={{ icon: ButtonDelete }}
           onClick={() => {
-            const newOption: ISelectOption = {
-              id: crypto.randomUUID(),
-              name: component.properties?.options.length,
-              value: component.properties?.options.length,
-              class: "bg-blue",
-            }
-            const options = [...(component.properties?.options || []), newOption]
+            const options = [...(component.properties?.options || [])]
+            options.splice(index, 1)
             updateProperty("options", options, component, onPropertyChange)
           }}
         />
       </div>
+    {/each}
+  </div>
+{/snippet}
 
-      {#each component.properties.options || [] as option, index (option.id)}
-        <div class="m-0 flex items-end justify-around gap-2 border-gray-400">
-          <UI.Input
-            label={{ name: $t("constructor.props.optionname") }}
-            wrapperClass="!w-3/10"
-            value={option.name}
-            maxlength={4}
-            onUpdate={(value) => {
-              const options = [...(component.properties?.options || [])]
-              options[index]["name"] = value
-              updateProperty("options", options, component, onPropertyChange)
-            }}
-          />
-          <UI.Input
-            label={{ name: $t("constructor.props.optionposition") }}
-            wrapperClass="!w-3/10"
-            value={option.value}
-            type="number"
-            number={{ minNum: 0, maxNum: 31, step: 1 }}
-            onUpdate={(value) => {
-              const options = [...(component.properties?.options || [])]
-              options[index]["value"] = value
-              updateProperty("options", options, component, onPropertyChange)
-            }}
-          />
-          <UI.Select
-            wrapperClass="w-80 h-14.5"
-            label={{ name: $t("constructor.props.colors") }}
-            type="buttons"
-            options={$optionsStore.COLOR_OPTIONS.filter((option) => option.value !== "bg-max" && option.value !== "bg-gray")}
-            value={$optionsStore.COLOR_OPTIONS.find((c) => (c.value as string).includes(option.class.split(" ").find((cls: string) => cls.startsWith("bg-"))))}
-            onUpdate={(option) => {
-              const options = [...(component.properties?.options || [])]
-              options[index]["class"] = option.value
-              updateProperty("options", options, component, onPropertyChange)
-            }}
-          />
-          <UI.Switch
-            wrapperClass=" w-1/10 bg-blue"
-            label={{ name: $t("constructor.props.disabled") }}
-            value={option.disabled}
-            options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-            onChange={(value) => {
-              const options = [...(component.properties?.options || [])]
-              options[index]["disabled"] = value
-              updateProperty("options", options, component, onPropertyChange)
-            }}
-          />
-          <UI.Button
-            wrapperClass="w-8"
-            content={{ icon: ButtonDelete }}
-            onClick={() => {
-              const options = [...(component.properties?.options || [])]
-              options.splice(index, 1)
-              updateProperty("options", options, component, onPropertyChange)
-            }}
-          />
-        </div>
-      {/each}
+{#snippet SwitchHeight()}
+  <UI.Input
+    label={{ name: $t("constructor.props.height") }}
+    value={component.properties.height}
+    onUpdate={(value) => updateProperty("height", value as string, component, onPropertyChange)}
+  />
+{/snippet}
+
+{#snippet SwitchValue()}
+  <UI.Input
+    label={{ name: $t("constructor.props.value") }}
+    value={component.properties.value}
+    type="number"
+    number={{ minNum: 0, maxNum: component.properties.bitMode ? Math.pow(2, 32) : 1, step: 1 }}
+    onUpdate={(value) => updateProperty("value", value as number, component, onPropertyChange)}
+  />
+{/snippet}
+
+{#if forConstructor}
+  <div class="relative flex flex-row items-start justify-center">
+    <div class="flex w-1/3 flex-col px-2">
+      <CommonSnippets snippet="Variable" {VARIABLE_OPTIONS} {component} {onPropertyChange} />
+      <CommonSnippets snippet="EventHandlerArgument" {component} {onPropertyChange} />
+      <CommonSnippets snippet="Access" {component} {onPropertyChange} />
     </div>
+
+    <div class="flex w-1/3 flex-col px-2">
+      {@render SwitchType()}
+      {#if !component.properties.bitMode}
+        {@render SwitchCaptions()}
+        {@render SwitchDisabled()}
+      {/if}
+    </div>
+
+    <div class="flex w-1/3 flex-col px-2">
+      <CommonSnippets snippet="Label" {component} {onPropertyChange} />
+      {#if !component.properties.bitMode}
+        {@render SwitchColors()}
+      {/if}
+      {@render SwitchBitmode()}
+    </div>
+  </div>
+  {#if component.properties.bitMode}
+    {@render SwitchOptions()}
   {/if}
 {:else}
   <div class="relative flex flex-row items-start justify-center">
-    <!-- Сообщение для отправки в ws по нажатию кнопки -->
-    <div class="flex w-1/3 flex-col items-center px-2">
-      <UI.Input
-        label={{ name: $t("constructor.props.id") }}
-        value={component.properties.id}
-        onUpdate={(value) => updateProperty("id", value as string, component, onPropertyChange)}
-      />
-      <UI.Select
-        label={{ name: $t("constructor.props.access") }}
-        type="buttons"
-        options={$optionsStore.ACCESS_OPTION}
-        value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.access)}
-        onUpdate={(option) => onPropertyChange({ access: option.value })}
-      />
-      <UI.Input
-        label={{ name: $t("constructor.props.wrapperclass") }}
-        value={component.properties.wrapperClass}
-        onUpdate={(value) => updateProperty("wrapperClass", value as string, component, onPropertyChange)}
-      />
+    <div class="flex w-1/3 flex-col px-2">
+      <CommonSnippets snippet="Identificator" {component} {onPropertyChange} />
+      <CommonSnippets snippet="Access" {component} {onPropertyChange} />
+      <CommonSnippets snippet="WrapperClass" {component} {onPropertyChange} />
+
       {#if !component.properties.bitMode}
-        <UI.Select
-          wrapperClass="!h-14"
-          label={{ name: $t("constructor.props.colors") }}
-          type="buttons"
-          options={$optionsStore.COLOR_OPTIONS.filter((option) => option.value !== "bg-max" && option.value !== "bg-gray")}
-          value={$optionsStore.COLOR_OPTIONS.find((c) =>
-            (c.value as string).includes(component.properties.options[0].class.split(" ").find((cls: string) => cls.startsWith("bg-"))),
-          )}
-          onUpdate={(option) => {
-            const options = [...(component.properties?.options || [])]
-            options[0]["class"] = option.value
-            updateProperty("options", options, component, onPropertyChange)
-          }}
-        />
+        {@render SwitchColors()}
       {/if}
     </div>
     <div class="flex w-1/3 flex-col px-2">
-      <UI.Input
-        label={{ name: $t("constructor.props.label") }}
-        value={component.properties.label.name}
-        onUpdate={(value) => updateProperty("label.name", value as string, component, onPropertyChange)}
-      />
+      <CommonSnippets snippet="Label" {component} {onPropertyChange} />
+
       {#if !component.properties.bitMode}
-        <UI.Input
-          label={{ name: $t("constructor.props.caption.left") }}
-          value={component.properties.label.captionLeft}
-          onUpdate={(value) => updateProperty("label.captionLeft", value as string, component, onPropertyChange)}
-        />
-        <UI.Input
-          label={{ name: $t("constructor.props.caption.right") }}
-          value={component.properties.label.captionRight}
-          onUpdate={(value) => updateProperty("label.captionRight", value as string, component, onPropertyChange)}
-        />
+        {@render SwitchCaptions()}
       {/if}
-      <UI.Select
-        wrapperClass="!h-14"
-        label={{ name: $t("constructor.props.type") }}
-        disabled={component.properties.bitMode}
-        type="buttons"
-        options={$optionsStore.SWITCH_OPTIONS}
-        value={$optionsStore.SWITCH_OPTIONS.find((option) => option.value == component.properties.type)}
-        onUpdate={(option) => updateProperty("type", option.value as string, component, onPropertyChange)}
-      />
+      {@render SwitchType()}
     </div>
     <div class="flex w-1/3 flex-col px-2">
-      <UI.Input
-        label={{ name: $t("constructor.props.height") }}
-        value={component.properties.height}
-        onUpdate={(value) => updateProperty("height", value as string, component, onPropertyChange)}
-      />
-      <UI.Input
-        label={{ name: $t("constructor.props.value") }}
-        value={component.properties.value}
-        type="number"
-        number={{ minNum: 0, maxNum: component.properties.bitMode ? Math.pow(2, 32) : 1, step: 1 }}
-        onUpdate={(value) => updateProperty("value", value as number, component, onPropertyChange)}
-      />
+      {@render SwitchHeight()}
+      {@render SwitchValue()}
       {#if !component.properties.bitMode}
-        <UI.Switch
-          wrapperClass="bg-blue"
-          label={{ name: $t("constructor.props.disabled") }}
-          value={component.properties.options[0].disabled}
-          options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-          onChange={(value) => {
-            const options = [...(component.properties?.options || [])]
-            options[0]["disabled"] = value
-            updateProperty("options", options, component, onPropertyChange)
-          }}
-        />
+        {@render SwitchDisabled()}
       {/if}
-      <UI.Switch
-        wrapperClass="bg-blue"
-        label={{ name: $t("constructor.props.bitmode") }}
-        value={component.properties.bitMode}
-        options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-        onChange={(value) => {
-          updateProperty("bitMode", value, component, onPropertyChange)
-          if (!component.properties.bitMode) updateProperty("value", 1, component, onPropertyChange)
-          if (component.properties.bitMode) updateProperty("type", "vertical", component, onPropertyChange)
-        }}
-      />
+      {@render SwitchBitmode()}
     </div>
   </div>
   {#if component.properties.bitMode}
-    <hr class="border-gray-400" />
-
-    <!-- Настройки опций -->
-    <div class="space-y-4">
-      <div class="m-0 flex items-center justify-center gap-2">
-        <h4>{$t("constructor.props.bits.title")}</h4>
-        <UI.Button
-          wrapperClass="w-8"
-          content={{ icon: ButtonAdd }}
-          onClick={() => {
-            const newOption: ISelectOption = {
-              id: crypto.randomUUID(),
-              name: `Option ${component.properties?.options.length + 1}`,
-              value: component.properties?.options.length,
-              class: "bg-blue",
-            }
-            const options = [...(component.properties?.options || []), newOption]
-            updateProperty("options", options, component, onPropertyChange)
-          }}
-        />
-      </div>
-
-      {#each component.properties.options || [] as option, index (option.id)}
-        <div class="m-0 flex items-end justify-around gap-2 border-gray-400">
-          <UI.Input
-            label={{ name: $t("constructor.props.optionname") }}
-            wrapperClass="!w-3/10"
-            value={option.name}
-            onUpdate={(value) => {
-              const options = [...(component.properties?.options || [])]
-              options[index]["name"] = value
-              updateProperty("options", options, component, onPropertyChange)
-            }}
-          />
-          <UI.Input
-            label={{ name: $t("constructor.props.optionvalue") }}
-            wrapperClass="!w-3/10"
-            value={option.value}
-            type="number"
-            number={{ minNum: 0, maxNum: 31, step: 1 }}
-            onUpdate={(value) => {
-              const options = [...(component.properties?.options || [])]
-              options[index]["value"] = value
-              updateProperty("options", options, component, onPropertyChange)
-            }}
-          />
-          <UI.Select
-            wrapperClass="w-80 h-14.5"
-            label={{ name: $t("constructor.props.colors") }}
-            type="buttons"
-            options={$optionsStore.COLOR_OPTIONS.filter((option) => option.value !== "bg-max" && option.value !== "bg-gray")}
-            value={$optionsStore.COLOR_OPTIONS.find((c) => (c.value as string).includes(option.class.split(" ").find((cls: string) => cls.startsWith("bg-"))))}
-            onUpdate={(option) => {
-              const options = [...(component.properties?.options || [])]
-              options[index]["class"] = option.value
-              updateProperty("options", options, component, onPropertyChange)
-            }}
-          />
-          <UI.Button
-            wrapperClass="w-8"
-            content={{ icon: ButtonDelete }}
-            onClick={() => {
-              const options = [...(component.properties?.options || [])]
-              options.splice(index, 1)
-              updateProperty("options", options, component, onPropertyChange)
-            }}
-          />
-        </div>
-      {/each}
-    </div>
+    {@render SwitchOptions()}
   {/if}
 {/if}

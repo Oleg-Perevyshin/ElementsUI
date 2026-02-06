@@ -5,6 +5,7 @@
   import * as UI from "$lib"
   import { optionsStore } from "../options"
   import { twMerge } from "tailwind-merge"
+  import CommonSnippets from "$lib/CommonSnippets.svelte"
 
   const {
     component,
@@ -32,165 +33,94 @@
   )
 </script>
 
+{#snippet ProgressBarType()}
+  <UI.Select
+    wrapperClass="!h-14"
+    label={{ name: $t("constructor.props.type") }}
+    disabled={component.properties.bitMode}
+    type="buttons"
+    options={$optionsStore.SWITCH_OPTIONS.filter((o) => o.value !== "checkbox")}
+    value={$optionsStore.SWITCH_OPTIONS.find((option) => option.value == component.properties.type)}
+    onUpdate={(option) => updateProperty("type", (option as UI.ISelectOption).value as string, component, onPropertyChange)}
+  />
+{/snippet}
+
+{#snippet ProgressBarMinMax()}
+  <UI.Input
+    label={{ name: $t("constructor.props.min") }}
+    value={component.properties.number.minNum as number}
+    type="number"
+    onUpdate={(value) => {
+      updateProperty("number.minNum", Number(value), component, onPropertyChange)
+      updateProperty(
+        "value",
+        component.properties.number.minNum + (component.properties.number.maxNum - component.properties.number.minNum) / 3,
+        component,
+        onPropertyChange,
+      )
+    }}
+  />
+  <UI.Input
+    label={{ name: $t("constructor.props.max") }}
+    value={component.properties.number.maxNum as number}
+    type="number"
+    onUpdate={(value) => {
+      updateProperty("number.maxNum", Number(value), component, onPropertyChange)
+      updateProperty(
+        "value",
+        component.properties.number.minNum + (component.properties.number.maxNum - component.properties.number.minNum) / 3,
+        component,
+        onPropertyChange,
+      )
+    }}
+  />
+  <UI.Input
+    label={{ name: $t("constructor.props.units") }}
+    value={component.properties.number.units}
+    onUpdate={(value) => updateProperty("number.units", value, component, onPropertyChange)}
+  />
+{/snippet}
+
+{#snippet ProgressBarValue()}
+  <UI.Input
+    label={{ name: $t("constructor.props.value") }}
+    type="number"
+    number={{ minNum: component.properties.number.minNum, maxNum: component.properties.number.maxNum, step: 1 }}
+    value={component.properties.value}
+    onUpdate={(value) => updateProperty("value", value as string, component, onPropertyChange)}
+  />
+{/snippet}
+
 {#if forConstructor}
   <div class="relative flex flex-row items-start justify-center">
-    <div class="flex w-1/3 flex-col items-center px-2">
-      <UI.Select
-        label={{ name: $t("constructor.props.variable") }}
-        options={VARIABLE_OPTIONS}
-        value={VARIABLE_OPTIONS.find((opt) => opt.value === component.properties.id)}
-        onUpdate={(value) => {
-          updateProperty("id", value.value as string, component, onPropertyChange)
-          onPropertyChange({ name: value.name?.split("—")[1].trim(), eventHandler: { Variables: [value.value as string] } })
-        }}
-      />
-      <UI.Select
-        wrapperClass="!h-14"
-        label={{ name: $t("constructor.props.type") }}
-        disabled={component.properties.bitMode}
-        type="buttons"
-        options={$optionsStore.SWITCH_OPTIONS.filter((o) => o.value !== "checkbox")}
-        value={$optionsStore.SWITCH_OPTIONS.find((option) => option.value == component.properties.type)}
-        onUpdate={(option) => updateProperty("type", option.value as string, component, onPropertyChange)}
-      />
+    <div class="flex w-1/3 flex-col px-2">
+      <CommonSnippets snippet="Variable" {VARIABLE_OPTIONS} {component} {onPropertyChange} />
+      {@render ProgressBarType()}
     </div>
     <div class="flex w-1/3 flex-col px-2">
-      <UI.Input
-        label={{ name: $t("constructor.props.min") }}
-        value={component.properties.number.minNum as number}
-        type="number"
-        onUpdate={(value) => {
-          // if ((value as number) >= component.properties.number.maxNum) {
-          //   value = component.properties.number.maxNum - 1
-          // }
-          updateProperty("number.minNum", Number(value), component, onPropertyChange)
-          updateProperty(
-            "value",
-            component.properties.number.minNum + (component.properties.number.maxNum - component.properties.number.minNum) / 3,
-            component,
-            onPropertyChange,
-          )
-        }}
-      />
-      <UI.Input
-        label={{ name: $t("constructor.props.max") }}
-        value={component.properties.number.maxNum as number}
-        type="number"
-        onUpdate={(value) => {
-          // if ((value as number) <= component.properties.number.minNum) {
-          //   value = component.properties.number.minNum + 1
-          // }
-          updateProperty("number.maxNum", Number(value), component, onPropertyChange)
-          updateProperty(
-            "value",
-            component.properties.number.minNum + (component.properties.number.maxNum - component.properties.number.minNum) / 3,
-            component,
-            onPropertyChange,
-          )
-        }}
-      />
-      <UI.Input
-        label={{ name: $t("constructor.props.units") }}
-        value={component.properties.number.units}
-        onUpdate={(value) => updateProperty("number.units", value, component, onPropertyChange)}
-      />
+      {@render ProgressBarMinMax()}
     </div>
     <div class="flex w-1/3 flex-col px-2">
-      <UI.Input
-        label={{ name: $t("constructor.props.label") }}
-        value={component.properties.label.name}
-        onUpdate={(value) => updateProperty("label.name", value as string, component, onPropertyChange)}
-      />
-      <UI.Select
-        label={{ name: $t("constructor.props.align") }}
-        type="buttons"
-        value={initialAlign}
-        options={$optionsStore.TEXT_ALIGN_OPTIONS}
-        onUpdate={(option) => updateProperty("label.class", twMerge(component.properties.label.class, option.value), component, onPropertyChange)}
-      />
-      <UI.Select
-        wrapperClass="!h-14"
-        label={{ name: $t("constructor.props.colors") }}
-        type="buttons"
-        options={$optionsStore.COLOR_OPTIONS}
-        value={initialColor}
-        onUpdate={(option) => updateProperty("wrapperClass", twMerge(component.properties.wrapperClass, option.value), component, onPropertyChange)}
-      />
+      <CommonSnippets snippet="Label" {component} {onPropertyChange} />
+      <CommonSnippets snippet="LabelAlign" initialValue={initialAlign} {component} {onPropertyChange} />
+      <CommonSnippets snippet="Colors" initialValue={initialColor} {component} {onPropertyChange} />
     </div>
   </div>
 {:else}
   <div class="relative flex flex-row items-start justify-center">
-    <div class="flex w-1/3 flex-col items-center px-2">
-      <UI.Input
-        label={{ name: $t("constructor.props.id") }}
-        value={component.properties.id}
-        onUpdate={(value) => updateProperty("id", value as string, component, onPropertyChange)}
-      />
-      <UI.Select
-        wrapperClass="!h-14"
-        label={{ name: $t("constructor.props.type") }}
-        disabled={component.properties.bitMode}
-        type="buttons"
-        options={$optionsStore.SWITCH_OPTIONS.filter((o) => o.value !== "checkbox")}
-        value={$optionsStore.SWITCH_OPTIONS.find((option) => option.value == component.properties.type)}
-        onUpdate={(option) => updateProperty("type", option.value as string, component, onPropertyChange)}
-      />
-      <UI.Input
-        label={{ name: $t("constructor.props.wrapperclass") }}
-        value={component.properties.wrapperClass}
-        onUpdate={(value) => updateProperty("wrapperClass", value as string, component, onPropertyChange)}
-      />
-      <UI.Select
-        wrapperClass="!h-14"
-        label={{ name: $t("constructor.props.colors") }}
-        type="buttons"
-        options={$optionsStore.COLOR_OPTIONS}
-        value={initialColor}
-        onUpdate={(option) => updateProperty("wrapperClass", twMerge(component.properties.wrapperClass, option.value), component, onPropertyChange)}
-      />
+    <div class="flex w-1/3 flex-col px-2">
+      <CommonSnippets snippet="Identificator" {component} {onPropertyChange} />
+      {@render ProgressBarType()}
+      <CommonSnippets snippet="WrapperClass" {component} {onPropertyChange} />
+      <CommonSnippets snippet="Colors" initialValue={initialColor} {component} {onPropertyChange} />
     </div>
     <div class="flex w-1/3 flex-col px-2">
-      <UI.Input
-        label={{ name: $t("constructor.props.label") }}
-        value={component.properties.label.name}
-        onUpdate={(value) => updateProperty("label.name", value as string, component, onPropertyChange)}
-      />
-      <UI.Input
-        label={{ name: $t("constructor.props.label.class") }}
-        value={component.properties.label.class}
-        onUpdate={(value) => updateProperty("label.class", value as string, component, onPropertyChange)}
-      />
-      <UI.Input
-        label={{ name: $t("constructor.props.value") }}
-        type="number"
-        number={{ minNum: component.properties.number.minNum, maxNum: component.properties.number.maxNum, step: 1 }}
-        value={component.properties.value}
-        onUpdate={(value) => updateProperty("value", value as string, component, onPropertyChange)}
-      />
+      <CommonSnippets snippet="Label" {component} {onPropertyChange} />
+      <CommonSnippets snippet="LabelClass" {component} {onPropertyChange} />
+      {@render ProgressBarValue()}
     </div>
     <div class="flex w-1/3 flex-col px-2">
-      <UI.Input
-        label={{ name: $t("constructor.props.min") }}
-        value={component.properties.number.minNum as number}
-        type="number"
-        onUpdate={(value) => {
-          updateProperty("number.minNum", Number(value), component, onPropertyChange)
-        }}
-      />
-      <UI.Input
-        label={{ name: $t("constructor.props.max") }}
-        value={component.properties.number.maxNum as number}
-        type="number"
-        onUpdate={(value) => {
-          updateProperty("number.maxNum", Number(value), component, onPropertyChange)
-        }}
-      />
-
-      <UI.Input
-        label={{ name: $t("constructor.props.units") }}
-        value={component.properties.number.units}
-        onUpdate={(value) => updateProperty("number.units", value, component, onPropertyChange)}
-      />
+      {@render ProgressBarMinMax()}
     </div>
   </div>
 {/if}

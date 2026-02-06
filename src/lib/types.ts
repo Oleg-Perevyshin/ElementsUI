@@ -44,37 +44,41 @@ export interface UIComponent {
   name?: string
   access?: "full" | "viewOnly" | "hidden"
   type:
-    | "Button"
     | "Accordion"
-    | "Input"
-    | "Select"
-    | "Switch"
+    | "Button"
     | "ColorPicker"
-    | "Slider"
-    | "TextField"
-    | "Joystick"
-    | "ProgressBar"
+    | "FileAttach"
     | "Graph"
+    | "Input"
+    | "Joystick"
+    | "Map"
+    | "ProgressBar"
+    | "Select"
+    | "Slider"
+    | "Switch"
     | "Table"
     | "Tabs"
-    | "FileAttach"
-    | "Map"
+    | "TextField"
+    | "Widget"
+
   properties:
     | IAccordionProps
     | IButtonProps
-    | IInputProps
-    | ISelectProps
-    | ISwitchProps
     | IColorPickerProps
-    | ISliderProps
-    | ITextFieldProps
-    | IProgressBarProps
-    | IGraphProps
-    | ITableProps<object>
-    | ITabsProps
     | IFileAttachProps
+    | IGraphProps
+    | IInputProps
     | IJoystickProps
     | IMapProps
+    | IProgressBarProps
+    | ISelectProps
+    | ISliderProps
+    | ISwitchProps
+    | ITableProps<object>
+    | ITabsProps
+    | ITextFieldProps
+    | IWidgetProps
+
   position: Required<Position>
   parentId: string
   eventHandler?: IUIComponentHandler
@@ -97,28 +101,6 @@ export interface IUIComponentHandler {
 }
 
 /* ********************************************************** */
-/* Интерфейс кнопки */
-export interface IButtonProps {
-  id?: string
-  wrapperClass?: string
-  componentClass?: string
-  disabled?: boolean
-  content?: {
-    name?: string
-    info?: { text: string; side: "top" | "bottom" | "left" | "right" }
-    icon?: ConstructorOfATypedSvelteComponent | string | null
-  }
-  keyBind?: {
-    key?: string
-    ctrlKey?: boolean
-    shiftKey?: boolean
-    altKey?: boolean
-    metaKey?: boolean /* Поддержка Meta (Cmd на Mac) */
-  }
-  onClick?: () => void
-}
-
-/* ********************************************************** */
 /* Интерфейс аккордиона */
 export interface IAccordionProps {
   id?: string
@@ -135,6 +117,78 @@ export interface IAccordionProps {
   }
   children?: Snippet
   image?: string
+}
+
+/* ********************************************************** */
+/* Интерфейс кнопки */
+export interface IButtonProps {
+  id?: string
+  wrapperClass?: string
+  componentClass?: string
+  disabled?: boolean
+  content?: {
+    name?: string
+    info?: { text: string; side: "top" | "bottom" | "left" | "right" }
+    icon?: ConstructorOfATypedSvelteComponent | string | null
+  }
+  keyBind?: {
+    showHint?: boolean
+    key?: string
+    ctrlKey?: boolean
+    shiftKey?: boolean
+    altKey?: boolean
+    metaKey?: boolean /* Поддержка Meta (Cmd на Mac) */
+  }
+  onClick?: () => void
+}
+
+/* ********************************************************** */
+/* Интерфейс карусели */
+export interface ICarouselProps {
+  id?: string
+  wrapperClass?: string
+  label?: { name?: string; class?: string }
+  scrollValue?: number
+  children?: Snippet
+}
+
+/* ********************************************************** */
+/* Интерфейс палитры */
+export interface IColorPickerProps {
+  id?: string
+  wrapperClass?: string
+  label?: { name?: string; class?: string }
+  value?: number[]
+  onChange?: (value: number[]) => void
+}
+
+/* ********************************************************** */
+/* Интерфейс прикрепления файлов */
+export interface IFileAttachProps {
+  id?: string
+  wrapperClass?: string
+  label?: { name?: string; class?: string }
+  type?: "file" | "image"
+  accept?: string
+  imageSize?: { height?: string; width?: string; fitMode?: "cover" | "contain"; form?: "square" | "circle" }
+  disabled?: boolean
+  currentImage?: string | null
+  onChange?: (event: Event, file: File | null) => void
+}
+
+/* ********************************************************** */
+/* Интерфейсы графика */
+export interface IGraphDataObject {
+  name: string
+  value: number
+  timestamp?: Date
+}
+export interface IGraphProps {
+  id?: string
+  wrapperClass?: string
+  label?: { name?: string; class?: string }
+  streamingData?: { data: IGraphDataObject[] | null; timestamp?: number }
+  isTest?: boolean
 }
 
 /* ********************************************************** */
@@ -180,6 +234,58 @@ export interface IInputProps {
 }
 
 /* ********************************************************** */
+/* Интерфейс джойстика */
+export interface IJoystickProps {
+  id?: string
+  wrapperClass?: string
+  label?: { name?: string; class?: string }
+  value?: number[]
+  axes?: { name: string; minNum?: number; maxNum?: number }[]
+  buttonIcon?: ConstructorOfATypedSvelteComponent | string
+  onUpdate?: (value: number[]) => void
+}
+
+/* ********************************************************** */
+/* Интерфейс карты */
+export interface IDeviceGNSS {
+  NavLat: number
+  NavLon: number
+  NavAlt: number
+  DevName: string
+  DevSN: string
+  NavHeading: number
+  NavSatUse: number
+}
+export interface IMapProps {
+  id?: string
+  wrapperClass?: string
+  label?: { name?: string; class?: string }
+  data: IDeviceGNSS | null
+  markerIcon?: ConstructorOfATypedSvelteComponent | string
+}
+
+/* ********************************************************** */
+/* Интерфейс индикатора прогресса */
+export interface IProgressDataObject {
+  name: string
+  value: number
+  timestamp?: Date
+}
+
+export interface IProgressBarProps {
+  id?: string
+  label?: { name?: string; class?: string }
+  value?: IProgressDataObject[] | null
+  number?: {
+    minNum?: number
+    maxNum?: number
+    units?: string
+  }
+  type?: "horizontal" | "vertical"
+  wrapperClass?: string
+}
+
+/* ********************************************************** */
 /* Интерфейс элемента выбора и его опций */
 export interface ISelectProps<T = unknown> {
   id?: string
@@ -188,12 +294,13 @@ export interface ISelectProps<T = unknown> {
   label?: { name?: string; class?: string }
   componentClass?: string
   type?: "select" | "buttons" | "input"
+  multiSelect?: boolean
   valueType?: "text" | "number"
-  value?: ISelectOption<T> | null
+  value?: ISelectOption<T> | ISelectOption<T>[] | null
   options?: ISelectOption<T>[]
   bitMode?: boolean
   range?: { start: number; end: number }
-  onUpdate?: (value: ISelectOption<T>) => void
+  onUpdate?: (value: ISelectOption<T> | ISelectOption<T>[]) => void
 }
 
 export interface ISelectOption<T = unknown> {
@@ -202,6 +309,19 @@ export interface ISelectOption<T = unknown> {
   name?: string
   class?: string
   disabled?: boolean
+}
+
+/* ********************************************************** */
+/* Интерфейс ползунка */
+export interface ISliderProps {
+  id?: string
+  wrapperClass?: string
+  label?: { name?: string; class?: string }
+  value?: number | [number, number]
+  type?: "single" | "range"
+  number?: { minNum: number; maxNum: number; step: number }
+  disabled?: boolean
+  onUpdate?: (value: number | [number, number]) => void
 }
 
 /* ********************************************************** */
@@ -226,70 +346,14 @@ export interface ISwitchProps {
 }
 
 /* ********************************************************** */
-export interface IColorPickerProps {
-  id?: string
-  wrapperClass?: string
-  label?: { name?: string; class?: string }
-  value?: number[]
-  onChange?: (value: number[]) => void
+/* Интерфейс таблицы */
+interface ITableButtons<T extends object> {
+  name: string | ((row: T) => string)
+  icon?: ConstructorOfATypedSvelteComponent | string
+  class?: string | ((row: T) => string)
+  eventHandler?: IUIComponentHandler
+  onClick?: (row: T) => void
 }
-
-/* ********************************************************** */
-export interface ISliderProps {
-  id?: string
-  wrapperClass?: string
-  label?: { name?: string; class?: string }
-  value?: number | [number, number]
-  type?: "single" | "range"
-  number?: { minNum: number; maxNum: number; step: number }
-  disabled?: boolean
-  onUpdate?: (value: number | [number, number]) => void
-}
-/* ********************************************************** */
-export interface ITextFieldProps {
-  id?: string
-  wrapperClass?: string
-  background?: boolean
-  content?: {
-    name?: string
-    class?: string
-    size?: "small" | "base" | "large" | "huge" | "massive"
-  }
-}
-/* ********************************************************** */
-export interface IProgressDataObject {
-  name: string
-  value: number
-  timestamp?: Date
-}
-export interface IProgressBarProps {
-  id?: string
-  label?: { name?: string; class?: string }
-  value?: IProgressDataObject[] | null
-  number?: {
-    minNum?: number
-    maxNum?: number
-    units?: string
-  }
-  type?: "horizontal" | "vertical"
-  wrapperClass?: string
-}
-
-/* ********************************************************** */
-export interface IGraphDataObject {
-  name: string
-  value: number
-  timestamp?: Date
-}
-export interface IGraphProps {
-  id?: string
-  wrapperClass?: string
-  label?: { name?: string; class?: string }
-  streamingData?: { data: IGraphDataObject[] | null; timestamp?: number }
-  isTest?: boolean
-}
-
-/* ********************************************************** */
 
 export interface ITableHeader<T extends object> {
   label?: { name?: string; class?: string }
@@ -297,24 +361,17 @@ export interface ITableHeader<T extends object> {
   sortable?: boolean
   width?: string
   align?: "left" | "center" | "right"
-  overflow?: {
+  type?: "buttons" | "select" | "text" | "image"
+  text?: {
     truncated?: boolean
     formatting?: (text: string) => string
     copy?: boolean
     modal?: boolean
   }
-  action?: {
-    type: "buttons" | "select" | "none"
-    buttons?: {
-      name: string | ((row: T) => string)
-      class?: string | ((row: T) => string)
-      eventHandler?: IUIComponentHandler
-      onClick?: (row: T) => void
-    }[]
-    select?: {
-      key: string
-      onChange?: () => void
-    }
+  buttons?: ITableButtons<T>[] | ((row: T) => ITableButtons<T>[])
+  select?: {
+    key: string
+    onChange?: () => void
   }
   image?: {
     src?: string | ((row: T) => string)
@@ -345,7 +402,7 @@ export interface ITableProps<T extends object> {
 }
 
 /* ********************************************************** */
-
+/* Интерфейс меню */
 export interface ITabsProps {
   id?: string
   wrapperClass?: string
@@ -354,66 +411,27 @@ export interface ITabsProps {
     width?: number
   }
   activeTab?: number
-  items: { name?: string; icon?: ConstructorOfATypedSvelteComponent | string; class?: string; children?: Snippet }[]
+  items: { name?: string; icon?: ConstructorOfATypedSvelteComponent | string; class?: string; children?: Snippet; onClick?: () => {} }[]
   children?: Snippet<[any]>
   apiArray?: UIComponent[]
   Components?: Snippet<[component: UIComponent, fixedHeight: boolean]>
 }
 
 /* ********************************************************** */
-
-export interface IJoystickProps {
+/* Интерфейс текста */
+export interface ITextFieldProps {
   id?: string
   wrapperClass?: string
-  label?: { name?: string; class?: string }
-  value?: number[]
-  axes?: { name: string; minNum?: number; maxNum?: number }[]
-  buttonIcon?: ConstructorOfATypedSvelteComponent | string
-  onUpdate?: (value: number[]) => void
+  background?: boolean
+  content?: {
+    name?: string
+    class?: string
+    size?: "small" | "base" | "large" | "huge" | "massive"
+  }
 }
 
 /* ********************************************************** */
-
-export interface IDeviceGNSS {
-  NavLat: number
-  NavLon: number
-  NavAlt: number
-  DevName: string
-  DevSN: string
-  NavHeading: number
-  NavSatUse: number
-}
-export interface IMapProps {
-  id?: string
-  label?: { name?: string; class?: string }
-  data: IDeviceGNSS | null
-  markerIcon?: ConstructorOfATypedSvelteComponent | string
-}
-
-/* ********************************************************** */
-
-export interface IFileAttachProps {
-  id?: string
-  wrapperClass?: string
-  label?: { name?: string; class?: string }
-  type?: "file" | "image"
-  accept?: string
-  imageSize?: { height?: string; width?: string; fitMode?: "cover" | "contain"; form?: "square" | "circle" }
-  disabled?: boolean
-  currentImage?: string | null
-  onChange?: (event: Event, file: File | null) => void
-}
-
-export interface ICarouselProps {
-  id?: string
-  wrapperClass?: string
-  label?: { name?: string; class?: string }
-  scrollValue?: number
-  children?: Snippet
-}
-
-/* ********************************************************** */
-
+/* Интерфейс виджета */
 export interface IWidgetProps {
   id?: string
   wrapperClass?: string

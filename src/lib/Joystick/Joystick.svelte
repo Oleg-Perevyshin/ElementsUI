@@ -122,7 +122,7 @@
   }
 </script>
 
-<div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class={twMerge(`bg-blue relative container flex w-full flex-col items-center`, wrapperClass)}>
+<div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class={twMerge(`bg-blue relative flex w-full flex-col items-center`, wrapperClass)}>
   {#if label.name}
     <h5 class={twMerge(`w-full px-4 text-center`, label.class)}>{label.name}</h5>
   {/if}

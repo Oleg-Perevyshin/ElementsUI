@@ -14,6 +14,7 @@
     wrapperClass = "",
     disabled = false,
     label = { name: "", class: "" },
+    multiSelect = false,
     type = "select",
     valueType = "text",
     value = $bindable(),
@@ -32,21 +33,22 @@
   }
 
   $effect(() => {
-    if (value?.name) {
-      searchValue = value?.name
-    } else if (value == undefined) {
-      const newOption: ISelectOption<T> = {
-        id: `input-${searchValue}`,
-        name: searchValue,
-        value: searchValue as T,
+    if (!Array.isArray(value))
+      if (value?.name) {
+        searchValue = value?.name
+      } else if (value == undefined) {
+        const newOption: ISelectOption<T> = {
+          id: `input-${searchValue}`,
+          name: searchValue,
+          value: searchValue as T,
+        }
+        searchValue = newOption.value
       }
-      searchValue = newOption.value
-    }
   })
 
   onMount(() => {
     if (type === "select" || type === "input") document.addEventListener("click", handleClickOutside)
-    if (type === "input") searchValue = value?.name ?? ""
+    if (type === "input" && !Array.isArray(value)) searchValue = value?.name ?? ""
     return () => {
       if (type === "select" || type === "input") document.removeEventListener("click", handleClickOutside)
     }
@@ -60,10 +62,30 @@
     }
   }
 
+  const isSelected = (option: ISelectOption<any>) => {
+    if (type === "buttons" && multiSelect && Array.isArray(value)) {
+      return value.includes(option)
+    }
+    return option.value === (value as ISelectOption)?.value
+  }
+
   const selectOption = (option: ISelectOption<T>, event: MouseEvent) => {
     event.stopPropagation()
     if (!disabled) {
-      value = option
+      if (type === "buttons" && multiSelect && value && !Array.isArray(value)) {
+        value = [value]
+        if (value.includes(option)) {
+          value = value.filter((op) => op !== option)
+        } else {
+          value.push(option)
+        }
+      } else if (type === "buttons" && multiSelect && value && Array.isArray(value)) {
+        if (value.includes(option)) {
+          value = value.filter((op) => op !== option)
+        } else {
+          value.push(option)
+        }
+      } else value = option
       isDropdownOpen = false
       searchValue = option.name?.toString() ?? ""
       filteredOptions = []
@@ -106,7 +128,7 @@
   {#if label.name}
     <h5 class={twMerge(`w-full px-4`, label.class)}>{label.name}</h5>
   {/if}
-  {#if type === "select"}
+  {#if type === "select" && !Array.isArray(value)}
     <button
       id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
       value={value?.value ? String(value.value) : ""}
@@ -157,7 +179,7 @@
           class="{twMerge(
             `m-0 inline-block min-w-0 flex-1 items-center px-2 py-1 font-semibold shadow-[0_0_3px_rgb(0_0_0_/0.25)] transition duration-300 select-none border border-(--bg-color)
             ${option.disabled || disabled ? 'opacity-50' : 'cursor-pointer hover:shadow-[0_0_6px_rgb(0_0_0_/0.25)]'}
-            ${option.value === value?.value && value !== null ? 'z-10 py-1 shadow-[0_0_10px_var(--shadow-color)] hover:shadow-[0_0_15px_var(--shadow-color)]' : ''}  
+            ${value !== null && isSelected(option) ? 'z-10 py-1 shadow-[0_0_10px_var(--shadow-color)] hover:shadow-[0_0_15px_var(--shadow-color)]' : ''}  
             ${options.length > 0 && index === 0 ? 'rounded-l-2xl' : ''} ${index === options.length - 1 ? 'rounded-r-2xl' : ''}`,
             option.class,
           )} bg-(--bg-color)"

@@ -40,7 +40,7 @@ ${formatObjectToString(joystickComponent.properties as IJoystickProps)}
     <JoystickProps
       component={joystickComponent as UIComponent & { properties: Partial<IJoystickProps> }}
       onPropertyChange={(updates) => (joystickComponent = updateComponent(joystickComponent, updates as object))}
-      forConstructor={true}
+      forConstructor={false}
     />
     <!-- <hr />
     <JoystickProps

@@ -235,7 +235,10 @@
   <div class={`mt-3 flex w-full ${isRange ? "justify-between" : "justify-center"} gap-2`}>
     {#if isRange}
       {#each ["lower", "upper"] as type (type)}
-        <div class={`flex items-center justify-center gap-2 rounded-full px-2 ${disabled ? "opacity-70" : ""}`} style="background-color: var(--bg-color)">
+        <div
+          class={`flex items-center justify-center gap-2 rounded-full px-2 transition duration-250 shadow-sm hover:shadow-md ${disabled ? "opacity-70" : ""}`}
+          style="background-color: var(--bg-color)"
+        >
           <button
             class="h-full w-4 {disabled ? '' : 'cursor-pointer'}"
             onclick={disabled ? undefined : () => adjustValue(type as "lower" | "upper", "decrement")}
@@ -252,7 +255,10 @@
         </div>
       {/each}
     {:else}
-      <div class={`flex items-center justify-center gap-2 rounded-full px-2 ${disabled ? "opacity-70" : ""}`} style="background-color: var(--bg-color)">
+      <div
+        class={`flex items-center justify-center gap-2 rounded-full px-2 transition duration-250 shadow-sm hover:shadow-md ${disabled ? "opacity-70" : ""}`}
+        style="background-color: var(--bg-color) "
+      >
         <button
           class="h-full w-4 {disabled ? '' : 'cursor-pointer'}"
           onclick={disabled ? undefined : () => adjustValue("single", "decrement")}

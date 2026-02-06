@@ -10,6 +10,7 @@
   import ButtonAdd from "$lib/libIcons/ButtonAdd.svelte"
   import ButtonDelete from "$lib/libIcons/ButtonDelete.svelte"
   import { twMerge } from "tailwind-merge"
+  import CommonSnippets from "$lib/CommonSnippets.svelte"
 
   const {
     component,
@@ -21,16 +22,7 @@
     forConstructor?: boolean
   }>()
 
-  let showIconLib = $state(false)
   let tabIcon = $state({ index: 0, isModalOpen: false })
-
-  const initialType = $derived($optionsStore.ACCORDION_TYPE_OPTIONS.find((t) => t.value === component.properties.outline))
-
-  const initialAlign = $derived(
-    $optionsStore.JUSTIFY_ALIGN_OPTIONS.find((a) =>
-      (a.value as string).includes(component.properties.wrapperClass?.split(" ").find((cls: string) => cls.startsWith("justify-"))),
-    ),
-  )
 
   const initialColor = $derived(
     $optionsStore.COLOR_OPTIONS.find((c) =>
@@ -58,60 +50,44 @@
   })
 </script>
 
-{#if forConstructor}
-  <div class="flex items-center justify-center gap-8">
-    <div class="flex w-1/3 flex-col items-center px-2">
-      <UI.Select
-        label={{ name: $t("constructor.props.access") }}
-        type="buttons"
-        options={$optionsStore.ACCESS_OPTION}
-        value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.access)}
-        onUpdate={(option) => onPropertyChange({ access: option.value })}
-      />
-      <UI.Select
-        wrapperClass="h-14"
-        label={{ name: $t("constructor.props.colors") }}
-        type="buttons"
-        options={$optionsStore.COLOR_OPTIONS.slice(1)}
-        value={initialColor}
-        onUpdate={(option) => {
-          updateProperty("wrapperClass", twMerge(component.properties.wrapperClass, option.value), component, onPropertyChange)
-        }}
-      />
-    </div>
-    <div class="flex w-1/3 flex-col items-center px-2">
-      <UI.Select
-        wrapperClass="h-14"
-        label={{ name: $t("constructor.props.icon.text.position") }}
-        type="buttons"
-        options={$optionsStore.ICON_TEXT_POSITION_OPTIONS}
-        value={initialPosition}
-        onUpdate={(option) => {
-          component.properties.items.forEach((_item: any, index: number) => {
-            const items = [...(component.properties?.items || [])]
-            items[index]["class"] = twMerge(items[index].class, option.value)
-            updateProperty("items", items, component, onPropertyChange)
-          })
-        }}
-      />
-      <UI.Switch
-        label={{
-          name: $t("constructor.props.widthMode"),
-          captionLeft: $t("constructor.props.height.small"),
-          captionRight: $t("constructor.props.equal"),
-        }}
-        value={initialWidth()}
-        options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-        onChange={(value) => {
-          component.properties.items.forEach((_item: any, index: number) => {
-            const items = [...(component.properties?.items || [])]
-            items[index]["class"] = twMerge(items[index].class, value ? `w-[${(1 / items.length) * 100}%]` : "w-auto")
-            updateProperty("items", items, component, onPropertyChange)
-          })
-        }}
-      />
-    </div>
-  </div>
+{#snippet TabsIconPosition()}
+  <UI.Select
+    wrapperClass="h-14"
+    label={{ name: $t("constructor.props.icon.text.position") }}
+    type="buttons"
+    options={$optionsStore.ICON_TEXT_POSITION_OPTIONS}
+    value={initialPosition}
+    onUpdate={(option) => {
+      component.properties.items.forEach((_item: any, index: number) => {
+        const items = [...(component.properties?.items || [])]
+        items[index]["class"] = twMerge(items[index].class, (option as UI.ISelectOption).value as string)
+        updateProperty("items", items, component, onPropertyChange)
+      })
+    }}
+  />
+{/snippet}
+
+{#snippet TabsWidthMode()}
+  <UI.Switch
+    label={{
+      name: $t("constructor.props.widthMode"),
+      captionLeft: $t("constructor.props.height.small"),
+      captionRight: $t("constructor.props.equal"),
+    }}
+    value={initialWidth()}
+    options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
+    onChange={(value) => {
+      component.properties.items.forEach((_item: any, index: number) => {
+        const items = [...(component.properties?.items || [])]
+        items[index]["class"] = twMerge(items[index].class, value ? `w-[${(1 / items.length) * 100}%]` : "w-auto")
+        updateProperty("items", items, component, onPropertyChange)
+      })
+    }}
+  />
+{/snippet}
+
+{#snippet TabsSettings()}
+  <hr class="border-gray-400" />
 
   <div class="space-y-4">
     <div class="m-0 flex items-center justify-center gap-2">
@@ -209,178 +185,54 @@
       </Modal>
     {/if}
   </div>
+{/snippet}
+
+{#snippet TabsSize()}
+  <div class="flex w-full gap-4">
+    <UI.Input
+      label={{ name: $t("constructor.props.size.height") }}
+      value={component.properties.size.height}
+      onUpdate={(value) => updateProperty("size.height", value as number, component, onPropertyChange)}
+      number={{ minNum: 1, maxNum: 1000, step: 1 }}
+      type="number"
+    />
+    <UI.Input
+      label={{ name: $t("constructor.props.size.width") }}
+      value={component.properties.size.width}
+      onUpdate={(value) => updateProperty("size.width", value as number, component, onPropertyChange)}
+      number={{ minNum: 1, maxNum: 1000, step: 1 }}
+      type="number"
+    />
+  </div>
+{/snippet}
+
+{#if forConstructor}
+  <div class="flex items-center mb-4 justify-center gap-8">
+    <div class="flex w-1/3 flex-col px-2">
+      <CommonSnippets snippet="Access" {component} {onPropertyChange} />
+      <CommonSnippets snippet="Colors" initialValue={initialColor} {component} {onPropertyChange} />
+    </div>
+    <div class="flex w-1/3 flex-col px-2">
+      {@render TabsIconPosition()}
+      {@render TabsWidthMode()}
+    </div>
+  </div>
 {:else}
-  <div class="flex items-center justify-center gap-8">
-    <div class="flex w-1/3 flex-col items-center px-2">
-      <UI.Input
-        label={{ name: $t("constructor.props.id") }}
-        value={component.properties.id}
-        onUpdate={(value) => updateProperty("id", value as string, component, onPropertyChange)}
-      />
-      <UI.Input
-        label={{ name: $t("constructor.props.wrapperclass") }}
-        value={component.properties.wrapperClass}
-        onUpdate={(value) => updateProperty("wrapperClass", value as string, component, onPropertyChange)}
-      />
-      <div class="flex w-full gap-4">
-        <UI.Input
-          label={{ name: $t("constructor.props.size.height") }}
-          value={component.properties.size.height}
-          onUpdate={(value) => updateProperty("size.height", value as number, component, onPropertyChange)}
-          number={{ minNum: 1, maxNum: 1000, step: 1 }}
-          type="number"
-        />
-        <UI.Input
-          label={{ name: $t("constructor.props.size.width") }}
-          value={component.properties.size.width}
-          onUpdate={(value) => updateProperty("size.width", value as number, component, onPropertyChange)}
-          number={{ minNum: 1, maxNum: 1000, step: 1 }}
-          type="number"
-        />
-      </div>
+  <div class="flex items-center mb-4 justify-center gap-8">
+    <div class="flex w-1/3 flex-col px-2">
+      <CommonSnippets snippet="Identificator" {component} {onPropertyChange} />
+      <CommonSnippets snippet="WrapperClass" {component} {onPropertyChange} />
+      {@render TabsSize()}
     </div>
-    <div class="flex w-1/3 flex-col items-center px-2">
-      <UI.Select
-        label={{ name: $t("constructor.props.access") }}
-        type="buttons"
-        options={$optionsStore.ACCESS_OPTION}
-        value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.access)}
-        onUpdate={(option) => onPropertyChange({ access: option.value })}
-      />
-
-      <UI.Select
-        wrapperClass="h-14"
-        label={{ name: $t("constructor.props.colors") }}
-        type="buttons"
-        options={$optionsStore.COLOR_OPTIONS.slice(1)}
-        value={initialColor}
-        onUpdate={(option) => {
-          updateProperty("wrapperClass", twMerge(component.properties.wrapperClass, option.value), component, onPropertyChange)
-        }}
-      />
+    <div class="flex w-1/3 flex-col px-2">
+      <CommonSnippets snippet="Access" {component} {onPropertyChange} />
+      <CommonSnippets snippet="Colors" initialValue={initialColor} {component} {onPropertyChange} />
     </div>
 
-    <div class="flex w-1/3 flex-col items-center px-2">
-      <UI.Select
-        wrapperClass="h-14"
-        label={{ name: $t("constructor.props.icon.text.position") }}
-        type="buttons"
-        options={$optionsStore.ICON_TEXT_POSITION_OPTIONS}
-        value={initialPosition}
-        onUpdate={(option) => {
-          component.properties.items.forEach((_item: any, index: number) => {
-            const items = [...(component.properties?.items || [])]
-            items[index]["class"] = twMerge(items[index].class, option.value)
-            updateProperty("items", items, component, onPropertyChange)
-          })
-        }}
-      />
-
-      <UI.Switch
-        label={{
-          name: $t("constructor.props.widthMode"),
-          captionLeft: $t("constructor.props.height.small"),
-          captionRight: $t("constructor.props.equal"),
-        }}
-        value={initialWidth()}
-        options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-        onChange={(value) => {
-          component.properties.items.forEach((_item: any, index: number) => {
-            const items = [...(component.properties?.items || [])]
-            items[index]["class"] = twMerge(items[index].class, value ? `w-[${(1 / items.length) * 100}%]` : "w-auto")
-            updateProperty("items", items, component, onPropertyChange)
-          })
-        }}
-      />
+    <div class="flex w-1/3 flex-col px-2">
+      {@render TabsIconPosition()}
+      {@render TabsWidthMode()}
     </div>
   </div>
-
-  <div class="space-y-4">
-    <div class="m-0 flex items-center justify-center gap-2">
-      <h4>{$t("constructor.props.tabs.title")}</h4>
-      <UI.Button
-        wrapperClass="w-8"
-        content={{ icon: ButtonAdd }}
-        onClick={() => {
-          let tabWidth = Math.max(...Array.from(document.body.querySelectorAll(".tab")).map((item) => (item as HTMLElement).offsetWidth))
-          const newItem: { name: string; icon: string; class: string } = {
-            name: `Tab ${component.properties?.items.length + 1}`,
-            class: `w-${initialWidth() ? `[${tabWidth}px]` : "auto"} text-${initialColor?.value.slice(3)}-500 ${initialPosition?.value}`,
-            icon: "",
-          }
-          const items = [...(component.properties?.items || []), newItem]
-          updateProperty("items", items, component, onPropertyChange)
-        }}
-      />
-    </div>
-
-    {#each component.properties.items || [] as tab, index}
-      <div class="m-0 flex items-end justify-around gap-2 border-gray-400">
-        <UI.Input
-          label={{ name: $t("constructor.props.optionname") }}
-          wrapperClass="w-5/10"
-          value={tab.name}
-          onUpdate={(value) => {
-            const items = [...(component.properties?.items || [])]
-            items[index]["name"] = value
-            updateProperty("items", items, component, onPropertyChange)
-          }}
-        />
-        <div class="relative mt-5 flex w-3/10 gap-2">
-          <UI.Button content={{ name: $t("constructor.props.labelicon") }} onClick={() => (tabIcon = { index: index, isModalOpen: true })} />
-
-          {#if tab.icon}
-            <Button
-              wrapperClass="w-8.5 "
-              componentClass="p-0.5 bg-red"
-              content={{ icon: CrossIcon }}
-              onClick={() => {
-                const items = [...(component.properties?.items || [])]
-                items[index]["icon"] = ""
-                updateProperty("items", items, component, onPropertyChange)
-              }}
-            />
-          {/if}
-        </div>
-
-        {#if component.properties.items.length > 1}
-          <UI.Button
-            wrapperClass="w-8"
-            content={{ icon: ButtonDelete }}
-            onClick={() => {
-              const items = [...(component.properties?.items || [])]
-              items.splice(index, 1)
-              updateProperty("items", items, component, onPropertyChange)
-            }}
-          />
-        {/if}
-      </div>
-    {/each}
-    {#if tabIcon.isModalOpen}
-      <Modal bind:isOpen={tabIcon.isModalOpen} wrapperClass="w-130">
-        {#snippet main()}
-          <div class="grid grid-cols-3">
-            {#each ICONS as category}
-              <div class="relative m-1.5 rounded-xl border-2 border-(--border-color) p-3">
-                <div class="absolute -top-3.5 bg-(--back-color) px-1">{$t(`constructor.props.icon.${category[0]}`)}</div>
-                <div class="grid grid-cols-3 place-items-center gap-2">
-                  {#each category[1] as icon}
-                    <button
-                      class="h-8 w-8 cursor-pointer [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
-                      onclick={() => {
-                        const items = [...(component.properties?.items || [])]
-                        items[tabIcon.index]["icon"] = icon as string
-                        updateProperty("items", items, component, onPropertyChange)
-                      }}
-                    >
-                      {@html icon}
-                    </button>{/each}
-                </div>
-              </div>
-            {/each}
-          </div>
-        {/snippet}
-      </Modal>
-    {/if}
-  </div>
+  {@render TabsSettings()}
 {/if}

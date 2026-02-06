@@ -130,6 +130,7 @@
       label: { name: "Image" },
       key: "imageUrl",
       width: "20%",
+      type: "image",
       image: {
         src: (row: ITableRow) => row.imageUrl,
         alt: "Image",
@@ -142,7 +143,7 @@
       label: { name: "Status" },
       key: "status",
       width: "10%",
-      overflow: {
+      text: {
         truncated: true,
         formatting: (text) => {
           if (text === "online") {
@@ -156,20 +157,18 @@
       key: "lastActive",
       width: "1fr",
       sortable: true,
-      overflow: { truncated: true, copy: true, modal: true },
+      text: { truncated: true, copy: true, modal: true },
     },
     {
       label: { name: "Actions" },
       key: "action",
       width: "1fr",
       align: "left",
-      action: {
-        type: "buttons",
-        buttons: [
-          { name: "Action 1 (id)", class: "bg-blue", eventHandler: { Header: "SET", Argument: "save", Variables: ["name"] } },
-          { name: "Action 2 (name)", class: "bg-green", onClick: (row) => console.log(row.name) },
-        ],
-      },
+      type: "buttons",
+      buttons: [
+        { name: "Action 1 (id)", class: "bg-blue", eventHandler: { Header: "SET", Argument: "save", Variables: ["name"] } },
+        { name: "Action 2 (name)", class: "bg-green", onClick: (row) => console.log(row.name) },
+      ],
     },
   ]
   const rows: ITableRow[] = [

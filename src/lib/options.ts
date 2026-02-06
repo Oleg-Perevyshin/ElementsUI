@@ -64,6 +64,12 @@ export const optionsStore = derived(t, ($t) => {
       { id: id(), value: "massive", name: $t("constructor.props.type.massive") },
     ],
 
+    TEXTFIELD_SETTINGS_OPTIONS: [
+      { id: id(), value: "bold", name: $t("constructor.props.bold") },
+      { id: id(), value: "italic", name: $t("constructor.props.italic") },
+      { id: id(), value: "background", name: $t("constructor.props.background") },
+    ],
+
     COLOR_OPTIONS: [
       { id: id(), name: "", value: "bg-max", class: "bg-max" },
       { id: id(), name: "", value: "bg-red", class: "bg-red" },
@@ -114,6 +120,12 @@ export const optionsStore = derived(t, ($t) => {
       { id: id(), value: "flex-col-reverse", name: "↓" },
     ],
 
+    TABLE_COLUMN_SETTING_OPTIONS: [
+      { id: id(), value: "sortable", name: $t("constructor.props.table.columns.sortable") },
+      { id: id(), value: "text.copy", name: $t("constructor.props.copy") },
+      { id: id(), value: "text.truncated", name: $t("constructor.props.table.columns.truncated") },
+    ],
+
     HEIGHT_OPTIONS: [
       { id: id(), value: "py-1", name: $t("constructor.props.height.small") },
       { id: id(), value: "py-2", name: $t("constructor.props.height.medium") },
@@ -158,9 +170,17 @@ export const optionsStore = derived(t, ($t) => {
       { id: id(), value: "logger", name: $t("constructor.props.table.type.logger") },
     ],
 
-    ACTION_TYPE_OPTIONS: [
-      { id: id(), value: "buttons", name: $t("constructor.props.table.action.type.buttons") },
-      { id: id(), value: "select", name: $t("constructor.props.table.action.type.select") },
+    TABLE_CONTENT_TYPE_OPTIONS: [
+      { id: id(), value: "text", name: $t("constructor.props.table.type.text") },
+      { id: id(), value: "buttons", name: $t("constructor.props.table.type.buttons") },
+      { id: id(), value: "select", name: $t("constructor.props.table.type.select") },
+      { id: id(), value: "image", name: $t("constructor.props.table.type.icon") },
+    ],
+
+    INPUT_SETTING_OPTIONS: [
+      { id: id(), value: "readonly", name: $t("constructor.props.readonly") },
+      { id: id(), value: "help.copyButton", name: $t("constructor.props.copy") },
+      { id: id(), value: "disabled", name: $t("constructor.props.disabled") },
     ],
 
     BUFFER_SIFE_OPTIONS: [

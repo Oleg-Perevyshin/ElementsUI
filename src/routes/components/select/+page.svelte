@@ -20,22 +20,14 @@
       bitMode: false,
       range: { start: 0, end: 1 },
       options: [
-        // { id: crypto.randomUUID(), value: "1", name: "Option 1", class: "bg-max" },
-        // { id: crypto.randomUUID(), value: "1", name: "Option 1", class: "bg-max" },
-        // { id: crypto.randomUUID(), value: "1", name: "Option 1", class: "bg-max" },
-        // { id: crypto.randomUUID(), value: "1", name: "Option 1", class: "bg-max" },
-        // { id: crypto.randomUUID(), value: "1", name: "Option 1", class: "bg-max" },
-        // { id: crypto.randomUUID(), value: "1", name: "Option 1", class: "bg-max" },
-        // { id: crypto.randomUUID(), value: "1", name: "Option 1", class: "bg-max" },
-        // { id: crypto.randomUUID(), value: "1", name: "Option 1", class: "bg-max" },
+        { id: crypto.randomUUID(), value: "1", name: "Option 1", class: "bg-max" },
+        { id: crypto.randomUUID(), value: "2", name: "Option 2", class: "bg-max" },
       ],
     },
     eventHandler: { Header: "SET", Argument: "", Variables: [] },
     position: { row: 0, col: 0, width: 0, height: 0 },
     parentId: "",
   })
-
-  let valueNum: ISelectOption | null = $state(null)
 
   let codeText = $derived(`
 <UI.Select
@@ -53,11 +45,7 @@ ${formatObjectToString(selectComponent.properties as ISelectProps)}
           properties: { value: value },
         })
       }}
-      bind:value={valueNum}
     />
-
-    <p>{valueNum?.value}</p>
-    <p>{typeof valueNum?.value}</p>
   {/snippet}
   {#snippet componentProps()}
     <SelectProps

@@ -204,7 +204,7 @@
         <button
           class="flex h-1/2 w-full items-center rounded-tr-2xl border-b border-(--border-color) pl-2 transition-colors duration-150 hover:bg-(--gray-color)/30 active:bg-(--gray-color)/10"
           onclick={() => {
-            if (!number.maxNum || !number.step || !value) return
+            if ((number.maxNum !== 0 && !number.maxNum) || !number.step || (value !== 0 && !value)) return
             if (Number(value) + number.step >= number.maxNum) {
               value = number.maxNum
               onUpdate(value as number)
@@ -219,13 +219,14 @@
         <button
           class="flex h-1/2 w-full items-center rounded-br-2xl pl-2 transition-colors duration-150 hover:bg-(--gray-color)/30 active:bg-(--gray-color)/10"
           onclick={() => {
-            if (!number.minNum || !number.step || !value) return
+            if ((number.minNum !== 0 && !number.minNum) || !number.step || (value !== 0 && !value)) return
             if (Number(value) - number.step <= number.minNum) {
               value = number.minNum
               onUpdate(value as number)
               return
             }
             value = Number(value) - (number.step ?? 1)
+
             onUpdate(value as number)
           }}
           aria-label="Уменьшить">−</button

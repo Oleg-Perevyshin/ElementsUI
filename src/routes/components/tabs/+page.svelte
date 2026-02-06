@@ -18,7 +18,10 @@
         width: 1,
       },
       items: [
-        { name: "Tab 1", class: "flex-row" },
+        {
+          name: "Tab 1",
+          class: "flex-row",
+        },
         { name: "Tab 2", class: "flex-row" },
         { name: "Tab 3", class: "flex-row" },
       ],

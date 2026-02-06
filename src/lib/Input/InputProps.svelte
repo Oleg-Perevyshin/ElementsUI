@@ -5,6 +5,7 @@
   import * as UI from "$lib"
   import { optionsStore } from "../options"
   import { twMerge } from "tailwind-merge"
+  import CommonSnippets from "$lib/CommonSnippets.svelte"
 
   const {
     component,
@@ -87,271 +88,241 @@
   }
 </script>
 
+{#snippet InputVariable()}
+  <UI.Select
+    label={{ name: $t("constructor.props.variable") }}
+    options={VARIABLE_OPTIONS}
+    value={VARIABLE_OPTIONS.find((opt) => opt.value === component.properties.id)}
+    onUpdate={(value) => {
+      updateProperty("id", (value as ISelectOption).value as string)
+      onPropertyChange({ name: (value as ISelectOption).name?.split("—")[1].trim(), eventHandler: { Variables: [(value as ISelectOption).value as string] } })
+    }}
+  />
+{/snippet}
+
+{#snippet InputAccess()}
+  <UI.Select
+    label={{ name: $t("constructor.props.access") }}
+    type="buttons"
+    options={$optionsStore.ACCESS_OPTION}
+    value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.access)}
+    onUpdate={(option) => onPropertyChange({ access: (option as ISelectOption).value })}
+  />
+{/snippet}
+
+{#snippet InputLabel()}
+  <UI.Input
+    label={{ name: $t("constructor.props.label") }}
+    value={component.properties.label.name}
+    onUpdate={(value) => updateProperty("label.name", value as string)}
+  />
+{/snippet}
+
+{#snippet InputLabelAlign()}
+  <UI.Select
+    label={{ name: $t("constructor.props.align") }}
+    type="buttons"
+    value={initialAlign}
+    options={$optionsStore.TEXT_ALIGN_OPTIONS}
+    onUpdate={(option) => updateProperty("label.class", twMerge(component.properties.label.class, (option as ISelectOption<string>).value))}
+  />
+{/snippet}
+
+{#snippet InputType()}
+  <UI.Select
+    label={{ name: $t("constructor.props.type") }}
+    options={$optionsStore.INPUT_TYPE_OPTIONS}
+    type="buttons"
+    value={$optionsStore.INPUT_TYPE_OPTIONS.find((opt) => opt.value === (component.properties.type || "text"))}
+    onUpdate={(option) => {
+      updateProperty("type", (option as UI.ISelectOption).value as string)
+      if ((option as UI.ISelectOption).value === "text-area") updateProperty("componentClass", twMerge(component.properties.componentClass, "font-mono"))
+      else updateProperty("componentClass", twMerge(component.properties.componentClass, "font-[Montserrat]"))
+    }}
+  />
+  {#if component.properties.type === "text" || component.properties.type === "password" || component.properties.type === "text-area"}
+    <UI.Input
+      label={{ name: $t("constructor.props.maxlength") }}
+      type="number"
+      number={{ minNum: 1, maxNum: 1000000, step: 1 }}
+      value={component.properties.maxlength}
+      onUpdate={(value) => updateProperty("maxlength", value as string)}
+    />
+    <UI.Input
+      label={{ name: $t("constructor.props.regexp") }}
+      value={component.properties.help.regExp}
+      maxlength={150}
+      help={{ info: $t("constructor.props.regexp.info") }}
+      componentClass={isValidRegExp === false ? "!border-2 !border-red-400" : ""}
+      onUpdate={(value) => updateProperty("help.regExp", value as string)}
+    />
+  {:else if component.properties.type === "number" && !component.properties.readonly && !component.properties.disabled}
+    <UI.Input
+      label={{ name: $t("constructor.props.minnum") }}
+      value={component.properties.number.minNum as number}
+      type="number"
+      onUpdate={(value) => {
+        updateProperty("number.minNum", Number(value))
+      }}
+    />
+    <UI.Input
+      label={{ name: $t("constructor.props.maxnum") }}
+      value={component.properties.number.maxNum as number}
+      type="number"
+      onUpdate={(value) => {
+        updateProperty("number.maxNum", Number(value))
+      }}
+    />
+    <UI.Input
+      label={{ name: $t("constructor.props.step") }}
+      value={component.properties.number.step as number}
+      type="number"
+      onUpdate={(value) => updateProperty("number.step", Number(value))}
+    />
+  {/if}
+{/snippet}
+
+{#snippet InputPlaceholder()}
+  <UI.Input
+    label={{ name: $t("constructor.props.placeholder") }}
+    value={component.properties.placeholder as string}
+    onUpdate={(value) => updateProperty("placeholder", value)}
+  />
+{/snippet}
+
+{#snippet InputInfo()}
+  <UI.Input
+    label={{ name: $t("constructor.props.info") }}
+    value={component.properties.help.info as string}
+    onUpdate={(value) => updateProperty("help.info", value)}
+  />
+{/snippet}
+
+{#snippet InputReadOnly()}
+  <UI.Switch
+    label={{ name: $t("constructor.props.readonly") }}
+    value={component.properties.readonly}
+    options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
+    onChange={(value) => updateProperty("readonly", value)}
+  />
+{/snippet}
+
+{#snippet InputCopy()}
+  <UI.Switch
+    label={{ name: $t("constructor.props.copy") }}
+    value={component.properties.help.copyButton}
+    options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
+    onChange={(value) => updateProperty("help.copyButton", value)}
+  />
+{/snippet}
+
+{#snippet InputAutocomplete()}
+  <UI.Select
+    label={{ name: $t("constructor.props.autocomplete") }}
+    options={$optionsStore.AUTOCOMPLETE_CONSTRUCTOR_OPTIONS}
+    value={$optionsStore.AUTOCOMPLETE_CONSTRUCTOR_OPTIONS.find((opt) => opt.value === (component.properties.help.autocomplete || "off"))}
+    onUpdate={(option) => updateProperty("help.autocomplete", (option as UI.ISelectOption).value as string)}
+  />
+{/snippet}
+
+{#snippet InputColors()}
+  <UI.Select
+    wrapperClass="h-14"
+    label={{ name: $t("constructor.props.colors") }}
+    type="buttons"
+    options={$optionsStore.COLOR_OPTIONS}
+    value={initialColor}
+    onUpdate={(option) => handleOptionColorChange((option as UI.ISelectOption).value as string)}
+  />
+{/snippet}
+
+{#snippet InputIdentificator()}
+  <UI.Input label={{ name: $t("constructor.props.id") }} value={component.properties.id} onUpdate={(value) => updateProperty("id", value as string)} />
+{/snippet}
+
+{#snippet InputWrapperClass()}
+  <UI.Input
+    label={{ name: $t("constructor.props.wrapperclass") }}
+    value={component.properties.wrapperClass}
+    onUpdate={(value) => updateProperty("wrapperClass", value as string)}
+  />
+{/snippet}
+
+{#snippet InputLabelClass()}
+  <UI.Input
+    label={{ name: $t("constructor.props.label.class") }}
+    value={component.properties.label.class}
+    onUpdate={(value) => updateProperty("label.class", value as string)}
+  />
+{/snippet}
+
+{#snippet InputComponentClass()}
+  <UI.Input
+    label={{ name: $t("constructor.props.componentclass") }}
+    value={component.properties.componentClass}
+    onUpdate={(value) => updateProperty("componentClass", twMerge(component.properties.componentClass, value as string))}
+  />
+{/snippet}
+
+{#snippet InputValue()}
+  <UI.Input label={{ name: $t("constructor.props.value") }} value={component.properties.value} onUpdate={(value) => updateProperty("value", value as string)} />
+{/snippet}
+
+{#snippet InputDisabled()}
+  <UI.Switch
+    label={{ name: $t("constructor.props.disabled") }}
+    value={component.properties.disabled}
+    options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
+    onChange={(value) => updateProperty("disabled", value)}
+  />
+{/snippet}
+
 {#if forConstructor}
   <div class="relative flex flex-row items-start justify-center">
-    <!-- Сообщение для отправки в ws по нажатию кнопки -->
-    <div class="flex w-1/3 flex-col items-center px-2">
-      <UI.Select
-        label={{ name: $t("constructor.props.variable") }}
-        options={VARIABLE_OPTIONS}
-        value={VARIABLE_OPTIONS.find((opt) => opt.value === component.properties.id)}
-        onUpdate={(value) => {
-          updateProperty("id", value.value as string)
-          onPropertyChange({ name: value.name?.split("—")[1].trim(), eventHandler: { Variables: [value.value as string] } })
-        }}
-      />
-      <UI.Select
-        label={{ name: $t("constructor.props.access") }}
-        type="buttons"
-        options={$optionsStore.ACCESS_OPTION}
-        value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.access)}
-        onUpdate={(option) => onPropertyChange({ access: option.value })}
-      />
-      <UI.Select
-        label={{ name: $t("constructor.props.type") }}
-        options={$optionsStore.INPUT_TYPE_OPTIONS}
-        type="buttons"
-        value={$optionsStore.INPUT_TYPE_OPTIONS.find((opt) => opt.value === (component.properties.type || "text"))}
-        onUpdate={(selectedOption) => {
-          updateProperty("type", selectedOption.value as string)
-          if (selectedOption.value === "text-area") updateProperty("componentClass", twMerge(component.properties.componentClass, "font-mono"))
-          else updateProperty("componentClass", twMerge(component.properties.componentClass, "font-[Montserrat]"))
-        }}
-      />
-      {#if component.properties.type === "text" || component.properties.type === "password" || component.properties.type === "text-area"}
-        <UI.Input
-          label={{ name: $t("constructor.props.maxlength") }}
-          type="number"
-          number={{ minNum: 1, maxNum: 1000000, step: 1 }}
-          value={component.properties.maxlength}
-          onUpdate={(value) => updateProperty("maxlength", value as string)}
-        />
-        <UI.Input
-          label={{ name: $t("constructor.props.regexp") }}
-          value={component.properties.help.regExp}
-          maxlength={150}
-          help={{ info: $t("constructor.props.regexp.info") }}
-          componentClass={isValidRegExp === false ? "!border-2 !border-red-400" : ""}
-          onUpdate={(value) => updateProperty("help.regExp", value as string)}
-        />
-      {:else if component.properties.type === "number" && !component.properties.readonly && !component.properties.disabled}
-        <UI.Input
-          label={{ name: $t("constructor.props.minnum") }}
-          value={component.properties.number.minNum as number}
-          type="number"
-          onUpdate={(value) => {
-            updateProperty("number.minNum", Number(value))
-          }}
-        />
-        <UI.Input
-          label={{ name: $t("constructor.props.maxnum") }}
-          value={component.properties.number.maxNum as number}
-          type="number"
-          onUpdate={(value) => {
-            updateProperty("number.maxNum", Number(value))
-          }}
-        />
-        <UI.Input
-          label={{ name: $t("constructor.props.step") }}
-          value={component.properties.number.step as number}
-          type="number"
-          onUpdate={(value) => updateProperty("number.step", Number(value))}
-        />
-      {/if}
+    <div class="flex w-1/3 flex-col px-2">
+      {@render InputVariable()}
+      {@render InputAccess()}
+      {@render InputType()}
     </div>
     <div class="flex w-1/3 flex-col px-2">
-      <UI.Input
-        label={{ name: $t("constructor.props.placeholder") }}
-        value={component.properties.placeholder as string}
-        onUpdate={(value) => updateProperty("placeholder", value)}
-      />
-      <UI.Input
-        label={{ name: $t("constructor.props.info") }}
-        value={component.properties.help.info as string}
-        onUpdate={(value) => updateProperty("help.info", value)}
-      />
-      <UI.Switch
-        label={{ name: $t("constructor.props.readonly") }}
-        value={component.properties.readonly}
-        options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-        onChange={(value) => updateProperty("readonly", value)}
-      />
-      <UI.Switch
-        label={{ name: $t("constructor.props.copy") }}
-        value={component.properties.help.copyButton}
-        options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-        onChange={(value) => updateProperty("help.copyButton", value)}
-      />
+      {@render InputPlaceholder()}
+      {@render InputInfo()}
+      <div class="flex">
+        {@render InputReadOnly()}
+        {@render InputCopy()}
+      </div>
     </div>
     <div class="flex w-1/3 flex-col px-2">
-      <UI.Input
-        label={{ name: $t("constructor.props.label") }}
-        value={component.properties.label.name}
-        onUpdate={(value) => updateProperty("label.name", value as string)}
-      />
-      <UI.Select
-        label={{ name: $t("constructor.props.align") }}
-        type="buttons"
-        value={initialAlign}
-        options={$optionsStore.TEXT_ALIGN_OPTIONS}
-        onUpdate={(option) => updateProperty("label.class", twMerge(component.properties.label.class, option.value))}
-      />
-      <UI.Select
-        label={{ name: $t("constructor.props.autocomplete") }}
-        options={$optionsStore.AUTOCOMPLETE_CONSTRUCTOR_OPTIONS}
-        value={$optionsStore.AUTOCOMPLETE_CONSTRUCTOR_OPTIONS.find((opt) => opt.value === (component.properties.help.autocomplete || "off"))}
-        onUpdate={(selectedOption) => updateProperty("help.autocomplete", selectedOption.value as string)}
-      />
-      <UI.Select
-        wrapperClass="h-14"
-        label={{ name: $t("constructor.props.colors") }}
-        type="buttons"
-        options={$optionsStore.COLOR_OPTIONS}
-        value={initialColor}
-        onUpdate={(option) => handleOptionColorChange(option.value as string)}
-      />
+      {@render InputLabel()}
+      {@render InputLabelAlign()}
+      {@render InputAutocomplete()}
+      {@render InputColors()}
     </div>
   </div>
 {:else}
   <div class="relative flex flex-row items-start justify-center">
-    <!-- Сообщение для отправки в ws по нажатию кнопки -->
-    <div class="flex w-1/3 flex-col items-center px-2">
-      <UI.Input label={{ name: $t("constructor.props.id") }} value={component.properties.id} onUpdate={(value) => updateProperty("id", value as string)} />
-      <UI.Input
-        label={{ name: $t("constructor.props.wrapperclass") }}
-        value={component.properties.wrapperClass}
-        onUpdate={(value) => updateProperty("wrapperClass", value as string)}
-      />
-      <UI.Input
-        label={{ name: $t("constructor.props.label") }}
-        value={component.properties.label.name}
-        onUpdate={(value) => updateProperty("label.name", value as string)}
-      />
-      <UI.Input
-        label={{ name: $t("constructor.props.label.class") }}
-        value={component.properties.label.class}
-        onUpdate={(value) => updateProperty("label.class", value as string)}
-      />
-      <UI.Input
-        label={{ name: $t("constructor.props.componentclass") }}
-        value={component.properties.componentClass}
-        onUpdate={(value) => updateProperty("componentClass", twMerge(component.properties.componentClass, value as string))}
-      />
-      <UI.Select
-        wrapperClass="h-14"
-        label={{ name: $t("constructor.props.colors") }}
-        type="buttons"
-        options={$optionsStore.COLOR_OPTIONS}
-        value={initialColor}
-        onUpdate={(option) => handleOptionColorChange(option.value as string)}
-      />
+    <div class="flex w-1/3 flex-col px-2">
+      {@render InputIdentificator()}
+      {@render InputWrapperClass()}
+      {@render InputLabel()}
+      {@render InputLabelClass()}
+      {@render InputComponentClass()}
+      {@render InputColors()}
     </div>
     <div class="flex w-1/3 flex-col px-2">
-      <UI.Select
-        label={{ name: $t("constructor.props.access") }}
-        type="buttons"
-        options={$optionsStore.ACCESS_OPTION}
-        value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.access)}
-        onUpdate={(option) => onPropertyChange({ access: option.value })}
-      />
-      <UI.Input
-        label={{ name: $t("constructor.props.value") }}
-        value={component.properties.value}
-        onUpdate={(value) => updateProperty("value", value as string)}
-      />
-      <UI.Select
-        label={{ name: $t("constructor.props.type") }}
-        options={$optionsStore.INPUT_TYPE_OPTIONS}
-        type="buttons"
-        value={$optionsStore.INPUT_TYPE_OPTIONS.find((opt) => opt.value === (component.properties.type || "text"))}
-        onUpdate={(selectedOption) => updateProperty("type", selectedOption.value as string)}
-      />
-      {#if component.properties.type === "text" || component.properties.type === "password" || component.properties.type === "text-area"}
-        <UI.Input
-          label={{ name: $t("constructor.props.maxlength") }}
-          type="number"
-          number={{ minNum: 1, maxNum: 1000000, step: 1 }}
-          value={component.properties.maxlength}
-          onUpdate={(value) => updateProperty("maxlength", value as string)}
-        />
-        <UI.Input
-          label={{ name: $t("constructor.props.regexp") }}
-          value={component.properties.help.regExp}
-          maxlength={150}
-          help={{ info: $t("constructor.props.regexp.info") }}
-          componentClass={isValidRegExp === false ? "!border-2 !border-red-400" : ""}
-          onUpdate={(value) => updateProperty("help.regExp", value)}
-        />
-        {#if component.properties.type === "text-area"}
-          <UI.Input
-            label={{ name: $t("constructor.props.textarea.rows") }}
-            type="number"
-            number={{ minNum: 1, maxNum: 1000000, step: 1 }}
-            value={component.properties.textareaRows}
-            onUpdate={(value) => updateProperty("textareaRows", value as string)}
-          />
-        {/if}
-      {:else if component.properties.type === "number" && !component.properties.readonly && !component.properties.disabled}
-        <UI.Input
-          label={{ name: $t("constructor.props.minnum") }}
-          value={component.properties.number.minNum as number}
-          type="number"
-          onUpdate={(value) => {
-            updateProperty("number.minNum", Number(value))
-          }}
-        />
-        <UI.Input
-          label={{ name: $t("constructor.props.maxnum") }}
-          value={component.properties.number.maxNum as number}
-          type="number"
-          onUpdate={(value) => {
-            updateProperty("number.maxNum", Number(value))
-          }}
-        />
-        <UI.Input
-          label={{ name: $t("constructor.props.step") }}
-          value={component.properties.number.step as number}
-          type="number"
-          onUpdate={(value) => updateProperty("number.step", Number(value))}
-        />
-      {/if}
+      {@render InputAccess()}
+      {@render InputValue()}
+      {@render InputType()}
     </div>
     <div class="flex w-1/3 flex-col px-2">
-      <UI.Input
-        label={{ name: $t("constructor.props.placeholder") }}
-        value={component.properties.placeholder as string}
-        onUpdate={(value) => updateProperty("placeholder", value)}
-      />
-      <UI.Input
-        label={{ name: $t("constructor.props.info") }}
-        value={component.properties.help.info as string}
-        onUpdate={(value) => updateProperty("help.info", value)}
-      />
-      <UI.Select
-        label={{ name: $t("constructor.props.autocomplete") }}
-        options={$optionsStore.AUTOCOMPLETE_OPTIONS}
-        value={$optionsStore.AUTOCOMPLETE_OPTIONS.find((opt) => opt.value === (component.properties.help.autocomplete || "off"))}
-        onUpdate={(selectedOption) => updateProperty("help.autocomplete", selectedOption.value as string)}
-      />
-
-      <UI.Switch
-        label={{ name: $t("constructor.props.readonly") }}
-        value={component.properties.readonly}
-        options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-        onChange={(value) => updateProperty("readonly", value)}
-      />
-      <UI.Switch
-        label={{ name: $t("constructor.props.copy") }}
-        value={component.properties.help.copyButton}
-        options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-        onChange={(value) => updateProperty("help.copyButton", value)}
-      />
-      <UI.Switch
-        label={{ name: $t("constructor.props.disabled") }}
-        value={component.properties.disabled}
-        options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-        onChange={(value) => updateProperty("disabled", value)}
-      />
+      {@render InputPlaceholder()}
+      {@render InputInfo()}
+      {@render InputAutocomplete()}
+      <div class="flex">
+        {@render InputReadOnly()}
+        {@render InputCopy()}
+      </div>
+      {@render InputDisabled()}
     </div>
   </div>
 {/if}

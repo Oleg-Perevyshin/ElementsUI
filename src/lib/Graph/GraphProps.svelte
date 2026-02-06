@@ -5,6 +5,7 @@
   import * as UI from "$lib"
   import { optionsStore } from "$lib/options"
   import { twMerge } from "tailwind-merge"
+  import CommonSnippets from "$lib/CommonSnippets.svelte"
 
   const {
     component,
@@ -26,73 +27,40 @@
   )
 </script>
 
+{#snippet GraphIsTest()}
+  <UI.Switch
+    wrapperClass="bg-blue"
+    label={{ name: $t("constructor.props.istest") }}
+    value={component.properties.isTest}
+    options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
+    onChange={(value) => updateProperty("isTest", value, component, onPropertyChange)}
+  />
+{/snippet}
+
 {#if forConstructor}
   <div class="relative flex flex-row items-start justify-center">
-    <!-- Сообщение для отправки в ws по нажатию кнопки -->
-    <div class="flex w-1/3 flex-col items-center px-2">
-      <UI.Select
-        label={{ name: $t("constructor.props.variable") }}
-        options={VARIABLE_OPTIONS}
-        value={VARIABLE_OPTIONS.find((opt) => opt.value === component.properties.id)}
-        onUpdate={(value) => {
-          updateProperty("id", value.value as string, component, onPropertyChange)
-          onPropertyChange({ name: value.name?.split("—")[1].trim(), eventHandler: { Variables: [value.value as string] } })
-        }}
-      />
+    <div class="flex w-1/3 flex-col px-2">
+      <CommonSnippets snippet="Variable" {VARIABLE_OPTIONS} {component} {onPropertyChange} />
     </div>
     <div class="flex w-1/3 flex-col px-2">
-      <UI.Input
-        label={{ name: $t("constructor.props.label") }}
-        value={component.properties.label.name}
-        onUpdate={(value) => updateProperty("label.name", value as string, component, onPropertyChange)}
-      />
+      <CommonSnippets snippet="Label" {component} {onPropertyChange} />
     </div>
     <div class="flex w-1/3 flex-col px-2">
-      <UI.Select
-        label={{ name: $t("constructor.props.align") }}
-        type="buttons"
-        value={initialAlign}
-        options={$optionsStore.TEXT_ALIGN_OPTIONS}
-        onUpdate={(option) => updateProperty("label.class", twMerge(component.properties.label.class, option.value), component, onPropertyChange)}
-      />
+      <CommonSnippets snippet="LabelAlign" initialValue={initialAlign} {component} {onPropertyChange} />
     </div>
   </div>
 {:else}
   <div class="relative mb-2 flex flex-row items-start justify-center">
-    <!-- Сообщение для отправки в ws по нажатию кнопки -->
-    <div class="flex w-1/3 flex-col items-center px-2">
-      <UI.Input
-        label={{ name: $t("constructor.props.id") }}
-        value={component.properties.id}
-        onUpdate={(value) => updateProperty("id", value as string, component, onPropertyChange)}
-      />
-      <UI.Input
-        label={{ name: $t("constructor.props.wrapperclass") }}
-        value={component.properties.wrapperClass}
-        onUpdate={(value) => updateProperty("wrapperClass", value as string, component, onPropertyChange)}
-      />
+    <div class="flex w-1/3 flex-col px-2">
+      <CommonSnippets snippet="Identificator" {component} {onPropertyChange} />
+      <CommonSnippets snippet="WrapperClass" {component} {onPropertyChange} />
     </div>
     <div class="flex w-1/3 flex-col px-2">
-      <UI.Input
-        label={{ name: $t("constructor.props.label") }}
-        value={component.properties.label.name}
-        onUpdate={(value) => updateProperty("label.name", value as string, component, onPropertyChange)}
-      />
-      <UI.Input
-        label={{ name: $t("constructor.props.label.class") }}
-        value={component.properties.label.class}
-        onUpdate={(value) => updateProperty("label.class", value as string, component, onPropertyChange)}
-      />
+      <CommonSnippets snippet="Label" {component} {onPropertyChange} />
+      <CommonSnippets snippet="LabelClass" initialValue={initialAlign} {component} {onPropertyChange} />
     </div>
-
     <div class="flex w-1/3 flex-col px-2">
-      <UI.Switch
-        wrapperClass="bg-blue"
-        label={{ name: $t("constructor.props.istest") }}
-        value={component.properties.isTest}
-        options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-        onChange={(value) => updateProperty("isTest", value, component, onPropertyChange)}
-      />
+      {@render GraphIsTest()}
     </div>
   </div>
 {/if}

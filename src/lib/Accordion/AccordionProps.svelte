@@ -8,6 +8,7 @@
   import Modal from "$lib/Modal.svelte"
   import Button from "$lib/Button/Button.svelte"
   import CrossIcon from "$lib/libIcons/CrossIcon.svelte"
+  import CommonSnippets from "$lib/CommonSnippets.svelte"
 
   const {
     component,
@@ -20,8 +21,6 @@
   }>()
 
   let showIconLib = $state(false)
-
-  const initialType = $derived($optionsStore.ACCORDION_TYPE_OPTIONS.find((t) => t.value === component.properties.outline))
 
   const initialAlign = $derived(
     $optionsStore.JUSTIFY_ALIGN_OPTIONS.find((a) =>
@@ -45,204 +44,127 @@
   let currentImage = $derived(component.properties.image ?? "")
 </script>
 
+{#snippet AccordionLabelIcon()}
+  <div class="relative mt-6 flex w-full gap-2">
+    <UI.Button content={{ name: $t("constructor.props.labelicon") }} onClick={() => (showIconLib = true)} />
+    {#if showIconLib}
+      <Modal bind:isOpen={showIconLib} wrapperClass="w-130">
+        {#snippet main()}
+          <div class="grid grid-cols-3">
+            {#each ICONS as category}
+              <div class="relative m-1.5 rounded-xl border-2 border-(--border-color) p-3">
+                <div class="absolute -top-3.5 bg-(--back-color) px-1">{$t(`constructor.props.icon.${category[0]}`)}</div>
+                <div class="grid grid-cols-3 place-items-center gap-2">
+                  {#each category[1] as icon}
+                    <button
+                      class="h-8 w-8 cursor-pointer [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
+                      onclick={() => {
+                        updateProperty("label.icon", icon as string, component, onPropertyChange)
+                      }}
+                    >
+                      {@html icon}
+                    </button>{/each}
+                </div>
+              </div>
+            {/each}
+          </div>
+        {/snippet}
+      </Modal>
+    {/if}
+    {#if component.properties.label.icon}
+      <Button
+        wrapperClass="w-8.5 "
+        componentClass="p-0.5 bg-red"
+        content={{ icon: CrossIcon }}
+        onClick={() => {
+          updateProperty("label.icon", "", component, onPropertyChange)
+        }}
+      />
+    {/if}
+  </div>
+{/snippet}
+
+{#snippet AccordionBackgroundImage()}
+  <div class="flex">
+    <UI.FileAttach
+      type="image"
+      label={{ name: $t("constructor.props.image") }}
+      accept="image/png, image/jpeg, image/webp"
+      bind:currentImage
+      onChange={handleImageUpload}
+    />
+    {#if currentImage}
+      <Button
+        wrapperClass="w-8.5 mt-6"
+        componentClass="p-0.5 bg-red"
+        content={{ icon: CrossIcon }}
+        onClick={() => {
+          updateProperty("image", "", component, onPropertyChange)
+        }}
+      />
+    {/if}
+  </div>
+{/snippet}
+
+{#snippet AccordionSize()}
+  <div class="flex w-full gap-4">
+    <UI.Input
+      label={{ name: $t("constructor.props.size.height") }}
+      value={component.properties.size.height}
+      onUpdate={(value) => updateProperty("size.height", value as number, component, onPropertyChange)}
+      number={{ minNum: 1, maxNum: 1000, step: 1 }}
+      type="number"
+    />
+    <UI.Input
+      label={{ name: $t("constructor.props.size.width") }}
+      value={component.properties.size.width}
+      onUpdate={(value) => updateProperty("size.width", value as number, component, onPropertyChange)}
+      number={{ minNum: 1, maxNum: 1000, step: 1 }}
+      type="number"
+    />
+  </div>
+{/snippet}
+
+{#snippet AccordionIsOpen()}
+  <UI.Switch
+    label={{ name: $t("constructor.props.open") }}
+    value={component.properties.isOpen}
+    options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
+    onChange={(value) => updateProperty("isOpen", value, component, onPropertyChange)}
+  />
+{/snippet}
+
 {#if forConstructor}
   <div class="flex items-start justify-center gap-8">
-    <div class="flex w-1/3 flex-col items-center px-2">
-      <UI.Select
-        label={{ name: $t("constructor.props.access") }}
-        type="buttons"
-        options={$optionsStore.ACCESS_OPTION}
-        value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.access)}
-        onUpdate={(option) => onPropertyChange({ access: option.value })}
-      />
-      <UI.Input
-        label={{ name: $t("constructor.props.label") }}
-        value={component.properties.label.name}
-        onUpdate={(value) => updateProperty("label.name", value as string, component, onPropertyChange)}
-      />
-      <UI.Select
-        label={{ name: $t("constructor.props.align") }}
-        type="buttons"
-        value={initialAlign}
-        options={$optionsStore.JUSTIFY_ALIGN_OPTIONS}
-        onUpdate={(option) => updateProperty("label.class", option.value as string, component, onPropertyChange)}
-      />
+    <div class="flex w-1/3 flex-col px-2">
+      <CommonSnippets snippet="Access" {component} {onPropertyChange} />
+      <CommonSnippets snippet="Label" {component} {onPropertyChange} />
+      <CommonSnippets snippet="LabelAlign" initialValue={initialAlign} {component} {onPropertyChange} />
     </div>
-    <div class="flex w-1/3 flex-col items-center px-2">
-      <div class="relative mt-6 flex w-full gap-2">
-        <UI.Button content={{ name: $t("constructor.props.labelicon") }} onClick={() => (showIconLib = true)} />
-        {#if showIconLib}
-          <Modal bind:isOpen={showIconLib} wrapperClass="w-130">
-            {#snippet main()}
-              <div class="grid grid-cols-3">
-                {#each ICONS as category}
-                  <div class="relative m-1.5 rounded-xl border-2 border-(--border-color) p-3">
-                    <div class="absolute -top-3.5 bg-(--back-color) px-1">{$t(`constructor.props.icon.${category[0]}`)}</div>
-                    <div class="grid grid-cols-3 place-items-center gap-2">
-                      {#each category[1] as icon}
-                        <button
-                          class="h-8 w-8 cursor-pointer [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
-                          onclick={() => {
-                            updateProperty("label.icon", icon as string, component, onPropertyChange)
-                          }}
-                        >
-                          {@html icon}
-                        </button>{/each}
-                    </div>
-                  </div>
-                {/each}
-              </div>
-            {/snippet}
-          </Modal>
-        {/if}
-        {#if component.properties.label.icon}
-          <Button
-            wrapperClass="w-8.5 "
-            componentClass="p-0.5 bg-red"
-            content={{ icon: CrossIcon }}
-            onClick={() => {
-              updateProperty("label.icon", "", component, onPropertyChange)
-            }}
-          />
-        {/if}
-      </div>
+    <div class="flex w-1/3 flex-col px-2">
+      {@render AccordionLabelIcon()}
     </div>
-    <div class="flex w-1/3 flex-col items-center gap-2 px-2">
-      <div class="flex">
-        <UI.FileAttach
-          type="image"
-          label={{ name: $t("constructor.props.image") }}
-          accept="image/png, image/jpeg, image/webp"
-          bind:currentImage
-          onChange={handleImageUpload}
-        />
-        {#if currentImage}
-          <Button
-            wrapperClass="w-8.5 mt-6"
-            componentClass="p-0.5 bg-red"
-            content={{ icon: CrossIcon }}
-            onClick={() => {
-              updateProperty("image", "", component, onPropertyChange)
-            }}
-          />
-        {/if}
-      </div>
+    <div class="flex w-1/3 flex-col gap-2 items-center px-2">
+      {@render AccordionBackgroundImage()}
     </div>
   </div>
 {:else}
   <div class="flex items-start justify-center gap-8">
-    <div class="flex w-1/3 flex-col items-center px-2">
-      <UI.Input
-        label={{ name: $t("constructor.props.id") }}
-        value={component.properties.id}
-        onUpdate={(value) => updateProperty("id", value as string, component, onPropertyChange)}
-      />
-      <UI.Select
-        label={{ name: $t("constructor.props.access") }}
-        type="buttons"
-        options={$optionsStore.ACCESS_OPTION}
-        value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.access)}
-        onUpdate={(option) => onPropertyChange({ access: option.value })}
-      />
-      <div class="flex w-full gap-4">
-        <UI.Input
-          label={{ name: $t("constructor.props.size.height") }}
-          value={component.properties.size.height}
-          onUpdate={(value) => updateProperty("size.height", value as number, component, onPropertyChange)}
-          number={{ minNum: 1, maxNum: 1000, step: 1 }}
-          type="number"
-        />
-        <UI.Input
-          label={{ name: $t("constructor.props.size.width") }}
-          value={component.properties.size.width}
-          onUpdate={(value) => updateProperty("size.width", value as number, component, onPropertyChange)}
-          number={{ minNum: 1, maxNum: 1000, step: 1 }}
-          type="number"
-        />
-      </div>
+    <div class="flex w-1/3 flex-col px-2">
+      <CommonSnippets snippet="Identificator" {component} {onPropertyChange} />
+      <CommonSnippets snippet="Access" {component} {onPropertyChange} />
 
-      <UI.Switch
-        label={{ name: $t("constructor.props.open") }}
-        value={component.properties.isOpen}
-        options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-        onChange={(value) => updateProperty("isOpen", value, component, onPropertyChange)}
-      />
+      {@render AccordionSize()}
+      {@render AccordionIsOpen()}
     </div>
     <div class="flex w-1/3 flex-col px-2">
-      <UI.Input
-        label={{ name: $t("constructor.props.wrapperclass") }}
-        value={component.properties.wrapperClass}
-        onUpdate={(value) => updateProperty("wrapperClass", value as string, component, onPropertyChange)}
-      />
-      <div class="relative mt-5 flex w-full gap-2">
-        <UI.Button content={{ name: $t("constructor.props.labelicon") }} onClick={() => (showIconLib = true)} />
-        {#if showIconLib}
-          <Modal bind:isOpen={showIconLib} wrapperClass="w-130">
-            {#snippet main()}
-              <div class="grid grid-cols-3">
-                {#each ICONS as category}
-                  <div class="relative m-1.5 rounded-xl border-2 border-(--border-color) p-3">
-                    <div class="absolute -top-3.5 bg-(--back-color) px-1">{$t(`constructor.props.icon.${category[0]}`)}</div>
-                    <div class="grid grid-cols-3 place-items-center gap-2">
-                      {#each category[1] as icon}
-                        <button
-                          class="h-8 w-8 cursor-pointer [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
-                          onclick={() => {
-                            updateProperty("label.icon", icon as string, component, onPropertyChange)
-                          }}
-                        >
-                          {@html icon}
-                        </button>{/each}
-                    </div>
-                  </div>
-                {/each}
-              </div>
-            {/snippet}
-          </Modal>
-        {/if}
-        {#if component.properties.label.icon}
-          <Button
-            wrapperClass="w-8.5 "
-            componentClass="p-0.5 bg-red"
-            content={{ icon: CrossIcon }}
-            onClick={() => {
-              updateProperty("label.icon", "", component, onPropertyChange)
-            }}
-          />
-        {/if}
-      </div>
-
-      <UI.Input
-        label={{ name: $t("constructor.props.label") }}
-        value={component.properties.label.name}
-        onUpdate={(value) => updateProperty("label.name", value as string, component, onPropertyChange)}
-      />
-      <UI.Input
-        label={{ name: $t("constructor.props.label.class") }}
-        value={component.properties.label.class}
-        onUpdate={(value) => updateProperty("label.class", value as string, component, onPropertyChange)}
-      />
+      <CommonSnippets snippet="WrapperClass" {component} {onPropertyChange} />
+      {@render AccordionLabelIcon()}
+      <CommonSnippets snippet="Label" {component} {onPropertyChange} />
+      <CommonSnippets snippet="LabelClass" initialValue={initialAlign} {component} {onPropertyChange} />
     </div>
     <div class="flex w-1/3 flex-col items-center gap-2 px-2">
-      <div class="flex">
-        <UI.FileAttach
-          type="image"
-          label={{ name: $t("constructor.props.image") }}
-          accept="image/png, image/jpeg, image/webp"
-          bind:currentImage
-          onChange={handleImageUpload}
-        />
-        {#if currentImage}
-          <Button
-            wrapperClass="w-8.5 mt-6"
-            componentClass="p-0.5 bg-red"
-            content={{ icon: CrossIcon }}
-            onClick={() => {
-              updateProperty("image", "", component, onPropertyChange)
-            }}
-          />
-        {/if}
-      </div>
+      {@render AccordionBackgroundImage()}
     </div>
   </div>
 {/if}

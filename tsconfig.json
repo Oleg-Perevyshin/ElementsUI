@@ -8,6 +8,7 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
+    "allowArbitraryExtensions": true,
     "jsx": "preserve"
   },
   "include": ["src/**/*"],

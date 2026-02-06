@@ -5,6 +5,7 @@
   import { optionsStore } from "$lib/options"
   import { getContext } from "svelte"
   import { twMerge } from "tailwind-merge"
+  import CommonSnippets from "$lib/CommonSnippets.svelte"
 
   const {
     component,
@@ -30,139 +31,127 @@
       (c.value as string).includes(component.properties.wrapperClass?.split(" ").find((cls: string) => cls.startsWith("text-"))),
     ),
   )
-  const initialBold = $derived(component.properties.content?.class?.split(" ").some((cls: string) => cls.includes("font-bold")))
-  const initialItalic = $derived(component.properties.content?.class?.split(" ").some((cls: string) => cls.startsWith("italic")))
 </script>
+
+{#snippet TextFieldSize()}
+  <UI.Select
+    label={{ name: $t("constructor.props.size") }}
+    type="buttons"
+    value={currentType}
+    options={$optionsStore.TEXTFIELD_SIZE_OPTIONS}
+    onUpdate={(item) => updateProperty("content.size", (item as UI.ISelectOption).value as string, component, onPropertyChange)}
+  />
+{/snippet}
+
+{#snippet TextFieldName()}
+  <UI.Input
+    label={{ name: $t("constructor.props.label") }}
+    value={component.properties.content.name}
+    onUpdate={(value) => updateProperty("content.name", value as string, component, onPropertyChange)}
+  />
+{/snippet}
+
+{#snippet TextFieldColors()}
+  <UI.Select
+    wrapperClass="!h-14"
+    label={{ name: $t("constructor.props.textcolors") }}
+    type="buttons"
+    options={$optionsStore.TEXT_COLOR_OPTIONS}
+    value={initialColor}
+    onUpdate={(option) =>
+      updateProperty("wrapperClass", twMerge(component.properties.wrapperClass, (option as UI.ISelectOption).value as string), component, onPropertyChange)}
+  />
+{/snippet}
+
+{#snippet TextFieldSettings()}
+  <UI.Select
+    label={{ name: $t("constructor.props.textfield.settings") }}
+    type="buttons"
+    multiSelect={true}
+    value={$optionsStore.TEXTFIELD_SETTINGS_OPTIONS.filter((opt) => {
+      if (component.properties.content.class.includes(`${opt.value}`) && !component.properties.content.class.includes(`not-${opt.value}`)) return opt
+      if (opt.value == "background" && component.properties.background) return opt
+    })}
+    options={$optionsStore.TEXTFIELD_SETTINGS_OPTIONS}
+    onUpdate={(value) => {
+      const currentActiveValues = $optionsStore.TEXTFIELD_SETTINGS_OPTIONS.filter((opt) => {
+        if (!opt?.value) return false
+        const currentValue =
+          (component.properties.content.class.includes(`${opt.value}`) && !component.properties.content.class.includes(`not-${opt.value}`)) ||
+          (opt.value == "background" && component.properties.background)
+        return currentValue === true
+      }).map((opt) => opt.value)
+      if (Array.isArray(value)) {
+        value.forEach((opt) => {
+          if (opt?.value === "background") {
+            updateProperty("background", true, component, onPropertyChange)
+          } else {
+            updateProperty(
+              "content.class",
+              twMerge(`${component.properties.content.class} ${opt.value === "bold" ? "font-bold" : "italic"}`),
+              component,
+              onPropertyChange,
+            )
+          }
+        })
+
+        currentActiveValues.forEach((activeValue) => {
+          if (!value.some((opt) => opt?.value === activeValue)) {
+            if (activeValue === "background") {
+              updateProperty("background", false, component, onPropertyChange)
+            } else {
+              updateProperty(
+                "content.class",
+                twMerge(`${component.properties.content.class} ${activeValue === "bold" ? "font-normal" : "not-italic"}`),
+                component,
+                onPropertyChange,
+              )
+            }
+          }
+        })
+      }
+    }}
+  />
+{/snippet}
+
+{#snippet TextFieldComponentClass()}
+  <UI.Input
+    label={{ name: $t("constructor.props.componentclass") }}
+    value={component.properties.content.class}
+    onUpdate={(value) => updateProperty("content.class", value as string, component, onPropertyChange)}
+  />
+{/snippet}
 
 {#if forConstructor}
   <div class="relative flex flex-row items-start justify-center">
     <div class="flex w-1/3 flex-col px-2">
-      <UI.Select
-        label={{ name: $t("constructor.props.variable") }}
-        options={VARIABLE_OPTIONS}
-        value={VARIABLE_OPTIONS.find((opt) => opt.value === component.properties.id)}
-        onUpdate={(value) => {
-          updateProperty("id", value.value as string, component, onPropertyChange)
-          onPropertyChange({ name: value.name?.split("—")[1].trim(), eventHandler: { Variables: [value.value as string] } })
-        }}
-      />
-      <UI.Input
-        label={{ name: $t("constructor.props.label") }}
-        value={component.properties.content.name}
-        onUpdate={(value) => updateProperty("content.name", value as string, component, onPropertyChange)}
-      />
-      <UI.Select
-        label={{ name: $t("constructor.props.size") }}
-        type="buttons"
-        value={currentType}
-        options={$optionsStore.TEXTFIELD_SIZE_OPTIONS}
-        onUpdate={(item) => updateProperty("content.size", item.value as string, component, onPropertyChange)}
-      />
+      <CommonSnippets snippet="Variable" {VARIABLE_OPTIONS} {component} {onPropertyChange} />
+      {@render TextFieldName()}
     </div>
     <div class="flex w-1/3 flex-col px-2">
-      <UI.Select
-        label={{ name: $t("constructor.props.align") }}
-        type="buttons"
-        value={initialAlign}
-        options={$optionsStore.TEXT_ALIGN_OPTIONS}
-        onUpdate={(option) => updateProperty("content.class", twMerge(component.properties.content.class, option.value), component, onPropertyChange)}
-      />
-      <UI.Select
-        wrapperClass="!h-14"
-        label={{ name: $t("constructor.props.textcolors") }}
-        type="buttons"
-        options={$optionsStore.TEXT_COLOR_OPTIONS}
-        value={initialColor}
-        onUpdate={(option) => updateProperty("wrapperClass", twMerge(component.properties.wrapperClass, option.value), component, onPropertyChange)}
-      />
+      <CommonSnippets snippet="LabelAlign" initialValue={initialAlign} {component} {onPropertyChange} />
+      {@render TextFieldColors()}
     </div>
     <div class="flex w-1/3 flex-col px-2">
-      <UI.Switch
-        label={{ name: $t("constructor.props.bold") }}
-        value={initialBold}
-        options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-        onChange={(value) =>
-          updateProperty("content.class", twMerge(`${component.properties.content.class} ${value ? "font-bold" : "font-normal"}`), component, onPropertyChange)}
-      />
-      <UI.Switch
-        label={{ name: $t("constructor.props.italic") }}
-        value={initialItalic}
-        options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-        onChange={(value) =>
-          updateProperty("content.class", twMerge(`${component.properties.content.class} ${value ? "italic" : "not-italic"}`), component, onPropertyChange)}
-      />
-      <UI.Switch
-        label={{ name: $t("constructor.props.background") }}
-        value={component.properties.background}
-        options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-        onChange={(value) => updateProperty("background", value, component, onPropertyChange)}
-      />
+      {@render TextFieldSize()}
+      {@render TextFieldSettings()}
     </div>
   </div>
 {:else}
   <div class="relative flex flex-row items-start justify-center">
     <div class="flex w-1/3 flex-col px-2">
-      <UI.Input
-        label={{ name: $t("constructor.props.id") }}
-        value={component.properties.id}
-        onUpdate={(value) => updateProperty("id", value as string, component, onPropertyChange)}
-      />
-      <UI.Input
-        label={{ name: $t("constructor.props.label") }}
-        value={component.properties.content.name}
-        onUpdate={(value) => updateProperty("content.name", value as string, component, onPropertyChange)}
-      />
-      <UI.Select
-        wrapperClass="!h-14"
-        label={{ name: $t("constructor.props.textcolors") }}
-        type="buttons"
-        options={$optionsStore.TEXT_COLOR_OPTIONS}
-        value={initialColor}
-        onUpdate={(option) => updateProperty("wrapperClass", twMerge(component.properties.wrapperClass, option.value), component, onPropertyChange)}
-      />
+      <CommonSnippets snippet="Identificator" {component} {onPropertyChange} />
+      {@render TextFieldName()}
     </div>
     <div class="flex w-1/3 flex-col px-2">
-      <UI.Select
-        label={{ name: $t("constructor.props.size") }}
-        type="buttons"
-        value={currentType}
-        options={$optionsStore.TEXTFIELD_SIZE_OPTIONS}
-        onUpdate={(item) => updateProperty("content.size", item.value as string, component, onPropertyChange)}
-      />
-      <UI.Input
-        label={{ name: $t("constructor.props.componentclass") }}
-        value={component.properties.content.class}
-        onUpdate={(value) => updateProperty("content.class", value as string, component, onPropertyChange)}
-      />
-      <UI.Select
-        label={{ name: $t("constructor.props.align") }}
-        type="buttons"
-        value={initialAlign}
-        options={$optionsStore.TEXT_ALIGN_OPTIONS}
-        onUpdate={(option) => updateProperty("content.class", twMerge(component.properties.content.class, option.value), component, onPropertyChange)}
-      />
+      {@render TextFieldComponentClass()}
+      <CommonSnippets snippet="LabelClass" {component} {onPropertyChange} />
+      {@render TextFieldColors()}
     </div>
     <div class="flex w-1/3 flex-col px-2">
-      <UI.Switch
-        label={{ name: $t("constructor.props.bold") }}
-        value={initialBold}
-        options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-        onChange={(value) =>
-          updateProperty("content.class", twMerge(`${component.properties.content.class} ${value ? "font-bold" : "font-normal"}`), component, onPropertyChange)}
-      />
-      <UI.Switch
-        label={{ name: $t("constructor.props.italic") }}
-        value={initialItalic}
-        options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-        onChange={(value) =>
-          updateProperty("content.class", twMerge(`${component.properties.content.class} ${value ? "italic" : "not-italic"}`), component, onPropertyChange)}
-      />
-      <UI.Switch
-        label={{ name: $t("constructor.props.background") }}
-        value={component.properties.background}
-        options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-        onChange={(value) => updateProperty("background", value, component, onPropertyChange)}
-      />
+      {@render TextFieldSize()}
+
+      {@render TextFieldSettings()}
     </div>
   </div>
 {/if}

@@ -5,6 +5,7 @@
   import * as UI from "$lib"
   import { optionsStore } from "../options"
   import { twMerge } from "tailwind-merge"
+  import CommonSnippets from "$lib/CommonSnippets.svelte"
 
   const {
     component,
@@ -32,179 +33,82 @@
   )
 </script>
 
+{#snippet SliderType()}
+  <UI.Select
+    label={{ name: $t("constructor.props.type") }}
+    type="buttons"
+    value={$optionsStore.SLIDER_TYPE_OPTIONS.find((opt) => opt.value === (component.properties.type || "single"))}
+    options={$optionsStore.SLIDER_TYPE_OPTIONS}
+    onUpdate={(type) => {
+      updateProperty("value", (type as UI.ISelectOption).value === "single" ? 5 : [2, 7], component, onPropertyChange)
+      updateProperty("type", (type as UI.ISelectOption).value as string, component, onPropertyChange)
+    }}
+  />
+{/snippet}
+
+{#snippet SliderMinMax()}
+  <UI.Input
+    label={{ name: $t("constructor.props.minnum") }}
+    value={component.properties.number.minNum as number}
+    type="number"
+    onUpdate={(value) => updateProperty("number.minNum", Number(value), component, onPropertyChange)}
+  />
+  <UI.Input
+    label={{ name: $t("constructor.props.maxnum") }}
+    value={component.properties.number.maxNum as number}
+    type="number"
+    onUpdate={(value) => updateProperty("number.maxNum", Number(value), component, onPropertyChange)}
+  />
+  <UI.Input
+    label={{ name: $t("constructor.props.step") }}
+    value={component.properties.number.step as number}
+    type="number"
+    onUpdate={(value) => updateProperty("number.step", Number(value), component, onPropertyChange)}
+  />
+{/snippet}
+
+{#snippet SliderValue()}
+  <UI.Input
+    label={{ name: $t("constructor.props.value") }}
+    value={component.properties.value}
+    onUpdate={(value) => updateProperty("value", value as string, component, onPropertyChange)}
+  />
+{/snippet}
+
 {#if forConstructor}
   <div class="relative flex flex-row items-start justify-center">
-    <div class="flex w-1/3 flex-col items-center px-2">
-      <UI.Select
-        label={{ name: $t("constructor.props.variable") }}
-        options={VARIABLE_OPTIONS}
-        value={VARIABLE_OPTIONS.find((opt) => opt.value === component.properties.id)}
-        onUpdate={(value) => {
-          updateProperty("id", value.value as string, component, onPropertyChange)
-          onPropertyChange({ name: value.name?.split("—")[1].trim(), eventHandler: { Variables: [value.value as string] } })
-        }}
-      />
-      <UI.Select
-        label={{ name: $t("constructor.props.action") }}
-        type="buttons"
-        value={$optionsStore.SHORT_ARGUMENT_OPTION.find((h) => h.value === component.eventHandler.Argument)}
-        options={$optionsStore.SHORT_ARGUMENT_OPTION}
-        onUpdate={(option) => {
-          updateProperty("eventHandler.Argument", option.value as string, component, onPropertyChange)
-
-          onPropertyChange({ eventHandler: { Argument: option.value as string } })
-        }}
-      />
-      <UI.Select
-        label={{ name: $t("constructor.props.access") }}
-        type="buttons"
-        options={$optionsStore.ACCESS_OPTION}
-        value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.access)}
-        onUpdate={(option) => onPropertyChange({ access: option.value })}
-      />
+    <div class="flex w-1/3 flex-col px-2">
+      <CommonSnippets snippet="Variable" {VARIABLE_OPTIONS} {component} {onPropertyChange} />
+      <CommonSnippets snippet="EventHandlerArgument" {component} {onPropertyChange} />
+      <CommonSnippets snippet="Access" {component} {onPropertyChange} />
+      {@render SliderType()}
     </div>
     <div class="flex w-1/3 flex-col px-2">
-      <UI.Select
-        label={{ name: $t("constructor.props.type") }}
-        type="buttons"
-        value={$optionsStore.SLIDER_TYPE_OPTIONS.find((opt) => opt.value === (component.properties.type || "single"))}
-        options={$optionsStore.SLIDER_TYPE_OPTIONS}
-        onUpdate={(type) => {
-          updateProperty("value", type.value === "single" ? 5 : [2, 7], component, onPropertyChange)
-          updateProperty("type", type.value as string, component, onPropertyChange)
-        }}
-      />
-      <UI.Input
-        label={{ name: $t("constructor.props.minnum") }}
-        value={component.properties.number.minNum as number}
-        type="number"
-        onUpdate={(value) => updateProperty("number.minNum", Number(value), component, onPropertyChange)}
-      />
-      <UI.Input
-        label={{ name: $t("constructor.props.maxnum") }}
-        value={component.properties.number.maxNum as number}
-        type="number"
-        onUpdate={(value) => updateProperty("number.maxNum", Number(value), component, onPropertyChange)}
-      />
-      <UI.Input
-        label={{ name: $t("constructor.props.step") }}
-        value={component.properties.number.step as number}
-        type="number"
-        onUpdate={(value) => updateProperty("number.step", Number(value), component, onPropertyChange)}
-      />
+      {@render SliderMinMax()}
     </div>
     <div class="flex w-1/3 flex-col px-2">
-      <UI.Input
-        label={{ name: $t("constructor.props.label") }}
-        value={component.properties.label.name}
-        onUpdate={(value) => updateProperty("label.name", value as string, component, onPropertyChange)}
-      />
-      <UI.Select
-        label={{ name: $t("constructor.props.align") }}
-        type="buttons"
-        value={initialAlign}
-        options={$optionsStore.TEXT_ALIGN_OPTIONS}
-        onUpdate={(option) => updateProperty("label.class", twMerge(component.properties.label.class, option.value), component, onPropertyChange)}
-      />
-      <UI.Select
-        wrapperClass="!h-14"
-        label={{ name: $t("constructor.props.colors") }}
-        type="buttons"
-        options={$optionsStore.COLOR_OPTIONS.filter((option) => option.value !== "bg-gray")}
-        value={initialColor}
-        onUpdate={(option) => updateProperty("wrapperClass", twMerge(component.properties.wrapperClass, option.value), component, onPropertyChange)}
-      />
+      <CommonSnippets snippet="Label" {component} {onPropertyChange} />
+      <CommonSnippets snippet="LabelAlign" initialValue={initialAlign} {component} {onPropertyChange} />
+      <CommonSnippets snippet="Colors" initialValue={initialColor} {component} {onPropertyChange} />
     </div>
   </div>
 {:else}
   <div class="relative flex flex-row items-start justify-center">
-    <div class="flex w-1/3 flex-col items-center px-2">
-      <UI.Input
-        label={{ name: $t("constructor.props.id") }}
-        value={component.properties.id}
-        onUpdate={(value) => updateProperty("id", value as string, component, onPropertyChange)}
-      />
-      <UI.Input
-        label={{ name: $t("constructor.props.wrapperclass") }}
-        value={component.properties.wrapperClass}
-        onUpdate={(value) => updateProperty("wrapperClass", value as string, component, onPropertyChange)}
-      />
-      <UI.Select
-        wrapperClass=" h-14"
-        label={{ name: $t("constructor.props.colors") }}
-        type="buttons"
-        options={$optionsStore.COLOR_OPTIONS.filter((option) => option.value !== "bg-gray")}
-        value={initialColor}
-        onUpdate={(option) => {
-          updateProperty("wrapperClass", twMerge(component.properties.wrapperClass, option.value), component, onPropertyChange)
-          const options = [...(component.properties?.options || [])]
-          options.forEach((o) => {
-            o["class"] = option.value
-          })
-          updateProperty("options", options, component, onPropertyChange)
-        }}
-      />
-      <UI.Switch
-        wrapperClass="bg-blue"
-        label={{ name: $t("constructor.props.disabled") }}
-        value={component.properties.disabled}
-        options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-        onChange={(value) => updateProperty("disabled", value, component, onPropertyChange)}
-      />
+    <div class="flex w-1/3 flex-col px-2">
+      <CommonSnippets snippet="Identificator" {component} {onPropertyChange} />
+      <CommonSnippets snippet="WrapperClass" {component} {onPropertyChange} />
+      <CommonSnippets snippet="Colors" initialValue={initialColor} {component} {onPropertyChange} />
+      <CommonSnippets snippet="Disabled" {component} {onPropertyChange} />
     </div>
     <div class="flex w-1/3 flex-col px-2">
-      <UI.Select
-        label={{ name: $t("constructor.props.access") }}
-        type="buttons"
-        options={$optionsStore.ACCESS_OPTION}
-        value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.access)}
-        onUpdate={(option) => onPropertyChange({ access: option.value })}
-      />
-      <UI.Input
-        label={{ name: $t("constructor.props.label") }}
-        value={component.properties.label.name}
-        onUpdate={(value) => updateProperty("label.name", value as string, component, onPropertyChange)}
-      />
-      <UI.Input
-        label={{ name: $t("constructor.props.label.class") }}
-        value={component.properties.label.class}
-        onUpdate={(value) => updateProperty("label.class", value as string, component, onPropertyChange)}
-      />
-      <UI.Input
-        label={{ name: $t("constructor.props.value") }}
-        value={component.properties.value}
-        onUpdate={(value) => updateProperty("value", value as string, component, onPropertyChange)}
-      />
+      <CommonSnippets snippet="Access" {component} {onPropertyChange} />
+      <CommonSnippets snippet="Label" {component} {onPropertyChange} />
+      <CommonSnippets snippet="LabelClass" {component} {onPropertyChange} />
+      {@render SliderValue()}
     </div>
     <div class="flex w-1/3 flex-col px-2">
-      <UI.Select
-        label={{ name: $t("constructor.props.type") }}
-        type="buttons"
-        value={$optionsStore.SLIDER_TYPE_OPTIONS.find((opt) => opt.value === (component.properties.type || "single"))}
-        options={$optionsStore.SLIDER_TYPE_OPTIONS}
-        onUpdate={(type) => {
-          updateProperty("value", type.value === "single" ? 5 : [2, 7], component, onPropertyChange)
-          updateProperty("type", type.value as string, component, onPropertyChange)
-        }}
-      />
-      <UI.Input
-        label={{ name: $t("constructor.props.minnum") }}
-        value={component.properties.number.minNum as number}
-        type="number"
-        onUpdate={(value) => updateProperty("number.minNum", Number(value), component, onPropertyChange)}
-      />
-      <UI.Input
-        label={{ name: $t("constructor.props.maxnum") }}
-        value={component.properties.number.maxNum as number}
-        type="number"
-        onUpdate={(value) => updateProperty("number.maxNum", Number(value), component, onPropertyChange)}
-      />
-      <UI.Input
-        label={{ name: $t("constructor.props.step") }}
-        value={component.properties.number.step as number}
-        type="number"
-        onUpdate={(value) => updateProperty("number.step", Number(value), component, onPropertyChange)}
-      />
+      {@render SliderType()}
+      {@render SliderMinMax()}
     </div>
   </div>
 {/if}

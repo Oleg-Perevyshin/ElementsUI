@@ -50,6 +50,7 @@ export {
   type ITextFieldProps,
   type IMapProps,
   type IProgressBarProps,
+  type IProgressDataObject,
   type IGraphProps,
   type IGraphDataObject,
   type ITableHeader,

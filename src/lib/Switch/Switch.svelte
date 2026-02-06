@@ -132,7 +132,7 @@
       relative size-8 cursor-pointer appearance-none rounded-2xl border border-(--bg-color)
       bg-white shadow-sm transition duration-200 after:origin-bottom-left after:opacity-0
       checked:border-(--bg-color)
-      checked:bg-(--bg-color) checked:after:absolute checked:after:-top-px checked:after:left-[5px]
+      checked:bg-(--bg-color) checked:after:absolute checked:after:-top-px checked:after:left-1.25
       checked:after:h-[13.5px] checked:after:w-[7.5px] checked:after:rotate-43
       checked:after:border-2 checked:after:border-t-0
       checked:after:border-l-0 checked:after:border-solid

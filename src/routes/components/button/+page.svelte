@@ -4,6 +4,7 @@
   import { formatObjectToString } from "../../common"
   import ComponentExample from "$lib/ComponentExample.svelte"
   import ButtonProps from "$lib/Button/ButtonProps.svelte"
+  import Modal from "$lib/Modal.svelte"
 
   let buttonComponent: UIComponent = $state({
     id: crypto.randomUUID(),
@@ -16,12 +17,13 @@
         name: "Button",
         info: { text: "", side: "top" },
       },
+      keyBind: { showInfo: true, ctrlKey: true, key: "Enter" },
     },
     eventHandler: { Header: "SET", Argument: "Save", Variables: [] },
     position: { row: 0, col: 0, width: 0, height: 0 },
     parentId: "",
   })
-
+  let isOpen = $state(true)
   let codeText = $derived(`
 <UI.Button
 ${formatObjectToString(buttonComponent.properties as IButtonProps)} 

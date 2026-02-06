@@ -14,8 +14,8 @@
       id: crypto.randomUUID(),
       wrapperClass: "bg-blue",
       label: { name: "Label", class: "text-center" },
-      value: [2, 6],
-      type: "range",
+      value: 3,
+      type: "single",
       number: { minNum: 0, maxNum: 10, step: 1 },
       disabled: false,
     },
@@ -39,7 +39,7 @@ ${formatObjectToString(sliderComponent.properties as ISliderProps)}
     <SliderProps
       component={sliderComponent as UIComponent & { properties: Partial<ISliderProps> }}
       onPropertyChange={(updates) => (sliderComponent = updateComponent(sliderComponent, updates as object))}
-      forConstructor={true}
+      forConstructor={false}
     />
     <!-- <hr />
     <SliderProps

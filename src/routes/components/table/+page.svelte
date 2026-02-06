@@ -1,6 +1,5 @@
 <script lang="ts">
   import { type ITableHeader, type ITableProps, type UIComponent } from "$lib"
-  import Button from "$lib/Button/Button.svelte"
   import ComponentExample from "$lib/ComponentExample.svelte"
   import Table from "$lib/Table/Table.svelte"
   import TableProps from "$lib/Table/TableProps.svelte"
@@ -28,8 +27,13 @@
             width: "0rem",
             height: "0rem",
           },
-          action: { type: "select", select: { key: "" } },
+          type: "select",
+          select: { key: "" },
           align: "left",
+          text: {
+            truncated: false,
+            copy: false,
+          },
         } as ITableHeader<any>,
         {
           key: "device",
@@ -40,9 +44,11 @@
             width: "0rem",
             height: "0rem",
           },
+          type: "text",
           align: "left",
-          overflow: {
+          text: {
             truncated: true,
+            copy: false,
           },
         } as ITableHeader<any>,
       ],
@@ -56,6 +62,7 @@
           ],
           device: "Value of device",
         },
+        {},
         {
           id: [
             { id: "Value of id1", name: "Value of id1", value: "Value of id1" },
