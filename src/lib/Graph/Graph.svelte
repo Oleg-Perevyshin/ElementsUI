@@ -225,7 +225,7 @@
 
   <div class="flex w-full flex-row gap-4">
     <!-- График -->
-    <div bind:this={container} class="h-64 grow overflow-hidden rounded-2xl border border-gray-200 shadow-sm">
+    <div bind:this={container} class="h-64 grow overflow-hidden rounded-xl border border-gray-200 shadow-sm">
       <canvas class="h-full w-full bg-(--back-color)" bind:this={canvas}></canvas>
     </div>
 
@@ -236,7 +236,7 @@
         label={{ name: "Refresh rate", class: "" }}
         options={REFRESH_OPTIONS}
         value={REFRESH_OPTIONS.find((o) => o.value == selectedRefreshRate)}
-        onUpdate={(value) => (selectedRefreshRate = value.value as number)}
+        onUpdate={(value) => (selectedRefreshRate = (value as ISelectOption).value as number)}
       />
 
       <!-- Масштаб по вертикали -->
@@ -244,7 +244,7 @@
         label={{ name: "Scale" }}
         options={SCALE_OPTIONS}
         value={SCALE_OPTIONS.find((o) => o.value == selectedScale)}
-        onUpdate={(value) => (selectedScale = value.value as number)}
+        onUpdate={(value) => (selectedScale = (value as ISelectOption).value as number)}
       />
 
       <!-- Переменные и их значение -->

@@ -121,7 +121,7 @@ export const optionsStore = derived(t, ($t) => {
     ],
 
     TABLE_COLUMN_SETTING_OPTIONS: [
-      { id: id(), value: "sortable", name: $t("constructor.props.table.columns.sortable") },
+      { id: id(), value: "text.sortable", name: $t("constructor.props.table.columns.sortable") },
       { id: id(), value: "text.copy", name: $t("constructor.props.copy") },
       { id: id(), value: "text.truncated", name: $t("constructor.props.table.columns.truncated") },
     ],

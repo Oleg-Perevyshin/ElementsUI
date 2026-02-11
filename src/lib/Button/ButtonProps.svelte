@@ -1,6 +1,6 @@
 <!-- $lib/ElementsUI/ButtonProps.svelte -->
 <script lang="ts">
-  import { Language, t } from "../locales/i18n"
+  import { t } from "../locales/i18n"
   import { type UIComponent, type IButtonProps, type ISelectOption, updateProperty, type IUIComponentHandler } from "../types"
   import * as UI from "$lib"
   import { optionsStore } from "../options"

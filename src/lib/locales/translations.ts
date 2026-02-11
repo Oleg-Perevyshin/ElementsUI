@@ -118,6 +118,7 @@ const translations: Translations = {
     "constructor.props.widthMode": "Ширина кнопок",
     "constructor.props.graphdata.title": "Начальные данные ",
     "constructor.props.options.title": "Опции компонента",
+    "constructor.props.progressbar.title": "Полосы прогресса",
     "constructor.props.bits.title": "Биты",
     "constructor.props.tabs.title": "Вкладки меню",
     "constructor.props.valuetype": "Тип значения",

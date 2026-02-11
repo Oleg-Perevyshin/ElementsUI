@@ -78,8 +78,7 @@
             {/if}
 
             <label
-              class="relative flex items-center justify-between rounded-full shadow-sm transition duration-200
-      {checkedOptions[index] ? 'border-(--bg-color)' : 'border-(--bg-color)'}
+              class="relative flex items-center justify-between rounded-full shadow-sm transition duration-200 border-(--bg-color)
       {option.disabled ? 'opacity-60' : 'hover:shadow-md'}"
             >
               <input

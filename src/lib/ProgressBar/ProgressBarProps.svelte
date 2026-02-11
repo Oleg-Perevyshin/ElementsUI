@@ -4,8 +4,9 @@
   import { type UIComponent, type IProgressBarProps, updateProperty, type IUIComponentHandler } from "../types"
   import * as UI from "$lib"
   import { optionsStore } from "../options"
-  import { twMerge } from "tailwind-merge"
   import CommonSnippets from "$lib/CommonSnippets.svelte"
+  import ButtonAdd from "$lib/libIcons/ButtonAdd.svelte"
+  import ButtonDelete from "$lib/libIcons/ButtonDelete.svelte"
 
   const {
     component,
@@ -19,18 +20,6 @@
 
   const DeviceVariables = getContext<{ id: string; value: string; name: string }[]>("DeviceVariables")
   let VARIABLE_OPTIONS = $derived(DeviceVariables && Array.isArray(DeviceVariables) ? DeviceVariables : [])
-
-  const initialAlign = $derived(
-    $optionsStore.TEXT_ALIGN_OPTIONS.find((a) =>
-      (a.value as string).includes(component.properties.label?.class?.split(" ").find((cls: string) => cls.startsWith("text-"))),
-    ),
-  )
-
-  const initialColor = $derived(
-    $optionsStore.COLOR_OPTIONS.find((c) =>
-      (c.value as string).includes(component.properties.wrapperClass?.split(" ").find((cls: string) => cls.startsWith("bg-"))),
-    ),
-  )
 </script>
 
 {#snippet ProgressBarType()}
@@ -52,12 +41,10 @@
     type="number"
     onUpdate={(value) => {
       updateProperty("number.minNum", Number(value), component, onPropertyChange)
-      updateProperty(
-        "value",
-        component.properties.number.minNum + (component.properties.number.maxNum - component.properties.number.minNum) / 3,
-        component,
-        onPropertyChange,
-      )
+      let newValue = component.properties.value.map((pr: UI.ISelectOption) => {
+        return { ...pr, value: component.properties.number.minNum + (component.properties.number.maxNum - component.properties.number.minNum) / 2 }
+      })
+      updateProperty("value", newValue, component, onPropertyChange)
     }}
   />
   <UI.Input
@@ -66,14 +53,15 @@
     type="number"
     onUpdate={(value) => {
       updateProperty("number.maxNum", Number(value), component, onPropertyChange)
-      updateProperty(
-        "value",
-        component.properties.number.minNum + (component.properties.number.maxNum - component.properties.number.minNum) / 3,
-        component,
-        onPropertyChange,
-      )
+      let newValue = component.properties.value.map((pr: UI.ISelectOption) => {
+        return { ...pr, value: component.properties.number.minNum + (component.properties.number.maxNum - component.properties.number.minNum) / 2 }
+      })
+      updateProperty("value", newValue, component, onPropertyChange)
     }}
   />
+{/snippet}
+
+{#snippet ProgressBarUnits()}
   <UI.Input
     label={{ name: $t("constructor.props.units") }}
     value={component.properties.number.units}
@@ -81,14 +69,90 @@
   />
 {/snippet}
 
-{#snippet ProgressBarValue()}
-  <UI.Input
-    label={{ name: $t("constructor.props.value") }}
-    type="number"
-    number={{ minNum: component.properties.number.minNum, maxNum: component.properties.number.maxNum, step: 1 }}
-    value={component.properties.value}
-    onUpdate={(value) => updateProperty("value", value as string, component, onPropertyChange)}
-  />
+{#snippet ProgressBarOptions()}
+  <hr class="border-gray-400" />
+
+  <div class="space-y-4">
+    <div class="m-0 flex items-center justify-center gap-2">
+      <h4>{$t("constructor.props.progressbar.title")}</h4>
+      <UI.Button
+        wrapperClass="w-8"
+        content={{ icon: ButtonAdd }}
+        onClick={() => {
+          const newProgress = {
+            name: `Label ${component.properties?.items.length + 1}`,
+            value: 50,
+            class: "bg-blue",
+          }
+          const progresses = [...(component.properties?.items || []), newProgress]
+          updateProperty("items", progresses, component, onPropertyChange)
+        }}
+      />
+    </div>
+
+    {#each component.properties.items || [] as progress, index}
+      <div class="m-0 flex items-end justify-around gap-2 border-gray-400">
+        <UI.Input
+          label={{ name: $t("constructor.props.optionname") }}
+          wrapperClass="!w-3/10"
+          value={progress.name}
+          onUpdate={(value) => {
+            const progresses = [...(component.properties?.items || [])]
+            progresses[index]["name"] = value
+            updateProperty("items", progresses, component, onPropertyChange)
+          }}
+        />
+        <UI.Input
+          label={{ name: $t("constructor.props.optionvalue") }}
+          wrapperClass="!w-3/10"
+          value={component.properties.value[index]}
+          type="number"
+          onUpdate={(value) => {
+            const progresses = [...(component.properties?.value || [])]
+            progresses[index] = value
+            updateProperty("value", progresses, component, onPropertyChange)
+          }}
+        />
+        {#if forConstructor}
+          <UI.Select
+            label={{ name: $t("constructor.props.colors") }}
+            wrapperClass="w-80 h-14.5"
+            type="buttons"
+            options={$optionsStore.COLOR_OPTIONS.filter((option) => option.value !== "bg-max")}
+            value={$optionsStore.COLOR_OPTIONS.find((c) =>
+              (c.value as string).includes(progress.class.split(" ").find((cls: string) => cls.startsWith("bg-"))),
+            )}
+            onUpdate={(value) => {
+              const progresses = [...(component.properties?.items || [])]
+              progresses[index]["class"] = (value as UI.ISelectOption).value
+              updateProperty("items", progresses, component, onPropertyChange)
+            }}
+          />
+        {:else}
+          <UI.Input
+            label={{ name: $t("constructor.props.optionclass") }}
+            wrapperClass="!w-3/10"
+            value={progress.class}
+            onUpdate={(value) => {
+              const progresses = [...(component.properties?.items || [])]
+              progresses[index]["class"] = value
+              updateProperty("items", progresses, component, onPropertyChange)
+            }}
+          />
+        {/if}
+
+        <UI.Button
+          wrapperClass="w-8"
+          content={{ icon: ButtonDelete }}
+          onClick={() => {
+            const progresses = [...(component.properties?.items || [])]
+            progresses.splice(index, 1)
+            updateProperty("items", progresses, component, onPropertyChange)
+          }}
+        />
+      </div>
+    {/each}
+  </div>
 {/snippet}
 
 {#if forConstructor}
@@ -100,27 +164,21 @@
     <div class="flex w-1/3 flex-col px-2">
       {@render ProgressBarMinMax()}
     </div>
-    <div class="flex w-1/3 flex-col px-2">
-      <CommonSnippets snippet="Label" {component} {onPropertyChange} />
-      <CommonSnippets snippet="LabelAlign" initialValue={initialAlign} {component} {onPropertyChange} />
-      <CommonSnippets snippet="Colors" initialValue={initialColor} {component} {onPropertyChange} />
-    </div>
   </div>
+  {@render ProgressBarOptions()}
 {:else}
   <div class="relative flex flex-row items-start justify-center">
     <div class="flex w-1/3 flex-col px-2">
       <CommonSnippets snippet="Identificator" {component} {onPropertyChange} />
       {@render ProgressBarType()}
-      <CommonSnippets snippet="WrapperClass" {component} {onPropertyChange} />
-      <CommonSnippets snippet="Colors" initialValue={initialColor} {component} {onPropertyChange} />
     </div>
     <div class="flex w-1/3 flex-col px-2">
-      <CommonSnippets snippet="Label" {component} {onPropertyChange} />
-      <CommonSnippets snippet="LabelClass" {component} {onPropertyChange} />
-      {@render ProgressBarValue()}
+      <CommonSnippets snippet="WrapperClass" {component} {onPropertyChange} />
+      {@render ProgressBarUnits()}
     </div>
     <div class="flex w-1/3 flex-col px-2">
       {@render ProgressBarMinMax()}
     </div>
   </div>
+  {@render ProgressBarOptions()}
 {/if}

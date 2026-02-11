@@ -125,7 +125,7 @@
     action?: string
   }
   const columns: ITableHeader<ITableRow>[] = [
-    { label: { name: "ID" }, key: "id", width: "5%", sortable: true, align: "center" },
+    { label: { name: "ID" }, key: "id", width: "5%", text: { sortable: true }, align: "center" },
     {
       label: { name: "Image" },
       key: "imageUrl",
@@ -138,7 +138,7 @@
         height: "5rem",
       },
     },
-    { label: { name: "Name" }, key: "name", width: "12%", sortable: true },
+    { label: { name: "Name" }, key: "name", width: "12%", text: { sortable: true } },
     {
       label: { name: "Status" },
       key: "status",
@@ -156,8 +156,7 @@
       label: { name: "Last Active" },
       key: "lastActive",
       width: "1fr",
-      sortable: true,
-      text: { truncated: true, copy: true, modal: true },
+      text: { sortable: true, truncated: true, copy: true, modal: true },
     },
     {
       label: { name: "Actions" },
@@ -198,7 +197,7 @@
 
   let inputString: string = $state("String Data")
   let inputNumber: number = $state(7)
-  let progressBarValue = $state(40)
+  let progressBarValue = $state([40])
   let selectOption: ISelectOption = $state({ id: "Map", name: "Map", value: "Map" })
   let COMPONENT_OPTIONS = Object.keys(componentMap).map((name) => ({ id: name, name: name, value: name }))
   let switchValue = $state(0)
@@ -403,22 +402,33 @@
       <UI.ProgressBar value={progressBarValue} wrapperClass="bg-red" />
       <UI.ProgressBar value={progressBarValue} type="vertical" wrapperClass="bg-red h-50" />
       <div class="flex justify-center">
-        <UI.Button wrapperClass="m-2 !w-10" content={{ name: "-" }} componentClass="h-10 rounded-full bg-purple" onClick={() => (progressBarValue -= 5)} />
-        <UI.Button wrapperClass="m-2 !w-10" content={{ name: "+" }} componentClass="h-10 rounded-full bg-green" onClick={() => (progressBarValue += 5)} />
+        <UI.Button wrapperClass="m-2 !w-10" content={{ name: "-" }} componentClass="h-10 rounded-full bg-purple" onClick={() => (progressBarValue[0] -= 5)} />
+        <UI.Button wrapperClass="m-2 !w-10" content={{ name: "+" }} componentClass="h-10 rounded-full bg-green" onClick={() => (progressBarValue[0] += 5)} />
       </div>
     </UI.Accordion>
 
     <!-- Компонент SELECT -->
     <UI.Accordion label={{ name: "Select" }} isOpen={false}>
       <p>{JSON.stringify(selectOption)}</p>
-      <UI.Select type="input" label={{ name: "Компоненты" }} options={COMPONENT_OPTIONS} value={selectOption} onUpdate={(option) => (selectOption = option)} />
-      <UI.Select label={{ name: "Компоненты" }} options={COMPONENT_OPTIONS} value={selectOption} onUpdate={(option) => (selectOption = option)} />
+      <UI.Select
+        type="input"
+        label={{ name: "Компоненты" }}
+        options={COMPONENT_OPTIONS}
+        value={selectOption}
+        onUpdate={(option) => (selectOption = option as UI.ISelectOption)}
+      />
+      <UI.Select
+        label={{ name: "Компоненты" }}
+        options={COMPONENT_OPTIONS}
+        value={selectOption}
+        onUpdate={(option) => (selectOption = option as UI.ISelectOption)}
+      />
       <UI.Select
         type="buttons"
         label={{ name: "Компоненты" }}
         options={COMPONENT_OPTIONS}
         value={selectOption}
-        onUpdate={(option) => (selectOption = option)}
+        onUpdate={(option) => (selectOption = option as UI.ISelectOption)}
       />
       <div class="mt-4 flex items-end">
         <UI.Select

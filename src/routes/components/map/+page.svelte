@@ -67,6 +67,7 @@
     properties: {
       id: crypto.randomUUID(),
       label: { name: "Label", class: "text-center" },
+      wrapperClass: "fdvgfvxd",
     },
     position: { row: 0, col: 0, width: 0, height: 0 },
     parentId: "",
@@ -85,10 +86,10 @@
   })
 
   let codeText = $derived(`
-  <UI.Map
-  ${formatObjectToString(mapComponent.properties as IMapProps)}
-    {data}
-  />`)
+<UI.Map
+${formatObjectToString(mapComponent.properties as IMapProps)}
+  {data}
+/>`)
 </script>
 
 <ComponentExample {codeText}>

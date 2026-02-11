@@ -159,7 +159,7 @@
             key: "id",
             label: { name: "ID" },
             width: "40%",
-            sortable: true,
+            text: { sortable: true },
             image: {
               width: "0rem",
               height: "0rem",
@@ -170,7 +170,6 @@
             key: "device",
             label: { name: "Device" },
             width: "60%",
-            sortable: false,
             image: {
               width: "0rem",
               height: "0rem",
@@ -216,7 +215,6 @@
         key: `column${(component.properties.header?.length || 0) + 1}`,
         label: { name: `Column ${(component.properties.header?.length || 0) + 1}`, class: "" },
         width: "10%",
-        sortable: false,
         type: "text",
       }
       const headers = [...(component.properties.header || []), newColumn]

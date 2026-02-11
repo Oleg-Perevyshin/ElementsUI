@@ -11,14 +11,13 @@
     access: "full",
     properties: {
       id: crypto.randomUUID(),
-      wrapperClass: "bg-blue",
       type: "horizontal",
-      label: { name: "Label", class: "text-center" },
-      value: [
-        { name: "Label 1", value: 30 },
-        { name: "Label 2", value: 50 },
-        { name: "Label 3", value: 80 },
+      items: [
+        { name: "Label 1", class: "bg-blue" },
+        { name: "Label 2", class: "bg-blue" },
+        { name: "Label 3", class: "bg-blue" },
       ],
+      value: [80, 50, 30],
       number: { minNum: 0, maxNum: 100, units: "%" },
     },
     position: { row: 0, col: 0, width: 0, height: 0 },

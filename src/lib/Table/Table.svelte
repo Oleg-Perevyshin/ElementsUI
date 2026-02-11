@@ -303,7 +303,7 @@
           )}
         >
           <span>{column.label?.name}</span>
-          {#if column.type === "text" && column.sortable}
+          {#if column.type === "text" && column.text?.sortable}
             <button
               class="inline-block cursor-pointer font-bold transition-transform duration-75 hover:scale-110 active:scale-95"
               onclick={() => sortRows(column.key as string)}

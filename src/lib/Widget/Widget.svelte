@@ -1,13 +1,97 @@
 <script lang="ts">
-  import { slide } from "svelte/transition"
   import type { IWidgetProps } from "../types"
   import { twMerge } from "tailwind-merge"
 
-  let { id = crypto.randomUUID() }: IWidgetProps = $props()
+  let {
+    id = crypto.randomUUID(),
+    label = { name: "", class: "" },
+    settings = { label: "", number: { minNum: 0, maxNum: 1000, step: 1 }, toggle: { captionLeft: "Off", captionRight: "On" } },
+    value = 8,
+    iconArray,
+    onUpdate = () => {},
+  }: IWidgetProps = $props()
 
   // let transformClass = $derived(`transform rotate-${rotation}`)
-  let image =
-    '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 512 512" transform="rotate(0)" ><!-- Icon from Game Icons by GameIcons - https://github.com/game-icons/icons/blob/master/license.txt --><path fill="currentColor" d="M309.15 21.209c-24.995-.374-50.098 14.428-64.076 63.611c-12.743 44.837-4.557 106.917 14.5 158.983c8.733-3.686 18.747-4.452 28.447-1.442c10.094 3.133 18.152 9.826 23.24 18.272c33.762-16.847 70.774-29.358 88.594-51.313c47.257-58.219 4.19-138.461-35.183-166.851c-14.175-10.221-34.811-20.95-55.522-21.26M135.72 207.832c-66.3-1.054-108.738 69.822-113.332 115.096c-3.894 38.368 5.81 105.23 96.476 82.398c44.995-11.33 94.419-49.163 129.946-91.465c-12.314-10.488-17.952-27.733-12.877-44.084a41.3 41.3 0 0 1 3.779-8.568c-32.11-20.996-61.997-47.643-90.418-52.178a96 96 0 0 0-13.574-1.199m139.908 50.63c-10.094-.024-19.338 6.442-22.506 16.65c-3.898 12.562 3 25.665 15.563 29.564c12.562 3.898 25.664-2.998 29.562-15.56c3.899-12.563-2.998-25.667-15.56-29.565a24 24 0 0 0-7.059-1.088zM316.9 287.84a41.4 41.4 0 0 1-1.464 6.61c-5.666 18.255-22.966 29.865-41.248 29.241c-2.283 37.694-9.975 76.046.136 102.479c26.791 70.035 117.817 72.857 162.09 52.955c35.175-15.813 88.228-57.646 23.121-124.75c-32.003-32.984-88.698-56.742-142.635-66.535"/></svg>'
+  let currentIndex = $state(0)
+  let intervalId: number | null = null
+
+  $effect(() => {
+    if (intervalId !== null) {
+      clearInterval(intervalId)
+      intervalId = null
+    }
+
+    const mappedValue = mapToStep(value)
+    const periodInMs = mappedValue === 0 ? 0 : 700 / mappedValue
+
+    if (iconArray && periodInMs > 0) {
+      intervalId = window.setInterval(() => {
+        currentIndex = (currentIndex + 1) % iconArray.length
+      }, periodInMs)
+    }
+
+    return () => {
+      if (intervalId !== null) {
+        clearInterval(intervalId)
+      }
+    }
+  })
+
+  const mapToStep = (inputValue: number): number => {
+    const minNumber = settings.number?.minNum ?? 0
+    const maxNumber = settings.number?.maxNum ?? 10
+    if (value > maxNumber) inputValue = maxNumber
+    const clampedValue = Math.min(Math.max(inputValue, minNumber), maxNumber)
+
+    const inputRange = maxNumber - minNumber
+    const outputRange = 10
+
+    if (inputRange === 0) {
+      return 0
+    }
+
+    const intervalWidth = inputRange / outputRange
+
+    let stepIndex = Math.ceil((clampedValue - minNumber) / intervalWidth)
+
+    stepIndex = Math.min(Math.max(stepIndex, 0), outputRange)
+
+    const result = 0 + stepIndex
+    console.log(result)
+
+    return result
+  }
+
+  // $effect(() => {
+  //   if (settings.number?.maxNum && value > settings.number?.maxNum) {
+  //     value = settings.number?.maxNum
+  //   }
+  // })
+
+  // $effect(() => {
+  //   if (settings.number?.minNum && value < settings.number?.minNum) {
+  //     value = settings.number?.minNum
+  //   }
+  // })
+
+  const currentImage = $derived(iconArray ? iconArray[currentIndex] : "")
+
+  const handleCaptionClick = (newValue: number) => {
+    if (value === newValue) return
+    value = newValue
+    onUpdate(newValue)
+  }
+
+  const handleToggle = () => {
+    value = (value ?? 0) ^ (1 << (value ?? 0))
+    onUpdate(value)
+  }
+
+  const maxCaptionWidth = $derived(
+    Math.max(settings.toggle?.captionLeft?.length ?? 0, settings.toggle?.captionRight?.length ?? 0) > 0
+      ? `${Math.max(settings.toggle?.captionLeft?.length ?? 0, settings.toggle?.captionRight?.length ?? 0)}ch`
+      : "auto",
+  )
 </script>
 
 <div
@@ -16,16 +100,110 @@
      transition-shadow duration-250
      shadow-[0_0_3px_rgb(0_0_0_/0.25)] hover:shadow-[0_0_6px_rgb(0_0_0_/0.25)]"
 >
-  <div class=" w-full h-[70%] inset-shadow-[0_-10px_10px_-15px_rgb(0_0_0_/0.5)] p-2">
+  <div class="flex flex-col w-full h-[70%] inset-shadow-[0_-10px_10px_-15px_rgb(0_0_0_/0.5)] p-2">
     <div class="flex gap-2 overflow-hidden">
-      <div class="h-12 w-12 p-0.5 [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full transform rotate-0">
-        {@html image}
+      <div class="size-14 p-0.5 [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full">
+        {@html currentImage}
       </div>
-      <h1>Пропеллер</h1>
+      <h1 class={label.class}>{label.name}</h1>
     </div>
-    <div class="text-5xl flex items-center justify-center">28 м/с</div>
+    <div class="text-5xl flex-1 flex items-center justify-center">{value} {settings.number?.units}</div>
   </div>
-  <div class="">
-    <p>sdfckxd</p>
+  {#if settings.label}
+    <h5>{settings.label}</h5>
+  {/if}
+  <!-- Input -->
+  <div class="flex p-2 gap-2">
+    <button
+      class="flex size-8 items-center justify-center rounded-full transition-colors duration-150 hover:bg-(--gray-color)/30 active:bg-(--gray-color)/10 text-2xl"
+      onclick={() => {
+        if ((settings.number?.minNum !== 0 && !settings.number?.minNum) || !settings.number?.step || (value !== 0 && !value)) return
+        if (Number(value) - settings.number?.step <= settings.number?.minNum) {
+          value = settings.number?.minNum
+          onUpdate(value as number)
+          return
+        } else if (settings.number?.maxNum && Number(value) > settings.number?.maxNum) {
+          value = settings.number?.maxNum
+          return
+        }
+        value = Number(value) - (settings.number?.step ?? 1)
+        onUpdate(value as number)
+      }}
+      aria-label="Уменьшить">−</button
+    >
+    <input
+      bind:value
+      class={twMerge(`flex-1 w-full rounded-2xl border px-8 py-1 text-center shadow-[0_0_3px_rgb(0_0_0_/0.25)] transition duration-200
+              outline-none focus:shadow-[0_0_6px_var(--blue-color)] focus:border-(--blue-color) [&::-webkit-inner-spin-button]:hidden [&::-webkit-outer-spin-button]:hidden
+              border-(--back-color)
+             hover:shadow-[0_0_6px_rgb(0_0_0_/0.25)]`)}
+      style="background: color-mix(in srgb, var(--back-color), var(--back-color) 70%);"
+      id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
+      type="number"
+      min={settings.number?.minNum}
+      max={settings.number?.maxNum}
+      step={settings.number?.step}
+    />
+    <button
+      class="flex size-8 items-center justify-center rounded-full transition-colors duration-150 hover:bg-(--gray-color)/30 active:bg-(--gray-color)/10 text-2xl"
+      onclick={() => {
+        if ((settings.number?.maxNum !== 0 && !settings.number?.maxNum) || !settings.number?.step || (value !== 0 && !value)) return
+        if (Number(value) + settings.number?.step >= settings.number?.maxNum) {
+          value = settings.number?.maxNum
+          onUpdate(value as number)
+          return
+        } else if (settings.number?.minNum && Number(value) < settings.number?.minNum) {
+          value = settings.number?.minNum
+          return
+        }
+        value = Number(value) + (settings.number?.step ?? 1)
+        onUpdate(value as number)
+      }}
+      aria-label="Увеличить">+</button
+    >
+  </div>
+
+  <!-- Switch -->
+  <div class="flex w-full flex-wrap items-end justify-around gap-5">
+    <div class="bg-blue flex flex-col">
+      <div class="relative flex w-full grow items-center justify-center bg-transparent">
+        {#if settings.toggle?.captionLeft}
+          <button class="mr-2 cursor-pointer" style="width: {maxCaptionWidth}; text-align: end;" onclick={() => handleCaptionClick(0)}
+            >{settings.toggle?.captionLeft}</button
+          >
+        {/if}
+
+        <label class="relative flex items-center justify-between rounded-full shadow-sm transition duration-200 border-(--bg-color) hover:shadow-md">
+          <input
+            id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
+            type="checkbox"
+            class="absolute left-1/2 h-full w-full -translate-x-1/2 cursor-pointer appearance-none rounded-md"
+            checked={value !== 0}
+            onchange={() => handleToggle()}
+          />
+          <span
+            class="relative flex items-center rounded-full border-(--bg-color) transition-all duration-250
+        {value ? 'bg-(--bg-color)' : 'bg-(--back-color)'}
+       cursor-pointer"
+            style="width: {`calc(2rem * 2)`}; height: 2rem;"
+          >
+            <span
+              class="absolute rounded-full transition-all duration-250
+                  {value ? 'bg-(--back-color)' : 'bg-(--bg-color)'}
+          cursor-pointer'}"
+              style="width: {`calc(2rem * 0.8)`}; height: {`calc(2rem * 0.8)`}; margin: 0 {`calc(2rem * 0.1)`}; transform: {value
+                ? `translateX(calc(2rem))`
+                : 'translateX(0)'}"
+            ></span>
+          </span>
+        </label>
+
+        {#if settings.toggle?.captionRight}
+          <button class="ml-2 cursor-pointer" style="width: {maxCaptionWidth}; text-align: start;" onclick={() => handleCaptionClick(1)}
+            >{settings.toggle?.captionRight}</button
+          >
+        {/if}
+      </div>
+    </div>
   </div>
 </div>

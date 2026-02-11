@@ -100,7 +100,7 @@
     <h5 class={twMerge(` w-full px-4 text-center`, label.class)}>{label.name}</h5>
   {/if}
   <MapLibre
-    class="h-[calc(100%-2rem)] min-h-50 overflow-hidden rounded-2xl shadow-sm transition duration-200 hover:shadow-md"
+    class="h-[calc(100%-2rem)] min-h-50 overflow-hidden rounded-xl shadow-sm transition duration-200 hover:shadow-md"
     style={isDarkMode ? "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json" : "https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json"}
     zoom={1.5}
     center={{ lat: 30, lng: 0 }}

@@ -266,16 +266,10 @@ export interface IMapProps {
 
 /* ********************************************************** */
 /* Интерфейс индикатора прогресса */
-export interface IProgressDataObject {
-  name: string
-  value: number
-  timestamp?: Date
-}
-
 export interface IProgressBarProps {
   id?: string
-  label?: { name?: string; class?: string }
-  value?: IProgressDataObject[] | null
+  items?: { name?: string; class?: string }[] | null
+  value?: number[] | null
   number?: {
     minNum?: number
     maxNum?: number
@@ -348,7 +342,7 @@ export interface ISwitchProps {
 /* ********************************************************** */
 /* Интерфейс таблицы */
 interface ITableButtons<T extends object> {
-  name: string | ((row: T) => string)
+  name?: string | ((row: T) => string)
   icon?: ConstructorOfATypedSvelteComponent | string
   class?: string | ((row: T) => string)
   eventHandler?: IUIComponentHandler
@@ -358,11 +352,11 @@ interface ITableButtons<T extends object> {
 export interface ITableHeader<T extends object> {
   label?: { name?: string; class?: string }
   key: keyof T
-  sortable?: boolean
   width?: string
   align?: "left" | "center" | "right"
   type?: "buttons" | "select" | "text" | "image"
   text?: {
+    sortable?: boolean
     truncated?: boolean
     formatting?: (text: string) => string
     copy?: boolean
@@ -436,8 +430,12 @@ export interface IWidgetProps {
   id?: string
   wrapperClass?: string
   label?: { name?: string; class?: string }
-  value?: number[]
-  axes?: { name: string; minNum?: number; maxNum?: number }[]
-  buttonIcon?: ConstructorOfATypedSvelteComponent | string
-  onUpdate?: (value: number[]) => void
+  value?: number
+  settings?: {
+    label?: string
+    number?: { minNum?: number; maxNum?: number; step?: number; units?: string }
+    toggle?: { captionLeft?: string; captionRight?: string }
+  }
+  iconArray?: string[]
+  onUpdate?: (value: number) => void
 }

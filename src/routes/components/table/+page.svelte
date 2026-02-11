@@ -22,7 +22,7 @@
           key: "id",
           label: { name: "ID" },
           width: "40%",
-          sortable: true,
+
           image: {
             width: "0rem",
             height: "0rem",
@@ -30,16 +30,12 @@
           type: "select",
           select: { key: "" },
           align: "left",
-          text: {
-            truncated: false,
-            copy: false,
-          },
+          text: { sortable: true, truncated: false, copy: false },
         } as ITableHeader<any>,
         {
           key: "device",
           label: { name: "Device" },
           width: "60%",
-          sortable: false,
           image: {
             width: "0rem",
             height: "0rem",

@@ -136,7 +136,7 @@
     <div class="flex w-full flex-col gap-2">
       <!-- Выбор цвета -->
       <div
-        class="hue-slider relative h-7 w-full cursor-pointer overflow-hidden rounded-full shadow-sm transition duration-200 hover:shadow-md"
+        class="hue-slider relative h-7 w-full cursor-pointer overflow-hidden rounded-2xl shadow-sm transition duration-200 hover:shadow-md"
         role="slider"
         aria-valuenow={null}
         tabindex={null}
@@ -151,7 +151,7 @@
         ></div>
         {#if mode === "hsv"}
           <div
-            class="pointer-events-none absolute top-1/2 h-7 w-1 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white"
+            class="pointer-events-none absolute top-1/2 h-7 w-1 -translate-x-1/2 -translate-y-1/2 rounded-2xl border-2 border-white"
             style={`left: ${huePointer}%; background: rgb(${hsvToRgb(hsv.h, 100, 100).join(",")})`}
           ></div>
         {/if}
@@ -159,7 +159,7 @@
 
       <!-- Яркость цвета -->
       <div
-        class="brightness-slider relative h-4 w-full cursor-pointer overflow-hidden rounded-full {mode === 'hsv'
+        class="brightness-slider relative h-4 w-full cursor-pointer overflow-hidden rounded-2xl {mode === 'hsv'
           ? 'shadow-sm transition duration-200 hover:shadow-md'
           : ''}"
         role="slider"
@@ -171,7 +171,7 @@
           <div class="absolute inset-0" style={`background: linear-gradient(to right, rgb(0,0,0), rgb(${hsvToRgb(hsv.h, hsv.s, 100).join(",")}))`}></div>
 
           <div
-            class="pointer-events-none absolute top-1/2 h-7 w-1 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white"
+            class="pointer-events-none absolute top-1/2 h-7 w-1 -translate-x-1/2 -translate-y-1/2 rounded-2xl border-2 border-white"
             style={`left: ${brightnessPointer}%; background: rgb(${hsvToRgb(hsv.h, hsv.s, hsv.v).join(",")})`}
           ></div>
         {/if}
@@ -179,7 +179,7 @@
 
       <!-- Яркость белого цвета -->
       <div
-        class="white-slider relative mt-4 h-4 w-full cursor-pointer overflow-hidden rounded-full shadow-sm transition duration-200 hover:shadow-md"
+        class="white-slider relative mt-4 h-4 w-full cursor-pointer overflow-hidden rounded-2xl shadow-sm transition duration-200 hover:shadow-md"
         role="slider"
         aria-valuenow={null}
         tabindex={null}
@@ -188,7 +188,7 @@
         <div class="absolute inset-0 bg-linear-to-r from-black to-white"></div>
         {#if mode === "white"}
           <div
-            class="pointer-events-none absolute top-1/2 h-7 w-1 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white"
+            class="pointer-events-none absolute top-1/2 h-7 w-1 -translate-x-1/2 -translate-y-1/2 rounded-2xl border-2 border-white"
             style={`left: ${whiteValue}%; background: rgb(${[255, 255, 255].map((c) => Math.round((whiteValue / 100) * c)).join(",")})`}
           ></div>
         {/if}

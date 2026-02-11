@@ -1,13 +1,13 @@
 <!-- $lib/ElementsUI/ProgressBar.svelte -->
 <script lang="ts">
   import { twMerge } from "tailwind-merge"
-  import type { IProgressBarProps, IProgressDataObject } from "../types"
+  import type { IProgressBarProps } from "../types"
 
   let {
     id = crypto.randomUUID(),
     wrapperClass = "",
-    label = { name: "", class: "" },
-    value = $bindable([{ name: "Label", value: 50 }]),
+    items = [{ name: "Label", class: "" }],
+    value = [],
     type = "horizontal",
     number = {
       minNum: 0,
@@ -18,7 +18,6 @@
 
   const min = $derived(number.minNum ?? 0)
   const max = $derived(number.maxNum ?? 100)
-  let progressArray: IProgressDataObject[] | null = $derived(value)
 
   const numericValue = (value: number) => {
     if (typeof value === "number" && !isNaN(value)) {
@@ -50,55 +49,36 @@
 
     return rounded2
   }
-
-  $effect(() => {
-    if (label.name && value) {
-      while (value?.length < label.name.split(",").length) {
-        progressArray?.push({ name: label.name.split(",")[progressArray?.length], value: number.minNum ?? 0 })
-      }
-    } else progressArray = value
-  })
-
-  $effect(() => {
-    if (label.name && value) {
-      if (progressArray && progressArray.length > label.name.split(",").length) {
-        progressArray = progressArray.slice(0, label.name.split(",").length)
-      }
-    } else progressArray = value
-  })
 </script>
 
 <div
   id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
-  class={twMerge(`relative flex ${type == "vertical" ? "h-full" : ""} w-full flex-col items-center`, wrapperClass)}
+  class={twMerge(`relative flex ${type == "vertical" ? "h-full flex-wrap justify-center gap-8" : "flex-col items-center "} w-full`, wrapperClass)}
 >
-  {#if type == "vertical"}
-    <div class="flex h-full flex-wrap gap-3">
-      {#each progressArray as val, index}
-        <div class="flex flex-col">
-          <h5 class={twMerge(`w-full px-4 text-center`, label.class)}>{val.name || label.name?.split(",")[index]}</h5>
-          <div class="flex h-full w-fit min-w-16 flex-col items-center gap-2 rounded-full bg-(--bg-color) p-2 shadow-sm">
-            <div class="relative my-auto h-[80%] w-[70%] rounded-full bg-(--back-color)/40">
-              <div class="absolute bottom-0 left-0 flex w-full rounded-full bg-(--field-color)" style="height: {progressPercent(val.value)}%;"></div>
-            </div>
-            <span class="m-auto font-semibold">{roundToClean(Number(numericValue(val.value)))}{number.units}</span>
+  {#each items as progress, index}
+    <div class="flex flex-col {type == 'vertical' ? '' : `w-full`}">
+      <h5 class={type == "vertical" ? "" : "px-4 mt-2"}>{progress.name}</h5>
+      <div
+        class="{twMerge(
+          `flex ${type == 'vertical' ? 'h-full w-fit min-w-16 flex-col p-2' : 'h-7 w-full px-2'} items-center gap-2 rounded-full  shadow-sm`,
+          progress.class,
+        )} bg-(--bg-color)"
+      >
+        {#if type == "vertical"}
+          <div class="relative my-auto h-[80%] w-[70%] rounded-full bg-(--back-color)/40">
+            <div
+              class="absolute bottom-0 left-0 flex w-full rounded-full bg-(--field-color)"
+              style="height: {progressPercent((value || [])[index] ?? 0)}%;"
+            ></div>
           </div>
-        </div>
-      {/each}
-    </div>
-  {:else}
-    <div class="flex w-full flex-col gap-2">
-      {#each progressArray as val, index}
-        <div class="flex flex-col">
-          <h5 class={twMerge(`w-full px-4 text-center`, label.class)}>{val.name || label.name?.split(",")[index]}</h5>
-          <div class="flex h-7 w-full items-center gap-2 rounded-full bg-(--bg-color) px-2 shadow-sm">
-            <span class="m-auto w-20 font-semibold">{roundToClean(Number(numericValue(val.value)))}{number.units}</span>
-            <div class="relative my-auto h-3.5 flex-1 rounded-full bg-(--back-color)/40">
-              <div class="absolute top-0 left-0 flex h-full rounded-full bg-(--field-color)" style="width: {progressPercent(val.value)}%;"></div>
-            </div>
+          <span class="m-auto font-semibold">{roundToClean(Number(numericValue((value || [])[index] ?? 0)))}{number.units}</span>
+        {:else}
+          <span class="m-auto w-20 font-semibold">{roundToClean(Number(numericValue((value || [])[index] ?? 0)))}{number.units}</span>
+          <div class="relative my-auto h-3.5 flex-1 rounded-full bg-(--back-color)/40">
+            <div class="absolute top-0 left-0 flex h-full rounded-full bg-(--field-color)" style="width: {progressPercent((value || [])[index] ?? 0)}%;"></div>
           </div>
-        </div>
-      {/each}
+        {/if}
+      </div>
     </div>
-  {/if}
+  {/each}
 </div>
