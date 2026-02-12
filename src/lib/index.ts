@@ -62,4 +62,5 @@ export {
   type IFileAttachProps,
   type IDeviceGNSS,
   type ICarouselProps,
+  type IReceivingDataObject,
 } from "./types"

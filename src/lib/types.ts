@@ -100,6 +100,14 @@ export interface IUIComponentHandler {
   Variables?: string[]
 }
 
+/* Интерфейс обработчика для UI компонента */
+export interface IReceivingDataObject {
+  Name?: string
+  Timestamp?: string
+  Value?: number | string | boolean
+  Info?: string
+}
+
 /* ********************************************************** */
 /* Интерфейс аккордиона */
 export interface IAccordionProps {
@@ -269,7 +277,7 @@ export interface IMapProps {
 export interface IProgressBarProps {
   id?: string
   items?: { name?: string; class?: string }[] | null
-  value?: number[] | null
+  value?: IReceivingDataObject[]
   number?: {
     minNum?: number
     maxNum?: number

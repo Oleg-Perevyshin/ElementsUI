@@ -17,7 +17,11 @@
         { name: "Label 2", class: "bg-blue" },
         { name: "Label 3", class: "bg-blue" },
       ],
-      value: [80, 50, 30],
+      value: [
+        { Value: 80, Name: "!!!!" },
+        { Value: 50, Name: "@@@@@@@@@", Info: "Upload" },
+        { Value: 30, Name: "################", Info: "Done" },
+      ],
       number: { minNum: 0, maxNum: 100, units: "%" },
     },
     position: { row: 0, col: 0, width: 0, height: 0 },

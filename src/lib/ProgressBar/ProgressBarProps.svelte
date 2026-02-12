@@ -41,8 +41,8 @@
     type="number"
     onUpdate={(value) => {
       updateProperty("number.minNum", Number(value), component, onPropertyChange)
-      let newValue = component.properties.value.map((pr: UI.ISelectOption) => {
-        return { ...pr, value: component.properties.number.minNum + (component.properties.number.maxNum - component.properties.number.minNum) / 2 }
+      let newValue = component.properties.value.map((pr: UI.IReceivingDataObject) => {
+        return { ...pr, Value: component.properties.number.minNum + (component.properties.number.maxNum - component.properties.number.minNum) / 2 }
       })
       updateProperty("value", newValue, component, onPropertyChange)
     }}
@@ -53,8 +53,8 @@
     type="number"
     onUpdate={(value) => {
       updateProperty("number.maxNum", Number(value), component, onPropertyChange)
-      let newValue = component.properties.value.map((pr: UI.ISelectOption) => {
-        return { ...pr, value: component.properties.number.minNum + (component.properties.number.maxNum - component.properties.number.minNum) / 2 }
+      let newValue = component.properties.value.map((pr: UI.IReceivingDataObject) => {
+        return { ...pr, Value: component.properties.number.minNum + (component.properties.number.maxNum - component.properties.number.minNum) / 2 }
       })
       updateProperty("value", newValue, component, onPropertyChange)
     }}
@@ -105,11 +105,11 @@
         <UI.Input
           label={{ name: $t("constructor.props.optionvalue") }}
           wrapperClass="!w-3/10"
-          value={component.properties.value[index]}
+          value={component.properties.value[index].Value}
           type="number"
           onUpdate={(value) => {
             const progresses = [...(component.properties?.value || [])]
-            progresses[index] = value
+            progresses[index].Value = value
             updateProperty("value", progresses, component, onPropertyChange)
           }}
         />
