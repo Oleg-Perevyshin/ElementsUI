@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Accordion, ProgressBar, type IProgressBarProps, type UIComponent } from "$lib"
+  import { ProgressBar, type IProgressBarProps, type UIComponent } from "$lib"
   import ComponentExample from "$lib/ComponentExample.svelte"
   import ProgressBarProps from "$lib/ProgressBar/ProgressBarProps.svelte"
   import { updateComponent } from "$lib/types"
@@ -17,11 +17,7 @@
         { name: "Label 2", class: "bg-blue" },
         { name: "Label 3", class: "bg-blue" },
       ],
-      value: [
-        { Value: 80, Name: "!!!!" },
-        { Value: 50, Name: "@@@@@@@@@", Info: "Upload" },
-        { Value: 30, Name: "################", Info: "Done" },
-      ],
+
       number: { minNum: 0, maxNum: 100, units: "%" },
     },
     position: { row: 0, col: 0, width: 0, height: 0 },

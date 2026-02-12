@@ -129,7 +129,7 @@ ${formatObjectToString(tableComponent.properties as ITableProps<object>)}
     <TableProps
       component={tableComponent as UIComponent & { properties: Partial<ITableProps<object>> }}
       onPropertyChange={(updates) => (tableComponent = updateComponent(tableComponent, updates as object))}
-      forConstructor={true}
+      forConstructor={false}
     />
     <!-- <hr />
     <TableProps

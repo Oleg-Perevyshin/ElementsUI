@@ -105,10 +105,18 @@
         <UI.Input
           label={{ name: $t("constructor.props.optionvalue") }}
           wrapperClass="!w-3/10"
-          value={component.properties.value[index].Value}
+          value={(component.properties.value || [])[index]?.Value}
           type="number"
           onUpdate={(value) => {
-            const progresses = [...(component.properties?.value || [])]
+            const progresses = [
+              ...(component.properties?.value ||
+                component.properties?.items.map((item: { name?: string; class?: string }, i: number) => {
+                  return {
+                    Name: item.name,
+                    Value: i == index ? value : 0,
+                  }
+                })),
+            ]
             progresses[index].Value = value
             updateProperty("value", progresses, component, onPropertyChange)
           }}
