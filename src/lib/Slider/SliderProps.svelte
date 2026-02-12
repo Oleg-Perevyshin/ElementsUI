@@ -4,7 +4,6 @@
   import { type UIComponent, type ISliderProps, updateProperty, type IUIComponentHandler } from "../types"
   import * as UI from "$lib"
   import { optionsStore } from "../options"
-  import { twMerge } from "tailwind-merge"
   import CommonSnippets from "$lib/CommonSnippets.svelte"
 
   const {

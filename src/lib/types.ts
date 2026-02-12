@@ -385,7 +385,7 @@ export interface ITableProps<T extends object> {
   body: T[] | T | null
   footer?: string
   type?: "table" | "logger"
-  dataBuffer?: { stashData?: boolean; rowsAmmount?: number; clearButton?: boolean; clearClass?: string }
+  dataBuffer?: { stashData?: boolean; rowsAmmount?: number; clearButton?: boolean; clearClass?: string; timestamp?: boolean }
   outline?: boolean
   cursor?: string | null
   loader?: Writable<boolean>
@@ -433,9 +433,11 @@ export interface IWidgetProps {
   value?: number
   settings?: {
     label?: string
+    class?: string
+    type?: "input" | "toggle" | "slider"
     number?: { minNum?: number; maxNum?: number; step?: number; units?: string }
     toggle?: { captionLeft?: string; captionRight?: string }
   }
-  iconArray?: string[]
+  icons?: { array: string[]; mode?: "cycling" | "switch" }
   onUpdate?: (value: number) => void
 }

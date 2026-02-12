@@ -140,6 +140,12 @@ input::placeholder {
   cursor: pointer;
 }
 
+* {
+  /* Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: var(--blue-color) transparent;
+}
+
 /* Цветовая гамма */
 .light {
   --back-color: #ffffff; /* Белый */

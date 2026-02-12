@@ -68,7 +68,7 @@
 
   /* Обработчик горячих клавиш */
   const handleKeyDown = (event: KeyboardEvent) => {
-    if (disabled || !keyBind || !onClick) return
+    if (disabled || !keyBind.key || !onClick) return
 
     const isKeyMatch = event.key === keyBind.key
     const isCtrlMatch = keyBind.ctrlKey === undefined || event.ctrlKey === keyBind.ctrlKey

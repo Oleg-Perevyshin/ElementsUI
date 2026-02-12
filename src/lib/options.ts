@@ -184,11 +184,17 @@ export const optionsStore = derived(t, ($t) => {
     ],
 
     BUFFER_SIFE_OPTIONS: [
-      { id: crypto.randomUUID(), value: 10, name: "10" },
-      { id: crypto.randomUUID(), value: 50, name: "50" },
-      { id: crypto.randomUUID(), value: 100, name: "100" },
-      { id: crypto.randomUUID(), value: 500, name: "500" },
-      { id: crypto.randomUUID(), value: 1000, name: "1000" },
+      { id: id(), value: 10, name: "10" },
+      { id: id(), value: 50, name: "50" },
+      { id: id(), value: 100, name: "100" },
+      { id: id(), value: 500, name: "500" },
+      { id: id(), value: 1000, name: "1000" },
+    ],
+
+    WIDGET_TYPE_OPTIONS: [
+      { id: id(), value: "input", name: "Поле ввода" },
+      { id: id(), value: "toggle", name: "Переключатель" },
+      { id: id(), value: "slider", name: "Ползунок" },
     ],
 
     AUTOCOMPLETE_CONSTRUCTOR_OPTIONS: [

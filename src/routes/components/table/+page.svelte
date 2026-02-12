@@ -16,7 +16,7 @@
       wrapperClass: "bg-blue",
       label: { name: "Label", class: "text-center" },
       type: "table",
-      dataBuffer: { rowsAmmount: 10 },
+      dataBuffer: { rowsAmmount: 10, timestamp: true },
       header: [
         {
           key: "id",
@@ -79,9 +79,9 @@
   let body: any | null = $state(null)
   let intervalId: any | null = null
 
-  const generateLoggerString = (): { logLevel: string; payload: string } => {
+  const generateLoggerString = (): { logLevel: string; payload: string; timeStamp: string } => {
     let logLevel = ["info", "warning", "error"][Math.floor(Math.random() * 3)]
-    return { logLevel, payload: `${logLevel}` }
+    return { logLevel, payload: `${logLevel}`, timeStamp: "12.02.2026 12.23.025" }
   }
 
   const generateStashingData = (): { id: string; device: string }[] => {
@@ -129,7 +129,7 @@ ${formatObjectToString(tableComponent.properties as ITableProps<object>)}
     <TableProps
       component={tableComponent as UIComponent & { properties: Partial<ITableProps<object>> }}
       onPropertyChange={(updates) => (tableComponent = updateComponent(tableComponent, updates as object))}
-      forConstructor={false}
+      forConstructor={true}
     />
     <!-- <hr />
     <TableProps

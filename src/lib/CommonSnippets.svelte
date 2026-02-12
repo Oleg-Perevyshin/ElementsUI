@@ -90,7 +90,6 @@
         | UI.ISwitchProps
         | UI.IColorPickerProps
         | UI.ISliderProps
-        | UI.IProgressBarProps
         | UI.IGraphProps
         | UI.ITableProps<object>
         | UI.IFileAttachProps
@@ -118,7 +117,6 @@
               | UI.ISwitchProps
               | UI.IColorPickerProps
               | UI.ISliderProps
-              | UI.IProgressBarProps
               | UI.IGraphProps
               | UI.ITableProps<object>
               | UI.IFileAttachProps
@@ -143,7 +141,6 @@
         | UI.ISwitchProps
         | UI.IColorPickerProps
         | UI.ISliderProps
-        | UI.IProgressBarProps
         | UI.IGraphProps
         | UI.ITableProps<object>
         | UI.IFileAttachProps

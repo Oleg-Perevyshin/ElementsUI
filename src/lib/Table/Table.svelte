@@ -7,6 +7,7 @@
   import { onMount, tick } from "svelte"
   import ButtonClear from "../libIcons/ButtonClear.svelte"
   import { t } from "$lib/locales/i18n"
+  import type { timeStamp } from "node:console"
 
   let {
     id = crypto.randomUUID(),
@@ -31,17 +32,19 @@
   let isAutoscroll = $state(false)
   let container: HTMLElement | null = $state(null)
   let buffer: any[] = $state([])
-  const loggerHeader = [
+  let loggerHeader = $derived([
     { key: "color", label: { name: "Type" }, width: "3.5rem" } as ITableHeader<any>,
+    ...(dataBuffer.timestamp ? [{ key: "timestamp", label: { name: "Timestamp" }, width: "12rem" } as ITableHeader<any>] : []),
     { key: "data", label: { name: "Data" }, width: "1fr" } as ITableHeader<any>,
-  ]
+  ])
+
   const logTypeOptions = [
     { id: crypto.randomUUID(), name: "Error", value: "error", color: "bg-(--red-color)" },
     { id: crypto.randomUUID(), name: "Warning", value: "warning", color: "bg-(--yellow-color)" },
     { id: crypto.randomUUID(), name: "Info", value: "info", color: "bg-(--gray-color)" },
   ]
 
-  let logType = $state(["error", "warning"])
+  let logType = $state(["error", "warning", "info"])
   let isDropdownOpen: { x: number; y: number } | null = $state(null)
   let copiedCell: { x: number; y: number } | null = $state(null)
   let tooltip = $state({ show: false, text: "", x: 0, y: 0 })
@@ -177,6 +180,10 @@
             buffer = [
               ...buffer,
               {
+                ...(dataBuffer.timestamp &&
+                  Object.entries(body[i])[2] && {
+                    timestamp: (Object.entries(body[i])[2][1] as string) ?? "",
+                  }),
                 type: Object.entries(body[i])[0][1] as string,
                 color: `<div class='size-6 rounded-full ${logTypeOptions.find((o) => o.value == Object.entries(body[i])[0][1])?.color}'></div>`,
                 data: Object.entries(body[i])[1][1] as string,
@@ -187,6 +194,10 @@
           buffer = [
             ...buffer,
             {
+              ...(dataBuffer.timestamp &&
+                Object.entries(body)[2] && {
+                  timestamp: (Object.entries(body)[2][1] as string) ?? "",
+                }),
               type: Object.entries(body)[0][1] as string,
               color: `<div class='size-6 rounded-full ${logTypeOptions.find((o) => o.value == Object.entries(body)[0][1])?.color}'></div>`,
               data: Object.entries(body)[1][1] as string,

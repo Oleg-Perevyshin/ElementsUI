@@ -547,6 +547,17 @@
   />
 {/snippet}
 
+{#snippet TableTimestamp()}
+  <UI.Switch
+    label={{ name: $t("constructor.props.table.timestamp") }}
+    value={component.properties.dataBuffer.timestamp}
+    options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
+    onChange={(value) => {
+      updateProperty("dataBuffer.timestamp", value, component, onPropertyChange)
+    }}
+  />
+{/snippet}
+
 {#snippet TableClearButton()}
   <UI.Switch
     label={{ name: $t("constructor.props.table.clearButton") }}
@@ -568,6 +579,9 @@
     <div class="flex w-1/3 flex-col px-2">
       <CommonSnippets snippet="Colors" initialValue={initialColor} {component} {onPropertyChange} />
       {@render TableOutline()}
+      {#if component.properties.type === "logger"}
+        {@render TableTimestamp()}
+      {/if}
     </div>
     <div class="flex w-1/3 flex-col px-2">
       <CommonSnippets snippet="Label" {component} {onPropertyChange} />
@@ -598,9 +612,11 @@
       {@render TableType()}
 
       <div class="flex">
-        {@render TableStashData()}
         {#if component.properties.type === "logger"}
           {@render TableClearButton()}
+          {@render TableTimestamp()}
+        {:else}
+          {@render TableStashData()}
         {/if}
       </div>
 

@@ -1,6 +1,6 @@
 {
   "name": "poe-svelte-ui-lib",
-  "version": "1.8.1",
+  "version": "1.8.2",
   "license": "MIT",
   "type": "module",
   "scripts": {
@@ -47,7 +47,7 @@
     "prettier-plugin-svelte": "^3.4.1",
     "prettier-plugin-tailwindcss": "^0.7.2",
     "publint": "^0.3.17",
-    "svelte": "^5.50.1",
+    "svelte": "^5.50.2",
     "tailwindcss": "^4.1.18",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
