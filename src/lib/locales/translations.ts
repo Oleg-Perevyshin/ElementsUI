@@ -154,6 +154,7 @@ const translations: Translations = {
     "constructor.props.file.notselected": "Файл не выбран",
     "constructor.props.map.loading": "Загрузка карты...",
     "constructor.props.map.noconnection": "Карта не загружена. Нет подключения к интернету",
+    "constructor.props.widget.mode": "Режим переключения",
 
     "constructor.props.table.type": "Тип таблицы",
     "constructor.props.table.type.table": "Статическая таблица",
@@ -195,6 +196,9 @@ const translations: Translations = {
     "constructor.props.icon.network": "Сеть",
     "constructor.props.icon.power": "Питание",
     "constructor.props.icon.settings": "Настройки",
+
+    "constructor.props.icon.bulb": "Лампочка",
+    "constructor.props.icon.propeller": "Пропеллер",
 
     "constructor.props.autocomplete.on": "Включено",
     "constructor.props.autocomplete.off": "Выключено",

@@ -80,7 +80,7 @@
         class="absolute left-0 z-1 h-8.5 w-full opacity-0 {disabled ? 'cursor-not-allowed' : 'cursor-pointer'}"
         {accept}
         {disabled}
-        onchange={handleFileChange}
+        oninput={handleFileChange}
       />
       <div
         class="flex w-full overflow-hidden rounded-2xl font-semibold shadow-sm transition duration-250 {disabled ? '' : 'hover:shadow-md'}

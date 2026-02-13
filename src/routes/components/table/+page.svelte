@@ -79,9 +79,9 @@
   let body: any | null = $state(null)
   let intervalId: any | null = null
 
-  const generateLoggerString = (): { logLevel: string; payload: string; timeStamp: string } => {
+  const generateLoggerString = (): { Name: string; Value: string; Timestamp: string } => {
     let logLevel = ["info", "warning", "error"][Math.floor(Math.random() * 3)]
-    return { logLevel, payload: `${logLevel}`, timeStamp: "12.02.2026 12.23.025" }
+    return { Name: logLevel, Value: `${logLevel}`, Timestamp: "12.02.2026 12.23.25" }
   }
 
   const generateStashingData = (): { id: string; device: string }[] => {

@@ -6,6 +6,23 @@ const scanAllIcons = async () => {
   const files = fs.readdirSync(dirPath)
 
   const categories: Record<string, string[]> = {}
+  const iconArray: Record<string, string[]> = {}
+
+  files
+    .filter((file) => !file.endsWith(".ts") && !file.includes("."))
+    .forEach((dir) => {
+      if (!iconArray[dir]) {
+        iconArray[dir] = []
+      }
+      const newDirPath = join(dirPath, dir)
+      const arrayFiles = fs.readdirSync(newDirPath)
+
+      arrayFiles.forEach((file) => {
+        const fullPath = join(newDirPath, file)
+        const svgContent = fs.readFileSync(fullPath, "utf8")
+        iconArray[dir].push(svgContent)
+      })
+    })
 
   files
     .filter((file) => !file.endsWith(".ts") && file.includes("."))
@@ -37,10 +54,18 @@ ${Object.entries(categories)
   .join(",\n")}
 ]
 
+export const ICONS_ARRAY: [string, string[]][] = [
+${Object.entries(iconArray)
+  .map(([name, svgs]) => {
+    const svgArray = svgs.map((svg) => JSON.stringify(svg)).join(",\n    ")
+    return `  [${JSON.stringify(name)}, [\n    ${svgArray}\n  ]]`
+  })
+  .join(",\n")}
+]
 `
 
   fs.writeFileSync("src/lib/icons.ts", content)
 
-  console.log("icons.ts создан:", Object.keys(categories))
+  console.log("icons.ts создан успешно")
 }
 scanAllIcons()

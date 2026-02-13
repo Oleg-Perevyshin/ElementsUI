@@ -15,7 +15,7 @@
   let intervalId: number | null = null
 
   $effect(() => {
-    if (icons?.mode == "cycling") {
+    if (icons.array && icons?.mode == "cycling") {
       if (intervalId !== null) {
         clearInterval(intervalId)
         intervalId = null
@@ -39,7 +39,7 @@
   })
 
   $effect(() => {
-    if (icons?.mode == "switch") {
+    if (icons.array && icons?.mode == "switch") {
       currentIndex = value == 0 ? 0 : icons.array.length - 1
     }
   })
@@ -61,8 +61,6 @@
     stepIndex = Math.min(Math.max(stepIndex, 0), 10)
 
     const result = 0 + stepIndex
-    console.log(result)
-
     return result
   }
 
@@ -100,10 +98,13 @@
      shadow-[0_0_3px_rgb(0_0_0_/0.25)] hover:shadow-[0_0_6px_rgb(0_0_0_/0.25)]`}
 >
   <div class="flex flex-col w-full h-[70%] inset-shadow-[0_-10px_10px_-15px_rgb(0_0_0_/0.5)] p-2">
-    <div class="grid gap-2 overflow-hidden items-center" style="grid-template-columns: 3.5rem 1fr;">
-      <div class="size-14 p-0.5 [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full">
-        {@html currentImage}
-      </div>
+    <div class="grid gap-2 overflow-hidden items-center" style="grid-template-columns:{icons.array ? '3.5rem' : ''} 1fr;">
+      {#if icons.array}
+        <div class="size-14 p-0.5 [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full">
+          {@html currentImage}
+        </div>
+      {/if}
+
       <h1 class="text-left break-all {label.class}">{label.name}</h1>
     </div>
 
@@ -120,7 +121,7 @@
   {/if}
   {#if settings.type == "input"}
     <!-- Input -->
-    <div class={twMerge(`flex p-2 gap-2`, settings.class)}>
+    <div class={twMerge(`flex p-2 gap-2 bg-blue`, settings.class)}>
       <button
         class="flex size-8 items-center justify-center shadow-sm hover:shadow-md rounded-full transition duration-200 bg-(--bg-color) active:scale-97 text-2xl"
         onclick={() => {

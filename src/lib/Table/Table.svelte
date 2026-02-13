@@ -180,13 +180,12 @@
             buffer = [
               ...buffer,
               {
-                ...(dataBuffer.timestamp &&
-                  Object.entries(body[i])[2] && {
-                    timestamp: (Object.entries(body[i])[2][1] as string) ?? "",
-                  }),
-                type: Object.entries(body[i])[0][1] as string,
-                color: `<div class='size-6 rounded-full ${logTypeOptions.find((o) => o.value == Object.entries(body[i])[0][1])?.color}'></div>`,
-                data: Object.entries(body[i])[1][1] as string,
+                ...(dataBuffer.timestamp && {
+                  timestamp: body[i].Timestamp ?? "",
+                }),
+                type: body[i].Name,
+                color: `<div class='size-6 rounded-full ${logTypeOptions.find((o) => o.value == body[i].Name)?.color}'></div>`,
+                data: body[i].Value,
               },
             ]
           }
@@ -194,13 +193,12 @@
           buffer = [
             ...buffer,
             {
-              ...(dataBuffer.timestamp &&
-                Object.entries(body)[2] && {
-                  timestamp: (Object.entries(body)[2][1] as string) ?? "",
-                }),
-              type: Object.entries(body)[0][1] as string,
-              color: `<div class='size-6 rounded-full ${logTypeOptions.find((o) => o.value == Object.entries(body)[0][1])?.color}'></div>`,
-              data: Object.entries(body)[1][1] as string,
+              ...(dataBuffer.timestamp && {
+                timestamp: body.Timestamp ?? "",
+              }),
+              type: body.Name,
+              color: `<div class='size-6 rounded-full ${logTypeOptions.find((o) => o.value == body.Name)?.color}'></div>`,
+              data: body.Value,
             },
           ]
         }

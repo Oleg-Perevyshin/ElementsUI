@@ -3,7 +3,7 @@
   import { updateProperty, type IUIComponentHandler, type UIComponent } from "../types"
   import * as UI from "$lib"
   import { optionsStore } from "../options"
-  import { ICONS } from "../icons"
+  import { ICONS, ICONS_ARRAY } from "../icons"
   import Modal from "$lib/Modal.svelte"
   import Button from "$lib/Button/Button.svelte"
   import CrossIcon from "$lib/libIcons/CrossIcon.svelte"
@@ -23,7 +23,7 @@
     forConstructor?: boolean
   }>()
 
-  let tabIcon = $state({ index: 0, isModalOpen: false })
+  let showIconLib = $state(false)
 
   const DeviceVariables = getContext<{ id: string; value: string; name: string }[]>("DeviceVariables")
   let VARIABLE_OPTIONS = $derived(DeviceVariables && Array.isArray(DeviceVariables) ? DeviceVariables : [])
@@ -102,6 +102,59 @@
   />
 {/snippet}
 
+{#snippet WidgetSwitchingMode()}
+  <UI.Select
+    label={{ name: $t("constructor.props.widget.mode") }}
+    type="buttons"
+    options={$optionsStore.WIDGET_MODE_OPTIONS}
+    value={$optionsStore.WIDGET_MODE_OPTIONS.find((o) => o.value == component.properties.icons.mode)}
+    onUpdate={(option) => {
+      updateProperty("icons.mode", (option as UI.ISelectOption).value as string, component, onPropertyChange)
+    }}
+  />
+{/snippet}
+
+{#snippet WidgetIcons()}
+  <div class="relative mt-6 flex w-full gap-2">
+    <UI.Button content={{ name: $t("constructor.props.labelicon") }} onClick={() => (showIconLib = true)} />
+    {#if showIconLib}
+      <Modal bind:isOpen={showIconLib} wrapperClass="w-130">
+        {#snippet main()}
+          <div class="grid grid-cols-1">
+            {#each ICONS_ARRAY as name}
+              <button
+                class="relative m-1.5 rounded-xl border-2 border-(--border-color) p-3 cursor-pointer"
+                onclick={() => {
+                  updateProperty("icons.array", name[1] as string[], component, onPropertyChange)
+                }}
+              >
+                <div class="absolute -top-3.5 bg-(--back-color) px-1">{$t(`constructor.props.icon.${name[0]}`)}</div>
+                <div class="grid grid-cols-9 place-items-center gap-2">
+                  {#each name[1] as icon}
+                    <div class="h-8 w-8 [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full">
+                      {@html icon}
+                    </div>
+                  {/each}
+                </div>
+              </button>
+            {/each}
+          </div>
+        {/snippet}
+      </Modal>
+    {/if}
+    {#if component.properties.icons.array}
+      <Button
+        wrapperClass="w-8.5 "
+        componentClass="p-0.5 bg-red"
+        content={{ icon: CrossIcon }}
+        onClick={() => {
+          updateProperty("icons.array", "", component, onPropertyChange)
+        }}
+      />
+    {/if}
+  </div>
+{/snippet}
+
 {#if forConstructor}
   <div class="flex mb-4 items-start justify-center gap-8">
     <div class="flex w-1/3 flex-col px-2">
@@ -112,9 +165,11 @@
     <div class="flex w-1/3 flex-col px-2">
       {@render WidgetSettingsLabel()}
       {@render WidgetClass()}
-      {@render WidgetType()}
+      {@render WidgetIcons()}
+      {@render WidgetSwitchingMode()}
     </div>
     <div class="flex w-1/3 flex-col px-2">
+      {@render WidgetType()}
       {#if component.properties.settings.type == "input" || component.properties.settings.type == "slider"}
         {@render WidgetMinMax()}
       {:else if component.properties.settings.type == "toggle"}
@@ -126,13 +181,22 @@
   <div class="flex items-center mb-4 justify-center gap-8">
     <div class="flex w-1/3 flex-col px-2">
       <CommonSnippets snippet="Identificator" {component} {onPropertyChange} />
-      <CommonSnippets snippet="WrapperClass" {component} {onPropertyChange} />
+      <CommonSnippets snippet="Access" {component} {onPropertyChange} />
+      <CommonSnippets snippet="Label" {component} {onPropertyChange} />
     </div>
     <div class="flex w-1/3 flex-col px-2">
-      <CommonSnippets snippet="Access" {component} {onPropertyChange} />
-      <CommonSnippets snippet="Colors" initialValue={initialColor} {component} {onPropertyChange} />
+      {@render WidgetSettingsLabel()}
+      {@render WidgetClass()}
+      {@render WidgetIcons()}
+      {@render WidgetSwitchingMode()}
     </div>
-
-    <div class="flex w-1/3 flex-col px-2"></div>
+    <div class="flex w-1/3 flex-col px-2">
+      {@render WidgetType()}
+      {#if component.properties.settings.type == "input" || component.properties.settings.type == "slider"}
+        {@render WidgetMinMax()}
+      {:else if component.properties.settings.type == "toggle"}
+        {@render WidgetToggleCaptions()}
+      {/if}
+    </div>
   </div>
 {/if}
