@@ -19,10 +19,9 @@
       dataBuffer: { rowsAmmount: 10, timestamp: true },
       header: [
         {
-          key: "id",
+          key: "id-S",
           label: { name: "ID" },
           width: "40%",
-
           image: {
             width: "0rem",
             height: "0rem",
@@ -35,7 +34,7 @@
         {
           key: "device",
           label: { name: "Device" },
-          width: "60%",
+          width: "30%",
           image: {
             width: "0rem",
             height: "0rem",
@@ -47,10 +46,27 @@
             copy: false,
           },
         } as ITableHeader<any>,
+        {
+          key: "5454",
+          label: { name: "Device" },
+          width: "30%",
+          buttons: [
+            {
+              name: "send",
+              eventHandler: { Header: "SET", Argument: "Save", Variables: ["id-S"] },
+            },
+          ],
+          type: "buttons",
+          align: "left",
+          text: {
+            truncated: true,
+            copy: false,
+          },
+        } as ITableHeader<any>,
       ],
       body: [
         {
-          id: [
+          "id-S": [
             { id: "Value of id1", name: "Value of id1", value: "Value of id1" },
             { id: "Value of id2", name: "Value of id2", value: "Value of id2" },
             { id: "Value of id3", name: "Value of id3", value: "Value of id3" },
@@ -60,7 +76,7 @@
         },
         {},
         {
-          id: [
+          "id-S": [
             { id: "Value of id1", name: "Value of id1", value: "Value of id1" },
             { id: "Value of id2", name: "Value of id2", value: "Value of id2" },
             { id: "Value of id3", name: "Value of id3", value: "Value of id3" },
