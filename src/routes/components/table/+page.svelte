@@ -47,7 +47,7 @@
           },
         } as ITableHeader<any>,
         {
-          key: "5454",
+          key: "buttons",
           label: { name: "Device" },
           width: "30%",
           buttons: [

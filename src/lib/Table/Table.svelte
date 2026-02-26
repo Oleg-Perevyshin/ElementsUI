@@ -111,7 +111,7 @@
     else if (button.eventHandler && onClick) {
       let value: Record<string, boolean | string | number | number[] | object | null> = {}
       button.eventHandler.Variables.forEach((v: string) => {
-        if (header.some((h) => h.key === v && h.type === "select")) value[v.slice(-2)] = row[v][0].value
+        if (header.some((h) => h.key === v && h.type === "select")) value[v.slice(0, -2)] = row[v][0].value
         else value[v] = row[v]
       })
       button.eventHandler.Value = JSON.stringify(value)
