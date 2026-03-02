@@ -392,7 +392,7 @@ export interface ITableProps<T extends object> {
   header?: ITableHeader<T>[]
   body: T[] | T | null
   footer?: string
-  dataBuffer?: { stashData?: boolean; bufferSize?: number; visibleRows?: number; clearButton?: boolean; clearClass?: string; timeSorting?: boolean }
+  dataBuffer?: { stashData?: boolean; bufferSize?: number; visibleRows?: number; clearButton?: boolean; clearClass?: string; logger?: boolean }
   outline?: boolean
   cursor?: string | null
   loader?: Writable<boolean>

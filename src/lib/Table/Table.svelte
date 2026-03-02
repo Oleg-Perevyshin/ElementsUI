@@ -15,7 +15,7 @@
     body = $bindable(),
     header = [],
     footer = "",
-    dataBuffer = { stashData: false, bufferSize: 10, clearButton: false, clearClass: "", timeSorting: true, visibleRows: 5 },
+    dataBuffer = { stashData: false, bufferSize: 10, clearButton: false, clearClass: "", logger: false, visibleRows: 5 },
     outline = false,
     cursor = null,
     loader,
@@ -27,7 +27,7 @@
 
   /* Сортировка */
   let sortState: { key: string | null; direction: "asc" | "desc" | null } = { key: null, direction: null }
-  let isAutoscroll = $state(false)
+  let isAutoscroll = $state(true)
   let container: HTMLElement | null = $state(null)
   let buffer: any[] = $state([])
 
@@ -39,6 +39,7 @@
 
   export const clearBuffer = async () => {
     buffer = []
+    tableHeight = 0
   }
 
   /* Сортировка столбцов */
@@ -83,14 +84,19 @@
   /* Обработчик автоскролла */
   const handleAutoScroll = () => {
     if (!container) return
-    isAutoscroll = !(container.scrollHeight - container.scrollTop <= container.clientHeight + 50)
+    isAutoscroll = container.scrollHeight - container.scrollTop <= container.clientHeight + 50
   }
   const scrollToBottom = () => {
-    if (!isAutoscroll && container) container.scrollTop = container.scrollHeight
+    if (isAutoscroll && container) {
+      container.scrollTop = container.scrollHeight
+      console.log(container.scrollTop, container.scrollHeight)
+    }
   }
 
   $effect(() => {
-    if (autoscroll && buffer && buffer.length > 0 && !dataBuffer.timeSorting) scrollToBottom()
+    if (autoscroll && buffer && buffer.length > 0 && !dataBuffer.logger) {
+      scrollToBottom()
+    }
   })
 
   const buttonClick = (row: any, button: any) => {
@@ -156,11 +162,11 @@
       if (body && dataBuffer.stashData) {
         if (Array.isArray(body)) {
           for (let i = 0; i < body.length; i++) {
-            dataBuffer.timeSorting ? (buffer = [body.reverse()[i], ...buffer]) : (buffer = [...buffer, body[i]])
+            dataBuffer.logger ? (buffer = [body.reverse()[i], ...buffer]) : (buffer = [...buffer, body[i]])
           }
-        } else dataBuffer.timeSorting ? (buffer = [body, ...buffer]) : (buffer = [...buffer, body])
+        } else dataBuffer.logger ? (buffer = [body, ...buffer]) : (buffer = [...buffer, body])
         if (buffer.length > (dataBuffer.bufferSize ?? 10)) {
-          dataBuffer.timeSorting ? (buffer = buffer.slice(0, dataBuffer.bufferSize ?? 10)) : (buffer = buffer.slice(-(dataBuffer.bufferSize ?? 10)))
+          dataBuffer.logger ? (buffer = buffer.slice(0, dataBuffer.bufferSize ?? 10)) : (buffer = buffer.slice(-(dataBuffer.bufferSize ?? 10)))
         }
 
         body = null
@@ -172,6 +178,8 @@
           }
         }
         isScrollable = container ? container.scrollHeight > container.clientHeight : false
+      } else {
+        tableHeight = 0
       }
     })()
   })

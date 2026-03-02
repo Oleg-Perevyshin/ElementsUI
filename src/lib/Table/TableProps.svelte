@@ -523,6 +523,17 @@
   />
 {/snippet}
 
+{#snippet TableLogger()}
+  <UI.Switch
+    label={{ name: $t("constructor.props.table.logger") }}
+    value={component.properties.dataBuffer.logger}
+    options={[{ id: crypto.randomUUID(), value: 0, class: "", disabled: !component.properties.dataBuffer.stashData }]}
+    onChange={(value) => {
+      updateProperty("dataBuffer.logger", value, component, onPropertyChange)
+    }}
+  />
+{/snippet}
+
 {#if forConstructor}
   <div class="relative flex flex-row items-start justify-center pb-4">
     <div class="flex w-1/3 flex-col px-2">
@@ -563,6 +574,7 @@
       <div class="flex">
         {@render TableStashData()}
         {@render TableClearButton()}
+        {@render TableLogger()}
       </div>
 
       {#if component.properties.dataBuffer.stashData}
