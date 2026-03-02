@@ -392,8 +392,7 @@ export interface ITableProps<T extends object> {
   header?: ITableHeader<T>[]
   body: T[] | T | null
   footer?: string
-  type?: "table" | "logger"
-  dataBuffer?: { stashData?: boolean; rowsAmmount?: number; clearButton?: boolean; clearClass?: string; timestamp?: boolean }
+  dataBuffer?: { stashData?: boolean; bufferSize?: number; visibleRows?: number; clearButton?: boolean; clearClass?: string; timeSorting?: boolean }
   outline?: boolean
   cursor?: string | null
   loader?: Writable<boolean>

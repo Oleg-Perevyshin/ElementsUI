@@ -186,6 +186,7 @@ const translations: Translations = {
     "constructor.props.table.type.select": "Селектор",
     "constructor.props.table.type.icon": "Иконка",
     "constructor.props.table.timestamp": "Время",
+    "constructor.props.table.visibleRows": "Видимые строки",
 
     "constructor.props.icon.access": "Доступ",
     "constructor.props.icon.common": "Общее",

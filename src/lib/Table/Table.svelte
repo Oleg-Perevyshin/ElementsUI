@@ -7,7 +7,6 @@
   import { onMount, tick } from "svelte"
   import ButtonClear from "../libIcons/ButtonClear.svelte"
   import { t } from "$lib/locales/i18n"
-  import type { timeStamp } from "node:console"
 
   let {
     id = crypto.randomUUID(),
@@ -16,8 +15,7 @@
     body = $bindable(),
     header = [],
     footer = "",
-    dataBuffer = { stashData: false, rowsAmmount: 10, clearButton: false, clearClass: "" },
-    type = "table",
+    dataBuffer = { stashData: false, bufferSize: 10, clearButton: false, clearClass: "", timeSorting: true, visibleRows: 5 },
     outline = false,
     cursor = null,
     loader,
@@ -32,23 +30,12 @@
   let isAutoscroll = $state(false)
   let container: HTMLElement | null = $state(null)
   let buffer: any[] = $state([])
-  let loggerHeader = $derived([
-    { key: "color", label: { name: "Type" }, width: "3.5rem" } as ITableHeader<any>,
-    ...(dataBuffer.timestamp ? [{ key: "timestamp", label: { name: "Timestamp" }, width: "12rem" } as ITableHeader<any>] : []),
-    { key: "data", label: { name: "Data" }, width: "1fr" } as ITableHeader<any>,
-  ])
 
-  const logTypeOptions = [
-    { id: crypto.randomUUID(), name: "Error", value: "error", color: "bg-(--red-color)" },
-    { id: crypto.randomUUID(), name: "Warning", value: "warning", color: "bg-(--yellow-color)" },
-    { id: crypto.randomUUID(), name: "Info", value: "info", color: "bg-(--gray-color)" },
-  ]
-
-  let logType = $state(["error", "warning", "info"])
   let isDropdownOpen: { x: number; y: number } | null = $state(null)
   let copiedCell: { x: number; y: number } | null = $state(null)
   let tooltip = $state({ show: false, text: "", x: 0, y: 0 })
   let isScrollable: boolean = $derived(container ? (container as HTMLElement).scrollHeight > (container as HTMLElement).clientHeight : false)
+  let tableHeight = $state(0)
 
   export const clearBuffer = async () => {
     buffer = []
@@ -103,7 +90,7 @@
   }
 
   $effect(() => {
-    if (autoscroll && buffer && buffer.length > 0) scrollToBottom()
+    if (autoscroll && buffer && buffer.length > 0 && !dataBuffer.timeSorting) scrollToBottom()
   })
 
   const buttonClick = (row: any, button: any) => {
@@ -160,76 +147,30 @@
   }
 
   $effect(() => {
-    ;(async () => {
-      const currentType = type
-      if (currentType === "logger") {
-        header = loggerHeader
-      }
-
-      await tick()
-      isScrollable = container ? container.scrollHeight > container.clientHeight : false
-      return () => (buffer = [])
-    })()
+    isScrollable = container ? container.scrollHeight > container.clientHeight : false
+    return () => (buffer = [])
   })
 
   $effect(() => {
     ;(async () => {
-      if (body && type == "logger") {
+      if (body && dataBuffer.stashData) {
         if (Array.isArray(body)) {
           for (let i = 0; i < body.length; i++) {
-            buffer = [
-              ...buffer,
-              {
-                ...(dataBuffer.timestamp && {
-                  timestamp: body[i].Timestamp ?? "",
-                }),
-                type: body[i].Name,
-                color: `<div class='size-6 rounded-full ${logTypeOptions.find((o) => o.value == body[i].Name)?.color}'></div>`,
-                data: body[i].Value,
-              },
-            ]
+            dataBuffer.timeSorting ? (buffer = [body.reverse()[i], ...buffer]) : (buffer = [...buffer, body[i]])
           }
-        } else {
-          buffer = [
-            ...buffer,
-            {
-              ...(dataBuffer.timestamp && {
-                timestamp: body.Timestamp ?? "",
-              }),
-              type: body.Name,
-              color: `<div class='size-6 rounded-full ${logTypeOptions.find((o) => o.value == body.Name)?.color}'></div>`,
-              data: body.Value,
-            },
-          ]
-        }
-
-        if (dataBuffer && buffer.length > (dataBuffer.rowsAmmount ?? 10)) {
-          buffer = buffer.slice(-(dataBuffer.rowsAmmount ?? 10))
+        } else dataBuffer.timeSorting ? (buffer = [body, ...buffer]) : (buffer = [...buffer, body])
+        if (buffer.length > (dataBuffer.bufferSize ?? 10)) {
+          dataBuffer.timeSorting ? (buffer = buffer.slice(0, dataBuffer.bufferSize ?? 10)) : (buffer = buffer.slice(-(dataBuffer.bufferSize ?? 10)))
         }
 
         body = null
-
         await tick()
-        isScrollable = container ? container.scrollHeight > container.clientHeight : false
-      }
-    })()
-  })
-
-  $effect(() => {
-    ;(async () => {
-      if (body && dataBuffer.stashData && type == "table") {
-        if (Array.isArray(body)) {
-          for (let i = 0; i < body.length; i++) {
-            buffer = [...buffer, body[i]]
+        if (document && dataBuffer.visibleRows) {
+          for (let i = 0; i < (dataBuffer.visibleRows ?? 5); i++) {
+            const rowHeight = document.getElementById(`rowDiv${i}`)?.offsetHeight ?? 0
+            tableHeight = i == 0 ? 0 + rowHeight : tableHeight + rowHeight
           }
-        } else buffer = [...buffer, body]
-        if (buffer.length > (dataBuffer.rowsAmmount ?? 10)) {
-          buffer = buffer.slice(-(dataBuffer.rowsAmmount ?? 10))
         }
-
-        body = null
-
-        await tick()
         isScrollable = container ? container.scrollHeight > container.clientHeight : false
       }
     })()
@@ -242,10 +183,6 @@
     }
     isScrollable = container ? container.scrollHeight > container.clientHeight : false
 
-    if (type === "logger") {
-      header = loggerHeader
-    }
-
     return () => {
       if (autoscroll) container?.removeEventListener("scroll", handleAutoScroll)
     }
@@ -254,43 +191,10 @@
 
 <div
   id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
-  class={twMerge(`bg-blue flex h-full w-full items-center ${type == "logger" ? "gap-2" : ""} flex-col overflow-hidden rounded-xl p-0.5`, wrapperClass)}
+  class={twMerge(`bg-blue flex w-full items-center flex-col overflow-hidden rounded-xl p-0.5`, wrapperClass)}
 >
   {#if label.name}
     <h5 class={twMerge(`w-full px-4 text-center`, label.class)}>{label.name}</h5>
-  {/if}
-
-  {#if type == "logger"}
-    <div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class="flex w-[50%] justify-center rounded-full">
-      {#each logTypeOptions as option, index}
-        <button
-          id={crypto.randomUUID()}
-          class={twMerge(`m-0 inline-block min-w-0 flex-1 cursor-pointer items-center px-2 py-1 font-semibold shadow-sm transition-all duration-300
-            select-none hover:shadow-md
-            ${
-              logType.includes(option.value) && logType !== null
-                ? "z-10 py-1 shadow-[0_0_10px_var(--shadow-color)] hover:shadow-[0_0_15px_var(--shadow-color)]"
-                : ""
-            }  
-            ${logTypeOptions.length > 0 && index === 0 ? "rounded-l-2xl" : ""} ${index === logTypeOptions.length - 1 ? "rounded-r-2xl" : ""} ${option.color}`)}
-          onclick={() => {
-            if (logType.includes(option.value)) {
-              logType = logType.filter((type) => type !== option.value)
-            } else {
-              logType.push(option.value)
-            }
-          }}
-        >
-          <span class="flex flex-row items-center justify-center gap-4">
-            {#if option}
-              <div class="flex-1">
-                {option.name}
-              </div>
-            {/if}
-          </span>
-        </button>
-      {/each}
-    </div>
   {/if}
 
   <div
@@ -336,18 +240,17 @@
     {/if}
 
     {#if body || buffer}
-      {@const rows =
-        type == "logger"
-          ? buffer.filter((str) => logType.includes(str.type)).slice(-(dataBuffer.rowsAmmount ?? 10))
-          : dataBuffer.stashData
-            ? buffer.slice(-(dataBuffer.rowsAmmount ?? 10))
-            : body.filter((row: any) => Object.entries(row).length != 0)}
+      {@const rows = dataBuffer.stashData ? buffer.slice(-(dataBuffer.bufferSize ?? 10)) : body.filter((row: any) => Object.entries(row).length != 0)}
       <!-- Table Body с прокруткой -->
-      <div class="flex-1 overflow-y-auto bg-(--container-color)/50 relative" bind:this={container} onscroll={handleScroll}>
-        <div class="grid min-w-0" style={`grid-template-columns: ${header.map((c) => c.width || "minmax(0, 1fr)").join(" ")};`}>
+      <div class="flex-1 overflow-y-auto bg-(--container-color)/50 relative" style={``} bind:this={container} onscroll={handleScroll}>
+        <div
+          class="grid min-w-0"
+          style={`grid-template-columns: ${header.map((c) => c.width || "minmax(0, 1fr)").join(" ")}; height: ${dataBuffer.visibleRows && tableHeight ? `${tableHeight}px` : "100%"};`}
+        >
           {#each rows as row, i (row)}
             {#each header as column, j (column)}
               <div
+                id="rowDiv{i}"
                 class="relative flex w-full min-w-0 items-center px-2 py-1 wrap-break-word
               {i % 2 ? 'bg-(--back-color)/40' : 'bg-[#edeef3] dark:bg-[#1f2a3a]'}
               {column.align === 'center' ? 'justify-center text-center' : column.align === 'right' ? 'justify-end text-right' : 'justify-start text-left'}

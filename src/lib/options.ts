@@ -183,12 +183,18 @@ export const optionsStore = derived(t, ($t) => {
       { id: id(), value: "disabled", name: $t("constructor.props.disabled") },
     ],
 
-    BUFFER_SIFE_OPTIONS: [
+    BUFFER_SIZE_OPTIONS: [
       { id: id(), value: 10, name: "10" },
       { id: id(), value: 50, name: "50" },
       { id: id(), value: 100, name: "100" },
       { id: id(), value: 500, name: "500" },
       { id: id(), value: 1000, name: "1000" },
+    ],
+
+    VISIBLE_ROWS_OPTIONS: [
+      { id: id(), value: 5, name: "5" },
+      { id: id(), value: 10, name: "10" },
+      { id: id(), value: 20, name: "20" },
     ],
 
     WIDGET_TYPE_OPTIONS: [

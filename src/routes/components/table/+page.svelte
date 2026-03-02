@@ -15,8 +15,7 @@
       id: crypto.randomUUID(),
       wrapperClass: "bg-blue",
       label: { name: "Label", class: "text-center" },
-      type: "table",
-      dataBuffer: { rowsAmmount: 10, timestamp: true },
+      dataBuffer: { bufferSize: 10, timeSorting: true, visibleRows: 5 },
       header: [
         {
           key: "id",
@@ -79,21 +78,16 @@
   let body: any | null = $state(null)
   let intervalId: any | null = null
 
-  const generateLoggerString = (): { Name: string; Value: string; Timestamp: string } => {
-    let logLevel = ["info", "warning", "error"][Math.floor(Math.random() * 3)]
-    return { Name: logLevel, Value: `${logLevel}`, Timestamp: "12.02.2026 12.23.25" }
-  }
-
   const generateStashingData = (): { id: string; device: string }[] => {
     return [
       {
         id: `Value of id ${Math.floor(Math.random() * 10)}`,
         device: `Value of device ${Math.floor(Math.random() * 10)}`,
       },
-      {
-        id: `Value of id ${Math.floor(Math.random() * 10)}`,
-        device: `Value of device ${Math.floor(Math.random() * 10)}`,
-      },
+      // {
+      //   id: `Value of id ${Math.floor(Math.random() * 10)}`,
+      //   device: `Value of device ${Math.floor(Math.random() * 10)}`,
+      // },
     ]
   }
   let codeText = $derived(`
@@ -103,10 +97,10 @@ ${formatObjectToString(tableComponent.properties as ITableProps<object>)}
 />`)
 
   onMount(() => {
-    body = (tableComponent.properties as ITableProps<object>).type == "logger" ? generateLoggerString() : generateStashingData()
+    body = generateStashingData()
 
     intervalId = setInterval(() => {
-      body = (tableComponent.properties as ITableProps<object>).type == "logger" ? generateLoggerString() : generateStashingData()
+      body = generateStashingData()
     }, 1000)
   })
 
@@ -117,7 +111,7 @@ ${formatObjectToString(tableComponent.properties as ITableProps<object>)}
 
 <ComponentExample {codeText}>
   {#snippet component()}
-    <div class="h-60">
+    <div class="">
       <Table
         {...tableComponent.properties as ITableProps<object>}
         body={(tableComponent.properties as ITableProps<object>).dataBuffer?.stashData ? body : (tableComponent.properties as ITableProps<object>).body}

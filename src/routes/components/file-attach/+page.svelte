@@ -30,7 +30,6 @@ ${formatObjectToString(fileAttachComponent.properties as IFileAttachProps)}
 />`)
 
   const handleImageUpload = (event: Event) => {
-    console.log("Uploaded")
     const target = event.target as HTMLInputElement
     const file = target.files?.[0]
     if (!file) return
