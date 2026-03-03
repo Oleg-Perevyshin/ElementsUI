@@ -173,12 +173,10 @@
   })
 
   $effect(() => {
-    console.log(tableHeight)
-  })
-
-  $effect(() => {
     ;(async () => {
       if (body && dataBuffer.stashData) {
+        console.log("Приняты данные: ", body)
+
         if (Array.isArray(body)) {
           for (let i = 0; i < body.length; i++) {
             dataBuffer.logger ? (buffer = [body.reverse()[i], ...buffer]) : (buffer = [...buffer, body[i]])
@@ -197,7 +195,6 @@
           }
         }
         isScrollable = container ? container.scrollHeight > container.clientHeight : false
-        console.log(container ? container.scrollHeight : "", container ? container.clientHeight : "", isScrollable)
       }
     })()
   })
@@ -216,7 +213,10 @@
   })
 </script>
 
-<div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class={twMerge(`bg-blue flex w-full items-center flex-col overflow-hidden rounded-xl p-1`, wrapperClass)}>
+<div
+  id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
+  class={twMerge(`bg-blue flex h-full w-full items-center flex-col overflow-hidden rounded-xl p-1`, wrapperClass)}
+>
   {#if label.name}
     <h5 class={twMerge(`w-full px-4 text-center`, label.class)}>{label.name}</h5>
   {/if}
@@ -269,7 +269,8 @@
       <div class="flex-1 overflow-y-auto bg-(--container-color)/50 relative" style={``} bind:this={container} onscroll={handleScroll}>
         <div
           class="grid min-w-0"
-          style={`grid-template-columns: ${header.map((c) => c.width || "minmax(0, 1fr)").join(" ")}; height: ${dataBuffer.visibleRows && tableHeight && rows.length > dataBuffer.visibleRows ? `${tableHeight}px` : "100%"};`}
+          style={`grid-template-columns: ${header.map((c) => c.width || "minmax(0, 1fr)").join(" ")}; 
+          height: ${dataBuffer.visibleRows && tableHeight && rows.length > dataBuffer.visibleRows ? `${tableHeight}px` : ""};`}
         >
           {#each rows as row, i (row)}
             {#each header as column, j (column)}
