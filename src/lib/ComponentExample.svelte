@@ -10,7 +10,7 @@
 </script>
 
 <div class="flex h-[calc(100vh-9rem)] flex-col">
-  <div class="flex-1 overflow-y-auto">
+  <div class="flex-1">
     {@render component()}
   </div>
   <div class="border-t border-gray-500"></div>

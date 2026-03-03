@@ -173,6 +173,10 @@
   })
 
   $effect(() => {
+    console.log(tableHeight)
+  })
+
+  $effect(() => {
     ;(async () => {
       if (body && dataBuffer.stashData) {
         if (Array.isArray(body)) {
@@ -265,7 +269,7 @@
       <div class="flex-1 overflow-y-auto bg-(--container-color)/50 relative" style={``} bind:this={container} onscroll={handleScroll}>
         <div
           class="grid min-w-0"
-          style={`grid-template-columns: ${header.map((c) => c.width || "minmax(0, 1fr)").join(" ")}; height: ${dataBuffer.visibleRows && tableHeight ? `${tableHeight}px` : "100%"};`}
+          style={`grid-template-columns: ${header.map((c) => c.width || "minmax(0, 1fr)").join(" ")}; height: ${dataBuffer.visibleRows && tableHeight && rows.length > dataBuffer.visibleRows ? `${tableHeight}px` : "100%"};`}
         >
           {#each rows as row, i (row)}
             {#each header as column, j (column)}
