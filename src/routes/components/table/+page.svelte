@@ -3,7 +3,7 @@
   import ComponentExample from "$lib/ComponentExample.svelte"
   import Table from "$lib/Table/Table.svelte"
   import TableProps from "$lib/Table/TableProps.svelte"
-  import { updateComponent } from "$lib/types"
+  import { updateComponent, type ITableButtons } from "$lib/types"
   import { onDestroy, onMount } from "svelte"
   import { formatObjectToString } from "../../common"
 
@@ -72,6 +72,7 @@
             { id: "Value of id4", name: "Value of id4", value: "Value of id4" },
           ],
           device: "Value of device",
+          buttons: [],
         },
         {},
         {
@@ -82,6 +83,7 @@
             { id: "Value of id4", name: "Value of id4", value: "Value of id4" },
           ],
           device: "Value of device",
+          buttons: [],
         },
       ],
       footer: "",
@@ -94,11 +96,12 @@
   let body: any | null = $state(null)
   let intervalId: any | null = null
 
-  const generateStashingData = (): { id: string; device: string }[] => {
+  const generateStashingData = (): { "id-S": string; device: string; buttons: ITableButtons<object>[] }[] => {
     return [
       {
-        id: `Value of id ${Math.floor(Math.random() * 10)}`,
+        "id-S": `Value of id ${Math.floor(Math.random() * 10)}`,
         device: `Value of device ${Math.floor(Math.random() * 10)}`,
+        buttons: [],
       },
       // {
       //   id: `Value of id ${Math.floor(Math.random() * 10)}`,
@@ -106,6 +109,15 @@
       // },
     ]
   }
+
+  let tableRef: any = $state(null)
+
+  $effect(() => {
+    if (!(tableComponent.properties as ITableProps<object>).dataBuffer?.stashData) {
+      tableRef.clearBuffer()
+    }
+  })
+
   let codeText = $derived(`
 <UI.Table
 ${formatObjectToString(tableComponent.properties as ITableProps<object>)} 
@@ -129,6 +141,7 @@ ${formatObjectToString(tableComponent.properties as ITableProps<object>)}
   {#snippet component()}
     <div class="">
       <Table
+        bind:this={tableRef}
         {...tableComponent.properties as ITableProps<object>}
         body={(tableComponent.properties as ITableProps<object>).dataBuffer?.stashData ? body : (tableComponent.properties as ITableProps<object>).body}
       />

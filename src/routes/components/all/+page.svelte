@@ -103,8 +103,6 @@
 
   // Запуск симуляции
   onMount(() => {
-    console.log(window)
-
     data = generateRandomDevice()
     intervalId = setInterval(() => {
       data = generateRandomDevice()
@@ -122,7 +120,7 @@
     name: string
     status: "online" | "offline"
     lastActive: string
-    action?: string
+    action?: ISelectOption[]
   }
   const columns: ITableHeader<ITableRow>[] = [
     { label: { name: "ID" }, key: "id", width: "5%", text: { sortable: true }, align: "center" },
@@ -163,7 +161,8 @@
       key: "action",
       width: "1fr",
       align: "left",
-      type: "buttons",
+      type: "select",
+      select: { key: "" },
       buttons: [
         { name: "Action 1 (id)", class: "bg-blue", eventHandler: { Header: "SET", Argument: "save", Variables: ["name"] } },
         { name: "Action 2 (name)", class: "bg-green", onClick: (row) => console.log(row.name) },
@@ -178,6 +177,12 @@
       name: "Device A",
       status: "online",
       lastActive: String(new Date()),
+      action: [
+        { id: "Value of id1", name: "Value of id1", value: "Value of id1" },
+        { id: "Value of id2", name: "Value of id2", value: "Value of id2" },
+        { id: "Value of id3", name: "Value of id3", value: "Value of id3" },
+        { id: "Value of id4", name: "Value of id4", value: "Value of id4" },
+      ],
     },
     {
       id: "# 2",
@@ -186,6 +191,12 @@
       name: "Device B",
       status: "offline",
       lastActive: String(new Date(Date.now() - 86400000 * 4)),
+      action: [
+        { id: "Value of id1", name: "Value of id1", value: "Value of id1" },
+        { id: "Value of id2", name: "Value of id2", value: "Value of id2" },
+        { id: "Value of id3", name: "Value of id3", value: "Value of id3" },
+        { id: "Value of id4", name: "Value of id4", value: "Value of id4" },
+      ],
     },
   ]
 
@@ -262,7 +273,7 @@
 
   <div class="flex w-full flex-col gap-2">
     <!-- Компонент ACCORDION -->
-    <UI.Accordion label={{ name: "Accordion" }} isOpen={false}>
+    <UI.Accordion label={{ name: "Accordion" }} isOpen={true}>
       <UI.Accordion label={{ name: "Accordion 1", class: "" }} isOpen={false} wrapperClass="col-span-3">
         <h6>Содержимое вложенного Accordion 1</h6>
         <h5>Содержимое вложенного Accordion 1</h5>
@@ -284,6 +295,15 @@
         <h2>Содержимое вложенного Accordion 3</h2>
         <h1>Содержимое вложенного Accordion 3</h1>
       </UI.Accordion>
+      <UI.Select
+        label={{ name: "constructor.props.argument" }}
+        options={[
+          { id: crypto.randomUUID(), value: "flex-row", name: "←" },
+          { id: crypto.randomUUID(), value: "flex-col", name: "↑" },
+          { id: crypto.randomUUID(), value: "flex-row-reverse", name: "→" },
+          { id: crypto.randomUUID(), value: "flex-col-reverse", name: "↓" },
+        ]}
+      />
     </UI.Accordion>
 
     <!-- Компонент BUTTON -->
@@ -562,18 +582,7 @@
           children={Tab}
           size={{ height: 1, width: 1 }}
         />
-        <UI.Tabs
-          items={[
-            { name: "Tab1", icon: IconGripHorizontalUp, class: "flex-col" },
-            { name: "Tab2", icon: IconGripVerticalRight, class: "flex-row-reverse" },
-            { name: "Tab3", icon: IconGripHorizontalDown, class: "flex-col-reverse" },
-            { name: "Tab4", icon: IconGripVerticalLeft, class: "" },
-          ]}
-          children={Tab}
-          size={{ height: 1, width: 1 }}
-        />
-        /4" }, ]} children={Tab}
-        size={{ height: 1, width: 1 }} />
+
         <UI.Tabs
           items={[
             { name: "Tab1", icon: IconGripHorizontalUp, class: "flex-col" },

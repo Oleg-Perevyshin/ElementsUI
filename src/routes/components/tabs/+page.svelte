@@ -22,7 +22,7 @@
           name: "Tab 1",
           class: "flex-row",
         },
-        { name: "Tab 2", class: "flex-row" },
+        { name: "Tab 2", class: "flex-row", disabled: true },
         { name: "Tab 3", class: "flex-row" },
       ],
     },
@@ -47,7 +47,7 @@ ${formatObjectToString(tabsComponent.properties as ITabsProps)}
     <TabsProps
       component={tabsComponent as UIComponent & { properties: Partial<ITabsProps> }}
       onPropertyChange={(updates) => (tabsComponent = updateComponent(tabsComponent, updates as object))}
-      forConstructor={false}
+      forConstructor={true}
     />
     <!-- <hr />
     <TabsProps

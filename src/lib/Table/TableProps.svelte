@@ -203,7 +203,7 @@
 
     {#each component.properties.header as column, columnIndex (columnIndex)}
       <div class="pb-3 {columnIndex !== component.properties.header.length - 1 ? 'border-b border-(--border-color)/50 ' : ''}">
-        <div class="p-2 pr-0 grid grid-cols-[minmax(5rem,10rem)_1fr_minmax(5rem,10rem)_minmax(10rem,21rem)_minmax(13rem,25rem)_2rem] items-end gap-2">
+        <div class="p-2 pr-0 grid grid-cols-[1fr_1fr_minmax(5rem,10rem)_minmax(10rem,21rem)_minmax(10rem,21rem)_2rem] items-end gap-2">
           <UI.Input
             label={{ name: $t("constructor.props.table.columns.key") }}
             value={column.key}
@@ -276,6 +276,20 @@
                     wrapperClass="w-3/10"
                     value={button.name}
                     onUpdate={(value) => updateButtonProperty(columnIndex, buttonIndex, "name", value)}
+                  />
+
+                  <UI.Select
+                    wrapperClass="w-80 h-14.5"
+                    label={{ name: $t("constructor.props.colors") }}
+                    type="buttons"
+                    options={$optionsStore.COLOR_OPTIONS.filter((option) => option.value !== "bg-max")}
+                    value={$optionsStore.COLOR_OPTIONS.find((c) =>
+                      (c.value as string).includes((button.class ?? "bg-blue").split(" ").find((cls: string) => cls.startsWith("bg-"))),
+                    )}
+                    onUpdate={(value) => {
+                      console.log(value)
+                      updateButtonProperty(columnIndex, buttonIndex, "class", (value as UI.ISelectOption).value)
+                    }}
                   />
 
                   <div class="relative mt-6 flex w-2/10 gap-2">
@@ -505,8 +519,10 @@
     options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
     onChange={(value) => {
       updateProperty("dataBuffer.stashData", value, component, onPropertyChange)
+      updateProperty("dataBuffer.visibleRows", value === 0 ? 0 : 5, component, onPropertyChange)
       if (value == 0) {
         updateProperty("dataBuffer.clearButton", 0, component, onPropertyChange)
+        updateProperty("dataBuffer.logger", 0, component, onPropertyChange)
       }
     }}
   />
@@ -514,7 +530,9 @@
 
 {#snippet TableClearButton()}
   <UI.Switch
-    label={{ name: $t("constructor.props.table.clearButton") }}
+    label={{
+      name: $t("constructor.props.table.clearButton"),
+    }}
     value={component.properties.dataBuffer.clearButton}
     options={[{ id: crypto.randomUUID(), value: 0, class: "", disabled: !component.properties.dataBuffer.stashData }]}
     onChange={(value) => {
@@ -525,7 +543,7 @@
 
 {#snippet TableLogger()}
   <UI.Switch
-    label={{ name: $t("constructor.props.table.logger") }}
+    label={{ name: $t("constructor.props.table.logger"), captionLeft: $t("constructor.props.info.bottom"), captionRight: $t("constructor.props.info.top") }}
     value={component.properties.dataBuffer.logger}
     options={[{ id: crypto.randomUUID(), value: 0, class: "", disabled: !component.properties.dataBuffer.stashData }]}
     onChange={(value) => {
@@ -539,16 +557,25 @@
     <div class="flex w-1/3 flex-col px-2">
       <CommonSnippets snippet="Variable" {VARIABLE_OPTIONS} {component} {onPropertyChange} />
       <CommonSnippets snippet="Access" {component} {onPropertyChange} />
+      {@render TableStashData()}
+      {#if component.properties.dataBuffer.stashData}
+        <div class="flex items-end">
+          {@render TableClearButton()}
+          {@render TableLogger()}
+        </div>
+      {/if}
     </div>
     <div class="flex w-1/3 flex-col px-2">
       <CommonSnippets snippet="Colors" initialValue={initialColor} {component} {onPropertyChange} />
       {@render TableOutline()}
+      {#if component.properties.dataBuffer.stashData}
+        {@render TableBufferSize()}
+      {/if}
     </div>
     <div class="flex w-1/3 flex-col px-2">
       <CommonSnippets snippet="Label" {component} {onPropertyChange} />
       <CommonSnippets snippet="LabelAlign" initialValue={initialAlign} {component} {onPropertyChange} />
       {#if component.properties.dataBuffer.stashData}
-        {@render TableBufferSize()}
         {@render TableVisibleRows()}
       {/if}
     </div>
@@ -571,7 +598,7 @@
 
     <div class="flex w-1/3 flex-col px-2">
       {@render TableFooter()}
-      <div class="flex">
+      <div class="flex items-end">
         {@render TableStashData()}
         {@render TableClearButton()}
         {@render TableLogger()}

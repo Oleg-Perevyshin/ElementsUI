@@ -91,6 +91,7 @@
 {#snippet InputVariable()}
   <UI.Select
     label={{ name: $t("constructor.props.variable") }}
+    type="input"
     options={VARIABLE_OPTIONS}
     value={VARIABLE_OPTIONS.find((opt) => opt.value === component.properties.id)}
     onUpdate={(value) => {

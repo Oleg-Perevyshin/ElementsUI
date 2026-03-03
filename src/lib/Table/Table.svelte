@@ -27,7 +27,7 @@
 
   /* Сортировка */
   let sortState: { key: string | null; direction: "asc" | "desc" | null } = { key: null, direction: null }
-  let isAutoscroll = $state(true)
+  let isAutoscroll = $state(false)
   let container: HTMLElement | null = $state(null)
   let buffer: any[] = $state([])
 
@@ -40,6 +40,22 @@
   export const clearBuffer = async () => {
     buffer = []
     tableHeight = 0
+  }
+
+  const getCoords = (ref: string) => {
+    if (typeof document !== "undefined") {
+      const box = document.getElementById(ref)?.getBoundingClientRect()
+      if (!box) return
+
+      return {
+        top: box.top + window.pageYOffset,
+        right: box.right + window.pageXOffset,
+        bottom: box.bottom + window.pageYOffset,
+        left: box.left + window.pageXOffset,
+      }
+    }
+
+    return undefined
   }
 
   /* Сортировка столбцов */
@@ -89,7 +105,6 @@
   const scrollToBottom = () => {
     if (isAutoscroll && container) {
       container.scrollTop = container.scrollHeight
-      console.log(container.scrollTop, container.scrollHeight)
     }
   }
 
@@ -173,18 +188,18 @@
         await tick()
         if (document && dataBuffer.visibleRows) {
           for (let i = 0; i < (dataBuffer.visibleRows ?? 5); i++) {
-            const rowHeight = document.getElementById(`rowDiv${i}`)?.offsetHeight ?? 0
+            const rowHeight = document.getElementById(`rowDiv${i}-0`)?.offsetHeight ?? 0
             tableHeight = i == 0 ? 0 + rowHeight : tableHeight + rowHeight
           }
         }
         isScrollable = container ? container.scrollHeight > container.clientHeight : false
-      } else {
-        tableHeight = 0
+        console.log(container ? container.scrollHeight : "", container ? container.clientHeight : "", isScrollable)
       }
     })()
   })
 
   onMount(() => {
+    // getCoords(`rowDiv${0}-${0}`)
     if (autoscroll) {
       container?.addEventListener("scroll", handleAutoScroll)
       scrollToBottom()
@@ -197,10 +212,7 @@
   })
 </script>
 
-<div
-  id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
-  class={twMerge(`bg-blue flex w-full items-center flex-col overflow-hidden rounded-xl p-0.5`, wrapperClass)}
->
+<div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class={twMerge(`bg-blue flex w-full items-center flex-col overflow-hidden rounded-xl p-1`, wrapperClass)}>
   {#if label.name}
     <h5 class={twMerge(`w-full px-4 text-center`, label.class)}>{label.name}</h5>
   {/if}
@@ -258,8 +270,8 @@
           {#each rows as row, i (row)}
             {#each header as column, j (column)}
               <div
-                id="rowDiv{i}"
-                class="relative flex w-full min-w-0 items-center px-2 py-1 wrap-break-word
+                id="rowDiv{i}-{j}"
+                class="relative flex w-full min-w-0 items-center gap-x-2 px-2 py-1 wrap-break-word
               {i % 2 ? 'bg-(--back-color)/40' : 'bg-[#edeef3] dark:bg-[#1f2a3a]'}
               {column.align === 'center' ? 'justify-center text-center' : column.align === 'right' ? 'justify-end text-right' : 'justify-start text-left'}
               border-t {j !== 0 ? ' border-l ' : ''} {outline ? 'border-(--border-color)' : 'border-transparent'}"
@@ -269,7 +281,7 @@
                   <div class="flex w-full flex-wrap gap-1">
                     {#each buttons as button (button)}
                       <button
-                        class="{twMerge(`flex items-center justify-center gap-2 cursor-pointer rounded-full w-full
+                        class="{twMerge(`flex items-center justify-center gap-2 cursor-pointer rounded-full 
                            px-4 py-1 font-semibold shadow-sm transition-shadow duration-200 outline-none select-none hover:shadow-md
                           ${typeof button.class === 'function' ? button.class(row) : button.class}`)} bg-(--bg-color)"
                         onclick={() => buttonClick(row, button)}
@@ -293,6 +305,7 @@
                 {:else if column.type == "select" && column.select}
                   {@const options = Array.isArray(row[column.key]) ? row[column.key] : []}
 
+                  <!-- <span>{JSON.stringify(getCoords(`rowDiv${i}-${j}`))}</span> -->
                   <div class="relative w-full">
                     <button
                       class="w-full rounded-2xl border border-(--blue-color) bg-(--back-color) p-1 text-center shadow-[0_0_3px_rgb(0_0_0_/0.25)] transition duration-200

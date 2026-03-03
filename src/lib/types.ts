@@ -349,7 +349,7 @@ export interface ISwitchProps {
 
 /* ********************************************************** */
 /* Интерфейс таблицы */
-interface ITableButtons<T extends object> {
+export interface ITableButtons<T extends object> {
   name?: string | ((row: T) => string)
   icon?: ConstructorOfATypedSvelteComponent | string
   class?: string | ((row: T) => string)
@@ -412,7 +412,7 @@ export interface ITabsProps {
     width?: number
   }
   activeTab?: number
-  items: { name?: string; icon?: ConstructorOfATypedSvelteComponent | string; class?: string; children?: Snippet; onClick?: () => {} }[]
+  items: { name?: string; icon?: ConstructorOfATypedSvelteComponent | string; class?: string; children?: Snippet; onClick?: () => {}; disabled?: boolean }[]
   children?: Snippet<[any]>
   apiArray?: UIComponent[]
   Components?: Snippet<[component: UIComponent, fixedHeight: boolean]>

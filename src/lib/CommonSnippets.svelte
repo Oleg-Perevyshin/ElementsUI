@@ -36,6 +36,7 @@
 {#snippet Variable()}
   <UI.Select
     label={{ name: $t("constructor.props.variable") }}
+    type="input"
     options={VARIABLE_OPTIONS}
     value={VARIABLE_OPTIONS.find((opt) => opt.value === component.properties.id)}
     onUpdate={(value) => {
@@ -105,7 +106,7 @@
     label={{ name: $t("constructor.props.align") }}
     type="buttons"
     value={initialAlign}
-    options={$optionsStore.TEXT_ALIGN_OPTIONS}
+    options={component.type == "Accordion" ? $optionsStore.JUSTIFY_ALIGN_OPTIONS : $optionsStore.TEXT_ALIGN_OPTIONS}
     onUpdate={(option) =>
       updateProperty(
         "label.class",

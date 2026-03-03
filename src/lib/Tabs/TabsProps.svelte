@@ -141,6 +141,18 @@
           {/if}
         </div>
 
+        <UI.Switch
+          wrapperClass="bg-blue w-40"
+          label={{ name: $t("constructor.props.disabled") }}
+          value={tab?.disabled ? 1 : 0}
+          options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
+          onChange={(value) => {
+            const items = [...(component.properties?.items || [])]
+            items[index]["disabled"] = value
+            updateProperty("items", items, component, onPropertyChange)
+          }}
+        />
+
         {#if component.properties.items.length > 1}
           <UI.Button
             wrapperClass="w-8"
@@ -217,6 +229,7 @@
       {@render TabsWidthMode()}
     </div>
   </div>
+  {@render TabsSettings()}
 {:else}
   <div class="flex items-center mb-4 justify-center gap-8">
     <div class="flex w-1/3 flex-col px-2">
