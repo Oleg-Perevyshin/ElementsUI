@@ -38,7 +38,7 @@
 
   const handleToggle = (index: number) => {
     if (localOptions[index].disabled) return
-    value = (value ?? 0) ^ (1 << (localOptions[index].value ?? 0))
+    value = (value ?? 0) ^ (1 << (bitMode ? (localOptions[index].value ?? 0) : 0))
 
     onChange(value)
   }
@@ -61,7 +61,7 @@
     {#if label.name}
       <h5 class={twMerge(`w-full px-4 text-center`, label.class)}>{label.name}</h5>
     {/if}
-    <div class="flex w-full flex-wrap items-end justify-around gap-5">
+    <div class="flex w-full ${type == 'vertical' ? 'flex-wrap' : ''} items-end justify-around gap-5">
       {#each localOptions as option, index}
         <div class={twMerge(`bg-blue flex flex-col`, option.class)}>
           {#if option.name && bitMode}
@@ -69,7 +69,7 @@
           {/if}
 
           <div class="relative flex w-full grow items-center justify-center bg-transparent">
-            {#if type === "horizontal" && label.captionLeft}
+            {#if type === "horizontal" && !bitMode && label.captionLeft}
               <button
                 class="mr-2 {option.disabled ? 'opacity-60' : 'cursor-pointer'}"
                 style="width: {maxCaptionWidth}; text-align: end;"
@@ -108,7 +108,7 @@
               </span>
             </label>
 
-            {#if type === "horizontal" && label.captionRight}
+            {#if type === "horizontal" && !bitMode && label.captionRight}
               <button
                 class="ml-2 {option.disabled ? 'opacity-60' : 'cursor-pointer'}"
                 style="width: {maxCaptionWidth}; text-align: start;"
@@ -158,7 +158,7 @@
       </div>
     {/if}
     {#if label.name}
-      <label for={ID} class={twMerge("{disabled ? 'cursor-not-allowed opacity-70' : 'cursor-pointer'} ml-1 select-none", label.class)}>
+      <label for={ID} class={twMerge(`${options[0].disabled ? "cursor-not-allowed opacity-70" : "cursor-pointer"} ml-1 select-none`, label.class)}>
         {label.name}
       </label>
     {/if}

@@ -278,6 +278,15 @@
   />
 {/snippet}
 
+{#snippet InputBitmode()}
+  <UI.Switch
+    label={{ name: $t("constructor.props.bitmode") }}
+    value={component.properties.bitMode}
+    options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
+    onChange={(value) => updateProperty("bitMode", value)}
+  />
+{/snippet}
+
 {#if forConstructor}
   <div class="relative flex flex-row items-start justify-center">
     <div class="flex w-1/3 flex-col px-2">
@@ -292,6 +301,7 @@
         {@render InputReadOnly()}
         {@render InputCopy()}
       </div>
+      {@render InputBitmode()}
     </div>
     <div class="flex w-1/3 flex-col px-2">
       {@render InputLabel()}
@@ -323,7 +333,10 @@
         {@render InputReadOnly()}
         {@render InputCopy()}
       </div>
-      {@render InputDisabled()}
+      <div class="flex">
+        {@render InputDisabled()}
+        {@render InputBitmode()}
+      </div>
     </div>
   </div>
 {/if}

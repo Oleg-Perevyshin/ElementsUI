@@ -210,6 +210,7 @@ export interface IInputProps {
   disabled?: boolean
   readonly?: boolean
   value?: string | number
+  bitMode?: boolean
   maxlength?: number
   textareaRows?: number
   placeholder?: string

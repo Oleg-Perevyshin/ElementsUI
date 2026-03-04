@@ -41,7 +41,7 @@ ${formatObjectToString(buttonComponent.properties as IButtonProps)}
     <ButtonProps
       component={buttonComponent as UIComponent & { properties: Partial<IButtonProps> }}
       onPropertyChange={(updates) => (buttonComponent = updateComponent(buttonComponent, updates as object))}
-      forConstructor={false}
+      forConstructor={true}
     />
     <!-- <hr />
     <ButtonProps

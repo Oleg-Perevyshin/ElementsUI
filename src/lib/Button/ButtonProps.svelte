@@ -95,7 +95,7 @@
     label={{ name: $t("constructor.props.variables") }}
     disabled={hasValue}
     value={component.eventHandler.Variables.join(" ")}
-    help={{ info: $t("constructor.props.variables.info"), autocomplete: "on", regExp: /^[a-zA-Z0-9\-_ ":{}]{0,500}$/ }}
+    help={{ info: $t("constructor.props.variables.info"), autocomplete: "on", regExp: /^[a-zA-Z0-9.\-_ ":{}]{0,500}$/ }}
     maxlength={500}
     onUpdate={(value) => {
       const parts = (value as string).trim().split(/\s+/)

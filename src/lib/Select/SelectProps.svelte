@@ -33,25 +33,6 @@
 
   let currentType = $derived($optionsStore.SELECT_TYPE_OPTIONS.find((t) => t.value === component.properties.type))
 
-  const generateBitOptions = (start: number, end: number) => {
-    const bitsNeeded = end - start + 1
-    const count = Math.pow(2, bitsNeeded)
-
-    const options: ISelectOption<number>[] = []
-
-    for (let i = 0; i < count; i++) {
-      const binary = i.toString(2).padStart(bitsNeeded, "0")
-
-      options.push({
-        id: crypto.randomUUID(),
-        value: parseInt(binary, 2) << start,
-        name: binary,
-        class: "bg-max",
-      })
-    }
-    updateProperty("options", options, component, onPropertyChange)
-  }
-
   const initialAlign = $derived(
     $optionsStore.TEXT_ALIGN_OPTIONS.find((a) =>
       (a.value as string).includes(component.properties.label?.class?.split(" ").find((cls: string) => cls.startsWith("text-"))),
@@ -113,7 +94,24 @@
 {/snippet}
 
 {#snippet SelectSettings()}
-  {#if component.properties.type === "buttons"}
+  <UI.Switch
+    label={{ name: $t("constructor.props.bitmode") }}
+    value={component.properties.bitMode}
+    options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
+    onChange={(value) => {
+      updateProperty("bitMode", value, component, onPropertyChange)
+      updateProperty("valueType", "number", component, onPropertyChange)
+      const options = [...(component.properties?.options || [])]
+      const newType = $optionsStore.SELECT_VALUE_TYPE_OPTIONS[1].value
+      options.forEach((option) => {
+        if (newType === "number") option.value = option.value !== undefined ? Number(option.value) : 0
+        else option.value = option.value !== undefined ? String(option.value) : ""
+      })
+      updateProperty("options", options, component, onPropertyChange)
+    }}
+  />
+
+  {#if component.properties.type === "buttons" && !component.properties.bitMode}
     <UI.Switch
       label={{ name: $t("constructor.props.multiselect") }}
       value={component.properties.multiSelect}
@@ -122,25 +120,8 @@
         updateProperty("multiSelect", value, component, onPropertyChange)
       }}
     />
-  {:else}
-    <UI.Switch
-      label={{ name: $t("constructor.props.bitmode") }}
-      value={component.properties.bitMode}
-      options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-      onChange={(value) => {
-        updateProperty("bitMode", value, component, onPropertyChange)
-        updateProperty("valueType", "number", component, onPropertyChange)
-        const options = [...(component.properties?.options || [])]
-        const newType = $optionsStore.SELECT_VALUE_TYPE_OPTIONS[1].value
-        options.forEach((option) => {
-          if (newType === "number") option.value = option.value !== undefined ? Number(option.value) : 0
-          else option.value = option.value !== undefined ? String(option.value) : ""
-        })
-        updateProperty("options", options, component, onPropertyChange)
-        if (value) generateBitOptions(component.properties.range.start, component.properties.range.end)
-      }}
-    />
   {/if}
+
   {#if component.properties.bitMode}
     <UI.Slider
       label={{ name: $t("constructor.props.range") }}
@@ -149,10 +130,8 @@
       value={[component.properties.range.start, component.properties.range.end]}
       onUpdate={(value) => {
         if (Array.isArray(value)) {
-          if (value[1] - value[0] > 6) value = [value[0], value[0] + 6]
           updateProperty("range.start", value[0] as number, component, onPropertyChange)
           updateProperty("range.end", value[1] as number, component, onPropertyChange)
-          generateBitOptions(component.properties.range.start, component.properties.range.end)
         }
       }}
     />
@@ -197,8 +176,8 @@
           label={{ name: $t("constructor.props.optionvalue") }}
           wrapperClass="!w-3/10"
           value={option.value}
-          readonly={component.properties.bitMode}
           type={component.properties.valueType}
+          number={{ minNum: 0, maxNum: Math.pow(2, component.properties.range.end - component.properties.range.start + 1), step: 1 }}
           onUpdate={(value) => {
             const options = [...(component.properties?.options || [])]
             options[index]["value"] = value

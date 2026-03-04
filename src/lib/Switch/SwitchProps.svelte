@@ -19,21 +19,14 @@
   }>()
   const DeviceVariables = getContext<{ id: string; value: string; name: string }[]>("DeviceVariables")
   let VARIABLE_OPTIONS = $derived(DeviceVariables && Array.isArray(DeviceVariables) ? DeviceVariables : [])
-
-  const initialColor = $derived(
-    $optionsStore.COLOR_OPTIONS.find((c) =>
-      (c.value as string).includes(component.properties.wrapperClass?.split(" ").find((cls: string) => cls.startsWith("bg-"))),
-    ),
-  )
 </script>
 
 {#snippet SwitchType()}
   <UI.Select
     wrapperClass="!h-14"
     label={{ name: $t("constructor.props.type") }}
-    disabled={component.properties.bitMode}
     type="buttons"
-    options={$optionsStore.SWITCH_OPTIONS}
+    options={$optionsStore.SWITCH_OPTIONS.map((o) => (component.properties.bitMode && o.value == "checkbox" ? { ...o, disabled: true } : o))}
     value={$optionsStore.SWITCH_OPTIONS.find((option) => option.value == component.properties.type)}
     onUpdate={(option) => updateProperty("type", (option as UI.ISelectOption).value as string, component, onPropertyChange)}
   />
@@ -91,8 +84,8 @@
     options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
     onChange={(value) => {
       updateProperty("bitMode", value, component, onPropertyChange)
-      if (!component.properties.bitMode) updateProperty("value", 1, component, onPropertyChange)
-      if (component.properties.bitMode) updateProperty("type", "vertical", component, onPropertyChange)
+      updateProperty("value", 0, component, onPropertyChange)
+      // if (!component.properties.bitMode) updateProperty("value", 0, component, onPropertyChange)
     }}
   />
 {/snippet}
@@ -221,7 +214,9 @@
       {#if !component.properties.bitMode}
         {@render SwitchColors()}
       {/if}
-      {@render SwitchBitmode()}
+      {#if component.properties.type != "checkbox"}
+        {@render SwitchBitmode()}
+      {/if}
     </div>
   </div>
   {#if component.properties.bitMode}
@@ -252,7 +247,9 @@
       {#if !component.properties.bitMode}
         {@render SwitchDisabled()}
       {/if}
-      {@render SwitchBitmode()}
+      {#if component.properties.type != "checkbox"}
+        {@render SwitchBitmode()}
+      {/if}
     </div>
   </div>
   {#if component.properties.bitMode}

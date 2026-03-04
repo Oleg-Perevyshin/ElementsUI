@@ -57,7 +57,7 @@ ${formatObjectToString(inputComponent.properties as IInputProps)}
     <InputProps
       component={inputComponent as UIComponent & { properties: Partial<IInputProps> }}
       onPropertyChange={(updates) => (inputComponent = updateComponent(inputComponent, updates as object))}
-      forConstructor={false}
+      forConstructor={true}
     />
     <!-- <hr />
     <InputProps
