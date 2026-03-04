@@ -27,7 +27,7 @@
 
   /* Сортировка */
   let sortState: { key: string | null; direction: "asc" | "desc" | null } = { key: null, direction: null }
-  let isAutoscroll = $state(false)
+  let isAutoscroll = $state(true)
   let container: HTMLElement | null = $state(null)
   let buffer: any[] = $state([])
 
