@@ -308,7 +308,14 @@
                     {/each}
                   </div>
                 {:else if column.type == "select" && column.select}
-                  {@const options = Array.isArray(row[column.key]) ? row[column.key] : []}
+                  {@const options = Array.isArray(row[column.key])
+                    ? row[column.key].find((o: ISelectOption) => o.value === row[(column.key as string).slice(0, -2)])
+                      ? [
+                          row[column.key].find((o: ISelectOption) => o.value === row[(column.key as string).slice(0, -2)]),
+                          ...row[column.key].filter((o: ISelectOption) => o.value !== row[(column.key as string).slice(0, -2)]),
+                        ]
+                      : row[column.key]
+                    : []}
 
                   <!-- <span>{JSON.stringify(getCoords(`rowDiv${i}-${j}`))}</span> -->
                   <div class="relative w-full">

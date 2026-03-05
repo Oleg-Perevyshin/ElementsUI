@@ -96,7 +96,7 @@
     value={VARIABLE_OPTIONS.find((opt) => opt.value === component.properties.id)}
     onUpdate={(value) => {
       updateProperty("id", (value as ISelectOption).value as string)
-      onPropertyChange({ name: (value as ISelectOption).name?.split("—")[1].trim(), eventHandler: { Variables: [(value as ISelectOption).value as string] } })
+      onPropertyChange({ name: (value as ISelectOption).name?.split("—")[1]?.trim(), eventHandler: { Variables: [(value as ISelectOption).value as string] } })
     }}
   />
 {/snippet}
@@ -132,7 +132,7 @@
 {#snippet InputType()}
   <UI.Select
     label={{ name: $t("constructor.props.type") }}
-    options={$optionsStore.INPUT_TYPE_OPTIONS}
+    options={$optionsStore.INPUT_TYPE_OPTIONS.map((o) => (component.properties.bitMode && o.value != "number" ? { ...o, disabled: true } : o))}
     type="buttons"
     value={$optionsStore.INPUT_TYPE_OPTIONS.find((opt) => opt.value === (component.properties.type || "text"))}
     onUpdate={(option) => {
@@ -283,8 +283,26 @@
     label={{ name: $t("constructor.props.bitmode") }}
     value={component.properties.bitMode}
     options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-    onChange={(value) => updateProperty("bitMode", value)}
+    onChange={(value) => {
+      updateProperty("bitMode", value)
+      updateProperty("type", "number")
+    }}
   />
+
+  {#if component.properties.bitMode}
+    <UI.Slider
+      label={{ name: $t("constructor.props.range") }}
+      type="range"
+      number={{ minNum: 0, maxNum: 31, step: 1 }}
+      value={[component.properties.range.start, component.properties.range.end]}
+      onUpdate={(value) => {
+        if (Array.isArray(value)) {
+          updateProperty("range.start", value[0] as number)
+          updateProperty("range.end", value[1] as number)
+        }
+      }}
+    />
+  {/if}
 {/snippet}
 
 {#if forConstructor}

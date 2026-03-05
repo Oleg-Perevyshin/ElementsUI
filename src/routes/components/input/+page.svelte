@@ -19,7 +19,8 @@
       label: { name: "Label", class: "text-center" },
       componentClass: "bg-max resize-none",
       type: "number",
-
+      bitMode: false,
+      range: { start: 0, end: 1 },
       maxlength: 32,
       number: { minNum: 1, maxNum: 10, step: 1 },
       textareaRows: 5,

@@ -42,7 +42,7 @@
     onUpdate={(value) => {
       updateProperty("id", (value as UI.ISelectOption).value as string, component, onPropertyChange)
       onPropertyChange({
-        name: (value as UI.ISelectOption).name?.split("—")[1].trim(),
+        name: (value as UI.ISelectOption).name?.split("—")[1]?.trim(),
         eventHandler: { Variables: [(value as UI.ISelectOption).value as string] },
       })
     }}
