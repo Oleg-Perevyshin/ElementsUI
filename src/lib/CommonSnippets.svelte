@@ -1,6 +1,8 @@
 <script lang="ts">
   import * as UI from "$lib"
   import { t } from "$lib/locales/i18n"
+  import { ICONS } from "./icons"
+  import CrossIcon from "./libIcons/CrossIcon.svelte"
   import { optionsStore } from "./options"
   import { updateProperty } from "./types"
   import { twMerge } from "tailwind-merge"
@@ -30,7 +32,16 @@
     | "WrapperClass"
     | "Disabled"
     | "EventHandlerArgument"
+    | "IconsLib"
     | ""
+
+  interface iconModal {
+    buttonIndex?: number
+    isModalOpen: boolean
+    columnIndex: number
+    column?: UI.ITableHeader<any>
+  }
+  let showIconLib: boolean = $state(false)
 </script>
 
 {#snippet Variable()}
@@ -191,35 +202,67 @@
   />
 {/snippet}
 
-<div>
-  {#if snippet === "Variable"}
-    {@render Variable()}
-  {/if}
-  {#if snippet === "Access"}
-    {@render Access()}
-  {/if}
-  {#if snippet === "Colors"}
-    {@render Colors(initialValue)}
-  {/if}
-  {#if snippet === "Label"}
-    {@render Label()}
-  {/if}
-  {#if snippet === "LabelAlign"}
-    {@render LabelAlign(initialValue)}
-  {/if}
-  {#if snippet === "LabelClass"}
-    {@render LabelClass()}
-  {/if}
-  {#if snippet === "Identificator"}
-    {@render Identificator()}
-  {/if}
-  {#if snippet === "WrapperClass"}
-    {@render WrapperClass()}
-  {/if}
-  {#if snippet === "Disabled"}
-    {@render Disabled()}
-  {/if}
-  {#if snippet === "EventHandlerArgument"}
-    {@render EventHandlerArgument()}
-  {/if}
-</div>
+{#snippet IconsLib(initialValue: { name: string; icons: [string, string[]][]; icon: string; updateProperty: (icon: string) => {} })}
+  <div class="relative mt-6 flex w-full gap-2">
+    <UI.Button content={{ name: initialValue.name }} onClick={() => (showIconLib = true)} />
+    {#if showIconLib}
+      <UI.Modal bind:isOpen={showIconLib} wrapperClass="w-130">
+        {#snippet main()}
+          <div class="grid grid-cols-3">
+            {#each ICONS as category}
+              <div class="relative m-1.5 rounded-xl border-2 border-(--border-color) p-3">
+                <div class="absolute -top-3.5 bg-(--back-color) px-1">{$t(`constructor.props.icon.${category[0]}`)}</div>
+                <div class="grid grid-cols-3 place-items-center gap-2">
+                  {#each category[1] as icon}
+                    <button
+                      class="h-8 w-8 cursor-pointer [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
+                      onclick={() => initialValue.updateProperty(icon)}
+                    >
+                      {@html icon}
+                    </button>{/each}
+                </div>
+              </div>
+            {/each}
+          </div>
+        {/snippet}
+      </UI.Modal>
+    {/if}
+    {#if initialValue.icon}
+      <UI.Button wrapperClass="w-8.5 " componentClass="p-0.5 bg-red" content={{ icon: CrossIcon }} onClick={() => initialValue.updateProperty("")} />
+    {/if}
+  </div>
+{/snippet}
+
+{#if snippet === "Variable"}
+  {@render Variable()}
+{/if}
+{#if snippet === "Access"}
+  {@render Access()}
+{/if}
+{#if snippet === "Colors"}
+  {@render Colors(initialValue)}
+{/if}
+{#if snippet === "Label"}
+  {@render Label()}
+{/if}
+{#if snippet === "LabelAlign"}
+  {@render LabelAlign(initialValue)}
+{/if}
+{#if snippet === "LabelClass"}
+  {@render LabelClass()}
+{/if}
+{#if snippet === "Identificator"}
+  {@render Identificator()}
+{/if}
+{#if snippet === "WrapperClass"}
+  {@render WrapperClass()}
+{/if}
+{#if snippet === "Disabled"}
+  {@render Disabled()}
+{/if}
+{#if snippet === "EventHandlerArgument"}
+  {@render EventHandlerArgument()}
+{/if}
+{#if snippet === "IconsLib"}
+  {@render IconsLib(initialValue)}
+{/if}

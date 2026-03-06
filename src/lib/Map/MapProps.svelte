@@ -33,46 +33,6 @@
   )
 </script>
 
-{#snippet MapMarkerIcon()}
-  <div class="mt-6 flex gap-2">
-    <UI.Button content={{ name: $t("constructor.props.markerIcon") }} onClick={() => (showIconLib = true)} />
-    {#if showIconLib}
-      <Modal bind:isOpen={showIconLib} wrapperClass="w-130">
-        {#snippet main()}
-          <div class="grid grid-cols-3">
-            {#each ICONS as category}
-              <div class="relative m-1.5 rounded-xl border-2 border-(--border-color) p-3">
-                <div class="absolute -top-3.5 bg-(--back-color) px-1">{$t(`constructor.props.icon.${category[0]}`)}</div>
-                <div class="grid grid-cols-3 place-items-center gap-2">
-                  {#each category[1] as icon}
-                    <button
-                      class="h-8 w-8 cursor-pointer [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
-                      onclick={() => {
-                        updateProperty("markerIcon", icon as string, component, onPropertyChange)
-                      }}
-                    >
-                      {@html icon}
-                    </button>{/each}
-                </div>
-              </div>
-            {/each}
-          </div>
-        {/snippet}
-      </Modal>
-    {/if}
-    {#if component.properties.markerIcon}
-      <Button
-        wrapperClass="w-8.5 "
-        componentClass="p-0.5 bg-red"
-        content={{ icon: CrossIcon }}
-        onClick={() => {
-          updateProperty("markerIcon", "", component, onPropertyChange)
-        }}
-      />
-    {/if}
-  </div>
-{/snippet}
-
 {#if forConstructor}
   <div class="relative flex flex-row items-start justify-center">
     <div class="flex w-1/3 flex-col px-2">
@@ -83,7 +43,17 @@
       <CommonSnippets snippet="LabelAlign" initialValue={initialAlign} {component} {onPropertyChange} />
     </div>
     <div class="flex w-1/3 flex-col px-2">
-      {@render MapMarkerIcon()}
+      <CommonSnippets
+        snippet="IconsLib"
+        initialValue={{
+          name: $t("constructor.props.markerIcon"),
+          icon: component.properties.markerIcon,
+          updateProperty: (icon: string) => updateProperty("markerIcon", icon as string, component, onPropertyChange),
+          icons: ICONS,
+        }}
+        {component}
+        {onPropertyChange}
+      />
     </div>
   </div>
 {:else}
@@ -97,7 +67,17 @@
     </div>
 
     <div class="flex w-1/3 flex-col px-2">
-      {@render MapMarkerIcon()}
+      <CommonSnippets
+        snippet="IconsLib"
+        initialValue={{
+          name: $t("constructor.props.markerIcon"),
+          icon: component.properties.markerIcon,
+          updateProperty: (icon: string) => updateProperty("markerIcon", icon as string, component, onPropertyChange),
+          icons: ICONS,
+        }}
+        {component}
+        {onPropertyChange}
+      />
     </div>
   </div>
 {/if}

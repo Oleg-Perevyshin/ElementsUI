@@ -32,6 +32,7 @@
   let buffer: any[] = $state([])
 
   let isDropdownOpen: { x: number; y: number } | null = $state(null)
+  let selectSlideDuration: number = $state(250)
   let copiedCell: { x: number; y: number } | null = $state(null)
   let tooltip = $state({ show: false, text: "", x: 0, y: 0 })
   let isScrollable: boolean = $derived(container ? (container as HTMLElement).scrollHeight > (container as HTMLElement).clientHeight : false)
@@ -40,22 +41,6 @@
   export const clearBuffer = async () => {
     buffer = []
     tableHeight = 0
-  }
-
-  const getCoords = (ref: string) => {
-    if (typeof document !== "undefined") {
-      const box = document.getElementById(ref)?.getBoundingClientRect()
-      if (!box) return
-
-      return {
-        top: box.top + window.pageYOffset,
-        right: box.right + window.pageXOffset,
-        bottom: box.bottom + window.pageYOffset,
-        left: box.left + window.pageXOffset,
-      }
-    }
-
-    return undefined
   }
 
   /* Сортировка столбцов */
@@ -175,8 +160,6 @@
   $effect(() => {
     ;(async () => {
       if (body && dataBuffer.stashData) {
-        console.log("Приняты данные: ", body)
-
         if (Array.isArray(body)) {
           for (let i = 0; i < body.length; i++) {
             dataBuffer.logger ? (buffer = [body.reverse()[i], ...buffer]) : (buffer = [...buffer, body[i]])
@@ -200,15 +183,26 @@
   })
 
   onMount(() => {
-    // getCoords(`rowDiv${0}-${0}`)
     if (autoscroll) {
       container?.addEventListener("scroll", handleAutoScroll)
       scrollToBottom()
     }
+
+    const handlePageScroll = () => {
+      isDropdownOpen = null
+      selectSlideDuration = 0
+      setTimeout(() => {
+        selectSlideDuration = 250
+      }, 10)
+    }
+
+    window.addEventListener("scroll", handlePageScroll, true)
+
     isScrollable = container ? container.scrollHeight > container.clientHeight : false
 
     return () => {
-      if (autoscroll) container?.removeEventListener("scroll", handleAutoScroll)
+      container?.removeEventListener("scroll", handleAutoScroll)
+      window.removeEventListener("scroll", handlePageScroll)
     }
   })
 </script>
@@ -317,9 +311,9 @@
                       : row[column.key]
                     : []}
 
-                  <!-- <span>{JSON.stringify(getCoords(`rowDiv${i}-${j}`))}</span> -->
                   <div class="relative w-full">
                     <button
+                      id="select{i}-{j}"
                       class="w-full rounded-2xl border border-(--blue-color) bg-(--back-color) p-1 text-center shadow-[0_0_3px_rgb(0_0_0_/0.25)] transition duration-200
         cursor-pointer hover:shadow-[0_0_6px_rgb(0_0_0_/0.25)]"
                       onclick={() => (isDropdownOpen = isDropdownOpen?.x === j && isDropdownOpen.y === i ? null : { x: j, y: i })}
@@ -328,10 +322,11 @@
                     </button>
 
                     {#if isDropdownOpen?.x === j && isDropdownOpen.y === i}
+                      {@const cords = document.getElementById(`select${i}-${j}`)?.getBoundingClientRect()}
                       <div
-                        class="absolute top-full left-1/2 z-50 -translate-x-1/2 rounded-b-2xl shadow-[0_0_3px_rgb(0_0_0_/0.25)]"
-                        style="width: calc(100% - 1.8rem);"
-                        transition:slide={{ duration: 250 }}
+                        class="fixed z-50 rounded-b-2xl shadow-[0_0_3px_rgb(0_0_0_/0.25)]"
+                        style="top: {cords?.bottom}px; left: calc({cords?.left}px + 0.9rem) ; width: calc({cords?.width}px - 1.8rem);"
+                        transition:slide={{ duration: selectSlideDuration }}
                       >
                         {#each options as option, option_index (option.id)}
                           <button

@@ -4,9 +4,6 @@
   import * as UI from "$lib"
   import { optionsStore } from "../options"
   import { ICONS } from "../icons"
-  import Modal from "$lib/Modal.svelte"
-  import Button from "$lib/Button/Button.svelte"
-  import CrossIcon from "$lib/libIcons/CrossIcon.svelte"
   import ButtonAdd from "$lib/libIcons/ButtonAdd.svelte"
   import ButtonDelete from "$lib/libIcons/ButtonDelete.svelte"
   import { twMerge } from "tailwind-merge"
@@ -125,20 +122,21 @@
           }}
         />
         <div class="relative mt-5 flex w-3/10 gap-2">
-          <UI.Button content={{ name: $t("constructor.props.labelicon") }} onClick={() => (tabIcon = { index: index, isModalOpen: true })} />
-
-          {#if tab.icon}
-            <Button
-              wrapperClass="w-8.5 "
-              componentClass="p-0.5 bg-red"
-              content={{ icon: CrossIcon }}
-              onClick={() => {
+          <CommonSnippets
+            snippet="IconsLib"
+            initialValue={{
+              name: $t("constructor.props.table.type.icon"),
+              icon: component.properties.items[tabIcon.index].icon,
+              updateProperty: (icon: string) => {
                 const items = [...(component.properties?.items || [])]
-                items[index]["icon"] = ""
+                items[tabIcon.index]["icon"] = icon as string
                 updateProperty("items", items, component, onPropertyChange)
-              }}
-            />
-          {/if}
+              },
+              icons: ICONS,
+            }}
+            {component}
+            {onPropertyChange}
+          />
         </div>
 
         <UI.Switch
@@ -170,32 +168,6 @@
         {/if}
       </div>
     {/each}
-    {#if tabIcon.isModalOpen}
-      <Modal bind:isOpen={tabIcon.isModalOpen} wrapperClass="w-130">
-        {#snippet main()}
-          <div class="grid grid-cols-3">
-            {#each ICONS as category}
-              <div class="relative m-1.5 rounded-xl border-2 border-(--border-color) p-3">
-                <div class="absolute -top-3.5 bg-(--back-color) px-1">{$t(`constructor.props.icon.${category[0]}`)}</div>
-                <div class="grid grid-cols-3 place-items-center gap-2">
-                  {#each category[1] as icon}
-                    <button
-                      class="h-8 w-8 cursor-pointer [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
-                      onclick={() => {
-                        const items = [...(component.properties?.items || [])]
-                        items[tabIcon.index]["icon"] = icon as string
-                        updateProperty("items", items, component, onPropertyChange)
-                      }}
-                    >
-                      {@html icon}
-                    </button>{/each}
-                </div>
-              </div>
-            {/each}
-          </div>
-        {/snippet}
-      </Modal>
-    {/if}
   </div>
 {/snippet}
 

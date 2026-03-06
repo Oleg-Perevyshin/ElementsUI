@@ -38,7 +38,7 @@
             width: "0rem",
             height: "0rem",
           },
-          type: "text",
+          type: "image",
           align: "left",
           text: {
             truncated: true,

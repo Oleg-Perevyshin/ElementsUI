@@ -51,7 +51,7 @@ ${formatObjectToString(fileAttachComponent.properties as IFileAttachProps)}
     <FileAttachProps
       component={fileAttachComponent as UIComponent & { properties: Partial<IFileAttachProps> }}
       onPropertyChange={(updates) => (fileAttachComponent = updateComponent(fileAttachComponent, updates as object))}
-      forConstructor={false}
+      forConstructor={true}
     />
     <!-- <hr />
     <FileAttachProps

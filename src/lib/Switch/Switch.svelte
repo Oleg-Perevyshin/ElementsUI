@@ -24,7 +24,7 @@
   let checkedOptions: boolean[] = $derived(
     (() => {
       if (bitMode) {
-        return localOptions.map((option) => ((value ?? 0) & (1 << (option?.value ?? 0))) == Math.pow(2, option.value ?? 0))
+        return localOptions.map((option) => Math.abs((value ?? 0) & (1 << (option?.value ?? 0))) == Math.pow(2, option.value ?? 0))
       } else {
         return [value == 1]
       }
@@ -38,7 +38,7 @@
 
   const handleToggle = (index: number) => {
     if (localOptions[index].disabled) return
-    value = (value ?? 0) ^ (1 << (bitMode ? (localOptions[index].value ?? 0) : 0))
+    value = Math.abs((value ?? 0) ^ (1 << (bitMode ? (localOptions[index].value ?? 0) : 0)))
 
     onChange(value)
   }

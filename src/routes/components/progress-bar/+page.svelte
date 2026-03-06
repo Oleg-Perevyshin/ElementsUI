@@ -38,7 +38,7 @@ ${formatObjectToString(progressBarComponent.properties as IProgressBarProps)}
     <ProgressBarProps
       component={progressBarComponent as UIComponent & { properties: Partial<IProgressBarProps> }}
       onPropertyChange={(updates) => (progressBarComponent = updateComponent(progressBarComponent, updates as object))}
-      forConstructor={false}
+      forConstructor={true}
     />
     <!-- <hr />
     <ProgressBarProps

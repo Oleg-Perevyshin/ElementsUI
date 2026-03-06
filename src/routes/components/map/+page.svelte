@@ -103,7 +103,7 @@ ${formatObjectToString(mapComponent.properties as IMapProps)}
     <MapProps
       component={mapComponent as UIComponent & { properties: Partial<IMapProps> }}
       onPropertyChange={(updates) => (mapComponent = updateComponent(mapComponent, updates as object))}
-      forConstructor={false}
+      forConstructor={true}
     />
     <!-- <hr />
     <MapProps

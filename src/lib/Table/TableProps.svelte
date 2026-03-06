@@ -103,6 +103,8 @@
 
   const updateButtonProperty = (columnIndex: number, buttonIndex: number, field: string, value: any) => {
     const headers = [...component.properties.header]
+    console.log(headers)
+
     const buttons = [...headers[columnIndex].buttons]
 
     buttons[buttonIndex] = { ...buttons[buttonIndex], [field]: value }
@@ -202,7 +204,7 @@
     </div>
 
     {#each component.properties.header as column, columnIndex (columnIndex)}
-      <div class="pb-3 {columnIndex !== component.properties.header.length - 1 ? 'border-b border-(--border-color)/50 ' : ''}">
+      <div class="flex flex-col pb-3 {columnIndex !== component.properties.header.length - 1 ? 'border-b border-(--border-color)/50 ' : ''}">
         <div class="p-2 pr-0 grid grid-cols-[1fr_1fr_minmax(5rem,10rem)_minmax(10rem,21rem)_minmax(10rem,21rem)_2rem] items-end gap-2">
           <UI.Input
             label={{ name: $t("constructor.props.table.columns.key") }}
@@ -273,7 +275,7 @@
                 <div class="flex items-end justify-between gap-2">
                   <UI.Input
                     label={{ name: $t("constructor.props.name") }}
-                    wrapperClass="w-3/10"
+                    wrapperClass="w-2/10"
                     value={button.name}
                     onUpdate={(value) => updateButtonProperty(columnIndex, buttonIndex, "name", value)}
                   />
@@ -287,54 +289,26 @@
                       (c.value as string).includes((button.class ?? "bg-blue").split(" ").find((cls: string) => cls.startsWith("bg-"))),
                     )}
                     onUpdate={(value) => {
-                      console.log(value)
                       updateButtonProperty(columnIndex, buttonIndex, "class", (value as UI.ISelectOption).value)
                     }}
                   />
 
-                  <div class="relative mt-6 flex w-2/10 gap-2">
-                    <UI.Button
-                      content={{ name: $t("constructor.props.table.type.icon") }}
-                      onClick={() => (buttonIcon = { buttonIndex, isModalOpen: true, columnIndex })}
+                  <div class="relative mt-6 flex w-1/4 gap-2">
+                    <CommonSnippets
+                      snippet="IconsLib"
+                      initialValue={{
+                        name: $t("constructor.props.table.type.icon"),
+                        icon: column.buttons[buttonIndex].icon,
+                        updateProperty: (icon: string) => updateButtonProperty(columnIndex, buttonIndex, "icon", icon),
+                        icons: ICONS,
+                      }}
+                      {component}
+                      {onPropertyChange}
                     />
-                    {#if buttonIcon.isModalOpen}
-                      <Modal bind:isOpen={buttonIcon.isModalOpen} wrapperClass="w-130">
-                        {#snippet main()}
-                          <div class="grid grid-cols-3">
-                            {#each ICONS as category}
-                              <div class="relative m-1.5 rounded-xl border-2 border-(--border-color) p-3">
-                                <div class="absolute -top-3.5 bg-(--back-color) px-1">{$t(`constructor.props.icon.${category[0]}`)}</div>
-                                <div class="grid grid-cols-3 place-items-center gap-2">
-                                  {#each category[1] as icon}
-                                    <button
-                                      class="h-8 w-8 cursor-pointer [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
-                                      onclick={() => {
-                                        updateButtonProperty(buttonIcon.columnIndex, buttonIcon.buttonIndex, "icon", icon)
-                                      }}
-                                    >
-                                      {@html icon}
-                                    </button>{/each}
-                                </div>
-                              </div>
-                            {/each}
-                          </div>
-                        {/snippet}
-                      </Modal>
-                    {/if}
-                    {#if column.buttons[buttonIndex].icon}
-                      <UI.Button
-                        wrapperClass="w-8.5 "
-                        componentClass="p-0.5 bg-red"
-                        content={{ icon: CrossIcon }}
-                        onClick={() => {
-                          updateButtonProperty(buttonIcon.columnIndex, buttonIcon.buttonIndex, "icon", "")
-                        }}
-                      />
-                    {/if}
                   </div>
 
                   <UI.Select
-                    wrapperClass="w-2/10"
+                    wrapperClass="w-1/4"
                     label={{ name: $t("constructor.props.header") }}
                     type="buttons"
                     value={$optionsStore.HEADER_OPTIONS.find((h) => h.value === button.eventHandler?.Header)}
@@ -373,8 +347,9 @@
             </div>
           </div>
         {:else if column.type == "select"}
-          <div class="ml-14">
+          <div class="mx-auto">
             <UI.Input
+              wrapperClass="w-70"
               label={{ name: $t("constructor.props.table.select.keys") }}
               value={column.select?.key ?? ""}
               maxlength={500}
@@ -386,27 +361,25 @@
           </div>
         {:else if column.type == "image"}
           <div class="ml-14 flex items-end gap-2">
-            <UI.Button
-              content={{ name: $t("constructor.props.table.columns.defaultIcon") }}
-              onClick={() => {
-                defaultIcon = { isModalOpen: true, columnIndex: columnIndex, column: column }
-              }}
-            />
-            {#if column.image?.defaultIcon}
-              <UI.Button
-                wrapperClass="w-8.5 "
-                componentClass="p-0.5 bg-red"
-                content={{ icon: CrossIcon }}
-                onClick={() => {
-                  updateTableHeader(columnIndex, "image", {
-                    class: column.image?.class,
-                    width: column.image?.width,
-                    height: column.image?.height,
-                    defaultIcon: "",
-                  })
+            <div class="w-1/2">
+              <CommonSnippets
+                snippet="IconsLib"
+                initialValue={{
+                  name: $t("constructor.props.table.columns.defaultIcon"),
+                  icon: column.image?.defaultIcon ?? "",
+                  updateProperty: (icon: string) =>
+                    updateTableHeader(columnIndex, "image", {
+                      class: column.image?.class ?? "",
+                      width: column.image?.width === "0rem" ? "1rem" : column.image?.width,
+                      height: column.image?.height === "0rem" ? "1rem" : column.image?.height,
+                      defaultIcon: icon,
+                    }),
+                  icons: ICONS,
                 }}
+                {component}
+                {onPropertyChange}
               />
-            {/if}
+            </div>
 
             <UI.Input
               label={{ name: $t("constructor.props.table.columns.class") }}
@@ -452,8 +425,9 @@
             />
           </div>
         {:else if column.type == "text"}
-          <div class="ml-14">
+          <div class="mx-auto">
             <UI.Select
+              wrapperClass="w-150"
               label={{ name: $t("constructor.props.tablecolumn.settings") }}
               type="buttons"
               multiSelect={true}
@@ -469,38 +443,6 @@
         {/if}
       </div>
     {/each}
-
-    {#if defaultIcon?.isModalOpen}
-      <Modal bind:isOpen={defaultIcon.isModalOpen} wrapperClass="w-130">
-        {#snippet main()}
-          <div class="grid grid-cols-3">
-            {#each ICONS as category}
-              <div class="relative m-1.5 rounded-xl border-2 border-(--border-color) p-3">
-                <div class="absolute -top-3.5 bg-(--back-color) px-1">{$t(`constructor.props.icon.${category[0]}`)}</div>
-                <div class="grid grid-cols-3 place-items-center gap-2">
-                  {#each category[1] as icon}
-                    <button
-                      class="h-8 w-8 cursor-pointer [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
-                      onclick={() => {
-                        if (defaultIcon) {
-                          updateTableHeader(defaultIcon.columnIndex, "image", {
-                            class: defaultIcon.column.image?.class ?? "",
-                            width: defaultIcon.column.image?.width === "0rem" ? "1rem" : defaultIcon.column.image?.width,
-                            height: defaultIcon.column.image?.height === "0rem" ? "1rem" : defaultIcon.column.image?.height,
-                            defaultIcon: icon,
-                          })
-                        }
-                      }}
-                    >
-                      {@html icon}
-                    </button>{/each}
-                </div>
-              </div>
-            {/each}
-          </div>
-        {/snippet}
-      </Modal>
-    {/if}
   </div>
 {/snippet}
 

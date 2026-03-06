@@ -157,11 +157,19 @@
       componentClass={isValidRegExp === false ? "!border-2 !border-red-400" : ""}
       onUpdate={(value) => updateProperty("help.regExp", value as string)}
     />
+    {#if component.properties.type === "text-area"}
+      <UI.Input
+        label={{ name: $t("constructor.props.textarea.rows") }}
+        value={component.properties.textareaRows}
+        onUpdate={(value) => updateProperty("textareaRows", value as string)}
+      />
+    {/if}
   {:else if component.properties.type === "number" && !component.properties.readonly && !component.properties.disabled}
     <UI.Input
       label={{ name: $t("constructor.props.minnum") }}
       value={component.properties.number.minNum as number}
       type="number"
+      readonly={component.properties.bitMode}
       onUpdate={(value) => {
         updateProperty("number.minNum", Number(value))
       }}
@@ -170,6 +178,7 @@
       label={{ name: $t("constructor.props.maxnum") }}
       value={component.properties.number.maxNum as number}
       type="number"
+      readonly={component.properties.bitMode}
       onUpdate={(value) => {
         updateProperty("number.maxNum", Number(value))
       }}
@@ -178,6 +187,7 @@
       label={{ name: $t("constructor.props.step") }}
       value={component.properties.number.step as number}
       type="number"
+      readonly={component.properties.bitMode}
       onUpdate={(value) => updateProperty("number.step", Number(value))}
     />
   {/if}
@@ -286,6 +296,9 @@
     onChange={(value) => {
       updateProperty("bitMode", value)
       updateProperty("type", "number")
+      updateProperty("number.minNum", 0)
+      updateProperty("number.maxNum", Math.pow(2, component.properties.range.end - component.properties.range.start + 1))
+      updateProperty("number.step", 1)
     }}
   />
 
@@ -299,6 +312,9 @@
         if (Array.isArray(value)) {
           updateProperty("range.start", value[0] as number)
           updateProperty("range.end", value[1] as number)
+          updateProperty("number.minNum", 0)
+          updateProperty("number.maxNum", Math.pow(2, component.properties.range.end - component.properties.range.start + 1))
+          updateProperty("number.step", 1)
         }
       }}
     />

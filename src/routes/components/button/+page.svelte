@@ -4,7 +4,7 @@
   import { formatObjectToString } from "../../common"
   import ComponentExample from "$lib/ComponentExample.svelte"
   import ButtonProps from "$lib/Button/ButtonProps.svelte"
-  import Modal from "$lib/Modal.svelte"
+  import { onMount } from "svelte"
 
   let buttonComponent: UIComponent = $state({
     id: crypto.randomUUID(),
@@ -23,12 +23,14 @@
     position: { row: 0, col: 0, width: 0, height: 0 },
     parentId: "",
   })
-  let isOpen = $state(true)
+
   let codeText = $derived(`
 <UI.Button
 ${formatObjectToString(buttonComponent.properties as IButtonProps)} 
   onClick={() => {}}
 />`)
+
+  onMount(() => document?.addEventListener("scroll", () => console.log("dfjkngoikugnjhvikdjn")))
 </script>
 
 <ComponentExample {codeText}>

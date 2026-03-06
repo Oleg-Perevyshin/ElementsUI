@@ -97,20 +97,22 @@
   <div class="space-y-4">
     <div class="m-0 flex items-center justify-center gap-2">
       <h4>{$t("constructor.props.bits.title")}</h4>
-      <UI.Button
-        wrapperClass="w-8"
-        content={{ icon: ButtonAdd }}
-        onClick={() => {
-          const newOption: ISelectOption = {
-            id: crypto.randomUUID(),
-            name: component.properties?.options.length,
-            value: component.properties?.options.length,
-            class: "bg-blue",
-          }
-          const options = [...(component.properties?.options || []), newOption]
-          updateProperty("options", options, component, onPropertyChange)
-        }}
-      />
+      {#if component.properties.options.length < 32}
+        <UI.Button
+          wrapperClass="w-8"
+          content={{ icon: ButtonAdd }}
+          onClick={() => {
+            const newOption: ISelectOption = {
+              id: crypto.randomUUID(),
+              name: component.properties?.options.length,
+              value: component.properties?.options.length,
+              class: "bg-blue",
+            }
+            const options = [...(component.properties?.options || []), newOption]
+            updateProperty("options", options, component, onPropertyChange)
+          }}
+        />
+      {/if}
     </div>
 
     {#each component.properties.options || [] as option, index (option.id)}

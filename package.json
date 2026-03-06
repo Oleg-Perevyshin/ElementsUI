@@ -42,7 +42,7 @@
     "@sveltejs/vite-plugin-svelte": "^6.2.4",
     "@tailwindcss/vite": "^4.2.1",
     "@types/maplibre-gl": "^1.14.0",
-    "@types/node": "^25.3.3",
+    "@types/node": "^25.3.5",
     "prettier": "^3.8.1",
     "prettier-plugin-svelte": "^3.5.1",
     "prettier-plugin-tailwindcss": "^0.7.2",

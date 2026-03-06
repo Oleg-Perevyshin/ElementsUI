@@ -26,12 +26,6 @@
   let showInfo = $state(false)
   let isCopied = $state(false)
 
-  // $effect(() => {
-  //   if (type === "number") {
-  //     if (value === undefined || value === null || value === "") value = number.minNum
-  //   }
-  // })
-
   /* Обработка регулярного выражения */
   const parseRegExp = (pattern: string | RegExp): RegExp => {
     if (pattern instanceof RegExp) return pattern

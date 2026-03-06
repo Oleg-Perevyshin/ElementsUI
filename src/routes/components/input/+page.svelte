@@ -1,6 +1,5 @@
 <script lang="ts">
-  import { Graph, type IInputProps, type UIComponent } from "$lib"
-  import Button from "$lib/Button/Button.svelte"
+  import { type IInputProps, type UIComponent } from "$lib"
   import ComponentExample from "$lib/ComponentExample.svelte"
   import Input from "$lib/Input/Input.svelte"
   import InputProps from "$lib/Input/InputProps.svelte"

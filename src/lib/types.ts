@@ -296,7 +296,6 @@ export interface ISelectProps<T = unknown> {
   wrapperClass?: string
   disabled?: boolean
   label?: { name?: string; class?: string }
-  componentClass?: string
   type?: "select" | "buttons" | "input"
   multiSelect?: boolean
   valueType?: "text" | "number"

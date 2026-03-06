@@ -105,46 +105,6 @@
   />
 {/snippet}
 
-{#snippet ButtonIcon()}
-  <div class="relative mt-6 flex w-full gap-2">
-    <UI.Button content={{ name: $t("constructor.props.buttonIcon") }} onClick={() => (showIconLib = true)} />
-    {#if showIconLib}
-      <Modal bind:isOpen={showIconLib} wrapperClass="w-130">
-        {#snippet main()}
-          <div class="grid grid-cols-3">
-            {#each ICONS as category}
-              <div class="relative m-1.5 rounded-xl border-2 border-(--border-color) p-3">
-                <div class="absolute -top-3.5 bg-(--back-color) px-1">{$t(`constructor.props.icon.${category[0]}`)}</div>
-                <div class="grid grid-cols-3 place-items-center gap-2">
-                  {#each category[1] as icon}
-                    <button
-                      class="h-8 w-8 cursor-pointer [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
-                      onclick={() => {
-                        updateProperty("content.icon", icon as string, component, onPropertyChange)
-                      }}
-                    >
-                      {@html icon}
-                    </button>{/each}
-                </div>
-              </div>
-            {/each}
-          </div>
-        {/snippet}
-      </Modal>
-    {/if}
-    {#if component.properties.content.icon}
-      <Button
-        wrapperClass="w-8.5 "
-        componentClass="p-0.5 bg-red"
-        content={{ icon: CrossIcon }}
-        onClick={() => {
-          updateProperty("content.icon", "", component, onPropertyChange)
-        }}
-      />
-    {/if}
-  </div>
-{/snippet}
-
 {#snippet ButtonName()}
   <UI.Input
     label={{ name: $t("constructor.props.name") }}
@@ -199,7 +159,17 @@
     <div class="flex w-1/3 flex-col px-2">
       {@render ButtonVariables()}
       <CommonSnippets snippet="Access" {component} {onPropertyChange} />
-      {@render ButtonIcon()}
+      <CommonSnippets
+        snippet="IconsLib"
+        initialValue={{
+          name: $t("constructor.props.buttonIcon"),
+          icon: component.properties.content.icon,
+          updateProperty: (icon: string) => updateProperty("content.icon", icon as string, component, onPropertyChange),
+          icons: ICONS,
+        }}
+        {component}
+        {onPropertyChange}
+      />
     </div>
     <div class="flex w-1/3 flex-col px-2">
       {@render ButtonName()}
@@ -224,7 +194,17 @@
     <div class="flex w-1/3 flex-col px-2">
       {@render ButtonComponentClass()}
       <CommonSnippets snippet="Colors" initialValue={initialColor} {component} {onPropertyChange} />
-      {@render ButtonIcon()}
+      <CommonSnippets
+        snippet="IconsLib"
+        initialValue={{
+          name: $t("constructor.props.buttonIcon"),
+          icon: component.properties.content.icon,
+          updateProperty: (icon: string) => updateProperty("content.icon", icon as string, component, onPropertyChange),
+          icons: ICONS,
+        }}
+        {component}
+        {onPropertyChange}
+      />
     </div>
   </div>
 {/if}
