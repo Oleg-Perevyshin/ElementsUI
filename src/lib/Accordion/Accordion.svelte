@@ -17,7 +17,7 @@
 </script>
 
 <div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class={twMerge(`w-full p-1`, wrapperClass)} transition:slide={{ duration: 250 }}>
-  <div class="shadow-[0_0_3px_rgb(0_0_0_/0.25)] hover:shadow-[0_0_6px_rgb(0_0_0_/0.25)] transition-shadow duration-250 rounded-xl bg-(--container-color) p-0">
+  <div class="shadow-[0_0_3px_rgb(0_0_0_/0.25)] hover:shadow-[0_0_6px_rgb(0_0_0_/0.25)] transition-shadow duration-250 rounded-xl bg-(--container-color)">
     <button class="flex w-full cursor-pointer items-center justify-between p-4 py-3.5" onclick={toggle}>
       <div class="flex w-full items-center">
         <span class={`flex h-7 w-7 shrink-0 items-center justify-center overflow-visible [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full`}>

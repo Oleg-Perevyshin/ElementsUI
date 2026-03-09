@@ -399,7 +399,6 @@ export interface ITableProps<T extends object> {
   loader?: Writable<boolean>
   autoscroll?: boolean
   getData?: () => void
-  modalData?: { isOpen?: boolean; rawData?: string; formattedData?: string }
   onClick?: (eventHandler: IUIComponentHandler) => void
 }
 

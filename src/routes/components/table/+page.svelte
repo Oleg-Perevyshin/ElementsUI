@@ -31,23 +31,24 @@
           text: { sortable: true, truncated: false, copy: false },
         } as ITableHeader<any>,
         {
-          key: "device",
+          key: "devicewwwwwwwwww",
           label: { name: "Device" },
           width: "30%",
           image: {
             width: "0rem",
             height: "0rem",
           },
-          type: "image",
+          type: "text",
           align: "left",
           text: {
             truncated: true,
             copy: false,
+            modal: true,
           },
         } as ITableHeader<any>,
         {
           key: "buttons",
-          label: { name: "Device" },
+          label: { name: "Действия" },
           width: "30%",
           buttons: [
             {

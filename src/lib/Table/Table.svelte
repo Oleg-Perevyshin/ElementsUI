@@ -7,6 +7,7 @@
   import { onMount, tick } from "svelte"
   import ButtonClear from "../libIcons/ButtonClear.svelte"
   import { t } from "$lib/locales/i18n"
+  import { Button, Modal } from "$lib"
 
   let {
     id = crypto.randomUUID(),
@@ -21,7 +22,6 @@
     loader,
     autoscroll = false,
     getData = () => {},
-    modalData = $bindable(),
     onClick,
   }: ITableProps<any> = $props()
 
@@ -37,6 +37,7 @@
   let tooltip = $state({ show: false, text: "", x: 0, y: 0 })
   let isScrollable: boolean = $derived(container ? (container as HTMLElement).scrollHeight > (container as HTMLElement).clientHeight : false)
   let tableHeight = $state(0)
+  let modalData: { isOpen: boolean; rawData?: string; formattedData?: string } = $state({ isOpen: false, rawData: "", formattedData: "" })
 
   export const clearBuffer = async () => {
     buffer = []
@@ -459,3 +460,21 @@
     {/if}
   </div>
 </div>
+
+<Modal isOpen={modalData.isOpen} title={$t("constructor.props.table.fulldata")} wrapperClass="w-[80%] max-h-[80%]">
+  {#snippet main()}
+    <div class="text-left whitespace-pre">
+      {@html modalData.formattedData}
+    </div>
+  {/snippet}
+  {#snippet footer()}
+    <Button
+      content={{ name: $t("constructor.props.copy") }}
+      wrapperClass="w-50"
+      onClick={() => {
+        navigator.clipboard.writeText(modalData.rawData ?? "")
+        modalData.isOpen = false
+      }}
+    />
+  {/snippet}
+</Modal>

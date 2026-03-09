@@ -165,6 +165,8 @@ const translations: Translations = {
     "constructor.props.table.columns.width": "Ширина, %",
     "constructor.props.table.columns.sortable": "Сортировка",
     "constructor.props.table.columns.truncated": "Сократить контент",
+    "constructor.props.table.fulldata": "Полные данные",
+    "constructor.props.table.columns.modal": "Модальное окно",
     "constructor.props.table.columns.alt": "Альтернативное название иконок",
     "constructor.props.table.columns.class": "Стили иконки",
     "constructor.props.table.columns.defaultIcon": "Иконка по умолчанию",

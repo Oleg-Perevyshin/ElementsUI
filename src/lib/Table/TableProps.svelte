@@ -6,9 +6,7 @@
   import ButtonDelete from "$lib/libIcons/ButtonDelete.svelte"
   import ButtonAdd from "$lib/libIcons/ButtonAdd.svelte"
   import { optionsStore } from "../options"
-  import Modal from "$lib/Modal.svelte"
   import { ICONS } from "$lib/icons"
-  import CrossIcon from "$lib/libIcons/CrossIcon.svelte"
   import CommonSnippets from "$lib/CommonSnippets.svelte"
 
   const {
@@ -23,9 +21,6 @@
 
   const DeviceVariables = getContext<{ id: string; value: string; name: string }[]>("DeviceVariables")
   let VARIABLE_OPTIONS = $derived(DeviceVariables && Array.isArray(DeviceVariables) ? DeviceVariables : [])
-
-  let defaultIcon: { isModalOpen: boolean; columnIndex: number; column: ITableHeader<any> } | null = $state(null)
-  let buttonIcon = $state({ buttonIndex: 0, isModalOpen: false, columnIndex: 0 })
 
   const initialColor = $derived(
     $optionsStore.COLOR_OPTIONS.find((c) =>
@@ -427,7 +422,7 @@
         {:else if column.type == "text"}
           <div class="mx-auto">
             <UI.Select
-              wrapperClass="w-150"
+              wrapperClass="w-200"
               label={{ name: $t("constructor.props.tablecolumn.settings") }}
               type="buttons"
               multiSelect={true}
