@@ -31,7 +31,7 @@
           text: { sortable: true, truncated: false, copy: false },
         } as ITableHeader<any>,
         {
-          key: "devicewwwwwwwwww",
+          key: "device",
           label: { name: "Device" },
           width: "30%",
           image: {
@@ -40,6 +40,8 @@
           },
           type: "text",
           align: "left",
+          sortable: true,
+          disableSelect: true,
           text: {
             truncated: true,
             copy: false,

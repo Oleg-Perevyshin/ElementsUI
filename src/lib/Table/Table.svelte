@@ -274,7 +274,9 @@
                 class="relative flex w-full min-w-0 items-center gap-x-2 px-2 py-1 wrap-break-word
               {i % 2 ? 'bg-(--back-color)/40' : 'bg-[#edeef3] dark:bg-[#1f2a3a]'}
               {column.align === 'center' ? 'justify-center text-center' : column.align === 'right' ? 'justify-end text-right' : 'justify-start text-left'}
-              border-t {j !== 0 ? ' border-l ' : ''} {outline ? 'border-(--border-color)' : 'border-transparent'}"
+              border-t {j !== 0 ? ' border-l ' : ''} {outline ? 'border-(--border-color)' : 'border-transparent'} {column.disableSelect
+                  ? 'select-none'
+                  : 'select-all'}"
               >
                 {#if column.type == "buttons" && column.buttons}
                   {@const buttons = typeof column.buttons === "function" ? column.buttons(row) : column.buttons}

@@ -364,6 +364,7 @@ export interface ITableHeader<T extends object> {
   width?: string
   align?: "left" | "center" | "right"
   type?: "buttons" | "select" | "text" | "image"
+  disableSelect?: boolean
   text?: {
     sortable?: boolean
     truncated?: boolean
