@@ -218,8 +218,7 @@
 
   <div
     class="relative flex h-full w-full flex-col overflow-hidden rounded-xl transition-shadow duration-250
-     shadow-[0_0_3px_rgb(0_0_0_/0.25)] hover:shadow-[0_0_6px_rgb(0_0_0_/0.25)]
-    {outline ? 'border border-(--border-color)' : ''} "
+     shadow-[0_0_3px_rgb(0_0_0_/0.25)]"
   >
     <!-- Table Header -->
     <div
@@ -280,7 +279,7 @@
               >
                 {#if column.type == "buttons" && column.buttons}
                   {@const buttons = typeof column.buttons === "function" ? column.buttons(row) : column.buttons}
-                  <div class="flex w-full flex-wrap gap-1">
+                  <div class="flex flex-wrap gap-1">
                     {#each buttons as button (button)}
                       <button
                         class="{twMerge(`flex items-center justify-center gap-2 cursor-pointer rounded-full 
@@ -390,7 +389,7 @@
                   >
                     {#if column.text?.modal}
                       <button
-                        class="w-full cursor-pointer overflow-hidden text-left text-ellipsis whitespace-nowrap"
+                        class="cursor-pointer overflow-hidden text-left text-ellipsis whitespace-nowrap"
                         onclick={(e) => {
                           e.stopPropagation()
                           showModal(text, column.text?.formatting)

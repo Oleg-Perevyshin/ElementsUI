@@ -128,7 +128,7 @@
   const addNewButton = (columnIndex: number) => {
     const newButton = {
       name: `button${(component.properties.header[columnIndex].buttons ? component.properties.header[columnIndex].buttons.length : 0) + 1}`,
-      class: "bg-blue",
+      class: "bg-blue w-full",
       eventHandler: { Header: "SET", Argument: "Save", Variables: [] },
       onClick: () => {},
     }
@@ -456,7 +456,6 @@
     options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
     onChange={(value) => {
       updateProperty("dataBuffer.stashData", value, component, onPropertyChange)
-      updateProperty("dataBuffer.visibleRows", value === 0 ? 0 : 5, component, onPropertyChange)
       if (value == 0) {
         updateProperty("dataBuffer.clearButton", 0, component, onPropertyChange)
         updateProperty("dataBuffer.logger", 0, component, onPropertyChange)

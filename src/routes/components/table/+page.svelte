@@ -15,7 +15,7 @@
       id: crypto.randomUUID(),
       wrapperClass: "bg-blue",
       label: { name: "Label", class: "text-center" },
-      dataBuffer: { bufferSize: 10, logger: false },
+      dataBuffer: { bufferSize: 10, visibleRows: 5, logger: false },
       header: [
         {
           key: "id-S",

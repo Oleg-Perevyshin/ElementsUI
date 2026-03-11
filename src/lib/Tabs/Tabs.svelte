@@ -27,9 +27,7 @@
 </script>
 
 <div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class="w-full h-full rounded-xl overflow-hidden p-1">
-  <div
-    class="flex flex-col shadow-[0_0_3px_rgb(0_0_0_/0.25)] hover:shadow-[0_0_6px_rgb(0_0_0_/0.25)] transition-shadow duration-250 h-full w-full overflow-hidden rounded-xl bg-(--back-color)"
-  >
+  <div class="flex flex-col shadow-[0_0_3px_rgb(0_0_0_/0.25)] transition-shadow duration-250 h-full w-full overflow-hidden rounded-xl bg-(--back-color)">
     <!-- Вкладки -->
     <div
       class="{twMerge(`z-40 flex h-fit items-center rounded-t-xl overflow-x-auto px-1 `, wrapperClass)} 
