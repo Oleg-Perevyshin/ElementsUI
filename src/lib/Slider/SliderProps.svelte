@@ -47,16 +47,16 @@
 
 {#snippet SliderMinMax()}
   <UI.Input
-    label={{ name: $t("constructor.props.minnum") }}
-    value={component.properties.number.minNum as number}
-    type="number"
-    onUpdate={(value) => updateProperty("number.minNum", Number(value), component, onPropertyChange)}
-  />
-  <UI.Input
     label={{ name: $t("constructor.props.maxnum") }}
     value={component.properties.number.maxNum as number}
     type="number"
     onUpdate={(value) => updateProperty("number.maxNum", Number(value), component, onPropertyChange)}
+  />
+  <UI.Input
+    label={{ name: $t("constructor.props.minnum") }}
+    value={component.properties.number.minNum as number}
+    type="number"
+    onUpdate={(value) => updateProperty("number.minNum", Number(value), component, onPropertyChange)}
   />
   <UI.Input
     label={{ name: $t("constructor.props.step") }}

@@ -100,7 +100,7 @@
     <div class="flex flex-col w-full h-[65%] inset-shadow-[0_-10px_10px_-15px_rgb(0_0_0_/0.5)] p-2">
       <div class="grid gap-2 overflow-hidden items-center" style="grid-template-columns:{icons.array ? '3.5rem' : ''} 1fr;">
         {#if icons.array}
-          <div class="size-14 p-0.5 [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full">
+          <div class="size-14 p-0.5 [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full {icons.class}">
             {@html currentImage}
           </div>
         {/if}

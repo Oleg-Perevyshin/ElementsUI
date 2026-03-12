@@ -446,6 +446,6 @@ export interface IWidgetProps {
     number?: { minNum?: number; maxNum?: number; step?: number; units?: string }
     toggle?: { captionLeft?: string; captionRight?: string }
   }
-  icons?: { array: string[]; mode?: "cycling" | "switch" }
+  icons?: { array: string[]; mode?: "cycling" | "switch"; class?: string }
   onUpdate?: (value: number) => void
 }

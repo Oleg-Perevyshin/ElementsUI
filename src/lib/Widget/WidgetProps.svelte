@@ -43,7 +43,7 @@
   />
 {/snippet}
 
-{#snippet WidgetClass()}
+{#snippet WidgetSettingsColor()}
   <UI.Select
     wrapperClass="!h-14"
     label={{ name: $t("constructor.props.componentcolor") }}
@@ -52,6 +52,22 @@
     value={initialColor}
     onUpdate={(option) => {
       updateProperty("settings.class", twMerge(component.properties.settings.class, (option as UI.ISelectOption<string>).value), component, onPropertyChange)
+    }}
+  />
+{/snippet}
+
+{#snippet WidgetIconColor()}
+  <UI.Select
+    wrapperClass="!h-14"
+    label={{ name: $t("constructor.props.iconcolor") }}
+    type="buttons"
+    options={$optionsStore.TEXT_COLOR_OPTIONS}
+    value={$optionsStore.TEXT_COLOR_OPTIONS.find((c) =>
+      (c.value as string).includes(component.properties.icons.class?.split(" ").find((cls: string) => cls.startsWith("text-"))),
+    )}
+    onUpdate={(option) => {
+      updateProperty("icons.class", twMerge(component.properties.icons.class, (option as UI.ISelectOption<string>).value), component, onPropertyChange)
+      console.log(component.properties)
     }}
   />
 {/snippet}
@@ -70,16 +86,16 @@
 
 {#snippet WidgetMinMax()}
   <UI.Input
-    label={{ name: $t("constructor.props.minnum") }}
-    value={component.properties.settings.number.minNum as number}
-    type="number"
-    onUpdate={(value) => updateProperty("settings.number.minNum", Number(value), component, onPropertyChange)}
-  />
-  <UI.Input
     label={{ name: $t("constructor.props.maxnum") }}
     value={component.properties.settings.number.maxNum as number}
     type="number"
     onUpdate={(value) => updateProperty("settings.number.maxNum", Number(value), component, onPropertyChange)}
+  />
+  <UI.Input
+    label={{ name: $t("constructor.props.minnum") }}
+    value={component.properties.settings.number.minNum as number}
+    type="number"
+    onUpdate={(value) => updateProperty("settings.number.minNum", Number(value), component, onPropertyChange)}
   />
   <UI.Input
     label={{ name: $t("constructor.props.step") }}
@@ -99,6 +115,14 @@
     label={{ name: $t("constructor.props.caption.right") }}
     value={component.properties.settings.toggle.captionRight}
     onUpdate={(value) => updateProperty("settings.toggle.captionRight", value as string, component, onPropertyChange)}
+  />
+{/snippet}
+
+{#snippet WidgetUnits()}
+  <UI.Input
+    label={{ name: $t("constructor.props.units") }}
+    value={component.properties.settings.number.units as string}
+    onUpdate={(value) => updateProperty("settings.number.units", value, component, onPropertyChange)}
   />
 {/snippet}
 
@@ -161,14 +185,16 @@
       <CommonSnippets snippet="Variable" {VARIABLE_OPTIONS} {component} {onPropertyChange} />
       <CommonSnippets snippet="Access" {component} {onPropertyChange} />
       <CommonSnippets snippet="Label" {component} {onPropertyChange} />
+      {@render WidgetUnits()}
     </div>
     <div class="flex w-1/3 flex-col px-2">
       {@render WidgetSettingsLabel()}
-      {@render WidgetClass()}
       {@render WidgetIcons()}
+      {@render WidgetIconColor()}
       {@render WidgetSwitchingMode()}
     </div>
     <div class="flex w-1/3 flex-col px-2">
+      {@render WidgetSettingsColor()}
       {@render WidgetType()}
       {#if component.properties.settings.type == "input" || component.properties.settings.type == "slider"}
         {@render WidgetMinMax()}
@@ -183,14 +209,16 @@
       <CommonSnippets snippet="Identificator" {component} {onPropertyChange} />
       <CommonSnippets snippet="Access" {component} {onPropertyChange} />
       <CommonSnippets snippet="Label" {component} {onPropertyChange} />
+      {@render WidgetUnits()}
     </div>
     <div class="flex w-1/3 flex-col px-2">
       {@render WidgetSettingsLabel()}
-      {@render WidgetClass()}
       {@render WidgetIcons()}
+      {@render WidgetIconColor()}
       {@render WidgetSwitchingMode()}
     </div>
     <div class="flex w-1/3 flex-col px-2">
+      {@render WidgetSettingsColor()}
       {@render WidgetType()}
       {#if component.properties.settings.type == "input" || component.properties.settings.type == "slider"}
         {@render WidgetMinMax()}

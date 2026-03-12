@@ -28,7 +28,7 @@
     properties: {
       id: crypto.randomUUID(),
       label: { name: "Пропеллер" },
-      icons: { array: svgImages, mode: "cycling" },
+      icons: { array: svgImages, mode: "cycling", class: "text-[#333] dark:text-[#e2e3e7]" },
       settings: {
         label: "Скорость",
         class: "bg-blue",
