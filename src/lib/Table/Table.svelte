@@ -88,6 +88,7 @@
     if (!container) return
     isAutoscroll = container.scrollHeight - container.scrollTop <= container.clientHeight + 50
   }
+
   const scrollToBottom = () => {
     if (isAutoscroll && container) {
       container.scrollTop = container.scrollHeight
