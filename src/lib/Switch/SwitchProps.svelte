@@ -79,7 +79,7 @@
 {#snippet SwitchBitmode()}
   <UI.Switch
     wrapperClass="bg-blue"
-    label={{ name: $t("constructor.props.bitmode") }}
+    label={{ name: $t("constructor.props.bitMode") }}
     value={component.properties.bitMode}
     options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
     onChange={(value) => {

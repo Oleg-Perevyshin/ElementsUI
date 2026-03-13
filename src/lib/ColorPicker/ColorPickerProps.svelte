@@ -80,6 +80,7 @@
     <div class="flex w-1/3 flex-col px-2">
       <CommonSnippets snippet="Label" {component} {onPropertyChange} />
       <CommonSnippets snippet="LabelClass" initialValue={initialAlign} {component} {onPropertyChange} />
+      <CommonSnippets snippet="Readonly" {component} {onPropertyChange} />
     </div>
     <div class="flex w-1/3 flex-col px-2">
       <CommonSnippets snippet="WrapperClass" {component} {onPropertyChange} />

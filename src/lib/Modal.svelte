@@ -9,6 +9,7 @@
     title,
     wrapperClass = "",
     mainClass = "",
+    width = "",
     main,
     footer,
     onCancel = () => (isOpen = false),
@@ -17,6 +18,7 @@
     title?: string
     wrapperClass?: string
     mainClass?: string
+    width?: string
     main: Snippet
     footer?: Snippet
     onCancel?: () => void
@@ -39,6 +41,7 @@
   <div class="fixed inset-0 z-100 flex items-center justify-center bg-black/50" transition:fade={{ duration: 200, delay: 1 }}>
     <div
       class={twMerge(`flex w-300 flex-col overflow-hidden rounded-2xl bg-(--back-color) text-center`, wrapperClass)}
+      style="width: {width};"
       transition:scale={{ duration: 250, start: 0.8 }}
     >
       <div class="flex items-end justify-between bg-(--field-color) px-6 py-3">

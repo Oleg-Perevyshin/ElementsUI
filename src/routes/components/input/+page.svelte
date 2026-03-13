@@ -51,7 +51,6 @@ ${formatObjectToString(inputComponent.properties as IInputProps)}
         bind:isValid={valid}
       />
     </div>
-    <p>{value}</p>
   {/snippet}
   {#snippet componentProps()}
     <InputProps

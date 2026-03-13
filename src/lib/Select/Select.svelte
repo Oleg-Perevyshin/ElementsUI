@@ -16,7 +16,6 @@
     label = { name: "", class: "" },
     multiSelect = false,
     type = "select",
-    valueType = "text",
     value = $bindable(),
     options = [],
     onUpdate,
@@ -112,7 +111,12 @@
         const newOption: ISelectOption<T> = {
           id: `input-${searchValue}`,
           name: searchValue,
-          value: valueType == "number" ? ((Number(searchValue) as T) == undefined ? (Number(searchValue) as T) : (searchValue as T)) : (searchValue as T),
+          value:
+            typeof options[0].value == "number"
+              ? (Number(searchValue) as T) == undefined
+                ? (Number(searchValue) as T)
+                : (searchValue as T)
+              : (searchValue as T),
         }
         value = newOption
         onUpdate?.(newOption)

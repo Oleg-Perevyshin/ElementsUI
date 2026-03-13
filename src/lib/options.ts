@@ -206,7 +206,7 @@ export const optionsStore = derived(t, ($t) => {
     INPUT_SETTING_OPTIONS: [
       { id: id(), value: "readonly", name: $t("constructor.props.readonly") },
       { id: id(), value: "help.copyButton", name: $t("constructor.props.copy") },
-      { id: id(), value: "disabled", name: $t("constructor.props.disabled") },
+      { id: id(), value: "bitMode", name: $t("constructor.props.bitMode") },
     ],
 
     BUFFER_SIZE_OPTIONS: [

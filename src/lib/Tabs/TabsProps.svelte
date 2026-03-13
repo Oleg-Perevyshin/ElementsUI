@@ -18,9 +18,6 @@
     onPropertyChange: (updates: Partial<{ properties?: string | object; name?: string; access?: string; eventHandler?: IUIComponentHandler }>) => void
     forConstructor?: boolean
   }>()
-
-  let tabIcon = $state({ index: 0, isModalOpen: false })
-
   const initialColor = $derived(
     $optionsStore.COLOR_OPTIONS.find((c) =>
       (c.value as string).includes(component.properties.wrapperClass?.split(" ").find((cls: string) => cls.startsWith("bg-"))),
@@ -84,8 +81,6 @@
 {/snippet}
 
 {#snippet TabsSettings()}
-  <hr class="border-gray-400" />
-
   <div class="space-y-4">
     <div class="m-0 flex items-center justify-center gap-2">
       <h4>{$t("constructor.props.tabs.title")}</h4>
@@ -121,15 +116,15 @@
             updateProperty("items", items, component, onPropertyChange)
           }}
         />
-        <div class="relative mt-5 flex w-3/10 gap-2">
+        <div class="relative flex w-50 gap-2">
           <CommonSnippets
             snippet="IconsLib"
             initialValue={{
               name: $t("constructor.props.table.type.icon"),
-              icon: component.properties.items[tabIcon.index].icon,
+              icon: component.properties.items[index].icon,
               updateProperty: (icon: string) => {
                 const items = [...(component.properties?.items || [])]
-                items[tabIcon.index]["icon"] = icon as string
+                items[index]["icon"] = icon as string
                 updateProperty("items", items, component, onPropertyChange)
               },
               icons: ICONS,
@@ -191,7 +186,7 @@
 {/snippet}
 
 {#if forConstructor}
-  <div class="flex items-center mb-4 justify-center gap-8">
+  <div class="flex items-start mb-4 justify-center gap-8">
     <div class="flex w-1/3 flex-col px-2">
       <CommonSnippets snippet="Access" {component} {onPropertyChange} />
       <CommonSnippets snippet="Colors" initialValue={initialColor} {component} {onPropertyChange} />
@@ -200,10 +195,12 @@
       {@render TabsIconPosition()}
       {@render TabsWidthMode()}
     </div>
+    <div class="flex w-1/3 flex-col px-2">
+      {@render TabsSettings()}
+    </div>
   </div>
-  {@render TabsSettings()}
 {:else}
-  <div class="flex items-center mb-4 justify-center gap-8">
+  <div class="flex items-start mb-4 justify-center gap-8">
     <div class="flex w-1/3 flex-col px-2">
       <CommonSnippets snippet="Identificator" {component} {onPropertyChange} />
       <CommonSnippets snippet="WrapperClass" {component} {onPropertyChange} />
@@ -212,12 +209,12 @@
     <div class="flex w-1/3 flex-col px-2">
       <CommonSnippets snippet="Access" {component} {onPropertyChange} />
       <CommonSnippets snippet="Colors" initialValue={initialColor} {component} {onPropertyChange} />
-    </div>
-
-    <div class="flex w-1/3 flex-col px-2">
       {@render TabsIconPosition()}
       {@render TabsWidthMode()}
     </div>
+
+    <div class="flex w-1/3 flex-col px-2">
+      {@render TabsSettings()}
+    </div>
   </div>
-  {@render TabsSettings()}
 {/if}

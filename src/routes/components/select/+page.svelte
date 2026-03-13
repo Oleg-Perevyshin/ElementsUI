@@ -16,7 +16,6 @@
       disabled: false,
       label: { name: "Label", class: "text-center" },
       type: "select",
-      valueType: "text",
       bitMode: false,
       range: { start: 0, end: 1 },
       options: [

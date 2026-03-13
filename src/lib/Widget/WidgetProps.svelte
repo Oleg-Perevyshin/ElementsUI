@@ -139,8 +139,19 @@
 {/snippet}
 
 {#snippet WidgetIcons()}
-  <div class="relative mt-6 flex w-full gap-2">
-    <UI.Button content={{ name: $t("constructor.props.labelicon") }} onClick={() => (showIconLib = true)} />
+  <CommonSnippets
+    snippet="IconsLib"
+    initialValue={{
+      name: $t("constructor.props.labelicon"),
+      icon: component.properties.icons.array,
+      updateProperty: (icons: string[]) => updateProperty("icons.array", icons as string[], component, onPropertyChange),
+      icons: { array: ICONS_ARRAY, selectArray: true },
+    }}
+    {component}
+    {onPropertyChange}
+  />
+
+  <!-- <UI.Button content={{ name: $t("constructor.props.labelicon") }} onClick={() => (showIconLib = true)} />
     {#if showIconLib}
       <Modal bind:isOpen={showIconLib} wrapperClass="w-130">
         {#snippet main()}
@@ -175,11 +186,10 @@
           updateProperty("icons.array", "", component, onPropertyChange)
         }}
       />
-    {/if}
-  </div>
+    {/if} -->
 {/snippet}
 
-{#if forConstructor}
+{#if !forConstructor}
   <div class="flex mb-4 items-start justify-center gap-8">
     <div class="flex w-1/3 flex-col px-2">
       <CommonSnippets snippet="Variable" {VARIABLE_OPTIONS} {component} {onPropertyChange} />
@@ -210,6 +220,7 @@
       <CommonSnippets snippet="Access" {component} {onPropertyChange} />
       <CommonSnippets snippet="Label" {component} {onPropertyChange} />
       {@render WidgetUnits()}
+      <CommonSnippets snippet="Readonly" {component} {onPropertyChange} />
     </div>
     <div class="flex w-1/3 flex-col px-2">
       {@render WidgetSettingsLabel()}

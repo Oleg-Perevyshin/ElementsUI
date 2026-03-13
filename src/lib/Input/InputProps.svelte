@@ -137,8 +137,6 @@
     value={$optionsStore.INPUT_TYPE_OPTIONS.find((opt) => opt.value === (component.properties.type || "text"))}
     onUpdate={(option) => {
       updateProperty("type", (option as UI.ISelectOption).value as string)
-      if ((option as UI.ISelectOption).value === "text-area") updateProperty("componentClass", twMerge(component.properties.componentClass, "font-mono"))
-      else updateProperty("componentClass", twMerge(component.properties.componentClass, "font-[Montserrat]"))
     }}
   />
   {#if component.properties.type === "text" || component.properties.type === "password" || component.properties.type === "text-area"}
@@ -164,32 +162,34 @@
         onUpdate={(value) => updateProperty("textareaRows", value as string)}
       />
     {/if}
-  {:else if component.properties.type === "number" && !component.properties.readonly && !component.properties.disabled}
-    <UI.Input
-      label={{ name: $t("constructor.props.minnum") }}
-      value={component.properties.number.minNum as number}
-      type="number"
-      readonly={component.properties.bitMode}
-      onUpdate={(value) => {
-        updateProperty("number.minNum", Number(value))
-      }}
-    />
-    <UI.Input
-      label={{ name: $t("constructor.props.maxnum") }}
-      value={component.properties.number.maxNum as number}
-      type="number"
-      readonly={component.properties.bitMode}
-      onUpdate={(value) => {
-        updateProperty("number.maxNum", Number(value))
-      }}
-    />
-    <UI.Input
-      label={{ name: $t("constructor.props.step") }}
-      value={component.properties.number.step as number}
-      type="number"
-      readonly={component.properties.bitMode}
-      onUpdate={(value) => updateProperty("number.step", Number(value))}
-    />
+  {:else if !component.properties.bitMode && component.properties.type === "number" && !component.properties.readonly && !component.properties.disabled}
+    <div class="flex">
+      <UI.Input
+        label={{ name: $t("constructor.props.min") }}
+        value={component.properties.number.minNum as number}
+        type="number"
+        readonly={component.properties.bitMode}
+        onUpdate={(value) => {
+          updateProperty("number.minNum", Number(value))
+        }}
+      />
+      <UI.Input
+        label={{ name: $t("constructor.props.max") }}
+        value={component.properties.number.maxNum as number}
+        type="number"
+        readonly={component.properties.bitMode}
+        onUpdate={(value) => {
+          updateProperty("number.maxNum", Number(value))
+        }}
+      />
+      <UI.Input
+        label={{ name: $t("constructor.props.step") }}
+        value={component.properties.number.step as number}
+        type="number"
+        readonly={component.properties.bitMode}
+        onUpdate={(value) => updateProperty("number.step", Number(value))}
+      />
+    </div>
   {/if}
 {/snippet}
 
@@ -209,21 +209,44 @@
   />
 {/snippet}
 
-{#snippet InputReadOnly()}
-  <UI.Switch
-    label={{ name: $t("constructor.props.readonly") }}
-    value={component.properties.readonly}
-    options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-    onChange={(value) => updateProperty("readonly", value)}
-  />
-{/snippet}
+{#snippet InputSettings()}
+  <UI.Select
+    label={{ name: $t("constructor.props.type") }}
+    options={$optionsStore.INPUT_SETTING_OPTIONS.map((o) =>
+      (component.properties.type === "password" || component.properties.type === "number") && o.value == "help.copyButton" ? { ...o, disabled: true } : o,
+    )}
+    type="buttons"
+    multiSelect={true}
+    value={$optionsStore.INPUT_SETTING_OPTIONS.filter((opt) => {
+      if (opt.value.split(".").reduce((o, key) => o?.[key], component.properties)) return opt
+    })}
+    onUpdate={(value) => {
+      const currentActiveValues = $optionsStore.INPUT_SETTING_OPTIONS.filter((opt) => {
+        if (!opt?.value) return false
+        return opt.value.split(".").reduce((o, key) => o?.[key], component.properties)
+      }).map((opt) => opt.value)
+      if (Array.isArray(value)) {
+        value.forEach((opt) => {
+          updateProperty(opt.value ?? "", true)
+          if (opt.value === "bitMode") {
+            updateProperty("type", "number")
+            updateProperty("number.minNum", 0)
+            updateProperty("number.maxNum", Math.pow(2, component.properties.range.end - component.properties.range.start + 1))
+            updateProperty("number.step", 1)
+            updateProperty("help.info", `${$t("constructor.props.maxnum")}: ${component.properties.number.maxNum}`)
+          }
+        })
 
-{#snippet InputCopy()}
-  <UI.Switch
-    label={{ name: $t("constructor.props.copy") }}
-    value={component.properties.help.copyButton}
-    options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-    onChange={(value) => updateProperty("help.copyButton", value)}
+        currentActiveValues.forEach((activeValue) => {
+          if (!value.some((opt) => opt?.value === activeValue)) {
+            updateProperty(activeValue, false)
+            if (activeValue === "bitMode") {
+              updateProperty("help.info", "")
+            }
+          }
+        })
+      }
+    }}
   />
 {/snippet}
 
@@ -289,19 +312,6 @@
 {/snippet}
 
 {#snippet InputBitmode()}
-  <UI.Switch
-    label={{ name: $t("constructor.props.bitmode") }}
-    value={component.properties.bitMode}
-    options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-    onChange={(value) => {
-      updateProperty("bitMode", value)
-      updateProperty("type", "number")
-      updateProperty("number.minNum", 0)
-      updateProperty("number.maxNum", Math.pow(2, component.properties.range.end - component.properties.range.start + 1))
-      updateProperty("number.step", 1)
-    }}
-  />
-
   {#if component.properties.bitMode}
     <UI.Slider
       label={{ name: $t("constructor.props.range") }}
@@ -315,6 +325,7 @@
           updateProperty("number.minNum", 0)
           updateProperty("number.maxNum", Math.pow(2, component.properties.range.end - component.properties.range.start + 1))
           updateProperty("number.step", 1)
+          updateProperty("help.info", `${$t("constructor.props.maxnum")}: ${component.properties.number.maxNum}`)
         }
       }}
     />
@@ -331,10 +342,7 @@
     <div class="flex w-1/3 flex-col px-2">
       {@render InputPlaceholder()}
       {@render InputInfo()}
-      <div class="flex">
-        {@render InputReadOnly()}
-        {@render InputCopy()}
-      </div>
+      {@render InputSettings()}
       {@render InputBitmode()}
     </div>
     <div class="flex w-1/3 flex-col px-2">
@@ -363,10 +371,7 @@
       {@render InputPlaceholder()}
       {@render InputInfo()}
       {@render InputAutocomplete()}
-      <div class="flex">
-        {@render InputReadOnly()}
-        {@render InputCopy()}
-      </div>
+      {@render InputSettings()}
       <div class="flex">
         {@render InputDisabled()}
         {@render InputBitmode()}

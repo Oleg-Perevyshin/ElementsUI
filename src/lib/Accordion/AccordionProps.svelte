@@ -20,8 +20,6 @@
     forConstructor?: boolean
   }>()
 
-  let showIconLib = $state(false)
-
   const initialAlign = $derived(
     $optionsStore.JUSTIFY_ALIGN_OPTIONS.find((a) =>
       (a.value as string).includes(component.properties.label?.class?.split(" ").find((cls: string) => cls.startsWith("justify-"))),

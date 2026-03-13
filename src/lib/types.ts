@@ -167,6 +167,7 @@ export interface IColorPickerProps {
   wrapperClass?: string
   label?: { name?: string; class?: string }
   value?: number[]
+  readonly?: boolean
   onChange?: (value: number[]) => void
 }
 
@@ -250,6 +251,7 @@ export interface IJoystickProps {
   wrapperClass?: string
   label?: { name?: string; class?: string }
   value?: number[]
+  readonly?: boolean
   axes?: { name: string; minNum?: number; maxNum?: number }[]
   buttonIcon?: ConstructorOfATypedSvelteComponent | string
   onUpdate?: (value: number[]) => void
@@ -298,7 +300,6 @@ export interface ISelectProps<T = unknown> {
   label?: { name?: string; class?: string }
   type?: "select" | "buttons" | "input"
   multiSelect?: boolean
-  valueType?: "text" | "number"
   value?: ISelectOption<T> | ISelectOption<T>[] | null
   options?: ISelectOption<T>[]
   bitMode?: boolean
@@ -439,6 +440,7 @@ export interface IWidgetProps {
   wrapperClass?: string
   label?: { name?: string; class?: string }
   value?: number
+  readonly?: boolean
   settings?: {
     label?: string
     class?: string

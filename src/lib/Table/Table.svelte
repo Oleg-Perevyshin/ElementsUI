@@ -463,7 +463,7 @@
   </div>
 </div>
 
-<Modal isOpen={modalData.isOpen} title={$t("constructor.props.table.fulldata")} wrapperClass="w-[80%] max-h-[80%]">
+<Modal isOpen={modalData.isOpen} title={$t("constructor.props.table.fulldata")} wrapperClass="max-h-[80%]" width="{0.8 * (container?.offsetWidth ?? 0)}px">
   {#snippet main()}
     <div class="text-left whitespace-pre">
       {@html modalData.formattedData}

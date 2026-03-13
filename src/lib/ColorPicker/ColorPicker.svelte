@@ -5,7 +5,7 @@
 
   let {
     id = crypto.randomUUID(),
-
+    readonly = false,
     wrapperClass = "",
     label = { name: "", class: "" },
     value = [0, 0, 0],
@@ -133,71 +133,72 @@
 
   <div class="flex w-full flex-row items-center gap-2">
     <!-- Слайдеры цвета -->
-    <div class="flex w-full flex-col gap-2">
-      <!-- Выбор цвета -->
-      <div
-        class="hue-slider relative h-7 w-full cursor-pointer overflow-hidden rounded-2xl shadow-sm transition duration-200 hover:shadow-md"
-        role="slider"
-        aria-valuenow={null}
-        tabindex={null}
-        onmousedown={(e) => handleDrag(e, "hue")}
-      >
+    {#if !readonly}
+      <div class="flex w-full flex-col gap-2">
+        <!-- Выбор цвета -->
         <div
-          class="absolute inset-0"
-          style={`background: linear-gradient(to right, ${Array.from({ length: 7 }, (_, i) => {
-            const [r, g, b] = hsvToRgb(i * 60, 100, 100)
-            return `rgb(${r},${g},${b})`
-          }).join(", ")})`}
-        ></div>
-        {#if mode === "hsv"}
+          class="hue-slider relative h-7 w-full cursor-pointer overflow-hidden rounded-2xl shadow-sm transition duration-200 hover:shadow-md"
+          role="slider"
+          aria-valuenow={null}
+          tabindex={null}
+          onmousedown={(e) => handleDrag(e, "hue")}
+        >
           <div
-            class="pointer-events-none absolute top-1/2 h-7 w-1 -translate-x-1/2 -translate-y-1/2 rounded-2xl border-2 border-white"
-            style={`left: ${huePointer}%; background: rgb(${hsvToRgb(hsv.h, 100, 100).join(",")})`}
+            class="absolute inset-0"
+            style={`background: linear-gradient(to right, ${Array.from({ length: 7 }, (_, i) => {
+              const [r, g, b] = hsvToRgb(i * 60, 100, 100)
+              return `rgb(${r},${g},${b})`
+            }).join(", ")})`}
           ></div>
-        {/if}
-      </div>
+          {#if mode === "hsv"}
+            <div
+              class="pointer-events-none absolute top-1/2 h-7 w-1 -translate-x-1/2 -translate-y-1/2 rounded-2xl border-2 border-white"
+              style={`left: ${huePointer}%; background: rgb(${hsvToRgb(hsv.h, 100, 100).join(",")})`}
+            ></div>
+          {/if}
+        </div>
 
-      <!-- Яркость цвета -->
-      <div
-        class="brightness-slider relative h-4 w-full cursor-pointer overflow-hidden rounded-2xl {mode === 'hsv'
-          ? 'shadow-sm transition duration-200 hover:shadow-md'
-          : ''}"
-        role="slider"
-        aria-valuenow={null}
-        tabindex={null}
-        onmousedown={(e) => handleDrag(e, "brightness")}
-      >
-        {#if mode === "hsv"}
-          <div class="absolute inset-0" style={`background: linear-gradient(to right, rgb(0,0,0), rgb(${hsvToRgb(hsv.h, hsv.s, 100).join(",")}))`}></div>
+        <!-- Яркость цвета -->
+        <div
+          class="brightness-slider relative h-4 w-full cursor-pointer overflow-hidden rounded-2xl {mode === 'hsv'
+            ? 'shadow-sm transition duration-200 hover:shadow-md'
+            : ''}"
+          role="slider"
+          aria-valuenow={null}
+          tabindex={null}
+          onmousedown={(e) => handleDrag(e, "brightness")}
+        >
+          {#if mode === "hsv"}
+            <div class="absolute inset-0" style={`background: linear-gradient(to right, rgb(0,0,0), rgb(${hsvToRgb(hsv.h, hsv.s, 100).join(",")}))`}></div>
 
-          <div
-            class="pointer-events-none absolute top-1/2 h-7 w-1 -translate-x-1/2 -translate-y-1/2 rounded-2xl border-2 border-white"
-            style={`left: ${brightnessPointer}%; background: rgb(${hsvToRgb(hsv.h, hsv.s, hsv.v).join(",")})`}
-          ></div>
-        {/if}
-      </div>
+            <div
+              class="pointer-events-none absolute top-1/2 h-7 w-1 -translate-x-1/2 -translate-y-1/2 rounded-2xl border-2 border-white"
+              style={`left: ${brightnessPointer}%; background: rgb(${hsvToRgb(hsv.h, hsv.s, hsv.v).join(",")})`}
+            ></div>
+          {/if}
+        </div>
 
-      <!-- Яркость белого цвета -->
-      <div
-        class="white-slider relative mt-4 h-4 w-full cursor-pointer overflow-hidden rounded-2xl shadow-sm transition duration-200 hover:shadow-md"
-        role="slider"
-        aria-valuenow={null}
-        tabindex={null}
-        onmousedown={(e) => handleDrag(e, "white")}
-      >
-        <div class="absolute inset-0 bg-linear-to-r from-black to-white"></div>
-        {#if mode === "white"}
-          <div
-            class="pointer-events-none absolute top-1/2 h-7 w-1 -translate-x-1/2 -translate-y-1/2 rounded-2xl border-2 border-white"
-            style={`left: ${whiteValue}%; background: rgb(${[255, 255, 255].map((c) => Math.round((whiteValue / 100) * c)).join(",")})`}
-          ></div>
-        {/if}
+        <!-- Яркость белого цвета -->
+        <div
+          class="white-slider relative mt-4 h-4 w-full cursor-pointer overflow-hidden rounded-2xl shadow-sm transition duration-200 hover:shadow-md"
+          role="slider"
+          aria-valuenow={null}
+          tabindex={null}
+          onmousedown={(e) => handleDrag(e, "white")}
+        >
+          <div class="absolute inset-0 bg-linear-to-r from-black to-white"></div>
+          {#if mode === "white"}
+            <div
+              class="pointer-events-none absolute top-1/2 h-7 w-1 -translate-x-1/2 -translate-y-1/2 rounded-2xl border-2 border-white"
+              style={`left: ${whiteValue}%; background: rgb(${[255, 255, 255].map((c) => Math.round((whiteValue / 100) * c)).join(",")})`}
+            ></div>
+          {/if}
+        </div>
       </div>
-    </div>
+    {/if}
 
     <!-- Превью цвета -->
-
-    <div class="flex flex-col items-center" style="width: 7rem;">
+    <div class="flex flex-col items-center m-auto" style="width: 7rem;">
       <div
         class={`flex size-15 flex-col justify-center gap-1 rounded-full px-2 font-mono text-sm shadow-sm transition duration-200 select-none ${textColor()}`}
         style={`background: rgb(${previewBaseColor().join(",")})`}

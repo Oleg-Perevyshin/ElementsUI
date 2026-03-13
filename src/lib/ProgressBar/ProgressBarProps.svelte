@@ -36,7 +36,7 @@
 
 {#snippet ProgressBarMinMax()}
   <UI.Input
-    label={{ name: $t("constructor.props.max") }}
+    label={{ name: $t("constructor.props.maxnum") }}
     value={component.properties.number.maxNum as number}
     type="number"
     onUpdate={(value) => {

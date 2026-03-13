@@ -33,14 +33,9 @@
     | "Disabled"
     | "EventHandlerArgument"
     | "IconsLib"
+    | "Readonly"
     | ""
 
-  interface iconModal {
-    buttonIndex?: number
-    isModalOpen: boolean
-    columnIndex: number
-    column?: UI.ITableHeader<any>
-  }
   let showIconLib: boolean = $state(false)
 </script>
 
@@ -64,7 +59,14 @@
   <UI.Select
     label={{ name: $t("constructor.props.access") }}
     type="buttons"
-    options={$optionsStore.ACCESS_OPTION}
+    options={component.type === "Accordion" ||
+    component.type === "Tabs" ||
+    component.type === "ProgressBar" ||
+    component.type === "TextField" ||
+    component.type === "Graph" ||
+    component.type === "Map"
+      ? $optionsStore.ACCESS_OPTION.filter((o) => o.value !== "viewOnly")
+      : $optionsStore.ACCESS_OPTION}
     value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.access)}
     onUpdate={(option) => onPropertyChange({ access: (option as UI.ISelectOption).value as string })}
   />
@@ -75,7 +77,7 @@
     wrapperClass="!h-14"
     label={{ name: $t("constructor.props.colors") }}
     type="buttons"
-    options={$optionsStore.COLOR_OPTIONS}
+    options={component.type === "Tabs" ? $optionsStore.COLOR_OPTIONS.filter((o) => o.value !== "bg-max") : $optionsStore.COLOR_OPTIONS}
     value={initialColor}
     onUpdate={(option) => {
       if (component.type === "Button") {
@@ -202,24 +204,47 @@
   />
 {/snippet}
 
-{#snippet IconsLib(initialValue: { name: string; icons: [string, string[]][]; icon: string; updateProperty: (icon: string) => {} })}
+{#snippet Readonly()}
+  <UI.Switch
+    label={{ name: $t("constructor.props.readonly") }}
+    value={Number((component.properties as UI.IColorPickerProps | UI.IInputProps | UI.IJoystickProps | UI.IWidgetProps).readonly)}
+    options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
+    onChange={(value) => updateProperty("readonly", value, component, onPropertyChange)}
+  />
+{/snippet}
+
+{#snippet IconsLib(initialValue: {
+  name: string
+  icons: { array: [string, string[]][]; selectArray?: false }
+  icon: string | string[]
+  updateProperty: (icon: string | string[]) => {}
+})}
   <div class="relative mt-6 flex w-full gap-2">
     <UI.Button content={{ name: initialValue.name }} onClick={() => (showIconLib = true)} />
     {#if showIconLib}
       <UI.Modal bind:isOpen={showIconLib} wrapperClass="w-130">
         {#snippet main()}
-          <div class="grid grid-cols-3">
-            {#each ICONS as category}
-              <div class="relative m-1.5 rounded-xl border-2 border-(--border-color) p-3">
+          <div class="grid" style="grid-template-columns: repeat({initialValue.icons.selectArray ? 1 : 3}, minmax(0, 1fr));">
+            {#each initialValue.icons.array as category}
+              <div
+                class="relative m-1.5 rounded-xl border-2 border-(--border-color) p-3 {initialValue.icons.selectArray ? 'cursor-pointer' : ''}"
+                role="button"
+                tabindex={null}
+                onkeydown={null}
+                onclick={() => (initialValue.icons.selectArray ? initialValue.updateProperty(category[1]) : {})}
+              >
                 <div class="absolute -top-3.5 bg-(--back-color) px-1">{$t(`constructor.props.icon.${category[0]}`)}</div>
-                <div class="grid grid-cols-3 place-items-center gap-2">
+                <div class="grid place-items-center gap-2" style="grid-template-columns: repeat({initialValue.icons.selectArray ? 9 : 3}, minmax(0, 1fr));">
                   {#each category[1] as icon}
-                    <button
-                      class="h-8 w-8 cursor-pointer [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
-                      onclick={() => initialValue.updateProperty(icon)}
-                    >
-                      {@html icon}
-                    </button>{/each}
+                    {#if initialValue.icons.selectArray}
+                      <button
+                        class="h-8 w-8 cursor-pointer [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
+                        onclick={() => initialValue.updateProperty(icon)}
+                      >
+                        {@html icon}
+                      </button>
+                    {/if}
+                  {/each}
                 </div>
               </div>
             {/each}
@@ -235,34 +260,26 @@
 
 {#if snippet === "Variable"}
   {@render Variable()}
-{/if}
-{#if snippet === "Access"}
+{:else if snippet === "Access"}
   {@render Access()}
-{/if}
-{#if snippet === "Colors"}
+{:else if snippet === "Colors"}
   {@render Colors(initialValue)}
-{/if}
-{#if snippet === "Label"}
+{:else if snippet === "Label"}
   {@render Label()}
-{/if}
-{#if snippet === "LabelAlign"}
+{:else if snippet === "LabelAlign"}
   {@render LabelAlign(initialValue)}
-{/if}
-{#if snippet === "LabelClass"}
+{:else if snippet === "LabelClass"}
   {@render LabelClass()}
-{/if}
-{#if snippet === "Identificator"}
+{:else if snippet === "Identificator"}
   {@render Identificator()}
-{/if}
-{#if snippet === "WrapperClass"}
+{:else if snippet === "WrapperClass"}
   {@render WrapperClass()}
-{/if}
-{#if snippet === "Disabled"}
+{:else if snippet === "Disabled"}
   {@render Disabled()}
-{/if}
-{#if snippet === "EventHandlerArgument"}
+{:else if snippet === "EventHandlerArgument"}
   {@render EventHandlerArgument()}
-{/if}
-{#if snippet === "IconsLib"}
+{:else if snippet === "Readonly"}
+  {@render Readonly()}
+{:else if snippet === "IconsLib"}
   {@render IconsLib(initialValue)}
 {/if}

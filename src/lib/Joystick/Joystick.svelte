@@ -7,6 +7,7 @@
     wrapperClass = "",
     label = { name: "", class: "" },
     value = $bindable([0, 0, 0, 0]),
+    readonly = false,
     axes = [
       { name: "Roll", minNum: -360, maxNum: 360 },
       { name: "Pitch", minNum: -360, maxNum: 360 },
@@ -127,143 +128,146 @@
     <h5 class={twMerge(`w-full px-4 text-center`, label.class)}>{label.name}</h5>
   {/if}
 
-  <div class="flex w-1/2 items-center justify-center">
-    <div class="relative z-10 flex size-40 min-h-40 min-w-40 items-center justify-center rounded-full bg-(--bg-color) shadow-[0_0_20px_rgb(0_0_0_/0.25)]">
-      <!-- Основные кнопки (оси pitch и yaw) -->
-      <div class="absolute h-full w-full overflow-hidden rounded-full">
-        {#each directions as direction, index}
-          <button class="pointer-events-none absolute top-1/2 left-1/2 block w-1/2 -translate-y-1/2 cursor-pointer" onclick={direction.onClick} title="">
-            <span
-              class="relative flex w-full origin-left items-center justify-center pl-[60%] pointer-events-auto
+  {#if !readonly}
+    <div class="flex w-1/2 items-center justify-center">
+      <div class="relative z-10 flex size-40 min-h-40 min-w-40 items-center justify-center rounded-full bg-(--bg-color) shadow-[0_0_20px_rgb(0_0_0_/0.25)]">
+        <!-- Основные кнопки (оси pitch и yaw) -->
+        <div class="absolute h-full w-full overflow-hidden rounded-full">
+          {#each directions as direction, index}
+            <button class="pointer-events-none absolute top-1/2 left-1/2 block w-1/2 -translate-y-1/2 cursor-pointer" onclick={direction.onClick} title="">
+              <span
+                class="relative flex w-full origin-left items-center justify-center pl-[60%] pointer-events-auto
             {direction.mainButton ? 'bg-(--bg-color)' : ''}
             "
-              style=" height: {direction.mainButton
-                ? 2 * 5 * Math.sin((Math.PI * 65) / 360)
-                : 2 * 5 * Math.sin((Math.PI * 25) / 360)}rem; transform: rotate({angle *
-                index}deg); clip-path: polygon(100% 0, {clipPos}% 0, 0 50%, {clipPos}% 100%, 100% 100%)
+                style=" height: {direction.mainButton
+                  ? 2 * 5 * Math.sin((Math.PI * 65) / 360)
+                  : 2 * 5 * Math.sin((Math.PI * 25) / 360)}rem; transform: rotate({angle *
+                  index}deg); clip-path: polygon(100% 0, {clipPos}% 0, 0 50%, {clipPos}% 100%, 100% 100%)
               "
-              role="application"
-              onmouseenter={(e) => (e.currentTarget.style.backgroundColor = "color-mix(in srgb, var(--bg-color), var(--shadow-color) 20%)")}
-              onmouseleave={(e) => (e.currentTarget.style.backgroundColor = "var(--bg-color)")}
+                role="application"
+                onmouseenter={(e) => (e.currentTarget.style.backgroundColor = "color-mix(in srgb, var(--bg-color), var(--shadow-color) 20%)")}
+                onmouseleave={(e) => (e.currentTarget.style.backgroundColor = "var(--bg-color)")}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width={direction.mainButton ? 32 : 16} height={direction.mainButton ? 32 : 16} viewBox="0 0 24 24"
+                  ><path
+                    fill="currentColor"
+                    d="M12.6 12L8.7 8.1q-.275-.275-.275-.7t.275-.7t.7-.275t.7.275l4.6 4.6q.15.15.213.325t.062.375t-.062.375t-.213.325l-4.6 4.6q-.275.275-.7.275t-.7-.275t-.275-.7t.275-.7z"
+                  /></svg
+                >
+              </span>
+            </button>
+          {/each}
+        </div>
+        <!-- Линии для разделения на сектора -->
+        <div class="pointer-events-none absolute h-full w-full overflow-hidden rounded-full">
+          {#each directions as direction, index}
+            <span
+              class=" absolute top-1/2 left-1/2 h-0 w-[52%] origin-left border-b border-(--bg-color) {index % 2 == 0
+                ? 'shadow-[0_3px_5px_rgb(0_0_0_/0.5)] '
+                : 'shadow-[0_-3px_5px_rgb(0_0_0_/0.5)]'}"
+              style="transform: rotate({direction.angle}deg);"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width={direction.mainButton ? 32 : 16} height={direction.mainButton ? 32 : 16} viewBox="0 0 24 24"
+            </span>
+          {/each}
+        </div>
+        <!-- Кнопка по центру -->
+        <div class="z-20 flex size-20 items-center justify-center rounded-full bg-(--bg-color) shadow-[0_0_15px_rgb(0_0_0_/0.25)] transition hover:scale-103">
+          <button
+            class="flex size-18 cursor-pointer items-center justify-center rounded-full p-3.5 [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
+            style="background: {value[3] == 1 ? 'color-mix(in srgb, var(--bg-color), var(--shadow-color) 10%)' : 'var(--bg-color)'}"
+            onclick={() => {
+              value[3] = value[3] == 0 ? 1 : 0
+            }}
+          >
+            {#if buttonIcon}
+              {#if typeof buttonIcon === "string"}
+                {@html buttonIcon}
+              {:else}
+                {@const IconComponent = buttonIcon}
+                <IconComponent />
+              {/if}
+            {:else}
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
                 ><path
                   fill="currentColor"
-                  d="M12.6 12L8.7 8.1q-.275-.275-.275-.7t.275-.7t.7-.275t.7.275l4.6 4.6q.15.15.213.325t.062.375t-.062.375t-.213.325l-4.6 4.6q-.275.275-.7.275t-.7-.275t-.275-.7t.275-.7z"
+                  d="M6 19h3v-5q0-.425.288-.712T10 13h4q.425 0 .713.288T15 14v5h3v-9l-6-4.5L6 10zm-2 0v-9q0-.475.213-.9t.587-.7l6-4.5q.525-.4 1.2-.4t1.2.4l6 4.5q.375.275.588.7T20 10v9q0 .825-.588 1.413T18 21h-4q-.425 0-.712-.288T13 20v-5h-2v5q0 .425-.288.713T10 21H6q-.825 0-1.412-.587T4 19m8-6.75"
                 /></svg
               >
-            </span>
-          </button>
-        {/each}
-      </div>
-      <!-- Линии для разделения на сектора -->
-      <div class="pointer-events-none absolute h-full w-full overflow-hidden rounded-full">
-        {#each directions as direction, index}
-          <span
-            class=" absolute top-1/2 left-1/2 h-0 w-[52%] origin-left border-b border-(--bg-color) {index % 2 == 0
-              ? 'shadow-[0_3px_5px_rgb(0_0_0_/0.5)] '
-              : 'shadow-[0_-3px_5px_rgb(0_0_0_/0.5)]'}"
-            style="transform: rotate({direction.angle}deg);"
-          >
-          </span>
-        {/each}
-      </div>
-      <!-- Кнопка по центру -->
-      <div class="z-20 flex size-20 items-center justify-center rounded-full bg-(--bg-color) shadow-[0_0_15px_rgb(0_0_0_/0.25)] transition hover:scale-103">
-        <button
-          class="flex size-18 cursor-pointer items-center justify-center rounded-full p-3.5 [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
-          style="background: {value[3] == 1 ? 'color-mix(in srgb, var(--bg-color), var(--shadow-color) 10%)' : 'var(--bg-color)'}"
-          onclick={() => {
-            value[3] = value[3] == 0 ? 1 : 0
-          }}
-        >
-          {#if buttonIcon}
-            {#if typeof buttonIcon === "string"}
-              {@html buttonIcon}
-            {:else}
-              {@const IconComponent = buttonIcon}
-              <IconComponent />
             {/if}
-          {:else}
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
-              ><path
-                fill="currentColor"
-                d="M6 19h3v-5q0-.425.288-.712T10 13h4q.425 0 .713.288T15 14v5h3v-9l-6-4.5L6 10zm-2 0v-9q0-.475.213-.9t.587-.7l6-4.5q.525-.4 1.2-.4t1.2.4l6 4.5q.375.275.588.7T20 10v9q0 .825-.588 1.413T18 21h-4q-.425 0-.712-.288T13 20v-5h-2v5q0 .425-.288.713T10 21H6q-.825 0-1.412-.587T4 19m8-6.75"
-              /></svg
-            >
-          {/if}
-        </button>
+          </button>
+        </div>
       </div>
+      <!-- Боковые кнопки (ось roll) -->
+      {#if axes.length == 3}
+        <div
+          class="absolute flex h-15 w-65 items-center justify-between rounded-full shadow-[0_0_15px_rgb(0_0_0_/0.25)]"
+          style="background: color-mix(in srgb, var(--bg-color), var(--shadow-color) 10%)"
+        >
+          <button
+            class="h-full cursor-pointer rounded-l-full px-3.5"
+            title=""
+            onclick={() => {
+              if (value[0] - sensitivity <= (axes[0].minNum ?? -360)) {
+                value[0] = axes[0].minNum ?? -360
+                onUpdate(value)
+                return
+              }
+              value[0] = roundToClean(value[0] - sensitivity)
+              onUpdate(value)
+            }}
+            onmouseenter={(e) => (e.currentTarget.style.backgroundColor = "color-mix(in srgb, var(--bg-color), var(--shadow-color) 30%)")}
+            onmouseleave={(e) => (e.currentTarget.style.backgroundColor = "background: color-mix(in srgb, var(--bg-color), var(--shadow-color) 10%)")}
+          >
+            <div class="rotate-270">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                ><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"
+                  ><path
+                    stroke-miterlimit="10"
+                    d="M6.395 7.705A7.9 7.9 0 0 1 12 5.382a7.93 7.93 0 0 1 7.929 7.929A7.94 7.94 0 0 1 12 21.25a7.94 7.94 0 0 1-7.929-7.94"
+                  /><path stroke-linejoin="round" d="m7.12 2.75l-.95 3.858a1.33 1.33 0 0 0 .97 1.609l3.869.948" /></g
+                ></svg
+              >
+            </div></button
+          >
+          <button
+            class="h-full cursor-pointer rounded-r-full px-3.5"
+            title=""
+            onclick={() => {
+              if (value[0] + sensitivity >= (axes[0].maxNum ?? 360)) {
+                value[0] = axes[0].maxNum ?? 360
+                onUpdate(value)
+                return
+              }
+              value[0] = roundToClean(value[0] + sensitivity)
+              onUpdate(value)
+            }}
+            onmouseenter={(e) => (e.currentTarget.style.backgroundColor = "color-mix(in srgb, var(--bg-color), var(--shadow-color) 30%)")}
+            onmouseleave={(e) => (e.currentTarget.style.backgroundColor = "vabackground: color-mix(in srgb, var(--bg-color), var(--shadow-color) 10%)")}
+          >
+            <div class="rotate-90">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                ><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"
+                  ><path
+                    stroke-miterlimit="10"
+                    d="M17.605 7.705A7.9 7.9 0 0 0 12 5.382a7.93 7.93 0 0 0-7.929 7.929A7.94 7.94 0 0 0 12 21.25a7.94 7.94 0 0 0 7.929-7.94"
+                  /><path stroke-linejoin="round" d="m16.88 2.75l.95 3.858a1.33 1.33 0 0 1-.97 1.609l-3.869.948" /></g
+                ></svg
+              >
+            </div></button
+          >
+        </div>
+      {/if}
     </div>
-    <!-- Боковые кнопки (ось roll) -->
-    {#if axes.length == 3}
-      <div
-        class="absolute flex h-15 w-65 items-center justify-between rounded-full shadow-[0_0_15px_rgb(0_0_0_/0.25)]"
-        style="background: color-mix(in srgb, var(--bg-color), var(--shadow-color) 10%)"
-      >
-        <button
-          class="h-full cursor-pointer rounded-l-full px-3.5"
-          title=""
-          onclick={() => {
-            if (value[0] - sensitivity <= (axes[0].minNum ?? -360)) {
-              value[0] = axes[0].minNum ?? -360
-              onUpdate(value)
-              return
-            }
-            value[0] = roundToClean(value[0] - sensitivity)
-            onUpdate(value)
-          }}
-          onmouseenter={(e) => (e.currentTarget.style.backgroundColor = "color-mix(in srgb, var(--bg-color), var(--shadow-color) 30%)")}
-          onmouseleave={(e) => (e.currentTarget.style.backgroundColor = "background: color-mix(in srgb, var(--bg-color), var(--shadow-color) 10%)")}
-        >
-          <div class="rotate-270">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-              ><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"
-                ><path
-                  stroke-miterlimit="10"
-                  d="M6.395 7.705A7.9 7.9 0 0 1 12 5.382a7.93 7.93 0 0 1 7.929 7.929A7.94 7.94 0 0 1 12 21.25a7.94 7.94 0 0 1-7.929-7.94"
-                /><path stroke-linejoin="round" d="m7.12 2.75l-.95 3.858a1.33 1.33 0 0 0 .97 1.609l3.869.948" /></g
-              ></svg
-            >
-          </div></button
-        >
-        <button
-          class="h-full cursor-pointer rounded-r-full px-3.5"
-          title=""
-          onclick={() => {
-            if (value[0] + sensitivity >= (axes[0].maxNum ?? 360)) {
-              value[0] = axes[0].maxNum ?? 360
-              onUpdate(value)
-              return
-            }
-            value[0] = roundToClean(value[0] + sensitivity)
-            onUpdate(value)
-          }}
-          onmouseenter={(e) => (e.currentTarget.style.backgroundColor = "color-mix(in srgb, var(--bg-color), var(--shadow-color) 30%)")}
-          onmouseleave={(e) => (e.currentTarget.style.backgroundColor = "vabackground: color-mix(in srgb, var(--bg-color), var(--shadow-color) 10%)")}
-        >
-          <div class="rotate-90">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-              ><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"
-                ><path
-                  stroke-miterlimit="10"
-                  d="M17.605 7.705A7.9 7.9 0 0 0 12 5.382a7.93 7.93 0 0 0-7.929 7.929A7.94 7.94 0 0 0 12 21.25a7.94 7.94 0 0 0 7.929-7.94"
-                /><path stroke-linejoin="round" d="m16.88 2.75l.95 3.858a1.33 1.33 0 0 1-.97 1.609l-3.869.948" /></g
-              ></svg
-            >
-          </div></button
-        >
-      </div>
-    {/if}
-  </div>
+  {/if}
 
   <!-- Нижняя панель -->
   <div class="mt-3 flex w-80 flex-col gap-1">
-    <div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class="flex w-full justify-center rounded-full">
-      {#each sensitivityOptions as option, index}
-        <button
-          id={crypto.randomUUID()}
-          class={twMerge(`m-0 inline-block min-w-0 flex-1 cursor-pointer items-center px-2 py-1 font-semibold shadow-sm transition-all duration-300
+    {#if !readonly}
+      <div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class="flex w-full justify-center rounded-full">
+        {#each sensitivityOptions as option, index}
+          <button
+            id={crypto.randomUUID()}
+            class={twMerge(`m-0 inline-block min-w-0 flex-1 cursor-pointer items-center px-2 py-1 font-semibold shadow-sm transition-all duration-300
             select-none hover:shadow-md
             ${
               option === sensitivity && sensitivity !== null
@@ -273,20 +277,21 @@
             ${sensitivityOptions.length > 0 && index === 0 ? "rounded-l-2xl" : ""} ${
               index === sensitivityOptions.length - 1 ? "rounded-r-2xl" : ""
             } bg-(--back-color)`)}
-          onclick={() => {
-            sensitivity = option
-          }}
-        >
-          <span class="flex flex-row items-center justify-center gap-4">
-            {#if option}
-              <div class="flex-1">
-                {option}
-              </div>
-            {/if}
-          </span>
-        </button>
-      {/each}
-    </div>
+            onclick={() => {
+              sensitivity = option
+            }}
+          >
+            <span class="flex flex-row items-center justify-center gap-4">
+              {#if option}
+                <div class="flex-1">
+                  {option}
+                </div>
+              {/if}
+            </span>
+          </button>
+        {/each}
+      </div>
+    {/if}
 
     <div class="flex justify-around">
       {#each axes as axe, index}

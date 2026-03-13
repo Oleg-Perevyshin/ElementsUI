@@ -76,37 +76,33 @@
     onUpdate={(value) => {
       const currentActiveValues = $optionsStore.TEXTFIELD_SETTINGS_OPTIONS.filter((opt) => {
         if (!opt?.value) return false
-        const currentValue =
+        return (
           (component.properties.content.class.includes(`${opt.value}`) && !component.properties.content.class.includes(`not-${opt.value}`)) ||
           (opt.value == "background" && component.properties.background)
-        return currentValue === true
+        )
       }).map((opt) => opt.value)
       if (Array.isArray(value)) {
         value.forEach((opt) => {
-          if (opt?.value === "background") {
-            updateProperty("background", true, component, onPropertyChange)
-          } else {
-            updateProperty(
-              "content.class",
-              twMerge(`${component.properties.content.class} ${opt.value === "bold" ? "font-bold" : "italic"}`),
-              component,
-              onPropertyChange,
-            )
-          }
+          opt?.value === "background"
+            ? updateProperty("background", true, component, onPropertyChange)
+            : updateProperty(
+                "content.class",
+                twMerge(`${component.properties.content.class} ${opt.value === "bold" ? "font-bold" : "italic"}`),
+                component,
+                onPropertyChange,
+              )
         })
 
         currentActiveValues.forEach((activeValue) => {
           if (!value.some((opt) => opt?.value === activeValue)) {
-            if (activeValue === "background") {
-              updateProperty("background", false, component, onPropertyChange)
-            } else {
-              updateProperty(
-                "content.class",
-                twMerge(`${component.properties.content.class} ${activeValue === "bold" ? "font-normal" : "not-italic"}`),
-                component,
-                onPropertyChange,
-              )
-            }
+            activeValue === "background"
+              ? updateProperty("background", false, component, onPropertyChange)
+              : updateProperty(
+                  "content.class",
+                  twMerge(`${component.properties.content.class} ${activeValue === "bold" ? "font-normal" : "not-italic"}`),
+                  component,
+                  onPropertyChange,
+                )
           }
         })
       }

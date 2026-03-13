@@ -5,6 +5,7 @@
   let {
     id = crypto.randomUUID(),
     label = { name: "", class: "" },
+    readonly = false,
     settings = { label: "", number: { minNum: 0, maxNum: 1000, step: 1 } },
     value = $bindable(8),
     icons = { array: [], mode: "cycling" },
@@ -123,23 +124,25 @@
     {#if settings.type == "input"}
       <!-- Input -->
       <div class={twMerge(`flex p-2 gap-2 bg-blue`, settings.class)}>
-        <button
-          class="flex size-8 items-center justify-center shadow-sm hover:shadow-md rounded-full transition duration-200 bg-(--bg-color) active:scale-97 text-2xl"
-          onclick={() => {
-            if ((settings.number?.minNum !== 0 && !settings.number?.minNum) || !settings.number?.step || (value !== 0 && !value)) return
-            if (Number(value) - settings.number?.step <= settings.number?.minNum) {
-              value = settings.number?.minNum
+        {#if !readonly}
+          <button
+            class="flex size-8 items-center justify-center shadow-sm hover:shadow-md rounded-full transition duration-200 bg-(--bg-color) active:scale-97 text-2xl"
+            onclick={() => {
+              if ((settings.number?.minNum !== 0 && !settings.number?.minNum) || !settings.number?.step || (value !== 0 && !value)) return
+              if (Number(value) - settings.number?.step <= settings.number?.minNum) {
+                value = settings.number?.minNum
+                onUpdate(value as number)
+                return
+              } else if (settings.number?.maxNum && Number(value) > settings.number?.maxNum) {
+                value = settings.number?.maxNum
+                return
+              }
+              value = Number(value) - (settings.number?.step ?? 1)
               onUpdate(value as number)
-              return
-            } else if (settings.number?.maxNum && Number(value) > settings.number?.maxNum) {
-              value = settings.number?.maxNum
-              return
-            }
-            value = Number(value) - (settings.number?.step ?? 1)
-            onUpdate(value as number)
-          }}
-          aria-label="Уменьшить">−</button
-        >
+            }}
+            aria-label="Уменьшить">−</button
+          >
+        {/if}
         <input
           bind:value
           class={twMerge(`flex-1 w-full rounded-2xl border px-8 py-1 text-center shadow-[0_0_3px_rgb(0_0_0_/0.25)] transition duration-200
@@ -149,27 +152,30 @@
           style="background: color-mix(in srgb, var(--back-color), var(--back-color) 70%);"
           id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
           type="number"
+          {readonly}
           min={settings.number?.minNum}
           max={settings.number?.maxNum}
           step={settings.number?.step}
         />
-        <button
-          class="flex size-8 items-center justify-center rounded-full shadow-sm hover:shadow-md transition duration-200 bg-(--bg-color) active:scale-97 text-2xl"
-          onclick={() => {
-            if ((settings.number?.maxNum !== 0 && !settings.number?.maxNum) || !settings.number?.step || (value !== 0 && !value)) return
-            if (Number(value) + settings.number?.step >= settings.number?.maxNum) {
-              value = settings.number?.maxNum
+        {#if !readonly}
+          <button
+            class="flex size-8 items-center justify-center rounded-full shadow-sm hover:shadow-md transition duration-200 bg-(--bg-color) active:scale-97 text-2xl"
+            onclick={() => {
+              if ((settings.number?.maxNum !== 0 && !settings.number?.maxNum) || !settings.number?.step || (value !== 0 && !value)) return
+              if (Number(value) + settings.number?.step >= settings.number?.maxNum) {
+                value = settings.number?.maxNum
+                onUpdate(value as number)
+                return
+              } else if (settings.number?.minNum && Number(value) < settings.number?.minNum) {
+                value = settings.number?.minNum
+                return
+              }
+              value = Number(value) + (settings.number?.step ?? 1)
               onUpdate(value as number)
-              return
-            } else if (settings.number?.minNum && Number(value) < settings.number?.minNum) {
-              value = settings.number?.minNum
-              return
-            }
-            value = Number(value) + (settings.number?.step ?? 1)
-            onUpdate(value as number)
-          }}
-          aria-label="Увеличить">+</button
-        >
+            }}
+            aria-label="Увеличить">+</button
+          >
+        {/if}
       </div>
     {:else if settings.type == "toggle"}
       <!-- Switch -->
@@ -185,6 +191,7 @@
             id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
             type="checkbox"
             class="absolute left-1/2 h-full w-full -translate-x-1/2 cursor-pointer appearance-none rounded-md"
+            disabled={readonly}
             checked={value !== 0}
             onchange={() => {
               value = value === 0 ? 1 : 0
@@ -223,6 +230,7 @@
           min={settings.number?.minNum}
           max={settings.number?.maxNum}
           step={settings.number?.step}
+          disabled={readonly}
           bind:value
           oninput={() => onUpdate(value)}
           class={twMerge(
