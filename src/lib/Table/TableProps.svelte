@@ -281,7 +281,7 @@
                     type="buttons"
                     options={$optionsStore.COLOR_OPTIONS.filter((option) => option.value !== "bg-max")}
                     value={$optionsStore.COLOR_OPTIONS.find((c) =>
-                      (c.value as string).includes((button.class ?? "bg-blue").split(" ").find((cls: string) => cls.startsWith("bg-"))),
+                      (c.value as string).includes((button.class ?? component.properties.wrapperClass).split(" ").find((cls: string) => cls.startsWith("bg-"))),
                     )}
                     onUpdate={(value) => {
                       updateButtonProperty(columnIndex, buttonIndex, "class", (value as UI.ISelectOption).value)

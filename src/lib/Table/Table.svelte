@@ -106,7 +106,7 @@
     else if (button.eventHandler && onClick) {
       let value: Record<string, boolean | string | number | number[] | object | null> = {}
       button.eventHandler.Variables.forEach((v: string) => {
-        if (header.some((h) => h.key === v && h.type === "select")) value[v.slice(0, -2)] = row[v][0].value
+        if (header.some((h) => h.key === v && h.type === "select")) value[v.slice(0, -2)] = row[v.slice(0, -2)]
         else value[v] = row[v]
       })
       button.eventHandler.Value = JSON.stringify(value)
@@ -121,8 +121,9 @@
     isDropdownOpen = null
 
     setTimeout(() => {
-      if (existingItem)
-        body = [...body].map((row, i) => (i === index ? { ...row, [key]: [option, ...existingItem.filter((opt: ISelectOption) => opt !== option)] } : row))
+      if (existingItem) {
+        body = [...body].map((row, i) => (i === index ? { ...row, [key.slice(0, -2)]: option.value } : row))
+      }
     }, 250)
   }
 
@@ -199,12 +200,14 @@
     }
 
     window.addEventListener("scroll", handlePageScroll, true)
+    window.addEventListener("resize", handlePageScroll, true)
 
     isScrollable = container ? container.scrollHeight > container.clientHeight : false
 
     return () => {
       container?.removeEventListener("scroll", handleAutoScroll)
       window.removeEventListener("scroll", handlePageScroll)
+      window.removeEventListener("resize", handlePageScroll, true)
     }
   })
 </script>
@@ -262,182 +265,179 @@
       {@const rows = dataBuffer.stashData ? buffer.slice(-(dataBuffer.bufferSize ?? 10)) : body.filter((row: any) => Object.entries(row).length != 0)}
       <!-- Table Body с прокруткой -->
       <div class="flex-1 overflow-y-auto bg-(--container-color)/50 relative" style={``} bind:this={container} onscroll={handleScroll}>
-        <div
-          class="grid min-w-0"
-          style={`grid-template-columns: ${header.map((c) => c.width || "minmax(0, 1fr)").join(" ")}; 
-          height: ${dataBuffer.visibleRows && tableHeight && rows.length > dataBuffer.visibleRows ? `${tableHeight}px` : ""};`}
-        >
+        <div class="min-w-0" style={`height: ${dataBuffer.visibleRows && tableHeight && rows.length > dataBuffer.visibleRows ? `${tableHeight}px` : ""};`}>
           {#each rows as row, i (row)}
-            {#each header as column, j (column)}
-              <div
-                id="rowDiv{i}-{j}"
-                class="relative flex w-full min-w-0 items-center gap-x-2 px-2 py-1 wrap-break-word
-              {i % 2 ? 'bg-(--back-color)/40' : 'bg-[#edeef3] dark:bg-[#1f2a3a]'}
+            <div
+              class="grid {!outline && i % 2
+                ? 'bg-[#f2f2f2] dark:bg-[#2a3545]'
+                : 'bg-[#fbfbfb] dark:bg-[#1d2635]'} hover:bg-(--bg-color)/30 transition-colors duration-100"
+              style="grid-template-columns: {header.map((c) => c.width || 'minmax(0, 1fr)').join(' ')};"
+            >
+              {#each header as column, j (column)}
+                <div
+                  id="rowDiv{i}-{j}"
+                  class="relative flex w-full min-w-0 items-center gap-x-2 px-2 py-1 wrap-break-word
+              
               {column.align === 'center' ? 'justify-center text-center' : column.align === 'right' ? 'justify-end text-right' : 'justify-start text-left'}
               border-t {j !== 0 ? ' border-l ' : ''} {outline ? 'border-(--border-color)' : 'border-transparent'} {column.disableSelect
-                  ? 'select-none'
-                  : 'select-all'}"
-              >
-                {#if column.type == "buttons" && column.buttons}
-                  {@const buttons = typeof column.buttons === "function" ? column.buttons(row) : column.buttons}
-                  <div class="flex flex-wrap gap-1">
-                    {#each buttons as button (button)}
-                      <button
-                        class="{twMerge(`flex items-center justify-center gap-2 cursor-pointer rounded-full 
+                    ? 'select-none'
+                    : 'select-all'}"
+                >
+                  {#if column.type == "buttons" && column.buttons}
+                    {@const buttons = typeof column.buttons === "function" ? column.buttons(row) : column.buttons}
+                    <div class="flex flex-wrap gap-1">
+                      {#each buttons as button (button)}
+                        <button
+                          class="{twMerge(`flex items-center justify-center gap-2 cursor-pointer rounded-full 
                            px-4 py-1 font-semibold shadow-sm transition-shadow duration-200 outline-none select-none hover:shadow-md
                           ${typeof button.class === 'function' ? button.class(row) : button.class}`)} bg-(--bg-color)"
-                        onclick={() => buttonClick(row, button)}
-                      >
-                        {#if button?.icon}
-                          <span
-                            class={`flex items-center justify-center overflow-visible h-7 w-7 [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full`}
-                          >
-                            {#if typeof button?.icon === "string"}
-                              {@html button.icon}
-                            {:else}
-                              {@const IconComponent = button?.icon}
-                              <IconComponent />
-                            {/if}
-                          </span>
-                        {/if}
-                        {typeof button.name === "function" ? button.name(row) : button.name}
-                      </button>
-                    {/each}
-                  </div>
-                {:else if column.type == "select" && column.select}
-                  {@const options = Array.isArray(row[column.key])
-                    ? row[column.key].find((o: ISelectOption) => o.value === row[(column.key as string).slice(0, -2)])
-                      ? [
-                          row[column.key].find((o: ISelectOption) => o.value === row[(column.key as string).slice(0, -2)]),
-                          ...row[column.key].filter((o: ISelectOption) => o.value !== row[(column.key as string).slice(0, -2)]),
-                        ]
-                      : row[column.key]
-                    : []}
-
-                  <div class="relative w-full">
-                    <button
-                      id="select{i}-{j}"
-                      class="w-full rounded-2xl border border-(--blue-color) bg-(--back-color) p-1 text-center shadow-[0_0_3px_rgb(0_0_0_/0.25)] transition duration-200
-        cursor-pointer hover:shadow-[0_0_6px_rgb(0_0_0_/0.25)]"
-                      onclick={() => (isDropdownOpen = isDropdownOpen?.x === j && isDropdownOpen.y === i ? null : { x: j, y: i })}
-                    >
-                      {options[0]?.name || $t("common.select_tag")}
-                    </button>
-
-                    {#if isDropdownOpen?.x === j && isDropdownOpen.y === i}
-                      {@const cords = document.getElementById(`select${i}-${j}`)?.getBoundingClientRect()}
-                      <div
-                        class="fixed z-50 rounded-b-2xl shadow-[0_0_3px_rgb(0_0_0_/0.25)]"
-                        style="top: {cords?.bottom}px; left: calc({cords?.left}px + 0.9rem) ; width: calc({cords?.width}px - 1.8rem);"
-                        transition:slide={{ duration: selectSlideDuration }}
-                      >
-                        {#each options as option, option_index (option.id)}
-                          <button
-                            id={option.id}
-                            value={option?.value ? String(option.value) : ""}
-                            class={twMerge(
-                              `flex h-full w-full cursor-pointer items-center justify-center p-1 inset-shadow-[0_10px_10px_-15px_rgb(0_0_0_/0.5)] duration-250 hover:bg-(--field-color)! bg-(--back-color)
-              ${option_index === options.length - 1 ? "rounded-b-2xl" : ""}`,
-                              option.class,
-                            )}
-                            onclick={(e) => selectOption(i, column.key, option, e)}
-                          >
-                            {option.name}
-                          </button>
-                        {/each}
-                      </div>
-                    {/if}
-                  </div>
-                {:else if column.type == "image" && column.image}
-                  <div
-                    class="flex items-center justify-center [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
-                    style={`width: ${column.image.width || "5rem"}; height: ${column.image.height || "5rem"}; `}
-                  >
-                    {#if hasImage(column, row)}
-                      <img
-                        src={typeof column.image?.src === "function" ? column.image.src(row) : column.image?.src || ""}
-                        alt={column.image.alt ?? "Image"}
-                        class={twMerge(`h-full w-full object-cover ${column.image.class || ""}`)}
-                        loading="lazy"
-                      />
-                    {:else if column.image.defaultIcon}
-                      {#if typeof column.image.defaultIcon === "string"}
-                        {@html column.image.defaultIcon}
-                      {:else}
-                        <column.image.defaultIcon />
-                      {/if}
-                    {/if}
-                  </div>
-                {:else}
-                  {@const text =
-                    Array.isArray(row[column.key]) && row[column.key][0] && "value" in row[column.key][0]
-                      ? row[column.key].map((item: ISelectOption) => item.name)
-                      : typeof row[column.key] == "object"
-                        ? JSON.stringify(row[column.key])
-                        : row[column.key]}
-                  <div
-                    class=" w-full max-w-full wrap-break-word {column.text?.truncated ? 'truncate' : ' whitespace-normal'}"
-                    onmouseenter={column.text?.truncated ? (e) => showTooltip(e, row[column.key], column.text?.formatting) : undefined}
-                    onmouseleave={column.text?.truncated ? hideTooltip : undefined}
-                    onmousemove={column.text?.truncated
-                      ? (e) => {
-                          tooltip.x = e.clientX
-                          tooltip.y = e.clientY
-                        }
-                      : undefined}
-                    role="columnheader"
-                    tabindex={null}
-                  >
-                    {#if column.text?.modal}
+                          onclick={() => buttonClick(row, button)}
+                        >
+                          {#if button?.icon}
+                            <span
+                              class={`flex items-center justify-center overflow-visible h-7 w-7 [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full`}
+                            >
+                              {#if typeof button?.icon === "string"}
+                                {@html button.icon}
+                              {:else}
+                                {@const IconComponent = button?.icon}
+                                <IconComponent />
+                              {/if}
+                            </span>
+                          {/if}
+                          {typeof button.name === "function" ? button.name(row) : button.name}
+                        </button>
+                      {/each}
+                    </div>
+                  {:else if column.type == "select" && column.select}
+                    {@const options = Array.isArray(row[column.key]) ? row[column.key] : []}
+                    <div class="relative w-full select-none">
                       <button
-                        class="cursor-pointer overflow-hidden text-left text-ellipsis whitespace-nowrap"
-                        onclick={(e) => {
-                          e.stopPropagation()
-                          showModal(text, column.text?.formatting)
-                        }}
+                        id="select{i}-{j}"
+                        class="w-full rounded-2xl border border-(--blue-color) bg-(--back-color) p-1 text-center shadow-[0_0_3px_rgb(0_0_0_/0.25)] transition duration-200
+        cursor-pointer hover:shadow-[0_0_6px_rgb(0_0_0_/0.25)]"
+                        onclick={() => (isDropdownOpen = isDropdownOpen?.x === j && isDropdownOpen.y === i ? null : { x: j, y: i })}
                       >
-                        {@html text}
+                        {options.some((o: ISelectOption) => o.value === row[(column.key as string).slice(0, -2)])
+                          ? row[column.key].find((o: ISelectOption) => o.value === row[(column.key as string).slice(0, -2)]).name
+                          : $t("common.select_tag")}
                       </button>
-                    {:else}
-                      {@html text}
-                    {/if}
-                  </div>
 
-                  {#if column.text?.copy}
-                    <button
-                      class="mx-2 flex cursor-pointer border-none bg-transparent text-2xl"
-                      onclick={(e) => {
-                        e.preventDefault()
-                        navigator.clipboard.writeText(row[column.key])
-                        copiedCell = { x: j, y: i }
-                        setTimeout(() => (copiedCell = null), 1000)
-                      }}
-                      aria-label="Копировать текст"
+                      {#if isDropdownOpen?.x === j && isDropdownOpen.y === i}
+                        {@const cords = document.getElementById(`select${i}-${j}`)?.getBoundingClientRect()}
+                        <div
+                          class="fixed z-50 rounded-b-2xl shadow-[0_0_3px_rgb(0_0_0_/0.25)]"
+                          style="top: {cords?.bottom}px; left: calc({cords?.left}px + 0.9rem) ; width: calc({cords?.width}px - 1.8rem);"
+                          transition:slide={{ duration: selectSlideDuration }}
+                        >
+                          {#each options as option, option_index (option.id)}
+                            <button
+                              id={option.id}
+                              value={option?.value ? String(option.value) : ""}
+                              class={twMerge(
+                                `flex h-full w-full cursor-pointer items-center justify-center p-1 inset-shadow-[0_10px_10px_-15px_rgb(0_0_0_/0.5)] duration-250 hover:bg-(--field-color)! bg-(--back-color)
+              ${option_index === options.length - 1 ? "rounded-b-2xl" : ""}`,
+                                option.class,
+                              )}
+                              onclick={(e) => selectOption(i, column.key, option, e)}
+                            >
+                              {option.name}
+                            </button>
+                          {/each}
+                        </div>
+                      {/if}
+                    </div>
+                  {:else if column.type == "image" && column.image}
+                    <div
+                      class="flex items-center justify-center [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
+                      style={`width: ${column.image.width || "5rem"}; height: ${column.image.height || "5rem"}; `}
                     >
-                      <div class="size-5 text-sm [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full">
-                        {#if copiedCell?.y === i && copiedCell.x === j}
-                          <div
-                            class="absolute top-1/2 right-3.5 -translate-y-1/2 transform rounded-md bg-(--green-color) px-1.5 py-1 shadow-lg"
-                            transition:fade={{ duration: 200 }}
-                          >
-                            ✓
-                          </div>
+                      {#if hasImage(column, row)}
+                        <img
+                          src={typeof column.image?.src === "function" ? column.image.src(row) : column.image?.src || ""}
+                          alt={column.image.alt ?? "Image"}
+                          class={twMerge(`h-full w-full object-cover ${column.image.class || ""}`)}
+                          loading="lazy"
+                        />
+                      {:else if column.image.defaultIcon}
+                        {#if typeof column.image.defaultIcon === "string"}
+                          {@html column.image.defaultIcon}
                         {:else}
-                          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
-                            <g fill="none" stroke="currentColor" stroke-width="1.5">
-                              <path
-                                d="M6 11c0-2.828 0-4.243.879-5.121C7.757 5 9.172 5 12 5h3c2.828 0 4.243 0 5.121.879C21 6.757 21 8.172 21 11v5c0 2.828 0 4.243-.879 5.121C19.243 22 17.828 22 15 22h-3c-2.828 0-4.243 0-5.121-.879C6 20.243 6 18.828 6 16z"
-                              />
-                              <path d="M6 19a3 3 0 0 1-3-3v-6c0-3.771 0-5.657 1.172-6.828S7.229 2 11 2h4a3 3 0 0 1 3 3" />
-                            </g>
-                          </svg>
+                          <column.image.defaultIcon />
                         {/if}
-                      </div>
-                    </button>
+                      {/if}
+                    </div>
+                  {:else}
+                    {@const text =
+                      Array.isArray(row[column.key]) && row[column.key][0] && "value" in row[column.key][0]
+                        ? row[column.key].map((item: ISelectOption) => item.name)
+                        : typeof row[column.key] == "object"
+                          ? JSON.stringify(row[column.key])
+                          : row[column.key]}
+                    <div
+                      class=" w-full max-w-full wrap-break-word {column.text?.truncated ? 'truncate' : ' whitespace-normal'}"
+                      onmouseenter={column.text?.truncated ? (e) => showTooltip(e, row[column.key], column.text?.formatting) : undefined}
+                      onmouseleave={column.text?.truncated ? hideTooltip : undefined}
+                      onmousemove={column.text?.truncated
+                        ? (e) => {
+                            tooltip.x = e.clientX
+                            tooltip.y = e.clientY
+                          }
+                        : undefined}
+                      role="columnheader"
+                      tabindex={null}
+                    >
+                      {#if column.text?.modal}
+                        <button
+                          class="cursor-pointer overflow-hidden text-left text-ellipsis whitespace-nowrap"
+                          onclick={(e) => {
+                            e.stopPropagation()
+                            showModal(text, column.text?.formatting)
+                          }}
+                        >
+                          {@html text}
+                        </button>
+                      {:else}
+                        {@html text}
+                      {/if}
+                    </div>
+
+                    {#if column.text?.copy}
+                      <button
+                        class="mx-2 flex cursor-pointer border-none bg-transparent text-2xl"
+                        onclick={(e) => {
+                          e.preventDefault()
+                          navigator.clipboard.writeText(row[column.key])
+                          copiedCell = { x: j, y: i }
+                          setTimeout(() => (copiedCell = null), 1000)
+                        }}
+                        aria-label="Копировать текст"
+                      >
+                        <div class="size-5 text-sm [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full">
+                          {#if copiedCell?.y === i && copiedCell.x === j}
+                            <div
+                              class="absolute top-1/2 right-3.5 -translate-y-1/2 transform rounded-md bg-(--green-color) px-1.5 py-1 shadow-lg"
+                              transition:fade={{ duration: 200 }}
+                            >
+                              ✓
+                            </div>
+                          {:else}
+                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                              <g fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path
+                                  d="M6 11c0-2.828 0-4.243.879-5.121C7.757 5 9.172 5 12 5h3c2.828 0 4.243 0 5.121.879C21 6.757 21 8.172 21 11v5c0 2.828 0 4.243-.879 5.121C19.243 22 17.828 22 15 22h-3c-2.828 0-4.243 0-5.121-.879C6 20.243 6 18.828 6 16z"
+                                />
+                                <path d="M6 19a3 3 0 0 1-3-3v-6c0-3.771 0-5.657 1.172-6.828S7.229 2 11 2h4a3 3 0 0 1 3 3" />
+                              </g>
+                            </svg>
+                          {/if}
+                        </div>
+                      </button>
+                    {/if}
                   {/if}
-                {/if}
-              </div>
-            {/each}
+                </div>
+              {/each}
+            </div>
           {/each}
         </div>
       </div>

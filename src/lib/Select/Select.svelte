@@ -85,9 +85,9 @@
           value.push(option)
         }
       } else value = option
-      isDropdownOpen = false
       searchValue = option.name?.toString() ?? ""
-      filteredOptions = []
+      if (type === "input") handleSearch(searchValue)
+      isDropdownOpen = false
       onUpdate?.(value)
     }
   }
@@ -95,35 +95,38 @@
   const handleSearch = (inputValue: string) => {
     searchValue = inputValue
 
-    if (inputValue.trim() === "") {
-      isDropdownOpen = false
-      filteredOptions = []
-    } else {
-      filteredOptions = options.filter((option) => {
-        const optionName = option.name?.toString() || ""
-        return optionName.toLowerCase().includes(inputValue.toLowerCase())
-      })
-      isDropdownOpen = filteredOptions.length > 0
+    filteredOptions = options.filter((option) => {
+      const optionName = option.name?.toString() || ""
+      return optionName.toLowerCase().includes(inputValue.toLowerCase())
+    })
 
-      const selectedFromList = options.find((option) => option.name?.toString() === searchValue)
+    filteredOptions = [
+      ...filteredOptions,
+      ...options.filter((option) => {
+        return !filteredOptions.includes(option)
+      }),
+    ]
 
-      if (!selectedFromList) {
-        const newOption: ISelectOption<T> = {
-          id: `input-${searchValue}`,
-          name: searchValue,
-          value:
-            typeof options[0].value == "number"
-              ? (Number(searchValue) as T) == undefined
-                ? (Number(searchValue) as T)
-                : (searchValue as T)
-              : (searchValue as T),
-        }
-        value = newOption
-        onUpdate?.(newOption)
-      } else {
-        value = selectedFromList
-        onUpdate?.(selectedFromList)
+    isDropdownOpen = filteredOptions.length > 0
+
+    const selectedFromList = options.find((option) => option.name?.toString() === searchValue)
+
+    if (!selectedFromList) {
+      const newOption: ISelectOption<T> = {
+        id: `input-${searchValue}`,
+        name: searchValue,
+        value:
+          typeof options[0].value == "number"
+            ? (Number(searchValue) as T) == undefined
+              ? (Number(searchValue) as T)
+              : (searchValue as T)
+            : (searchValue as T),
       }
+      value = newOption
+      onUpdate?.(newOption)
+    } else {
+      value = selectedFromList
+      onUpdate?.(selectedFromList)
     }
   }
 </script>
@@ -211,17 +214,15 @@
       id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
       {disabled}
       oninput={(e) => handleSearch((e.currentTarget as HTMLInputElement).value)}
-      onclick={(e) => {
-        if (searchValue == "") {
-          filteredOptions = options
-          isDropdownOpen = true
-        }
+      onclick={() => {
+        if (searchValue == "") filteredOptions = options
+        isDropdownOpen = true
       }}
     />
 
     {#if isDropdownOpen}
       <div
-        class="absolute top-full left-1/2 z-50 -translate-x-1/2 rounded-b-xl border border-t-0 border-(--bg-color) shadow-[0_0_3px_rgb(0_0_0_/0.25)]"
+        class="absolute select-none top-full left-1/2 z-50 -translate-x-1/2 rounded-b-xl border border-t-0 border-(--bg-color) shadow-[0_0_3px_rgb(0_0_0_/0.25)]"
         style="width: calc(100% - 1.8rem);"
         transition:slide={{ duration: 250 }}
       >

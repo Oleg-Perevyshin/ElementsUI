@@ -55,6 +55,7 @@
           buttons: [
             {
               name: "send",
+              class: "bg-blue",
               eventHandler: { Header: "SET", Argument: "Save", Variables: ["id-S"] },
             },
           ],
@@ -78,7 +79,6 @@
           device: "Value of device",
           buttons: [],
         },
-        {},
         {
           "id-S": [
             { id: "Value of id1", name: "Value of id1", value: "Value of id1" },
@@ -144,7 +144,7 @@ ${formatObjectToString(tableComponent.properties as ITableProps<object>)}
 
 <ComponentExample {codeText}>
   {#snippet component()}
-    <div class="">
+    <div class="h-60">
       <Table
         bind:this={tableRef}
         {...tableComponent.properties as ITableProps<object>}

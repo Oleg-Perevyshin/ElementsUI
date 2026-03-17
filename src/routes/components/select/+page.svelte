@@ -21,6 +21,8 @@
       options: [
         { id: crypto.randomUUID(), value: "1", name: "Option 1", class: "bg-max" },
         { id: crypto.randomUUID(), value: "2", name: "Option 2", class: "bg-max" },
+        { id: crypto.randomUUID(), value: "3", name: "3", class: "bg-max" },
+        { id: crypto.randomUUID(), value: "4", name: "4", class: "bg-max" },
       ],
     },
     eventHandler: { Header: "SET", Argument: "", Variables: [] },
