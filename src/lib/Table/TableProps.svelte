@@ -34,7 +34,7 @@
     ),
   )
 
-  const changeColumnSettings = (settings: UI.ISelectOption<string> | UI.ISelectOption<string>[], columnIndex: number) => {
+  const changeColumnSettings = (settings: UI.IOption<string> | UI.IOption<string>[], columnIndex: number) => {
     const currentActiveValues = $optionsStore.TABLE_COLUMN_SETTING_OPTIONS.filter((opt) => {
       if (!opt?.value) return false
       const currentValue = opt.value.split(".").reduce((o, key) => o?.[key], component.properties.header[columnIndex])
@@ -153,7 +153,7 @@
     type="buttons"
     options={$optionsStore.BUFFER_SIZE_OPTIONS}
     value={$optionsStore.BUFFER_SIZE_OPTIONS.find((o) => o.value === component.properties.dataBuffer.bufferSize)}
-    onUpdate={(value) => updateProperty("dataBuffer.bufferSize", (value as UI.ISelectOption<number>).value as number, component, onPropertyChange)}
+    onUpdate={(value) => updateProperty("dataBuffer.bufferSize", (value as UI.IOption<number>).value as number, component, onPropertyChange)}
   />
 {/snippet}
 
@@ -163,7 +163,7 @@
     type="buttons"
     options={$optionsStore.VISIBLE_ROWS_OPTIONS}
     value={$optionsStore.VISIBLE_ROWS_OPTIONS.find((o) => o.value === component.properties.dataBuffer.visibleRows)}
-    onUpdate={(value) => updateProperty("dataBuffer.visibleRows", (value as UI.ISelectOption<number>).value as number, component, onPropertyChange)}
+    onUpdate={(value) => updateProperty("dataBuffer.visibleRows", (value as UI.IOption<number>).value as number, component, onPropertyChange)}
   />
 {/snippet}
 
@@ -180,9 +180,6 @@
       }
       const headers = [...(component.properties.header || []), newColumn]
       updateProperty("header", headers, component, onPropertyChange)
-      headers.forEach((h) => {
-        updateTableHeader(headers.indexOf(h), "width", `${(100 / headers.length).toFixed(2)}%`)
-      })
       updateTableBody()
     }}
   />
@@ -204,7 +201,7 @@
           <UI.Input
             label={{ name: $t("constructor.props.table.columns.key") }}
             value={column.key}
-            help={{ regExp: /^[0-9a-zA-Z_-]{0,16}$/ }}
+            help={{ regExp: /^[0-9a-zA-Z_.-]{0,16}$/ }}
             onUpdate={(value) => {
               updateTableHeader(columnIndex, "key", value)
               updateTableBody()
@@ -220,6 +217,7 @@
           <UI.Input
             label={{ name: $t("constructor.props.table.columns.width"), class: "px-0" }}
             type="number"
+            isValid={component.properties.header.reduce((width: number, h: ITableHeader<object>) => Number(h.width?.replace("%", "")) + width, 0) == 100}
             value={Number(column.width.replace("%", ""))}
             onUpdate={(value) => updateTableHeader(columnIndex, "width", `${value}%`)}
           />
@@ -228,7 +226,7 @@
             type="buttons"
             value={$optionsStore.ALIGN_OPTIONS.find((a) => (a.value as string).includes(column.align ?? "left"))}
             options={$optionsStore.ALIGN_OPTIONS}
-            onUpdate={(option) => updateTableHeader(columnIndex, "align", (option as UI.ISelectOption).value)}
+            onUpdate={(option) => updateTableHeader(columnIndex, "align", (option as UI.IOption).value)}
           />
           <UI.Select
             label={{ name: $t("constructor.props.table.content.type") }}
@@ -236,8 +234,8 @@
             options={forConstructor ? $optionsStore.TABLE_CONTENT_TYPE_OPTIONS.slice(0, 3) : $optionsStore.TABLE_CONTENT_TYPE_OPTIONS}
             value={$optionsStore.TABLE_CONTENT_TYPE_OPTIONS.find((h) => h.value === column.type) || $optionsStore.TABLE_CONTENT_TYPE_OPTIONS[0]}
             onUpdate={(value) => {
-              column.type = (value as UI.ISelectOption).value
-              if ((value as UI.ISelectOption).value == "buttons" && (!column.buttons || column.buttons.length == 0)) addNewButton(columnIndex)
+              column.type = (value as UI.IOption).value
+              if ((value as UI.IOption).value == "buttons" && (!column.buttons || column.buttons.length == 0)) addNewButton(columnIndex)
             }}
           />
           <UI.Button
@@ -247,9 +245,6 @@
               const headers = [...(component.properties.header || [])]
               headers.splice(columnIndex, 1)
               updateProperty("header", headers, component, onPropertyChange)
-              headers.forEach((h) => {
-                updateTableHeader(headers.indexOf(h), "width", `${(100 / headers.length).toFixed(2)}%`)
-              })
             }}
           />
         </div>
@@ -284,7 +279,7 @@
                       (c.value as string).includes((button.class ?? component.properties.wrapperClass).split(" ").find((cls: string) => cls.startsWith("bg-"))),
                     )}
                     onUpdate={(value) => {
-                      updateButtonProperty(columnIndex, buttonIndex, "class", (value as UI.ISelectOption).value)
+                      updateButtonProperty(columnIndex, buttonIndex, "class", (value as UI.IOption).value)
                     }}
                   />
 
@@ -295,7 +290,7 @@
                         name: $t("constructor.props.table.type.icon"),
                         icon: column.buttons[buttonIndex].icon,
                         updateProperty: (icon: string) => updateButtonProperty(columnIndex, buttonIndex, "icon", icon),
-                        icons: ICONS,
+                        icons: { array: ICONS },
                       }}
                       {component}
                       {onPropertyChange}
@@ -310,7 +305,7 @@
                     options={$optionsStore.HEADER_OPTIONS}
                     onUpdate={(option) => {
                       const handler = button.eventHandler
-                      handler.Header = (option as UI.ISelectOption).value as string
+                      handler.Header = (option as UI.IOption).value as string
                       updateButtonProperty(columnIndex, buttonIndex, "eventHandler", handler)
                     }}
                   />
@@ -329,7 +324,7 @@
                     label={{ name: $t("constructor.props.table.keys") }}
                     value={button.eventHandler?.Variables.join(" ")}
                     maxlength={500}
-                    help={{ info: $t("constructor.props.table.keys.info"), regExp: /^[a-zA-Z0-9\-_ ]{0,500}$/ }}
+                    help={{ info: $t("constructor.props.table.keys.info"), regExp: /^[a-zA-Z0-9\-._ ]{0,500}$/ }}
                     onUpdate={(value) => {
                       const handler = { ...button.eventHandler }
                       handler.Variables = (value as string).trim().split(/\s+/)
@@ -369,7 +364,7 @@
                       height: column.image?.height === "0rem" ? "1rem" : column.image?.height,
                       defaultIcon: icon,
                     }),
-                  icons: ICONS,
+                  icons: { array: ICONS },
                 }}
                 {component}
                 {onPropertyChange}
@@ -422,7 +417,7 @@
         {:else if column.type == "text"}
           <div class="mx-auto">
             <UI.Select
-              wrapperClass="w-200"
+              wrapperClass="w-250"
               label={{ name: $t("constructor.props.tablecolumn.settings") }}
               type="buttons"
               multiSelect={true}

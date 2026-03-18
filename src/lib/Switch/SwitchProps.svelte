@@ -1,7 +1,7 @@
 <script lang="ts">
   import { getContext } from "svelte"
   import { t } from "$lib/locales/i18n"
-  import { type UIComponent, type ISwitchProps, updateProperty, type ISelectOption, type IUIComponentHandler } from "../types"
+  import { type UIComponent, type ISwitchProps, updateProperty, type IOption, type IUIComponentHandler } from "../types"
   import * as UI from "$lib"
   import { optionsStore } from "../options"
   import ButtonDelete from "$lib/libIcons/ButtonDelete.svelte"
@@ -19,6 +19,9 @@
   }>()
   const DeviceVariables = getContext<{ id: string; value: string; name: string }[]>("DeviceVariables")
   let VARIABLE_OPTIONS = $derived(DeviceVariables && Array.isArray(DeviceVariables) ? DeviceVariables : [])
+  let initialColor = $optionsStore.COLOR_OPTIONS.find((c) =>
+    (c.value as string).includes(component.properties.options[0].class.split(" ").find((cls: string) => cls.startsWith("bg-"))),
+  )
 </script>
 
 {#snippet SwitchType()}
@@ -28,7 +31,7 @@
     type="buttons"
     options={$optionsStore.SWITCH_OPTIONS.map((o) => (component.properties.bitMode && o.value == "checkbox" ? { ...o, disabled: true } : o))}
     value={$optionsStore.SWITCH_OPTIONS.find((option) => option.value == component.properties.type)}
-    onUpdate={(option) => updateProperty("type", (option as UI.ISelectOption).value as string, component, onPropertyChange)}
+    onUpdate={(option) => updateProperty("type", (option as UI.IOption).value as string, component, onPropertyChange)}
   />
 {/snippet}
 
@@ -65,14 +68,6 @@
     label={{ name: $t("constructor.props.colors") }}
     type="buttons"
     options={$optionsStore.COLOR_OPTIONS.filter((option) => option.value !== "bg-max" && option.value !== "bg-gray")}
-    value={$optionsStore.COLOR_OPTIONS.find((c) =>
-      (c.value as string).includes(component.properties.options[0].class.split(" ").find((cls: string) => cls.startsWith("bg-"))),
-    )}
-    onUpdate={(option) => {
-      const options = [...(component.properties?.options || [])]
-      options[0]["class"] = (option as UI.ISelectOption).value
-      updateProperty("options", options, component, onPropertyChange)
-    }}
   />
 {/snippet}
 
@@ -102,7 +97,7 @@
           wrapperClass="w-8"
           content={{ icon: ButtonAdd }}
           onClick={() => {
-            const newOption: ISelectOption = {
+            const newOption: IOption = {
               id: crypto.randomUUID(),
               name: component.properties?.options.length,
               value: component.properties?.options.length,
@@ -148,7 +143,7 @@
           value={$optionsStore.COLOR_OPTIONS.find((c) => (c.value as string).includes(option.class.split(" ").find((cls: string) => cls.startsWith("bg-"))))}
           onUpdate={(option) => {
             const options = [...(component.properties?.options || [])]
-            options[index]["class"] = (option as UI.ISelectOption).value
+            options[index]["class"] = (option as UI.IOption).value
             updateProperty("options", options, component, onPropertyChange)
           }}
         />
@@ -214,7 +209,20 @@
     <div class="flex w-1/3 flex-col px-2">
       <CommonSnippets snippet="Label" {component} {onPropertyChange} />
       {#if !component.properties.bitMode}
-        {@render SwitchColors()}
+        <CommonSnippets
+          snippet="Colors"
+          initialValue={{
+            initialColor,
+            uselessColors: ["bg-gray", "bg-max"],
+            updateProperty: (option: UI.IOption) => {
+              const options = [...(component.properties?.options || [])]
+              options[0]["class"] = (option as UI.IOption).value
+              updateProperty("options", options, component, onPropertyChange)
+            },
+          }}
+          {component}
+          {onPropertyChange}
+        />
       {/if}
       {#if component.properties.type != "checkbox"}
         {@render SwitchBitmode()}
@@ -232,7 +240,20 @@
       <CommonSnippets snippet="WrapperClass" {component} {onPropertyChange} />
 
       {#if !component.properties.bitMode}
-        {@render SwitchColors()}
+        <CommonSnippets
+          snippet="Colors"
+          initialValue={{
+            initialColor,
+            uselessColors: ["bg-gray", "bg-max"],
+            updateProperty: (option: UI.IOption) => {
+              const options = [...(component.properties?.options || [])]
+              options[0]["class"] = (option as UI.IOption).value
+              updateProperty("options", options, component, onPropertyChange)
+            },
+          }}
+          {component}
+          {onPropertyChange}
+        />
       {/if}
     </div>
     <div class="flex w-1/3 flex-col px-2">

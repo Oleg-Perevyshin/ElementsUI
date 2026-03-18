@@ -46,10 +46,10 @@
     options={VARIABLE_OPTIONS}
     value={VARIABLE_OPTIONS.find((opt) => opt.value === component.properties.id)}
     onUpdate={(value) => {
-      updateProperty("id", (value as UI.ISelectOption).value as string, component, onPropertyChange)
+      updateProperty("id", (value as UI.IOption).value as string, component, onPropertyChange)
       onPropertyChange({
-        name: (value as UI.ISelectOption).name?.split("—")[1]?.trim(),
-        eventHandler: { Variables: [(value as UI.ISelectOption).value as string] },
+        name: (value as UI.IOption).name?.split("—")[1]?.trim(),
+        eventHandler: { Variables: [(value as UI.IOption).value as string] },
       })
     }}
   />
@@ -68,29 +68,21 @@
       ? $optionsStore.ACCESS_OPTION.filter((o) => o.value !== "viewOnly")
       : $optionsStore.ACCESS_OPTION}
     value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.access)}
-    onUpdate={(option) => onPropertyChange({ access: (option as UI.ISelectOption).value as string })}
+    onUpdate={(option) => onPropertyChange({ access: (option as UI.IOption).value as string })}
   />
 {/snippet}
 
-{#snippet Colors(initialColor: UI.ISelectOption<string>)}
+{#snippet Colors(initialValue: { color: UI.IOption<string>; uselessColors?: string[]; updateProperty?: (option: UI.IOption | UI.IOption[]) => {} })}
   <UI.Select
     wrapperClass="!h-14"
     label={{ name: $t("constructor.props.colors") }}
     type="buttons"
-    options={component.type === "Tabs" ? $optionsStore.COLOR_OPTIONS.filter((o) => o.value !== "bg-max") : $optionsStore.COLOR_OPTIONS}
-    value={initialColor}
-    onUpdate={(option) => {
-      if (component.type === "Button") {
-        updateProperty(
-          "componentClass",
-          twMerge((component.properties as UI.IButtonProps).componentClass, (option as UI.ISelectOption<string>).value),
-          component,
-          onPropertyChange,
-        )
-      } else {
-        updateProperty("wrapperClass", twMerge(component.properties.wrapperClass, (option as UI.ISelectOption<string>).value), component, onPropertyChange)
-      }
-    }}
+    options={$optionsStore.COLOR_OPTIONS.filter((o) => !initialValue.uselessColors?.includes(o.value))}
+    value={initialValue.color}
+    onUpdate={(option) =>
+      initialValue.updateProperty
+        ? initialValue.updateProperty(option)
+        : updateProperty("wrapperClass", twMerge(component.properties.wrapperClass, (option as UI.IOption<string>).value), component, onPropertyChange)}
   />
 {/snippet}
 
@@ -114,7 +106,7 @@
   />
 {/snippet}
 
-{#snippet LabelAlign(initialAlign: UI.ISelectOption<string>)}
+{#snippet LabelAlign(initialAlign: UI.IOption<string>)}
   <UI.Select
     label={{ name: $t("constructor.props.align") }}
     type="buttons"
@@ -137,7 +129,7 @@
               | UI.IJoystickProps
               | UI.IMapProps
           ).label?.class,
-          (option as UI.ISelectOption<string>).value,
+          (option as UI.IOption<string>).value,
         ),
         component,
         onPropertyChange,
@@ -198,8 +190,8 @@
     value={$optionsStore.SHORT_ARGUMENT_OPTION.find((h) => h.value === component.eventHandler?.Argument)}
     options={$optionsStore.SHORT_ARGUMENT_OPTION}
     onUpdate={(option) => {
-      updateProperty("eventHandler.Argument", (option as UI.ISelectOption).value as string, component, onPropertyChange)
-      onPropertyChange({ eventHandler: { Argument: (option as UI.ISelectOption).value as string } })
+      updateProperty("eventHandler.Argument", (option as UI.IOption).value as string, component, onPropertyChange)
+      onPropertyChange({ eventHandler: { Argument: (option as UI.IOption).value as string } })
     }}
   />
 {/snippet}
@@ -236,14 +228,12 @@
                 <div class="absolute -top-3.5 bg-(--back-color) px-1">{$t(`constructor.props.icon.${category[0]}`)}</div>
                 <div class="grid place-items-center gap-2" style="grid-template-columns: repeat({initialValue.icons.selectArray ? 9 : 3}, minmax(0, 1fr));">
                   {#each category[1] as icon}
-                    {#if initialValue.icons.selectArray}
-                      <button
-                        class="h-8 w-8 cursor-pointer [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
-                        onclick={() => initialValue.updateProperty(icon)}
-                      >
-                        {@html icon}
-                      </button>
-                    {/if}
+                    <button
+                      class="h-8 w-8 cursor-pointer [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
+                      onclick={() => initialValue.updateProperty(icon)}
+                    >
+                      {@html icon}
+                    </button>
                   {/each}
                 </div>
               </div>

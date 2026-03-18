@@ -2,7 +2,7 @@
 <script lang="ts" generics="T = unknown">
   import { slide } from "svelte/transition"
   import { onMount } from "svelte"
-  import type { ISelectOption, ISelectProps } from "../types"
+  import type { IOption, ISelectProps } from "../types"
   import { twMerge } from "tailwind-merge"
   import { t } from "$lib/locales/i18n"
 
@@ -22,7 +22,7 @@
   }: ISelectProps<T> = $props()
 
   let searchValue: any = $state("")
-  let filteredOptions = $state<ISelectOption<T>[]>([])
+  let filteredOptions = $state<IOption<T>[]>([])
 
   /* Закрытие при клике вне компонента */
   const handleClickOutside = (event: MouseEvent) => {
@@ -36,7 +36,7 @@
       if (value?.name) {
         searchValue = value?.name
       } else if (value == undefined) {
-        const newOption: ISelectOption<T> = {
+        const newOption: IOption<T> = {
           id: `input-${searchValue}`,
           name: searchValue,
           value: searchValue as T,
@@ -61,14 +61,14 @@
     }
   }
 
-  const isSelected = (option: ISelectOption<any>) => {
+  const isSelected = (option: IOption<any>) => {
     if (type === "buttons" && multiSelect && Array.isArray(value)) {
       return value.includes(option)
     }
-    return option.value === (value as ISelectOption)?.value
+    return option.value === (value as IOption)?.value
   }
 
-  const selectOption = (option: ISelectOption<T>, event: MouseEvent) => {
+  const selectOption = (option: IOption<T>, event: MouseEvent) => {
     event.stopPropagation()
     if (!disabled) {
       if (type === "buttons" && multiSelect && value && !Array.isArray(value)) {
@@ -112,7 +112,7 @@
     const selectedFromList = options.find((option) => option.name?.toString() === searchValue)
 
     if (!selectedFromList) {
-      const newOption: ISelectOption<T> = {
+      const newOption: IOption<T> = {
         id: `input-${searchValue}`,
         name: searchValue,
         value:

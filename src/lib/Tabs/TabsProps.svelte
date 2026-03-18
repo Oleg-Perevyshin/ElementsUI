@@ -1,6 +1,6 @@
 <script lang="ts">
   import { t } from "$lib/locales/i18n"
-  import { updateProperty, type ISelectOption, type ITabsProps, type IUIComponentHandler, type UIComponent } from "../types"
+  import { updateProperty, type IOption, type ITabsProps, type IUIComponentHandler, type UIComponent } from "../types"
   import * as UI from "$lib"
   import { optionsStore } from "../options"
   import { ICONS } from "../icons"
@@ -28,7 +28,7 @@
     $optionsStore.ICON_TEXT_POSITION_OPTIONS.find((c) =>
       (c.value as string).includes(
         component.properties.items
-          .find((item: ISelectOption) => item.class?.includes("flex-"))
+          .find((item: IOption) => item.class?.includes("flex-"))
           .class.split(" ")
           .find((cls: string) => cls.startsWith("flex-")),
       ),
@@ -36,7 +36,7 @@
   )
 
   const initialWidth = $derived(() => {
-    let width = component.properties.items.find((item: ISelectOption) => item.class?.split(" ").find((cls: string) => cls.startsWith("w-")))
+    let width = component.properties.items.find((item: IOption) => item.class?.split(" ").find((cls: string) => cls.startsWith("w-")))
     if (!width) {
       return 0
     } else if (width.class.includes("w-auto")) return 0
@@ -54,7 +54,7 @@
     onUpdate={(option) => {
       component.properties.items.forEach((_item: any, index: number) => {
         const items = [...(component.properties?.items || [])]
-        items[index]["class"] = twMerge(items[index].class, (option as UI.ISelectOption).value as string)
+        items[index]["class"] = twMerge(items[index].class, (option as UI.IOption).value as string)
         updateProperty("items", items, component, onPropertyChange)
       })
     }}
@@ -127,7 +127,7 @@
                 items[index]["icon"] = icon as string
                 updateProperty("items", items, component, onPropertyChange)
               },
-              icons: ICONS,
+              icons: { array: ICONS },
             }}
             {component}
             {onPropertyChange}
@@ -189,7 +189,7 @@
   <div class="flex items-start mb-4 justify-center gap-8">
     <div class="flex w-1/3 flex-col px-2">
       <CommonSnippets snippet="Access" {component} {onPropertyChange} />
-      <CommonSnippets snippet="Colors" initialValue={initialColor} {component} {onPropertyChange} />
+      <CommonSnippets snippet="Colors" initialValue={{ initialColor, uselessColors: ["bg-max"] }} {component} {onPropertyChange} />
     </div>
     <div class="flex w-1/3 flex-col px-2">
       {@render TabsIconPosition()}
@@ -208,7 +208,7 @@
     </div>
     <div class="flex w-1/3 flex-col px-2">
       <CommonSnippets snippet="Access" {component} {onPropertyChange} />
-      <CommonSnippets snippet="Colors" initialValue={initialColor} {component} {onPropertyChange} />
+      <CommonSnippets snippet="Colors" initialValue={{ initialColor, uselessColors: ["bg-max"] }} {component} {onPropertyChange} />
       {@render TabsIconPosition()}
       {@render TabsWidthMode()}
     </div>

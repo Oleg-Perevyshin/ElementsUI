@@ -1,7 +1,7 @@
 <!-- src/routes/test/+page.svelte -->
 <script lang="ts">
   import * as UI from "$lib"
-  import type { IDeviceGNSS, ISelectOption, ITableHeader } from "$lib/types"
+  import type { IDeviceGNSS, IOption, ITableHeader } from "$lib/types"
   import IconGripHorizontalUp from "../../../appIcons/IconGripHorizontalUp.svelte"
   import IconGripHorizontalDown from "../../../appIcons/IconGripHorizontalDown.svelte"
   import IconGripVerticalDual from "../../../appIcons/IconGripVerticalDual.svelte"
@@ -120,7 +120,7 @@
     name: string
     status: "online" | "offline"
     lastActive: string
-    action?: ISelectOption[]
+    action?: IOption[]
   }
   const columns: ITableHeader<ITableRow>[] = [
     { label: { name: "ID" }, key: "id", width: "5%", text: { sortable: true }, align: "center" },
@@ -209,7 +209,7 @@
   let inputString: string = $state("String Data")
   let inputNumber: number = $state(7)
   let progressBarValue = $state([40])
-  let selectOption: ISelectOption = $state({ id: "Map", name: "Map", value: "Map" })
+  let selectOption: IOption = $state({ id: "Map", name: "Map", value: "Map" })
   let COMPONENT_OPTIONS = Object.keys(componentMap).map((name) => ({ id: name, name: name, value: name }))
   let switchValue = $state(0)
   let fullSwitchValue = $state(10)
@@ -435,20 +435,15 @@
         label={{ name: "Компоненты" }}
         options={COMPONENT_OPTIONS}
         value={selectOption}
-        onUpdate={(option) => (selectOption = option as UI.ISelectOption)}
+        onUpdate={(option) => (selectOption = option as UI.IOption)}
       />
-      <UI.Select
-        label={{ name: "Компоненты" }}
-        options={COMPONENT_OPTIONS}
-        value={selectOption}
-        onUpdate={(option) => (selectOption = option as UI.ISelectOption)}
-      />
+      <UI.Select label={{ name: "Компоненты" }} options={COMPONENT_OPTIONS} value={selectOption} onUpdate={(option) => (selectOption = option as UI.IOption)} />
       <UI.Select
         type="buttons"
         label={{ name: "Компоненты" }}
         options={COMPONENT_OPTIONS}
         value={selectOption}
-        onUpdate={(option) => (selectOption = option as UI.ISelectOption)}
+        onUpdate={(option) => (selectOption = option as UI.IOption)}
       />
       <div class="mt-4 flex items-end">
         <UI.Select

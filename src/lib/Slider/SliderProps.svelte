@@ -39,8 +39,8 @@
     value={$optionsStore.SLIDER_TYPE_OPTIONS.find((opt) => opt.value === (component.properties.type || "single"))}
     options={$optionsStore.SLIDER_TYPE_OPTIONS}
     onUpdate={(type) => {
-      updateProperty("value", (type as UI.ISelectOption).value === "single" ? 5 : [2, 7], component, onPropertyChange)
-      updateProperty("type", (type as UI.ISelectOption).value as string, component, onPropertyChange)
+      updateProperty("value", (type as UI.IOption).value === "single" ? 5 : [2, 7], component, onPropertyChange)
+      updateProperty("type", (type as UI.IOption).value as string, component, onPropertyChange)
     }}
   />
 {/snippet}
@@ -88,7 +88,7 @@
     <div class="flex w-1/3 flex-col px-2">
       <CommonSnippets snippet="Label" {component} {onPropertyChange} />
       <CommonSnippets snippet="LabelAlign" initialValue={initialAlign} {component} {onPropertyChange} />
-      <CommonSnippets snippet="Colors" initialValue={initialColor} {component} {onPropertyChange} />
+      <CommonSnippets snippet="Colors" initialValue={{ initialColor, uselessColors: ["bg-gray"] }} {component} {onPropertyChange} />
     </div>
   </div>
 {:else}
@@ -96,7 +96,7 @@
     <div class="flex w-1/3 flex-col px-2">
       <CommonSnippets snippet="Identificator" {component} {onPropertyChange} />
       <CommonSnippets snippet="WrapperClass" {component} {onPropertyChange} />
-      <CommonSnippets snippet="Colors" initialValue={initialColor} {component} {onPropertyChange} />
+      <CommonSnippets snippet="Colors" initialValue={{ initialColor, uselessColors: ["bg-gray"] }} {component} {onPropertyChange} />
       <CommonSnippets snippet="Disabled" {component} {onPropertyChange} />
     </div>
     <div class="flex w-1/3 flex-col px-2">

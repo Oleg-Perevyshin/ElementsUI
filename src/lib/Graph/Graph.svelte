@@ -2,7 +2,7 @@
 <script lang="ts">
   import { onMount } from "svelte"
   import Select from "../Select/Select.svelte"
-  import type { IGraphDataObject, IGraphProps, ISelectOption } from "../types"
+  import type { IGraphDataObject, IGraphProps, IOption } from "../types"
 
   /* Инициализация пропсов с дефолтными значениями */
   let {
@@ -23,7 +23,7 @@
   let height = $state(125)
 
   /* Константы и настройки */
-  const REFRESH_OPTIONS: ISelectOption[] = [
+  const REFRESH_OPTIONS: IOption[] = [
     { id: "RefreshOption-AUTO", name: "AUTO", value: 0, class: "" },
     { id: "RefreshOption-10", name: "10", value: 10, class: "" },
     { id: "RefreshOption-25", name: "25", value: 25, class: "" },
@@ -34,7 +34,7 @@
     { id: "RefreshOption-1000", name: "1000", value: 1000, class: "" },
     { id: "RefreshOption-5000", name: "5000", value: 5000, class: "" },
   ]
-  const SCALE_OPTIONS: ISelectOption[] = [
+  const SCALE_OPTIONS: IOption[] = [
     { id: "ScaleOption-50", name: "50", value: 50, class: "" },
     { id: "ScaleOption-100", name: "100", value: 100, class: "" },
     { id: "ScaleOption-500", name: "500", value: 500, class: "" },
@@ -236,7 +236,7 @@
         label={{ name: "Refresh rate", class: "" }}
         options={REFRESH_OPTIONS}
         value={REFRESH_OPTIONS.find((o) => o.value == selectedRefreshRate)}
-        onUpdate={(value) => (selectedRefreshRate = (value as ISelectOption).value as number)}
+        onUpdate={(value) => (selectedRefreshRate = (value as IOption).value as number)}
       />
 
       <!-- Масштаб по вертикали -->
@@ -244,7 +244,7 @@
         label={{ name: "Scale" }}
         options={SCALE_OPTIONS}
         value={SCALE_OPTIONS.find((o) => o.value == selectedScale)}
-        onUpdate={(value) => (selectedScale = (value as ISelectOption).value as number)}
+        onUpdate={(value) => (selectedScale = (value as IOption).value as number)}
       />
 
       <!-- Переменные и их значение -->

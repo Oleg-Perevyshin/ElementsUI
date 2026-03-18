@@ -44,12 +44,11 @@
           // captionRight: "On",
         },
       },
-      value: 0,
     },
     position: { row: 0, col: 0, width: 0, height: 0 },
     parentId: "",
   })
-  let widgetValue = $state(0)
+  let widgetValue = $state(80)
 
   let codeText = $derived(`
 <UI.TextField
@@ -59,7 +58,7 @@ ${formatObjectToString(widgetComponent.properties as ITextFieldProps)}
 
 <ComponentExample {codeText}>
   {#snippet component()}
-    <div class="m-auto w-70 h-75">
+    <div class="m-auto size-70">
       <Widget bind:value={widgetValue} {...widgetComponent.properties as IWidgetProps} />
     </div>
   {/snippet}

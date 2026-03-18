@@ -1,7 +1,7 @@
 <!-- $lib/ElementsUI/Table.svelte -->
 <script lang="ts">
   import { get } from "svelte/store"
-  import type { ISelectOption, ITableHeader, ITableProps } from "../types"
+  import type { IOption, ITableHeader, ITableProps } from "../types"
   import { fade, fly, slide } from "svelte/transition"
   import { twMerge } from "tailwind-merge"
   import { onMount, tick } from "svelte"
@@ -114,7 +114,7 @@
     }
   }
 
-  const selectOption = async (index: number, key: any, option: ISelectOption<string | number>, event: MouseEvent) => {
+  const selectOption = async (index: number, key: any, option: IOption<string | number>, event: MouseEvent) => {
     event.stopPropagation()
 
     let existingItem = body[index][key]
@@ -277,7 +277,6 @@
                 <div
                   id="rowDiv{i}-{j}"
                   class="relative flex w-full min-w-0 items-center gap-x-2 px-2 py-1 wrap-break-word
-              
               {column.align === 'center' ? 'justify-center text-center' : column.align === 'right' ? 'justify-end text-right' : 'justify-start text-left'}
               border-t {j !== 0 ? ' border-l ' : ''} {outline ? 'border-(--border-color)' : 'border-transparent'} {column.disableSelect
                     ? 'select-none'
@@ -318,8 +317,8 @@
         cursor-pointer hover:shadow-[0_0_6px_rgb(0_0_0_/0.25)]"
                         onclick={() => (isDropdownOpen = isDropdownOpen?.x === j && isDropdownOpen.y === i ? null : { x: j, y: i })}
                       >
-                        {options.some((o: ISelectOption) => o.value === row[(column.key as string).slice(0, -2)])
-                          ? row[column.key].find((o: ISelectOption) => o.value === row[(column.key as string).slice(0, -2)]).name
+                        {options.some((o: IOption) => o.value === row[(column.key as string).slice(0, -2)])
+                          ? row[column.key].find((o: IOption) => o.value === row[(column.key as string).slice(0, -2)]).name
                           : $t("common.select_tag")}
                       </button>
 
@@ -370,15 +369,15 @@
                   {:else}
                     {@const text =
                       Array.isArray(row[column.key]) && row[column.key][0] && "value" in row[column.key][0]
-                        ? row[column.key].map((item: ISelectOption) => item.name)
+                        ? row[column.key].map((item: IOption) => item.name)
                         : typeof row[column.key] == "object"
                           ? JSON.stringify(row[column.key])
                           : row[column.key]}
                     <div
-                      class=" w-full max-w-full wrap-break-word {column.text?.truncated ? 'truncate' : ' whitespace-normal'}"
-                      onmouseenter={column.text?.truncated ? (e) => showTooltip(e, row[column.key], column.text?.formatting) : undefined}
-                      onmouseleave={column.text?.truncated ? hideTooltip : undefined}
-                      onmousemove={column.text?.truncated
+                      class="w-full max-w-full wrap-break-word {column.text?.truncated ? 'truncate' : ' whitespace-normal'}"
+                      onmouseenter={column.text?.tooltip ? (e) => showTooltip(e, row[column.key], column.text?.formatting) : undefined}
+                      onmouseleave={column.text?.tooltip ? hideTooltip : undefined}
+                      onmousemove={column.text?.tooltip
                         ? (e) => {
                             tooltip.x = e.clientX
                             tooltip.y = e.clientY
@@ -389,7 +388,7 @@
                     >
                       {#if column.text?.modal}
                         <button
-                          class="cursor-pointer overflow-hidden text-left text-ellipsis whitespace-nowrap"
+                          class="w-full cursor-pointer text-left"
                           onclick={(e) => {
                             e.stopPropagation()
                             showModal(text, column.text?.formatting)

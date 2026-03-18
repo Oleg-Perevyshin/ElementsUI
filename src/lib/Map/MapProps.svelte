@@ -49,7 +49,7 @@
           name: $t("constructor.props.markerIcon"),
           icon: component.properties.markerIcon,
           updateProperty: (icon: string) => updateProperty("markerIcon", icon as string, component, onPropertyChange),
-          icons: ICONS,
+          icons: { array: ICONS },
         }}
         {component}
         {onPropertyChange}
@@ -73,7 +73,7 @@
           name: $t("constructor.props.markerIcon"),
           icon: component.properties.markerIcon,
           updateProperty: (icon: string) => updateProperty("markerIcon", icon as string, component, onPropertyChange),
-          icons: ICONS,
+          icons: { array: ICONS },
         }}
         {component}
         {onPropertyChange}

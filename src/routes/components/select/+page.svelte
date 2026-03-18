@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { type ISelectOption, type ISelectProps, type UIComponent } from "$lib"
+  import { type IOption, type ISelectProps, type UIComponent } from "$lib"
   import ComponentExample from "$lib/ComponentExample.svelte"
   import Select from "$lib/Select/Select.svelte"
   import SelectProps from "$lib/Select/SelectProps.svelte"

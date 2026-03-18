@@ -1,7 +1,7 @@
 <script lang="ts">
   import { getContext } from "svelte"
   import { t } from "$lib/locales/i18n"
-  import type { IInputProps, UIComponent, ISelectOption, IUIComponentHandler } from "../types"
+  import type { IInputProps, UIComponent, IOption, IUIComponentHandler } from "../types"
   import * as UI from "$lib"
   import { optionsStore } from "../options"
   import { twMerge } from "tailwind-merge"
@@ -95,8 +95,8 @@
     options={VARIABLE_OPTIONS}
     value={VARIABLE_OPTIONS.find((opt) => opt.value === component.properties.id)}
     onUpdate={(value) => {
-      updateProperty("id", (value as ISelectOption).value as string)
-      onPropertyChange({ name: (value as ISelectOption).name?.split("—")[1]?.trim(), eventHandler: { Variables: [(value as ISelectOption).value as string] } })
+      updateProperty("id", (value as IOption).value as string)
+      onPropertyChange({ name: (value as IOption).name?.split("—")[1]?.trim(), eventHandler: { Variables: [(value as IOption).value as string] } })
     }}
   />
 {/snippet}
@@ -107,7 +107,7 @@
     type="buttons"
     options={$optionsStore.ACCESS_OPTION}
     value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.access)}
-    onUpdate={(option) => onPropertyChange({ access: (option as ISelectOption).value })}
+    onUpdate={(option) => onPropertyChange({ access: (option as IOption).value })}
   />
 {/snippet}
 
@@ -125,7 +125,7 @@
     type="buttons"
     value={initialAlign}
     options={$optionsStore.TEXT_ALIGN_OPTIONS}
-    onUpdate={(option) => updateProperty("label.class", twMerge(component.properties.label.class, (option as ISelectOption<string>).value))}
+    onUpdate={(option) => updateProperty("label.class", twMerge(component.properties.label.class, (option as IOption<string>).value))}
   />
 {/snippet}
 
@@ -136,7 +136,7 @@
     type="buttons"
     value={$optionsStore.INPUT_TYPE_OPTIONS.find((opt) => opt.value === (component.properties.type || "text"))}
     onUpdate={(option) => {
-      updateProperty("type", (option as UI.ISelectOption).value as string)
+      updateProperty("type", (option as UI.IOption).value as string)
     }}
   />
   {#if component.properties.type === "text" || component.properties.type === "password" || component.properties.type === "text-area"}
@@ -255,7 +255,7 @@
     label={{ name: $t("constructor.props.autocomplete") }}
     options={$optionsStore.AUTOCOMPLETE_CONSTRUCTOR_OPTIONS}
     value={$optionsStore.AUTOCOMPLETE_CONSTRUCTOR_OPTIONS.find((opt) => opt.value === (component.properties.help.autocomplete || "off"))}
-    onUpdate={(option) => updateProperty("help.autocomplete", (option as UI.ISelectOption).value as string)}
+    onUpdate={(option) => updateProperty("help.autocomplete", (option as UI.IOption).value as string)}
   />
 {/snippet}
 
@@ -266,7 +266,7 @@
     type="buttons"
     options={$optionsStore.COLOR_OPTIONS}
     value={initialColor}
-    onUpdate={(option) => handleOptionColorChange((option as UI.ISelectOption).value as string)}
+    onUpdate={(option) => handleOptionColorChange((option as UI.IOption).value as string)}
   />
 {/snippet}
 

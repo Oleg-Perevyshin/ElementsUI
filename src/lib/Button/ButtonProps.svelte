@@ -1,7 +1,7 @@
 <!-- $lib/ElementsUI/ButtonProps.svelte -->
 <script lang="ts">
   import { t } from "../locales/i18n"
-  import { type UIComponent, type IButtonProps, type ISelectOption, updateProperty, type IUIComponentHandler } from "../types"
+  import { type UIComponent, type IButtonProps, type IOption, updateProperty, type IUIComponentHandler } from "../types"
   import * as UI from "$lib"
   import { optionsStore } from "../options"
   import { twMerge } from "tailwind-merge"
@@ -25,7 +25,7 @@
 
   let hasValue: boolean = $derived(component.eventHandler.Value)
 
-  let Header: ISelectOption = $derived(
+  let Header: IOption = $derived(
     $optionsStore.HEADER_OPTIONS.find((h) => h.value === component.eventHandler.Header) ?? {
       id: "",
       name: "",
@@ -54,7 +54,7 @@
     value={Header}
     options={$optionsStore.HEADER_OPTIONS}
     onUpdate={(option) => {
-      Header = { ...(option as ISelectOption<string>) }
+      Header = { ...(option as IOption<string>) }
       onPropertyChange({ eventHandler: { Header: Header.value as string } })
     }}
   />
@@ -66,7 +66,7 @@
         $optionsStore.FULL_ARGUMENT_OPTION.find((h) => h.value === "")}
       options={$optionsStore.FULL_ARGUMENT_OPTION}
       onUpdate={(option) => {
-        onPropertyChange({ eventHandler: { Argument: (option as ISelectOption<string>).value as string } })
+        onPropertyChange({ eventHandler: { Argument: (option as IOption<string>).value as string } })
       }}
     />
   {/if}
@@ -120,7 +120,7 @@
     options={$optionsStore.HEIGHT_OPTIONS}
     value={initialHeight}
     onUpdate={(option) =>
-      updateProperty("componentClass", twMerge(component.properties.componentClass, (option as ISelectOption<string>).value), component, onPropertyChange)}
+      updateProperty("componentClass", twMerge(component.properties.componentClass, (option as IOption<string>).value), component, onPropertyChange)}
   />
 {/snippet}
 
@@ -138,7 +138,7 @@
     type="buttons"
     options={$optionsStore.INFO_SIDE_OPTIONS}
     value={$optionsStore.INFO_SIDE_OPTIONS.find((h) => h.value === component.properties.content.info.side)}
-    onUpdate={(option) => updateProperty("content.info.side", (option as ISelectOption<string>).value as string, component, onPropertyChange)}
+    onUpdate={(option) => updateProperty("content.info.side", (option as IOption<string>).value as string, component, onPropertyChange)}
   />
 {/snippet}
 
@@ -165,7 +165,7 @@
           name: $t("constructor.props.buttonIcon"),
           icon: component.properties.content.icon,
           updateProperty: (icon: string) => updateProperty("content.icon", icon as string, component, onPropertyChange),
-          icons: ICONS,
+          icons: { array: ICONS },
         }}
         {component}
         {onPropertyChange}
@@ -174,7 +174,22 @@
     <div class="flex w-1/3 flex-col px-2">
       {@render ButtonName()}
       {@render ButtonHeight()}
-      <CommonSnippets snippet="Colors" initialValue={initialColor} {component} {onPropertyChange} />
+      <CommonSnippets
+        snippet="Colors"
+        initialValue="{{
+          initialColor,
+          updateProperty: (option: UI.IOption<string>) => {
+            updateProperty(
+              'componentClass',
+              twMerge((component.properties as UI.IButtonProps).componentClass, (option as UI.IOption<string>).value),
+              component,
+              onPropertyChange,
+            )
+          },
+        }}}"
+        {component}
+        {onPropertyChange}
+      />
     </div>
   </div>
 {:else}
@@ -193,14 +208,29 @@
     </div>
     <div class="flex w-1/3 flex-col px-2">
       {@render ButtonComponentClass()}
-      <CommonSnippets snippet="Colors" initialValue={initialColor} {component} {onPropertyChange} />
+      <CommonSnippets
+        snippet="Colors"
+        initialValue={{
+          initialColor,
+          updateProperty: (option: UI.IOption<string>) => {
+            updateProperty(
+              "componentClass",
+              twMerge((component.properties as UI.IButtonProps).componentClass, (option as UI.IOption<string>).value),
+              component,
+              onPropertyChange,
+            )
+          },
+        }}
+        {component}
+        {onPropertyChange}
+      />
       <CommonSnippets
         snippet="IconsLib"
         initialValue={{
           name: $t("constructor.props.buttonIcon"),
           icon: component.properties.content.icon,
           updateProperty: (icon: string) => updateProperty("content.icon", icon as string, component, onPropertyChange),
-          icons: ICONS,
+          icons: { array: ICONS },
         }}
         {component}
         {onPropertyChange}

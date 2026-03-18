@@ -106,7 +106,7 @@
           name: $t("constructor.props.labelicon"),
           icon: component.properties.label.icon,
           updateProperty: (icon: string) => updateProperty("label.icon", icon as string, component, onPropertyChange),
-          icons: ICONS,
+          icons: { array: ICONS },
         }}
         {component}
         {onPropertyChange}
@@ -131,9 +131,9 @@
         snippet="IconsLib"
         initialValue={{
           name: $t("constructor.props.labelicon"),
+          icons: { array: ICONS },
           icon: component.properties.label.icon,
           updateProperty: (icon: string) => updateProperty("label.icon", icon as string, component, onPropertyChange),
-          icons: ICONS,
         }}
         {component}
         {onPropertyChange}

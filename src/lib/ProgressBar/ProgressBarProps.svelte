@@ -30,7 +30,7 @@
     type="buttons"
     options={$optionsStore.SWITCH_OPTIONS.filter((o) => o.value !== "checkbox")}
     value={$optionsStore.SWITCH_OPTIONS.find((option) => option.value == component.properties.type)}
-    onUpdate={(option) => updateProperty("type", (option as UI.ISelectOption).value as string, component, onPropertyChange)}
+    onUpdate={(option) => updateProperty("type", (option as UI.IOption).value as string, component, onPropertyChange)}
   />
 {/snippet}
 
@@ -133,7 +133,7 @@
             )}
             onUpdate={(value) => {
               const progresses = [...(component.properties?.items || [])]
-              progresses[index]["class"] = (value as UI.ISelectOption).value
+              progresses[index]["class"] = (value as UI.IOption).value
               updateProperty("items", progresses, component, onPropertyChange)
             }}
           />

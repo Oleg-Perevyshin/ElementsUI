@@ -42,7 +42,7 @@
     type="buttons"
     value={$optionsStore.FILE_ATTACH_TYPE_OPTIONS.find((c) => (c.value as string).includes(component.properties.type))}
     options={$optionsStore.FILE_ATTACH_TYPE_OPTIONS}
-    onUpdate={(option) => updateProperty("type", (option as UI.ISelectOption).value as string, component, onPropertyChange)}
+    onUpdate={(option) => updateProperty("type", (option as UI.IOption).value as string, component, onPropertyChange)}
   />
 
   {#if component.properties.type === "image"}
@@ -66,14 +66,14 @@
         type="buttons"
         value={$optionsStore.FITMODE_OPTIONS.find((c) => (c.value as string).includes(component.properties.imageSize.fitMode))}
         options={$optionsStore.FITMODE_OPTIONS}
-        onUpdate={(option) => updateProperty("imageSize.fitMode", (option as UI.ISelectOption).value as string, component, onPropertyChange)}
+        onUpdate={(option) => updateProperty("imageSize.fitMode", (option as UI.IOption).value as string, component, onPropertyChange)}
       />
       <UI.Select
         label={{ name: $t("constructor.props.form") }}
         type="buttons"
         value={$optionsStore.FORM_OPTIONS.find((c) => (c.value as string).includes(component.properties.imageSize.form))}
         options={$optionsStore.FORM_OPTIONS}
-        onUpdate={(option) => updateProperty("imageSize.form", (option as UI.ISelectOption).value as string, component, onPropertyChange)}
+        onUpdate={(option) => updateProperty("imageSize.form", (option as UI.IOption).value as string, component, onPropertyChange)}
       />
     </div>
   {/if}

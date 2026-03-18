@@ -45,7 +45,7 @@ export {
   type IAccordionProps,
   type IInputProps,
   type ISelectProps,
-  type ISelectOption,
+  type IOption,
   type ISwitchProps,
   type IColorPickerProps,
   type ISliderProps,

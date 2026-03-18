@@ -300,14 +300,14 @@ export interface ISelectProps<T = unknown> {
   label?: { name?: string; class?: string }
   type?: "select" | "buttons" | "input"
   multiSelect?: boolean
-  value?: ISelectOption<T> | ISelectOption<T>[] | null
-  options?: ISelectOption<T>[]
+  value?: IOption<T> | IOption<T>[] | null
+  options?: IOption<T>[]
   bitMode?: boolean
   range?: { start: number; end: number }
-  onUpdate?: (value: ISelectOption<T> | ISelectOption<T>[]) => void
+  onUpdate?: (value: IOption<T> | IOption<T>[]) => void
 }
 
-export interface ISelectOption<T = unknown> {
+export interface IOption<T = unknown> {
   id: string
   value?: T
   name?: string
@@ -342,7 +342,7 @@ export interface ISwitchProps {
     captionRight?: string
   }
   hiddenInfo?: string
-  options?: ISelectOption<number>[]
+  options?: IOption<number>[]
   bitMode?: boolean
   type?: "horizontal" | "vertical" | "checkbox"
   value?: number
@@ -369,6 +369,7 @@ export interface ITableHeader<T extends object> {
   text?: {
     sortable?: boolean
     truncated?: boolean
+    tooltip?: boolean
     formatting?: (text: string) => string
     copy?: boolean
     modal?: boolean

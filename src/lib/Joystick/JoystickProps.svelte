@@ -1,7 +1,7 @@
 <script lang="ts">
   import { getContext } from "svelte"
   import { t } from "$lib/locales/i18n"
-  import { type UIComponent, type IGraphProps, updateProperty, type ISelectOption, type IUIComponentHandler } from "../types"
+  import { type UIComponent, type IGraphProps, updateProperty, type IOption, type IUIComponentHandler } from "../types"
   import * as UI from "$lib"
   import Modal from "$lib/Modal.svelte"
   import { ICONS } from "$lib/icons"
@@ -115,13 +115,13 @@
             name: $t("constructor.props.buttonIcon"),
             icon: component.properties.buttonIcon,
             updateProperty: (icon: string) => updateProperty("buttonIcon", icon as string, component, onPropertyChange),
-            icons: ICONS,
+            icons: { array: ICONS },
           }}
           {component}
           {onPropertyChange}
         />
         {@render JoystickAxesNames()}
-        <CommonSnippets snippet="Colors" initialValue={initialColor} {component} {onPropertyChange} />
+        <CommonSnippets snippet="Colors" initialValue={{ initialColor }} {component} {onPropertyChange} />
       </div>
     </div>
     {@render JoystickAxesMinMax()}
@@ -145,13 +145,13 @@
             name: $t("constructor.props.buttonIcon"),
             icon: component.properties.buttonIcon,
             updateProperty: (icon: string) => updateProperty("buttonIcon", icon as string, component, onPropertyChange),
-            icons: ICONS,
+            icons: { array: ICONS },
           }}
           {component}
           {onPropertyChange}
         />
         {@render JoystickAxesNames()}
-        <CommonSnippets snippet="Colors" initialValue={initialColor} {component} {onPropertyChange} />
+        <CommonSnippets snippet="Colors" initialValue={{ initialColor }} {component} {onPropertyChange} />
       </div>
     </div>
     {@render JoystickAxesMinMax()}

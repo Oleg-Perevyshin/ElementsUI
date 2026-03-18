@@ -18,7 +18,7 @@
     textareaRows = 3,
     isValid = $bindable(true),
     number = { minNum: -1000000, maxNum: 1000000, step: 1 },
-    help = { info: "", autocomplete: "off", copyButton: false, regExp: "^[\\s\\S]*$" },
+    help = { info: "", autocomplete: "off", copyButton: false },
     onUpdate = () => {},
   }: IInputProps = $props()
 
@@ -35,7 +35,7 @@
   let RegExpObj = $derived(() => parseRegExp(help.regExp ?? ""))
 
   $effect(() => {
-    isValid = RegExpObj().test(typeof value === "string" ? value : String(value))
+    if (help.regExp) isValid = RegExpObj().test(typeof value === "string" ? value : String(value))
   })
 
   const handleInputChange = (value: string | number) => {

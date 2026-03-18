@@ -39,7 +39,7 @@
     type="buttons"
     value={currentType}
     options={$optionsStore.TEXTFIELD_SIZE_OPTIONS}
-    onUpdate={(item) => updateProperty("content.size", (item as UI.ISelectOption).value as string, component, onPropertyChange)}
+    onUpdate={(item) => updateProperty("content.size", (item as UI.IOption).value as string, component, onPropertyChange)}
   />
 {/snippet}
 
@@ -59,7 +59,7 @@
     options={$optionsStore.TEXT_COLOR_OPTIONS}
     value={initialColor}
     onUpdate={(option) =>
-      updateProperty("wrapperClass", twMerge(component.properties.wrapperClass, (option as UI.ISelectOption).value as string), component, onPropertyChange)}
+      updateProperty("wrapperClass", twMerge(component.properties.wrapperClass, (option as UI.IOption).value as string), component, onPropertyChange)}
   />
 {/snippet}
 

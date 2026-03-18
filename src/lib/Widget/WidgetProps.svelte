@@ -3,12 +3,7 @@
   import { updateProperty, type IUIComponentHandler, type UIComponent } from "../types"
   import * as UI from "$lib"
   import { optionsStore } from "../options"
-  import { ICONS, ICONS_ARRAY } from "../icons"
-  import Modal from "$lib/Modal.svelte"
-  import Button from "$lib/Button/Button.svelte"
-  import CrossIcon from "$lib/libIcons/CrossIcon.svelte"
-  import ButtonAdd from "$lib/libIcons/ButtonAdd.svelte"
-  import ButtonDelete from "$lib/libIcons/ButtonDelete.svelte"
+  import { ICONS_ARRAY } from "../icons"
   import { twMerge } from "tailwind-merge"
   import CommonSnippets from "$lib/CommonSnippets.svelte"
   import { getContext } from "svelte"
@@ -51,7 +46,7 @@
     options={$optionsStore.COLOR_OPTIONS}
     value={initialColor}
     onUpdate={(option) => {
-      updateProperty("settings.class", twMerge(component.properties.settings.class, (option as UI.ISelectOption<string>).value), component, onPropertyChange)
+      updateProperty("settings.class", twMerge(component.properties.settings.class, (option as UI.IOption<string>).value), component, onPropertyChange)
     }}
   />
 {/snippet}
@@ -66,7 +61,7 @@
       (c.value as string).includes(component.properties.icons.class?.split(" ").find((cls: string) => cls.startsWith("text-"))),
     )}
     onUpdate={(option) => {
-      updateProperty("icons.class", twMerge(component.properties.icons.class, (option as UI.ISelectOption<string>).value), component, onPropertyChange)
+      updateProperty("icons.class", twMerge(component.properties.icons.class, (option as UI.IOption<string>).value), component, onPropertyChange)
       console.log(component.properties)
     }}
   />
@@ -79,7 +74,7 @@
     options={$optionsStore.WIDGET_TYPE_OPTIONS}
     value={$optionsStore.WIDGET_TYPE_OPTIONS.find((o) => o.value == component.properties.settings.type)}
     onUpdate={(option) => {
-      updateProperty("settings.type", (option as UI.ISelectOption).value as string, component, onPropertyChange)
+      updateProperty("settings.type", (option as UI.IOption).value as string, component, onPropertyChange)
     }}
   />
 {/snippet}
@@ -133,7 +128,7 @@
     options={$optionsStore.WIDGET_MODE_OPTIONS}
     value={$optionsStore.WIDGET_MODE_OPTIONS.find((o) => o.value == component.properties.icons.mode)}
     onUpdate={(option) => {
-      updateProperty("icons.mode", (option as UI.ISelectOption).value as string, component, onPropertyChange)
+      updateProperty("icons.mode", (option as UI.IOption).value as string, component, onPropertyChange)
     }}
   />
 {/snippet}
@@ -189,7 +184,7 @@
     {/if} -->
 {/snippet}
 
-{#if !forConstructor}
+{#if forConstructor}
   <div class="flex mb-4 items-start justify-center gap-8">
     <div class="flex w-1/3 flex-col px-2">
       <CommonSnippets snippet="Variable" {VARIABLE_OPTIONS} {component} {onPropertyChange} />

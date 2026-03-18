@@ -1,7 +1,7 @@
 <script lang="ts">
   import { getContext, onMount } from "svelte"
   import { t } from "$lib/locales/i18n"
-  import { type UIComponent, type ISelectProps, type ISelectOption, updateProperty, type IUIComponentHandler } from "../types"
+  import { type UIComponent, type ISelectProps, type IOption, updateProperty, type IUIComponentHandler } from "../types"
   import * as UI from "$lib"
   import ButtonDelete from "../libIcons/ButtonDelete.svelte"
   import ButtonAdd from "../libIcons/ButtonAdd.svelte"
@@ -36,7 +36,7 @@
         : ($optionsStore.SELECT_VALUE_TYPE_OPTIONS[0] as ValueTypeOption),
   )
 
-  let Header: ISelectOption = $derived(
+  let Header: IOption = $derived(
     $optionsStore.HEADER_OPTIONS.find((h) => h.value === component.eventHandler.Header) ?? {
       id: "",
       name: "",
@@ -62,7 +62,7 @@
       $optionsStore.FULL_ARGUMENT_OPTION.find((h) => h.value === "")}
     options={$optionsStore.FULL_ARGUMENT_OPTION}
     onUpdate={(option) => {
-      onPropertyChange({ eventHandler: { Argument: (option as UI.ISelectOption).value as string } })
+      onPropertyChange({ eventHandler: { Argument: (option as UI.IOption).value as string } })
     }}
   />
 
@@ -82,7 +82,7 @@
     type="buttons"
     value={currentType}
     options={$optionsStore.SELECT_TYPE_OPTIONS}
-    onUpdate={(item) => updateProperty("type", (item as UI.ISelectOption).value as string, component, onPropertyChange)}
+    onUpdate={(item) => updateProperty("type", (item as UI.IOption).value as string, component, onPropertyChange)}
   />
 {/snippet}
 
@@ -161,7 +161,7 @@
         wrapperClass="w-8"
         content={{ icon: ButtonAdd }}
         onClick={() => {
-          const newOption: ISelectOption = {
+          const newOption: IOption = {
             id: crypto.randomUUID(),
             name: `Option ${component.properties?.options.length + 1}`,
             value: component.properties?.options.length + 1,
@@ -206,7 +206,7 @@
             value={$optionsStore.COLOR_OPTIONS.find((c) => (c.value as string).includes(option.class.split(" ").find((cls: string) => cls.startsWith("bg-"))))}
             onUpdate={(option) => {
               const options = [...(component.properties?.options || [])]
-              options[index]["class"] = (option as UI.ISelectOption).value
+              options[index]["class"] = (option as UI.IOption).value
               updateProperty("options", options, component, onPropertyChange)
             }}
           />
