@@ -225,14 +225,9 @@ export const optionsStore = derived(t, ($t) => {
     ],
 
     WIDGET_TYPE_OPTIONS: [
-      { id: id(), value: "input", name: "Поле ввода" },
-      { id: id(), value: "slider", name: "Ползунок" },
-      { id: id(), value: "toggle", name: "Переключатель" },
-    ],
-
-    WIDGET_MODE_OPTIONS: [
-      { id: id(), value: "cycling", name: "Зацикленный" },
-      { id: id(), value: "switch", name: "Переключение" },
+      { id: id(), value: "input", name: $t("constructor.props.input") },
+      { id: id(), value: "slider", name: $t("constructor.props.slider") },
+      { id: id(), value: "switch", name: $t("constructor.props.switch") },
     ],
 
     AUTOCOMPLETE_CONSTRUCTOR_OPTIONS: [

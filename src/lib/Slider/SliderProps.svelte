@@ -46,24 +46,29 @@
 {/snippet}
 
 {#snippet SliderMinMax()}
-  <UI.Input
-    label={{ name: $t("constructor.props.maxnum") }}
-    value={component.properties.number.maxNum as number}
-    type="number"
-    onUpdate={(value) => updateProperty("number.maxNum", Number(value), component, onPropertyChange)}
-  />
-  <UI.Input
-    label={{ name: $t("constructor.props.minnum") }}
-    value={component.properties.number.minNum as number}
-    type="number"
-    onUpdate={(value) => updateProperty("number.minNum", Number(value), component, onPropertyChange)}
-  />
-  <UI.Input
-    label={{ name: $t("constructor.props.step") }}
-    value={component.properties.number.step as number}
-    type="number"
-    onUpdate={(value) => updateProperty("number.step", Number(value), component, onPropertyChange)}
-  />
+  <div class="flex">
+    <UI.Input
+      label={{ name: $t("constructor.props.min") }}
+      value={component.properties.number.maxNum as number}
+      type="number"
+      readonly={component.properties.bitMode}
+      onUpdate={(value) => updateProperty("number.maxNum", Number(value), component, onPropertyChange)}
+    />
+    <UI.Input
+      label={{ name: $t("constructor.props.max") }}
+      value={component.properties.number.minNum as number}
+      type="number"
+      readonly={component.properties.bitMode}
+      onUpdate={(value) => updateProperty("number.minNum", Number(value), component, onPropertyChange)}
+    />
+    <UI.Input
+      label={{ name: $t("constructor.props.step") }}
+      value={component.properties.number.step as number}
+      type="number"
+      readonly={component.properties.bitMode}
+      onUpdate={(value) => updateProperty("number.step", Number(value), component, onPropertyChange)}
+    />
+  </div>
 {/snippet}
 
 {#snippet SliderValue()}
@@ -80,9 +85,9 @@
       <CommonSnippets snippet="Variable" {VARIABLE_OPTIONS} {component} {onPropertyChange} />
       <CommonSnippets snippet="EventHandlerArgument" {component} {onPropertyChange} />
       <CommonSnippets snippet="Access" {component} {onPropertyChange} />
-      {@render SliderType()}
     </div>
     <div class="flex w-1/3 flex-col px-2">
+      {@render SliderType()}
       {@render SliderMinMax()}
     </div>
     <div class="flex w-1/3 flex-col px-2">

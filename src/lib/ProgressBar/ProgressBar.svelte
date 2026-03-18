@@ -7,7 +7,11 @@
     id = crypto.randomUUID(),
     wrapperClass = "",
     items = [{ name: "Label", class: "" }],
-    value = [],
+    value = [
+      { Name: "Label 1", Value: 50 },
+      { Name: "Label 2", Value: 50 },
+      { Name: "Label 3", Value: 50 },
+    ],
     type = "horizontal",
     number = {
       minNum: 0,

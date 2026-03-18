@@ -35,31 +35,34 @@
 {/snippet}
 
 {#snippet ProgressBarMinMax()}
-  <UI.Input
-    label={{ name: $t("constructor.props.maxnum") }}
-    value={component.properties.number.maxNum as number}
-    type="number"
-    onUpdate={(value) => {
-      updateProperty("number.maxNum", Number(value), component, onPropertyChange)
-      let newValue = component.properties.value.map((pr: UI.IReceivingDataObject) => {
-        return { ...pr, Value: component.properties.number.minNum + (component.properties.number.maxNum - component.properties.number.minNum) / 2 }
-      })
-      updateProperty("value", newValue, component, onPropertyChange)
-    }}
-  />
-
-  <UI.Input
-    label={{ name: $t("constructor.props.minnum") }}
-    value={component.properties.number.minNum as number}
-    type="number"
-    onUpdate={(value) => {
-      updateProperty("number.minNum", Number(value), component, onPropertyChange)
-      let newValue = component.properties.value.map((pr: UI.IReceivingDataObject) => {
-        return { ...pr, Value: component.properties.number.minNum + (component.properties.number.maxNum - component.properties.number.minNum) / 2 }
-      })
-      updateProperty("value", newValue, component, onPropertyChange)
-    }}
-  />
+  <div class="flex">
+    <UI.Input
+      label={{ name: $t("constructor.props.max") }}
+      value={component.properties.number.maxNum as number}
+      type="number"
+      readonly={component.properties.bitMode}
+      onUpdate={(value) => {
+        updateProperty("number.maxNum", Number(value), component, onPropertyChange)
+        let newValue = component.properties.value?.map((pr: UI.IReceivingDataObject) => {
+          return { ...pr, Value: component.properties.number.minNum + (component.properties.number.maxNum - component.properties.number.minNum) / 2 }
+        })
+        updateProperty("value", newValue, component, onPropertyChange)
+      }}
+    />
+    <UI.Input
+      label={{ name: $t("constructor.props.min") }}
+      value={component.properties.number.minNum as number}
+      type="number"
+      readonly={component.properties.bitMode}
+      onUpdate={(value) => {
+        updateProperty("number.minNum", Number(value), component, onPropertyChange)
+        let newValue = component.properties.value?.map((pr: UI.IReceivingDataObject) => {
+          return { ...pr, Value: component.properties.number.minNum + (component.properties.number.maxNum - component.properties.number.minNum) / 2 }
+        })
+        updateProperty("value", newValue, component, onPropertyChange)
+      }}
+    />
+  </div>
 {/snippet}
 
 {#snippet ProgressBarUnits()}
@@ -71,8 +74,6 @@
 {/snippet}
 
 {#snippet ProgressBarOptions()}
-  <hr class="border-gray-400" />
-
   <div class="space-y-4">
     <div class="m-0 flex items-center justify-center gap-2">
       <h4>{$t("constructor.props.progressbar.title")}</h4>
@@ -82,20 +83,27 @@
         onClick={() => {
           const newProgress = {
             name: `Label ${component.properties?.items.length + 1}`,
-            value: 50,
             class: "bg-blue",
           }
           const progresses = [...(component.properties?.items || []), newProgress]
           updateProperty("items", progresses, component, onPropertyChange)
+          updateProperty(
+            "value",
+            Array.from(component.properties?.items, (x: { name?: string; class?: string }) => {
+              return { Name: x.name, Value: (component.properties.number.maxNum - component.properties.number.minNum) / 2 }
+            }),
+            component,
+            onPropertyChange,
+          )
         }}
       />
     </div>
 
     {#each component.properties.items || [] as progress, index}
-      <div class="m-0 flex items-end justify-around gap-2 border-gray-400">
+      <div class="m-0 flex items-end w-full gap-1">
         <UI.Input
           label={{ name: $t("constructor.props.optionname") }}
-          wrapperClass="!w-3/10"
+          wrapperClass="w-2/5"
           value={progress.name}
           onUpdate={(value) => {
             const progresses = [...(component.properties?.items || [])]
@@ -103,29 +111,10 @@
             updateProperty("items", progresses, component, onPropertyChange)
           }}
         />
-        <UI.Input
-          label={{ name: $t("constructor.props.optionvalue") }}
-          wrapperClass="!w-3/10"
-          value={(component.properties.value || [])[index]?.Value}
-          type="number"
-          onUpdate={(value) => {
-            const progresses = [
-              ...(component.properties?.value ||
-                component.properties?.items.map((item: { name?: string; class?: string }, i: number) => {
-                  return {
-                    Name: item.name,
-                    Value: i == index ? value : 0,
-                  }
-                })),
-            ]
-            progresses[index].Value = value
-            updateProperty("value", progresses, component, onPropertyChange)
-          }}
-        />
         {#if forConstructor}
           <UI.Select
             label={{ name: $t("constructor.props.colors") }}
-            wrapperClass="w-80 h-14.5"
+            wrapperClass="w-1/2 h-14.5"
             type="buttons"
             options={$optionsStore.COLOR_OPTIONS.filter((option) => option.value !== "bg-max")}
             value={$optionsStore.COLOR_OPTIONS.find((c) =>
@@ -139,8 +128,27 @@
           />
         {:else}
           <UI.Input
+            label={{ name: $t("constructor.props.optionvalue") }}
+            wrapperClass="w-1/4"
+            value={(component.properties.value || [])[index]?.Value}
+            type="number"
+            onUpdate={(value) => {
+              const progresses = [
+                ...(component.properties?.value ||
+                  component.properties?.items.map((item: { name?: string; class?: string }, i: number) => {
+                    return {
+                      Name: item.name,
+                      Value: i == index ? value : 0,
+                    }
+                  })),
+              ]
+              progresses[index].Value = value
+              updateProperty("value", progresses, component, onPropertyChange)
+            }}
+          />
+          <UI.Input
             label={{ name: $t("constructor.props.optionclass") }}
-            wrapperClass="!w-3/10"
+            wrapperClass="w-1/2"
             value={progress.class}
             onUpdate={(value) => {
               const progresses = [...(component.properties?.items || [])]
@@ -172,9 +180,12 @@
     </div>
     <div class="flex w-1/3 flex-col px-2">
       {@render ProgressBarMinMax()}
+      {@render ProgressBarUnits()}
+    </div>
+    <div class="flex w-1/3 flex-col px-2">
+      {@render ProgressBarOptions()}
     </div>
   </div>
-  {@render ProgressBarOptions()}
 {:else}
   <div class="relative flex flex-row items-start justify-center">
     <div class="flex w-1/3 flex-col px-2">
@@ -183,11 +194,12 @@
     </div>
     <div class="flex w-1/3 flex-col px-2">
       <CommonSnippets snippet="WrapperClass" {component} {onPropertyChange} />
+      {@render ProgressBarMinMax()}
+
       {@render ProgressBarUnits()}
     </div>
     <div class="flex w-1/3 flex-col px-2">
-      {@render ProgressBarMinMax()}
+      {@render ProgressBarOptions()}
     </div>
   </div>
-  {@render ProgressBarOptions()}
 {/if}

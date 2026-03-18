@@ -9,7 +9,7 @@
     readonly = false,
     settings = { label: "", number: { minNum: 0, maxNum: 1000, step: 1 } },
     value = $bindable(0),
-    icons = { array: [], mode: "cycling" },
+    icons = { array: [], cycling: true },
     onUpdate = () => {},
   }: IWidgetProps = $props()
 
@@ -17,7 +17,7 @@
   let intervalId: number | null = null
 
   $effect(() => {
-    if (icons.array && icons?.mode == "cycling") {
+    if (icons.array && icons?.cycling) {
       if (intervalId !== null) {
         clearInterval(intervalId)
         intervalId = null
@@ -41,7 +41,14 @@
   })
 
   $effect(() => {
-    if (icons.array && icons?.mode == "switch") {
+    if (icons.array && !icons?.cycling && settings.type !== "switch") {
+      currentIndex = mapToStep(value)
+      console.log(currentIndex)
+    }
+  })
+
+  $effect(() => {
+    if (icons.array && !icons?.cycling && settings.type == "switch") {
       currentIndex = value == 0 ? 0 : icons.array.length - 1
     }
   })
@@ -59,7 +66,7 @@
       return 0
     }
 
-    let stepIndex = Math.ceil((clampedValue - minNumber) / (inputRange / 10))
+    let stepIndex = icons?.cycling ? Math.ceil((clampedValue - minNumber) / (inputRange / 10)) : Math.ceil((clampedValue - minNumber) / (inputRange / 4))
     stepIndex = Math.min(Math.max(stepIndex, 0), 10)
 
     const result = 0 + stepIndex
@@ -75,8 +82,8 @@
   }
 
   const maxCaptionWidth = $derived(
-    Math.max(settings.toggle?.captionLeft?.length ?? 0, settings.toggle?.captionRight?.length ?? 0) > 0
-      ? `${Math.max(settings.toggle?.captionLeft?.length ?? 0, settings.toggle?.captionRight?.length ?? 0)}ch`
+    Math.max(settings.switch?.captionLeft?.length ?? 0, settings.switch?.captionRight?.length ?? 0) > 0
+      ? `${Math.max(settings.switch?.captionLeft?.length ?? 0, settings.switch?.captionRight?.length ?? 0)}ch`
       : "auto",
   )
 
@@ -116,7 +123,7 @@
           <span class="text-5xl">{settings.number?.units}</span>
         </div>
       {:else}
-        {value === 0 ? (settings.toggle?.captionLeft ?? "Off") : (settings.toggle?.captionRight ?? "On")}
+        <span class="text-5xl">{value === 0 ? (settings.switch?.captionLeft ?? "Off") : (settings.switch?.captionRight ?? "On")}</span>
       {/if}
     </div>
     <div class="px-2">
@@ -179,12 +186,12 @@
             >
           {/if}
         </div>
-      {:else if settings.type == "toggle"}
+      {:else if settings.type == "switch"}
         <!-- Switch -->
         <div class={twMerge(`flex bg-blue p-2 w-full flex-wrap items-end justify-center gap-1`, settings.class)}>
-          {#if settings.toggle?.captionLeft}
+          {#if settings.switch?.captionLeft}
             <button class="mr-2 cursor-pointer" style="width: {maxCaptionWidth}; text-align: end;" onclick={() => handleCaptionClick(0)}
-              >{settings.toggle?.captionLeft}</button
+              >{settings.switch?.captionLeft}</button
             >
           {/if}
 
@@ -217,9 +224,9 @@
             </span>
           </label>
 
-          {#if settings.toggle?.captionRight}
+          {#if settings.switch?.captionRight}
             <button class="ml-2 cursor-pointer" style="width: {maxCaptionWidth}; text-align: start;" onclick={() => handleCaptionClick(1)}
-              >{settings.toggle?.captionRight}</button
+              >{settings.switch?.captionRight}</button
             >
           {/if}
         </div>

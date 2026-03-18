@@ -79,9 +79,6 @@
     help={{ info: $t("constructor.props.argument.info"), autocomplete: "on", regExp: /^[a-zA-Z0-9\-_]{0,32}$/ }}
     onUpdate={(value) => onPropertyChange({ eventHandler: { Argument: value as string } })}
   />
-{/snippet}
-
-{#snippet ButtonVariables()}
   {#if (component.eventHandler.Argument !== "Save" && component.eventHandler.Argument !== "NoSave") || Header.value === "SET"}
     <UI.Input
       label={{ name: $t("constructor.props.value") }}
@@ -91,6 +88,9 @@
       onUpdate={(value) => onPropertyChange({ eventHandler: { Value: value as string } })}
     />
   {/if}
+{/snippet}
+
+{#snippet ButtonVariables()}
   <UI.Input
     label={{ name: $t("constructor.props.variables") }}
     disabled={hasValue}

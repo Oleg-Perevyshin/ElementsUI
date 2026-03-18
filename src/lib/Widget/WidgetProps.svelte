@@ -18,8 +18,6 @@
     forConstructor?: boolean
   }>()
 
-  let showIconLib = $state(false)
-
   const DeviceVariables = getContext<{ id: string; value: string; name: string }[]>("DeviceVariables")
   let VARIABLE_OPTIONS = $derived(DeviceVariables && Array.isArray(DeviceVariables) ? DeviceVariables : [])
 
@@ -80,36 +78,41 @@
 {/snippet}
 
 {#snippet WidgetMinMax()}
-  <UI.Input
-    label={{ name: $t("constructor.props.maxnum") }}
-    value={component.properties.settings.number.maxNum as number}
-    type="number"
-    onUpdate={(value) => updateProperty("settings.number.maxNum", Number(value), component, onPropertyChange)}
-  />
-  <UI.Input
-    label={{ name: $t("constructor.props.minnum") }}
-    value={component.properties.settings.number.minNum as number}
-    type="number"
-    onUpdate={(value) => updateProperty("settings.number.minNum", Number(value), component, onPropertyChange)}
-  />
-  <UI.Input
-    label={{ name: $t("constructor.props.step") }}
-    value={component.properties.settings.number.step as number}
-    type="number"
-    onUpdate={(value) => updateProperty("settings.number.step", Number(value), component, onPropertyChange)}
-  />
+  <div class="flex">
+    <UI.Input
+      label={{ name: $t("constructor.props.min") }}
+      value={component.properties.settings.number.minNum as number}
+      type="number"
+      readonly={component.properties.bitMode}
+      onUpdate={(value) => updateProperty("settings.number.minNum", Number(value), component, onPropertyChange)}
+    />
+    <UI.Input
+      label={{ name: $t("constructor.props.max") }}
+      value={component.properties.settings.number.maxNum as number}
+      type="number"
+      readonly={component.properties.bitMode}
+      onUpdate={(value) => updateProperty("settings.number.maxNum", Number(value), component, onPropertyChange)}
+    />
+    <UI.Input
+      label={{ name: $t("constructor.props.step") }}
+      value={component.properties.settings.number.step as number}
+      type="number"
+      readonly={component.properties.bitMode}
+      onUpdate={(value) => updateProperty("settings.number.step", Number(value), component, onPropertyChange)}
+    />
+  </div>
 {/snippet}
 
-{#snippet WidgetToggleCaptions()}
+{#snippet WidgetSwitchCaptions()}
   <UI.Input
     label={{ name: $t("constructor.props.caption.left") }}
-    value={component.properties.settings.toggle.captionLeft}
-    onUpdate={(value) => updateProperty("settings.toggle.captionLeft", value as string, component, onPropertyChange)}
+    value={component.properties.settings.switch.captionLeft}
+    onUpdate={(value) => updateProperty("settings.switch.captionLeft", value as string, component, onPropertyChange)}
   />
   <UI.Input
     label={{ name: $t("constructor.props.caption.right") }}
-    value={component.properties.settings.toggle.captionRight}
-    onUpdate={(value) => updateProperty("settings.toggle.captionRight", value as string, component, onPropertyChange)}
+    value={component.properties.settings.switch.captionRight}
+    onUpdate={(value) => updateProperty("settings.switch.captionRight", value as string, component, onPropertyChange)}
   />
 {/snippet}
 
@@ -122,7 +125,7 @@
 {/snippet}
 
 {#snippet WidgetSwitchingMode()}
-  <UI.Select
+  <!-- <UI.Select
     label={{ name: $t("constructor.props.widget.mode") }}
     type="buttons"
     options={$optionsStore.WIDGET_MODE_OPTIONS}
@@ -130,6 +133,12 @@
     onUpdate={(option) => {
       updateProperty("icons.mode", (option as UI.IOption).value as string, component, onPropertyChange)
     }}
+  /> -->
+  <UI.Switch
+    label={{ name: $t("constructor.props.widget.mode") }}
+    value={component.properties.icons.cycling}
+    options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
+    onChange={(value) => updateProperty("icons.cycling", value, component, onPropertyChange)}
   />
 {/snippet}
 
@@ -189,22 +198,22 @@
     <div class="flex w-1/3 flex-col px-2">
       <CommonSnippets snippet="Variable" {VARIABLE_OPTIONS} {component} {onPropertyChange} />
       <CommonSnippets snippet="Access" {component} {onPropertyChange} />
-      <CommonSnippets snippet="Label" {component} {onPropertyChange} />
       {@render WidgetUnits()}
     </div>
     <div class="flex w-1/3 flex-col px-2">
-      {@render WidgetSettingsLabel()}
+      <CommonSnippets snippet="Label" {component} {onPropertyChange} />
       {@render WidgetIcons()}
       {@render WidgetIconColor()}
       {@render WidgetSwitchingMode()}
     </div>
     <div class="flex w-1/3 flex-col px-2">
+      {@render WidgetSettingsLabel()}
       {@render WidgetSettingsColor()}
       {@render WidgetType()}
       {#if component.properties.settings.type == "input" || component.properties.settings.type == "slider"}
         {@render WidgetMinMax()}
-      {:else if component.properties.settings.type == "toggle"}
-        {@render WidgetToggleCaptions()}
+      {:else if component.properties.settings.type == "switch"}
+        {@render WidgetSwitchCaptions()}
       {/if}
     </div>
   </div>
@@ -228,8 +237,8 @@
       {@render WidgetType()}
       {#if component.properties.settings.type == "input" || component.properties.settings.type == "slider"}
         {@render WidgetMinMax()}
-      {:else if component.properties.settings.type == "toggle"}
-        {@render WidgetToggleCaptions()}
+      {:else if component.properties.settings.type == "switch"}
+        {@render WidgetSwitchCaptions()}
       {/if}
     </div>
   </div>

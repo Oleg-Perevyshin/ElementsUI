@@ -445,10 +445,10 @@ export interface IWidgetProps {
   settings?: {
     label?: string
     class?: string
-    type?: "input" | "toggle" | "slider"
+    type?: "input" | "switch" | "slider"
     number?: { minNum?: number; maxNum?: number; step?: number; units?: string }
-    toggle?: { captionLeft?: string; captionRight?: string }
+    switch?: { captionLeft?: string; captionRight?: string }
   }
-  icons?: { array: string[]; mode?: "cycling" | "switch"; class?: string }
+  icons?: { array: string[]; cycling?: boolean; class?: string }
   onUpdate?: (value: number) => void
 }

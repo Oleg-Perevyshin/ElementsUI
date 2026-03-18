@@ -39,7 +39,7 @@
           step: 1,
           units: "м/с",
         },
-        toggle: {
+        switch: {
           // captionLeft: "Off",
           // captionRight: "On",
         },

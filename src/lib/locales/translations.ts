@@ -55,6 +55,10 @@ const translations: Translations = {
     "constructor.props.type.viewOnly": "Просмотр",
     "constructor.props.type.hidden": "Скрыто",
 
+    "constructor.props.input": "Поле ввода",
+    "constructor.props.slider": "Ползунок",
+    "constructor.props.switch": "Переключатель",
+
     /* Общие для редактора свойств */
     "constructor.props.id": "Идентификатор",
     "constructor.props.label": "Текст надписи",
@@ -155,7 +159,7 @@ const translations: Translations = {
     "constructor.props.file.notselected": "Файл не выбран",
     "constructor.props.map.loading": "Загрузка карты...",
     "constructor.props.map.noconnection": "Карта не загружена. Нет подключения к интернету",
-    "constructor.props.widget.mode": "Режим переключения",
+    "constructor.props.widget.mode": "Зацикленный",
 
     "constructor.props.table.type": "Тип таблицы",
     "constructor.props.table.type.table": "Статическая таблица",
