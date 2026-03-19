@@ -26,6 +26,8 @@
     parentId: "",
   })
 
+  let forConstructor = $state(false)
+
   let codeText = $derived(`
 <UI.Accordion
 ${formatObjectToString(accordionComponent.properties as IAccordionProps)} 
@@ -36,7 +38,7 @@ ${formatObjectToString(accordionComponent.properties as IAccordionProps)}
 </UI.Accordion>`)
 </script>
 
-<ComponentExample {codeText}>
+<ComponentExample {codeText} bind:forConstructor>
   {#snippet component()}
     <Accordion {...accordionComponent.properties as IAccordionProps}>
       <div class="flex flex-col">
@@ -50,12 +52,7 @@ ${formatObjectToString(accordionComponent.properties as IAccordionProps)}
     <AccordionProps
       component={accordionComponent as UIComponent & { properties: Partial<IAccordionProps> }}
       onPropertyChange={(updates) => (accordionComponent = updateComponent(accordionComponent, updates as object))}
-      forConstructor={true}
+      {forConstructor}
     />
-    <!-- <hr />
-    <AccordionProps
-      component={accordionComponent as UIComponent & { properties: Partial<IAccordionProps> }}
-      onPropertyChange={(updates) => (accordionComponent = updateComponent(accordionComponent, updates as object))}
-    /> -->
   {/snippet}
 </ComponentExample>

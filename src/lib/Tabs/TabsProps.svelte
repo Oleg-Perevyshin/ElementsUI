@@ -18,6 +18,7 @@
     onPropertyChange: (updates: Partial<{ properties?: string | object; name?: string; access?: string; eventHandler?: IUIComponentHandler }>) => void
     forConstructor?: boolean
   }>()
+
   const initialColor = $derived(
     $optionsStore.COLOR_OPTIONS.find((c) =>
       (c.value as string).includes(component.properties.wrapperClass?.split(" ").find((cls: string) => cls.startsWith("bg-"))),
@@ -189,7 +190,7 @@
   <div class="flex items-start mb-4 justify-center gap-8">
     <div class="flex w-1/3 flex-col px-2">
       <CommonSnippets snippet="Access" {component} {onPropertyChange} />
-      <CommonSnippets snippet="Colors" initialValue={{ initialColor, uselessColors: ["bg-max"] }} {component} {onPropertyChange} />
+      <CommonSnippets snippet="Colors" initialValue={{ color: initialColor, uselessColors: ["bg-max"] }} {component} {onPropertyChange} />
     </div>
     <div class="flex w-1/3 flex-col px-2">
       {@render TabsIconPosition()}
@@ -208,7 +209,7 @@
     </div>
     <div class="flex w-1/3 flex-col px-2">
       <CommonSnippets snippet="Access" {component} {onPropertyChange} />
-      <CommonSnippets snippet="Colors" initialValue={{ initialColor, uselessColors: ["bg-max"] }} {component} {onPropertyChange} />
+      <CommonSnippets snippet="Colors" initialValue={{ color: initialColor, uselessColors: ["bg-max"] }} {component} {onPropertyChange} />
       {@render TabsIconPosition()}
       {@render TabsWidthMode()}
     </div>

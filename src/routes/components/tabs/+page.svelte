@@ -30,6 +30,8 @@
     parentId: "",
   })
 
+  let forConstructor = $state(false)
+
   let codeText = $derived(`
 <UI.Tabs
 ${formatObjectToString(tabsComponent.properties as ITabsProps)} 
@@ -37,7 +39,7 @@ ${formatObjectToString(tabsComponent.properties as ITabsProps)}
 />`)
 </script>
 
-<ComponentExample {codeText}>
+<ComponentExample {codeText} bind:forConstructor>
   {#snippet component()}
     <div class="h-60">
       <Tabs {...tabsComponent.properties as ITabsProps} />
@@ -47,13 +49,7 @@ ${formatObjectToString(tabsComponent.properties as ITabsProps)}
     <TabsProps
       component={tabsComponent as UIComponent & { properties: Partial<ITabsProps> }}
       onPropertyChange={(updates) => (tabsComponent = updateComponent(tabsComponent, updates as object))}
-      forConstructor={false}
+      {forConstructor}
     />
-    <!-- <hr />
-    <TabsProps
-      component={tabsComponent as UIComponent & { properties: Partial<ITabsProps> }}
-      onPropertyChange={(updates) => (tabsComponent = updateComponent(tabsComponent, updates as object))}
-      
-    /> -->
   {/snippet}
 </ComponentExample>

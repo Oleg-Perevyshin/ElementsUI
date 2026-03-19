@@ -313,7 +313,7 @@
       <UI.Button content={{ name: "Button 3" }} componentClass="bg-blue" disabled />
       <UI.Button content={{ name: "Button 4", icon: IconGripVerticalDual }} componentClass="bg-green h-12 rounded-3xl" />
       <div class="flex h-10 items-center justify-around">
-        <UI.Button content={{ icon: IconGripHorizontalUp }} wrapperClass=" w-20 h-10 " componentClass="bg-purple rounded-full" />
+        <UI.Button content={{ icon: IconGripHorizontalUp }} wrapperClass="w-10 h-10" componentClass="bg-purple rounded-full" />
         <UI.Button content={{ icon: IconGripHorizontalDown, info: { text: "Info for Icon Button", side: "right" } }} wrapperClass="w-10" />
       </div>
     </UI.Accordion>

@@ -5,10 +5,7 @@
   import * as UI from "$lib"
   import { optionsStore } from "../options"
   import { twMerge } from "tailwind-merge"
-  import CrossIcon from "$lib/libIcons/CrossIcon.svelte"
-  import Modal from "$lib/Modal.svelte"
   import { ICONS } from "$lib/icons"
-  import Button from "./Button.svelte"
   import CommonSnippets from "$lib/CommonSnippets.svelte"
 
   const {
@@ -20,8 +17,6 @@
     onPropertyChange: (updates: Partial<{ properties?: string | object; name?: string; access?: string; eventHandler?: IUIComponentHandler }>) => void
     forConstructor?: boolean
   }>()
-
-  let showIconLib = $state(false)
 
   let hasValue: boolean = $derived(component.eventHandler.Value)
 
@@ -114,14 +109,22 @@
 {/snippet}
 
 {#snippet ButtonHeight()}
-  <UI.Select
-    label={{ name: $t("constructor.props.height") }}
-    type="buttons"
-    options={$optionsStore.HEIGHT_OPTIONS}
-    value={initialHeight}
-    onUpdate={(option) =>
-      updateProperty("componentClass", twMerge(component.properties.componentClass, (option as IOption<string>).value), component, onPropertyChange)}
-  />
+  {#if component.properties.content.name?.trim() == "" && component.properties.content.icon}
+    <UI.Switch
+      label={{ name: $t("constructor.props.button.rounded") }}
+      value={(component.properties as UI.IInputProps | UI.ISwitchProps | UI.ISliderProps | UI.IFileAttachProps)?.disabled ? 1 : 0}
+      options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
+      onChange={(value) => updateProperty("disabled", value, component, onPropertyChange)}
+    />
+  {:else}
+    <UI.Select
+      label={{ name: $t("constructor.props.height") }}
+      type="buttons"
+      options={$optionsStore.HEIGHT_OPTIONS}
+      value={initialHeight}
+      onUpdate={(option) =>
+        updateProperty("componentClass", twMerge(component.properties.componentClass, (option as IOption<string>).value), component, onPropertyChange)}
+    />{/if}
 {/snippet}
 
 {#snippet ButtonInfo()}
@@ -176,17 +179,17 @@
       {@render ButtonHeight()}
       <CommonSnippets
         snippet="Colors"
-        initialValue="{{
-          initialColor,
+        initialValue={{
+          color: initialColor,
           updateProperty: (option: UI.IOption<string>) => {
             updateProperty(
-              'componentClass',
+              "componentClass",
               twMerge((component.properties as UI.IButtonProps).componentClass, (option as UI.IOption<string>).value),
               component,
               onPropertyChange,
             )
           },
-        }}}"
+        }}
         {component}
         {onPropertyChange}
       />
@@ -198,7 +201,6 @@
       <CommonSnippets snippet="Identificator" {component} {onPropertyChange} />
       <CommonSnippets snippet="Access" {component} {onPropertyChange} />
       <CommonSnippets snippet="WrapperClass" {component} {onPropertyChange} />
-
       <CommonSnippets snippet="Disabled" {component} {onPropertyChange} />
     </div>
     <div class="flex w-1/3 flex-col px-2">
@@ -211,14 +213,17 @@
       <CommonSnippets
         snippet="Colors"
         initialValue={{
-          initialColor,
+          color: initialColor,
           updateProperty: (option: UI.IOption<string>) => {
-            updateProperty(
-              "componentClass",
-              twMerge((component.properties as UI.IButtonProps).componentClass, (option as UI.IOption<string>).value),
-              component,
-              onPropertyChange,
-            )
+            if (!component.properties.content.name && component.properties.content.icon && initialColor?.value === option.value) {
+              updateProperty("componentClass", "", component, onPropertyChange)
+            } else
+              updateProperty(
+                "componentClass",
+                twMerge((component.properties as UI.IButtonProps).componentClass, (option as UI.IOption<string>).value),
+                component,
+                onPropertyChange,
+              )
           },
         }}
         {component}

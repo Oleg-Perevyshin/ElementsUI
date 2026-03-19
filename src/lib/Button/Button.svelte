@@ -96,12 +96,12 @@
   <button
     id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
     class="{twMerge(
-      `relative inline-block w-full items-center rounded-2xl px-2
-        py-1 font-semibold  transition duration-200 select-none 
-        ${content.icon && !content.name ? 'bg-transparent p-0' : 'bg-blue border border-(--bg-color) shadow-sm hover:shadow-md'}
+      `relative inline-block items-center  font-semibold transition duration-200 select-none 
+        ${content.icon && !content.name?.trim() ? 'bg-transparent rounded-full' : 'w-full rounded-2xl py-1 px-2 bg-blue border border-(--bg-color) shadow-sm hover:shadow-md'}
         ${disabled ? 'cursor-not-allowed opacity-50 hover:shadow-none' : 'cursor-pointer active:scale-97'} `,
       componentClass,
     )} bg-(--bg-color)"
+    style="padding: {!content.name?.trim() ? content.name?.length || (componentClass ? '' : '0.5') : ''}rem;"
     onclick={handleClick}
     {disabled}
     aria-label={content.name}
@@ -115,8 +115,8 @@
     <div class=" flex flex-row items-center justify-center gap-2">
       {#if content?.icon}
         <span
-          class={` ${content.name ? "absolute left-3" : ""} ${typeof content?.icon == "string" ? "p-0.5" : ""}  flex items-center justify-center overflow-visible 
-            ${content.name ? "h-8 w-8" : `${svgSize()}`} [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full`}
+          class={` ${content.name?.trim() ? "absolute left-3" : ""} ${typeof content?.icon == "string" ? "p-0.5" : ""} flex items-center justify-center overflow-visible 
+            ${content.name?.trim() ? "h-8 w-8" : `${svgSize()}`} [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full`}
         >
           {#if typeof content?.icon === "string"}
             {@html content.icon}
@@ -127,7 +127,7 @@
         </span>
       {/if}
 
-      {#if content.name}
+      {#if content.name?.trim()}
         <div class="flex-1">
           {content.name}
           {#if keyBind.key && keyBind.showHint}

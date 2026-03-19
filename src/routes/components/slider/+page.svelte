@@ -24,6 +24,8 @@
     parentId: "",
   })
 
+  let forConstructor = $state(false)
+
   let codeText = $derived(`
 <UI.Slider
 ${formatObjectToString(sliderComponent.properties as ISliderProps)} 
@@ -31,7 +33,7 @@ ${formatObjectToString(sliderComponent.properties as ISliderProps)}
 />`)
 </script>
 
-<ComponentExample {codeText}>
+<ComponentExample {codeText} bind:forConstructor>
   {#snippet component()}
     <Slider {...sliderComponent.properties as ISliderProps} />
   {/snippet}
@@ -39,13 +41,7 @@ ${formatObjectToString(sliderComponent.properties as ISliderProps)}
     <SliderProps
       component={sliderComponent as UIComponent & { properties: Partial<ISliderProps> }}
       onPropertyChange={(updates) => (sliderComponent = updateComponent(sliderComponent, updates as object))}
-      forConstructor={true}
+      {forConstructor}
     />
-    <!-- <hr />
-    <SliderProps
-      component={sliderComponent as UIComponent & { properties: Partial<ISliderProps> }}
-      onPropertyChange={(updates) => (sliderComponent = updateComponent(sliderComponent, updates as object))}
-      
-    /> -->
   {/snippet}
 </ComponentExample>

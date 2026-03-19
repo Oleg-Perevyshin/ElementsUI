@@ -30,6 +30,8 @@
     parentId: "",
   })
 
+  let forConstructor = $state(false)
+
   let codeText = $derived(`
 <UI.Select
 ${formatObjectToString(selectComponent.properties as ISelectProps)} 
@@ -37,7 +39,7 @@ ${formatObjectToString(selectComponent.properties as ISelectProps)}
 />`)
 </script>
 
-<ComponentExample {codeText}>
+<ComponentExample {codeText} bind:forConstructor>
   {#snippet component()}
     <Select
       {...selectComponent.properties as ISelectProps}
@@ -52,13 +54,7 @@ ${formatObjectToString(selectComponent.properties as ISelectProps)}
     <SelectProps
       component={selectComponent as UIComponent & { properties: Partial<ISelectProps> }}
       onPropertyChange={(updates) => (selectComponent = updateComponent(selectComponent, updates as object))}
-      forConstructor={true}
+      {forConstructor}
     />
-    <!-- <hr />
-    <SelectProps
-      component={selectComponent as UIComponent & { properties: Partial<ISelectProps> }}
-      onPropertyChange={(updates) => (selectComponent = updateComponent(selectComponent, updates as object))}
-      
-    /> -->
   {/snippet}
 </ComponentExample>

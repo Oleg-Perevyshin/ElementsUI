@@ -123,6 +123,8 @@
     }
   })
 
+  let forConstructor = $state(false)
+
   let codeText = $derived(`
 <UI.Table
 ${formatObjectToString(tableComponent.properties as ITableProps<object>)} 
@@ -142,14 +144,10 @@ ${formatObjectToString(tableComponent.properties as ITableProps<object>)}
   })
 </script>
 
-<ComponentExample {codeText}>
+<ComponentExample {codeText} bind:forConstructor>
   {#snippet component()}
     <div class="h-60">
-      <Table
-        bind:this={tableRef}
-        {...tableComponent.properties as ITableProps<object>}
-        body={(tableComponent.properties as ITableProps<object>).dataBuffer?.stashData ? body : (tableComponent.properties as ITableProps<object>).body}
-      />
+      <Table bind:this={tableRef} {...tableComponent.properties as ITableProps<object>} body={(tableComponent.properties as ITableProps<object>).body} />
     </div>
   {/snippet}
 
@@ -157,12 +155,7 @@ ${formatObjectToString(tableComponent.properties as ITableProps<object>)}
     <TableProps
       component={tableComponent as UIComponent & { properties: Partial<ITableProps<object>> }}
       onPropertyChange={(updates) => (tableComponent = updateComponent(tableComponent, updates as object))}
-      forConstructor={false}
+      {forConstructor}
     />
-    <!-- <hr />
-    <TableProps
-      component={tableComponent as UIComponent & { properties: Partial<ITableProps<object>> }}
-      onPropertyChange={(updates) => (tableComponent = updateComponent(tableComponent, updates as object))}
-    /> -->
   {/snippet}
 </ComponentExample>

@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { onMount } from "svelte"
   import type { IWidgetProps } from "../types"
   import { twMerge } from "tailwind-merge"
 
@@ -8,13 +7,19 @@
     label = { name: "", class: "" },
     readonly = false,
     settings = { label: "", number: { minNum: 0, maxNum: 1000, step: 1 } },
-    value = $bindable(0),
+    value = 0,
     icons = { array: [], cycling: true },
     onUpdate = () => {},
   }: IWidgetProps = $props()
 
   let currentIndex = $state(0)
   let intervalId: number | null = null
+
+  let currentValue = $derived(value)
+
+  $effect(() => {
+    if (value === undefined || value === null) value = settings.number?.minNum ?? 0
+  })
 
   $effect(() => {
     if (icons.array && icons?.cycling) {
@@ -23,7 +28,7 @@
         intervalId = null
       }
 
-      const mappedValue = mapToStep(value)
+      const mappedValue = mapToStep(currentValue)
       const periodInMs = mappedValue === 0 ? 0 : 700 / mappedValue
 
       if (icons && periodInMs > 0) {
@@ -42,22 +47,22 @@
 
   $effect(() => {
     if (icons.array && !icons?.cycling && settings.type !== "switch") {
-      currentIndex = mapToStep(value)
+      currentIndex = mapToStep(currentValue)
       console.log(currentIndex)
     }
   })
 
   $effect(() => {
     if (icons.array && !icons?.cycling && settings.type == "switch") {
-      currentIndex = value == 0 ? 0 : icons.array.length - 1
+      currentIndex = currentValue == 0 ? 0 : icons.array.length - 1
     }
   })
 
   const mapToStep = (inputValue: number): number => {
     const minNumber = settings.number?.minNum ?? 0
     const maxNumber = settings.number?.maxNum ?? 10
-    if (value > maxNumber) inputValue = maxNumber
-    if (value < minNumber) inputValue = minNumber
+    if (currentValue > maxNumber) inputValue = maxNumber
+    if (currentValue < minNumber) inputValue = minNumber
     const clampedValue = Math.min(Math.max(inputValue, minNumber), maxNumber)
 
     const inputRange = maxNumber - minNumber
@@ -76,8 +81,8 @@
   const currentImage = $derived(icons ? icons.array[currentIndex] : "")
 
   const handleCaptionClick = (newValue: number) => {
-    if (value === newValue) return
-    value = newValue
+    if (currentValue === newValue) return
+    currentValue = newValue
     onUpdate(newValue)
   }
 
@@ -119,11 +124,11 @@
     <div class="flex mx-3 gap-1 items-center justify-center inset-shadow-[0_-10px_10px_-15px_rgb(0_0_0_/0.5)]">
       {#if settings.type == "input" || settings.type == "slider"}
         <div>
-          <span class="text-7xl">{value}</span>
+          <span class="text-7xl">{currentValue}</span>
           <span class="text-5xl">{settings.number?.units}</span>
         </div>
       {:else}
-        <span class="text-5xl">{value === 0 ? (settings.switch?.captionLeft ?? "Off") : (settings.switch?.captionRight ?? "On")}</span>
+        <span class="text-5xl">{currentValue === 0 ? (settings.switch?.captionLeft ?? "Off") : (settings.switch?.captionRight ?? "On")}</span>
       {/if}
     </div>
     <div class="px-2">
@@ -137,23 +142,23 @@
             <button
               class="flex size-8 items-center justify-center shadow-sm hover:shadow-md rounded-full transition duration-200 bg-(--bg-color) active:scale-97 text-2xl"
               onclick={() => {
-                if ((settings.number?.minNum !== 0 && !settings.number?.minNum) || !settings.number?.step || (value !== 0 && !value)) return
-                if (Number(value) - settings.number?.step <= settings.number?.minNum) {
-                  value = settings.number?.minNum
-                  onUpdate(value as number)
+                if ((settings.number?.minNum !== 0 && !settings.number?.minNum) || !settings.number?.step || (currentValue !== 0 && !currentValue)) return
+                if (Number(currentValue) - settings.number?.step <= settings.number?.minNum) {
+                  currentValue = settings.number?.minNum
+                  onUpdate(currentValue as number)
                   return
-                } else if (settings.number?.maxNum && Number(value) > settings.number?.maxNum) {
-                  value = settings.number?.maxNum
+                } else if (settings.number?.maxNum && Number(currentValue) > settings.number?.maxNum) {
+                  currentValue = settings.number?.maxNum
                   return
                 }
-                value = Number(value) - (settings.number?.step ?? 1)
-                onUpdate(value as number)
+                currentValue = Number(currentValue) - (settings.number?.step ?? 1)
+                onUpdate(currentValue as number)
               }}
               aria-label="Уменьшить">−</button
             >
           {/if}
           <input
-            bind:value
+            bind:value={currentValue}
             class={twMerge(`flex-1 w-full rounded-2xl border px-8 py-1 text-center shadow-[0_0_3px_rgb(0_0_0_/0.25)] transition duration-200
               outline-none focus:shadow-[0_0_6px_var(--bg-color)] focus:border-(--bg-color) [&::-webkit-inner-spin-button]:hidden [&::-webkit-outer-spin-button]:hidden
               border-(--back-color)
@@ -170,17 +175,17 @@
             <button
               class="flex size-8 items-center justify-center rounded-full shadow-sm hover:shadow-md transition duration-200 bg-(--bg-color) active:scale-97 text-2xl"
               onclick={() => {
-                if ((settings.number?.maxNum !== 0 && !settings.number?.maxNum) || !settings.number?.step || (value !== 0 && !value)) return
-                if (Number(value) + settings.number?.step >= settings.number?.maxNum) {
-                  value = settings.number?.maxNum
-                  onUpdate(value as number)
+                if ((settings.number?.maxNum !== 0 && !settings.number?.maxNum) || !settings.number?.step || (currentValue !== 0 && !currentValue)) return
+                if (Number(currentValue) + settings.number?.step >= settings.number?.maxNum) {
+                  currentValue = settings.number?.maxNum
+                  onUpdate(currentValue as number)
                   return
-                } else if (settings.number?.minNum && Number(value) < settings.number?.minNum) {
-                  value = settings.number?.minNum
+                } else if (settings.number?.minNum && Number(currentValue) < settings.number?.minNum) {
+                  currentValue = settings.number?.minNum
                   return
                 }
-                value = Number(value) + (settings.number?.step ?? 1)
-                onUpdate(value as number)
+                currentValue = Number(currentValue) + (settings.number?.step ?? 1)
+                onUpdate(currentValue as number)
               }}
               aria-label="Увеличить">+</button
             >
@@ -201,23 +206,23 @@
               type="checkbox"
               class="absolute left-1/2 h-full w-full -translate-x-1/2 cursor-pointer appearance-none rounded-md"
               disabled={readonly}
-              checked={value !== 0}
+              checked={currentValue !== 0}
               onchange={() => {
-                value = value === 0 ? 1 : 0
-                onUpdate(value)
+                currentValue = currentValue === 0 ? 1 : 0
+                onUpdate(currentValue)
               }}
             />
             <span
               class="relative flex items-center rounded-full border-(--bg-color) transition-all duration-250
-        {value ? 'bg-(--bg-color)' : 'bg-(--back-color)'}
+        {currentValue ? 'bg-(--bg-color)' : 'bg-(--back-color)'}
        cursor-pointer"
               style="width: {`calc(2rem * 2)`}; height: 2rem;"
             >
               <span
                 class="absolute rounded-full transition-all duration-250
-                  {value ? 'bg-(--back-color)' : 'bg-(--bg-color)'}
+                  {currentValue ? 'bg-(--back-color)' : 'bg-(--bg-color)'}
           cursor-pointer'}"
-                style="width: {`calc(2rem * 0.8)`}; height: {`calc(2rem * 0.8)`}; margin: 0 {`calc(2rem * 0.1)`}; transform: {value
+                style="width: {`calc(2rem * 0.8)`}; height: {`calc(2rem * 0.8)`}; margin: 0 {`calc(2rem * 0.1)`}; transform: {currentValue
                   ? `translateX(calc(2rem))`
                   : 'translateX(0)'}"
               ></span>
@@ -240,8 +245,8 @@
             max={settings.number?.maxNum}
             step={settings.number?.step}
             disabled={readonly}
-            bind:value
-            oninput={() => onUpdate(value)}
+            bind:value={currentValue}
+            oninput={() => onUpdate(currentValue)}
             class={twMerge(
               `h-8 w-full appearance-none overflow-hidden rounded-full accent-(--back-color) 
               [&::-webkit-slider-runnable-track]:rounded-full
@@ -282,21 +287,25 @@
             <button
               class="h-full w-4 cursor-pointer"
               onclick={() => {
-                value = roundToClean(Math.max(settings.number?.minNum ?? 0, Math.min(value - (settings.number?.step ?? 1), settings.number?.maxNum ?? 10)))
-                onUpdate(value)
+                currentValue = roundToClean(
+                  Math.max(settings.number?.minNum ?? 0, Math.min(currentValue - (settings.number?.step ?? 1), settings.number?.maxNum ?? 10)),
+                )
+                onUpdate(currentValue)
               }}
-              disabled={value <= (settings.number?.minNum ?? 0)}>−</button
+              disabled={currentValue <= (settings.number?.minNum ?? 0)}>−</button
             >
             <span class="inline-block text-center tabular-nums" style={`width: ${String(settings.number?.maxNum ?? 10).length + 1}ch`}>
-              {value}
+              {currentValue}
             </span>
             <button
               class="h-full w-4 cursor-pointer"
               onclick={() => {
-                value = roundToClean(Math.max(settings.number?.minNum ?? 0, Math.min(value + (settings.number?.step ?? 1), settings.number?.maxNum ?? 10)))
-                onUpdate(value)
+                currentValue = roundToClean(
+                  Math.max(settings.number?.minNum ?? 0, Math.min(currentValue + (settings.number?.step ?? 1), settings.number?.maxNum ?? 10)),
+                )
+                onUpdate(currentValue)
               }}
-              disabled={value >= (settings.number?.maxNum ?? 10)}>+</button
+              disabled={currentValue >= (settings.number?.maxNum ?? 10)}>+</button
             >
           </div>
         </div>

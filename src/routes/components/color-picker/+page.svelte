@@ -19,6 +19,8 @@
     parentId: "",
   })
 
+  let forConstructor = $state(false)
+
   let codeText = $derived(`
 <UI.ColorPicker
 ${formatObjectToString(colorPickerComponent.properties as IColorPickerProps)} 
@@ -26,7 +28,7 @@ ${formatObjectToString(colorPickerComponent.properties as IColorPickerProps)}
 />`)
 </script>
 
-<ComponentExample {codeText}>
+<ComponentExample {codeText} bind:forConstructor>
   {#snippet component()}
     <ColorPicker {...colorPickerComponent.properties as IColorPickerProps} />
   {/snippet}
@@ -34,13 +36,7 @@ ${formatObjectToString(colorPickerComponent.properties as IColorPickerProps)}
     <ColorPickerProps
       component={colorPickerComponent as UIComponent & { properties: Partial<IColorPickerProps> }}
       onPropertyChange={(updates) => (colorPickerComponent = updateComponent(colorPickerComponent, updates as object))}
-      forConstructor={true}
+      {forConstructor}
     />
-    <!-- <hr />
-    <ColorPickerProps
-      component={colorPickerComponent as UIComponent & { properties: Partial<IColorPickerProps> }}
-      onPropertyChange={(updates) => (colorPickerComponent = updateComponent(colorPickerComponent, updates as object))}
-      
-    /> -->
   {/snippet}
 </ComponentExample>

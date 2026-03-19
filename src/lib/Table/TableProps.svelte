@@ -497,7 +497,7 @@
       {/if}
     </div>
     <div class="flex w-1/3 flex-col px-2">
-      <CommonSnippets snippet="Colors" initialValue={initialColor} {component} {onPropertyChange} />
+      <CommonSnippets snippet="Colors" initialValue={{ color: initialColor }} {component} {onPropertyChange} />
       {@render TableOutline()}
       {#if component.properties.dataBuffer.stashData}
         {@render TableBufferSize()}
@@ -517,7 +517,7 @@
     <div class="flex w-1/3 flex-col px-2">
       <CommonSnippets snippet="Identificator" {component} {onPropertyChange} />
       <CommonSnippets snippet="WrapperClass" {component} {onPropertyChange} />
-      <CommonSnippets snippet="Colors" initialValue={initialColor} {component} {onPropertyChange} />
+      <CommonSnippets snippet="Colors" initialValue={{ color: initialColor }} {component} {onPropertyChange} />
       {@render TableOutline()}
     </div>
 

@@ -24,13 +24,15 @@
     parentId: "",
   })
 
+  let forConstructor = $state(false)
+
   let codeText = $derived(`
 <UI.ProgressBar
 ${formatObjectToString(progressBarComponent.properties as IProgressBarProps)} 
 />`)
 </script>
 
-<ComponentExample {codeText}>
+<ComponentExample {codeText} bind:forConstructor>
   {#snippet component()}
     <ProgressBar {...progressBarComponent.properties as IProgressBarProps} />
   {/snippet}
@@ -38,12 +40,7 @@ ${formatObjectToString(progressBarComponent.properties as IProgressBarProps)}
     <ProgressBarProps
       component={progressBarComponent as UIComponent & { properties: Partial<IProgressBarProps> }}
       onPropertyChange={(updates) => (progressBarComponent = updateComponent(progressBarComponent, updates as object))}
-      forConstructor={true}
+      {forConstructor}
     />
-    <!-- <hr />
-    <ProgressBarProps
-      component={progressBarComponent as UIComponent & { properties: Partial<IProgressBarProps> }}
-      onPropertyChange={(updates) => (progressBarComponent = updateComponent(progressBarComponent, updates as object))} 
-    /> -->
   {/snippet}
 </ComponentExample>

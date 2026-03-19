@@ -85,6 +85,8 @@
     if (intervalId) clearInterval(intervalId)
   })
 
+  let forConstructor = $state(false)
+
   let codeText = $derived(`
 <UI.Map
 ${formatObjectToString(mapComponent.properties as IMapProps)}
@@ -92,7 +94,7 @@ ${formatObjectToString(mapComponent.properties as IMapProps)}
 />`)
 </script>
 
-<ComponentExample {codeText}>
+<ComponentExample {codeText} bind:forConstructor>
   {#snippet component()}
     <div class="h-full">
       <Map {...mapComponent.properties as IMapProps} {data} />
@@ -103,13 +105,7 @@ ${formatObjectToString(mapComponent.properties as IMapProps)}
     <MapProps
       component={mapComponent as UIComponent & { properties: Partial<IMapProps> }}
       onPropertyChange={(updates) => (mapComponent = updateComponent(mapComponent, updates as object))}
-      forConstructor={true}
+      {forConstructor}
     />
-    <!-- <hr />
-    <MapProps
-      component={mapComponent as UIComponent & { properties: Partial<IMapProps> }}
-      onPropertyChange={(updates) => (mapComponent = updateComponent(mapComponent, updates as object))}
-      
-    />  -->
   {/snippet}
 </ComponentExample>

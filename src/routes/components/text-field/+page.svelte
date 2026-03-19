@@ -23,13 +23,15 @@
     parentId: "",
   })
 
+  let forConstructor = $state(false)
+
   let codeText = $derived(`
 <UI.TextField
 ${formatObjectToString(textFieldComponent.properties as ITextFieldProps)} 
 />`)
 </script>
 
-<ComponentExample {codeText}>
+<ComponentExample {codeText} bind:forConstructor>
   {#snippet component()}
     <div>
       <TextField {...textFieldComponent.properties as ITextFieldProps} />
@@ -39,13 +41,7 @@ ${formatObjectToString(textFieldComponent.properties as ITextFieldProps)}
     <TextFieldProps
       component={textFieldComponent as UIComponent & { properties: Partial<ITextFieldProps> }}
       onPropertyChange={(updates) => (textFieldComponent = updateComponent(textFieldComponent, updates as object))}
-      forConstructor={true}
+      {forConstructor}
     />
-    <!-- <hr />
-    <TextFieldProps
-      component={textFieldComponent as UIComponent & { properties: Partial<ITextFieldProps> }}
-      onPropertyChange={(updates) => (textFieldComponent = updateComponent(textFieldComponent, updates as object))}
-      
-    /> -->
   {/snippet}
 </ComponentExample>

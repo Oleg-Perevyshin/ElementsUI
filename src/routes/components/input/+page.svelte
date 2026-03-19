@@ -30,6 +30,8 @@
     parentId: "",
   })
 
+  let forConstructor = $state(false)
+
   let codeText = $derived(`
 <UI.Input
 ${formatObjectToString(inputComponent.properties as IInputProps)} 
@@ -37,7 +39,7 @@ ${formatObjectToString(inputComponent.properties as IInputProps)}
 />`)
 </script>
 
-<ComponentExample {codeText}>
+<ComponentExample {codeText} bind:forConstructor>
   {#snippet component()}
     <div>
       <Input
@@ -56,12 +58,7 @@ ${formatObjectToString(inputComponent.properties as IInputProps)}
     <InputProps
       component={inputComponent as UIComponent & { properties: Partial<IInputProps> }}
       onPropertyChange={(updates) => (inputComponent = updateComponent(inputComponent, updates as object))}
-      forConstructor={true}
+      {forConstructor}
     />
-    <!-- <hr />
-    <InputProps
-      component={inputComponent as UIComponent & { properties: Partial<IInputProps> }}
-      onPropertyChange={(updates) => (inputComponent = updateComponent(inputComponent, updates as object))}
-    /> -->
   {/snippet}
 </ComponentExample>

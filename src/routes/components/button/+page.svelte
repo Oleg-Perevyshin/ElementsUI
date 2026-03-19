@@ -1,10 +1,9 @@
 <script lang="ts">
-  import { Accordion, Button } from "$lib"
-  import { updateComponent, type IButtonProps, type IUIComponentHandler, type Position, type UIComponent } from "$lib/types"
+  import { Button } from "$lib"
+  import { updateComponent, type IButtonProps, type UIComponent } from "$lib/types"
   import { formatObjectToString } from "../../common"
   import ComponentExample from "$lib/ComponentExample.svelte"
   import ButtonProps from "$lib/Button/ButtonProps.svelte"
-  import { onMount } from "svelte"
 
   let buttonComponent: UIComponent = $state({
     id: crypto.randomUUID(),
@@ -12,9 +11,9 @@
     access: "full",
     properties: {
       id: crypto.randomUUID(),
-      componentClass: "bg-red py-1",
+      componentClass: "bg-red p-2",
       content: {
-        name: "Button",
+        // name: "Button",
         info: { text: "", side: "top" },
       },
       keyBind: { showInfo: true, ctrlKey: true, key: "Enter" },
@@ -24,32 +23,27 @@
     parentId: "",
   })
 
+  let forConstructor = $state(false)
+
   let codeText = $derived(`
 <UI.Button
 ${formatObjectToString(buttonComponent.properties as IButtonProps)} 
   onClick={() => {}}
 />`)
-
-  onMount(() => document?.addEventListener("scroll", () => console.log("dfjkngoikugnjhvikdjn")))
 </script>
 
-<ComponentExample {codeText}>
+<ComponentExample {codeText} bind:forConstructor>
   {#snippet component()}
     <div class="relative mx-40 my-20">
       <Button {...buttonComponent.properties as IButtonProps} />
     </div>
+    <Button {...buttonComponent.properties as IButtonProps} />
   {/snippet}
   {#snippet componentProps()}
     <ButtonProps
       component={buttonComponent as UIComponent & { properties: Partial<IButtonProps> }}
       onPropertyChange={(updates) => (buttonComponent = updateComponent(buttonComponent, updates as object))}
-      forConstructor={true}
+      {forConstructor}
     />
-    <!-- <hr />
-    <ButtonProps
-      component={buttonComponent as UIComponent & { properties: Partial<IButtonProps> }}
-      onPropertyChange={(updates) => (buttonComponent = updateComponent(buttonComponent, updates as object))}
-      
-    /> -->
   {/snippet}
 </ComponentExample>

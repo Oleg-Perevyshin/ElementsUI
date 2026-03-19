@@ -121,7 +121,7 @@
           {onPropertyChange}
         />
         {@render JoystickAxesNames()}
-        <CommonSnippets snippet="Colors" initialValue={{ initialColor }} {component} {onPropertyChange} />
+        <CommonSnippets snippet="Colors" initialValue={{ color: initialColor }} {component} {onPropertyChange} />
       </div>
     </div>
     {@render JoystickAxesMinMax()}
@@ -151,7 +151,7 @@
           {onPropertyChange}
         />
         {@render JoystickAxesNames()}
-        <CommonSnippets snippet="Colors" initialValue={{ initialColor }} {component} {onPropertyChange} />
+        <CommonSnippets snippet="Colors" initialValue={{ color: initialColor }} {component} {onPropertyChange} />
       </div>
     </div>
     {@render JoystickAxesMinMax()}

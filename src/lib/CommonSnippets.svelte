@@ -175,7 +175,6 @@
 
 {#snippet Disabled()}
   <UI.Switch
-    wrapperClass="bg-blue"
     label={{ name: $t("constructor.props.disabled") }}
     value={(component.properties as UI.IInputProps | UI.ISwitchProps | UI.ISliderProps | UI.IFileAttachProps)?.disabled ? 1 : 0}
     options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
@@ -243,7 +242,7 @@
       </UI.Modal>
     {/if}
     {#if initialValue.icon}
-      <UI.Button wrapperClass="w-8.5 " componentClass="p-0.5 bg-red" content={{ icon: CrossIcon }} onClick={() => initialValue.updateProperty("")} />
+      <UI.Button wrapperClass="w-8.5" componentClass="p-0.5 bg-red" content={{ icon: CrossIcon }} onClick={() => initialValue.updateProperty("")} />
     {/if}
   </div>
 {/snippet}

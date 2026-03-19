@@ -165,7 +165,8 @@
       if (body && dataBuffer.stashData) {
         if (Array.isArray(body)) {
           for (let i = 0; i < body.length; i++) {
-            dataBuffer.logger ? (buffer = [body.reverse()[i], ...buffer]) : (buffer = [...buffer, body[i]])
+            let item = { ...(dataBuffer.logger ? body.toReversed()[i] : body[i]), __rowId: crypto.randomUUID() }
+            dataBuffer.logger ? (buffer = [item, ...buffer]) : (buffer = [...buffer, item])
           }
         } else dataBuffer.logger ? (buffer = [body, ...buffer]) : (buffer = [...buffer, body])
         if (buffer.length > (dataBuffer.bufferSize ?? 10)) {
@@ -266,7 +267,7 @@
       <!-- Table Body с прокруткой -->
       <div class="flex-1 overflow-y-auto bg-(--container-color)/50 relative" style={``} bind:this={container} onscroll={handleScroll}>
         <div class="min-w-0" style={`height: ${dataBuffer.visibleRows && tableHeight && rows.length > dataBuffer.visibleRows ? `${tableHeight}px` : ""};`}>
-          {#each rows as row, i (row)}
+          {#each rows as row, i (row.__rowId ?? row)}
             <div
               class="grid {!outline && i % 2
                 ? 'bg-[#f2f2f2] dark:bg-[#2a3545]'

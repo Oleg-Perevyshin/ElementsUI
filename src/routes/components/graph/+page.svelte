@@ -28,13 +28,15 @@
     parentId: "",
   })
 
+  let forConstructor = $state(false)
+
   let codeText = $derived(`
 <UI.Graph
 ${formatObjectToString(graphComponent.properties as IGraphProps)} 
 />`)
 </script>
 
-<ComponentExample {codeText}>
+<ComponentExample {codeText} bind:forConstructor>
   {#snippet component()}
     <Graph {...graphComponent.properties as IGraphProps} />
   {/snippet}
@@ -42,13 +44,7 @@ ${formatObjectToString(graphComponent.properties as IGraphProps)}
     <GraphProps
       component={graphComponent as UIComponent & { properties: Partial<IGraphProps> }}
       onPropertyChange={(updates) => (graphComponent = updateComponent(graphComponent, updates as object))}
-      forConstructor={true}
+      {forConstructor}
     />
-    <!-- <hr />
-    <GraphProps
-      component={graphComponent as UIComponent & { properties: Partial<IGraphProps> }}
-      onPropertyChange={(updates) => (graphComponent = updateComponent(graphComponent, updates as object))}
-      
-    /> -->
   {/snippet}
 </ComponentExample>

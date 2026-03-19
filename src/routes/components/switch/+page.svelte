@@ -28,6 +28,8 @@
     parentId: "",
   })
 
+  let forConstructor = $state(false)
+
   let codeText = $derived(`
 <UI.Switch
 ${formatObjectToString(switchComponent.properties as ISwitchProps)} 
@@ -35,7 +37,7 @@ ${formatObjectToString(switchComponent.properties as ISwitchProps)}
 />`)
 </script>
 
-<ComponentExample {codeText}>
+<ComponentExample {codeText} bind:forConstructor>
   {#snippet component()}
     <div class="  my-10 flex w-full justify-center">
       <Switch wrapperClass={(switchComponent.properties as ISwitchProps).bitMode ? "w-fit" : ""} {...switchComponent.properties as ISwitchProps} />
@@ -45,13 +47,7 @@ ${formatObjectToString(switchComponent.properties as ISwitchProps)}
     <SwitchProps
       component={switchComponent as UIComponent & { properties: Partial<ISwitchProps> }}
       onPropertyChange={(updates) => (switchComponent = updateComponent(switchComponent, updates as object))}
-      forConstructor={true}
+      {forConstructor}
     />
-    <!-- <hr />
-    <SwitchProps
-      component={switchComponent as UIComponent & { properties: Partial<ISwitchProps> }}
-      onPropertyChange={(updates) => (switchComponent = updateComponent(switchComponent, updates as object))}
-      
-    /> -->
   {/snippet}
 </ComponentExample>

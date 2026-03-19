@@ -1,10 +1,14 @@
 <script lang="ts">
-  import * as UI from "$lib"
+  import { Switch, t } from "$lib"
   import type { Snippet } from "svelte"
-  import CopyButton from "./libIcons/CopyButton.svelte"
-  import { fade, fly, slide } from "svelte/transition"
+  import { fade } from "svelte/transition"
 
-  let { component, componentProps, codeText }: { component: Snippet; componentProps: Snippet; codeText: string } = $props()
+  let {
+    component,
+    componentProps,
+    codeText,
+    forConstructor = $bindable(),
+  }: { component: Snippet; componentProps: Snippet; codeText: string; forConstructor: boolean } = $props()
 
   let isCopied = $state(false)
 </script>
@@ -13,6 +17,13 @@
   <div class="flex-1">
     {@render component()}
   </div>
+  <Switch
+    wrapperClass="w-60 self-end p-2"
+    label={{ name: $t("library.for_constructor") }}
+    value={forConstructor ? 1 : 0}
+    options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
+    onChange={(value) => (forConstructor = value == 0 ? false : true)}
+  />
   <div class="border-t border-gray-500"></div>
   <div class="max-h-[70%]" transition:fade={{ duration: 200 }}>
     {@render componentProps()}

@@ -23,6 +23,8 @@
     parentId: "",
   })
 
+  let forConstructor = $state(false)
+
   let codeText = $derived(`
 <UI.FileAttach
 ${formatObjectToString(fileAttachComponent.properties as IFileAttachProps)} 
@@ -43,7 +45,7 @@ ${formatObjectToString(fileAttachComponent.properties as IFileAttachProps)}
   }
 </script>
 
-<ComponentExample {codeText}>
+<ComponentExample {codeText} bind:forConstructor>
   {#snippet component()}
     <FileAttach {...fileAttachComponent.properties as IFileAttachProps} onChange={(event) => handleImageUpload(event)} />
   {/snippet}
@@ -51,13 +53,7 @@ ${formatObjectToString(fileAttachComponent.properties as IFileAttachProps)}
     <FileAttachProps
       component={fileAttachComponent as UIComponent & { properties: Partial<IFileAttachProps> }}
       onPropertyChange={(updates) => (fileAttachComponent = updateComponent(fileAttachComponent, updates as object))}
-      forConstructor={true}
+      {forConstructor}
     />
-    <!-- <hr />
-    <FileAttachProps
-      component={fileAttachComponent as UIComponent & { properties: Partial<IFileAttachProps> }}
-      onPropertyChange={(updates) => (fileAttachComponent = updateComponent(fileAttachComponent, updates as object))}
-      
-    /> -->
   {/snippet}
 </ComponentExample>

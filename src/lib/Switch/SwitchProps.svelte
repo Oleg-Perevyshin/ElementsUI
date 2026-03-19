@@ -212,7 +212,7 @@
         <CommonSnippets
           snippet="Colors"
           initialValue={{
-            initialColor,
+            color: initialColor,
             uselessColors: ["bg-gray", "bg-max"],
             updateProperty: (option: UI.IOption) => {
               const options = [...(component.properties?.options || [])]
@@ -243,7 +243,7 @@
         <CommonSnippets
           snippet="Colors"
           initialValue={{
-            initialColor,
+            color: initialColor,
             uselessColors: ["bg-gray", "bg-max"],
             updateProperty: (option: UI.IOption) => {
               const options = [...(component.properties?.options || [])]

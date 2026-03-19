@@ -26,13 +26,15 @@
     parentId: "",
   })
 
+  let forConstructor = $state(false)
+
   let codeText = $derived(`
 <UI.Joystick
 ${formatObjectToString(joystickComponent.properties as IJoystickProps)} 
 />`)
 </script>
 
-<ComponentExample {codeText}>
+<ComponentExample {codeText} bind:forConstructor>
   {#snippet component()}
     <Joystick {...joystickComponent.properties as IJoystickProps} />
   {/snippet}
@@ -40,13 +42,7 @@ ${formatObjectToString(joystickComponent.properties as IJoystickProps)}
     <JoystickProps
       component={joystickComponent as UIComponent & { properties: Partial<IJoystickProps> }}
       onPropertyChange={(updates) => (joystickComponent = updateComponent(joystickComponent, updates as object))}
-      forConstructor={true}
+      {forConstructor}
     />
-    <!-- <hr />
-    <JoystickProps
-      component={joystickComponent as UIComponent & { properties: Partial<IJoystickProps> }}
-      onPropertyChange={(updates) => (joystickComponent = updateComponent(joystickComponent, updates as object))}
-      
-    /> -->
   {/snippet}
 </ComponentExample>

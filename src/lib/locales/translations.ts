@@ -7,6 +7,7 @@ const translations: Translations = {
   ru: {
     "common.select_tag": "Сделайте выбор",
     "debug.baud_rate_data": "Данные",
+    "library.for_constructor": "Для конструктора",
 
     /* Опции рeдактора свойств */
     "constructor.props.action.update": "Обновить",
@@ -160,6 +161,7 @@ const translations: Translations = {
     "constructor.props.map.loading": "Загрузка карты...",
     "constructor.props.map.noconnection": "Карта не загружена. Нет подключения к интернету",
     "constructor.props.widget.mode": "Зацикленный",
+    "constructor.props.button.rounded": "Круглая кнопка",
 
     "constructor.props.table.type": "Тип таблицы",
     "constructor.props.table.type.table": "Статическая таблица",
