@@ -104,19 +104,22 @@
   <UI.Input
     label={{ name: $t("constructor.props.name") }}
     value={component.properties.content.name}
-    onUpdate={(value) => updateProperty("content.name", value as string, component, onPropertyChange)}
+    onUpdate={(value) => {
+      updateProperty("content.name", value as string, component, onPropertyChange)
+      if (component.properties.content.icon && !component.properties.content.name?.trim()) {
+        updateProperty("componentClass", twMerge((component.properties as UI.IButtonProps).componentClass, "w-fit"), component, onPropertyChange)
+      } else if (
+        (component.properties.content.icon && component.properties.content.name?.trim()) ||
+        (!component.properties.content.icon && !component.properties.content.name?.trim())
+      ) {
+        updateProperty("componentClass", twMerge((component.properties as UI.IButtonProps).componentClass, "w-full"), component, onPropertyChange)
+      }
+    }}
   />
 {/snippet}
 
 {#snippet ButtonHeight()}
-  {#if component.properties.content.name?.trim() == "" && component.properties.content.icon}
-    <UI.Switch
-      label={{ name: $t("constructor.props.button.rounded") }}
-      value={(component.properties as UI.IInputProps | UI.ISwitchProps | UI.ISliderProps | UI.IFileAttachProps)?.disabled ? 1 : 0}
-      options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-      onChange={(value) => updateProperty("disabled", value, component, onPropertyChange)}
-    />
-  {:else}
+  {#if !(!component.properties.content.name?.trim() && component.properties.content.icon)}
     <UI.Select
       label={{ name: $t("constructor.props.height") }}
       type="buttons"
@@ -124,7 +127,8 @@
       value={initialHeight}
       onUpdate={(option) =>
         updateProperty("componentClass", twMerge(component.properties.componentClass, (option as IOption<string>).value), component, onPropertyChange)}
-    />{/if}
+    />
+  {/if}
 {/snippet}
 
 {#snippet ButtonInfo()}
@@ -167,7 +171,13 @@
         initialValue={{
           name: $t("constructor.props.buttonIcon"),
           icon: component.properties.content.icon,
-          updateProperty: (icon: string) => updateProperty("content.icon", icon as string, component, onPropertyChange),
+          updateProperty: (icon: string) => {
+            updateProperty("content.icon", icon as string, component, onPropertyChange)
+            if (component.properties.content.icon && !component.properties.content.name?.trim())
+              updateProperty("componentClass", twMerge((component.properties as UI.IButtonProps).componentClass, "w-fit"), component, onPropertyChange)
+            else if (!component.properties.content.icon && !component.properties.content.name?.trim())
+              updateProperty("componentClass", twMerge((component.properties as UI.IButtonProps).componentClass, "w-full"), component, onPropertyChange)
+          },
           icons: { array: ICONS },
         }}
         {component}
@@ -182,12 +192,23 @@
         initialValue={{
           color: initialColor,
           updateProperty: (option: UI.IOption<string>) => {
-            updateProperty(
-              "componentClass",
-              twMerge((component.properties as UI.IButtonProps).componentClass, (option as UI.IOption<string>).value),
-              component,
-              onPropertyChange,
-            )
+            if (!component.properties.content.name && component.properties.content.icon && initialColor?.value === option.value) {
+              updateProperty(
+                "componentClass",
+                component.properties.componentClass
+                  .split(" ")
+                  .filter((cl: string) => !cl.startsWith("bg-"))
+                  .join(" "),
+                component,
+                onPropertyChange,
+              )
+            } else
+              updateProperty(
+                "componentClass",
+                twMerge((component.properties as UI.IButtonProps).componentClass, (option as UI.IOption<string>).value),
+                component,
+                onPropertyChange,
+              )
           },
         }}
         {component}
@@ -216,7 +237,15 @@
           color: initialColor,
           updateProperty: (option: UI.IOption<string>) => {
             if (!component.properties.content.name && component.properties.content.icon && initialColor?.value === option.value) {
-              updateProperty("componentClass", "", component, onPropertyChange)
+              updateProperty(
+                "componentClass",
+                component.properties.componentClass
+                  .split(" ")
+                  .filter((cl: string) => !cl.startsWith("bg-"))
+                  .join(" "),
+                component,
+                onPropertyChange,
+              )
             } else
               updateProperty(
                 "componentClass",
@@ -234,7 +263,13 @@
         initialValue={{
           name: $t("constructor.props.buttonIcon"),
           icon: component.properties.content.icon,
-          updateProperty: (icon: string) => updateProperty("content.icon", icon as string, component, onPropertyChange),
+          updateProperty: (icon: string) => {
+            updateProperty("content.icon", icon as string, component, onPropertyChange)
+            if (component.properties.content.icon && !component.properties.content.name?.trim())
+              updateProperty("componentClass", twMerge((component.properties as UI.IButtonProps).componentClass, "w-fit"), component, onPropertyChange)
+            else if (!component.properties.content.icon && !component.properties.content.name?.trim())
+              updateProperty("componentClass", twMerge((component.properties as UI.IButtonProps).componentClass, "w-full"), component, onPropertyChange)
+          },
           icons: { array: ICONS },
         }}
         {component}

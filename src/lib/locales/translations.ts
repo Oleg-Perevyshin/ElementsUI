@@ -161,7 +161,6 @@ const translations: Translations = {
     "constructor.props.map.loading": "Загрузка карты...",
     "constructor.props.map.noconnection": "Карта не загружена. Нет подключения к интернету",
     "constructor.props.widget.mode": "Зацикленный",
-    "constructor.props.button.rounded": "Круглая кнопка",
 
     "constructor.props.table.type": "Тип таблицы",
     "constructor.props.table.type.table": "Статическая таблица",

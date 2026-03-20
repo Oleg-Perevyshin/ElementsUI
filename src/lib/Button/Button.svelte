@@ -96,12 +96,12 @@
   <button
     id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
     class="{twMerge(
-      `relative inline-block items-center  font-semibold transition duration-200 select-none 
-        ${content.icon && !content.name?.trim() ? 'bg-transparent rounded-full' : 'w-full rounded-2xl py-1 px-2 bg-blue border border-(--bg-color) shadow-sm hover:shadow-md'}
+      `relative inline-block items-center w-full font-semibold transition duration-200 select-none 
+        ${content.icon && !content.name?.trim() ? 'bg-transparent p-0 rounded-full' : 'rounded-2xl py-1 px-2 bg-blue border border-(--bg-color) shadow-sm hover:shadow-md'}
         ${disabled ? 'cursor-not-allowed opacity-50 hover:shadow-none' : 'cursor-pointer active:scale-97'} `,
       componentClass,
     )} bg-(--bg-color)"
-    style="padding: {!content.name?.trim() ? content.name?.length || (componentClass ? '' : '0.5') : ''}rem;"
+    style={!content.name?.trim() && content.name && content.icon ? `padding-inline: ${content.name.length / 2}rem` : ""}
     onclick={handleClick}
     {disabled}
     aria-label={content.name}
