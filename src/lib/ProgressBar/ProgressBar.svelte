@@ -55,7 +55,7 @@
 >
   {#each items as progress, index}
     <div class="flex flex-col {type == 'vertical' ? 'items-center' : `w-full`}">
-      <h5 class={type == "vertical" ? "" : "px-4 mt-2"}>{(value as IReceivingDataObject[])[index].Name || progress.name}</h5>
+      <h5 class={type == "vertical" ? "" : "px-4 mt-2"}>{(value as IReceivingDataObject[])[index]?.Name || progress.name}</h5>
       <div
         class="{twMerge(
           `flex ${type == 'vertical' ? 'h-full w-fit min-w-16 flex-col p-2' : 'h-7 w-full px-2'} items-center gap-2 rounded-full  shadow-sm`,
