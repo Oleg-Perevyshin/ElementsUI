@@ -294,7 +294,7 @@
           />
         </div>
 
-        {#if column.buttons}
+        {#if column.type == "buttons"}
           <div class="flex gap-2 items-end">
             <div class="pl-2 w-12">
               <UI.Button
@@ -381,7 +381,7 @@
               {/each}
             </div>
           </div>
-        {:else if column.select}
+        {:else if column.type == "select"}
           <div class="mx-auto">
             <UI.Input
               wrapperClass="w-70"
@@ -394,7 +394,7 @@
               }}
             />
           </div>
-        {:else if column.image}
+        {:else if column.type == "image"}
           <div class="ml-14 flex items-end gap-2">
             <div class="w-1/2">
               <CommonSnippets
@@ -459,7 +459,7 @@
               }}
             />
           </div>
-        {:else if column.text}
+        {:else if column.type == "text"}
           <div class="mx-auto">
             <UI.Select
               wrapperClass="w-250"
@@ -475,7 +475,7 @@
               }}
             />
           </div>
-        {:else if column.progressBar}
+        {:else if column.type == "progressBar"}
           <div class="w-3/5 flex mx-auto items-end gap-2">
             <UI.Input
               label={{ name: $t("constructor.props.min") }}
