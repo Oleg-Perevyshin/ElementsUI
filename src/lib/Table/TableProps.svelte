@@ -77,6 +77,34 @@
       })
     }
   }
+
+  const changeColumnType = (type: UI.IOption<string> | UI.IOption<string>[], columnIndex: number) => {
+    const currentActiveValues = $optionsStore.TABLE_CONTENT_TYPE_OPTIONS.filter((opt) => {
+      if (!opt?.value) return false
+      return Object.hasOwn(component.properties.header[columnIndex], opt.value)
+    }).map((opt) => opt.value)
+
+    let newHeader = component.properties.header
+
+    if (Array.isArray(type)) {
+      type.forEach((opt) => {
+        if (opt?.value) {
+          if (opt.value == "buttons") {
+            newHeader[columnIndex][opt.value] = []
+            addNewButton(columnIndex)
+          } else newHeader[columnIndex][opt.value] = {}
+        }
+      })
+
+      currentActiveValues.forEach((activeValue) => {
+        if (!type.some((opt) => opt?.value === activeValue)) {
+          newHeader[columnIndex] = Object.fromEntries(Object.entries(newHeader[columnIndex]).filter((h) => h[0] !== activeValue))
+        }
+      })
+    }
+    updateProperty("header", newHeader, component, onPropertyChange)
+  }
+
   const updateTableHeader = (index: number, field: string, value: any) => {
     const headers = [...component.properties.header]
     headers[index] = { ...headers[index], [field]: value }
@@ -116,6 +144,15 @@
     updateProperty("header", headers, component, onPropertyChange)
   }
 
+  const updateProgressBarProperty = (columnIndex: number, field: string, value: any) => {
+    const headers = [...component.properties.header]
+    let progressBar = headers[columnIndex].progressBar
+
+    progressBar = { ...progressBar, [field]: value }
+    headers[columnIndex].progressBar = progressBar
+    updateProperty("header", headers, component, onPropertyChange)
+  }
+
   const removeButtonFromColumn = (columnIndex: number, buttonIndex: number) => {
     const headers = [...component.properties.header]
     const buttons = [...headers[columnIndex].buttons]
@@ -128,11 +165,12 @@
   const addNewButton = (columnIndex: number) => {
     const newButton = {
       name: `button${(component.properties.header[columnIndex].buttons ? component.properties.header[columnIndex].buttons.length : 0) + 1}`,
-      class: "bg-blue w-full",
+      class: "bg-blue",
       eventHandler: { Header: "SET", Argument: "Save", Variables: [] },
       onClick: () => {},
     }
     const buttons = [...(component.properties.header[columnIndex].buttons || []), newButton]
+    console.log(buttons)
 
     updateTableHeader(columnIndex, "buttons", buttons)
   }
@@ -176,7 +214,7 @@
         key: `column${(component.properties.header?.length || 0) + 1}`,
         label: { name: `Column ${(component.properties.header?.length || 0) + 1}`, class: "" },
         width: "10%",
-        type: "text",
+        text: {},
       }
       const headers = [...(component.properties.header || []), newColumn]
       updateProperty("header", headers, component, onPropertyChange)
@@ -197,7 +235,7 @@
 
     {#each component.properties.header as column, columnIndex (columnIndex)}
       <div class="flex flex-col pb-3 {columnIndex !== component.properties.header.length - 1 ? 'border-b border-(--border-color)/50 ' : ''}">
-        <div class="p-2 pr-0 grid grid-cols-[1fr_1fr_minmax(5rem,10rem)_minmax(10rem,21rem)_minmax(10rem,21rem)_2rem] items-end gap-2">
+        <div class="p-2 pr-0 grid grid-cols-[1fr_1fr_minmax(5rem,10rem)_minmax(10rem,21rem)_minmax(10rem,28rem)_2rem] items-end gap-2">
           <UI.Input
             label={{ name: $t("constructor.props.table.columns.key") }}
             value={column.key}
@@ -231,11 +269,18 @@
           <UI.Select
             label={{ name: $t("constructor.props.table.content.type") }}
             type="buttons"
-            options={forConstructor ? $optionsStore.TABLE_CONTENT_TYPE_OPTIONS.slice(0, 3) : $optionsStore.TABLE_CONTENT_TYPE_OPTIONS}
+            // multiSelect
+            options={forConstructor ? $optionsStore.TABLE_CONTENT_TYPE_OPTIONS.slice(0, 4) : $optionsStore.TABLE_CONTENT_TYPE_OPTIONS}
+            // value={$optionsStore.TABLE_CONTENT_TYPE_OPTIONS.filter((opt) => Object.hasOwn(component.properties.header[columnIndex], opt.value))}
             value={$optionsStore.TABLE_CONTENT_TYPE_OPTIONS.find((h) => h.value === column.type) || $optionsStore.TABLE_CONTENT_TYPE_OPTIONS[0]}
             onUpdate={(value) => {
               column.type = (value as UI.IOption).value
               if ((value as UI.IOption).value == "buttons" && (!column.buttons || column.buttons.length == 0)) addNewButton(columnIndex)
+              if ((value as UI.IOption).value == "progressBar" && !column.progressBar) column.progressBar = {}
+
+              // changeColumnType(value, columnIndex)
+              // if ((value as UI.IOption).value == "buttons" && (!column.buttons || column.buttons.length == 0)) addNewButton(columnIndex)
+              // if ((value as UI.IOption).value == "progressBar" && !column.progressBar) column.progressBar = {}
             }}
           />
           <UI.Button
@@ -249,7 +294,7 @@
           />
         </div>
 
-        {#if column.type == "buttons"}
+        {#if column.buttons}
           <div class="flex gap-2 items-end">
             <div class="pl-2 w-12">
               <UI.Button
@@ -336,7 +381,7 @@
               {/each}
             </div>
           </div>
-        {:else if column.type == "select"}
+        {:else if column.select}
           <div class="mx-auto">
             <UI.Input
               wrapperClass="w-70"
@@ -349,7 +394,7 @@
               }}
             />
           </div>
-        {:else if column.type == "image"}
+        {:else if column.image}
           <div class="ml-14 flex items-end gap-2">
             <div class="w-1/2">
               <CommonSnippets
@@ -388,7 +433,7 @@
               label={{ name: $t("constructor.props.table.columns.image.width"), class: "px-0" }}
               type="number"
               number={{ minNum: 0, maxNum: 1000, step: 1 }}
-              value={Number(column.image?.width.replace("rem", "")) ?? 0}
+              value={Number(column.image?.width?.replace("rem", "") ?? 0)}
               onUpdate={(value) => {
                 updateTableHeader(columnIndex, "image", {
                   class: column.image?.class,
@@ -403,7 +448,7 @@
               label={{ name: $t("constructor.props.table.columns.image.height"), class: "px-0" }}
               type="number"
               number={{ minNum: 0, maxNum: 1000, step: 1 }}
-              value={Number(column.image?.height.replace("rem", "")) ?? 0}
+              value={Number(column.image?.height?.replace("rem", "") ?? 0)}
               onUpdate={(value) => {
                 updateTableHeader(columnIndex, "image", {
                   class: column.image?.class,
@@ -414,7 +459,7 @@
               }}
             />
           </div>
-        {:else if column.type == "text"}
+        {:else if column.text}
           <div class="mx-auto">
             <UI.Select
               wrapperClass="w-250"
@@ -428,6 +473,26 @@
               onUpdate={(value) => {
                 changeColumnSettings(value, columnIndex)
               }}
+            />
+          </div>
+        {:else if column.progressBar}
+          <div class="w-3/5 flex mx-auto items-end gap-2">
+            <UI.Input
+              label={{ name: $t("constructor.props.min") }}
+              value={(column.progressBar?.minNum as number) ?? 0}
+              type="number"
+              onUpdate={(value) => updateProgressBarProperty(columnIndex, "minNum", value as string)}
+            />
+            <UI.Input
+              label={{ name: $t("constructor.props.max") }}
+              value={(column.progressBar?.maxNum as number) ?? 100}
+              type="number"
+              onUpdate={(value) => updateProgressBarProperty(columnIndex, "maxNum", value as string)}
+            />
+            <UI.Input
+              label={{ name: $t("constructor.props.units") }}
+              value={column.progressBar?.units}
+              onUpdate={(value) => updateProgressBarProperty(columnIndex, "units", value as string)}
             />
           </div>
         {/if}

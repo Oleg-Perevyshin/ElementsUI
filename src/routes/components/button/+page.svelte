@@ -11,9 +11,9 @@
     access: "full",
     properties: {
       id: crypto.randomUUID(),
-      componentClass: "bg-red p-2",
+      componentClass: "bg-red px-1 py-1",
       content: {
-        // name: "Button",
+        name: "Button",
         info: { text: "", side: "top" },
       },
       keyBind: { showInfo: true, ctrlKey: true, key: "Enter" },
@@ -37,7 +37,6 @@ ${formatObjectToString(buttonComponent.properties as IButtonProps)}
     <div class="relative mx-40 my-20">
       <Button {...buttonComponent.properties as IButtonProps} />
     </div>
-    <Button {...buttonComponent.properties as IButtonProps} />
   {/snippet}
   {#snippet componentProps()}
     <ButtonProps

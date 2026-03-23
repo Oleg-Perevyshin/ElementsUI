@@ -165,21 +165,21 @@
   {:else if !component.properties.bitMode && component.properties.type === "number" && !component.properties.readonly && !component.properties.disabled}
     <div class="flex">
       <UI.Input
-        label={{ name: $t("constructor.props.max") }}
-        value={component.properties.number.maxNum as number}
-        type="number"
-        readonly={component.properties.bitMode}
-        onUpdate={(value) => {
-          updateProperty("number.maxNum", Number(value))
-        }}
-      />
-      <UI.Input
         label={{ name: $t("constructor.props.min") }}
         value={component.properties.number.minNum as number}
         type="number"
         readonly={component.properties.bitMode}
         onUpdate={(value) => {
           updateProperty("number.minNum", Number(value))
+        }}
+      />
+      <UI.Input
+        label={{ name: $t("constructor.props.max") }}
+        value={component.properties.number.maxNum as number}
+        type="number"
+        readonly={component.properties.bitMode}
+        onUpdate={(value) => {
+          updateProperty("number.maxNum", Number(value))
         }}
       />
       <UI.Input

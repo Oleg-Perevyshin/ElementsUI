@@ -155,6 +155,24 @@
     return !!src
   }
 
+  const progressPercent = (column: ITableHeader<any>, value: number) => {
+    let min = column.progressBar?.minNum ?? 0
+    let max = column.progressBar?.maxNum ?? 100
+    if (value) return (((Math.min(Math.max(value, min), max) - min) / (max - min)) * 100) as number
+  }
+
+  const roundToClean = (num: number): number => {
+    if (Number.isInteger(num)) return num
+
+    const rounded1 = Number(num.toFixed(1))
+    if (Math.abs(rounded1 - num) < 1e-10) return rounded1
+
+    const rounded2 = Number(num.toFixed(2))
+    if (Math.abs(rounded2 - num) < 1e-10) return rounded2
+
+    return rounded2
+  }
+
   $effect(() => {
     isScrollable = container ? container.scrollHeight > container.clientHeight : false
     return () => (buffer = [])
@@ -367,6 +385,16 @@
                             <column.image.defaultIcon />
                           {/if}
                         {/if}
+                      </div>
+                    {:else if column.type == "progressBar" && column.progressBar}
+                      <div class="grid grid-cols-[3.5rem_1fr] h-7 w-full px-2 items-center gap-2 rounded-full shadow-sm bg-(--bg-color)">
+                        <span class="m-auto font-semibold">{roundToClean(Number(row[column.key] ?? 0))}{column.progressBar?.units}</span>
+                        <div class="relative my-auto h-3.5 rounded-full bg-(--back-color)/40">
+                          <div
+                            class="absolute top-0 left-0 flex h-full rounded-full bg-(--field-color)"
+                            style="width: {progressPercent(column, row[column.key] as number)}%;"
+                          ></div>
+                        </div>
                       </div>
                     {:else}
                       {@const text =

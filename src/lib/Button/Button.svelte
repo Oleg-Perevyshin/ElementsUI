@@ -85,7 +85,6 @@
   /* Подписка на события клавиатуры */
   onMount(() => {
     if (keyBind) window.addEventListener("keydown", handleKeyDown)
-
     return () => {
       if (keyBind) window.removeEventListener("keydown", handleKeyDown)
     }
@@ -128,7 +127,7 @@
       {/if}
 
       {#if content.name?.trim()}
-        <div class="flex-1">
+        <div class="flex-1 truncate">
           {content.name}
           {#if keyBind.key && keyBind.showHint}
             <div class="text-xs opacity-70">

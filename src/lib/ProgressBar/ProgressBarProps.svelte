@@ -37,12 +37,12 @@
 {#snippet ProgressBarMinMax()}
   <div class="flex">
     <UI.Input
-      label={{ name: $t("constructor.props.max") }}
-      value={component.properties.number.maxNum as number}
+      label={{ name: $t("constructor.props.min") }}
+      value={component.properties.number.minNum as number}
       type="number"
       readonly={component.properties.bitMode}
       onUpdate={(value) => {
-        updateProperty("number.maxNum", Number(value), component, onPropertyChange)
+        updateProperty("number.minNum", Number(value), component, onPropertyChange)
         let newValue = component.properties.value?.map((pr: UI.IReceivingDataObject) => {
           return { ...pr, Value: component.properties.number.minNum + (component.properties.number.maxNum - component.properties.number.minNum) / 2 }
         })
@@ -50,12 +50,12 @@
       }}
     />
     <UI.Input
-      label={{ name: $t("constructor.props.min") }}
-      value={component.properties.number.minNum as number}
+      label={{ name: $t("constructor.props.max") }}
+      value={component.properties.number.maxNum as number}
       type="number"
       readonly={component.properties.bitMode}
       onUpdate={(value) => {
-        updateProperty("number.minNum", Number(value), component, onPropertyChange)
+        updateProperty("number.maxNum", Number(value), component, onPropertyChange)
         let newValue = component.properties.value?.map((pr: UI.IReceivingDataObject) => {
           return { ...pr, Value: component.properties.number.minNum + (component.properties.number.maxNum - component.properties.number.minNum) / 2 }
         })
@@ -195,7 +195,6 @@
     <div class="flex w-1/3 flex-col px-2">
       <CommonSnippets snippet="WrapperClass" {component} {onPropertyChange} />
       {@render ProgressBarMinMax()}
-
       {@render ProgressBarUnits()}
     </div>
     <div class="flex w-1/3 flex-col px-2">

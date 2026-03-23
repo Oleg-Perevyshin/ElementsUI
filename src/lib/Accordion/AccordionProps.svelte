@@ -5,7 +5,6 @@
   import * as UI from "$lib"
   import { optionsStore } from "../options"
   import { ICONS } from "../icons"
-  import Modal from "$lib/Modal.svelte"
   import Button from "$lib/Button/Button.svelte"
   import CrossIcon from "$lib/libIcons/CrossIcon.svelte"
   import CommonSnippets from "$lib/CommonSnippets.svelte"

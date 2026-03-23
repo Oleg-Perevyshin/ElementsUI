@@ -33,13 +33,6 @@
       class="{twMerge(`z-40 flex h-fit items-center rounded-t-xl overflow-x-auto px-1 `, wrapperClass)} 
      bg-(--bg-color)"
     >
-      <!-- `text-${
-                    wrapperClass
-                      ?.split(" ")
-                      .find((cls: string) => cls.startsWith("bg-"))
-                      ?.slice(3)
-                      .split("-")[0]
-                  }-500` -->
       {#each items as item, index}
         <button
           class={twMerge(

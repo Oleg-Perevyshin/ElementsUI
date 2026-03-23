@@ -32,6 +32,7 @@
   <UI.Input
     label={{ name: $t("constructor.props.file.accept") }}
     value={component.properties.accept}
+    help={{ info: $t("constructor.props.file.accept.help") }}
     onUpdate={(value) => updateProperty("accept", value as string, component, onPropertyChange)}
   />
 {/snippet}

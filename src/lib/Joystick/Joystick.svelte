@@ -136,7 +136,7 @@
           {#each directions as direction, index}
             <button class="pointer-events-none absolute top-1/2 left-1/2 block w-1/2 -translate-y-1/2 cursor-pointer" onclick={direction.onClick} title="">
               <span
-                class="relative flex w-full origin-left items-center justify-center pl-[60%] pointer-events-auto
+                class="relative flex w-full origin-left items-center justify-center pl-[60%] pointer-events-auto active:scale-98 transition duration-200
             {direction.mainButton ? 'bg-(--bg-color)' : ''}
             "
                 style=" height: {direction.mainButton
@@ -204,7 +204,7 @@
           style="background: color-mix(in srgb, var(--bg-color), var(--shadow-color) 10%)"
         >
           <button
-            class="h-full cursor-pointer rounded-l-full px-3.5"
+            class="h-full cursor-pointer rounded-l-full px-3.5 active:scale-98 transition duration-200"
             title=""
             onclick={() => {
               if (value[0] - sensitivity <= (axes[0].minNum ?? -360)) {
@@ -230,7 +230,7 @@
             </div></button
           >
           <button
-            class="h-full cursor-pointer rounded-r-full px-3.5"
+            class="h-full cursor-pointer rounded-r-full px-3.5 active:scale-97 transition duration-200"
             title=""
             onclick={() => {
               if (value[0] + sensitivity >= (axes[0].maxNum ?? 360)) {

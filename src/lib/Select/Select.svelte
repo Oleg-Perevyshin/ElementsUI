@@ -55,10 +55,7 @@
 
   const toggleDropdown = (event: MouseEvent) => {
     event.stopPropagation()
-    if (!disabled) {
-      isDropdownOpen = !isDropdownOpen
-      filteredOptions = []
-    }
+    if (!disabled) isDropdownOpen = !isDropdownOpen
   }
 
   const isSelected = (option: IOption<any>) => {
@@ -103,10 +100,9 @@
     filteredOptions = [
       ...filteredOptions,
       ...options.filter((option) => {
-        return !filteredOptions.includes(option)
+        return !filteredOptions.some((filtered) => filtered.id === option.id)
       }),
     ]
-
     isDropdownOpen = filteredOptions.length > 0
 
     const selectedFromList = options.find((option) => option.name?.toString() === searchValue)
@@ -214,9 +210,9 @@
       id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
       {disabled}
       oninput={(e) => handleSearch((e.currentTarget as HTMLInputElement).value)}
-      onclick={() => {
+      onclick={(e) => {
         if (searchValue == "") filteredOptions = options
-        isDropdownOpen = true
+        toggleDropdown(e)
       }}
     />
 

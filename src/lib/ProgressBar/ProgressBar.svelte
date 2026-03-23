@@ -1,17 +1,13 @@
 <!-- $lib/ElementsUI/ProgressBar.svelte -->
 <script lang="ts">
   import { twMerge } from "tailwind-merge"
-  import type { IProgressBarProps } from "../types"
+  import type { IProgressBarProps, IReceivingDataObject } from "../types"
 
   let {
     id = crypto.randomUUID(),
     wrapperClass = "",
     items = [{ name: "Label", class: "" }],
-    value = [
-      { Name: "Label 1", Value: 50 },
-      { Name: "Label 2", Value: 50 },
-      { Name: "Label 3", Value: 50 },
-    ],
+    value,
     type = "horizontal",
     number = {
       minNum: 0,
@@ -37,9 +33,7 @@
   }
 
   const progressPercent = (value: number) => {
-    if (value) {
-      return (((Math.min(Math.max(value, min), max) - min) / (max - min)) * 100) as number
-    }
+    if (value) return (((Math.min(Math.max(value, min), max) - min) / (max - min)) * 100) as number
   }
 
   const roundToClean = (num: number): number => {
@@ -61,7 +55,7 @@
 >
   {#each items as progress, index}
     <div class="flex flex-col {type == 'vertical' ? 'items-center' : `w-full`}">
-      <h5 class={type == "vertical" ? "" : "px-4 mt-2"}>{value[index]?.Name || progress.name}</h5>
+      <h5 class={type == "vertical" ? "" : "px-4 mt-2"}>{(value as IReceivingDataObject[])[index].Name || progress.name}</h5>
       <div
         class="{twMerge(
           `flex ${type == 'vertical' ? 'h-full w-fit min-w-16 flex-col p-2' : 'h-7 w-full px-2'} items-center gap-2 rounded-full  shadow-sm`,
@@ -72,22 +66,26 @@
           <div class="relative my-auto h-[80%] w-[70%] rounded-full bg-(--back-color)/40">
             <div
               class="absolute bottom-0 left-0 flex w-full rounded-full bg-(--field-color)"
-              style="height: {progressPercent((value[index]?.Value as number) ?? 0)}%;"
+              style="height: {progressPercent(((value as IReceivingDataObject[])[index]?.Value as number) ?? 0)}%;"
             ></div>
           </div>
-          <span class="m-auto font-semibold">{roundToClean(Number(numericValue((value[index]?.Value as number) || 0)))}{number.units}</span>
+          <span class="m-auto font-semibold"
+            >{roundToClean(Number(numericValue(((value as IReceivingDataObject[])[index]?.Value as number) || 0)))}{number.units}</span
+          >
         {:else}
-          <span class="m-auto w-20 font-semibold">{roundToClean(Number(numericValue((value[index]?.Value as number) || 0)))}{number.units}</span>
+          <span class="m-auto w-20 font-semibold"
+            >{roundToClean(Number(numericValue(((value as IReceivingDataObject[])[index]?.Value as number) || 0)))}{number.units}</span
+          >
           <div class="relative my-auto h-3.5 flex-1 rounded-full bg-(--back-color)/40">
             <div
               class="absolute top-0 left-0 flex h-full rounded-full bg-(--field-color)"
-              style="width: {progressPercent((value[index]?.Value as number) ?? 0)}%;"
+              style="width: {progressPercent(((value as IReceivingDataObject[])[index]?.Value as number) ?? 0)}%;"
             ></div>
           </div>
         {/if}
       </div>
-      {#if value[index]?.Info}
-        <span>{value[index]?.Info}</span>
+      {#if (value as IReceivingDataObject[])[index]?.Info}
+        <span>{(value as IReceivingDataObject[])[index]?.Info}</span>
       {/if}
     </div>
   {/each}

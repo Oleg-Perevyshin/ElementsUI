@@ -364,7 +364,7 @@ export interface ITableHeader<T extends object> {
   key: keyof T
   width?: string
   align?: "left" | "center" | "right"
-  type?: "buttons" | "select" | "text" | "image"
+  type?: "buttons" | "select" | "text" | "image" | "progressBar"
   disableSelect?: boolean
   text?: {
     sortable?: boolean
@@ -374,6 +374,7 @@ export interface ITableHeader<T extends object> {
     copy?: boolean
     modal?: boolean
   }
+  progressBar?: { minNum?: number; maxNum?: number; units?: string }
   buttons?: ITableButtons<T>[] | ((row: T) => ITableButtons<T>[])
   select?: {
     key: string

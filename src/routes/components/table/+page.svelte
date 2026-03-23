@@ -20,7 +20,7 @@
         {
           key: "id-S",
           label: { name: "ID" },
-          width: "40%",
+          width: "30%",
           image: {
             width: "0rem",
             height: "0rem",
@@ -33,7 +33,7 @@
         {
           key: "device",
           label: { name: "Device" },
-          width: "30%",
+          width: "20%",
           image: {
             width: "0rem",
             height: "0rem",
@@ -51,7 +51,7 @@
         {
           key: "buttons",
           label: { name: "Действия" },
-          width: "30%",
+          width: "20%",
           buttons: [
             {
               name: "send",
@@ -66,6 +66,15 @@
             copy: false,
           },
         } as ITableHeader<any>,
+        {
+          key: "progress",
+          label: { name: "Индикатор прогресса" },
+          width: "30%",
+          align: "left",
+          sortable: true,
+          disableSelect: true,
+          progressBar: { minNum: 0, maxNum: 100, units: "%" },
+        } as ITableHeader<any>,
       ],
       body: [
         {
@@ -77,6 +86,7 @@
           ],
           id: "Value of id5",
           device: "Value of device",
+          progress: 1000,
           buttons: [],
         },
         {
