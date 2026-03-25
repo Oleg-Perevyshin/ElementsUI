@@ -47,11 +47,11 @@
     "prettier-plugin-svelte": "^3.5.1",
     "prettier-plugin-tailwindcss": "^0.7.2",
     "publint": "^0.3.18",
-    "svelte": "^5.54.1",
+    "svelte": "^5.55.0",
     "tailwindcss": "^4.2.2",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
-    "vite": "^8.0.1",
+    "vite": "^8.0.2",
     "vite-plugin-compression": "^0.5.1"
   }
 }

@@ -350,7 +350,7 @@ export interface ISwitchProps {
 }
 
 /* ********************************************************** */
-/* Интерфейс таблицы */
+/* Интерфейсы таблицы */
 export interface ITableButtons<T extends object> {
   name?: string | ((row: T) => string)
   icon?: ConstructorOfATypedSvelteComponent | string
@@ -358,28 +358,49 @@ export interface ITableButtons<T extends object> {
   eventHandler?: IUIComponentHandler
   onClick?: (row: T) => void
 }
+// export interface ITableButtons<T extends object> {
+//   name?: string | ((row: T) => string)
+//   icon?: ConstructorOfATypedSvelteComponent | string
+//   class?: string | ((row: T) => string)
+//   eventHandler?: IUIComponentHandler
+//   onClick?: (row: T) => void
+// }
+// export interface ITableButtons<T extends object> {
+//   name?: string | ((row: T) => string)
+//   icon?: ConstructorOfATypedSvelteComponent | string
+//   class?: string | ((row: T) => string)
+//   eventHandler?: IUIComponentHandler
+//   onClick?: (row: T) => void
+// }
+// export interface ITableButtons<T extends object> {
+//   name?: string | ((row: T) => string)
+//   icon?: ConstructorOfATypedSvelteComponent | string
+//   class?: string | ((row: T) => string)
+//   eventHandler?: IUIComponentHandler
+//   onClick?: (row: T) => void
+// }
 
 export interface ITableHeader<T extends object> {
   label?: { name?: string; class?: string }
-  key: keyof T
   width?: string
   align?: "left" | "center" | "right"
-  type?: "buttons" | "select" | "text" | "image" | "progressBar"
   disableSelect?: boolean
   text?: {
+    key: keyof T
     sortable?: boolean
     truncated?: boolean
     tooltip?: boolean
     formatting?: (text: string) => string
     copy?: boolean
     modal?: boolean
-  }
-  progressBar?: { minNum?: number; maxNum?: number; units?: string }
+  }[]
+  progressBar?: { key: keyof T; minNum?: number; maxNum?: number; units?: string }[]
   buttons?: ITableButtons<T>[] | ((row: T) => ITableButtons<T>[])
   select?: {
-    key: string
+    key: keyof T
+    keyCol: string
     onChange?: () => void
-  }
+  }[]
   image?: {
     src?: string | ((row: T) => string)
     alt?: string
@@ -387,7 +408,7 @@ export interface ITableHeader<T extends object> {
     width?: string
     height?: string
     defaultIcon?: ConstructorOfATypedSvelteComponent | string
-  }
+  }[]
 }
 
 export interface ITableProps<T extends object> {

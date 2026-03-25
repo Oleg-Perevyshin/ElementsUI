@@ -145,12 +145,12 @@ export const optionsStore = derived(t, ($t) => {
       { id: id(), value: "flex-col-reverse", name: "↓" },
     ],
 
-    TABLE_COLUMN_SETTING_OPTIONS: [
-      { id: id(), value: "text.sortable", name: $t("constructor.props.table.columns.sortable") },
-      { id: id(), value: "text.copy", name: $t("constructor.props.copy") },
-      { id: id(), value: "text.truncated", name: $t("constructor.props.table.columns.truncated") },
-      { id: id(), value: "text.tooltip", name: $t("constructor.props.table.columns.tooltip") },
-      { id: id(), value: "text.modal", name: $t("constructor.props.table.columns.modal") },
+    TABLE_TEXT_SETTING_OPTIONS: [
+      { id: id(), value: "sortable", name: $t("constructor.props.table.columns.sortable") },
+      { id: id(), value: "copy", name: $t("constructor.props.copy") },
+      { id: id(), value: "truncated", name: $t("constructor.props.table.columns.truncated") },
+      { id: id(), value: "tooltip", name: $t("constructor.props.table.columns.tooltip") },
+      { id: id(), value: "modal", name: $t("constructor.props.table.columns.modal") },
     ],
 
     HEIGHT_OPTIONS: [

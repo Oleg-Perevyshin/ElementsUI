@@ -18,62 +18,51 @@
       dataBuffer: { bufferSize: 10, visibleRows: 5, logger: false },
       header: [
         {
-          key: "id-S",
           label: { name: "ID" },
           width: "30%",
-          image: {
-            width: "0rem",
-            height: "0rem",
-          },
-          type: "select",
-          select: { key: "" },
           align: "left",
-          text: { sortable: true, truncated: false, copy: false },
+          select: [{}],
+          text: [{ key: "id-S", sortable: true, truncated: false, copy: false }],
         } as ITableHeader<any>,
         {
-          key: "device",
           label: { name: "Device" },
           width: "20%",
-          image: {
-            width: "0rem",
-            height: "0rem",
-          },
-          type: "text",
+          image: [
+            {
+              width: "0rem",
+              height: "0rem",
+            },
+          ],
           align: "left",
-          sortable: true,
           disableSelect: true,
-          text: {
-            truncated: true,
-            copy: false,
-            modal: true,
-          },
+          text: [
+            {
+              key: "device",
+              truncated: true,
+              copy: false,
+              modal: true,
+            },
+          ],
         } as ITableHeader<any>,
         {
-          key: "buttons",
           label: { name: "Действия" },
           width: "20%",
           buttons: [
             {
               name: "send",
-              class: "bg-blue",
+              class: "bg-blue grow",
               eventHandler: { Header: "SET", Argument: "Save", Variables: ["id-S"] },
             },
           ],
-          type: "buttons",
           align: "left",
-          text: {
-            truncated: true,
-            copy: false,
-          },
         } as ITableHeader<any>,
         {
-          key: "progress",
           label: { name: "Индикатор прогресса" },
           width: "30%",
           align: "left",
           sortable: true,
           disableSelect: true,
-          progressBar: { minNum: 0, maxNum: 100, units: "%" },
+          progressBar: [{ key: "progress", minNum: 0, maxNum: 100, units: "%" }],
         } as ITableHeader<any>,
       ],
       body: [
@@ -87,7 +76,6 @@
           id: "Value of id5",
           device: "Value of device",
           progress: 1000,
-          buttons: [],
         },
         {
           "id-S": [

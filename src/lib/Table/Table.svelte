@@ -31,7 +31,7 @@
   let container: HTMLElement | null = $state(null)
   let buffer: any[] = $state([])
 
-  let isDropdownOpen: { x: number; y: number } | null = $state(null)
+  let isDropdownOpen: { x: number; y: number; index: number } | null = $state(null)
   let selectSlideDuration: number = $state(250)
   let copiedCell: { x: number; y: number } | null = $state(null)
   let tooltip = $state({ show: false, text: "", x: 0, y: 0 })
@@ -106,7 +106,7 @@
     else if (button.eventHandler && onClick) {
       let value: Record<string, boolean | string | number | number[] | object | null> = {}
       button.eventHandler.Variables.forEach((v: string) => {
-        if (header.some((h) => h.key === v && h.type === "select")) value[v.slice(0, -2)] = row[v.slice(0, -2)]
+        if (header.some((h) => h.select && h.select.some((s) => s.key === v))) value[v.slice(0, -2)] = row[v.slice(0, -2)]
         else value[v] = row[v]
       })
       button.eventHandler.Value = JSON.stringify(value)
@@ -150,14 +150,14 @@
 
   /* Для работы этой проверки в описании столбцов таблицы нужно явно указать что строка будет пустая при отсутствии иконки в БД -
      src: (row) => (row.icon ? `data:image/png;base64,${row.icon}` : '') */
-  const hasImage = (column: ITableHeader<any>, row: any): boolean => {
-    const src = typeof column.image?.src === "function" ? column.image.src(row) : column.image?.src
+  const hasImage = (column: ITableHeader<any>, row: any, index: number): boolean => {
+    const src = typeof column.image?.[index].src === "function" ? column.image[index].src(row) : column.image?.[index].src
     return !!src
   }
 
-  const progressPercent = (column: ITableHeader<any>, value: number) => {
-    let min = column.progressBar?.minNum ?? 0
-    let max = column.progressBar?.maxNum ?? 100
+  const progressPercent = (column: ITableHeader<any>, value: number, index: number) => {
+    let min = column.progressBar?.[index].minNum ?? 0
+    let max = column.progressBar?.[index].maxNum ?? 100
     if (value) return (((Math.min(Math.max(value, min), max) - min) / (max - min)) * 100) as number
   }
 
@@ -257,10 +257,15 @@
           )}
         >
           <span>{column.label?.name}</span>
-          {#if column.type === "text" && column.text?.sortable}
+          {#if column.text && column.text.some((text) => text.sortable === true)}
             <button
               class="inline-block cursor-pointer font-bold transition-transform duration-75 hover:scale-110 active:scale-95"
-              onclick={() => sortRows(column.key as string)}
+              onclick={() =>
+                sortRows(
+                  column.text?.find((text) => {
+                    text.sortable
+                  })?.key as string,
+                )}
             >
               ↑↓
             </button>
@@ -302,9 +307,9 @@
                       ? 'select-none'
                       : 'select-all'}"
                   >
-                    {#if column.type == "buttons" && column.buttons}
+                    {#if column.buttons}
                       {@const buttons = typeof column.buttons === "function" ? column.buttons(row) : column.buttons}
-                      <div class="flex flex-wrap gap-1">
+                      <div class="flex flex-wrap w-full gap-1">
                         {#each buttons as button (button)}
                           <button
                             class="{twMerge(`flex items-center justify-center gap-2 cursor-pointer rounded-full 
@@ -328,141 +333,157 @@
                           </button>
                         {/each}
                       </div>
-                    {:else if column.type == "select" && column.select}
-                      {@const options = Array.isArray(row[column.key]) ? row[column.key] : []}
-                      <div class="relative w-full select-none">
-                        <button
-                          id="select{i}-{j}"
-                          class="w-full rounded-2xl border border-(--blue-color) bg-(--back-color) p-1 text-center shadow-[0_0_3px_rgb(0_0_0_/0.25)] transition duration-200
-        cursor-pointer hover:shadow-[0_0_6px_rgb(0_0_0_/0.25)]"
-                          onclick={() => (isDropdownOpen = isDropdownOpen?.x === j && isDropdownOpen.y === i ? null : { x: j, y: i })}
-                        >
-                          {options.some((o: IOption) => o.value === row[(column.key as string).slice(0, -2)])
-                            ? row[column.key].find((o: IOption) => o.value === row[(column.key as string).slice(0, -2)]).name
-                            : $t("common.select_tag")}
-                        </button>
-
-                        {#if isDropdownOpen?.x === j && isDropdownOpen.y === i}
-                          {@const cords = document.getElementById(`select${i}-${j}`)?.getBoundingClientRect()}
-                          <div
-                            class="fixed z-50 rounded-b-2xl shadow-[0_0_3px_rgb(0_0_0_/0.25)]"
-                            style="top: {cords?.bottom}px; left: calc({cords?.left}px + 0.9rem) ; width: calc({cords?.width}px - 1.8rem);"
-                            transition:slide={{ duration: selectSlideDuration }}
-                          >
-                            {#each options as option, option_index (option.id)}
-                              <button
-                                id={option.id}
-                                value={option?.value ? String(option.value) : ""}
-                                class={twMerge(
-                                  `flex h-full w-full cursor-pointer items-center justify-center p-1 inset-shadow-[0_10px_10px_-15px_rgb(0_0_0_/0.5)] duration-250 hover:bg-(--field-color)! bg-(--back-color)
-              ${option_index === options.length - 1 ? "rounded-b-2xl" : ""}`,
-                                  option.class,
-                                )}
-                                onclick={(e) => selectOption(i, column.key, option, e)}
-                              >
-                                {option.name}
-                              </button>
-                            {/each}
-                          </div>
-                        {/if}
-                      </div>
-                    {:else if column.type == "image" && column.image}
-                      <div
-                        class="flex items-center justify-center [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
-                        style={`width: ${column.image.width || "5rem"}; height: ${column.image.height || "5rem"}; `}
-                      >
-                        {#if hasImage(column, row)}
-                          <img
-                            src={typeof column.image?.src === "function" ? column.image.src(row) : column.image?.src || ""}
-                            alt={column.image.alt ?? "Image"}
-                            class={twMerge(`h-full w-full object-cover ${column.image.class || ""}`)}
-                            loading="lazy"
-                          />
-                        {:else if column.image.defaultIcon}
-                          {#if typeof column.image.defaultIcon === "string"}
-                            {@html column.image.defaultIcon}
-                          {:else}
-                            <column.image.defaultIcon />
-                          {/if}
-                        {/if}
-                      </div>
-                    {:else if column.type == "progressBar" && column.progressBar}
-                      <div class="grid grid-cols-[3.5rem_1fr] h-7 w-full px-2 items-center gap-2 rounded-full shadow-sm bg-(--bg-color)">
-                        <span class="m-auto font-semibold">{roundToClean(Number(row[column.key] ?? 0))}{column.progressBar?.units}</span>
-                        <div class="relative my-auto h-3.5 rounded-full bg-(--back-color)/40">
-                          <div
-                            class="absolute top-0 left-0 flex h-full rounded-full bg-(--field-color)"
-                            style="width: {progressPercent(column, row[column.key] as number)}%;"
-                          ></div>
-                        </div>
-                      </div>
-                    {:else}
-                      {@const text =
-                        Array.isArray(row[column.key]) && row[column.key][0] && "value" in row[column.key][0]
-                          ? row[column.key].map((item: IOption) => item.name)
-                          : typeof row[column.key] == "object"
-                            ? JSON.stringify(row[column.key])
-                            : row[column.key]}
-                      <div
-                        class="w-full max-w-full wrap-break-word {column.text?.truncated ? 'truncate' : ' whitespace-normal'}"
-                        onmouseenter={column.text?.tooltip ? (e) => showTooltip(e, row[column.key], column.text?.formatting) : undefined}
-                        onmouseleave={column.text?.tooltip ? hideTooltip : undefined}
-                        onmousemove={column.text?.tooltip
-                          ? (e) => {
-                              tooltip.x = e.clientX
-                              tooltip.y = e.clientY
-                            }
-                          : undefined}
-                        role="columnheader"
-                        tabindex={null}
-                      >
-                        {#if column.text?.modal}
+                    {/if}
+                    {#if column.select}
+                      {#each column.select as select, selectIndex}
+                        {@const options = Array.isArray(row[select.key]) ? row[select.key] : []}
+                        <div class="relative w-full select-none">
                           <button
-                            class="w-full cursor-pointer text-left"
-                            onclick={(e) => {
-                              e.stopPropagation()
-                              showModal(text, column.text?.formatting)
-                            }}
+                            id="select{i}-{j}-{selectIndex}"
+                            class="w-full rounded-2xl border border-(--blue-color) bg-(--back-color) p-1 text-center shadow-[0_0_3px_rgb(0_0_0_/0.25)] transition duration-200
+        cursor-pointer hover:shadow-[0_0_6px_rgb(0_0_0_/0.25)]"
+                            onclick={() =>
+                              (isDropdownOpen =
+                                isDropdownOpen?.x === j && isDropdownOpen?.y === i && isDropdownOpen?.index === selectIndex
+                                  ? null
+                                  : { x: j, y: i, index: selectIndex })}
                           >
-                            {@html text}
+                            {options.some((o: IOption) => o.value === row[(select?.key as string).slice(0, -2)])
+                              ? row[select?.key].find((o: IOption) => o.value === row[(select?.key as string).slice(0, -2)]).name
+                              : $t("common.select_tag")}
                           </button>
-                        {:else}
-                          {@html text}
-                        {/if}
-                      </div>
 
-                      {#if column.text?.copy}
-                        <button
-                          class="mx-2 flex cursor-pointer border-none bg-transparent text-2xl"
-                          onclick={(e) => {
-                            e.preventDefault()
-                            navigator.clipboard.writeText(row[column.key])
-                            copiedCell = { x: j, y: i }
-                            setTimeout(() => (copiedCell = null), 1000)
-                          }}
-                          aria-label="Копировать текст"
+                          {#if isDropdownOpen?.x === j && isDropdownOpen.y === i && isDropdownOpen.index === selectIndex}
+                            {@const cords = document.getElementById(`select${i}-${j}-${selectIndex}`)?.getBoundingClientRect()}
+                            <div
+                              class="fixed z-50 rounded-b-2xl shadow-[0_0_3px_rgb(0_0_0_/0.25)]"
+                              style="top: {cords?.bottom}px; left: calc({cords?.left}px + 0.9rem) ; width: calc({cords?.width}px - 1.8rem);"
+                              transition:slide={{ duration: selectSlideDuration }}
+                            >
+                              {#each options as option, option_index (option.id)}
+                                <button
+                                  id={option.id}
+                                  value={option?.value ? String(option.value) : ""}
+                                  class={twMerge(
+                                    `flex h-full w-full cursor-pointer items-center justify-center p-1 inset-shadow-[0_10px_10px_-15px_rgb(0_0_0_/0.5)] duration-250 hover:bg-(--field-color)! bg-(--back-color)
+              ${option_index === options.length - 1 ? "rounded-b-2xl" : ""}`,
+                                    option.class,
+                                  )}
+                                  onclick={(e) => selectOption(i, select?.key, option, e)}
+                                >
+                                  {option.name}
+                                </button>
+                              {/each}
+                            </div>
+                          {/if}
+                        </div>
+                      {/each}
+                    {/if}
+                    {#if column.image}
+                      {#each column.image as image, index}
+                        <div
+                          class="flex items-center justify-center [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
+                          style={`width: ${image.width || "5rem"}; height: ${image.height || "5rem"}; `}
                         >
-                          <div class="size-5 text-sm [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full">
-                            {#if copiedCell?.y === i && copiedCell.x === j}
-                              <div
-                                class="absolute top-1/2 right-3.5 -translate-y-1/2 transform rounded-md bg-(--green-color) px-1.5 py-1 shadow-lg"
-                                transition:fade={{ duration: 200 }}
-                              >
-                                ✓
-                              </div>
+                          {#if hasImage(column, row, index)}
+                            <img
+                              src={typeof image?.src === "function" ? image.src(row) : image?.src || ""}
+                              alt={image.alt ?? "Image"}
+                              class={twMerge(`h-full w-full object-cover ${image.class || ""}`)}
+                              loading="lazy"
+                            />
+                          {:else if image.defaultIcon}
+                            {#if typeof image.defaultIcon === "string"}
+                              {@html image.defaultIcon}
                             {:else}
-                              <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
-                                <g fill="none" stroke="currentColor" stroke-width="1.5">
-                                  <path
-                                    d="M6 11c0-2.828 0-4.243.879-5.121C7.757 5 9.172 5 12 5h3c2.828 0 4.243 0 5.121.879C21 6.757 21 8.172 21 11v5c0 2.828 0 4.243-.879 5.121C19.243 22 17.828 22 15 22h-3c-2.828 0-4.243 0-5.121-.879C6 20.243 6 18.828 6 16z"
-                                  />
-                                  <path d="M6 19a3 3 0 0 1-3-3v-6c0-3.771 0-5.657 1.172-6.828S7.229 2 11 2h4a3 3 0 0 1 3 3" />
-                                </g>
-                              </svg>
+                              <image.defaultIcon />
                             {/if}
+                          {/if}
+                        </div>
+                      {/each}
+                    {/if}
+                    {#if column.progressBar}
+                      {#each column.progressBar as progressBar, index}
+                        <div class="grid grid-cols-[3.5rem_1fr] h-7 w-full px-2 items-center gap-2 rounded-full shadow-sm bg-(--bg-color)">
+                          <span class="m-auto font-semibold">{roundToClean(Number(row[progressBar.key] ?? 0))}{progressBar?.units}</span>
+                          <div class="relative my-auto h-3.5 rounded-full bg-(--back-color)/40">
+                            <div
+                              class="absolute top-0 left-0 flex h-full rounded-full bg-(--field-color)"
+                              style="width: {progressPercent(column, row[progressBar.key] as number, index)}%;"
+                            ></div>
                           </div>
-                        </button>
-                      {/if}
+                        </div>
+                      {/each}
+                    {/if}
+                    {#if column.text}
+                      {#each column.text as text}
+                        {@const data =
+                          Array.isArray(row[text.key]) && row[text.key][0] && "value" in row[text.key][0]
+                            ? row[text.key].map((item: IOption) => item.name)
+                            : typeof row[text.key] == "object"
+                              ? JSON.stringify(row[text.key])
+                              : row[text.key]}
+                        <div
+                          class="w-full max-w-full wrap-break-word {text?.truncated ? 'truncate' : ' whitespace-normal'}"
+                          onmouseenter={text?.tooltip ? (e) => showTooltip(e, row[text?.key ?? ""], text?.formatting) : undefined}
+                          onmouseleave={text?.tooltip ? hideTooltip : undefined}
+                          onmousemove={text?.tooltip
+                            ? (e) => {
+                                tooltip.x = e.clientX
+                                tooltip.y = e.clientY
+                              }
+                            : undefined}
+                          role="columnheader"
+                          tabindex={null}
+                        >
+                          {#if text?.modal}
+                            <button
+                              class="w-full cursor-pointer text-left"
+                              onclick={(e) => {
+                                e.stopPropagation()
+                                showModal(data, text?.formatting)
+                              }}
+                            >
+                              {@html data}
+                            </button>
+                          {:else}
+                            {@html data}
+                          {/if}
+                        </div>
+
+                        {#if text?.copy}
+                          <button
+                            class="mx-2 flex cursor-pointer border-none bg-transparent text-2xl"
+                            onclick={(e) => {
+                              e.preventDefault()
+                              navigator.clipboard.writeText(row[text?.key ?? ""])
+                              copiedCell = { x: j, y: i }
+                              setTimeout(() => (copiedCell = null), 1000)
+                            }}
+                            aria-label="Копировать текст"
+                          >
+                            <div class="size-5 text-sm [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full">
+                              {#if copiedCell?.y === i && copiedCell.x === j}
+                                <div
+                                  class="absolute top-1/2 right-3.5 -translate-y-1/2 transform rounded-md bg-(--green-color) px-1.5 py-1 shadow-lg"
+                                  transition:fade={{ duration: 200 }}
+                                >
+                                  ✓
+                                </div>
+                              {:else}
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                                  <g fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <path
+                                      d="M6 11c0-2.828 0-4.243.879-5.121C7.757 5 9.172 5 12 5h3c2.828 0 4.243 0 5.121.879C21 6.757 21 8.172 21 11v5c0 2.828 0 4.243-.879 5.121C19.243 22 17.828 22 15 22h-3c-2.828 0-4.243 0-5.121-.879C6 20.243 6 18.828 6 16z"
+                                    />
+                                    <path d="M6 19a3 3 0 0 1-3-3v-6c0-3.771 0-5.657 1.172-6.828S7.229 2 11 2h4a3 3 0 0 1 3 3" />
+                                  </g>
+                                </svg>
+                              {/if}
+                            </div>
+                          </button>
+                        {/if}
+                      {/each}
                     {/if}
                   </div>
                 {/if}
