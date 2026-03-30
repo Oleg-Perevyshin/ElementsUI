@@ -1,7 +1,7 @@
 <!-- $lib/ElementsUI/Table.svelte -->
 <script lang="ts">
   import { get } from "svelte/store"
-  import type { IOption, ITableHeader, ITableImage, ITableProgressBar, ITableProps, ITableText } from "../types"
+  import type { IOption, ITableContent, ITableHeader, ITableImage, ITableProgressBar, ITableProps, ITableText } from "../types"
   import { fade, fly, slide } from "svelte/transition"
   import { twMerge } from "tailwind-merge"
   import { onMount, tick } from "svelte"
@@ -106,7 +106,13 @@
     else if (button.eventHandler && onClick) {
       let value: Record<string, boolean | string | number | number[] | object | null> = {}
       button.eventHandler.Variables.forEach((v: string) => {
-        if (header.some((h) => h.content?.some((c) => c.type == "select") && h.content.some((c) => c.type == "select" && c.data.key === v)))
+        if (
+          header.some(
+            (h) =>
+              (h.content as ITableContent<any>[])?.some((c) => c.type == "select") &&
+              (h.content as ITableContent<any>[]).some((c) => c.type == "select" && c.data.key === v),
+          )
+        )
           value[v.slice(0, -2)] = row[v.slice(0, -2)]
         else value[v] = row[v]
       })
@@ -152,13 +158,13 @@
   /* Для работы этой проверки в описании столбцов таблицы нужно явно указать что строка будет пустая при отсутствии иконки в БД -
      src: (row) => (row.icon ? `data:image/png;base64,${row.icon}` : '') */
   const hasImage = (column: ITableHeader<any>, row: any, index: number): boolean => {
-    let content = column.content?.[index]
+    let content = (column.content as ITableContent<any>[])?.[index]
     const src = content?.type === "image" && typeof content.data.src === "function" ? content.data.src(row) : (content?.data as ITableImage<object>).src
     return !!src
   }
 
-  const progressPercent = (column: ITableHeader<any>, value: number, index: number) => {
-    let progressBar = column.content?.[index].data as ITableProgressBar<object>
+  const progressPercent = (content: ITableContent<any>, value: number) => {
+    let progressBar = content.data as ITableProgressBar<object>
 
     let min = progressBar?.minNum ?? 0
     let max = progressBar?.maxNum ?? 100
@@ -261,13 +267,14 @@
           )}
         >
           <span>{column.label?.name}</span>
-          {#if column.content?.some((c) => c.type === "text" && c.data.sortable)}
+
+          {#if typeof column.content !== "function" && (column.content as ITableContent<any>[])?.some((c) => c.type === "text" && c.data.sortable)}
             <button
               class="inline-block cursor-pointer font-bold transition-transform duration-75 hover:scale-110 active:scale-95"
               onclick={() =>
                 sortRows(
                   (
-                    column.content?.find((c) => {
+                    (column.content as ITableContent<any>[])?.find((c) => {
                       c.type === "text" && c.data.sortable
                     })?.data as ITableText<object>
                   ).key as string,
@@ -305,6 +312,8 @@
             >
               {#each header as column, j (column)}
                 {#if column.width !== "0%"}
+                  {@const contentArray = typeof column.content === "function" ? column.content(row) : column.content}
+
                   <div
                     id="rowDiv{i}-{j}"
                     class="relative flex w-full min-w-0 items-center gap-x-2 px-2 py-1 wrap-break-word
@@ -313,7 +322,7 @@
                       ? 'select-none'
                       : 'select-all'}"
                   >
-                    {#each column.content as content, index}
+                    {#each contentArray as content, index}
                       {#if content.type === "button"}
                         {@const button = typeof content.data === "function" ? content.data(row) : content.data}
                         <div class="flex flex-wrap w-full gap-1">
@@ -407,7 +416,7 @@
                           <div class="relative my-auto h-3.5 rounded-full bg-(--back-color)/40">
                             <div
                               class="absolute top-0 left-0 flex h-full rounded-full bg-(--field-color)"
-                              style="width: {progressPercent(column, row[progressBar.key] as number, index)}%;"
+                              style="width: {progressPercent(content, row[progressBar.key] as number)}%;"
                             ></div>
                           </div>
                         </div>

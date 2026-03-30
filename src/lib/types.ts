@@ -366,7 +366,7 @@ export interface ITableSelect<T extends object> {
   keyCol: string
   onChange?: () => void
 }
-export interface ITableButtons<T extends object> {
+export interface ITableButton<T extends object> {
   name?: string | ((row: T) => string)
   icon?: ConstructorOfATypedSvelteComponent | string
   class?: string | ((row: T) => string)
@@ -380,6 +380,7 @@ export interface ITableProgressBar<T extends object> {
   units?: string
 }
 export interface ITableImage<T extends object> {
+  key: keyof T
   src?: string | ((row: T) => string)
   alt?: string
   class?: string
@@ -388,18 +389,19 @@ export interface ITableImage<T extends object> {
   defaultIcon?: ConstructorOfATypedSvelteComponent | string
 }
 
+export type ITableContent<T extends object> =
+  | { type: "text"; data: ITableText<T> }
+  | { type: "select"; data: ITableSelect<T> }
+  | { type: "button"; data: ITableButton<T> | ((row: T) => ITableButton<T>) }
+  | { type: "progressBar"; data: ITableProgressBar<T> }
+  | { type: "image"; data: ITableImage<T> }
+
 export interface ITableHeader<T extends object> {
   label?: { name?: string; class?: string }
   width?: string
   align?: "left" | "center" | "right"
   disableSelect?: boolean
-  content?: (
-    | { type: "text"; data: ITableText<T> }
-    | { type: "select"; data: ITableSelect<T> }
-    | { type: "button"; data: ITableButtons<T> | ((row: T) => ITableButtons<T>) }
-    | { type: "progressBar"; data: ITableProgressBar<T> }
-    | { type: "image"; data: ITableImage<T> }
-  )[]
+  content?: ITableContent<T>[] | ((row: T) => ITableContent<T>[])
 }
 
 export interface ITableProps<T extends object> {
