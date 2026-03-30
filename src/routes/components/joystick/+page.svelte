@@ -1,6 +1,5 @@
 <script lang="ts">
   import { type IJoystickProps, type UIComponent } from "$lib"
-  import Button from "$lib/Button/Button.svelte"
   import ComponentExample from "$lib/ComponentExample.svelte"
   import Joystick from "$lib/Joystick/Joystick.svelte"
   import JoystickProps from "$lib/Joystick/JoystickProps.svelte"

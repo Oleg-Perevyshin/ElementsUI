@@ -21,37 +21,52 @@
           label: { name: "ID" },
           width: "30%",
           align: "left",
-          select: [{}],
-          text: [{ key: "id-S", sortable: true, truncated: false, copy: false }],
+          content: [
+            { type: "select", data: { key: "id-S" } },
+            {
+              type: "button",
+              data: {
+                name: "send",
+                class: "bg-blue grow",
+                eventHandler: { Header: "SET", Argument: "Save", Variables: ["id-S"] },
+              },
+            },
+            { type: "text", data: { key: "id-S", sortable: true, truncated: false, copy: false } },
+          ],
         } as ITableHeader<any>,
         {
           label: { name: "Device" },
           width: "20%",
-          image: [
-            {
-              width: "0rem",
-              height: "0rem",
-            },
-          ],
+
           align: "left",
           disableSelect: true,
-          text: [
+          content: [
             {
-              key: "device",
-              truncated: true,
-              copy: false,
-              modal: true,
+              type: "image",
+              data: { width: "0rem", height: "0rem" },
+            },
+            {
+              type: "text",
+              data: {
+                key: "device",
+                truncated: true,
+                copy: false,
+                modal: true,
+              },
             },
           ],
         } as ITableHeader<any>,
         {
           label: { name: "Действия" },
           width: "20%",
-          buttons: [
+          content: [
             {
-              name: "send",
-              class: "bg-blue grow",
-              eventHandler: { Header: "SET", Argument: "Save", Variables: ["id-S"] },
+              type: "button",
+              data: {
+                name: "send",
+                class: "bg-blue grow",
+                eventHandler: { Header: "SET", Argument: "Save", Variables: ["id-S"] },
+              },
             },
           ],
           align: "left",
@@ -60,9 +75,13 @@
           label: { name: "Индикатор прогресса" },
           width: "30%",
           align: "left",
-          sortable: true,
           disableSelect: true,
-          progressBar: [{ key: "progress", minNum: 0, maxNum: 100, units: "%" }],
+          content: [
+            {
+              type: "progressBar",
+              data: { key: "progress", minNum: 0, maxNum: 100, units: "%" },
+            },
+          ],
         } as ITableHeader<any>,
       ],
       body: [

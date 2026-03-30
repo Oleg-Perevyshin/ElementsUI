@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getContext, tick } from "svelte"
+  import { getContext } from "svelte"
   import { t } from "$lib/locales/i18n"
   import { type UIComponent, type ITableProps, type ITableHeader, updateProperty, type IUIComponentHandler } from "../types"
   import * as UI from "$lib"
@@ -9,7 +9,7 @@
   import { ICONS } from "$lib/icons"
   import CommonSnippets from "$lib/CommonSnippets.svelte"
   import { slide } from "svelte/transition"
-  import MoveVerticalIcon from "$lib/libIcons/MoveVerticalIcon.svelte"
+  import Dragging from "$lib/Dragging.svelte"
 
   const {
     component,
@@ -38,39 +38,50 @@
     ),
   )
 
-  const changeColumnSettings = (settings: UI.IOption<string> | UI.IOption<string>[], columnIndex: number, textIndex: number) => {
+  let settingsContainer: HTMLDivElement[] = $state([])
+  let columnContainer: HTMLDivElement | null = $state(null)
+  const defaultColors = [
+    "bg-[#fca5a559] dark:bg-[#991b1b59]",
+    "bg-[#86efac59] dark:bg-[#15803d59]",
+    "bg-[#93c5fd59] dark:bg-[#1d4ed859]",
+    "bg-[#fdba7459] dark:bg-[#c2410c59]",
+    "bg-[#67e8f959] dark:bg-[#0e749059]",
+    "bg-[#d8b4fe59] dark:bg-[#7e22ce59]",
+  ]
+
+  const changeColumnSettings = (settings: UI.IOption<string> | UI.IOption<string>[], columnIndex: number, index: number) => {
     const currentActiveValues = $optionsStore.TABLE_TEXT_SETTING_OPTIONS.filter(
-      (opt) => component.properties.header[columnIndex].text[textIndex][opt.value] === true,
+      (opt) => component.properties.header[columnIndex].content[index].data[opt.value] === true,
     ).map((opt) => opt.value)
 
     if (Array.isArray(settings)) {
       settings.forEach((opt) => {
-        if (opt?.value) component.properties.header[columnIndex].text[textIndex][opt.value] = true
+        if (opt?.value) component.properties.header[columnIndex].content[index].data[opt.value] = true
       })
 
       currentActiveValues.forEach((activeValue) => {
-        if (!settings.some((opt) => opt?.value === activeValue)) component.properties.header[columnIndex].text[textIndex][activeValue] = false
+        if (!settings.some((opt) => opt?.value === activeValue)) component.properties.header[columnIndex].content[index].data[activeValue] = false
       })
     }
   }
 
   const addContent = (option: UI.IOption, event: MouseEvent, columnIndex: number) => {
     event.stopPropagation()
-    let newHeader = component.properties.header
+    let header = component.properties.header
+    header[columnIndex].content.push({
+      type: option.value,
+      data:
+        option.value === "button"
+          ? {
+              name: `button`,
+              class: "bg-blue grow",
+              eventHandler: { Header: "SET", Argument: "Save", Variables: [] },
+              onClick: () => {},
+            }
+          : {},
+    })
 
-    if (option.value === "buttons")
-      (newHeader[columnIndex].buttons ||= [
-        { name: `button1`, class: "bg-blue grow", eventHandler: { Header: "SET", Argument: "Save", Variables: [] }, onClick: () => {} },
-      ]).push({
-        name: `button${newHeader[columnIndex].buttons.length + 1}`,
-        class: "bg-blue grow",
-        eventHandler: { Header: "SET", Argument: "Save", Variables: [] },
-        onClick: () => {},
-      })
-    else (newHeader[columnIndex][option.value as string] ||= [{}]).push({})
-
-    updateProperty("header", newHeader, component, onPropertyChange)
-
+    updateProperty("header", header, component, onPropertyChange)
     isDropdownOpen = -1
   }
 
@@ -80,181 +91,11 @@
     updateProperty("header", headers, component, onPropertyChange)
   }
 
-  // const updateTableBody = () => {
-  //   let newBody = component.properties.body.map((row: object) => {
-  //     const newRow: Partial<object> = {}
-  //     component.properties.header.forEach((col: ITableHeader<any>) => {
-  //       if (col.text) {
-  //         const key = col.text.key as keyof object
-  //         newRow[key] = row[key] ?? `Value of ${key}`
-  //       }
-  //     })
-  //     return newRow
-  //   })
-  //   updateProperty("body", newBody, component, onPropertyChange)
-  // }
-
-  const updateButtonProperty = (columnIndex: number, buttonIndex: number, field: string, value: any) => {
+  const updateContentProperty = (columnIndex: number, index: number, field: string, value: any) => {
     const headers = [...component.properties.header]
-    console.log(headers)
-
-    const buttons = [...headers[columnIndex].buttons]
-
-    buttons[buttonIndex] = { ...buttons[buttonIndex], [field]: value }
-    headers[columnIndex].buttons = buttons
+    headers[columnIndex].content[index].data = { ...headers[columnIndex].content[index].data, [field]: value }
     updateProperty("header", headers, component, onPropertyChange)
   }
-
-  const updateProgressBarProperty = (columnIndex: number, field: string, value: any, progressBarIndex: number) => {
-    const headers = [...component.properties.header]
-    headers[columnIndex].progressBar[progressBarIndex] = { ...headers[columnIndex].progressBar[progressBarIndex], [field]: value }
-    updateProperty("header", headers, component, onPropertyChange)
-  }
-
-  const updateImageProperty = (columnIndex: number, field: string, value: any, imageIndex: number) => {
-    const headers = [...component.properties.header]
-    headers[columnIndex].image[imageIndex] = { ...headers[columnIndex].image[imageIndex], [field]: value }
-    updateProperty("header", headers, component, onPropertyChange)
-  }
-
-  const removeButtonFromColumn = (columnIndex: number, buttonIndex: number) => {
-    const headers = [...component.properties.header]
-    const buttons = [...headers[columnIndex].buttons]
-
-    buttons.splice(buttonIndex, 1)
-    headers[columnIndex].buttons = buttons.length ? buttons : undefined
-    updateProperty("header", headers, component, onPropertyChange)
-  }
-
-  // let dragState: {
-  //   isDragging: boolean
-  //   command: Command | null
-  //   startX: number
-  //   startY: number
-  //   offsetY: number
-  //   ghostElement: HTMLElement | null
-  //   placeholderElement: HTMLElement | null
-  //   dropIndex: number | null
-  //   categoryName: keyof SavedCommands | null
-  // } = $state({
-  //   isDragging: false,
-  //   command: null,
-  //   startX: 0,
-  //   startY: 0,
-  //   offsetY: 0,
-  //   ghostElement: null,
-  //   placeholderElement: null,
-  //   dropIndex: null,
-  //   categoryName: null,
-  // })
-
-  // /* Перетаскивание с MouseEvent */
-  // const startDrag = async (e: MouseEvent, index: number, categoryName: keyof SavedCommands) => {
-  //   const movedElement = document.getElementById(`item-${index}`) as HTMLElement
-  //   if (!movedElement) return
-
-  //   const element = movedElement.cloneNode(true) as HTMLElement
-  //   const rect = movedElement.getBoundingClientRect()
-
-  //   /* Создаем визуальный эффект перетаскивания */
-  //   element.id = "drag-element"
-  //   element.style.position = "fixed"
-  //   element.style.zIndex = "9999"
-  //   element.style.minHeight = `${rect.height}px`
-  //   element.style.pointerEvents = "none"
-  //   element.style.width = `${rect.width}px`
-  //   element.style.background = "var(--field-color)"
-  //   element.style.padding = "0.25rem"
-  //   element.style.borderRadius = "1rem"
-  //   element.style.top = `${rect.top}px`
-  //   movedElement.parentNode?.appendChild(element)
-
-  //   const placeholder = document.createElement("div")
-  //   placeholder.style.minHeight = `${rect.height}px`
-  //   placeholder.style.width = "100%"
-  //   placeholder.style.border = "2px dashed var(--blue-color)"
-  //   placeholder.style.borderRadius = "1rem"
-  //   element.parentNode?.insertBefore(placeholder, movedElement)
-
-  //   const [movedItem] = commands[categoryName].splice(index, 1)
-  //   await tick()
-
-  //   dragState = {
-  //     isDragging: true,
-  //     command: movedItem,
-  //     startX: e.clientX,
-  //     startY: e.clientY,
-  //     offsetY: e.clientY - rect.top,
-  //     ghostElement: element,
-  //     placeholderElement: placeholder,
-  //     dropIndex: index,
-  //     categoryName,
-  //   }
-  //   commandItems = Array.from(commandContainer?.querySelectorAll('[id^="item-"]') || [])
-
-  //   e.preventDefault()
-  //   e.stopPropagation()
-  // }
-
-  // const processDrag = (e: MouseEvent) => {
-  //   if (!dragState.isDragging || !dragState.ghostElement || !dragState.placeholderElement) return
-  //   const ghost = dragState.ghostElement
-  //   ghost.style.top = `${e.clientY - dragState.offsetY}px`
-
-  //   const allElements = document.elementsFromPoint(dragState.startX, e.clientY)
-  //   const cell = allElements.find((el) => el.classList.contains("saved-command")) as HTMLElement
-  //   const newIndex = cell ? Number(cell.id.slice(5)) : null
-
-  //   /* Находим целевой элемент перед которым нужно вставить placeholder */
-  //   if (newIndex === null) return
-  //   dragState.dropIndex = newIndex
-
-  //   const placeholder = dragState.placeholderElement
-  //   const targetElement = commandItems[dragState.dropIndex]
-
-  //   if (targetElement && targetElement.parentNode) {
-  //     const nextSibling = placeholder.nextSibling
-  //     if (nextSibling !== targetElement) targetElement.parentNode.insertBefore(placeholder, targetElement)
-  //   }
-  // }
-
-  // const endDrag = () => {
-  //   if (!dragState.isDragging || !dragState.ghostElement || !dragState.categoryName) return
-
-  //   /* Определение целевой ячейки под курсором */
-  //   if (dragState.command !== null && dragState.dropIndex !== null) {
-  //     const currentCommands = [...commands[dragState.categoryName]]
-  //     currentCommands.splice(dragState.dropIndex, 0, dragState.command)
-  //     commands = { ...commands, [dragState.categoryName]: currentCommands }
-  //   }
-
-  //   if (dragState.placeholderElement) dragState.placeholderElement.remove()
-  //   if (dragState.ghostElement) dragState.ghostElement.remove()
-
-  //   dragState = {
-  //     isDragging: false,
-  //     command: null,
-  //     startX: 0,
-  //     startY: 0,
-  //     offsetY: 0,
-  //     ghostElement: null,
-  //     placeholderElement: null,
-  //     dropIndex: null,
-  //     categoryName: null,
-  //   }
-  // }
-
-  // /* Глобальные обработчики для mouse events */
-  // $effect(() => {
-  //   if (dragState.isDragging) {
-  //     window.addEventListener("mousemove", processDrag)
-  //     window.addEventListener("mouseup", endDrag)
-  //     return () => {
-  //       window.removeEventListener("mousemove", processDrag)
-  //       window.removeEventListener("mouseup", endDrag)
-  //     }
-  //   }
-  // })
 </script>
 
 {#snippet TableOutline()}
@@ -290,8 +131,8 @@
   <hr class="border-(--border-color)" />
 
   <!-- Настройки столбцов таблицы -->
-  <div>
-    <div class=" flex items-center justify-center gap-2">
+  <div class="flex flex-col gap-2" bind:this={columnContainer}>
+    <div class="flex items-center justify-center gap-2">
       <h4>{$t("constructor.props.table.columns")}</h4>
       <UI.Button
         wrapperClass="w-8"
@@ -300,7 +141,7 @@
           const newColumn: ITableHeader<any> = {
             label: { name: `Column ${(component.properties.header?.length || 0) + 1}`, class: "" },
             width: "10%",
-            text: [{ key: `column${(component.properties.header?.length || 0) + 1}` }],
+            content: [{ type: "text", data: { key: "" } }],
           }
           const headers = [...(component.properties.header || []), newColumn]
           updateProperty("header", headers, component, onPropertyChange)
@@ -310,8 +151,23 @@
     </div>
 
     {#each component.properties.header as column, columnIndex (columnIndex)}
-      <div class="flex flex-col pb-3 {columnIndex !== component.properties.header.length - 1 ? 'border-b border-(--border-color)/50 ' : ''}">
-        <div class="p-2 pr-0 grid grid-cols-[1fr_minmax(5rem,10rem)_minmax(10rem,21rem)_2rem_2rem] items-end gap-2">
+      <div
+        id="column-{columnIndex}"
+        class="relative flex flex-col p-2 border rounded-2xl border-(--border-color)/50 {defaultColors[columnIndex % defaultColors.length]}"
+      >
+        <Dragging
+          wrapperClass="absolute top-10"
+          container={columnContainer}
+          array={component.properties.header}
+          elementsId="column"
+          elementIndex={columnIndex}
+          onUpdate={(updatedArray) => {
+            if (Array.isArray(updatedArray) && updatedArray.every((item) => typeof item === "object" && "content" in item)) {
+              updateProperty("header", updatedArray, component, onPropertyChange)
+            }
+          }}
+        />
+        <div class="py-2 pl-6 grid grid-cols-[1fr_minmax(5rem,10rem)_minmax(10rem,21rem)_2rem_2rem] items-end gap-2">
           <UI.Input
             label={{ name: $t("constructor.props.table.columns.label") }}
             value={column.label?.name}
@@ -365,23 +221,6 @@
               </div>
             {/if}
           </div>
-          <!-- <UI.Select
-            label={{ name: $t("constructor.props.table.content.type") }}
-            type="buttons"
-            multiSelect
-            options={forConstructor ? $optionsStore.TABLE_CONTENT_TYPE_OPTIONS.slice(0, 4) : $optionsStore.TABLE_CONTENT_TYPE_OPTIONS}
-            value={$optionsStore.TABLE_CONTENT_TYPE_OPTIONS.filter((opt) => Object.hasOwn(component.properties.header[columnIndex], opt.value))}
-            // value={$optionsStore.TABLE_CONTENT_TYPE_OPTIONS.find((h) => h.value === column.type) || $optionsStore.TABLE_CONTENT_TYPE_OPTIONS[0]}
-            onUpdate={(value) => {
-              // column.type = (value as UI.IOption).value
-              // if ((value as UI.IOption).value == "buttons" && (!column.buttons || column.buttons.length == 0)) addNewButton(columnIndex)
-              // if ((value as UI.IOption).value == "progressBar" && !column.progressBar) column.progressBar = {}
-
-              changeColumnType(value, columnIndex)
-              // if ((value as UI.IOption).value == "buttons" && (!column.buttons || column.buttons.length == 0)) addNewButton(columnIndex)
-              // if ((value as UI.IOption).value == "progressBar" && !column.progressBar) column.progressBar = {}
-            }}
-          /> -->
           <UI.Button
             wrapperClass="w-8"
             content={{ icon: ButtonDelete }}
@@ -392,10 +231,11 @@
             }}
           />
         </div>
-        <div class="flex flex-col gap-2">
-          {#if column.text}
-            {#each column.text as text, textIndex}
-              <div class="relative bg-(--container-color)/50 rounded-2xl p-2">
+        <div class="flex flex-col gap-2" bind:this={settingsContainer[columnIndex]}>
+          {#each column.content as content, index}
+            {#if content.type == "text"}
+              {@const text = content.data}
+              <div id={`item-${index}-${columnIndex}`} class="relative bg-(--container-color)/50 rounded-2xl p-2">
                 <div class="flex gap-2 mx-auto items-end" style="width: {forConstructor ? '65%' : '90%'}; ">
                   <UI.Input
                     wrapperClass="w-1/4"
@@ -405,10 +245,9 @@
                     onUpdate={(value) => {
                       updateTableHeader(
                         columnIndex,
-                        "text",
-                        column.text.map((textItem: any, i: number) => (i == textIndex ? { ...textItem, key: value } : textItem)),
+                        "content",
+                        column.content.map((textItem: any, i: number) => (i == index ? { ...textItem, data: { ...textItem.data, key: value } } : textItem)),
                       )
-
                       // updateTableBody()
                     }}
                   />
@@ -417,40 +256,41 @@
                     type="buttons"
                     multiSelect={true}
                     value={$optionsStore.TABLE_TEXT_SETTING_OPTIONS.slice(0, forConstructor ? 3 : 5).filter((opt) => {
-                      if (component.properties.header[columnIndex].text[textIndex][opt.value]) return opt
+                      if (column.content[index].data[opt.value]) return opt
                     })}
                     options={$optionsStore.TABLE_TEXT_SETTING_OPTIONS.slice(0, forConstructor ? 3 : 5)}
-                    onUpdate={(value) => changeColumnSettings(value, columnIndex, textIndex)}
+                    onUpdate={(value) => changeColumnSettings(value, columnIndex, index)}
                   />
                 </div>
 
-                <!-- <div
-                  class="cursor-move absolute left-2 bottom-2 size-8 [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
-                  role="button"
-                  tabindex={0}
-                  onkeydown={null}
-                  onmousedown={(e) => startDrag(e, textIndex, column.text)}
-                >
-                  <MoveVerticalIcon />
-                </div> -->
+                <Dragging
+                  wrapperClass="absolute left-2 bottom-2"
+                  container={settingsContainer[columnIndex]}
+                  array={column.content}
+                  elementIndex={index}
+                  containerIndex={columnIndex}
+                  onUpdate={(updatedArray, index) => {
+                    if (index === columnIndex) {
+                      const headers = [...component.properties.header]
+                      headers[columnIndex].content = updatedArray
+                      updateProperty("header", headers, component, onPropertyChange)
+                    }
+                  }}
+                />
 
                 <UI.Button
                   wrapperClass="absolute right-2 bottom-2 w-8"
                   content={{ icon: ButtonDelete }}
                   onClick={() => {
                     const headers = [...(component.properties.header || [])]
-                    ;(headers as ITableHeader<object>[])[columnIndex].text?.splice(textIndex, 1)
-                    if (!headers[columnIndex].text.length)
-                      headers[columnIndex] = Object.fromEntries(Object.entries(headers[columnIndex]).filter((h) => h[0] !== "text"))
+                    ;(headers as ITableHeader<object>[])[columnIndex].content?.splice(index, 1)
                     updateProperty("header", headers, component, onPropertyChange)
                   }}
                 />
               </div>
-            {/each}
-          {/if}
-          {#if column.select}
-            {#each column.select as select, selectIndex}
-              <div class="relative bg-(--container-color)/50 rounded-2xl p-2">
+            {:else if content.type == "select"}
+              {@const select = content.data}
+              <div id={`item-${index}-${columnIndex}`} class="relative bg-(--container-color)/50 rounded-2xl p-2">
                 <div class="flex w-1/3 mx-auto gap-2">
                   <UI.Input
                     wrapperClass="w-1/2"
@@ -460,8 +300,8 @@
                     onUpdate={(value) => {
                       updateTableHeader(
                         columnIndex,
-                        "select",
-                        column.select.map((selectItem: any, i: number) => (i == selectIndex ? { ...selectItem, key: value } : selectItem)),
+                        "content",
+                        column.content.map((textItem: any, i: number) => (i == index ? { ...textItem, data: { ...textItem.data, key: value } } : textItem)),
                       )
                       // updateTableBody()
                     }}
@@ -474,35 +314,46 @@
                     help={{ info: $t("constructor.props.table.select.keys.info"), regExp: /^[a-zA-Z0-9\-_ ]{0,500}$/ }}
                     onUpdate={(value) => {
                       const headers = [...component.properties.header]
-                      headers[columnIndex].select[selectIndex] = { ...headers[columnIndex].select[selectIndex], keyCol: value }
+                      headers[columnIndex].content[index].data = { ...headers[columnIndex].content[index].data, keyCol: value }
                       updateProperty("header", headers, component, onPropertyChange)
                     }}
                   />
                 </div>
+
+                <Dragging
+                  wrapperClass="absolute left-2 bottom-2"
+                  container={settingsContainer[columnIndex]}
+                  array={column.content}
+                  elementIndex={index}
+                  containerIndex={columnIndex}
+                  onUpdate={(updatedArray, index) => {
+                    if (index === columnIndex) {
+                      const headers = [...component.properties.header]
+                      headers[columnIndex].content = updatedArray
+                      updateProperty("header", headers, component, onPropertyChange)
+                    }
+                  }}
+                />
 
                 <UI.Button
                   wrapperClass="absolute right-2 bottom-2 w-8"
                   content={{ icon: ButtonDelete }}
                   onClick={() => {
                     const headers = [...(component.properties.header || [])]
-                    ;(headers as ITableHeader<object>[])[columnIndex].select?.splice(selectIndex, 1)
-                    if (!headers[columnIndex].select.length)
-                      headers[columnIndex] = Object.fromEntries(Object.entries(headers[columnIndex]).filter((h) => h[0] !== "select"))
+                    ;(headers as ITableHeader<object>[])[columnIndex].content?.splice(index, 1)
                     updateProperty("header", headers, component, onPropertyChange)
                   }}
                 />
               </div>
-            {/each}
-          {/if}
-          {#if column.buttons}
-            <div class="w-full bg-(--container-color)/50 rounded-2xl p-2">
-              {#each column.buttons as button, buttonIndex (buttonIndex)}
-                <div class="flex items-end justify-between gap-2">
+            {:else if content.type == "button"}
+              {@const button = content.data}
+              <div id={`item-${index}-${columnIndex}`} class="relative w-full bg-(--container-color)/50 rounded-2xl p-2">
+                <div class="flex w-[95%] mx-auto items-end justify-between gap-2">
                   <UI.Input
                     label={{ name: $t("constructor.props.name") }}
                     wrapperClass="w-2/10"
                     value={button.name}
-                    onUpdate={(value) => updateButtonProperty(columnIndex, buttonIndex, "name", value)}
+                    onUpdate={(value) => updateContentProperty(columnIndex, index, "name", value)}
                   />
 
                   <UI.Select
@@ -514,7 +365,7 @@
                       (c.value as string).includes((button.class ?? component.properties.wrapperClass).split(" ").find((cls: string) => cls.startsWith("bg-"))),
                     )}
                     onUpdate={(value) => {
-                      updateButtonProperty(columnIndex, buttonIndex, "class", (value as UI.IOption).value)
+                      updateContentProperty(columnIndex, index, "class", (value as UI.IOption).value)
                     }}
                   />
 
@@ -523,8 +374,8 @@
                       snippet="IconsLib"
                       initialValue={{
                         name: $t("constructor.props.table.type.icon"),
-                        icon: column.buttons[buttonIndex].icon,
-                        updateProperty: (icon: string) => updateButtonProperty(columnIndex, buttonIndex, "icon", icon),
+                        icon: column.content[index].data.icon,
+                        updateProperty: (icon: string) => updateContentProperty(columnIndex, index, "icon", icon),
                         icons: { array: ICONS },
                       }}
                       {component}
@@ -541,7 +392,7 @@
                     onUpdate={(option) => {
                       const handler = button.eventHandler
                       handler.Header = (option as UI.IOption).value as string
-                      updateButtonProperty(columnIndex, buttonIndex, "eventHandler", handler)
+                      updateContentProperty(columnIndex, index, "eventHandler", handler)
                     }}
                   />
                   <UI.Input
@@ -551,7 +402,7 @@
                     onUpdate={(value) => {
                       const handler = button.eventHandler
                       handler.Argument = value as string
-                      updateButtonProperty(columnIndex, buttonIndex, "eventHandler", handler)
+                      updateContentProperty(columnIndex, index, "eventHandler", handler)
                     }}
                   />
                   <UI.Input
@@ -563,17 +414,38 @@
                     onUpdate={(value) => {
                       const handler = { ...button.eventHandler }
                       handler.Variables = (value as string).trim().split(/\s+/)
-                      updateButtonProperty(columnIndex, buttonIndex, "eventHandler", handler)
+                      updateContentProperty(columnIndex, index, "eventHandler", handler)
                     }}
                   />
-                  <UI.Button wrapperClass="w-8" content={{ icon: ButtonDelete }} onClick={() => removeButtonFromColumn(columnIndex, buttonIndex)} />
                 </div>
-              {/each}
-            </div>
-          {/if}
-          {#if column.progressBar}
-            {#each column.progressBar as progressBar, progressBarIndex}
-              <div class="relative bg-(--container-color)/50 rounded-2xl p-2">
+
+                <UI.Button
+                  wrapperClass="absolute right-2 bottom-2 w-8"
+                  content={{ icon: ButtonDelete }}
+                  onClick={() => {
+                    const headers = [...(component.properties.header || [])]
+                    ;(headers as ITableHeader<object>[])[columnIndex].content?.splice(index, 1)
+                    updateProperty("header", headers, component, onPropertyChange)
+                  }}
+                />
+                <Dragging
+                  wrapperClass="absolute left-2 bottom-2"
+                  container={settingsContainer[columnIndex]}
+                  array={column.content}
+                  elementIndex={index}
+                  containerIndex={columnIndex}
+                  onUpdate={(updatedArray, index) => {
+                    if (index === columnIndex) {
+                      const headers = [...component.properties.header]
+                      headers[columnIndex].content = updatedArray
+                      updateProperty("header", headers, component, onPropertyChange)
+                    }
+                  }}
+                />
+              </div>
+            {:else if content.type == "progressBar"}
+              {@const progressBar = content.data}
+              <div id={`item-${index}-${columnIndex}`} class="relative bg-(--container-color)/50 rounded-2xl p-2">
                 <div class="w-3/5 flex mx-auto items-end gap-2">
                   <UI.Input
                     label={{ name: $t("constructor.props.table.progressBar.key") }}
@@ -582,10 +454,8 @@
                     onUpdate={(value) => {
                       updateTableHeader(
                         columnIndex,
-                        "progressBar",
-                        column.progressBar.map((progressBarItem: any, i: number) =>
-                          i == progressBarIndex ? { ...progressBarItem, key: value } : progressBarItem,
-                        ),
+                        "content",
+                        column.content.map((textItem: any, i: number) => (i == index ? { ...textItem, data: { ...textItem.data, key: value } } : textItem)),
                       )
                       // updateTableBody()
                     }}
@@ -595,38 +465,49 @@
                     label={{ name: $t("constructor.props.min") }}
                     value={(progressBar?.minNum as number) ?? 0}
                     type="number"
-                    onUpdate={(value) => updateProgressBarProperty(columnIndex, "minNum", value as string, progressBarIndex)}
+                    onUpdate={(value) => updateContentProperty(columnIndex, index, "minNum", value as string)}
                   />
                   <UI.Input
                     wrapperClass="w-1/2"
                     label={{ name: $t("constructor.props.max") }}
                     value={(progressBar?.maxNum as number) ?? 100}
                     type="number"
-                    onUpdate={(value) => updateProgressBarProperty(columnIndex, "maxNum", value as string, progressBarIndex)}
+                    onUpdate={(value) => updateContentProperty(columnIndex, index, "maxNum", value as string)}
                   />
                   <UI.Input
                     label={{ name: $t("constructor.props.units") }}
                     value={progressBar?.units}
-                    onUpdate={(value) => updateProgressBarProperty(columnIndex, "units", value as string, progressBarIndex)}
+                    onUpdate={(value) => updateContentProperty(columnIndex, index, "units", value as string)}
                   />
                 </div>
+
+                <Dragging
+                  wrapperClass="absolute left-2 bottom-2"
+                  container={settingsContainer[columnIndex]}
+                  array={column.content}
+                  elementIndex={index}
+                  containerIndex={columnIndex}
+                  onUpdate={(updatedArray, index) => {
+                    if (index === columnIndex) {
+                      const headers = [...component.properties.header]
+                      headers[columnIndex].content = updatedArray
+                      updateProperty("header", headers, component, onPropertyChange)
+                    }
+                  }}
+                />
                 <UI.Button
                   wrapperClass="absolute right-2 bottom-2 w-8"
                   content={{ icon: ButtonDelete }}
                   onClick={() => {
                     const headers = [...(component.properties.header || [])]
-                    ;(headers as ITableHeader<object>[])[columnIndex].progressBar?.splice(progressBarIndex, 1)
-                    if (!headers[columnIndex].progressBar.length)
-                      headers[columnIndex] = Object.fromEntries(Object.entries(headers[columnIndex]).filter((h) => h[0] !== "progressBar"))
+                    ;(headers as ITableHeader<object>[])[columnIndex].content?.splice(index, 1)
                     updateProperty("header", headers, component, onPropertyChange)
                   }}
                 />
               </div>
-            {/each}
-          {/if}
-          {#if !forConstructor && column.image}
-            {#each column.image as image, imageIndex}
-              <div class="relative bg-(--container-color)/50 rounded-2xl p-2">
+            {:else if !forConstructor && content.type == "image"}
+              {@const image = content.data}
+              <div id={`item-${index}-${columnIndex}`} class="relative bg-(--container-color)/50 rounded-2xl p-2">
                 <div class="flex items-end gap-2 w-[80%] mx-auto">
                   <CommonSnippets
                     snippet="IconsLib"
@@ -634,11 +515,9 @@
                       name: $t("constructor.props.table.columns.defaultIcon"),
                       icon: image?.defaultIcon ?? "",
                       updateProperty: (icon: string) => {
-                        updateImageProperty(columnIndex, "defaultIcon", icon, imageIndex)
-                        console.log(image)
-
-                        if (!image?.width || image?.width === "0rem") updateImageProperty(columnIndex, "width", "1rem", imageIndex)
-                        if (!image?.width || image?.height === "0rem") updateImageProperty(columnIndex, "height", "1rem", imageIndex)
+                        updateContentProperty(columnIndex, index, "defaultIcon", icon)
+                        if (!image?.width || image?.width === "0rem") updateContentProperty(columnIndex, index, "width", "1rem")
+                        if (!image?.width || image?.height === "0rem") updateContentProperty(columnIndex, index, "height", "1rem")
                       },
                       icons: { array: ICONS },
                     }}
@@ -649,7 +528,7 @@
                   <UI.Input
                     label={{ name: $t("constructor.props.table.columns.class") }}
                     value={image?.class}
-                    onUpdate={(value) => updateImageProperty(columnIndex, "class", value, imageIndex)}
+                    onUpdate={(value) => updateContentProperty(columnIndex, index, "class", value)}
                   />
                   <UI.Input
                     wrapperClass="w-4/10"
@@ -657,7 +536,7 @@
                     type="number"
                     number={{ minNum: 0, maxNum: 1000, step: 1 }}
                     value={Number(image?.width?.replace("rem", "") ?? 0)}
-                    onUpdate={(value) => updateImageProperty(columnIndex, "width", `${value ?? 0}rem`, imageIndex)}
+                    onUpdate={(value) => updateContentProperty(columnIndex, index, "width", `${value ?? 0}rem`)}
                   />
                   <UI.Input
                     wrapperClass="w-4/10"
@@ -665,26 +544,41 @@
                     type="number"
                     number={{ minNum: 0, maxNum: 1000, step: 1 }}
                     value={Number(image?.height?.replace("rem", "") ?? 0)}
-                    onUpdate={(value) => updateImageProperty(columnIndex, "height", `${value ?? 0}rem`, imageIndex)}
+                    onUpdate={(value) => updateContentProperty(columnIndex, index, "height", `${value ?? 0}rem`)}
                   />
                 </div>
+                <Dragging
+                  wrapperClass="absolute left-2 bottom-2"
+                  container={settingsContainer[columnIndex]}
+                  array={column.content}
+                  elementIndex={index}
+                  containerIndex={columnIndex}
+                  onUpdate={(updatedArray, index) => {
+                    if (index === columnIndex) {
+                      const headers = [...component.properties.header]
+                      headers[columnIndex].content = updatedArray
+                      updateProperty("header", headers, component, onPropertyChange)
+                    }
+                  }}
+                />
                 <UI.Button
                   wrapperClass="absolute right-2 bottom-2 w-8"
                   content={{ icon: ButtonDelete }}
                   onClick={() => {
                     const headers = [...(component.properties.header || [])]
-                    ;(headers as ITableHeader<object>[])[columnIndex].image?.splice(imageIndex, 1)
-                    if (!headers[columnIndex].image.length)
-                      headers[columnIndex] = Object.fromEntries(Object.entries(headers[columnIndex]).filter((h) => h[0] !== "image"))
+                    ;(headers as ITableHeader<object>[])[columnIndex].content?.splice(index, 1)
                     updateProperty("header", headers, component, onPropertyChange)
                   }}
                 />
               </div>
-            {/each}
-          {/if}
+            {/if}
+          {/each}
+
+          <div id={`item-${column.content.length}-${columnIndex}`} class="min-h-2"></div>
         </div>
       </div>
     {/each}
+    <div id={`column-${component.properties.header.length}`} class="min-h-4"></div>
   </div>
 {/snippet}
 

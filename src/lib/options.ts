@@ -200,7 +200,7 @@ export const optionsStore = derived(t, ($t) => {
     TABLE_CONTENT_TYPE_OPTIONS: [
       { id: id(), value: "text", name: $t("constructor.props.table.type.text") },
       { id: id(), value: "select", name: $t("constructor.props.table.type.select") },
-      { id: id(), value: "buttons", name: $t("constructor.props.table.type.buttons") },
+      { id: id(), value: "button", name: $t("constructor.props.table.type.button") },
       { id: id(), value: "progressBar", name: $t("constructor.props.table.type.progressbar") },
       { id: id(), value: "image", name: $t("constructor.props.table.type.icon") },
     ],

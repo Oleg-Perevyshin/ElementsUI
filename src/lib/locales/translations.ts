@@ -193,7 +193,7 @@ const translations: Translations = {
     "constructor.props.table.buffersize": "Размер буфера",
     "constructor.props.table.clearButton": "Кнопка очистки",
     "constructor.props.table.type.text": "Текст",
-    "constructor.props.table.type.buttons": "Кнопки",
+    "constructor.props.table.type.button": "Кнопка",
     "constructor.props.table.type.select": "Селектор",
     "constructor.props.table.type.icon": "Иконка",
     "constructor.props.table.type.progressbar": "Прогресс",

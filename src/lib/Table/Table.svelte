@@ -1,7 +1,7 @@
 <!-- $lib/ElementsUI/Table.svelte -->
 <script lang="ts">
   import { get } from "svelte/store"
-  import type { IOption, ITableHeader, ITableProps } from "../types"
+  import type { IOption, ITableHeader, ITableImage, ITableProgressBar, ITableProps, ITableText } from "../types"
   import { fade, fly, slide } from "svelte/transition"
   import { twMerge } from "tailwind-merge"
   import { onMount, tick } from "svelte"
@@ -106,7 +106,8 @@
     else if (button.eventHandler && onClick) {
       let value: Record<string, boolean | string | number | number[] | object | null> = {}
       button.eventHandler.Variables.forEach((v: string) => {
-        if (header.some((h) => h.select && h.select.some((s) => s.key === v))) value[v.slice(0, -2)] = row[v.slice(0, -2)]
+        if (header.some((h) => h.content?.some((c) => c.type == "select") && h.content.some((c) => c.type == "select" && c.data.key === v)))
+          value[v.slice(0, -2)] = row[v.slice(0, -2)]
         else value[v] = row[v]
       })
       button.eventHandler.Value = JSON.stringify(value)
@@ -151,13 +152,16 @@
   /* Для работы этой проверки в описании столбцов таблицы нужно явно указать что строка будет пустая при отсутствии иконки в БД -
      src: (row) => (row.icon ? `data:image/png;base64,${row.icon}` : '') */
   const hasImage = (column: ITableHeader<any>, row: any, index: number): boolean => {
-    const src = typeof column.image?.[index].src === "function" ? column.image[index].src(row) : column.image?.[index].src
+    let content = column.content?.[index]
+    const src = content?.type === "image" && typeof content.data.src === "function" ? content.data.src(row) : (content?.data as ITableImage<object>).src
     return !!src
   }
 
   const progressPercent = (column: ITableHeader<any>, value: number, index: number) => {
-    let min = column.progressBar?.[index].minNum ?? 0
-    let max = column.progressBar?.[index].maxNum ?? 100
+    let progressBar = column.content?.[index].data as ITableProgressBar<object>
+
+    let min = progressBar?.minNum ?? 0
+    let max = progressBar?.maxNum ?? 100
     if (value) return (((Math.min(Math.max(value, min), max) - min) / (max - min)) * 100) as number
   }
 
@@ -225,7 +229,7 @@
 
     return () => {
       container?.removeEventListener("scroll", handleAutoScroll)
-      window.removeEventListener("scroll", handlePageScroll)
+      window.removeEventListener("scroll", handlePageScroll, true)
       window.removeEventListener("resize", handlePageScroll, true)
     }
   })
@@ -245,26 +249,28 @@
   >
     <!-- Table Header -->
     <div
-      class="grid font-semibold {isScrollable ? 'border-r-8 border-(--bg-color)' : ''}"
+      class="grid font-semibold bg-(--bg-color) {isScrollable ? 'border-r-8 border-(--bg-color)' : ''}"
       style={`grid-template-columns: ${header.map((c) => c.width || "minmax(0, 1fr)").join(" ")};`}
     >
       {#each header as column, index (column)}
         <div
           class={twMerge(
-            `items-center justify-center flex border-l ${outline && index !== 0 ? " border-(--border-color)" : "border-transparent"} 
-            ${column.align === "center" ? "justify-center text-center" : column.align === "right" ? "justify-end text-right" : "justify-start text-left"} gap-1 bg-(--bg-color) p-2 text-left`,
+            `items-center justify-center flex border-l ${outline && index !== 0 ? " border-(--border-color)" : "border-transparent"}
+            ${column.align === "center" ? "justify-center text-center" : column.align === "right" ? "justify-end text-right" : "justify-start text-left"} gap-1  p-2 text-left`,
             column.label?.class,
           )}
         >
           <span>{column.label?.name}</span>
-          {#if column.text && column.text.some((text) => text.sortable === true)}
+          {#if column.content?.some((c) => c.type === "text" && c.data.sortable)}
             <button
               class="inline-block cursor-pointer font-bold transition-transform duration-75 hover:scale-110 active:scale-95"
               onclick={() =>
                 sortRows(
-                  column.text?.find((text) => {
-                    text.sortable
-                  })?.key as string,
+                  (
+                    column.content?.find((c) => {
+                      c.type === "text" && c.data.sortable
+                    })?.data as ITableText<object>
+                  ).key as string,
                 )}
             >
               ↑↓
@@ -307,10 +313,10 @@
                       ? 'select-none'
                       : 'select-all'}"
                   >
-                    {#if column.buttons}
-                      {@const buttons = typeof column.buttons === "function" ? column.buttons(row) : column.buttons}
-                      <div class="flex flex-wrap w-full gap-1">
-                        {#each buttons as button (button)}
+                    {#each column.content as content, index}
+                      {#if content.type === "button"}
+                        {@const button = typeof content.data === "function" ? content.data(row) : content.data}
+                        <div class="flex flex-wrap w-full gap-1">
                           <button
                             class="{twMerge(`flex items-center justify-center gap-2 cursor-pointer rounded-full 
                            px-4 py-1 font-semibold shadow-sm transition-shadow duration-200 outline-none select-none hover:shadow-md
@@ -331,30 +337,26 @@
                             {/if}
                             {typeof button.name === "function" ? button.name(row) : button.name}
                           </button>
-                        {/each}
-                      </div>
-                    {/if}
-                    {#if column.select}
-                      {#each column.select as select, selectIndex}
+                        </div>
+                      {:else if content.type === "select"}
+                        {@const select = content.data}
                         {@const options = Array.isArray(row[select.key]) ? row[select.key] : []}
                         <div class="relative w-full select-none">
                           <button
-                            id="select{i}-{j}-{selectIndex}"
+                            id="select{i}-{j}-{index}"
                             class="w-full rounded-2xl border border-(--blue-color) bg-(--back-color) p-1 text-center shadow-[0_0_3px_rgb(0_0_0_/0.25)] transition duration-200
         cursor-pointer hover:shadow-[0_0_6px_rgb(0_0_0_/0.25)]"
                             onclick={() =>
                               (isDropdownOpen =
-                                isDropdownOpen?.x === j && isDropdownOpen?.y === i && isDropdownOpen?.index === selectIndex
-                                  ? null
-                                  : { x: j, y: i, index: selectIndex })}
+                                isDropdownOpen?.x === j && isDropdownOpen?.y === i && isDropdownOpen?.index === index ? null : { x: j, y: i, index })}
                           >
                             {options.some((o: IOption) => o.value === row[(select?.key as string).slice(0, -2)])
                               ? row[select?.key].find((o: IOption) => o.value === row[(select?.key as string).slice(0, -2)]).name
                               : $t("common.select_tag")}
                           </button>
 
-                          {#if isDropdownOpen?.x === j && isDropdownOpen.y === i && isDropdownOpen.index === selectIndex}
-                            {@const cords = document.getElementById(`select${i}-${j}-${selectIndex}`)?.getBoundingClientRect()}
+                          {#if isDropdownOpen?.x === j && isDropdownOpen.y === i && isDropdownOpen.index === index}
+                            {@const cords = document.getElementById(`select${i}-${j}-${index}`)?.getBoundingClientRect()}
                             <div
                               class="fixed z-50 rounded-b-2xl shadow-[0_0_3px_rgb(0_0_0_/0.25)]"
                               style="top: {cords?.bottom}px; left: calc({cords?.left}px + 0.9rem) ; width: calc({cords?.width}px - 1.8rem);"
@@ -377,10 +379,8 @@
                             </div>
                           {/if}
                         </div>
-                      {/each}
-                    {/if}
-                    {#if column.image}
-                      {#each column.image as image, index}
+                      {:else if content.type === "image"}
+                        {@const image = content.data}
                         <div
                           class="flex items-center justify-center [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
                           style={`width: ${image.width || "5rem"}; height: ${image.height || "5rem"}; `}
@@ -400,10 +400,8 @@
                             {/if}
                           {/if}
                         </div>
-                      {/each}
-                    {/if}
-                    {#if column.progressBar}
-                      {#each column.progressBar as progressBar, index}
+                      {:else if content.type === "progressBar"}
+                        {@const progressBar = content.data}
                         <div class="grid grid-cols-[3.5rem_1fr] h-7 w-full px-2 items-center gap-2 rounded-full shadow-sm bg-(--bg-color)">
                           <span class="m-auto font-semibold">{roundToClean(Number(row[progressBar.key] ?? 0))}{progressBar?.units}</span>
                           <div class="relative my-auto h-3.5 rounded-full bg-(--back-color)/40">
@@ -413,10 +411,8 @@
                             ></div>
                           </div>
                         </div>
-                      {/each}
-                    {/if}
-                    {#if column.text}
-                      {#each column.text as text}
+                      {:else if content.type === "text"}
+                        {@const text = content.data}
                         {@const data =
                           Array.isArray(row[text.key]) && row[text.key][0] && "value" in row[text.key][0]
                             ? row[text.key].map((item: IOption) => item.name)
@@ -483,8 +479,8 @@
                             </div>
                           </button>
                         {/if}
-                      {/each}
-                    {/if}
+                      {/if}
+                    {/each}
                   </div>
                 {/if}
               {/each}

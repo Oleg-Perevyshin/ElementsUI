@@ -351,6 +351,21 @@ export interface ISwitchProps {
 
 /* ********************************************************** */
 /* Интерфейсы таблицы */
+
+export interface ITableText<T extends object> {
+  key: keyof T
+  sortable?: boolean
+  truncated?: boolean
+  tooltip?: boolean
+  formatting?: (text: string) => string
+  copy?: boolean
+  modal?: boolean
+}
+export interface ITableSelect<T extends object> {
+  key: keyof T
+  keyCol: string
+  onChange?: () => void
+}
 export interface ITableButtons<T extends object> {
   name?: string | ((row: T) => string)
   icon?: ConstructorOfATypedSvelteComponent | string
@@ -358,57 +373,33 @@ export interface ITableButtons<T extends object> {
   eventHandler?: IUIComponentHandler
   onClick?: (row: T) => void
 }
-// export interface ITableButtons<T extends object> {
-//   name?: string | ((row: T) => string)
-//   icon?: ConstructorOfATypedSvelteComponent | string
-//   class?: string | ((row: T) => string)
-//   eventHandler?: IUIComponentHandler
-//   onClick?: (row: T) => void
-// }
-// export interface ITableButtons<T extends object> {
-//   name?: string | ((row: T) => string)
-//   icon?: ConstructorOfATypedSvelteComponent | string
-//   class?: string | ((row: T) => string)
-//   eventHandler?: IUIComponentHandler
-//   onClick?: (row: T) => void
-// }
-// export interface ITableButtons<T extends object> {
-//   name?: string | ((row: T) => string)
-//   icon?: ConstructorOfATypedSvelteComponent | string
-//   class?: string | ((row: T) => string)
-//   eventHandler?: IUIComponentHandler
-//   onClick?: (row: T) => void
-// }
+export interface ITableProgressBar<T extends object> {
+  key: keyof T
+  minNum?: number
+  maxNum?: number
+  units?: string
+}
+export interface ITableImage<T extends object> {
+  src?: string | ((row: T) => string)
+  alt?: string
+  class?: string
+  width?: string
+  height?: string
+  defaultIcon?: ConstructorOfATypedSvelteComponent | string
+}
 
 export interface ITableHeader<T extends object> {
   label?: { name?: string; class?: string }
   width?: string
   align?: "left" | "center" | "right"
   disableSelect?: boolean
-  text?: {
-    key: keyof T
-    sortable?: boolean
-    truncated?: boolean
-    tooltip?: boolean
-    formatting?: (text: string) => string
-    copy?: boolean
-    modal?: boolean
-  }[]
-  progressBar?: { key: keyof T; minNum?: number; maxNum?: number; units?: string }[]
-  buttons?: ITableButtons<T>[] | ((row: T) => ITableButtons<T>[])
-  select?: {
-    key: keyof T
-    keyCol: string
-    onChange?: () => void
-  }[]
-  image?: {
-    src?: string | ((row: T) => string)
-    alt?: string
-    class?: string
-    width?: string
-    height?: string
-    defaultIcon?: ConstructorOfATypedSvelteComponent | string
-  }[]
+  content?: (
+    | { type: "text"; data: ITableText<T> }
+    | { type: "select"; data: ITableSelect<T> }
+    | { type: "button"; data: ITableButtons<T> | ((row: T) => ITableButtons<T>) }
+    | { type: "progressBar"; data: ITableProgressBar<T> }
+    | { type: "image"; data: ITableImage<T> }
+  )[]
 }
 
 export interface ITableProps<T extends object> {
