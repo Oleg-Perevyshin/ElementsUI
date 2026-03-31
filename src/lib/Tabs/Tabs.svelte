@@ -9,11 +9,7 @@
     size = { width: 12, height: 6 },
     activeTab = 0,
     items = [
-      {
-        name: "tab 1",
-        icon: "",
-        class: "",
-      },
+      { name: "tab 1", icon: "", class: "" },
       { name: "tab 2", icon: "", class: "" },
     ],
     children,
@@ -26,13 +22,10 @@
   let currentTabIndex: number = $derived(activeTab)
 </script>
 
-<div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class="w-full h-full rounded-xl overflow-hidden p-1">
-  <div class="flex flex-col shadow-[0_0_3px_rgb(0_0_0_/0.25)] transition-shadow duration-250 h-full w-full overflow-hidden rounded-xl bg-(--back-color)">
+<div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class="w-full h-full rounded-xl p-1">
+  <div class="flex flex-col shadow-[0_0_3px_rgb(0_0_0_/0.25)] transition-shadow duration-250 h-full w-full rounded-xl bg-(--back-color)">
     <!-- Вкладки -->
-    <div
-      class="{twMerge(`z-40 flex h-fit items-center rounded-t-xl overflow-x-auto px-1 `, wrapperClass)} 
-     bg-(--bg-color)"
-    >
+    <div class="{twMerge(`z-40 flex h-fit items-center rounded-t-xl overflow-x-auto px-1 sticky top-0`, wrapperClass)} bg-(--bg-color)">
       {#each items as item, index}
         <button
           class={twMerge(
@@ -81,11 +74,8 @@
           {/if}
         </button>
         <span
-          class="{isCol && items.find((item) => item.icon) ? 'h-9' : 'h-4'} w-0 border border-l {index !== items.length - 1 &&
-          index !== currentTabIndex &&
-          index !== currentTabIndex - 1
-            ? 'border-gray-500'
-            : 'opacity-0'}"
+          class="{isCol && items.find((item) => item.icon) ? 'h-9' : 'h-4'} w-0 border border-l
+          {index !== items.length - 1 && index !== currentTabIndex && index !== currentTabIndex - 1 ? 'border-gray-500' : 'opacity-0'}"
         ></span>
       {/each}
     </div>

@@ -301,7 +301,7 @@
     {#if body || buffer}
       {@const rows = dataBuffer.stashData ? buffer.slice(-(dataBuffer.bufferSize ?? 10)) : body.filter((row: any) => Object.entries(row).length != 0)}
       <!-- Table Body с прокруткой -->
-      <div class="flex-1 overflow-y-auto bg-(--container-color)/50 relative" style={``} bind:this={container} onscroll={handleScroll}>
+      <div class="flex-1 overflow-y-auto bg-(--container-color)/50 relative" bind:this={container} onscroll={handleScroll}>
         <div class="min-w-0" style={`height: ${dataBuffer.visibleRows && tableHeight && rows.length > dataBuffer.visibleRows ? `${tableHeight}px` : ""};`}>
           {#each rows as row, i (row.__rowId ?? row)}
             <div
@@ -313,14 +313,11 @@
               {#each header as column, j (column)}
                 {#if column.width !== "0%"}
                   {@const contentArray = typeof column.content === "function" ? column.content(row) : column.content}
-
                   <div
                     id="rowDiv{i}-{j}"
-                    class="relative flex w-full min-w-0 items-center gap-x-2 px-2 py-1 wrap-break-word
+                    class="relative flex w-full min-w-0 items-center gap-x-2 px-2 py-1 wrap-break-word border-t
               {column.align === 'center' ? 'justify-center text-center' : column.align === 'right' ? 'justify-end text-right' : 'justify-start text-left'}
-              border-t {j !== 0 ? ' border-l ' : ''} {outline ? 'border-(--border-color)' : 'border-transparent'} {column.disableSelect
-                      ? 'select-none'
-                      : 'select-all'}"
+               {j !== 0 ? ' border-l ' : ''} {outline ? 'border-(--border-color)' : 'border-transparent'} {column.disableSelect ? 'select-none' : 'select-all'}"
                   >
                     {#each contentArray as content, index}
                       {#if content.type === "button"}

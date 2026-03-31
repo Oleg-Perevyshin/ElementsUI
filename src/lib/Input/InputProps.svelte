@@ -5,7 +5,6 @@
   import * as UI from "$lib"
   import { optionsStore } from "../options"
   import { twMerge } from "tailwind-merge"
-  import CommonSnippets from "$lib/CommonSnippets.svelte"
 
   const {
     component,

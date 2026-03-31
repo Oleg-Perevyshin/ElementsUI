@@ -21,12 +21,7 @@
   let hasValue: boolean = $derived(component.eventHandler.Value)
 
   let Header: IOption = $derived(
-    $optionsStore.HEADER_OPTIONS.find((h) => h.value === component.eventHandler.Header) ?? {
-      id: "",
-      name: "",
-      value: "",
-      class: "!w-1/4",
-    },
+    $optionsStore.HEADER_OPTIONS.find((h) => h.value === component.eventHandler.Header) ?? { id: "", name: "", value: "", class: "!w-1/4" },
   )
 
   const initialColor = $derived(
@@ -48,10 +43,7 @@
     type="buttons"
     value={Header}
     options={$optionsStore.HEADER_OPTIONS}
-    onUpdate={(option) => {
-      Header = { ...(option as IOption<string>) }
-      onPropertyChange({ eventHandler: { Header: Header.value as string } })
-    }}
+    onUpdate={(option) => onPropertyChange({ eventHandler: { Header: (option as IOption<string>).value as string } })}
   />
   {#if Header.value === "SET"}
     <UI.Select
@@ -60,9 +52,7 @@
       value={$optionsStore.FULL_ARGUMENT_OPTION.find((h) => h.value === component.eventHandler.Argument) ??
         $optionsStore.FULL_ARGUMENT_OPTION.find((h) => h.value === "")}
       options={$optionsStore.FULL_ARGUMENT_OPTION}
-      onUpdate={(option) => {
-        onPropertyChange({ eventHandler: { Argument: (option as IOption<string>).value as string } })
-      }}
+      onUpdate={(option) => onPropertyChange({ eventHandler: { Argument: (option as IOption<string>).value as string } })}
     />
   {/if}
   <UI.Input
@@ -92,11 +82,7 @@
     value={component.eventHandler.Variables.join(" ")}
     help={{ info: $t("constructor.props.variables.info"), autocomplete: "on", regExp: /^[a-zA-Z0-9.\-_ ":{}]{0,500}$/ }}
     maxlength={500}
-    onUpdate={(value) => {
-      const parts = (value as string).trim().split(/\s+/)
-
-      onPropertyChange({ eventHandler: { Variables: parts } })
-    }}
+    onUpdate={(value) => onPropertyChange({ eventHandler: { Variables: (value as string).trim().split(/\s+/) } })}
   />
 {/snippet}
 

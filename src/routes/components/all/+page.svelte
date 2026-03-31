@@ -8,7 +8,6 @@
   import { onDestroy, onMount } from "svelte"
   import IconGripVerticalRight from "../../../appIcons/IconGripVerticalRight.svelte"
   import IconGripVerticalLeft from "../../../appIcons/IconGripVerticalLeft.svelte"
-  import { importModule } from "../../common"
 
   const componentMap = {
     Accordion: { component: UI.Accordion },
@@ -123,50 +122,41 @@
     action?: IOption[]
   }
   const columns: ITableHeader<ITableRow>[] = [
-    { label: { name: "ID" }, key: "id", width: "5%", text: { sortable: true }, align: "center" },
+    { label: { name: "ID" }, content: [{ type: "text", data: { key: "id", sortable: true } }], width: "5%", align: "center" },
     {
       label: { name: "Image" },
-      key: "imageUrl",
+      content: [{ type: "image", data: { src: (row: ITableRow) => row.imageUrl, alt: "Image", width: "5rem", height: "5rem" } }],
       width: "20%",
-      type: "image",
-      image: {
-        src: (row: ITableRow) => row.imageUrl,
-        alt: "Image",
-        width: "5rem",
-        height: "5rem",
-      },
     },
-    { label: { name: "Name" }, key: "name", width: "12%", text: { sortable: true } },
+    { label: { name: "Name" }, content: [{ type: "text", data: { key: "name", sortable: true } }], width: "12%" },
     {
       label: { name: "Status" },
-      key: "status",
-      width: "10%",
-      text: {
-        truncated: true,
-        formatting: (text) => {
-          if (text === "online") {
-            return "1"
-          } else return "2"
+      content: [
+        {
+          type: "text",
+          data: {
+            key: "status",
+            truncated: true,
+            formatting: (text) => {
+              if (text === "online") {
+                return "1"
+              } else return "2"
+            },
+          },
         },
-      },
+      ],
+      width: "10%",
     },
     {
       label: { name: "Last Active" },
-      key: "lastActive",
+      content: [{ type: "text", data: { key: "lastActive", sortable: true, truncated: true, copy: true, modal: true } }],
       width: "1fr",
-      text: { sortable: true, truncated: true, copy: true, modal: true },
     },
     {
       label: { name: "Actions" },
-      key: "action",
+      content: [{ type: "select", data: { key: "action", keyCol: "" } }],
       width: "1fr",
       align: "left",
-      type: "select",
-      select: { key: "" },
-      buttons: [
-        { name: "Action 1 (id)", class: "bg-blue", eventHandler: { Header: "SET", Argument: "save", Variables: ["name"] } },
-        { name: "Action 2 (name)", class: "bg-green", onClick: (row) => console.log(row.name) },
-      ],
     },
   ]
   const rows: ITableRow[] = [
@@ -208,7 +198,7 @@
 
   let inputString: string = $state("String Data")
   let inputNumber: number = $state(7)
-  let progressBarValue = $state([40])
+  let progressBarValue: UI.IReceivingDataObject[] = $state([{ Name: "progress", Value: 66 }])
   let selectOption: IOption = $state({ id: "Map", name: "Map", value: "Map" })
   let COMPONENT_OPTIONS = Object.keys(componentMap).map((name) => ({ id: name, name: name, value: name }))
   let switchValue = $state(0)
@@ -268,343 +258,322 @@
   </div>
 </UI.Carousel> -->
 
-<div class="flex h-full flex-col items-center overflow-hidden overflow-y-visible">
-  <h2>Обзорная страница компонентов</h2>
+<div class="grid grid-cols-2 gap-1">
+  <h2 class="col-span-2">Обзорная страница компонентов</h2>
 
-  <div class="flex w-full flex-col gap-2">
-    <!-- Компонент ACCORDION -->
-    <UI.Accordion label={{ name: "Accordion" }} isOpen={true}>
-      <UI.Accordion label={{ name: "Accordion 1", class: "" }} isOpen={false} wrapperClass="col-span-3">
-        <h6>Содержимое вложенного Accordion 1</h6>
-        <h5>Содержимое вложенного Accordion 1</h5>
-        <h4>Содержимое вложенного Accordion 1</h4>
-        <h3>Содержимое вложенного Accordion 1</h3>
-        <h2>Содержимое вложенного Accordion 1</h2>
-        <h1>Содержимое вложенного Accordion 1</h1>
-      </UI.Accordion>
-      <UI.Accordion label={{ name: "Accordion 2", class: "" }} isOpen={false} wrapperClass="col-span-3">
-        <h1>Содержимое вложенного Accordion 2</h1>
-        <h2>Содержимое вложенного Accordion 2</h2>
-        <h3>Содержимое вложенного Accordion 2</h3>
-        <h4>Содержимое вложенного Accordion 2</h4>
-        <h5>Содержимое вложенного Accordion 2</h5>
-      </UI.Accordion>
-      <UI.Accordion label={{ name: "Accordion 3", class: "" }} isOpen={false} wrapperClass="col-span-3">
-        <h4>Содержимое вложенного Accordion 3</h4>
-        <h3>Содержимое вложенного Accordion 3</h3>
-        <h2>Содержимое вложенного Accordion 3</h2>
-        <h1>Содержимое вложенного Accordion 3</h1>
-      </UI.Accordion>
-      <UI.Select
-        label={{ name: "constructor.props.argument" }}
+  <!-- Компонент ACCORDION -->
+  <UI.Accordion label={{ name: "Accordion" }} isOpen={false} wrapperClass="col-span-2">
+    <UI.Accordion label={{ name: "Accordion 1", class: "" }} isOpen={false} wrapperClass="col-span-3">
+      <h6>Содержимое вложенного Accordion 1</h6>
+      <h5>Содержимое вложенного Accordion 1</h5>
+      <h4>Содержимое вложенного Accordion 1</h4>
+      <h3>Содержимое вложенного Accordion 1</h3>
+      <h2>Содержимое вложенного Accordion 1</h2>
+      <h1>Содержимое вложенного Accordion 1</h1>
+    </UI.Accordion>
+    <UI.Accordion label={{ name: "Accordion 2", class: "" }} isOpen={false} wrapperClass="col-span-3">
+      <h1>Содержимое вложенного Accordion 2</h1>
+      <h2>Содержимое вложенного Accordion 2</h2>
+      <h3>Содержимое вложенного Accordion 2</h3>
+      <h4>Содержимое вложенного Accordion 2</h4>
+      <h5>Содержимое вложенного Accordion 2</h5>
+    </UI.Accordion>
+    <UI.Accordion label={{ name: "Accordion 3", class: "" }} isOpen={false} wrapperClass="col-span-3">
+      <h4>Содержимое вложенного Accordion 3</h4>
+      <h3>Содержимое вложенного Accordion 3</h3>
+      <h2>Содержимое вложенного Accordion 3</h2>
+      <h1>Содержимое вложенного Accordion 3</h1>
+    </UI.Accordion>
+  </UI.Accordion>
+
+  <!-- Компонент BUTTON -->
+  <UI.Accordion label={{ name: "Button" }} isOpen={false}>
+    <UI.Button content={{ name: "Button 1" }} componentClass="bg-red" />
+    <UI.Button content={{ name: "Button 2", info: { text: "Info for Button 2", side: "top" } }} componentClass="bg-yellow" />
+    <UI.Button content={{ name: "Button 3" }} componentClass="bg-blue" disabled />
+    <UI.Button content={{ name: "Button 4", icon: IconGripVerticalDual }} componentClass="bg-green h-12 rounded-3xl" />
+    <div class="flex h-10 items-center justify-around">
+      <UI.Button content={{ icon: IconGripHorizontalUp }} wrapperClass="w-10 h-10" componentClass="bg-purple rounded-full" />
+      <UI.Button content={{ icon: IconGripHorizontalDown, info: { text: "Info for Icon Button", side: "right" } }} wrapperClass="w-10" />
+    </div>
+  </UI.Accordion>
+
+  <!-- Компонент COLOR PICKER -->
+  <UI.Accordion label={{ name: "Color Picker" }} isOpen={false}>
+    <UI.ColorPicker label={{ name: "Выбор цвета из палитры" }} value={[186, 25, 255]} />
+  </UI.Accordion>
+
+  <!-- Компонент INPUT -->
+  <UI.Accordion label={{ name: "Input" }} isOpen={false}>
+    <div class="flex w-full flex-col items-center gap-2">
+      <UI.Input wrapperClass="!w-60" help={{ regExp: /^[\w\s-]{4,16}$/ }} bind:value={inputString} type="text" maxlength={20} />
+      <UI.Input wrapperClass="!w-60" help={{ copyButton: true, regExp: /^[\w\s-]{4,16}$/ }} bind:value={inputString} readonly type="text" maxlength={20} />
+      <UI.Input wrapperClass="!w-60" help={{ regExp: /^[\w\s-]{4,16}$/ }} placeholder={inputString} type="text" maxlength={20} />
+      <UI.Input
+        wrapperClass="!w-60"
+        help={{ copyButton: true, regExp: /^[\w\s-]{4,16}$/ }}
+        bind:value={inputString}
+        readonly
+        type="text"
+        maxlength={20}
+        disabled
+      />
+      <UI.Input
+        wrapperClass="!w-30 bg-green"
+        value={inputNumber}
+        type="number"
+        maxlength={3}
+        number={{ maxNum: 100, minNum: 0, step: 10 }}
+        help={{ info: "Информационная подсказка" }}
+        onUpdate={(value) => (inputNumber = value as number)}
+      />
+      <UI.Input wrapperClass="w-100" bind:value={inputString} type="password" maxlength={20} />
+      <UI.Input
+        wrapperClass="w-150"
+        bind:value={inputString}
+        help={{ copyButton: true, info: "Информационная подсказка. Может быть многострочной, если не вмещается!" }}
+        type="text-area"
+        maxlength={150}
+        textareaRows={2}
+      />
+      <p>string: {inputString}</p>
+      <p>number: {inputNumber}</p>
+    </div>
+  </UI.Accordion>
+
+  <!-- Компонент TEXT FIELD -->
+  <UI.Accordion label={{ name: "Text Field" }} isOpen={false}>
+    <UI.TextField content={{ name: "Random text", size: "small", class: "" }} wrapperClass="text-gray-400" />
+    <UI.TextField content={{ name: "Random text", size: "base", class: "font-bold" }} wrapperClass="text-red-400" />
+    <UI.TextField content={{ name: "Random text", size: "large", class: "" }} wrapperClass="text-lime-400" />
+    <UI.TextField content={{ name: "Random text", size: "huge", class: "italic" }} wrapperClass="text-sky-400" />
+    <UI.TextField content={{ name: "Random text", size: "massive", class: "italic font-bold" }} wrapperClass="text-blue-400" />
+    <UI.TextField content={{ name: "Random text", size: "massive", class: "font-bold" }} wrapperClass="text-purple-400" />
+    <UI.TextField content={{ name: "Random text", size: "massive", class: "" }} wrapperClass="text-pink-400" />
+  </UI.Accordion>
+
+  <!-- Компонент PROGRESS BAR -->
+  <UI.Accordion label={{ name: "Progress Bar" }} isOpen={false}>
+    <UI.ProgressBar value={progressBarValue} wrapperClass="bg-red" />
+    <div class="flex justify-center">
+      <UI.Button
+        wrapperClass="m-2 !w-10"
+        content={{ name: "-" }}
+        componentClass="h-10 rounded-full bg-purple"
+        onClick={() => {
+          if (progressBarValue[0] && typeof progressBarValue[0].Value === "number") progressBarValue[0].Value -= 5
+        }}
+      />
+    </div>
+  </UI.Accordion>
+
+  <!-- Компонент SWITCH -->
+  <UI.Accordion label={{ name: "Switch" }} isOpen={false}>
+    <div class="flex items-center justify-between">
+      <UI.Switch
+        wrapperClass="w-1/3"
+        label={{ name: "Переключатель 1", captionLeft: "Off", captionRight: "On" }}
+        bind:value={switchValue}
+        options={[{ id: crypto.randomUUID(), value: 0, class: "bg-blue" }]}
+      />
+      <UI.Switch
+        wrapperClass="w-1/3"
+        label={{ name: "Переключатель 2" }}
+        type="vertical"
+        bind:value={switchValue}
+        options={[{ id: crypto.randomUUID(), value: 0, class: "bg-red" }]}
+      />
+      <UI.Switch
+        wrapperClass="bg-yellow w-1/3"
+        label={{ name: "Галочка" }}
+        type="checkbox"
+        bind:value={switchValue}
+        options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
+      />
+    </div>
+    <span>Выбранное значение: {switchValue}</span>
+    <div class="mt-4 flex justify-center">
+      <UI.Switch
+        wrapperClass="bg-yellow w-1/3"
+        label={{ name: "Битовый режим" }}
+        type="vertical"
+        bitMode
+        bind:value={fullSwitchValue}
         options={[
-          { id: crypto.randomUUID(), value: "flex-row", name: "←" },
-          { id: crypto.randomUUID(), value: "flex-col", name: "↑" },
-          { id: crypto.randomUUID(), value: "flex-row-reverse", name: "→" },
-          { id: crypto.randomUUID(), value: "flex-col-reverse", name: "↓" },
+          { id: crypto.randomUUID(), value: 3, class: "bg-green" },
+          { id: crypto.randomUUID(), value: 2, class: "bg-green" },
+          { id: crypto.randomUUID(), value: 1, class: "bg-purple" },
+          { id: crypto.randomUUID(), value: 0, class: "bg-purple" },
         ]}
       />
-    </UI.Accordion>
+    </div>
+    <span> Выбранное значение в битовом режиме: {fullSwitchValue} </span>
+  </UI.Accordion>
 
-    <!-- Компонент BUTTON -->
-    <UI.Accordion label={{ name: "Button" }} isOpen={false}>
-      <UI.Button content={{ name: "Button 1" }} componentClass="bg-red" />
-      <UI.Button content={{ name: "Button 2", info: { text: "Info for Button 2", side: "top" } }} componentClass="bg-yellow" />
-      <UI.Button content={{ name: "Button 3" }} componentClass="bg-blue" disabled />
-      <UI.Button content={{ name: "Button 4", icon: IconGripVerticalDual }} componentClass="bg-green h-12 rounded-3xl" />
-      <div class="flex h-10 items-center justify-around">
-        <UI.Button content={{ icon: IconGripHorizontalUp }} wrapperClass="w-10 h-10" componentClass="bg-purple rounded-full" />
-        <UI.Button content={{ icon: IconGripHorizontalDown, info: { text: "Info for Icon Button", side: "right" } }} wrapperClass="w-10" />
-      </div>
-    </UI.Accordion>
+  <!-- Компонент FILE ATTACH -->
+  <UI.Accordion label={{ name: "File Attach" }} isOpen={false} wrapperClass="col-span-2">
+    <div class="flex w-full flex-row items-center justify-between gap-3">
+      <UI.FileAttach id={crypto.randomUUID()} label={{ name: "Выберите файл" }} type="file" />
+      <UI.FileAttach id={crypto.randomUUID()} label={{ name: "Выберите файл" }} type="file" disabled />
+      <UI.FileAttach
+        id={crypto.randomUUID()}
+        label={{ name: "Выберите изображение" }}
+        type="image"
+        imageSize={{ height: "10rem", width: "10rem", fitMode: "contain" }}
+      />
+      <UI.FileAttach
+        id={crypto.randomUUID()}
+        label={{ name: "Выберите изображение" }}
+        type="image"
+        imageSize={{ height: "10rem", width: "10rem", fitMode: "cover" }}
+      />
+      <UI.FileAttach
+        id={crypto.randomUUID()}
+        label={{ name: "Выберите изображение" }}
+        type="image"
+        disabled
+        imageSize={{ height: "10rem", width: "10rem", fitMode: "cover" }}
+      />
+    </div>
+  </UI.Accordion>
 
-    <!-- Компонент COLOR PICKER -->
-    <UI.Accordion label={{ name: "Color Picker" }} isOpen={false}>
-      <UI.ColorPicker label={{ name: "Выбор цвета из палитры" }} value={[186, 25, 255]} />
-    </UI.Accordion>
+  <!-- Компонент GRAPH -->
+  <UI.Accordion label={{ name: "Graph" }} isOpen={false} wrapperClass="col-span-2">
+    <UI.Graph label={{ name: "Пример компонента график" }} streamingData={{ data: dataForGraph }} isTest={true} />
+  </UI.Accordion>
 
-    <!-- Компонент FILE ATTACH -->
-    <UI.Accordion label={{ name: "File Attach" }} isOpen={false}>
-      <div class="flex w-full flex-row items-center justify-between gap-3">
-        <UI.FileAttach id={crypto.randomUUID()} label={{ name: "Выберите файл" }} type="file" />
-        <UI.FileAttach id={crypto.randomUUID()} label={{ name: "Выберите файл" }} type="file" disabled />
-        <UI.FileAttach
-          id={crypto.randomUUID()}
-          label={{ name: "Выберите изображение" }}
-          type="image"
-          imageSize={{ height: "10rem", width: "10rem", fitMode: "contain" }}
-        />
-        <UI.FileAttach
-          id={crypto.randomUUID()}
-          label={{ name: "Выберите изображение" }}
-          type="image"
-          imageSize={{ height: "10rem", width: "10rem", fitMode: "cover" }}
-        />
-        <UI.FileAttach
-          id={crypto.randomUUID()}
-          label={{ name: "Выберите изображение" }}
-          type="image"
-          disabled
-          imageSize={{ height: "10rem", width: "10rem", fitMode: "cover" }}
-        />
-      </div>
-    </UI.Accordion>
+  <!-- Компонент JOYSTICK -->
+  <UI.Accordion label={{ name: "Joystick" }} isOpen={false} wrapperClass="col-span-2">
+    <div class="flex">
+      <UI.Joystick label={{ name: "Управление по 3 осям" }} />
+      <UI.Joystick
+        label={{ name: "Управление по 2 осям" }}
+        axes={[
+          { name: "Pitch", minNum: -100, maxNum: 100 },
+          { name: "Yaw", minNum: -100, maxNum: 100 },
+        ]}
+        buttonIcon={IconGripVerticalDual}
+      />
+    </div>
+  </UI.Accordion>
 
-    <!-- Компонент GRAPH -->
-    <UI.Accordion label={{ name: "Graph" }} isOpen={false}>
-      <UI.Graph label={{ name: "Пример компонента график" }} streamingData={{ data: dataForGraph }} isTest={true} />
-    </UI.Accordion>
+  <!-- Компонент MAP -->
+  <UI.Accordion label={{ name: "Map" }} isOpen={false} wrapperClass="col-span-2">
+    <div class="h-150">
+      <UI.Map label={{ name: "Карта" }} {data} />
+    </div>
+  </UI.Accordion>
 
-    <!-- Компонент INPUT -->
-    <UI.Accordion label={{ name: "Input" }} isOpen={false}>
-      <div class="flex w-full flex-col items-center gap-2">
-        <UI.Input wrapperClass="!w-60" help={{ regExp: /^[\w\s-]{4,16}$/ }} bind:value={inputString} type="text" maxlength={20} />
-        <div class="flex justify-between gap-4">
-          <UI.Input wrapperClass="!w-60" help={{ copyButton: true, regExp: /^[\w\s-]{4,16}$/ }} bind:value={inputString} readonly type="text" maxlength={20} />
-          <UI.Input wrapperClass="!w-60" help={{ regExp: /^[\w\s-]{4,16}$/ }} placeholder={inputString} type="text" maxlength={20} />
-          <UI.Input
-            wrapperClass="!w-60"
-            help={{ copyButton: true, regExp: /^[\w\s-]{4,16}$/ }}
-            bind:value={inputString}
-            readonly
-            type="text"
-            maxlength={20}
-            disabled
-          />
-        </div>
-        <UI.Input
-          wrapperClass="!w-30 bg-green"
-          value={inputNumber}
-          type="number"
-          maxlength={3}
-          number={{ maxNum: 100, minNum: 0, step: 10 }}
-          help={{ info: "Информационная подсказка" }}
-          onUpdate={(value) => (inputNumber = value as number)}
-        />
-        <UI.Input wrapperClass="w-100" bind:value={inputString} type="password" maxlength={20} />
-        <UI.Input
-          wrapperClass="w-150"
-          bind:value={inputString}
-          help={{ copyButton: true, info: "Информационная подсказка. Может быть многострочной, если не вмещается!" }}
-          type="text-area"
-          maxlength={150}
-          textareaRows={2}
-        />
-        <p>string: {inputString}</p>
-        <p>number: {inputNumber}</p>
-      </div>
-    </UI.Accordion>
-
-    <!-- Компонент JOYSTICK -->
-    <UI.Accordion label={{ name: "Joystick" }} isOpen={false}>
-      <div class="flex">
-        <UI.Joystick label={{ name: "Управление по 3 осям" }} />
-        <UI.Joystick
-          label={{ name: "Управление по 2 осям" }}
-          axes={[
-            { name: "Pitch", minNum: -100, maxNum: 100 },
-            { name: "Yaw", minNum: -100, maxNum: 100 },
-          ]}
-          buttonIcon={IconGripVerticalDual}
-        />
-      </div>
-    </UI.Accordion>
-
-    <!-- Компонент MAP -->
-    <UI.Accordion label={{ name: "Map" }} isOpen={false}>
-      <div class="h-150">
-        <UI.Map label={{ name: "Карта" }} {data} />
-      </div>
-    </UI.Accordion>
-
-    <!-- Компонент PROGRESS BAR -->
-    <UI.Accordion label={{ name: "Progress Bar" }} isOpen={false}>
-      <UI.ProgressBar value={progressBarValue} wrapperClass="bg-red" />
-      <UI.ProgressBar value={progressBarValue} type="vertical" wrapperClass="bg-red h-50" />
-      <div class="flex justify-center">
-        <UI.Button wrapperClass="m-2 !w-10" content={{ name: "-" }} componentClass="h-10 rounded-full bg-purple" onClick={() => (progressBarValue[0] -= 5)} />
-        <UI.Button wrapperClass="m-2 !w-10" content={{ name: "+" }} componentClass="h-10 rounded-full bg-green" onClick={() => (progressBarValue[0] += 5)} />
-      </div>
-    </UI.Accordion>
-
-    <!-- Компонент SELECT -->
-    <UI.Accordion label={{ name: "Select" }} isOpen={false}>
-      <p>{JSON.stringify(selectOption)}</p>
+  <!-- Компонент SELECT -->
+  <UI.Accordion label={{ name: "Select" }} isOpen={false} wrapperClass="col-span-2">
+    <p>{JSON.stringify(selectOption)}</p>
+    <UI.Select
+      type="input"
+      label={{ name: "Компоненты" }}
+      options={COMPONENT_OPTIONS}
+      value={selectOption}
+      onUpdate={(option) => (selectOption = option as UI.IOption)}
+    />
+    <UI.Select label={{ name: "Компоненты" }} options={COMPONENT_OPTIONS} value={selectOption} onUpdate={(option) => (selectOption = option as UI.IOption)} />
+    <UI.Select
+      type="buttons"
+      label={{ name: "Компоненты" }}
+      options={COMPONENT_OPTIONS}
+      value={selectOption}
+      onUpdate={(option) => (selectOption = option as UI.IOption)}
+    />
+    <div class="mt-4 flex items-end">
       <UI.Select
-        type="input"
-        label={{ name: "Компоненты" }}
-        options={COMPONENT_OPTIONS}
-        value={selectOption}
-        onUpdate={(option) => (selectOption = option as UI.IOption)}
+        label={{ name: "Битовый режим", class: "text-center" }}
+        bitMode={true}
+        range={{ start: 0, end: 3 }}
+        value={bitModeOptions.find((o) => o.value === fullSwitchValue)}
+        options={bitModeOptions}
+        onUpdate={() => {}}
       />
-      <UI.Select label={{ name: "Компоненты" }} options={COMPONENT_OPTIONS} value={selectOption} onUpdate={(option) => (selectOption = option as UI.IOption)} />
-      <UI.Select
-        type="buttons"
-        label={{ name: "Компоненты" }}
-        options={COMPONENT_OPTIONS}
-        value={selectOption}
-        onUpdate={(option) => (selectOption = option as UI.IOption)}
+      <span>Выбранное значение: {fullSwitchValue}</span>
+    </div>
+  </UI.Accordion>
+
+  <!-- Компонент SLIDER -->
+  <UI.Accordion label={{ name: "Slider" }} isOpen={false} wrapperClass="col-span-2">
+    <div class="flex gap-2">
+      <UI.Slider wrapperClass="!w-1/3 bg-red px-2" label={{ name: "Слайдер" }} value={0} number={{ minNum: -50, maxNum: 50, step: 1 }} disabled={false} />
+      <UI.Slider
+        wrapperClass="!w-1/3 bg-blue px-2"
+        label={{ name: "Слайдер с диапазоном" }}
+        value={[-12, 35]}
+        number={{ minNum: -50, maxNum: 50, step: 1 }}
+        disabled={false}
       />
-      <div class="mt-4 flex items-end">
-        <UI.Select
-          label={{ name: "Битовый режим", class: "text-center" }}
-          bitMode={true}
-          range={{ start: 0, end: 3 }}
-          value={bitModeOptions.find((o) => o.value === fullSwitchValue)}
-          options={bitModeOptions}
-          onUpdate={() => {}}
-        />
-        <span>Выбранное значение: {fullSwitchValue}</span>
-      </div>
-    </UI.Accordion>
-
-    <!-- Компонент SLIDER -->
-    <UI.Accordion label={{ name: "Slider" }} isOpen={false}>
-      <div class="flex gap-2">
-        <UI.Slider wrapperClass="!w-1/3 bg-red px-2" label={{ name: "Слайдер" }} value={0} number={{ minNum: -50, maxNum: 50, step: 1 }} disabled={false} />
-        <UI.Slider
-          wrapperClass="!w-1/3 bg-blue px-2"
-          label={{ name: "Слайдер с диапазоном" }}
-          value={[-12, 35]}
-          number={{ minNum: -50, maxNum: 50, step: 1 }}
-          disabled={false}
-        />
-        <UI.Slider
-          wrapperClass="!w-1/3 bg-blue px-2"
-          label={{ name: "Слайдер с диапазоном (не активный)" }}
-          value={[-10, 12]}
-          number={{ minNum: -15, maxNum: 15, step: 1 }}
-          disabled={true}
-        />
-      </div>
-      <div class="flex gap-2">
-        <UI.Slider wrapperClass="!w-1/2 bg-green px-2" label={{ name: "Слайдер" }} value={-10} number={{ minNum: -25, maxNum: 25, step: 1 }} disabled={false} />
-        <UI.Slider
-          wrapperClass="!w-1/2 bg-yellow px-2"
-          label={{ name: "Слайдер" }}
-          value={-25}
-          number={{ minNum: -50, maxNum: 50, step: 1 }}
-          disabled={false}
-        />
-      </div>
-      <div class="flex gap-2">
-        <UI.Slider wrapperClass="!w-1/2 bg-purple px-2" label={{ name: "Слайдер" }} value={0} number={{ minNum: -50, maxNum: 50, step: 1 }} disabled={false} />
-        <UI.Slider wrapperClass="!w-1/2 bg-pink px-2" label={{ name: "Слайдер" }} value={25} number={{ minNum: -50, maxNum: 50, step: 1 }} disabled={false} />
-      </div>
-    </UI.Accordion>
-
-    <!-- Компонент SWITCH -->
-    <UI.Accordion label={{ name: "Switch" }} isOpen={false}>
-      <div class="flex items-center justify-between">
-        <UI.Switch
-          wrapperClass="w-1/3"
-          label={{ name: "Переключатель 1", captionLeft: "Off", captionRight: "On" }}
-          bind:value={switchValue}
-          options={[{ id: crypto.randomUUID(), value: 0, class: "bg-blue" }]}
-        />
-        <UI.Switch
-          wrapperClass="w-1/3"
-          label={{ name: "Переключатель 2" }}
-          type="vertical"
-          bind:value={switchValue}
-          options={[{ id: crypto.randomUUID(), value: 0, class: "bg-red" }]}
-        />
-        <UI.Switch
-          wrapperClass="bg-yellow w-1/3"
-          label={{ name: "Галочка" }}
-          type="checkbox"
-          bind:value={switchValue}
-          options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-        />
-      </div>
-      <span>Выбранное значение: {switchValue}</span>
-      <div class="mt-4 flex justify-center">
-        <UI.Switch
-          wrapperClass="bg-yellow w-1/3"
-          label={{ name: "Битовый режим" }}
-          type="vertical"
-          bitMode
-          bind:value={fullSwitchValue}
-          options={[
-            { id: crypto.randomUUID(), value: 3, class: "bg-green" },
-            { id: crypto.randomUUID(), value: 2, class: "bg-green" },
-            { id: crypto.randomUUID(), value: 1, class: "bg-purple" },
-            { id: crypto.randomUUID(), value: 0, class: "bg-purple" },
-          ]}
-        />
-      </div>
-      <span> Выбранное значение в битовом режиме: {fullSwitchValue} </span>
-    </UI.Accordion>
-
-    <!-- Компонент TABLE -->
-    <UI.Accordion label={{ name: "Table" }} isOpen={true}>
-      <UI.Table
-        label={{ name: "Devices" }}
-        header={columns}
-        body={rows}
-        onClick={(eventHandler) => console.log(eventHandler)}
-        footer={`rows: ${rows.length}`}
-        bind:modalData
+      <UI.Slider
+        wrapperClass="!w-1/3 bg-blue px-2"
+        label={{ name: "Слайдер с диапазоном (не активный)" }}
+        value={[-10, 12]}
+        number={{ minNum: -15, maxNum: 15, step: 1 }}
+        disabled={true}
       />
-      <UI.Modal isOpen={modalData.isOpen} title="Full data">
-        {#snippet main()}
-          {@html modalData.formattedData}
-        {/snippet}
-        {#snippet footer()}
-          <UI.Button
-            content={{ name: "Copy" }}
-            wrapperClass="w-20 bg-pink"
-            onClick={() => {
-              navigator.clipboard.writeText(modalData.rawData)
-              modalData.isOpen = false
-            }}
-          />
-        {/snippet}
-      </UI.Modal>
-    </UI.Accordion>
+    </div>
+    <div class="flex gap-2">
+      <UI.Slider wrapperClass="!w-1/2 bg-green px-2" label={{ name: "Слайдер" }} value={-10} number={{ minNum: -25, maxNum: 25, step: 1 }} disabled={false} />
+      <UI.Slider wrapperClass="!w-1/2 bg-yellow px-2" label={{ name: "Слайдер" }} value={-25} number={{ minNum: -50, maxNum: 50, step: 1 }} disabled={false} />
+    </div>
+    <div class="flex gap-2">
+      <UI.Slider wrapperClass="!w-1/2 bg-purple px-2" label={{ name: "Слайдер" }} value={0} number={{ minNum: -50, maxNum: 50, step: 1 }} disabled={false} />
+      <UI.Slider wrapperClass="!w-1/2 bg-pink px-2" label={{ name: "Слайдер" }} value={25} number={{ minNum: -50, maxNum: 50, step: 1 }} disabled={false} />
+    </div>
+  </UI.Accordion>
 
-    <!-- Компонент TABS -->
-    <UI.Accordion label={{ name: "Tabs" }} isOpen={false}>
-      <div class="flex flex-col gap-5">
-        <UI.Tabs items={[{ name: "Tab1" }, { name: "Tab2" }, { name: "Tab3" }, { name: "Tab4" }]} children={Tab} size={{ height: 1, width: 1 }} />
-        <UI.Tabs
-          items={[
-            { name: "Tab1", class: "w-1/4" },
-            { name: "Tab2", class: "w-1/4" },
-            { name: "Tab3", class: "w-1/4" },
-            { name: "Tab4", class: "w-1/4" },
-          ]}
-          children={Tab}
-          size={{ height: 1, width: 1 }}
+  <!-- Компонент TABLE -->
+  <UI.Accordion label={{ name: "Table" }} isOpen={true} wrapperClass="col-span-2">
+    <UI.Table label={{ name: "Devices" }} header={columns} body={rows} onClick={(eventHandler) => console.log(eventHandler)} footer={`rows: ${rows.length}`} />
+    <UI.Modal isOpen={modalData.isOpen} title="Full data">
+      {#snippet main()}
+        {@html modalData.formattedData}
+      {/snippet}
+      {#snippet footer()}
+        <UI.Button
+          content={{ name: "Copy" }}
+          wrapperClass="w-20 bg-pink"
+          onClick={() => {
+            navigator.clipboard.writeText(modalData.rawData)
+            modalData.isOpen = false
+          }}
         />
+      {/snippet}
+    </UI.Modal>
+  </UI.Accordion>
 
-        <UI.Tabs
-          items={[
-            { name: "Tab1", icon: IconGripHorizontalUp, class: "flex-col" },
-            { name: "Tab2", icon: IconGripVerticalRight, class: "flex-row-reverse" },
-            { name: "Tab3", icon: IconGripHorizontalDown, class: "flex-col-reverse" },
-            { name: "Tab4", icon: IconGripVerticalLeft, class: "" },
-          ]}
-          children={Tab}
-          size={{ height: 1, width: 1 }}
-        />
-      </div>
-    </UI.Accordion>
-    {#snippet Tab(item: { name: string })}
-      <div>
-        <h5>Content of {item.name}</h5>
-      </div>
-    {/snippet}
+  <!-- Компонент TABS -->
+  <UI.Accordion label={{ name: "Tabs" }} isOpen={false} wrapperClass="col-span-2">
+    <div class="flex flex-col gap-5">
+      <UI.Tabs items={[{ name: "Tab1" }, { name: "Tab2" }, { name: "Tab3" }, { name: "Tab4" }]} children={Tab} size={{ height: 1, width: 1 }} />
+      <UI.Tabs
+        items={[
+          { name: "Tab1", class: "w-1/4" },
+          { name: "Tab2", class: "w-1/4" },
+          { name: "Tab3", class: "w-1/4" },
+          { name: "Tab4", class: "w-1/4" },
+        ]}
+        children={Tab}
+        size={{ height: 1, width: 1 }}
+      />
 
-    <!-- Компонент TEXT FIELD -->
-    <UI.Accordion label={{ name: "Text Field" }} isOpen={false}>
-      <UI.TextField content={{ name: "Random text", size: "small", class: "" }} wrapperClass="text-gray-400" />
-      <UI.TextField content={{ name: "Random text", size: "base", class: "font-bold" }} wrapperClass="text-red-400" />
-      <UI.TextField content={{ name: "Random text", size: "large", class: "" }} wrapperClass="text-lime-400" />
-      <UI.TextField content={{ name: "Random text", size: "huge", class: "italic" }} wrapperClass="text-sky-400" />
-      <UI.TextField content={{ name: "Random text", size: "massive", class: "italic font-bold" }} wrapperClass="text-blue-400" />
-      <UI.TextField content={{ name: "Random text", size: "massive", class: "font-bold" }} wrapperClass="text-purple-400" />
-      <UI.TextField content={{ name: "Random text", size: "massive", class: "" }} wrapperClass="text-pink-400" />
-    </UI.Accordion>
-  </div>
+      <UI.Tabs
+        items={[
+          { name: "Tab1", icon: IconGripHorizontalUp, class: "flex-col" },
+          { name: "Tab2", icon: IconGripVerticalRight, class: "flex-row-reverse" },
+          { name: "Tab3", icon: IconGripHorizontalDown, class: "flex-col-reverse" },
+          { name: "Tab4", icon: IconGripVerticalLeft, class: "" },
+        ]}
+        children={Tab}
+        size={{ height: 1, width: 1 }}
+      />
+    </div>
+  </UI.Accordion>
+  {#snippet Tab(item: { name: string })}
+    <div>
+      <h5>Content of {item.name}</h5>
+    </div>
+  {/snippet}
 </div>

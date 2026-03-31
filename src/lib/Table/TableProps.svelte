@@ -167,13 +167,11 @@
             }
           }}
         />
-        <div class="py-2 pl-6 grid grid-cols-[1fr_minmax(5rem,10rem)_minmax(10rem,21rem)_2rem_2rem] items-end gap-2">
+        <div class="py-2 pl-9 grid grid-cols-[1fr_minmax(5rem,10rem)_minmax(10rem,21rem)_2rem_2rem] items-end gap-2">
           <UI.Input
             label={{ name: $t("constructor.props.table.columns.label") }}
             value={column.label?.name}
-            onUpdate={(value) => {
-              updateTableHeader(columnIndex, "label", { ["name"]: value })
-            }}
+            onUpdate={(value) => updateTableHeader(columnIndex, "label", { ["name"]: value })}
           />
           <UI.Input
             label={{ name: $t("constructor.props.table.columns.width"), class: "px-0" }}
@@ -365,9 +363,7 @@
                           (button.class ?? component.properties.wrapperClass).split(" ").find((cls: string) => cls.startsWith("bg-")),
                         ),
                       )}
-                      onUpdate={(value) => {
-                        updateContentProperty(columnIndex, index, "class", (value as UI.IOption).value)
-                      }}
+                      onUpdate={(value) => updateContentProperty(columnIndex, index, "class", (value as UI.IOption).value)}
                     />
 
                     <div class="relative mt-6 flex w-1/4 gap-2">
@@ -613,9 +609,7 @@
     }}
     value={component.properties.dataBuffer.clearButton}
     options={[{ id: crypto.randomUUID(), value: 0, class: "", disabled: !component.properties.dataBuffer.stashData }]}
-    onChange={(value) => {
-      updateProperty("dataBuffer.clearButton", value, component, onPropertyChange)
-    }}
+    onChange={(value) => updateProperty("dataBuffer.clearButton", value, component, onPropertyChange)}
   />
 {/snippet}
 
@@ -624,9 +618,7 @@
     label={{ name: $t("constructor.props.table.logger"), captionLeft: $t("constructor.props.info.bottom"), captionRight: $t("constructor.props.info.top") }}
     value={component.properties.dataBuffer.logger}
     options={[{ id: crypto.randomUUID(), value: 0, class: "", disabled: !component.properties.dataBuffer.stashData }]}
-    onChange={(value) => {
-      updateProperty("dataBuffer.logger", value, component, onPropertyChange)
-    }}
+    onChange={(value) => updateProperty("dataBuffer.logger", value, component, onPropertyChange)}
   />
 {/snippet}
 

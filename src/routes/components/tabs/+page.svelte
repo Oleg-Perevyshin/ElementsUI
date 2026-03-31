@@ -1,7 +1,6 @@
 <script lang="ts">
-  import { Button, Input, Select, TabsProps, type ITabsProps, type UIComponent } from "$lib"
+  import { TabsProps, type ITabsProps, type UIComponent } from "$lib"
   import ComponentExample from "$lib/ComponentExample.svelte"
-  import Modal from "$lib/Modal.svelte"
   import Tabs from "$lib/Tabs/Tabs.svelte"
   import { updateComponent } from "$lib/types"
   import { formatObjectToString } from "../../common"
@@ -18,10 +17,7 @@
         width: 1,
       },
       items: [
-        {
-          name: "Tab 1",
-          class: "flex-row",
-        },
+        { name: "Tab 1", class: "flex-row" },
         { name: "Tab 2", class: "flex-row", disabled: true },
         { name: "Tab 3", class: "flex-row" },
       ],
@@ -44,11 +40,11 @@ ${formatObjectToString(tabsComponent.properties as ITabsProps)}
     <div class="h-60">
       <Tabs
         {...tabsComponent.properties as ITabsProps}
-        // items={[
-        //   { name: "Tab1", children: componentProps },
-        //   { name: "Tab2", children: componentProps },
-        //   { name: "Tab3", children: componentProps },
-        // ]}
+        items={[
+          { name: "Tab1", children: componentProps },
+          { name: "Tab2", children: componentProps },
+          { name: "Tab3", children: componentProps },
+        ]}
       />
     </div>
   {/snippet}

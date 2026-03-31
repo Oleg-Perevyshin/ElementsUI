@@ -134,10 +134,13 @@
         <!-- Основные кнопки (оси pitch и yaw) -->
         <div class="absolute h-full w-full overflow-hidden rounded-full">
           {#each directions as direction, index}
-            <button class="pointer-events-none absolute top-1/2 left-1/2 block w-1/2 -translate-y-1/2 cursor-pointer" onclick={direction.onClick} title="">
+            <button
+              class="btn-segment pointer-events-none absolute top-1/2 left-1/2 block w-1/2 -translate-y-1/2 cursor-pointer"
+              onclick={direction.onClick}
+              title=""
+            >
               <span
-                class="relative flex w-full origin-left items-center justify-center pl-[60%] pointer-events-auto active:scale-98 transition duration-200
-            {direction.mainButton ? 'bg-(--bg-color)' : ''}
+                class="relative flex w-full origin-left items-center justify-center pl-[60%] pointer-events-auto {direction.mainButton ? 'bg-(--bg-color)' : ''}
             "
                 style=" height: {direction.mainButton
                   ? 2 * 5 * Math.sin((Math.PI * 65) / 360)
@@ -148,7 +151,12 @@
                 onmouseenter={(e) => (e.currentTarget.style.backgroundColor = "color-mix(in srgb, var(--bg-color), var(--shadow-color) 20%)")}
                 onmouseleave={(e) => (e.currentTarget.style.backgroundColor = "var(--bg-color)")}
               >
-                <svg xmlns="http://www.w3.org/2000/svg" width={direction.mainButton ? 32 : 16} height={direction.mainButton ? 32 : 16} viewBox="0 0 24 24"
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="segment-icon"
+                  width={direction.mainButton ? 32 : 16}
+                  height={direction.mainButton ? 32 : 16}
+                  viewBox="0 0 24 24"
                   ><path
                     fill="currentColor"
                     d="M12.6 12L8.7 8.1q-.275-.275-.275-.7t.275-.7t.7-.275t.7.275l4.6 4.6q.15.15.213.325t.062.375t-.062.375t-.213.325l-4.6 4.6q-.275.275-.7.275t-.7-.275t-.275-.7t.275-.7z"
@@ -171,13 +179,11 @@
           {/each}
         </div>
         <!-- Кнопка по центру -->
-        <div class="z-20 flex size-20 items-center justify-center rounded-full bg-(--bg-color) shadow-[0_0_15px_rgb(0_0_0_/0.25)] transition hover:scale-103">
+        <div class="btn-segment z-20 flex size-20 items-center justify-center rounded-full bg-(--bg-color) shadow-[0_0_15px_rgb(0_0_0_/0.25)]">
           <button
             class="flex size-18 cursor-pointer items-center justify-center rounded-full p-3.5 [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
             style="background: {value[3] == 1 ? 'color-mix(in srgb, var(--bg-color), var(--shadow-color) 10%)' : 'var(--bg-color)'}"
-            onclick={() => {
-              value[3] = value[3] == 0 ? 1 : 0
-            }}
+            onclick={() => (value[3] = value[3] == 0 ? 1 : 0)}
           >
             {#if buttonIcon}
               {#if typeof buttonIcon === "string"}
@@ -187,7 +193,7 @@
                 <IconComponent />
               {/if}
             {:else}
-              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
+              <svg xmlns="http://www.w3.org/2000/svg" class="segment-icon" width="32" height="32" viewBox="0 0 24 24"
                 ><path
                   fill="currentColor"
                   d="M6 19h3v-5q0-.425.288-.712T10 13h4q.425 0 .713.288T15 14v5h3v-9l-6-4.5L6 10zm-2 0v-9q0-.475.213-.9t.587-.7l6-4.5q.525-.4 1.2-.4t1.2.4l6 4.5q.375.275.588.7T20 10v9q0 .825-.588 1.413T18 21h-4q-.425 0-.712-.288T13 20v-5h-2v5q0 .425-.288.713T10 21H6q-.825 0-1.412-.587T4 19m8-6.75"
@@ -204,7 +210,7 @@
           style="background: color-mix(in srgb, var(--bg-color), var(--shadow-color) 10%)"
         >
           <button
-            class="h-full cursor-pointer rounded-l-full px-3.5 active:scale-98 transition duration-200"
+            class="btn-segment h-full cursor-pointer rounded-l-full px-3.5"
             title=""
             onclick={() => {
               if (value[0] - sensitivity <= (axes[0].minNum ?? -360)) {
@@ -218,19 +224,17 @@
             onmouseenter={(e) => (e.currentTarget.style.backgroundColor = "color-mix(in srgb, var(--bg-color), var(--shadow-color) 30%)")}
             onmouseleave={(e) => (e.currentTarget.style.backgroundColor = "background: color-mix(in srgb, var(--bg-color), var(--shadow-color) 10%)")}
           >
-            <div class="rotate-270">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                ><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"
-                  ><path
-                    stroke-miterlimit="10"
-                    d="M6.395 7.705A7.9 7.9 0 0 1 12 5.382a7.93 7.93 0 0 1 7.929 7.929A7.94 7.94 0 0 1 12 21.25a7.94 7.94 0 0 1-7.929-7.94"
-                  /><path stroke-linejoin="round" d="m7.12 2.75l-.95 3.858a1.33 1.33 0 0 0 .97 1.609l3.869.948" /></g
-                ></svg
-              >
-            </div></button
-          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="segment-icon rotate-270" width="24" height="24" viewBox="0 0 24 24"
+              ><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"
+                ><path
+                  stroke-miterlimit="10"
+                  d="M6.395 7.705A7.9 7.9 0 0 1 12 5.382a7.93 7.93 0 0 1 7.929 7.929A7.94 7.94 0 0 1 12 21.25a7.94 7.94 0 0 1-7.929-7.94"
+                /><path stroke-linejoin="round" d="m7.12 2.75l-.95 3.858a1.33 1.33 0 0 0 .97 1.609l3.869.948" /></g
+              ></svg
+            >
+          </button>
           <button
-            class="h-full cursor-pointer rounded-r-full px-3.5 active:scale-97 transition duration-200"
+            class="btn-segment h-full cursor-pointer rounded-r-full px-3.5"
             title=""
             onclick={() => {
               if (value[0] + sensitivity >= (axes[0].maxNum ?? 360)) {
@@ -244,17 +248,15 @@
             onmouseenter={(e) => (e.currentTarget.style.backgroundColor = "color-mix(in srgb, var(--bg-color), var(--shadow-color) 30%)")}
             onmouseleave={(e) => (e.currentTarget.style.backgroundColor = "vabackground: color-mix(in srgb, var(--bg-color), var(--shadow-color) 10%)")}
           >
-            <div class="rotate-90">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                ><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"
-                  ><path
-                    stroke-miterlimit="10"
-                    d="M17.605 7.705A7.9 7.9 0 0 0 12 5.382a7.93 7.93 0 0 0-7.929 7.929A7.94 7.94 0 0 0 12 21.25a7.94 7.94 0 0 0 7.929-7.94"
-                  /><path stroke-linejoin="round" d="m16.88 2.75l.95 3.858a1.33 1.33 0 0 1-.97 1.609l-3.869.948" /></g
-                ></svg
-              >
-            </div></button
-          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="segment-icon rotate-90" width="24" height="24" viewBox="0 0 24 24"
+              ><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"
+                ><path
+                  stroke-miterlimit="10"
+                  d="M17.605 7.705A7.9 7.9 0 0 0 12 5.382a7.93 7.93 0 0 0-7.929 7.929A7.94 7.94 0 0 0 12 21.25a7.94 7.94 0 0 0 7.929-7.94"
+                /><path stroke-linejoin="round" d="m16.88 2.75l.95 3.858a1.33 1.33 0 0 1-.97 1.609l-3.869.948" /></g
+              ></svg
+            >
+          </button>
         </div>
       {/if}
     </div>
@@ -312,3 +314,15 @@
     </div>
   </div>
 </div>
+
+<style>
+  .segment-icon {
+    transition: transform 0.2s ease;
+    transform-origin: center;
+    display: block;
+  }
+
+  .btn-segment:active .segment-icon {
+    transform: scale(0.8);
+  }
+</style>

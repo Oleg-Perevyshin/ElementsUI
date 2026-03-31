@@ -380,7 +380,6 @@ export interface ITableProgressBar<T extends object> {
   units?: string
 }
 export interface ITableImage<T extends object> {
-  key: keyof T
   src?: string | ((row: T) => string)
   alt?: string
   class?: string

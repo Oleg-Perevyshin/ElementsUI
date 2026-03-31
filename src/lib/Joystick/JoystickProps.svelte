@@ -102,9 +102,9 @@
       <div class="flex w-1/3 flex-col px-2">
         <CommonSnippets snippet="Variable" {VARIABLE_OPTIONS} {component} {onPropertyChange} />
         <CommonSnippets snippet="EventHandlerArgument" {component} {onPropertyChange} />
+        <CommonSnippets snippet="Access" {component} {onPropertyChange} />
       </div>
       <div class="flex w-1/3 flex-col px-2">
-        <CommonSnippets snippet="Access" {component} {onPropertyChange} />
         <CommonSnippets snippet="Label" {component} {onPropertyChange} />
         <CommonSnippets snippet="LabelAlign" initialValue={initialAlign} {component} {onPropertyChange} />
       </div>

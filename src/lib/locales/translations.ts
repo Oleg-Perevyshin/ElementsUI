@@ -186,7 +186,7 @@ const translations: Translations = {
     "constructor.props.table.addaction": "Добавить действие",
     "constructor.props.table.addbutton": "Добавить кнопку",
     "constructor.props.table.keys": "Перечень ключей",
-    "constructor.props.table.keys.info": "Ключи колонок, значения которых будут возвращаться",
+    "constructor.props.table.keys.info": "Ключи колонок, значения которых будут возвращаться. Перечислить через пробел",
     "constructor.props.table.select.keys": "Ключ строки",
     "constructor.props.table.select.keys.info": "Ключ колонки, содержащей серийный номер модуля; если поле пустое - применяется серийный номер изделия",
     "constructor.props.table.stashData": "Накопление данных",
