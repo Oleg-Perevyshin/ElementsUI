@@ -15,7 +15,7 @@
       wrapperClass: "bg-max",
       disabled: false,
       label: { name: "Label", class: "text-center" },
-      type: "select",
+      type: "input",
       bitMode: false,
       range: { start: 0, end: 1 },
       options: [
@@ -24,6 +24,7 @@
         { id: crypto.randomUUID(), value: "3", name: "3", class: "bg-max" },
         { id: crypto.randomUUID(), value: "4", name: "4", class: "bg-max" },
       ],
+      value: { id: crypto.randomUUID(), value: "1", name: "Option 1", class: "bg-max" },
     },
     eventHandler: { Header: "SET", Argument: "", Variables: [] },
     position: { row: 0, col: 0, width: 0, height: 0 },

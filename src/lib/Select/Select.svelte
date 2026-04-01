@@ -47,7 +47,11 @@
 
   onMount(() => {
     if (type === "select" || type === "input") document.addEventListener("click", handleClickOutside)
-    if (type === "input" && !Array.isArray(value)) searchValue = value?.name ?? ""
+    if (type === "input" && !Array.isArray(value)) {
+      searchValue = value?.name ?? ""
+      handleSearch(searchValue)
+      isDropdownOpen = false
+    }
     return () => {
       if (type === "select" || type === "input") document.removeEventListener("click", handleClickOutside)
     }

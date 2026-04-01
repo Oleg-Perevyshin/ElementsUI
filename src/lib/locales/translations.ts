@@ -8,6 +8,8 @@ const translations: Translations = {
     "common.select_tag": "Сделайте выбор",
     "debug.baud_rate_data": "Данные",
     "library.for_constructor": "Для конструктора",
+    "library.overview": "Обзор",
+    "library.examples": "Примеры",
 
     /* Опции рeдактора свойств */
     "constructor.props.action.update": "Обновить",

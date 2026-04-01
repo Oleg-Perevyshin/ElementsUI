@@ -55,4 +55,27 @@ ${formatObjectToString(accordionComponent.properties as IAccordionProps)}
       {forConstructor}
     />
   {/snippet}
+  {#snippet examples()}
+    <Accordion label={{ name: "Accordion 1", class: "" }} isOpen={false} wrapperClass="col-span-3">
+      <h6>Содержимое вложенного Accordion 1</h6>
+      <h5>Содержимое вложенного Accordion 1</h5>
+      <h4>Содержимое вложенного Accordion 1</h4>
+      <h3>Содержимое вложенного Accordion 1</h3>
+      <h2>Содержимое вложенного Accordion 1</h2>
+      <h1>Содержимое вложенного Accordion 1</h1>
+    </Accordion>
+    <Accordion label={{ name: "Accordion 2", class: "" }} isOpen={false} wrapperClass="col-span-3">
+      <h1>Содержимое вложенного Accordion 2</h1>
+      <h2>Содержимое вложенного Accordion 2</h2>
+      <h3>Содержимое вложенного Accordion 2</h3>
+      <h4>Содержимое вложенного Accordion 2</h4>
+      <h5>Содержимое вложенного Accordion 2</h5>
+    </Accordion>
+    <Accordion label={{ name: "Accordion 3", class: "" }} isOpen={false} wrapperClass="col-span-3">
+      <h4>Содержимое вложенного Accordion 3</h4>
+      <h3>Содержимое вложенного Accordion 3</h3>
+      <h2>Содержимое вложенного Accordion 3</h2>
+      <h1>Содержимое вложенного Accordion 3</h1>
+    </Accordion>
+  {/snippet}
 </ComponentExample>
