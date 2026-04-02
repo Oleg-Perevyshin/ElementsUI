@@ -21,8 +21,27 @@
     onUpdate,
   }: ISelectProps<T> = $props()
 
-  let searchValue: any = $state("")
-  let filteredOptions = $state<IOption<T>[]>([])
+  let searchValue: any = $derived(
+    (() => {
+      if (type === "input" && !Array.isArray(value)) return value?.name ?? ""
+    })(),
+  )
+
+  let filteredOptions = $derived<IOption<T>[]>(
+    (() => {
+      const firstOptions = options.filter((option) => {
+        const optionName = option.name?.toString() || ""
+        return optionName.toLowerCase().includes(searchValue.toLowerCase())
+      })
+
+      return [
+        ...firstOptions,
+        ...options.filter((option) => {
+          return !firstOptions.some((filtered) => filtered.id === option.id)
+        }),
+      ]
+    })(),
+  )
 
   /* Закрытие при клике вне компонента */
   const handleClickOutside = (event: MouseEvent) => {
@@ -31,27 +50,8 @@
     }
   }
 
-  $effect(() => {
-    if (!Array.isArray(value))
-      if (value?.name) {
-        searchValue = value?.name
-      } else if (value == undefined) {
-        const newOption: IOption<T> = {
-          id: `input-${searchValue}`,
-          name: searchValue,
-          value: searchValue as T,
-        }
-        searchValue = newOption.value
-      }
-  })
-
   onMount(() => {
     if (type === "select" || type === "input") document.addEventListener("click", handleClickOutside)
-    if (type === "input" && !Array.isArray(value)) {
-      searchValue = value?.name ?? ""
-      handleSearch(searchValue)
-      isDropdownOpen = false
-    }
     return () => {
       if (type === "select" || type === "input") document.removeEventListener("click", handleClickOutside)
     }
@@ -63,71 +63,39 @@
   }
 
   const isSelected = (option: IOption<any>) => {
-    if (type === "buttons" && multiSelect && Array.isArray(value)) {
-      return value.includes(option)
-    }
-    return option.value === (value as IOption)?.value
+    if (type === "buttons" && multiSelect && Array.isArray(value)) return value.find((v) => v.value === option.value)
+    else return option.value === (value as IOption)?.value
   }
 
   const selectOption = (option: IOption<T>, event: MouseEvent) => {
     event.stopPropagation()
-    if (!disabled) {
-      if (type === "buttons" && multiSelect && value && !Array.isArray(value)) {
-        value = [value]
-        if (value.includes(option)) {
-          value = value.filter((op) => op !== option)
-        } else {
-          value.push(option)
-        }
-      } else if (type === "buttons" && multiSelect && value && Array.isArray(value)) {
-        if (value.includes(option)) {
-          value = value.filter((op) => op !== option)
-        } else {
-          value.push(option)
-        }
-      } else value = option
-      searchValue = option.name?.toString() ?? ""
-      if (type === "input") handleSearch(searchValue)
-      isDropdownOpen = false
-      onUpdate?.(value)
+
+    if (type === "buttons" && multiSelect && value) {
+      if (!Array.isArray(value)) value = [value]
+
+      if (value.find((v) => v.value === option.value)) value = value.filter((op) => op.value !== option.value)
+      else value.push(option)
+    } else {
+      value = option
     }
+
+    if (type === "input") {
+      handleSearch()
+      searchValue = option.name?.toString() ?? ""
+    }
+    isDropdownOpen = false
+    onUpdate?.(value)
   }
 
-  const handleSearch = (inputValue: string) => {
-    searchValue = inputValue
-
-    filteredOptions = options.filter((option) => {
-      const optionName = option.name?.toString() || ""
-      return optionName.toLowerCase().includes(inputValue.toLowerCase())
-    })
-
-    filteredOptions = [
-      ...filteredOptions,
-      ...options.filter((option) => {
-        return !filteredOptions.some((filtered) => filtered.id === option.id)
-      }),
-    ]
-    isDropdownOpen = filteredOptions.length > 0
-
-    const selectedFromList = options.find((option) => option.name?.toString() === searchValue)
-
-    if (!selectedFromList) {
-      const newOption: IOption<T> = {
-        id: `input-${searchValue}`,
-        name: searchValue,
-        value:
-          typeof options[0].value == "number"
-            ? (Number(searchValue) as T) == undefined
-              ? (Number(searchValue) as T)
-              : (searchValue as T)
-            : (searchValue as T),
-      }
-      value = newOption
-      onUpdate?.(newOption)
-    } else {
-      value = selectedFromList
-      onUpdate?.(selectedFromList)
+  const handleSearch = () => {
+    const selectedOption = options.find((option) => option.name?.toString() === searchValue) || {
+      id: `input-${Date.now()}`,
+      name: searchValue,
+      value:
+        typeof options[0]?.value == "number" ? ((Number(searchValue) as T) == undefined ? (Number(searchValue) as T) : (searchValue as T)) : (searchValue as T),
     }
+    value = selectedOption
+    onUpdate?.(selectedOption)
   }
 </script>
 
@@ -165,13 +133,12 @@
             value={option?.value ? String(option.value) : ""}
             class={twMerge(
               `flex h-full w-full cursor-pointer items-center justify-center p-1 inset-shadow-[0_10px_10px_-15px_rgb(0_0_0_/0.5)] duration-250 hover:bg-(--field-color)!
-              ${index === options.length - 1 ? "rounded-b-xl" : ""} `,
+              ${index === options.length - 1 ? "rounded-b-xl" : ""}`,
               option.class,
             )}
             onclick={(e) => selectOption(option, e)}
             {disabled}
-            style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%); 
-            "
+            style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"
           >
             {option.name}
           </button>
@@ -213,9 +180,9 @@
       style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"
       id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
       {disabled}
-      oninput={(e) => handleSearch((e.currentTarget as HTMLInputElement).value)}
+      oninput={handleSearch}
       onclick={(e) => {
-        if (searchValue == "") filteredOptions = options
+        // if (searchValue == "") filteredOptions = options
         toggleDropdown(e)
       }}
     />
@@ -232,13 +199,12 @@
             value={option?.value ? String(option.value) : ""}
             class={twMerge(
               `flex h-full w-full cursor-pointer items-center justify-center p-1 inset-shadow-[0_10px_10px_-15px_rgb(0_0_0_/0.5)] duration-250 hover:bg-(--field-color)!
-              ${index === filteredOptions.length - 1 ? "rounded-b-xl" : ""} `,
+              ${index === filteredOptions.length - 1 ? "rounded-b-xl" : ""}`,
               option.class,
             )}
             onclick={(e) => selectOption(option, e)}
             {disabled}
-            style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%); 
-            "
+            style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"
           >
             {option.name}
           </button>

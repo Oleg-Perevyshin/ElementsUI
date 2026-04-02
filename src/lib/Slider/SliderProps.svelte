@@ -45,32 +45,6 @@
   />
 {/snippet}
 
-{#snippet SliderMinMax()}
-  <div class="flex">
-    <UI.Input
-      label={{ name: $t("constructor.props.min") }}
-      value={component.properties.number.maxNum as number}
-      type="number"
-      readonly={component.properties.bitMode}
-      onUpdate={(value) => updateProperty("number.maxNum", Number(value), component, onPropertyChange)}
-    />
-    <UI.Input
-      label={{ name: $t("constructor.props.max") }}
-      value={component.properties.number.minNum as number}
-      type="number"
-      readonly={component.properties.bitMode}
-      onUpdate={(value) => updateProperty("number.minNum", Number(value), component, onPropertyChange)}
-    />
-    <UI.Input
-      label={{ name: $t("constructor.props.step") }}
-      value={component.properties.number.step as number}
-      type="number"
-      readonly={component.properties.bitMode}
-      onUpdate={(value) => updateProperty("number.step", Number(value), component, onPropertyChange)}
-    />
-  </div>
-{/snippet}
-
 {#snippet SliderValue()}
   <UI.Input
     label={{ name: $t("constructor.props.value") }}
@@ -88,7 +62,18 @@
     </div>
     <div class="flex w-1/3 flex-col px-2">
       {@render SliderType()}
-      {@render SliderMinMax()}
+      <CommonSnippets
+        snippet="MinMaxStep"
+        initialValue="{{
+          number: component.properties.number,
+          bitMode: component.properties.bitMode,
+          updateProperty: (value: number, property: string) => {
+            updateProperty(property, Number(value), component, onPropertyChange)
+          },
+        }}}"
+        {component}
+        {onPropertyChange}
+      />
     </div>
     <div class="flex w-1/3 flex-col px-2">
       <CommonSnippets snippet="Label" {component} {onPropertyChange} />
@@ -112,7 +97,18 @@
     </div>
     <div class="flex w-1/3 flex-col px-2">
       {@render SliderType()}
-      {@render SliderMinMax()}
+      <CommonSnippets
+        snippet="MinMaxStep"
+        initialValue={{
+          number: component.properties.number,
+          bitMode: component.properties.bitMode,
+          updateProperty: (value: number, property: string) => {
+            updateProperty(property, Number(value), component, onPropertyChange)
+          },
+        }}
+        {component}
+        {onPropertyChange}
+      />
     </div>
   </div>
 {/if}

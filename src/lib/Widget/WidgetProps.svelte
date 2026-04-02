@@ -77,32 +77,6 @@
   />
 {/snippet}
 
-{#snippet WidgetMinMax()}
-  <div class="flex">
-    <UI.Input
-      label={{ name: $t("constructor.props.min") }}
-      value={component.properties.settings.number.minNum as number}
-      type="number"
-      readonly={component.properties.bitMode}
-      onUpdate={(value) => updateProperty("settings.number.minNum", Number(value), component, onPropertyChange)}
-    />
-    <UI.Input
-      label={{ name: $t("constructor.props.max") }}
-      value={component.properties.settings.number.maxNum as number}
-      type="number"
-      readonly={component.properties.bitMode}
-      onUpdate={(value) => updateProperty("settings.number.maxNum", Number(value), component, onPropertyChange)}
-    />
-    <UI.Input
-      label={{ name: $t("constructor.props.step") }}
-      value={component.properties.settings.number.step as number}
-      type="number"
-      readonly={component.properties.bitMode}
-      onUpdate={(value) => updateProperty("settings.number.step", Number(value), component, onPropertyChange)}
-    />
-  </div>
-{/snippet}
-
 {#snippet WidgetSwitchCaptions()}
   <UI.Input
     label={{ name: $t("constructor.props.caption.left") }}
@@ -197,11 +171,12 @@
   <div class="flex mb-4 items-start justify-center gap-8">
     <div class="flex w-1/3 flex-col px-2">
       <CommonSnippets snippet="Variable" {VARIABLE_OPTIONS} {component} {onPropertyChange} />
+      <CommonSnippets snippet="EventHandlerArgument" {component} {onPropertyChange} />
       <CommonSnippets snippet="Access" {component} {onPropertyChange} />
-      {@render WidgetUnits()}
     </div>
     <div class="flex w-1/3 flex-col px-2">
       <CommonSnippets snippet="Label" {component} {onPropertyChange} />
+      {@render WidgetUnits()}
       {@render WidgetIcons()}
       {@render WidgetIconColor()}
       {@render WidgetSwitchingMode()}
@@ -211,7 +186,18 @@
       {@render WidgetSettingsColor()}
       {@render WidgetType()}
       {#if component.properties.settings.type == "input" || component.properties.settings.type == "slider"}
-        {@render WidgetMinMax()}
+        <CommonSnippets
+          snippet="MinMaxStep"
+          initialValue={{
+            number: component.properties.settings.number,
+            bitMode: component.properties.bitMode,
+            updateProperty: (value: number, property: string) => {
+              updateProperty(`settings.${property}`, Number(value), component, onPropertyChange)
+            },
+          }}
+          {component}
+          {onPropertyChange}
+        />
       {:else if component.properties.settings.type == "switch"}
         {@render WidgetSwitchCaptions()}
       {/if}
@@ -236,7 +222,18 @@
       {@render WidgetSettingsColor()}
       {@render WidgetType()}
       {#if component.properties.settings.type == "input" || component.properties.settings.type == "slider"}
-        {@render WidgetMinMax()}
+        <CommonSnippets
+          snippet="MinMaxStep"
+          initialValue={{
+            number: component.properties.settings.number,
+            bitMode: component.properties.bitMode,
+            updateProperty: (value: number, property: string) => {
+              updateProperty(`settings.${property}`, Number(value), component, onPropertyChange)
+            },
+          }}
+          {component}
+          {onPropertyChange}
+        />
       {:else if component.properties.settings.type == "switch"}
         {@render WidgetSwitchCaptions()}
       {/if}

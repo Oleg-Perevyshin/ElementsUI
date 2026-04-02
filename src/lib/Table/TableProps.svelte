@@ -74,7 +74,7 @@
         option.value === "button"
           ? {
               name: `button`,
-              class: "bg-blue grow",
+              class: "bg-blue",
               eventHandler: { Header: "SET", Argument: "Save", Variables: [] },
               onClick: () => {},
             }

@@ -17,6 +17,9 @@
 
   let currentValue = $derived(value)
 
+  const minNumber = $derived(settings.number?.minNum ?? 0 + 1)
+  const maxNumber = $derived(settings.number?.maxNum ?? 0)
+
   $effect(() => {
     if (value === undefined || value === null) value = settings.number?.minNum ?? 0
   })
@@ -28,7 +31,7 @@
         intervalId = null
       }
 
-      const mappedValue = mapToStep(currentValue)
+      const mappedValue = mapToStep(settings.type == "switch" && currentValue ? (maxNumber - minNumber) / 2 : currentValue)
       const periodInMs = mappedValue === 0 ? 0 : 700 / mappedValue
 
       if (icons && periodInMs > 0) {
@@ -46,36 +49,29 @@
   })
 
   $effect(() => {
-    if (icons.array && !icons?.cycling && settings.type !== "switch") {
-      currentIndex = mapToStep(currentValue)
-      console.log(currentIndex)
-    }
+    if (icons.array && !icons?.cycling && settings.type !== "switch") currentIndex = mapToStep(currentValue)
   })
 
   $effect(() => {
-    if (icons.array && !icons?.cycling && settings.type == "switch") {
-      currentIndex = currentValue == 0 ? 0 : icons.array.length - 1
-    }
+    if (icons.array && !icons?.cycling && settings.type == "switch") currentIndex = currentValue == 0 ? 0 : icons.array.length - 1
   })
 
   const mapToStep = (inputValue: number): number => {
-    const minNumber = settings.number?.minNum ?? 0
-    const maxNumber = settings.number?.maxNum ?? 10
     if (currentValue > maxNumber) inputValue = maxNumber
     if (currentValue < minNumber) inputValue = minNumber
     const clampedValue = Math.min(Math.max(inputValue, minNumber), maxNumber)
 
     const inputRange = maxNumber - minNumber
 
-    if (inputRange === 0) {
-      return 0
-    }
+    if (inputRange === 0) return 0
+    if (settings.type == "switch" && inputValue === maxNumber) return icons.array.length - 1
 
-    let stepIndex = icons?.cycling ? Math.ceil((clampedValue - minNumber) / (inputRange / 10)) : Math.ceil((clampedValue - minNumber) / (inputRange / 4))
+    let stepIndex = icons?.cycling
+      ? Math.ceil((clampedValue - minNumber) / (inputRange / 10))
+      : Math.ceil((clampedValue - minNumber) / (inputRange / (icons.array.length - 2)))
     stepIndex = Math.min(Math.max(stepIndex, 0), 10)
 
-    const result = 0 + stepIndex
-    return result
+    return stepIndex
   }
 
   const currentImage = $derived(icons ? icons.array[currentIndex] : "")

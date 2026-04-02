@@ -256,34 +256,39 @@
     <!-- Table Header -->
     <div
       class="grid font-semibold bg-(--bg-color) {isScrollable ? 'border-r-8 border-(--bg-color)' : ''}"
-      style={`grid-template-columns: ${header.map((c) => c.width || "minmax(0, 1fr)").join(" ")};`}
+      style={`grid-template-columns: ${(header || [])
+        .filter((c) => c.width !== "0%")
+        .map((c) => c.width || "minmax(0, 1fr)")
+        .join(" ")};`}
     >
       {#each header as column, index (column)}
-        <div
-          class={twMerge(
-            `items-center justify-center flex border-l ${outline && index !== 0 ? " border-(--border-color)" : "border-transparent"}
+        {#if column.width !== "0%"}
+          <div
+            class={twMerge(
+              `items-center justify-center flex border-l ${outline && index !== 0 ? " border-(--border-color)" : "border-transparent"}
             ${column.align === "center" ? "justify-center text-center" : column.align === "right" ? "justify-end text-right" : "justify-start text-left"} gap-1  p-2 text-left`,
-            column.label?.class,
-          )}
-        >
-          <span>{column.label?.name}</span>
+              column.label?.class,
+            )}
+          >
+            <span>{column.label?.name}</span>
 
-          {#if typeof column.content !== "function" && (column.content as ITableContent<any>[])?.some((c) => c.type === "text" && c.data.sortable)}
-            <button
-              class="inline-block cursor-pointer font-bold transition-transform duration-75 hover:scale-110 active:scale-95"
-              onclick={() =>
-                sortRows(
-                  (
-                    (column.content as ITableContent<any>[])?.find((c) => {
-                      c.type === "text" && c.data.sortable
-                    })?.data as ITableText<object>
-                  ).key as string,
-                )}
-            >
-              ↑↓
-            </button>
-          {/if}
-        </div>
+            {#if typeof column.content !== "function" && (column.content as ITableContent<any>[])?.some((c) => c.type === "text" && c.data.sortable)}
+              <button
+                class="inline-block cursor-pointer font-bold transition-transform duration-75 hover:scale-110 active:scale-95"
+                onclick={() =>
+                  sortRows(
+                    (
+                      (column.content as ITableContent<any>[])?.find((c) => {
+                        c.type === "text" && c.data.sortable
+                      })?.data as ITableText<object>
+                    ).key as string,
+                  )}
+              >
+                ↑↓
+              </button>
+            {/if}
+          </div>
+        {/if}
       {/each}
     </div>
     {#if dataBuffer.clearButton}
@@ -308,7 +313,10 @@
               class="grid {!outline && i % 2
                 ? 'bg-[#f2f2f2] dark:bg-[#2a3545]'
                 : 'bg-[#fbfbfb] dark:bg-[#1d2635]'} hover:bg-(--bg-color)/20 transition-colors duration-250"
-              style="grid-template-columns: {header.map((c) => c.width || 'minmax(0, 1fr)').join(' ')};"
+              style={`grid-template-columns: ${(header || [])
+                .filter((c) => c.width !== "0%")
+                .map((c) => c.width || "minmax(0, 1fr)")
+                .join(" ")};`}
             >
               {#each header as column, j (column)}
                 {#if column.width !== "0%"}
@@ -322,28 +330,26 @@
                     {#each contentArray as content, index}
                       {#if content.type === "button"}
                         {@const button = typeof content.data === "function" ? content.data(row) : content.data}
-                        <div class="flex flex-wrap w-full gap-1">
-                          <button
-                            class="{twMerge(`flex items-center justify-center gap-2 cursor-pointer rounded-full 
+                        <button
+                          class="{twMerge(`flex items-center justify-center gap-2 cursor-pointer rounded-full 
                            px-4 py-1 font-semibold shadow-sm transition-shadow duration-200 outline-none select-none hover:shadow-md
                           ${typeof button.class === 'function' ? button.class(row) : button.class}`)} bg-(--bg-color)"
-                            onclick={() => buttonClick(row, button)}
-                          >
-                            {#if button?.icon}
-                              <span
-                                class={`flex items-center justify-center overflow-visible h-7 w-7 [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full`}
-                              >
-                                {#if typeof button?.icon === "string"}
-                                  {@html button.icon}
-                                {:else}
-                                  {@const IconComponent = button?.icon}
-                                  <IconComponent />
-                                {/if}
-                              </span>
-                            {/if}
-                            {typeof button.name === "function" ? button.name(row) : button.name}
-                          </button>
-                        </div>
+                          onclick={() => buttonClick(row, button)}
+                        >
+                          {#if button?.icon}
+                            <span
+                              class={`flex items-center justify-center overflow-visible h-7 w-7 [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full`}
+                            >
+                              {#if typeof button?.icon === "string"}
+                                {@html button.icon}
+                              {:else}
+                                {@const IconComponent = button?.icon}
+                                <IconComponent />
+                              {/if}
+                            </span>
+                          {/if}
+                          {typeof button.name === "function" ? button.name(row) : button.name}
+                        </button>
                       {:else if content.type === "select"}
                         {@const select = content.data}
                         {@const options = Array.isArray(row[select.key]) ? row[select.key] : []}
@@ -440,7 +446,7 @@
                         >
                           {#if text?.modal}
                             <button
-                              class="w-full cursor-pointer text-left"
+                              class="w-fit cursor-pointer text-left"
                               onclick={(e) => {
                                 e.stopPropagation()
                                 showModal(data, text?.formatting)

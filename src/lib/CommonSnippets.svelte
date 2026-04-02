@@ -1,7 +1,6 @@
 <script lang="ts">
   import * as UI from "$lib"
   import { t } from "$lib/locales/i18n"
-  import { ICONS } from "./icons"
   import CrossIcon from "./libIcons/CrossIcon.svelte"
   import { optionsStore } from "./options"
   import { updateProperty } from "./types"
@@ -34,6 +33,7 @@
     | "EventHandlerArgument"
     | "IconsLib"
     | "Readonly"
+    | "MinMaxStep"
     | ""
 
   let showIconLib: boolean = $state(false)
@@ -204,6 +204,38 @@
   />
 {/snippet}
 
+{#snippet MinMaxStep(initialValue: {
+  number: { minNum: number; maxNum: number; step: number }
+  bitMode: boolean
+  updateProperty: (value: number, property: string) => {}
+})}
+  <div class="flex">
+    <UI.Input
+      label={{ name: $t("constructor.props.min") }}
+      value={initialValue.number.minNum}
+      type="number"
+      readonly={initialValue.bitMode}
+      onUpdate={(value) => initialValue.updateProperty(value as number, "number.minNum")}
+    />
+    <UI.Input
+      label={{ name: $t("constructor.props.max") }}
+      value={initialValue.number.maxNum}
+      type="number"
+      readonly={initialValue.bitMode}
+      onUpdate={(value) => initialValue.updateProperty(value as number, "number.maxNum")}
+    />
+    {#if component.type !== "ProgressBar"}
+      <UI.Input
+        label={{ name: $t("constructor.props.step") }}
+        value={initialValue.number.step}
+        type="number"
+        readonly={initialValue.bitMode}
+        onUpdate={(value) => initialValue.updateProperty(value as number, "number.step")}
+      />
+    {/if}
+  </div>
+{/snippet}
+
 {#snippet IconsLib(initialValue: {
   name: string
   icons: { array: [string, string[]][]; selectArray?: false }
@@ -271,4 +303,6 @@
   {@render Readonly()}
 {:else if snippet === "IconsLib"}
   {@render IconsLib(initialValue)}
+{:else if snippet === "MinMaxStep"}
+  {@render MinMaxStep(initialValue)}
 {/if}
