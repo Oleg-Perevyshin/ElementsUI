@@ -99,15 +99,6 @@
 {/snippet}
 
 {#snippet WidgetSwitchingMode()}
-  <!-- <UI.Select
-    label={{ name: $t("constructor.props.widget.mode") }}
-    type="buttons"
-    options={$optionsStore.WIDGET_MODE_OPTIONS}
-    value={$optionsStore.WIDGET_MODE_OPTIONS.find((o) => o.value == component.properties.icons.mode)}
-    onUpdate={(option) => {
-      updateProperty("icons.mode", (option as UI.IOption).value as string, component, onPropertyChange)
-    }}
-  /> -->
   <UI.Switch
     label={{ name: $t("constructor.props.widget.mode") }}
     value={component.properties.icons.cycling}

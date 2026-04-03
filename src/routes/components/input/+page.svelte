@@ -17,7 +17,7 @@
       id: crypto.randomUUID(),
       label: { name: "Label", class: "text-center" },
       componentClass: "bg-max resize-none",
-      type: "number",
+      type: "text",
       bitMode: false,
       range: { start: 0, end: 1 },
       maxlength: 32,

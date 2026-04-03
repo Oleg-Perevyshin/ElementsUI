@@ -19,6 +19,8 @@
     forConstructor?: boolean
   }>()
 
+  let itemsContainer: HTMLDivElement | null = $state(null)
+
   const initialColor = $derived(
     $optionsStore.COLOR_OPTIONS.find((c) =>
       (c.value as string).includes(component.properties.wrapperClass?.split(" ").find((cls: string) => cls.startsWith("bg-"))),
@@ -82,7 +84,7 @@
 {/snippet}
 
 {#snippet TabsSettings()}
-  <div class="space-y-4">
+  <div class="space-y-4" bind:this={itemsContainer}>
     <div class="m-0 flex items-center justify-center gap-2">
       <h4>{$t("constructor.props.tabs.title")}</h4>
       {#if component.properties?.items.length < 10}
@@ -106,10 +108,19 @@
     </div>
 
     {#each component.properties.items || [] as tab, index}
-      <div class="m-0 flex items-end justify-around gap-2 border-gray-400">
+      <div id="item-{index}" class="m-0 flex items-end justify-around gap-2 border-gray-400">
+        <UI.Dragging
+          wrapperClass="w-10"
+          container={itemsContainer}
+          array={component.properties.items}
+          elementIndex={index}
+          onUpdate={(updatedArray) => {
+            updateProperty("items", updatedArray, component, onPropertyChange)
+          }}
+        />
         <UI.Input
           label={{ name: $t("constructor.props.optionname") }}
-          wrapperClass="w-5/10"
+          wrapperClass="w-1/3"
           value={tab.name}
           onUpdate={(value) => {
             const items = [...(component.properties?.items || [])]
@@ -117,7 +128,7 @@
             updateProperty("items", items, component, onPropertyChange)
           }}
         />
-        <div class="relative flex w-50 gap-2">
+        <div class="relative flex w-40 gap-2">
           <CommonSnippets
             snippet="IconsLib"
             initialValue={{
@@ -136,7 +147,7 @@
         </div>
 
         <UI.Switch
-          wrapperClass="bg-blue w-40"
+          wrapperClass="w-30"
           label={{ name: $t("constructor.props.disabled") }}
           value={tab?.disabled ? 1 : 0}
           options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
@@ -164,6 +175,7 @@
         {/if}
       </div>
     {/each}
+    <div id="item-{component.properties.items.length}" class="min-h-4"></div>
   </div>
 {/snippet}
 

@@ -64,6 +64,9 @@
     help={{ info: $t("constructor.props.argument.info"), autocomplete: "on", regExp: /^[a-zA-Z0-9\-_]{0,32}$/ }}
     onUpdate={(value) => onPropertyChange({ eventHandler: { Argument: value as string } })}
   />
+{/snippet}
+
+{#snippet ButtonVariables()}
   {#if (component.eventHandler.Argument !== "Save" && component.eventHandler.Argument !== "NoSave") || Header.value === "SET"}
     <UI.Input
       label={{ name: $t("constructor.props.value") }}
@@ -73,9 +76,6 @@
       onUpdate={(value) => onPropertyChange({ eventHandler: { Value: value as string } })}
     />
   {/if}
-{/snippet}
-
-{#snippet ButtonVariables()}
   <UI.Input
     label={{ name: $t("constructor.props.variables") }}
     disabled={hasValue}
@@ -147,11 +147,11 @@
   <div class="relative flex flex-row items-start justify-center">
     <!-- Сообщение для отправки в ws по нажатию кнопки -->
     <div class="flex w-1/3 flex-col px-2">
+      <CommonSnippets snippet="Access" {component} {onPropertyChange} />
       {@render ButtonHeaderArgument()}
     </div>
     <div class="flex w-1/3 flex-col px-2">
       {@render ButtonVariables()}
-      <CommonSnippets snippet="Access" {component} {onPropertyChange} />
       <CommonSnippets
         snippet="IconsLib"
         initialValue={{

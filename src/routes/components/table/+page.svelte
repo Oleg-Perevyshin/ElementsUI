@@ -31,7 +31,7 @@
                 eventHandler: { Header: "SET", Argument: "Save", Variables: ["id-S"] },
               },
             },
-            { type: "text", data: { key: "id-S", sortable: true, truncated: false, copy: false } },
+            { type: "text", data: { key: "id", sortable: true, truncated: false, copy: false } },
           ],
         } as ITableHeader<any>,
         {
@@ -106,6 +106,7 @@
           id: "Value of id2",
           device: "Value of device",
           buttons: [],
+          progress: 10,
         },
       ],
       footer: "",

@@ -64,7 +64,7 @@
     const inputRange = maxNumber - minNumber
 
     if (inputRange === 0) return 0
-    if (settings.type == "switch" && inputValue === maxNumber) return icons.array.length - 1
+    if (inputValue === maxNumber) return icons.array.length - 1
 
     let stepIndex = icons?.cycling
       ? Math.ceil((clampedValue - minNumber) / (inputRange / 10))

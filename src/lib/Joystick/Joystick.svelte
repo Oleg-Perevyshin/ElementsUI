@@ -140,13 +140,10 @@
               title=""
             >
               <span
-                class="relative flex w-full origin-left items-center justify-center pl-[60%] pointer-events-auto {direction.mainButton ? 'bg-(--bg-color)' : ''}
-            "
-                style=" height: {direction.mainButton
-                  ? 2 * 5 * Math.sin((Math.PI * 65) / 360)
-                  : 2 * 5 * Math.sin((Math.PI * 25) / 360)}rem; transform: rotate({angle *
-                  index}deg); clip-path: polygon(100% 0, {clipPos}% 0, 0 50%, {clipPos}% 100%, 100% 100%)
-              "
+                class="relative flex w-full origin-left items-center justify-center pl-[60%] pointer-events-auto
+                {direction.mainButton ? 'bg-(--bg-color)' : ''}"
+                style=" height: {direction.mainButton ? 2 * 5 * Math.sin((Math.PI * 65) / 360) : 2 * 5 * Math.sin((Math.PI * 25) / 360)}rem; 
+                  transform: rotate({angle * index}deg); clip-path: polygon(100% 0, {clipPos}% 0, 0 50%, {clipPos}% 100%, 100% 100%)"
                 role="application"
                 onmouseenter={(e) => (e.currentTarget.style.backgroundColor = "color-mix(in srgb, var(--bg-color), var(--shadow-color) 20%)")}
                 onmouseleave={(e) => (e.currentTarget.style.backgroundColor = "var(--bg-color)")}

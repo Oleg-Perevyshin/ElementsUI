@@ -215,6 +215,7 @@ const translations: Translations = {
 
     "constructor.props.icon.bulb": "Лампочка",
     "constructor.props.icon.propeller": "Пропеллер",
+    "constructor.props.icon.battery": "Аккумулятор",
 
     "constructor.props.autocomplete.on": "Включено",
     "constructor.props.autocomplete.off": "Выключено",

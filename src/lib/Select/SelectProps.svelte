@@ -22,6 +22,8 @@
   const DeviceVariables = getContext<{ id: string; value: string; name: string }[]>("DeviceVariables")
   let VARIABLE_OPTIONS = $derived(DeviceVariables && Array.isArray(DeviceVariables) ? DeviceVariables : [])
 
+  let itemsContainer: HTMLDivElement | null = $state(null)
+
   type ValueTypeOption = {
     id: string
     value: "text" | "number"
@@ -154,7 +156,7 @@
 {#snippet SelectOptions()}
   <hr class="border-gray-400" />
 
-  <div class="space-y-4">
+  <div class="space-y-4" bind:this={itemsContainer}>
     <div class="m-0 flex items-center justify-center gap-2">
       <h4>{$t("constructor.props.options.title")}</h4>
       <UI.Button
@@ -174,10 +176,19 @@
     </div>
 
     {#each component.properties.options || [] as option, index (option.id)}
-      <div class="m-0 flex items-end justify-around gap-2 border-gray-400">
+      <div id="item-{index}" class="m-0 flex items-end justify-around gap-2 border-gray-400">
+        <UI.Dragging
+          wrapperClass="w-9"
+          container={itemsContainer}
+          array={component.properties.options}
+          elementIndex={index}
+          onUpdate={(updatedArray) => {
+            updateProperty("options", updatedArray, component, onPropertyChange)
+          }}
+        />
         <UI.Input
           label={{ name: $t("constructor.props.optionname") }}
-          wrapperClass="!w-3/10"
+          wrapperClass="w-3/10"
           value={option.name}
           onUpdate={(value) => {
             const options = [...(component.properties?.options || [])]
@@ -187,7 +198,7 @@
         />
         <UI.Input
           label={{ name: $t("constructor.props.optionvalue") }}
-          wrapperClass="!w-3/10"
+          wrapperClass="w-3/10"
           value={option.value}
           type={currentValueType.value}
           number={{ minNum: 0, maxNum: Math.pow(2, component.properties.range.end - component.properties.range.start + 1), step: 1 }}
@@ -213,7 +224,7 @@
         {:else}
           <UI.Input
             label={{ name: $t("constructor.props.optionclass") }}
-            wrapperClass="!w-3/10"
+            wrapperClass="w-3/10"
             value={option.class}
             onUpdate={(value) => {
               const options = [...(component.properties?.options || [])]
@@ -234,6 +245,7 @@
         />
       </div>
     {/each}
+    <div id="item-{component.properties.options.length}" class="min-h-4"></div>
   </div>
 {/snippet}
 

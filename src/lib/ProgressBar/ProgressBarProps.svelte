@@ -20,6 +20,7 @@
 
   const DeviceVariables = getContext<{ id: string; value: string; name: string }[]>("DeviceVariables")
   let VARIABLE_OPTIONS = $derived(DeviceVariables && Array.isArray(DeviceVariables) ? DeviceVariables : [])
+  let itemsContainer: HTMLDivElement | null = $state(null)
 </script>
 
 {#snippet ProgressBarType()}
@@ -43,7 +44,7 @@
 {/snippet}
 
 {#snippet ProgressBarOptions()}
-  <div class="space-y-4">
+  <div class="space-y-4" bind:this={itemsContainer}>
     <div class="m-0 flex items-center justify-center gap-2">
       <h4>{$t("constructor.props.progressbar.title")}</h4>
       <UI.Button
@@ -69,10 +70,19 @@
     </div>
 
     {#each component.properties.items || [] as progress, index}
-      <div class="m-0 flex items-end w-full gap-1">
+      <div id="item-{index}" class="m-0 flex items-end w-full gap-1">
+        <UI.Dragging
+          wrapperClass="w-9"
+          container={itemsContainer}
+          array={component.properties.items}
+          elementIndex={index}
+          onUpdate={(updatedArray) => {
+            updateProperty("items", updatedArray, component, onPropertyChange)
+          }}
+        />
         <UI.Input
           label={{ name: $t("constructor.props.optionname") }}
-          wrapperClass="w-2/5"
+          wrapperClass="w-1/4"
           value={progress.name}
           onUpdate={(value) => {
             const progresses = [...(component.properties?.items || [])]
@@ -117,7 +127,7 @@
           />
           <UI.Input
             label={{ name: $t("constructor.props.optionclass") }}
-            wrapperClass="w-1/2"
+            wrapperClass="w-1/3"
             value={progress.class}
             onUpdate={(value) => {
               const progresses = [...(component.properties?.items || [])]
@@ -138,6 +148,7 @@
         />
       </div>
     {/each}
+    <div id="item-{component.properties.items.length}" class="min-h-4"></div>
   </div>
 {/snippet}
 

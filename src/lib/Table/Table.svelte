@@ -277,11 +277,7 @@
                 class="inline-block cursor-pointer font-bold transition-transform duration-75 hover:scale-110 active:scale-95"
                 onclick={() =>
                   sortRows(
-                    (
-                      (column.content as ITableContent<any>[])?.find((c) => {
-                        c.type === "text" && c.data.sortable
-                      })?.data as ITableText<object>
-                    ).key as string,
+                    ((column.content as ITableContent<any>[])?.find((c) => c.type === "text" && c.data.sortable)?.data as ITableText<object>).key as string,
                   )}
               >
                 ↑↓
