@@ -9,8 +9,8 @@
     value = $bindable([0, 0, 0, 0]),
     readonly = false,
     axes = [
-      { name: "Roll", minNum: -360, maxNum: 360 },
       { name: "Pitch", minNum: -360, maxNum: 360 },
+      { name: "Roll", minNum: -360, maxNum: 360 },
       { name: "Yaw", minNum: -360, maxNum: 360 },
     ],
     buttonIcon,
@@ -33,7 +33,7 @@
       mainButton: false,
       onClick: () => {
         updateValue(2, +sensitivity)
-        updateValue(1, -sensitivity)
+        updateValue(0, -sensitivity)
         onUpdate(value)
       },
     },
@@ -42,7 +42,7 @@
       angle: 122,
       mainButton: true,
       onClick: () => {
-        updateValue(1, -sensitivity)
+        updateValue(0, -sensitivity)
         onUpdate(value)
       },
     },
@@ -52,7 +52,7 @@
       mainButton: false,
       onClick: () => {
         updateValue(2, -sensitivity)
-        updateValue(1, -sensitivity)
+        updateValue(0, -sensitivity)
         onUpdate(value)
       },
     },
@@ -70,7 +70,7 @@
       angle: 239,
       mainButton: false,
       onClick: () => {
-        updateValue(1, +sensitivity)
+        updateValue(0, +sensitivity)
         updateValue(2, -sensitivity)
         onUpdate(value)
       },
@@ -80,7 +80,7 @@
       angle: 301,
       mainButton: true,
       onClick: () => {
-        updateValue(1, +sensitivity)
+        updateValue(0, +sensitivity)
         onUpdate(value)
       },
     },
@@ -89,7 +89,7 @@
       angle: 328,
       mainButton: false,
       onClick: () => {
-        updateValue(1, +sensitivity)
+        updateValue(0, +sensitivity)
         updateValue(2, +sensitivity)
         onUpdate(value)
       },
@@ -97,7 +97,7 @@
   ]
 
   const updateValue = (index: number, delta: number) => {
-    const axis = axes[axes.length == 2 ? index - 1 : index]
+    const axis = axes[axes.length == 2 && index == 2 ? index - 1 : index]
     const min = axis.minNum ?? -360
     const max = axis.maxNum ?? 360
 
@@ -210,12 +210,12 @@
             class="btn-segment h-full cursor-pointer rounded-l-full px-3.5"
             title=""
             onclick={() => {
-              if (value[0] - sensitivity <= (axes[0].minNum ?? -360)) {
-                value[0] = axes[0].minNum ?? -360
+              if (value[1] - sensitivity <= (axes[1].minNum ?? -360)) {
+                value[1] = axes[1].minNum ?? -360
                 onUpdate(value)
                 return
               }
-              value[0] = roundToClean(value[0] - sensitivity)
+              value[1] = roundToClean(value[1] - sensitivity)
               onUpdate(value)
             }}
             onmouseenter={(e) => (e.currentTarget.style.backgroundColor = "color-mix(in srgb, var(--bg-color), var(--shadow-color) 30%)")}
@@ -234,12 +234,12 @@
             class="btn-segment h-full cursor-pointer rounded-r-full px-3.5"
             title=""
             onclick={() => {
-              if (value[0] + sensitivity >= (axes[0].maxNum ?? 360)) {
-                value[0] = axes[0].maxNum ?? 360
+              if (value[1] + sensitivity >= (axes[1].maxNum ?? 360)) {
+                value[1] = axes[1].maxNum ?? 360
                 onUpdate(value)
                 return
               }
-              value[0] = roundToClean(value[0] + sensitivity)
+              value[1] = roundToClean(value[1] + sensitivity)
               onUpdate(value)
             }}
             onmouseenter={(e) => (e.currentTarget.style.backgroundColor = "color-mix(in srgb, var(--bg-color), var(--shadow-color) 30%)")}
@@ -302,7 +302,7 @@
               [&::-webkit-inner-spin-button]:hidden
               [&::-webkit-outer-spin-button]:hidden`}
             style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"
-            value={value[axes.length == 3 ? index : index + 1]}
+            value={value[axes.length == 2 && index == 1 ? index + 1 : index]}
             id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
             readonly
           />

@@ -39,4 +39,7 @@ ${formatObjectToString(colorPickerComponent.properties as IColorPickerProps)}
       {forConstructor}
     />
   {/snippet}
+  {#snippet examples()}
+    <ColorPicker label={{ name: "Выбор цвета из палитры" }} value={[186, 25, 255]} />
+  {/snippet}
 </ComponentExample>

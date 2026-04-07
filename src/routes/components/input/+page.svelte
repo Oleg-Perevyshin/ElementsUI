@@ -37,6 +37,8 @@
 ${formatObjectToString(inputComponent.properties as IInputProps)} 
   onUpdate={() => {}}
 />`)
+  let inputString: string = $state("String Data")
+  let inputNumber: number = $state(7)
 </script>
 
 <ComponentExample {codeText} bind:forConstructor>
@@ -61,4 +63,39 @@ ${formatObjectToString(inputComponent.properties as IInputProps)}
       {forConstructor}
     />
   {/snippet}
+  {#snippet examples()}
+    <div class="flex w-full flex-col items-center gap-2">
+      <Input wrapperClass="!w-60" help={{ regExp: /^[\w\s-]{4,16}$/ }} bind:value={inputString} type="text" maxlength={20} />
+      <Input wrapperClass="!w-60" help={{ copyButton: true, regExp: /^[\w\s-]{4,16}$/ }} bind:value={inputString} readonly type="text" maxlength={20} />
+      <Input wrapperClass="!w-60" help={{ regExp: /^[\w\s-]{4,16}$/ }} placeholder={inputString} type="text" maxlength={20} />
+      <Input
+        wrapperClass="!w-60"
+        help={{ copyButton: true, regExp: /^[\w\s-]{4,16}$/ }}
+        bind:value={inputString}
+        readonly
+        type="text"
+        maxlength={20}
+        disabled
+      />
+      <Input
+        wrapperClass="!w-30 bg-green"
+        value={inputNumber}
+        type="number"
+        maxlength={3}
+        number={{ maxNum: 100, minNum: 0, step: 10 }}
+        help={{ info: "Информационная подсказка" }}
+        onUpdate={(value) => (inputNumber = value as number)}
+      />
+      <Input wrapperClass="w-100" bind:value={inputString} type="password" maxlength={20} />
+      <Input
+        wrapperClass="w-150"
+        bind:value={inputString}
+        help={{ copyButton: true, info: "Информационная подсказка. Может быть многострочной, если не вмещается!" }}
+        type="text-area"
+        maxlength={150}
+        textareaRows={2}
+      />
+      <p>string: {inputString}</p>
+      <p>number: {inputNumber}</p>
+    </div>{/snippet}
 </ComponentExample>
