@@ -15,8 +15,8 @@
       wrapperClass: "bg-blue",
       label: { name: "Label", class: "text-center" },
       axes: [
-        { name: "Roll", minNum: -100, maxNum: 100 },
         { name: "Pitch", minNum: -100, maxNum: 100 },
+        { name: "Roll", minNum: -100, maxNum: 100 },
         { name: "Yaw", minNum: -100, maxNum: 100 },
       ],
     },

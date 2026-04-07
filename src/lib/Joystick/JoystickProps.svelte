@@ -3,12 +3,8 @@
   import { t } from "$lib/locales/i18n"
   import { type UIComponent, type IGraphProps, updateProperty, type IOption, type IUIComponentHandler } from "../types"
   import * as UI from "$lib"
-  import Modal from "$lib/Modal.svelte"
   import { ICONS } from "$lib/icons"
-  import Button from "$lib/Button/Button.svelte"
-  import CrossIcon from "$lib/libIcons/CrossIcon.svelte"
   import { optionsStore } from "$lib/options"
-  import { twMerge } from "tailwind-merge"
   import CommonSnippets from "$lib/CommonSnippets.svelte"
 
   const {
@@ -20,8 +16,6 @@
     onPropertyChange: (updates: Partial<{ properties?: string | object; name?: string; access?: string; eventHandler?: IUIComponentHandler }>) => void
     forConstructor?: boolean
   }>()
-
-  let showIconLib = $state(false)
 
   const DeviceVariables = getContext<{ id: string; value: string; name: string }[]>("DeviceVariables")
   let VARIABLE_OPTIONS = $derived(DeviceVariables && Array.isArray(DeviceVariables) ? DeviceVariables : [])
@@ -96,6 +90,16 @@
   </div>
 {/snippet}
 
+{#snippet JoystickHomeButton()}
+  <UI.Switch
+    label={{ name: $t("constructor.props.joystick.homebutton") }}
+    value={component.properties.isHomeButton}
+    options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
+    onChange={(value) => {
+      updateProperty("isHomeButton", value, component, onPropertyChange)
+    }}
+  />{/snippet}
+
 {#if forConstructor}
   <div>
     <div class="relative flex flex-row items-start justify-center">
@@ -107,6 +111,7 @@
       <div class="flex w-1/3 flex-col px-2">
         <CommonSnippets snippet="Label" {component} {onPropertyChange} />
         <CommonSnippets snippet="LabelAlign" initialValue={initialAlign} {component} {onPropertyChange} />
+        {@render JoystickHomeButton()}
       </div>
       <div class="flex w-1/3 flex-col px-2">
         <CommonSnippets
@@ -137,6 +142,7 @@
       <div class="flex w-1/3 flex-col px-2">
         <CommonSnippets snippet="Label" {component} {onPropertyChange} />
         <CommonSnippets snippet="LabelClass" {component} {onPropertyChange} />
+        {@render JoystickHomeButton()}
       </div>
       <div class="flex w-1/3 flex-col px-2">
         <CommonSnippets

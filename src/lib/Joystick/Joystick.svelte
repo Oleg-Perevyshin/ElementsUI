@@ -6,7 +6,8 @@
     id = crypto.randomUUID(),
     wrapperClass = "",
     label = { name: "", class: "" },
-    value = $bindable([0, 0, 0, 0]),
+    value = $bindable([0, 0, 0]),
+    isHomeButton = false,
     readonly = false,
     axes = [
       { name: "Pitch", minNum: -360, maxNum: 360 },
@@ -125,7 +126,7 @@
 
 <div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class={twMerge(`bg-blue relative flex w-full flex-col items-center`, wrapperClass)}>
   {#if label.name}
-    <h5 class={twMerge(`w-full px-4 text-center`, label.class)}>{label.name}</h5>
+    <h5 class={twMerge(`w-full px-4 text-center`, label.class)}>{label.name} {value}</h5>
   {/if}
 
   {#if !readonly}
@@ -176,11 +177,18 @@
           {/each}
         </div>
         <!-- Кнопка по центру -->
-        <div class="btn-segment z-20 flex size-20 items-center justify-center rounded-full bg-(--bg-color) shadow-[0_0_15px_rgb(0_0_0_/0.25)]">
+        <div class="z-20 flex size-20 items-center justify-center rounded-full bg-(--bg-color) shadow-[0_0_15px_rgb(0_0_0_/0.25)]">
           <button
-            class="flex size-18 cursor-pointer items-center justify-center rounded-full p-3.5 [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
-            style="background: {value[3] == 1 ? 'color-mix(in srgb, var(--bg-color), var(--shadow-color) 10%)' : 'var(--bg-color)'}"
-            onclick={() => (value[3] = value[3] == 0 ? 1 : 0)}
+            class="flex size-17 cursor-pointer rounded-full p-2 origin-center active:scale-95
+            [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
+            style="background: {!isHomeButton && value[3] == 1 ? 'color-mix(in srgb, var(--bg-color), var(--shadow-color) 10%)' : 'var(--bg-color)'}"
+            onmouseenter={(e) => {
+              if (isHomeButton) e.currentTarget.style.backgroundColor = "color-mix(in srgb, var(--bg-color), var(--shadow-color) 20%)"
+            }}
+            onmouseleave={(e) => {
+              if (isHomeButton) e.currentTarget.style.backgroundColor = "var(--bg-color)"
+            }}
+            onclick={() => (isHomeButton ? (value = [0, 0, 0]) : (value[3] = value[3] == 0 ? 1 : 0))}
           >
             {#if buttonIcon}
               {#if typeof buttonIcon === "string"}
@@ -190,7 +198,7 @@
                 <IconComponent />
               {/if}
             {:else}
-              <svg xmlns="http://www.w3.org/2000/svg" class="segment-icon" width="32" height="32" viewBox="0 0 24 24"
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
                 ><path
                   fill="currentColor"
                   d="M6 19h3v-5q0-.425.288-.712T10 13h4q.425 0 .713.288T15 14v5h3v-9l-6-4.5L6 10zm-2 0v-9q0-.475.213-.9t.587-.7l6-4.5q.525-.4 1.2-.4t1.2.4l6 4.5q.375.275.588.7T20 10v9q0 .825-.588 1.413T18 21h-4q-.425 0-.712-.288T13 20v-5h-2v5q0 .425-.288.713T10 21H6q-.825 0-1.412-.587T4 19m8-6.75"

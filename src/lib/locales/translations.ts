@@ -157,6 +157,7 @@ const translations: Translations = {
     "constructor.props.map.timeout": "Таймаут маркеров:",
     "constructor.props.joystick.axes": "Названия осей",
     "constructor.props.joystick.axes.info": "Поле для ввода названий осей, разделенных пробелами (2 или 3 названия)",
+    "constructor.props.joystick.homebutton": "Центральная кнопка сброса",
     "constructor.props.file.select": "Выберите файл",
     "constructor.props.file.notselected": "Файл не выбран",
     "constructor.props.map.loading": "Загрузка карты...",
