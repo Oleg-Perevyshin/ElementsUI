@@ -49,12 +49,15 @@ ${formatObjectToString(buttonComponent.properties as IButtonProps)}
     />
   {/snippet}
   {#snippet examples()}
-    <Button content={{ name: "Button 1" }} componentClass="bg-red" />
-    <Button content={{ name: "Button 2", info: { text: "Info for Button 2", side: "top" } }} componentClass="bg-yellow" />
-    <Button content={{ name: "Button 3" }} componentClass="bg-blue" disabled />
-    <Button content={{ name: "Button 4", icon: IconGripVerticalDual }} componentClass="bg-green h-12 rounded-3xl" />
-    <div class="flex h-10 items-center justify-around">
-      <Button content={{ icon: IconGripHorizontalUp }} wrapperClass="w-10 h-10" componentClass="bg-purple rounded-full" />
-      <Button content={{ icon: IconGripHorizontalDown, info: { text: "Info for Icon Button", side: "right" } }} wrapperClass="w-10" />
-    </div>{/snippet}
+    <div class="flex flex-col gap-2 w-1/2 mx-auto">
+      <Button content={{ name: "Button 1" }} componentClass="bg-red" />
+      <Button content={{ name: "Button 2", info: { text: "Info for Button 2", side: "top" } }} componentClass="bg-yellow" />
+      <Button content={{ name: "Button 3" }} componentClass="bg-blue" disabled />
+      <Button content={{ name: "Button 4", icon: IconGripVerticalDual }} componentClass="bg-green h-12 rounded-3xl" />
+      <div class="flex h-10 items-center justify-around">
+        <Button content={{ icon: IconGripHorizontalUp }} wrapperClass="w-10 h-10" componentClass="bg-purple rounded-full" />
+        <Button content={{ icon: IconGripHorizontalDown, info: { text: "Info for Icon Button", side: "right" } }} wrapperClass="w-10" />
+      </div>
+    </div>
+  {/snippet}
 </ComponentExample>

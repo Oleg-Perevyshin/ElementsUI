@@ -33,56 +33,43 @@
   )
 </script>
 
-{#snippet JoystickAxesNames()}
-  <UI.Input
-    label={{ name: $t("constructor.props.joystick.axes") }}
-    value={component.properties.axes.map((axe: any) => axe.name).join(" ")}
-    help={{ info: $t("constructor.props.joystick.axes.info"), regExp: /^[\p{L}0-9\-_":{}]+ +[\p{L}0-9\-_":{}]+(?: +[\p{L}0-9\-_":{}]+)?$/u }}
-    maxlength={100}
-    onUpdate={(value) => {
-      const stringValue = value as string
-      const spaceCount = (stringValue.match(/\s/g) || []).length
-      if (spaceCount > 2) {
-        return
-      }
-      const parts = stringValue.trim().split(/\s+/)
-      updateProperty(
-        "axes",
-        parts.map((a: any, index: number) => {
-          let axeIndex = parts.length == 2 && component.properties.axes.length === 3 ? index + 1 : index
-          return {
-            name: a,
-            minNum: component.properties.axes[axeIndex] ? component.properties.axes[axeIndex].minNum : -100,
-            maxNum: component.properties.axes[axeIndex] ? component.properties.axes[axeIndex].maxNum : 100,
-          }
-        }),
-        component,
-        onPropertyChange,
-      )
-    }}
-  />
-{/snippet}
-
 {#snippet JoystickAxesMinMax()}
   <div class="mt-2 flex w-full justify-around gap-2">
     {#each component.properties.axes as axe, index}
-      <div class="flex items-start gap-2">
-        <h5 class="mt-1">{axe.name}</h5>
+      {@const axesOptions = [
+        { name: $t("constructor.props.joystick.pitch.axe"), info: "", regExp: /^[\p{L}0-9\-_"':{}]+$/u },
+        { name: $t("constructor.props.joystick.roll.axe"), info: $t("constructor.props.joystick.axes.info"), regExp: /^[\p{L}0-9\-_"':{}]*$/u },
+        { name: $t("constructor.props.joystick.yaw.axe"), info: "", regExp: /^[\p{L}0-9\-_"':{}]+$/u },
+      ]}
+      <div class="flex flex-col gap-1">
+        <UI.Input
+          label={{ name: axesOptions[index].name }}
+          value={component.properties.axes[index].name}
+          help={{ info: axesOptions[index].info, regExp: axesOptions[index].regExp }}
+          maxlength={20}
+          onUpdate={(value) => {
+            updateProperty(
+              "axes",
+              component.properties.axes.map((a: any, i: number) => (i === index ? { ...a, name: value } : a)),
+              component,
+              onPropertyChange,
+            )
+          }}
+        />
+
         <UI.Slider
           type="range"
           number={{ minNum: -360, maxNum: 360, step: 10 }}
+          disabled={index == 1 && axe.name == ""}
           value={[component.properties.axes[index].minNum, component.properties.axes[index].maxNum]}
           onUpdate={(value) => {
-            if (Array.isArray(value)) {
-              const axes = component.properties.axes
-
+            if (Array.isArray(value))
               updateProperty(
                 "axes",
-                axes.map((a: any, i: number) => (i === index ? { ...a, minNum: value[0], maxNum: value[1] } : a)),
+                component.properties.axes.map((a: any, i: number) => (i === index ? { ...a, minNum: value[0], maxNum: value[1] } : a)),
                 component,
                 onPropertyChange,
               )
-            }
           }}
         />
       </div>
@@ -125,7 +112,6 @@
           {component}
           {onPropertyChange}
         />
-        {@render JoystickAxesNames()}
         <CommonSnippets snippet="Colors" initialValue={{ color: initialColor }} {component} {onPropertyChange} />
       </div>
     </div>
@@ -156,7 +142,6 @@
           {component}
           {onPropertyChange}
         />
-        {@render JoystickAxesNames()}
         <CommonSnippets snippet="Colors" initialValue={{ color: initialColor }} {component} {onPropertyChange} />
       </div>
     </div>

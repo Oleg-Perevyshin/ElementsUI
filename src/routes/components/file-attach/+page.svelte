@@ -56,4 +56,29 @@ ${formatObjectToString(fileAttachComponent.properties as IFileAttachProps)}
       {forConstructor}
     />
   {/snippet}
+  {#snippet examples()}
+    <div class="flex w-full flex-row items-center justify-between gap-3">
+      <FileAttach id={crypto.randomUUID()} label={{ name: "Выберите файл" }} type="file" />
+      <FileAttach id={crypto.randomUUID()} label={{ name: "Выберите файл" }} type="file" disabled />
+      <FileAttach
+        id={crypto.randomUUID()}
+        label={{ name: "Выберите изображение" }}
+        type="image"
+        imageSize={{ height: "10rem", width: "10rem", fitMode: "contain" }}
+      />
+      <FileAttach
+        id={crypto.randomUUID()}
+        label={{ name: "Выберите изображение" }}
+        type="image"
+        imageSize={{ height: "10rem", width: "10rem", fitMode: "cover" }}
+      />
+      <FileAttach
+        id={crypto.randomUUID()}
+        label={{ name: "Выберите изображение" }}
+        type="image"
+        disabled
+        imageSize={{ height: "10rem", width: "10rem", fitMode: "cover" }}
+      />
+    </div>
+  {/snippet}
 </ComponentExample>

@@ -44,4 +44,31 @@ ${formatObjectToString(sliderComponent.properties as ISliderProps)}
       {forConstructor}
     />
   {/snippet}
+  {#snippet examples()}
+    <div class="flex gap-2">
+      <Slider wrapperClass="!w-1/3 bg-red px-2" label={{ name: "Слайдер" }} value={0} number={{ minNum: -50, maxNum: 50, step: 1 }} disabled={false} />
+      <Slider
+        wrapperClass="!w-1/3 bg-blue px-2"
+        label={{ name: "Слайдер с диапазоном" }}
+        value={[-12, 35]}
+        number={{ minNum: -50, maxNum: 50, step: 1 }}
+        disabled={false}
+      />
+      <Slider
+        wrapperClass="!w-1/3 bg-blue px-2"
+        label={{ name: "Слайдер с диапазоном (не активный)" }}
+        value={[-10, 12]}
+        number={{ minNum: -15, maxNum: 15, step: 1 }}
+        disabled={true}
+      />
+    </div>
+    <div class="flex gap-2">
+      <Slider wrapperClass="!w-1/2 bg-green px-2" label={{ name: "Слайдер" }} value={-10} number={{ minNum: -25, maxNum: 25, step: 1 }} disabled={false} />
+      <Slider wrapperClass="!w-1/2 bg-yellow px-2" label={{ name: "Слайдер" }} value={-25} number={{ minNum: -50, maxNum: 50, step: 1 }} disabled={false} />
+    </div>
+    <div class="flex gap-2">
+      <Slider wrapperClass="!w-1/2 bg-purple px-2" label={{ name: "Слайдер" }} value={0} number={{ minNum: -50, maxNum: 50, step: 1 }} disabled={false} />
+      <Slider wrapperClass="!w-1/2 bg-pink px-2" label={{ name: "Слайдер" }} value={25} number={{ minNum: -50, maxNum: 50, step: 1 }} disabled={false} />
+    </div>
+  {/snippet}
 </ComponentExample>

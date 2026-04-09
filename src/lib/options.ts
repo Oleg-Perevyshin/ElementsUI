@@ -231,6 +231,25 @@ export const optionsStore = derived(t, ($t) => {
       { id: id(), value: "switch", name: $t("constructor.props.switch") },
     ],
 
+    INPUT_REGEXP_OPTIONS: [
+      { id: id(), value: "/^[0-9a-z]{0,10}$/", name: $t("constructor.props.regexp.latin10") },
+      { id: id(), value: "/^[а-яА-яЁё]{0,10}$/", name: $t("constructor.props.regexp.kiril10") },
+      {
+        id: id(),
+        value: "/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/",
+        name: $t("constructor.props.regexp.ipv4"),
+      },
+      { id: id(), value: "/((^|:)([0-9a-fA-F]{0,4})){1,8}$/", name: $t("constructor.props.regexp.ipv6") },
+      { id: id(), value: "/(0[1-9]|[12][0-9]|3[01])[.](0[1-9]|1[012])[.](19|20)\\d\\d/", name: $t("constructor.props.regexp.date") },
+      { id: id(), value: "/^([01]?[0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9])?$/", name: $t("constructor.props.regexp.time") },
+      { id: id(), value: "/^[a-zA-Z0-9.!#$%&'*+/=?^_{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)\\*$/", name: $t("constructor.props.regexp.email") },
+      { id: id(), value: "/(https?):((//)|(\\\\))+[\\w\\d:#@%/$()~_?\\+-=\\\\\\.&]*/", name: $t("constructor.props.regexp.url") },
+      { id: id(), value: "/^-?\\d+(\\.\\d+)?$/", name: $t("constructor.props.regexp.numbers") },
+      { id: id(), value: "/^#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/", name: $t("constructor.props.regexp.colorhex") },
+      { id: id(), value: "/^[0-9A-F]{0,4}$/", name: $t("constructor.props.regexp.devid") },
+      { id: id(), value: "/^[0-9a-fA-F]{4}-[0-9a-fA-F]{24}[:][0-9a-fA-F]{2}$|^$/", name: $t("constructor.props.regexp.serialnum") },
+    ],
+
     AUTOCOMPLETE_CONSTRUCTOR_OPTIONS: [
       { id: id(), value: "on", name: $t("constructor.props.autocomplete.on") },
       { id: id(), value: "off", name: $t("constructor.props.autocomplete.off") },

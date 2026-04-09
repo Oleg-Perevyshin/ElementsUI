@@ -5,6 +5,7 @@
   import * as UI from "$lib"
   import { optionsStore } from "../options"
   import { twMerge } from "tailwind-merge"
+  import Library from "$lib/libIcons/Library.svelte"
 
   const {
     component,
@@ -17,6 +18,7 @@
   }>()
 
   let isValidRegExp = $state(true)
+  let showRegExpLibrary = $state(true)
   const DeviceVariables = getContext<{ id: string; value: string; name: string }[]>("DeviceVariables")
   let VARIABLE_OPTIONS = $derived(DeviceVariables && Array.isArray(DeviceVariables) ? DeviceVariables : [])
 
@@ -146,14 +148,42 @@
       value={component.properties.maxlength}
       onUpdate={(value) => updateProperty("maxlength", value as string)}
     />
-    <UI.Input
-      label={{ name: $t("constructor.props.regexp") }}
-      value={component.properties.help.regExp}
-      maxlength={150}
-      help={{ info: $t("constructor.props.regexp.info") }}
-      componentClass={isValidRegExp === false ? "!border-2 !border-red-400" : ""}
-      onUpdate={(value) => updateProperty("help.regExp", value as string)}
-    />
+    <div class="flex items-end">
+      <UI.Input
+        label={{ name: $t("constructor.props.regexp") }}
+        value={component.properties.help.regExp}
+        maxlength={150}
+        help={{ info: $t("constructor.props.regexp.info") }}
+        componentClass={isValidRegExp === false ? "!border-2 !border-red-400" : ""}
+        onUpdate={(value) => updateProperty("help.regExp", value as string)}
+      />
+      <UI.Button
+        wrapperClass="w-8"
+        content={{ icon: Library, info: { text: $t("constructor.props.regexp.library.info"), side: "top" } }}
+        onClick={() => {
+          showRegExpLibrary = !showRegExpLibrary
+        }}
+      />
+      {#if showRegExpLibrary}
+        <UI.Modal bind:isOpen={showRegExpLibrary} wrapperClass="w-200 h-[80%]">
+          {#snippet main()}
+            {#each $optionsStore.INPUT_REGEXP_OPTIONS as regexp}
+              <div
+                class="flex flex-col items-start justify-start m-1.5 rounded-xl border-2 border-(--border-color) p-3 cursor-pointer hover:bg-(--gray-color)/30 transition duration-150"
+                role="button"
+                tabindex={null}
+                onkeydown={null}
+                onclick={() => (component.properties.help.regExp = regexp.value)}
+              >
+                <h5>{regexp.name}</h5>
+                <span>{regexp.value}</span>
+              </div>
+            {/each}
+          {/snippet}
+        </UI.Modal>
+      {/if}
+    </div>
+
     {#if component.properties.type === "text-area"}
       <UI.Input
         label={{ name: $t("constructor.props.textarea.rows") }}

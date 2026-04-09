@@ -47,4 +47,7 @@ ${formatObjectToString(graphComponent.properties as IGraphProps)}
       {forConstructor}
     />
   {/snippet}
+  {#snippet examples()}
+    <Graph label={{ name: "Пример компонента график" }} streamingData={{ data: dataForGraph }} isTest={true} />
+  {/snippet}
 </ComponentExample>

@@ -108,4 +108,9 @@ ${formatObjectToString(mapComponent.properties as IMapProps)}
       {forConstructor}
     />
   {/snippet}
+  {#snippet examples()}
+    <div class="h-150">
+      <Map label={{ name: "Карта" }} {data} />
+    </div>
+  {/snippet}
 </ComponentExample>

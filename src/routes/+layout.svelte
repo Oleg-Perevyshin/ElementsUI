@@ -19,7 +19,6 @@
 
   /* Список всех компонентов */
   const menuItems = [
-    { page: "all", name: "ALL in ONE" },
     { page: "accordion", name: "Accordion" },
     { page: "button", name: "Button" },
     { page: "color-picker", name: "ColorPicker" },

@@ -14,7 +14,7 @@
     properties: {
       id: crypto.randomUUID(),
       label: { name: "Пропеллер" },
-      icons: { array: ICONS_ARRAY[1][1], mode: "cycling", class: "text-[#333] dark:text-[#e2e3e7]" },
+      icons: { array: ICONS_ARRAY[2][1], mode: "cycling", class: "text-[#333] dark:text-[#e2e3e7]" },
       settings: {
         label: "Скорость",
         class: "bg-blue",
@@ -34,8 +34,6 @@
     position: { row: 0, col: 0, width: 0, height: 0 },
     parentId: "",
   })
-  let widgetValue = $state(80)
-
   let forConstructor = $state(false)
 
   let codeText = $derived(`
@@ -56,5 +54,22 @@ ${formatObjectToString(widgetComponent.properties as ITextFieldProps)}
       onPropertyChange={(updates) => (widgetComponent = updateComponent(widgetComponent, updates as object))}
       {forConstructor}
     />
+  {/snippet}
+  {#snippet examples()}
+    <div class="flex">
+      <Widget
+        wrapperClass="m-auto size-70"
+        label={{ name: "Пропеллер" }}
+        icons={{ array: ICONS_ARRAY[2][1], cycling: true }}
+        settings={{ label: "Скорость", number: { minNum: 0, maxNum: 10, step: 1, units: "м/с" }, type: "input" }}
+      />
+      <Widget
+        wrapperClass="m-auto size-70"
+        label={{ name: "Заряд" }}
+        icons={{ array: ICONS_ARRAY[0][1], cycling: false }}
+        settings={{ number: { minNum: 0, maxNum: 100, step: 1, units: "%" }, type: "slider" }}
+      />
+      <Widget wrapperClass="m-auto size-70" label={{ name: "Лампочка" }} icons={{ array: ICONS_ARRAY[1][1], cycling: false }} settings={{ type: "switch" }} />
+    </div>
   {/snippet}
 </ComponentExample>

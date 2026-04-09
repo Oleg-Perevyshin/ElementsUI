@@ -1,10 +1,8 @@
 <script lang="ts">
   import { type ISelectProps, type UIComponent } from "$lib"
-  import Button from "$lib/Button/Button.svelte"
   import ComponentExample from "$lib/ComponentExample.svelte"
-  import Select from "$lib/Select/Select.svelte"
-  import SelectProps from "$lib/Select/SelectProps.svelte"
-  import { updateComponent } from "$lib/types"
+  import * as UI from "$lib"
+  import { updateComponent, type IOption } from "$lib/types"
   import { formatObjectToString } from "../../common"
 
   let selectComponent: UIComponent = $state({
@@ -40,11 +38,52 @@
 ${formatObjectToString(selectComponent.properties as ISelectProps)} 
   onUpdate={() => {}}
 />`)
+
+  const componentMap = {
+    Accordion: { component: UI.Accordion },
+    Button: { component: UI.Button },
+    ColorPicker: { component: UI.ColorPicker },
+    FileAttach: { component: UI.FileAttach },
+    Graph: { component: UI.Graph },
+    Input: { component: UI.Input },
+    Joystick: { component: UI.Joystick },
+    Map: { component: UI.Map },
+    ProgressBar: { component: UI.ProgressBar },
+    Select: { component: UI.Select },
+    Slider: { component: UI.Slider },
+    Switch: { component: UI.Switch },
+    Table: { component: UI.Table },
+    Tabs: { component: UI.Tabs },
+    TextField: { component: UI.TextField },
+  }
+
+  const bitModeOptions = [
+    { id: crypto.randomUUID(), value: 0, name: "0000", class: "bg-max" },
+    { id: crypto.randomUUID(), value: 1, name: "0001", class: "bg-max" },
+    { id: crypto.randomUUID(), value: 2, name: "0010", class: "bg-max" },
+    { id: crypto.randomUUID(), value: 3, name: "0011", class: "bg-max" },
+    { id: crypto.randomUUID(), value: 4, name: "0100", class: "bg-max" },
+    { id: crypto.randomUUID(), value: 5, name: "0101", class: "bg-max" },
+    { id: crypto.randomUUID(), value: 6, name: "0110", class: "bg-max" },
+    { id: crypto.randomUUID(), value: 7, name: "0111", class: "bg-max" },
+    { id: crypto.randomUUID(), value: 8, name: "1000", class: "bg-max" },
+    { id: crypto.randomUUID(), value: 9, name: "1001", class: "bg-max" },
+    { id: crypto.randomUUID(), value: 10, name: "1010", class: "bg-max" },
+    { id: crypto.randomUUID(), value: 11, name: "1011", class: "bg-max" },
+    { id: crypto.randomUUID(), value: 12, name: "1100", class: "bg-max" },
+    { id: crypto.randomUUID(), value: 13, name: "1101", class: "bg-max" },
+    { id: crypto.randomUUID(), value: 14, name: "1110", class: "bg-max" },
+    { id: crypto.randomUUID(), value: 15, name: "1111", class: "bg-max" },
+  ]
+
+  let selectOption: IOption = $state({ id: "Map", name: "Map", value: "Map" })
+  let COMPONENT_OPTIONS = Object.keys(componentMap).map((name) => ({ id: name, name: name, value: name }))
+  let fullSwitchValue = $state(10)
 </script>
 
 <ComponentExample {codeText} bind:forConstructor>
   {#snippet component()}
-    <Select
+    <UI.Select
       {...selectComponent.properties as ISelectProps}
       onUpdate={(value) => {
         updateComponent(selectComponent, {
@@ -54,10 +93,39 @@ ${formatObjectToString(selectComponent.properties as ISelectProps)}
     />
   {/snippet}
   {#snippet componentProps()}
-    <SelectProps
+    <UI.SelectProps
       component={selectComponent as UIComponent & { properties: Partial<ISelectProps> }}
       onPropertyChange={(updates) => (selectComponent = updateComponent(selectComponent, updates as object))}
       {forConstructor}
     />
+  {/snippet}
+  {#snippet examples()}
+    <p>{JSON.stringify(selectOption)}</p>
+    <UI.Select
+      type="input"
+      label={{ name: "Компоненты" }}
+      options={COMPONENT_OPTIONS}
+      value={selectOption}
+      onUpdate={(option) => (selectOption = option as IOption)}
+    />
+    <UI.Select label={{ name: "Компоненты" }} options={COMPONENT_OPTIONS} value={selectOption} onUpdate={(option) => (selectOption = option as IOption)} />
+    <UI.Select
+      type="buttons"
+      label={{ name: "Компоненты" }}
+      options={COMPONENT_OPTIONS}
+      value={selectOption}
+      onUpdate={(option) => (selectOption = option as IOption)}
+    />
+    <div class="mt-4 flex items-end">
+      <UI.Select
+        label={{ name: "Битовый режим", class: "text-center" }}
+        bitMode={true}
+        range={{ start: 0, end: 3 }}
+        value={bitModeOptions.find((o) => o.value === fullSwitchValue)}
+        options={bitModeOptions}
+        onUpdate={() => {}}
+      />
+      <span>Выбранное значение: {fullSwitchValue}</span>
+    </div>
   {/snippet}
 </ComponentExample>

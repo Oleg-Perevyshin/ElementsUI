@@ -1,9 +1,10 @@
 <script lang="ts">
   import { Accordion } from "$lib"
   import AccordionProps from "$lib/Accordion/AccordionProps.svelte"
-  import { updateComponent, type IAccordionProps, type Position, type UIComponent } from "$lib/types"
+  import { updateComponent, type IAccordionProps, type UIComponent } from "$lib/types"
   import { formatObjectToString } from "../../common"
   import ComponentExample from "$lib/ComponentExample.svelte"
+  import { ICONS } from "$lib/icons"
 
   let accordionComponent: UIComponent = $state({
     id: crypto.randomUUID(),
@@ -12,7 +13,6 @@
     properties: {
       id: crypto.randomUUID(),
       isOpen: true,
-      outline: false,
       size: {
         height: 1,
         width: 1,
@@ -77,7 +77,7 @@ ${formatObjectToString(accordionComponent.properties as IAccordionProps)}
       </div>
     </Accordion>
 
-    <Accordion label={{ name: "Accordion 3", class: "" }} isOpen={false} wrapperClass="col-span-3">
+    <Accordion label={{ name: "Accordion 2", class: "", icon: ICONS[4][1][2] }} isOpen={false} wrapperClass="col-span-3">
       <h4>Содержимое вложенного Accordion 3</h4>
       <h3>Содержимое вложенного Accordion 3</h3>
       <h2>Содержимое вложенного Accordion 3</h2>

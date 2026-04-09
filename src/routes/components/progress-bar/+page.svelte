@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { ProgressBar, type IProgressBarProps, type UIComponent } from "$lib"
+  import { Button, ProgressBar, type IProgressBarProps, type UIComponent } from "$lib"
   import ComponentExample from "$lib/ComponentExample.svelte"
   import ProgressBarProps from "$lib/ProgressBar/ProgressBarProps.svelte"
-  import { updateComponent } from "$lib/types"
+  import { updateComponent, type IReceivingDataObject } from "$lib/types"
   import { formatObjectToString } from "../../common"
 
   let progressBarComponent: UIComponent = $state({
@@ -30,6 +30,7 @@
 <UI.ProgressBar
 ${formatObjectToString(progressBarComponent.properties as IProgressBarProps)} 
 />`)
+  let progressBarValue: IReceivingDataObject[] = $state([{ Name: "progress", Value: 66 }])
 </script>
 
 <ComponentExample {codeText} bind:forConstructor>
@@ -42,5 +43,26 @@ ${formatObjectToString(progressBarComponent.properties as IProgressBarProps)}
       onPropertyChange={(updates) => (progressBarComponent = updateComponent(progressBarComponent, updates as object))}
       {forConstructor}
     />
+  {/snippet}
+  {#snippet examples()}
+    <ProgressBar value={progressBarValue} wrapperClass="bg-red" />
+    <div class="flex justify-center">
+      <Button
+        wrapperClass="m-2 !w-10"
+        content={{ name: "-" }}
+        componentClass="h-10 rounded-full bg-purple"
+        onClick={() => {
+          if (progressBarValue[0] && typeof progressBarValue[0].Value === "number") progressBarValue[0].Value -= 5
+        }}
+      />
+      <Button
+        wrapperClass="m-2 !w-10"
+        content={{ name: "+" }}
+        componentClass="h-10 rounded-full bg-purple"
+        onClick={() => {
+          if (progressBarValue[0] && typeof progressBarValue[0].Value === "number") progressBarValue[0].Value += 5
+        }}
+      />
+    </div>
   {/snippet}
 </ComponentExample>

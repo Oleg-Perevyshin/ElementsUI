@@ -4,6 +4,7 @@
 
   let {
     id = crypto.randomUUID(),
+    wrapperClass,
     label = { name: "", class: "" },
     readonly = false,
     settings = { label: "", number: { minNum: 0, maxNum: 1000, step: 1 } },
@@ -101,14 +102,14 @@
   }
 </script>
 
-<div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class="w-full h-full p-1">
+<div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class={twMerge("w-full h-full p-1", wrapperClass)}>
   <div
     class={`h-full grid grid-rows-[4fr_9fr_5fr] rounded-xl bg-(--container-color)
      transition-shadow duration-250 p-1
      shadow-[0_0_3px_rgb(0_0_0_/0.25)] hover:shadow-[0_0_6px_rgb(0_0_0_/0.25)]`}
   >
-    <div class="grid gap-2 overflow-hidden items-center" style="grid-template-columns:{icons.array ? '3.5rem' : ''} 1fr;">
-      {#if icons.array}
+    <div class="grid gap-2 overflow-hidden items-center" style="grid-template-columns:{icons.array && icons.array.length !== 0 ? '3.5rem' : ''} 1fr;">
+      {#if icons.array && icons.array.length !== 0}
         <div class="size-14 p-0.5 [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full {icons.class}">
           {@html currentImage}
         </div>
@@ -127,7 +128,7 @@
         <span class="text-5xl">{currentValue === 0 ? (settings.switch?.captionLeft ?? "Off") : (settings.switch?.captionRight ?? "On")}</span>
       {/if}
     </div>
-    <div class="px-2">
+    <div class="flex flex-col items-center justify-center px-2">
       {#if settings.label}
         <h5>{settings.label}</h5>
       {/if}

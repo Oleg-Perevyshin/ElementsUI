@@ -97,5 +97,6 @@ ${formatObjectToString(inputComponent.properties as IInputProps)}
       />
       <p>string: {inputString}</p>
       <p>number: {inputNumber}</p>
-    </div>{/snippet}
+    </div>
+  {/snippet}
 </ComponentExample>

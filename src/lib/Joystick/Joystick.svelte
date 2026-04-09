@@ -126,7 +126,7 @@
 
 <div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class={twMerge(`bg-blue relative flex w-full flex-col items-center`, wrapperClass)}>
   {#if label.name}
-    <h5 class={twMerge(`w-full px-4 text-center`, label.class)}>{label.name} {value}</h5>
+    <h5 class={twMerge(`w-full px-4 text-center`, label.class)}>{label.name}</h5>
   {/if}
 
   {#if !readonly}
@@ -209,7 +209,7 @@
         </div>
       </div>
       <!-- Боковые кнопки (ось roll) -->
-      {#if axes.length == 3}
+      {#if axes[1].name !== ""}
         <div
           class="absolute flex h-15 w-65 items-center justify-between rounded-full shadow-[0_0_15px_rgb(0_0_0_/0.25)]"
           style="background: color-mix(in srgb, var(--bg-color), var(--shadow-color) 10%)"
@@ -300,21 +300,23 @@
       </div>
     {/if}
 
-    <div class="flex justify-around">
+    <div class="flex justify-around items-end gap-2">
       {#each axes as axe, index}
-        <div>
-          <h5 class=" px-4 text-center">{axe.name}</h5>
-          <input
-            class={`w-20 rounded-2xl border border-(--border-color) px-4 py-1 text-center transition-all duration-300 outline-none
+        {#if axe.name !== "" || index !== 1}
+          <div>
+            <h5 class="px-2 text-center">{axe.name}</h5>
+            <input
+              class={`w-20 rounded-2xl border border-(--border-color) px-4 py-1 text-center transition-all duration-300 outline-none
               hover:shadow-md 
               [&::-webkit-inner-spin-button]:hidden
               [&::-webkit-outer-spin-button]:hidden`}
-            style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"
-            value={value[axes.length == 2 && index == 1 ? index + 1 : index]}
-            id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
-            readonly
-          />
-        </div>
+              style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"
+              value={value[index]}
+              id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
+              readonly
+            />
+          </div>
+        {/if}
       {/each}
     </div>
   </div>

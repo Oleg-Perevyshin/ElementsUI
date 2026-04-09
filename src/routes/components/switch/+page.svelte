@@ -35,6 +35,8 @@
 ${formatObjectToString(switchComponent.properties as ISwitchProps)} 
   onChange={() => {}}
 />`)
+  let switchValue = $state(0)
+  let fullSwitchValue = $state(10)
 </script>
 
 <ComponentExample {codeText} bind:forConstructor>
@@ -49,5 +51,46 @@ ${formatObjectToString(switchComponent.properties as ISwitchProps)}
       onPropertyChange={(updates) => (switchComponent = updateComponent(switchComponent, updates as object))}
       {forConstructor}
     />
+  {/snippet}
+  {#snippet examples()}
+    <div class="flex items-center justify-between">
+      <Switch
+        wrapperClass="w-1/3"
+        label={{ name: "Переключатель 1", captionLeft: "Off", captionRight: "On" }}
+        bind:value={switchValue}
+        options={[{ id: crypto.randomUUID(), value: 0, class: "bg-blue" }]}
+      />
+      <Switch
+        wrapperClass="w-1/3"
+        label={{ name: "Переключатель 2" }}
+        type="vertical"
+        bind:value={switchValue}
+        options={[{ id: crypto.randomUUID(), value: 0, class: "bg-red" }]}
+      />
+      <Switch
+        wrapperClass="bg-yellow w-1/3"
+        label={{ name: "Галочка" }}
+        type="checkbox"
+        bind:value={switchValue}
+        options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
+      />
+    </div>
+    <span>Выбранное значение: {switchValue}</span>
+    <div class="mt-4 flex justify-center">
+      <Switch
+        wrapperClass="bg-yellow w-1/3"
+        label={{ name: "Битовый режим" }}
+        type="vertical"
+        bitMode
+        bind:value={fullSwitchValue}
+        options={[
+          { id: crypto.randomUUID(), value: 3, class: "bg-green" },
+          { id: crypto.randomUUID(), value: 2, class: "bg-green" },
+          { id: crypto.randomUUID(), value: 1, class: "bg-purple" },
+          { id: crypto.randomUUID(), value: 0, class: "bg-purple" },
+        ]}
+      />
+    </div>
+    <span> Выбранное значение в битовом режиме: {fullSwitchValue} </span>
   {/snippet}
 </ComponentExample>

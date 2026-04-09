@@ -24,6 +24,8 @@
     onCancel?: () => void
   } = $props()
 
+  let modalWrapper: HTMLDivElement | null = $state(null)
+
   const handleKeyDown = (event: KeyboardEvent) => {
     if (event.key === "Escape") {
       isOpen = false
@@ -31,15 +33,27 @@
     }
   }
 
+  const handleClickOutside = (event: MouseEvent) => {
+    if (modalWrapper && !modalWrapper.contains(event.target as Node)) {
+      isOpen = false
+      onCancel()
+    }
+  }
+
   onMount(() => {
     document.addEventListener("keydown", handleKeyDown)
-    return () => document.removeEventListener("keydown", handleKeyDown)
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown)
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
   })
 </script>
 
 {#if isOpen}
   <div class="fixed inset-0 z-100 flex items-center justify-center bg-black/50" transition:fade={{ duration: 200, delay: 1 }}>
     <div
+      bind:this={modalWrapper}
       class={twMerge(`flex w-300 flex-col overflow-hidden rounded-2xl bg-(--back-color) text-center`, wrapperClass)}
       style="width: {width};"
       transition:scale={{ duration: 250, start: 0.8 }}

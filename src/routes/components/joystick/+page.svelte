@@ -3,6 +3,7 @@
   import ComponentExample from "$lib/ComponentExample.svelte"
   import Joystick from "$lib/Joystick/Joystick.svelte"
   import JoystickProps from "$lib/Joystick/JoystickProps.svelte"
+  import IconGripVerticalDual from "$lib/libIcons/IconGripVerticalDual.svelte"
   import { updateComponent } from "$lib/types"
   import { formatObjectToString } from "../../common"
 
@@ -43,5 +44,15 @@ ${formatObjectToString(joystickComponent.properties as IJoystickProps)}
       onPropertyChange={(updates) => (joystickComponent = updateComponent(joystickComponent, updates as object))}
       {forConstructor}
     />
+  {/snippet}
+  {#snippet examples()}
+    <div class="flex">
+      <Joystick label={{ name: "Управление по 3 осям" }} isHomeButton />
+      <Joystick
+        label={{ name: "Управление по 2 осям" }}
+        axes={[{ name: "Pitch", minNum: -100, maxNum: 100 }, { name: "" }, { name: "Yaw", minNum: -100, maxNum: 100 }]}
+        buttonIcon={IconGripVerticalDual}
+      />
+    </div>
   {/snippet}
 </ComponentExample>
