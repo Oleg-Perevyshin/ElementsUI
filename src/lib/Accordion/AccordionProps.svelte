@@ -95,10 +95,10 @@
   <div class="flex items-start justify-center gap-8">
     <div class="flex w-1/3 flex-col px-2">
       <CommonSnippets snippet="Access" {component} {onPropertyChange} />
-      <CommonSnippets snippet="Label" {component} {onPropertyChange} />
-      <CommonSnippets snippet="LabelAlign" initialValue={initialAlign} {component} {onPropertyChange} />
     </div>
     <div class="flex w-1/3 flex-col px-2">
+      <CommonSnippets snippet="Label" {component} {onPropertyChange} />
+      <CommonSnippets snippet="LabelAlign" initialValue={initialAlign} {component} {onPropertyChange} />
       <CommonSnippets
         snippet="IconsLib"
         initialValue={{
@@ -120,12 +120,12 @@
     <div class="flex w-1/3 flex-col px-2">
       <CommonSnippets snippet="Identificator" {component} {onPropertyChange} />
       <CommonSnippets snippet="Access" {component} {onPropertyChange} />
-
+      <CommonSnippets snippet="WrapperClass" {component} {onPropertyChange} />
       {@render AccordionSize()}
-      {@render AccordionIsOpen()}
     </div>
     <div class="flex w-1/3 flex-col px-2">
-      <CommonSnippets snippet="WrapperClass" {component} {onPropertyChange} />
+      <CommonSnippets snippet="Label" {component} {onPropertyChange} />
+      <CommonSnippets snippet="LabelClass" initialValue={initialAlign} {component} {onPropertyChange} />
       <CommonSnippets
         snippet="IconsLib"
         initialValue={{
@@ -137,8 +137,7 @@
         {component}
         {onPropertyChange}
       />
-      <CommonSnippets snippet="Label" {component} {onPropertyChange} />
-      <CommonSnippets snippet="LabelClass" initialValue={initialAlign} {component} {onPropertyChange} />
+      {@render AccordionIsOpen()}
     </div>
     <div class="flex w-1/3 flex-col items-center gap-2 px-2">
       {@render AccordionBackgroundImage()}

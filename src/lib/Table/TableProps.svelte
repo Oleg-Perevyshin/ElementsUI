@@ -230,9 +230,9 @@
         <div class="flex flex-col gap-2" bind:this={settingsContainer[columnIndex]}>
           {#if typeof column.content !== "function"}
             {#each column.content as content, index}
-              {#if content.type == "text"}
-                {@const text = content.data}
-                <div id={`item-${index}-${columnIndex}`} class="relative bg-(--container-color)/50 rounded-2xl p-2">
+              <div id={`item-${index}-${columnIndex}`} class="relative bg-(--container-color)/50 rounded-2xl p-2">
+                {#if content.type == "text"}
+                  {@const text = content.data}
                   <div class="flex gap-2 mx-auto items-end" style="width: {forConstructor ? '65%' : '90%'}; ">
                     <UI.Input
                       wrapperClass="w-1/4"
@@ -245,7 +245,6 @@
                           "content",
                           column.content.map((textItem: any, i: number) => (i == index ? { ...textItem, data: { ...textItem.data, key: value } } : textItem)),
                         )
-                        // updateTableBody()
                       }}
                     />
                     <UI.Select
@@ -259,35 +258,8 @@
                       onUpdate={(value) => changeColumnSettings(value, columnIndex, index)}
                     />
                   </div>
-
-                  <Dragging
-                    wrapperClass="absolute left-2 bottom-2"
-                    container={settingsContainer[columnIndex]}
-                    array={column.content}
-                    elementIndex={index}
-                    containerIndex={columnIndex}
-                    onUpdate={(updatedArray, index) => {
-                      if (index === columnIndex) {
-                        const headers = [...component.properties.header]
-                        headers[columnIndex].content = updatedArray
-                        updateProperty("header", headers, component, onPropertyChange)
-                      }
-                    }}
-                  />
-
-                  <UI.Button
-                    wrapperClass="absolute right-2 bottom-2 w-8"
-                    content={{ icon: ButtonDelete }}
-                    onClick={() => {
-                      const headers = [...(component.properties.header || [])]
-                      ;((headers as ITableHeader<object>[])[columnIndex].content as ITableContent<object>[]).splice(index, 1)
-                      updateProperty("header", headers, component, onPropertyChange)
-                    }}
-                  />
-                </div>
-              {:else if content.type == "select"}
-                {@const select = content.data}
-                <div id={`item-${index}-${columnIndex}`} class="relative bg-(--container-color)/50 rounded-2xl p-2">
+                {:else if content.type == "select"}
+                  {@const select = content.data}
                   <div class="flex w-1/3 mx-auto gap-2">
                     <UI.Input
                       wrapperClass="w-1/2"
@@ -316,35 +288,8 @@
                       }}
                     />
                   </div>
-
-                  <Dragging
-                    wrapperClass="absolute left-2 bottom-2"
-                    container={settingsContainer[columnIndex]}
-                    array={column.content}
-                    elementIndex={index}
-                    containerIndex={columnIndex}
-                    onUpdate={(updatedArray, index) => {
-                      if (index === columnIndex) {
-                        const headers = [...component.properties.header]
-                        headers[columnIndex].content = updatedArray
-                        updateProperty("header", headers, component, onPropertyChange)
-                      }
-                    }}
-                  />
-
-                  <UI.Button
-                    wrapperClass="absolute right-2 bottom-2 w-8"
-                    content={{ icon: ButtonDelete }}
-                    onClick={() => {
-                      const headers = [...(component.properties.header || [])]
-                      ;((headers as ITableHeader<object>[])[columnIndex].content as ITableContent<object>[]).splice(index, 1)
-                      updateProperty("header", headers, component, onPropertyChange)
-                    }}
-                  />
-                </div>
-              {:else if content.type == "button"}
-                {@const button = content.data}
-                <div id={`item-${index}-${columnIndex}`} class="relative w-full bg-(--container-color)/50 rounded-2xl p-2">
+                {:else if content.type == "button"}
+                  {@const button = content.data}
                   <div class="flex w-[95%] mx-auto items-end justify-between gap-2">
                     <UI.Input
                       label={{ name: $t("constructor.props.name") }}
@@ -415,34 +360,8 @@
                       }}
                     />
                   </div>
-
-                  <UI.Button
-                    wrapperClass="absolute right-2 bottom-2 w-8"
-                    content={{ icon: ButtonDelete }}
-                    onClick={() => {
-                      const headers = [...(component.properties.header || [])]
-                      ;((headers as ITableHeader<object>[])[columnIndex].content as ITableContent<object>[]).splice(index, 1)
-                      updateProperty("header", headers, component, onPropertyChange)
-                    }}
-                  />
-                  <Dragging
-                    wrapperClass="absolute left-2 bottom-2"
-                    container={settingsContainer[columnIndex]}
-                    array={column.content}
-                    elementIndex={index}
-                    containerIndex={columnIndex}
-                    onUpdate={(updatedArray, index) => {
-                      if (index === columnIndex) {
-                        const headers = [...component.properties.header]
-                        headers[columnIndex].content = updatedArray
-                        updateProperty("header", headers, component, onPropertyChange)
-                      }
-                    }}
-                  />
-                </div>
-              {:else if content.type == "progressBar"}
-                {@const progressBar = content.data}
-                <div id={`item-${index}-${columnIndex}`} class="relative bg-(--container-color)/50 rounded-2xl p-2">
+                {:else if content.type == "progressBar"}
+                  {@const progressBar = content.data}
                   <div class="w-3/5 flex mx-auto items-end gap-2">
                     <UI.Input
                       label={{ name: $t("constructor.props.table.progressBar.key") }}
@@ -477,34 +396,8 @@
                       onUpdate={(value) => updateContentProperty(columnIndex, index, "units", value as string)}
                     />
                   </div>
-
-                  <Dragging
-                    wrapperClass="absolute left-2 bottom-2"
-                    container={settingsContainer[columnIndex]}
-                    array={column.content}
-                    elementIndex={index}
-                    containerIndex={columnIndex}
-                    onUpdate={(updatedArray, index) => {
-                      if (index === columnIndex) {
-                        const headers = [...component.properties.header]
-                        headers[columnIndex].content = updatedArray
-                        updateProperty("header", headers, component, onPropertyChange)
-                      }
-                    }}
-                  />
-                  <UI.Button
-                    wrapperClass="absolute right-2 bottom-2 w-8"
-                    content={{ icon: ButtonDelete }}
-                    onClick={() => {
-                      const headers = [...(component.properties.header || [])]
-                      ;((headers as ITableHeader<object>[])[columnIndex].content as ITableContent<object>[]).splice(index, 1)
-                      updateProperty("header", headers, component, onPropertyChange)
-                    }}
-                  />
-                </div>
-              {:else if !forConstructor && content.type == "image"}
-                {@const image = content.data}
-                <div id={`item-${index}-${columnIndex}`} class="relative bg-(--container-color)/50 rounded-2xl p-2">
+                {:else if !forConstructor && content.type == "image"}
+                  {@const image = content.data}
                   <div class="flex items-end gap-2 w-[80%] mx-auto">
                     <CommonSnippets
                       snippet="IconsLib"
@@ -544,35 +437,36 @@
                       onUpdate={(value) => updateContentProperty(columnIndex, index, "height", `${value ?? 0}rem`)}
                     />
                   </div>
-                  <Dragging
-                    wrapperClass="absolute left-2 bottom-2"
-                    container={settingsContainer[columnIndex]}
-                    array={column.content}
-                    elementIndex={index}
-                    containerIndex={columnIndex}
-                    onUpdate={(updatedArray, index) => {
-                      if (index === columnIndex) {
-                        const headers = [...component.properties.header]
-                        headers[columnIndex].content = updatedArray
-                        updateProperty("header", headers, component, onPropertyChange)
-                      }
-                    }}
-                  />
-                  <UI.Button
-                    wrapperClass="absolute right-2 bottom-2 w-8"
-                    content={{ icon: ButtonDelete }}
-                    onClick={() => {
-                      const headers = [...(component.properties.header || [])]
-                      ;((headers as ITableHeader<object>[])[columnIndex].content as ITableContent<object>[]).splice(index, 1)
+                {/if}
+                <Dragging
+                  wrapperClass="absolute left-2 bottom-2"
+                  container={settingsContainer[columnIndex]}
+                  array={column.content}
+                  elementIndex={index}
+                  containerIndex={columnIndex}
+                  onUpdate={(updatedArray, index) => {
+                    if (index === columnIndex) {
+                      const headers = [...component.properties.header]
+                      headers[columnIndex].content = updatedArray
                       updateProperty("header", headers, component, onPropertyChange)
-                    }}
-                  />
-                </div>
-              {/if}
+                    }
+                  }}
+                />
+
+                <UI.Button
+                  wrapperClass="absolute right-2 bottom-2 w-8"
+                  content={{ icon: ButtonDelete }}
+                  onClick={() => {
+                    const headers = [...(component.properties.header || [])]
+                    ;((headers as ITableHeader<object>[])[columnIndex].content as ITableContent<object>[]).splice(index, 1)
+                    updateProperty("header", headers, component, onPropertyChange)
+                  }}
+                />
+              </div>
             {/each}
           {/if}
-          <div id={`item-${column.content.length}-${columnIndex}`} class="min-h-2"></div>
         </div>
+        <div id={`item-${column.content.length}-${columnIndex}`} class="min-h-2"></div>
       </div>
     {/each}
     <div id={`column-${component.properties.header.length}`} class="min-h-4"></div>
@@ -625,8 +519,8 @@
 {#if forConstructor}
   <div class="relative flex flex-row items-start justify-center pb-4">
     <div class="flex w-1/3 flex-col px-2">
-      <CommonSnippets snippet="Variable" {VARIABLE_OPTIONS} {component} {onPropertyChange} />
       <CommonSnippets snippet="Access" {component} {onPropertyChange} />
+      <CommonSnippets snippet="Variable" {VARIABLE_OPTIONS} {component} {onPropertyChange} />
       {@render TableStashData()}
       {#if component.properties.dataBuffer.stashData}
         <div class="flex items-end">

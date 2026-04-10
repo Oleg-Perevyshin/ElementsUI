@@ -252,11 +252,11 @@
 {#if forConstructor}
   <div class="relative mb-4 flex flex-row items-start justify-center">
     <div class="flex w-1/3 flex-col px-2">
+      <CommonSnippets snippet="Access" {component} {onPropertyChange} />
       <CommonSnippets snippet="Variable" {VARIABLE_OPTIONS} {component} {onPropertyChange} />
       {@render SelectArgument()}
     </div>
     <div class="flex w-1/3 flex-col px-2">
-      <CommonSnippets snippet="Access" {component} {onPropertyChange} />
       {@render SelectType()}
       {@render SelectValueType()}
     </div>

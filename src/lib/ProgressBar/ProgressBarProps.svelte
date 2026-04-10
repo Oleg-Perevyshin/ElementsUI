@@ -155,6 +155,7 @@
 {#if forConstructor}
   <div class="relative flex flex-row items-start justify-center">
     <div class="flex w-1/3 flex-col px-2">
+      <CommonSnippets snippet="Access" {component} {onPropertyChange} />
       <CommonSnippets snippet="Variable" {VARIABLE_OPTIONS} {component} {onPropertyChange} />
       {@render ProgressBarType()}
     </div>
@@ -184,6 +185,7 @@
 {:else}
   <div class="relative flex flex-row items-start justify-center">
     <div class="flex w-1/3 flex-col px-2">
+      <CommonSnippets snippet="Access" {component} {onPropertyChange} />
       <CommonSnippets snippet="Identificator" {component} {onPropertyChange} />
       {@render ProgressBarType()}
     </div>

@@ -113,6 +113,7 @@
               [&::-webkit-slider-thumb]:relative
               [&::-webkit-slider-thumb]:size-4
               [&::-webkit-slider-thumb]:cursor-pointer
+              ${disabled ? "[&::-webkit-slider-thumb]:cursor-not-allowed" : ""}
               [&::-webkit-slider-thumb]:rounded-full
               [&::-webkit-slider-thumb]:shadow-[var(--focus-shadow),]
             ${
@@ -124,6 +125,7 @@
             [&::-moz-range-thumb]:ml-[-0.4rem]
             [&::-moz-range-thumb]:size-4 
             [&::-moz-range-thumb]:cursor-pointer 
+            ${disabled ? "[&::-moz-range-thumb]:cursor-not-allowed" : ""}
             [&::-moz-range-thumb]:rounded-full
             [&::-moz-range-thumb]:shadow-[var(--focus-shadow),] 
             [&::-moz-range-thumb]:ring-[6px] 
@@ -160,6 +162,7 @@
               [&::-webkit-slider-thumb]:relative
               [&::-webkit-slider-thumb]:size-4
               [&::-webkit-slider-thumb]:cursor-pointer
+              ${disabled ? "[&::-webkit-slider-thumb]:cursor-not-allowed" : ""}
               [&::-webkit-slider-thumb]:rounded-full
               [&::-webkit-slider-thumb]:shadow-[var(--focus-shadow),]
             ${
@@ -171,6 +174,7 @@
             [&::-moz-range-thumb]:ml-[-0.4rem]
             [&::-moz-range-thumb]:size-4 
             [&::-moz-range-thumb]:cursor-pointer 
+            ${disabled ? "[&::-moz-range-thumb]:cursor-not-allowed" : ""}
             [&::-moz-range-thumb]:rounded-full
             [&::-moz-range-thumb]:shadow-[var(--focus-shadow),] 
             [&::-moz-range-thumb]:ring-[6px] 
@@ -193,6 +197,7 @@
           max={number.maxNum}
           step={number.step}
           bind:value={singleValue}
+          {disabled}
           oninput={() => onUpdate(singleValue)}
           class={twMerge(
             `h-8 w-full appearance-none overflow-hidden rounded-full accent-(--back-color) 
@@ -205,6 +210,7 @@
               [&::-webkit-slider-thumb]:h-4
               [&::-webkit-slider-thumb]:w-4
               [&::-webkit-slider-thumb]:cursor-pointer
+              ${disabled ? "[&::-webkit-slider-thumb]:cursor-not-allowed" : ""}
               [&::-webkit-slider-thumb]:rounded-full
             [&::-webkit-slider-thumb]:shadow-[var(--focus-shadow),]
             ${
@@ -216,6 +222,7 @@
             [&::-moz-range-thumb]:ml-[-0.4rem]
             [&::-moz-range-thumb]:size-4 
             [&::-moz-range-thumb]:cursor-pointer 
+            ${disabled ? "[&::-moz-range-thumb]:cursor-not-allowed" : ""}
             [&::-moz-range-thumb]:rounded-full
             [&::-moz-range-thumb]:shadow-[var(--focus-shadow),] 
             [&::-moz-range-thumb]:ring-[6px] 

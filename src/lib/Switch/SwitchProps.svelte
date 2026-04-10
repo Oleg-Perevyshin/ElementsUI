@@ -36,16 +36,18 @@
 {/snippet}
 
 {#snippet SwitchCaptions()}
-  <UI.Input
-    label={{ name: $t("constructor.props.caption.left") }}
-    value={component.properties.label.captionLeft}
-    onUpdate={(value) => updateProperty("label.captionLeft", value as string, component, onPropertyChange)}
-  />
-  <UI.Input
-    label={{ name: $t("constructor.props.caption.right") }}
-    value={component.properties.label.captionRight}
-    onUpdate={(value) => updateProperty("label.captionRight", value as string, component, onPropertyChange)}
-  />
+  {#if component.properties.type == "horizontal"}
+    <UI.Input
+      label={{ name: $t("constructor.props.caption.left") }}
+      value={component.properties.label.captionLeft}
+      onUpdate={(value) => updateProperty("label.captionLeft", value as string, component, onPropertyChange)}
+    />
+    <UI.Input
+      label={{ name: $t("constructor.props.caption.right") }}
+      value={component.properties.label.captionRight}
+      onUpdate={(value) => updateProperty("label.captionRight", value as string, component, onPropertyChange)}
+    />
+  {/if}
 {/snippet}
 
 {#snippet SwitchDisabled()}
@@ -59,15 +61,6 @@
       options[0]["disabled"] = value
       updateProperty("options", options, component, onPropertyChange)
     }}
-  />
-{/snippet}
-
-{#snippet SwitchColors()}
-  <UI.Select
-    wrapperClass="!h-14"
-    label={{ name: $t("constructor.props.colors") }}
-    type="buttons"
-    options={$optionsStore.COLOR_OPTIONS.filter((option) => option.value !== "bg-max" && option.value !== "bg-gray")}
   />
 {/snippet}
 
@@ -193,9 +186,9 @@
 {#if forConstructor}
   <div class="relative flex flex-row items-start justify-center">
     <div class="flex w-1/3 flex-col px-2">
+      <CommonSnippets snippet="Access" {component} {onPropertyChange} />
       <CommonSnippets snippet="Variable" {VARIABLE_OPTIONS} {component} {onPropertyChange} />
       <CommonSnippets snippet="EventHandlerArgument" {component} {onPropertyChange} />
-      <CommonSnippets snippet="Access" {component} {onPropertyChange} />
     </div>
 
     <div class="flex w-1/3 flex-col px-2">
@@ -258,11 +251,10 @@
     </div>
     <div class="flex w-1/3 flex-col px-2">
       <CommonSnippets snippet="Label" {component} {onPropertyChange} />
-
+      {@render SwitchType()}
       {#if !component.properties.bitMode}
         {@render SwitchCaptions()}
       {/if}
-      {@render SwitchType()}
     </div>
     <div class="flex w-1/3 flex-col px-2">
       {@render SwitchHeight()}

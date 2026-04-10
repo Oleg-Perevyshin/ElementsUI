@@ -42,7 +42,7 @@ ${formatObjectToString(tabsComponent.properties as ITabsProps)}
 <ComponentExample {codeText} bind:forConstructor>
   {#snippet component()}
     <div class="h-60">
-      <Tabs {...tabsComponent.properties as ITabsProps} items={[{ name: "Tab1" }, { name: "Tab2" }, { name: "Tab3" }]} />
+      <Tabs {...tabsComponent.properties as ITabsProps} />
     </div>
   {/snippet}
   {#snippet componentProps()}

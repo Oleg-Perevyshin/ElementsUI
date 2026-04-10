@@ -18,7 +18,7 @@
   }>()
 
   let isValidRegExp = $state(true)
-  let showRegExpLibrary = $state(true)
+  let showRegExpLibrary = $state(false)
   const DeviceVariables = getContext<{ id: string; value: string; name: string }[]>("DeviceVariables")
   let VARIABLE_OPTIONS = $derived(DeviceVariables && Array.isArray(DeviceVariables) ? DeviceVariables : [])
 
@@ -153,7 +153,6 @@
         label={{ name: $t("constructor.props.regexp") }}
         value={component.properties.help.regExp}
         maxlength={150}
-        help={{ info: $t("constructor.props.regexp.info") }}
         componentClass={isValidRegExp === false ? "!border-2 !border-red-400" : ""}
         onUpdate={(value) => updateProperty("help.regExp", value as string)}
       />
@@ -240,7 +239,7 @@
 
 {#snippet InputSettings()}
   <UI.Select
-    label={{ name: $t("constructor.props.type") }}
+    wrapperClass="mt-5"
     options={$optionsStore.INPUT_SETTING_OPTIONS.map((o) =>
       (component.properties.type === "password" || component.properties.type === "number") && o.value == "help.copyButton" ? { ...o, disabled: true } : o,
     )}
@@ -364,8 +363,8 @@
 {#if forConstructor}
   <div class="relative flex flex-row items-start justify-center">
     <div class="flex w-1/3 flex-col px-2">
-      {@render InputVariable()}
       {@render InputAccess()}
+      {@render InputVariable()}
       {@render InputType()}
     </div>
     <div class="flex w-1/3 flex-col px-2">

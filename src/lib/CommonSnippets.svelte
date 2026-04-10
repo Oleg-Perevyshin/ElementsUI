@@ -212,14 +212,14 @@
   <div class="flex">
     <UI.Input
       label={{ name: $t("constructor.props.min") }}
-      value={initialValue.number.minNum}
+      value={initialValue.number?.minNum}
       type="number"
       readonly={initialValue.bitMode}
       onUpdate={(value) => initialValue.updateProperty(value as number, "number.minNum")}
     />
     <UI.Input
       label={{ name: $t("constructor.props.max") }}
-      value={initialValue.number.maxNum}
+      value={initialValue.number?.maxNum}
       type="number"
       readonly={initialValue.bitMode}
       onUpdate={(value) => initialValue.updateProperty(value as number, "number.maxNum")}
@@ -227,7 +227,7 @@
     {#if component.type !== "ProgressBar"}
       <UI.Input
         label={{ name: $t("constructor.props.step") }}
-        value={initialValue.number.step}
+        value={initialValue.number?.step}
         type="number"
         readonly={initialValue.bitMode}
         onUpdate={(value) => initialValue.updateProperty(value as number, "number.step")}

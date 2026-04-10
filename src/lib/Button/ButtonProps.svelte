@@ -153,27 +153,6 @@
     <div class="flex w-1/3 flex-col px-2">
       {@render ButtonVariables()}
       <CommonSnippets
-        snippet="IconsLib"
-        initialValue={{
-          name: $t("constructor.props.buttonIcon"),
-          icon: component.properties.content.icon,
-          updateProperty: (icon: string) => {
-            updateProperty("content.icon", icon as string, component, onPropertyChange)
-            if (component.properties.content.icon && !component.properties.content.name?.trim())
-              updateProperty("componentClass", twMerge((component.properties as UI.IButtonProps).componentClass, "w-fit"), component, onPropertyChange)
-            else if (!component.properties.content.icon && !component.properties.content.name?.trim())
-              updateProperty("componentClass", twMerge((component.properties as UI.IButtonProps).componentClass, "w-full"), component, onPropertyChange)
-          },
-          icons: { array: ICONS },
-        }}
-        {component}
-        {onPropertyChange}
-      />
-    </div>
-    <div class="flex w-1/3 flex-col px-2">
-      {@render ButtonName()}
-      {@render ButtonHeight()}
-      <CommonSnippets
         snippet="Colors"
         initialValue={{
           color: initialColor,
@@ -200,6 +179,27 @@
         {component}
         {onPropertyChange}
       />
+    </div>
+    <div class="flex w-1/3 flex-col px-2">
+      {@render ButtonName()}
+      <CommonSnippets
+        snippet="IconsLib"
+        initialValue={{
+          name: $t("constructor.props.buttonIcon"),
+          icon: component.properties.content.icon,
+          updateProperty: (icon: string) => {
+            updateProperty("content.icon", icon as string, component, onPropertyChange)
+            if (component.properties.content.icon && !component.properties.content.name?.trim())
+              updateProperty("componentClass", twMerge((component.properties as UI.IButtonProps).componentClass, "w-fit"), component, onPropertyChange)
+            else if (!component.properties.content.icon && !component.properties.content.name?.trim())
+              updateProperty("componentClass", twMerge((component.properties as UI.IButtonProps).componentClass, "w-full"), component, onPropertyChange)
+          },
+          icons: { array: ICONS },
+        }}
+        {component}
+        {onPropertyChange}
+      />
+      {@render ButtonHeight()}
     </div>
   </div>
 {:else}
