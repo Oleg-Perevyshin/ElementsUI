@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { Button, ProgressBar, type IProgressBarProps, type UIComponent } from "$lib"
+  import { Button, ProgressBar, Table, type IProgressBarProps, type UIComponent } from "$lib"
   import ComponentExample from "$lib/ComponentExample.svelte"
   import ProgressBarProps from "$lib/ProgressBar/ProgressBarProps.svelte"
   import { updateComponent, type IReceivingDataObject } from "$lib/types"
-  import { formatObjectToString } from "../../common"
+  import { formatObjectToString, TableColumns } from "../../common"
 
   let progressBarComponent: UIComponent = $state({
     id: crypto.randomUUID(),
@@ -31,6 +31,48 @@
 ${formatObjectToString(progressBarComponent.properties as IProgressBarProps)} 
 />`)
   let progressBarValue: IReceivingDataObject[] = $state([{ Name: "progress", Value: 66 }])
+
+  const rows = [
+    {
+      name: "id",
+      type: "string",
+      default: "crypto.randomUUID()",
+      description: "Уникальный идентификатор компонента",
+    },
+    {
+      name: "wrapperClass",
+      type: "string",
+      default: '""',
+      description: "Дополнительные CSS-классы для внешней обёртки компонента",
+    },
+    {
+      name: "items",
+      type: "{ name: string; class?: string }[]",
+      default: '[{ name: "Label", class: "" }]',
+      description: "Массив элементов прогресс-бара: `name` — название для отображения, `class` — CSS-классы для стилизации контейнера элемента",
+    },
+    {
+      name: "value",
+      type: "number | IReceivingDataObject[]",
+      default: "undefined",
+      description:
+        "Значение прогресса: число для одиночного бара или массив объектов `{ Name, Value, Info }` для нескольких элементов; `Value` — текущее значение, `Info` — дополнительная подсказка под баром",
+    },
+    {
+      name: "type",
+      type: '"horizontal" | "vertical"',
+      default: '"horizontal"',
+      description:
+        "Ориентация прогресс-бара: `horizontal` — горизонтальное заполнение слева направо, `vertical` — вертикальное заполнение снизу вверх с центрированным расположением элементов",
+    },
+    {
+      name: "number",
+      type: "{ minNum?: number; maxNum?: number; units?: string }",
+      default: '{ minNum: 0, maxNum: 100, units: "%" }',
+      description:
+        "Настройки диапазона значений: `minNum`/`maxNum` — границы шкалы прогресса, `units` — суффикс для отображения числового значения (например, `%`)",
+    },
+  ]
 </script>
 
 <ComponentExample {codeText} bind:forConstructor>
@@ -65,4 +107,7 @@ ${formatObjectToString(progressBarComponent.properties as IProgressBarProps)}
       />
     </div>
   {/snippet}
-</ComponentExample>
+  {#snippet props()}
+    <Table header={TableColumns} body={rows} outline />
+  {/snippet}</ComponentExample
+>

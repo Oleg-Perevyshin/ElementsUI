@@ -10,6 +10,15 @@ const translations: Translations = {
     "library.for_constructor": "Для конструктора",
     "library.overview": "Обзор",
     "library.examples": "Примеры",
+    "library.setting": "Настройка",
+    "library.palette": "Палитра",
+    "library.regexp": "Регулярные выражения",
+    "library.props": "Свойства",
+
+    "library.props.name": "Название",
+    "library.props.type": "Тип",
+    "library.props.default": "По умолчанию",
+    "library.props.desc": "Описание",
 
     /* Опции рeдактора свойств */
     "constructor.props.action.update": "Обновить",

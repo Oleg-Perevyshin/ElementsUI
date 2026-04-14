@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { Button } from "$lib"
+  import { Button, Table } from "$lib"
   import { updateComponent, type IButtonProps, type UIComponent } from "$lib/types"
-  import { formatObjectToString } from "../../common"
+  import { formatObjectToString, TableColumns } from "../../common"
   import ComponentExample from "$lib/ComponentExample.svelte"
   import ButtonProps from "$lib/Button/ButtonProps.svelte"
   import IconGripVerticalDual from "$lib/libIcons/IconGripVerticalDual.svelte"
@@ -33,6 +33,53 @@
 ${formatObjectToString(buttonComponent.properties as IButtonProps)} 
   onClick={() => {}}
 />`)
+
+  const rows = [
+    {
+      name: "id",
+      type: "string",
+      default: "crypto.randomUUID()",
+      description: "Уникальный идентификатор компонента",
+    },
+    {
+      name: "wrapperClass",
+      type: "string",
+      default: '""',
+      description: "Дополнительные CSS-классы для внешней обёртки компонента",
+    },
+    {
+      name: "componentClass",
+      type: "string",
+      default: '""',
+      description: "Дополнительные CSS-классы для самого элемента кнопки",
+    },
+    {
+      name: "disabled",
+      type: "boolean",
+      default: "false",
+      description: "Отключает кнопку: блокирует клики, добавляет визуальные стили неактивности",
+    },
+    {
+      name: "content",
+      type: "{ name?: string; info?: { text: string; side: 'top' | 'bottom' | 'left' | 'right' }; icon?: ConstructorOfATypedSvelteComponent | string | null }",
+      default: '{ name: "", info: { text: "", side: "top" }, icon: null }',
+      description:
+        "Настройки содержимого кнопки: `name` — текст кнопки, `info` — объект с текстом подсказки и её позицией (top/bottom/left/right), `icon` — иконка в виде SVG-строки или Svelte-компонента; при пустом `name` и наличии `icon` кнопка рендерится как круглая без фона",
+    },
+    {
+      name: "keyBind",
+      type: "{ showHint?: boolean; key?: string; ctrlKey?: boolean; shiftKey?: boolean; altKey?: boolean; metaKey?: boolean }",
+      default: "{ showHint: true }",
+      description:
+        "Настройки горячих клавиш: `key` — клавиша для активации, модификаторы `ctrlKey`/`shiftKey`/`altKey`/`metaKey` — необязательные условия сочетания, `showHint` — отображать ли подсказку с комбинацией в интерфейсе; обработчик регистрируется глобально на window",
+    },
+    {
+      name: "onClick",
+      type: "() => void",
+      default: "undefined",
+      description: "Callback-функция, вызываемая при клике на кнопку или срабатывании горячей клавиши",
+    },
+  ]
 </script>
 
 <ComponentExample {codeText} bind:forConstructor>
@@ -59,5 +106,8 @@ ${formatObjectToString(buttonComponent.properties as IButtonProps)}
         <Button content={{ icon: IconGripHorizontalDown, info: { text: "Info for Icon Button", side: "right" } }} wrapperClass="w-10" />
       </div>
     </div>
+  {/snippet}
+  {#snippet props()}
+    <Table header={TableColumns} body={rows} outline />
   {/snippet}
 </ComponentExample>

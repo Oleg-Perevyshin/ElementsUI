@@ -1,4 +1,8 @@
-import type { UIComponent } from "$lib"
+import type { ITableHeader, UIComponent } from "$lib"
+import { marked } from "marked"
+import DOMPurify from "dompurify"
+import { t } from "$lib/locales/i18n"
+import { get } from "svelte/store"
 
 export const formatObjectToString = (properties: UIComponent["properties"]): string => {
   const clearValue = (value: any): any => {
@@ -95,3 +99,50 @@ export const importModule = async (url: string): Promise<any> => {
 
   return promises[url]
 }
+
+export const RenderMarkdown = async (text: string) => {
+  if (typeof text !== "string") {
+    return ""
+  }
+
+  try {
+    /* Установка опций для обработки Markdown */
+    marked.setOptions({
+      async: false, // Отключаем асинхронный режим
+      breaks: true, // Включает поддержку разрыва строк
+      gfm: true, // Поддержка GitHub Flavored Markdown
+      pedantic: false, // Отключает строгий режим
+      silent: true, // Не вызывает ошибок при рендеринге
+    })
+
+    /* Преобразуем Markdown в HTML и очищаем */
+    const html = await marked(text)
+    const cleanHtml = DOMPurify.sanitize(html)
+    return cleanHtml
+  } catch (error) {
+    return ""
+  }
+}
+
+export interface TableRows {
+  name: string
+  type: string
+  default: string
+  description: string
+}
+
+const translate = get(t)
+export const TableColumns: ITableHeader<TableRows>[] = [
+  { label: { name: translate("library.props.name") }, content: [{ type: "text", data: { key: "name" } }], width: "15%" },
+  {
+    label: { name: translate("library.props.type") },
+    content: [{ type: "text", data: { key: "type" } }],
+    width: "30%",
+  },
+  { label: { name: translate("library.props.default") }, content: [{ type: "text", data: { key: "default" } }], width: "20%" },
+  {
+    label: { name: translate("library.props.desc") },
+    content: [{ type: "text", data: { key: "description" } }],
+    width: "35%",
+  },
+]

@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { type IMapProps, type UIComponent } from "$lib"
+  import { Table, type IMapProps, type UIComponent } from "$lib"
   import ComponentExample from "$lib/ComponentExample.svelte"
   import Map from "$lib/Map/Map.svelte"
   import { updateComponent, type IDeviceGNSS } from "$lib/types"
   import { onDestroy, onMount } from "svelte"
-  import { formatObjectToString } from "../../common"
+  import { formatObjectToString, TableColumns } from "../../common"
   import MapProps from "$lib/Map/MapProps.svelte"
 
   let data: IDeviceGNSS | null = $state(null)
@@ -92,6 +92,35 @@
 ${formatObjectToString(mapComponent.properties as IMapProps)}
   {data}
 />`)
+
+  const rows = [
+    {
+      name: "id",
+      type: "string",
+      default: "crypto.randomUUID()",
+      description: "Уникальный идентификатор компонента",
+    },
+    {
+      name: "label",
+      type: "{ name?: string; class?: string }",
+      default: '{ name: "", class: "" }',
+      description: "Настройки подписи: `name` — текст заголовка, `class` — CSS-классы для стилизации",
+    },
+    {
+      name: "data",
+      type: "IDeviceGNSS | null",
+      default: "undefined",
+      description:
+        "Данные устройства GNSS для отображения на карте; поддерживает двустороннее связывание (`$bindable`) — после обработки компонента значение сбрасывается в `null`",
+    },
+    {
+      name: "markerIcon",
+      type: "ConstructorOfATypedSvelteComponent | string | null",
+      default: "undefined",
+      description:
+        "Кастомная иконка для маркеров устройств: может быть SVG-строкой или Svelte-компонентом; по умолчанию используется встроенная иконка стрелки с поворотом по курсу",
+    },
+  ]
 </script>
 
 <ComponentExample {codeText} bind:forConstructor>
@@ -113,4 +142,7 @@ ${formatObjectToString(mapComponent.properties as IMapProps)}
       <Map label={{ name: "Карта" }} {data} />
     </div>
   {/snippet}
-</ComponentExample>
+  {#snippet props()}
+    <Table header={TableColumns} body={rows} outline />
+  {/snippet}</ComponentExample
+>

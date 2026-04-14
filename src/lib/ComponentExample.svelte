@@ -7,25 +7,28 @@
     component,
     componentProps,
     examples,
+    props,
     codeText,
     forConstructor = $bindable(),
-  }: { component: Snippet; componentProps: Snippet; examples?: Snippet; codeText: string; forConstructor: boolean } = $props()
+  }: { component: Snippet; componentProps: Snippet; examples?: Snippet; props?: Snippet; codeText: string; forConstructor: boolean } = $props()
 
   let isCopied = $state(false)
   let snippetOptions = [
     { id: crypto.randomUUID(), value: "overview", name: $t("library.overview") },
     { id: crypto.randomUUID(), value: "examples", name: $t("library.examples") },
+    { id: crypto.randomUUID(), value: "props", name: $t("library.props") },
   ]
 
   let mainSnippet: string | undefined = $state("overview")
 
   const renderCurrentSnippet = () => {
     if (mainSnippet === "examples" && examples) return examples
+    if (mainSnippet === "props" && props) return props
     else return overview
   }
 </script>
 
-{#if examples}
+<div class="flex flex-col">
   <Select
     wrapperClass="w-1/2 mx-auto mb-3"
     type="buttons"
@@ -33,8 +36,10 @@
     value={snippetOptions.find((o) => o.value == mainSnippet)}
     onUpdate={(value) => (mainSnippet = (value as IOption<string>).value)}
   />
-{/if}
-{@render renderCurrentSnippet()()}
+  <div class="flex-1 whitespace-pre">
+    {@render renderCurrentSnippet()()}
+  </div>
+</div>
 
 {#snippet overview()}
   <div class="flex w-full h-[calc(100vh-9rem)] flex-col">
@@ -53,7 +58,7 @@
       {@render componentProps()}
       <div class="relative mt-3">
         <button
-          class="absolute top-2 right-3 flex cursor-pointer border-none bg-transparent"
+          class="absolute top-9 right-3 flex cursor-pointer border-none bg-transparent"
           onclick={(e) => {
             e.preventDefault()
             navigator.clipboard.writeText(codeText)
@@ -82,8 +87,7 @@
             {/if}
           </div>
         </button>
-        <pre class="overflow-x-auto">{codeText}
-  </pre>
+        <pre class="overflow-x-auto">{codeText}</pre>
       </div>
     </div>
   </div>

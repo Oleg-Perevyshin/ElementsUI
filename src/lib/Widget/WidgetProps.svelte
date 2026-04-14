@@ -119,43 +119,6 @@
     {component}
     {onPropertyChange}
   />
-
-  <!-- <UI.Button content={{ name: $t("constructor.props.labelicon") }} onClick={() => (showIconLib = true)} />
-    {#if showIconLib}
-      <Modal bind:isOpen={showIconLib} wrapperClass="w-130">
-        {#snippet main()}
-          <div class="grid grid-cols-1">
-            {#each ICONS_ARRAY as name}
-              <button
-                class="relative m-1.5 rounded-xl border-2 border-(--border-color) p-3 cursor-pointer"
-                onclick={() => {
-                  updateProperty("icons.array", name[1] as string[], component, onPropertyChange)
-                }}
-              >
-                <div class="absolute -top-3.5 bg-(--back-color) px-1">{$t(`constructor.props.icon.${name[0]}`)}</div>
-                <div class="grid grid-cols-9 place-items-center gap-2">
-                  {#each name[1] as icon}
-                    <div class="h-8 w-8 [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full">
-                      {@html icon}
-                    </div>
-                  {/each}
-                </div>
-              </button>
-            {/each}
-          </div>
-        {/snippet}
-      </Modal>
-    {/if}
-    {#if component.properties.icons.array}
-      <Button
-        wrapperClass="w-8.5 "
-        componentClass="p-0.5 bg-red"
-        content={{ icon: CrossIcon }}
-        onClick={() => {
-          updateProperty("icons.array", "", component, onPropertyChange)
-        }}
-      />
-    {/if} -->
 {/snippet}
 
 {#if forConstructor}

@@ -381,7 +381,7 @@
     </div>
   </div>
 {:else}
-  <div class="relative flex flex-row items-start justify-center">
+  <!-- <div class="relative flex flex-row items-start justify-center">
     <div class="flex w-1/3 flex-col px-2">
       {@render InputIdentificator()}
       {@render InputWrapperClass()}
@@ -405,5 +405,5 @@
         {@render InputBitmode()}
       </div>
     </div>
-  </div>
+  </div> -->
 {/if}

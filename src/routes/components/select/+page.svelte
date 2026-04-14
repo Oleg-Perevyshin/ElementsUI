@@ -3,7 +3,7 @@
   import ComponentExample from "$lib/ComponentExample.svelte"
   import * as UI from "$lib"
   import { updateComponent, type IOption } from "$lib/types"
-  import { formatObjectToString } from "../../common"
+  import { formatObjectToString, TableColumns } from "../../common"
 
   let selectComponent: UIComponent = $state({
     id: crypto.randomUUID(),
@@ -79,6 +79,67 @@ ${formatObjectToString(selectComponent.properties as ISelectProps)}
   let selectOption: IOption = $state({ id: "Map", name: "Map", value: "Map" })
   let COMPONENT_OPTIONS = Object.keys(componentMap).map((name) => ({ id: name, name: name, value: name }))
   let fullSwitchValue = $state(10)
+
+  const rows = [
+    {
+      name: "id",
+      type: "string",
+      default: "crypto.randomUUID()",
+      description: "Уникальный идентификатор компонента",
+    },
+    {
+      name: "wrapperClass",
+      type: "string",
+      default: '""',
+      description: "Дополнительные CSS-классы для внешней обёртки компонента",
+    },
+    {
+      name: "disabled",
+      type: "boolean",
+      default: "false",
+      description: "Отключает взаимодействие с компонентом: блокирует клики, добавляет визуальные стили неактивности",
+    },
+    {
+      name: "label",
+      type: "{ name?: string; class?: string }",
+      default: '{ name: "", class: "" }',
+      description: "Настройки подписи: `name` — текст заголовка, `class` — CSS-классы для стилизации",
+    },
+    {
+      name: "multiSelect",
+      type: "boolean",
+      default: "false",
+      description:
+        'Режим множественного выбора: работает только с `type: "buttons"`; при `true` позволяет выбирать несколько опций, значение передаётся как массив',
+    },
+    {
+      name: "type",
+      type: '"select" | "buttons" | "input"',
+      default: '"select"',
+      description:
+        "Тип отображения: `select` — выпадающий список с кнопкой, `buttons` — горизонтальный ряд кнопок, `input` — поле ввода с автодополнением и поиском",
+    },
+    {
+      name: "value",
+      type: "T | T[] | IOption<T> | IOption<T>[]",
+      default: "undefined",
+      description:
+        "Текущее выбранное значение: для `select`/`input` — объект `IOption` или примитив, для `buttons` с `multiSelect` — массив значений; поддерживает двустороннее связывание (`$bindable`)",
+    },
+    {
+      name: "options",
+      type: "IOption<T>[]",
+      default: "[]",
+      description:
+        "Массив доступных опций: каждый элемент содержит `id` (уникальный ключ), `name` (отображаемый текст), `value` (возвращаемое значение), `class` (доп. стили), `disabled` (блокировка отдельной опции)",
+    },
+    {
+      name: "onUpdate",
+      type: "(value: T | T[] | IOption<T> | IOption<T>[]) => void",
+      default: "undefined",
+      description: "Callback-функция, вызываемая при изменении выбора; передаёт новое значение (одиночное или массив в зависимости от `multiSelect`)",
+    },
+  ]
 </script>
 
 <ComponentExample {codeText} bind:forConstructor>
@@ -128,4 +189,7 @@ ${formatObjectToString(selectComponent.properties as ISelectProps)}
       <span>Выбранное значение: {fullSwitchValue}</span>
     </div>
   {/snippet}
-</ComponentExample>
+  {#snippet props()}
+    <UI.Table header={TableColumns} body={rows} outline />
+  {/snippet}</ComponentExample
+>
