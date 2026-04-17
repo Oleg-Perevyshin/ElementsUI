@@ -319,15 +319,16 @@
                   {@const contentArray = typeof column.content === "function" ? column.content(row) : column.content}
                   <div
                     id="rowDiv{i}-{j}"
-                    class="relative flex w-full min-w-0 items-center gap-x-2 px-2 py-1 wrap-break-word border-t
+                    class="relative grid w-full min-w-0 items-center gap-x-2 px-2 py-1 wrap-break-word border-t
               {column.align === 'center' ? 'justify-center text-center' : column.align === 'right' ? 'justify-end text-right' : 'justify-start text-left'}
                {j !== 0 ? ' border-l ' : ''} {outline ? 'border-(--border-color)' : 'border-transparent'} {column.disableSelect ? 'select-none' : 'select-all'}"
+                    style=" grid-template-columns: repeat({contentArray?.length}, minmax(0, 1fr));"
                   >
                     {#each contentArray as content, index}
                       {#if content.type === "button"}
                         {@const button = typeof content.data === "function" ? content.data(row) : content.data}
                         <button
-                          class="{twMerge(`flex items-center justify-center gap-2 cursor-pointer rounded-full 
+                          class="{twMerge(`flex w-full items-center justify-center gap-2 cursor-pointer rounded-full 
                            px-4 py-1 font-semibold shadow-sm transition-shadow duration-200 outline-none select-none hover:shadow-md
                           ${typeof button.class === 'function' ? button.class(row) : button.class}`)} bg-(--bg-color)"
                           onclick={() => buttonClick(row, button)}

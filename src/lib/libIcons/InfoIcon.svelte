@@ -1,0 +1,7 @@
+<script lang="ts"></script>
+
+<svg xmlns="http://www.w3.org/2000/svg" width="1.5rem" height="1.5rem" viewBox="0 0 24 24"
+  ><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+    ><circle cx="12" cy="12" r="10" stroke-width="1.3" /><path stroke-width="1.5" d="M12 16v-4.5" /><path stroke-width="1.8" d="M12 8.012v-.01" /></g
+  ></svg
+>

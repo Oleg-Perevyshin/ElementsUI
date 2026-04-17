@@ -44,7 +44,7 @@
 
 <div class={twMerge(`flex flex-col items-center`, wrapperClass)}>
   {#if label.name}
-    <h5 class={`${label.class}`}>{label.name}</h5>
+    <h5 class={`${label.class} w-full`}>{label.name}</h5>
   {/if}
 
   {#if type === "image"}

@@ -3,6 +3,7 @@
   import { fade, fly } from "svelte/transition"
   import type { IInputProps } from "../types"
   import { twMerge } from "tailwind-merge"
+  import InfoIcon from "$lib/libIcons/InfoIcon.svelte"
 
   let {
     id = crypto.randomUUID(),
@@ -35,7 +36,7 @@
   let RegExpObj = $derived(() => parseRegExp(help.regExp ?? ""))
 
   $effect(() => {
-    if (help.regExp) isValid = RegExpObj().test(typeof value === "string" ? value : String(value))
+    if (help.regExp && type !== "number") isValid = RegExpObj().test(typeof value === "string" ? value : String(value))
   })
 
   const handleInputChange = (value: string | number) => {
@@ -160,9 +161,9 @@
       </button>
     {/if}
 
-    {#if help.copyButton && (type === "text" || type === "text-area") && !disabled}
+    {#if help.copyButton && type !== "password" && !disabled}
       <button
-        class="absolute right-3 flex border-none bg-transparent {type === 'text-area' ? 'top-2' : ''} cursor-pointer"
+        class="absolute {type == 'number' ? 'right-10' : 'right-3'}  flex border-none bg-transparent {type === 'text-area' ? 'top-2' : ''} cursor-pointer"
         onclick={(e) => {
           e.preventDefault()
           navigator.clipboard.writeText(value as string)
@@ -198,6 +199,7 @@
         <button
           class="flex h-1/2 w-full items-center rounded-tr-2xl border-b border-(--border-color) pl-2 transition-colors duration-150 hover:bg-(--gray-color)/30 active:bg-(--gray-color)/10"
           onclick={() => {
+            if (value == undefined) value = number.minNum
             if ((number.maxNum !== 0 && !number.maxNum) || !number.step || (value !== 0 && !value)) return
             if (Number(value) + number.step >= number.maxNum) {
               value = number.maxNum
@@ -213,6 +215,7 @@
         <button
           class="flex h-1/2 w-full items-center rounded-br-2xl pl-2 transition-colors duration-150 hover:bg-(--gray-color)/30 active:bg-(--gray-color)/10"
           onclick={() => {
+            if (value == undefined) value = number.minNum
             if ((number.minNum !== 0 && !number.minNum) || !number.step || (value !== 0 && !value)) return
             if (Number(value) - number.step <= number.minNum) {
               value = number.minNum
@@ -236,11 +239,7 @@
         onmouseleave={() => (showInfo = false)}
         aria-label={showInfo ? "Скрыть инфо" : "Показать инфо"}
       >
-        <svg xmlns="http://www.w3.org/2000/svg" width="1.5rem" height="1.5rem" viewBox="0 0 24 24"
-          ><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-            ><circle cx="12" cy="12" r="10" stroke-width="1.3" /><path stroke-width="1.5" d="M12 16v-4.5" /><path stroke-width="1.8" d="M12 8.012v-.01" /></g
-          ></svg
-        >
+        <InfoIcon />
       </button>
 
       {#if showInfo}

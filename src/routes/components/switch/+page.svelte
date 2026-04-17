@@ -109,7 +109,7 @@ ${formatObjectToString(switchComponent.properties as ISwitchProps)}
 
 <ComponentExample {codeText} bind:forConstructor>
   {#snippet component()}
-    <div class="  my-10 flex w-full justify-center">
+    <div class="my-10 flex w-full justify-center">
       <Switch wrapperClass={(switchComponent.properties as ISwitchProps).bitMode ? "w-fit" : ""} {...switchComponent.properties as ISwitchProps} />
     </div>
   {/snippet}

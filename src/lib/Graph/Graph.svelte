@@ -41,7 +41,7 @@
     { id: "ScaleOption-1000", name: "1000", value: 1000, class: "" },
     { id: "ScaleOption-2000", name: "2000", value: 2000, class: "" },
   ]
-  let selectedRefreshRate = $state(0)
+  let selectedRefreshRate = $derived(isTest ? 50 : 0)
   let selectedScale = $state(100)
   const maxDataPoints = $derived(selectedRefreshRate == 0 ? 20 : 100)
   const defaultColors = ["#3b82f6", "#ef4444", "#10b981", "#f59e0b", "#8b5cf6", "#ec4899"]

@@ -8,7 +8,7 @@
   let {
     id = crypto.randomUUID(),
     wrapperClass = "",
-    componentClass = "",
+    componentClass = "bg-blue",
     disabled = false,
     content = {
       name: "",
@@ -95,9 +95,10 @@
   <button
     id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
     class="{twMerge(
-      `relative inline-block items-center w-full font-semibold transition duration-200 select-none 
-        ${content.icon && !content.name?.trim() ? 'bg-transparent p-0 rounded-full' : 'rounded-2xl py-1 px-2 bg-blue border border-(--bg-color) shadow-sm hover:shadow-md'}
-        ${disabled ? 'cursor-not-allowed opacity-50 hover:shadow-none' : 'cursor-pointer active:scale-97'} `,
+      `relative inline-block items-center font-semibold w-full transition duration-200 select-none
+      ${componentClass.split(' ').find((cl: string) => cl === 'bg-transparent') || !componentClass.split(' ').find((cl: string) => cl.startsWith('bg-')) ? 'underline ' : 'border border-(--bg-color) shadow-sm hover:shadow-md'}
+      ${content.icon && !content.name?.trim() ? 'rounded-full' : 'rounded-2xl py-1 px-2'}
+      ${disabled ? 'cursor-not-allowed opacity-50 hover:shadow-none' : 'cursor-pointer active:scale-97'} `,
       componentClass,
     )} bg-(--bg-color)"
     style={!content.name?.trim() && content.name && content.icon ? `padding-inline: ${content.name.length / 2}rem` : ""}
@@ -111,7 +112,7 @@
       if (content.info?.text) showInfo = false
     }}
   >
-    <div class=" flex flex-row items-center justify-center gap-2">
+    <div class="flex flex-row items-center justify-center gap-2">
       {#if content?.icon}
         <span
           class={` ${content.name?.trim() ? "absolute left-3" : ""} ${typeof content?.icon == "string" ? "p-0.5" : ""} flex items-center justify-center overflow-visible 

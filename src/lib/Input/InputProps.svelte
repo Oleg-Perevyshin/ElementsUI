@@ -137,6 +137,7 @@
     type="buttons"
     value={$optionsStore.INPUT_TYPE_OPTIONS.find((opt) => opt.value === (component.properties.type || "text"))}
     onUpdate={(option) => {
+      if ((option as IOption<string>).value == "password" && component.properties.help.copyButton) updateProperty("help.copyButton", false)
       updateProperty("type", (option as UI.IOption).value as string)
     }}
   />
@@ -158,13 +159,14 @@
       />
       <UI.Button
         wrapperClass="w-8"
+        componentClass="bg-transparent"
         content={{ icon: Library, info: { text: $t("constructor.props.regexp.library.info"), side: "top" } }}
         onClick={() => {
           showRegExpLibrary = !showRegExpLibrary
         }}
       />
       {#if showRegExpLibrary}
-        <UI.Modal bind:isOpen={showRegExpLibrary} wrapperClass="w-200 h-[80%]">
+        <UI.Modal title={$t("constructor.props.regexp.library.info")} bind:isOpen={showRegExpLibrary} wrapperClass="w-200 h-[80%]">
           {#snippet main()}
             {#each $optionsStore.INPUT_REGEXP_OPTIONS as regexp}
               <div
@@ -188,6 +190,19 @@
         label={{ name: $t("constructor.props.textarea.rows") }}
         value={component.properties.textareaRows}
         onUpdate={(value) => updateProperty("textareaRows", value as string)}
+      />
+    {/if}
+    {#if component.properties.type === "text" || component.properties.type === "text-area"}
+      <UI.Select
+        label={{ name: $t("constructor.props.align.content") }}
+        options={$optionsStore.TEXT_ALIGN_OPTIONS.map((o) => (component.properties.bitMode && o.value != "number" ? { ...o, disabled: true } : o))}
+        type="buttons"
+        value={$optionsStore.TEXT_ALIGN_OPTIONS.find(
+          (opt) => opt.value === (component.properties.componentClass.split(" ").find((cl: string) => cl.startsWith("text-")) || "text-center"),
+        )}
+        onUpdate={(option) => {
+          updateProperty("componentClass", twMerge(component.properties.componentClass, (option as IOption<string>).value))
+        }}
       />
     {/if}
   {:else if !component.properties.bitMode && component.properties.type === "number" && !component.properties.readonly && !component.properties.disabled}
@@ -240,9 +255,11 @@
 {#snippet InputSettings()}
   <UI.Select
     wrapperClass="mt-5"
-    options={$optionsStore.INPUT_SETTING_OPTIONS.map((o) =>
-      (component.properties.type === "password" || component.properties.type === "number") && o.value == "help.copyButton" ? { ...o, disabled: true } : o,
-    )}
+    options={$optionsStore.INPUT_SETTING_OPTIONS.map((o) => {
+      if (component.properties.type === "number" && o.value === "bitMode") return { ...o, disabled: false }
+      else if (component.properties.type === "password" && o.value == "help.copyButton") return { ...o, disabled: true }
+      else return o
+    })}
     type="buttons"
     multiSelect={true}
     value={$optionsStore.INPUT_SETTING_OPTIONS.filter((opt) => {
@@ -259,7 +276,7 @@
           if (opt.value === "bitMode") {
             updateProperty("type", "number")
             updateProperty("number.minNum", 0)
-            updateProperty("number.maxNum", Math.pow(2, component.properties.range.end - component.properties.range.start + 1))
+            updateProperty("number.maxNum", Math.pow(2, component.properties.range.end - component.properties.range.start + 1) - 1)
             updateProperty("number.step", 1)
             updateProperty("help.info", `${$t("constructor.props.maxnum")}: ${component.properties.number.maxNum}`)
           }
@@ -351,7 +368,7 @@
           updateProperty("range.start", value[0] as number)
           updateProperty("range.end", value[1] as number)
           updateProperty("number.minNum", 0)
-          updateProperty("number.maxNum", Math.pow(2, component.properties.range.end - component.properties.range.start + 1))
+          updateProperty("number.maxNum", Math.pow(2, component.properties.range.end - component.properties.range.start + 1) - 1)
           updateProperty("number.step", 1)
           updateProperty("help.info", `${$t("constructor.props.maxnum")}: ${component.properties.number.maxNum}`)
         }
@@ -381,7 +398,7 @@
     </div>
   </div>
 {:else}
-  <!-- <div class="relative flex flex-row items-start justify-center">
+  <div class="relative flex flex-row items-start justify-center">
     <div class="flex w-1/3 flex-col px-2">
       {@render InputIdentificator()}
       {@render InputWrapperClass()}
@@ -405,5 +422,5 @@
         {@render InputBitmode()}
       </div>
     </div>
-  </div> -->
+  </div>
 {/if}

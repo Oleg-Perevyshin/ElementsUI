@@ -17,8 +17,8 @@
       label: { name: "Label", class: "text-center" },
       axes: [
         { name: "Pitch", minNum: -100, maxNum: 100 },
-        { name: "Roll", minNum: -100, maxNum: 100 },
         { name: "Yaw", minNum: -100, maxNum: 100 },
+        { name: "Roll", minNum: -100, maxNum: 100 },
       ],
     },
     eventHandler: { Header: "SET", Argument: "Save", Variables: [] },
@@ -108,7 +108,7 @@ ${formatObjectToString(joystickComponent.properties as IJoystickProps)}
   {/snippet}
   {#snippet examples()}
     <div class="flex">
-      <Joystick label={{ name: "Управление по 3 осям" }} isHomeButton />
+      <Joystick label={{ name: "Управление по 3 осям" }} />
       <Joystick
         label={{ name: "Управление по 2 осям" }}
         axes={[{ name: "Pitch", minNum: -100, maxNum: 100 }, { name: "" }, { name: "Yaw", minNum: -100, maxNum: 100 }]}

@@ -121,7 +121,13 @@
     </div>
   </div>
 {:else}
-  <div class={twMerge(" relative bg-blue m-1 flex items-center justify-center gap-2", wrapperClass)}>
+  <div
+    class={twMerge(
+      "relative bg-blue m-1 flex items-center justify-center gap-2",
+      wrapperClass,
+      options[0].class?.split(" ").find((cl) => cl.startsWith("bg-")),
+    )}
+  >
     <input
       id={ID}
       type="checkbox"

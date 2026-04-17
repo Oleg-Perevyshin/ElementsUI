@@ -111,7 +111,7 @@
     label={{ name: $t("constructor.props.align") }}
     type="buttons"
     value={initialAlign}
-    options={component.type == "Accordion" ? $optionsStore.JUSTIFY_ALIGN_OPTIONS : $optionsStore.TEXT_ALIGN_OPTIONS}
+    options={component.type == "Accordion" ? $optionsStore.JUSTIFY_ALIGN_OPTIONS : $optionsStore.TEXT_ALIGN_OPTIONS.slice(0, -1)}
     onUpdate={(option) =>
       updateProperty(
         "label.class",
@@ -205,8 +205,8 @@
 {/snippet}
 
 {#snippet MinMaxStep(initialValue: {
-  number: { minNum: number; maxNum: number; step: number }
-  bitMode: boolean
+  number: { minNum: number; maxNum: number; step?: number }
+  bitMode?: boolean
   updateProperty: (value: number, property: string) => {}
 })}
   <div class="flex">
@@ -224,7 +224,7 @@
       readonly={initialValue.bitMode}
       onUpdate={(value) => initialValue.updateProperty(value as number, "number.maxNum")}
     />
-    {#if component.type !== "ProgressBar"}
+    {#if component.type !== "ProgressBar" && component.type !== "Joystick"}
       <UI.Input
         label={{ name: $t("constructor.props.step") }}
         value={initialValue.number?.step}

@@ -124,6 +124,7 @@ export const optionsStore = derived(t, ($t) => {
       { id: id(), value: "text-left", name: $t("constructor.props.align.left") },
       { id: id(), value: "text-center", name: $t("constructor.props.align.center") },
       { id: id(), value: "text-right", name: $t("constructor.props.align.right") },
+      { id: id(), value: "text-justify", name: $t("constructor.props.align.justify") },
     ],
 
     ALIGN_OPTIONS: [
@@ -208,7 +209,7 @@ export const optionsStore = derived(t, ($t) => {
     INPUT_SETTING_OPTIONS: [
       { id: id(), value: "readonly", name: $t("constructor.props.readonly") },
       { id: id(), value: "help.copyButton", name: $t("constructor.props.copy") },
-      { id: id(), value: "bitMode", name: $t("constructor.props.bitMode") },
+      { id: id(), value: "bitMode", name: $t("constructor.props.bitMode"), disabled: true },
     ],
 
     BUFFER_SIZE_OPTIONS: [

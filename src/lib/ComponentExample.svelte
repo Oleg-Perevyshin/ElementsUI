@@ -36,7 +36,7 @@
     value={snippetOptions.find((o) => o.value == mainSnippet)}
     onUpdate={(value) => (mainSnippet = (value as IOption<string>).value)}
   />
-  <div class="flex-1 whitespace-pre">
+  <div class="flex-1">
     {@render renderCurrentSnippet()()}
   </div>
 </div>
@@ -58,7 +58,7 @@
       {@render componentProps()}
       <div class="relative mt-3">
         <button
-          class="absolute top-9 right-3 flex cursor-pointer border-none bg-transparent"
+          class="absolute top-2 right-3 flex cursor-pointer border-none bg-transparent"
           onclick={(e) => {
             e.preventDefault()
             navigator.clipboard.writeText(codeText)
@@ -67,7 +67,7 @@
           }}
           aria-label="Копировать текст"
         >
-          <div class=" size-6 text-sm [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full">
+          <div class="size-6 text-sm [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full">
             {#if isCopied}
               <div
                 class="right-1..5 absolute top-1/2 -translate-y-1/2 transform rounded-md bg-(--green-color) px-1.5 py-1 shadow-lg"

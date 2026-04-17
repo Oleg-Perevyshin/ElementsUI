@@ -84,7 +84,12 @@
     type="buttons"
     value={currentType}
     options={$optionsStore.SELECT_TYPE_OPTIONS}
-    onUpdate={(item) => updateProperty("type", (item as UI.IOption).value as string, component, onPropertyChange)}
+    onUpdate={(option) => {
+      if ((option as UI.IOption).value !== "buttons" && Array.isArray(component.properties.value))
+        updateProperty("value", component.properties.value[0], component, onPropertyChange)
+
+      updateProperty("type", (option as UI.IOption).value as string, component, onPropertyChange)
+    }}
   />
 {/snippet}
 
@@ -117,10 +122,9 @@
     onChange={(value) => {
       updateProperty("bitMode", value, component, onPropertyChange)
       const options = [...(component.properties?.options || [])]
-      const newType = $optionsStore.SELECT_VALUE_TYPE_OPTIONS[1].value
+      const maxNumber = Math.pow(2, component.properties.range.end - component.properties.range.start + 1) - 1
       options.forEach((option) => {
-        if (newType === "number") option.value = option.value !== undefined ? Number(option.value) : 0
-        else option.value = option.value !== undefined ? String(option.value) : ""
+        option.value = option.value !== undefined && option.value > 0 ? (option.value > maxNumber ? maxNumber : Number(option.value)) : 0
       })
       updateProperty("options", options, component, onPropertyChange)
     }}
@@ -161,6 +165,7 @@
       <h4>{$t("constructor.props.options.title")}</h4>
       <UI.Button
         wrapperClass="w-8"
+        componentClass="bg-transparent"
         content={{ icon: ButtonAdd }}
         onClick={() => {
           const newOption: IOption = {
@@ -201,7 +206,9 @@
           wrapperClass="w-3/10"
           value={option.value}
           type={currentValueType.value}
-          number={{ minNum: 0, maxNum: Math.pow(2, component.properties.range.end - component.properties.range.start + 1), step: 1 }}
+          number={component.properties.bitMode
+            ? { minNum: 0, maxNum: Math.pow(2, component.properties.range.end - component.properties.range.start + 1) - 1, step: 1 }
+            : { minNum: -1000000, maxNum: 1000000, step: 1 }}
           onUpdate={(value) => {
             const options = [...(component.properties?.options || [])]
             options[index]["value"] = value
@@ -236,6 +243,7 @@
 
         <UI.Button
           wrapperClass="w-8"
+          componentClass="bg-transparent"
           content={{ icon: ButtonDelete }}
           onClick={() => {
             const options = [...(component.properties?.options || [])]

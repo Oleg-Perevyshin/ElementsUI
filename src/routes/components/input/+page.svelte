@@ -6,9 +6,6 @@
   import { updateComponent } from "$lib/types"
   import { formatObjectToString, TableColumns } from "../../common"
 
-  let valid = $state(false)
-  let value = $state(undefined)
-
   let inputComponent: UIComponent = $state({
     id: crypto.randomUUID(),
     type: "Input",
@@ -17,7 +14,8 @@
       id: crypto.randomUUID(),
       label: { name: "Label", class: "text-center" },
       componentClass: "bg-max resize-none",
-      type: "text",
+      type: "text-area",
+      value: "dlskjlkdcfsdl",
       bitMode: false,
       range: { start: 0, end: 1 },
       maxlength: 32,
@@ -146,8 +144,6 @@ ${formatObjectToString(inputComponent.properties as IInputProps)}
             properties: { value: value },
           })
         }}
-        bind:value
-        bind:isValid={valid}
       />
     </div>
   {/snippet}

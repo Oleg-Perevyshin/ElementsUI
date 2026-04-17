@@ -33,7 +33,7 @@
 
         <div
           class="{twMerge(
-            'flex w-full justify-start',
+            'flex w-full justify-start ',
             label.class?.split(' ').find((cls: string) => cls.startsWith('justify-')),
           )} "
         >

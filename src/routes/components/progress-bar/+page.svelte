@@ -17,7 +17,7 @@
         { name: "Label 2", class: "bg-blue" },
         { name: "Label 3", class: "bg-blue" },
       ],
-      value: [{ Value: 50 }, { Value: 50 }, { Value: 50 }],
+      value: [{ Name: "LABEL 1", Value: 50 }, { Value: 50 }, { Value: 50 }],
       number: { minNum: 0, maxNum: 100, units: "%" },
     },
     position: { row: 0, col: 0, width: 0, height: 0 },

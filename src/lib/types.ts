@@ -250,7 +250,6 @@ export interface IJoystickProps {
   id?: string
   wrapperClass?: string
   label?: { name?: string; class?: string }
-  isHomeButton?: boolean
   value?: number[]
   readonly?: boolean
   axes?: { name: string; minNum?: number; maxNum?: number }[]

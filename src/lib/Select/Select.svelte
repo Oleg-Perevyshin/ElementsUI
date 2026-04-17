@@ -158,7 +158,7 @@
             option.class,
           )} bg-(--bg-color)"
           onclick={(e) => selectOption(option, e)}
-          disabled={option.disabled}
+          disabled={option.disabled || disabled}
         >
           <span class="flex flex-row items-center justify-center gap-4">
             {#if option.name}

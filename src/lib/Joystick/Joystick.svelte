@@ -6,13 +6,12 @@
     id = crypto.randomUUID(),
     wrapperClass = "",
     label = { name: "", class: "" },
-    value = $bindable([0, 0, 0]),
-    isHomeButton = false,
+    value = $bindable([0, 0, 0, 0]),
     readonly = false,
     axes = [
       { name: "Pitch", minNum: -360, maxNum: 360 },
-      { name: "Roll", minNum: -360, maxNum: 360 },
       { name: "Yaw", minNum: -360, maxNum: 360 },
+      { name: "Roll", minNum: -360, maxNum: 360 },
     ],
     buttonIcon,
     onUpdate = () => {},
@@ -24,7 +23,7 @@
       angle: 30.5,
       mainButton: true,
       onClick: () => {
-        updateValue(2, +sensitivity)
+        updateValue(1, +sensitivity)
         onUpdate(value)
       },
     },
@@ -33,7 +32,7 @@
       angle: 58,
       mainButton: false,
       onClick: () => {
-        updateValue(2, +sensitivity)
+        updateValue(1, +sensitivity)
         updateValue(0, -sensitivity)
         onUpdate(value)
       },
@@ -52,7 +51,7 @@
       angle: 149.5,
       mainButton: false,
       onClick: () => {
-        updateValue(2, -sensitivity)
+        updateValue(1, -sensitivity)
         updateValue(0, -sensitivity)
         onUpdate(value)
       },
@@ -62,7 +61,7 @@
       angle: 212,
       mainButton: true,
       onClick: () => {
-        updateValue(2, -sensitivity)
+        updateValue(1, -sensitivity)
         onUpdate(value)
       },
     },
@@ -72,7 +71,7 @@
       mainButton: false,
       onClick: () => {
         updateValue(0, +sensitivity)
-        updateValue(2, -sensitivity)
+        updateValue(1, -sensitivity)
         onUpdate(value)
       },
     },
@@ -91,7 +90,7 @@
       mainButton: false,
       onClick: () => {
         updateValue(0, +sensitivity)
-        updateValue(2, +sensitivity)
+        updateValue(1, +sensitivity)
         onUpdate(value)
       },
     },
@@ -179,16 +178,10 @@
         <!-- Кнопка по центру -->
         <div class="z-20 flex size-20 items-center justify-center rounded-full bg-(--bg-color) shadow-[0_0_15px_rgb(0_0_0_/0.25)]">
           <button
-            class="flex size-17 cursor-pointer rounded-full p-2 origin-center active:scale-95
+            class="flex size-18 cursor-pointer rounded-full p-2 origin-center active:scale-95
             [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
-            style="background: {!isHomeButton && value[3] == 1 ? 'color-mix(in srgb, var(--bg-color), var(--shadow-color) 10%)' : 'var(--bg-color)'}"
-            onmouseenter={(e) => {
-              if (isHomeButton) e.currentTarget.style.backgroundColor = "color-mix(in srgb, var(--bg-color), var(--shadow-color) 20%)"
-            }}
-            onmouseleave={(e) => {
-              if (isHomeButton) e.currentTarget.style.backgroundColor = "var(--bg-color)"
-            }}
-            onclick={() => (isHomeButton ? (value = [0, 0, 0]) : (value[3] = value[3] == 0 ? 1 : 0))}
+            style="background: {value[3] == 1 ? 'color-mix(in srgb, var(--bg-color), var(--shadow-color) 10%)' : 'var(--bg-color)'}"
+            onclick={() => (value[3] = value[3] == 0 ? 1 : 0)}
           >
             {#if buttonIcon}
               {#if typeof buttonIcon === "string"}
@@ -208,8 +201,32 @@
           </button>
         </div>
       </div>
+
+      <div class="absolute top-4 w-55 flex items-center justify-between">
+        {#each [0, 1] as i}
+          <button
+            class="flex shadow-sm hover:shadow-md transition duration-200 justify-center cursor-pointer items-center bg-(--back-color) rounded-full size-10 p-0.5
+            {i ? 'font-semibold text-2xl' : ''} [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
+            style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"
+            title=""
+            onclick={() => (i ? (value = [0, 0, 0, 0]) : {})}
+          >
+            {#if i}
+              0
+            {:else}
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
+                ><path
+                  fill="currentColor"
+                  d="M6 19h3v-5q0-.425.288-.712T10 13h4q.425 0 .713.288T15 14v5h3v-9l-6-4.5L6 10zm-2 0v-9q0-.475.213-.9t.587-.7l6-4.5q.525-.4 1.2-.4t1.2.4l6 4.5q.375.275.588.7T20 10v9q0 .825-.588 1.413T18 21h-4q-.425 0-.712-.288T13 20v-5h-2v5q0 .425-.288.713T10 21H6q-.825 0-1.412-.587T4 19m8-6.75"
+                /></svg
+              >
+            {/if}
+          </button>
+        {/each}
+      </div>
+
       <!-- Боковые кнопки (ось roll) -->
-      {#if axes[1].name !== ""}
+      {#if axes[2].name !== ""}
         <div
           class="absolute flex h-15 w-65 items-center justify-between rounded-full shadow-[0_0_15px_rgb(0_0_0_/0.25)]"
           style="background: color-mix(in srgb, var(--bg-color), var(--shadow-color) 10%)"
@@ -218,12 +235,12 @@
             class="btn-segment h-full cursor-pointer rounded-l-full px-3.5"
             title=""
             onclick={() => {
-              if (value[1] - sensitivity <= (axes[1].minNum ?? -360)) {
-                value[1] = axes[1].minNum ?? -360
+              if (value[2] - sensitivity <= (axes[2].minNum ?? -360)) {
+                value[2] = axes[2].minNum ?? -360
                 onUpdate(value)
                 return
               }
-              value[1] = roundToClean(value[1] - sensitivity)
+              value[2] = roundToClean(value[2] - sensitivity)
               onUpdate(value)
             }}
             onmouseenter={(e) => (e.currentTarget.style.backgroundColor = "color-mix(in srgb, var(--bg-color), var(--shadow-color) 30%)")}
@@ -242,12 +259,12 @@
             class="btn-segment h-full cursor-pointer rounded-r-full px-3.5"
             title=""
             onclick={() => {
-              if (value[1] + sensitivity >= (axes[1].maxNum ?? 360)) {
-                value[1] = axes[1].maxNum ?? 360
+              if (value[2] + sensitivity >= (axes[2].maxNum ?? 360)) {
+                value[2] = axes[2].maxNum ?? 360
                 onUpdate(value)
                 return
               }
-              value[1] = roundToClean(value[1] + sensitivity)
+              value[2] = roundToClean(value[2] + sensitivity)
               onUpdate(value)
             }}
             onmouseenter={(e) => (e.currentTarget.style.backgroundColor = "color-mix(in srgb, var(--bg-color), var(--shadow-color) 30%)")}
@@ -302,7 +319,7 @@
 
     <div class="flex justify-around items-end gap-2">
       {#each axes as axe, index}
-        {#if axe.name !== "" || index !== 1}
+        {#if axe.name !== "" || index !== 2}
           <div>
             <h5 class="px-2 text-center">{axe.name}</h5>
             <input

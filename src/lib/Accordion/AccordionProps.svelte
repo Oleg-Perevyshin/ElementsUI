@@ -42,7 +42,7 @@
 </script>
 
 {#snippet AccordionBackgroundImage()}
-  <div class="flex">
+  <div class="flex items-center">
     <UI.FileAttach
       type="image"
       label={{ name: $t("constructor.props.image") }}

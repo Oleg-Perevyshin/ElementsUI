@@ -7,6 +7,7 @@
   import { twMerge } from "tailwind-merge"
   import { ICONS } from "$lib/icons"
   import CommonSnippets from "$lib/CommonSnippets.svelte"
+  import InfoIcon from "$lib/libIcons/InfoIcon.svelte"
 
   const {
     component,
@@ -35,6 +36,28 @@
       (h.value as string).includes(component.properties.componentClass?.split(" ").find((cls: string) => cls.startsWith("py-"))),
     ),
   )
+  const updateIconProperty = (propertyName: string, value: string) => {
+    updateProperty(propertyName, value, component, onPropertyChange)
+    if (component.properties.content.icon && !component.properties.content.name?.trim())
+      updateProperty("componentClass", twMerge((component.properties as UI.IButtonProps).componentClass, "w-fit p-2"), component, onPropertyChange)
+    else if (
+      (component.properties.content.icon && component.properties.content.name?.trim()) ||
+      (!component.properties.content.icon && !component.properties.content.name?.trim())
+    )
+      updateProperty("componentClass", twMerge((component.properties as UI.IButtonProps).componentClass, "w-full px-1 py-1"), component, onPropertyChange)
+  }
+
+  const updateButtonColor = (option: UI.IOption<string>) => {
+    if (initialColor?.value === option.value)
+      updateProperty("componentClass", twMerge(component.properties.componentClass, "bg-transparent"), component, onPropertyChange)
+    else
+      updateProperty(
+        "componentClass",
+        twMerge((component.properties as UI.IButtonProps).componentClass, (option as UI.IOption<string>).value),
+        component,
+        onPropertyChange,
+      )
+  }
 </script>
 
 {#snippet ButtonHeaderArgument()}
@@ -90,17 +113,7 @@
   <UI.Input
     label={{ name: $t("constructor.props.name") }}
     value={component.properties.content.name}
-    onUpdate={(value) => {
-      updateProperty("content.name", value as string, component, onPropertyChange)
-      if (component.properties.content.icon && !component.properties.content.name?.trim()) {
-        updateProperty("componentClass", twMerge((component.properties as UI.IButtonProps).componentClass, "w-fit"), component, onPropertyChange)
-      } else if (
-        (component.properties.content.icon && component.properties.content.name?.trim()) ||
-        (!component.properties.content.icon && !component.properties.content.name?.trim())
-      ) {
-        updateProperty("componentClass", twMerge((component.properties as UI.IButtonProps).componentClass, "w-full"), component, onPropertyChange)
-      }
-    }}
+    onUpdate={(value) => updateIconProperty("content.name", value as string)}
   />
 {/snippet}
 
@@ -143,6 +156,25 @@
   />
 {/snippet}
 
+{#snippet ButtonColors()}
+  <div class="flex items-end gap-2">
+    <UI.Button
+      wrapperClass="w-8"
+      componentClass="bg-transparent"
+      content={{ icon: InfoIcon, info: { text: $t("constructor.props.button.colors.hint"), side: "right" } }}
+    />
+    <CommonSnippets
+      snippet="Colors"
+      initialValue={{
+        color: initialColor,
+        updateProperty: (option: UI.IOption<string>) => updateButtonColor(option),
+      }}
+      {component}
+      {onPropertyChange}
+    />
+  </div>
+{/snippet}
+
 {#if forConstructor}
   <div class="relative flex flex-row items-start justify-center">
     <!-- Сообщение для отправки в ws по нажатию кнопки -->
@@ -152,33 +184,7 @@
     </div>
     <div class="flex w-1/3 flex-col px-2">
       {@render ButtonVariables()}
-      <CommonSnippets
-        snippet="Colors"
-        initialValue={{
-          color: initialColor,
-          updateProperty: (option: UI.IOption<string>) => {
-            if (!component.properties.content.name && component.properties.content.icon && initialColor?.value === option.value) {
-              updateProperty(
-                "componentClass",
-                component.properties.componentClass
-                  .split(" ")
-                  .filter((cl: string) => !cl.startsWith("bg-"))
-                  .join(" "),
-                component,
-                onPropertyChange,
-              )
-            } else
-              updateProperty(
-                "componentClass",
-                twMerge((component.properties as UI.IButtonProps).componentClass, (option as UI.IOption<string>).value),
-                component,
-                onPropertyChange,
-              )
-          },
-        }}
-        {component}
-        {onPropertyChange}
-      />
+      {@render ButtonColors()}
     </div>
     <div class="flex w-1/3 flex-col px-2">
       {@render ButtonName()}
@@ -187,13 +193,7 @@
         initialValue={{
           name: $t("constructor.props.buttonIcon"),
           icon: component.properties.content.icon,
-          updateProperty: (icon: string) => {
-            updateProperty("content.icon", icon as string, component, onPropertyChange)
-            if (component.properties.content.icon && !component.properties.content.name?.trim())
-              updateProperty("componentClass", twMerge((component.properties as UI.IButtonProps).componentClass, "w-fit"), component, onPropertyChange)
-            else if (!component.properties.content.icon && !component.properties.content.name?.trim())
-              updateProperty("componentClass", twMerge((component.properties as UI.IButtonProps).componentClass, "w-full"), component, onPropertyChange)
-          },
+          updateProperty: (icon: string) => updateIconProperty("content.icon", icon as string),
           icons: { array: ICONS },
         }}
         {component}
@@ -217,45 +217,13 @@
     </div>
     <div class="flex w-1/3 flex-col px-2">
       {@render ButtonComponentClass()}
-      <CommonSnippets
-        snippet="Colors"
-        initialValue={{
-          color: initialColor,
-          updateProperty: (option: UI.IOption<string>) => {
-            if (!component.properties.content.name && component.properties.content.icon && initialColor?.value === option.value) {
-              updateProperty(
-                "componentClass",
-                component.properties.componentClass
-                  .split(" ")
-                  .filter((cl: string) => !cl.startsWith("bg-"))
-                  .join(" "),
-                component,
-                onPropertyChange,
-              )
-            } else
-              updateProperty(
-                "componentClass",
-                twMerge((component.properties as UI.IButtonProps).componentClass, (option as UI.IOption<string>).value),
-                component,
-                onPropertyChange,
-              )
-          },
-        }}
-        {component}
-        {onPropertyChange}
-      />
+      {@render ButtonColors()}
       <CommonSnippets
         snippet="IconsLib"
         initialValue={{
           name: $t("constructor.props.buttonIcon"),
           icon: component.properties.content.icon,
-          updateProperty: (icon: string) => {
-            updateProperty("content.icon", icon as string, component, onPropertyChange)
-            if (component.properties.content.icon && !component.properties.content.name?.trim())
-              updateProperty("componentClass", twMerge((component.properties as UI.IButtonProps).componentClass, "w-fit"), component, onPropertyChange)
-            else if (!component.properties.content.icon && !component.properties.content.name?.trim())
-              updateProperty("componentClass", twMerge((component.properties as UI.IButtonProps).componentClass, "w-full"), component, onPropertyChange)
-          },
+          updateProperty: (icon: string) => updateIconProperty("content.icon", icon as string),
           icons: { array: ICONS },
         }}
         {component}

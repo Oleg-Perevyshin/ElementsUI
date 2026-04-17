@@ -136,6 +136,7 @@
       <h4>{$t("constructor.props.table.columns")}</h4>
       <UI.Button
         wrapperClass="w-8"
+        componentClass="bg-transparent"
         content={{ icon: ButtonAdd }}
         onClick={() => {
           const newColumn: ITableHeader<any> = {
@@ -219,6 +220,7 @@
           </div>
           <UI.Button
             wrapperClass="w-8"
+            componentClass="bg-transparent"
             content={{ icon: ButtonDelete }}
             onClick={() => {
               const headers = [...(component.properties.header || [])]
@@ -455,6 +457,7 @@
 
                 <UI.Button
                   wrapperClass="absolute right-2 bottom-2 w-8"
+                  componentClass="bg-transparent"
                   content={{ icon: ButtonDelete }}
                   onClick={() => {
                     const headers = [...(component.properties.header || [])]

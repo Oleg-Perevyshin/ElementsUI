@@ -38,13 +38,13 @@
     {#each component.properties.axes as axe, index}
       {@const axesOptions = [
         { name: $t("constructor.props.joystick.pitch.axe"), info: "", regExp: /^[\p{L}0-9\-_"':{}]+$/u },
-        { name: $t("constructor.props.joystick.roll.axe"), info: $t("constructor.props.joystick.axes.info"), regExp: /^[\p{L}0-9\-_"':{}]*$/u },
         { name: $t("constructor.props.joystick.yaw.axe"), info: "", regExp: /^[\p{L}0-9\-_"':{}]+$/u },
+        { name: $t("constructor.props.joystick.roll.axe"), info: $t("constructor.props.joystick.axes.info"), regExp: /^[\p{L}0-9\-_"':{}]*$/u },
       ]}
       <div class="flex flex-col gap-1">
         <UI.Input
           label={{ name: axesOptions[index].name }}
-          value={component.properties.axes[index].name}
+          value={axe.name}
           help={{ info: axesOptions[index].info, regExp: axesOptions[index].regExp }}
           maxlength={20}
           onUpdate={(value) => {
@@ -57,35 +57,27 @@
           }}
         />
 
-        <UI.Slider
-          type="range"
-          number={{ minNum: -360, maxNum: 360, step: 10 }}
-          disabled={index == 1 && axe.name == ""}
-          value={[component.properties.axes[index].minNum, component.properties.axes[index].maxNum]}
-          onUpdate={(value) => {
-            if (Array.isArray(value))
+        <CommonSnippets
+          snippet="MinMaxStep"
+          initialValue={{
+            number: { minNum: axe.minNum, maxNum: axe.maxNum },
+            bitMode: index == 2 && axe.name == "",
+            updateProperty: (value: number, property: string) => {
               updateProperty(
                 "axes",
-                component.properties.axes.map((a: any, i: number) => (i === index ? { ...a, minNum: value[0], maxNum: value[1] } : a)),
+                component.properties.axes.map((a: any, i: number) => (i === index ? { ...a, [property.split(".")[1]]: value } : a)),
                 component,
                 onPropertyChange,
               )
+            },
           }}
+          {component}
+          {onPropertyChange}
         />
       </div>
     {/each}
   </div>
 {/snippet}
-
-{#snippet JoystickHomeButton()}
-  <UI.Switch
-    label={{ name: $t("constructor.props.joystick.homebutton") }}
-    value={component.properties.isHomeButton}
-    options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-    onChange={(value) => {
-      updateProperty("isHomeButton", value, component, onPropertyChange)
-    }}
-  />{/snippet}
 
 {#if forConstructor}
   <div>
@@ -98,7 +90,6 @@
       <div class="flex w-1/3 flex-col px-2">
         <CommonSnippets snippet="Label" {component} {onPropertyChange} />
         <CommonSnippets snippet="LabelAlign" initialValue={initialAlign} {component} {onPropertyChange} />
-        {@render JoystickHomeButton()}
       </div>
       <div class="flex w-1/3 flex-col px-2">
         <CommonSnippets
@@ -123,12 +114,11 @@
       <div class="flex w-1/3 flex-col px-2">
         <CommonSnippets snippet="Identificator" {component} {onPropertyChange} />
         <CommonSnippets snippet="Access" {component} {onPropertyChange} />
-        <CommonSnippets snippet="Readonly" {component} {onPropertyChange} />
       </div>
       <div class="flex w-1/3 flex-col px-2">
         <CommonSnippets snippet="Label" {component} {onPropertyChange} />
         <CommonSnippets snippet="LabelClass" {component} {onPropertyChange} />
-        {@render JoystickHomeButton()}
+        <CommonSnippets snippet="Readonly" {component} {onPropertyChange} />
       </div>
       <div class="flex w-1/3 flex-col px-2">
         <CommonSnippets
