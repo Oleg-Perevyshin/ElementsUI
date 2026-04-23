@@ -124,11 +124,11 @@
 
     {#if isDropdownOpen}
       <div
-        class="absolute top-full left-1/2 z-50 -translate-x-1/2 rounded-b-xl shadow-[0_0_3px_rgb(0_0_0_/0.25)]"
+        class="absolute top-full left-1/2 z-50 rounded-b-xl -translate-x-1/2 shadow-[0_0_3px_rgb(0_0_0_/0.25)]"
         style="width: calc(100% - 1.8rem);"
         transition:slide={{ duration: 250 }}
       >
-        <div class="overflow-y-auto bg-(--back-color)" style="max-height: {listHeight};">
+        <div class="overflow-y-auto bg-(--back-color) rounded-b-xl" style="max-height: {listHeight};">
           {#each options as option, index (option.id)}
             <button
               id={option.id}
@@ -195,7 +195,7 @@
         style="width: calc(100% - 1.8rem); "
         transition:slide={{ duration: 250 }}
       >
-        <div class="overflow-y-auto bg-(--back-color)" style="max-height: {listHeight};">
+        <div class="overflow-y-auto bg-(--back-color) rounded-b-xl" style="max-height: {listHeight};">
           {#each filteredOptions as option, index (option.id)}
             <button
               id={option.id}
