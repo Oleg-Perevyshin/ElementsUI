@@ -209,8 +209,7 @@
               [&::-webkit-slider-thumb]:ml-[-0.4rem] 
               [&::-webkit-slider-thumb]:h-4
               [&::-webkit-slider-thumb]:w-4
-              [&::-webkit-slider-thumb]:cursor-pointer
-              ${disabled ? "[&::-webkit-slider-thumb]:cursor-not-allowed" : ""}
+              ${disabled ? "[&::-webkit-slider-thumb]:cursor-not-allowed" : "[&::-webkit-slider-thumb]:cursor-pointer"}
               [&::-webkit-slider-thumb]:rounded-full
             [&::-webkit-slider-thumb]:shadow-[var(--focus-shadow),]
             ${
@@ -221,8 +220,7 @@
             [&::-moz-range-thumb]:relative 
             [&::-moz-range-thumb]:ml-[-0.4rem]
             [&::-moz-range-thumb]:size-4 
-            [&::-moz-range-thumb]:cursor-pointer 
-            ${disabled ? "[&::-moz-range-thumb]:cursor-not-allowed" : ""}
+            ${disabled ? "[&::-moz-range-thumb]:cursor-not-allowed" : "[&::-moz-range-thumb]:cursor-pointer"}
             [&::-moz-range-thumb]:rounded-full
             [&::-moz-range-thumb]:shadow-[var(--focus-shadow),] 
             [&::-moz-range-thumb]:ring-[6px] 
@@ -247,7 +245,7 @@
           style="background-color: var(--bg-color)"
         >
           <button
-            class="h-full w-4 {disabled ? '' : 'cursor-pointer'}"
+            class="h-full w-4 {disabled ? 'cursor-not-allowed' : 'cursor-pointer'}"
             onclick={disabled ? undefined : () => adjustValue(type as "lower" | "upper", "decrement")}
             disabled={disabled || (type === "lower" ? lowerValue <= number.minNum : upperValue <= lowerValue)}>−</button
           >
@@ -255,7 +253,7 @@
             {type === "lower" ? lowerValue : upperValue}
           </span>
           <button
-            class="h-full w-4 {disabled ? '' : 'cursor-pointer'}"
+            class="h-full w-4 {disabled ? 'cursor-not-allowed' : 'cursor-pointer'}"
             onclick={disabled ? undefined : () => adjustValue(type as "lower" | "upper", "increment")}
             disabled={disabled || (type === "lower" ? lowerValue >= upperValue : upperValue >= number.maxNum)}>+</button
           >
@@ -267,7 +265,7 @@
         style="background-color: var(--bg-color) "
       >
         <button
-          class="h-full w-4 {disabled ? '' : 'cursor-pointer'}"
+          class="h-full w-4 {disabled ? 'cursor-not-allowed' : 'cursor-pointer'}"
           onclick={disabled ? undefined : () => adjustValue("single", "decrement")}
           disabled={disabled || singleValue <= number.minNum}>−</button
         >
@@ -275,7 +273,7 @@
           {singleValue}
         </span>
         <button
-          class="h-full w-4 {disabled ? '' : 'cursor-pointer'}"
+          class="h-full w-4 {disabled ? 'cursor-not-allowed' : 'cursor-pointer'}"
           onclick={disabled ? undefined : () => adjustValue("single", "increment")}
           disabled={disabled || singleValue >= number.maxNum}>+</button
         >

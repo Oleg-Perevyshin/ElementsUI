@@ -121,10 +121,11 @@
 {#if forConstructor}
   <div class="relative flex flex-row items-start justify-center">
     <div class="flex w-1/3 flex-col px-2">
+      <CommonSnippets snippet="Access" {component} {onPropertyChange} />
       <CommonSnippets snippet="Variable" {VARIABLE_OPTIONS} {component} {onPropertyChange} />
-      {@render TextFieldName()}
     </div>
     <div class="flex w-1/3 flex-col px-2">
+      {@render TextFieldName()}
       <CommonSnippets snippet="LabelAlign" initialValue={initialAlign} {component} {onPropertyChange} />
       {@render TextFieldColors()}
     </div>
@@ -137,6 +138,7 @@
   <div class="relative flex flex-row items-start justify-center">
     <div class="flex w-1/3 flex-col px-2">
       <CommonSnippets snippet="Identificator" {component} {onPropertyChange} />
+      <CommonSnippets snippet="Access" {component} {onPropertyChange} />
       {@render TextFieldName()}
     </div>
     <div class="flex w-1/3 flex-col px-2">

@@ -61,7 +61,7 @@
     {#if label.name}
       <h5 class={twMerge(`w-full px-4 text-center`, label.class)}>{label.name}</h5>
     {/if}
-    <div class="flex w-full ${type == 'vertical' ? 'flex-wrap' : ''} items-end justify-around gap-5">
+    <div class="flex w-full {type == 'vertical' ? 'flex-wrap' : ''} items-end justify-around gap-5">
       {#each localOptions as option, index}
         <div class={twMerge(`bg-blue flex flex-col`, option.class)}>
           {#if option.name && bitMode}
@@ -71,7 +71,7 @@
           <div class="relative flex w-full grow items-center justify-center bg-transparent">
             {#if type === "horizontal" && !bitMode && label.captionLeft}
               <button
-                class="mr-2 {option.disabled ? 'opacity-60' : 'cursor-pointer'}"
+                class="mr-2 {option.disabled ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'}"
                 style="width: {maxCaptionWidth}; text-align: end;"
                 onclick={() => handleCaptionClick(0)}>{label.captionLeft}</button
               >
@@ -79,7 +79,7 @@
 
             <label
               class="relative flex items-center justify-between rounded-full shadow-sm transition duration-200 border-(--bg-color)
-      {option.disabled ? 'opacity-60' : 'hover:shadow-md'}"
+      {option.disabled ? 'opacity-60 cursor-not-allowed' : 'hover:shadow-md'}"
             >
               <input
                 id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
@@ -92,13 +92,13 @@
               <span
                 class="relative flex items-center rounded-full border-(--bg-color) transition-all duration-250
         {checkedOptions[index] ? 'bg-(--bg-color)' : 'bg-(--back-color)'}
-        {option.disabled ? '' : 'cursor-pointer'}"
+        {option.disabled ? 'cursor-not-allowed' : 'cursor-pointer'}"
                 style="{type === 'horizontal' ? 'width' : 'height'}: {`calc(${height} * 2)`}; {type === 'horizontal' ? 'height' : 'width'}: {height};"
               >
                 <span
                   class="absolute rounded-full transition-all duration-250
                   {checkedOptions[index] ? 'bg-(--back-color)' : 'bg-(--bg-color)'}
-          {option.disabled ? 'opacity-60' : 'cursor-pointer'}"
+          {option.disabled ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'}"
                   style="width: {`calc(${height} * 0.8)`}; height: {`calc(${height} * 0.8)`}; margin: 0 {`calc(${height} * 0.1)`}; transform: {checkedOptions[
                     index
                   ]
@@ -110,7 +110,7 @@
 
             {#if type === "horizontal" && !bitMode && label.captionRight}
               <button
-                class="ml-2 {option.disabled ? 'opacity-60' : 'cursor-pointer'}"
+                class="ml-2 {option.disabled ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'}"
                 style="width: {maxCaptionWidth}; text-align: start;"
                 onclick={() => handleCaptionClick(1)}>{label.captionRight}</button
               >
@@ -164,7 +164,7 @@
       </div>
     {/if}
     {#if label.name}
-      <label for={ID} class={twMerge(`${options[0].disabled ? "cursor-not-allowed opacity-70" : "cursor-pointer"} ml-1 select-none`, label.class)}>
+      <label for={ID} class={twMerge(`${options[0].disabled ? "" : "cursor-pointer"} ml-1 select-none`, label.class)}>
         {label.name}
       </label>
     {/if}

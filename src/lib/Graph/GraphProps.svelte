@@ -40,6 +40,7 @@
 {#if forConstructor}
   <div class="relative flex flex-row items-start justify-center">
     <div class="flex w-1/3 flex-col px-2">
+      <CommonSnippets snippet="Access" {component} {onPropertyChange} />
       <CommonSnippets snippet="Variable" {VARIABLE_OPTIONS} {component} {onPropertyChange} />
     </div>
     <div class="flex w-1/3 flex-col px-2">
@@ -53,13 +54,14 @@
   <div class="relative mb-2 flex flex-row items-start justify-center">
     <div class="flex w-1/3 flex-col px-2">
       <CommonSnippets snippet="Identificator" {component} {onPropertyChange} />
-      <CommonSnippets snippet="WrapperClass" {component} {onPropertyChange} />
+      <CommonSnippets snippet="Access" {component} {onPropertyChange} />
     </div>
     <div class="flex w-1/3 flex-col px-2">
       <CommonSnippets snippet="Label" {component} {onPropertyChange} />
       <CommonSnippets snippet="LabelClass" initialValue={initialAlign} {component} {onPropertyChange} />
     </div>
     <div class="flex w-1/3 flex-col px-2">
+      <CommonSnippets snippet="WrapperClass" {component} {onPropertyChange} />
       {@render GraphIsTest()}
     </div>
   </div>

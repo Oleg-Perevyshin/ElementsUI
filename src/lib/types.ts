@@ -300,6 +300,7 @@ export interface ISelectProps<T = unknown> {
   label?: { name?: string; class?: string }
   type?: "select" | "buttons" | "input"
   multiSelect?: boolean
+  listHeight?: string
   value?: IOption<T> | IOption<T>[] | null
   options?: IOption<T>[]
   bitMode?: boolean

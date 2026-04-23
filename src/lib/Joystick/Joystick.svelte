@@ -202,8 +202,17 @@
         </div>
       </div>
 
-      <div class="absolute top-4 w-55 flex items-center justify-between">
-        {#each [0, 1] as i}
+      <div class="absolute top-4 w-55 flex items-center justify-end">
+        <button
+          class="flex shadow-sm hover:shadow-md transition duration-200 justify-center cursor-pointer items-center bg-(--back-color) rounded-full size-10 p-0.5
+           font-semibold text-2xl [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
+          style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"
+          title=""
+          onclick={() => (value = [0, 0, 0, 0])}
+        >
+          0
+        </button>
+        <!-- {#each [0, 1] as i}
           <button
             class="flex shadow-sm hover:shadow-md transition duration-200 justify-center cursor-pointer items-center bg-(--back-color) rounded-full size-10 p-0.5
             {i ? 'font-semibold text-2xl' : ''} [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
@@ -222,7 +231,7 @@
               >
             {/if}
           </button>
-        {/each}
+        {/each} -->
       </div>
 
       <!-- Боковые кнопки (ось roll) -->

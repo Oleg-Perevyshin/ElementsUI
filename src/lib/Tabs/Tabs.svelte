@@ -46,7 +46,7 @@
                     ),
                   )?.value,
                 )
-              : `bg-(--bg-color) text-gray-500 ${item.disabled ? "opacity-40" : ""} `,
+              : `bg-(--bg-color) text-gray-500 dark:text-gray-300 ${item.disabled ? "opacity-40" : ""} `,
           )}
           disabled={item.disabled}
           style="width: {item.class

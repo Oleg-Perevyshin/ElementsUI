@@ -10,6 +10,7 @@
   import CommonSnippets from "$lib/CommonSnippets.svelte"
   import { slide } from "svelte/transition"
   import Dragging from "$lib/Dragging.svelte"
+  import InfoIcon from "$lib/libIcons/InfoIcon.svelte"
 
   const {
     component,
@@ -300,18 +301,28 @@
                       onUpdate={(value) => updateContentProperty(columnIndex, index, "name", value)}
                     />
 
-                    <UI.Select
-                      wrapperClass="w-80 h-14.5"
-                      label={{ name: $t("constructor.props.colors") }}
-                      type="buttons"
-                      options={$optionsStore.COLOR_OPTIONS.filter((option) => option.value !== "bg-max")}
-                      value={$optionsStore.COLOR_OPTIONS.find((c) =>
-                        (c.value as string).includes(
-                          (button.class ?? component.properties.wrapperClass).split(" ").find((cls: string) => cls.startsWith("bg-")),
-                        ),
-                      )}
-                      onUpdate={(value) => updateContentProperty(columnIndex, index, "class", (value as UI.IOption).value)}
-                    />
+                    <div class="flex items-end gap-1">
+                      <UI.Button
+                        wrapperClass="w-8"
+                        componentClass="bg-transparent"
+                        content={{ icon: InfoIcon, info: { text: $t("constructor.props.button.colors.hint"), side: "right" } }}
+                      />
+                      <UI.Select
+                        wrapperClass="w-80 h-14.5"
+                        label={{ name: $t("constructor.props.colors") }}
+                        type="buttons"
+                        options={$optionsStore.COLOR_OPTIONS.filter((option) => option.value !== "bg-max")}
+                        value={$optionsStore.COLOR_OPTIONS.find((c) =>
+                          (c.value as string).includes(
+                            (button.class ?? component.properties.wrapperClass).split(" ").find((cls: string) => cls.startsWith("bg-")),
+                          ),
+                        )}
+                        onUpdate={(option) => {
+                          if (button.class === (option as UI.IOption).value) updateContentProperty(columnIndex, index, "class", "bg-transparent")
+                          else updateContentProperty(columnIndex, index, "class", (option as UI.IOption).value)
+                        }}
+                      />
+                    </div>
 
                     <div class="relative mt-6 flex w-1/4 gap-2">
                       <CommonSnippets
@@ -568,8 +579,8 @@
       <div class="flex items-end">
         {@render TableStashData()}
         {@render TableClearButton()}
-        {@render TableLogger()}
       </div>
+      {@render TableLogger()}
 
       {#if component.properties.dataBuffer.stashData}
         {@render TableBufferSize()}

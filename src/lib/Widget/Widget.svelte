@@ -65,7 +65,7 @@
     const inputRange = maxNumber - minNumber
 
     if (inputRange === 0) return 0
-    if (inputValue === maxNumber) return icons.array.length - 1
+    if (!icons?.cycling && inputValue === maxNumber) return icons.array.length - 1
 
     let stepIndex = icons?.cycling
       ? Math.ceil((clampedValue - minNumber) / (inputRange / 10))
@@ -190,18 +190,25 @@
         </div>
       {:else if settings.type == "switch"}
         <!-- Switch -->
-        <div class={twMerge(`flex bg-blue p-2 w-full flex-wrap items-end justify-center gap-1`, settings.class)}>
+        <div class={twMerge(`flex bg-blue p-2 w-full flex-wrap items-end justify-center gap-1 ${readonly ? "opacity-60" : ""}`, settings.class)}>
           {#if settings.switch?.captionLeft}
-            <button class="mr-2 cursor-pointer" style="width: {maxCaptionWidth}; text-align: end;" onclick={() => handleCaptionClick(0)}
-              >{settings.switch?.captionLeft}</button
+            <button
+              class="mr-2 {readonly ? 'cursor-not-allowed' : 'cursor-pointer'}"
+              style="width: {maxCaptionWidth}; text-align: end;"
+              onclick={() => handleCaptionClick(0)}>{settings.switch?.captionLeft}</button
             >
           {/if}
 
-          <label class="relative flex items-center justify-between rounded-full shadow-sm transition duration-200 border-(--bg-color) hover:shadow-md">
+          <label
+            class="relative flex items-center justify-between
+            rounded-full shadow-sm transition duration-200 border-(--bg-color) hover:shadow-md"
+          >
             <input
               id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
               type="checkbox"
-              class="absolute left-1/2 h-full w-full -translate-x-1/2 cursor-pointer appearance-none rounded-md"
+              class="absolute left-1/2 h-full w-full -translate-x-1/2 {readonly ? 'cursor-not-allowed' : 'cursor-pointer'} appearance-none rounded-md {readonly
+                ? 'cursor-not-allowed'
+                : ''}"
               disabled={readonly}
               checked={currentValue !== 0}
               onchange={() => {
@@ -212,13 +219,12 @@
             <span
               class="relative flex items-center rounded-full border-(--bg-color) transition-all duration-250
         {currentValue ? 'bg-(--bg-color)' : 'bg-(--back-color)'}
-       cursor-pointer"
+        {readonly ? 'cursor-not-allowed' : 'cursor-pointer'}"
               style="width: {`calc(2rem * 2)`}; height: 2rem;"
             >
               <span
                 class="absolute rounded-full transition-all duration-250
-                  {currentValue ? 'bg-(--back-color)' : 'bg-(--bg-color)'}
-          cursor-pointer'}"
+                  {currentValue ? 'bg-(--back-color)' : 'bg-(--bg-color)'} {readonly ? 'cursor-not-allowed' : 'cursor-pointer'}"
                 style="width: {`calc(2rem * 0.8)`}; height: {`calc(2rem * 0.8)`}; margin: 0 {`calc(2rem * 0.1)`}; transform: {currentValue
                   ? `translateX(calc(2rem))`
                   : 'translateX(0)'}"
@@ -227,15 +233,17 @@
           </label>
 
           {#if settings.switch?.captionRight}
-            <button class="ml-2 cursor-pointer" style="width: {maxCaptionWidth}; text-align: start;" onclick={() => handleCaptionClick(1)}
-              >{settings.switch?.captionRight}</button
+            <button
+              class="ml-2 {readonly ? 'cursor-not-allowed' : 'cursor-pointer'}"
+              style="width: {maxCaptionWidth}; text-align: start;"
+              onclick={() => handleCaptionClick(1)}>{settings.switch?.captionRight}</button
             >
           {/if}
         </div>
       {:else if settings.type == "slider"}
         {@const userAgent = navigator.userAgent}
         <!-- Cлайдер -->
-        <div class={twMerge(`flex flex-col items-center w-full bg-blue px-2 gap-1`, settings.class)}>
+        <div class={twMerge(`flex flex-col items-center w-full bg-blue px-2 gap-1 ${readonly ? "opacity-60" : ""}`, settings.class)}>
           <input
             type="range"
             min={settings.number?.minNum}
@@ -250,11 +258,10 @@
               [&::-webkit-slider-runnable-track]:bg-(--gray-color)
               [&::-webkit-slider-runnable-track]:shadow-sm
               [&::-webkit-slider-thumb]:relative 
-
               [&::-webkit-slider-thumb]:ml-[-0.4rem] 
               [&::-webkit-slider-thumb]:h-4
               [&::-webkit-slider-thumb]:w-4
-              [&::-webkit-slider-thumb]:cursor-pointer
+              ${readonly ? "[&::-webkit-slider-thumb]:cursor-not-allowed" : "[&::-webkit-slider-thumb]:cursor-pointer"}
               [&::-webkit-slider-thumb]:rounded-full
             [&::-webkit-slider-thumb]:shadow-[var(--focus-shadow),]
             ${
@@ -265,7 +272,7 @@
             [&::-moz-range-thumb]:relative 
             [&::-moz-range-thumb]:ml-[-0.4rem]
             [&::-moz-range-thumb]:size-4 
-            [&::-moz-range-thumb]:cursor-pointer 
+            ${readonly ? "[&::-moz-range-thumb]:cursor-not-allowed" : "[&::-moz-range-thumb]:cursor-pointer"}
             [&::-moz-range-thumb]:rounded-full
             [&::-moz-range-thumb]:shadow-[var(--focus-shadow),] 
             [&::-moz-range-thumb]:ring-[6px] 
@@ -282,27 +289,27 @@
             style="background-color: var(--bg-color) "
           >
             <button
-              class="h-full w-4 cursor-pointer"
+              class="h-full w-4 {readonly ? 'cursor-not-allowed' : 'cursor-pointer'}"
               onclick={() => {
                 currentValue = roundToClean(
                   Math.max(settings.number?.minNum ?? 0, Math.min(currentValue - (settings.number?.step ?? 1), settings.number?.maxNum ?? 10)),
                 )
                 onUpdate(currentValue)
               }}
-              disabled={currentValue <= (settings.number?.minNum ?? 0)}>−</button
+              disabled={readonly || currentValue <= (settings.number?.minNum ?? 0)}>−</button
             >
             <span class="inline-block text-center tabular-nums" style={`width: ${String(settings.number?.maxNum ?? 10).length + 1}ch`}>
               {currentValue}
             </span>
             <button
-              class="h-full w-4 cursor-pointer"
+              class="h-full w-4 {readonly ? 'cursor-not-allowed' : 'cursor-pointer'}"
               onclick={() => {
                 currentValue = roundToClean(
                   Math.max(settings.number?.minNum ?? 0, Math.min(currentValue + (settings.number?.step ?? 1), settings.number?.maxNum ?? 10)),
                 )
                 onUpdate(currentValue)
               }}
-              disabled={currentValue >= (settings.number?.maxNum ?? 10)}>+</button
+              disabled={readonly || currentValue >= (settings.number?.maxNum ?? 10)}>+</button
             >
           </div>
         </div>

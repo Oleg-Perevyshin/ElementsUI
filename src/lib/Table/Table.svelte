@@ -1,7 +1,7 @@
 <!-- $lib/ElementsUI/Table.svelte -->
 <script lang="ts">
   import { get } from "svelte/store"
-  import type { IOption, ITableContent, ITableHeader, ITableImage, ITableProgressBar, ITableProps, ITableText } from "../types"
+  import type { IOption, ITableButton, ITableContent, ITableHeader, ITableImage, ITableProgressBar, ITableProps, ITableText } from "../types"
   import { fade, fly, slide } from "svelte/transition"
   import { twMerge } from "tailwind-merge"
   import { onMount, tick } from "svelte"
@@ -121,7 +121,7 @@
     }
   }
 
-  const selectOption = async (index: number, key: any, option: IOption<string | number>, event: MouseEvent) => {
+  const selectOption = async (index: number, key: any, selectIndex: number, option: IOption<string | number>, event: MouseEvent) => {
     event.stopPropagation()
 
     let existingItem = body[index][key]
@@ -149,10 +149,6 @@
       x: event.clientX,
       y: event.clientY,
     }
-  }
-
-  const hideTooltip = () => {
-    tooltip.show = false
   }
 
   /* Для работы этой проверки в описании столбцов таблицы нужно явно указать что строка будет пустая при отсутствии иконки в БД -
@@ -327,9 +323,16 @@
                     {#each contentArray as content, index}
                       {#if content.type === "button"}
                         {@const button = typeof content.data === "function" ? content.data(row) : content.data}
+
                         <button
                           class="{twMerge(`flex w-full items-center justify-center gap-2 cursor-pointer rounded-full 
-                           px-4 py-1 font-semibold shadow-sm transition-shadow duration-200 outline-none select-none hover:shadow-md
+                           px-4 py-1 font-semibold duration-200 outline-none select-none
+                           ${
+                             ((content.data as ITableButton<object>).class as string).split(' ').find((cl: string) => cl === 'bg-transparent') ||
+                             !((content.data as ITableButton<object>).class as string).split(' ').find((cl: string) => cl.startsWith('bg-'))
+                               ? 'underline '
+                               : 'border border-(--bg-color) shadow-sm hover:shadow-md'
+                           }
                           ${typeof button.class === 'function' ? button.class(row) : button.class}`)} bg-(--bg-color)"
                           onclick={() => buttonClick(row, button)}
                         >
@@ -380,7 +383,7 @@
               ${option_index === options.length - 1 ? "rounded-b-2xl" : ""}`,
                                     option.class,
                                   )}
-                                  onclick={(e) => selectOption(i, select?.key, option, e)}
+                                  onclick={(e) => selectOption(i, select?.key, index, option, e)}
                                 >
                                   {option.name}
                                 </button>
@@ -431,7 +434,7 @@
                         <div
                           class="w-full max-w-full wrap-break-word {text?.truncated ? 'truncate' : ' whitespace-normal'}"
                           onmouseenter={text?.tooltip ? (e) => showTooltip(e, row[text?.key ?? ""], text?.formatting) : undefined}
-                          onmouseleave={text?.tooltip ? hideTooltip : undefined}
+                          onmouseleave={() => (text?.tooltip ? (tooltip.show = false) : undefined)}
                           onmousemove={text?.tooltip
                             ? (e) => {
                                 tooltip.x = e.clientX

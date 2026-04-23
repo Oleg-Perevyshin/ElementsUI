@@ -75,7 +75,7 @@ export const optionsStore = derived(t, ($t) => {
       { id: id(), name: "", value: "bg-red", class: "bg-red" },
       { id: id(), name: "", value: "bg-yellow", class: "bg-yellow" },
       { id: id(), name: "", value: "bg-green", class: "bg-green" },
-      { id: id(), name: "", value: "bg-blue", class: "bg-blue" },
+      { id: id(), name: "-", value: "bg-blue", class: "bg-blue text-transparent" },
       { id: id(), name: "", value: "bg-purple", class: "bg-purple" },
       { id: id(), name: "", value: "bg-gray", class: "bg-gray" },
     ],

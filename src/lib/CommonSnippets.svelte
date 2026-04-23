@@ -74,7 +74,6 @@
 
 {#snippet Colors(initialValue: { color: UI.IOption<string>; uselessColors?: string[]; updateProperty?: (option: UI.IOption | UI.IOption[]) => {} })}
   <UI.Select
-    wrapperClass="!h-14"
     label={{ name: $t("constructor.props.colors") }}
     type="buttons"
     options={$optionsStore.COLOR_OPTIONS.filter((o) => !initialValue.uselessColors?.includes(o.value))}
@@ -114,7 +113,7 @@
     options={component.type == "Accordion" ? $optionsStore.JUSTIFY_ALIGN_OPTIONS : $optionsStore.TEXT_ALIGN_OPTIONS.slice(0, -1)}
     onUpdate={(option) =>
       updateProperty(
-        "label.class",
+        component.type == "TextField" ? "content.class" : "label.class",
         twMerge(
           (
             component.properties as
@@ -229,6 +228,7 @@
         label={{ name: $t("constructor.props.step") }}
         value={initialValue.number?.step}
         type="number"
+        number={{ minNum: 0, maxNum: 1000000, step: 1 }}
         readonly={initialValue.bitMode}
         onUpdate={(value) => initialValue.updateProperty(value as number, "number.step")}
       />

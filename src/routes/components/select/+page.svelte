@@ -14,7 +14,7 @@
       wrapperClass: "bg-max",
       disabled: false,
       label: { name: "Label", class: "text-center" },
-      type: "buttons",
+      type: "input",
       multiSelect: true,
       bitMode: false,
       range: { start: 0, end: 1 },
@@ -24,7 +24,7 @@
         { id: "select-option-3", value: "3", name: "3", class: "bg-max" },
         { id: "select-option-4", value: "4", name: "4", class: "bg-max" },
       ],
-      value: [{ id: "select-option-1", value: "1", name: "Option 1", class: "bg-max" }],
+      value: { id: "select-option-3", value: "3", name: "3", class: "bg-max" },
     },
     eventHandler: { Header: "SET", Argument: "", Variables: [] },
     position: { row: 0, col: 0, width: 0, height: 0 },
@@ -147,6 +147,8 @@ ${formatObjectToString(selectComponent.properties as ISelectProps)}
     <UI.Select
       {...selectComponent.properties as ISelectProps}
       onUpdate={(value) => {
+        console.log(value)
+
         updateComponent(selectComponent, {
           properties: { value: value },
         })

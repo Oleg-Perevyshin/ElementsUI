@@ -15,6 +15,7 @@
     disabled = false,
     label = { name: "", class: "" },
     multiSelect = false,
+    listHeight = "",
     type = "select",
     value = $bindable(),
     options = [],
@@ -127,22 +128,24 @@
         style="width: calc(100% - 1.8rem);"
         transition:slide={{ duration: 250 }}
       >
-        {#each options as option, index (option.id)}
-          <button
-            id={option.id}
-            value={option?.value ? String(option.value) : ""}
-            class={twMerge(
-              `flex h-full w-full cursor-pointer items-center justify-center p-1 inset-shadow-[0_10px_10px_-15px_rgb(0_0_0_/0.5)] duration-250 hover:bg-(--field-color)!
-              ${index === options.length - 1 ? "rounded-b-xl" : ""}`,
-              option.class,
-            )}
-            onclick={(e) => selectOption(option, e)}
-            {disabled}
-            style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"
-          >
-            {option.name}
-          </button>
-        {/each}
+        <div class="overflow-y-auto bg-(--back-color)" style="max-height: {listHeight};">
+          {#each options as option, index (option.id)}
+            <button
+              id={option.id}
+              value={option?.value ? String(option.value) : ""}
+              class={twMerge(
+                `flex h-full w-full cursor-pointer items-center justify-center p-1 inset-shadow-[0_10px_10px_-15px_rgb(0_0_0_/0.5)] duration-250 hover:bg-(--field-color)
+            ${index === options.length - 1 ? "rounded-b-xl" : ""}`,
+                option.class,
+              )}
+              onclick={(e) => selectOption(option, e)}
+              {disabled}
+              style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"
+            >
+              {option.name}
+            </button>
+          {/each}
+        </div>
       </div>
     {/if}
   {:else if type === "buttons"}
@@ -182,7 +185,6 @@
       {disabled}
       oninput={handleSearch}
       onclick={(e) => {
-        // if (searchValue == "") filteredOptions = options
         toggleDropdown(e)
       }}
     />
@@ -190,25 +192,27 @@
     {#if isDropdownOpen}
       <div
         class="absolute select-none top-full left-1/2 z-50 -translate-x-1/2 rounded-b-xl border border-t-0 border-(--bg-color) shadow-[0_0_3px_rgb(0_0_0_/0.25)]"
-        style="width: calc(100% - 1.8rem);"
+        style="width: calc(100% - 1.8rem); "
         transition:slide={{ duration: 250 }}
       >
-        {#each filteredOptions as option, index (option.id)}
-          <button
-            id={option.id}
-            value={option?.value ? String(option.value) : ""}
-            class={twMerge(
-              `flex h-full w-full cursor-pointer items-center justify-center p-1 inset-shadow-[0_10px_10px_-15px_rgb(0_0_0_/0.5)] duration-250 hover:bg-(--field-color)!
+        <div class="overflow-y-auto bg-(--back-color)" style="max-height: {listHeight};">
+          {#each filteredOptions as option, index (option.id)}
+            <button
+              id={option.id}
+              value={option?.value ? String(option.value) : ""}
+              class={twMerge(
+                `flex h-full w-full cursor-pointer items-center justify-center p-1 inset-shadow-[0_10px_10px_-15px_rgb(0_0_0_/0.5)] duration-250 hover:bg-(--field-color)!
               ${index === filteredOptions.length - 1 ? "rounded-b-xl" : ""}`,
-              option.class,
-            )}
-            onclick={(e) => selectOption(option, e)}
-            {disabled}
-            style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"
-          >
-            {option.name}
-          </button>
-        {/each}
+                option.class,
+              )}
+              onclick={(e) => selectOption(option, e)}
+              {disabled}
+              style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"
+            >
+              {option.name}
+            </button>
+          {/each}
+        </div>
       </div>
     {/if}
   {/if}
