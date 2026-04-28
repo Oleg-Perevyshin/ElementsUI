@@ -83,9 +83,9 @@ export const optionsStore = derived(t, ($t) => {
     TEXT_COLOR_OPTIONS: [
       {
         id: "TEXT_COLOR_SHADOW",
-        name: "",
+        name: "-",
         value: "text-[#333] dark:text-[#e2e3e7]",
-        class: "bg-[var(--shadow-color)] dark:bg-[#e2e3e7] border-[var(--shadow-color)] dark:border-[#e2e3e7]",
+        class: "bg-[var(--shadow-color)] dark:bg-[#e2e3e7] border-[var(--shadow-color)] dark:border-[#e2e3e7] text-transparent",
       },
       { id: "TEXT_COLOR_RED", name: "", value: "text-red-500 dark:text-red-400", class: "bg-red-500 dark:bg-red-400 border-red-500 dark:border-red-400" },
       {

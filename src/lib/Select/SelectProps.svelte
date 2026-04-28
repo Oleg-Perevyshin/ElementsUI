@@ -165,7 +165,6 @@
       <h4>{$t("constructor.props.options.title")}</h4>
       <UI.Button
         wrapperClass="w-8"
-        componentClass="bg-transparent"
         content={{ icon: ButtonAdd }}
         onClick={() => {
           const newOption: IOption = {
@@ -243,7 +242,6 @@
 
         <UI.Button
           wrapperClass="w-8"
-          componentClass="bg-transparent"
           content={{ icon: ButtonDelete }}
           onClick={() => {
             const options = [...(component.properties?.options || [])]

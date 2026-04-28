@@ -137,7 +137,6 @@
       <h4>{$t("constructor.props.table.columns")}</h4>
       <UI.Button
         wrapperClass="w-8"
-        componentClass="bg-transparent"
         content={{ icon: ButtonAdd }}
         onClick={() => {
           const newColumn: ITableHeader<any> = {
@@ -221,7 +220,6 @@
           </div>
           <UI.Button
             wrapperClass="w-8"
-            componentClass="bg-transparent"
             content={{ icon: ButtonDelete }}
             onClick={() => {
               const headers = [...(component.properties.header || [])]
@@ -302,11 +300,7 @@
                     />
 
                     <div class="flex items-end gap-1">
-                      <UI.Button
-                        wrapperClass="w-8"
-                        componentClass="bg-transparent"
-                        content={{ icon: InfoIcon, info: { text: $t("constructor.props.button.colors.hint"), side: "right" } }}
-                      />
+                      <UI.Button wrapperClass="w-8" content={{ icon: InfoIcon, info: { text: $t("constructor.props.button.colors.hint"), side: "right" } }} />
                       <UI.Select
                         wrapperClass="w-80 h-14.5"
                         label={{ name: $t("constructor.props.colors") }}
@@ -468,7 +462,6 @@
 
                 <UI.Button
                   wrapperClass="absolute right-2 bottom-2 w-8"
-                  componentClass="bg-transparent"
                   content={{ icon: ButtonDelete }}
                   onClick={() => {
                     const headers = [...(component.properties.header || [])]

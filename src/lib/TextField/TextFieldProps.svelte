@@ -53,7 +53,6 @@
 
 {#snippet TextFieldColors()}
   <UI.Select
-    wrapperClass="!h-14"
     label={{ name: $t("constructor.props.textcolors") }}
     type="buttons"
     options={$optionsStore.TEXT_COLOR_OPTIONS}

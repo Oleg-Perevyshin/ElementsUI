@@ -158,11 +158,7 @@
 
 {#snippet ButtonColors()}
   <div class="flex items-end gap-2">
-    <UI.Button
-      wrapperClass="w-8"
-      componentClass="bg-transparent"
-      content={{ icon: InfoIcon, info: { text: $t("constructor.props.button.colors.hint"), side: "right" } }}
-    />
+    <UI.Button wrapperClass="w-8" content={{ icon: InfoIcon, info: { text: $t("constructor.props.button.colors.hint"), side: "right" } }} />
     <CommonSnippets
       snippet="Colors"
       initialValue={{

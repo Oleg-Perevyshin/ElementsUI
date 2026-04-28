@@ -90,7 +90,6 @@
       {#if component.properties?.items.length < 10}
         <UI.Button
           wrapperClass="w-8"
-          componentClass="bg-transparent"
           content={{ icon: ButtonAdd }}
           onClick={() => {
             const newItem: { name: string; icon: string; class: string } = {
@@ -162,7 +161,6 @@
         {#if component.properties.items.length > 1}
           <UI.Button
             wrapperClass="w-8"
-            componentClass="bg-transparent"
             content={{ icon: ButtonDelete }}
             onClick={() => {
               const items = [...(component.properties?.items || [])]

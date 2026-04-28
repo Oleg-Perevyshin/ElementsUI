@@ -49,7 +49,6 @@
       <h4>{$t("constructor.props.progressbar.title")}</h4>
       <UI.Button
         wrapperClass="w-8"
-        componentClass="bg-transparent"
         content={{ icon: ButtonAdd }}
         onClick={() => {
           const newProgress = {
@@ -140,7 +139,6 @@
 
         <UI.Button
           wrapperClass="w-8"
-          componentClass="bg-transparent"
           content={{ icon: ButtonDelete }}
           onClick={() => {
             const progresses = [...(component.properties?.items || [])]

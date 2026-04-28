@@ -134,7 +134,7 @@
               id={option.id}
               value={option?.value ? String(option.value) : ""}
               class={twMerge(
-                `flex h-full w-full cursor-pointer items-center justify-center p-1 inset-shadow-[0_10px_10px_-15px_rgb(0_0_0_/0.5)] duration-250 hover:bg-(--field-color)
+                `flex h-full w-full cursor-pointer items-center justify-center p-1 inset-shadow-[0_10px_10px_-15px_rgb(0_0_0_/0.5)] duration-250 hover:bg-(--field-color) wrap-break-word
             ${index === options.length - 1 ? "rounded-b-xl" : ""}`,
                 option.class,
               )}
@@ -195,13 +195,13 @@
         style="width: calc(100% - 1.8rem); "
         transition:slide={{ duration: 250 }}
       >
-        <div class="overflow-y-auto bg-(--back-color) rounded-b-xl" style="max-height: {listHeight};">
+        <div class="overflow-y-auto bg-(--back-color) rounded-b-xl wrap-anywhere" style="max-height: {listHeight};">
           {#each filteredOptions as option, index (option.id)}
             <button
               id={option.id}
               value={option?.value ? String(option.value) : ""}
               class={twMerge(
-                `flex h-full w-full cursor-pointer items-center justify-center p-1 inset-shadow-[0_10px_10px_-15px_rgb(0_0_0_/0.5)] duration-250 hover:bg-(--field-color)!
+                `flex h-full w-full cursor-pointer items-center justify-center p-1 inset-shadow-[0_10px_10px_-15px_rgb(0_0_0_/0.5)] duration-250 hover:bg-(--field-color) 
               ${index === filteredOptions.length - 1 ? "rounded-b-xl" : ""}`,
                 option.class,
               )}

@@ -328,9 +328,9 @@
                           class="{twMerge(`flex w-full items-center justify-center gap-2 cursor-pointer rounded-full 
                            px-4 py-1 font-semibold duration-200 outline-none select-none
                            ${
-                             ((content.data as ITableButton<object>).class as string).split(' ').find((cl: string) => cl === 'bg-transparent') ||
-                             !((content.data as ITableButton<object>).class as string).split(' ').find((cl: string) => cl.startsWith('bg-'))
-                               ? 'underline '
+                             ((button as ITableButton<object>).class as string)?.split(' ').find((cl: string) => cl === 'bg-transparent') ||
+                             !((button as ITableButton<object>).class as string)?.split(' ').find((cl: string) => cl.startsWith('bg-'))
+                               ? 'bg-transparent underline'
                                : 'border border-(--bg-color) shadow-sm hover:shadow-md'
                            }
                           ${typeof button.class === 'function' ? button.class(row) : button.class}`)} bg-(--bg-color)"

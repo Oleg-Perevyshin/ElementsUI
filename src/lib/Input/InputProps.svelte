@@ -159,7 +159,6 @@
       />
       <UI.Button
         wrapperClass="w-8"
-        componentClass="bg-transparent"
         content={{ icon: Library, info: { text: $t("constructor.props.regexp.library.info"), side: "top" } }}
         onClick={() => {
           showRegExpLibrary = !showRegExpLibrary

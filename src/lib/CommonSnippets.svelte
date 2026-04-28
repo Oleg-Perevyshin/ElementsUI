@@ -243,7 +243,7 @@
   updateProperty: (icon: string | string[]) => {}
 })}
   <div class="relative mt-6 flex w-full gap-2">
-    <UI.Button content={{ name: initialValue.name }} onClick={() => (showIconLib = true)} />
+    <UI.Button content={{ name: initialValue.name }} componentClass="bg-blue" onClick={() => (showIconLib = true)} />
     {#if showIconLib}
       <UI.Modal bind:isOpen={showIconLib} wrapperClass="w-130">
         {#snippet main()}

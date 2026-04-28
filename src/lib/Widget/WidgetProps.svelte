@@ -122,7 +122,7 @@
 {/snippet}
 
 {#if forConstructor}
-  <div class="flex mb-4 items-start justify-center gap-8">
+  <div class="flex mb-4 justify-center gap-8">
     <div class="flex w-1/3 flex-col px-2">
       <CommonSnippets snippet="Access" {component} {onPropertyChange} />
       <CommonSnippets snippet="Variable" {VARIABLE_OPTIONS} {component} {onPropertyChange} />
@@ -158,7 +158,7 @@
     </div>
   </div>
 {:else}
-  <div class="flex items-center mb-4 justify-center gap-8">
+  <div class="flex mb-4 justify-center gap-8">
     <div class="flex w-1/3 flex-col px-2">
       <CommonSnippets snippet="Identificator" {component} {onPropertyChange} />
       <CommonSnippets snippet="Access" {component} {onPropertyChange} />

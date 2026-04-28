@@ -97,7 +97,7 @@
             {#each LOCALES as lang (lang.value)}
               <UI.Button
                 content={{ name: lang.name, icon: lang.component }}
-                componentClass="h-12 border-0 text-center bg-transparent !shadow-none hover:translate-x-1 hover:shadow-none"
+                componentClass="h-12 border-0 text-center no-underline !shadow-none hover:translate-x-1 hover:shadow-none"
                 onClick={() => switchLanguage(lang.value)}
               />
             {/each}

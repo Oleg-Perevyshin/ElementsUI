@@ -8,7 +8,7 @@
   let {
     id = crypto.randomUUID(),
     wrapperClass = "",
-    componentClass = "bg-blue",
+    componentClass = "",
     disabled = false,
     content = {
       name: "",
@@ -96,7 +96,7 @@
     id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
     class="{twMerge(
       `relative inline-block items-center font-semibold w-full transition duration-200 select-none
-      ${componentClass.split(' ').find((cl: string) => cl === 'bg-transparent') || !componentClass.split(' ').find((cl: string) => cl.startsWith('bg-')) ? 'underline ' : 'border border-(--bg-color) shadow-sm hover:shadow-md'}
+      ${componentClass.split(' ').find((cl: string) => cl === 'bg-transparent') || !componentClass.split(' ').find((cl: string) => cl.startsWith('bg-')) ? 'underline' : 'border border-(--bg-color) shadow-sm hover:shadow-md'}
       ${content.icon && !content.name?.trim() ? 'rounded-full' : 'rounded-2xl py-1 px-2'}
       ${disabled ? 'cursor-not-allowed opacity-50 hover:shadow-none' : 'cursor-pointer active:scale-97'} `,
       componentClass,

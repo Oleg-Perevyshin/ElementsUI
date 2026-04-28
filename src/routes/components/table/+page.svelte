@@ -27,7 +27,6 @@
               type: "button",
               data: {
                 name: "send",
-                class: "bg-blue",
                 eventHandler: { Header: "SET", Argument: "Save", Variables: ["id-S"] },
               },
             },
