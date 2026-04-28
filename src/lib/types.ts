@@ -280,7 +280,7 @@ export interface IMapProps {
 /* Интерфейс индикатора прогресса */
 export interface IProgressBarProps {
   id?: string
-  items?: { name?: string; class?: string }[] | null
+  items?: { name?: string; class?: string }[]
   value?: IReceivingDataObject[]
   number?: {
     minNum?: number

@@ -301,7 +301,11 @@ const translations: Translations = {
     "constructor.props.autocomplete.impp": "Мессенджер",
     "constructor.props.autocomplete.fax": "Номер факса",
   },
-  en: {},
+  en: {
+    "common.select_tag": "Make a choice",
+    "constructor.props.file.select": "Select a file",
+    "constructor.props.file.notselected": "File is not selected",
+  },
   zh: {},
 }
 export default translations

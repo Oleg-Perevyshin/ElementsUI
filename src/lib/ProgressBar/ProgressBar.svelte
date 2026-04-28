@@ -32,6 +32,26 @@
     }
   }
 
+  const getItemValue = (index: number): number => {
+    const valueData = (value as IReceivingDataObject[] | undefined)?.[index]
+    if (valueData?.Value !== undefined && valueData?.Value !== null) {
+      return valueData.Value as number
+    }
+    return 0
+  }
+
+  const getItemName = (index: number): string => {
+    const valueData = (value as IReceivingDataObject[] | undefined)?.[index]
+    if (valueData?.Name) {
+      return valueData.Name
+    }
+    return items[index]?.name ?? ""
+  }
+
+  const getItemInfo = (index: number): string | undefined => {
+    return (value as IReceivingDataObject[] | undefined)?.[index]?.Info
+  }
+
   const progressPercent = (value: number) => {
     if (value) return (((Math.min(Math.max(value, min), max) - min) / (max - min)) * 100) as number
   }
@@ -55,7 +75,7 @@
 >
   {#each items as progress, index}
     <div class="flex flex-col {type == 'vertical' ? 'items-center' : `w-full`}">
-      <h5 class={type == "vertical" ? "" : "px-4 mt-2"}>{(value as IReceivingDataObject[])[index].Name || progress.name}</h5>
+      <h5 class={type == "vertical" ? "" : "px-4 mt-2"}>{getItemName(index)}</h5>
       <div
         class="{twMerge(
           `flex ${type == 'vertical' ? 'h-full w-fit min-w-16 flex-col p-2' : 'h-7 w-full px-2'} items-center gap-2 rounded-full  shadow-sm`,
@@ -64,28 +84,18 @@
       >
         {#if type == "vertical"}
           <div class="relative my-auto h-[80%] w-[70%] rounded-full bg-(--back-color)/40">
-            <div
-              class="absolute bottom-0 left-0 flex w-full rounded-full bg-(--field-color)"
-              style="height: {progressPercent(((value as IReceivingDataObject[])[index]?.Value as number) ?? 0)}%;"
-            ></div>
+            <div class="absolute bottom-0 left-0 flex w-full rounded-full bg-(--field-color)" style="height: {progressPercent(getItemValue(index))}%;"></div>
           </div>
-          <span class="m-auto font-semibold"
-            >{roundToClean(Number(numericValue(((value as IReceivingDataObject[])[index]?.Value as number) || 0)))}{number.units}</span
-          >
+          <span class="m-auto font-semibold">{roundToClean(Number(numericValue(getItemValue(index))))}{number.units}</span>
         {:else}
-          <span class="m-auto w-20 font-semibold"
-            >{roundToClean(Number(numericValue(((value as IReceivingDataObject[])[index]?.Value as number) || 0)))}{number.units}</span
-          >
+          <span class="m-auto w-20 font-semibold">{roundToClean(Number(numericValue(getItemValue(index))))}{number.units}</span>
           <div class="relative my-auto h-3.5 flex-1 rounded-full bg-(--back-color)/40">
-            <div
-              class="absolute top-0 left-0 flex h-full rounded-full bg-(--field-color)"
-              style="width: {progressPercent(((value as IReceivingDataObject[])[index]?.Value as number) ?? 0)}%;"
-            ></div>
+            <div class="absolute top-0 left-0 flex h-full rounded-full bg-(--field-color)" style="width: {progressPercent(getItemValue(index))}%;"></div>
           </div>
         {/if}
       </div>
-      {#if ((value as IReceivingDataObject[]) || "")[index]?.Info}
-        <span>{((value as IReceivingDataObject[]) || "")[index]?.Info}</span>
+      {#if getItemInfo(index)}
+        <span>{getItemInfo(index)}</span>
       {/if}
     </div>
   {/each}

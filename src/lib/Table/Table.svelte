@@ -541,3 +541,11 @@
     />
   {/snippet}
 </Modal>
+
+<style>
+  ::-webkit-scrollbar-thumb {
+    background-color: color-mix(in srgb, var(--blue-color), white);
+    border-radius: 8px;
+    cursor: pointer;
+  }
+</style>
