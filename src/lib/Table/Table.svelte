@@ -447,18 +447,16 @@
                           >
                             {#if text?.modal}
                               <button
-                                class={twMerge("w-fit cursor-pointer text-left", text.class)}
+                                class="w-fit cursor-pointer text-left"
                                 onclick={(e) => {
                                   e.stopPropagation()
-                                  showModal(data, text?.formatting)
+                                  showModal(data.replace(/<[^>]*>/g, ""), text?.formatting)
                                 }}
                               >
-                                {data}
+                                {@html data}
                               </button>
                             {:else}
-                              <span class={text.class}>
-                                {data}
-                              </span>
+                              {@html data}
                             {/if}
                           </div>
 
@@ -467,7 +465,7 @@
                               class="mx-2 flex cursor-pointer border-none bg-transparent text-2xl"
                               onclick={(e) => {
                                 e.preventDefault()
-                                navigator.clipboard.writeText(row[text?.key ?? ""])
+                                navigator.clipboard.writeText(row[text?.key ?? ""].replace(/<[^>]*>/g, ""))
                                 copiedCell = { x: j, y: i }
                                 setTimeout(() => (copiedCell = null), 1000)
                               }}
@@ -514,7 +512,7 @@
         transition:fly={{ y: 10, duration: 200 }}
         role="tooltip"
       >
-        {@html tooltip.text}
+        {@html tooltip.text.replace(/<[^>]*>/g, "")}
       </div>
     {/if}
     <!-- Нижнее поле для сводной информации -->
