@@ -447,16 +447,18 @@
                           >
                             {#if text?.modal}
                               <button
-                                class="w-fit cursor-pointer text-left"
+                                class={twMerge("w-fit cursor-pointer text-left", text.class)}
                                 onclick={(e) => {
                                   e.stopPropagation()
                                   showModal(data, text?.formatting)
                                 }}
                               >
-                                {@html data}
+                                {data}
                               </button>
                             {:else}
-                              {@html data}
+                              <span class={text.class}>
+                                {data}
+                              </span>
                             {/if}
                           </div>
 
@@ -534,6 +536,7 @@
     <Button
       content={{ name: $t("constructor.props.copy") }}
       wrapperClass="w-50"
+      componentClass="bg-blue"
       onClick={() => {
         navigator.clipboard.writeText(modalData.rawData ?? "")
         modalData.isOpen = false

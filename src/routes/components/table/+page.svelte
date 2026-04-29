@@ -31,7 +31,7 @@
                 eventHandler: { Header: "SET", Argument: "Save", Variables: ["id-S"] },
               },
             },
-            { type: "text", data: { key: "id", sortable: true, truncated: false, copy: false } },
+            { type: "text", data: { key: "id", sortable: true, truncated: false, copy: false, class: "text-green-500" } },
           ],
         } as ITableHeader<any>,
         {

@@ -361,6 +361,7 @@ export interface ITableText<T extends object> {
   formatting?: (text: string) => string
   copy?: boolean
   modal?: boolean
+  class?: string
 }
 export interface ITableSelect<T extends object> {
   key: keyof T
