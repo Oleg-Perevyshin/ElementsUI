@@ -74,6 +74,84 @@
 
     return rounded2
   }
+
+  /* ===== bitMode handlers ===== */
+  const BITMODE_MAX = BigInt("18446744073709551615") // 2^64 - 1
+  const BITMODE_MIN = BigInt(0)
+
+  let bitModeValue = $state("")
+  let bitModeFormat = $state<"dec" | "hex" | "bin">("dec")
+
+  $effect(() => {
+    if (type === "bitMode" && value !== undefined) {
+      bitModeValue = typeof value === "bigint" ? value.toString() : String(value)
+    }
+  })
+
+  const parseBitModeInput = (input: string): bigint | null => {
+    const trimmed = input.trim()
+    if (!trimmed) return null
+
+    try {
+      if (trimmed.startsWith("0x") || trimmed.startsWith("0X")) {
+        return BigInt(trimmed)
+      } else if (trimmed.startsWith("0b") || trimmed.startsWith("0B")) {
+        return BigInt(trimmed)
+      } else {
+        return BigInt(trimmed)
+      }
+    } catch {
+      return null
+    }
+  }
+
+  const validateBitModeValue = (bigVal: bigint): boolean => {
+    return bigVal >= BITMODE_MIN && bigVal <= BITMODE_MAX
+  }
+
+  const handleBitModeInput = (inputValue: string) => {
+    bitModeValue = inputValue
+
+    const parsed = parseBitModeInput(inputValue)
+    if (parsed !== null && validateBitModeValue(parsed)) {
+      onUpdate?.(parsed.toString())
+      isValid = true
+    } else if (inputValue.trim() === "") {
+      onUpdate?.("")
+      isValid = true
+    } else {
+      isValid = false
+    }
+  }
+
+  const formatBitModeValue = (inputValue: string, format: "dec" | "hex" | "bin"): string => {
+    const parsed = parseBitModeInput(inputValue)
+    if (parsed === null) return inputValue
+
+    switch (format) {
+      case "hex":
+        return "0x" + parsed.toString(16).toUpperCase()
+      case "bin":
+        return "0b" + parsed.toString(2)
+      default:
+        return parsed.toString()
+    }
+  }
+
+  const cycleBitModeFormat = () => {
+    const formats: Array<"dec" | "hex" | "bin"> = ["dec", "hex", "bin"]
+    const currentIndex = formats.indexOf(bitModeFormat)
+    bitModeFormat = formats[(currentIndex + 1) % formats.length]
+  }
+
+  $effect(() => {
+    if (type === "bitMode" && bitModeValue) {
+      const formatted = formatBitModeValue(bitModeValue, bitModeFormat)
+      if (formatted !== bitModeValue) {
+        bitModeValue = formatted
+      }
+    }
+  })
 </script>
 
 <div class={twMerge(`bg-max ${type === "text-area" ? "h-full" : ""} relative flex w-full flex-col px-1 items-center`, wrapperClass)}>
@@ -82,7 +160,83 @@
   {/if}
 
   <div class="relative flex w-full items-center {type === 'text-area' ? 'h-full' : ''}">
-    {#if type === "text" || type === "password" || type === "number"}
+    {#if type === "bitMode"}
+      <!-- Bit Mode: special input for 0-2^64 values with format toggle -->
+      <div class="relative flex w-full items-center">
+        <input
+          bind:value={bitModeValue}
+          class={twMerge(
+            `w-full rounded-2xl border px-4 py-1 text-center shadow-[0_0_3px_rgb(0_0_0_/0.25)] transition duration-200
+                outline-none focus:shadow-[0_0_6px_var(--blue-color)] focus:border-(--blue-color)
+                ${isValid ? "border-(--bg-color)" : "border-red-400 shadow-[0_0_6px_var(--red-color)] focus:shadow-[0_0_6px_var(--red-color)] focus:border-red-400"}
+                ${disabled ? "opacity-50" : "hover:shadow-[0_0_6px_rgb(0_0_0_/0.25)]"}
+                ${readonly ? "" : "hover:shadow-[0_0_6px_rgb(0_0_0_/0.25)]"}
+                ${help?.info ? "pl-8" : ""}
+                ${help.copyButton ? "pr-20" : "pr-12"}`,
+            componentClass,
+          )}
+          style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"
+          id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
+          {placeholder}
+          {disabled}
+          autocomplete={help?.autocomplete}
+          oninput={(e) => handleBitModeInput((e.currentTarget as HTMLInputElement).value)}
+          type="text"
+          {readonly}
+        />
+
+        <!-- Format toggle button for bitMode -->
+        {#if !readonly && !disabled}
+          <button
+            type="button"
+            class="absolute right-10 flex cursor-pointer border-none bg-transparent px-1 text-xs font-bold text-(--blue-color) hover:text-(--hover-color)"
+            onclick={cycleBitModeFormat}
+            aria-label={`Current format: ${bitModeFormat}. Click to change.`}
+          >
+            {bitModeFormat.toUpperCase()}
+          </button>
+        {/if}
+
+        <!-- Spinner buttons for bitMode -->
+        {#if !readonly && !disabled}
+          <div class="absolute right-0 flex h-full w-10 flex-col items-center justify-center rounded-r-2xl border-l border-(--border-color)">
+            <button
+              class="flex h-1/2 w-full items-center rounded-tr-2xl border-b border-(--border-color) pl-2 transition-colors duration-150 hover:bg-(--gray-color)/30 active:bg-(--gray-color)/10"
+              onclick={() => {
+                const parsed = parseBitModeInput(bitModeValue)
+                if (parsed !== null) {
+                  const newVal = parsed + BigInt(1)
+                  if (validateBitModeValue(newVal)) {
+                    const formatted = formatBitModeValue(newVal.toString(), bitModeFormat)
+                    bitModeValue = formatted
+                    onUpdate?.(newVal.toString())
+                  }
+                } else {
+                  bitModeValue = formatBitModeValue("1", bitModeFormat)
+                  onUpdate?.("1")
+                }
+              }}
+              aria-label="Increment">+</button
+            >
+            <button
+              class="flex h-1/2 w-full items-center rounded-br-2xl pl-2 transition-colors duration-150 hover:bg-(--gray-color)/30 active:bg-(--gray-color)/10"
+              onclick={() => {
+                const parsed = parseBitModeInput(bitModeValue)
+                if (parsed !== null && parsed > BigInt(0)) {
+                  const newVal = parsed - BigInt(1)
+                  if (validateBitModeValue(newVal)) {
+                    const formatted = formatBitModeValue(newVal.toString(), bitModeFormat)
+                    bitModeValue = formatted
+                    onUpdate?.(newVal.toString())
+                  }
+                }
+              }}
+              aria-label="Decrement">−</button
+            >
+          </div>
+        {/if}
+      </div>
+    {:else if type === "text" || type === "password" || type === "number"}
       <input
         bind:value
         class={twMerge(
@@ -104,9 +258,9 @@
         onkeydown={handleKeyDown}
         type={type === "password" ? (showPassword ? "text" : "password") : type === "number" ? "number" : "text"}
         {maxlength}
-        min={number?.minNum}
-        max={number?.maxNum}
-        step={number?.step}
+        min={Number(number?.minNum)}
+        max={Number(number?.maxNum)}
+        step={Number(number?.step)}
         {readonly}
       />
     {:else if type === "text-area"}
@@ -199,14 +353,14 @@
         <button
           class="flex h-1/2 w-full items-center rounded-tr-2xl border-b border-(--border-color) pl-2 transition-colors duration-150 hover:bg-(--gray-color)/30 active:bg-(--gray-color)/10"
           onclick={() => {
-            if (value == undefined) value = number.minNum
+            if (value == undefined) value = number.minNum as number
             if ((number.maxNum !== 0 && !number.maxNum) || !number.step || (value !== 0 && !value)) return
-            if (Number(value) + number.step >= number.maxNum) {
-              value = number.maxNum
+            if (Number(value) + (number.step as number) >= (number.maxNum as number)) {
+              value = number.maxNum as number
               onUpdate(value as number)
               return
             }
-            value = Number(value) + (number.step ?? 1)
+            value = Number(value) + ((number.step as number) ?? 1)
             onUpdate(value as number)
           }}
           aria-label="Увеличить">+</button
@@ -215,14 +369,14 @@
         <button
           class="flex h-1/2 w-full items-center rounded-br-2xl pl-2 transition-colors duration-150 hover:bg-(--gray-color)/30 active:bg-(--gray-color)/10"
           onclick={() => {
-            if (value == undefined) value = number.minNum
+            if (value == undefined) value = number.minNum as number
             if ((number.minNum !== 0 && !number.minNum) || !number.step || (value !== 0 && !value)) return
-            if (Number(value) - number.step <= number.minNum) {
-              value = number.minNum
+            if (Number(value) - (number.step as number) <= (number.minNum as number)) {
+              value = number.minNum as number
               onUpdate(value as number)
               return
             }
-            value = Number(value) - (number.step ?? 1)
+            value = Number(value) - ((number.step as number) ?? 1)
 
             onUpdate(value as number)
           }}

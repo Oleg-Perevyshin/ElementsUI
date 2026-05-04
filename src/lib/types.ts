@@ -204,20 +204,19 @@ export interface IGraphProps {
 /* Интерфейс поля ввода */
 export interface IInputProps {
   id?: string
-  type?: "text" | "password" | "number" | "text-area"
+  type?: "text" | "password" | "number" | "text-area" | "bitMode"
   wrapperClass?: string
   label?: { name?: string; class?: string }
   componentClass?: string
   disabled?: boolean
   readonly?: boolean
-  value?: string | number
-  bitMode?: boolean
-  range?: { start: number; end: number }
+  value?: string | number | bigint
+  range?: { start: number | bigint; end: number | bigint }
   maxlength?: number
   textareaRows?: number
   placeholder?: string
   isValid?: boolean
-  number?: { minNum?: number; maxNum?: number; step?: number }
+  number?: { minNum?: number | bigint; maxNum?: number | bigint; step?: number | bigint }
   help?: {
     info?: string
     copyButton?: boolean

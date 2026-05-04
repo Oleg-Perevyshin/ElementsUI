@@ -133,7 +133,7 @@
 {#snippet InputType()}
   <UI.Select
     label={{ name: $t("constructor.props.type") }}
-    options={$optionsStore.INPUT_TYPE_OPTIONS.map((o) => (component.properties.bitMode && o.value != "number" ? { ...o, disabled: true } : o))}
+    options={$optionsStore.INPUT_TYPE_OPTIONS}
     type="buttons"
     value={$optionsStore.INPUT_TYPE_OPTIONS.find((opt) => opt.value === (component.properties.type || "text"))}
     onUpdate={(option) => {
@@ -194,7 +194,7 @@
     {#if component.properties.type === "text" || component.properties.type === "text-area"}
       <UI.Select
         label={{ name: $t("constructor.props.align.content") }}
-        options={$optionsStore.TEXT_ALIGN_OPTIONS.map((o) => (component.properties.bitMode && o.value != "number" ? { ...o, disabled: true } : o))}
+        options={$optionsStore.TEXT_ALIGN_OPTIONS}
         type="buttons"
         value={$optionsStore.TEXT_ALIGN_OPTIONS.find(
           (opt) => opt.value === (component.properties.componentClass.split(" ").find((cl: string) => cl.startsWith("text-")) || "text-center"),
@@ -204,13 +204,12 @@
         }}
       />
     {/if}
-  {:else if !component.properties.bitMode && component.properties.type === "number" && !component.properties.readonly && !component.properties.disabled}
+  {:else if component.properties.type === "number" && !component.properties.readonly && !component.properties.disabled}
     <div class="flex">
       <UI.Input
         label={{ name: $t("constructor.props.min") }}
         value={component.properties.number.minNum as number}
         type="number"
-        readonly={component.properties.bitMode}
         onUpdate={(value) => {
           updateProperty("number.minNum", Number(value))
         }}
@@ -219,7 +218,6 @@
         label={{ name: $t("constructor.props.max") }}
         value={component.properties.number.maxNum as number}
         type="number"
-        readonly={component.properties.bitMode}
         onUpdate={(value) => {
           updateProperty("number.maxNum", Number(value))
         }}
@@ -228,10 +226,26 @@
         label={{ name: $t("constructor.props.step") }}
         value={component.properties.number.step as number}
         type="number"
-        readonly={component.properties.bitMode}
         onUpdate={(value) => updateProperty("number.step", Number(value))}
       />
     </div>
+  {:else if component.properties.type === "bitMode"}
+    <UI.Slider
+      label={{ name: $t("constructor.props.range") }}
+      type="range"
+      number={{ minNum: 0, maxNum: 63, step: 1 }}
+      value={[component.properties.range.start, component.properties.range.end]}
+      onUpdate={(value) => {
+        if (Array.isArray(value)) {
+          updateProperty("range.start", value[0] as number)
+          updateProperty("range.end", value[1] as number)
+          updateProperty("number.minNum", 0)
+          updateProperty("number.maxNum", Math.pow(2, component.properties.range.end - component.properties.range.start + 1) - 1)
+          updateProperty("number.step", 1)
+          updateProperty("help.info", `${$t("constructor.props.maxnum")}: ${component.properties.number.maxNum}`)
+        }
+      }}
+    />
   {/if}
 {/snippet}
 
@@ -252,46 +266,47 @@
 {/snippet}
 
 {#snippet InputSettings()}
-  <UI.Select
-    wrapperClass="mt-5"
-    options={$optionsStore.INPUT_SETTING_OPTIONS.map((o) => {
-      if (component.properties.type === "number" && o.value === "bitMode") return { ...o, disabled: false }
-      else if (component.properties.type === "password" && o.value == "help.copyButton") return { ...o, disabled: true }
-      else return o
-    })}
-    type="buttons"
-    multiSelect={true}
-    value={$optionsStore.INPUT_SETTING_OPTIONS.filter((opt) => {
-      if (opt.value.split(".").reduce((o, key) => o?.[key], component.properties)) return opt
-    })}
-    onUpdate={(value) => {
-      const currentActiveValues = $optionsStore.INPUT_SETTING_OPTIONS.filter((opt) => {
-        if (!opt?.value) return false
-        return opt.value.split(".").reduce((o, key) => o?.[key], component.properties)
-      }).map((opt) => opt.value)
-      if (Array.isArray(value)) {
-        value.forEach((opt) => {
-          updateProperty(opt.value ?? "", true)
-          if (opt.value === "bitMode") {
-            updateProperty("type", "number")
-            updateProperty("number.minNum", 0)
-            updateProperty("number.maxNum", Math.pow(2, component.properties.range.end - component.properties.range.start + 1) - 1)
-            updateProperty("number.step", 1)
-            updateProperty("help.info", `${$t("constructor.props.maxnum")}: ${component.properties.number.maxNum}`)
-          }
-        })
-
-        currentActiveValues.forEach((activeValue) => {
-          if (!value.some((opt) => opt?.value === activeValue)) {
-            updateProperty(activeValue, false)
-            if (activeValue === "bitMode") {
-              updateProperty("help.info", "")
+  {#if component.properties.type !== "bitMode"}
+    <UI.Select
+      wrapperClass="mt-5"
+      options={$optionsStore.INPUT_SETTING_OPTIONS.map((o) => {
+        if (component.properties.type === "password" && o.value == "help.copyButton") return { ...o, disabled: true }
+        else return o
+      })}
+      type="buttons"
+      multiSelect={true}
+      value={$optionsStore.INPUT_SETTING_OPTIONS.filter((opt) => {
+        if (opt.value.split(".").reduce((o, key) => o?.[key], component.properties)) return opt
+      })}
+      onUpdate={(value) => {
+        const currentActiveValues = $optionsStore.INPUT_SETTING_OPTIONS.filter((opt) => {
+          if (!opt?.value) return false
+          return opt.value.split(".").reduce((o, key) => o?.[key], component.properties)
+        }).map((opt) => opt.value)
+        if (Array.isArray(value)) {
+          value.forEach((opt) => {
+            updateProperty(opt.value ?? "", true)
+            if (opt.value === "bitMode") {
+              updateProperty("type", "number")
+              updateProperty("number.minNum", 0)
+              updateProperty("number.maxNum", Math.pow(2, component.properties.range.end - component.properties.range.start + 1) - 1)
+              updateProperty("number.step", 1)
+              updateProperty("help.info", `${$t("constructor.props.maxnum")}: ${component.properties.number.maxNum}`)
             }
-          }
-        })
-      }
-    }}
-  />
+          })
+
+          currentActiveValues.forEach((activeValue) => {
+            if (!value.some((opt) => opt?.value === activeValue)) {
+              updateProperty(activeValue, false)
+              if (activeValue === "bitMode") {
+                updateProperty("help.info", "")
+              }
+            }
+          })
+        }
+      }}
+    />
+  {/if}
 {/snippet}
 
 {#snippet InputAutocomplete()}
@@ -355,27 +370,6 @@
   />
 {/snippet}
 
-{#snippet InputBitmode()}
-  {#if component.properties.bitMode}
-    <UI.Slider
-      label={{ name: $t("constructor.props.range") }}
-      type="range"
-      number={{ minNum: 0, maxNum: 31, step: 1 }}
-      value={[component.properties.range.start, component.properties.range.end]}
-      onUpdate={(value) => {
-        if (Array.isArray(value)) {
-          updateProperty("range.start", value[0] as number)
-          updateProperty("range.end", value[1] as number)
-          updateProperty("number.minNum", 0)
-          updateProperty("number.maxNum", Math.pow(2, component.properties.range.end - component.properties.range.start + 1) - 1)
-          updateProperty("number.step", 1)
-          updateProperty("help.info", `${$t("constructor.props.maxnum")}: ${component.properties.number.maxNum}`)
-        }
-      }}
-    />
-  {/if}
-{/snippet}
-
 {#if forConstructor}
   <div class="relative flex flex-row items-start justify-center">
     <div class="flex w-1/3 flex-col px-2">
@@ -387,7 +381,6 @@
       {@render InputPlaceholder()}
       {@render InputInfo()}
       {@render InputSettings()}
-      {@render InputBitmode()}
     </div>
     <div class="flex w-1/3 flex-col px-2">
       {@render InputLabel()}
@@ -416,10 +409,7 @@
       {@render InputInfo()}
       {@render InputAutocomplete()}
       {@render InputSettings()}
-      <div class="flex">
-        {@render InputDisabled()}
-        {@render InputBitmode()}
-      </div>
+      {@render InputDisabled()}
     </div>
   </div>
 {/if}

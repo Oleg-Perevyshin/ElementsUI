@@ -38,6 +38,7 @@ const translations: Translations = {
     "constructor.props.type.password": "Пароль",
     "constructor.props.type.number": "Число",
     "constructor.props.type.textarea": "Область ",
+    "constructor.props.type.bitMode": "Битовый ",
     "constructor.props.type.single": "Простой",
     "constructor.props.type.range": "Диапазон",
 

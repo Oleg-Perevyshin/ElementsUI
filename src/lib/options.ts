@@ -38,6 +38,7 @@ export const optionsStore = derived(t, ($t) => {
       { id: id(), value: "password", name: $t("constructor.props.type.password") },
       { id: id(), value: "number", name: $t("constructor.props.type.number") },
       { id: id(), value: "text-area", name: $t("constructor.props.type.textarea") },
+      { id: id(), value: "bitMode", name: $t("constructor.props.type.bitMode") },
     ],
 
     SELECT_TYPE_OPTIONS: [
@@ -209,7 +210,6 @@ export const optionsStore = derived(t, ($t) => {
     INPUT_SETTING_OPTIONS: [
       { id: id(), value: "readonly", name: $t("constructor.props.readonly") },
       { id: id(), value: "help.copyButton", name: $t("constructor.props.copy") },
-      { id: id(), value: "bitMode", name: $t("constructor.props.bitMode"), disabled: true },
     ],
 
     BUFFER_SIZE_OPTIONS: [
