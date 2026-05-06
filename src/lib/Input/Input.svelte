@@ -86,11 +86,11 @@
       <input
         bind:value
         class={twMerge(
-          `w-full rounded-2xl border px-4 py-1 text-center shadow-[0_0_3px_rgb(0_0_0_/0.25)] transition duration-200
+          `w-full rounded-2xl border px-4 py-1 text-center shadow-(--border-shadow-color) transition duration-200
               outline-none focus:shadow-[0_0_6px_var(--blue-color)] focus:border-(--blue-color) [&::-webkit-inner-spin-button]:hidden [&::-webkit-outer-spin-button]:hidden
               ${isValid ? "border-(--bg-color)" : "border-red-400 shadow-[0_0_6px_var(--red-color)] focus:shadow-[0_0_6px_var(--red-color)] focus:border-red-400"}
-              ${disabled ? "opacity-50" : "hover:shadow-[0_0_6px_rgb(0_0_0_/0.25)]"} 
-              ${readonly ? "" : "hover:shadow-[0_0_6px_rgb(0_0_0_/0.25)]"}
+              ${disabled ? "opacity-50" : "hover:shadow-(--focus-shadow-color)"} 
+              ${readonly ? "" : "hover:shadow-(--focus-shadow-color)"}
               ${help?.info ? "pl-8" : ""} 
               ${help.copyButton || type === "password" || (type === "number" && !readonly) ? "pr-8" : ""}`,
           componentClass,

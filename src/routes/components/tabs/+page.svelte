@@ -1,6 +1,7 @@
 <script lang="ts">
   import { Table, TabsProps, type ITabsProps, type UIComponent } from "$lib"
   import ComponentExample from "$lib/ComponentExample.svelte"
+  import Input from "$lib/Input/Input.svelte"
   import IconGripVerticalLeft from "$lib/libIcons/IconGripVerticalLeft.svelte"
   import IconGripVerticalRight from "$lib/libIcons/IconGripVerticalRight.svelte"
   import Tabs from "$lib/Tabs/Tabs.svelte"
@@ -98,7 +99,7 @@ ${formatObjectToString(tabsComponent.properties as ITabsProps)}
 <ComponentExample {codeText} bind:forConstructor>
   {#snippet component()}
     <div class="h-60">
-      <Tabs {...tabsComponent.properties as ITabsProps} />
+      <Tabs {...tabsComponent.properties as ITabsProps} children={Tab} />
     </div>
   {/snippet}
   {#snippet componentProps()}
@@ -142,5 +143,6 @@ ${formatObjectToString(tabsComponent.properties as ITabsProps)}
 {#snippet Tab(item: { name: string })}
   <div>
     <h5>Content of {item.name}</h5>
+    <Input />
   </div>
 {/snippet}

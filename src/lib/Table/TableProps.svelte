@@ -200,7 +200,7 @@
             </button>
             {#if isDropdownOpen == columnIndex}
               <div
-                class="absolute top-full left-1/2 z-50 -translate-x-1/2 rounded-b-xl shadow-[0_0_3px_rgb(0_0_0_/0.25)] w-25"
+                class="absolute top-full left-1/2 z-50 -translate-x-1/2 rounded-b-xl shadow-(--border-shadow-color) w-25"
                 transition:slide={{ duration: 250 }}
               >
                 {#each $optionsStore.TABLE_CONTENT_TYPE_OPTIONS.slice(0, forConstructor ? 4 : 5) as option, index (option.id)}
@@ -208,7 +208,7 @@
                     id={option.id}
                     value={option?.value ? String(option.value) : ""}
                     class={`flex h-full w-full cursor-pointer items-center justify-center p-1  duration-250 hover:bg-(--field-color)
-              ${index === $optionsStore.TABLE_CONTENT_TYPE_OPTIONS.slice(0, forConstructor ? 4 : 5).length - 1 ? "rounded-b-xl" : ""} ${index === 0 ? "rounded-t-xl" : "inset-shadow-[0_10px_10px_-15px_rgb(0_0_0_/0.5)]"}`}
+              ${index === $optionsStore.TABLE_CONTENT_TYPE_OPTIONS.slice(0, forConstructor ? 4 : 5).length - 1 ? "rounded-b-xl" : ""} ${index === 0 ? "rounded-t-xl" : "inset-shadow-[0_10px_10px_-15px_rgb(0_0_0_/0.5)] dark:inset-shadow-[0_10px_10px_-15px_rgb(0_0_0_/0.5)]"}`}
                     onclick={(e) => addContent(option, e, columnIndex)}
                     style="background: color-mix(in srgb, var(--back-color), var(--back-color) 70%);"
                   >

@@ -100,120 +100,122 @@
   }
 </script>
 
-<div class={twMerge(`bg-max relative flex w-full flex-col items-center px-1`, wrapperClass)} bind:this={dropdownElement}>
-  {#if label.name}
-    <h5 class={twMerge(`w-full px-4`, label.class)}>{label.name}</h5>
-  {/if}
-  {#if type === "select" && !Array.isArray(value)}
-    <button
-      id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
-      value={value?.value ? String(value.value) : ""}
-      class={twMerge(
-        `w-full rounded-2xl border border-(--bg-color) p-1 text-center shadow-[0_0_3px_rgb(0_0_0_/0.25)] transition duration-200
-        ${disabled ? "opacity-50" : "cursor-pointer hover:shadow-[0_0_6px_rgb(0_0_0_/0.25)]"}`,
-        value?.class,
-      )}
-      style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%); "
-      onclick={toggleDropdown}
-      aria-haspopup="true"
-      aria-expanded={isDropdownOpen}
-      {disabled}
-    >
-      {value?.name || $t("common.select_tag")}
-    </button>
-
-    {#if isDropdownOpen}
-      <div
-        class="absolute top-full left-1/2 z-50 rounded-b-xl -translate-x-1/2 shadow-[0_0_3px_rgb(0_0_0_/0.25)]"
-        style="width: calc(100% - 1.8rem);"
-        transition:slide={{ duration: 250 }}
-      >
-        <div class="overflow-y-auto bg-(--back-color) rounded-b-xl" style="max-height: {listHeight};">
-          {#each options as option, index (option.id)}
-            <button
-              id={option.id}
-              value={option?.value ? String(option.value) : ""}
-              class={twMerge(
-                `flex h-full w-full cursor-pointer items-center justify-center p-1 inset-shadow-[0_10px_10px_-15px_rgb(0_0_0_/0.5)] duration-250 hover:bg-(--field-color) wrap-break-word
-            ${index === options.length - 1 ? "rounded-b-xl" : ""}`,
-                option.class,
-              )}
-              onclick={(e) => selectOption(option, e)}
-              {disabled}
-              style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"
-            >
-              {option.name}
-            </button>
-          {/each}
-        </div>
-      </div>
+<div class={twMerge(`bg-max w-full px-1`, wrapperClass)}>
+  <div class="relative w-full flex flex-col items-center" bind:this={dropdownElement}>
+    {#if label.name}
+      <h5 class={twMerge(`w-full px-4`, label.class)}>{label.name}</h5>
     {/if}
-  {:else if type === "buttons"}
-    <div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class="flex h-full w-full flex-row justify-center rounded-full">
-      {#each options as option, index (option.id)}
-        <button
-          id={option.id}
-          class="{twMerge(
-            `m-0 inline-block min-w-0 flex-1 items-center px-2 py-1 font-semibold shadow-[0_0_3px_rgb(0_0_0_/0.25)] transition duration-300 select-none border border-(--bg-color)
-            ${option.disabled || disabled ? 'opacity-50' : 'cursor-pointer hover:shadow-[0_0_6px_rgb(0_0_0_/0.25)]'}
+    {#if type === "select" && !Array.isArray(value)}
+      <button
+        id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
+        value={value?.value ? String(value.value) : ""}
+        class={twMerge(
+          `w-full rounded-2xl border border-(--bg-color) p-1 text-center shadow-(--border-shadow-color) transition duration-200
+        ${disabled ? "opacity-50" : "cursor-pointer hover:shadow-(--focus-shadow-color)"}`,
+          value?.class,
+        )}
+        style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%); "
+        onclick={toggleDropdown}
+        aria-haspopup="true"
+        aria-expanded={isDropdownOpen}
+        {disabled}
+      >
+        {value?.name || $t("common.select_tag")}
+      </button>
+
+      {#if isDropdownOpen}
+        <div
+          class="absolute top-full left-1/2 z-50 rounded-b-xl -translate-x-1/2 shadow-(--border-shadow-color)"
+          style="width: calc(100% - 1.8rem);"
+          transition:slide={{ duration: 250 }}
+        >
+          <div class="overflow-y-auto bg-(--back-color) rounded-b-xl" style="max-height: {listHeight};">
+            {#each options as option, index (option.id)}
+              <button
+                id={option.id}
+                value={option?.value ? String(option.value) : ""}
+                class={twMerge(
+                  `flex h-full w-full cursor-pointer items-center justify-center p-1 inset-shadow-[0_10px_10px_-15px_rgb(0_0_0_/0.5)] dark:inset-shadow-[0_10px_10px_-15px_rgb(255_255_255_/0.5)] duration-250 hover:bg-(--field-color) wrap-break-word
+            ${index === options.length - 1 ? "rounded-b-xl" : ""}`,
+                  option.class,
+                )}
+                onclick={(e) => selectOption(option, e)}
+                {disabled}
+                style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"
+              >
+                {option.name}
+              </button>
+            {/each}
+          </div>
+        </div>
+      {/if}
+    {:else if type === "buttons"}
+      <div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class="flex h-full w-full flex-row justify-center rounded-full">
+        {#each options as option, index (option.id)}
+          <button
+            id={option.id}
+            class="{twMerge(
+              `m-0 inline-block min-w-0 flex-1 items-center px-2 py-1 font-semibold shadow-(--border-shadow-color) transition duration-300 select-none border border-(--bg-color)
+            ${option.disabled || disabled ? 'opacity-50' : 'cursor-pointer hover:shadow-(--focus-shadow-color)'}
             ${value !== null && isSelected(option) ? 'z-10 py-1 shadow-[0_0_10px_var(--shadow-color)] hover:shadow-[0_0_15px_var(--shadow-color)]' : ''}  
             ${options.length > 0 && index === 0 ? 'rounded-l-2xl' : ''} ${index === options.length - 1 ? 'rounded-r-2xl' : ''}`,
-            option.class,
-          )} bg-(--bg-color)"
-          onclick={(e) => selectOption(option, e)}
-          disabled={option.disabled || disabled}
-        >
-          <span class="flex flex-row items-center justify-center gap-4">
-            {#if option.name}
-              <div class="flex-1">
-                {option.name}
-              </div>
-            {/if}
-          </span>
-        </button>
-      {/each}
-    </div>
-  {:else if type === "input"}
-    <input
-      bind:value={searchValue}
-      class="w-full appearance-none rounded-2xl border px-4 py-1 text-center shadow-[0_0_3px_rgb(0_0_0_/0.25)]
+              option.class,
+            )} bg-(--bg-color)"
+            onclick={(e) => selectOption(option, e)}
+            disabled={option.disabled || disabled}
+          >
+            <span class="flex flex-row items-center justify-center gap-4">
+              {#if option.name}
+                <div class="flex-1">
+                  {option.name}
+                </div>
+              {/if}
+            </span>
+          </button>
+        {/each}
+      </div>
+    {:else if type === "input"}
+      <input
+        bind:value={searchValue}
+        class="w-full appearance-none rounded-2xl border px-4 py-1 text-center shadow-(--border-shadow-color)
           transition duration-200 outline-none focus:shadow-[0_0_6px_var(--blue-color)]
           [&::-webkit-inner-spin-button]:hidden [&::-webkit-outer-spin-button]:hidden
-          {disabled ? 'cursor-not-allowed opacity-50' : 'cursor-text'} border-(--bg-color) focus:border-(--blue-color) hover:shadow-[0_0_6px_rgb(0_0_0_/0.25)]"
-      style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"
-      id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
-      {disabled}
-      oninput={handleSearch}
-      onclick={(e) => {
-        toggleDropdown(e)
-      }}
-    />
+          {disabled ? 'cursor-not-allowed opacity-50' : 'cursor-text'} border-(--bg-color) focus:border-(--blue-color) hover:shadow-(--focus-shadow-color)"
+        style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"
+        id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
+        {disabled}
+        oninput={handleSearch}
+        onclick={(e) => {
+          toggleDropdown(e)
+        }}
+      />
 
-    {#if isDropdownOpen}
-      <div
-        class="absolute select-none top-full left-1/2 z-50 -translate-x-1/2 rounded-b-xl border border-t-0 border-(--bg-color) shadow-[0_0_3px_rgb(0_0_0_/0.25)]"
-        style="width: calc(100% - 1.8rem); "
-        transition:slide={{ duration: 250 }}
-      >
-        <div class="overflow-y-auto bg-(--back-color) rounded-b-xl wrap-anywhere" style="max-height: {listHeight};">
-          {#each filteredOptions as option, index (option.id)}
-            <button
-              id={option.id}
-              value={option?.value ? String(option.value) : ""}
-              class={twMerge(
-                `flex h-full w-full cursor-pointer items-center justify-center p-1 inset-shadow-[0_10px_10px_-15px_rgb(0_0_0_/0.5)] duration-250 hover:bg-(--field-color) 
+      {#if isDropdownOpen}
+        <div
+          class="absolute select-none top-full left-1/2 z-50 -translate-x-1/2 rounded-b-xl border border-t-0 border-(--bg-color) shadow-(--border-shadow-color)"
+          style="width: calc(100% - 1.8rem); "
+          transition:slide={{ duration: 250 }}
+        >
+          <div class="overflow-y-auto bg-(--back-color) rounded-b-xl wrap-anywhere" style="max-height: {listHeight};">
+            {#each filteredOptions as option, index (option.id)}
+              <button
+                id={option.id}
+                value={option?.value ? String(option.value) : ""}
+                class={twMerge(
+                  `flex h-full w-full cursor-pointer items-center justify-center p-1 inset-shadow-[0_10px_10px_-15px_rgb(0_0_0_/0.5)] dark:inset-shadow-[0_10px_10px_-15px_rgb(255_255_255_/0.5)] duration-250 hover:bg-(--field-color) 
               ${index === filteredOptions.length - 1 ? "rounded-b-xl" : ""}`,
-                option.class,
-              )}
-              onclick={(e) => selectOption(option, e)}
-              {disabled}
-              style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"
-            >
-              {option.name}
-            </button>
-          {/each}
+                  option.class,
+                )}
+                onclick={(e) => selectOption(option, e)}
+                {disabled}
+                style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"
+              >
+                {option.name}
+              </button>
+            {/each}
+          </div>
         </div>
-      </div>
+      {/if}
     {/if}
-  {/if}
+  </div>
 </div>

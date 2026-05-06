@@ -115,7 +115,7 @@
               [&::-webkit-slider-thumb]:cursor-pointer
               ${disabled ? "[&::-webkit-slider-thumb]:cursor-not-allowed" : ""}
               [&::-webkit-slider-thumb]:rounded-full
-              [&::-webkit-slider-thumb]:shadow-[var(--focus-shadow),]
+              [&::-webkit-slider-thumb]:shadow-(--focus-shadow)
             ${
               userAgent.includes("iOS") || userAgent.includes("iPhone") || userAgent.includes("iPad")
                 ? "[&::-webkit-slider-thumb]:ring-[6.5px]"
@@ -127,7 +127,7 @@
             [&::-moz-range-thumb]:cursor-pointer 
             ${disabled ? "[&::-moz-range-thumb]:cursor-not-allowed" : ""}
             [&::-moz-range-thumb]:rounded-full
-            [&::-moz-range-thumb]:shadow-[var(--focus-shadow),] 
+            [&::-moz-range-thumb]:shadow-(--focus-shadow) 
             [&::-moz-range-thumb]:ring-[6px] 
             [&::-moz-range-track]:rounded-full
             [&::-moz-range-track]:bg-(--gray-color)
@@ -164,7 +164,7 @@
               [&::-webkit-slider-thumb]:cursor-pointer
               ${disabled ? "[&::-webkit-slider-thumb]:cursor-not-allowed" : ""}
               [&::-webkit-slider-thumb]:rounded-full
-              [&::-webkit-slider-thumb]:shadow-[var(--focus-shadow),]
+              [&::-webkit-slider-thumb]:shadow-(--focus-shadow)
             ${
               userAgent.includes("iOS") || userAgent.includes("iPhone") || userAgent.includes("iPad")
                 ? "[&::-webkit-slider-thumb]:ring-[6.5px]"
@@ -176,7 +176,7 @@
             [&::-moz-range-thumb]:cursor-pointer 
             ${disabled ? "[&::-moz-range-thumb]:cursor-not-allowed" : ""}
             [&::-moz-range-thumb]:rounded-full
-            [&::-moz-range-thumb]:shadow-[var(--focus-shadow),] 
+            [&::-moz-range-thumb]:shadow-(--focus-shadow)
             [&::-moz-range-thumb]:ring-[6px] 
             [&::-moz-range-track]:rounded-full
             [&::-moz-range-track]:bg-(--gray-color)
@@ -211,7 +211,7 @@
               [&::-webkit-slider-thumb]:w-4
               ${disabled ? "[&::-webkit-slider-thumb]:cursor-not-allowed" : "[&::-webkit-slider-thumb]:cursor-pointer"}
               [&::-webkit-slider-thumb]:rounded-full
-            [&::-webkit-slider-thumb]:shadow-[var(--focus-shadow),]
+            [&::-webkit-slider-thumb]:shadow-(--focus-shadow)
             ${
               userAgent.includes("iOS") || userAgent.includes("iPhone") || userAgent.includes("iPad")
                 ? "pl-3.5 [&::-webkit-slider-thumb]:ring-[6.5px]"
@@ -222,7 +222,7 @@
             [&::-moz-range-thumb]:size-4 
             ${disabled ? "[&::-moz-range-thumb]:cursor-not-allowed" : "[&::-moz-range-thumb]:cursor-pointer"}
             [&::-moz-range-thumb]:rounded-full
-            [&::-moz-range-thumb]:shadow-[var(--focus-shadow),] 
+            [&::-moz-range-thumb]:shadow-(--focus-shadow)
             [&::-moz-range-thumb]:ring-[6px] 
             [&::-moz-range-track]:rounded-full
             [&::-moz-range-track]:bg-(--gray-color)

@@ -11,7 +11,7 @@
     access: "full",
     properties: {
       id: crypto.randomUUID(),
-      wrapperClass: "bg-max",
+      wrapperClass: "bg-max h-25",
       disabled: false,
       label: { name: "Label", class: "text-center" },
       type: "input",

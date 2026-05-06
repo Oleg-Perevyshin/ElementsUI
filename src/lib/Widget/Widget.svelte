@@ -105,8 +105,8 @@
 <div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class={twMerge("w-full h-full p-1", wrapperClass)}>
   <div
     class={`h-full grid grid-rows-[4fr_9fr_5fr] rounded-xl bg-(--container-color)
-     transition-shadow duration-250 p-1
-     shadow-[0_0_3px_rgb(0_0_0_/0.25)] hover:shadow-[0_0_6px_rgb(0_0_0_/0.25)]`}
+     transition-all duration-250 p-1
+     shadow-(--border-shadow-color) hover:shadow-(--focus-shadow-color)`}
   >
     <div class="grid gap-2 overflow-hidden items-center" style="grid-template-columns:{icons.array && icons.array.length !== 0 ? '3.5rem' : ''} 1fr;">
       {#if icons.array && icons.array.length !== 0}
@@ -118,7 +118,9 @@
       <span class="text-left text-3xl overflow-hidden font-semibold {label.class}">{label.name}</span>
     </div>
 
-    <div class="flex mx-3 gap-1 items-center justify-center inset-shadow-[0_-10px_10px_-15px_rgb(0_0_0_/0.5)]">
+    <div
+      class="flex mx-3 gap-1 items-center justify-center inset-shadow-[0_-10px_10px_-15px_rgb(0_0_0_/0.5)] dark:inset-shadow-[0_-10px_10px_-15px_rgb(255_255_255_/0.5)]"
+    >
       {#if settings.type == "input" || settings.type == "slider"}
         <div>
           <span class="text-7xl">{currentValue}</span>
@@ -156,10 +158,10 @@
           {/if}
           <input
             bind:value={currentValue}
-            class={twMerge(`flex-1 w-full rounded-2xl border px-8 py-1 text-center shadow-[0_0_3px_rgb(0_0_0_/0.25)] transition duration-200
+            class={twMerge(`flex-1 w-full rounded-2xl border px-8 py-1 text-center shadow-(--border-shadow-color) transition duration-200
               outline-none focus:shadow-[0_0_6px_var(--bg-color)] focus:border-(--bg-color) [&::-webkit-inner-spin-button]:hidden [&::-webkit-outer-spin-button]:hidden
               border-(--back-color)
-             hover:shadow-[0_0_6px_rgb(0_0_0_/0.25)]`)}
+             hover:shadow-(--focus-shadow-color)`)}
             style="background: color-mix(in srgb, var(--back-color), var(--back-color) 70%);"
             id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
             type="number"
@@ -263,7 +265,7 @@
               [&::-webkit-slider-thumb]:w-4
               ${readonly ? "[&::-webkit-slider-thumb]:cursor-not-allowed" : "[&::-webkit-slider-thumb]:cursor-pointer"}
               [&::-webkit-slider-thumb]:rounded-full
-            [&::-webkit-slider-thumb]:shadow-[var(--focus-shadow),]
+            [&::-webkit-slider-thumb]:shadow-(--focus-shadow)
             ${
               userAgent.includes("iOS") || userAgent.includes("iPhone") || userAgent.includes("iPad")
                 ? "pl-3.5 [&::-webkit-slider-thumb]:ring-[6.5px]"
@@ -274,7 +276,7 @@
             [&::-moz-range-thumb]:size-4 
             ${readonly ? "[&::-moz-range-thumb]:cursor-not-allowed" : "[&::-moz-range-thumb]:cursor-pointer"}
             [&::-moz-range-thumb]:rounded-full
-            [&::-moz-range-thumb]:shadow-[var(--focus-shadow),] 
+            [&::-moz-range-thumb]:shadow-(--focus-shadow)
             [&::-moz-range-thumb]:ring-[6px] 
             [&::-moz-range-track]:rounded-full
             [&::-moz-range-track]:bg-(--gray-color)

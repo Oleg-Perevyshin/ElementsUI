@@ -247,7 +247,7 @@
 
   <div
     class="relative flex h-full w-full flex-col overflow-hidden rounded-xl transition-shadow duration-250
-     shadow-[0_0_3px_rgb(0_0_0_/0.25)]"
+     shadow-(--border-shadow-color)"
   >
     <!-- Table Header -->
     <div
@@ -356,8 +356,8 @@
                         <div class="relative w-full select-none">
                           <button
                             id="select{i}-{j}-{index}"
-                            class="w-full rounded-2xl border border-(--blue-color) bg-(--back-color) p-1 text-center shadow-[0_0_3px_rgb(0_0_0_/0.25)] transition duration-200
-        cursor-pointer hover:shadow-[0_0_6px_rgb(0_0_0_/0.25)]"
+                            class="w-full rounded-2xl border border-(--blue-color) bg-(--back-color) p-1 text-center shadow-(--border-shadow-color) transition duration-200
+        cursor-pointer hover:shadow-(--focus-shadow-color)"
                             onclick={() =>
                               (isDropdownOpen =
                                 isDropdownOpen?.x === j && isDropdownOpen?.y === i && isDropdownOpen?.index === index ? null : { x: j, y: i, index })}
@@ -370,7 +370,7 @@
                           {#if isDropdownOpen?.x === j && isDropdownOpen.y === i && isDropdownOpen.index === index}
                             {@const cords = document.getElementById(`select${i}-${j}-${index}`)?.getBoundingClientRect()}
                             <div
-                              class="fixed z-50 rounded-b-2xl shadow-[0_0_3px_rgb(0_0_0_/0.25)]"
+                              class="fixed z-50 rounded-b-2xl shadow-(--border-shadow-color)"
                               style="top: {cords?.bottom}px; left: calc({cords?.left}px + 0.9rem) ; width: calc({cords?.width}px - 1.8rem);"
                               transition:slide={{ duration: selectSlideDuration }}
                             >
@@ -379,7 +379,7 @@
                                   id={option.id}
                                   value={option?.value ? String(option.value) : ""}
                                   class={twMerge(
-                                    `flex h-full w-full cursor-pointer items-center justify-center p-1 inset-shadow-[0_10px_10px_-15px_rgb(0_0_0_/0.5)] duration-250 hover:bg-(--field-color)! bg-(--back-color)
+                                    `flex h-full w-full cursor-pointer items-center justify-center p-1 inset-shadow-[0_10px_10px_-15px_rgb(0_0_0_/0.5)] dark:inset-shadow-[0_10px_10px_-15px_rgb(255_255_255_/0.5)] duration-250 hover:bg-(--field-color)! bg-(--back-color)
               ${option_index === options.length - 1 ? "rounded-b-2xl" : ""}`,
                                     option.class,
                                   )}
