@@ -210,13 +210,13 @@ export interface IInputProps {
   componentClass?: string
   disabled?: boolean
   readonly?: boolean
-  value?: string | number | bigint
-  range?: { start: number | bigint; end: number | bigint }
+  value?: string | number
+  range?: { start: number; end: number }
   maxlength?: number
   textareaRows?: number
   placeholder?: string
   isValid?: boolean
-  number?: { minNum?: number | bigint; maxNum?: number | bigint; step?: number | bigint }
+  number?: { minNum?: number; maxNum?: number; step?: number }
   help?: {
     info?: string
     copyButton?: boolean

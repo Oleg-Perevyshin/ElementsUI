@@ -138,6 +138,16 @@
     value={$optionsStore.INPUT_TYPE_OPTIONS.find((opt) => opt.value === (component.properties.type || "text"))}
     onUpdate={(option) => {
       if ((option as IOption<string>).value == "password" && component.properties.help.copyButton) updateProperty("help.copyButton", false)
+      if ((option as IOption<string>).value === "bitMode") {
+        updateProperty("type", "number")
+        updateProperty("number.minNum", 0)
+        updateProperty("number.maxNum", Math.pow(2, component.properties.range.end - component.properties.range.start + 1) - 1)
+        updateProperty("number.step", 1)
+        updateProperty("help.info", `${$t("constructor.props.maxnum")}: ${component.properties.number.maxNum}`)
+      } else {
+        updateProperty("help.info", "")
+      }
+
       updateProperty("type", (option as UI.IOption).value as string)
     }}
   />
@@ -233,7 +243,7 @@
     <UI.Slider
       label={{ name: $t("constructor.props.range") }}
       type="range"
-      number={{ minNum: 0, maxNum: 63, step: 1 }}
+      number={{ minNum: 0, maxNum: 31, step: 1 }}
       value={[component.properties.range.start, component.properties.range.end]}
       onUpdate={(value) => {
         if (Array.isArray(value)) {
@@ -286,21 +296,11 @@
         if (Array.isArray(value)) {
           value.forEach((opt) => {
             updateProperty(opt.value ?? "", true)
-            if (opt.value === "bitMode") {
-              updateProperty("type", "number")
-              updateProperty("number.minNum", 0)
-              updateProperty("number.maxNum", Math.pow(2, component.properties.range.end - component.properties.range.start + 1) - 1)
-              updateProperty("number.step", 1)
-              updateProperty("help.info", `${$t("constructor.props.maxnum")}: ${component.properties.number.maxNum}`)
-            }
           })
 
           currentActiveValues.forEach((activeValue) => {
             if (!value.some((opt) => opt?.value === activeValue)) {
               updateProperty(activeValue, false)
-              if (activeValue === "bitMode") {
-                updateProperty("help.info", "")
-              }
             }
           })
         }

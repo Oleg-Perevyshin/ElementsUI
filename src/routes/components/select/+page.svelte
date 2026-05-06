@@ -147,8 +147,6 @@ ${formatObjectToString(selectComponent.properties as ISelectProps)}
     <UI.Select
       {...selectComponent.properties as ISelectProps}
       onUpdate={(value) => {
-        console.log(value)
-
         updateComponent(selectComponent, {
           properties: { value: value },
         })

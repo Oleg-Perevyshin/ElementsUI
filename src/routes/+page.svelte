@@ -34,10 +34,7 @@
     try {
       renderedContents = await Promise.all(
         INFO_FILES.map(async (filePath) => {
-          console.log(filePath)
-
           const response = await fetch(`/ElementsUI/${filePath}`)
-          console.log(response)
 
           if (!response.ok) throw new Error(`Не удалось загрузить ${filePath}`)
           const textData = await response.text()

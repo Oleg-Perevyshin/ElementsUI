@@ -87,7 +87,6 @@
       array,
     }
 
-    // commandItems = Array.from(container[containerIndex ?? 0]?.querySelectorAll('[id^="item-"]') || [])
     commandItems = Array.from(container.querySelectorAll(`[id^="${elementsId}-"]`) || [])
 
     e.preventDefault()
@@ -160,11 +159,18 @@
 
 <div
   id={crypto.randomUUID()}
-  class={twMerge("cursor-move size-8 [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full", wrapperClass)}
+  class={twMerge(
+    `size-8 [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full ${array.length == 1 ? "opacity-50 cursor-not-allowed" : "cursor-move"} `,
+    wrapperClass,
+  )}
   role="button"
   tabindex={0}
   onkeydown={null}
-  onmousedown={(e) => startDrag(e)}
+  onmousedown={(e) => {
+    if (array.length !== 1) {
+      startDrag(e)
+    }
+  }}
 >
   <MoveVerticalIcon />
 </div>

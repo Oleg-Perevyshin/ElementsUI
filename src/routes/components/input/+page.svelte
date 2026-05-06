@@ -14,11 +14,11 @@
       id: crypto.randomUUID(),
       label: { name: "Label", class: "text-center" },
       componentClass: "bg-max resize-none",
-      type: "bitMode",
+      type: "text",
       value: "2",
       range: { start: 0, end: 1 },
       maxlength: 32,
-      number: { minNum: 1, maxNum: 10n, step: 1 },
+      number: { minNum: 1, maxNum: 10, step: 1 },
       textareaRows: 5,
       help: { copyButton: false, info: "", autocomplete: "off", regExp: "^[0-9a-zA-Z_-]{0,32}$" },
     },
@@ -29,11 +29,11 @@
 
   let forConstructor = $state(false)
 
-  //   let codeText = $derived(`
-  // <UI.Input
-  // ${formatObjectToString(inputComponent.properties as IInputProps)}
-  //   onUpdate={() => {}}
-  // />`)
+  let codeText = $derived(`
+  <UI.Input
+  ${formatObjectToString(inputComponent.properties as IInputProps)}
+    onUpdate={() => {}}
+  />`)
   let inputString: string = $state("String Data")
   let inputNumber: number = $state(7)
 
@@ -133,7 +133,7 @@
   ]
 </script>
 
-<ComponentExample codeText="" bind:forConstructor>
+<ComponentExample {codeText} bind:forConstructor>
   {#snippet component()}
     <div>
       <Input
@@ -142,7 +142,6 @@
           updateComponent(inputComponent, {
             properties: { value: Math.pow(Number(value), 64) },
           })
-          console.log(value)
         }}
       />
     </div>

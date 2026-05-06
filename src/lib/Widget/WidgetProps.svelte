@@ -60,7 +60,6 @@
     )}
     onUpdate={(option) => {
       updateProperty("icons.class", twMerge(component.properties.icons.class, (option as UI.IOption<string>).value), component, onPropertyChange)
-      console.log(component.properties)
     }}
   />
 {/snippet}
