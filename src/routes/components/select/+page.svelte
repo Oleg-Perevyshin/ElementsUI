@@ -19,7 +19,7 @@
       bitMode: false,
       range: { start: 0, end: 1 },
       options: [
-        { id: "select-option-1", value: "1", name: "Option 1", class: "bg-max" },
+        { id: "select-option-1", value: "1", name: "Option 1", class: "bg-max", disabled: true },
         { id: "select-option-2", value: "2", name: "Option 2", class: "bg-max" },
         { id: "select-option-3", value: "3", name: "3", class: "bg-max" },
         { id: "select-option-4", value: "4", name: "4", class: "bg-max" },

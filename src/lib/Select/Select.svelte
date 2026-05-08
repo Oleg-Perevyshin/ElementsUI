@@ -135,12 +135,12 @@
                 id={option.id}
                 value={option?.value ? String(option.value) : ""}
                 class={twMerge(
-                  `flex h-full w-full cursor-pointer items-center justify-center p-1 inset-shadow-[0_10px_10px_-15px_rgb(0_0_0_/0.5)] dark:inset-shadow-[0_10px_10px_-15px_rgb(255_255_255_/0.5)] duration-250 hover:bg-(--field-color) wrap-break-word
-            ${index === options.length - 1 ? "rounded-b-xl" : ""}`,
+                  `flex h-full w-full  items-center justify-center p-1 inset-shadow-[0_10px_10px_-15px_rgb(0_0_0_/0.5)] dark:inset-shadow-[0_10px_10px_-15px_rgb(255_255_255_/0.5)] 
+                  duration-250 hover:bg-(--field-color) wrap-break-word ${index === options.length - 1 ? "rounded-b-xl" : ""} ${option.disabled ? "opacity-50" : "cursor-pointer"}`,
                   option.class,
                 )}
                 onclick={(e) => selectOption(option, e)}
-                {disabled}
+                disabled={option.disabled}
                 style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"
               >
                 {option.name}
@@ -202,12 +202,12 @@
                 id={option.id}
                 value={option?.value ? String(option.value) : ""}
                 class={twMerge(
-                  `flex h-full w-full cursor-pointer items-center justify-center p-1 inset-shadow-[0_10px_10px_-15px_rgb(0_0_0_/0.5)] dark:inset-shadow-[0_10px_10px_-15px_rgb(255_255_255_/0.5)] duration-250 hover:bg-(--field-color) 
-              ${index === filteredOptions.length - 1 ? "rounded-b-xl" : ""}`,
+                  `flex h-full w-full items-center justify-center p-1 inset-shadow-[0_10px_10px_-15px_rgb(0_0_0_/0.5)] dark:inset-shadow-[0_10px_10px_-15px_rgb(255_255_255_/0.5)] 
+                  uration-250 hover:bg-(--field-color) ${index === filteredOptions.length - 1 ? "rounded-b-xl" : ""} ${option.disabled ? "opacity-50" : "cursor-pointer"}`,
                   option.class,
                 )}
                 onclick={(e) => selectOption(option, e)}
-                {disabled}
+                disabled={option.disabled}
                 style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"
               >
                 {option.name}
