@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { browser } from "$app/environment"
   import { type Snippet } from "svelte"
   import { fade, scale } from "svelte/transition"
   import { twMerge } from "tailwind-merge"
@@ -36,29 +35,22 @@
 
   let isTopmost = $derived($ModalStack.at(-1) === modalId)
 
+  // Открытие/закрытие модалки + Escape
   $effect(() => {
-    if (!browser) return
+    if (isOpen) {
+      ModalStack.open(modalId)
+    } else {
+      ModalStack.close(modalId)
+    }
+  })
 
+  $effect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape" && isTopmost) {
         isOpen = false
         onCancel()
       }
     }
-
-    if (isOpen) {
-      ModalStack.open(modalId)
-      document.addEventListener("keydown", handleKeyDown)
-    }
-
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown)
-      ModalStack.close(modalId)
-    }
-  })
-
-  $effect(() => {
-    if (!browser || !isOpen) return
 
     const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as HTMLElement
@@ -68,8 +60,15 @@
       }
     }
 
+    if (!isOpen) return
+
+    document.addEventListener("keydown", handleKeyDown)
     document.addEventListener("mousedown", handleClickOutside)
-    return () => document.removeEventListener("mousedown", handleClickOutside)
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown)
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
   })
 </script>
 
