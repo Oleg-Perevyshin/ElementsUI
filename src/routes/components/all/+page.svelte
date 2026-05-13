@@ -527,7 +527,7 @@
   <!-- Компонент TABLE -->
   <UI.Accordion label={{ name: "Table" }} isOpen={true} wrapperClass="col-span-2">
     <UI.Table label={{ name: "Devices" }} header={columns} body={rows} onClick={(eventHandler) => console.log(eventHandler)} footer={`rows: ${rows.length}`} />
-    <UI.Modal isOpen={modalData.isOpen} title="Full data">
+    <UI.Modal bind:isOpen={modalData.isOpen} title="Full data">
       {#snippet main()}
         {@html modalData.formattedData}
       {/snippet}

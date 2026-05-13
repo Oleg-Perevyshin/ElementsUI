@@ -1,8 +1,10 @@
 <script lang="ts">
-  import { onMount, type Snippet } from "svelte"
+  import { browser } from "$app/environment"
+  import { type Snippet } from "svelte"
   import { fade, scale } from "svelte/transition"
   import { twMerge } from "tailwind-merge"
   import CrossIcon from "./libIcons/CrossIcon.svelte"
+  import { ModalStack } from "./ModalStackStore"
 
   let {
     isOpen = $bindable(false),
@@ -24,48 +26,77 @@
     onCancel?: () => void
   } = $props()
 
-  let modalWrapper: HTMLDivElement | null = $state(null)
+  let modalId = $state(crypto.randomUUID())
 
-  const handleKeyDown = (event: KeyboardEvent) => {
-    if (event.key === "Escape") {
-      isOpen = false
-      onCancel()
+  let zIndex = $derived.by(() => {
+    const stack = $ModalStack
+    const indexInStack = stack.indexOf(modalId)
+    return indexInStack !== -1 ? 100 + indexInStack : 100
+  })
+
+  let isTopmost = $derived($ModalStack.at(-1) === modalId)
+
+  $effect(() => {
+    if (!browser) return
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isTopmost) {
+        isOpen = false
+        onCancel()
+      }
     }
-  }
 
-  const handleClickOutside = (event: MouseEvent) => {
-    if (modalWrapper && !modalWrapper.contains(event.target as Node)) {
-      isOpen = false
-      onCancel()
+    if (isOpen) {
+      ModalStack.open(modalId)
+      document.addEventListener("keydown", handleKeyDown)
     }
-  }
 
-  onMount(() => {
-    document.addEventListener("keydown", handleKeyDown)
-    document.addEventListener("mousedown", handleClickOutside)
     return () => {
       document.removeEventListener("keydown", handleKeyDown)
-      document.removeEventListener("mousedown", handleClickOutside)
+      ModalStack.close(modalId)
     }
+  })
+
+  $effect(() => {
+    if (!browser || !isOpen) return
+
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement
+      if (isTopmost && !target.closest("[data-modal]")) {
+        isOpen = false
+        onCancel()
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
   })
 </script>
 
 {#if isOpen}
-  <div class="fixed inset-0 z-100 flex items-center justify-center bg-black/50" transition:fade={{ duration: 200, delay: 1 }}>
+  <div
+    class="fixed inset-0 flex items-center justify-center bg-black/50"
+    data-modal-backdrop
+    transition:fade={{ duration: 200 }}
+    style="z-index: {zIndex - 1};"
+  >
     <div
-      bind:this={modalWrapper}
-      class={twMerge(`flex w-300 flex-col overflow-hidden rounded-2xl bg-(--back-color) text-center`, wrapperClass)}
-      style="width: {width};"
+      data-modal
+      class={twMerge("flex w-300 flex-col overflow-hidden rounded-2xl bg-(--back-color) text-center", wrapperClass)}
+      style="width: {width}; z-index: {zIndex};"
       transition:scale={{ duration: 250, start: 0.8 }}
     >
       <div class="flex items-end justify-between bg-(--field-color) px-6 py-3">
         <h4>{title}</h4>
-        <button class="h-6 w-6 cursor-pointer" onclick={onCancel}> <CrossIcon /> </button>
+        <button class="h-6 w-6 cursor-pointer" onclick={onCancel}>
+          <CrossIcon />
+        </button>
       </div>
 
       <div class={twMerge("flex h-full w-full flex-col overflow-auto p-2", mainClass)}>
         {@render main?.()}
       </div>
+
       {#if footer}
         <div class="flex flex-row-reverse justify-between bg-(--field-color) p-1.5">
           {@render footer?.()}

@@ -16,7 +16,7 @@
       label: { name: "Label", class: "text-center" },
       value: 3,
       type: "single",
-      number: { minNum: 0, maxNum: 10, step: 1 },
+      number: { minNum: 0, maxNum: 10, step: 1.2 },
       disabled: false,
     },
     eventHandler: { Header: "SET", Argument: "NoSave", Variables: [] },

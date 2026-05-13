@@ -37,6 +37,7 @@ export { default as WidgetProps } from "./Widget/WidgetProps.svelte"
 
 export * from "./locales/i18n"
 export * from "./locales/translations"
+export * from "./ModalStackStore"
 
 export {
   type UIComponent,

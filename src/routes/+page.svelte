@@ -49,6 +49,10 @@
     }
   }
 
+  let modalData = $state(false)
+  let modalData1 = $state(false)
+  let modalData2 = $state(false)
+
   onMount(() => {
     renderAllFiles()
   })
