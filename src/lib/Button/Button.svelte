@@ -61,8 +61,9 @@
   })
 
   /* Обработчик клика */
-  const handleClick = () => {
+  const handleClick = (event: Event) => {
     if (disabled || !onClick) return
+    event?.stopPropagation()
     onClick()
   }
 
@@ -102,7 +103,7 @@
       componentClass,
     )} bg-(--bg-color)"
     style={!content.name?.trim() && content.name && content.icon ? `padding-inline: ${content.name.length / 2}rem` : ""}
-    onclick={handleClick}
+    onclick={(event) => handleClick(event)}
     {disabled}
     aria-label={content.name}
     onmouseenter={() => {
