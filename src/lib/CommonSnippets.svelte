@@ -33,6 +33,7 @@
     | "EventHandlerArgument"
     | "IconsLib"
     | "Readonly"
+    | "BitModeInfo"
     | "MinMaxStep"
     | ""
 
@@ -203,6 +204,18 @@
   />
 {/snippet}
 
+{#snippet BitModeInfo()}
+  {#if (component.properties as UI.IInputProps).type === "bitMode" || (component.properties as UI.ISelectProps).bitMode || (component.properties as UI.ISwitchProps).bitMode}
+    <UI.TextField
+      wrapperClass="mt-5 shadow-(--border-shadow-color) bg-(--blue-color)/20"
+      content={{
+        name: "Выберите битовый диапазон в рамках глобальной переменной для данного компонента.",
+      }}
+      background
+    />
+  {/if}
+{/snippet}
+
 {#snippet MinMaxStep(initialValue: {
   number: { minNum: number; maxNum: number; step?: number }
   bitMode?: boolean
@@ -301,6 +314,8 @@
   {@render EventHandlerArgument()}
 {:else if snippet === "Readonly"}
   {@render Readonly()}
+{:else if snippet === "BitModeInfo"}
+  {@render BitModeInfo()}
 {:else if snippet === "IconsLib"}
   {@render IconsLib(initialValue)}
 {:else if snippet === "MinMaxStep"}

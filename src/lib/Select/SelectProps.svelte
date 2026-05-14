@@ -6,7 +6,6 @@
   import ButtonDelete from "../libIcons/ButtonDelete.svelte"
   import ButtonAdd from "../libIcons/ButtonAdd.svelte"
   import { optionsStore } from "../options.js"
-  import { twMerge } from "tailwind-merge"
   import CommonSnippets from "$lib/CommonSnippets.svelte"
 
   const {
@@ -265,6 +264,7 @@
     <div class="flex w-1/3 flex-col px-2">
       {@render SelectType()}
       {@render SelectValueType()}
+      <CommonSnippets snippet="BitModeInfo" {component} {onPropertyChange} />
     </div>
     <div class="flex w-1/3 flex-col px-2">
       <CommonSnippets snippet="Label" {component} {onPropertyChange} />
@@ -284,6 +284,7 @@
       <CommonSnippets snippet="Label" {component} {onPropertyChange} />
       <CommonSnippets snippet="LabelClass" {component} {onPropertyChange} />
       <CommonSnippets snippet="Disabled" {component} {onPropertyChange} />
+      <CommonSnippets snippet="BitModeInfo" {component} {onPropertyChange} />
     </div>
     <div class="flex w-1/3 flex-col items-center px-2">
       {@render SelectType()}

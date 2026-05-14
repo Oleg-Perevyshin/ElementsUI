@@ -1,4 +1,4 @@
-import { writable, get } from "svelte/store"
+import { writable } from "svelte/store"
 
 const ModalStore = writable<string[]>([])
 
@@ -9,13 +9,5 @@ export const ModalStack = {
   },
   close: (id: string) => {
     ModalStore.update((state) => state.filter((item) => item !== id))
-  },
-  getTopmost: () => {
-    const state = get(ModalStore)
-    return state[state.length - 1]
-  },
-  isInStack: (id: string) => {
-    const state = get(ModalStore)
-    return state.includes(id)
   },
 }

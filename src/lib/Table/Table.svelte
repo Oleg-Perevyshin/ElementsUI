@@ -266,7 +266,7 @@
               column.label?.class,
             )}
           >
-            <span>{column.label?.name}</span>
+            <span>{$t(column.label?.name ?? "")}</span>
 
             {#if typeof column.content !== "function" && (column.content as ITableContent<any>[])?.some((c) => c.type === "text" && c.data.sortable)}
               <button
@@ -348,7 +348,7 @@
                               {/if}
                             </span>
                           {/if}
-                          {typeof button.name === "function" ? button.name(row) : button.name}
+                          {typeof button.name === "function" ? $t(button.name(row)) : $t(button.name ?? "")}
                         </button>
                       {:else if content.type === "select"}
                         {@const select = content.data}

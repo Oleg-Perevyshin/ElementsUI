@@ -6,6 +6,7 @@
   import { optionsStore } from "../options"
   import { twMerge } from "tailwind-merge"
   import Library from "$lib/libIcons/Library.svelte"
+  import CommonSnippets from "$lib/CommonSnippets.svelte"
 
   const {
     component,
@@ -381,6 +382,7 @@
       {@render InputPlaceholder()}
       {@render InputInfo()}
       {@render InputSettings()}
+      <CommonSnippets snippet="BitModeInfo" {component} {onPropertyChange} />
     </div>
     <div class="flex w-1/3 flex-col px-2">
       {@render InputLabel()}
@@ -403,6 +405,7 @@
       {@render InputAccess()}
       {@render InputValue()}
       {@render InputType()}
+      <CommonSnippets snippet="BitModeInfo" {component} {onPropertyChange} />
     </div>
     <div class="flex w-1/3 flex-col px-2">
       {@render InputPlaceholder()}
