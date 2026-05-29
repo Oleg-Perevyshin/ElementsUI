@@ -1,6 +1,6 @@
 <script lang="ts">
   import { getContext } from "svelte"
-  import { t } from "$lib/locales/i18n"
+  import { T } from "$lib/locales/i18n"
   import type { IInputProps, UIComponent, IOption, IUIComponentHandler } from "../types"
   import * as UI from "$lib"
   import { optionsStore } from "../options"
@@ -92,7 +92,7 @@
 
 {#snippet InputVariable()}
   <UI.Select
-    label={{ name: $t("constructor.props.variable") }}
+    label={{ name: $T("constructor.props.variable") }}
     type="input"
     options={VARIABLE_OPTIONS}
     value={VARIABLE_OPTIONS.find((opt) => opt.value === component.properties.id)}
@@ -105,7 +105,7 @@
 
 {#snippet InputAccess()}
   <UI.Select
-    label={{ name: $t("constructor.props.access") }}
+    label={{ name: $T("constructor.props.access") }}
     type="buttons"
     options={$optionsStore.ACCESS_OPTION}
     value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.access)}
@@ -115,7 +115,7 @@
 
 {#snippet InputLabel()}
   <UI.Input
-    label={{ name: $t("constructor.props.label") }}
+    label={{ name: $T("constructor.props.label") }}
     value={component.properties.label.name}
     onUpdate={(value) => updateProperty("label.name", value as string)}
   />
@@ -123,7 +123,7 @@
 
 {#snippet InputLabelAlign()}
   <UI.Select
-    label={{ name: $t("constructor.props.align") }}
+    label={{ name: $T("constructor.props.align") }}
     type="buttons"
     value={initialAlign}
     options={$optionsStore.TEXT_ALIGN_OPTIONS}
@@ -133,7 +133,7 @@
 
 {#snippet InputType()}
   <UI.Select
-    label={{ name: $t("constructor.props.type") }}
+    label={{ name: $T("constructor.props.type") }}
     options={$optionsStore.INPUT_TYPE_OPTIONS}
     type="buttons"
     value={$optionsStore.INPUT_TYPE_OPTIONS.find((opt) => opt.value === (component.properties.type || "text"))}
@@ -144,7 +144,7 @@
         updateProperty("number.minNum", 0)
         updateProperty("number.maxNum", Math.pow(2, component.properties.range.end - component.properties.range.start + 1) - 1)
         updateProperty("number.step", 1)
-        updateProperty("help.info", `${$t("constructor.props.maxnum")}: ${component.properties.number.maxNum}`)
+        updateProperty("help.info", `${$T("constructor.props.maxnum")}: ${component.properties.number.maxNum}`)
       } else {
         updateProperty("help.info", "")
       }
@@ -154,7 +154,7 @@
   />
   {#if component.properties.type === "text" || component.properties.type === "password" || component.properties.type === "text-area"}
     <UI.Input
-      label={{ name: $t("constructor.props.maxlength") }}
+      label={{ name: $T("constructor.props.maxlength") }}
       type="number"
       number={{ minNum: 1, maxNum: 1000000, step: 1 }}
       value={component.properties.maxlength}
@@ -162,7 +162,7 @@
     />
     <div class="flex items-end">
       <UI.Input
-        label={{ name: $t("constructor.props.regexp") }}
+        label={{ name: $T("constructor.props.regexp") }}
         value={component.properties.help.regExp}
         maxlength={150}
         componentClass={isValidRegExp === false ? "!border-2 !border-red-400" : ""}
@@ -170,13 +170,13 @@
       />
       <UI.Button
         wrapperClass="w-8"
-        content={{ icon: Library, info: { text: $t("constructor.props.regexp.library.info"), side: "top" } }}
+        content={{ icon: Library, info: { text: $T("constructor.props.regexp.library.info"), side: "top" } }}
         onClick={() => {
           showRegExpLibrary = !showRegExpLibrary
         }}
       />
       {#if showRegExpLibrary}
-        <UI.Modal title={$t("constructor.props.regexp.library.info")} bind:isOpen={showRegExpLibrary} wrapperClass="w-200 h-[80%]">
+        <UI.Modal title={$T("constructor.props.regexp.library.info")} bind:isOpen={showRegExpLibrary} wrapperClass="w-200 h-[80%]">
           {#snippet main()}
             {#each $optionsStore.INPUT_REGEXP_OPTIONS as regexp}
               <div
@@ -197,14 +197,14 @@
 
     {#if component.properties.type === "text-area"}
       <UI.Input
-        label={{ name: $t("constructor.props.textarea.rows") }}
+        label={{ name: $T("constructor.props.textarea.rows") }}
         value={component.properties.textareaRows}
         onUpdate={(value) => updateProperty("textareaRows", value as string)}
       />
     {/if}
     {#if component.properties.type === "text" || component.properties.type === "text-area"}
       <UI.Select
-        label={{ name: $t("constructor.props.align.content") }}
+        label={{ name: $T("constructor.props.align.content") }}
         options={$optionsStore.TEXT_ALIGN_OPTIONS}
         type="buttons"
         value={$optionsStore.TEXT_ALIGN_OPTIONS.find(
@@ -218,7 +218,7 @@
   {:else if component.properties.type === "number" && !component.properties.readonly && !component.properties.disabled}
     <div class="flex">
       <UI.Input
-        label={{ name: $t("constructor.props.min") }}
+        label={{ name: $T("constructor.props.min") }}
         value={component.properties.number.minNum as number}
         type="number"
         onUpdate={(value) => {
@@ -226,7 +226,7 @@
         }}
       />
       <UI.Input
-        label={{ name: $t("constructor.props.max") }}
+        label={{ name: $T("constructor.props.max") }}
         value={component.properties.number.maxNum as number}
         type="number"
         onUpdate={(value) => {
@@ -234,7 +234,7 @@
         }}
       />
       <UI.Input
-        label={{ name: $t("constructor.props.step") }}
+        label={{ name: $T("constructor.props.step") }}
         value={component.properties.number.step as number}
         type="number"
         onUpdate={(value) => updateProperty("number.step", Number(value))}
@@ -242,7 +242,7 @@
     </div>
   {:else if component.properties.type === "bitMode"}
     <UI.Slider
-      label={{ name: $t("constructor.props.range") }}
+      label={{ name: $T("constructor.props.range") }}
       type="range"
       number={{ minNum: 0, maxNum: 31, step: 1 }}
       value={[component.properties.range.start, component.properties.range.end]}
@@ -253,7 +253,7 @@
           updateProperty("number.minNum", 0)
           updateProperty("number.maxNum", Math.pow(2, component.properties.range.end - component.properties.range.start + 1) - 1)
           updateProperty("number.step", 1)
-          updateProperty("help.info", `${$t("constructor.props.maxnum")}: ${component.properties.number.maxNum}`)
+          updateProperty("help.info", `${$T("constructor.props.maxnum")}: ${component.properties.number.maxNum}`)
         }
       }}
     />
@@ -262,7 +262,7 @@
 
 {#snippet InputPlaceholder()}
   <UI.Input
-    label={{ name: $t("constructor.props.placeholder") }}
+    label={{ name: $T("constructor.props.placeholder") }}
     value={component.properties.placeholder as string}
     onUpdate={(value) => updateProperty("placeholder", value)}
   />
@@ -270,7 +270,7 @@
 
 {#snippet InputInfo()}
   <UI.Input
-    label={{ name: $t("constructor.props.info") }}
+    label={{ name: $T("constructor.props.info") }}
     value={component.properties.help.info as string}
     onUpdate={(value) => updateProperty("help.info", value)}
   />
@@ -312,7 +312,7 @@
 
 {#snippet InputAutocomplete()}
   <UI.Select
-    label={{ name: $t("constructor.props.autocomplete") }}
+    label={{ name: $T("constructor.props.autocomplete") }}
     options={$optionsStore.AUTOCOMPLETE_CONSTRUCTOR_OPTIONS}
     value={$optionsStore.AUTOCOMPLETE_CONSTRUCTOR_OPTIONS.find((opt) => opt.value === (component.properties.help.autocomplete || "off"))}
     onUpdate={(option) => updateProperty("help.autocomplete", (option as UI.IOption).value as string)}
@@ -322,7 +322,7 @@
 {#snippet InputColors()}
   <UI.Select
     wrapperClass="h-14"
-    label={{ name: $t("constructor.props.colors") }}
+    label={{ name: $T("constructor.props.colors") }}
     type="buttons"
     options={$optionsStore.COLOR_OPTIONS}
     value={initialColor}
@@ -331,12 +331,12 @@
 {/snippet}
 
 {#snippet InputIdentificator()}
-  <UI.Input label={{ name: $t("constructor.props.id") }} value={component.properties.id} onUpdate={(value) => updateProperty("id", value as string)} />
+  <UI.Input label={{ name: $T("constructor.props.id") }} value={component.properties.id} onUpdate={(value) => updateProperty("id", value as string)} />
 {/snippet}
 
 {#snippet InputWrapperClass()}
   <UI.Input
-    label={{ name: $t("constructor.props.wrapperclass") }}
+    label={{ name: $T("constructor.props.wrapperclass") }}
     value={component.properties.wrapperClass}
     onUpdate={(value) => updateProperty("wrapperClass", value as string)}
   />
@@ -344,7 +344,7 @@
 
 {#snippet InputLabelClass()}
   <UI.Input
-    label={{ name: $t("constructor.props.label.class") }}
+    label={{ name: $T("constructor.props.label.class") }}
     value={component.properties.label.class}
     onUpdate={(value) => updateProperty("label.class", value as string)}
   />
@@ -352,19 +352,19 @@
 
 {#snippet InputComponentClass()}
   <UI.Input
-    label={{ name: $t("constructor.props.componentclass") }}
+    label={{ name: $T("constructor.props.componentclass") }}
     value={component.properties.componentClass}
     onUpdate={(value) => updateProperty("componentClass", twMerge(component.properties.componentClass, value as string))}
   />
 {/snippet}
 
 {#snippet InputValue()}
-  <UI.Input label={{ name: $t("constructor.props.value") }} value={component.properties.value} onUpdate={(value) => updateProperty("value", value as string)} />
+  <UI.Input label={{ name: $T("constructor.props.value") }} value={component.properties.value} onUpdate={(value) => updateProperty("value", value as string)} />
 {/snippet}
 
 {#snippet InputDisabled()}
   <UI.Switch
-    label={{ name: $t("constructor.props.disabled") }}
+    label={{ name: $T("constructor.props.disabled") }}
     value={component.properties.disabled}
     options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
     onChange={(value) => updateProperty("disabled", value)}

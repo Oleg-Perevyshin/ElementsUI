@@ -1,6 +1,6 @@
 <script lang="ts">
   import { getContext } from "svelte"
-  import { t } from "$lib/locales/i18n"
+  import { T } from "$lib/locales/i18n"
   import { type UIComponent, type ISwitchProps, updateProperty, type IOption, type IUIComponentHandler } from "../types"
   import * as UI from "$lib"
   import { optionsStore } from "../options"
@@ -27,7 +27,7 @@
 {#snippet SwitchType()}
   <UI.Select
     wrapperClass="!h-14"
-    label={{ name: $t("constructor.props.type") }}
+    label={{ name: $T("constructor.props.type") }}
     type="buttons"
     options={$optionsStore.SWITCH_OPTIONS.map((o) => (component.properties.bitMode && o.value == "checkbox" ? { ...o, disabled: true } : o))}
     value={$optionsStore.SWITCH_OPTIONS.find((option) => option.value == component.properties.type)}
@@ -38,12 +38,12 @@
 {#snippet SwitchCaptions()}
   {#if component.properties.type == "horizontal"}
     <UI.Input
-      label={{ name: $t("constructor.props.caption.left") }}
+      label={{ name: $T("constructor.props.caption.left") }}
       value={component.properties.label.captionLeft}
       onUpdate={(value) => updateProperty("label.captionLeft", value as string, component, onPropertyChange)}
     />
     <UI.Input
-      label={{ name: $t("constructor.props.caption.right") }}
+      label={{ name: $T("constructor.props.caption.right") }}
       value={component.properties.label.captionRight}
       onUpdate={(value) => updateProperty("label.captionRight", value as string, component, onPropertyChange)}
     />
@@ -53,7 +53,7 @@
 {#snippet SwitchDisabled()}
   <UI.Switch
     wrapperClass="bg-blue"
-    label={{ name: $t("constructor.props.disabled") }}
+    label={{ name: $T("constructor.props.disabled") }}
     value={component.properties.options[0].disabled}
     options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
     onChange={(value) => {
@@ -67,7 +67,7 @@
 {#snippet SwitchBitmode()}
   <UI.Switch
     wrapperClass="bg-blue"
-    label={{ name: $t("constructor.props.bitMode") }}
+    label={{ name: $T("constructor.props.bitMode") }}
     value={component.properties.bitMode}
     options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
     onChange={(value) => {
@@ -84,7 +84,7 @@
   <!-- Настройки опций -->
   <div class="space-y-4">
     <div class="m-0 flex items-center justify-center gap-2">
-      <h4>{$t("constructor.props.bits.title")}</h4>
+      <h4>{$T("constructor.props.bits.title")}</h4>
       {#if component.properties.options.length < 32}
         <UI.Button
           wrapperClass="w-8"
@@ -106,7 +106,7 @@
     {#each component.properties.options || [] as option, index (option.id)}
       <div class="m-0 flex items-end justify-around gap-2 border-gray-400">
         <UI.Input
-          label={{ name: $t("constructor.props.optionname") }}
+          label={{ name: $T("constructor.props.optionname") }}
           wrapperClass="!w-3/10"
           value={option.name}
           maxlength={4}
@@ -117,7 +117,7 @@
           }}
         />
         <UI.Input
-          label={{ name: $t("constructor.props.optionposition") }}
+          label={{ name: $T("constructor.props.optionposition") }}
           wrapperClass="!w-3/10"
           value={option.value}
           type="number"
@@ -130,7 +130,7 @@
         />
         <UI.Select
           wrapperClass="w-80 h-14.5"
-          label={{ name: $t("constructor.props.colors") }}
+          label={{ name: $T("constructor.props.colors") }}
           type="buttons"
           options={$optionsStore.COLOR_OPTIONS.filter((option) => option.value !== "bg-max" && option.value !== "bg-gray")}
           value={$optionsStore.COLOR_OPTIONS.find((c) => (c.value as string).includes(option.class.split(" ").find((cls: string) => cls.startsWith("bg-"))))}
@@ -142,7 +142,7 @@
         />
         <UI.Switch
           wrapperClass=" w-1/10 bg-blue"
-          label={{ name: $t("constructor.props.disabled") }}
+          label={{ name: $T("constructor.props.disabled") }}
           value={option.disabled}
           options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
           onChange={(value) => {
@@ -167,7 +167,7 @@
 
 {#snippet SwitchHeight()}
   <UI.Input
-    label={{ name: $t("constructor.props.height") }}
+    label={{ name: $T("constructor.props.height") }}
     value={component.properties.height}
     onUpdate={(value) => updateProperty("height", value as string, component, onPropertyChange)}
   />
@@ -175,7 +175,7 @@
 
 {#snippet SwitchValue()}
   <UI.Input
-    label={{ name: $t("constructor.props.value") }}
+    label={{ name: $T("constructor.props.value") }}
     value={component.properties.value}
     type="number"
     number={{ minNum: 0, maxNum: component.properties.bitMode ? Math.pow(2, 32) : 1, step: 1 }}

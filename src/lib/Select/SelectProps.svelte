@@ -1,6 +1,6 @@
 <script lang="ts">
   import { getContext, onMount } from "svelte"
-  import { t } from "$lib/locales/i18n"
+  import { T } from "$lib/locales/i18n"
   import { type UIComponent, type ISelectProps, type IOption, updateProperty, type IUIComponentHandler } from "../types"
   import * as UI from "$lib"
   import ButtonDelete from "../libIcons/ButtonDelete.svelte"
@@ -57,7 +57,7 @@
 
 {#snippet SelectArgument()}
   <UI.Select
-    label={{ name: $t("constructor.props.argument") }}
+    label={{ name: $T("constructor.props.argument") }}
     type="buttons"
     value={$optionsStore.FULL_ARGUMENT_OPTION.find((h) => h.value === component.eventHandler.Argument) ??
       $optionsStore.FULL_ARGUMENT_OPTION.find((h) => h.value === "")}
@@ -72,14 +72,14 @@
     value={component.eventHandler.Argument}
     maxlength={32}
     disabled={component.eventHandler.Argument == "Save" || component.eventHandler.Argument == "NoSave"}
-    help={{ info: $t("constructor.props.argument.info"), autocomplete: "on", regExp: /^[a-zA-Z0-9\-_]{0,32}$/ }}
+    help={{ info: $T("constructor.props.argument.info"), autocomplete: "on", regExp: /^[a-zA-Z0-9\-_]{0,32}$/ }}
     onUpdate={(value) => onPropertyChange({ eventHandler: { Argument: value as string } })}
   />
 {/snippet}
 
 {#snippet SelectType()}
   <UI.Select
-    label={{ name: $t("constructor.props.type") }}
+    label={{ name: $T("constructor.props.type") }}
     type="buttons"
     value={currentType}
     options={$optionsStore.SELECT_TYPE_OPTIONS}
@@ -95,7 +95,7 @@
 {#snippet SelectValueType()}
   <UI.Select
     wrapperClass="h-14"
-    label={{ name: $t("constructor.props.valuetype") }}
+    label={{ name: $T("constructor.props.valuetype") }}
     type="buttons"
     disabled={component.properties.bitMode}
     options={$optionsStore.SELECT_VALUE_TYPE_OPTIONS}
@@ -115,7 +115,7 @@
 
 {#snippet SelectSettings()}
   <UI.Switch
-    label={{ name: $t("constructor.props.bitMode") }}
+    label={{ name: $T("constructor.props.bitMode") }}
     value={component.properties.bitMode}
     options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
     onChange={(value) => {
@@ -131,7 +131,7 @@
 
   {#if component.properties.type === "buttons" && !component.properties.bitMode}
     <UI.Switch
-      label={{ name: $t("constructor.props.multiselect") }}
+      label={{ name: $T("constructor.props.multiselect") }}
       value={component.properties.multiSelect}
       options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
       onChange={(value) => {
@@ -142,7 +142,7 @@
 
   {#if component.properties.bitMode}
     <UI.Slider
-      label={{ name: $t("constructor.props.range") }}
+      label={{ name: $T("constructor.props.range") }}
       type="range"
       number={{ minNum: 0, maxNum: 31, step: 1 }}
       value={[component.properties.range.start, component.properties.range.end]}
@@ -161,7 +161,7 @@
 
   <div class="space-y-4" bind:this={itemsContainer}>
     <div class="m-0 flex items-center justify-center gap-2">
-      <h4>{$t("constructor.props.options.title")}</h4>
+      <h4>{$T("constructor.props.options.title")}</h4>
       <UI.Button
         wrapperClass="w-8"
         content={{ icon: ButtonAdd }}
@@ -190,7 +190,7 @@
           }}
         />
         <UI.Input
-          label={{ name: $t("constructor.props.optionname") }}
+          label={{ name: $T("constructor.props.optionname") }}
           wrapperClass="w-3/10"
           value={option.name}
           onUpdate={(value) => {
@@ -200,7 +200,7 @@
           }}
         />
         <UI.Input
-          label={{ name: $t("constructor.props.optionvalue") }}
+          label={{ name: $T("constructor.props.optionvalue") }}
           wrapperClass="w-3/10"
           value={option.value}
           type={currentValueType.value}
@@ -216,7 +216,7 @@
         {#if forConstructor}
           <UI.Select
             wrapperClass="w-80 h-14.5"
-            label={{ name: $t("constructor.props.colors") }}
+            label={{ name: $T("constructor.props.colors") }}
             type="buttons"
             options={$optionsStore.COLOR_OPTIONS}
             value={$optionsStore.COLOR_OPTIONS.find((c) => (c.value as string).includes(option.class.split(" ").find((cls: string) => cls.startsWith("bg-"))))}
@@ -228,7 +228,7 @@
           />
         {:else}
           <UI.Input
-            label={{ name: $t("constructor.props.optionclass") }}
+            label={{ name: $T("constructor.props.optionclass") }}
             wrapperClass="w-3/10"
             value={option.class}
             onUpdate={(value) => {

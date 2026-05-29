@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { t } from "$lib/locales/i18n"
+  import { T } from "$lib/locales/i18n"
   import type { IDeviceGNSS, IMapProps } from "$lib/types"
   import { onDestroy, onMount } from "svelte"
   import { fade } from "svelte/transition"
@@ -112,7 +112,7 @@
 
     <CustomControl position="top-left">
       <div class="flex items-center gap-2 px-2 py-1 text-black">
-        <label for="timeout" class="text-sm font-medium">{$t("constructor.props.map.timeout")}</label>
+        <label for="timeout" class="text-sm font-medium">{$T("constructor.props.map.timeout")}</label>
         <select
           id="timeout"
           class="rounded px-2 py-1 text-sm"

@@ -1,6 +1,6 @@
 <!-- $lib/ElementsUI/ButtonProps.svelte -->
 <script lang="ts">
-  import { t } from "$lib/locales/i18n"
+  import { T } from "$lib/locales/i18n"
   import { type UIComponent, type IColorPickerProps, updateProperty, type IUIComponentHandler } from "../types"
   import * as UI from "$lib"
   import { getContext } from "svelte"
@@ -28,7 +28,7 @@
 </script>
 
 {#snippet ColorPickerDefaultColor()}
-  <UI.TextField content={{ name: $t("constructor.props.defaultcolor"), class: "font-bold" }} />
+  <UI.TextField content={{ name: $T("constructor.props.defaultcolor"), class: "font-bold" }} />
   <div class="flex items-center gap-3">
     <UI.TextField wrapperClass="w-4" content={{ name: "R", class: "font-bold" }} />
     <UI.Input

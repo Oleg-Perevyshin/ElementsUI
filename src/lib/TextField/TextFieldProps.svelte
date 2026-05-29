@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { t } from "$lib/locales/i18n"
+  import { T } from "$lib/locales/i18n"
   import { updateProperty, type ITextFieldProps, type IUIComponentHandler, type UIComponent } from "../types"
   import * as UI from "$lib/index"
   import { optionsStore } from "$lib/options"
@@ -35,7 +35,7 @@
 
 {#snippet TextFieldSize()}
   <UI.Select
-    label={{ name: $t("constructor.props.size") }}
+    label={{ name: $T("constructor.props.size") }}
     type="buttons"
     value={currentType}
     options={$optionsStore.TEXTFIELD_SIZE_OPTIONS}
@@ -45,7 +45,7 @@
 
 {#snippet TextFieldName()}
   <UI.Input
-    label={{ name: $t("constructor.props.label") }}
+    label={{ name: $T("constructor.props.label") }}
     value={component.properties.content.name}
     onUpdate={(value) => updateProperty("content.name", value as string, component, onPropertyChange)}
   />
@@ -53,7 +53,7 @@
 
 {#snippet TextFieldColors()}
   <UI.Select
-    label={{ name: $t("constructor.props.textcolors") }}
+    label={{ name: $T("constructor.props.textcolors") }}
     type="buttons"
     options={$optionsStore.TEXT_COLOR_OPTIONS}
     value={initialColor}
@@ -64,7 +64,7 @@
 
 {#snippet TextFieldSettings()}
   <UI.Select
-    label={{ name: $t("constructor.props.textfield.settings") }}
+    label={{ name: $T("constructor.props.textfield.settings") }}
     type="buttons"
     multiSelect={true}
     value={$optionsStore.TEXTFIELD_SETTINGS_OPTIONS.filter((opt) => {
@@ -111,7 +111,7 @@
 
 {#snippet TextFieldComponentClass()}
   <UI.Input
-    label={{ name: $t("constructor.props.componentclass") }}
+    label={{ name: $T("constructor.props.componentclass") }}
     value={component.properties.content.class}
     onUpdate={(value) => updateProperty("content.class", value as string, component, onPropertyChange)}
   />

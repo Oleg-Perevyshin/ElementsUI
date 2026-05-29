@@ -6,7 +6,7 @@
   import { twMerge } from "tailwind-merge"
   import { onMount, tick } from "svelte"
   import ButtonClear from "../libIcons/ButtonClear.svelte"
-  import { t } from "$lib/locales/i18n"
+  import { T } from "$lib/locales/i18n"
   import { Button, Modal } from "$lib"
 
   let {
@@ -266,7 +266,7 @@
               column.label?.class,
             )}
           >
-            <span>{$t(column.label?.name ?? "")}</span>
+            <span>{$T(column.label?.name ?? "")}</span>
 
             {#if typeof column.content !== "function" && (column.content as ITableContent<any>[])?.some((c) => c.type === "text" && c.data.sortable)}
               <button
@@ -348,7 +348,7 @@
                               {/if}
                             </span>
                           {/if}
-                          {typeof button.name === "function" ? $t(button.name(row)) : $t(button.name ?? "")}
+                          {typeof button.name === "function" ? $T(button.name(row)) : $T(button.name ?? "")}
                         </button>
                       {:else if content.type === "select"}
                         {@const select = content.data}
@@ -364,7 +364,7 @@
                           >
                             {options.some((o: IOption) => o.value === row[(select?.key as string).slice(0, -2)])
                               ? row[select?.key].find((o: IOption) => o.value === row[(select?.key as string).slice(0, -2)]).name
-                              : $t("common.select_tag")}
+                              : $T("common.select_tag")}
                           </button>
 
                           {#if isDropdownOpen?.x === j && isDropdownOpen.y === i && isDropdownOpen.index === index}
@@ -524,7 +524,7 @@
   </div>
 </div>
 
-<Modal isOpen={modalData.isOpen} title={$t("constructor.props.table.fulldata")} wrapperClass="max-h-[80%]" width="{0.8 * (container?.offsetWidth ?? 0)}px">
+<Modal isOpen={modalData.isOpen} title={$T("constructor.props.table.fulldata")} wrapperClass="max-h-[80%]" width="{0.8 * (container?.offsetWidth ?? 0)}px">
   {#snippet main()}
     <div class="text-left whitespace-pre">
       {@html modalData.formattedData}
@@ -532,7 +532,7 @@
   {/snippet}
   {#snippet footer()}
     <Button
-      content={{ name: $t("constructor.props.copy") }}
+      content={{ name: $T("constructor.props.copy") }}
       wrapperClass="w-50"
       componentClass="bg-blue"
       onClick={() => {

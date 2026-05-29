@@ -14,6 +14,7 @@ const translations: Translations = {
     "library.palette": "Палитра",
     "library.regexp": "Регулярные выражения",
     "library.props": "Свойства",
+    "library.retry": "Повторить",
 
     "library.props.name": "Название",
     "library.props.type": "Тип",
@@ -188,6 +189,9 @@ const translations: Translations = {
     "constructor.props.file.notselected": "Файл не выбран",
     "constructor.props.map.loading": "Загрузка карты...",
     "constructor.props.map.noconnection": "Карта не загружена. Нет подключения к интернету",
+    "constructor.props.video.viewer.loading": "Загрузка камеры...",
+    "constructor.props.video.viewer.no.permission": "Нет разрешения для доступа к камере",
+    "constructor.props.video.viewer.no.access": "Камера недоступна",
     "constructor.props.widget.mode": "Зацикленный",
 
     "constructor.props.table.type": "Тип таблицы",

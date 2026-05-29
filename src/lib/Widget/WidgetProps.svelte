@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { t } from "$lib/locales/i18n"
+  import { T } from "$lib/locales/i18n"
   import { updateProperty, type IUIComponentHandler, type UIComponent } from "../types"
   import * as UI from "$lib"
   import { optionsStore } from "../options"
@@ -30,7 +30,7 @@
 
 {#snippet WidgetSettingsLabel()}
   <UI.Input
-    label={{ name: $t("constructor.props.settings.label") }}
+    label={{ name: $T("constructor.props.settings.label") }}
     value={component.properties.settings.label as string}
     onUpdate={(value) => updateProperty("settings.label", value, component, onPropertyChange)}
   />
@@ -39,7 +39,7 @@
 {#snippet WidgetSettingsColor()}
   <UI.Select
     wrapperClass="!h-14"
-    label={{ name: $t("constructor.props.componentcolor") }}
+    label={{ name: $T("constructor.props.componentcolor") }}
     type="buttons"
     options={$optionsStore.COLOR_OPTIONS}
     value={initialColor}
@@ -52,7 +52,7 @@
 {#snippet WidgetIconColor()}
   <UI.Select
     wrapperClass="!h-14"
-    label={{ name: $t("constructor.props.iconcolor") }}
+    label={{ name: $T("constructor.props.iconcolor") }}
     type="buttons"
     options={$optionsStore.TEXT_COLOR_OPTIONS}
     value={$optionsStore.TEXT_COLOR_OPTIONS.find((c) =>
@@ -66,7 +66,7 @@
 
 {#snippet WidgetType()}
   <UI.Select
-    label={{ name: $t("constructor.props.settings.type") }}
+    label={{ name: $T("constructor.props.settings.type") }}
     type="buttons"
     options={$optionsStore.WIDGET_TYPE_OPTIONS}
     value={$optionsStore.WIDGET_TYPE_OPTIONS.find((o) => o.value == component.properties.settings.type)}
@@ -78,12 +78,12 @@
 
 {#snippet WidgetSwitchCaptions()}
   <UI.Input
-    label={{ name: $t("constructor.props.caption.left") }}
+    label={{ name: $T("constructor.props.caption.left") }}
     value={component.properties.settings.switch.captionLeft}
     onUpdate={(value) => updateProperty("settings.switch.captionLeft", value as string, component, onPropertyChange)}
   />
   <UI.Input
-    label={{ name: $t("constructor.props.caption.right") }}
+    label={{ name: $T("constructor.props.caption.right") }}
     value={component.properties.settings.switch.captionRight}
     onUpdate={(value) => updateProperty("settings.switch.captionRight", value as string, component, onPropertyChange)}
   />
@@ -91,7 +91,7 @@
 
 {#snippet WidgetUnits()}
   <UI.Input
-    label={{ name: $t("constructor.props.units") }}
+    label={{ name: $T("constructor.props.units") }}
     value={component.properties.settings.number.units as string}
     onUpdate={(value) => updateProperty("settings.number.units", value, component, onPropertyChange)}
   />
@@ -99,7 +99,7 @@
 
 {#snippet WidgetSwitchingMode()}
   <UI.Switch
-    label={{ name: $t("constructor.props.widget.mode") }}
+    label={{ name: $T("constructor.props.widget.mode") }}
     value={component.properties.icons.cycling}
     options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
     onChange={(value) => updateProperty("icons.cycling", value, component, onPropertyChange)}
@@ -110,7 +110,7 @@
   <CommonSnippets
     snippet="IconsLib"
     initialValue={{
-      name: $t("constructor.props.labelicon"),
+      name: $T("constructor.props.labelicon"),
       icon: component.properties.icons.array,
       updateProperty: (icons: string[]) => updateProperty("icons.array", icons as string[], component, onPropertyChange),
       icons: { array: ICONS_ARRAY, selectArray: true },

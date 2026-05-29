@@ -1,6 +1,6 @@
 <!-- $lib/ElementsUI/AccordionProps.svelte -->
 <script lang="ts">
-  import { t } from "$lib/locales/i18n"
+  import { T } from "$lib/locales/i18n"
   import { updateProperty, type IAccordionProps, type IUIComponentHandler, type UIComponent } from "../types"
   import * as UI from "$lib"
   import { optionsStore } from "../options"
@@ -45,7 +45,7 @@
   <div class="flex items-center">
     <UI.FileAttach
       type="image"
-      label={{ name: $t("constructor.props.image") }}
+      label={{ name: $T("constructor.props.image") }}
       accept="image/png, image/jpeg, image/webp"
       bind:currentImage
       onChange={handleImageUpload}
@@ -66,14 +66,14 @@
 {#snippet AccordionSize()}
   <div class="flex w-full gap-4">
     <UI.Input
-      label={{ name: $t("constructor.props.size.height") }}
+      label={{ name: $T("constructor.props.size.height") }}
       value={component.properties.size.height}
       onUpdate={(value) => updateProperty("size.height", value as number, component, onPropertyChange)}
       number={{ minNum: 1, maxNum: 1000, step: 1 }}
       type="number"
     />
     <UI.Input
-      label={{ name: $t("constructor.props.size.width") }}
+      label={{ name: $T("constructor.props.size.width") }}
       value={component.properties.size.width}
       onUpdate={(value) => updateProperty("size.width", value as number, component, onPropertyChange)}
       number={{ minNum: 1, maxNum: 1000, step: 1 }}
@@ -84,7 +84,7 @@
 
 {#snippet AccordionIsOpen()}
   <UI.Switch
-    label={{ name: $t("constructor.props.open") }}
+    label={{ name: $T("constructor.props.open") }}
     value={component.properties.isOpen}
     options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
     onChange={(value) => updateProperty("isOpen", value, component, onPropertyChange)}
@@ -102,7 +102,7 @@
       <CommonSnippets
         snippet="IconsLib"
         initialValue={{
-          name: $t("constructor.props.labelicon"),
+          name: $T("constructor.props.labelicon"),
           icon: component.properties.label.icon,
           updateProperty: (icon: string) => updateProperty("label.icon", icon as string, component, onPropertyChange),
           icons: { array: ICONS },
@@ -129,7 +129,7 @@
       <CommonSnippets
         snippet="IconsLib"
         initialValue={{
-          name: $t("constructor.props.labelicon"),
+          name: $T("constructor.props.labelicon"),
           icons: { array: ICONS },
           icon: component.properties.label.icon,
           updateProperty: (icon: string) => updateProperty("label.icon", icon as string, component, onPropertyChange),

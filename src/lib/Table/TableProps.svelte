@@ -1,6 +1,6 @@
 <script lang="ts">
   import { getContext } from "svelte"
-  import { t } from "$lib/locales/i18n"
+  import { T } from "$lib/locales/i18n"
   import { type UIComponent, type ITableProps, type ITableHeader, updateProperty, type IUIComponentHandler, type ITableContent } from "../types"
   import * as UI from "$lib"
   import ButtonDelete from "$lib/libIcons/ButtonDelete.svelte"
@@ -101,7 +101,7 @@
 
 {#snippet TableOutline()}
   <UI.Switch
-    label={{ name: $t("constructor.props.outline") }}
+    label={{ name: $T("constructor.props.outline") }}
     value={component.properties.outline}
     options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
     onChange={(value) => updateProperty("outline", value, component, onPropertyChange)}
@@ -110,7 +110,7 @@
 
 {#snippet TableBufferSize()}
   <UI.Select
-    label={{ name: $t("constructor.props.table.buffersize") }}
+    label={{ name: $T("constructor.props.table.buffersize") }}
     type="buttons"
     options={$optionsStore.BUFFER_SIZE_OPTIONS}
     value={$optionsStore.BUFFER_SIZE_OPTIONS.find((o) => o.value === component.properties.dataBuffer.bufferSize)}
@@ -120,7 +120,7 @@
 
 {#snippet TableVisibleRows()}
   <UI.Select
-    label={{ name: $t("constructor.props.table.visibleRows") }}
+    label={{ name: $T("constructor.props.table.visibleRows") }}
     type="buttons"
     options={$optionsStore.VISIBLE_ROWS_OPTIONS}
     value={$optionsStore.VISIBLE_ROWS_OPTIONS.find((o) => o.value === component.properties.dataBuffer.visibleRows)}
@@ -134,7 +134,7 @@
   <!-- Настройки столбцов таблицы -->
   <div class="flex flex-col gap-2" bind:this={columnContainer}>
     <div class="flex items-center justify-center gap-2">
-      <h4>{$t("constructor.props.table.columns")}</h4>
+      <h4>{$T("constructor.props.table.columns")}</h4>
       <UI.Button
         wrapperClass="w-8"
         content={{ icon: ButtonAdd }}
@@ -170,19 +170,19 @@
         />
         <div class="py-2 pl-9 grid grid-cols-[1fr_minmax(5rem,10rem)_minmax(10rem,21rem)_2rem_2rem] items-end gap-2">
           <UI.Input
-            label={{ name: $t("constructor.props.table.columns.label") }}
+            label={{ name: $T("constructor.props.table.columns.label") }}
             value={column.label?.name}
             onUpdate={(value) => updateTableHeader(columnIndex, "label", { ["name"]: value })}
           />
           <UI.Input
-            label={{ name: $t("constructor.props.table.columns.width"), class: "px-0" }}
+            label={{ name: $T("constructor.props.table.columns.width"), class: "px-0" }}
             type="number"
             isValid={component.properties.header.reduce((width: number, h: ITableHeader<object>) => Number(h.width?.replace("%", "")) + width, 0) == 100}
             value={Number(column.width.replace("%", ""))}
             onUpdate={(value) => updateTableHeader(columnIndex, "width", `${value}%`)}
           />
           <UI.Select
-            label={{ name: $t("constructor.props.align.content") }}
+            label={{ name: $T("constructor.props.align.content") }}
             type="buttons"
             value={$optionsStore.ALIGN_OPTIONS.find((a) => (a.value as string).includes(column.align ?? "left"))}
             options={$optionsStore.ALIGN_OPTIONS}
@@ -237,7 +237,7 @@
                   <div class="flex gap-2 mx-auto items-end" style="width: {forConstructor ? '65%' : '90%'}; ">
                     <UI.Input
                       wrapperClass="w-1/4"
-                      label={{ name: $t("constructor.props.table.text.key") }}
+                      label={{ name: $T("constructor.props.table.text.key") }}
                       value={text.key}
                       help={{ regExp: /^[0-9a-zA-Z_.-]{0,16}$/ }}
                       onUpdate={(value) => {
@@ -249,7 +249,7 @@
                       }}
                     />
                     <UI.Select
-                      label={{ name: $t("constructor.props.tablecolumn.settings") }}
+                      label={{ name: $T("constructor.props.tablecolumn.settings") }}
                       type="buttons"
                       multiSelect={true}
                       value={$optionsStore.TABLE_TEXT_SETTING_OPTIONS.slice(0, forConstructor ? 3 : 5).filter((opt) => {
@@ -264,7 +264,7 @@
                   <div class="flex w-1/3 mx-auto gap-2">
                     <UI.Input
                       wrapperClass="w-1/2"
-                      label={{ name: $t("constructor.props.table.select.key") }}
+                      label={{ name: $T("constructor.props.table.select.key") }}
                       value={select.key}
                       help={{ regExp: /^[0-9a-zA-Z_.-]{0,16}$/ }}
                       onUpdate={(value) => {
@@ -278,10 +278,10 @@
                     />
                     <UI.Input
                       wrapperClass="w-1/2"
-                      label={{ name: $t("constructor.props.table.select.keys") }}
+                      label={{ name: $T("constructor.props.table.select.keys") }}
                       value={select?.keyCol ?? ""}
                       maxlength={500}
-                      help={{ info: $t("constructor.props.table.select.keys.info"), regExp: /^[a-zA-Z0-9\-_ ]{0,500}$/ }}
+                      help={{ info: $T("constructor.props.table.select.keys.info"), regExp: /^[a-zA-Z0-9\-_ ]{0,500}$/ }}
                       onUpdate={(value) => {
                         const headers = [...component.properties.header]
                         headers[columnIndex].content[index].data = { ...headers[columnIndex].content[index].data, keyCol: value }
@@ -293,17 +293,17 @@
                   {@const button = content.data}
                   <div class="flex w-[95%] mx-auto items-end justify-between gap-2">
                     <UI.Input
-                      label={{ name: $t("constructor.props.name") }}
+                      label={{ name: $T("constructor.props.name") }}
                       wrapperClass="w-2/10"
                       value={button.name}
                       onUpdate={(value) => updateContentProperty(columnIndex, index, "name", value)}
                     />
 
                     <div class="flex items-end gap-1">
-                      <UI.Button wrapperClass="w-8" content={{ icon: InfoIcon, info: { text: $t("constructor.props.button.colors.hint"), side: "right" } }} />
+                      <UI.Button wrapperClass="w-8" content={{ icon: InfoIcon, info: { text: $T("constructor.props.button.colors.hint"), side: "right" } }} />
                       <UI.Select
                         wrapperClass="w-80 h-14.5"
-                        label={{ name: $t("constructor.props.colors") }}
+                        label={{ name: $T("constructor.props.colors") }}
                         type="buttons"
                         options={$optionsStore.COLOR_OPTIONS.filter((option) => option.value !== "bg-max")}
                         value={$optionsStore.COLOR_OPTIONS.find((c) =>
@@ -322,7 +322,7 @@
                       <CommonSnippets
                         snippet="IconsLib"
                         initialValue={{
-                          name: $t("constructor.props.table.type.icon"),
+                          name: $T("constructor.props.table.type.icon"),
                           icon: column.content[index].data.icon,
                           updateProperty: (icon: string) => updateContentProperty(columnIndex, index, "icon", icon),
                           icons: { array: ICONS },
@@ -334,7 +334,7 @@
 
                     <UI.Select
                       wrapperClass="w-1/4"
-                      label={{ name: $t("constructor.props.header") }}
+                      label={{ name: $T("constructor.props.header") }}
                       type="buttons"
                       value={$optionsStore.HEADER_OPTIONS.find((h) => h.value === button.eventHandler?.Header)}
                       options={$optionsStore.HEADER_OPTIONS}
@@ -346,7 +346,7 @@
                     />
                     <UI.Input
                       wrapperClass="w-2/10"
-                      label={{ name: $t("constructor.props.argument") }}
+                      label={{ name: $T("constructor.props.argument") }}
                       value={button.eventHandler?.Argument}
                       onUpdate={(value) => {
                         const handler = button.eventHandler
@@ -356,10 +356,10 @@
                     />
                     <UI.Input
                       wrapperClass="w-2/10"
-                      label={{ name: $t("constructor.props.table.keys") }}
+                      label={{ name: $T("constructor.props.table.keys") }}
                       value={button.eventHandler?.Variables.join(" ")}
                       maxlength={500}
-                      help={{ info: $t("constructor.props.table.keys.info"), regExp: /^[a-zA-Z0-9\-._ ]{0,500}$/ }}
+                      help={{ info: $T("constructor.props.table.keys.info"), regExp: /^[a-zA-Z0-9\-._ ]{0,500}$/ }}
                       onUpdate={(value) => {
                         const handler = { ...button.eventHandler }
                         handler.Variables = (value as string).trim().split(/\s+/)
@@ -371,7 +371,7 @@
                   {@const progressBar = content.data}
                   <div class="w-3/5 flex mx-auto items-end gap-2">
                     <UI.Input
-                      label={{ name: $t("constructor.props.table.progressBar.key") }}
+                      label={{ name: $T("constructor.props.table.progressBar.key") }}
                       value={progressBar.key}
                       help={{ regExp: /^[0-9a-zA-Z_.-]{0,16}$/ }}
                       onUpdate={(value) => {
@@ -385,20 +385,20 @@
                     />
                     <UI.Input
                       wrapperClass="w-1/2"
-                      label={{ name: $t("constructor.props.min") }}
+                      label={{ name: $T("constructor.props.min") }}
                       value={(progressBar?.minNum as number) ?? 0}
                       type="number"
                       onUpdate={(value) => updateContentProperty(columnIndex, index, "minNum", value as string)}
                     />
                     <UI.Input
                       wrapperClass="w-1/2"
-                      label={{ name: $t("constructor.props.max") }}
+                      label={{ name: $T("constructor.props.max") }}
                       value={(progressBar?.maxNum as number) ?? 100}
                       type="number"
                       onUpdate={(value) => updateContentProperty(columnIndex, index, "maxNum", value as string)}
                     />
                     <UI.Input
-                      label={{ name: $t("constructor.props.units") }}
+                      label={{ name: $T("constructor.props.units") }}
                       value={progressBar?.units}
                       onUpdate={(value) => updateContentProperty(columnIndex, index, "units", value as string)}
                     />
@@ -409,7 +409,7 @@
                     <CommonSnippets
                       snippet="IconsLib"
                       initialValue={{
-                        name: $t("constructor.props.table.columns.defaultIcon"),
+                        name: $T("constructor.props.table.columns.defaultIcon"),
                         icon: image?.defaultIcon ?? "",
                         updateProperty: (icon: string) => {
                           updateContentProperty(columnIndex, index, "defaultIcon", icon)
@@ -423,13 +423,13 @@
                     />
 
                     <UI.Input
-                      label={{ name: $t("constructor.props.table.columns.class") }}
+                      label={{ name: $T("constructor.props.table.columns.class") }}
                       value={image?.class}
                       onUpdate={(value) => updateContentProperty(columnIndex, index, "class", value)}
                     />
                     <UI.Input
                       wrapperClass="w-4/10"
-                      label={{ name: $t("constructor.props.table.columns.image.width"), class: "px-0" }}
+                      label={{ name: $T("constructor.props.table.columns.image.width"), class: "px-0" }}
                       type="number"
                       number={{ minNum: 0, maxNum: 1000, step: 1 }}
                       value={Number(image?.width?.replace("rem", "") ?? 0)}
@@ -437,7 +437,7 @@
                     />
                     <UI.Input
                       wrapperClass="w-4/10"
-                      label={{ name: $t("constructor.props.table.columns.image.height"), class: "px-0" }}
+                      label={{ name: $T("constructor.props.table.columns.image.height"), class: "px-0" }}
                       type="number"
                       number={{ minNum: 0, maxNum: 1000, step: 1 }}
                       value={Number(image?.height?.replace("rem", "") ?? 0)}
@@ -482,7 +482,7 @@
 
 {#snippet TableFooter()}
   <UI.Input
-    label={{ name: $t("constructor.props.footer") }}
+    label={{ name: $T("constructor.props.footer") }}
     value={component.properties.footer}
     onUpdate={(value) => updateProperty("footer", value as string, component, onPropertyChange)}
   />
@@ -490,7 +490,7 @@
 
 {#snippet TableStashData()}
   <UI.Switch
-    label={{ name: $t("constructor.props.table.stashData") }}
+    label={{ name: $T("constructor.props.table.stashData") }}
     value={component.properties.dataBuffer.stashData}
     options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
     onChange={(value) => {
@@ -506,7 +506,7 @@
 {#snippet TableClearButton()}
   <UI.Switch
     label={{
-      name: $t("constructor.props.table.clearButton"),
+      name: $T("constructor.props.table.clearButton"),
     }}
     value={component.properties.dataBuffer.clearButton}
     options={[{ id: crypto.randomUUID(), value: 0, class: "", disabled: !component.properties.dataBuffer.stashData }]}
@@ -516,7 +516,7 @@
 
 {#snippet TableLogger()}
   <UI.Switch
-    label={{ name: $t("constructor.props.table.logger"), captionLeft: $t("constructor.props.info.bottom"), captionRight: $t("constructor.props.info.top") }}
+    label={{ name: $T("constructor.props.table.logger"), captionLeft: $T("constructor.props.info.bottom"), captionRight: $T("constructor.props.info.top") }}
     value={component.properties.dataBuffer.logger}
     options={[{ id: crypto.randomUUID(), value: 0, class: "", disabled: !component.properties.dataBuffer.stashData }]}
     onChange={(value) => updateProperty("dataBuffer.logger", value, component, onPropertyChange)}

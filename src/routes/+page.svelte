@@ -1,7 +1,7 @@
 <!-- src/routes/+page.svelte -->
 <script lang="ts">
   import * as UI from "$lib"
-  import { t } from "$lib/locales/i18n"
+  import { T } from "$lib/locales/i18n"
   import { fade } from "svelte/transition"
   import Settings from "../appIcons/Settings.svelte"
   import Palette from "../appIcons/Palette.svelte"
@@ -60,7 +60,7 @@
   Посетите тестовый ресурс <a href="https://cloud-dev.poe-gw.keenetic.pro/" target="_blank">PAS Cloud</a> для просмотра компонентов в использовании
 </p>
 
-<UI.Accordion wrapperClass="mt-10" label={{ name: $t("library.setting"), icon: Settings }}
+<UI.Accordion wrapperClass="mt-10" label={{ name: $T("library.setting"), icon: Settings }}
   ><p class="text-left">
     Для корректного отображения компонентов и использования встроенной цветовой палитры, добавьте следующие переменные в ваш файл app.css или в глобальный файл
     стилей вашего приложения:
@@ -101,7 +101,7 @@
   </div>
 </UI.Accordion>
 
-<UI.Accordion wrapperClass="mt-2" label={{ name: $t("library.palette"), icon: Palette }} isOpen={false}>
+<UI.Accordion wrapperClass="mt-2" label={{ name: $T("library.palette"), icon: Palette }} isOpen={false}>
   <div class="grid grid-cols-5 justify-center">
     <!-- Заголовки -->
     <div class="col-span-2 col-start-2 border-l border-(--border-color) font-semibold">Светлая тема</div>
@@ -119,6 +119,6 @@
   </div>
 </UI.Accordion>
 
-<UI.Accordion wrapperClass="mt-2" label={{ name: $t("library.regexp"), icon: Library }} isOpen={false}>
+<UI.Accordion wrapperClass="mt-2" label={{ name: $T("library.regexp"), icon: Library }} isOpen={false}>
   <div class="text-left justify-center">{@html renderedContents[2]}</div>
 </UI.Accordion>

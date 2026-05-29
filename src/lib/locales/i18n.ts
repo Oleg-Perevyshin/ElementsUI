@@ -40,4 +40,4 @@ function translate(locale: string, key: string): string {
   return translations[locale]?.[key] || key
 }
 
-export const t: Readable<(key: string) => string> = derived(Language, ($lang) => (key: string) => translate($lang, key))
+export const T: Readable<(key: string) => string> = derived(Language, ($lang) => (key: string) => translate($lang, key))

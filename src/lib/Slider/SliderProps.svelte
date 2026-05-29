@@ -1,6 +1,6 @@
 <script lang="ts">
   import { getContext } from "svelte"
-  import { t } from "$lib/locales/i18n"
+  import { T } from "$lib/locales/i18n"
   import { type UIComponent, type ISliderProps, updateProperty, type IUIComponentHandler } from "../types"
   import * as UI from "$lib"
   import { optionsStore } from "../options"
@@ -34,7 +34,7 @@
 
 {#snippet SliderType()}
   <UI.Select
-    label={{ name: $t("constructor.props.type") }}
+    label={{ name: $T("constructor.props.type") }}
     type="buttons"
     value={$optionsStore.SLIDER_TYPE_OPTIONS.find((opt) => opt.value === (component.properties.type || "single"))}
     options={$optionsStore.SLIDER_TYPE_OPTIONS}
@@ -47,7 +47,7 @@
 
 {#snippet SliderValue()}
   <UI.Input
-    label={{ name: $t("constructor.props.value") }}
+    label={{ name: $T("constructor.props.value") }}
     value={component.properties.value}
     onUpdate={(value) => updateProperty("value", value as string, component, onPropertyChange)}
   />

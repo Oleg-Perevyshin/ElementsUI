@@ -1,6 +1,6 @@
 <script lang="ts">
   import { getContext } from "svelte"
-  import { t } from "$lib/locales/i18n"
+  import { T } from "$lib/locales/i18n"
   import { type UIComponent, type IGraphProps, updateProperty, type IOption, type IUIComponentHandler } from "../types"
   import * as UI from "$lib"
   import { ICONS } from "$lib/icons"
@@ -37,9 +37,9 @@
   <div class="mt-2 flex w-full justify-around gap-2">
     {#each component.properties.axes as axe, index}
       {@const axesOptions = [
-        { name: $t("constructor.props.joystick.pitch.axe"), info: "", regExp: /^[\p{L}0-9\-_"':{}]+$/u },
-        { name: $t("constructor.props.joystick.yaw.axe"), info: "", regExp: /^[\p{L}0-9\-_"':{}]+$/u },
-        { name: $t("constructor.props.joystick.roll.axe"), info: $t("constructor.props.joystick.axes.info"), regExp: /^[\p{L}0-9\-_"':{}]*$/u },
+        { name: $T("constructor.props.joystick.pitch.axe"), info: "", regExp: /^[\p{L}0-9\-_"':{}]+$/u },
+        { name: $T("constructor.props.joystick.yaw.axe"), info: "", regExp: /^[\p{L}0-9\-_"':{}]+$/u },
+        { name: $T("constructor.props.joystick.roll.axe"), info: $T("constructor.props.joystick.axes.info"), regExp: /^[\p{L}0-9\-_"':{}]*$/u },
       ]}
       <div class="flex flex-col gap-1">
         <UI.Input
@@ -95,7 +95,7 @@
         <CommonSnippets
           snippet="IconsLib"
           initialValue={{
-            name: $t("constructor.props.buttonIcon"),
+            name: $T("constructor.props.buttonIcon"),
             icon: component.properties.buttonIcon,
             updateProperty: (icon: string) => updateProperty("buttonIcon", icon as string, component, onPropertyChange),
             icons: { array: ICONS },
@@ -124,7 +124,7 @@
         <CommonSnippets
           snippet="IconsLib"
           initialValue={{
-            name: $t("constructor.props.buttonIcon"),
+            name: $T("constructor.props.buttonIcon"),
             icon: component.properties.buttonIcon,
             updateProperty: (icon: string) => updateProperty("buttonIcon", icon as string, component, onPropertyChange),
             icons: { array: ICONS },

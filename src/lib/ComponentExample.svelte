@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Select, Switch, t, type IOption } from "$lib"
+  import { Select, Switch, T, type IOption } from "$lib"
   import type { Snippet } from "svelte"
   import { fade } from "svelte/transition"
 
@@ -14,9 +14,9 @@
 
   let isCopied = $state(false)
   let snippetOptions = [
-    { id: crypto.randomUUID(), value: "overview", name: $t("library.overview") },
-    { id: crypto.randomUUID(), value: "examples", name: $t("library.examples") },
-    { id: crypto.randomUUID(), value: "props", name: $t("library.props") },
+    { id: crypto.randomUUID(), value: "overview", name: $T("library.overview") },
+    { id: crypto.randomUUID(), value: "examples", name: $T("library.examples") },
+    { id: crypto.randomUUID(), value: "props", name: $T("library.props") },
   ]
 
   let mainSnippet: string | undefined = $state("overview")
@@ -48,7 +48,7 @@
     </div>
     <Switch
       wrapperClass="w-60 self-end p-2"
-      label={{ name: $t("library.for_constructor") }}
+      label={{ name: $T("library.for_constructor") }}
       value={forConstructor ? 1 : 0}
       options={[{ id: crypto.randomUUID(), value: 0 }]}
       onChange={(value) => (forConstructor = value == 0 ? false : true)}

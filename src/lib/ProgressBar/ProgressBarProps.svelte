@@ -1,6 +1,6 @@
 <script lang="ts">
   import { getContext } from "svelte"
-  import { t } from "$lib/locales/i18n"
+  import { T } from "$lib/locales/i18n"
   import { type UIComponent, type IProgressBarProps, updateProperty, type IUIComponentHandler } from "../types"
   import * as UI from "$lib"
   import { optionsStore } from "../options"
@@ -26,7 +26,7 @@
 {#snippet ProgressBarType()}
   <UI.Select
     wrapperClass="!h-14"
-    label={{ name: $t("constructor.props.type") }}
+    label={{ name: $T("constructor.props.type") }}
     disabled={component.properties.bitMode}
     type="buttons"
     options={$optionsStore.SWITCH_OPTIONS.filter((o) => o.value !== "checkbox")}
@@ -37,7 +37,7 @@
 
 {#snippet ProgressBarUnits()}
   <UI.Input
-    label={{ name: $t("constructor.props.units") }}
+    label={{ name: $T("constructor.props.units") }}
     value={component.properties.number.units}
     onUpdate={(value) => updateProperty("number.units", value, component, onPropertyChange)}
   />
@@ -46,7 +46,7 @@
 {#snippet ProgressBarOptions()}
   <div class="space-y-4" bind:this={itemsContainer}>
     <div class="m-0 flex items-center justify-center gap-2">
-      <h4>{$t("constructor.props.progressbar.title")}</h4>
+      <h4>{$T("constructor.props.progressbar.title")}</h4>
       <UI.Button
         wrapperClass="w-8"
         content={{ icon: ButtonAdd }}
@@ -81,7 +81,7 @@
           }}
         />
         <UI.Input
-          label={{ name: $t("constructor.props.optionname") }}
+          label={{ name: $T("constructor.props.optionname") }}
           wrapperClass="w-1/4"
           value={progress.name}
           onUpdate={(value) => {
@@ -92,7 +92,7 @@
         />
         {#if forConstructor}
           <UI.Select
-            label={{ name: $t("constructor.props.colors") }}
+            label={{ name: $T("constructor.props.colors") }}
             wrapperClass="w-1/2 h-14.5"
             type="buttons"
             options={$optionsStore.COLOR_OPTIONS.filter((option) => option.value !== "bg-max")}
@@ -107,7 +107,7 @@
           />
         {:else}
           <UI.Input
-            label={{ name: $t("constructor.props.optionvalue") }}
+            label={{ name: $T("constructor.props.optionvalue") }}
             wrapperClass="w-1/4"
             value={(component.properties.value || [])[index]?.Value}
             type="number"
@@ -126,7 +126,7 @@
             }}
           />
           <UI.Input
-            label={{ name: $t("constructor.props.optionclass") }}
+            label={{ name: $T("constructor.props.optionclass") }}
             wrapperClass="w-1/3"
             value={progress.class}
             onUpdate={(value) => {

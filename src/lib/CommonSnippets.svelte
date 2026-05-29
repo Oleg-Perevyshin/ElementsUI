@@ -1,6 +1,6 @@
 <script lang="ts">
   import * as UI from "$lib"
-  import { t } from "$lib/locales/i18n"
+  import { T } from "$lib/locales/i18n"
   import CrossIcon from "./libIcons/CrossIcon.svelte"
   import { optionsStore } from "./options"
   import { updateProperty } from "./types"
@@ -42,7 +42,7 @@
 
 {#snippet Variable()}
   <UI.Select
-    label={{ name: $t("constructor.props.variable") }}
+    label={{ name: $T("constructor.props.variable") }}
     type="input"
     options={VARIABLE_OPTIONS}
     value={VARIABLE_OPTIONS.find((opt) => opt.value === component.properties.id)}
@@ -58,7 +58,7 @@
 
 {#snippet Access()}
   <UI.Select
-    label={{ name: $t("constructor.props.access") }}
+    label={{ name: $T("constructor.props.access") }}
     type="buttons"
     options={component.type === "Accordion" ||
     component.type === "Tabs" ||
@@ -75,7 +75,7 @@
 
 {#snippet Colors(initialValue: { color: UI.IOption<string>; uselessColors?: string[]; updateProperty?: (option: UI.IOption | UI.IOption[]) => {} })}
   <UI.Select
-    label={{ name: $t("constructor.props.colors") }}
+    label={{ name: $T("constructor.props.colors") }}
     type="buttons"
     options={$optionsStore.COLOR_OPTIONS.filter((o) => !initialValue.uselessColors?.includes(o.value))}
     value={initialValue.color}
@@ -88,7 +88,7 @@
 
 {#snippet Label()}
   <UI.Input
-    label={{ name: $t("constructor.props.label") }}
+    label={{ name: $T("constructor.props.label") }}
     value={(
       component.properties as
         | UI.IAccordionProps
@@ -108,7 +108,7 @@
 
 {#snippet LabelAlign(initialAlign: UI.IOption<string>)}
   <UI.Select
-    label={{ name: $t("constructor.props.align") }}
+    label={{ name: $T("constructor.props.align") }}
     type="buttons"
     value={initialAlign}
     options={component.type == "Accordion" ? $optionsStore.JUSTIFY_ALIGN_OPTIONS : $optionsStore.TEXT_ALIGN_OPTIONS.slice(0, -1)}
@@ -139,7 +139,7 @@
 
 {#snippet LabelClass()}
   <UI.Input
-    label={{ name: $t("constructor.props.label.class") }}
+    label={{ name: $T("constructor.props.label.class") }}
     value={(
       component.properties as
         | UI.IAccordionProps
@@ -159,7 +159,7 @@
 
 {#snippet Identificator()}
   <UI.Input
-    label={{ name: $t("constructor.props.id") }}
+    label={{ name: $T("constructor.props.id") }}
     value={component.properties.id}
     onUpdate={(value) => updateProperty("id", value as string, component, onPropertyChange)}
   />
@@ -167,7 +167,7 @@
 
 {#snippet WrapperClass()}
   <UI.Input
-    label={{ name: $t("constructor.props.wrapperclass") }}
+    label={{ name: $T("constructor.props.wrapperclass") }}
     value={component.properties.wrapperClass}
     onUpdate={(value) => updateProperty("wrapperClass", value as string, component, onPropertyChange)}
   />
@@ -175,7 +175,7 @@
 
 {#snippet Disabled()}
   <UI.Switch
-    label={{ name: $t("constructor.props.disabled") }}
+    label={{ name: $T("constructor.props.disabled") }}
     value={(component.properties as UI.IInputProps | UI.ISwitchProps | UI.ISliderProps | UI.IFileAttachProps)?.disabled ? 1 : 0}
     options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
     onChange={(value) => updateProperty("disabled", value, component, onPropertyChange)}
@@ -184,7 +184,7 @@
 
 {#snippet EventHandlerArgument()}
   <UI.Select
-    label={{ name: $t("constructor.props.action") }}
+    label={{ name: $T("constructor.props.action") }}
     type="buttons"
     value={$optionsStore.SHORT_ARGUMENT_OPTION.find((h) => h.value === component.eventHandler?.Argument)}
     options={$optionsStore.SHORT_ARGUMENT_OPTION}
@@ -197,7 +197,7 @@
 
 {#snippet Readonly()}
   <UI.Switch
-    label={{ name: $t("constructor.props.readonly") }}
+    label={{ name: $T("constructor.props.readonly") }}
     value={Number((component.properties as UI.IColorPickerProps | UI.IInputProps | UI.IJoystickProps | UI.IWidgetProps).readonly)}
     options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
     onChange={(value) => updateProperty("readonly", value, component, onPropertyChange)}
@@ -223,14 +223,14 @@
 })}
   <div class="flex">
     <UI.Input
-      label={{ name: $t("constructor.props.min") }}
+      label={{ name: $T("constructor.props.min") }}
       value={initialValue.number?.minNum}
       type="number"
       readonly={initialValue.bitMode}
       onUpdate={(value) => initialValue.updateProperty(value as number, "number.minNum")}
     />
     <UI.Input
-      label={{ name: $t("constructor.props.max") }}
+      label={{ name: $T("constructor.props.max") }}
       value={initialValue.number?.maxNum}
       type="number"
       readonly={initialValue.bitMode}
@@ -238,7 +238,7 @@
     />
     {#if component.type !== "ProgressBar" && component.type !== "Joystick"}
       <UI.Input
-        label={{ name: $t("constructor.props.step") }}
+        label={{ name: $T("constructor.props.step") }}
         value={initialValue.number?.step}
         type="number"
         number={{ minNum: 0, maxNum: 1000000, step: 1 }}
@@ -269,7 +269,7 @@
                 onkeydown={null}
                 onclick={() => (initialValue.icons.selectArray ? initialValue.updateProperty(category[1]) : {})}
               >
-                <div class="absolute -top-3.5 bg-(--back-color) px-1">{$t(`constructor.props.icon.${category[0]}`)}</div>
+                <div class="absolute -top-3.5 bg-(--back-color) px-1">{$T(`constructor.props.icon.${category[0]}`)}</div>
                 <div class="grid place-items-center gap-2" style="grid-template-columns: repeat({initialValue.icons.selectArray ? 9 : 3}, minmax(0, 1fr));">
                   {#each category[1] as icon}
                     <button

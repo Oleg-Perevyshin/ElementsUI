@@ -34,6 +34,7 @@
     { page: "table", name: "Table" },
     { page: "tabs", name: "Tabs" },
     { page: "text-field", name: "TextField" },
+    { page: "video-viewer", name: "VideoViewer" },
     { page: "widget", name: "Widget" },
   ]
 

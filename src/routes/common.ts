@@ -1,7 +1,7 @@
 import type { ITableHeader, UIComponent } from "$lib"
 import { marked } from "marked"
 import DOMPurify from "dompurify"
-import { t } from "$lib/locales/i18n"
+import { T } from "$lib/locales/i18n"
 import { get } from "svelte/store"
 
 export const formatObjectToString = (properties: UIComponent["properties"]): string => {
@@ -131,7 +131,7 @@ export interface TableRows {
   description: string
 }
 
-const translate = get(t)
+const translate = get(T)
 export const TableColumns: ITableHeader<TableRows>[] = [
   { label: { name: translate("library.props.name") }, content: [{ type: "text", data: { key: "name" } }], width: "15%" },
   {

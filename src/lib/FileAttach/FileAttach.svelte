@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { t } from "$lib/locales/i18n"
+  import { T } from "$lib/locales/i18n"
   import type { IFileAttachProps } from "$lib/types"
   import { twMerge } from "tailwind-merge"
 
@@ -87,10 +87,10 @@
              "
       >
         <div class="flex w-1/3 items-center justify-center bg-(--blue-color) p-2 py-1 {disabled ? 'opacity-50' : ''}">
-          {$t("constructor.props.file.select")}
+          {$T("constructor.props.file.select")}
         </div>
         <div class="flex flex-1 items-center justify-start truncate bg-(--back-color) px-2 {disabled ? 'opacity-50' : ''}">
-          <p class="truncate">{fileName || $t("constructor.props.file.notselected")}</p>
+          <p class="truncate">{fileName || $T("constructor.props.file.notselected")}</p>
         </div>
       </div>
     </label>

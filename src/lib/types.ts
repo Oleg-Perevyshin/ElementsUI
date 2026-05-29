@@ -59,6 +59,7 @@ export interface UIComponent {
     | "Table"
     | "Tabs"
     | "TextField"
+    | "VideoViewer"
     | "Widget"
 
   properties:
@@ -447,6 +448,15 @@ export interface ITextFieldProps {
     class?: string
     size?: "small" | "base" | "large" | "huge" | "massive"
   }
+}
+
+/* ********************************************************** */
+/* Интерфейс видео потока */
+export interface IVideoViewerProps {
+  id?: string
+  stream?: MediaStream | null
+  onstream?: (stream: MediaStream) => void
+  ondevicechange?: (devices: MediaDeviceInfo[]) => void
 }
 
 /* ********************************************************** */

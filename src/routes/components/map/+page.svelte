@@ -127,7 +127,6 @@ ${formatObjectToString(mapComponent.properties as IMapProps)}
   {#snippet component()}
     <div class="h-full">
       <Map {...mapComponent.properties as IMapProps} {data} />
-      <!-- <Map /> -->
     </div>
   {/snippet}
   {#snippet componentProps()}

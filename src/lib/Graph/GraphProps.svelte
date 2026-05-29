@@ -1,6 +1,6 @@
 <script lang="ts">
   import { getContext } from "svelte"
-  import { t } from "$lib/locales/i18n"
+  import { T } from "$lib/locales/i18n"
   import { type UIComponent, type IGraphProps, updateProperty, type IUIComponentHandler } from "../types"
   import * as UI from "$lib"
   import { optionsStore } from "$lib/options"
@@ -30,7 +30,7 @@
 {#snippet GraphIsTest()}
   <UI.Switch
     wrapperClass="bg-blue"
-    label={{ name: $t("constructor.props.istest") }}
+    label={{ name: $T("constructor.props.istest") }}
     value={component.properties.isTest}
     options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
     onChange={(value) => updateProperty("isTest", value, component, onPropertyChange)}

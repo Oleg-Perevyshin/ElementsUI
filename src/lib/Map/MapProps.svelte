@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { t } from "$lib/locales/i18n"
+  import { T } from "$lib/locales/i18n"
   import { type UIComponent, type IGraphProps, updateProperty, type IUIComponentHandler } from "../types"
   import { ICONS } from "$lib/icons"
   import { optionsStore } from "$lib/options"
@@ -40,7 +40,7 @@
       <CommonSnippets
         snippet="IconsLib"
         initialValue={{
-          name: $t("constructor.props.markerIcon"),
+          name: $T("constructor.props.markerIcon"),
           icon: component.properties.markerIcon,
           updateProperty: (icon: string) => updateProperty("markerIcon", icon as string, component, onPropertyChange),
           icons: { array: ICONS },
@@ -65,7 +65,7 @@
       <CommonSnippets
         snippet="IconsLib"
         initialValue={{
-          name: $t("constructor.props.markerIcon"),
+          name: $T("constructor.props.markerIcon"),
           icon: component.properties.markerIcon,
           updateProperty: (icon: string) => updateProperty("markerIcon", icon as string, component, onPropertyChange),
           icons: { array: ICONS },

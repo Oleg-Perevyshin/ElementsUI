@@ -4,7 +4,7 @@
   import { onMount } from "svelte"
   import type { IOption, ISelectProps } from "../types"
   import { twMerge } from "tailwind-merge"
-  import { t } from "$lib/locales/i18n"
+  import { T } from "$lib/locales/i18n"
 
   let isDropdownOpen = $state(false)
   let dropdownElement: HTMLDivElement
@@ -120,7 +120,7 @@
         aria-expanded={isDropdownOpen}
         {disabled}
       >
-        {value?.name || $t("common.select_tag")}
+        {value?.name || $T("common.select_tag")}
       </button>
 
       {#if isDropdownOpen}

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { t } from "$lib/locales/i18n"
+  import { T } from "$lib/locales/i18n"
   import { updateProperty, type IOption, type ITabsProps, type IUIComponentHandler, type UIComponent } from "../types"
   import * as UI from "$lib"
   import { optionsStore } from "../options"
@@ -50,7 +50,7 @@
 {#snippet TabsIconPosition()}
   <UI.Select
     wrapperClass="h-14"
-    label={{ name: $t("constructor.props.icon.text.position") }}
+    label={{ name: $T("constructor.props.icon.text.position") }}
     type="buttons"
     options={$optionsStore.ICON_TEXT_POSITION_OPTIONS}
     value={initialPosition}
@@ -67,9 +67,9 @@
 {#snippet TabsWidthMode()}
   <UI.Switch
     label={{
-      name: $t("constructor.props.widthMode"),
-      captionLeft: $t("constructor.props.height.small"),
-      captionRight: $t("constructor.props.equal"),
+      name: $T("constructor.props.widthMode"),
+      captionLeft: $T("constructor.props.height.small"),
+      captionRight: $T("constructor.props.equal"),
     }}
     value={initialWidth()}
     options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
@@ -86,7 +86,7 @@
 {#snippet TabsSettings()}
   <div class="space-y-4" bind:this={itemsContainer}>
     <div class="m-0 flex items-center justify-center gap-2">
-      <h4>{$t("constructor.props.tabs.title")}</h4>
+      <h4>{$T("constructor.props.tabs.title")}</h4>
       {#if component.properties?.items.length < 10}
         <UI.Button
           wrapperClass="w-8"
@@ -119,7 +119,7 @@
           }}
         />
         <UI.Input
-          label={{ name: $t("constructor.props.optionname") }}
+          label={{ name: $T("constructor.props.optionname") }}
           wrapperClass="w-1/3"
           value={tab.name}
           onUpdate={(value) => {
@@ -132,7 +132,7 @@
           <CommonSnippets
             snippet="IconsLib"
             initialValue={{
-              name: $t("constructor.props.table.type.icon"),
+              name: $T("constructor.props.table.type.icon"),
               icon: component.properties.items[index].icon,
               updateProperty: (icon: string) => {
                 const items = [...(component.properties?.items || [])]
@@ -148,7 +148,7 @@
 
         <UI.Switch
           wrapperClass="w-30"
-          label={{ name: $t("constructor.props.disabled") }}
+          label={{ name: $T("constructor.props.disabled") }}
           value={tab?.disabled ? 1 : 0}
           options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
           onChange={(value) => {
@@ -182,14 +182,14 @@
 {#snippet TabsSize()}
   <div class="flex w-full gap-4">
     <UI.Input
-      label={{ name: $t("constructor.props.size.height") }}
+      label={{ name: $T("constructor.props.size.height") }}
       value={component.properties.size.height}
       onUpdate={(value) => updateProperty("size.height", value as number, component, onPropertyChange)}
       number={{ minNum: 1, maxNum: 1000, step: 1 }}
       type="number"
     />
     <UI.Input
-      label={{ name: $t("constructor.props.size.width") }}
+      label={{ name: $T("constructor.props.size.width") }}
       value={component.properties.size.width}
       onUpdate={(value) => updateProperty("size.width", value as number, component, onPropertyChange)}
       number={{ minNum: 1, maxNum: 1000, step: 1 }}

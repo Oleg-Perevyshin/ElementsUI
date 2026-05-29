@@ -1,6 +1,6 @@
 <!-- $lib/ElementsUI/ButtonProps.svelte -->
 <script lang="ts">
-  import { t } from "$lib/locales/i18n"
+  import { T } from "$lib/locales/i18n"
   import { type IFileAttachProps, type IUIComponentHandler, type UIComponent, updateProperty } from "../types"
   import * as UI from "$lib"
   import { optionsStore } from "../options"
@@ -30,16 +30,16 @@
 
 {#snippet FileAccept()}
   <UI.Input
-    label={{ name: $t("constructor.props.file.accept") }}
+    label={{ name: $T("constructor.props.file.accept") }}
     value={component.properties.accept}
-    help={{ info: $t("constructor.props.file.accept.help") }}
+    help={{ info: $T("constructor.props.file.accept.help") }}
     onUpdate={(value) => updateProperty("accept", value as string, component, onPropertyChange)}
   />
 {/snippet}
 
 {#snippet FileType()}
   <UI.Select
-    label={{ name: $t("constructor.props.type") }}
+    label={{ name: $T("constructor.props.type") }}
     type="buttons"
     value={$optionsStore.FILE_ATTACH_TYPE_OPTIONS.find((c) => (c.value as string).includes(component.properties.type))}
     options={$optionsStore.FILE_ATTACH_TYPE_OPTIONS}
@@ -49,13 +49,13 @@
   {#if component.properties.type === "image"}
     <div class="flex gap-4">
       <UI.Input
-        label={{ name: $t("constructor.props.imageSize.height") }}
+        label={{ name: $T("constructor.props.imageSize.height") }}
         type="number"
         value={component.properties.imageSize.height.replace("rem", "")}
         onUpdate={(value) => updateProperty("imageSize.height", `${value as string}rem`, component, onPropertyChange)}
       />
       <UI.Input
-        label={{ name: $t("constructor.props.imageSize.width") }}
+        label={{ name: $T("constructor.props.imageSize.width") }}
         type="number"
         value={component.properties.imageSize.width.replace("rem", "")}
         onUpdate={(value) => updateProperty("imageSize.width", `${value as string}rem`, component, onPropertyChange)}
@@ -63,14 +63,14 @@
     </div>
     <div class="flex gap-4">
       <UI.Select
-        label={{ name: $t("constructor.props.fitmode") }}
+        label={{ name: $T("constructor.props.fitmode") }}
         type="buttons"
         value={$optionsStore.FITMODE_OPTIONS.find((c) => (c.value as string).includes(component.properties.imageSize.fitMode))}
         options={$optionsStore.FITMODE_OPTIONS}
         onUpdate={(option) => updateProperty("imageSize.fitMode", (option as UI.IOption).value as string, component, onPropertyChange)}
       />
       <UI.Select
-        label={{ name: $t("constructor.props.form") }}
+        label={{ name: $T("constructor.props.form") }}
         type="buttons"
         value={$optionsStore.FORM_OPTIONS.find((c) => (c.value as string).includes(component.properties.imageSize.form))}
         options={$optionsStore.FORM_OPTIONS}

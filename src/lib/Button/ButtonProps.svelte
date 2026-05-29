@@ -1,6 +1,6 @@
 <!-- $lib/ElementsUI/ButtonProps.svelte -->
 <script lang="ts">
-  import { t } from "../locales/i18n"
+  import { T } from "../locales/i18n"
   import { type UIComponent, type IButtonProps, type IOption, updateProperty, type IUIComponentHandler } from "../types"
   import * as UI from "$lib"
   import { optionsStore } from "../options"
@@ -62,7 +62,7 @@
 
 {#snippet ButtonHeaderArgument()}
   <UI.Select
-    label={{ name: $t("constructor.props.header") }}
+    label={{ name: $T("constructor.props.header") }}
     type="buttons"
     value={Header}
     options={$optionsStore.HEADER_OPTIONS}
@@ -70,7 +70,7 @@
   />
   {#if Header.value === "SET"}
     <UI.Select
-      label={{ name: $t("constructor.props.argument") }}
+      label={{ name: $T("constructor.props.argument") }}
       type="buttons"
       value={$optionsStore.FULL_ARGUMENT_OPTION.find((h) => h.value === component.eventHandler.Argument) ??
         $optionsStore.FULL_ARGUMENT_OPTION.find((h) => h.value === "")}
@@ -79,12 +79,12 @@
     />
   {/if}
   <UI.Input
-    label={{ name: Header.value !== "SET" ? $t("constructor.props.argument") : "" }}
+    label={{ name: Header.value !== "SET" ? $T("constructor.props.argument") : "" }}
     wrapperClass="{Header.value === 'SET' ? 'mt-1' : ''} "
     value={component.eventHandler.Argument}
     maxlength={32}
     disabled={Header.value === "SET" && (component.eventHandler.Argument == "Save" || component.eventHandler.Argument == "NoSave")}
-    help={{ info: $t("constructor.props.argument.info"), autocomplete: "on", regExp: /^[a-zA-Z0-9\-_]{0,32}$/ }}
+    help={{ info: $T("constructor.props.argument.info"), autocomplete: "on", regExp: /^[a-zA-Z0-9\-_]{0,32}$/ }}
     onUpdate={(value) => onPropertyChange({ eventHandler: { Argument: value as string } })}
   />
 {/snippet}
@@ -92,18 +92,18 @@
 {#snippet ButtonVariables()}
   {#if (component.eventHandler.Argument !== "Save" && component.eventHandler.Argument !== "NoSave") || Header.value === "SET"}
     <UI.Input
-      label={{ name: $t("constructor.props.value") }}
+      label={{ name: $T("constructor.props.value") }}
       value={component.eventHandler.Value}
-      help={{ info: $t("constructor.props.value.info") }}
+      help={{ info: $T("constructor.props.value.info") }}
       maxlength={500}
       onUpdate={(value) => onPropertyChange({ eventHandler: { Value: value as string } })}
     />
   {/if}
   <UI.Input
-    label={{ name: $t("constructor.props.variables") }}
+    label={{ name: $T("constructor.props.variables") }}
     disabled={hasValue}
     value={component.eventHandler.Variables.join(" ")}
-    help={{ info: $t("constructor.props.variables.info"), autocomplete: "on", regExp: /^[a-zA-Z0-9.\-_ ":{}]{0,500}$/ }}
+    help={{ info: $T("constructor.props.variables.info"), autocomplete: "on", regExp: /^[a-zA-Z0-9.\-_ ":{}]{0,500}$/ }}
     maxlength={500}
     onUpdate={(value) => onPropertyChange({ eventHandler: { Variables: (value as string).trim().split(/\s+/) } })}
   />
@@ -111,7 +111,7 @@
 
 {#snippet ButtonName()}
   <UI.Input
-    label={{ name: $t("constructor.props.name") }}
+    label={{ name: $T("constructor.props.name") }}
     value={component.properties.content.name}
     onUpdate={(value) => updateIconProperty("content.name", value as string)}
   />
@@ -120,7 +120,7 @@
 {#snippet ButtonHeight()}
   {#if !(!component.properties.content.name?.trim() && component.properties.content.icon)}
     <UI.Select
-      label={{ name: $t("constructor.props.height") }}
+      label={{ name: $T("constructor.props.height") }}
       type="buttons"
       options={$optionsStore.HEIGHT_OPTIONS}
       value={initialHeight}
@@ -132,7 +132,7 @@
 
 {#snippet ButtonInfo()}
   <UI.Input
-    label={{ name: $t("constructor.props.info") }}
+    label={{ name: $T("constructor.props.info") }}
     value={component.properties.content.info.text}
     onUpdate={(value) => updateProperty("content.info.text", value as string, component, onPropertyChange)}
   />
@@ -140,7 +140,7 @@
 
 {#snippet ButtonInfoSide()}
   <UI.Select
-    label={{ name: $t("constructor.props.info.side") }}
+    label={{ name: $T("constructor.props.info.side") }}
     type="buttons"
     options={$optionsStore.INFO_SIDE_OPTIONS}
     value={$optionsStore.INFO_SIDE_OPTIONS.find((h) => h.value === component.properties.content.info.side)}
@@ -150,7 +150,7 @@
 
 {#snippet ButtonComponentClass()}
   <UI.Input
-    label={{ name: $t("constructor.props.componentclass") }}
+    label={{ name: $T("constructor.props.componentclass") }}
     value={component.properties.componentClass}
     onUpdate={(value) => updateProperty("componentClass", value as string, component, onPropertyChange)}
   />
@@ -158,7 +158,7 @@
 
 {#snippet ButtonColors()}
   <div class="flex items-end gap-2">
-    <UI.Button wrapperClass="w-8" content={{ icon: InfoIcon, info: { text: $t("constructor.props.button.colors.hint"), side: "right" } }} />
+    <UI.Button wrapperClass="w-8" content={{ icon: InfoIcon, info: { text: $T("constructor.props.button.colors.hint"), side: "right" } }} />
     <CommonSnippets
       snippet="Colors"
       initialValue={{
@@ -187,7 +187,7 @@
       <CommonSnippets
         snippet="IconsLib"
         initialValue={{
-          name: $t("constructor.props.buttonIcon"),
+          name: $T("constructor.props.buttonIcon"),
           icon: component.properties.content.icon,
           updateProperty: (icon: string) => updateIconProperty("content.icon", icon as string),
           icons: { array: ICONS },
@@ -217,7 +217,7 @@
       <CommonSnippets
         snippet="IconsLib"
         initialValue={{
-          name: $t("constructor.props.buttonIcon"),
+          name: $T("constructor.props.buttonIcon"),
           icon: component.properties.content.icon,
           updateProperty: (icon: string) => updateIconProperty("content.icon", icon as string),
           icons: { array: ICONS },
