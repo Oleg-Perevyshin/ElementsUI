@@ -99,6 +99,7 @@ const translations: Translations = {
     "constructor.props.variables": "Перечень переменных",
     "constructor.props.variables.info": "Поле для ввода имён переменных, разделенных пробелами",
     "constructor.props.value": "Значение",
+    "constructor.props.defaultvalue": "Значение по умолчанию",
     "constructor.props.value.info": "Поле для ввода Value пакета в формате JSON",
     "constructor.props.align": "Выравнивание надписи",
     "constructor.props.align.header": "Выравнивание заголовка",

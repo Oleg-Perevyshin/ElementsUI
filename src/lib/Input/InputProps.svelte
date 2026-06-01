@@ -359,7 +359,11 @@
 {/snippet}
 
 {#snippet InputValue()}
-  <UI.Input label={{ name: $T("constructor.props.value") }} value={component.properties.value} onUpdate={(value) => updateProperty("value", value as string)} />
+  <UI.Input
+    label={{ name: $T("constructor.props.defaultvalue") }}
+    value={component.properties.value}
+    onUpdate={(value) => updateProperty("value", value as string)}
+  />
 {/snippet}
 
 {#snippet InputDisabled()}
@@ -379,6 +383,7 @@
       {@render InputType()}
     </div>
     <div class="flex w-1/3 flex-col px-2">
+      {@render InputValue()}
       {@render InputPlaceholder()}
       {@render InputInfo()}
       {@render InputSettings()}
