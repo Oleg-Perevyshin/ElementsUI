@@ -31,6 +31,7 @@
         },
       },
     },
+    eventHandler: { Header: "SET", Argument: "Save", Variables: [] },
     position: { row: 0, col: 0, width: 0, height: 0 },
     parentId: "",
   })

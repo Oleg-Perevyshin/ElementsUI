@@ -16,13 +16,11 @@ export const optionsStore = derived(T, ($T) => {
     ],
 
     SHORT_ARGUMENT_OPTION: [
-      { id: id(), value: "NoSave", name: $T("constructor.props.action.update") },
       { id: id(), value: "Save", name: $T("constructor.props.action.save") },
       { id: id(), value: "NoSend", name: $T("constructor.props.action.nosend") },
     ],
 
     FULL_ARGUMENT_OPTION: [
-      { id: id(), value: "NoSave", name: $T("constructor.props.action.update") },
       { id: id(), value: "Save", name: $T("constructor.props.action.save") },
       { id: id(), value: "", name: $T("constructor.props.action.custom") },
     ],

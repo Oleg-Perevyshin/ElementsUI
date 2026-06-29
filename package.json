@@ -1,6 +1,6 @@
 {
   "name": "poe-svelte-ui-lib",
-  "version": "1.9.22",
+  "version": "1.10.0",
   "license": "MIT",
   "type": "module",
   "scripts": {
@@ -37,23 +37,23 @@
   },
   "devDependencies": {
     "@sveltejs/adapter-static": "^3.0.10",
-    "@sveltejs/kit": "^2.61.1",
-    "@sveltejs/package": "^2.5.7",
+    "@sveltejs/kit": "^2.68.0",
+    "@sveltejs/package": "^2.5.8",
     "@sveltejs/vite-plugin-svelte": "^7.1.2",
-    "@tailwindcss/vite": "^4.3.0",
+    "@tailwindcss/vite": "^4.3.1",
     "@types/maplibre-gl": "^1.14.0",
-    "@types/node": "^25.9.1",
-    "dompurify": "^3.4.7",
-    "marked": "^18.0.4",
-    "prettier": "^3.8.3",
-    "prettier-plugin-svelte": "^4.0.1",
+    "@types/node": "^26.0.1",
+    "dompurify": "^3.4.11",
+    "marked": "^18.0.5",
+    "prettier": "^3.9.3",
+    "prettier-plugin-svelte": "^4.1.1",
     "prettier-plugin-tailwindcss": "^0.8.0",
     "publint": "^0.3.21",
-    "svelte": "^5.55.10",
-    "tailwindcss": "^4.3.0",
-    "tsx": "^4.22.3",
+    "svelte": "^5.56.4",
+    "tailwindcss": "^4.3.1",
+    "tsx": "^4.22.4",
     "typescript": "^6.0.3",
-    "vite": "^8.0.14",
+    "vite": "^8.1.0",
     "vite-plugin-compression": "^0.5.1"
   }
 }

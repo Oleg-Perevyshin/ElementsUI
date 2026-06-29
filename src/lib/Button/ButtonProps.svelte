@@ -83,14 +83,14 @@
     wrapperClass="{Header.value === 'SET' ? 'mt-1' : ''} "
     value={component.eventHandler.Argument}
     maxlength={32}
-    disabled={Header.value === "SET" && (component.eventHandler.Argument == "Save" || component.eventHandler.Argument == "NoSave")}
+    disabled={Header.value === "SET" && component.eventHandler.Argument == "Save"}
     help={{ info: $T("constructor.props.argument.info"), autocomplete: "on", regExp: /^[a-zA-Z0-9\-_]{0,32}$/ }}
     onUpdate={(value) => onPropertyChange({ eventHandler: { Argument: value as string } })}
   />
 {/snippet}
 
 {#snippet ButtonVariables()}
-  {#if (component.eventHandler.Argument !== "Save" && component.eventHandler.Argument !== "NoSave") || Header.value === "SET"}
+  {#if component.eventHandler.Argument !== "Save" || Header.value === "SET"}
     <UI.Input
       label={{ name: $T("constructor.props.value") }}
       value={component.eventHandler.Value}

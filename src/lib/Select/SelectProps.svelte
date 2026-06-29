@@ -71,7 +71,7 @@
     wrapperClass="{Header.value === 'SET' ? 'mt-1' : ''} "
     value={component.eventHandler.Argument}
     maxlength={32}
-    disabled={component.eventHandler.Argument == "Save" || component.eventHandler.Argument == "NoSave"}
+    disabled={component.eventHandler.Argument == "Save"}
     help={{ info: $T("constructor.props.argument.info"), autocomplete: "on", regExp: /^[a-zA-Z0-9\-_]{0,32}$/ }}
     onUpdate={(value) => onPropertyChange({ eventHandler: { Argument: value as string } })}
   />

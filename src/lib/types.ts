@@ -454,9 +454,9 @@ export interface ITextFieldProps {
 /* Интерфейс видео потока */
 export interface IVideoViewerProps {
   id?: string
-  stream?: MediaStream | null
-  onstream?: (stream: MediaStream) => void
-  ondevicechange?: (devices: MediaDeviceInfo[]) => void
+  wrapperClass?: string
+  label?: { name?: string; class?: string }
+  showSelect?: boolean
 }
 
 /* ********************************************************** */

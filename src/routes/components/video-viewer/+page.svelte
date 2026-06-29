@@ -1,61 +1,33 @@
 <script lang="ts">
-  import { type ITextFieldProps, type UIComponent } from "$lib"
+  import { T, type ITextFieldProps, type UIComponent } from "$lib"
   import ComponentExample from "$lib/ComponentExample.svelte"
   import TextFieldProps from "$lib/TextField/TextFieldProps.svelte"
-  import { updateComponent, type IOption } from "$lib/types"
+  import { updateComponent, type IOption, type IVideoViewerProps } from "$lib/types"
   import VideoViewer from "$lib/VideoViewer/VideoViewer.svelte"
   import { onMount } from "svelte"
   import { formatObjectToString } from "../../common"
   import Select from "$lib/Select/Select.svelte"
+  import VideoViewerProps from "$lib/VideoViewer/VideoViewerProps.svelte"
+  import { ICONS_ARRAY } from "$lib/icons"
 
-  let textFieldComponent: UIComponent = $state({
+  let videoViewerComponent: UIComponent = $state({
     id: crypto.randomUUID(),
-    type: "TextField",
+    type: "VideoViewer",
     access: "full",
     properties: {
       id: crypto.randomUUID(),
-      wrapperClass: "text-[#333] dark:text-[#e2e3e7]",
-      content: {
-        name: "Text Field",
-        class: "text-center",
-        size: "large",
-      },
+      label: { name: "Label" },
+      showSelect: true,
     },
     position: { row: 0, col: 0, width: 0, height: 0 },
     parentId: "",
   })
-  let sources: MediaDeviceInfo[] = $state([])
-  let devId: string = $state("")
-  let stream: MediaStream | null = $state(null)
-
-  const getDevices = async () => {
-    try {
-      const deviceList = await navigator.mediaDevices.enumerateDevices()
-      sources = deviceList.filter((d) => d.kind === "videoinput")
-    } catch (e) {
-      console.error("Failed to enumerate sources:", e)
-      return []
-    }
-
-    const constraints: MediaStreamConstraints = {
-      video: {
-        width: { ideal: 640 },
-        height: { ideal: 480 },
-        facingMode: "user",
-        ...(devId && { deviceId: { exact: devId } }),
-      },
-      audio: false,
-    }
-    console.log(devId)
-
-    stream = await navigator.mediaDevices.getUserMedia(constraints)
-  }
 
   let forConstructor = $state(false)
 
   let codeText = $derived(`
 <UI.TextField
-${formatObjectToString(textFieldComponent.properties as ITextFieldProps)} 
+${formatObjectToString(videoViewerComponent.properties as IVideoViewerProps)} 
 />`)
 
   const rows = [
@@ -85,33 +57,18 @@ ${formatObjectToString(textFieldComponent.properties as ITextFieldProps)}
         "Настройки текста: `name` — отображаемый контент, `class` — CSS-классы для стилизации, `size` — предустановленный размер шрифта (`small` = text-sm, `base` = text-base, `large` = text-2xl, `huge` = text-4xl, `massive` = text-5xl)",
     },
   ]
-
-  onMount(() => {
-    getDevices()
-  })
 </script>
 
 <ComponentExample {codeText} bind:forConstructor>
   {#snippet component()}
-    {@const devList = sources.map((s) => ({ id: crypto.randomUUID(), name: s.label, value: s.deviceId }))}
     <div class="h-200">
-      <VideoViewer bind:stream />
-      <Select
-        wrapperClass="w-[50%] m-auto mt-3"
-        type="buttons"
-        options={devList}
-        value={devList.find((s) => s.value === devId) || devList[0]}
-        onUpdate={(value) => {
-          devId = (value as IOption<string>).value as string
-          getDevices()
-        }}
-      />
+      <VideoViewer {...videoViewerComponent.properties as IVideoViewerProps} />
     </div>
   {/snippet}
   {#snippet componentProps()}
-    <TextFieldProps
-      component={textFieldComponent as UIComponent & { properties: Partial<ITextFieldProps> }}
-      onPropertyChange={(updates) => (textFieldComponent = updateComponent(textFieldComponent, updates as object))}
+    <VideoViewerProps
+      component={videoViewerComponent as UIComponent & { properties: Partial<IVideoViewerProps> }}
+      onPropertyChange={(updates) => (videoViewerComponent = updateComponent(videoViewerComponent, updates as object))}
       {forConstructor}
     />
   {/snippet}
