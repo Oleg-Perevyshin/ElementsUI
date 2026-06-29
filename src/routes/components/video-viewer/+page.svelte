@@ -1,14 +1,10 @@
 <script lang="ts">
-  import { T, type ITextFieldProps, type UIComponent } from "$lib"
+  import { T, type UIComponent } from "$lib"
   import ComponentExample from "$lib/ComponentExample.svelte"
-  import TextFieldProps from "$lib/TextField/TextFieldProps.svelte"
-  import { updateComponent, type IOption, type IVideoViewerProps } from "$lib/types"
+  import { updateComponent, type IVideoViewerProps } from "$lib/types"
   import VideoViewer from "$lib/VideoViewer/VideoViewer.svelte"
-  import { onMount } from "svelte"
   import { formatObjectToString } from "../../common"
-  import Select from "$lib/Select/Select.svelte"
   import VideoViewerProps from "$lib/VideoViewer/VideoViewerProps.svelte"
-  import { ICONS_ARRAY } from "$lib/icons"
 
   let videoViewerComponent: UIComponent = $state({
     id: crypto.randomUUID(),
