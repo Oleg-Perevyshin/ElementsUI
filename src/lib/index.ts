@@ -33,7 +33,7 @@ export { default as TabsProps } from "./Tabs/TabsProps.svelte"
 export { default as TextField } from "./TextField/TextField.svelte"
 export { default as TextFieldProps } from "./TextField/TextFieldProps.svelte"
 export { default as VideoViewer } from "./VideoViewer/VideoViewer.svelte"
-// export { default as VideoViewerProps } from "./VideoViewer/VideoViewerProps.svelte"
+export { default as VideoViewerProps } from "./VideoViewer/VideoViewerProps.svelte"
 export { default as Widget } from "./Widget/Widget.svelte"
 export { default as WidgetProps } from "./Widget/WidgetProps.svelte"
 
