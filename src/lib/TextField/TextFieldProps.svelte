@@ -70,6 +70,7 @@
     value={$optionsStore.TEXTFIELD_SETTINGS_OPTIONS.filter((opt) => {
       if (component.properties.content.class.includes(`${opt.value}`) && !component.properties.content.class.includes(`not-${opt.value}`)) return opt
       if (opt.value == "background" && component.properties.background) return opt
+      if (opt.value == "underline" && component.properties.underline) return opt
     })}
     options={$optionsStore.TEXTFIELD_SETTINGS_OPTIONS}
     onUpdate={(value) => {
@@ -77,31 +78,36 @@
         if (!opt?.value) return false
         return (
           (component.properties.content.class.includes(`${opt.value}`) && !component.properties.content.class.includes(`not-${opt.value}`)) ||
-          (opt.value == "background" && component.properties.background)
+          (opt.value == "background" && component.properties.background) ||
+          (opt.value == "underline" && component.properties.underline)
         )
       }).map((opt) => opt.value)
       if (Array.isArray(value)) {
         value.forEach((opt) => {
           opt?.value === "background"
             ? updateProperty("background", true, component, onPropertyChange)
-            : updateProperty(
-                "content.class",
-                twMerge(`${component.properties.content.class} ${opt.value === "bold" ? "font-bold" : "italic"}`),
-                component,
-                onPropertyChange,
-              )
+            : opt?.value === "underline"
+              ? updateProperty("underline", true, component, onPropertyChange)
+              : updateProperty(
+                  "content.class",
+                  twMerge(`${component.properties.content.class} ${opt.value === "bold" ? "font-bold" : "italic"}`),
+                  component,
+                  onPropertyChange,
+                )
         })
 
         currentActiveValues.forEach((activeValue) => {
           if (!value.some((opt) => opt?.value === activeValue)) {
             activeValue === "background"
               ? updateProperty("background", false, component, onPropertyChange)
-              : updateProperty(
-                  "content.class",
-                  twMerge(`${component.properties.content.class} ${activeValue === "bold" ? "font-normal" : "not-italic"}`),
-                  component,
-                  onPropertyChange,
-                )
+              : activeValue === "underline"
+                ? updateProperty("underline", false, component, onPropertyChange)
+                : updateProperty(
+                    "content.class",
+                    twMerge(`${component.properties.content.class} ${activeValue === "bold" ? "font-normal" : "not-italic"}`),
+                    component,
+                    onPropertyChange,
+                  )
           }
         })
       }

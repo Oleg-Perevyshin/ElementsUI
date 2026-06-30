@@ -168,6 +168,7 @@ const translations: Translations = {
     "constructor.props.bold": "Жирный",
     "constructor.props.italic": "Курсив",
     "constructor.props.background": "Фон",
+    "constructor.props.underline": "Линия",
     "constructor.props.optionclass": "Стили опции",
     "constructor.props.optionvalue": "Значение",
     "constructor.props.optionposition": "Позиция",

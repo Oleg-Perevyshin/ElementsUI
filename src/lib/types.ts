@@ -443,6 +443,7 @@ export interface ITextFieldProps {
   id?: string
   wrapperClass?: string
   background?: boolean
+  underline?: boolean
   content?: {
     name?: string
     class?: string

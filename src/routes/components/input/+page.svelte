@@ -18,7 +18,7 @@
       value: "2",
       range: { start: 0, end: 1 },
       maxlength: 32,
-      number: { minNum: 1, maxNum: 10, step: 1 },
+      number: { minNum: 1, maxNum: 10, step: 0.001 },
       textareaRows: 5,
       help: { copyButton: false, info: "", autocomplete: "off", regExp: "^[0-9a-zA-Z_-]{0,32}$" },
     },

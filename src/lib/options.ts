@@ -66,6 +66,7 @@ export const optionsStore = derived(T, ($T) => {
     TEXTFIELD_SETTINGS_OPTIONS: [
       { id: id(), value: "bold", name: $T("constructor.props.bold") },
       { id: id(), value: "italic", name: $T("constructor.props.italic") },
+      { id: id(), value: "underline", name: $T("constructor.props.underline") },
       { id: id(), value: "background", name: $T("constructor.props.background") },
     ],
 

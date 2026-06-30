@@ -72,7 +72,16 @@
     const rounded2 = Number(num.toFixed(2))
     if (Math.abs(rounded2 - num) < 1e-10) return rounded2
 
-    return rounded2
+    const rounded3 = Number(num.toFixed(3))
+    if (Math.abs(rounded3 - num) < 1e-10) return rounded3
+
+    const rounded4 = Number(num.toFixed(4))
+    if (Math.abs(rounded4 - num) < 1e-10) return rounded4
+
+    const rounded5 = Number(num.toFixed(5))
+    if (Math.abs(rounded5 - num) < 1e-10) return rounded5
+
+    return rounded5
   }
 </script>
 
@@ -129,8 +138,7 @@
         rows={textareaRows}
         {placeholder}
         {readonly}
-        oninput={(e) => handleInputChange((e.currentTarget as HTMLTextAreaElement).value)}
-      ></textarea>
+        oninput={(e) => handleInputChange((e.currentTarget as HTMLTextAreaElement).value)}></textarea>
     {/if}
 
     {#if type === "password" && !disabled}

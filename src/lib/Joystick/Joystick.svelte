@@ -202,7 +202,8 @@
         </div>
       </div>
 
-      <div class="absolute top-4 w-55 flex items-center justify-end">
+      <!-- Копка 0 -->
+      <div class="absolute {label.name ? 'top-4' : 'top-0'} w-55 flex items-center justify-end">
         <button
           class="flex shadow-sm hover:shadow-md transition duration-200 justify-center cursor-pointer items-center bg-(--back-color) rounded-full size-10 p-0.5
            font-semibold text-2xl [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
@@ -212,26 +213,6 @@
         >
           0
         </button>
-        <!-- {#each [0, 1] as i}
-          <button
-            class="flex shadow-sm hover:shadow-md transition duration-200 justify-center cursor-pointer items-center bg-(--back-color) rounded-full size-10 p-0.5
-            {i ? 'font-semibold text-2xl' : ''} [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
-            style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"
-            title=""
-            onclick={() => (i ? (value = [0, 0, 0, 0]) : {})}
-          >
-            {#if i}
-              0
-            {:else}
-              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
-                ><path
-                  fill="currentColor"
-                  d="M6 19h3v-5q0-.425.288-.712T10 13h4q.425 0 .713.288T15 14v5h3v-9l-6-4.5L6 10zm-2 0v-9q0-.475.213-.9t.587-.7l6-4.5q.525-.4 1.2-.4t1.2.4l6 4.5q.375.275.588.7T20 10v9q0 .825-.588 1.413T18 21h-4q-.425 0-.712-.288T13 20v-5h-2v5q0 .425-.288.713T10 21H6q-.825 0-1.412-.587T4 19m8-6.75"
-                /></svg
-              >
-            {/if}
-          </button>
-        {/each} -->
       </div>
 
       <!-- Боковые кнопки (ось roll) -->

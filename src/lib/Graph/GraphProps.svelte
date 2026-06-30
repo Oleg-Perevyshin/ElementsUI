@@ -45,9 +45,10 @@
     </div>
     <div class="flex w-1/3 flex-col px-2">
       <CommonSnippets snippet="Label" {component} {onPropertyChange} />
+      <CommonSnippets snippet="LabelAlign" initialValue={initialAlign} {component} {onPropertyChange} />
     </div>
     <div class="flex w-1/3 flex-col px-2">
-      <CommonSnippets snippet="LabelAlign" initialValue={initialAlign} {component} {onPropertyChange} />
+      {@render GraphIsTest()}
     </div>
   </div>
 {:else}

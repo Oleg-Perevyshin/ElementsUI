@@ -135,7 +135,7 @@
     </div>
   </div>
 
-  {#if showSelect}
+  {#if sources.length > 1 && showSelect}
     {@const deviceOptions = sources.map((dev) => {
       return { id: dev.deviceId, name: dev.label, value: dev.deviceId }
     })}

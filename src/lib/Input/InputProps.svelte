@@ -361,6 +361,7 @@
 {#snippet InputValue()}
   <UI.Input
     label={{ name: $T("constructor.props.defaultvalue") }}
+    help={{ regExp: component.properties.type === "number" ? /^\d*\.?\d+$/ : /^.*$/ }}
     value={component.properties.value}
     onUpdate={(value) => updateProperty("value", value as string)}
   />
