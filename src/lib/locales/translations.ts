@@ -239,6 +239,13 @@ const translations: Translations = {
     "constructor.props.table.logger": "Добавление строк",
 
     "constructor.props.icon.access": "Доступ",
+    "constructor.props.icon.account": "Доступ",
+    "constructor.props.icon.actions": "Действия",
+    "constructor.props.icon.connectivity": "Подключения",
+    "constructor.props.icon.data": "Данные",
+    "constructor.props.icon.devices": "Устройства",
+    "constructor.props.icon.interface": "Интерфейс",
+    "constructor.props.icon.notifications": "Информация",
     "constructor.props.icon.common": "Общее",
     "constructor.props.icon.scenarios": "Сценарии",
     "constructor.props.icon.periphery": "Периферия",
