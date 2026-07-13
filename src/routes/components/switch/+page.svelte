@@ -37,6 +37,7 @@ ${formatObjectToString(switchComponent.properties as ISwitchProps)}
 />`)
   let switchValue = $state(0)
   let fullSwitchValue = $state(10)
+  let highBitValue = $state(0)
 
   const rows = [
     {
@@ -160,6 +161,23 @@ ${formatObjectToString(switchComponent.properties as ISwitchProps)}
       />
     </div>
     <span> Выбранное значение в битовом режиме: {fullSwitchValue} </span>
+
+    <!-- Регрессионный пример: биты 29/30/31 (старший, знаковый бит int32) — проверка, что переключение
+         одного флага не задевает соседние (баг из-за Math.abs на 32-битных знаковых операциях) -->
+    <div class="mt-4 flex justify-center">
+      <Switch
+        wrapperClass="bg-yellow w-1/2"
+        label={{ name: "Управление датчиками (биты 29/30/31)" }}
+        bitMode
+        bind:value={highBitValue}
+        options={[
+          { id: crypto.randomUUID(), value: 29, name: "A", class: "bg-blue" },
+          { id: crypto.randomUUID(), value: 31, name: "T", class: "bg-red" },
+          { id: crypto.randomUUID(), value: 30, name: "G", class: "bg-blue" },
+        ]}
+      />
+    </div>
+    <span> Выбранное значение (биты 29-31): {highBitValue} </span>
   {/snippet}
   {#snippet props()}
     <Table header={TableColumns} body={rows} outline />
