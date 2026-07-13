@@ -155,7 +155,6 @@ const translations: Translations = {
     "constructor.props.readonly": "Только чтение",
     "constructor.props.istest": "Тестовые данные",
     "constructor.props.refreshrate": "Скорость обновления",
-    "constructor.props.scale": "Масштаб",
     "constructor.props.variable": "Имя переменной",
     "constructor.props.widthMode": "Ширина кнопок",
     "constructor.props.graphdata.title": "Начальные данные ",
@@ -324,7 +323,6 @@ const translations: Translations = {
     "constructor.props.file.select": "Select a file",
     "constructor.props.file.notselected": "File is not selected",
     "constructor.props.refreshrate": "Refresh rate",
-    "constructor.props.scale": "Scale",
   },
   zh: {},
 }

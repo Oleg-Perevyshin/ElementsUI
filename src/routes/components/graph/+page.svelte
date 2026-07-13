@@ -12,6 +12,20 @@
     { name: "Yaw", value: 0 },
   ]
 
+  /* Пример статического режима: готовый исторический ряд с реальными timestamp (Unix-эпоха, мс) —
+     например, потребление электроэнергии за сутки с шагом в час */
+  const now = Date.now()
+  const hourMs = 60 * 60 * 1000
+  const historyExample = [
+    {
+      name: "P, кВт·ч",
+      points: Array.from({ length: 24 }, (_, i) => ({
+        timestamp: now - (23 - i) * hourMs,
+        value: 30 + Math.round(Math.sin(i / 3) * 20 + Math.random() * 10),
+      })),
+    },
+  ]
+
   let graphComponent: UIComponent = $state({
     id: crypto.randomUUID(),
     type: "Graph",
@@ -56,16 +70,28 @@ ${formatObjectToString(graphComponent.properties as IGraphProps)}
     },
     {
       name: "streamingData",
-      type: "{ data: { name: string; value: number }[]; timestamp: number } | string",
-      default: "{ data: [], timestamp: Date.now() }",
-      description:
-        "Потоковые данные для отрисовки графика: `data` — массив объектов с именем и значением, `timestamp` — метка времени обновления; поддерживает строку JSON для парсинга",
+      type: "{ data: { name: string; value: number }[] | null } | string",
+      default: "{ data: [] }",
+      description: "Потоковые данные для живого режима: `data` — массив текущих значений именованных серий; поддерживает строку JSON для парсинга",
     },
     {
       name: "isTest",
       type: "boolean",
       default: "false",
-      description: "Режим тестирования: при `true` генерирует случайные значения вместо использования входящих данных",
+      description: "Режим тестирования: при `true` генерирует случайные значения вместо использования входящих данных, форсирует refreshRate = 50мс",
+    },
+    {
+      name: "refreshRate",
+      type: "number",
+      default: "0",
+      description: "Интервал отрисовки точки в живом режиме, мс. `0` = AUTO — точка рисуется, когда значения реально изменились (без таймера)",
+    },
+    {
+      name: "historyData",
+      type: "{ name: string; points: { value: number; timestamp: number }[] }[]",
+      default: "[]",
+      description:
+        "Готовый исторический ряд — если задан (непустой), компонент переходит в статический режим: рисует весь массив разом по реальным timestamp (Unix-эпоха, мс), streamingData/refreshRate игнорируются",
     },
   ]
 </script>
@@ -83,6 +109,7 @@ ${formatObjectToString(graphComponent.properties as IGraphProps)}
   {/snippet}
   {#snippet examples()}
     <Graph label={{ name: "Пример компонента график" }} streamingData={{ data: dataForGraph }} isTest={true} />
+    <Graph label={{ name: "Статический режим — наведите курсор на график" }} historyData={historyExample} />
   {/snippet}
   {#snippet props()}
     <Table header={TableColumns} body={rows} outline />

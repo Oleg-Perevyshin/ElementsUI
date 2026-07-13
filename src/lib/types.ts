@@ -191,8 +191,19 @@ export interface IFileAttachProps {
 export interface IGraphDataObject {
   name: string
   value: number
-  timestamp?: Date
 }
+
+/* Точка статического (исторического) ряда. timestamp — Unix-эпоха в миллисекундах (как Date.now()) */
+export interface IGraphHistoryPoint {
+  value: number
+  timestamp: number
+}
+
+export interface IGraphHistorySeries {
+  name: string
+  points: IGraphHistoryPoint[]
+}
+
 export interface IGraphProps {
   id?: string
   wrapperClass?: string
@@ -201,7 +212,9 @@ export interface IGraphProps {
   isTest?: boolean
   /* 0 = AUTO (рисовать точку на каждое новое значение из streamingData), иначе — интервал в мс */
   refreshRate?: number
-  scale?: number
+  /* Готовый исторический ряд — если задан (непустой), компонент переходит в статический режим:
+     рисует весь массив разом по реальным timestamp, streamingData/refreshRate игнорируются */
+  historyData?: IGraphHistorySeries[]
 }
 
 /* ********************************************************** */

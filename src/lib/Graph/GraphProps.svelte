@@ -6,7 +6,7 @@
   import { optionsStore } from "$lib/options"
   import { twMerge } from "tailwind-merge"
   import CommonSnippets from "$lib/CommonSnippets.svelte"
-  import { REFRESH_OPTIONS, SCALE_OPTIONS } from "./Graph.svelte"
+  import { REFRESH_OPTIONS } from "./Graph.svelte"
 
   const {
     component,
@@ -44,12 +44,6 @@
     options={REFRESH_OPTIONS}
     value={REFRESH_OPTIONS.find((o) => o.value == (component.properties.refreshRate ?? 0))}
     onUpdate={(value) => updateProperty("refreshRate", (value as IOption).value as number, component, onPropertyChange)}
-  />
-  <UI.Select
-    label={{ name: $T("constructor.props.scale") }}
-    options={SCALE_OPTIONS}
-    value={SCALE_OPTIONS.find((o) => o.value == (component.properties.scale ?? 100))}
-    onUpdate={(value) => updateProperty("scale", (value as IOption).value as number, component, onPropertyChange)}
   />
 {/snippet}
 
