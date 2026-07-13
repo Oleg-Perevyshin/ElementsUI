@@ -1,4 +1,28 @@
 <!-- $lib/ElementsUI/Graph.svelte -->
+<script module lang="ts">
+  import type { IOption } from "../types"
+
+  /* Константы и настройки — экспортируются для переиспользования в GraphProps.svelte (редактор конструктора) */
+  export const REFRESH_OPTIONS: IOption[] = [
+    { id: "RefreshOption-AUTO", name: "AUTO", value: 0, class: "" },
+    { id: "RefreshOption-10", name: "10", value: 10, class: "" },
+    { id: "RefreshOption-25", name: "25", value: 25, class: "" },
+    { id: "RefreshOption-50", name: "50", value: 50, class: "" },
+    { id: "RefreshOption-100", name: "100", value: 100, class: "" },
+    { id: "RefreshOption-250", name: "250", value: 250, class: "" },
+    { id: "RefreshOption-500", name: "500", value: 500, class: "" },
+    { id: "RefreshOption-1000", name: "1000", value: 1000, class: "" },
+    { id: "RefreshOption-5000", name: "5000", value: 5000, class: "" },
+  ]
+  export const SCALE_OPTIONS: IOption[] = [
+    { id: "ScaleOption-50", name: "50", value: 50, class: "" },
+    { id: "ScaleOption-100", name: "100", value: 100, class: "" },
+    { id: "ScaleOption-500", name: "500", value: 500, class: "" },
+    { id: "ScaleOption-1000", name: "1000", value: 1000, class: "" },
+    { id: "ScaleOption-2000", name: "2000", value: 2000, class: "" },
+  ]
+</script>
+
 <script lang="ts">
   import { onMount } from "svelte"
   import Select from "../Select/Select.svelte"
@@ -9,8 +33,10 @@
     id = crypto.randomUUID(),
     wrapperClass = "",
     label = { name: "", class: "" },
-    streamingData = { data: [], timestamp: Date.now() },
+    streamingData = { data: [] },
     isTest = false,
+    refreshRate = 0,
+    scale = 100,
   }: IGraphProps = $props()
 
   /* Состояние компонента */
@@ -22,31 +48,15 @@
   let width = $state(600)
   let height = $state(125)
 
-  /* Константы и настройки */
-  const REFRESH_OPTIONS: IOption[] = [
-    { id: "RefreshOption-AUTO", name: "AUTO", value: 0, class: "" },
-    { id: "RefreshOption-10", name: "10", value: 10, class: "" },
-    { id: "RefreshOption-25", name: "25", value: 25, class: "" },
-    { id: "RefreshOption-50", name: "50", value: 50, class: "" },
-    { id: "RefreshOption-100", name: "100", value: 100, class: "" },
-    { id: "RefreshOption-250", name: "250", value: 250, class: "" },
-    { id: "RefreshOption-500", name: "500", value: 500, class: "" },
-    { id: "RefreshOption-1000", name: "1000", value: 1000, class: "" },
-    { id: "RefreshOption-5000", name: "5000", value: 5000, class: "" },
-  ]
-  const SCALE_OPTIONS: IOption[] = [
-    { id: "ScaleOption-50", name: "50", value: 50, class: "" },
-    { id: "ScaleOption-100", name: "100", value: 100, class: "" },
-    { id: "ScaleOption-500", name: "500", value: 500, class: "" },
-    { id: "ScaleOption-1000", name: "1000", value: 1000, class: "" },
-    { id: "ScaleOption-2000", name: "2000", value: 2000, class: "" },
-  ]
-  let selectedRefreshRate = $derived(isTest ? 50 : 0)
-  let selectedScale = $state(100)
+  /* selectedRefreshRate/selectedScale изначально берутся из пропов (сохраняются вместе с компонентом в конструкторе),
+     но остаются локально переключаемыми через Select ниже — присвоение этим $derived временно
+     переопределяет значение, пока не изменится refreshRate/scale/isTest (проп) */
+  let selectedRefreshRate = $derived(isTest ? 50 : (refreshRate ?? 0))
+  let selectedScale = $derived(scale ?? 100)
   const maxDataPoints = $derived(selectedRefreshRate == 0 ? 20 : 100)
   const defaultColors = ["#3b82f6", "#ef4444", "#10b981", "#f59e0b", "#8b5cf6", "#ec4899"]
 
-  let previousDataTimestamp: number = $state(0)
+  let previousValues: number[] = $state([])
 
   /* Инициализация данных графиков */
   const initializeGraphData = () => {
@@ -56,6 +66,7 @@
     if (!streamingData.data || streamingData.data.length === 0) {
       graphData = []
       currentValues = []
+      previousValues = []
       return
     }
     const newGraphData = (streamingData.data as IGraphDataObject[]).slice(0, 6).map((d, i) => {
@@ -106,22 +117,25 @@
         drawAllGraphs()
       }, selectedRefreshRate)
     } else if (selectedRefreshRate == 0 && !isTest) {
+      /* AUTO: streamingData не несёт признак "это новый пакет" (timestamp никем не передаётся —
+         DeviceStore хранит только последнее значение), поэтому опрашиваем каждые 10мс и рисуем
+         точку только когда сами значения реально изменились, а не на каждый тик поллинга. */
       intervalId = setInterval(() => {
         if (!streamingData.data || streamingData.data.length === 0) return
-        if (previousDataTimestamp < (streamingData.timestamp ?? Date.now())) {
-          let newValues = (streamingData.data as IGraphDataObject[]).map((dataset) => dataset.value)
+        const newValues = (streamingData.data as IGraphDataObject[]).map((dataset) => dataset.value)
+        if (JSON.stringify(newValues) === JSON.stringify(previousValues)) return
+        previousValues = newValues
 
-          newValues.forEach((value, i) => {
-            if (!graphData[i]) return
-            graphData[i].points.push({ x: streamingData.timestamp ?? Date.now(), y: value })
-            if (graphData[i].points.length > maxDataPoints) {
-              graphData[i].points.shift()
-            }
-            currentValues[i] = value
-          })
-          drawAllGraphs()
-          previousDataTimestamp = streamingData.timestamp ?? Date.now()
-        }
+        const now = Date.now()
+        newValues.forEach((value, i) => {
+          if (!graphData[i]) return
+          graphData[i].points.push({ x: now, y: value })
+          if (graphData[i].points.length > maxDataPoints) {
+            graphData[i].points.shift()
+          }
+          currentValues[i] = value
+        })
+        drawAllGraphs()
       }, 10)
     }
     return () => clearInterval(intervalId)

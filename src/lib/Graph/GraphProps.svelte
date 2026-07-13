@@ -1,11 +1,12 @@
 <script lang="ts">
   import { getContext } from "svelte"
   import { T } from "$lib/locales/i18n"
-  import { type UIComponent, type IGraphProps, updateProperty, type IUIComponentHandler } from "../types"
+  import { type UIComponent, type IGraphProps, type IOption, updateProperty, type IUIComponentHandler } from "../types"
   import * as UI from "$lib"
   import { optionsStore } from "$lib/options"
   import { twMerge } from "tailwind-merge"
   import CommonSnippets from "$lib/CommonSnippets.svelte"
+  import { REFRESH_OPTIONS, SCALE_OPTIONS } from "./Graph.svelte"
 
   const {
     component,
@@ -37,6 +38,21 @@
   />
 {/snippet}
 
+{#snippet GraphSettings()}
+  <UI.Select
+    label={{ name: $T("constructor.props.refreshrate") }}
+    options={REFRESH_OPTIONS}
+    value={REFRESH_OPTIONS.find((o) => o.value == (component.properties.refreshRate ?? 0))}
+    onUpdate={(value) => updateProperty("refreshRate", (value as IOption).value as number, component, onPropertyChange)}
+  />
+  <UI.Select
+    label={{ name: $T("constructor.props.scale") }}
+    options={SCALE_OPTIONS}
+    value={SCALE_OPTIONS.find((o) => o.value == (component.properties.scale ?? 100))}
+    onUpdate={(value) => updateProperty("scale", (value as IOption).value as number, component, onPropertyChange)}
+  />
+{/snippet}
+
 {#if forConstructor}
   <div class="relative flex flex-row items-start justify-center">
     <div class="flex w-1/3 flex-col px-2">
@@ -49,6 +65,7 @@
     </div>
     <div class="flex w-1/3 flex-col px-2">
       {@render GraphIsTest()}
+      {@render GraphSettings()}
     </div>
   </div>
 {:else}
@@ -64,6 +81,7 @@
     <div class="flex w-1/3 flex-col px-2">
       <CommonSnippets snippet="WrapperClass" {component} {onPropertyChange} />
       {@render GraphIsTest()}
+      {@render GraphSettings()}
     </div>
   </div>
 {/if}

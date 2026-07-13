@@ -197,8 +197,11 @@ export interface IGraphProps {
   id?: string
   wrapperClass?: string
   label?: { name?: string; class?: string }
-  streamingData?: { data: IGraphDataObject[] | null; timestamp?: number }
+  streamingData?: { data: IGraphDataObject[] | null }
   isTest?: boolean
+  /* 0 = AUTO (рисовать точку на каждое новое значение из streamingData), иначе — интервал в мс */
+  refreshRate?: number
+  scale?: number
 }
 
 /* ********************************************************** */
