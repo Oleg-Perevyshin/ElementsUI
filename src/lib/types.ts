@@ -474,6 +474,13 @@ export interface IVideoViewerProps {
   wrapperClass?: string
   label?: { name?: string; class?: string }
   showSelect?: boolean
+  /* "camera" — локальный getUserMedia (по умолчанию); "remote" — компонент только отображает кадры из пропа frame */
+  source?: "camera" | "remote"
+  /* Ключ потока для приложения/конструктора — самим компонентом не используется (WS не открывает) */
+  streamKey?: string
+  /* Последний полученный кадр в режиме remote — прокидывается родителем реактивно */
+  frame?: Uint8Array | Blob | null
+  status?: "connecting" | "live" | "offline" | "error"
 }
 
 /* ********************************************************** */

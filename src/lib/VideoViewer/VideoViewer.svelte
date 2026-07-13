@@ -7,7 +7,17 @@
   import { onMount } from "svelte"
   import { twMerge } from "tailwind-merge"
 
-  let { id = crypto.randomUUID(), wrapperClass, label = { name: "", class: "" }, showSelect = true }: IVideoViewerProps = $props()
+  let {
+    id = crypto.randomUUID(),
+    wrapperClass,
+    label = { name: "", class: "" },
+    showSelect = true,
+    source = "camera",
+    frame = null,
+    status,
+  }: IVideoViewerProps = $props()
+
+  const isRemote = $derived(source === "remote")
 
   let videoElement = $state<HTMLVideoElement | null>(null)
   let stream = $state<MediaStream | null>(null)
@@ -92,11 +102,16 @@
     }
   }
 
-  setInterval(async () => {
-    sources = await getDevices()
-  }, 1000)
+  $effect(() => {
+    if (isRemote) return
+    const interval = setInterval(async () => {
+      sources = await getDevices()
+    }, 1000)
+    return () => clearInterval(interval)
+  })
 
   onMount(() => {
+    if (isRemote) return
     getDevices()
     if (typeof window !== "undefined" && "mediaDevices" in navigator) {
       handlePermission()
@@ -105,6 +120,20 @@
       stopStream()
     }
   })
+
+  /* Remote-режим: кадр приходит извне через проп frame — компонент только рендерит, WS не открывает.
+     object URL создаётся заново на каждый кадр и отзывается перед следующим (и при размонтировании) */
+  let remoteImgSrc = $state<string | null>(null)
+  $effect(() => {
+    if (!isRemote || !frame) {
+      remoteImgSrc = null
+      return
+    }
+    const blob = frame instanceof Blob ? frame : new Blob([frame], { type: "image/jpeg" })
+    const url = URL.createObjectURL(blob)
+    remoteImgSrc = url
+    return () => URL.revokeObjectURL(url)
+  })
 </script>
 
 <div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class={twMerge("flex flex-col w-full h-full items-center", wrapperClass)}>
@@ -112,30 +141,57 @@
     <h5 class={twMerge(`w-full px-4 text-center`, label.class)}>{label.name}</h5>
   {/if}
   <div class="relative flex flex-1 w-full items-center justify-center">
-    {#if loading || error}
-      <div class="absolute h-full w-full rounded-2xl px-40 py-15 flex flex-col items-center justify-center bg-(--border-color)/50 gap-4 z-10">
-        {#if loading}
-          <h2>{$T("constructor.props.camera.loading")}</h2>
-        {:else if error}
-          <svg class="w-12 h-12 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-            />
-          </svg>
-          <h5 class="text-red-600">{error}</h5>
-          <Button wrapperClass="w-fit" content={{ name: $T("library.retry") }} componentClass="bg-blue px-5" onClick={handlePermission} />
+    {#if isRemote}
+      {#if status !== "live" || !remoteImgSrc}
+        <div class="absolute h-full w-full rounded-2xl px-40 py-15 flex flex-col items-center justify-center bg-(--border-color)/50 gap-4 z-10">
+          {#if status === "error"}
+            <svg class="w-12 h-12 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+              />
+            </svg>
+            <h5 class="text-red-600">{$T("constructor.props.video.viewer.error")}</h5>
+          {:else if status === "offline"}
+            <h2>{$T("constructor.props.video.viewer.offline")}</h2>
+          {:else}
+            <h2>{$T("constructor.props.video.viewer.connecting")}</h2>
+          {/if}
+        </div>
+      {/if}
+      <div class="absolute h-full w-full rounded-2xl bg-(--border-color)/50">
+        {#if remoteImgSrc}
+          <img src={remoteImgSrc} alt={label.name || ""} class="h-full w-full rounded-2xl object-contain block" />
         {/if}
       </div>
+    {:else}
+      {#if loading || error}
+        <div class="absolute h-full w-full rounded-2xl px-40 py-15 flex flex-col items-center justify-center bg-(--border-color)/50 gap-4 z-10">
+          {#if loading}
+            <h2>{$T("constructor.props.camera.loading")}</h2>
+          {:else if error}
+            <svg class="w-12 h-12 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+              />
+            </svg>
+            <h5 class="text-red-600">{error}</h5>
+            <Button wrapperClass="w-fit" content={{ name: $T("library.retry") }} componentClass="bg-blue px-5" onClick={handlePermission} />
+          {/if}
+        </div>
+      {/if}
+      <div class="absolute h-full w-full rounded-2xl bg-(--border-color)/50">
+        <video bind:this={videoElement} class="h-full w-full rounded-2xl object-contain block {!isStreaming || loading ? 'invisible' : 'visible'}"></video>
+      </div>
     {/if}
-    <div class="absolute h-full w-full rounded-2xl bg-(--border-color)/50">
-      <video bind:this={videoElement} class="h-full w-full rounded-2xl object-contain block {!isStreaming || loading ? 'invisible' : 'visible'}"></video>
-    </div>
   </div>
 
-  {#if sources.length > 1 && showSelect}
+  {#if !isRemote && sources.length > 1 && showSelect}
     {@const deviceOptions = sources.map((dev) => {
       return { id: dev.deviceId, name: dev.label, value: dev.deviceId }
     })}
