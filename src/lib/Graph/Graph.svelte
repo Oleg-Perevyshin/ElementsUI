@@ -5,8 +5,6 @@
   /* Константы и настройки — экспортируются для переиспользования в GraphProps.svelte (редактор конструктора) */
   export const REFRESH_OPTIONS: IOption[] = [
     { id: "RefreshOption-AUTO", name: "AUTO", value: 0, class: "" },
-    { id: "RefreshOption-10", name: "10", value: 10, class: "" },
-    { id: "RefreshOption-25", name: "25", value: 25, class: "" },
     { id: "RefreshOption-50", name: "50", value: 50, class: "" },
     { id: "RefreshOption-100", name: "100", value: 100, class: "" },
     { id: "RefreshOption-250", name: "250", value: 250, class: "" },
