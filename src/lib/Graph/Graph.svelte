@@ -79,12 +79,18 @@
     initializeGraphData()
   })
 
-  /* Обработка входящих данных */
+  /* Обработка входящих данных.
+     ВАЖНО: streamingData читается только внутри колбэков setInterval (асинхронный контекст),
+     а не в теле $effect — иначе каждое новое сообщение (у нас до 10 Гц с устройства) делает
+     streamingData зависимостью эффекта, и он пересоздаёт таймер на каждый пакет: если Refresh
+     rate медленнее, чем частота входящих данных, setInterval убивается раньше, чем успевает
+     сработать хотя бы раз — график зависает. */
   let intervalId: ReturnType<typeof setInterval>
   $effect(() => {
     clearInterval(intervalId)
-    if (selectedRefreshRate > 0 && streamingData.data && streamingData.data.length > 0) {
+    if (selectedRefreshRate > 0) {
       intervalId = setInterval(() => {
+        if (!isTest && (!streamingData.data || streamingData.data.length === 0)) return
         let newValues
         if (isTest) newValues = graphData.map(() => Math.random() * 100 - 50)
         else newValues = (streamingData.data as IGraphDataObject[]).map((dataset) => dataset.value)
@@ -99,8 +105,9 @@
         })
         drawAllGraphs()
       }, selectedRefreshRate)
-    } else if (selectedRefreshRate == 0 && streamingData.data && streamingData.data.length > 0 && !isTest) {
+    } else if (selectedRefreshRate == 0 && !isTest) {
       intervalId = setInterval(() => {
+        if (!streamingData.data || streamingData.data.length === 0) return
         if (previousDataTimestamp < (streamingData.timestamp ?? Date.now())) {
           let newValues = (streamingData.data as IGraphDataObject[]).map((dataset) => dataset.value)
 
