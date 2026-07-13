@@ -30,8 +30,7 @@
     historyData = [],
   }: IGraphProps = $props()
 
-  /* Статический режим: historyData передан целиком с реальными timestamp (Unix-эпоха в мс) —
-     компонент рисует весь массив разом, без интервалов/AUTO; streamingData/refreshRate игнорируются */
+  /* Статический режим: historyData передан целиком с реальными timestamp (Unix-эпоха в мс) */
   const isHistoryMode = $derived(!!historyData && historyData.length > 0)
 
   /* Состояние компонента */
@@ -42,19 +41,13 @@
   let ctx: CanvasRenderingContext2D
   let width = $state(600)
   let height = $state(125)
-
-  /* selectedRefreshRate изначально берётся из пропа (сохраняется вместе с компонентом в конструкторе),
-     но остаётся локально переключаемым через Select ниже — присвоение этому $derived временно
-     переопределяет значение, пока не изменится refreshRate/isTest (проп) */
   let selectedRefreshRate = $derived(isTest ? 50 : (refreshRate ?? 0))
   const maxDataPoints = $derived(selectedRefreshRate == 0 ? 20 : 100)
   const defaultColors = ["#3b82f6", "#ef4444", "#10b981", "#f59e0b", "#8b5cf6", "#ec4899"]
 
   let previousValues: number[] = $state([])
 
-  /* Автомасштаб Y для живого режима: диапазон плавно "подъезжает" к фактическому min/max буфера
-     (±10% отступ), пересчитывается один раз за тик (не за кадр/mousemove) и сглаживается —
-     иначе ось дёргалась бы на каждый новый семпл */
+  /* Автомасштаб Y для живого режима: диапазон плавно "подъезжает" к фактическому min/max буфера (±10% отступ) */
   let liveYRange = $state<{ min: number; max: number } | null>(null)
 
   const computeAutoYRange = (values: number[]): { min: number; max: number } => {
@@ -120,8 +113,7 @@
     initializeGraphData()
   })
 
-  /* Статический режим: строим graphData один раз (и заново при каждой смене historyData) —
-     x = реальный timestamp точки, "текущее" значение в панели Values — последняя (по времени) точка серии */
+  /* Статический режим: строим graphData один раз */
   $effect(() => {
     if (!isHistoryMode) return
     const series = historyData.slice(0, 6).map((s, i) => {
@@ -138,12 +130,7 @@
     drawAllGraphs()
   })
 
-  /* Обработка входящих потоковых данных.
-     ВАЖНО: streamingData читается только внутри колбэков setInterval (асинхронный контекст),
-     а не в теле $effect — иначе каждое новое сообщение (у нас до 10 Гц с устройства) делает
-     streamingData зависимостью эффекта, и он пересоздаёт таймер на каждый пакет: если Refresh
-     rate медленнее, чем частота входящих данных, setInterval убивается раньше, чем успевает
-     сработать хотя бы раз — график зависает. */
+  /* Обработка входящих потоковых данных */
   let intervalId: ReturnType<typeof setInterval>
   $effect(() => {
     clearInterval(intervalId)
