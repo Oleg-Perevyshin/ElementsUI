@@ -159,7 +159,7 @@
             <p class="font-bold">{device.DevName}</p>
           </div>
         {/snippet}
-        <Popup closeButton={false} class="rounded-2xl text-left w-[26rem]">
+        <Popup closeButton={false} class="map-popup rounded-2xl text-left w-[26rem]">
           <p>DevSN: {device.DevSN}</p>
           <p>DevName: {device.DevName}</p>
           <p>Lat: {`${device.NavLat.toFixed(3)} | Lon: ${device.NavLon.toFixed(3)} | Alt: ${device.NavAlt.toFixed(1)}`}</p>
@@ -215,3 +215,23 @@
     {/each}
   </MapLibre>
 </div>
+
+<style>
+  :global(.map-popup .maplibregl-popup-content) {
+    background-color: var(--back-color);
+    color: inherit;
+  }
+
+  :global(.map-popup.maplibregl-popup-anchor-bottom .maplibregl-popup-tip) {
+    border-top-color: var(--back-color);
+  }
+  :global(.map-popup.maplibregl-popup-anchor-top .maplibregl-popup-tip) {
+    border-bottom-color: var(--back-color);
+  }
+  :global(.map-popup.maplibregl-popup-anchor-left .maplibregl-popup-tip) {
+    border-right-color: var(--back-color);
+  }
+  :global(.map-popup.maplibregl-popup-anchor-right .maplibregl-popup-tip) {
+    border-left-color: var(--back-color);
+  }
+</style>
