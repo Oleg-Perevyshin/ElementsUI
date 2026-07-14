@@ -40,11 +40,11 @@
     if (data) {
       const idx = devices.findIndex((d) => d.DevSN === data?.DevSN)
       if (idx !== -1) {
-        // Обновление существующего
+        /* Обновление существующего */
         devices[idx] = { ...devices[idx], ...data }
         restartFreshTimer(idx)
       } else {
-        // Новое устройство
+        /* Новое устройство */
         const newDevice: MapDevice = {
           ...data,
           isFresh: true,
@@ -90,7 +90,6 @@
 
   const changeTimeout = (val: number) => {
     markerTimeout = val
-    // перезапускаем таймеры для всех устройств
     devices.forEach((_, idx) => restartFreshTimer(idx))
   }
 </script>
@@ -160,10 +159,11 @@
             <p class="font-bold">{device.DevName}</p>
           </div>
         {/snippet}
-        <Popup closeButton={false} class="rounded-2xl text-left">
+        <Popup closeButton={false} class="rounded-2xl text-left w-[26rem]">
           <p>DevSN: {device.DevSN}</p>
-          <p>Lat: {`${device.NavLat.toFixed(3)} | Lon: ${device.NavLon.toFixed(3)} | Alt: ${device.NavAlt}`}</p>
-          <p>Heading: {device.NavHeading} | Sat Use: {device.NavSatUse}</p>
+          <p>DevName: {device.DevName}</p>
+          <p>Lat: {`${device.NavLat.toFixed(3)} | Lon: ${device.NavLon.toFixed(3)} | Alt: ${device.NavAlt.toFixed(1)}`}</p>
+          <p>Heading: {device.NavHeading.toFixed(1)} | Sat Use: {device.NavSatUse}</p>
 
           <div class="relative flex justify-between">
             <button
@@ -176,7 +176,7 @@
                 isCopied = true
                 setTimeout(() => (isCopied = false), 1000)
               }}
-              aria-label="Копировать текст"
+              aria-label="Copy"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="1.5rem" height="1.5rem" viewBox="0 0 24 24">
                 <g fill="none" stroke="currentColor" stroke-width="1.5">
@@ -196,7 +196,7 @@
               </div>
             {/if}
 
-            <button class="size-6 cursor-pointer" aria-label="Удалить" onclick={() => (devices = devices.filter((dev) => dev.DevSN !== device.DevSN))}>
+            <button class="size-6 cursor-pointer" aria-label="Delete" onclick={() => (devices = devices.filter((dev) => dev.DevSN !== device.DevSN))}>
               <svg xmlns="http://www.w3.org/2000/svg" width="1.5rem" height="1.5rem" viewBox="0 0 24 24"
                 ><path
                   fill="none"

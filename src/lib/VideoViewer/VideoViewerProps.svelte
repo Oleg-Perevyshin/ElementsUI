@@ -26,7 +26,11 @@
 
 {#snippet VideoViewerSource()}
   <UI.Switch
-    label={{ name: $T("constructor.props.video.viewer.source"), captionLeft: $T("constructor.props.video.viewer.source.camera"), captionRight: $T("constructor.props.video.viewer.source.remote") }}
+    label={{
+      name: $T("constructor.props.video.viewer.source"),
+      captionLeft: $T("constructor.props.video.viewer.source.camera"),
+      captionRight: $T("constructor.props.video.viewer.source.remote"),
+    }}
     value={component.properties?.source === "remote" ? 1 : 0}
     options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
     onChange={(value) => updateProperty("source", value === 1 ? "remote" : "camera", component, onPropertyChange)}

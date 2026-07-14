@@ -24,7 +24,7 @@
   let checkedOptions: boolean[] = $derived(
     (() => {
       if (bitMode) {
-        return localOptions.map((option) => (((value ?? 0) & (1 << (option?.value ?? 0))) >>> 0) === Math.pow(2, option.value ?? 0))
+        return localOptions.map((option) => ((value ?? 0) & (1 << (option?.value ?? 0))) >>> 0 === Math.pow(2, option.value ?? 0))
       } else {
         return [value == 1]
       }

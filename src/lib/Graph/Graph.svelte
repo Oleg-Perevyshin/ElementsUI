@@ -383,12 +383,7 @@
   <div class="flex w-full flex-row gap-4">
     <!-- График -->
     <div bind:this={container} class="relative h-64 grow overflow-hidden rounded-xl border border-gray-200 shadow-sm">
-      <canvas
-        class="h-full w-full bg-(--back-color)"
-        bind:this={canvas}
-        onmousemove={handleMouseMove}
-        onmouseleave={handleMouseLeave}
-      ></canvas>
+      <canvas class="h-full w-full bg-(--back-color)" bind:this={canvas} onmousemove={handleMouseMove} onmouseleave={handleMouseLeave}></canvas>
 
       {#if tooltip.visible}
         <div
