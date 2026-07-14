@@ -10,7 +10,8 @@
 
   interface MapDevice extends IDeviceGNSS {
     isFresh: boolean
-    timeoutId: number | null
+    staleTimeoutId: number | null
+    removeTimeoutId: number | null
   }
 
   let devices: MapDevice[] = $state([])
@@ -18,21 +19,29 @@
   let isDarkMode = $state(false)
   let markerTimeout = $state(30_000)
 
-  const restartFreshTimer = (index: number) => {
-    const device = devices[index]
-    // Очистить старый таймер, если есть
-    if (device.timeoutId !== null) {
-      clearTimeout(device.timeoutId)
-    }
-    // Запустить новый
-    const id = setTimeout(() => {
-      if (index < devices.length && devices[index].DevSN === device.DevSN) {
-        devices[index].isFresh = false
-        devices[index].timeoutId = null
-      }
+  const clearDeviceTimers = (device: MapDevice) => {
+    if (device.staleTimeoutId !== null) clearTimeout(device.staleTimeoutId)
+    if (device.removeTimeoutId !== null) clearTimeout(device.removeTimeoutId)
+  }
+
+  // Перезапускает цикл "устройство свежее" -> (без обновлений markerTimeout) "устарело" -> (без обновлений ещё markerTimeout) "удалено"
+  const restartFreshTimer = (devSN: string) => {
+    const idx = devices.findIndex((d) => d.DevSN === devSN)
+    if (idx === -1) return
+
+    clearDeviceTimers(devices[idx])
+    devices[idx].isFresh = true
+
+    devices[idx].staleTimeoutId = setTimeout(() => {
+      const staleIdx = devices.findIndex((d) => d.DevSN === devSN)
+      if (staleIdx === -1) return
+
+      devices[staleIdx].isFresh = false
+      devices[staleIdx].staleTimeoutId = null
+      devices[staleIdx].removeTimeoutId = setTimeout(() => {
+        devices = devices.filter((d) => d.DevSN !== devSN)
+      }, markerTimeout) as unknown as number
     }, markerTimeout) as unknown as number
-    devices[index].timeoutId = id
-    devices[index].isFresh = true
   }
 
   // Обработка входящих данных
@@ -42,17 +51,17 @@
       if (idx !== -1) {
         /* Обновление существующего */
         devices[idx] = { ...devices[idx], ...data }
-        restartFreshTimer(idx)
       } else {
         /* Новое устройство */
         const newDevice: MapDevice = {
           ...data,
           isFresh: true,
-          timeoutId: null,
+          staleTimeoutId: null,
+          removeTimeoutId: null,
         }
         devices.push(newDevice)
-        restartFreshTimer(devices.length - 1)
       }
+      restartFreshTimer(data.DevSN)
       data = null
     }
   })
@@ -69,12 +78,10 @@
   })
 
   onDestroy(() => {
-    if (typeof window !== "undefined") window.addEventListener("ThemeChange", handleThemeChange as EventListener)
+    if (typeof window !== "undefined") window.removeEventListener("ThemeChange", handleThemeChange as EventListener)
 
     for (const device of devices) {
-      if (device.timeoutId !== null) {
-        clearTimeout(device.timeoutId)
-      }
+      clearDeviceTimers(device)
     }
   })
 
@@ -90,7 +97,7 @@
 
   const changeTimeout = (val: number) => {
     markerTimeout = val
-    devices.forEach((_, idx) => restartFreshTimer(idx))
+    devices.forEach((device) => restartFreshTimer(device.DevSN))
   }
 </script>
 
@@ -159,56 +166,88 @@
             <p class="font-bold">{device.DevName}</p>
           </div>
         {/snippet}
-        <Popup closeButton={false} class="map-popup rounded-2xl text-left w-[26rem]">
-          <p>DevSN: {device.DevSN}</p>
-          <p>DevName: {device.DevName}</p>
-          <p>Lat: {`${device.NavLat.toFixed(3)} | Lon: ${device.NavLon.toFixed(3)} | Alt: ${device.NavAlt.toFixed(1)}`}</p>
-          <p>Heading: {device.NavHeading.toFixed(1)} | Sat Use: {device.NavSatUse}</p>
 
-          <div class="relative flex justify-between">
-            <button
-              class="absolute right-0 flex cursor-pointer border-none bg-transparent"
-              onclick={(e) => {
-                e.preventDefault()
-                navigator.clipboard.writeText(
-                  `DevName: ${device.DevName}\nDevSN: ${device.DevSN}\nLat: ${device.NavLat.toFixed(3)} | Lon: ${device.NavLon.toFixed(3)} | Alt: ${device.NavAlt}\nHeading: ${device.NavHeading} | Sat Use: ${device.NavSatUse}`,
-                )
-                isCopied = true
-                setTimeout(() => (isCopied = false), 1000)
-              }}
-              aria-label="Copy"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="1.5rem" height="1.5rem" viewBox="0 0 24 24">
-                <g fill="none" stroke="currentColor" stroke-width="1.5">
-                  <path
-                    d="M6 11c0-2.828 0-4.243.879-5.121C7.757 5 9.172 5 12 5h3c2.828 0 4.243 0 5.121.879C21 6.757 21 8.172 21 11v5c0 2.828 0 4.243-.879 5.121C19.243 22 17.828 22 15 22h-3c-2.828 0-4.243 0-5.121-.879C6 20.243 6 18.828 6 16z"
-                  />
-                  <path d="M6 19a3 3 0 0 1-3-3v-6c0-3.771 0-5.657 1.172-6.828S7.229 2 11 2h4a3 3 0 0 1 3 3" />
-                </g>
-              </svg>
-            </button>
-            {#if isCopied}
-              <div
-                class="absolute top-1/2 right-0 -translate-y-1/2 transform rounded-md bg-(--green-color) px-1.5 py-1 text-sm shadow-lg"
-                transition:fade={{ duration: 200 }}
-              >
-                ✓
+        <Popup closeButton={false} class="map-popup rounded-2xl text-left">
+          <div class="flex flex-col gap-1.5">
+            <div class="flex items-center gap-1.5">
+              <span class="size-2 shrink-0 rounded-full {device.isFresh ? 'bg-green-500' : 'bg-red-500'}"></span>
+              <h6 class="text-sm leading-none font-bold">{device.DevName}</h6>
+            </div>
+
+            <div class="grid grid-cols-2 gap-x-3 gap-y-1 rounded-lg bg-(--container-color) p-2 text-xs">
+              <div>
+                <p class="text-[0.6rem] font-semibold tracking-wide uppercase opacity-60">Lat / Lon</p>
+                <p class="font-medium">{device.NavLat.toFixed(5)}, {device.NavLon.toFixed(5)}</p>
               </div>
-            {/if}
+              <div>
+                <p class="text-[0.6rem] font-semibold tracking-wide uppercase opacity-60">Alt</p>
+                <p class="font-medium">{device.NavAlt.toFixed(1)} m</p>
+              </div>
+              <div>
+                <p class="text-[0.6rem] font-semibold tracking-wide uppercase opacity-60">Heading</p>
+                <p class="font-medium">{device.NavHeading.toFixed(1)}°</p>
+              </div>
+              <div>
+                <p class="text-[0.6rem] font-semibold tracking-wide uppercase opacity-60">Satellites</p>
+                <p class="font-medium">{device.NavSatUse}</p>
+              </div>
+            </div>
 
-            <button class="size-6 cursor-pointer" aria-label="Delete" onclick={() => (devices = devices.filter((dev) => dev.DevSN !== device.DevSN))}>
-              <svg xmlns="http://www.w3.org/2000/svg" width="1.5rem" height="1.5rem" viewBox="0 0 24 24"
-                ><path
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="1.5"
-                  d="m19.5 5.5l-.62 10.025c-.158 2.561-.237 3.842-.88 4.763a4 4 0 0 1-1.2 1.128c-.957.584-2.24.584-4.806.584c-2.57 0-3.855 0-4.814-.585a4 4 0 0 1-1.2-1.13c-.642-.922-.72-2.205-.874-4.77L4.5 5.5M3 5.5h18m-4.944 0l-.683-1.408c-.453-.936-.68-1.403-1.071-1.695a2 2 0 0 0-.275-.172C13.594 2 13.074 2 12.035 2c-1.066 0-1.599 0-2.04.234a2 2 0 0 0-.278.18c-.395.303-.616.788-1.058 1.757L8.053 5.5m1.447 11v-6m5 6v-6"
-                  color="currentColor"
-                /></svg
+            <p class="text-[0.6rem] font-mono text-center tracking-wide uppercase">{device.DevSN}</p>
+
+            <div class="flex items-center justify-between border-t border-(--border-color) pt-1">
+              <div class="relative flex items-center">
+                <button
+                  class="flex cursor-pointer items-center gap-1 rounded-lg border-none bg-transparent px-1 py-0.5 opacity-70 transition hover:opacity-100"
+                  onclick={(e) => {
+                    e.preventDefault()
+                    navigator.clipboard.writeText(
+                      `DevName: ${device.DevName}\nDevSN: ${device.DevSN}\nLat: ${device.NavLat.toFixed(3)} | Lon: ${device.NavLon.toFixed(3)} | Alt: ${device.NavAlt}\nHeading: ${device.NavHeading} | Satellites: ${device.NavSatUse}`,
+                    )
+                    isCopied = true
+                    setTimeout(() => (isCopied = false), 1000)
+                  }}
+                  aria-label="Copy"
+                  title="Copy"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="1.25rem" height="1.25rem" viewBox="0 0 24 24">
+                    <g fill="none" stroke="currentColor" stroke-width="1.5">
+                      <path
+                        d="M6 11c0-2.828 0-4.243.879-5.121C7.757 5 9.172 5 12 5h3c2.828 0 4.243 0 5.121.879C21 6.757 21 8.172 21 11v5c0 2.828 0 4.243-.879 5.121C19.243 22 17.828 22 15 22h-3c-2.828 0-4.243 0-5.121-.879C6 20.243 6 18.828 6 16z"
+                      />
+                      <path d="M6 19a3 3 0 0 1-3-3v-6c0-3.771 0-5.657 1.172-6.828S7.229 2 11 2h4a3 3 0 0 1 3 3" />
+                    </g>
+                  </svg>
+                </button>
+                {#if isCopied}
+                  <div
+                    class="absolute -top-1 right-0 -translate-y-full rounded-md bg-(--green-color) px-1.5 py-1 text-sm shadow-lg"
+                    transition:fade={{ duration: 200 }}
+                  >
+                    ✓
+                  </div>
+                {/if}
+              </div>
+
+              <button
+                class="cursor-pointer rounded-lg border-none bg-transparent p-0.5 text-red-500 transition hover:text-red-600"
+                aria-label="Delete"
+                title="Delete"
+                onclick={() => (devices = devices.filter((dev) => dev.DevSN !== device.DevSN))}
               >
-            </button>
+                <svg xmlns="http://www.w3.org/2000/svg" width="1.25rem" height="1.25rem" viewBox="0 0 24 24"
+                  ><path
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="1.5"
+                    d="m19.5 5.5l-.62 10.025c-.158 2.561-.237 3.842-.88 4.763a4 4 0 0 1-1.2 1.128c-.957.584-2.24.584-4.806.584c-2.57 0-3.855 0-4.814-.585a4 4 0 0 1-1.2-1.13c-.642-.922-.72-2.205-.874-4.77L4.5 5.5M3 5.5h18m-4.944 0l-.683-1.408c-.453-.936-.68-1.403-1.071-1.695a2 2 0 0 0-.275-.172C13.594 2 13.074 2 12.035 2c-1.066 0-1.599 0-2.04.234a2 2 0 0 0-.278.18c-.395.303-.616.788-1.058 1.757L8.053 5.5m1.447 11v-6m5 6v-6"
+                    color="currentColor"
+                  /></svg
+                >
+              </button>
+            </div>
           </div>
         </Popup>
       </Marker>

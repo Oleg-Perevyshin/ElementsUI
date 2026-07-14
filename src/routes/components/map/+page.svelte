@@ -11,14 +11,18 @@
   let intervalId: any | null = null
 
   // Храним уже созданные устройства для возможного обновления
-  let existingDevices: string[] = []
+  let existingDevices: { sn: string; name: string }[] = []
+
+  const randomHex = (length: number): string =>
+    Array.from({ length }, () => Math.floor(Math.random() * 16).toString(16).toUpperCase()).join("")
+
+  // Формат: 10.00.000-00_000068B60000B33B0000A520:D9
+  const generateDevSN = (): string => `10.00.000-00_${randomHex(24)}:${randomHex(2)}`
 
   const generateRandomDevice = (): IDeviceGNSS => {
-    const now = Date.now()
-
     // С вероятностью 30% обновляем существующее устройство
     if (existingDevices.length > 0 && Math.random() < 0.3) {
-      const randomDevSN = existingDevices[Math.floor(Math.random() * existingDevices.length)]
+      const device = existingDevices[Math.floor(Math.random() * existingDevices.length)]
 
       // Генерируем небольшое смещение от предыдущей позиции (чтобы было реалистично)
       const lat = (Math.random() * 180 - 90).toFixed(6)
@@ -29,8 +33,8 @@
         NavLat: parseFloat(lat),
         NavLon: parseFloat(lon),
         NavAlt: Math.floor(Math.random() * 5000),
-        DevName: randomDevSN.replace("SN-", "Device-"), // опционально: сохранить имя
-        DevSN: randomDevSN, // ← тот же SN!
+        DevName: device.name,
+        DevSN: device.sn, // ← тот же SN!
         NavHeading: head,
         NavSatUse: Math.floor(Math.random() * 20) + 4,
       }
@@ -41,19 +45,20 @@
     const lon = 30 + (Math.random() - 0.5) * 50 // от 5 до 55
     const head = Math.floor(Math.random() * 360)
 
-    const newDevSN = `SN-${now.toString(36).slice(-8).toUpperCase()}`
-    existingDevices.push(newDevSN) // сохраняем для будущих обновлений
+    const newDevSN = generateDevSN()
+    const newDevName = `Device-${Math.floor(Math.random() * 100)}`
+    existingDevices.push({ sn: newDevSN, name: newDevName })
 
     // Ограничиваем размер списка, чтобы не рос бесконечно
     if (existingDevices.length > 10) {
-      existingDevices = existingDevices.slice(-10) // оставляем последние 20
+      existingDevices = existingDevices.slice(-10)
     }
 
     return {
       NavLat: parseFloat(lat.toFixed(6)),
       NavLon: parseFloat(lon.toFixed(6)),
       NavAlt: Math.floor(Math.random() * 5000),
-      DevName: `Device-${Math.floor(Math.random() * 100)}`,
+      DevName: newDevName,
       DevSN: newDevSN,
       NavHeading: head,
       NavSatUse: Math.floor(Math.random() * 20) + 4,

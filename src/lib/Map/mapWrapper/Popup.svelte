@@ -5,10 +5,11 @@
   interface Props {
     closeButton?: boolean
     class?: string
+    maxWidth?: string
     children?: Snippet
   }
 
-  let { closeButton = true, class: className = undefined, children }: Props = $props()
+  let { closeButton = true, class: className = undefined, maxWidth = "none", children }: Props = $props()
 
   let container = $state<HTMLElement | null>(null)
 
@@ -24,6 +25,7 @@
 
     const options: any = {
       closeButton,
+      maxWidth,
     }
 
     if (className) {
