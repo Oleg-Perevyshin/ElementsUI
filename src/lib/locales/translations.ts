@@ -184,6 +184,8 @@ const translations: Translations = {
     "constructor.props.multiselect": "Мультивыбор",
     "constructor.props.access": "Доступ (не для владельца)",
     "constructor.props.map.timeout": "Таймаут маркеров:",
+    "constructor.props.map.track": "Траектория",
+    "constructor.props.map.trackLength": "Точек в траектории:",
     "constructor.props.joystick.pitch.axe": "Ocь ⮃",
     "constructor.props.joystick.roll.axe": "Ось ↶ ↷",
     "constructor.props.joystick.yaw.axe": "Ось ⮂",

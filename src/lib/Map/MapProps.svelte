@@ -1,17 +1,20 @@
 <script lang="ts">
   import { T } from "$lib/locales/i18n"
-  import { type UIComponent, type IGraphProps, updateProperty, type IUIComponentHandler } from "../types"
+  import { type UIComponent, type IMapProps, updateProperty, type IUIComponentHandler } from "../types"
   import { ICONS } from "$lib/icons"
   import { optionsStore } from "$lib/options"
   import { getContext } from "svelte"
   import CommonSnippets from "$lib/CommonSnippets.svelte"
+  import { Switch, Select } from "$lib"
+
+  const TRACK_LENGTH_OPTIONS = [100, 500, 1000, 5000, 10000, 50000].map((value) => ({ id: crypto.randomUUID(), value, name: String(value) }))
 
   const {
     component,
     onPropertyChange,
     forConstructor = true,
   } = $props<{
-    component: UIComponent & { properties: Partial<IGraphProps> }
+    component: UIComponent & { properties: Partial<IMapProps> }
     onPropertyChange: (updates: Partial<{ properties?: string | object; name?: string; access?: string; eventHandler?: IUIComponentHandler }>) => void
     forConstructor?: boolean
   }>()
@@ -48,6 +51,21 @@
         {component}
         {onPropertyChange}
       />
+      <Switch
+        label={{ name: $T("constructor.props.map.track") }}
+        value={component.properties.trackEnabled ? 1 : 0}
+        options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
+        onChange={(value) => updateProperty("trackEnabled", Boolean(value), component, onPropertyChange)}
+      />
+      {#if component.properties.trackEnabled}
+        <Select
+          label={{ name: $T("constructor.props.map.trackLength") }}
+          type="input"
+          options={TRACK_LENGTH_OPTIONS}
+          value={TRACK_LENGTH_OPTIONS.find((opt) => opt.value === (component.properties.trackLength ?? 1000))}
+          onUpdate={(option) => updateProperty("trackLength", (option as { value: number }).value, component, onPropertyChange)}
+        />
+      {/if}
     </div>
   </div>
 {:else}
@@ -73,6 +91,21 @@
         {component}
         {onPropertyChange}
       />
+      <Switch
+        label={{ name: $T("constructor.props.map.track") }}
+        value={component.properties.trackEnabled ? 1 : 0}
+        options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
+        onChange={(value) => updateProperty("trackEnabled", Boolean(value), component, onPropertyChange)}
+      />
+      {#if component.properties.trackEnabled}
+        <Select
+          label={{ name: $T("constructor.props.map.trackLength") }}
+          type="input"
+          options={TRACK_LENGTH_OPTIONS}
+          value={TRACK_LENGTH_OPTIONS.find((opt) => opt.value === (component.properties.trackLength ?? 1000))}
+          onUpdate={(option) => updateProperty("trackLength", (option as { value: number }).value, component, onPropertyChange)}
+        />
+      {/if}
     </div>
   </div>
 {/if}

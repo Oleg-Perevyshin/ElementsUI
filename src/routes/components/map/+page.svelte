@@ -125,6 +125,20 @@ ${formatObjectToString(mapComponent.properties as IMapProps)}
       description:
         "Кастомная иконка для маркеров устройств: может быть SVG-строкой или Svelte-компонентом; по умолчанию используется встроенная иконка стрелки с поворотом по курсу",
     },
+    {
+      name: "trackEnabled",
+      type: "boolean",
+      default: "false",
+      description:
+        "Включает отрисовку траектории движения устройств на карте; поддерживает двустороннее связывание (`$bindable`) — зритель может переключить прямо на карте",
+    },
+    {
+      name: "trackLength",
+      type: "number",
+      default: "1000",
+      description:
+        "Максимальное количество последних точек в траектории каждого устройства (100 / 500 / 1000 / 5000 / 10000 / 50000); поддерживает двустороннее связывание (`$bindable`) — зритель может изменить прямо на карте",
+    },
   ]
 </script>
 
@@ -143,7 +157,7 @@ ${formatObjectToString(mapComponent.properties as IMapProps)}
   {/snippet}
   {#snippet examples()}
     <div class="h-150">
-      <Map label={{ name: "Карта" }} {data} />
+      <Map label={{ name: "Карта" }} {data} trackEnabled trackLength={1000} />
     </div>
   {/snippet}
   {#snippet props()}

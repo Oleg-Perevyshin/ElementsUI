@@ -290,6 +290,8 @@ export interface IMapProps {
   label?: { name?: string; class?: string }
   data: IDeviceGNSS | null
   markerIcon?: ConstructorOfATypedSvelteComponent | string
+  trackEnabled?: boolean
+  trackLength?: number
 }
 
 /* ********************************************************** */

@@ -4,14 +4,22 @@
   import { onDestroy, onMount } from "svelte"
   import { fade } from "svelte/transition"
   import { twMerge } from "tailwind-merge"
-  import { MapLibre, NavigationControl, ScaleControl, GeolocateControl, FullScreenControl, Marker, Popup, CustomControl } from "./mapWrapper"
+  import { MapLibre, NavigationControl, ScaleControl, GeolocateControl, FullScreenControl, Marker, Popup, Line, CustomControl } from "./mapWrapper"
 
-  let { id = crypto.randomUUID(), label = { name: "", class: "" }, data = $bindable(), markerIcon }: IMapProps = $props()
+  let {
+    id = crypto.randomUUID(),
+    label = { name: "", class: "" },
+    data = $bindable(),
+    markerIcon,
+    trackEnabled = $bindable(false),
+    trackLength = $bindable(1000),
+  }: IMapProps = $props()
 
   interface MapDevice extends IDeviceGNSS {
     isFresh: boolean
     staleTimeoutId: number | null
     removeTimeoutId: number | null
+    track: [number, number][]
   }
 
   let devices: MapDevice[] = $state([])
@@ -47,10 +55,13 @@
   // Обработка входящих данных
   $effect(() => {
     if (data) {
+      /* (0, 0) — признак отсутствия реального GPS-фикса, в траекторию такие точки не добавляем */
+      const hasFix = data.NavLat !== 0 || data.NavLon !== 0
       const idx = devices.findIndex((d) => d.DevSN === data?.DevSN)
       if (idx !== -1) {
         /* Обновление существующего */
-        devices[idx] = { ...devices[idx], ...data }
+        const track = hasFix ? [...devices[idx].track, [data.NavLon, data.NavLat] as [number, number]].slice(-trackLength) : devices[idx].track
+        devices[idx] = { ...devices[idx], ...data, track }
       } else {
         /* Новое устройство */
         const newDevice: MapDevice = {
@@ -58,11 +69,21 @@
           isFresh: true,
           staleTimeoutId: null,
           removeTimeoutId: null,
+          track: hasFix ? [[data.NavLon, data.NavLat]] : [],
         }
         devices.push(newDevice)
       }
       restartFreshTimer(data.DevSN)
       data = null
+    }
+  })
+
+  // Подрезает уже накопленные траектории при уменьшении trackLength
+  $effect(() => {
+    if (trackLength > 0) {
+      devices.forEach((device) => {
+        if (device.track.length > trackLength) device.track = device.track.slice(-trackLength)
+      })
     }
   })
 
@@ -84,6 +105,15 @@
       clearDeviceTimers(device)
     }
   })
+
+  const trackLengthOptions: { label: string; value: number }[] = [
+    { label: "100", value: 100 },
+    { label: "500", value: 500 },
+    { label: "1000", value: 1000 },
+    { label: "5000", value: 5000 },
+    { label: "10000", value: 10000 },
+    { label: "50000", value: 50000 },
+  ]
 
   const timeoutOptions: { label: string; value: number }[] = [
     { label: "30 sec", value: 30_000 },
@@ -117,20 +147,46 @@
     <FullScreenControl />
 
     <CustomControl position="top-left">
-      <div class="flex items-center gap-2 px-2 py-1 text-black">
-        <label for="timeout" class="text-sm font-medium">{$T("constructor.props.map.timeout")}</label>
-        <select
-          id="timeout"
-          class="rounded px-2 py-1 text-sm"
-          bind:value={markerTimeout}
-          onchange={(e) => changeTimeout(parseInt((e.target as HTMLSelectElement).value))}
-        >
-          {#each timeoutOptions as opt}
-            <option value={opt.value}>{opt.label}</option>
-          {/each}
-        </select>
+      <div class="flex flex-wrap items-center gap-3 px-2 py-1 text-black">
+        <label class="flex items-center gap-1.5 text-sm font-medium">
+          <input type="checkbox" bind:checked={trackEnabled} />
+          {$T("constructor.props.map.track")}
+        </label>
+
+        {#if trackEnabled}
+          <div class="flex items-center gap-2">
+            <label for="trackLength" class="text-sm font-medium">{$T("constructor.props.map.trackLength")}</label>
+            <select id="trackLength" class="rounded px-2 py-1 text-sm" bind:value={trackLength}>
+              {#each trackLengthOptions as opt}
+                <option value={opt.value}>{opt.label}</option>
+              {/each}
+            </select>
+          </div>
+        {/if}
+
+        <div class="flex items-center gap-2">
+          <label for="timeout" class="text-sm font-medium">{$T("constructor.props.map.timeout")}</label>
+          <select
+            id="timeout"
+            class="rounded px-2 py-1 text-sm"
+            bind:value={markerTimeout}
+            onchange={(e) => changeTimeout(parseInt((e.target as HTMLSelectElement).value))}
+          >
+            {#each timeoutOptions as opt}
+              <option value={opt.value}>{opt.label}</option>
+            {/each}
+          </select>
+        </div>
       </div>
     </CustomControl>
+
+    {#if trackEnabled}
+      {#each devices as device (device.DevSN)}
+        {#if device.track.length >= 2}
+          <Line id={`track-${device.DevSN}`} coordinates={device.track} color={device.isFresh ? "#22c55e" : "#ef4444"} />
+        {/if}
+      {/each}
+    {/if}
 
     {#each devices as device}
       <Marker lnglat={{ lng: device.NavLon, lat: device.NavLat }}>
