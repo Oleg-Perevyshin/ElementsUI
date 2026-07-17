@@ -1,11 +1,17 @@
 <script lang="ts">
-  import { Table, type UIComponent } from "$lib"
+  import { type UIComponent } from "$lib"
   import ComponentExample from "$lib/ComponentExample.svelte"
   import { updateComponent, type IVideoViewerProps } from "$lib/types"
   import VideoViewer from "$lib/VideoViewer/VideoViewer.svelte"
-  import { formatObjectToString, TableColumns } from "../../common"
+  import { formatObjectToString, RenderMarkdown } from "../../common"
   import VideoViewerProps from "$lib/VideoViewer/VideoViewerProps.svelte"
   import { onMount } from "svelte"
+  import readmeRaw from "$lib/VideoViewer/README.md?raw"
+
+  let readmeHtml = $state("")
+  $effect(() => {
+    RenderMarkdown(readmeRaw).then((html) => (readmeHtml = html))
+  })
 
   let videoViewerComponent: UIComponent = $state({
     id: crypto.randomUUID(),
@@ -26,58 +32,6 @@
 <UI.VideoViewer
 ${formatObjectToString(videoViewerComponent.properties as IVideoViewerProps)}
 />`)
-
-  const rows = [
-    {
-      name: "id",
-      type: "string",
-      default: "crypto.randomUUID()",
-      description: "Уникальный идентификатор компонента",
-    },
-    {
-      name: "wrapperClass",
-      type: "string",
-      default: '""',
-      description: "Дополнительные CSS-классы для внешней обёртки компонента",
-    },
-    {
-      name: "label",
-      type: "{ name?: string; class?: string }",
-      default: '{ name: "", class: "" }',
-      description: "Настройки заголовка компонента",
-    },
-    {
-      name: "showSelect",
-      type: "boolean",
-      default: "true",
-      description: 'Показывать селектор источника (список доступных камер) — применяется только в режиме source="camera"',
-    },
-    {
-      name: "source",
-      type: '"camera" | "remote"',
-      default: '"camera"',
-      description:
-        "Режим работы: `camera` — локальный доступ к веб-камере через getUserMedia (как раньше), `remote` — компонент только отображает кадры, переданные извне через проп `frame` (WebSocket/протокол — забота приложения, не компонента)",
-    },
-    {
-      name: "streamKey",
-      type: "string",
-      default: "undefined",
-      description: "Ключ потока для приложения/конструктора — самим компонентом не используется (компонент не открывает соединений)",
-    },
-    {
-      name: "frame",
-      type: "Uint8Array | Blob | null",
-      default: "null",
-      description: "Последний полученный кадр (JPEG) в режиме `remote` — обновляется родительским приложением при получении нового кадра",
-    },
-    {
-      name: "status",
-      type: '"connecting" | "live" | "offline" | "error"',
-      default: "undefined",
-      description: "Статус соединения в режиме `remote` — управляет индикатором поверх кадра (не показывается при `live`)",
-    },
-  ]
 
   /* Пример remote-режима: синтетические JPEG-кадры (canvas → toBlob) имитируют получение потока извне,
      без реального устройства — так новый режим можно проверить в браузере */
@@ -110,9 +64,9 @@ ${formatObjectToString(videoViewerComponent.properties as IVideoViewerProps)}
   })
 </script>
 
-<ComponentExample {codeText} bind:forConstructor>
+<ComponentExample {codeText} {readmeHtml} bind:forConstructor>
   {#snippet component()}
-    <div class="h-200">
+    <div class="h-full">
       <VideoViewer {...videoViewerComponent.properties as IVideoViewerProps} />
     </div>
   {/snippet}
@@ -127,8 +81,5 @@ ${formatObjectToString(videoViewerComponent.properties as IVideoViewerProps)}
     <div class="h-80">
       <VideoViewer label={{ name: "Удалённый поток (синтетические кадры)" }} source="remote" frame={remoteFrame} status={remoteStatus} />
     </div>
-  {/snippet}
-  {#snippet props()}
-    <Table header={TableColumns} body={rows} outline />
   {/snippet}
 </ComponentExample>

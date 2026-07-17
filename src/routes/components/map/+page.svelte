@@ -1,11 +1,17 @@
 <script lang="ts">
-  import { Table, type IMapProps, type UIComponent } from "$lib"
+  import type { IMapProps, UIComponent } from "$lib"
   import ComponentExample from "$lib/ComponentExample.svelte"
   import Map from "$lib/Map/Map.svelte"
   import { updateComponent, type IDeviceGNSS } from "$lib/types"
   import { onDestroy, onMount } from "svelte"
-  import { formatObjectToString, TableColumns } from "../../common"
+  import { formatObjectToString, RenderMarkdown } from "../../common"
   import MapProps from "$lib/Map/MapProps.svelte"
+  import readmeRaw from "$lib/Map/README.md?raw"
+
+  let readmeHtml = $state("")
+  $effect(() => {
+    RenderMarkdown(readmeRaw).then((html) => (readmeHtml = html))
+  })
 
   let data: IDeviceGNSS | null = $state(null)
   let intervalId: any | null = null
@@ -97,52 +103,9 @@
 ${formatObjectToString(mapComponent.properties as IMapProps)}
   {data}
 />`)
-
-  const rows = [
-    {
-      name: "id",
-      type: "string",
-      default: "crypto.randomUUID()",
-      description: "Уникальный идентификатор компонента",
-    },
-    {
-      name: "label",
-      type: "{ name?: string; class?: string }",
-      default: '{ name: "", class: "" }',
-      description: "Настройки подписи: `name` — текст заголовка, `class` — CSS-классы для стилизации",
-    },
-    {
-      name: "data",
-      type: "IDeviceGNSS | null",
-      default: "undefined",
-      description:
-        "Данные устройства GNSS для отображения на карте; поддерживает двустороннее связывание (`$bindable`) — после обработки компонента значение сбрасывается в `null`",
-    },
-    {
-      name: "markerIcon",
-      type: "ConstructorOfATypedSvelteComponent | string | null",
-      default: "undefined",
-      description:
-        "Кастомная иконка для маркеров устройств: может быть SVG-строкой или Svelte-компонентом; по умолчанию используется встроенная иконка стрелки с поворотом по курсу",
-    },
-    {
-      name: "trackEnabled",
-      type: "boolean",
-      default: "false",
-      description:
-        "Включает отрисовку траектории движения устройств на карте; поддерживает двустороннее связывание (`$bindable`) — зритель может переключить прямо на карте",
-    },
-    {
-      name: "trackLength",
-      type: "number",
-      default: "1000",
-      description:
-        "Максимальное количество последних точек в траектории каждого устройства (100 / 500 / 1000 / 5000 / 10000 / 50000); поддерживает двустороннее связывание (`$bindable`) — зритель может изменить прямо на карте",
-    },
-  ]
 </script>
 
-<ComponentExample {codeText} bind:forConstructor>
+<ComponentExample {codeText} {readmeHtml} bind:forConstructor>
   {#snippet component()}
     <div class="h-full">
       <Map {...mapComponent.properties as IMapProps} {data} />
@@ -160,7 +123,4 @@ ${formatObjectToString(mapComponent.properties as IMapProps)}
       <Map label={{ name: "Карта" }} {data} trackEnabled trackLength={1000} />
     </div>
   {/snippet}
-  {#snippet props()}
-    <Table header={TableColumns} body={rows} outline />
-  {/snippet}</ComponentExample
->
+</ComponentExample>

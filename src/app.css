@@ -112,6 +112,33 @@ code {
   font-family: monospace;
 }
 
+/* Таблицы из Markdown (marked/GFM) — используются в README.md компонентов, отображаемых на табе "Инфо" */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 0.5rem 0;
+  table-layout: fixed;
+  text-align: left;
+}
+th,
+td {
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--border-color);
+  overflow-wrap: break-word;
+}
+th {
+  background-color: var(--container-color);
+  font-weight: bold;
+}
+tr:nth-child(even) td {
+  background-color: var(--container-color);
+}
+/* Внутри таблиц длинные типы/сигнатуры (`Partial<IButtonProps>` и т.п.) должны переноситься, а не растягивать таблицу по горизонтали */
+table code {
+  white-space: normal;
+  word-break: break-word;
+}
+
 /* Устранение стилей для ссылок */
 a {
   text-decoration: none;

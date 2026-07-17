@@ -1,8 +1,6 @@
-import type { ITableHeader, UIComponent } from "$lib"
+import type { UIComponent } from "$lib"
 import { marked } from "marked"
 import DOMPurify from "dompurify"
-import { T } from "$lib/locales/i18n"
-import { get } from "svelte/store"
 
 export const formatObjectToString = (properties: UIComponent["properties"]): string => {
   const clearValue = (value: any): any => {
@@ -124,25 +122,3 @@ export const RenderMarkdown = async (text: string) => {
   }
 }
 
-export interface TableRows {
-  name: string
-  type: string
-  default: string
-  description: string
-}
-
-const translate = get(T)
-export const TableColumns: ITableHeader<TableRows>[] = [
-  { label: { name: translate("library.props.name") }, content: [{ type: "text", data: { key: "name" } }], width: "15%" },
-  {
-    label: { name: translate("library.props.type") },
-    content: [{ type: "text", data: { key: "type" } }],
-    width: "30%",
-  },
-  { label: { name: translate("library.props.default") }, content: [{ type: "text", data: { key: "default" } }], width: "20%" },
-  {
-    label: { name: translate("library.props.desc") },
-    content: [{ type: "text", data: { key: "description" } }],
-    width: "35%",
-  },
-]

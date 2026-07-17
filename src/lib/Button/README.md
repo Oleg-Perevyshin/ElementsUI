@@ -6,49 +6,32 @@
 
 ## Пропсы
 
-| Название       | Тип                                                                                                                                                   | По умолчанию                                              | Описание                                         |
-| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- | ------------------------------------------------ |
-| id             | string                                                                                                                                                | crypto.randomUUID()                                       | Уникальный идентификатор компонента              |
-| wrapperClass   | string                                                                                                                                                | ""                                                        | Дополнительные CSS-классы для обертки компонента |
-| componentClass | string                                                                                                                                                | ""                                                        | CSS-классы для стилизации самой кнопки           |
-| disabled       | boolean                                                                                                                                               | false                                                     | Состояние отключения кнопки                      |
-| content        | { name?: string; info?: { text: string; side: "top" \| "bottom" \| "left" \| "right" }; icon?: ConstructorOfATypedSvelteComponent \| string \| null } | { name: "", info: { text: "", side: "top" }, icon: null } | Настройки содержимого кнопки                     |
-| keyBind        | { key?: string; ctrlKey?: boolean; shiftKey?: boolean; altKey?: boolean; metaKey?: boolean; showHint?: boolean }                                      | { showHint: true }                                        | Настройки горячих клавиш для активации кнопки    |
-| onClick        | () => void                                                                                                                                            | undefined                                                 | Обработчик клика по кнопке                       |
-
-### Вложенные типы
-
-#### Content
-
-| Название | Тип                                                            | По умолчанию              | Описание                                                 |
-| -------- | -------------------------------------------------------------- | ------------------------- | -------------------------------------------------------- |
-| name     | string                                                         | ""                        | Текст кнопки                                             |
-| info     | { text: string; side: "top" \| "bottom" \| "left" \| "right" } | { text: "", side: "top" } | Информационная подсказка                                 |
-| icon     | ConstructorOfATypedSvelteComponent \| string \| null           | null                      | Иконка, отображаемая в кнопке (SVG строка или компонент) |
-
-#### Info
-
-| Название | Тип                                    | По умолчанию | Описание                       |
-| -------- | -------------------------------------- | ------------ | ------------------------------ |
-| text     | string                                 | ""           | Текст информационной подсказки |
-| side     | "top" \| "bottom" \| "left" \| "right" | "top"        | Сторона отображения подсказки  |
-
-#### KeyBind
-
-| Название | Тип     | По умолчанию | Описание                                   |
-| -------- | ------- | ------------ | ------------------------------------------ |
-| key      | string  | undefined    | Клавиша для активации                      |
-| ctrlKey  | boolean | undefined    | Требование нажатия Ctrl                    |
-| shiftKey | boolean | undefined    | Требование нажатия Shift                   |
-| altKey   | boolean | undefined    | Требование нажатия Alt                     |
-| metaKey  | boolean | undefined    | Требование нажатия Meta (Cmd на Mac)       |
-| showHint | boolean | true         | Показывать ли подсказку о горячих клавишах |
+| Название | Тип | По умолчанию | Описание |
+| --- | --- | --- | --- |
+| `id` | `string` | `crypto.randomUUID()` | Уникальный идентификатор компонента |
+| `wrapperClass` | `string` | `""` | Дополнительные CSS-классы для обертки компонента |
+| `componentClass` | `string` | `""` | CSS-классы для стилизации самой кнопки |
+| `disabled` | `boolean` | `false` | Состояние отключения кнопки |
+| `content` | `object` | `undefined` | Настройки содержимого кнопки |
+| `content.name` | `string` | `""` | Текст кнопки |
+| `content.info` | `object` | `undefined` | Информационная подсказка |
+| `content.info.text` | `string` | `""` | Текст информационной подсказки |
+| `content.info.side` | `"top" \| "bottom" \| "left" \| "right"` | `"top"` | Сторона отображения подсказки |
+| `content.icon` | `ConstructorOfATypedSvelteComponent \| string \| null` | `null` | Иконка, отображаемая в кнопке (SVG строка или Svelte-компонент); без `content.name` и с заданной иконкой кнопка рендерится как круглая без фона |
+| `keyBind` | `object` | `{ showHint: true }` | Настройки горячих клавиш для активации кнопки |
+| `keyBind.key` | `string` | `undefined` | Клавиша для активации |
+| `keyBind.ctrlKey` | `boolean` | `undefined` | Требование нажатия Ctrl |
+| `keyBind.shiftKey` | `boolean` | `undefined` | Требование нажатия Shift |
+| `keyBind.altKey` | `boolean` | `undefined` | Требование нажатия Alt |
+| `keyBind.metaKey` | `boolean` | `undefined` | Требование нажатия Meta (Cmd на Mac) |
+| `keyBind.showHint` | `boolean` | `true` | Показывать ли подсказку о горячих клавишах |
+| `onClick` | `() => void` | `undefined` | Обработчик клика по кнопке |
 
 ## События
 
-| Название | Тип        | Описание                                                                |
-| -------- | ---------- | ----------------------------------------------------------------------- |
-| onClick  | () => void | Срабатывает при клике по кнопке или при активации через горячую клавишу |
+| Название | Тип | Описание |
+| --- | --- | --- |
+| onClick | () => void | Срабатывает при клике по кнопке или при активации через горячую клавишу |
 
 ## Примеры
 
@@ -148,11 +131,11 @@
 
 ### Пропсы конструктора
 
-| Название         | Тип                                                                                                                               | По умолчанию | Описание                                                |
-| ---------------- | --------------------------------------------------------------------------------------------------------------------------------- | ------------ | ------------------------------------------------------- |
-| component        | UIComponent & { properties: Partial<IButtonProps> }                                                                               | -            | Объект компонента с его свойствами                      |
-| onPropertyChange | (updates: Partial<{ properties?: string \| object; name?: string; access?: string; eventHandler?: IUIComponentHandler }>) => void | -            | Коллбэк для обновления свойств компонента               |
-| forConstructor   | boolean                                                                                                                           | true         | Режим отображения (для конструктора или редактирования) |
+| Название | Тип | По умолчанию | Описание |
+| --- | --- | --- | --- |
+| `component` | `UIComponent & { properties: Partial<IButtonProps> }` | `-` | Объект компонента с его свойствами |
+| `onPropertyChange` | `(updates: Partial<{ properties?: string \| object; name?: string; access?: string; eventHandler?: IUIComponentHandler }>) => void` | `-` | Коллбэк для обновления свойств компонента |
+| `forConstructor` | `boolean` | `true` | Режим отображения (для конструктора или редактирования) |
 
 ### Особенности конструктора
 

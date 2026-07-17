@@ -2,10 +2,15 @@
   import { Accordion } from "$lib"
   import AccordionProps from "$lib/Accordion/AccordionProps.svelte"
   import { updateComponent, type IAccordionProps, type UIComponent } from "$lib/types"
-  import { formatObjectToString, TableColumns } from "../../common"
+  import { formatObjectToString, RenderMarkdown } from "../../common"
   import ComponentExample from "$lib/ComponentExample.svelte"
   import { ICONS } from "$lib/icons"
-  import Table from "$lib/Table/Table.svelte"
+  import readmeRaw from "$lib/Accordion/README.md?raw"
+
+  let readmeHtml = $state("")
+  $effect(() => {
+    RenderMarkdown(readmeRaw).then((html) => (readmeHtml = html))
+  })
 
   let accordionComponent: UIComponent = $state({
     id: crypto.randomUUID(),
@@ -31,61 +36,15 @@
 
   let codeText = $derived(`
 <UI.Accordion
-${formatObjectToString(accordionComponent.properties as IAccordionProps)} 
+${formatObjectToString(accordionComponent.properties as IAccordionProps)}
 >
   <h1>Содержимое компонента</h1>
   <h1>Содержимое компонента</h1>
   <h1>Содержимое компонента</h1>
 </UI.Accordion>`)
-
-  const rows = [
-    {
-      name: "id",
-      type: "string",
-      default: "crypto.randomUUID()",
-      description: "Уникальный идентификатор компонента",
-    },
-    {
-      name: "isOpen",
-      type: "boolean",
-      default: "false",
-      description: "Состояние открытия/закрытия аккордеона",
-    },
-    {
-      name: "wrapperClass",
-      type: "string",
-      default: '""',
-      description: "Дополнительные CSS-классы для обертки компонента",
-    },
-    {
-      name: "size",
-      type: "{ height?: number; width?: number }",
-      default: "{ width: 1, height: 1 }",
-      description: "Размеры сетки содержимого (количество колонок и строк)",
-    },
-    {
-      name: "label",
-      type: "{ name?: string; class?: string; icon?: ConstructorOfATypedSvelteComponent | string | null }",
-      default: '{ name: "", class: "text-left", icon: null }',
-      description:
-        "Настройки заголовка аккордеона: `name` — текст заголовка, `class` — CSS-классы для стилизации, `icon` — иконка в виде SVG-строки или Svelte-компонента",
-    },
-    {
-      name: "children",
-      type: "Snippet",
-      default: "undefined",
-      description: "Слот для содержимого, которое будет отображаться при открытии",
-    },
-    {
-      name: "image",
-      type: "string",
-      default: '""',
-      description: "URL изображения для фона содержимого аккордеона",
-    },
-  ]
 </script>
 
-<ComponentExample {codeText} bind:forConstructor>
+<ComponentExample {codeText} {readmeHtml} bind:forConstructor>
   {#snippet component()}
     <Accordion {...accordionComponent.properties as IAccordionProps}>
       <div class="flex flex-col">
@@ -130,8 +89,5 @@ ${formatObjectToString(accordionComponent.properties as IAccordionProps)}
       <h2>Содержимое вложенного Accordion 3</h2>
       <h1>Содержимое вложенного Accordion 3</h1>
     </Accordion>
-  {/snippet}
-  {#snippet props()}
-    <Table header={TableColumns} body={rows} outline />
   {/snippet}
 </ComponentExample>

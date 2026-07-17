@@ -6,39 +6,23 @@
 
 ## Пропсы
 
-| Название     | Тип                                                  | По умолчанию                           | Описание                                         |
-| ------------ | ---------------------------------------------------- | -------------------------------------- | ------------------------------------------------ |
-| id           | string                                               | crypto.randomUUID()                    | Уникальный идентификатор компонента              |
-| wrapperClass | string                                               | ""                                     | Дополнительные CSS-классы для обертки компонента |
-| items        | { name: string; class: string }[]                    | [{ name: "Label", class: "" }]         | Массив элементов индикатора прогресса            |
-| value        | number \| IReceivingDataObject[]                     | undefined                              | Текущее значение(я) индикатора(ов) прогресса     |
-| type         | "horizontal" \| "vertical"                           | "horizontal"                           | Тип ориентации индикатора                        |
-| number       | { minNum?: number; maxNum?: number; units?: string } | { minNum: 0, maxNum: 100, units: "%" } | Настройки числовых значений                      |
-
-### Вложенные типы
-
-#### Items
-
-| Название | Тип    | По умолчанию | Описание                           |
-| -------- | ------ | ------------ | ---------------------------------- |
-| name     | string | "Label"      | Название элемента                  |
-| class    | string | ""           | CSS-классы для стилизации элемента |
-
-#### Number
-
-| Название | Тип    | По умолчанию | Описание              |
-| -------- | ------ | ------------ | --------------------- |
-| minNum   | number | 0            | Минимальное значение  |
-| maxNum   | number | 100          | Максимальное значение |
-| units    | string | "%"          | Единицы измерения     |
-
-#### IReceivingDataObject
-
-| Название | Тип    | Описание               |
-| -------- | ------ | ---------------------- |
-| Name     | string | Имя элемента           |
-| Value    | number | Значение элемента      |
-| Info     | string | Информация об элементе |
+| Название | Тип | По умолчанию | Описание |
+| --- | --- | --- | --- |
+| `id` | `string` | `crypto.randomUUID()` | Уникальный идентификатор компонента |
+| `wrapperClass` | `string` | `""` | Дополнительные CSS-классы для обертки компонента |
+| `items` | `{ name?: string; class?: string }[]` | `[{ name: "Label", class: "" }]` | Массив элементов индикатора прогресса |
+| `items[].name` | `string` | `"Label"` | Название элемента |
+| `items[].class` | `string` | `""` | CSS-классы для стилизации элемента |
+| `value` | `IReceivingDataObject[]` | `undefined` | Значения индикаторов прогресса — по одному объекту на каждый элемент из `items` (индексы должны соответствовать) |
+| `value[].Name` | `string` | `undefined` | Имя элемента; при наличии переопределяет `name` из `items` для отображения |
+| `value[].Timestamp` | `string` | `undefined` | Временная метка значения |
+| `value[].Value` | `number \| string \| boolean` | `undefined` | Текущее значение индикатора |
+| `value[].Info` | `string` | `undefined` | Дополнительная информация, отображаемая под индикатором |
+| `type` | `"horizontal" \| "vertical"` | `"horizontal"` | Тип ориентации индикатора |
+| `number` | `object` | `-` | Настройки числовых значений |
+| `number.minNum` | `number` | `0` | Минимальное значение |
+| `number.maxNum` | `number` | `100` | Максимальное значение |
+| `number.units` | `string` | `"%"` | Единицы измерения |
 
 ## События
 
@@ -122,11 +106,11 @@
 
 ### Пропсы конструктора
 
-| Название         | Тип                                                                                                                               | По умолчанию | Описание                                                |
-| ---------------- | --------------------------------------------------------------------------------------------------------------------------------- | ------------ | ------------------------------------------------------- |
-| component        | UIComponent & { properties: Partial<IProgressBarProps> }                                                                          | -            | Объект компонента с его свойствами                      |
-| onPropertyChange | (updates: Partial<{ properties?: string \| object; name?: string; access?: string; eventHandler?: IUIComponentHandler }>) => void | -            | Коллбэк для обновления свойств компонента               |
-| forConstructor   | boolean                                                                                                                           | true         | Режим отображения (для конструктора или редактирования) |
+| Название | Тип | По умолчанию | Описание |
+| --- | --- | --- | --- |
+| `component` | `UIComponent & { properties: Partial<IProgressBarProps> }` | `-` | Объект компонента с его свойствами |
+| `onPropertyChange` | `(updates: Partial<{ properties?: string \| object; name?: string; access?: string; eventHandler?: IUIComponentHandler }>) => void` | `-` | Коллбэк для обновления свойств компонента |
+| `forConstructor` | `boolean` | `true` | Режим отображения (для конструктора или редактирования) |
 
 ### Особенности конструктора
 

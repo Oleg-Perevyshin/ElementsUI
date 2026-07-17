@@ -6,36 +6,24 @@
 
 ## Пропсы
 
-| Название     | Тип                                                                                                                                                      | По умолчанию                                                                     | Описание                                |
-| ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | --------------------------------------- |
-| id           | string                                                                                                                                                   | crypto.randomUUID()                                                              | Уникальный идентификатор компонента     |
-| wrapperClass | string                                                                                                                                                   | "bg-blue"                                                                        | CSS-классы для обертки компонента       |
-| size         | { width: number; height: number }                                                                                                                        | { width: 12, height: 6 }                                                         | Размеры сетки содержимого вкладок       |
-| activeTab    | number                                                                                                                                                   | 0                                                                                | Индекс активной вкладки                 |
-| items        | { name: string; icon?: string \| ConstructorOfATypedSvelteComponent; class?: string; disabled?: boolean; onClick?: () => void; children?: () => void }[] | [{ name: "tab 1", icon: "", class: "" }, { name: "tab 2", icon: "", class: "" }] | Массив элементов вкладок                |
-| children     | (item: any) => void                                                                                                                                      | undefined                                                                        | Слот для содержимого вкладок            |
-| apiArray     | any[]                                                                                                                                                    | []                                                                               | Массив данных для отображения через API |
-| Components   | (comp: any, isRoot: boolean) => void                                                                                                                     | undefined                                                                        | Функция для отображения компонентов     |
-
-### Вложенные типы
-
-#### Items
-
-| Название | Тип                                          | Описание                                  |
-| -------- | -------------------------------------------- | ----------------------------------------- |
-| name     | string                                       | Название вкладки                          |
-| icon     | string \| ConstructorOfATypedSvelteComponent | Иконка вкладки (SVG строка или компонент) |
-| class    | string                                       | CSS-классы для стилизации вкладки         |
-| disabled | boolean                                      | Состояние отключения вкладки              |
-| onClick  | () => void                                   | Обработчик клика по вкладке               |
-| children | () => void                                   | Слот для содержимого вкладки              |
-
-#### Size
-
-| Название | Тип    | По умолчанию | Описание                               |
-| -------- | ------ | ------------ | -------------------------------------- |
-| width    | number | 12           | Количество колонок в сетке содержимого |
-| height   | number | 6            | Количество строк в сетке содержимого   |
+| Название | Тип | По умолчанию | Описание |
+| --- | --- | --- | --- |
+| `id` | `string` | `crypto.randomUUID()` | Уникальный идентификатор компонента |
+| `wrapperClass` | `string` | `"bg-blue"` | Дополнительные CSS-классы для контейнера вкладок: влияет на фон и стилизацию активной вкладки (автоматически подбирается контрастный цвет текста) |
+| `size` | `object` | `-` | Размеры сетки содержимого активной вкладки |
+| `size.width` | `number` | `12` | Количество колонок в сетке содержимого |
+| `size.height` | `number` | `6` | Количество строк в сетке содержимого |
+| `activeTab` | `number` | `0` | Индекс активной вкладки: изменение значения переключает вкладку программно |
+| `items` | `{ name?: string; icon?: ConstructorOfATypedSvelteComponent \| string; class?: string; children?: Snippet; onClick?: () => {}; disabled?: boolean }[]` | `[{ name: "tab 1", icon: "", class: "" }, { name: "tab 2", icon: "", class: "" }]` | Массив элементов вкладок |
+| `items[].name` | `string` | `undefined` | Название (заголовок) вкладки |
+| `items[].icon` | `ConstructorOfATypedSvelteComponent \| string` | `undefined` | Иконка вкладки (SVG строка или Svelte-компонент) |
+| `items[].class` | `string` | `undefined` | CSS-классы для стилизации вкладки; поддерживает `flex-col` для вертикальной компоновки |
+| `items[].children` | `Snippet` | `undefined` | Слот для содержимого конкретной вкладки: используется, если не переданы общий `children` или `Components` |
+| `items[].onClick` | `() => {}` | `undefined` | Обработчик клика по вкладке |
+| `items[].disabled` | `boolean` | `undefined` | Состояние отключения вкладки |
+| `children` | `Snippet<[any]>` | `undefined` | Слот для динамического рендеринга контента активной вкладки; принимает `items[currentTabIndex]` |
+| `apiArray` | `UIComponent[]` | `[]` | Массив данных компонентов для отображения через `Components` |
+| `Components` | `Snippet<[component: UIComponent, fixedHeight: boolean]>` | `undefined` | Сниппет для отображения динамических компонентов из `apiArray` |
 
 ## События
 
@@ -146,11 +134,11 @@
 
 ### Пропсы конструктора
 
-| Название         | Тип                                                                                                                               | По умолчанию | Описание                                                |
-| ---------------- | --------------------------------------------------------------------------------------------------------------------------------- | ------------ | ------------------------------------------------------- |
-| component        | UIComponent & { properties: Partial<ITabsProps> }                                                                                 | -            | Объект компонента с его свойствами                      |
-| onPropertyChange | (updates: Partial<{ properties?: string \| object; name?: string; access?: string; eventHandler?: IUIComponentHandler }>) => void | -            | Коллбэк для обновления свойств компонента               |
-| forConstructor   | boolean                                                                                                                           | true         | Режим отображения (для конструктора или редактирования) |
+| Название | Тип | По умолчанию | Описание |
+| --- | --- | --- | --- |
+| `component` | `UIComponent & { properties: Partial<ITabsProps> }` | `-` | Объект компонента с его свойствами |
+| `onPropertyChange` | `(updates: Partial<{ properties?: string \| object; name?: string; access?: string; eventHandler?: IUIComponentHandler }>) => void` | `-` | Коллбэк для обновления свойств компонента |
+| `forConstructor` | `boolean` | `true` | Режим отображения (для конструктора или редактирования) |
 
 ### Особенности конструктора
 

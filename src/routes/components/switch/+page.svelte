@@ -1,10 +1,16 @@
 <script lang="ts">
-  import { Table, type ISwitchProps, type UIComponent } from "$lib"
+  import { type ISwitchProps, type UIComponent } from "$lib"
   import ComponentExample from "$lib/ComponentExample.svelte"
   import Switch from "$lib/Switch/Switch.svelte"
   import SwitchProps from "$lib/Switch/SwitchProps.svelte"
   import { updateComponent } from "$lib/types"
-  import { formatObjectToString, TableColumns } from "../../common"
+  import { formatObjectToString, RenderMarkdown } from "../../common"
+  import readmeRaw from "$lib/Switch/README.md?raw"
+
+  let readmeHtml = $state("")
+  $effect(() => {
+    RenderMarkdown(readmeRaw).then((html) => (readmeHtml = html))
+  })
 
   let switchComponent: UIComponent = $state({
     id: crypto.randomUUID(),
@@ -38,77 +44,9 @@ ${formatObjectToString(switchComponent.properties as ISwitchProps)}
   let switchValue = $state(0)
   let fullSwitchValue = $state(10)
   let highBitValue = $state(0)
-
-  const rows = [
-    {
-      name: "id",
-      type: "string",
-      default: "crypto.randomUUID()",
-      description: "Уникальный идентификатор компонента",
-    },
-    {
-      name: "wrapperClass",
-      type: "string",
-      default: '""',
-      description: "Дополнительные CSS-классы для внешней обёртки компонента",
-    },
-    {
-      name: "label",
-      type: "{ name?: string; class?: string; captionLeft?: string; captionRight?: string }",
-      default: '{ name: "", class: "", captionLeft: "", captionRight: "" }',
-      description:
-        "Настройки подписи: `name` — текст заголовка, `class` — CSS-классы для стилизации, `captionLeft`/`captionRight` — подписи по сторонам переключателя (работают как кликабельные кнопки для установки значения 0/1 в режиме `horizontal` без `bitMode`)",
-    },
-    {
-      name: "hiddenInfo",
-      type: "string",
-      default: '""',
-      description: "Текст всплывающей подсказки для режима `checkbox`: отображается при наведении на чекбокс",
-    },
-    {
-      name: "height",
-      type: "string",
-      default: '"2rem"',
-      description: "Высота переключателя: определяет размеры трека и ползунка; ширина в режиме `horizontal` рассчитывается как `height * 2`",
-    },
-    {
-      name: "type",
-      type: '"horizontal" | "vertical" | "checkbox"',
-      default: '"horizontal"',
-      description:
-        "Тип отображения: `horizontal` — горизонтальный слайдер, `vertical` — вертикальный слайдер, `checkbox` — стандартный чекбокс с галочкой и поддержкой `hiddenInfo`",
-    },
-    {
-      name: "options",
-      type: "{ name?: string; value?: number; class?: string; disabled?: boolean }[]",
-      default: "[]",
-      description:
-        "Массив опций переключателя: `name` — название (отображается в `bitMode`), `value` — номер бита или значение, `class` — доп. стили, `disabled` — блокировка отдельной опции; в обычном режиме используется только первый элемент",
-    },
-    {
-      name: "bitMode",
-      type: "boolean",
-      default: "false",
-      description:
-        "Режим битовых флагов: при `true` значение интерпретируется как битовая маска, каждая опция управляет отдельным битом через побитовые операции; при `false` — простой переключатель 0/1",
-    },
-    {
-      name: "value",
-      type: "number",
-      default: "0",
-      description:
-        "Текущее значение переключателя: в обычном режиме — 0 или 1, в `bitMode` — битовая маска; поддерживает двустороннее связывание (`$bindable`)",
-    },
-    {
-      name: "onChange",
-      type: "(value: number) => void",
-      default: "() => {}",
-      description: "Callback-функция, вызываемая при изменении состояния; передаёт новое числовое значение (или обновлённую битовую маску в `bitMode`)",
-    },
-  ]
 </script>
 
-<ComponentExample {codeText} bind:forConstructor>
+<ComponentExample {codeText} {readmeHtml} bind:forConstructor>
   {#snippet component()}
     <div class="my-10 flex w-full justify-center">
       <Switch wrapperClass={(switchComponent.properties as ISwitchProps).bitMode ? "w-fit" : ""} {...switchComponent.properties as ISwitchProps} />
@@ -179,7 +117,4 @@ ${formatObjectToString(switchComponent.properties as ISwitchProps)}
     </div>
     <span> Выбранное значение (биты 29-31): {highBitValue} </span>
   {/snippet}
-  {#snippet props()}
-    <Table header={TableColumns} body={rows} outline />
-  {/snippet}</ComponentExample
->
+</ComponentExample>

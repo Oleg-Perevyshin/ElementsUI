@@ -35,9 +35,12 @@ export const LOCALES = [
   { id: "app-language-zh", name: "中国人", value: "zh", component: FlagZh },
 ]
 
+/* Индекс языка в кортеже перевода [ru, en, zh] — жёстко привязан к порядку LOCALES */
+const LANGUAGE_INDEX: Record<string, number> = Object.fromEntries(LOCALES.map((locale, index) => [locale.value, index]))
+
 /* Функция для перевода для текущего языка */
 function translate(locale: string, key: string): string {
-  return translations[locale]?.[key] || key
+  return translations[key]?.[LANGUAGE_INDEX[locale] ?? 0] || key
 }
 
 export const T: Readable<(key: string) => string> = derived(Language, ($lang) => (key: string) => translate($lang, key))

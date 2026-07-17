@@ -5,7 +5,13 @@
   import TableProps from "$lib/Table/TableProps.svelte"
   import { updateComponent, type IOption, type ITableButton } from "$lib/types"
   import { onDestroy, onMount } from "svelte"
-  import { formatObjectToString, TableColumns } from "../../common"
+  import { formatObjectToString, RenderMarkdown } from "../../common"
+  import readmeRaw from "$lib/Table/README.md?raw"
+
+  let readmeHtml = $state("")
+  $effect(() => {
+    RenderMarkdown(readmeRaw).then((html) => (readmeHtml = html))
+  })
 
   let tableComponent: UIComponent = $state({
     id: crypto.randomUUID(),
@@ -227,91 +233,6 @@ ${formatObjectToString(tableComponent.properties as ITableProps<object>)}
   ]
   let modalData = $state({ isOpen: false, rawData: "", formattedData: "" })
 
-  const propsRows = [
-    {
-      name: "id",
-      type: "string",
-      default: "crypto.randomUUID()",
-      description: "Уникальный идентификатор компонента",
-    },
-    {
-      name: "wrapperClass",
-      type: "string",
-      default: '""',
-      description: "Дополнительные CSS-классы для внешней обёртки компонента",
-    },
-    {
-      name: "label",
-      type: "{ name?: string; class?: string }",
-      default: '{ name: "", class: "" }',
-      description: "Настройки подписи: `name` — текст заголовка, `class` — CSS-классы для стилизации",
-    },
-    {
-      name: "body",
-      type: "any[] | any | null",
-      default: "undefined",
-      description:
-        "Данные строк таблицы: массив объектов или единичный объект; каждый объект представляет строку с ключами, соответствующими колонкам; поддерживает двустороннее связывание (`$bindable`)",
-    },
-    {
-      name: "header",
-      type: "ITableHeader<any>[]",
-      default: "[]",
-      description:
-        "Конфигурация колонок: массив объектов с настройками `width` (ширина), `align` (выравнивание), `label` (заголовок), `content` (массив элементов: `text`/`image`/`button`/`select`/`progressBar` с типизированными `data`)",
-    },
-    {
-      name: "footer",
-      type: "string",
-      default: '""',
-      description: "Текст сводной информации, отображаемый в нижней панели таблицы",
-    },
-    {
-      name: "dataBuffer",
-      type: "{ stashData?: boolean; bufferSize?: number; clearButton?: boolean; clearClass?: string; logger?: boolean; visibleRows?: number }",
-      default: '{ stashData: false, bufferSize: 10, clearButton: false, clearClass: "", logger: false, visibleRows: 5 }',
-      description:
-        "Настройки буферизации: `stashData` — включение внутреннего буфера, `bufferSize` — максимальное количество хранимых строк, `clearButton` — показать кнопку очистки, `logger` — режим логов (добавление строк сверху), `visibleRows` — количество строк для расчёта высоты контейнера",
-    },
-    {
-      name: "outline",
-      type: "boolean",
-      default: "false",
-      description: "Режим отображения границ: при `true` добавляет видимые разделители между ячейками и колонками",
-    },
-    {
-      name: "cursor",
-      type: "any | null",
-      default: "null",
-      description: "Курсор пагинации для бесконечной прокрутки: передаётся в `getData` при достижении конца списка; при `null` загрузка новых данных отключена",
-    },
-    {
-      name: "loader",
-      type: "Readable<boolean> | null",
-      default: "undefined",
-      description: "Svelte store с состоянием загрузки: при `true` блокирует повторные запросы `getData` во время получения данных",
-    },
-    {
-      name: "autoscroll",
-      type: "boolean",
-      default: "false",
-      description: "Автоматическая прокрутка: при `true` таблица всегда прокручивается к последней строке при добавлении новых данных",
-    },
-    {
-      name: "getData",
-      type: "() => void",
-      default: "() => {}",
-      description: "Callback-функция для загрузки следующей порции данных: вызывается при достижении конца прокрутки (если заданы `cursor` и `loader`)",
-    },
-    {
-      name: "onClick",
-      type: "(handler: { Value: string; Variables: string[] }) => void",
-      default: "undefined",
-      description:
-        "Callback-функция для обработки кликов по кнопкам в ячейках: передаёт объект с сериализованными значениями строки (`Value`) и списком запрошенных переменных (`Variables`)",
-    },
-  ]
-
   onMount(() => {
     body = generateStashingData()
 
@@ -325,7 +246,7 @@ ${formatObjectToString(tableComponent.properties as ITableProps<object>)}
   })
 </script>
 
-<ComponentExample {codeText} bind:forConstructor>
+<ComponentExample {codeText} {readmeHtml} bind:forConstructor>
   {#snippet component()}
     <div class="h-60">
       <Table bind:this={tableRef} {...tableComponent.properties as ITableProps<object>} body={(tableComponent.properties as ITableProps<object>).body} />
@@ -364,7 +285,4 @@ ${formatObjectToString(tableComponent.properties as ITableProps<object>)}
       {/snippet}
     </Modal>
   {/snippet}
-  {#snippet props()}
-    <Table header={TableColumns} body={propsRows} outline />
-  {/snippet}</ComponentExample
->
+</ComponentExample>

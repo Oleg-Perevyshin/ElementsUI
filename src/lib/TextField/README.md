@@ -6,22 +6,16 @@
 
 ## Пропсы
 
-| Название     | Тип                                                                                          | По умолчанию                          | Описание                            |
-| ------------ | -------------------------------------------------------------------------------------------- | ------------------------------------- | ----------------------------------- |
-| id           | string                                                                                       | crypto.randomUUID()                   | Уникальный идентификатор компонента |
-| wrapperClass | string                                                                                       | ""                                    | CSS-классы для обертки компонента   |
-| background   | boolean                                                                                      | false                                 | Показывать фоновое оформление       |
-| content      | { name: string; class?: string; size?: "small" \| "base" \| "large" \| "huge" \| "massive" } | { name: "", class: "", size: "base" } | Настройки содержимого текста        |
-
-### Вложенные типы
-
-#### Content
-
-| Название | Тип                                                 | По умолчанию | Описание                         |
-| -------- | --------------------------------------------------- | ------------ | -------------------------------- |
-| name     | string                                              | ""           | Текстовое содержимое             |
-| class    | string                                              | ""           | CSS-классы для стилизации текста |
-| size     | "small" \| "base" \| "large" \| "huge" \| "massive" | "base"       | Размер текста                    |
+| Название | Тип | По умолчанию | Описание |
+| --- | --- | --- | --- |
+| `id` | `string` | `crypto.randomUUID()` | Уникальный идентификатор компонента |
+| `wrapperClass` | `string` | `""` | CSS-классы для обертки компонента |
+| `background` | `boolean` | `false` | Показывать фоновое оформление: добавляет закруглённый контейнер с отступами и цветом `--back-color` |
+| `underline` | `boolean` | `false` | Добавляет подчёркивание текста |
+| `content` | `object` | `-` | Настройки содержимого текста |
+| `content.name` | `string` | `""` | Текстовое содержимое |
+| `content.class` | `string` | `""` | CSS-классы для стилизации текста |
+| `content.size` | `"small" \| "base" \| "large" \| "huge" \| "massive"` | `"base"` | Размер текста (`small` = text-sm, `base` = text-base, `large` = text-2xl, `huge` = text-4xl, `massive` = text-5xl) |
 
 ## События
 
@@ -87,11 +81,11 @@
 
 ### Пропсы конструктора
 
-| Название         | Тип                                                                                                                               | По умолчанию | Описание                                                |
-| ---------------- | --------------------------------------------------------------------------------------------------------------------------------- | ------------ | ------------------------------------------------------- |
-| component        | UIComponent & { properties: Partial<ITextFieldProps> }                                                                            | -            | Объект компонента с его свойствами                      |
-| onPropertyChange | (updates: Partial<{ properties?: string \| object; name?: string; access?: string; eventHandler?: IUIComponentHandler }>) => void | -            | Коллбэк для обновления свойств компонента               |
-| forConstructor   | boolean                                                                                                                           | true         | Режим отображения (для конструктора или редактирования) |
+| Название | Тип | По умолчанию | Описание |
+| --- | --- | --- | --- |
+| `component` | `UIComponent & { properties: Partial<ITextFieldProps> }` | `-` | Объект компонента с его свойствами |
+| `onPropertyChange` | `(updates: Partial<{ properties?: string \| object; name?: string; access?: string; eventHandler?: IUIComponentHandler }>) => void` | `-` | Коллбэк для обновления свойств компонента |
+| `forConstructor` | `boolean` | `true` | Режим отображения (для конструктора или редактирования) |
 
 ### Особенности конструктора
 

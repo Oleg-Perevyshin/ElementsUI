@@ -1,10 +1,16 @@
 <script lang="ts">
-  import { Table, type IGraphProps, type UIComponent } from "$lib"
+  import { type IGraphProps, type UIComponent } from "$lib"
   import ComponentExample from "$lib/ComponentExample.svelte"
   import Graph from "$lib/Graph/Graph.svelte"
   import GraphProps from "$lib/Graph/GraphProps.svelte"
   import { updateComponent } from "$lib/types"
-  import { formatObjectToString, TableColumns } from "../../common"
+  import { formatObjectToString, RenderMarkdown } from "../../common"
+  import readmeRaw from "$lib/Graph/README.md?raw"
+
+  let readmeHtml = $state("")
+  $effect(() => {
+    RenderMarkdown(readmeRaw).then((html) => (readmeHtml = html))
+  })
 
   const dataForGraph = [
     { name: "Roll", value: 0 },
@@ -46,57 +52,11 @@
 
   let codeText = $derived(`
 <UI.Graph
-${formatObjectToString(graphComponent.properties as IGraphProps)} 
+${formatObjectToString(graphComponent.properties as IGraphProps)}
 />`)
-
-  const rows = [
-    {
-      name: "id",
-      type: "string",
-      default: "crypto.randomUUID()",
-      description: "Уникальный идентификатор компонента",
-    },
-    {
-      name: "wrapperClass",
-      type: "string",
-      default: '""',
-      description: "Дополнительные CSS-классы для внешней обёртки компонента",
-    },
-    {
-      name: "label",
-      type: "{ name?: string; class?: string }",
-      default: '{ name: "", class: "" }',
-      description: "Настройки подписи: `name` — текст заголовка, `class` — CSS-классы для стилизации",
-    },
-    {
-      name: "streamingData",
-      type: "{ data: { name: string; value: number }[] | null } | string",
-      default: "{ data: [] }",
-      description: "Потоковые данные для живого режима: `data` — массив текущих значений именованных серий; поддерживает строку JSON для парсинга",
-    },
-    {
-      name: "isTest",
-      type: "boolean",
-      default: "false",
-      description: "Режим тестирования: при `true` генерирует случайные значения вместо использования входящих данных, форсирует refreshRate = 50мс",
-    },
-    {
-      name: "refreshRate",
-      type: "number",
-      default: "0",
-      description: "Интервал отрисовки точки в живом режиме, мс. `0` = AUTO — точка рисуется, когда значения реально изменились (без таймера)",
-    },
-    {
-      name: "historyData",
-      type: "{ name: string; points: { value: number; timestamp: number }[] }[]",
-      default: "[]",
-      description:
-        "Готовый исторический ряд — если задан (непустой), компонент переходит в статический режим: рисует весь массив разом по реальным timestamp (Unix-эпоха, мс), streamingData/refreshRate игнорируются",
-    },
-  ]
 </script>
 
-<ComponentExample {codeText} bind:forConstructor>
+<ComponentExample {codeText} {readmeHtml} bind:forConstructor>
   {#snippet component()}
     <Graph {...graphComponent.properties as IGraphProps} />
   {/snippet}
@@ -111,7 +71,4 @@ ${formatObjectToString(graphComponent.properties as IGraphProps)}
     <Graph label={{ name: "Пример компонента график" }} streamingData={{ data: dataForGraph }} isTest={true} />
     <Graph label={{ name: "Статический режим — наведите курсор на график" }} historyData={historyExample} />
   {/snippet}
-  {#snippet props()}
-    <Table header={TableColumns} body={rows} outline />
-  {/snippet}</ComponentExample
->
+</ComponentExample>

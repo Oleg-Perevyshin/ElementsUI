@@ -8,12 +8,13 @@
   import { goto } from "$app/navigation"
   import { page } from "$app/state"
   import { fade } from "svelte/transition"
-  import { Language, LOCALES } from "../lib/locales/i18n"
+  import { get } from "svelte/store"
+  import { Language, LOCALES, setLanguage } from "../lib/locales/i18n"
 
   let { children } = $props()
   let currentTheme: boolean = $state(true)
   let showLanguageModal = $state(false)
-  let currentLanguage = $state(LOCALES[0])
+  let currentLanguage = $state(LOCALES.find((lang) => lang.value === get(Language)) ?? LOCALES[0])
 
   let activePage = $derived(page.url.pathname)
 
@@ -21,6 +22,7 @@
   const menuItems = [
     { page: "accordion", name: "Accordion" },
     { page: "button", name: "Button" },
+    { page: "carousel", name: "Carousel" },
     { page: "color-picker", name: "ColorPicker" },
     { page: "file-attach", name: "FileAttach" },
     { page: "graph", name: "Graph" },
@@ -51,12 +53,17 @@
   const switchLanguage = (value: string) => {
     const lang = LOCALES.find((lang) => lang.value === value)
     if (lang) {
-      Language.set(lang.value)
-      UI.Language.set(lang.value)
+      setLanguage(lang.value)
       currentLanguage = lang
-      localStorage.setItem("AppLanguage", lang.value)
       showLanguageModal = false
     }
+  }
+
+  /* Закрытие выпадающего списка языков при клике вне его */
+  const handleClickOutside = (event: MouseEvent) => {
+    const target = event.target as HTMLElement
+    const isClickOutsideLang = !target.closest(".lang-button")
+    if (isClickOutsideLang && showLanguageModal) showLanguageModal = false
   }
 
   let DeviceVariables = $state<{ id: string; value: string; name: string; class: string }[]>([
@@ -73,6 +80,12 @@
     document.body.classList.toggle("dark", savedTheme === "dark")
     document.body.classList.toggle("light", savedTheme === "light")
     currentTheme = savedTheme === "light"
+
+    /* Language уже инициализирован из localStorage/языка браузера при загрузке модуля i18n.ts — здесь только фиксируем выбор в localStorage, если он ещё не сохранён */
+    if (!localStorage.getItem("AppLanguage")) setLanguage(currentLanguage.value)
+
+    document.addEventListener("click", handleClickOutside)
+    return () => document.removeEventListener("click", handleClickOutside)
   })
 </script>
 

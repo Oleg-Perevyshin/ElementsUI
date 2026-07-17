@@ -1,10 +1,16 @@
 <script lang="ts">
-  import { Table, type ITextFieldProps, type UIComponent } from "$lib"
+  import { type ITextFieldProps, type UIComponent } from "$lib"
   import ComponentExample from "$lib/ComponentExample.svelte"
   import TextField from "$lib/TextField/TextField.svelte"
   import TextFieldProps from "$lib/TextField/TextFieldProps.svelte"
   import { updateComponent } from "$lib/types"
-  import { formatObjectToString, TableColumns } from "../../common"
+  import { formatObjectToString, RenderMarkdown } from "../../common"
+  import readmeRaw from "$lib/TextField/README.md?raw"
+
+  let readmeHtml = $state("")
+  $effect(() => {
+    RenderMarkdown(readmeRaw).then((html) => (readmeHtml = html))
+  })
 
   let textFieldComponent: UIComponent = $state({
     id: crypto.randomUUID(),
@@ -27,39 +33,11 @@
 
   let codeText = $derived(`
 <UI.TextField
-${formatObjectToString(textFieldComponent.properties as ITextFieldProps)} 
+${formatObjectToString(textFieldComponent.properties as ITextFieldProps)}
 />`)
-
-  const rows = [
-    {
-      name: "id",
-      type: "string",
-      default: "crypto.randomUUID()",
-      description: "Уникальный идентификатор компонента",
-    },
-    {
-      name: "wrapperClass",
-      type: "string",
-      default: '""',
-      description: "Дополнительные CSS-классы для внешней обёртки компонента",
-    },
-    {
-      name: "background",
-      type: "boolean",
-      default: "false",
-      description: "Режим фона: при `true` добавляет закруглённый контейнер с отступами и цветом `--back-color`",
-    },
-    {
-      name: "content",
-      type: "{ name?: string; class?: string; size?: 'small' | 'base' | 'large' | 'huge' | 'massive' }",
-      default: '{ name: "", class: "", size: "base" }',
-      description:
-        "Настройки текста: `name` — отображаемый контент, `class` — CSS-классы для стилизации, `size` — предустановленный размер шрифта (`small` = text-sm, `base` = text-base, `large` = text-2xl, `huge` = text-4xl, `massive` = text-5xl)",
-    },
-  ]
 </script>
 
-<ComponentExample {codeText} bind:forConstructor>
+<ComponentExample {codeText} {readmeHtml} bind:forConstructor>
   {#snippet component()}
     <div>
       <TextField {...textFieldComponent.properties as ITextFieldProps} />
@@ -80,8 +58,5 @@ ${formatObjectToString(textFieldComponent.properties as ITextFieldProps)}
     <TextField content={{ name: "Random text", size: "massive", class: "italic font-bold" }} wrapperClass="text-blue-400" />
     <TextField content={{ name: "Random text", size: "massive", class: "font-bold" }} wrapperClass="text-purple-400" />
     <TextField content={{ name: "Random text", size: "massive", class: "" }} wrapperClass="text-pink-400" background />
-  {/snippet}
-  {#snippet props()}
-    <Table header={TableColumns} body={rows} outline />
   {/snippet}
 </ComponentExample>
