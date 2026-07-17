@@ -50,10 +50,8 @@
   }
 
   const handleKeyDown = (e: KeyboardEvent) => {
-    if (type === "number") {
-      if (e.key === ".") {
-        e.preventDefault()
-      }
+    if (type === "number" && Number.isInteger(number?.step ?? 1) && e.key === ".") {
+      e.preventDefault()
     }
   }
 
