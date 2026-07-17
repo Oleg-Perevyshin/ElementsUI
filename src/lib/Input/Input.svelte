@@ -212,7 +212,7 @@
               onUpdate(value as number)
               return
             }
-            value = Number(value) + (number.step ?? 1)
+            value = roundToClean(Number(value) + (number.step ?? 1))
             onUpdate(value as number)
           }}
           aria-label="Увеличить">+</button
@@ -228,7 +228,7 @@
               onUpdate(value as number)
               return
             }
-            value = Number(value) - (number.step ?? 1)
+            value = roundToClean(Number(value) - (number.step ?? 1))
 
             onUpdate(value as number)
           }}
