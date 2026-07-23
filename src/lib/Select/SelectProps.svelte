@@ -58,7 +58,7 @@
 {#snippet SelectArgument()}
   <UI.Input
     label={{ name: $T("constructor.props.argument") }}
-    value={component.eventHandler.Argument}
+    value={component.eventHandler.Argument || "ModCfg"}
     maxlength={32}
     help={{ info: $T("constructor.props.argument.info"), autocomplete: "on", regExp: /^[a-zA-Z0-9\-_]{0,32}$/ }}
     onUpdate={(value) => onPropertyChange({ eventHandler: { Argument: value as string } })}

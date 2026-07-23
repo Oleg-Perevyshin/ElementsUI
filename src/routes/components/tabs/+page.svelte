@@ -27,11 +27,7 @@
         height: 1,
         width: 1,
       },
-      items: [
-        { name: "Tab 1", class: "flex-row" },
-        { name: "Tab 2", class: "flex-row", disabled: true },
-        { name: "Tab 3", class: "flex-row" },
-      ],
+      items: [{ name: "Tab 1", class: "flex-row" }],
     },
     position: { row: 0, col: 0, width: 0, height: 0 },
     parentId: "",

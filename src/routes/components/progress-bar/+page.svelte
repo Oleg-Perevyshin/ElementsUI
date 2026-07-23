@@ -18,12 +18,8 @@
     properties: {
       id: crypto.randomUUID(),
       type: "horizontal",
-      items: [
-        { name: "Label 1", class: "bg-blue" },
-        { name: "Label 2", class: "bg-blue" },
-        { name: "Label 3", class: "bg-blue" },
-      ],
-      value: [{ Name: "LABEL 1", Value: 50 }, { Value: 50 }, { Value: 50 }],
+      items: [],
+      value: [],
       number: { minNum: 0, maxNum: 100, units: "%" },
     },
     position: { row: 0, col: 0, width: 0, height: 0 },
