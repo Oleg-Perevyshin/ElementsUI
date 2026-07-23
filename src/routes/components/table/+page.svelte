@@ -34,7 +34,7 @@
               data: {
                 class: "bg-blue",
                 name: "send",
-                eventHandler: { Header: "SET", Argument: "Save", Variables: ["id-S"] },
+                eventHandler: { Header: "SET", Argument: "ModCfg", Variables: ["id-S"] },
               },
             },
             { type: "text", data: { key: "id", sortable: true, truncated: false, copy: false } },
@@ -71,7 +71,7 @@
               data: {
                 name: "send",
                 class: "bg-blue",
-                eventHandler: { Header: "SET", Argument: "Save", Variables: ["id-S"] },
+                eventHandler: { Header: "SET", Argument: "ModCfg", Variables: ["id-S"] },
               },
             },
           ],

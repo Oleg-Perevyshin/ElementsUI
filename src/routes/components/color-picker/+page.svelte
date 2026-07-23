@@ -20,7 +20,7 @@
       label: { name: "Label", class: "text-center" },
       value: [0, 0, 0],
     },
-    eventHandler: { Header: "SET", Argument: "Save", Variables: [] },
+    eventHandler: { Header: "SET", Argument: "ModCfg", Variables: [] },
     position: { row: 0, col: 0, width: 0, height: 0 },
     parentId: "",
   })

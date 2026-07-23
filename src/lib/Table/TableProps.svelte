@@ -76,7 +76,7 @@
           ? {
               name: `button`,
               class: "bg-blue",
-              eventHandler: { Header: "SET", Argument: "Save", Variables: [] },
+              eventHandler: { Header: "SET", Argument: "ModCfg", Variables: [] },
               onClick: () => {},
             }
           : {},

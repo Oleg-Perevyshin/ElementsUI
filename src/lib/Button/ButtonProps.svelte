@@ -68,29 +68,17 @@
     options={$optionsStore.HEADER_OPTIONS}
     onUpdate={(option) => onPropertyChange({ eventHandler: { Header: (option as IOption<string>).value as string } })}
   />
-  {#if Header.value === "SET"}
-    <UI.Select
-      label={{ name: $T("constructor.props.argument") }}
-      type="buttons"
-      value={$optionsStore.FULL_ARGUMENT_OPTION.find((h) => h.value === component.eventHandler.Argument) ??
-        $optionsStore.FULL_ARGUMENT_OPTION.find((h) => h.value === "")}
-      options={$optionsStore.FULL_ARGUMENT_OPTION}
-      onUpdate={(option) => onPropertyChange({ eventHandler: { Argument: (option as IOption<string>).value as string } })}
-    />
-  {/if}
   <UI.Input
-    label={{ name: Header.value !== "SET" ? $T("constructor.props.argument") : "" }}
-    wrapperClass="{Header.value === 'SET' ? 'mt-1' : ''} "
+    label={{ name: $T("constructor.props.argument") }}
     value={component.eventHandler.Argument}
     maxlength={32}
-    disabled={Header.value === "SET" && component.eventHandler.Argument == "Save"}
     help={{ info: $T("constructor.props.argument.info"), autocomplete: "on", regExp: /^[a-zA-Z0-9\-_]{0,32}$/ }}
     onUpdate={(value) => onPropertyChange({ eventHandler: { Argument: value as string } })}
   />
 {/snippet}
 
 {#snippet ButtonVariables()}
-  {#if component.eventHandler.Argument !== "Save" || Header.value === "SET"}
+  {#if component.eventHandler.Argument !== "ModCfg" || Header.value === "SET"}
     <UI.Input
       label={{ name: $T("constructor.props.value") }}
       value={component.eventHandler.Value}

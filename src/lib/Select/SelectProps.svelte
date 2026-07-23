@@ -56,22 +56,10 @@
 </script>
 
 {#snippet SelectArgument()}
-  <UI.Select
-    label={{ name: $T("constructor.props.argument") }}
-    type="buttons"
-    value={$optionsStore.FULL_ARGUMENT_OPTION.find((h) => h.value === component.eventHandler.Argument) ??
-      $optionsStore.FULL_ARGUMENT_OPTION.find((h) => h.value === "")}
-    options={$optionsStore.FULL_ARGUMENT_OPTION}
-    onUpdate={(option) => {
-      onPropertyChange({ eventHandler: { Argument: (option as UI.IOption).value as string } })
-    }}
-  />
-
   <UI.Input
-    wrapperClass="{Header.value === 'SET' ? 'mt-1' : ''} "
+    label={{ name: $T("constructor.props.argument") }}
     value={component.eventHandler.Argument}
     maxlength={32}
-    disabled={component.eventHandler.Argument == "Save"}
     help={{ info: $T("constructor.props.argument.info"), autocomplete: "on", regExp: /^[a-zA-Z0-9\-_]{0,32}$/ }}
     onUpdate={(value) => onPropertyChange({ eventHandler: { Argument: value as string } })}
   />
