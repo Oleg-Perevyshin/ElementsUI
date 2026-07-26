@@ -53,6 +53,11 @@
       (a.value as string).includes(component.properties.label?.class?.split(" ").find((cls: string) => cls.startsWith("text-"))),
     ),
   )
+
+  /* Argument пуст — поле ниже лишь визуально показывает "ModCfg", реальное значение нужно проставить в состояние */
+  $effect(() => {
+    if (!component.eventHandler.Argument) onPropertyChange({ eventHandler: { Argument: "ModCfg" } })
+  })
 </script>
 
 {#snippet SelectArgument()}

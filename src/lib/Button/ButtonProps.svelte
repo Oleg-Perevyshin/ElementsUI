@@ -19,6 +19,11 @@
     forConstructor?: boolean
   }>()
 
+  /* Argument пуст — поле ниже лишь визуально показывает "ModCfg", реальное значение нужно проставить в состояние */
+  $effect(() => {
+    if (!component.eventHandler.Argument) onPropertyChange({ eventHandler: { Argument: "ModCfg" } })
+  })
+
   let hasValue: boolean = $derived(component.eventHandler.Value)
 
   let Header: IOption = $derived(
