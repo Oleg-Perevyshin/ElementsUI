@@ -154,9 +154,7 @@
         drawAllGraphs()
       }, selectedRefreshRate)
     } else if (selectedRefreshRate == 0 && !isTest) {
-      /* AUTO: streamingData не несёт признак "это новый пакет" (метки времени тут нет —
-         DeviceStore хранит только последнее значение), поэтому опрашиваем каждые 10мс и рисуем
-         точку только когда сами значения реально изменились, а не на каждый тик поллинга. */
+      /* AUTO: streamingData не несёт признак "новый пакет" — опрашиваем каждые 10мс, рисуем точку только при реальном изменении значений */
       intervalId = setInterval(() => {
         if (!streamingData.data || streamingData.data.length === 0) return
         const newValues = (streamingData.data as IGraphDataObject[]).map((dataset) => dataset.value)
@@ -210,9 +208,7 @@
     const maxX = allPoints.length ? Math.max(...allPoints.map((p) => p.x)) : 1
     const timeSpan = maxX - minX || 1
 
-    /* Оба режима — авто-масштаб по фактическим данным (±10% отступ, не обязательно симметрично относительно нуля):
-       в статическом считается разово по всему массиву, в живом — используется сглаженный liveYRange
-       (обновляется отдельно, в updateLiveYRange, чтобы не дёргаться на каждый кадр/mousemove) */
+    /* Авто-масштаб по данным (±10%): статический — разово по массиву, живой — через сглаженный liveYRange (updateLiveYRange) */
     let yMin: number
     let yMax: number
     if (isHistoryMode) {

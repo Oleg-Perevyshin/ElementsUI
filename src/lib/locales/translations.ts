@@ -1,10 +1,5 @@
-// $lib/locales/translations.ts
-/**
- * Значения для каждого ключа хранятся одним кортежем [ru, en, zh] — это гарантирует,
- * что ключ не может существовать в одном языке и отсутствовать в другом:
- * TypeScript требует заполнить все три элемента кортежа при добавлении новой строки.
- * Порядок элементов кортежа жёстко привязан к порядку языков в LOCALES (see i18n.ts).
- */
+/* $lib/locales/translations.ts */
+/* Кортеж [ru, en, zh] на ключ — TypeScript не даст добавить строку без всех трёх языков, порядок жёстко привязан к LOCALES (i18n.ts) */
 export type LanguageCode = "ru" | "en" | "zh"
 
 const translations: Record<string, [string, string, string]> = {

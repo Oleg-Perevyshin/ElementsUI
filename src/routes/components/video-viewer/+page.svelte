@@ -33,8 +33,7 @@
 ${formatObjectToString(videoViewerComponent.properties as IVideoViewerProps)}
 />`)
 
-  /* Пример remote-режима: синтетические JPEG-кадры (canvas → toBlob) имитируют получение потока извне,
-     без реального устройства — так новый режим можно проверить в браузере */
+  /* Пример remote-режима: синтетические JPEG-кадры (canvas → toBlob) имитируют поток без реального устройства */
   let remoteFrame = $state<Blob | null>(null)
   let remoteStatus = $state<IVideoViewerProps["status"]>("connecting")
 

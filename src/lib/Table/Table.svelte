@@ -151,8 +151,7 @@
     }
   }
 
-  /* Для работы этой проверки в описании столбцов таблицы нужно явно указать что строка будет пустая при отсутствии иконки в БД -
-     src: (row) => (row.icon ? `data:image/png;base64,${row.icon}` : '') */
+  /* Требует явного src: (row) => row.icon ? `data:image/png;base64,${row.icon}` : '' в описании столбца */
   const hasImage = (column: ITableHeader<any>, row: any, index: number): boolean => {
     let content = (column.content as ITableContent<any>[])?.[index]
     const src = content?.type === "image" && typeof content.data.src === "function" ? content.data.src(row) : (content?.data as ITableImage<object>).src

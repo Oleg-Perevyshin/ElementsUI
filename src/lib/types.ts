@@ -212,8 +212,7 @@ export interface IGraphProps {
   isTest?: boolean
   /* 0 = AUTO (рисовать точку на каждое новое значение из streamingData), иначе — интервал в мс */
   refreshRate?: number
-  /* Готовый исторический ряд — если задан (непустой), компонент переходит в статический режим:
-     рисует весь массив разом по реальным timestamp, streamingData/refreshRate игнорируются */
+  /* Если задан (непустой) — статический режим, весь массив разом по реальным timestamp, streamingData/refreshRate игнорируются */
   historyData?: IGraphHistorySeries[]
 }
 
