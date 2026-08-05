@@ -184,6 +184,7 @@ const translations: Record<string, [string, string, string]> = {
   "constructor.props.divider.anchor.top": ["К верху", "To top", "顶部"],
   "constructor.props.divider.anchor.center": ["По центру", "Center", "居中"],
   "constructor.props.divider.anchor.bottom": ["К низу", "To bottom", "底部"],
+  "constructor.props.divider.width": ["Толщина полосы", "Line width", "线条粗细"],
   "constructor.props.disabled": ["Отключить", "Disable", "禁用"],
   "constructor.props.readonly": ["Только чтение", "Read only", "只读"],
   "constructor.props.istest": ["Тестовые данные", "Test data", "测试数据"],
