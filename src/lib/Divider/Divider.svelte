@@ -12,7 +12,7 @@
 <div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class={twMerge(`flex h-full w-full flex-col ${anchorClass[anchor]}`, wrapperClass)}>
   <div class="w-full" style="padding-block: {sizeIndent[size]}px;">
     {#if type === "line"}
-      <div class={twMerge("w-full rounded-full", color)} style="height: {width}px;"></div>
+      <div class="{twMerge('w-full rounded-full', color)} bg-(--bg-color)" style="height: {width}px;"></div>
     {/if}
   </div>
 </div>
