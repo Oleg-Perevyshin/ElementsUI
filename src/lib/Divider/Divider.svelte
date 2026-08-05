@@ -3,8 +3,7 @@
   import { twMerge } from "tailwind-merge"
   import type { IDividerProps } from "../types"
 
-  let { id = crypto.randomUUID(), wrapperClass = "", type = "line", size = "base", width = 2, color = "bg-max", anchor = "center" }: IDividerProps =
-    $props()
+  let { id = crypto.randomUUID(), wrapperClass = "", type = "line", size = "base", width = 2, color = "bg-max", anchor = "center" }: IDividerProps = $props()
 
   const anchorClass = { top: "justify-start", center: "justify-center", bottom: "justify-end" } as const
   const sizeIndent = { small: 4, base: 8, large: 16, huge: 24, massive: 32 } as const

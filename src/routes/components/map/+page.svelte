@@ -20,7 +20,11 @@
   let existingDevices: { sn: string; name: string }[] = []
 
   const randomHex = (length: number): string =>
-    Array.from({ length }, () => Math.floor(Math.random() * 16).toString(16).toUpperCase()).join("")
+    Array.from({ length }, () =>
+      Math.floor(Math.random() * 16)
+        .toString(16)
+        .toUpperCase(),
+    ).join("")
 
   // Формат: 10.00.000-00_000068B60000B33B0000A520:D9
   const generateDevSN = (): string => `10.00.000-00_${randomHex(24)}:${randomHex(2)}`
