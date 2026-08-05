@@ -180,7 +180,6 @@ export interface IDividerProps {
   id?: string
   wrapperClass?: string
   type?: "line" | "empty"
-  size?: "small" | "base" | "large" | "huge" | "massive"
   width?: number
   color?: string
   anchor?: "top" | "center" | "bottom"

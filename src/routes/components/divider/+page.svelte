@@ -20,7 +20,6 @@
       id: crypto.randomUUID(),
       wrapperClass: "",
       type: "line",
-      size: "base",
       width: 2,
       color: "bg-max",
       anchor: "center",
@@ -53,16 +52,16 @@ ${formatObjectToString(dividerComponent.properties as IDividerProps)}
   {#snippet examples()}
     <div class="flex flex-col gap-2">
       <div class="h-16 w-full border border-dashed border-gray-500">
-        <Divider type="line" size="small" width={2} color="bg-max" anchor="top" />
+        <Divider type="line" width={2} color="bg-max" anchor="top" />
       </div>
       <div class="h-16 w-full border border-dashed border-gray-500">
-        <Divider type="line" size="base" width={2} color="bg-blue" anchor="center" />
+        <Divider type="line" width={2} color="bg-blue" anchor="center" />
       </div>
       <div class="h-16 w-full border border-dashed border-gray-500">
-        <Divider type="line" size="large" width={4} color="bg-red" anchor="bottom" />
+        <Divider type="line" width={4} color="bg-red" anchor="bottom" />
       </div>
       <div class="h-16 w-full border border-dashed border-gray-500">
-        <Divider type="empty" size="massive" />
+        <Divider type="empty" />
       </div>
     </div>
   {/snippet}

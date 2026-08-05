@@ -18,7 +18,6 @@
 
   let currentType = $derived($optionsStore.DIVIDER_TYPE_OPTIONS.find((t) => t.value === component.properties.type))
   let currentAnchor = $derived($optionsStore.DIVIDER_ANCHOR_OPTIONS.find((a) => a.value === component.properties.anchor))
-  let currentSize = $derived($optionsStore.TEXTFIELD_SIZE_OPTIONS.find((s) => s.value === component.properties.size))
   let currentColor = $derived($optionsStore.COLOR_OPTIONS.find((c) => c.value === component.properties.color))
 </script>
 
@@ -39,16 +38,6 @@
     value={currentAnchor}
     options={$optionsStore.DIVIDER_ANCHOR_OPTIONS}
     onUpdate={(item) => updateProperty("anchor", (item as UI.IOption).value as string, component, onPropertyChange)}
-  />
-{/snippet}
-
-{#snippet DividerSize()}
-  <UI.Select
-    label={{ name: $T("constructor.props.size") }}
-    type="buttons"
-    value={currentSize}
-    options={$optionsStore.TEXTFIELD_SIZE_OPTIONS}
-    onUpdate={(item) => updateProperty("size", (item as UI.IOption).value as string, component, onPropertyChange)}
   />
 {/snippet}
 
@@ -82,10 +71,9 @@
     </div>
     <div class="flex w-1/3 flex-col px-2">
       {@render DividerAnchor()}
-      {@render DividerSize()}
+      {@render DividerWidth()}
     </div>
     <div class="flex w-1/3 flex-col px-2">
-      {@render DividerWidth()}
       {@render DividerColor()}
     </div>
   </div>
@@ -99,7 +87,6 @@
     <div class="flex w-1/3 flex-col px-2">
       {@render DividerType()}
       {@render DividerAnchor()}
-      {@render DividerSize()}
     </div>
     <div class="flex w-1/3 flex-col px-2">
       {@render DividerWidth()}
