@@ -6,6 +6,8 @@ export { default as ButtonProps } from "./Button/ButtonProps.svelte"
 export { default as Carousel } from "./Carousel/Carousel.svelte"
 export { default as ColorPicker } from "./ColorPicker/ColorPicker.svelte"
 export { default as ColorPickerProps } from "./ColorPicker/ColorPickerProps.svelte"
+export { default as Divider } from "./Divider/Divider.svelte"
+export { default as DividerProps } from "./Divider/DividerProps.svelte"
 export { default as Dragging } from "./Dragging.svelte"
 export { default as FileAttach } from "./FileAttach/FileAttach.svelte"
 export { default as FileAttachProps } from "./FileAttach/FileAttachProps.svelte"
@@ -52,6 +54,7 @@ export {
   type IOption,
   type ISwitchProps,
   type IColorPickerProps,
+  type IDividerProps,
   type ISliderProps,
   type ITextFieldProps,
   type IMapProps,

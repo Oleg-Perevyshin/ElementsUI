@@ -47,6 +47,7 @@ export interface UIComponent {
     | "Accordion"
     | "Button"
     | "ColorPicker"
+    | "Divider"
     | "FileAttach"
     | "Graph"
     | "Input"
@@ -66,6 +67,7 @@ export interface UIComponent {
     | IAccordionProps
     | IButtonProps
     | IColorPickerProps
+    | IDividerProps
     | IFileAttachProps
     | IGraphProps
     | IInputProps
@@ -170,6 +172,16 @@ export interface IColorPickerProps {
   value?: number[]
   readonly?: boolean
   onChange?: (value: number[]) => void
+}
+
+/* ********************************************************** */
+/* Интерфейс разделителя элементов */
+export interface IDividerProps {
+  id?: string
+  wrapperClass?: string
+  type?: "line" | "empty"
+  size?: number
+  anchor?: "top" | "center" | "bottom"
 }
 
 /* ********************************************************** */

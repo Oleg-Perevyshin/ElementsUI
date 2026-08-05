@@ -165,6 +165,17 @@ export const optionsStore = derived(T, ($T) => {
       { id: id(), value: "image", name: $T("constructor.props.type.image") },
     ],
 
+    DIVIDER_TYPE_OPTIONS: [
+      { id: id(), value: "line", name: $T("constructor.props.divider.type.line") },
+      { id: id(), value: "empty", name: $T("constructor.props.divider.type.empty") },
+    ],
+
+    DIVIDER_ANCHOR_OPTIONS: [
+      { id: id(), value: "top", name: $T("constructor.props.divider.anchor.top") },
+      { id: id(), value: "center", name: $T("constructor.props.divider.anchor.center") },
+      { id: id(), value: "bottom", name: $T("constructor.props.divider.anchor.bottom") },
+    ],
+
     FITMODE_OPTIONS: [
       { id: id(), value: "cover", name: $T("constructor.props.type.cover") },
       { id: id(), value: "contain", name: $T("constructor.props.type.contain") },
