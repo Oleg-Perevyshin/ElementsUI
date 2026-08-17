@@ -89,17 +89,17 @@
   {/if}
 
   <div class="relative flex w-full items-center {type === 'text-area' ? 'h-full' : ''}">
-    {#if type !== "text-area"}
+    {#if type === "number"}
       <input
         bind:value
         class={twMerge(
           `w-full rounded-2xl border px-4 py-1 text-center shadow-(--border-shadow-color) transition duration-200
               outline-none focus:shadow-[0_0_6px_var(--blue-color)] focus:border-(--blue-color) [&::-webkit-inner-spin-button]:hidden [&::-webkit-outer-spin-button]:hidden
               ${isValid ? "border-(--bg-color)" : "border-red-400 shadow-[0_0_6px_var(--red-color)] focus:shadow-[0_0_6px_var(--red-color)] focus:border-red-400"}
-              ${disabled ? "opacity-50" : "hover:shadow-(--focus-shadow-color)"} 
+              ${disabled ? "opacity-50" : "hover:shadow-(--focus-shadow-color)"}
               ${readonly ? "" : "hover:shadow-(--focus-shadow-color)"}
-              ${help?.info ? "pl-8" : ""} 
-              ${help.copyButton || type === "password" || (type === "number" && !readonly) ? "pr-8" : ""}`,
+              ${help?.info ? "pl-8" : ""}
+              ${help.copyButton || !readonly ? "pr-8" : ""}`,
           componentClass,
         )}
         style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"
@@ -109,11 +109,35 @@
         autocomplete={help?.autocomplete}
         oninput={(e) => handleInputChange((e.currentTarget as HTMLInputElement).value)}
         onkeydown={handleKeyDown}
-        type={type === "password" ? (showPassword ? "text" : "password") : type === "number" ? "number" : "text"}
+        type="number"
         {maxlength}
         min={number?.minNum}
         max={number?.maxNum}
         step={number?.step}
+        {readonly}
+      />
+    {:else if type !== "text-area"}
+      <input
+        bind:value
+        class={twMerge(
+          `w-full rounded-2xl border px-4 py-1 text-center shadow-(--border-shadow-color) transition duration-200
+              outline-none focus:shadow-[0_0_6px_var(--blue-color)] focus:border-(--blue-color) [&::-webkit-inner-spin-button]:hidden [&::-webkit-outer-spin-button]:hidden
+              ${isValid ? "border-(--bg-color)" : "border-red-400 shadow-[0_0_6px_var(--red-color)] focus:shadow-[0_0_6px_var(--red-color)] focus:border-red-400"}
+              ${disabled ? "opacity-50" : "hover:shadow-(--focus-shadow-color)"}
+              ${readonly ? "" : "hover:shadow-(--focus-shadow-color)"}
+              ${help?.info ? "pl-8" : ""}
+              ${help.copyButton || type === "password" ? "pr-8" : ""}`,
+          componentClass,
+        )}
+        style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"
+        id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
+        {placeholder}
+        {disabled}
+        autocomplete={help?.autocomplete}
+        oninput={(e) => handleInputChange((e.currentTarget as HTMLInputElement).value)}
+        onkeydown={handleKeyDown}
+        type={type === "password" ? (showPassword ? "text" : "password") : "text"}
+        {maxlength}
         {readonly}
       />
     {:else}
