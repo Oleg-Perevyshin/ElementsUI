@@ -30,6 +30,7 @@
     { page: "input", name: "Input" },
     { page: "joystick", name: "Joystick" },
     { page: "map", name: "Map" },
+    { page: "period-chart", name: "PeriodChart" },
     { page: "progress-bar", name: "ProgressBar" },
     { page: "select", name: "Select" },
     { page: "slider", name: "Slider" },

@@ -20,6 +20,8 @@ export { default as JoystickProps } from "./Joystick/JoystickProps.svelte"
 export { default as Modal } from "./Modal.svelte"
 export { default as Map } from "./Map/Map.svelte"
 export { default as MapProps } from "./Map/MapProps.svelte"
+export { default as PeriodChart } from "./PeriodChart/PeriodChart.svelte"
+export { default as PeriodChartProps } from "./PeriodChart/PeriodChartProps.svelte"
 export { default as ProgressBar } from "./ProgressBar/ProgressBar.svelte"
 export { default as ProgressBarProps } from "./ProgressBar/ProgressBarProps.svelte"
 export { default as Select } from "./Select/Select.svelte"
@@ -71,4 +73,6 @@ export {
   type ICarouselProps,
   type IReceivingDataObject,
   type IVideoViewerProps,
+  type IPeriodChartProps,
+  type IPeriodChartLevel,
 } from "./types"

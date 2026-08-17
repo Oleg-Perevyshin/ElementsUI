@@ -53,6 +53,7 @@ export interface UIComponent {
     | "Input"
     | "Joystick"
     | "Map"
+    | "PeriodChart"
     | "ProgressBar"
     | "Select"
     | "Slider"
@@ -73,6 +74,7 @@ export interface UIComponent {
     | IInputProps
     | IJoystickProps
     | IMapProps
+    | IPeriodChartProps
     | IProgressBarProps
     | ISelectProps
     | ISliderProps
@@ -227,6 +229,25 @@ export interface IGraphProps {
   refreshRate?: number
   /* Если задан (непустой) — статический режим, весь массив разом по реальным timestamp, streamingData/refreshRate игнорируются */
   historyData?: IGraphHistorySeries[]
+}
+
+/* ********************************************************** */
+/* Интерфейсы столбчатого графика с переключателем уровней детализации (Год/Месяц/Сутки/Час и т.п.) */
+export interface IPeriodChartLevel {
+  name: string /* Подпись вкладки переключателя, напр. "Час"/"Сутки"/"Месяц"/"Год" */
+  variable?: string /* Имя переменной устройства, откуда берутся data этого уровня, напр. "PWR.EHour" */
+  data: number[] /* Значения — длина массива = число столбиков, ничем не ограничена */
+  labels?: string[] /* Подписи столбиков по X; если не заданы — используется индекс+1 */
+}
+
+export interface IPeriodChartProps {
+  id?: string
+  wrapperClass?: string
+  label?: { name?: string; class?: string }
+  levels?: IPeriodChartLevel[] /* Порядок = порядок вкладок переключателя, всегда открывается на первом (индекс 0) */
+  unit?: string /* Единицы для тултипа/подписи, напр. "Вт·ч" */
+  /* Только уведомление о смене вкладки — сам компонент ничего не запрашивает, консьюмер сам решает, догружать ли данные */
+  onLevelChange?: (index: number, level: IPeriodChartLevel) => void
 }
 
 /* ********************************************************** */

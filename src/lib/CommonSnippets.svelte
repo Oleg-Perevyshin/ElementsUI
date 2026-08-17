@@ -65,7 +65,8 @@
     component.type === "ProgressBar" ||
     component.type === "TextField" ||
     component.type === "Graph" ||
-    component.type === "Map"
+    component.type === "Map" ||
+    component.type === "PeriodChart"
       ? $optionsStore.ACCESS_OPTION.filter((o) => o.value !== "viewOnly")
       : $optionsStore.ACCESS_OPTION}
     value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.access)}
