@@ -128,7 +128,7 @@
       remoteImgSrc = null
       return
     }
-    const blob = frame instanceof Blob ? frame : new Blob([frame], { type: "image/jpeg" })
+    const blob = frame instanceof Blob ? frame : new Blob([new Uint8Array(frame)], { type: "image/jpeg" })
     const url = URL.createObjectURL(blob)
     remoteImgSrc = url
     return () => URL.revokeObjectURL(url)

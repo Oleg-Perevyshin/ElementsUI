@@ -15,7 +15,7 @@
 
 <script lang="ts">
   import { twMerge } from "tailwind-merge"
-  import type { IPeriodChartProps, IPeriodChartLevel } from "../types"
+  import type { IPeriodChartProps } from "../types"
 
   let {
     id = crypto.randomUUID(),

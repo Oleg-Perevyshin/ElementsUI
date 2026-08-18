@@ -54,10 +54,10 @@
 
   $effect(() => {
     if (Array.isArray(value)) {
-      lowerValue = value[0]
-      upperValue = value[1]
+      lowerValue = roundToClean(value[0])
+      upperValue = roundToClean(value[1])
     } else if (typeof value === "number") {
-      singleValue = value
+      singleValue = roundToClean(value)
     }
   })
 
