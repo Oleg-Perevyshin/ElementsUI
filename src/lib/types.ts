@@ -1,6 +1,5 @@
 // $lib/ElementsUI/types.ts
 import type { Snippet } from "svelte"
-import type { Writable } from "svelte/store"
 
 export const updateProperty = (
   path: string,
@@ -466,7 +465,7 @@ export interface ITableProps<T extends object> {
   dataBuffer?: { stashData?: boolean; bufferSize?: number; visibleRows?: number; clearButton?: boolean; clearClass?: string; logger?: boolean }
   outline?: boolean
   cursor?: string | null
-  loader?: Writable<boolean>
+  loader?: () => boolean
   autoscroll?: boolean
   getData?: () => void
   onClick?: (eventHandler: IUIComponentHandler) => void

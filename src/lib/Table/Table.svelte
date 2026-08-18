@@ -1,6 +1,5 @@
 <!-- $lib/ElementsUI/Table.svelte -->
 <script lang="ts">
-  import { get } from "svelte/store"
   import type { IOption, ITableButton, ITableContent, ITableHeader, ITableImage, ITableProgressBar, ITableProps, ITableText } from "../types"
   import { fade, fly, slide } from "svelte/transition"
   import { twMerge } from "tailwind-merge"
@@ -78,7 +77,7 @@
   const handleScroll = () => {
     if (!container) return
     const { scrollTop, clientHeight, scrollHeight } = container
-    if (scrollTop + clientHeight >= scrollHeight - 50 && cursor !== null && loader && !get(loader)) {
+    if (scrollTop + clientHeight >= scrollHeight - 50 && cursor !== null && loader && !loader()) {
       getData()
     }
   }
