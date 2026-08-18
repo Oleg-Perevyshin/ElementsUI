@@ -29,7 +29,7 @@ export function setLanguage(newLang: string) {
 }
 
 /* Поддерживаемые языки (код, название языка, флаг) */
-export const LOCALES = [
+export const LOCALES: { id: string; name: string; value: string; component: ConstructorOfATypedSvelteComponent }[] = [
   { id: "app-language-ru", name: "Русский", value: "ru", component: FlagRu },
   { id: "app-language-en", name: "English", value: "en", component: FlagEn },
   { id: "app-language-zh", name: "中国人", value: "zh", component: FlagZh },
