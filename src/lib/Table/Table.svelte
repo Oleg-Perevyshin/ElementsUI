@@ -336,7 +336,7 @@
                         >
                           {#if button?.icon}
                             <span
-                              class={`flex items-center justify-center overflow-visible h-7 w-7 [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full`}
+                              class={`flex items-center justify-center overflow-visible h-9 w-9 [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full`}
                             >
                               {#if typeof button?.icon === "string"}
                                 {@html button.icon}

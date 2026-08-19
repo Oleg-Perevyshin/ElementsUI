@@ -63,7 +63,12 @@ ${formatObjectToString(periodChartComponent.properties as IPeriodChartProps)}
     />
   {/snippet}
   {#snippet examples()}
-    <PeriodChart label={{ name: "Расход энергии" }} levels={energyLevels} unit=" Вт·ч" onLevelChange={(_, level) => console.log("Переключились на", level.name)} />
+    <PeriodChart
+      label={{ name: "Расход энергии" }}
+      levels={energyLevels}
+      unit=" Вт·ч"
+      onLevelChange={(_, level) => console.log("Переключились на", level.name)}
+    />
     <PeriodChart label={{ name: "Другая палитра" }} wrapperClass="bg-green" levels={energyLevels} unit=" Вт·ч" />
     <PeriodChart label={{ name: "Без данных" }} levels={[{ name: "Час", data: [] }]} />
   {/snippet}

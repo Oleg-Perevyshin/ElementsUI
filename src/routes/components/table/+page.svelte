@@ -2,6 +2,7 @@
   import { Button, Modal, type ITableHeader, type ITableProps, type UIComponent } from "$lib"
   import ComponentExample from "$lib/ComponentExample.svelte"
   import Table from "$lib/Table/Table.svelte"
+  import DebugDeleteIcon from "$lib/libIcons/ButtonDelete.svelte"
   import TableProps from "$lib/Table/TableProps.svelte"
   import { updateComponent, type IOption, type ITableButton } from "$lib/types"
   import { onDestroy, onMount } from "svelte"
