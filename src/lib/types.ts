@@ -191,6 +191,7 @@ export interface IDividerProps {
 export interface IFileAttachProps {
   id?: string
   wrapperClass?: string
+  componentClass?: string
   label?: { name?: string; class?: string }
   type?: "file" | "image"
   accept?: string
@@ -346,6 +347,7 @@ export interface IProgressBarProps {
 export interface ISelectProps<T = unknown> {
   id?: string
   wrapperClass?: string
+  componentClass?: string
   disabled?: boolean
   label?: { name?: string; class?: string }
   type?: "select" | "buttons" | "input"

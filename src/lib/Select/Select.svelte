@@ -46,6 +46,7 @@
   let {
     id = crypto.randomUUID(),
     wrapperClass = "",
+    componentClass = "",
     disabled = false,
     label = { name: "", class: "" },
     multiSelect = false,
@@ -156,7 +157,7 @@
         aria-expanded={isDropdownOpen}
         {disabled}
       >
-        <span class="min-w-0 truncate {value?.name ? '' : 'text-(--faint-color)'}">{value?.name || $T("common.select_tag")}</span>
+        <span class="min-w-0 flex-1 truncate {value?.name ? '' : 'text-(--faint-color)'} {componentClass}">{value?.name || $T("common.select_tag")}</span>
         <svg
           class="size-3.5 shrink-0 text-(--faint-color) transition-transform duration-150"
           style="transform: rotate({isDropdownOpen ? 180 : 0}deg)"
@@ -245,9 +246,11 @@
     {:else if type === "input"}
       <input
         bind:value={searchValue}
-        class="{fieldBase} {disabled
-          ? 'cursor-not-allowed border-(--hairline-color) bg-(--container-color) text-(--faint-color)'
-          : 'cursor-text hover:border-(--faint-color)'}"
+        class={twMerge(
+          fieldBase,
+          disabled ? "cursor-not-allowed border-(--hairline-color) bg-(--container-color) text-(--faint-color)" : "cursor-text hover:border-(--faint-color)",
+          componentClass,
+        )}
         id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
         {disabled}
         oninput={handleSearch}

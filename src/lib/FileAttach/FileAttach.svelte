@@ -6,6 +6,7 @@
   let {
     id = crypto.randomUUID(),
     wrapperClass = "",
+    componentClass = "",
     label = { name: "", class: "" },
     type = "file",
     accept = "*/*",
@@ -93,8 +94,8 @@
         <div class="flex shrink-0 items-center justify-center bg-(--accent-color) px-3 font-semibold whitespace-nowrap text-(--on-accent)">
           {$T("constructor.props.file.select")}
         </div>
-        <div class="flex min-w-0 flex-1 items-center justify-start truncate bg-(--field-color) px-3 text-(--font-color)">
-          <p class="truncate">{fileName || $T("constructor.props.file.notselected")}</p>
+        <div class={twMerge("flex min-w-0 flex-1 items-center justify-start truncate bg-(--field-color) px-3 text-(--font-color)", componentClass)}>
+          <p class="w-full truncate">{fileName || $T("constructor.props.file.notselected")}</p>
         </div>
       </div>
     </label>
