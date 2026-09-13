@@ -30,55 +30,66 @@
 
 <div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class="h-full w-full">
   <div class="flex h-full w-full flex-col overflow-hidden rounded-[14px] border border-(--hairline-color) bg-(--back-color)">
-    <!-- Полоса вкладок -->
-    <div class={twMerge(`sticky top-0 z-40 flex h-fit items-center gap-6 overflow-x-auto border-b border-(--hairline-color) px-4`, wrapperClass)}>
-      {#each items as item, index}
-        <button
-          class={twMerge(
-            `tab relative flex min-w-fit shrink-0 items-center gap-2 border-0 bg-transparent py-3 text-[14px]
-             transition-colors duration-150 ${isCol && items.find((item) => item.icon) ? "h-20 flex-col justify-center" : ""}
-             ${
-               index === currentTabIndex
-                 ? "cursor-pointer font-semibold text-(--font-color) shadow-[inset_0_-2px_0_var(--accent-color)]"
-                 : item.disabled
-                   ? "cursor-not-allowed font-medium text-(--faint-color)"
-                   : "cursor-pointer font-medium text-(--muted-color) hover:text-(--font-color)"
-             }`,
-            item.class,
-          )}
-          disabled={item.disabled}
-          style="width: {item.class
-            ?.split(' ')
-            .find((cls: string) => cls.startsWith('w-'))
-            ?.replace('w-[', '')
-            .slice(0, -1)};"
-          onclick={() => {
-            currentTabIndex = index
-            if (item.onClick) item.onClick()
-          }}
-          aria-selected={index === currentTabIndex}
-          role="tab"
-        >
-          {#if item?.icon}
-            <span class="flex size-[18px] items-center justify-center overflow-visible [&_svg]:h-full [&_svg]:w-full">
-              {#if typeof item.icon === "string"}
-                {@html item.icon}
-              {:else}
-                {@const IconComponent = item.icon}
-                <IconComponent />
-              {/if}
-            </span>
-          {/if}
-          {#if item?.name}
-            <span class="whitespace-nowrap">{item.name}</span>
-          {/if}
-        </button>
-      {/each}
+    <!-- Полоса вкладок — outer оставлен «чистым» скролл-контейнером без justify-*:
+         justify-content на самом overflow-x-auto блоке при контенте чуть шире контейнера
+         даёт паразитный горизонтальный скролл на пару px даже когда прокручивать нечего
+         (классический баг центрирования flex-контейнера с overflow). Поэтому justify-*
+         из wrapperClass уходит на внутреннюю обёртку, а не на сам скролл-контейнер. -->
+    <div class="sticky top-0 z-40 flex h-fit items-center overflow-x-auto border-b border-(--hairline-color) px-4">
+      <div class={twMerge(`flex w-full items-center gap-6`, wrapperClass)}>
+        {#each items as item, index}
+          <button
+            class={twMerge(
+              `tab relative flex min-w-fit shrink-0 items-center justify-center gap-2 border-0 bg-transparent py-3 text-[14px]
+               transition-colors duration-150 ${isCol && items.find((item) => item.icon) ? "h-20 flex-col" : ""}
+               ${
+                 index === currentTabIndex
+                   ? "cursor-pointer font-semibold text-(--font-color) shadow-[inset_0_-2px_0_var(--accent-color)]"
+                   : item.disabled
+                     ? "cursor-not-allowed font-medium text-(--faint-color)"
+                     : "cursor-pointer font-medium text-(--muted-color) hover:text-(--font-color)"
+               }`,
+              item.class,
+            )}
+            disabled={item.disabled}
+            style="width: {item.class
+              ?.split(' ')
+              .find((cls: string) => cls.startsWith('w-'))
+              ?.replace('w-[', '')
+              .slice(0, -1)};"
+            onclick={() => {
+              currentTabIndex = index
+              if (item.onClick) item.onClick()
+            }}
+            aria-selected={index === currentTabIndex}
+            role="tab"
+          >
+            {#if item?.icon}
+              <span class="flex size-[18px] items-center justify-center overflow-visible [&_svg]:h-full [&_svg]:w-full">
+                {#if typeof item.icon === "string"}
+                  {@html item.icon}
+                {:else}
+                  {@const IconComponent = item.icon}
+                  <IconComponent />
+                {/if}
+              </span>
+            {/if}
+            {#if item?.name}
+              <span class="whitespace-nowrap">{item.name}</span>
+            {/if}
+          </button>
+        {/each}
+      </div>
     </div>
 
-    <!-- Контент вкладки -->
+    <!-- Контент вкладки — overflow-x-hidden явно рядом с overflow-y-auto: у некоторых
+         потребителей (например, кнопка отправки формы логина в DevCloud) есть элемент
+         с col-start-2 при единственной явной колонке — он намеренно живёт в неявно
+         создаваемой второй колонке грида. Без overflow-x-hidden спека CSS трактует это
+         как реальное горизонтальное переполнение (раз overflow-y уже не visible, ось X
+         тоже становится auto) и рисует паразитный горизонтальный скролл на пару px. -->
     <div
-      class="grid w-full flex-1 gap-3 overflow-y-auto bg-(--back-color) p-4"
+      class="grid w-full min-h-0 flex-1 gap-3 overflow-x-hidden overflow-y-auto bg-(--back-color) p-4"
       style="grid-template-columns: repeat({size.width || 1}, minmax(0, 1fr)); grid-template-rows: repeat({size.height || 1}, auto);"
     >
       {#if Components}

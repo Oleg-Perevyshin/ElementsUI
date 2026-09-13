@@ -116,12 +116,12 @@
     [&::-webkit-slider-runnable-track]:h-8 [&::-webkit-slider-runnable-track]:bg-transparent
     [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:size-[18px] [&::-webkit-slider-thumb]:mt-[7px]
     [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white
-    [&::-webkit-slider-thumb]:border [&::-webkit-slider-thumb]:border-(--hairline-color)
-    [&::-webkit-slider-thumb]:shadow-[0_1px_3px_rgb(16_24_40/0.22)]
+    [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-(--bg-color,var(--accent-color))
+    [&::-webkit-slider-thumb]:shadow-[0_1px_4px_rgb(16_24_40/0.35)]
     [&::-moz-range-track]:h-8 [&::-moz-range-track]:bg-transparent [&::-moz-range-track]:border-0
     [&::-moz-range-thumb]:size-[18px] [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white
-    [&::-moz-range-thumb]:border [&::-moz-range-thumb]:border-(--hairline-color)
-    [&::-moz-range-thumb]:shadow-[0_1px_3px_rgb(16_24_40/0.22)]
+    [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-(--bg-color,var(--accent-color))
+    [&::-moz-range-thumb]:shadow-[0_1px_4px_rgb(16_24_40/0.35)]
     focus-visible:outline-none`
 </script>
 
@@ -272,9 +272,9 @@
           >
 
           <div class="relative flex h-8 min-w-0 flex-1 items-center">
-            <div class="pointer-events-none absolute inset-x-0 top-1/2 h-1 -translate-y-1/2 rounded-full bg-(--back-color)"></div>
+            <div class="pointer-events-none absolute inset-x-0 top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-(--back-color)"></div>
             <div
-              class="pointer-events-none absolute top-1/2 left-0 h-1 -translate-y-1/2 rounded-full bg-(--bg-color,var(--accent-color))"
+              class="pointer-events-none absolute top-1/2 left-0 h-1.5 -translate-y-1/2 rounded-full bg-(--bg-color,var(--accent-color))"
               style="width: {pct()}%;"
             ></div>
             <input

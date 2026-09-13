@@ -92,16 +92,19 @@
      подбирать под конкретную высоту трека, и он даёт разный результат в Chromium и
      Safari/WebKit — при равных высотах input и thumb смещения нет по определению,
      это работает одинаково везде. */
+  /* Бегунок: было border-(--hairline-color) (почти прозрачная линия) + мягкая тень —
+     на светлом фоне белый кружок буквально сливался с дорожкой. Рамка в 2px цветом
+     заливки даёт чёткий, "премиальный" контур вместо почти невидимой линии. */
   const THUMB = `w-full appearance-none bg-transparent h-[18px]
     [&::-webkit-slider-runnable-track]:h-[18px] [&::-webkit-slider-runnable-track]:bg-transparent
     [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:size-[18px]
     [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white
-    [&::-webkit-slider-thumb]:border [&::-webkit-slider-thumb]:border-(--hairline-color)
-    [&::-webkit-slider-thumb]:shadow-[0_1px_3px_rgb(16_24_40/0.22)]
+    [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-(--bg-color,var(--accent-color))
+    [&::-webkit-slider-thumb]:shadow-[0_1px_4px_rgb(16_24_40/0.35)]
     [&::-moz-range-track]:h-[18px] [&::-moz-range-track]:bg-transparent [&::-moz-range-track]:border-0
     [&::-moz-range-thumb]:size-[18px] [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white
-    [&::-moz-range-thumb]:border [&::-moz-range-thumb]:border-(--hairline-color)
-    [&::-moz-range-thumb]:shadow-[0_1px_3px_rgb(16_24_40/0.22)]
+    [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-(--bg-color,var(--accent-color))
+    [&::-moz-range-thumb]:shadow-[0_1px_4px_rgb(16_24_40/0.35)]
     focus-visible:outline-none`
 
   /* Двойной слайдер: оба input на всю ширину трека с ОДИНАКОВЫМ min/max,
@@ -123,17 +126,19 @@
       id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
       class="relative flex h-8 flex-1 items-center {disabled ? 'cursor-not-allowed opacity-45' : ''}"
     >
-      <!-- Фон дорожки 4px -->
-      <div class="pointer-events-none absolute inset-x-0 top-1/2 h-1 -translate-y-1/2 rounded-full bg-(--container-color)"></div>
+      <!-- Фон дорожки 6px — --container-color здесь давал слишком слабый контраст
+           с фоном страницы (#f0f2f5 на белом), дорожка визуально пропадала;
+           --border-color заметно контрастнее и совпадает с рамкой счётчика ниже. -->
+      <div class="pointer-events-none absolute inset-x-0 top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-(--border-color)"></div>
       <!-- Заливка -->
       {#if isRange}
         <div
-          class="pointer-events-none absolute top-1/2 h-1 -translate-y-1/2 rounded-full bg-(--bg-color,var(--accent-color))"
+          class="pointer-events-none absolute top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-(--bg-color,var(--accent-color))"
           style="left: {pct(lowerValue)}%; width: {Math.max(0, pct(upperValue) - pct(lowerValue))}%;"
         ></div>
       {:else}
         <div
-          class="pointer-events-none absolute top-1/2 left-0 h-1 -translate-y-1/2 rounded-full bg-(--bg-color,var(--accent-color))"
+          class="pointer-events-none absolute top-1/2 left-0 h-1.5 -translate-y-1/2 rounded-full bg-(--bg-color,var(--accent-color))"
           style="width: {pct(singleValue)}%;"
         ></div>
       {/if}

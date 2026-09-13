@@ -70,18 +70,6 @@
     }
   })
 
-  const svgSize = $derived(() => {
-    const widthClass = twMerge(
-      wrapperClass.split(" ").find((cls: string) => cls.startsWith("w-")),
-      componentClass.split(" ").find((cls: string) => cls.startsWith("w-")),
-    )
-    const heightClass = twMerge(
-      wrapperClass.split(" ").find((cls: string) => cls.startsWith("h-")),
-      componentClass.split(" ").find((cls: string) => cls.startsWith("h-")),
-    )
-    return `${widthClass} ${heightClass}`
-  })
-
   const handleClick = (event: Event) => {
     if (disabled || !onClick) return
     event?.stopPropagation()
@@ -134,7 +122,7 @@
     {#if content?.icon}
       <span
         class={`flex shrink-0 items-center justify-center overflow-visible
-          ${content.name?.trim() ? "h-[18px] w-[18px]" : `${svgSize()}`}
+          ${content.name?.trim() ? "h-[18px] w-[18px]" : "h-full w-full"}
           [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full`}
       >
         {#if typeof content?.icon === "string"}

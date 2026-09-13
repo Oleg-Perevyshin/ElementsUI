@@ -314,7 +314,11 @@
                   <div
                     id="rowDiv{i}-{j}"
                     class="relative grid min-h-7 w-full min-w-0 items-center gap-x-2 px-3 py-1 text-[13px] wrap-break-word
-              {column.align === 'center' ? 'justify-center text-center' : column.align === 'right' ? 'justify-end text-right tabular-nums' : 'justify-start text-left'}
+              {column.align === 'center'
+                ? 'justify-center justify-items-center text-center'
+                : column.align === 'right'
+                  ? 'justify-end justify-items-end text-right tabular-nums'
+                  : 'justify-start justify-items-start text-left'}
                {j !== 0 ? ' border-l ' : ''} {outline ? 'border-(--hairline-color)' : 'border-transparent'} {column.disableSelect ? 'select-none' : 'select-all'}"
                     style=" grid-template-columns: repeat({contentArray?.length}, minmax(0, 1fr));"
                   >

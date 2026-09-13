@@ -10,6 +10,38 @@
 
   let isDropdownOpen = $state(false)
   let dropdownElement: HTMLDivElement
+  let portalElement: HTMLDivElement | undefined = $state()
+  let anchorRect: { top: number; bottom: number; left: number; width: number } | null = $state(null)
+
+  /* Список вариантов выносится в document.body (портал), чтобы его не обрезал
+     overflow-hidden/overflow-auto ближайшего скроллящегося предка (например,
+     панель свойств конструктора). Позиция считается от dropdownElement и
+     обновляется, пока список открыт, при скролле/резайзе где угодно на странице. */
+  function portal(node: HTMLElement) {
+    document.body.appendChild(node)
+    return {
+      destroy() {
+        node.remove()
+      },
+    }
+  }
+
+  function updateAnchorRect() {
+    if (!dropdownElement) return
+    const rect = dropdownElement.getBoundingClientRect()
+    anchorRect = { top: rect.top, bottom: rect.bottom, left: rect.left, width: rect.width }
+  }
+
+  $effect(() => {
+    if (!isDropdownOpen) return
+    updateAnchorRect()
+    window.addEventListener("scroll", updateAnchorRect, true)
+    window.addEventListener("resize", updateAnchorRect)
+    return () => {
+      window.removeEventListener("scroll", updateAnchorRect, true)
+      window.removeEventListener("resize", updateAnchorRect)
+    }
+  })
 
   let {
     id = crypto.randomUUID(),
@@ -41,7 +73,10 @@
   )
 
   const handleClickOutside = (event: MouseEvent) => {
-    if (dropdownElement && !dropdownElement.contains(event.target as Node)) isDropdownOpen = false
+    const target = event.target as Node
+    const insideAnchor = !!dropdownElement?.contains(target)
+    const insidePortal = !!portalElement?.contains(target)
+    if (!insideAnchor && !insidePortal) isDropdownOpen = false
   }
 
   onMount(() => {
@@ -135,7 +170,13 @@
       </button>
 
       {#if isDropdownOpen}
-        <div class="absolute top-full left-0 z-50 mt-1 w-full" transition:slide={{ duration: 150 }}>
+        <div
+          use:portal
+          bind:this={portalElement}
+          class="fixed z-[9999] mt-1"
+          style="top: {anchorRect?.bottom ?? 0}px; left: {anchorRect?.left ?? 0}px; width: {anchorRect?.width ?? 0}px;"
+          transition:slide={{ duration: 150 }}
+        >
           <div class={listBase} style="max-height: {listHeight};" role="listbox">
             {#each options as option (option.id)}
               <button
@@ -214,7 +255,13 @@
       />
 
       {#if isDropdownOpen}
-        <div class="absolute top-full left-0 z-50 mt-1 w-full select-none" transition:slide={{ duration: 150 }}>
+        <div
+          use:portal
+          bind:this={portalElement}
+          class="fixed z-[9999] mt-1 select-none"
+          style="top: {anchorRect?.bottom ?? 0}px; left: {anchorRect?.left ?? 0}px; width: {anchorRect?.width ?? 0}px;"
+          transition:slide={{ duration: 150 }}
+        >
           <div class={listBase} style="max-height: {listHeight};" role="listbox">
             {#each filteredOptions as option (option.id)}
               <button

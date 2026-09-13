@@ -42,17 +42,21 @@
   }
 </script>
 
-<div class={twMerge(`flex flex-col items-center`, wrapperClass)}>
+<!-- Не входил в исходный design-handoff (пропущен вместе с остальными точками,
+     которые авторы документа не осматривали) — сейчас приведён к общей палитре:
+     радиус 10/высота 36 как у Input/Select, сегмент "Выбрать файл" залит акцентом
+     с текстом --on-accent (было --font-color по тёмно-синему — нечитаемо). -->
+<div class={twMerge(`flex flex-col items-center gap-1`, wrapperClass)}>
   {#if label.name}
-    <h5 class={`${label.class} w-full`}>{label.name}</h5>
+    <span class={twMerge(`w-full text-[12px] font-semibold text-(--muted-color)`, label.class)}>{label.name}</span>
   {/if}
 
   {#if type === "image"}
     <div class="relative">
       <button
-        class="flex items-center justify-center overflow-hidden {imageSize.form === 'circle' ? 'rounded-full' : 'rounded-2xl'} 
-        bg-(--back-color) shadow-sm transition duration-250
-        {disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:shadow-md'}"
+        class="flex items-center justify-center overflow-hidden {imageSize.form === 'circle' ? 'rounded-full' : 'rounded-2xl'}
+        border border-(--hairline-color) bg-(--container-color) transition-colors duration-150
+        {disabled ? 'cursor-not-allowed opacity-45' : 'cursor-pointer hover:bg-(--border-color)'}"
         style={`height: ${imageSize.height}; width: ${imageSize.width}`}
         onclick={triggerFileInput}
         {disabled}
@@ -67,7 +71,7 @@
             `}
           />
         {:else}
-          <span class="text-sm text-gray-500">Image</span>
+          <span class="text-[12px] font-medium text-(--faint-color)">Image</span>
         {/if}
       </button>
       <input id={ID} type="file" class="absolute -z-10 h-0 w-0 overflow-hidden opacity-0" {accept} {disabled} onchange={handleFileChange} />
@@ -77,19 +81,19 @@
       <input
         id={ID}
         type="file"
-        class="absolute left-0 z-1 h-8.5 w-full opacity-0 {disabled ? 'cursor-not-allowed' : 'cursor-pointer'}"
+        class="absolute left-0 z-1 h-9 w-full opacity-0 {disabled ? 'cursor-not-allowed' : 'cursor-pointer'}"
         {accept}
         {disabled}
         onchange={handleFileChange}
       />
       <div
-        class="flex w-full overflow-hidden rounded-2xl font-semibold shadow-sm transition duration-250 {disabled ? '' : 'hover:shadow-md'}
-             "
+        class="flex h-9 w-full overflow-hidden rounded-[10px] border border-(--border-color) text-[14px] transition-colors duration-150
+             {disabled ? 'opacity-45' : 'hover:border-(--faint-color)'}"
       >
-        <div class="flex w-1/3 items-center justify-center bg-(--blue-color) p-2 py-1 {disabled ? 'opacity-50' : ''}">
+        <div class="flex shrink-0 items-center justify-center bg-(--accent-color) px-3 font-semibold whitespace-nowrap text-(--on-accent)">
           {$T("constructor.props.file.select")}
         </div>
-        <div class="flex flex-1 items-center justify-start truncate bg-(--back-color) px-2 {disabled ? 'opacity-50' : ''}">
+        <div class="flex min-w-0 flex-1 items-center justify-start truncate bg-(--field-color) px-3 text-(--font-color)">
           <p class="truncate">{fileName || $T("constructor.props.file.notselected")}</p>
         </div>
       </div>

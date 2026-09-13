@@ -20,8 +20,11 @@
 
 <div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class={twMerge(`w-full`, wrapperClass)} transition:slide={{ duration: 200 }}>
   <div class="overflow-hidden rounded-[14px] border border-(--hairline-color) bg-(--back-color)">
+    <!-- Заголовок темнее контента (--container-color), а не наоборот: так он читается
+         как отдельная кликабельная полоса, а раскрытое содержимое остаётся на чистом
+         светлом фоне (--back-color) — там часто лежат вложенные карточки/поля. -->
     <button
-      class="flex w-full cursor-pointer items-center justify-between gap-3 px-4 py-3 text-left transition-colors duration-150 hover:bg-(--container-color)"
+      class="flex w-full cursor-pointer items-center justify-between gap-3 bg-(--container-color) px-4 py-3 text-left transition-colors duration-150 hover:bg-(--border-color)"
       onclick={toggle}
     >
       <div class="flex min-w-0 flex-1 items-center gap-3">
@@ -50,7 +53,7 @@
 
     {#if isOpen}
       <div
-        class="grid w-full gap-3 border-t border-(--hairline-color) bg-(--container-color) p-4"
+        class="grid w-full gap-3 border-t border-(--hairline-color) bg-(--back-color) p-4"
         transition:slide={{ duration: 200 }}
         style="grid-template-columns: repeat({size.width || 1}, minmax(0, 1fr));
           grid-template-rows: repeat({size.height || 1}, {image ? 'minmax(6.5rem, auto)' : 'auto'});

@@ -97,7 +97,7 @@
         </button>
       </div>
 
-      <div class={twMerge("flex h-full w-full flex-col overflow-auto p-5", mainClass)}>
+      <div class={twMerge("flex h-full w-full min-h-0 flex-col overflow-x-hidden overflow-y-auto p-5", mainClass)}>
         {@render main?.()}
       </div>
 
