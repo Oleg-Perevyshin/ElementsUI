@@ -79,6 +79,15 @@ ${formatObjectToString(selectComponent.properties as ISelectProps)}
   let selectOption: IOption = $state({ id: "Map", name: "Map", value: "Map" })
   let COMPONENT_OPTIONS = Object.keys(componentMap).map((name) => ({ id: name, name: name, value: name }))
   let fullSwitchValue = $state(10)
+
+  /* type="buttons" с явным bg-* у опций — регрессионный пример для конфликта
+     twMerge между заливкой выбранной кнопки и цветом опции (см. Select.svelte) */
+  const statusOptions = [
+    { id: crypto.randomUUID(), value: "online", name: "Online", class: "bg-green" },
+    { id: crypto.randomUUID(), value: "updating", name: "Updating", class: "bg-yellow" },
+    { id: crypto.randomUUID(), value: "offline", name: "Offline", class: "bg-red" },
+  ]
+  let statusValue: IOption = $state(statusOptions[0])
 </script>
 
 <ComponentExample {codeText} {readmeHtml} bind:forConstructor>
@@ -127,5 +136,12 @@ ${formatObjectToString(selectComponent.properties as ISelectProps)}
       />
       <span>Выбранное значение: {fullSwitchValue}</span>
     </div>
+    <UI.Select
+      type="buttons"
+      label={{ name: "Статус (buttons + цвет опции)" }}
+      options={statusOptions}
+      value={statusValue}
+      onUpdate={(option) => (statusValue = option as IOption)}
+    />
   {/snippet}
 </ComponentExample>

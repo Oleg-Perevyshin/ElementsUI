@@ -1,3 +1,7 @@
+<!-- $lib/Widget/Widget.svelte — шапка фиксированной высоты + гибкое тело
+     вместо жёсткой сетки grid-rows-[4fr_9fr_5fr]. Кнопки ± квадратные 32px,
+     дорожка слайдера 4px. Вся логика (mapToStep, циклирование иконок,
+     $effect, onUpdate) не тронута. -->
 <script lang="ts">
   import type { IWidgetProps } from "../types"
   import { twMerge } from "tailwind-merge"
@@ -42,9 +46,7 @@
       }
 
       return () => {
-        if (intervalId !== null) {
-          clearInterval(intervalId)
-        }
+        if (intervalId !== null) clearInterval(intervalId)
       }
     }
   })
@@ -91,55 +93,75 @@
 
   const roundToClean = (num: number): number => {
     if (Number.isInteger(num)) return num
-
     const rounded1 = Number(num.toFixed(1))
     if (Math.abs(rounded1 - num) < 1e-10) return rounded1
-
-    const rounded2 = Number(num.toFixed(2))
-    if (Math.abs(rounded2 - num) < 1e-10) return rounded2
-
-    return rounded2
+    return Number(num.toFixed(2))
   }
+
+  const pct = $derived(() => {
+    const lo = settings.number?.minNum ?? 0
+    const hi = settings.number?.maxNum ?? 10
+    const span = Math.abs(hi - lo) || 1
+    return Math.max(0, Math.min(100, ((Number(currentValue) - lo) / span) * 100))
+  })
+
+  const stepBtn = `flex size-8 shrink-0 items-center justify-center rounded-lg border border-(--border-color)
+    bg-(--back-color) text-[16px] leading-none text-(--muted-color) transition-colors duration-150
+    hover:bg-(--container-color) hover:text-(--font-color) active:scale-[0.97]
+    disabled:cursor-not-allowed disabled:opacity-40`
+
+  /* mt-[7px] у webkit-thumb: без него Chrome/Safari прижимают thumb к верху трека
+     после appearance:none — см. подробный комментарий в Slider.svelte */
+  const THUMB = `w-full appearance-none bg-transparent h-8
+    [&::-webkit-slider-runnable-track]:h-8 [&::-webkit-slider-runnable-track]:bg-transparent
+    [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:size-[18px] [&::-webkit-slider-thumb]:mt-[7px]
+    [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white
+    [&::-webkit-slider-thumb]:border [&::-webkit-slider-thumb]:border-(--hairline-color)
+    [&::-webkit-slider-thumb]:shadow-[0_1px_3px_rgb(16_24_40/0.22)]
+    [&::-moz-range-track]:h-8 [&::-moz-range-track]:bg-transparent [&::-moz-range-track]:border-0
+    [&::-moz-range-thumb]:size-[18px] [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white
+    [&::-moz-range-thumb]:border [&::-moz-range-thumb]:border-(--hairline-color)
+    [&::-moz-range-thumb]:shadow-[0_1px_3px_rgb(16_24_40/0.22)]
+    focus-visible:outline-none`
 </script>
 
-<div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class={twMerge("w-full h-full p-1", wrapperClass)}>
-  <div
-    class={`h-full grid grid-rows-[4fr_9fr_5fr] rounded-xl bg-(--container-color)
-     transition-all duration-250 p-1
-     shadow-(--border-shadow-color) hover:shadow-(--focus-shadow-color)`}
-  >
-    <div class="grid gap-2 overflow-hidden items-center" style="grid-template-columns:{icons.array && icons.array.length !== 0 ? '3.5rem' : ''} 1fr;">
+<div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class={twMerge("h-full w-full", wrapperClass)}>
+  <div class="flex h-full flex-col overflow-hidden rounded-[14px] border border-(--hairline-color) bg-(--back-color)">
+    <!-- Шапка: иконка + название, фиксированная высота -->
+    <div class="flex h-11 shrink-0 items-center gap-2.5 border-b border-(--hairline-color) px-3.5">
       {#if icons.array && icons.array.length !== 0}
-        <div class="size-14 p-0.5 [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full {icons.class}">
+        <div class="size-5 shrink-0 text-(--muted-color) [&_svg]:h-full [&_svg]:w-full {icons.class}">
           {@html currentImage}
         </div>
       {/if}
-
-      <span class="text-left text-3xl overflow-hidden font-semibold {label.class}">{label.name}</span>
+      <span class="min-w-0 flex-1 truncate text-left text-[13px] font-semibold {label.class}">{label.name}</span>
+      {#if settings.number?.units}
+        <span class="shrink-0 text-[11px] font-semibold text-(--faint-color)">{settings.number?.units}</span>
+      {/if}
     </div>
 
-    <div
-      class="flex mx-3 gap-1 items-center justify-center inset-shadow-[0_-10px_10px_-15px_rgb(0_0_0_/0.5)] dark:inset-shadow-[0_-10px_10px_-15px_rgb(255_255_255_/0.5)]"
-    >
+    <!-- Значение: занимает всё свободное место -->
+    <div class="flex flex-1 items-center justify-center px-3.5 py-4">
       {#if settings.type == "input" || settings.type == "slider"}
-        <div>
-          <span class="text-7xl">{currentValue}</span>
-          <span class="text-5xl">{settings.number?.units}</span>
-        </div>
+        <span class="text-[34px] leading-none font-[650] tracking-[-0.02em] tabular-nums">{currentValue}</span>
       {:else}
-        <span class="text-5xl">{currentValue === 0 ? (settings.switch?.captionLeft ?? "Off") : (settings.switch?.captionRight ?? "On")}</span>
+        <span class="text-[28px] leading-none font-[650] tracking-[-0.015em]">
+          {currentValue === 0 ? (settings.switch?.captionLeft ?? "Off") : (settings.switch?.captionRight ?? "On")}
+        </span>
       {/if}
     </div>
-    <div class="flex flex-col items-center justify-center px-2">
+
+    <!-- Управление -->
+    <div class="flex shrink-0 flex-col items-stretch gap-2 border-t border-(--hairline-color) bg-(--container-color) px-3.5 py-3">
       {#if settings.label}
-        <h5>{settings.label}</h5>
+        <span class="text-[11px] font-bold tracking-[0.06em] text-(--faint-color) uppercase">{settings.label}</span>
       {/if}
+
       {#if settings.type == "input"}
-        <!-- Input -->
-        <div class={twMerge(`flex p-2 gap-2 bg-blue`, settings.class)}>
+        <div class={twMerge(`flex items-center gap-2`, settings.class)}>
           {#if !readonly}
             <button
-              class="flex size-8 items-center justify-center shadow-sm hover:shadow-md rounded-full transition duration-200 bg-(--bg-color) active:scale-97 text-2xl"
+              class={stepBtn}
               onclick={() => {
                 if ((settings.number?.minNum !== 0 && !settings.number?.minNum) || !settings.number?.step || (currentValue !== 0 && !currentValue)) return
                 if (Number(currentValue) - settings.number?.step <= settings.number?.minNum) {
@@ -158,11 +180,10 @@
           {/if}
           <input
             bind:value={currentValue}
-            class={twMerge(`flex-1 w-full rounded-2xl border px-8 py-1 text-center shadow-(--border-shadow-color) transition duration-200
-              outline-none focus:shadow-[0_0_6px_var(--bg-color)] focus:border-(--bg-color) [&::-webkit-inner-spin-button]:hidden [&::-webkit-outer-spin-button]:hidden
-              border-(--back-color)
-             hover:shadow-(--focus-shadow-color)`)}
-            style="background: color-mix(in srgb, var(--back-color), var(--back-color) 70%);"
+            class="h-8 w-full min-w-0 flex-1 rounded-[10px] border border-(--border-color) bg-(--field-color) px-3 text-center text-[14px] tabular-nums
+              transition-[border-color,box-shadow] duration-150 outline-none
+              focus:border-(--accent-color) focus:shadow-(--focus-shadow-color)
+              [&::-webkit-inner-spin-button]:hidden [&::-webkit-outer-spin-button]:hidden"
             id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
             type="number"
             {readonly}
@@ -172,7 +193,7 @@
           />
           {#if !readonly}
             <button
-              class="flex size-8 items-center justify-center rounded-full shadow-sm hover:shadow-md transition duration-200 bg-(--bg-color) active:scale-97 text-2xl"
+              class={stepBtn}
               onclick={() => {
                 if ((settings.number?.maxNum !== 0 && !settings.number?.maxNum) || !settings.number?.step || (currentValue !== 0 && !currentValue)) return
                 if (Number(currentValue) + settings.number?.step >= settings.number?.maxNum) {
@@ -191,26 +212,22 @@
           {/if}
         </div>
       {:else if settings.type == "switch"}
-        <!-- Switch -->
-        <div class={twMerge(`flex bg-blue p-2 w-full flex-wrap items-end justify-center gap-1 ${readonly ? "opacity-60" : ""}`, settings.class)}>
+        <div class={twMerge(`flex w-full items-center justify-center gap-2.5 ${readonly ? "opacity-45" : ""}`, settings.class)}>
           {#if settings.switch?.captionLeft}
             <button
-              class="mr-2 {readonly ? 'cursor-not-allowed' : 'cursor-pointer'}"
+              class="text-[13px] font-medium {readonly ? 'cursor-not-allowed' : 'cursor-pointer'} {currentValue
+                ? 'text-(--muted-color)'
+                : 'text-(--font-color)'}"
               style="width: {maxCaptionWidth}; text-align: end;"
               onclick={() => handleCaptionClick(0)}>{settings.switch?.captionLeft}</button
             >
           {/if}
 
-          <label
-            class="relative flex items-center justify-between
-            rounded-full shadow-sm transition duration-200 border-(--bg-color) hover:shadow-md"
-          >
+          <label class="relative flex items-center {readonly ? 'cursor-not-allowed' : ''}">
             <input
               id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
               type="checkbox"
-              class="absolute left-1/2 h-full w-full -translate-x-1/2 {readonly ? 'cursor-not-allowed' : 'cursor-pointer'} appearance-none rounded-md {readonly
-                ? 'cursor-not-allowed'
-                : ''}"
+              class="absolute left-1/2 h-full w-full -translate-x-1/2 appearance-none rounded-full {readonly ? 'cursor-not-allowed' : 'cursor-pointer'}"
               disabled={readonly}
               checked={currentValue !== 0}
               onchange={() => {
@@ -219,101 +236,70 @@
               }}
             />
             <span
-              class="relative flex items-center rounded-full border-(--bg-color) transition-all duration-250
-        {currentValue ? 'bg-(--bg-color)' : 'bg-(--back-color)'}
-        {readonly ? 'cursor-not-allowed' : 'cursor-pointer'}"
-              style="width: {`calc(2rem * 2)`}; height: 2rem;"
+              class="relative flex h-[26px] w-[44px] items-center rounded-full transition-colors duration-200
+                {currentValue ? 'bg-(--bg-color,var(--accent-color))' : 'bg-(--border-color)'}
+                {readonly ? 'cursor-not-allowed' : 'cursor-pointer'}"
             >
               <span
-                class="absolute rounded-full transition-all duration-250
-                  {currentValue ? 'bg-(--back-color)' : 'bg-(--bg-color)'} {readonly ? 'cursor-not-allowed' : 'cursor-pointer'}"
-                style="width: {`calc(2rem * 0.8)`}; height: {`calc(2rem * 0.8)`}; margin: 0 {`calc(2rem * 0.1)`}; transform: {currentValue
-                  ? `translateX(calc(2rem))`
-                  : 'translateX(0)'}"
+                class="absolute size-[22px] rounded-full bg-white shadow-[0_1px_3px_rgb(16_24_40/0.28)] transition-transform duration-200"
+                style="margin: 0 2px; transform: translateX({currentValue ? '18px' : '0'});"
               ></span>
             </span>
           </label>
 
           {#if settings.switch?.captionRight}
             <button
-              class="ml-2 {readonly ? 'cursor-not-allowed' : 'cursor-pointer'}"
+              class="text-[13px] font-medium {readonly ? 'cursor-not-allowed' : 'cursor-pointer'} {currentValue
+                ? 'text-(--font-color)'
+                : 'text-(--muted-color)'}"
               style="width: {maxCaptionWidth}; text-align: start;"
               onclick={() => handleCaptionClick(1)}>{settings.switch?.captionRight}</button
             >
           {/if}
         </div>
       {:else if settings.type == "slider"}
-        {@const userAgent = navigator.userAgent}
-        <!-- Cлайдер -->
-        <div class={twMerge(`flex flex-col items-center w-full bg-blue px-2 gap-1 ${readonly ? "opacity-60" : ""}`, settings.class)}>
-          <input
-            type="range"
-            min={settings.number?.minNum}
-            max={settings.number?.maxNum}
-            step={settings.number?.step}
-            disabled={readonly}
-            bind:value={currentValue}
-            oninput={() => onUpdate(currentValue)}
-            class={twMerge(
-              `h-8 w-full appearance-none overflow-hidden rounded-full accent-(--back-color) 
-              [&::-webkit-slider-runnable-track]:rounded-full
-              [&::-webkit-slider-runnable-track]:bg-(--gray-color)
-              [&::-webkit-slider-runnable-track]:shadow-sm
-              [&::-webkit-slider-thumb]:relative 
-              [&::-webkit-slider-thumb]:ml-[-0.4rem] 
-              [&::-webkit-slider-thumb]:h-4
-              [&::-webkit-slider-thumb]:w-4
-              ${readonly ? "[&::-webkit-slider-thumb]:cursor-not-allowed" : "[&::-webkit-slider-thumb]:cursor-pointer"}
-              [&::-webkit-slider-thumb]:rounded-full
-            [&::-webkit-slider-thumb]:shadow-(--focus-shadow)
-            ${
-              userAgent.includes("iOS") || userAgent.includes("iPhone") || userAgent.includes("iPad")
-                ? "pl-3.5 [&::-webkit-slider-thumb]:ring-[6.5px]"
-                : "pl-3 [&::-webkit-slider-thumb]:ring-[5px]"
-            }
-            [&::-moz-range-thumb]:relative 
-            [&::-moz-range-thumb]:ml-[-0.4rem]
-            [&::-moz-range-thumb]:size-4 
-            ${readonly ? "[&::-moz-range-thumb]:cursor-not-allowed" : "[&::-moz-range-thumb]:cursor-pointer"}
-            [&::-moz-range-thumb]:rounded-full
-            [&::-moz-range-thumb]:shadow-(--focus-shadow)
-            [&::-moz-range-thumb]:ring-[6px] 
-            [&::-moz-range-track]:rounded-full
-            [&::-moz-range-track]:bg-(--gray-color)
-             `,
-              `[&::-moz-range-thumb]:shadow-[calc(100rem*-1-0.5rem)_0_0_100rem] 
-              [&::-webkit-slider-thumb]:shadow-[calc(100rem*-1-0.5rem)_0_0_100rem]`,
-            )}
-            style="color: var(--bg-color);"
-          />
-          <div
-            class="flex w-20 items-center justify-center gap-2 rounded-full px-2 transition duration-250 shadow-sm hover:shadow-md"
-            style="background-color: var(--bg-color) "
+        <div class={twMerge(`flex w-full items-center gap-2 ${readonly ? "opacity-45" : ""}`, settings.class)}>
+          <button
+            class={stepBtn}
+            onclick={() => {
+              currentValue = roundToClean(
+                Math.max(settings.number?.minNum ?? 0, Math.min(currentValue - (settings.number?.step ?? 1), settings.number?.maxNum ?? 10)),
+              )
+              onUpdate(currentValue)
+            }}
+            disabled={readonly || currentValue <= (settings.number?.minNum ?? 0)}
+            aria-label="Уменьшить">−</button
           >
-            <button
-              class="h-full w-4 {readonly ? 'cursor-not-allowed' : 'cursor-pointer'}"
-              onclick={() => {
-                currentValue = roundToClean(
-                  Math.max(settings.number?.minNum ?? 0, Math.min(currentValue - (settings.number?.step ?? 1), settings.number?.maxNum ?? 10)),
-                )
-                onUpdate(currentValue)
-              }}
-              disabled={readonly || currentValue <= (settings.number?.minNum ?? 0)}>−</button
-            >
-            <span class="inline-block text-center tabular-nums" style={`width: ${String(settings.number?.maxNum ?? 10).length + 1}ch`}>
-              {currentValue}
-            </span>
-            <button
-              class="h-full w-4 {readonly ? 'cursor-not-allowed' : 'cursor-pointer'}"
-              onclick={() => {
-                currentValue = roundToClean(
-                  Math.max(settings.number?.minNum ?? 0, Math.min(currentValue + (settings.number?.step ?? 1), settings.number?.maxNum ?? 10)),
-                )
-                onUpdate(currentValue)
-              }}
-              disabled={readonly || currentValue >= (settings.number?.maxNum ?? 10)}>+</button
-            >
+
+          <div class="relative flex h-8 min-w-0 flex-1 items-center">
+            <div class="pointer-events-none absolute inset-x-0 top-1/2 h-1 -translate-y-1/2 rounded-full bg-(--back-color)"></div>
+            <div
+              class="pointer-events-none absolute top-1/2 left-0 h-1 -translate-y-1/2 rounded-full bg-(--bg-color,var(--accent-color))"
+              style="width: {pct()}%;"
+            ></div>
+            <input
+              type="range"
+              min={settings.number?.minNum}
+              max={settings.number?.maxNum}
+              step={settings.number?.step}
+              disabled={readonly}
+              bind:value={currentValue}
+              oninput={() => onUpdate(currentValue)}
+              class={twMerge(THUMB, "relative", readonly ? "[&::-webkit-slider-thumb]:cursor-not-allowed" : "[&::-webkit-slider-thumb]:cursor-pointer")}
+            />
           </div>
+
+          <button
+            class={stepBtn}
+            onclick={() => {
+              currentValue = roundToClean(
+                Math.max(settings.number?.minNum ?? 0, Math.min(currentValue + (settings.number?.step ?? 1), settings.number?.maxNum ?? 10)),
+              )
+              onUpdate(currentValue)
+            }}
+            disabled={readonly || currentValue >= (settings.number?.maxNum ?? 10)}
+            aria-label="Увеличить">+</button
+          >
         </div>
       {/if}
     </div>

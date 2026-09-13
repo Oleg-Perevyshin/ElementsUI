@@ -89,5 +89,17 @@ ${formatObjectToString(accordionComponent.properties as IAccordionProps)}
       <h2>Содержимое вложенного Accordion 3</h2>
       <h1>Содержимое вложенного Accordion 3</h1>
     </Accordion>
+
+    <!-- Режим с фоновой картинкой (image) — сетка становится полупрозрачной поверх неё -->
+    <Accordion
+      label={{ name: "Accordion с фоном (image)", class: "" }}
+      isOpen={true}
+      wrapperClass="col-span-3"
+      size={{ width: 2, height: 1 }}
+      image="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%231b63d8'/%3E%3Cstop offset='1' stop-color='%236b3fc4'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='200' height='100' fill='url(%23g)'/%3E%3C/svg%3E"
+    >
+      <p class="font-semibold text-white">Слева</p>
+      <p class="font-semibold text-white">Справа</p>
+    </Accordion>
   {/snippet}
 </ComponentExample>

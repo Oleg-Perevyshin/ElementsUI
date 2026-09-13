@@ -1,10 +1,27 @@
-<!-- $lib/ElementsUI/Slider.svelte -->
+<!-- $lib/Slider/Slider.svelte — дорожка 4px и ползунок 18px.
+     Логика adjustValue/roundToClean/$effect не тронута.
+
+     Диапазонный режим переписан: было два <input> на раздельных долях трека
+     (flex-basis), разделённых общей подвижной точкой centerNum. Такая схема
+     ломается, как только centerNum пересчитывается на каждое движение любого
+     из двух input — браузер может принудительно поджать value соседнего input,
+     если его новый min/max обгоняет текущее значение (внешне выглядит как
+     "второй ползунок дёрнулся сам"), а pct() для заливки и внутренний расчёт
+     позиции thumb в двух РАЗНЫХ диапазонах могли давать на пиксель разное —
+     отсюда неровная заливка. Стандартная надёжная схема для двойного слайдера:
+     оба <input> на всю ширину трека с ОДИНАКОВЫМ min/max, наложены друг на
+     друга; pointer-events выключены на самом input и включены только на его
+     ::thumb, поэтому перетаскивать можно только за конкретный бегунок, а не
+     проваливаться в другой. Клик по пустой дорожке (не по бегунку) больше не
+     телепортирует ближайший ползунок — сознательный компромисс ради надёжности. -->
 <script lang="ts">
   import type { ISliderProps } from "../types"
   import { twMerge } from "tailwind-merge"
 
   let {
     id = crypto.randomUUID(),
+    /* Было "bg-blue" — декоративная заливка. Цвет заливки дорожки берётся из --bg-color,
+       который задаётся классом bg-* в вызове; без него используется акцент. */
     wrapperClass = "",
     label = { name: "", class: "" },
     type = "single",
@@ -19,14 +36,15 @@
   const maxDigits = $derived(String(number.maxNum ?? 10).length)
   const valueWidth = $derived(`${maxDigits + 1}ch`)
 
-  /* Инициализация значений с проверкой типа */
   let singleValue = $derived(!isRange && typeof value === "number" ? value : number.minNum)
   let lowerValue = $derived(isRange && Array.isArray(value) ? value[0] : number.minNum)
   let upperValue = $derived(isRange && Array.isArray(value) ? value[1] : number.maxNum)
 
-  let activeRound: "floor" | "ceil" = $state("floor")
-
-  let centerNum = $derived(lowerValue + Math[activeRound](Math.abs(upperValue - lowerValue) / 2 / number.step) * number.step)
+  /* Позиция значения в процентах — для отрисовки заливки */
+  const pct = (v: number) => {
+    const span = Math.abs((number.maxNum ?? 10) - (number.minNum ?? 0)) || 1
+    return Math.max(0, Math.min(100, ((v - (number.minNum ?? 0)) / span) * 100))
+  }
 
   $effect(() => {
     if (value === undefined || value === null) {
@@ -63,134 +81,105 @@
 
   const roundToClean = (num: number): number => {
     if (Number.isInteger(num)) return num
-
     const rounded1 = Number(num.toFixed(1))
     if (Math.abs(rounded1 - num) < 1e-10) return rounded1
-
-    const rounded2 = Number(num.toFixed(2))
-    if (Math.abs(rounded2 - num) < 1e-10) return rounded2
-
-    return rounded2
+    return Number(num.toFixed(2))
   }
+
+  /* Единые классы для нативного ползунка: высота input РАВНА высоте thumb (18px) —
+     тогда центрирование по вертикали отдаётся обычному flexbox родителя (items-center),
+     без ручного margin-top на ::-webkit-slider-thumb. Такой margin-top пришлось бы
+     подбирать под конкретную высоту трека, и он даёт разный результат в Chromium и
+     Safari/WebKit — при равных высотах input и thumb смещения нет по определению,
+     это работает одинаково везде. */
+  const THUMB = `w-full appearance-none bg-transparent h-[18px]
+    [&::-webkit-slider-runnable-track]:h-[18px] [&::-webkit-slider-runnable-track]:bg-transparent
+    [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:size-[18px]
+    [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white
+    [&::-webkit-slider-thumb]:border [&::-webkit-slider-thumb]:border-(--hairline-color)
+    [&::-webkit-slider-thumb]:shadow-[0_1px_3px_rgb(16_24_40/0.22)]
+    [&::-moz-range-track]:h-[18px] [&::-moz-range-track]:bg-transparent [&::-moz-range-track]:border-0
+    [&::-moz-range-thumb]:size-[18px] [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white
+    [&::-moz-range-thumb]:border [&::-moz-range-thumb]:border-(--hairline-color)
+    [&::-moz-range-thumb]:shadow-[0_1px_3px_rgb(16_24_40/0.22)]
+    focus-visible:outline-none`
+
+  /* Двойной слайдер: оба input на всю ширину трека с ОДИНАКОВЫМ min/max,
+     наложены друг на друга. pointer-events выключен на самом input и включён
+     только на ::thumb (класс .range-overlay ниже) — тянуть можно исключительно
+     за конкретный бегунок. Tailwind не генерирует CSS для сочетания
+     произвольного варианта псевдоэлемента с pointer-events-*, поэтому это
+     обычный style-блок ниже, а не класс. */
 </script>
 
-<div class={twMerge(`bg-blue relative flex w-full flex-col items-center `, wrapperClass)}>
+<div class={twMerge(`relative flex w-full flex-col gap-1.5`, wrapperClass)}>
   {#if label.name}
-    <h5 class={twMerge(`w-full px-4 text-center`, label.class)}>{label.name}</h5>
+    <h5 class={twMerge(`w-full text-[12px] font-semibold text-(--muted-color)`, label.class)}>{label.name}</h5>
   {/if}
 
-  <!-- Слайдер -->
-  <div
-    id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
-    class="relative flex h-8 w-full items-center justify-center rounded-full {disabled ? 'cursor-not-allowed opacity-50' : ''}"
-  >
-    {#if isRange}
-      {@const userAgent = navigator.userAgent}
+  <div class="flex w-full items-center gap-3">
+    <!-- Дорожка -->
+    <div
+      id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
+      class="relative flex h-8 flex-1 items-center {disabled ? 'cursor-not-allowed opacity-45' : ''}"
+    >
+      <!-- Фон дорожки 4px -->
+      <div class="pointer-events-none absolute inset-x-0 top-1/2 h-1 -translate-y-1/2 rounded-full bg-(--container-color)"></div>
+      <!-- Заливка -->
+      {#if isRange}
+        <div
+          class="pointer-events-none absolute top-1/2 h-1 -translate-y-1/2 rounded-full bg-(--bg-color,var(--accent-color))"
+          style="left: {pct(lowerValue)}%; width: {Math.max(0, pct(upperValue) - pct(lowerValue))}%;"
+        ></div>
+      {:else}
+        <div
+          class="pointer-events-none absolute top-1/2 left-0 h-1 -translate-y-1/2 rounded-full bg-(--bg-color,var(--accent-color))"
+          style="width: {pct(singleValue)}%;"
+        ></div>
+      {/if}
 
-      <div class="flex w-full">
+      {#if isRange}
         <input
           type="range"
           min={number.minNum}
-          max={centerNum}
+          max={number.maxNum}
           step={number.step}
           bind:value={lowerValue}
           oninput={disabled
             ? undefined
             : (e) => {
-                const newValue = Math.min(Number((e.target as HTMLInputElement).value), upperValue)
-                lowerValue = roundToClean(newValue == upperValue ? upperValue - number.step : newValue)
+                const newValue = Math.min(Number((e.target as HTMLInputElement).value), upperValue - number.step)
+                lowerValue = roundToClean(Math.max(number.minNum, newValue))
                 onUpdate([lowerValue, upperValue])
               }}
-          onmousedown={() => (activeRound = "ceil")}
           {disabled}
-          class={twMerge(
-            `basis-[calc(${(Math.abs(centerNum - number.minNum) / Math.abs(number.maxNum - number.minNum)) * 100}%+2rem+5px)] h-8 w-full appearance-none overflow-hidden 
-              accent-(--back-color) 
-              [&::-webkit-slider-runnable-track]:rounded-l-full
-              [&::-webkit-slider-runnable-track]:bg-(--gray-color)
-              [&::-webkit-slider-runnable-track]:px-2
-              [&::-webkit-slider-runnable-track]:shadow-sm
-              [&::-webkit-slider-thumb]:relative
-              [&::-webkit-slider-thumb]:size-4
-              [&::-webkit-slider-thumb]:cursor-pointer
-              ${disabled ? "[&::-webkit-slider-thumb]:cursor-not-allowed" : ""}
-              [&::-webkit-slider-thumb]:rounded-full
-              [&::-webkit-slider-thumb]:shadow-(--focus-shadow)
-            ${
-              userAgent.includes("iOS") || userAgent.includes("iPhone") || userAgent.includes("iPad")
-                ? "[&::-webkit-slider-thumb]:ring-[6.5px]"
-                : "[&::-webkit-slider-thumb]:ring-[5px] "
-            }
-            [&::-moz-range-thumb]:relative 
-            [&::-moz-range-thumb]:ml-[-0.4rem]
-            [&::-moz-range-thumb]:size-4 
-            [&::-moz-range-thumb]:cursor-pointer 
-            ${disabled ? "[&::-moz-range-thumb]:cursor-not-allowed" : ""}
-            [&::-moz-range-thumb]:rounded-full
-            [&::-moz-range-thumb]:shadow-(--focus-shadow) 
-            [&::-moz-range-thumb]:ring-[6px] 
-            [&::-moz-range-track]:rounded-full
-            [&::-moz-range-track]:bg-(--gray-color)
-             `,
-            `[&::-moz-range-thumb]:shadow-[calc(100rem+0.5rem)_0_0_100rem] 
-              [&::-webkit-slider-thumb]:shadow-[calc(100rem+0.5rem)_0_0_100rem]`,
-          )}
-          style="color: var(--bg-color); flex-basis: {`calc(${(Math.abs(centerNum - number.minNum) / Math.abs(number.maxNum - number.minNum)) * 100}% + 2rem + 5px)`};"
+          class="{twMerge(
+            THUMB,
+            'absolute inset-x-0 top-1/2 -translate-y-1/2',
+            disabled ? '[&::-webkit-slider-thumb]:cursor-not-allowed' : '[&::-webkit-slider-thumb]:cursor-pointer',
+          )} range-overlay"
         />
         <input
           type="range"
-          min={centerNum}
+          min={number.minNum}
           max={number.maxNum}
           step={number.step}
           bind:value={upperValue}
           oninput={disabled
             ? undefined
             : (e) => {
-                const newValue = Math.max(Number((e.target as HTMLInputElement).value), lowerValue)
-                upperValue = roundToClean(newValue == lowerValue ? newValue + number.step : upperValue)
+                const newValue = Math.max(Number((e.target as HTMLInputElement).value), lowerValue + number.step)
+                upperValue = roundToClean(Math.min(number.maxNum, newValue))
                 onUpdate([lowerValue, upperValue])
               }}
-          onmousedown={() => (activeRound = "floor")}
           {disabled}
-          class={twMerge(
-            `basis-[calc(${100 - (Math.abs(centerNum - number.minNum) / Math.abs(number.maxNum - number.minNum)) * 100}%+2rem+5px)] h-8 w-full  appearance-none overflow-hidden  
-              accent-(--back-color) 
-              [&::-webkit-slider-runnable-track]:rounded-r-full
-              [&::-webkit-slider-runnable-track]:bg-(--gray-color)
-              [&::-webkit-slider-runnable-track]:px-2
-              [&::-webkit-slider-runnable-track]:shadow-sm
-              [&::-webkit-slider-thumb]:relative
-              [&::-webkit-slider-thumb]:size-4
-              [&::-webkit-slider-thumb]:cursor-pointer
-              ${disabled ? "[&::-webkit-slider-thumb]:cursor-not-allowed" : ""}
-              [&::-webkit-slider-thumb]:rounded-full
-              [&::-webkit-slider-thumb]:shadow-(--focus-shadow)
-            ${
-              userAgent.includes("iOS") || userAgent.includes("iPhone") || userAgent.includes("iPad")
-                ? "[&::-webkit-slider-thumb]:ring-[6.5px]"
-                : "[&::-webkit-slider-thumb]:ring-[5px] "
-            }
-            [&::-moz-range-thumb]:relative 
-            [&::-moz-range-thumb]:ml-[-0.4rem]
-            [&::-moz-range-thumb]:size-4 
-            [&::-moz-range-thumb]:cursor-pointer 
-            ${disabled ? "[&::-moz-range-thumb]:cursor-not-allowed" : ""}
-            [&::-moz-range-thumb]:rounded-full
-            [&::-moz-range-thumb]:shadow-(--focus-shadow)
-            [&::-moz-range-thumb]:ring-[6px] 
-            [&::-moz-range-track]:rounded-full
-            [&::-moz-range-track]:bg-(--gray-color)
-             `,
-            `[&::-moz-range-thumb]:shadow-[calc(100rem*-1-0.5rem)_0_0_100rem] 
-              [&::-webkit-slider-thumb]:shadow-[calc(100rem*-1-0.5rem)_0_0_100rem]`,
-          )}
-          style="color: var(--bg-color); flex-basis: {`calc(${(1 - Math.abs(centerNum - number.minNum) / Math.abs(number.maxNum - number.minNum)) * 100}% + 2rem + 5px)`};"
+          class="{twMerge(
+            THUMB,
+            'absolute inset-x-0 top-1/2 -translate-y-1/2',
+            disabled ? '[&::-webkit-slider-thumb]:cursor-not-allowed' : '[&::-webkit-slider-thumb]:cursor-pointer',
+          )} range-overlay"
         />
-      </div>
-    {:else}
-      {@const userAgent = navigator.userAgent}
-      <!-- Одиночный слайдер -->
-      <div class="absolute h-full w-full">
+      {:else}
         <input
           type="range"
           min={number.minNum}
@@ -199,85 +188,74 @@
           bind:value={singleValue}
           {disabled}
           oninput={() => onUpdate(singleValue)}
-          class={twMerge(
-            `h-8 w-full appearance-none overflow-hidden rounded-full accent-(--back-color) 
-              [&::-webkit-slider-runnable-track]:rounded-full
-              [&::-webkit-slider-runnable-track]:bg-(--gray-color)
-              [&::-webkit-slider-runnable-track]:shadow-sm
-              [&::-webkit-slider-thumb]:relative 
-
-              [&::-webkit-slider-thumb]:ml-[-0.4rem] 
-              [&::-webkit-slider-thumb]:h-4
-              [&::-webkit-slider-thumb]:w-4
-              ${disabled ? "[&::-webkit-slider-thumb]:cursor-not-allowed" : "[&::-webkit-slider-thumb]:cursor-pointer"}
-              [&::-webkit-slider-thumb]:rounded-full
-            [&::-webkit-slider-thumb]:shadow-(--focus-shadow)
-            ${
-              userAgent.includes("iOS") || userAgent.includes("iPhone") || userAgent.includes("iPad")
-                ? "pl-3.5 [&::-webkit-slider-thumb]:ring-[6.5px]"
-                : "pl-3 [&::-webkit-slider-thumb]:ring-[5px]"
-            }
-            [&::-moz-range-thumb]:relative 
-            [&::-moz-range-thumb]:ml-[-0.4rem]
-            [&::-moz-range-thumb]:size-4 
-            ${disabled ? "[&::-moz-range-thumb]:cursor-not-allowed" : "[&::-moz-range-thumb]:cursor-pointer"}
-            [&::-moz-range-thumb]:rounded-full
-            [&::-moz-range-thumb]:shadow-(--focus-shadow)
-            [&::-moz-range-thumb]:ring-[6px] 
-            [&::-moz-range-track]:rounded-full
-            [&::-moz-range-track]:bg-(--gray-color)
-             `,
-            `[&::-moz-range-thumb]:shadow-[calc(100rem*-1-0.5rem)_0_0_100rem] 
-              [&::-webkit-slider-thumb]:shadow-[calc(100rem*-1-0.5rem)_0_0_100rem]`,
-          )}
-          style="color: var(--bg-color);"
+          class={twMerge(THUMB, "relative", disabled ? "[&::-webkit-slider-thumb]:cursor-not-allowed" : "[&::-webkit-slider-thumb]:cursor-pointer")}
         />
-      </div>
-    {/if}
-  </div>
+      {/if}
+    </div>
 
-  <!-- Кнопки управления -->
-  <div class={`mt-3 flex w-full ${isRange ? "justify-between" : "justify-center"} gap-2`}>
+    <!-- Значения со счётчиком -->
     {#if isRange}
-      {#each ["lower", "upper"] as type (type)}
+      {#each ["lower", "upper"] as t (t)}
         <div
-          class={`flex items-center justify-center gap-2 rounded-full px-2 transition duration-250 shadow-sm hover:shadow-md ${disabled ? "opacity-70" : ""}`}
-          style="background-color: var(--bg-color)"
+          class="flex h-7 shrink-0 items-center gap-1 rounded-lg border border-(--border-color) bg-(--field-color) px-1 {disabled ? 'opacity-45' : ''}"
         >
           <button
-            class="h-full w-4 {disabled ? 'cursor-not-allowed' : 'cursor-pointer'}"
-            onclick={disabled ? undefined : () => adjustValue(type as "lower" | "upper", "decrement")}
-            disabled={disabled || (type === "lower" ? lowerValue <= number.minNum : upperValue <= lowerValue)}>−</button
+            class="flex size-5 items-center justify-center rounded text-(--muted-color) transition-colors duration-150 hover:bg-(--container-color) disabled:cursor-not-allowed disabled:opacity-40 {disabled
+              ? 'cursor-not-allowed'
+              : 'cursor-pointer'}"
+            onclick={disabled ? undefined : () => adjustValue(t as "lower" | "upper", "decrement")}
+            disabled={disabled || (t === "lower" ? lowerValue <= number.minNum : upperValue <= lowerValue)}
+            aria-label="Уменьшить">−</button
           >
-          <span class="inline-block text-center tabular-nums" style={`width: ${valueWidth}`}>
-            {type === "lower" ? lowerValue : upperValue}
+          <span class="inline-block text-center text-[13px] font-semibold tabular-nums" style={`width: ${valueWidth}`}>
+            {t === "lower" ? lowerValue : upperValue}
           </span>
           <button
-            class="h-full w-4 {disabled ? 'cursor-not-allowed' : 'cursor-pointer'}"
-            onclick={disabled ? undefined : () => adjustValue(type as "lower" | "upper", "increment")}
-            disabled={disabled || (type === "lower" ? lowerValue >= upperValue : upperValue >= number.maxNum)}>+</button
+            class="flex size-5 items-center justify-center rounded text-(--muted-color) transition-colors duration-150 hover:bg-(--container-color) disabled:cursor-not-allowed disabled:opacity-40 {disabled
+              ? 'cursor-not-allowed'
+              : 'cursor-pointer'}"
+            onclick={disabled ? undefined : () => adjustValue(t as "lower" | "upper", "increment")}
+            disabled={disabled || (t === "lower" ? lowerValue >= upperValue : upperValue >= number.maxNum)}
+            aria-label="Увеличить">+</button
           >
         </div>
       {/each}
     {:else}
-      <div
-        class={`flex items-center justify-center gap-2 rounded-full px-2 transition duration-250 shadow-sm hover:shadow-md ${disabled ? "opacity-70" : ""}`}
-        style="background-color: var(--bg-color) "
-      >
+      <div class="flex h-7 shrink-0 items-center gap-1 rounded-lg border border-(--border-color) bg-(--field-color) px-1 {disabled ? 'opacity-45' : ''}">
         <button
-          class="h-full w-4 {disabled ? 'cursor-not-allowed' : 'cursor-pointer'}"
+          class="flex size-5 items-center justify-center rounded text-(--muted-color) transition-colors duration-150 hover:bg-(--container-color) disabled:cursor-not-allowed disabled:opacity-40 {disabled
+            ? 'cursor-not-allowed'
+            : 'cursor-pointer'}"
           onclick={disabled ? undefined : () => adjustValue("single", "decrement")}
-          disabled={disabled || singleValue <= number.minNum}>−</button
+          disabled={disabled || singleValue <= number.minNum}
+          aria-label="Уменьшить">−</button
         >
-        <span class="inline-block text-center tabular-nums" style={`width: ${valueWidth}`}>
+        <span class="inline-block text-center text-[13px] font-semibold tabular-nums" style={`width: ${valueWidth}`}>
           {singleValue}
         </span>
         <button
-          class="h-full w-4 {disabled ? 'cursor-not-allowed' : 'cursor-pointer'}"
+          class="flex size-5 items-center justify-center rounded text-(--muted-color) transition-colors duration-150 hover:bg-(--container-color) disabled:cursor-not-allowed disabled:opacity-40 {disabled
+            ? 'cursor-not-allowed'
+            : 'cursor-pointer'}"
           onclick={disabled ? undefined : () => adjustValue("single", "increment")}
-          disabled={disabled || singleValue >= number.maxNum}>+</button
+          disabled={disabled || singleValue >= number.maxNum}
+          aria-label="Увеличить">+</button
         >
       </div>
     {/if}
   </div>
 </div>
+
+<style>
+  /* Двойной слайдер: оба input наложены на всю ширину трека, дорожка каждого
+     не должна перехватывать клик — только его собственный thumb. */
+  .range-overlay {
+    pointer-events: none;
+  }
+  .range-overlay::-webkit-slider-thumb {
+    pointer-events: auto;
+  }
+  .range-overlay::-moz-range-thumb {
+    pointer-events: auto;
+  }
+</style>

@@ -1,4 +1,5 @@
-<!-- $lib/ElementsUI/ProgressBar.svelte -->
+<!-- $lib/ProgressBar/ProgressBar.svelte — полоса 6px, подпись и значение над ней.
+     Логика вычислений не тронута, изменены только классы и разметка подписей. -->
 <script lang="ts">
   import { twMerge } from "tailwind-merge"
   import type { IProgressBarProps, IReceivingDataObject } from "../types"
@@ -42,9 +43,7 @@
 
   const getItemName = (index: number): string => {
     const valueData = (value as IReceivingDataObject[] | undefined)?.[index]
-    if (valueData?.Name) {
-      return valueData.Name
-    }
+    if (valueData?.Name) return valueData.Name
     return items[index]?.name ?? ""
   }
 
@@ -54,49 +53,47 @@
 
   const progressPercent = (value: number) => {
     if (value) return (((Math.min(Math.max(value, min), max) - min) / (max - min)) * 100) as number
+    return 0
   }
 
   const roundToClean = (num: number): number => {
     if (Number.isInteger(num)) return num
-
     const rounded1 = Number(num.toFixed(1))
     if (Math.abs(rounded1 - num) < 1e-10) return rounded1
-
-    const rounded2 = Number(num.toFixed(2))
-    if (Math.abs(rounded2 - num) < 1e-10) return rounded2
-
-    return rounded2
+    return Number(num.toFixed(2))
   }
 </script>
 
 <div
   id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
-  class={twMerge(`relative flex ${type == "vertical" ? "h-full flex-wrap justify-center gap-8" : "flex-col items-center "} w-full`, wrapperClass)}
+  class={twMerge(`relative flex w-full ${type == "vertical" ? "h-full flex-wrap justify-center gap-6" : "flex-col gap-3"}`, wrapperClass)}
 >
   {#each items as progress, index}
-    <div class="flex flex-col {type == 'vertical' ? 'items-center' : `w-full`}">
-      <h5 class={type == "vertical" ? "" : "px-4 mt-2"}>{getItemName(index)}</h5>
-      <div
-        class="{twMerge(
-          `flex ${type == 'vertical' ? 'h-full w-fit min-w-16 flex-col p-2' : 'h-7 w-full px-2'} items-center gap-2 rounded-full  shadow-sm`,
-          progress.class,
-        )} bg-(--bg-color)"
-      >
-        {#if type == "vertical"}
-          <div class="relative my-auto h-[80%] w-[70%] rounded-full bg-(--back-color)/40">
-            <div class="absolute bottom-0 left-0 flex w-full rounded-full bg-(--field-color)" style="height: {progressPercent(getItemValue(index))}%;"></div>
-          </div>
-          <span class="m-auto font-semibold">{roundToClean(Number(numericValue(getItemValue(index))))}{number.units}</span>
-        {:else}
-          <span class="m-auto w-20 font-semibold">{roundToClean(Number(numericValue(getItemValue(index))))}{number.units}</span>
-          <div class="relative my-auto h-3.5 flex-1 rounded-full bg-(--back-color)/40">
-            <div class="absolute top-0 left-0 flex h-full rounded-full bg-(--field-color)" style="width: {progressPercent(getItemValue(index))}%;"></div>
-          </div>
+    {#if type === "vertical"}
+      <div class="flex h-full flex-col items-center gap-2">
+        <span class="text-[12px] font-semibold text-(--muted-color)">{getItemName(index)}</span>
+        <!-- Дорожка 6px, заливка снизу вверх -->
+        <div class="{twMerge('relative w-1.5 flex-1 overflow-hidden rounded-full bg-(--container-color)', progress.class)}">
+          <div class="absolute bottom-0 left-0 w-full bg-(--bg-color)" style="height: {progressPercent(getItemValue(index))}%;"></div>
+        </div>
+        <span class="text-[13px] font-semibold tabular-nums">{roundToClean(Number(numericValue(getItemValue(index))))}{number.units}</span>
+        {#if getItemInfo(index)}
+          <span class="text-[12px] text-(--faint-color)">{getItemInfo(index)}</span>
         {/if}
       </div>
-      {#if getItemInfo(index)}
-        <span>{getItemInfo(index)}</span>
-      {/if}
-    </div>
+    {:else}
+      <div class="flex w-full flex-col gap-1.5">
+        <div class="flex items-baseline justify-between gap-3">
+          <span class="truncate text-[12px] font-semibold text-(--muted-color)">{getItemName(index)}</span>
+          <span class="shrink-0 text-[12px] font-semibold tabular-nums">{roundToClean(Number(numericValue(getItemValue(index))))}{number.units}</span>
+        </div>
+        <div class="{twMerge('relative h-1.5 w-full overflow-hidden rounded-full bg-(--container-color)', progress.class)}">
+          <div class="absolute top-0 left-0 h-full bg-(--bg-color)" style="width: {progressPercent(getItemValue(index))}%;"></div>
+        </div>
+        {#if getItemInfo(index)}
+          <span class="text-[12px] text-(--faint-color)">{getItemInfo(index)}</span>
+        {/if}
+      </div>
+    {/if}
   {/each}
 </div>

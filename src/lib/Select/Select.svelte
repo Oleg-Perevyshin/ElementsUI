@@ -1,4 +1,6 @@
-<!-- $lib/ElementUI/Select.svelte -->
+<!-- $lib/Select/Select.svelte — радиус 10, высота 36, выравнивание по левому краю,
+     список — единственный элемент с тенью, группа type="buttons" без разрывов.
+     Логика (filteredOptions, selectOption, handleSearch, клик вне) не тронута. -->
 <script lang="ts" generics="T = unknown">
   import { slide } from "svelte/transition"
   import { onMount } from "svelte"
@@ -15,7 +17,7 @@
     disabled = false,
     label = { name: "", class: "" },
     multiSelect = false,
-    listHeight = "",
+    listHeight = "16rem",
     type = "select",
     value = $bindable(),
     options = [],
@@ -34,21 +36,12 @@
         const optionName = option.name?.toString() || ""
         return optionName.toLowerCase().includes(searchValue.toLowerCase())
       })
-
-      return [
-        ...firstOptions,
-        ...options.filter((option) => {
-          return !firstOptions.some((filtered) => filtered.id === option.id)
-        }),
-      ]
+      return [...firstOptions, ...options.filter((option) => !firstOptions.some((filtered) => filtered.id === option.id))]
     })(),
   )
 
-  /* Закрытие при клике вне компонента */
   const handleClickOutside = (event: MouseEvent) => {
-    if (dropdownElement && !dropdownElement.contains(event.target as Node)) {
-      isDropdownOpen = false
-    }
+    if (dropdownElement && !dropdownElement.contains(event.target as Node)) isDropdownOpen = false
   }
 
   onMount(() => {
@@ -73,7 +66,6 @@
 
     if (type === "buttons" && multiSelect && value) {
       if (!Array.isArray(value)) value = [value]
-
       if (value.find((v) => v.value === option.value)) value = value.filter((op) => op.value !== option.value)
       else value.push(option)
     } else {
@@ -98,119 +90,146 @@
     value = selectedOption
     onUpdate?.(selectedOption)
   }
+
+  /* Общая база поля — та же, что у Input */
+  const fieldBase = `h-9 w-full rounded-[10px] border border-(--border-color) bg-(--field-color) px-3 text-left text-[14px]
+    transition-[border-color,box-shadow] duration-150 outline-none
+    focus:border-(--accent-color) focus:shadow-(--focus-shadow-color)`
+
+  const listBase = `overflow-y-auto rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-1 shadow-(--elevation-2)`
+
+  const optionBase = `flex h-8 w-full items-center rounded-md px-2.5 text-left text-[14px] transition-colors duration-150`
 </script>
 
-<div class={twMerge(`bg-max w-full px-1`, wrapperClass)}>
-  <div class="relative w-full flex flex-col items-center" bind:this={dropdownElement}>
+<div class={twMerge(`flex w-full flex-col gap-1`, wrapperClass)}>
+  <div class="relative flex w-full flex-col gap-1" bind:this={dropdownElement}>
     {#if label.name}
-      <h5 class={twMerge(`w-full px-4`, label.class)}>{label.name}</h5>
+      <span class={twMerge(`text-[12px] font-semibold text-(--muted-color)`, label.class)}>{label.name}</span>
     {/if}
+
     {#if type === "select" && !Array.isArray(value)}
       <button
         id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
         value={value?.value ? String(value.value) : ""}
         class={twMerge(
-          `w-full rounded-2xl border border-(--bg-color) p-1 text-center shadow-(--border-shadow-color) transition duration-200
-        ${disabled ? "opacity-50" : "cursor-pointer hover:shadow-(--focus-shadow-color)"}`,
+          `${fieldBase} flex items-center justify-between gap-2
+           ${disabled ? "cursor-not-allowed border-(--hairline-color) bg-(--container-color) text-(--faint-color)" : "cursor-pointer hover:border-(--faint-color)"}`,
           value?.class,
         )}
-        style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%); "
         onclick={toggleDropdown}
-        aria-haspopup="true"
+        aria-haspopup="listbox"
         aria-expanded={isDropdownOpen}
         {disabled}
       >
-        {value?.name || $T("common.select_tag")}
+        <span class="min-w-0 truncate {value?.name ? '' : 'text-(--faint-color)'}">{value?.name || $T("common.select_tag")}</span>
+        <svg
+          class="size-3.5 shrink-0 text-(--faint-color) transition-transform duration-150"
+          style="transform: rotate({isDropdownOpen ? 180 : 0}deg)"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"><path d="M6 9l6 6 6-6" /></svg
+        >
       </button>
 
       {#if isDropdownOpen}
-        <div
-          class="absolute top-full left-1/2 z-50 rounded-b-xl -translate-x-1/2 shadow-(--border-shadow-color)"
-          style="width: calc(100% - 1.8rem);"
-          transition:slide={{ duration: 250 }}
-        >
-          <div class="overflow-y-auto bg-(--back-color) rounded-b-xl" style="max-height: {listHeight};">
-            {#each options as option, index (option.id)}
+        <div class="absolute top-full left-0 z-50 mt-1 w-full" transition:slide={{ duration: 150 }}>
+          <div class={listBase} style="max-height: {listHeight};" role="listbox">
+            {#each options as option (option.id)}
               <button
                 id={option.id}
                 value={option?.value ? String(option.value) : ""}
                 class={twMerge(
-                  `flex h-full w-full  items-center justify-center p-1 inset-shadow-[0_10px_10px_-15px_rgb(0_0_0_/0.5)] dark:inset-shadow-[0_10px_10px_-15px_rgb(255_255_255_/0.5)] 
-                  duration-250 hover:bg-(--field-color) wrap-break-word ${index === options.length - 1 ? "rounded-b-xl" : ""} ${option.disabled ? "opacity-50" : "cursor-pointer"}`,
+                  `${optionBase}
+                   ${isSelected(option) ? "bg-(--accent-soft) font-semibold text-(--accent-color)" : "hover:bg-(--container-color)"}
+                   ${option.disabled ? "cursor-not-allowed text-(--faint-color)" : "cursor-pointer"}`,
                   option.class,
                 )}
                 onclick={(e) => selectOption(option, e)}
                 disabled={option.disabled}
-                style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"
               >
-                {option.name}
+                <span class="min-w-0 truncate">{option.name}</span>
               </button>
             {/each}
           </div>
         </div>
       {/if}
     {:else if type === "buttons"}
-      <div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class="flex h-full w-full flex-row justify-center rounded-full">
+      <!-- Сплошная группа: общий контур, разделители внутри, без зазоров и теней -->
+      <div
+        id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
+        class="flex w-full overflow-hidden rounded-[10px] border border-(--border-color) {disabled ? 'opacity-45' : ''}"
+        role="group"
+      >
         {#each options as option, index (option.id)}
+          {@const selected = value !== null && isSelected(option)}
+          {@const hasOwnColor = !!option.class?.split(/\s+/).find((c) => c.startsWith("bg-"))}
+          <!-- Заливка приклеена вне twMerge: иначе она конфликтует с explicit bg-* из option.class
+               в одной merge-группе и вырезается (та же ловушка, что и в Button.svelte).
+               Опции со своим цветом (COLOR_OPTIONS и любой другой свотч-пикер, использующий
+               этот же type="buttons") обязаны показывать этот цвет ВСЕГДА, а не только когда
+               выбраны — иначе, например, палитра цветов в CommonSnippets.Colors превращается
+               в ряд одинаковых белых кнопок. Выбор у таких опций отмечается рамкой, а не заливкой;
+               для обычного сегмент-контрола без своего цвета (Access, Header и т.п.) поведение
+               прежнее — акцентная заливка только у выбранного пункта. -->
           <button
             id={option.id}
             class="{twMerge(
-              `m-0 inline-block min-w-0 flex-1 items-center px-2 py-1 font-semibold shadow-(--border-shadow-color) transition duration-300 select-none border border-(--bg-color)
-            ${option.disabled || disabled ? 'opacity-50' : 'cursor-pointer hover:shadow-(--focus-shadow-color)'}
-            ${value !== null && isSelected(option) ? 'z-10 py-1 shadow-[0_0_10px_var(--shadow-color)] hover:shadow-[0_0_15px_var(--shadow-color)]' : ''}  
-            ${options.length > 0 && index === 0 ? 'rounded-l-2xl' : ''} ${index === options.length - 1 ? 'rounded-r-2xl' : ''}`,
+              `min-w-0 flex-1 px-3 py-2 text-[13px] font-semibold transition-colors duration-150
+               ${index > 0 ? 'border-l border-(--border-color)' : ''}
+               ${
+                 hasOwnColor
+                   ? selected
+                     ? "ring-2 ring-inset ring-(--font-color)"
+                     : ""
+                   : selected
+                     ? "text-(--on-accent)"
+                     : "text-(--font-color) hover:bg-(--container-color)"
+               }
+               ${option.disabled || disabled ? 'cursor-not-allowed text-(--faint-color)' : 'cursor-pointer'}`,
               option.class,
-            )} bg-(--bg-color)"
+            )} {hasOwnColor ? 'bg-(--bg-color)' : selected ? 'bg-(--bg-color,var(--accent-color))' : 'bg-(--back-color)'}"
             onclick={(e) => selectOption(option, e)}
             disabled={option.disabled || disabled}
+            aria-pressed={!!isSelected(option)}
           >
-            <span class="flex flex-row items-center justify-center gap-4">
-              {#if option.name}
-                <div class="flex-1">
-                  {option.name}
-                </div>
-              {/if}
-            </span>
+            {#if option.name}
+              <span class="block truncate">{option.name}</span>
+            {/if}
           </button>
         {/each}
       </div>
     {:else if type === "input"}
       <input
         bind:value={searchValue}
-        class="w-full appearance-none rounded-2xl border px-4 py-1 text-center shadow-(--border-shadow-color)
-          transition duration-200 outline-none focus:shadow-[0_0_6px_var(--blue-color)]
-          [&::-webkit-inner-spin-button]:hidden [&::-webkit-outer-spin-button]:hidden
-          {disabled ? 'cursor-not-allowed opacity-50' : 'cursor-text'} border-(--bg-color) focus:border-(--blue-color) hover:shadow-(--focus-shadow-color)"
-        style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"
+        class="{fieldBase} {disabled
+          ? 'cursor-not-allowed border-(--hairline-color) bg-(--container-color) text-(--faint-color)'
+          : 'cursor-text hover:border-(--faint-color)'}"
         id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
         {disabled}
         oninput={handleSearch}
-        onclick={(e) => {
-          toggleDropdown(e)
-        }}
+        onclick={(e) => toggleDropdown(e)}
       />
 
       {#if isDropdownOpen}
-        <div
-          class="absolute select-none top-full left-1/2 z-50 -translate-x-1/2 rounded-b-xl border border-t-0 border-(--bg-color) shadow-(--border-shadow-color)"
-          style="width: calc(100% - 1.8rem); "
-          transition:slide={{ duration: 250 }}
-        >
-          <div class="overflow-y-auto bg-(--back-color) rounded-b-xl wrap-anywhere" style="max-height: {listHeight};">
-            {#each filteredOptions as option, index (option.id)}
+        <div class="absolute top-full left-0 z-50 mt-1 w-full select-none" transition:slide={{ duration: 150 }}>
+          <div class={listBase} style="max-height: {listHeight};" role="listbox">
+            {#each filteredOptions as option (option.id)}
               <button
                 id={option.id}
                 value={option?.value ? String(option.value) : ""}
                 class={twMerge(
-                  `flex h-full w-full items-center justify-center p-1 inset-shadow-[0_10px_10px_-15px_rgb(0_0_0_/0.5)] dark:inset-shadow-[0_10px_10px_-15px_rgb(255_255_255_/0.5)] 
-                  uration-250 hover:bg-(--field-color) ${index === filteredOptions.length - 1 ? "rounded-b-xl" : ""} ${option.disabled ? "opacity-50" : "cursor-pointer"}`,
+                  `${optionBase}
+                   ${isSelected(option) ? "bg-(--accent-soft) font-semibold text-(--accent-color)" : "hover:bg-(--container-color)"}
+                   ${option.disabled ? "cursor-not-allowed text-(--faint-color)" : "cursor-pointer"}`,
                   option.class,
                 )}
                 onclick={(e) => selectOption(option, e)}
                 disabled={option.disabled}
-                style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"
               >
-                {option.name}
+                <span class="min-w-0 truncate">{option.name}</span>
               </button>
             {/each}
           </div>

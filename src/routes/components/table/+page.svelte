@@ -143,6 +143,11 @@ ${formatObjectToString(tableComponent.properties as ITableProps<object>)}
   ]
   let modalData = $state({ isOpen: false, rawData: "", formattedData: "" })
 
+  const loggerColumns: ITableHeader<{ "id-S": string; device: string }>[] = [
+    { label: { name: "ID" }, content: [{ type: "text", data: { key: "id-S" } }], width: "50%" },
+    { label: { name: "Device" }, content: [{ type: "text", data: { key: "device" } }], width: "50%" },
+  ]
+
   onMount(() => {
     body = generateStashingData()
 
@@ -179,6 +184,18 @@ ${formatObjectToString(tableComponent.properties as ITableProps<object>)}
       onClick={(eventHandler) => console.log(eventHandler)}
       footer={`rows: ${rows.length}`}
     />
+    <div class="flex gap-4">
+      <!-- outline: та же таблица, но с видимым контуром вместо "утопленной" поверхности -->
+      <Table wrapperClass="h-60 flex-1" label={{ name: "С контуром (outline)" }} header={columns} body={rows} outline={true} />
+      <!-- dataBuffer.logger: новые строки дописываются сверху, старые вытесняются за bufferSize -->
+      <Table
+        wrapperClass="h-60 flex-1"
+        label={{ name: "Логгер (dataBuffer.logger)" }}
+        header={loggerColumns}
+        body={body}
+        dataBuffer={{ logger: true, stashData: true, bufferSize: 10, visibleRows: 5, clearButton: true }}
+      />
+    </div>
     <Modal isOpen={modalData.isOpen} title="Full data">
       {#snippet main()}
         {@html modalData.formattedData}

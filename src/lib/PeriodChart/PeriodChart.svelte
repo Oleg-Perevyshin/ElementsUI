@@ -1,8 +1,8 @@
-<!-- $lib/ElementsUI/PeriodChart.svelte -->
+<!-- $lib/PeriodChart/PeriodChart.svelte — сегментированный переключатель,
+     числа внутри столбиков убраны, акцент только у выбранного. Логика не тронута. -->
 <script module lang="ts">
   import type { IPeriodChartLevel } from "../types"
 
-  /* Демо-данные по умолчанию — компонент выглядит осмысленно уже без пропсов, как у Tabs/Switch */
   const randomLevelData = (n: number) => Array.from({ length: n }, () => Math.round(Math.random() * 100))
 
   export const DEFAULT_LEVELS: IPeriodChartLevel[] = [
@@ -19,7 +19,9 @@
 
   let {
     id = crypto.randomUUID(),
-    wrapperClass = "bg-blue",
+    /* Было "bg-blue" — декоративная заливка панели. Теперь нейтрально;
+       вызовы, которым нужен цвет, по-прежнему могут передать bg-* явно. */
+    wrapperClass = "",
     label = { name: "", class: "" },
     levels = DEFAULT_LEVELS,
     unit = "",
@@ -27,6 +29,8 @@
   }: IPeriodChartProps = $props()
 
   let currentLevelIndex = $state(0)
+  let hoveredIndex: number | null = $state(null)
+
   $effect(() => {
     if (currentLevelIndex >= levels.length) currentLevelIndex = 0
   })
@@ -44,27 +48,25 @@
   const barLabel = (i: number) => currentLevel?.labels?.[i] ?? String(i + 1)
   const barHeightPercent = (value: number) => Math.max((value / maxValue) * 100, value > 0 ? 2 : 0)
 
-  /* Высота зоны столбиков — h-40 (10rem = 160px по умолчанию), должна совпадать с классом ниже.
-   * Если бар ниже этого порога, число физически не влезает внутрь (обрежется overflow-hidden) —
-   * рисуем его НАД столбиком вместо "внутри". */
-  const BAR_ZONE_PX = 160
-  const MIN_LABEL_PX = 18
-  const isSmallBar = (value: number) => (barHeightPercent(value) / 100) * BAR_ZONE_PX < MIN_LABEL_PX
+  /* Подписи по оси прореживаются: при 31 значении все они не читаются */
+  const labelStep = $derived(Math.ceil(values.length / 12) || 1)
 </script>
 
-<div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class={twMerge("relative flex w-full flex-col items-center justify-center gap-2", wrapperClass)}>
+<div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class={twMerge("relative flex w-full flex-col gap-3", wrapperClass)}>
   {#if label.name}
-    <h5 class={twMerge("w-full px-4 text-center", label.class)}>{label.name}</h5>
+    <h5 class={twMerge("w-full text-[13px] font-semibold text-(--muted-color)", label.class)}>{label.name}</h5>
   {/if}
 
-  <!-- Переключатель уровней детализации -->
-  <div class="flex w-full items-center justify-center gap-1 rounded-xl bg-(--bg-color) p-1">
+  <!-- Сегментированный переключатель уровней -->
+  <div class="flex w-full items-center gap-0.5 rounded-[10px] bg-(--container-color) p-[3px]">
     {#each levels as level, index (level.name)}
       <button
         type="button"
         class={twMerge(
-          "flex-1 cursor-pointer rounded-lg px-3 py-1.5 text-sm font-semibold transition-colors duration-150",
-          index === currentLevelIndex ? "bg-(--back-color) shadow-sm" : "text-(--shadow-color)/75 hover:text-(--shadow-color)",
+          "flex-1 cursor-pointer rounded-[7px] px-3 py-1.5 text-[13px] transition-colors duration-150",
+          index === currentLevelIndex
+            ? "bg-(--back-color) font-semibold text-(--font-color) shadow-(--elevation-1)"
+            : "font-medium text-(--muted-color) hover:text-(--font-color)",
         )}
         onclick={() => selectLevel(index)}
       >
@@ -73,33 +75,42 @@
     {/each}
   </div>
 
-  <!-- Столбчатый график текущего уровня -->
-  <div class="relative flex w-full flex-col rounded-xl border border-(--border-color) bg-(--back-color) p-3">
+  <!-- Столбчатый график -->
+  <div class="relative flex w-full flex-col gap-1.5 rounded-[12px] border border-(--hairline-color) bg-(--back-color) p-3.5">
     {#if values.length === 0}
-      <div class="flex h-48 w-full items-center justify-center text-(--shadow-color)/60">Нет данных</div>
+      <div class="flex h-40 w-full items-center justify-center text-[13px] text-(--faint-color)">Нет данных</div>
     {:else}
       <div class="flex h-40 w-full items-end gap-1">
         {#each values as value, i}
-          <div class="relative flex h-full flex-1 flex-col items-center justify-end" role="img" aria-label={`${barLabel(i)}: ${value}${unit}`}>
-            {#if isSmallBar(value)}
-              <span class="mb-0.5 text-xs font-semibold text-(--shadow-color)">{Math.round(value)}</span>
+          <div
+            class="relative flex h-full flex-1 flex-col items-center justify-end"
+            role="img"
+            aria-label={`${barLabel(i)}: ${value}${unit}`}
+            onmouseenter={() => (hoveredIndex = i)}
+            onmouseleave={() => (hoveredIndex = null)}
+          >
+            {#if hoveredIndex === i}
+              <span
+                class="pointer-events-none absolute -top-1 z-10 -translate-y-full rounded-lg border border-(--hairline-color) bg-(--back-color) px-2 py-1 text-[12px] font-semibold tabular-nums whitespace-nowrap shadow-(--elevation-2)"
+              >
+                {barLabel(i)}: {Math.round(value)}{unit}
+              </span>
             {/if}
             <div
-              class="flex w-full items-center justify-center overflow-hidden rounded-t-sm bg-(--bg-color) transition-[height] duration-150"
+              class="w-full rounded-t-[3px] transition-[height,background-color] duration-150 {hoveredIndex === i
+                ? 'bg-(--accent-color)'
+                : 'bg-(--accent-color)/35'}"
               style="height: {barHeightPercent(value)}%"
-            >
-              {#if !isSmallBar(value)}
-                <span class="px-0.5 text-xs font-semibold text-white">{Math.round(value)}</span>
-              {/if}
-            </div>
+            ></div>
           </div>
         {/each}
       </div>
 
-      <!-- Подписи по оси X — всегда видны, без наведения -->
-      <div class="mt-1 flex w-full gap-1">
+      <div class="flex w-full gap-1">
         {#each values as _, i}
-          <div class="flex-1 truncate text-center text-[10px] font-bold text-(--shadow-color)/75">{barLabel(i)}</div>
+          <div class="flex-1 truncate text-center text-[10px] font-bold text-(--faint-color)">
+            {i % labelStep === 0 ? barLabel(i) : ""}
+          </div>
         {/each}
       </div>
     {/if}

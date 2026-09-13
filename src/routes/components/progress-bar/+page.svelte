@@ -33,6 +33,11 @@
 ${formatObjectToString(progressBarComponent.properties as IProgressBarProps)} 
 />`)
   let progressBarValue: IReceivingDataObject[] = $state([{ Name: "progress", Value: 66 }])
+  let verticalValue: IReceivingDataObject[] = $state([
+    { Name: "CPU", Value: 42 },
+    { Name: "RAM", Value: 78 },
+    { Name: "Flash", Value: 15 },
+  ])
 </script>
 
 <ComponentExample {codeText} {readmeHtml} bind:forConstructor>
@@ -64,6 +69,14 @@ ${formatObjectToString(progressBarComponent.properties as IProgressBarProps)}
         onClick={() => {
           if (progressBarValue[0] && typeof progressBarValue[0].Value === "number") progressBarValue[0].Value += 5
         }}
+      />
+    </div>
+    <div class="flex h-40 justify-center gap-6">
+      <ProgressBar
+        type="vertical"
+        wrapperClass="bg-green"
+        items={[{ name: "CPU" }, { name: "RAM" }, { name: "Flash" }]}
+        value={verticalValue}
       />
     </div>
   {/snippet}

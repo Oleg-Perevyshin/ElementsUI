@@ -41,7 +41,10 @@ ${formatObjectToString(sliderComponent.properties as ISliderProps)}
 
 <ComponentExample {codeText} {readmeHtml} bind:forConstructor>
   {#snippet component()}
-    <Slider {...sliderComponent.properties as ISliderProps} />
+    <Slider
+      {...sliderComponent.properties as ISliderProps}
+      onUpdate={(value: number | [number, number]) => (sliderComponent = updateComponent(sliderComponent, { properties: { value } }))}
+    />
   {/snippet}
   {#snippet componentProps()}
     <SliderProps

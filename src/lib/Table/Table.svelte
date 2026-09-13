@@ -1,12 +1,13 @@
 <!-- $lib/ElementsUI/Table.svelte -->
 <script lang="ts">
   import type { IOption, ITableButton, ITableContent, ITableHeader, ITableImage, ITableProgressBar, ITableProps, ITableText } from "../types"
-  import { fade, fly, slide } from "svelte/transition"
+  import { fly, slide } from "svelte/transition"
   import { twMerge } from "tailwind-merge"
   import { onMount, tick } from "svelte"
   import ButtonClear from "../libIcons/ButtonClear.svelte"
   import { T } from "$lib/locales/i18n"
   import { Button, Modal } from "$lib"
+  import CopiedChip from "../CopiedChip.svelte"
 
   let {
     id = crypto.randomUUID(),
@@ -237,19 +238,20 @@
 
 <div
   id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
-  class={twMerge(`bg-blue flex h-full w-full items-center flex-col overflow-hidden rounded-xl p-1`, wrapperClass)}
+  class={twMerge(`flex h-full w-full flex-col overflow-hidden`, wrapperClass)}
 >
   {#if label.name}
-    <h5 class={twMerge(`w-full px-4 text-center`, label.class)}>{label.name}</h5>
+    <span class={twMerge(`w-full pb-2 text-[12px] font-semibold text-(--muted-color)`, label.class)}>{label.name}</span>
   {/if}
 
   <div
-    class="relative flex h-full w-full flex-col overflow-hidden rounded-xl transition-shadow duration-250
-     shadow-(--border-shadow-color)"
+    class="relative flex h-full w-full flex-col overflow-hidden rounded-[14px] border border-(--hairline-color) bg-(--back-color)"
   >
     <!-- Table Header -->
     <div
-      class="grid font-semibold bg-(--bg-color) {isScrollable ? 'border-r-8 border-(--bg-color)' : ''}"
+      class="grid border-b border-(--hairline-color) bg-(--container-color) text-[11px] font-bold tracking-[0.06em] text-(--muted-color) uppercase {isScrollable
+        ? 'border-r-8 border-r-(--container-color)'
+        : ''}"
       style={`grid-template-columns: ${(header || [])
         .filter((c) => c.width !== "0%")
         .map((c) => c.width || "minmax(0, 1fr)")
@@ -259,8 +261,8 @@
         {#if column.width !== "0%"}
           <div
             class={twMerge(
-              `items-center justify-center flex border-l ${outline && index !== 0 ? " border-(--border-color)" : "border-transparent"}
-            ${column.align === "center" ? "justify-center text-center" : column.align === "right" ? "justify-end text-right" : "justify-start text-left"} gap-1  p-2 text-left`,
+              `flex items-center border-l ${outline && index !== 0 ? " border-(--hairline-color)" : "border-transparent"}
+            ${column.align === "center" ? "justify-center text-center" : column.align === "right" ? "justify-end text-right" : "justify-start text-left"} gap-1 px-3 py-2`,
               column.label?.class,
             )}
           >
@@ -268,7 +270,7 @@
 
             {#if typeof column.content !== "function" && (column.content as ITableContent<any>[])?.some((c) => c.type === "text" && c.data.sortable)}
               <button
-                class="inline-block cursor-pointer font-bold transition-transform duration-75 hover:scale-110 active:scale-95"
+                class="inline-flex cursor-pointer items-center rounded px-1 text-(--faint-color) transition-colors duration-150 hover:bg-(--back-color) hover:text-(--font-color)"
                 onclick={() =>
                   sortRows(
                     ((column.content as ITableContent<any>[])?.find((c) => c.type === "text" && c.data.sortable)?.data as ITableText<object>).key as string,
@@ -284,7 +286,7 @@
     {#if dataBuffer.clearButton}
       <button
         class={twMerge(
-          "absolute size-[2.25em] top-0.5 right-2 bg-(--back-color) rounded-full p-1 cursor-pointer [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full",
+          "absolute top-1 right-2 flex size-7 cursor-pointer items-center justify-center rounded-lg bg-(--back-color) p-1.5 text-(--muted-color) transition-colors duration-150 hover:bg-(--container-color) hover:text-(--font-color) [&_svg]:h-full [&_svg]:w-full",
           dataBuffer.clearClass,
         )}
         onclick={clearBuffer}
@@ -296,13 +298,11 @@
     {#if body || buffer}
       {@const rows = dataBuffer.stashData ? buffer.slice(-(dataBuffer.bufferSize ?? 10)) : body.filter((row: any) => Object.entries(row).length != 0)}
       <!-- Table Body с прокруткой -->
-      <div class="flex-1 overflow-y-auto bg-(--container-color)/50 relative" bind:this={container} onscroll={handleScroll}>
+      <div class="relative flex-1 overflow-y-auto bg-(--back-color)" bind:this={container} onscroll={handleScroll}>
         <div class="min-w-0" style={`height: ${dataBuffer.visibleRows && tableHeight && rows.length > dataBuffer.visibleRows ? `${tableHeight}px` : ""};`}>
           {#each rows as row, i (row.__rowId ?? row)}
             <div
-              class="grid {!outline && i % 2
-                ? 'bg-[#f2f2f2] dark:bg-[#2a3545]'
-                : 'bg-[#fbfbfb] dark:bg-[#1d2635]'} hover:bg-(--bg-color)/20 transition-colors duration-250"
+              class="grid border-t border-(--hairline-color) transition-colors duration-150 hover:bg-(--accent-soft)"
               style={`grid-template-columns: ${(header || [])
                 .filter((c) => c.width !== "0%")
                 .map((c) => c.width || "minmax(0, 1fr)")
@@ -313,9 +313,9 @@
                   {@const contentArray = typeof column.content === "function" ? column.content(row) : column.content}
                   <div
                     id="rowDiv{i}-{j}"
-                    class="relative grid w-full min-w-0 items-center gap-x-2 px-2 py-1 wrap-break-word border-t
-              {column.align === 'center' ? 'justify-center text-center' : column.align === 'right' ? 'justify-end text-right' : 'justify-start text-left'}
-               {j !== 0 ? ' border-l ' : ''} {outline ? 'border-(--border-color)' : 'border-transparent'} {column.disableSelect ? 'select-none' : 'select-all'}"
+                    class="relative grid min-h-7 w-full min-w-0 items-center gap-x-2 px-3 py-1 text-[13px] wrap-break-word
+              {column.align === 'center' ? 'justify-center text-center' : column.align === 'right' ? 'justify-end text-right tabular-nums' : 'justify-start text-left'}
+               {j !== 0 ? ' border-l ' : ''} {outline ? 'border-(--hairline-color)' : 'border-transparent'} {column.disableSelect ? 'select-none' : 'select-all'}"
                     style=" grid-template-columns: repeat({contentArray?.length}, minmax(0, 1fr));"
                   >
                     {#each contentArray as content, index}
@@ -323,20 +323,21 @@
                         {@const button = typeof content.data === "function" ? content.data(row) : content.data}
 
                         <button
-                          class="{twMerge(`flex w-full items-center justify-center gap-2 cursor-pointer rounded-full 
-                           px-4 py-1 font-semibold duration-200 outline-none select-none
+                          class="{twMerge(`flex h-7 w-full cursor-pointer items-center justify-center gap-1.5 rounded-lg
+                           px-3 text-[13px] font-semibold transition-colors duration-150 outline-none select-none
+                           focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent-color)
                            ${
                              ((button as ITableButton<object>).class as string)?.split(' ').find((cl: string) => cl === 'bg-transparent') ||
                              !((button as ITableButton<object>).class as string)?.split(' ').find((cl: string) => cl.startsWith('bg-'))
-                               ? 'bg-transparent underline'
-                               : 'border border-(--bg-color) shadow-sm hover:shadow-md'
+                               ? 'bg-transparent text-(--accent-color) hover:bg-(--accent-soft)'
+                               : 'border border-transparent text-(--on-accent) hover:brightness-90 dark:hover:brightness-115'
                            }
                           ${typeof button.class === 'function' ? button.class(row) : button.class}`)} bg-(--bg-color)"
                           onclick={() => buttonClick(row, button)}
                         >
                           {#if button?.icon}
                             <span
-                              class={`flex items-center justify-center overflow-visible h-7 w-7 [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full`}
+                              class={`flex size-4 shrink-0 items-center justify-center overflow-visible [&_svg]:h-full [&_svg]:w-full`}
                             >
                               {#if typeof button?.icon === "string"}
                                 {@html button.icon}
@@ -354,8 +355,9 @@
                         <div class="relative w-full select-none">
                           <button
                             id="select{i}-{j}-{index}"
-                            class="w-full rounded-2xl border border-(--blue-color) bg-(--back-color) p-1 text-center shadow-(--border-shadow-color) transition duration-200
-        cursor-pointer hover:shadow-(--focus-shadow-color)"
+                            class="h-7 w-full cursor-pointer rounded-lg border border-(--border-color) bg-(--field-color) px-2 text-left text-[13px]
+        transition-[border-color,box-shadow] duration-150 outline-none hover:border-(--faint-color)
+        focus:border-(--accent-color) focus:shadow-(--focus-shadow-color)"
                             onclick={() =>
                               (isDropdownOpen =
                                 isDropdownOpen?.x === j && isDropdownOpen?.y === i && isDropdownOpen?.index === index ? null : { x: j, y: i, index })}
@@ -368,8 +370,8 @@
                           {#if isDropdownOpen?.x === j && isDropdownOpen.y === i && isDropdownOpen.index === index}
                             {@const cords = document.getElementById(`select${i}-${j}-${index}`)?.getBoundingClientRect()}
                             <div
-                              class="fixed z-50 rounded-b-2xl shadow-(--border-shadow-color)"
-                              style="top: {cords?.bottom}px; left: calc({cords?.left}px + 0.9rem) ; width: calc({cords?.width}px - 1.8rem);"
+                              class="fixed z-50 overflow-hidden rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-1 shadow-(--elevation-2)"
+                              style="top: calc({cords?.bottom}px + 4px); left: {cords?.left}px; width: {cords?.width}px;"
                               transition:slide={{ duration: selectSlideDuration }}
                             >
                               {#each options as option, option_index (option.id)}
@@ -377,8 +379,7 @@
                                   id={option.id}
                                   value={option?.value ? String(option.value) : ""}
                                   class={twMerge(
-                                    `flex h-full w-full cursor-pointer items-center justify-center p-1 inset-shadow-[0_10px_10px_-15px_rgb(0_0_0_/0.5)] dark:inset-shadow-[0_10px_10px_-15px_rgb(255_255_255_/0.5)] duration-250 hover:bg-(--field-color)! bg-(--back-color)
-              ${option_index === options.length - 1 ? "rounded-b-2xl" : ""}`,
+                                    `flex h-8 w-full cursor-pointer items-center rounded-md px-2.5 text-left text-[13px] transition-colors duration-150 hover:bg-(--container-color)`,
                                     option.class,
                                   )}
                                   onclick={(e) => selectOption(i, select?.key, index, option, e)}
@@ -412,11 +413,11 @@
                         </div>
                       {:else if content.type === "progressBar"}
                         {@const progressBar = content.data}
-                        <div class="grid grid-cols-[3.5rem_1fr] h-7 w-full px-2 items-center gap-2 rounded-full shadow-sm bg-(--bg-color)">
-                          <span class="m-auto font-semibold">{roundToClean(Number(row[progressBar.key] ?? 0))}{progressBar?.units}</span>
-                          <div class="relative my-auto h-3.5 rounded-full bg-(--back-color)/40">
+                        <div class="grid h-7 w-full grid-cols-[3.5rem_1fr] items-center gap-2">
+                          <span class="text-right text-[12px] font-semibold tabular-nums">{roundToClean(Number(row[progressBar.key] ?? 0))}{progressBar?.units}</span>
+                          <div class="relative my-auto h-1.5 overflow-hidden rounded-full bg-(--container-color)">
                             <div
-                              class="absolute top-0 left-0 flex h-full rounded-full bg-(--field-color)"
+                              class="absolute top-0 left-0 flex h-full rounded-full bg-(--bg-color,var(--accent-color))"
                               style="width: {progressPercent(content, row[progressBar.key] as number)}%;"
                             ></div>
                           </div>
@@ -460,7 +461,7 @@
 
                           {#if text?.copy}
                             <button
-                              class="mx-2 flex cursor-pointer border-none bg-transparent text-2xl"
+                              class="ml-1.5 flex size-5 shrink-0 cursor-pointer items-center justify-center rounded border-none bg-transparent text-(--faint-color) transition-colors duration-150 hover:bg-(--container-color) hover:text-(--font-color)"
                               onclick={(e) => {
                                 e.preventDefault()
                                 navigator.clipboard.writeText(row[text?.key ?? ""].replace(/<[^>]*>/g, ""))
@@ -469,15 +470,8 @@
                               }}
                               aria-label="Копировать текст"
                             >
-                              <div class="size-5 text-sm [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full">
-                                {#if copiedCell?.y === i && copiedCell.x === j}
-                                  <div
-                                    class="absolute top-1/2 right-3.5 -translate-y-1/2 transform rounded-md bg-(--green-color) px-1.5 py-1 shadow-lg"
-                                    transition:fade={{ duration: 200 }}
-                                  >
-                                    ✓
-                                  </div>
-                                {:else}
+                              <div class="size-3.5 [&_svg]:h-full [&_svg]:w-full">
+                                {#if !(copiedCell?.y === i && copiedCell.x === j)}
                                   <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
                                     <g fill="none" stroke="currentColor" stroke-width="1.5">
                                       <path
@@ -487,6 +481,7 @@
                                     </g>
                                   </svg>
                                 {/if}
+                                <CopiedChip show={copiedCell?.y === i && copiedCell.x === j} class="top-1/2 right-3 z-10 -translate-y-1/2" />
                               </div>
                             </button>
                           {/if}
@@ -504,10 +499,9 @@
 
     {#if tooltip.show}
       <div
-        class="fixed z-50 w-max max-w-[30%] break-all rounded-md px-2 py-1 text-left text-sm whitespace-pre-wrap shadow-lg"
-        style="background: color-mix(in srgb, var(--yellow-color) 30%, var(--back-color)); transform: translateX(-50%); 
-        left: {tooltip.x + 10}px; top: {tooltip.y + 10}px;"
-        transition:fly={{ y: 10, duration: 200 }}
+        class="fixed z-50 w-max max-w-[30%] rounded-lg border border-(--hairline-color) bg-(--back-color) px-2.5 py-1.5 text-left text-[12px] font-medium break-all whitespace-pre-wrap shadow-(--elevation-2)"
+        style="transform: translateX(-50%); left: {tooltip.x + 10}px; top: {tooltip.y + 10}px;"
+        transition:fly={{ y: 8, duration: 200 }}
         role="tooltip"
       >
         {@html tooltip.text.replace(/<[^>]*>/g, "")}
@@ -515,8 +509,8 @@
     {/if}
     <!-- Нижнее поле для сводной информации -->
     {#if footer}
-      <div class="flex h-8 items-center justify-center bg-(--bg-color)">
-        <h5>{footer}</h5>
+      <div class="flex h-8 items-center justify-center border-t border-(--hairline-color) bg-(--container-color)">
+        <span class="text-[12px] font-semibold text-(--muted-color)">{footer}</span>
       </div>
     {/if}
   </div>
@@ -541,10 +535,3 @@
   {/snippet}
 </Modal>
 
-<style>
-  ::-webkit-scrollbar-thumb {
-    background-color: color-mix(in srgb, var(--blue-color), white);
-    border-radius: 8px;
-    cursor: pointer;
-  }
-</style>

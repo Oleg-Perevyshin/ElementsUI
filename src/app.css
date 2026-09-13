@@ -1,59 +1,102 @@
-/* src/app.css */
-@import "tailwindcss";
+/* src/app.css — ElementsUI
+   Шаг 1–2 плана: токены + типографика.
+   Имена переменных сохранены, поэтому разметка компонентов не меняется.
+   Новое: --accent-*, --focus-ring, --ink-*, --*-soft (мягкие тинты для фонов). */
 
+@import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
+  /* Интерфейс — системный шрифт: спроектирован для плотных панелей и мелких кеглей.
+     Montserrat остаётся в логотипе и крупных заголовках витрин (класс .font-display). */
   font-family:
-    "Montserrat",
     -apple-system,
     BlinkMacSystemFont,
-    segoe ui,
+    "SF Pro Text",
+    "Segoe UI Variable Text",
+    "Segoe UI",
     Roboto,
-    helvetica neue,
+    "Helvetica Neue",
     Arial,
-    noto sans,
+    "Noto Sans",
     sans-serif,
-    apple color emoji,
-    segoe ui emoji,
-    segoe ui symbol,
-    noto color emoji;
+    "Apple Color Emoji",
+    "Segoe UI Emoji";
   font-optical-sizing: auto;
-  font-weight: 450;
   font-style: normal;
   box-sizing: border-box;
   margin: 0;
   padding: 0;
   min-width: 640px;
-  text-align: center;
-  font-size: 13px;
+
+  /* Было: font-size 13px, font-weight 450, text-align center.
+     13px остаётся доступен классом .text-dense для таблиц и сервисных панелей. */
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
+.font-display {
+  font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+/* Плотный режим для таблиц, сервисного раздела и отладки */
+.text-dense {
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+/* ─── Типографическая шкала ─────────────────────────────────────────── */
 h1,
 h2,
 h3,
 h4,
 h5,
 h6 {
-  font-weight: bold;
+  margin: 0;
+  text-wrap: pretty;
 }
+
 h1 {
-  font-size: 1.8rem;
+  font-size: 2.2rem; /* 33px */
+  font-weight: 700;
+  line-height: 1.12;
+  letter-spacing: -0.022em;
 }
+
 h2 {
-  font-size: 1.6rem;
+  font-size: 1.75rem; /* 26px */
+  font-weight: 650;
+  line-height: 1.2;
+  letter-spacing: -0.016em;
 }
+
 h3 {
-  font-size: 1.4rem;
+  font-size: 1.35rem; /* 20px */
+  font-weight: 620;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
 }
+
 h4 {
-  font-size: 1.2rem;
+  font-size: 1.13rem; /* 17px */
+  font-weight: 600;
+  line-height: 1.4;
 }
+
 h5 {
-  font-size: 1rem;
+  font-size: 1rem; /* 15px */
+  font-weight: 600;
 }
+
 h6 {
-  font-size: 0.8rem;
+  font-size: 0.8rem; /* 12px */
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted-color);
 }
 
 p {
@@ -62,21 +105,21 @@ p {
 
 label {
   margin: 0;
-  font-weight: bold;
-}
-
-hr {
-  margin: 0.25rem 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--muted-color);
 }
 
 ul,
 ol {
-  padding-left: 1rem;
+  padding-left: 1.25rem;
   margin: 0.25rem 0;
 }
+
 ul {
   list-style: disc;
 }
+
 ol {
   list-style: decimal;
 }
@@ -88,126 +131,225 @@ li {
 blockquote {
   margin: 1rem 0;
   padding-left: 1rem;
-  border-left: 4px solid #ccc;
-  font-style: italic;
+  border-left: 3px solid var(--border-color);
+  color: var(--muted-color);
+  font-style: normal;
 }
 
 pre {
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
+  padding: 0.5rem 0.75rem;
   text-align: left;
   background-color: var(--container-color);
   border: 1px solid var(--border-color);
-  border-radius: 0.5rem;
+  border-radius: 10px;
   white-space: pre;
 }
 
 code {
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
+  padding: 0.1rem 0.35rem;
   text-align: left;
   background-color: var(--container-color);
-  border-radius: 0.5rem;
+  border-radius: 6px;
   white-space: pre;
-  font-family: monospace;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.9em;
 }
 
-/* Таблицы из Markdown (marked/GFM) — используются в README.md компонентов, отображаемых на табе "Инфо" */
+/* ─── Таблицы (Markdown + плотный режим) ─────────────────────────────── */
 table {
   border-collapse: collapse;
   width: 100%;
   margin: 0.5rem 0;
-  table-layout: fixed;
   text-align: left;
-}
-th,
-td {
-  padding: 0.25rem 0.5rem;
-  border: 1px solid var(--border-color);
-  overflow-wrap: break-word;
-}
-th {
-  background-color: var(--container-color);
-  font-weight: bold;
-}
-tr:nth-child(even) td {
-  background-color: var(--container-color);
-}
-/* Внутри таблиц длинные типы/сигнатуры (`Partial<IButtonProps>` и т.п.) должны переноситься, а не растягивать таблицу по горизонтали */
-table code {
-  white-space: normal;
-  word-break: break-word;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
 }
 
-/* Устранение стилей для ссылок */
-a {
-  text-decoration: none;
+th,
+td {
+  padding: 0.4rem 0.6rem;
+  border: 0;
+  border-top: 1px solid var(--hairline-color);
+}
+
+th {
+  background-color: var(--container-color);
+  border-top: 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted-color);
+}
+
+/* Зебра убрана: строки разделяет волосяная линия, выделение — тинт акцента */
+tr:nth-child(even) td {
+  background-color: transparent;
+}
+
+tbody tr:hover td {
+  background-color: var(--accent-soft);
+}
+
+.can-decode-table th,
+.can-decode-table td {
+  text-align: center;
+}
+
+.can-decode-table th:not(:last-child),
+.can-decode-table td:not(:last-child) {
+  width: 1%;
+  white-space: nowrap;
+}
+
+.can-decode-table th:last-child,
+.can-decode-table td:last-child {
+  text-align: left;
+}
+
+body {
+  background: var(--bg-body);
   color: var(--font-color);
 }
 
+a {
+  color: var(--accent-color);
+  text-decoration: none;
+}
+
 a:hover {
+  color: var(--accent-hover);
   text-decoration: underline;
 }
 
-input::placeholder {
-  opacity: 0.5;
+/* Единое кольцо фокуса вместо размытых теней у каждого компонента */
+:where(button, a, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
+  border-radius: 10px;
 }
 
-/* Стили полосы прокрутки */
+/* ─── Полоса прокрутки: нейтральная, проявляется при наведении ───────── */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
 }
+
 ::-webkit-scrollbar-track {
   background: transparent;
 }
+
 ::-webkit-scrollbar-thumb {
-  background-color: var(--blue-color);
-  border-radius: 8px;
-  cursor: pointer;
+  background-color: var(--scrollbar-color);
+  border: 3px solid transparent;
+  background-clip: content-box;
+  border-radius: 999px;
 }
 
-/* Цветовая гамма */
-.light {
-  --back-color: #ffffff; /* Белый */
-  --border-color: #b2bbca; /* Светлые серо-голубые границы */
-  --container-color: #f3f4f6; /* gray-100 */
-  --field-color: #ecf2fa; /*цвет маленьких полей, например полей ввода*/
-  --shadow-color: #34343a;
-  --border-shadow-color: 0 0 3px rgb(0 0 0/0.25);
-  --focus-shadow-color: 0 0 6px rgb(0 0 0/0.25);
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--muted-color);
+}
 
-  --gray-color: #d1d5db; /* gray-300 */
-  --red-color: #fca5a5; /* red-300 */
-  --orange-color: #fdba74; /* orange-300 */
-  --yellow-color: #fde047; /* yellow-300 */
-  --green-color: #86efac; /* green-300 */
-  --cyan-color: #67e8f9; /* cyan-300 */
-  --blue-color: #93c5fd; /* blue-300 */
-  --purple-color: #d8b4fe; /* purple-300 */
-  --pink-color: #f9a8d4; /* pink-300 */
+/* ════════════════════════════════════════════════════════════════════
+   Цветовая гамма — «Графит и сапфир»
+   Акцент выведен из градиента логотипа (#86b6ff → #274c92).
+   Градиент на body убран: фон плоский, глубину даёт волосяная линия.
+   ════════════════════════════════════════════════════════════════════ */
+.light {
+  --bg-body: #f5f6f8; /* в ElementsUI не используется, оставлено для паритета */
+  --back-color: #ffffff;
+  --container-color: #f0f2f5;
+  --field-color: #ffffff;
+  --border-color: #d5d9e0;
+  --hairline-color: rgb(17 24 39 / 0.09);
+
+  --font-color: #10141a;
+  --muted-color: #545c6b;
+  --faint-color: #8b93a1;
+
+  --accent-color: #1b63d8;
+  --accent-hover: #1653ba;
+  --accent-soft: rgb(27 99 216 / 0.08);
+  --on-accent: #ffffff;
+
+  --shadow-color: #34343a;
+  --border-shadow-color: 0 1px 2px rgb(16 24 40 / 0.05);
+  --focus-shadow-color: 0 0 0 3px rgb(27 99 216 / 0.18);
+  --elevation-1: 0 1px 2px rgb(16 24 40 / 0.05);
+  --elevation-2: 0 4px 12px rgb(16 24 40 / 0.08);
+  --elevation-3: 0 12px 32px rgb(16 24 40 / 0.12);
+  --scrollbar-color: #c4c9d2;
+
+  /* Семантические заливки: белый текст поверх каждой даёт ≥ 4.5:1 */
+  --gray-color: #e4e7ec;
+  --red-color: #c0392f;
+  --orange-color: #b45b09;
+  --yellow-color: #8a6d0b;
+  --green-color: #14875a;
+  --cyan-color: #0e7490;
+  --blue-color: #1b63d8;
+  --purple-color: #6b3fc4;
+  --pink-color: #b92b6b;
+
+  /* Мягкие тинты для фонов блоков и подсветки строк */
+  --gray-soft: #f0f2f5;
+  --red-soft: #fbeae8;
+  --orange-soft: #fcefe1;
+  --yellow-soft: #faf3dc;
+  --green-soft: #e4f4ec;
+  --cyan-soft: #e2f2f6;
+  --blue-soft: #e8f0fc;
+  --purple-soft: #efe9fb;
+  --pink-soft: #fbe7f0;
 }
 
 .dark {
-  --back-color: #111827; /* gray-900 */
-  --border-color: #585c63; /* Границы - темный серо-синий */
-  --container-color: #1f2937; /* gray-800 */
-  --field-color: #2d3748; /*цвет маленьких полей, например полей ввода*/
-  --shadow-color: #d4d4d8;
-  --border-shadow-color: 0 0 3px rgb(255 255 255/0.5);
-  --focus-shadow-color: 0 0 6px rgb(255 255 255/0.5);
+  --bg-body: #0a0c10;
+  --back-color: #13161d;
+  --container-color: #1a1e27;
+  --field-color: #1a1e27;
+  --border-color: #333a47;
+  --hairline-color: rgb(255 255 255 / 0.1);
 
-  --gray-color: #374151; /* gray-700 */
-  --red-color: #991b1b; /* red-800 */
-  --orange-color: #c2410c; /* orange-700 */
-  --yellow-color: #a16207; /* yellow-600 */
-  --green-color: #15803d; /* green-700 */
-  --cyan-color: #0e7490; /* cyan-700 */
-  --blue-color: #1d4ed8; /* blue-600 */
-  --purple-color: #7e22ce; /* purple-700 */
-  --pink-color: #be185d; /* pink-700 */
+  --font-color: #e9ebf0;
+  --muted-color: #9ba3b2;
+  --faint-color: #6d7686;
+
+  --accent-color: #5b9bf8;
+  --accent-hover: #7cb0fa;
+  --accent-soft: rgb(91 155 248 / 0.14);
+  --on-accent: #ffffff;
+
+  --shadow-color: #000000;
+  --border-shadow-color: 0 1px 2px rgb(0 0 0 / 0.4);
+  --focus-shadow-color: 0 0 0 3px rgb(91 155 248 / 0.28);
+  --elevation-1: 0 1px 2px rgb(0 0 0 / 0.4);
+  --elevation-2: 0 4px 12px rgb(0 0 0 / 0.45);
+  --elevation-3: 0 12px 32px rgb(0 0 0 / 0.5);
+  --scrollbar-color: #333a47;
+
+  --gray-color: #242a35;
+  --red-color: #c4453b;
+  --orange-color: #a85b12;
+  --yellow-color: #8a6a14;
+  --green-color: #188a5f;
+  --cyan-color: #10748e;
+  --blue-color: #2c74e6;
+  --purple-color: #6b44c0;
+  --pink-color: #b03266;
+
+  --gray-soft: rgb(255 255 255 / 0.06);
+  --red-soft: rgb(196 69 59 / 0.18);
+  --orange-soft: rgb(168 91 18 / 0.18);
+  --yellow-soft: rgb(138 106 20 / 0.18);
+  --green-soft: rgb(24 138 95 / 0.18);
+  --cyan-soft: rgb(16 116 142 / 0.18);
+  --blue-soft: rgb(44 116 230 / 0.18);
+  --purple-soft: rgb(107 68 192 / 0.18);
+  --pink-soft: rgb(176 50 102 / 0.18);
 }
 
+/* ─── Утилиты заливки (без изменений в именах) ───────────────────────── */
 .bg-max {
   --bg-color: var(--back-color);
 }
@@ -239,14 +381,37 @@ input::placeholder {
   --bg-color: var(--pink-color);
 }
 
+/* Мягкие варианты — для карточек, плашек и подсветки, где заливка не должна кричать */
+.bg-red-soft {
+  --bg-color: var(--red-soft);
+}
+.bg-orange-soft {
+  --bg-color: var(--orange-soft);
+}
+.bg-yellow-soft {
+  --bg-color: var(--yellow-soft);
+}
+.bg-green-soft {
+  --bg-color: var(--green-soft);
+}
+.bg-cyan-soft {
+  --bg-color: var(--cyan-soft);
+}
+.bg-blue-soft {
+  --bg-color: var(--blue-soft);
+}
+.bg-purple-soft {
+  --bg-color: var(--purple-soft);
+}
+.bg-pink-soft {
+  --bg-color: var(--pink-soft);
+}
+
 .border-max {
   --border-color: var(--back-color);
 }
 .border-gray {
   --border-color: var(--gray-color);
-}
-.border-white {
-  --border-color: var(--white-color);
 }
 .border-red {
   --border-color: var(--red-color);
@@ -273,23 +438,15 @@ input::placeholder {
   --border-color: var(--pink-color);
 }
 
-/* Все возможные именованные цвета из Tailwind
-bg-stone-400     border-stone-400'
-bg-red-400       border-red-400
-bg-orange-400    border-orange-400
-bg-amber-400     border-amber-400
-bg-yellow-400    border-yellow-400
-bg-lime-400      border-lime-400
-bg-green-400     border-green-400
-bg-emerald-400   border-emerald-400
-bg-teal-400      border-teal-400
-bg-cyan-400      border-cyan-400
-bg-sky-400       border-sky-400
-bg-blue-400      border-blue-400
-bg-indigo-400    border-indigo-400
-bg-violet-400    border-violet-400
-bg-purple-400    border-purple-400
-bg-fuchsia-400   border-fuchsia-400
-bg-pink-400      border-pink-400
-bg-rose-400      border-rose-400
-*/
+/* ElementsUI: подсказка placeholder */
+input::placeholder,
+textarea::placeholder {
+  color: var(--faint-color);
+  opacity: 1;
+}
+
+hr {
+  margin: 0.5rem 0;
+  border: 0;
+  border-top: 1px solid var(--hairline-color);
+}

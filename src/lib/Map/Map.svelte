@@ -2,8 +2,8 @@
   import { T } from "$lib/locales/i18n"
   import type { IDeviceGNSS, IMapProps } from "$lib/types"
   import { onDestroy, onMount } from "svelte"
-  import { fade } from "svelte/transition"
   import { twMerge } from "tailwind-merge"
+  import CopiedChip from "../CopiedChip.svelte"
   import { MapLibre, NavigationControl, ScaleControl, GeolocateControl, FullScreenControl, Marker, Popup, Line, CustomControl } from "./mapWrapper"
 
   let {
@@ -275,14 +275,7 @@
                     </g>
                   </svg>
                 </button>
-                {#if isCopied}
-                  <div
-                    class="absolute -top-1 right-0 -translate-y-full rounded-md bg-(--green-color) px-1.5 py-1 text-sm shadow-lg"
-                    transition:fade={{ duration: 200 }}
-                  >
-                    ✓
-                  </div>
-                {/if}
+                <CopiedChip show={isCopied} class="-top-1 right-0 -translate-y-full" />
               </div>
 
               <button

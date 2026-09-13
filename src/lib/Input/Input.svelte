@@ -1,9 +1,12 @@
-<!-- $lib/ElementsUI/Input.svelte -->
+<!-- $lib/Input/Input.svelte — радиус 10, высота 36, выравнивание по левому краю,
+     кольцо фокуса вместо размытой тени. Вся логика (regExp, roundToClean,
+     handleInputChange, счётчик, копирование) не тронута. -->
 <script lang="ts">
-  import { fade, fly } from "svelte/transition"
   import type { IInputProps } from "../types"
   import { twMerge } from "tailwind-merge"
   import InfoIcon from "$lib/libIcons/InfoIcon.svelte"
+  import Tooltip from "../Tooltip.svelte"
+  import CopiedChip from "../CopiedChip.svelte"
 
   let {
     id = crypto.randomUUID(),
@@ -27,7 +30,6 @@
   let showInfo = $state(false)
   let isCopied = $state(false)
 
-  /* Обработка регулярного выражения */
   const parseRegExp = (pattern: string | RegExp): RegExp => {
     if (pattern instanceof RegExp) return pattern
     const match = pattern.match(/^\/(.*)\/([gimsuy]*)$/)
@@ -50,59 +52,47 @@
   }
 
   const handleKeyDown = (e: KeyboardEvent) => {
-    if (type === "number" && Number.isInteger(number?.step ?? 1) && e.key === ".") {
-      e.preventDefault()
-    }
+    if (type === "number" && Number.isInteger(number?.step ?? 1) && e.key === ".") e.preventDefault()
   }
 
   $effect(() => {
-    if (type === "number" && typeof value == "number") {
-      value = roundToClean(value)
-    }
+    if (type === "number" && typeof value == "number") value = roundToClean(value)
   })
 
   const roundToClean = (num: number): number => {
     if (Number.isInteger(num)) return num
-
-    const rounded1 = Number(num.toFixed(1))
-    if (Math.abs(rounded1 - num) < 1e-10) return rounded1
-
-    const rounded2 = Number(num.toFixed(2))
-    if (Math.abs(rounded2 - num) < 1e-10) return rounded2
-
-    const rounded3 = Number(num.toFixed(3))
-    if (Math.abs(rounded3 - num) < 1e-10) return rounded3
-
-    const rounded4 = Number(num.toFixed(4))
-    if (Math.abs(rounded4 - num) < 1e-10) return rounded4
-
-    const rounded5 = Number(num.toFixed(5))
-    if (Math.abs(rounded5 - num) < 1e-10) return rounded5
-
-    return rounded5
+    for (const digits of [1, 2, 3, 4, 5]) {
+      const rounded = Number(num.toFixed(digits))
+      if (Math.abs(rounded - num) < 1e-10) return rounded
+    }
+    return Number(num.toFixed(5))
   }
+
+  /* Единая база поля: высота 36, радиус 10, текст по левому краю.
+     Правый отступ учитывает кнопки (глаз / копировать / счётчик). */
+  const fieldBase = $derived(
+    `w-full rounded-[10px] border bg-(--field-color) px-3 text-[14px] text-left leading-none
+     transition-[border-color,box-shadow,background-color] duration-150 outline-none
+     placeholder:text-(--faint-color)
+     [&::-webkit-inner-spin-button]:hidden [&::-webkit-outer-spin-button]:hidden
+     ${isValid ? "border-(--border-color) focus:border-(--accent-color) focus:shadow-(--focus-shadow-color)" : "border-(--red-color) focus:border-(--red-color) focus:shadow-[0_0_0_3px_color-mix(in_srgb,var(--red-color),transparent_80%)]"}
+     ${disabled ? "cursor-not-allowed border-(--hairline-color) bg-(--container-color) text-(--faint-color)" : ""}
+     ${readonly && !disabled ? "bg-(--container-color) text-(--muted-color)" : ""}
+     ${help?.info ? "pl-9" : ""}`,
+  )
 </script>
 
-<div class={twMerge(`bg-max ${type === "text-area" ? "h-full" : ""} relative flex w-full flex-col px-1 items-center`, wrapperClass)}>
+<div class={twMerge(`relative flex w-full flex-col gap-1 ${type === "text-area" ? "h-full" : ""}`, wrapperClass)}>
   {#if label.name}
-    <h5 class={twMerge(`w-full px-4 text-center`, label.class)}>{label.name}</h5>
+    <!-- Метка слева, 12/600 — вместо центрированного h5 -->
+    <span class={twMerge(`text-[12px] font-semibold text-(--muted-color)`, label.class)}>{label.name}</span>
   {/if}
 
   <div class="relative flex w-full items-center {type === 'text-area' ? 'h-full' : ''}">
     {#if type === "number"}
       <input
         bind:value
-        class={twMerge(
-          `w-full rounded-2xl border px-4 py-1 text-center shadow-(--border-shadow-color) transition duration-200
-              outline-none focus:shadow-[0_0_6px_var(--blue-color)] focus:border-(--blue-color) [&::-webkit-inner-spin-button]:hidden [&::-webkit-outer-spin-button]:hidden
-              ${isValid ? "border-(--bg-color)" : "border-red-400 shadow-[0_0_6px_var(--red-color)] focus:shadow-[0_0_6px_var(--red-color)] focus:border-red-400"}
-              ${disabled ? "opacity-50" : "hover:shadow-(--focus-shadow-color)"}
-              ${readonly ? "" : "hover:shadow-(--focus-shadow-color)"}
-              ${help?.info ? "pl-8" : ""}
-              ${help.copyButton || !readonly ? "pr-8" : ""}`,
-          componentClass,
-        )}
-        style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"
+        class={twMerge(fieldBase, "h-9 pr-9", componentClass)}
         id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
         {placeholder}
         {disabled}
@@ -119,17 +109,7 @@
     {:else if type !== "text-area"}
       <input
         bind:value
-        class={twMerge(
-          `w-full rounded-2xl border px-4 py-1 text-center shadow-(--border-shadow-color) transition duration-200
-              outline-none focus:shadow-[0_0_6px_var(--blue-color)] focus:border-(--blue-color) [&::-webkit-inner-spin-button]:hidden [&::-webkit-outer-spin-button]:hidden
-              ${isValid ? "border-(--bg-color)" : "border-red-400 shadow-[0_0_6px_var(--red-color)] focus:shadow-[0_0_6px_var(--red-color)] focus:border-red-400"}
-              ${disabled ? "opacity-50" : "hover:shadow-(--focus-shadow-color)"}
-              ${readonly ? "" : "hover:shadow-(--focus-shadow-color)"}
-              ${help?.info ? "pl-8" : ""}
-              ${help.copyButton || type === "password" ? "pr-8" : ""}`,
-          componentClass,
-        )}
-        style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"
+        class={twMerge(fieldBase, `h-9 ${help.copyButton || type === "password" ? "pr-9" : ""}`, componentClass)}
         id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
         {placeholder}
         {disabled}
@@ -143,17 +123,7 @@
     {:else}
       <textarea
         bind:value
-        class={twMerge(
-          `h-full w-full resize-y rounded-2xl border border-(--border-color) px-2 py-1 text-center shadow-[0_0_3px_rgb(0_0_0_/0.25)] transition
-          duration-200 outline-none focus:border-blue-400
-            ${isValid ? "border-(--bg-color)" : "border-red-400 shadow-[0_0_6px_var(--red-color)] focus:shadow-[0_0_6px_var(--red-color)] focus:border-red-400"}
-            ${disabled ? "cursor-not-allowed opacity-50" : "hover:shadow-[0_0_6px_rgb(0_0_0_/0.25)]"} 
-            ${readonly ? "" : "hover:shadow-[0_0_6px_rgb(0_0_0_/0.25)]"}
-            ${help?.info ? "pl-8" : ""}
-            ${help.copyButton ? "pr-8" : ""}`,
-          componentClass,
-        )}
-        style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"
+        class={twMerge(fieldBase, `h-full min-h-20 resize-y py-2 leading-[1.5] ${help.copyButton ? "pr-9" : ""}`, componentClass)}
         id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
         {disabled}
         {maxlength}
@@ -166,20 +136,18 @@
     {#if type === "password" && !disabled}
       <button
         type="button"
-        class="absolute right-2 flex cursor-pointer border-none bg-transparent"
+        class="absolute right-1.5 flex size-7 cursor-pointer items-center justify-center rounded-lg border-none bg-transparent text-(--faint-color) transition-colors duration-150 hover:bg-(--container-color) hover:text-(--font-color)"
         onclick={() => (showPassword = !showPassword)}
         aria-label={showPassword ? "Скрыть пароль" : "Показать пароль"}
       >
         {#if showPassword}
-          <svg xmlns="http://www.w3.org/2000/svg" width="1.5rem" height="1.5rem" viewBox="0 0 24 24"
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
             ><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-              ><path d="M15 12a3 3 0 1 1-6 0a3 3 0 0 1 6 0" /><path
-                d="M2 12c1.6-4.097 5.336-7 10-7s8.4 2.903 10 7c-1.6 4.097-5.336 7-10 7s-8.4-2.903-10-7"
-              /></g
+              ><path d="M15 12a3 3 0 1 1-6 0a3 3 0 0 1 6 0" /><path d="M2 12c1.6-4.097 5.336-7 10-7s8.4 2.903 10 7c-1.6 4.097-5.336 7-10 7s-8.4-2.903-10-7" /></g
             ></svg
           >
         {:else}
-          <svg xmlns="http://www.w3.org/2000/svg" width="1.5rem" height="1.5rem" viewBox="0 0 24 24"
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
             ><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
               ><path
                 stroke-linejoin="round"
@@ -193,7 +161,9 @@
 
     {#if help.copyButton && type !== "password" && !disabled}
       <button
-        class="absolute {type == 'number' ? 'right-10' : 'right-3'}  flex border-none bg-transparent {type === 'text-area' ? 'top-2' : ''} cursor-pointer"
+        class="absolute {type == 'number' ? 'right-10' : 'right-1.5'} {type === 'text-area'
+          ? 'top-1.5'
+          : ''} flex size-7 cursor-pointer items-center justify-center rounded-lg border-none bg-transparent text-(--faint-color) transition-colors duration-150 hover:bg-(--container-color) hover:text-(--font-color)"
         onclick={(e) => {
           e.preventDefault()
           navigator.clipboard.writeText(value as string)
@@ -202,32 +172,25 @@
         }}
         aria-label="Копировать текст"
       >
-        <div class=" size-5 text-sm [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full">
-          {#if isCopied}
-            <div
-              class="right-1..5 absolute top-1/2 -translate-y-1/2 transform rounded-md bg-(--green-color) px-1.5 py-1 shadow-lg"
-              transition:fade={{ duration: 200 }}
-            >
-              ✓
-            </div>
-          {:else}
-            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
-              <g fill="none" stroke="currentColor" stroke-width="1.5">
-                <path
-                  d="M6 11c0-2.828 0-4.243.879-5.121C7.757 5 9.172 5 12 5h3c2.828 0 4.243 0 5.121.879C21 6.757 21 8.172 21 11v5c0 2.828 0 4.243-.879 5.121C19.243 22 17.828 22 15 22h-3c-2.828 0-4.243 0-5.121-.879C6 20.243 6 18.828 6 16z"
-                />
-                <path d="M6 19a3 3 0 0 1-3-3v-6c0-3.771 0-5.657 1.172-6.828S7.229 2 11 2h4a3 3 0 0 1 3 3" />
-              </g>
-            </svg>
-          {/if}
-        </div>
+        {#if !isCopied}
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24">
+            <g fill="none" stroke="currentColor" stroke-width="1.5">
+              <path
+                d="M6 11c0-2.828 0-4.243.879-5.121C7.757 5 9.172 5 12 5h3c2.828 0 4.243 0 5.121.879C21 6.757 21 8.172 21 11v5c0 2.828 0 4.243-.879 5.121C19.243 22 17.828 22 15 22h-3c-2.828 0-4.243 0-5.121-.879C6 20.243 6 18.828 6 16z"
+              />
+              <path d="M6 19a3 3 0 0 1-3-3v-6c0-3.771 0-5.657 1.172-6.828S7.229 2 11 2h4a3 3 0 0 1 3 3" />
+            </g>
+          </svg>
+        {/if}
+        <CopiedChip show={isCopied} class="right-0" />
       </button>
     {/if}
 
     {#if (type === "number" || type === "bitMode") && !readonly && !disabled}
-      <div class="absolute right-0 flex h-full w-8 flex-col items-center justify-center rounded-r-2xl border-l border-(--border-color)">
+      <!-- Счётчик: узкая колонка со стрелками, отделена волосяной линией -->
+      <div class="absolute right-0 flex h-9 w-8 flex-col overflow-hidden rounded-r-[10px] border-l border-(--hairline-color)">
         <button
-          class="flex h-1/2 w-full items-center rounded-tr-2xl border-b border-(--border-color) pl-2 transition-colors duration-150 hover:bg-(--gray-color)/30 active:bg-(--gray-color)/10"
+          class="flex h-1/2 w-full items-center justify-center border-b border-(--hairline-color) text-[11px] leading-none text-(--muted-color) transition-colors duration-150 hover:bg-(--container-color) hover:text-(--font-color)"
           onclick={() => {
             if (value == undefined) value = number.minNum
             if ((number.maxNum !== 0 && !number.maxNum) || !number.step || (value !== 0 && !value)) return
@@ -239,11 +202,10 @@
             value = roundToClean(Number(value) + (number.step ?? 1))
             onUpdate(value as number)
           }}
-          aria-label="Увеличить">+</button
+          aria-label="Увеличить">▲</button
         >
-
         <button
-          class="flex h-1/2 w-full items-center rounded-br-2xl pl-2 transition-colors duration-150 hover:bg-(--gray-color)/30 active:bg-(--gray-color)/10"
+          class="flex h-1/2 w-full items-center justify-center text-[11px] leading-none text-(--muted-color) transition-colors duration-150 hover:bg-(--container-color) hover:text-(--font-color)"
           onclick={() => {
             if (value == undefined) value = number.minNum
             if ((number.minNum !== 0 && !number.minNum) || !number.step || (value !== 0 && !value)) return
@@ -253,10 +215,9 @@
               return
             }
             value = roundToClean(Number(value) - (number.step ?? 1))
-
             onUpdate(value as number)
           }}
-          aria-label="Уменьшить">−</button
+          aria-label="Уменьшить">▼</button
         >
       </div>
     {/if}
@@ -264,7 +225,9 @@
     {#if help.info}
       <button
         type="button"
-        class="button-info absolute left-2 flex border-none bg-transparent {type === 'text-area' ? 'top-2' : ''} {disabled ? 'opacity-50' : 'cursor-pointer'}"
+        class="button-info absolute left-2 flex size-5 items-center justify-center border-none bg-transparent text-(--faint-color) {type === 'text-area'
+          ? 'top-2'
+          : ''} {disabled ? 'opacity-50' : 'cursor-pointer hover:text-(--accent-color)'}"
         onmouseenter={() => (showInfo = true)}
         onmouseleave={() => (showInfo = false)}
         aria-label={showInfo ? "Скрыть инфо" : "Показать инфо"}
@@ -272,14 +235,11 @@
         <InfoIcon />
       </button>
 
-      {#if showInfo}
-        <div
-          transition:fly={{ x: -15, duration: 250 }}
-          class="absolute top-5 left-10 z-50 w-auto -translate-y-1/2 rounded bg-(--container-color) px-2 py-1 shadow-lg"
-        >
-          {help?.info}
-        </div>
-      {/if}
+      <Tooltip show={showInfo} text={help?.info ?? ""} side="top" align="start" />
     {/if}
   </div>
+
+  {#if !isValid && help.regExp}
+    <span class="text-[12px] text-(--red-color)">Неверный формат</span>
+  {/if}
 </div>

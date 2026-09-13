@@ -2,6 +2,7 @@
   import { Select, Switch, T, type IOption } from "$lib"
   import type { Snippet } from "svelte"
   import { fade } from "svelte/transition"
+  import CopiedChip from "./CopiedChip.svelte"
 
   let {
     component,
@@ -65,14 +66,7 @@
                 aria-label="Копировать текст"
               >
                 <div class="size-6 text-sm [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full">
-                  {#if isCopied}
-                    <div
-                      class="right-1..5 absolute top-1/2 -translate-y-1/2 transform rounded-md bg-(--green-color) px-1.5 py-1 shadow-lg"
-                      transition:fade={{ duration: 200 }}
-                    >
-                      ✓
-                    </div>
-                  {:else}
+                  {#if !isCopied}
                     <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
                       <g fill="none" stroke="currentColor" stroke-width="1.5">
                         <path
@@ -82,6 +76,7 @@
                       </g>
                     </svg>
                   {/if}
+                  <CopiedChip show={isCopied} class="right-1.5 top-1/2 -translate-y-1/2" />
                 </div>
               </button>
               <pre class="overflow-x-auto">{codeText}</pre>

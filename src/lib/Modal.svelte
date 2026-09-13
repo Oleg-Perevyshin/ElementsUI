@@ -1,3 +1,5 @@
+<!-- $lib/Modal.svelte — радиус 20, шапка и подвал через линии,
+     подложка 40% + blur. Логика стека, Escape и клика вне окна не тронута. -->
 <script lang="ts">
   import { type Snippet } from "svelte"
   import { fade, scale } from "svelte/transition"
@@ -35,13 +37,9 @@
 
   let isTopmost = $derived($ModalStack.at(-1) === modalId)
 
-  // Открытие/закрытие модалки + Escape
   $effect(() => {
-    if (isOpen) {
-      ModalStack.open(modalId)
-    } else {
-      ModalStack.close(modalId)
-    }
+    if (isOpen) ModalStack.open(modalId)
+    else ModalStack.close(modalId)
   })
 
   $effect(() => {
@@ -74,30 +72,39 @@
 
 {#if isOpen}
   <div
-    class="fixed inset-0 flex items-center justify-center bg-black/50"
+    class="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-[2px]"
     data-modal-backdrop
-    transition:fade={{ duration: 200 }}
+    transition:fade={{ duration: 150 }}
     style="z-index: {zIndex - 1};"
   >
     <div
       data-modal
-      class={twMerge("flex w-300 flex-col overflow-hidden rounded-2xl bg-(--back-color) text-center", wrapperClass)}
+      class={twMerge(
+        "flex w-300 flex-col overflow-hidden rounded-[20px] border border-(--hairline-color) bg-(--back-color) shadow-(--elevation-3)",
+        wrapperClass,
+      )}
       style="width: {width}; z-index: {zIndex};"
-      transition:scale={{ duration: 250, start: 0.8 }}
+      transition:scale={{ duration: 200, start: 0.96 }}
     >
-      <div class="flex items-end justify-between bg-(--field-color) px-6 py-3">
-        <h4>{title}</h4>
-        <button class="h-6 w-6 cursor-pointer" onclick={onCancel}>
+      <div class="flex items-center justify-between gap-4 border-b border-(--hairline-color) px-5 py-4">
+        <h4 class="min-w-0 truncate text-[17px] font-semibold">{title}</h4>
+        <button
+          class="flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-lg text-(--faint-color) transition-colors duration-150 hover:bg-(--container-color) hover:text-(--font-color) [&_svg]:size-4"
+          onclick={onCancel}
+          aria-label="Закрыть"
+        >
           <CrossIcon />
         </button>
       </div>
 
-      <div class={twMerge("flex h-full w-full flex-col overflow-auto p-2", mainClass)}>
+      <div class={twMerge("flex h-full w-full flex-col overflow-auto p-5", mainClass)}>
         {@render main?.()}
       </div>
 
       {#if footer}
-        <div class="flex flex-row-reverse justify-between bg-(--field-color) p-1.5">
+        <!-- Подтверждающее действие — крайнее справа; row-reverse сохранён,
+             поэтому порядок сниппетов в вызовах менять не нужно -->
+        <div class="flex flex-row-reverse items-center justify-start gap-2 border-t border-(--hairline-color) bg-(--container-color) px-5 py-3">
           {@render footer?.()}
         </div>
       {/if}

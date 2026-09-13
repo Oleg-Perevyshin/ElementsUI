@@ -59,6 +59,7 @@ ${formatObjectToString(joystickComponent.properties as IJoystickProps)}
         axes={[{ name: "Pitch", minNum: -100, maxNum: 100 }, { name: "" }, { name: "Yaw", minNum: -100, maxNum: 100 }]}
         buttonIcon={IconGripVerticalDual}
       />
+      <Joystick label={{ name: "Только чтение" }} value={[40, -20, 0]} readonly />
     </div>
   {/snippet}
 </ComponentExample>

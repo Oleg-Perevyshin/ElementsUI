@@ -46,6 +46,9 @@ ${formatObjectToString(colorPickerComponent.properties as IColorPickerProps)}
     />
   {/snippet}
   {#snippet examples()}
-    <ColorPicker label={{ name: "Выбор цвета из палитры" }} value={[186, 25, 255]} />
+    <div class="flex gap-4">
+      <ColorPicker label={{ name: "Выбор цвета из палитры" }} value={[186, 25, 255]} />
+      <ColorPicker label={{ name: "Только чтение" }} value={[34, 197, 94]} readonly />
+    </div>
   {/snippet}
 </ComponentExample>
