@@ -7,6 +7,7 @@
   import ButtonAdd from "../libIcons/ButtonAdd.svelte"
   import { optionsStore } from "../options.js"
   import CommonSnippets from "$lib/CommonSnippets.svelte"
+  import { twMerge } from "tailwind-merge"
 
   const {
     component,
@@ -53,6 +54,11 @@
       (a.value as string).includes(component.properties.label?.class?.split(" ").find((cls: string) => cls.startsWith("text-"))),
     ),
   )
+  const initialContentAlign = $derived(
+    $optionsStore.TEXT_ALIGN_OPTIONS.slice(0, -1).find((a) =>
+      (a.value as string).includes(component.properties.componentClass?.split(" ").find((cls: string) => cls.startsWith("text-")) ?? "text-left"),
+    ),
+  )
 
   /* Argument пуст — поле ниже лишь визуально показывает "ModCfg", реальное значение нужно проставить в состояние */
   $effect(() => {
@@ -67,6 +73,22 @@
     maxlength={32}
     help={{ info: $T("constructor.props.argument.info"), autocomplete: "on", regExp: /^[a-zA-Z0-9\-_]{0,32}$/ }}
     onUpdate={(value) => onPropertyChange({ eventHandler: { Argument: value as string } })}
+  />
+{/snippet}
+
+{#snippet SelectContentAlign()}
+  <UI.Select
+    label={{ name: $T("constructor.props.align.content") }}
+    type="buttons"
+    value={initialContentAlign}
+    options={$optionsStore.TEXT_ALIGN_OPTIONS.slice(0, -1)}
+    onUpdate={(option) =>
+      updateProperty(
+        "componentClass",
+        twMerge(component.properties.componentClass, (option as UI.IOption<string>).value),
+        component,
+        onPropertyChange,
+      )}
   />
 {/snippet}
 
@@ -262,6 +284,7 @@
     <div class="flex w-1/3 flex-col px-2">
       <CommonSnippets snippet="Label" {component} {onPropertyChange} />
       <CommonSnippets snippet="LabelAlign" initialValue={initialAlign} {component} {onPropertyChange} />
+      {@render SelectContentAlign()}
       {@render SelectSettings()}
     </div>
   </div>
@@ -276,6 +299,7 @@
     <div class="flex w-1/3 flex-col px-2">
       <CommonSnippets snippet="Label" {component} {onPropertyChange} />
       <CommonSnippets snippet="LabelClass" {component} {onPropertyChange} />
+      {@render SelectContentAlign()}
       <CommonSnippets snippet="Disabled" {component} {onPropertyChange} />
       <CommonSnippets snippet="BitModeInfo" {component} {onPropertyChange} />
     </div>

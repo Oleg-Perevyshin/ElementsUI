@@ -91,10 +91,13 @@
                 disabled={option.disabled}
                 onchange={() => handleToggle(index)}
               />
-              <!-- Дорожка: акцент во включённом состоянии, нейтральная серая в выключенном -->
+              <!-- Дорожка: акцент во включённом состоянии, нейтральная серая в выключенном.
+                   Фолбэк var(--accent-color) — большинство вызовов Switch не передают
+                   wrapperClass с ролью цвета (bg-blue и т.п.), без фолбэка --bg-color
+                   остаётся не задан и дорожка становится невидимой при включении. -->
               <span
                 class="relative flex items-center rounded-full transition-colors duration-200
-                  {checkedOptions[index] ? 'bg-(--bg-color)' : 'bg-(--border-color)'}
+                  {checkedOptions[index] ? 'bg-(--bg-color,var(--accent-color))' : 'bg-(--border-color)'}
                   {option.disabled ? 'cursor-not-allowed opacity-45' : 'cursor-pointer'}"
                 style="{type === 'horizontal' ? 'width' : 'height'}: {`calc(${height} * 1.7)`}; {type === 'horizontal'
                   ? 'height'
@@ -144,7 +147,7 @@
       class="
         relative size-5 shrink-0 cursor-pointer appearance-none rounded-[6px] border border-(--border-color)
         bg-(--field-color) transition-colors duration-150 after:origin-center after:opacity-0
-        checked:border-(--bg-color) checked:bg-(--bg-color)
+        checked:border-(--bg-color,var(--accent-color)) checked:bg-(--bg-color,var(--accent-color))
         checked:after:absolute checked:after:top-[1px] checked:after:left-[6px]
         checked:after:h-[10px] checked:after:w-[5px] checked:after:rotate-45
         checked:after:border-2 checked:after:border-t-0 checked:after:border-l-0

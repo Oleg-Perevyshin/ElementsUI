@@ -22,6 +22,11 @@
   let initialColor = $optionsStore.COLOR_OPTIONS.find((c) =>
     (c.value as string).includes(component.properties.options[0].class.split(" ").find((cls: string) => cls.startsWith("bg-"))),
   )
+  const initialAlign = $derived(
+    $optionsStore.TEXT_ALIGN_OPTIONS.find((a) =>
+      (a.value as string).includes(component.properties.label?.class?.split(" ").find((cls: string) => cls.startsWith("text-"))),
+    ),
+  )
 </script>
 
 {#snippet SwitchType()}
@@ -201,6 +206,7 @@
 
     <div class="flex w-1/3 flex-col px-2">
       <CommonSnippets snippet="Label" {component} {onPropertyChange} />
+      <CommonSnippets snippet="LabelAlign" initialValue={initialAlign} {component} {onPropertyChange} />
       {#if !component.properties.bitMode}
         <CommonSnippets
           snippet="Colors"
@@ -251,6 +257,7 @@
     </div>
     <div class="flex w-1/3 flex-col px-2">
       <CommonSnippets snippet="Label" {component} {onPropertyChange} />
+      <CommonSnippets snippet="LabelAlign" initialValue={initialAlign} {component} {onPropertyChange} />
       {@render SwitchType()}
       {#if !component.properties.bitMode}
         {@render SwitchCaptions()}
