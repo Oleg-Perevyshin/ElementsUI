@@ -40,6 +40,10 @@ export { default as VideoViewer } from "./VideoViewer/VideoViewer.svelte"
 export { default as VideoViewerProps } from "./VideoViewer/VideoViewerProps.svelte"
 export { default as Widget } from "./Widget/Widget.svelte"
 export { default as WidgetProps } from "./Widget/WidgetProps.svelte"
+export { default as WidgetWiFi } from "./WidgetWiFi/WidgetWiFi.svelte"
+export { default as WidgetWiFiProps } from "./WidgetWiFi/WidgetWiFiProps.svelte"
+export { default as WidgetDeviceInfo } from "./WidgetDeviceInfo/WidgetDeviceInfo.svelte"
+export { default as WidgetDeviceInfoProps } from "./WidgetDeviceInfo/WidgetDeviceInfoProps.svelte"
 
 export * from "./locales/i18n"
 export * from "./locales/translations"
@@ -62,6 +66,10 @@ export {
   type IMapProps,
   type IProgressBarProps,
   type IWidgetProps,
+  type IWidgetWiFiProps,
+  type IWidgetWiFiConfig,
+  type IWidgetDeviceInfoProps,
+  type IWidgetDeviceInfoConfig,
   type IGraphProps,
   type IGraphDataObject,
   type ITableHeader,

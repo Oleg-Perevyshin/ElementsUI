@@ -62,6 +62,8 @@ export interface UIComponent {
     | "TextField"
     | "VideoViewer"
     | "Widget"
+    | "WidgetWiFi"
+    | "WidgetDeviceInfo"
 
   properties:
     | IAccordionProps
@@ -82,6 +84,8 @@ export interface UIComponent {
     | ITabsProps
     | ITextFieldProps
     | IWidgetProps
+    | IWidgetWiFiProps
+    | IWidgetDeviceInfoProps
 
   position: Required<Position>
   parentId: string
@@ -536,4 +540,60 @@ export interface IWidgetProps {
   }
   icons?: { array: string[]; cycling?: boolean; class?: string }
   onUpdate?: (value: number) => void
+}
+
+/* Смарт-виджеты — составные карточки конструктора с ФИКСИРОВАННЫМ набором полей устройства
+   (в отличие от примитивов, где переменную выбирает пользователь через Select). Поля соответствуют
+   реальной прошивочной конвенции (group prefix + предопределённые имена, как в config_service
+   ProdFactory-ESP) — компонент ничего не знает про DeviceStore/WebSocket, только value/onSave:
+   владелец рендера (GUIPreview.svelte) сам читает/пишет нужные ключи единым пакетом. */
+export interface IWidgetWiFiConfig {
+  WiFiMode: number /* 0=NULL, 1=STA, 2=AP, 3=STA+AP — как esp_wifi wifi_mode_t */
+  StaSSID: string
+  StaPSK: string
+  StaticIP: number /* 0=DHCP, 1=Static */
+  StaIP: string
+  StaMS: string
+  StaGW: string
+  ApSSID: string
+  ApPSK: string
+  ApIP: string
+  ApMS: string
+  ApGW: string
+}
+
+export interface IWidgetWiFiProps {
+  /* Виджет не привязывается к произвольной переменной устройства — id не используется для
+     биндинга (в отличие от примитивов), но нужен как структурное поле в общем properties-union
+     (CommonSnippets и т.п. читают component.properties.id по всем типам без разбора) */
+  id?: string
+  wrapperClass?: string
+  componentClass?: string
+  label?: { name?: string }
+  value?: IWidgetWiFiConfig
+  allowedModes?: number[]
+  confirmOnAP?: boolean
+  onScan?: () => Promise<{ id: string; name: string; value: string }[]>
+  onSave?: (config: IWidgetWiFiConfig) => void
+}
+
+export interface IWidgetDeviceInfoConfig {
+  DevSN: string
+  DevID: string
+  DevFW: number
+  RunCnt: number
+  DevName: string
+  HostName: string
+  WebUser: string
+  WebPsw: string
+}
+
+export interface IWidgetDeviceInfoProps {
+  id?: string
+  wrapperClass?: string
+  componentClass?: string
+  label?: { name?: string }
+  value?: IWidgetDeviceInfoConfig
+  onSave?: (info: IWidgetDeviceInfoConfig) => void
+  onRestart?: () => void
 }
