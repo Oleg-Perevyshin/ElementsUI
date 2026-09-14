@@ -97,7 +97,7 @@
   })
 </script>
 
-<div class={twMerge(`relative flex w-full flex-col items-center gap-1`, wrapperClass)}>
+<div class={twMerge(`relative flex w-full flex-col items-center`, wrapperClass)}>
   <button
     {id}
     class={`${twMerge(
@@ -145,9 +145,4 @@
   </button>
 
   <Tooltip show={showInfo} text={content.info?.text ?? ""} side={content.info?.side ?? "top"} />
-
-  <!-- Такая же зарезервированная строка, как у Input/Select (h-4, всегда пустая — у кнопки
-       нет валидации), чтобы высота совпадала при совместном размещении в одной строке
-       (items-end) с полем ввода или селектом. -->
-  <span class="block h-4" aria-hidden="true"></span>
 </div>
