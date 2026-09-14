@@ -18,8 +18,10 @@
 
   let activePage = $derived(page.url.pathname)
 
-  /* Список всех компонентов */
+  /* Список всех компонентов — смарт-виджеты идут первыми (тот же принцип, что и в DevCloud'овской палитре конструктора) */
   const menuItems = [
+    { page: "widget-wifi", name: "WidgetWiFi" },
+    { page: "widget-device-info", name: "WidgetDeviceInfo" },
     { page: "accordion", name: "Accordion" },
     { page: "button", name: "Button" },
     { page: "carousel", name: "Carousel" },
