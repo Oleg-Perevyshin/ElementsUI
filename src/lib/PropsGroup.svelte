@@ -22,18 +22,18 @@
   } = $props()
 </script>
 
-<div class={twMerge("flex flex-col gap-2 rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-3", wrapperClass)}>
+<div class={twMerge("flex flex-col gap-1.5 rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-2", wrapperClass)}>
   {#if label || headerActions}
     <div class="flex items-center justify-between gap-2">
       {#if label}
-        <span class="text-[12px] font-semibold text-(--muted-color)">{label}</span>
+        <span class="text-[11px] font-semibold text-(--muted-color)">{label}</span>
       {/if}
       {#if headerActions}
         {@render headerActions()}
       {/if}
     </div>
   {/if}
-  <div class={twMerge("flex flex-col gap-2", contentClass)}>
+  <div class={twMerge("flex flex-col gap-1.5", contentClass)}>
     {@render children()}
   </div>
 </div>
