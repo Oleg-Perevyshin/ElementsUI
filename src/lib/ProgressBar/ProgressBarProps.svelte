@@ -6,6 +6,7 @@
   import { optionsStore } from "../options"
   import CommonSnippets from "$lib/CommonSnippets.svelte"
   import PropsGroup from "$lib/PropsGroup.svelte"
+  import PropsListModal from "$lib/PropsListModal.svelte"
   import ButtonAdd from "$lib/libIcons/ButtonAdd.svelte"
   import ButtonDelete from "$lib/libIcons/ButtonDelete.svelte"
 
@@ -45,117 +46,121 @@
 {/snippet}
 
 {#snippet ProgressBarOptions()}
-  <PropsGroup label={$T("constructor.props.progressbar.title")} wrapperClass="mt-3">
-    {#snippet headerActions()}
-      <UI.Button
-        wrapperClass="w-8"
-        content={{ icon: ButtonAdd }}
-        onClick={() => {
-          const newProgress = {
-            name: `Label ${component.properties?.items.length + 1}`,
-            class: "bg-blue",
-          }
-          const progresses = [...(component.properties?.items || []), newProgress]
-          updateProperty("items", progresses, component, onPropertyChange)
-          updateProperty(
-            "value",
-            Array.from(component.properties?.items, (x: { name?: string; class?: string }) => {
-              return { Name: x.name, Value: (component.properties.number.maxNum - component.properties.number.minNum) / 2 }
-            }),
-            component,
-            onPropertyChange,
-          )
-        }}
-      />
-    {/snippet}
-
-    <div bind:this={itemsContainer} class="flex flex-col gap-2">
-      {#each component.properties.items || [] as progress, index}
-        <div id="item-{index}" class="flex items-end gap-1 rounded-lg border border-(--hairline-color) bg-(--container-color)/60 p-2">
-          <UI.Dragging
-            wrapperClass="w-9"
-            container={itemsContainer}
-            array={component.properties.items}
-            elementIndex={index}
-            onUpdate={(updatedArray) => {
-              updateProperty("items", updatedArray, component, onPropertyChange)
-            }}
-          />
-          <UI.Input
-            label={{ name: $T("constructor.props.optionname") }}
-            wrapperClass="w-1/4"
-            value={progress.name}
-            onUpdate={(value) => {
-              const progresses = [...(component.properties?.items || [])]
-              progresses[index]["name"] = value
-              updateProperty("items", progresses, component, onPropertyChange)
-            }}
-          />
-          {#if forConstructor}
-            <UI.Select
-              label={{ name: $T("constructor.props.colors") }}
-              wrapperClass="w-1/2 h-14.5"
-              type="buttons"
-              options={$optionsStore.COLOR_OPTIONS.filter((option) => option.value !== "bg-max")}
-              value={$optionsStore.COLOR_OPTIONS.find((c) =>
-                (c.value as string).includes(progress.class.split(" ").find((cls: string) => cls.startsWith("bg-"))),
-              )}
-              onUpdate={(value) => {
-                const progresses = [...(component.properties?.items || [])]
-                progresses[index]["class"] = (value as UI.IOption).value
-                updateProperty("items", progresses, component, onPropertyChange)
-              }}
-            />
-          {:else}
-            <UI.Input
-              label={{ name: $T("constructor.props.optionvalue") }}
-              wrapperClass="w-1/4"
-              value={(component.properties.value || [])[index]?.Value}
-              type="number"
-              onUpdate={(value) => {
-                const progresses = [
-                  ...(component.properties?.value ||
-                    component.properties?.items.map((item: { name?: string; class?: string }, i: number) => {
-                      return {
-                        Name: item.name,
-                        Value: i == index ? value : 0,
-                      }
-                    })),
-                ]
-                progresses[index].Value = value
-                updateProperty("value", progresses, component, onPropertyChange)
-              }}
-            />
-            <UI.Input
-              label={{ name: $T("constructor.props.optionclass") }}
-              wrapperClass="w-1/3"
-              value={progress.class}
-              onUpdate={(value) => {
-                const progresses = [...(component.properties?.items || [])]
-                progresses[index]["class"] = value
-                updateProperty("items", progresses, component, onPropertyChange)
-              }}
-            />
-          {/if}
-
+  <PropsListModal label={$T("constructor.props.progressbar.title")} count={component.properties.items?.length ?? 0} wrapperClass="w-200 h-[70%]">
+    {#snippet main()}
+      <PropsGroup>
+        {#snippet headerActions()}
           <UI.Button
             wrapperClass="w-8"
-            content={{ icon: ButtonDelete }}
+            content={{ icon: ButtonAdd }}
             onClick={() => {
-              const progresses = [...(component.properties?.items || [])]
-              progresses.splice(index, 1)
+              const newProgress = {
+                name: `Label ${component.properties?.items.length + 1}`,
+                class: "bg-blue",
+              }
+              const progresses = [...(component.properties?.items || []), newProgress]
               updateProperty("items", progresses, component, onPropertyChange)
+              updateProperty(
+                "value",
+                Array.from(component.properties?.items, (x: { name?: string; class?: string }) => {
+                  return { Name: x.name, Value: (component.properties.number.maxNum - component.properties.number.minNum) / 2 }
+                }),
+                component,
+                onPropertyChange,
+              )
             }}
           />
+        {/snippet}
+
+        <div bind:this={itemsContainer} class="flex flex-col gap-2">
+          {#each component.properties.items || [] as progress, index}
+            <div id="item-{index}" class="flex items-end gap-1 rounded-lg border border-(--hairline-color) bg-(--container-color)/60 p-2">
+              <UI.Dragging
+                wrapperClass="w-9"
+                container={itemsContainer}
+                array={component.properties.items}
+                elementIndex={index}
+                onUpdate={(updatedArray) => {
+                  updateProperty("items", updatedArray, component, onPropertyChange)
+                }}
+              />
+              <UI.Input
+                label={{ name: $T("constructor.props.optionname") }}
+                wrapperClass="w-1/4"
+                value={progress.name}
+                onUpdate={(value) => {
+                  const progresses = [...(component.properties?.items || [])]
+                  progresses[index]["name"] = value
+                  updateProperty("items", progresses, component, onPropertyChange)
+                }}
+              />
+              {#if forConstructor}
+                <UI.Select
+                  label={{ name: $T("constructor.props.colors") }}
+                  wrapperClass="w-1/2 h-14.5"
+                  type="buttons"
+                  options={$optionsStore.COLOR_OPTIONS.filter((option) => option.value !== "bg-max")}
+                  value={$optionsStore.COLOR_OPTIONS.find((c) =>
+                    (c.value as string).includes(progress.class.split(" ").find((cls: string) => cls.startsWith("bg-"))),
+                  )}
+                  onUpdate={(value) => {
+                    const progresses = [...(component.properties?.items || [])]
+                    progresses[index]["class"] = (value as UI.IOption).value
+                    updateProperty("items", progresses, component, onPropertyChange)
+                  }}
+                />
+              {:else}
+                <UI.Input
+                  label={{ name: $T("constructor.props.optionvalue") }}
+                  wrapperClass="w-1/4"
+                  value={(component.properties.value || [])[index]?.Value}
+                  type="number"
+                  onUpdate={(value) => {
+                    const progresses = [
+                      ...(component.properties?.value ||
+                        component.properties?.items.map((item: { name?: string; class?: string }, i: number) => {
+                          return {
+                            Name: item.name,
+                            Value: i == index ? value : 0,
+                          }
+                        })),
+                    ]
+                    progresses[index].Value = value
+                    updateProperty("value", progresses, component, onPropertyChange)
+                  }}
+                />
+                <UI.Input
+                  label={{ name: $T("constructor.props.optionclass") }}
+                  wrapperClass="w-1/3"
+                  value={progress.class}
+                  onUpdate={(value) => {
+                    const progresses = [...(component.properties?.items || [])]
+                    progresses[index]["class"] = value
+                    updateProperty("items", progresses, component, onPropertyChange)
+                  }}
+                />
+              {/if}
+
+              <UI.Button
+                wrapperClass="w-8"
+                content={{ icon: ButtonDelete }}
+                onClick={() => {
+                  const progresses = [...(component.properties?.items || [])]
+                  progresses.splice(index, 1)
+                  updateProperty("items", progresses, component, onPropertyChange)
+                }}
+              />
+            </div>
+          {/each}
+          <div id="item-{component.properties.items.length}" class="min-h-4"></div>
         </div>
-      {/each}
-      <div id="item-{component.properties.items.length}" class="min-h-4"></div>
-    </div>
-  </PropsGroup>
+      </PropsGroup>
+    {/snippet}
+  </PropsListModal>
 {/snippet}
 
 {#if forConstructor}
-  <div class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+  <div class="flex flex-col gap-2">
     <PropsGroup label={$T("constructor.props.group.general")}>
       <CommonSnippets snippet="Access" {component} {onPropertyChange} />
       <CommonSnippets snippet="Variable" {VARIABLE_OPTIONS} {component} {onPropertyChange} />
@@ -183,7 +188,7 @@
   </div>
   {@render ProgressBarOptions()}
 {:else}
-  <div class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+  <div class="flex flex-col gap-2">
     <PropsGroup label={$T("constructor.props.group.general")}>
       <CommonSnippets snippet="Access" {component} {onPropertyChange} />
       <CommonSnippets snippet="Identificator" {component} {onPropertyChange} />

@@ -9,6 +9,7 @@
   import { twMerge } from "tailwind-merge"
   import CommonSnippets from "$lib/CommonSnippets.svelte"
   import PropsGroup from "$lib/PropsGroup.svelte"
+  import PropsListModal from "$lib/PropsListModal.svelte"
 
   const {
     component,
@@ -85,100 +86,104 @@
 {/snippet}
 
 {#snippet TabsSettings()}
-  <PropsGroup label={$T("constructor.props.tabs.title")} wrapperClass="mt-3">
-    {#snippet headerActions()}
-      {#if component.properties?.items.length < 10}
-        <UI.Button
-          wrapperClass="w-8"
-          content={{ icon: ButtonAdd }}
-          onClick={() => {
-            const newItem: { name: string; icon: string; class: string } = {
-              name: `Tab ${component.properties?.items.length + 1}`,
-              class: `text-${initialColor?.value.slice(3)}-500 ${initialPosition?.value}`,
-              icon: "",
-            }
-            const items = [...(component.properties?.items || []), newItem]
-            items.forEach((_item: any, index: number) => {
-              items[index]["class"] = twMerge(items[index].class, initialWidth() ? `w-[${(1 / items.length) * 100}%]` : "w-auto")
-              updateProperty("items", items, component, onPropertyChange)
-            })
-          }}
-        />
-      {/if}
-    {/snippet}
-
-    <div bind:this={itemsContainer} class="flex flex-col gap-2">
-      {#each component.properties.items || [] as tab, index}
-        <div id="item-{index}" class="flex items-end justify-around gap-2 rounded-lg border border-(--hairline-color) bg-(--container-color)/60 p-2">
-          <UI.Dragging
-            wrapperClass="w-10"
-            container={itemsContainer}
-            array={component.properties.items}
-            elementIndex={index}
-            onUpdate={(updatedArray) => {
-              updateProperty("items", updatedArray, component, onPropertyChange)
-            }}
-          />
-          <UI.Input
-            label={{ name: $T("constructor.props.optionname") }}
-            wrapperClass="w-1/3"
-            value={tab.name}
-            onUpdate={(value) => {
-              const items = [...(component.properties?.items || [])]
-              items[index]["name"] = value
-              updateProperty("items", items, component, onPropertyChange)
-            }}
-          />
-          <div class="relative flex w-40 gap-2">
-            <CommonSnippets
-              snippet="IconsLib"
-              initialValue={{
-                name: $T("constructor.props.table.type.icon"),
-                icon: component.properties.items[index].icon,
-                updateProperty: (icon: string) => {
-                  const items = [...(component.properties?.items || [])]
-                  items[index]["icon"] = icon as string
-                  updateProperty("items", items, component, onPropertyChange)
-                },
-                icons: { array: ICONS },
-              }}
-              {component}
-              {onPropertyChange}
-            />
-          </div>
-
-          <UI.Switch
-            wrapperClass="w-30"
-            label={{ name: $T("constructor.props.disabled") }}
-            value={tab?.disabled ? 1 : 0}
-            options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-            onChange={(value) => {
-              const items = [...(component.properties?.items || [])]
-              items[index]["disabled"] = value
-              updateProperty("items", items, component, onPropertyChange)
-            }}
-          />
-
-          {#if component.properties.items.length > 1}
+  <PropsListModal label={$T("constructor.props.tabs.title")} count={component.properties.items?.length ?? 0} wrapperClass="w-200 h-[70%]">
+    {#snippet main()}
+      <PropsGroup>
+        {#snippet headerActions()}
+          {#if component.properties?.items.length < 10}
             <UI.Button
               wrapperClass="w-8"
-              content={{ icon: ButtonDelete }}
+              content={{ icon: ButtonAdd }}
               onClick={() => {
-                const items = [...(component.properties?.items || [])]
-                items.splice(index, 1)
+                const newItem: { name: string; icon: string; class: string } = {
+                  name: `Tab ${component.properties?.items.length + 1}`,
+                  class: `text-${initialColor?.value.slice(3)}-500 ${initialPosition?.value}`,
+                  icon: "",
+                }
+                const items = [...(component.properties?.items || []), newItem]
                 items.forEach((_item: any, index: number) => {
                   items[index]["class"] = twMerge(items[index].class, initialWidth() ? `w-[${(1 / items.length) * 100}%]` : "w-auto")
                   updateProperty("items", items, component, onPropertyChange)
                 })
-                updateProperty("items", items, component, onPropertyChange)
               }}
             />
           {/if}
+        {/snippet}
+
+        <div bind:this={itemsContainer} class="flex flex-col gap-2">
+          {#each component.properties.items || [] as tab, index}
+            <div id="item-{index}" class="flex items-end justify-around gap-2 rounded-lg border border-(--hairline-color) bg-(--container-color)/60 p-2">
+              <UI.Dragging
+                wrapperClass="w-10"
+                container={itemsContainer}
+                array={component.properties.items}
+                elementIndex={index}
+                onUpdate={(updatedArray) => {
+                  updateProperty("items", updatedArray, component, onPropertyChange)
+                }}
+              />
+              <UI.Input
+                label={{ name: $T("constructor.props.optionname") }}
+                wrapperClass="w-1/3"
+                value={tab.name}
+                onUpdate={(value) => {
+                  const items = [...(component.properties?.items || [])]
+                  items[index]["name"] = value
+                  updateProperty("items", items, component, onPropertyChange)
+                }}
+              />
+              <div class="relative flex w-40 gap-2">
+                <CommonSnippets
+                  snippet="IconsLib"
+                  initialValue={{
+                    name: $T("constructor.props.table.type.icon"),
+                    icon: component.properties.items[index].icon,
+                    updateProperty: (icon: string) => {
+                      const items = [...(component.properties?.items || [])]
+                      items[index]["icon"] = icon as string
+                      updateProperty("items", items, component, onPropertyChange)
+                    },
+                    icons: { array: ICONS },
+                  }}
+                  {component}
+                  {onPropertyChange}
+                />
+              </div>
+
+              <UI.Switch
+                wrapperClass="w-30"
+                label={{ name: $T("constructor.props.disabled") }}
+                value={tab?.disabled ? 1 : 0}
+                options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
+                onChange={(value) => {
+                  const items = [...(component.properties?.items || [])]
+                  items[index]["disabled"] = value
+                  updateProperty("items", items, component, onPropertyChange)
+                }}
+              />
+
+              {#if component.properties.items.length > 1}
+                <UI.Button
+                  wrapperClass="w-8"
+                  content={{ icon: ButtonDelete }}
+                  onClick={() => {
+                    const items = [...(component.properties?.items || [])]
+                    items.splice(index, 1)
+                    items.forEach((_item: any, index: number) => {
+                      items[index]["class"] = twMerge(items[index].class, initialWidth() ? `w-[${(1 / items.length) * 100}%]` : "w-auto")
+                      updateProperty("items", items, component, onPropertyChange)
+                    })
+                    updateProperty("items", items, component, onPropertyChange)
+                  }}
+                />
+              {/if}
+            </div>
+          {/each}
+          <div id="item-{component.properties.items.length}" class="min-h-4"></div>
         </div>
-      {/each}
-      <div id="item-{component.properties.items.length}" class="min-h-4"></div>
-    </div>
-  </PropsGroup>
+      </PropsGroup>
+    {/snippet}
+  </PropsListModal>
 {/snippet}
 
 {#snippet TabsSize()}
@@ -201,7 +206,7 @@
 {/snippet}
 
 {#if forConstructor}
-  <div class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+  <div class="flex flex-col gap-2">
     <PropsGroup label={$T("constructor.props.group.general")}>
       <CommonSnippets snippet="Access" {component} {onPropertyChange} />
       <CommonSnippets snippet="Colors" initialValue={{ color: initialColor, uselessColors: ["bg-max"] }} {component} {onPropertyChange} />
@@ -213,7 +218,7 @@
   </div>
   {@render TabsSettings()}
 {:else}
-  <div class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+  <div class="flex flex-col gap-2">
     <PropsGroup label={$T("constructor.props.group.general")}>
       <CommonSnippets snippet="Identificator" {component} {onPropertyChange} />
       <CommonSnippets snippet="WrapperClass" {component} {onPropertyChange} />

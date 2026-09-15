@@ -82,7 +82,7 @@
 
 {#if forConstructor}
   <div>
-    <div class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+    <div class="flex flex-col gap-2">
       <PropsGroup label={$T("constructor.props.group.general")}>
         <CommonSnippets snippet="Access" {component} {onPropertyChange} />
         <CommonSnippets snippet="Variable" {VARIABLE_OPTIONS} {component} {onPropertyChange} />
@@ -111,7 +111,7 @@
   </div>
 {:else}
   <div>
-    <div class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+    <div class="flex flex-col gap-2">
       <PropsGroup label={$T("constructor.props.group.general")}>
         <CommonSnippets snippet="Identificator" {component} {onPropertyChange} />
         <CommonSnippets snippet="Access" {component} {onPropertyChange} />

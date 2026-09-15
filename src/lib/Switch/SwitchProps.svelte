@@ -8,6 +8,7 @@
   import ButtonAdd from "$lib/libIcons/ButtonAdd.svelte"
   import CommonSnippets from "$lib/CommonSnippets.svelte"
   import PropsGroup from "$lib/PropsGroup.svelte"
+  import PropsListModal from "$lib/PropsListModal.svelte"
 
   const {
     component,
@@ -85,86 +86,92 @@
 {/snippet}
 
 {#snippet SwitchOptions()}
-  <PropsGroup label={$T("constructor.props.bits.title")} wrapperClass="mt-3">
-    {#snippet headerActions()}
-      {#if component.properties.options.length < 32}
-        <UI.Button
-          wrapperClass="w-8"
-          content={{ icon: ButtonAdd }}
-          onClick={() => {
-            const newOption: IOption = {
-              id: crypto.randomUUID(),
-              name: component.properties?.options.length,
-              value: component.properties?.options.length,
-              class: "bg-blue",
-            }
-            const options = [...(component.properties?.options || []), newOption]
-            updateProperty("options", options, component, onPropertyChange)
-          }}
-        />
-      {/if}
-    {/snippet}
+  <PropsListModal label={$T("constructor.props.bits.title")} count={component.properties.options?.length ?? 0} wrapperClass="w-200 h-[70%]">
+    {#snippet main()}
+      <PropsGroup>
+        {#snippet headerActions()}
+          {#if component.properties.options.length < 32}
+            <UI.Button
+              wrapperClass="w-8"
+              content={{ icon: ButtonAdd }}
+              onClick={() => {
+                const newOption: IOption = {
+                  id: crypto.randomUUID(),
+                  name: component.properties?.options.length,
+                  value: component.properties?.options.length,
+                  class: "bg-blue",
+                }
+                const options = [...(component.properties?.options || []), newOption]
+                updateProperty("options", options, component, onPropertyChange)
+              }}
+            />
+          {/if}
+        {/snippet}
 
-    {#each component.properties.options || [] as option, index (option.id)}
-      <div class="flex items-end justify-around gap-2 rounded-lg border border-(--hairline-color) bg-(--container-color)/60 p-2">
-        <UI.Input
-          label={{ name: $T("constructor.props.optionname") }}
-          wrapperClass="!w-3/10"
-          value={option.name}
-          maxlength={4}
-          onUpdate={(value) => {
-            const options = [...(component.properties?.options || [])]
-            options[index]["name"] = value
-            updateProperty("options", options, component, onPropertyChange)
-          }}
-        />
-        <UI.Input
-          label={{ name: $T("constructor.props.optionposition") }}
-          wrapperClass="!w-3/10"
-          value={option.value}
-          type="number"
-          number={{ minNum: 0, maxNum: 31, step: 1 }}
-          onUpdate={(value) => {
-            const options = [...(component.properties?.options || [])]
-            options[index]["value"] = value
-            updateProperty("options", options, component, onPropertyChange)
-          }}
-        />
-        <UI.Select
-          wrapperClass="w-80 h-14.5"
-          label={{ name: $T("constructor.props.colors") }}
-          type="buttons"
-          options={$optionsStore.COLOR_OPTIONS.filter((option) => option.value !== "bg-max" && option.value !== "bg-gray")}
-          value={$optionsStore.COLOR_OPTIONS.find((c) => (c.value as string).includes(option.class.split(" ").find((cls: string) => cls.startsWith("bg-"))))}
-          onUpdate={(option) => {
-            const options = [...(component.properties?.options || [])]
-            options[index]["class"] = (option as UI.IOption).value
-            updateProperty("options", options, component, onPropertyChange)
-          }}
-        />
-        <UI.Switch
-          wrapperClass=" w-1/10 bg-blue"
-          label={{ name: $T("constructor.props.disabled") }}
-          value={option.disabled}
-          options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-          onChange={(value) => {
-            const options = [...(component.properties?.options || [])]
-            options[index]["disabled"] = value
-            updateProperty("options", options, component, onPropertyChange)
-          }}
-        />
-        <UI.Button
-          wrapperClass="w-8"
-          content={{ icon: ButtonDelete }}
-          onClick={() => {
-            const options = [...(component.properties?.options || [])]
-            options.splice(index, 1)
-            updateProperty("options", options, component, onPropertyChange)
-          }}
-        />
-      </div>
-    {/each}
-  </PropsGroup>
+        {#each component.properties.options || [] as option, index (option.id)}
+          <div class="flex items-end justify-around gap-2 rounded-lg border border-(--hairline-color) bg-(--container-color)/60 p-2">
+            <UI.Input
+              label={{ name: $T("constructor.props.optionname") }}
+              wrapperClass="!w-3/10"
+              value={option.name}
+              maxlength={4}
+              onUpdate={(value) => {
+                const options = [...(component.properties?.options || [])]
+                options[index]["name"] = value
+                updateProperty("options", options, component, onPropertyChange)
+              }}
+            />
+            <UI.Input
+              label={{ name: $T("constructor.props.optionposition") }}
+              wrapperClass="!w-3/10"
+              value={option.value}
+              type="number"
+              number={{ minNum: 0, maxNum: 31, step: 1 }}
+              onUpdate={(value) => {
+                const options = [...(component.properties?.options || [])]
+                options[index]["value"] = value
+                updateProperty("options", options, component, onPropertyChange)
+              }}
+            />
+            <UI.Select
+              wrapperClass="w-80 h-14.5"
+              label={{ name: $T("constructor.props.colors") }}
+              type="buttons"
+              options={$optionsStore.COLOR_OPTIONS.filter((option) => option.value !== "bg-max" && option.value !== "bg-gray")}
+              value={$optionsStore.COLOR_OPTIONS.find((c) =>
+                (c.value as string).includes(option.class.split(" ").find((cls: string) => cls.startsWith("bg-"))),
+              )}
+              onUpdate={(option) => {
+                const options = [...(component.properties?.options || [])]
+                options[index]["class"] = (option as UI.IOption).value
+                updateProperty("options", options, component, onPropertyChange)
+              }}
+            />
+            <UI.Switch
+              wrapperClass=" w-1/10 bg-blue"
+              label={{ name: $T("constructor.props.disabled") }}
+              value={option.disabled}
+              options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
+              onChange={(value) => {
+                const options = [...(component.properties?.options || [])]
+                options[index]["disabled"] = value
+                updateProperty("options", options, component, onPropertyChange)
+              }}
+            />
+            <UI.Button
+              wrapperClass="w-8"
+              content={{ icon: ButtonDelete }}
+              onClick={() => {
+                const options = [...(component.properties?.options || [])]
+                options.splice(index, 1)
+                updateProperty("options", options, component, onPropertyChange)
+              }}
+            />
+          </div>
+        {/each}
+      </PropsGroup>
+    {/snippet}
+  </PropsListModal>
 {/snippet}
 
 {#snippet SwitchHeight()}
@@ -186,7 +193,7 @@
 {/snippet}
 
 {#if forConstructor}
-  <div class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+  <div class="flex flex-col gap-2">
     <PropsGroup label={$T("constructor.props.group.general")}>
       <CommonSnippets snippet="Access" {component} {onPropertyChange} />
       <CommonSnippets snippet="Variable" {VARIABLE_OPTIONS} {component} {onPropertyChange} />
@@ -229,7 +236,7 @@
     {@render SwitchOptions()}
   {/if}
 {:else}
-  <div class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+  <div class="flex flex-col gap-2">
     <PropsGroup label={$T("constructor.props.group.general")}>
       <CommonSnippets snippet="Identificator" {component} {onPropertyChange} />
       <CommonSnippets snippet="Access" {component} {onPropertyChange} />
