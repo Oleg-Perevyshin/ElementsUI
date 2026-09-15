@@ -19,7 +19,7 @@
     componentClass = "",
     label = { name: "Информация об устройстве" },
     value = $bindable(),
-    collapsed: initialCollapsed = false,
+    collapsed = $bindable(false),
     persistKey,
     onSave = () => {},
     onRestart = () => {},
@@ -40,9 +40,18 @@
     },
   )
 
-  /* Сворачивание тела виджета по клику на значок/заголовок (как аккордеон), но в отличие от
-     Accordion переживает перезагрузку страницы через localStorage, если передан persistKey */
-  let collapsed = $state(readPersistedCollapsed(persistKey, initialCollapsed))
+  /* Сворачивание тела виджета по клику на значок/заголовок (как аккордеон). collapsed — bindable:
+     в конструкторе родитель биндит его на component.properties.collapsed, клик по шапке сразу
+     сохраняется в GUI (как isOpen у Accordion в ConstructorUI.svelte). На реальном устройстве
+     (GUIPreview) проп передаётся однонаправленно — поверх дефолта только переживает перезагрузку
+     через localStorage (persistKey). */
+  let hasMergedPersisted = false
+  $effect(() => {
+    if (hasMergedPersisted) return
+    hasMergedPersisted = true
+    const persisted = readPersistedCollapsed(persistKey, collapsed)
+    if (persisted !== collapsed) collapsed = persisted
+  })
   $effect(() => writePersistedCollapsed(persistKey, collapsed))
 
   /* Поля редактируются локально (как Argument: NoSend в реальной GUI) — отправка одним пакетом по кнопке */

@@ -57,15 +57,6 @@
   />
 {/snippet}
 
-{#snippet WidgetCollapsed()}
-  <UI.Switch
-    label={{ name: "Свёрнут по умолчанию" }}
-    value={component.properties.collapsed ? 1 : 0}
-    options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-    onChange={(value) => updateProperty("collapsed", value === 1, component, onPropertyChange)}
-  />
-{/snippet}
-
 <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
   <PropsGroup label={$T("constructor.props.group.general")}>
     {@render WidgetLabel()}
@@ -74,6 +65,5 @@
   </PropsGroup>
   <PropsGroup label={$T("constructor.props.group.behavior")}>
     {@render WidgetConfirmAP()}
-    {@render WidgetCollapsed()}
   </PropsGroup>
 </div>
