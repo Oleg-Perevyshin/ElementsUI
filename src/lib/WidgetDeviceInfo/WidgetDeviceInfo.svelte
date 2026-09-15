@@ -19,6 +19,7 @@
     componentClass = "",
     label = { name: "Информация об устройстве" },
     value = $bindable(),
+    collapsed: initialCollapsed = false,
     persistKey,
     onSave = () => {},
     onRestart = () => {},
@@ -41,7 +42,7 @@
 
   /* Сворачивание тела виджета по клику на значок/заголовок (как аккордеон), но в отличие от
      Accordion переживает перезагрузку страницы через localStorage, если передан persistKey */
-  let collapsed = $state(readPersistedCollapsed(persistKey))
+  let collapsed = $state(readPersistedCollapsed(persistKey, initialCollapsed))
   $effect(() => writePersistedCollapsed(persistKey, collapsed))
 
   /* Поля редактируются локально (как Argument: NoSend в реальной GUI) — отправка одним пакетом по кнопке */

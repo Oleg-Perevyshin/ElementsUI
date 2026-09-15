@@ -55,6 +55,15 @@
   />
 {/snippet}
 
+{#snippet WidgetCollapsed()}
+  <UI.Switch
+    label={{ name: "Свёрнут по умолчанию" }}
+    value={component.properties.collapsed ? 1 : 0}
+    options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
+    onChange={(value) => updateProperty("collapsed", value === 1, component, onPropertyChange)}
+  />
+{/snippet}
+
 <div class="flex w-full flex-col gap-3">
   <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
     {@render WidgetLabel()}
@@ -62,4 +71,5 @@
   </div>
   {@render WidgetAllowedModes()}
   {@render WidgetColor()}
+  {@render WidgetCollapsed()}
 </div>

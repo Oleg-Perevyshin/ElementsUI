@@ -4,12 +4,13 @@
    $app/environment — библиотека не должна знать про SvelteKit. */
 const STORAGE_PREFIX = "widget-collapsed:"
 
-export const readPersistedCollapsed = (persistKey?: string): boolean => {
-  if (!persistKey || typeof window === "undefined") return false
+export const readPersistedCollapsed = (persistKey: string | undefined, defaultValue = false): boolean => {
+  if (!persistKey || typeof window === "undefined") return defaultValue
   try {
-    return window.localStorage.getItem(STORAGE_PREFIX + persistKey) === "1"
+    const saved = window.localStorage.getItem(STORAGE_PREFIX + persistKey)
+    return saved === null ? defaultValue : saved === "1"
   } catch {
-    return false
+    return defaultValue
   }
 }
 

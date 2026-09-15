@@ -22,5 +22,11 @@
       value={component.properties.componentClass ?? ""}
       onUpdate={(value) => updateProperty("componentClass", value, component, onPropertyChange)}
     />
+    <UI.Switch
+      label={{ name: "Свёрнут по умолчанию" }}
+      value={component.properties.collapsed ? 1 : 0}
+      options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
+      onChange={(value) => updateProperty("collapsed", value === 1, component, onPropertyChange)}
+    />
   </div>
 </div>

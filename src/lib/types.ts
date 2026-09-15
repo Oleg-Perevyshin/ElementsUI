@@ -573,8 +573,11 @@ export interface IWidgetWiFiProps {
   value?: IWidgetWiFiConfig
   allowedModes?: number[]
   confirmOnAP?: boolean
-  /* Уникальный ключ виджета (обычно ModSN + id компонента) — если задан, свёрнутость шапки
-     запоминается в localStorage и переживает перезагрузку страницы */
+  /* Свёрнут ли виджет по умолчанию — как isOpen у Accordion, задаётся в конструкторе и сохраняется
+     в GUI, чтобы при входе на устройство все видели один и тот же задуманный вид интерфейса */
+  collapsed?: boolean
+  /* Уникальный ключ виджета (обычно ModSN + id компонента) — если задан, поверх дефолта ещё
+     запоминается личный выбор пользователя в localStorage и переживает перезагрузку страницы */
   persistKey?: string
   onScan?: () => Promise<{ id: string; name: string; value: string }[]>
   onSave?: (config: IWidgetWiFiConfig) => void
@@ -597,6 +600,7 @@ export interface IWidgetDeviceInfoProps {
   componentClass?: string
   label?: { name?: string }
   value?: IWidgetDeviceInfoConfig
+  collapsed?: boolean
   persistKey?: string
   onSave?: (info: IWidgetDeviceInfoConfig) => void
   onRestart?: () => void

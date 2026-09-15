@@ -24,6 +24,7 @@
     value = $bindable(),
     allowedModes = [1, 2, 3],
     confirmOnAP = true,
+    collapsed: initialCollapsed = false,
     persistKey,
     onScan,
     onSave = () => {},
@@ -90,7 +91,7 @@
      в шапке кликом не триггерит, только сама кнопка значок+заголовок (см. WidgetHeader.svelte).
      В отличие от Accordion (только начальное значение из GUI) — переживает перезагрузку страницы
      через localStorage, если передан persistKey. */
-  let collapsed = $state(readPersistedCollapsed(persistKey))
+  let collapsed = $state(readPersistedCollapsed(persistKey, initialCollapsed))
   $effect(() => writePersistedCollapsed(persistKey, collapsed))
 
   /* Поля редактируются локально (как Argument: NoSend в реальной GUI) — отправка одним пакетом по кнопке */
