@@ -24,7 +24,12 @@
 
   const CONFIG: Record<"top" | "bottom" | "left" | "right", Partial<Record<"center" | "start", Variant>>> = {
     top: {
-      center: { pos: "bottom-full left-1/2 mb-2", tr: "translateX(-50%)", arr: "top-full left-1/2 -translate-x-1/2 -translate-y-1/2 rotate-45", off: { y: -10 } },
+      center: {
+        pos: "bottom-full left-1/2 mb-2",
+        tr: "translateX(-50%)",
+        arr: "top-full left-1/2 -translate-x-1/2 -translate-y-1/2 rotate-45",
+        off: { y: -10 },
+      },
       start: { pos: "bottom-full left-0 mb-2", tr: "", arr: "top-full left-3 -translate-x-1/2 -translate-y-1/2 rotate-45", off: { y: -10 } },
     },
     bottom: {

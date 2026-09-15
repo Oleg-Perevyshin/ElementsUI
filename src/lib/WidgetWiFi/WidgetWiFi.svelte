@@ -111,7 +111,10 @@
   }
 </script>
 
-<div class={twMerge("relative flex w-full max-w-3xl flex-col gap-4 rounded-2xl border border-(--hairline-color) bg-(--container-color) p-4", wrapperClass)} style={accentStyle}>
+<div
+  class={twMerge("relative flex w-full max-w-3xl flex-col gap-4 rounded-2xl border border-(--hairline-color) bg-(--container-color) p-4", wrapperClass)}
+  style={accentStyle}
+>
   <!-- Заголовок и переключатель режима -->
   <WidgetHeader icon={WifiIcon} label={label?.name ?? "WiFi"} bind:collapsed>
     {#snippet right()}
@@ -152,8 +155,14 @@
 
           <UI.Input type="password" label={{ name: "Пароль" }} bind:value={cfg.StaPSK} maxlength={64} help={{ autocomplete: "off", regExp: PSK_REGEXP }} />
 
-          <UI.Select wrapperClass="w-48" type="buttons" label={{ name: "Получение IP" }} value={selectedIPMode} options={IP_MODE_OPTIONS}
-            onUpdate={(option) => (cfg.StaticIP = (option as IOption<number>).value as number)} />
+          <UI.Select
+            wrapperClass="w-48"
+            type="buttons"
+            label={{ name: "Получение IP" }}
+            value={selectedIPMode}
+            options={IP_MODE_OPTIONS}
+            onUpdate={(option) => (cfg.StaticIP = (option as IOption<number>).value as number)}
+          />
 
           {#if cfg.StaticIP === 1}
             <div class="grid grid-cols-1 gap-2 sm:grid-cols-3" transition:slide={{ duration: 150 }}>
@@ -196,10 +205,7 @@
   {#if showAPWarning}
     <!-- Подтверждение локально к виджету (не на весь экран) — предупреждение относится
        именно к этой карточке, а не к странице целиком -->
-    <div
-      class="absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-black/40 backdrop-blur-[2px]"
-      transition:fade={{ duration: 150 }}
-    >
+    <div class="absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-black/40 backdrop-blur-[2px]" transition:fade={{ duration: 150 }}>
       <div
         class="flex w-full max-w-80 flex-col gap-3 rounded-[16px] border border-(--hairline-color) bg-(--back-color) p-4 shadow-(--elevation-3)"
         transition:scale={{ duration: 150, start: 0.96 }}

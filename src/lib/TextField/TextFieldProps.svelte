@@ -6,6 +6,7 @@
   import { getContext } from "svelte"
   import { twMerge } from "tailwind-merge"
   import CommonSnippets from "$lib/CommonSnippets.svelte"
+  import PropsGroup from "$lib/PropsGroup.svelte"
 
   const {
     component,
@@ -124,37 +125,36 @@
 {/snippet}
 
 {#if forConstructor}
-  <div class="relative flex flex-row items-start justify-center">
-    <div class="flex w-1/3 flex-col px-2">
+  <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+    <PropsGroup label={$T("constructor.props.group.general")}>
       <CommonSnippets snippet="Access" {component} {onPropertyChange} />
       <CommonSnippets snippet="Variable" {VARIABLE_OPTIONS} {component} {onPropertyChange} />
-    </div>
-    <div class="flex w-1/3 flex-col px-2">
+    </PropsGroup>
+    <PropsGroup label={$T("constructor.props.group.content")}>
       {@render TextFieldName()}
       <CommonSnippets snippet="LabelAlign" initialValue={initialAlign} {component} {onPropertyChange} />
       {@render TextFieldColors()}
-    </div>
-    <div class="flex w-1/3 flex-col px-2">
+    </PropsGroup>
+    <PropsGroup label={$T("constructor.props.group.appearance")}>
       {@render TextFieldSize()}
       {@render TextFieldSettings()}
-    </div>
+    </PropsGroup>
   </div>
 {:else}
-  <div class="relative flex flex-row items-start justify-center">
-    <div class="flex w-1/3 flex-col px-2">
+  <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+    <PropsGroup label={$T("constructor.props.group.general")}>
       <CommonSnippets snippet="Identificator" {component} {onPropertyChange} />
       <CommonSnippets snippet="Access" {component} {onPropertyChange} />
       {@render TextFieldName()}
-    </div>
-    <div class="flex w-1/3 flex-col px-2">
+    </PropsGroup>
+    <PropsGroup label={$T("constructor.props.group.content")}>
       {@render TextFieldComponentClass()}
       <CommonSnippets snippet="LabelClass" {component} {onPropertyChange} />
       {@render TextFieldColors()}
-    </div>
-    <div class="flex w-1/3 flex-col px-2">
+    </PropsGroup>
+    <PropsGroup label={$T("constructor.props.group.appearance")}>
       {@render TextFieldSize()}
-
       {@render TextFieldSettings()}
-    </div>
+    </PropsGroup>
   </div>
 {/if}

@@ -236,17 +236,12 @@
   })
 </script>
 
-<div
-  id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
-  class={twMerge(`flex h-full w-full flex-col overflow-hidden`, wrapperClass)}
->
+<div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class={twMerge(`flex h-full w-full flex-col overflow-hidden`, wrapperClass)}>
   {#if label.name}
     <span class={twMerge(`w-full pb-2 text-[12px] font-semibold text-(--muted-color)`, label.class)}>{label.name}</span>
   {/if}
 
-  <div
-    class="relative flex h-full w-full flex-col overflow-hidden rounded-[14px] border border-(--hairline-color) bg-(--back-color)"
-  >
+  <div class="relative flex h-full w-full flex-col overflow-hidden rounded-[14px] border border-(--hairline-color) bg-(--back-color)">
     <!-- Table Header -->
     <div
       class="grid border-b border-(--hairline-color) bg-(--container-color) text-[11px] font-bold tracking-[0.06em] text-(--muted-color) uppercase {isScrollable
@@ -315,11 +310,13 @@
                     id="rowDiv{i}-{j}"
                     class="relative grid min-h-7 w-full min-w-0 items-center gap-x-2 px-3 py-1 text-[13px] wrap-break-word
               {column.align === 'center'
-                ? 'justify-center justify-items-center text-center'
-                : column.align === 'right'
-                  ? 'justify-end justify-items-end text-right tabular-nums'
-                  : 'justify-start justify-items-start text-left'}
-               {j !== 0 ? ' border-l ' : ''} {outline ? 'border-(--hairline-color)' : 'border-transparent'} {column.disableSelect ? 'select-none' : 'select-all'}"
+                      ? 'justify-center justify-items-center text-center'
+                      : column.align === 'right'
+                        ? 'justify-end justify-items-end text-right tabular-nums'
+                        : 'justify-start justify-items-start text-left'}
+               {j !== 0 ? ' border-l ' : ''} {outline ? 'border-(--hairline-color)' : 'border-transparent'} {column.disableSelect
+                      ? 'select-none'
+                      : 'select-all'}"
                     style=" grid-template-columns: repeat({contentArray?.length}, minmax(0, 1fr));"
                   >
                     {#each contentArray as content, index}
@@ -340,9 +337,7 @@
                           onclick={() => buttonClick(row, button)}
                         >
                           {#if button?.icon}
-                            <span
-                              class={`flex size-4 shrink-0 items-center justify-center overflow-visible [&_svg]:h-full [&_svg]:w-full`}
-                            >
+                            <span class={`flex size-4 shrink-0 items-center justify-center overflow-visible [&_svg]:h-full [&_svg]:w-full`}>
                               {#if typeof button?.icon === "string"}
                                 {@html button.icon}
                               {:else}
@@ -418,7 +413,9 @@
                       {:else if content.type === "progressBar"}
                         {@const progressBar = content.data}
                         <div class="grid h-7 w-full grid-cols-[3.5rem_1fr] items-center gap-2">
-                          <span class="text-right text-[12px] font-semibold tabular-nums">{roundToClean(Number(row[progressBar.key] ?? 0))}{progressBar?.units}</span>
+                          <span class="text-right text-[12px] font-semibold tabular-nums"
+                            >{roundToClean(Number(row[progressBar.key] ?? 0))}{progressBar?.units}</span
+                          >
                           <div class="relative my-auto h-1.5 overflow-hidden rounded-full bg-(--container-color)">
                             <div
                               class="absolute top-0 left-0 flex h-full rounded-full bg-(--bg-color,var(--accent-color))"
@@ -538,4 +535,3 @@
     />
   {/snippet}
 </Modal>
-

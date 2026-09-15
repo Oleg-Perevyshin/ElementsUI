@@ -73,7 +73,7 @@
       <div class="flex h-full flex-col items-center gap-2">
         <span class="text-[12px] font-semibold text-(--muted-color)">{getItemName(index)}</span>
         <!-- Дорожка 6px, заливка снизу вверх -->
-        <div class="{twMerge('relative w-1.5 flex-1 overflow-hidden rounded-full bg-(--container-color)', progress.class)}">
+        <div class={twMerge("relative w-1.5 flex-1 overflow-hidden rounded-full bg-(--container-color)", progress.class)}>
           <div class="absolute bottom-0 left-0 w-full bg-(--bg-color)" style="height: {progressPercent(getItemValue(index))}%;"></div>
         </div>
         <span class="text-[13px] font-semibold tabular-nums">{roundToClean(Number(numericValue(getItemValue(index))))}{number.units}</span>
@@ -87,7 +87,7 @@
           <span class="truncate text-[12px] font-semibold text-(--muted-color)">{getItemName(index)}</span>
           <span class="shrink-0 text-[12px] font-semibold tabular-nums">{roundToClean(Number(numericValue(getItemValue(index))))}{number.units}</span>
         </div>
-        <div class="{twMerge('relative h-1.5 w-full overflow-hidden rounded-full bg-(--container-color)', progress.class)}">
+        <div class={twMerge("relative h-1.5 w-full overflow-hidden rounded-full bg-(--container-color)", progress.class)}>
           <div class="absolute top-0 left-0 h-full bg-(--bg-color)" style="width: {progressPercent(getItemValue(index))}%;"></div>
         </div>
         {#if getItemInfo(index)}

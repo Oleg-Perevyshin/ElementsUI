@@ -38,7 +38,11 @@
   const DANGER_BG = ["bg-red", "bg-pink"]
 
   const role = $derived.by(() => {
-    const bg = componentClass.split(/\s+/).filter((c) => c.startsWith("bg-")).at(-1) ?? ""
+    const bg =
+      componentClass
+        .split(/\s+/)
+        .filter((c) => c.startsWith("bg-"))
+        .at(-1) ?? ""
     if (!bg || bg === "bg-transparent") return "plain"
     if (SURFACE_BG.includes(bg) || bg.endsWith("-soft")) return "secondary"
     if (DANGER_BG.includes(bg)) return "destructive"

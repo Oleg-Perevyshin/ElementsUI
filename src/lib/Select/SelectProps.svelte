@@ -7,6 +7,7 @@
   import ButtonAdd from "../libIcons/ButtonAdd.svelte"
   import { optionsStore } from "../options.js"
   import CommonSnippets from "$lib/CommonSnippets.svelte"
+  import PropsGroup from "$lib/PropsGroup.svelte"
   import { twMerge } from "tailwind-merge"
 
   const {
@@ -83,12 +84,7 @@
     value={initialContentAlign}
     options={$optionsStore.TEXT_ALIGN_OPTIONS.slice(0, -1)}
     onUpdate={(option) =>
-      updateProperty(
-        "componentClass",
-        twMerge(component.properties.componentClass, (option as UI.IOption<string>).value),
-        component,
-        onPropertyChange,
-      )}
+      updateProperty("componentClass", twMerge(component.properties.componentClass, (option as UI.IOption<string>).value), component, onPropertyChange)}
   />
 {/snippet}
 
@@ -172,11 +168,8 @@
 {/snippet}
 
 {#snippet SelectOptions()}
-  <hr class="border-gray-400" />
-
-  <div class="space-y-4" bind:this={itemsContainer}>
-    <div class="m-0 flex items-center justify-center gap-2">
-      <h4>{$T("constructor.props.options.title")}</h4>
+  <PropsGroup label={$T("constructor.props.options.title")} wrapperClass="mt-3">
+    {#snippet headerActions()}
       <UI.Button
         wrapperClass="w-8"
         content={{ icon: ButtonAdd }}
@@ -191,123 +184,127 @@
           updateProperty("options", options, component, onPropertyChange)
         }}
       />
-    </div>
+    {/snippet}
 
-    {#each component.properties.options || [] as option, index (option.id)}
-      <div id="item-{index}" class="m-0 flex items-end justify-around gap-2 border-gray-400">
-        <UI.Dragging
-          wrapperClass="w-9"
-          container={itemsContainer}
-          array={component.properties.options}
-          elementIndex={index}
-          onUpdate={(updatedArray) => {
-            updateProperty("options", updatedArray, component, onPropertyChange)
-          }}
-        />
-        <UI.Input
-          label={{ name: $T("constructor.props.optionname") }}
-          wrapperClass="w-3/10"
-          value={option.name}
-          onUpdate={(value) => {
-            const options = [...(component.properties?.options || [])]
-            options[index]["name"] = value
-            updateProperty("options", options, component, onPropertyChange)
-          }}
-        />
-        <UI.Input
-          label={{ name: $T("constructor.props.optionvalue") }}
-          wrapperClass="w-3/10"
-          value={option.value}
-          type={currentValueType.value}
-          number={component.properties.bitMode
-            ? { minNum: 0, maxNum: Math.pow(2, component.properties.range.end - component.properties.range.start + 1) - 1, step: 1 }
-            : { minNum: -1000000, maxNum: 1000000, step: 1 }}
-          onUpdate={(value) => {
-            const options = [...(component.properties?.options || [])]
-            options[index]["value"] = value
-            updateProperty("options", options, component, onPropertyChange)
-          }}
-        />
-        {#if forConstructor}
-          <UI.Select
-            wrapperClass="w-80 h-14.5"
-            label={{ name: $T("constructor.props.colors") }}
-            type="buttons"
-            options={$optionsStore.COLOR_OPTIONS}
-            value={$optionsStore.COLOR_OPTIONS.find((c) => (c.value as string).includes(option.class.split(" ").find((cls: string) => cls.startsWith("bg-"))))}
-            onUpdate={(option) => {
-              const options = [...(component.properties?.options || [])]
-              options[index]["class"] = (option as UI.IOption).value
-              updateProperty("options", options, component, onPropertyChange)
+    <div bind:this={itemsContainer} class="flex flex-col gap-2">
+      {#each component.properties.options || [] as option, index (option.id)}
+        <div id="item-{index}" class="flex items-end justify-around gap-2 rounded-lg border border-(--hairline-color) bg-(--container-color)/60 p-2">
+          <UI.Dragging
+            wrapperClass="w-9"
+            container={itemsContainer}
+            array={component.properties.options}
+            elementIndex={index}
+            onUpdate={(updatedArray) => {
+              updateProperty("options", updatedArray, component, onPropertyChange)
             }}
           />
-        {:else}
           <UI.Input
-            label={{ name: $T("constructor.props.optionclass") }}
+            label={{ name: $T("constructor.props.optionname") }}
             wrapperClass="w-3/10"
-            value={option.class}
+            value={option.name}
             onUpdate={(value) => {
               const options = [...(component.properties?.options || [])]
-              options[index]["class"] = value as string
+              options[index]["name"] = value
               updateProperty("options", options, component, onPropertyChange)
             }}
           />
-        {/if}
+          <UI.Input
+            label={{ name: $T("constructor.props.optionvalue") }}
+            wrapperClass="w-3/10"
+            value={option.value}
+            type={currentValueType.value}
+            number={component.properties.bitMode
+              ? { minNum: 0, maxNum: Math.pow(2, component.properties.range.end - component.properties.range.start + 1) - 1, step: 1 }
+              : { minNum: -1000000, maxNum: 1000000, step: 1 }}
+            onUpdate={(value) => {
+              const options = [...(component.properties?.options || [])]
+              options[index]["value"] = value
+              updateProperty("options", options, component, onPropertyChange)
+            }}
+          />
+          {#if forConstructor}
+            <UI.Select
+              wrapperClass="w-80 h-14.5"
+              label={{ name: $T("constructor.props.colors") }}
+              type="buttons"
+              options={$optionsStore.COLOR_OPTIONS}
+              value={$optionsStore.COLOR_OPTIONS.find((c) =>
+                (c.value as string).includes(option.class.split(" ").find((cls: string) => cls.startsWith("bg-"))),
+              )}
+              onUpdate={(option) => {
+                const options = [...(component.properties?.options || [])]
+                options[index]["class"] = (option as UI.IOption).value
+                updateProperty("options", options, component, onPropertyChange)
+              }}
+            />
+          {:else}
+            <UI.Input
+              label={{ name: $T("constructor.props.optionclass") }}
+              wrapperClass="w-3/10"
+              value={option.class}
+              onUpdate={(value) => {
+                const options = [...(component.properties?.options || [])]
+                options[index]["class"] = value as string
+                updateProperty("options", options, component, onPropertyChange)
+              }}
+            />
+          {/if}
 
-        <UI.Button
-          wrapperClass="w-8"
-          content={{ icon: ButtonDelete }}
-          onClick={() => {
-            const options = [...(component.properties?.options || [])]
-            options.splice(index, 1)
-            updateProperty("options", options, component, onPropertyChange)
-          }}
-        />
-      </div>
-    {/each}
-    <div id="item-{component.properties.options.length}" class="min-h-4"></div>
-  </div>
+          <UI.Button
+            wrapperClass="w-8"
+            content={{ icon: ButtonDelete }}
+            onClick={() => {
+              const options = [...(component.properties?.options || [])]
+              options.splice(index, 1)
+              updateProperty("options", options, component, onPropertyChange)
+            }}
+          />
+        </div>
+      {/each}
+      <div id="item-{component.properties.options.length}" class="min-h-4"></div>
+    </div>
+  </PropsGroup>
 {/snippet}
 
 {#if forConstructor}
-  <div class="relative mb-4 flex flex-row items-start justify-center">
-    <div class="flex w-1/3 flex-col px-2">
+  <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+    <PropsGroup label={$T("constructor.props.group.general")}>
       <CommonSnippets snippet="Access" {component} {onPropertyChange} />
       <CommonSnippets snippet="Variable" {VARIABLE_OPTIONS} {component} {onPropertyChange} />
       {@render SelectArgument()}
-    </div>
-    <div class="flex w-1/3 flex-col px-2">
+    </PropsGroup>
+    <PropsGroup label={$T("constructor.props.group.value")}>
       {@render SelectType()}
       {@render SelectValueType()}
       <CommonSnippets snippet="BitModeInfo" {component} {onPropertyChange} />
-    </div>
-    <div class="flex w-1/3 flex-col px-2">
+    </PropsGroup>
+    <PropsGroup label={$T("constructor.props.group.appearance")}>
       <CommonSnippets snippet="Label" {component} {onPropertyChange} />
       <CommonSnippets snippet="LabelAlign" initialValue={initialAlign} {component} {onPropertyChange} />
       {@render SelectContentAlign()}
       {@render SelectSettings()}
-    </div>
+    </PropsGroup>
   </div>
   {@render SelectOptions()}
 {:else}
-  <div class="relative mb-4 flex flex-row items-start justify-center">
-    <div class="flex w-1/3 flex-col px-2">
+  <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+    <PropsGroup label={$T("constructor.props.group.general")}>
       <CommonSnippets snippet="Identificator" {component} {onPropertyChange} />
       <CommonSnippets snippet="Access" {component} {onPropertyChange} />
       <CommonSnippets snippet="WrapperClass" {component} {onPropertyChange} />
-    </div>
-    <div class="flex w-1/3 flex-col px-2">
+    </PropsGroup>
+    <PropsGroup label={$T("constructor.props.group.appearance")}>
       <CommonSnippets snippet="Label" {component} {onPropertyChange} />
       <CommonSnippets snippet="LabelClass" {component} {onPropertyChange} />
       {@render SelectContentAlign()}
       <CommonSnippets snippet="Disabled" {component} {onPropertyChange} />
       <CommonSnippets snippet="BitModeInfo" {component} {onPropertyChange} />
-    </div>
-    <div class="flex w-1/3 flex-col items-center px-2">
+    </PropsGroup>
+    <PropsGroup label={$T("constructor.props.group.value")} contentClass="items-center">
       {@render SelectType()}
       {@render SelectValueType()}
       {@render SelectSettings()}
-    </div>
+    </PropsGroup>
   </div>
 
   {@render SelectOptions()}

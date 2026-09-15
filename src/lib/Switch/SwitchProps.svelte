@@ -7,6 +7,7 @@
   import ButtonDelete from "$lib/libIcons/ButtonDelete.svelte"
   import ButtonAdd from "$lib/libIcons/ButtonAdd.svelte"
   import CommonSnippets from "$lib/CommonSnippets.svelte"
+  import PropsGroup from "$lib/PropsGroup.svelte"
 
   const {
     component,
@@ -84,12 +85,8 @@
 {/snippet}
 
 {#snippet SwitchOptions()}
-  <hr class="border-gray-400" />
-
-  <!-- Настройки опций -->
-  <div class="space-y-4">
-    <div class="m-0 flex items-center justify-center gap-2">
-      <h4>{$T("constructor.props.bits.title")}</h4>
+  <PropsGroup label={$T("constructor.props.bits.title")} wrapperClass="mt-3">
+    {#snippet headerActions()}
       {#if component.properties.options.length < 32}
         <UI.Button
           wrapperClass="w-8"
@@ -106,10 +103,10 @@
           }}
         />
       {/if}
-    </div>
+    {/snippet}
 
     {#each component.properties.options || [] as option, index (option.id)}
-      <div class="m-0 flex items-end justify-around gap-2 border-gray-400">
+      <div class="flex items-end justify-around gap-2 rounded-lg border border-(--hairline-color) bg-(--container-color)/60 p-2">
         <UI.Input
           label={{ name: $T("constructor.props.optionname") }}
           wrapperClass="!w-3/10"
@@ -167,7 +164,7 @@
         />
       </div>
     {/each}
-  </div>
+  </PropsGroup>
 {/snippet}
 
 {#snippet SwitchHeight()}
@@ -189,22 +186,22 @@
 {/snippet}
 
 {#if forConstructor}
-  <div class="relative flex flex-row items-start justify-center">
-    <div class="flex w-1/3 flex-col px-2">
+  <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+    <PropsGroup label={$T("constructor.props.group.general")}>
       <CommonSnippets snippet="Access" {component} {onPropertyChange} />
       <CommonSnippets snippet="Variable" {VARIABLE_OPTIONS} {component} {onPropertyChange} />
       <CommonSnippets snippet="EventHandlerArgument" {component} {onPropertyChange} />
-    </div>
+    </PropsGroup>
 
-    <div class="flex w-1/3 flex-col px-2">
+    <PropsGroup label={$T("constructor.props.group.behavior")}>
       {@render SwitchType()}
       {#if !component.properties.bitMode}
         {@render SwitchCaptions()}
         {@render SwitchDisabled()}
       {/if}
-    </div>
+    </PropsGroup>
 
-    <div class="flex w-1/3 flex-col px-2">
+    <PropsGroup label={$T("constructor.props.group.appearance")}>
       <CommonSnippets snippet="Label" {component} {onPropertyChange} />
       <CommonSnippets snippet="LabelAlign" initialValue={initialAlign} {component} {onPropertyChange} />
       {#if !component.properties.bitMode}
@@ -226,14 +223,14 @@
       {#if component.properties.type != "checkbox"}
         {@render SwitchBitmode()}
       {/if}
-    </div>
+    </PropsGroup>
   </div>
   {#if component.properties.bitMode}
     {@render SwitchOptions()}
   {/if}
 {:else}
-  <div class="relative flex flex-row items-start justify-center">
-    <div class="flex w-1/3 flex-col px-2">
+  <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+    <PropsGroup label={$T("constructor.props.group.general")}>
       <CommonSnippets snippet="Identificator" {component} {onPropertyChange} />
       <CommonSnippets snippet="Access" {component} {onPropertyChange} />
       <CommonSnippets snippet="WrapperClass" {component} {onPropertyChange} />
@@ -254,16 +251,16 @@
           {onPropertyChange}
         />
       {/if}
-    </div>
-    <div class="flex w-1/3 flex-col px-2">
+    </PropsGroup>
+    <PropsGroup label={$T("constructor.props.group.appearance")}>
       <CommonSnippets snippet="Label" {component} {onPropertyChange} />
       <CommonSnippets snippet="LabelAlign" initialValue={initialAlign} {component} {onPropertyChange} />
       {@render SwitchType()}
       {#if !component.properties.bitMode}
         {@render SwitchCaptions()}
       {/if}
-    </div>
-    <div class="flex w-1/3 flex-col px-2">
+    </PropsGroup>
+    <PropsGroup label={$T("constructor.props.group.behavior")}>
       {@render SwitchHeight()}
       {@render SwitchValue()}
       {#if !component.properties.bitMode}
@@ -272,7 +269,7 @@
       {#if component.properties.type != "checkbox"}
         {@render SwitchBitmode()}
       {/if}
-    </div>
+    </PropsGroup>
   </div>
   {#if component.properties.bitMode}
     {@render SwitchOptions()}

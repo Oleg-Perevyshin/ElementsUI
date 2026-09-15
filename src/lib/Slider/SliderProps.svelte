@@ -5,6 +5,7 @@
   import * as UI from "$lib"
   import { optionsStore } from "../options"
   import CommonSnippets from "$lib/CommonSnippets.svelte"
+  import PropsGroup from "$lib/PropsGroup.svelte"
 
   const {
     component,
@@ -54,13 +55,13 @@
 {/snippet}
 
 {#if forConstructor}
-  <div class="relative flex flex-row items-start justify-center">
-    <div class="flex w-1/3 flex-col px-2">
+  <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+    <PropsGroup label={$T("constructor.props.group.general")}>
       <CommonSnippets snippet="Access" {component} {onPropertyChange} />
       <CommonSnippets snippet="Variable" {VARIABLE_OPTIONS} {component} {onPropertyChange} />
       <CommonSnippets snippet="EventHandlerArgument" {component} {onPropertyChange} />
-    </div>
-    <div class="flex w-1/3 flex-col px-2">
+    </PropsGroup>
+    <PropsGroup label={$T("constructor.props.group.value")}>
       {@render SliderType()}
       <CommonSnippets
         snippet="MinMaxStep"
@@ -74,28 +75,28 @@
         {component}
         {onPropertyChange}
       />
-    </div>
-    <div class="flex w-1/3 flex-col px-2">
+    </PropsGroup>
+    <PropsGroup label={$T("constructor.props.group.appearance")}>
       <CommonSnippets snippet="Label" {component} {onPropertyChange} />
       <CommonSnippets snippet="LabelAlign" initialValue={initialAlign} {component} {onPropertyChange} />
       <CommonSnippets snippet="Colors" initialValue={{ color: initialColor, uselessColors: ["bg-gray"] }} {component} {onPropertyChange} />
-    </div>
+    </PropsGroup>
   </div>
 {:else}
-  <div class="relative flex flex-row items-start justify-center">
-    <div class="flex w-1/3 flex-col px-2">
+  <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+    <PropsGroup label={$T("constructor.props.group.general")}>
       <CommonSnippets snippet="Identificator" {component} {onPropertyChange} />
       <CommonSnippets snippet="WrapperClass" {component} {onPropertyChange} />
       <CommonSnippets snippet="Colors" initialValue={{ color: initialColor, uselessColors: ["bg-gray"] }} {component} {onPropertyChange} />
       <CommonSnippets snippet="Disabled" {component} {onPropertyChange} />
-    </div>
-    <div class="flex w-1/3 flex-col px-2">
+    </PropsGroup>
+    <PropsGroup label={$T("constructor.props.group.content")}>
       <CommonSnippets snippet="Access" {component} {onPropertyChange} />
       <CommonSnippets snippet="Label" {component} {onPropertyChange} />
       <CommonSnippets snippet="LabelClass" {component} {onPropertyChange} />
       {@render SliderValue()}
-    </div>
-    <div class="flex w-1/3 flex-col px-2">
+    </PropsGroup>
+    <PropsGroup label={$T("constructor.props.group.value")}>
       {@render SliderType()}
       <CommonSnippets
         snippet="MinMaxStep"
@@ -109,6 +110,6 @@
         {component}
         {onPropertyChange}
       />
-    </div>
+    </PropsGroup>
   </div>
 {/if}

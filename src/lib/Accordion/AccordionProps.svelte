@@ -8,6 +8,7 @@
   import Button from "$lib/Button/Button.svelte"
   import CrossIcon from "$lib/libIcons/CrossIcon.svelte"
   import CommonSnippets from "$lib/CommonSnippets.svelte"
+  import PropsGroup from "$lib/PropsGroup.svelte"
 
   const {
     component,
@@ -92,11 +93,11 @@
 {/snippet}
 
 {#if forConstructor}
-  <div class="flex items-start justify-center gap-8">
-    <div class="flex w-1/3 flex-col px-2">
+  <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+    <PropsGroup label={$T("constructor.props.group.general")}>
       <CommonSnippets snippet="Access" {component} {onPropertyChange} />
-    </div>
-    <div class="flex w-1/3 flex-col px-2">
+    </PropsGroup>
+    <PropsGroup label={$T("constructor.props.group.content")}>
       <CommonSnippets snippet="Label" {component} {onPropertyChange} />
       <CommonSnippets snippet="LabelAlign" initialValue={initialAlign} {component} {onPropertyChange} />
       <CommonSnippets
@@ -110,20 +111,20 @@
         {component}
         {onPropertyChange}
       />
-    </div>
-    <div class="flex w-1/3 flex-col gap-2 items-center px-2">
+    </PropsGroup>
+    <PropsGroup label={$T("constructor.props.group.appearance")} contentClass="items-center">
       {@render AccordionBackgroundImage()}
-    </div>
+    </PropsGroup>
   </div>
 {:else}
-  <div class="flex items-start justify-center gap-8">
-    <div class="flex w-1/3 flex-col px-2">
+  <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+    <PropsGroup label={$T("constructor.props.group.general")}>
       <CommonSnippets snippet="Identificator" {component} {onPropertyChange} />
       <CommonSnippets snippet="Access" {component} {onPropertyChange} />
       <CommonSnippets snippet="WrapperClass" {component} {onPropertyChange} />
       {@render AccordionSize()}
-    </div>
-    <div class="flex w-1/3 flex-col px-2">
+    </PropsGroup>
+    <PropsGroup label={$T("constructor.props.group.content")}>
       <CommonSnippets snippet="Label" {component} {onPropertyChange} />
       <CommonSnippets snippet="LabelClass" initialValue={initialAlign} {component} {onPropertyChange} />
       <CommonSnippets
@@ -138,9 +139,9 @@
         {onPropertyChange}
       />
       {@render AccordionIsOpen()}
-    </div>
-    <div class="flex w-1/3 flex-col items-center gap-2 px-2">
+    </PropsGroup>
+    <PropsGroup label={$T("constructor.props.group.appearance")} contentClass="items-center">
       {@render AccordionBackgroundImage()}
-    </div>
+    </PropsGroup>
   </div>
 {/if}

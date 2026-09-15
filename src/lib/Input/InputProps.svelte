@@ -7,6 +7,7 @@
   import { twMerge } from "tailwind-merge"
   import Library from "$lib/libIcons/Library.svelte"
   import CommonSnippets from "$lib/CommonSnippets.svelte"
+  import PropsGroup from "$lib/PropsGroup.svelte"
 
   const {
     component,
@@ -279,7 +280,6 @@
 {#snippet InputSettings()}
   {#if component.properties.type !== "bitMode"}
     <UI.Select
-      wrapperClass="mt-5"
       options={$optionsStore.INPUT_SETTING_OPTIONS.map((o) => {
         if (component.properties.type === "password" && o.value == "help.copyButton") return { ...o, disabled: true }
         else return o
@@ -377,48 +377,48 @@
 {/snippet}
 
 {#if forConstructor}
-  <div class="relative flex flex-row items-start justify-center">
-    <div class="flex w-1/3 flex-col px-2">
+  <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+    <PropsGroup label={$T("constructor.props.group.general")}>
       {@render InputAccess()}
       {@render InputVariable()}
       {@render InputType()}
-    </div>
-    <div class="flex w-1/3 flex-col px-2">
+    </PropsGroup>
+    <PropsGroup label={$T("constructor.props.group.value")}>
       {@render InputValue()}
       {@render InputPlaceholder()}
       {@render InputInfo()}
       {@render InputSettings()}
       <CommonSnippets snippet="BitModeInfo" {component} {onPropertyChange} />
-    </div>
-    <div class="flex w-1/3 flex-col px-2">
+    </PropsGroup>
+    <PropsGroup label={$T("constructor.props.group.appearance")}>
       {@render InputLabel()}
       {@render InputLabelAlign()}
       {@render InputAutocomplete()}
       {@render InputColors()}
-    </div>
+    </PropsGroup>
   </div>
 {:else}
-  <div class="relative flex flex-row items-start justify-center">
-    <div class="flex w-1/3 flex-col px-2">
+  <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+    <PropsGroup label={$T("constructor.props.group.general")}>
       {@render InputIdentificator()}
       {@render InputWrapperClass()}
       {@render InputLabel()}
       {@render InputLabelClass()}
       {@render InputComponentClass()}
       {@render InputColors()}
-    </div>
-    <div class="flex w-1/3 flex-col px-2">
+    </PropsGroup>
+    <PropsGroup label={$T("constructor.props.group.value")}>
       {@render InputAccess()}
       {@render InputValue()}
       {@render InputType()}
       <CommonSnippets snippet="BitModeInfo" {component} {onPropertyChange} />
-    </div>
-    <div class="flex w-1/3 flex-col px-2">
+    </PropsGroup>
+    <PropsGroup label={$T("constructor.props.group.behavior")}>
       {@render InputPlaceholder()}
       {@render InputInfo()}
       {@render InputAutocomplete()}
       {@render InputSettings()}
       {@render InputDisabled()}
-    </div>
+    </PropsGroup>
   </div>
 {/if}

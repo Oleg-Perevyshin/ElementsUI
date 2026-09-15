@@ -122,10 +122,7 @@
 
   <div class="flex w-full items-center gap-3">
     <!-- Дорожка -->
-    <div
-      id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
-      class="relative flex h-8 flex-1 items-center {disabled ? 'cursor-not-allowed opacity-45' : ''}"
-    >
+    <div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class="relative flex h-8 flex-1 items-center {disabled ? 'cursor-not-allowed opacity-45' : ''}">
       <!-- Фон дорожки 6px — --container-color здесь давал слишком слабый контраст
            с фоном страницы (#f0f2f5 на белом), дорожка визуально пропадала;
            --border-color заметно контрастнее и совпадает с рамкой счётчика ниже. -->
@@ -201,9 +198,7 @@
     <!-- Значения со счётчиком -->
     {#if isRange}
       {#each ["lower", "upper"] as t (t)}
-        <div
-          class="flex h-7 shrink-0 items-center gap-1 rounded-lg border border-(--border-color) bg-(--field-color) px-1 {disabled ? 'opacity-45' : ''}"
-        >
+        <div class="flex h-7 shrink-0 items-center gap-1 rounded-lg border border-(--border-color) bg-(--field-color) px-1 {disabled ? 'opacity-45' : ''}">
           <button
             class="flex size-5 items-center justify-center rounded text-(--muted-color) transition-colors duration-150 hover:bg-(--container-color) disabled:cursor-not-allowed disabled:opacity-40 {disabled
               ? 'cursor-not-allowed'

@@ -7,6 +7,7 @@
   import { twMerge } from "tailwind-merge"
   import { ICONS } from "$lib/icons"
   import CommonSnippets from "$lib/CommonSnippets.svelte"
+  import PropsGroup from "$lib/PropsGroup.svelte"
   import InfoIcon from "$lib/libIcons/InfoIcon.svelte"
 
   const {
@@ -165,17 +166,16 @@
 {/snippet}
 
 {#if forConstructor}
-  <div class="relative flex flex-row items-start justify-center">
-    <!-- Сообщение для отправки в ws по нажатию кнопки -->
-    <div class="flex w-1/3 flex-col px-2">
+  <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+    <PropsGroup label={$T("constructor.props.group.general")}>
       <CommonSnippets snippet="Access" {component} {onPropertyChange} />
       {@render ButtonHeaderArgument()}
-    </div>
-    <div class="flex w-1/3 flex-col px-2">
+    </PropsGroup>
+    <PropsGroup label={$T("constructor.props.group.value")}>
       {@render ButtonVariables()}
       {@render ButtonColors()}
-    </div>
-    <div class="flex w-1/3 flex-col px-2">
+    </PropsGroup>
+    <PropsGroup label={$T("constructor.props.group.appearance")}>
       {@render ButtonName()}
       <CommonSnippets
         snippet="IconsLib"
@@ -189,22 +189,22 @@
         {onPropertyChange}
       />
       {@render ButtonHeight()}
-    </div>
+    </PropsGroup>
   </div>
 {:else}
-  <div class="relative flex flex-row items-start justify-center">
-    <div class="flex w-1/3 flex-col px-2">
+  <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+    <PropsGroup label={$T("constructor.props.group.general")}>
       <CommonSnippets snippet="Identificator" {component} {onPropertyChange} />
       <CommonSnippets snippet="Access" {component} {onPropertyChange} />
       <CommonSnippets snippet="WrapperClass" {component} {onPropertyChange} />
       <CommonSnippets snippet="Disabled" {component} {onPropertyChange} />
-    </div>
-    <div class="flex w-1/3 flex-col px-2">
+    </PropsGroup>
+    <PropsGroup label={$T("constructor.props.group.content")}>
       {@render ButtonName()}
       {@render ButtonInfo()}
       {@render ButtonInfoSide()}
-    </div>
-    <div class="flex w-1/3 flex-col px-2">
+    </PropsGroup>
+    <PropsGroup label={$T("constructor.props.group.appearance")}>
       {@render ButtonComponentClass()}
       {@render ButtonColors()}
       <CommonSnippets
@@ -218,6 +218,6 @@
         {component}
         {onPropertyChange}
       />
-    </div>
+    </PropsGroup>
   </div>
 {/if}

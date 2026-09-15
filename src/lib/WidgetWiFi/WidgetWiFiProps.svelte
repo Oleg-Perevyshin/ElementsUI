@@ -2,9 +2,11 @@
      Виджет — самостоятельный тип компонента (не набор примитивов с привязкой полей),
      поэтому и панель проще: не "к какой переменной привязать", а "как виджет себя ведёт". -->
 <script lang="ts">
+  import { T } from "$lib/locales/i18n"
   import * as UI from "$lib"
   import { updateProperty, type UIComponent, type IWidgetWiFiProps, type IOption } from "../types"
   import WidgetAccentPicker from "../WidgetAccentPicker.svelte"
+  import PropsGroup from "$lib/PropsGroup.svelte"
 
   const { component, onPropertyChange } = $props<{
     component: UIComponent & { properties: Partial<IWidgetWiFiProps> }
@@ -64,12 +66,14 @@
   />
 {/snippet}
 
-<div class="flex w-full flex-col gap-3">
-  <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+<div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+  <PropsGroup label={$T("constructor.props.group.general")}>
     {@render WidgetLabel()}
+    {@render WidgetAllowedModes()}
+    {@render WidgetColor()}
+  </PropsGroup>
+  <PropsGroup label={$T("constructor.props.group.behavior")}>
     {@render WidgetConfirmAP()}
-  </div>
-  {@render WidgetAllowedModes()}
-  {@render WidgetColor()}
-  {@render WidgetCollapsed()}
+    {@render WidgetCollapsed()}
+  </PropsGroup>
 </div>

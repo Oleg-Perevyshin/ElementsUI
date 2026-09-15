@@ -6,6 +6,7 @@
   import { ICONS } from "$lib/icons"
   import { optionsStore } from "$lib/options"
   import CommonSnippets from "$lib/CommonSnippets.svelte"
+  import PropsGroup from "$lib/PropsGroup.svelte"
 
   const {
     component,
@@ -34,7 +35,7 @@
 </script>
 
 {#snippet JoystickAxesMinMax()}
-  <div class="mt-2 flex w-full justify-around gap-2">
+  <PropsGroup label={$T("constructor.props.group.value")} wrapperClass="mt-3" contentClass="flex-row flex-wrap justify-around gap-2">
     {#each component.properties.axes as axe, index}
       {@const axesOptions = [
         { name: $T("constructor.props.joystick.pitch.axe"), info: "", regExp: /^[\p{L}0-9\-_"':{}]+$/u },
@@ -76,22 +77,22 @@
         />
       </div>
     {/each}
-  </div>
+  </PropsGroup>
 {/snippet}
 
 {#if forConstructor}
   <div>
-    <div class="relative flex flex-row items-start justify-center">
-      <div class="flex w-1/3 flex-col px-2">
+    <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+      <PropsGroup label={$T("constructor.props.group.general")}>
         <CommonSnippets snippet="Access" {component} {onPropertyChange} />
         <CommonSnippets snippet="Variable" {VARIABLE_OPTIONS} {component} {onPropertyChange} />
         <CommonSnippets snippet="EventHandlerArgument" {component} {onPropertyChange} />
-      </div>
-      <div class="flex w-1/3 flex-col px-2">
+      </PropsGroup>
+      <PropsGroup label={$T("constructor.props.group.content")}>
         <CommonSnippets snippet="Label" {component} {onPropertyChange} />
         <CommonSnippets snippet="LabelAlign" initialValue={initialAlign} {component} {onPropertyChange} />
-      </div>
-      <div class="flex w-1/3 flex-col px-2">
+      </PropsGroup>
+      <PropsGroup label={$T("constructor.props.group.appearance")}>
         <CommonSnippets
           snippet="IconsLib"
           initialValue={{
@@ -104,23 +105,23 @@
           {onPropertyChange}
         />
         <CommonSnippets snippet="Colors" initialValue={{ color: initialColor }} {component} {onPropertyChange} />
-      </div>
+      </PropsGroup>
     </div>
     {@render JoystickAxesMinMax()}
   </div>
 {:else}
   <div>
-    <div class="relative mb-2 flex flex-row items-start justify-center">
-      <div class="flex w-1/3 flex-col px-2">
+    <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+      <PropsGroup label={$T("constructor.props.group.general")}>
         <CommonSnippets snippet="Identificator" {component} {onPropertyChange} />
         <CommonSnippets snippet="Access" {component} {onPropertyChange} />
-      </div>
-      <div class="flex w-1/3 flex-col px-2">
+      </PropsGroup>
+      <PropsGroup label={$T("constructor.props.group.content")}>
         <CommonSnippets snippet="Label" {component} {onPropertyChange} />
         <CommonSnippets snippet="LabelClass" {component} {onPropertyChange} />
         <CommonSnippets snippet="Readonly" {component} {onPropertyChange} />
-      </div>
-      <div class="flex w-1/3 flex-col px-2">
+      </PropsGroup>
+      <PropsGroup label={$T("constructor.props.group.appearance")}>
         <CommonSnippets
           snippet="IconsLib"
           initialValue={{
@@ -133,7 +134,7 @@
           {onPropertyChange}
         />
         <CommonSnippets snippet="Colors" initialValue={{ color: initialColor }} {component} {onPropertyChange} />
-      </div>
+      </PropsGroup>
     </div>
     {@render JoystickAxesMinMax()}
   </div>

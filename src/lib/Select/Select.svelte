@@ -225,11 +225,11 @@
                ${
                  hasOwnColor
                    ? selected
-                     ? "ring-2 ring-inset ring-(--font-color)"
-                     : ""
+                     ? 'ring-2 ring-inset ring-(--font-color)'
+                     : ''
                    : selected
-                     ? "text-(--on-accent)"
-                     : "text-(--font-color) hover:bg-(--container-color)"
+                     ? 'text-(--on-accent)'
+                     : 'text-(--font-color) hover:bg-(--container-color)'
                }
                ${option.disabled || disabled ? 'cursor-not-allowed text-(--faint-color)' : 'cursor-pointer'}`,
               option.class,

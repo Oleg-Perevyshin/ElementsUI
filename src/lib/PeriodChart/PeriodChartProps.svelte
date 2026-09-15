@@ -7,6 +7,7 @@
   import ButtonAdd from "$lib/libIcons/ButtonAdd.svelte"
   import ButtonDelete from "$lib/libIcons/ButtonDelete.svelte"
   import CommonSnippets from "$lib/CommonSnippets.svelte"
+  import PropsGroup from "$lib/PropsGroup.svelte"
 
   const {
     component,
@@ -61,11 +62,8 @@
 {/snippet}
 
 {#snippet PeriodChartLevels()}
-  <hr class="border-gray-400" />
-
-  <div class="space-y-4" bind:this={itemsContainer}>
-    <div class="m-0 flex items-center justify-center gap-2">
-      <h4>{$T("constructor.props.periodchart.title")}</h4>
+  <PropsGroup label={$T("constructor.props.periodchart.title")} wrapperClass="mt-3">
+    {#snippet headerActions()}
       <UI.Button
         wrapperClass="w-8"
         content={{ icon: ButtonAdd }}
@@ -75,101 +73,103 @@
           updateLevels(levels)
         }}
       />
-    </div>
+    {/snippet}
 
-    {#each component.properties.levels || [] as level, index}
-      <div id="item-{index}" class="m-0 flex items-end justify-around gap-2 border-gray-400">
-        <UI.Dragging
-          wrapperClass="w-9"
-          container={itemsContainer}
-          array={component.properties.levels}
-          elementIndex={index}
-          onUpdate={(updatedArray) => updateLevels(updatedArray)}
-        />
-        <UI.Input
-          label={{ name: $T("constructor.props.optionname") }}
-          wrapperClass="w-1/5"
-          value={level.name}
-          onUpdate={(value) => {
-            const levels = [...(component.properties?.levels || [])]
-            levels[index] = { ...levels[index], name: value as string }
-            updateLevels(levels)
-          }}
-        />
-        <UI.Select
-          label={{ name: $T("constructor.props.variable") }}
-          wrapperClass="w-1/5"
-          type="input"
-          options={VARIABLE_OPTIONS}
-          value={VARIABLE_OPTIONS.find((opt) => opt.value === level.variable)}
-          onUpdate={(value) => {
-            const levels = [...(component.properties?.levels || [])]
-            levels[index] = { ...levels[index], variable: (value as IOption).value as string }
-            updateLevels(levels)
-          }}
-        />
-        <UI.Input
-          label={{ name: $T("constructor.props.periodchart.data") }}
-          wrapperClass="w-1/5"
-          value={formatNumbers(level.data)}
-          onUpdate={(value) => {
-            const levels = [...(component.properties?.levels || [])]
-            levels[index] = { ...levels[index], data: parseNumbers(value as string) }
-            updateLevels(levels)
-          }}
-        />
-        <UI.Input
-          label={{ name: $T("constructor.props.periodchart.labels") }}
-          wrapperClass="w-1/5"
-          value={formatStrings(level.labels)}
-          onUpdate={(value) => {
-            const levels = [...(component.properties?.levels || [])]
-            levels[index] = { ...levels[index], labels: parseStrings(value as string) }
-            updateLevels(levels)
-          }}
-        />
-
-        {#if (component.properties.levels?.length ?? 0) > 1}
-          <UI.Button
-            wrapperClass="w-8"
-            content={{ icon: ButtonDelete }}
-            onClick={() => {
+    <div bind:this={itemsContainer} class="flex flex-col gap-2">
+      {#each component.properties.levels || [] as level, index}
+        <div id="item-{index}" class="flex items-end justify-around gap-2 rounded-lg border border-(--hairline-color) bg-(--container-color)/60 p-2">
+          <UI.Dragging
+            wrapperClass="w-9"
+            container={itemsContainer}
+            array={component.properties.levels}
+            elementIndex={index}
+            onUpdate={(updatedArray) => updateLevels(updatedArray)}
+          />
+          <UI.Input
+            label={{ name: $T("constructor.props.optionname") }}
+            wrapperClass="w-1/5"
+            value={level.name}
+            onUpdate={(value) => {
               const levels = [...(component.properties?.levels || [])]
-              levels.splice(index, 1)
+              levels[index] = { ...levels[index], name: value as string }
               updateLevels(levels)
             }}
           />
-        {/if}
-      </div>
-    {/each}
-    <div id="item-{component.properties.levels?.length ?? 0}" class="min-h-4"></div>
-  </div>
+          <UI.Select
+            label={{ name: $T("constructor.props.variable") }}
+            wrapperClass="w-1/5"
+            type="input"
+            options={VARIABLE_OPTIONS}
+            value={VARIABLE_OPTIONS.find((opt) => opt.value === level.variable)}
+            onUpdate={(value) => {
+              const levels = [...(component.properties?.levels || [])]
+              levels[index] = { ...levels[index], variable: (value as IOption).value as string }
+              updateLevels(levels)
+            }}
+          />
+          <UI.Input
+            label={{ name: $T("constructor.props.periodchart.data") }}
+            wrapperClass="w-1/5"
+            value={formatNumbers(level.data)}
+            onUpdate={(value) => {
+              const levels = [...(component.properties?.levels || [])]
+              levels[index] = { ...levels[index], data: parseNumbers(value as string) }
+              updateLevels(levels)
+            }}
+          />
+          <UI.Input
+            label={{ name: $T("constructor.props.periodchart.labels") }}
+            wrapperClass="w-1/5"
+            value={formatStrings(level.labels)}
+            onUpdate={(value) => {
+              const levels = [...(component.properties?.levels || [])]
+              levels[index] = { ...levels[index], labels: parseStrings(value as string) }
+              updateLevels(levels)
+            }}
+          />
+
+          {#if (component.properties.levels?.length ?? 0) > 1}
+            <UI.Button
+              wrapperClass="w-8"
+              content={{ icon: ButtonDelete }}
+              onClick={() => {
+                const levels = [...(component.properties?.levels || [])]
+                levels.splice(index, 1)
+                updateLevels(levels)
+              }}
+            />
+          {/if}
+        </div>
+      {/each}
+      <div id="item-{component.properties.levels?.length ?? 0}" class="min-h-4"></div>
+    </div>
+  </PropsGroup>
 {/snippet}
 
 {#if forConstructor}
-  <div class="relative mb-4 flex flex-row items-start justify-center">
-    <div class="flex w-1/2 flex-col px-2">
+  <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+    <PropsGroup label={$T("constructor.props.group.general")}>
       <CommonSnippets snippet="Access" {component} {onPropertyChange} />
       <CommonSnippets snippet="Colors" initialValue={{ color: initialColor, uselessColors: ["bg-max"] }} {component} {onPropertyChange} />
       <CommonSnippets snippet="Label" {component} {onPropertyChange} />
-    </div>
-    <div class="flex w-1/2 flex-col px-2">
+    </PropsGroup>
+    <PropsGroup label={$T("constructor.props.group.value")}>
       {@render PeriodChartUnit()}
-    </div>
+    </PropsGroup>
   </div>
   {@render PeriodChartLevels()}
 {:else}
-  <div class="relative mb-4 flex flex-row items-start justify-center">
-    <div class="flex w-1/2 flex-col px-2">
+  <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+    <PropsGroup label={$T("constructor.props.group.general")}>
       <CommonSnippets snippet="Identificator" {component} {onPropertyChange} />
       <CommonSnippets snippet="Access" {component} {onPropertyChange} />
       <CommonSnippets snippet="Label" {component} {onPropertyChange} />
-    </div>
-    <div class="flex w-1/2 flex-col px-2">
+    </PropsGroup>
+    <PropsGroup label={$T("constructor.props.group.value")}>
       <CommonSnippets snippet="WrapperClass" {component} {onPropertyChange} />
       <CommonSnippets snippet="Colors" initialValue={{ color: initialColor, uselessColors: ["bg-max"] }} {component} {onPropertyChange} />
       {@render PeriodChartUnit()}
-    </div>
+    </PropsGroup>
   </div>
   {@render PeriodChartLevels()}
 {/if}

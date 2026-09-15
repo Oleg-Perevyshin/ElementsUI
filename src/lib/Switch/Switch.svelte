@@ -99,9 +99,7 @@
                 class="relative flex items-center rounded-full transition-colors duration-200
                   {checkedOptions[index] ? 'bg-(--bg-color,var(--accent-color))' : 'bg-(--border-color)'}
                   {option.disabled ? 'cursor-not-allowed opacity-45' : 'cursor-pointer'}"
-                style="{type === 'horizontal' ? 'width' : 'height'}: {`calc(${height} * 1.7)`}; {type === 'horizontal'
-                  ? 'height'
-                  : 'width'}: {height};"
+                style="{type === 'horizontal' ? 'width' : 'height'}: {`calc(${height} * 1.7)`}; {type === 'horizontal' ? 'height' : 'width'}: {height};"
               >
                 <span
                   class="absolute rounded-full bg-white shadow-[0_1px_3px_rgb(16_24_40/0.28)] transition-transform duration-200
