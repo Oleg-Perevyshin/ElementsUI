@@ -12,12 +12,14 @@
   import RestartIcon from "./RestartIcon.svelte"
   import WidgetHeader from "../WidgetHeader.svelte"
   import { widgetAccentStyle } from "../widgetAccent"
+  import { readPersistedCollapsed, writePersistedCollapsed } from "../widgetCollapse"
 
   let {
     wrapperClass = "",
     componentClass = "",
     label = { name: "Информация об устройстве" },
     value = $bindable(),
+    persistKey,
     onSave = () => {},
     onRestart = () => {},
   }: IWidgetDeviceInfoProps = $props()
@@ -37,8 +39,10 @@
     },
   )
 
-  /* Сворачивание тела виджета по клику на значок/заголовок (как аккордеон) */
-  let collapsed = $state(false)
+  /* Сворачивание тела виджета по клику на значок/заголовок (как аккордеон), но в отличие от
+     Accordion переживает перезагрузку страницы через localStorage, если передан persistKey */
+  let collapsed = $state(readPersistedCollapsed(persistKey))
+  $effect(() => writePersistedCollapsed(persistKey, collapsed))
 
   /* Поля редактируются локально (как Argument: NoSend в реальной GUI) — отправка одним пакетом по кнопке */
   let savedSnapshot = $state(JSON.stringify(info))

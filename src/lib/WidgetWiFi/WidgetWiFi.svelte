@@ -15,6 +15,7 @@
   import WarningIcon from "./WarningIcon.svelte"
   import WidgetHeader from "../WidgetHeader.svelte"
   import { widgetAccentStyle } from "../widgetAccent"
+  import { readPersistedCollapsed, writePersistedCollapsed } from "../widgetCollapse"
 
   let {
     wrapperClass = "",
@@ -23,6 +24,7 @@
     value = $bindable(),
     allowedModes = [1, 2, 3],
     confirmOnAP = true,
+    persistKey,
     onScan,
     onSave = () => {},
   }: IWidgetWiFiProps = $props()
@@ -85,8 +87,11 @@
   }
 
   /* Сворачивание тела виджета по клику на значок/заголовок (как аккордеон) — переключатель режима
-     в шапке кликом не триггерит, только сама кнопка значок+заголовок (см. WidgetHeader.svelte) */
-  let collapsed = $state(false)
+     в шапке кликом не триггерит, только сама кнопка значок+заголовок (см. WidgetHeader.svelte).
+     В отличие от Accordion (только начальное значение из GUI) — переживает перезагрузку страницы
+     через localStorage, если передан persistKey. */
+  let collapsed = $state(readPersistedCollapsed(persistKey))
+  $effect(() => writePersistedCollapsed(persistKey, collapsed))
 
   /* Поля редактируются локально (как Argument: NoSend в реальной GUI) — отправка одним пакетом по кнопке */
   let savedSnapshot = $state(JSON.stringify(cfg))

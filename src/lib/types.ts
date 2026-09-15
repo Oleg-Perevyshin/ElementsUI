@@ -573,6 +573,9 @@ export interface IWidgetWiFiProps {
   value?: IWidgetWiFiConfig
   allowedModes?: number[]
   confirmOnAP?: boolean
+  /* Уникальный ключ виджета (обычно ModSN + id компонента) — если задан, свёрнутость шапки
+     запоминается в localStorage и переживает перезагрузку страницы */
+  persistKey?: string
   onScan?: () => Promise<{ id: string; name: string; value: string }[]>
   onSave?: (config: IWidgetWiFiConfig) => void
 }
@@ -594,6 +597,7 @@ export interface IWidgetDeviceInfoProps {
   componentClass?: string
   label?: { name?: string }
   value?: IWidgetDeviceInfoConfig
+  persistKey?: string
   onSave?: (info: IWidgetDeviceInfoConfig) => void
   onRestart?: () => void
 }
