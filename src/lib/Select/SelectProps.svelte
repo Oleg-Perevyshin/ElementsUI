@@ -191,7 +191,7 @@
 
         <div bind:this={itemsContainer} class="flex flex-col gap-2">
           {#each component.properties.options || [] as option, index (option.id)}
-            <div id="item-{index}" class="flex items-end justify-around gap-2 rounded-lg border border-(--hairline-color) bg-(--container-color)/60 p-2">
+            <div id="item-{index}" class="flex items-end justify-around gap-1.5 rounded-lg border border-(--hairline-color) bg-(--container-color)/60 p-1.5">
               <UI.Dragging
                 wrapperClass="w-9"
                 container={itemsContainer}

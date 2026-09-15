@@ -74,7 +74,7 @@
 
         <div bind:this={itemsContainer} class="flex flex-col gap-2">
           {#each component.properties.items || [] as progress, index}
-            <div id="item-{index}" class="flex items-end gap-1 rounded-lg border border-(--hairline-color) bg-(--container-color)/60 p-2">
+            <div id="item-{index}" class="flex items-end gap-1 rounded-lg border border-(--hairline-color) bg-(--container-color)/60 p-1.5">
               <UI.Dragging
                 wrapperClass="w-9"
                 container={itemsContainer}

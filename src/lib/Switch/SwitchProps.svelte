@@ -109,7 +109,7 @@
         {/snippet}
 
         {#each component.properties.options || [] as option, index (option.id)}
-          <div class="flex items-end justify-around gap-2 rounded-lg border border-(--hairline-color) bg-(--container-color)/60 p-2">
+          <div class="flex items-end justify-around gap-1.5 rounded-lg border border-(--hairline-color) bg-(--container-color)/60 p-1.5">
             <UI.Input
               label={{ name: $T("constructor.props.optionname") }}
               wrapperClass="!w-3/10"

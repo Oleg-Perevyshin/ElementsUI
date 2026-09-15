@@ -157,7 +157,7 @@
           {#each component.properties.header as column, columnIndex (columnIndex)}
             <div
               id="column-{columnIndex}"
-              class="relative flex flex-col rounded-[10px] border border-(--hairline-color) border-l-2 bg-(--container-color)/40 p-2 {columnAccentColors[
+              class="relative flex flex-col rounded-[10px] border border-(--hairline-color) border-l-2 bg-(--container-color)/40 p-1.5 {columnAccentColors[
                 columnIndex % columnAccentColors.length
               ]}"
             >
@@ -173,7 +173,7 @@
                   }
                 }}
               />
-              <div class="py-2 pl-9 grid grid-cols-[1fr_minmax(5rem,10rem)_minmax(10rem,21rem)_2rem_2rem] items-end gap-2">
+              <div class="py-1.5 pl-9 grid grid-cols-[1fr_minmax(5rem,10rem)_minmax(10rem,21rem)_2rem_2rem] items-end gap-1.5">
                 <UI.Input
                   label={{ name: $T("constructor.props.table.columns.label") }}
                   value={column.label?.name}
@@ -236,7 +236,7 @@
               <div class="flex flex-col gap-2" bind:this={settingsContainer[columnIndex]}>
                 {#if typeof column.content !== "function"}
                   {#each column.content as content, index}
-                    <div id={`item-${index}-${columnIndex}`} class="relative rounded-lg border border-(--hairline-color) bg-(--back-color)/60 p-2">
+                    <div id={`item-${index}-${columnIndex}`} class="relative rounded-lg border border-(--hairline-color) bg-(--back-color)/60 p-1.5">
                       {#if content.type == "text"}
                         {@const text = content.data}
                         <div class="flex gap-2 mx-auto items-end" style="width: {forConstructor ? '65%' : '90%'}; ">
