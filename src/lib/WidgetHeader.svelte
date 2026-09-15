@@ -31,7 +31,7 @@
     <span class="flex size-8 shrink-0 items-center justify-center rounded-xl bg-(--accent-soft) text-(--accent-color)">
       <Icon />
     </span>
-    <h3 class="min-w-0 truncate">{label}</h3>
+    <span class="min-w-0 truncate text-[14px] font-semibold">{label}</span>
     <span
       class="flex size-4 shrink-0 items-center justify-center text-(--faint-color) transition-transform duration-150 [&_svg]:h-full [&_svg]:w-full"
       style="transform: rotate({collapsed ? 0 : 90}deg)"
