@@ -10,6 +10,7 @@
   import type { IWidgetDeviceInfoConfig, IWidgetDeviceInfoProps } from "../types"
   import CpuIcon from "./CpuIcon.svelte"
   import RestartIcon from "./RestartIcon.svelte"
+  import WidgetHeader from "../WidgetHeader.svelte"
   import { widgetAccentStyle } from "../widgetAccent"
 
   let {
@@ -36,6 +37,9 @@
     },
   )
 
+  /* Сворачивание тела виджета по клику на значок/заголовок (как аккордеон) */
+  let collapsed = $state(false)
+
   /* Поля редактируются локально (как Argument: NoSend в реальной GUI) — отправка одним пакетом по кнопке */
   let savedSnapshot = $state(JSON.stringify(info))
   let isDirty = $derived(JSON.stringify(info) !== savedSnapshot)
@@ -50,43 +54,43 @@
   style={accentStyle}
 >
   <!-- Заголовок -->
-  <div class="flex flex-wrap items-center justify-between gap-3">
-    <div class="flex items-center gap-2">
-      <span class="flex size-8 shrink-0 items-center justify-center rounded-xl bg-(--accent-soft) text-(--accent-color)">
-        <CpuIcon />
-      </span>
-      <h3>{label?.name ?? "Информация об устройстве"}</h3>
-    </div>
-    <UI.Button wrapperClass="w-auto" componentClass="bg-transparent px-3" content={{ icon: RestartIcon, name: "Перезагрузить" }} onClick={onRestart} />
-  </div>
+  <WidgetHeader icon={CpuIcon} label={label?.name ?? "Информация об устройстве"} bind:collapsed>
+    {#snippet right()}
+      <UI.Button wrapperClass="w-auto" componentClass="bg-transparent px-3" content={{ icon: RestartIcon, name: "Перезагрузить" }} onClick={onRestart} />
+    {/snippet}
+  </WidgetHeader>
 
-  <!-- Только чтение -->
-  <div class="flex flex-col gap-2 rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-3">
-    <!-- Серийник бывает длинным (напр. 00.00.000-00_0000AC670000B22B00007428:DBC5) — своя строка, чтобы не резался -->
-    <UI.Input label={{ name: "Серийный номер" }} value={info.DevSN} readonly help={{ copyButton: true }} />
-    <div class="grid grid-cols-1 gap-2 sm:grid-cols-3">
-      <UI.Input label={{ name: "ID устройства" }} value={info.DevID} readonly />
-      <UI.Input label={{ name: "Версия ПО" }} value={info.DevFW} readonly />
-      <UI.Input label={{ name: "Запусков" }} value={info.RunCnt} readonly />
-    </div>
-  </div>
+  {#if !collapsed}
+    <div class="flex flex-col gap-4" transition:slide={{ duration: 150 }}>
+      <!-- Только чтение -->
+      <div class="flex flex-col gap-2 rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-3">
+        <!-- Серийник бывает длинным (напр. 00.00.000-00_0000AC670000B22B00007428:DBC5) — своя строка, чтобы не резался -->
+        <UI.Input label={{ name: "Серийный номер" }} value={info.DevSN} readonly help={{ copyButton: true }} />
+        <div class="grid grid-cols-1 gap-2 sm:grid-cols-3">
+          <UI.Input label={{ name: "ID устройства" }} value={info.DevID} readonly />
+          <UI.Input label={{ name: "Версия ПО" }} value={info.DevFW} readonly />
+          <UI.Input label={{ name: "Запусков" }} value={info.RunCnt} readonly />
+        </div>
+      </div>
 
-  <!-- Редактируемые настройки -->
-  <div class="flex flex-col gap-3 rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-3">
-    <span class="text-[12px] font-semibold text-(--muted-color)">Настройки</span>
-    <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
-      <UI.Input label={{ name: "Имя устройства" }} bind:value={info.DevName} maxlength={26} />
-      <UI.Input label={{ name: "Имя хоста" }} bind:value={info.HostName} maxlength={32} />
-      <UI.Input label={{ name: "Пользователь Web" }} bind:value={info.WebUser} maxlength={16} />
-      <UI.Input type="password" label={{ name: "Пароль Web" }} bind:value={info.WebPsw} maxlength={16} help={{ autocomplete: "off" }} />
-    </div>
-  </div>
+      <!-- Редактируемые настройки -->
+      <div class="flex flex-col gap-3 rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-3">
+        <span class="text-[12px] font-semibold text-(--muted-color)">Настройки</span>
+        <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
+          <UI.Input label={{ name: "Имя устройства" }} bind:value={info.DevName} maxlength={26} />
+          <UI.Input label={{ name: "Имя хоста" }} bind:value={info.HostName} maxlength={32} />
+          <UI.Input label={{ name: "Пользователь Web" }} bind:value={info.WebUser} maxlength={16} />
+          <UI.Input type="password" label={{ name: "Пароль Web" }} bind:value={info.WebPsw} maxlength={16} help={{ autocomplete: "off" }} />
+        </div>
+      </div>
 
-  <!-- Сохранение -->
-  <div class="flex flex-col items-center gap-2">
-    {#if isDirty}
-      <span class="text-[12px] text-(--muted-color)" transition:slide={{ duration: 100 }}>Есть несохранённые изменения</span>
-    {/if}
-    <UI.Button wrapperClass="w-40" componentClass="bg-green" content={{ name: "Сохранить" }} disabled={!isDirty} onClick={save} />
-  </div>
+      <!-- Сохранение -->
+      <div class="flex flex-col items-center gap-2">
+        {#if isDirty}
+          <span class="text-[12px] text-(--muted-color)" transition:slide={{ duration: 100 }}>Есть несохранённые изменения</span>
+        {/if}
+        <UI.Button wrapperClass="w-40" componentClass="bg-green" content={{ name: "Сохранить" }} disabled={!isDirty} onClick={save} />
+      </div>
+    </div>
+  {/if}
 </div>

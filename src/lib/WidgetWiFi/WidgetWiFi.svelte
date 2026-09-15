@@ -13,6 +13,7 @@
   import SearchIcon from "./SearchIcon.svelte"
   import LoaderIcon from "./LoaderIcon.svelte"
   import WarningIcon from "./WarningIcon.svelte"
+  import WidgetHeader from "../WidgetHeader.svelte"
   import { widgetAccentStyle } from "../widgetAccent"
 
   let {
@@ -83,6 +84,10 @@
     scanning = false
   }
 
+  /* Сворачивание тела виджета по клику на значок/заголовок (как аккордеон) — переключатель режима
+     в шапке кликом не триггерит, только сама кнопка значок+заголовок (см. WidgetHeader.svelte) */
+  let collapsed = $state(false)
+
   /* Поля редактируются локально (как Argument: NoSend в реальной GUI) — отправка одним пакетом по кнопке */
   let savedSnapshot = $state(JSON.stringify(cfg))
   let isDirty = $derived(JSON.stringify(cfg) !== savedSnapshot)
@@ -102,85 +107,85 @@
 
 <div class={twMerge("relative flex w-full max-w-3xl flex-col gap-4 rounded-2xl border border-(--hairline-color) bg-(--container-color) p-4", wrapperClass)} style={accentStyle}>
   <!-- Заголовок и переключатель режима -->
-  <div class="flex flex-wrap items-center justify-between gap-3">
-    <div class="flex items-center gap-2">
-      <span class="flex size-8 shrink-0 items-center justify-center rounded-xl bg-(--accent-soft) text-(--accent-color)">
-        <WifiIcon />
-      </span>
-      <h3>{label?.name ?? "WiFi"}</h3>
-    </div>
-    <UI.Select
-      wrapperClass="w-full sm:w-72"
-      type="buttons"
-      value={selectedMode}
-      options={MODE_OPTIONS}
-      onUpdate={(option) => (cfg.WiFiMode = (option as IOption<number>).value as number)}
-    />
-  </div>
+  <WidgetHeader icon={WifiIcon} label={label?.name ?? "WiFi"} bind:collapsed>
+    {#snippet right()}
+      <UI.Select
+        wrapperClass="w-full sm:w-72"
+        type="buttons"
+        value={selectedMode}
+        options={MODE_OPTIONS}
+        onUpdate={(option) => (cfg.WiFiMode = (option as IOption<number>).value as number)}
+      />
+    {/snippet}
+  </WidgetHeader>
 
-  {#if cfg.WiFiMode === 1 || cfg.WiFiMode === 3}
-    <!-- Клиентский режим (STA) -->
-    <div class="flex flex-col gap-3 rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-3" transition:slide={{ duration: 150 }}>
-      <span class="text-[12px] font-semibold text-(--muted-color)">Режим клиента (STA)</span>
+  {#if !collapsed}
+    <div class="flex flex-col gap-4" transition:slide={{ duration: 150 }}>
+      {#if cfg.WiFiMode === 1 || cfg.WiFiMode === 3}
+        <!-- Клиентский режим (STA) -->
+        <div class="flex flex-col gap-3 rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-3" transition:slide={{ duration: 150 }}>
+          <span class="text-[12px] font-semibold text-(--muted-color)">Режим клиента (STA)</span>
 
-      <div class="flex items-end gap-2">
-        <UI.Select
-          wrapperClass="flex-1"
-          type="input"
-          label={{ name: "SSID сети" }}
-          value={{ id: "current", name: cfg.StaSSID, value: cfg.StaSSID }}
-          options={foundNetworks}
-          onUpdate={(option) => (cfg.StaSSID = (option as IOption<string>).name ?? "")}
-        />
-        <UI.Button
-          wrapperClass="w-9"
-          componentClass="p-1"
-          content={{ icon: scanning ? LoaderIcon : SearchIcon, info: { text: "Сканировать сети", side: "top" } }}
-          disabled={scanning || !onScan}
-          onClick={scanNetworks}
-        />
-      </div>
+          <div class="flex items-end gap-2">
+            <UI.Select
+              wrapperClass="flex-1"
+              type="input"
+              label={{ name: "SSID сети" }}
+              value={{ id: "current", name: cfg.StaSSID, value: cfg.StaSSID }}
+              options={foundNetworks}
+              onUpdate={(option) => (cfg.StaSSID = (option as IOption<string>).name ?? "")}
+            />
+            <UI.Button
+              wrapperClass="w-9"
+              componentClass="p-1"
+              content={{ icon: scanning ? LoaderIcon : SearchIcon, info: { text: "Сканировать сети", side: "top" } }}
+              disabled={scanning || !onScan}
+              onClick={scanNetworks}
+            />
+          </div>
 
-      <UI.Input type="password" label={{ name: "Пароль" }} bind:value={cfg.StaPSK} maxlength={64} help={{ autocomplete: "off", regExp: PSK_REGEXP }} />
+          <UI.Input type="password" label={{ name: "Пароль" }} bind:value={cfg.StaPSK} maxlength={64} help={{ autocomplete: "off", regExp: PSK_REGEXP }} />
 
-      <UI.Select wrapperClass="w-48" type="buttons" label={{ name: "Получение IP" }} value={selectedIPMode} options={IP_MODE_OPTIONS}
-        onUpdate={(option) => (cfg.StaticIP = (option as IOption<number>).value as number)} />
+          <UI.Select wrapperClass="w-48" type="buttons" label={{ name: "Получение IP" }} value={selectedIPMode} options={IP_MODE_OPTIONS}
+            onUpdate={(option) => (cfg.StaticIP = (option as IOption<number>).value as number)} />
 
-      {#if cfg.StaticIP === 1}
-        <div class="grid grid-cols-1 gap-2 sm:grid-cols-3" transition:slide={{ duration: 150 }}>
-          <UI.Input label={{ name: "IP адрес" }} bind:value={cfg.StaIP} maxlength={15} placeholder="192.168.1.100" help={{ regExp: IP_REGEXP }} />
-          <UI.Input label={{ name: "Маска подсети" }} bind:value={cfg.StaMS} maxlength={15} placeholder="255.255.255.0" help={{ regExp: IP_REGEXP }} />
-          <UI.Input label={{ name: "Шлюз" }} bind:value={cfg.StaGW} maxlength={15} placeholder="192.168.1.1" help={{ regExp: IP_REGEXP }} />
+          {#if cfg.StaticIP === 1}
+            <div class="grid grid-cols-1 gap-2 sm:grid-cols-3" transition:slide={{ duration: 150 }}>
+              <UI.Input label={{ name: "IP адрес" }} bind:value={cfg.StaIP} maxlength={15} placeholder="192.168.1.100" help={{ regExp: IP_REGEXP }} />
+              <UI.Input label={{ name: "Маска подсети" }} bind:value={cfg.StaMS} maxlength={15} placeholder="255.255.255.0" help={{ regExp: IP_REGEXP }} />
+              <UI.Input label={{ name: "Шлюз" }} bind:value={cfg.StaGW} maxlength={15} placeholder="192.168.1.1" help={{ regExp: IP_REGEXP }} />
+            </div>
+          {/if}
         </div>
       {/if}
+
+      {#if cfg.WiFiMode === 2 || cfg.WiFiMode === 3}
+        <!-- Точка доступа (AP) -->
+        <div class="flex flex-col gap-3 rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-3" transition:slide={{ duration: 150 }}>
+          <span class="text-[12px] font-semibold text-(--muted-color)">Точка доступа (AP)</span>
+
+          <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            <UI.Input label={{ name: "SSID" }} bind:value={cfg.ApSSID} maxlength={32} />
+            <UI.Input type="password" label={{ name: "Пароль" }} bind:value={cfg.ApPSK} maxlength={64} help={{ autocomplete: "off", regExp: PSK_REGEXP }} />
+          </div>
+
+          <div class="grid grid-cols-1 gap-2 sm:grid-cols-3">
+            <UI.Input label={{ name: "IP адрес" }} bind:value={cfg.ApIP} maxlength={15} help={{ regExp: IP_REGEXP }} />
+            <UI.Input label={{ name: "Маска подсети" }} bind:value={cfg.ApMS} maxlength={15} help={{ regExp: IP_REGEXP }} />
+            <UI.Input label={{ name: "Шлюз" }} bind:value={cfg.ApGW} maxlength={15} help={{ regExp: IP_REGEXP }} />
+          </div>
+        </div>
+      {/if}
+
+      <!-- Сохранение -->
+      <div class="flex flex-col items-center gap-2">
+        {#if isDirty}
+          <span class="text-[12px] text-(--muted-color)" transition:slide={{ duration: 100 }}>Есть несохранённые изменения</span>
+        {/if}
+        <UI.Button wrapperClass="w-40" componentClass="bg-green" content={{ name: "Сохранить" }} disabled={!isDirty} onClick={save} />
+      </div>
     </div>
   {/if}
-
-  {#if cfg.WiFiMode === 2 || cfg.WiFiMode === 3}
-    <!-- Точка доступа (AP) -->
-    <div class="flex flex-col gap-3 rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-3" transition:slide={{ duration: 150 }}>
-      <span class="text-[12px] font-semibold text-(--muted-color)">Точка доступа (AP)</span>
-
-      <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
-        <UI.Input label={{ name: "SSID" }} bind:value={cfg.ApSSID} maxlength={32} />
-        <UI.Input type="password" label={{ name: "Пароль" }} bind:value={cfg.ApPSK} maxlength={64} help={{ autocomplete: "off", regExp: PSK_REGEXP }} />
-      </div>
-
-      <div class="grid grid-cols-1 gap-2 sm:grid-cols-3">
-        <UI.Input label={{ name: "IP адрес" }} bind:value={cfg.ApIP} maxlength={15} help={{ regExp: IP_REGEXP }} />
-        <UI.Input label={{ name: "Маска подсети" }} bind:value={cfg.ApMS} maxlength={15} help={{ regExp: IP_REGEXP }} />
-        <UI.Input label={{ name: "Шлюз" }} bind:value={cfg.ApGW} maxlength={15} help={{ regExp: IP_REGEXP }} />
-      </div>
-    </div>
-  {/if}
-
-  <!-- Сохранение -->
-  <div class="flex flex-col items-center gap-2">
-    {#if isDirty}
-      <span class="text-[12px] text-(--muted-color)" transition:slide={{ duration: 100 }}>Есть несохранённые изменения</span>
-    {/if}
-    <UI.Button wrapperClass="w-40" componentClass="bg-green" content={{ name: "Сохранить" }} disabled={!isDirty} onClick={save} />
-  </div>
 
   {#if showAPWarning}
     <!-- Подтверждение локально к виджету (не на весь экран) — предупреждение относится
