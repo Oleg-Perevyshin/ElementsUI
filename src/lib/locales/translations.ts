@@ -14,6 +14,20 @@ const translations: Record<string, [string, string, string]> = {
   "library.info": ["Инфо", "Info", "信息"],
   "library.retry": ["Повторить", "Retry", "重试"],
 
+  /* Документация компонентов для ⓘ в конструкторе (приложение читает через UI.T) — механизм общий
+     для всех типов компонентов, заполнено пока только там, где есть что объяснить (фиксированная
+     прошивочная конвенция у смарт-виджетов) */
+  "component.info.WidgetWiFi": [
+    "📶 Виджет работает с фиксированным набором полей группы `CFG` на устройстве — привязка переменных вручную не нужна.\n\n**📡 Режим клиента (STA)**\n- `WiFiMode`, `StaSSID`, `StaPSK`\n- `StaticIP`, `StaIP`, `StaMS`, `StaGW`\n\n**📡 Точка доступа (AP)**\n- `ApSSID`, `ApPSK`\n- `ApIP`, `ApMS`, `ApGW`\n\n🔍 Сканирование сетей отправляет `Header: GET`, `Argument: APsList` — ответ устройства ожидается в поле `CFG.StaSSID-S`.\n\n⚙️ Если на устройстве используется другое имя группы вместо `CFG`, поменяйте префикс (ID) в настройках виджета.",
+    "📶 The widget works with a fixed set of fields in the device's `CFG` group — no manual variable binding needed.\n\n**📡 Client mode (STA)**\n- `WiFiMode`, `StaSSID`, `StaPSK`\n- `StaticIP`, `StaIP`, `StaMS`, `StaGW`\n\n**📡 Access point (AP)**\n- `ApSSID`, `ApPSK`\n- `ApIP`, `ApMS`, `ApGW`\n\n🔍 Network scanning sends `Header: GET`, `Argument: APsList` — the device response is expected in the `CFG.StaSSID-S` field.\n\n⚙️ If the device uses a different group name instead of `CFG`, change the prefix (ID) in the widget settings.",
+    "📶 该组件使用设备 `CFG` 分组下的一组固定字段——无需手动绑定变量。\n\n**📡 客户端模式（STA）**\n- `WiFiMode`、`StaSSID`、`StaPSK`\n- `StaticIP`、`StaIP`、`StaMS`、`StaGW`\n\n**📡 接入点（AP）**\n- `ApSSID`、`ApPSK`\n- `ApIP`、`ApMS`、`ApGW`\n\n🔍 扫描网络会发送 `Header: GET`、`Argument: APsList`——设备应在 `CFG.StaSSID-S` 字段中返回结果。\n\n⚙️ 如果设备使用的分组名称不是 `CFG`，请在组件设置中修改前缀（ID）。",
+  ],
+  "component.info.WidgetDeviceInfo": [
+    "ℹ️ Виджет работает с фиксированным набором полей группы `CFG` на устройстве — привязка переменных вручную не нужна.\n\n**🔒 Только чтение**\n- `DevSN`, `DevID`, `DevFW`, `RunCnt`\n\n**✏️ Редактируемые** (сохраняются одним пакетом по кнопке «Сохранить»)\n- `DevName`, `HostName`, `WebUser`, `WebPsw`\n\n🔌 Кнопка «Перезагрузить» отправляет `Argument: Restart`.\n\n⚙️ Если на устройстве используется другое имя группы вместо `CFG`, поменяйте префикс (ID) в настройках виджета.",
+    "ℹ️ The widget works with a fixed set of fields in the device's `CFG` group — no manual variable binding needed.\n\n**🔒 Read-only**\n- `DevSN`, `DevID`, `DevFW`, `RunCnt`\n\n**✏️ Editable** (saved as one packet via the \"Save\" button)\n- `DevName`, `HostName`, `WebUser`, `WebPsw`\n\n🔌 The \"Restart\" button sends `Argument: Restart`.\n\n⚙️ If the device uses a different group name instead of `CFG`, change the prefix (ID) in the widget settings.",
+    "ℹ️ 该组件使用设备 `CFG` 分组下的一组固定字段——无需手动绑定变量。\n\n**🔒 只读字段**\n- `DevSN`、`DevID`、`DevFW`、`RunCnt`\n\n**✏️ 可编辑字段**（通过「保存」按钮一次性发送）\n- `DevName`、`HostName`、`WebUser`、`WebPsw`\n\n🔌 「重启」按钮会发送 `Argument: Restart`。\n\n⚙️ 如果设备使用的分组名称不是 `CFG`，请在组件设置中修改前缀（ID）。",
+  ],
+
   /* Опции редактора свойств */
   "constructor.props.action.update": ["Обновить", "Update", "更新"],
   "constructor.props.action.save": ["Сохранить", "Save", "保存"],

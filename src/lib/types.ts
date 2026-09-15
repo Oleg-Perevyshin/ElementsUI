@@ -563,14 +563,19 @@ export interface IWidgetWiFiConfig {
 }
 
 export interface IWidgetWiFiProps {
-  /* Виджет не привязывается к произвольной переменной устройства — id не используется для
-     биндинга (в отличие от примитивов), но нужен как структурное поле в общем properties-union
-     (CommonSnippets и т.п. читают component.properties.id по всем типам без разбора) */
+  /* В отличие от примитивов id — не биндинг одной переменной, а префикс прошивочной группы
+     (обычно "CFG"), с которой работает весь набор полей виджета разом (см. keys ниже) */
   id?: string
   wrapperClass?: string
   componentClass?: string
   label?: { name?: string }
   value?: IWidgetWiFiConfig
+  /* Переопределение имени поля устройства для каждого ключа IWidgetWiFiConfig — по умолчанию
+     совпадает с именем самого ключа (WiFiMode, StaSSID, ...), меняется только если у прошивки
+     другая конвенция именования */
+  keys?: Partial<Record<keyof IWidgetWiFiConfig, string>>
+  /* Команда сканирования сетей — по умолчанию Header: GET, Argument: APsList */
+  scanCommand?: { header?: string; argument?: string }
   allowedModes?: number[]
   confirmOnAP?: boolean
   /* Свёрнут ли виджет по умолчанию — как isOpen у Accordion, задаётся в конструкторе и сохраняется
@@ -595,11 +600,17 @@ export interface IWidgetDeviceInfoConfig {
 }
 
 export interface IWidgetDeviceInfoProps {
+  /* Префикс прошивочной группы (обычно "CFG"), с которой работает весь набор полей виджета разом */
   id?: string
   wrapperClass?: string
   componentClass?: string
   label?: { name?: string }
   value?: IWidgetDeviceInfoConfig
+  /* Переопределение имени поля устройства для каждого ключа IWidgetDeviceInfoConfig — по умолчанию
+     совпадает с именем самого ключа (DevSN, DevName, ...) */
+  keys?: Partial<Record<keyof IWidgetDeviceInfoConfig, string>>
+  /* Команда перезагрузки — по умолчанию Header: SET, Argument: Restart */
+  restartCommand?: { header?: string; argument?: string }
   collapsed?: boolean
   persistKey?: string
   onSave?: (info: IWidgetDeviceInfoConfig) => void
