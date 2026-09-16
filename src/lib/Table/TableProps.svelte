@@ -174,7 +174,7 @@
                 }}
               />
               <div
-                class="py-1.5 pl-9 grid grid-cols-[minmax(10rem,16rem)_minmax(5rem,7rem)_minmax(14rem,18rem)_2rem_2rem_1fr] items-end gap-1.5"
+                class="py-1.5 pl-9 grid grid-cols-[minmax(9rem,14rem)_minmax(5rem,7rem)_minmax(18rem,22rem)_2rem_2rem_1fr] items-end gap-1.5"
               >
                 <UI.Input
                   label={{ name: $T("constructor.props.table.columns.label") }}
