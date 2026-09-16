@@ -1,7 +1,9 @@
 <!-- $lib/WidgetHeader.svelte — общая шапка смарт-виджетов конструктора: значок + заголовок
      сворачивают/разворачивают тело виджета по клику (как аккордеон), справа — снипет с любым
      содержимым шапки конкретного виджета (переключатель режима, кнопка "Перезагрузить" и т.п.),
-     клик по нему сворачивание не триггерит. -->
+     клик по нему сворачивание не триггерит. Визуально — та же полоса-заголовок, что и у Accordion
+     (px-3/py-2, bg-container, мелкая 18px иконка без бейджа) вместо прежнего тяжёлого 32px
+     значка-бейджа, который делал шапку заметно выше аккордеона. -->
 <script lang="ts">
   import type { Component, Snippet } from "svelte"
   import ArrowIcon from "./libIcons/ArrowIcon.svelte"
@@ -21,19 +23,19 @@
   const Icon = $derived(icon)
 </script>
 
-<div class="flex flex-wrap items-center justify-between gap-3">
+<div class="flex flex-wrap items-center justify-between gap-3 rounded-[10px] bg-(--container-color) px-3 py-2">
   <button
     type="button"
-    class="flex min-w-0 cursor-pointer items-center gap-2 border-none bg-transparent p-0 text-left"
+    class="flex min-w-0 flex-1 cursor-pointer items-center gap-2 border-none bg-transparent p-0 text-left"
     onclick={() => (collapsed = !collapsed)}
     aria-expanded={!collapsed}
   >
-    <span class="flex size-8 shrink-0 items-center justify-center rounded-xl bg-(--accent-soft) text-(--accent-color)">
+    <span class="flex h-[18px] w-[18px] shrink-0 items-center justify-center text-(--accent-color) [&_svg]:h-full [&_svg]:w-full">
       <Icon />
     </span>
     <span class="min-w-0 truncate text-[14px] font-semibold">{label}</span>
     <span
-      class="flex size-4 shrink-0 items-center justify-center text-(--faint-color) transition-transform duration-150 [&_svg]:h-full [&_svg]:w-full"
+      class="flex h-[14px] w-[14px] shrink-0 items-center justify-center text-(--faint-color) transition-transform duration-150 [&_svg]:h-full [&_svg]:w-full"
       style="transform: rotate({collapsed ? 0 : 90}deg)"
     >
       <ArrowIcon />

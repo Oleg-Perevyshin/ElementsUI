@@ -153,7 +153,7 @@
               onUpdate={(option) => (cfg.StaSSID = (option as IOption<string>).name ?? "")}
             />
             <UI.Button
-              wrapperClass="w-9"
+              wrapperClass="w-8"
               componentClass="p-1"
               content={{ icon: scanning ? LoaderIcon : SearchIcon, info: { text: "Сканировать сети", side: "top" } }}
               disabled={scanning || !onScan}

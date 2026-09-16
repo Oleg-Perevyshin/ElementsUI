@@ -74,28 +74,19 @@
 
         <div bind:this={itemsContainer} class="flex flex-col gap-2">
           {#each component.properties.items || [] as progress, index}
-            <div id="item-{index}" class="flex flex-col gap-2 rounded-lg border border-(--hairline-color) bg-(--container-color)/60 p-2">
-              <div class="flex items-center gap-2">
-                <UI.Dragging
-                  wrapperClass="shrink-0"
-                  container={itemsContainer}
-                  array={component.properties.items}
-                  elementIndex={index}
-                  onUpdate={(updatedArray) => {
-                    updateProperty("items", updatedArray, component, onPropertyChange)
-                  }}
-                />
-                <span class="flex-1"></span>
-                <UI.Button
-                  wrapperClass="w-8 shrink-0"
-                  content={{ icon: ButtonDelete }}
-                  onClick={() => {
-                    const progresses = [...(component.properties?.items || [])]
-                    progresses.splice(index, 1)
-                    updateProperty("items", progresses, component, onPropertyChange)
-                  }}
-                />
-              </div>
+            <div
+              id="item-{index}"
+              class="grid grid-cols-[auto_1fr_auto] items-center gap-2 rounded-lg border border-(--hairline-color) bg-(--container-color)/60 p-2"
+            >
+              <UI.Dragging
+                wrapperClass="shrink-0"
+                container={itemsContainer}
+                array={component.properties.items}
+                elementIndex={index}
+                onUpdate={(updatedArray) => {
+                  updateProperty("items", updatedArray, component, onPropertyChange)
+                }}
+              />
               <div class="flex flex-wrap items-end gap-2">
                 <UI.Input
                   label={{ name: $T("constructor.props.optionname") }}
@@ -154,6 +145,15 @@
                   />
                 {/if}
               </div>
+              <UI.Button
+                wrapperClass="w-8 shrink-0"
+                content={{ icon: ButtonDelete }}
+                onClick={() => {
+                  const progresses = [...(component.properties?.items || [])]
+                  progresses.splice(index, 1)
+                  updateProperty("items", progresses, component, onPropertyChange)
+                }}
+              />
             </div>
           {/each}
           <div id="item-{component.properties.items.length}" class="min-h-4"></div>

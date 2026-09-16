@@ -109,19 +109,7 @@
         {/snippet}
 
         {#each component.properties.options || [] as option, index (option.id)}
-          <div class="flex flex-col gap-2 rounded-lg border border-(--hairline-color) bg-(--container-color)/60 p-2">
-            <div class="flex items-center gap-2">
-              <span class="flex-1"></span>
-              <UI.Button
-                wrapperClass="w-8 shrink-0"
-                content={{ icon: ButtonDelete }}
-                onClick={() => {
-                  const options = [...(component.properties?.options || [])]
-                  options.splice(index, 1)
-                  updateProperty("options", options, component, onPropertyChange)
-                }}
-              />
-            </div>
+          <div class="grid grid-cols-[1fr_auto] items-center gap-2 rounded-lg border border-(--hairline-color) bg-(--container-color)/60 p-2">
             <div class="flex flex-wrap items-end gap-2">
               <UI.Input
                 label={{ name: $T("constructor.props.optionname") }}
@@ -172,6 +160,15 @@
                 }}
               />
             </div>
+            <UI.Button
+              wrapperClass="w-8 shrink-0"
+              content={{ icon: ButtonDelete }}
+              onClick={() => {
+                const options = [...(component.properties?.options || [])]
+                options.splice(index, 1)
+                updateProperty("options", options, component, onPropertyChange)
+              }}
+            />
           </div>
         {/each}
       </PropsGroup>

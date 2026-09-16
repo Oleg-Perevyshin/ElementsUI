@@ -53,7 +53,7 @@
     />
     {#if currentImage}
       <Button
-        wrapperClass="w-8.5 mt-6"
+        wrapperClass="w-8 mt-6"
         componentClass="p-0.5 bg-red"
         content={{ icon: CrossIcon }}
         onClick={() => {

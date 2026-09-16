@@ -238,36 +238,25 @@
               <div class="flex flex-col gap-2" bind:this={settingsContainer[columnIndex]}>
                 {#if typeof column.content !== "function"}
                   {#each column.content as content, index}
-                    <div id={`item-${index}-${columnIndex}`} class="flex flex-col gap-2 rounded-lg border border-(--hairline-color) bg-(--back-color)/60 p-2">
-                      <!-- Тулбар карточки: перетаскивание слева, удаление справа — поля контента никогда
-                           не переносятся поверх этих кнопок, в отличие от прежней абсолютной раскладки -->
-                      <div class="flex items-center gap-2">
-                        <Dragging
-                          wrapperClass="shrink-0"
-                          container={settingsContainer[columnIndex]}
-                          array={column.content}
-                          elementIndex={index}
-                          containerIndex={columnIndex}
-                          onUpdate={(updatedArray, index) => {
-                            if (index === columnIndex) {
-                              const headers = [...component.properties.header]
-                              headers[columnIndex].content = updatedArray
-                              updateProperty("header", headers, component, onPropertyChange)
-                            }
-                          }}
-                        />
-                        <span class="flex-1"></span>
-                        <UI.Button
-                          wrapperClass="w-8 shrink-0"
-                          content={{ icon: ButtonDelete }}
-                          onClick={() => {
-                            const headers = [...(component.properties.header || [])]
-                            ;((headers as ITableHeader<object>[])[columnIndex].content as ITableContent<object>[]).splice(index, 1)
+                    <div
+                      id={`item-${index}-${columnIndex}`}
+                      class="grid grid-cols-[auto_1fr_auto] items-center gap-2 rounded-lg border border-(--hairline-color) bg-(--back-color)/60 p-2"
+                    >
+                      <Dragging
+                        wrapperClass="shrink-0"
+                        container={settingsContainer[columnIndex]}
+                        array={column.content}
+                        elementIndex={index}
+                        containerIndex={columnIndex}
+                        onUpdate={(updatedArray, index) => {
+                          if (index === columnIndex) {
+                            const headers = [...component.properties.header]
+                            headers[columnIndex].content = updatedArray
                             updateProperty("header", headers, component, onPropertyChange)
-                          }}
-                        />
-                      </div>
-
+                          }
+                        }}
+                      />
+                      <div class="flex min-w-0 flex-col gap-2">
                       {#if content.type == "text"}
                         {@const text = content.data}
                         <div class="flex flex-wrap items-end gap-2">
@@ -495,6 +484,16 @@
                           />
                         </div>
                       {/if}
+                      </div>
+                      <UI.Button
+                        wrapperClass="w-8 shrink-0"
+                        content={{ icon: ButtonDelete }}
+                        onClick={() => {
+                          const headers = [...(component.properties.header || [])]
+                          ;((headers as ITableHeader<object>[])[columnIndex].content as ITableContent<object>[]).splice(index, 1)
+                          updateProperty("header", headers, component, onPropertyChange)
+                        }}
+                      />
                     </div>
                   {/each}
                 {/if}

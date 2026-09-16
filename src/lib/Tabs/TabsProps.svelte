@@ -112,34 +112,19 @@
 
         <div bind:this={itemsContainer} class="flex flex-col gap-2">
           {#each component.properties.items || [] as tab, index}
-            <div id="item-{index}" class="flex flex-col gap-2 rounded-lg border border-(--hairline-color) bg-(--container-color)/60 p-2">
-              <div class="flex items-center gap-2">
-                <UI.Dragging
-                  wrapperClass="shrink-0"
-                  container={itemsContainer}
-                  array={component.properties.items}
-                  elementIndex={index}
-                  onUpdate={(updatedArray) => {
-                    updateProperty("items", updatedArray, component, onPropertyChange)
-                  }}
-                />
-                <span class="flex-1"></span>
-                {#if component.properties.items.length > 1}
-                  <UI.Button
-                    wrapperClass="w-8 shrink-0"
-                    content={{ icon: ButtonDelete }}
-                    onClick={() => {
-                      const items = [...(component.properties?.items || [])]
-                      items.splice(index, 1)
-                      items.forEach((_item: any, index: number) => {
-                        items[index]["class"] = twMerge(items[index].class, initialWidth() ? `w-[${(1 / items.length) * 100}%]` : "w-auto")
-                        updateProperty("items", items, component, onPropertyChange)
-                      })
-                      updateProperty("items", items, component, onPropertyChange)
-                    }}
-                  />
-                {/if}
-              </div>
+            <div
+              id="item-{index}"
+              class="grid grid-cols-[auto_1fr_auto] items-center gap-2 rounded-lg border border-(--hairline-color) bg-(--container-color)/60 p-2"
+            >
+              <UI.Dragging
+                wrapperClass="shrink-0"
+                container={itemsContainer}
+                array={component.properties.items}
+                elementIndex={index}
+                onUpdate={(updatedArray) => {
+                  updateProperty("items", updatedArray, component, onPropertyChange)
+                }}
+              />
               <div class="flex flex-wrap items-end gap-2">
                 <UI.Input
                   label={{ name: $T("constructor.props.optionname") }}
@@ -181,6 +166,21 @@
                   }}
                 />
               </div>
+              {#if component.properties.items.length > 1}
+                <UI.Button
+                  wrapperClass="w-8 shrink-0"
+                  content={{ icon: ButtonDelete }}
+                  onClick={() => {
+                    const items = [...(component.properties?.items || [])]
+                    items.splice(index, 1)
+                    items.forEach((_item: any, index: number) => {
+                      items[index]["class"] = twMerge(items[index].class, initialWidth() ? `w-[${(1 / items.length) * 100}%]` : "w-auto")
+                      updateProperty("items", items, component, onPropertyChange)
+                    })
+                    updateProperty("items", items, component, onPropertyChange)
+                  }}
+                />
+              {/if}
             </div>
           {/each}
           <div id="item-{component.properties.items.length}" class="min-h-4"></div>

@@ -19,6 +19,13 @@
 
   const isRemote = $derived(source === "remote")
 
+  /* Мастер-цвет (тот же bg-* из optionsStore.COLOR_OPTIONS, что и у остальных примитивов) —
+     проявляется как акцентная рамка кадра, см. Map.svelte для того же приёма. */
+  const roleBorderClass = $derived.by(() => {
+    const role = wrapperClass?.match(/bg-(\w+)/)?.[1]
+    return role && role !== "max" ? `border-2 border-(--border-color) border-${role}` : ""
+  })
+
   let videoElement = $state<HTMLVideoElement | null>(null)
   let stream = $state<MediaStream | null>(null)
   let error = $state<string | null>(null)
@@ -139,7 +146,7 @@
   {#if label.name}
     <h5 class={twMerge(`w-full px-4 text-center`, label.class)}>{label.name}</h5>
   {/if}
-  <div class="relative flex flex-1 w-full items-center justify-center">
+  <div class={twMerge("relative flex flex-1 w-full items-center justify-center rounded-2xl", roleBorderClass)}>
     {#if isRemote}
       {#if status !== "live" || !remoteImgSrc}
         <div class="absolute h-full w-full rounded-2xl px-40 py-15 flex flex-col items-center justify-center bg-(--border-color)/50 gap-4 z-10">

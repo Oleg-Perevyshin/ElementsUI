@@ -68,17 +68,18 @@ export const optionsStore = derived(T, ($T) => {
     /* Единая семантическая палитра (app.css: --X-color/--X-soft, светлая и тёмная тема уже учтены) —
        тот же набор ролей, что и в "мастер-цвете" виджетов конструктора (widgetAccent.ts на стороне
        приложения). bg-max — нейтральный вариант (= --back-color), с ним свотч отмечается рамкой
-       (Select.svelte: hasOwnColor), а не акцентной синей заливкой, как обычный сегмент-контрол. */
+       (Select.svelte: hasOwnColor), а не акцентной синей заливкой, как обычный сегмент-контрол.
+       7 пунктов вместо прежних 9: orange/cyan/pink убраны — на глаз сливались с yellow/green/red
+       соответственно; состав теперь 1:1 с TEXT_COLOR_OPTIONS (red/yellow/green/blue/purple/gray) —
+       там уже давно только явно различимые цвета. */
     COLOR_OPTIONS: [
       { id: id(), name: "-", value: "bg-max", class: "bg-max text-transparent" },
       { id: id(), name: "", value: "bg-red", class: "bg-red" },
-      { id: id(), name: "", value: "bg-orange", class: "bg-orange" },
       { id: id(), name: "", value: "bg-yellow", class: "bg-yellow" },
       { id: id(), name: "", value: "bg-green", class: "bg-green" },
-      { id: id(), name: "", value: "bg-cyan", class: "bg-cyan" },
       { id: id(), name: "", value: "bg-blue", class: "bg-blue" },
       { id: id(), name: "", value: "bg-purple", class: "bg-purple" },
-      { id: id(), name: "", value: "bg-pink", class: "bg-pink" },
+      { id: id(), name: "", value: "bg-gray", class: "bg-gray" },
     ],
 
     TEXT_COLOR_OPTIONS: [

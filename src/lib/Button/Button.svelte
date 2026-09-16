@@ -3,7 +3,7 @@
      Что изменилось внутри:
        • роль определяется значением bg-* (намерение), а не фактом его наличия;
        • убрано автоподчёркивание текста — кнопка больше не выглядит ссылкой;
-       • единый радиус 10px (иконка без подписи — круг), высота 36px, кегль 14/600;
+       • единый радиус 10px (иконка без подписи — круг), высота 32px (стандарт полей h-8), кегль 14/600;
        • кольцо фокуса вместо размытой тени;
        • disabled через токены, а не opacity: 0.5;
        • иконка встала в поток (flex + gap) вместо absolute left-3. -->
@@ -108,7 +108,7 @@
       `relative inline-flex w-full items-center justify-center gap-2 leading-none font-semibold text-[14px] select-none
        transition-[background-color,filter,box-shadow] duration-150
        focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent-color)
-       ${isIconOnly ? "aspect-square rounded-full p-0" : "min-h-9 rounded-[10px] px-4 py-2"}
+       ${isIconOnly ? "aspect-square rounded-full p-0" : "h-8 rounded-[10px] px-4 py-2"}
        ${disabled ? "" : "cursor-pointer active:scale-[0.97]"}`,
       roleClass,
       componentClass,

@@ -8,12 +8,22 @@
 
   let {
     id = crypto.randomUUID(),
+    wrapperClass = "",
     label = { name: "", class: "" },
     data = $bindable(),
     markerIcon,
     trackEnabled = $bindable(false),
     trackLength = $bindable(1000),
   }: IMapProps = $props()
+
+  /* Мастер-цвет (тот же bg-* из optionsStore.COLOR_OPTIONS, что и у остальных примитивов) —
+     проявляется как акцентная рамка карты, т.к. заливать фон самой карты цветом нет смысла. */
+  const roleBorderClass = $derived.by(() => {
+    const role = wrapperClass.match(/bg-(\w+)/)?.[1]
+    /* border-(--border-color) — реальная utility, красящая рамку; border-{role} лишь задаёт
+       переменную --border-color (см. app.css), как и bg-* для --bg-color (см. Button.svelte). */
+    return role && role !== "max" ? `border-2 border-(--border-color) border-${role}` : ""
+  })
 
   interface MapDevice extends IDeviceGNSS {
     isFresh: boolean
@@ -131,12 +141,12 @@
   }
 </script>
 
-<div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class="h-full min-h-50">
+<div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class={twMerge("h-full min-h-50", wrapperClass)}>
   {#if label.name}
     <h5 class={twMerge(` w-full px-4 text-center`, label.class)}>{label.name}</h5>
   {/if}
   <MapLibre
-    class="h-[calc(100%-2rem)] min-h-50 overflow-hidden rounded-xl shadow-sm transition duration-200 hover:shadow-md"
+    class={twMerge("h-[calc(100%-2rem)] min-h-50 overflow-hidden rounded-xl shadow-sm transition duration-200 hover:shadow-md", roleBorderClass)}
     style={isDarkMode ? "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json" : "https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json"}
     zoom={1.5}
     center={{ lat: 30, lng: 0 }}

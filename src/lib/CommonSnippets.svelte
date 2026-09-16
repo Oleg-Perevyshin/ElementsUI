@@ -257,7 +257,7 @@
   updateProperty: (icon: string | string[]) => {}
 })}
   <div class="relative mt-6 flex w-full gap-2">
-    <UI.Button content={{ name: initialValue.name }} componentClass="h-8 min-h-8 bg-blue" onClick={() => (showIconLib = true)} />
+    <UI.Button content={{ name: initialValue.name }} componentClass="bg-blue" onClick={() => (showIconLib = true)} />
     {#if showIconLib}
       <UI.Modal bind:isOpen={showIconLib} wrapperClass="w-130">
         {#snippet main()}
@@ -288,7 +288,7 @@
       </UI.Modal>
     {/if}
     {#if initialValue.icon}
-      <UI.Button wrapperClass="w-8.5" componentClass="p-0.5 bg-red" content={{ icon: CrossIcon }} onClick={() => initialValue.updateProperty("")} />
+      <UI.Button wrapperClass="w-8" componentClass="p-0.5 bg-red" content={{ icon: CrossIcon }} onClick={() => initialValue.updateProperty("")} />
     {/if}
   </div>
 {/snippet}

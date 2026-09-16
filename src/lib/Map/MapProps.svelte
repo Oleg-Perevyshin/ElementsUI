@@ -28,6 +28,12 @@
       (a.value as string).includes(component.properties.label?.class?.split(" ").find((cls: string) => cls.startsWith("text-"))),
     ),
   )
+
+  const initialColor = $derived(
+    $optionsStore.COLOR_OPTIONS.find((c) =>
+      (c.value as string).includes(component.properties.wrapperClass?.split(" ").find((cls: string) => cls.startsWith("bg-"))),
+    ),
+  )
 </script>
 
 {#if forConstructor}
@@ -67,6 +73,7 @@
           onUpdate={(option) => updateProperty("trackLength", (option as { value: number }).value, component, onPropertyChange)}
         />
       {/if}
+      <CommonSnippets snippet="Colors" initialValue={{ color: initialColor }} {component} {onPropertyChange} />
     </PropsGroup>
   </div>
 {:else}
@@ -106,6 +113,7 @@
           onUpdate={(option) => updateProperty("trackLength", (option as { value: number }).value, component, onPropertyChange)}
         />
       {/if}
+      <CommonSnippets snippet="Colors" initialValue={{ color: initialColor }} {component} {onPropertyChange} />
     </PropsGroup>
   </div>
 {/if}

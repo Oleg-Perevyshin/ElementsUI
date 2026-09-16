@@ -4,6 +4,7 @@
   import * as UI from "$lib"
   import CommonSnippets from "$lib/CommonSnippets.svelte"
   import PropsGroup from "$lib/PropsGroup.svelte"
+  import { optionsStore } from "$lib/options"
 
   const {
     component,
@@ -14,6 +15,12 @@
     onPropertyChange: (updates: Partial<{ properties?: string | object; name?: string; access?: string; eventHandler?: IUIComponentHandler }>) => void
     forConstructor?: boolean
   }>()
+
+  const initialColor = $derived(
+    $optionsStore.COLOR_OPTIONS.find((c) =>
+      (c.value as string).includes(component.properties.wrapperClass?.split(" ").find((cls: string) => cls.startsWith("bg-"))),
+    ),
+  )
 </script>
 
 {#snippet VideoViewershowSelect()}
@@ -60,6 +67,7 @@
       {#if component.properties?.source === "remote"}
         {@render VideoViewerStreamKey()}
       {/if}
+      <CommonSnippets snippet="Colors" initialValue={{ color: initialColor }} {component} {onPropertyChange} />
     </PropsGroup>
   </div>
 {:else}
@@ -78,6 +86,7 @@
       {#if component.properties?.source === "remote"}
         {@render VideoViewerStreamKey()}
       {/if}
+      <CommonSnippets snippet="Colors" initialValue={{ color: initialColor }} {component} {onPropertyChange} />
     </PropsGroup>
   </div>
 {/if}

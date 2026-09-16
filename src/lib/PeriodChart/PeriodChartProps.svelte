@@ -77,28 +77,17 @@
 
     <div bind:this={itemsContainer} class="flex flex-col gap-2">
       {#each component.properties.levels || [] as level, index}
-        <div id="item-{index}" class="flex flex-col gap-2 rounded-lg border border-(--hairline-color) bg-(--container-color)/60 p-2">
-          <div class="flex items-center gap-2">
-            <UI.Dragging
-              wrapperClass="shrink-0"
-              container={itemsContainer}
-              array={component.properties.levels}
-              elementIndex={index}
-              onUpdate={(updatedArray) => updateLevels(updatedArray)}
-            />
-            <span class="flex-1"></span>
-            {#if (component.properties.levels?.length ?? 0) > 1}
-              <UI.Button
-                wrapperClass="w-8 shrink-0"
-                content={{ icon: ButtonDelete }}
-                onClick={() => {
-                  const levels = [...(component.properties?.levels || [])]
-                  levels.splice(index, 1)
-                  updateLevels(levels)
-                }}
-              />
-            {/if}
-          </div>
+        <div
+          id="item-{index}"
+          class="grid grid-cols-[auto_1fr_auto] items-center gap-2 rounded-lg border border-(--hairline-color) bg-(--container-color)/60 p-2"
+        >
+          <UI.Dragging
+            wrapperClass="shrink-0"
+            container={itemsContainer}
+            array={component.properties.levels}
+            elementIndex={index}
+            onUpdate={(updatedArray) => updateLevels(updatedArray)}
+          />
           <div class="flex flex-wrap items-end gap-2">
             <UI.Input
               label={{ name: $T("constructor.props.optionname") }}
@@ -143,6 +132,17 @@
               }}
             />
           </div>
+          {#if (component.properties.levels?.length ?? 0) > 1}
+            <UI.Button
+              wrapperClass="w-8 shrink-0"
+              content={{ icon: ButtonDelete }}
+              onClick={() => {
+                const levels = [...(component.properties?.levels || [])]
+                levels.splice(index, 1)
+                updateLevels(levels)
+              }}
+            />
+          {/if}
         </div>
       {/each}
       <div id="item-{component.properties.levels?.length ?? 0}" class="min-h-4"></div>

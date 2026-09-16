@@ -27,6 +27,15 @@
       (c.value as string).includes(component.properties.settings.class?.split(" ").find((cls: string) => cls.startsWith("bg-"))),
     ),
   )
+
+  /* Один мастер-цвет вместо двух независимых пикеров: цвет иконки больше не выбирается отдельно,
+     а выводится из того же bg-* (COLOR_OPTIONS и TEXT_COLOR_OPTIONS — одна и та же ролевая палитра
+     red/yellow/green/blue/purple/gray, см. options.ts). */
+  const deriveIconColorClass = (bgClass: string): string => {
+    const role = bgClass.match(/bg-(\w+)/)?.[1]
+    const match = role && role !== "max" ? $optionsStore.TEXT_COLOR_OPTIONS.find((c) => c.id === `TEXT_COLOR_${role.toUpperCase()}`) : null
+    return (match ?? $optionsStore.TEXT_COLOR_OPTIONS[0]).value as string
+  }
 </script>
 
 {#snippet WidgetSettingsLabel()}
@@ -45,22 +54,9 @@
     options={$optionsStore.COLOR_OPTIONS}
     value={initialColor}
     onUpdate={(option) => {
-      updateProperty("settings.class", twMerge(component.properties.settings.class, (option as UI.IOption<string>).value), component, onPropertyChange)
-    }}
-  />
-{/snippet}
-
-{#snippet WidgetIconColor()}
-  <UI.Select
-    wrapperClass="!h-14"
-    label={{ name: $T("constructor.props.iconcolor") }}
-    type="buttons"
-    options={$optionsStore.TEXT_COLOR_OPTIONS}
-    value={$optionsStore.TEXT_COLOR_OPTIONS.find((c) =>
-      (c.value as string).includes(component.properties.icons.class?.split(" ").find((cls: string) => cls.startsWith("text-"))),
-    )}
-    onUpdate={(option) => {
-      updateProperty("icons.class", twMerge(component.properties.icons.class, (option as UI.IOption<string>).value), component, onPropertyChange)
+      const bgClass = (option as UI.IOption<string>).value as string
+      updateProperty("settings.class", twMerge(component.properties.settings.class, bgClass), component, onPropertyChange)
+      updateProperty("icons.class", twMerge(component.properties.icons.class, deriveIconColorClass(bgClass)), component, onPropertyChange)
     }}
   />
 {/snippet}
@@ -132,7 +128,6 @@
       <CommonSnippets snippet="Label" {component} {onPropertyChange} />
       {@render WidgetUnits()}
       {@render WidgetIcons()}
-      {@render WidgetIconColor()}
       {@render WidgetSwitchingMode()}
     </PropsGroup>
     <PropsGroup label={$T("constructor.props.group.appearance")}>
@@ -169,7 +164,6 @@
     <PropsGroup label={$T("constructor.props.group.content")}>
       {@render WidgetSettingsLabel()}
       {@render WidgetIcons()}
-      {@render WidgetIconColor()}
       {@render WidgetSwitchingMode()}
     </PropsGroup>
     <PropsGroup label={$T("constructor.props.group.appearance")}>
