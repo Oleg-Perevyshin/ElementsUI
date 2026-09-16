@@ -77,68 +77,72 @@
 
     <div bind:this={itemsContainer} class="flex flex-col gap-2">
       {#each component.properties.levels || [] as level, index}
-        <div id="item-{index}" class="flex items-end justify-around gap-2 rounded-lg border border-(--hairline-color) bg-(--container-color)/60 p-2">
-          <UI.Dragging
-            wrapperClass="w-9"
-            container={itemsContainer}
-            array={component.properties.levels}
-            elementIndex={index}
-            onUpdate={(updatedArray) => updateLevels(updatedArray)}
-          />
-          <UI.Input
-            label={{ name: $T("constructor.props.optionname") }}
-            wrapperClass="w-1/5"
-            value={level.name}
-            onUpdate={(value) => {
-              const levels = [...(component.properties?.levels || [])]
-              levels[index] = { ...levels[index], name: value as string }
-              updateLevels(levels)
-            }}
-          />
-          <UI.Select
-            label={{ name: $T("constructor.props.variable") }}
-            wrapperClass="w-1/5"
-            type="input"
-            options={VARIABLE_OPTIONS}
-            value={VARIABLE_OPTIONS.find((opt) => opt.value === level.variable)}
-            onUpdate={(value) => {
-              const levels = [...(component.properties?.levels || [])]
-              levels[index] = { ...levels[index], variable: (value as IOption).value as string }
-              updateLevels(levels)
-            }}
-          />
-          <UI.Input
-            label={{ name: $T("constructor.props.periodchart.data") }}
-            wrapperClass="w-1/5"
-            value={formatNumbers(level.data)}
-            onUpdate={(value) => {
-              const levels = [...(component.properties?.levels || [])]
-              levels[index] = { ...levels[index], data: parseNumbers(value as string) }
-              updateLevels(levels)
-            }}
-          />
-          <UI.Input
-            label={{ name: $T("constructor.props.periodchart.labels") }}
-            wrapperClass="w-1/5"
-            value={formatStrings(level.labels)}
-            onUpdate={(value) => {
-              const levels = [...(component.properties?.levels || [])]
-              levels[index] = { ...levels[index], labels: parseStrings(value as string) }
-              updateLevels(levels)
-            }}
-          />
-
-          {#if (component.properties.levels?.length ?? 0) > 1}
-            <UI.Button
-              wrapperClass="w-8"
-              content={{ icon: ButtonDelete }}
-              onClick={() => {
+        <div id="item-{index}" class="flex flex-col gap-2 rounded-lg border border-(--hairline-color) bg-(--container-color)/60 p-2">
+          <div class="flex items-center gap-2">
+            <UI.Dragging
+              wrapperClass="shrink-0"
+              container={itemsContainer}
+              array={component.properties.levels}
+              elementIndex={index}
+              onUpdate={(updatedArray) => updateLevels(updatedArray)}
+            />
+            <span class="flex-1"></span>
+            {#if (component.properties.levels?.length ?? 0) > 1}
+              <UI.Button
+                wrapperClass="w-8 shrink-0"
+                content={{ icon: ButtonDelete }}
+                onClick={() => {
+                  const levels = [...(component.properties?.levels || [])]
+                  levels.splice(index, 1)
+                  updateLevels(levels)
+                }}
+              />
+            {/if}
+          </div>
+          <div class="flex flex-wrap items-end gap-2">
+            <UI.Input
+              label={{ name: $T("constructor.props.optionname") }}
+              wrapperClass="min-w-28 flex-1"
+              value={level.name}
+              onUpdate={(value) => {
                 const levels = [...(component.properties?.levels || [])]
-                levels.splice(index, 1)
+                levels[index] = { ...levels[index], name: value as string }
                 updateLevels(levels)
               }}
             />
-          {/if}
+            <UI.Select
+              label={{ name: $T("constructor.props.variable") }}
+              wrapperClass="min-w-32 flex-1"
+              type="input"
+              options={VARIABLE_OPTIONS}
+              value={VARIABLE_OPTIONS.find((opt) => opt.value === level.variable)}
+              onUpdate={(value) => {
+                const levels = [...(component.properties?.levels || [])]
+                levels[index] = { ...levels[index], variable: (value as IOption).value as string }
+                updateLevels(levels)
+              }}
+            />
+            <UI.Input
+              label={{ name: $T("constructor.props.periodchart.data") }}
+              wrapperClass="min-w-32 flex-1"
+              value={formatNumbers(level.data)}
+              onUpdate={(value) => {
+                const levels = [...(component.properties?.levels || [])]
+                levels[index] = { ...levels[index], data: parseNumbers(value as string) }
+                updateLevels(levels)
+              }}
+            />
+            <UI.Input
+              label={{ name: $T("constructor.props.periodchart.labels") }}
+              wrapperClass="min-w-32 flex-1"
+              value={formatStrings(level.labels)}
+              onUpdate={(value) => {
+                const levels = [...(component.properties?.levels || [])]
+                levels[index] = { ...levels[index], labels: parseStrings(value as string) }
+                updateLevels(levels)
+              }}
+            />
+          </div>
         </div>
       {/each}
       <div id="item-{component.properties.levels?.length ?? 0}" class="min-h-4"></div>

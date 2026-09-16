@@ -24,12 +24,14 @@
 
 <div class={twMerge("flex flex-col gap-1.5 rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-2", wrapperClass)}>
   {#if label || headerActions}
-    <div class="flex items-center justify-between gap-2">
+    <div class="flex items-center gap-2">
       {#if label}
         <span class="text-[11px] font-semibold text-(--muted-color)">{label}</span>
       {/if}
       {#if headerActions}
-        {@render headerActions()}
+        <span class="ml-auto flex items-center gap-2">
+          {@render headerActions()}
+        </span>
       {/if}
     </div>
   {/if}
