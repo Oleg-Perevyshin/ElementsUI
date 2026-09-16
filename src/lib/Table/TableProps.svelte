@@ -133,7 +133,7 @@
 {/snippet}
 
 {#snippet TableColumnSettings(forConstructor: boolean)}
-  <PropsListModal label={$T("constructor.props.table.columns")} count={component.properties.header?.length ?? 0}>
+  <PropsListModal label={$T("constructor.props.table.columns")} count={component.properties.header?.length ?? 0} wrapperClass="w-380 h-[85%]">
     {#snippet main()}
       <PropsGroup>
         {#snippet headerActions()}
@@ -300,10 +300,10 @@
                         </div>
                       {:else if content.type == "button"}
                         {@const button = content.data}
-                        <div class="flex w-[95%] mx-auto items-end justify-between gap-2">
+                        <div class="flex w-[95%] mx-auto flex-wrap items-end justify-between gap-2">
                           <UI.Input
                             label={{ name: $T("constructor.props.name") }}
-                            wrapperClass="w-2/10"
+                            wrapperClass="w-1/10"
                             value={button.name}
                             onUpdate={(value) => updateContentProperty(columnIndex, index, "name", value)}
                           />
@@ -357,7 +357,7 @@
                             }}
                           />
                           <UI.Input
-                            wrapperClass="w-2/10"
+                            wrapperClass="w-1/10"
                             label={{ name: $T("constructor.props.argument") }}
                             value={button.eventHandler?.Argument}
                             onUpdate={(value) => {
