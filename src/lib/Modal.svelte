@@ -52,7 +52,11 @@
 
     const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as HTMLElement
-      if (isTopmost && !target.closest("[data-modal]")) {
+      /* [data-ui-portal] — элементы вроде выпадающего списка Select физически вынесены в
+         document.body (портал, чтобы их не обрезал overflow родителя), т.е. DOM-предок у них —
+         не [data-modal], а <body>. Без этой проверки клик по такому элементу внутри модалки
+         считался бы кликом "снаружи" и сразу закрывал бы её. */
+      if (isTopmost && !target.closest("[data-modal]") && !target.closest("[data-ui-portal]")) {
         isOpen = false
         onCancel()
       }

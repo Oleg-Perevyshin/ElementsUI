@@ -16,7 +16,9 @@
   /* Список вариантов выносится в document.body (портал), чтобы его не обрезал
      overflow-hidden/overflow-auto ближайшего скроллящегося предка (например,
      панель свойств конструктора). Позиция считается от dropdownElement и
-     обновляется, пока список открыт, при скролле/резайзе где угодно на странице. */
+     обновляется, пока список открыт, при скролле/резайзе где угодно на странице.
+     Атрибут data-ui-portal на контейнере — чтобы Modal.svelte не принимал клик по
+     опции (физически лежащей вне [data-modal]) за клик "снаружи" и не закрывался. */
   function portal(node: HTMLElement) {
     document.body.appendChild(node)
     return {
@@ -174,6 +176,7 @@
         <div
           use:portal
           bind:this={portalElement}
+          data-ui-portal
           class="fixed z-[9999] mt-1"
           style="top: {anchorRect?.bottom ?? 0}px; left: {anchorRect?.left ?? 0}px; width: {anchorRect?.width ?? 0}px;"
           transition:slide={{ duration: 150 }}
@@ -262,6 +265,7 @@
         <div
           use:portal
           bind:this={portalElement}
+          data-ui-portal
           class="fixed z-[9999] mt-1 select-none"
           style="top: {anchorRect?.bottom ?? 0}px; left: {anchorRect?.left ?? 0}px; width: {anchorRect?.width ?? 0}px;"
           transition:slide={{ duration: 150 }}
