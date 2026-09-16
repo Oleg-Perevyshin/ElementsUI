@@ -393,7 +393,7 @@
                         {@const image = content.data}
                         <div
                           class="flex items-center justify-center [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
-                          style={`width: ${image.width || "5rem"}; height: ${image.height || "5rem"}; `}
+                          style={`width: ${image.width || "2rem"}; height: ${image.height || "2rem"}; `}
                         >
                           {#if hasImage(column, row, index)}
                             <img
