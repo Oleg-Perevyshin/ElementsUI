@@ -3,7 +3,7 @@
   import { T } from "$lib/locales/i18n"
   import { type UIComponent, type ISliderProps, updateProperty, type IUIComponentHandler } from "../types"
   import * as UI from "$lib"
-  import { optionsStore } from "../options"
+  import { optionsStore, findColorOption } from "../options"
   import CommonSnippets from "$lib/CommonSnippets.svelte"
   import PropsGroup from "$lib/PropsGroup.svelte"
 
@@ -26,11 +26,7 @@
     ),
   )
 
-  const initialColor = $derived(
-    $optionsStore.COLOR_OPTIONS.find((c) =>
-      (c.value as string).includes(component.properties.wrapperClass?.split(" ").find((cls: string) => cls.startsWith("bg-"))),
-    ),
-  )
+  const initialColor = $derived(findColorOption($optionsStore.COLOR_OPTIONS, component.properties.wrapperClass))
 </script>
 
 {#snippet SliderType()}

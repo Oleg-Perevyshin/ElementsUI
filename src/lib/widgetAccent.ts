@@ -7,9 +7,8 @@
 /* componentClass — значение вида "bg-red" из optionsStore.COLOR_OPTIONS (или "" — без роли,
    обычный акцент темы). Возвращает inline-style для корня виджета; пустая строка ничего не переопределяет. */
 export const widgetAccentStyle = (componentClass: string): string => {
-  if (!componentClass) return ""
-  const role = componentClass.replace(/^bg-/, "")
-  if (role === "max") return ""
+  const role = componentClass.match(/(?:^|\s)bg-(\w+)/)?.[1]
+  if (!role || role === "max") return ""
   return (
     `--accent-color: var(--${role}-color); --accent-soft: var(--${role}-soft); --accent-hover: var(--${role}-color);` +
     `--focus-shadow-color: 0 0 0 3px color-mix(in srgb, var(--${role}-color) 18%, transparent);`

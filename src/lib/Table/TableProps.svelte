@@ -5,7 +5,7 @@
   import * as UI from "$lib"
   import ButtonDelete from "$lib/libIcons/ButtonDelete.svelte"
   import ButtonAdd from "$lib/libIcons/ButtonAdd.svelte"
-  import { optionsStore } from "../options"
+  import { optionsStore, findColorOption } from "../options"
   import { ICONS } from "$lib/icons"
   import CommonSnippets from "$lib/CommonSnippets.svelte"
   import PropsGroup from "$lib/PropsGroup.svelte"
@@ -29,11 +29,7 @@
 
   let isDropdownOpen = $state(-1)
 
-  const initialColor = $derived(
-    $optionsStore.COLOR_OPTIONS.find((c) =>
-      (c.value as string).includes(component.properties.wrapperClass?.split(" ").find((cls: string) => cls.startsWith("bg-"))),
-    ),
-  )
+  const initialColor = $derived(findColorOption($optionsStore.COLOR_OPTIONS, component.properties.wrapperClass))
 
   const initialAlign = $derived(
     $optionsStore.TEXT_ALIGN_OPTIONS.find((a) =>
@@ -352,11 +348,7 @@
                               label={{ name: $T("constructor.props.colors") }}
                               type="buttons"
                               options={$optionsStore.COLOR_OPTIONS.filter((option) => option.value !== "bg-max")}
-                              value={$optionsStore.COLOR_OPTIONS.find((c) =>
-                                (c.value as string).includes(
-                                  (button.class ?? component.properties.wrapperClass).split(" ").find((cls: string) => cls.startsWith("bg-")),
-                                ),
-                              )}
+                              value={findColorOption($optionsStore.COLOR_OPTIONS, button.class ?? component.properties.wrapperClass)}
                               onUpdate={(option) => {
                                 if (button.class === (option as UI.IOption).value) updateContentProperty(columnIndex, index, "class", "bg-transparent")
                                 else updateContentProperty(columnIndex, index, "class", (option as UI.IOption).value)

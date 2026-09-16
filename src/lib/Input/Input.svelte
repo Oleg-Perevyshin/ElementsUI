@@ -1,4 +1,4 @@
-<!-- $lib/Input/Input.svelte — радиус 10, высота 36, выравнивание по левому краю,
+<!-- $lib/Input/Input.svelte — радиус 10, высота 32 (h-8), выравнивание по левому краю,
      кольцо фокуса вместо размытой тени. Вся логика (regExp, roundToClean,
      handleInputChange, счётчик, копирование) не тронута. -->
 <script lang="ts">
@@ -39,13 +39,17 @@
 
   $effect(() => {
     if (help.regExp && type !== "number") isValid = RegExpObj().test(typeof value === "string" ? value : String(value))
+    else isValid = true
   })
 
   const handleInputChange = (value: string | number) => {
     if (type === "number") {
-      const numValue = typeof value === "string" ? parseFloat(value.replace(",", ".")) : Number(value)
-      if (!isNaN(numValue)) onUpdate?.(numValue)
-      else onUpdate?.(value as string)
+      let numValue = typeof value === "string" ? parseFloat(value.replace(",", ".")) : Number(value)
+      if (!isNaN(numValue)) {
+        if (typeof number?.minNum === "number") numValue = Math.max(numValue, number.minNum)
+        if (typeof number?.maxNum === "number") numValue = Math.min(numValue, number.maxNum)
+        onUpdate?.(numValue)
+      } else onUpdate?.(value as string)
     } else {
       onUpdate?.(value as string)
     }

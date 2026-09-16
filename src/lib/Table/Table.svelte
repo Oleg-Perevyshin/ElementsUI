@@ -105,7 +105,7 @@
     if (button.onClick) button.onClick(row)
     else if (button.eventHandler && onClick) {
       let value: Record<string, boolean | string | number | number[] | object | null> = {}
-      button.eventHandler.Variables.forEach((v: string) => {
+      ;(button.eventHandler.Variables ?? []).forEach((v: string) => {
         if (
           header.some(
             (h) =>
@@ -124,7 +124,7 @@
   const selectOption = async (index: number, key: any, selectIndex: number, option: IOption<string | number>, event: MouseEvent) => {
     event.stopPropagation()
 
-    let existingItem = body[index][key]
+    let existingItem = body[index][key.slice(0, -2)]
     isDropdownOpen = null
 
     setTimeout(() => {
@@ -163,7 +163,7 @@
 
     let min = progressBar?.minNum ?? 0
     let max = progressBar?.maxNum ?? 100
-    if (value) return (((Math.min(Math.max(value, min), max) - min) / (max - min)) * 100) as number
+    if (value != null && !isNaN(value)) return (((Math.min(Math.max(value, min), max) - min) / (max - min)) * 100) as number
   }
 
   const roundToClean = (num: number): number => {

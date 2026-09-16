@@ -102,10 +102,9 @@
   const selectOption = (option: IOption<T>, event: MouseEvent) => {
     event.stopPropagation()
 
-    if (type === "buttons" && multiSelect && value) {
-      if (!Array.isArray(value)) value = [value]
-      if (value.find((v) => v.value === option.value)) value = value.filter((op) => op.value !== option.value)
-      else value.push(option)
+    if (type === "buttons" && multiSelect) {
+      const current = Array.isArray(value) ? value : value ? [value] : []
+      value = current.find((v) => v.value === option.value) ? current.filter((op) => op.value !== option.value) : [...current, option]
     } else {
       value = option
     }
@@ -123,7 +122,9 @@
       id: `input-${Date.now()}`,
       name: searchValue,
       value:
-        typeof options[0]?.value == "number" ? ((Number(searchValue) as T) == undefined ? (Number(searchValue) as T) : (searchValue as T)) : (searchValue as T),
+        typeof options[0]?.value == "number" && searchValue !== "" && !isNaN(Number(searchValue))
+          ? (Number(searchValue) as T)
+          : (searchValue as T),
     }
     value = selectedOption
     onUpdate?.(selectedOption)
@@ -256,6 +257,7 @@
           componentClass,
         )}
         id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
+        autocomplete="off"
         {disabled}
         oninput={handleSearch}
         onclick={(e) => toggleDropdown(e)}

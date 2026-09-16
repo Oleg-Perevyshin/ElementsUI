@@ -2,7 +2,7 @@
   import { T } from "$lib/locales/i18n"
   import { updateProperty, type IOption, type ITabsProps, type IUIComponentHandler, type UIComponent } from "../types"
   import * as UI from "$lib"
-  import { optionsStore } from "../options"
+  import { optionsStore, findColorOption } from "../options"
   import { ICONS } from "../icons"
   import ButtonAdd from "$lib/libIcons/ButtonAdd.svelte"
   import ButtonDelete from "$lib/libIcons/ButtonDelete.svelte"
@@ -23,11 +23,7 @@
 
   let itemsContainer: HTMLDivElement | null = $state(null)
 
-  const initialColor = $derived(
-    $optionsStore.COLOR_OPTIONS.find((c) =>
-      (c.value as string).includes(component.properties.wrapperClass?.split(" ").find((cls: string) => cls.startsWith("bg-"))),
-    ),
-  )
+  const initialColor = $derived(findColorOption($optionsStore.COLOR_OPTIONS, component.properties.wrapperClass))
 
   const initialPosition = $derived(
     $optionsStore.ICON_TEXT_POSITION_OPTIONS.find((c) =>

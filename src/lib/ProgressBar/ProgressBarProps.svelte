@@ -3,7 +3,7 @@
   import { T } from "$lib/locales/i18n"
   import { type UIComponent, type IProgressBarProps, updateProperty, type IUIComponentHandler } from "../types"
   import * as UI from "$lib"
-  import { optionsStore } from "../options"
+  import { optionsStore, findColorOption } from "../options"
   import CommonSnippets from "$lib/CommonSnippets.svelte"
   import PropsGroup from "$lib/PropsGroup.svelte"
   import PropsListModal from "$lib/PropsListModal.svelte"
@@ -104,9 +104,7 @@
                     wrapperClass="min-w-56 flex-[2]"
                     type="buttons"
                     options={$optionsStore.COLOR_OPTIONS.filter((option) => option.value !== "bg-max")}
-                    value={$optionsStore.COLOR_OPTIONS.find((c) =>
-                      (c.value as string).includes(progress.class.split(" ").find((cls: string) => cls.startsWith("bg-"))),
-                    )}
+                    value={findColorOption($optionsStore.COLOR_OPTIONS, progress.class)}
                     onUpdate={(value) => {
                       const progresses = [...(component.properties?.items || [])]
                       progresses[index]["class"] = (value as UI.IOption).value

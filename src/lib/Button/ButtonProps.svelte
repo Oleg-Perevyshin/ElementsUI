@@ -3,7 +3,7 @@
   import { T } from "../locales/i18n"
   import { type UIComponent, type IButtonProps, type IOption, updateProperty, type IUIComponentHandler } from "../types"
   import * as UI from "$lib"
-  import { optionsStore } from "../options"
+  import { optionsStore, findColorOption } from "../options"
   import { twMerge } from "tailwind-merge"
   import { ICONS } from "$lib/icons"
   import CommonSnippets from "$lib/CommonSnippets.svelte"
@@ -31,11 +31,7 @@
     $optionsStore.HEADER_OPTIONS.find((h) => h.value === component.eventHandler.Header) ?? { id: "", name: "", value: "", class: "!w-1/4" },
   )
 
-  const initialColor = $derived(
-    $optionsStore.COLOR_OPTIONS.find((c) =>
-      (c.value as string).includes(component.properties.componentClass?.split(" ").find((cls: string) => cls.startsWith("bg-"))),
-    ),
-  )
+  const initialColor = $derived(findColorOption($optionsStore.COLOR_OPTIONS, component.properties.componentClass))
 
   const initialHeight = $derived(
     $optionsStore.HEIGHT_OPTIONS.find((h) =>

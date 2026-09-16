@@ -4,7 +4,7 @@
   import * as UI from "$lib"
   import CommonSnippets from "$lib/CommonSnippets.svelte"
   import PropsGroup from "$lib/PropsGroup.svelte"
-  import { optionsStore } from "$lib/options"
+  import { optionsStore, findColorOption } from "$lib/options"
 
   const {
     component,
@@ -16,11 +16,7 @@
     forConstructor?: boolean
   }>()
 
-  const initialColor = $derived(
-    $optionsStore.COLOR_OPTIONS.find((c) =>
-      (c.value as string).includes(component.properties.wrapperClass?.split(" ").find((cls: string) => cls.startsWith("bg-"))),
-    ),
-  )
+  const initialColor = $derived(findColorOption($optionsStore.COLOR_OPTIONS, component.properties.wrapperClass))
 </script>
 
 {#snippet VideoViewershowSelect()}

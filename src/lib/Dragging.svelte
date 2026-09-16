@@ -1,4 +1,8 @@
-<script lang="ts" module>
+<script lang="ts">
+  import { tick } from "svelte"
+  import MoveVerticalIcon from "./libIcons/MoveVerticalIcon.svelte"
+  import { twMerge } from "tailwind-merge"
+
   let dragState = $state({
     isDragging: false,
     element: null as any,
@@ -13,12 +17,6 @@
   })
 
   let commandItems: Element[] = $state([])
-</script>
-
-<script lang="ts">
-  import { tick } from "svelte"
-  import MoveVerticalIcon from "./libIcons/MoveVerticalIcon.svelte"
-  import { twMerge } from "tailwind-merge"
 
   let {
     wrapperClass,
@@ -41,7 +39,7 @@
   /* Перетаскивание с MouseEvent */
   const startDrag = async (e: MouseEvent) => {
     const movedElement = document.querySelector(
-      containerIndex == null ? `#${elementsId}-${elementIndex}` : `#${elementsId}-${elementIndex}-${dragState.containerIndex || containerIndex}`,
+      containerIndex == null ? `#${elementsId}-${elementIndex}` : `#${elementsId}-${elementIndex}-${containerIndex}`,
     ) as HTMLElement
 
     if (!movedElement) return

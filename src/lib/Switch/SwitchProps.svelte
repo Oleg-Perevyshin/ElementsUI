@@ -3,7 +3,7 @@
   import { T } from "$lib/locales/i18n"
   import { type UIComponent, type ISwitchProps, updateProperty, type IOption, type IUIComponentHandler } from "../types"
   import * as UI from "$lib"
-  import { optionsStore } from "../options"
+  import { optionsStore, findColorOption } from "../options"
   import ButtonDelete from "$lib/libIcons/ButtonDelete.svelte"
   import ButtonAdd from "$lib/libIcons/ButtonAdd.svelte"
   import CommonSnippets from "$lib/CommonSnippets.svelte"
@@ -21,9 +21,7 @@
   }>()
   const DeviceVariables = getContext<{ id: string; value: string; name: string }[]>("DeviceVariables")
   let VARIABLE_OPTIONS = $derived(DeviceVariables && Array.isArray(DeviceVariables) ? DeviceVariables : [])
-  let initialColor = $optionsStore.COLOR_OPTIONS.find((c) =>
-    (c.value as string).includes(component.properties.options[0].class.split(" ").find((cls: string) => cls.startsWith("bg-"))),
-  )
+  let initialColor = $derived(findColorOption($optionsStore.COLOR_OPTIONS, component.properties.options[0].class))
   const initialAlign = $derived(
     $optionsStore.TEXT_ALIGN_OPTIONS.find((a) =>
       (a.value as string).includes(component.properties.label?.class?.split(" ").find((cls: string) => cls.startsWith("text-"))),
@@ -139,9 +137,7 @@
                 label={{ name: $T("constructor.props.colors") }}
                 type="buttons"
                 options={$optionsStore.COLOR_OPTIONS.filter((option) => option.value !== "bg-max" && option.value !== "bg-gray")}
-                value={$optionsStore.COLOR_OPTIONS.find((c) =>
-                  (c.value as string).includes(option.class.split(" ").find((cls: string) => cls.startsWith("bg-"))),
-                )}
+                value={findColorOption($optionsStore.COLOR_OPTIONS, option.class)}
                 onUpdate={(option) => {
                   const options = [...(component.properties?.options || [])]
                   options[index]["class"] = (option as UI.IOption).value

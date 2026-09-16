@@ -1,10 +1,10 @@
 <script lang="ts">
   import { getContext } from "svelte"
   import { T } from "$lib/locales/i18n"
-  import { type UIComponent, type IGraphProps, updateProperty, type IOption, type IUIComponentHandler } from "../types"
+  import { type UIComponent, type IJoystickProps, updateProperty, type IUIComponentHandler } from "../types"
   import * as UI from "$lib"
   import { ICONS } from "$lib/icons"
-  import { optionsStore } from "$lib/options"
+  import { optionsStore, findColorOption } from "$lib/options"
   import CommonSnippets from "$lib/CommonSnippets.svelte"
   import PropsGroup from "$lib/PropsGroup.svelte"
 
@@ -13,7 +13,7 @@
     onPropertyChange,
     forConstructor = true,
   } = $props<{
-    component: UIComponent & { properties: Partial<IGraphProps> }
+    component: UIComponent & { properties: Partial<IJoystickProps> }
     onPropertyChange: (updates: Partial<{ properties?: string | object; name?: string; access?: string; eventHandler?: IUIComponentHandler }>) => void
     forConstructor?: boolean
   }>()
@@ -27,11 +27,7 @@
     ),
   )
 
-  const initialColor = $derived(
-    $optionsStore.COLOR_OPTIONS.find((c) =>
-      (c.value as string).includes(component.properties.wrapperClass?.split(" ").find((cls: string) => cls.startsWith("bg-"))),
-    ),
-  )
+  const initialColor = $derived(findColorOption($optionsStore.COLOR_OPTIONS, component.properties.wrapperClass))
 </script>
 
 {#snippet JoystickAxesMinMax()}

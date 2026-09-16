@@ -5,7 +5,7 @@
   import * as UI from "$lib"
   import ButtonDelete from "../libIcons/ButtonDelete.svelte"
   import ButtonAdd from "../libIcons/ButtonAdd.svelte"
-  import { optionsStore } from "../options.js"
+  import { optionsStore, findColorOption } from "../options.js"
   import CommonSnippets from "$lib/CommonSnippets.svelte"
   import PropsGroup from "$lib/PropsGroup.svelte"
   import PropsListModal from "$lib/PropsListModal.svelte"
@@ -235,9 +235,7 @@
                     label={{ name: $T("constructor.props.colors") }}
                     type="buttons"
                     options={$optionsStore.COLOR_OPTIONS}
-                    value={$optionsStore.COLOR_OPTIONS.find((c) =>
-                      (c.value as string).includes(option.class.split(" ").find((cls: string) => cls.startsWith("bg-"))),
-                    )}
+                    value={findColorOption($optionsStore.COLOR_OPTIONS, option.class)}
                     onUpdate={(option) => {
                       const options = [...(component.properties?.options || [])]
                       options[index]["class"] = (option as UI.IOption).value

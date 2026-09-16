@@ -2,7 +2,7 @@
   import { T } from "$lib/locales/i18n"
   import { updateProperty, type ITextFieldProps, type IUIComponentHandler, type UIComponent } from "../types"
   import * as UI from "$lib/index"
-  import { optionsStore } from "$lib/options"
+  import { optionsStore, findColorOption } from "$lib/options"
   import { getContext } from "svelte"
   import { twMerge } from "tailwind-merge"
   import CommonSnippets from "$lib/CommonSnippets.svelte"
@@ -27,11 +27,7 @@
       (a.value as string).includes(component.properties.content?.class?.split(" ").find((cls: string) => cls.startsWith("text-"))),
     ),
   )
-  const initialColor = $derived(
-    $optionsStore.TEXT_COLOR_OPTIONS.find((c) =>
-      (c.value as string).includes(component.properties.wrapperClass?.split(" ").find((cls: string) => cls.startsWith("text-"))),
-    ),
-  )
+  const initialColor = $derived(findColorOption($optionsStore.TEXT_COLOR_OPTIONS, component.properties.wrapperClass, "text-"))
 </script>
 
 {#snippet TextFieldSize()}

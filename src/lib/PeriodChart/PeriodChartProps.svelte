@@ -3,7 +3,7 @@
   import { T } from "$lib/locales/i18n"
   import { updateProperty, type IOption, type IPeriodChartLevel, type IPeriodChartProps, type IUIComponentHandler, type UIComponent } from "../types"
   import * as UI from "$lib"
-  import { optionsStore } from "../options"
+  import { optionsStore, findColorOption } from "../options"
   import ButtonAdd from "$lib/libIcons/ButtonAdd.svelte"
   import ButtonDelete from "$lib/libIcons/ButtonDelete.svelte"
   import CommonSnippets from "$lib/CommonSnippets.svelte"
@@ -24,11 +24,7 @@
 
   let itemsContainer: HTMLDivElement | null = $state(null)
 
-  const initialColor = $derived(
-    $optionsStore.COLOR_OPTIONS.find((c) =>
-      (c.value as string).includes(component.properties.wrapperClass?.split(" ").find((cls: string) => cls.startsWith("bg-"))),
-    ),
-  )
+  const initialColor = $derived(findColorOption($optionsStore.COLOR_OPTIONS, component.properties.wrapperClass))
 
   /* levels[].data/labels хранятся как number[]/string[], редактируются одной строкой через запятую (fallback для литеральных демо-данных) */
   const parseNumbers = (text: string): number[] =>

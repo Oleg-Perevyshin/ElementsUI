@@ -6,6 +6,13 @@ function id() {
   return crypto.randomUUID() as string
 }
 
+/* Достаёт роль master-цвета (класс bg-*) из строки классов компонента и находит соответствующую
+   запись в COLOR_OPTIONS — общий хелпер для всех *Props-панелей, где нужно предзаполнить пикер цвета. */
+export const findColorOption = <T extends { value: string }>(options: T[], classString?: string, prefix: string = "bg-"): T | undefined => {
+  const colorClass = classString?.split(" ").find((cls) => cls.startsWith(prefix))
+  return colorClass ? options.find((c) => c.value.includes(colorClass)) : undefined
+}
+
 export const optionsStore = derived(T, ($T) => {
   return {
     HEADER_OPTIONS: [
@@ -162,11 +169,6 @@ export const optionsStore = derived(T, ($T) => {
       { id: id(), value: "py-3", name: $T("constructor.props.height.large") },
     ],
 
-    ACCORDION_TYPE_OPTIONS: [
-      { id: id(), value: false, name: $T("constructor.props.type.main") },
-      { id: id(), value: true, name: $T("constructor.props.type.sub") },
-    ],
-
     FILE_ATTACH_TYPE_OPTIONS: [
       { id: id(), value: "file", name: $T("constructor.props.type.file") },
       { id: id(), value: "image", name: $T("constructor.props.type.image") },
@@ -204,11 +206,6 @@ export const optionsStore = derived(T, ($T) => {
     FORM_OPTIONS: [
       { id: id(), value: "square", name: $T("constructor.props.type.square") },
       { id: id(), value: "circle", name: $T("constructor.props.type.circle") },
-    ],
-
-    TABLE_TYPE_OPTIONS: [
-      { id: id(), value: "table", name: $T("constructor.props.table.type.table") },
-      { id: id(), value: "logger", name: $T("constructor.props.table.type.logger") },
     ],
 
     TABLE_CONTENT_TYPE_OPTIONS: [
@@ -280,82 +277,6 @@ export const optionsStore = derived(T, ($T) => {
       { id: id(), value: "postal-code", name: $T("constructor.props.autocomplete.postal-code") },
       { id: id(), value: "email", name: $T("constructor.props.autocomplete.email") },
       { id: id(), value: "tel", name: $T("constructor.props.autocomplete.tel") },
-    ],
-
-    AUTOCOMPLETE_OPTIONS: [
-      // Основные значения
-      { id: id(), value: "on", name: $T("constructor.props.autocomplete.on") },
-      { id: id(), value: "off", name: $T("constructor.props.autocomplete.off") },
-      // Имя и фамилия
-      { id: id(), value: "name", name: $T("constructor.props.autocomplete.name") },
-      { id: id(), value: "honorific-prefix", name: $T("constructor.props.autocomplete.honorific-prefix") },
-      { id: id(), value: "given-name", name: $T("constructor.props.autocomplete.given-name") },
-      { id: id(), value: "additional-name", name: $T("constructor.props.autocomplete.additional-name") },
-      { id: id(), value: "family-name", name: $T("constructor.props.autocomplete.family-name") },
-      { id: id(), value: "honorific-suffix", name: $T("constructor.props.autocomplete.honorific-suffix") },
-      { id: id(), value: "nickname", name: $T("constructor.props.autocomplete.nickname") },
-
-      // Пользовательская информация
-      { id: id(), value: "username", name: $T("constructor.props.autocomplete.username") },
-      { id: id(), value: "new-password", name: $T("constructor.props.autocomplete.new-password") },
-      { id: id(), value: "current-password", name: $T("constructor.props.autocomplete.current-password") },
-      { id: id(), value: "one-time-code", name: $T("constructor.props.autocomplete.one-time-code") },
-
-      // Организация
-      { id: id(), value: "organization-title", name: $T("constructor.props.autocomplete.organization-title") },
-      { id: id(), value: "organization", name: $T("constructor.props.autocomplete.organization") },
-
-      // Адрес
-      { id: id(), value: "street-address", name: $T("constructor.props.autocomplete.street-address") },
-      { id: id(), value: "address-line1", name: $T("constructor.props.autocomplete.address-line1") },
-      { id: id(), value: "address-line2", name: $T("constructor.props.autocomplete.address-line2") },
-      { id: id(), value: "address-line3", name: $T("constructor.props.autocomplete.address-line3") },
-      { id: id(), value: "address-level4", name: $T("constructor.props.autocomplete.address-level4") },
-      { id: id(), value: "address-level3", name: $T("constructor.props.autocomplete.address-level3") },
-      { id: id(), value: "address-level2", name: $T("constructor.props.autocomplete.address-level2") },
-      { id: id(), value: "address-level1", name: $T("constructor.props.autocomplete.address-level1") },
-      { id: id(), value: "country", name: $T("constructor.props.autocomplete.country") },
-      { id: id(), value: "country-name", name: $T("constructor.props.autocomplete.country-name") },
-      { id: id(), value: "postal-code", name: $T("constructor.props.autocomplete.postal-code") },
-
-      // Контактная информация
-      { id: id(), value: "cc-name", name: $T("constructor.props.autocomplete.cc-name") },
-      { id: id(), value: "cc-given-name", name: $T("constructor.props.autocomplete.cc-given-name") },
-      { id: id(), value: "cc-additional-name", name: $T("constructor.props.autocomplete.cc-additional-name") },
-      { id: id(), value: "cc-family-name", name: $T("constructor.props.autocomplete.cc-family-name") },
-      { id: id(), value: "cc-number", name: $T("constructor.props.autocomplete.cc-number") },
-      { id: id(), value: "cc-exp", name: $T("constructor.props.autocomplete.cc-exp") },
-      { id: id(), value: "cc-exp-month", name: $T("constructor.props.autocomplete.cc-exp-month") },
-      { id: id(), value: "cc-exp-year", name: $T("constructor.props.autocomplete.cc-exp-year") },
-      { id: id(), value: "cc-csc", name: $T("constructor.props.autocomplete.cc-csc") },
-      { id: id(), value: "cc-type", name: $T("constructor.props.autocomplete.cc-type") },
-
-      // Контакт
-      { id: id(), value: "transaction-currency", name: $T("constructor.props.autocomplete.transaction-currency") },
-      { id: id(), value: "transaction-amount", name: $T("constructor.props.autocomplete.transaction-amount") },
-      { id: id(), value: "language", name: $T("constructor.props.autocomplete.language") },
-      { id: id(), value: "bday", name: $T("constructor.props.autocomplete.bday") },
-      { id: id(), value: "bday-day", name: $T("constructor.props.autocomplete.bday-day") },
-      { id: id(), value: "bday-month", name: $T("constructor.props.autocomplete.bday-month") },
-      { id: id(), value: "bday-year", name: $T("constructor.props.autocomplete.bday-year") },
-
-      // Связь
-      { id: id(), value: "sex", name: $T("constructor.props.autocomplete.sex") },
-      { id: id(), value: "url", name: $T("constructor.props.autocomplete.url") },
-      { id: id(), value: "photo", name: $T("constructor.props.autocomplete.photo") },
-
-      // Email и телефон
-      { id: id(), value: "email", name: $T("constructor.props.autocomplete.email") },
-      { id: id(), value: "tel", name: $T("constructor.props.autocomplete.tel") },
-      { id: id(), value: "tel-country-code", name: $T("constructor.props.autocomplete.tel-country-code") },
-      { id: id(), value: "tel-national", name: $T("constructor.props.autocomplete.tel-national") },
-      { id: id(), value: "tel-area-code", name: $T("constructor.props.autocomplete.tel-area-code") },
-      { id: id(), value: "tel-local", name: $T("constructor.props.autocomplete.tel-local") },
-      { id: id(), value: "tel-local-prefix", name: $T("constructor.props.autocomplete.tel-local-prefix") },
-      { id: id(), value: "tel-local-suffix", name: $T("constructor.props.autocomplete.tel-local-suffix") },
-      { id: id(), value: "tel-extension", name: $T("constructor.props.autocomplete.tel-extension") },
-      { id: id(), value: "impp", name: $T("constructor.props.autocomplete.impp") },
-      { id: id(), value: "fax", name: $T("constructor.props.autocomplete.fax") },
     ],
   }
 })

@@ -40,6 +40,7 @@
   $effect(() => {
     if (isOpen) ModalStack.open(modalId)
     else ModalStack.close(modalId)
+    return () => ModalStack.close(modalId)
   })
 
   $effect(() => {

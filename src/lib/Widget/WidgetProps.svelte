@@ -2,7 +2,7 @@
   import { T } from "$lib/locales/i18n"
   import { updateProperty, type IUIComponentHandler, type UIComponent } from "../types"
   import * as UI from "$lib"
-  import { optionsStore } from "../options"
+  import { optionsStore, findColorOption } from "../options"
   import { ICONS_ARRAY } from "../icons"
   import { twMerge } from "tailwind-merge"
   import CommonSnippets from "$lib/CommonSnippets.svelte"
@@ -22,11 +22,7 @@
   const DeviceVariables = getContext<{ id: string; value: string; name: string }[]>("DeviceVariables")
   let VARIABLE_OPTIONS = $derived(DeviceVariables && Array.isArray(DeviceVariables) ? DeviceVariables : [])
 
-  const initialColor = $derived(
-    $optionsStore.COLOR_OPTIONS.find((c) =>
-      (c.value as string).includes(component.properties.settings.class?.split(" ").find((cls: string) => cls.startsWith("bg-"))),
-    ),
-  )
+  const initialColor = $derived(findColorOption($optionsStore.COLOR_OPTIONS, component.properties.settings.class))
 
   /* Один мастер-цвет вместо двух независимых пикеров: цвет иконки больше не выбирается отдельно,
      а выводится из того же bg-* (COLOR_OPTIONS и TEXT_COLOR_OPTIONS — одна и та же ролевая палитра
