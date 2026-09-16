@@ -130,7 +130,7 @@
   }
 
   /* Общая база поля — та же, что у Input */
-  const fieldBase = `h-9 w-full rounded-[10px] border border-(--border-color) bg-(--field-color) px-3 text-left text-[14px]
+  const fieldBase = `h-8 w-full rounded-[10px] border border-(--border-color) bg-(--field-color) px-3 text-left text-[14px]
     transition-[border-color,box-shadow] duration-150 outline-none
     focus:border-(--accent-color) focus:shadow-(--focus-shadow-color)`
 
@@ -222,7 +222,7 @@
           <button
             id={option.id}
             class="{twMerge(
-              `min-h-8 min-w-0 flex-1 px-3 py-2 text-[13px] font-semibold transition-colors duration-150
+              `h-8 min-w-0 flex-1 px-3 py-2 text-[13px] font-semibold transition-colors duration-150
                ${index === 0 ? 'rounded-l-[9px]' : ''} ${index === options.length - 1 ? 'rounded-r-[9px]' : ''}
                ${index > 0 ? 'border-l border-(--border-color)' : ''}
                ${

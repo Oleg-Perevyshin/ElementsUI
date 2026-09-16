@@ -110,7 +110,7 @@
                 {#if forConstructor}
                   <UI.Select
                     label={{ name: $T("constructor.props.colors") }}
-                    wrapperClass="min-w-56 flex-[2] h-13.5"
+                    wrapperClass="min-w-56 flex-[2]"
                     type="buttons"
                     options={$optionsStore.COLOR_OPTIONS.filter((option) => option.value !== "bg-max")}
                     value={$optionsStore.COLOR_OPTIONS.find((c) =>

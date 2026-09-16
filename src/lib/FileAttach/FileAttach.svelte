@@ -82,13 +82,13 @@
       <input
         id={ID}
         type="file"
-        class="absolute left-0 z-1 h-9 w-full opacity-0 {disabled ? 'cursor-not-allowed' : 'cursor-pointer'}"
+        class="absolute left-0 z-1 h-8 w-full opacity-0 {disabled ? 'cursor-not-allowed' : 'cursor-pointer'}"
         {accept}
         {disabled}
         onchange={handleFileChange}
       />
       <div
-        class="flex h-9 w-full overflow-hidden rounded-[10px] border border-(--border-color) text-[14px] transition-colors duration-150
+        class="flex h-8 w-full overflow-hidden rounded-[10px] border border-(--border-color) text-[14px] transition-colors duration-150
              {disabled ? 'opacity-45' : 'hover:border-(--faint-color)'}"
       >
         <div class="flex shrink-0 items-center justify-center bg-(--accent-color) px-3 font-semibold whitespace-nowrap text-(--on-accent)">

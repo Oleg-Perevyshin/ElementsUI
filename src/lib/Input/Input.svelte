@@ -92,7 +92,7 @@
     {#if type === "number"}
       <input
         bind:value
-        class={twMerge(fieldBase, "h-9 pr-9", componentClass)}
+        class={twMerge(fieldBase, "h-8 pr-9", componentClass)}
         id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
         {placeholder}
         {disabled}
@@ -109,7 +109,7 @@
     {:else if type !== "text-area"}
       <input
         bind:value
-        class={twMerge(fieldBase, `h-9 ${help.copyButton || type === "password" ? "pr-9" : ""}`, componentClass)}
+        class={twMerge(fieldBase, `h-8 ${help.copyButton || type === "password" ? "pr-9" : ""}`, componentClass)}
         id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
         {placeholder}
         {disabled}
@@ -190,7 +190,7 @@
 
     {#if (type === "number" || type === "bitMode") && !readonly && !disabled}
       <!-- Счётчик: узкая колонка со стрелками, отделена волосяной линией -->
-      <div class="absolute right-0 flex h-9 w-8 flex-col overflow-hidden rounded-r-[10px] border-l border-(--hairline-color)">
+      <div class="absolute right-0 flex h-8 w-8 flex-col overflow-hidden rounded-r-[10px] border-l border-(--hairline-color)">
         <button
           class="flex h-1/2 w-full items-center justify-center border-b border-(--hairline-color) text-[11px] leading-none text-(--muted-color) transition-colors duration-150 hover:bg-(--container-color) hover:text-(--font-color)"
           onclick={() => {
