@@ -112,71 +112,75 @@
 
         <div bind:this={itemsContainer} class="flex flex-col gap-2">
           {#each component.properties.items || [] as tab, index}
-            <div id="item-{index}" class="flex items-end justify-around gap-1.5 rounded-lg border border-(--hairline-color) bg-(--container-color)/60 p-1.5">
-              <UI.Dragging
-                wrapperClass="w-10"
-                container={itemsContainer}
-                array={component.properties.items}
-                elementIndex={index}
-                onUpdate={(updatedArray) => {
-                  updateProperty("items", updatedArray, component, onPropertyChange)
-                }}
-              />
-              <UI.Input
-                label={{ name: $T("constructor.props.optionname") }}
-                wrapperClass="w-1/3"
-                value={tab.name}
-                onUpdate={(value) => {
-                  const items = [...(component.properties?.items || [])]
-                  items[index]["name"] = value
-                  updateProperty("items", items, component, onPropertyChange)
-                }}
-              />
-              <div class="relative flex w-40 gap-2">
-                <CommonSnippets
-                  snippet="IconsLib"
-                  initialValue={{
-                    name: $T("constructor.props.table.type.icon"),
-                    icon: component.properties.items[index].icon,
-                    updateProperty: (icon: string) => {
-                      const items = [...(component.properties?.items || [])]
-                      items[index]["icon"] = icon as string
-                      updateProperty("items", items, component, onPropertyChange)
-                    },
-                    icons: { array: ICONS },
+            <div id="item-{index}" class="flex flex-col gap-2 rounded-lg border border-(--hairline-color) bg-(--container-color)/60 p-2">
+              <div class="flex items-center gap-2">
+                <UI.Dragging
+                  wrapperClass="shrink-0"
+                  container={itemsContainer}
+                  array={component.properties.items}
+                  elementIndex={index}
+                  onUpdate={(updatedArray) => {
+                    updateProperty("items", updatedArray, component, onPropertyChange)
                   }}
-                  {component}
-                  {onPropertyChange}
                 />
-              </div>
-
-              <UI.Switch
-                wrapperClass="w-30"
-                label={{ name: $T("constructor.props.disabled") }}
-                value={tab?.disabled ? 1 : 0}
-                options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-                onChange={(value) => {
-                  const items = [...(component.properties?.items || [])]
-                  items[index]["disabled"] = value
-                  updateProperty("items", items, component, onPropertyChange)
-                }}
-              />
-
-              {#if component.properties.items.length > 1}
-                <UI.Button
-                  wrapperClass="w-8"
-                  content={{ icon: ButtonDelete }}
-                  onClick={() => {
-                    const items = [...(component.properties?.items || [])]
-                    items.splice(index, 1)
-                    items.forEach((_item: any, index: number) => {
-                      items[index]["class"] = twMerge(items[index].class, initialWidth() ? `w-[${(1 / items.length) * 100}%]` : "w-auto")
+                <span class="flex-1"></span>
+                {#if component.properties.items.length > 1}
+                  <UI.Button
+                    wrapperClass="w-8 shrink-0"
+                    content={{ icon: ButtonDelete }}
+                    onClick={() => {
+                      const items = [...(component.properties?.items || [])]
+                      items.splice(index, 1)
+                      items.forEach((_item: any, index: number) => {
+                        items[index]["class"] = twMerge(items[index].class, initialWidth() ? `w-[${(1 / items.length) * 100}%]` : "w-auto")
+                        updateProperty("items", items, component, onPropertyChange)
+                      })
                       updateProperty("items", items, component, onPropertyChange)
-                    })
+                    }}
+                  />
+                {/if}
+              </div>
+              <div class="flex flex-wrap items-end gap-2">
+                <UI.Input
+                  label={{ name: $T("constructor.props.optionname") }}
+                  wrapperClass="min-w-32 flex-1"
+                  value={tab.name}
+                  onUpdate={(value) => {
+                    const items = [...(component.properties?.items || [])]
+                    items[index]["name"] = value
                     updateProperty("items", items, component, onPropertyChange)
                   }}
                 />
-              {/if}
+                <div class="relative min-w-32">
+                  <CommonSnippets
+                    snippet="IconsLib"
+                    initialValue={{
+                      name: $T("constructor.props.table.type.icon"),
+                      icon: component.properties.items[index].icon,
+                      updateProperty: (icon: string) => {
+                        const items = [...(component.properties?.items || [])]
+                        items[index]["icon"] = icon as string
+                        updateProperty("items", items, component, onPropertyChange)
+                      },
+                      icons: { array: ICONS },
+                    }}
+                    {component}
+                    {onPropertyChange}
+                  />
+                </div>
+
+                <UI.Switch
+                  wrapperClass="min-w-24"
+                  label={{ name: $T("constructor.props.disabled") }}
+                  value={tab?.disabled ? 1 : 0}
+                  options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
+                  onChange={(value) => {
+                    const items = [...(component.properties?.items || [])]
+                    items[index]["disabled"] = value
+                    updateProperty("items", items, component, onPropertyChange)
+                  }}
+                />
+              </div>
             </div>
           {/each}
           <div id="item-{component.properties.items.length}" class="min-h-4"></div>

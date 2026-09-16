@@ -74,82 +74,86 @@
 
         <div bind:this={itemsContainer} class="flex flex-col gap-2">
           {#each component.properties.items || [] as progress, index}
-            <div id="item-{index}" class="flex items-end gap-1 rounded-lg border border-(--hairline-color) bg-(--container-color)/60 p-1.5">
-              <UI.Dragging
-                wrapperClass="w-9"
-                container={itemsContainer}
-                array={component.properties.items}
-                elementIndex={index}
-                onUpdate={(updatedArray) => {
-                  updateProperty("items", updatedArray, component, onPropertyChange)
-                }}
-              />
-              <UI.Input
-                label={{ name: $T("constructor.props.optionname") }}
-                wrapperClass="w-1/4"
-                value={progress.name}
-                onUpdate={(value) => {
-                  const progresses = [...(component.properties?.items || [])]
-                  progresses[index]["name"] = value
-                  updateProperty("items", progresses, component, onPropertyChange)
-                }}
-              />
-              {#if forConstructor}
-                <UI.Select
-                  label={{ name: $T("constructor.props.colors") }}
-                  wrapperClass="w-1/2 h-14.5"
-                  type="buttons"
-                  options={$optionsStore.COLOR_OPTIONS.filter((option) => option.value !== "bg-max")}
-                  value={$optionsStore.COLOR_OPTIONS.find((c) =>
-                    (c.value as string).includes(progress.class.split(" ").find((cls: string) => cls.startsWith("bg-"))),
-                  )}
-                  onUpdate={(value) => {
+            <div id="item-{index}" class="flex flex-col gap-2 rounded-lg border border-(--hairline-color) bg-(--container-color)/60 p-2">
+              <div class="flex items-center gap-2">
+                <UI.Dragging
+                  wrapperClass="shrink-0"
+                  container={itemsContainer}
+                  array={component.properties.items}
+                  elementIndex={index}
+                  onUpdate={(updatedArray) => {
+                    updateProperty("items", updatedArray, component, onPropertyChange)
+                  }}
+                />
+                <span class="flex-1"></span>
+                <UI.Button
+                  wrapperClass="w-8 shrink-0"
+                  content={{ icon: ButtonDelete }}
+                  onClick={() => {
                     const progresses = [...(component.properties?.items || [])]
-                    progresses[index]["class"] = (value as UI.IOption).value
+                    progresses.splice(index, 1)
                     updateProperty("items", progresses, component, onPropertyChange)
                   }}
                 />
-              {:else}
+              </div>
+              <div class="flex flex-wrap items-end gap-2">
                 <UI.Input
-                  label={{ name: $T("constructor.props.optionvalue") }}
-                  wrapperClass="w-1/4"
-                  value={(component.properties.value || [])[index]?.Value}
-                  type="number"
-                  onUpdate={(value) => {
-                    const progresses = [
-                      ...(component.properties?.value ||
-                        component.properties?.items.map((item: { name?: string; class?: string }, i: number) => {
-                          return {
-                            Name: item.name,
-                            Value: i == index ? value : 0,
-                          }
-                        })),
-                    ]
-                    progresses[index].Value = value
-                    updateProperty("value", progresses, component, onPropertyChange)
-                  }}
-                />
-                <UI.Input
-                  label={{ name: $T("constructor.props.optionclass") }}
-                  wrapperClass="w-1/3"
-                  value={progress.class}
+                  label={{ name: $T("constructor.props.optionname") }}
+                  wrapperClass="min-w-28 flex-1"
+                  value={progress.name}
                   onUpdate={(value) => {
                     const progresses = [...(component.properties?.items || [])]
-                    progresses[index]["class"] = value
+                    progresses[index]["name"] = value
                     updateProperty("items", progresses, component, onPropertyChange)
                   }}
                 />
-              {/if}
-
-              <UI.Button
-                wrapperClass="w-8"
-                content={{ icon: ButtonDelete }}
-                onClick={() => {
-                  const progresses = [...(component.properties?.items || [])]
-                  progresses.splice(index, 1)
-                  updateProperty("items", progresses, component, onPropertyChange)
-                }}
-              />
+                {#if forConstructor}
+                  <UI.Select
+                    label={{ name: $T("constructor.props.colors") }}
+                    wrapperClass="min-w-56 flex-[2] h-13.5"
+                    type="buttons"
+                    options={$optionsStore.COLOR_OPTIONS.filter((option) => option.value !== "bg-max")}
+                    value={$optionsStore.COLOR_OPTIONS.find((c) =>
+                      (c.value as string).includes(progress.class.split(" ").find((cls: string) => cls.startsWith("bg-"))),
+                    )}
+                    onUpdate={(value) => {
+                      const progresses = [...(component.properties?.items || [])]
+                      progresses[index]["class"] = (value as UI.IOption).value
+                      updateProperty("items", progresses, component, onPropertyChange)
+                    }}
+                  />
+                {:else}
+                  <UI.Input
+                    label={{ name: $T("constructor.props.optionvalue") }}
+                    wrapperClass="min-w-24 flex-1"
+                    value={(component.properties.value || [])[index]?.Value}
+                    type="number"
+                    onUpdate={(value) => {
+                      const progresses = [
+                        ...(component.properties?.value ||
+                          component.properties?.items.map((item: { name?: string; class?: string }, i: number) => {
+                            return {
+                              Name: item.name,
+                              Value: i == index ? value : 0,
+                            }
+                          })),
+                      ]
+                      progresses[index].Value = value
+                      updateProperty("value", progresses, component, onPropertyChange)
+                    }}
+                  />
+                  <UI.Input
+                    label={{ name: $T("constructor.props.optionclass") }}
+                    wrapperClass="min-w-32 flex-[2]"
+                    value={progress.class}
+                    onUpdate={(value) => {
+                      const progresses = [...(component.properties?.items || [])]
+                      progresses[index]["class"] = value
+                      updateProperty("items", progresses, component, onPropertyChange)
+                    }}
+                  />
+                {/if}
+              </div>
             </div>
           {/each}
           <div id="item-{component.properties.items.length}" class="min-h-4"></div>

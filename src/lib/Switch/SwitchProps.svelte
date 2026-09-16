@@ -109,64 +109,69 @@
         {/snippet}
 
         {#each component.properties.options || [] as option, index (option.id)}
-          <div class="flex items-end justify-around gap-1.5 rounded-lg border border-(--hairline-color) bg-(--container-color)/60 p-1.5">
-            <UI.Input
-              label={{ name: $T("constructor.props.optionname") }}
-              wrapperClass="!w-3/10"
-              value={option.name}
-              maxlength={4}
-              onUpdate={(value) => {
-                const options = [...(component.properties?.options || [])]
-                options[index]["name"] = value
-                updateProperty("options", options, component, onPropertyChange)
-              }}
-            />
-            <UI.Input
-              label={{ name: $T("constructor.props.optionposition") }}
-              wrapperClass="!w-3/10"
-              value={option.value}
-              type="number"
-              number={{ minNum: 0, maxNum: 31, step: 1 }}
-              onUpdate={(value) => {
-                const options = [...(component.properties?.options || [])]
-                options[index]["value"] = value
-                updateProperty("options", options, component, onPropertyChange)
-              }}
-            />
-            <UI.Select
-              wrapperClass="w-80 h-14.5"
-              label={{ name: $T("constructor.props.colors") }}
-              type="buttons"
-              options={$optionsStore.COLOR_OPTIONS.filter((option) => option.value !== "bg-max" && option.value !== "bg-gray")}
-              value={$optionsStore.COLOR_OPTIONS.find((c) =>
-                (c.value as string).includes(option.class.split(" ").find((cls: string) => cls.startsWith("bg-"))),
-              )}
-              onUpdate={(option) => {
-                const options = [...(component.properties?.options || [])]
-                options[index]["class"] = (option as UI.IOption).value
-                updateProperty("options", options, component, onPropertyChange)
-              }}
-            />
-            <UI.Switch
-              wrapperClass=" w-1/10 bg-blue"
-              label={{ name: $T("constructor.props.disabled") }}
-              value={option.disabled}
-              options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-              onChange={(value) => {
-                const options = [...(component.properties?.options || [])]
-                options[index]["disabled"] = value
-                updateProperty("options", options, component, onPropertyChange)
-              }}
-            />
-            <UI.Button
-              wrapperClass="w-8"
-              content={{ icon: ButtonDelete }}
-              onClick={() => {
-                const options = [...(component.properties?.options || [])]
-                options.splice(index, 1)
-                updateProperty("options", options, component, onPropertyChange)
-              }}
-            />
+          <div class="flex flex-col gap-2 rounded-lg border border-(--hairline-color) bg-(--container-color)/60 p-2">
+            <div class="flex items-center gap-2">
+              <span class="flex-1"></span>
+              <UI.Button
+                wrapperClass="w-8 shrink-0"
+                content={{ icon: ButtonDelete }}
+                onClick={() => {
+                  const options = [...(component.properties?.options || [])]
+                  options.splice(index, 1)
+                  updateProperty("options", options, component, onPropertyChange)
+                }}
+              />
+            </div>
+            <div class="flex flex-wrap items-end gap-2">
+              <UI.Input
+                label={{ name: $T("constructor.props.optionname") }}
+                wrapperClass="min-w-24 flex-1"
+                value={option.name}
+                maxlength={4}
+                onUpdate={(value) => {
+                  const options = [...(component.properties?.options || [])]
+                  options[index]["name"] = value
+                  updateProperty("options", options, component, onPropertyChange)
+                }}
+              />
+              <UI.Input
+                label={{ name: $T("constructor.props.optionposition") }}
+                wrapperClass="min-w-24 flex-1"
+                value={option.value}
+                type="number"
+                number={{ minNum: 0, maxNum: 31, step: 1 }}
+                onUpdate={(value) => {
+                  const options = [...(component.properties?.options || [])]
+                  options[index]["value"] = value
+                  updateProperty("options", options, component, onPropertyChange)
+                }}
+              />
+              <UI.Select
+                wrapperClass="min-w-56 flex-[2] h-13.5"
+                label={{ name: $T("constructor.props.colors") }}
+                type="buttons"
+                options={$optionsStore.COLOR_OPTIONS.filter((option) => option.value !== "bg-max" && option.value !== "bg-gray")}
+                value={$optionsStore.COLOR_OPTIONS.find((c) =>
+                  (c.value as string).includes(option.class.split(" ").find((cls: string) => cls.startsWith("bg-"))),
+                )}
+                onUpdate={(option) => {
+                  const options = [...(component.properties?.options || [])]
+                  options[index]["class"] = (option as UI.IOption).value
+                  updateProperty("options", options, component, onPropertyChange)
+                }}
+              />
+              <UI.Switch
+                wrapperClass="min-w-24 bg-blue"
+                label={{ name: $T("constructor.props.disabled") }}
+                value={option.disabled}
+                options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
+                onChange={(value) => {
+                  const options = [...(component.properties?.options || [])]
+                  options[index]["disabled"] = value
+                  updateProperty("options", options, component, onPropertyChange)
+                }}
+              />
+            </div>
           </div>
         {/each}
       </PropsGroup>

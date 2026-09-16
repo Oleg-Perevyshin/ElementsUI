@@ -191,77 +191,81 @@
 
         <div bind:this={itemsContainer} class="flex flex-col gap-2">
           {#each component.properties.options || [] as option, index (option.id)}
-            <div id="item-{index}" class="flex items-end justify-around gap-1.5 rounded-lg border border-(--hairline-color) bg-(--container-color)/60 p-1.5">
-              <UI.Dragging
-                wrapperClass="w-9"
-                container={itemsContainer}
-                array={component.properties.options}
-                elementIndex={index}
-                onUpdate={(updatedArray) => {
-                  updateProperty("options", updatedArray, component, onPropertyChange)
-                }}
-              />
-              <UI.Input
-                label={{ name: $T("constructor.props.optionname") }}
-                wrapperClass="w-3/10"
-                value={option.name}
-                onUpdate={(value) => {
-                  const options = [...(component.properties?.options || [])]
-                  options[index]["name"] = value
-                  updateProperty("options", options, component, onPropertyChange)
-                }}
-              />
-              <UI.Input
-                label={{ name: $T("constructor.props.optionvalue") }}
-                wrapperClass="w-3/10"
-                value={option.value}
-                type={currentValueType.value}
-                number={component.properties.bitMode
-                  ? { minNum: 0, maxNum: Math.pow(2, component.properties.range.end - component.properties.range.start + 1) - 1, step: 1 }
-                  : { minNum: -1000000, maxNum: 1000000, step: 1 }}
-                onUpdate={(value) => {
-                  const options = [...(component.properties?.options || [])]
-                  options[index]["value"] = value
-                  updateProperty("options", options, component, onPropertyChange)
-                }}
-              />
-              {#if forConstructor}
-                <UI.Select
-                  wrapperClass="w-80 h-14.5"
-                  label={{ name: $T("constructor.props.colors") }}
-                  type="buttons"
-                  options={$optionsStore.COLOR_OPTIONS}
-                  value={$optionsStore.COLOR_OPTIONS.find((c) =>
-                    (c.value as string).includes(option.class.split(" ").find((cls: string) => cls.startsWith("bg-"))),
-                  )}
-                  onUpdate={(option) => {
+            <div id="item-{index}" class="flex flex-col gap-2 rounded-lg border border-(--hairline-color) bg-(--container-color)/60 p-2">
+              <div class="flex items-center gap-2">
+                <UI.Dragging
+                  wrapperClass="shrink-0"
+                  container={itemsContainer}
+                  array={component.properties.options}
+                  elementIndex={index}
+                  onUpdate={(updatedArray) => {
+                    updateProperty("options", updatedArray, component, onPropertyChange)
+                  }}
+                />
+                <span class="flex-1"></span>
+                <UI.Button
+                  wrapperClass="w-8 shrink-0"
+                  content={{ icon: ButtonDelete }}
+                  onClick={() => {
                     const options = [...(component.properties?.options || [])]
-                    options[index]["class"] = (option as UI.IOption).value
+                    options.splice(index, 1)
                     updateProperty("options", options, component, onPropertyChange)
                   }}
                 />
-              {:else}
+              </div>
+              <div class="flex flex-wrap items-end gap-2">
                 <UI.Input
-                  label={{ name: $T("constructor.props.optionclass") }}
-                  wrapperClass="w-3/10"
-                  value={option.class}
+                  label={{ name: $T("constructor.props.optionname") }}
+                  wrapperClass="min-w-28 flex-1"
+                  value={option.name}
                   onUpdate={(value) => {
                     const options = [...(component.properties?.options || [])]
-                    options[index]["class"] = value as string
+                    options[index]["name"] = value
                     updateProperty("options", options, component, onPropertyChange)
                   }}
                 />
-              {/if}
-
-              <UI.Button
-                wrapperClass="w-8"
-                content={{ icon: ButtonDelete }}
-                onClick={() => {
-                  const options = [...(component.properties?.options || [])]
-                  options.splice(index, 1)
-                  updateProperty("options", options, component, onPropertyChange)
-                }}
-              />
+                <UI.Input
+                  label={{ name: $T("constructor.props.optionvalue") }}
+                  wrapperClass="min-w-28 flex-1"
+                  value={option.value}
+                  type={currentValueType.value}
+                  number={component.properties.bitMode
+                    ? { minNum: 0, maxNum: Math.pow(2, component.properties.range.end - component.properties.range.start + 1) - 1, step: 1 }
+                    : { minNum: -1000000, maxNum: 1000000, step: 1 }}
+                  onUpdate={(value) => {
+                    const options = [...(component.properties?.options || [])]
+                    options[index]["value"] = value
+                    updateProperty("options", options, component, onPropertyChange)
+                  }}
+                />
+                {#if forConstructor}
+                  <UI.Select
+                    wrapperClass="min-w-56 flex-[2] h-13.5"
+                    label={{ name: $T("constructor.props.colors") }}
+                    type="buttons"
+                    options={$optionsStore.COLOR_OPTIONS}
+                    value={$optionsStore.COLOR_OPTIONS.find((c) =>
+                      (c.value as string).includes(option.class.split(" ").find((cls: string) => cls.startsWith("bg-"))),
+                    )}
+                    onUpdate={(option) => {
+                      const options = [...(component.properties?.options || [])]
+                      options[index]["class"] = (option as UI.IOption).value
+                      updateProperty("options", options, component, onPropertyChange)
+                    }}
+                  />
+                {:else}
+                  <UI.Input
+                    label={{ name: $T("constructor.props.optionclass") }}
+                    wrapperClass="min-w-32 flex-[2]"
+                    value={option.class}
+                    onUpdate={(value) => {
+                      const options = [...(component.properties?.options || [])]
+                      options[index]["class"] = value as string
+                      updateProperty("options", options, component, onPropertyChange)
+                    }}
+                  />
+                {/if}
+              </div>
             </div>
           {/each}
           <div id="item-{component.properties.options.length}" class="min-h-4"></div>

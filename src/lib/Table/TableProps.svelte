@@ -133,7 +133,7 @@
 {/snippet}
 
 {#snippet TableColumnSettings(forConstructor: boolean)}
-  <PropsListModal label={$T("constructor.props.table.columns")} count={component.properties.header?.length ?? 0} wrapperClass="w-380 h-[85%]">
+  <PropsListModal label={$T("constructor.props.table.columns")} count={component.properties.header?.length ?? 0} wrapperClass="w-300 h-[85%]">
     {#snippet main()}
       <PropsGroup>
         {#snippet headerActions()}
@@ -173,7 +173,9 @@
                   }
                 }}
               />
-              <div class="py-1.5 pl-9 grid grid-cols-[1fr_minmax(5rem,10rem)_minmax(10rem,21rem)_2rem_2rem] items-end gap-1.5">
+              <div
+                class="py-1.5 pl-9 grid grid-cols-[minmax(10rem,16rem)_minmax(5rem,7rem)_minmax(14rem,18rem)_2rem_2rem_1fr] items-end gap-1.5"
+              >
                 <UI.Input
                   label={{ name: $T("constructor.props.table.columns.label") }}
                   value={column.label?.name}
@@ -236,12 +238,41 @@
               <div class="flex flex-col gap-2" bind:this={settingsContainer[columnIndex]}>
                 {#if typeof column.content !== "function"}
                   {#each column.content as content, index}
-                    <div id={`item-${index}-${columnIndex}`} class="relative rounded-lg border border-(--hairline-color) bg-(--back-color)/60 p-1.5">
+                    <div id={`item-${index}-${columnIndex}`} class="flex flex-col gap-2 rounded-lg border border-(--hairline-color) bg-(--back-color)/60 p-2">
+                      <!-- Тулбар карточки: перетаскивание слева, удаление справа — поля контента никогда
+                           не переносятся поверх этих кнопок, в отличие от прежней абсолютной раскладки -->
+                      <div class="flex items-center gap-2">
+                        <Dragging
+                          wrapperClass="shrink-0"
+                          container={settingsContainer[columnIndex]}
+                          array={column.content}
+                          elementIndex={index}
+                          containerIndex={columnIndex}
+                          onUpdate={(updatedArray, index) => {
+                            if (index === columnIndex) {
+                              const headers = [...component.properties.header]
+                              headers[columnIndex].content = updatedArray
+                              updateProperty("header", headers, component, onPropertyChange)
+                            }
+                          }}
+                        />
+                        <span class="flex-1"></span>
+                        <UI.Button
+                          wrapperClass="w-8 shrink-0"
+                          content={{ icon: ButtonDelete }}
+                          onClick={() => {
+                            const headers = [...(component.properties.header || [])]
+                            ;((headers as ITableHeader<object>[])[columnIndex].content as ITableContent<object>[]).splice(index, 1)
+                            updateProperty("header", headers, component, onPropertyChange)
+                          }}
+                        />
+                      </div>
+
                       {#if content.type == "text"}
                         {@const text = content.data}
-                        <div class="flex gap-2 mx-auto items-end" style="width: {forConstructor ? '65%' : '90%'}; ">
+                        <div class="flex flex-wrap items-end gap-2">
                           <UI.Input
-                            wrapperClass="w-1/4"
+                            wrapperClass="min-w-32 flex-1"
                             label={{ name: $T("constructor.props.table.text.key") }}
                             value={text.key}
                             help={{ regExp: /^[0-9a-zA-Z_.-]{0,16}$/ }}
@@ -256,6 +287,7 @@
                             }}
                           />
                           <UI.Select
+                            wrapperClass="min-w-60 flex-[2]"
                             label={{ name: $T("constructor.props.tablecolumn.settings") }}
                             type="buttons"
                             multiSelect={true}
@@ -268,9 +300,9 @@
                         </div>
                       {:else if content.type == "select"}
                         {@const select = content.data}
-                        <div class="flex w-1/3 mx-auto gap-2">
+                        <div class="flex flex-wrap items-end gap-2">
                           <UI.Input
-                            wrapperClass="w-1/2"
+                            wrapperClass="min-w-32 flex-1"
                             label={{ name: $T("constructor.props.table.select.key") }}
                             value={select.key}
                             help={{ regExp: /^[0-9a-zA-Z_.-]{0,16}$/ }}
@@ -286,7 +318,7 @@
                             }}
                           />
                           <UI.Input
-                            wrapperClass="w-1/2"
+                            wrapperClass="min-w-40 flex-1"
                             label={{ name: $T("constructor.props.table.select.keys") }}
                             value={select?.keyCol ?? ""}
                             maxlength={500}
@@ -300,21 +332,34 @@
                         </div>
                       {:else if content.type == "button"}
                         {@const button = content.data}
-                        <div class="flex w-[95%] mx-auto flex-wrap items-end justify-between gap-2">
+                        <!-- Строка 1 — как выглядит кнопка, строка 2 — какую команду она шлёт -->
+                        <div class="flex flex-wrap items-end gap-2">
                           <UI.Input
+                            wrapperClass="min-w-28 flex-1"
                             label={{ name: $T("constructor.props.name") }}
-                            wrapperClass="w-1/10"
                             value={button.name}
                             onUpdate={(value) => updateContentProperty(columnIndex, index, "name", value)}
                           />
-
-                          <div class="flex items-end gap-1">
+                          <div class="relative min-w-32 flex-1">
+                            <CommonSnippets
+                              snippet="IconsLib"
+                              initialValue={{
+                                name: $T("constructor.props.table.type.icon"),
+                                icon: column.content[index].data.icon,
+                                updateProperty: (icon: string) => updateContentProperty(columnIndex, index, "icon", icon),
+                                icons: { array: ICONS },
+                              }}
+                              {component}
+                              {onPropertyChange}
+                            />
+                          </div>
+                          <div class="flex min-w-72 flex-[2] items-end gap-1">
                             <UI.Button
-                              wrapperClass="w-8"
+                              wrapperClass="w-8 shrink-0"
                               content={{ icon: InfoIcon, info: { text: $T("constructor.props.button.colors.hint"), side: "right" } }}
                             />
                             <UI.Select
-                              wrapperClass="w-80 h-14.5"
+                              wrapperClass="min-w-0 flex-1 h-13.5"
                               label={{ name: $T("constructor.props.colors") }}
                               type="buttons"
                               options={$optionsStore.COLOR_OPTIONS.filter((option) => option.value !== "bg-max")}
@@ -329,23 +374,10 @@
                               }}
                             />
                           </div>
-
-                          <div class="relative mt-6 flex w-1/4 gap-2">
-                            <CommonSnippets
-                              snippet="IconsLib"
-                              initialValue={{
-                                name: $T("constructor.props.table.type.icon"),
-                                icon: column.content[index].data.icon,
-                                updateProperty: (icon: string) => updateContentProperty(columnIndex, index, "icon", icon),
-                                icons: { array: ICONS },
-                              }}
-                              {component}
-                              {onPropertyChange}
-                            />
-                          </div>
-
+                        </div>
+                        <div class="flex flex-wrap items-end gap-2">
                           <UI.Select
-                            wrapperClass="w-1/4"
+                            wrapperClass="min-w-56 flex-1"
                             label={{ name: $T("constructor.props.header") }}
                             type="buttons"
                             value={$optionsStore.HEADER_OPTIONS.find((h) => h.value === button.eventHandler?.Header)}
@@ -357,7 +389,7 @@
                             }}
                           />
                           <UI.Input
-                            wrapperClass="w-1/10"
+                            wrapperClass="min-w-28 flex-1"
                             label={{ name: $T("constructor.props.argument") }}
                             value={button.eventHandler?.Argument}
                             onUpdate={(value) => {
@@ -367,7 +399,7 @@
                             }}
                           />
                           <UI.Input
-                            wrapperClass="w-2/10"
+                            wrapperClass="min-w-40 flex-[2]"
                             label={{ name: $T("constructor.props.table.keys") }}
                             value={button.eventHandler?.Variables.join(" ")}
                             maxlength={500}
@@ -381,8 +413,9 @@
                         </div>
                       {:else if content.type == "progressBar"}
                         {@const progressBar = content.data}
-                        <div class="w-3/5 flex mx-auto items-end gap-2">
+                        <div class="flex flex-wrap items-end gap-2">
                           <UI.Input
+                            wrapperClass="min-w-28 flex-1"
                             label={{ name: $T("constructor.props.table.progressBar.key") }}
                             value={progressBar.key}
                             help={{ regExp: /^[0-9a-zA-Z_.-]{0,16}$/ }}
@@ -398,20 +431,21 @@
                             }}
                           />
                           <UI.Input
-                            wrapperClass="w-1/2"
+                            wrapperClass="min-w-20 flex-1"
                             label={{ name: $T("constructor.props.min") }}
                             value={(progressBar?.minNum as number) ?? 0}
                             type="number"
                             onUpdate={(value) => updateContentProperty(columnIndex, index, "minNum", value as string)}
                           />
                           <UI.Input
-                            wrapperClass="w-1/2"
+                            wrapperClass="min-w-20 flex-1"
                             label={{ name: $T("constructor.props.max") }}
                             value={(progressBar?.maxNum as number) ?? 100}
                             type="number"
                             onUpdate={(value) => updateContentProperty(columnIndex, index, "maxNum", value as string)}
                           />
                           <UI.Input
+                            wrapperClass="min-w-24 flex-1"
                             label={{ name: $T("constructor.props.units") }}
                             value={progressBar?.units}
                             onUpdate={(value) => updateContentProperty(columnIndex, index, "units", value as string)}
@@ -419,30 +453,32 @@
                         </div>
                       {:else if !forConstructor && content.type == "image"}
                         {@const image = content.data}
-                        <div class="flex items-end gap-2 w-[80%] mx-auto">
-                          <CommonSnippets
-                            snippet="IconsLib"
-                            initialValue={{
-                              name: $T("constructor.props.table.columns.defaultIcon"),
-                              icon: image?.defaultIcon ?? "",
-                              updateProperty: (icon: string) => {
-                                updateContentProperty(columnIndex, index, "defaultIcon", icon)
-                                if (!image?.width || image?.width === "0rem") updateContentProperty(columnIndex, index, "width", "1rem")
-                                if (!image?.width || image?.height === "0rem") updateContentProperty(columnIndex, index, "height", "1rem")
-                              },
-                              icons: { array: ICONS },
-                            }}
-                            {component}
-                            {onPropertyChange}
-                          />
-
+                        <div class="flex flex-wrap items-end gap-2">
+                          <div class="relative min-w-32">
+                            <CommonSnippets
+                              snippet="IconsLib"
+                              initialValue={{
+                                name: $T("constructor.props.table.columns.defaultIcon"),
+                                icon: image?.defaultIcon ?? "",
+                                updateProperty: (icon: string) => {
+                                  updateContentProperty(columnIndex, index, "defaultIcon", icon)
+                                  if (!image?.width || image?.width === "0rem") updateContentProperty(columnIndex, index, "width", "1rem")
+                                  if (!image?.width || image?.height === "0rem") updateContentProperty(columnIndex, index, "height", "1rem")
+                                },
+                                icons: { array: ICONS },
+                              }}
+                              {component}
+                              {onPropertyChange}
+                            />
+                          </div>
                           <UI.Input
+                            wrapperClass="min-w-32 flex-1"
                             label={{ name: $T("constructor.props.table.columns.class") }}
                             value={image?.class}
                             onUpdate={(value) => updateContentProperty(columnIndex, index, "class", value)}
                           />
                           <UI.Input
-                            wrapperClass="w-4/10"
+                            wrapperClass="min-w-20 flex-1"
                             label={{ name: $T("constructor.props.table.columns.image.width"), class: "px-0" }}
                             type="number"
                             number={{ minNum: 0, maxNum: 1000, step: 1 }}
@@ -450,7 +486,7 @@
                             onUpdate={(value) => updateContentProperty(columnIndex, index, "width", `${value ?? 0}rem`)}
                           />
                           <UI.Input
-                            wrapperClass="w-4/10"
+                            wrapperClass="min-w-20 flex-1"
                             label={{ name: $T("constructor.props.table.columns.image.height"), class: "px-0" }}
                             type="number"
                             number={{ minNum: 0, maxNum: 1000, step: 1 }}
@@ -459,30 +495,6 @@
                           />
                         </div>
                       {/if}
-                      <Dragging
-                        wrapperClass="absolute left-2 bottom-2"
-                        container={settingsContainer[columnIndex]}
-                        array={column.content}
-                        elementIndex={index}
-                        containerIndex={columnIndex}
-                        onUpdate={(updatedArray, index) => {
-                          if (index === columnIndex) {
-                            const headers = [...component.properties.header]
-                            headers[columnIndex].content = updatedArray
-                            updateProperty("header", headers, component, onPropertyChange)
-                          }
-                        }}
-                      />
-
-                      <UI.Button
-                        wrapperClass="absolute right-2 bottom-2 w-8"
-                        content={{ icon: ButtonDelete }}
-                        onClick={() => {
-                          const headers = [...(component.properties.header || [])]
-                          ;((headers as ITableHeader<object>[])[columnIndex].content as ITableContent<object>[]).splice(index, 1)
-                          updateProperty("header", headers, component, onPropertyChange)
-                        }}
-                      />
                     </div>
                   {/each}
                 {/if}
