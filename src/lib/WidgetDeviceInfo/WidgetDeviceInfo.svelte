@@ -37,6 +37,8 @@
       HostName: "",
       WebUser: "",
       WebPsw: "",
+      StaIP: "",
+      ApIP: "",
     },
   )
 
@@ -84,6 +86,10 @@
           <UI.Input label={{ name: "ID устройства" }} value={info.DevID} readonly />
           <UI.Input label={{ name: "Версия ПО" }} value={info.DevFW} readonly />
           <UI.Input label={{ name: "Запусков" }} value={info.RunCnt} readonly />
+        </div>
+        <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
+          <UI.Input label={{ name: "IP-адрес (STA)" }} value={info.StaIP} readonly />
+          <UI.Input label={{ name: "IP-адрес (AP)" }} value={info.ApIP} readonly />
         </div>
       </div>
 

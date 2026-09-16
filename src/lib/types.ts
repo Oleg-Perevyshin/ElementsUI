@@ -597,6 +597,10 @@ export interface IWidgetDeviceInfoConfig {
   HostName: string
   WebUser: string
   WebPsw: string
+  /* Текущие IP-адреса устройства в обоих режимах WiFi (STA/AP) — только для отображения,
+     реальное конфигурирование сети происходит в WidgetWiFi */
+  StaIP: string
+  ApIP: string
 }
 
 export interface IWidgetDeviceInfoProps {

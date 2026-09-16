@@ -1,6 +1,6 @@
 {
   "name": "poe-svelte-ui-lib",
-  "version": "1.28.6",
+  "version": "1.29.0",
   "license": "MIT",
   "type": "module",
   "scripts": {

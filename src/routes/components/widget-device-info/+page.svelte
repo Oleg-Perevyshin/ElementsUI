@@ -21,6 +21,8 @@
     HostName: "syp-device-01",
     WebUser: "admin",
     WebPsw: "",
+    StaIP: "192.168.1.42",
+    ApIP: "192.168.4.1",
   }
 
   let deviceInfoComponent: UIComponent = $state({

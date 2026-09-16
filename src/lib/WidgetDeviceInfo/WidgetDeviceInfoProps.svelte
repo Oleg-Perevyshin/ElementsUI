@@ -1,5 +1,7 @@
 <!-- $lib/WidgetDeviceInfo/WidgetDeviceInfoProps.svelte — панель пропсов конструктора
-     для WidgetDeviceInfo. Виджет простой, полей мало — панель тоже простая: заголовок + мастер-цвет. -->
+     для WidgetDeviceInfo: заголовок/мастер-цвет/префикс группы, переопределение имён полей
+     устройства (keys) и команда перезагрузки — все с дефолтами, равными текущей прошивочной
+     конвенции (см. DEFAULT_PROPS.WidgetDeviceInfo в DevCloud). -->
 <script lang="ts">
   import { T } from "$lib/locales/i18n"
   import * as UI from "$lib"
@@ -8,7 +10,18 @@
   import PropsGroup from "$lib/PropsGroup.svelte"
   import { optionsStore } from "../options"
 
-  const DEVICE_INFO_KEYS: (keyof IWidgetDeviceInfoConfig)[] = ["DevSN", "DevID", "DevFW", "RunCnt", "DevName", "HostName", "WebUser", "WebPsw"]
+  const DEVICE_INFO_KEYS: (keyof IWidgetDeviceInfoConfig)[] = [
+    "DevSN",
+    "DevID",
+    "DevFW",
+    "RunCnt",
+    "DevName",
+    "HostName",
+    "WebUser",
+    "WebPsw",
+    "StaIP",
+    "ApIP",
+  ]
 
   const { component, onPropertyChange } = $props<{
     component: UIComponent & { properties: Partial<IWidgetDeviceInfoProps> }
