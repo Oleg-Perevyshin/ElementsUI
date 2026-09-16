@@ -1,9 +1,10 @@
 <!-- $lib/WidgetHeader.svelte — общая шапка смарт-виджетов конструктора: значок + заголовок
      сворачивают/разворачивают тело виджета по клику (как аккордеон), справа — снипет с любым
      содержимым шапки конкретного виджета (переключатель режима, кнопка "Перезагрузить" и т.п.),
-     клик по нему сворачивание не триггерит. Визуально — та же полоса-заголовок, что и у Accordion
-     (px-3/py-2, bg-container, мелкая 18px иконка без бейджа) вместо прежнего тяжёлого 32px
-     значка-бейджа, который делал шапку заметно выше аккордеона. -->
+     клик по нему сворачивание не триггерит. Мелкая 18px иконка без подложки (как у Accordion)
+     вместо прежнего тяжёлого 32px значка-бейджа. Без своего фона/паддинга — виджет уже даёт
+     отступы через собственный p-4, добавлять сюда ещё одну bg-container полосу с px/py поверх
+     означало бы двойной отступ и лишнюю высоту. -->
 <script lang="ts">
   import type { Component, Snippet } from "svelte"
   import ArrowIcon from "./libIcons/ArrowIcon.svelte"
@@ -23,7 +24,7 @@
   const Icon = $derived(icon)
 </script>
 
-<div class="flex flex-wrap items-center justify-between gap-3 rounded-[10px] bg-(--container-color) px-3 py-2">
+<div class="flex flex-wrap items-center justify-between gap-3">
   <button
     type="button"
     class="flex min-w-0 flex-1 cursor-pointer items-center gap-2 border-none bg-transparent p-0 text-left"
