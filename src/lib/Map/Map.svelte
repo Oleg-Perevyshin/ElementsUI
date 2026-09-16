@@ -19,15 +19,18 @@
   /* Мастер-цвет (тот же bg-* из optionsStore.COLOR_OPTIONS, что и у остальных примитивов) —
      красить саму карту цветом смысла нет (это базовая карта MapLibre), поэтому проявляется на
      ФОНЕ наших собственных оверлеев поверх неё: панели управления (CustomControl) и карточки
-     устройства (Popup) — см. roleBgClass ниже, применяется прямо в разметке. */
+     устройства (Popup) — см. roleBgClass/roleBgPaint ниже, применяются прямо в разметке. */
   const roleBgClass = $derived.by(() => {
     const role = wrapperClass.match(/bg-(\w+)/)?.[1]
-    /* bg-(--bg-color) — реальная utility, красящая заливку; bg-{role} лишь задаёт переменную
-       --bg-color (см. app.css), тот же приём, что и в Button.svelte (roleBg/roleClass).
-       text-(--on-accent) — иначе тёмный текст (задуман под белую подложку control'ов MapLibre
-       по умолчанию) нечитаем на цветной заливке. */
-    return role && role !== "max" ? `bg-(--bg-color) bg-${role} text-(--on-accent)` : ""
+    /* bg-{role} лишь задаёт переменную --bg-color (см. app.css); text-(--on-accent) — иначе
+       тёмный текст (задуман под белую подложку control'ов MapLibre по умолчанию) нечитаем на
+       цветной заливке. Красящая bg-(--bg-color) — НЕ здесь, см. roleBgPaint: если оставить обе
+       bg-* утилиты в одной строке, twMerge видит конфликт одной группы и вырезает одну из них
+       (та же ловушка, что и в Button.svelte, см. его комментарий про roleBg/roleClass). */
+    return role && role !== "max" ? `bg-${role} text-(--on-accent)` : ""
   })
+  /* Приклеивается к className СНАРУЖИ twMerge — иначе конфликтует с bg-{role} внутри roleBgClass. */
+  const roleBgPaint = $derived(roleBgClass ? "bg-(--bg-color)" : "")
 
   /* Акцентное кольцо вокруг самой карты. Намеренно ring, а не border: border меняет content-box
      контейнера MapLibre уже ПОСЛЕ монтажа, а сама MapLibre не переотрисовывает canvas при таком
@@ -172,7 +175,7 @@
     <FullScreenControl />
 
     <CustomControl position="top-left">
-      <div class={twMerge("flex flex-wrap items-center gap-3 rounded-lg px-2 py-1 text-black", roleBgClass)}>
+      <div class={`${twMerge("flex flex-wrap items-center gap-3 rounded-lg px-2 py-1 text-black", roleBgClass)} ${roleBgPaint}`}>
         <label class="flex items-center gap-1.5 text-sm font-medium">
           <input type="checkbox" bind:checked={trackEnabled} />
           {$T("constructor.props.map.track")}
@@ -255,7 +258,9 @@
               <h6 class="text-sm leading-none font-bold">{device.DevName}</h6>
             </div>
 
-            <div class={twMerge("grid grid-cols-2 gap-x-3 gap-y-1 rounded-lg bg-(--container-color) p-2 text-xs", roleBgClass)}>
+            <div
+              class={`${twMerge("grid grid-cols-2 gap-x-3 gap-y-1 rounded-lg bg-(--container-color) p-2 text-xs", roleBgClass)} ${roleBgPaint}`}
+            >
               <div>
                 <p class="text-[0.6rem] font-semibold tracking-wide uppercase opacity-60">Lat / Lon</p>
                 <p class="font-medium">{device.NavLat.toFixed(5)}, {device.NavLon.toFixed(5)}</p>
