@@ -222,7 +222,7 @@
           <button
             id={option.id}
             class="{twMerge(
-              `h-8 min-w-0 flex-1 px-3 py-2 text-[13px] font-semibold transition-colors duration-150
+              `flex h-8 min-w-0 flex-1 items-center justify-center px-3 py-2 text-[13px] font-semibold transition-colors duration-150
                ${index === 0 ? 'rounded-l-[9px]' : ''} ${index === options.length - 1 ? 'rounded-r-[9px]' : ''}
                ${index > 0 ? 'border-l border-(--border-color)' : ''}
                ${
