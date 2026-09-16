@@ -17,12 +17,27 @@
   }: IMapProps = $props()
 
   /* Мастер-цвет (тот же bg-* из optionsStore.COLOR_OPTIONS, что и у остальных примитивов) —
-     проявляется как акцентная рамка карты, т.к. заливать фон самой карты цветом нет смысла. */
-  const roleBorderClass = $derived.by(() => {
+     красить саму карту цветом смысла нет (это базовая карта MapLibre), поэтому проявляется на
+     ФОНЕ наших собственных оверлеев поверх неё: панели управления (CustomControl) и карточки
+     устройства (Popup) — см. roleBgClass ниже, применяется прямо в разметке. */
+  const roleBgClass = $derived.by(() => {
     const role = wrapperClass.match(/bg-(\w+)/)?.[1]
-    /* border-(--border-color) — реальная utility, красящая рамку; border-{role} лишь задаёт
-       переменную --border-color (см. app.css), как и bg-* для --bg-color (см. Button.svelte). */
-    return role && role !== "max" ? `border-2 border-(--border-color) border-${role}` : ""
+    /* bg-(--bg-color) — реальная utility, красящая заливку; bg-{role} лишь задаёт переменную
+       --bg-color (см. app.css), тот же приём, что и в Button.svelte (roleBg/roleClass).
+       text-(--on-accent) — иначе тёмный текст (задуман под белую подложку control'ов MapLibre
+       по умолчанию) нечитаем на цветной заливке. */
+    return role && role !== "max" ? `bg-(--bg-color) bg-${role} text-(--on-accent)` : ""
+  })
+
+  /* Акцентное кольцо вокруг самой карты. Намеренно ring, а не border: border меняет content-box
+     контейнера MapLibre уже ПОСЛЕ монтажа, а сама MapLibre не переотрисовывает canvas при таком
+     ресайзе без явного вызова map.resize() — итог был обрезанный/съехавший рендер при смене
+     цвета. ring — box-shadow, размеры контейнера не меняет, поэтому безопасен. */
+  const roleRingClass = $derived.by(() => {
+    const role = wrapperClass.match(/bg-(\w+)/)?.[1]
+    /* ring-(--border-color) — реальная utility, красящая кольцо; border-{role} лишь задаёт
+       переменную --border-color (см. app.css). */
+    return role && role !== "max" ? `ring-2 ring-inset ring-(--border-color) border-${role}` : ""
   })
 
   interface MapDevice extends IDeviceGNSS {
@@ -146,7 +161,7 @@
     <h5 class={twMerge(` w-full px-4 text-center`, label.class)}>{label.name}</h5>
   {/if}
   <MapLibre
-    class={twMerge("h-[calc(100%-2rem)] min-h-50 overflow-hidden rounded-xl shadow-sm transition duration-200 hover:shadow-md", roleBorderClass)}
+    class={twMerge("h-[calc(100%-2rem)] min-h-50 overflow-hidden rounded-xl shadow-sm transition duration-200 hover:shadow-md", roleRingClass)}
     style={isDarkMode ? "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json" : "https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json"}
     zoom={1.5}
     center={{ lat: 30, lng: 0 }}
@@ -157,7 +172,7 @@
     <FullScreenControl />
 
     <CustomControl position="top-left">
-      <div class="flex flex-wrap items-center gap-3 px-2 py-1 text-black">
+      <div class={twMerge("flex flex-wrap items-center gap-3 rounded-lg px-2 py-1 text-black", roleBgClass)}>
         <label class="flex items-center gap-1.5 text-sm font-medium">
           <input type="checkbox" bind:checked={trackEnabled} />
           {$T("constructor.props.map.track")}
@@ -240,7 +255,7 @@
               <h6 class="text-sm leading-none font-bold">{device.DevName}</h6>
             </div>
 
-            <div class="grid grid-cols-2 gap-x-3 gap-y-1 rounded-lg bg-(--container-color) p-2 text-xs">
+            <div class={twMerge("grid grid-cols-2 gap-x-3 gap-y-1 rounded-lg bg-(--container-color) p-2 text-xs", roleBgClass)}>
               <div>
                 <p class="text-[0.6rem] font-semibold tracking-wide uppercase opacity-60">Lat / Lon</p>
                 <p class="font-medium">{device.NavLat.toFixed(5)}, {device.NavLon.toFixed(5)}</p>
