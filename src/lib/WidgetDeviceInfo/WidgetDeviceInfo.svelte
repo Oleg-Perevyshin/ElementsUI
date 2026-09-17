@@ -67,8 +67,9 @@
      иначе входящее значение затёрло бы то, что он ещё не успел сохранить. */
   $effect(() => {
     if (value !== undefined && !untrack(() => isDirty)) {
+      const snapshot = JSON.stringify(value)
       info = value
-      savedSnapshot = JSON.stringify(info)
+      savedSnapshot = snapshot
     }
   })
 

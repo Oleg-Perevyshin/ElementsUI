@@ -114,8 +114,9 @@
      каждое изменение cfg от самого пользователя, только на смену value. */
   $effect(() => {
     if (value !== undefined && !untrack(() => isDirty)) {
+      const snapshot = JSON.stringify(value)
       cfg = value
-      savedSnapshot = JSON.stringify(cfg)
+      savedSnapshot = snapshot
     }
   })
 
