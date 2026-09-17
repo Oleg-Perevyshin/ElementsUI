@@ -52,11 +52,6 @@
               item.class,
             )}
             disabled={item.disabled}
-            style="width: {item.class
-              ?.split(' ')
-              .find((cls: string) => cls.startsWith('w-'))
-              ?.replace('w-[', '')
-              .slice(0, -1)};"
             onclick={() => {
               currentTabIndex = index
               if (item.onClick) item.onClick()
@@ -93,7 +88,7 @@
       style="grid-template-columns: repeat({size.width || 1}, minmax(0, 1fr)); grid-template-rows: repeat({size.height || 1}, auto);"
     >
       {#if Components}
-        {#each (apiArray ?? []).filter((c) => c.id.endsWith(`${currentTabIndex}`)) as comp}
+        {#each (apiArray ?? []).filter((c) => c.id.match(/(\d+)$/)?.[1] === `${currentTabIndex}`) as comp}
           {@render Components(comp, false)}
         {/each}
       {:else if children}

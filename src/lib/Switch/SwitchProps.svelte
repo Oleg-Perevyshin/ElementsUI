@@ -21,7 +21,7 @@
   }>()
   const DeviceVariables = getContext<{ id: string; value: string; name: string }[]>("DeviceVariables")
   let VARIABLE_OPTIONS = $derived(DeviceVariables && Array.isArray(DeviceVariables) ? DeviceVariables : [])
-  let initialColor = $derived(findColorOption($optionsStore.COLOR_OPTIONS, component.properties.options[0].class))
+  let initialColor = $derived(findColorOption($optionsStore.COLOR_OPTIONS, component.properties.options?.[0]?.class))
   const initialAlign = $derived(
     $optionsStore.TEXT_ALIGN_OPTIONS.find((a) =>
       (a.value as string).includes(component.properties.label?.class?.split(" ").find((cls: string) => cls.startsWith("text-"))),
@@ -156,15 +156,17 @@
                 }}
               />
             </div>
-            <UI.Button
-              wrapperClass="w-8 shrink-0"
-              content={{ icon: ButtonDelete }}
-              onClick={() => {
-                const options = [...(component.properties?.options || [])]
-                options.splice(index, 1)
-                updateProperty("options", options, component, onPropertyChange)
-              }}
-            />
+            {#if (component.properties.options?.length ?? 0) > 1}
+              <UI.Button
+                wrapperClass="w-8 shrink-0"
+                content={{ icon: ButtonDelete }}
+                onClick={() => {
+                  const options = [...(component.properties?.options || [])]
+                  options.splice(index, 1)
+                  updateProperty("options", options, component, onPropertyChange)
+                }}
+              />
+            {/if}
           </div>
         {/each}
       </PropsGroup>

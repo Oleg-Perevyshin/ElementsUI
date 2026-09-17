@@ -23,9 +23,39 @@ const translations: Record<string, [string, string, string]> = {
     "📶 该组件使用设备 `CFG` 分组下的一组固定字段——无需手动绑定变量。\n\n**📡 客户端模式（STA）**\n- `WiFiMode`、`StaSSID`、`StaPSK`\n- `StaticIP`、`StaIP`、`StaMS`、`StaGW`\n\n**📡 接入点（AP）**\n- `ApSSID`、`ApPSK`\n- `ApIP`、`ApMS`、`ApGW`\n\n🔍 扫描网络会发送 `Header: GET`、`Argument: APsList`——设备应在 `CFG.StaSSID-S` 字段中返回结果。\n\n⚙️ 如果设备使用的分组名称不是 `CFG`，请在组件设置中修改前缀（ID）。",
   ],
   "component.info.WidgetDeviceInfo": [
-    "ℹ️ Виджет работает с фиксированным набором полей группы `CFG` на устройстве — привязка переменных вручную не нужна.\n\n**🔒 Только чтение**\n- `DevSN`, `DevID`, `DevFW`, `RunCnt`\n\n**✏️ Редактируемые** (сохраняются одним пакетом по кнопке «Сохранить»)\n- `DevName`, `HostName`, `WebUser`, `WebPsw`\n\n🔌 Кнопка «Перезагрузить» отправляет `Argument: Restart`.\n\n⚙️ Если на устройстве используется другое имя группы вместо `CFG`, поменяйте префикс (ID) в настройках виджета.",
-    "ℹ️ The widget works with a fixed set of fields in the device's `CFG` group — no manual variable binding needed.\n\n**🔒 Read-only**\n- `DevSN`, `DevID`, `DevFW`, `RunCnt`\n\n**✏️ Editable** (saved as one packet via the \"Save\" button)\n- `DevName`, `HostName`, `WebUser`, `WebPsw`\n\n🔌 The \"Restart\" button sends `Argument: Restart`.\n\n⚙️ If the device uses a different group name instead of `CFG`, change the prefix (ID) in the widget settings.",
-    "ℹ️ 该组件使用设备 `CFG` 分组下的一组固定字段——无需手动绑定变量。\n\n**🔒 只读字段**\n- `DevSN`、`DevID`、`DevFW`、`RunCnt`\n\n**✏️ 可编辑字段**（通过「保存」按钮一次性发送）\n- `DevName`、`HostName`、`WebUser`、`WebPsw`\n\n🔌 「重启」按钮会发送 `Argument: Restart`。\n\n⚙️ 如果设备使用的分组名称不是 `CFG`，请在组件设置中修改前缀（ID）。",
+    "ℹ️ Виджет работает с фиксированным набором полей группы `CFG` на устройстве — привязка переменных вручную не нужна.\n\n**🔒 Только чтение**\n- `DevSN`, `DevID`, `DevFW`, `RunCnt`\n- `StaIP`, `ApIP` — текущие IP-адреса в режимах STA/AP\n\n**✏️ Редактируемые** (сохраняются одним пакетом по кнопке «Сохранить»)\n- `DevName`, `HostName`, `WebUser`, `WebPsw`\n\n🔌 Кнопка «Перезагрузить» отправляет `Argument: Restart`.\n\n⚙️ Если на устройстве используется другое имя группы вместо `CFG`, поменяйте префикс (ID) в настройках виджета.",
+    'ℹ️ The widget works with a fixed set of fields in the device\'s `CFG` group — no manual variable binding needed.\n\n**🔒 Read-only**\n- `DevSN`, `DevID`, `DevFW`, `RunCnt`\n- `StaIP`, `ApIP` — current IP addresses in STA/AP mode\n\n**✏️ Editable** (saved as one packet via the "Save" button)\n- `DevName`, `HostName`, `WebUser`, `WebPsw`\n\n🔌 The "Restart" button sends `Argument: Restart`.\n\n⚙️ If the device uses a different group name instead of `CFG`, change the prefix (ID) in the widget settings.',
+    "ℹ️ 该组件使用设备 `CFG` 分组下的一组固定字段——无需手动绑定变量。\n\n**🔒 只读字段**\n- `DevSN`、`DevID`、`DevFW`、`RunCnt`\n- `StaIP`、`ApIP` —— STA/AP 模式下的当前 IP 地址\n\n**✏️ 可编辑字段**（通过「保存」按钮一次性发送）\n- `DevName`、`HostName`、`WebUser`、`WebPsw`\n\n🔌 「重启」按钮会发送 `Argument: Restart`。\n\n⚙️ 如果设备使用的分组名称不是 `CFG`，请在组件设置中修改前缀（ID）。",
+  ],
+  "component.info.Tabs": [
+    "📑 Ширина и позиция иконки задаются через служебные CSS-классы каждой вкладки, а не отдельными полями.\n\n**↔️ Ширина кнопок** (переключатель «Авто/Равные»)\n- `w-auto` — по содержимому\n- `flex-1` — поровну между всеми вкладками\n\n**🔤 Позиция иконки**\n- `flex-row` / `flex-col` / `flex-row-reverse` / `flex-col-reverse`\n\n⚠️ Максимум 10 вкладок.",
+    '📑 Tab width and icon position are set via each tab\'s internal CSS classes, not separate fields.\n\n**↔️ Button width** ("Auto/Equal" toggle)\n- `w-auto` — sized to content\n- `flex-1` — equal share among all tabs\n\n**🔤 Icon position**\n- `flex-row` / `flex-col` / `flex-row-reverse` / `flex-col-reverse`\n\n⚠️ Maximum 10 tabs.',
+    "📑 每个标签页的宽度和图标位置通过内部 CSS 类设置，而非独立字段。\n\n**↔️ 按钮宽度**（「自动/均等」切换）\n- `w-auto` —— 按内容自适应\n- `flex-1` —— 在所有标签页间均分\n\n**🔤 图标位置**\n- `flex-row` / `flex-col` / `flex-row-reverse` / `flex-col-reverse`\n\n⚠️ 最多 10 个标签页。",
+  ],
+  "component.info.Switch": [
+    "🔘 Один и тот же компонент под тремя разными задачами — тип определяет, что означает `options`.\n\n**↔️/↕️ horizontal / vertical** — обычный слайдер 0/1, `options[0]` задаёт мастер-цвет.\n\n**☑️ checkbox** — простой булев тумблер, `options` можно не задавать.\n\n**🔢 bitMode** — `value` становится битовой маской, каждый элемент `options` управляет одним битом через свою `value` (номер бита 0-31); недоступен вместе с `checkbox`.",
+    "🔘 One component, three different jobs — `type` decides what `options` means.\n\n**↔️/↕️ horizontal / vertical** — a plain 0/1 slider, `options[0]` sets the master color.\n\n**☑️ checkbox** — a simple boolean toggle, `options` may be omitted.\n\n**🔢 bitMode** — `value` becomes a bitmask, each `options` entry controls one bit via its `value` (bit number 0-31); not available together with `checkbox`.",
+    "🔘 同一个组件承担三种不同职责——`type` 决定 `options` 的含义。\n\n**↔️/↕️ horizontal / vertical** —— 普通的 0/1 滑块，`options[0]` 设置主色。\n\n**☑️ checkbox** —— 简单的布尔开关，可省略 `options`。\n\n**🔢 bitMode** —— `value` 变为位掩码，每个 `options` 项通过自己的 `value`（位号 0-31）控制一个比特位；不能与 `checkbox` 同时使用。",
+  ],
+  "component.info.Table": [
+    "📊 Тип `type` определяет поведение буфера строк.\n\n**📋 table** — статическая таблица, `body` заменяется целиком при каждом обновлении.\n\n**📜 logger** — `dataBuffer.stashData` копит входящие строки в буфер (`dataBuffer.bufferSize` — сколько хранить), новые строки добавляются сверху, старые вытесняются.\n\n⚙️ `dataBuffer.visibleRows` ограничивает видимую высоту прокруткой, не количество данных.",
+    "📊 The `type` field determines row-buffer behavior.\n\n**📋 table** — a static table, `body` is fully replaced on every update.\n\n**📜 logger** — `dataBuffer.stashData` accumulates incoming rows in a buffer (`dataBuffer.bufferSize` — how many to keep), new rows are added on top and old ones are evicted.\n\n⚙️ `dataBuffer.visibleRows` limits the visible scroll height, not the amount of data.",
+    "📊 `type` 字段决定行缓冲区的行为。\n\n**📋 table** —— 静态表格，每次更新时整体替换 `body`。\n\n**📜 logger** —— `dataBuffer.stashData` 将传入的行累积到缓冲区（`dataBuffer.bufferSize` —— 保留多少条），新行添加在顶部，旧行被淘汰。\n\n⚙️ `dataBuffer.visibleRows` 限制可视滚动高度，而非数据量。",
+  ],
+  "component.info.ProgressBar": [
+    "📶 `items` и `value` — два независимых массива, связанные позиционно (по индексу, не по имени).\n\n- `items[i]` — статическое оформление полосы: `name` (подпись) и `class` (цвет через `bg-*`)\n- `value[i].Value` — текущее числовое значение этой же полосы (0-100 или в границах `number.minNum`/`maxNum`)\n\n⚠️ Порядок элементов в обоих массивах должен совпадать.",
+    "📶 `items` and `value` are two independent arrays linked positionally (by index, not by name).\n\n- `items[i]` — the bar's static appearance: `name` (label) and `class` (color via `bg-*`)\n- `value[i].Value` — the current numeric value of that same bar (0-100 or within `number.minNum`/`maxNum`)\n\n⚠️ The order of elements in both arrays must match.",
+    "📶 `items` 和 `value` 是两个通过位置（索引，而非名称）关联的独立数组。\n\n- `items[i]` —— 该进度条的静态外观：`name`（标签）和 `class`（通过 `bg-*` 设置颜色）\n- `value[i].Value` —— 同一进度条的当前数值（0-100 或在 `number.minNum`/`maxNum` 范围内）\n\n⚠️ 两个数组中元素的顺序必须一致。",
+  ],
+  "component.info.FileAttach": [
+    "📎 `type` меняет не только внешний вид, но и формат `currentImage`.\n\n**📄 file** — обычная кнопка выбора файла, показывает только имя.\n\n**🖼️ image** — превью-кнопка; `currentImage` ожидается как data-URI (`data:image/...`) или голая base64-строка (тогда PNG-префикс подставляется автоматически). После выбора нового файла показывается его локальное превью — до того, как `onChange` обработает загрузку и обновит `currentImage`.",
+    "📎 `type` changes not only the appearance but also the `currentImage` format.\n\n**📄 file** — a plain file-picker button, shows only the file name.\n\n**🖼️ image** — a preview button; `currentImage` is expected to be a data URI (`data:image/...`) or a bare base64 string (the PNG prefix is then added automatically). After picking a new file, its local preview is shown right away — before `onChange` finishes the upload and updates `currentImage`.",
+    "📎 `type` 不仅改变外观，还改变 `currentImage` 的格式。\n\n**📄 file** —— 普通文件选择按钮，仅显示文件名。\n\n**🖼️ image** —— 预览按钮；`currentImage` 应为 data URI（`data:image/...`）或纯 base64 字符串（此时会自动添加 PNG 前缀）。选择新文件后会立即显示本地预览——早于 `onChange` 完成上传并更新 `currentImage` 之前。",
+  ],
+  "component.info.Widget": [
+    "🔢 Диапазон значения задаётся `settings.number.minNum`/`maxNum` (по умолчанию 0/0). Иконки в `icons.array` распределяются по этому диапазону равномерно — при `icons.cycling: true` перебираются автоматически по таймеру вместо ручного выбора.",
+    "🔢 The value range is set by `settings.number.minNum`/`maxNum` (defaults to 0/0). Icons in `icons.array` are spread evenly across this range — with `icons.cycling: true` they cycle automatically on a timer instead of manual selection.",
+    "🔢 数值范围由 `settings.number.minNum`/`maxNum` 设置（默认 0/0）。`icons.array` 中的图标在此范围内均匀分布——当 `icons.cycling: true` 时，图标按计时器自动循环，而非手动选择。",
   ],
 
   /* Опции редактора свойств */
@@ -183,6 +213,10 @@ const translations: Record<string, [string, string, string]> = {
   "constructor.props.regexp.colorhex": ["Цвет HEX", "HEX color", "HEX 颜色"],
   "constructor.props.regexp.devid": ["ID устройства", "Device ID", "设备 ID"],
   "constructor.props.regexp.serialnum": ["Серийный номер устройства", "Device serial number", "设备序列号"],
+  "constructor.props.regexp.phone": ["Телефон (РФ)", "Phone number (RU)", "电话号码（俄罗斯）"],
+  "constructor.props.regexp.mac": ["MAC-адрес", "MAC address", "MAC 地址"],
+  "constructor.props.regexp.username": ["Логин (3-16 символов)", "Username (3-16 characters)", "用户名（3-16 个字符）"],
+  "constructor.props.regexp.password": ["Пароль (мин. 8, буквы и цифры)", "Password (min. 8, letters and digits)", "密码（至少 8 位，字母和数字）"],
   "constructor.props.min": ["Мин.", "Min.", "最小值"],
   "constructor.props.max": ["Макс.", "Max.", "最大值"],
   "constructor.props.maxnum": ["Максимальное число", "Maximum number", "最大数值"],

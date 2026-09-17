@@ -5,6 +5,7 @@
      WiFiMode / StaSSID/StaPSK/StaticIP/StaIP/StaMS/StaGW / ApSSID/ApPSK/ApIP/ApMS/ApGW.
      Ничего не знает про DeviceStore/WebSocket — value/onSave, вся отправка на стороне вызывающего. -->
 <script lang="ts">
+  import { untrack } from "svelte"
   import { slide, fade, scale } from "svelte/transition"
   import { twMerge } from "tailwind-merge"
   import * as UI from "$lib"
@@ -103,8 +104,21 @@
   $effect(() => writePersistedCollapsed(persistKey, collapsed))
 
   /* Поля редактируются локально (как Argument: NoSend в реальной GUI) — отправка одним пакетом по кнопке */
-  let savedSnapshot = $state(JSON.stringify(cfg))
+  let savedSnapshot = $state(untrack(() => JSON.stringify(cfg)))
   let isDirty = $derived(JSON.stringify(cfg) !== savedSnapshot)
+
+  /* value — не однократный дефолт, а живой поток данных с устройства (GUIPreview.svelte
+     пересчитывает его на каждое обновление DeviceStore). Подхватываем свежие данные, только
+     если у пользователя нет несохранённых правок — иначе входящее значение затирало бы то,
+     что он ещё не успел сохранить. untrack(isDirty) — чтобы этот эффект не перезапускался на
+     каждое изменение cfg от самого пользователя, только на смену value. */
+  $effect(() => {
+    if (value !== undefined && !untrack(() => isDirty)) {
+      cfg = value
+      savedSnapshot = JSON.stringify(cfg)
+    }
+  })
+
   const commitSave = () => {
     onSave?.($state.snapshot(cfg))
     savedSnapshot = JSON.stringify(cfg)

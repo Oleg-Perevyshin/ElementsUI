@@ -93,8 +93,9 @@
                   wrapperClass="min-w-28 flex-1"
                   value={progress.name}
                   onUpdate={(value) => {
-                    const progresses = [...(component.properties?.items || [])]
-                    progresses[index]["name"] = value
+                    const progresses = (component.properties?.items || []).map((p: { name?: string; class?: string }, i: number) =>
+                      i === index ? { ...p, name: value } : p,
+                    )
                     updateProperty("items", progresses, component, onPropertyChange)
                   }}
                 />
@@ -106,8 +107,9 @@
                     options={$optionsStore.COLOR_OPTIONS.filter((option) => option.value !== "bg-max")}
                     value={findColorOption($optionsStore.COLOR_OPTIONS, progress.class)}
                     onUpdate={(value) => {
-                      const progresses = [...(component.properties?.items || [])]
-                      progresses[index]["class"] = (value as UI.IOption).value
+                      const progresses = (component.properties?.items || []).map((p: { name?: string; class?: string }, i: number) =>
+                        i === index ? { ...p, class: (value as UI.IOption).value } : p,
+                      )
                       updateProperty("items", progresses, component, onPropertyChange)
                     }}
                   />
@@ -118,16 +120,13 @@
                     value={(component.properties.value || [])[index]?.Value}
                     type="number"
                     onUpdate={(value) => {
-                      const progresses = [
-                        ...(component.properties?.value ||
-                          component.properties?.items.map((item: { name?: string; class?: string }, i: number) => {
-                            return {
-                              Name: item.name,
-                              Value: i == index ? value : 0,
-                            }
-                          })),
-                      ]
-                      progresses[index].Value = value
+                      const base =
+                        component.properties?.value ||
+                        component.properties?.items.map((item: { name?: string; class?: string }, i: number) => ({
+                          Name: item.name,
+                          Value: i == index ? value : 0,
+                        }))
+                      const progresses = base.map((p: { Name?: string; Value?: number }, i: number) => (i === index ? { ...p, Value: value } : p))
                       updateProperty("value", progresses, component, onPropertyChange)
                     }}
                   />

@@ -25,24 +25,23 @@
 
   const initialColor = $derived(findColorOption($optionsStore.COLOR_OPTIONS, component.properties.wrapperClass))
 
-  const initialPosition = $derived(
-    $optionsStore.ICON_TEXT_POSITION_OPTIONS.find((c) =>
-      (c.value as string).includes(
-        component.properties.items
-          .find((item: IOption) => item.class?.includes("flex-"))
-          .class.split(" ")
-          .find((cls: string) => cls.startsWith("flex-")),
-      ),
-    ),
-  )
-
-  const initialWidth = $derived(() => {
-    let width = component.properties.items.find((item: IOption) => item.class?.split(" ").find((cls: string) => cls.startsWith("w-")))
-    if (!width) {
-      return 0
-    } else if (width.class.includes("w-auto")) return 0
-    else return 1
+  const initialPosition = $derived.by(() => {
+    const flexClass = component.properties.items
+      ?.find((item: IOption) => item.class?.includes("flex-"))
+      ?.class?.split(" ")
+      .find((cls: string) => cls.startsWith("flex-"))
+    if (!flexClass) return undefined
+    return $optionsStore.ICON_TEXT_POSITION_OPTIONS.find((c) => (c.value as string).includes(flexClass))
   })
+
+  const initialWidth = $derived(() => (component.properties.items?.some((item: IOption) => item.class?.split(" ").includes("flex-1")) ? 1 : 0))
+
+  /* "Равные" — flex-1 (flexbox сам поровну распределяет место с учётом gap между кнопками);
+     "Авто" — w-auto (ширина по контенту). Раньше "Равные" считалось как w-[X%] через inline
+     style в Tabs.svelte — не учитывало gap-6 между кнопками и создавало паразитный горизонтальный
+     скролл. flex-1/w-auto — обычные статические Tailwind-классы, отдельный inline style не нужен. */
+  const setTabWidthClass = (existingClass: string | undefined, equal: boolean): string =>
+    twMerge((existingClass ?? "").replace(/\bflex-1\b|\bw-auto\b/g, "").trim(), equal ? "flex-1" : "w-auto")
 </script>
 
 {#snippet TabsIconPosition()}
@@ -74,7 +73,7 @@
     onChange={(value) => {
       component.properties.items.forEach((_item: any, index: number) => {
         const items = [...(component.properties?.items || [])]
-        items[index]["class"] = twMerge(items[index].class, value ? `w-[${(1 / items.length) * 100}%]` : "w-auto")
+        items[index]["class"] = setTabWidthClass(items[index].class, Boolean(value))
         updateProperty("items", items, component, onPropertyChange)
       })
     }}
@@ -98,7 +97,7 @@
                 }
                 const items = [...(component.properties?.items || []), newItem]
                 items.forEach((_item: any, index: number) => {
-                  items[index]["class"] = twMerge(items[index].class, initialWidth() ? `w-[${(1 / items.length) * 100}%]` : "w-auto")
+                  items[index]["class"] = setTabWidthClass(items[index].class, Boolean(initialWidth()))
                   updateProperty("items", items, component, onPropertyChange)
                 })
               }}
@@ -170,8 +169,7 @@
                     const items = [...(component.properties?.items || [])]
                     items.splice(index, 1)
                     items.forEach((_item: any, index: number) => {
-                      items[index]["class"] = twMerge(items[index].class, initialWidth() ? `w-[${(1 / items.length) * 100}%]` : "w-auto")
-                      updateProperty("items", items, component, onPropertyChange)
+                      items[index]["class"] = setTabWidthClass(items[index].class, Boolean(initialWidth()))
                     })
                     updateProperty("items", items, component, onPropertyChange)
                   }}

@@ -60,10 +60,10 @@ ${formatObjectToString(tabsComponent.properties as ITabsProps)}
       <Tabs items={[{ name: "Tab1" }, { name: "Tab2" }, { name: "Tab3" }, { name: "Tab4" }]} children={Tab} size={{ height: 1, width: 1 }} />
       <Tabs
         items={[
-          { name: "Tab1", class: "w-1/4" },
-          { name: "Tab2", class: "w-1/4" },
-          { name: "Tab3", class: "w-1/4" },
-          { name: "Tab4", class: "w-1/4" },
+          { name: "Tab1", class: "flex-1" },
+          { name: "Tab2", class: "flex-1" },
+          { name: "Tab3", class: "flex-1" },
+          { name: "Tab4", class: "flex-1" },
         ]}
         children={Tab}
         size={{ height: 1, width: 1 }}

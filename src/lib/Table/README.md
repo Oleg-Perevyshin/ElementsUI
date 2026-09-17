@@ -127,51 +127,31 @@
   }
 
   const columns = [
-    { label: { name: "ID" }, key: "id", width: "5%", sortable: true, align: "center" },
+    { label: { name: "ID" }, width: "5%", align: "center", content: [{ type: "text", data: { key: "id", sortable: true } }] },
     {
       label: { name: "Image" },
-      key: "imageUrl",
       width: "20%",
-      image: {
-        src: (row: ITableRow) => row.imageUrl,
-        alt: "Image",
-        width: "5rem",
-        height: "5rem",
-      },
+      content: [{ type: "image", data: { src: (row: ITableRow) => row.imageUrl, alt: "Image", width: "5rem", height: "5rem" } }],
     },
-    { label: { name: "Name" }, key: "name", width: "12%", sortable: true },
+    { label: { name: "Name" }, width: "12%", content: [{ type: "text", data: { key: "name", sortable: true } }] },
     {
       label: { name: "Status" },
-      key: "status",
       width: "10%",
-      overflow: {
-        truncated: true,
-        formatting: (text) => {
-          if (text === "online") {
-            return "1"
-          } else return "2"
-        },
-      },
+      content: [{ type: "text", data: { key: "status", truncated: true, formatting: (text) => (text === "online" ? "🟢" : "⚪") } }],
     },
     {
       label: { name: "Last Active" },
-      key: "lastActive",
       width: "auto",
-      sortable: true,
-      overflow: { truncated: true, copy: true, modal: true },
+      content: [{ type: "text", data: { key: "lastActive", sortable: true, truncated: true, copy: true, modal: true } }],
     },
     {
       label: { name: "Actions" },
-      key: "action",
       width: "15%",
       align: "center",
-      action: {
-        type: "buttons",
-        buttons: [
-          { name: "Action 1 (id)", class: "bg-blue", eventHandler: { Header: "SET", Argument: "save", Variables: ["name"] } },
-          { name: "Action 2 (name)", class: "bg-green", onClick: (row) => console.log(row.name) },
-        ],
-      },
+      content: [
+        { type: "button", data: { name: "Action 1", class: "bg-blue", eventHandler: { Header: "SET", Argument: "save", Variables: ["name"] } } },
+        { type: "button", data: { name: "Action 2", class: "bg-green", onClick: (row) => console.log(row.name) } },
+      ],
     },
   ]
 

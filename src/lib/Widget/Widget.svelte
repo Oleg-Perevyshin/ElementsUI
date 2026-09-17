@@ -22,7 +22,7 @@
 
   let currentValue = $derived(value)
 
-  const minNumber = $derived(settings.number?.minNum ?? 0 + 1)
+  const minNumber = $derived(settings.number?.minNum ?? 0)
   const maxNumber = $derived(settings.number?.maxNum ?? 0)
 
   $effect(() => {

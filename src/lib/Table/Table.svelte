@@ -30,6 +30,8 @@
   let isAutoscroll = $state(true)
   let container: HTMLElement | null = $state(null)
   let buffer: any[] = $state([])
+  /* body типизирован как T[] | T | null — нормализуем в массив один раз для рендера */
+  let bodyArray = $derived(body == null ? [] : Array.isArray(body) ? body : [body])
 
   let isDropdownOpen: { x: number; y: number; index: number } | null = $state(null)
   let selectSlideDuration: number = $state(250)
@@ -290,8 +292,8 @@
       </button>
     {/if}
 
-    {#if body || buffer}
-      {@const rows = dataBuffer.stashData ? buffer.slice(-(dataBuffer.bufferSize ?? 10)) : body.filter((row: any) => Object.entries(row).length != 0)}
+    {#if bodyArray.length > 0 || buffer.length > 0}
+      {@const rows = dataBuffer.stashData ? buffer.slice(-(dataBuffer.bufferSize ?? 10)) : bodyArray.filter((row: any) => Object.entries(row).length != 0)}
       <!-- Table Body с прокруткой -->
       <div class="relative flex-1 overflow-y-auto bg-(--back-color)" bind:this={container} onscroll={handleScroll}>
         <div class="min-w-0" style={`height: ${dataBuffer.visibleRows && tableHeight && rows.length > dataBuffer.visibleRows ? `${tableHeight}px` : ""};`}>

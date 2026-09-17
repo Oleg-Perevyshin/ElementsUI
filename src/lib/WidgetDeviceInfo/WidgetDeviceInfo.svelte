@@ -4,6 +4,7 @@
      DevSN/DevID/DevFW/RunCnt — только чтение; DevName/HostName/WebUser/WebPsw — сохраняются
      одним пакетом. Ничего не знает про DeviceStore/WebSocket — value/onSave/onRestart. -->
 <script lang="ts">
+  import { untrack } from "svelte"
   import { slide } from "svelte/transition"
   import { twMerge } from "tailwind-merge"
   import * as UI from "$lib"
@@ -57,8 +58,20 @@
   $effect(() => writePersistedCollapsed(persistKey, collapsed))
 
   /* Поля редактируются локально (как Argument: NoSend в реальной GUI) — отправка одним пакетом по кнопке */
-  let savedSnapshot = $state(JSON.stringify(info))
+  let savedSnapshot = $state(untrack(() => JSON.stringify(info)))
   let isDirty = $derived(JSON.stringify(info) !== savedSnapshot)
+
+  /* value — живой поток данных с устройства (readonly-поля StaIP/DevFW/RunCnt и т.п. должны
+     обновляться постоянно), а не однократный дефолт. Подхватываем свежие данные, только если
+     у пользователя нет несохранённых правок редактируемых полей (DevName/HostName/...) —
+     иначе входящее значение затёрло бы то, что он ещё не успел сохранить. */
+  $effect(() => {
+    if (value !== undefined && !untrack(() => isDirty)) {
+      info = value
+      savedSnapshot = JSON.stringify(info)
+    }
+  })
+
   const save = () => {
     onSave?.($state.snapshot(info))
     savedSnapshot = JSON.stringify(info)

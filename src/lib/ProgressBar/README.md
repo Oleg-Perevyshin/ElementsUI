@@ -36,7 +36,7 @@
 <script>
   import * as UI from "poe-svelte-ui-lib"
 
-  let progressBarValue = 40
+  let progressBarValue = [{ Value: 40 }]
 </script>
 
 <UI.ProgressBar value={progressBarValue} wrapperClass="bg-red" />
@@ -48,7 +48,7 @@
 <script>
   import * as UI from "poe-svelte-ui-lib"
 
-  let progressBarValue = 65
+  let progressBarValue = [{ Value: 65 }]
 </script>
 
 <UI.ProgressBar value={progressBarValue} type="vertical" wrapperClass="bg-red h-50" />

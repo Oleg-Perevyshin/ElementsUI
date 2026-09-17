@@ -39,13 +39,13 @@
   })
 
   const handleToggle = (index: number) => {
-    if (localOptions[index].disabled) return
-    value = ((value ?? 0) ^ (1 << (bitMode ? (localOptions[index].value ?? 0) : 0))) >>> 0
+    if (localOptions[index]?.disabled) return
+    value = ((value ?? 0) ^ (1 << (bitMode ? (localOptions[index]?.value ?? 0) : 0))) >>> 0
     onChange(value)
   }
 
   const handleCaptionClick = (newValue: number) => {
-    if (localOptions[0].disabled || value === newValue) return
+    if (localOptions[0]?.disabled || value === newValue) return
     value = newValue
     onChange(newValue)
   }
@@ -134,14 +134,14 @@
     class={twMerge(
       "relative flex items-center justify-center gap-2",
       wrapperClass,
-      options[0].class?.split(" ").find((cl) => cl.startsWith("bg-")),
+      options[0]?.class?.split(" ").find((cl) => cl.startsWith("bg-")),
     )}
   >
     <input
       id={ID}
       type="checkbox"
       checked={checkedOptions[0]}
-      disabled={localOptions[0].disabled ?? false}
+      disabled={localOptions[0]?.disabled ?? false}
       class="
         relative size-5 shrink-0 cursor-pointer appearance-none rounded-[6px] border border-(--border-color)
         bg-(--field-color) transition-colors duration-150 after:origin-center after:opacity-0
@@ -164,7 +164,7 @@
     />
     <Tooltip show={showInfo} text={hiddenInfo} side="top" />
     {#if label.name}
-      <label for={ID} class={twMerge(`text-[13px] select-none ${options[0].disabled ? "text-(--faint-color)" : "cursor-pointer"}`, label.class)}>
+      <label for={ID} class={twMerge(`text-[13px] select-none ${options[0]?.disabled ? "text-(--faint-color)" : "cursor-pointer"}`, label.class)}>
         {label.name}
       </label>
     {/if}

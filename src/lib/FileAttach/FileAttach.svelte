@@ -17,9 +17,16 @@
   }: IFileAttachProps = $props()
 
   let ID = $derived(`${id}-${crypto.randomUUID().slice(0, 6)}`)
-  let selectedFile = $state<File | null>(null)
   let previewUrl = $derived(currentImage ? (currentImage.startsWith("data:") ? currentImage : `data:image/png;base64,${currentImage}`) : null)
   let fileName = $state("")
+
+  /* Blob-URL для мгновенного превью выбранного файла до того, как onChange/родитель
+     подтвердит загрузку и обновит currentImage. Предыдущий blob обязательно отзывается
+     перед созданием нового и при размонтировании — иначе течёт память при частой смене файла. */
+  let objectUrl: string | null = null
+  $effect(() => () => {
+    if (objectUrl) URL.revokeObjectURL(objectUrl)
+  })
 
   const handleFileChange = (event: Event) => {
     const input = event.target as HTMLInputElement
@@ -29,10 +36,13 @@
     }
 
     const file = input.files[0]
-    selectedFile = file
     fileName = file.name
 
-    if (file.type.startsWith("image/")) previewUrl = URL.createObjectURL(file)
+    if (file.type.startsWith("image/")) {
+      if (objectUrl) URL.revokeObjectURL(objectUrl)
+      objectUrl = URL.createObjectURL(file)
+      previewUrl = objectUrl
+    }
 
     onChange(event, file)
   }
@@ -64,7 +74,7 @@
       >
         {#if previewUrl || currentImage}
           <img
-            src={previewUrl ?? (currentImage?.startsWith("data:") ? currentImage : `data:image/png;base64,${currentImage}`)}
+            src={previewUrl}
             alt="Preview"
             class={`
               h-full w-full
