@@ -20,6 +20,8 @@
 | `componentClass` | `string`                                  | `""`                                   | "Мастер-цвет" виджета — роль вида `"bg-red"` (см. `optionsStore.COLOR_OPTIONS`) |
 | `label`          | `{ name?: string }`                       | `{ name: "Информация об устройстве" }` | Заголовок карточки                                                              |
 | `value`          | `IWidgetDeviceInfoConfig`                 | внутренний дефолт                      | Текущая информация об устройстве                                                |
+| `collapsed`      | `boolean`                                 | `false`                                 | Свёрнуто ли тело виджета (заголовок остаётся); поддерживает двустороннее связывание (`$bindable`) |
+| `persistKey`     | `string`                                  | `undefined`                             | Ключ для сохранения состояния `collapsed` в `localStorage` — при заданном ключе состояние сворачивания переживает перезагрузку страницы |
 | `onSave`         | `(info: IWidgetDeviceInfoConfig) => void` | `undefined`                            | Срабатывает при нажатии "Сохранить" — редактируемые поля одним пакетом          |
 | `onRestart`      | `() => void`                              | `undefined`                            | Срабатывает при нажатии "Перезагрузить"                                         |
 
