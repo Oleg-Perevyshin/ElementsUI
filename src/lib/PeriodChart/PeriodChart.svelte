@@ -80,23 +80,25 @@
     <h5 class={twMerge("w-full text-[13px] font-semibold text-(--muted-color)", label.class)}>{label.name}</h5>
   {/if}
 
-  <!-- Сегментированный переключатель уровней -->
-  <div class="flex w-full items-center gap-0.5 rounded-[10px] bg-(--container-color) p-[3px]">
-    {#each levels as level, index (level.name)}
-      <button
-        type="button"
-        class={twMerge(
-          "flex-1 cursor-pointer rounded-[7px] px-3 py-1.5 text-[13px] transition-colors duration-150",
-          index === currentLevelIndex
-            ? "bg-(--back-color) font-semibold text-(--font-color) shadow-(--elevation-1)"
-            : "font-medium text-(--muted-color) hover:text-(--font-color)",
-        )}
-        onclick={() => selectLevel(index)}
-      >
-        {level.name}
-      </button>
-    {/each}
-  </div>
+  <!-- Сегментированный переключатель уровней: при одном уровне переключать нечего -->
+  {#if levels.length > 1}
+    <div class="flex w-full items-center gap-0.5 rounded-[10px] bg-(--container-color) p-[3px]">
+      {#each levels as level, index (level.name)}
+        <button
+          type="button"
+          class={twMerge(
+            "flex-1 cursor-pointer rounded-[7px] px-3 py-1.5 text-[13px] transition-colors duration-150",
+            index === currentLevelIndex
+              ? "bg-(--back-color) font-semibold text-(--font-color) shadow-(--elevation-1)"
+              : "font-medium text-(--muted-color) hover:text-(--font-color)",
+          )}
+          onclick={() => selectLevel(index)}
+        >
+          {level.name}
+        </button>
+      {/each}
+    </div>
+  {/if}
 
   <!-- Столбчатый график -->
   <div class="relative flex w-full flex-col gap-1.5 rounded-[12px] border border-(--hairline-color) bg-(--back-color) p-3.5">
