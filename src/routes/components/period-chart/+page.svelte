@@ -27,6 +27,16 @@
     { name: "Час", variable: "PWR.EHour", data: randomLevelData(6), labels: ["0-10", "10-20", "20-30", "30-40", "40-50", "50-60"] },
   ]
 
+  /* Малые и большие величины — проверка автомасштаба шкалы Y */
+  const spectrumLevels: IPeriodChartLevel[] = [
+    {
+      name: "Спектр",
+      data: [0.0734, 0.0121, 0.0482, 0.0317, 0.0265, 0.0198, 0.0153, 0.0089, 0.0041],
+      labels: ["910", "680", "630", "590", "555", "515", "480", "445", "415"],
+    },
+  ]
+  const bigLevels: IPeriodChartLevel[] = [{ name: "Сутки", data: Array.from({ length: 24 }, () => Math.round(Math.random() * 2_400_000)) }]
+
   let periodChartComponent: UIComponent = $state({
     id: crypto.randomUUID(),
     type: "PeriodChart",
@@ -70,6 +80,8 @@ ${formatObjectToString(periodChartComponent.properties as IPeriodChartProps)}
       onLevelChange={(_, level) => console.log("Переключились на", level.name)}
     />
     <PeriodChart label={{ name: "Другая палитра" }} wrapperClass="bg-green" levels={energyLevels} unit=" Вт·ч" />
+    <PeriodChart label={{ name: "Малые величины" }} levels={spectrumLevels} unit=" мкВт/см²" />
+    <PeriodChart label={{ name: "Большие величины" }} levels={bigLevels} unit=" Вт·ч" />
     <PeriodChart label={{ name: "Без данных" }} levels={[{ name: "Час", data: [] }]} />
   {/snippet}
 </ComponentExample>
