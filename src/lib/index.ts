@@ -75,6 +75,7 @@ export {
   type IWidgetFileSystemProps,
   type IWidgetFileSystemInfo,
   type IWidgetFileSystemFile,
+  type IWidgetFileSystemUpload,
   type IGraphProps,
   type IGraphDataObject,
   type IGraphHistoryPoint,

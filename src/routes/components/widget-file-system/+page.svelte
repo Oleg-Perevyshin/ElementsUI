@@ -12,34 +12,34 @@
     RenderMarkdown(readmeRaw).then((html) => (readmeHtml = html))
   })
 
-  /* Имитация устройства: CFG.FSInfo как его отдаёт прошивка, закачка — рост UlProg шагом 5% */
+  /* Имитация устройства: CFG.FS как его отдаёт прошивка, закачка — Upload.Progress шагом 5% */
   let fsInfo: IWidgetFileSystemInfo = $state({
-    FSTotal: 1441792,
-    FSUsed: 1105920,
-    FSFree: 335872,
-    FileCount: 4,
-    FSList: [
-      { Name: "/littlefs/cert.pem", Size: 1834 },
-      { Name: "/littlefs/20.00.000-01_14.bin", Size: 917504 },
-      { Name: "/littlefs/notes.md", Size: 12288 },
-      { Name: "/littlefs/very/long/path/to/some/deeply/nested/config.txt", Size: 512 },
+    Total: 1441792,
+    Used: 1105920,
+    Free: 335872,
+    List: [
+      { Name: "/storage/cert.pem", Size: 1834 },
+      { Name: "/storage/20.00.000-01_14.bin", Size: 917504 },
+      { Name: "/storage/notes.md", Size: 12288 },
+      { Name: "/storage/very/long/path/to/some/deeply/nested/config.txt", Size: 512 },
     ],
   })
-  let progress = $state(0)
 
   const recalc = () => {
-    fsInfo.FSUsed = fsInfo.FSList.reduce((sum, f) => sum + f.Size, 0)
-    fsInfo.FSFree = fsInfo.FSTotal - fsInfo.FSUsed
-    fsInfo.FileCount = fsInfo.FSList.length
+    fsInfo.Used = fsInfo.List.reduce((sum, f) => sum + f.Size, 0)
+    fsInfo.Free = fsInfo.Total - fsInfo.Used
   }
   const mockDelete = (name: string) => {
-    fsInfo.FSList = fsInfo.FSList.filter((f) => f.Name !== name)
+    fsInfo.List = fsInfo.List.filter((f) => f.Name !== name)
     recalc()
   }
   const mockUpload = async (file: File) => {
-    for (progress = 0; progress < 100; progress += 5) await new Promise((r) => setTimeout(r, 80))
-    progress = 100
-    fsInfo.FSList = [...fsInfo.FSList.filter((f) => f.Name !== `/littlefs/${file.name}`), { Name: `/littlefs/${file.name}`, Size: file.size }]
+    for (let p = 0; p < 100; p += 5) {
+      fsInfo.Upload = { Name: file.name, Size: file.size, Progress: p }
+      await new Promise((r) => setTimeout(r, 80))
+    }
+    fsInfo.Upload = undefined
+    fsInfo.List = [...fsInfo.List.filter((f) => f.Name !== `/storage/${file.name}`), { Name: `/storage/${file.name}`, Size: file.size }]
     recalc()
   }
 
@@ -52,7 +52,7 @@
       componentClass: "",
       accept: ".bin, .txt, .md, .pem",
     },
-    eventHandler: { Header: "GET", Argument: "FSInfo", Variables: [] },
+    eventHandler: { Header: "GET", Argument: "FS", Variables: [] },
     position: { row: 0, col: 0, width: 0, height: 0 },
     parentId: "",
   })
@@ -62,7 +62,6 @@
 <UI.WidgetFileSystem
 ${formatObjectToString(fsComponent.properties as IWidgetFileSystemProps)}
 value={fsInfo}
-uploadProgress={progress}
 onRefresh={handleRefresh}
 onDelete={handleDelete}
 onUpload={handleUpload}
@@ -75,8 +74,7 @@ onUpload={handleUpload}
       <WidgetFileSystem
         {...fsComponent.properties as IWidgetFileSystemProps}
         value={fsInfo}
-        uploadProgress={progress}
-        onRefresh={() => console.log("GET FSInfo (mock)")}
+        onRefresh={() => console.log("GET FS (mock)")}
         onDelete={mockDelete}
         onUpload={mockUpload}
       />
@@ -90,7 +88,7 @@ onUpload={handleUpload}
   {/snippet}
   {#snippet examples()}
     <div class="flex flex-col gap-6 p-2">
-      <WidgetFileSystem value={{ FSTotal: 1441792, FSUsed: 8192, FSFree: 1433600, FileCount: 0, FSList: [] }} componentClass="bg-green" />
+      <WidgetFileSystem value={{ Total: 1441792, Used: 8192, Free: 1433600, List: [] }} componentClass="bg-green" />
     </div>
   {/snippet}
 </ComponentExample>

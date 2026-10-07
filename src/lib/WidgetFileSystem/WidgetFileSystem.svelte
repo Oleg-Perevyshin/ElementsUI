@@ -1,8 +1,8 @@
 <!-- $lib/WidgetFileSystem/WidgetFileSystem.svelte — смарт-виджет файловой системы устройства.
-     Данные — объект CFG.FSInfo в том виде, в каком его отдаёт прошивка (FS_WriteFullInfo, ProdFactory-ESP):
-     FSTotal/FSUsed/FSFree/FileCount/FSList[{Name, Size}]; прогресс закачки — CFG.UlProg.
-     Ничего не знает про DeviceStore/WebSocket — value/uploadProgress/onRefresh/onDelete/onUpload,
-     протокол закачки (FUpS/FUpP/FUpD) и отправка команд на стороне вызывающего. -->
+     Данные — один объект CFG.FS в том виде, в каком его отдаёт прошивка (FS_WriteState, ProdFactory-ESP):
+     Total/Used/Free/List[{Name, Size}] и Upload{Name, Size, Progress} — только пока идёт закачка.
+     Ничего не знает про DeviceStore/WebSocket — value/onRefresh/onDelete/onUpload, протокол
+     закачки (SET FS с Op UploadStart/UploadChunk/UploadDone) и отправка команд на стороне вызывающего. -->
 <script lang="ts">
   import { slide, fade, scale } from "svelte/transition"
   import { twMerge } from "tailwind-merge"
@@ -19,7 +19,6 @@
     componentClass = "",
     label = { name: "Файловая система" },
     value,
-    uploadProgress = 0,
     accept = "*/*",
     maxNameLength = 31,
     collapsed = $bindable(false),
@@ -49,10 +48,10 @@
     return `${(bytes / (1024 * 1024)).toFixed(1)} МБ`
   }
 
-  let total = $derived(value?.FSTotal ?? 0)
-  let used = $derived(value?.FSUsed ?? 0)
-  let free = $derived(value?.FSFree ?? Math.max(total - used, 0))
-  let files = $derived(value?.FSList ?? [])
+  let total = $derived(value?.Total ?? 0)
+  let used = $derived(value?.Used ?? 0)
+  let free = $derived(value?.Free ?? Math.max(total - used, 0))
+  let files = $derived(value?.List ?? [])
   let usedPercent = $derived(total > 0 ? Math.min(100, Math.round((used / total) * 100)) : 0)
   /* Полоса — мастер-цвет виджета; почти заполненную ФС (закачка скоро начнёт падать) выдаёт только процент */
   let percentColor = $derived(usedPercent >= 90 ? "var(--red-color)" : usedPercent >= 75 ? "var(--orange-color)" : "var(--muted-color)")
@@ -75,8 +74,10 @@
       : []),
   ])
 
-  /* Прогресс закачки 0..100; нечисло (NaN, массив в формате ProgressBar и т.п.) — 0, а не «NaN%» */
-  let progress = $derived(Number.isFinite(Number(uploadProgress)) ? Math.min(100, Math.max(0, Number(uploadProgress))) : 0)
+  /* Закачка видна, пока её ведёт этот клиент или пока устройство сообщает Upload (закачка с другого клиента);
+     прогресс 0..100, нечисло — 0, а не «NaN%» */
+  let upload = $derived(value?.Upload)
+  let progress = $derived(Number.isFinite(Number(upload?.Progress)) ? Math.min(100, Math.max(0, Number(upload?.Progress))) : 0)
 
   let pendingDelete: string | null = $state(null)
   const confirmDelete = () => {
@@ -84,8 +85,7 @@
     pendingDelete = null
   }
 
-  /* Закачка: имя проверяется до отправки (прошивка отвергнет длинное имя уже после FUpS), прогресс —
-     из uploadProgress, пока onUpload не завершится */
+  /* Закачка: имя проверяется до отправки (прошивка отвергнет длинное имя уже после UploadStart) */
   let uploading = $state(false)
   let uploadError = $state("")
   const handleFile = async (_event: Event, file: File | null) => {
@@ -136,7 +136,7 @@
         </div>
         <div class="flex justify-between gap-2 text-[12px] text-(--muted-color)">
           <span>Свободно {formatBytes(free)}</span>
-          <span>Файлов: {value?.FileCount ?? files.length}</span>
+          <span>Файлов: {files.length}</span>
         </div>
       </div>
 
@@ -152,9 +152,12 @@
       <!-- Закачка -->
       {#if onUpload}
         <div class="flex flex-col gap-2 rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-3">
-          <UI.FileAttach label={{ name: "Закачать файл" }} {accept} disabled={uploading} onChange={handleFile} />
-          {#if uploading}
+          <UI.FileAttach label={{ name: "Закачать файл" }} {accept} disabled={uploading || !!upload} onChange={handleFile} />
+          {#if uploading || upload}
             <div class="flex items-center gap-2 text-[12px]" transition:slide={{ duration: 100 }}>
+              {#if upload?.Name}
+                <span class="max-w-40 truncate text-(--muted-color)">{upload.Name}</span>
+              {/if}
               <div class="h-2 flex-1 overflow-hidden rounded-full bg-(--container-color)">
                 <div class="h-full rounded-full bg-(--accent-color) transition-[width] duration-300" style="width: {progress}%"></div>
               </div>

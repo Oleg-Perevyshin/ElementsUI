@@ -3,55 +3,78 @@
 ## Описание
 
 Смарт-виджет файловой системы устройства: занятость памяти, список файлов с удалением и закачка
-нового файла с прогрессом. Работает с объектом `FSInfo` группы `CFG` ровно в том виде, в каком
-его отдаёт прошивка (`FS_WriteFullInfo`, ProdFactory-ESP), и с прогрессом закачки `UlProg`.
-Компонент ничего не знает про DeviceStore/WebSocket — только `value`/`uploadProgress` и колбэки
-`onRefresh`/`onDelete`/`onUpload`, вся отправка (в том числе протокол закачки `FUpS` → `FUpP` →
-`FUpD`) на стороне вызывающего кода.
+нового файла с прогрессом. Работает с одним объектом `CFG.FS` ровно в том виде, в каком его отдаёт
+прошивка (`FS_WriteState`, ProdFactory-ESP), и с одной командой `FS`. Компонент ничего не знает про
+DeviceStore/WebSocket — только `value` и колбэки `onRefresh`/`onDelete`/`onUpload`, вся отправка
+(в том числе протокол закачки) на стороне вызывающего кода.
 
-Заменяет собой блок из отдельных компонентов (поля «Всего/Использовано/Свободно», кнопка
-`GET FSInfo`, таблица `FSList` с кнопкой `DelFile`, `FileAttach`, `ProgressBar` по `UlProg`) —
-одной карточкой в стиле `WidgetWiFi`/`WidgetDeviceInfo`.
-
-- **Занятость** — «занято X из Y», процент и полоса; от 75% полоса оранжевая, от 90% — красная.
-  Размеры показываются в Б/КБ/МБ.
+- **Занятость** — «занято X из Y», процент и полоса мастер-цвета; процент оранжевый от 75%,
+  красный от 90%. Размеры в Б/КБ/МБ.
 - **Файлы** — таблица «Путь / Размер / Удалить»; длинный путь обрезается «…», удаление
-  подтверждается внутри карточки. Пустая ФС — «Файлов нет». Колонка удаления есть, только
-  если передан `onDelete`.
+  подтверждается внутри карточки. Пустая ФС — «Файлов нет». Колонка удаления есть, только если
+  передан `onDelete`.
 - **Закачка** — блок есть, только если передан `onUpload`. Имя файла проверяется до отправки
-  (`maxNameLength`, по умолчанию 31 — ограничение прошивки), пока `onUpload` не завершится,
-  показывается прогресс из `uploadProgress`; ошибка из `onUpload` выводится под полем.
+  (`maxNameLength`, по умолчанию 31 — ограничение прошивки). Прогресс берётся из `value.Upload`
+  и виден, пока закачку ведёт этот клиент или пока устройство сообщает `Upload` (закачка с
+  другого клиента). Ошибка из `onUpload` выводится под полем.
+
+## Протокол устройства
+
+Всё состояние ФС — один объект `CFG.FS`:
+
+```
+"CFG.FS": {
+  "Total": 1441792, "Used": 98304, "Free": 1343488,
+  "List": [{ "Name": "/storage/cert.pem", "Size": 1834 }],
+  "Upload": { "Name": "fw.bin", "Size": 917504, "Progress": 35 }
+}
+```
+
+`Upload` есть, только пока идёт закачка. Снимок со списком `List` приходит на `GET ModCfg`,
+`GET FS`, после удаления, после завершения или ошибки закачки и в рассылке `OK! Update`; ход
+закачки — только `{"Upload": {...}}` (без списка, раз в 5%). Объект со списком заменяет состояние
+целиком, без списка — дописывается поверх (это делает вызывающий код).
+
+Команды — один аргумент `FS`, операция в поле `Op`; ответ всегда `FS` с тем же `Op`:
+
+| Запрос                                                                               | Ответ                                                     |
+| ------------------------------------------------------------------------------------ | --------------------------------------------------------- |
+| `GET FS`                                                                             | `CFG.FS` — снимок                                         |
+| `SET FS {"Op": "Delete", "Name": "/storage/a.bin"}`                                  | `Op`, `CFG.FS` — снимок                                   |
+| `SET FS {"Op": "UploadStart", "FileName", "FileExtension", "FileSize", "CurrentID"}` | `Op`, `CurrentID`, `ChunkSize`, `CFG.FS.Upload`           |
+| `SET FS {"Op": "UploadChunk", "ChunkIndex", "Data", "CurrentID"}`                    | `Op`, `ChunkIndex`, `CurrentID`, раз в 5% `CFG.FS.Upload` |
+| `SET FS {"Op": "UploadDone", "CRC32", "CurrentID"}`                                  | `Op`, `CurrentID`, `CFG.FS` — снимок                      |
+
+Ошибки — `ER! FS` с тем же `Op` (и `CurrentID` у закачки); ошибка закачки несёт снимок `CFG.FS`.
 
 ## Пропсы
 
-| Название         | Тип                                      | По умолчанию                   | Описание                                                                                                                |
-| ---------------- | ---------------------------------------- | ------------------------------ | ----------------------------------------------------------------------------------------------------------------------- |
-| `id`             | `string`                                 | `undefined`                    | Префикс прошивочной группы (обычно `"CFG"`), используется вызывающим кодом для чтения `FSInfo`/`UlProg`                 |
-| `wrapperClass`   | `string`                                 | `""`                           | CSS-классы обёртки                                                                                                      |
-| `componentClass` | `string`                                 | `""`                           | «Мастер-цвет» виджета — роль вида `"bg-red"` (см. `optionsStore.COLOR_OPTIONS`)                                         |
-| `label`          | `{ name?: string }`                      | `{ name: "Файловая система" }` | Заголовок карточки                                                                                                      |
-| `value`          | `IWidgetFileSystemInfo`                  | `undefined`                    | Состояние файловой системы (`CFG.FSInfo`)                                                                               |
-| `uploadProgress` | `number`                                 | `0`                            | Прогресс текущей закачки, % (`CFG.UlProg`)                                                                              |
-| `keys`           | `{ FSInfo?: string; UlProg?: string }`   | `undefined`                    | Переопределение имён полей устройства, по умолчанию `FSInfo` и `UlProg`                                                 |
-| `accept`         | `string`                                 | `"*/*"`                        | Какие файлы можно выбрать (атрибут `accept`), например `".bin, .txt, .pem"`                                             |
-| `maxNameLength`  | `number`                                 | `31`                           | Максимальная длина имени файла                                                                                          |
-| `infoCommand`    | `{ header?: string; argument?: string }` | `undefined`                    | Команда обновления, по умолчанию `GET FSInfo` (используется вызывающим кодом)                                           |
-| `deleteCommand`  | `{ header?: string; argument?: string }` | `undefined`                    | Команда удаления, по умолчанию `SET DelFile` (используется вызывающим кодом)                                            |
-| `collapsed`      | `boolean`                                | `false`                        | Свёрнуто ли тело виджета (`$bindable`)                                                                                  |
-| `persistKey`     | `string`                                 | `undefined`                    | Ключ для сохранения `collapsed` в `localStorage`                                                                        |
-| `onRefresh`      | `() => void`                             | `undefined`                    | Кнопка «Обновить» в шапке; без обработчика кнопка неактивна                                                             |
-| `onDelete`       | `(name: string) => void`                 | `undefined`                    | Удаление файла после подтверждения; `name` — полный путь из `FSList`                                                    |
-| `onUpload`       | `(file: File) => void \| Promise<void>`  | `undefined`                    | Закачка выбранного файла; пока промис не завершён — показывается прогресс, исключение показывается как ошибка под полем |
+| Название         | Тип                                     | По умолчанию                   | Описание                                                                                   |
+| ---------------- | --------------------------------------- | ------------------------------ | ------------------------------------------------------------------------------------------ |
+| `id`             | `string`                                | `undefined`                    | Префикс прошивочной группы (обычно `"CFG"`), используется вызывающим кодом для чтения `FS` |
+| `wrapperClass`   | `string`                                | `""`                           | CSS-классы обёртки                                                                         |
+| `componentClass` | `string`                                | `""`                           | «Мастер-цвет» виджета — роль вида `"bg-red"`, перекрашивает весь виджет                    |
+| `label`          | `{ name?: string }`                     | `{ name: "Файловая система" }` | Заголовок карточки                                                                         |
+| `value`          | `IWidgetFileSystemInfo`                 | `undefined`                    | Состояние файловой системы (`CFG.FS`)                                                      |
+| `keys`           | `{ FS?: string }`                       | `undefined`                    | Переопределение имени поля устройства, по умолчанию `FS`                                   |
+| `argument`       | `string`                                | `undefined`                    | Аргумент команд, по умолчанию `"FS"` (используется вызывающим кодом)                       |
+| `accept`         | `string`                                | `"*/*"`                        | Какие файлы можно выбрать (атрибут `accept`), например `".bin, .txt, .pem"`                |
+| `maxNameLength`  | `number`                                | `31`                           | Максимальная длина имени файла                                                             |
+| `collapsed`      | `boolean`                               | `false`                        | Свёрнуто ли тело виджета (`$bindable`)                                                     |
+| `persistKey`     | `string`                                | `undefined`                    | Ключ для сохранения `collapsed` в `localStorage`                                           |
+| `onRefresh`      | `() => void`                            | `undefined`                    | Кнопка «Обновить» в шапке (`GET FS`); без обработчика кнопка неактивна                     |
+| `onDelete`       | `(name: string) => void`                | `undefined`                    | Удаление файла после подтверждения; `name` — полный путь из `List`                         |
+| `onUpload`       | `(file: File) => void \| Promise<void>` | `undefined`                    | Закачка выбранного файла; исключение показывается как ошибка под полем                     |
 
 ### IWidgetFileSystemInfo
 
-| Поле        | Тип                                | Описание                                                          |
-| ----------- | ---------------------------------- | ----------------------------------------------------------------- |
-| `FSTotal`   | `number`                           | Размер файловой системы, байт                                     |
-| `FSUsed`    | `number`                           | Занято, байт                                                      |
-| `FSFree`    | `number`                           | Свободно, байт                                                    |
-| `FileCount` | `number`                           | Количество файлов (если нет — длина `FSList`)                     |
-| `FSList`    | `{ Name: string; Size: number }[]` | Файлы: полный путь (его же принимает `DelFile`) и размер в байтах |
+| Поле     | Тип                                                 | Описание                                                |
+| -------- | --------------------------------------------------- | ------------------------------------------------------- |
+| `Total`  | `number`                                            | Размер файловой системы, байт                           |
+| `Used`   | `number`                                            | Занято, байт                                            |
+| `Free`   | `number`                                            | Свободно, байт                                          |
+| `List`   | `{ Name: string; Size: number }[]`                  | Файлы: полный путь (его же принимает `Delete`) и размер |
+| `Upload` | `{ Name: string; Size: number; Progress: number }?` | Текущая закачка, `Progress` 0–100 с шагом 5%            |
 
 ## Примеры
 
@@ -59,17 +82,15 @@
 <script>
   import * as UI from "poe-svelte-ui-lib"
 
-  let fsInfo = { FSTotal: 1441792, FSUsed: 98304, FSFree: 1343488, FileCount: 1, FSList: [{ Name: "/littlefs/cert.pem", Size: 1834 }] }
-  let progress = 0
+  let fs = { Total: 1441792, Used: 98304, Free: 1343488, List: [{ Name: "/storage/cert.pem", Size: 1834 }] }
 </script>
 
 <UI.WidgetFileSystem
-  value={fsInfo}
-  uploadProgress={progress}
+  value={fs}
   accept=".bin, .txt, .pem"
-  onRefresh={() => console.log("GET FSInfo")}
-  onDelete={(name) => console.log("SET DelFile", { Name: name })}
-  onUpload={async (file) => console.log("FUpS/FUpP/FUpD", file.name)}
+  onRefresh={() => console.log("GET FS")}
+  onDelete={(name) => console.log("SET FS", { Op: "Delete", Name: name })}
+  onUpload={async (file) => console.log("SET FS UploadStart/UploadChunk/UploadDone", file.name)}
 />
 ```
 
@@ -81,4 +102,4 @@
 | `onPropertyChange` | `(updates: Partial<{ properties?: string \| object; name?: string; access?: string }>) => void` | Коллбэк для обновления свойств компонента |
 
 Группы панели: общие (заголовок, префикс группы, мастер-цвет), закачка (`accept`,
-`maxNameLength`), ключи устройства (`FSInfo`, `UlProg`), команды обновления и удаления.
+`maxNameLength`), устройство (поле `FS`, аргумент команд).
