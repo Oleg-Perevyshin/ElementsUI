@@ -80,7 +80,7 @@
 </script>
 
 <div
-  class={twMerge("flex w-full max-w-3xl flex-col gap-4 rounded-2xl border border-(--hairline-color) bg-(--container-color) p-4", wrapperClass)}
+  class={twMerge("flex w-full flex-col gap-4 rounded-2xl border border-(--hairline-color) bg-(--container-color) p-4", wrapperClass)}
   style={accentStyle}
 >
   <!-- Заголовок -->
