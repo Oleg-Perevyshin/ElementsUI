@@ -37,6 +37,11 @@
   let selectSlideDuration: number = $state(250)
   let copiedCell: { x: number; y: number } | null = $state(null)
   let tooltip = $state({ show: false, text: "", x: 0, y: 0 })
+  /* Шаблон колонок общий для шапки и строк; кнопка очистки — отдельная узкая колонка, чтобы не перекрывать заголовки */
+  const ACTIONS_COLUMN = "2.5rem"
+  let gridTemplate = $derived(
+    [...(header || []).filter((c) => c.width !== "0%").map((c) => c.width || "minmax(0, 1fr)"), ...(dataBuffer.clearButton ? [ACTIONS_COLUMN] : [])].join(" "),
+  )
   let isScrollable: boolean = $derived(container ? (container as HTMLElement).scrollHeight > (container as HTMLElement).clientHeight : false)
   let tableHeight = $state(0)
   let modalData: { isOpen: boolean; rawData?: string; formattedData?: string } = $state({ isOpen: false, rawData: "", formattedData: "" })
@@ -247,10 +252,7 @@
       class="grid border-b border-(--hairline-color) bg-(--container-color) text-[11px] font-bold tracking-[0.06em] text-(--muted-color) uppercase {isScrollable
         ? 'border-r-8 border-r-(--container-color)'
         : ''}"
-      style={`grid-template-columns: ${(header || [])
-        .filter((c) => c.width !== "0%")
-        .map((c) => c.width || "minmax(0, 1fr)")
-        .join(" ")};`}
+      style={`grid-template-columns: ${gridTemplate};`}
     >
       {#each header as column, index (column)}
         {#if column.width !== "0%"}
@@ -277,18 +279,16 @@
           </div>
         {/if}
       {/each}
+      {#if dataBuffer.clearButton}
+        <div class="flex items-center justify-center tracking-normal normal-case">
+          <Button
+            componentClass={twMerge("size-7 p-1.5 text-(--muted-color) hover:text-(--red-color)", dataBuffer.clearClass)}
+            content={{ icon: ButtonClear, info: { text: $T("common.table.clear"), side: "left" } }}
+            onClick={clearBuffer}
+          />
+        </div>
+      {/if}
     </div>
-    {#if dataBuffer.clearButton}
-      <button
-        class={twMerge(
-          "absolute top-1 right-2 flex size-7 cursor-pointer items-center justify-center rounded-lg bg-(--back-color) p-1.5 text-(--muted-color) transition-colors duration-150 hover:bg-(--container-color) hover:text-(--font-color) [&_svg]:h-full [&_svg]:w-full",
-          dataBuffer.clearClass,
-        )}
-        onclick={clearBuffer}
-      >
-        <ButtonClear />
-      </button>
-    {/if}
 
     {#if bodyArray.length > 0 || buffer.length > 0}
       {@const rows = dataBuffer.stashData ? buffer.slice(-(dataBuffer.bufferSize ?? 10)) : bodyArray.filter((row: any) => Object.entries(row).length != 0)}
@@ -298,10 +298,7 @@
           {#each rows as row, i (row.__rowId ?? row)}
             <div
               class="grid border-t border-(--hairline-color) transition-colors duration-150 hover:bg-(--accent-soft)"
-              style={`grid-template-columns: ${(header || [])
-                .filter((c) => c.width !== "0%")
-                .map((c) => c.width || "minmax(0, 1fr)")
-                .join(" ")};`}
+              style={`grid-template-columns: ${gridTemplate};`}
             >
               {#each header as column, j (column)}
                 {#if column.width !== "0%"}
@@ -492,6 +489,7 @@
                   </div>
                 {/if}
               {/each}
+              {#if dataBuffer.clearButton}<div></div>{/if}
             </div>
           {/each}
         </div>

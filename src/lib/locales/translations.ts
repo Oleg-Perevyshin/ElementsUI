@@ -4,6 +4,7 @@ export type LanguageCode = "ru" | "en" | "zh"
 
 const translations: Record<string, [string, string, string]> = {
   "common.select_tag": ["Сделайте выбор", "Make a choice", "请选择"],
+  "common.table.clear": ["Очистить таблицу", "Clear table", "清空表格"],
   "debug.baud_rate_data": ["Данные", "Data", "数据"],
   "library.for_constructor": ["Для конструктора", "For constructor", "用于构造器"],
   "library.overview": ["Обзор", "Overview", "概览"],
