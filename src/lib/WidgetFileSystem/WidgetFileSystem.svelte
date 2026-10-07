@@ -54,8 +54,8 @@
   let free = $derived(value?.FSFree ?? Math.max(total - used, 0))
   let files = $derived(value?.FSList ?? [])
   let usedPercent = $derived(total > 0 ? Math.min(100, Math.round((used / total) * 100)) : 0)
-  /* Почти заполненная ФС подсвечивается: закачка новых файлов скоро начнёт падать */
-  let usageColor = $derived(usedPercent >= 90 ? "var(--red-color)" : usedPercent >= 75 ? "var(--orange-color)" : "var(--accent-color)")
+  /* Полоса — мастер-цвет виджета; почти заполненную ФС (закачка скоро начнёт падать) выдаёт только процент */
+  let percentColor = $derived(usedPercent >= 90 ? "var(--red-color)" : usedPercent >= 75 ? "var(--orange-color)" : "var(--muted-color)")
 
   /* Таблица файлов: путь обрезается «…», размер — уже отформатирован, удаление — с подтверждением */
   type FileRow = IWidgetFileSystemFile & { SizeText: string }
@@ -67,7 +67,7 @@
       ? [
           {
             label: { name: "" },
-            content: [{ type: "button", data: { name: "Удалить", class: "bg-red", onClick: (row: FileRow) => (pendingDelete = row.Name) } }],
+            content: [{ type: "button", data: { name: "Удалить", class: "bg-accent", onClick: (row: FileRow) => (pendingDelete = row.Name) } }],
             width: "6.5rem",
             align: "center",
           } as ITableHeader<FileRow>,
@@ -126,10 +126,10 @@
       <div class="flex flex-col gap-2 rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-3">
         <div class="flex items-baseline justify-between gap-2 text-[13px]">
           <span class="font-semibold">Занято {formatBytes(used)} из {formatBytes(total)}</span>
-          <span class="font-semibold tabular-nums" style="color: {usageColor}">{usedPercent}%</span>
+          <span class="font-semibold tabular-nums" style="color: {percentColor}">{usedPercent}%</span>
         </div>
         <div class="h-2 w-full overflow-hidden rounded-full bg-(--container-color)">
-          <div class="h-full rounded-full transition-[width] duration-300" style="width: {usedPercent}%; background: {usageColor}"></div>
+          <div class="h-full rounded-full transition-[width] duration-300" style="width: {usedPercent}%; background: var(--accent-color)"></div>
         </div>
         <div class="flex justify-between gap-2 text-[12px] text-(--muted-color)">
           <span>Свободно {formatBytes(free)}</span>

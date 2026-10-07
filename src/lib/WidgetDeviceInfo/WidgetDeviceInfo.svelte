@@ -123,7 +123,7 @@
         {#if isDirty}
           <span class="text-[12px] text-(--muted-color)" transition:slide={{ duration: 100 }}>Есть несохранённые изменения</span>
         {/if}
-        <UI.Button wrapperClass="w-40" componentClass="bg-green" content={{ name: "Сохранить" }} disabled={!isDirty} onClick={save} />
+        <UI.Button wrapperClass="w-40" componentClass="bg-accent" content={{ name: "Сохранить" }} disabled={!isDirty} onClick={save} />
       </div>
     </div>
   {/if}

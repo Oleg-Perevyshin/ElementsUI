@@ -33,8 +33,8 @@
 
   /* "Мастер-цвет" виджета — переопределяет --accent-color/--accent-soft на корне, дальше это
      штатный каскад переменных, на котором и так построены компоненты библиотеки: значок, режимы
-     STA/AP, фокус-кольцо у полей перекрашиваются вместе, одним источником истины. Кнопка
-     "Сохранить" остаётся зелёной осознанно (componentClass="bg-green" сама выставляет --bg-color). */
+     STA/AP, фокус-кольцо у полей и кнопка "Сохранить" (маркер bg-accent) перекрашиваются вместе,
+     одним источником истины; красной остаётся только кнопка подтверждения режима AP. */
   let accentStyle = $derived(widgetAccentStyle(componentClass ?? ""))
 
   let cfg: IWidgetWiFiConfig = $state(
@@ -220,7 +220,7 @@
         {#if isDirty}
           <span class="text-[12px] text-(--muted-color)" transition:slide={{ duration: 100 }}>Есть несохранённые изменения</span>
         {/if}
-        <UI.Button wrapperClass="w-40" componentClass="bg-green" content={{ name: "Сохранить" }} disabled={!isDirty} onClick={save} />
+        <UI.Button wrapperClass="w-40" componentClass="bg-accent" content={{ name: "Сохранить" }} disabled={!isDirty} onClick={save} />
       </div>
     </div>
   {/if}
