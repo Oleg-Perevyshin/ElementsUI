@@ -75,6 +75,9 @@
       : []),
   ])
 
+  /* Прогресс закачки 0..100; нечисло (NaN, массив в формате ProgressBar и т.п.) — 0, а не «NaN%» */
+  let progress = $derived(Number.isFinite(Number(uploadProgress)) ? Math.min(100, Math.max(0, Number(uploadProgress))) : 0)
+
   let pendingDelete: string | null = $state(null)
   const confirmDelete = () => {
     if (pendingDelete) onDelete?.(pendingDelete)
@@ -153,12 +156,9 @@
           {#if uploading}
             <div class="flex items-center gap-2 text-[12px]" transition:slide={{ duration: 100 }}>
               <div class="h-2 flex-1 overflow-hidden rounded-full bg-(--container-color)">
-                <div
-                  class="h-full rounded-full bg-(--accent-color) transition-[width] duration-300"
-                  style="width: {Math.min(100, Math.max(0, uploadProgress))}%"
-                ></div>
+                <div class="h-full rounded-full bg-(--accent-color) transition-[width] duration-300" style="width: {progress}%"></div>
               </div>
-              <span class="w-10 text-right tabular-nums">{Math.round(uploadProgress)}%</span>
+              <span class="w-10 text-right tabular-nums">{Math.round(progress)}%</span>
             </div>
           {/if}
           {#if uploadError}
