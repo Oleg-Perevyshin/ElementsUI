@@ -8,6 +8,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "prepack": "svelte-kit sync && svelte-package && publint",
+    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "CheckUpdate": "npx npm-check-updates -u && npm install",
     "UpdateIconsLib": "tsx src/lib/IconsCatalog/iconsLib.ts",
     "Formatting": "prettier --write ."
@@ -51,6 +52,7 @@
     "prettier-plugin-tailwindcss": "^0.8.0",
     "publint": "^0.3.21",
     "svelte": "^5.56.4",
+    "svelte-check": "^4.7.6",
     "tailwindcss": "^4.3.1",
     "tsx": "^4.22.4",
     "typescript": "^6.0.3",
