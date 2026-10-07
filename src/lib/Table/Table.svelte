@@ -79,6 +79,8 @@
 
   const handleScroll = () => {
     if (!container) return
+    /* Контейнер рендерится только при наличии строк, поэтому слушатель — в разметке, а не addEventListener в onMount */
+    if (autoscroll) handleAutoScroll()
     const { scrollTop, clientHeight, scrollHeight } = container
     if (scrollTop + clientHeight >= scrollHeight - 50 && cursor !== null && loader && !loader()) {
       getData()
@@ -212,10 +214,7 @@
   })
 
   onMount(() => {
-    if (autoscroll) {
-      container?.addEventListener("scroll", handleAutoScroll)
-      scrollToBottom()
-    }
+    if (autoscroll) scrollToBottom()
 
     const handlePageScroll = () => {
       isDropdownOpen = null
@@ -231,7 +230,6 @@
     isScrollable = container ? container.scrollHeight > container.clientHeight : false
 
     return () => {
-      container?.removeEventListener("scroll", handleAutoScroll)
       window.removeEventListener("scroll", handlePageScroll, true)
       window.removeEventListener("resize", handlePageScroll, true)
     }
