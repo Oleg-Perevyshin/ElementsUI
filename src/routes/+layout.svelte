@@ -22,6 +22,7 @@
   const menuItems = [
     { page: "widget-wifi", name: "WidgetWiFi" },
     { page: "widget-device-info", name: "WidgetDeviceInfo" },
+    { page: "widget-file-system", name: "WidgetFileSystem" },
     { page: "accordion", name: "Accordion" },
     { page: "button", name: "Button" },
     { page: "carousel", name: "Carousel" },

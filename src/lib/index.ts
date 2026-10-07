@@ -44,6 +44,8 @@ export { default as WidgetWiFi } from "./WidgetWiFi/WidgetWiFi.svelte"
 export { default as WidgetWiFiProps } from "./WidgetWiFi/WidgetWiFiProps.svelte"
 export { default as WidgetDeviceInfo } from "./WidgetDeviceInfo/WidgetDeviceInfo.svelte"
 export { default as WidgetDeviceInfoProps } from "./WidgetDeviceInfo/WidgetDeviceInfoProps.svelte"
+export { default as WidgetFileSystem } from "./WidgetFileSystem/WidgetFileSystem.svelte"
+export { default as WidgetFileSystemProps } from "./WidgetFileSystem/WidgetFileSystemProps.svelte"
 
 export * from "./locales/i18n"
 export * from "./locales/translations"
@@ -70,6 +72,9 @@ export {
   type IWidgetWiFiConfig,
   type IWidgetDeviceInfoProps,
   type IWidgetDeviceInfoConfig,
+  type IWidgetFileSystemProps,
+  type IWidgetFileSystemInfo,
+  type IWidgetFileSystemFile,
   type IGraphProps,
   type IGraphDataObject,
   type IGraphHistoryPoint,

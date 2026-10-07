@@ -64,6 +64,7 @@ export interface UIComponent {
     | "Widget"
     | "WidgetWiFi"
     | "WidgetDeviceInfo"
+    | "WidgetFileSystem"
 
   properties:
     | IAccordionProps
@@ -86,6 +87,7 @@ export interface UIComponent {
     | IWidgetProps
     | IWidgetWiFiProps
     | IWidgetDeviceInfoProps
+    | IWidgetFileSystemProps
 
   position: Required<Position>
   parentId: string
@@ -619,4 +621,44 @@ export interface IWidgetDeviceInfoProps {
   persistKey?: string
   onSave?: (info: IWidgetDeviceInfoConfig) => void
   onRestart?: () => void
+}
+
+/* Файл и состояние файловой системы — ровно то, что прошивка отдаёт в CFG.FSInfo (FS_WriteFullInfo, ProdFactory-ESP) */
+export interface IWidgetFileSystemFile {
+  Name: string /* полный путь файла на устройстве — его же принимает DelFile */
+  Size: number /* байт */
+}
+
+export interface IWidgetFileSystemInfo {
+  FSTotal: number /* байт */
+  FSUsed: number
+  FSFree: number
+  FileCount?: number
+  FSList: IWidgetFileSystemFile[]
+}
+
+export interface IWidgetFileSystemProps {
+  /* Префикс прошивочной группы (обычно "CFG"), в которой живут FSInfo и UlProg */
+  id?: string
+  wrapperClass?: string
+  componentClass?: string
+  label?: { name?: string }
+  value?: IWidgetFileSystemInfo
+  /* Прогресс текущей закачки, % (CFG.UlProg — прошивка шлёт его с шагом 5%) */
+  uploadProgress?: number
+  /* Переопределение имён полей устройства — по умолчанию FSInfo и UlProg */
+  keys?: { FSInfo?: string; UlProg?: string }
+  /* Какие файлы можно выбрать для закачки (атрибут accept), например ".bin, .txt, .pem" */
+  accept?: string
+  /* Максимальная длина имени файла — ограничение прошивки (LittleFS, upload_file.c), по умолчанию 31 */
+  maxNameLength?: number
+  /* Команды — по умолчанию GET FSInfo и SET DelFile */
+  infoCommand?: { header?: string; argument?: string }
+  deleteCommand?: { header?: string; argument?: string }
+  collapsed?: boolean
+  persistKey?: string
+  onRefresh?: () => void
+  onDelete?: (name: string) => void
+  /* Протокол закачки (FUpS/FUpP/FUpD) реализует вызывающий — виджет только отдаёт выбранный файл */
+  onUpload?: (file: File) => void | Promise<void>
 }
