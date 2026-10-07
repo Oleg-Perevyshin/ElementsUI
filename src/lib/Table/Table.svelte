@@ -42,7 +42,14 @@
   let gridTemplate = $derived(
     [...(header || []).filter((c) => c.width !== "0%").map((c) => c.width || "minmax(0, 1fr)"), ...(dataBuffer.clearButton ? [ACTIONS_COLUMN] : [])].join(" "),
   )
-  let isScrollable: boolean = $derived(container ? (container as HTMLElement).scrollHeight > (container as HTMLElement).clientHeight : false)
+  /* Фактическая ширина полосы прокрутки тела, на неё сдвигается шапка (0 для оверлейных полос) */
+  let scrollbarWidth = $state(0)
+  const measureScrollbar = () => (scrollbarWidth = container ? container.offsetWidth - container.clientWidth : 0)
+
+  $effect(() => {
+    void [body, buffer.length, tableHeight]
+    tick().then(measureScrollbar)
+  })
   let tableHeight = $state(0)
   let modalData: { isOpen: boolean; rawData?: string; formattedData?: string } = $state({ isOpen: false, rawData: "", formattedData: "" })
 
@@ -188,8 +195,14 @@
   }
 
   $effect(() => {
-    isScrollable = container ? container.scrollHeight > container.clientHeight : false
-    return () => (buffer = [])
+    if (!container) return () => (buffer = [])
+    const observer = new ResizeObserver(measureScrollbar)
+    observer.observe(container)
+    if (container.firstElementChild) observer.observe(container.firstElementChild)
+    return () => {
+      observer.disconnect()
+      buffer = []
+    }
   })
 
   $effect(() => {
@@ -213,7 +226,6 @@
             tableHeight = i == 0 ? 0 + rowHeight : tableHeight + rowHeight
           }
         }
-        isScrollable = container ? container.scrollHeight > container.clientHeight : false
       }
     })()
   })
@@ -232,8 +244,6 @@
     window.addEventListener("scroll", handlePageScroll, true)
     window.addEventListener("resize", handlePageScroll, true)
 
-    isScrollable = container ? container.scrollHeight > container.clientHeight : false
-
     return () => {
       window.removeEventListener("scroll", handlePageScroll, true)
       window.removeEventListener("resize", handlePageScroll, true)
@@ -249,10 +259,8 @@
   <div class="relative flex h-full w-full flex-col overflow-hidden rounded-[14px] border border-(--hairline-color) bg-(--back-color)">
     <!-- Table Header -->
     <div
-      class="grid border-b border-(--hairline-color) bg-(--container-color) text-[11px] font-bold tracking-[0.06em] text-(--muted-color) uppercase {isScrollable
-        ? 'border-r-8 border-r-(--container-color)'
-        : ''}"
-      style={`grid-template-columns: ${gridTemplate};`}
+      class="grid border-b border-(--hairline-color) bg-(--container-color) text-[11px] font-bold tracking-[0.06em] text-(--muted-color) uppercase"
+      style={`grid-template-columns: ${gridTemplate}; padding-right: ${scrollbarWidth}px;`}
     >
       {#each header as column, index (column)}
         {#if column.width !== "0%"}
