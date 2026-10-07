@@ -9,7 +9,8 @@
 export const widgetAccentStyle = (componentClass: string): string => {
   /* --bg-color = акцент: кнопки виджета с маркером "bg-accent" (класса в теме нет — только роль "залитая")
      заливаются им по наследованию, поэтому "Сохранить"/"Удалить" перекрашиваются вместе со всем виджетом */
-  const fill = "--bg-color: var(--accent-color);"
+  /* --table-header-color — шапка таблиц внутри виджета (Table) в мягком оттенке мастер-цвета */
+  const fill = "--bg-color: var(--accent-color); --table-header-color: var(--accent-soft);"
   const role = componentClass.match(/(?:^|\s)bg-(\w+)/)?.[1]
   if (!role || role === "max") return fill
   return (

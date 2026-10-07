@@ -7,6 +7,7 @@
   import { twMerge } from "tailwind-merge"
   import CommonSnippets from "$lib/CommonSnippets.svelte"
   import PropsGroup from "$lib/PropsGroup.svelte"
+  import WidgetAccentPicker from "../WidgetAccentPicker.svelte"
   import { getContext } from "svelte"
 
   const {
@@ -43,14 +44,9 @@
 {/snippet}
 
 {#snippet WidgetSettingsColor()}
-  <UI.Select
-    wrapperClass="!h-14"
-    label={{ name: $T("constructor.props.componentcolor") }}
-    type="buttons"
-    options={$optionsStore.COLOR_OPTIONS}
-    value={initialColor}
-    onUpdate={(option) => {
-      const bgClass = (option as UI.IOption<string>).value as string
+  <WidgetAccentPicker
+    value={(initialColor?.value as string) ?? ""}
+    onUpdate={(bgClass) => {
       updateProperty("settings.class", twMerge(component.properties.settings.class, bgClass), component, onPropertyChange)
       updateProperty("icons.class", twMerge(component.properties.icons.class, deriveIconColorClass(bgClass)), component, onPropertyChange)
     }}

@@ -65,6 +65,7 @@ export interface UIComponent {
     | "WidgetWiFi"
     | "WidgetDeviceInfo"
     | "WidgetFileSystem"
+    | "WidgetStackInfo"
 
   properties:
     | IAccordionProps
@@ -88,6 +89,7 @@ export interface UIComponent {
     | IWidgetWiFiProps
     | IWidgetDeviceInfoProps
     | IWidgetFileSystemProps
+    | IWidgetStackInfoProps
 
   position: Required<Position>
   parentId: string
@@ -665,4 +667,44 @@ export interface IWidgetFileSystemProps {
   onDelete?: (name: string) => void
   /* Протокол закачки (SET FS с Op UploadStart/UploadChunk/UploadDone) реализует вызывающий — виджет только отдаёт выбранный файл */
   onUpload?: (file: File) => void | Promise<void>
+}
+
+/* Снимок памяти и задач — объект StackInfo в том виде, в каком его отдают ProdFactory-ESP и ProdFactory-STM (API_GetStackInfo) */
+export interface IWidgetStackInfoHeap {
+  Name: string /* ESP: Internal / Default (вместе с PSRAM), STM: Heap */
+  Total: number /* байт */
+  Free: number
+  MinFree: number /* минимум свободного с момента старта */
+}
+
+export interface IWidgetStackInfoTask {
+  Name: string
+  FreeMin: number /* минимальный запас стека с момента создания задачи, байт */
+  Prio: number
+  Core?: number /* только ESP: ядро привязки, -1 — без привязки */
+  State: number /* eTaskState: 0 Running, 1 Ready, 2 Blocked, 3 Suspended, 4 Deleted */
+}
+
+export interface IWidgetStackInfo {
+  Heap: IWidgetStackInfoHeap[]
+  Tasks: IWidgetStackInfoTask[]
+}
+
+export interface IWidgetStackInfoProps {
+  id?: string
+  wrapperClass?: string
+  componentClass?: string
+  label?: { name?: string }
+  value?: IWidgetStackInfo
+  /* Переопределение имени объекта в ответе — по умолчанию StackInfo */
+  keys?: { StackInfo?: string }
+  /* Аргумент запроса — по умолчанию "StackInfo" (GET StackInfo) */
+  argument?: string
+  /* Запас стека ниже порога (байт) подсвечивается красным, ниже удвоенного — оранжевым */
+  warnBytes?: number
+  /* Период автоопроса, мс; 0 — только по кнопке */
+  period?: number
+  collapsed?: boolean
+  persistKey?: string
+  onRefresh?: () => void
 }

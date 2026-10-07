@@ -23,6 +23,7 @@
     { page: "widget-wifi", name: "WidgetWiFi" },
     { page: "widget-device-info", name: "WidgetDeviceInfo" },
     { page: "widget-file-system", name: "WidgetFileSystem" },
+    { page: "widget-stack-info", name: "WidgetStackInfo" },
     { page: "accordion", name: "Accordion" },
     { page: "button", name: "Button" },
     { page: "carousel", name: "Carousel" },

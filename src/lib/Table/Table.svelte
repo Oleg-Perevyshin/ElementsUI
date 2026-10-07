@@ -259,7 +259,7 @@
   <div class="relative flex h-full w-full flex-col overflow-hidden rounded-[14px] border border-(--hairline-color) bg-(--back-color)">
     <!-- Table Header -->
     <div
-      class="grid border-b border-(--hairline-color) bg-(--container-color) text-[11px] font-bold tracking-[0.06em] text-(--muted-color) uppercase"
+      class="grid border-b border-(--hairline-color) bg-[var(--table-header-color,var(--container-color))] text-[11px] font-bold tracking-[0.06em] text-(--muted-color) uppercase"
       style={`grid-template-columns: ${gridTemplate}; padding-right: ${scrollbarWidth}px;`}
     >
       {#each header as column, index (column)}

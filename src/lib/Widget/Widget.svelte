@@ -5,6 +5,7 @@
 <script lang="ts">
   import type { IWidgetProps } from "../types"
   import { twMerge } from "tailwind-merge"
+  import { widgetAccentStyle } from "../widgetAccent"
 
   let {
     id = crypto.randomUUID(),
@@ -16,6 +17,9 @@
     icons = { array: [], cycling: true },
     onUpdate = () => {},
   }: IWidgetProps = $props()
+
+  /* Мастер-цвет — роль из settings.class, тот же механизм, что у смарт-виджетов: перекрашивает переключатель, слайдер и фокус поля */
+  let accentStyle = $derived(widgetAccentStyle(settings.class ?? ""))
 
   let currentIndex = $state(0)
   let intervalId: number | null = null
@@ -125,7 +129,7 @@
     focus-visible:outline-none`
 </script>
 
-<div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class={twMerge("h-full w-full", wrapperClass)}>
+<div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class={twMerge("h-full w-full", wrapperClass)} style={accentStyle}>
   <div class="flex h-full flex-col overflow-hidden rounded-[14px] border border-(--hairline-color) bg-(--back-color)">
     <!-- Шапка: иконка + название, фиксированная высота -->
     <div class="flex h-11 shrink-0 items-center gap-2.5 border-b border-(--hairline-color) px-3.5">

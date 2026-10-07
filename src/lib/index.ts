@@ -46,6 +46,8 @@ export { default as WidgetDeviceInfo } from "./WidgetDeviceInfo/WidgetDeviceInfo
 export { default as WidgetDeviceInfoProps } from "./WidgetDeviceInfo/WidgetDeviceInfoProps.svelte"
 export { default as WidgetFileSystem } from "./WidgetFileSystem/WidgetFileSystem.svelte"
 export { default as WidgetFileSystemProps } from "./WidgetFileSystem/WidgetFileSystemProps.svelte"
+export { default as WidgetStackInfo } from "./WidgetStackInfo/WidgetStackInfo.svelte"
+export { default as WidgetStackInfoProps } from "./WidgetStackInfo/WidgetStackInfoProps.svelte"
 
 export * from "./locales/i18n"
 export * from "./locales/translations"
@@ -76,6 +78,10 @@ export {
   type IWidgetFileSystemInfo,
   type IWidgetFileSystemFile,
   type IWidgetFileSystemUpload,
+  type IWidgetStackInfoProps,
+  type IWidgetStackInfo,
+  type IWidgetStackInfoHeap,
+  type IWidgetStackInfoTask,
   type IGraphProps,
   type IGraphDataObject,
   type IGraphHistoryPoint,
