@@ -310,7 +310,7 @@
                   {@const contentArray = typeof column.content === "function" ? column.content(row) : column.content}
                   <div
                     id="rowDiv{i}-{j}"
-                    class="relative grid min-h-7 w-full min-w-0 items-center gap-x-2 px-3 py-1 text-[13px] wrap-break-word
+                    class="relative grid min-h-7 w-full min-w-0 items-center gap-x-2 px-3 py-1 text-[length:var(--table-font-size,13px)] wrap-break-word
               {column.align === 'center'
                       ? 'justify-center justify-items-center text-center'
                       : column.align === 'right'
