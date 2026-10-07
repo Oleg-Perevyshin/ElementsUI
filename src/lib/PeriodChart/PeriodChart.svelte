@@ -119,9 +119,7 @@
           <div class="relative flex h-40 w-full items-end gap-1">
             {#each axis.ticks as tick}
               <div
-                class="pointer-events-none absolute inset-x-0 border-t {tick === 0
-                  ? 'border-(--hairline-color)'
-                  : 'border-dashed border-(--hairline-color)/60'}"
+                class="pointer-events-none absolute inset-x-0 border-t {tick === 0 ? 'border-(--faint-color)/60' : 'border-dashed border-(--faint-color)/40'}"
                 style="bottom: {(tick / axis.top) * 100}%"
               ></div>
             {/each}

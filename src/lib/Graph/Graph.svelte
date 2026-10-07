@@ -301,26 +301,35 @@
     drawAllGraphs()
   }
 
+  /* Прозрачность линий сетки — общая с PeriodChart (border-(--faint-color)/40) */
+  const GRID_ALPHA = 0.4
+
   const drawAllGraphs = () => {
     if (!ctx) return
     ctx.clearRect(0, 0, width, height)
 
     const { padding, graphWidth, graphHeight, minX, timeSpan, yMin, yMax, getX, getY } = computeGeometry()
 
-    /* Сетка X */
-    ctx.strokeStyle = "#777"
-    ctx.fillStyle = "#777"
-    ctx.lineWidth = 0.5
+    /* Сетка в стиле PeriodChart: пунктир цветом --faint-color темы, подписи тем же цветом без прозрачности */
+    const gridColor = getComputedStyle(canvas).getPropertyValue("--faint-color").trim() || "#8b93a1"
+    ctx.strokeStyle = gridColor
+    ctx.fillStyle = gridColor
+    ctx.lineWidth = 1
+    ctx.setLineDash([3, 3])
     ctx.font = "10px monospace"
+
+    /* Сетка X */
     ctx.textAlign = "center"
 
     for (let i = 0; i <= 10; i++) {
       const t = minX + (i / 10) * timeSpan
       const x = getX(t)
+      ctx.globalAlpha = GRID_ALPHA
       ctx.beginPath()
       ctx.moveTo(x, padding.top)
       ctx.lineTo(x, height - padding.bottom)
       ctx.stroke()
+      ctx.globalAlpha = 1
       ctx.textBaseline = "top"
       ctx.fillText(formatAxisLabel(t, timeSpan), x, height - padding.bottom + 2)
     }
@@ -332,12 +341,15 @@
     for (let i = 0; i <= ySteps; i++) {
       const yVal = yMax - (i * (yMax - yMin)) / ySteps
       const y = getY(yVal)
+      ctx.globalAlpha = GRID_ALPHA
       ctx.beginPath()
       ctx.moveTo(padding.left, y)
       ctx.lineTo(width - padding.right, y)
       ctx.stroke()
+      ctx.globalAlpha = 1
       ctx.fillText(yVal.toFixed(1), padding.left - 5, y)
     }
+    ctx.setLineDash([])
 
     /* Отрисовка графиков */
     ctx.lineWidth = 2
