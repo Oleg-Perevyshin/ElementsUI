@@ -428,9 +428,10 @@
                             : typeof row[text.key] == "object"
                               ? JSON.stringify(row[text.key])
                               : row[text.key]}
-                        <div class="flex items-center">
+                        <!-- w-full + min-w-0: при justify-items-start ячейка иначе берёт ширину по содержимому и truncate не даёт «…» -->
+                        <div class="flex w-full min-w-0 items-center">
                           <div
-                            class="w-full max-w-full wrap-break-word {text?.truncated ? 'truncate' : ' whitespace-normal'}"
+                            class="w-full max-w-full min-w-0 wrap-break-word {text?.truncated ? 'truncate' : ' whitespace-normal'}"
                             onmouseenter={text?.tooltip ? (e) => showTooltip(e, row[text?.key ?? ""], text?.formatting) : undefined}
                             onmouseleave={() => (text?.tooltip ? (tooltip.show = false) : undefined)}
                             onmousemove={text?.tooltip
@@ -444,7 +445,7 @@
                           >
                             {#if text?.modal}
                               <button
-                                class="w-fit cursor-pointer text-left"
+                                class="cursor-pointer text-left {text?.truncated ? 'block w-full max-w-full truncate' : 'w-fit'}"
                                 onclick={(e) => {
                                   e.stopPropagation()
                                   showModal(data.replace(/<[^>]*>/g, ""), text?.formatting)
