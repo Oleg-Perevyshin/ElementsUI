@@ -1,6 +1,6 @@
 <script lang="ts">
   import { type UIComponent } from "$lib"
-  import ComponentExample from "$lib/ComponentExample.svelte"
+  import ComponentExample from "../../ComponentExample.svelte"
   import { ICONS_ARRAY } from "$lib/icons"
   import { updateComponent, type IWidgetProps } from "$lib/types"
   import Widget from "$lib/Widget/Widget.svelte"

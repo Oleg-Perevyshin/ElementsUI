@@ -1,6 +1,6 @@
 <script lang="ts">
   import { type UIComponent } from "$lib"
-  import ComponentExample from "$lib/ComponentExample.svelte"
+  import ComponentExample from "../../ComponentExample.svelte"
   import { updateComponent, type IVideoViewerProps } from "$lib/types"
   import VideoViewer from "$lib/VideoViewer/VideoViewer.svelte"
   import { formatObjectToString, RenderMarkdown } from "../../common"

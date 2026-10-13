@@ -1,6 +1,6 @@
 <script lang="ts">
   import { type IDividerProps, type UIComponent } from "$lib"
-  import ComponentExample from "$lib/ComponentExample.svelte"
+  import ComponentExample from "../../ComponentExample.svelte"
   import Divider from "$lib/Divider/Divider.svelte"
   import DividerProps from "$lib/Divider/DividerProps.svelte"
   import { updateComponent } from "$lib/types"

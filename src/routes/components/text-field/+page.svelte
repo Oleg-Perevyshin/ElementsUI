@@ -1,6 +1,6 @@
 <script lang="ts">
   import { type ITextFieldProps, type UIComponent } from "$lib"
-  import ComponentExample from "$lib/ComponentExample.svelte"
+  import ComponentExample from "../../ComponentExample.svelte"
   import TextField from "$lib/TextField/TextField.svelte"
   import TextFieldProps from "$lib/TextField/TextFieldProps.svelte"
   import { updateComponent } from "$lib/types"

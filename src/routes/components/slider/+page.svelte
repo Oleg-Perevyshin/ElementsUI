@@ -1,6 +1,6 @@
 <script lang="ts">
   import { type ISliderProps, type UIComponent } from "$lib"
-  import ComponentExample from "$lib/ComponentExample.svelte"
+  import ComponentExample from "../../ComponentExample.svelte"
   import Slider from "$lib/Slider/Slider.svelte"
   import SliderProps from "$lib/Slider/SliderProps.svelte"
   import { updateComponent } from "$lib/types"

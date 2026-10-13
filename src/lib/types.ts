@@ -374,6 +374,8 @@ export interface IOption<T = unknown> {
   name?: string
   class?: string
   disabled?: boolean
+  /* Иконка варианта: SVG-разметка или короткая метка ("S", "XL"). В type="buttons" показывается вместо name, name — подсказка и aria-label */
+  icon?: string
 }
 
 /* ********************************************************** */

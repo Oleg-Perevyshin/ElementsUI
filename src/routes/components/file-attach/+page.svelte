@@ -1,5 +1,5 @@
 <script lang="ts">
-  import ComponentExample from "$lib/ComponentExample.svelte"
+  import ComponentExample from "../../ComponentExample.svelte"
   import FileAttach from "$lib/FileAttach/FileAttach.svelte"
   import FileAttachProps from "$lib/FileAttach/FileAttachProps.svelte"
   import { updateComponent, type IFileAttachProps, type UIComponent } from "$lib/types"

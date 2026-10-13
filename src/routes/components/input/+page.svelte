@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { IInputProps, UIComponent } from "$lib"
-  import ComponentExample from "$lib/ComponentExample.svelte"
+  import ComponentExample from "../../ComponentExample.svelte"
   import Input from "$lib/Input/Input.svelte"
   import InputProps from "$lib/Input/InputProps.svelte"
   import { updateComponent } from "$lib/types"

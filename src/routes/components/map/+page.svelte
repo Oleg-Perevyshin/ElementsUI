@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { IMapProps, UIComponent } from "$lib"
-  import ComponentExample from "$lib/ComponentExample.svelte"
+  import ComponentExample from "../../ComponentExample.svelte"
   import Map from "$lib/Map/Map.svelte"
   import { updateComponent, type IDeviceGNSS } from "$lib/types"
   import { onDestroy, onMount } from "svelte"

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { type ISwitchProps, type UIComponent } from "$lib"
-  import ComponentExample from "$lib/ComponentExample.svelte"
+  import ComponentExample from "../../ComponentExample.svelte"
   import Switch from "$lib/Switch/Switch.svelte"
   import SwitchProps from "$lib/Switch/SwitchProps.svelte"
   import { updateComponent } from "$lib/types"

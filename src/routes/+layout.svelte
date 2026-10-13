@@ -16,7 +16,8 @@
   let showLanguageModal = $state(false)
   let currentLanguage = $state(LOCALES.find((lang) => lang.value === get(Language)) ?? LOCALES[0])
 
-  let activePage = $derived(page.url.pathname)
+  /* Сегмент страницы компонента — точное сравнение, иначе "widget" совпадал бы с "widget-file-system" */
+  let activePage = $derived(page.url.pathname.split("/").filter(Boolean)[2] ?? "")
 
   /* Список всех компонентов — смарт-виджеты идут первыми (тот же принцип, что и в DevCloud'овской палитре конструктора) */
   const menuItems = [
@@ -139,7 +140,7 @@
             componentClass="h-10  text-left {item.page === 'all' ? '' : 'bg-gray'}"
             onClick={() => goto(`/ElementsUI/components/${item.page}`)}
           />
-          {#if activePage.startsWith(`/ElementsUI/components/${item.page}`)}
+          {#if activePage === item.page}
             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
               ><path
                 fill="currentColor"

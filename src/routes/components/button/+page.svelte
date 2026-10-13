@@ -2,7 +2,7 @@
   import { Button } from "$lib"
   import { updateComponent, type IButtonProps, type UIComponent } from "$lib/types"
   import { formatObjectToString, RenderMarkdown } from "../../common"
-  import ComponentExample from "$lib/ComponentExample.svelte"
+  import ComponentExample from "../../ComponentExample.svelte"
   import ButtonProps from "$lib/Button/ButtonProps.svelte"
   import IconGripVerticalDual from "$lib/libIcons/IconGripVerticalDual.svelte"
   import IconGripHorizontalUp from "../../../appIcons/IconGripHorizontalUp.svelte"

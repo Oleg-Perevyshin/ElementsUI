@@ -1,6 +1,6 @@
 <script lang="ts">
   import { type UIComponent } from "$lib"
-  import ComponentExample from "$lib/ComponentExample.svelte"
+  import ComponentExample from "../../ComponentExample.svelte"
   import { updateComponent, type IWidgetWiFiProps } from "$lib/types"
   import WidgetWiFi from "$lib/WidgetWiFi/WidgetWiFi.svelte"
   import WidgetWiFiProps from "$lib/WidgetWiFi/WidgetWiFiProps.svelte"

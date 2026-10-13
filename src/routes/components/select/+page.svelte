@@ -1,6 +1,6 @@
 <script lang="ts">
   import { type ISelectProps, type UIComponent } from "$lib"
-  import ComponentExample from "$lib/ComponentExample.svelte"
+  import ComponentExample from "../../ComponentExample.svelte"
   import * as UI from "$lib"
   import { updateComponent, type IOption } from "$lib/types"
   import { formatObjectToString, RenderMarkdown } from "../../common"

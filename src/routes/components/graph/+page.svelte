@@ -1,6 +1,6 @@
 <script lang="ts">
   import { type IGraphProps, type UIComponent } from "$lib"
-  import ComponentExample from "$lib/ComponentExample.svelte"
+  import ComponentExample from "../../ComponentExample.svelte"
   import Graph from "$lib/Graph/Graph.svelte"
   import GraphProps from "$lib/Graph/GraphProps.svelte"
   import { updateComponent } from "$lib/types"

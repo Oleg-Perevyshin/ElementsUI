@@ -7,8 +7,11 @@
   import type { IOption, ISelectProps } from "../types"
   import { twMerge } from "tailwind-merge"
   import { T } from "$lib/locales/i18n"
+  import Tooltip from "../Tooltip.svelte"
 
   let isDropdownOpen = $state(false)
+  /* Вариант-иконка под курсором в type="buttons": его name показывается подсказкой */
+  let hoveredOptionId: string | null = $state(null)
   let dropdownElement: HTMLDivElement
   let portalElement: HTMLDivElement | undefined = $state()
   let anchorRect: { top: number; bottom: number; left: number; width: number } | null = $state(null)
@@ -121,10 +124,7 @@
     const selectedOption = options.find((option) => option.name?.toString() === searchValue) || {
       id: `input-${Date.now()}`,
       name: searchValue,
-      value:
-        typeof options[0]?.value == "number" && searchValue !== "" && !isNaN(Number(searchValue))
-          ? (Number(searchValue) as T)
-          : (searchValue as T),
+      value: typeof options[0]?.value == "number" && searchValue !== "" && !isNaN(Number(searchValue)) ? (Number(searchValue) as T) : (searchValue as T),
     }
     value = selectedOption
     onUpdate?.(selectedOption)
@@ -206,7 +206,7 @@
       <!-- Сплошная группа: общий контур, разделители внутри, без зазоров и теней -->
       <div
         id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
-        class="flex w-full overflow-hidden rounded-[10px] border border-(--border-color) {disabled ? 'opacity-45' : ''}"
+        class="flex w-full rounded-[10px] border border-(--border-color) {disabled ? 'opacity-45' : ''}"
         role="group"
       >
         {#each options as option, index (option.id)}
@@ -220,10 +220,12 @@
                в ряд одинаковых белых кнопок. Выбор у таких опций отмечается рамкой, а не заливкой;
                для обычного сегмент-контрола без своего цвета (Access, Header и т.п.) поведение
                прежнее — акцентная заливка только у выбранного пункта. -->
-          <button
-            id={option.id}
-            class="{twMerge(
-              `flex h-8 min-w-0 flex-1 items-center justify-center px-3 py-2 text-[13px] font-semibold transition-colors duration-150
+          <!-- Обёртка — позиционирующий предок подсказки; overflow-hidden у группы убран, иначе подсказка обрезается -->
+          <div class="relative flex min-w-0 flex-1">
+            <button
+              id={option.id}
+              class="{twMerge(
+                `flex h-8 w-full min-w-0 items-center justify-center px-3 py-2 text-[13px] font-semibold transition-colors duration-150
                ${index === 0 ? 'rounded-l-[9px]' : ''} ${index === options.length - 1 ? 'rounded-r-[9px]' : ''}
                ${index > 0 ? 'border-l border-(--border-color)' : ''}
                ${
@@ -236,16 +238,25 @@
                      : 'text-(--font-color) hover:bg-(--container-color)'
                }
                ${option.disabled || disabled ? 'cursor-not-allowed text-(--faint-color)' : 'cursor-pointer'}`,
-              option.class,
-            )} {hasOwnColor ? 'bg-(--bg-color)' : selected ? 'bg-(--bg-color,var(--accent-color))' : 'bg-(--back-color)'}"
-            onclick={(e) => selectOption(option, e)}
-            disabled={option.disabled || disabled}
-            aria-pressed={!!isSelected(option)}
-          >
-            {#if option.name}
-              <span class="block truncate">{option.name}</span>
+                option.class,
+              )} {hasOwnColor ? 'bg-(--bg-color)' : selected ? 'bg-(--bg-color,var(--accent-color))' : 'bg-(--back-color)'}"
+              onclick={(e) => selectOption(option, e)}
+              disabled={option.disabled || disabled}
+              aria-pressed={!!isSelected(option)}
+              aria-label={option.icon ? option.name : undefined}
+              onmouseenter={() => (hoveredOptionId = option.icon && option.name ? option.id : null)}
+              onmouseleave={() => (hoveredOptionId = null)}
+            >
+              {#if option.icon}
+                <span class="flex h-[18px] min-w-[18px] items-center justify-center leading-none [&_svg]:h-full [&_svg]:w-full">{@html option.icon}</span>
+              {:else if option.name}
+                <span class="block truncate">{option.name}</span>
+              {/if}
+            </button>
+            {#if option.icon && option.name}
+              <Tooltip show={hoveredOptionId === option.id} text={option.name} side="top" />
             {/if}
-          </button>
+          </div>
         {/each}
       </div>
     {:else if type === "input"}

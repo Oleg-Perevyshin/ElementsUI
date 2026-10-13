@@ -2,7 +2,7 @@
   import { Carousel } from "$lib"
   import type { ICarouselProps } from "$lib/types"
   import { RenderMarkdown } from "../../common"
-  import ComponentExample from "$lib/ComponentExample.svelte"
+  import ComponentExample from "../../ComponentExample.svelte"
   import readmeRaw from "$lib/Carousel/README.md?raw"
 
   let readmeHtml = $state("")

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { type UIComponent } from "$lib"
-  import ComponentExample from "$lib/ComponentExample.svelte"
+  import ComponentExample from "../../ComponentExample.svelte"
   import { updateComponent, type IWidgetDeviceInfoProps } from "$lib/types"
   import WidgetDeviceInfo from "$lib/WidgetDeviceInfo/WidgetDeviceInfo.svelte"
   import WidgetDeviceInfoProps from "$lib/WidgetDeviceInfo/WidgetDeviceInfoProps.svelte"

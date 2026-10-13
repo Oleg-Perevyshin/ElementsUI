@@ -1,6 +1,6 @@
 <script lang="ts">
   import { type UIComponent } from "$lib"
-  import ComponentExample from "$lib/ComponentExample.svelte"
+  import ComponentExample from "../../ComponentExample.svelte"
   import { updateComponent, type IWidgetFileSystemInfo, type IWidgetFileSystemProps } from "$lib/types"
   import WidgetFileSystem from "$lib/WidgetFileSystem/WidgetFileSystem.svelte"
   import WidgetFileSystemProps from "$lib/WidgetFileSystem/WidgetFileSystemProps.svelte"

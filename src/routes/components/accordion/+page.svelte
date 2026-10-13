@@ -3,7 +3,7 @@
   import AccordionProps from "$lib/Accordion/AccordionProps.svelte"
   import { updateComponent, type IAccordionProps, type UIComponent } from "$lib/types"
   import { formatObjectToString, RenderMarkdown } from "../../common"
-  import ComponentExample from "$lib/ComponentExample.svelte"
+  import ComponentExample from "../../ComponentExample.svelte"
   import { ICONS } from "$lib/icons"
   import readmeRaw from "$lib/Accordion/README.md?raw"
 

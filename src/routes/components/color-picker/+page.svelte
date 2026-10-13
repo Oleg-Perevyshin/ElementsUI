@@ -1,7 +1,7 @@
 <script lang="ts">
   import ColorPicker from "$lib/ColorPicker/ColorPicker.svelte"
   import ColorPickerProps from "$lib/ColorPicker/ColorPickerProps.svelte"
-  import ComponentExample from "$lib/ComponentExample.svelte"
+  import ComponentExample from "../../ComponentExample.svelte"
   import { updateComponent, type IColorPickerProps, type UIComponent } from "$lib/types"
   import { formatObjectToString, RenderMarkdown } from "../../common"
   import readmeRaw from "$lib/ColorPicker/README.md?raw"

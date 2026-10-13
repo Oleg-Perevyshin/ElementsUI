@@ -1,6 +1,7 @@
 // $lib/ElementsUI/options.ts
 import { derived } from "svelte/store"
 import { T } from "./locales/i18n"
+import { PROPS_ICONS } from "./libIcons/propsIcons"
 
 function id() {
   return crypto.randomUUID() as string
@@ -34,11 +35,11 @@ export const optionsStore = derived(T, ($T) => {
     ],
 
     INPUT_TYPE_OPTIONS: [
-      { id: id(), value: "text", name: $T("constructor.props.type.text") },
-      { id: id(), value: "password", name: $T("constructor.props.type.password") },
-      { id: id(), value: "number", name: $T("constructor.props.type.number") },
-      { id: id(), value: "text-area", name: $T("constructor.props.type.textarea") },
-      { id: id(), value: "bitMode", name: $T("constructor.props.type.bitMode") },
+      { id: id(), value: "text", name: $T("constructor.props.type.text"), icon: "Aa" },
+      { id: id(), value: "password", name: $T("constructor.props.type.password"), icon: "•••" },
+      { id: id(), value: "number", name: $T("constructor.props.type.number"), icon: "123" },
+      { id: id(), value: "text-area", name: $T("constructor.props.type.textarea"), icon: "¶" },
+      { id: id(), value: "bitMode", name: $T("constructor.props.type.bitMode"), icon: "01" },
     ],
 
     SELECT_TYPE_OPTIONS: [
@@ -53,23 +54,23 @@ export const optionsStore = derived(T, ($T) => {
     ],
 
     SLIDER_TYPE_OPTIONS: [
-      { id: id(), value: "single", name: $T("constructor.props.type.single") },
-      { id: id(), value: "range", name: $T("constructor.props.type.range") },
+      { id: id(), value: "single", name: $T("constructor.props.type.single"), icon: PROPS_ICONS.sliderSingle },
+      { id: id(), value: "range", name: $T("constructor.props.type.range"), icon: PROPS_ICONS.sliderRange },
     ],
 
     TEXTFIELD_SIZE_OPTIONS: [
-      { id: id(), value: "small", name: $T("constructor.props.type.small") },
-      { id: id(), value: "base", name: $T("constructor.props.type.base") },
-      { id: id(), value: "large", name: $T("constructor.props.type.large") },
-      { id: id(), value: "huge", name: $T("constructor.props.type.huge") },
-      { id: id(), value: "massive", name: $T("constructor.props.type.massive") },
+      { id: id(), value: "small", name: $T("constructor.props.type.small"), icon: "S" },
+      { id: id(), value: "base", name: $T("constructor.props.type.base"), icon: "M" },
+      { id: id(), value: "large", name: $T("constructor.props.type.large"), icon: "L" },
+      { id: id(), value: "huge", name: $T("constructor.props.type.huge"), icon: "XL" },
+      { id: id(), value: "massive", name: $T("constructor.props.type.massive"), icon: "XXL" },
     ],
 
     TEXTFIELD_SETTINGS_OPTIONS: [
-      { id: id(), value: "bold", name: $T("constructor.props.bold") },
-      { id: id(), value: "italic", name: $T("constructor.props.italic") },
-      { id: id(), value: "underline", name: $T("constructor.props.underline") },
-      { id: id(), value: "background", name: $T("constructor.props.background") },
+      { id: id(), value: "bold", name: $T("constructor.props.bold"), icon: PROPS_ICONS.bold },
+      { id: id(), value: "italic", name: $T("constructor.props.italic"), icon: PROPS_ICONS.italic },
+      { id: id(), value: "underline", name: $T("constructor.props.underline"), icon: PROPS_ICONS.underline },
+      { id: id(), value: "background", name: $T("constructor.props.background"), icon: PROPS_ICONS.highlight },
     ],
 
     /* Единая семантическая палитра (app.css: --X-color/--X-soft, светлая и тёмная тема уже учтены) —
@@ -130,82 +131,82 @@ export const optionsStore = derived(T, ($T) => {
     ],
 
     TEXT_ALIGN_OPTIONS: [
-      { id: id(), value: "text-left", name: $T("constructor.props.align.left") },
-      { id: id(), value: "text-center", name: $T("constructor.props.align.center") },
-      { id: id(), value: "text-right", name: $T("constructor.props.align.right") },
-      { id: id(), value: "text-justify", name: $T("constructor.props.align.justify") },
+      { id: id(), value: "text-left", name: $T("constructor.props.align.left"), icon: PROPS_ICONS.alignLeft },
+      { id: id(), value: "text-center", name: $T("constructor.props.align.center"), icon: PROPS_ICONS.alignCenter },
+      { id: id(), value: "text-right", name: $T("constructor.props.align.right"), icon: PROPS_ICONS.alignRight },
+      { id: id(), value: "text-justify", name: $T("constructor.props.align.justify"), icon: PROPS_ICONS.alignJustify },
     ],
 
     ALIGN_OPTIONS: [
-      { id: id(), value: "left", name: $T("constructor.props.align.left") },
-      { id: id(), value: "center", name: $T("constructor.props.align.center") },
-      { id: id(), value: "right", name: $T("constructor.props.align.right") },
+      { id: id(), value: "left", name: $T("constructor.props.align.left"), icon: PROPS_ICONS.alignLeft },
+      { id: id(), value: "center", name: $T("constructor.props.align.center"), icon: PROPS_ICONS.alignCenter },
+      { id: id(), value: "right", name: $T("constructor.props.align.right"), icon: PROPS_ICONS.alignRight },
     ],
 
     JUSTIFY_ALIGN_OPTIONS: [
-      { id: id(), value: "justify-start", name: $T("constructor.props.align.left") },
-      { id: id(), value: "justify-center", name: $T("constructor.props.align.center") },
-      { id: id(), value: "justify-end", name: $T("constructor.props.align.right") },
+      { id: id(), value: "justify-start", name: $T("constructor.props.align.left"), icon: PROPS_ICONS.alignLeft },
+      { id: id(), value: "justify-center", name: $T("constructor.props.align.center"), icon: PROPS_ICONS.alignCenter },
+      { id: id(), value: "justify-end", name: $T("constructor.props.align.right"), icon: PROPS_ICONS.alignRight },
     ],
 
     ICON_TEXT_POSITION_OPTIONS: [
-      { id: id(), value: "flex-row", name: "←" },
-      { id: id(), value: "flex-col", name: "↑" },
-      { id: id(), value: "flex-row-reverse", name: "→" },
-      { id: id(), value: "flex-col-reverse", name: "↓" },
+      { id: id(), value: "flex-row", name: $T("constructor.props.iconpos.left"), icon: PROPS_ICONS.arrowLeft },
+      { id: id(), value: "flex-col", name: $T("constructor.props.iconpos.top"), icon: PROPS_ICONS.arrowUp },
+      { id: id(), value: "flex-row-reverse", name: $T("constructor.props.iconpos.right"), icon: PROPS_ICONS.arrowRight },
+      { id: id(), value: "flex-col-reverse", name: $T("constructor.props.iconpos.bottom"), icon: PROPS_ICONS.arrowDown },
     ],
 
     TABLE_TEXT_SETTING_OPTIONS: [
-      { id: id(), value: "sortable", name: $T("constructor.props.table.columns.sortable") },
-      { id: id(), value: "copy", name: $T("constructor.props.copy") },
-      { id: id(), value: "truncated", name: $T("constructor.props.table.columns.truncated") },
-      { id: id(), value: "tooltip", name: $T("constructor.props.table.columns.tooltip") },
-      { id: id(), value: "modal", name: $T("constructor.props.table.columns.modal") },
+      { id: id(), value: "sortable", name: $T("constructor.props.table.columns.sortable"), icon: PROPS_ICONS.sort },
+      { id: id(), value: "copy", name: $T("constructor.props.copy"), icon: PROPS_ICONS.copy },
+      { id: id(), value: "truncated", name: $T("constructor.props.table.columns.truncated"), icon: PROPS_ICONS.ellipsis },
+      { id: id(), value: "tooltip", name: $T("constructor.props.table.columns.tooltip"), icon: PROPS_ICONS.tooltip },
+      { id: id(), value: "modal", name: $T("constructor.props.table.columns.modal"), icon: PROPS_ICONS.modal },
     ],
 
     HEIGHT_OPTIONS: [
-      { id: id(), value: "py-1", name: $T("constructor.props.height.small") },
-      { id: id(), value: "py-2", name: $T("constructor.props.height.medium") },
-      { id: id(), value: "py-3", name: $T("constructor.props.height.large") },
+      { id: id(), value: "py-1", name: $T("constructor.props.height.small"), icon: "S" },
+      { id: id(), value: "py-2", name: $T("constructor.props.height.medium"), icon: "M" },
+      { id: id(), value: "py-3", name: $T("constructor.props.height.large"), icon: "L" },
     ],
 
     FILE_ATTACH_TYPE_OPTIONS: [
-      { id: id(), value: "file", name: $T("constructor.props.type.file") },
-      { id: id(), value: "image", name: $T("constructor.props.type.image") },
+      { id: id(), value: "file", name: $T("constructor.props.type.file"), icon: PROPS_ICONS.file },
+      { id: id(), value: "image", name: $T("constructor.props.type.image"), icon: PROPS_ICONS.image },
     ],
 
     DIVIDER_TYPE_OPTIONS: [
-      { id: id(), value: "line", name: $T("constructor.props.divider.type.line") },
-      { id: id(), value: "empty", name: $T("constructor.props.divider.type.empty") },
+      { id: id(), value: "line", name: $T("constructor.props.divider.type.line"), icon: PROPS_ICONS.dividerLine },
+      { id: id(), value: "empty", name: $T("constructor.props.divider.type.empty"), icon: PROPS_ICONS.dividerSpace },
     ],
 
     DIVIDER_ANCHOR_OPTIONS: [
-      { id: id(), value: "top", name: $T("constructor.props.divider.anchor.top") },
-      { id: id(), value: "center", name: $T("constructor.props.divider.anchor.center") },
-      { id: id(), value: "bottom", name: $T("constructor.props.divider.anchor.bottom") },
+      { id: id(), value: "top", name: $T("constructor.props.divider.anchor.top"), icon: PROPS_ICONS.anchorTop },
+      { id: id(), value: "center", name: $T("constructor.props.divider.anchor.center"), icon: PROPS_ICONS.anchorCenter },
+      { id: id(), value: "bottom", name: $T("constructor.props.divider.anchor.bottom"), icon: PROPS_ICONS.anchorBottom },
     ],
 
     FITMODE_OPTIONS: [
-      { id: id(), value: "cover", name: $T("constructor.props.type.cover") },
-      { id: id(), value: "contain", name: $T("constructor.props.type.contain") },
+      { id: id(), value: "cover", name: $T("constructor.props.type.cover"), icon: PROPS_ICONS.fitCover },
+      { id: id(), value: "contain", name: $T("constructor.props.type.contain"), icon: PROPS_ICONS.fitContain },
     ],
 
     SWITCH_OPTIONS: [
-      { id: id(), value: "horizontal", name: $T("constructor.props.type.horizontal") },
-      { id: id(), value: "vertical", name: $T("constructor.props.type.vertical") },
-      { id: id(), value: "checkbox", name: $T("constructor.props.type.checkbox") },
+      { id: id(), value: "horizontal", name: $T("constructor.props.type.horizontal"), icon: PROPS_ICONS.toggleHorizontal },
+      { id: id(), value: "vertical", name: $T("constructor.props.type.vertical"), icon: PROPS_ICONS.toggleVertical },
+      { id: id(), value: "checkbox", name: $T("constructor.props.type.checkbox"), icon: PROPS_ICONS.checkbox },
     ],
 
     INFO_SIDE_OPTIONS: [
-      { id: id(), value: "top", name: $T("constructor.props.info.top") },
-      { id: id(), value: "bottom", name: $T("constructor.props.info.bottom") },
-      { id: id(), value: "left", name: $T("constructor.props.info.left") },
-      { id: id(), value: "right", name: $T("constructor.props.info.right") },
+      { id: id(), value: "top", name: $T("constructor.props.info.top"), icon: PROPS_ICONS.arrowUp },
+      { id: id(), value: "bottom", name: $T("constructor.props.info.bottom"), icon: PROPS_ICONS.arrowDown },
+      { id: id(), value: "left", name: $T("constructor.props.info.left"), icon: PROPS_ICONS.arrowLeft },
+      { id: id(), value: "right", name: $T("constructor.props.info.right"), icon: PROPS_ICONS.arrowRight },
     ],
 
     FORM_OPTIONS: [
-      { id: id(), value: "square", name: $T("constructor.props.type.square") },
-      { id: id(), value: "circle", name: $T("constructor.props.type.circle") },
+      { id: id(), value: "square", name: $T("constructor.props.type.square"), icon: PROPS_ICONS.square },
+      { id: id(), value: "circle", name: $T("constructor.props.type.circle"), icon: PROPS_ICONS.circle },
     ],
 
     TABLE_CONTENT_TYPE_OPTIONS: [
@@ -217,8 +218,8 @@ export const optionsStore = derived(T, ($T) => {
     ],
 
     INPUT_SETTING_OPTIONS: [
-      { id: id(), value: "readonly", name: $T("constructor.props.readonly") },
-      { id: id(), value: "help.copyButton", name: $T("constructor.props.copy") },
+      { id: id(), value: "readonly", name: $T("constructor.props.readonly"), icon: PROPS_ICONS.lock },
+      { id: id(), value: "help.copyButton", name: $T("constructor.props.copy"), icon: PROPS_ICONS.copy },
     ],
 
     BUFFER_SIZE_OPTIONS: [

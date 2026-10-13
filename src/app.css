@@ -48,185 +48,188 @@
   line-height: 1.45;
 }
 
-/* ─── Типографическая шкала ─────────────────────────────────────────── */
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  margin: 0;
-  text-wrap: pretty;
-}
+/* Глобальные стили тегов — в слое base: утилиты Tailwind (классы компонентов poe-svelte-ui-lib) всегда сильнее */
+@layer base {
+  /* ─── Типографическая шкала ─────────────────────────────────────────── */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin: 0;
+    text-wrap: pretty;
+  }
 
-h1 {
-  font-size: 2.2rem; /* 33px */
-  font-weight: 700;
-  line-height: 1.12;
-  letter-spacing: -0.022em;
-}
+  h1 {
+    font-size: 2.2rem; /* 33px */
+    font-weight: 700;
+    line-height: 1.12;
+    letter-spacing: -0.022em;
+  }
 
-h2 {
-  font-size: 1.75rem; /* 26px */
-  font-weight: 650;
-  line-height: 1.2;
-  letter-spacing: -0.016em;
-}
+  h2 {
+    font-size: 1.75rem; /* 26px */
+    font-weight: 650;
+    line-height: 1.2;
+    letter-spacing: -0.016em;
+  }
 
-h3 {
-  font-size: 1.35rem; /* 20px */
-  font-weight: 620;
-  line-height: 1.3;
-  letter-spacing: -0.01em;
-}
+  h3 {
+    font-size: 1.35rem; /* 20px */
+    font-weight: 620;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+  }
 
-h4 {
-  font-size: 1.13rem; /* 17px */
-  font-weight: 600;
-  line-height: 1.4;
-}
+  h4 {
+    font-size: 1.13rem; /* 17px */
+    font-weight: 600;
+    line-height: 1.4;
+  }
 
-h5 {
-  font-size: 1rem; /* 15px */
-  font-weight: 600;
-}
+  h5 {
+    font-size: 1rem; /* 15px */
+    font-weight: 600;
+  }
 
-h6 {
-  font-size: 0.8rem; /* 12px */
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--muted-color);
-}
+  h6 {
+    font-size: 0.8rem; /* 12px */
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted-color);
+  }
 
-p {
-  margin: 0;
-}
+  p {
+    margin: 0;
+  }
 
-label {
-  margin: 0;
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--muted-color);
-}
+  label {
+    margin: 0;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--muted-color);
+  }
 
-ul,
-ol {
-  padding-left: 1.25rem;
-  margin: 0.25rem 0;
-}
+  ul,
+  ol {
+    padding-left: 1.25rem;
+    margin: 0.25rem 0;
+  }
 
-ul {
-  list-style: disc;
-}
+  ul {
+    list-style: disc;
+  }
 
-ol {
-  list-style: decimal;
-}
+  ol {
+    list-style: decimal;
+  }
 
-li {
-  margin: 0.25rem 0;
-}
+  li {
+    margin: 0.25rem 0;
+  }
 
-blockquote {
-  margin: 1rem 0;
-  padding-left: 1rem;
-  border-left: 3px solid var(--border-color);
-  color: var(--muted-color);
-  font-style: normal;
-}
+  blockquote {
+    margin: 1rem 0;
+    padding-left: 1rem;
+    border-left: 3px solid var(--border-color);
+    color: var(--muted-color);
+    font-style: normal;
+  }
 
-pre {
-  padding: 0.5rem 0.75rem;
-  text-align: left;
-  background-color: var(--container-color);
-  border: 1px solid var(--border-color);
-  border-radius: 10px;
-  white-space: pre;
-}
+  pre {
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+    background-color: var(--container-color);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    white-space: pre;
+  }
 
-code {
-  padding: 0.1rem 0.35rem;
-  text-align: left;
-  background-color: var(--container-color);
-  border-radius: 6px;
-  white-space: pre;
-  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
-  font-size: 0.9em;
-}
+  code {
+    padding: 0.1rem 0.35rem;
+    text-align: left;
+    background-color: var(--container-color);
+    border-radius: 6px;
+    white-space: pre;
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 0.9em;
+  }
 
-/* ─── Таблицы (Markdown + плотный режим) ─────────────────────────────── */
-table {
-  border-collapse: collapse;
-  width: 100%;
-  margin: 0.5rem 0;
-  text-align: left;
-  font-size: 13px;
-  font-variant-numeric: tabular-nums;
-}
+  /* ─── Таблицы (Markdown + плотный режим) ─────────────────────────────── */
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 0.5rem 0;
+    text-align: left;
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+  }
 
-th,
-td {
-  padding: 0.4rem 0.6rem;
-  border: 0;
-  border-top: 1px solid var(--hairline-color);
-}
+  th,
+  td {
+    padding: 0.4rem 0.6rem;
+    border: 0;
+    border-top: 1px solid var(--hairline-color);
+  }
 
-th {
-  background-color: var(--container-color);
-  border-top: 0;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--muted-color);
-}
+  th {
+    background-color: var(--container-color);
+    border-top: 0;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted-color);
+  }
 
-/* Зебра убрана: строки разделяет волосяная линия, выделение — тинт акцента */
-tr:nth-child(even) td {
-  background-color: transparent;
-}
+  /* Зебра убрана: строки разделяет волосяная линия, выделение — тинт акцента */
+  tr:nth-child(even) td {
+    background-color: transparent;
+  }
 
-tbody tr:hover td {
-  background-color: var(--accent-soft);
-}
+  tbody tr:hover td {
+    background-color: var(--accent-soft);
+  }
 
-.can-decode-table th,
-.can-decode-table td {
-  text-align: center;
-}
+  .can-decode-table th,
+  .can-decode-table td {
+    text-align: center;
+  }
 
-.can-decode-table th:not(:last-child),
-.can-decode-table td:not(:last-child) {
-  width: 1%;
-  white-space: nowrap;
-}
+  .can-decode-table th:not(:last-child),
+  .can-decode-table td:not(:last-child) {
+    width: 1%;
+    white-space: nowrap;
+  }
 
-.can-decode-table th:last-child,
-.can-decode-table td:last-child {
-  text-align: left;
-}
+  .can-decode-table th:last-child,
+  .can-decode-table td:last-child {
+    text-align: left;
+  }
 
-body {
-  background: var(--bg-body);
-  color: var(--font-color);
-}
+  body {
+    background: var(--bg-body);
+    color: var(--font-color);
+  }
 
-a {
-  color: var(--accent-color);
-  text-decoration: none;
-}
+  a {
+    color: var(--accent-color);
+    text-decoration: none;
+  }
 
-a:hover {
-  color: var(--accent-hover);
-  text-decoration: underline;
-}
+  a:hover {
+    color: var(--accent-hover);
+    text-decoration: underline;
+  }
 
-/* Единое кольцо фокуса вместо размытых теней у каждого компонента */
-:where(button, a, input, select, textarea, [tabindex]):focus-visible {
-  outline: 2px solid var(--accent-color);
-  outline-offset: 2px;
-  border-radius: 10px;
+  /* Единое кольцо фокуса вместо размытых теней у каждого компонента */
+  :where(button, a, input, select, textarea, [tabindex]):focus-visible {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
+    border-radius: 10px;
+  }
 }
 
 /* ─── Полоса прокрутки: нейтральная, проявляется при наведении ───────── */
@@ -440,13 +443,17 @@ a:hover {
 
 /* ElementsUI: подсказка placeholder */
 input::placeholder,
-textarea::placeholder {
-  color: var(--faint-color);
-  opacity: 1;
+@layer base {
+  textarea::placeholder {
+    color: var(--faint-color);
+    opacity: 1;
+  }
 }
 
-hr {
-  margin: 0.5rem 0;
-  border: 0;
-  border-top: 1px solid var(--hairline-color);
+@layer base {
+  hr {
+    margin: 0.5rem 0;
+    border: 0;
+    border-top: 1px solid var(--hairline-color);
+  }
 }

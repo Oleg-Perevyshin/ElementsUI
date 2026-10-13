@@ -1,6 +1,6 @@
 <script lang="ts">
   import { type IPeriodChartProps, type IPeriodChartLevel, type UIComponent } from "$lib"
-  import ComponentExample from "$lib/ComponentExample.svelte"
+  import ComponentExample from "../../ComponentExample.svelte"
   import PeriodChart from "$lib/PeriodChart/PeriodChart.svelte"
   import PeriodChartProps from "$lib/PeriodChart/PeriodChartProps.svelte"
   import { updateComponent } from "$lib/types"

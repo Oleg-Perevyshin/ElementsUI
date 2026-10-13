@@ -1,6 +1,6 @@
 <script lang="ts">
   import { TabsProps, type ITabsProps, type UIComponent } from "$lib"
-  import ComponentExample from "$lib/ComponentExample.svelte"
+  import ComponentExample from "../../ComponentExample.svelte"
   import Input from "$lib/Input/Input.svelte"
   import IconGripVerticalLeft from "$lib/libIcons/IconGripVerticalLeft.svelte"
   import IconGripVerticalRight from "$lib/libIcons/IconGripVerticalRight.svelte"
