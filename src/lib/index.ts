@@ -48,6 +48,8 @@ export { default as WidgetFileSystem } from "./WidgetFileSystem/WidgetFileSystem
 export { default as WidgetFileSystemProps } from "./WidgetFileSystem/WidgetFileSystemProps.svelte"
 export { default as WidgetStackInfo } from "./WidgetStackInfo/WidgetStackInfo.svelte"
 export { default as WidgetStackInfoProps } from "./WidgetStackInfo/WidgetStackInfoProps.svelte"
+export { default as WidgetRGBStrip } from "./WidgetRGBStrip/WidgetRGBStrip.svelte"
+export { default as WidgetRGBStripProps } from "./WidgetRGBStrip/WidgetRGBStripProps.svelte"
 
 export * from "./locales/i18n"
 export * from "./locales/translations"
@@ -82,6 +84,8 @@ export {
   type IWidgetStackInfo,
   type IWidgetStackInfoHeap,
   type IWidgetStackInfoTask,
+  type IWidgetRGBStripProps,
+  type IWidgetRGBStripConfig,
   type IGraphProps,
   type IGraphDataObject,
   type IGraphHistoryPoint,

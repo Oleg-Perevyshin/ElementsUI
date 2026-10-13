@@ -10,18 +10,7 @@
   import PropsGroup from "$lib/PropsGroup.svelte"
   import { optionsStore } from "../options"
 
-  const DEVICE_INFO_KEYS: (keyof IWidgetDeviceInfoConfig)[] = [
-    "DevSN",
-    "DevID",
-    "DevFW",
-    "RunCnt",
-    "DevName",
-    "HostName",
-    "WebUser",
-    "WebPsw",
-    "StaIP",
-    "ApIP",
-  ]
+  const DEVICE_INFO_KEYS: (keyof IWidgetDeviceInfoConfig)[] = ["DevSN", "DevID", "DevFW", "RunCnt", "DevName", "HostName", "WebUser", "WebPsw", "StaIP", "ApIP"]
 
   const { component, onPropertyChange } = $props<{
     component: UIComponent & { properties: Partial<IWidgetDeviceInfoProps> }

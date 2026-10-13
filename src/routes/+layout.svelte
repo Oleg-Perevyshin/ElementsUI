@@ -25,6 +25,7 @@
     { page: "widget-device-info", name: "WidgetDeviceInfo" },
     { page: "widget-file-system", name: "WidgetFileSystem" },
     { page: "widget-stack-info", name: "WidgetStackInfo" },
+    { page: "widget-rgb-strip", name: "WidgetRGBStrip" },
     { page: "accordion", name: "Accordion" },
     { page: "button", name: "Button" },
     { page: "carousel", name: "Carousel" },

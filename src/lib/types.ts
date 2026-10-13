@@ -66,6 +66,7 @@ export interface UIComponent {
     | "WidgetDeviceInfo"
     | "WidgetFileSystem"
     | "WidgetStackInfo"
+    | "WidgetRGBStrip"
 
   properties:
     | IAccordionProps
@@ -90,6 +91,7 @@ export interface UIComponent {
     | IWidgetDeviceInfoProps
     | IWidgetFileSystemProps
     | IWidgetStackInfoProps
+    | IWidgetRGBStripProps
 
   position: Required<Position>
   parentId: string
@@ -709,4 +711,32 @@ export interface IWidgetStackInfoProps {
   collapsed?: boolean
   persistKey?: string
   onRefresh?: () => void
+}
+
+/* Адресная лента — поля группы LST в том виде, в каком их отдаёт RGB_Strip (ProdFactory-ESP) */
+export interface IWidgetRGBStripConfig {
+  Color: number[] /* [R, G, B, W] 0..255; W используется только моделью SK6812 */
+  Effect: number /* 0 статичный, 1 радуга, 2 дыхание, 3 палитра, 4 комета, 5 мерцание, 6 огонь, 7 бегущие огни */
+  Speed: number /* 0..10, 0 — пауза эффекта */
+  Count: number /* количество светодиодов 1..MaxCount */
+  Model: number /* 0 WS2812, 1 SK6812 (RGBW), 2 WS2811 */
+  Order: number /* 0 GRB, 1 RGB, 2 BRG, 3 RBG, 4 GBR, 5 BGR */
+  MaxCount: number /* ёмкость, заданная в прошивке, — только чтение */
+}
+
+export interface IWidgetRGBStripProps {
+  /* Префикс прошивочной группы ленты, по умолчанию "LST" */
+  id?: string
+  wrapperClass?: string
+  componentClass?: string
+  label?: { name?: string }
+  value?: Partial<IWidgetRGBStripConfig>
+  /* Переопределение имён полей устройства, по умолчанию совпадают с ключами IWidgetRGBStripConfig */
+  keys?: Partial<Record<keyof IWidgetRGBStripConfig, string>>
+  collapsed?: boolean
+  persistKey?: string
+  /* Цвет, эффект, скорость — отправляются сразу */
+  onChange?: (field: "Color" | "Effect" | "Speed", value: number | number[]) => void
+  /* Количество, модель, порядок — одним пакетом по «Сохранить» (лента перезапускается) */
+  onSave?: (hardware: Pick<IWidgetRGBStripConfig, "Count" | "Model" | "Order">) => void
 }

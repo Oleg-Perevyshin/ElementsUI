@@ -192,7 +192,7 @@ ${formatObjectToString(tableComponent.properties as ITableProps<object>)}
         wrapperClass="h-60 flex-1"
         label={{ name: "Логгер (dataBuffer.logger)" }}
         header={loggerColumns}
-        body={body}
+        {body}
         dataBuffer={{ logger: true, stashData: true, bufferSize: 10, visibleRows: 5, clearButton: true }}
       />
     </div>

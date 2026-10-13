@@ -79,10 +79,7 @@
   }
 </script>
 
-<div
-  class={twMerge("flex w-full flex-col gap-4 rounded-2xl border border-(--hairline-color) bg-(--container-color) p-4", wrapperClass)}
-  style={accentStyle}
->
+<div class={twMerge("flex w-full flex-col gap-4 rounded-2xl border border-(--hairline-color) bg-(--container-color) p-4", wrapperClass)} style={accentStyle}>
   <!-- Заголовок -->
   <WidgetHeader icon={CpuIcon} label={label?.name ?? "Информация об устройстве"} bind:collapsed>
     {#snippet right()}

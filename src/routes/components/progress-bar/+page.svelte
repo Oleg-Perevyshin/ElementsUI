@@ -72,12 +72,7 @@ ${formatObjectToString(progressBarComponent.properties as IProgressBarProps)}
       />
     </div>
     <div class="flex h-40 justify-center gap-6">
-      <ProgressBar
-        type="vertical"
-        wrapperClass="bg-green"
-        items={[{ name: "CPU" }, { name: "RAM" }, { name: "Flash" }]}
-        value={verticalValue}
-      />
+      <ProgressBar type="vertical" wrapperClass="bg-green" items={[{ name: "CPU" }, { name: "RAM" }, { name: "Flash" }]} value={verticalValue} />
     </div>
   {/snippet}
 </ComponentExample>

@@ -169,9 +169,7 @@
                   }
                 }}
               />
-              <div
-                class="py-1.5 pl-9 grid grid-cols-[minmax(9rem,14rem)_minmax(5rem,7rem)_minmax(18rem,22rem)_2rem_2rem_1fr] items-end gap-1.5"
-              >
+              <div class="py-1.5 pl-9 grid grid-cols-[minmax(9rem,14rem)_minmax(5rem,7rem)_minmax(18rem,22rem)_2rem_2rem_1fr] items-end gap-1.5">
                 <UI.Input
                   label={{ name: $T("constructor.props.table.columns.label") }}
                   value={column.label?.name}
@@ -253,229 +251,229 @@
                         }}
                       />
                       <div class="flex min-w-0 flex-col gap-2">
-                      {#if content.type == "text"}
-                        {@const text = content.data}
-                        <div class="flex flex-wrap items-end gap-2">
-                          <UI.Input
-                            wrapperClass="min-w-32 flex-1"
-                            label={{ name: $T("constructor.props.table.text.key") }}
-                            value={text.key}
-                            help={{ regExp: /^[0-9a-zA-Z_.-]{0,16}$/ }}
-                            onUpdate={(value) => {
-                              updateTableHeader(
-                                columnIndex,
-                                "content",
-                                column.content.map((textItem: any, i: number) =>
-                                  i == index ? { ...textItem, data: { ...textItem.data, key: value } } : textItem,
-                                ),
-                              )
-                            }}
-                          />
-                          <UI.Select
-                            wrapperClass="min-w-60 flex-[2]"
-                            label={{ name: $T("constructor.props.tablecolumn.settings") }}
-                            type="buttons"
-                            multiSelect={true}
-                            value={$optionsStore.TABLE_TEXT_SETTING_OPTIONS.slice(0, forConstructor ? 3 : 5).filter((opt) => {
-                              if (column.content[index].data[opt.value]) return opt
-                            })}
-                            options={$optionsStore.TABLE_TEXT_SETTING_OPTIONS.slice(0, forConstructor ? 3 : 5)}
-                            onUpdate={(value) => changeColumnSettings(value, columnIndex, index)}
-                          />
-                        </div>
-                      {:else if content.type == "select"}
-                        {@const select = content.data}
-                        <div class="flex flex-wrap items-end gap-2">
-                          <UI.Input
-                            wrapperClass="min-w-32 flex-1"
-                            label={{ name: $T("constructor.props.table.select.key") }}
-                            value={select.key}
-                            help={{ regExp: /^[0-9a-zA-Z_.-]{0,16}$/ }}
-                            onUpdate={(value) => {
-                              updateTableHeader(
-                                columnIndex,
-                                "content",
-                                column.content.map((textItem: any, i: number) =>
-                                  i == index ? { ...textItem, data: { ...textItem.data, key: value } } : textItem,
-                                ),
-                              )
-                              // updateTableBody()
-                            }}
-                          />
-                          <UI.Input
-                            wrapperClass="min-w-40 flex-1"
-                            label={{ name: $T("constructor.props.table.select.keys") }}
-                            value={select?.keyCol ?? ""}
-                            maxlength={500}
-                            help={{ info: $T("constructor.props.table.select.keys.info"), regExp: /^[a-zA-Z0-9\-_ ]{0,500}$/ }}
-                            onUpdate={(value) => {
-                              const headers = [...component.properties.header]
-                              headers[columnIndex].content[index].data = { ...headers[columnIndex].content[index].data, keyCol: value }
-                              updateProperty("header", headers, component, onPropertyChange)
-                            }}
-                          />
-                        </div>
-                      {:else if content.type == "button"}
-                        {@const button = content.data}
-                        <!-- Строка 1 — как выглядит кнопка, строка 2 — какую команду она шлёт -->
-                        <div class="flex flex-wrap items-end gap-2">
-                          <UI.Input
-                            wrapperClass="min-w-28 flex-1"
-                            label={{ name: $T("constructor.props.name") }}
-                            value={button.name}
-                            onUpdate={(value) => updateContentProperty(columnIndex, index, "name", value)}
-                          />
-                          <div class="relative min-w-32 flex-1">
-                            <CommonSnippets
-                              snippet="IconsLib"
-                              initialValue={{
-                                name: $T("constructor.props.table.type.icon"),
-                                icon: column.content[index].data.icon,
-                                updateProperty: (icon: string) => updateContentProperty(columnIndex, index, "icon", icon),
-                                icons: { array: ICONS },
+                        {#if content.type == "text"}
+                          {@const text = content.data}
+                          <div class="flex flex-wrap items-end gap-2">
+                            <UI.Input
+                              wrapperClass="min-w-32 flex-1"
+                              label={{ name: $T("constructor.props.table.text.key") }}
+                              value={text.key}
+                              help={{ regExp: /^[0-9a-zA-Z_.-]{0,16}$/ }}
+                              onUpdate={(value) => {
+                                updateTableHeader(
+                                  columnIndex,
+                                  "content",
+                                  column.content.map((textItem: any, i: number) =>
+                                    i == index ? { ...textItem, data: { ...textItem.data, key: value } } : textItem,
+                                  ),
+                                )
                               }}
-                              {component}
-                              {onPropertyChange}
-                            />
-                          </div>
-                          <div class="flex min-w-72 flex-[2] items-end gap-1">
-                            <UI.Button
-                              wrapperClass="w-8 shrink-0"
-                              content={{ icon: InfoIcon, info: { text: $T("constructor.props.button.colors.hint"), side: "right" } }}
                             />
                             <UI.Select
-                              wrapperClass="min-w-0 flex-1"
-                              label={{ name: $T("constructor.props.colors") }}
+                              wrapperClass="min-w-60 flex-[2]"
+                              label={{ name: $T("constructor.props.tablecolumn.settings") }}
                               type="buttons"
-                              options={$optionsStore.COLOR_OPTIONS.filter((option) => option.value !== "bg-max")}
-                              value={findColorOption($optionsStore.COLOR_OPTIONS, button.class ?? component.properties.wrapperClass)}
+                              multiSelect={true}
+                              value={$optionsStore.TABLE_TEXT_SETTING_OPTIONS.slice(0, forConstructor ? 3 : 5).filter((opt) => {
+                                if (column.content[index].data[opt.value]) return opt
+                              })}
+                              options={$optionsStore.TABLE_TEXT_SETTING_OPTIONS.slice(0, forConstructor ? 3 : 5)}
+                              onUpdate={(value) => changeColumnSettings(value, columnIndex, index)}
+                            />
+                          </div>
+                        {:else if content.type == "select"}
+                          {@const select = content.data}
+                          <div class="flex flex-wrap items-end gap-2">
+                            <UI.Input
+                              wrapperClass="min-w-32 flex-1"
+                              label={{ name: $T("constructor.props.table.select.key") }}
+                              value={select.key}
+                              help={{ regExp: /^[0-9a-zA-Z_.-]{0,16}$/ }}
+                              onUpdate={(value) => {
+                                updateTableHeader(
+                                  columnIndex,
+                                  "content",
+                                  column.content.map((textItem: any, i: number) =>
+                                    i == index ? { ...textItem, data: { ...textItem.data, key: value } } : textItem,
+                                  ),
+                                )
+                                // updateTableBody()
+                              }}
+                            />
+                            <UI.Input
+                              wrapperClass="min-w-40 flex-1"
+                              label={{ name: $T("constructor.props.table.select.keys") }}
+                              value={select?.keyCol ?? ""}
+                              maxlength={500}
+                              help={{ info: $T("constructor.props.table.select.keys.info"), regExp: /^[a-zA-Z0-9\-_ ]{0,500}$/ }}
+                              onUpdate={(value) => {
+                                const headers = [...component.properties.header]
+                                headers[columnIndex].content[index].data = { ...headers[columnIndex].content[index].data, keyCol: value }
+                                updateProperty("header", headers, component, onPropertyChange)
+                              }}
+                            />
+                          </div>
+                        {:else if content.type == "button"}
+                          {@const button = content.data}
+                          <!-- Строка 1 — как выглядит кнопка, строка 2 — какую команду она шлёт -->
+                          <div class="flex flex-wrap items-end gap-2">
+                            <UI.Input
+                              wrapperClass="min-w-28 flex-1"
+                              label={{ name: $T("constructor.props.name") }}
+                              value={button.name}
+                              onUpdate={(value) => updateContentProperty(columnIndex, index, "name", value)}
+                            />
+                            <div class="relative min-w-32 flex-1">
+                              <CommonSnippets
+                                snippet="IconsLib"
+                                initialValue={{
+                                  name: $T("constructor.props.table.type.icon"),
+                                  icon: column.content[index].data.icon,
+                                  updateProperty: (icon: string) => updateContentProperty(columnIndex, index, "icon", icon),
+                                  icons: { array: ICONS },
+                                }}
+                                {component}
+                                {onPropertyChange}
+                              />
+                            </div>
+                            <div class="flex min-w-72 flex-[2] items-end gap-1">
+                              <UI.Button
+                                wrapperClass="w-8 shrink-0"
+                                content={{ icon: InfoIcon, info: { text: $T("constructor.props.button.colors.hint"), side: "right" } }}
+                              />
+                              <UI.Select
+                                wrapperClass="min-w-0 flex-1"
+                                label={{ name: $T("constructor.props.colors") }}
+                                type="buttons"
+                                options={$optionsStore.COLOR_OPTIONS.filter((option) => option.value !== "bg-max")}
+                                value={findColorOption($optionsStore.COLOR_OPTIONS, button.class ?? component.properties.wrapperClass)}
+                                onUpdate={(option) => {
+                                  if (button.class === (option as UI.IOption).value) updateContentProperty(columnIndex, index, "class", "bg-transparent")
+                                  else updateContentProperty(columnIndex, index, "class", (option as UI.IOption).value)
+                                }}
+                              />
+                            </div>
+                          </div>
+                          <div class="flex flex-wrap items-end gap-2">
+                            <UI.Select
+                              wrapperClass="min-w-56 flex-1"
+                              label={{ name: $T("constructor.props.header") }}
+                              type="buttons"
+                              value={$optionsStore.HEADER_OPTIONS.find((h) => h.value === button.eventHandler?.Header)}
+                              options={$optionsStore.HEADER_OPTIONS}
                               onUpdate={(option) => {
-                                if (button.class === (option as UI.IOption).value) updateContentProperty(columnIndex, index, "class", "bg-transparent")
-                                else updateContentProperty(columnIndex, index, "class", (option as UI.IOption).value)
+                                const handler = button.eventHandler
+                                handler.Header = (option as UI.IOption).value as string
+                                updateContentProperty(columnIndex, index, "eventHandler", handler)
+                              }}
+                            />
+                            <UI.Input
+                              wrapperClass="min-w-28 flex-1"
+                              label={{ name: $T("constructor.props.argument") }}
+                              value={button.eventHandler?.Argument}
+                              onUpdate={(value) => {
+                                const handler = button.eventHandler
+                                handler.Argument = value as string
+                                updateContentProperty(columnIndex, index, "eventHandler", handler)
+                              }}
+                            />
+                            <UI.Input
+                              wrapperClass="min-w-40 flex-[2]"
+                              label={{ name: $T("constructor.props.table.keys") }}
+                              value={button.eventHandler?.Variables.join(" ")}
+                              maxlength={500}
+                              help={{ info: $T("constructor.props.table.keys.info"), regExp: /^[a-zA-Z0-9\-._ ]{0,500}$/ }}
+                              onUpdate={(value) => {
+                                const handler = { ...button.eventHandler }
+                                handler.Variables = (value as string).trim().split(/\s+/)
+                                updateContentProperty(columnIndex, index, "eventHandler", handler)
                               }}
                             />
                           </div>
-                        </div>
-                        <div class="flex flex-wrap items-end gap-2">
-                          <UI.Select
-                            wrapperClass="min-w-56 flex-1"
-                            label={{ name: $T("constructor.props.header") }}
-                            type="buttons"
-                            value={$optionsStore.HEADER_OPTIONS.find((h) => h.value === button.eventHandler?.Header)}
-                            options={$optionsStore.HEADER_OPTIONS}
-                            onUpdate={(option) => {
-                              const handler = button.eventHandler
-                              handler.Header = (option as UI.IOption).value as string
-                              updateContentProperty(columnIndex, index, "eventHandler", handler)
-                            }}
-                          />
-                          <UI.Input
-                            wrapperClass="min-w-28 flex-1"
-                            label={{ name: $T("constructor.props.argument") }}
-                            value={button.eventHandler?.Argument}
-                            onUpdate={(value) => {
-                              const handler = button.eventHandler
-                              handler.Argument = value as string
-                              updateContentProperty(columnIndex, index, "eventHandler", handler)
-                            }}
-                          />
-                          <UI.Input
-                            wrapperClass="min-w-40 flex-[2]"
-                            label={{ name: $T("constructor.props.table.keys") }}
-                            value={button.eventHandler?.Variables.join(" ")}
-                            maxlength={500}
-                            help={{ info: $T("constructor.props.table.keys.info"), regExp: /^[a-zA-Z0-9\-._ ]{0,500}$/ }}
-                            onUpdate={(value) => {
-                              const handler = { ...button.eventHandler }
-                              handler.Variables = (value as string).trim().split(/\s+/)
-                              updateContentProperty(columnIndex, index, "eventHandler", handler)
-                            }}
-                          />
-                        </div>
-                      {:else if content.type == "progressBar"}
-                        {@const progressBar = content.data}
-                        <div class="flex flex-wrap items-end gap-2">
-                          <UI.Input
-                            wrapperClass="min-w-28 flex-1"
-                            label={{ name: $T("constructor.props.table.progressBar.key") }}
-                            value={progressBar.key}
-                            help={{ regExp: /^[0-9a-zA-Z_.-]{0,16}$/ }}
-                            onUpdate={(value) => {
-                              updateTableHeader(
-                                columnIndex,
-                                "content",
-                                column.content.map((textItem: any, i: number) =>
-                                  i == index ? { ...textItem, data: { ...textItem.data, key: value } } : textItem,
-                                ),
-                              )
-                              // updateTableBody()
-                            }}
-                          />
-                          <UI.Input
-                            wrapperClass="min-w-20 flex-1"
-                            label={{ name: $T("constructor.props.min") }}
-                            value={(progressBar?.minNum as number) ?? 0}
-                            type="number"
-                            onUpdate={(value) => updateContentProperty(columnIndex, index, "minNum", value as string)}
-                          />
-                          <UI.Input
-                            wrapperClass="min-w-20 flex-1"
-                            label={{ name: $T("constructor.props.max") }}
-                            value={(progressBar?.maxNum as number) ?? 100}
-                            type="number"
-                            onUpdate={(value) => updateContentProperty(columnIndex, index, "maxNum", value as string)}
-                          />
-                          <UI.Input
-                            wrapperClass="min-w-24 flex-1"
-                            label={{ name: $T("constructor.props.units") }}
-                            value={progressBar?.units}
-                            onUpdate={(value) => updateContentProperty(columnIndex, index, "units", value as string)}
-                          />
-                        </div>
-                      {:else if !forConstructor && content.type == "image"}
-                        {@const image = content.data}
-                        <div class="flex flex-wrap items-end gap-2">
-                          <div class="relative min-w-32">
-                            <CommonSnippets
-                              snippet="IconsLib"
-                              initialValue={{
-                                name: $T("constructor.props.table.columns.defaultIcon"),
-                                icon: image?.defaultIcon ?? "",
-                                updateProperty: (icon: string) => {
-                                  updateContentProperty(columnIndex, index, "defaultIcon", icon)
-                                  if (!image?.width || image?.width === "0rem") updateContentProperty(columnIndex, index, "width", "1rem")
-                                  if (!image?.width || image?.height === "0rem") updateContentProperty(columnIndex, index, "height", "1rem")
-                                },
-                                icons: { array: ICONS },
+                        {:else if content.type == "progressBar"}
+                          {@const progressBar = content.data}
+                          <div class="flex flex-wrap items-end gap-2">
+                            <UI.Input
+                              wrapperClass="min-w-28 flex-1"
+                              label={{ name: $T("constructor.props.table.progressBar.key") }}
+                              value={progressBar.key}
+                              help={{ regExp: /^[0-9a-zA-Z_.-]{0,16}$/ }}
+                              onUpdate={(value) => {
+                                updateTableHeader(
+                                  columnIndex,
+                                  "content",
+                                  column.content.map((textItem: any, i: number) =>
+                                    i == index ? { ...textItem, data: { ...textItem.data, key: value } } : textItem,
+                                  ),
+                                )
+                                // updateTableBody()
                               }}
-                              {component}
-                              {onPropertyChange}
+                            />
+                            <UI.Input
+                              wrapperClass="min-w-20 flex-1"
+                              label={{ name: $T("constructor.props.min") }}
+                              value={(progressBar?.minNum as number) ?? 0}
+                              type="number"
+                              onUpdate={(value) => updateContentProperty(columnIndex, index, "minNum", value as string)}
+                            />
+                            <UI.Input
+                              wrapperClass="min-w-20 flex-1"
+                              label={{ name: $T("constructor.props.max") }}
+                              value={(progressBar?.maxNum as number) ?? 100}
+                              type="number"
+                              onUpdate={(value) => updateContentProperty(columnIndex, index, "maxNum", value as string)}
+                            />
+                            <UI.Input
+                              wrapperClass="min-w-24 flex-1"
+                              label={{ name: $T("constructor.props.units") }}
+                              value={progressBar?.units}
+                              onUpdate={(value) => updateContentProperty(columnIndex, index, "units", value as string)}
                             />
                           </div>
-                          <UI.Input
-                            wrapperClass="min-w-32 flex-1"
-                            label={{ name: $T("constructor.props.table.columns.class") }}
-                            value={image?.class}
-                            onUpdate={(value) => updateContentProperty(columnIndex, index, "class", value)}
-                          />
-                          <UI.Input
-                            wrapperClass="min-w-20 flex-1"
-                            label={{ name: $T("constructor.props.table.columns.image.width"), class: "px-0" }}
-                            type="number"
-                            number={{ minNum: 0, maxNum: 1000, step: 1 }}
-                            value={Number(image?.width?.replace("rem", "") ?? 0)}
-                            onUpdate={(value) => updateContentProperty(columnIndex, index, "width", `${value ?? 0}rem`)}
-                          />
-                          <UI.Input
-                            wrapperClass="min-w-20 flex-1"
-                            label={{ name: $T("constructor.props.table.columns.image.height"), class: "px-0" }}
-                            type="number"
-                            number={{ minNum: 0, maxNum: 1000, step: 1 }}
-                            value={Number(image?.height?.replace("rem", "") ?? 0)}
-                            onUpdate={(value) => updateContentProperty(columnIndex, index, "height", `${value ?? 0}rem`)}
-                          />
-                        </div>
-                      {/if}
+                        {:else if !forConstructor && content.type == "image"}
+                          {@const image = content.data}
+                          <div class="flex flex-wrap items-end gap-2">
+                            <div class="relative min-w-32">
+                              <CommonSnippets
+                                snippet="IconsLib"
+                                initialValue={{
+                                  name: $T("constructor.props.table.columns.defaultIcon"),
+                                  icon: image?.defaultIcon ?? "",
+                                  updateProperty: (icon: string) => {
+                                    updateContentProperty(columnIndex, index, "defaultIcon", icon)
+                                    if (!image?.width || image?.width === "0rem") updateContentProperty(columnIndex, index, "width", "1rem")
+                                    if (!image?.width || image?.height === "0rem") updateContentProperty(columnIndex, index, "height", "1rem")
+                                  },
+                                  icons: { array: ICONS },
+                                }}
+                                {component}
+                                {onPropertyChange}
+                              />
+                            </div>
+                            <UI.Input
+                              wrapperClass="min-w-32 flex-1"
+                              label={{ name: $T("constructor.props.table.columns.class") }}
+                              value={image?.class}
+                              onUpdate={(value) => updateContentProperty(columnIndex, index, "class", value)}
+                            />
+                            <UI.Input
+                              wrapperClass="min-w-20 flex-1"
+                              label={{ name: $T("constructor.props.table.columns.image.width"), class: "px-0" }}
+                              type="number"
+                              number={{ minNum: 0, maxNum: 1000, step: 1 }}
+                              value={Number(image?.width?.replace("rem", "") ?? 0)}
+                              onUpdate={(value) => updateContentProperty(columnIndex, index, "width", `${value ?? 0}rem`)}
+                            />
+                            <UI.Input
+                              wrapperClass="min-w-20 flex-1"
+                              label={{ name: $T("constructor.props.table.columns.image.height"), class: "px-0" }}
+                              type="number"
+                              number={{ minNum: 0, maxNum: 1000, step: 1 }}
+                              value={Number(image?.height?.replace("rem", "") ?? 0)}
+                              onUpdate={(value) => updateContentProperty(columnIndex, index, "height", `${value ?? 0}rem`)}
+                            />
+                          </div>
+                        {/if}
                       </div>
                       <UI.Button
                         wrapperClass="w-8 shrink-0"

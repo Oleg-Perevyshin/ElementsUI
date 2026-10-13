@@ -60,7 +60,13 @@ onSave={handleSave}
   {#snippet examples()}
     <div class="flex flex-col gap-6 p-2">
       <WidgetWiFi label={{ name: "WiFi" }} componentClass="bg-blue" onScan={mockScan} onSave={(cfg) => console.log("SET CFG (mock):", cfg)} />
-      <WidgetWiFi label={{ name: "Только клиент" }} allowedModes={[1]} componentClass="bg-purple" onScan={mockScan} onSave={(cfg) => console.log("SET CFG (mock):", cfg)} />
+      <WidgetWiFi
+        label={{ name: "Только клиент" }}
+        allowedModes={[1]}
+        componentClass="bg-purple"
+        onScan={mockScan}
+        onSave={(cfg) => console.log("SET CFG (mock):", cfg)}
+      />
     </div>
   {/snippet}
 </ComponentExample>

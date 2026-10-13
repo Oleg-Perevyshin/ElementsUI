@@ -26,7 +26,7 @@
   let mainSnippet: string | undefined = $state("overview")
 
   /* Справка (i) — тот же текст component.info.<Тип>, что открывает конструктор DevCloud; тип — из адреса страницы */
-  const TYPE_OVERRIDES: Record<string, string> = { WidgetWifi: "WidgetWiFi" }
+  const TYPE_OVERRIDES: Record<string, string> = { WidgetWifi: "WidgetWiFi", WidgetRgbStrip: "WidgetRGBStrip" }
   let componentType = $derived.by(() => {
     const slug = page.url.pathname.split("/").filter(Boolean).pop() ?? ""
     const pascal = slug.replace(/(^|-)(\w)/g, (_m, _d, c: string) => c.toUpperCase())

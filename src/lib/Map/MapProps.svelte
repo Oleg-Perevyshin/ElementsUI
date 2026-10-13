@@ -29,9 +29,7 @@
     ),
   )
 
-  const initialColor = $derived(
-    findColorOption($optionsStore.COLOR_OPTIONS, component.properties.wrapperClass),
-  )
+  const initialColor = $derived(findColorOption($optionsStore.COLOR_OPTIONS, component.properties.wrapperClass))
 </script>
 
 {#if forConstructor}
