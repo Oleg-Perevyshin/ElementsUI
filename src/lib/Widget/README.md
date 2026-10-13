@@ -157,6 +157,10 @@
 | `onPropertyChange` | `(updates: Partial<{ properties?: string \| object; name?: string; access?: string; eventHandler?: IUIComponentHandler }>) => void` | `-`          | Коллбэк для обновления свойств компонента               |
 | `forConstructor`   | `boolean`                                                                                                                           | `true`       | Режим отображения (для конструктора или редактирования) |
 
+### Мастер-цвет
+
+Пикер «Мастер-цвет» (`WidgetAccentPicker`, общий со смарт-виджетами) пишет роль `bg-*` в `settings.class` и подобранный цвет иконки в `icons.class` — формат сохранённых интерфейсов прежний. Корень виджета получает `widgetAccentStyle(settings.class)`: роль перекрашивает переключатель, слайдер и фокус поля.
+
 ### Особенности конструктора
 
 - Предоставляет визуальные элементы управления для всех доступных свойств
