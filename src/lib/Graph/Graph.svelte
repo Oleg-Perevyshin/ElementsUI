@@ -390,12 +390,13 @@
 
   <div class="flex w-full flex-row gap-4">
     <!-- График -->
-    <div bind:this={container} class="relative h-64 grow overflow-hidden rounded-xl border border-gray-200 shadow-sm">
+    <!-- design-handoff, раздел 9: рамка --hairline-color без тени, тултип в оформлении общего Tooltip.svelte -->
+    <div bind:this={container} class="relative h-64 grow overflow-hidden rounded-[14px] border border-(--hairline-color)">
       <canvas class="h-full w-full bg-(--back-color)" bind:this={canvas} onmousemove={handleMouseMove} onmouseleave={handleMouseLeave}></canvas>
 
       {#if tooltip.visible}
         <div
-          class="pointer-events-none absolute z-10 rounded-lg border border-(--border-color) bg-(--back-color) px-2 py-1 text-xs whitespace-nowrap shadow-lg"
+          class="pointer-events-none absolute z-10 rounded-lg border border-(--hairline-color) bg-(--back-color) px-2.5 py-1.5 text-[12px] whitespace-nowrap shadow-(--elevation-2)"
           style="left: {Math.min(tooltip.x + 12, width - 150)}px; top: {Math.min(tooltip.y + 12, height - 16 - tooltip.items.length * 16)}px;"
         >
           <div class="mb-1 font-semibold">{formatTooltipTime(tooltip.time)}</div>

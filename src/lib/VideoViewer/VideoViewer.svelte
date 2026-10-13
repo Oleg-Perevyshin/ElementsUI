@@ -149,10 +149,11 @@
   {#if label.name}
     <h5 class={twMerge(`w-full px-4 text-center`, label.class)}>{label.name}</h5>
   {/if}
-  <div class={twMerge("relative flex flex-1 w-full items-center justify-center rounded-2xl", roleBorderClass)}>
+  <!-- design-handoff, раздел 9: фон --container-color, радиус 14, оверлей загрузки без фиксированных отступов -->
+  <div class={twMerge("relative flex w-full flex-1 items-center justify-center rounded-[14px]", roleBorderClass)}>
     {#if isRemote}
       {#if status !== "live" || !remoteImgSrc}
-        <div class="absolute h-full w-full rounded-2xl px-40 py-15 flex flex-col items-center justify-center bg-(--border-color)/50 gap-4 z-10">
+        <div class="absolute z-10 flex h-full w-full flex-col items-center justify-center gap-4 rounded-[14px] bg-(--container-color) p-4 text-center">
           {#if status === "error"}
             <svg class="w-12 h-12 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -170,14 +171,14 @@
           {/if}
         </div>
       {/if}
-      <div class="absolute h-full w-full rounded-2xl bg-(--border-color)/50">
+      <div class="absolute h-full w-full overflow-hidden rounded-[14px] bg-(--container-color)">
         {#if remoteImgSrc}
-          <img src={remoteImgSrc} alt={label.name || ""} class="h-full w-full rounded-2xl object-contain block" />
+          <img src={remoteImgSrc} alt={label.name || ""} class="block h-full w-full rounded-[14px] object-contain" />
         {/if}
       </div>
     {:else}
       {#if loading || error}
-        <div class="absolute h-full w-full rounded-2xl px-40 py-15 flex flex-col items-center justify-center bg-(--border-color)/50 gap-4 z-10">
+        <div class="absolute z-10 flex h-full w-full flex-col items-center justify-center gap-4 rounded-[14px] bg-(--container-color) p-4 text-center">
           {#if loading}
             <h2>{$T("constructor.props.camera.loading")}</h2>
           {:else if error}
@@ -194,8 +195,8 @@
           {/if}
         </div>
       {/if}
-      <div class="absolute h-full w-full rounded-2xl bg-(--border-color)/50">
-        <video bind:this={videoElement} class="h-full w-full rounded-2xl object-contain block {!isStreaming || loading ? 'invisible' : 'visible'}"></video>
+      <div class="absolute h-full w-full overflow-hidden rounded-[14px] bg-(--container-color)">
+        <video bind:this={videoElement} class="block h-full w-full rounded-[14px] object-contain {!isStreaming || loading ? 'invisible' : 'visible'}"></video>
       </div>
     {/if}
   </div>

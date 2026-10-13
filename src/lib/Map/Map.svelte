@@ -164,7 +164,7 @@
     <h5 class={twMerge(` w-full px-4 text-center`, label.class)}>{label.name}</h5>
   {/if}
   <MapLibre
-    class={twMerge("h-[calc(100%-2rem)] min-h-50 overflow-hidden rounded-xl shadow-sm transition duration-200 hover:shadow-md", roleRingClass)}
+    class={twMerge("h-[calc(100%-2rem)] min-h-50 overflow-hidden rounded-[14px] border border-(--hairline-color)", roleRingClass)}
     style={isDarkMode ? "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json" : "https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json"}
     zoom={1.5}
     center={{ lat: 30, lng: 0 }}
@@ -222,7 +222,7 @@
           <div class="flex flex-col items-center justify-center leading-none">
             <div
               class="flex size-8 shrink-0 items-center justify-center [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full
-            {device.isFresh ? 'text-green-500' : 'text-red-500'}"
+            {device.isFresh ? 'text-(--green-color)' : 'text-(--red-color)'}"
               style="rotate: {device.NavHeading}deg;"
             >
               {#if markerIcon}
@@ -251,16 +251,14 @@
           </div>
         {/snippet}
 
-        <Popup closeButton={false} class="map-popup rounded-2xl text-left">
+        <Popup closeButton={false} class="map-popup text-left">
           <div class="flex flex-col gap-1.5">
             <div class="flex items-center gap-1.5">
-              <span class="size-2 shrink-0 rounded-full {device.isFresh ? 'bg-green-500' : 'bg-red-500'}"></span>
+              <span class="size-2 shrink-0 rounded-full {device.isFresh ? 'bg-(--green-color)' : 'bg-(--red-color)'}"></span>
               <h6 class="text-sm leading-none font-bold">{device.DevName}</h6>
             </div>
 
-            <div
-              class={`${twMerge("grid grid-cols-2 gap-x-3 gap-y-1 rounded-lg bg-(--container-color) p-2 text-xs", roleBgClass)} ${roleBgPaint}`}
-            >
+            <div class={`${twMerge("grid grid-cols-2 gap-x-3 gap-y-1 rounded-lg bg-(--container-color) p-2 text-xs", roleBgClass)} ${roleBgPaint}`}>
               <div>
                 <p class="text-[0.6rem] font-semibold tracking-wide uppercase opacity-60">Lat / Lon</p>
                 <p class="font-medium">{device.NavLat.toFixed(5)}, {device.NavLon.toFixed(5)}</p>
@@ -281,7 +279,7 @@
 
             <p class="text-[0.6rem] font-mono text-center tracking-wide uppercase">{device.DevSN}</p>
 
-            <div class="flex items-center justify-between border-t border-(--border-color) pt-1">
+            <div class="flex items-center justify-between border-t border-(--hairline-color) pt-1">
               <div class="relative flex items-center">
                 <button
                   class="flex cursor-pointer items-center gap-1 rounded-lg border-none bg-transparent px-1 py-0.5 opacity-70 transition hover:opacity-100"
@@ -309,7 +307,7 @@
               </div>
 
               <button
-                class="cursor-pointer rounded-lg border-none bg-transparent p-0.5 text-red-500 transition hover:text-red-600"
+                class="cursor-pointer rounded-lg border-none bg-transparent p-0.5 text-(--red-color) transition hover:opacity-80"
                 aria-label="Delete"
                 title="Delete"
                 onclick={() => (devices = devices.filter((dev) => dev.DevSN !== device.DevSN))}
@@ -335,9 +333,14 @@
 </div>
 
 <style>
+  /* Попап по правилам карточки (design-handoff, раздел 9): радиус 14, линия, тень уровня 2 */
   :global(.map-popup .maplibregl-popup-content) {
     background-color: var(--back-color);
     color: inherit;
+    border: 1px solid var(--hairline-color);
+    border-radius: 14px;
+    box-shadow: var(--elevation-2);
+    padding: 12px;
   }
 
   :global(.map-popup.maplibregl-popup-anchor-bottom .maplibregl-popup-tip) {

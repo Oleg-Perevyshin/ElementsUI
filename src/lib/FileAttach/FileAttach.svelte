@@ -53,10 +53,8 @@
   }
 </script>
 
-<!-- Не входил в исходный design-handoff (пропущен вместе с остальными точками,
-     которые авторы документа не осматривали) — сейчас приведён к общей палитре:
-     радиус 10/высота 36 как у Input/Select, сегмент "Выбрать файл" залит акцентом
-     с текстом --on-accent (было --font-color по тёмно-синему — нечитаемо). -->
+<!-- По design-handoff (раздел 9): зона сброса — пунктир 1 px с радиусом 12 вместо залитой кнопки,
+     высота как у Input; «Выбрать файл» — акцентный текст, имя файла — обычным цветом, пока не выбрано — бледным. -->
 <div class={twMerge(`flex flex-col items-center gap-1`, wrapperClass)}>
   {#if label.name}
     <span class={twMerge(`w-full text-[12px] font-semibold text-(--muted-color)`, label.class)}>{label.name}</span>
@@ -65,8 +63,8 @@
   {#if type === "image"}
     <div class="relative">
       <button
-        class="flex items-center justify-center overflow-hidden {imageSize.form === 'circle' ? 'rounded-full' : 'rounded-2xl'}
-        border border-(--hairline-color) bg-(--container-color) transition-colors duration-150
+        class="flex items-center justify-center overflow-hidden {imageSize.form === 'circle' ? 'rounded-full' : 'rounded-[12px]'}
+        border border-dashed border-(--border-color) bg-(--container-color) transition-colors duration-150
         {disabled ? 'cursor-not-allowed opacity-45' : 'cursor-pointer hover:bg-(--border-color)'}"
         style={`height: ${imageSize.height}; width: ${imageSize.width}`}
         onclick={triggerFileInput}
@@ -98,13 +96,16 @@
         onchange={handleFileChange}
       />
       <div
-        class="flex h-8 w-full overflow-hidden rounded-[10px] border border-(--border-color) text-[14px] transition-colors duration-150
-             {disabled ? 'opacity-45' : 'hover:border-(--faint-color)'}"
+        class={twMerge(
+          `flex h-8 w-full items-center gap-3 overflow-hidden rounded-[12px] border border-dashed border-(--border-color) bg-(--field-color) px-3 text-[14px]
+           transition-colors duration-150 ${disabled ? "opacity-45" : "hover:border-(--accent-color)"}`,
+          componentClass,
+        )}
       >
-        <div class="flex shrink-0 items-center justify-center bg-(--accent-color) px-3 font-semibold whitespace-nowrap text-(--on-accent)">
+        <span class="shrink-0 font-semibold whitespace-nowrap text-(--accent-color)">
           {$T("constructor.props.file.select")}
-        </div>
-        <div class={twMerge("flex min-w-0 flex-1 items-center justify-start truncate bg-(--field-color) px-3 text-(--font-color)", componentClass)}>
+        </span>
+        <div class="flex min-w-0 flex-1 items-center justify-start truncate {fileName ? 'text-(--font-color)' : 'text-(--faint-color)'}">
           <p class="w-full truncate">{fileName || $T("constructor.props.file.notselected")}</p>
         </div>
       </div>

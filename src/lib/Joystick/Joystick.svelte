@@ -130,7 +130,7 @@
 
   {#if !readonly}
     <div class="flex w-1/2 items-center justify-center">
-      <div class="relative z-10 flex size-40 min-h-40 min-w-40 items-center justify-center rounded-full bg-(--bg-color) shadow-[0_0_20px_rgb(0_0_0_/0.25)]">
+      <div class="relative z-10 flex size-40 min-h-40 min-w-40 items-center justify-center rounded-full bg-(--bg-color) shadow-(--elevation-2)">
         <!-- Основные кнопки (оси pitch и yaw) -->
         <div class="absolute h-full w-full overflow-hidden rounded-full">
           {#each directions as direction, index}
@@ -176,7 +176,7 @@
           {/each}
         </div>
         <!-- Кнопка по центру -->
-        <div class="z-20 flex size-20 items-center justify-center rounded-full bg-(--bg-color) shadow-[0_0_15px_rgb(0_0_0_/0.25)]">
+        <div class="z-20 flex size-20 items-center justify-center rounded-full bg-(--bg-color) shadow-(--elevation-2)">
           <button
             class="flex size-18 cursor-pointer rounded-full p-2 origin-center active:scale-95
             [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
@@ -202,11 +202,11 @@
         </div>
       </div>
 
-      <!-- Копка 0 -->
+      <!-- Кнопка 0 — 32 px по общему правилу кнопок-иконок (design-handoff, раздел 9) -->
       <div class="absolute {label.name ? 'top-4' : 'top-0'} w-55 flex items-center justify-end">
         <button
-          class="flex shadow-sm hover:shadow-md transition duration-200 justify-center cursor-pointer items-center bg-(--back-color) rounded-full size-10 p-0.5
-           font-semibold text-2xl [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
+          class="flex size-[32px] cursor-pointer items-center justify-center rounded-full border border-(--hairline-color) bg-(--back-color) p-0.5 text-[15px] font-semibold
+           transition-colors duration-150 hover:border-(--border-color) [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
           style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"
           title=""
           onclick={() => (value = [0, 0, 0, 0])}
@@ -218,7 +218,7 @@
       <!-- Боковые кнопки (ось roll) -->
       {#if axes[2].name !== ""}
         <div
-          class="absolute flex h-15 w-65 items-center justify-between rounded-full shadow-[0_0_15px_rgb(0_0_0_/0.25)]"
+          class="absolute flex h-15 w-65 items-center justify-between rounded-full shadow-(--elevation-2)"
           style="background: color-mix(in srgb, var(--bg-color), var(--shadow-color) 10%)"
         >
           <button
@@ -234,7 +234,7 @@
               onUpdate(value)
             }}
             onmouseenter={(e) => (e.currentTarget.style.backgroundColor = "color-mix(in srgb, var(--bg-color), var(--shadow-color) 30%)")}
-            onmouseleave={(e) => (e.currentTarget.style.backgroundColor = "background: color-mix(in srgb, var(--bg-color), var(--shadow-color) 10%)")}
+            onmouseleave={(e) => (e.currentTarget.style.backgroundColor = "")}
           >
             <svg xmlns="http://www.w3.org/2000/svg" class="segment-icon rotate-270" width="24" height="24" viewBox="0 0 24 24"
               ><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"
@@ -258,7 +258,7 @@
               onUpdate(value)
             }}
             onmouseenter={(e) => (e.currentTarget.style.backgroundColor = "color-mix(in srgb, var(--bg-color), var(--shadow-color) 30%)")}
-            onmouseleave={(e) => (e.currentTarget.style.backgroundColor = "vabackground: color-mix(in srgb, var(--bg-color), var(--shadow-color) 10%)")}
+            onmouseleave={(e) => (e.currentTarget.style.backgroundColor = "")}
           >
             <svg xmlns="http://www.w3.org/2000/svg" class="segment-icon rotate-90" width="24" height="24" viewBox="0 0 24 24"
               ><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"

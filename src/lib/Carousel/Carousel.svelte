@@ -42,12 +42,13 @@
     <h5 class={`${label.class}`}>{label.name}</h5>
   {/if}
   <!-- Карусель -->
-  <div class="relative w-full overflow-hidden rounded-2xl bg-(--back-color)/50">
+  <!-- По design-handoff (раздел 9): сплошной фон, стрелки 32 px на поверхности с линией и тенью уровня 2 -->
+  <div class="relative w-full overflow-hidden rounded-2xl bg-(--container-color)">
     <!-- Кнопки навигации -->
     {#if !isAtStart}
       <button
         transition:slide={{ axis: "x" }}
-        class="absolute z-10 size-10 -translate-y-1/2 cursor-pointer top-1/2 left-1 p-2 rounded-full bg-(--field-color) [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full shadow-[0_0_6px_var(--shadow-color)] rotate-180"
+        class="absolute z-10 size-[32px] -translate-y-1/2 cursor-pointer top-1/2 left-1 p-1.5 rounded-full border border-(--hairline-color) bg-(--back-color) text-(--muted-color) transition-colors duration-150 hover:text-(--font-color) [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full shadow-(--elevation-2) rotate-180"
         onclick={() => scrollCarousel(-scrollValue)}
       >
         <ArrowIcon />
@@ -56,7 +57,7 @@
     {#if !isAtEnd}
       <button
         transition:slide={{ axis: "x" }}
-        class="absolute z-10 size-10 -translate-y-1/2 cursor-pointer top-1/2 right-1 p-2 rounded-full bg-(--field-color) [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full shadow-[0_0_6px_var(--shadow-color)]"
+        class="absolute z-10 size-[32px] -translate-y-1/2 cursor-pointer top-1/2 right-1 p-1.5 rounded-full border border-(--hairline-color) bg-(--back-color) text-(--muted-color) transition-colors duration-150 hover:text-(--font-color) [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full shadow-(--elevation-2)"
         onclick={() => scrollCarousel(scrollValue)}
       >
         <ArrowIcon />
