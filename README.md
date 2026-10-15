@@ -71,6 +71,18 @@ npm run build       # сборка пакета (svelte-kit sync + svelte-packag
 npm run Formatting  # prettier --write .
 ```
 
+### Публикация в npm
+
+Коммит в `main` с `[publish]` в сообщении (`"X.Y.Z [deploy] [publish]"`, версия поднята в `package.json`) запускает
+`.github/workflows/npm_publish.yaml`. Публикация идёт через **trusted publisher** npm (OIDC): workflow получает
+одноразовый токен от GitHub (`permissions: id-token: write`), постоянный `NPM_TOKEN` не нужен, provenance добавляется
+автоматически. Требования npm: npm CLI 11.5.1+ (workflow обновляет его сам), Node 22.14+, `repository.url` в
+`package.json` дословно совпадает с репозиторием.
+
+Связь настраивается на npmjs.com → пакет → Settings → Trusted Publisher: GitHub Actions, `Oleg-Perevyshin/ElementsUI`,
+workflow `npm_publish.yaml`, разрешение «npm publish». Новая связь подтверждается первой успешной публикацией и
+должна пройти её в течение 2 дней, иначе истекает. Существующую связь изменить нельзя — только удалить и создать заново.
+
 ---
 
 Лицензия: MIT — см. `LICENSE`.

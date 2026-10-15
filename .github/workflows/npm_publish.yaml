@@ -1,4 +1,6 @@
 # .github/workflows/npm_publish.yaml
+# Публикация через trusted publisher npm (OIDC): токен NPM_TOKEN не нужен, provenance добавляется автоматически.
+# Связь на npmjs.com: Oleg-Perevyshin/ElementsUI, workflow npm_publish.yaml, разрешение «npm publish».
 name: Публикация в NPM
 
 on:
@@ -12,6 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      id-token: write # OIDC-токен для trusted publishing
 
     steps:
       - name: Клонирование репозитория
@@ -23,6 +26,9 @@ jobs:
           node-version: "24"
           registry-url: "https://registry.npmjs.org"
 
+      - name: Обновление npm (trusted publishing требует npm 11.5.1+)
+        run: npm install -g npm@latest
+
       - name: Установка зависимостей
         run: npm install
 
@@ -31,5 +37,3 @@ jobs:
 
       - name: Публикация в NPM
         run: npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

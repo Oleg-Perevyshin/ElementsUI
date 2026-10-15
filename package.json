@@ -1,6 +1,10 @@
 {
   "name": "poe-svelte-ui-lib",
   "version": "1.36.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Oleg-Perevyshin/ElementsUI.git"
+  },
   "license": "MIT",
   "type": "module",
   "scripts": {
