@@ -14,14 +14,20 @@
     onPropertyChange: (updates: Partial<{ properties?: string | object; name?: string; access?: string }>) => void
   }>()
 
-  const HEIGHT_OPTIONS = [250, 300, 400, 500, 600, 800].map((value) => ({ id: crypto.randomUUID(), value, name: `${value} px` }))
+  /* Высота карты размерами, как у текстового поля: S/M/L/XL */
+  const HEIGHT_OPTIONS = [
+    { value: 250, name: "S" },
+    { value: 400, name: "M" },
+    { value: 600, name: "L" },
+    { value: 800, name: "XL" },
+  ].map((o) => ({ id: crypto.randomUUID(), ...o }))
   const TRACK_LENGTH_OPTIONS = [100, 500, 1000, 5000, 10000, 50000].map((value) => ({ id: crypto.randomUUID(), value, name: String(value) }))
 
-  /* Группы вводятся через запятую: "MAV, GNSS" */
+  /* Группы через пробел, как переменные кнопки (имя группы не содержит пробелов): "MAV GNSS" */
   const setGroups = (raw: unknown) => {
     const list = String(raw ?? "")
-      .split(",")
-      .map((g) => g.trim())
+      .trim()
+      .split(/[\s,]+/)
       .filter(Boolean)
     updateProperty("groups", list.length ? list : ["MAV"], component, onPropertyChange)
   }
@@ -34,7 +40,7 @@
       value={component.properties.label?.name}
       onUpdate={(value) => updateProperty("label.name", value as string, component, onPropertyChange)}
     />
-    <UI.Input label={{ name: "Группы полей (через запятую)" }} value={(component.properties.groups ?? ["MAV"]).join(", ")} onUpdate={setGroups} />
+    <UI.Input label={{ name: "Группы полей (через пробел)" }} value={(component.properties.groups ?? ["MAV"]).join(" ")} onUpdate={setGroups} />
     <WidgetAccentPicker
       value={component.properties.componentClass ?? ""}
       onUpdate={(value) => updateProperty("componentClass", value, component, onPropertyChange)}
@@ -45,7 +51,7 @@
       label={{ name: "Высота карты" }}
       type="buttons"
       options={HEIGHT_OPTIONS}
-      value={HEIGHT_OPTIONS.find((opt) => opt.value === (component.properties.height ?? 400))}
+      value={HEIGHT_OPTIONS.find((opt) => opt.value === (component.properties.height ?? 400)) ?? HEIGHT_OPTIONS[1]}
       onUpdate={(option) => updateProperty("height", (option as { value: number }).value, component, onPropertyChange)}
     />
     <CommonSnippets
