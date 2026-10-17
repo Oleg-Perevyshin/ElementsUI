@@ -227,15 +227,30 @@
             {/each}
           </select>
         </div>
-
-        <button
-          class="cursor-pointer rounded px-2 py-1 text-sm font-medium whitespace-nowrap disabled:cursor-default disabled:opacity-50"
-          disabled={!devices.some(hasFixPoint)}
-          onclick={fitAllDevices}
-        >
-          {$T("constructor.props.map.fitAll")}
-        </button>
       </div>
+    </CustomControl>
+
+    <!-- Штатная кнопка карты в колонке зума/геолокации/полного экрана -->
+    <CustomControl position="top-right">
+      <button
+        type="button"
+        class="flex! items-center justify-center text-[#333] disabled:opacity-40"
+        title={$T("constructor.props.map.fitAll")}
+        aria-label={$T("constructor.props.map.fitAll")}
+        disabled={!devices.some(hasFixPoint)}
+        onclick={fitAllDevices}
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
+          <path
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M4 9V5a1 1 0 0 1 1-1h4m6 0h4a1 1 0 0 1 1 1v4m0 6v4a1 1 0 0 1-1 1h-4m-6 0H5a1 1 0 0 1-1-1v-4m5-3a3 3 0 1 0 6 0a3 3 0 1 0-6 0"
+          />
+        </svg>
+      </button>
     </CustomControl>
 
     {#if trackEnabled}
