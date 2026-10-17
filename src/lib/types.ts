@@ -51,7 +51,6 @@ export interface UIComponent {
     | "Graph"
     | "Input"
     | "Joystick"
-    | "Map"
     | "PeriodChart"
     | "ProgressBar"
     | "Select"
@@ -68,6 +67,7 @@ export interface UIComponent {
     | "WidgetStackInfo"
     | "WidgetRGBStrip"
     | "WidgetPFD"
+    | "WidgetMap"
 
   properties:
     | IAccordionProps
@@ -78,7 +78,6 @@ export interface UIComponent {
     | IGraphProps
     | IInputProps
     | IJoystickProps
-    | IMapProps
     | IPeriodChartProps
     | IProgressBarProps
     | ISelectProps
@@ -94,6 +93,7 @@ export interface UIComponent {
     | IWidgetStackInfoProps
     | IWidgetRGBStripProps
     | IWidgetPFDProps
+    | IWidgetMapProps
 
   position: Required<Position>
   parentId: string
@@ -316,27 +316,6 @@ export interface IJoystickProps {
   axes?: { name: string; minNum?: number; maxNum?: number }[]
   buttonIcon?: ConstructorOfATypedSvelteComponent | string
   onUpdate?: (value: number[]) => void
-}
-
-/* ********************************************************** */
-/* Интерфейс карты */
-export interface IDeviceGNSS {
-  NavLat: number
-  NavLon: number
-  NavAlt: number
-  DevName: string
-  DevSN: string
-  NavHeading: number
-  NavSatUse: number
-}
-export interface IMapProps {
-  id?: string
-  wrapperClass?: string
-  label?: { name?: string; class?: string }
-  data: IDeviceGNSS | null
-  markerIcon?: ConstructorOfATypedSvelteComponent | string
-  trackEnabled?: boolean
-  trackLength?: number
 }
 
 /* ********************************************************** */
@@ -790,6 +769,36 @@ export interface IWidgetPFDProps {
   value?: Partial<IWidgetPFDData>
   keys?: Partial<Record<keyof IWidgetPFDData, string>>
   limits?: IWidgetPFDLimits
+  collapsed?: boolean
+  persistKey?: string
+}
+
+/* Карта — поля одной группы борта (MAV, GNSS...) */
+export interface IWidgetMapData {
+  Lat: number /* широта, °; 0 вместе с Lon — нет фикса */
+  Lon: number /* долгота, ° */
+  Alt: number /* высота, м */
+  Heading: number /* курс, 0..360° — поворот маркера */
+  Sat: number /* спутников */
+}
+
+export interface IWidgetMapProps {
+  id?: string
+  wrapperClass?: string
+  componentClass?: string
+  label?: { name?: string }
+  /* Префиксы групп полей — каждая группа отдельный борт (маркер и траектория), по умолчанию ["MAV"] */
+  groups?: string[]
+  /* Значения по группам: { MAV: { Lat, Lon, ... }, GNSS: {...} } */
+  value?: Record<string, Partial<IWidgetMapData>>
+  keys?: Partial<Record<keyof IWidgetMapData, string>>
+  /* Высота карты, px */
+  height?: number
+  markerIcon?: ConstructorOfATypedSvelteComponent | string
+  /* Начальные значения переключателей оператора поверх карты */
+  trackEnabled?: boolean
+  trackLength?: number
+  markerTimeout?: number
   collapsed?: boolean
   persistKey?: string
 }

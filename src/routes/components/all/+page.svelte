@@ -1,11 +1,10 @@
 <!-- src/routes/test/+page.svelte -->
 <script lang="ts">
   import * as UI from "$lib"
-  import type { IDeviceGNSS, IOption, ITableHeader } from "$lib/types"
+  import type { IOption, ITableHeader } from "$lib/types"
   import IconGripHorizontalUp from "../../../appIcons/IconGripHorizontalUp.svelte"
   import IconGripHorizontalDown from "../../../appIcons/IconGripHorizontalDown.svelte"
   import IconGripVerticalDual from "../../../appIcons/IconGripVerticalDual.svelte"
-  import { onDestroy, onMount } from "svelte"
   import IconGripVerticalRight from "../../../appIcons/IconGripVerticalRight.svelte"
   import IconGripVerticalLeft from "../../../appIcons/IconGripVerticalLeft.svelte"
 
@@ -17,7 +16,6 @@
     Graph: { component: UI.Graph },
     Input: { component: UI.Input },
     Joystick: { component: UI.Joystick },
-    Map: { component: UI.Map },
     ProgressBar: { component: UI.ProgressBar },
     Select: { component: UI.Select },
     Slider: { component: UI.Slider },
@@ -45,72 +43,6 @@
     { id: crypto.randomUUID(), value: 14, name: "1110", class: "bg-max" },
     { id: crypto.randomUUID(), value: 15, name: "1111", class: "bg-max" },
   ]
-
-  /* Данные для карты */
-  let data: IDeviceGNSS | null = $state(null)
-  let intervalId: any | null = null
-
-  // Храним уже созданные устройства для возможного обновления
-  let existingDevices: string[] = []
-
-  const generateRandomDevice = (): IDeviceGNSS => {
-    const now = Date.now()
-
-    // С вероятностью 30% обновляем существующее устройство
-    if (existingDevices.length > 0 && Math.random() < 0.3) {
-      const randomDevSN = existingDevices[Math.floor(Math.random() * existingDevices.length)]
-
-      // Генерируем небольшое смещение от предыдущей позиции (чтобы было реалистично)
-      const lat = (Math.random() * 180 - 90).toFixed(6)
-      const lon = (Math.random() * 360 - 180).toFixed(6)
-      const head = Math.floor(Math.random() * 360)
-
-      return {
-        NavLat: parseFloat(lat),
-        NavLon: parseFloat(lon),
-        NavAlt: Math.floor(Math.random() * 5000),
-        DevName: randomDevSN.replace("SN-", "Device-"), // опционально: сохранить имя
-        DevSN: randomDevSN, // ← тот же SN!
-        NavHeading: head,
-        NavSatUse: Math.floor(Math.random() * 20) + 4,
-      }
-    }
-
-    // Иначе — создаём новое устройство
-    const lat = 50 + (Math.random() - 0.5) * 30 // от 35 до 65
-    const lon = 30 + (Math.random() - 0.5) * 50 // от 5 до 55
-    const head = Math.floor(Math.random() * 360)
-
-    const newDevSN = `SN-${now.toString(36).slice(-8).toUpperCase()}`
-    existingDevices.push(newDevSN) // сохраняем для будущих обновлений
-
-    // Ограничиваем размер списка, чтобы не рос бесконечно
-    if (existingDevices.length > 10) {
-      existingDevices = existingDevices.slice(-10) // оставляем последние 20
-    }
-
-    return {
-      NavLat: parseFloat(lat.toFixed(6)),
-      NavLon: parseFloat(lon.toFixed(6)),
-      NavAlt: Math.floor(Math.random() * 5000),
-      DevName: `Device-${Math.floor(Math.random() * 100)}`,
-      DevSN: newDevSN,
-      NavHeading: head,
-      NavSatUse: Math.floor(Math.random() * 20) + 4,
-    }
-  }
-
-  // Запуск симуляции
-  onMount(() => {
-    data = generateRandomDevice()
-    intervalId = setInterval(() => {
-      data = generateRandomDevice()
-    }, 5000)
-  })
-
-  onDestroy(() => {
-    if (intervalId) clearInterval(intervalId)
-  })
 
   /* Интерфейс для строки таблицы (в таблицу передается желаемый массив объектов) */
   interface ITableRow {
@@ -199,7 +131,7 @@
   let inputString: string = $state("String Data")
   let inputNumber: number = $state(7)
   let progressBarValue: UI.IReceivingDataObject[] = $state([{ Name: "progress", Value: 66 }])
-  let selectOption: IOption = $state({ id: "Map", name: "Map", value: "Map" })
+  let selectOption: IOption = $state({ id: "Button", name: "Button", value: "Button" })
   let COMPONENT_OPTIONS = Object.keys(componentMap).map((name) => ({ id: name, name: name, value: name }))
   let switchValue = $state(0)
   let fullSwitchValue = $state(10)
@@ -454,13 +386,6 @@
         ]}
         buttonIcon={IconGripVerticalDual}
       />
-    </div>
-  </UI.Accordion>
-
-  <!-- Компонент MAP -->
-  <UI.Accordion label={{ name: "Map" }} isOpen={false} wrapperClass="col-span-2">
-    <div class="h-150">
-      <UI.Map label={{ name: "Карта" }} {data} />
     </div>
   </UI.Accordion>
 

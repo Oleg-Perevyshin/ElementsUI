@@ -65,7 +65,6 @@
     component.type === "ProgressBar" ||
     component.type === "TextField" ||
     component.type === "Graph" ||
-    component.type === "Map" ||
     component.type === "PeriodChart"
       ? $optionsStore.ACCESS_OPTION.filter((o) => o.value !== "viewOnly")
       : $optionsStore.ACCESS_OPTION}
@@ -101,7 +100,6 @@
         | UI.ITableProps<object>
         | UI.IFileAttachProps
         | UI.IJoystickProps
-        | UI.IMapProps
     ).label?.name}
     onUpdate={(value) => updateProperty("label.name", value as string, component, onPropertyChange)}
   />
@@ -128,7 +126,6 @@
               | UI.ITableProps<object>
               | UI.IFileAttachProps
               | UI.IJoystickProps
-              | UI.IMapProps
           ).label?.class,
           (option as UI.IOption<string>).value,
         ),
@@ -152,7 +149,6 @@
         | UI.ITableProps<object>
         | UI.IFileAttachProps
         | UI.IJoystickProps
-        | UI.IMapProps
     ).label?.class}
     onUpdate={(value) => updateProperty("label.class", value as string, component, onPropertyChange)}
   />

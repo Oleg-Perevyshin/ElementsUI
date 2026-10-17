@@ -47,7 +47,6 @@ ${formatObjectToString(selectComponent.properties as ISelectProps)}
     Graph: { component: UI.Graph },
     Input: { component: UI.Input },
     Joystick: { component: UI.Joystick },
-    Map: { component: UI.Map },
     ProgressBar: { component: UI.ProgressBar },
     Select: { component: UI.Select },
     Slider: { component: UI.Slider },
@@ -76,7 +75,7 @@ ${formatObjectToString(selectComponent.properties as ISelectProps)}
     { id: crypto.randomUUID(), value: 15, name: "1111", class: "bg-max" },
   ]
 
-  let selectOption: IOption = $state({ id: "Map", name: "Map", value: "Map" })
+  let selectOption: IOption = $state({ id: "Button", name: "Button", value: "Button" })
   let COMPONENT_OPTIONS = Object.keys(componentMap).map((name) => ({ id: name, name: name, value: name }))
   let fullSwitchValue = $state(10)
 

@@ -18,8 +18,6 @@ export { default as InputProps } from "./Input/InputProps.svelte"
 export { default as Joystick } from "./Joystick/Joystick.svelte"
 export { default as JoystickProps } from "./Joystick/JoystickProps.svelte"
 export { default as Modal } from "./Modal.svelte"
-export { default as Map } from "./Map/Map.svelte"
-export { default as MapProps } from "./Map/MapProps.svelte"
 export { default as PeriodChart } from "./PeriodChart/PeriodChart.svelte"
 export { default as PeriodChartProps } from "./PeriodChart/PeriodChartProps.svelte"
 export { default as ProgressBar } from "./ProgressBar/ProgressBar.svelte"
@@ -52,6 +50,8 @@ export { default as WidgetRGBStrip } from "./WidgetRGBStrip/WidgetRGBStrip.svelt
 export { default as WidgetRGBStripProps } from "./WidgetRGBStrip/WidgetRGBStripProps.svelte"
 export { default as WidgetPFD } from "./WidgetPFD/WidgetPFD.svelte"
 export { default as WidgetPFDProps } from "./WidgetPFD/WidgetPFDProps.svelte"
+export { default as WidgetMap } from "./WidgetMap/WidgetMap.svelte"
+export { default as WidgetMapProps } from "./WidgetMap/WidgetMapProps.svelte"
 
 export * from "./locales/i18n"
 export * from "./locales/translations"
@@ -71,7 +71,6 @@ export {
   type IDividerProps,
   type ISliderProps,
   type ITextFieldProps,
-  type IMapProps,
   type IProgressBarProps,
   type IWidgetProps,
   type IWidgetWiFiProps,
@@ -91,6 +90,8 @@ export {
   type IWidgetPFDProps,
   type IWidgetPFDData,
   type IWidgetPFDLimits,
+  type IWidgetMapProps,
+  type IWidgetMapData,
   type IGraphProps,
   type IGraphDataObject,
   type IGraphHistoryPoint,
@@ -106,7 +107,6 @@ export {
   type ITabsProps,
   type IJoystickProps,
   type IFileAttachProps,
-  type IDeviceGNSS,
   type ICarouselProps,
   type IReceivingDataObject,
   type IVideoViewerProps,
