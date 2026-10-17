@@ -39,7 +39,7 @@ jobs:
         run: npm publish --access public
 
   # После публикации поднимает версию библиотеки в DevCloud (Forgejo) и разворачивает облако коммитом с [deploy].
-  # Секрет FORGEJO_ACCESS_TOKEN — токен Forgejo с правом записи в xPOE-Studio/DevCloud.
+  # Секрет DEVCLOUD_ACCESS_TOKEN — токен Forgejo с правом записи в xPOE-Studio/DevCloud.
   update-devcloud:
     needs: publish
     runs-on: ubuntu-latest
@@ -67,8 +67,8 @@ jobs:
 
       - name: Клонирование DevCloud
         env:
-          FORGEJO_ACCESS_TOKEN: ${{ secrets.FORGEJO_ACCESS_TOKEN }}
-        run: git clone --depth 1 "https://oauth2:${FORGEJO_ACCESS_TOKEN}@git.xpoe.pro/xPOE-Studio/DevCloud.git" devcloud
+          DEVCLOUD_ACCESS_TOKEN: ${{ secrets.DEVCLOUD_ACCESS_TOKEN }}
+        run: git clone --depth 1 "https://oauth2:${DEVCLOUD_ACCESS_TOKEN}@git.xpoe.pro/xPOE-Studio/DevCloud.git" devcloud
 
       - name: Обновление библиотеки и проверка типов
         working-directory: devcloud

@@ -120,5 +120,5 @@
 </UI.Accordion>
 
 <UI.Accordion wrapperClass="mt-2" label={{ name: $T("library.regexp"), icon: Library }} isOpen={false}>
-  <div class="text-left justify-center">{@html renderedContents[2]}</div>
+  <div class="markdown-content text-left justify-center">{@html renderedContents[2]}</div>
 </UI.Accordion>

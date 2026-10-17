@@ -99,7 +99,7 @@
 
 <div class="mx-auto flex h-screen max-w-450 flex-col">
   <!-- Верхняя панель -->
-  <header class={"sticky top-0 z-50 m-1 mt-2 flex h-14 items-center justify-between rounded-full bg-(--back-color)/50 p-4"}>
+  <header class={"sticky top-0 z-50 m-1 mt-2 flex h-14 items-center justify-between rounded-2xl border border-(--hairline-color) bg-(--back-color) p-4"}>
     <div class="flex items-center gap-2">
       <a href="/ElementsUI/" class="ml-2 no-underline! transition hover:scale-101"><h1>POE-Svelte-UI-Lib</h1></a>
     </div>
@@ -133,7 +133,7 @@
 
   <div class="mb-2 flex flex-1 overflow-hidden">
     <!-- Панель навигации -->
-    <nav class="m-1 flex w-64 flex-col items-start gap-2 overflow-y-auto rounded-2xl bg-(--back-color)/50 p-4">
+    <nav class="m-1 flex w-64 flex-col items-start gap-2 overflow-y-auto rounded-2xl border border-(--hairline-color) bg-(--back-color) p-4">
       {#each menuItems as item}
         <div class="flex w-full">
           <UI.Button
@@ -153,22 +153,8 @@
       {/each}
     </nav>
     <!-- Панель контента -->
-    <div class="m-1 flex-1 overflow-y-auto rounded-2xl bg-(--back-color)/50 p-4">
+    <div class="m-1 flex-1 overflow-y-auto rounded-2xl border border-(--hairline-color) bg-(--back-color) p-4">
       {@render children()}
     </div>
   </div>
 </div>
-
-<style>
-  /* Стили для светлой темы */
-  :global(body.light) {
-    color: #333; /* Цвет текста для светлой темы */
-    background: radial-gradient(circle, rgba(255, 221, 192, 1) 0%, rgba(215, 204, 208, 1) 67%, rgba(130, 205, 224, 1) 100%);
-  }
-
-  /* Стили для темной темы */
-  :global(body.dark) {
-    color: #e2e3e7; /* Цвет текста для темной темы */
-    background: radial-gradient(circle, rgba(43, 88, 118, 1) 0%, rgba(53, 56, 110, 1) 71%, rgba(78, 67, 118, 1) 100%);
-  }
-</style>

@@ -67,7 +67,7 @@
           {@render examples()}
         </div>
       {:else if mainSnippet === "info"}
-        <div class="min-h-0 flex-1 overflow-y-auto text-left">
+        <div class="markdown-content min-h-0 flex-1 overflow-y-auto text-left">
           {@html readmeHtml}
         </div>
       {:else}
