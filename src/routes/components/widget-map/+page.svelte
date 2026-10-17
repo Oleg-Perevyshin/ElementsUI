@@ -16,10 +16,21 @@
   /* Два борта по маршруту над Минском (модель MavlinkTelemetry_Simulate прошивки 20.00.000-01), второй стартует с другой точки */
   const simMav = createFlightSim()
   const simGnss = createFlightSim(3)
-  const pick = ({ Lat, Lon, Alt, Heading, Sat }: IWidgetMapData) => ({ Lat, Lon, Alt, Heading, Sat })
-  let boards: Record<string, IWidgetMapData> = $state({ MAV: pick(simMav(0)), GNSS: pick(simGnss(0)) })
+  const pick = ({ Lat, Lon, Alt, Heading, Sat }: Omit<IWidgetMapData, "DevName" | "DevSN">, DevName: string, DevSN: string): IWidgetMapData => ({
+    Lat,
+    Lon,
+    Alt,
+    Heading,
+    Sat,
+    DevName,
+    DevSN,
+  })
+  let boards: Record<string, IWidgetMapData> = $state({ MAV: pick(simMav(0), "Борт 1", "20000001A1B2C3"), GNSS: pick(simGnss(0), "Борт 2", "20000001D4E5F6") })
   $effect(() => {
-    const timer = setInterval(() => (boards = { MAV: pick(simMav(0.5)), GNSS: pick(simGnss(0.5)) }), 500)
+    const timer = setInterval(
+      () => (boards = { MAV: pick(simMav(0.5), "Борт 1", "20000001A1B2C3"), GNSS: pick(simGnss(0.5), "Борт 2", "20000001D4E5F6") }),
+      500,
+    )
     return () => clearInterval(timer)
   })
 

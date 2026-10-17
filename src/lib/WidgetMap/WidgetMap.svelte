@@ -1,7 +1,7 @@
 <!-- $lib/WidgetMap/WidgetMap.svelte — смарт-виджет «Карта»: борта из групп полей устройства (по умолчанию MAV) с полями
-     Lat/Lon/Alt/Heading/Sat (см. IWidgetMapData), каждая группа — свой маркер и своя траектория. Только отображение:
-     ничего не отправляет и не знает про DeviceStore/WebSocket. Траекторию, длину трека, таймаут маркеров и «Все борта»
-     оператор переключает прямо поверх карты; вид карта сама не меняет — бортов может быть много. -->
+     Lat/Lon/Alt/Heading/Sat/DevName/DevSN (см. IWidgetMapData), каждая группа — свой маркер и своя траектория. Только отображение:
+     ничего не отправляет и не знает про DeviceStore/WebSocket. Траекторию, длину трека и таймаут маркеров оператор
+     переключает прямо поверх карты, «Все борта» — кнопка в шапке; вид карта сама не меняет — бортов может быть много. -->
 <script lang="ts">
   import { onMount, untrack } from "svelte"
   import { slide } from "svelte/transition"
@@ -13,6 +13,8 @@
   import { widgetAccentStyle } from "../widgetAccent"
   import { readPersistedCollapsed, writePersistedCollapsed } from "../widgetCollapse"
   import MapIcon from "./MapIcon.svelte"
+  import FitIcon from "./FitIcon.svelte"
+  import * as UI from "$lib"
   import { MapLibre, NavigationControl, ScaleControl, GeolocateControl, FullScreenControl, Marker, Popup, Line, CustomControl } from "./mapWrapper"
 
   let {
@@ -49,6 +51,8 @@
     alt: number
     heading: number
     sat: number
+    name: string
+    sn: string
     track: [number, number][]
     lastChange: number
     hiddenAt: number
@@ -75,13 +79,25 @@
       const alt = num(v.Alt)
       const heading = num(v.Heading)
       const sat = num(v.Sat)
+      const name = typeof v.DevName === "string" && v.DevName ? v.DevName : group
+      const sn = typeof v.DevSN === "string" ? v.DevSN : ""
       untrack(() => {
         const idx = boards.findIndex((b) => b.group === group)
         const prev = idx === -1 ? null : boards[idx]
-        if (prev && prev.lat === lat && prev.lon === lon && prev.alt === alt && prev.heading === heading && prev.sat === sat) return
+        if (
+          prev &&
+          prev.lat === lat &&
+          prev.lon === lon &&
+          prev.alt === alt &&
+          prev.heading === heading &&
+          prev.sat === sat &&
+          prev.name === name &&
+          prev.sn === sn
+        )
+          return
         const moved = !prev || prev.lat !== lat || prev.lon !== lon
         const track = moved ? [...(prev?.track ?? []), [lon, lat] as [number, number]].slice(-trackLength) : prev!.track
-        const next: Board = { group, lat, lon, alt, heading, sat, track, lastChange: Date.now(), hiddenAt: prev?.hiddenAt ?? 0 }
+        const next: Board = { group, lat, lon, alt, heading, sat, name, sn, track, lastChange: Date.now(), hiddenAt: prev?.hiddenAt ?? 0 }
         if (idx === -1) boards.push(next)
         else boards[idx] = next
       })
@@ -126,7 +142,7 @@
 
   const copyBoard = (b: Board) => {
     navigator.clipboard.writeText(
-      `${b.group}\nLat: ${b.lat.toFixed(6)} | Lon: ${b.lon.toFixed(6)} | Alt: ${b.alt.toFixed(1)}\nHeading: ${b.heading.toFixed(1)} | Satellites: ${b.sat}`,
+      `DevName: ${b.name}\nDevSN: ${b.sn}\nGroup: ${b.group}\nLat: ${b.lat.toFixed(6)} | Lon: ${b.lon.toFixed(6)} | Alt: ${b.alt.toFixed(1)}\nHeading: ${b.heading.toFixed(1)} | Satellites: ${b.sat}`,
     )
     isCopied = true
     setTimeout(() => (isCopied = false), 1000)
@@ -159,16 +175,25 @@
 >
   <WidgetHeader icon={MapIcon} label={label?.name ?? "Карта"} bind:collapsed>
     {#snippet right()}
-      <span
-        class="text-[12px] font-semibold tabular-nums {freshCount === 0
-          ? 'text-(--red-color)'
-          : freshCount < groupList.length
-            ? 'text-(--muted-color)'
-            : 'text-(--green-color)'}"
-        title={$T("constructor.props.map.boards")}
-      >
-        {freshCount} / {groupList.length}
-      </span>
+      <div class="flex items-center gap-3">
+        <UI.Button
+          wrapperClass="w-auto"
+          componentClass="bg-transparent px-3"
+          content={{ icon: FitIcon, name: $T("constructor.props.map.fitAll") }}
+          disabled={collapsed || visibleBoards.length === 0}
+          onClick={fitAllBoards}
+        />
+        <span
+          class="text-[12px] font-semibold tabular-nums {freshCount === 0
+            ? 'text-(--red-color)'
+            : freshCount < groupList.length
+              ? 'text-(--muted-color)'
+              : 'text-(--green-color)'}"
+          title={$T("constructor.props.map.boards")}
+        >
+          {freshCount} / {groupList.length}
+        </span>
+      </div>
     {/snippet}
   </WidgetHeader>
 
@@ -214,29 +239,6 @@
           </div>
         </CustomControl>
 
-        <!-- Штатная кнопка карты в колонке зума/геолокации/полного экрана -->
-        <CustomControl position="top-right">
-          <button
-            type="button"
-            class="flex! items-center justify-center text-[#333] disabled:opacity-40"
-            title={$T("constructor.props.map.fitAll")}
-            aria-label={$T("constructor.props.map.fitAll")}
-            disabled={visibleBoards.length === 0}
-            onclick={fitAllBoards}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
-              <path
-                fill="none"
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M4 9V5a1 1 0 0 1 1-1h4m6 0h4a1 1 0 0 1 1 1v4m0 6v4a1 1 0 0 1-1 1h-4m-6 0H5a1 1 0 0 1-1-1v-4m5-3a3 3 0 1 0 6 0a3 3 0 1 0-6 0"
-              />
-            </svg>
-          </button>
-        </CustomControl>
-
         {#if trackEnabled}
           {#each visibleBoards as board (board.group)}
             {#if board.track.length >= 2}
@@ -276,7 +278,7 @@
                     </div>
                   {/if}
                 </div>
-                <p class="font-bold">{board.group}</p>
+                <p class="font-bold">{board.name}</p>
               </div>
             {/snippet}
 
@@ -284,7 +286,8 @@
               <div class="flex flex-col gap-1.5">
                 <div class="flex items-center gap-1.5">
                   <span class="size-2 shrink-0 rounded-full {isFresh(board) ? 'bg-(--green-color)' : 'bg-(--red-color)'}"></span>
-                  <h6 class="text-sm leading-none font-bold">{board.group}</h6>
+                  <h6 class="text-sm leading-none font-bold">{board.name}</h6>
+                  {#if board.name !== board.group}<span class="text-[0.6rem] font-semibold uppercase opacity-60">{board.group}</span>{/if}
                 </div>
 
                 <div class="grid grid-cols-2 gap-x-3 gap-y-1 rounded-lg bg-(--container-color) p-2 text-xs">
@@ -305,6 +308,8 @@
                     <p class="font-medium">{board.sat}</p>
                   </div>
                 </div>
+
+                {#if board.sn}<p class="text-center font-mono text-[0.6rem] tracking-wide uppercase">{board.sn}</p>{/if}
 
                 <div class="flex items-center justify-between border-t border-(--hairline-color) pt-1">
                   <div class="relative flex items-center">

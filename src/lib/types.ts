@@ -773,13 +773,15 @@ export interface IWidgetPFDProps {
   persistKey?: string
 }
 
-/* Карта — поля одной группы борта (MAV, GNSS...) */
+/* Карта — поля одной группы борта (MAV, GNSS...); имена общие с WidgetPFD (Lat/Lon/Alt/Heading/Sat) и WidgetDeviceInfo (DevName/DevSN) */
 export interface IWidgetMapData {
   Lat: number /* широта, °; 0 вместе с Lon — нет фикса */
   Lon: number /* долгота, ° */
   Alt: number /* высота, м */
   Heading: number /* курс, 0..360° — поворот маркера */
   Sat: number /* спутников */
+  DevName: string /* имя борта — подпись маркера и заголовок карточки */
+  DevSN: string /* серийный номер — в карточке */
 }
 
 export interface IWidgetMapProps {
