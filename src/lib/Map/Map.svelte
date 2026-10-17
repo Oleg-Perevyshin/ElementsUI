@@ -51,9 +51,8 @@
   }
 
   let devices: MapDevice[] = $state([])
-  /* Экземпляр MapLibre — для перелёта к первому устройству с фиксом (стартовый вид — весь мир) */
+  /* Экземпляр MapLibre — для кнопки «Все борта»; сам вид карта не меняет, бортов может быть много */
   let mapInstance: any = $state()
-  let isCentered = false
   let isCopied = $state(false)
   let isDarkMode = $state(false)
   let markerTimeout = $state(30_000)
@@ -88,10 +87,6 @@
     if (data) {
       /* (0, 0) — признак отсутствия реального GPS-фикса, в траекторию такие точки не добавляем */
       const hasFix = Number.isFinite(data.NavLat) && Number.isFinite(data.NavLon) && (data.NavLat !== 0 || data.NavLon !== 0)
-      if (hasFix && !isCentered && mapInstance) {
-        mapInstance.flyTo({ center: [data.NavLon, data.NavLat], zoom: 16 })
-        isCentered = true
-      }
       const idx = devices.findIndex((d) => d.DevSN === data?.DevSN)
       if (idx !== -1) {
         /* Обновление существующего; точку трека добавляем только при смене координат — курс и высота приходят чаще позиции */
@@ -162,6 +157,23 @@
     { label: "1 h", value: 3_600_000 },
   ]
 
+  /* Вписывает в экран все борта с фиксом, один борт — приближение к нему */
+  const hasFixPoint = (d: MapDevice) => Number.isFinite(d.NavLat) && Number.isFinite(d.NavLon) && (d.NavLat !== 0 || d.NavLon !== 0)
+  const fitAllDevices = () => {
+    const fixed = devices.filter(hasFixPoint)
+    if (!mapInstance || fixed.length === 0) return
+    if (fixed.length === 1) return mapInstance.flyTo({ center: [fixed[0].NavLon, fixed[0].NavLat], zoom: 16 })
+    const lons = fixed.map((d) => d.NavLon)
+    const lats = fixed.map((d) => d.NavLat)
+    mapInstance.fitBounds(
+      [
+        [Math.min(...lons), Math.min(...lats)],
+        [Math.max(...lons), Math.max(...lats)],
+      ],
+      { padding: 60, maxZoom: 16 },
+    )
+  }
+
   const changeTimeout = (val: number) => {
     markerTimeout = val
     devices.forEach((device) => restartFreshTimer(device.DevSN))
@@ -215,6 +227,14 @@
             {/each}
           </select>
         </div>
+
+        <button
+          class="cursor-pointer rounded px-2 py-1 text-sm font-medium whitespace-nowrap disabled:cursor-default disabled:opacity-50"
+          disabled={!devices.some(hasFixPoint)}
+          onclick={fitAllDevices}
+        >
+          {$T("constructor.props.map.fitAll")}
+        </button>
       </div>
     </CustomControl>
 

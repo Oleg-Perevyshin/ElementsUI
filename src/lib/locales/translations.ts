@@ -365,6 +365,7 @@ const translations: Record<string, [string, string, string]> = {
   "constructor.props.multiselect": ["Мультивыбор", "Multi-select", "多选"],
   "constructor.props.access": ["Доступ (не для владельца)", "Access (non-owner)", "访问权限（非所有者）"],
   "constructor.props.map.timeout": ["Таймаут маркеров:", "Marker timeout:", "标记超时："],
+  "constructor.props.map.fitAll": ["Все борта", "All vehicles", "全部设备"],
   "constructor.props.map.track": ["Траектория", "Track", "轨迹"],
   "constructor.props.map.trackLength": ["Точек в траектории:", "Points in track:", "轨迹点数："],
   "constructor.props.joystick.pitch.axe": ["Ocь ⮃", "Pitch axis ⮃", "俯仰轴 ⮃"],
