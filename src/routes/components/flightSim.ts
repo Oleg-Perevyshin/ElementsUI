@@ -1,5 +1,6 @@
 /* Имитация полёта для демо WidgetPFD/WidgetMap — та же модель, что MavlinkTelemetry_Simulate в прошивке 20.00.000-01:
-   облёт маршрута из 7 точек над Минском, развороты креном до 35° с инерцией, западный ветер с порывами, набор/снижение */
+   облёт маршрута из 7 точек над Минском, развороты креном до 35° с инерцией, западный ветер с порывами, набор/снижение,
+   навигация к точке, связь, HDOP, EKF и сообщения автопилота */
 import type { IWidgetPFDData } from "$lib/types"
 
 export const HOME = { lat: 53.9006, lon: 27.559 }
@@ -19,12 +20,35 @@ const RAD2DEG = 180 / Math.PI
 const remainder = (x: number, y: number) => x - y * Math.round(x / y)
 
 export const createFlightSim = (startWp = 0) => {
-  const s = { t: 0, wp: startWp, north: 0, east: 0, alt: 120, psi: Math.PI / 2, phi: 0, v: 18, climb: 0, vn: 0, ve: 0 }
+  const s = {
+    t: 0,
+    wp: startWp,
+    north: 0,
+    east: 0,
+    alt: 120,
+    psi: Math.PI / 2,
+    phi: 0,
+    v: 18,
+    climb: 0,
+    vn: 0,
+    ve: 0,
+    msg: "",
+    msgSev: 6,
+    msgSeq: 0,
+    ekfWarned: 0,
+    battWarned: 0,
+  }
+  const post = (sev: number, text: string) => {
+    s.msg = text
+    s.msgSev = sev
+    s.msgSeq++
+  }
 
   const step = () => {
     s.t += STEP
     let wp = ROUTE[s.wp]
     if (Math.hypot(wp[0] - s.north, wp[1] - s.east) < 60) {
+      post(6, `Reached waypoint #${s.wp + 1}`)
       s.wp = (s.wp + 1) % ROUTE.length
       wp = ROUTE[s.wp]
     }
@@ -46,6 +70,24 @@ export const createFlightSim = (startWp = 0) => {
     for (let i = Math.min(Math.round(dtSec / STEP), 100); i > 0; i--) step()
     const t = s.t
     const altMsl = s.alt + 220
+    const wp = ROUTE[s.wp]
+    const prev = ROUTE[(s.wp + ROUTE.length - 1) % ROUTE.length]
+    const dn = wp[0] - prev[0]
+    const de = wp[1] - prev[1]
+    const leg = Math.max(Math.hypot(dn, de), 1)
+    const homeDist = Math.hypot(s.north, s.east)
+    const ekfCycle = Math.floor(t / 180) + 1
+    const ekfSpike = t % 180 > 170
+    if (ekfSpike && s.ekfWarned !== ekfCycle) {
+      s.ekfWarned = ekfCycle
+      post(4, "EKF variance")
+    }
+    const battRem = 100 - Math.trunc((t % 1200) / 15)
+    const battCycle = Math.floor(t / 1200) + 1
+    if (battRem < 25 && s.battWarned !== battCycle) {
+      s.battWarned = battCycle
+      post(2, "Battery 1 low")
+    }
     return {
       Roll: s.phi * RAD2DEG + 1.5 * Math.sin(t * 1.7) + 0.8 * Math.sin(t * 3.1),
       Pitch: Math.atan2(s.climb, s.v) * RAD2DEG + 2.5 + Math.sin(t * 1.3),
@@ -63,7 +105,7 @@ export const createFlightSim = (startWp = 0) => {
       Sat: 15 + Math.trunc(3 * Math.sin(t / 50)),
       BV: 16.6 - (t % 1200) * 0.002,
       BC: 8 + 3 * Math.max(s.climb, 0) + 0.1 * Math.abs(s.phi * RAD2DEG),
-      BRem: 100 - Math.trunc((t % 1200) / 15),
+      BRem: battRem,
       Mode: 10,
       VType: 1,
       Armed: 1,
@@ -71,6 +113,21 @@ export const createFlightSim = (startWp = 0) => {
       HomeLon: HOME.lon,
       Press: 1013.25 * Math.pow(1 - 2.25577e-5 * altMsl, 5.25588),
       Temp: 18 - altMsl * 0.0065,
+      WPNum: s.wp + 1,
+      WPDist: Math.hypot(wp[0] - s.north, wp[1] - s.east),
+      WPBrg: (Math.atan2(wp[1] - s.east, wp[0] - s.north) * RAD2DEG + 360) % 360,
+      AltErr: wp[2] - s.alt,
+      SpdErr: 18 + 2 * Math.sin(t / 23) - s.v,
+      XTE: (dn * (s.east - prev[1]) - de * (s.north - prev[0])) / leg,
+      RSSI: (Math.max(40, 230 - homeDist * 0.06 + 6 * Math.sin(t * 0.9)) * 100) / 254,
+      RemRSSI: (Math.max(35, 222 - homeDist * 0.07 + 5 * Math.sin(t * 0.7)) * 100) / 254,
+      Drop: (10 + homeDist * 0.05) * 0.01,
+      HDOP: (95 + 20 * Math.sin(t / 40)) * 0.01,
+      EKF: ekfSpike ? 0.65 : 0.12 + 0.05 * Math.sin(t / 13),
+      SensErr: 0,
+      Msg: s.msg,
+      MsgSev: s.msgSev,
+      MsgSeq: s.msgSeq,
     }
   }
 }
