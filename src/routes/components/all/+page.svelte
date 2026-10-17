@@ -11,7 +11,6 @@
   const componentMap = {
     Accordion: { component: UI.Accordion },
     Button: { component: UI.Button },
-    ColorPicker: { component: UI.ColorPicker },
     FileAttach: { component: UI.FileAttach },
     Graph: { component: UI.Graph },
     Input: { component: UI.Input },
@@ -228,11 +227,6 @@
       <UI.Button content={{ icon: IconGripHorizontalUp }} wrapperClass="w-10 h-10" componentClass="bg-purple rounded-full" />
       <UI.Button content={{ icon: IconGripHorizontalDown, info: { text: "Info for Icon Button", side: "right" } }} wrapperClass="w-10" />
     </div>
-  </UI.Accordion>
-
-  <!-- Компонент COLOR PICKER -->
-  <UI.Accordion label={{ name: "Color Picker" }} isOpen={false}>
-    <UI.ColorPicker label={{ name: "Выбор цвета из палитры" }} value={[186, 25, 255]} />
   </UI.Accordion>
 
   <!-- Компонент INPUT -->

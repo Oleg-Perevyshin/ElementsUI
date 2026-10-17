@@ -45,7 +45,6 @@ export interface UIComponent {
   type:
     | "Accordion"
     | "Button"
-    | "ColorPicker"
     | "Divider"
     | "FileAttach"
     | "Graph"
@@ -72,7 +71,6 @@ export interface UIComponent {
   properties:
     | IAccordionProps
     | IButtonProps
-    | IColorPickerProps
     | IDividerProps
     | IFileAttachProps
     | IGraphProps
@@ -174,17 +172,6 @@ export interface ICarouselProps {
   label?: { name?: string; class?: string }
   scrollValue?: number
   children?: Snippet
-}
-
-/* ********************************************************** */
-/* Интерфейс палитры */
-export interface IColorPickerProps {
-  id?: string
-  wrapperClass?: string
-  label?: { name?: string; class?: string }
-  value?: number[]
-  readonly?: boolean
-  onChange?: (value: number[]) => void
 }
 
 /* ********************************************************** */

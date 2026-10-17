@@ -94,7 +94,6 @@
         | UI.IAccordionProps
         | UI.IInputProps
         | UI.ISwitchProps
-        | UI.IColorPickerProps
         | UI.ISliderProps
         | UI.IGraphProps
         | UI.ITableProps<object>
@@ -120,7 +119,6 @@
               | UI.IAccordionProps
               | UI.IInputProps
               | UI.ISwitchProps
-              | UI.IColorPickerProps
               | UI.ISliderProps
               | UI.IGraphProps
               | UI.ITableProps<object>
@@ -143,7 +141,6 @@
         | UI.IAccordionProps
         | UI.IInputProps
         | UI.ISwitchProps
-        | UI.IColorPickerProps
         | UI.ISliderProps
         | UI.IGraphProps
         | UI.ITableProps<object>
@@ -195,7 +192,7 @@
 {#snippet Readonly()}
   <UI.Switch
     label={{ name: $T("constructor.props.readonly") }}
-    value={Number((component.properties as UI.IColorPickerProps | UI.IInputProps | UI.IJoystickProps | UI.IWidgetProps).readonly)}
+    value={Number((component.properties as UI.IInputProps | UI.IJoystickProps | UI.IWidgetProps).readonly)}
     options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
     onChange={(value) => updateProperty("readonly", value, component, onPropertyChange)}
   />

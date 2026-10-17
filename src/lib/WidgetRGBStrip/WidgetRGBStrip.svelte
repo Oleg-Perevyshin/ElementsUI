@@ -9,6 +9,7 @@
   import * as UI from "$lib"
   import type { IOption, IWidgetRGBStripConfig, IWidgetRGBStripProps } from "../types"
   import LightIcon from "./LightIcon.svelte"
+  import ColorPicker from "./ColorPicker.svelte"
   import WidgetHeader from "../WidgetHeader.svelte"
   import ArrowIcon from "../libIcons/ArrowIcon.svelte"
   import { widgetAccentStyle } from "../widgetAccent"
@@ -101,7 +102,7 @@
     <div class="flex flex-col gap-4" transition:slide={{ duration: 150 }}>
       <!-- Свечение: применяется сразу -->
       <div class="flex flex-col gap-3 rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-3">
-        <UI.ColorPicker value={color.slice(0, 3)} readonly={!onChange} onChange={(rgb) => sendColor([...rgb, color[3]])} />
+        <ColorPicker value={color.slice(0, 3)} readonly={!onChange} onChange={(rgb) => sendColor([...rgb, color[3]])} />
         {#if hasWhite}
           <UI.Slider
             label={{ name: "Белый канал" }}

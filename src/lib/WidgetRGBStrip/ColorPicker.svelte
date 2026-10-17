@@ -1,7 +1,15 @@
-<!-- $lib/ElementsUI/ColorPicker.svelte -->
+<!-- $lib/WidgetRGBStrip/ColorPicker.svelte — внутренняя палитра виджета «Светодиодная лента» (HSV + белый), отдельным компонентом библиотеки не экспортируется -->
 <script lang="ts">
   import { twMerge } from "tailwind-merge"
-  import type { IColorPickerProps } from "../types"
+
+  interface IColorPickerProps {
+    id?: string
+    wrapperClass?: string
+    label?: { name?: string; class?: string }
+    value?: number[]
+    readonly?: boolean
+    onChange?: (value: number[]) => void
+  }
 
   let {
     id = crypto.randomUUID(),

@@ -42,7 +42,6 @@ ${formatObjectToString(selectComponent.properties as ISelectProps)}
   const componentMap = {
     Accordion: { component: UI.Accordion },
     Button: { component: UI.Button },
-    ColorPicker: { component: UI.ColorPicker },
     FileAttach: { component: UI.FileAttach },
     Graph: { component: UI.Graph },
     Input: { component: UI.Input },

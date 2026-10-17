@@ -31,7 +31,6 @@
     { page: "accordion", name: "Accordion" },
     { page: "button", name: "Button" },
     { page: "carousel", name: "Carousel" },
-    { page: "color-picker", name: "ColorPicker" },
     { page: "divider", name: "Divider" },
     { page: "file-attach", name: "FileAttach" },
     { page: "graph", name: "Graph" },
