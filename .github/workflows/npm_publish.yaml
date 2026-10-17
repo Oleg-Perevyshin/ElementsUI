@@ -10,17 +10,17 @@ jobs:
   # Публикация библиотеки в npmjs
   publish:
     if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[publish]')
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
       id-token: write
 
     steps:
       - name: Клонирование репозитория
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Установка Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: "24"
           registry-url: "https://registry.npmjs.org"
@@ -40,16 +40,16 @@ jobs:
   # Обновление версии библиотеки в DevCloud и переразвётывание облака
   update-devcloud:
     needs: publish
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
 
     steps:
       - name: Клонирование библиотеки
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Установка Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: "24"
 
