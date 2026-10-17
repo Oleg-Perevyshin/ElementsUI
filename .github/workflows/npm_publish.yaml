@@ -7,6 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
+  # Публикация библиотеки в npmjs
   publish:
     if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[publish]')
     runs-on: ubuntu-latest
@@ -36,7 +37,7 @@ jobs:
       - name: Публикация в NPM
         run: npm publish --access public
 
-  # После публикации поднимаем версию библиотеки в DevCloud и переразворачиваем облако
+  # Обновление версии библиотеки в DevCloud и переразвётывание облака
   update-devcloud:
     needs: publish
     runs-on: ubuntu-latest
@@ -70,7 +71,7 @@ jobs:
       - name: Обновление библиотеки и проверка типов
         working-directory: devcloud
         env:
-          DATABASE_URL: "postgresql://placeholder:placeholder@localhost:5432/placeholder" # только для prisma generate (provider postgresql), к БД не подключается
+          DATABASE_URL: "postgresql://placeholder:placeholder@localhost:5432/placeholder"
         run: |
           npm install "poe-svelte-ui-lib@$VERSION"
           npx svelte-kit sync

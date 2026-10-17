@@ -21,6 +21,7 @@
 
   /* Список всех компонентов — смарт-виджеты идут первыми (тот же принцип, что и в DevCloud'овской палитре конструктора) */
   const menuItems = [
+    { page: "theme", name: "Тема" },
     { page: "widget-wifi", name: "WidgetWiFi" },
     { page: "widget-device-info", name: "WidgetDeviceInfo" },
     { page: "widget-file-system", name: "WidgetFileSystem" },
@@ -138,7 +139,7 @@
         <div class="flex w-full">
           <UI.Button
             content={{ name: item.name }}
-            componentClass="h-10  text-left {item.page === 'all' ? '' : 'bg-gray'}"
+            componentClass="h-10  text-left {item.page === 'theme' ? '' : 'bg-gray'}"
             onClick={() => goto(`/ElementsUI/components/${item.page}`)}
           />
           {#if activePage === item.page}

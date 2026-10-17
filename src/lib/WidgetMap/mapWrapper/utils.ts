@@ -1,29 +1,25 @@
 const CDN_URL = "https://cdn.jsdelivr.net/npm/maplibre-gl@5.17.0/dist/maplibre-gl.min.js"
 const CSS_URL = "https://cdn.jsdelivr.net/npm/maplibre-gl@5.17.0/dist/maplibre-gl.min.css"
 
-export const loadMapLibre = async (hasConnectionState: boolean): Promise<boolean> => {
-  if (typeof window === "undefined") return false
+/* Одна загрузка на страницу: несколько карт ждут один и тот же промис, иначе вторая видит уже вставленный <script> до его загрузки */
+let loading: Promise<boolean> | null = null
 
-  if (!navigator.onLine) {
-    hasConnectionState = false
-    return false
-  }
+export const loadMapLibre = (): Promise<boolean> => {
+  if (typeof window === "undefined") return Promise.resolve(false)
+  if (window.maplibregl) return Promise.resolve(true)
+  if (!navigator.onLine) return Promise.resolve(false)
 
-  try {
-    if (!window.maplibregl) {
-      await loadScript(CDN_URL)
-      await loadCSS(CSS_URL)
-
-      if (!window.maplibregl) {
-        throw new Error("MapLibre GL не был загружен корректно.")
-      }
-    }
-  } catch (err) {
-    console.error("Ошибка загрузки MapLibre GL:", err)
-    hasConnectionState = false
-    return false
-  }
-  return true
+  loading ??= Promise.all([loadScript(CDN_URL), loadCSS(CSS_URL)])
+    .then(() => {
+      if (!window.maplibregl) throw new Error("MapLibre GL не был загружен корректно.")
+      return true
+    })
+    .catch((err) => {
+      console.error("Ошибка загрузки MapLibre GL:", err)
+      loading = null
+      return false
+    })
+  return loading
 }
 
 const loadScript = (src: string): Promise<void> => {
@@ -36,7 +32,10 @@ const loadScript = (src: string): Promise<void> => {
     script.src = src
     script.async = true
     script.onload = () => resolve()
-    script.onerror = () => reject(new Error(`Не удалось загрузить скрипт ${src}`))
+    script.onerror = () => {
+      script.remove() /* иначе повторная попытка увидит тег и не станет грузить заново */
+      reject(new Error(`Не удалось загрузить скрипт ${src}`))
+    }
     document.head.appendChild(script)
   })
 }

@@ -148,13 +148,16 @@
     setTimeout(() => (isCopied = false), 1000)
   }
 
-  const handleThemeChange = (event: CustomEvent) => {
-    isDarkMode = !event.detail.currentTheme
+  /* Тема карты — по ближайшему предку .dark/.light (как у токенов theme.css), а не по localStorage: работает и внутри блока с другой темой */
+  let rootEl: HTMLDivElement | undefined = $state()
+  const detectTheme = () => {
+    const scope = rootEl?.closest(".dark, .light")
+    isDarkMode = scope ? scope.classList.contains("dark") : localStorage.getItem("AppTheme") !== "light"
   }
   onMount(() => {
-    isDarkMode = localStorage.getItem("AppTheme") !== "light"
-    window.addEventListener("ThemeChange", handleThemeChange as EventListener)
-    return () => window.removeEventListener("ThemeChange", handleThemeChange as EventListener)
+    detectTheme()
+    window.addEventListener("ThemeChange", detectTheme)
+    return () => window.removeEventListener("ThemeChange", detectTheme)
   })
 
   const trackLengthOptions = [100, 500, 1000, 5000, 10000, 50000]
@@ -170,6 +173,7 @@
 </script>
 
 <div
+  bind:this={rootEl}
   class={twMerge("relative flex w-full flex-col gap-4 rounded-2xl border border-(--hairline-color) bg-(--container-color) p-4", wrapperClass)}
   style={accentStyle}
 >
