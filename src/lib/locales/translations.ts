@@ -9,9 +9,8 @@ const translations: Record<string, [string, string, string]> = {
   "library.for_constructor": ["Для конструктора", "For constructor", "用于构造器"],
   "library.overview": ["Обзор", "Overview", "概览"],
   "library.examples": ["Примеры", "Examples", "示例"],
-  "library.setting": ["Настройка", "Setup", "设置"],
-  "library.palette": ["Палитра", "Palette", "调色板"],
   "library.regexp": ["Регулярные выражения", "Regular expressions", "正则表达式"],
+  "library.theme": ["Тема", "Theme", "主题"],
   "library.info": ["Инфо", "Info", "信息"],
   "library.retry": ["Повторить", "Retry", "重试"],
 

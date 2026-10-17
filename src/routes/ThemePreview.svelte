@@ -1,10 +1,10 @@
-<!-- src/routes/components/theme/+page.svelte — предпросмотр темы (theme.css): типовой интерфейс облака на одной странице,
+<!-- src/routes/ThemePreview.svelte — вкладка «Тема» главной витрины: типовой интерфейс облака на стилях theme.css,
      тема — глобальная, переключается кнопкой в шапке витрины. -->
 <script lang="ts">
   import * as UI from "$lib"
   import type { IOption, ITableHeader, IWidgetMapData, IWidgetPFDData, IWidgetStackInfo } from "$lib/types"
-  import { RenderMarkdown } from "../../common"
-  import { createFlightSim } from "../flightSim"
+  import { RenderMarkdown } from "./common"
+  import { createFlightSim } from "./components/flightSim"
 
   /* Живые данные: тот же полёт над Минском, что в демо PFD и карты */
   const simMav = createFlightSim()
