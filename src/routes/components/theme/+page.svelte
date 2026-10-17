@@ -1,5 +1,5 @@
-<!-- src/routes/components/theme/+page.svelte — предпросмотр темы (theme.css): один и тот же интерфейс облака
-     в светлой и тёмной теме рядом. Палитра задаётся классами .light/.dark, поэтому обе темы видны одновременно. -->
+<!-- src/routes/components/theme/+page.svelte — предпросмотр темы (theme.css): типовой интерфейс облака на одной странице,
+     тема — глобальная, переключается кнопкой в шапке витрины. -->
 <script lang="ts">
   import * as UI from "$lib"
   import type { IOption, ITableHeader, IWidgetMapData, IWidgetPFDData, IWidgetStackInfo } from "$lib/types"
@@ -105,7 +105,7 @@ Telemetry_SendObject(g_telemetry_stream, g_mcfg.DevSN, "Data", mav, sizeof(mav) 
   <!-- Шапка устройства -->
   <div class="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-(--hairline-color) bg-(--back-color) p-4">
     <div class="flex flex-col">
-      <h4>Борт 1</h4>
+      <h4>Объект 1</h4>
       <span class="text-sm text-(--muted-color)">20.00.000-01 · ПО 1.4.2</span>
     </div>
     <div class="flex flex-wrap gap-2 text-xs font-semibold">
@@ -150,7 +150,7 @@ Telemetry_SendObject(g_telemetry_stream, g_mcfg.DevSN, "Data", mav, sizeof(mav) 
       <UI.Button content={{ name: "Без роли" }} />
     </div>
     <div class="grid grid-cols-2 gap-3">
-      <UI.Input label={{ name: "Имя устройства" }} value="Борт 1" />
+      <UI.Input label={{ name: "Имя устройства" }} value="Объект 1" />
       <UI.Input label={{ name: "Частота, Гц" }} type="number" value={20} number={{ minNum: 1, maxNum: 100, step: 1 }} />
       <UI.Input label={{ name: "Неверный ввод" }} value="12.34.567" isValid={false} />
       <UI.Input label={{ name: "Только чтение" }} value="20000001A1B2C3" readonly help={{ copyButton: true }} />
@@ -174,7 +174,7 @@ Telemetry_SendObject(g_telemetry_stream, g_mcfg.DevSN, "Data", mav, sizeof(mav) 
   <UI.WidgetPFD value={flight} limits={{ speedMin: 8, speedMax: 25, bankMax: 30, altMax: 170, battLow: 20 }} />
   <UI.WidgetMap
     groups={["MAV", "GNSS"]}
-    value={{ MAV: board(flight, "Борт 1", "20000001A1B2C3"), GNSS: board(gnss, "Борт 2", "20000001D4E5F6") }}
+    value={{ MAV: board(flight, "Объект 1", "20000001A1B2C3"), GNSS: board(gnss, "Объект 2", "20000001D4E5F6") }}
     height={250}
     trackEnabled
   />
@@ -185,7 +185,7 @@ Telemetry_SendObject(g_telemetry_stream, g_mcfg.DevSN, "Data", mav, sizeof(mav) 
       DevID: "20.00.000-01",
       DevFW: 142,
       RunCnt: 37,
-      DevName: "Борт 1",
+      DevName: "Объект 1",
       HostName: "bort-1",
       WebUser: "admin",
       WebPsw: "",
@@ -219,17 +219,10 @@ Telemetry_SendObject(g_telemetry_stream, g_mcfg.DevSN, "Data", mav, sizeof(mav) 
   </div>
 {/snippet}
 
-<div class="flex flex-col gap-3">
+<div class="flex flex-col gap-4">
   <p class="text-sm text-(--muted-color)">
-    Один и тот же интерфейс в обеих темах — стили из <code>src/lib/theme.css</code>, тот же файл подключает DevCloud. Правьте тему там и смотрите результат
-    здесь.
+    Интерфейс облака на одной странице — стили из <code>src/lib/theme.css</code>, тот же файл подключает DevCloud. Тема переключается кнопкой в шапке витрины;
+    правьте <code>theme.css</code> и смотрите результат здесь.
   </p>
-  <div class="grid grid-cols-1 gap-4 2xl:grid-cols-2">
-    {#each ["light", "dark"] as theme (theme)}
-      <section class="{theme} flex min-w-0 flex-col gap-4 rounded-2xl bg-(--bg-body) p-4 text-(--font-color)">
-        <h5>{theme === "light" ? "Светлая тема" : "Тёмная тема"}</h5>
-        {@render preview()}
-      </section>
-    {/each}
-  </div>
+  {@render preview()}
 </div>

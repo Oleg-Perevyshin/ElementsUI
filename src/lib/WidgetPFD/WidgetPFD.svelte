@@ -204,6 +204,17 @@
   const uid = crypto.randomUUID().slice(0, 8)
 
   const fmt = (v: number, digits = 1) => (Number.isFinite(v) ? v.toFixed(digits) : "—")
+  const signed = (v: number) => `${v >= 0 ? "+" : ""}${fmt(v)}`
+
+  /* Всплывающая подсказка: элементы прибора и строк помечены data-tip, одна подсказка следует за курсором */
+  let tip: { text: string; x: number; y: number } | null = $state(null)
+  const onTip = (e: PointerEvent) => {
+    const host = e.currentTarget as HTMLElement
+    const el = (e.target as Element | null)?.closest("[data-tip]")
+    if (!el) return (tip = null)
+    const r = host.getBoundingClientRect()
+    tip = { text: el.getAttribute("data-tip") ?? "", x: Math.min(Math.max(e.clientX - r.left, 90), r.width - 90), y: e.clientY - r.top }
+  }
   const fmtDistance = (m: number) => (m >= 1000 ? `${(m / 1000).toFixed(2)} км` : `${Math.round(m)} м`)
   const fmtAge = (s: number) => (Number.isFinite(s) ? `${s.toFixed(1)} с` : "нет связи")
 </script>
@@ -219,21 +230,31 @@
   </WidgetHeader>
 
   {#if !collapsed}
-    <div class="flex flex-col gap-2" transition:slide={{ duration: 150 }} bind:clientWidth={width}>
+    <div
+      class="relative flex flex-col gap-2"
+      transition:slide={{ duration: 150 }}
+      bind:clientWidth={width}
+      onpointermove={onTip}
+      onpointerleave={() => (tip = null)}
+      role="presentation"
+    >
       <!-- Строка состояния -->
       <div
         class="flex flex-wrap items-center gap-x-4 gap-y-1 rounded-[10px] border border-(--hairline-color) bg-(--back-color) px-3 py-2 text-[12px] font-semibold tabular-nums"
       >
-        <span class="rounded-md px-1.5 py-0.5 {armed ? 'bg-(--red-color) text-white' : 'bg-(--container-color) text-(--muted-color)'}"
-          >{armed ? "ARMED" : "DISARMED"}</span
+        <span
+          class="rounded-md px-1.5 py-0.5 {armed ? 'bg-(--red-color) text-white' : 'bg-(--container-color) text-(--muted-color)'}"
+          data-tip={armed ? "Двигатели взведены — аппарат готов к полёту" : "Двигатели не взведены"}>{armed ? "ARMED" : "DISARMED"}</span
         >
-        <span>{modeName}</span>
-        <span class={fix < 3 ? "text-(--orange-color)" : ""}>GPS {FIX[fix] ?? fix} · {num(value?.Sat)}</span>
-        <span class={battLow ? "text-(--red-color)" : ""}>
+        <span data-tip="Режим полёта автопилота">{modeName}</span>
+        <span class={fix < 3 ? "text-(--orange-color)" : ""} data-tip="Тип фиксации GPS · число спутников; меньше 3D — позиция неточная"
+          >GPS {FIX[fix] ?? fix} · {num(value?.Sat)}</span
+        >
+        <span class={battLow ? "text-(--red-color)" : ""} data-tip="Батарея: напряжение · ток · остаток заряда">
           {fmt(num(value?.BV))} В{battCurrent >= 0 ? ` · ${fmt(battCurrent)} А` : ""}{battRem >= 0 ? ` · ${battRem}%` : ""}
         </span>
         {#if home}
-          <span>Дом {fmtDistance(home.distance)} · {Math.round(home.bearing)}°</span>
+          <span data-tip="Точка взлёта: расстояние · направление на неё">Дом {fmtDistance(home.distance)} · {Math.round(home.bearing)}°</span>
         {/if}
       </div>
 
@@ -247,7 +268,7 @@
         </defs>
 
         <!-- Авиагоризонт -->
-        <g clip-path="url(#pfd-horizon-{uid})">
+        <g clip-path="url(#pfd-horizon-{uid})" data-tip="Авиагоризонт: крен {fmt(roll.current)}°, тангаж {fmt(pitch.current)}°">
           <g transform="rotate({-roll.current} {CX} {CY}) translate(0 {pitch.current * PPD})">
             <rect x={CX - 600} y={CY - 1000} width="1200" height="1000" fill="#3a86c8" />
             <rect x={CX - 600} y={CY} width="1200" height="1000" fill="#8a5a2b" />
@@ -274,7 +295,10 @@
             {@const b = arcPoint(t, ROLL_R + (t % 30 === 0 ? 12 : 7))}
             <line x1={a.x} y1={a.y} x2={b.x} y2={b.y} stroke="#fff" stroke-width="1.5" />
           {/each}
-          <g transform="rotate({-roll.current} {CX} {CY})">
+          <g
+            transform="rotate({-roll.current} {CX} {CY})"
+            data-tip="Указатель крена: {fmt(roll.current)}°{limits?.bankMax !== undefined ? `, предел ±${limits.bankMax}°` : ''}"
+          >
             <polygon
               points="{CX},{CY - ROLL_R + 2} {CX - 7},{CY - ROLL_R + 14} {CX + 7},{CY - ROLL_R + 14}"
               fill={limits?.bankMax !== undefined && Math.abs(roll.current) > limits.bankMax ? "#ef4444" : "#facc15"}
@@ -303,7 +327,12 @@
 
         {#if !compact}
           <!-- Лента скорости (путевая), красные зоны вне speedMin/speedMax -->
-          <g clip-path="url(#pfd-speed-{uid})">
+          <g
+            clip-path="url(#pfd-speed-{uid})"
+            data-tip="Путевая скорость (над землёй, по GPS): {fmt(gs)} м/с{limits?.speedMin !== undefined || limits?.speedMax !== undefined
+              ? ' — красное: вне допустимого диапазона'
+              : ''}"
+          >
             <rect x="0" y="0" width="70" height={HH} fill="#000" fill-opacity="0.72" />
             {#if limits?.speedMin !== undefined}
               {@const y = CY - (limits.speedMin - gs) * SPEED_PPU}
@@ -322,12 +351,15 @@
           <rect x="4" y={CY - 14} width="58" height="28" rx="4" fill="#000" stroke="var(--accent-color)" stroke-width="1.5" />
           <text x="33" y={CY + 6} fill="#fff" font-size="15" font-weight="600" text-anchor="middle">{fmt(gs)}</text>
           <rect x="0" y="0" width="70" height="20" rx="8" fill="#000" />
-          <rect x="0" y={HH - 20} width="70" height="20" rx="8" fill="#000" />
-          <text x="35" y="14" fill="#fff" font-size="10" text-anchor="middle" fill-opacity="0.7">GS м/с</text>
-          <text x="35" y={HH - 6} fill="#fff" font-size="11" text-anchor="middle">AS {fmt(as)}</text>
+          <text x="35" y="14" fill="#fff" font-size="10" text-anchor="middle" fill-opacity="0.7">СКОР м/с</text>
 
           <!-- Лента высоты над точкой взлёта, красная зона выше altMax; вариометр справа -->
-          <g clip-path="url(#pfd-alt-{uid})">
+          <g
+            clip-path="url(#pfd-alt-{uid})"
+            data-tip="Высота над точкой взлёта: {Math.round(alt)} м; полоса у края — вертикальная скорость{limits?.altMax !== undefined
+              ? ', красное — выше предела'
+              : ''}"
+          >
             <rect x={VW - 70} y="0" width="70" height={HH} fill="#000" fill-opacity="0.72" />
             {#if limits?.altMax !== undefined}
               {@const y = CY - (limits.altMax - alt) * ALT_PPU}
@@ -343,13 +375,30 @@
           <rect x={VW - 66} y={CY - 14} width="58" height="28" rx="4" fill="#000" stroke="var(--accent-color)" stroke-width="1.5" />
           <text x={VW - 37} y={CY + 6} fill="#fff" font-size="15" font-weight="600" text-anchor="middle">{Math.round(alt)}</text>
           <rect x={VW - 70} y="0" width="70" height="20" rx="8" fill="#000" />
-          <rect x={VW - 70} y={HH - 20} width="70" height="20" rx="8" fill="#000" />
-          <text x={VW - 35} y="14" fill="#fff" font-size="10" text-anchor="middle" fill-opacity="0.7">ALT м</text>
-          <text x={VW - 35} y={HH - 6} fill="#fff" font-size="11" text-anchor="middle">VS {climb >= 0 ? "+" : ""}{fmt(climb)}</text>
+          <text x={VW - 35} y="14" fill="#fff" font-size="10" text-anchor="middle" fill-opacity="0.7">ВЫС м</text>
+
+          <!-- Углы под лентами: воздушная и вертикальная скорость -->
+          <g data-tip="Воздушная скорость — относительно воздуха; отличается от путевой на ветер">
+            <rect x="0" y={HH + 6} width={HX - 6} height="44" rx="8" fill="#000" fill-opacity="0.72" />
+            <text x={(HX - 6) / 2} y={HH + 21} fill="#fff" fill-opacity="0.7" font-size="9" text-anchor="middle">ВОЗД. СКОР</text>
+            <text x={(HX - 6) / 2} y={HH + 41} fill="#fff" font-size="14" font-weight="600" text-anchor="middle">{fmt(as)}</text>
+          </g>
+          <g data-tip="Вертикальная скорость: + набор высоты, − снижение, м/с">
+            <rect x={HX + HW + 6} y={HH + 6} width={VW - HX - HW - 6} height="44" rx="8" fill="#000" fill-opacity="0.72" />
+            <text x={(HX + HW + 6 + VW) / 2} y={HH + 21} fill="#fff" fill-opacity="0.7" font-size="9" text-anchor="middle">ВЕРТ. СКОР</text>
+            <text
+              x={(HX + HW + 6 + VW) / 2}
+              y={HH + 41}
+              fill={climb > 0.2 ? "#22c55e" : climb < -0.2 ? "#f97316" : "#fff"}
+              font-size="14"
+              font-weight="600"
+              text-anchor="middle">{signed(climb)}</text
+            >
+          </g>
         {/if}
 
         <!-- Лента курса: трек (розовый), направление на дом (зелёный) -->
-        <g clip-path="url(#pfd-hdg-{uid})">
+        <g clip-path="url(#pfd-hdg-{uid})" data-tip="Курс — куда направлен нос аппарата: {Math.round(wrap360(heading.current))}°">
           <rect x={HX} y={HH + 6} width={HW} height="44" fill="#000" fill-opacity="0.72" />
           {#each hdgTicks as d (d)}
             {@const x = CX + hdgOffset(d)}
@@ -358,11 +407,21 @@
           {/each}
           {#if track !== null}
             {@const x = CX + hdgOffset(track)}
-            <polygon points="{x},{HH + 8} {x - 6},{HH + 18} {x + 6},{HH + 18}" fill="#ec4899" />
+            <polygon
+              points="{x},{HH + 8} {x - 6},{HH + 18} {x + 6},{HH + 18}"
+              fill="#ec4899"
+              data-tip="Трек — куда аппарат реально движется над землёй (по скоростям на север и восток): {Math.round(track)}°"
+            />
           {/if}
           {#if home}
             {@const x = CX + hdgOffset(home.bearing)}
-            <circle cx={x} cy={HH + 44} r="4" fill="#22c55e" />
+            <circle
+              cx={x}
+              cy={HH + 44}
+              r="4"
+              fill="#22c55e"
+              data-tip="Направление на точку взлёта: {Math.round(home.bearing)}°, {fmtDistance(home.distance)}"
+            />
           {/if}
         </g>
         <rect x={CX - 26} y={HH + 20} width="52" height="24" rx="4" fill="#000" stroke="var(--accent-color)" stroke-width="1.5" />
@@ -382,12 +441,27 @@
         {/if}
       </svg>
 
+      {#if tip}
+        <div
+          class="pointer-events-none absolute z-10 max-w-64 -translate-x-1/2 -translate-y-full rounded-lg border border-(--hairline-color) bg-(--back-color) px-2.5 py-1.5 text-[12px] text-(--font-color) shadow-(--elevation-2)"
+          style="left: {tip.x}px; top: {tip.y - 10}px"
+        >
+          {tip.text}
+        </div>
+      {/if}
+
       <!-- Значения под прибором -->
       <div
         class="flex flex-wrap gap-x-5 gap-y-1 rounded-[10px] border border-(--hairline-color) bg-(--back-color) px-3 py-2 text-[12px] whitespace-nowrap tabular-nums"
       >
+        {#if track !== null}<span data-tip="Направление движения над землёй"
+            ><span style="color:#ec4899">▲</span> <span class="text-(--muted-color)">Трек</span> {Math.round(track)}°</span
+          >{/if}
+        {#if home}<span data-tip="Направление на точку взлёта"
+            ><span style="color:#22c55e">●</span> <span class="text-(--muted-color)">Дом</span> {Math.round(home.bearing)}°</span
+          >{/if}
         <span><span class="text-(--muted-color)">Координаты</span> {lat ? `${lat.toFixed(6)}, ${lon.toFixed(6)}` : "—"}</span>
-        <span><span class="text-(--muted-color)">Высота MSL</span> {Math.round(altMsl)} м</span>
+        <span data-tip="Высота над уровнем моря"><span class="text-(--muted-color)">Высота MSL</span> {Math.round(altMsl)} м</span>
         <span><span class="text-(--muted-color)">Давление</span> {fmt(num(value?.Press))} гПа</span>
         <span><span class="text-(--muted-color)">Температура</span> {fmt(num(value?.Temp))} °C</span>
       </div>

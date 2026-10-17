@@ -1,7 +1,7 @@
-<!-- $lib/WidgetMap/WidgetMap.svelte — смарт-виджет «Карта»: борта из групп полей устройства (по умолчанию MAV) с полями
+<!-- $lib/WidgetMap/WidgetMap.svelte — смарт-виджет «Карта»: объекты из групп полей устройства (по умолчанию MAV) с полями
      Lat/Lon/Alt/Heading/Sat/DevName/DevSN (см. IWidgetMapData), каждая группа — свой маркер и своя траектория. Только отображение:
      ничего не отправляет и не знает про DeviceStore/WebSocket. Траекторию, длину трека и таймаут маркеров оператор
-     переключает прямо поверх карты, «Все борта» — кнопка в шапке; вид карта сама не меняет — бортов может быть много. -->
+     переключает прямо поверх карты, «Показать все» — кнопка в шапке; вид карта сама не меняет — объектов может быть много. -->
 <script lang="ts">
   import { onMount, untrack } from "svelte"
   import { slide } from "svelte/transition"
@@ -69,7 +69,7 @@
   let isCopied = $state(false)
   let isDarkMode = $state(false)
 
-  /* Борт обновляется только при реальной смене значений — свежесть считается от последнего изменения, а не от перерисовки */
+  /* Объект обновляется только при реальной смене значений — свежесть считается от последнего изменения, а не от перерисовки */
   $effect(() => {
     for (const group of groupList) {
       const v = value?.[group]
@@ -120,7 +120,7 @@
   const isFresh = (b: Board) => now - b.lastChange < markerTimeout
   let freshCount = $derived(visibleBoards.filter(isFresh).length)
 
-  /* Вписывает в экран все видимые борта, один борт — приближение к нему */
+  /* Вписывает в экран все видимые объекты, один объект — приближение к нему */
   const fitAllBoards = () => {
     if (!mapInstance || visibleBoards.length === 0) return
     if (visibleBoards.length === 1) return mapInstance.flyTo({ center: [visibleBoards[0].lon, visibleBoards[0].lat], zoom: 16 })
@@ -183,7 +183,7 @@
         <UI.Button
           wrapperClass="w-auto"
           componentClass="bg-transparent px-3"
-          content={{ icon: FitIcon, name: $T("constructor.props.map.fitAll") }}
+          content={{ icon: FitIcon, name: $T("constructor.props.map.fitAll"), info: { text: $T("constructor.props.map.fitAllHint"), side: "bottom" } }}
           disabled={collapsed || visibleBoards.length === 0}
           onClick={fitAllBoards}
         />
