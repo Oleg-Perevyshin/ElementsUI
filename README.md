@@ -15,12 +15,18 @@ npm install poe-svelte-ui-lib
 
 ### Подключение стилей и темы
 
-Пакет не поставляет готовый CSS-файл — цветовые токены (`--back-color`, `--accent-color`, `--red-color` и т.д.) и типографика ожидаются от проекта-потребителя. Возьмите `src/app.css` этого репозитория как стартовый шаблон и скопируйте в свой проект (палитру можно переопределить своими значениями — имена переменных и структура классов `bg-*`/`border-*` должны остаться прежними, чтобы компоненты стилизовались корректно). В `app.css` потребителя также нужно указать Tailwind, откуда сканировать классы из собранного пакета:
+Тема поставляется пакетом — `poe-svelte-ui-lib/theme.css`: цветовые токены светлой и тёмной темы (`--back-color`, `--accent-color`, `--red-color`…), типографика тегов в `@layer base`, компактный Markdown (`.markdown-content` — обёртка для `{@html}` с результатом `RenderMarkdown`) и роли заливки `bg-*`/`border-*`. Эталон темы — DevCloud; витрина подключает тот же файл, поэтому компоненты в ней выглядят ровно как в облаке. В `app.css` потребителя:
 
 ```css
 @import "tailwindcss";
+@import "poe-svelte-ui-lib/theme.css";
 @source "../node_modules/poe-svelte-ui-lib/dist";
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* дальше — только собственные отличия приложения, например :root { min-width: 640px; } */
 ```
+
+Текст в Markdown, таблицы и код переносятся по ширине контейнера — горизонтальной прокрутки быть не должно, только вертикальная. Markdown рендерится с `breaks: true` (как в облаке), поэтому абзац и пункт списка пишутся одной строкой — ручной перенос внутри абзаца превращается в разрыв строки.
 
 **Глобальные стили тегов — только в `@layer base`.** Компоненты задают размеры текста и отступы Tailwind-утилитами (например `text-[12px]` у подписи `<h5>`). Правило вне слоя (`h5 { font-size: 1rem }`, `label { … }`, `p { … }`) сильнее любой утилиты, и в приложении подписи станут крупнее задуманного и перестанут помещаться. Поэтому типографику тегов оборачивайте:
 
@@ -85,15 +91,11 @@ npm run Formatting  # prettier --write .
 
 ### Публикация в npm
 
-Коммит в `main` с `[publish]` в сообщении (`"X.Y.Z [deploy] [publish]"`, версия поднята в `package.json`) запускает
-`.github/workflows/npm_publish.yaml`. Публикация идёт через **trusted publisher** npm (OIDC): workflow получает
-одноразовый токен от GitHub (`permissions: id-token: write`), постоянный `NPM_TOKEN` не нужен, provenance добавляется
-автоматически. Требования npm: npm CLI 11.5.1+ (workflow обновляет его сам), Node 22.14+, `repository.url` в
-`package.json` дословно совпадает с репозиторием.
+Коммит в `main` с `[publish]` в сообщении (`"X.Y.Z [deploy] [publish]"`, версия поднята в `package.json`) запускает `.github/workflows/npm_publish.yaml`. Публикация идёт через **trusted publisher** npm (OIDC): workflow получает одноразовый токен от GitHub (`permissions: id-token: write`), постоянный `NPM_TOKEN` не нужен, provenance добавляется автоматически. Требования npm: npm CLI 11.5.1+ (workflow обновляет его сам), Node 22.14+, `repository.url` в `package.json` дословно совпадает с репозиторием.
 
-Связь настраивается на npmjs.com → пакет → Settings → Trusted Publisher: GitHub Actions, `Oleg-Perevyshin/ElementsUI`,
-workflow `npm_publish.yaml`, разрешение «npm publish». Новая связь подтверждается первой успешной публикацией и
-должна пройти её в течение 2 дней, иначе истекает. Существующую связь изменить нельзя — только удалить и создать заново.
+Связь настраивается на npmjs.com → пакет → Settings → Trusted Publisher: GitHub Actions, `Oleg-Perevyshin/ElementsUI`, workflow `npm_publish.yaml`, разрешение «npm publish». Новая связь подтверждается первой успешной публикацией и должна пройти её в течение 2 дней, иначе истекает. Существующую связь изменить нельзя — только удалить и создать заново.
+
+**Обновление DevCloud — автоматически.** После публикации job `update-devcloud` того же workflow ждёт новую версию в npm, клонирует `xPOE-Studio/DevCloud` (Forgejo) по секрету `FORGEJO_ACCESS_TOKEN`, ставит `poe-svelte-ui-lib@<версия>`, прогоняет `prisma generate` и `svelte-check` и, если проверка прошла, пушит в `main` коммит `poe-svelte-ui-lib <версия> [deploy]` — облако разворачивается само. Вручную версию в облаке не поднимаем; изменения кода облака, которым нужна новая версия библиотеки, коммитятся без `[deploy]` до выпуска — их развернёт этот коммит. Если `svelte-check` упал, коммита нет, облако остаётся на прежней версии (смотрите лог job в GitHub Actions).
 
 ---
 

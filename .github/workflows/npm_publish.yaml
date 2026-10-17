@@ -37,3 +37,54 @@ jobs:
 
       - name: Публикация в NPM
         run: npm publish --access public
+
+  # После публикации поднимает версию библиотеки в DevCloud (Forgejo) и разворачивает облако коммитом с [deploy].
+  # Секрет FORGEJO_ACCESS_TOKEN — токен Forgejo с правом записи в xPOE-Studio/DevCloud.
+  update-devcloud:
+    needs: publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Клонирование библиотеки (версия)
+        uses: actions/checkout@v4
+
+      - name: Установка Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Ожидание версии в реестре npm
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+          for i in $(seq 1 40); do
+            [ "$(npm view poe-svelte-ui-lib@$VERSION version 2>/dev/null)" = "$VERSION" ] && exit 0
+            sleep 15
+          done
+          echo "Версия $VERSION не появилась в npm за 10 минут" && exit 1
+
+      - name: Клонирование DevCloud
+        env:
+          FORGEJO_ACCESS_TOKEN: ${{ secrets.FORGEJO_ACCESS_TOKEN }}
+        run: git clone --depth 1 "https://oauth2:${FORGEJO_ACCESS_TOKEN}@git.xpoe.pro/xPOE-Studio/DevCloud.git" devcloud
+
+      - name: Обновление библиотеки и проверка типов
+        working-directory: devcloud
+        env:
+          DATABASE_URL: "file:./ci.db" # только для prisma generate, к БД не подключается
+        run: |
+          npm install "poe-svelte-ui-lib@$VERSION"
+          npx prisma generate
+          npx svelte-check --threshold error
+
+      - name: Коммит с развёртыванием облака
+        working-directory: devcloud
+        run: |
+          git diff --quiet package.json package-lock.json && echo "Версия уже актуальна" && exit 0
+          git config user.name "${{ github.event.head_commit.author.name || github.actor }}"
+          git config user.email "${{ github.event.head_commit.author.email || format('{0}@users.noreply.github.com', github.actor) }}"
+          git add package.json package-lock.json
+          git commit -m "poe-svelte-ui-lib $VERSION [deploy]"
+          git push origin HEAD:main
