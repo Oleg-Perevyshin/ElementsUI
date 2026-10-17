@@ -9,6 +9,7 @@
     style?: any | string
     zoom?: number
     center?: any
+    maxPitch?: number
     map?: any
     children?: Snippet<[any]>
   }
@@ -18,6 +19,7 @@
     style = { version: 8, sources: {}, layers: [] },
     zoom = $bindable(undefined),
     center = $bindable(undefined),
+    maxPitch = 60,
     map = $bindable(undefined),
     children,
   }: Props = $props()
@@ -37,6 +39,7 @@
       style,
       zoom,
       center,
+      maxPitch,
     })
     mapCtx.map = map
   })
@@ -65,6 +68,7 @@
       style,
       zoom,
       center,
+      maxPitch,
     })
     mapCtx.map = map
   })

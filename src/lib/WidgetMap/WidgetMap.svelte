@@ -205,6 +205,7 @@
         style={isDarkMode ? "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json" : "https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json"}
         zoom={1.5}
         center={{ lat: 30, lng: 0 }}
+        maxPitch={0}
       >
         <NavigationControl />
         <ScaleControl />
