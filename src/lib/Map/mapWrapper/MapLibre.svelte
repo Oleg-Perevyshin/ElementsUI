@@ -9,6 +9,7 @@
     style?: any | string
     zoom?: number
     center?: any
+    map?: any
     children?: Snippet<[any]>
   }
 
@@ -17,11 +18,11 @@
     style = { version: 8, sources: {}, layers: [] },
     zoom = $bindable(undefined),
     center = $bindable(undefined),
+    map = $bindable(undefined),
     children,
   }: Props = $props()
 
   let container: HTMLElement | undefined = $state()
-  let map: any | undefined = $state()
   let isLoading = $state(false)
   let hasConnection = $state(true)
 

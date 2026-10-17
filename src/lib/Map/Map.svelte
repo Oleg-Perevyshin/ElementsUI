@@ -51,6 +51,9 @@
   }
 
   let devices: MapDevice[] = $state([])
+  /* Экземпляр MapLibre — для перелёта к первому устройству с фиксом (стартовый вид — весь мир) */
+  let mapInstance: any = $state()
+  let isCentered = false
   let isCopied = $state(false)
   let isDarkMode = $state(false)
   let markerTimeout = $state(30_000)
@@ -84,11 +87,17 @@
   $effect(() => {
     if (data) {
       /* (0, 0) — признак отсутствия реального GPS-фикса, в траекторию такие точки не добавляем */
-      const hasFix = data.NavLat !== 0 || data.NavLon !== 0
+      const hasFix = Number.isFinite(data.NavLat) && Number.isFinite(data.NavLon) && (data.NavLat !== 0 || data.NavLon !== 0)
+      if (hasFix && !isCentered && mapInstance) {
+        mapInstance.flyTo({ center: [data.NavLon, data.NavLat], zoom: 16 })
+        isCentered = true
+      }
       const idx = devices.findIndex((d) => d.DevSN === data?.DevSN)
       if (idx !== -1) {
-        /* Обновление существующего */
-        const track = hasFix ? [...devices[idx].track, [data.NavLon, data.NavLat] as [number, number]].slice(-trackLength) : devices[idx].track
+        /* Обновление существующего; точку трека добавляем только при смене координат — курс и высота приходят чаще позиции */
+        const last = devices[idx].track.at(-1)
+        const moved = !last || last[0] !== data.NavLon || last[1] !== data.NavLat
+        const track = hasFix && moved ? [...devices[idx].track, [data.NavLon, data.NavLat] as [number, number]].slice(-trackLength) : devices[idx].track
         devices[idx] = { ...devices[idx], ...data, track }
       } else {
         /* Новое устройство */
@@ -164,6 +173,7 @@
     <h5 class={twMerge(` w-full px-4 text-center`, label.class)}>{label.name}</h5>
   {/if}
   <MapLibre
+    bind:map={mapInstance}
     class={twMerge("h-[calc(100%-2rem)] min-h-50 overflow-hidden rounded-[14px] border border-(--hairline-color)", roleRingClass)}
     style={isDarkMode ? "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json" : "https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json"}
     zoom={1.5}
@@ -216,7 +226,7 @@
       {/each}
     {/if}
 
-    {#each devices as device}
+    {#each devices.filter((d) => Number.isFinite(d.NavLat) && Number.isFinite(d.NavLon)) as device (device.DevSN)}
       <Marker lnglat={{ lng: device.NavLon, lat: device.NavLat }}>
         {#snippet content()}
           <div class="flex flex-col items-center justify-center leading-none">
@@ -261,19 +271,19 @@
             <div class={`${twMerge("grid grid-cols-2 gap-x-3 gap-y-1 rounded-lg bg-(--container-color) p-2 text-xs", roleBgClass)} ${roleBgPaint}`}>
               <div>
                 <p class="text-[0.6rem] font-semibold tracking-wide uppercase opacity-60">Lat / Lon</p>
-                <p class="font-medium">{device.NavLat.toFixed(5)}, {device.NavLon.toFixed(5)}</p>
+                <p class="font-medium">{(device.NavLat ?? 0).toFixed(5)}, {(device.NavLon ?? 0).toFixed(5)}</p>
               </div>
               <div>
                 <p class="text-[0.6rem] font-semibold tracking-wide uppercase opacity-60">Alt</p>
-                <p class="font-medium">{device.NavAlt.toFixed(1)} m</p>
+                <p class="font-medium">{(device.NavAlt ?? 0).toFixed(1)} m</p>
               </div>
               <div>
                 <p class="text-[0.6rem] font-semibold tracking-wide uppercase opacity-60">Heading</p>
-                <p class="font-medium">{device.NavHeading.toFixed(1)}°</p>
+                <p class="font-medium">{(device.NavHeading ?? 0).toFixed(1)}°</p>
               </div>
               <div>
                 <p class="text-[0.6rem] font-semibold tracking-wide uppercase opacity-60">Satellites</p>
-                <p class="font-medium">{device.NavSatUse}</p>
+                <p class="font-medium">{device.NavSatUse ?? "—"}</p>
               </div>
             </div>
 
@@ -286,7 +296,7 @@
                   onclick={(e) => {
                     e.preventDefault()
                     navigator.clipboard.writeText(
-                      `DevName: ${device.DevName}\nDevSN: ${device.DevSN}\nLat: ${device.NavLat.toFixed(3)} | Lon: ${device.NavLon.toFixed(3)} | Alt: ${device.NavAlt}\nHeading: ${device.NavHeading} | Satellites: ${device.NavSatUse}`,
+                      `DevName: ${device.DevName}\nDevSN: ${device.DevSN}\nLat: ${(device.NavLat ?? 0).toFixed(6)} | Lon: ${(device.NavLon ?? 0).toFixed(6)} | Alt: ${device.NavAlt}\nHeading: ${device.NavHeading} | Satellites: ${device.NavSatUse}`,
                     )
                     isCopied = true
                     setTimeout(() => (isCopied = false), 1000)
