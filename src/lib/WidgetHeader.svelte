@@ -24,7 +24,8 @@
   const Icon = $derived(icon)
 </script>
 
-<div class="flex flex-wrap items-center justify-between gap-3">
+<!-- Фиксированная высота 32 px без переноса — свёрнутые виджеты одной высоты при любом содержимом справа -->
+<div class="flex h-[32px] items-center justify-between gap-3">
   <button
     type="button"
     class="flex min-w-0 flex-1 cursor-pointer items-center gap-2 border-none bg-transparent p-0 text-left"
@@ -43,6 +44,8 @@
     </span>
   </button>
   {#if right}
-    {@render right()}
+    <div class="flex min-w-0 shrink-0 items-center justify-end">
+      {@render right()}
+    </div>
   {/if}
 </div>

@@ -67,6 +67,7 @@ export interface UIComponent {
     | "WidgetFileSystem"
     | "WidgetStackInfo"
     | "WidgetRGBStrip"
+    | "WidgetPFD"
 
   properties:
     | IAccordionProps
@@ -92,6 +93,7 @@ export interface UIComponent {
     | IWidgetFileSystemProps
     | IWidgetStackInfoProps
     | IWidgetRGBStripProps
+    | IWidgetPFDProps
 
   position: Required<Position>
   parentId: string
@@ -739,4 +741,55 @@ export interface IWidgetRGBStripProps {
   onChange?: (field: "Color" | "Effect" | "Speed", value: number | number[]) => void
   /* Количество, модель, порядок — одним пакетом по «Сохранить» (лента перезапускается) */
   onSave?: (hardware: Pick<IWidgetRGBStripConfig, "Count" | "Model" | "Order">) => void
+}
+
+/* Пилотажный дисплей — поля группы (по умолчанию MAV) в том виде, в каком их отдаёт телеметрия MAVLink (20.00.000-01) */
+export interface IWidgetPFDData {
+  Roll: number /* крен, ° (вправо +) */
+  Pitch: number /* тангаж, ° (вверх +) */
+  Heading: number /* курс, 0..360° */
+  GSpeed: number /* путевая скорость, м/с */
+  ASpeed: number /* воздушная скорость, м/с */
+  Climb: number /* вертикальная скорость, м/с (вверх +) */
+  Alt: number /* высота над точкой взлёта, м */
+  AltMSL: number /* высота над уровнем моря, м */
+  Lat: number /* широта, ° */
+  Lon: number /* долгота, ° */
+  Vx: number /* скорость на север, м/с — для трека */
+  Vy: number /* скорость на восток, м/с — для трека */
+  Fix: number /* GPS_FIX_TYPE: 0-1 нет, 2 2D, 3 3D, 4 DGPS, 5 RTK float, 6 RTK fixed */
+  Sat: number /* видимых спутников */
+  BV: number /* напряжение батареи, В */
+  BC: number /* ток, А; -1 — не измеряется */
+  BRem: number /* остаток, %; -1 — неизвестно */
+  Mode: number /* custom_mode HEARTBEAT */
+  VType: number /* MAV_TYPE — определяет названия режимов */
+  Armed: number /* 1 — взведён */
+  HomeLat: number /* точка взлёта, °; 0 — неизвестна */
+  HomeLon: number
+  Press: number /* давление, гПа */
+  Temp: number /* температура, °C */
+}
+
+/* Границы для цветовых зон; не заданная граница не рисуется */
+export interface IWidgetPFDLimits {
+  speedMin?: number /* м/с — ниже красная зона на ленте скорости */
+  speedMax?: number /* м/с — выше красная зона */
+  bankMax?: number /* ° — за пределом дуга крена красная */
+  altMax?: number /* м — выше красная зона на ленте высоты */
+  battLow?: number /* % — ниже батарея подсвечивается */
+  staleMs?: number /* мс без новых данных — флаг «нет данных», по умолчанию 2000 */
+}
+
+export interface IWidgetPFDProps {
+  /* Префикс группы полей, по умолчанию "MAV" */
+  id?: string
+  wrapperClass?: string
+  componentClass?: string
+  label?: { name?: string }
+  value?: Partial<IWidgetPFDData>
+  keys?: Partial<Record<keyof IWidgetPFDData, string>>
+  limits?: IWidgetPFDLimits
+  collapsed?: boolean
+  persistKey?: string
 }

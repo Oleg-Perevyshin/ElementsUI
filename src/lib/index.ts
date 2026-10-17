@@ -50,6 +50,8 @@ export { default as WidgetStackInfo } from "./WidgetStackInfo/WidgetStackInfo.sv
 export { default as WidgetStackInfoProps } from "./WidgetStackInfo/WidgetStackInfoProps.svelte"
 export { default as WidgetRGBStrip } from "./WidgetRGBStrip/WidgetRGBStrip.svelte"
 export { default as WidgetRGBStripProps } from "./WidgetRGBStrip/WidgetRGBStripProps.svelte"
+export { default as WidgetPFD } from "./WidgetPFD/WidgetPFD.svelte"
+export { default as WidgetPFDProps } from "./WidgetPFD/WidgetPFDProps.svelte"
 
 export * from "./locales/i18n"
 export * from "./locales/translations"
@@ -86,6 +88,9 @@ export {
   type IWidgetStackInfoTask,
   type IWidgetRGBStripProps,
   type IWidgetRGBStripConfig,
+  type IWidgetPFDProps,
+  type IWidgetPFDData,
+  type IWidgetPFDLimits,
   type IGraphProps,
   type IGraphDataObject,
   type IGraphHistoryPoint,

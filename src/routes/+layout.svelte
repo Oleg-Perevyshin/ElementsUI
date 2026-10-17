@@ -26,6 +26,7 @@
     { page: "widget-file-system", name: "WidgetFileSystem" },
     { page: "widget-stack-info", name: "WidgetStackInfo" },
     { page: "widget-rgb-strip", name: "WidgetRGBStrip" },
+    { page: "widget-pfd", name: "WidgetPFD" },
     { page: "accordion", name: "Accordion" },
     { page: "button", name: "Button" },
     { page: "carousel", name: "Carousel" },
