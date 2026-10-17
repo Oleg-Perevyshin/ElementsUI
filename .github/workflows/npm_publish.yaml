@@ -73,7 +73,7 @@ jobs:
           DATABASE_URL: "file:./ci.db"
         run: |
           npm install "poe-svelte-ui-lib@$VERSION"
-          mkdir -p .svelte-kit && echo '{"compilerOptions":{}}' > .svelte-kit/tsconfig.json
+          npx svelte-kit sync
           npx prisma generate
           npx svelte-check --threshold error
 
