@@ -1,6 +1,4 @@
 # .github/workflows/npm_publish.yaml
-# Публикация через trusted publisher npm (OIDC): токен NPM_TOKEN не нужен, provenance добавляется автоматически.
-# Связь на npmjs.com: Oleg-Perevyshin/ElementsUI, workflow npm_publish.yaml, разрешение «npm publish».
 name: Публикация в NPM
 
 on:
@@ -14,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      id-token: write # OIDC-токен для trusted publishing
+      id-token: write
 
     steps:
       - name: Клонирование репозитория
@@ -26,7 +24,7 @@ jobs:
           node-version: "24"
           registry-url: "https://registry.npmjs.org"
 
-      - name: Обновление npm (trusted publishing требует npm 11.5.1+)
+      - name: Обновление npm
         run: npm install -g npm@latest
 
       - name: Установка зависимостей
@@ -38,8 +36,7 @@ jobs:
       - name: Публикация в NPM
         run: npm publish --access public
 
-  # После публикации поднимает версию библиотеки в DevCloud (Forgejo) и разворачивает облако коммитом с [deploy].
-  # Секрет DEVCLOUD_ACCESS_TOKEN — токен Forgejo с правом записи в xPOE-Studio/DevCloud.
+  # После публикации поднимаем версию библиотеки в DevCloud и переразворачиваем облако
   update-devcloud:
     needs: publish
     runs-on: ubuntu-latest
@@ -47,7 +44,7 @@ jobs:
       contents: read
 
     steps:
-      - name: Клонирование библиотеки (версия)
+      - name: Клонирование библиотеки
         uses: actions/checkout@v4
 
       - name: Установка Node.js
@@ -73,9 +70,10 @@ jobs:
       - name: Обновление библиотеки и проверка типов
         working-directory: devcloud
         env:
-          DATABASE_URL: "file:./ci.db" # только для prisma generate, к БД не подключается
+          DATABASE_URL: "file:./ci.db"
         run: |
           npm install "poe-svelte-ui-lib@$VERSION"
+          mkdir -p .svelte-kit && echo '{"compilerOptions":{}}' > .svelte-kit/tsconfig.json
           npx prisma generate
           npx svelte-check --threshold error
 
