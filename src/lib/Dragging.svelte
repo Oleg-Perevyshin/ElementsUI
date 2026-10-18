@@ -2,6 +2,7 @@
   import { tick } from "svelte"
   import MoveVerticalIcon from "./libIcons/MoveVerticalIcon.svelte"
   import { twMerge } from "tailwind-merge"
+  import { applyDragGhost, clearDragGhost, createDropPlaceholder } from "./dragStyle"
 
   let dragState = $state({
     isDragging: false,
@@ -48,24 +49,19 @@
     const element = movedElement.cloneNode(true) as HTMLElement
     const rect = movedElement.getBoundingClientRect()
 
-    /* Создаем визуальный эффект перетаскивания */
+    /* Визуальный эффект перетаскивания — общий для библиотеки и приложений (dragStyle.ts) */
     element.id = "drag-element"
     element.style.position = "fixed"
     element.style.zIndex = "9999"
     element.style.minHeight = `${rect.height}px`
     element.style.pointerEvents = "none"
     element.style.width = `${rect.width}px`
-    element.style.background = "var(--field-color)"
-    element.style.padding = "0.25rem"
-    element.style.borderRadius = "1rem"
+    element.style.left = `${rect.left}px`
     element.style.top = `${rect.top}px`
+    applyDragGhost(element)
     movedElement.parentNode?.appendChild(element)
 
-    const placeholder = document.createElement("div")
-    placeholder.style.minHeight = `${rect.height}px`
-    placeholder.style.width = "100%"
-    placeholder.style.border = "2px dashed var(--blue-color)"
-    placeholder.style.borderRadius = "1rem"
+    const placeholder = createDropPlaceholder(rect.height)
     element.parentNode?.insertBefore(placeholder, movedElement)
 
     const [movedItem] = array.splice(elementIndex, 1)
@@ -127,6 +123,7 @@
 
     if (dragState.placeholderElement) dragState.placeholderElement.remove()
     if (dragState.ghostElement) dragState.ghostElement.remove()
+    clearDragGhost()
 
     dragState = {
       isDragging: false,

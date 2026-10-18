@@ -56,6 +56,7 @@ export * from "./locales/i18n"
 export * from "./locales/languages"
 export * from "./locales/localize"
 export { widgetAccentStyle } from "./widgetAccent"
+export { applyDragGhost, clearDragGhost, createDropPlaceholder } from "./dragStyle"
 export * from "./ModalStackStore"
 
 export {
