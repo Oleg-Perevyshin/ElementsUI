@@ -38,7 +38,8 @@
 
   /* Перетаскивание с MouseEvent */
   const startDrag = async (e: MouseEvent) => {
-    const movedElement = document.querySelector(
+    /* Строка ищется только внутри своего списка — id вида item-N есть и у других списков на странице */
+    const movedElement = container.querySelector(
       containerIndex == null ? `#${elementsId}-${elementIndex}` : `#${elementsId}-${elementIndex}-${containerIndex}`,
     ) as HTMLElement
 

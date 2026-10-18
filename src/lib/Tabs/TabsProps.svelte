@@ -11,6 +11,8 @@
   import CommonSnippets from "$lib/CommonSnippets.svelte"
   import PropsGroup from "$lib/PropsGroup.svelte"
   import PropsListModal from "$lib/PropsListModal.svelte"
+  import { Language } from "$lib/locales/i18n"
+  import { localizeText } from "$lib/locales/localize"
 
   const {
     component,
@@ -23,6 +25,18 @@
   }>()
 
   let itemsContainer: HTMLDivElement | null = $state(null)
+
+  /* У каждой вкладки — стабильный id: по нему конструктор переносит её содержимое при перестановке и удалении вкладок */
+  $effect(() => {
+    const items = component.properties.items ?? []
+    if (items.every((item: { id?: string }) => item.id)) return
+    updateProperty(
+      "items",
+      items.map((item: { id?: string }) => (item.id ? item : { ...item, id: crypto.randomUUID() })),
+      component,
+      onPropertyChange,
+    )
+  })
 
   const initialColor = $derived(findColorOption($optionsStore.COLOR_OPTIONS, component.properties.wrapperClass))
 
@@ -91,8 +105,9 @@
               wrapperClass="w-8"
               content={{ icon: ButtonAdd }}
               onClick={() => {
-                const newItem: { name: string; icon: string; class: string } = {
-                  name: `Tab ${component.properties?.items.length + 1}`,
+                const newItem: { id: string; name: string; icon: string; class: string } = {
+                  id: crypto.randomUUID(),
+                  name: "",
                   class: `text-${initialColor?.value.slice(3)}-500 ${initialPosition?.value}`,
                   icon: "",
                 }
@@ -122,6 +137,11 @@
                 }}
               />
               <div class="flex flex-wrap items-end gap-2">
+                <!-- Какая это вкладка: номер и название на текущем языке (название правится в «Тексты и переводы») -->
+                <div class="flex w-full items-baseline gap-2 text-[13px]">
+                  <span class="font-semibold">{$T("constructor.props.tabs.item", { n: index + 1 })}</span>
+                  <span class="truncate text-(--muted-color)">{localizeText(tab.name, $Language) || $T("constructor.props.tabs.untitled")}</span>
+                </div>
                 <div class="relative min-w-32">
                   <CommonSnippets
                     snippet="IconsLib"

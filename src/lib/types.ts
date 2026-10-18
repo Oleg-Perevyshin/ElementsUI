@@ -465,7 +465,16 @@ export interface ITabsProps {
     width?: number
   }
   activeTab?: number
-  items: { name?: string; icon?: ConstructorOfATypedSvelteComponent | string; class?: string; children?: Snippet; onClick?: () => {}; disabled?: boolean }[]
+  /* id — стабильный идентификатор вкладки: по нему конструктор переносит содержимое вкладки при перестановке/удалении (содержимое привязано к номеру вкладки) */
+  items: {
+    id?: string
+    name?: string
+    icon?: ConstructorOfATypedSvelteComponent | string
+    class?: string
+    children?: Snippet
+    onClick?: () => {}
+    disabled?: boolean
+  }[]
   children?: Snippet<[any]>
   apiArray?: UIComponent[]
   Components?: Snippet<[component: UIComponent, fixedHeight: boolean]>
