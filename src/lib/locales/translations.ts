@@ -1,6 +1,6 @@
 /* $lib/locales/translations.ts */
 /* Словарь библиотеки: переводы по кодам языков (languages.ts); обязателен язык по умолчанию, недостающий перевод показывается на нём */
-import type { Translations } from "./languages"
+import type { Translations } from "./languages.js"
 
 const translations: Translations = {
   "common.select_tag": { ru: "Сделайте выбор", en: "Make a choice", zh: "请选择" },

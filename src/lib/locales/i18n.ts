@@ -1,6 +1,6 @@
 import { derived, get, writable, type Readable } from "svelte/store"
-import translations from "./translations"
-import { DEFAULT_LANGUAGE, LANGUAGES, isLanguageCode, resolveLanguage, type LanguageCode, type Translations } from "./languages"
+import translations from "./translations.js"
+import { DEFAULT_LANGUAGE, LANGUAGES, isLanguageCode, resolveLanguage, type LanguageCode, type Translations } from "./languages.js"
 
 /* Язык и механизм перевода — общие для библиотеки и приложений: приложение берёт отсюда Language/setLanguage/LOCALES и строит свой $T
    из своего словаря через createTranslator (см. README «Языки»); переключение языка одним setLanguage меняет и компоненты, и приложение */
