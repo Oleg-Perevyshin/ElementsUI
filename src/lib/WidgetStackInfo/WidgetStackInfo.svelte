@@ -3,6 +3,7 @@
      (API_GetStackInfo): Heap[{Name, Total, Free, MinFree}] и Tasks[{Name, FreeMin, Prio, Core?, State}].
      Ничего не знает про DeviceStore/WebSocket — value/onRefresh, автоопрос лишь периодически зовёт onRefresh. -->
 <script lang="ts">
+  import { T } from "$lib/locales/i18n"
   import { slide } from "svelte/transition"
   import { twMerge } from "tailwind-merge"
   import * as UI from "$lib"
@@ -16,7 +17,7 @@
   let {
     wrapperClass = "",
     componentClass = "",
-    label = { name: "Память и задачи" },
+    label = {},
     value,
     warnBytes = 512,
     period = $bindable(0),
@@ -38,12 +39,12 @@
   $effect(() => writePersistedCollapsed(persistKey, collapsed))
 
   /* Автоопрос: сразу при включении и далее раз в period; свёрнутый виджет не опрашивает */
-  const periods: IOption<number>[] = [
-    { id: "off", value: 0, name: "Выкл" },
-    { id: "1s", value: 1000, name: "1 с" },
-    { id: "5s", value: 5000, name: "5 с" },
-    { id: "10s", value: 10000, name: "10 с" },
-  ]
+  let periods: IOption<number>[] = $derived([
+    { id: "off", value: 0, name: $T("widget.stack.off") },
+    { id: "1s", value: 1000, name: $T("widget.stack.sec", { n: 1 }) },
+    { id: "5s", value: 5000, name: $T("widget.stack.sec", { n: 5 }) },
+    { id: "10s", value: 10000, name: $T("widget.stack.sec", { n: 10 }) },
+  ])
   $effect(() => {
     if (!period || period <= 0 || collapsed || !onRefresh) return
     onRefresh()
@@ -54,9 +55,9 @@
   /* Размер в человекочитаемом виде: Б / КБ / МБ, одна цифра после запятой начиная с КБ */
   const formatBytes = (bytes: number) => {
     if (!Number.isFinite(bytes) || bytes < 0) return "—"
-    if (bytes < 1024) return `${bytes} Б`
-    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} КБ`
-    return `${(bytes / (1024 * 1024)).toFixed(1)} МБ`
+    if (bytes < 1024) return $T("widget.common.bytes", { n: bytes })
+    if (bytes < 1024 * 1024) return $T("widget.common.kbytes", { n: (bytes / 1024).toFixed(1) })
+    return $T("widget.common.mbytes", { n: (bytes / (1024 * 1024)).toFixed(1) })
   }
   const percent = (part: number, total: number) => (total > 0 ? Math.min(100, Math.max(0, Math.round((part / total) * 100))) : 0)
 
@@ -72,7 +73,7 @@
 
   /* Имена задач приходят с устройства, а Table выводит ячейки через {@html} — экранируем */
   const escapeHtml = (text: string) => text.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`)
-  const STATES = ["Работает", "Готова", "Ожидает", "Приостановлена", "Удалена"]
+  let STATES = $derived(["running", "ready", "blocked", "suspended", "deleted"].map((state) => $T(`widget.stack.state.${state}`)))
   const stackColor = (bytes: number) => (bytes < warnBytes ? "var(--red-color)" : bytes < warnBytes * 2 ? "var(--orange-color)" : "")
 
   type TaskRow = { Name: string; StateText: string; Prio: number; CoreText: string; FreeMinText: string }
@@ -88,19 +89,26 @@
         Name: escapeHtml(t.Name),
         StateText: STATES[t.State] ?? "—",
         Prio: t.Prio,
-        CoreText: t.Core === undefined ? "" : t.Core < 0 ? "любое" : String(t.Core),
+        CoreText: t.Core === undefined ? "" : t.Core < 0 ? $T("widget.stack.core_any") : String(t.Core),
         FreeMinText: color ? `<span style="color: ${color}; font-weight: 600">${t.FreeMin}</span>` : String(t.FreeMin),
       }
     }),
   )
   let header: ITableHeader<TaskRow>[] = $derived([
-    { label: { name: "Задача" }, content: [{ type: "text", data: { key: "Name", truncated: true } }], width: "1fr", align: "left" },
-    { label: { name: "Состояние" }, content: [{ type: "text", data: { key: "StateText", truncated: true } }], width: "9.5rem", align: "left" },
-    { label: { name: "Приор." }, content: [{ type: "text", data: { key: "Prio" } }], width: "5.5rem", align: "center" },
+    { label: { name: $T("widget.stack.task") }, content: [{ type: "text", data: { key: "Name", truncated: true } }], width: "1fr", align: "left" },
+    { label: { name: $T("widget.stack.state") }, content: [{ type: "text", data: { key: "StateText", truncated: true } }], width: "9.5rem", align: "left" },
+    { label: { name: $T("widget.stack.prio") }, content: [{ type: "text", data: { key: "Prio" } }], width: "5.5rem", align: "center" },
     ...(hasCore
-      ? [{ label: { name: "Ядро" }, content: [{ type: "text", data: { key: "CoreText" } }], width: "5.5rem", align: "center" } as ITableHeader<TaskRow>]
+      ? [
+          {
+            label: { name: $T("widget.stack.core") },
+            content: [{ type: "text", data: { key: "CoreText" } }],
+            width: "5.5rem",
+            align: "center",
+          } as ITableHeader<TaskRow>,
+        ]
       : []),
-    { label: { name: "Запас, Б" }, content: [{ type: "text", data: { key: "FreeMinText" } }], width: "6rem", align: "right" },
+    { label: { name: $T("widget.stack.free_min") }, content: [{ type: "text", data: { key: "FreeMinText" } }], width: "6rem", align: "right" },
   ])
 </script>
 
@@ -109,7 +117,7 @@
   style={accentStyle}
 >
   <!-- Заголовок -->
-  <WidgetHeader icon={MemoryIcon} label={label?.name ?? "Память и задачи"} bind:collapsed>
+  <WidgetHeader icon={MemoryIcon} label={label?.name || $T("widget.stack.title")} bind:collapsed>
     {#snippet right()}
       <div class="flex items-center gap-2">
         <UI.Select
@@ -123,7 +131,7 @@
         <UI.Button
           wrapperClass="w-auto"
           componentClass="bg-transparent px-3"
-          content={{ icon: RefreshIcon, name: "Обновить" }}
+          content={{ icon: RefreshIcon, name: $T("widget.common.refresh") }}
           disabled={!onRefresh}
           onClick={() => onRefresh?.()}
         />
@@ -135,7 +143,7 @@
     <div class="flex flex-col gap-4" transition:slide={{ duration: 150 }}>
       {#if !value}
         <div class="rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-3 text-center text-[13px] text-(--faint-color)">
-          Нет данных — нажмите «Обновить»
+          {$T("widget.stack.no_data")}
         </div>
       {:else}
         <!-- Кучи -->
@@ -143,7 +151,9 @@
           {#each heaps as heap (heap.Name)}
             <div class="flex flex-col gap-2 rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-3">
               <div class="flex items-baseline justify-between gap-2 text-[13px]">
-                <span class="truncate font-semibold">{heap.Name}: {formatBytes(heap.used)} из {formatBytes(heap.Total)}</span>
+                <span class="truncate font-semibold"
+                  >{$T("widget.stack.heap", { name: heap.Name, used: formatBytes(heap.used), total: formatBytes(heap.Total) })}</span
+                >
                 <span class="font-semibold tabular-nums" style="color: {percentColor(heap.usedPercent)}">{heap.usedPercent}%</span>
               </div>
               <div class="relative h-2 w-full overflow-hidden rounded-full bg-(--container-color)">
@@ -154,8 +164,8 @@
                 ></div>
               </div>
               <div class="flex justify-between gap-2 text-[12px] text-(--muted-color)">
-                <span>Свободно {formatBytes(heap.Free)}</span>
-                <span>Минимум {formatBytes(heap.MinFree)}</span>
+                <span>{$T("widget.common.free", { size: formatBytes(heap.Free) })}</span>
+                <span>{$T("widget.stack.min", { size: formatBytes(heap.MinFree) })}</span>
               </div>
             </div>
           {/each}
@@ -164,9 +174,9 @@
         <!-- Задачи -->
         <div class="flex flex-col gap-2">
           <div class="flex items-baseline justify-between gap-2 text-[12px] text-(--muted-color)">
-            <span>Задач: {tasks.length}</span>
+            <span>{$T("widget.stack.tasks", { n: tasks.length })}</span>
             {#if lowCount}
-              <span class="font-semibold text-(--red-color)">Запас стека меньше {warnBytes} Б: {lowCount}</span>
+              <span class="font-semibold text-(--red-color)">{$T("widget.stack.low", { warn: warnBytes, n: lowCount })}</span>
             {/if}
           </div>
           <div class="flex max-h-80 min-h-0 flex-col">

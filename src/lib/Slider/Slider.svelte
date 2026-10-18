@@ -15,6 +15,7 @@
      проваливаться в другой. Клик по пустой дорожке (не по бегунку) больше не
      телепортирует ближайший ползунок — сознательный компромисс ради надёжности. -->
 <script lang="ts">
+  import { T } from "$lib/locales/i18n"
   import type { ISliderProps } from "../types"
   import { twMerge } from "tailwind-merge"
 
@@ -205,7 +206,7 @@
               : 'cursor-pointer'}"
             onclick={disabled ? undefined : () => adjustValue(t as "lower" | "upper", "decrement")}
             disabled={disabled || (t === "lower" ? lowerValue <= number.minNum : upperValue <= lowerValue)}
-            aria-label="Уменьшить">−</button
+            aria-label={$T("ui.decrease")}>−</button
           >
           <span class="inline-block text-center text-[13px] font-semibold tabular-nums" style={`width: ${valueWidth}`}>
             {t === "lower" ? lowerValue : upperValue}
@@ -216,7 +217,7 @@
               : 'cursor-pointer'}"
             onclick={disabled ? undefined : () => adjustValue(t as "lower" | "upper", "increment")}
             disabled={disabled || (t === "lower" ? lowerValue >= upperValue : upperValue >= number.maxNum)}
-            aria-label="Увеличить">+</button
+            aria-label={$T("ui.increase")}>+</button
           >
         </div>
       {/each}
@@ -228,7 +229,7 @@
             : 'cursor-pointer'}"
           onclick={disabled ? undefined : () => adjustValue("single", "decrement")}
           disabled={disabled || singleValue <= number.minNum}
-          aria-label="Уменьшить">−</button
+          aria-label={$T("ui.decrease")}>−</button
         >
         <span class="inline-block text-center text-[13px] font-semibold tabular-nums" style={`width: ${valueWidth}`}>
           {singleValue}
@@ -239,7 +240,7 @@
             : 'cursor-pointer'}"
           onclick={disabled ? undefined : () => adjustValue("single", "increment")}
           disabled={disabled || singleValue >= number.maxNum}
-          aria-label="Увеличить">+</button
+          aria-label={$T("ui.increase")}>+</button
         >
       </div>
     {/if}

@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { Language } from "$lib/locales/i18n"
+  import { localizeDeep } from "$lib/locales/localize"
   import type { IJoystickProps, UIComponent } from "$lib"
   import ComponentExample from "../../ComponentExample.svelte"
   import Joystick from "$lib/Joystick/Joystick.svelte"
@@ -42,7 +44,10 @@ ${formatObjectToString(joystickComponent.properties as IJoystickProps)}
 
 <ComponentExample {codeText} {readmeHtml} bind:forConstructor>
   {#snippet component()}
-    <Joystick {...joystickComponent.properties as IJoystickProps} />
+    <Joystick
+      {...localizeDeep(joystickComponent.properties, $Language) as IJoystickProps}
+      onUpdate={(value) => (joystickComponent = updateComponent(joystickComponent, { properties: { value } }))}
+    />
   {/snippet}
   {#snippet componentProps()}
     <JoystickProps

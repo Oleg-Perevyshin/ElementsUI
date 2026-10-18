@@ -3,6 +3,7 @@
      устройства (keys) и команда перезагрузки — все с дефолтами, равными текущей прошивочной
      конвенции (см. DEFAULT_PROPS.WidgetDeviceInfo в DevCloud). -->
 <script lang="ts">
+  import TextsEditor from "../TextsEditor.svelte"
   import { T } from "$lib/locales/i18n"
   import * as UI from "$lib"
   import { updateProperty, type UIComponent, type IWidgetDeviceInfoProps, type IWidgetDeviceInfoConfig, type IOption } from "../types"
@@ -30,14 +31,14 @@
 
 {#snippet WidgetRestartCommand()}
   <UI.Select
-    label={{ name: "Заголовок пакета" }}
+    label={{ name: $T("widget.common.packet_header") }}
     type="buttons"
     options={$optionsStore.HEADER_OPTIONS}
     value={$optionsStore.HEADER_OPTIONS.find((o) => o.value === (component.properties.restartCommand?.header || "SET"))}
     onUpdate={(option) => updateProperty("restartCommand.header", (option as IOption<string>).value as string, component, onPropertyChange)}
   />
   <UI.Input
-    label={{ name: "Аргумент" }}
+    label={{ name: $T("widget.common.argument") }}
     value={component.properties.restartCommand?.argument ?? "Restart"}
     onUpdate={(value) => updateProperty("restartCommand.argument", value as string, component, onPropertyChange)}
   />
@@ -45,13 +46,9 @@
 
 <div class="flex flex-col gap-2">
   <PropsGroup label={$T("constructor.props.group.general")}>
+    <TextsEditor {component} {onPropertyChange} />
     <UI.Input
-      label={{ name: "Заголовок" }}
-      value={component.properties.label?.name}
-      onUpdate={(value) => updateProperty("label.name", value as string, component, onPropertyChange)}
-    />
-    <UI.Input
-      label={{ name: "Префикс группы (ID)" }}
+      label={{ name: $T("widget.common.group_prefix") }}
       value={component.properties.id}
       onUpdate={(value) => updateProperty("id", value as string, component, onPropertyChange)}
     />
@@ -60,10 +57,10 @@
       onUpdate={(value) => updateProperty("componentClass", value, component, onPropertyChange)}
     />
   </PropsGroup>
-  <PropsGroup label="Ключи устройства">
+  <PropsGroup label={$T("widget.common.device_keys")}>
     {@render WidgetKeys()}
   </PropsGroup>
-  <PropsGroup label="Команда перезагрузки">
+  <PropsGroup label={$T("widget.info.restart_command")}>
     {@render WidgetRestartCommand()}
   </PropsGroup>
 </div>

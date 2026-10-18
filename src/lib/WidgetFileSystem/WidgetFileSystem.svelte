@@ -4,6 +4,7 @@
      Ничего не знает про DeviceStore/WebSocket — value/onRefresh/onDelete/onUpload, протокол
      закачки (SET FS с Op UploadStart/UploadChunk/UploadDone) и отправка команд на стороне вызывающего. -->
 <script lang="ts">
+  import { T } from "$lib/locales/i18n"
   import { slide, fade, scale } from "svelte/transition"
   import { twMerge } from "tailwind-merge"
   import * as UI from "$lib"
@@ -17,7 +18,7 @@
   let {
     wrapperClass = "",
     componentClass = "",
-    label = { name: "Файловая система" },
+    label = {},
     value,
     accept = "*/*",
     maxNameLength = 31,
@@ -43,9 +44,9 @@
   /* Размер в человекочитаемом виде: Б / КБ / МБ, одна цифра после запятой начиная с КБ */
   const formatBytes = (bytes: number) => {
     if (!Number.isFinite(bytes) || bytes < 0) return "—"
-    if (bytes < 1024) return `${bytes} Б`
-    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} КБ`
-    return `${(bytes / (1024 * 1024)).toFixed(1)} МБ`
+    if (bytes < 1024) return $T("widget.common.bytes", { n: bytes })
+    if (bytes < 1024 * 1024) return $T("widget.common.kbytes", { n: (bytes / 1024).toFixed(1) })
+    return $T("widget.common.mbytes", { n: (bytes / (1024 * 1024)).toFixed(1) })
   }
 
   let total = $derived(value?.Total ?? 0)
@@ -60,13 +61,15 @@
   type FileRow = IWidgetFileSystemFile & { SizeText: string }
   let rows: FileRow[] = $derived(files.map((f) => ({ ...f, SizeText: formatBytes(f.Size) })))
   let header: ITableHeader<FileRow>[] = $derived([
-    { label: { name: "Путь" }, content: [{ type: "text", data: { key: "Name", truncated: true, sortable: true } }], width: "1fr", align: "left" },
-    { label: { name: "Размер" }, content: [{ type: "text", data: { key: "SizeText" } }], width: "6rem", align: "right" },
+    { label: { name: $T("widget.fs.path") }, content: [{ type: "text", data: { key: "Name", truncated: true, sortable: true } }], width: "1fr", align: "left" },
+    { label: { name: $T("widget.fs.size") }, content: [{ type: "text", data: { key: "SizeText" } }], width: "6rem", align: "right" },
     ...(onDelete
       ? [
           {
             label: { name: "" },
-            content: [{ type: "button", data: { name: "Удалить", class: "bg-accent", onClick: (row: FileRow) => (pendingDelete = row.Name) } }],
+            content: [
+              { type: "button", data: { name: $T("widget.common.delete"), class: "bg-accent", onClick: (row: FileRow) => (pendingDelete = row.Name) } },
+            ],
             width: "6.5rem",
             align: "center",
           } as ITableHeader<FileRow>,
@@ -92,14 +95,14 @@
     uploadError = ""
     if (!file || !onUpload || uploading) return
     if (file.name.length > maxNameLength) {
-      uploadError = `Имя файла длиннее ${maxNameLength} символов`
+      uploadError = $T("widget.fs.name_too_long", { n: maxNameLength })
       return
     }
     uploading = true
     try {
       await onUpload(file)
     } catch (error) {
-      uploadError = `Закачка прервана: ${error instanceof Error ? error.message : error}`
+      uploadError = $T("widget.fs.upload_failed", { error: error instanceof Error ? error.message : String(error) })
     } finally {
       uploading = false
     }
@@ -111,12 +114,12 @@
   style={accentStyle}
 >
   <!-- Заголовок -->
-  <WidgetHeader icon={StorageIcon} label={label?.name ?? "Файловая система"} bind:collapsed>
+  <WidgetHeader icon={StorageIcon} label={label?.name || $T("widget.fs.title")} bind:collapsed>
     {#snippet right()}
       <UI.Button
         wrapperClass="w-auto"
         componentClass="bg-transparent px-3"
-        content={{ icon: RefreshIcon, name: "Обновить" }}
+        content={{ icon: RefreshIcon, name: $T("widget.common.refresh") }}
         disabled={!onRefresh}
         onClick={() => onRefresh?.()}
       />
@@ -128,15 +131,15 @@
       <!-- Занятость памяти -->
       <div class="flex flex-col gap-2 rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-3">
         <div class="flex items-baseline justify-between gap-2 text-[13px]">
-          <span class="font-semibold">Занято {formatBytes(used)} из {formatBytes(total)}</span>
+          <span class="font-semibold">{$T("widget.fs.used", { used: formatBytes(used), total: formatBytes(total) })}</span>
           <span class="font-semibold tabular-nums" style="color: {percentColor}">{usedPercent}%</span>
         </div>
         <div class="h-2 w-full overflow-hidden rounded-full bg-(--container-color)">
           <div class="h-full rounded-full transition-[width] duration-300" style="width: {usedPercent}%; background: var(--accent-color)"></div>
         </div>
         <div class="flex justify-between gap-2 text-[12px] text-(--muted-color)">
-          <span>Свободно {formatBytes(free)}</span>
-          <span>Файлов: {files.length}</span>
+          <span>{$T("widget.common.free", { size: formatBytes(free) })}</span>
+          <span>{$T("widget.fs.files", { n: files.length })}</span>
         </div>
       </div>
 
@@ -145,14 +148,16 @@
         {#if rows.length}
           <UI.Table {header} body={rows} outline />
         {:else}
-          <div class="rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-3 text-center text-[13px] text-(--faint-color)">Файлов нет</div>
+          <div class="rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-3 text-center text-[13px] text-(--faint-color)">
+            {$T("widget.fs.empty")}
+          </div>
         {/if}
       </div>
 
       <!-- Закачка -->
       {#if onUpload}
         <div class="flex flex-col gap-2 rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-3">
-          <UI.FileAttach label={{ name: "Закачать файл" }} {accept} disabled={uploading || !!upload} onChange={handleFile} />
+          <UI.FileAttach label={{ name: $T("widget.fs.upload") }} {accept} disabled={uploading || !!upload} onChange={handleFile} />
           {#if uploading || upload}
             <div class="flex items-center gap-2 text-[12px]" transition:slide={{ duration: 100 }}>
               {#if upload?.Name}
@@ -179,11 +184,16 @@
         class="flex w-full max-w-80 flex-col gap-3 rounded-[16px] border border-(--hairline-color) bg-(--back-color) p-4 shadow-(--elevation-3)"
         transition:scale={{ duration: 150, start: 0.96 }}
       >
-        <h4 class="text-[15px] font-semibold">Удалить файл?</h4>
+        <h4 class="text-[15px] font-semibold">{$T("widget.fs.delete_confirm")}</h4>
         <p class="text-[13px] break-all text-(--muted-color)">{pendingDelete}</p>
         <div class="flex gap-2">
-          <UI.Button wrapperClass="flex-1" componentClass="bg-transparent" content={{ name: "Отмена" }} onClick={() => (pendingDelete = null)} />
-          <UI.Button wrapperClass="flex-1" componentClass="bg-red" content={{ name: "Удалить" }} onClick={confirmDelete} />
+          <UI.Button
+            wrapperClass="flex-1"
+            componentClass="bg-transparent"
+            content={{ name: $T("widget.common.cancel") }}
+            onClick={() => (pendingDelete = null)}
+          />
+          <UI.Button wrapperClass="flex-1" componentClass="bg-red" content={{ name: $T("widget.common.delete") }} onClick={confirmDelete} />
         </div>
       </div>
     </div>

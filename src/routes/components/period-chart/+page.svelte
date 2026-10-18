@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { Language } from "$lib/locales/i18n"
+  import { localizeDeep } from "$lib/locales/localize"
   import { type IPeriodChartProps, type IPeriodChartLevel, type UIComponent } from "$lib"
   import ComponentExample from "../../ComponentExample.svelte"
   import PeriodChart from "$lib/PeriodChart/PeriodChart.svelte"
@@ -63,7 +65,7 @@ ${formatObjectToString(periodChartComponent.properties as IPeriodChartProps)}
 
 <ComponentExample {codeText} {readmeHtml} bind:forConstructor>
   {#snippet component()}
-    <PeriodChart {...periodChartComponent.properties as IPeriodChartProps} />
+    <PeriodChart {...localizeDeep(periodChartComponent.properties, $Language) as IPeriodChartProps} />
   {/snippet}
   {#snippet componentProps()}
     <PeriodChartProps

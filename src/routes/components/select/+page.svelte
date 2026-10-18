@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { Language } from "$lib/locales/i18n"
+  import { localizeDeep } from "$lib/locales/localize"
   import { type ISelectProps, type UIComponent } from "$lib"
   import ComponentExample from "../../ComponentExample.svelte"
   import * as UI from "$lib"
@@ -11,6 +13,17 @@
     RenderMarkdown(readmeRaw).then((html) => (readmeHtml = html))
   })
 
+  /* Многоязычный текст для демо: в данных — { ru, en, zh }, тип поля — string (разрешается localizeDeep) */
+  const L = (ru: string, en: string, zh: string) => ({ ru, en, zh }) as unknown as string
+
+  const DEMO_OPTIONS = [
+    { id: "auto", value: 0, name: L("Авто", "Auto", "自动"), class: "bg-green" },
+    { id: "manual", value: 1, name: L("Ручной", "Manual", "手动"), class: "bg-blue" },
+    { id: "eco", value: 2, name: L("Эконом", "Eco", "节能"), class: "bg-cyan" },
+    { id: "boost", value: 3, name: L("Форсаж", "Boost", "增强"), class: "bg-orange" },
+    { id: "service", value: 4, name: L("Сервис", "Service", "维护"), class: "bg-red", disabled: true },
+  ]
+
   let selectComponent: UIComponent = $state({
     id: crypto.randomUUID(),
     type: "Select",
@@ -19,12 +32,13 @@
       id: crypto.randomUUID(),
       wrapperClass: "bg-max h-25",
       disabled: false,
-      label: { name: "Label", class: "text-center" },
-      type: "input",
-      multiSelect: true,
+      label: { name: L("Режим работы", "Operating mode", "工作模式"), class: "text-center" },
+      type: "select",
+      multiSelect: false,
       bitMode: false,
       range: { start: 0, end: 1 },
-      options: [],
+      options: DEMO_OPTIONS,
+      value: DEMO_OPTIONS[1],
     },
     eventHandler: { Header: "SET", Argument: "ModCfg", Variables: [] },
     position: { row: 0, col: 0, width: 0, height: 0 },
@@ -91,12 +105,8 @@ ${formatObjectToString(selectComponent.properties as ISelectProps)}
 <ComponentExample {codeText} {readmeHtml} bind:forConstructor>
   {#snippet component()}
     <UI.Select
-      {...selectComponent.properties as ISelectProps}
-      onUpdate={(value) => {
-        updateComponent(selectComponent, {
-          properties: { value: value },
-        })
-      }}
+      {...localizeDeep(selectComponent.properties, $Language) as ISelectProps}
+      onUpdate={(value) => (selectComponent = updateComponent(selectComponent, { properties: { value } }))}
     />
   {/snippet}
   {#snippet componentProps()}

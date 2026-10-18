@@ -20,7 +20,7 @@
   let {
     wrapperClass = "",
     componentClass = "",
-    label = { name: "Карта" },
+    label = {},
     groups = ["MAV"],
     value,
     height = 400,
@@ -177,7 +177,7 @@
   class={twMerge("relative flex w-full flex-col gap-4 rounded-2xl border border-(--hairline-color) bg-(--container-color) p-4", wrapperClass)}
   style={accentStyle}
 >
-  <WidgetHeader icon={MapIcon} label={label?.name ?? "Карта"} bind:collapsed>
+  <WidgetHeader icon={MapIcon} label={label?.name || $T("widget.map.title")} bind:collapsed>
     {#snippet right()}
       <div class="flex items-center gap-3">
         <UI.Button

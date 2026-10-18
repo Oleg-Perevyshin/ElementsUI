@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { Language } from "$lib/locales/i18n"
+  import { localizeDeep } from "$lib/locales/localize"
   import { Button, ProgressBar, type IProgressBarProps, type UIComponent } from "$lib"
   import ComponentExample from "../../ComponentExample.svelte"
   import ProgressBarProps from "$lib/ProgressBar/ProgressBarProps.svelte"
@@ -42,7 +44,7 @@ ${formatObjectToString(progressBarComponent.properties as IProgressBarProps)}
 
 <ComponentExample {codeText} {readmeHtml} bind:forConstructor>
   {#snippet component()}
-    <ProgressBar {...progressBarComponent.properties as IProgressBarProps} />
+    <ProgressBar {...localizeDeep(progressBarComponent.properties, $Language) as IProgressBarProps} />
   {/snippet}
   {#snippet componentProps()}
     <ProgressBarProps

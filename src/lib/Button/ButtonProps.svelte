@@ -1,5 +1,7 @@
 <!-- $lib/ElementsUI/ButtonProps.svelte -->
 <script lang="ts">
+  import TextsEditor from "../TextsEditor.svelte"
+  import { localizeText } from "../locales/localize"
   import { T } from "../locales/i18n"
   import { type UIComponent, type IButtonProps, type IOption, updateProperty, type IUIComponentHandler } from "../types"
   import * as UI from "$lib"
@@ -40,11 +42,11 @@
   )
   const updateIconProperty = (propertyName: string, value: string) => {
     updateProperty(propertyName, value, component, onPropertyChange)
-    if (component.properties.content.icon && !component.properties.content.name?.trim())
+    if (component.properties.content.icon && !localizeText(component.properties.content.name, "ru").trim())
       updateProperty("componentClass", twMerge((component.properties as UI.IButtonProps).componentClass, "w-fit p-2"), component, onPropertyChange)
     else if (
-      (component.properties.content.icon && component.properties.content.name?.trim()) ||
-      (!component.properties.content.icon && !component.properties.content.name?.trim())
+      (component.properties.content.icon && localizeText(component.properties.content.name, "ru").trim()) ||
+      (!component.properties.content.icon && !localizeText(component.properties.content.name, "ru").trim())
     )
       updateProperty("componentClass", twMerge((component.properties as UI.IButtonProps).componentClass, "w-full px-1 py-1"), component, onPropertyChange)
   }
@@ -100,15 +102,11 @@
 {/snippet}
 
 {#snippet ButtonName()}
-  <UI.Input
-    label={{ name: $T("constructor.props.name") }}
-    value={component.properties.content.name}
-    onUpdate={(value) => updateIconProperty("content.name", value as string)}
-  />
+  <TextsEditor {component} {onPropertyChange} />
 {/snippet}
 
 {#snippet ButtonHeight()}
-  {#if !(!component.properties.content.name?.trim() && component.properties.content.icon)}
+  {#if !(!localizeText(component.properties.content.name, "ru").trim() && component.properties.content.icon)}
     <UI.Select
       label={{ name: $T("constructor.props.height") }}
       type="buttons"
@@ -118,14 +116,6 @@
         updateProperty("componentClass", twMerge(component.properties.componentClass, (option as IOption<string>).value), component, onPropertyChange)}
     />
   {/if}
-{/snippet}
-
-{#snippet ButtonInfo()}
-  <UI.Input
-    label={{ name: $T("constructor.props.info") }}
-    value={component.properties.content.info.text}
-    onUpdate={(value) => updateProperty("content.info.text", value as string, component, onPropertyChange)}
-  />
 {/snippet}
 
 {#snippet ButtonInfoSide()}
@@ -197,7 +187,6 @@
     </PropsGroup>
     <PropsGroup label={$T("constructor.props.group.content")}>
       {@render ButtonName()}
-      {@render ButtonInfo()}
       {@render ButtonInfoSide()}
     </PropsGroup>
     <PropsGroup label={$T("constructor.props.group.appearance")}>

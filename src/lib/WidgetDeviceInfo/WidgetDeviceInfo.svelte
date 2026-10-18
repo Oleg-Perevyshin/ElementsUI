@@ -4,6 +4,7 @@
      DevSN/DevID/DevFW/RunCnt — только чтение; DevName/HostName/WebUser/WebPsw — сохраняются
      одним пакетом. Ничего не знает про DeviceStore/WebSocket — value/onSave/onRestart. -->
 <script lang="ts">
+  import { T } from "$lib/locales/i18n"
   import { untrack } from "svelte"
   import { slide } from "svelte/transition"
   import { twMerge } from "tailwind-merge"
@@ -18,7 +19,7 @@
   let {
     wrapperClass = "",
     componentClass = "",
-    label = { name: "Информация об устройстве" },
+    label = {},
     value = $bindable(),
     collapsed = $bindable(false),
     persistKey,
@@ -81,9 +82,14 @@
 
 <div class={twMerge("flex w-full flex-col gap-4 rounded-2xl border border-(--hairline-color) bg-(--container-color) p-4", wrapperClass)} style={accentStyle}>
   <!-- Заголовок -->
-  <WidgetHeader icon={CpuIcon} label={label?.name ?? "Информация об устройстве"} bind:collapsed>
+  <WidgetHeader icon={CpuIcon} label={label?.name || $T("widget.info.title")} bind:collapsed>
     {#snippet right()}
-      <UI.Button wrapperClass="w-auto" componentClass="bg-transparent px-3" content={{ icon: RestartIcon, name: "Перезагрузить" }} onClick={onRestart} />
+      <UI.Button
+        wrapperClass="w-auto"
+        componentClass="bg-transparent px-3"
+        content={{ icon: RestartIcon, name: $T("widget.info.restart") }}
+        onClick={onRestart}
+      />
     {/snippet}
   </WidgetHeader>
 
@@ -92,35 +98,35 @@
       <!-- Только чтение -->
       <div class="flex flex-col gap-2 rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-3">
         <!-- Серийник бывает длинным (напр. 00.00.000-00_0000AC670000B22B00007428:DBC5) — своя строка, чтобы не резался -->
-        <UI.Input label={{ name: "Серийный номер" }} value={info.DevSN} readonly help={{ copyButton: true }} />
+        <UI.Input label={{ name: $T("widget.info.sn") }} value={info.DevSN} readonly help={{ copyButton: true }} />
         <div class="grid grid-cols-1 gap-2 sm:grid-cols-3">
-          <UI.Input label={{ name: "ID устройства" }} value={info.DevID} readonly />
-          <UI.Input label={{ name: "Версия ПО" }} value={info.DevFW} readonly />
-          <UI.Input label={{ name: "Запусков" }} value={info.RunCnt} readonly />
+          <UI.Input label={{ name: $T("widget.info.id") }} value={info.DevID} readonly />
+          <UI.Input label={{ name: $T("widget.info.fw") }} value={info.DevFW} readonly />
+          <UI.Input label={{ name: $T("widget.info.runs") }} value={info.RunCnt} readonly />
         </div>
         <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
-          <UI.Input label={{ name: "IP-адрес (STA)" }} value={info.StaIP} readonly />
-          <UI.Input label={{ name: "IP-адрес (AP)" }} value={info.ApIP} readonly />
+          <UI.Input label={{ name: $T("widget.info.sta_ip") }} value={info.StaIP} readonly />
+          <UI.Input label={{ name: $T("widget.info.ap_ip") }} value={info.ApIP} readonly />
         </div>
       </div>
 
       <!-- Редактируемые настройки -->
       <div class="flex flex-col gap-3 rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-3">
-        <span class="text-[12px] font-semibold text-(--muted-color)">Настройки</span>
+        <span class="text-[12px] font-semibold text-(--muted-color)">{$T("widget.info.settings")}</span>
         <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
-          <UI.Input label={{ name: "Имя устройства" }} bind:value={info.DevName} maxlength={26} />
-          <UI.Input label={{ name: "Имя хоста" }} bind:value={info.HostName} maxlength={32} />
-          <UI.Input label={{ name: "Пользователь Web" }} bind:value={info.WebUser} maxlength={16} />
-          <UI.Input type="password" label={{ name: "Пароль Web" }} bind:value={info.WebPsw} maxlength={16} help={{ autocomplete: "off" }} />
+          <UI.Input label={{ name: $T("widget.info.name") }} bind:value={info.DevName} maxlength={26} />
+          <UI.Input label={{ name: $T("widget.info.host") }} bind:value={info.HostName} maxlength={32} />
+          <UI.Input label={{ name: $T("widget.info.web_user") }} bind:value={info.WebUser} maxlength={16} />
+          <UI.Input type="password" label={{ name: $T("widget.info.web_psw") }} bind:value={info.WebPsw} maxlength={16} help={{ autocomplete: "off" }} />
         </div>
       </div>
 
       <!-- Сохранение -->
       <div class="flex flex-col items-center gap-2">
         {#if isDirty}
-          <span class="text-[12px] text-(--muted-color)" transition:slide={{ duration: 100 }}>Есть несохранённые изменения</span>
+          <span class="text-[12px] text-(--muted-color)" transition:slide={{ duration: 100 }}>{$T("widget.common.unsaved")}</span>
         {/if}
-        <UI.Button wrapperClass="w-40" componentClass="bg-accent" content={{ name: "Сохранить" }} disabled={!isDirty} onClick={save} />
+        <UI.Button wrapperClass="w-40" componentClass="bg-accent" content={{ name: $T("widget.common.save") }} disabled={!isDirty} onClick={save} />
       </div>
     </div>
   {/if}

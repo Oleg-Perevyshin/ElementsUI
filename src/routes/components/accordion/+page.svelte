@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { Language } from "$lib/locales/i18n"
+  import { localizeDeep } from "$lib/locales/localize"
   import { Accordion } from "$lib"
   import AccordionProps from "$lib/Accordion/AccordionProps.svelte"
   import { updateComponent, type IAccordionProps, type UIComponent } from "$lib/types"
@@ -46,7 +48,15 @@ ${formatObjectToString(accordionComponent.properties as IAccordionProps)}
 
 <ComponentExample {codeText} {readmeHtml} bind:forConstructor>
   {#snippet component()}
-    <Accordion {...accordionComponent.properties as IAccordionProps}>
+    <!-- isOpen — только через привязку: из развёрнутых свойств он перекрыл бы её -->
+    {@const { isOpen: _isOpen, ...accordionProps } = localizeDeep(accordionComponent.properties, $Language) as IAccordionProps}
+    <Accordion
+      {...accordionProps}
+      bind:isOpen={
+        () => (accordionComponent.properties as IAccordionProps).isOpen ?? false,
+        (isOpen) => (accordionComponent = updateComponent(accordionComponent, { properties: { isOpen } }))
+      }
+    >
       <div class="flex flex-col">
         <h1>Содержимое компонента</h1>
         <h1>Содержимое компонента</h1>

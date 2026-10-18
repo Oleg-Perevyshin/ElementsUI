@@ -1,4 +1,5 @@
 <script lang="ts">
+  import TextsEditor from "../TextsEditor.svelte"
   import { getContext } from "svelte"
   import { T } from "$lib/locales/i18n"
   import type { IInputProps, UIComponent, IOption, IUIComponentHandler } from "../types"
@@ -111,11 +112,7 @@
 {/snippet}
 
 {#snippet InputLabel()}
-  <UI.Input
-    label={{ name: $T("constructor.props.label") }}
-    value={component.properties.label.name}
-    onUpdate={(value) => updateProperty("label.name", value as string)}
-  />
+  <TextsEditor {component} {onPropertyChange} />
 {/snippet}
 
 {#snippet InputLabelAlign()}
@@ -257,22 +254,6 @@
   {/if}
 {/snippet}
 
-{#snippet InputPlaceholder()}
-  <UI.Input
-    label={{ name: $T("constructor.props.placeholder") }}
-    value={component.properties.placeholder as string}
-    onUpdate={(value) => updateProperty("placeholder", value)}
-  />
-{/snippet}
-
-{#snippet InputInfo()}
-  <UI.Input
-    label={{ name: $T("constructor.props.info") }}
-    value={component.properties.help.info as string}
-    onUpdate={(value) => updateProperty("help.info", value)}
-  />
-{/snippet}
-
 {#snippet InputSettings()}
   {#if component.properties.type !== "bitMode"}
     <UI.Select
@@ -381,8 +362,6 @@
     </PropsGroup>
     <PropsGroup label={$T("constructor.props.group.value")}>
       {@render InputValue()}
-      {@render InputPlaceholder()}
-      {@render InputInfo()}
       {@render InputSettings()}
       <CommonSnippets snippet="BitModeInfo" {component} {onPropertyChange} />
     </PropsGroup>
@@ -410,8 +389,6 @@
       <CommonSnippets snippet="BitModeInfo" {component} {onPropertyChange} />
     </PropsGroup>
     <PropsGroup label={$T("constructor.props.group.behavior")}>
-      {@render InputPlaceholder()}
-      {@render InputInfo()}
       {@render InputAutocomplete()}
       {@render InputSettings()}
       {@render InputDisabled()}

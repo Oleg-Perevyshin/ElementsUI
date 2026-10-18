@@ -3,6 +3,7 @@
      дорожка слайдера 4px. Вся логика (mapToStep, циклирование иконок,
      $effect, onUpdate) не тронута. -->
 <script lang="ts">
+  import { T } from "$lib/locales/i18n"
   import type { IWidgetProps } from "../types"
   import { twMerge } from "tailwind-merge"
   import { widgetAccentStyle } from "../widgetAccent"
@@ -179,7 +180,7 @@
                 currentValue = Number(currentValue) - (settings.number?.step ?? 1)
                 onUpdate(currentValue as number)
               }}
-              aria-label="Уменьшить">−</button
+              aria-label={$T("ui.decrease")}>−</button
             >
           {/if}
           <input
@@ -211,7 +212,7 @@
                 currentValue = Number(currentValue) + (settings.number?.step ?? 1)
                 onUpdate(currentValue as number)
               }}
-              aria-label="Увеличить">+</button
+              aria-label={$T("ui.increase")}>+</button
             >
           {/if}
         </div>
@@ -272,7 +273,7 @@
               onUpdate(currentValue)
             }}
             disabled={readonly || currentValue <= (settings.number?.minNum ?? 0)}
-            aria-label="Уменьшить">−</button
+            aria-label={$T("ui.decrease")}>−</button
           >
 
           <div class="relative flex h-8 min-w-0 flex-1 items-center">
@@ -302,7 +303,7 @@
               onUpdate(currentValue)
             }}
             disabled={readonly || currentValue >= (settings.number?.maxNum ?? 10)}
-            aria-label="Увеличить">+</button
+            aria-label={$T("ui.increase")}>+</button
           >
         </div>
       {/if}

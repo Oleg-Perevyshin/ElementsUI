@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { Language } from "$lib/locales/i18n"
+  import { localizeDeep } from "$lib/locales/localize"
   import { Button, Modal, type ITableHeader, type ITableProps, type UIComponent } from "$lib"
   import ComponentExample from "../../ComponentExample.svelte"
   import Table from "$lib/Table/Table.svelte"
@@ -14,6 +16,45 @@
     RenderMarkdown(readmeRaw).then((html) => (readmeHtml = html))
   })
 
+  /* Многоязычный текст для демо: в данных — { ru, en, zh }, тип поля — string (разрешается localizeDeep) */
+  const L = (ru: string, en: string, zh: string) => ({ ru, en, zh }) as unknown as string
+
+  /* Демо для конструктора: текст (сортировка, обрезка), шкала заряда и кнопка с командой */
+  const DEMO_HEADER = [
+    {
+      label: { name: L("Устройство", "Device", "设备") },
+      width: "34%",
+      align: "left",
+      content: [{ type: "text", data: { key: "name", sortable: true, truncated: true } }],
+    },
+    { label: { name: L("Состояние", "State", "状态") }, width: "20%", align: "center", content: [{ type: "text", data: { key: "state", sortable: true } }] },
+    {
+      label: { name: L("Заряд", "Battery", "电量") },
+      width: "24%",
+      align: "center",
+      content: [{ type: "progressBar", data: { key: "battery", minNum: 0, maxNum: 100, units: "%" } }],
+    },
+    {
+      label: { name: "" },
+      width: "18%",
+      align: "center",
+      content: [
+        {
+          type: "button",
+          data: { name: L("Сброс", "Reset", "重置"), class: "bg-accent", eventHandler: { Header: "SET", Argument: "Reset", Variables: [] } },
+        },
+      ],
+    },
+  ]
+  const DEMO_BODY = ["Насос", "Вентилятор", "Клапан подачи", "Датчик давления", "Контроллер котла", "Шлюз RS485", "Счётчик воды", "Термостат кухни"].map(
+    (name, i) => ({
+      name,
+      sn: `0A${(0x3f20 + i * 37).toString(16).toUpperCase()}-${1000 + i * 113}`,
+      state: i % 3 === 2 ? "offline" : "online",
+      battery: [92, 64, 18, 100, 47, 5, 76, 33][i],
+    }),
+  )
+
   let tableComponent: UIComponent = $state({
     id: crypto.randomUUID(),
     type: "Table",
@@ -21,10 +62,10 @@
     properties: {
       id: crypto.randomUUID(),
       wrapperClass: "bg-blue",
-      label: { name: "Label", class: "text-center" },
+      label: { name: L("Устройства объекта", "Site devices", "现场设备"), class: "text-center" },
       dataBuffer: { bufferSize: 10, visibleRows: 5, logger: false },
-      header: [],
-      body: [],
+      header: DEMO_HEADER,
+      body: DEMO_BODY,
       footer: "",
       autoscroll: true,
     },
@@ -164,7 +205,11 @@ ${formatObjectToString(tableComponent.properties as ITableProps<object>)}
 <ComponentExample {codeText} {readmeHtml} bind:forConstructor>
   {#snippet component()}
     <div class="h-60">
-      <Table bind:this={tableRef} {...tableComponent.properties as ITableProps<object>} body={(tableComponent.properties as ITableProps<object>).body} />
+      <Table
+        bind:this={tableRef}
+        {...localizeDeep(tableComponent.properties, $Language) as ITableProps<object>}
+        body={(tableComponent.properties as ITableProps<object>).body}
+      />
     </div>
   {/snippet}
 

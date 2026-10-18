@@ -48,18 +48,18 @@
 
 ## Пропсы
 
-| Название         | Тип                                                      | По умолчанию                     | Описание                                                                |
-| ---------------- | -------------------------------------------------------- | -------------------------------- | ----------------------------------------------------------------------- |
-| `id`             | `string`                                                 | `undefined`                      | Префикс группы ленты (`"LST"`), используется вызывающим кодом           |
-| `wrapperClass`   | `string`                                                 | `""`                             | CSS-классы обёртки                                                      |
-| `componentClass` | `string`                                                 | `""`                             | «Мастер-цвет» виджета — роль вида `"bg-red"`, перекрашивает весь виджет |
-| `label`          | `{ name?: string }`                                      | `{ name: "Светодиодная лента" }` | Заголовок карточки                                                      |
-| `value`          | `Partial<IWidgetRGBStripConfig>`                         | `undefined`                      | Поля группы `LST`                                                       |
-| `keys`           | `Partial<Record<keyof IWidgetRGBStripConfig, string>>`   | `undefined`                      | Переопределение имён полей устройства                                   |
-| `collapsed`      | `boolean`                                                | `false`                          | Свёрнуто ли тело виджета (`$bindable`)                                  |
-| `persistKey`     | `string`                                                 | `undefined`                      | Ключ для сохранения `collapsed` в `localStorage`                        |
-| `onChange`       | `(field: "Color" \| "Effect" \| "Speed", value) => void` | `undefined`                      | Изменение свечения — отправляется сразу; без обработчика только чтение  |
-| `onSave`         | `(hardware: { Count, Model, Order }) => void`            | `undefined`                      | Сохранение оборудования одним пакетом                                   |
+| Название         | Тип                                                      | По умолчанию | Описание                                                                |
+| ---------------- | -------------------------------------------------------- | ------------ | ----------------------------------------------------------------------- |
+| `id`             | `string`                                                 | `undefined`  | Префикс группы ленты (`"LST"`), используется вызывающим кодом           |
+| `wrapperClass`   | `string`                                                 | `""`         | CSS-классы обёртки                                                      |
+| `componentClass` | `string`                                                 | `""`         | «Мастер-цвет» виджета — роль вида `"bg-red"`, перекрашивает весь виджет |
+| `label`          | `{ name?: string }`                                      | `{}`         | Заголовок карточки; пустой — «Светодиодная лента» на текущем языке      |
+| `value`          | `Partial<IWidgetRGBStripConfig>`                         | `undefined`  | Поля группы `LST`                                                       |
+| `keys`           | `Partial<Record<keyof IWidgetRGBStripConfig, string>>`   | `undefined`  | Переопределение имён полей устройства                                   |
+| `collapsed`      | `boolean`                                                | `false`      | Свёрнуто ли тело виджета (`$bindable`)                                  |
+| `persistKey`     | `string`                                                 | `undefined`  | Ключ для сохранения `collapsed` в `localStorage`                        |
+| `onChange`       | `(field: "Color" \| "Effect" \| "Speed", value) => void` | `undefined`  | Изменение свечения — отправляется сразу; без обработчика только чтение  |
+| `onSave`         | `(hardware: { Count, Model, Order }) => void`            | `undefined`  | Сохранение оборудования одним пакетом                                   |
 
 ## Примеры
 

@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { Language } from "$lib/locales/i18n"
+  import { localizeDeep } from "$lib/locales/localize"
   import { type IGraphProps, type UIComponent } from "$lib"
   import ComponentExample from "../../ComponentExample.svelte"
   import Graph from "$lib/Graph/Graph.svelte"
@@ -57,7 +59,7 @@ ${formatObjectToString(graphComponent.properties as IGraphProps)}
 
 <ComponentExample {codeText} {readmeHtml} bind:forConstructor>
   {#snippet component()}
-    <Graph {...graphComponent.properties as IGraphProps} />
+    <Graph {...localizeDeep(graphComponent.properties, $Language) as IGraphProps} />
   {/snippet}
   {#snippet componentProps()}
     <GraphProps

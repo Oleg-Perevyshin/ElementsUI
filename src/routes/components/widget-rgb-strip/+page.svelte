@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { Language } from "$lib/locales/i18n"
+  import { localizeDeep } from "$lib/locales/localize"
   import { type UIComponent } from "$lib"
   import ComponentExample from "../../ComponentExample.svelte"
   import { updateComponent, type IWidgetRGBStripConfig, type IWidgetRGBStripProps } from "$lib/types"
@@ -19,7 +21,7 @@
     id: crypto.randomUUID(),
     type: "WidgetRGBStrip",
     access: "full",
-    properties: { id: "LST", label: { name: "Светодиодная лента" }, componentClass: "" },
+    properties: { id: "LST", label: { name: "" }, componentClass: "" },
     eventHandler: { Header: "SET", Argument: "ModCfg", Variables: [] },
     position: { row: 0, col: 0, width: 0, height: 0 },
     parentId: "",
@@ -39,7 +41,7 @@ onSave={(hardware) => send({ "LST.Count": hardware.Count, "LST.Model": hardware.
   {#snippet component()}
     <div class="m-auto w-full max-w-xl">
       <WidgetRGBStrip
-        {...stripComponent.properties as IWidgetRGBStripProps}
+        {...localizeDeep(stripComponent.properties, $Language) as IWidgetRGBStripProps}
         value={strip}
         onChange={(field, value) => (strip = { ...strip, [field]: value })}
         onSave={(hardware) => (strip = { ...strip, ...hardware })}

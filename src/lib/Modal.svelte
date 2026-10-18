@@ -1,6 +1,7 @@
 <!-- $lib/Modal.svelte — радиус 20, шапка и подвал через линии,
      подложка 40% + blur. Логика стека, Escape и клика вне окна не тронута. -->
 <script lang="ts">
+  import { T } from "$lib/locales/i18n"
   import { type Snippet } from "svelte"
   import { fade, scale } from "svelte/transition"
   import { twMerge } from "tailwind-merge"
@@ -96,7 +97,7 @@
         <button
           class="flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-lg text-(--faint-color) transition-colors duration-150 hover:bg-(--container-color) hover:text-(--font-color) [&_svg]:size-4"
           onclick={onCancel}
-          aria-label="Закрыть"
+          aria-label={$T("ui.close")}
         >
           <CrossIcon />
         </button>

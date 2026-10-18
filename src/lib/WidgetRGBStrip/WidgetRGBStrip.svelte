@@ -3,6 +3,7 @@
      Count/Model/Order — одним пакетом по «Сохранить» (onSave): прошивка пересоздаёт драйвер ленты.
      Ничего не знает про DeviceStore/WebSocket — только value и колбэки. -->
 <script lang="ts">
+  import { T } from "$lib/locales/i18n"
   import { untrack } from "svelte"
   import { slide } from "svelte/transition"
   import { twMerge } from "tailwind-merge"
@@ -15,16 +16,7 @@
   import { widgetAccentStyle } from "../widgetAccent"
   import { readPersistedCollapsed, writePersistedCollapsed } from "../widgetCollapse"
 
-  let {
-    wrapperClass = "",
-    componentClass = "",
-    label = { name: "Светодиодная лента" },
-    value,
-    collapsed = $bindable(false),
-    persistKey,
-    onChange,
-    onSave,
-  }: IWidgetRGBStripProps = $props()
+  let { wrapperClass = "", componentClass = "", label = {}, value, collapsed = $bindable(false), persistKey, onChange, onSave }: IWidgetRGBStripProps = $props()
 
   let accentStyle = $derived(widgetAccentStyle(componentClass ?? ""))
 
@@ -38,16 +30,16 @@
   })
   $effect(() => writePersistedCollapsed(persistKey, collapsed))
 
-  const EFFECTS: IOption<number>[] = [
-    { id: "static", value: 0, name: "Статичный" },
-    { id: "rainbow", value: 1, name: "Радуга" },
-    { id: "breath", value: 2, name: "Дыхание" },
-    { id: "palette", value: 3, name: "Палитра" },
-    { id: "chase", value: 4, name: "Комета" },
-    { id: "twinkle", value: 5, name: "Мерцание" },
-    { id: "fire", value: 6, name: "Огонь" },
-    { id: "theater", value: 7, name: "Бегущие огни" },
-  ]
+  let EFFECTS: IOption<number>[] = $derived([
+    { id: "static", value: 0, name: $T("widget.rgb.effect.static") },
+    { id: "rainbow", value: 1, name: $T("widget.rgb.effect.rainbow") },
+    { id: "breath", value: 2, name: $T("widget.rgb.effect.breath") },
+    { id: "palette", value: 3, name: $T("widget.rgb.effect.palette") },
+    { id: "chase", value: 4, name: $T("widget.rgb.effect.chase") },
+    { id: "twinkle", value: 5, name: $T("widget.rgb.effect.twinkle") },
+    { id: "fire", value: 6, name: $T("widget.rgb.effect.fire") },
+    { id: "theater", value: 7, name: $T("widget.rgb.effect.theater") },
+  ])
   const MODELS: IOption<number>[] = [
     { id: "ws2812", value: 0, name: "WS2812" },
     { id: "sk6812", value: 1, name: "SK6812" },
@@ -92,9 +84,13 @@
   style={accentStyle}
 >
   <!-- Заголовок: образец текущего цвета -->
-  <WidgetHeader icon={LightIcon} label={label?.name ?? "Светодиодная лента"} bind:collapsed>
+  <WidgetHeader icon={LightIcon} label={label?.name || $T("widget.rgb.title")} bind:collapsed>
     {#snippet right()}
-      <span class="size-6 rounded-md border border-(--hairline-color)" style="background: rgb({color[0]}, {color[1]}, {color[2]})" title="Текущий цвет"></span>
+      <span
+        class="size-6 rounded-md border border-(--hairline-color)"
+        style="background: rgb({color[0]}, {color[1]}, {color[2]})"
+        title={$T("widget.rgb.current_color")}
+      ></span>
     {/snippet}
   </WidgetHeader>
 
@@ -105,7 +101,7 @@
         <ColorPicker value={color.slice(0, 3)} readonly={!onChange} onChange={(rgb) => sendColor([...rgb, color[3]])} />
         {#if hasWhite}
           <UI.Slider
-            label={{ name: "Белый канал" }}
+            label={{ name: $T("widget.rgb.white") }}
             value={color[3]}
             number={{ minNum: 0, maxNum: 255, step: 1 }}
             disabled={!onChange}
@@ -113,14 +109,14 @@
           />
         {/if}
         <UI.Select
-          label={{ name: "Эффект" }}
+          label={{ name: $T("widget.rgb.effect") }}
           options={EFFECTS}
           value={EFFECTS.find((o) => o.value === effectIndex) ?? EFFECTS[0]}
           disabled={!onChange}
           onUpdate={(option) => !Array.isArray(option) && onChange?.("Effect", option.value ?? 0)}
         />
         <UI.Slider
-          label={{ name: "Скорость эффекта (0 — пауза)" }}
+          label={{ name: $T("widget.rgb.speed") }}
           value={speed}
           number={{ minNum: 0, maxNum: 10, step: 1 }}
           disabled={!onChange || effectIndex === 0}
@@ -137,7 +133,7 @@
           onclick={() => (hardwareOpen = !hardwareOpen)}
         >
           <span class="text-[12px] font-semibold text-(--muted-color)">
-            Оборудование
+            {$T("widget.rgb.hardware")}
             <span class="font-normal text-(--faint-color)">
               · {hardware.Count} LED · {MODELS[hardware.Model]?.name ?? "—"} · {ORDERS[hardware.Order]?.name ?? "—"}
             </span>
@@ -152,21 +148,21 @@
         {#if hardwareOpen || isDirty}
           <div class="flex flex-col gap-3" transition:slide={{ duration: 150 }}>
             <UI.Input
-              label={{ name: `Количество светодиодов (1–${maxCount})` }}
+              label={{ name: $T("widget.rgb.count", { max: maxCount }) }}
               type="number"
               number={{ minNum: 1, maxNum: maxCount, step: 1 }}
               value={hardware.Count}
               onUpdate={(v) => (hardware.Count = Number(v))}
             />
             <UI.Select
-              label={{ name: "Модель чипа" }}
+              label={{ name: $T("widget.rgb.model") }}
               type="buttons"
               options={MODELS}
               value={MODELS.find((o) => o.value === hardware.Model) ?? MODELS[0]}
               onUpdate={(option) => !Array.isArray(option) && (hardware.Model = option.value ?? 0)}
             />
             <UI.Select
-              label={{ name: "Порядок цветов" }}
+              label={{ name: $T("widget.rgb.order") }}
               type="buttons"
               options={ORDERS}
               value={ORDERS.find((o) => o.value === hardware.Order) ?? ORDERS[0]}
@@ -174,10 +170,10 @@
             />
             {#if isDirty}
               <span class="text-[12px] text-(--muted-color)" transition:slide={{ duration: 100 }}>
-                {countValid ? "При сохранении лента перезапустится с новыми настройками" : `Количество — целое от 1 до ${maxCount}`}
+                {countValid ? $T("widget.rgb.restart_note") : $T("widget.rgb.count_invalid", { max: maxCount })}
               </span>
             {/if}
-            <UI.Button componentClass="bg-accent" content={{ name: "Сохранить" }} disabled={!onSave || !isDirty || !countValid} onClick={save} />
+            <UI.Button componentClass="bg-accent" content={{ name: $T("widget.common.save") }} disabled={!onSave || !isDirty || !countValid} onClick={save} />
           </div>
         {/if}
       </div>

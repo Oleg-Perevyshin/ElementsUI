@@ -3,6 +3,7 @@
      имя объекта ответа (keys.StackInfo) и аргумент запроса — все с дефолтами прошивочной конвенции
      (см. DEFAULT_PROPS.WidgetStackInfo в DevCloud). -->
 <script lang="ts">
+  import TextsEditor from "../TextsEditor.svelte"
   import { T } from "$lib/locales/i18n"
   import * as UI from "$lib"
   import { updateProperty, type UIComponent, type IWidgetStackInfoProps } from "../types"
@@ -17,40 +18,36 @@
 
 <div class="flex flex-col gap-2">
   <PropsGroup label={$T("constructor.props.group.general")}>
-    <UI.Input
-      label={{ name: "Заголовок" }}
-      value={component.properties.label?.name}
-      onUpdate={(value) => updateProperty("label.name", value as string, component, onPropertyChange)}
-    />
+    <TextsEditor {component} {onPropertyChange} />
     <WidgetAccentPicker
       value={component.properties.componentClass ?? ""}
       onUpdate={(value) => updateProperty("componentClass", value, component, onPropertyChange)}
     />
   </PropsGroup>
-  <PropsGroup label="Отображение">
+  <PropsGroup label={$T("widget.stack.display")}>
     <UI.Input
-      label={{ name: "Порог запаса стека, Б" }}
+      label={{ name: $T("widget.stack.warn_bytes") }}
       type="number"
       number={{ minNum: 0, maxNum: 65535, step: 64 }}
       value={component.properties.warnBytes ?? 512}
       onUpdate={(value) => updateProperty("warnBytes", Number(value), component, onPropertyChange)}
     />
     <UI.Input
-      label={{ name: "Автоопрос по умолчанию, мс (0 — выкл)" }}
+      label={{ name: $T("widget.stack.period") }}
       type="number"
       number={{ minNum: 0, maxNum: 60000, step: 1000 }}
       value={component.properties.period ?? 0}
       onUpdate={(value) => updateProperty("period", Number(value), component, onPropertyChange)}
     />
   </PropsGroup>
-  <PropsGroup label="Устройство">
+  <PropsGroup label={$T("widget.common.device")}>
     <UI.Input
-      label={{ name: "Объект ответа" }}
+      label={{ name: $T("widget.stack.response") }}
       value={component.properties.keys?.StackInfo ?? "StackInfo"}
       onUpdate={(value) => updateProperty("keys.StackInfo", value as string, component, onPropertyChange)}
     />
     <UI.Input
-      label={{ name: "Аргумент запроса" }}
+      label={{ name: $T("widget.stack.request") }}
       value={component.properties.argument ?? "StackInfo"}
       onUpdate={(value) => updateProperty("argument", value as string, component, onPropertyChange)}
     />

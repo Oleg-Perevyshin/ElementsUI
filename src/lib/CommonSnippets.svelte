@@ -5,6 +5,7 @@
   import { optionsStore } from "./options"
   import { updateProperty } from "./types"
   import { twMerge } from "tailwind-merge"
+  import TextsEditor from "./TextsEditor.svelte"
 
   let {
     snippet = "",
@@ -87,21 +88,7 @@
 {/snippet}
 
 {#snippet Label()}
-  <UI.Input
-    label={{ name: $T("constructor.props.label") }}
-    value={(
-      component.properties as
-        | UI.IAccordionProps
-        | UI.IInputProps
-        | UI.ISwitchProps
-        | UI.ISliderProps
-        | UI.IGraphProps
-        | UI.ITableProps<object>
-        | UI.IFileAttachProps
-        | UI.IJoystickProps
-    ).label?.name}
-    onUpdate={(value) => updateProperty("label.name", value as string, component, onPropertyChange)}
-  />
+  <TextsEditor {component} {onPropertyChange} />
 {/snippet}
 
 {#snippet LabelAlign(initialAlign: UI.IOption<string>)}
@@ -203,7 +190,7 @@
     <UI.TextField
       wrapperClass="mt-5 shadow-(--border-shadow-color) bg-(--blue-color)/20"
       content={{
-        name: "Выберите битовый диапазон в рамках глобальной переменной для данного компонента.",
+        name: $T("ui.bit_range"),
       }}
       background
     />

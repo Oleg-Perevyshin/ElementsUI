@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { Language } from "$lib/locales/i18n"
+  import { localizeDeep } from "$lib/locales/localize"
   import { TabsProps, type ITabsProps, type UIComponent } from "$lib"
   import ComponentExample from "../../ComponentExample.svelte"
   import Input from "$lib/Input/Input.svelte"
@@ -16,6 +18,9 @@
     RenderMarkdown(readmeRaw).then((html) => (readmeHtml = html))
   })
 
+  /* Многоязычный текст для демо: в данных — { ru, en, zh }, тип поля — string (разрешается localizeDeep) */
+  const L = (ru: string, en: string, zh: string) => ({ ru, en, zh }) as unknown as string
+
   let tabsComponent: UIComponent = $state({
     id: crypto.randomUUID(),
     type: "Tabs",
@@ -27,7 +32,13 @@
         height: 1,
         width: 1,
       },
-      items: [{ name: "Tab 1", class: "flex-row" }],
+      activeTab: 1,
+      items: [
+        { name: L("Обзор", "Overview", "概览"), class: "flex-row" },
+        { name: L("Настройки", "Settings", "设置"), class: "flex-row" },
+        { name: L("Журнал", "Log", "日志"), class: "flex-row" },
+        { name: L("Сервис", "Service", "维护"), class: "flex-row", disabled: true },
+      ],
     },
     position: { row: 0, col: 0, width: 0, height: 0 },
     parentId: "",
@@ -44,8 +55,17 @@ ${formatObjectToString(tabsComponent.properties as ITabsProps)}
 
 <ComponentExample {codeText} {readmeHtml} bind:forConstructor>
   {#snippet component()}
+    <!-- activeTab — только через привязку: из развёрнутых свойств он перекрыл бы её -->
+    {@const { activeTab: _activeTab, ...tabsProps } = localizeDeep(tabsComponent.properties, $Language) as ITabsProps}
     <div class="h-60">
-      <Tabs {...tabsComponent.properties as ITabsProps} children={Tab} />
+      <Tabs
+        {...tabsProps}
+        bind:activeTab={
+          () => (tabsComponent.properties as ITabsProps).activeTab ?? 0,
+          (activeTab) => (tabsComponent = updateComponent(tabsComponent, { properties: { activeTab } }))
+        }
+        children={Tab}
+      />
     </div>
   {/snippet}
   {#snippet componentProps()}

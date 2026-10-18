@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { Language } from "$lib/locales/i18n"
+  import { localizeDeep } from "$lib/locales/localize"
   import { type UIComponent } from "$lib"
   import ComponentExample from "../../ComponentExample.svelte"
   import { updateComponent, type IWidgetWiFiProps } from "$lib/types"
@@ -48,7 +50,11 @@ onSave={handleSave}
 <ComponentExample {codeText} {readmeHtml} bind:forConstructor>
   {#snippet component()}
     <div class="m-auto w-full max-w-3xl">
-      <WidgetWiFi {...wifiComponent.properties as IWidgetWiFiProps} onScan={mockScan} onSave={(cfg) => console.log("SET CFG (mock):", cfg)} />
+      <WidgetWiFi
+        {...localizeDeep(wifiComponent.properties, $Language) as IWidgetWiFiProps}
+        onScan={mockScan}
+        onSave={(cfg) => console.log("SET CFG (mock):", cfg)}
+      />
     </div>
   {/snippet}
   {#snippet componentProps()}

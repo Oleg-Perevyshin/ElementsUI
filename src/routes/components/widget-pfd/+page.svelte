@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { Language } from "$lib/locales/i18n"
+  import { localizeDeep } from "$lib/locales/localize"
   import { type UIComponent } from "$lib"
   import ComponentExample from "../../ComponentExample.svelte"
   import { updateComponent, type IWidgetPFDData, type IWidgetPFDProps } from "$lib/types"
@@ -27,7 +29,7 @@
     access: "full",
     properties: {
       id: "MAV",
-      label: { name: "Пилотажный дисплей" },
+      label: { name: "" },
       componentClass: "",
       limits: { speedMin: 8, speedMax: 25, bankMax: 30, altMax: 170, battLow: 20 },
     },
@@ -47,7 +49,7 @@ value={mav}
 <ComponentExample {codeText} {readmeHtml} bind:forConstructor>
   {#snippet component()}
     <div class="m-auto w-full max-w-3xl">
-      <WidgetPFD {...pfdComponent.properties as IWidgetPFDProps} value={flight} />
+      <WidgetPFD {...localizeDeep(pfdComponent.properties, $Language) as IWidgetPFDProps} value={flight} />
     </div>
   {/snippet}
   {#snippet componentProps()}

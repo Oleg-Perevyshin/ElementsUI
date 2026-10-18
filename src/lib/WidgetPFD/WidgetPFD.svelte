@@ -4,6 +4,7 @@
      ничего не отправляет и не знает про DeviceStore/WebSocket. Между пакетами ориентация сглаживается (Tween),
      устаревшие данные закрываются флагом «нет данных». В узкой ячейке ленты заменяются числами. -->
 <script lang="ts">
+  import { T } from "$lib/locales/i18n"
   import { untrack } from "svelte"
   import { slide } from "svelte/transition"
   import { Tween } from "svelte/motion"
@@ -15,15 +16,7 @@
   import { widgetAccentStyle } from "../widgetAccent"
   import { readPersistedCollapsed, writePersistedCollapsed } from "../widgetCollapse"
 
-  let {
-    wrapperClass = "",
-    componentClass = "",
-    label = { name: "Пилотажный дисплей" },
-    value,
-    limits,
-    collapsed = $bindable(false),
-    persistKey,
-  }: IWidgetPFDProps = $props()
+  let { wrapperClass = "", componentClass = "", label = {}, value, limits, collapsed = $bindable(false), persistKey }: IWidgetPFDProps = $props()
 
   let accentStyle = $derived(widgetAccentStyle(componentClass ?? ""))
 
@@ -93,7 +86,7 @@
   })
 
   /* Строка состояния */
-  const FIX = ["нет", "нет", "2D", "3D", "DGPS", "RTK float", "RTK fix"]
+  let FIX = $derived([$T("pfd.fix.none"), $T("pfd.fix.none"), "2D", "3D", "DGPS", "RTK float", "RTK fix"])
   const COPTER_MODES: Record<number, string> = {
     0: "STABILIZE",
     1: "ACRO",
@@ -191,10 +184,9 @@
   /* Пороги дисперсии EKF — как в Mission Planner: от 0.5 внимание, от 0.8 тревога; неисправный датчик — тревога */
   let navState: "ok" | "warn" | "bad" | "none" = $derived(sensErr > 0 || ekf >= 0.8 ? "bad" : ekf >= 0.5 ? "warn" : ekf >= 0 ? "ok" : "none")
   const NAV_COLOR = { ok: "var(--green-color)", warn: "var(--orange-color)", bad: "var(--red-color)", none: "var(--faint-color)" }
-  const NAV_TEXT = { ok: "НАВ в норме", warn: "НАВ: внимание", bad: "НАВ: тревога", none: "НАВ: нет данных" }
 
   /* Сообщения автопилота (STATUSTEXT): новое — по смене MsgSeq, последнее висит 10 с, история из 5 — в подсказке */
-  const SEVERITY = ["АВАРИЯ", "ТРЕВОГА", "КРИТИЧНО", "ОШИБКА", "ВНИМАНИЕ", "ЗАМЕЧАНИЕ", "ИНФО", "ОТЛАДКА"]
+  let SEVERITY = $derived(Array.from({ length: 8 }, (_, i) => $T(`pfd.sev.${i}`)))
   let messages: { text: string; sev: number; at: number }[] = $state([])
   let lastSeq = -1
   $effect(() => {
@@ -276,133 +268,114 @@
     const el = (e.target as Element | null)?.closest("[data-tip]")
     tip = el ? (el.getAttribute("data-tip") ?? null) : null
   }
-  const fmtDistance = (m: number) => (m >= 1000 ? `${(m / 1000).toFixed(2)} км` : `${Math.round(m)} м`)
-  const fmtAge = (s: number) => (Number.isFinite(s) ? `${s.toFixed(1)} с` : "нет связи")
+  const fmtDistance = (m: number) => (m >= 1000 ? $T("pfd.u.km", { n: (m / 1000).toFixed(2) }) : $T("pfd.u.m", { n: Math.round(m) }))
+  const fmtAge = (s: number) => (Number.isFinite(s) ? $T("pfd.u.s", { n: s.toFixed(1) }) : $T("pfd.no_link"))
 
   /* Тексты подсказок: первая строка — величина, единица и значение, дальше — что означают знаки, цвета и пороги */
+  let battText = $derived(
+    [$T("pfd.batt.v", { v: fmt(num(value?.BV)) }), battCurrent >= 0 && $T("pfd.batt.a", { v: fmt(battCurrent) }), battRem >= 0 && `${battRem} %`]
+      .filter(Boolean)
+      .join(" · "),
+  )
+  let latLonText = $derived(lat ? `${lat.toFixed(6)}, ${lon.toFixed(6)}` : "—")
   const lines = (...rows: (string | false | null | undefined)[]) => rows.filter(Boolean).join("\n")
   let tips = $derived.by(() => {
     const hdg = Math.round(wrap360(heading.current))
-    const homeLine = home ? `Расстояние: ${fmtDistance(home.distance)}` : null
+    const homeLine = home ? $T("pfd.distance", { d: fmtDistance(home.distance) }) : null
     return {
-      system: lines(
-        "Система",
-        "ARMED / DISARMED — двигатели взведены / не взведены",
-        "Режим — режим работы автопилота",
-        "НАВ — исправность навигации (фильтр EKF и датчики)",
-      ),
-      armed: armed
-        ? lines("Двигатели: ВЗВЕДЕНЫ (ARMED)", "Аппарат готов к движению — моторы могут вращаться")
-        : lines("Двигатели: НЕ ВЗВЕДЕНЫ (DISARMED)", "Моторы заблокированы"),
-      mode: lines(`Режим автопилота: ${modeName}`, "Название зависит от типа аппарата: самолёт, коптер, наземный"),
+      system: lines($T("pfd.system"), $T("pfd.tip.system.armed"), $T("pfd.tip.system.mode"), $T("pfd.tip.system.nav")),
+      armed: armed ? lines($T("pfd.tip.armed"), $T("pfd.tip.armed.note")) : lines($T("pfd.tip.disarmed"), $T("pfd.tip.disarmed.note")),
+      mode: lines($T("pfd.tip.mode", { mode: modeName }), $T("pfd.tip.mode.note")),
       nav: lines(
-        `Навигация (НАВ): ${{ ok: "норма", warn: "внимание", bad: "тревога", none: "нет данных" }[navState]}`,
-        ekf >= 0 && `Дисперсия фильтра EKF: ${fmt(ekf, 2)}`,
-        "до 0.5 — норма",
-        "0.5…0.8 — внимание",
-        "от 0.8 — тревога, позиция может уплыть",
-        sensErr > 0 && `Неисправных датчиков: ${sensErr}`,
+        $T("pfd.tip.nav", { state: $T(`pfd.nav.${navState}`) }),
+        ekf >= 0 && $T("pfd.tip.nav.ekf", { v: fmt(ekf, 2) }),
+        $T("pfd.tip.nav.ok"),
+        $T("pfd.tip.nav.warn"),
+        $T("pfd.tip.nav.bad"),
+        sensErr > 0 && $T("pfd.tip.nav.sensors", { n: sensErr }),
       ),
       gps: lines(
-        `GPS: ${FIX[fix] ?? fix} · ${num(value?.Sat)} спутников`,
-        "Фиксация ниже 3D — высота и позиция неточные",
-        hdop >= 0 && `HDOP (точность по горизонтали): ${fmt(hdop, 2)}`,
-        "до 1 — отлично",
-        "1…2 — хорошо",
-        "больше 2 — позиция неточная",
+        $T("pfd.tip.gps", { fix: FIX[fix] ?? fix, n: num(value?.Sat) }),
+        $T("pfd.tip.gps.fix"),
+        hdop >= 0 && $T("pfd.tip.gps.hdop", { v: fmt(hdop, 2) }),
+        $T("pfd.tip.gps.hdop1"),
+        $T("pfd.tip.gps.hdop2"),
+        $T("pfd.tip.gps.hdop3"),
       ),
       link: lines(
-        `Связь, %: ${rssi >= 0 ? Math.round(rssi) : "—"} / ${remRssi >= 0 ? Math.round(remRssi) : "—"}`,
-        "Слева — сигнал на наземной стороне, справа — на аппарате",
-        "меньше 30 — связь на пределе",
-        drop >= 0 && `Потери пакетов, %: ${fmt(drop)}`,
+        $T("pfd.tip.link", { local: rssi >= 0 ? Math.round(rssi) : "—", remote: remRssi >= 0 ? Math.round(remRssi) : "—" }),
+        $T("pfd.tip.link.sides"),
+        $T("pfd.tip.link.low"),
+        drop >= 0 && $T("pfd.tip.link.drop", { v: fmt(drop) }),
       ),
       battery: lines(
-        `Батарея: ${fmt(num(value?.BV))} В${battCurrent >= 0 ? ` · ${fmt(battCurrent)} А` : ""}${battRem >= 0 ? ` · ${battRem} %` : ""}`,
-        "В — напряжение",
-        battCurrent >= 0 && "А — ток потребления",
-        battRem >= 0 && "% — остаток заряда",
-        limits?.battLow !== undefined && `Ниже ${limits.battLow} % — красным`,
+        $T("pfd.tip.battery", { value: battText }),
+        $T("pfd.tip.battery.v"),
+        battCurrent >= 0 && $T("pfd.tip.battery.a"),
+        battRem >= 0 && $T("pfd.tip.battery.rem"),
+        limits?.battLow !== undefined && $T("pfd.tip.battery.low", { n: limits.battLow }),
       ),
       horizon: lines(
-        "Авиагоризонт",
-        `Крен, °: ${signed(roll.current)}  ("+" — вправо, "−" — влево)`,
-        `Тангаж, °: ${signed(pitch.current)}  ("+" — нос вверх, "−" — вниз)`,
-        "Синий — небо, коричневый — земля",
+        $T("pfd.tip.horizon"),
+        $T("pfd.tip.horizon.roll", { v: signed(roll.current) }),
+        $T("pfd.tip.horizon.pitch", { v: signed(pitch.current) }),
+        $T("pfd.tip.horizon.colors"),
       ),
       rollPtr: lines(
-        `Крен, °: ${signed(roll.current)}`,
-        '"+" — вправо',
-        '"−" — влево',
-        limits?.bankMax !== undefined && `Предел ±${limits.bankMax}° — дальше дуга красная`,
+        $T("pfd.tip.roll", { v: signed(roll.current) }),
+        $T("pfd.tip.roll.right"),
+        $T("pfd.tip.roll.left"),
+        limits?.bankMax !== undefined && $T("pfd.tip.roll.limit", { n: limits.bankMax }),
       ),
       speedTape: lines(
-        `Путевая скорость, м/с: ${fmt(gs)}`,
-        "Скорость над землёй по GPS",
+        $T("pfd.tip.gs", { v: fmt(gs) }),
+        $T("pfd.tip.gs.note"),
         (limits?.speedMin !== undefined || limits?.speedMax !== undefined) &&
-          `Красная полоса — вне диапазона ${limits?.speedMin ?? "…"}…${limits?.speedMax ?? "…"} м/с`,
-        wp && "Бирюзовая метка — целевая скорость точки маршрута",
+          $T("pfd.tip.speed.range", { min: limits?.speedMin ?? "…", max: limits?.speedMax ?? "…" }),
+        wp && $T("pfd.tip.speed.wp"),
       ),
-      speedBox: lines(`Путевая скорость, м/с: ${fmt(gs)}`, "Скорость над землёй по GPS"),
-      speedLabel: lines("Лента путевой скорости, м/с", "Скорость над землёй по GPS, текущее значение — в рамке"),
+      speedBox: lines($T("pfd.tip.gs", { v: fmt(gs) }), $T("pfd.tip.gs.note")),
+      speedLabel: lines($T("pfd.tip.speed.label"), $T("pfd.tip.speed.label.note")),
       speedBug: wp
-        ? lines(`Целевая скорость точки ${wp.num}, м/с: ${fmt(as + wp.spdErr)}`, `Воздушная, сейчас: ${fmt(as)}`, "Метка у края — цель за пределами ленты")
+        ? lines($T("pfd.tip.speed.bug", { n: wp.num, v: fmt(as + wp.spdErr) }), $T("pfd.tip.speed.bug.as", { v: fmt(as) }), $T("pfd.tip.bug.edge"))
         : "",
       altTape: lines(
-        `Высота над точкой взлёта, м: ${Math.round(alt)}`,
-        "Полоса у правого края — вертикальная скорость:",
-        "вверх, зелёная — набор",
-        "вниз, оранжевая — снижение",
-        limits?.altMax !== undefined && `Красная полоса — выше ${limits.altMax} м`,
-        wp && "Бирюзовая метка — целевая высота точки маршрута",
+        $T("pfd.tip.alt", { v: Math.round(alt) }),
+        $T("pfd.tip.alt.vs"),
+        $T("pfd.tip.alt.up"),
+        $T("pfd.tip.alt.down"),
+        limits?.altMax !== undefined && $T("pfd.tip.alt.max", { n: limits.altMax }),
+        wp && $T("pfd.tip.alt.wp"),
       ),
-      altBox: lines(`Высота над точкой взлёта, м: ${Math.round(alt)}`, `Над уровнем моря, м: ${Math.round(altMsl)}`),
-      altLabel: lines("Лента высоты над точкой взлёта, м", "Текущее значение — в рамке"),
+      altBox: lines($T("pfd.tip.alt", { v: Math.round(alt) }), $T("pfd.tip.alt.msl", { v: Math.round(altMsl) })),
+      altLabel: lines($T("pfd.tip.alt.label"), $T("pfd.tip.alt.label.note")),
       altBug: wp
         ? lines(
-            `Целевая высота точки ${wp.num}, м: ${Math.round(wp.altTarget)}`,
-            `Осталось, м: ${signed(wp.altTarget - alt)}`,
-            '"+" — набрать',
-            '"−" — снизиться',
+            $T("pfd.tip.alt.bug", { n: wp.num, v: Math.round(wp.altTarget) }),
+            $T("pfd.tip.alt.bug.left", { v: signed(wp.altTarget - alt) }),
+            $T("pfd.tip.alt.bug.up"),
+            $T("pfd.tip.alt.bug.down"),
           )
         : "",
-      compactSpeed: lines(`Путевая скорость, м/с: ${fmt(gs)}`, `Воздушная скорость, м/с: ${fmt(as)}`),
-      compactAlt: lines(
-        `Высота над точкой взлёта, м: ${Math.round(alt)}`,
-        `Вертикальная скорость, м/с: ${signed(climb)}`,
-        '"+" — набор высоты',
-        '"−" — снижение',
-      ),
-      airspeed: lines(
-        `Воздушная скорость, м/с: ${fmt(as)}`,
-        "Скорость относительно воздуха",
-        "Отличается от путевой на ветер:",
-        "встречный — путевая меньше",
-        "попутный — путевая больше",
-      ),
-      vs: lines(`Вертикальная скорость, м/с: ${signed(climb)}`, '"+" — набор высоты', '"−" — снижение'),
-      heading: lines(`Курс, °: ${String(hdg % 360).padStart(3, "0")}`, "Куда направлен нос аппарата", "0 — север, 90 — восток, 180 — юг, 270 — запад"),
-      track:
-        track !== null
-          ? lines(`Трек, °: ${Math.round(track)}  (▲ розовый)`, "Куда аппарат реально движется над землёй", "Отличается от курса на снос ветром")
-          : "",
-      wpBug: wp ? lines(`Курс на точку ${wp.num}, °: ${Math.round(wp.bearing)}  (◆ бирюзовый)`, `Расстояние: ${fmtDistance(wp.dist)}`) : "",
-      homeMark: home ? lines(`Направление на точку взлёта, °: ${Math.round(home.bearing)}  (● зелёный)`, homeLine) : "",
-      messages: lines(`Сообщения автопилота, последние ${messages.length}:`, ...messages.map((m) => `${SEVERITY[m.sev] ?? m.sev} — ${m.text}`)),
+      compactSpeed: lines($T("pfd.tip.gs", { v: fmt(gs) }), $T("pfd.tip.as", { v: fmt(as) })),
+      compactAlt: lines($T("pfd.tip.alt", { v: Math.round(alt) }), $T("pfd.tip.vs", { v: signed(climb) }), $T("pfd.tip.vs.up"), $T("pfd.tip.vs.down")),
+      airspeed: lines($T("pfd.tip.as", { v: fmt(as) }), $T("pfd.tip.as.note"), $T("pfd.tip.as.wind"), $T("pfd.tip.as.head"), $T("pfd.tip.as.tail")),
+      vs: lines($T("pfd.tip.vs", { v: signed(climb) }), $T("pfd.tip.vs.up"), $T("pfd.tip.vs.down")),
+      heading: lines($T("pfd.tip.heading", { v: String(hdg % 360).padStart(3, "0") }), $T("pfd.tip.heading.note"), $T("pfd.tip.heading.dirs")),
+      track: track !== null ? lines($T("pfd.tip.track", { v: Math.round(track) }), $T("pfd.tip.track.note"), $T("pfd.tip.track.drift")) : "",
+      wpBug: wp ? lines($T("pfd.tip.wp.bearing", { n: wp.num, v: Math.round(wp.bearing) }), $T("pfd.distance", { d: fmtDistance(wp.dist) })) : "",
+      homeMark: home ? lines($T("pfd.tip.home.bearing", { v: Math.round(home.bearing) }), homeLine) : "",
+      messages: lines($T("pfd.tip.messages", { n: messages.length }), ...messages.map((m) => `${SEVERITY[m.sev] ?? m.sev} — ${m.text}`)),
       route: wp
         ? lines(
-            `Маршрут: точка ${wp.num}`,
-            `Расстояние до точки: ${fmtDistance(wp.dist)}`,
-            `Откл. — боковое отклонение от линии маршрута: ${fmtDistance(Math.abs(wp.xte))}`,
+            $T("pfd.tip.route", { n: wp.num }),
+            $T("pfd.tip.route.dist", { d: fmtDistance(wp.dist) }),
+            $T("pfd.tip.route.xte", { d: fmtDistance(Math.abs(wp.xte)) }),
           )
         : "",
-      home: home ? lines("Точка взлёта", homeLine, `Направление на неё, °: ${Math.round(home.bearing)}  (● на ленте курса)`) : "",
-      position: lines(
-        "Позиция",
-        `Широта, долгота, °: ${lat ? `${lat.toFixed(6)}, ${lon.toFixed(6)}` : "—"}`,
-        `MSL — высота над уровнем моря, м: ${Math.round(altMsl)}`,
-      ),
-      air: lines("Воздух", `Давление, гПа: ${fmt(num(value?.Press))}`, `Температура, °C: ${fmt(num(value?.Temp))}`),
+      home: home ? lines($T("pfd.tip.home"), homeLine, $T("pfd.tip.home.dir", { v: Math.round(home.bearing) })) : "",
+      position: lines($T("pfd.position"), $T("pfd.tip.position.latlon", { v: latLonText }), $T("pfd.tip.position.msl", { v: Math.round(altMsl) })),
+      air: lines($T("pfd.air"), $T("pfd.tip.air.press", { v: fmt(num(value?.Press)) }), $T("pfd.tip.air.temp", { v: fmt(num(value?.Temp)) })),
     }
   })
   let tipText = $derived(tip ? (tips as Record<string, string>)[tip] || null : null)
@@ -413,12 +386,12 @@
   class={twMerge("relative flex w-full flex-col gap-4 rounded-2xl border border-(--hairline-color) bg-(--container-color) p-4", wrapperClass)}
   style={accentStyle}
 >
-  <WidgetHeader icon={PlaneIcon} label={label?.name ?? "Пилотажный дисплей"} bind:collapsed>
+  <WidgetHeader icon={PlaneIcon} label={label?.name || $T("pfd.title")} bind:collapsed>
     {#snippet right()}
       <div class="flex items-center gap-4">
         <label class="flex cursor-pointer items-center gap-1.5 text-[12px] font-semibold text-(--muted-color)">
           <input type="checkbox" class="cursor-pointer accent-(--accent-color)" checked={tipsEnabled} onchange={(e) => setTips(e.currentTarget.checked)} />
-          Подсказки
+          {$T("pfd.tips")}
         </label>
         <span class="text-[12px] font-semibold tabular-nums {stale ? 'text-(--red-color)' : 'text-(--muted-color)'}">{fmtAge(age)}</span>
       </div>
@@ -439,38 +412,40 @@
         class="flex flex-wrap items-center justify-between gap-x-5 gap-y-1.5 rounded-[10px] border border-(--hairline-color) bg-(--back-color) px-3 py-2 text-[12px] font-semibold tabular-nums"
       >
         <div class="flex min-w-0 items-center gap-2" data-tip="system">
-          <span class="shrink-0 text-[10px] tracking-wide whitespace-nowrap text-(--faint-color) uppercase">Система</span>
+          <span class="shrink-0 text-[10px] tracking-wide whitespace-nowrap text-(--faint-color) uppercase">{$T("pfd.system")}</span>
           <span class="rounded-md px-1.5 py-0.5 {armed ? 'bg-(--red-color) text-white' : 'bg-(--container-color) text-(--muted-color)'}" data-tip="armed"
             >{armed ? "ARMED" : "DISARMED"}</span
           >
           <span data-tip="mode">{modeName}</span>
           <span class="flex items-center gap-1" style="color: {NAV_COLOR[navState]}" data-tip="nav">
-            <span class="size-2 rounded-full" style="background: {NAV_COLOR[navState]}"></span>НАВ{sensErr > 0 ? ` · датчики ${sensErr}` : ""}
+            <span class="size-2 rounded-full" style="background: {NAV_COLOR[navState]}"></span>{$T("pfd.nav")}{sensErr > 0
+              ? ` · ${$T("pfd.nav.sensors", { n: sensErr })}`
+              : ""}
           </span>
         </div>
         <div class="flex min-w-0 items-center gap-2" data-tip="gps">
           <span class="shrink-0 text-[10px] tracking-wide whitespace-nowrap text-(--faint-color) uppercase">GPS</span>
-          <span class={fix < 3 ? "text-(--orange-color)" : ""}>{FIX[fix] ?? fix} · {num(value?.Sat)} сп.</span>
+          <span class={fix < 3 ? "text-(--orange-color)" : ""}>{FIX[fix] ?? fix} · {$T("pfd.sat", { n: num(value?.Sat) })}</span>
           {#if hdop >= 0}<span class={hdop > 2 ? "text-(--orange-color)" : ""}>HDOP {fmt(hdop, 2)}</span>{/if}
         </div>
         {#if rssi >= 0 || remRssi >= 0 || drop >= 0}
           <div class="flex min-w-0 items-center gap-2" data-tip="link">
-            <span class="shrink-0 text-[10px] tracking-wide whitespace-nowrap text-(--faint-color) uppercase">Связь</span>
+            <span class="shrink-0 text-[10px] tracking-wide whitespace-nowrap text-(--faint-color) uppercase">{$T("pfd.link")}</span>
             <span class={Math.min(rssi, remRssi) >= 0 && Math.min(rssi, remRssi) < 30 ? "text-(--red-color)" : ""}
               >{rssi >= 0 ? Math.round(rssi) : "—"} / {remRssi >= 0 ? Math.round(remRssi) : "—"} %</span
             >
-            {#if drop >= 0}<span class={drop > 5 ? "text-(--orange-color)" : ""}>потери {fmt(drop)} %</span>{/if}
+            {#if drop >= 0}<span class={drop > 5 ? "text-(--orange-color)" : ""}>{$T("pfd.link.drop", { v: fmt(drop) })}</span>{/if}
           </div>
         {/if}
         <div class="flex items-center gap-2 {battLow ? 'text-(--red-color)' : ''}" data-tip="battery">
-          <span class="shrink-0 text-[10px] tracking-wide whitespace-nowrap text-(--faint-color) uppercase">Батарея</span>
-          <span>{fmt(num(value?.BV))} В{battCurrent >= 0 ? ` · ${fmt(battCurrent)} А` : ""}{battRem >= 0 ? ` · ${battRem} %` : ""}</span>
+          <span class="shrink-0 text-[10px] tracking-wide whitespace-nowrap text-(--faint-color) uppercase">{$T("pfd.battery")}</span>
+          <span>{battText}</span>
         </div>
       </div>
 
       <!-- Прибор -->
       <div class="relative">
-        <svg viewBox="0 0 {VW} 320" class="w-full rounded-[10px] bg-(--back-color)" role="img" aria-label="Пилотажный дисплей">
+        <svg viewBox="0 0 {VW} 320" class="w-full rounded-[10px] bg-(--back-color)" role="img" aria-label={$T("pfd.title")}>
           <defs>
             <clipPath id="pfd-horizon-{uid}"><rect x={HX} y="0" width={HW} height={HH} rx="8" /></clipPath>
             <clipPath id="pfd-speed-{uid}"><rect x="0" y="0" width="70" height={HH} rx="8" /></clipPath>
@@ -526,12 +501,12 @@
                 <g data-tip="compactSpeed">
                   <rect x="8" y={CY - 16} width="76" height="32" rx="6" fill="#000" fill-opacity="0.55" />
                   <text x="46" y={CY + 6} text-anchor="middle">{fmt(gs)}</text>
-                  <text x="46" y={CY + 32} text-anchor="middle" font-size="11">м/с</text>
+                  <text x="46" y={CY + 32} text-anchor="middle" font-size="11">m/s</text>
                 </g>
                 <g data-tip="compactAlt">
                   <rect x={VW - 84} y={CY - 16} width="76" height="32" rx="6" fill="#000" fill-opacity="0.55" />
                   <text x={VW - 46} y={CY + 6} text-anchor="middle">{Math.round(alt)}</text>
-                  <text x={VW - 46} y={CY + 32} text-anchor="middle" font-size="11">м · {climb >= 0 ? "+" : ""}{fmt(climb)}</text>
+                  <text x={VW - 46} y={CY + 32} text-anchor="middle" font-size="11">m · {climb >= 0 ? "+" : ""}{fmt(climb)}</text>
                 </g>
               </g>
             {/if}
@@ -561,7 +536,7 @@
             </g>
             <g data-tip="speedLabel">
               <rect x="0" y="0" width="70" height="20" rx="8" fill="#000" />
-              <text x="35" y="14" fill="#fff" font-size="10" text-anchor="middle" fill-opacity="0.7">СКОР м/с</text>
+              <text x="35" y="14" fill="#fff" font-size="10" text-anchor="middle" fill-opacity="0.7">SPD m/s</text>
             </g>
             {#if wp}
               {@const y = clampTape(CY - wp.spdErr * SPEED_PPU)}
@@ -588,7 +563,7 @@
             </g>
             <g data-tip="altLabel">
               <rect x={VW - 70} y="0" width="70" height="20" rx="8" fill="#000" />
-              <text x={VW - 35} y="14" fill="#fff" font-size="10" text-anchor="middle" fill-opacity="0.7">ВЫС м</text>
+              <text x={VW - 35} y="14" fill="#fff" font-size="10" text-anchor="middle" fill-opacity="0.7">ALT m</text>
             </g>
             {#if wp}
               {@const y = clampTape(CY - (wp.altTarget - alt) * ALT_PPU)}
@@ -598,12 +573,12 @@
             <!-- Углы под лентами: воздушная и вертикальная скорость -->
             <g data-tip="airspeed">
               <rect x="0" y={HH + 6} width={HX - 6} height="44" rx="8" fill="#000" fill-opacity="0.72" />
-              <text x={(HX - 6) / 2} y={HH + 21} fill="#fff" fill-opacity="0.7" font-size="9" text-anchor="middle">ВОЗД. СКОР</text>
+              <text x={(HX - 6) / 2} y={HH + 21} fill="#fff" fill-opacity="0.7" font-size="9" text-anchor="middle">AS</text>
               <text x={(HX - 6) / 2} y={HH + 41} fill="#fff" font-size="14" font-weight="600" text-anchor="middle">{fmt(as)}</text>
             </g>
             <g data-tip="vs">
               <rect x={HX + HW + 6} y={HH + 6} width={VW - HX - HW - 6} height="44" rx="8" fill="#000" fill-opacity="0.72" />
-              <text x={(HX + HW + 6 + VW) / 2} y={HH + 21} fill="#fff" fill-opacity="0.7" font-size="9" text-anchor="middle">ВЕРТ. СКОР</text>
+              <text x={(HX + HW + 6 + VW) / 2} y={HH + 21} fill="#fff" fill-opacity="0.7" font-size="9" text-anchor="middle">VS</text>
               <text
                 x={(HX + HW + 6 + VW) / 2}
                 y={HH + 41}
@@ -650,7 +625,7 @@
               <line x1={HX + 20} y1="20" x2={HX + HW - 20} y2={HH - 20} stroke="#ef4444" stroke-width="3" />
               <line x1={HX + HW - 20} y1="20" x2={HX + 20} y2={HH - 20} stroke="#ef4444" stroke-width="3" />
               <rect x={CX - 70} y={CY - 16} width="140" height="32" rx="6" fill="#ef4444" />
-              <text x={CX} y={CY + 6} fill="#fff" font-size="15" font-weight="600" text-anchor="middle">НЕТ ДАННЫХ</text>
+              <text x={CX} y={CY + 6} fill="#fff" font-size="15" font-weight="600" text-anchor="middle">NO DATA</text>
             </g>
           {/if}
         </svg>
@@ -678,29 +653,29 @@
       >
         {#if wp}
           <div class="flex min-w-0 items-center gap-2" data-tip="route">
-            <span class="shrink-0 text-[10px] font-semibold tracking-wide whitespace-nowrap text-(--faint-color) uppercase">Маршрут</span>
-            <span><span style="color:#22d3ee">◆</span> точка {wp.num} · {fmtDistance(wp.dist)} · откл. {fmtDistance(Math.abs(wp.xte))}</span>
+            <span class="shrink-0 text-[10px] font-semibold tracking-wide whitespace-nowrap text-(--faint-color) uppercase">{$T("pfd.route")}</span>
+            <span><span style="color:#22d3ee">◆</span> {$T("pfd.route.line", { n: wp.num, d: fmtDistance(wp.dist), x: fmtDistance(Math.abs(wp.xte)) })}</span>
           </div>
         {/if}
         {#if home}
           <div class="flex min-w-0 items-center gap-2" data-tip="home">
-            <span class="shrink-0 text-[10px] font-semibold tracking-wide whitespace-nowrap text-(--faint-color) uppercase">Дом</span>
+            <span class="shrink-0 text-[10px] font-semibold tracking-wide whitespace-nowrap text-(--faint-color) uppercase">{$T("pfd.home")}</span>
             <span><span style="color:#22c55e">●</span> {fmtDistance(home.distance)} · {Math.round(home.bearing)}°</span>
           </div>
         {/if}
         {#if track !== null}
           <div class="flex items-center gap-2" data-tip="track">
-            <span class="shrink-0 text-[10px] font-semibold tracking-wide whitespace-nowrap text-(--faint-color) uppercase">Трек</span>
+            <span class="shrink-0 text-[10px] font-semibold tracking-wide whitespace-nowrap text-(--faint-color) uppercase">{$T("pfd.track")}</span>
             <span><span style="color:#ec4899">▲</span> {Math.round(track)}°</span>
           </div>
         {/if}
         <div class="flex min-w-0 items-center gap-2" data-tip="position">
-          <span class="shrink-0 text-[10px] font-semibold tracking-wide whitespace-nowrap text-(--faint-color) uppercase">Позиция</span>
-          <span>{lat ? `${lat.toFixed(6)}, ${lon.toFixed(6)}` : "—"} · MSL {Math.round(altMsl)} м</span>
+          <span class="shrink-0 text-[10px] font-semibold tracking-wide whitespace-nowrap text-(--faint-color) uppercase">{$T("pfd.position")}</span>
+          <span>{latLonText} · MSL {$T("pfd.u.m", { n: Math.round(altMsl) })}</span>
         </div>
         <div class="flex min-w-0 items-center gap-2" data-tip="air">
-          <span class="shrink-0 text-[10px] font-semibold tracking-wide whitespace-nowrap text-(--faint-color) uppercase">Воздух</span>
-          <span>{fmt(num(value?.Press))} гПа · {fmt(num(value?.Temp))} °C</span>
+          <span class="shrink-0 text-[10px] font-semibold tracking-wide whitespace-nowrap text-(--faint-color) uppercase">{$T("pfd.air")}</span>
+          <span>{fmt(num(value?.Press))} {$T("pfd.u.hpa")} · {fmt(num(value?.Temp))} °C</span>
         </div>
       </div>
     </div>

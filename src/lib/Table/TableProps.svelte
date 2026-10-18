@@ -169,12 +169,7 @@
                   }
                 }}
               />
-              <div class="py-1.5 pl-9 grid grid-cols-[minmax(9rem,14rem)_minmax(5rem,7rem)_minmax(18rem,22rem)_2rem_2rem_1fr] items-end gap-1.5">
-                <UI.Input
-                  label={{ name: $T("constructor.props.table.columns.label") }}
-                  value={column.label?.name}
-                  onUpdate={(value) => updateTableHeader(columnIndex, "label", { ["name"]: value })}
-                />
+              <div class="py-1.5 pl-9 grid grid-cols-[minmax(5rem,7rem)_minmax(18rem,22rem)_2rem_2rem_1fr] items-end gap-1.5">
                 <UI.Input
                   label={{ name: $T("constructor.props.table.columns.width"), class: "px-0" }}
                   type="number"
@@ -317,12 +312,6 @@
                           {@const button = content.data}
                           <!-- Строка 1 — как выглядит кнопка, строка 2 — какую команду она шлёт -->
                           <div class="flex flex-wrap items-end gap-2">
-                            <UI.Input
-                              wrapperClass="min-w-28 flex-1"
-                              label={{ name: $T("constructor.props.name") }}
-                              value={button.name}
-                              onUpdate={(value) => updateContentProperty(columnIndex, index, "name", value)}
-                            />
                             <div class="relative min-w-32 flex-1">
                               <CommonSnippets
                                 snippet="IconsLib"
@@ -498,14 +487,6 @@
   </PropsListModal>
 {/snippet}
 
-{#snippet TableFooter()}
-  <UI.Input
-    label={{ name: $T("constructor.props.footer") }}
-    value={component.properties.footer}
-    onUpdate={(value) => updateProperty("footer", value as string, component, onPropertyChange)}
-  />
-{/snippet}
-
 {#snippet TableStashData()}
   <UI.Switch
     label={{ name: $T("constructor.props.table.stashData") }}
@@ -586,7 +567,6 @@
     </PropsGroup>
 
     <PropsGroup label={$T("constructor.props.group.behavior")}>
-      {@render TableFooter()}
       <div class="flex items-end">
         {@render TableStashData()}
         {@render TableClearButton()}

@@ -2,6 +2,7 @@
      Table, опции ProgressBar/Select/Switch/Tabs) в модалку вместо попытки втиснуть их в узкий
      сайдбар конструктора (ConstructorUI.svelte). Кнопка-триггер показывает счётчик элементов. -->
 <script lang="ts">
+  import { T } from "$lib/locales/i18n"
   import type { Snippet } from "svelte"
   import * as UI from "$lib"
 
@@ -26,7 +27,7 @@
   onclick={() => (isOpen = true)}
 >
   <span class="text-[11px] font-semibold text-(--muted-color)">{label} ({count})</span>
-  <span class="text-[12px] text-(--accent-color)">Настроить →</span>
+  <span class="text-[12px] text-(--accent-color)">{$T("ui.configure")}</span>
 </button>
 
 {#if isOpen}

@@ -16,6 +16,7 @@ export { default as InputProps } from "./Input/InputProps.svelte"
 export { default as Joystick } from "./Joystick/Joystick.svelte"
 export { default as JoystickProps } from "./Joystick/JoystickProps.svelte"
 export { default as Modal } from "./Modal.svelte"
+export { default as TextsEditor } from "./TextsEditor.svelte"
 export { default as PeriodChart } from "./PeriodChart/PeriodChart.svelte"
 export { default as PeriodChartProps } from "./PeriodChart/PeriodChartProps.svelte"
 export { default as ProgressBar } from "./ProgressBar/ProgressBar.svelte"
@@ -53,6 +54,8 @@ export { default as WidgetMapProps } from "./WidgetMap/WidgetMapProps.svelte"
 
 export * from "./locales/i18n"
 export * from "./locales/translations"
+export * from "./locales/localize"
+export { widgetAccentStyle } from "./widgetAccent"
 export * from "./ModalStackStore"
 
 export {

@@ -5,15 +5,17 @@
 
   const randomLevelData = (n: number) => Array.from({ length: n }, () => Math.round(Math.random() * 100))
 
+  /* Демо-уровни, когда levels не заданы; name — ключ перевода */
   export const DEFAULT_LEVELS: IPeriodChartLevel[] = [
-    { name: "Год", data: randomLevelData(12) },
-    { name: "Месяц", data: randomLevelData(31) },
-    { name: "Сутки", data: randomLevelData(24) },
-    { name: "Час", data: randomLevelData(6) },
+    { name: "ui.period.year", data: randomLevelData(12) },
+    { name: "ui.period.month", data: randomLevelData(31) },
+    { name: "ui.period.day", data: randomLevelData(24) },
+    { name: "ui.period.hour", data: randomLevelData(6) },
   ]
 </script>
 
 <script lang="ts">
+  import { T } from "$lib/locales/i18n"
   import { twMerge } from "tailwind-merge"
   import type { IPeriodChartProps } from "../types"
 
@@ -23,7 +25,7 @@
        вызовы, которым нужен цвет, по-прежнему могут передать bg-* явно. */
     wrapperClass = "",
     label = { name: "", class: "" },
-    levels = DEFAULT_LEVELS,
+    levels: levelsProp,
     unit = "",
     onLevelChange = () => {},
   }: IPeriodChartProps = $props()
@@ -35,6 +37,7 @@
     if (currentLevelIndex >= levels.length) currentLevelIndex = 0
   })
 
+  const levels = $derived(levelsProp ?? DEFAULT_LEVELS.map((level) => ({ ...level, name: $T(level.name) })))
   const currentLevel = $derived<IPeriodChartLevel | undefined>(levels[currentLevelIndex])
   const values = $derived(currentLevel?.data ?? [])
 
@@ -103,7 +106,7 @@
   <!-- Столбчатый график -->
   <div class="relative flex w-full flex-col gap-1.5 rounded-[12px] border border-(--hairline-color) bg-(--back-color) p-3.5">
     {#if values.length === 0}
-      <div class="flex h-40 w-full items-center justify-center text-[13px] text-(--faint-color)">Нет данных</div>
+      <div class="flex h-40 w-full items-center justify-center text-[13px] text-(--faint-color)">{$T("ui.no_data")}</div>
     {:else}
       <div class="flex w-full gap-2">
         <!-- Шкала Y: подписи нулевой высоты, центр каждой ровно на своей линии сетки -->

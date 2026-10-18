@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { Language } from "$lib/locales/i18n"
+  import { localizeDeep } from "$lib/locales/localize"
   import { type ISwitchProps, type UIComponent } from "$lib"
   import ComponentExample from "../../ComponentExample.svelte"
   import Switch from "$lib/Switch/Switch.svelte"
@@ -49,7 +51,11 @@ ${formatObjectToString(switchComponent.properties as ISwitchProps)}
 <ComponentExample {codeText} {readmeHtml} bind:forConstructor>
   {#snippet component()}
     <div class="my-10 flex w-full justify-center">
-      <Switch wrapperClass={(switchComponent.properties as ISwitchProps).bitMode ? "w-fit" : ""} {...switchComponent.properties as ISwitchProps} />
+      <Switch
+        wrapperClass={(switchComponent.properties as ISwitchProps).bitMode ? "w-fit" : ""}
+        {...localizeDeep(switchComponent.properties, $Language) as ISwitchProps}
+        onChange={(value) => (switchComponent = updateComponent(switchComponent, { properties: { value } }))}
+      />
     </div>
   {/snippet}
   {#snippet componentProps()}

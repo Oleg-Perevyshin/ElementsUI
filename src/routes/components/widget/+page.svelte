@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { Language } from "$lib/locales/i18n"
+  import { localizeDeep } from "$lib/locales/localize"
   import { type UIComponent } from "$lib"
   import ComponentExample from "../../ComponentExample.svelte"
   import { ICONS_ARRAY } from "$lib/icons"
@@ -52,7 +54,10 @@ ${formatObjectToString(widgetComponent.properties as IWidgetProps)}
 <ComponentExample {codeText} {readmeHtml} bind:forConstructor>
   {#snippet component()}
     <div class="m-auto size-70">
-      <Widget {...widgetComponent.properties as IWidgetProps} />
+      <Widget
+        {...localizeDeep(widgetComponent.properties, $Language) as IWidgetProps}
+        onUpdate={(value) => (widgetComponent = updateComponent(widgetComponent, { properties: { value } }))}
+      />
     </div>
   {/snippet}
   {#snippet componentProps()}

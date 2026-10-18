@@ -13,7 +13,7 @@
     id = crypto.randomUUID(),
     wrapperClass = "",
     size = { width: 12, height: 6 },
-    activeTab = 0,
+    activeTab = $bindable(0),
     items = [
       { name: "tab 1", icon: "", class: "" },
       { name: "tab 2", icon: "", class: "" },
@@ -24,8 +24,6 @@
   }: ITabsProps = $props()
 
   const isCol = $derived(!!items.find((item) => item.class?.startsWith("flex-col")))
-
-  let currentTabIndex: number = $derived(activeTab)
 </script>
 
 <div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class="h-full w-full">
@@ -43,7 +41,7 @@
               `tab relative flex min-w-fit shrink-0 items-center justify-center gap-2 border-0 bg-transparent py-3 text-[14px]
                transition-colors duration-150 ${isCol && items.find((item) => item.icon) ? "h-20 flex-col" : ""}
                ${
-                 index === currentTabIndex
+                 index === activeTab
                    ? "cursor-pointer font-semibold text-(--font-color) shadow-[inset_0_-2px_0_var(--accent-color)]"
                    : item.disabled
                      ? "cursor-not-allowed font-medium text-(--faint-color)"
@@ -53,10 +51,10 @@
             )}
             disabled={item.disabled}
             onclick={() => {
-              currentTabIndex = index
+              activeTab = index
               if (item.onClick) item.onClick()
             }}
-            aria-selected={index === currentTabIndex}
+            aria-selected={index === activeTab}
             role="tab"
           >
             {#if item?.icon}
@@ -88,13 +86,13 @@
       style="grid-template-columns: repeat({size.width || 1}, minmax(0, 1fr)); grid-template-rows: repeat({size.height || 1}, auto);"
     >
       {#if Components}
-        {#each (apiArray ?? []).filter((c) => c.id.match(/(\d+)$/)?.[1] === `${currentTabIndex}`) as comp}
+        {#each (apiArray ?? []).filter((c) => c.id.match(/(\d+)$/)?.[1] === `${activeTab}`) as comp}
           {@render Components(comp, false)}
         {/each}
       {:else if children}
-        {@render children(items[currentTabIndex])}
+        {@render children(items[activeTab])}
       {:else}
-        {@render items[currentTabIndex]?.children?.()}
+        {@render items[activeTab]?.children?.()}
       {/if}
     </div>
   </div>

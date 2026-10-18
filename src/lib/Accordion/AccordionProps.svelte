@@ -9,6 +9,7 @@
   import CrossIcon from "$lib/libIcons/CrossIcon.svelte"
   import CommonSnippets from "$lib/CommonSnippets.svelte"
   import PropsGroup from "$lib/PropsGroup.svelte"
+  import WidgetAccentPicker from "../WidgetAccentPicker.svelte"
 
   const {
     component,
@@ -113,6 +114,10 @@
       />
     </PropsGroup>
     <PropsGroup label={$T("constructor.props.group.appearance")} contentClass="items-center">
+      <WidgetAccentPicker
+        value={component.properties.componentClass ?? ""}
+        onUpdate={(value) => updateProperty("componentClass", value, component, onPropertyChange)}
+      />
       {@render AccordionBackgroundImage()}
     </PropsGroup>
   </div>
@@ -141,6 +146,10 @@
       {@render AccordionIsOpen()}
     </PropsGroup>
     <PropsGroup label={$T("constructor.props.group.appearance")} contentClass="items-center">
+      <WidgetAccentPicker
+        value={component.properties.componentClass ?? ""}
+        onUpdate={(value) => updateProperty("componentClass", value, component, onPropertyChange)}
+      />
       {@render AccordionBackgroundImage()}
     </PropsGroup>
   </div>

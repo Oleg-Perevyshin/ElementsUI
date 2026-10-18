@@ -1,6 +1,7 @@
 <!-- $lib/WidgetMap/WidgetMapProps.svelte — панель пропсов конструктора для WidgetMap: заголовок, группы полей
      (каждая — объект), мастер-цвет, высота карты, иконка маркера и начальные значения переключателей оператора. -->
 <script lang="ts">
+  import TextsEditor from "../TextsEditor.svelte"
   import { T } from "$lib/locales/i18n"
   import * as UI from "$lib"
   import { updateProperty, type UIComponent, type IWidgetMapProps } from "../types"
@@ -35,12 +36,8 @@
 
 <div class="flex flex-col gap-2">
   <PropsGroup label={$T("constructor.props.group.general")}>
-    <UI.Input
-      label={{ name: "Заголовок" }}
-      value={component.properties.label?.name}
-      onUpdate={(value) => updateProperty("label.name", value as string, component, onPropertyChange)}
-    />
-    <UI.Input label={{ name: "Группы полей (через пробел)" }} value={(component.properties.groups ?? ["MAV"]).join(" ")} onUpdate={setGroups} />
+    <TextsEditor {component} {onPropertyChange} />
+    <UI.Input label={{ name: $T("widget.map.groups") }} value={(component.properties.groups ?? ["MAV"]).join(" ")} onUpdate={setGroups} />
     <WidgetAccentPicker
       value={component.properties.componentClass ?? ""}
       onUpdate={(value) => updateProperty("componentClass", value, component, onPropertyChange)}
@@ -48,7 +45,7 @@
   </PropsGroup>
   <PropsGroup label={$T("constructor.props.group.appearance")}>
     <UI.Select
-      label={{ name: "Высота карты" }}
+      label={{ name: $T("widget.map.height") }}
       type="buttons"
       options={HEIGHT_OPTIONS}
       value={HEIGHT_OPTIONS.find((opt) => opt.value === (component.properties.height ?? 400)) ?? HEIGHT_OPTIONS[1]}
@@ -66,7 +63,7 @@
       {onPropertyChange}
     />
   </PropsGroup>
-  <PropsGroup label="По умолчанию (оператор меняет на карте)">
+  <PropsGroup label={$T("widget.map.defaults")}>
     <UI.Switch
       label={{ name: $T("constructor.props.map.track") }}
       value={component.properties.trackEnabled ? 1 : 0}

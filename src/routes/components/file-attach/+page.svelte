@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { Language } from "$lib/locales/i18n"
+  import { localizeDeep } from "$lib/locales/localize"
   import ComponentExample from "../../ComponentExample.svelte"
   import FileAttach from "$lib/FileAttach/FileAttach.svelte"
   import FileAttachProps from "$lib/FileAttach/FileAttachProps.svelte"
@@ -53,7 +55,7 @@ ${formatObjectToString(fileAttachComponent.properties as IFileAttachProps)}
 
 <ComponentExample {codeText} {readmeHtml} bind:forConstructor>
   {#snippet component()}
-    <FileAttach {...fileAttachComponent.properties as IFileAttachProps} onChange={(event) => handleImageUpload(event)} />
+    <FileAttach {...localizeDeep(fileAttachComponent.properties, $Language) as IFileAttachProps} onChange={(event) => handleImageUpload(event)} />
   {/snippet}
   {#snippet componentProps()}
     <FileAttachProps

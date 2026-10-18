@@ -5,6 +5,7 @@
      WiFiMode / StaSSID/StaPSK/StaticIP/StaIP/StaMS/StaGW / ApSSID/ApPSK/ApIP/ApMS/ApGW.
      Ничего не знает про DeviceStore/WebSocket — value/onSave, вся отправка на стороне вызывающего. -->
 <script lang="ts">
+  import { T } from "$lib/locales/i18n"
   import { untrack } from "svelte"
   import { slide, fade, scale } from "svelte/transition"
   import { twMerge } from "tailwind-merge"
@@ -139,7 +140,7 @@
   style={accentStyle}
 >
   <!-- Заголовок и переключатель режима -->
-  <WidgetHeader icon={WifiIcon} label={label?.name ?? "WiFi"} bind:collapsed>
+  <WidgetHeader icon={WifiIcon} label={label?.name || "WiFi"} bind:collapsed>
     {#snippet right()}
       <UI.Select
         wrapperClass="w-full sm:w-72"
@@ -156,13 +157,13 @@
       {#if cfg.WiFiMode === 1 || cfg.WiFiMode === 3}
         <!-- Клиентский режим (STA) -->
         <div class="flex flex-col gap-3 rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-3" transition:slide={{ duration: 150 }}>
-          <span class="text-[12px] font-semibold text-(--muted-color)">Режим клиента (STA)</span>
+          <span class="text-[12px] font-semibold text-(--muted-color)">{$T("widget.wifi.sta")}</span>
 
           <div class="flex items-end gap-2">
             <UI.Select
               wrapperClass="flex-1"
               type="input"
-              label={{ name: "SSID сети" }}
+              label={{ name: $T("widget.wifi.ssid") }}
               value={{ id: "current", name: cfg.StaSSID, value: cfg.StaSSID }}
               options={foundNetworks}
               onUpdate={(option) => (cfg.StaSSID = (option as IOption<string>).name ?? "")}
@@ -170,18 +171,24 @@
             <UI.Button
               wrapperClass="w-8"
               componentClass="p-1"
-              content={{ icon: scanning ? LoaderIcon : SearchIcon, info: { text: "Сканировать сети", side: "top" } }}
+              content={{ icon: scanning ? LoaderIcon : SearchIcon, info: { text: $T("widget.wifi.scan"), side: "top" } }}
               disabled={scanning || !onScan}
               onClick={scanNetworks}
             />
           </div>
 
-          <UI.Input type="password" label={{ name: "Пароль" }} bind:value={cfg.StaPSK} maxlength={64} help={{ autocomplete: "off", regExp: PSK_REGEXP }} />
+          <UI.Input
+            type="password"
+            label={{ name: $T("widget.common.password") }}
+            bind:value={cfg.StaPSK}
+            maxlength={64}
+            help={{ autocomplete: "off", regExp: PSK_REGEXP }}
+          />
 
           <UI.Select
             wrapperClass="w-48"
             type="buttons"
-            label={{ name: "Получение IP" }}
+            label={{ name: $T("widget.wifi.ip_mode") }}
             value={selectedIPMode}
             options={IP_MODE_OPTIONS}
             onUpdate={(option) => (cfg.StaticIP = (option as IOption<number>).value as number)}
@@ -189,9 +196,27 @@
 
           {#if cfg.StaticIP === 1}
             <div class="grid grid-cols-1 gap-2 sm:grid-cols-3" transition:slide={{ duration: 150 }}>
-              <UI.Input label={{ name: "IP адрес" }} bind:value={cfg.StaIP} maxlength={15} placeholder="192.168.1.100" help={{ regExp: IP_REGEXP }} />
-              <UI.Input label={{ name: "Маска подсети" }} bind:value={cfg.StaMS} maxlength={15} placeholder="255.255.255.0" help={{ regExp: IP_REGEXP }} />
-              <UI.Input label={{ name: "Шлюз" }} bind:value={cfg.StaGW} maxlength={15} placeholder="192.168.1.1" help={{ regExp: IP_REGEXP }} />
+              <UI.Input
+                label={{ name: $T("widget.common.ip") }}
+                bind:value={cfg.StaIP}
+                maxlength={15}
+                placeholder="192.168.1.100"
+                help={{ regExp: IP_REGEXP }}
+              />
+              <UI.Input
+                label={{ name: $T("widget.common.mask") }}
+                bind:value={cfg.StaMS}
+                maxlength={15}
+                placeholder="255.255.255.0"
+                help={{ regExp: IP_REGEXP }}
+              />
+              <UI.Input
+                label={{ name: $T("widget.common.gateway") }}
+                bind:value={cfg.StaGW}
+                maxlength={15}
+                placeholder="192.168.1.1"
+                help={{ regExp: IP_REGEXP }}
+              />
             </div>
           {/if}
         </div>
@@ -200,17 +225,23 @@
       {#if cfg.WiFiMode === 2 || cfg.WiFiMode === 3}
         <!-- Точка доступа (AP) -->
         <div class="flex flex-col gap-3 rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-3" transition:slide={{ duration: 150 }}>
-          <span class="text-[12px] font-semibold text-(--muted-color)">Точка доступа (AP)</span>
+          <span class="text-[12px] font-semibold text-(--muted-color)">{$T("widget.wifi.ap")}</span>
 
           <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
             <UI.Input label={{ name: "SSID" }} bind:value={cfg.ApSSID} maxlength={32} />
-            <UI.Input type="password" label={{ name: "Пароль" }} bind:value={cfg.ApPSK} maxlength={64} help={{ autocomplete: "off", regExp: PSK_REGEXP }} />
+            <UI.Input
+              type="password"
+              label={{ name: $T("widget.common.password") }}
+              bind:value={cfg.ApPSK}
+              maxlength={64}
+              help={{ autocomplete: "off", regExp: PSK_REGEXP }}
+            />
           </div>
 
           <div class="grid grid-cols-1 gap-2 sm:grid-cols-3">
-            <UI.Input label={{ name: "IP адрес" }} bind:value={cfg.ApIP} maxlength={15} help={{ regExp: IP_REGEXP }} />
-            <UI.Input label={{ name: "Маска подсети" }} bind:value={cfg.ApMS} maxlength={15} help={{ regExp: IP_REGEXP }} />
-            <UI.Input label={{ name: "Шлюз" }} bind:value={cfg.ApGW} maxlength={15} help={{ regExp: IP_REGEXP }} />
+            <UI.Input label={{ name: $T("widget.common.ip") }} bind:value={cfg.ApIP} maxlength={15} help={{ regExp: IP_REGEXP }} />
+            <UI.Input label={{ name: $T("widget.common.mask") }} bind:value={cfg.ApMS} maxlength={15} help={{ regExp: IP_REGEXP }} />
+            <UI.Input label={{ name: $T("widget.common.gateway") }} bind:value={cfg.ApGW} maxlength={15} help={{ regExp: IP_REGEXP }} />
           </div>
         </div>
       {/if}
@@ -218,9 +249,9 @@
       <!-- Сохранение -->
       <div class="flex flex-col items-center gap-2">
         {#if isDirty}
-          <span class="text-[12px] text-(--muted-color)" transition:slide={{ duration: 100 }}>Есть несохранённые изменения</span>
+          <span class="text-[12px] text-(--muted-color)" transition:slide={{ duration: 100 }}>{$T("widget.common.unsaved")}</span>
         {/if}
-        <UI.Button wrapperClass="w-40" componentClass="bg-accent" content={{ name: "Сохранить" }} disabled={!isDirty} onClick={save} />
+        <UI.Button wrapperClass="w-40" componentClass="bg-accent" content={{ name: $T("widget.common.save") }} disabled={!isDirty} onClick={save} />
       </div>
     </div>
   {/if}
@@ -235,14 +266,19 @@
       >
         <div class="flex items-center gap-2 text-(--orange-color)">
           <WarningIcon />
-          <h4 class="text-[15px] font-semibold text-(--font-color)">Сохранить режим AP?</h4>
+          <h4 class="text-[15px] font-semibold text-(--font-color)">{$T("widget.wifi.ap_confirm_title")}</h4>
         </div>
         <p class="text-[13px] text-(--muted-color)">
-          Wi-Fi клиент (STA) будет выключен, устройство отключится от облака и станет доступно только по своей точке доступа. Продолжить?
+          {$T("widget.wifi.ap_confirm_text")}
         </p>
         <div class="flex gap-2">
-          <UI.Button wrapperClass="flex-1" componentClass="bg-transparent" content={{ name: "Отмена" }} onClick={() => (showAPWarning = false)} />
-          <UI.Button wrapperClass="flex-1" componentClass="bg-red" content={{ name: "Сохранить" }} onClick={confirmAndSave} />
+          <UI.Button
+            wrapperClass="flex-1"
+            componentClass="bg-transparent"
+            content={{ name: $T("widget.common.cancel") }}
+            onClick={() => (showAPWarning = false)}
+          />
+          <UI.Button wrapperClass="flex-1" componentClass="bg-red" content={{ name: $T("widget.common.save") }} onClick={confirmAndSave} />
         </div>
       </div>
     </div>

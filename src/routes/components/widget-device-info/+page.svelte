@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { Language } from "$lib/locales/i18n"
+  import { localizeDeep } from "$lib/locales/localize"
   import { type UIComponent } from "$lib"
   import ComponentExample from "../../ComponentExample.svelte"
   import { updateComponent, type IWidgetDeviceInfoProps } from "$lib/types"
@@ -30,7 +32,7 @@
     type: "WidgetDeviceInfo",
     access: "full",
     properties: {
-      label: { name: "Информация об устройстве" },
+      label: { name: "" },
       componentClass: "",
     },
     eventHandler: { Header: "SET", Argument: "ModCfg", Variables: [] },
@@ -52,7 +54,7 @@ onRestart={handleRestart}
   {#snippet component()}
     <div class="m-auto w-full max-w-3xl">
       <WidgetDeviceInfo
-        {...deviceInfoComponent.properties as IWidgetDeviceInfoProps}
+        {...localizeDeep(deviceInfoComponent.properties, $Language) as IWidgetDeviceInfoProps}
         value={mockValue}
         onSave={(info) => console.log("SET CFG (mock):", info)}
         onRestart={() => console.log("RESTART (mock)")}

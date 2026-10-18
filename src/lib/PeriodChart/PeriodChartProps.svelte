@@ -49,14 +49,6 @@
   }
 </script>
 
-{#snippet PeriodChartUnit()}
-  <UI.Input
-    label={{ name: $T("constructor.props.units") }}
-    value={component.properties.unit}
-    onUpdate={(value) => updateProperty("unit", value, component, onPropertyChange)}
-  />
-{/snippet}
-
 {#snippet PeriodChartLevels()}
   <PropsGroup label={$T("constructor.props.periodchart.title")} wrapperClass="mt-3">
     {#snippet headerActions()}
@@ -85,16 +77,6 @@
             onUpdate={(updatedArray) => updateLevels(updatedArray)}
           />
           <div class="flex flex-wrap items-end gap-2">
-            <UI.Input
-              label={{ name: $T("constructor.props.optionname") }}
-              wrapperClass="min-w-28 flex-1"
-              value={level.name}
-              onUpdate={(value) => {
-                const levels = [...(component.properties?.levels || [])]
-                levels[index] = { ...levels[index], name: value as string }
-                updateLevels(levels)
-              }}
-            />
             <UI.Select
               label={{ name: $T("constructor.props.variable") }}
               wrapperClass="min-w-32 flex-1"
@@ -153,9 +135,6 @@
       <CommonSnippets snippet="Colors" initialValue={{ color: initialColor, uselessColors: ["bg-max"] }} {component} {onPropertyChange} />
       <CommonSnippets snippet="Label" {component} {onPropertyChange} />
     </PropsGroup>
-    <PropsGroup label={$T("constructor.props.group.value")}>
-      {@render PeriodChartUnit()}
-    </PropsGroup>
   </div>
   {@render PeriodChartLevels()}
 {:else}
@@ -168,7 +147,6 @@
     <PropsGroup label={$T("constructor.props.group.value")}>
       <CommonSnippets snippet="WrapperClass" {component} {onPropertyChange} />
       <CommonSnippets snippet="Colors" initialValue={{ color: initialColor, uselessColors: ["bg-max"] }} {component} {onPropertyChange} />
-      {@render PeriodChartUnit()}
     </PropsGroup>
   </div>
   {@render PeriodChartLevels()}

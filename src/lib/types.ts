@@ -128,6 +128,8 @@ export interface IAccordionProps {
   id?: string
   isOpen?: boolean
   wrapperClass?: string
+  /* Мастер-цвет "bg-red" и т.п. из COLOR_OPTIONS (см. widgetAccent.ts): иконка и текст заголовка — цвет, фон заголовка — его мягкий оттенок; "" — акцент темы */
+  componentClass?: string
   size?: {
     height?: number
     width?: number

@@ -1,7 +1,8 @@
-<!-- $lib/WidgetAccentPicker.svelte — переиспользуемый пункт панели пропсов "Мастер-цвет" для
+<!-- $lib/WidgetAccentPicker.svelte — переиспользуемый пункт панели пропсов «Мастер-цвет» для
      смарт-виджетов конструктора (WidgetWiFi, WidgetDeviceInfo и далее). Один UI на все виджеты,
      та же палитра, что и у примитивов (optionsStore.COLOR_OPTIONS) — см. widgetAccent.ts. -->
 <script lang="ts">
+  import { T } from "$lib/locales/i18n"
   import { optionsStore } from "./options"
   import Select from "./Select/Select.svelte"
   import type { IOption } from "./types"
@@ -19,7 +20,7 @@
 
 <Select
   {wrapperClass}
-  label={{ name: "Мастер-цвет" }}
+  label={{ name: $T("ui.accent") }}
   type="buttons"
   options={$optionsStore.COLOR_OPTIONS}
   value={$optionsStore.COLOR_OPTIONS.find((o) => o.value === value) ?? $optionsStore.COLOR_OPTIONS[0]}

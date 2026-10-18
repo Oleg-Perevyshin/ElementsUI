@@ -1,4 +1,5 @@
 <script lang="ts">
+  import TextsEditor from "../TextsEditor.svelte"
   import { T } from "$lib/locales/i18n"
   import { updateProperty, type ITextFieldProps, type IUIComponentHandler, type UIComponent } from "../types"
   import * as UI from "$lib/index"
@@ -41,11 +42,7 @@
 {/snippet}
 
 {#snippet TextFieldName()}
-  <UI.Input
-    label={{ name: $T("constructor.props.label") }}
-    value={component.properties.content.name}
-    onUpdate={(value) => updateProperty("content.name", value as string, component, onPropertyChange)}
-  />
+  <TextsEditor {component} {onPropertyChange} />
 {/snippet}
 
 {#snippet TextFieldColors()}

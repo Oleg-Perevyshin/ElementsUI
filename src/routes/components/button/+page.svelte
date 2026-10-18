@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { Language } from "$lib/locales/i18n"
+  import { localizeDeep } from "$lib/locales/localize"
   import { Button } from "$lib"
   import { updateComponent, type IButtonProps, type UIComponent } from "$lib/types"
   import { formatObjectToString, RenderMarkdown } from "../../common"
@@ -44,7 +46,7 @@ ${formatObjectToString(buttonComponent.properties as IButtonProps)}
 <ComponentExample {codeText} {readmeHtml} bind:forConstructor>
   {#snippet component()}
     <div class="relative mx-40 my-20">
-      <Button {...buttonComponent.properties as IButtonProps} />
+      <Button {...localizeDeep(buttonComponent.properties, $Language) as IButtonProps} />
     </div>
   {/snippet}
   {#snippet componentProps()}

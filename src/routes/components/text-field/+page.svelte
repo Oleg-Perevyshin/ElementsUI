@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { Language } from "$lib/locales/i18n"
+  import { localizeDeep } from "$lib/locales/localize"
   import { type ITextFieldProps, type UIComponent } from "$lib"
   import ComponentExample from "../../ComponentExample.svelte"
   import TextField from "$lib/TextField/TextField.svelte"
@@ -40,7 +42,7 @@ ${formatObjectToString(textFieldComponent.properties as ITextFieldProps)}
 <ComponentExample {codeText} {readmeHtml} bind:forConstructor>
   {#snippet component()}
     <div>
-      <TextField {...textFieldComponent.properties as ITextFieldProps} />
+      <TextField {...localizeDeep(textFieldComponent.properties, $Language) as ITextFieldProps} />
     </div>
   {/snippet}
   {#snippet componentProps()}

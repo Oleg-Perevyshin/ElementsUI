@@ -58,21 +58,21 @@ Telemetry_SendObject(g_telemetry_stream, g_mcfg.DevSN, "Data", dev, sizeof(dev) 
 
 ## Пропсы
 
-| Название         | Тип                                             | По умолчанию        | Описание                                                        |
-| ---------------- | ----------------------------------------------- | ------------------- | --------------------------------------------------------------- |
-| `wrapperClass`   | `string`                                        | `""`                | CSS-классы обёртки                                              |
-| `componentClass` | `string`                                        | `""`                | «Мастер-цвет» виджета — роль вида `"bg-blue"`                   |
-| `label`          | `{ name?: string }`                             | `{ name: "Карта" }` | Заголовок карточки                                              |
-| `groups`         | `string[]`                                      | `["MAV"]`           | Префиксы групп полей — по объекту на группу                     |
-| `value`          | `Record<string, Partial<IWidgetMapData>>`       | `undefined`         | Значения по группам: `{ MAV: { Lat, Lon, ... }, GNSS: {...} }`  |
-| `keys`           | `Partial<Record<keyof IWidgetMapData, string>>` | `undefined`         | Переопределение имён ключей (применяет GUIPreview)              |
-| `height`         | `number`                                        | `400`               | Высота карты, px                                                |
-| `markerIcon`     | `ConstructorOfATypedSvelteComponent \| string`  | `undefined`         | Иконка маркера (SVG-строка или компонент), по умолчанию стрелка |
-| `trackEnabled`   | `boolean`                                       | `false`             | Начальное состояние «Траектория» (`$bindable`)                  |
-| `trackLength`    | `number`                                        | `1000`              | Начальное число точек траектории (`$bindable`)                  |
-| `markerTimeout`  | `number`                                        | `30000`             | Начальный таймаут маркеров, мс (`$bindable`)                    |
-| `collapsed`      | `boolean`                                       | `false`             | Свёрнуто ли тело виджета (`$bindable`)                          |
-| `persistKey`     | `string`                                        | `undefined`         | Ключ для сохранения `collapsed` в `localStorage`                |
+| Название         | Тип                                             | По умолчанию | Описание                                                        |
+| ---------------- | ----------------------------------------------- | ------------ | --------------------------------------------------------------- |
+| `wrapperClass`   | `string`                                        | `""`         | CSS-классы обёртки                                              |
+| `componentClass` | `string`                                        | `""`         | «Мастер-цвет» виджета — роль вида `"bg-blue"`                   |
+| `label`          | `{ name?: string }`                             | `{}`         | Заголовок карточки; пустой — «Карта» на текущем языке           |
+| `groups`         | `string[]`                                      | `["MAV"]`    | Префиксы групп полей — по объекту на группу                     |
+| `value`          | `Record<string, Partial<IWidgetMapData>>`       | `undefined`  | Значения по группам: `{ MAV: { Lat, Lon, ... }, GNSS: {...} }`  |
+| `keys`           | `Partial<Record<keyof IWidgetMapData, string>>` | `undefined`  | Переопределение имён ключей (применяет GUIPreview)              |
+| `height`         | `number`                                        | `400`        | Высота карты, px                                                |
+| `markerIcon`     | `ConstructorOfATypedSvelteComponent \| string`  | `undefined`  | Иконка маркера (SVG-строка или компонент), по умолчанию стрелка |
+| `trackEnabled`   | `boolean`                                       | `false`      | Начальное состояние «Траектория» (`$bindable`)                  |
+| `trackLength`    | `number`                                        | `1000`       | Начальное число точек траектории (`$bindable`)                  |
+| `markerTimeout`  | `number`                                        | `30000`      | Начальный таймаут маркеров, мс (`$bindable`)                    |
+| `collapsed`      | `boolean`                                       | `false`      | Свёрнуто ли тело виджета (`$bindable`)                          |
+| `persistKey`     | `string`                                        | `undefined`  | Ключ для сохранения `collapsed` в `localStorage`                |
 
 ## Примеры
 

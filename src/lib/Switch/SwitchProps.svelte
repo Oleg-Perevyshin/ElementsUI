@@ -40,21 +40,6 @@
   />
 {/snippet}
 
-{#snippet SwitchCaptions()}
-  {#if component.properties.type == "horizontal"}
-    <UI.Input
-      label={{ name: $T("constructor.props.caption.left") }}
-      value={component.properties.label.captionLeft}
-      onUpdate={(value) => updateProperty("label.captionLeft", value as string, component, onPropertyChange)}
-    />
-    <UI.Input
-      label={{ name: $T("constructor.props.caption.right") }}
-      value={component.properties.label.captionRight}
-      onUpdate={(value) => updateProperty("label.captionRight", value as string, component, onPropertyChange)}
-    />
-  {/if}
-{/snippet}
-
 {#snippet SwitchDisabled()}
   <UI.Switch
     wrapperClass="bg-blue"
@@ -109,6 +94,7 @@
         {#each component.properties.options || [] as option, index (option.id)}
           <div class="grid grid-cols-[1fr_auto] items-center gap-2 rounded-lg border border-(--hairline-color) bg-(--container-color)/60 p-2">
             <div class="flex flex-wrap items-end gap-2">
+              <!-- Имя варианта — короткая метка бита (до 4 символов) в битовом режиме, не переводится -->
               <UI.Input
                 label={{ name: $T("constructor.props.optionname") }}
                 wrapperClass="min-w-24 flex-1"
@@ -203,7 +189,6 @@
     <PropsGroup label={$T("constructor.props.group.behavior")}>
       {@render SwitchType()}
       {#if !component.properties.bitMode}
-        {@render SwitchCaptions()}
         {@render SwitchDisabled()}
       {/if}
     </PropsGroup>
@@ -263,9 +248,6 @@
       <CommonSnippets snippet="Label" {component} {onPropertyChange} />
       <CommonSnippets snippet="LabelAlign" initialValue={initialAlign} {component} {onPropertyChange} />
       {@render SwitchType()}
-      {#if !component.properties.bitMode}
-        {@render SwitchCaptions()}
-      {/if}
     </PropsGroup>
     <PropsGroup label={$T("constructor.props.group.behavior")}>
       {@render SwitchHeight()}

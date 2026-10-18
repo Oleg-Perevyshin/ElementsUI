@@ -35,14 +35,6 @@
   }
 </script>
 
-{#snippet WidgetSettingsLabel()}
-  <UI.Input
-    label={{ name: $T("constructor.props.settings.label") }}
-    value={component.properties.settings.label as string}
-    onUpdate={(value) => updateProperty("settings.label", value, component, onPropertyChange)}
-  />
-{/snippet}
-
 {#snippet WidgetSettingsColor()}
   <WidgetAccentPicker
     value={(initialColor?.value as string) ?? ""}
@@ -62,27 +54,6 @@
     onUpdate={(option) => {
       updateProperty("settings.type", (option as UI.IOption).value as string, component, onPropertyChange)
     }}
-  />
-{/snippet}
-
-{#snippet WidgetSwitchCaptions()}
-  <UI.Input
-    label={{ name: $T("constructor.props.caption.left") }}
-    value={component.properties.settings.switch.captionLeft}
-    onUpdate={(value) => updateProperty("settings.switch.captionLeft", value as string, component, onPropertyChange)}
-  />
-  <UI.Input
-    label={{ name: $T("constructor.props.caption.right") }}
-    value={component.properties.settings.switch.captionRight}
-    onUpdate={(value) => updateProperty("settings.switch.captionRight", value as string, component, onPropertyChange)}
-  />
-{/snippet}
-
-{#snippet WidgetUnits()}
-  <UI.Input
-    label={{ name: $T("constructor.props.units") }}
-    value={component.properties.settings.number.units as string}
-    onUpdate={(value) => updateProperty("settings.number.units", value, component, onPropertyChange)}
   />
 {/snippet}
 
@@ -118,12 +89,10 @@
     </PropsGroup>
     <PropsGroup label={$T("constructor.props.group.content")}>
       <CommonSnippets snippet="Label" {component} {onPropertyChange} />
-      {@render WidgetUnits()}
       {@render WidgetIcons()}
       {@render WidgetSwitchingMode()}
     </PropsGroup>
     <PropsGroup label={$T("constructor.props.group.appearance")}>
-      {@render WidgetSettingsLabel()}
       {@render WidgetSettingsColor()}
       {@render WidgetType()}
       {#if component.properties.settings.type == "input" || component.properties.settings.type == "slider"}
@@ -139,8 +108,6 @@
           {component}
           {onPropertyChange}
         />
-      {:else if component.properties.settings.type == "switch"}
-        {@render WidgetSwitchCaptions()}
       {/if}
     </PropsGroup>
   </div>
@@ -150,11 +117,9 @@
       <CommonSnippets snippet="Identificator" {component} {onPropertyChange} />
       <CommonSnippets snippet="Access" {component} {onPropertyChange} />
       <CommonSnippets snippet="Label" {component} {onPropertyChange} />
-      {@render WidgetUnits()}
       <CommonSnippets snippet="Readonly" {component} {onPropertyChange} />
     </PropsGroup>
     <PropsGroup label={$T("constructor.props.group.content")}>
-      {@render WidgetSettingsLabel()}
       {@render WidgetIcons()}
       {@render WidgetSwitchingMode()}
     </PropsGroup>
@@ -174,8 +139,6 @@
           {component}
           {onPropertyChange}
         />
-      {:else if component.properties.settings.type == "switch"}
-        {@render WidgetSwitchCaptions()}
       {/if}
     </PropsGroup>
   </div>

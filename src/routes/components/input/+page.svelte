@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { Language } from "$lib/locales/i18n"
+  import { localizeDeep } from "$lib/locales/localize"
   import type { IInputProps, UIComponent } from "$lib"
   import ComponentExample from "../../ComponentExample.svelte"
   import Input from "$lib/Input/Input.svelte"
@@ -48,12 +50,8 @@
   {#snippet component()}
     <div>
       <Input
-        {...inputComponent.properties as IInputProps}
-        onUpdate={(value) => {
-          updateComponent(inputComponent, {
-            properties: { value: Math.pow(Number(value), 64) },
-          })
-        }}
+        {...localizeDeep(inputComponent.properties, $Language) as IInputProps}
+        onUpdate={(value) => (inputComponent = updateComponent(inputComponent, { properties: { value } }))}
       />
     </div>
   {/snippet}

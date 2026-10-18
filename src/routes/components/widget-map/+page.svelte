@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { Language } from "$lib/locales/i18n"
+  import { localizeDeep } from "$lib/locales/localize"
   import { type UIComponent } from "$lib"
   import ComponentExample from "../../ComponentExample.svelte"
   import { updateComponent, type IWidgetMapData, type IWidgetMapProps } from "$lib/types"
@@ -42,7 +44,7 @@
     type: "WidgetMap",
     access: "full",
     properties: {
-      label: { name: "Карта" },
+      label: { name: "" },
       groups: ["MAV", "GNSS"],
       componentClass: "",
       height: 400,
@@ -64,7 +66,7 @@ value={{ MAV: mav, GNSS: gnss }}
 <ComponentExample {codeText} {readmeHtml} bind:forConstructor>
   {#snippet component()}
     <div class="m-auto w-full max-w-4xl">
-      <WidgetMap {...mapComponent.properties as IWidgetMapProps} value={boards} />
+      <WidgetMap {...localizeDeep(mapComponent.properties, $Language) as IWidgetMapProps} value={boards} />
     </div>
   {/snippet}
   {#snippet componentProps()}

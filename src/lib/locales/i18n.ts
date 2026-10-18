@@ -38,9 +38,16 @@ export const LOCALES: { id: string; name: string; value: string; component: Cons
 /* Индекс языка в кортеже перевода [ru, en, zh] — жёстко привязан к порядку LOCALES */
 const LANGUAGE_INDEX: Record<string, number> = Object.fromEntries(LOCALES.map((locale, index) => [locale.value, index]))
 
+/* Параметры перевода: {name} в строке заменяется значением params.name */
+export type TranslateParams = Record<string, string | number>
+
 /* Функция для перевода для текущего языка */
-function translate(locale: string, key: string): string {
-  return translations[key]?.[LANGUAGE_INDEX[locale] ?? 0] || key
+function translate(locale: string, key: string, params?: TranslateParams): string {
+  const text = translations[key]?.[LANGUAGE_INDEX[locale] ?? 0] || key
+  return params ? text.replace(/\{(\w+)\}/g, (match, name) => (name in params ? String(params[name]) : match)) : text
 }
 
-export const T: Readable<(key: string) => string> = derived(Language, ($lang) => (key: string) => translate($lang, key))
+export const T: Readable<(key: string, params?: TranslateParams) => string> = derived(
+  Language,
+  ($lang) => (key: string, params?: TranslateParams) => translate($lang, key, params),
+)

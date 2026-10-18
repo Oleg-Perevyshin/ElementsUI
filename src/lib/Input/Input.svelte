@@ -2,6 +2,7 @@
      кольцо фокуса вместо размытой тени. Вся логика (regExp, roundToClean,
      handleInputChange, счётчик, копирование) не тронута. -->
 <script lang="ts">
+  import { T } from "$lib/locales/i18n"
   import type { IInputProps } from "../types"
   import { twMerge } from "tailwind-merge"
   import InfoIcon from "$lib/libIcons/InfoIcon.svelte"
@@ -142,7 +143,7 @@
         type="button"
         class="absolute right-1.5 flex size-7 cursor-pointer items-center justify-center rounded-lg border-none bg-transparent text-(--faint-color) transition-colors duration-150 hover:bg-(--container-color) hover:text-(--font-color)"
         onclick={() => (showPassword = !showPassword)}
-        aria-label={showPassword ? "Скрыть пароль" : "Показать пароль"}
+        aria-label={showPassword ? $T("ui.password.hide") : $T("ui.password.show")}
       >
         {#if showPassword}
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
@@ -176,7 +177,7 @@
           isCopied = true
           setTimeout(() => (isCopied = false), 1000)
         }}
-        aria-label="Копировать текст"
+        aria-label={$T("ui.copy_text")}
       >
         {#if !isCopied}
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24">
@@ -208,7 +209,7 @@
             value = roundToClean(Number(value) + (number.step ?? 1))
             onUpdate(value as number)
           }}
-          aria-label="Увеличить">▲</button
+          aria-label={$T("ui.increase")}>▲</button
         >
         <button
           class="flex h-1/2 w-full items-center justify-center text-[11px] leading-none text-(--muted-color) transition-colors duration-150 hover:bg-(--container-color) hover:text-(--font-color)"
@@ -223,7 +224,7 @@
             value = roundToClean(Number(value) - (number.step ?? 1))
             onUpdate(value as number)
           }}
-          aria-label="Уменьшить">▼</button
+          aria-label={$T("ui.decrease")}>▼</button
         >
       </div>
     {/if}
@@ -236,7 +237,7 @@
           : ''} {disabled ? 'opacity-50' : 'cursor-pointer hover:text-(--accent-color)'}"
         onmouseenter={() => (showInfo = true)}
         onmouseleave={() => (showInfo = false)}
-        aria-label={showInfo ? "Скрыть инфо" : "Показать инфо"}
+        aria-label={showInfo ? $T("ui.info.hide") : $T("ui.info.show")}
       >
         <InfoIcon />
       </button>
@@ -251,6 +252,6 @@
        лишнего зазора, когда ошибки нет) и не абсолютным позиционированием (не наезжает на
        соседний контент при плотной вертикальной раскладке) — просто раздвигает то, что ниже,
        как везде в вебе. -->
-    <span class="block text-[12px] font-semibold text-(--red-color)">Неверный формат</span>
+    <span class="block text-[12px] font-semibold text-(--red-color)">{$T("ui.invalid_format")}</span>
   {/if}
 </div>

@@ -206,16 +206,6 @@
               />
               <div class="flex flex-wrap items-end gap-2">
                 <UI.Input
-                  label={{ name: $T("constructor.props.optionname") }}
-                  wrapperClass="min-w-28 flex-1"
-                  value={option.name}
-                  onUpdate={(value) => {
-                    const options = [...(component.properties?.options || [])]
-                    options[index]["name"] = value
-                    updateProperty("options", options, component, onPropertyChange)
-                  }}
-                />
-                <UI.Input
                   label={{ name: $T("constructor.props.optionvalue") }}
                   wrapperClass="min-w-28 flex-1"
                   value={option.value}

@@ -39,21 +39,6 @@
         { name: $T("constructor.props.joystick.roll.axe"), info: $T("constructor.props.joystick.axes.info"), regExp: /^[\p{L}0-9\-_"':{}]*$/u },
       ]}
       <div class="flex flex-col gap-1">
-        <UI.Input
-          label={{ name: axesOptions[index].name }}
-          value={axe.name}
-          help={{ info: axesOptions[index].info, regExp: axesOptions[index].regExp }}
-          maxlength={20}
-          onUpdate={(value) => {
-            updateProperty(
-              "axes",
-              component.properties.axes.map((a: any, i: number) => (i === index ? { ...a, name: value } : a)),
-              component,
-              onPropertyChange,
-            )
-          }}
-        />
-
         <CommonSnippets
           snippet="MinMaxStep"
           initialValue={{

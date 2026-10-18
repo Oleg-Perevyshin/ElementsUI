@@ -1,4 +1,5 @@
 <script lang="ts">
+  import TextsEditor from "../TextsEditor.svelte"
   import { getContext } from "svelte"
   import { T } from "$lib/locales/i18n"
   import { type UIComponent, type IProgressBarProps, updateProperty, type IUIComponentHandler } from "../types"
@@ -38,11 +39,7 @@
 {/snippet}
 
 {#snippet ProgressBarUnits()}
-  <UI.Input
-    label={{ name: $T("constructor.props.units") }}
-    value={component.properties.number.units}
-    onUpdate={(value) => updateProperty("number.units", value, component, onPropertyChange)}
-  />
+  <TextsEditor {component} {onPropertyChange} />
 {/snippet}
 
 {#snippet ProgressBarOptions()}
@@ -88,17 +85,6 @@
                 }}
               />
               <div class="flex flex-wrap items-end gap-2">
-                <UI.Input
-                  label={{ name: $T("constructor.props.optionname") }}
-                  wrapperClass="min-w-28 flex-1"
-                  value={progress.name}
-                  onUpdate={(value) => {
-                    const progresses = (component.properties?.items || []).map((p: { name?: string; class?: string }, i: number) =>
-                      i === index ? { ...p, name: value } : p,
-                    )
-                    updateProperty("items", progresses, component, onPropertyChange)
-                  }}
-                />
                 {#if forConstructor}
                   <UI.Select
                     label={{ name: $T("constructor.props.colors") }}

@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { Language } from "$lib/locales/i18n"
+  import { localizeDeep } from "$lib/locales/localize"
   import { type UIComponent } from "$lib"
   import ComponentExample from "../../ComponentExample.svelte"
   import { updateComponent, type IWidgetFileSystemInfo, type IWidgetFileSystemProps } from "$lib/types"
@@ -48,7 +50,7 @@
     type: "WidgetFileSystem",
     access: "full",
     properties: {
-      label: { name: "Файловая система" },
+      label: { name: "" },
       componentClass: "",
       accept: ".bin, .txt, .md, .pem",
     },
@@ -72,7 +74,7 @@ onUpload={handleUpload}
   {#snippet component()}
     <div class="m-auto w-full max-w-3xl">
       <WidgetFileSystem
-        {...fsComponent.properties as IWidgetFileSystemProps}
+        {...localizeDeep(fsComponent.properties, $Language) as IWidgetFileSystemProps}
         value={fsInfo}
         onRefresh={() => console.log("GET FS (mock)")}
         onDelete={mockDelete}

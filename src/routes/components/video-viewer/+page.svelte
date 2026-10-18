@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { Language } from "$lib/locales/i18n"
+  import { localizeDeep } from "$lib/locales/localize"
   import { type UIComponent } from "$lib"
   import ComponentExample from "../../ComponentExample.svelte"
   import { updateComponent, type IVideoViewerProps } from "$lib/types"
@@ -66,7 +68,7 @@ ${formatObjectToString(videoViewerComponent.properties as IVideoViewerProps)}
 <ComponentExample {codeText} {readmeHtml} bind:forConstructor>
   {#snippet component()}
     <div class="h-full">
-      <VideoViewer {...videoViewerComponent.properties as IVideoViewerProps} />
+      <VideoViewer {...localizeDeep(videoViewerComponent.properties, $Language) as IVideoViewerProps} />
     </div>
   {/snippet}
   {#snippet componentProps()}

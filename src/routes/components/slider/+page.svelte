@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { Language } from "$lib/locales/i18n"
+  import { localizeDeep } from "$lib/locales/localize"
   import { type ISliderProps, type UIComponent } from "$lib"
   import ComponentExample from "../../ComponentExample.svelte"
   import Slider from "$lib/Slider/Slider.svelte"
@@ -42,7 +44,7 @@ ${formatObjectToString(sliderComponent.properties as ISliderProps)}
 <ComponentExample {codeText} {readmeHtml} bind:forConstructor>
   {#snippet component()}
     <Slider
-      {...sliderComponent.properties as ISliderProps}
+      {...localizeDeep(sliderComponent.properties, $Language) as ISliderProps}
       onUpdate={(value: number | [number, number]) => (sliderComponent = updateComponent(sliderComponent, { properties: { value } }))}
     />
   {/snippet}

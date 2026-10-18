@@ -1,4 +1,5 @@
 <script lang="ts">
+  import TextsEditor from "../TextsEditor.svelte"
   import { T } from "$lib/locales/i18n"
   import { updateProperty, type IOption, type ITabsProps, type IUIComponentHandler, type UIComponent } from "../types"
   import * as UI from "$lib"
@@ -121,16 +122,6 @@
                 }}
               />
               <div class="flex flex-wrap items-end gap-2">
-                <UI.Input
-                  label={{ name: $T("constructor.props.optionname") }}
-                  wrapperClass="min-w-32 flex-1"
-                  value={tab.name}
-                  onUpdate={(value) => {
-                    const items = [...(component.properties?.items || [])]
-                    items[index]["name"] = value
-                    updateProperty("items", items, component, onPropertyChange)
-                  }}
-                />
                 <div class="relative min-w-32">
                   <CommonSnippets
                     snippet="IconsLib"
@@ -207,6 +198,7 @@
   <div class="flex flex-col gap-2">
     <PropsGroup label={$T("constructor.props.group.general")}>
       <CommonSnippets snippet="Access" {component} {onPropertyChange} />
+      <TextsEditor {component} {onPropertyChange} />
       <CommonSnippets snippet="Colors" initialValue={{ color: initialColor, uselessColors: ["bg-max"] }} {component} {onPropertyChange} />
     </PropsGroup>
     <PropsGroup label={$T("constructor.props.group.appearance")}>
@@ -224,6 +216,7 @@
     </PropsGroup>
     <PropsGroup label={$T("constructor.props.group.appearance")}>
       <CommonSnippets snippet="Access" {component} {onPropertyChange} />
+      <TextsEditor {component} {onPropertyChange} />
       <CommonSnippets snippet="Colors" initialValue={{ color: initialColor, uselessColors: ["bg-max"] }} {component} {onPropertyChange} />
       {@render TabsIconPosition()}
       {@render TabsWidthMode()}

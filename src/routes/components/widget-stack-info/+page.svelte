@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { Language } from "$lib/locales/i18n"
+  import { localizeDeep } from "$lib/locales/localize"
   import { type UIComponent } from "$lib"
   import ComponentExample from "../../ComponentExample.svelte"
   import { updateComponent, type IWidgetStackInfo, type IWidgetStackInfoProps } from "$lib/types"
@@ -42,7 +44,7 @@
     type: "WidgetStackInfo",
     access: "full",
     properties: {
-      label: { name: "Память и задачи" },
+      label: { name: "" },
       componentClass: "",
       warnBytes: 512,
     },
@@ -63,7 +65,11 @@ onRefresh={handleRefresh}
 <ComponentExample {codeText} {readmeHtml} bind:forConstructor>
   {#snippet component()}
     <div class="m-auto w-full max-w-3xl">
-      <WidgetStackInfo {...stackComponent.properties as IWidgetStackInfoProps} value={stackInfo} onRefresh={() => (stackInfo = makeInfo())} />
+      <WidgetStackInfo
+        {...localizeDeep(stackComponent.properties, $Language) as IWidgetStackInfoProps}
+        value={stackInfo}
+        onRefresh={() => (stackInfo = makeInfo())}
+      />
     </div>
   {/snippet}
   {#snippet componentProps()}

@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { Language } from "$lib/locales/i18n"
+  import { localizeDeep } from "$lib/locales/localize"
   import { type IDividerProps, type UIComponent } from "$lib"
   import ComponentExample from "../../ComponentExample.svelte"
   import Divider from "$lib/Divider/Divider.svelte"
@@ -39,7 +41,7 @@ ${formatObjectToString(dividerComponent.properties as IDividerProps)}
 <ComponentExample {codeText} {readmeHtml} bind:forConstructor>
   {#snippet component()}
     <div class="h-24 w-full border border-dashed border-gray-500">
-      <Divider {...dividerComponent.properties as IDividerProps} />
+      <Divider {...localizeDeep(dividerComponent.properties, $Language) as IDividerProps} />
     </div>
   {/snippet}
   {#snippet componentProps()}

@@ -475,7 +475,7 @@
                                 copiedCell = { x: j, y: i }
                                 setTimeout(() => (copiedCell = null), 1000)
                               }}
-                              aria-label="Копировать текст"
+                              aria-label={$T("ui.copy_text")}
                             >
                               <div class="size-3.5 [&_svg]:h-full [&_svg]:w-full">
                                 {#if !(copiedCell?.y === i && copiedCell.x === j)}
