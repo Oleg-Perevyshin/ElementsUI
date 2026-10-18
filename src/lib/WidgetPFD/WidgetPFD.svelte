@@ -13,6 +13,7 @@
   import type { IWidgetPFDProps } from "../types"
   import PlaneIcon from "./PlaneIcon.svelte"
   import WidgetHeader from "../WidgetHeader.svelte"
+  import { hintsSetting } from "../hints"
   import { widgetAccentStyle } from "../widgetAccent"
   import { readPersistedCollapsed, writePersistedCollapsed } from "../widgetCollapse"
 
@@ -244,27 +245,13 @@
   /* Подсказка: элементы прибора и строк помечены data-tip, текст всегда в одном месте — информационная строка внизу горизонта */
   /* Ключ подсказки элемента под курсором; текст берётся из tips — обновляется вместе с данными */
   let tip: string | null = $state(null)
-  /* Галочка «Подсказки» в шапке — выбор оператора, общий для всех PFD в браузере */
-  const TIPS_KEY = "WidgetPFD.tips"
-  let tipsEnabled = $state(true)
+  /* Подсказки включаются кнопкой «?» в шапке — выбор общий для всех PFD в браузере (hints.ts) */
+  const hints = hintsSetting("WidgetPFD")
   $effect(() => {
-    try {
-      tipsEnabled = localStorage.getItem(TIPS_KEY) !== "0"
-    } catch {
-      /* хранилище недоступно — подсказки включены */
-    }
+    if (!$hints) tip = null
   })
-  const setTips = (on: boolean) => {
-    tipsEnabled = on
-    if (!on) tip = null
-    try {
-      localStorage.setItem(TIPS_KEY, on ? "1" : "0")
-    } catch {
-      /* хранилище недоступно — выбор действует до перезагрузки */
-    }
-  }
   const onTip = (e: PointerEvent) => {
-    if (!tipsEnabled) return
+    if (!$hints) return
     const el = (e.target as Element | null)?.closest("[data-tip]")
     tip = el ? (el.getAttribute("data-tip") ?? null) : null
   }
@@ -386,13 +373,9 @@
   class={twMerge("relative flex w-full flex-col gap-4 rounded-2xl border border-(--hairline-color) bg-(--container-color) p-4", wrapperClass)}
   style={accentStyle}
 >
-  <WidgetHeader icon={PlaneIcon} label={label?.name || $T("pfd.title")} bind:collapsed>
+  <WidgetHeader icon={PlaneIcon} label={label?.name || $T("pfd.title")} bind:collapsed {hints}>
     {#snippet right()}
       <div class="flex items-center gap-4">
-        <label class="flex cursor-pointer items-center gap-1.5 text-[12px] font-semibold text-(--muted-color)">
-          <input type="checkbox" class="cursor-pointer accent-(--accent-color)" checked={tipsEnabled} onchange={(e) => setTips(e.currentTarget.checked)} />
-          {$T("pfd.tips")}
-        </label>
         <span class="text-[12px] font-semibold tabular-nums {stale ? 'text-(--red-color)' : 'text-(--muted-color)'}">{fmtAge(age)}</span>
       </div>
     {/snippet}

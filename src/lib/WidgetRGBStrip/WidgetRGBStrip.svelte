@@ -12,11 +12,15 @@
   import LightIcon from "./LightIcon.svelte"
   import ColorPicker from "./ColorPicker.svelte"
   import WidgetHeader from "../WidgetHeader.svelte"
+  import { hint, hintsSetting } from "../hints"
   import ArrowIcon from "../libIcons/ArrowIcon.svelte"
   import { widgetAccentStyle } from "../widgetAccent"
   import { readPersistedCollapsed, writePersistedCollapsed } from "../widgetCollapse"
 
   let { wrapperClass = "", componentClass = "", label = {}, value, collapsed = $bindable(false), persistKey, onChange, onSave }: IWidgetRGBStripProps = $props()
+
+  /* Подсказки — кнопка «?» в шапке, выбор общий для всех WidgetRGBStrip */
+  const hints = hintsSetting("WidgetRGBStrip")
 
   let accentStyle = $derived(widgetAccentStyle(componentClass ?? ""))
 
@@ -84,7 +88,7 @@
   style={accentStyle}
 >
   <!-- Заголовок: образец текущего цвета -->
-  <WidgetHeader icon={LightIcon} label={label?.name || $T("widget.rgb.title")} bind:collapsed>
+  <WidgetHeader icon={LightIcon} label={label?.name || $T("widget.rgb.title")} bind:collapsed {hints}>
     {#snippet right()}
       <span
         class="size-6 rounded-md border border-(--hairline-color)"
@@ -100,28 +104,34 @@
       <div class="flex flex-col gap-3 rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-3">
         <ColorPicker value={color.slice(0, 3)} readonly={!onChange} onChange={(rgb) => sendColor([...rgb, color[3]])} />
         {#if hasWhite}
-          <UI.Slider
-            label={{ name: $T("widget.rgb.white") }}
-            value={color[3]}
-            number={{ minNum: 0, maxNum: 255, step: 1 }}
-            disabled={!onChange}
-            onUpdate={(w) => sendColor([color[0], color[1], color[2], w as number])}
-          />
+          <div use:hint={{ text: $T("widget.rgb.hint.white"), enabled: $hints }}>
+            <UI.Slider
+              label={{ name: $T("widget.rgb.white") }}
+              value={color[3]}
+              number={{ minNum: 0, maxNum: 255, step: 1 }}
+              disabled={!onChange}
+              onUpdate={(w) => sendColor([color[0], color[1], color[2], w as number])}
+            />
+          </div>
         {/if}
-        <UI.Select
-          label={{ name: $T("widget.rgb.effect") }}
-          options={EFFECTS}
-          value={EFFECTS.find((o) => o.value === effectIndex) ?? EFFECTS[0]}
-          disabled={!onChange}
-          onUpdate={(option) => !Array.isArray(option) && onChange?.("Effect", option.value ?? 0)}
-        />
-        <UI.Slider
-          label={{ name: $T("widget.rgb.speed") }}
-          value={speed}
-          number={{ minNum: 0, maxNum: 10, step: 1 }}
-          disabled={!onChange || effectIndex === 0}
-          onUpdate={(v) => onChange?.("Speed", v as number)}
-        />
+        <div use:hint={{ text: $T("widget.rgb.hint.effect"), enabled: $hints }}>
+          <UI.Select
+            label={{ name: $T("widget.rgb.effect") }}
+            options={EFFECTS}
+            value={EFFECTS.find((o) => o.value === effectIndex) ?? EFFECTS[0]}
+            disabled={!onChange}
+            onUpdate={(option) => !Array.isArray(option) && onChange?.("Effect", option.value ?? 0)}
+          />
+        </div>
+        <div use:hint={{ text: $T("widget.rgb.hint.speed"), enabled: $hints }}>
+          <UI.Slider
+            label={{ name: $T("widget.rgb.speed") }}
+            value={speed}
+            number={{ minNum: 0, maxNum: 10, step: 1 }}
+            disabled={!onChange || effectIndex === 0}
+            onUpdate={(v) => onChange?.("Speed", v as number)}
+          />
+        </div>
       </div>
 
       <!-- Оборудование: свёрнуто по умолчанию, сохраняется одним пакетом, лента перезапускается -->
@@ -147,27 +157,33 @@
         </button>
         {#if hardwareOpen || isDirty}
           <div class="flex flex-col gap-3" transition:slide={{ duration: 150 }}>
-            <UI.Input
-              label={{ name: $T("widget.rgb.count", { max: maxCount }) }}
-              type="number"
-              number={{ minNum: 1, maxNum: maxCount, step: 1 }}
-              value={hardware.Count}
-              onUpdate={(v) => (hardware.Count = Number(v))}
-            />
-            <UI.Select
-              label={{ name: $T("widget.rgb.model") }}
-              type="buttons"
-              options={MODELS}
-              value={MODELS.find((o) => o.value === hardware.Model) ?? MODELS[0]}
-              onUpdate={(option) => !Array.isArray(option) && (hardware.Model = option.value ?? 0)}
-            />
-            <UI.Select
-              label={{ name: $T("widget.rgb.order") }}
-              type="buttons"
-              options={ORDERS}
-              value={ORDERS.find((o) => o.value === hardware.Order) ?? ORDERS[0]}
-              onUpdate={(option) => !Array.isArray(option) && (hardware.Order = option.value ?? 0)}
-            />
+            <div use:hint={{ text: $T("widget.rgb.hint.count"), enabled: $hints }}>
+              <UI.Input
+                label={{ name: $T("widget.rgb.count", { max: maxCount }) }}
+                type="number"
+                number={{ minNum: 1, maxNum: maxCount, step: 1 }}
+                value={hardware.Count}
+                onUpdate={(v) => (hardware.Count = Number(v))}
+              />
+            </div>
+            <div use:hint={{ text: $T("widget.rgb.hint.model"), enabled: $hints }}>
+              <UI.Select
+                label={{ name: $T("widget.rgb.model") }}
+                type="buttons"
+                options={MODELS}
+                value={MODELS.find((o) => o.value === hardware.Model) ?? MODELS[0]}
+                onUpdate={(option) => !Array.isArray(option) && (hardware.Model = option.value ?? 0)}
+              />
+            </div>
+            <div use:hint={{ text: $T("widget.rgb.hint.order"), enabled: $hints }}>
+              <UI.Select
+                label={{ name: $T("widget.rgb.order") }}
+                type="buttons"
+                options={ORDERS}
+                value={ORDERS.find((o) => o.value === hardware.Order) ?? ORDERS[0]}
+                onUpdate={(option) => !Array.isArray(option) && (hardware.Order = option.value ?? 0)}
+              />
+            </div>
             {#if isDirty}
               <span class="text-[12px] text-(--muted-color)" transition:slide={{ duration: 100 }}>
                 {countValid ? $T("widget.rgb.restart_note") : $T("widget.rgb.count_invalid", { max: maxCount })}

@@ -20,7 +20,7 @@
     return {
       Heap: [
         { Name: "Internal", Total: 327680, Free: 118000 - jitter, MinFree: 92000 },
-        { Name: "Default", Total: 4521984, Free: 4100000 - jitter, MinFree: 4040000 },
+        { Name: "PSRAM", Total: 4194304, Free: 3980000 - jitter, MinFree: 3920000 },
       ],
       Tasks: [
         { Name: "api_task", FreeMin: 1240, Prio: 5, Core: 1, State: 2 },

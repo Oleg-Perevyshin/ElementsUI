@@ -10,6 +10,7 @@
   import type { IWidgetMapProps } from "../types"
   import CopiedChip from "../CopiedChip.svelte"
   import WidgetHeader from "../WidgetHeader.svelte"
+  import { hint, hintsSetting } from "../hints"
   import { widgetAccentStyle } from "../widgetAccent"
   import { readPersistedCollapsed, writePersistedCollapsed } from "../widgetCollapse"
   import MapIcon from "./MapIcon.svelte"
@@ -31,6 +32,9 @@
     collapsed = $bindable(false),
     persistKey,
   }: IWidgetMapProps = $props()
+
+  /* Подсказки — кнопка «?» в шапке, выбор общий для всех WidgetMap */
+  const hints = hintsSetting("WidgetMap")
 
   let accentStyle = $derived(widgetAccentStyle(componentClass ?? ""))
 
@@ -177,7 +181,7 @@
   class={twMerge("relative flex w-full flex-col gap-4 rounded-2xl border border-(--hairline-color) bg-(--container-color) p-4", wrapperClass)}
   style={accentStyle}
 >
-  <WidgetHeader icon={MapIcon} label={label?.name || $T("widget.map.title")} bind:collapsed>
+  <WidgetHeader icon={MapIcon} label={label?.name || $T("widget.map.title")} bind:collapsed {hints}>
     {#snippet right()}
       <div class="flex items-center gap-3">
         <UI.Button
@@ -193,7 +197,7 @@
             : freshCount < groupList.length
               ? 'text-(--muted-color)'
               : 'text-(--green-color)'}"
-          title={$T("constructor.props.map.boards")}
+          use:hint={{ text: $T("widget.map.hint.boards"), enabled: $hints }}
         >
           {freshCount} / {groupList.length}
         </span>
@@ -219,7 +223,7 @@
         <!-- Панель оператора поверх карты -->
         <CustomControl position="top-left">
           <div class="flex flex-wrap items-center gap-3 rounded-lg px-2 py-1 text-black">
-            <label class="flex items-center gap-1.5 text-sm font-medium">
+            <label class="flex items-center gap-1.5 text-sm font-medium" use:hint={{ text: $T("widget.map.hint.track"), enabled: $hints }}>
               <input type="checkbox" bind:checked={trackEnabled} />
               {$T("constructor.props.map.track")}
             </label>
@@ -233,7 +237,7 @@
                 </select>
               </div>
             {/if}
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-2" use:hint={{ text: $T("widget.map.hint.timeout"), enabled: $hints }}>
               <span class="text-sm font-medium">{$T("constructor.props.map.timeout")}</span>
               <select class="rounded px-2 py-1 text-sm" bind:value={markerTimeout}>
                 {#each timeoutOptions as opt}

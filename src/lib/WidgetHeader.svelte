@@ -7,28 +7,33 @@
      означало бы двойной отступ и лишнюю высоту. -->
 <script lang="ts">
   import type { Component, Snippet } from "svelte"
+  import type { Writable } from "svelte/store"
   import ArrowIcon from "./libIcons/ArrowIcon.svelte"
+  import { T } from "./locales/i18n"
 
   let {
     icon,
     label,
     collapsed = $bindable(false),
     right,
+    hints,
   }: {
     icon: Component
     label: string
     collapsed?: boolean
     right?: Snippet
+    /* Настройка подсказок этого виджета (hintsSetting) — показывает кнопку «?», переключающую только его подсказки */
+    hints?: Writable<boolean>
   } = $props()
 
   const Icon = $derived(icon)
 </script>
 
-<!-- Фиксированная высота 32 px без переноса — свёрнутые виджеты одной высоты при любом содержимом справа -->
+<!-- Фиксированная высота 32 px без переноса — свёрнутые виджеты одной высоты при любом содержимом справа; «?» — сразу за заголовком, видна и в узком виджете -->
 <div class="flex h-[32px] items-center justify-between gap-3">
   <button
     type="button"
-    class="flex min-w-0 flex-1 cursor-pointer items-center gap-2 border-none bg-transparent p-0 text-left"
+    class="flex min-w-0 cursor-pointer items-center gap-2 border-none bg-transparent p-0 text-left"
     onclick={() => (collapsed = !collapsed)}
     aria-expanded={!collapsed}
   >
@@ -43,6 +48,19 @@
       <ArrowIcon />
     </span>
   </button>
+  {#if hints}
+    <button
+      type="button"
+      class="flex size-[22px] shrink-0 cursor-pointer items-center justify-center rounded-full border text-[12px] font-bold transition-colors duration-150
+        {$hints
+        ? 'border-(--accent-color) bg-(--accent-soft) text-(--accent-color)'
+        : 'border-(--hairline-color) bg-transparent text-(--faint-color) hover:text-(--muted-color)'}"
+      title={$hints ? $T("widget.hints.on") : $T("widget.hints.off")}
+      aria-pressed={$hints}
+      onclick={() => hints.update((on) => !on)}>?</button
+    >
+  {/if}
+  <div class="flex-1"></div>
   {#if right}
     <div class="flex min-w-0 shrink-0 items-center justify-end">
       {@render right()}

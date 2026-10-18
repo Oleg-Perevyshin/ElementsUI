@@ -108,7 +108,7 @@ const translations: Translations = {
     zh: "🎯 **用途**\n设备网络的完整配置：模式、连接路由器、自身接入点。\n\n📦 **数据包**\n- `CFG` 分组的字段（可通过设置中的前缀更改），无需绑定变量\n- 字段在本地编辑，「保存」以一个 `SET ModCfg` 数据包发送已修改的字段\n- 🔍 扫描网络 —— `GET APsList`，找到的网络出现在 SSID 列表中\n\n🔑 **键**\n- `WiFiMode` —— 数字：`0` 关闭、`1` 客户端、`2` 接入点、`3` 两者\n- `StaSSID`、`StaPSK` —— 字符串：路由器网络和密码\n- `StaticIP` —— 数字：`0` DHCP、`1` 静态地址\n- `StaIP`、`StaMS`、`StaGW` —— 字符串：客户端地址、掩码、网关\n- `ApSSID`、`ApPSK` —— 字符串：自身接入点名称和密码\n- `ApIP`、`ApMS`、`ApGW` —— 字符串：接入点地址、掩码、网关\n\n✨ **特点**\n- 仅启用接入点时组件会提醒：设备可能从局域网中消失\n\n⚙️ **设置**\n- 分组前缀（ID）、字段名覆盖、主色",
   },
   "component.info.WidgetDeviceInfo": {
-    ru: "🎯 **Назначение**\nПаспорт устройства и его основные настройки.\n\n📦 **Пакет данных**\n- Поля группы `CFG` (меняется префиксом в настройках), привязывать переменные не нужно\n- «Сохранить» отправляет изменённые поля одним пакетом `SET ModCfg`\n- ♻️ «Сброс настроек» — после подтверждения команда `SET RstNVS`, все настройки к заводским, прибор перезагружается\n- 🔌 «Перезагрузить» — команда `SET Restart`\n\n🔑 **Ключи**\n- `DevSN` — строка: серийный номер, только чтение\n- `DevID` — строка: код изделия, только чтение\n- `DevFW` — число: версия ПО, только чтение\n- `RunCnt` — число: счётчик запусков, только чтение\n- `StaIP`, `ApIP` — строки: текущие адреса клиента и точки доступа, только чтение\n- `DevName` — строка: имя устройства\n- `HostName` — строка: сетевое имя\n- `WebUser`, `WebPsw` — строки: логин и пароль веб-интерфейса\n\n⚙️ **Настройки**\n- Префикс группы (ID), мастер-цвет",
+    ru: "🎯 **Назначение**\nПаспорт устройства и его основные настройки.\n\n📦 **Пакет данных**\n- Поля группы `CFG` (меняется префиксом в настройках), привязывать переменные не нужно\n- «Сохранить» отправляет изменённые поля одним пакетом `SET ModCfg`\n- ♻️ «Сброс настроек» — после подтверждения команда `SET RstNVS`, все настройки к заводским, устройство перезагружается\n- 🔌 «Перезагрузить» — команда `SET Restart`\n\n🔑 **Ключи**\n- `DevSN` — строка: серийный номер, только чтение\n- `DevID` — строка: код изделия, только чтение\n- `DevFW` — число: версия ПО, только чтение\n- `RunCnt` — число: счётчик запусков, только чтение\n- `StaIP`, `ApIP` — строки: текущие адреса клиента и точки доступа, только чтение\n- `DevName` — строка: имя устройства\n- `HostName` — строка: сетевое имя\n- `WebUser`, `WebPsw` — строки: логин и пароль веб-интерфейса\n\n⚙️ **Настройки**\n- Префикс группы (ID), мастер-цвет",
     en: '🎯 **Purpose**\nDevice passport and its main settings.\n\n📦 **Data packet**\n- Fields of the `CFG` group (changed by the prefix in settings), no variable binding needed\n- "Save" sends the changed fields in one `SET ModCfg` packet\n- ♻️ "Factory reset" — after confirmation the `SET RstNVS` command, all settings return to factory defaults and the device restarts\n- 🔌 "Restart" — the `SET Restart` command\n\n🔑 **Keys**\n- `DevSN` — string: serial number, read only\n- `DevID` — string: product code, read only\n- `DevFW` — number: firmware version, read only\n- `RunCnt` — number: boot counter, read only\n- `StaIP`, `ApIP` — strings: current client and access point addresses, read only\n- `DevName` — string: device name\n- `HostName` — string: network host name\n- `WebUser`, `WebPsw` — strings: web interface login and password\n\n⚙️ **Settings**\n- Group prefix (ID), master color',
     zh: "🎯 **用途**\n设备档案及其主要设置。\n\n📦 **数据包**\n- `CFG` 分组的字段（可通过设置中的前缀更改），无需绑定变量\n- 「保存」以一个 `SET ModCfg` 数据包发送已修改的字段\n- ♻️「恢复出厂设置」—— 确认后发送 `SET RstNVS` 命令，所有设置恢复为出厂默认值，设备重启\n- 🔌「重启」—— `SET Restart` 命令\n\n🔑 **键**\n- `DevSN` —— 字符串：序列号，只读\n- `DevID` —— 字符串：产品代码，只读\n- `DevFW` —— 数字：固件版本，只读\n- `RunCnt` —— 数字：启动计数，只读\n- `StaIP`、`ApIP` —— 字符串：客户端和接入点的当前地址，只读\n- `DevName` —— 字符串：设备名称\n- `HostName` —— 字符串：网络主机名\n- `WebUser`、`WebPsw` —— 字符串：Web 界面登录名和密码\n\n⚙️ **设置**\n- 分组前缀（ID）、主色",
   },
@@ -123,9 +123,9 @@ const translations: Translations = {
     zh: "🎯 **用途**\n控制可寻址灯带：颜色、效果、速度以及灯带本身的参数。\n\n📦 **数据包**\n- `RGB_Strip` 驱动的 `LST` 分组字段（可通过设置中的前缀更改），无需绑定变量\n- 颜色、效果和速度立即发送\n- 「硬件」区块在本地编辑，点击「保存」一次性发送 —— 灯带重启\n\n🔑 **键**\n- `Color` —— 数组 `[R, G, B, W]`，0–255；`W` 仅用于 SK6812\n- `Effect` —— 数字：`0` 静态、`1` 彩虹、`2` 呼吸、`3` 调色板、`4` 彗星、`5` 闪烁、`6` 火焰、`7` 跑马灯\n- `Speed` —— 0–10 的数字（非线性），`0` —— 暂停\n- `Count` —— LED 数量，1–`MaxCount`\n- `Model` —— 数字：`0` WS2812、`1` SK6812（RGBW）、`2` WS2811\n- `Order` —— 颜色顺序：`0` GRB、`1` RGB、`2` BRG、`3` RBG、`4` GBR、`5` BGR\n- `MaxCount` —— 数字：固件中的容量，只读\n\n✨ **特点**\n- 彩虹、调色板和火焰不使用颜色\n- 颜色不对（红色变绿色）—— 更改顺序：WS2812 通常为 GRB，部分 WS2811 为 RGB 或 BRG\n- 数据引脚和传输方式（RMT/SPI）在固件中设定\n\n⚙️ **设置**\n- 分组前缀（ID）、主色",
   },
   "component.info.WidgetPFD": {
-    ru: "🎯 **Назначение**\nПилотажный дисплей (PFD) — главный прибор контроля полёта: пространственное положение, скорость, высота, курс и состояние систем.\n\n📦 **Пакет данных**\n- Поля группы `MAV` — телеметрия автопилота MAVLink (меняется префиксом в настройках), привязывать переменные не нужно\n- Поток телеметрии: `Roll`, `Pitch`, `Heading` — ~20 раз в секунду, остальное — 1–2 раза в секунду\n- Только отображение, ничего не отправляет\n\n🔑 **Ключи**\n- `Roll`, `Pitch` — числа, °: крен (вправо +) и тангаж (вверх +)\n- `Heading` — число, 0–360°: курс\n- `GSpeed`, `ASpeed` — числа, м/с: путевая и воздушная скорость\n- `Alt` — число, м: высота над точкой взлёта; `AltMSL` — над уровнем моря\n- `Climb` — число, м/с: вертикальная скорость (вверх +)\n- `Lat`, `Lon` — числа, °: координаты\n- `Vx`, `Vy` — числа, м/с: скорость на север и восток — для трека\n- `Fix` — число: тип фиксации GPS, `0`–`1` нет, `2` 2D, `3` 3D, `4`–`6` DGPS/RTK; `Sat` — число спутников\n- `BV` — В; `BC` — А (`-1` не измеряется); `BRem` — % (`-1` неизвестно)\n- `Mode` — число: режим автопилота; `VType` — тип аппарата (по нему — названия режимов); `Armed` — `1` взведён\n- `HomeLat`, `HomeLon` — числа, °: точка взлёта, `0` — неизвестна\n- `Press` — гПа, `Temp` — °C\n- `WPNum` — номер точки маршрута (`0` — маршрута нет); `WPDist`, `WPBrg` — расстояние, м, и курс на неё, °\n- `AltErr`, `SpdErr` — цель минус текущее: высота, м, и воздушная скорость, м/с; `XTE` — боковое отклонение от маршрута, м\n- `RSSI`, `RemRSSI` — сигнал своей и удалённой стороны, % (`-1` неизвестно); `Drop` — потери пакетов, %\n- `HDOP` — точность GPS (до 1 отлично, больше 2 неточно); `EKF` — дисперсия навигационного фильтра (от 0.5 внимание, от 0.8 тревога); `SensErr` — неисправных датчиков\n- `Msg`, `MsgSev`, `MsgSeq` — сообщение автопилота, важность (`0`–`3` ошибка, `4` предупреждение, `5`–`7` информация), номер\n\n✨ **Особенности**\n- Ориентация сглаживается между пакетами\n- Наведите курсор на любой элемент прибора или строки — расшифровка с текущим значением в строке внизу горизонта; выключается галочкой «Подсказки» в шапке\n- Углы под лентами: воздушная скорость (относительно воздуха) и вертикальная скорость (+ набор, − снижение)\n- Розовый ▲ на ленте курса — трек: куда аппарат реально движется над землёй (по `Vx`, `Vy`); зелёный ● — направление на точку взлёта; легенда с градусами — под прибором\n- Нет данных дольше заданного времени — прибор перечёркнут и помечен «NO DATA»\n- В узкой ячейке ленты скорости и высоты заменяются числами поверх горизонта\n- Строки сгруппированы: сверху «Система / GPS / Связь / Батарея» — состояние, снизу «Маршрут / Дом / Трек / Позиция / Воздух» — куда движемся и где находимся\n- Бирюзовые метки — цели текущей точки маршрута: скорость и высота на лентах, курс ◆ на ленте курса\n- Сообщения автопилота — в той же строке внизу горизонта на 10 с, цвет по важности; наведение на строку — история\n- Ключи `Lat`, `Lon`, `Alt`, `Heading`, `Sat` общие с «Картой» — одна группа питает оба виджета\n\n⚙️ **Настройки**\n- Префикс группы (ID), мастер-цвет\n- Границы: мин./макс. скорость и макс. высота — красные зоны на лентах; предельный крен — красная дуга; низкий заряд; время до «NO DATA»",
-    en: '🎯 **Purpose**\nPrimary flight display (PFD) — the main flight instrument: attitude, speed, altitude, heading and system status.\n\n📦 **Data packet**\n- Fields of the `MAV` group — MAVLink autopilot telemetry (changed by the prefix in settings), no variable binding needed\n- Telemetry stream: `Roll`, `Pitch`, `Heading` ~20 times a second, the rest 1–2 times a second\n- Display only, sends nothing\n\n🔑 **Keys**\n- `Roll`, `Pitch` — numbers, °: bank (right +) and pitch (up +)\n- `Heading` — number, 0–360°: heading\n- `GSpeed`, `ASpeed` — numbers, m/s: ground speed and airspeed\n- `Alt` — number, m: altitude above home; `AltMSL` — above sea level\n- `Climb` — number, m/s: vertical speed (up +)\n- `Lat`, `Lon` — numbers, °: coordinates\n- `Vx`, `Vy` — numbers, m/s: north and east velocity — for the track\n- `Fix` — number: GPS fix type, `0`–`1` none, `2` 2D, `3` 3D, `4`–`6` DGPS/RTK; `Sat` — satellite count\n- `BV` — V; `BC` — A (`-1` not measured); `BRem` — % (`-1` unknown)\n- `Mode` — number: autopilot mode; `VType` — vehicle type (mode names depend on it); `Armed` — `1` armed\n- `HomeLat`, `HomeLon` — numbers, °: home position, `0` — unknown\n- `Press` — hPa, `Temp` — °C\n- `WPNum` — waypoint number (`0` — no mission); `WPDist`, `WPBrg` — distance, m, and bearing to it, °\n- `AltErr`, `SpdErr` — target minus current: altitude, m, and airspeed, m/s; `XTE` — cross-track error, m\n- `RSSI`, `RemRSSI` — local and remote signal, % (`-1` unknown); `Drop` — packet loss, %\n- `HDOP` — GPS precision (up to 1 excellent, over 2 poor); `EKF` — navigation filter variance (from 0.5 warning, from 0.8 alarm); `SensErr` — unhealthy sensors\n- `Msg`, `MsgSev`, `MsgSeq` — autopilot message, severity (`0`–`3` error, `4` warning, `5`–`7` info), number\n\n✨ **Features**\n- Attitude is smoothed between packets\n- Hover any instrument element or row item — its meaning and current value in the line at the bottom of the horizon; turned off with the \"Hints\" checkbox in the header\n- Corners under the tapes: airspeed (relative to the air) and vertical speed (+ climb, − descent)\n- Magenta ▲ on the heading tape is the track: where the vehicle actually moves over the ground (from `Vx`, `Vy`); green ● — direction to home; a legend with degrees is below the instrument\n- No data for longer than the set time — the instrument is crossed out and marked "NO DATA"\n- In a narrow cell the speed and altitude tapes become numbers over the horizon\n- Rows are grouped: top \"System / GPS / Link / Battery\" — status, bottom \"Route / Home / Track / Position / Air\" — where we go and where we are\n- Cyan marks — targets of the current waypoint: speed and altitude on the tapes, bearing ◆ on the heading tape\n- Autopilot messages — in the same line at the bottom of the horizon for 10 s, colored by severity; hover the line for history\n- Keys `Lat`, `Lon`, `Alt`, `Heading`, `Sat` are shared with the "Map" — one group feeds both widgets\n\n⚙️ **Settings**\n- Group prefix (ID), master color\n- Limits: min/max speed and max altitude — red bands on the tapes; bank limit — red arc; low battery; time until "NO DATA"',
-    zh: "🎯 **用途**\n主飞行显示器（PFD）—— 飞行监控的主要仪表：姿态、速度、高度、航向和系统状态。\n\n📦 **数据包**\n- `MAV` 分组的字段 —— MAVLink 自驾仪遥测（可通过设置中的前缀更改），无需绑定变量\n- 遥测流：`Roll`、`Pitch`、`Heading` 约每秒 20 次，其余每秒 1–2 次\n- 仅显示，不发送任何数据\n\n🔑 **键**\n- `Roll`、`Pitch` —— 数字，°：坡度（向右 +）和俯仰（向上 +）\n- `Heading` —— 数字，0–360°：航向\n- `GSpeed`、`ASpeed` —— 数字，m/s：地速和空速\n- `Alt` —— 数字，m：相对起飞点高度；`AltMSL` —— 海拔高度\n- `Climb` —— 数字，m/s：升降速度（向上 +）\n- `Lat`、`Lon` —— 数字，°：坐标\n- `Vx`、`Vy` —— 数字，m/s：向北和向东的速度 —— 用于航迹\n- `Fix` —— 数字：GPS 定位类型，`0`–`1` 无、`2` 2D、`3` 3D、`4`–`6` DGPS/RTK；`Sat` —— 卫星数\n- `BV` —— V；`BC` —— A（`-1` 未测量）；`BRem` —— %（`-1` 未知）\n- `Mode` —— 数字：自驾仪模式；`VType` —— 机型（决定模式名称）；`Armed` —— `1` 已解锁\n- `HomeLat`、`HomeLon` —— 数字，°：起飞点，`0` —— 未知\n- `Press` —— hPa，`Temp` —— °C\n- `WPNum` —— 航点编号（`0` —— 无任务）；`WPDist`、`WPBrg` —— 到航点的距离，m，和方位，°\n- `AltErr`、`SpdErr` —— 目标减当前：高度，m，空速，m/s；`XTE` —— 偏航距离，m\n- `RSSI`、`RemRSSI` —— 本地和远端信号，%（`-1` 未知）；`Drop` —— 丢包率，%\n- `HDOP` —— GPS 精度（1 以下优秀，大于 2 不准确）；`EKF` —— 导航滤波器方差（0.5 起注意，0.8 起告警）；`SensErr` —— 故障传感器数\n- `Msg`、`MsgSev`、`MsgSeq` —— 自驾仪消息、严重程度（`0`–`3` 错误、`4` 警告、`5`–`7` 信息）、编号\n\n✨ **特点**\n- 数据包之间的姿态经过平滑\n- 将鼠标悬停在仪表或行中的任意元素上 —— 在地平线底部的信息行中显示含义和当前值；可通过标题栏中的「提示」复选框关闭\n- 速度带和高度带下方的角落：空速（相对空气）和升降速度（+ 爬升、− 下降）\n- 航向带上的粉色 ▲ 为航迹：载具相对地面的实际运动方向（由 `Vx`、`Vy` 计算）；绿色 ● —— 起飞点方向；仪表下方有带角度的图例\n- 超过设定时间无数据 —— 仪表被划叉并标记「无数据」\n- 在窄单元格中，速度带和高度带变为地平线上的数字\n- 行已分组：上方「系统 / GPS / 链路 / 电池」—— 状态，下方「航线 / 起飞点 / 航迹 / 位置 / 空气」—— 去向与位置\n- 青色标记 —— 当前航点的目标：速度带和高度带上的速度与高度，航向带上的方位 ◆\n- 自驾仪消息 —— 在地平线底部同一信息行显示 10 秒，颜色按严重程度；悬停该行可查看历史\n- 键 `Lat`、`Lon`、`Alt`、`Heading`、`Sat` 与「地图」通用 —— 一个分组同时供两个组件使用\n\n⚙️ **设置**\n- 分组前缀（ID）、主色\n- 限值：最小/最大速度和最大高度 —— 速度带和高度带上的红色区域；最大坡度 —— 红色弧线；低电量；「无数据」前的时间",
+    ru: "🎯 **Назначение**\nПилотажный дисплей (PFD) — главный прибор контроля полёта: пространственное положение, скорость, высота, курс и состояние систем.\n\n📦 **Пакет данных**\n- Поля группы `MAV` — телеметрия автопилота MAVLink (меняется префиксом в настройках), привязывать переменные не нужно\n- Поток телеметрии: `Roll`, `Pitch`, `Heading` — ~20 раз в секунду, остальное — 1–2 раза в секунду\n- Только отображение, ничего не отправляет\n\n🔑 **Ключи**\n- `Roll`, `Pitch` — числа, °: крен (вправо +) и тангаж (вверх +)\n- `Heading` — число, 0–360°: курс\n- `GSpeed`, `ASpeed` — числа, м/с: путевая и воздушная скорость\n- `Alt` — число, м: высота над точкой взлёта; `AltMSL` — над уровнем моря\n- `Climb` — число, м/с: вертикальная скорость (вверх +)\n- `Lat`, `Lon` — числа, °: координаты\n- `Vx`, `Vy` — числа, м/с: скорость на север и восток — для трека\n- `Fix` — число: тип фиксации GPS, `0`–`1` нет, `2` 2D, `3` 3D, `4`–`6` DGPS/RTK; `Sat` — число спутников\n- `BV` — В; `BC` — А (`-1` не измеряется); `BRem` — % (`-1` неизвестно)\n- `Mode` — число: режим автопилота; `VType` — тип аппарата (по нему — названия режимов); `Armed` — `1` взведён\n- `HomeLat`, `HomeLon` — числа, °: точка взлёта, `0` — неизвестна\n- `Press` — гПа, `Temp` — °C\n- `WPNum` — номер точки маршрута (`0` — маршрута нет); `WPDist`, `WPBrg` — расстояние, м, и курс на неё, °\n- `AltErr`, `SpdErr` — цель минус текущее: высота, м, и воздушная скорость, м/с; `XTE` — боковое отклонение от маршрута, м\n- `RSSI`, `RemRSSI` — сигнал своей и удалённой стороны, % (`-1` неизвестно); `Drop` — потери пакетов, %\n- `HDOP` — точность GPS (до 1 отлично, больше 2 неточно); `EKF` — дисперсия навигационного фильтра (от 0.5 внимание, от 0.8 тревога); `SensErr` — неисправных датчиков\n- `Msg`, `MsgSev`, `MsgSeq` — сообщение автопилота, важность (`0`–`3` ошибка, `4` предупреждение, `5`–`7` информация), номер\n\n✨ **Особенности**\n- Ориентация сглаживается между пакетами\n- Наведите курсор на любой элемент прибора или строки — расшифровка с текущим значением в строке внизу горизонта; выключается кнопкой «?» в шапке\n- Углы под лентами: воздушная скорость (относительно воздуха) и вертикальная скорость (+ набор, − снижение)\n- Розовый ▲ на ленте курса — трек: куда аппарат реально движется над землёй (по `Vx`, `Vy`); зелёный ● — направление на точку взлёта; легенда с градусами — под прибором\n- Нет данных дольше заданного времени — прибор перечёркнут и помечен «NO DATA»\n- В узкой ячейке ленты скорости и высоты заменяются числами поверх горизонта\n- Строки сгруппированы: сверху «Система / GPS / Связь / Батарея» — состояние, снизу «Маршрут / Дом / Трек / Позиция / Воздух» — куда движемся и где находимся\n- Бирюзовые метки — цели текущей точки маршрута: скорость и высота на лентах, курс ◆ на ленте курса\n- Сообщения автопилота — в той же строке внизу горизонта на 10 с, цвет по важности; наведение на строку — история\n- Ключи `Lat`, `Lon`, `Alt`, `Heading`, `Sat` общие с «Картой» — одна группа питает оба виджета\n\n⚙️ **Настройки**\n- Префикс группы (ID), мастер-цвет\n- Границы: мин./макс. скорость и макс. высота — красные зоны на лентах; предельный крен — красная дуга; низкий заряд; время до «NO DATA»",
+    en: '🎯 **Purpose**\nPrimary flight display (PFD) — the main flight instrument: attitude, speed, altitude, heading and system status.\n\n📦 **Data packet**\n- Fields of the `MAV` group — MAVLink autopilot telemetry (changed by the prefix in settings), no variable binding needed\n- Telemetry stream: `Roll`, `Pitch`, `Heading` ~20 times a second, the rest 1–2 times a second\n- Display only, sends nothing\n\n🔑 **Keys**\n- `Roll`, `Pitch` — numbers, °: bank (right +) and pitch (up +)\n- `Heading` — number, 0–360°: heading\n- `GSpeed`, `ASpeed` — numbers, m/s: ground speed and airspeed\n- `Alt` — number, m: altitude above home; `AltMSL` — above sea level\n- `Climb` — number, m/s: vertical speed (up +)\n- `Lat`, `Lon` — numbers, °: coordinates\n- `Vx`, `Vy` — numbers, m/s: north and east velocity — for the track\n- `Fix` — number: GPS fix type, `0`–`1` none, `2` 2D, `3` 3D, `4`–`6` DGPS/RTK; `Sat` — satellite count\n- `BV` — V; `BC` — A (`-1` not measured); `BRem` — % (`-1` unknown)\n- `Mode` — number: autopilot mode; `VType` — vehicle type (mode names depend on it); `Armed` — `1` armed\n- `HomeLat`, `HomeLon` — numbers, °: home position, `0` — unknown\n- `Press` — hPa, `Temp` — °C\n- `WPNum` — waypoint number (`0` — no mission); `WPDist`, `WPBrg` — distance, m, and bearing to it, °\n- `AltErr`, `SpdErr` — target minus current: altitude, m, and airspeed, m/s; `XTE` — cross-track error, m\n- `RSSI`, `RemRSSI` — local and remote signal, % (`-1` unknown); `Drop` — packet loss, %\n- `HDOP` — GPS precision (up to 1 excellent, over 2 poor); `EKF` — navigation filter variance (from 0.5 warning, from 0.8 alarm); `SensErr` — unhealthy sensors\n- `Msg`, `MsgSev`, `MsgSeq` — autopilot message, severity (`0`–`3` error, `4` warning, `5`–`7` info), number\n\n✨ **Features**\n- Attitude is smoothed between packets\n- Hover any instrument element or row item — its meaning and current value in the line at the bottom of the horizon; turned off with the \"?\" button in the header\n- Corners under the tapes: airspeed (relative to the air) and vertical speed (+ climb, − descent)\n- Magenta ▲ on the heading tape is the track: where the vehicle actually moves over the ground (from `Vx`, `Vy`); green ● — direction to home; a legend with degrees is below the instrument\n- No data for longer than the set time — the instrument is crossed out and marked "NO DATA"\n- In a narrow cell the speed and altitude tapes become numbers over the horizon\n- Rows are grouped: top \"System / GPS / Link / Battery\" — status, bottom \"Route / Home / Track / Position / Air\" — where we go and where we are\n- Cyan marks — targets of the current waypoint: speed and altitude on the tapes, bearing ◆ on the heading tape\n- Autopilot messages — in the same line at the bottom of the horizon for 10 s, colored by severity; hover the line for history\n- Keys `Lat`, `Lon`, `Alt`, `Heading`, `Sat` are shared with the "Map" — one group feeds both widgets\n\n⚙️ **Settings**\n- Group prefix (ID), master color\n- Limits: min/max speed and max altitude — red bands on the tapes; bank limit — red arc; low battery; time until "NO DATA"',
+    zh: "🎯 **用途**\n主飞行显示器（PFD）—— 飞行监控的主要仪表：姿态、速度、高度、航向和系统状态。\n\n📦 **数据包**\n- `MAV` 分组的字段 —— MAVLink 自驾仪遥测（可通过设置中的前缀更改），无需绑定变量\n- 遥测流：`Roll`、`Pitch`、`Heading` 约每秒 20 次，其余每秒 1–2 次\n- 仅显示，不发送任何数据\n\n🔑 **键**\n- `Roll`、`Pitch` —— 数字，°：坡度（向右 +）和俯仰（向上 +）\n- `Heading` —— 数字，0–360°：航向\n- `GSpeed`、`ASpeed` —— 数字，m/s：地速和空速\n- `Alt` —— 数字，m：相对起飞点高度；`AltMSL` —— 海拔高度\n- `Climb` —— 数字，m/s：升降速度（向上 +）\n- `Lat`、`Lon` —— 数字，°：坐标\n- `Vx`、`Vy` —— 数字，m/s：向北和向东的速度 —— 用于航迹\n- `Fix` —— 数字：GPS 定位类型，`0`–`1` 无、`2` 2D、`3` 3D、`4`–`6` DGPS/RTK；`Sat` —— 卫星数\n- `BV` —— V；`BC` —— A（`-1` 未测量）；`BRem` —— %（`-1` 未知）\n- `Mode` —— 数字：自驾仪模式；`VType` —— 机型（决定模式名称）；`Armed` —— `1` 已解锁\n- `HomeLat`、`HomeLon` —— 数字，°：起飞点，`0` —— 未知\n- `Press` —— hPa，`Temp` —— °C\n- `WPNum` —— 航点编号（`0` —— 无任务）；`WPDist`、`WPBrg` —— 到航点的距离，m，和方位，°\n- `AltErr`、`SpdErr` —— 目标减当前：高度，m，空速，m/s；`XTE` —— 偏航距离，m\n- `RSSI`、`RemRSSI` —— 本地和远端信号，%（`-1` 未知）；`Drop` —— 丢包率，%\n- `HDOP` —— GPS 精度（1 以下优秀，大于 2 不准确）；`EKF` —— 导航滤波器方差（0.5 起注意，0.8 起告警）；`SensErr` —— 故障传感器数\n- `Msg`、`MsgSev`、`MsgSeq` —— 自驾仪消息、严重程度（`0`–`3` 错误、`4` 警告、`5`–`7` 信息）、编号\n\n✨ **特点**\n- 数据包之间的姿态经过平滑\n- 将鼠标悬停在仪表或行中的任意元素上 —— 在地平线底部的信息行中显示含义和当前值；可通过标题栏中的「?」按钮关闭\n- 速度带和高度带下方的角落：空速（相对空气）和升降速度（+ 爬升、− 下降）\n- 航向带上的粉色 ▲ 为航迹：载具相对地面的实际运动方向（由 `Vx`、`Vy` 计算）；绿色 ● —— 起飞点方向；仪表下方有带角度的图例\n- 超过设定时间无数据 —— 仪表被划叉并标记「无数据」\n- 在窄单元格中，速度带和高度带变为地平线上的数字\n- 行已分组：上方「系统 / GPS / 链路 / 电池」—— 状态，下方「航线 / 起飞点 / 航迹 / 位置 / 空气」—— 去向与位置\n- 青色标记 —— 当前航点的目标：速度带和高度带上的速度与高度，航向带上的方位 ◆\n- 自驾仪消息 —— 在地平线底部同一信息行显示 10 秒，颜色按严重程度；悬停该行可查看历史\n- 键 `Lat`、`Lon`、`Alt`、`Heading`、`Sat` 与「地图」通用 —— 一个分组同时供两个组件使用\n\n⚙️ **设置**\n- 分组前缀（ID）、主色\n- 限值：最小/最大速度和最大高度 —— 速度带和高度带上的红色区域；最大坡度 —— 红色弧线；低电量；「无数据」前的时间",
   },
   "component.info.WidgetMap": {
     ru: "🎯 **Назначение**\nКарта объектов в реальном времени: положение, курс и траектория каждого объекта.\n\n📦 **Пакет данных**\n- Поля групп устройства, по группе на объект: по умолчанию `MAV`, несколько — через пробел (`MAV GNSS`); привязывать переменные не нужно\n- Поток телеметрии: координаты — раз в 0.5–1 с, имя и серийный номер — реже\n- Только отображение, ничего не отправляет\n\n🔑 **Ключи**\n- `Lat` — число, °: широта, обязательный; `Lat` и `Lon` = 0 — нет фикса, объект не рисуется\n- `Lon` — число, °: долгота, обязательный\n- `Alt` — число, м: высота\n- `Heading` — число, 0–360°: курс, поворачивает маркер\n- `Sat` — число спутников\n- `DevName` — строка: имя объекта, подпись маркера; без него — имя группы\n- `DevSN` — строка: серийный номер\n\n✨ **Особенности**\n- Ключи общие с «Пилотажным дисплеем» и «Об устройстве» — один пакет питает несколько виджетов\n- Клик по объекту — карточка со всеми значениями, кнопки «Копировать» и «Скрыть»\n- Траекторию, число её точек и таймаут маркеров оператор переключает на карте; объект без новых данных краснеет, ещё через таймаут скрывается\n- «Показать все» в шапке вписывает объекты в экран; сама карта вид не меняет\n- В шапке — сколько объектов на связи из заданных\n- Только 2D: правой кнопкой мыши карта поворачивается, компас под зумом возвращает её на север\n\n⚙️ **Настройки**\n- Группы полей, мастер-цвет\n- Высота карты `S`/`M`/`L`/`XL`, иконка маркера\n- Начальные значения: траектория и число её точек",
@@ -133,9 +133,9 @@ const translations: Translations = {
     zh: "🎯 **用途**\n实时对象地图：每个对象的位置、航向和轨迹。\n\n📦 **数据包**\n- 设备字段分组，每个分组一个对象：默认 `MAV`，多个用空格分隔（`MAV GNSS`）；无需绑定变量\n- 遥测流：坐标每 0.5–1 秒一次，名称和序列号频率更低\n- 仅显示，不发送任何数据\n\n🔑 **键**\n- `Lat` —— 数字，°：纬度，必需；`Lat` 和 `Lon` 为 0 —— 无定位，不绘制对象\n- `Lon` —— 数字，°：经度，必需\n- `Alt` —— 数字，m：高度\n- `Heading` —— 数字，0–360°：航向，旋转标记\n- `Sat` —— 卫星数\n- `DevName` —— 字符串：对象名称，标记标签；缺省时为分组名\n- `DevSN` —— 字符串：序列号\n\n✨ **特点**\n- 键与「主飞行显示器」和「设备信息」通用 —— 一个数据包可供多个组件使用\n- 点击对象 —— 显示所有值的卡片，带「复制」和「隐藏」按钮\n- 操作员在地图上切换轨迹、轨迹点数和标记超时；无新数据的对象变红，再过一个超时后隐藏\n- 标题栏中的「显示全部」将对象纳入视野；地图本身不会自动移动\n- 标题栏显示已配置对象中在线的数量\n- 仅 2D：按住鼠标右键旋转地图，缩放按钮下方的指南针将其恢复为正北\n\n⚙️ **设置**\n- 字段分组、主色\n- 地图高度 `S`/`M`/`L`/`XL`、标记图标\n- 默认值：轨迹及其点数",
   },
   "component.info.WidgetStackInfo": {
-    ru: '🎯 **Назначение**\nОтладка прошивки: свободная память и запас стека задач.\n\n📦 **Пакет данных**\n- Один объект `StackInfo` из ответа на `GET StackInfo`, привязывать переменные не нужно\n- Запрос — кнопкой «Обновить» или автоопросом\n\n🔑 **Ключи**\n- `Heap` — массив `[{ "Name", "Total", "Free", "MinFree" }]`, байт: кучи памяти, `MinFree` — минимум свободного с момента старта\n- `Tasks` — массив `[{ "Name", "State", "Prio", "Core", "FreeMin" }]`: задачи; `State` — `0` выполняется, `1` готова, `2` ждёт, `3` приостановлена, `4` удалена; `Core` — ядро (только ESP32, `-1` без привязки); `FreeMin` — минимальный запас стека, байт\n\n✨ **Особенности**\n- Светлая часть полосы кучи — пик занятости\n- Задачи отсортированы по запасу стека — самые рискованные сверху\n- Свёрнутый виджет не опрашивает устройство\n\n⚙️ **Настройки**\n- Порог запаса стека: меньше порога — красным, меньше удвоенного — оранжевым\n- Автоопрос: выкл / 1 / 5 / 10 с; мастер-цвет',
-    en: '🎯 **Purpose**\nFirmware debugging: free memory and task stack headroom.\n\n📦 **Data packet**\n- One `StackInfo` object from the `GET StackInfo` response, no variable binding needed\n- Requested with the "Refresh" button or by auto polling\n\n🔑 **Keys**\n- `Heap` — array `[{ "Name", "Total", "Free", "MinFree" }]`, bytes: memory heaps, `MinFree` — minimum free since boot\n- `Tasks` — array `[{ "Name", "State", "Prio", "Core", "FreeMin" }]`: tasks; `State` — `0` running, `1` ready, `2` blocked, `3` suspended, `4` deleted; `Core` — core (ESP32 only, `-1` unpinned); `FreeMin` — minimum stack headroom, bytes\n\n✨ **Features**\n- The light part of the heap bar is peak usage\n- Tasks are sorted by stack headroom — the riskiest on top\n- A collapsed widget does not poll the device\n\n⚙️ **Settings**\n- Stack threshold: below it — red, below double — orange\n- Auto polling: off / 1 / 5 / 10 s; master color',
-    zh: '🎯 **用途**\n固件调试：空闲内存和任务栈余量。\n\n📦 **数据包**\n- 来自 `GET StackInfo` 响应的一个 `StackInfo` 对象，无需绑定变量\n- 通过「刷新」按钮或自动轮询请求\n\n🔑 **键**\n- `Heap` —— 数组 `[{ "Name", "Total", "Free", "MinFree" }]`，字节：内存堆，`MinFree` —— 启动以来的最小空闲\n- `Tasks` —— 数组 `[{ "Name", "State", "Prio", "Core", "FreeMin" }]`：任务；`State` —— `0` 运行、`1` 就绪、`2` 阻塞、`3` 挂起、`4` 已删除；`Core` —— 内核（仅 ESP32，`-1` 未绑定）；`FreeMin` —— 最小栈余量，字节\n\n✨ **特点**\n- 堆条的浅色部分为峰值占用\n- 任务按栈余量排序 —— 风险最高的在上方\n- 折叠的组件不轮询设备\n\n⚙️ **设置**\n- 栈余量阈值：低于阈值 —— 红色，低于两倍 —— 橙色\n- 自动轮询：关 / 1 / 5 / 10 秒；主色',
+    ru: '🎯 **Назначение**\nОтладка прошивки: свободная память и запас стека задач.\n\n📦 **Пакет данных**\n- Один объект `StackInfo` из ответа на `GET StackInfo`, привязывать переменные не нужно\n- Запрос — кнопкой «Обновить» или автоопросом\n\n🔑 **Ключи**\n- `Heap` — массив `[{ "Name", "Total", "Free", "MinFree" }]`, байт: кучи памяти — `Internal` встроенная и `PSRAM` внешняя ОЗУ у ESP, `Heap` у STM, в виджете понятными подписями; `MinFree` — минимум свободного с момента старта\n- `Tasks` — массив `[{ "Name", "State", "Prio", "Core", "FreeMin" }]`: задачи; `State` — `0` выполняется, `1` готова, `2` ждёт, `3` приостановлена, `4` удалена; `Core` — ядро (только ESP32, `-1` без привязки); `FreeMin` — минимальный запас стека, байт\n\n✨ **Особенности**\n- Светлая часть полосы кучи — пик занятости\n- Задачи отсортированы по запасу стека — самые рискованные сверху\n- Свёрнутый виджет не опрашивает устройство\n\n⚙️ **Настройки**\n- Порог запаса стека: меньше порога — красным, меньше удвоенного — оранжевым\n- Автоопрос: выкл / 1 / 5 / 10 с; мастер-цвет',
+    en: '🎯 **Purpose**\nFirmware debugging: free memory and task stack headroom.\n\n📦 **Data packet**\n- One `StackInfo` object from the `GET StackInfo` response, no variable binding needed\n- Requested with the "Refresh" button or by auto polling\n\n🔑 **Keys**\n- `Heap` — array `[{ "Name", "Total", "Free", "MinFree" }]`, bytes: memory heaps — `Internal` on-chip and `PSRAM` external RAM on ESP, `Heap` on STM, shown with readable names; `MinFree` — minimum free since boot\n- `Tasks` — array `[{ "Name", "State", "Prio", "Core", "FreeMin" }]`: tasks; `State` — `0` running, `1` ready, `2` blocked, `3` suspended, `4` deleted; `Core` — core (ESP32 only, `-1` unpinned); `FreeMin` — minimum stack headroom, bytes\n\n✨ **Features**\n- The light part of the heap bar is peak usage\n- Tasks are sorted by stack headroom — the riskiest on top\n- A collapsed widget does not poll the device\n\n⚙️ **Settings**\n- Stack threshold: below it — red, below double — orange\n- Auto polling: off / 1 / 5 / 10 s; master color',
+    zh: '🎯 **用途**\n固件调试：空闲内存和任务栈余量。\n\n📦 **数据包**\n- 来自 `GET StackInfo` 响应的一个 `StackInfo` 对象，无需绑定变量\n- 通过「刷新」按钮或自动轮询请求\n\n🔑 **键**\n- `Heap` —— 数组 `[{ "Name", "Total", "Free", "MinFree" }]`，字节：内存堆 —— ESP 上为 `Internal` 内部和 `PSRAM` 外部 RAM，STM 上为 `Heap`，组件中显示易读名称；`MinFree` —— 启动以来的最小空闲\n- `Tasks` —— 数组 `[{ "Name", "State", "Prio", "Core", "FreeMin" }]`：任务；`State` —— `0` 运行、`1` 就绪、`2` 阻塞、`3` 挂起、`4` 已删除；`Core` —— 内核（仅 ESP32，`-1` 未绑定）；`FreeMin` —— 最小栈余量，字节\n\n✨ **特点**\n- 堆条的浅色部分为峰值占用\n- 任务按栈余量排序 —— 风险最高的在上方\n- 折叠的组件不轮询设备\n\n⚙️ **设置**\n- 栈余量阈值：低于阈值 —— 红色，低于两倍 —— 橙色\n- 自动轮询：关 / 1 / 5 / 10 秒；主色',
   },
 
   /* Опции редактора свойств */
@@ -523,7 +523,195 @@ const translations: Translations = {
   "widget.stack.core": { ru: "Ядро", en: "Core", zh: "核心" },
   "widget.stack.free_min": { ru: "Запас, Б", en: "Headroom, B", zh: "余量, B" },
   "widget.stack.no_data": { ru: "Нет данных — нажмите «Обновить»", en: "No data — press “Refresh”", zh: "无数据 — 请点击“刷新”" },
-  "widget.stack.heap": { ru: "{name}: {used} из {total}", en: "{name}: {used} of {total}", zh: "{name}：{used} / {total}" },
+  "widget.stack.heap.name.Internal": { ru: "Встроенная ОЗУ", en: "Internal RAM", zh: "内部 RAM" },
+  "widget.stack.heap.name.PSRAM": { ru: "Внешняя ОЗУ (PSRAM)", en: "External RAM (PSRAM)", zh: "外部 RAM (PSRAM)" },
+  "widget.stack.heap.name.Heap": { ru: "ОЗУ", en: "RAM", zh: "RAM" },
+  "widget.stack.heap.hint.Internal": {
+    ru: "Быстрая память кристалла: стеки задач, Wi-Fi, сеть, DMA. Кончается первой — при нехватке устройство может перезагрузиться",
+    en: "Fast on-chip memory: task stacks, Wi-Fi, network, DMA. Runs out first — a shortage may reboot the device",
+    zh: "芯片内部高速内存：任务栈、Wi-Fi、网络、DMA。最先耗尽——不足时设备可能重启",
+  },
+  "widget.stack.heap.hint.PSRAM": {
+    ru: "Внешняя микросхема памяти: большие буферы и данные. Медленнее встроенной, для стеков и DMA не используется",
+    en: "External memory chip: large buffers and data. Slower than internal RAM, not used for stacks or DMA",
+    zh: "外部内存芯片：大缓冲区和数据。比内部 RAM 慢，不用于任务栈和 DMA",
+  },
+  "widget.stack.heap.hint.Heap": {
+    ru: "Память FreeRTOS для задач, очередей и буферов. При нехватке новые задачи и буферы не создаются",
+    en: "FreeRTOS memory for tasks, queues and buffers. When it runs out, new tasks and buffers cannot be created",
+    zh: "FreeRTOS 用于任务、队列和缓冲区的内存。不足时无法创建新任务和缓冲区",
+  },
+  "widget.hints.on": {
+    ru: "Подсказки включены — наведите курсор на элемент. Нажмите, чтобы выключить",
+    en: "Hints are on — hover an element. Click to turn off",
+    zh: "提示已开启——将鼠标悬停在元素上。点击关闭",
+  },
+  "widget.hints.off": { ru: "Подсказки выключены. Нажмите, чтобы включить", en: "Hints are off. Click to turn on", zh: "提示已关闭。点击开启" },
+  "widget.stack.hint.min": {
+    ru: "Минимум свободной памяти с момента включения — насколько близко устройство подходило к нехватке. Светлая часть полосы — пик занятости",
+    en: "Minimum free memory since power-on — how close the device came to running out. The light part of the bar is the peak usage",
+    zh: "开机以来的最小空闲内存——设备离内存不足有多近。进度条浅色部分为峰值占用",
+  },
+  "widget.stack.hint.tasks": {
+    ru: "Задачи прошивки. «Запас стека» — сколько байт стека задачи ни разу не использовалось; чем меньше, тем ближе переполнение. «Приор.» — приоритет, «Ядро» — процессорное ядро",
+    en: 'Firmware tasks. "Stack headroom" — stack bytes never used by the task; the smaller, the closer to overflow. "Prio" — priority, "Core" — CPU core',
+    zh: "固件任务。“栈余量”——任务从未使用过的栈字节数，越小越接近溢出。“优先级”——优先级，“核心”——处理器核心",
+  },
+  "widget.stack.hint.low": {
+    ru: "У этих задач запас стека меньше порога из настроек виджета — при переполнении устройство перезагрузится; стек задачи стоит увеличить в прошивке",
+    en: "These tasks have less stack headroom than the widget threshold — an overflow reboots the device; increase their stack in the firmware",
+    zh: "这些任务的栈余量低于组件设置的阈值——溢出会导致设备重启；应在固件中增大其栈",
+  },
+  "widget.stack.hint.poll": {
+    ru: "Автоопрос — как часто запрашивать данные у устройства; «Обновить» — запросить сейчас",
+    en: 'Auto polling — how often to request data from the device; "Refresh" — request now',
+    zh: "自动轮询——向设备请求数据的频率；“刷新”——立即请求",
+  },
+  "widget.wifi.hint.mode": {
+    ru: "Режим Wi-Fi: клиент — устройство подключается к роутеру, точка — создаёт свою сеть, оба — одновременно; выключено — Wi-Fi не работает",
+    en: "Wi-Fi mode: client — the device joins a router, access point — creates its own network, both — at once; off — Wi-Fi is disabled",
+    zh: "Wi-Fi 模式：客户端——设备连接路由器，热点——创建自己的网络，两者——同时；关闭——Wi-Fi 停用",
+  },
+  "widget.wifi.hint.sta": {
+    ru: "Подключение устройства к вашему роутеру: через него устройство выходит в облако",
+    en: "Connecting the device to your router: the device reaches the cloud through it",
+    zh: "设备连接到您的路由器：设备通过它访问云端",
+  },
+  "widget.wifi.hint.ap": {
+    ru: "Собственная сеть устройства — для настройки без роутера, например если роутер сменился",
+    en: "The device's own network — for setup without a router, e.g. after the router has changed",
+    zh: "设备自己的网络——用于无路由器时的设置，例如更换路由器后",
+  },
+  "widget.wifi.hint.ssid": {
+    ru: "Имя сети роутера. Кнопка поиска показывает сети, которые видит устройство",
+    en: "The router's network name. The search button lists networks the device can see",
+    zh: "路由器的网络名称。搜索按钮显示设备能看到的网络",
+  },
+  "widget.wifi.hint.ip_mode": {
+    ru: "DHCP — адрес выдаёт роутер (обычный выбор); статический — адрес, маска и шлюз задаются вручную",
+    en: "DHCP — the router assigns the address (the usual choice); static — address, mask and gateway are set manually",
+    zh: "DHCP——由路由器分配地址（常用）；静态——手动设置地址、掩码和网关",
+  },
+  "widget.wifi.hint.ip": {
+    ru: "Адрес устройства в сети роутера — должен быть свободен и из той же подсети, что роутер",
+    en: "The device address in the router network — must be unused and in the router's subnet",
+    zh: "设备在路由器网络中的地址——必须未被占用且与路由器同一子网",
+  },
+  "widget.wifi.hint.mask": { ru: "Маска подсети, обычно 255.255.255.0", en: "Subnet mask, usually 255.255.255.0", zh: "子网掩码，通常为 255.255.255.0" },
+  "widget.wifi.hint.gateway": {
+    ru: "Адрес роутера — через него устройство выходит в интернет",
+    en: "The router address — the device reaches the internet through it",
+    zh: "路由器地址——设备通过它访问互联网",
+  },
+  "widget.wifi.hint.ap_ip": {
+    ru: "Адрес устройства в его собственной сети — по нему открывается веб-интерфейс при подключении к точке доступа",
+    en: "The device address in its own network — opens the web interface when connected to the access point",
+    zh: "设备在自身网络中的地址——连接热点后通过它打开网页界面",
+  },
+  "widget.info.hint.sn": {
+    ru: "Уникальный серийный номер устройства — по нему устройство находят в облаке и на шине",
+    en: "Unique device serial number — used to find the device in the cloud and on the bus",
+    zh: "设备唯一序列号——用于在云端和总线上识别设备",
+  },
+  "widget.info.hint.id": {
+    ru: "Код модели по каталогу — определяет прошивку и интерфейс устройства",
+    en: "Model code from the catalog — defines the device firmware and interface",
+    zh: "目录中的型号代码——决定设备的固件和界面",
+  },
+  "widget.info.hint.fw": { ru: "Версия прошивки устройства", en: "Device firmware version", zh: "设备固件版本" },
+  "widget.info.hint.runs": {
+    ru: "Сколько раз устройство включалось или перезагружалось. Быстрый рост без вашего участия — признак сбоев питания или прошивки",
+    en: "How many times the device has started or rebooted. Fast growth without your action indicates power or firmware faults",
+    zh: "设备启动或重启的次数。无人操作时快速增长表明电源或固件故障",
+  },
+  "widget.info.hint.sta_ip": {
+    ru: "Адрес устройства в сети роутера; 0.0.0.0 — к роутеру не подключено",
+    en: "The device address in the router network; 0.0.0.0 — not connected to a router",
+    zh: "设备在路由器网络中的地址；0.0.0.0——未连接路由器",
+  },
+  "widget.info.hint.ap_ip": {
+    ru: "Адрес устройства в его собственной точке доступа — для настройки без роутера",
+    en: "The device address on its own access point — for setup without a router",
+    zh: "设备在自身热点中的地址——用于无路由器时的设置",
+  },
+  "widget.info.hint.name": {
+    ru: "Имя устройства в облаке и в интерфейсе",
+    en: "Device name in the cloud and in the interface",
+    zh: "设备在云端和界面中的名称",
+  },
+  "widget.info.hint.host": {
+    ru: "Сетевое имя: устройство открывается в браузере по адресу http://имя.local",
+    en: "Network name: the device opens in a browser at http://name.local",
+    zh: "网络名称：可在浏览器中通过 http://名称.local 打开设备",
+  },
+  "widget.info.hint.web_user": { ru: "Логин для входа в веб-интерфейс устройства", en: "Login for the device web interface", zh: "设备网页界面的登录名" },
+  "widget.info.hint.web_psw": {
+    ru: "Пароль для входа в веб-интерфейс устройства",
+    en: "Password for the device web interface",
+    zh: "设备网页界面的密码",
+  },
+  "widget.info.hint.restart": {
+    ru: "Перезагрузить устройство — настройки сохраняются, связь пропадёт на несколько секунд",
+    en: "Restart the device — settings are kept, the connection drops for a few seconds",
+    zh: "重启设备——设置保留，连接会中断几秒",
+  },
+  "widget.fs.hint.usage": {
+    ru: "Занятость файловой системы устройства; при заполнении новые файлы, журналы и обновления не запишутся",
+    en: "Device file system usage; when full, new files, logs and updates cannot be written",
+    zh: "设备文件系统占用；存满后无法写入新文件、日志和更新",
+  },
+  "widget.fs.hint.files": {
+    ru: "Файлы на устройстве: сортировка — по заголовку колонки, удаление — кнопкой в строке",
+    en: "Files on the device: sort by the column header, delete with the button in the row",
+    zh: "设备上的文件：点击列标题排序，点击行内按钮删除",
+  },
+  "widget.fs.hint.upload": {
+    ru: "Загрузить файл на устройство; файл с тем же именем будет заменён",
+    en: "Upload a file to the device; a file with the same name is replaced",
+    zh: "上传文件到设备；同名文件将被替换",
+  },
+  "widget.rgb.hint.white": {
+    ru: "Яркость отдельного белого светодиода (для лент RGBW)",
+    en: "Brightness of the separate white LED (for RGBW strips)",
+    zh: "独立白色 LED 的亮度（用于 RGBW 灯带）",
+  },
+  "widget.rgb.hint.effect": { ru: "Режим свечения; применяется сразу", en: "Lighting mode; applied immediately", zh: "灯光模式；立即生效" },
+  "widget.rgb.hint.speed": {
+    ru: "Скорость эффекта: 0 — самый медленный; для статичного цвета не действует",
+    en: "Effect speed: 0 — slowest; has no effect on a static color",
+    zh: "效果速度：0——最慢；对静态颜色无效",
+  },
+  "widget.rgb.hint.count": {
+    ru: "Сколько светодиодов в ленте; больше, чем есть, — лишняя нагрузка, меньше — часть ленты не светит",
+    en: "How many LEDs the strip has; too many wastes time, too few leaves part of the strip dark",
+    zh: "灯带上的 LED 数量；过多浪费资源，过少则部分灯带不亮",
+  },
+  "widget.rgb.hint.model": {
+    ru: "Тип микросхемы светодиодов — указан в документации на ленту",
+    en: "LED chip type — stated in the strip documentation",
+    zh: "LED 芯片类型——见灯带说明书",
+  },
+  "widget.rgb.hint.order": {
+    ru: "Порядок цветов в ленте: если красный светится зелёным — смените порядок",
+    en: "Color order of the strip: if red shows as green, change the order",
+    zh: "灯带颜色顺序：如果红色显示为绿色，请更改顺序",
+  },
+  "widget.map.hint.boards": {
+    ru: "Объекты на связи / всего объектов: зелёный — все на связи, красный — ни одного",
+    en: "Objects online / total objects: green — all online, red — none",
+    zh: "在线对象 / 对象总数：绿色——全部在线，红色——无",
+  },
+  "widget.map.hint.track": {
+    ru: "Показывать пройденный путь каждого объекта; длина — сколько последних точек хранить",
+    en: "Show the path of each object; length — how many recent points to keep",
+    zh: "显示每个对象的轨迹；长度——保留的最近点数",
+  },
+  "widget.map.hint.timeout": {
+    ru: "Через сколько без новых данных маркер краснеет; ещё через столько же — скрывается",
+    en: "How long without new data before the marker turns red; after the same again it is hidden",
+    zh: "无新数据多久后标记变红；再过同样时间后隐藏",
+  },
+  "widget.stack.used": { ru: "Занято {used} из {total}", en: "Used {used} of {total}", zh: "已用 {used} / {total}" },
   "widget.stack.min": { ru: "Минимум {size}", en: "Minimum {size}", zh: "最低 {size}" },
   "widget.stack.tasks": { ru: "Задач: {n}", en: "Tasks: {n}", zh: "任务：{n}" },
   "widget.stack.low": { ru: "Запас стека меньше {warn} Б: {n}", en: "Stack headroom below {warn} B: {n}", zh: "栈余量低于 {warn} B：{n}" },
@@ -603,7 +791,6 @@ const translations: Translations = {
   },
 
   "pfd.title": { ru: "Пилотажный дисплей", en: "Flight display", zh: "飞行显示器" },
-  "pfd.tips": { ru: "Подсказки", en: "Hints", zh: "提示" },
   "pfd.fix.none": { ru: "нет", en: "none", zh: "无" },
   "pfd.sev.0": { ru: "АВАРИЯ", en: "EMERGENCY", zh: "紧急" },
   "pfd.sev.1": { ru: "ТРЕВОГА", en: "ALERT", zh: "警报" },
@@ -841,7 +1028,7 @@ const translations: Translations = {
   "widget.info.factory_reset_hint": { ru: "Все настройки к заводским", en: "All settings to factory defaults", zh: "所有设置恢复为出厂默认值" },
   "widget.info.factory_reset_title": { ru: "Сбросить все настройки?", en: "Reset all settings?", zh: "重置所有设置？" },
   "widget.info.factory_reset_text": {
-    ru: "Все настройки прибора — Wi-Fi, имя, пароль Web, настройки модулей — вернутся к заводским, прибор перезагрузится. Связь по Wi-Fi может пропасть.",
+    ru: "Все настройки устройства — Wi-Fi, имя, пароль Web, настройки модулей — вернутся к заводским, устройство перезагрузится. Связь по Wi-Fi может пропасть.",
     en: "All device settings — Wi-Fi, name, Web password, module settings — return to factory defaults and the device restarts. The Wi-Fi connection may be lost.",
     zh: "设备的所有设置（Wi-Fi、名称、Web 密码、模块设置）将恢复为出厂默认值，设备将重启。Wi-Fi 连接可能会断开。",
   },

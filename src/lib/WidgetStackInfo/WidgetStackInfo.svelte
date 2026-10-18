@@ -11,6 +11,7 @@
   import MemoryIcon from "./MemoryIcon.svelte"
   import RefreshIcon from "./RefreshIcon.svelte"
   import WidgetHeader from "../WidgetHeader.svelte"
+  import { hint, hintsSetting } from "../hints"
   import { widgetAccentStyle } from "../widgetAccent"
   import { readPersistedCollapsed, writePersistedCollapsed } from "../widgetCollapse"
 
@@ -62,6 +63,9 @@
   const percent = (part: number, total: number) => (total > 0 ? Math.min(100, Math.max(0, Math.round((part / total) * 100))) : 0)
 
   /* Текущая занятость — мастер-цвет, пик занятости с момента старта (Total − MinFree) — его светлая подложка */
+  /* Подсказки — кнопка «?» в шапке, выбор общий для всех WidgetStackInfo */
+  const hints = hintsSetting("WidgetStackInfo")
+
   let heaps = $derived(
     (value?.Heap ?? []).map((h) => {
       const used = Math.max(h.Total - h.Free, 0)
@@ -69,6 +73,12 @@
       return { ...h, used, usedPercent: percent(used, h.Total), peakPercent: percent(peak, h.Total) }
     }),
   )
+  /* Код кучи из прошивки (Internal/PSRAM у ESP, Heap у STM) → подпись и подсказка на языке пользователя; неизвестный код — как есть */
+  const heapText = (kind: "name" | "hint", code: string) => {
+    const key = `widget.stack.heap.${kind}.${code}`
+    const text = $T(key)
+    return text === key ? (kind === "name" ? code : "") : text
+  }
   const percentColor = (p: number) => (p >= 90 ? "var(--red-color)" : p >= 75 ? "var(--orange-color)" : "var(--muted-color)")
 
   /* Имена задач приходят с устройства, а Table выводит ячейки через {@html} — экранируем */
@@ -117,9 +127,9 @@
   style={accentStyle}
 >
   <!-- Заголовок -->
-  <WidgetHeader icon={MemoryIcon} label={label?.name || $T("widget.stack.title")} bind:collapsed>
+  <WidgetHeader icon={MemoryIcon} label={label?.name || $T("widget.stack.title")} bind:collapsed {hints}>
     {#snippet right()}
-      <div class="flex items-center gap-2">
+      <div class="flex items-center gap-2" use:hint={{ text: $T("widget.stack.hint.poll"), enabled: $hints }}>
         <UI.Select
           wrapperClass="w-64"
           type="buttons"
@@ -149,11 +159,17 @@
         <!-- Кучи -->
         <div class="grid gap-3 {heaps.length > 1 ? 'sm:grid-cols-2' : ''}">
           {#each heaps as heap (heap.Name)}
-            <div class="flex flex-col gap-2 rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-3">
-              <div class="flex items-baseline justify-between gap-2 text-[13px]">
-                <span class="truncate font-semibold"
-                  >{$T("widget.stack.heap", { name: heap.Name, used: formatBytes(heap.used), total: formatBytes(heap.Total) })}</span
-                >
+            <div
+              class="flex flex-col gap-2 rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-3"
+              use:hint={{ text: heapText("hint", heap.Name), enabled: $hints }}
+            >
+              <div class="flex items-start justify-between gap-2 text-[13px]">
+                <div class="flex min-w-0 flex-col">
+                  <span class="truncate font-semibold">{heapText("name", heap.Name)}</span>
+                  <span class="text-[12px] text-(--muted-color)"
+                    >{$T("widget.stack.used", { used: formatBytes(heap.used), total: formatBytes(heap.Total) })}</span
+                  >
+                </div>
                 <span class="font-semibold tabular-nums" style="color: {percentColor(heap.usedPercent)}">{heap.usedPercent}%</span>
               </div>
               <div class="relative h-2 w-full overflow-hidden rounded-full bg-(--container-color)">
@@ -165,7 +181,7 @@
               </div>
               <div class="flex justify-between gap-2 text-[12px] text-(--muted-color)">
                 <span>{$T("widget.common.free", { size: formatBytes(heap.Free) })}</span>
-                <span>{$T("widget.stack.min", { size: formatBytes(heap.MinFree) })}</span>
+                <span use:hint={{ text: $T("widget.stack.hint.min"), enabled: $hints }}>{$T("widget.stack.min", { size: formatBytes(heap.MinFree) })}</span>
               </div>
             </div>
           {/each}
@@ -174,9 +190,11 @@
         <!-- Задачи -->
         <div class="flex flex-col gap-2">
           <div class="flex items-baseline justify-between gap-2 text-[12px] text-(--muted-color)">
-            <span>{$T("widget.stack.tasks", { n: tasks.length })}</span>
+            <span use:hint={{ text: $T("widget.stack.hint.tasks"), enabled: $hints }}>{$T("widget.stack.tasks", { n: tasks.length })}</span>
             {#if lowCount}
-              <span class="font-semibold text-(--red-color)">{$T("widget.stack.low", { warn: warnBytes, n: lowCount })}</span>
+              <span class="font-semibold text-(--red-color)" use:hint={{ text: $T("widget.stack.hint.low"), enabled: $hints }}
+                >{$T("widget.stack.low", { warn: warnBytes, n: lowCount })}</span
+              >
             {/if}
           </div>
           <div class="flex max-h-80 min-h-0 flex-col">

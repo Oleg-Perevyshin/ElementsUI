@@ -14,6 +14,7 @@
   import CpuIcon from "./CpuIcon.svelte"
   import RestartIcon from "./RestartIcon.svelte"
   import WidgetHeader from "../WidgetHeader.svelte"
+  import { hint, hintsSetting } from "../hints"
   import { widgetAccentStyle } from "../widgetAccent"
   import { readPersistedCollapsed, writePersistedCollapsed } from "../widgetCollapse"
 
@@ -28,6 +29,9 @@
     onRestart = () => {},
     onFactoryReset,
   }: IWidgetDeviceInfoProps = $props()
+
+  /* Подсказки — кнопка «?» в шапке, выбор общий для всех WidgetDeviceInfo */
+  const hints = hintsSetting("WidgetDeviceInfo")
 
   let confirmReset = $state(false)
   const factoryReset = () => {
@@ -93,14 +97,16 @@
   style={accentStyle}
 >
   <!-- Заголовок -->
-  <WidgetHeader icon={CpuIcon} label={label?.name || $T("widget.info.title")} bind:collapsed>
+  <WidgetHeader icon={CpuIcon} label={label?.name || $T("widget.info.title")} bind:collapsed {hints}>
     {#snippet right()}
-      <UI.Button
-        wrapperClass="w-auto"
-        componentClass="bg-transparent px-3"
-        content={{ icon: RestartIcon, name: $T("widget.info.restart") }}
-        onClick={onRestart}
-      />
+      <div use:hint={{ text: $T("widget.info.hint.restart"), enabled: $hints }}>
+        <UI.Button
+          wrapperClass="w-auto"
+          componentClass="bg-transparent px-3"
+          content={{ icon: RestartIcon, name: $T("widget.info.restart") }}
+          onClick={onRestart}
+        />
+      </div>
     {/snippet}
   </WidgetHeader>
 
@@ -109,15 +115,27 @@
       <!-- Только чтение -->
       <div class="flex flex-col gap-2 rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-3">
         <!-- Серийник бывает длинным (напр. 00.00.000-00_0000AC670000B22B00007428:DBC5) — своя строка, чтобы не резался -->
-        <UI.Input label={{ name: $T("widget.info.sn") }} value={info.DevSN} readonly help={{ copyButton: true }} />
+        <div use:hint={{ text: $T("widget.info.hint.sn"), enabled: $hints }}>
+          <UI.Input label={{ name: $T("widget.info.sn") }} value={info.DevSN} readonly help={{ copyButton: true }} />
+        </div>
         <div class="grid grid-cols-1 gap-2 sm:grid-cols-3">
-          <UI.Input label={{ name: $T("widget.info.id") }} value={info.DevID} readonly />
-          <UI.Input label={{ name: $T("widget.info.fw") }} value={info.DevFW} readonly />
-          <UI.Input label={{ name: $T("widget.info.runs") }} value={info.RunCnt} readonly />
+          <div use:hint={{ text: $T("widget.info.hint.id"), enabled: $hints }}>
+            <UI.Input label={{ name: $T("widget.info.id") }} value={info.DevID} readonly />
+          </div>
+          <div use:hint={{ text: $T("widget.info.hint.fw"), enabled: $hints }}>
+            <UI.Input label={{ name: $T("widget.info.fw") }} value={info.DevFW} readonly />
+          </div>
+          <div use:hint={{ text: $T("widget.info.hint.runs"), enabled: $hints }}>
+            <UI.Input label={{ name: $T("widget.info.runs") }} value={info.RunCnt} readonly />
+          </div>
         </div>
         <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
-          <UI.Input label={{ name: $T("widget.info.sta_ip") }} value={info.StaIP} readonly />
-          <UI.Input label={{ name: $T("widget.info.ap_ip") }} value={info.ApIP} readonly />
+          <div use:hint={{ text: $T("widget.info.hint.sta_ip"), enabled: $hints }}>
+            <UI.Input label={{ name: $T("widget.info.sta_ip") }} value={info.StaIP} readonly />
+          </div>
+          <div use:hint={{ text: $T("widget.info.hint.ap_ip"), enabled: $hints }}>
+            <UI.Input label={{ name: $T("widget.info.ap_ip") }} value={info.ApIP} readonly />
+          </div>
         </div>
       </div>
 
@@ -125,10 +143,18 @@
       <div class="flex flex-col gap-3 rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-3">
         <span class="text-[12px] font-semibold text-(--muted-color)">{$T("widget.info.settings")}</span>
         <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
-          <UI.Input label={{ name: $T("widget.info.name") }} bind:value={info.DevName} maxlength={26} />
-          <UI.Input label={{ name: $T("widget.info.host") }} bind:value={info.HostName} maxlength={32} />
-          <UI.Input label={{ name: $T("widget.info.web_user") }} bind:value={info.WebUser} maxlength={16} />
-          <UI.Input type="password" label={{ name: $T("widget.info.web_psw") }} bind:value={info.WebPsw} maxlength={16} help={{ autocomplete: "off" }} />
+          <div use:hint={{ text: $T("widget.info.hint.name"), enabled: $hints }}>
+            <UI.Input label={{ name: $T("widget.info.name") }} bind:value={info.DevName} maxlength={26} />
+          </div>
+          <div use:hint={{ text: $T("widget.info.hint.host"), enabled: $hints }}>
+            <UI.Input label={{ name: $T("widget.info.host") }} bind:value={info.HostName} maxlength={32} />
+          </div>
+          <div use:hint={{ text: $T("widget.info.hint.web_user"), enabled: $hints }}>
+            <UI.Input label={{ name: $T("widget.info.web_user") }} bind:value={info.WebUser} maxlength={16} />
+          </div>
+          <div use:hint={{ text: $T("widget.info.hint.web_psw"), enabled: $hints }}>
+            <UI.Input type="password" label={{ name: $T("widget.info.web_psw") }} bind:value={info.WebPsw} maxlength={16} help={{ autocomplete: "off" }} />
+          </div>
         </div>
       </div>
 

@@ -12,6 +12,7 @@
   import StorageIcon from "./StorageIcon.svelte"
   import RefreshIcon from "./RefreshIcon.svelte"
   import WidgetHeader from "../WidgetHeader.svelte"
+  import { hint, hintsSetting } from "../hints"
   import { widgetAccentStyle } from "../widgetAccent"
   import { readPersistedCollapsed, writePersistedCollapsed } from "../widgetCollapse"
 
@@ -28,6 +29,9 @@
     onDelete,
     onUpload,
   }: IWidgetFileSystemProps = $props()
+
+  /* Подсказки — кнопка «?» в шапке, выбор общий для всех WidgetFileSystem */
+  const hints = hintsSetting("WidgetFileSystem")
 
   let accentStyle = $derived(widgetAccentStyle(componentClass ?? ""))
 
@@ -114,7 +118,7 @@
   style={accentStyle}
 >
   <!-- Заголовок -->
-  <WidgetHeader icon={StorageIcon} label={label?.name || $T("widget.fs.title")} bind:collapsed>
+  <WidgetHeader icon={StorageIcon} label={label?.name || $T("widget.fs.title")} bind:collapsed {hints}>
     {#snippet right()}
       <UI.Button
         wrapperClass="w-auto"
@@ -129,7 +133,10 @@
   {#if !collapsed}
     <div class="flex flex-col gap-4" transition:slide={{ duration: 150 }}>
       <!-- Занятость памяти -->
-      <div class="flex flex-col gap-2 rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-3">
+      <div
+        class="flex flex-col gap-2 rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-3"
+        use:hint={{ text: $T("widget.fs.hint.usage"), enabled: $hints }}
+      >
         <div class="flex items-baseline justify-between gap-2 text-[13px]">
           <span class="font-semibold">{$T("widget.fs.used", { used: formatBytes(used), total: formatBytes(total) })}</span>
           <span class="font-semibold tabular-nums" style="color: {percentColor}">{usedPercent}%</span>
@@ -144,7 +151,7 @@
       </div>
 
       <!-- Файлы -->
-      <div class="flex max-h-72 min-h-0 flex-col">
+      <div class="flex max-h-72 min-h-0 flex-col" use:hint={{ text: $T("widget.fs.hint.files"), enabled: $hints }}>
         {#if rows.length}
           <UI.Table {header} body={rows} outline />
         {:else}
@@ -157,7 +164,9 @@
       <!-- Закачка -->
       {#if onUpload}
         <div class="flex flex-col gap-2 rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-3">
-          <UI.FileAttach label={{ name: $T("widget.fs.upload") }} {accept} disabled={uploading || !!upload} onChange={handleFile} />
+          <div use:hint={{ text: $T("widget.fs.hint.upload"), enabled: $hints }}>
+            <UI.FileAttach label={{ name: $T("widget.fs.upload") }} {accept} disabled={uploading || !!upload} onChange={handleFile} />
+          </div>
           {#if uploading || upload}
             <div class="flex items-center gap-2 text-[12px]" transition:slide={{ duration: 100 }}>
               {#if upload?.Name}

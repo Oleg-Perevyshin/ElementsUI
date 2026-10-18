@@ -71,7 +71,7 @@
   const stackInfo: IWidgetStackInfo = {
     Heap: [
       { Name: "Internal", Total: 327680, Free: 118000, MinFree: 92000 },
-      { Name: "Default", Total: 4521984, Free: 4100000, MinFree: 4040000 },
+      { Name: "PSRAM", Total: 4194304, Free: 3980000, MinFree: 3920000 },
     ],
     Tasks: [
       { Name: "api_task", FreeMin: 640, Prio: 5, Core: 1, State: 2 },
