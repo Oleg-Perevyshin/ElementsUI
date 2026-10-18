@@ -332,6 +332,8 @@ export interface ISelectProps<T = unknown> {
   label?: { name?: string; class?: string }
   type?: "select" | "buttons" | "input"
   multiSelect?: boolean
+  /* Для type="buttons": группа по ширине содержимого — все кнопки одинаковой ширины по самой длинной подписи, текст без переноса и обрезки */
+  fitContent?: boolean
   listHeight?: string
   value?: IOption<T> | IOption<T>[] | null
   options?: IOption<T>[]

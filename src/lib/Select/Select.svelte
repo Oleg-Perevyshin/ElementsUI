@@ -55,6 +55,7 @@
     disabled = false,
     label = { name: "", class: "" },
     multiSelect = false,
+    fitContent = false,
     listHeight = "16rem",
     type = "select",
     value = $bindable(),
@@ -206,7 +207,9 @@
       <!-- Сплошная группа: общий контур, разделители внутри, без зазоров и теней -->
       <div
         id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
-        class="flex w-full rounded-[10px] border border-(--border-color) {disabled ? 'opacity-45' : ''}"
+        class="{fitContent ? 'grid w-max auto-cols-fr grid-flow-col' : 'flex w-full'} rounded-[10px] border border-(--border-color) {disabled
+          ? 'opacity-45'
+          : ''}"
         role="group"
       >
         {#each options as option, index (option.id)}
@@ -221,7 +224,7 @@
                для обычного сегмент-контрола без своего цвета (Access, Header и т.п.) поведение
                прежнее — акцентная заливка только у выбранного пункта. -->
           <!-- Обёртка — позиционирующий предок подсказки; overflow-hidden у группы убран, иначе подсказка обрезается -->
-          <div class="relative flex min-w-0 flex-1">
+          <div class="relative flex {fitContent ? '' : 'min-w-0 flex-1'}">
             <button
               id={option.id}
               class="{twMerge(
@@ -237,7 +240,8 @@
                      ? 'text-(--on-accent)'
                      : 'text-(--font-color) hover:bg-(--container-color)'
                }
-               ${option.disabled || disabled ? 'cursor-not-allowed text-(--faint-color)' : 'cursor-pointer'}`,
+               ${option.disabled || disabled ? 'cursor-not-allowed text-(--faint-color)' : 'cursor-pointer'}
+               ${fitContent ? 'px-3 whitespace-nowrap' : ''}`,
                 option.class,
               )} {hasOwnColor ? 'bg-(--bg-color)' : selected ? 'bg-(--bg-color,var(--accent-color))' : 'bg-(--back-color)'}"
               onclick={(e) => selectOption(option, e)}
