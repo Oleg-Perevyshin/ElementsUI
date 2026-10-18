@@ -1,10 +1,8 @@
 /* $lib/locales/localize.ts */
 /* Многоязычные тексты, введённые в конструкторе: строка (один язык) или объект { ru, en, zh }; ru — основной и запасной */
-import type { LanguageCode } from "./translations"
+import { LANGUAGE_CODES, type LanguageCode } from "./languages"
 
 export type LocalizedText = string | Partial<Record<LanguageCode, string>>
-
-export const LANGUAGE_CODES: LanguageCode[] = ["ru", "en", "zh"]
 
 /* Поля свойств, которые считаются текстом для пользователя — их показывает и правит окно «Тексты и переводы» (TextsEditor) */
 const TEXT_KEYS = new Set([

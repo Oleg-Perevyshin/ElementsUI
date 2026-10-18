@@ -1,8 +1,8 @@
 /* $lib/locales/translations.ts */
-/* Кортеж [ru, en, zh] на ключ — TypeScript не даст добавить строку без всех трёх языков, порядок жёстко привязан к LOCALES (i18n.ts) */
-export type LanguageCode = "ru" | "en" | "zh"
+/* Словарь библиотеки: переводы на все языки в порядке LANGUAGES (languages.ts) — TypeScript не даст пропустить язык */
+import type { Translations } from "./languages"
 
-const translations: Record<string, [string, string, string]> = {
+const translations: Translations = {
   "common.select_tag": ["Сделайте выбор", "Make a choice", "请选择"],
   "common.table.clear": ["Очистить таблицу", "Clear table", "清空表格"],
   "debug.baud_rate_data": ["Данные", "Data", "数据"],

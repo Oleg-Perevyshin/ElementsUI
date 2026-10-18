@@ -53,7 +53,7 @@ export { default as WidgetMap } from "./WidgetMap/WidgetMap.svelte"
 export { default as WidgetMapProps } from "./WidgetMap/WidgetMapProps.svelte"
 
 export * from "./locales/i18n"
-export * from "./locales/translations"
+export * from "./locales/languages"
 export * from "./locales/localize"
 export { widgetAccentStyle } from "./widgetAccent"
 export * from "./ModalStackStore"

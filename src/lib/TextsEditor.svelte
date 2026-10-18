@@ -3,8 +3,8 @@
      поэтому окно одно на все компоненты; окна свойств сами тексты не показывают и не правят. -->
 <script lang="ts">
   import { T } from "$lib/locales/i18n"
-  import { LANGUAGE_CODES, collectTexts, packLocalized, setAtPath, type TextPath } from "$lib/locales/localize"
-  import type { LanguageCode } from "$lib/locales/translations"
+  import { collectTexts, packLocalized, setAtPath, type TextPath } from "$lib/locales/localize"
+  import { LANGUAGE_CODES, type LanguageCode } from "$lib/locales/languages"
   import Button from "./Button/Button.svelte"
   import Input from "./Input/Input.svelte"
   import Modal from "./Modal.svelte"

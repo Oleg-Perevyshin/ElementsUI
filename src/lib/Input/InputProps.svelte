@@ -3,7 +3,7 @@
   import { getContext } from "svelte"
   import { T } from "$lib/locales/i18n"
   import translations from "$lib/locales/translations"
-  import { LANGUAGE_CODES } from "$lib/locales/localize"
+  import { LANGUAGE_CODES } from "$lib/locales/languages"
   import type { IInputProps, UIComponent, IOption, IUIComponentHandler } from "../types"
   import * as UI from "$lib"
   import { optionsStore, findColorOption } from "../options"
