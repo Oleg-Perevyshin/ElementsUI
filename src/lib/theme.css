@@ -342,12 +342,12 @@
    Градиент на body убран: фон плоский, глубину даёт волосяная линия.
    ════════════════════════════════════════════════════════════════════ */
 .light {
-  --bg-body: #f5f6f8;
+  --bg-body: #e9ecf1;
   --back-color: #ffffff;
-  --container-color: #f0f2f5;
+  --container-color: #f2f4f7;
   --field-color: #ffffff;
-  --border-color: #d5d9e0;
-  --hairline-color: rgb(17 24 39 / 0.09);
+  --border-color: #cfd5de;
+  --hairline-color: rgb(17 24 39 / 0.11);
 
   --font-color: #10141a;
   --muted-color: #545c6b;
@@ -361,7 +361,7 @@
   --shadow-color: #34343a;
   --border-shadow-color: 0 1px 2px rgb(16 24 40 / 0.05);
   --focus-shadow-color: 0 0 0 3px rgb(65 117 200 / 0.18);
-  --elevation-1: 0 1px 2px rgb(16 24 40 / 0.05);
+  --elevation-1: 0 1px 2px rgb(16 24 40 / 0.06), 0 2px 6px rgb(16 24 40 / 0.04);
   --elevation-2: 0 4px 12px rgb(16 24 40 / 0.08);
   --elevation-3: 0 12px 32px rgb(16 24 40 / 0.12);
   --scrollbar-color: #c4c9d2;
@@ -391,11 +391,11 @@
 }
 
 .dark {
-  --bg-body: #0a0c10;
-  --back-color: #13161d;
-  --container-color: #1a1e27;
-  --field-color: #1a1e27;
-  --border-color: #333a47;
+  --bg-body: #0b0d12;
+  --back-color: #171b23;
+  --container-color: #20252f;
+  --field-color: #12151b;
+  --border-color: #384050;
   --hairline-color: rgb(255 255 255 / 0.1);
 
   --font-color: #e9ebf0;
@@ -417,7 +417,7 @@
 
   /* Тёмная тема — тёмные, приглушённые тона (S=50%, L — самая тёмная точка, где контраст
      с белым текстом ещё ≥ 4.5:1 и с --bg-body ещё ≥ 3.2:1), а не светлее светлой темы */
-  --gray-color: #242a35;
+  --gray-color: #2b313d;
   --red-color: #a84038;
   --orange-color: #825a2b;
   --yellow-color: #776128;
@@ -436,6 +436,23 @@
   --blue-soft: rgb(56 99 168 / 0.18);
   --purple-soft: rgb(117 75 195 / 0.18);
   --pink-soft: rgb(168 56 110 / 0.18);
+}
+
+/* ─── Поверхности: фон страницы (--bg-body) → панель → вложенный блок → поле ───────────────
+   Один рецепт для всех приложений — каждая ступень заметна в обеих темах; панели не делаются полупрозрачными
+   (bg-(--back-color)/50 сливается с фоном), отступы и скругление задаёт сама страница классами Tailwind */
+@layer components {
+  /* Панель на фоне страницы: карточка, шапка раздела, область холста */
+  .ui-panel {
+    background-color: var(--back-color);
+    border: 1px solid var(--hairline-color);
+    box-shadow: var(--elevation-1);
+  }
+  /* Блок внутри панели: группа полей, строка списка, подложка сообщения */
+  .ui-inset {
+    background-color: var(--container-color);
+    border: 1px solid var(--hairline-color);
+  }
 }
 
 /* ─── Утилиты заливки (без изменений в именах) ───────────────────────── */
