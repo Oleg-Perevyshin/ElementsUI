@@ -2,6 +2,7 @@
 <script lang="ts">
   import TextsEditor from "../TextsEditor.svelte"
   import { localizeText } from "../locales/localize"
+  import { DEFAULT_LANGUAGE } from "../locales/languages"
   import { T } from "../locales/i18n"
   import { type UIComponent, type IButtonProps, type IOption, updateProperty, type IUIComponentHandler } from "../types"
   import * as UI from "$lib"
@@ -42,11 +43,11 @@
   )
   const updateIconProperty = (propertyName: string, value: string) => {
     updateProperty(propertyName, value, component, onPropertyChange)
-    if (component.properties.content.icon && !localizeText(component.properties.content.name, "ru").trim())
+    if (component.properties.content.icon && !localizeText(component.properties.content.name, DEFAULT_LANGUAGE).trim())
       updateProperty("componentClass", twMerge((component.properties as UI.IButtonProps).componentClass, "w-fit p-2"), component, onPropertyChange)
     else if (
-      (component.properties.content.icon && localizeText(component.properties.content.name, "ru").trim()) ||
-      (!component.properties.content.icon && !localizeText(component.properties.content.name, "ru").trim())
+      (component.properties.content.icon && localizeText(component.properties.content.name, DEFAULT_LANGUAGE).trim()) ||
+      (!component.properties.content.icon && !localizeText(component.properties.content.name, DEFAULT_LANGUAGE).trim())
     )
       updateProperty("componentClass", twMerge((component.properties as UI.IButtonProps).componentClass, "w-full px-1 py-1"), component, onPropertyChange)
   }
@@ -106,7 +107,7 @@
 {/snippet}
 
 {#snippet ButtonHeight()}
-  {#if !(!localizeText(component.properties.content.name, "ru").trim() && component.properties.content.icon)}
+  {#if !(!localizeText(component.properties.content.name, DEFAULT_LANGUAGE).trim() && component.properties.content.icon)}
     <UI.Select
       label={{ name: $T("constructor.props.height") }}
       type="buttons"

@@ -17,11 +17,11 @@
   }: { component: Snippet; componentProps: Snippet; examples?: Snippet; readmeHtml: string; codeText: string; forConstructor: boolean } = $props()
 
   let isCopied = $state(false)
-  let snippetOptions = [
-    { id: crypto.randomUUID(), value: "overview", name: $T("library.overview") },
-    { id: crypto.randomUUID(), value: "examples", name: $T("library.examples") },
-    { id: crypto.randomUUID(), value: "info", name: $T("library.info") },
-  ]
+  let snippetOptions = $derived([
+    { id: "overview", value: "overview", name: $T("library.overview") },
+    { id: "examples", value: "examples", name: $T("library.examples") },
+    { id: "info", value: "info", name: $T("library.info") },
+  ])
 
   let mainSnippet: string | undefined = $state("overview")
 

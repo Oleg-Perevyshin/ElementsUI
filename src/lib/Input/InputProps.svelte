@@ -3,7 +3,7 @@
   import { getContext } from "svelte"
   import { T } from "$lib/locales/i18n"
   import translations from "$lib/locales/translations"
-  import { LANGUAGE_CODES } from "$lib/locales/languages"
+  import { DEFAULT_LANGUAGE, LANGUAGE_CODES } from "$lib/locales/languages"
   import type { IInputProps, UIComponent, IOption, IUIComponentHandler } from "../types"
   import * as UI from "$lib"
   import { optionsStore, findColorOption } from "../options"
@@ -39,7 +39,8 @@
   /* Подсказка битового режима «Максимальное число: N» сразу на всех языках — иначе записалась бы на языке интерфейса конструктора */
   const maxNumInfo = (range: { start: number; end: number }) => {
     const max = Math.pow(2, range.end - range.start + 1) - 1
-    return Object.fromEntries(LANGUAGE_CODES.map((lang, i) => [lang, `${translations["constructor.props.maxnum"][i]}: ${max}`]))
+    const row = translations["constructor.props.maxnum"]
+    return Object.fromEntries(LANGUAGE_CODES.map((lang) => [lang, `${row[lang] || row[DEFAULT_LANGUAGE]}: ${max}`]))
   }
 
   const updateProperty = (path: string, value: string | object | boolean | number | RegExp) => {

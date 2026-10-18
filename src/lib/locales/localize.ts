@@ -1,6 +1,10 @@
 /* $lib/locales/localize.ts */
-/* Многоязычные тексты, введённые в конструкторе: строка (один язык) или объект { ru, en, zh }; ru — основной и запасной */
-import { LANGUAGE_CODES, type LanguageCode } from "./languages"
+/* Многоязычные тексты, введённые в конструкторе: строка (язык по умолчанию) или объект по кодам языков { ru, en, zh, ... };
+   язык по умолчанию (DEFAULT_LANGUAGE) — основной и запасной; набор и порядок языков — LANGUAGES (languages.ts) */
+import { DEFAULT_LANGUAGE, LANGUAGE_CODES, type LanguageCode } from "./languages"
+
+/* Ключ многоязычного текста: код языка из LANGUAGES или похожий на код (ru, en, pt-BR) — данные с языком, убранным из списка, не ломаются */
+const LANGUAGE_KEY = /^[a-z]{2,3}(-[A-Z]{2})?$/
 
 export type LocalizedText = string | Partial<Record<LanguageCode, string>>
 
@@ -28,13 +32,13 @@ const isPlainObject = (value: unknown): value is Record<string, unknown> =>
 export const isLocalizedText = (value: unknown): value is Partial<Record<LanguageCode, string>> => {
   if (!isPlainObject(value)) return false
   const keys = Object.keys(value)
-  return keys.length > 0 && keys.every((key) => LANGUAGE_CODES.includes(key as LanguageCode) && typeof value[key] === "string")
+  return keys.length > 0 && keys.every((key) => LANGUAGE_KEY.test(key) && typeof value[key] === "string")
 }
 
-/* Текст на нужном языке: сам язык → ru → первый непустой */
+/* Текст на нужном языке: сам язык → язык по умолчанию → первый непустой */
 export const localizeText = (value: LocalizedText | undefined, lang: string): string => {
   if (value === undefined || typeof value === "string") return value ?? ""
-  return value[lang as LanguageCode] || value.ru || Object.values(value).find(Boolean) || ""
+  return value[lang as LanguageCode] || value[DEFAULT_LANGUAGE] || Object.values(value).find(Boolean) || ""
 }
 
 /* Копия структуры, где каждый многоязычный текст заменён строкой на языке lang; функции, компоненты и бинарные данные — как есть */
@@ -67,10 +71,10 @@ export function setAtPath<T>(target: T, path: TextPath, value: unknown): T {
   return copy as T
 }
 
-/* Текст из трёх полей окна переводов: пусто — "", только ru — строка, иначе объект из непустых языков */
+/* Текст из полей окна переводов (по полю на язык): пусто — "", только язык по умолчанию — строка, иначе объект из непустых языков */
 export const packLocalized = (values: Partial<Record<LanguageCode, string>>): LocalizedText => {
   const filled = Object.fromEntries(LANGUAGE_CODES.filter((lang) => values[lang]?.trim()).map((lang) => [lang, values[lang]!.trim()]))
   const langs = Object.keys(filled)
   if (!langs.length) return ""
-  return langs.length === 1 && langs[0] === "ru" ? filled.ru : filled
+  return langs.length === 1 && langs[0] === DEFAULT_LANGUAGE ? filled[DEFAULT_LANGUAGE] : filled
 }

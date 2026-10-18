@@ -9,7 +9,7 @@
   import { page } from "$app/state"
   import { fade } from "svelte/transition"
   import { get } from "svelte/store"
-  import { Language, LOCALES, setLanguage } from "../lib/locales/i18n"
+  import { Language, LOCALES, restoreLanguage, setLanguage } from "../lib/locales/i18n"
 
   let { children } = $props()
   let currentTheme: boolean = $state(true)
@@ -89,8 +89,9 @@
     document.body.classList.toggle("light", savedTheme === "light")
     currentTheme = savedTheme === "light"
 
-    /* Language уже инициализирован из localStorage/языка браузера при загрузке модуля i18n.ts — здесь только фиксируем выбор в localStorage, если он ещё не сохранён */
-    if (!localStorage.getItem("AppLanguage")) setLanguage(currentLanguage.value)
+    /* Сохранённый язык — после гидратации (пререндер всегда на языке по умолчанию) */
+    restoreLanguage()
+    currentLanguage = LOCALES.find((lang) => lang.value === get(Language)) ?? LOCALES[0]
 
     document.addEventListener("click", handleClickOutside)
     return () => document.removeEventListener("click", handleClickOutside)
@@ -108,7 +109,7 @@
         <UI.Button
           wrapperClass="lang-button w-9"
           componentClass="p-1"
-          content={{ icon: currentLanguage.component }}
+          content={{ icon: currentLanguage.flag }}
           onClick={() => (showLanguageModal = !showLanguageModal)}
         />
         {#if showLanguageModal}
@@ -118,7 +119,7 @@
           >
             {#each LOCALES as lang (lang.value)}
               <UI.Button
-                content={{ name: lang.name, icon: lang.component }}
+                content={{ name: lang.name, icon: lang.flag }}
                 componentClass="h-12 border-0 text-center no-underline !shadow-none hover:translate-x-1 hover:shadow-none"
                 onClick={() => switchLanguage(lang.value)}
               />

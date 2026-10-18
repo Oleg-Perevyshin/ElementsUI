@@ -7,11 +7,11 @@
   import readmeRaw from "../../README.md?raw"
   import regexpRaw from "./RegExp.md?raw"
 
-  const tabs: IOption<string>[] = [
+  let tabs: IOption<string>[] = $derived([
     { id: "overview", value: "overview", name: $T("library.overview") },
     { id: "theme", value: "theme", name: $T("library.theme") },
     { id: "regexp", value: "regexp", name: $T("library.regexp") },
-  ]
+  ])
   let tab = $state("overview")
 
   let readmeHtml = $state("")

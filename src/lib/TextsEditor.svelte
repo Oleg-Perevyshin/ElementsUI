@@ -4,7 +4,7 @@
 <script lang="ts">
   import { T } from "$lib/locales/i18n"
   import { collectTexts, packLocalized, setAtPath, type TextPath } from "$lib/locales/localize"
-  import { LANGUAGE_CODES, type LanguageCode } from "$lib/locales/languages"
+  import { DEFAULT_LANGUAGE, LANGUAGE_CODES, type LanguageCode } from "$lib/locales/languages"
   import Button from "./Button/Button.svelte"
   import Input from "./Input/Input.svelte"
   import Modal from "./Modal.svelte"
@@ -43,7 +43,7 @@
     const skip = NOT_TEXTS[component.type] ?? []
     rows = collectTexts(component.properties)
       .filter(({ path }) => !skip.includes(String(path[0])))
-      .map(({ path, text }) => ({ path, values: typeof text === "string" ? { ru: text } : { ...text } }))
+      .map(({ path, text }) => ({ path, values: typeof text === "string" ? { [DEFAULT_LANGUAGE]: text } : { ...text } }))
     isOpen = true
   }
 
@@ -69,7 +69,7 @@
           {#each LANGUAGE_CODES as lang (lang)}
             <Input
               value={row.values[lang] ?? ""}
-              placeholder={lang === "ru" ? "" : row.values.ru}
+              placeholder={lang === DEFAULT_LANGUAGE ? "" : row.values[DEFAULT_LANGUAGE]}
               onUpdate={(value) => (rows[index].values[lang] = String(value))}
             />
           {/each}
