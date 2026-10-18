@@ -364,9 +364,15 @@ Telemetry_SendObject(g_telemetry_stream, g_mcfg.DevSN, "Data", mav, sizeof(mav) 
     <div class="grid grid-cols-2 gap-3">
       <UI.Input label={{ name: "Имя устройства" }} value="Объект 1" />
       <UI.Input label={{ name: "Частота, Гц" }} type="number" value={20} number={{ minNum: 1, maxNum: 100, step: 1 }} />
-      <UI.Input label={{ name: "Неверный ввод" }} value="12.34.567" isValid={false} />
+      <UI.Input label={{ name: "Код устройства — неверный формат" }} value="12.34.567" help={{ regExp: /^\d{2}\.\d{2}\.\d{3}-\d{2}$/ }} />
       <UI.Input label={{ name: "Только чтение" }} value="20000001A1B2C3" readonly help={{ copyButton: true }} />
     </div>
+    <UI.Input
+      label={{ name: "Многострочный ввод" }}
+      type="text-area"
+      textareaRows={4}
+      value={"Первая строка заметки\nВторая строка — поле растёт по высоте на заданное число строк"}
+    />
   {/snippet}
   {@render section("Input", Inputs)}
 
