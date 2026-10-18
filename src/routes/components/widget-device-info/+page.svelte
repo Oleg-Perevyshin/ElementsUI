@@ -47,6 +47,7 @@ ${formatObjectToString(deviceInfoComponent.properties as IWidgetDeviceInfoProps)
 value={deviceInfo}
 onSave={handleSave}
 onRestart={handleRestart}
+onFactoryReset={handleFactoryReset}
 />`)
 </script>
 
@@ -58,6 +59,7 @@ onRestart={handleRestart}
         value={mockValue}
         onSave={(info) => console.log("SET CFG (mock):", info)}
         onRestart={() => console.log("RESTART (mock)")}
+        onFactoryReset={() => console.log("FACTORY RESET (mock)")}
       />
     </div>
   {/snippet}
@@ -74,6 +76,7 @@ onRestart={handleRestart}
         componentClass="bg-green"
         onSave={(info) => console.log("SET CFG (mock):", info)}
         onRestart={() => console.log("RESTART (mock)")}
+        onFactoryReset={() => console.log("FACTORY RESET (mock)")}
       />
     </div>
   {/snippet}

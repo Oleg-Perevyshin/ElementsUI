@@ -593,10 +593,14 @@ export interface IWidgetDeviceInfoProps {
   keys?: Partial<Record<keyof IWidgetDeviceInfoConfig, string>>
   /* Команда перезагрузки — по умолчанию Header: SET, Argument: Restart */
   restartCommand?: { header?: string; argument?: string }
+  /* Команда сброса всех настроек к заводским (очистка NVS и перезагрузка) — по умолчанию Header: SET, Argument: RstNVS */
+  resetCommand?: { header?: string; argument?: string }
   collapsed?: boolean
   persistKey?: string
   onSave?: (info: IWidgetDeviceInfoConfig) => void
   onRestart?: () => void
+  /* Без колбэка кнопка «Сброс настроек» не показывается */
+  onFactoryReset?: () => void
 }
 
 /* Состояние файловой системы — объект CFG.FS в том виде, в каком его отдаёт прошивка (FS_WriteState, ProdFactory-ESP) */

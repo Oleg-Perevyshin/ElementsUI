@@ -29,18 +29,18 @@
   {/each}
 {/snippet}
 
-{#snippet WidgetRestartCommand()}
+{#snippet WidgetCommand(path: "restartCommand" | "resetCommand", defaultArgument: string)}
   <UI.Select
     label={{ name: $T("widget.common.packet_header") }}
     type="buttons"
     options={$optionsStore.HEADER_OPTIONS}
-    value={$optionsStore.HEADER_OPTIONS.find((o) => o.value === (component.properties.restartCommand?.header || "SET"))}
-    onUpdate={(option) => updateProperty("restartCommand.header", (option as IOption<string>).value as string, component, onPropertyChange)}
+    value={$optionsStore.HEADER_OPTIONS.find((o) => o.value === (component.properties[path]?.header || "SET"))}
+    onUpdate={(option) => updateProperty(`${path}.header`, (option as IOption<string>).value as string, component, onPropertyChange)}
   />
   <UI.Input
     label={{ name: $T("widget.common.argument") }}
-    value={component.properties.restartCommand?.argument ?? "Restart"}
-    onUpdate={(value) => updateProperty("restartCommand.argument", value as string, component, onPropertyChange)}
+    value={component.properties[path]?.argument ?? defaultArgument}
+    onUpdate={(value) => updateProperty(`${path}.argument`, value as string, component, onPropertyChange)}
   />
 {/snippet}
 
@@ -61,6 +61,9 @@
     {@render WidgetKeys()}
   </PropsGroup>
   <PropsGroup label={$T("widget.info.restart_command")}>
-    {@render WidgetRestartCommand()}
+    {@render WidgetCommand("restartCommand", "Restart")}
+  </PropsGroup>
+  <PropsGroup label={$T("widget.info.reset_command")}>
+    {@render WidgetCommand("resetCommand", "RstNVS")}
   </PropsGroup>
 </div>

@@ -2,11 +2,12 @@
      Фиксированный набор полей (см. IWidgetDeviceInfoConfig в types.ts), соответствует реальной
      прошивочной конвенции (main_config.c, группа "CFG", ProdFactory-ESP):
      DevSN/DevID/DevFW/RunCnt — только чтение; DevName/HostName/WebUser/WebPsw — сохраняются
-     одним пакетом. Ничего не знает про DeviceStore/WebSocket — value/onSave/onRestart. -->
+     одним пакетом; «Сброс настроек» — с подтверждением, все настройки к заводским. Ничего не знает про DeviceStore/WebSocket —
+     value/onSave/onRestart/onFactoryReset. -->
 <script lang="ts">
   import { T } from "$lib/locales/i18n"
   import { untrack } from "svelte"
-  import { slide } from "svelte/transition"
+  import { fade, scale, slide } from "svelte/transition"
   import { twMerge } from "tailwind-merge"
   import * as UI from "$lib"
   import type { IWidgetDeviceInfoConfig, IWidgetDeviceInfoProps } from "../types"
@@ -25,7 +26,14 @@
     persistKey,
     onSave = () => {},
     onRestart = () => {},
+    onFactoryReset,
   }: IWidgetDeviceInfoProps = $props()
+
+  let confirmReset = $state(false)
+  const factoryReset = () => {
+    confirmReset = false
+    onFactoryReset?.()
+  }
 
   let accentStyle = $derived(widgetAccentStyle(componentClass ?? ""))
 
@@ -80,7 +88,10 @@
   }
 </script>
 
-<div class={twMerge("flex w-full flex-col gap-4 rounded-2xl border border-(--hairline-color) bg-(--container-color) p-4", wrapperClass)} style={accentStyle}>
+<div
+  class={twMerge("relative flex w-full flex-col gap-4 rounded-2xl border border-(--hairline-color) bg-(--container-color) p-4", wrapperClass)}
+  style={accentStyle}
+>
   <!-- Заголовок -->
   <WidgetHeader icon={CpuIcon} label={label?.name || $T("widget.info.title")} bind:collapsed>
     {#snippet right()}
@@ -127,6 +138,41 @@
           <span class="text-[12px] text-(--muted-color)" transition:slide={{ duration: 100 }}>{$T("widget.common.unsaved")}</span>
         {/if}
         <UI.Button wrapperClass="w-40" componentClass="bg-accent" content={{ name: $T("widget.common.save") }} disabled={!isDirty} onClick={save} />
+      </div>
+
+      <!-- Сброс всех настроек к заводским — отдельно от сохранения, только с подтверждением -->
+      {#if onFactoryReset}
+        <div class="flex items-center justify-between gap-3 border-t border-(--hairline-color) pt-3">
+          <span class="text-[12px] text-(--muted-color)">{$T("widget.info.factory_reset_hint")}</span>
+          <UI.Button
+            wrapperClass="w-auto shrink-0"
+            componentClass="bg-red px-3"
+            content={{ name: $T("widget.info.factory_reset") }}
+            onClick={() => (confirmReset = true)}
+          />
+        </div>
+      {/if}
+    </div>
+  {/if}
+
+  {#if confirmReset}
+    <!-- Подтверждение локально к виджету, как удаление файла у WidgetFileSystem -->
+    <div class="absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-black/40 backdrop-blur-[2px]" transition:fade={{ duration: 150 }}>
+      <div
+        class="flex w-full max-w-96 flex-col gap-3 rounded-[16px] border border-(--hairline-color) bg-(--back-color) p-4 shadow-(--elevation-3)"
+        transition:scale={{ duration: 150, start: 0.96 }}
+      >
+        <h4 class="text-[15px] font-semibold">{$T("widget.info.factory_reset_title")}</h4>
+        <p class="text-[13px] text-(--muted-color)">{$T("widget.info.factory_reset_text")}</p>
+        <div class="flex gap-2">
+          <UI.Button
+            wrapperClass="flex-1"
+            componentClass="bg-transparent"
+            content={{ name: $T("widget.common.cancel") }}
+            onClick={() => (confirmReset = false)}
+          />
+          <UI.Button wrapperClass="flex-1" componentClass="bg-red" content={{ name: $T("widget.info.factory_reset") }} onClick={factoryReset} />
+        </div>
       </div>
     </div>
   {/if}
