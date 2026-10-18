@@ -60,7 +60,8 @@
 {#if type !== "checkbox"}
   <div class={twMerge(`relative flex w-full flex-col items-center justify-center gap-1.5`, wrapperClass)}>
     {#if label.name}
-      <h5 class={twMerge(`w-full text-[12px] font-semibold text-(--muted-color)`, label.class)}>{label.name}</h5>
+      <!-- Подпись по умолчанию по центру — над переключателем, который тоже по центру; выравнивание из label.class важнее -->
+      <h5 class={twMerge(`w-full text-center text-[12px] font-semibold text-(--muted-color)`, label.class)}>{label.name}</h5>
     {/if}
     <div class="flex w-full {type == 'vertical' ? 'flex-wrap' : ''} items-center justify-around gap-4">
       {#each localOptions as option, index}

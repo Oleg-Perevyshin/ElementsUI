@@ -330,7 +330,12 @@ Telemetry_SendObject(g_telemetry_stream, g_mcfg.DevSN, "Data", mav, sizeof(mav) 
   {/snippet}
   {@render section("Select", Select)}
 
-  {#snippet Slider()}<UI.Slider label={{ name: "Яркость" }} value={60} number={{ minNum: 0, maxNum: 100, step: 1 }} />{/snippet}
+  {#snippet Slider()}
+    <div class="grid gap-4 sm:grid-cols-2">
+      <UI.Slider label={{ name: "Яркость" }} value={60} number={{ minNum: 0, maxNum: 100, step: 1 }} />
+      <UI.Slider label={{ name: "Диапазон температуры" }} value={[-12, 35]} number={{ minNum: -50, maxNum: 50, step: 1 }} />
+    </div>
+  {/snippet}
   {@render section("Slider", Slider)}
 
   {#snippet Switch()}
@@ -409,7 +414,7 @@ Telemetry_SendObject(g_telemetry_stream, g_mcfg.DevSN, "Data", mav, sizeof(mav) 
   </section>
 {/snippet}
 
-<div class="flex flex-col gap-4">
+<div class="flex flex-col gap-10">
   <p class="text-sm text-(--muted-color)">
     Интерфейс облака на одной странице — стили из <code>src/lib/theme.css</code>, тот же файл подключает DevCloud. Тема переключается кнопкой в шапке витрины;
     правьте <code>theme.css</code> и смотрите результат здесь.
