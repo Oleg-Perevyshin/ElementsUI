@@ -85,5 +85,6 @@ jobs:
           git config user.name "${{ github.event.head_commit.author.name || github.actor }}"
           git config user.email "${{ github.event.head_commit.author.email || format('{0}@users.noreply.github.com', github.actor) }}"
           git add package.json package-lock.json
-          git commit -m "poe-svelte-ui-lib $VERSION [deploy]"
+          git commit -m "Автообновление poe-svelte-ui-lib до $VERSION — переразвёртывание облака [deploy]" \
+            -m "Коммит создан автоматически при выпуске библиотеки (ElementsUI, .github/workflows/npm_publish.yaml): обновлены только package.json и package-lock.json."
           git push origin HEAD:main
