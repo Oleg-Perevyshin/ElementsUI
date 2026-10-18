@@ -9,20 +9,26 @@ const LEGACY_KEYS: Record<string, string> = { WidgetPFD: "WidgetPFD.tips" }
 
 const settings = new Map<string, Writable<boolean>>()
 
-/* Настройка подсказок виджета: включены по умолчанию, одна на тип виджета */
+/* Настройка подсказок виджета: выключены по умолчанию, одна на тип виджета; в браузер пишется только выбор оператора (нажатие «?»),
+   ключ WidgetHints.<тип> — прежние Hints.<тип> записывались автоматически при первом показе и выбором не являются, удаляются */
 export const hintsSetting = (widget: string): Writable<boolean> => {
   const cached = settings.get(widget)
   if (cached) return cached
-  const storageKey = `Hints.${widget}`
-  let initial = true
+  const storageKey = `WidgetHints.${widget}`
+  let initial = false
   try {
-    const saved = typeof localStorage === "undefined" ? null : (localStorage.getItem(storageKey) ?? localStorage.getItem(LEGACY_KEYS[widget] ?? ""))
-    if (saved !== null) initial = saved !== "0"
+    if (typeof localStorage !== "undefined") {
+      localStorage.removeItem(`Hints.${widget}`)
+      const saved = localStorage.getItem(storageKey) ?? localStorage.getItem(LEGACY_KEYS[widget] ?? "")
+      if (saved !== null) initial = saved === "1"
+    }
   } catch {
-    /* хранилище недоступно — подсказки включены */
+    /* хранилище недоступно — подсказки выключены */
   }
   const store = writable(initial)
+  let first = true
   store.subscribe((on) => {
+    if (first) return void (first = false)
     if (!on) hideHint()
     try {
       if (typeof localStorage !== "undefined") localStorage.setItem(storageKey, on ? "1" : "0")
