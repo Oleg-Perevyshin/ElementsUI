@@ -38,6 +38,12 @@ export type Translations = Record<string, Translation>
 
 export const isLanguageCode = (value: unknown): value is LanguageCode => LANGUAGE_CODES.includes(value as LanguageCode)
 
+/* Код языка из произвольного значения (код, заголовок Accept-Language «en-US,en;q=0.9», язык браузера); неизвестный — язык по умолчанию */
+export const resolveLanguage = (value: string | null | undefined): LanguageCode => {
+  const code = value?.split(/[,;]/)[0]?.trim().split("-")[0]?.toLowerCase()
+  return isLanguageCode(code) ? code : DEFAULT_LANGUAGE
+}
+
 /* Ключи словаря без перевода на какой-либо язык — для проверки полноты словаря при добавлении языка */
 export const findMissingTranslations = (dictionary: Translations): { key: string; languages: LanguageCode[] }[] =>
   Object.entries(dictionary)

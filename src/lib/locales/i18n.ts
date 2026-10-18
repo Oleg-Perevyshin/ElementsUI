@@ -1,6 +1,6 @@
-import { derived, writable, type Readable } from "svelte/store"
+import { derived, get, writable, type Readable } from "svelte/store"
 import translations from "./translations"
-import { DEFAULT_LANGUAGE, LANGUAGES, isLanguageCode, type LanguageCode, type Translations } from "./languages"
+import { DEFAULT_LANGUAGE, LANGUAGES, isLanguageCode, resolveLanguage, type LanguageCode, type Translations } from "./languages"
 
 /* Язык и механизм перевода — общие для библиотеки и приложений: приложение берёт отсюда Language/setLanguage/LOCALES и строит свой $T
    из своего словаря через createTranslator (см. README «Языки»); переключение языка одним setLanguage меняет и компоненты, и приложение */
@@ -10,6 +10,9 @@ import { DEFAULT_LANGUAGE, LANGUAGES, isLanguageCode, type LanguageCode, type Tr
   гидратации); сохранённый выбор применяет restoreLanguage(): в SSR-приложениях — в onMount корневого layout, в SPA — при старте
 */
 export const Language = writable<string>(DEFAULT_LANGUAGE)
+
+/* Текущий язык — для заголовков запросов (Accept-Language) и прочего кода вне компонентов */
+export const getLanguage = (): LanguageCode => resolveLanguage(get(Language))
 
 /* Сохранённый язык → язык браузера; неизвестный код не применяется */
 export function restoreLanguage() {
@@ -50,8 +53,8 @@ export type TranslateParams = Record<string, string | number>
 
 export type Translator = (key: string, params?: TranslateParams) => string
 
-/* Перевод по словарю: текущий язык → язык по умолчанию → сам ключ */
-const translate = (dictionary: Translations, locale: string, key: string, params?: TranslateParams): string => {
+/* Перевод по словарю на заданный язык: язык → язык по умолчанию → сам ключ; без хранилища — для серверного кода (язык запроса) */
+export const translate = (dictionary: Translations, locale: string, key: string, params?: TranslateParams): string => {
   const row = dictionary[key]
   const text = (row && (row[locale as LanguageCode] || row[DEFAULT_LANGUAGE])) || key
   return params ? text.replace(/\{(\w+)\}/g, (match, name) => (name in params ? String(params[name]) : match)) : text
