@@ -2,7 +2,17 @@
      тема — глобальная, переключается кнопкой в шапке витрины. -->
 <script lang="ts">
   import * as UI from "$lib"
-  import type { IOption, IPeriodChartLevel, ITableHeader, IVideoViewerProps, IWidgetMapData, IWidgetPFDData, IWidgetStackInfo } from "$lib/types"
+  import type {
+    IOption,
+    IPeriodChartLevel,
+    IWidgetFileSystemInfo,
+    IWidgetWiFiConfig,
+    ITableHeader,
+    IVideoViewerProps,
+    IWidgetMapData,
+    IWidgetPFDData,
+    IWidgetStackInfo,
+  } from "$lib/types"
   import { ICONS_ARRAY } from "$lib/icons"
   import { onMount, type Snippet } from "svelte"
   import { RenderMarkdown } from "./common"
@@ -107,6 +117,51 @@
     ]
   }
 
+  /* Wi-Fi: клиент к роутеру и точка доступа одновременно */
+  const wifiConfig: IWidgetWiFiConfig = {
+    WiFiMode: 3,
+    StaSSID: "POE-Net",
+    StaPSK: "",
+    StaticIP: 0,
+    StaIP: "192.168.1.42",
+    StaMS: "255.255.255.0",
+    StaGW: "192.168.1.1",
+    ApSSID: "Objekt-1",
+    ApPSK: "",
+    ApIP: "192.168.4.1",
+    ApMS: "255.255.255.0",
+    ApGW: "192.168.4.1",
+  }
+
+  /* Файловая система: имитация устройства — список файлов, удаление и закачка с прогрессом */
+  let fsInfo: IWidgetFileSystemInfo = $state({
+    Total: 1441792,
+    Used: 931626,
+    Free: 510166,
+    List: [
+      { Name: "/storage/cert.pem", Size: 1834 },
+      { Name: "/storage/20.00.000-01_14.bin", Size: 917504 },
+      { Name: "/storage/notes.md", Size: 12288 },
+    ],
+  })
+  const recalcFs = () => {
+    fsInfo.Used = fsInfo.List.reduce((sum, f) => sum + f.Size, 0)
+    fsInfo.Free = fsInfo.Total - fsInfo.Used
+  }
+  const fsDelete = (name: string) => {
+    fsInfo.List = fsInfo.List.filter((f) => f.Name !== name)
+    recalcFs()
+  }
+  const fsUpload = async (file: File) => {
+    for (let p = 0; p < 100; p += 5) {
+      fsInfo.Upload = { Name: file.name, Size: file.size, Progress: p }
+      await new Promise((r) => setTimeout(r, 80))
+    }
+    fsInfo.Upload = undefined
+    fsInfo.List = [...fsInfo.List.filter((f) => f.Name !== `/storage/${file.name}`), { Name: `/storage/${file.name}`, Size: file.size }]
+    recalcFs()
+  }
+
   let isModalOpen = $state(false)
 
   /* Видео: синтетические кадры, как в демо VideoViewer */
@@ -193,7 +248,7 @@ Telemetry_SendObject(g_telemetry_stream, g_mcfg.DevSN, "Data", mav, sizeof(mav) 
   </div>
 
   <!-- Компоненты — в порядке меню слева, каждый тип в своём разделе -->
-  {#snippet WiFi()}<UI.WidgetWiFi label={{ name: "Wi-Fi" }} componentClass="bg-blue" onScan={mockScan} onSave={() => {}} />{/snippet}
+  {#snippet WiFi()}<UI.WidgetWiFi label={{ name: "Wi-Fi" }} componentClass="bg-blue" value={wifiConfig} onScan={mockScan} onSave={() => {}} />{/snippet}
   {@render section("WidgetWiFi", WiFi, false)}
 
   {#snippet DeviceInfo()}
@@ -213,11 +268,19 @@ Telemetry_SendObject(g_telemetry_stream, g_mcfg.DevSN, "Data", mav, sizeof(mav) 
       }}
       onSave={() => {}}
       onRestart={() => {}}
+      onFactoryReset={() => {}}
     />
   {/snippet}
   {@render section("WidgetDeviceInfo", DeviceInfo, false)}
 
-  {#snippet FileSystem()}<UI.WidgetFileSystem value={{ Total: 1441792, Used: 524288, Free: 917504, List: [] }} componentClass="bg-cyan" />{/snippet}
+  {#snippet FileSystem()}<UI.WidgetFileSystem
+      value={fsInfo}
+      componentClass="bg-cyan"
+      accept=".bin, .txt, .md, .pem"
+      onRefresh={() => {}}
+      onDelete={fsDelete}
+      onUpload={fsUpload}
+    />{/snippet}
   {@render section("WidgetFileSystem", FileSystem, false)}
 
   {#snippet StackInfo()}<UI.WidgetStackInfo componentClass="bg-green" value={stackInfo} warnBytes={1024} onRefresh={() => {}} />{/snippet}

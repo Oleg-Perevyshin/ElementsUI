@@ -73,10 +73,10 @@
      устройство и режим на нём меняется. STA+AP не предупреждаем: STA остаётся активным. */
   let showAPWarning = $state(false)
 
-  const IP_MODE_OPTIONS: IOption<number>[] = [
+  let IP_MODE_OPTIONS: IOption<number>[] = $derived([
     { id: "dhcp", name: "DHCP", value: 0 },
-    { id: "static", name: "Static", value: 1 },
-  ]
+    { id: "static", name: $T("widget.wifi.static"), value: 1 },
+  ])
   let selectedIPMode = $derived(IP_MODE_OPTIONS.find((o) => o.value === cfg.StaticIP) ?? IP_MODE_OPTIONS[0])
 
   const IP_REGEXP = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/

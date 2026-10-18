@@ -29,11 +29,11 @@
   const Icon = $derived(icon)
 </script>
 
-<!-- Фиксированная высота 32 px без переноса — свёрнутые виджеты одной высоты при любом содержимом справа; «?» — сразу за заголовком, видна и в узком виджете -->
+<!-- Фиксированная высота 32 px без переноса — свёрнутые виджеты одной высоты при любом содержимом справа; «?» — в правом краю, после содержимого шапки -->
 <div class="flex h-[32px] items-center justify-between gap-3">
   <button
     type="button"
-    class="flex min-w-0 cursor-pointer items-center gap-2 border-none bg-transparent p-0 text-left"
+    class="flex min-w-0 flex-1 cursor-pointer items-center gap-2 border-none bg-transparent p-0 text-left"
     onclick={() => (collapsed = !collapsed)}
     aria-expanded={!collapsed}
   >
@@ -48,6 +48,11 @@
       <ArrowIcon />
     </span>
   </button>
+  {#if right}
+    <div class="flex min-w-0 shrink-0 items-center justify-end">
+      {@render right()}
+    </div>
+  {/if}
   {#if hints}
     <button
       type="button"
@@ -59,11 +64,5 @@
       aria-pressed={$hints}
       onclick={() => hints.update((on) => !on)}>?</button
     >
-  {/if}
-  <div class="flex-1"></div>
-  {#if right}
-    <div class="flex min-w-0 shrink-0 items-center justify-end">
-      {@render right()}
-    </div>
   {/if}
 </div>

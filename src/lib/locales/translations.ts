@@ -567,6 +567,7 @@ const translations: Translations = {
     en: 'Auto polling — how often to request data from the device; "Refresh" — request now',
     zh: "自动轮询——向设备请求数据的频率；“刷新”——立即请求",
   },
+  "widget.wifi.static": { ru: "Статический", en: "Static", zh: "静态" },
   "widget.wifi.hint.mode": {
     ru: "Режим Wi-Fi: клиент — устройство подключается к роутеру, точка — создаёт свою сеть, оба — одновременно; выключено — Wi-Fi не работает",
     en: "Wi-Fi mode: client — the device joins a router, access point — creates its own network, both — at once; off — Wi-Fi is disabled",
