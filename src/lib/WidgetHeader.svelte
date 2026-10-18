@@ -27,42 +27,57 @@
   } = $props()
 
   const Icon = $derived(icon)
+
+  /* Правая часть уходит второй строкой, если не помещается рядом с заголовком (место под значок, заголовок и «?») */
+  const TITLE_MIN_PX = 180
+  let headerWidth = $state(0)
+  let rightWidth = $state(0)
+  let wrapped = $derived(!!right && headerWidth > 0 && rightWidth + TITLE_MIN_PX + (hints ? 34 : 0) > headerWidth)
 </script>
 
-<!-- Фиксированная высота 32 px без переноса — свёрнутые виджеты одной высоты при любом содержимом справа; «?» — в правом краю, после содержимого шапки -->
-<div class="flex h-[32px] items-center justify-between gap-3">
-  <button
-    type="button"
-    class="flex min-w-0 flex-1 cursor-pointer items-center gap-2 border-none bg-transparent p-0 text-left"
-    onclick={() => (collapsed = !collapsed)}
-    aria-expanded={!collapsed}
-  >
-    <span class="flex h-[18px] w-[18px] shrink-0 items-center justify-center text-(--accent-color) [&_svg]:h-full [&_svg]:w-full">
-      <Icon />
-    </span>
-    <span class="min-w-0 truncate text-[14px] font-semibold">{label}</span>
-    <span
-      class="flex h-[14px] w-[14px] shrink-0 items-center justify-center text-(--faint-color) transition-transform duration-150 [&_svg]:h-full [&_svg]:w-full"
-      style="transform: rotate({collapsed ? 0 : 90}deg)"
-    >
-      <ArrowIcon />
-    </span>
-  </button>
-  {#if right}
-    <div class="flex min-w-0 shrink-0 items-center justify-end">
-      {@render right()}
-    </div>
-  {/if}
-  {#if hints}
+<!-- Первая строка фиксированной высоты 32 px — свёрнутые виджеты одной высоты; «?» — в правом краю.
+     Правая часть стоит в первой строке, а если не помещается — второй строкой под заголовком (выравнивание вправо) -->
+<div class="flex flex-col gap-2" bind:clientWidth={headerWidth}>
+  <div class="flex h-[32px] items-center justify-between gap-3">
     <button
       type="button"
-      class="flex size-[22px] shrink-0 cursor-pointer items-center justify-center rounded-full border text-[12px] font-bold transition-colors duration-150
-        {$hints
-        ? 'border-(--accent-color) bg-(--accent-soft) text-(--accent-color)'
-        : 'border-(--hairline-color) bg-transparent text-(--faint-color) hover:text-(--muted-color)'}"
-      title={$hints ? $T("widget.hints.on") : $T("widget.hints.off")}
-      aria-pressed={$hints}
-      onclick={() => hints.update((on) => !on)}>?</button
+      class="flex min-w-0 flex-1 cursor-pointer items-center gap-2 border-none bg-transparent p-0 text-left"
+      onclick={() => (collapsed = !collapsed)}
+      aria-expanded={!collapsed}
     >
+      <span class="flex h-[18px] w-[18px] shrink-0 items-center justify-center text-(--accent-color) [&_svg]:h-full [&_svg]:w-full">
+        <Icon />
+      </span>
+      <span class="min-w-0 truncate text-[14px] font-semibold">{label}</span>
+      <span
+        class="flex h-[14px] w-[14px] shrink-0 items-center justify-center text-(--faint-color) transition-transform duration-150 [&_svg]:h-full [&_svg]:w-full"
+        style="transform: rotate({collapsed ? 0 : 90}deg)"
+      >
+        <ArrowIcon />
+      </span>
+    </button>
+    {#if right && !wrapped}
+      <div class="flex w-max shrink-0 items-center justify-end" bind:clientWidth={rightWidth}>
+        {@render right()}
+      </div>
+    {/if}
+    {#if hints}
+      <button
+        type="button"
+        class="flex size-[22px] shrink-0 cursor-pointer items-center justify-center rounded-full border text-[12px] font-bold transition-colors duration-150
+        {$hints
+          ? 'border-(--accent-color) bg-(--accent-soft) text-(--accent-color)'
+          : 'border-(--hairline-color) bg-transparent text-(--faint-color) hover:text-(--muted-color)'}"
+        title={$hints ? $T("widget.hints.on") : $T("widget.hints.off")}
+        aria-pressed={$hints}
+        onclick={() => hints.update((on) => !on)}>?</button
+      >
+    {/if}
+  </div>
+  {#if right && wrapped}
+    <!-- Во второй строке элементы могут переноситься; естественная ширина правой части — из первой строки -->
+    <div class="flex max-w-full flex-wrap items-center justify-end gap-2">
+      {@render right()}
+    </div>
   {/if}
 </div>

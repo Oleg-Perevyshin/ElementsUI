@@ -129,7 +129,7 @@
   <!-- Заголовок -->
   <WidgetHeader icon={MemoryIcon} label={label?.name || $T("widget.stack.title")} bind:collapsed {hints}>
     {#snippet right()}
-      <div class="flex items-center gap-2" use:hint={{ text: $T("widget.stack.hint.poll"), enabled: $hints }}>
+      <div class="flex flex-wrap items-center justify-end gap-2" use:hint={{ text: $T("widget.stack.hint.poll"), enabled: $hints }}>
         <UI.Select
           wrapperClass="w-64"
           type="buttons"
