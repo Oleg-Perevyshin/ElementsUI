@@ -2,7 +2,7 @@
   import { tick } from "svelte"
   import MoveVerticalIcon from "./libIcons/MoveVerticalIcon.svelte"
   import { twMerge } from "tailwind-merge"
-  import { applyDragGhost, clearDragGhost, createDropPlaceholder } from "./dragStyle"
+  import { animateReorder, applyDragGhost, clearDragGhost, createDropPlaceholder } from "./dragStyle"
 
   let dragState = $state({
     isDragging: false,
@@ -93,21 +93,32 @@
     const ghost = dragState.ghostElement
     ghost.style.top = `${e.clientY - dragState.offsetY}px`
 
-    const allElements = document.elementsFromPoint(dragState.startX, e.clientY)
-    const cell = allElements.find((el) => el.id.startsWith(`${elementsId}-`)) as HTMLElement
-    const newIndex =
-      cell && (dragState.containerIndex !== null ? Number(cell.id.split("-")[2]) === dragState.containerIndex : true) ? Number(cell.id.split("-")[1]) : null
-
-    /* Находим целевой элемент перед которым нужно вставить placeholder */
-    if (newIndex === null) return
+    /*
+      Место вставки — перед первой строкой, середина которой ниже курсора (иначе — в конец): меняется только при пересечении середины
+      строки, без дрожания на границах. Соседние строки сдвигаются плавно (animateReorder)
+    */
+    const items = commandItems.filter((item) =>
+      dragState.containerIndex === null ? true : Number(item.id.split("-")[2]) === dragState.containerIndex,
+    ) as HTMLElement[]
+    if (!items.length) return
+    let target = items[items.length - 1]
+    for (const item of items) {
+      const rect = item.getBoundingClientRect()
+      /* Положение в раскладке, без сдвига идущей анимации — иначе движущаяся строка снова «пересекала» бы курсор */
+      const transform = getComputedStyle(item).transform
+      const shift = transform && transform !== "none" ? new DOMMatrixReadOnly(transform).m42 : 0
+      if (e.clientY < rect.top - shift + rect.height / 2) {
+        target = item
+        break
+      }
+    }
+    const newIndex = Number(target.id.split("-")[1])
+    if (newIndex === dragState.dropIndex && dragState.placeholderElement.nextSibling === target) return
     dragState.dropIndex = newIndex
 
     const placeholder = dragState.placeholderElement
-    const targetElement = commandItems[dragState.dropIndex]
-
-    if (targetElement && targetElement.parentNode) {
-      const nextSibling = placeholder.nextSibling
-      if (nextSibling !== targetElement) targetElement.parentNode.insertBefore(placeholder, targetElement)
+    if (target.parentNode && placeholder.nextSibling !== target) {
+      animateReorder(items, () => target.parentNode?.insertBefore(placeholder, target))
     }
   }
 

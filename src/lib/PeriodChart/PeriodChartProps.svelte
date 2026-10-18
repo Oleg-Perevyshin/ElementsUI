@@ -1,6 +1,7 @@
 <script lang="ts">
   import { getContext } from "svelte"
-  import { T } from "$lib/locales/i18n"
+  import { Language, T } from "$lib/locales/i18n"
+  import { localizeText } from "$lib/locales/localize"
   import { updateProperty, type IOption, type IPeriodChartLevel, type IPeriodChartProps, type IUIComponentHandler, type UIComponent } from "../types"
   import * as UI from "$lib"
   import { optionsStore, findColorOption } from "../options"
@@ -8,6 +9,8 @@
   import ButtonDelete from "$lib/libIcons/ButtonDelete.svelte"
   import CommonSnippets from "$lib/CommonSnippets.svelte"
   import PropsGroup from "$lib/PropsGroup.svelte"
+  import PropsListHeader from "$lib/PropsListHeader.svelte"
+  import PropsListModal from "$lib/PropsListModal.svelte"
 
   const {
     component,
@@ -23,6 +26,8 @@
   let VARIABLE_OPTIONS = $derived(DeviceVariables && Array.isArray(DeviceVariables) ? DeviceVariables : [])
 
   let itemsContainer: HTMLDivElement | null = $state(null)
+  /* Колонки строки уровня: ручка, номер и текст, переменная, данные, подписи, удаление */
+  const LEVEL_GRID = "grid-cols-[2rem_minmax(6rem,auto)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_2rem]"
 
   const initialColor = $derived(findColorOption($optionsStore.COLOR_OPTIONS, component.properties.wrapperClass))
 
@@ -50,82 +55,96 @@
 </script>
 
 {#snippet PeriodChartLevels()}
-  <PropsGroup label={$T("constructor.props.periodchart.title")} wrapperClass="mt-3">
-    {#snippet headerActions()}
-      <UI.Button
-        wrapperClass="w-8"
-        content={{ icon: ButtonAdd }}
-        onClick={() => {
-          const newLevel: IPeriodChartLevel = { name: `Level ${(component.properties?.levels?.length ?? 0) + 1}`, data: [] }
-          const levels = [...(component.properties?.levels || []), newLevel]
-          updateLevels(levels)
-        }}
-      />
-    {/snippet}
-
-    <div bind:this={itemsContainer} class="flex flex-col gap-2">
-      {#each component.properties.levels || [] as level, index}
-        <div
-          id="item-{index}"
-          class="grid grid-cols-[auto_1fr_auto] items-center gap-2 rounded-lg border border-(--hairline-color) bg-(--container-color)/60 p-2"
-        >
-          <UI.Dragging
-            wrapperClass="shrink-0"
-            container={itemsContainer}
-            array={component.properties.levels}
-            elementIndex={index}
-            onUpdate={(updatedArray) => updateLevels(updatedArray)}
+  <PropsListModal label={$T("constructor.props.periodchart.title")} count={component.properties.levels?.length ?? 0} wrapperClass="w-250 h-[70%]">
+    {#snippet main()}
+      <PropsGroup>
+        {#snippet headerActions()}
+          <UI.Button
+            wrapperClass="w-8"
+            content={{ icon: ButtonAdd }}
+            onClick={() => {
+              const newLevel: IPeriodChartLevel = { name: "", data: [] }
+              const levels = [...(component.properties?.levels || []), newLevel]
+              updateLevels(levels)
+            }}
           />
-          <div class="flex flex-wrap items-end gap-2">
-            <UI.Select
-              label={{ name: $T("constructor.props.variable") }}
-              wrapperClass="min-w-32 flex-1"
-              type="input"
-              options={VARIABLE_OPTIONS}
-              value={VARIABLE_OPTIONS.find((opt) => opt.value === level.variable)}
-              onUpdate={(value) => {
-                const levels = [...(component.properties?.levels || [])]
-                levels[index] = { ...levels[index], variable: (value as IOption).value as string }
-                updateLevels(levels)
-              }}
-            />
-            <UI.Input
-              label={{ name: $T("constructor.props.periodchart.data") }}
-              wrapperClass="min-w-32 flex-1"
-              value={formatNumbers(level.data)}
-              onUpdate={(value) => {
-                const levels = [...(component.properties?.levels || [])]
-                levels[index] = { ...levels[index], data: parseNumbers(value as string) }
-                updateLevels(levels)
-              }}
-            />
-            <UI.Input
-              label={{ name: $T("constructor.props.periodchart.labels") }}
-              wrapperClass="min-w-32 flex-1"
-              value={formatStrings(level.labels)}
-              onUpdate={(value) => {
-                const levels = [...(component.properties?.levels || [])]
-                levels[index] = { ...levels[index], labels: parseStrings(value as string) }
-                updateLevels(levels)
-              }}
-            />
-          </div>
-          {#if (component.properties.levels?.length ?? 0) > 1}
-            <UI.Button
-              wrapperClass="w-8 shrink-0"
-              content={{ icon: ButtonDelete }}
-              onClick={() => {
-                const levels = [...(component.properties?.levels || [])]
-                levels.splice(index, 1)
-                updateLevels(levels)
-              }}
+        {/snippet}
+
+        <div bind:this={itemsContainer} class="flex flex-col gap-2">
+          {#if component.properties.levels?.length}
+            <PropsListHeader
+              gridClass={LEVEL_GRID}
+              captions={[
+                "",
+                $T("constructor.props.item"),
+                $T("constructor.props.variable"),
+                $T("constructor.props.periodchart.data"),
+                $T("constructor.props.periodchart.labels"),
+                "",
+              ]}
             />
           {/if}
+          {#each component.properties.levels || [] as level, index}
+            <div
+              id="item-{index}"
+              class="grid {LEVEL_GRID} items-center gap-3 rounded-lg border border-(--hairline-color) bg-(--container-color)/60 px-2 py-1.5"
+            >
+              <UI.Dragging
+                container={itemsContainer}
+                array={component.properties.levels}
+                elementIndex={index}
+                onUpdate={(updatedArray) => updateLevels(updatedArray)}
+              />
+              <div class="flex min-w-0 flex-col text-[13px]">
+                <span class="font-semibold">{$T("constructor.props.periodchart.item", { n: index + 1 })}</span>
+                <span class="truncate text-(--muted-color)">{localizeText(level.name, $Language) || $T("constructor.props.tabs.untitled")}</span>
+              </div>
+              <UI.Select
+                type="input"
+                options={VARIABLE_OPTIONS}
+                value={VARIABLE_OPTIONS.find((opt) => opt.value === level.variable)}
+                onUpdate={(value) => {
+                  const levels = [...(component.properties?.levels || [])]
+                  levels[index] = { ...levels[index], variable: (value as IOption).value as string }
+                  updateLevels(levels)
+                }}
+              />
+              <UI.Input
+                value={formatNumbers(level.data)}
+                onUpdate={(value) => {
+                  const levels = [...(component.properties?.levels || [])]
+                  levels[index] = { ...levels[index], data: parseNumbers(value as string) }
+                  updateLevels(levels)
+                }}
+              />
+              <UI.Input
+                value={formatStrings(level.labels)}
+                onUpdate={(value) => {
+                  const levels = [...(component.properties?.levels || [])]
+                  levels[index] = { ...levels[index], labels: parseStrings(value as string) }
+                  updateLevels(levels)
+                }}
+              />
+              {#if (component.properties.levels?.length ?? 0) > 1}
+                <UI.Button
+                  wrapperClass="w-8"
+                  content={{ icon: ButtonDelete }}
+                  onClick={() => {
+                    const levels = [...(component.properties?.levels || [])]
+                    levels.splice(index, 1)
+                    updateLevels(levels)
+                  }}
+                />
+              {:else}
+                <span></span>
+              {/if}
+            </div>
+          {/each}
+          <div id="item-{component.properties.levels?.length ?? 0}" class="min-h-4"></div>
         </div>
-      {/each}
-      <div id="item-{component.properties.levels?.length ?? 0}" class="min-h-4"></div>
-    </div>
-  </PropsGroup>
+      </PropsGroup>
+    {/snippet}
+  </PropsListModal>
 {/snippet}
 
 {#if forConstructor}
@@ -136,7 +155,9 @@
       <CommonSnippets snippet="Label" {component} {onPropertyChange} />
     </PropsGroup>
   </div>
-  {@render PeriodChartLevels()}
+  <PropsGroup>
+    {@render PeriodChartLevels()}
+  </PropsGroup>
 {:else}
   <div class="flex flex-col gap-2">
     <PropsGroup label={$T("constructor.props.group.general")}>
@@ -149,5 +170,7 @@
       <CommonSnippets snippet="Colors" initialValue={{ color: initialColor, uselessColors: ["bg-max"] }} {component} {onPropertyChange} />
     </PropsGroup>
   </div>
-  {@render PeriodChartLevels()}
+  <PropsGroup>
+    {@render PeriodChartLevels()}
+  </PropsGroup>
 {/if}

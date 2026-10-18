@@ -9,6 +9,7 @@
   import CommonSnippets from "$lib/CommonSnippets.svelte"
   import PropsGroup from "$lib/PropsGroup.svelte"
   import PropsListModal from "$lib/PropsListModal.svelte"
+  import PropsListHeader from "$lib/PropsListHeader.svelte"
 
   const {
     component,
@@ -21,6 +22,8 @@
   }>()
   const DeviceVariables = getContext<{ id: string; value: string; name: string }[]>("DeviceVariables")
   let VARIABLE_OPTIONS = $derived(DeviceVariables && Array.isArray(DeviceVariables) ? DeviceVariables : [])
+  /* Колонки строки бита: метка, позиция, цвет, отключение, удаление */
+  const BIT_GRID = "grid-cols-[minmax(4rem,1fr)_minmax(4rem,1fr)_minmax(0,2fr)_auto_2rem]"
   let initialColor = $derived(findColorOption($optionsStore.COLOR_OPTIONS, component.properties.options?.[0]?.class))
   const initialAlign = $derived(
     $optionsStore.TEXT_ALIGN_OPTIONS.find((a) =>
@@ -91,60 +94,58 @@
           {/if}
         {/snippet}
 
+        {#if component.properties.options?.length}
+          <PropsListHeader
+            gridClass={BIT_GRID}
+            captions={[$T("constructor.props.optionname"), $T("constructor.props.optionposition"), $T("constructor.props.colors"), "", ""]}
+          />
+        {/if}
         {#each component.properties.options || [] as option, index (option.id)}
-          <div class="grid grid-cols-[1fr_auto] items-center gap-2 rounded-lg border border-(--hairline-color) bg-(--container-color)/60 p-2">
-            <div class="flex flex-wrap items-end gap-2">
-              <!-- Имя варианта — короткая метка бита (до 4 символов) в битовом режиме, не переводится -->
-              <UI.Input
-                label={{ name: $T("constructor.props.optionname") }}
-                wrapperClass="min-w-24 flex-1"
-                value={option.name}
-                maxlength={4}
-                onUpdate={(value) => {
-                  const options = [...(component.properties?.options || [])]
-                  options[index]["name"] = value
-                  updateProperty("options", options, component, onPropertyChange)
-                }}
-              />
-              <UI.Input
-                label={{ name: $T("constructor.props.optionposition") }}
-                wrapperClass="min-w-24 flex-1"
-                value={option.value}
-                type="number"
-                number={{ minNum: 0, maxNum: 31, step: 1 }}
-                onUpdate={(value) => {
-                  const options = [...(component.properties?.options || [])]
-                  options[index]["value"] = value
-                  updateProperty("options", options, component, onPropertyChange)
-                }}
-              />
-              <UI.Select
-                wrapperClass="min-w-56 flex-[2]"
-                label={{ name: $T("constructor.props.colors") }}
-                type="buttons"
-                options={$optionsStore.COLOR_OPTIONS.filter((option) => option.value !== "bg-max" && option.value !== "bg-gray")}
-                value={findColorOption($optionsStore.COLOR_OPTIONS, option.class)}
-                onUpdate={(option) => {
-                  const options = [...(component.properties?.options || [])]
-                  options[index]["class"] = (option as UI.IOption).value
-                  updateProperty("options", options, component, onPropertyChange)
-                }}
-              />
-              <UI.Switch
-                wrapperClass="min-w-24 bg-blue"
-                label={{ name: $T("constructor.props.disabled") }}
-                value={option.disabled}
-                options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-                onChange={(value) => {
-                  const options = [...(component.properties?.options || [])]
-                  options[index]["disabled"] = value
-                  updateProperty("options", options, component, onPropertyChange)
-                }}
-              />
-            </div>
+          <div class="grid {BIT_GRID} items-center gap-3 rounded-lg border border-(--hairline-color) bg-(--container-color)/60 px-2 py-1.5">
+            <!-- Имя варианта — короткая метка бита (до 4 символов) в битовом режиме, не переводится -->
+            <UI.Input
+              value={option.name}
+              maxlength={4}
+              onUpdate={(value) => {
+                const options = [...(component.properties?.options || [])]
+                options[index]["name"] = value
+                updateProperty("options", options, component, onPropertyChange)
+              }}
+            />
+            <UI.Input
+              value={option.value}
+              type="number"
+              number={{ minNum: 0, maxNum: 31, step: 1 }}
+              onUpdate={(value) => {
+                const options = [...(component.properties?.options || [])]
+                options[index]["value"] = value
+                updateProperty("options", options, component, onPropertyChange)
+              }}
+            />
+            <UI.Select
+              type="buttons"
+              options={$optionsStore.COLOR_OPTIONS.filter((option) => option.value !== "bg-max" && option.value !== "bg-gray")}
+              value={findColorOption($optionsStore.COLOR_OPTIONS, option.class)}
+              onUpdate={(option) => {
+                const options = [...(component.properties?.options || [])]
+                options[index]["class"] = (option as UI.IOption).value
+                updateProperty("options", options, component, onPropertyChange)
+              }}
+            />
+            <UI.Switch
+              wrapperClass="bg-blue"
+              label={{ captionRight: $T("constructor.props.disabled") }}
+              value={option.disabled}
+              options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
+              onChange={(value) => {
+                const options = [...(component.properties?.options || [])]
+                options[index]["disabled"] = value
+                updateProperty("options", options, component, onPropertyChange)
+              }}
+            />
             {#if (component.properties.options?.length ?? 0) > 1}
               <UI.Button
-                wrapperClass="w-8 shrink-0"
+                wrapperClass="w-8"
                 content={{ icon: ButtonDelete }}
                 onClick={() => {
                   const options = [...(component.properties?.options || [])]
@@ -152,6 +153,8 @@
                   updateProperty("options", options, component, onPropertyChange)
                 }}
               />
+            {:else}
+              <span></span>
             {/if}
           </div>
         {/each}

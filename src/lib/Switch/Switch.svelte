@@ -66,7 +66,7 @@
       {#each localOptions as option, index}
         <div class={twMerge(`flex flex-col gap-1`, option.class)}>
           {#if option.name && bitMode}
-            <span class="text-[12px] font-medium text-(--muted-color)">{option.name}</span>
+            <span class="text-center text-[12px] font-medium text-(--muted-color)">{option.name}</span>
           {/if}
 
           <div class="relative flex w-full grow items-center justify-center bg-transparent">

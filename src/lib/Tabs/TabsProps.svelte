@@ -123,9 +123,10 @@
 
         <div bind:this={itemsContainer} class="flex flex-col gap-2">
           {#each component.properties.items || [] as tab, index}
+            <!-- Строка в одну линию: ручка, какая это вкладка, иконка, «Отключить», удаление -->
             <div
               id="item-{index}"
-              class="grid grid-cols-[auto_1fr_auto] items-center gap-2 rounded-lg border border-(--hairline-color) bg-(--container-color)/60 p-2"
+              class="grid grid-cols-[auto_minmax(0,1fr)_auto_auto_auto] items-center gap-3 rounded-lg border border-(--hairline-color) bg-(--container-color)/60 px-2 py-1.5"
             >
               <UI.Dragging
                 wrapperClass="shrink-0"
@@ -136,42 +137,38 @@
                   updateProperty("items", updatedArray, component, onPropertyChange)
                 }}
               />
-              <div class="flex flex-wrap items-end gap-2">
-                <!-- Какая это вкладка: номер и название на текущем языке (название правится в «Тексты и переводы») -->
-                <div class="flex w-full items-baseline gap-2 text-[13px]">
-                  <span class="font-semibold">{$T("constructor.props.tabs.item", { n: index + 1 })}</span>
-                  <span class="truncate text-(--muted-color)">{localizeText(tab.name, $Language) || $T("constructor.props.tabs.untitled")}</span>
-                </div>
-                <div class="relative min-w-32">
-                  <CommonSnippets
-                    snippet="IconsLib"
-                    initialValue={{
-                      name: $T("constructor.props.table.type.icon"),
-                      icon: component.properties.items[index].icon,
-                      updateProperty: (icon: string) => {
-                        const items = [...(component.properties?.items || [])]
-                        items[index]["icon"] = icon as string
-                        updateProperty("items", items, component, onPropertyChange)
-                      },
-                      icons: { array: ICONS },
-                    }}
-                    {component}
-                    {onPropertyChange}
-                  />
-                </div>
-
-                <UI.Switch
-                  wrapperClass="min-w-24"
-                  label={{ name: $T("constructor.props.disabled") }}
-                  value={tab?.disabled ? 1 : 0}
-                  options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-                  onChange={(value) => {
-                    const items = [...(component.properties?.items || [])]
-                    items[index]["disabled"] = value
-                    updateProperty("items", items, component, onPropertyChange)
-                  }}
-                />
+              <!-- Номер и название на текущем языке (название правится в «Тексты и переводы») -->
+              <div class="flex min-w-0 items-baseline gap-2 text-[13px]">
+                <span class="shrink-0 font-semibold">{$T("constructor.props.tabs.item", { n: index + 1 })}</span>
+                <span class="truncate text-(--muted-color)">{localizeText(tab.name, $Language) || $T("constructor.props.tabs.untitled")}</span>
               </div>
+              <CommonSnippets
+                snippet="IconsLib"
+                initialValue={{
+                  name: $T("constructor.props.table.type.icon"),
+                  icon: component.properties.items[index].icon,
+                  updateProperty: (icon: string) => {
+                    const items = [...(component.properties?.items || [])]
+                    items[index]["icon"] = icon as string
+                    updateProperty("items", items, component, onPropertyChange)
+                  },
+                  icons: { array: ICONS },
+                  compact: true,
+                }}
+                {component}
+                {onPropertyChange}
+              />
+              <UI.Switch
+                wrapperClass="w-auto"
+                label={{ captionRight: $T("constructor.props.disabled") }}
+                value={tab?.disabled ? 1 : 0}
+                options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
+                onChange={(value) => {
+                  const items = [...(component.properties?.items || [])]
+                  items[index]["disabled"] = value === 1
+                  updateProperty("items", items, component, onPropertyChange)
+                }}
+              />
               {#if component.properties.items.length > 1}
                 <UI.Button
                   wrapperClass="w-8 shrink-0"

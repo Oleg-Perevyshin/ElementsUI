@@ -1,13 +1,15 @@
 <script lang="ts">
   import TextsEditor from "../TextsEditor.svelte"
   import { getContext } from "svelte"
-  import { T } from "$lib/locales/i18n"
+  import { Language, T } from "$lib/locales/i18n"
+  import { localizeText } from "$lib/locales/localize"
   import { type UIComponent, type IProgressBarProps, updateProperty, type IUIComponentHandler } from "../types"
   import * as UI from "$lib"
   import { optionsStore, findColorOption } from "../options"
   import CommonSnippets from "$lib/CommonSnippets.svelte"
   import PropsGroup from "$lib/PropsGroup.svelte"
   import PropsListModal from "$lib/PropsListModal.svelte"
+  import PropsListHeader from "$lib/PropsListHeader.svelte"
   import ButtonAdd from "$lib/libIcons/ButtonAdd.svelte"
   import ButtonDelete from "$lib/libIcons/ButtonDelete.svelte"
 
@@ -24,6 +26,8 @@
   const DeviceVariables = getContext<{ id: string; value: string; name: string }[]>("DeviceVariables")
   let VARIABLE_OPTIONS = $derived(DeviceVariables && Array.isArray(DeviceVariables) ? DeviceVariables : [])
   let itemsContainer: HTMLDivElement | null = $state(null)
+  /* Колонки строки шкалы: ручка, номер и текст, цвет (в конструкторе на две колонки) или значение и стили, удаление */
+  const ITEM_GRID = "grid-cols-[2rem_minmax(8rem,1fr)_minmax(6rem,1fr)_minmax(0,1fr)_2rem]"
 </script>
 
 {#snippet ProgressBarType()}
@@ -52,7 +56,7 @@
             content={{ icon: ButtonAdd }}
             onClick={() => {
               const newProgress = {
-                name: `Label ${component.properties?.items.length + 1}`,
+                name: "",
                 class: "bg-blue",
               }
               const progresses = [...(component.properties?.items || []), newProgress]
@@ -70,13 +74,24 @@
         {/snippet}
 
         <div bind:this={itemsContainer} class="flex flex-col gap-2">
+          {#if component.properties.items?.length}
+            <PropsListHeader
+              gridClass={ITEM_GRID}
+              captions={[
+                "",
+                $T("constructor.props.item"),
+                forConstructor ? $T("constructor.props.colors") : $T("constructor.props.optionvalue"),
+                forConstructor ? "" : $T("constructor.props.optionclass"),
+                "",
+              ]}
+            />
+          {/if}
           {#each component.properties.items || [] as progress, index}
             <div
               id="item-{index}"
-              class="grid grid-cols-[auto_1fr_auto] items-center gap-2 rounded-lg border border-(--hairline-color) bg-(--container-color)/60 p-2"
+              class="grid {ITEM_GRID} items-center gap-3 rounded-lg border border-(--hairline-color) bg-(--container-color)/60 px-2 py-1.5"
             >
               <UI.Dragging
-                wrapperClass="shrink-0"
                 container={itemsContainer}
                 array={component.properties.items}
                 elementIndex={index}
@@ -84,52 +99,49 @@
                   updateProperty("items", updatedArray, component, onPropertyChange)
                 }}
               />
-              <div class="flex flex-wrap items-end gap-2">
-                {#if forConstructor}
-                  <UI.Select
-                    label={{ name: $T("constructor.props.colors") }}
-                    wrapperClass="min-w-56 flex-[2]"
-                    type="buttons"
-                    options={$optionsStore.COLOR_OPTIONS.filter((option) => option.value !== "bg-max")}
-                    value={findColorOption($optionsStore.COLOR_OPTIONS, progress.class)}
-                    onUpdate={(value) => {
-                      const progresses = (component.properties?.items || []).map((p: { name?: string; class?: string }, i: number) =>
-                        i === index ? { ...p, class: (value as UI.IOption).value } : p,
-                      )
-                      updateProperty("items", progresses, component, onPropertyChange)
-                    }}
-                  />
-                {:else}
-                  <UI.Input
-                    label={{ name: $T("constructor.props.optionvalue") }}
-                    wrapperClass="min-w-24 flex-1"
-                    value={(component.properties.value || [])[index]?.Value}
-                    type="number"
-                    onUpdate={(value) => {
-                      const base =
-                        component.properties?.value ||
-                        component.properties?.items.map((item: { name?: string; class?: string }, i: number) => ({
-                          Name: item.name,
-                          Value: i == index ? value : 0,
-                        }))
-                      const progresses = base.map((p: { Name?: string; Value?: number }, i: number) => (i === index ? { ...p, Value: value } : p))
-                      updateProperty("value", progresses, component, onPropertyChange)
-                    }}
-                  />
-                  <UI.Input
-                    label={{ name: $T("constructor.props.optionclass") }}
-                    wrapperClass="min-w-32 flex-[2]"
-                    value={progress.class}
-                    onUpdate={(value) => {
-                      const progresses = [...(component.properties?.items || [])]
-                      progresses[index]["class"] = value
-                      updateProperty("items", progresses, component, onPropertyChange)
-                    }}
-                  />
-                {/if}
+              <div class="flex min-w-0 items-baseline gap-2 text-[13px]">
+                <span class="shrink-0 font-semibold">{$T("constructor.props.progressbar.item", { n: index + 1 })}</span>
+                <span class="truncate text-(--muted-color)">{localizeText(progress.name, $Language) || $T("constructor.props.tabs.untitled")}</span>
               </div>
+              {#if forConstructor}
+                <UI.Select
+                  wrapperClass="col-span-2"
+                  type="buttons"
+                  options={$optionsStore.COLOR_OPTIONS.filter((option) => option.value !== "bg-max")}
+                  value={findColorOption($optionsStore.COLOR_OPTIONS, progress.class)}
+                  onUpdate={(value) => {
+                    const progresses = (component.properties?.items || []).map((p: { name?: string; class?: string }, i: number) =>
+                      i === index ? { ...p, class: (value as UI.IOption).value } : p,
+                    )
+                    updateProperty("items", progresses, component, onPropertyChange)
+                  }}
+                />
+              {:else}
+                <UI.Input
+                  value={(component.properties.value || [])[index]?.Value}
+                  type="number"
+                  onUpdate={(value) => {
+                    const base =
+                      component.properties?.value ||
+                      component.properties?.items.map((item: { name?: string; class?: string }, i: number) => ({
+                        Name: item.name,
+                        Value: i == index ? value : 0,
+                      }))
+                    const progresses = base.map((p: { Name?: string; Value?: number }, i: number) => (i === index ? { ...p, Value: value } : p))
+                    updateProperty("value", progresses, component, onPropertyChange)
+                  }}
+                />
+                <UI.Input
+                  value={progress.class}
+                  onUpdate={(value) => {
+                    const progresses = [...(component.properties?.items || [])]
+                    progresses[index]["class"] = value
+                    updateProperty("items", progresses, component, onPropertyChange)
+                  }}
+                />
+              {/if}
               <UI.Button
-                wrapperClass="w-8 shrink-0"
+                wrapperClass="w-8"
                 content={{ icon: ButtonDelete }}
                 onClick={() => {
                   const progresses = [...(component.properties?.items || [])]

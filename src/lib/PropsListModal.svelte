@@ -1,5 +1,5 @@
 <!-- $lib/PropsListModal.svelte — вынос "тяжёлых" списковых секций панелей свойств (столбцы
-     Table, опции ProgressBar/Select/Switch/Tabs) в модалку вместо попытки втиснуть их в узкий
+     Table, опции ProgressBar/Select/Switch/Tabs, уровни PeriodChart) в модалку вместо попытки втиснуть их в узкий
      сайдбар конструктора (ConstructorUI.svelte). Кнопка-триггер показывает счётчик элементов. -->
 <script lang="ts">
   import { T } from "$lib/locales/i18n"

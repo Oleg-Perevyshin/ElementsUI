@@ -5,6 +5,9 @@
   import { optionsStore } from "./options"
   import { updateProperty } from "./types"
   import { twMerge } from "tailwind-merge"
+
+  /* Значок «нет иконки» для компактной кнопки выбора иконки */
+  const ICON_PLACEHOLDER = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></svg>`
   import TextsEditor from "./TextsEditor.svelte"
 
   let {
@@ -235,9 +238,23 @@
   icons: { array: [string, string[]][]; selectArray?: false }
   icon: string | string[]
   updateProperty: (icon: string | string[]) => {}
+  /* compact — для строк списков в одну линию: квадратная кнопка с текущей иконкой и подсказкой вместо кнопки с текстом */
+  compact?: boolean
 })}
-  <div class="relative mt-6 flex w-full gap-2">
-    <UI.Button content={{ name: initialValue.name }} componentClass="bg-blue" onClick={() => (showIconLib = true)} />
+  <div class={initialValue.compact ? "relative flex shrink-0 items-center gap-1" : "relative mt-6 flex w-full gap-2"}>
+    {#if initialValue.compact}
+      <UI.Button
+        wrapperClass="w-auto"
+        componentClass="size-8 rounded-[10px] p-[6px] bg-max"
+        content={{
+          icon: typeof initialValue.icon === "string" && initialValue.icon ? initialValue.icon : ICON_PLACEHOLDER,
+          info: { text: initialValue.name, side: "top" },
+        }}
+        onClick={() => (showIconLib = true)}
+      />
+    {:else}
+      <UI.Button content={{ name: initialValue.name }} componentClass="bg-blue" onClick={() => (showIconLib = true)} />
+    {/if}
     {#if showIconLib}
       <UI.Modal bind:isOpen={showIconLib} wrapperClass="w-130">
         {#snippet main()}
@@ -268,7 +285,12 @@
       </UI.Modal>
     {/if}
     {#if initialValue.icon}
-      <UI.Button wrapperClass="w-8" componentClass="p-0.5 bg-red" content={{ icon: CrossIcon }} onClick={() => initialValue.updateProperty("")} />
+      <UI.Button
+        wrapperClass={initialValue.compact ? "w-auto" : "w-8"}
+        componentClass={initialValue.compact ? "size-8 rounded-[10px] p-[7px] bg-transparent" : "p-0.5 bg-red"}
+        content={{ icon: CrossIcon }}
+        onClick={() => initialValue.updateProperty("")}
+      />
     {/if}
   </div>
 {/snippet}

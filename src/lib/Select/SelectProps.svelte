@@ -1,6 +1,6 @@
 <script lang="ts">
   import { getContext, onMount } from "svelte"
-  import { T } from "$lib/locales/i18n"
+  import { Language, T } from "$lib/locales/i18n"
   import { type UIComponent, type ISelectProps, type IOption, updateProperty, type IUIComponentHandler } from "../types"
   import * as UI from "$lib"
   import ButtonDelete from "../libIcons/ButtonDelete.svelte"
@@ -9,6 +9,8 @@
   import CommonSnippets from "$lib/CommonSnippets.svelte"
   import PropsGroup from "$lib/PropsGroup.svelte"
   import PropsListModal from "$lib/PropsListModal.svelte"
+  import PropsListHeader from "$lib/PropsListHeader.svelte"
+  import { localizeText } from "$lib/locales/localize"
   import { twMerge } from "tailwind-merge"
 
   const {
@@ -25,6 +27,8 @@
   let VARIABLE_OPTIONS = $derived(DeviceVariables && Array.isArray(DeviceVariables) ? DeviceVariables : [])
 
   let itemsContainer: HTMLDivElement | null = $state(null)
+  /* Колонки строки варианта: ручка, номер и текст, значение, цвет/стили, удаление */
+  const OPTION_GRID = "grid-cols-[2rem_minmax(8rem,1fr)_minmax(6rem,1fr)_minmax(0,2fr)_2rem]"
 
   type ValueTypeOption = {
     id: string
@@ -179,7 +183,7 @@
             onClick={() => {
               const newOption: IOption = {
                 id: crypto.randomUUID(),
-                name: `Option ${component.properties?.options.length + 1}`,
+                name: "",
                 value: component.properties?.options.length + 1,
                 class: "bg-max",
               }
@@ -190,13 +194,24 @@
         {/snippet}
 
         <div bind:this={itemsContainer} class="flex flex-col gap-2">
+          {#if component.properties.options?.length}
+            <PropsListHeader
+              gridClass={OPTION_GRID}
+              captions={[
+                "",
+                $T("constructor.props.item"),
+                $T("constructor.props.optionvalue"),
+                forConstructor ? $T("constructor.props.colors") : $T("constructor.props.optionclass"),
+                "",
+              ]}
+            />
+          {/if}
           {#each component.properties.options || [] as option, index (option.id)}
             <div
               id="item-{index}"
-              class="grid grid-cols-[auto_1fr_auto] items-center gap-2 rounded-lg border border-(--hairline-color) bg-(--container-color)/60 p-2"
+              class="grid {OPTION_GRID} items-center gap-3 rounded-lg border border-(--hairline-color) bg-(--container-color)/60 px-2 py-1.5"
             >
               <UI.Dragging
-                wrapperClass="shrink-0"
                 container={itemsContainer}
                 array={component.properties.options}
                 elementIndex={index}
@@ -204,49 +219,45 @@
                   updateProperty("options", updatedArray, component, onPropertyChange)
                 }}
               />
-              <div class="flex flex-wrap items-end gap-2">
-                <UI.Input
-                  label={{ name: $T("constructor.props.optionvalue") }}
-                  wrapperClass="min-w-28 flex-1"
-                  value={option.value}
-                  type={currentValueType.value}
-                  number={component.properties.bitMode
-                    ? { minNum: 0, maxNum: Math.pow(2, component.properties.range.end - component.properties.range.start + 1) - 1, step: 1 }
-                    : { minNum: -1000000, maxNum: 1000000, step: 1 }}
-                  onUpdate={(value) => {
+              <div class="flex min-w-0 items-baseline gap-2 text-[13px]">
+                <span class="shrink-0 font-semibold">{$T("constructor.props.options.item", { n: index + 1 })}</span>
+                <span class="truncate text-(--muted-color)">{localizeText(option.name, $Language) || $T("constructor.props.tabs.untitled")}</span>
+              </div>
+              <UI.Input
+                value={option.value}
+                type={currentValueType.value}
+                number={component.properties.bitMode
+                  ? { minNum: 0, maxNum: Math.pow(2, component.properties.range.end - component.properties.range.start + 1) - 1, step: 1 }
+                  : { minNum: -1000000, maxNum: 1000000, step: 1 }}
+                onUpdate={(value) => {
+                  const options = [...(component.properties?.options || [])]
+                  options[index]["value"] = value
+                  updateProperty("options", options, component, onPropertyChange)
+                }}
+              />
+              {#if forConstructor}
+                <UI.Select
+                  type="buttons"
+                  options={$optionsStore.COLOR_OPTIONS}
+                  value={findColorOption($optionsStore.COLOR_OPTIONS, option.class)}
+                  onUpdate={(option) => {
                     const options = [...(component.properties?.options || [])]
-                    options[index]["value"] = value
+                    options[index]["class"] = (option as UI.IOption).value
                     updateProperty("options", options, component, onPropertyChange)
                   }}
                 />
-                {#if forConstructor}
-                  <UI.Select
-                    wrapperClass="min-w-56 flex-[2]"
-                    label={{ name: $T("constructor.props.colors") }}
-                    type="buttons"
-                    options={$optionsStore.COLOR_OPTIONS}
-                    value={findColorOption($optionsStore.COLOR_OPTIONS, option.class)}
-                    onUpdate={(option) => {
-                      const options = [...(component.properties?.options || [])]
-                      options[index]["class"] = (option as UI.IOption).value
-                      updateProperty("options", options, component, onPropertyChange)
-                    }}
-                  />
-                {:else}
-                  <UI.Input
-                    label={{ name: $T("constructor.props.optionclass") }}
-                    wrapperClass="min-w-32 flex-[2]"
-                    value={option.class}
-                    onUpdate={(value) => {
-                      const options = [...(component.properties?.options || [])]
-                      options[index]["class"] = value as string
-                      updateProperty("options", options, component, onPropertyChange)
-                    }}
-                  />
-                {/if}
-              </div>
+              {:else}
+                <UI.Input
+                  value={option.class}
+                  onUpdate={(value) => {
+                    const options = [...(component.properties?.options || [])]
+                    options[index]["class"] = value as string
+                    updateProperty("options", options, component, onPropertyChange)
+                  }}
+                />
+              {/if}
               <UI.Button
-                wrapperClass="w-8 shrink-0"
+                wrapperClass="w-8"
                 content={{ icon: ButtonDelete }}
                 onClick={() => {
                   const options = [...(component.properties?.options || [])]
