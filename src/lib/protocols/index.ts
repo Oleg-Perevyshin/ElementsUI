@@ -10,7 +10,7 @@ export { CborToValue, ValueToCbor, cborToValue, valueToCbor } from "./cbor/value
 /* JSON-текст ↔ CBOR: двоичные данные — base64, ключи с "BIN" кодируются байтами (поля ввода терминала и отладки) */
 export { CborToJson, JsonToCbor, cborToJson, jsonToCbor } from "./cbor/json.js"
 /* Контрольные суммы и пакет poe_cbor_pkt { TrgBusID : [RetBusID, HA_Code, Payload, CRC16] } (CAN, RS485) */
-export { crc16Kermit, crc8Rohc } from "./crc.js"
+export { crc16Kermit, crc8Rohc, crc8RohcUtf8 } from "./crc.js"
 export {
   BROADCAST_BUS_ID,
   makeHaCode,
@@ -23,3 +23,5 @@ export {
   type DecodedPacketObject,
   type PacketParse,
 } from "./packet.js"
+/* Рамка POESerial (UART-консоль system_console): сборка команды и потоковый разбор кадров, строк Teleplot и текста */
+export { encodePoeSerialFrame, createPoeSerialParser, type PoeSerialItem } from "./poeSerial.js"

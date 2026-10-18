@@ -76,3 +76,61 @@ test("CBOR: значение и JSON-текст", () => {
   assert.deepEqual(m.cborToValue(m.valueToCbor(value)), value)
   assert.deepEqual(m.cborToJson(m.valueToCbor(value)), { ...value, Value: { a: 1, bin: "AQI=" } })
 })
+
+/* POESerial: CRC-8 по правилу прошивки (crc8_rohc из common.c, вырезан и собран на компьютере) */
+const CRC8_UTF8_REF = {
+  ascii: [[..."123456789"].map((c) => c.charCodeAt(0)), 0xd0],
+  emoji: [[...new TextEncoder().encode("🔵")], 0x7d],
+  cyr: [[...new TextEncoder().encode("Объект 1")], 0x8d],
+  bin: [[0xa2, 0x63, 0x4b, 0x65, 0x79, 0x6c, 0xd0, 0x9e, 0xd0, 0xb1, 0xff, 0xc3, 0x28, 0xe2, 0x82, 0xac, 0xf0, 0x9f, 0x94, 0xb5, 0xe2, 0x82], 0x8f],
+  all: [Array.from({ length: 256 }, (_, i) => i), 0x8e],
+}
+
+test("POESerial: CRC-8 как у прошивки (UTF-8, эмодзи, кириллица, сырой CBOR)", () => {
+  for (const [name, [data, crc]] of Object.entries(CRC8_UTF8_REF)) assert.equal(m.crc8RohcUtf8(0xff, Uint8Array.from(data)), crc, name)
+})
+
+/* Кадр устройства как его собирает SC_Log: [SOH]HDR[US]ARG[STX]VAL[ETX]CRC[US]FHS[EOT]\n */
+const deviceFrame = (header, argument, value, crcOverride) => {
+  const enc = (text) => [...new TextEncoder().encode(text)]
+  const crc = m.crc8RohcUtf8(m.crc8RohcUtf8(m.crc8RohcUtf8(0xff, Uint8Array.from(enc(header))), Uint8Array.from(enc(argument))), Uint8Array.from(enc(value)))
+  const crcText = crcOverride ?? crc.toString(16).toUpperCase().padStart(2, "0")
+  return [0x01, ...enc(header), 0x1f, ...enc(argument), 0x02, ...enc(value), 0x03, ...enc(crcText), 0x1f, ...enc("123456"), 0x04, 0x0a]
+}
+
+test("POESerial: разбор потока в любом месте разреза", () => {
+  const stream = Uint8Array.from([
+    ...new TextEncoder().encode("ESP-ROM boot\n>Temp:21.5\n>XY:1:2\n"),
+    ...deviceFrame("🔵", "ModCfg", "A2646E616D65"),
+    ...deviceFrame("🟢", "HTTP", "Сервер запущен"),
+    ...new TextEncoder().encode("tail line\n"),
+  ])
+  const expected = [
+    { type: "raw", text: "ESP-ROM boot" },
+    { type: "plot", name: "Temp", value: "21.5" },
+    { type: "plot", name: "XY", value: "1:2" },
+    { type: "frame", header: "🔵", argument: "ModCfg", value: "A2646E616D65", crcOk: true, freeHeap: "123456" },
+    { type: "frame", header: "🟢", argument: "HTTP", value: "Сервер запущен", crcOk: true, freeHeap: "123456" },
+    { type: "raw", text: "tail line" },
+  ]
+  const pick = (item) =>
+    item.type === "frame"
+      ? { type: item.type, header: item.header, argument: item.argument, value: item.value, crcOk: item.crcOk, freeHeap: item.freeHeap }
+      : item
+  for (let cut = 0; cut <= stream.length; cut++) {
+    const parser = m.createPoeSerialParser()
+    const items = [...parser.push(stream.subarray(0, cut)), ...parser.push(stream.subarray(cut))]
+    assert.deepEqual(items.map(pick), expected, `разрез на ${cut} байте`)
+  }
+})
+
+test("POESerial: неверный CRC, команда устройству", () => {
+  const [bad] = m.createPoeSerialParser().push(Uint8Array.from(deviceFrame("OK!", "ModCfg", "A0", "00")))
+  assert.equal(bad.crcOk, false)
+  const value = m.valueToCbor({ Payload: { DevName: "Объект 1" } })
+  const frame = m.encodePoeSerialFrame("SET", "ModCfg", value)
+  assert.deepEqual([...frame.subarray(0, 5)], [0x01, 0x53, 0x45, 0x54, 0x1f])
+  const [parsed] = m.createPoeSerialParser().push(frame)
+  assert.equal(parsed.crcOk, true)
+  assert.deepEqual([...parsed.valueBytes], [...value])
+})
