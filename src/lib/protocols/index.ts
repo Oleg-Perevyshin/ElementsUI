@@ -9,3 +9,17 @@ export { bytesToBase64, base64ToBytes } from "./cbor/base64.js"
 export { CborToValue, ValueToCbor, cborToValue, valueToCbor } from "./cbor/value.js"
 /* JSON-текст ↔ CBOR: двоичные данные — base64, ключи с "BIN" кодируются байтами (поля ввода терминала и отладки) */
 export { CborToJson, JsonToCbor, cborToJson, jsonToCbor } from "./cbor/json.js"
+/* Контрольные суммы и пакет poe_cbor_pkt { TrgBusID : [RetBusID, HA_Code, Payload, CRC16] } (CAN, RS485) */
+export { crc16Kermit, crc8Rohc } from "./crc.js"
+export {
+  BROADCAST_BUS_ID,
+  makeHaCode,
+  splitHaCode,
+  packetObjectCrc,
+  encodePacket,
+  decodePacket,
+  objectsFor,
+  type PacketObject,
+  type DecodedPacketObject,
+  type PacketParse,
+} from "./packet.js"

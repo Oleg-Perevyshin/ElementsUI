@@ -1,6 +1,6 @@
 {
   "name": "poe-svelte-ui-lib",
-  "version": "1.62.0",
+  "version": "1.63.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Oleg-Perevyshin/ElementsUI.git"
@@ -15,7 +15,8 @@
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "CheckUpdate": "npx npm-check-updates -u && npm install",
     "UpdateIconsLib": "tsx src/lib/IconsCatalog/iconsLib.ts",
-    "Formatting": "prettier --write ."
+    "Formatting": "prettier --write .",
+    "TestProtocols": "svelte-package && node --test tests/*.test.mjs"
   },
   "svelte": "./dist/index.js",
   "types": "./dist/index.d.ts",

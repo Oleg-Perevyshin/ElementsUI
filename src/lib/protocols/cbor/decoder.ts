@@ -30,6 +30,11 @@ export class CborDecoder {
     }
   }
 
+  /* Сколько байт уже прочитано — граница значения при разборе потока по одному значению */
+  public get offset(): number {
+    return this.state.offset
+  }
+
   /* Основной метод декодирования - декодирует одно значение CBOR */
   public decode(): CborValue {
     this.state.depth++
@@ -218,13 +223,14 @@ export class CborDecoder {
 
       case CborMajorType.ByteString: {
         const bytesValue = header.value === BigInt(-1) ? this.readIndefiniteBytes() : this.decodeBytesWithLength(Number(header.value))
-        if (!bytesValue) throw new CborError("Failed to decode byte string")
+        /* Не хватило байт — конец данных (в потоке это «ждать ещё»), а не испорченный CBOR */
+        if (!bytesValue) throw new CborEndOfDataError()
         return bytesValue.value
       }
 
       case CborMajorType.Utf8String: {
         const stringValue = header.value === BigInt(-1) ? this.readIndefiniteString() : this.decodeStringWithLength(Number(header.value))
-        if (!stringValue) throw new CborError("Failed to decode string")
+        if (!stringValue) throw new CborEndOfDataError()
         return stringValue.value
       }
 
