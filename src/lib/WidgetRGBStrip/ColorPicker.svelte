@@ -1,4 +1,4 @@
-<!-- $lib/WidgetRGBStrip/ColorPicker.svelte — внутренняя палитра виджета «Светодиодная лента» (HSV + белый), отдельным компонентом библиотеки не экспортируется -->
+<!-- $lib/WidgetRGBStrip/ColorPicker.svelte — внутренняя палитра виджета «RGB лента» (HSV + белый), отдельным компонентом библиотеки не экспортируется -->
 <script lang="ts">
   import { twMerge } from "tailwind-merge"
 

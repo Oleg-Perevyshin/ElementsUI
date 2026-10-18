@@ -53,7 +53,7 @@
 | `id`             | `string`                                                 | `undefined`  | Префикс группы ленты (`"LST"`), используется вызывающим кодом           |
 | `wrapperClass`   | `string`                                                 | `""`         | CSS-классы обёртки                                                      |
 | `componentClass` | `string`                                                 | `""`         | «Мастер-цвет» виджета — роль вида `"bg-red"`, перекрашивает весь виджет |
-| `label`          | `{ name?: string }`                                      | `{}`         | Заголовок карточки; пустой — «Светодиодная лента» на текущем языке      |
+| `label`          | `{ name?: string }`                                      | `{}`         | Заголовок карточки; пустой — «RGB лента» на текущем языке               |
 | `value`          | `Partial<IWidgetRGBStripConfig>`                         | `undefined`  | Поля группы `LST`                                                       |
 | `keys`           | `Partial<Record<keyof IWidgetRGBStripConfig, string>>`   | `undefined`  | Переопределение имён полей устройства                                   |
 | `collapsed`      | `boolean`                                                | `false`      | Свёрнуто ли тело виджета (`$bindable`)                                  |

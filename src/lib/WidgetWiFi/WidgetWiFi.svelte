@@ -144,7 +144,7 @@
   style={accentStyle}
 >
   <!-- Заголовок и переключатель режима -->
-  <WidgetHeader icon={WifiIcon} label={label?.name || "WiFi"} bind:collapsed {hints}>
+  <WidgetHeader icon={WifiIcon} label={label?.name || $T("widget.wifi.title")} bind:collapsed {hints}>
     {#snippet right()}
       <div class="w-full sm:w-72" use:hint={{ text: $T("widget.wifi.hint.mode"), enabled: $hints }}>
         <UI.Select

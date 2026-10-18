@@ -248,7 +248,7 @@ Telemetry_SendObject(g_telemetry_stream, g_mcfg.DevSN, "Data", mav, sizeof(mav) 
   </div>
 
   <!-- Компоненты — в порядке меню слева, каждый тип в своём разделе -->
-  {#snippet WiFi()}<UI.WidgetWiFi label={{ name: "Wi-Fi" }} componentClass="bg-blue" value={wifiConfig} onScan={mockScan} onSave={() => {}} />{/snippet}
+  {#snippet WiFi()}<UI.WidgetWiFi componentClass="bg-blue" value={wifiConfig} onScan={mockScan} onSave={() => {}} />{/snippet}
   {@render section("WidgetWiFi", WiFi, false)}
 
   {#snippet DeviceInfo()}
