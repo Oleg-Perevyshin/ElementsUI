@@ -30,19 +30,37 @@
 
   const mapCtx = prepareMapContext()
 
-  // Инициализация карты
-  $effect(() => {
-    if (!window.maplibregl || map || !container) return
+  /* Подпись источников карты (CARTO, OpenStreetMap) обязательна по их условиям — оставляем её компактной кнопкой «i», свёрнутой при открытии */
+  /* Подпись появляется, когда загрузятся стиль и источники, — сворачиваем один раз, дальше её открывает и закрывает оператор */
+  const collapseAttribution = (target: maplibregl.Map) => {
+    const tryCollapse = () => {
+      const attrib = container?.querySelector(".maplibregl-ctrl-attrib.maplibregl-compact")
+      if (!attrib) return
+      attrib.classList.remove("maplibregl-compact-show")
+      attrib.removeAttribute("open")
+      target.off("styledata", tryCollapse)
+      target.off("sourcedata", tryCollapse)
+    }
+    target.on("styledata", tryCollapse)
+    target.on("sourcedata", tryCollapse)
+  }
 
+  const createMap = () => {
+    if (!window.maplibregl || map || !container) return
     map = new window.maplibregl.Map({
       container,
       style,
       zoom,
       center,
       maxPitch,
+      attributionControl: { compact: true },
     })
+    collapseAttribution(map)
     mapCtx.map = map
-  })
+  }
+
+  // Инициализация карты
+  $effect(createMap)
 
   $effect(() => {
     if (map && style) {
@@ -61,16 +79,7 @@
     hasConnection = await loadMapLibre()
     isLoading = false
 
-    if (!window.maplibregl || map || !container) return
-
-    map = new window.maplibregl.Map({
-      container,
-      style,
-      zoom,
-      center,
-      maxPitch,
-    })
-    mapCtx.map = map
+    createMap()
   })
 </script>
 
