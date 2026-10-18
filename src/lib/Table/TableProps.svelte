@@ -104,7 +104,7 @@
     label={{ name: $T("constructor.props.outline") }}
     value={component.properties.outline}
     options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-    onChange={(value) => updateProperty("outline", value, component, onPropertyChange)}
+    onChange={(value) => updateProperty("outline", value === 1, component, onPropertyChange)}
   />
 {/snippet}
 
@@ -493,9 +493,9 @@
     value={component.properties.dataBuffer.stashData}
     options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
     onChange={(value) => {
-      updateProperty("dataBuffer.stashData", value, component, onPropertyChange)
+      updateProperty("dataBuffer.stashData", value === 1, component, onPropertyChange)
       if (value == 0) {
-        updateProperty("dataBuffer.clearButton", 0, component, onPropertyChange)
+        updateProperty("dataBuffer.clearButton", false, component, onPropertyChange)
         updateProperty("dataBuffer.logger", 0, component, onPropertyChange)
       }
     }}
@@ -509,7 +509,7 @@
     }}
     value={component.properties.dataBuffer.clearButton}
     options={[{ id: crypto.randomUUID(), value: 0, class: "", disabled: !component.properties.dataBuffer.stashData }]}
-    onChange={(value) => updateProperty("dataBuffer.clearButton", value, component, onPropertyChange)}
+    onChange={(value) => updateProperty("dataBuffer.clearButton", value === 1, component, onPropertyChange)}
   />
 {/snippet}
 
@@ -518,7 +518,7 @@
     label={{ name: $T("constructor.props.table.logger"), captionLeft: $T("constructor.props.info.bottom"), captionRight: $T("constructor.props.info.top") }}
     value={component.properties.dataBuffer.logger}
     options={[{ id: crypto.randomUUID(), value: 0, class: "", disabled: !component.properties.dataBuffer.stashData }]}
-    onChange={(value) => updateProperty("dataBuffer.logger", value, component, onPropertyChange)}
+    onChange={(value) => updateProperty("dataBuffer.logger", value === 1, component, onPropertyChange)}
   />
 {/snippet}
 

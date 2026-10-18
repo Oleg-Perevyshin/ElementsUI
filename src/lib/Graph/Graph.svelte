@@ -15,6 +15,7 @@
 </script>
 
 <script lang="ts">
+  import { T } from "$lib/locales/i18n"
   import { onMount } from "svelte"
   import Select from "../Select/Select.svelte"
   import type { IGraphDataObject, IGraphProps } from "../types"
@@ -416,27 +417,23 @@
       {#if !isHistoryMode}
         <!-- Развертка по горизонтали -->
         <Select
-          label={{ name: "Refresh Rate", class: "" }}
+          label={{ name: $T("ui.graph.refresh"), class: "" }}
           options={REFRESH_OPTIONS}
           value={REFRESH_OPTIONS.find((o) => o.value == selectedRefreshRate)}
           onUpdate={(value) => (selectedRefreshRate = (value as IOption).value as number)}
         />
       {/if}
 
-      <!-- Переменные и их значение -->
-      <div>
-        <h5 class="px-4">Values</h5>
-        <table class="w-full font-mono text-sm">
-          <tbody>
-            {#each graphData as data, i (data.id)}
-              <tr>
-                <td><div class="mr-2 h-4 w-4 rounded-full" style="background-color: {data.color}"></div></td>
-                <td class="w-24 truncate text-left font-semibold">{data.name}</td>
-                <td class="w-16 text-right">{currentValues[i]?.toFixed(2)}</td>
-              </tr>
-            {/each}
-          </tbody>
-        </table>
+      <!-- Переменные и их значение: сетка, а не таблица — имя обрезается «…», значение не переносится -->
+      <div class="flex flex-col gap-1">
+        <h5 class="text-[12px] font-semibold text-(--muted-color)">{$T("ui.graph.values")}</h5>
+        <div class="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-2 gap-y-1 text-[13px]">
+          {#each graphData as data, i (data.id)}
+            <span class="size-2.5 rounded-full" style="background-color: {data.color}"></span>
+            <span class="truncate font-semibold" title={data.name}>{data.name}</span>
+            <span class="text-right whitespace-nowrap tabular-nums">{currentValues[i]?.toFixed(2)}</span>
+          {/each}
+        </div>
       </div>
     </div>
   </div>

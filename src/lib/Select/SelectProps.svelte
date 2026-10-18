@@ -131,7 +131,7 @@
     value={component.properties.bitMode}
     options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
     onChange={(value) => {
-      updateProperty("bitMode", value, component, onPropertyChange)
+      updateProperty("bitMode", value === 1, component, onPropertyChange)
       const options = [...(component.properties?.options || [])]
       const maxNumber = Math.pow(2, component.properties.range.end - component.properties.range.start + 1) - 1
       options.forEach((option) => {
@@ -147,7 +147,7 @@
       value={component.properties.multiSelect}
       options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
       onChange={(value) => {
-        updateProperty("multiSelect", value, component, onPropertyChange)
+        updateProperty("multiSelect", value === 1, component, onPropertyChange)
       }}
     />
   {/if}

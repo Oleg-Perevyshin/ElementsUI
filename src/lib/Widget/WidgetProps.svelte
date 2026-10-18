@@ -62,7 +62,7 @@
     label={{ name: $T("constructor.props.widget.mode") }}
     value={component.properties.icons.cycling}
     options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-    onChange={(value) => updateProperty("icons.cycling", value, component, onPropertyChange)}
+    onChange={(value) => updateProperty("icons.cycling", value === 1, component, onPropertyChange)}
   />
 {/snippet}
 

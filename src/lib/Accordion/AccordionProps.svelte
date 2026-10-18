@@ -89,7 +89,7 @@
     label={{ name: $T("constructor.props.open") }}
     value={component.properties.isOpen}
     options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-    onChange={(value) => updateProperty("isOpen", value, component, onPropertyChange)}
+    onChange={(value) => updateProperty("isOpen", value === 1, component, onPropertyChange)}
   />
 {/snippet}
 

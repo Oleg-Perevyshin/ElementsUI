@@ -61,7 +61,7 @@
     value={component.properties.bitMode}
     options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
     onChange={(value) => {
-      updateProperty("bitMode", value, component, onPropertyChange)
+      updateProperty("bitMode", value === 1, component, onPropertyChange)
       updateProperty("value", 0, component, onPropertyChange)
       // if (!component.properties.bitMode) updateProperty("value", 0, component, onPropertyChange)
     }}

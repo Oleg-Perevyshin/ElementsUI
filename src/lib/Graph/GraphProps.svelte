@@ -35,7 +35,7 @@
     label={{ name: $T("constructor.props.istest") }}
     value={component.properties.isTest}
     options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-    onChange={(value) => updateProperty("isTest", value, component, onPropertyChange)}
+    onChange={(value) => updateProperty("isTest", value === 1, component, onPropertyChange)}
   />
 {/snippet}
 

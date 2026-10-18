@@ -2,6 +2,8 @@
   import TextsEditor from "../TextsEditor.svelte"
   import { getContext } from "svelte"
   import { T } from "$lib/locales/i18n"
+  import translations from "$lib/locales/translations"
+  import { LANGUAGE_CODES } from "$lib/locales/localize"
   import type { IInputProps, UIComponent, IOption, IUIComponentHandler } from "../types"
   import * as UI from "$lib"
   import { optionsStore, findColorOption } from "../options"
@@ -34,6 +36,12 @@
   )
 
   /* Обновление свойства */
+  /* Подсказка битового режима «Максимальное число: N» сразу на всех языках — иначе записалась бы на языке интерфейса конструктора */
+  const maxNumInfo = (range: { start: number; end: number }) => {
+    const max = Math.pow(2, range.end - range.start + 1) - 1
+    return Object.fromEntries(LANGUAGE_CODES.map((lang, i) => [lang, `${translations["constructor.props.maxnum"][i]}: ${max}`]))
+  }
+
   const updateProperty = (path: string, value: string | object | boolean | number | RegExp) => {
     const newProperties = JSON.parse(JSON.stringify(component.properties))
     if (path === "regExp") {
@@ -138,7 +146,7 @@
         updateProperty("number.minNum", 0)
         updateProperty("number.maxNum", Math.pow(2, component.properties.range.end - component.properties.range.start + 1) - 1)
         updateProperty("number.step", 1)
-        updateProperty("help.info", `${$T("constructor.props.maxnum")}: ${component.properties.number.maxNum}`)
+        updateProperty("help.info", maxNumInfo(component.properties.range))
       } else {
         updateProperty("help.info", "")
       }
@@ -247,7 +255,7 @@
           updateProperty("number.minNum", 0)
           updateProperty("number.maxNum", Math.pow(2, component.properties.range.end - component.properties.range.start + 1) - 1)
           updateProperty("number.step", 1)
-          updateProperty("help.info", `${$T("constructor.props.maxnum")}: ${component.properties.number.maxNum}`)
+          updateProperty("help.info", maxNumInfo({ start: value[0] as number, end: value[1] as number }))
         }
       }}
     />
@@ -349,7 +357,7 @@
     label={{ name: $T("constructor.props.disabled") }}
     value={component.properties.disabled}
     options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-    onChange={(value) => updateProperty("disabled", value)}
+    onChange={(value) => updateProperty("disabled", value === 1)}
   />
 {/snippet}
 

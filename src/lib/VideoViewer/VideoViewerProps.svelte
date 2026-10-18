@@ -24,7 +24,7 @@
     label={{ name: $T("constructor.props.showSelect") }}
     value={component.properties?.showSelect ? 1 : 0}
     options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-    onChange={(value) => updateProperty("showSelect", value, component, onPropertyChange)}
+    onChange={(value) => updateProperty("showSelect", value === 1, component, onPropertyChange)}
   />
 {/snippet}
 

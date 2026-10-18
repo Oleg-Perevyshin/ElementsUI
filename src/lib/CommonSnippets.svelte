@@ -159,7 +159,7 @@
     label={{ name: $T("constructor.props.disabled") }}
     value={(component.properties as UI.IInputProps | UI.ISwitchProps | UI.ISliderProps | UI.IFileAttachProps)?.disabled ? 1 : 0}
     options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-    onChange={(value) => updateProperty("disabled", value, component, onPropertyChange)}
+    onChange={(value) => updateProperty("disabled", value === 1, component, onPropertyChange)}
   />
 {/snippet}
 
@@ -181,7 +181,7 @@
     label={{ name: $T("constructor.props.readonly") }}
     value={Number((component.properties as UI.IInputProps | UI.IJoystickProps | UI.IWidgetProps).readonly)}
     options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-    onChange={(value) => updateProperty("readonly", value, component, onPropertyChange)}
+    onChange={(value) => updateProperty("readonly", value === 1, component, onPropertyChange)}
   />
 {/snippet}
 
