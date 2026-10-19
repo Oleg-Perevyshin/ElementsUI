@@ -13,7 +13,18 @@ const ARRAY5 = 0x85
 const decoder = new TextDecoder()
 
 export type XPoeDebugItem =
-  | { type: "frame"; srcId: number; cmd: number; header: string; argument: string; value: string; valueBytes: Uint8Array; crc: string; crcOk: boolean; freeHeap: string }
+  | {
+      type: "frame"
+      srcId: number
+      cmd: number
+      header: string
+      argument: string
+      value: string
+      valueBytes: Uint8Array
+      crc: string
+      crcOk: boolean
+      freeHeap: string
+    }
   | { type: "raw"; text: string }
 
 const encodeUInt = (input: number): number[] => {
@@ -21,7 +32,7 @@ const encodeUInt = (input: number): number[] => {
   if (value < 24n) return [Number(value)]
   if (value <= 0xffn) return [0x18, Number(value)]
   if (value <= 0xffffn) return [0x19, Number(value >> 8n), Number(value & 0xffn)]
-  if (value <= 0xffffffffn) return [0x1a, Number(value >> 24n), Number(value >> 16n & 0xffn), Number(value >> 8n & 0xffn), Number(value & 0xffn)]
+  if (value <= 0xffffffffn) return [0x1a, Number(value >> 24n), Number((value >> 16n) & 0xffn), Number((value >> 8n) & 0xffn), Number(value & 0xffn)]
   throw new Error("xPOE-Debug integer is out of range")
 }
 
@@ -45,12 +56,17 @@ export const encodeXPoeDebugFrame = (header: string, argument: string, value: Ui
 }
 
 const textItems = (bytes: Uint8Array) =>
-  decoder.decode(bytes).split("\n").map((line) => line.trim()).filter((line) => line && ![...line].some((char) => char.charCodeAt(0) < 0x20 && char !== "\t")).map((text) => ({ type: "raw" as const, text }))
+  decoder
+    .decode(bytes)
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) => line && ![...line].some((char) => char.charCodeAt(0) < 0x20 && char !== "\t"))
+    .map((text) => ({ type: "raw" as const, text }))
 
-const readUInt = (value: unknown): number | null => typeof value === "number" && Number.isInteger(value) && value >= 0 && value <= 0xffff ? value : null
+const readUInt = (value: unknown): number | null => (typeof value === "number" && Number.isInteger(value) && value >= 0 && value <= 0xffff ? value : null)
 
 /* Декодирует одну definite array из начала буфера; null означает неполный или невалидный кадр. */
-const frameItem = (buffer: Uint8Array): { status: "complete"; item: XPoeDebugItem; length: number } | { status: "incomplete" | "garbage" } => {
+const frameItem = (buffer: Uint8Array): { status: "complete"; item: XPoeDebugItem; length: number } | { status: "incomplete" } | { status: "garbage" } => {
   if (buffer[0] !== ARRAY5) return { status: "garbage" }
   try {
     const cbor = new CborDecoder(buffer)
@@ -66,13 +82,29 @@ const frameItem = (buffer: Uint8Array): { status: "complete"; item: XPoeDebugIte
     const freeHeapValue = fields.decode()
     const crcStart = 1 + fields.offset
     const crc = readUInt(fields.decode())
-    if (fields.offset !== length - 1 || crc === null || (freeHeapValue !== null && (typeof freeHeapValue !== "number" || !Number.isInteger(freeHeapValue) || freeHeapValue < 0))) return { status: "garbage" }
+    if (
+      fields.offset !== length - 1 ||
+      crc === null ||
+      (freeHeapValue !== null && (typeof freeHeapValue !== "number" || !Number.isInteger(freeHeapValue) || freeHeapValue < 0))
+    )
+      return { status: "garbage" }
     const valueBytes = buffer.slice(valueStart, valueEnd)
     const { header, argument } = splitCmd(cmd)
     return {
       status: "complete",
       length,
-      item: { type: "frame", srcId, cmd, header: Object.entries(HEADER_CODES).find(([, code]) => code === header)?.[0] ?? String(header), argument: nameByCode(DEFAULT_ARGUMENT_CODES, argument), value: Array.from(valueBytes, (byte) => byte.toString(16).padStart(2, "0").toUpperCase()).join(""), valueBytes, crc: crc.toString(16).toUpperCase().padStart(4, "0"), crcOk: crc16Kermit(0, buffer.subarray(0, crcStart)) === crc, freeHeap: typeof freeHeapValue === "number" ? String(freeHeapValue) : "" },
+      item: {
+        type: "frame",
+        srcId,
+        cmd,
+        header: Object.entries(HEADER_CODES).find(([, code]) => code === header)?.[0] ?? String(header),
+        argument: nameByCode(DEFAULT_ARGUMENT_CODES, argument),
+        value: Array.from(valueBytes, (byte) => byte.toString(16).padStart(2, "0").toUpperCase()).join(""),
+        valueBytes,
+        crc: crc.toString(16).toUpperCase().padStart(4, "0"),
+        crcOk: crc16Kermit(0, buffer.subarray(0, crcStart)) === crc,
+        freeHeap: typeof freeHeapValue === "number" ? String(freeHeapValue) : "",
+      },
     }
   } catch (error) {
     if (error instanceof CborEndOfDataError) return { status: "incomplete" }
@@ -114,13 +146,18 @@ export const createXPoeDebugParser = () => {
           buffer = buffer.slice(1)
           continue
         }
-        if (parsed.status === "garbage") { buffer = buffer.slice(1); continue }
+        if (parsed.status === "garbage") {
+          buffer = buffer.slice(1)
+          continue
+        }
         items.push(parsed.item)
         buffer = buffer.slice(parsed.length)
       }
       return items
     },
-    reset() { buffer = new Uint8Array() },
+    reset() {
+      buffer = new Uint8Array()
+    },
   }
 }
 
@@ -130,6 +167,10 @@ export const xPoeDebugValueFromText = (text: string | undefined): Uint8Array => 
   if (!trimmed) return new Uint8Array([0xf6])
   if (/^([0-9A-Fa-f]{2}\s?)+$/.test(trimmed)) return Uint8Array.from(trimmed.replace(/\s/g, "").match(/../g) ?? [], (pair) => parseInt(pair, 16))
   let parsed: unknown
-  try { parsed = JSON.parse(trimmed) } catch { throw new Error(`Value не является ни hex, ни JSON: ${trimmed}`) }
+  try {
+    parsed = JSON.parse(trimmed)
+  } catch {
+    throw new Error(`Value не является ни hex, ни JSON: ${trimmed}`)
+  }
   return jsonToCbor(parsed)
 }

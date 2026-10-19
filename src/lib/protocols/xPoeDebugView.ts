@@ -54,6 +54,16 @@ const COPY_ICON = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16
 const COPIED_ICON = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`
 
 let copyBindings = 0
+let copyObserver: MutationObserver | null = null
+
+const removeXPoeDebugModalFooters = () => {
+  document.querySelectorAll<HTMLElement>("[data-modal]").forEach((modal) => {
+    if (!modal.querySelector("[data-xpoe-debug-modal]")) return
+    const footer = modal.lastElementChild as HTMLElement | null
+    if (!footer || modal.children.length < 3) return
+    footer.remove()
+  })
+}
 
 const handleCopyClick = (event: MouseEvent) => {
   if (!(event.target instanceof Element)) return
@@ -82,12 +92,21 @@ const handleCopyClick = (event: MouseEvent) => {
 
 /* Делегированный обработчик кнопок модального окна; возвращённую функцию вызывают при уничтожении страницы. */
 export function bindXPoeDebugCopyButtons(): () => void {
-  if (copyBindings++ === 0) document.addEventListener("click", handleCopyClick)
+  if (copyBindings++ === 0) {
+    document.addEventListener("click", handleCopyClick)
+    removeXPoeDebugModalFooters()
+    copyObserver = new MutationObserver(removeXPoeDebugModalFooters)
+    copyObserver.observe(document.documentElement, { childList: true, subtree: true })
+  }
   let isBound = true
   return () => {
     if (!isBound) return
     isBound = false
-    if (--copyBindings === 0) document.removeEventListener("click", handleCopyClick)
+    if (--copyBindings === 0) {
+      document.removeEventListener("click", handleCopyClick)
+      copyObserver?.disconnect()
+      copyObserver = null
+    }
   }
 }
 
@@ -107,5 +126,5 @@ export function formatXPoeDebugModal(text: string): string {
   const textStyle = "display:block;min-width:0;max-width:100%;margin:0;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;font:inherit"
   const pane = (title: string, target: string, value: string) =>
     `<section style="${sectionStyle}"><div style="${headingStyle}"><span>${title}</span><button type="button" class="${buttonClass}" data-xpoe-copy="${target}" aria-label="Копировать ${title}" style="${buttonStyle}">${COPY_ICON}</button></div><pre style="${textStyle}">${value}</pre></section>`
-  return `<style>[data-modal]:has([data-xpoe-debug-modal])>div:last-child{display:none!important}</style><div data-xpoe-debug-modal style="${modalStyle}">${pane("Value", "value", decoded)}${hexIndex < 0 ? "" : pane("HEX", "hex", hex)}</div>`
+  return `<div data-xpoe-debug-modal style="${modalStyle}">${pane("Value", "value", decoded)}${hexIndex < 0 ? "" : pane("HEX", "hex", hex)}</div>`
 }
