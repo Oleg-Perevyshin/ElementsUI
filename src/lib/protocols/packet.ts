@@ -118,3 +118,37 @@ export const decodePacket = (bytes: Uint8Array): PacketParse => {
 /* Объекты пакета для своего адреса (и broadcast) с верным CRC — как CBOR_PktDecGet прошивки, только все, а не первый */
 export const objectsFor = (objects: DecodedPacketObject[], busID: number): DecodedPacketObject[] =>
   objects.filter((object) => object.crcOk && (object.trgBusID === busID || object.trgBusID === BROADCAST_BUS_ID))
+
+/* Потоковый разбор пакетов из сырого потока (RS485): пауза дольше gapMs обрывает недособранный пакет, мусор сдвигается по байту,
+   без единого целого пакета буфер не растёт дальше maxBytes */
+export const createPacketStreamParser = ({ gapMs = 100, maxBytes = 4096 } = {}) => {
+  let buffer = new Uint8Array()
+  let last = 0
+  return {
+    push(chunk: Uint8Array, now = Date.now()): { bytes: Uint8Array; objects: DecodedPacketObject[] }[] {
+      if (buffer.length && now - last > gapMs) buffer = new Uint8Array()
+      last = now
+      const merged = new Uint8Array(buffer.length + chunk.length)
+      merged.set(buffer)
+      merged.set(chunk, buffer.length)
+      buffer = merged
+
+      const packets: { bytes: Uint8Array; objects: DecodedPacketObject[] }[] = []
+      while (buffer.length) {
+        const parsed = decodePacket(buffer)
+        if (parsed.status === "incomplete") break
+        if (parsed.status === "garbage") {
+          buffer = buffer.slice(1)
+          continue
+        }
+        packets.push({ bytes: buffer.slice(0, parsed.length), objects: parsed.objects })
+        buffer = buffer.slice(parsed.length)
+      }
+      if (buffer.length > maxBytes) buffer = new Uint8Array()
+      return packets
+    },
+    reset() {
+      buffer = new Uint8Array()
+    },
+  }
+}

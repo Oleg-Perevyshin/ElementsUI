@@ -134,3 +134,99 @@ test("POESerial: неверный CRC, команда устройству", () 
   assert.equal(parsed.crcOk, true)
   assert.deepEqual([...parsed.valueBytes], [...value])
 })
+
+/* CAN/CAN FD через slcan */
+test("CAN: нарезка на кадры как в can_service прошивки", () => {
+  const ids = (frames) => frames.map((frame) => [frame.canId, frame.data.length])
+  assert.deepEqual(ids(m.canFragments(new Uint8Array(8), false, 0x123)), [[0x523, 8]])
+  assert.deepEqual(ids(m.canFragments(new Uint8Array(20), false, 0x123)), [
+    [0x123, 8],
+    [0x123, 8],
+    [0x523, 4],
+  ])
+  assert.deepEqual(ids(m.canFragments(new Uint8Array(16), false, 0x7)), [
+    [0x007, 8],
+    [0x407, 8],
+  ])
+  assert.deepEqual(ids(m.canFragments(new Uint8Array(70), true, 0x3ff)), [
+    [0x3ff, 64],
+    [0x7ff, 6],
+  ])
+  for (let i = 0; i < 50; i++) {
+    const id = m.canFragments(new Uint8Array(1), false)[0].canId & m.CAN_PACKET_ID_MASK
+    assert.ok(id >= 1 && id <= 0x3ff)
+  }
+})
+
+test("CAN: кадры slcan, допустимые длины CAN FD", () => {
+  assert.equal(m.encodeSlcanFrame({ canId: 0x523, data: Uint8Array.of(1, 2, 0xab) }, false), "t5233" + "0102AB\r")
+  assert.equal(m.encodeSlcanFrame({ canId: 0x400, data: new Uint8Array() }, true), "b4000\r")
+  const fd13 = m.encodeSlcanFrame({ canId: 0x401, data: new Uint8Array(13).fill(1) }, true)
+  assert.equal(fd13, "b401A" + "01".repeat(13) + "00".repeat(3) + "\r")
+  assert.equal(m.encodeSlcanFrame({ canId: 0x401, data: new Uint8Array(20) }, true).slice(0, 5), "b401B")
+})
+
+test("CAN: сборка пакета из потока slcan в любом месте разреза", () => {
+  for (const fd of [false, true]) {
+    const packet = bytes(REF.multi)
+    const other = bytes(REF.one)
+    const stream = new TextEncoder().encode(m.encodeCanPacket(packet, fd, 0x0aa) + m.encodeCanPacket(other, fd, 0x0bb))
+    for (let cut = 0; cut <= stream.length; cut += 7) {
+      const parser = m.createCanParser()
+      const messages = [...parser.push(stream.subarray(0, cut), 0), ...parser.push(stream.subarray(cut), 1)]
+      assert.equal(messages.length, 2, `fd=${fd} разрез ${cut}`)
+      assert.deepEqual([...messages[0].data], [...packet])
+      assert.deepEqual([...messages[1].data], [...other])
+      assert.deepEqual([messages[0].packetId, messages[1].packetId], [0x0aa, 0x0bb])
+    }
+  }
+})
+
+test("CAN: чередование пакетов, remote-кадр, таймаут незавершённой сессии", () => {
+  const a = m.canFragments(bytes(REF.multi), false, 0x11)
+  const b = m.canFragments(bytes(REF.one), false, 0x22)
+  const interleaved = [a[0], b[0], ...a.slice(1), ...b.slice(1)].map((frame) => m.encodeSlcanFrame(frame, false)).join("")
+  const parser = m.createCanParser()
+  const messages = parser.push(new TextEncoder().encode(interleaved + "r5550\r"), 0)
+  assert.deepEqual(
+    messages.map((message) => [message.packetId, message.remote]),
+    [
+      [0x11, false],
+      [0x22, false],
+      [0x155, true],
+    ],
+  )
+  const stale = m.createCanParser({ sessionTimeoutMs: 100 })
+  stale.push(new TextEncoder().encode(m.encodeSlcanFrame(a[0], false)), 0)
+  const late = stale.push(
+    new TextEncoder().encode(
+      a
+        .slice(1)
+        .map((frame) => m.encodeSlcanFrame(frame, false))
+        .join(""),
+    ),
+    500,
+  )
+  assert.ok(late.length === 0 || late[0].data.length < bytes(REF.multi).length)
+})
+
+test("RS485: пакеты из сырого потока, мусор, пауза", () => {
+  const one = bytes(REF.one)
+  const multi = bytes(REF.multi)
+  const stream = new Uint8Array([0x41, 0x42, ...one, ...multi])
+  for (let cut = 0; cut <= stream.length; cut++) {
+    const parser = m.createPacketStreamParser()
+    const packets = [...parser.push(stream.subarray(0, cut), 0), ...parser.push(stream.subarray(cut), 10)]
+    assert.deepEqual(
+      packets.map((packet) => hex(packet.bytes)),
+      [REF.one, REF.multi],
+      `разрез ${cut}`,
+    )
+  }
+  const parser = m.createPacketStreamParser({ gapMs: 100 })
+  assert.equal(parser.push(multi.subarray(0, 10), 0).length, 0)
+  assert.deepEqual(
+    parser.push(one, 500).map((packet) => hex(packet.bytes)),
+    [REF.one],
+  )
+})

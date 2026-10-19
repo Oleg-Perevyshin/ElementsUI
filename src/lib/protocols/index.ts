@@ -19,9 +19,12 @@ export {
   encodePacket,
   decodePacket,
   objectsFor,
+  createPacketStreamParser,
   type PacketObject,
   type DecodedPacketObject,
   type PacketParse,
 } from "./packet.js"
 /* Рамка POESerial (UART-консоль system_console): сборка команды и потоковый разбор кадров, строк Teleplot и текста */
 export { encodePoeSerialFrame, createPoeSerialParser, type PoeSerialItem } from "./poeSerial.js"
+/* CAN/CAN FD через slcan-адаптер: нарезка пакета на кадры как в can_service прошивки, кадры slcan, потоковый разбор со сборкой фрагментов */
+export { CAN_FINAL_BIT, CAN_PACKET_ID_MASK, canFragments, encodeSlcanFrame, encodeCanPacket, createCanParser, type CanFrame, type CanMessage } from "./can.js"
