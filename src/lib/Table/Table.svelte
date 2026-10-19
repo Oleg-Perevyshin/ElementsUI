@@ -340,6 +340,8 @@
                            }
                           ${typeof button.class === 'function' ? button.class(row) : button.class}`)} bg-(--bg-color)"
                           onclick={() => buttonClick(row, button)}
+                          title={typeof button.title === "function" ? button.title(row) : button.title}
+                          aria-label={typeof button.title === "function" ? button.title(row) : button.title}
                         >
                           {#if button?.icon}
                             <span class={`flex size-4 shrink-0 items-center justify-center overflow-visible [&_svg]:h-full [&_svg]:w-full`}>

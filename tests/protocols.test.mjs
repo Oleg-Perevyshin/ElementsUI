@@ -1,6 +1,7 @@
 /* tests/protocols.test.mjs — ядро протоколов (poe-svelte-ui-lib/protocols) против эталонных байт прошивки: запуск `npm run TestProtocols` */
 import { test } from "node:test"
 import assert from "node:assert/strict"
+import { readFileSync } from "node:fs"
 import * as m from "../dist/protocols/index.js"
 
 /* Эталон — пакеты, собранные настоящим poe_cbor_pkt.c прошивки (ProdFactory-ESP, CBOR_PACK + CBOR_PktEncFinish):
@@ -234,8 +235,11 @@ test("RS485: пакеты из сырого потока, мусор, пауза
 })
 
 test("словарь, поле Value POESerial, команды slcan-адаптера", () => {
-  assert.equal(Object.keys(m.DEFAULT_ARGUMENT_CODES).length, 52)
+  /* DEFAULT_ARGUMENT_CODES — ровно мастер-словарь dictionary.yaml (сгенерирован npm run Dictionary, файл поставляется в пакете) */
+  assert.deepEqual(m.DEFAULT_ARGUMENT_CODES, m.parseArgumentDictionary(readFileSync(new URL("../dist/protocols/dictionary.yaml", import.meta.url), "utf8")))
+  assert.equal(Object.keys(m.DEFAULT_ARGUMENT_CODES).length, 48)
   assert.equal(m.DEFAULT_ARGUMENT_CODES.DataStream, 15)
+  assert.equal(m.DEFAULT_ARGUMENT_CODES.FDwS, undefined)
   assert.deepEqual(m.parseArgumentDictionary("# комментарий\n- [ModCfg, A_MOD_CONFIG, 36]   # хвост\n- [OrData, A_OR_DATA, 211]\n"), {
     ModCfg: 36,
     OrData: 211,

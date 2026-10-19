@@ -38,5 +38,5 @@ export {
   type CanFrame,
   type CanMessage,
 } from "./can.js"
-/* Словарь заголовков и аргументов HA_Code — по умолчанию из Dictionary.yaml прошивок, разбор файла словаря */
+/* Словарь заголовков и аргументов HA_Code — по умолчанию из мастер-словаря dictionary.yaml библиотеки, разбор файла словаря */
 export { HEADER_CODES, DEFAULT_ARGUMENT_CODES, parseArgumentDictionary, nameByCode } from "./dictionary.js"

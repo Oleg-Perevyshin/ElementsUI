@@ -45,6 +45,15 @@
     recalc()
   }
 
+  /* Скачивание — имитация чтения чанков и сохранение текстового файла-заглушки */
+  const mockDownload = async (name: string) => {
+    await new Promise((r) => setTimeout(r, 600))
+    const url = URL.createObjectURL(new Blob([`mock ${name}`], { type: "application/octet-stream" }))
+    const a = Object.assign(document.createElement("a"), { href: url, download: name.split("/").pop() ?? "file" })
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
   let fsComponent: UIComponent = $state({
     id: crypto.randomUUID(),
     type: "WidgetFileSystem",
@@ -67,6 +76,7 @@ value={fsInfo}
 onRefresh={handleRefresh}
 onDelete={handleDelete}
 onUpload={handleUpload}
+onDownload={handleDownload}
 />`)
 </script>
 
@@ -79,6 +89,7 @@ onUpload={handleUpload}
         onRefresh={() => console.log("GET FS (mock)")}
         onDelete={mockDelete}
         onUpload={mockUpload}
+        onDownload={mockDownload}
       />
     </div>
   {/snippet}

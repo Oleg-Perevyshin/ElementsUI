@@ -1,6 +1,6 @@
 {
   "name": "poe-svelte-ui-lib",
-  "version": "1.67.0",
+  "version": "1.68.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Oleg-Perevyshin/ElementsUI.git"
@@ -11,12 +11,13 @@
     "dev": "vite dev",
     "build": "vite build",
     "preview": "vite preview",
-    "prepack": "svelte-kit sync && svelte-package && publint",
+    "prepack": "node scripts/GenerateDictionary.mjs && svelte-kit sync && svelte-package && publint",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "CheckUpdate": "npx npm-check-updates -u && npm install",
     "UpdateIconsLib": "tsx src/lib/IconsCatalog/iconsLib.ts",
     "Formatting": "prettier --write .",
-    "TestProtocols": "svelte-package && node --test tests/*.test.mjs"
+    "Dictionary": "node scripts/GenerateDictionary.mjs",
+    "TestProtocols": "node scripts/GenerateDictionary.mjs && svelte-package && node --test tests/*.test.mjs"
   },
   "svelte": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -29,6 +30,7 @@
       "types": "./dist/protocols/index.d.ts",
       "default": "./dist/protocols/index.js"
     },
+    "./protocols/dictionary.yaml": "./dist/protocols/dictionary.yaml",
     "./locales": {
       "types": "./dist/locales/index.d.ts",
       "default": "./dist/locales/index.js"

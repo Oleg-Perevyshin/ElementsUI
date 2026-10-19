@@ -663,9 +663,9 @@ const translations: Translations = {
     zh: "设备文件系统占用；存满后无法写入新文件、日志和更新",
   },
   "widget.fs.hint.files": {
-    ru: "Файлы на устройстве: сортировка — по заголовку колонки, удаление — кнопкой в строке",
-    en: "Files on the device: sort by the column header, delete with the button in the row",
-    zh: "设备上的文件：点击列标题排序，点击行内按钮删除",
+    ru: "Файлы на устройстве: сортировка — по заголовку колонки, скачивание и удаление — значками в строке",
+    en: "Files on the device: sort by the column header, download and delete with the icons in the row",
+    zh: "设备上的文件：点击列标题排序，点击行内图标下载或删除",
   },
   "widget.fs.hint.upload": {
     ru: "Загрузить файл на устройство; файл с тем же именем будет заменён",
@@ -731,6 +731,9 @@ const translations: Translations = {
   "widget.fs.files": { ru: "Файлов: {n}", en: "Files: {n}", zh: "文件：{n}" },
   "widget.fs.empty": { ru: "Файлов нет", en: "No files", zh: "没有文件" },
   "widget.fs.upload": { ru: "Закачать файл", en: "Upload file", zh: "上传文件" },
+  "widget.fs.download": { ru: "Скачать", en: "Download", zh: "下载" },
+  "widget.fs.downloading": { ru: "Скачивание: {name}", en: "Downloading: {name}", zh: "正在下载：{name}" },
+  "widget.fs.download_failed": { ru: "Скачивание прервано: {error}", en: "Download aborted: {error}", zh: "下载中断：{error}" },
   "widget.fs.delete_confirm": { ru: "Удалить файл?", en: "Delete file?", zh: "删除文件？" },
   "widget.fs.upload_group": { ru: "Закачка файлов", en: "File upload", zh: "文件上传" },
   "widget.fs.accept": { ru: "Допустимые файлы (accept)", en: "Allowed files (accept)", zh: "允许的文件 (accept)" },

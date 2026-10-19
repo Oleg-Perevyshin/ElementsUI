@@ -1,0 +1,66 @@
+# Словарь аргументов протокола HA_Code — единый для всех устройств, обоих фреймворков и приложений
+# Строковое представление аргумента | Название в перечислении | Числовой код
+# Источник — poe-svelte-ui-lib (src/lib/protocols/dictionary.yaml); .framework/Dictionary.yaml фреймворков — копии, не править
+
+# 0 — отсутствие аргумента
+- [Unknown, A_UNKNOWN, 0]                   # Аргумент отсутствует
+
+# Служебные команды
+- [Restart, A_RESTART, 1]                   # SET: перезагрузка устройства
+- [DefCfg, A_DEF_CONFIG, 2]                 # SET: сброс конфигурации к заводской
+- [DlFW, A_DOWNLOAD_FIRMWARE, 3]            # SET: скачивание прошивки с сервера (http_client)
+- [RstNVS, A_RESET_NVS, 5]                  # SET: очистка NVS и перезагрузка
+- [LocTime, A_LOCAL_TIME, 6]                # GET: локальное время устройства
+- [Update, A_UPDATE, 7]                     # OK!/ER!: обновление данных в интерфейсе (DevCloud ретранслирует DataStream)
+- [StackInfo, A_STACK_INFO, 8]              # GET: снимок куч и стеков задач
+- [BackUp, A_BACKUP, 9]                     # Резервная копия конфигурации
+- [BindMKey, A_BIND_MOD_KEY, 10]            # SET: привязка ключа модуля (ModBindKey)
+- [DataStream, A_DATA_STREAM, 15]           # OK!: поток данных групп конфигурации (CS_PushGroupStream)
+
+# Локальная сеть
+- [APsList, A_APS_LIST, 21]                 # GET: список точек доступа Wi-Fi
+- [FS, A_FS, 22]                            # Файловая система: GET FS — снимок, SET FS {Op: Delete|UploadStart|UploadChunk|UploadDone|DownloadStart|DownloadChunk|DownloadDone}
+- [JoinDev, A_JOIN_DEV, 23]                 # SET: подтверждение подключения устройства к облаку
+- [JoinUser, A_JOIN_USER, 24]               # SET: пользователь подключился к устройству
+- [LeaveUser, A_LEAVE_USER, 25]             # SET: пользователь отключился от устройства
+
+# Модули в рамках изделия
+- [ModFind, A_MODULE_FIND, 31]              # GET/OK!: поиск модулей на шинах изделия
+- [ModList, A_MODULE_LIST, 32]              # Список модулей изделия (CFG.ModList)
+- [ModCap, A_MODULE_CAPTURE, 33]            # GET/OK!: захват модуля для привязки
+- [ModInfo, A_MODULE_INFO, 34]              # GET/OK!: информация о модуле
+- [ModMode, A_MODULE_MODE, 35]              # SET: режим работы модуля
+- [ModCfg, A_MODULE_CFG, 36]                # GET/SET: конфигурация модуля (группы config_service)
+- [ModT1, A_MODULE_TELEMETRY_1, 37]         # Телеметрия модуля, канал 1
+- [ModT2, A_MODULE_TELEMETRY_2, 38]         # Телеметрия модуля, канал 2
+- [ModT3, A_MODULE_TELEMETRY_3, 39]         # Телеметрия модуля, канал 3
+- [ModT4, A_MODULE_TELEMETRY_4, 40]         # Телеметрия модуля, канал 4
+- [ModT5, A_MODULE_TELEMETRY_5, 41]         # Телеметрия модуля, канал 5
+- [ModS1, A_MODULE_STREAM_1, 42]            # Поток данных модуля, канал 1
+- [ModS2, A_MODULE_STREAM_2, 43]            # Поток данных модуля, канал 2
+- [ModS3, A_MODULE_STREAM_3, 44]            # Поток данных модуля, канал 3
+- [ModS4, A_MODULE_STREAM_4, 45]            # Поток данных модуля, канал 4
+- [ModS5, A_MODULE_STREAM_5, 46]            # Поток данных модуля, канал 5
+
+# Обновление прошивки
+- [FwUpgS, A_UPGRADE_START, 51]             # Старт обновления прошивки модуля по шине
+- [FwUpgP, A_UPGRADE_PROC, 52]              # Блок прошивки при обновлении по шине
+- [FwUpgD, A_UPGRADE_DONE, 53]              # Завершение обновления прошивки по шине
+- [FwUpgE, A_UPGRADE_ERR, 54]               # Ошибка обновления прошивки по шине
+
+- [TestReq, TEST_REQUEST, 91]               # GET: тестовый запрос
+
+# Работа с модулями перемещения (оси подвесов, линейные перемещения, серво приводы и подобные)
+- [MotInit, A_MOTION_INIT, 111]             # SET: включение/калибровка (1 байт: команда)
+- [MotMode, A_MOTION_MODE, 112]             # SET: режим управления (2 байта: ctrl_mode + torque_mode)
+- [MotPos, A_MOTION_POS, 113]               # GET/SET: целевое значение (4 байта: float)
+- [MotPID, A_MOTION_PID, 114]               # SET: коэффициенты PID (13 байт: selector + Kp + Ki + Kd)
+- [MotInfo, A_MOTION_INFO, 115]             # GET: телеметрия (32 байта: angle+vel+Iq+Id+target+flags)
+- [MotCfg, A_MOTION_CFG, 116]               # GET/SET: конфигурация мотора (28 байт: лимиты+параметры)
+- [MotCal, A_MOTION_CAL, 117]               # SET: запуск калибровки нулевого угла (0 байт)
+
+# Работа с модулями ориентации (IMU, магнетометры, GNSS и подобные)
+- [OrData, A_ORIENTATION_DATA, 141]         # SET: углы ориентации от модуля
+- [OrOfs, A_ORIENTATION_OFFSET, 142]        # Смещения ориентации
+- [OrAccCal, A_ORIENTATION_ACC_CALIB, 143]  # Калибровка акселерометра
+- [OrMagCal, A_ORIENTATION_MAG_CALIB, 144]  # Калибровка магнетометра

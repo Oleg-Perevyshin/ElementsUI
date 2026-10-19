@@ -7,3 +7,6 @@ bun.lockb
 
 # Miscellaneous
 /static/
+
+# Словарь протокола: выравнивание комментариев по столбцу, копируется во фреймворки как есть
+src/lib/protocols/dictionary.yaml

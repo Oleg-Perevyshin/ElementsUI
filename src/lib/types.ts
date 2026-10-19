@@ -407,6 +407,8 @@ export interface ITableSelect<T extends object> {
 export interface ITableButton<T extends object> {
   name?: string | ((row: T) => string)
   icon?: ConstructorOfATypedSvelteComponent | string
+  /* Подсказка при наведении — обязательна для кнопки-значка без name */
+  title?: string | ((row: T) => string)
   class?: string | ((row: T) => string)
   eventHandler?: IUIComponentHandler
   onClick?: (row: T) => void
@@ -654,6 +656,8 @@ export interface IWidgetFileSystemProps {
   persistKey?: string
   onRefresh?: () => void
   onDelete?: (name: string) => void
+  /* Скачивание файла: протокол SET FS с Op DownloadStart/DownloadChunk/DownloadDone и сохранение — у вызывающего; виджет только отдаёт имя и ждёт завершения */
+  onDownload?: (name: string) => void | Promise<void>
   /* Протокол закачки (SET FS с Op UploadStart/UploadChunk/UploadDone) реализует вызывающий — виджет только отдаёт выбранный файл */
   onUpload?: (file: File) => void | Promise<void>
 }

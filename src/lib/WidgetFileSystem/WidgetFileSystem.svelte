@@ -1,16 +1,19 @@
 <!-- $lib/WidgetFileSystem/WidgetFileSystem.svelte — смарт-виджет файловой системы устройства.
      Данные — один объект CFG.FS в том виде, в каком его отдаёт прошивка (FS_WriteState, ProdFactory-ESP):
      Total/Used/Free/List[{Name, Size}] и Upload{Name, Size, Progress} — только пока идёт закачка.
-     Ничего не знает про DeviceStore/WebSocket — value/onRefresh/onDelete/onUpload, протокол
-     закачки (SET FS с Op UploadStart/UploadChunk/UploadDone) и отправка команд на стороне вызывающего. -->
+     Ничего не знает про DeviceStore/WebSocket — value/onRefresh/onDelete/onUpload/onDownload, протоколы
+     закачки и скачивания (SET FS с Op UploadStart/UploadChunk/UploadDone и DownloadStart/DownloadChunk/DownloadDone)
+     и отправка команд на стороне вызывающего. -->
 <script lang="ts">
   import { T } from "$lib/locales/i18n"
   import { slide, fade, scale } from "svelte/transition"
   import { twMerge } from "tailwind-merge"
   import * as UI from "$lib"
-  import type { IWidgetFileSystemFile, IWidgetFileSystemProps, ITableHeader } from "../types"
+  import type { IWidgetFileSystemFile, IWidgetFileSystemProps, ITableHeader, ITableContent } from "../types"
   import StorageIcon from "./StorageIcon.svelte"
   import RefreshIcon from "./RefreshIcon.svelte"
+  import ButtonDownload from "../libIcons/ButtonDownload.svelte"
+  import ButtonDelete from "../libIcons/ButtonDelete.svelte"
   import WidgetHeader from "../WidgetHeader.svelte"
   import { hint, hintsSetting } from "../hints"
   import { widgetAccentStyle } from "../widgetAccent"
@@ -28,6 +31,7 @@
     onRefresh,
     onDelete,
     onUpload,
+    onDownload,
   }: IWidgetFileSystemProps = $props()
 
   /* Подсказки — кнопка «?» в шапке, выбор общий для всех WidgetFileSystem */
@@ -61,24 +65,30 @@
   /* Полоса — мастер-цвет виджета; почти заполненную ФС (закачка скоро начнёт падать) выдаёт только процент */
   let percentColor = $derived(usedPercent >= 90 ? "var(--red-color)" : usedPercent >= 75 ? "var(--orange-color)" : "var(--muted-color)")
 
-  /* Таблица файлов: путь обрезается «…», размер — уже отформатирован, удаление — с подтверждением */
+  /* Таблица файлов: путь обрезается «…», размер — уже отформатирован; действия — значки без текста: скачать и удалить (с подтверждением) */
   type FileRow = IWidgetFileSystemFile & { SizeText: string }
   let rows: FileRow[] = $derived(files.map((f) => ({ ...f, SizeText: formatBytes(f.Size) })))
+  let actions = $derived(
+    [
+      onDownload && {
+        type: "button",
+        data: { icon: ButtonDownload, title: $T("widget.fs.download"), class: "bg-transparent px-0", onClick: (row: FileRow) => handleDownload(row.Name) },
+      },
+      onDelete && {
+        type: "button",
+        data: {
+          icon: ButtonDelete,
+          title: $T("widget.common.delete"),
+          class: "bg-transparent px-0 text-(--red-color) hover:bg-(--red-color)/10",
+          onClick: (row: FileRow) => (pendingDelete = row.Name),
+        },
+      },
+    ].filter(Boolean) as ITableContent<FileRow>[],
+  )
   let header: ITableHeader<FileRow>[] = $derived([
     { label: { name: $T("widget.fs.path") }, content: [{ type: "text", data: { key: "Name", truncated: true, sortable: true } }], width: "1fr", align: "left" },
     { label: { name: $T("widget.fs.size") }, content: [{ type: "text", data: { key: "SizeText" } }], width: "6rem", align: "right" },
-    ...(onDelete
-      ? [
-          {
-            label: { name: "" },
-            content: [
-              { type: "button", data: { name: $T("widget.common.delete"), class: "bg-accent", onClick: (row: FileRow) => (pendingDelete = row.Name) } },
-            ],
-            width: "6.5rem",
-            align: "center",
-          } as ITableHeader<FileRow>,
-        ]
-      : []),
+    ...(actions.length ? [{ label: { name: "" }, content: actions, width: `${actions.length * 2.5 + 1}rem`, align: "center" } as ITableHeader<FileRow>] : []),
   ])
 
   /* Закачка видна, пока её ведёт этот клиент или пока устройство сообщает Upload (закачка с другого клиента);
@@ -90,6 +100,22 @@
   const confirmDelete = () => {
     if (pendingDelete) onDelete?.(pendingDelete)
     pendingDelete = null
+  }
+
+  /* Скачивание: одно за раз, ошибка вызывающего показывается под таблицей */
+  let downloading: string | null = $state(null)
+  let downloadError = $state("")
+  const handleDownload = async (name: string) => {
+    if (!onDownload || downloading) return
+    downloadError = ""
+    downloading = name
+    try {
+      await onDownload(name)
+    } catch (error) {
+      downloadError = $T("widget.fs.download_failed", { error: error instanceof Error ? error.message : String(error) })
+    } finally {
+      downloading = null
+    }
   }
 
   /* Закачка: имя проверяется до отправки (прошивка отвергнет длинное имя уже после UploadStart) */
@@ -158,6 +184,14 @@
           <div class="rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-3 text-center text-[13px] text-(--faint-color)">
             {$T("widget.fs.empty")}
           </div>
+        {/if}
+        {#if downloading}
+          <span class="mt-2 truncate text-[12px] text-(--muted-color)" transition:slide={{ duration: 100 }}
+            >{$T("widget.fs.downloading", { name: downloading })}</span
+          >
+        {/if}
+        {#if downloadError}
+          <span class="mt-2 text-[12px] text-(--red-color)" transition:slide={{ duration: 100 }}>{downloadError}</span>
         {/if}
       </div>
 

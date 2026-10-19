@@ -110,13 +110,14 @@
 
 #### ITableButton\<T\>
 
-| Название       | Тип                                            | По умолчанию | Описание                                                |
-| -------------- | ---------------------------------------------- | ------------ | ------------------------------------------------------- |
-| `name`         | `string \| ((row: T) => string)`               | `undefined`  | Текст кнопки (статичный или вычисляемый по строке)      |
-| `icon`         | `ConstructorOfATypedSvelteComponent \| string` | `undefined`  | Иконка кнопки (Svelte-компонент или строка SVG)         |
-| `class`        | `string \| ((row: T) => string)`               | `undefined`  | CSS-классы кнопки (статичные или вычисляемые по строке) |
-| `eventHandler` | `IUIComponentHandler`                          | `undefined`  | Обработчик события конструктора                         |
-| `onClick`      | `(row: T) => void`                             | `undefined`  | Обработчик клика по кнопке                              |
+| Название       | Тип                                            | По умолчанию | Описание                                                                          |
+| -------------- | ---------------------------------------------- | ------------ | --------------------------------------------------------------------------------- |
+| `name`         | `string \| ((row: T) => string)`               | `undefined`  | Текст кнопки (статичный или вычисляемый по строке)                                |
+| `icon`         | `ConstructorOfATypedSvelteComponent \| string` | `undefined`  | Иконка кнопки (Svelte-компонент или строка SVG)                                   |
+| `title`        | `string \| ((row: T) => string)`               | `undefined`  | Подсказка при наведении и `aria-label` — обязательна для кнопки-значка без `name` |
+| `class`        | `string \| ((row: T) => string)`               | `undefined`  | CSS-классы кнопки (статичные или вычисляемые по строке)                           |
+| `eventHandler` | `IUIComponentHandler`                          | `undefined`  | Обработчик события конструктора                                                   |
+| `onClick`      | `(row: T) => void`                             | `undefined`  | Обработчик клика по кнопке                                                        |
 
 #### ITableProgressBar\<T\>
 
