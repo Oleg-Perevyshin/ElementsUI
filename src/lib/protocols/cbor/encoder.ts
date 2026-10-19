@@ -257,6 +257,12 @@ export class CborEncoder {
     return this
   }
 
+  /* Добавить заранее проверенный CBOR item без повторного кодирования. */
+  public encodeRaw(value: Uint8Array): this {
+    this.writeBytes(Array.from(value))
+    return this
+  }
+
   /* Начать кодирование массива - count элементов или null для неопределённой длины */
   public encodeArrayStart(count: number | null): this {
     if (count === null) this.writeIndefiniteHeader(CborMajorType.Array)

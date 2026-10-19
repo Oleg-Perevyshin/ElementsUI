@@ -27,7 +27,7 @@ export {
 } from "./packet.js"
 /* Графики отладки: кадр OK! DebPlot (SC_PLOT прошивки) — значения из CBOR-карты, график на группу, серии в порядке устройства */
 export { createPlotGroups, debPlotValues, DEB_PLOT_ARGUMENT, type PlotPoint } from "./plotGroups.js"
-/* System Console over UART: CBOR [SrcID, HdrArg, Value, FHS, CRC16], plus stream parsing */
+/* System Console over UART: single-record poe_cbor_pkt with debug-only FHS */
 export { encodeXPoeDebugFrame, createXPoeDebugParser, xPoeDebugCmd, xPoeDebugValueFromText, type XPoeDebugItem } from "./xPoeDebug.js"
 /* Отображение Value xPOE-Debug в таблице/модалке и копирование Value/HEX */
 export { formatXPoeDebugValue, formatXPoeDebugValueForTable, formatXPoeDebugModal, bindXPoeDebugCopyButtons } from "./xPoeDebugView.js"
