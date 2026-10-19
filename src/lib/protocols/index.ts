@@ -25,6 +25,18 @@ export {
   type PacketParse,
 } from "./packet.js"
 /* Рамка POESerial (UART-консоль system_console): сборка команды и потоковый разбор кадров, строк Teleplot и текста */
-export { encodePoeSerialFrame, createPoeSerialParser, type PoeSerialItem } from "./poeSerial.js"
+export { encodePoeSerialFrame, createPoeSerialParser, poeSerialValueFromText, type PoeSerialItem } from "./poeSerial.js"
 /* CAN/CAN FD через slcan-адаптер: нарезка пакета на кадры как в can_service прошивки, кадры slcan, потоковый разбор со сборкой фрагментов */
-export { CAN_FINAL_BIT, CAN_PACKET_ID_MASK, canFragments, encodeSlcanFrame, encodeCanPacket, createCanParser, type CanFrame, type CanMessage } from "./can.js"
+export {
+  CAN_FINAL_BIT,
+  CAN_PACKET_ID_MASK,
+  canFragments,
+  encodeSlcanFrame,
+  encodeCanPacket,
+  createCanParser,
+  slcanOpenCommands,
+  type CanFrame,
+  type CanMessage,
+} from "./can.js"
+/* Словарь заголовков и аргументов HA_Code — по умолчанию из Dictionary.yaml прошивок, разбор файла словаря */
+export { HEADER_CODES, DEFAULT_ARGUMENT_CODES, parseArgumentDictionary, nameByCode } from "./dictionary.js"

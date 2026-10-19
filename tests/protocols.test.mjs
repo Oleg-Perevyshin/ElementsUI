@@ -230,3 +230,20 @@ test("RS485: пакеты из сырого потока, мусор, пауза
     [REF.one],
   )
 })
+
+test("словарь, поле Value POESerial, команды slcan-адаптера", () => {
+  assert.equal(Object.keys(m.DEFAULT_ARGUMENT_CODES).length, 52)
+  assert.equal(m.DEFAULT_ARGUMENT_CODES.DataStream, 15)
+  assert.deepEqual(m.parseArgumentDictionary("# комментарий\n- [ModCfg, A_MOD_CONFIG, 36]   # хвост\n- [OrData, A_OR_DATA, 211]\n"), {
+    ModCfg: 36,
+    OrData: 211,
+  })
+  assert.equal(m.nameByCode(m.HEADER_CODES, 2), "OK!")
+  assert.equal(m.nameByCode(m.DEFAULT_ARGUMENT_CODES, 9999), "9999")
+  assert.deepEqual([...m.poeSerialValueFromText("")], [])
+  assert.deepEqual([...m.poeSerialValueFromText("A1 61 61 01")], [0xa1, 0x61, 0x61, 0x01])
+  assert.deepEqual([...m.poeSerialValueFromText('{"a":1}')], [...m.valueToCbor({ a: 1 })])
+  assert.throws(() => m.poeSerialValueFromText("не json"))
+  assert.deepEqual(m.slcanOpenCommands("S6"), ["C\r", "S6\r", "M0\r", "A0\r", "O\r"])
+  assert.deepEqual(m.slcanOpenCommands("S6", "Y2"), ["C\r", "S6\r", "Y2\r", "M0\r", "A0\r", "O\r"])
+})

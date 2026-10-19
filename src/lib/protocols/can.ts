@@ -121,3 +121,8 @@ export const createCanParser = ({ sessionTimeoutMs = 2000, maxPacketBytes = 8192
     },
   }
 }
+
+/* Команды открытия slcan-адаптера (CANable и совместимые): закрыть канал, скорость арбитража (S0..S8, SA..SD), для CAN FD — скорость данных
+   (Y1..Y5), нормальный режим, без автоповтора, открыть канал — каждая строка заканчивается \r */
+export const slcanOpenCommands = (bitrate: string, dataBitrate?: string): string[] =>
+  ["C", bitrate, ...(dataBitrate ? [dataBitrate] : []), "M0", "A0", "O"].map((command) => `${command}\r`)

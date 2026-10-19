@@ -3,6 +3,7 @@
    по HEADER+ARGUMENT+VALUE (crc8RohcUtf8), FHS (свободная куча) только у кадров устройства. Устройство шлёт VALUE текстом (лог или hex-дамп CBOR),
    устройству VALUE уходит сырыми байтами CBOR. Между кадрами — текст: строки Teleplot «>Имя:Значение» (PLOT) и прочий вывод (RAW) */
 import { crc8RohcUtf8 } from "./crc.js"
+import { jsonToCbor } from "./cbor/json.js"
 
 export const SOH = 0x01
 export const STX = 0x02
@@ -119,4 +120,19 @@ export const createPoeSerialParser = () => {
       buffer = new Uint8Array()
     },
   }
+}
+
+/* Поле Value команды из ввода пользователя: пусто — без тела, hex-строка (с пробелами или без) — готовые байты как есть, иначе JSON → CBOR
+   (двоичные данные — base64, ключи с BIN — байты, см. jsonToCbor); не hex и не JSON — ошибка */
+export const poeSerialValueFromText = (text: string | undefined): Uint8Array => {
+  const trimmed = (text ?? "").trim()
+  if (!trimmed) return new Uint8Array()
+  if (/^([0-9A-Fa-f]{2}\s?)+$/.test(trimmed)) return Uint8Array.from(trimmed.replace(/\s/g, "").match(/../g) ?? [], (pair) => parseInt(pair, 16))
+  let parsed: unknown
+  try {
+    parsed = JSON.parse(trimmed)
+  } catch {
+    throw new Error(`Value не является ни hex, ни JSON: ${trimmed}`)
+  }
+  return jsonToCbor(parsed)
 }
