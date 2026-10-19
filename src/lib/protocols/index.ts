@@ -17,6 +17,7 @@ export {
   splitCmd,
   EXTERNAL_BUS_ID,
   packetObjectCrc,
+  encodePacketBytesPayload,
   encodePacket,
   decodePacket,
   objectsFor,
