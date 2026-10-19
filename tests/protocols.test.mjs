@@ -261,3 +261,47 @@ test("словарь, поле Value xPOE-Debug, команды slcan-адапт
   assert.deepEqual(m.slcanOpenCommands("S6"), ["C\r", "S6\r", "M0\r", "A0\r", "O\r"])
   assert.deepEqual(m.slcanOpenCommands("S6", "Y2"), ["C\r", "S6\r", "Y2\r", "M0\r", "A0\r", "O\r"])
 })
+
+test("графики Teleplot: порядок серий как у устройства, даже при подключении посреди пачки", () => {
+  const burst = [
+    "LIGHT.CLR",
+    "SPEC.910",
+    "SPEC.680",
+    "SPEC.630",
+    "SPEC.590",
+    "SPEC.555",
+    "SPEC.515",
+    "SPEC.480",
+    "SPEC.445",
+    "SPEC.415",
+    "LIGHT.IRR",
+    "LIGHT.PPFD",
+  ]
+  const plots = m.createPlotGroups()
+  let t = 0
+  for (const name of burst.slice(6)) plots.push(name, 1, (t += 2)) /* подключились посреди пачки */
+  t += 1000
+  for (const name of burst) plots.push(name, 2, (t += 2))
+  t += 1000
+  for (const name of burst) plots.push(name, 3, (t += 2))
+  assert.deepEqual(
+    plots.data("SPEC").map((p) => p.name),
+    ["910", "680", "630", "590", "555", "515", "480", "445", "415"],
+  )
+  assert.deepEqual(
+    plots.data("LIGHT").map((p) => p.name),
+    ["CLR", "IRR", "PPFD"],
+  )
+  assert.ok(plots.data("SPEC").every((p) => p.value === 3))
+  /* частый вывод без пауз — новая пачка с повтора имени */
+  const fast = m.createPlotGroups()
+  for (let i = 0; i < 3; i++) for (const name of ["A.x", "A.y", "A.z"]) fast.push(name, i, 0)
+  assert.deepEqual(
+    fast.data("A").map((p) => p.name),
+    ["x", "y", "z"],
+  )
+  assert.equal(plots.push("T", NaN), null)
+  assert.equal(plots.push("T", 21.5), "")
+  plots.clear()
+  assert.deepEqual(plots.data("SPEC"), [])
+})

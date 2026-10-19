@@ -25,6 +25,8 @@ export {
   type DecodedPacketObject,
   type PacketParse,
 } from "./packet.js"
+/* Группы графиков Teleplot (строки PLOT): серии в порядке устройства, график на группу */
+export { createPlotGroups, type PlotPoint } from "./plotGroups.js"
 /* Рамка xPOE-Debug (UART-консоль system_console): сборка команды и потоковый разбор кадров, строк Teleplot и текста */
 export { encodeXPoeDebugFrame, createXPoeDebugParser, xPoeDebugValueFromText, type XPoeDebugItem } from "./xPoeDebug.js"
 /* CAN/CAN FD через slcan-адаптер: нарезка пакета на кадры как в can_service прошивки, кадры slcan, потоковый разбор со сборкой фрагментов */
