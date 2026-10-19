@@ -118,8 +118,8 @@ test("xPOE-Debug: разбор потока в любом месте разре�
   ])
   const expected = [
     { type: "raw", text: "ESP-ROM boot" },
-    { type: "plot", name: "Temp", value: "21.5" },
-    { type: "plot", name: "XY", value: "1:2" },
+    { type: "raw", text: ">Temp:21.5" },
+    { type: "raw", text: ">XY:1:2" },
     { type: "frame", header: "🔵", argument: "ModCfg", value: "A2646E616D65", crcOk: true, freeHeap: "123456" },
     { type: "frame", header: "🟢", argument: "HTTP", value: "Сервер запущен", crcOk: true, freeHeap: "123456" },
     { type: "raw", text: "tail line" },
@@ -245,7 +245,7 @@ test("RS485: пакеты из сырого потока, мусор, пауза
 test("словарь, поле Value xPOE-Debug, команды slcan-адаптера", () => {
   /* DEFAULT_ARGUMENT_CODES — ровно мастер-словарь dictionary.yaml (сгенерирован npm run Dictionary, файл поставляется в пакете) */
   assert.deepEqual(m.DEFAULT_ARGUMENT_CODES, m.parseArgumentDictionary(readFileSync(new URL("../dist/protocols/dictionary.yaml", import.meta.url), "utf8")))
-  assert.equal(Object.keys(m.DEFAULT_ARGUMENT_CODES).length, 48)
+  assert.equal(Object.keys(m.DEFAULT_ARGUMENT_CODES).length, 49)
   assert.equal(m.DEFAULT_ARGUMENT_CODES.DataStream, 15)
   assert.equal(m.DEFAULT_ARGUMENT_CODES.FDwS, undefined)
   assert.deepEqual(m.parseArgumentDictionary("# комментарий\n- [ModCfg, A_MOD_CONFIG, 36]   # хвост\n- [OrData, A_OR_DATA, 211]\n"), {
@@ -262,46 +262,41 @@ test("словарь, поле Value xPOE-Debug, команды slcan-адапт
   assert.deepEqual(m.slcanOpenCommands("S6", "Y2"), ["C\r", "S6\r", "Y2\r", "M0\r", "A0\r", "O\r"])
 })
 
-test("графики Teleplot: порядок серий как у устройства, даже при подключении посреди пачки", () => {
-  const burst = [
-    "LIGHT.CLR",
-    "SPEC.910",
-    "SPEC.680",
-    "SPEC.630",
-    "SPEC.590",
-    "SPEC.555",
-    "SPEC.515",
-    "SPEC.480",
-    "SPEC.445",
-    "SPEC.415",
-    "LIGHT.IRR",
-    "LIGHT.PPFD",
-  ]
+/* Кадр SC_PLOT прошивки: OK! DebPlot, VALUE — hex CBOR-карты, собранной poe_cbor (CBOR_EncodeMapStart/String/Float) */
+const DEB_PLOT_HEX =
+  "AC694C494748542E434C52FA3E80000068535045432E393130FA3F00000068535045432E363830FA3FC0000068535045432E363330FA4000000068535045432E353930FA4020000068535045432E353535FA4040000068535045432E353135FA4060000068535045432E343830FA4080000068535045432E343435FA4090000068535045432E343135FA40A00000694C494748542E495252FA3E0000006A4C494748542E50504644FA3EC00000"
+
+test("графики: кадр DebPlot — значения и порядок серий из CBOR-карты устройства", () => {
+  const parser = m.createXPoeDebugParser()
+  const [frame] = parser.push(Uint8Array.from(deviceFrame("OK!", m.DEB_PLOT_ARGUMENT, DEB_PLOT_HEX)))
+  assert.equal(frame.type, "frame")
+  assert.ok(frame.crcOk)
+  const values = m.debPlotValues(frame.value)
+  assert.equal(values.length, 12)
   const plots = m.createPlotGroups()
-  let t = 0
-  for (const name of burst.slice(6)) plots.push(name, 1, (t += 2)) /* подключились посреди пачки */
-  t += 1000
-  for (const name of burst) plots.push(name, 2, (t += 2))
-  t += 1000
-  for (const name of burst) plots.push(name, 3, (t += 2))
+  assert.deepEqual(plots.update(values), ["LIGHT", "SPEC"])
   assert.deepEqual(
     plots.data("SPEC").map((p) => p.name),
     ["910", "680", "630", "590", "555", "515", "480", "445", "415"],
   )
   assert.deepEqual(
-    plots.data("LIGHT").map((p) => p.name),
-    ["CLR", "IRR", "PPFD"],
+    plots.data("LIGHT").map((p) => [p.name, p.value]),
+    [
+      ["CLR", 0.25],
+      ["IRR", 0.125],
+      ["PPFD", 0.375],
+    ],
   )
-  assert.ok(plots.data("SPEC").every((p) => p.value === 3))
-  /* частый вывод без пауз — новая пачка с повтора имени */
-  const fast = m.createPlotGroups()
-  for (let i = 0; i < 3; i++) for (const name of ["A.x", "A.y", "A.z"]) fast.push(name, i, 0)
+  /* кадр только с частью серий группы — они впереди в порядке кадра, остальные сохраняются следом */
+  plots.update([["SPEC.415", 9]])
   assert.deepEqual(
-    fast.data("A").map((p) => p.name),
-    ["x", "y", "z"],
+    plots
+      .data("SPEC")
+      .map((p) => p.name)
+      .slice(0, 2),
+    ["415", "910"],
   )
-  assert.equal(plots.push("T", NaN), null)
-  assert.equal(plots.push("T", 21.5), "")
+  assert.deepEqual(m.debPlotValues("не cbor"), [])
   plots.clear()
   assert.deepEqual(plots.data("SPEC"), [])
 })

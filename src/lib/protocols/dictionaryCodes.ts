@@ -5,6 +5,7 @@ export const DEFAULT_ARGUMENT_CODES: Record<string, number> = {
   Restart: 1,
   DefCfg: 2,
   DlFW: 3,
+  DebPlot: 4,
   RstNVS: 5,
   LocTime: 6,
   Update: 7,

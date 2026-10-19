@@ -9,6 +9,7 @@
 - [Restart, A_RESTART, 1]                   # SET: перезагрузка устройства
 - [DefCfg, A_DEF_CONFIG, 2]                 # SET: сброс конфигурации к заводской
 - [DlFW, A_DOWNLOAD_FIRMWARE, 3]            # SET: скачивание прошивки с сервера (http_client)
+- [DebPlot, A_DEB_PLOT, 4]                  # OK!: значения графиков отладки — CBOR-карта {"Имя": float32} (SC_PLOT)
 - [RstNVS, A_RESET_NVS, 5]                  # SET: очистка NVS и перезагрузка
 - [LocTime, A_LOCAL_TIME, 6]                # GET: локальное время устройства
 - [Update, A_UPDATE, 7]                     # OK!/ER!: обновление данных в интерфейсе (DevCloud ретранслирует DataStream)

@@ -1,7 +1,7 @@
 /* $lib/protocols/xPoeDebug.ts */
 /* Рамка xPOE-Debug (system_console прошивки): [SOH] HEADER [US] ARGUMENT [STX] VALUE [ETX] CRC8 [US] FHS [EOT] \n — CRC8 двумя hex-символами
    по HEADER+ARGUMENT+VALUE (crc8Rohc), FHS (свободная куча) только у кадров устройства. Устройство шлёт VALUE текстом (лог или hex-дамп CBOR),
-   устройству VALUE уходит сырыми байтами CBOR. Между кадрами — текст: строки Teleplot «>Имя:Значение» (PLOT) и прочий вывод (RAW) */
+   устройству VALUE уходит сырыми байтами CBOR. Значения графиков — кадр OK! DebPlot (createPlotGroups). Текст между кадрами — RAW (вывод загрузчика и т.п.) */
 import { crc8Rohc } from "./crc.js"
 import { jsonToCbor } from "./cbor/json.js"
 
@@ -18,7 +18,6 @@ const MAX_FRAME = 8192
 
 export type XPoeDebugItem =
   | { type: "frame"; header: string; argument: string; value: string; valueBytes: Uint8Array; crc: string; crcOk: boolean; freeHeap: string }
-  | { type: "plot"; name: string; value: string }
   | { type: "raw"; text: string }
 
 const encoder = new TextEncoder()
@@ -33,17 +32,14 @@ export const encodeXPoeDebugFrame = (header: string, argument: string, value: Ui
   return new Uint8Array([SOH, ...headerBytes, US, ...argumentBytes, STX, ...value, ETX, ...encoder.encode(hex2(crc)), EOT])
 }
 
-/* Строки текста вне кадров: Teleplot «>Имя:Значение» → plot, остальное → raw; пустые и с управляющими символами пропускаются */
+/* Строки текста вне кадров → raw; пустые и с управляющими символами пропускаются */
 const textItems = (bytes: Uint8Array): XPoeDebugItem[] =>
   decoder
     .decode(bytes)
     .split("\n")
     .map((line) => line.trim())
     .filter((line) => line && ![...line].some((char) => char.charCodeAt(0) < 0x20 && char !== "\t"))
-    .map((line) => {
-      const colon = line.indexOf(":")
-      return line.startsWith(">") && colon > 1 ? { type: "plot", name: line.slice(1, colon), value: line.slice(colon + 1) } : { type: "raw", text: line }
-    })
+    .map((line) => ({ type: "raw", text: line }))
 
 /* Кадр от SOH до EOT включительно; без разделителей — null (пропускается, как в прошивке и Rust-терминале) */
 const frameItem = (frame: Uint8Array): XPoeDebugItem | null => {

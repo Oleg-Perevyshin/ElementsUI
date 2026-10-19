@@ -25,9 +25,9 @@ export {
   type DecodedPacketObject,
   type PacketParse,
 } from "./packet.js"
-/* Группы графиков Teleplot (строки PLOT): серии в порядке устройства, график на группу */
-export { createPlotGroups, type PlotPoint } from "./plotGroups.js"
-/* Рамка xPOE-Debug (UART-консоль system_console): сборка команды и потоковый разбор кадров, строк Teleplot и текста */
+/* Графики отладки: кадр OK! DebPlot (SC_PLOT прошивки) — значения из CBOR-карты, график на группу, серии в порядке устройства */
+export { createPlotGroups, debPlotValues, DEB_PLOT_ARGUMENT, type PlotPoint } from "./plotGroups.js"
+/* Рамка xPOE-Debug (UART-консоль system_console): сборка команды и потоковый разбор кадров и текста */
 export { encodeXPoeDebugFrame, createXPoeDebugParser, xPoeDebugValueFromText, type XPoeDebugItem } from "./xPoeDebug.js"
 /* CAN/CAN FD через slcan-адаптер: нарезка пакета на кадры как в can_service прошивки, кадры slcan, потоковый разбор со сборкой фрагментов */
 export {
