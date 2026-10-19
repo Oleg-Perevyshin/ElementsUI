@@ -389,11 +389,12 @@
     <h5 class={`w-full px-4 text-center ${label.class}`}>{label.name}</h5>
   {/if}
 
-  <div class="flex w-full flex-row gap-4">
-    <!-- График -->
+  <div class="flex w-full min-w-0 flex-row gap-4">
+    <!-- График: холст абсолютно поверх контейнера — его пиксельная ширина не распирает контейнер, иначе в сетке/flex с 1fr ширина растёт по кругу (ResizeObserver) -->
     <!-- design-handoff, раздел 9: рамка --hairline-color без тени, тултип в оформлении общего Tooltip.svelte -->
-    <div bind:this={container} class="relative h-64 grow overflow-hidden rounded-[14px] border border-(--hairline-color)">
-      <canvas class="h-full w-full bg-(--back-color)" bind:this={canvas} onmousemove={handleMouseMove} onmouseleave={handleMouseLeave}></canvas>
+    <div bind:this={container} class="relative h-64 min-w-0 grow overflow-hidden rounded-[14px] border border-(--hairline-color)">
+      <canvas class="absolute inset-0 h-full w-full bg-(--back-color)" bind:this={canvas} onmousemove={handleMouseMove} onmouseleave={handleMouseLeave}
+      ></canvas>
 
       {#if tooltip.visible}
         <div

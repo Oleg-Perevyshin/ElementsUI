@@ -528,7 +528,8 @@
 
 <Modal isOpen={modalData.isOpen} title={$T("constructor.props.table.fulldata")} wrapperClass="max-h-[80%]" width="{0.8 * (container?.offsetWidth ?? 0)}px">
   {#snippet main()}
-    <div class="text-left whitespace-pre">
+    <!-- Длинные строки (hex пакета, base64, длинные значения) переносятся, отступы форматирования сохраняются — содержимое видно целиком -->
+    <div class="text-left whitespace-pre-wrap [overflow-wrap:anywhere]">
       {@html modalData.formattedData}
     </div>
   {/snippet}
