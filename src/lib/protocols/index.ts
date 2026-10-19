@@ -29,6 +29,8 @@ export {
 export { createPlotGroups, debPlotValues, DEB_PLOT_ARGUMENT, type PlotPoint } from "./plotGroups.js"
 /* System Console over UART: CBOR [SrcID, HdrArg, Value, FHS, CRC16], plus stream parsing */
 export { encodeXPoeDebugFrame, createXPoeDebugParser, xPoeDebugCmd, xPoeDebugValueFromText, type XPoeDebugItem } from "./xPoeDebug.js"
+/* Отображение Value xPOE-Debug в таблице/модалке и копирование Value/HEX */
+export { formatXPoeDebugValue, formatXPoeDebugValueForTable, formatXPoeDebugModal, bindXPoeDebugCopyButtons } from "./xPoeDebugView.js"
 /* CAN/CAN FD через slcan-адаптер: нарезка пакета на кадры как в can_service прошивки, кадры slcan, потоковый разбор со сборкой фрагментов */
 export {
   CAN_FINAL_BIT,
