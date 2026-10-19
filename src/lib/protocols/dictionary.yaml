@@ -9,13 +9,14 @@
 - [Restart, A_RESTART, 1]                   # SET: перезагрузка устройства
 - [DefCfg, A_DEF_CONFIG, 2]                 # SET: сброс конфигурации к заводской
 - [DlFW, A_DOWNLOAD_FIRMWARE, 3]            # SET: скачивание прошивки с сервера (http_client)
-- [DebPlot, A_DEB_PLOT, 4]                  # OK!: значения графиков отладки — CBOR-карта {"Имя": float32} (SC_PLOT)
 - [RstNVS, A_RESET_NVS, 5]                  # SET: очистка NVS и перезагрузка
 - [LocTime, A_LOCAL_TIME, 6]                # GET: локальное время устройства
 - [Update, A_UPDATE, 7]                     # OK!/ER!: обновление данных в интерфейсе (DevCloud ретранслирует DataStream)
 - [StackInfo, A_STACK_INFO, 8]              # GET: снимок куч и стеков задач
 - [BackUp, A_BACKUP, 9]                     # Резервная копия конфигурации
 - [BindMKey, A_BIND_MOD_KEY, 10]            # SET: привязка ключа модуля (ModBindKey)
+- [DebugLog, A_DEBUG_LOG, 11]               # OK!: системное сообщение отладки; VALUE — CBOR-массив [уровень, тег, текст]
+- [DebPlot, A_DEBUG_PLOT, 12]               # OK!: значения графиков отладки — CBOR-карта {"Имя": float32} (SC_PLOT)
 - [DataStream, A_DATA_STREAM, 15]           # OK!: поток данных групп конфигурации (CS_PushGroupStream)
 
 # Локальная сеть

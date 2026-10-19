@@ -10,7 +10,7 @@ export const crc16Kermit = (crc: number, bytes: Uint8Array | number[]): number =
   return crc & 0xffff
 }
 
-/* CRC-8/ROHC: poly 0x07 reflected (0xE0), init 0xFF, xorout 0x00, check("123456789") = 0xD0 — рамка xPOE-Debug (system_console): HEADER, ARGUMENT, VALUE */
+/* CRC-8/ROHC remains available for legacy consumers. System Console frames use CRC-16/KERMIT over CBOR bytes. */
 export const crc8Rohc = (crc: number, bytes: Uint8Array | number[]): number => {
   for (const byte of bytes) {
     crc ^= byte & 0xff

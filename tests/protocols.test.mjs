@@ -101,27 +101,23 @@ test("CRC побайтно, как в common.c прошивки", () => {
   }
 })
 
-/* Кадр устройства как его собирает SC_Log: [SOH]HDR[US]ARG[STX]VAL[ETX]CRC[US]FHS[EOT]\n */
-const deviceFrame = (header, argument, value, crcOverride) => {
-  const enc = (text) => [...new TextEncoder().encode(text)]
-  const crc = m.crc8Rohc(m.crc8Rohc(m.crc8Rohc(0xff, enc(header)), enc(argument)), enc(value))
-  const crcText = crcOverride ?? crc.toString(16).toUpperCase().padStart(2, "0")
-  return [0x01, ...enc(header), 0x1f, ...enc(argument), 0x02, ...enc(value), 0x03, ...enc(crcText), 0x1f, ...enc("123456"), 0x04, 0x0a]
-}
+/* Кадр System Console: definite CBOR [SrcID, HdrArg, Value, FHS, CRC16]. */
+const deviceFrame = (header, argument, value, srcId = 0xf47f, freeHeap = 123456) =>
+  m.encodeXPoeDebugFrame(header, argument, value, srcId, freeHeap)
 
 test("xPOE-Debug: разбор потока в любом месте разреза", () => {
   const stream = Uint8Array.from([
     ...new TextEncoder().encode("ESP-ROM boot\n>Temp:21.5\n>XY:1:2\n"),
-    ...deviceFrame("🔵", "ModCfg", "A2646E616D65"),
-    ...deviceFrame("🟢", "HTTP", "Сервер запущен"),
+    ...deviceFrame("OK!", "DebugLog", m.valueToCbor([3, "Net", "Сервер запущен"])),
+    ...deviceFrame("OK!", "DebPlot", m.valueToCbor({ "SPEC.910": 1.5 })),
     ...new TextEncoder().encode("tail line\n"),
   ])
   const expected = [
     { type: "raw", text: "ESP-ROM boot" },
     { type: "raw", text: ">Temp:21.5" },
     { type: "raw", text: ">XY:1:2" },
-    { type: "frame", header: "🔵", argument: "ModCfg", value: "A2646E616D65", crcOk: true, freeHeap: "123456" },
-    { type: "frame", header: "🟢", argument: "HTTP", value: "Сервер запущен", crcOk: true, freeHeap: "123456" },
+    { type: "frame", header: "OK!", argument: "DebugLog", value: Array.from(m.valueToCbor([3, "Net", "Сервер запущен"]), (b) => b.toString(16).padStart(2, "0").toUpperCase()).join(""), crcOk: true, freeHeap: "123456" },
+    { type: "frame", header: "OK!", argument: "DebPlot", value: Array.from(m.valueToCbor({ "SPEC.910": 1.5 }), (b) => b.toString(16).padStart(2, "0").toUpperCase()).join(""), crcOk: true, freeHeap: "123456" },
     { type: "raw", text: "tail line" },
   ]
   const pick = (item) =>
@@ -136,13 +132,17 @@ test("xPOE-Debug: разбор потока в любом месте разре�
 })
 
 test("xPOE-Debug: неверный CRC, команда устройству", () => {
-  const [bad] = m.createXPoeDebugParser().push(Uint8Array.from(deviceFrame("OK!", "ModCfg", "A0", "00")))
+  const invalidFrame = deviceFrame("OK!", "DebugLog", m.valueToCbor([3, "test", "message"]))
+  invalidFrame[invalidFrame.length - 1] ^= 1
+  const [bad] = m.createXPoeDebugParser().push(invalidFrame)
   assert.equal(bad.crcOk, false)
   const value = m.valueToCbor({ Payload: { DevName: "Объект 1" } })
   const frame = m.encodeXPoeDebugFrame("SET", "ModCfg", value)
-  assert.deepEqual([...frame.subarray(0, 5)], [0x01, 0x53, 0x45, 0x54, 0x1f])
+  assert.equal(frame[0], 0x85)
   const [parsed] = m.createXPoeDebugParser().push(frame)
   assert.equal(parsed.crcOk, true)
+  assert.equal(parsed.srcId, 0)
+  assert.equal(parsed.freeHeap, "")
   assert.deepEqual([...parsed.valueBytes], [...value])
 })
 

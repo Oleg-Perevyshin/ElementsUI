@@ -27,8 +27,8 @@ export {
 } from "./packet.js"
 /* Графики отладки: кадр OK! DebPlot (SC_PLOT прошивки) — значения из CBOR-карты, график на группу, серии в порядке устройства */
 export { createPlotGroups, debPlotValues, DEB_PLOT_ARGUMENT, type PlotPoint } from "./plotGroups.js"
-/* Рамка xPOE-Debug (UART-консоль system_console): сборка команды и потоковый разбор кадров и текста */
-export { encodeXPoeDebugFrame, createXPoeDebugParser, xPoeDebugValueFromText, type XPoeDebugItem } from "./xPoeDebug.js"
+/* System Console over UART: CBOR [SrcID, HdrArg, Value, FHS, CRC16], plus stream parsing */
+export { encodeXPoeDebugFrame, createXPoeDebugParser, xPoeDebugCmd, xPoeDebugValueFromText, type XPoeDebugItem } from "./xPoeDebug.js"
 /* CAN/CAN FD через slcan-адаптер: нарезка пакета на кадры как в can_service прошивки, кадры slcan, потоковый разбор со сборкой фрагментов */
 export {
   CAN_FINAL_BIT,
