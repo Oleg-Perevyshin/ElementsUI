@@ -77,23 +77,25 @@ test("CBOR: значение и JSON-текст", () => {
   assert.deepEqual(m.cborToJson(m.valueToCbor(value)), { ...value, Value: { a: 1, bin: "AQI=" } })
 })
 
-/* POESerial: CRC-8 по правилу прошивки (crc8_rohc из common.c, вырезан и собран на компьютере) */
-const CRC8_UTF8_REF = {
-  ascii: [[..."123456789"].map((c) => c.charCodeAt(0)), 0xd0],
-  emoji: [[...new TextEncoder().encode("🔵")], 0x7d],
-  cyr: [[...new TextEncoder().encode("Объект 1")], 0x8d],
-  bin: [[0xa2, 0x63, 0x4b, 0x65, 0x79, 0x6c, 0xd0, 0x9e, 0xd0, 0xb1, 0xff, 0xc3, 0x28, 0xe2, 0x82, 0xac, 0xf0, 0x9f, 0x94, 0xb5, 0xe2, 0x82], 0x8f],
-  all: [Array.from({ length: 256 }, (_, i) => i), 0x8e],
+/* CRC-8/ROHC и CRC-16/KERMIT побайтно — эталон из common.c прошивки (вырезан и собран на компьютере): эмодзи, кириллица, сырой CBOR, все байты */
+const CRC_REF = {
+  emoji: [[...new TextEncoder().encode("🔵")], 0x30, 0x288e],
+  cyr: [[...new TextEncoder().encode("Объект 1")], 0x11, 0x766e],
+  bin: [[0xa2, 0x63, 0x4b, 0x65, 0x79, 0x6c, 0xd0, 0x9e, 0xd0, 0xb1, 0xff, 0xc3, 0x28, 0xe2, 0x82, 0xac, 0xf0, 0x9f, 0x94, 0xb5, 0xe2, 0x82], 0xb0, 0xb48f],
+  all: [Array.from({ length: 256 }, (_, i) => i), 0x8e, 0xd841],
 }
 
-test("POESerial: CRC-8 как у прошивки (UTF-8, эмодзи, кириллица, сырой CBOR)", () => {
-  for (const [name, [data, crc]] of Object.entries(CRC8_UTF8_REF)) assert.equal(m.crc8RohcUtf8(0xff, Uint8Array.from(data)), crc, name)
+test("CRC побайтно, как в common.c прошивки", () => {
+  for (const [name, [data, crc8, crc16]] of Object.entries(CRC_REF)) {
+    assert.equal(m.crc8Rohc(0xff, data), crc8, `crc8 ${name}`)
+    assert.equal(m.crc16Kermit(0, data), crc16, `crc16 ${name}`)
+  }
 })
 
 /* Кадр устройства как его собирает SC_Log: [SOH]HDR[US]ARG[STX]VAL[ETX]CRC[US]FHS[EOT]\n */
 const deviceFrame = (header, argument, value, crcOverride) => {
   const enc = (text) => [...new TextEncoder().encode(text)]
-  const crc = m.crc8RohcUtf8(m.crc8RohcUtf8(m.crc8RohcUtf8(0xff, Uint8Array.from(enc(header))), Uint8Array.from(enc(argument))), Uint8Array.from(enc(value)))
+  const crc = m.crc8Rohc(m.crc8Rohc(m.crc8Rohc(0xff, enc(header)), enc(argument)), enc(value))
   const crcText = crcOverride ?? crc.toString(16).toUpperCase().padStart(2, "0")
   return [0x01, ...enc(header), 0x1f, ...enc(argument), 0x02, ...enc(value), 0x03, ...enc(crcText), 0x1f, ...enc("123456"), 0x04, 0x0a]
 }

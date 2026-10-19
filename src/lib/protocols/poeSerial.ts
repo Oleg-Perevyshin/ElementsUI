@@ -1,8 +1,8 @@
 /* $lib/protocols/poeSerial.ts */
 /* Рамка POESerial (system_console прошивки): [SOH] HEADER [US] ARGUMENT [STX] VALUE [ETX] CRC8 [US] FHS [EOT] \n — CRC8 двумя hex-символами
-   по HEADER+ARGUMENT+VALUE (crc8RohcUtf8), FHS (свободная куча) только у кадров устройства. Устройство шлёт VALUE текстом (лог или hex-дамп CBOR),
+   по HEADER+ARGUMENT+VALUE (crc8Rohc), FHS (свободная куча) только у кадров устройства. Устройство шлёт VALUE текстом (лог или hex-дамп CBOR),
    устройству VALUE уходит сырыми байтами CBOR. Между кадрами — текст: строки Teleplot «>Имя:Значение» (PLOT) и прочий вывод (RAW) */
-import { crc8RohcUtf8 } from "./crc.js"
+import { crc8Rohc } from "./crc.js"
 import { jsonToCbor } from "./cbor/json.js"
 
 export const SOH = 0x01
@@ -29,7 +29,7 @@ const hex2 = (value: number) => value.toString(16).toUpperCase().padStart(2, "0"
 export const encodePoeSerialFrame = (header: string, argument: string, value: Uint8Array): Uint8Array => {
   const headerBytes = encoder.encode(header)
   const argumentBytes = encoder.encode(argument)
-  const crc = crc8RohcUtf8(crc8RohcUtf8(crc8RohcUtf8(0xff, headerBytes), argumentBytes), value)
+  const crc = crc8Rohc(crc8Rohc(crc8Rohc(0xff, headerBytes), argumentBytes), value)
   return new Uint8Array([SOH, ...headerBytes, US, ...argumentBytes, STX, ...value, ETX, ...encoder.encode(hex2(crc)), EOT])
 }
 
@@ -57,7 +57,7 @@ const frameItem = (frame: Uint8Array): PoeSerialItem | null => {
   const tailUs = frame.indexOf(US, etx + 1)
   const crc = decoder.decode(frame.subarray(etx + 1, tailUs < 0 ? frame.length - 1 : tailUs)).trim()
   const freeHeap = tailUs < 0 ? "" : decoder.decode(frame.subarray(tailUs + 1, frame.length - 1)).trim()
-  const crcCalc = crc8RohcUtf8(crc8RohcUtf8(crc8RohcUtf8(0xff, header), argument), valueBytes)
+  const crcCalc = crc8Rohc(crc8Rohc(crc8Rohc(0xff, header), argument), valueBytes)
   return {
     type: "frame",
     header: decoder.decode(header),
