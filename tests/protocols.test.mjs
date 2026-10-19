@@ -5,23 +5,23 @@ import { readFileSync } from "node:fs"
 import * as m from "../dist/protocols/index.js"
 
 /* Эталон — пакеты, собранные настоящим poe_cbor_pkt.c прошивки (ProdFactory-ESP, CBOR_PACK + CBOR_PktEncFinish):
-   one   — 0x42 ← 0x01, HA 0x1234, payload 01 02 03
-   multi — 0xFFFF ← 0xABCD, HA 0xC123, float 1.5, -2.25 | 0x1234 ← 0x0017, HA 0x4001, 300 байт (i & 0xFF) | 0x0005 ← 0x0006, HA 0x0007, 01 02 03
-   empty — 0x0005 ← 0x0006, HA 0x0007, пустой payload */
+   one   — 0x42 ← 0x01, Cmd 0x1234, payload 01 02 03
+   multi — 0xFFFF ← 0xABCD, Cmd 0xC123, float 1.5, -2.25 | 0x1234 ← 0x0017, Cmd 0x4001, 300 байт (i & 0xFF) | 0x0005 ← 0x0006, Cmd 0x0007, 01 02 03
+   empty — 0x0005 ← 0x0006, Cmd 0x0007, пустой payload */
 const REF = {
-  one: "bf184284011912344301020319ad94ff",
+  one: "9f851842011912344301020319ad94ff",
   multi:
-    "bf19ffff8419abcd19c123480000c03f000010c019a2c0191234841719400159012c000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b19275e058406074301020319834dff",
-  empty: "bf0584060740198432ff",
+    "9f8519ffff19abcd19c123480000c03f000010c019a2c0851912341719400159012c000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b19275e850506074301020319834dff",
+  empty: "9f8505060740198432ff",
 }
 const bytes = (hex) => Uint8Array.from(Buffer.from(hex, "hex"))
 const hex = (data) => Buffer.from(data).toString("hex")
 const f32 = (...values) => new Uint8Array(new Float32Array(values).buffer)
 const ascii = [..."123456789"].map((c) => c.charCodeAt(0))
 const MULTI_OBJECTS = [
-  { trgBusID: 0xffff, retBusID: 0xabcd, haCode: 0xc123, payload: f32(1.5, -2.25) },
-  { trgBusID: 0x1234, retBusID: 0x0017, haCode: 0x4001, payload: Uint8Array.from({ length: 300 }, (_, i) => i & 0xff) },
-  { trgBusID: 5, retBusID: 6, haCode: 7, payload: Uint8Array.of(1, 2, 3) },
+  { trgBusID: 0xffff, srcBusID: 0xabcd, cmd: 0xc123, payload: f32(1.5, -2.25) },
+  { trgBusID: 0x1234, srcBusID: 0x0017, cmd: 0x4001, payload: Uint8Array.from({ length: 300 }, (_, i) => i & 0xff) },
+  { trgBusID: 5, srcBusID: 6, cmd: 7, payload: Uint8Array.of(1, 2, 3) },
 ]
 
 test("контрольные значения CRC", () => {
@@ -30,9 +30,9 @@ test("контрольные значения CRC", () => {
 })
 
 test("сборка пакета — байты как у прошивки", () => {
-  assert.equal(hex(m.encodePacket([{ trgBusID: 0x42, retBusID: 0x01, haCode: 0x1234, payload: Uint8Array.of(1, 2, 3) }])), REF.one)
+  assert.equal(hex(m.encodePacket([{ trgBusID: 0x42, srcBusID: 0x01, cmd: 0x1234, payload: Uint8Array.of(1, 2, 3) }])), REF.one)
   assert.equal(hex(m.encodePacket(MULTI_OBJECTS)), REF.multi)
-  assert.equal(hex(m.encodePacket([{ trgBusID: 5, retBusID: 6, haCode: 7, payload: new Uint8Array() }])), REF.empty)
+  assert.equal(hex(m.encodePacket([{ trgBusID: 5, srcBusID: 6, cmd: 7, payload: new Uint8Array() }])), REF.empty)
 })
 
 test("разбор пакета прошивки", () => {
@@ -41,8 +41,12 @@ test("разбор пакета прошивки", () => {
   assert.equal(parsed.length, REF.multi.length / 2)
   assert.equal(parsed.objects.length, 3)
   assert.ok(parsed.objects.every((object) => object.crcOk))
-  assert.deepEqual([parsed.objects[0].header, parsed.objects[0].argument], [3, 0x0123])
-  assert.equal(m.makeHaCode(3, 0x0123), 0xc123)
+  assert.deepEqual([parsed.objects[0].header, parsed.objects[0].argument, parsed.objects[0].reply], [3, 0x0091, true])
+  /* Те же числа, что CMD/CMD_NR из api_cmd.h прошивки */
+  assert.equal(m.makeCmd(1, 36), 0x4049)
+  assert.equal(m.makeCmd(2, 37, false), 0x804a)
+  assert.equal(m.makeCmd(3, 8191), 0xffff)
+  assert.deepEqual(m.splitCmd(0x804a), { header: 2, argument: 37, reply: false })
   assert.deepEqual(
     m.objectsFor(parsed.objects, 0x77).map((object) => object.trgBusID),
     [0xffff],
@@ -53,6 +57,7 @@ test("поток: обрывок — incomplete, мусор — garbage, два 
   const multi = bytes(REF.multi)
   for (let n = 0; n < multi.length; n++) assert.equal(m.decodePacket(multi.subarray(0, n)).status, "incomplete", `обрывок ${n} байт`)
   assert.equal(m.decodePacket(Uint8Array.of(0x41, 0x42)).status, "garbage")
+  assert.equal(m.decodePacket(Uint8Array.of(0xbf, 0xff)).status, "garbage") /* прежний формат — Map */
   const stream = new Uint8Array([...bytes(REF.one), ...bytes(REF.empty)])
   const first = m.decodePacket(stream)
   assert.equal(first.status, "complete")
@@ -66,10 +71,13 @@ test("порча и одинаковые адреса", () => {
   assert.equal(parsed.objects.length, 3)
   assert.equal(parsed.objects.filter((object) => !object.crcOk).length, 1)
   const twins = m.encodePacket([
-    { trgBusID: 9, retBusID: 1, haCode: 2, payload: Uint8Array.of(1) },
-    { trgBusID: 9, retBusID: 1, haCode: 3, payload: Uint8Array.of(2) },
+    { trgBusID: 9, srcBusID: 1, cmd: 2, payload: Uint8Array.of(1) },
+    { trgBusID: 9, srcBusID: 1, cmd: 3, payload: Uint8Array.of(2) },
   ])
-  assert.equal(m.decodePacket(twins).objects.length, 2)
+  assert.deepEqual(
+    m.decodePacket(twins).objects.map((object) => object.cmd),
+    [2, 3],
+  ) /* одному адресату — оба, по порядку */
 })
 
 test("CBOR: значение и JSON-текст", () => {
@@ -101,7 +109,7 @@ const deviceFrame = (header, argument, value, crcOverride) => {
   return [0x01, ...enc(header), 0x1f, ...enc(argument), 0x02, ...enc(value), 0x03, ...enc(crcText), 0x1f, ...enc("123456"), 0x04, 0x0a]
 }
 
-test("POESerial: разбор потока в любом месте разреза", () => {
+test("xPOE-Debug: разбор потока в любом месте разреза", () => {
   const stream = Uint8Array.from([
     ...new TextEncoder().encode("ESP-ROM boot\n>Temp:21.5\n>XY:1:2\n"),
     ...deviceFrame("🔵", "ModCfg", "A2646E616D65"),
@@ -121,19 +129,19 @@ test("POESerial: разбор потока в любом месте разрез
       ? { type: item.type, header: item.header, argument: item.argument, value: item.value, crcOk: item.crcOk, freeHeap: item.freeHeap }
       : item
   for (let cut = 0; cut <= stream.length; cut++) {
-    const parser = m.createPoeSerialParser()
+    const parser = m.createXPoeDebugParser()
     const items = [...parser.push(stream.subarray(0, cut)), ...parser.push(stream.subarray(cut))]
     assert.deepEqual(items.map(pick), expected, `разрез на ${cut} байте`)
   }
 })
 
-test("POESerial: неверный CRC, команда устройству", () => {
-  const [bad] = m.createPoeSerialParser().push(Uint8Array.from(deviceFrame("OK!", "ModCfg", "A0", "00")))
+test("xPOE-Debug: неверный CRC, команда устройству", () => {
+  const [bad] = m.createXPoeDebugParser().push(Uint8Array.from(deviceFrame("OK!", "ModCfg", "A0", "00")))
   assert.equal(bad.crcOk, false)
   const value = m.valueToCbor({ Payload: { DevName: "Объект 1" } })
-  const frame = m.encodePoeSerialFrame("SET", "ModCfg", value)
+  const frame = m.encodeXPoeDebugFrame("SET", "ModCfg", value)
   assert.deepEqual([...frame.subarray(0, 5)], [0x01, 0x53, 0x45, 0x54, 0x1f])
-  const [parsed] = m.createPoeSerialParser().push(frame)
+  const [parsed] = m.createXPoeDebugParser().push(frame)
   assert.equal(parsed.crcOk, true)
   assert.deepEqual([...parsed.valueBytes], [...value])
 })
@@ -234,7 +242,7 @@ test("RS485: пакеты из сырого потока, мусор, пауза
   )
 })
 
-test("словарь, поле Value POESerial, команды slcan-адаптера", () => {
+test("словарь, поле Value xPOE-Debug, команды slcan-адаптера", () => {
   /* DEFAULT_ARGUMENT_CODES — ровно мастер-словарь dictionary.yaml (сгенерирован npm run Dictionary, файл поставляется в пакете) */
   assert.deepEqual(m.DEFAULT_ARGUMENT_CODES, m.parseArgumentDictionary(readFileSync(new URL("../dist/protocols/dictionary.yaml", import.meta.url), "utf8")))
   assert.equal(Object.keys(m.DEFAULT_ARGUMENT_CODES).length, 48)
@@ -246,10 +254,10 @@ test("словарь, поле Value POESerial, команды slcan-адапт�
   })
   assert.equal(m.nameByCode(m.HEADER_CODES, 2), "OK!")
   assert.equal(m.nameByCode(m.DEFAULT_ARGUMENT_CODES, 9999), "9999")
-  assert.deepEqual([...m.poeSerialValueFromText("")], [])
-  assert.deepEqual([...m.poeSerialValueFromText("A1 61 61 01")], [0xa1, 0x61, 0x61, 0x01])
-  assert.deepEqual([...m.poeSerialValueFromText('{"a":1}')], [...m.valueToCbor({ a: 1 })])
-  assert.throws(() => m.poeSerialValueFromText("не json"))
+  assert.deepEqual([...m.xPoeDebugValueFromText("")], [])
+  assert.deepEqual([...m.xPoeDebugValueFromText("A1 61 61 01")], [0xa1, 0x61, 0x61, 0x01])
+  assert.deepEqual([...m.xPoeDebugValueFromText('{"a":1}')], [...m.valueToCbor({ a: 1 })])
+  assert.throws(() => m.xPoeDebugValueFromText("не json"))
   assert.deepEqual(m.slcanOpenCommands("S6"), ["C\r", "S6\r", "M0\r", "A0\r", "O\r"])
   assert.deepEqual(m.slcanOpenCommands("S6", "Y2"), ["C\r", "S6\r", "Y2\r", "M0\r", "A0\r", "O\r"])
 })

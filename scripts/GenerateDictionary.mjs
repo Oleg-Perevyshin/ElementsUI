@@ -10,7 +10,7 @@ const names = new Set()
 const codes = new Set()
 for (const [name, code] of entries) {
   if (names.has(name) || codes.has(code)) throw new Error(`dictionary.yaml: повтор имени или кода — ${name} = ${code}`)
-  if (code > 0x3fff) throw new Error(`dictionary.yaml: код ${name} = ${code} не помещается в 14 бит HA_Code`)
+  if (code > 0x1fff) throw new Error(`dictionary.yaml: код ${name} = ${code} не помещается в 13 бит аргумента Cmd`)
   names.add(name)
   codes.add(code)
 }

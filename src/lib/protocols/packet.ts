@@ -1,52 +1,59 @@
 /* $lib/protocols/packet.ts */
-/* Пакет poe_cbor_pkt (README poe_cbor прошивки, ProdFactory-ESP/STM): indefinite MAP { TrgBusID : [RetBusID, HA_Code, Payload, CRC16] },
-   объектов в пакете сколько угодно (в том числе с одинаковым TrgBusID), у каждого свой CRC-16/KERMIT по TrgBusID|RetBusID|HA_Code (по 2 байта
-   big-endian) и Payload — не зависит от того, как числа записаны в CBOR. Общая точка сборки и разбора для терминала (CAN, RS485) и облака */
+/* Пакет poe_cbor_pkt (README poe_cbor прошивки, ProdFactory-ESP/STM): indefinite ARRAY объектов [[TrgBusID, SrcBusID, Cmd, Payload, CRC16], …],
+   объектов в пакете сколько угодно (в том числе одному адресату), порядок сохраняется; у каждого свой CRC-16/KERMIT по TrgBusID|SrcBusID|Cmd
+   (по 2 байта big-endian) и Payload — не зависит от того, как числа записаны в CBOR. Общая точка сборки и разбора для терминала (CAN, RS485) и облака */
 import { CborDecoder } from "./cbor/decoder.js"
 import { CborEncoder } from "./cbor/encoder.js"
 import { CborEndOfDataError } from "./cbor/types.js"
 import { crc16Kermit } from "./crc.js"
 
-/* Адрес «всем устройствам шины» */
+/* Адрес «всем устройствам шины» — только адресат */
 export const BROADCAST_BUS_ID = 0xffff
+/* Адрес внешнего клиента (терминал, отладка облака) — у модулей такого адреса не бывает */
+export const EXTERNAL_BUS_ID = 0x0000
 
 export interface PacketObject {
   trgBusID: number
-  retBusID: number
-  haCode: number
+  srcBusID: number
+  cmd: number
   payload: Uint8Array
 }
 
 export interface DecodedPacketObject extends PacketObject {
-  /* Заголовок (2 старших бита HA_Code) и аргумент (14 младших) */
+  /* Части Cmd: заголовок (биты 14-15), аргумент (биты 1-13), нужен ли ответ (бит 0) */
   header: number
   argument: number
+  reply: boolean
   crc: number
   /* Неверный CRC — устройство такой объект отбросит, показываем отметкой, а не прячем */
   crcOk: boolean
 }
 
-/* HA_Code = заголовок (0..3) в старших 2 битах и аргумент (0..0x3FFF) */
-export const makeHaCode = (header: number, argument: number): number => ((header & 0x03) << 14) | (argument & 0x3fff)
-export const splitHaCode = (haCode: number): { header: number; argument: number } => ({ header: (haCode >> 14) & 0x03, argument: haCode & 0x3fff })
+/* Cmd = заголовок (0..3) в битах 14-15, аргумент (0..8191) в битах 1-13, флаг ответа в бите 0 — как CMD/CMD_NR в api_cmd.h прошивки */
+export const makeCmd = (header: number, argument: number, reply = true): number => ((header & 0x03) << 14) | ((argument & 0x1fff) << 1) | (reply ? 1 : 0)
+export const splitCmd = (cmd: number): { header: number; argument: number; reply: boolean } => ({
+  header: (cmd >> 14) & 0x03,
+  argument: (cmd >> 1) & 0x1fff,
+  reply: (cmd & 1) === 1,
+})
 
-/* CRC объекта: TrgBusID | RetBusID | HA_Code по 2 байта big-endian, затем Payload */
-export const packetObjectCrc = (trgBusID: number, retBusID: number, haCode: number, payload: Uint8Array): number => {
-  const head = [trgBusID >> 8, trgBusID, retBusID >> 8, retBusID, haCode >> 8, haCode].map((byte) => byte & 0xff)
+/* CRC объекта: TrgBusID | SrcBusID | Cmd по 2 байта big-endian, затем Payload */
+export const packetObjectCrc = (trgBusID: number, srcBusID: number, cmd: number, payload: Uint8Array): number => {
+  const head = [trgBusID >> 8, trgBusID, srcBusID >> 8, srcBusID, cmd >> 8, cmd].map((byte) => byte & 0xff)
   return crc16Kermit(crc16Kermit(0, head), payload)
 }
 
 /* Пакет из одного или нескольких объектов — те же байты, что CBOR_PACK/CBOR_PktEncFinish прошивки */
 export const encodePacket = (objects: PacketObject[]): Uint8Array => {
   const encoder = new CborEncoder()
-  encoder.encodeMapStart(null)
-  for (const { trgBusID, retBusID, haCode, payload } of objects) {
+  encoder.encodeArrayStart(null)
+  for (const { trgBusID, srcBusID, cmd, payload } of objects) {
+    encoder.encodeArrayStart(5)
     encoder.encodeUnsigned(trgBusID)
-    encoder.encodeArrayStart(4)
-    encoder.encodeUnsigned(retBusID)
-    encoder.encodeUnsigned(haCode)
+    encoder.encodeUnsigned(srcBusID)
+    encoder.encodeUnsigned(cmd)
     encoder.encodeBytes(payload)
-    encoder.encodeUnsigned(packetObjectCrc(trgBusID, retBusID, haCode, payload))
+    encoder.encodeUnsigned(packetObjectCrc(trgBusID, srcBusID, cmd, payload))
   }
   encoder.encodeBreak()
   return encoder.getResult()
@@ -69,22 +76,21 @@ const readValue = (bytes: Uint8Array, offset: number): { value: unknown; length:
 
 const toNumber = (value: unknown): number | null => (typeof value === "number" && Number.isInteger(value) && value >= 0 && value <= 0xffff ? value : null)
 
-/* Объект пакета из пары ключ/значение; не по формату (не 4 элемента, не те типы, старый формат без CRC) — null, как CBOR_PktDecGet его пропускает */
-const toObject = (key: unknown, value: unknown): DecodedPacketObject | null => {
-  const trgBusID = toNumber(key)
-  if (trgBusID === null || !Array.isArray(value) || value.length !== 4) return null
-  const [retBusID, haCode, payload, crc] = [toNumber(value[0]), toNumber(value[1]), value[2], toNumber(value[3])]
-  if (retBusID === null || haCode === null || !(payload instanceof Uint8Array) || crc === null) return null
-  return { trgBusID, retBusID, haCode, payload, crc, crcOk: packetObjectCrc(trgBusID, retBusID, haCode, payload) === crc, ...splitHaCode(haCode) }
+/* Объект пакета; не по формату (не 5 элементов, не те типы) — null, как CBOR_PktDecNext прошивки его пропускает */
+const toObject = (value: unknown): DecodedPacketObject | null => {
+  if (!Array.isArray(value) || value.length !== 5) return null
+  const [trgBusID, srcBusID, cmd, payload, crc] = [toNumber(value[0]), toNumber(value[1]), toNumber(value[2]), value[3], toNumber(value[4])]
+  if (trgBusID === null || srcBusID === null || cmd === null || !(payload instanceof Uint8Array) || crc === null) return null
+  return { trgBusID, srcBusID, cmd, payload, crc, crcOk: packetObjectCrc(trgBusID, srcBusID, cmd, payload) === crc, ...splitCmd(cmd) }
 }
 
 /* Разбор пакета с начала буфера — и для целого кадра (CAN), и для потока (RS485: «incomplete» — ждать ещё байт, «garbage» — сдвинуться на байт) */
 export const decodePacket = (bytes: Uint8Array): PacketParse => {
   if (bytes.length === 0) return { status: "incomplete" }
   const first = bytes[0]
-  if (first >> 5 !== 5) return { status: "garbage" }
+  if (first >> 5 !== 4) return { status: "garbage" }
 
-  /* Число записей: indefinite (0xBF, до BREAK) или definite — прямо в байте либо в следующих 1/2 байтах */
+  /* Число объектов: indefinite (0x9F, до BREAK) или definite — прямо в байте либо в следующих 1/2 байтах */
   let offset = 1
   let count: number | null = null
   const info = first & 0x1f
@@ -101,12 +107,10 @@ export const decodePacket = (bytes: Uint8Array): PacketParse => {
     for (let index = 0; count === null || index < count; index++) {
       if (offset >= bytes.length) return { status: "incomplete" }
       if (count === null && bytes[offset] === 0xff) return { status: "complete", length: offset + 1, objects }
-      const key = readValue(bytes, offset)
-      if (!key) return { status: "incomplete" }
-      const value = readValue(bytes, offset + key.length)
+      const value = readValue(bytes, offset)
       if (!value) return { status: "incomplete" }
-      offset += key.length + value.length
-      const object = toObject(key.value, value.value)
+      offset += value.length
+      const object = toObject(value.value)
       if (object) objects.push(object)
     }
   } catch {
@@ -115,7 +119,7 @@ export const decodePacket = (bytes: Uint8Array): PacketParse => {
   return { status: "complete", length: offset, objects }
 }
 
-/* Объекты пакета для своего адреса (и broadcast) с верным CRC — как CBOR_PktDecGet прошивки, только все, а не первый */
+/* Объекты пакета для своего адреса (и broadcast) с верным CRC, по порядку — как CBOR_PktDecNext прошивки */
 export const objectsFor = (objects: DecodedPacketObject[], busID: number): DecodedPacketObject[] =>
   objects.filter((object) => object.crcOk && (object.trgBusID === busID || object.trgBusID === BROADCAST_BUS_ID))
 

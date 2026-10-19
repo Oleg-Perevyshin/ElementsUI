@@ -1,5 +1,5 @@
-/* $lib/protocols/poeSerial.ts */
-/* Рамка POESerial (system_console прошивки): [SOH] HEADER [US] ARGUMENT [STX] VALUE [ETX] CRC8 [US] FHS [EOT] \n — CRC8 двумя hex-символами
+/* $lib/protocols/xPoeDebug.ts */
+/* Рамка xPOE-Debug (system_console прошивки): [SOH] HEADER [US] ARGUMENT [STX] VALUE [ETX] CRC8 [US] FHS [EOT] \n — CRC8 двумя hex-символами
    по HEADER+ARGUMENT+VALUE (crc8Rohc), FHS (свободная куча) только у кадров устройства. Устройство шлёт VALUE текстом (лог или hex-дамп CBOR),
    устройству VALUE уходит сырыми байтами CBOR. Между кадрами — текст: строки Teleplot «>Имя:Значение» (PLOT) и прочий вывод (RAW) */
 import { crc8Rohc } from "./crc.js"
@@ -16,7 +16,7 @@ const LF = 0x0a
 const MAX_TEXT_TAIL = 4096
 const MAX_FRAME = 8192
 
-export type PoeSerialItem =
+export type XPoeDebugItem =
   | { type: "frame"; header: string; argument: string; value: string; valueBytes: Uint8Array; crc: string; crcOk: boolean; freeHeap: string }
   | { type: "plot"; name: string; value: string }
   | { type: "raw"; text: string }
@@ -26,7 +26,7 @@ const decoder = new TextDecoder()
 const hex2 = (value: number) => value.toString(16).toUpperCase().padStart(2, "0")
 
 /* Кадр команды устройству — те же байты, что разбирает system_console (VALUE — сырой CBOR, FHS не передаётся) */
-export const encodePoeSerialFrame = (header: string, argument: string, value: Uint8Array): Uint8Array => {
+export const encodeXPoeDebugFrame = (header: string, argument: string, value: Uint8Array): Uint8Array => {
   const headerBytes = encoder.encode(header)
   const argumentBytes = encoder.encode(argument)
   const crc = crc8Rohc(crc8Rohc(crc8Rohc(0xff, headerBytes), argumentBytes), value)
@@ -34,7 +34,7 @@ export const encodePoeSerialFrame = (header: string, argument: string, value: Ui
 }
 
 /* Строки текста вне кадров: Teleplot «>Имя:Значение» → plot, остальное → raw; пустые и с управляющими символами пропускаются */
-const textItems = (bytes: Uint8Array): PoeSerialItem[] =>
+const textItems = (bytes: Uint8Array): XPoeDebugItem[] =>
   decoder
     .decode(bytes)
     .split("\n")
@@ -46,7 +46,7 @@ const textItems = (bytes: Uint8Array): PoeSerialItem[] =>
     })
 
 /* Кадр от SOH до EOT включительно; без разделителей — null (пропускается, как в прошивке и Rust-терминале) */
-const frameItem = (frame: Uint8Array): PoeSerialItem | null => {
+const frameItem = (frame: Uint8Array): XPoeDebugItem | null => {
   const us = frame.indexOf(US)
   const stx = us < 0 ? -1 : frame.indexOf(STX, us + 1)
   const etx = stx < 0 ? -1 : frame.indexOf(ETX, stx + 1)
@@ -78,12 +78,12 @@ const concat = (a: Uint8Array, b: Uint8Array) => {
 }
 
 /* Потоковый разбор: push(байты из порта) → готовые кадры и строки; незавершённое ждёт следующего чанка */
-export const createPoeSerialParser = () => {
+export const createXPoeDebugParser = () => {
   let buffer = new Uint8Array()
   return {
-    push(chunk: Uint8Array): PoeSerialItem[] {
+    push(chunk: Uint8Array): XPoeDebugItem[] {
       buffer = concat(buffer, chunk)
-      const items: PoeSerialItem[] = []
+      const items: XPoeDebugItem[] = []
       for (;;) {
         const soh = buffer.indexOf(SOH)
         if (soh < 0) break
@@ -124,7 +124,7 @@ export const createPoeSerialParser = () => {
 
 /* Поле Value команды из ввода пользователя: пусто — без тела, hex-строка (с пробелами или без) — готовые байты как есть, иначе JSON → CBOR
    (двоичные данные — base64, ключи с BIN — байты, см. jsonToCbor); не hex и не JSON — ошибка */
-export const poeSerialValueFromText = (text: string | undefined): Uint8Array => {
+export const xPoeDebugValueFromText = (text: string | undefined): Uint8Array => {
   const trimmed = (text ?? "").trim()
   if (!trimmed) return new Uint8Array()
   if (/^([0-9A-Fa-f]{2}\s?)+$/.test(trimmed)) return Uint8Array.from(trimmed.replace(/\s/g, "").match(/../g) ?? [], (pair) => parseInt(pair, 16))

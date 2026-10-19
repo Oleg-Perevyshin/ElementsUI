@@ -9,12 +9,13 @@ export { bytesToBase64, base64ToBytes } from "./cbor/base64.js"
 export { CborToValue, ValueToCbor, cborToValue, valueToCbor } from "./cbor/value.js"
 /* JSON-текст ↔ CBOR: двоичные данные — base64, ключи с "BIN" кодируются байтами (поля ввода терминала и отладки) */
 export { CborToJson, JsonToCbor, cborToJson, jsonToCbor } from "./cbor/json.js"
-/* Контрольные суммы и пакет poe_cbor_pkt { TrgBusID : [RetBusID, HA_Code, Payload, CRC16] } (CAN, RS485) */
+/* Контрольные суммы и пакет poe_cbor_pkt [[TrgBusID, SrcBusID, Cmd, Payload, CRC16], …] (CAN, RS485) */
 export { crc16Kermit, crc8Rohc } from "./crc.js"
 export {
   BROADCAST_BUS_ID,
-  makeHaCode,
-  splitHaCode,
+  makeCmd,
+  splitCmd,
+  EXTERNAL_BUS_ID,
   packetObjectCrc,
   encodePacket,
   decodePacket,
@@ -24,8 +25,8 @@ export {
   type DecodedPacketObject,
   type PacketParse,
 } from "./packet.js"
-/* Рамка POESerial (UART-консоль system_console): сборка команды и потоковый разбор кадров, строк Teleplot и текста */
-export { encodePoeSerialFrame, createPoeSerialParser, poeSerialValueFromText, type PoeSerialItem } from "./poeSerial.js"
+/* Рамка xPOE-Debug (UART-консоль system_console): сборка команды и потоковый разбор кадров, строк Teleplot и текста */
+export { encodeXPoeDebugFrame, createXPoeDebugParser, xPoeDebugValueFromText, type XPoeDebugItem } from "./xPoeDebug.js"
 /* CAN/CAN FD через slcan-адаптер: нарезка пакета на кадры как в can_service прошивки, кадры slcan, потоковый разбор со сборкой фрагментов */
 export {
   CAN_FINAL_BIT,
@@ -38,5 +39,5 @@ export {
   type CanFrame,
   type CanMessage,
 } from "./can.js"
-/* Словарь заголовков и аргументов HA_Code — по умолчанию из мастер-словаря dictionary.yaml библиотеки, разбор файла словаря */
+/* Словарь заголовков и аргументов Cmd — по умолчанию из мастер-словаря dictionary.yaml библиотеки, разбор файла словаря */
 export { HEADER_CODES, DEFAULT_ARGUMENT_CODES, parseArgumentDictionary, nameByCode } from "./dictionary.js"
