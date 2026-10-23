@@ -46,19 +46,67 @@ const isDebugLog = (value: unknown): value is [number, string, string | Uint8Arr
 /* Байты строками по 16 — для дампов DebugLog и раздела HEX */
 const hexRows = (bytes: Uint8Array): string => (bytesToHex(bytes).match(/.{1,48}/g) ?? []).map((row) => row.trim()).join("\n")
 
-/* Payload в модалку: развёрнутый вид — карты и массивы с отступами, DebugLog — уровень и тег, ниже текст или дамп и FHS; не CBOR — null */
+/* Цвета развёрнутого вида — палитра темы, как прежний разбор отладки облака: ключи, строки, числа, логические, null, байты */
+type PrettyKind = "key" | "string" | "number" | "boolean" | "null" | "bytes"
+const PRETTY_COLORS: Record<PrettyKind, string> = {
+  key: "--pink-color",
+  string: "--purple-color",
+  number: "--red-color",
+  boolean: "--orange-color",
+  null: "--cyan-color",
+  bytes: "--green-color",
+}
+type Paint = (kind: PrettyKind, text: string) => string
+const plain: Paint = (_kind, text) => text
+const colored: Paint = (kind, text) => `<span style="color:var(${PRETTY_COLORS[kind]})">${escapeHtml(text)}</span>`
+
+/* Карты и массивы с отступом 2, по одному элементу на строку; скобки и запятые — без цвета */
+const prettyValue = (value: unknown, paint: Paint, indent = ""): string => {
+  if (value === null || value === undefined) return paint("null", "null")
+  if (typeof value === "string") return paint("string", JSON.stringify(value))
+  if (typeof value === "number") return paint("number", String(shortNumber(value)))
+  if (typeof value === "bigint") return paint("number", String(value))
+  if (typeof value === "boolean") return paint("boolean", String(value))
+  if (value instanceof Uint8Array) return paint("bytes", `h'${bytesToHex(value)}'`)
+  const inner = `${indent}  `
+  if (Array.isArray(value)) {
+    if (!value.length) return "[]"
+    return `[\n${value.map((item) => inner + prettyValue(item, paint, inner)).join(",\n")}\n${indent}]`
+  }
+  const entries = value instanceof Map ? [...value.entries()] : Object.entries(value as object)
+  if (!entries.length) return "{}"
+  return `{\n${entries.map(([key, item]) => `${inner}${paint("key", `${JSON.stringify(String(key))}:`)} ${prettyValue(item, paint, inner)}`).join(",\n")}\n${indent}}`
+}
+
+/* DebugLog — уровень и тег, ниже текст или дамп по 16 байт и FHS; остальное — prettyValue */
+const prettyPayload = (value: unknown, paint: Paint, html: boolean): string => {
+  const raw = (text: string) => (html ? escapeHtml(text) : text)
+  if (isDebugLog(value)) {
+    const [level, tag, detail, fhs] = value
+    const body = detail instanceof Uint8Array ? `${raw(`bytes(${detail.length}):`)}\n${paint("bytes", hexRows(detail))}` : raw(detail)
+    return [`${LOG_LEVELS[level]} ${paint("key", tag)}`, body, typeof fhs === "number" ? `FHS: ${paint("number", String(fhs))}` : ""].filter(Boolean).join("\n")
+  }
+  if (typeof value === "string") return raw(value)
+  return prettyValue(value, paint)
+}
+
+/* Payload в развёрнутом виде, чистый текст: карты и массивы с отступами, DebugLog — уровень и тег, ниже текст или дамп и FHS; не CBOR — null */
 export function formatXPoeDebugPretty(hex: string): string | null {
   const bytes = hexToBytes(hex)
   if (!bytes) return null
   try {
-    const value = cborToValue(bytes)
-    if (isDebugLog(value)) {
-      const [level, tag, detail, fhs] = value
-      const body = detail instanceof Uint8Array ? `bytes(${detail.length}):\n${hexRows(detail)}` : detail
-      return [`${LOG_LEVELS[level]} ${tag}`, body, typeof fhs === "number" ? `FHS: ${fhs}` : ""].filter(Boolean).join("\n")
-    }
-    if (typeof value === "string") return value
-    return JSON.stringify(normalizeCborValue(value), null, 2) ?? String(value)
+    return prettyPayload(cborToValue(bytes), plain, false)
+  } catch {
+    return null
+  }
+}
+
+/* То же в HTML с цветами палитры темы — для модалки */
+const formatXPoeDebugPrettyHtml = (hex: string): string | null => {
+  const bytes = hexToBytes(hex)
+  if (!bytes) return null
+  try {
+    return prettyPayload(cborToValue(bytes), colored, true)
   } catch {
     return null
   }
@@ -149,14 +197,14 @@ export function bindXPoeDebugCopyButtons(): () => void {
   }
 }
 
-/* Две прокручиваемые секции модалки: Value — развёрнутый вид Payload (formatXPoeDebugPretty), HEX — байты Payload по 16 в строке; HEX-раздел есть, если форматтер таблицы добавил исходные байты */
+/* Две прокручиваемые секции модалки: Value — развёрнутый вид Payload в цветах палитры темы, HEX — байты Payload по 16 в строке; HEX-раздел есть, если форматтер таблицы добавил исходные байты */
 export function formatXPoeDebugModal(text: string): string {
   const separator = "\nHEX\n"
   const hexIndex = text.lastIndexOf(separator)
   const hex = hexIndex < 0 ? "" : text.slice(hexIndex + separator.length)
-  const pretty = hex ? formatXPoeDebugPretty(hex) : null
+  const pretty = hex ? formatXPoeDebugPrettyHtml(hex) : null
   const bytes = pretty === null ? null : hexToBytes(hex)
-  const decoded = pretty === null ? (hexIndex < 0 ? text : text.slice(0, hexIndex)) : escapeHtml(pretty)
+  const decoded = pretty === null ? (hexIndex < 0 ? text : text.slice(0, hexIndex)) : pretty
   const hexText = bytes ? hexRows(bytes) : hex
   const modalStyle = "display:flex;flex-direction:column;gap:.75rem;max-height:80vh;min-width:0;overflow-y:auto;overflow-x:hidden"
   const sectionStyle = "min-width:0;padding:.25rem 0 .75rem"

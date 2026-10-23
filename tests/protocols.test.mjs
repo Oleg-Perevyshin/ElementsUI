@@ -188,7 +188,8 @@ test("xPOE-Debug: неверный CRC, команда устройству, н�
   )
   assert.equal(m.formatXPoeDebugPretty("XYZ"), null)
   const modal = m.formatXPoeDebugModal(`x\nHEX\n${float32Map}`)
-  assert.ok(modal.includes("{\n  &quot;T&quot;: 0.12\n}") && modal.includes("A1 61 54 FA 3D F5 C2 8F"))
+  assert.ok(modal.includes('<span style="color:var(--pink-color)">&quot;T&quot;:</span> <span style="color:var(--red-color)">0.12</span>'))
+  assert.ok(modal.includes("A1 61 54 FA 3D F5 C2 8F"))
 })
 
 /* CAN/CAN FD через slcan */
