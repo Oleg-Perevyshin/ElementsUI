@@ -9,12 +9,15 @@ export { bytesToBase64, base64ToBytes } from "./cbor/base64.js"
 export { CborToValue, ValueToCbor, cborToValue, valueToCbor } from "./cbor/value.js"
 /* JSON-текст ↔ CBOR: двоичные данные — base64, ключи с "BIN" кодируются байтами (поля ввода терминала и отладки) */
 export { CborToJson, JsonToCbor, cborToJson, jsonToCbor } from "./cbor/json.js"
-/* Контрольные суммы и пакет poe_cbor_pkt [[TrgBusID, SrcBusID, Cmd, Payload, CRC16], …] (CAN, RS485) */
-export { crc16Kermit, crc8Rohc } from "./crc.js"
+/* Контрольная сумма и пакет poe_cbor_pkt [[TrgBusID, SrcBusID, HAR, Payload, CRC16], …] — все шины и консоль */
+export { crc16Kermit } from "./crc.js"
 export {
   BROADCAST_BUS_ID,
-  makeCmd,
-  splitCmd,
+  BUS_ID_REGEXP,
+  parseBusId,
+  formatBusId,
+  makeHar,
+  splitHar,
   EXTERNAL_BUS_ID,
   packetObjectCrc,
   encodePacketBytesPayload,
@@ -26,10 +29,19 @@ export {
   type DecodedPacketObject,
   type PacketParse,
 } from "./packet.js"
-/* Графики отладки: кадр OK! DebPlot (SC_PLOT прошивки) — значения из CBOR-карты, график на группу, серии в порядке устройства */
-export { createPlotGroups, debPlotValues, DEB_PLOT_ARGUMENT, type PlotPoint } from "./plotGroups.js"
-/* System Console over UART: single-record poe_cbor_pkt with debug-only FHS */
-export { encodeXPoeDebugFrame, createXPoeDebugParser, xPoeDebugCmd, xPoeDebugValueFromText, type XPoeDebugItem } from "./xPoeDebug.js"
+/* Графики отладки: пакет OK! DebugPlot (SC_PLOT прошивки) — значения из CBOR-карты, график на группу, серии в порядке устройства */
+export { createPlotGroups, debugPlotValues, DEBUG_PLOT_ARGUMENT, type PlotPoint } from "./plotGroups.js"
+/* xPOE-Debug — UART-консоль как шина: пакеты вперемешку с текстом загрузчика, логи OK! DebugLog */
+export {
+  encodeXPoeDebugFrame,
+  createXPoeDebugParser,
+  xPoeDebugHar,
+  xPoeDebugValueFromText,
+  xPoeDebugRow,
+  DEBUG_LOG_ARGUMENT,
+  type XPoeDebugItem,
+  type XPoeDebugRow,
+} from "./xPoeDebug.js"
 /* Отображение Value xPOE-Debug в таблице/модалке и копирование Value/HEX */
 export { formatXPoeDebugValue, formatXPoeDebugValueForTable, formatXPoeDebugModal, bindXPoeDebugCopyButtons } from "./xPoeDebugView.js"
 /* CAN/CAN FD через slcan-адаптер: нарезка пакета на кадры как в can_service прошивки, кадры slcan, потоковый разбор со сборкой фрагментов */
@@ -44,5 +56,5 @@ export {
   type CanFrame,
   type CanMessage,
 } from "./can.js"
-/* Словарь заголовков и аргументов Cmd — по умолчанию из мастер-словаря dictionary.yaml библиотеки, разбор файла словаря */
+/* Словарь заголовков и аргументов HAR — по умолчанию из мастер-словаря dictionary.yaml библиотеки, разбор файла словаря */
 export { HEADER_CODES, DEFAULT_ARGUMENT_CODES, parseArgumentDictionary, nameByCode } from "./dictionary.js"

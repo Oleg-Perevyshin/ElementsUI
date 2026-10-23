@@ -18,7 +18,7 @@ const compactCborValue = (value: unknown): string => {
   return escapeHtml(JSON.stringify(normalizeCborValue(value)) ?? String(value))
 }
 
-/* Декодирует CBOR Value для таблицы; системный лог имеет вид [уровень, тег, текст]. */
+/* Payload в таблицу: CBOR как JSON, лог DebugLog [уровень, тег, текст|байты, FHS] — уровень · тег · текст */
 export function formatXPoeDebugValue(rawValue: string): string {
   const hex = rawValue.trim().replace(/\s/g, "")
   if (!hex || hex.length % 2 !== 0 || !/^[0-9A-Fa-f]+$/.test(hex)) return escapeHtml(rawValue)
@@ -27,7 +27,7 @@ export function formatXPoeDebugValue(rawValue: string): string {
     const value = cborToValue(Uint8Array.from(hex.match(/.{2}/g)!, (byte) => parseInt(byte, 16)))
     if (
       Array.isArray(value) &&
-      value.length === 3 &&
+      value.length === 4 &&
       typeof value[0] === "number" &&
       LOG_LEVELS[value[0]] &&
       typeof value[1] === "string" &&
@@ -43,7 +43,7 @@ export function formatXPoeDebugValue(rawValue: string): string {
   }
 }
 
-/* Сохраняет исходный HEX скрытым до раскрытия строки в общей таблице. */
+/* Исходный HEX скрыт до раскрытия строки в общей таблице */
 export function formatXPoeDebugValueForTable(rawValue: string, isCbor = true): string {
   if (!isCbor) return escapeHtml(rawValue)
   const formatted = formatXPoeDebugValue(rawValue)

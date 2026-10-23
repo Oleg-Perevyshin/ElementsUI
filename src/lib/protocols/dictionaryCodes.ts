@@ -12,7 +12,7 @@ export const DEFAULT_ARGUMENT_CODES: Record<string, number> = {
   BackUp: 9,
   BindMKey: 10,
   DebugLog: 11,
-  DebPlot: 12,
+  DebugPlot: 12,
   DataStream: 15,
   APsList: 21,
   FS: 22,

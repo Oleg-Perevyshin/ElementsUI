@@ -1,5 +1,5 @@
 /* $lib/protocols/dictionary.ts */
-/* Словарь заголовков и аргументов протокола — заголовок и аргумент поля Cmd пакета (makeCmd/splitCmd). Аргументы по умолчанию —
+/* Словарь заголовков и аргументов протокола — заголовок и аргумент поля HAR пакета (makeHar/splitHar). Аргументы по умолчанию —
    из мастер-словаря dictionary.yaml рядом (единственный источник; .framework/Dictionary.yaml прошивок — его справочные копии), DEFAULT_ARGUMENT_CODES
    генерируется из него (dictionaryCodes.ts, npm run Dictionary); у устройства словарь может быть свой — его загружают из файла
    (parseArgumentDictionary), своих копий словаря в приложениях не держим */

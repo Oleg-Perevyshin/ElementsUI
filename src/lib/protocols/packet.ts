@@ -1,6 +1,6 @@
 /* $lib/protocols/packet.ts */
-/* Общий пакет poe_cbor_pkt: indefinite ARRAY записей [TrgBusID, SrcBusID, Cmd, Payload, CRC16].
-   Payload — ровно один CBOR item. CRC-16/KERMIT считается по сырым CBOR-байтам записи от её заголовка до конца Payload. */
+/* Общий пакет poe_cbor_pkt всех шин и консоли: indefinite ARRAY записей [TrgBusID, SrcBusID, HAR, Payload, CRC16].
+   Payload — ровно одно CBOR item (сырые данные — байтовая строка), пустой — null. CRC-16/KERMIT — по CBOR-байтам записи от её заголовка до конца Payload */
 import { CborDecoder } from "./cbor/decoder.js"
 import { CborEncoder } from "./cbor/encoder.js"
 import { CborEndOfDataError } from "./cbor/types.js"
@@ -11,15 +11,23 @@ export const BROADCAST_BUS_ID = 0xffff
 /* Адрес внешнего клиента (терминал, отладка облака) — у модулей такого адреса не бывает */
 export const EXTERNAL_BUS_ID = 0x0000
 
+/* BusID в полях ввода — HEX без "0x", 1-4 знака (uint16) */
+export const BUS_ID_REGEXP = /^[0-9A-Fa-f]{1,4}$/
+/* HEX-поле BusID → число; пусто или не HEX — fallback */
+export const parseBusId = (text: string | undefined, fallback = 0): number => (text && BUS_ID_REGEXP.test(text) ? parseInt(text, 16) : fallback)
+/* BusID для таблиц — 0x0000 */
+export const formatBusId = (id: number): string => `0x${id.toString(16).toUpperCase().padStart(4, "0")}`
+
 export interface PacketObject {
   trgBusID: number
   srcBusID: number
-  cmd: number
+  har: number
+  /* CBOR item Payload; пустой массив — пустой Payload (null) */
   payload: Uint8Array
 }
 
 export interface DecodedPacketObject extends PacketObject {
-  /* Части Cmd: заголовок (биты 14-15), аргумент (биты 1-13), нужен ли ответ (бит 0) */
+  /* Части HAR: заголовок (биты 14-15), аргумент (биты 1-13), нужен ли ответ (бит 0) */
   header: number
   argument: number
   reply: boolean
@@ -28,39 +36,40 @@ export interface DecodedPacketObject extends PacketObject {
   crcOk: boolean
 }
 
-/* Cmd = заголовок (0..3) в битах 14-15, аргумент (0..8191) в битах 1-13, флаг ответа в бите 0 — как CMD/CMD_NR в api_cmd.h прошивки */
-export const makeCmd = (header: number, argument: number, reply = true): number => ((header & 0x03) << 14) | ((argument & 0x1fff) << 1) | (reply ? 1 : 0)
-export const splitCmd = (cmd: number): { header: number; argument: number; reply: boolean } => ({
-  header: (cmd >> 14) & 0x03,
-  argument: (cmd >> 1) & 0x1fff,
-  reply: (cmd & 1) === 1,
+/* HAR = заголовок (0..3) в битах 14-15, аргумент (0..8191) в битах 1-13, флаг ответа в бите 0 — как HAR/HAR_NR в api_har.h прошивки */
+export const makeHar = (header: number, argument: number, reply = true): number => ((header & 0x03) << 14) | ((argument & 0x1fff) << 1) | (reply ? 1 : 0)
+export const splitHar = (har: number): { header: number; argument: number; reply: boolean } => ({
+  header: (har >> 14) & 0x03,
+  argument: (har >> 1) & 0x1fff,
+  reply: (har & 1) === 1,
 })
+
+const NULL_PAYLOAD = Uint8Array.of(0xf6)
 
 export const packetObjectCrc = (encodedRecordPrefix: Uint8Array): number => crc16Kermit(0, encodedRecordPrefix)
 
-/* Кодирует сырые байты как один CBOR byte string для Payload. */
+/* Сырые байты одним CBOR item Payload — байтовой строкой, как CBOR_PACK прошивки */
 export const encodePacketBytesPayload = (bytes: Uint8Array): Uint8Array => {
   const encoder = new CborEncoder()
   encoder.encodeBytes(bytes)
   return encoder.getResult()
 }
 
-/* Пакет из одного или нескольких объектов — те же байты, что CBOR_PACK/CBOR_PktEncFinish прошивки */
+/* Пакет из одного или нескольких объектов — те же байты, что CBOR_PktEncAddRaw/CBOR_PktEncFinish прошивки */
 export const encodePacket = (objects: PacketObject[]): Uint8Array => {
   const encoder = new CborEncoder()
   encoder.encodeArrayStart(null)
-  for (const { trgBusID, srcBusID, cmd, payload } of objects) {
+  for (const { trgBusID, srcBusID, har, payload } of objects) {
+    const item = payload.length ? payload : NULL_PAYLOAD
+    const payloadDecoder = new CborDecoder(item)
+    if (!payloadDecoder.skipValue() || payloadDecoder.offset !== item.length) throw new Error("Payload должен содержать ровно одно CBOR item")
     const recordStart = encoder.getResult().length
     encoder.encodeArrayStart(5)
     encoder.encodeUnsigned(trgBusID)
     encoder.encodeUnsigned(srcBusID)
-    encoder.encodeUnsigned(cmd)
-    const prefixStart = encoder.getResult().length
-    /* Payload is already CBOR-encoded; reject malformed or concatenated values. */
-    const payloadDecoder = new CborDecoder(payload)
-    if (!payloadDecoder.skipValue() || payloadDecoder.offset !== payload.length) throw new Error("Payload должен содержать ровно один CBOR item")
-    encoder.encodeRaw(payload)
-    const prefix = encoder.getResult().slice(recordStart, prefixStart + payload.length)
+    encoder.encodeUnsigned(har)
+    encoder.encodeRaw(item)
+    const prefix = encoder.getResult().slice(recordStart)
     encoder.encodeUnsigned(packetObjectCrc(prefix))
   }
   encoder.encodeBreak()
@@ -87,19 +96,20 @@ const toNumber = (value: unknown): number | null => (typeof value === "number" &
 /* Объект пакета; не по формату (не 5 элементов, не те типы) — null, как CBOR_PktDecNext прошивки его пропускает */
 const toObject = (value: unknown, rawRecord: Uint8Array): DecodedPacketObject | null => {
   if (!Array.isArray(value) || value.length !== 5) return null
-  const [trgBusID, srcBusID, cmd, crc] = [toNumber(value[0]), toNumber(value[1]), toNumber(value[2]), toNumber(value[4])]
-  if (trgBusID === null || srcBusID === null || cmd === null || crc === null) return null
+  const [trgBusID, srcBusID, har, crc] = [toNumber(value[0]), toNumber(value[1]), toNumber(value[2]), toNumber(value[4])]
+  if (trgBusID === null || srcBusID === null || har === null || crc === null) return null
   const info = rawRecord[0] & 0x1f
   const headerLength = info < 24 ? 1 : info === 24 ? 2 : info === 25 ? 3 : info === 26 ? 5 : info === 27 ? 9 : 0
-  if ((rawRecord[0] >> 5) !== 4 || headerLength === 0) return null
+  if (rawRecord[0] >> 5 !== 4 || headerLength === 0) return null
   const fields = new CborDecoder(rawRecord.subarray(headerLength))
   for (let i = 0; i < 3; i++) if (!fields.skipValue()) return null
   const payloadStart = headerLength + fields.offset
   if (!fields.skipValue()) return null
   const payloadEnd = headerLength + fields.offset
   const prefix = rawRecord.subarray(0, payloadEnd)
-  const payloadBytes = rawRecord.subarray(payloadStart, payloadEnd)
-  return { trgBusID, srcBusID, cmd, payload: payloadBytes, crc, crcOk: packetObjectCrc(prefix) === crc, ...splitCmd(cmd) }
+  const item = rawRecord.subarray(payloadStart, payloadEnd)
+  const payload = item.length === 1 && item[0] === 0xf6 ? new Uint8Array() : item
+  return { trgBusID, srcBusID, har, payload, crc, crcOk: packetObjectCrc(prefix) === crc, ...splitHar(har) }
 }
 
 /* Разбор пакета с начала буфера — и для целого кадра (CAN), и для потока (RS485: «incomplete» — ждать ещё байт, «garbage» — сдвинуться на байт) */
