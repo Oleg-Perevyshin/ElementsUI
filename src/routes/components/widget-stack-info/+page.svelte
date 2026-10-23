@@ -23,7 +23,7 @@
         { Name: "PSRAM", Total: 4194304, Free: 3980000 - jitter, MinFree: 3920000 },
       ],
       Tasks: [
-        { Name: "api_task", FreeMin: 1240, Prio: 5, Core: 1, State: 2 },
+        { Name: "api_rx_task", FreeMin: 1240, Prio: 5, Core: 1, State: 2 },
         { Name: "IDLE0", FreeMin: 620, Prio: 0, Core: 0, State: 1 },
         { Name: "IDLE1", FreeMin: 640, Prio: 0, Core: 1, State: 0 },
         { Name: "Tmr Svc", FreeMin: 1580, Prio: 1, Core: 0, State: 2 },
@@ -87,7 +87,7 @@ onRefresh={handleRefresh}
           Heap: [{ Name: "Heap", Total: 65536, Free: 12800, MinFree: 6200 }],
           Tasks: [
             { Name: "IDLE", FreeMin: 312, Prio: 0, State: 1 },
-            { Name: "api_task", FreeMin: 1096, Prio: 3, State: 2 },
+            { Name: "api_rx_task", FreeMin: 1096, Prio: 3, State: 2 },
             { Name: "can_rx", FreeMin: 704, Prio: 4, State: 2 },
           ],
         }}

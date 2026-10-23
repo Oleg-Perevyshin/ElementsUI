@@ -52,10 +52,6 @@ test("разбор пакета прошивки", () => {
   assert.equal(m.makeHar(2, 37, false), 0x804a)
   assert.equal(m.makeHar(3, 8191), 0xffff)
   assert.deepEqual(m.splitHar(0x804a), { header: 2, argument: 37, reply: false })
-  assert.deepEqual(
-    m.objectsFor(parsed.objects, 0x77).map((object) => object.trgBusID),
-    [0xffff],
-  )
 })
 
 test("поток: обрывок — incomplete, мусор — garbage, два пакета подряд", () => {
@@ -88,7 +84,7 @@ test("порча и одинаковые адреса", () => {
 test("CBOR: значение и JSON-текст", () => {
   const value = { Header: "GET", Argument: "ModInfo", Value: { a: 1, bin: Uint8Array.of(1, 2) } }
   assert.deepEqual(m.cborToValue(m.valueToCbor(value)), value)
-  assert.deepEqual(m.cborToJson(m.valueToCbor(value)), { ...value, Value: { a: 1, bin: "AQI=" } })
+  assert.deepEqual(m.cborToValue(m.jsonToCbor({ ...value, Value: { a: 1, bin: "AQI=" } })), value) /* строка base64 под ключом с "bin" — байты */
 })
 
 /* CRC-16/KERMIT побайтно — эталон из common.c прошивки (вырезан и собран на компьютере): эмодзи, кириллица, сырой CBOR, все байты */

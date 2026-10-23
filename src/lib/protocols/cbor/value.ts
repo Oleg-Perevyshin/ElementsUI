@@ -5,7 +5,7 @@ import { decodeCbor } from "./decoder.js"
 import { encodeCbor } from "./encoder.js"
 
 /* Класс для конвертации CBOR в обычное JS-значение */
-export class CborToValue {
+class CborToValue {
   /* Преобразовать CBOR значение в обычный JS-объект/значение */
   public static convert(value: CborValue): unknown {
     /* null */
@@ -73,7 +73,7 @@ export class CborToValue {
 }
 
 /* Класс для конвертации обычного JS-значения в CBOR */
-export class ValueToCbor {
+class ValueToCbor {
   /* Преобразовать обычное JS-значение в CBOR */
   public static convert(value: unknown): CborValue {
     /* null */

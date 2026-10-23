@@ -19,7 +19,7 @@
     { "Name": "Internal", "Total": 327680,  "Free": 118000,  "MinFree": 92000 },
     { "Name": "PSRAM",    "Total": 4194304, "Free": 3980000, "MinFree": 3920000 }
   ],
-  "Tasks": [{ "Name": "api_task", "FreeMin": 1240, "Prio": 5, "Core": 1, "State": 2 }]
+  "Tasks": [{ "Name": "api_rx_task", "FreeMin": 1240, "Prio": 5, "Core": 1, "State": 2 }]
 }
 ```
 

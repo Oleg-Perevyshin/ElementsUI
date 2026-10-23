@@ -1,80 +1,11 @@
-/* Конвертация между CBOR и JSON-совместимыми значениями: двоичные данные — base64, строки под ключами с "BIN" — байты */
+/* JSON-совместимое значение → CBOR (поля ввода терминала и отладки): строки base64 под ключами с "BIN" — байты */
 
-import { type CborValue, CborTag } from "./types.js"
-import { decodeCbor } from "./decoder.js"
+import { type CborValue } from "./types.js"
 import { encodeCbor } from "./encoder.js"
-import { base64ToBytes, bytesToBase64 } from "./base64.js"
-
-/* Класс для конвертации CBOR в JSON */
-export class CborToJson {
-  /* Преобразовать CBOR значение в JSON-совместимый объект */
-  public static convert(value: CborValue): unknown {
-    /* null */
-    if (value === null) return null
-
-    /* undefined */
-    if (value === undefined) return null
-
-    /* boolean */
-    if (typeof value === "boolean") return value
-
-    /* number */
-    if (typeof value === "number") return value
-
-    /* string */
-    if (typeof value === "string") return value
-
-    /* Uint8Array -> Base64 строка */
-    if (value instanceof Uint8Array) return bytesToBase64(value)
-
-    /* Array */
-    if (Array.isArray(value)) return value.map((item) => this.convert(item))
-
-    /* bigint */
-    if (typeof value === "bigint") {
-      /* Если в пределах safe integer - возвращаем как число */
-      if (value >= BigInt(Number.MIN_SAFE_INTEGER) && value <= BigInt(Number.MAX_SAFE_INTEGER)) {
-        return Number(value)
-      }
-      /* Иначе возвращаем как строку */
-      return value.toString()
-    }
-
-    /* Map -> Object (check native Map) */
-    if (value instanceof globalThis.Map) {
-      const obj: Record<string, unknown> = {}
-      for (const [key, val] of value) {
-        /* Ключи приводим к строкам */
-        const keyStr = this.keyToString(key as CborValue)
-        obj[keyStr] = this.convert(val as CborValue)
-      }
-      return obj
-    }
-
-    /* CborTag - распаковываем в объект с полем _tag */
-    if (value instanceof CborTag) return { _tag: Number(value.tag), value: this.convert(value.value) }
-
-    return null
-  }
-
-  /* CBOR -> JSON объект */
-  public static decode(buffer: ArrayBuffer | Uint8Array): unknown {
-    const value = decodeCbor(buffer)
-    return this.convert(value)
-  }
-
-  /* Преобразовать ключ в строку */
-  private static keyToString(key: CborValue): string {
-    if (typeof key === "string") return key
-    if (typeof key === "number") return key.toString()
-    if (typeof key === "bigint") return key.toString()
-    if (typeof key === "boolean") return key.toString()
-    return JSON.stringify(key)
-  }
-}
+import { base64ToBytes } from "./base64.js"
 
 /* Класс для конвертации JSON в CBOR */
-export class JsonToCbor {
+class JsonToCbor {
   /* Преобразовать JSON-совместимое значение в CBOR */
   public static convert(value: unknown, parentKey?: string): CborValue {
     /* null */
@@ -129,11 +60,6 @@ export class JsonToCbor {
 }
 
 /* Упрощённые функции для быстрого использования */
-
-/* Декодировать CBOR в JSON объект */
-export function cborToJson(buffer: ArrayBuffer | Uint8Array): unknown {
-  return CborToJson.decode(buffer)
-}
 
 /* Закодировать JSON в CBOR */
 export function jsonToCbor(value: unknown): Uint8Array {

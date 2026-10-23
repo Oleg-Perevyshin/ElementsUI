@@ -16,7 +16,7 @@
 - [BackUp, A_BACKUP, 9]                     # Резервная копия конфигурации
 - [BindMKey, A_BIND_MOD_KEY, 10]            # SET: привязка ключа модуля (ModBindKey)
 - [DebugLog, A_DEBUG_LOG, 11]               # OK!: сообщение отладки — CBOR-массив [уровень, тег, текст|байты, FHS]
-- [DebugPlot, A_DEBUG_PLOT, 12]             # OK!: значения графиков отладки — CBOR-карта {"Имя": float32} (SC_PLOT)
+- [DebugPlot, A_DEBUG_PLOT, 12]             # OK!: значения графиков отладки — CBOR-карта {"Имя": float32} (LOG_PLOT)
 - [DataStream, A_DATA_STREAM, 15]           # OK!: поток данных групп конфигурации (CS_PushGroupStream)
 
 # Локальная сеть

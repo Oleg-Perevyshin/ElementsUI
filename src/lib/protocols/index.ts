@@ -2,34 +2,29 @@
 /* Общее ядро протоколов обмена с устройствами для DevCloud, WebApp и SYP-DevTerminal — без Svelte, точка входа "poe-svelte-ui-lib/protocols"
    (условие default: работает и в браузере, и под Node без Vite); импорты с расширением .js, чтобы их разрешал сам Node */
 export * from "./cbor/types.js"
-export { CborDecoder, decodeCbor } from "./cbor/decoder.js"
-export { CborEncoder, encodeCbor } from "./cbor/encoder.js"
 export { bytesToBase64, base64ToBytes } from "./cbor/base64.js"
 /* Значение ↔ CBOR: двоичные данные — Uint8Array как есть (WebSocket, хранилище, телеметрия) */
-export { CborToValue, ValueToCbor, cborToValue, valueToCbor } from "./cbor/value.js"
-/* JSON-текст ↔ CBOR: двоичные данные — base64, ключи с "BIN" кодируются байтами (поля ввода терминала и отладки) */
-export { CborToJson, JsonToCbor, cborToJson, jsonToCbor } from "./cbor/json.js"
+export { cborToValue, valueToCbor } from "./cbor/value.js"
+/* JSON-значение → CBOR: строки base64 под ключами с "BIN" кодируются байтами (поля ввода терминала и отладки) */
+export { jsonToCbor } from "./cbor/json.js"
 /* Контрольная сумма и пакет poe_cbor_pkt [[TrgBusID, SrcBusID, HAR, Payload, CRC16], …] — все шины и консоль */
 export { crc16Kermit } from "./crc.js"
 export {
-  BROADCAST_BUS_ID,
   BUS_ID_REGEXP,
   parseBusId,
   formatBusId,
   makeHar,
   splitHar,
-  EXTERNAL_BUS_ID,
   packetObjectCrc,
   encodePacketBytesPayload,
   encodePacket,
   decodePacket,
-  objectsFor,
   createPacketStreamParser,
   type PacketObject,
   type DecodedPacketObject,
   type PacketParse,
 } from "./packet.js"
-/* Графики отладки: пакет OK! DebugPlot (SC_PLOT прошивки) — значения из CBOR-карты, график на группу, серии в порядке устройства */
+/* Графики отладки: пакет OK! DebugPlot (LOG_PLOT прошивки) — значения из CBOR-карты, график на группу, серии в порядке устройства */
 export { createPlotGroups, debugPlotValues, DEBUG_PLOT_ARGUMENT, type PlotPoint } from "./plotGroups.js"
 /* xPOE-Debug — UART-консоль как шина: пакеты вперемешку с текстом загрузчика, логи OK! DebugLog */
 export {

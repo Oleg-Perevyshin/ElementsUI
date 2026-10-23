@@ -6,11 +6,6 @@ import { CborEncoder } from "./cbor/encoder.js"
 import { CborEndOfDataError } from "./cbor/types.js"
 import { crc16Kermit } from "./crc.js"
 
-/* Адрес «всем устройствам шины» — только адресат */
-export const BROADCAST_BUS_ID = 0xffff
-/* Адрес внешнего клиента (терминал, отладка облака) — у модулей такого адреса не бывает */
-export const EXTERNAL_BUS_ID = 0x0000
-
 /* BusID в полях ввода — HEX без "0x", 1-4 знака (uint16) */
 export const BUS_ID_REGEXP = /^[0-9A-Fa-f]{1,4}$/
 /* HEX-поле BusID → число; пусто или не HEX — fallback */
@@ -146,10 +141,6 @@ export const decodePacket = (bytes: Uint8Array): PacketParse => {
   }
   return { status: "complete", length: offset, objects }
 }
-
-/* Объекты пакета для своего адреса (и broadcast) с верным CRC, по порядку — как CBOR_PktDecNext прошивки */
-export const objectsFor = (objects: DecodedPacketObject[], busID: number): DecodedPacketObject[] =>
-  objects.filter((object) => object.crcOk && (object.trgBusID === busID || object.trgBusID === BROADCAST_BUS_ID))
 
 /* Потоковый разбор пакетов из сырого потока (RS485): пауза дольше gapMs обрывает недособранный пакет, мусор сдвигается по байту,
    без единого целого пакета буфер не растёт дальше maxBytes */

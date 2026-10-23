@@ -1,5 +1,5 @@
 /* $lib/protocols/plotGroups.ts */
-/* Графики отладки: пакет xPOE-Debug OK! DebugPlot (SC_PLOT прошивки), Payload — CBOR-карта {"Группа.Имя": float32, …} в порядке вызова.
+/* Графики отладки: пакет xPOE-Debug OK! DebugPlot (LOG_PLOT прошивки), Payload — CBOR-карта {"Группа.Имя": float32, …} в порядке вызова.
    График на группу — префикс имени до первой точки, без префикса — общая группа ""; серии в порядке карты, у серий, которых в кадре нет, — после них */
 import { cborToValue } from "./cbor/value.js"
 import { xPoeDebugValueFromText } from "./xPoeDebug.js"

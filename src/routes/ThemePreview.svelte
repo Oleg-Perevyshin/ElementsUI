@@ -84,7 +84,7 @@
       { Name: "PSRAM", Total: 4194304, Free: 3980000, MinFree: 3920000 },
     ],
     Tasks: [
-      { Name: "api_task", FreeMin: 640, Prio: 5, Core: 1, State: 2 },
+      { Name: "api_rx_task", FreeMin: 640, Prio: 5, Core: 1, State: 2 },
       { Name: "telemetry", FreeMin: 1480, Prio: 4, Core: 1, State: 2 },
       { Name: "wifi", FreeMin: 3200, Prio: 23, Core: 0, State: 2 },
     ],

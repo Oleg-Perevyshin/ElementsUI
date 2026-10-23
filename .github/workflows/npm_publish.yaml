@@ -85,5 +85,5 @@ jobs:
           git config user.name "${{ github.event.head_commit.author.name || github.actor }}"
           git config user.email "${{ github.event.head_commit.author.email || format('{0}@users.noreply.github.com', github.actor) }}"
           git add package.json package-lock.json
-          git commit -m "ReDeploy облака (обновление ElementsUI до $VERSION) [deploy]" -m "Обновлены только package.json и package-lock.json"
+          git commit -m "ReDeploy облака (обновление ElementsUI до $VERSION) [deploy]"
           git push origin HEAD:main
