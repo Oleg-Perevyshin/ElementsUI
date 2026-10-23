@@ -2,6 +2,10 @@
   import { T } from "$lib/locales/i18n"
   import type { IFileAttachProps } from "$lib/types"
   import { twMerge } from "tailwind-merge"
+  import Button from "../Button/Button.svelte"
+
+  /* Иконка «открыть файл» для type "button" — документ со стрелкой вверх, контур 1.75 как у остальных кнопок */
+  const OPEN_FILE_ICON = `<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M12 18v-6"/><path d="m9 15 3-3 3 3"/></svg>`
 
   let {
     id = crypto.randomUUID(),
@@ -13,6 +17,8 @@
     imageSize = { height: "10rem", width: "10rem", fitMode: "cover", form: "square" },
     disabled = false,
     currentImage = $bindable(""),
+    info,
+    icon,
     onChange = () => {},
   }: IFileAttachProps = $props()
 
@@ -45,6 +51,8 @@
     }
 
     onChange(event, file)
+    /* Кнопка «Открыть файл» — повторный выбор того же файла тоже должен срабатывать */
+    if (type === "button") input.value = ""
   }
 
   const triggerFileInput = () => {
@@ -60,7 +68,11 @@
     <span class={twMerge(`w-full text-[12px] font-semibold text-(--muted-color)`, label.class)}>{label.name}</span>
   {/if}
 
-  {#if type === "image"}
+  {#if type === "button"}
+    <!-- Иконочная кнопка с подсказкой, как UI.Button; выбор файла — скрытый input за ней -->
+    <Button {componentClass} {disabled} content={{ icon: icon ?? OPEN_FILE_ICON, info }} onClick={triggerFileInput} />
+    <input id={ID} type="file" class="hidden" {accept} {disabled} onchange={handleFileChange} />
+  {:else if type === "image"}
     <div class="relative">
       <button
         class="flex items-center justify-center overflow-hidden {imageSize.form === 'circle' ? 'rounded-full' : 'rounded-[12px]'}

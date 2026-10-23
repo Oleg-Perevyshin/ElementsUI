@@ -70,6 +70,15 @@
   let boards: Board[] = $state([])
   let now = $state(Date.now())
   let mapInstance: any = $state()
+  /* Вид карты (центр, масштаб, поворот) переживает сворачивание: тело виджета пересоздаёт карту, и она открывается там, где её оставили */
+  let view = $state.raw({ center: { lat: 30, lng: 0 }, zoom: 1.5, bearing: 0 })
+  $effect(() => {
+    const map = mapInstance
+    if (!map) return
+    const save = () => (view = { center: map.getCenter(), zoom: map.getZoom(), bearing: map.getBearing() })
+    map.on("moveend", save)
+    return () => map.off("moveend", save)
+  })
   let isCopied = $state(false)
   let isDarkMode = $state(false)
 
@@ -211,8 +220,9 @@
         bind:map={mapInstance}
         class="h-full w-full overflow-hidden rounded-[14px] border border-(--hairline-color)"
         style={isDarkMode ? "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json" : "https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json"}
-        zoom={1.5}
-        center={{ lat: 30, lng: 0 }}
+        zoom={view.zoom}
+        center={view.center}
+        bearing={view.bearing}
         maxPitch={0}
       >
         <NavigationControl />

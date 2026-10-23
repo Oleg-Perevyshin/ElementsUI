@@ -70,6 +70,13 @@ ${formatObjectToString(fileAttachComponent.properties as IFileAttachProps)}
       <FileAttach id={crypto.randomUUID()} label={{ name: "Выберите файл" }} type="file" disabled />
       <FileAttach
         id={crypto.randomUUID()}
+        label={{ name: "Кнопка" }}
+        type="button"
+        componentClass="size-8 rounded-[10px] p-[6px] bg-max"
+        info={{ text: "Открыть файл", side: "top" }}
+      />
+      <FileAttach
+        id={crypto.randomUUID()}
         label={{ name: "Выберите изображение" }}
         type="image"
         imageSize={{ height: "10rem", width: "10rem", fitMode: "contain" }}

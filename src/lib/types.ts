@@ -194,8 +194,11 @@ export interface IFileAttachProps {
   wrapperClass?: string
   componentClass?: string
   label?: { name?: string; class?: string }
-  type?: "file" | "image"
+  type?: "file" | "image" | "button"
   accept?: string
+  /* Только для type "button": подсказка при наведении и своя иконка (по умолчанию — документ со стрелкой вверх) */
+  info?: { text: string; side: "top" | "bottom" | "left" | "right" }
+  icon?: ConstructorOfATypedSvelteComponent | string | null
   imageSize?: { height?: string; width?: string; fitMode?: "cover" | "contain"; form?: "square" | "circle" }
   disabled?: boolean
   currentImage?: string | null

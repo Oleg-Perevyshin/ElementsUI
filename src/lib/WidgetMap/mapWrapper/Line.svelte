@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onDestroy } from "svelte"
+  import { onDestroy, untrack } from "svelte"
   import { getMapContext } from "./contexts.svelte.js"
 
   interface Props {
@@ -23,31 +23,36 @@
     properties: {},
   })
 
+  /* Источник и слой — один раз; пока стиль карты грузится, добавление ждёт в очереди waitForStyleLoaded */
   $effect(() => {
     if (!mapCtx.map || added) return
-
-    mapCtx.addSource(id, { type: "geojson", data: toGeoJSON() })
-    mapCtx.addLayer({
-      id,
-      type: "line",
-      source: id,
-      layout: { "line-join": "round", "line-cap": "round" },
-      paint: { "line-color": color, "line-width": width, "line-opacity": opacity },
+    untrack(() => {
+      mapCtx.addSource(id, { type: "geojson", data: toGeoJSON() })
+      mapCtx.addLayer({
+        id,
+        type: "line",
+        source: id,
+        layout: { "line-join": "round", "line-cap": "round" },
+        paint: { "line-color": color, "line-width": width, "line-opacity": opacity },
+      })
     })
     added = true
   })
 
+  /* Координаты и оформление читаются до любых проверок — иначе эффект не подписывается на них и, запущенный до загрузки стиля, больше не срабатывает */
   $effect(() => {
-    if (!added || !mapCtx.map) return
-    const source = mapCtx.map.getSource(id) as any
-    source?.setData(toGeoJSON())
+    const data = toGeoJSON()
+    if (!added) return
+    mapCtx.waitForStyleLoaded((map) => (map.getSource(id) as any)?.setData(data))
   })
 
   $effect(() => {
-    if (!added || !mapCtx.map || !mapCtx.map.getLayer(id)) return
-    mapCtx.map.setPaintProperty(id, "line-color", color)
-    mapCtx.map.setPaintProperty(id, "line-width", width)
-    mapCtx.map.setPaintProperty(id, "line-opacity", opacity)
+    const paint = { "line-color": color, "line-width": width, "line-opacity": opacity }
+    if (!added) return
+    mapCtx.waitForStyleLoaded((map) => {
+      if (!map.getLayer(id)) return
+      for (const [name, value] of Object.entries(paint)) map.setPaintProperty(id, name, value)
+    })
   })
 
   onDestroy(() => {

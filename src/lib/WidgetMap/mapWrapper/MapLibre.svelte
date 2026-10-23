@@ -9,6 +9,7 @@
     style?: any | string
     zoom?: number
     center?: any
+    bearing?: number
     maxPitch?: number
     map?: any
     children?: Snippet<[any]>
@@ -19,6 +20,7 @@
     style = { version: 8, sources: {}, layers: [] },
     zoom = $bindable(undefined),
     center = $bindable(undefined),
+    bearing = 0,
     maxPitch = 60,
     map = $bindable(undefined),
     children,
@@ -45,13 +47,18 @@
     target.on("sourcedata", tryCollapse)
   }
 
+  /* Стиль, с которым создана или на который переключена карта — setStyle только при его реальной смене */
+  let appliedStyle: any = undefined
+
   const createMap = () => {
     if (!window.maplibregl || map || !container) return
+    appliedStyle = style
     map = new window.maplibregl.Map({
       container,
       style,
       zoom,
       center,
+      bearing,
       maxPitch,
       attributionControl: { compact: true },
     })
@@ -63,7 +70,8 @@
   $effect(createMap)
 
   $effect(() => {
-    if (map && style) {
+    if (map && style && style !== appliedStyle) {
+      appliedStyle = style
       mapCtx.setStyle(style)
     }
   })
