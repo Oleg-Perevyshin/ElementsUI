@@ -174,6 +174,21 @@ test("xPOE-Debug: неверный CRC, команда устройству, н�
   assert.deepEqual([m.parseBusId("00FF"), m.parseBusId(""), m.parseBusId("XYZ", 7), m.parseBusId("10000", 7), m.formatBusId(0xab)], [255, 0, 7, 7, "0x00AB"])
   /* таблица: DebugLog — уровень · тег · текст, FHS в отдельной колонке */
   assert.equal(m.formatXPoeDebugValue(toHex(m.valueToCbor([2, "Net", "Нет связи", 1000]))), '<span class="font-semibold">🟡</span> · Net · Нет связи')
+  /* модалка: развёрнутый вид — карта с отступами, float32 кратко, DebugLog по строкам, дамп по 16 байт */
+  const float32Map = "A16154FA3DF5C28F" /* {"T": float32 0.12} */
+  assert.equal(m.formatXPoeDebugValue(float32Map), "{&quot;T&quot;:0.12}")
+  assert.equal(m.formatXPoeDebugPretty(toHex(m.valueToCbor({ Mode: 1, List: [1, 2] }))), '{\n  "Mode": 1,\n  "List": [\n    1,\n    2\n  ]\n}')
+  assert.equal(m.formatXPoeDebugPretty(toHex(m.valueToCbor([3, "API", "Запуск", 2048]))), "🟢 API\nЗапуск\nFHS: 2048")
+  assert.deepEqual(
+    m
+      .formatXPoeDebugPretty(toHex(m.valueToCbor([4, "RX", new Uint8Array(17).fill(0xab), 1])))
+      .split("\n")
+      .slice(1),
+    ["bytes(17):", "AB AB AB AB AB AB AB AB AB AB AB AB AB AB AB AB", "AB", "FHS: 1"],
+  )
+  assert.equal(m.formatXPoeDebugPretty("XYZ"), null)
+  const modal = m.formatXPoeDebugModal(`x\nHEX\n${float32Map}`)
+  assert.ok(modal.includes("{\n  &quot;T&quot;: 0.12\n}") && modal.includes("A1 61 54 FA 3D F5 C2 8F"))
 })
 
 /* CAN/CAN FD через slcan */

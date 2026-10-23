@@ -5,7 +5,18 @@ const HTML_ESCAPES: Record<string, string> = { "&": "&amp;", "<": "&lt;", ">": "
 const escapeHtml = (value: string): string => value.replace(/[&<>"']/g, (char) => HTML_ESCAPES[char])
 const bytesToHex = (bytes: Uint8Array): string => Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0").toUpperCase()).join(" ")
 
+/* float32 с провода — кратчайшая запись, дающая то же float32 (0.12, а не 0.12000000476837158); double и целые — как есть */
+const shortNumber = (value: number): number => {
+  if (Number.isInteger(value) || !Number.isFinite(value) || Math.fround(value) !== value) return value
+  for (let digits = 1; digits <= 9; digits++) {
+    const short = Number(value.toPrecision(digits))
+    if (Math.fround(short) === value) return short
+  }
+  return value
+}
+
 const normalizeCborValue = (value: unknown): unknown => {
+  if (typeof value === "number") return shortNumber(value)
   if (value instanceof Uint8Array) return `h'${bytesToHex(value)}'`
   if (Array.isArray(value)) return value.map(normalizeCborValue)
   if (value && typeof value === "object") return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, normalizeCborValue(item)]))
@@ -18,6 +29,41 @@ const compactCborValue = (value: unknown): string => {
   return escapeHtml(JSON.stringify(normalizeCborValue(value)) ?? String(value))
 }
 
+const hexToBytes = (hex: string): Uint8Array | null => {
+  const clean = hex.replace(/\s/g, "")
+  if (!clean || clean.length % 2 !== 0 || !/^[0-9A-Fa-f]+$/.test(clean)) return null
+  return Uint8Array.from(clean.match(/.{2}/g)!, (byte) => parseInt(byte, 16))
+}
+
+const isDebugLog = (value: unknown): value is [number, string, string | Uint8Array, number?] =>
+  Array.isArray(value) &&
+  value.length === 4 &&
+  typeof value[0] === "number" &&
+  !!LOG_LEVELS[value[0]] &&
+  typeof value[1] === "string" &&
+  (typeof value[2] === "string" || value[2] instanceof Uint8Array)
+
+/* Байты строками по 16 — для дампов DebugLog и раздела HEX */
+const hexRows = (bytes: Uint8Array): string => (bytesToHex(bytes).match(/.{1,48}/g) ?? []).map((row) => row.trim()).join("\n")
+
+/* Payload в модалку: развёрнутый вид — карты и массивы с отступами, DebugLog — уровень и тег, ниже текст или дамп и FHS; не CBOR — null */
+export function formatXPoeDebugPretty(hex: string): string | null {
+  const bytes = hexToBytes(hex)
+  if (!bytes) return null
+  try {
+    const value = cborToValue(bytes)
+    if (isDebugLog(value)) {
+      const [level, tag, detail, fhs] = value
+      const body = detail instanceof Uint8Array ? `bytes(${detail.length}):\n${hexRows(detail)}` : detail
+      return [`${LOG_LEVELS[level]} ${tag}`, body, typeof fhs === "number" ? `FHS: ${fhs}` : ""].filter(Boolean).join("\n")
+    }
+    if (typeof value === "string") return value
+    return JSON.stringify(normalizeCborValue(value), null, 2) ?? String(value)
+  } catch {
+    return null
+  }
+}
+
 /* Payload в таблицу: CBOR как JSON, лог DebugLog [уровень, тег, текст|байты, FHS] — уровень · тег · текст */
 export function formatXPoeDebugValue(rawValue: string): string {
   const hex = rawValue.trim().replace(/\s/g, "")
@@ -25,14 +71,7 @@ export function formatXPoeDebugValue(rawValue: string): string {
 
   try {
     const value = cborToValue(Uint8Array.from(hex.match(/.{2}/g)!, (byte) => parseInt(byte, 16)))
-    if (
-      Array.isArray(value) &&
-      value.length === 4 &&
-      typeof value[0] === "number" &&
-      LOG_LEVELS[value[0]] &&
-      typeof value[1] === "string" &&
-      (typeof value[2] === "string" || value[2] instanceof Uint8Array)
-    ) {
+    if (isDebugLog(value)) {
       const level = LOG_LEVELS[value[0]]
       const detail = compactCborValue(value[2])
       return `<span class="font-semibold">${level}</span> · ${escapeHtml(value[1])}${detail ? ` · ${detail}` : ""}`
@@ -110,12 +149,15 @@ export function bindXPoeDebugCopyButtons(): () => void {
   }
 }
 
-/* Две прокручиваемые секции модалки; HEX-раздел появляется, если форматтер таблицы добавил исходные байты. */
+/* Две прокручиваемые секции модалки: Value — развёрнутый вид Payload (formatXPoeDebugPretty), HEX — байты Payload по 16 в строке; HEX-раздел есть, если форматтер таблицы добавил исходные байты */
 export function formatXPoeDebugModal(text: string): string {
   const separator = "\nHEX\n"
   const hexIndex = text.lastIndexOf(separator)
-  const decoded = hexIndex < 0 ? text : text.slice(0, hexIndex)
   const hex = hexIndex < 0 ? "" : text.slice(hexIndex + separator.length)
+  const pretty = hex ? formatXPoeDebugPretty(hex) : null
+  const bytes = pretty === null ? null : hexToBytes(hex)
+  const decoded = pretty === null ? (hexIndex < 0 ? text : text.slice(0, hexIndex)) : escapeHtml(pretty)
+  const hexText = bytes ? hexRows(bytes) : hex
   const modalStyle = "display:flex;flex-direction:column;gap:.75rem;max-height:80vh;min-width:0;overflow-y:auto;overflow-x:hidden"
   const sectionStyle = "min-width:0;padding:.25rem 0 .75rem"
   const headingStyle = "display:flex;align-items:center;justify-content:space-between;gap:.75rem;margin:0 0 .5rem;font-weight:600"
@@ -126,5 +168,5 @@ export function formatXPoeDebugModal(text: string): string {
   const textStyle = "display:block;min-width:0;max-width:100%;margin:0;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;font:inherit"
   const pane = (title: string, target: string, value: string) =>
     `<section style="${sectionStyle}"><div style="${headingStyle}"><span>${title}</span><button type="button" class="${buttonClass}" data-xpoe-copy="${target}" aria-label="Копировать ${title}" style="${buttonStyle}">${COPY_ICON}</button></div><pre style="${textStyle}">${value}</pre></section>`
-  return `<div data-xpoe-debug-modal style="${modalStyle}">${pane("Value", "value", decoded)}${hexIndex < 0 ? "" : pane("HEX", "hex", hex)}</div>`
+  return `<div data-xpoe-debug-modal style="${modalStyle}">${pane("Value", "value", decoded)}${hexIndex < 0 ? "" : pane("HEX", "hex", hexText)}</div>`
 }
