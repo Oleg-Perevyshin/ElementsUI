@@ -43,7 +43,7 @@ const isDebugLog = (value: unknown): value is [number, string, string | Uint8Arr
   typeof value[1] === "string" &&
   (typeof value[2] === "string" || value[2] instanceof Uint8Array)
 
-/* Байты строками по 16 — для дампов DebugLog и раздела HEX */
+/* Байты строками по 16 — для дампа DebugLog в Value */
 const hexRows = (bytes: Uint8Array): string => (bytesToHex(bytes).match(/.{1,48}/g) ?? []).map((row) => row.trim()).join("\n")
 
 /* Цвета развёрнутого вида — палитра темы, как прежний разбор отладки облака: ключи, строки, числа, логические, null, байты */
@@ -197,15 +197,13 @@ export function bindXPoeDebugCopyButtons(): () => void {
   }
 }
 
-/* Две прокручиваемые секции модалки: Value — развёрнутый вид Payload в цветах палитры темы, HEX — байты Payload по 16 в строке; HEX-раздел есть, если форматтер таблицы добавил исходные байты */
+/* Две прокручиваемые секции модалки: Value — развёрнутый вид Payload в цветах палитры темы, HEX — исходные байты Payload сплошной строкой; HEX-раздел есть, если форматтер таблицы добавил исходные байты */
 export function formatXPoeDebugModal(text: string): string {
   const separator = "\nHEX\n"
   const hexIndex = text.lastIndexOf(separator)
   const hex = hexIndex < 0 ? "" : text.slice(hexIndex + separator.length)
   const pretty = hex ? formatXPoeDebugPrettyHtml(hex) : null
-  const bytes = pretty === null ? null : hexToBytes(hex)
   const decoded = pretty === null ? (hexIndex < 0 ? text : text.slice(0, hexIndex)) : pretty
-  const hexText = bytes ? hexRows(bytes) : hex
   const modalStyle = "display:flex;flex-direction:column;gap:.75rem;max-height:80vh;min-width:0;overflow-y:auto;overflow-x:hidden"
   const sectionStyle = "min-width:0;padding:.25rem 0 .75rem"
   const headingStyle = "display:flex;align-items:center;justify-content:space-between;gap:.75rem;margin:0 0 .5rem;font-weight:600"
@@ -216,5 +214,5 @@ export function formatXPoeDebugModal(text: string): string {
   const textStyle = "display:block;min-width:0;max-width:100%;margin:0;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;font:inherit"
   const pane = (title: string, target: string, value: string) =>
     `<section style="${sectionStyle}"><div style="${headingStyle}"><span>${title}</span><button type="button" class="${buttonClass}" data-xpoe-copy="${target}" aria-label="Копировать ${title}" style="${buttonStyle}">${COPY_ICON}</button></div><pre style="${textStyle}">${value}</pre></section>`
-  return `<div data-xpoe-debug-modal style="${modalStyle}">${pane("Value", "value", decoded)}${hexIndex < 0 ? "" : pane("HEX", "hex", hexText)}</div>`
+  return `<div data-xpoe-debug-modal style="${modalStyle}">${pane("Value", "value", decoded)}${hexIndex < 0 ? "" : pane("HEX", "hex", hex)}</div>`
 }
