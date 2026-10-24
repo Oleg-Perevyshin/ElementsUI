@@ -43,6 +43,8 @@
       <UI.Input label={{ name: $T("pfd.props.speed_max") }} type="number" value={limits.speedMax} onUpdate={(v) => setLimit("speedMax", v)} />
       <UI.Input label={{ name: $T("pfd.props.bank_max") }} type="number" value={limits.bankMax} onUpdate={(v) => setLimit("bankMax", v)} />
       <UI.Input label={{ name: $T("pfd.props.alt_max") }} type="number" value={limits.altMax} onUpdate={(v) => setLimit("altMax", v)} />
+      <UI.Input label={{ name: $T("pfd.props.g_min") }} type="number" value={limits.gMin} onUpdate={(v) => setLimit("gMin", v)} />
+      <UI.Input label={{ name: $T("pfd.props.g_max") }} type="number" value={limits.gMax} onUpdate={(v) => setLimit("gMax", v)} />
       <UI.Input label={{ name: $T("pfd.props.batt_low") }} type="number" value={limits.battLow} onUpdate={(v) => setLimit("battLow", v)} />
       <UI.Input label={{ name: $T("pfd.props.stale") }} type="number" value={limits.staleMs ?? 2000} onUpdate={(v) => setLimit("staleMs", v)} />
     </div>

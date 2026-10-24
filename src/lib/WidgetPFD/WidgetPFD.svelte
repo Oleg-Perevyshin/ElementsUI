@@ -66,6 +66,48 @@
   let gs = $derived(num(value?.GSpeed))
   let as = $derived(num(value?.ASpeed))
   let climb = $derived(num(value?.Climb))
+  /* Перегрузка (SCALED_IMU): плашка G только при наличии данных, минимум и максимум — за время просмотра */
+  let load = $derived(typeof value?.Load === "number" && Number.isFinite(value.Load) ? value.Load : null)
+  let loadMin = $state(Infinity)
+  let loadMax = $state(-Infinity)
+  $effect(() => {
+    const g = load
+    if (g === null) return
+    untrack(() => {
+      loadMin = Math.min(loadMin, g)
+      loadMax = Math.max(loadMax, g)
+    })
+  })
+  /* Газ (VFR_HUD), %; нет числа — плашки нет */
+  let thr = $derived(typeof value?.Thr === "number" && Number.isFinite(value.Thr) ? value.Thr : null)
+  /* Боковая перегрузка (SCALED_IMU), g, вправо +; шарик смещается в обратную сторону, как в трубке указателя скольжения */
+  let slip = $derived(typeof value?.Slip === "number" && Number.isFinite(value.Slip) ? value.Slip : null)
+  const SLIP_PPG = 100 /* пикселей на 1 g, шарик упирается в край трубки на ±0.15 g */
+  let slipX = $derived(slip === null ? 0 : Math.max(-15, Math.min(15, -slip * SLIP_PPG)))
+  /* Тренд путевой скорости: ускорение по новым значениям GSpeed, сглаженное; стрелка — куда придёт скорость через TREND_S */
+  const TREND_S = 10
+  let accel = $state(0)
+  let lastGs: { v: number; t: number } | null = null
+  $effect(() => {
+    const v = value?.GSpeed
+    if (typeof v !== "number" || !Number.isFinite(v)) return
+    const t = Date.now()
+    untrack(() => {
+      const dt = lastGs ? (t - lastGs.t) / 1000 : Infinity
+      if (lastGs && v === lastGs.v && dt < 1.5) return
+      accel = dt < 3 ? accel + ((v - lastGs!.v) / dt - accel) * 0.3 : 0
+      lastGs = { v, t }
+    })
+  })
+  let trend = $derived(stale ? 0 : accel * TREND_S)
+  /* Ветер (WIND): откуда дует и скорость; стрелка нарисована остриём вниз (встречный) и поворачивается на «откуда дует − курс» */
+  let wind = $derived(
+    typeof value?.WindDir === "number" && Number.isFinite(value.WindDir) && typeof value?.WindSpd === "number" && Number.isFinite(value.WindSpd)
+      ? { dir: wrap360(value.WindDir), spd: value.WindSpd }
+      : null,
+  )
+  let windRel = $derived(wind ? wrap360(wind.dir - heading.current) : 0)
+  let loadBad = $derived(load !== null && ((limits?.gMax !== undefined && load > limits.gMax) || (limits?.gMin !== undefined && load < limits.gMin)))
   let alt = $derived(num(value?.Alt))
   let altMsl = $derived(num(value?.AltMSL))
   let lat = $derived(num(value?.Lat))
@@ -162,6 +204,12 @@
 
   /* Навигация к точке маршрута: метки целей на лентах (flight director); нет маршрута — меток нет */
   let wpNum = $derived(num(value?.WPNum))
+  /* Время до точки при текущей путевой скорости; почти на месте — не считается */
+  const fmtEta = (s: number) => {
+    const t = Math.round(s)
+    const mmss = `${Math.floor((t % 3600) / 60)}:${String(t % 60).padStart(2, "0")}`
+    return t >= 3600 ? `${Math.floor(t / 3600)}:${mmss.padStart(5, "0")}` : mmss
+  }
   let wp = $derived(
     wpNum > 0
       ? {
@@ -174,6 +222,7 @@
         }
       : null,
   )
+  let eta = $derived(wp && gs > 1 ? fmtEta(wp.dist / gs) : null)
 
   /* Связь, точность GPS, исправность навигации */
   let rssi = $derived(num(value?.RSSI, -1))
@@ -320,6 +369,7 @@
         (limits?.speedMin !== undefined || limits?.speedMax !== undefined) &&
           $T("pfd.tip.speed.range", { min: limits?.speedMin ?? "…", max: limits?.speedMax ?? "…" }),
         wp && $T("pfd.tip.speed.wp"),
+        Math.abs(trend) >= 0.1 && $T("pfd.tip.trend", { v: fmt(gs + trend) }),
       ),
       speedBox: lines($T("pfd.tip.gs", { v: fmt(gs) }), $T("pfd.tip.gs.note")),
       speedLabel: lines($T("pfd.tip.speed.label"), $T("pfd.tip.speed.label.note")),
@@ -344,10 +394,27 @@
             $T("pfd.tip.alt.bug.down"),
           )
         : "",
-      compactSpeed: lines($T("pfd.tip.gs", { v: fmt(gs) }), $T("pfd.tip.as", { v: fmt(as) })),
+      compactSpeed: lines(
+        $T("pfd.tip.gs", { v: fmt(gs) }),
+        $T("pfd.tip.as", { v: fmt(as) }),
+        Math.abs(trend) >= 0.1 && $T("pfd.tip.trend", { v: fmt(gs + trend) }),
+      ),
       compactAlt: lines($T("pfd.tip.alt", { v: Math.round(alt) }), $T("pfd.tip.vs", { v: signed(climb) }), $T("pfd.tip.vs.up"), $T("pfd.tip.vs.down")),
       airspeed: lines($T("pfd.tip.as", { v: fmt(as) }), $T("pfd.tip.as.note"), $T("pfd.tip.as.wind"), $T("pfd.tip.as.head"), $T("pfd.tip.as.tail")),
       vs: lines($T("pfd.tip.vs", { v: signed(climb) }), $T("pfd.tip.vs.up"), $T("pfd.tip.vs.down")),
+      wind: wind ? lines($T("pfd.tip.wind", { v: fmt(wind.spd), dir: Math.round(wind.dir) }), $T("pfd.tip.wind.note"), $T("pfd.tip.wind.dirs")) : "",
+      thr: thr !== null ? lines($T("pfd.tip.thr", { v: Math.round(thr) }), $T("pfd.tip.thr.note")) : "",
+      slip: slip !== null ? lines($T("pfd.tip.slip", { v: fmt(slip, 2) }), $T("pfd.tip.slip.note"), $T("pfd.tip.slip.step")) : "",
+      trend: lines($T("pfd.tip.trend", { v: fmt(gs + trend) }), $T("pfd.tip.trend.note")),
+      load:
+        load !== null
+          ? lines(
+              $T("pfd.tip.load", { v: fmt(load, 2) }),
+              $T("pfd.tip.load.note"),
+              $T("pfd.tip.load.range", { min: fmt(loadMin, 2), max: fmt(loadMax, 2) }),
+              (limits?.gMin !== undefined || limits?.gMax !== undefined) && $T("pfd.tip.load.limit", { min: limits?.gMin ?? "…", max: limits?.gMax ?? "…" }),
+            )
+          : "",
       heading: lines($T("pfd.tip.heading", { v: String(hdg % 360).padStart(3, "0") }), $T("pfd.tip.heading.note"), $T("pfd.tip.heading.dirs")),
       track: track !== null ? lines($T("pfd.tip.track", { v: Math.round(track) }), $T("pfd.tip.track.note"), $T("pfd.tip.track.drift")) : "",
       wpBug: wp ? lines($T("pfd.tip.wp.bearing", { n: wp.num, v: Math.round(wp.bearing) }), $T("pfd.distance", { d: fmtDistance(wp.dist) })) : "",
@@ -358,6 +425,7 @@
             $T("pfd.tip.route", { n: wp.num }),
             $T("pfd.tip.route.dist", { d: fmtDistance(wp.dist) }),
             $T("pfd.tip.route.xte", { d: fmtDistance(Math.abs(wp.xte)) }),
+            eta && $T("pfd.tip.route.eta", { t: eta }),
           )
         : "",
       home: home ? lines($T("pfd.tip.home"), homeLine, $T("pfd.tip.home.dir", { v: Math.round(home.bearing) })) : "",
@@ -470,6 +538,15 @@
                 fill={limits?.bankMax !== undefined && Math.abs(roll.current) > limits.bankMax ? "#ef4444" : "#facc15"}
               />
             </g>
+            <!-- Шарик скольжения под указателем крена, поворачивается вместе с ним; больше 0.1 g — оранжевый -->
+            {#if slip !== null}
+              <g transform="rotate({-roll.current} {CX} {CY})" data-tip="slip">
+                <rect x={CX - 21} y={CY - ROLL_R + 17} width="42" height="11" rx="5.5" fill="#000" fill-opacity="0.45" stroke="#fff" stroke-width="1" />
+                <line x1={CX - 6} y1={CY - ROLL_R + 17} x2={CX - 6} y2={CY - ROLL_R + 28} stroke="#fff" stroke-width="1" />
+                <line x1={CX + 6} y1={CY - ROLL_R + 17} x2={CX + 6} y2={CY - ROLL_R + 28} stroke="#fff" stroke-width="1" />
+                <circle cx={CX + slipX} cy={CY - ROLL_R + 22.5} r="4" fill={Math.abs(slip) > 0.1 ? "#f97316" : "#fff"} />
+              </g>
+            {/if}
 
             <!-- Символ самолёта -->
             <g stroke="#facc15" stroke-width="4" fill="none" stroke-linecap="round">
@@ -477,6 +554,36 @@
               <polyline points="{CX + 70},{CY} {CX + 25},{CY} {CX + 15},{CY + 10}" />
             </g>
             <circle cx={CX} cy={CY} r="3" fill="#facc15" />
+
+            <!-- Перегрузка (вне gMin/gMax — красная) и газ: одной строкой в верхних углах горизонта -->
+            {#if load !== null}
+              <g data-tip="load">
+                <rect x={HX + 8} y="8" width="64" height="22" rx="6" fill="#000" fill-opacity="0.55" />
+                <text x={HX + 16} y="24" font-size="13" font-weight="600"
+                  ><tspan fill="#fff" fill-opacity="0.7" font-size="10">G</tspan><tspan dx="5" fill={loadBad ? "#ef4444" : "#fff"}>{fmt(load)}</tspan></text
+                >
+              </g>
+            {/if}
+            {#if wind}
+              <g data-tip="wind">
+                <rect x={HX + 8} y={load !== null ? 34 : 8} width="76" height="22" rx="6" fill="#000" fill-opacity="0.55" />
+                <g transform="rotate({windRel} {HX + 20} {load !== null ? 45 : 19})">
+                  <line x1={HX + 20} y1={load !== null ? 39 : 13} x2={HX + 20} y2={load !== null ? 51 : 25} stroke="#fff" stroke-width="2" />
+                  <polygon points="{HX + 16},{load !== null ? 47 : 21} {HX + 24},{load !== null ? 47 : 21} {HX + 20},{load !== null ? 52 : 26}" fill="#fff" />
+                </g>
+                <text x={HX + 32} y={load !== null ? 50 : 24} fill="#fff" font-size="13" font-weight="600"
+                  >{fmt(wind.spd)}<tspan dx="3" fill-opacity="0.7" font-size="10">m/s</tspan></text
+                >
+              </g>
+            {/if}
+            {#if thr !== null}
+              <g data-tip="thr">
+                <rect x={HX + HW - 84} y="8" width="76" height="22" rx="6" fill="#000" fill-opacity="0.55" />
+                <text x={HX + HW - 76} y="24" font-size="13" font-weight="600"
+                  ><tspan fill="#fff" fill-opacity="0.7" font-size="10">THR</tspan><tspan dx="5" fill="#fff">{Math.round(thr)} %</tspan></text
+                >
+              </g>
+            {/if}
 
             <!-- Компактный режим: числа вместо лент -->
             {#if compact}
@@ -517,6 +624,16 @@
               <rect x="4" y={CY - 14} width="58" height="28" rx="4" fill="#000" stroke="var(--accent-color)" stroke-width="1.5" />
               <text x="33" y={CY + 6} fill="#fff" font-size="15" font-weight="600" text-anchor="middle">{fmt(gs)}</text>
             </g>
+            <!-- Тренд скорости: от окна скорости до значения через TREND_S при текущем ускорении -->
+            {#if Math.abs(trend) * SPEED_PPU > 16}
+              {@const y0 = trend > 0 ? CY - 14 : CY + 14}
+              {@const y1 = clampTape(CY - trend * SPEED_PPU)}
+              {@const tip = trend > 0 ? 7 : -7}
+              <g data-tip="trend">
+                <line x1="66" y1={y0} x2="66" y2={y1 + tip} stroke="#facc15" stroke-width="2" />
+                <polygon points="61,{y1 + tip} 71,{y1 + tip} 66,{y1}" fill="#facc15" />
+              </g>
+            {/if}
             <g data-tip="speedLabel">
               <rect x="0" y="0" width="70" height="20" rx="8" fill="#000" />
               <text x="35" y="14" fill="#fff" font-size="10" text-anchor="middle" fill-opacity="0.7">SPD m/s</text>
@@ -637,7 +754,10 @@
         {#if wp}
           <div class="flex min-w-0 items-center gap-2" data-tip="route">
             <span class="shrink-0 text-[10px] font-semibold tracking-wide whitespace-nowrap text-(--faint-color) uppercase">{$T("pfd.route")}</span>
-            <span><span style="color:#22d3ee">◆</span> {$T("pfd.route.line", { n: wp.num, d: fmtDistance(wp.dist), x: fmtDistance(Math.abs(wp.xte)) })}</span>
+            <span
+              ><span style="color:#22d3ee">◆</span>
+              {$T("pfd.route.line", { n: wp.num, d: fmtDistance(wp.dist), x: fmtDistance(Math.abs(wp.xte)) })}{eta ? ` · ${eta}` : ""}</span
+            >
           </div>
         {/if}
         {#if home}

@@ -298,7 +298,7 @@ Telemetry_SendObject(g_telemetry_stream, g_mcfg.DevSN, "Data", mav, sizeof(mav) 
   {/snippet}
   {@render section("WidgetRGBStrip", RGBStrip, false)}
 
-  {#snippet PFD()}<UI.WidgetPFD value={flight} limits={{ speedMin: 8, speedMax: 25, bankMax: 30, altMax: 170, battLow: 20 }} />{/snippet}
+  {#snippet PFD()}<UI.WidgetPFD value={flight} limits={{ speedMin: 8, speedMax: 25, bankMax: 30, altMax: 170, gMin: -1, gMax: 3.8, battLow: 20 }} />{/snippet}
   {@render section("WidgetPFD", PFD, false)}
 
   {#snippet Map()}

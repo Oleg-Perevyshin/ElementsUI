@@ -31,7 +31,7 @@
       id: "MAV",
       label: { name: "" },
       componentClass: "",
-      limits: { speedMin: 8, speedMax: 25, bankMax: 30, altMax: 170, battLow: 20 },
+      limits: { speedMin: 8, speedMax: 25, bankMax: 30, altMax: 170, gMin: -1, gMax: 3.8, battLow: 20 },
     },
     eventHandler: { Header: "GET", Argument: "ModCfg", Variables: [] },
     position: { row: 0, col: 0, width: 0, height: 0 },
