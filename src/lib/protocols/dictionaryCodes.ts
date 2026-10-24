@@ -39,7 +39,6 @@ export const DEFAULT_ARGUMENT_CODES: Record<string, number> = {
   FwUpgP: 52,
   FwUpgD: 53,
   FwUpgE: 54,
-  TestReq: 91,
   MotInit: 111,
   MotMode: 112,
   MotPos: 113,
