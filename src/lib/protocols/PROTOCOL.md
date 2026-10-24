@@ -1,7 +1,7 @@
 # 📡 Протокол POE на базе CBOR
 
 Один бинарный пакет `poe_cbor_pkt` на всех проводах: CAN, CAN FD, RS485, LoRa и UART-консоль (xPOE-Debug). Отдельный конверт — только у WebSocket облака.
-Реализации: прошивки ProdFactory-ESP / ProdFactory-STM (`components/core/poe_cbor`, `api_service`) и ядро `poe-svelte-ui-lib/protocols` (DevCloud, SYP-DevTerminal, WebApp).
+Реализации: прошивки ProdFactory-ESP / ProdFactory-STM (`components/core/poe_cbor`, `api_service`) и ядро `poe-svelte-ui-lib/protocols` (DevCloud, DevTerminal, WebApp).
 
 ## 📦 Пакет
 
