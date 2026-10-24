@@ -489,7 +489,7 @@
                 <g data-tip="compactAlt">
                   <rect x={VW - 84} y={CY - 16} width="76" height="32" rx="6" fill="#000" fill-opacity="0.55" />
                   <text x={VW - 46} y={CY + 6} text-anchor="middle">{Math.round(alt)}</text>
-                  <text x={VW - 46} y={CY + 32} text-anchor="middle" font-size="11">m · {climb >= 0 ? "+" : ""}{fmt(climb)}</text>
+                  <text x={VW - 46} y={CY + 32} text-anchor="middle" font-size="11">m · {climb >= 0 ? "+" : ""}{fmt(climb)} m/s</text>
                 </g>
               </g>
             {/if}
@@ -556,12 +556,12 @@
             <!-- Углы под лентами: воздушная и вертикальная скорость -->
             <g data-tip="airspeed">
               <rect x="0" y={HH + 6} width={HX - 6} height="44" rx="8" fill="#000" fill-opacity="0.72" />
-              <text x={(HX - 6) / 2} y={HH + 21} fill="#fff" fill-opacity="0.7" font-size="9" text-anchor="middle">AS</text>
+              <text x={(HX - 6) / 2} y={HH + 21} fill="#fff" fill-opacity="0.7" font-size="9" text-anchor="middle">AS m/s</text>
               <text x={(HX - 6) / 2} y={HH + 41} fill="#fff" font-size="14" font-weight="600" text-anchor="middle">{fmt(as)}</text>
             </g>
             <g data-tip="vs">
               <rect x={HX + HW + 6} y={HH + 6} width={VW - HX - HW - 6} height="44" rx="8" fill="#000" fill-opacity="0.72" />
-              <text x={(HX + HW + 6 + VW) / 2} y={HH + 21} fill="#fff" fill-opacity="0.7" font-size="9" text-anchor="middle">VS</text>
+              <text x={(HX + HW + 6 + VW) / 2} y={HH + 21} fill="#fff" fill-opacity="0.7" font-size="9" text-anchor="middle">VS m/s</text>
               <text
                 x={(HX + HW + 6 + VW) / 2}
                 y={HH + 41}
