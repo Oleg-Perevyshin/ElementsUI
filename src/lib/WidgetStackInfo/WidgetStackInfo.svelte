@@ -1,6 +1,6 @@
 <!-- $lib/WidgetStackInfo/WidgetStackInfo.svelte — отладочный смарт-виджет памяти и задач FreeRTOS.
      Данные — один объект StackInfo в том виде, в каком его отдают ProdFactory-ESP и ProdFactory-STM
-     (API_GetStackInfo): Heap[{Name, Total, Free, MinFree}] и Tasks[{Name, FreeMin, Prio, Core?, State}].
+     (API_GetStackInfo): Heap[{Name, Total, Free, MinFree}] и Tasks[{Name, FreeMin, Prio, Core?, State, CPU?}].
      Ничего не знает про DeviceStore/WebSocket — value/onRefresh, автоопрос лишь периодически зовёт onRefresh. -->
 <script lang="ts">
   import { T } from "$lib/locales/i18n"
@@ -86,20 +86,25 @@
   let STATES = $derived(["running", "ready", "blocked", "suspended", "deleted"].map((state) => $T(`widget.stack.state.${state}`)))
   const stackColor = (bytes: number) => (bytes < warnBytes ? "var(--red-color)" : bytes < warnBytes * 2 ? "var(--orange-color)" : "")
 
-  type TaskRow = { Name: string; StateText: string; Prio: number; CoreText: string; FreeMinText: string }
+  type TaskRow = { Name: string; StateText: string; Prio: number; CoreText: string; CpuText: string; FreeMinText: string }
   let tasks = $derived([...(value?.Tasks ?? [])].sort((a, b) => a.FreeMin - b.FreeMin))
   let hasCore = $derived(tasks.some((t) => t.Core !== undefined))
+  /* Загрузка задачи, % одного ядра с прошлого ответа: от 50 % — оранжевая, от 80 % — красная; IDLE — это свободное время ядра, не подсвечивается */
+  let hasCpu = $derived(tasks.some((t) => t.CPU !== undefined))
+  const cpuColor = (cpu: number) => (cpu >= 80 ? "var(--red-color)" : cpu >= 50 ? "var(--orange-color)" : "")
   let lowCount = $derived(tasks.filter((t) => t.FreeMin < warnBytes).length)
 
   /* Порядок фиксированный — по возрастанию запаса стека: при автоопросе сортировка кликом сбрасывалась бы каждый ответ */
   let rows: TaskRow[] = $derived(
     tasks.map((t: IWidgetStackInfoTask) => {
       const color = stackColor(t.FreeMin)
+      const cpu = t.CPU === undefined ? "" : t.CPU.toFixed(1)
       return {
         Name: escapeHtml(t.Name),
         StateText: STATES[t.State] ?? "—",
         Prio: t.Prio,
         CoreText: t.Core === undefined ? "" : t.Core < 0 ? $T("widget.stack.core_any") : String(t.Core),
+        CpuText: cpu && !t.Name.startsWith("IDLE") && cpuColor(t.CPU!) ? `<span style="color: ${cpuColor(t.CPU!)}; font-weight: 600">${cpu}</span>` : cpu,
         FreeMinText: color ? `<span style="color: ${color}; font-weight: 600">${t.FreeMin}</span>` : String(t.FreeMin),
       }
     }),
@@ -115,6 +120,16 @@
             content: [{ type: "text", data: { key: "CoreText" } }],
             width: "5.5rem",
             align: "center",
+          } as ITableHeader<TaskRow>,
+        ]
+      : []),
+    ...(hasCpu
+      ? [
+          {
+            label: { name: $T("widget.stack.cpu") },
+            content: [{ type: "text", data: { key: "CpuText" } }],
+            width: "5.5rem",
+            align: "right",
           } as ITableHeader<TaskRow>,
         ]
       : []),

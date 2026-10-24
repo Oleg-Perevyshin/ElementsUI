@@ -679,6 +679,7 @@ export interface IWidgetStackInfoTask {
   Prio: number
   Core?: number /* только ESP: ядро привязки, -1 — без привязки */
   State: number /* eTaskState: 0 Running, 1 Ready, 2 Blocked, 3 Suspended, 4 Deleted */
+  CPU?: number /* загрузка задачи, % одного ядра с прошлого ответа (с запуска — в первом ответе) */
 }
 
 export interface IWidgetStackInfo {
