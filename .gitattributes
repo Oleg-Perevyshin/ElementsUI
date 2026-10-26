@@ -1,0 +1,5 @@
+# Текстовые файлы — всегда LF, независимо от ОС и core.autocrlf
+* text=auto eol=lf
+
+# Двоичные файлы
+*.png binary
