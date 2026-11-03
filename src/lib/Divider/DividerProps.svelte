@@ -1,11 +1,11 @@
 <!-- $lib/ElementsUI/DividerProps.svelte -->
 <script lang="ts">
-  import { T } from "$lib/locales/i18n"
+  import { T } from "../locales/i18n"
   import { updateProperty, type IDividerProps, type IUIComponentHandler, type UIComponent } from "../types"
-  import * as UI from "$lib"
+  import * as UI from ".."
   import { optionsStore } from "../options"
-  import CommonSnippets from "$lib/CommonSnippets.svelte"
-  import PropsGroup from "$lib/PropsGroup.svelte"
+  import CommonSnippets from "../CommonSnippets.svelte"
+  import PropsGroup from "../PropsGroup.svelte"
 
   const {
     component,

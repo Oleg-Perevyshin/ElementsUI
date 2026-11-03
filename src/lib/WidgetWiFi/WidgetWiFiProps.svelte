@@ -3,11 +3,11 @@
      поэтому и панель проще: не "к какой переменной привязать", а "как виджет себя ведёт". -->
 <script lang="ts">
   import TextsEditor from "../TextsEditor.svelte"
-  import { T } from "$lib/locales/i18n"
-  import * as UI from "$lib"
+  import { T } from "../locales/i18n"
+  import * as UI from ".."
   import { updateProperty, type UIComponent, type IWidgetWiFiProps, type IWidgetWiFiConfig, type IOption } from "../types"
   import WidgetAccentPicker from "../WidgetAccentPicker.svelte"
-  import PropsGroup from "$lib/PropsGroup.svelte"
+  import PropsGroup from "../PropsGroup.svelte"
   import { optionsStore } from "../options"
 
   const WIFI_KEYS: (keyof IWidgetWiFiConfig)[] = [

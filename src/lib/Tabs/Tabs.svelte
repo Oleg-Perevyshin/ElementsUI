@@ -6,7 +6,7 @@
      "justify-center bg-blue" в Top.svelte), продолжат красить панель —
      из них класс bg-* нужно убрать вручную. -->
 <script lang="ts">
-  import type { ITabsProps } from "$lib/types"
+  import type { ITabsProps } from "../types"
   import { twMerge } from "tailwind-merge"
 
   let {

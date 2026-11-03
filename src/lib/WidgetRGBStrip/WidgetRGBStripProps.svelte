@@ -2,11 +2,11 @@
      заголовок, префикс группы (по умолчанию LST), мастер-цвет. -->
 <script lang="ts">
   import TextsEditor from "../TextsEditor.svelte"
-  import { T } from "$lib/locales/i18n"
-  import * as UI from "$lib"
+  import { T } from "../locales/i18n"
+  import * as UI from ".."
   import { updateProperty, type UIComponent, type IWidgetRGBStripProps } from "../types"
   import WidgetAccentPicker from "../WidgetAccentPicker.svelte"
-  import PropsGroup from "$lib/PropsGroup.svelte"
+  import PropsGroup from "../PropsGroup.svelte"
 
   const {
     component,

@@ -5,11 +5,11 @@
      одним пакетом; «Сброс настроек» — с подтверждением, все настройки к заводским. Ничего не знает про DeviceStore/WebSocket —
      value/onSave/onRestart/onFactoryReset. -->
 <script lang="ts">
-  import { T } from "$lib/locales/i18n"
+  import { T } from "../locales/i18n"
   import { untrack } from "svelte"
   import { fade, scale, slide } from "svelte/transition"
   import { twMerge } from "tailwind-merge"
-  import * as UI from "$lib"
+  import * as UI from ".."
   import type { IWidgetDeviceInfoConfig, IWidgetDeviceInfoProps } from "../types"
   import CpuIcon from "./CpuIcon.svelte"
   import RestartIcon from "./RestartIcon.svelte"

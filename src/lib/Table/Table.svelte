@@ -5,8 +5,8 @@
   import { twMerge } from "tailwind-merge"
   import { onMount, tick } from "svelte"
   import ButtonClear from "../libIcons/ButtonClear.svelte"
-  import { T } from "$lib/locales/i18n"
-  import { Button, Modal } from "$lib"
+  import { T } from "../locales/i18n"
+  import { Button, Modal } from ".."
   import CopiedChip from "../CopiedChip.svelte"
 
   let {

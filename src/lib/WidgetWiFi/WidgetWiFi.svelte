@@ -5,11 +5,11 @@
      WiFiMode / StaSSID/StaPSK/StaticIP/StaIP/StaMS/StaGW / ApSSID/ApPSK/ApIP/ApMS/ApGW.
      Ничего не знает про DeviceStore/WebSocket — value/onSave, вся отправка на стороне вызывающего. -->
 <script lang="ts">
-  import { T } from "$lib/locales/i18n"
+  import { T } from "../locales/i18n"
   import { untrack } from "svelte"
   import { slide, fade, scale } from "svelte/transition"
   import { twMerge } from "tailwind-merge"
-  import * as UI from "$lib"
+  import * as UI from ".."
   import type { IWidgetWiFiConfig, IWidgetWiFiProps, IOption } from "../types"
   import WifiIcon from "./WifiIcon.svelte"
   import SearchIcon from "./SearchIcon.svelte"

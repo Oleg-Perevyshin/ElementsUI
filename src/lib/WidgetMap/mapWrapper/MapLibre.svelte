@@ -3,7 +3,7 @@
   import type * as maplibregl from "maplibre-gl"
   import { prepareMapContext } from "./contexts.svelte.js"
   import { loadMapLibre } from "./utils.js"
-  import { T } from "$lib/locales/i18n"
+  import { T } from "../../locales/i18n"
 
   interface Props {
     class?: string

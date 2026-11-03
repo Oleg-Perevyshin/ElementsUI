@@ -1,12 +1,12 @@
 <script lang="ts">
   import { getContext } from "svelte"
-  import { T } from "$lib/locales/i18n"
+  import { T } from "../locales/i18n"
   import { type UIComponent, type IGraphProps, type IOption, updateProperty, findOptionByClass, type IUIComponentHandler } from "../types"
-  import * as UI from "$lib"
-  import { optionsStore } from "$lib/options"
+  import * as UI from ".."
+  import { optionsStore } from "../options"
   import { twMerge } from "tailwind-merge"
-  import CommonSnippets from "$lib/CommonSnippets.svelte"
-  import PropsGroup from "$lib/PropsGroup.svelte"
+  import CommonSnippets from "../CommonSnippets.svelte"
+  import PropsGroup from "../PropsGroup.svelte"
   import { REFRESH_OPTIONS } from "./Graph.svelte"
 
   const {

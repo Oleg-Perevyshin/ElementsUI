@@ -1,6 +1,6 @@
 <script lang="ts">
-  import * as UI from "$lib"
-  import { T } from "$lib/locales/i18n"
+  import * as UI from "./index"
+  import { T } from "./locales/i18n"
   import CrossIcon from "./libIcons/CrossIcon.svelte"
   import { optionsStore } from "./options"
   import { updateProperty } from "./types"

@@ -3,10 +3,10 @@
      (API_GetStackInfo): Heap[{Name, Total, Free, MinFree}] и Tasks[{Name, FreeMin, Prio, Core?, State, CPU?}].
      Ничего не знает про DeviceStore/WebSocket — value/onRefresh, автоопрос лишь периодически зовёт onRefresh. -->
 <script lang="ts">
-  import { T } from "$lib/locales/i18n"
+  import { T } from "../locales/i18n"
   import { slide } from "svelte/transition"
   import { twMerge } from "tailwind-merge"
-  import * as UI from "$lib"
+  import * as UI from ".."
   import type { IOption, ITableHeader, IWidgetStackInfoProps, IWidgetStackInfoTask } from "../types"
   import MemoryIcon from "./MemoryIcon.svelte"
   import RefreshIcon from "./RefreshIcon.svelte"

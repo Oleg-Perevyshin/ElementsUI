@@ -15,7 +15,7 @@
 </script>
 
 <script lang="ts">
-  import { T } from "$lib/locales/i18n"
+  import { T } from "../locales/i18n"
   import { onMount } from "svelte"
   import Select from "../Select/Select.svelte"
   import type { IGraphDataObject, IGraphProps } from "../types"

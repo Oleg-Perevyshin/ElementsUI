@@ -5,13 +5,13 @@
   import { DEFAULT_LANGUAGE } from "../locales/languages"
   import { T } from "../locales/i18n"
   import { type UIComponent, type IButtonProps, type IOption, updateProperty, findOptionByClass, type IUIComponentHandler } from "../types"
-  import * as UI from "$lib"
+  import * as UI from ".."
   import { optionsStore, findColorOption } from "../options"
   import { twMerge } from "tailwind-merge"
-  import { ICONS } from "$lib/icons"
-  import CommonSnippets from "$lib/CommonSnippets.svelte"
-  import PropsGroup from "$lib/PropsGroup.svelte"
-  import InfoIcon from "$lib/libIcons/InfoIcon.svelte"
+  import { ICONS } from "../icons"
+  import CommonSnippets from "../CommonSnippets.svelte"
+  import PropsGroup from "../PropsGroup.svelte"
+  import InfoIcon from "../libIcons/InfoIcon.svelte"
 
   const {
     component,

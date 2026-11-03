@@ -1,6 +1,6 @@
 <script lang="ts">
   import { getContext } from "svelte"
-  import { T } from "$lib/locales/i18n"
+  import { T } from "../locales/i18n"
   import {
     type UIComponent,
     type ITableProps,
@@ -10,17 +10,17 @@
     type IUIComponentHandler,
     type ITableContent,
   } from "../types"
-  import * as UI from "$lib"
-  import ButtonDelete from "$lib/libIcons/ButtonDelete.svelte"
-  import ButtonAdd from "$lib/libIcons/ButtonAdd.svelte"
+  import * as UI from ".."
+  import ButtonDelete from "../libIcons/ButtonDelete.svelte"
+  import ButtonAdd from "../libIcons/ButtonAdd.svelte"
   import { optionsStore, findColorOption } from "../options"
-  import { ICONS } from "$lib/icons"
-  import CommonSnippets from "$lib/CommonSnippets.svelte"
-  import PropsGroup from "$lib/PropsGroup.svelte"
-  import PropsListModal from "$lib/PropsListModal.svelte"
+  import { ICONS } from "../icons"
+  import CommonSnippets from "../CommonSnippets.svelte"
+  import PropsGroup from "../PropsGroup.svelte"
+  import PropsListModal from "../PropsListModal.svelte"
   import { slide } from "svelte/transition"
-  import Dragging from "$lib/Dragging.svelte"
-  import InfoIcon from "$lib/libIcons/InfoIcon.svelte"
+  import Dragging from "../Dragging.svelte"
+  import InfoIcon from "../libIcons/InfoIcon.svelte"
 
   const {
     component,

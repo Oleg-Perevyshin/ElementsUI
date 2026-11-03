@@ -2,7 +2,7 @@
   import { twMerge } from "tailwind-merge"
   import ArrowIcon from "../libIcons/ArrowIcon.svelte"
   import { slide } from "svelte/transition"
-  import type { ICarouselProps } from "$lib/types"
+  import type { ICarouselProps } from "../types"
 
   let { id = crypto.randomUUID(), wrapperClass = "", label = { name: "", class: "text-left" }, scrollValue = 200, children }: ICarouselProps = $props()
 

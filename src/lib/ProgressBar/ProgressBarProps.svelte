@@ -1,17 +1,17 @@
 <script lang="ts">
   import TextsEditor from "../TextsEditor.svelte"
   import { getContext } from "svelte"
-  import { Language, T } from "$lib/locales/i18n"
-  import { localizeText } from "$lib/locales/localize"
+  import { Language, T } from "../locales/i18n"
+  import { localizeText } from "../locales/localize"
   import { type UIComponent, type IProgressBarProps, updateProperty, type IUIComponentHandler } from "../types"
-  import * as UI from "$lib"
+  import * as UI from ".."
   import { optionsStore, findColorOption } from "../options"
-  import CommonSnippets from "$lib/CommonSnippets.svelte"
-  import PropsGroup from "$lib/PropsGroup.svelte"
-  import PropsListModal from "$lib/PropsListModal.svelte"
-  import PropsListHeader from "$lib/PropsListHeader.svelte"
-  import ButtonAdd from "$lib/libIcons/ButtonAdd.svelte"
-  import ButtonDelete from "$lib/libIcons/ButtonDelete.svelte"
+  import CommonSnippets from "../CommonSnippets.svelte"
+  import PropsGroup from "../PropsGroup.svelte"
+  import PropsListModal from "../PropsListModal.svelte"
+  import PropsListHeader from "../PropsListHeader.svelte"
+  import ButtonAdd from "../libIcons/ButtonAdd.svelte"
+  import ButtonDelete from "../libIcons/ButtonDelete.svelte"
 
   const {
     component,

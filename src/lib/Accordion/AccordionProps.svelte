@@ -1,14 +1,14 @@
 <!-- $lib/ElementsUI/AccordionProps.svelte -->
 <script lang="ts">
-  import { T } from "$lib/locales/i18n"
+  import { T } from "../locales/i18n"
   import { findOptionByClass, updateProperty, type IAccordionProps, type IUIComponentHandler, type UIComponent } from "../types"
-  import * as UI from "$lib"
+  import * as UI from ".."
   import { optionsStore } from "../options"
   import { ICONS } from "../icons"
-  import Button from "$lib/Button/Button.svelte"
-  import CrossIcon from "$lib/libIcons/CrossIcon.svelte"
-  import CommonSnippets from "$lib/CommonSnippets.svelte"
-  import PropsGroup from "$lib/PropsGroup.svelte"
+  import Button from "../Button/Button.svelte"
+  import CrossIcon from "../libIcons/CrossIcon.svelte"
+  import CommonSnippets from "../CommonSnippets.svelte"
+  import PropsGroup from "../PropsGroup.svelte"
   import WidgetAccentPicker from "../WidgetAccentPicker.svelte"
 
   const {

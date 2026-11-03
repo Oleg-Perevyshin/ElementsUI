@@ -1,16 +1,16 @@
 <script lang="ts">
   import { getContext, onMount } from "svelte"
-  import { Language, T } from "$lib/locales/i18n"
+  import { Language, T } from "../locales/i18n"
   import { type UIComponent, type ISelectProps, type IOption, updateProperty, findOptionByClass, type IUIComponentHandler } from "../types"
-  import * as UI from "$lib"
+  import * as UI from ".."
   import ButtonDelete from "../libIcons/ButtonDelete.svelte"
   import ButtonAdd from "../libIcons/ButtonAdd.svelte"
   import { optionsStore, findColorOption } from "../options.js"
-  import CommonSnippets from "$lib/CommonSnippets.svelte"
-  import PropsGroup from "$lib/PropsGroup.svelte"
-  import PropsListModal from "$lib/PropsListModal.svelte"
-  import PropsListHeader from "$lib/PropsListHeader.svelte"
-  import { localizeText } from "$lib/locales/localize"
+  import CommonSnippets from "../CommonSnippets.svelte"
+  import PropsGroup from "../PropsGroup.svelte"
+  import PropsListModal from "../PropsListModal.svelte"
+  import PropsListHeader from "../PropsListHeader.svelte"
+  import { localizeText } from "../locales/localize"
   import { twMerge } from "tailwind-merge"
 
   const {

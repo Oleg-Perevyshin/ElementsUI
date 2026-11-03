@@ -2,10 +2,10 @@
      кольцо фокуса вместо размытой тени. Вся логика (regExp, roundToClean,
      handleInputChange, счётчик, копирование) не тронута. -->
 <script lang="ts">
-  import { T } from "$lib/locales/i18n"
+  import { T } from "../locales/i18n"
   import type { IInputProps } from "../types"
   import { twMerge } from "tailwind-merge"
-  import InfoIcon from "$lib/libIcons/InfoIcon.svelte"
+  import InfoIcon from "../libIcons/InfoIcon.svelte"
   import Tooltip from "../Tooltip.svelte"
   import CopiedChip from "../CopiedChip.svelte"
 

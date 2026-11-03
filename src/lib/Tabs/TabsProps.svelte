@@ -1,18 +1,18 @@
 <script lang="ts">
   import TextsEditor from "../TextsEditor.svelte"
-  import { T } from "$lib/locales/i18n"
+  import { T } from "../locales/i18n"
   import { updateProperty, type ITabsProps, type IUIComponentHandler, type UIComponent } from "../types"
-  import * as UI from "$lib"
+  import * as UI from ".."
   import { optionsStore, findColorOption } from "../options"
   import { ICONS } from "../icons"
-  import ButtonAdd from "$lib/libIcons/ButtonAdd.svelte"
-  import ButtonDelete from "$lib/libIcons/ButtonDelete.svelte"
+  import ButtonAdd from "../libIcons/ButtonAdd.svelte"
+  import ButtonDelete from "../libIcons/ButtonDelete.svelte"
   import { twMerge } from "tailwind-merge"
-  import CommonSnippets from "$lib/CommonSnippets.svelte"
-  import PropsGroup from "$lib/PropsGroup.svelte"
-  import PropsListModal from "$lib/PropsListModal.svelte"
-  import { Language } from "$lib/locales/i18n"
-  import { localizeText } from "$lib/locales/localize"
+  import CommonSnippets from "../CommonSnippets.svelte"
+  import PropsGroup from "../PropsGroup.svelte"
+  import PropsListModal from "../PropsListModal.svelte"
+  import { Language } from "../locales/i18n"
+  import { localizeText } from "../locales/localize"
 
   const {
     component,

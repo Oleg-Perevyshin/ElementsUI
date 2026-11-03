@@ -2,13 +2,13 @@
      (каждая — объект), мастер-цвет, высота карты, иконка маркера и начальные значения переключателей оператора. -->
 <script lang="ts">
   import TextsEditor from "../TextsEditor.svelte"
-  import { T } from "$lib/locales/i18n"
-  import * as UI from "$lib"
+  import { T } from "../locales/i18n"
+  import * as UI from ".."
   import { updateProperty, type UIComponent, type IWidgetMapProps } from "../types"
-  import { ICONS } from "$lib/icons"
+  import { ICONS } from "../icons"
   import WidgetAccentPicker from "../WidgetAccentPicker.svelte"
-  import CommonSnippets from "$lib/CommonSnippets.svelte"
-  import PropsGroup from "$lib/PropsGroup.svelte"
+  import CommonSnippets from "../CommonSnippets.svelte"
+  import PropsGroup from "../PropsGroup.svelte"
 
   const {
     component,

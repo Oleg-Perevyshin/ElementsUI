@@ -5,7 +5,7 @@
      ComponentExample — опечатка в классе позиционирования (right-1..5,
      невалидный Tailwind-класс, физически ничего не позиционировал). -->
 <script lang="ts">
-  import { T } from "$lib/locales/i18n"
+  import { T } from "./locales/i18n"
   import { fade } from "svelte/transition"
 
   let { show = false, class: className = "" }: { show?: boolean; class?: string } = $props()

@@ -6,7 +6,7 @@
   import { onMount } from "svelte"
   import type { IOption, ISelectProps } from "../types"
   import { twMerge } from "tailwind-merge"
-  import { T } from "$lib/locales/i18n"
+  import { T } from "../locales/i18n"
   import Tooltip from "../Tooltip.svelte"
 
   let isDropdownOpen = $state(false)

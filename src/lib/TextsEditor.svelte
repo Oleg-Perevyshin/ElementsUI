@@ -2,9 +2,9 @@
      (надпись, подписи, варианты, вкладки, колонки...) × RU/EN/ZH. Тексты собираются из свойств автоматически (collectTexts),
      поэтому окно одно на все компоненты; окна свойств сами тексты не показывают и не правят. -->
 <script lang="ts">
-  import { T } from "$lib/locales/i18n"
-  import { collectTexts, packLocalized, setAtPath, type TextPath } from "$lib/locales/localize"
-  import { DEFAULT_LANGUAGE, LANGUAGE_CODES, type LanguageCode } from "$lib/locales/languages"
+  import { T } from "./locales/i18n"
+  import { collectTexts, packLocalized, setAtPath, type TextPath } from "./locales/localize"
+  import { DEFAULT_LANGUAGE, LANGUAGE_CODES, type LanguageCode } from "./locales/languages"
   import Button from "./Button/Button.svelte"
   import Input from "./Input/Input.svelte"
   import Modal from "./Modal.svelte"

@@ -1,17 +1,17 @@
 <script lang="ts">
   import TextsEditor from "../TextsEditor.svelte"
   import { getContext } from "svelte"
-  import { T } from "$lib/locales/i18n"
-  import translations from "$lib/locales/translations"
-  import { DEFAULT_LANGUAGE, LANGUAGE_CODES } from "$lib/locales/languages"
+  import { T } from "../locales/i18n"
+  import translations from "../locales/translations"
+  import { DEFAULT_LANGUAGE, LANGUAGE_CODES } from "../locales/languages"
   import type { IInputProps, UIComponent, IOption, IUIComponentHandler } from "../types"
   import { findOptionByClass } from "../types"
-  import * as UI from "$lib"
+  import * as UI from ".."
   import { optionsStore, findColorOption } from "../options"
   import { twMerge } from "tailwind-merge"
-  import Library from "$lib/libIcons/Library.svelte"
-  import CommonSnippets from "$lib/CommonSnippets.svelte"
-  import PropsGroup from "$lib/PropsGroup.svelte"
+  import Library from "../libIcons/Library.svelte"
+  import CommonSnippets from "../CommonSnippets.svelte"
+  import PropsGroup from "../PropsGroup.svelte"
 
   const {
     component,

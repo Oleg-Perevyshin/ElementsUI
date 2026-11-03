@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { T } from "$lib/locales/i18n"
-  import type { IFileAttachProps } from "$lib/types"
+  import { T } from "../locales/i18n"
+  import type { IFileAttachProps } from "../types"
   import { twMerge } from "tailwind-merge"
   import Button from "../Button/Button.svelte"
 

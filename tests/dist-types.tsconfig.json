@@ -1,0 +1,15 @@
+{
+  "//": "Проверка собранных .d.ts пакета так, как их видит приложение (svelte-check + шимы svelte2tsx): тип пропсов, потерянный при упаковке, даёт Cannot find name и останавливает prepack до публикации",
+  "compilerOptions": {
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": false,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "target": "esnext",
+    "lib": ["esnext", "dom"],
+    "types": ["geojson"]
+  },
+  "files": ["../node_modules/svelte2tsx/svelte-shims-v4.d.ts"],
+  "include": ["../dist/**/*.d.ts"]
+}

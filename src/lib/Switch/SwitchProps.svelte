@@ -1,15 +1,15 @@
 <script lang="ts">
   import { getContext } from "svelte"
-  import { T } from "$lib/locales/i18n"
+  import { T } from "../locales/i18n"
   import { type UIComponent, type ISwitchProps, updateProperty, findOptionByClass, type IOption, type IUIComponentHandler } from "../types"
-  import * as UI from "$lib"
+  import * as UI from ".."
   import { optionsStore, findColorOption } from "../options"
-  import ButtonDelete from "$lib/libIcons/ButtonDelete.svelte"
-  import ButtonAdd from "$lib/libIcons/ButtonAdd.svelte"
-  import CommonSnippets from "$lib/CommonSnippets.svelte"
-  import PropsGroup from "$lib/PropsGroup.svelte"
-  import PropsListModal from "$lib/PropsListModal.svelte"
-  import PropsListHeader from "$lib/PropsListHeader.svelte"
+  import ButtonDelete from "../libIcons/ButtonDelete.svelte"
+  import ButtonAdd from "../libIcons/ButtonAdd.svelte"
+  import CommonSnippets from "../CommonSnippets.svelte"
+  import PropsGroup from "../PropsGroup.svelte"
+  import PropsListModal from "../PropsListModal.svelte"
+  import PropsListHeader from "../PropsListHeader.svelte"
 
   const {
     component,

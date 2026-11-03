@@ -2,9 +2,9 @@
      Table, опции ProgressBar/Select/Switch/Tabs, уровни PeriodChart) в модалку вместо попытки втиснуть их в узкий
      сайдбар конструктора (ConstructorUI.svelte). Кнопка-триггер показывает счётчик элементов. -->
 <script lang="ts">
-  import { T } from "$lib/locales/i18n"
+  import { T } from "./locales/i18n"
   import type { Snippet } from "svelte"
-  import * as UI from "$lib"
+  import * as UI from "./index"
 
   let {
     label,

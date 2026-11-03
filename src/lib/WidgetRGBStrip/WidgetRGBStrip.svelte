@@ -3,11 +3,11 @@
      Count/Model/Order — одним пакетом по «Сохранить» (onSave): прошивка пересоздаёт драйвер ленты.
      Ничего не знает про DeviceStore/WebSocket — только value и колбэки. -->
 <script lang="ts">
-  import { T } from "$lib/locales/i18n"
+  import { T } from "../locales/i18n"
   import { untrack } from "svelte"
   import { slide } from "svelte/transition"
   import { twMerge } from "tailwind-merge"
-  import * as UI from "$lib"
+  import * as UI from ".."
   import type { IOption, IWidgetRGBStripConfig, IWidgetRGBStripProps } from "../types"
   import LightIcon from "./LightIcon.svelte"
   import ColorPicker from "./ColorPicker.svelte"

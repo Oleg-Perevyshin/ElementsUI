@@ -1,9 +1,9 @@
 <script lang="ts">
-  import Button from "$lib/Button/Button.svelte"
-  import Error from "$lib/libIcons/Error.svelte"
-  import { T } from "$lib/locales/i18n"
-  import Select from "$lib/Select/Select.svelte"
-  import type { IOption, IVideoViewerProps } from "$lib/types"
+  import Button from "../Button/Button.svelte"
+  import Error from "../libIcons/Error.svelte"
+  import { T } from "../locales/i18n"
+  import Select from "../Select/Select.svelte"
+  import type { IOption, IVideoViewerProps } from "../types"
   import { onMount } from "svelte"
   import { twMerge } from "tailwind-merge"
 

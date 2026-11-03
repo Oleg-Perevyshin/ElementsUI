@@ -2,7 +2,7 @@
      смарт-виджетов конструктора (WidgetWiFi, WidgetDeviceInfo и далее). Один UI на все виджеты,
      та же палитра, что и у примитивов (optionsStore.COLOR_OPTIONS) — см. widgetAccent.ts. -->
 <script lang="ts">
-  import { T } from "$lib/locales/i18n"
+  import { T } from "./locales/i18n"
   import { optionsStore } from "./options"
   import Select from "./Select/Select.svelte"
   import type { IOption } from "./types"

@@ -15,7 +15,7 @@
      проваливаться в другой. Клик по пустой дорожке (не по бегунку) больше не
      телепортирует ближайший ползунок — сознательный компромисс ради надёжности. -->
 <script lang="ts">
-  import { T } from "$lib/locales/i18n"
+  import { T } from "../locales/i18n"
   import type { ISliderProps } from "../types"
   import { twMerge } from "tailwind-merge"
 

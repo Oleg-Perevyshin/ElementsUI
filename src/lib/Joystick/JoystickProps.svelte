@@ -1,12 +1,12 @@
 <script lang="ts">
   import { getContext } from "svelte"
-  import { T } from "$lib/locales/i18n"
+  import { T } from "../locales/i18n"
   import { type UIComponent, type IJoystickProps, updateProperty, findOptionByClass, type IUIComponentHandler } from "../types"
-  import * as UI from "$lib"
-  import { ICONS } from "$lib/icons"
-  import { optionsStore, findColorOption } from "$lib/options"
-  import CommonSnippets from "$lib/CommonSnippets.svelte"
-  import PropsGroup from "$lib/PropsGroup.svelte"
+  import * as UI from ".."
+  import { ICONS } from "../icons"
+  import { optionsStore, findColorOption } from "../options"
+  import CommonSnippets from "../CommonSnippets.svelte"
+  import PropsGroup from "../PropsGroup.svelte"
 
   const {
     component,

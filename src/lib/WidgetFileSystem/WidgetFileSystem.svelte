@@ -5,10 +5,10 @@
      закачки и скачивания (SET FS с Op UploadStart/UploadChunk/UploadDone и DownloadStart/DownloadChunk/DownloadDone)
      и отправка команд на стороне вызывающего. -->
 <script lang="ts">
-  import { T } from "$lib/locales/i18n"
+  import { T } from "../locales/i18n"
   import { slide, fade, scale } from "svelte/transition"
   import { twMerge } from "tailwind-merge"
-  import * as UI from "$lib"
+  import * as UI from ".."
   import type { IWidgetFileSystemFile, IWidgetFileSystemProps, ITableHeader, ITableContent } from "../types"
   import StorageIcon from "./StorageIcon.svelte"
   import RefreshIcon from "./RefreshIcon.svelte"

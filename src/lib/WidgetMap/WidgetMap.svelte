@@ -6,7 +6,7 @@
   import { onMount, untrack } from "svelte"
   import { slide } from "svelte/transition"
   import { twMerge } from "tailwind-merge"
-  import { T } from "$lib/locales/i18n"
+  import { T } from "../locales/i18n"
   import type { IWidgetMapProps } from "../types"
   import CopiedChip from "../CopiedChip.svelte"
   import WidgetHeader from "../WidgetHeader.svelte"
@@ -15,7 +15,7 @@
   import { readPersistedCollapsed, writePersistedCollapsed } from "../widgetCollapse"
   import MapIcon from "./MapIcon.svelte"
   import FitIcon from "./FitIcon.svelte"
-  import * as UI from "$lib"
+  import * as UI from ".."
   import { MapLibre, NavigationControl, ScaleControl, GeolocateControl, FullScreenControl, Marker, Popup, Line, CustomControl } from "./mapWrapper"
 
   let {

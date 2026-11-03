@@ -4,7 +4,7 @@
      ничего не отправляет и не знает про DeviceStore/WebSocket. Между пакетами ориентация сглаживается (Tween),
      устаревшие данные закрываются флагом «нет данных». В узкой ячейке ленты заменяются числами. -->
 <script lang="ts">
-  import { T } from "$lib/locales/i18n"
+  import { T } from "../locales/i18n"
   import { untrack } from "svelte"
   import { slide } from "svelte/transition"
   import { Tween } from "svelte/motion"

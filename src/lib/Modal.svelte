@@ -1,7 +1,7 @@
 <!-- $lib/Modal.svelte — радиус 20, шапка и подвал через линии,
      подложка 40% + blur. Логика стека, Escape и клика вне окна не тронута. -->
 <script lang="ts">
-  import { T } from "$lib/locales/i18n"
+  import { T } from "./locales/i18n"
   import { type Snippet } from "svelte"
   import { fade, scale } from "svelte/transition"
   import { twMerge } from "tailwind-merge"
