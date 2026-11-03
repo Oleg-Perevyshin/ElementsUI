@@ -17,9 +17,9 @@
   const mockScan = async () => {
     await new Promise((r) => setTimeout(r, 600))
     return [
-      { id: "n1", name: "POE-Net", value: "POE-Net" },
-      { id: "n2", name: "Home-5G", value: "Home-5G" },
-      { id: "n3", name: "Office-Guest", value: "Office-Guest" },
+      { id: "n1", name: "POE-Net (-48 dBm, ch 11)", value: "POE-Net" },
+      { id: "n2", name: "Home-5G (-63 dBm, ch 36)", value: "Home-5G" },
+      { id: "n3", name: "Office-Guest (-81 dBm, ch 6)", value: "Office-Guest" },
     ]
   }
 

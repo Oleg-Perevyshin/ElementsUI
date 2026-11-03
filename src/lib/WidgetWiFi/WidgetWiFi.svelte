@@ -175,7 +175,7 @@
                 label={{ name: $T("widget.wifi.ssid") }}
                 value={{ id: "current", name: cfg.StaSSID, value: cfg.StaSSID }}
                 options={foundNetworks}
-                onUpdate={(option) => (cfg.StaSSID = (option as IOption<string>).name ?? "")}
+                onUpdate={(option) => (cfg.StaSSID = String((option as IOption<string>).value ?? (option as IOption<string>).name ?? ""))}
               />
             </div>
             <UI.Button
