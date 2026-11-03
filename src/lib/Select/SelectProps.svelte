@@ -1,7 +1,7 @@
 <script lang="ts">
   import { getContext, onMount } from "svelte"
   import { Language, T } from "$lib/locales/i18n"
-  import { type UIComponent, type ISelectProps, type IOption, updateProperty, type IUIComponentHandler } from "../types"
+  import { type UIComponent, type ISelectProps, type IOption, updateProperty, findOptionByClass, type IUIComponentHandler } from "../types"
   import * as UI from "$lib"
   import ButtonDelete from "../libIcons/ButtonDelete.svelte"
   import ButtonAdd from "../libIcons/ButtonAdd.svelte"
@@ -17,11 +17,11 @@
     component,
     onPropertyChange,
     forConstructor = true,
-  } = $props<{
+  }: {
     component: UIComponent & { properties: Partial<ISelectProps> }
     onPropertyChange: (updates: Partial<{ properties?: string | object; name?: string; access?: string; eventHandler?: IUIComponentHandler }>) => void
     forConstructor?: boolean
-  }>()
+  } = $props()
 
   const DeviceVariables = getContext<{ id: string; value: string; name: string }[]>("DeviceVariables")
   let VARIABLE_OPTIONS = $derived(DeviceVariables && Array.isArray(DeviceVariables) ? DeviceVariables : [])
@@ -37,15 +37,18 @@
     class: string
   }
   let currentValueType = $derived(
-    !component.properties.options[0]
+    !component.properties.options?.[0]
       ? ($optionsStore.SELECT_VALUE_TYPE_OPTIONS[0] as ValueTypeOption)
-      : typeof component.properties.options[0].value === "number"
+      : typeof component.properties.options?.[0]?.value === "number"
         ? $optionsStore.SELECT_VALUE_TYPE_OPTIONS[1]
         : ($optionsStore.SELECT_VALUE_TYPE_OPTIONS[0] as ValueTypeOption),
   )
 
+  /* Диапазон битов bitMode; без range в свойствах — один нулевой бит */
+  const bitRange = $derived(component.properties.range ?? { start: 0, end: 0 })
+
   let Header: IOption = $derived(
-    $optionsStore.HEADER_OPTIONS.find((h) => h.value === component.eventHandler.Header) ?? {
+    $optionsStore.HEADER_OPTIONS.find((h) => h.value === component.eventHandler?.Header) ?? {
       id: "",
       name: "",
       value: "",
@@ -55,11 +58,7 @@
 
   let currentType = $derived($optionsStore.SELECT_TYPE_OPTIONS.find((t) => t.value === component.properties.type))
 
-  const initialAlign = $derived(
-    $optionsStore.TEXT_ALIGN_OPTIONS.find((a) =>
-      (a.value as string).includes(component.properties.label?.class?.split(" ").find((cls: string) => cls.startsWith("text-"))),
-    ),
-  )
+  const initialAlign = $derived(findOptionByClass($optionsStore.TEXT_ALIGN_OPTIONS, component.properties.label?.class, "text-"))
   const initialContentAlign = $derived(
     $optionsStore.TEXT_ALIGN_OPTIONS.slice(0, -1).find((a) =>
       (a.value as string).includes(component.properties.componentClass?.split(" ").find((cls: string) => cls.startsWith("text-")) ?? "text-left"),
@@ -68,14 +67,14 @@
 
   /* Argument пуст — поле ниже лишь визуально показывает "ModCfg", реальное значение нужно проставить в состояние */
   $effect(() => {
-    if (!component.eventHandler.Argument) onPropertyChange({ eventHandler: { Argument: "ModCfg" } })
+    if (!component.eventHandler?.Argument) onPropertyChange({ eventHandler: { Argument: "ModCfg" } })
   })
 </script>
 
 {#snippet SelectArgument()}
   <UI.Input
     label={{ name: $T("constructor.props.argument") }}
-    value={component.eventHandler.Argument || "ModCfg"}
+    value={component.eventHandler?.Argument || "ModCfg"}
     maxlength={32}
     help={{ info: $T("constructor.props.argument.info"), autocomplete: "on", regExp: /^[a-zA-Z0-9\-_]{0,32}$/ }}
     onUpdate={(value) => onPropertyChange({ eventHandler: { Argument: value as string } })}
@@ -132,14 +131,14 @@
 {#snippet SelectSettings()}
   <UI.Switch
     label={{ name: $T("constructor.props.bitMode") }}
-    value={component.properties.bitMode}
+    value={component.properties.bitMode ? 1 : 0}
     options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
     onChange={(value) => {
       updateProperty("bitMode", value === 1, component, onPropertyChange)
       const options = [...(component.properties?.options || [])]
-      const maxNumber = Math.pow(2, component.properties.range.end - component.properties.range.start + 1) - 1
+      const maxNumber = Math.pow(2, bitRange.end - bitRange.start + 1) - 1
       options.forEach((option) => {
-        option.value = option.value !== undefined && option.value > 0 ? (option.value > maxNumber ? maxNumber : Number(option.value)) : 0
+        option.value = option.value != null && Number(option.value) > 0 ? Math.min(Number(option.value), maxNumber) : 0
       })
       updateProperty("options", options, component, onPropertyChange)
     }}
@@ -148,7 +147,7 @@
   {#if component.properties.type === "buttons" && !component.properties.bitMode}
     <UI.Switch
       label={{ name: $T("constructor.props.multiselect") }}
-      value={component.properties.multiSelect}
+      value={component.properties.multiSelect ? 1 : 0}
       options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
       onChange={(value) => {
         updateProperty("multiSelect", value === 1, component, onPropertyChange)
@@ -161,7 +160,7 @@
       label={{ name: $T("constructor.props.range") }}
       type="range"
       number={{ minNum: 0, maxNum: 31, step: 1 }}
-      value={[component.properties.range.start, component.properties.range.end]}
+      value={[bitRange.start, bitRange.end]}
       onUpdate={(value) => {
         if (Array.isArray(value)) {
           updateProperty("range.start", value[0] as number, component, onPropertyChange)
@@ -184,7 +183,7 @@
               const newOption: IOption = {
                 id: crypto.randomUUID(),
                 name: "",
-                value: component.properties?.options.length + 1,
+                value: (component.properties.options?.length ?? 0) + 1,
                 class: "bg-max",
               }
               const options = [...(component.properties?.options || []), newOption]
@@ -213,7 +212,7 @@
             >
               <UI.Dragging
                 container={itemsContainer}
-                array={component.properties.options}
+                array={component.properties.options ?? []}
                 elementIndex={index}
                 onUpdate={(updatedArray) => {
                   updateProperty("options", updatedArray, component, onPropertyChange)
@@ -224,10 +223,10 @@
                 <span class="truncate text-(--muted-color)">{localizeText(option.name, $Language) || $T("constructor.props.tabs.untitled")}</span>
               </div>
               <UI.Input
-                value={option.value}
+                value={option.value as string | number | undefined}
                 type={currentValueType.value}
                 number={component.properties.bitMode
-                  ? { minNum: 0, maxNum: Math.pow(2, component.properties.range.end - component.properties.range.start + 1) - 1, step: 1 }
+                  ? { minNum: 0, maxNum: Math.pow(2, bitRange.end - bitRange.start + 1) - 1, step: 1 }
                   : { minNum: -1000000, maxNum: 1000000, step: 1 }}
                 onUpdate={(value) => {
                   const options = [...(component.properties?.options || [])]
@@ -242,7 +241,7 @@
                   value={findColorOption($optionsStore.COLOR_OPTIONS, option.class)}
                   onUpdate={(option) => {
                     const options = [...(component.properties?.options || [])]
-                    options[index]["class"] = (option as UI.IOption).value
+                    options[index]["class"] = (option as UI.IOption).value as string
                     updateProperty("options", options, component, onPropertyChange)
                   }}
                 />
@@ -267,7 +266,7 @@
               />
             </div>
           {/each}
-          <div id="item-{component.properties.options.length}" class="min-h-4"></div>
+          <div id="item-{component.properties.options?.length ?? 0}" class="min-h-4"></div>
         </div>
       </PropsGroup>
     {/snippet}

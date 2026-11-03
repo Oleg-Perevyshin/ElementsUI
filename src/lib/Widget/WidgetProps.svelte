@@ -14,16 +14,16 @@
     component,
     onPropertyChange,
     forConstructor = true,
-  } = $props<{
+  }: {
     component: UIComponent & { properties: Partial<UI.IWidgetProps> }
     onPropertyChange: (updates: Partial<{ properties?: string | object; name?: string; access?: string; eventHandler?: IUIComponentHandler }>) => void
     forConstructor?: boolean
-  }>()
+  } = $props()
 
   const DeviceVariables = getContext<{ id: string; value: string; name: string }[]>("DeviceVariables")
   let VARIABLE_OPTIONS = $derived(DeviceVariables && Array.isArray(DeviceVariables) ? DeviceVariables : [])
 
-  const initialColor = $derived(findColorOption($optionsStore.COLOR_OPTIONS, component.properties.settings.class))
+  const initialColor = $derived(findColorOption($optionsStore.COLOR_OPTIONS, component.properties.settings?.class))
 
   /* Один мастер-цвет вместо двух независимых пикеров: цвет иконки больше не выбирается отдельно,
      а выводится из того же bg-* (COLOR_OPTIONS и TEXT_COLOR_OPTIONS — одна и та же ролевая палитра
@@ -39,8 +39,8 @@
   <WidgetAccentPicker
     value={(initialColor?.value as string) ?? ""}
     onUpdate={(bgClass) => {
-      updateProperty("settings.class", twMerge(component.properties.settings.class, bgClass), component, onPropertyChange)
-      updateProperty("icons.class", twMerge(component.properties.icons.class, deriveIconColorClass(bgClass)), component, onPropertyChange)
+      updateProperty("settings.class", twMerge(component.properties.settings?.class, bgClass), component, onPropertyChange)
+      updateProperty("icons.class", twMerge(component.properties.icons?.class, deriveIconColorClass(bgClass)), component, onPropertyChange)
     }}
   />
 {/snippet}
@@ -50,7 +50,7 @@
     label={{ name: $T("constructor.props.settings.type") }}
     type="buttons"
     options={$optionsStore.WIDGET_TYPE_OPTIONS}
-    value={$optionsStore.WIDGET_TYPE_OPTIONS.find((o) => o.value == component.properties.settings.type)}
+    value={$optionsStore.WIDGET_TYPE_OPTIONS.find((o) => o.value == component.properties.settings?.type)}
     onUpdate={(option) => {
       updateProperty("settings.type", (option as UI.IOption).value as string, component, onPropertyChange)
     }}
@@ -60,7 +60,7 @@
 {#snippet WidgetSwitchingMode()}
   <UI.Switch
     label={{ name: $T("constructor.props.widget.mode") }}
-    value={component.properties.icons.cycling}
+    value={component.properties.icons?.cycling ? 1 : 0}
     options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
     onChange={(value) => updateProperty("icons.cycling", value === 1, component, onPropertyChange)}
   />
@@ -71,7 +71,7 @@
     snippet="IconsLib"
     initialValue={{
       name: $T("constructor.props.labelicon"),
-      icon: component.properties.icons.array,
+      icon: component.properties.icons?.array,
       updateProperty: (icons: string[]) => updateProperty("icons.array", icons as string[], component, onPropertyChange),
       icons: { array: ICONS_ARRAY, selectArray: true },
     }}
@@ -95,12 +95,11 @@
     <PropsGroup label={$T("constructor.props.group.appearance")}>
       {@render WidgetSettingsColor()}
       {@render WidgetType()}
-      {#if component.properties.settings.type == "input" || component.properties.settings.type == "slider"}
+      {#if component.properties.settings?.type == "input" || component.properties.settings?.type == "slider"}
         <CommonSnippets
           snippet="MinMaxStep"
           initialValue={{
-            number: component.properties.settings.number,
-            bitMode: component.properties.bitMode,
+            number: component.properties.settings?.number,
             updateProperty: (value: number, property: string) => {
               updateProperty(`settings.${property}`, Number(value), component, onPropertyChange)
             },
@@ -126,12 +125,11 @@
     <PropsGroup label={$T("constructor.props.group.appearance")}>
       {@render WidgetSettingsColor()}
       {@render WidgetType()}
-      {#if component.properties.settings.type == "input" || component.properties.settings.type == "slider"}
+      {#if component.properties.settings?.type == "input" || component.properties.settings?.type == "slider"}
         <CommonSnippets
           snippet="MinMaxStep"
           initialValue={{
-            number: component.properties.settings.number,
-            bitMode: component.properties.bitMode,
+            number: component.properties.settings?.number,
             updateProperty: (value: number, property: string) => {
               updateProperty(`settings.${property}`, Number(value), component, onPropertyChange)
             },

@@ -108,9 +108,9 @@ const translations: Translations = {
     zh: "🎯 **用途**\n设备网络的完整配置：模式、连接路由器、自身接入点。\n\n📦 **数据包**\n- `CFG` 分组的字段（可通过设置中的前缀更改），无需绑定变量\n- 字段在本地编辑，「保存」以一个 `SET ModCfg` 数据包发送已修改的字段\n- 🔍 扫描网络 —— `GET APsList`，找到的网络出现在 SSID 列表中\n\n🔑 **键**\n- `WiFiMode` —— 数字：`0` 关闭、`1` 客户端、`2` 接入点、`3` 两者\n- `StaSSID`、`StaPSK` —— 字符串：路由器网络和密码\n- `StaticIP` —— 数字：`0` DHCP、`1` 静态地址\n- `StaIP`、`StaMS`、`StaGW` —— 字符串：客户端地址、掩码、网关\n- `ApSSID`、`ApPSK` —— 字符串：自身接入点名称和密码\n- `ApIP`、`ApMS`、`ApGW` —— 字符串：接入点地址、掩码、网关\n\n✨ **特点**\n- 仅启用接入点时组件会提醒：设备可能从局域网中消失\n\n⚙️ **设置**\n- 分组前缀（ID）、字段名覆盖、主色",
   },
   "component.info.WidgetDeviceInfo": {
-    ru: "🎯 **Назначение**\nПаспорт устройства и его основные настройки.\n\n📦 **Пакет данных**\n- Поля группы `CFG` (меняется префиксом в настройках), привязывать переменные не нужно\n- «Сохранить» отправляет изменённые поля одним пакетом `SET ModCfg`\n- ♻️ «Сброс настроек» — после подтверждения команда `SET RstNVS`, все настройки к заводским, устройство перезагружается\n- 🔌 «Перезагрузить» — команда `SET Restart`\n\n🔑 **Ключи**\n- `DevSN` — строка: серийный номер, только чтение\n- `DevID` — строка: код изделия, только чтение\n- `DevFW` — число: версия ПО, только чтение\n- `RunCnt` — число: счётчик запусков, только чтение\n- `StaIP`, `ApIP` — строки: текущие адреса клиента и точки доступа, только чтение\n- `DevName` — строка: имя устройства\n- `HostName` — строка: сетевое имя\n- `WebUser`, `WebPsw` — строки: логин и пароль веб-интерфейса\n\n⚙️ **Настройки**\n- Префикс группы (ID), мастер-цвет",
-    en: '🎯 **Purpose**\nDevice passport and its main settings.\n\n📦 **Data packet**\n- Fields of the `CFG` group (changed by the prefix in settings), no variable binding needed\n- "Save" sends the changed fields in one `SET ModCfg` packet\n- ♻️ "Factory reset" — after confirmation the `SET RstNVS` command, all settings return to factory defaults and the device restarts\n- 🔌 "Restart" — the `SET Restart` command\n\n🔑 **Keys**\n- `DevSN` — string: serial number, read only\n- `DevID` — string: product code, read only\n- `DevFW` — number: firmware version, read only\n- `RunCnt` — number: boot counter, read only\n- `StaIP`, `ApIP` — strings: current client and access point addresses, read only\n- `DevName` — string: device name\n- `HostName` — string: network host name\n- `WebUser`, `WebPsw` — strings: web interface login and password\n\n⚙️ **Settings**\n- Group prefix (ID), master color',
-    zh: "🎯 **用途**\n设备档案及其主要设置。\n\n📦 **数据包**\n- `CFG` 分组的字段（可通过设置中的前缀更改），无需绑定变量\n- 「保存」以一个 `SET ModCfg` 数据包发送已修改的字段\n- ♻️「恢复出厂设置」—— 确认后发送 `SET RstNVS` 命令，所有设置恢复为出厂默认值，设备重启\n- 🔌「重启」—— `SET Restart` 命令\n\n🔑 **键**\n- `DevSN` —— 字符串：序列号，只读\n- `DevID` —— 字符串：产品代码，只读\n- `DevFW` —— 数字：固件版本，只读\n- `RunCnt` —— 数字：启动计数，只读\n- `StaIP`、`ApIP` —— 字符串：客户端和接入点的当前地址，只读\n- `DevName` —— 字符串：设备名称\n- `HostName` —— 字符串：网络主机名\n- `WebUser`、`WebPsw` —— 字符串：Web 界面登录名和密码\n\n⚙️ **设置**\n- 分组前缀（ID）、主色",
+    ru: "🎯 **Назначение**\nПаспорт устройства и его основные настройки.\n\n📦 **Пакет данных**\n- Поля группы `CFG` (меняется префиксом в настройках), привязывать переменные не нужно\n- «Сохранить» отправляет изменённые поля одним пакетом `SET ModCfg`\n- ♻️ «Сброс настроек» — после подтверждения команда `SET RstNVS`, все настройки к заводским, устройство перезагружается\n- 🔌 «Перезагрузить» — команда `SET Restart`\n\n🔑 **Ключи**\n- `DevSN` — строка: серийный номер, только чтение\n- `DevID` — строка: код изделия, только чтение\n- `DevFW` — число: версия ПО, только чтение\n- `RunCnt` — число: счётчик запусков, только чтение\n- `StaIP`, `ApIP` — строки: текущие адреса клиента и точки доступа, только чтение\n- `DevName` — строка: имя устройства, латиница, цифры, `_`, `-` и `.`, до 15 символов\n- `HostName` — строка: сетевое имя без `.local` (домен добавляет устройство), латиница, цифры, `_` и `-`, до 18 символов\n- `WebUser`, `WebPsw` — строки: логин и пароль веб-интерфейса до 15 символов; логин — латиница, цифры, `_` и `-`, пароль — ещё и спецсимволы, без пробела\n\n⚙️ **Настройки**\n- Префикс группы (ID), мастер-цвет",
+    en: '🎯 **Purpose**\nDevice passport and its main settings.\n\n📦 **Data packet**\n- Fields of the `CFG` group (changed by the prefix in settings), no variable binding needed\n- "Save" sends the changed fields in one `SET ModCfg` packet\n- ♻️ "Factory reset" — after confirmation the `SET RstNVS` command, all settings return to factory defaults and the device restarts\n- 🔌 "Restart" — the `SET Restart` command\n\n🔑 **Keys**\n- `DevSN` — string: serial number, read only\n- `DevID` — string: product code, read only\n- `DevFW` — number: firmware version, read only\n- `RunCnt` — number: boot counter, read only\n- `StaIP`, `ApIP` — strings: current client and access point addresses, read only\n- `DevName` — string: device name, Latin letters, digits, `_`, `-` and `.`, up to 15 characters\n- `HostName` — string: network host name without `.local` (the device adds the domain), Latin letters, digits, `_` and `-`, up to 18 characters\n- `WebUser`, `WebPsw` — strings: web interface login and password, up to 15 characters; login — Latin letters, digits, `_` and `-`, password — also special characters, no spaces\n\n⚙️ **Settings**\n- Group prefix (ID), master color',
+    zh: "🎯 **用途**\n设备档案及其主要设置。\n\n📦 **数据包**\n- `CFG` 分组的字段（可通过设置中的前缀更改），无需绑定变量\n- 「保存」以一个 `SET ModCfg` 数据包发送已修改的字段\n- ♻️「恢复出厂设置」—— 确认后发送 `SET RstNVS` 命令，所有设置恢复为出厂默认值，设备重启\n- 🔌「重启」—— `SET Restart` 命令\n\n🔑 **键**\n- `DevSN` —— 字符串：序列号，只读\n- `DevID` —— 字符串：产品代码，只读\n- `DevFW` —— 数字：固件版本，只读\n- `RunCnt` —— 数字：启动计数，只读\n- `StaIP`、`ApIP` —— 字符串：客户端和接入点的当前地址，只读\n- `DevName` —— 字符串：设备名称，拉丁字母、数字、`_`、`-` 和 `.`，最多 15 个字符\n- `HostName` —— 字符串：网络主机名，不带 `.local`（域名由设备添加），拉丁字母、数字、`_` 和 `-`，最多 18 个字符\n- `WebUser`、`WebPsw` —— 字符串：Web 界面登录名和密码，最多 15 个字符；登录名为拉丁字母、数字、`_` 和 `-`，密码还可含特殊字符，不含空格\n\n⚙️ **设置**\n- 分组前缀（ID）、主色",
   },
   "component.info.WidgetFileSystem": {
     ru: '🎯 **Назначение**\nПамять устройства, список файлов, удаление и закачка.\n\n📦 **Пакет данных**\n- Один объект `CFG.FS` (префикс и имя поля меняются в настройках), привязывать переменные не нужно\n- 🔄 «Обновить» — `GET FS`\n- «Удалить» — `SET FS` с `Op: Delete` после подтверждения\n- Закачка — `SET FS` с `Op` `UploadStart` → `UploadChunk` → `UploadDone`\n\n🔑 **Ключи**\n- `Total`, `Used`, `Free` — числа, байт: объём, занято, свободно\n- `List` — массив `[{ "Name", "Size" }]`: полный путь файла и размер в байтах\n- `Upload` — объект `{ "Name", "Size", "Progress" }`, есть только во время закачки; `Progress` — 0–100\n\n✨ **Особенности**\n- Полоса занятости оранжевая от 75%, красная от 90%\n- Закачка с другого клиента тоже видна\n- Имя файла — не длиннее 31 символа (ограничение прошивки, задаётся в настройках)\n\n⚙️ **Настройки**\n- Префикс группы (ID), поле состояния ФС, аргумент команд, мастер-цвет\n- Допустимые файлы (фильтр в окне выбора), максимальная длина имени',
@@ -638,20 +638,24 @@ const translations: Translations = {
     zh: "设备在自身热点中的地址——用于无路由器时的设置",
   },
   "widget.info.hint.name": {
-    ru: "Имя устройства в облаке и в интерфейсе",
-    en: "Device name in the cloud and in the interface",
-    zh: "设备在云端和界面中的名称",
+    ru: "Имя устройства в облаке и в интерфейсе. Латинские буквы, цифры, «_», «-» и «.», до 15 символов",
+    en: "Device name in the cloud and in the interface. Latin letters, digits, “_”, “-” and “.”, up to 15 characters",
+    zh: "设备在云端和界面中的名称。拉丁字母、数字、“_”、“-”和“.”，最多 15 个字符",
   },
   "widget.info.hint.host": {
-    ru: "Сетевое имя: устройство открывается в браузере по адресу http://имя.local",
-    en: "Network name: the device opens in a browser at http://name.local",
-    zh: "网络名称：可在浏览器中通过 http://名称.local 打开设备",
+    ru: "Сетевое имя: устройство открывается в браузере по адресу http://имя.local. Вводите без «.local» — домен добавляет устройство. Латинские буквы, цифры, «_» и «-», до 18 символов",
+    en: "Network name: the device opens in a browser at http://name.local. Enter it without “.local” — the device adds the domain. Latin letters, digits, “_” and “-”, up to 18 characters",
+    zh: "网络名称：可在浏览器中通过 http://名称.local 打开设备。输入时不带“.local”——域名由设备添加。拉丁字母、数字、“_”和“-”，最多 18 个字符",
   },
-  "widget.info.hint.web_user": { ru: "Логин для входа в веб-интерфейс устройства", en: "Login for the device web interface", zh: "设备网页界面的登录名" },
+  "widget.info.hint.web_user": {
+    ru: "Логин для входа в веб-интерфейс устройства. Латинские буквы, цифры, «_» и «-», до 15 символов",
+    en: "Login for the device web interface. Latin letters, digits, “_” and “-”, up to 15 characters",
+    zh: "设备网页界面的登录名。拉丁字母、数字、“_”和“-”，最多 15 个字符",
+  },
   "widget.info.hint.web_psw": {
-    ru: "Пароль для входа в веб-интерфейс устройства",
-    en: "Password for the device web interface",
-    zh: "设备网页界面的密码",
+    ru: "Пароль для входа в веб-интерфейс устройства. Латинские буквы, цифры и спецсимволы без пробела, до 15 символов",
+    en: "Password for the device web interface. Latin letters, digits and special characters without spaces, up to 15 characters",
+    zh: "设备网页界面的密码。拉丁字母、数字和特殊字符（不含空格），最多 15 个字符",
   },
   "widget.info.hint.restart": {
     ru: "Перезагрузить устройство — настройки сохраняются, связь пропадёт на несколько секунд",

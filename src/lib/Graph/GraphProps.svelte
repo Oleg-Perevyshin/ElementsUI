@@ -1,7 +1,7 @@
 <script lang="ts">
   import { getContext } from "svelte"
   import { T } from "$lib/locales/i18n"
-  import { type UIComponent, type IGraphProps, type IOption, updateProperty, type IUIComponentHandler } from "../types"
+  import { type UIComponent, type IGraphProps, type IOption, updateProperty, findOptionByClass, type IUIComponentHandler } from "../types"
   import * as UI from "$lib"
   import { optionsStore } from "$lib/options"
   import { twMerge } from "tailwind-merge"
@@ -13,27 +13,23 @@
     component,
     onPropertyChange,
     forConstructor = true,
-  } = $props<{
+  }: {
     component: UIComponent & { properties: Partial<IGraphProps> }
     onPropertyChange: (updates: Partial<{ properties?: string | object; name?: string; access?: string; eventHandler?: IUIComponentHandler }>) => void
     forConstructor?: boolean
-  }>()
+  } = $props()
 
   const DeviceVariables = getContext<{ id: string; value: string; name: string }[]>("DeviceVariables")
   let VARIABLE_OPTIONS = $derived(DeviceVariables && Array.isArray(DeviceVariables) ? DeviceVariables : [])
 
-  const initialAlign = $derived(
-    $optionsStore.TEXT_ALIGN_OPTIONS.find((a) =>
-      (a.value as string).includes(component.properties.label?.class?.split(" ").find((cls: string) => cls.startsWith("text-"))),
-    ),
-  )
+  const initialAlign = $derived(findOptionByClass($optionsStore.TEXT_ALIGN_OPTIONS, component.properties.label?.class, "text-"))
 </script>
 
 {#snippet GraphIsTest()}
   <UI.Switch
     wrapperClass="bg-blue"
     label={{ name: $T("constructor.props.istest") }}
-    value={component.properties.isTest}
+    value={component.properties.isTest ? 1 : 0}
     options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
     onChange={(value) => updateProperty("isTest", value === 1, component, onPropertyChange)}
   />

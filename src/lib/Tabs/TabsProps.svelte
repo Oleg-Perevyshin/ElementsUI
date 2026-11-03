@@ -1,7 +1,7 @@
 <script lang="ts">
   import TextsEditor from "../TextsEditor.svelte"
   import { T } from "$lib/locales/i18n"
-  import { updateProperty, type IOption, type ITabsProps, type IUIComponentHandler, type UIComponent } from "../types"
+  import { updateProperty, type ITabsProps, type IUIComponentHandler, type UIComponent } from "../types"
   import * as UI from "$lib"
   import { optionsStore, findColorOption } from "../options"
   import { ICONS } from "../icons"
@@ -18,11 +18,11 @@
     component,
     onPropertyChange,
     forConstructor = true,
-  } = $props<{
+  }: {
     component: UIComponent & { properties: Partial<ITabsProps> }
     onPropertyChange: (updates: Partial<{ properties?: string | object; name?: string; access?: string; eventHandler?: IUIComponentHandler }>) => void
     forConstructor?: boolean
-  }>()
+  } = $props()
 
   let itemsContainer: HTMLDivElement | null = $state(null)
 
@@ -42,14 +42,14 @@
 
   const initialPosition = $derived.by(() => {
     const flexClass = component.properties.items
-      ?.find((item: IOption) => item.class?.includes("flex-"))
+      ?.find((item) => item.class?.includes("flex-"))
       ?.class?.split(" ")
       .find((cls: string) => cls.startsWith("flex-"))
     if (!flexClass) return undefined
     return $optionsStore.ICON_TEXT_POSITION_OPTIONS.find((c) => (c.value as string).includes(flexClass))
   })
 
-  const initialWidth = $derived(() => (component.properties.items?.some((item: IOption) => item.class?.split(" ").includes("flex-1")) ? 1 : 0))
+  const initialWidth = $derived(() => (component.properties.items?.some((item) => item.class?.split(" ").includes("flex-1")) ? 1 : 0))
 
   /* "Равные" — flex-1 (flexbox сам поровну распределяет место с учётом gap между кнопками);
      "Авто" — w-auto (ширина по контенту). Раньше "Равные" считалось как w-[X%] через inline
@@ -67,7 +67,7 @@
     options={$optionsStore.ICON_TEXT_POSITION_OPTIONS}
     value={initialPosition}
     onUpdate={(option) => {
-      component.properties.items.forEach((_item: any, index: number) => {
+      ;(component.properties.items ?? []).forEach((_item: any, index: number) => {
         const items = [...(component.properties?.items || [])]
         items[index]["class"] = twMerge(items[index].class, (option as UI.IOption).value as string)
         updateProperty("items", items, component, onPropertyChange)
@@ -86,7 +86,7 @@
     value={initialWidth()}
     options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
     onChange={(value) => {
-      component.properties.items.forEach((_item: any, index: number) => {
+      ;(component.properties.items ?? []).forEach((_item: any, index: number) => {
         const items = [...(component.properties?.items || [])]
         items[index]["class"] = setTabWidthClass(items[index].class, Boolean(value))
         updateProperty("items", items, component, onPropertyChange)
@@ -100,7 +100,7 @@
     {#snippet main()}
       <PropsGroup>
         {#snippet headerActions()}
-          {#if component.properties?.items.length < 10}
+          {#if (component.properties.items?.length ?? 0) < 10}
             <UI.Button
               wrapperClass="w-8"
               content={{ icon: ButtonAdd }}
@@ -131,7 +131,7 @@
               <UI.Dragging
                 wrapperClass="shrink-0"
                 container={itemsContainer}
-                array={component.properties.items}
+                array={component.properties.items ?? []}
                 elementIndex={index}
                 onUpdate={(updatedArray) => {
                   updateProperty("items", updatedArray, component, onPropertyChange)
@@ -146,7 +146,7 @@
                 snippet="IconsLib"
                 initialValue={{
                   name: $T("constructor.props.table.type.icon"),
-                  icon: component.properties.items[index].icon,
+                  icon: tab.icon,
                   updateProperty: (icon: string) => {
                     const items = [...(component.properties?.items || [])]
                     items[index]["icon"] = icon as string
@@ -169,7 +169,7 @@
                   updateProperty("items", items, component, onPropertyChange)
                 }}
               />
-              {#if component.properties.items.length > 1}
+              {#if (component.properties.items?.length ?? 0) > 1}
                 <UI.Button
                   wrapperClass="w-8 shrink-0"
                   content={{ icon: ButtonDelete }}
@@ -185,7 +185,7 @@
               {/if}
             </div>
           {/each}
-          <div id="item-{component.properties.items.length}" class="min-h-4"></div>
+          <div id="item-{component.properties.items?.length ?? 0}" class="min-h-4"></div>
         </div>
       </PropsGroup>
     {/snippet}
@@ -196,14 +196,14 @@
   <div class="flex w-full gap-4">
     <UI.Input
       label={{ name: $T("constructor.props.size.height") }}
-      value={component.properties.size.height}
+      value={component.properties.size?.height}
       onUpdate={(value) => updateProperty("size.height", value as number, component, onPropertyChange)}
       number={{ minNum: 1, maxNum: 1000, step: 1 }}
       type="number"
     />
     <UI.Input
       label={{ name: $T("constructor.props.size.width") }}
-      value={component.properties.size.width}
+      value={component.properties.size?.width}
       onUpdate={(value) => updateProperty("size.width", value as number, component, onPropertyChange)}
       number={{ minNum: 1, maxNum: 1000, step: 1 }}
       type="number"

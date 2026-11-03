@@ -25,10 +25,13 @@
     "ApGW",
   ]
 
-  const { component, onPropertyChange } = $props<{
+  const {
+    component,
+    onPropertyChange,
+  }: {
     component: UIComponent & { properties: Partial<IWidgetWiFiProps> }
     onPropertyChange: (updates: Partial<{ properties?: string | object; name?: string; access?: string }>) => void
-  }>()
+  } = $props()
 
   const MODE_OPTIONS: IOption<number>[] = [
     { id: "sta", name: "STA", value: 1 },

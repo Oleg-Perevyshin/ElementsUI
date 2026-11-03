@@ -16,11 +16,11 @@
     component,
     onPropertyChange,
     forConstructor = true,
-  } = $props<{
+  }: {
     component: UIComponent & { properties: Partial<IPeriodChartProps> }
     onPropertyChange: (updates: Partial<{ properties?: string | object; name?: string; access?: string; eventHandler?: IUIComponentHandler }>) => void
     forConstructor?: boolean
-  }>()
+  } = $props()
 
   const DeviceVariables = getContext<{ id: string; value: string; name: string }[]>("DeviceVariables")
   let VARIABLE_OPTIONS = $derived(DeviceVariables && Array.isArray(DeviceVariables) ? DeviceVariables : [])
@@ -91,7 +91,7 @@
             >
               <UI.Dragging
                 container={itemsContainer}
-                array={component.properties.levels}
+                array={component.properties.levels ?? []}
                 elementIndex={index}
                 onUpdate={(updatedArray) => updateLevels(updatedArray)}
               />

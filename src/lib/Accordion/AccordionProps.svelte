@@ -1,7 +1,7 @@
 <!-- $lib/ElementsUI/AccordionProps.svelte -->
 <script lang="ts">
   import { T } from "$lib/locales/i18n"
-  import { updateProperty, type IAccordionProps, type IUIComponentHandler, type UIComponent } from "../types"
+  import { findOptionByClass, updateProperty, type IAccordionProps, type IUIComponentHandler, type UIComponent } from "../types"
   import * as UI from "$lib"
   import { optionsStore } from "../options"
   import { ICONS } from "../icons"
@@ -15,17 +15,13 @@
     component,
     onPropertyChange,
     forConstructor = true,
-  } = $props<{
+  }: {
     component: UIComponent & { properties: Partial<IAccordionProps> }
     onPropertyChange: (updates: Partial<{ properties?: string | object; name?: string; access?: string; eventHandler?: IUIComponentHandler }>) => void
     forConstructor?: boolean
-  }>()
+  } = $props()
 
-  const initialAlign = $derived(
-    $optionsStore.JUSTIFY_ALIGN_OPTIONS.find((a) =>
-      (a.value as string).includes(component.properties.label?.class?.split(" ").find((cls: string) => cls.startsWith("justify-"))),
-    ),
-  )
+  const initialAlign = $derived(findOptionByClass($optionsStore.JUSTIFY_ALIGN_OPTIONS, component.properties.label?.class, "justify-"))
 
   const handleImageUpload = (event: Event) => {
     const input = event.target as HTMLInputElement
@@ -69,14 +65,14 @@
   <div class="flex w-full gap-4">
     <UI.Input
       label={{ name: $T("constructor.props.size.height") }}
-      value={component.properties.size.height}
+      value={component.properties.size?.height}
       onUpdate={(value) => updateProperty("size.height", value as number, component, onPropertyChange)}
       number={{ minNum: 1, maxNum: 1000, step: 1 }}
       type="number"
     />
     <UI.Input
       label={{ name: $T("constructor.props.size.width") }}
-      value={component.properties.size.width}
+      value={component.properties.size?.width}
       onUpdate={(value) => updateProperty("size.width", value as number, component, onPropertyChange)}
       number={{ minNum: 1, maxNum: 1000, step: 1 }}
       type="number"
@@ -87,7 +83,7 @@
 {#snippet AccordionIsOpen()}
   <UI.Switch
     label={{ name: $T("constructor.props.open") }}
-    value={component.properties.isOpen}
+    value={component.properties.isOpen ? 1 : 0}
     options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
     onChange={(value) => updateProperty("isOpen", value === 1, component, onPropertyChange)}
   />
@@ -105,7 +101,7 @@
         snippet="IconsLib"
         initialValue={{
           name: $T("constructor.props.labelicon"),
-          icon: component.properties.label.icon,
+          icon: component.properties.label?.icon,
           updateProperty: (icon: string) => updateProperty("label.icon", icon as string, component, onPropertyChange),
           icons: { array: ICONS },
         }}
@@ -137,7 +133,7 @@
         initialValue={{
           name: $T("constructor.props.labelicon"),
           icons: { array: ICONS },
-          icon: component.properties.label.icon,
+          icon: component.properties.label?.icon,
           updateProperty: (icon: string) => updateProperty("label.icon", icon as string, component, onPropertyChange),
         }}
         {component}

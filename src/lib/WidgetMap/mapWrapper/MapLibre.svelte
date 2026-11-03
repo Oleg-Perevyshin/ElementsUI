@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onDestroy, onMount, type Snippet } from "svelte"
+  import type * as maplibregl from "maplibre-gl"
   import { prepareMapContext } from "./contexts.svelte.js"
   import { loadMapLibre } from "./utils.js"
   import { T } from "$lib/locales/i18n"

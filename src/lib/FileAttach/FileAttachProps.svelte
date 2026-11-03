@@ -1,7 +1,7 @@
 <!-- $lib/ElementsUI/ButtonProps.svelte -->
 <script lang="ts">
   import { T } from "$lib/locales/i18n"
-  import { type IFileAttachProps, type IUIComponentHandler, type UIComponent, updateProperty } from "../types"
+  import { type IFileAttachProps, type IUIComponentHandler, type UIComponent, updateProperty, findOptionByClass } from "../types"
   import * as UI from "$lib"
   import { optionsStore } from "../options"
   import { getContext } from "svelte"
@@ -13,20 +13,16 @@
     component,
     onPropertyChange,
     forConstructor = true,
-  } = $props<{
+  }: {
     component: UIComponent & { properties: Partial<IFileAttachProps> }
     onPropertyChange: (updates: Partial<{ properties?: string | object; name?: string; access?: string; eventHandler?: IUIComponentHandler }>) => void
     forConstructor?: boolean
-  }>()
+  } = $props()
 
   const DeviceVariables = getContext<{ id: string; value: string; name: string }[]>("DeviceVariables")
   let VARIABLE_OPTIONS = $derived(DeviceVariables && Array.isArray(DeviceVariables) ? DeviceVariables : [])
 
-  const initialAlign = $derived(
-    $optionsStore.TEXT_ALIGN_OPTIONS.find((a) =>
-      (a.value as string).includes(component.properties.label?.class?.split(" ").find((cls: string) => cls.startsWith("text-"))),
-    ),
-  )
+  const initialAlign = $derived(findOptionByClass($optionsStore.TEXT_ALIGN_OPTIONS, component.properties.label?.class, "text-"))
 </script>
 
 {#snippet FileAccept()}
@@ -42,7 +38,7 @@
   <UI.Select
     label={{ name: $T("constructor.props.type") }}
     type="buttons"
-    value={$optionsStore.FILE_ATTACH_TYPE_OPTIONS.find((c) => (c.value as string).includes(component.properties.type))}
+    value={$optionsStore.FILE_ATTACH_TYPE_OPTIONS.find((c) => !!component.properties.type && (c.value as string).includes(component.properties.type))}
     options={$optionsStore.FILE_ATTACH_TYPE_OPTIONS}
     onUpdate={(option) => updateProperty("type", (option as UI.IOption).value as string, component, onPropertyChange)}
   />
@@ -52,13 +48,13 @@
       <UI.Input
         label={{ name: $T("constructor.props.imageSize.height") }}
         type="number"
-        value={component.properties.imageSize.height.replace("rem", "")}
+        value={component.properties.imageSize?.height?.replace("rem", "")}
         onUpdate={(value) => updateProperty("imageSize.height", `${value as string}rem`, component, onPropertyChange)}
       />
       <UI.Input
         label={{ name: $T("constructor.props.imageSize.width") }}
         type="number"
-        value={component.properties.imageSize.width.replace("rem", "")}
+        value={component.properties.imageSize?.width?.replace("rem", "")}
         onUpdate={(value) => updateProperty("imageSize.width", `${value as string}rem`, component, onPropertyChange)}
       />
     </div>
@@ -66,14 +62,18 @@
       <UI.Select
         label={{ name: $T("constructor.props.fitmode") }}
         type="buttons"
-        value={$optionsStore.FITMODE_OPTIONS.find((c) => (c.value as string).includes(component.properties.imageSize.fitMode))}
+        value={$optionsStore.FITMODE_OPTIONS.find(
+          (c) => !!component.properties.imageSize?.fitMode && (c.value as string).includes(component.properties.imageSize?.fitMode),
+        )}
         options={$optionsStore.FITMODE_OPTIONS}
         onUpdate={(option) => updateProperty("imageSize.fitMode", (option as UI.IOption).value as string, component, onPropertyChange)}
       />
       <UI.Select
         label={{ name: $T("constructor.props.form") }}
         type="buttons"
-        value={$optionsStore.FORM_OPTIONS.find((c) => (c.value as string).includes(component.properties.imageSize.form))}
+        value={$optionsStore.FORM_OPTIONS.find(
+          (c) => !!component.properties.imageSize?.form && (c.value as string).includes(component.properties.imageSize?.form),
+        )}
         options={$optionsStore.FORM_OPTIONS}
         onUpdate={(option) => updateProperty("imageSize.form", (option as UI.IOption).value as string, component, onPropertyChange)}
       />

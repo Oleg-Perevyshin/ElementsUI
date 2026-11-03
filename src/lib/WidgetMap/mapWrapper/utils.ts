@@ -1,7 +1,9 @@
-const CDN_URL = "https://cdn.jsdelivr.net/npm/maplibre-gl@5.17.0/dist/maplibre-gl.min.js"
-const CSS_URL = "https://cdn.jsdelivr.net/npm/maplibre-gl@5.17.0/dist/maplibre-gl.min.css"
+/* Версия совпадает с devDependency maplibre-gl (типы); с 6.x пакет — только ES-модуль, UMD-скрипта и глобала больше нет */
+const MAPLIBRE_VERSION = "6.16.0"
+const MODULE_URL = `https://cdn.jsdelivr.net/npm/maplibre-gl@${MAPLIBRE_VERSION}/dist/maplibre-gl.mjs`
+const CSS_URL = `https://cdn.jsdelivr.net/npm/maplibre-gl@${MAPLIBRE_VERSION}/dist/maplibre-gl.css`
 
-/* Одна загрузка на страницу: несколько карт ждут один и тот же промис, иначе вторая видит уже вставленный <script> до его загрузки */
+/* Одна загрузка на страницу: несколько карт ждут один и тот же промис */
 let loading: Promise<boolean> | null = null
 
 export const loadMapLibre = (): Promise<boolean> => {
@@ -9,9 +11,10 @@ export const loadMapLibre = (): Promise<boolean> => {
   if (window.maplibregl) return Promise.resolve(true)
   if (!navigator.onLine) return Promise.resolve(false)
 
-  loading ??= Promise.all([loadScript(CDN_URL), loadCSS(CSS_URL)])
-    .then(() => {
-      if (!window.maplibregl) throw new Error("MapLibre GL не был загружен корректно.")
+  /* Модуль кладётся в window.maplibregl — компоненты обёртки обращаются к нему как раньше; с CDN, чтобы не тянуть карту в бандл приложений */
+  loading ??= Promise.all([import(/* @vite-ignore */ MODULE_URL) as Promise<typeof import("maplibre-gl")>, loadCSS(CSS_URL)])
+    .then(([maplibregl]) => {
+      window.maplibregl = maplibregl
       return true
     })
     .catch((err) => {
@@ -20,24 +23,6 @@ export const loadMapLibre = (): Promise<boolean> => {
       return false
     })
   return loading
-}
-
-const loadScript = (src: string): Promise<void> => {
-  return new Promise((resolve, reject) => {
-    if (document.querySelector(`script[src="${src}"]`)) {
-      resolve()
-      return
-    }
-    const script = document.createElement("script")
-    script.src = src
-    script.async = true
-    script.onload = () => resolve()
-    script.onerror = () => {
-      script.remove() /* иначе повторная попытка увидит тег и не станет грузить заново */
-      reject(new Error(`Не удалось загрузить скрипт ${src}`))
-    }
-    document.head.appendChild(script)
-  })
 }
 
 const loadCSS = (href: string): Promise<void> => {

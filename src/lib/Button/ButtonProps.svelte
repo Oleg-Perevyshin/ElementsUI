@@ -4,7 +4,7 @@
   import { localizeText } from "../locales/localize"
   import { DEFAULT_LANGUAGE } from "../locales/languages"
   import { T } from "../locales/i18n"
-  import { type UIComponent, type IButtonProps, type IOption, updateProperty, type IUIComponentHandler } from "../types"
+  import { type UIComponent, type IButtonProps, type IOption, updateProperty, findOptionByClass, type IUIComponentHandler } from "../types"
   import * as UI from "$lib"
   import { optionsStore, findColorOption } from "../options"
   import { twMerge } from "tailwind-merge"
@@ -17,37 +17,33 @@
     component,
     onPropertyChange,
     forConstructor = true,
-  } = $props<{
+  }: {
     component: UIComponent & { properties: Partial<IButtonProps> }
     onPropertyChange: (updates: Partial<{ properties?: string | object; name?: string; access?: string; eventHandler?: IUIComponentHandler }>) => void
     forConstructor?: boolean
-  }>()
+  } = $props()
 
   /* Argument пуст — поле ниже лишь визуально показывает "ModCfg", реальное значение нужно проставить в состояние */
   $effect(() => {
-    if (!component.eventHandler.Argument) onPropertyChange({ eventHandler: { Argument: "ModCfg" } })
+    if (!component.eventHandler?.Argument) onPropertyChange({ eventHandler: { Argument: "ModCfg" } })
   })
 
-  let hasValue: boolean = $derived(component.eventHandler.Value)
+  let hasValue: boolean = $derived(!!component.eventHandler?.Value)
 
   let Header: IOption = $derived(
-    $optionsStore.HEADER_OPTIONS.find((h) => h.value === component.eventHandler.Header) ?? { id: "", name: "", value: "", class: "!w-1/4" },
+    $optionsStore.HEADER_OPTIONS.find((h) => h.value === component.eventHandler?.Header) ?? { id: "", name: "", value: "", class: "!w-1/4" },
   )
 
   const initialColor = $derived(findColorOption($optionsStore.COLOR_OPTIONS, component.properties.componentClass))
 
-  const initialHeight = $derived(
-    $optionsStore.HEIGHT_OPTIONS.find((h) =>
-      (h.value as string).includes(component.properties.componentClass?.split(" ").find((cls: string) => cls.startsWith("py-"))),
-    ),
-  )
+  const initialHeight = $derived(findOptionByClass($optionsStore.HEIGHT_OPTIONS, component.properties.componentClass, "py-"))
   const updateIconProperty = (propertyName: string, value: string) => {
     updateProperty(propertyName, value, component, onPropertyChange)
-    if (component.properties.content.icon && !localizeText(component.properties.content.name, DEFAULT_LANGUAGE).trim())
+    if (component.properties.content?.icon && !localizeText(component.properties.content?.name, DEFAULT_LANGUAGE).trim())
       updateProperty("componentClass", twMerge((component.properties as UI.IButtonProps).componentClass, "w-fit p-2"), component, onPropertyChange)
     else if (
-      (component.properties.content.icon && localizeText(component.properties.content.name, DEFAULT_LANGUAGE).trim()) ||
-      (!component.properties.content.icon && !localizeText(component.properties.content.name, DEFAULT_LANGUAGE).trim())
+      (component.properties.content?.icon && localizeText(component.properties.content?.name, DEFAULT_LANGUAGE).trim()) ||
+      (!component.properties.content?.icon && !localizeText(component.properties.content?.name, DEFAULT_LANGUAGE).trim())
     )
       updateProperty("componentClass", twMerge((component.properties as UI.IButtonProps).componentClass, "w-full px-1 py-1"), component, onPropertyChange)
   }
@@ -75,7 +71,7 @@
   />
   <UI.Input
     label={{ name: $T("constructor.props.argument") }}
-    value={component.eventHandler.Argument || "ModCfg"}
+    value={component.eventHandler?.Argument || "ModCfg"}
     maxlength={32}
     help={{ info: $T("constructor.props.argument.info"), autocomplete: "on", regExp: /^[a-zA-Z0-9\-_]{0,32}$/ }}
     onUpdate={(value) => onPropertyChange({ eventHandler: { Argument: value as string } })}
@@ -83,10 +79,10 @@
 {/snippet}
 
 {#snippet ButtonVariables()}
-  {#if component.eventHandler.Argument !== "ModCfg" || Header.value === "SET"}
+  {#if component.eventHandler?.Argument !== "ModCfg" || Header.value === "SET"}
     <UI.Input
       label={{ name: $T("constructor.props.value") }}
-      value={component.eventHandler.Value}
+      value={component.eventHandler?.Value}
       help={{ info: $T("constructor.props.value.info") }}
       maxlength={500}
       onUpdate={(value) => onPropertyChange({ eventHandler: { Value: value as string } })}
@@ -95,7 +91,7 @@
   <UI.Input
     label={{ name: $T("constructor.props.variables") }}
     disabled={hasValue}
-    value={component.eventHandler.Variables.join(" ")}
+    value={component.eventHandler?.Variables?.join(" ")}
     help={{ info: $T("constructor.props.variables.info"), autocomplete: "on", regExp: /^[a-zA-Z0-9.\-_ ":{}]{0,500}$/ }}
     maxlength={500}
     onUpdate={(value) => onPropertyChange({ eventHandler: { Variables: (value as string).trim().split(/\s+/) } })}
@@ -107,7 +103,7 @@
 {/snippet}
 
 {#snippet ButtonHeight()}
-  {#if !(!localizeText(component.properties.content.name, DEFAULT_LANGUAGE).trim() && component.properties.content.icon)}
+  {#if !(!localizeText(component.properties.content?.name, DEFAULT_LANGUAGE).trim() && component.properties.content?.icon)}
     <UI.Select
       label={{ name: $T("constructor.props.height") }}
       type="buttons"
@@ -124,7 +120,7 @@
     label={{ name: $T("constructor.props.info.side") }}
     type="buttons"
     options={$optionsStore.INFO_SIDE_OPTIONS}
-    value={$optionsStore.INFO_SIDE_OPTIONS.find((h) => h.value === component.properties.content.info.side)}
+    value={$optionsStore.INFO_SIDE_OPTIONS.find((h) => h.value === component.properties.content?.info?.side)}
     onUpdate={(option) => updateProperty("content.info.side", (option as IOption<string>).value as string, component, onPropertyChange)}
   />
 {/snippet}
@@ -168,7 +164,7 @@
         snippet="IconsLib"
         initialValue={{
           name: $T("constructor.props.buttonIcon"),
-          icon: component.properties.content.icon,
+          icon: component.properties.content?.icon,
           updateProperty: (icon: string) => updateIconProperty("content.icon", icon as string),
           icons: { array: ICONS },
         }}
@@ -197,7 +193,7 @@
         snippet="IconsLib"
         initialValue={{
           name: $T("constructor.props.buttonIcon"),
-          icon: component.properties.content.icon,
+          icon: component.properties.content?.icon,
           updateProperty: (icon: string) => updateIconProperty("content.icon", icon as string),
           icons: { array: ICONS },
         }}

@@ -10,10 +10,13 @@
   import CommonSnippets from "$lib/CommonSnippets.svelte"
   import PropsGroup from "$lib/PropsGroup.svelte"
 
-  const { component, onPropertyChange } = $props<{
+  const {
+    component,
+    onPropertyChange,
+  }: {
     component: UIComponent & { properties: Partial<IWidgetMapProps> }
     onPropertyChange: (updates: Partial<{ properties?: string | object; name?: string; access?: string }>) => void
-  }>()
+  } = $props()
 
   /* Высота карты размерами, как у текстового поля: S/M/L/XL */
   const HEIGHT_OPTIONS = [

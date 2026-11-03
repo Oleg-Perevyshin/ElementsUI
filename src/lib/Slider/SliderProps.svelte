@@ -1,7 +1,7 @@
 <script lang="ts">
   import { getContext } from "svelte"
   import { T } from "$lib/locales/i18n"
-  import { type UIComponent, type ISliderProps, updateProperty, type IUIComponentHandler } from "../types"
+  import { type UIComponent, type ISliderProps, updateProperty, findOptionByClass, type IUIComponentHandler } from "../types"
   import * as UI from "$lib"
   import { optionsStore, findColorOption } from "../options"
   import CommonSnippets from "$lib/CommonSnippets.svelte"
@@ -11,20 +11,16 @@
     component,
     onPropertyChange,
     forConstructor = true,
-  } = $props<{
+  }: {
     component: UIComponent & { properties: Partial<ISliderProps> }
     onPropertyChange: (updates: Partial<{ properties?: string | object; name?: string; access?: string; eventHandler?: IUIComponentHandler }>) => void
     forConstructor?: boolean
-  }>()
+  } = $props()
 
   const DeviceVariables = getContext<{ id: string; value: string; name: string }[]>("DeviceVariables")
   let VARIABLE_OPTIONS = $derived(DeviceVariables && Array.isArray(DeviceVariables) ? DeviceVariables : [])
 
-  const initialAlign = $derived(
-    $optionsStore.TEXT_ALIGN_OPTIONS.find((a) =>
-      (a.value as string).includes(component.properties.label?.class?.split(" ").find((cls: string) => cls.startsWith("text-"))),
-    ),
-  )
+  const initialAlign = $derived(findOptionByClass($optionsStore.TEXT_ALIGN_OPTIONS, component.properties.label?.class, "text-"))
 
   const initialColor = $derived(findColorOption($optionsStore.COLOR_OPTIONS, component.properties.wrapperClass))
 </script>
@@ -45,7 +41,7 @@
 {#snippet SliderValue()}
   <UI.Input
     label={{ name: $T("constructor.props.value") }}
-    value={component.properties.value}
+    value={Array.isArray(component.properties.value) ? component.properties.value.join(",") : component.properties.value}
     onUpdate={(value) => updateProperty("value", value as string, component, onPropertyChange)}
   />
 {/snippet}
@@ -63,7 +59,6 @@
         snippet="MinMaxStep"
         initialValue={{
           number: component.properties.number,
-          bitMode: component.properties.bitMode,
           updateProperty: (value: number, property: string) => {
             updateProperty(property, Number(value), component, onPropertyChange)
           },
@@ -98,7 +93,6 @@
         snippet="MinMaxStep"
         initialValue={{
           number: component.properties.number,
-          bitMode: component.properties.bitMode,
           updateProperty: (value: number, property: string) => {
             updateProperty(property, Number(value), component, onPropertyChange)
           },

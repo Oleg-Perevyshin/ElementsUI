@@ -19,6 +19,12 @@ export const updateProperty = (
   onPropertyChange({ properties: newProperties })
 }
 
+/* Опция панели свойств, чьё значение содержит класс с префиксом из строки классов компонента (text-, justify-, py-...); класса нет — undefined */
+export const findOptionByClass = <O extends { value?: unknown }>(options: O[], classes: string | undefined, prefix: string): O | undefined => {
+  const cls = classes?.split(" ").find((c) => c.startsWith(prefix))
+  return cls ? options.find((option) => String(option.value).includes(cls)) : undefined
+}
+
 export const updateComponent = (
   component: UIComponent,
   updates: Partial<{

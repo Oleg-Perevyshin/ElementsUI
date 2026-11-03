@@ -167,37 +167,40 @@
             >{$T("widget.wifi.sta")}</span
           >
 
-          <div class="flex items-end gap-2">
-            <div use:hint={{ text: $T("widget.wifi.hint.ssid"), enabled: $hints }}>
-              <UI.Select
-                wrapperClass="flex-1"
-                type="input"
-                label={{ name: $T("widget.wifi.ssid") }}
-                value={{ id: "current", name: cfg.StaSSID, value: cfg.StaSSID }}
-                options={foundNetworks}
-                onUpdate={(option) => (cfg.StaSSID = String((option as IOption<string>).value ?? (option as IOption<string>).name ?? ""))}
+          <!-- SSID с поиском и пароль — одной строкой по 50%, на узком экране друг под другом -->
+          <div class="grid grid-cols-1 gap-x-4 gap-y-3 sm:grid-cols-2">
+            <div class="flex min-w-0 items-end gap-2">
+              <div class="min-w-0 flex-1" use:hint={{ text: $T("widget.wifi.hint.ssid"), enabled: $hints }}>
+                <UI.Select
+                  wrapperClass="w-full"
+                  type="input"
+                  label={{ name: $T("widget.wifi.ssid") }}
+                  value={{ id: "current", name: cfg.StaSSID, value: cfg.StaSSID }}
+                  options={foundNetworks}
+                  onUpdate={(option) => (cfg.StaSSID = String((option as IOption<string>).value ?? (option as IOption<string>).name ?? ""))}
+                />
+              </div>
+              <UI.Button
+                wrapperClass="w-8"
+                componentClass="p-1"
+                content={{ icon: scanning ? LoaderIcon : SearchIcon, info: { text: $T("widget.wifi.scan"), side: "top" } }}
+                disabled={scanning || !onScan}
+                onClick={scanNetworks}
               />
             </div>
-            <UI.Button
-              wrapperClass="w-8"
-              componentClass="p-1"
-              content={{ icon: scanning ? LoaderIcon : SearchIcon, info: { text: $T("widget.wifi.scan"), side: "top" } }}
-              disabled={scanning || !onScan}
-              onClick={scanNetworks}
+
+            <!-- one-time-code: менеджер паролей браузера не считает поле паролем входа и не накрывает список сетей у SSID
+                 своими сохранёнными логинами (autocomplete="off" для паролей Chrome игнорирует) -->
+            <UI.Input
+              type="password"
+              label={{ name: $T("widget.common.password") }}
+              bind:value={cfg.StaPSK}
+              maxlength={64}
+              help={{ autocomplete: "one-time-code", regExp: PSK_REGEXP }}
             />
           </div>
 
-          <!-- one-time-code: менеджер паролей браузера не считает поле паролем входа и не накрывает список сетей у SSID
-               своими сохранёнными логинами (autocomplete="off" для паролей Chrome игнорирует) -->
-          <UI.Input
-            type="password"
-            label={{ name: $T("widget.common.password") }}
-            bind:value={cfg.StaPSK}
-            maxlength={64}
-            help={{ autocomplete: "one-time-code", regExp: PSK_REGEXP }}
-          />
-
-          <div class="w-48" use:hint={{ text: $T("widget.wifi.hint.ip_mode"), enabled: $hints }}>
+          <div class="w-full sm:w-72" use:hint={{ text: $T("widget.wifi.hint.ip_mode"), enabled: $hints }}>
             <UI.Select
               wrapperClass="w-full"
               type="buttons"
@@ -249,7 +252,8 @@
             >{$T("widget.wifi.ap")}</span
           >
 
-          <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
+          <!-- Те же колонки, что у STA: в режиме STA + AP пароли стоят друг под другом -->
+          <div class="grid grid-cols-1 gap-x-4 gap-y-3 sm:grid-cols-2">
             <UI.Input label={{ name: "SSID" }} bind:value={cfg.ApSSID} maxlength={32} />
             <UI.Input
               type="password"

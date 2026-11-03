@@ -1,7 +1,7 @@
 <script lang="ts">
   import TextsEditor from "../TextsEditor.svelte"
   import { T } from "$lib/locales/i18n"
-  import { updateProperty, type ITextFieldProps, type IUIComponentHandler, type UIComponent } from "../types"
+  import { findOptionByClass, updateProperty, type ITextFieldProps, type IUIComponentHandler, type UIComponent } from "../types"
   import * as UI from "$lib/index"
   import { optionsStore, findColorOption } from "$lib/options"
   import { getContext } from "svelte"
@@ -13,21 +13,18 @@
     component,
     onPropertyChange,
     forConstructor = true,
-  } = $props<{
+  }: {
     component: UIComponent & { properties: Partial<ITextFieldProps> }
     onPropertyChange: (updates: Partial<{ properties?: string | object; name?: string; access?: string; eventHandler?: IUIComponentHandler }>) => void
     forConstructor?: boolean
-  }>()
+  } = $props()
   const DeviceVariables = getContext<{ id: string; value: string; name: string }[]>("DeviceVariables")
   let VARIABLE_OPTIONS = $derived(DeviceVariables && Array.isArray(DeviceVariables) ? DeviceVariables : [])
 
-  let currentType = $derived($optionsStore.TEXTFIELD_SIZE_OPTIONS.find((t) => t.value === component.properties.content.size))
+  const contentClass = $derived(component.properties.content?.class ?? "")
+  let currentType = $derived($optionsStore.TEXTFIELD_SIZE_OPTIONS.find((t) => t.value === component.properties.content?.size))
 
-  const initialAlign = $derived(
-    $optionsStore.TEXT_ALIGN_OPTIONS.find((a) =>
-      (a.value as string).includes(component.properties.content?.class?.split(" ").find((cls: string) => cls.startsWith("text-"))),
-    ),
-  )
+  const initialAlign = $derived(findOptionByClass($optionsStore.TEXT_ALIGN_OPTIONS, component.properties.content?.class, "text-"))
   const initialColor = $derived(findColorOption($optionsStore.TEXT_COLOR_OPTIONS, component.properties.wrapperClass, "text-"))
 </script>
 
@@ -62,7 +59,7 @@
     type="buttons"
     multiSelect={true}
     value={$optionsStore.TEXTFIELD_SETTINGS_OPTIONS.filter((opt) => {
-      if (component.properties.content.class.includes(`${opt.value}`) && !component.properties.content.class.includes(`not-${opt.value}`)) return opt
+      if (contentClass.includes(`${opt.value}`) && !contentClass.includes(`not-${opt.value}`)) return opt
       if (opt.value == "background" && component.properties.background) return opt
       if (opt.value == "underline" && component.properties.underline) return opt
     })}
@@ -71,7 +68,7 @@
       const currentActiveValues = $optionsStore.TEXTFIELD_SETTINGS_OPTIONS.filter((opt) => {
         if (!opt?.value) return false
         return (
-          (component.properties.content.class.includes(`${opt.value}`) && !component.properties.content.class.includes(`not-${opt.value}`)) ||
+          (contentClass.includes(`${opt.value}`) && !contentClass.includes(`not-${opt.value}`)) ||
           (opt.value == "background" && component.properties.background) ||
           (opt.value == "underline" && component.properties.underline)
         )
@@ -82,12 +79,7 @@
             ? updateProperty("background", true, component, onPropertyChange)
             : opt?.value === "underline"
               ? updateProperty("underline", true, component, onPropertyChange)
-              : updateProperty(
-                  "content.class",
-                  twMerge(`${component.properties.content.class} ${opt.value === "bold" ? "font-bold" : "italic"}`),
-                  component,
-                  onPropertyChange,
-                )
+              : updateProperty("content.class", twMerge(`${contentClass} ${opt.value === "bold" ? "font-bold" : "italic"}`), component, onPropertyChange)
         })
 
         currentActiveValues.forEach((activeValue) => {
@@ -98,7 +90,7 @@
                 ? updateProperty("underline", false, component, onPropertyChange)
                 : updateProperty(
                     "content.class",
-                    twMerge(`${component.properties.content.class} ${activeValue === "bold" ? "font-normal" : "not-italic"}`),
+                    twMerge(`${contentClass} ${activeValue === "bold" ? "font-normal" : "not-italic"}`),
                     component,
                     onPropertyChange,
                   )
@@ -112,7 +104,7 @@
 {#snippet TextFieldComponentClass()}
   <UI.Input
     label={{ name: $T("constructor.props.componentclass") }}
-    value={component.properties.content.class}
+    value={contentClass}
     onUpdate={(value) => updateProperty("content.class", value as string, component, onPropertyChange)}
   />
 {/snippet}

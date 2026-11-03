@@ -51,7 +51,7 @@
     if (!added) return
     mapCtx.waitForStyleLoaded((map) => {
       if (!map.getLayer(id)) return
-      for (const [name, value] of Object.entries(paint)) map.setPaintProperty(id, name, value)
+      for (const [name, value] of Object.entries(paint)) map.setPaintProperty(id, name as Parameters<typeof map.setPaintProperty>[1], value)
     })
   })
 

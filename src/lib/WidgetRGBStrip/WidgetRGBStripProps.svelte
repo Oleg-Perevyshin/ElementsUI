@@ -8,10 +8,13 @@
   import WidgetAccentPicker from "../WidgetAccentPicker.svelte"
   import PropsGroup from "$lib/PropsGroup.svelte"
 
-  const { component, onPropertyChange } = $props<{
+  const {
+    component,
+    onPropertyChange,
+  }: {
     component: UIComponent & { properties: Partial<IWidgetRGBStripProps> }
     onPropertyChange: (updates: Partial<{ properties?: string | object; name?: string; access?: string }>) => void
-  }>()
+  } = $props()
 </script>
 
 <div class="flex flex-col gap-2">

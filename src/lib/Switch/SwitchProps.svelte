@@ -1,7 +1,7 @@
 <script lang="ts">
   import { getContext } from "svelte"
   import { T } from "$lib/locales/i18n"
-  import { type UIComponent, type ISwitchProps, updateProperty, type IOption, type IUIComponentHandler } from "../types"
+  import { type UIComponent, type ISwitchProps, updateProperty, findOptionByClass, type IOption, type IUIComponentHandler } from "../types"
   import * as UI from "$lib"
   import { optionsStore, findColorOption } from "../options"
   import ButtonDelete from "$lib/libIcons/ButtonDelete.svelte"
@@ -15,21 +15,17 @@
     component,
     onPropertyChange,
     forConstructor = true,
-  } = $props<{
+  }: {
     component: UIComponent & { properties: Partial<ISwitchProps> }
     onPropertyChange: (updates: Partial<{ properties?: string | object; name?: string; access?: string; eventHandler?: IUIComponentHandler }>) => void
     forConstructor?: boolean
-  }>()
+  } = $props()
   const DeviceVariables = getContext<{ id: string; value: string; name: string }[]>("DeviceVariables")
   let VARIABLE_OPTIONS = $derived(DeviceVariables && Array.isArray(DeviceVariables) ? DeviceVariables : [])
   /* Колонки строки бита: метка, позиция, цвет, отключение, удаление */
   const BIT_GRID = "grid-cols-[minmax(4rem,1fr)_minmax(4rem,1fr)_minmax(0,2fr)_auto_2rem]"
   let initialColor = $derived(findColorOption($optionsStore.COLOR_OPTIONS, component.properties.options?.[0]?.class))
-  const initialAlign = $derived(
-    $optionsStore.TEXT_ALIGN_OPTIONS.find((a) =>
-      (a.value as string).includes(component.properties.label?.class?.split(" ").find((cls: string) => cls.startsWith("text-"))),
-    ),
-  )
+  const initialAlign = $derived(findOptionByClass($optionsStore.TEXT_ALIGN_OPTIONS, component.properties.label?.class, "text-"))
 </script>
 
 {#snippet SwitchType()}
@@ -47,11 +43,11 @@
   <UI.Switch
     wrapperClass="bg-blue"
     label={{ name: $T("constructor.props.disabled") }}
-    value={component.properties.options[0].disabled}
+    value={component.properties.options?.[0]?.disabled ? 1 : 0}
     options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
     onChange={(value) => {
       const options = [...(component.properties?.options || [])]
-      options[0]["disabled"] = value
+      options[0]["disabled"] = value === 1
       updateProperty("options", options, component, onPropertyChange)
     }}
   />
@@ -61,7 +57,7 @@
   <UI.Switch
     wrapperClass="bg-blue"
     label={{ name: $T("constructor.props.bitMode") }}
-    value={component.properties.bitMode}
+    value={component.properties.bitMode ? 1 : 0}
     options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
     onChange={(value) => {
       updateProperty("bitMode", value === 1, component, onPropertyChange)
@@ -76,15 +72,15 @@
     {#snippet main()}
       <PropsGroup>
         {#snippet headerActions()}
-          {#if component.properties.options.length < 32}
+          {#if (component.properties.options?.length ?? 0) < 32}
             <UI.Button
               wrapperClass="w-8"
               content={{ icon: ButtonAdd }}
               onClick={() => {
                 const newOption: IOption = {
                   id: crypto.randomUUID(),
-                  name: component.properties?.options.length,
-                  value: component.properties?.options.length,
+                  name: String(component.properties.options?.length ?? 0),
+                  value: component.properties.options?.length ?? 0,
                   class: "bg-blue",
                 }
                 const options = [...(component.properties?.options || []), newOption]
@@ -108,7 +104,7 @@
               maxlength={4}
               onUpdate={(value) => {
                 const options = [...(component.properties?.options || [])]
-                options[index]["name"] = value
+                options[index]["name"] = String(value)
                 updateProperty("options", options, component, onPropertyChange)
               }}
             />
@@ -118,7 +114,7 @@
               number={{ minNum: 0, maxNum: 31, step: 1 }}
               onUpdate={(value) => {
                 const options = [...(component.properties?.options || [])]
-                options[index]["value"] = value
+                options[index]["value"] = Number(value)
                 updateProperty("options", options, component, onPropertyChange)
               }}
             />
@@ -128,18 +124,18 @@
               value={findColorOption($optionsStore.COLOR_OPTIONS, option.class)}
               onUpdate={(option) => {
                 const options = [...(component.properties?.options || [])]
-                options[index]["class"] = (option as UI.IOption).value
+                options[index]["class"] = (option as UI.IOption).value as string
                 updateProperty("options", options, component, onPropertyChange)
               }}
             />
             <UI.Switch
               wrapperClass="bg-blue"
               label={{ captionRight: $T("constructor.props.disabled") }}
-              value={option.disabled}
+              value={option.disabled ? 1 : 0}
               options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
               onChange={(value) => {
                 const options = [...(component.properties?.options || [])]
-                options[index]["disabled"] = value
+                options[index]["disabled"] = value === 1
                 updateProperty("options", options, component, onPropertyChange)
               }}
             />
@@ -207,7 +203,7 @@
             uselessColors: ["bg-gray", "bg-max"],
             updateProperty: (option: UI.IOption) => {
               const options = [...(component.properties?.options || [])]
-              options[0]["class"] = (option as UI.IOption).value
+              options[0]["class"] = (option as UI.IOption).value as string
               updateProperty("options", options, component, onPropertyChange)
             },
           }}
@@ -238,7 +234,7 @@
             uselessColors: ["bg-gray", "bg-max"],
             updateProperty: (option: UI.IOption) => {
               const options = [...(component.properties?.options || [])]
-              options[0]["class"] = (option as UI.IOption).value
+              options[0]["class"] = (option as UI.IOption).value as string
               updateProperty("options", options, component, onPropertyChange)
             },
           }}

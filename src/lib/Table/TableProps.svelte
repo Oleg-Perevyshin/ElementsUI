@@ -1,7 +1,15 @@
 <script lang="ts">
   import { getContext } from "svelte"
   import { T } from "$lib/locales/i18n"
-  import { type UIComponent, type ITableProps, type ITableHeader, updateProperty, type IUIComponentHandler, type ITableContent } from "../types"
+  import {
+    type UIComponent,
+    type ITableProps,
+    type ITableHeader,
+    updateProperty,
+    findOptionByClass,
+    type IUIComponentHandler,
+    type ITableContent,
+  } from "../types"
   import * as UI from "$lib"
   import ButtonDelete from "$lib/libIcons/ButtonDelete.svelte"
   import ButtonAdd from "$lib/libIcons/ButtonAdd.svelte"
@@ -18,11 +26,11 @@
     component,
     onPropertyChange,
     forConstructor = true,
-  } = $props<{
+  }: {
     component: UIComponent & { properties: Partial<ITableProps<object>> }
     onPropertyChange: (updates: Partial<{ properties?: string | object; name?: string; access?: string; eventHandler?: IUIComponentHandler }>) => void
     forConstructor?: boolean
-  }>()
+  } = $props()
 
   const DeviceVariables = getContext<{ id: string; value: string; name: string }[]>("DeviceVariables")
   let VARIABLE_OPTIONS = $derived(DeviceVariables && Array.isArray(DeviceVariables) ? DeviceVariables : [])
@@ -31,11 +39,7 @@
 
   const initialColor = $derived(findColorOption($optionsStore.COLOR_OPTIONS, component.properties.wrapperClass))
 
-  const initialAlign = $derived(
-    $optionsStore.TEXT_ALIGN_OPTIONS.find((a) =>
-      (a.value as string).includes(component.properties.label?.class?.split(" ").find((cls: string) => cls.startsWith("text-"))),
-    ),
-  )
+  const initialAlign = $derived(findOptionByClass($optionsStore.TEXT_ALIGN_OPTIONS, component.properties.label?.class, "text-"))
 
   let settingsContainer: HTMLDivElement[] = $state([])
   let columnContainer: HTMLDivElement | null = $state(null)
@@ -50,26 +54,34 @@
     "border-l-(--purple-color)",
   ]
 
+  /* В конструкторе содержимое столбца — сохранённые данные: массив, а не функция (row) => ... из кода приложений;
+     data элемента правится как обычный объект полей */
+  const columnContent = (column: ITableHeader<object> | undefined): ITableContent<object>[] => (Array.isArray(column?.content) ? column.content : [])
+  const contentData = (columnIndex: number, index: number) =>
+    (columnContent(component.properties.header?.[columnIndex])[index]?.data ?? {}) as Record<string, unknown>
+
   const changeColumnSettings = (settings: UI.IOption<string> | UI.IOption<string>[], columnIndex: number, index: number) => {
-    const currentActiveValues = $optionsStore.TABLE_TEXT_SETTING_OPTIONS.filter(
-      (opt) => component.properties.header[columnIndex].content[index].data[opt.value] === true,
-    ).map((opt) => opt.value)
+    const data = contentData(columnIndex, index)
+    const currentActiveValues = $optionsStore.TABLE_TEXT_SETTING_OPTIONS.filter((opt) => opt.value && data[opt.value] === true).map((opt) => opt.value)
 
     if (Array.isArray(settings)) {
       settings.forEach((opt) => {
-        if (opt?.value) component.properties.header[columnIndex].content[index].data[opt.value] = true
+        if (opt?.value) data[opt.value] = true
       })
 
       currentActiveValues.forEach((activeValue) => {
-        if (!settings.some((opt) => opt?.value === activeValue)) component.properties.header[columnIndex].content[index].data[activeValue] = false
+        if (activeValue && !settings.some((opt) => opt?.value === activeValue)) data[activeValue] = false
       })
     }
   }
 
   const addContent = (option: UI.IOption, event: MouseEvent, columnIndex: number) => {
     event.stopPropagation()
-    let header = component.properties.header
-    header[columnIndex].content.push({
+    const header = component.properties.header ?? []
+    const column = header[columnIndex]
+    if (!column) return
+    if (!Array.isArray(column.content)) column.content = []
+    column.content.push({
       type: option.value,
       data:
         option.value === "button"
@@ -80,21 +92,23 @@
               onClick: () => {},
             }
           : {},
-    })
+    } as ITableContent<object>)
 
     updateProperty("header", header, component, onPropertyChange)
     isDropdownOpen = -1
   }
 
   const updateTableHeader = (index: number, field: string, value: any) => {
-    const headers = [...component.properties.header]
+    const headers = [...(component.properties.header ?? [])]
     headers[index] = { ...headers[index], [field]: value }
     updateProperty("header", headers, component, onPropertyChange)
   }
 
   const updateContentProperty = (columnIndex: number, index: number, field: string, value: any) => {
-    const headers = [...component.properties.header]
-    headers[columnIndex].content[index].data = { ...headers[columnIndex].content[index].data, [field]: value }
+    const headers = [...(component.properties.header ?? [])]
+    const item = columnContent(headers[columnIndex])[index]
+    if (!item) return
+    item.data = { ...item.data, [field]: value }
     updateProperty("header", headers, component, onPropertyChange)
   }
 </script>
@@ -102,7 +116,7 @@
 {#snippet TableOutline()}
   <UI.Switch
     label={{ name: $T("constructor.props.outline") }}
-    value={component.properties.outline}
+    value={component.properties.outline ? 1 : 0}
     options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
     onChange={(value) => updateProperty("outline", value === 1, component, onPropertyChange)}
   />
@@ -113,7 +127,7 @@
     label={{ name: $T("constructor.props.table.buffersize") }}
     type="buttons"
     options={$optionsStore.BUFFER_SIZE_OPTIONS}
-    value={$optionsStore.BUFFER_SIZE_OPTIONS.find((o) => o.value === component.properties.dataBuffer.bufferSize)}
+    value={$optionsStore.BUFFER_SIZE_OPTIONS.find((o) => o.value === component.properties.dataBuffer?.bufferSize)}
     onUpdate={(value) => updateProperty("dataBuffer.bufferSize", (value as UI.IOption<number>).value as number, component, onPropertyChange)}
   />
 {/snippet}
@@ -123,7 +137,7 @@
     label={{ name: $T("constructor.props.table.visibleRows") }}
     type="buttons"
     options={$optionsStore.VISIBLE_ROWS_OPTIONS}
-    value={$optionsStore.VISIBLE_ROWS_OPTIONS.find((o) => o.value === component.properties.dataBuffer.visibleRows)}
+    value={$optionsStore.VISIBLE_ROWS_OPTIONS.find((o) => o.value === component.properties.dataBuffer?.visibleRows)}
     onUpdate={(value) => updateProperty("dataBuffer.visibleRows", (value as UI.IOption<number>).value as number, component, onPropertyChange)}
   />
 {/snippet}
@@ -150,7 +164,7 @@
         {/snippet}
 
         <div bind:this={columnContainer} class="flex flex-col gap-2">
-          {#each component.properties.header as column, columnIndex (columnIndex)}
+          {#each component.properties.header ?? [] as column, columnIndex (columnIndex)}
             <div
               id="column-{columnIndex}"
               class="relative flex flex-col rounded-[10px] border border-(--hairline-color) border-l-2 bg-(--container-color)/40 p-1.5 {columnAccentColors[
@@ -160,7 +174,7 @@
               <Dragging
                 wrapperClass="absolute top-10"
                 container={columnContainer}
-                array={component.properties.header}
+                array={component.properties.header ?? []}
                 elementsId="column"
                 elementIndex={columnIndex}
                 onUpdate={(updatedArray) => {
@@ -173,8 +187,11 @@
                 <UI.Input
                   label={{ name: $T("constructor.props.table.columns.width"), class: "px-0" }}
                   type="number"
-                  isValid={component.properties.header.reduce((width: number, h: ITableHeader<object>) => Number(h.width?.replace("%", "")) + width, 0) == 100}
-                  value={Number(column.width.replace("%", ""))}
+                  isValid={(component.properties.header ?? []).reduce(
+                    (width: number, h: ITableHeader<object>) => Number(h.width?.replace("%", "")) + width,
+                    0,
+                  ) == 100}
+                  value={Number(column.width?.replace("%", ""))}
                   onUpdate={(value) => updateTableHeader(columnIndex, "width", `${value}%`)}
                 />
                 <UI.Select
@@ -226,7 +243,8 @@
               </div>
               <div class="flex flex-col gap-2" bind:this={settingsContainer[columnIndex]}>
                 {#if typeof column.content !== "function"}
-                  {#each column.content as content, index}
+                  {@const contentItems = column.content ?? []}
+                  {#each contentItems as content, index}
                     <div
                       id={`item-${index}-${columnIndex}`}
                       class="grid grid-cols-[auto_1fr_auto] items-center gap-2 rounded-lg border border-(--hairline-color) bg-(--back-color)/60 p-2"
@@ -234,12 +252,12 @@
                       <Dragging
                         wrapperClass="shrink-0"
                         container={settingsContainer[columnIndex]}
-                        array={column.content}
+                        array={contentItems}
                         elementIndex={index}
                         containerIndex={columnIndex}
                         onUpdate={(updatedArray, index) => {
                           if (index === columnIndex) {
-                            const headers = [...component.properties.header]
+                            const headers = [...(component.properties.header ?? [])]
                             headers[columnIndex].content = updatedArray
                             updateProperty("header", headers, component, onPropertyChange)
                           }
@@ -258,7 +276,7 @@
                                 updateTableHeader(
                                   columnIndex,
                                   "content",
-                                  column.content.map((textItem: any, i: number) =>
+                                  contentItems.map((textItem: any, i: number) =>
                                     i == index ? { ...textItem, data: { ...textItem.data, key: value } } : textItem,
                                   ),
                                 )
@@ -270,7 +288,7 @@
                               type="buttons"
                               multiSelect={true}
                               value={$optionsStore.TABLE_TEXT_SETTING_OPTIONS.slice(0, forConstructor ? 3 : 5).filter((opt) => {
-                                if (column.content[index].data[opt.value]) return opt
+                                if (opt.value && contentData(columnIndex, index)[opt.value]) return opt
                               })}
                               options={$optionsStore.TABLE_TEXT_SETTING_OPTIONS.slice(0, forConstructor ? 3 : 5)}
                               onUpdate={(value) => changeColumnSettings(value, columnIndex, index)}
@@ -288,7 +306,7 @@
                                 updateTableHeader(
                                   columnIndex,
                                   "content",
-                                  column.content.map((textItem: any, i: number) =>
+                                  contentItems.map((textItem: any, i: number) =>
                                     i == index ? { ...textItem, data: { ...textItem.data, key: value } } : textItem,
                                   ),
                                 )
@@ -301,15 +319,11 @@
                               value={select?.keyCol ?? ""}
                               maxlength={500}
                               help={{ info: $T("constructor.props.table.select.keys.info"), regExp: /^[a-zA-Z0-9\-_ ]{0,500}$/ }}
-                              onUpdate={(value) => {
-                                const headers = [...component.properties.header]
-                                headers[columnIndex].content[index].data = { ...headers[columnIndex].content[index].data, keyCol: value }
-                                updateProperty("header", headers, component, onPropertyChange)
-                              }}
+                              onUpdate={(value) => updateContentProperty(columnIndex, index, "keyCol", value)}
                             />
                           </div>
                         {:else if content.type == "button"}
-                          {@const button = content.data}
+                          {@const button = typeof content.data === "function" ? {} : content.data}
                           <!-- Строка 1 — как выглядит кнопка, строка 2 — какую команду она шлёт -->
                           <div class="flex flex-wrap items-end gap-2">
                             <div class="relative min-w-32 flex-1">
@@ -317,7 +331,7 @@
                                 snippet="IconsLib"
                                 initialValue={{
                                   name: $T("constructor.props.table.type.icon"),
-                                  icon: column.content[index].data.icon,
+                                  icon: button.icon,
                                   updateProperty: (icon: string) => updateContentProperty(columnIndex, index, "icon", icon),
                                   icons: { array: ICONS },
                                 }}
@@ -335,7 +349,10 @@
                                 label={{ name: $T("constructor.props.colors") }}
                                 type="buttons"
                                 options={$optionsStore.COLOR_OPTIONS.filter((option) => option.value !== "bg-max")}
-                                value={findColorOption($optionsStore.COLOR_OPTIONS, button.class ?? component.properties.wrapperClass)}
+                                value={findColorOption(
+                                  $optionsStore.COLOR_OPTIONS,
+                                  typeof button.class === "string" ? button.class : component.properties.wrapperClass,
+                                )}
                                 onUpdate={(option) => {
                                   if (button.class === (option as UI.IOption).value) updateContentProperty(columnIndex, index, "class", "bg-transparent")
                                   else updateContentProperty(columnIndex, index, "class", (option as UI.IOption).value)
@@ -351,8 +368,7 @@
                               value={$optionsStore.HEADER_OPTIONS.find((h) => h.value === button.eventHandler?.Header)}
                               options={$optionsStore.HEADER_OPTIONS}
                               onUpdate={(option) => {
-                                const handler = button.eventHandler
-                                handler.Header = (option as UI.IOption).value as string
+                                const handler = { ...button.eventHandler, Header: (option as UI.IOption).value as string }
                                 updateContentProperty(columnIndex, index, "eventHandler", handler)
                               }}
                             />
@@ -361,15 +377,14 @@
                               label={{ name: $T("constructor.props.argument") }}
                               value={button.eventHandler?.Argument}
                               onUpdate={(value) => {
-                                const handler = button.eventHandler
-                                handler.Argument = value as string
+                                const handler = { ...button.eventHandler, Argument: value as string }
                                 updateContentProperty(columnIndex, index, "eventHandler", handler)
                               }}
                             />
                             <UI.Input
                               wrapperClass="min-w-40 flex-[2]"
                               label={{ name: $T("constructor.props.table.keys") }}
-                              value={button.eventHandler?.Variables.join(" ")}
+                              value={button.eventHandler?.Variables?.join(" ")}
                               maxlength={500}
                               help={{ info: $T("constructor.props.table.keys.info"), regExp: /^[a-zA-Z0-9\-._ ]{0,500}$/ }}
                               onUpdate={(value) => {
@@ -391,7 +406,7 @@
                                 updateTableHeader(
                                   columnIndex,
                                   "content",
-                                  column.content.map((textItem: any, i: number) =>
+                                  contentItems.map((textItem: any, i: number) =>
                                     i == index ? { ...textItem, data: { ...textItem.data, key: value } } : textItem,
                                   ),
                                 )
@@ -477,10 +492,10 @@
                   {/each}
                 {/if}
               </div>
-              <div id={`item-${column.content.length}-${columnIndex}`} class="min-h-2"></div>
+              <div id={`item-${columnContent(column).length}-${columnIndex}`} class="min-h-2"></div>
             </div>
           {/each}
-          <div id={`column-${component.properties.header.length}`} class="min-h-4"></div>
+          <div id={`column-${component.properties.header?.length ?? 0}`} class="min-h-4"></div>
         </div>
       </PropsGroup>
     {/snippet}
@@ -490,7 +505,7 @@
 {#snippet TableStashData()}
   <UI.Switch
     label={{ name: $T("constructor.props.table.stashData") }}
-    value={component.properties.dataBuffer.stashData}
+    value={component.properties.dataBuffer?.stashData ? 1 : 0}
     options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
     onChange={(value) => {
       updateProperty("dataBuffer.stashData", value === 1, component, onPropertyChange)
@@ -507,8 +522,8 @@
     label={{
       name: $T("constructor.props.table.clearButton"),
     }}
-    value={component.properties.dataBuffer.clearButton}
-    options={[{ id: crypto.randomUUID(), value: 0, class: "", disabled: !component.properties.dataBuffer.stashData }]}
+    value={component.properties.dataBuffer?.clearButton ? 1 : 0}
+    options={[{ id: crypto.randomUUID(), value: 0, class: "", disabled: !component.properties.dataBuffer?.stashData }]}
     onChange={(value) => updateProperty("dataBuffer.clearButton", value === 1, component, onPropertyChange)}
   />
 {/snippet}
@@ -516,8 +531,8 @@
 {#snippet TableLogger()}
   <UI.Switch
     label={{ name: $T("constructor.props.table.logger"), captionLeft: $T("constructor.props.info.bottom"), captionRight: $T("constructor.props.info.top") }}
-    value={component.properties.dataBuffer.logger}
-    options={[{ id: crypto.randomUUID(), value: 0, class: "", disabled: !component.properties.dataBuffer.stashData }]}
+    value={component.properties.dataBuffer?.logger ? 1 : 0}
+    options={[{ id: crypto.randomUUID(), value: 0, class: "", disabled: !component.properties.dataBuffer?.stashData }]}
     onChange={(value) => updateProperty("dataBuffer.logger", value === 1, component, onPropertyChange)}
   />
 {/snippet}
@@ -528,7 +543,7 @@
       <CommonSnippets snippet="Access" {component} {onPropertyChange} />
       <CommonSnippets snippet="Variable" {VARIABLE_OPTIONS} {component} {onPropertyChange} />
       {@render TableStashData()}
-      {#if component.properties.dataBuffer.stashData}
+      {#if component.properties.dataBuffer?.stashData}
         <div class="flex items-end">
           {@render TableClearButton()}
           {@render TableLogger()}
@@ -538,14 +553,14 @@
     <PropsGroup label={$T("constructor.props.group.appearance")}>
       <CommonSnippets snippet="Colors" initialValue={{ color: initialColor }} {component} {onPropertyChange} />
       {@render TableOutline()}
-      {#if component.properties.dataBuffer.stashData}
+      {#if component.properties.dataBuffer?.stashData}
         {@render TableBufferSize()}
       {/if}
     </PropsGroup>
     <PropsGroup label={$T("constructor.props.group.content")}>
       <CommonSnippets snippet="Label" {component} {onPropertyChange} />
       <CommonSnippets snippet="LabelAlign" initialValue={initialAlign} {component} {onPropertyChange} />
-      {#if component.properties.dataBuffer.stashData}
+      {#if component.properties.dataBuffer?.stashData}
         {@render TableVisibleRows()}
       {/if}
     </PropsGroup>
@@ -573,7 +588,7 @@
       </div>
       {@render TableLogger()}
 
-      {#if component.properties.dataBuffer.stashData}
+      {#if component.properties.dataBuffer?.stashData}
         {@render TableBufferSize()}
         {@render TableVisibleRows()}
       {/if}

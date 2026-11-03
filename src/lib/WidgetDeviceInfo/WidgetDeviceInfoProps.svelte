@@ -13,10 +13,13 @@
 
   const DEVICE_INFO_KEYS: (keyof IWidgetDeviceInfoConfig)[] = ["DevSN", "DevID", "DevFW", "RunCnt", "DevName", "HostName", "WebUser", "WebPsw", "StaIP", "ApIP"]
 
-  const { component, onPropertyChange } = $props<{
+  const {
+    component,
+    onPropertyChange,
+  }: {
     component: UIComponent & { properties: Partial<IWidgetDeviceInfoProps> }
     onPropertyChange: (updates: Partial<{ properties?: string | object; name?: string; access?: string }>) => void
-  }>()
+  } = $props()
 </script>
 
 {#snippet WidgetKeys()}

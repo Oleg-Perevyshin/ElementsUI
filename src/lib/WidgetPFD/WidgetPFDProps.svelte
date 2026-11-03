@@ -8,10 +8,13 @@
   import WidgetAccentPicker from "../WidgetAccentPicker.svelte"
   import PropsGroup from "$lib/PropsGroup.svelte"
 
-  const { component, onPropertyChange } = $props<{
+  const {
+    component,
+    onPropertyChange,
+  }: {
     component: UIComponent & { properties: Partial<IWidgetPFDProps> }
     onPropertyChange: (updates: Partial<{ properties?: string | object; name?: string; access?: string }>) => void
-  }>()
+  } = $props()
 
   /* Пустое поле — граница не задана (зона не рисуется) */
   const setLimit = (key: keyof IWidgetPFDLimits, raw: unknown) => {

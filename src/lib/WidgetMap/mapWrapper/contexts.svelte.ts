@@ -10,6 +10,7 @@ import type {
   ProjectionSpecification,
   LightSpecification,
 } from "maplibre-gl"
+import type * as maplibregl from "maplibre-gl"
 import { setContext, getContext } from "svelte"
 
 const MAP_CONTEXT_KEY = Symbol("MapLibre map context")
@@ -22,7 +23,7 @@ class MapContext {
   /** Map instance */
   _map: MapLibre | null = $state.raw(null)
   /** Callbacks to be called when the map style is loaded */
-  private _listener?: maplibregl.Listener = undefined
+  private _listener?: (ev: maplibregl.MapStyleDataEvent) => void = undefined
   private _pending: ((map: maplibregl.Map) => void)[] = []
   /** Names of layers dynamically added */
   userLayers: Set<string> = new Set()

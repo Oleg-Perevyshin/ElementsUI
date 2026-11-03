@@ -17,11 +17,11 @@
     component,
     onPropertyChange,
     forConstructor = true,
-  } = $props<{
+  }: {
     component: UIComponent & { properties: Partial<IProgressBarProps> }
     onPropertyChange: (updates: Partial<{ properties?: string | object; name?: string; access?: string; eventHandler?: IUIComponentHandler }>) => void
     forConstructor?: boolean
-  }>()
+  } = $props()
 
   const DeviceVariables = getContext<{ id: string; value: string; name: string }[]>("DeviceVariables")
   let VARIABLE_OPTIONS = $derived(DeviceVariables && Array.isArray(DeviceVariables) ? DeviceVariables : [])
@@ -34,7 +34,6 @@
   <UI.Select
     wrapperClass="!h-14"
     label={{ name: $T("constructor.props.type") }}
-    disabled={component.properties.bitMode}
     type="buttons"
     options={$optionsStore.SWITCH_OPTIONS.filter((o) => o.value !== "checkbox")}
     value={$optionsStore.SWITCH_OPTIONS.find((option) => option.value == component.properties.type)}
@@ -63,8 +62,8 @@
               updateProperty("items", progresses, component, onPropertyChange)
               updateProperty(
                 "value",
-                Array.from(component.properties?.items, (x: { name?: string; class?: string }) => {
-                  return { Name: x.name, Value: (component.properties.number.maxNum - component.properties.number.minNum) / 2 }
+                Array.from(component.properties.items ?? [], (x: { name?: string; class?: string }) => {
+                  return { Name: x.name, Value: ((component.properties.number?.maxNum ?? 0) - (component.properties.number?.minNum ?? 0)) / 2 }
                 }),
                 component,
                 onPropertyChange,
@@ -93,7 +92,7 @@
             >
               <UI.Dragging
                 container={itemsContainer}
-                array={component.properties.items}
+                array={component.properties.items ?? []}
                 elementIndex={index}
                 onUpdate={(updatedArray) => {
                   updateProperty("items", updatedArray, component, onPropertyChange)
@@ -118,16 +117,16 @@
                 />
               {:else}
                 <UI.Input
-                  value={(component.properties.value || [])[index]?.Value}
+                  value={(component.properties.value || [])[index]?.Value as number | string | undefined}
                   type="number"
                   onUpdate={(value) => {
                     const base =
                       component.properties?.value ||
-                      component.properties?.items.map((item: { name?: string; class?: string }, i: number) => ({
+                      (component.properties.items ?? []).map((item: { name?: string; class?: string }, i: number) => ({
                         Name: item.name,
                         Value: i == index ? value : 0,
                       }))
-                    const progresses = base.map((p: { Name?: string; Value?: number }, i: number) => (i === index ? { ...p, Value: value } : p))
+                    const progresses = base.map((p: UI.IReceivingDataObject, i: number) => (i === index ? { ...p, Value: value } : p))
                     updateProperty("value", progresses, component, onPropertyChange)
                   }}
                 />
@@ -135,7 +134,7 @@
                   value={progress.class}
                   onUpdate={(value) => {
                     const progresses = [...(component.properties?.items || [])]
-                    progresses[index]["class"] = value
+                    progresses[index]["class"] = String(value)
                     updateProperty("items", progresses, component, onPropertyChange)
                   }}
                 />
@@ -151,7 +150,7 @@
               />
             </div>
           {/each}
-          <div id="item-{component.properties.items.length}" class="min-h-4"></div>
+          <div id="item-{component.properties.items?.length ?? 0}" class="min-h-4"></div>
         </div>
       </PropsGroup>
     {/snippet}
@@ -170,13 +169,16 @@
         snippet="MinMaxStep"
         initialValue={{
           number: component.properties.number,
-          bitMode: component.properties.bitMode,
           updateProperty: (value: number, property: string) => {
             updateProperty(property, Number(value), component, onPropertyChange)
             let newValue = component.properties.value?.map((pr: UI.IReceivingDataObject) => {
-              return { ...pr, Value: component.properties.number.minNum + (component.properties.number.maxNum - component.properties.number.minNum) / 2 }
+              return {
+                ...pr,
+                Value:
+                  (component.properties.number?.minNum ?? 0) + ((component.properties.number?.maxNum ?? 0) - (component.properties.number?.minNum ?? 0)) / 2,
+              }
             })
-            updateProperty("value", newValue, component, onPropertyChange)
+            if (newValue) updateProperty("value", newValue, component, onPropertyChange)
           },
         }}
         {component}
@@ -199,13 +201,16 @@
         snippet="MinMaxStep"
         initialValue={{
           number: component.properties.number,
-          bitMode: component.properties.bitMode,
           updateProperty: (value: number, property: string) => {
             updateProperty(property, Number(value), component, onPropertyChange)
             let newValue = component.properties.value?.map((pr: UI.IReceivingDataObject) => {
-              return { ...pr, Value: component.properties.number.minNum + (component.properties.number.maxNum - component.properties.number.minNum) / 2 }
+              return {
+                ...pr,
+                Value:
+                  (component.properties.number?.minNum ?? 0) + ((component.properties.number?.maxNum ?? 0) - (component.properties.number?.minNum ?? 0)) / 2,
+              }
             })
-            updateProperty("value", newValue, component, onPropertyChange)
+            if (newValue) updateProperty("value", newValue, component, onPropertyChange)
           },
         }}
         {component}

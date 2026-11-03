@@ -86,6 +86,16 @@
     }
   })
 
+  /* Хост и пользователь веб — только латиница, цифры, "_" и "-", имени устройства можно ещё "." (STM по умолчанию — код изделия
+     00.00.491-01), паролю — любые печатаемые ASCII без пробела (прошивка декодирует %XX формы входа); лишнее вырезается при вводе,
+     значение с устройства вне правила подсвечивается. Длины — буферы main_config.h без \0 */
+  const NAME_REGEXP = /^[A-Za-z0-9_-]*$/
+  const DEV_NAME_REGEXP = /^[A-Za-z0-9_.-]*$/
+  const PSW_REGEXP = /^[!-~]*$/
+  const onlyNameChars = (input: string | number) => String(input).replace(/[^A-Za-z0-9_-]/g, "")
+  const onlyDevNameChars = (input: string | number) => String(input).replace(/[^A-Za-z0-9_.-]/g, "")
+  const onlyPswChars = (input: string | number) => String(input).replace(/[^!-~]/g, "")
+
   const save = () => {
     onSave?.($state.snapshot(info))
     savedSnapshot = JSON.stringify(info)
@@ -144,21 +154,43 @@
         <span class="text-[12px] font-semibold text-(--muted-color)">{$T("widget.info.settings")}</span>
         <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
           <div use:hint={{ text: $T("widget.info.hint.name"), enabled: $hints }}>
-            <UI.Input label={{ name: $T("widget.info.name") }} bind:value={info.DevName} maxlength={26} />
+            <UI.Input
+              label={{ name: $T("widget.info.name") }}
+              bind:value={info.DevName}
+              maxlength={15}
+              help={{ regExp: DEV_NAME_REGEXP }}
+              onUpdate={(input) => (info.DevName = onlyDevNameChars(input))}
+            />
           </div>
-          <div use:hint={{ text: $T("widget.info.hint.host"), enabled: $hints }}>
-            <UI.Input label={{ name: $T("widget.info.host") }} bind:value={info.HostName} maxlength={32} />
+          <!-- Прошивка хранит имя без домена, ".local" добавляет mDNS — показываем его как неизменяемую часть адреса -->
+          <div class="flex min-w-0 items-end gap-1.5" use:hint={{ text: $T("widget.info.hint.host"), enabled: $hints }}>
+            <UI.Input
+              wrapperClass="min-w-0 flex-1"
+              label={{ name: $T("widget.info.host") }}
+              bind:value={info.HostName}
+              maxlength={18}
+              help={{ regExp: NAME_REGEXP }}
+              onUpdate={(input) => (info.HostName = onlyNameChars(input))}
+            />
+            <span class="flex h-8 shrink-0 items-center text-[14px] text-(--muted-color) select-none">.local</span>
           </div>
           <div use:hint={{ text: $T("widget.info.hint.web_user"), enabled: $hints }}>
-            <UI.Input label={{ name: $T("widget.info.web_user") }} bind:value={info.WebUser} maxlength={16} />
+            <UI.Input
+              label={{ name: $T("widget.info.web_user") }}
+              bind:value={info.WebUser}
+              maxlength={15}
+              help={{ regExp: NAME_REGEXP }}
+              onUpdate={(input) => (info.WebUser = onlyNameChars(input))}
+            />
           </div>
           <div use:hint={{ text: $T("widget.info.hint.web_psw"), enabled: $hints }}>
             <UI.Input
               type="password"
               label={{ name: $T("widget.info.web_psw") }}
               bind:value={info.WebPsw}
-              maxlength={16}
-              help={{ autocomplete: "one-time-code" }}
+              maxlength={15}
+              help={{ autocomplete: "one-time-code", regExp: PSW_REGEXP }}
+              onUpdate={(input) => (info.WebPsw = onlyPswChars(input))}
             />
           </div>
         </div>

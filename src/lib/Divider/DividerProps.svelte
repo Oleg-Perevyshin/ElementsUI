@@ -11,11 +11,11 @@
     component,
     onPropertyChange,
     forConstructor = true,
-  } = $props<{
+  }: {
     component: UIComponent & { properties: Partial<IDividerProps> }
     onPropertyChange: (updates: Partial<{ properties?: string | object; name?: string; access?: string; eventHandler?: IUIComponentHandler }>) => void
     forConstructor?: boolean
-  }>()
+  } = $props()
 
   let currentType = $derived($optionsStore.DIVIDER_TYPE_OPTIONS.find((t) => t.value === component.properties.type))
   let currentAnchor = $derived($optionsStore.DIVIDER_ANCHOR_OPTIONS.find((a) => a.value === component.properties.anchor))
