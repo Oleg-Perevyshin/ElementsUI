@@ -1,17 +1,17 @@
 <script lang="ts">
-  import { Language } from "$lib/locales/i18n"
-  import { localizeDeep } from "$lib/locales/localize"
-  import { TabsProps, type ITabsProps, type UIComponent } from "$lib"
+  import { Language } from "#lib/locales/i18n.ts"
+  import { localizeDeep } from "#lib/locales/localize.ts"
+  import { TabsProps, type ITabsProps, type UIComponent } from "#lib"
   import ComponentExample from "../../ComponentExample.svelte"
-  import Input from "$lib/Input/Input.svelte"
-  import IconGripVerticalLeft from "$lib/libIcons/IconGripVerticalLeft.svelte"
-  import IconGripVerticalRight from "$lib/libIcons/IconGripVerticalRight.svelte"
-  import Tabs from "$lib/Tabs/Tabs.svelte"
-  import { updateComponent } from "$lib/types"
+  import Input from "#lib/Input/Input.svelte"
+  import IconGripVerticalLeft from "#lib/libIcons/IconGripVerticalLeft.svelte"
+  import IconGripVerticalRight from "#lib/libIcons/IconGripVerticalRight.svelte"
+  import Tabs from "#lib/Tabs/Tabs.svelte"
+  import { updateComponent } from "#lib/types.ts"
   import IconGripHorizontalDown from "../../../appIcons/IconGripHorizontalDown.svelte"
   import IconGripHorizontalUp from "../../../appIcons/IconGripHorizontalUp.svelte"
   import { formatObjectToString, RenderMarkdown } from "../../common"
-  import readmeRaw from "$lib/Tabs/README.md?raw"
+  import readmeRaw from "#lib/Tabs/README.md?raw"
 
   let readmeHtml = $state("")
   $effect(() => {

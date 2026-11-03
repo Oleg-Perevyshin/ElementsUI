@@ -1,14 +1,14 @@
 <script lang="ts">
-  import { Language } from "$lib/locales/i18n"
-  import { localizeDeep } from "$lib/locales/localize"
-  import { type UIComponent } from "$lib"
+  import { Language } from "#lib/locales/i18n.ts"
+  import { localizeDeep } from "#lib/locales/localize.ts"
+  import { type UIComponent } from "#lib"
   import ComponentExample from "../../ComponentExample.svelte"
-  import { ICONS_ARRAY } from "$lib/icons"
-  import { updateComponent, type IWidgetProps } from "$lib/types"
-  import Widget from "$lib/Widget/Widget.svelte"
-  import WidgetProps from "$lib/Widget/WidgetProps.svelte"
+  import { ICONS_ARRAY } from "#lib/icons.ts"
+  import { updateComponent, type IWidgetProps } from "#lib/types.ts"
+  import Widget from "#lib/Widget/Widget.svelte"
+  import WidgetProps from "#lib/Widget/WidgetProps.svelte"
   import { formatObjectToString, RenderMarkdown } from "../../common"
-  import readmeRaw from "$lib/Widget/README.md?raw"
+  import readmeRaw from "#lib/Widget/README.md?raw"
 
   let readmeHtml = $state("")
   $effect(() => {

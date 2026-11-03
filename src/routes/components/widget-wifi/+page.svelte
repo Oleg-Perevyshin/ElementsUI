@@ -1,13 +1,13 @@
 <script lang="ts">
-  import { Language } from "$lib/locales/i18n"
-  import { localizeDeep } from "$lib/locales/localize"
-  import { type UIComponent } from "$lib"
+  import { Language } from "#lib/locales/i18n.ts"
+  import { localizeDeep } from "#lib/locales/localize.ts"
+  import { type UIComponent } from "#lib"
   import ComponentExample from "../../ComponentExample.svelte"
-  import { updateComponent, type IWidgetWiFiProps } from "$lib/types"
-  import WidgetWiFi from "$lib/WidgetWiFi/WidgetWiFi.svelte"
-  import WidgetWiFiProps from "$lib/WidgetWiFi/WidgetWiFiProps.svelte"
+  import { updateComponent, type IWidgetWiFiProps } from "#lib/types.ts"
+  import WidgetWiFi from "#lib/WidgetWiFi/WidgetWiFi.svelte"
+  import WidgetWiFiProps from "#lib/WidgetWiFi/WidgetWiFiProps.svelte"
   import { formatObjectToString, RenderMarkdown } from "../../common"
-  import readmeRaw from "$lib/WidgetWiFi/README.md?raw"
+  import readmeRaw from "#lib/WidgetWiFi/README.md?raw"
 
   let readmeHtml = $state("")
   $effect(() => {

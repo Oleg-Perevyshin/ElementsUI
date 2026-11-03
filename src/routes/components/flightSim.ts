@@ -1,7 +1,7 @@
 /* Имитация полёта для демо WidgetPFD/WidgetMap — та же модель, что MavlinkTelemetry_Simulate в прошивке 20.00.000-01:
    облёт маршрута из 7 точек над Минском, развороты креном до 35° с инерцией, западный ветер с порывами, набор/снижение,
    навигация к точке, связь, HDOP, EKF и сообщения автопилота */
-import type { IWidgetPFDData } from "$lib/types"
+import type { IWidgetPFDData } from "#lib/types.ts"
 
 export const HOME = { lat: 53.9006, lon: 27.559 }
 const ROUTE: [number, number, number][] = [

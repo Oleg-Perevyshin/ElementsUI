@@ -1,7 +1,7 @@
 <!-- src/routes/+page.svelte — главная витрины: вкладки «Обзор» (README библиотеки — тот же текст, что на npm и в репозитории),
      «Тема» (предпросмотр theme.css на типовом интерфейсе облака) и «Регулярные выражения» (справочник для проверки полей ввода) -->
 <script lang="ts">
-  import { Select, T, type IOption } from "$lib"
+  import { Select, T, type IOption } from "#lib"
   import { RenderMarkdown } from "./common"
   import ThemePreview from "./ThemePreview.svelte"
   import readmeRaw from "../../README.md?raw"

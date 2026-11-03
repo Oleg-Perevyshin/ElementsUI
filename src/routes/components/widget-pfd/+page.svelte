@@ -1,13 +1,13 @@
 <script lang="ts">
-  import { Language } from "$lib/locales/i18n"
-  import { localizeDeep } from "$lib/locales/localize"
-  import { type UIComponent } from "$lib"
+  import { Language } from "#lib/locales/i18n.ts"
+  import { localizeDeep } from "#lib/locales/localize.ts"
+  import { type UIComponent } from "#lib"
   import ComponentExample from "../../ComponentExample.svelte"
-  import { updateComponent, type IWidgetPFDData, type IWidgetPFDProps } from "$lib/types"
-  import WidgetPFD from "$lib/WidgetPFD/WidgetPFD.svelte"
-  import WidgetPFDProps from "$lib/WidgetPFD/WidgetPFDProps.svelte"
+  import { updateComponent, type IWidgetPFDData, type IWidgetPFDProps } from "#lib/types.ts"
+  import WidgetPFD from "#lib/WidgetPFD/WidgetPFD.svelte"
+  import WidgetPFDProps from "#lib/WidgetPFD/WidgetPFDProps.svelte"
   import { formatObjectToString, RenderMarkdown } from "../../common"
-  import readmeRaw from "$lib/WidgetPFD/README.md?raw"
+  import readmeRaw from "#lib/WidgetPFD/README.md?raw"
   import { createFlightSim } from "../flightSim"
 
   let readmeHtml = $state("")

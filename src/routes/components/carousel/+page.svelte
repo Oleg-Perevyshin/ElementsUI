@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { Carousel } from "$lib"
-  import type { ICarouselProps } from "$lib/types"
+  import { Carousel } from "#lib"
+  import type { ICarouselProps } from "#lib/types.ts"
   import { RenderMarkdown } from "../../common"
   import ComponentExample from "../../ComponentExample.svelte"
-  import readmeRaw from "$lib/Carousel/README.md?raw"
+  import readmeRaw from "#lib/Carousel/README.md?raw"
 
   let readmeHtml = $state("")
   $effect(() => {

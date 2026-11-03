@@ -1,15 +1,15 @@
 <script lang="ts">
-  import { Language } from "$lib/locales/i18n"
-  import { localizeDeep } from "$lib/locales/localize"
-  import { Button } from "$lib"
-  import { updateComponent, type IButtonProps, type UIComponent } from "$lib/types"
+  import { Language } from "#lib/locales/i18n.ts"
+  import { localizeDeep } from "#lib/locales/localize.ts"
+  import { Button } from "#lib"
+  import { updateComponent, type IButtonProps, type UIComponent } from "#lib/types.ts"
   import { formatObjectToString, RenderMarkdown } from "../../common"
   import ComponentExample from "../../ComponentExample.svelte"
-  import ButtonProps from "$lib/Button/ButtonProps.svelte"
-  import IconGripVerticalDual from "$lib/libIcons/IconGripVerticalDual.svelte"
+  import ButtonProps from "#lib/Button/ButtonProps.svelte"
+  import IconGripVerticalDual from "#lib/libIcons/IconGripVerticalDual.svelte"
   import IconGripHorizontalUp from "../../../appIcons/IconGripHorizontalUp.svelte"
   import IconGripHorizontalDown from "../../../appIcons/IconGripHorizontalDown.svelte"
-  import readmeRaw from "$lib/Button/README.md?raw"
+  import readmeRaw from "#lib/Button/README.md?raw"
 
   let readmeHtml = $state("")
   $effect(() => {

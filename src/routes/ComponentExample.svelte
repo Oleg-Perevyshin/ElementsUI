@@ -1,11 +1,11 @@
 <script lang="ts">
-  import { Button, Modal, Select, Switch, T, type IOption } from "$lib"
+  import { Button, Modal, Select, Switch, T, type IOption } from "#lib"
   import { page } from "$app/state"
-  import InfoIcon from "$lib/libIcons/InfoIcon.svelte"
+  import InfoIcon from "#lib/libIcons/InfoIcon.svelte"
   import { RenderMarkdown } from "./common"
   import type { Snippet } from "svelte"
   import { fade } from "svelte/transition"
-  import CopiedChip from "$lib/CopiedChip.svelte"
+  import CopiedChip from "#lib/CopiedChip.svelte"
 
   let {
     component,

@@ -1,13 +1,13 @@
 <script lang="ts">
-  import { Language } from "$lib/locales/i18n"
-  import { localizeDeep } from "$lib/locales/localize"
-  import { type ITextFieldProps, type UIComponent } from "$lib"
+  import { Language } from "#lib/locales/i18n.ts"
+  import { localizeDeep } from "#lib/locales/localize.ts"
+  import { type ITextFieldProps, type UIComponent } from "#lib"
   import ComponentExample from "../../ComponentExample.svelte"
-  import TextField from "$lib/TextField/TextField.svelte"
-  import TextFieldProps from "$lib/TextField/TextFieldProps.svelte"
-  import { updateComponent } from "$lib/types"
+  import TextField from "#lib/TextField/TextField.svelte"
+  import TextFieldProps from "#lib/TextField/TextFieldProps.svelte"
+  import { updateComponent } from "#lib/types.ts"
   import { formatObjectToString, RenderMarkdown } from "../../common"
-  import readmeRaw from "$lib/TextField/README.md?raw"
+  import readmeRaw from "#lib/TextField/README.md?raw"
 
   let readmeHtml = $state("")
   $effect(() => {

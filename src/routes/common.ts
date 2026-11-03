@@ -1,4 +1,4 @@
-import type { UIComponent } from "$lib"
+import type { UIComponent } from "#lib"
 import { marked } from "marked"
 import DOMPurify from "dompurify"
 

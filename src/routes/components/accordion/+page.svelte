@@ -1,13 +1,13 @@
 <script lang="ts">
-  import { Language } from "$lib/locales/i18n"
-  import { localizeDeep } from "$lib/locales/localize"
-  import { Accordion } from "$lib"
-  import AccordionProps from "$lib/Accordion/AccordionProps.svelte"
-  import { updateComponent, type IAccordionProps, type UIComponent } from "$lib/types"
+  import { Language } from "#lib/locales/i18n.ts"
+  import { localizeDeep } from "#lib/locales/localize.ts"
+  import { Accordion } from "#lib"
+  import AccordionProps from "#lib/Accordion/AccordionProps.svelte"
+  import { updateComponent, type IAccordionProps, type UIComponent } from "#lib/types.ts"
   import { formatObjectToString, RenderMarkdown } from "../../common"
   import ComponentExample from "../../ComponentExample.svelte"
-  import { ICONS } from "$lib/icons"
-  import readmeRaw from "$lib/Accordion/README.md?raw"
+  import { ICONS } from "#lib/icons.ts"
+  import readmeRaw from "#lib/Accordion/README.md?raw"
 
   let readmeHtml = $state("")
   $effect(() => {

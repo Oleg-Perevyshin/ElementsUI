@@ -2,7 +2,7 @@
 <script lang="ts">
   import { onMount, setContext } from "svelte"
   import "../app.css"
-  import * as UI from "$lib/index"
+  import * as UI from "#lib/index.ts"
   import IconLightDark from "../appIcons/IconLightDark.svelte"
   import GitHub from "../appIcons/GitHub.svelte"
   import { goto } from "$app/navigation"

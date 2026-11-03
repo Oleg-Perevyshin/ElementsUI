@@ -1,14 +1,14 @@
 <script lang="ts">
-  import { Language } from "$lib/locales/i18n"
-  import { localizeDeep } from "$lib/locales/localize"
-  import type { IJoystickProps, UIComponent } from "$lib"
+  import { Language } from "#lib/locales/i18n.ts"
+  import { localizeDeep } from "#lib/locales/localize.ts"
+  import type { IJoystickProps, UIComponent } from "#lib"
   import ComponentExample from "../../ComponentExample.svelte"
-  import Joystick from "$lib/Joystick/Joystick.svelte"
-  import JoystickProps from "$lib/Joystick/JoystickProps.svelte"
-  import IconGripVerticalDual from "$lib/libIcons/IconGripVerticalDual.svelte"
-  import { updateComponent } from "$lib/types"
+  import Joystick from "#lib/Joystick/Joystick.svelte"
+  import JoystickProps from "#lib/Joystick/JoystickProps.svelte"
+  import IconGripVerticalDual from "#lib/libIcons/IconGripVerticalDual.svelte"
+  import { updateComponent } from "#lib/types.ts"
   import { formatObjectToString, RenderMarkdown } from "../../common"
-  import readmeRaw from "$lib/Joystick/README.md?raw"
+  import readmeRaw from "#lib/Joystick/README.md?raw"
 
   let readmeHtml = $state("")
   $effect(() => {

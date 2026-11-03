@@ -1,14 +1,14 @@
 <script lang="ts">
-  import { Language } from "$lib/locales/i18n"
-  import { localizeDeep } from "$lib/locales/localize"
-  import { type UIComponent } from "$lib"
+  import { Language } from "#lib/locales/i18n.ts"
+  import { localizeDeep } from "#lib/locales/localize.ts"
+  import { type UIComponent } from "#lib"
   import ComponentExample from "../../ComponentExample.svelte"
-  import { updateComponent, type IVideoViewerProps } from "$lib/types"
-  import VideoViewer from "$lib/VideoViewer/VideoViewer.svelte"
+  import { updateComponent, type IVideoViewerProps } from "#lib/types.ts"
+  import VideoViewer from "#lib/VideoViewer/VideoViewer.svelte"
   import { formatObjectToString, RenderMarkdown } from "../../common"
-  import VideoViewerProps from "$lib/VideoViewer/VideoViewerProps.svelte"
+  import VideoViewerProps from "#lib/VideoViewer/VideoViewerProps.svelte"
   import { onMount } from "svelte"
-  import readmeRaw from "$lib/VideoViewer/README.md?raw"
+  import readmeRaw from "#lib/VideoViewer/README.md?raw"
 
   let readmeHtml = $state("")
   $effect(() => {

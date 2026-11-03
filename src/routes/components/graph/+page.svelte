@@ -1,13 +1,13 @@
 <script lang="ts">
-  import { Language } from "$lib/locales/i18n"
-  import { localizeDeep } from "$lib/locales/localize"
-  import { type IGraphProps, type UIComponent } from "$lib"
+  import { Language } from "#lib/locales/i18n.ts"
+  import { localizeDeep } from "#lib/locales/localize.ts"
+  import { type IGraphProps, type UIComponent } from "#lib"
   import ComponentExample from "../../ComponentExample.svelte"
-  import Graph from "$lib/Graph/Graph.svelte"
-  import GraphProps from "$lib/Graph/GraphProps.svelte"
-  import { updateComponent } from "$lib/types"
+  import Graph from "#lib/Graph/Graph.svelte"
+  import GraphProps from "#lib/Graph/GraphProps.svelte"
+  import { updateComponent } from "#lib/types.ts"
   import { formatObjectToString, RenderMarkdown } from "../../common"
-  import readmeRaw from "$lib/Graph/README.md?raw"
+  import readmeRaw from "#lib/Graph/README.md?raw"
 
   let readmeHtml = $state("")
   $effect(() => {

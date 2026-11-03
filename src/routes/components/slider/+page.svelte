@@ -1,13 +1,13 @@
 <script lang="ts">
-  import { Language } from "$lib/locales/i18n"
-  import { localizeDeep } from "$lib/locales/localize"
-  import { type ISliderProps, type UIComponent } from "$lib"
+  import { Language } from "#lib/locales/i18n.ts"
+  import { localizeDeep } from "#lib/locales/localize.ts"
+  import { type ISliderProps, type UIComponent } from "#lib"
   import ComponentExample from "../../ComponentExample.svelte"
-  import Slider from "$lib/Slider/Slider.svelte"
-  import SliderProps from "$lib/Slider/SliderProps.svelte"
-  import { updateComponent } from "$lib/types"
+  import Slider from "#lib/Slider/Slider.svelte"
+  import SliderProps from "#lib/Slider/SliderProps.svelte"
+  import { updateComponent } from "#lib/types.ts"
   import { formatObjectToString, RenderMarkdown } from "../../common"
-  import readmeRaw from "$lib/Slider/README.md?raw"
+  import readmeRaw from "#lib/Slider/README.md?raw"
 
   let readmeHtml = $state("")
   $effect(() => {

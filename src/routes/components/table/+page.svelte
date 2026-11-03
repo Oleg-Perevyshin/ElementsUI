@@ -1,15 +1,15 @@
 <script lang="ts">
-  import { Language } from "$lib/locales/i18n"
-  import { localizeDeep } from "$lib/locales/localize"
-  import { Button, Modal, type ITableHeader, type ITableProps, type UIComponent } from "$lib"
+  import { Language } from "#lib/locales/i18n.ts"
+  import { localizeDeep } from "#lib/locales/localize.ts"
+  import { Button, Modal, type ITableHeader, type ITableProps, type UIComponent } from "#lib"
   import ComponentExample from "../../ComponentExample.svelte"
-  import Table from "$lib/Table/Table.svelte"
-  import DebugDeleteIcon from "$lib/libIcons/ButtonDelete.svelte"
-  import TableProps from "$lib/Table/TableProps.svelte"
-  import { updateComponent, type IOption, type ITableButton } from "$lib/types"
+  import Table from "#lib/Table/Table.svelte"
+  import DebugDeleteIcon from "#lib/libIcons/ButtonDelete.svelte"
+  import TableProps from "#lib/Table/TableProps.svelte"
+  import { updateComponent, type IOption, type ITableButton } from "#lib/types.ts"
   import { onDestroy, onMount } from "svelte"
   import { formatObjectToString, RenderMarkdown } from "../../common"
-  import readmeRaw from "$lib/Table/README.md?raw"
+  import readmeRaw from "#lib/Table/README.md?raw"
 
   let readmeHtml = $state("")
   $effect(() => {

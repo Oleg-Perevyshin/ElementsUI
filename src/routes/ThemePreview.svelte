@@ -1,7 +1,7 @@
 <!-- src/routes/ThemePreview.svelte — вкладка «Тема» главной витрины: палитра и все компоненты в порядке меню на стилях theme.css,
      тема — глобальная, переключается кнопкой в шапке витрины. -->
 <script lang="ts">
-  import * as UI from "$lib"
+  import * as UI from "#lib"
   import type {
     IOption,
     IPeriodChartLevel,
@@ -12,8 +12,8 @@
     IWidgetMapData,
     IWidgetPFDData,
     IWidgetStackInfo,
-  } from "$lib/types"
-  import { ICONS_ARRAY } from "$lib/icons"
+  } from "#lib/types.ts"
+  import { ICONS_ARRAY } from "#lib/icons.ts"
   import { onMount, type Snippet } from "svelte"
   import { RenderMarkdown } from "./common"
   import { createFlightSim } from "./components/flightSim"

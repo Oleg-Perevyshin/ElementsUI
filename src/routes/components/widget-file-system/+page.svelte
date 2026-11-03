@@ -1,13 +1,13 @@
 <script lang="ts">
-  import { Language } from "$lib/locales/i18n"
-  import { localizeDeep } from "$lib/locales/localize"
-  import { type UIComponent } from "$lib"
+  import { Language } from "#lib/locales/i18n.ts"
+  import { localizeDeep } from "#lib/locales/localize.ts"
+  import { type UIComponent } from "#lib"
   import ComponentExample from "../../ComponentExample.svelte"
-  import { updateComponent, type IWidgetFileSystemInfo, type IWidgetFileSystemProps } from "$lib/types"
-  import WidgetFileSystem from "$lib/WidgetFileSystem/WidgetFileSystem.svelte"
-  import WidgetFileSystemProps from "$lib/WidgetFileSystem/WidgetFileSystemProps.svelte"
+  import { updateComponent, type IWidgetFileSystemInfo, type IWidgetFileSystemProps } from "#lib/types.ts"
+  import WidgetFileSystem from "#lib/WidgetFileSystem/WidgetFileSystem.svelte"
+  import WidgetFileSystemProps from "#lib/WidgetFileSystem/WidgetFileSystemProps.svelte"
   import { formatObjectToString, RenderMarkdown } from "../../common"
-  import readmeRaw from "$lib/WidgetFileSystem/README.md?raw"
+  import readmeRaw from "#lib/WidgetFileSystem/README.md?raw"
 
   let readmeHtml = $state("")
   $effect(() => {

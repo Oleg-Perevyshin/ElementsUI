@@ -1,13 +1,13 @@
 <script lang="ts">
-  import { Language } from "$lib/locales/i18n"
-  import { localizeDeep } from "$lib/locales/localize"
-  import { type UIComponent } from "$lib"
+  import { Language } from "#lib/locales/i18n.ts"
+  import { localizeDeep } from "#lib/locales/localize.ts"
+  import { type UIComponent } from "#lib"
   import ComponentExample from "../../ComponentExample.svelte"
-  import { updateComponent, type IWidgetRGBStripConfig, type IWidgetRGBStripProps } from "$lib/types"
-  import WidgetRGBStrip from "$lib/WidgetRGBStrip/WidgetRGBStrip.svelte"
-  import WidgetRGBStripProps from "$lib/WidgetRGBStrip/WidgetRGBStripProps.svelte"
+  import { updateComponent, type IWidgetRGBStripConfig, type IWidgetRGBStripProps } from "#lib/types.ts"
+  import WidgetRGBStrip from "#lib/WidgetRGBStrip/WidgetRGBStrip.svelte"
+  import WidgetRGBStripProps from "#lib/WidgetRGBStrip/WidgetRGBStripProps.svelte"
   import { formatObjectToString, RenderMarkdown } from "../../common"
-  import readmeRaw from "$lib/WidgetRGBStrip/README.md?raw"
+  import readmeRaw from "#lib/WidgetRGBStrip/README.md?raw"
 
   let readmeHtml = $state("")
   $effect(() => {

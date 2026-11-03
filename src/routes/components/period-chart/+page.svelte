@@ -1,13 +1,13 @@
 <script lang="ts">
-  import { Language } from "$lib/locales/i18n"
-  import { localizeDeep } from "$lib/locales/localize"
-  import { type IPeriodChartProps, type IPeriodChartLevel, type UIComponent } from "$lib"
+  import { Language } from "#lib/locales/i18n.ts"
+  import { localizeDeep } from "#lib/locales/localize.ts"
+  import { type IPeriodChartProps, type IPeriodChartLevel, type UIComponent } from "#lib"
   import ComponentExample from "../../ComponentExample.svelte"
-  import PeriodChart from "$lib/PeriodChart/PeriodChart.svelte"
-  import PeriodChartProps from "$lib/PeriodChart/PeriodChartProps.svelte"
-  import { updateComponent } from "$lib/types"
+  import PeriodChart from "#lib/PeriodChart/PeriodChart.svelte"
+  import PeriodChartProps from "#lib/PeriodChart/PeriodChartProps.svelte"
+  import { updateComponent } from "#lib/types.ts"
   import { formatObjectToString, RenderMarkdown } from "../../common"
-  import readmeRaw from "$lib/PeriodChart/README.md?raw"
+  import readmeRaw from "#lib/PeriodChart/README.md?raw"
 
   let readmeHtml = $state("")
   $effect(() => {

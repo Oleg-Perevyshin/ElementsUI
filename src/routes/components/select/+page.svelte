@@ -1,12 +1,12 @@
 <script lang="ts">
-  import { Language } from "$lib/locales/i18n"
-  import { localizeDeep } from "$lib/locales/localize"
-  import { type ISelectProps, type UIComponent } from "$lib"
+  import { Language } from "#lib/locales/i18n.ts"
+  import { localizeDeep } from "#lib/locales/localize.ts"
+  import { type ISelectProps, type UIComponent } from "#lib"
   import ComponentExample from "../../ComponentExample.svelte"
-  import * as UI from "$lib"
-  import { updateComponent, type IOption } from "$lib/types"
+  import * as UI from "#lib"
+  import { updateComponent, type IOption } from "#lib/types.ts"
   import { formatObjectToString, RenderMarkdown } from "../../common"
-  import readmeRaw from "$lib/Select/README.md?raw"
+  import readmeRaw from "#lib/Select/README.md?raw"
 
   let readmeHtml = $state("")
   $effect(() => {
