@@ -4,6 +4,8 @@
 import type { Map, Marker, NavigationControl } from "maplibre-gl"
 
 declare global {
+  /* Версия poe-svelte-ui-lib из package.json, подставляется Vite (define в vite.config.ts) */
+  const __LIB_VERSION__: string
   interface Window {
     maplibregl?: typeof import("maplibre-gl")
   }

@@ -103,6 +103,16 @@
   <header class={"sticky top-0 z-50 m-1 mt-2 flex h-14 items-center justify-between rounded-2xl border border-(--hairline-color) bg-(--back-color) p-4"}>
     <div class="flex items-center gap-2">
       <a href="/ElementsUI/" class="ml-2 no-underline! transition hover:scale-101"><h1>POE-Svelte-UI-Lib</h1></a>
+      <!-- Версия из package.json (define __LIB_VERSION__), ссылка — на эту версию в npm -->
+      <a
+        href={`https://www.npmjs.com/package/poe-svelte-ui-lib/v/${__LIB_VERSION__}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="rounded-md border border-(--hairline-color) bg-(--container-color) px-1.5 py-0.5 font-mono text-[12px] text-(--muted-color) no-underline! transition-colors hover:text-(--font-color)"
+        title="npm: poe-svelte-ui-lib"
+      >
+        v{__LIB_VERSION__}
+      </a>
     </div>
     <div class="flex items-center gap-4">
       <div class="relative mx-1 flex h-full items-center" role="button" tabindex="0">
