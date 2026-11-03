@@ -153,7 +153,13 @@
             <UI.Input label={{ name: $T("widget.info.web_user") }} bind:value={info.WebUser} maxlength={16} />
           </div>
           <div use:hint={{ text: $T("widget.info.hint.web_psw"), enabled: $hints }}>
-            <UI.Input type="password" label={{ name: $T("widget.info.web_psw") }} bind:value={info.WebPsw} maxlength={16} help={{ autocomplete: "off" }} />
+            <UI.Input
+              type="password"
+              label={{ name: $T("widget.info.web_psw") }}
+              bind:value={info.WebPsw}
+              maxlength={16}
+              help={{ autocomplete: "one-time-code" }}
+            />
           </div>
         </div>
       </div>

@@ -80,7 +80,26 @@
     onSave?.($state.snapshot(hardware))
     savedSnapshot = JSON.stringify(hardware)
   }
-  const sendColor = (rgbw: number[]) => onChange?.("Color", rgbw)
+
+  /* Образец в шапке — цвет первого светодиода: отправленный сразу, до ответа устройства; новое значение с устройства его заменяет */
+  let sentColor: number[] | null = $state(null)
+  let colorKey = $derived(color.join(","))
+  $effect(() => {
+    void colorKey
+    sentColor = null
+  })
+  /* Как превью палитры: оттенок без учёта яркости (тусклый светодиод светится тем же цветом), белый — своим уровнем */
+  let headerColor = $derived.by(() => {
+    const [r, g, b] = sentColor ?? color
+    const max = Math.max(r, g, b)
+    if (max === 0 || (r === g && g === b)) return [r, g, b]
+    return [r, g, b].map((c) => Math.round((c / max) * 255))
+  })
+
+  const sendColor = (rgbw: number[]) => {
+    sentColor = rgbw
+    onChange?.("Color", rgbw)
+  }
 </script>
 
 <div
@@ -92,7 +111,7 @@
     {#snippet right()}
       <span
         class="size-6 rounded-md border border-(--hairline-color)"
-        style="background: rgb({color[0]}, {color[1]}, {color[2]})"
+        style="background: rgb({headerColor[0]}, {headerColor[1]}, {headerColor[2]})"
         title={$T("widget.rgb.current_color")}
       ></span>
     {/snippet}

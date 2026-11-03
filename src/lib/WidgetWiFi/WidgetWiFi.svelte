@@ -187,12 +187,14 @@
             />
           </div>
 
+          <!-- one-time-code: менеджер паролей браузера не считает поле паролем входа и не накрывает список сетей у SSID
+               своими сохранёнными логинами (autocomplete="off" для паролей Chrome игнорирует) -->
           <UI.Input
             type="password"
             label={{ name: $T("widget.common.password") }}
             bind:value={cfg.StaPSK}
             maxlength={64}
-            help={{ autocomplete: "off", regExp: PSK_REGEXP }}
+            help={{ autocomplete: "one-time-code", regExp: PSK_REGEXP }}
           />
 
           <div class="w-48" use:hint={{ text: $T("widget.wifi.hint.ip_mode"), enabled: $hints }}>
@@ -254,7 +256,7 @@
               label={{ name: $T("widget.common.password") }}
               bind:value={cfg.ApPSK}
               maxlength={64}
-              help={{ autocomplete: "off", regExp: PSK_REGEXP }}
+              help={{ autocomplete: "one-time-code", regExp: PSK_REGEXP }}
             />
           </div>
 

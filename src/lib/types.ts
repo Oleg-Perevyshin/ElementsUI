@@ -284,6 +284,7 @@ export interface IInputProps {
       | "username"
       | "new-password"
       | "current-password"
+      | "one-time-code"
       | "organization-title"
       | "country-name"
       | "address-level1"
