@@ -37,7 +37,7 @@ jobs:
       - name: Публикация в NPM
         run: npm publish --access public
 
-  # Обновление версии библиотеки в DevCloud и переразвётывание облака
+  # Обновление библиотеки в DevCloud, подъём версии облака и переразвёртывание
   update-devcloud:
     needs: publish
     runs-on: ubuntu-24.04
@@ -82,8 +82,11 @@ jobs:
         working-directory: devcloud
         run: |
           git diff --quiet package.json package-lock.json && echo "Версия уже актуальна" && exit 0
+          # Новая библиотека - новая версия облака: вторая цифра +1, третья всегда 0
+          npm version minor --no-git-tag-version
+          DEVCLOUD_VERSION=$(node -p "require('./package.json').version.split('.').slice(0, 2).join('.')")
           git config user.name "${{ github.event.head_commit.author.name || github.actor }}"
           git config user.email "${{ github.event.head_commit.author.email || format('{0}@users.noreply.github.com', github.actor) }}"
           git add package.json package-lock.json
-          git commit -m "ReDeploy облака (обновление ElementsUI до $VERSION) [deploy]"
+          git commit -m "$DEVCLOUD_VERSION [deploy] Обновление ElementsUI до $VERSION"
           git push origin HEAD:main
