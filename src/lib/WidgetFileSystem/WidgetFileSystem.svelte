@@ -1,9 +1,4 @@
-<!-- $lib/WidgetFileSystem/WidgetFileSystem.svelte — смарт-виджет файловой системы устройства.
-     Данные — один объект CFG.FS в том виде, в каком его отдаёт прошивка (FS_WriteState, ProdFactory-ESP):
-     Total/Used/Free/List[{Name, Size}] и Upload{Name, Size, Progress} — только пока идёт закачка.
-     Ничего не знает про DeviceStore/WebSocket — value/onRefresh/onDelete/onUpload/onDownload, протоколы
-     закачки и скачивания (SET FS с Op UploadStart/UploadChunk/UploadDone и DownloadStart/DownloadChunk/DownloadDone)
-     и отправка команд на стороне вызывающего. -->
+<!-- $lib/WidgetFileSystem/WidgetFileSystem.svelte — смарт-виджет файловой системы устройства. Данные — один объект CFG.FS в том виде, в каком его отдаёт прошивка (FS_WriteState, ProdFactory-ESP): Total/Used/Free/List[{Name, Size}] и Upload{Name, Size, Progress} — только пока идёт закачка. Ничего не знает про DeviceStore/WebSocket — value/onRefresh/onDelete/onUpload/onDownload, протоколы закачки и скачивания (SET FS с Op UploadStart/UploadChunk/UploadDone и DownloadStart/DownloadChunk/DownloadDone) и отправка команд на стороне вызывающего. -->
 <script lang="ts">
   import { T } from "../locales/i18n"
   import { slide, fade, scale } from "svelte/transition"
@@ -91,8 +86,7 @@
     ...(actions.length ? [{ label: { name: "" }, content: actions, width: `${actions.length * 2.5 + 1}rem`, align: "center" } as ITableHeader<FileRow>] : []),
   ])
 
-  /* Закачка видна, пока её ведёт этот клиент или пока устройство сообщает Upload (закачка с другого клиента);
-     прогресс 0..100, нечисло — 0, а не «NaN%» */
+  /* Закачка видна, пока её ведёт этот клиент или пока устройство сообщает Upload (закачка с другого клиента); прогресс 0..100, нечисло — 0, а не «NaN%» */
   let upload = $derived(value?.Upload)
   let progress = $derived(Number.isFinite(Number(upload?.Progress)) ? Math.min(100, Math.max(0, Number(upload?.Progress))) : 0)
 

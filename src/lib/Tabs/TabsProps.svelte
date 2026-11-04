@@ -51,10 +51,7 @@
 
   const initialWidth = $derived(() => (component.properties.items?.some((item) => item.class?.split(" ").includes("flex-1")) ? 1 : 0))
 
-  /* "Равные" — flex-1 (flexbox сам поровну распределяет место с учётом gap между кнопками);
-     "Авто" — w-auto (ширина по контенту). Раньше "Равные" считалось как w-[X%] через inline
-     style в Tabs.svelte — не учитывало gap-6 между кнопками и создавало паразитный горизонтальный
-     скролл. flex-1/w-auto — обычные статические Tailwind-классы, отдельный inline style не нужен. */
+  /* «Равные» — flex-1 (место делится поровну с учётом gap), «Авто» — w-auto (ширина по содержимому) */
   const setTabWidthClass = (existingClass: string | undefined, equal: boolean): string =>
     twMerge((existingClass ?? "").replace(/\bflex-1\b|\bw-auto\b/g, "").trim(), equal ? "flex-1" : "w-auto")
 </script>

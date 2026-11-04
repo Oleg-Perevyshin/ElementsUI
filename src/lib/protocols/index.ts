@@ -1,6 +1,5 @@
 /* $lib/protocols/index.ts */
-/* Общее ядро протоколов обмена с устройствами для DevCloud, WebApp и DevTerminal — без Svelte, точка входа "poe-svelte-ui-lib/protocols"
-   (условие default: работает и в браузере, и под Node без Vite); импорты с расширением .js, чтобы их разрешал сам Node */
+/* Общее ядро протоколов обмена с устройствами для DevCloud, WebApp и DevTerminal — без Svelte, точка входа "poe-svelte-ui-lib/protocols" (условие default: работает и в браузере, и под Node без Vite); импорты с расширением .js, чтобы их разрешал сам Node */
 export * from "./cbor/types.js"
 export { bytesToBase64, base64ToBytes } from "./cbor/base64.js"
 /* Значение ↔ CBOR: двоичные данные — Uint8Array как есть (WebSocket, хранилище, телеметрия) */

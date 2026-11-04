@@ -4,10 +4,7 @@ import assert from "node:assert/strict"
 import { readFileSync } from "node:fs"
 import * as m from "../dist/protocols/index.js"
 
-/* Эталон — пакеты, собранные настоящим poe_cbor_pkt.c прошивки (ProdFactory-ESP, CBOR_PACK + CBOR_PktEncFinish), сырые поля — байтовой строкой:
-   one   — 0x42 ← 0x01, HAR 0x1234, h'010203'
-   multi — 0xFFFF ← 0xABCD, HAR 0xC123, float 1.5, -2.25 | 0x1234 ← 0x0017, HAR 0x4001, 300 байт (i & 0xFF) | 0x0005 ← 0x0006, HAR 0x0007, h'010203'
-   empty — 0x0005 ← 0x0006, HAR 0x0007, CBOR_PACK без полей — h'' */
+/* Эталон — пакеты, собранные настоящим poe_cbor_pkt.c прошивки (ProdFactory-ESP, CBOR_PACK + CBOR_PktEncFinish), сырые поля — байтовой строкой: one — 0x42 ← 0x01, HAR 0x1234, h'010203' multi — 0xFFFF ← 0xABCD, HAR 0xC123, float 1.5, -2.25 | 0x1234 ← 0x0017, HAR 0x4001, 300 байт (i & 0xFF) | 0x0005 ← 0x0006, HAR 0x0007, h'010203' empty — 0x0005 ← 0x0006, HAR 0x0007, CBOR_PACK без полей — h'' */
 const REF = {
   one: "9f851842011912344301020319f1d8ff",
   multi:
@@ -58,7 +55,7 @@ test("поток: обрывок — incomplete, мусор — garbage, два 
   const multi = bytes(REF.multi)
   for (let n = 0; n < multi.length; n++) assert.equal(m.decodePacket(multi.subarray(0, n)).status, "incomplete", `обрывок ${n} байт`)
   assert.equal(m.decodePacket(Uint8Array.of(0x41, 0x42)).status, "garbage")
-  assert.equal(m.decodePacket(Uint8Array.of(0xbf, 0xff)).status, "garbage") /* прежний формат — Map */
+  assert.equal(m.decodePacket(Uint8Array.of(0xbf, 0xff)).status, "garbage") /* Map вместо массива — не пакет */
   const stream = new Uint8Array([...bytes(REF.one), ...bytes(REF.empty)])
   const first = m.decodePacket(stream)
   assert.equal(first.status, "complete")

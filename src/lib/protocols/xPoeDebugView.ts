@@ -46,7 +46,7 @@ const isDebugLog = (value: unknown): value is [number, string, string | Uint8Arr
 /* Байты строками по 16 — для дампа DebugLog в Value */
 const hexRows = (bytes: Uint8Array): string => (bytesToHex(bytes).match(/.{1,48}/g) ?? []).map((row) => row.trim()).join("\n")
 
-/* Цвета развёрнутого вида — палитра темы, как прежний разбор отладки облака: ключи, строки, числа, логические, null, байты */
+/* Цвета развёрнутого вида — палитра темы: ключи, строки, числа, логические, null, байты */
 type PrettyKind = "key" | "string" | "number" | "boolean" | "null" | "bytes"
 const PRETTY_COLORS: Record<PrettyKind, string> = {
   key: "--pink-color",

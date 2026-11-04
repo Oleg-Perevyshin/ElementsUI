@@ -1,9 +1,4 @@
-<!-- $lib/WidgetDeviceInfo/WidgetDeviceInfo.svelte — смарт-виджет информации об устройстве.
-     Фиксированный набор полей (см. IWidgetDeviceInfoConfig в types.ts), соответствует реальной
-     прошивочной конвенции (main_config.c, группа "CFG", ProdFactory-ESP):
-     DevSN/DevID/DevFW/RunCnt — только чтение; DevName/HostName/WebUser/WebPsw — сохраняются
-     одним пакетом; «Сброс настроек» — с подтверждением, все настройки к заводским. Ничего не знает про DeviceStore/WebSocket —
-     value/onSave/onRestart/onFactoryReset. -->
+<!-- $lib/WidgetDeviceInfo/WidgetDeviceInfo.svelte — смарт-виджет информации об устройстве. Фиксированный набор полей (см. IWidgetDeviceInfoConfig в types.ts), соответствует реальной прошивочной конвенции (main_config.c, группа "CFG", ProdFactory-ESP): DevSN/DevID/DevFW/RunCnt — только чтение; DevName/HostName/WebUser/WebPsw — сохраняются одним пакетом; «Сброс настроек» — с подтверждением, все настройки к заводским. Ничего не знает про DeviceStore/WebSocket — value/onSave/onRestart/onFactoryReset. -->
 <script lang="ts">
   import { T } from "../locales/i18n"
   import { untrack } from "svelte"
@@ -56,11 +51,7 @@
     },
   )
 
-  /* Сворачивание тела виджета по клику на значок/заголовок (как аккордеон). collapsed — bindable:
-     в конструкторе родитель биндит его на component.properties.collapsed, клик по шапке сразу
-     сохраняется в GUI (как isOpen у Accordion в ConstructorUI.svelte). На реальном устройстве
-     (GUIPreview) проп передаётся однонаправленно — поверх дефолта только переживает перезагрузку
-     через localStorage (persistKey). */
+  /* Сворачивание тела виджета по клику на значок/заголовок (как аккордеон). collapsed — bindable: в конструкторе родитель биндит его на component.properties.collapsed, клик по шапке сразу сохраняется в GUI (как isOpen у Accordion в ConstructorUI.svelte). На реальном устройстве (GUIPreview) проп передаётся однонаправленно — поверх дефолта только переживает перезагрузку через localStorage (persistKey). */
   let hasMergedPersisted = false
   $effect(() => {
     if (hasMergedPersisted) return
@@ -74,10 +65,7 @@
   let savedSnapshot = $state(untrack(() => JSON.stringify(info)))
   let isDirty = $derived(JSON.stringify(info) !== savedSnapshot)
 
-  /* value — живой поток данных с устройства (readonly-поля StaIP/DevFW/RunCnt и т.п. должны
-     обновляться постоянно), а не однократный дефолт. Подхватываем свежие данные, только если
-     у пользователя нет несохранённых правок редактируемых полей (DevName/HostName/...) —
-     иначе входящее значение затёрло бы то, что он ещё не успел сохранить. */
+  /* value — живой поток данных с устройства (readonly-поля StaIP/DevFW/RunCnt и т.п. должны обновляться постоянно), а не однократный дефолт. Подхватываем свежие данные, только если у пользователя нет несохранённых правок редактируемых полей (DevName/HostName/...) — иначе входящее значение затёрло бы то, что он ещё не успел сохранить. */
   $effect(() => {
     if (value !== undefined && !untrack(() => isDirty)) {
       const snapshot = JSON.stringify(value)
@@ -86,9 +74,7 @@
     }
   })
 
-  /* Хост и пользователь веб — только латиница, цифры, "_" и "-", имени устройства можно ещё "." (STM по умолчанию — код изделия
-     00.00.491-01), паролю — любые печатаемые ASCII без пробела (прошивка декодирует %XX формы входа); лишнее вырезается при вводе,
-     значение с устройства вне правила подсвечивается. Длины — буферы main_config.h без \0 */
+  /* Хост и пользователь веб — только латиница, цифры, "_" и "-", имени устройства можно ещё "." (STM по умолчанию — код изделия 00.00.491-01), паролю — любые печатаемые ASCII без пробела (прошивка декодирует %XX формы входа); лишнее вырезается при вводе, значение с устройства вне правила подсвечивается. Длины — буферы main_config.h без \0 */
   const NAME_REGEXP = /^[A-Za-z0-9_-]*$/
   const DEV_NAME_REGEXP = /^[A-Za-z0-9_.-]*$/
   const PSW_REGEXP = /^[!-~]*$/

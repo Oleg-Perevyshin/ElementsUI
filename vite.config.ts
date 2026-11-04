@@ -14,12 +14,10 @@ export default defineConfig({
   define: { __LIB_VERSION__: JSON.stringify(version) },
   plugins: [
     tailwindcss(),
-    /* С SvelteKit 3 конфиг Svelte/Kit живёт здесь (svelte.config.js не поддерживается); его же читают svelte-package и svelte-check.
-       Витрина импортирует библиотеку через #lib (package.json imports), сама библиотека — относительными путями */
     sveltekit({
       preprocess: vitePreprocess(),
       compilerOptions: { runes: true },
-      adapter: adapter({ pages: "docs", assets: "docs", fallback: null, precompress: false }),
+      adapter: adapter({ pages: "docs", assets: "docs", fallback: undefined, precompress: false }),
       paths: { base: "/ElementsUI", relative: false },
       prerender: { handleHttpError: "warn" },
     }),
@@ -35,7 +33,7 @@ export default defineConfig({
   build: {
     sourcemap: false,
     rollupOptions: {
-      external: ["maplibre-gl"], // Это говорит Vite не включать её в сборку
+      external: ["maplibre-gl"],
     },
   },
 })

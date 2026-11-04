@@ -1,12 +1,4 @@
-<!-- $lib/Button/Button.svelte — шаг 3 плана.
-     API не изменён: id, wrapperClass, componentClass, disabled, content, keyBind, onClick.
-     Что изменилось внутри:
-       • роль определяется значением bg-* (намерение), а не фактом его наличия;
-       • убрано автоподчёркивание текста — кнопка больше не выглядит ссылкой;
-       • единый радиус 10px (иконка без подписи — круг), высота 32px (стандарт полей h-8), кегль 14/600;
-       • кольцо фокуса вместо размытой тени;
-       • disabled через токены, а не opacity: 0.5;
-       • иконка встала в поток (flex + gap) вместо absolute left-3. -->
+<!-- $lib/Button/Button.svelte — кнопка: роль по значению bg-*, радиус 10px (иконка без подписи — круг), высота 32px, кольцо фокуса, иконка в потоке через flex + gap -->
 <script lang="ts">
   import { onMount } from "svelte"
   import type { IButtonProps } from "../types"
@@ -29,11 +21,7 @@
 
   let showInfo = $state(false)
 
-  /* ─── Роль кнопки по последнему классу bg-* ─────────────────────────
-     bg-blue / bg-green / bg-cyan / bg-purple / bg-orange / bg-yellow → primary     (заливка + белый текст)
-     bg-red / bg-pink                                                → destructive
-     bg-max / bg-gray / bg-*-soft                                    → secondary   (поверхность + контур)
-     bg-transparent / без bg-*                                       → plain       (текст акцентом) */
+  /* ─── Роль кнопки по последнему классу bg-* ───────────────────────── bg-blue / bg-green / bg-cyan / bg-purple / bg-orange / bg-yellow → primary (заливка + белый текст) bg-red / bg-pink → destructive bg-max / bg-gray / bg-*-soft → secondary (поверхность + контур) bg-transparent / без bg-* → plain (текст акцентом) */
   const SURFACE_BG = ["bg-max", "bg-gray"]
   const DANGER_BG = ["bg-red", "bg-pink"]
 
@@ -51,10 +39,7 @@
 
   const isIconOnly = $derived(!!content?.icon && !content.name?.trim())
 
-  /* bg-(--bg-color) намеренно не входит в roleClass: он приклеивается к готовому
-     className вне twMerge (см. разметку ниже) — иначе twMerge видит его и явный
-     bg-* из componentClass (bg-red, bg-max…) как конфликтующие утилиты одной
-     группы и вырезает один из них, из-за чего заливка кнопки пропадает. */
+  /* bg-(--bg-color) намеренно не входит в roleClass: он приклеивается к готовому className вне twMerge (см. разметку ниже) — иначе twMerge видит его и явный bg-* из componentClass (bg-red, bg-max…) как конфликтующие утилиты одной группы и вырезает один из них, из-за чего заливка кнопки пропадает. */
   const roleBg = $derived.by(() => {
     if (disabled) return "bg-(--gray-color)"
     if (role === "plain") return "bg-transparent"

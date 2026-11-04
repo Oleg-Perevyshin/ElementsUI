@@ -1,6 +1,4 @@
-<!-- $lib/WidgetAccentPicker.svelte — переиспользуемый пункт панели пропсов «Мастер-цвет» для
-     смарт-виджетов конструктора (WidgetWiFi, WidgetDeviceInfo и далее). Один UI на все виджеты,
-     та же палитра, что и у примитивов (optionsStore.COLOR_OPTIONS) — см. widgetAccent.ts. -->
+<!-- $lib/WidgetAccentPicker.svelte — переиспользуемый пункт панели пропсов «Мастер-цвет» для смарт-виджетов конструктора (WidgetWiFi, WidgetDeviceInfo и далее). Один UI на все виджеты, та же палитра, что и у примитивов (optionsStore.COLOR_OPTIONS) — см. widgetAccent.ts. -->
 <script lang="ts">
   import { T } from "./locales/i18n"
   import { optionsStore } from "./options"

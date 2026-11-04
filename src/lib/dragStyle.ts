@@ -1,5 +1,4 @@
-/* $lib/dragStyle.ts — единый вид перетаскивания для библиотеки и приложений (списки Dragging, холст конструктора DevCloud):
-   перетаскиваемый элемент — фон с заметным оттенком акцента, рамка акцентом и тень; место вставки — заливка мягким акцентом со штриховой рамкой */
+/* $lib/dragStyle.ts — единый вид перетаскивания для библиотеки и приложений (списки Dragging, холст конструктора DevCloud): перетаскиваемый элемент — фон с заметным оттенком акцента, рамка акцентом и тень; место вставки — заливка мягким акцентом со штриховой рамкой */
 
 const GHOST_STYLE = {
   background: "color-mix(in srgb, var(--accent-color) 30%, var(--back-color))",
@@ -22,10 +21,7 @@ export const clearDragGhost = (element?: HTMLElement | null) => {
   document.body.style.cursor = ""
 }
 
-/*
-  Плавный сдвиг соседей при перестановке (FLIP): запоминаем положение элементов, выполняем перестановку в DOM и анимируем каждый
-  сдвинувшийся элемент из старого положения в новое. При системной настройке «уменьшить движение» — без анимации
-*/
+/* Плавный сдвиг соседей при перестановке (FLIP): запоминаем положение элементов, выполняем перестановку в DOM и анимируем каждый сдвинувшийся элемент из старого положения в новое. При системной настройке «уменьшить движение» — без анимации */
 export const animateReorder = (elements: Element[], mutate: () => void, duration = 160) => {
   const reduceMotion = typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches
   const before = new Map(elements.map((element) => [element, element.getBoundingClientRect().top]))

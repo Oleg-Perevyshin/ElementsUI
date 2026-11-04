@@ -1,7 +1,4 @@
-<!-- $lib/Widget/Widget.svelte — шапка фиксированной высоты + гибкое тело
-     вместо жёсткой сетки grid-rows-[4fr_9fr_5fr]. Кнопки ± квадратные 32px,
-     дорожка слайдера 4px. Вся логика (mapToStep, циклирование иконок,
-     $effect, onUpdate) не тронута. -->
+<!-- $lib/Widget/Widget.svelte — карточка значения: шапка фиксированной высоты и гибкое тело, кнопки ± 32px, дорожка слайдера 4px -->
 <script lang="ts">
   import { T } from "../locales/i18n"
   import type { IWidgetProps } from "../types"
@@ -115,8 +112,7 @@
     hover:bg-(--container-color) hover:text-(--font-color) active:scale-[0.97]
     disabled:cursor-not-allowed disabled:opacity-40`
 
-  /* mt-[7px] у webkit-thumb: без него Chrome/Safari прижимают thumb к верху трека
-     после appearance:none — см. подробный комментарий в Slider.svelte */
+  /* mt-[7px] у webkit-thumb: без него Chrome/Safari прижимают thumb к верху трека после appearance:none — см. подробный комментарий в Slider.svelte */
   const THUMB = `w-full appearance-none bg-transparent h-8
     [&::-webkit-slider-runnable-track]:h-8 [&::-webkit-slider-runnable-track]:bg-transparent
     [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:size-[18px] [&::-webkit-slider-thumb]:mt-[7px]

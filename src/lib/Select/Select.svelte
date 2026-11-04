@@ -1,6 +1,4 @@
-<!-- $lib/Select/Select.svelte — радиус 10, высота 36, выравнивание по левому краю,
-     список — единственный элемент с тенью, группа type="buttons" без разрывов.
-     Логика (filteredOptions, selectOption, handleSearch, клик вне) не тронута. -->
+<!-- $lib/Select/Select.svelte — радиус 10, высота 36, выравнивание по левому краю, список — единственный элемент с тенью, группа type="buttons" без разрывов. -->
 <script lang="ts" generics="T = unknown">
   import { slide } from "svelte/transition"
   import { onMount } from "svelte"
@@ -16,12 +14,7 @@
   let portalElement: HTMLDivElement | undefined = $state()
   let anchorRect: { top: number; bottom: number; left: number; width: number } | null = $state(null)
 
-  /* Список вариантов выносится в document.body (портал), чтобы его не обрезал
-     overflow-hidden/overflow-auto ближайшего скроллящегося предка (например,
-     панель свойств конструктора). Позиция считается от dropdownElement и
-     обновляется, пока список открыт, при скролле/резайзе где угодно на странице.
-     Атрибут data-ui-portal на контейнере — чтобы Modal.svelte не принимал клик по
-     опции (физически лежащей вне [data-modal]) за клик "снаружи" и не закрывался. */
+  /* Список вариантов выносится в document.body (портал), чтобы его не обрезал overflow-hidden/overflow-auto ближайшего скроллящегося предка (например, панель свойств конструктора). Позиция считается от dropdownElement и обновляется, пока список открыт, при скролле/резайзе где угодно на странице. Атрибут data-ui-portal на контейнере — чтобы Modal.svelte не принимал клик по опции (физически лежащей вне [data-modal]) за клик "снаружи" и не закрывался. */
   function portal(node: HTMLElement) {
     document.body.appendChild(node)
     return {
@@ -215,15 +208,8 @@
         {#each options as option, index (option.id)}
           {@const selected = value !== null && isSelected(option)}
           {@const hasOwnColor = !!option.class?.split(/\s+/).find((c) => c.startsWith("bg-"))}
-          <!-- Заливка приклеена вне twMerge: иначе она конфликтует с explicit bg-* из option.class
-               в одной merge-группе и вырезается (та же ловушка, что и в Button.svelte).
-               Опции со своим цветом (COLOR_OPTIONS и любой другой свотч-пикер, использующий
-               этот же type="buttons") обязаны показывать этот цвет ВСЕГДА, а не только когда
-               выбраны — иначе, например, палитра цветов в CommonSnippets.Colors превращается
-               в ряд одинаковых белых кнопок. Выбор у таких опций отмечается рамкой, а не заливкой;
-               для обычного сегмент-контрола без своего цвета (Access, Header и т.п.) поведение
-               прежнее — акцентная заливка только у выбранного пункта. -->
-          <!-- Обёртка — позиционирующий предок подсказки; overflow-hidden у группы убран, иначе подсказка обрезается -->
+          <!-- Заливка вне twMerge, чтобы не конфликтовать с bg-* из option.class: опции со своим цветом показывают его всегда и отмечаются рамкой, обычный сегмент-контрол заливает только выбранный пункт -->
+          <!-- Обёртка — позиционирующий предок подсказки; без overflow-hidden у группы, чтобы подсказка не обрезалась -->
           <div class="relative flex {fitContent ? '' : 'min-w-0 flex-1'}">
             <button
               id={option.id}

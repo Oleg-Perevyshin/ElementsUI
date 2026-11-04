@@ -1,6 +1,5 @@
 /* $lib/protocols/xPoeDebug.ts */
-/* xPOE-Debug — UART-консоль как ещё одна шина: пакеты poe_cbor_pkt [[TrgBusID, SrcBusID, HAR, Payload, CRC16], …] вперемешку с текстом загрузчика.
-   Логи — OK! DebugLog, Payload [уровень, тег, текст|байты, FHS]; графики — OK! DebugPlot, Payload {"Группа.Имя": float32} */
+/* xPOE-Debug — UART-консоль как ещё одна шина: пакеты poe_cbor_pkt [[TrgBusID, SrcBusID, HAR, Payload, CRC16], …] вперемешку с текстом загрузчика. Логи — OK! DebugLog, Payload [уровень, тег, текст|байты, FHS]; графики — OK! DebugPlot, Payload {"Группа.Имя": float32} */
 import { cborToValue } from "./cbor/value.js"
 import { jsonToCbor } from "./cbor/json.js"
 import { DEFAULT_ARGUMENT_CODES, HEADER_CODES, nameByCode } from "./dictionary.js"
@@ -83,8 +82,7 @@ const frameItem = (object: DecodedPacketObject): XPoeDebugItem => {
   }
 }
 
-/* Строка таблицы xPOE-Debug — общая для облака и терминала: пакет с неверным CRC — ⚠️ вместо заголовка (аргумент и значение обычно целы),
-   текст вне пакетов — RAW */
+/* Строка таблицы xPOE-Debug — общая для облака и терминала: пакет с неверным CRC — ⚠️ вместо заголовка (аргумент и значение обычно целы), текст вне пакетов — RAW */
 export interface XPoeDebugRow {
   trgId: string
   srcId: string

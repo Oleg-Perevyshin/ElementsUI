@@ -92,8 +92,7 @@ ${formatObjectToString(selectComponent.properties as ISelectProps)}
   let COMPONENT_OPTIONS = Object.keys(componentMap).map((name) => ({ id: name, name: name, value: name }))
   let fullSwitchValue = $state(10)
 
-  /* type="buttons" с явным bg-* у опций — регрессионный пример для конфликта
-     twMerge между заливкой выбранной кнопки и цветом опции (см. Select.svelte) */
+  /* type="buttons" с явным bg-* у опций — регрессионный пример для конфликта twMerge между заливкой выбранной кнопки и цветом опции (см. Select.svelte) */
   const statusOptions = [
     { id: crypto.randomUUID(), value: "online", name: "Online", class: "bg-green" },
     { id: crypto.randomUUID(), value: "updating", name: "Updating", class: "bg-yellow" },

@@ -1,5 +1,4 @@
-<!-- $lib/PeriodChart/PeriodChart.svelte — сегментированный переключатель,
-     числа внутри столбиков убраны, акцент только у выбранного. Логика не тронута. -->
+<!-- $lib/PeriodChart/PeriodChart.svelte — столбики за период и сегментированный переключатель периода, акцент только у выбранного -->
 <script module lang="ts">
   import type { IPeriodChartLevel } from "../types"
 
@@ -21,8 +20,7 @@
 
   let {
     id = crypto.randomUUID(),
-    /* Было "bg-blue" — декоративная заливка панели. Теперь нейтрально;
-       вызовы, которым нужен цвет, по-прежнему могут передать bg-* явно. */
+    /* Панель без заливки, цвет можно передать явно через bg-* */
     wrapperClass = "",
     label = { name: "", class: "" },
     levels: levelsProp,

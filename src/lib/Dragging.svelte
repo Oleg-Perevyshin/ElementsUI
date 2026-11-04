@@ -93,10 +93,7 @@
     const ghost = dragState.ghostElement
     ghost.style.top = `${e.clientY - dragState.offsetY}px`
 
-    /*
-      Место вставки — перед первой строкой, середина которой ниже курсора (иначе — в конец): меняется только при пересечении середины
-      строки, без дрожания на границах. Соседние строки сдвигаются плавно (animateReorder)
-    */
+    /* Место вставки — перед первой строкой, середина которой ниже курсора (иначе — в конец): меняется только при пересечении середины строки, без дрожания на границах. Соседние строки сдвигаются плавно (animateReorder) */
     const items = commandItems.filter((item) =>
       dragState.containerIndex === null ? true : Number(item.id.split("-")[2]) === dragState.containerIndex,
     ) as HTMLElement[]

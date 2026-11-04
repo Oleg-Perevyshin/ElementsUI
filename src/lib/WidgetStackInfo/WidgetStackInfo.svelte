@@ -1,7 +1,4 @@
-<!-- $lib/WidgetStackInfo/WidgetStackInfo.svelte — отладочный смарт-виджет памяти и задач FreeRTOS.
-     Данные — один объект StackInfo в том виде, в каком его отдают ProdFactory-ESP и ProdFactory-STM
-     (API_GetStackInfo): Heap[{Name, Total, Free, MinFree}] и Tasks[{Name, FreeMin, Prio, Core?, State, CPU?}].
-     Ничего не знает про DeviceStore/WebSocket — value/onRefresh, автоопрос лишь периодически зовёт onRefresh. -->
+<!-- $lib/WidgetStackInfo/WidgetStackInfo.svelte — отладочный смарт-виджет памяти и задач FreeRTOS. Данные — один объект StackInfo в том виде, в каком его отдают ProdFactory-ESP и ProdFactory-STM (API_GetStackInfo): Heap[{Name, Total, Free, MinFree}] и Tasks[{Name, FreeMin, Prio, Core?, State, CPU?}]. Ничего не знает про DeviceStore/WebSocket — value/onRefresh, автоопрос лишь периодически зовёт onRefresh. -->
 <script lang="ts">
   import { T } from "../locales/i18n"
   import { slide } from "svelte/transition"

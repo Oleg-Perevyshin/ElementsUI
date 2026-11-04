@@ -7,8 +7,7 @@ function id() {
   return crypto.randomUUID() as string
 }
 
-/* Достаёт роль master-цвета (класс bg-*) из строки классов компонента и находит соответствующую
-   запись в COLOR_OPTIONS — общий хелпер для всех *Props-панелей, где нужно предзаполнить пикер цвета. */
+/* Достаёт роль master-цвета (класс bg-*) из строки классов компонента и находит соответствующую запись в COLOR_OPTIONS — общий хелпер для всех *Props-панелей, где нужно предзаполнить пикер цвета. */
 export const findColorOption = <T extends { value: string }>(options: T[], classString?: string, prefix: string = "bg-"): T | undefined => {
   const colorClass = classString?.split(" ").find((cls) => cls.startsWith(prefix))
   return colorClass ? options.find((c) => c.value.includes(colorClass)) : undefined
@@ -73,13 +72,7 @@ export const optionsStore = derived(T, ($T) => {
       { id: id(), value: "background", name: $T("constructor.props.background"), icon: PROPS_ICONS.highlight },
     ],
 
-    /* Единая семантическая палитра (app.css: --X-color/--X-soft, светлая и тёмная тема уже учтены) —
-       тот же набор ролей, что и в "мастер-цвете" виджетов конструктора (widgetAccent.ts на стороне
-       приложения). bg-max — нейтральный вариант (= --back-color), с ним свотч отмечается рамкой
-       (Select.svelte: hasOwnColor), а не акцентной синей заливкой, как обычный сегмент-контрол.
-       7 пунктов вместо прежних 9: orange/cyan/pink убраны — на глаз сливались с yellow/green/red
-       соответственно; состав теперь 1:1 с TEXT_COLOR_OPTIONS (red/yellow/green/blue/purple/gray) —
-       там уже давно только явно различимые цвета. */
+    /* Семантическая палитра темы (--X-color и --X-soft): те же роли, что у мастер-цвета виджетов; bg-max — нейтральный вариант, свотч с ним отмечается рамкой; 7 различимых цветов, состав совпадает с TEXT_COLOR_OPTIONS */
     COLOR_OPTIONS: [
       { id: id(), name: "-", value: "bg-max", class: "bg-max text-transparent" },
       { id: id(), name: "", value: "bg-red", class: "bg-red" },

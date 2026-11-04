@@ -1,7 +1,5 @@
 /* $lib/protocols/can.ts */
-/* Пакеты по CAN/CAN FD через slcan-адаптер (can_service прошивки): стандартный 11-битный ID — бит 10 «последний/единственный фрагмент»,
-   биты 0..9 — packet_id, одинаковый у всех фрагментов пакета; DATA — чистый payload без служебных байт. Адаптер говорит ASCII-кадрами slcan:
-   [t|d|b|r]III L DD..DD\r (стандартный ID, 3 hex), [T|D|B|R]IIIIIIII L DD..\r (расширенный, 8 hex); t/T — CAN, d/D, b/B — CAN FD (b — с BRS) */
+/* Пакеты по CAN/CAN FD через slcan-адаптер (can_service прошивки): стандартный 11-битный ID — бит 10 «последний/единственный фрагмент», биты 0..9 — packet_id, одинаковый у всех фрагментов пакета; DATA — чистый payload без служебных байт. Адаптер говорит ASCII-кадрами slcan: [t|d|b|r]III L DD..DD\r (стандартный ID, 3 hex), [T|D|B|R]IIIIIIII L DD..\r (расширенный, 8 hex); t/T — CAN, d/D, b/B — CAN FD (b — с BRS) */
 import { decodePacket } from "./packet.js"
 
 export const CAN_FINAL_BIT = 0x400
@@ -122,7 +120,6 @@ export const createCanParser = ({ sessionTimeoutMs = 2000, maxPacketBytes = 8192
   }
 }
 
-/* Команды открытия slcan-адаптера (CANable и совместимые): закрыть канал, скорость арбитража (S0..S8, SA..SD), для CAN FD — скорость данных
-   (Y1..Y5), нормальный режим, без автоповтора, открыть канал — каждая строка заканчивается \r */
+/* Команды открытия slcan-адаптера (CANable и совместимые): закрыть канал, скорость арбитража (S0..S8, SA..SD), для CAN FD — скорость данных (Y1..Y5), нормальный режим, без автоповтора, открыть канал — каждая строка заканчивается \r */
 export const slcanOpenCommands = (bitrate: string, dataBitrate?: string): string[] =>
   ["C", bitrate, ...(dataBitrate ? [dataBitrate] : []), "M0", "A0", "O"].map((command) => `${command}\r`)

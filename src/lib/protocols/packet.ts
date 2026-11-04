@@ -1,6 +1,5 @@
 /* $lib/protocols/packet.ts */
-/* Общий пакет poe_cbor_pkt всех шин и консоли: indefinite ARRAY записей [TrgBusID, SrcBusID, HAR, Payload, CRC16].
-   Payload — ровно одно CBOR item (сырые данные — байтовая строка), пустой — null. CRC-16/KERMIT — по CBOR-байтам записи от её заголовка до конца Payload */
+/* Общий пакет poe_cbor_pkt всех шин и консоли: indefinite ARRAY записей [TrgBusID, SrcBusID, HAR, Payload, CRC16]. Payload — ровно одно CBOR item (сырые данные — байтовая строка), пустой — null. CRC-16/KERMIT — по CBOR-байтам записи от её заголовка до конца Payload */
 import { CborDecoder } from "./cbor/decoder.js"
 import { CborEncoder } from "./cbor/encoder.js"
 import { CborEndOfDataError } from "./cbor/types.js"
@@ -142,8 +141,7 @@ export const decodePacket = (bytes: Uint8Array): PacketParse => {
   return { status: "complete", length: offset, objects }
 }
 
-/* Потоковый разбор пакетов из сырого потока (RS485): пауза дольше gapMs обрывает недособранный пакет, мусор сдвигается по байту,
-   без единого целого пакета буфер не растёт дальше maxBytes */
+/* Потоковый разбор пакетов из сырого потока (RS485): пауза дольше gapMs обрывает недособранный пакет, мусор сдвигается по байту, без единого целого пакета буфер не растёт дальше maxBytes */
 export const createPacketStreamParser = ({ gapMs = 100, maxBytes = 4096 } = {}) => {
   let buffer = new Uint8Array()
   let last = 0

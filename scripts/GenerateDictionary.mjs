@@ -1,5 +1,4 @@
-/* scripts/GenerateDictionary.mjs — генерирует src/lib/protocols/dictionaryCodes.ts из мастер-словаря src/lib/protocols/dictionary.yaml
-   (строки «- [Строка, Enum, Число]», тот же разбор, что parseArgumentDictionary); запускается npm run Dictionary и перед упаковкой (prepack) */
+/* scripts/GenerateDictionary.mjs — генерирует src/lib/protocols/dictionaryCodes.ts из мастер-словаря src/lib/protocols/dictionary.yaml (строки «- [Строка, Enum, Число]», тот же разбор, что parseArgumentDictionary); запускается npm run Dictionary и перед упаковкой (prepack) */
 import { readFileSync, writeFileSync } from "node:fs"
 
 const root = new URL("../src/lib/protocols/", import.meta.url)

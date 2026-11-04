@@ -26,9 +26,7 @@
   let previewUrl = $derived(currentImage ? (currentImage.startsWith("data:") ? currentImage : `data:image/png;base64,${currentImage}`) : null)
   let fileName = $state("")
 
-  /* Blob-URL для мгновенного превью выбранного файла до того, как onChange/родитель
-     подтвердит загрузку и обновит currentImage. Предыдущий blob обязательно отзывается
-     перед созданием нового и при размонтировании — иначе течёт память при частой смене файла. */
+  /* Blob-URL для мгновенного превью до обновления currentImage, отзывается перед созданием нового и при размонтировании, чтобы не текла память */
   let objectUrl: string | null = null
   $effect(() => () => {
     if (objectUrl) URL.revokeObjectURL(objectUrl)
@@ -61,8 +59,7 @@
   }
 </script>
 
-<!-- По design-handoff (раздел 9): зона сброса — пунктир 1 px с радиусом 12 вместо залитой кнопки,
-     высота как у Input; «Выбрать файл» — акцентный текст, имя файла — обычным цветом, пока не выбрано — бледным. -->
+<!-- По design-handoff (раздел 9): зона сброса — пунктир 1 px с радиусом 12 вместо залитой кнопки, высота как у Input; «Выбрать файл» — акцентный текст, имя файла — обычным цветом, пока не выбрано — бледным. -->
 <div class={twMerge(`flex flex-col items-center gap-1`, wrapperClass)}>
   {#if label.name}
     <span class={twMerge(`w-full text-[12px] font-semibold text-(--muted-color)`, label.class)}>{label.name}</span>

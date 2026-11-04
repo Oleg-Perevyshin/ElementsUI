@@ -1,5 +1,4 @@
-<!-- $lib/WidgetPFD/WidgetPFDProps.svelte — панель пропсов конструктора для WidgetPFD:
-     заголовок, префикс группы полей (по умолчанию MAV), мастер-цвет и границы цветовых зон. -->
+<!-- $lib/WidgetPFD/WidgetPFDProps.svelte — панель пропсов конструктора для WidgetPFD: заголовок, префикс группы полей (по умолчанию MAV), мастер-цвет и границы цветовых зон. -->
 <script lang="ts">
   import TextsEditor from "../TextsEditor.svelte"
   import { T } from "../locales/i18n"

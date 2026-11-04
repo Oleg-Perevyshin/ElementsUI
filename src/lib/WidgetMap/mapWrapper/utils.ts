@@ -1,4 +1,4 @@
-/* Версия совпадает с devDependency maplibre-gl (типы); с 6.x пакет — только ES-модуль, UMD-скрипта и глобала больше нет */
+/* Версия совпадает с devDependency maplibre-gl (типы); пакет 6.x — только ES-модуль, без UMD-скрипта и глобала */
 const MAPLIBRE_VERSION = "6.16.0"
 const MODULE_URL = `https://cdn.jsdelivr.net/npm/maplibre-gl@${MAPLIBRE_VERSION}/dist/maplibre-gl.mjs`
 const CSS_URL = `https://cdn.jsdelivr.net/npm/maplibre-gl@${MAPLIBRE_VERSION}/dist/maplibre-gl.css`
@@ -11,7 +11,7 @@ export const loadMapLibre = (): Promise<boolean> => {
   if (window.maplibregl) return Promise.resolve(true)
   if (!navigator.onLine) return Promise.resolve(false)
 
-  /* Модуль кладётся в window.maplibregl — компоненты обёртки обращаются к нему как раньше; с CDN, чтобы не тянуть карту в бандл приложений */
+  /* Модуль кладётся в window.maplibregl — через него к карте обращаются компоненты обёртки; с CDN, чтобы не тянуть карту в бандл приложений */
   loading ??= Promise.all([import(/* @vite-ignore */ MODULE_URL) as Promise<typeof import("maplibre-gl")>, loadCSS(CSS_URL)])
     .then(([maplibregl]) => {
       window.maplibregl = maplibregl

@@ -19,11 +19,7 @@
 
   const isRemote = $derived(source === "remote")
 
-  /* Мастер-цвет (тот же bg-* из optionsStore.COLOR_OPTIONS, что и у остальных примитивов) —
-     проявляется как акцентное кольцо вокруг кадра. Namеренно ring, а не border — border меняет
-     content-box контейнера (см. Map.svelte, где это ломало рендер MapLibre при смене цвета);
-     ring (box-shadow) размеры не меняет, тот же приём здесь для единообразия и на случай
-     будущей смены video/img на что-то более чувствительное к ресайзу контейнера. */
+  /* Мастер-цвет bg-* рисуется кольцом ring вокруг кадра: ring не меняет размеры контейнера, в отличие от border */
   const roleBorderClass = $derived.by(() => {
     const role = wrapperClass?.match(/bg-(\w+)/)?.[1]
     return role && role !== "max" ? `ring-2 ring-inset ring-(--border-color) border-${role}` : ""

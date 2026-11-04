@@ -1,5 +1,4 @@
-<!-- $lib/Modal.svelte — радиус 20, шапка и подвал через линии,
-     подложка 40% + blur. Логика стека, Escape и клика вне окна не тронута. -->
+<!-- $lib/Modal.svelte — модальное окно: радиус 20, шапка и подвал через линии, подложка 40% с размытием, стек окон, закрытие по Escape и клику вне окна -->
 <script lang="ts">
   import { T } from "./locales/i18n"
   import { type Snippet } from "svelte"
@@ -54,10 +53,7 @@
 
     const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as HTMLElement
-      /* [data-ui-portal] — элементы вроде выпадающего списка Select физически вынесены в
-         document.body (портал, чтобы их не обрезал overflow родителя), т.е. DOM-предок у них —
-         не [data-modal], а <body>. Без этой проверки клик по такому элементу внутри модалки
-         считался бы кликом "снаружи" и сразу закрывал бы её. */
+      /* [data-ui-portal]: выпадающие списки вынесены в body, клик по ним внутри модалки не считается кликом снаружи */
       if (isTopmost && !target.closest("[data-modal]") && !target.closest("[data-ui-portal]")) {
         isOpen = false
         onCancel()
@@ -108,8 +104,7 @@
       </div>
 
       {#if footer}
-        <!-- Подтверждающее действие — крайнее справа; row-reverse сохранён,
-             поэтому порядок сниппетов в вызовах менять не нужно -->
+        <!-- Подтверждающее действие — крайнее справа; row-reverse сохранён, поэтому порядок сниппетов в вызовах менять не нужно -->
         <div class="flex flex-row-reverse items-center justify-start gap-2 border-t border-(--hairline-color) bg-(--container-color) px-5 py-3">
           {@render footer?.()}
         </div>

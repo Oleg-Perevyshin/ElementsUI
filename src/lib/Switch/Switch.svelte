@@ -1,6 +1,4 @@
-<!-- $lib/Switch/Switch.svelte — нормализованы цвета, тени и состояние «выключен».
-     Геометрия тумблера по-прежнему считается от пропа height, чтобы не сломать
-     вызовы, которые его задают. Чекбокс: 20px с радиусом 6 вместо size-8 rounded-2xl. -->
+<!-- $lib/Switch/Switch.svelte — тумблер, геометрия считается от пропа height; чекбокс 20px с радиусом 6 -->
 <script lang="ts">
   import { twMerge } from "tailwind-merge"
   import type { ISwitchProps } from "../types"
@@ -92,10 +90,7 @@
                 disabled={option.disabled}
                 onchange={() => handleToggle(index)}
               />
-              <!-- Дорожка: акцент во включённом состоянии, нейтральная серая в выключенном.
-                   Фолбэк var(--accent-color) — большинство вызовов Switch не передают
-                   wrapperClass с ролью цвета (bg-blue и т.п.), без фолбэка --bg-color
-                   остаётся не задан и дорожка становится невидимой при включении. -->
+              <!-- Дорожка: акцент во включённом состоянии, нейтральная серая в выключенном. Фолбэк var(--accent-color) — большинство вызовов Switch не передают wrapperClass с ролью цвета (bg-blue и т.п.), без фолбэка --bg-color остаётся не задан и дорожка становится невидимой при включении. -->
               <span
                 class="relative flex items-center rounded-full transition-colors duration-200
                   {checkedOptions[index] ? 'bg-(--bg-color,var(--accent-color))' : 'bg-(--border-color)'}

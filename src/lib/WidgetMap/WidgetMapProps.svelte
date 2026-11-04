@@ -1,5 +1,4 @@
-<!-- $lib/WidgetMap/WidgetMapProps.svelte — панель пропсов конструктора для WidgetMap: заголовок, группы полей
-     (каждая — объект), мастер-цвет, высота карты, иконка маркера и начальные значения переключателей оператора. -->
+<!-- $lib/WidgetMap/WidgetMapProps.svelte — панель пропсов конструктора для WidgetMap: заголовок, группы полей (каждая — объект), мастер-цвет, высота карты, иконка маркера и начальные значения переключателей оператора. -->
 <script lang="ts">
   import TextsEditor from "../TextsEditor.svelte"
   import { T } from "../locales/i18n"

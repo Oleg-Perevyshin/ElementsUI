@@ -1,9 +1,8 @@
 /* $lib/locales/localize.ts */
-/* Многоязычные тексты, введённые в конструкторе: строка (язык по умолчанию) или объект по кодам языков { ru, en, zh, ... };
-   язык по умолчанию (DEFAULT_LANGUAGE) — основной и запасной; набор и порядок языков — LANGUAGES (languages.ts) */
+/* Многоязычные тексты, введённые в конструкторе: строка (язык по умолчанию) или объект по кодам языков { ru, en, zh, ... }; язык по умолчанию (DEFAULT_LANGUAGE) — основной и запасной; набор и порядок языков — LANGUAGES (languages.ts) */
 import { DEFAULT_LANGUAGE, LANGUAGE_CODES, type LanguageCode } from "./languages.js"
 
-/* Ключ многоязычного текста: код языка из LANGUAGES или похожий на код (ru, en, pt-BR) — данные с языком, убранным из списка, не ломаются */
+/* Ключ многоязычного текста: код языка из LANGUAGES или похожий на код (ru, en, pt-BR) — данные с языком, которого нет в списке, не ломаются */
 const LANGUAGE_KEY = /^[a-z]{2,3}(-[A-Z]{2})?$/
 
 export type LocalizedText = string | Partial<Record<LanguageCode, string>>

@@ -1,9 +1,4 @@
-<!-- $lib/CopiedChip.svelte — единая всплывающая метка "Скопировано" после клика
-     на кнопку копирования. Раньше в каждом месте (Input, Table, Map,
-     ComponentExample) была своя версия: где-то текст, где-то просто "✓",
-     разные цвета (--green-color вместо --green-soft) и радиусы, а в
-     ComponentExample — опечатка в классе позиционирования (right-1..5,
-     невалидный Tailwind-класс, физически ничего не позиционировал). -->
+<!-- $lib/CopiedChip.svelte — общая всплывающая метка «Скопировано» после клика на кнопку копирования -->
 <script lang="ts">
   import { T } from "./locales/i18n"
   import { fade } from "svelte/transition"

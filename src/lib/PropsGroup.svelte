@@ -1,8 +1,4 @@
-<!-- $lib/PropsGroup.svelte — карточка-группа полей для панелей свойств конструктора (*Props.svelte).
-     Визуальный язык взят из уже принятого вложенного оформления смарт-виджетов
-     (WidgetWiFi.svelte/WidgetDeviceInfo.svelte: rounded-[10px] border bg-(--back-color) p-3 +
-     подпись text-[12px] font-semibold text-(--muted-color)) — общий premium-вид панелей вместо
-     голых flex-колонок без оформления. -->
+<!-- $lib/PropsGroup.svelte — карточка-группа полей для панелей свойств конструктора (*Props.svelte). Визуальный язык взят из уже принятого вложенного оформления смарт-виджетов (WidgetWiFi.svelte/WidgetDeviceInfo.svelte: rounded-[10px] border bg-(--back-color) p-3 + подпись text-[12px] font-semibold text-(--muted-color)) — общий premium-вид панелей вместо голых flex-колонок без оформления. -->
 <script lang="ts">
   import { twMerge } from "tailwind-merge"
   import type { Snippet } from "svelte"

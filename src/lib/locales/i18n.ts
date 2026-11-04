@@ -2,13 +2,9 @@ import { derived, get, writable, type Readable } from "svelte/store"
 import translations from "./translations.js"
 import { DEFAULT_LANGUAGE, LANGUAGES, LANGUAGE_CODES, isLanguageCode, resolveLanguage, type LanguageCode, type Translations } from "./languages.js"
 
-/* Язык и механизм перевода — общие для библиотеки и приложений: приложение берёт отсюда Language/setLanguage/LOCALES и строит свой $T
-   из своего словаря через createTranslator (см. README «Языки»); переключение языка одним setLanguage меняет и компоненты, и приложение */
+/* Язык и механизм перевода — общие для библиотеки и приложений: приложение берёт отсюда Language/setLanguage/LOCALES и строит свой $T из своего словаря через createTranslator (см. README «Языки»); переключение языка одним setLanguage меняет и компоненты, и приложение */
 
-/*
-  Текущий язык. Стартует всегда с языка по умолчанию — серверный рендер и гидратация совпадают (Svelte 5 не перерисовывает текст при
-  гидратации); сохранённый выбор применяет restoreLanguage(): в SSR-приложениях — в onMount корневого layout, в SPA — при старте
-*/
+/* Текущий язык. Стартует всегда с языка по умолчанию — серверный рендер и гидратация совпадают (Svelte 5 не перерисовывает текст при гидратации); сохранённый выбор применяет restoreLanguage(): в SSR-приложениях — в onMount корневого layout, в SPA — при старте */
 export const Language = writable<string>(DEFAULT_LANGUAGE)
 
 /* Текущий язык — для заголовков запросов (Accept-Language) и прочего кода вне компонентов */
@@ -78,8 +74,7 @@ const WIDGET_TITLE_KEYS: Record<string, string> = {
   WidgetMap: "widget.map.title",
 }
 
-/* Название виджета сразу на всех языках { ru, en, zh, ... } — конструктор заполняет им заголовок нового виджета,
-   переводы видны и правятся в «Тексты и переводы»; для неизвестного типа — пустой объект */
+/* Название виджета сразу на всех языках { ru, en, zh, ... } — конструктор заполняет им заголовок нового виджета, переводы видны и правятся в «Тексты и переводы»; для неизвестного типа — пустой объект */
 export const widgetTitle = (type: string): Partial<Record<LanguageCode, string>> => {
   const entry = translations[WIDGET_TITLE_KEYS[type] ?? ""]
   return entry ? Object.fromEntries(LANGUAGE_CODES.filter((lang) => entry[lang]).map((lang) => [lang, entry[lang] as string])) : {}

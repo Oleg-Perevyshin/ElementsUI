@@ -1,7 +1,4 @@
-<!-- $lib/WidgetRGBStrip/WidgetRGBStrip.svelte — смарт-виджет адресной светодиодной ленты.
-     Поля группы LST (RGB_Strip, ProdFactory-ESP): Color/Effect/Speed отправляются сразу (onChange),
-     Count/Model/Order — одним пакетом по «Сохранить» (onSave): прошивка пересоздаёт драйвер ленты.
-     Ничего не знает про DeviceStore/WebSocket — только value и колбэки. -->
+<!-- $lib/WidgetRGBStrip/WidgetRGBStrip.svelte — смарт-виджет адресной светодиодной ленты. Поля группы LST (RGB_Strip, ProdFactory-ESP): Color/Effect/Speed отправляются сразу (onChange), Count/Model/Order — одним пакетом по «Сохранить» (onSave): прошивка пересоздаёт драйвер ленты. Ничего не знает про DeviceStore/WebSocket — только value и колбэки. -->
 <script lang="ts">
   import { T } from "../locales/i18n"
   import { untrack } from "svelte"

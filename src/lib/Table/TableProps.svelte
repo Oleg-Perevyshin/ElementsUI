@@ -43,8 +43,7 @@
 
   let settingsContainer: HTMLDivElement[] = $state([])
   let columnContainer: HTMLDivElement | null = $state(null)
-  /* Акцентная левая полоса столбца (вместо сплошной цветной заливки) — та же семантическая
-     палитра ролей, что и в остальной дизайн-системе (app.css), уже тема-зависимая */
+  /* Акцентная левая полоса столбца (вместо сплошной цветной заливки) — та же семантическая палитра ролей, что и в остальной дизайн-системе (app.css), уже тема-зависимая */
   const columnAccentColors = [
     "border-l-(--red-color)",
     "border-l-(--green-color)",
@@ -54,8 +53,7 @@
     "border-l-(--purple-color)",
   ]
 
-  /* В конструкторе содержимое столбца — сохранённые данные: массив, а не функция (row) => ... из кода приложений;
-     data элемента правится как обычный объект полей */
+  /* В конструкторе содержимое столбца — сохранённые данные: массив, а не функция (row) => ... из кода приложений; data элемента правится как обычный объект полей */
   const columnContent = (column: ITableHeader<object> | undefined): ITableContent<object>[] => (Array.isArray(column?.content) ? column.content : [])
   const contentData = (columnIndex: number, index: number) =>
     (columnContent(component.properties.header?.[columnIndex])[index]?.data ?? {}) as Record<string, unknown>

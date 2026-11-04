@@ -1,7 +1,4 @@
-<!-- $lib/WidgetStackInfo/WidgetStackInfoProps.svelte — панель пропсов конструктора для
-     WidgetStackInfo: заголовок/мастер-цвет, порог подсветки запаса стека, автоопрос по умолчанию,
-     имя объекта ответа (keys.StackInfo) и аргумент запроса — все с дефолтами прошивочной конвенции
-     (см. DEFAULT_PROPS.WidgetStackInfo в DevCloud). -->
+<!-- $lib/WidgetStackInfo/WidgetStackInfoProps.svelte — панель пропсов конструктора для WidgetStackInfo: заголовок/мастер-цвет, порог подсветки запаса стека, автоопрос по умолчанию, имя объекта ответа (keys.StackInfo) и аргумент запроса — все с дефолтами прошивочной конвенции (см. DEFAULT_PROPS.WidgetStackInfo в DevCloud). -->
 <script lang="ts">
   import TextsEditor from "../TextsEditor.svelte"
   import { T } from "../locales/i18n"

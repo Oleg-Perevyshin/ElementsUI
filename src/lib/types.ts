@@ -543,11 +543,7 @@ export interface IWidgetProps {
   onUpdate?: (value: number) => void
 }
 
-/* Смарт-виджеты — составные карточки конструктора с ФИКСИРОВАННЫМ набором полей устройства
-   (в отличие от примитивов, где переменную выбирает пользователь через Select). Поля соответствуют
-   реальной прошивочной конвенции (group prefix + предопределённые имена, как в config_service
-   ProdFactory-ESP) — компонент ничего не знает про DeviceStore/WebSocket, только value/onSave:
-   владелец рендера (GUIPreview.svelte) сам читает/пишет нужные ключи единым пакетом. */
+/* Смарт-виджеты — составные карточки конструктора с ФИКСИРОВАННЫМ набором полей устройства (в отличие от примитивов, где переменную выбирает пользователь через Select). Поля соответствуют реальной прошивочной конвенции (group prefix + предопределённые имена, как в config_service ProdFactory-ESP) — компонент ничего не знает про DeviceStore/WebSocket, только value/onSave: владелец рендера (GUIPreview.svelte) сам читает/пишет нужные ключи единым пакетом. */
 export interface IWidgetWiFiConfig {
   WiFiMode: number /* 0=NULL, 1=STA, 2=AP, 3=STA+AP — как esp_wifi wifi_mode_t */
   StaSSID: string
@@ -564,26 +560,21 @@ export interface IWidgetWiFiConfig {
 }
 
 export interface IWidgetWiFiProps {
-  /* В отличие от примитивов id — не биндинг одной переменной, а префикс прошивочной группы
-     (обычно "CFG"), с которой работает весь набор полей виджета разом (см. keys ниже) */
+  /* В отличие от примитивов id — не биндинг одной переменной, а префикс прошивочной группы (обычно "CFG"), с которой работает весь набор полей виджета разом (см. keys ниже) */
   id?: string
   wrapperClass?: string
   componentClass?: string
   label?: { name?: string }
   value?: IWidgetWiFiConfig
-  /* Переопределение имени поля устройства для каждого ключа IWidgetWiFiConfig — по умолчанию
-     совпадает с именем самого ключа (WiFiMode, StaSSID, ...), меняется только если у прошивки
-     другая конвенция именования */
+  /* Переопределение имени поля устройства для каждого ключа IWidgetWiFiConfig — по умолчанию совпадает с именем самого ключа (WiFiMode, StaSSID, ...), меняется только если у прошивки другая конвенция именования */
   keys?: Partial<Record<keyof IWidgetWiFiConfig, string>>
   /* Команда сканирования сетей — по умолчанию Header: GET, Argument: APsList */
   scanCommand?: { header?: string; argument?: string }
   allowedModes?: number[]
   confirmOnAP?: boolean
-  /* Свёрнут ли виджет по умолчанию — как isOpen у Accordion, задаётся в конструкторе и сохраняется
-     в GUI, чтобы при входе на устройство все видели один и тот же задуманный вид интерфейса */
+  /* Свёрнут ли виджет по умолчанию — как isOpen у Accordion, задаётся в конструкторе и сохраняется в GUI, чтобы при входе на устройство все видели один и тот же задуманный вид интерфейса */
   collapsed?: boolean
-  /* Уникальный ключ виджета (обычно ModSN + id компонента) — если задан, поверх дефолта ещё
-     запоминается личный выбор пользователя в localStorage и переживает перезагрузку страницы */
+  /* Уникальный ключ виджета (обычно ModSN + id компонента) — если задан, поверх дефолта ещё запоминается личный выбор пользователя в localStorage и переживает перезагрузку страницы */
   persistKey?: string
   onScan?: () => Promise<{ id: string; name: string; value: string }[]>
   onSave?: (config: IWidgetWiFiConfig) => void
@@ -598,8 +589,7 @@ export interface IWidgetDeviceInfoConfig {
   HostName: string
   WebUser: string
   WebPsw: string
-  /* Текущие IP-адреса устройства в обоих режимах WiFi (STA/AP) — только для отображения,
-     реальное конфигурирование сети происходит в WidgetWiFi */
+  /* Текущие IP-адреса устройства в обоих режимах WiFi (STA/AP) — только для отображения, реальное конфигурирование сети происходит в WidgetWiFi */
   StaIP: string
   ApIP: string
 }
@@ -611,8 +601,7 @@ export interface IWidgetDeviceInfoProps {
   componentClass?: string
   label?: { name?: string }
   value?: IWidgetDeviceInfoConfig
-  /* Переопределение имени поля устройства для каждого ключа IWidgetDeviceInfoConfig — по умолчанию
-     совпадает с именем самого ключа (DevSN, DevName, ...) */
+  /* Переопределение имени поля устройства для каждого ключа IWidgetDeviceInfoConfig — по умолчанию совпадает с именем самого ключа (DevSN, DevName, ...) */
   keys?: Partial<Record<keyof IWidgetDeviceInfoConfig, string>>
   /* Команда перезагрузки — по умолчанию Header: SET, Argument: Restart */
   restartCommand?: { header?: string; argument?: string }

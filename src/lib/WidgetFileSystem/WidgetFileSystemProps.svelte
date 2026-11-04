@@ -1,7 +1,4 @@
-<!-- $lib/WidgetFileSystem/WidgetFileSystemProps.svelte — панель пропсов конструктора для
-     WidgetFileSystem: заголовок/мастер-цвет/префикс группы, имя поля устройства (keys.FS),
-     фильтр закачки и аргумент команд — все с дефолтами, равными прошивочной конвенции
-     (см. DEFAULT_PROPS.WidgetFileSystem в DevCloud). -->
+<!-- $lib/WidgetFileSystem/WidgetFileSystemProps.svelte — панель пропсов конструктора для WidgetFileSystem: заголовок/мастер-цвет/префикс группы, имя поля устройства (keys.FS), фильтр закачки и аргумент команд — все с дефолтами, равными прошивочной конвенции (см. DEFAULT_PROPS.WidgetFileSystem в DevCloud). -->
 <script lang="ts">
   import TextsEditor from "../TextsEditor.svelte"
   import { T } from "../locales/i18n"
