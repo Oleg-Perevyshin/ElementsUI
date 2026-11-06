@@ -8,6 +8,7 @@
   import WidgetAccentPicker from "../WidgetAccentPicker.svelte"
   import CommonSnippets from "../CommonSnippets.svelte"
   import PropsGroup from "../PropsGroup.svelte"
+  import { twMerge } from "tailwind-merge"
 
   const {
     component,
@@ -37,53 +38,58 @@
 </script>
 
 <div class="flex flex-col gap-2">
-  <PropsGroup label={$T("constructor.props.group.general")}>
-    <TextsEditor {component} {onPropertyChange} />
+  <PropsGroup>
     <UI.Switch
       label={{ name: $T("constructor.props.simulation") }}
       value={component.properties.isTest ? 1 : 0}
       options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
       onChange={(value) => updateProperty("isTest", value === 1, component, onPropertyChange)}
     />
-    <UI.Input label={{ name: $T("widget.map.groups") }} disabled={component.properties.isTest} value={(component.properties.groups ?? ["MAV"]).join(" ")} onUpdate={setGroups} />
-    <WidgetAccentPicker
-      value={component.properties.componentClass ?? ""}
-      onUpdate={(value) => updateProperty("componentClass", value, component, onPropertyChange)}
-    />
   </PropsGroup>
-  <PropsGroup label={$T("constructor.props.group.appearance")}>
-    <UI.Select
-      label={{ name: $T("widget.map.height") }}
-      type="buttons"
-      options={HEIGHT_OPTIONS}
-      value={HEIGHT_OPTIONS.find((opt) => opt.value === (component.properties.height ?? 400)) ?? HEIGHT_OPTIONS[1]}
-      onUpdate={(option) => updateProperty("height", (option as { value: number }).value, component, onPropertyChange)}
-    />
-    <CommonSnippets
-      snippet="IconsLib"
-      initialValue={{
-        name: $T("constructor.props.markerIcon"),
-        icon: component.properties.markerIcon,
-        updateProperty: (icon: string) => updateProperty("markerIcon", icon as string, component, onPropertyChange),
-        icons: { array: ICONS },
-      }}
-      {component}
-      {onPropertyChange}
-    />
-  </PropsGroup>
-  <PropsGroup label={$T("widget.map.defaults")}>
-    <UI.Switch
-      label={{ name: $T("constructor.props.map.track") }}
-      value={component.properties.trackEnabled ? 1 : 0}
-      options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-      onChange={(value) => updateProperty("trackEnabled", Boolean(value), component, onPropertyChange)}
-    />
-    <UI.Select
-      label={{ name: $T("constructor.props.map.trackLength") }}
-      type="input"
-      options={TRACK_LENGTH_OPTIONS}
-      value={TRACK_LENGTH_OPTIONS.find((opt) => opt.value === (component.properties.trackLength ?? 1000))}
-      onUpdate={(option) => updateProperty("trackLength", (option as { value: number }).value, component, onPropertyChange)}
-    />
-  </PropsGroup>
+  <!-- В режиме имитации остальные свойства не учитываются, поэтому вся панель бледная и недоступна -->
+  <div class={twMerge("flex flex-col gap-2 transition-opacity", component.properties.isTest && "opacity-40 grayscale")} inert={component.properties.isTest}>
+    <PropsGroup label={$T("constructor.props.group.general")}>
+      <TextsEditor {component} {onPropertyChange} />
+      <UI.Input label={{ name: $T("widget.map.groups") }} value={(component.properties.groups ?? ["MAV"]).join(" ")} onUpdate={setGroups} />
+      <WidgetAccentPicker
+        value={component.properties.componentClass ?? ""}
+        onUpdate={(value) => updateProperty("componentClass", value, component, onPropertyChange)}
+      />
+    </PropsGroup>
+    <PropsGroup label={$T("constructor.props.group.appearance")}>
+      <UI.Select
+        label={{ name: $T("widget.map.height") }}
+        type="buttons"
+        options={HEIGHT_OPTIONS}
+        value={HEIGHT_OPTIONS.find((opt) => opt.value === (component.properties.height ?? 400)) ?? HEIGHT_OPTIONS[1]}
+        onUpdate={(option) => updateProperty("height", (option as { value: number }).value, component, onPropertyChange)}
+      />
+      <CommonSnippets
+        snippet="IconsLib"
+        initialValue={{
+          name: $T("constructor.props.markerIcon"),
+          icon: component.properties.markerIcon,
+          updateProperty: (icon: string) => updateProperty("markerIcon", icon as string, component, onPropertyChange),
+          icons: { array: ICONS },
+        }}
+        {component}
+        {onPropertyChange}
+      />
+    </PropsGroup>
+    <PropsGroup label={$T("widget.map.defaults")}>
+      <UI.Switch
+        label={{ name: $T("constructor.props.map.track") }}
+        value={component.properties.trackEnabled ? 1 : 0}
+        options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
+        onChange={(value) => updateProperty("trackEnabled", Boolean(value), component, onPropertyChange)}
+      />
+      <UI.Select
+        label={{ name: $T("constructor.props.map.trackLength") }}
+        type="input"
+        options={TRACK_LENGTH_OPTIONS}
+        value={TRACK_LENGTH_OPTIONS.find((opt) => opt.value === (component.properties.trackLength ?? 1000))}
+        onUpdate={(option) => updateProperty("trackLength", (option as { value: number }).value, component, onPropertyChange)}
+      />
+    </PropsGroup>
+  </div>
 </div>

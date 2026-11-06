@@ -27,8 +27,7 @@
 
 {#snippet GraphIsTest()}
   <UI.Switch
-    wrapperClass="bg-blue"
-    label={{ name: $T("constructor.props.istest") }}
+    label={{ name: $T("constructor.props.simulation") }}
     value={component.properties.isTest ? 1 : 0}
     options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
     onChange={(value) => updateProperty("isTest", value === 1, component, onPropertyChange)}
@@ -44,35 +43,37 @@
   />
 {/snippet}
 
-{#if forConstructor}
-  <div class="flex flex-col gap-2">
-    <PropsGroup label={$T("constructor.props.group.general")}>
-      <CommonSnippets snippet="Access" {component} {onPropertyChange} />
-      <CommonSnippets snippet="Variable" {VARIABLE_OPTIONS} {component} {onPropertyChange} />
-    </PropsGroup>
-    <PropsGroup label={$T("constructor.props.group.appearance")}>
-      <CommonSnippets snippet="Label" {component} {onPropertyChange} />
-      <CommonSnippets snippet="LabelAlign" initialValue={initialAlign} {component} {onPropertyChange} />
-    </PropsGroup>
-    <PropsGroup label={$T("constructor.props.group.behavior")}>
-      {@render GraphIsTest()}
-      {@render GraphSettings()}
-    </PropsGroup>
+<div class="flex flex-col gap-2">
+  <PropsGroup>
+    {@render GraphIsTest()}
+  </PropsGroup>
+  <!-- В режиме имитации остальные свойства не учитываются, поэтому вся панель бледная и недоступна -->
+  <div class={twMerge("flex flex-col gap-2 transition-opacity", component.properties.isTest && "opacity-40 grayscale")} inert={component.properties.isTest}>
+    {#if forConstructor}
+      <PropsGroup label={$T("constructor.props.group.general")}>
+        <CommonSnippets snippet="Access" {component} {onPropertyChange} />
+        <CommonSnippets snippet="Variable" {VARIABLE_OPTIONS} {component} {onPropertyChange} />
+      </PropsGroup>
+      <PropsGroup label={$T("constructor.props.group.appearance")}>
+        <CommonSnippets snippet="Label" {component} {onPropertyChange} />
+        <CommonSnippets snippet="LabelAlign" initialValue={initialAlign} {component} {onPropertyChange} />
+      </PropsGroup>
+      <PropsGroup label={$T("constructor.props.group.behavior")}>
+        {@render GraphSettings()}
+      </PropsGroup>
+    {:else}
+      <PropsGroup label={$T("constructor.props.group.general")}>
+        <CommonSnippets snippet="Identificator" {component} {onPropertyChange} />
+        <CommonSnippets snippet="Access" {component} {onPropertyChange} />
+      </PropsGroup>
+      <PropsGroup label={$T("constructor.props.group.appearance")}>
+        <CommonSnippets snippet="Label" {component} {onPropertyChange} />
+        <CommonSnippets snippet="LabelClass" initialValue={initialAlign} {component} {onPropertyChange} />
+      </PropsGroup>
+      <PropsGroup label={$T("constructor.props.group.behavior")}>
+        <CommonSnippets snippet="WrapperClass" {component} {onPropertyChange} />
+        {@render GraphSettings()}
+      </PropsGroup>
+    {/if}
   </div>
-{:else}
-  <div class="flex flex-col gap-2">
-    <PropsGroup label={$T("constructor.props.group.general")}>
-      <CommonSnippets snippet="Identificator" {component} {onPropertyChange} />
-      <CommonSnippets snippet="Access" {component} {onPropertyChange} />
-    </PropsGroup>
-    <PropsGroup label={$T("constructor.props.group.appearance")}>
-      <CommonSnippets snippet="Label" {component} {onPropertyChange} />
-      <CommonSnippets snippet="LabelClass" initialValue={initialAlign} {component} {onPropertyChange} />
-    </PropsGroup>
-    <PropsGroup label={$T("constructor.props.group.behavior")}>
-      <CommonSnippets snippet="WrapperClass" {component} {onPropertyChange} />
-      {@render GraphIsTest()}
-      {@render GraphSettings()}
-    </PropsGroup>
-  </div>
-{/if}
+</div>

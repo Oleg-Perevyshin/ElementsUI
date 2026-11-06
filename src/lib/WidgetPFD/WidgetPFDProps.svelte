@@ -6,6 +6,7 @@
   import { updateProperty, type UIComponent, type IWidgetPFDProps, type IWidgetPFDLimits } from "../types"
   import WidgetAccentPicker from "../WidgetAccentPicker.svelte"
   import PropsGroup from "../PropsGroup.svelte"
+  import { twMerge } from "tailwind-merge"
 
   const {
     component,
@@ -27,35 +28,39 @@
 </script>
 
 <div class="flex flex-col gap-2">
-  <PropsGroup label={$T("constructor.props.group.general")}>
-    <TextsEditor {component} {onPropertyChange} />
+  <PropsGroup>
     <UI.Switch
       label={{ name: $T("constructor.props.simulation") }}
       value={component.properties.isTest ? 1 : 0}
       options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
       onChange={(value) => updateProperty("isTest", value === 1, component, onPropertyChange)}
     />
-    <UI.Input
-      label={{ name: $T("pfd.props.group") }}
-      disabled={component.properties.isTest}
-      value={component.properties.id ?? "MAV"}
-      onUpdate={(value) => updateProperty("id", value as string, component, onPropertyChange)}
-    />
-    <WidgetAccentPicker
-      value={component.properties.componentClass ?? ""}
-      onUpdate={(value) => updateProperty("componentClass", value, component, onPropertyChange)}
-    />
   </PropsGroup>
-  <PropsGroup label={$T("pfd.limits")}>
-    <div class="grid grid-cols-2 gap-2">
-      <UI.Input label={{ name: $T("pfd.props.speed_min") }} type="number" value={limits.speedMin} onUpdate={(v) => setLimit("speedMin", v)} />
-      <UI.Input label={{ name: $T("pfd.props.speed_max") }} type="number" value={limits.speedMax} onUpdate={(v) => setLimit("speedMax", v)} />
-      <UI.Input label={{ name: $T("pfd.props.bank_max") }} type="number" value={limits.bankMax} onUpdate={(v) => setLimit("bankMax", v)} />
-      <UI.Input label={{ name: $T("pfd.props.alt_max") }} type="number" value={limits.altMax} onUpdate={(v) => setLimit("altMax", v)} />
-      <UI.Input label={{ name: $T("pfd.props.g_min") }} type="number" value={limits.gMin} onUpdate={(v) => setLimit("gMin", v)} />
-      <UI.Input label={{ name: $T("pfd.props.g_max") }} type="number" value={limits.gMax} onUpdate={(v) => setLimit("gMax", v)} />
-      <UI.Input label={{ name: $T("pfd.props.batt_low") }} type="number" value={limits.battLow} onUpdate={(v) => setLimit("battLow", v)} />
-      <UI.Input disabled={component.properties.isTest} label={{ name: $T("pfd.props.stale") }} type="number" value={limits.staleMs ?? 2000} onUpdate={(v) => setLimit("staleMs", v)} />
-    </div>
-  </PropsGroup>
+  <!-- В режиме имитации остальные свойства не учитываются, поэтому вся панель бледная и недоступна -->
+  <div class={twMerge("flex flex-col gap-2 transition-opacity", component.properties.isTest && "opacity-40 grayscale")} inert={component.properties.isTest}>
+    <PropsGroup label={$T("constructor.props.group.general")}>
+      <TextsEditor {component} {onPropertyChange} />
+      <UI.Input
+        label={{ name: $T("pfd.props.group") }}
+        value={component.properties.id ?? "MAV"}
+        onUpdate={(value) => updateProperty("id", value as string, component, onPropertyChange)}
+      />
+      <WidgetAccentPicker
+        value={component.properties.componentClass ?? ""}
+        onUpdate={(value) => updateProperty("componentClass", value, component, onPropertyChange)}
+      />
+    </PropsGroup>
+    <PropsGroup label={$T("pfd.limits")}>
+      <div class="grid grid-cols-2 gap-2">
+        <UI.Input label={{ name: $T("pfd.props.speed_min") }} type="number" value={limits.speedMin} onUpdate={(v) => setLimit("speedMin", v)} />
+        <UI.Input label={{ name: $T("pfd.props.speed_max") }} type="number" value={limits.speedMax} onUpdate={(v) => setLimit("speedMax", v)} />
+        <UI.Input label={{ name: $T("pfd.props.bank_max") }} type="number" value={limits.bankMax} onUpdate={(v) => setLimit("bankMax", v)} />
+        <UI.Input label={{ name: $T("pfd.props.alt_max") }} type="number" value={limits.altMax} onUpdate={(v) => setLimit("altMax", v)} />
+        <UI.Input label={{ name: $T("pfd.props.g_min") }} type="number" value={limits.gMin} onUpdate={(v) => setLimit("gMin", v)} />
+        <UI.Input label={{ name: $T("pfd.props.g_max") }} type="number" value={limits.gMax} onUpdate={(v) => setLimit("gMax", v)} />
+        <UI.Input label={{ name: $T("pfd.props.batt_low") }} type="number" value={limits.battLow} onUpdate={(v) => setLimit("battLow", v)} />
+        <UI.Input label={{ name: $T("pfd.props.stale") }} type="number" value={limits.staleMs ?? 2000} onUpdate={(v) => setLimit("staleMs", v)} />
+      </div>
+    </PropsGroup>
+  </div>
 </div>

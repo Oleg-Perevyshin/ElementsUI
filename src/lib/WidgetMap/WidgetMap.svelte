@@ -65,17 +65,69 @@
   /* (0, 0) и нечисловые координаты — признак отсутствия фикса */
   const hasFix = (lat: unknown, lon: unknown) => Number.isFinite(lat) && Number.isFinite(lon) && (lat !== 0 || lon !== 0)
 
-  /* Режим имитации: два объекта на одном маршруте, данные и группы устройства не учитываются */
-  const SIM_GROUPS = ["SIM-1", "SIM-2"]
-  const SIM_SN = ["10.10.001-01_0000804500006B3600004000:F76F", "10.10.001-01_0000804500006B3600004001:3A9C"]
+  /* Режим имитации: шесть аппаратов над одним районом сами выходят на связь и пропадают, данные и группы устройства не учитываются */
+  const SIM_COUNT = 6
+  const SIM_ONLINE = 3
+  const SIM_GROUPS = Array.from({ length: SIM_COUNT }, (_, i) => `SIM-${i + 1}`)
+  const SIM_SN = [
+    "10.10.001-01_0000804500006B3600004000:F76F",
+    "10.10.001-01_0000441B0000F68C0000561C:36B1",
+    "20.00.000-01_000068B60000B33B0000A520:5180",
+    "00.00.000-00_0000AC670000B22B00007428:DBC5",
+    "25.00.000-02_0000A0850000E31300004C5C:8D50",
+    "50.00.000-00_0000DCDA00000C1800003194:2BC6",
+  ]
+  /* Сдвиг маршрута каждого аппарата, м: север, восток — чтобы не летали друг за другом */
+  const SIM_SHIFT: [number, number][] = [
+    [0, 0],
+    [-400, 700],
+    [700, -900],
+    [-800, 600],
+    [1100, 900],
+    [-600, -1200],
+  ]
+  const randomSec = (min: number, max: number) => (min + Math.random() * (max - min)) * 1000
   let simValue: Record<string, Partial<IWidgetMapData>> | undefined = $state()
   $effect(() => {
     if (!isTest) return
-    const sims = [createFlightSim(), createFlightSim(3)]
-    const frame = (dt: number) =>
-      Object.fromEntries(SIM_GROUPS.map((group, i) => [group, { ...sims[i](dt), DevName: group, DevSN: SIM_SN[i] }]))
-    simValue = frame(0)
-    const timer = setInterval(() => (simValue = frame(0.5)), 500)
+    /* На связи всегда три аппарата: когда один пропадает, его сменяет тот, кто молчит дольше всех; молчащий маркер успевает покраснеть и скрыться */
+    const fleet = SIM_GROUPS.map((group, i) => ({
+      group,
+      sim: createFlightSim(i % 7),
+      online: i < SIM_ONLINE,
+      switchAt: i < SIM_ONLINE ? Date.now() + randomSec(20 + i * 25, 40 + i * 25) : 0,
+      offlineSince: i,
+    }))
+    const kmLat = 111320
+    const kmLon = 111320 * Math.cos((HOME.lat * Math.PI) / 180)
+    const frames: Record<string, Partial<IWidgetMapData>> = {}
+    /* Модель летит всегда; пока аппарат без связи, его последний кадр не меняется — маркер краснеет, затем скрывается */
+    const tick = (dt: number) => {
+      const t = Date.now()
+      fleet.forEach((f, i) => {
+        const data = f.sim(dt)
+        if (f.online && t >= f.switchAt) {
+          const next = fleet.filter((x) => !x.online).sort((a, b) => a.offlineSince - b.offlineSince)[0]
+          f.online = false
+          f.offlineSince = t
+          next.online = true
+          next.switchAt = t + randomSec(40, 100)
+        }
+        if (!f.online) return
+        frames[f.group] = {
+          Lat: data.Lat + SIM_SHIFT[i][0] / kmLat,
+          Lon: data.Lon + SIM_SHIFT[i][1] / kmLon,
+          Alt: data.Alt + i * 15,
+          Heading: data.Heading,
+          Sat: data.Sat - (i % 3),
+          DevName: f.group,
+          DevSN: SIM_SN[i],
+        }
+      })
+      simValue = { ...frames }
+    }
+    tick(0)
+    const timer = setInterval(() => tick(0.5), 500)
     return () => {
       clearInterval(timer)
       simValue = undefined
@@ -171,7 +223,43 @@
   const hideBoard = (group: string) => {
     const b = boards.find((x) => x.group === group)
     if (b) b.hiddenAt = b.lastChange
+    followed = followed.filter((g) => g !== group)
   }
+
+  /* Слежение: один объект держится в центре карты, несколько — вписываются в карту при включении и дальше только центрируются; масштаб остаётся за оператором, карта отдаляется сама, лишь когда объект уходит за край */
+  let followed: string[] = $state([])
+  const toggleFollow = (group: string) => (followed = followed.includes(group) ? followed.filter((g) => g !== group) : [...followed, group])
+  const FOLLOW_PADDING = 60
+  let lastFollowKey = ""
+  $effect(() => {
+    const map = mapInstance
+    const targets = visibleBoards.filter((b) => followed.includes(b.group))
+    if (!map || targets.length === 0) return
+    untrack(() => {
+      if (targets.length === 1) return map.easeTo({ center: [targets[0].lon, targets[0].lat], duration: 300 })
+      const lons = targets.map((b) => b.lon)
+      const lats = targets.map((b) => b.lat)
+      const bounds: [[number, number], [number, number]] = [
+        [Math.min(...lons), Math.min(...lats)],
+        [Math.max(...lons), Math.max(...lats)],
+      ]
+      const key = targets.map((b) => b.group).join(" ")
+      if (key !== lastFollowKey) {
+        lastFollowKey = key
+        return map.fitBounds(bounds, { padding: FOLLOW_PADDING, maxZoom: 16, duration: 300 })
+      }
+      const center: [number, number] = [(bounds[0][0] + bounds[1][0]) / 2, (bounds[0][1] + bounds[1][1]) / 2]
+      /* Помещаются ли все объекты, если поставить их середину в центр */
+      const { width, height } = map.getContainer().getBoundingClientRect()
+      const mid = map.project(center)
+      const fits = targets.every((b) => {
+        const p = map.project([b.lon, b.lat])
+        return Math.abs(p.x - mid.x) <= width / 2 - FOLLOW_PADDING && Math.abs(p.y - mid.y) <= height / 2 - FOLLOW_PADDING
+      })
+      if (fits) map.easeTo({ center, duration: 300 })
+      else map.fitBounds(bounds, { padding: FOLLOW_PADDING, maxZoom: map.getZoom(), duration: 300 })
+    })
+  })
 
   const copyBoard = (b: Board) => {
     navigator.clipboard.writeText(
@@ -287,6 +375,7 @@
         {/if}
 
         {#each visibleBoards as board (board.group)}
+          {@const isFollowed = followed.includes(board.group)}
           <Marker lnglat={{ lng: board.lon, lat: board.lat }}>
             {#snippet content()}
               <div class="flex flex-col items-center justify-center leading-none">
@@ -318,6 +407,10 @@
                   {/if}
                 </div>
                 <p class="font-bold">{board.name}</p>
+                <!-- Метка слежения видна и при закрытом окне деталей -->
+                {#if isFollowed}
+                  <span class="mt-0.5 size-2 rounded-full bg-(--accent-color) ring-2 ring-white" title={$T("widget.map.follow")}></span>
+                {/if}
               </div>
             {/snippet}
 
@@ -350,8 +443,8 @@
 
                 {#if board.sn}<p class="text-center font-mono text-[0.6rem] tracking-wide uppercase">{board.sn}</p>{/if}
 
-                <div class="flex items-center justify-between border-t border-(--hairline-color) pt-1">
-                  <div class="relative flex items-center">
+                <div class="grid grid-cols-[1fr_auto_1fr] items-center border-t border-(--hairline-color) pt-1">
+                  <div class="relative flex items-center justify-self-start">
                     <button
                       class="flex cursor-pointer items-center gap-1 rounded-lg border-none bg-transparent px-1 py-0.5 opacity-70 transition hover:opacity-100"
                       onclick={(e) => {
@@ -374,7 +467,24 @@
                   </div>
 
                   <button
-                    class="cursor-pointer rounded-lg border-none bg-transparent p-0.5 text-(--red-color) transition hover:opacity-80"
+                    class="flex cursor-pointer items-center gap-1 rounded-lg border px-2 py-0.5 text-xs font-semibold transition {isFollowed
+                      ? 'border-(--accent-color) bg-(--accent-color) text-white'
+                      : 'border-(--hairline-color) bg-transparent opacity-80 hover:opacity-100'}"
+                    aria-pressed={isFollowed}
+                    onclick={() => toggleFollow(board.group)}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" viewBox="0 0 24 24">
+                      <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5">
+                        <circle cx="12" cy="12" r="7" />
+                        <circle cx="12" cy="12" r="2.5" fill={isFollowed ? "currentColor" : "none"} />
+                        <path d="M12 2v3m0 14v3M2 12h3m14 0h3" />
+                      </g>
+                    </svg>
+                    {$T("widget.map.follow")}
+                  </button>
+
+                  <button
+                    class="cursor-pointer justify-self-end rounded-lg border-none bg-transparent p-0.5 text-(--red-color) transition hover:opacity-80"
                     aria-label="Hide"
                     title="Hide"
                     onclick={() => hideBoard(board.group)}

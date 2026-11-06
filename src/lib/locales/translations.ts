@@ -309,7 +309,6 @@ const translations: Translations = {
   "constructor.props.divider.width": { ru: "Толщина полосы", en: "Line width", zh: "线条粗细" },
   "constructor.props.disabled": { ru: "Отключить", en: "Disable", zh: "禁用" },
   "constructor.props.readonly": { ru: "Только чтение", en: "Read only", zh: "只读" },
-  "constructor.props.istest": { ru: "Тестовые данные", en: "Test data", zh: "测试数据" },
   "constructor.props.simulation": { ru: "Режим имитации", en: "Simulation mode", zh: "模拟模式" },
   "constructor.props.refreshrate": { ru: "Скорость обновления", en: "Refresh rate", zh: "刷新速率" },
   "constructor.props.variable": { ru: "Имя переменной", en: "Variable name", zh: "变量名" },
@@ -769,6 +768,7 @@ const translations: Translations = {
   "widget.rgb.count_invalid": { ru: "Количество — целое от 1 до {max}", en: "Count must be an integer from 1 to {max}", zh: "数量必须是 1 到 {max} 的整数" },
   "widget.rgb.group": { ru: "Группа ленты (ID)", en: "Strip group (ID)", zh: "灯带组 (ID)" },
   "widget.map.title": { ru: "Карта", en: "Map", zh: "地图" },
+  "widget.map.follow": { ru: "Следить", en: "Follow", zh: "跟踪" },
   "widget.map.groups": { ru: "Группы полей (через пробел)", en: "Field groups (space-separated)", zh: "字段组（以空格分隔）" },
   "widget.map.height": { ru: "Высота карты", en: "Map height", zh: "地图高度" },
   "widget.map.defaults": {
