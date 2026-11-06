@@ -25,7 +25,7 @@
 
   let mainSnippet: string | undefined = $state("overview")
 
-  /* Справка (i) — тот же текст component.info.<Тип>, что открывает конструктор DevCloud; тип — из адреса страницы */
+  /* Справка (i) - тот же текст component.info.<Тип>, что открывает конструктор DevCloud; тип - из адреса страницы */
   const TYPE_OVERRIDES: Record<string, string> = { WidgetWifi: "WidgetWiFi", WidgetRgbStrip: "WidgetRGBStrip", WidgetPfd: "WidgetPFD" }
   let componentType = $derived.by(() => {
     const slug = page.url.pathname.split("/").filter(Boolean).pop() ?? ""

@@ -5,7 +5,7 @@ const HTML_ESCAPES: Record<string, string> = { "&": "&amp;", "<": "&lt;", ">": "
 const escapeHtml = (value: string): string => value.replace(/[&<>"']/g, (char) => HTML_ESCAPES[char])
 const bytesToHex = (bytes: Uint8Array): string => Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0").toUpperCase()).join(" ")
 
-/* float32 с провода — кратчайшая запись, дающая то же float32 (0.12, а не 0.12000000476837158); double и целые — как есть */
+/* float32 с провода - кратчайшая запись, дающая то же float32 (0.12, а не 0.12000000476837158); double и целые - как есть */
 const shortNumber = (value: number): number => {
   if (Number.isInteger(value) || !Number.isFinite(value) || Math.fround(value) !== value) return value
   for (let digits = 1; digits <= 9; digits++) {
@@ -43,10 +43,10 @@ const isDebugLog = (value: unknown): value is [number, string, string | Uint8Arr
   typeof value[1] === "string" &&
   (typeof value[2] === "string" || value[2] instanceof Uint8Array)
 
-/* Байты строками по 16 — для дампа DebugLog в Value */
+/* Байты строками по 16 - для дампа DebugLog в Value */
 const hexRows = (bytes: Uint8Array): string => (bytesToHex(bytes).match(/.{1,48}/g) ?? []).map((row) => row.trim()).join("\n")
 
-/* Цвета развёрнутого вида — палитра темы: ключи, строки, числа, логические, null, байты */
+/* Цвета развёрнутого вида - палитра темы: ключи, строки, числа, логические, null, байты */
 type PrettyKind = "key" | "string" | "number" | "boolean" | "null" | "bytes"
 const PRETTY_COLORS: Record<PrettyKind, string> = {
   key: "--pink-color",
@@ -60,7 +60,7 @@ type Paint = (kind: PrettyKind, text: string) => string
 const plain: Paint = (_kind, text) => text
 const colored: Paint = (kind, text) => `<span style="color:var(${PRETTY_COLORS[kind]})">${escapeHtml(text)}</span>`
 
-/* Карты и массивы с отступом 2, по одному элементу на строку; скобки и запятые — без цвета */
+/* Карты и массивы с отступом 2, по одному элементу на строку; скобки и запятые - без цвета */
 const prettyValue = (value: unknown, paint: Paint, indent = ""): string => {
   if (value === null || value === undefined) return paint("null", "null")
   if (typeof value === "string") return paint("string", JSON.stringify(value))
@@ -78,7 +78,7 @@ const prettyValue = (value: unknown, paint: Paint, indent = ""): string => {
   return `{\n${entries.map(([key, item]) => `${inner}${paint("key", `${JSON.stringify(String(key))}:`)} ${prettyValue(item, paint, inner)}`).join(",\n")}\n${indent}}`
 }
 
-/* DebugLog — уровень и тег, ниже текст или дамп по 16 байт и FHS; остальное — prettyValue */
+/* DebugLog - уровень и тег, ниже текст или дамп по 16 байт и FHS; остальное - prettyValue */
 const prettyPayload = (value: unknown, paint: Paint, html: boolean): string => {
   const raw = (text: string) => (html ? escapeHtml(text) : text)
   if (isDebugLog(value)) {
@@ -90,7 +90,7 @@ const prettyPayload = (value: unknown, paint: Paint, html: boolean): string => {
   return prettyValue(value, paint)
 }
 
-/* Payload в развёрнутом виде, чистый текст: карты и массивы с отступами, DebugLog — уровень и тег, ниже текст или дамп и FHS; не CBOR — null */
+/* Payload в развёрнутом виде, чистый текст: карты и массивы с отступами, DebugLog - уровень и тег, ниже текст или дамп и FHS; не CBOR - null */
 export function formatXPoeDebugPretty(hex: string): string | null {
   const bytes = hexToBytes(hex)
   if (!bytes) return null
@@ -101,7 +101,7 @@ export function formatXPoeDebugPretty(hex: string): string | null {
   }
 }
 
-/* То же в HTML с цветами палитры темы — для модалки */
+/* То же в HTML с цветами палитры темы - для модалки */
 const formatXPoeDebugPrettyHtml = (hex: string): string | null => {
   const bytes = hexToBytes(hex)
   if (!bytes) return null
@@ -112,7 +112,7 @@ const formatXPoeDebugPrettyHtml = (hex: string): string | null => {
   }
 }
 
-/* Payload в таблицу: CBOR как JSON, лог DebugLog [уровень, тег, текст|байты, FHS] — уровень · тег · текст */
+/* Payload в таблицу: CBOR как JSON, лог DebugLog [уровень, тег, текст|байты, FHS] - уровень · тег · текст */
 export function formatXPoeDebugValue(rawValue: string): string {
   const hex = rawValue.trim().replace(/\s/g, "")
   if (!hex || hex.length % 2 !== 0 || !/^[0-9A-Fa-f]+$/.test(hex)) return escapeHtml(rawValue)
@@ -197,7 +197,7 @@ export function bindXPoeDebugCopyButtons(): () => void {
   }
 }
 
-/* Две прокручиваемые секции модалки: Value — развёрнутый вид Payload в цветах палитры темы, HEX — исходные байты Payload сплошной строкой; HEX-раздел есть, если форматтер таблицы добавил исходные байты */
+/* Две прокручиваемые секции модалки: Value - развёрнутый вид Payload в цветах палитры темы, HEX - исходные байты Payload сплошной строкой; HEX-раздел есть, если форматтер таблицы добавил исходные байты */
 export function formatXPoeDebugModal(text: string): string {
   const separator = "\nHEX\n"
   const hexIndex = text.lastIndexOf(separator)

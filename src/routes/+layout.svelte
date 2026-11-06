@@ -16,10 +16,10 @@
   let showLanguageModal = $state(false)
   let currentLanguage = $state(LOCALES.find((lang) => lang.value === get(Language)) ?? LOCALES[0])
 
-  /* Сегмент страницы компонента — точное сравнение, иначе "widget" совпадал бы с "widget-file-system" */
+  /* Сегмент страницы компонента - точное сравнение, иначе "widget" совпадал бы с "widget-file-system" */
   let activePage = $derived(page.url.pathname.split("/").filter(Boolean)[2] ?? "")
 
-  /* Список всех компонентов — смарт-виджеты идут первыми (тот же принцип, что и в DevCloud'овской палитре конструктора) */
+  /* Список всех компонентов - смарт-виджеты идут первыми (тот же принцип, что и в DevCloud'овской палитре конструктора) */
   const menuItems = [
     { page: "widget-wifi", name: "WidgetWiFi" },
     { page: "widget-device-info", name: "WidgetDeviceInfo" },
@@ -75,9 +75,9 @@
   }
 
   let DeviceVariables = $state<{ id: string; value: string; name: string; class: string }[]>([
-    { id: crypto.randomUUID(), value: "DevSN", name: "DevSN — Серийный номер устройства", class: "justify-start" },
-    { id: crypto.randomUUID(), value: "DevName", name: "DevName — Название устройства", class: "justify-start" },
-    { id: crypto.randomUUID(), value: "DevFW", name: "DevFW — Версия прошивки", class: "justify-start" },
+    { id: crypto.randomUUID(), value: "DevSN", name: "DevSN - Серийный номер устройства", class: "justify-start" },
+    { id: crypto.randomUUID(), value: "DevName", name: "DevName - Название устройства", class: "justify-start" },
+    { id: crypto.randomUUID(), value: "DevFW", name: "DevFW - Версия прошивки", class: "justify-start" },
   ])
 
   setContext("DeviceVariables", DeviceVariables)
@@ -89,7 +89,7 @@
     document.body.classList.toggle("light", savedTheme === "light")
     currentTheme = savedTheme === "light"
 
-    /* Сохранённый язык — после гидратации (пререндер всегда на языке по умолчанию) */
+    /* Сохранённый язык - после гидратации (пререндер всегда на языке по умолчанию) */
     restoreLanguage()
     currentLanguage = LOCALES.find((lang) => lang.value === get(Language)) ?? LOCALES[0]
 
@@ -103,7 +103,7 @@
   <header class={"sticky top-0 z-50 m-1 mt-2 flex h-14 items-center justify-between rounded-2xl border border-(--hairline-color) bg-(--back-color) p-4"}>
     <div class="flex items-center gap-2">
       <a href="/ElementsUI/" class="ml-2 no-underline! transition hover:scale-101"><h1>POE-Svelte-UI-Lib</h1></a>
-      <!-- Версия из package.json (define __LIB_VERSION__), ссылка — на эту версию в npm -->
+      <!-- Версия из package.json (define __LIB_VERSION__), ссылка - на эту версию в npm -->
       <a
         href={`https://www.npmjs.com/package/poe-svelte-ui-lib/v/${__LIB_VERSION__}`}
         target="_blank"

@@ -25,7 +25,7 @@
 | `wrapperClass` | `string` | `""` | Классы обёртки |
 | `type` | `"line" \| "empty"` | `"line"` | Линия или пустой отступ |
 | `width` | `number` | `1` | Толщина линии, пикселей |
-| `color` | `string` | `""` | Цвет: `bg-max`, `bg-red`, `bg-yellow`, `bg-green`, `bg-blue`, `bg-purple`, `bg-gray`. Пусто — нейтральный |
+| `color` | `string` | `""` | Цвет: `bg-max`, `bg-red`, `bg-yellow`, `bg-green`, `bg-blue`, `bg-purple`, `bg-gray`. Пусто - нейтральный |
 | `anchor` | `"top" \| "center" \| "bottom"` | `"center"` | Где стоит линия по высоте |
 
 Колбэков нет.

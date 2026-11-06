@@ -13,7 +13,7 @@ export interface ICoverageInput {
   start?: LngLat /* Точка взлёта: от неё строится порядок обхода */
   returnHome?: boolean /* Вернуться в точку взлёта после облёта */
   home?: LngLat /* Куда возвращаться, если не в start */
-  linkStart?: boolean /* false — start задаёт только порядок обхода, переход от него строит вызывающий (облёт нескольких полей) */
+  linkStart?: boolean /* false - start задаёт только порядок обхода, переход от него строит вызывающий (облёт нескольких полей) */
 }
 
 export type SegmentKind = "spray" | "turn" | "transit"
@@ -25,7 +25,7 @@ export interface ICoverageSegment {
 
 export interface ICoverageResult {
   segments: ICoverageSegment[] /* Траектория по порядку: проходы с распылением, развороты, переходы */
-  waypoints: { point: LngLat; spray: boolean }[] /* Точки миссии; spray — распыление включено до следующей точки */
+  waypoints: { point: LngLat; spray: boolean }[] /* Точки миссии; spray - распыление включено до следующей точки */
   area: number /* Площадь поля без запретных зон, м² */
   sprayLength: number
   turnLength: number
@@ -216,7 +216,7 @@ class FreeSpace {
         const e2 = sub(next, cur)
         const l1 = Math.hypot(...e1) || 1
         const l2 = Math.hypot(...e2) || 1
-        /* Нормали внутрь кольца для CCW — влево от ребра */
+        /* Нормали внутрь кольца для CCW - влево от ребра */
         const sign = (ccw ? 1 : -1) * (outward ? -1 : 1)
         const n1: P = [(-e1[1] / l1) * sign, (e1[0] / l1) * sign]
         const n2: P = [(-e2[1] / l2) * sign, (e2[0] / l2) * sign]
@@ -266,7 +266,7 @@ class Router {
     const hit = this.cache.get(key)
     if (hit) return hit
     const n = this.nodes.length
-    /* Узлы 0..n-1 — граф, n — старт, n+1 — финиш */
+    /* Узлы 0..n-1 - граф, n - старт, n+1 - финиш */
     const pos = [...this.nodes, a, b]
     const edge = (i: number, j: number) => {
       if (i < n && j < n) return this.adj[i][j]
@@ -497,7 +497,7 @@ const makeProjection = (field: LngLat[], angleDeg: number) => {
   return { fwd, inv, kLat, kLon }
 }
 
-/* Площадь поля без зон, м² (зоны, частично выходящие за поле, считаются целиком — приближение) */
+/* Площадь поля без зон, м² (зоны, частично выходящие за поле, считаются целиком - приближение) */
 export const fieldArea = (field: LngLat[], holes: LngLat[][]) => {
   if (field.length < 3) return 0
   const { fwd } = makeProjection(field, 0)
@@ -537,7 +537,7 @@ export const estimateAngleCost = (input: ICoverageInput, angle: number) => {
   const cells = buildCells(rows)
   const sprayLen = rows.reduce((s, r) => s + r.ivs.reduce((q, [a, b]) => q + (b - a), 0), 0)
   const passes = rows.reduce((s, r) => s + r.ivs.length, 0)
-  /* Разворот обходится как ~3 шага захвата пути, переход между ячейками — как 10 */
+  /* Разворот обходится как ~3 шага захвата пути, переход между ячейками - как 10 */
   return sprayLen + passes * input.spacing * 3 + cells.length * input.spacing * 10
 }
 
@@ -731,7 +731,7 @@ export const planFields = (input: IFieldsInput): ICoverageResult | null => {
     unreachable: 0,
   }
   const margin = Math.max(0, input.margin)
-  /* Переходы к полю, между полями и домой — по открытой местности в обход всех зон */
+  /* Переходы к полю, между полями и домой - по открытой местности в обход всех зон */
   const transit = (from: LngLat, to: LngLat) => {
     const t = routeOpen(from, to, input.holes, margin)
     if (!t.ok) total.unreachable++
@@ -768,7 +768,7 @@ export const planFields = (input: IFieldsInput): ICoverageResult | null => {
 export const bestFieldAngle = (contour: LngLat[], holes: LngLat[][], spacing: number, margin: number) =>
   Math.round(optimizeAngle({ field: contour, holes: holesOf(contour, holes), angle: 0, spacing, margin }) * 2) / 2
 
-/* Подбор угла поля приближениями по полному расчёту траектории: шаг 5° по всем 180° и направления сторон поля, затем шаг 1° около трёх лучших, затем 0.1° около победителя. Мерило — время облёта: путь со скоростью плюс около 4 с на разворот, недопокрытая площадь штрафуется. Считается частями, чтобы интерфейс не замирал */
+/* Подбор угла поля приближениями по полному расчёту траектории: шаг 5° по всем 180° и направления сторон поля, затем шаг 1° около трёх лучших, затем 0.1° около победителя. Мерило - время облёта: путь со скоростью плюс около 4 с на разворот, недопокрытая площадь штрафуется. Считается частями, чтобы интерфейс не замирал */
 export const searchFieldAngle = async (
   contour: LngLat[],
   holes: LngLat[][],
@@ -786,7 +786,7 @@ export const searchFieldAngle = async (
     const hit = cache.get(key)
     if (hit !== undefined) return hit
     const r = planCoverage({ field: contour, holes: own, angle: key, spacing, margin })
-    /* Недопокрытая площадь штрафуется: недолитый метр прохода стоит как трёхкратный полёт по нему — за ним пришлось бы возвращаться */
+    /* Недопокрытая площадь штрафуется: недолитый метр прохода стоит как трёхкратный полёт по нему - за ним пришлось бы возвращаться */
     const missed = r ? Math.max(0, area / spacing - r.sprayLength) : 0
     const c = r ? (r.sprayLength + r.turnLength + r.transitLength + missed * 3) / Math.max(0.1, speed) + r.turns * 4 + r.unreachable * 1e6 : Infinity
     cache.set(key, c)
@@ -829,7 +829,7 @@ export const searchFieldAngle = async (
 /* ********************************************************** */
 /* Миссия в формате QGC WPL 110 (Mission Planner, QGroundControl): точка дома, скорость, точки маршрута; распыление включается в начале прохода и выключается в конце */
 
-/* none — без команд распыления; sprayer — MAV_CMD_DO_SPRAYER (ArduPilot Sprayer); servo — DO_SET_SERVO на канал насоса */
+/* none - без команд распыления; sprayer - MAV_CMD_DO_SPRAYER (ArduPilot Sprayer); servo - DO_SET_SERVO на канал насоса */
 export type SprayControl = "none" | "sprayer" | "servo"
 
 export interface IMissionExport {

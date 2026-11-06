@@ -2,7 +2,7 @@
 <script module lang="ts">
   import type { IOption } from "../types"
 
-  /* Константы и настройки — экспортируются для переиспользования в GraphProps.svelte (редактор конструктора) */
+  /* Константы и настройки - экспортируются для переиспользования в GraphProps.svelte (редактор конструктора) */
   export const REFRESH_OPTIONS: IOption[] = [
     { id: "RefreshOption-AUTO", name: "AUTO", value: 0, class: "" },
     { id: "RefreshOption-50", name: "50", value: 50, class: "" },
@@ -72,7 +72,7 @@
     }
   }
 
-  /* Тултип при наведении — время и значения всех серий в ближайшей к курсору точке */
+  /* Тултип при наведении - время и значения всех серий в ближайшей к курсору точке */
   let tooltip = $state<{ visible: boolean; x: number; y: number; time: number; items: { name: string; value: number; color: string }[] }>({
     visible: false,
     x: 0,
@@ -155,7 +155,7 @@
         drawAllGraphs()
       }, selectedRefreshRate)
     } else if (selectedRefreshRate == 0 && !isTest) {
-      /* AUTO: streamingData не несёт признак "новый пакет" — опрашиваем каждые 10мс, рисуем точку только при реальном изменении значений */
+      /* AUTO: streamingData не несёт признак "новый пакет" - опрашиваем каждые 10мс, рисуем точку только при реальном изменении значений */
       intervalId = setInterval(() => {
         if (!streamingData.data || streamingData.data.length === 0) return
         const newValues = (streamingData.data as IGraphDataObject[]).map((dataset) => dataset.value)
@@ -198,7 +198,7 @@
     return () => resizeObserver.disconnect()
   })
 
-  /* Общая геометрия осей — переиспользуется отрисовкой и обработчиком наведения мыши, чтобы не дублировать формулы */
+  /* Общая геометрия осей - переиспользуется отрисовкой и обработчиком наведения мыши, чтобы не дублировать формулы */
   const computeGeometry = () => {
     const padding = { top: 10, right: 10, bottom: 20, left: 35 }
     const graphWidth = width - padding.left - padding.right
@@ -209,7 +209,7 @@
     const maxX = allPoints.length ? Math.max(...allPoints.map((p) => p.x)) : 1
     const timeSpan = maxX - minX || 1
 
-    /* Авто-масштаб по данным (±10%): статический — разово по массиву, живой — через сглаженный liveYRange (updateLiveYRange) */
+    /* Авто-масштаб по данным (±10%): статический - разово по массиву, живой - через сглаженный liveYRange (updateLiveYRange) */
     let yMin: number
     let yMax: number
     if (isHistoryMode) {
@@ -230,7 +230,7 @@
     return { padding, graphWidth, graphHeight, minX, maxX, timeSpan, yMin, yMax, ySpan, getX, getY }
   }
 
-  /* Бинарный поиск ближайшей по времени точки — точки в graphData всегда отсортированы по x (по построению) */
+  /* Бинарный поиск ближайшей по времени точки - точки в graphData всегда отсортированы по x (по построению) */
   const findNearestPoint = (points: { x: number; y: number }[], t: number): { x: number; y: number } | null => {
     if (points.length === 0) return null
     let lo = 0
@@ -246,7 +246,7 @@
 
   const pad2 = (n: number) => String(n).padStart(2, "0")
 
-  /* Компактная адаптивная подпись сетки по оси X: относительное время для живого режима, дата/время — для статического */
+  /* Компактная адаптивная подпись сетки по оси X: относительное время для живого режима, дата/время - для статического */
   const formatAxisLabel = (t: number, spanMs: number): string => {
     if (!isHistoryMode) return `${((t - Date.now()) / 1000).toFixed(0)}s`
     const d = new Date(t)
@@ -302,7 +302,7 @@
     drawAllGraphs()
   }
 
-  /* Прозрачность линий сетки — общая с PeriodChart (border-(--faint-color)/40) */
+  /* Прозрачность линий сетки - общая с PeriodChart (border-(--faint-color)/40) */
   const GRID_ALPHA = 0.4
 
   const drawAllGraphs = () => {
@@ -390,7 +390,7 @@
   {/if}
 
   <div class="flex w-full min-w-0 flex-row gap-4">
-    <!-- График: холст абсолютно поверх контейнера — его пиксельная ширина не распирает контейнер, иначе в сетке/flex с 1fr ширина растёт по кругу (ResizeObserver) -->
+    <!-- График: холст абсолютно поверх контейнера - его пиксельная ширина не распирает контейнер, иначе в сетке/flex с 1fr ширина растёт по кругу (ResizeObserver) -->
     <!-- design-handoff, раздел 9: рамка --hairline-color без тени, тултип в оформлении общего Tooltip.svelte -->
     <div bind:this={container} class="relative h-64 min-w-0 grow overflow-hidden rounded-[14px] border border-(--hairline-color)">
       <canvas class="absolute inset-0 h-full w-full bg-(--back-color)" bind:this={canvas} onmousemove={handleMouseMove} onmouseleave={handleMouseLeave}
@@ -425,7 +425,7 @@
         />
       {/if}
 
-      <!-- Переменные и их значение: сетка, а не таблица — имя обрезается «…», значение не переносится -->
+      <!-- Переменные и их значение: сетка, а не таблица - имя обрезается «…», значение не переносится -->
       <div class="flex flex-col gap-1">
         <h5 class="text-[12px] font-semibold text-(--muted-color)">{$T("ui.graph.values")}</h5>
         <div class="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-2 gap-y-1 text-[13px]">

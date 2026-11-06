@@ -1,5 +1,5 @@
 /* $lib/protocols/xPoeDebug.ts */
-/* xPOE-Debug — UART-консоль как ещё одна шина: пакеты poe_cbor_pkt [[TrgBusID, SrcBusID, HAR, Payload, CRC16], …] вперемешку с текстом загрузчика. Логи — OK! DebugLog, Payload [уровень, тег, текст|байты, FHS]; графики — OK! DebugPlot, Payload {"Группа.Имя": float32} */
+/* xPOE-Debug - UART-консоль как ещё одна шина: пакеты poe_cbor_pkt [[TrgBusID, SrcBusID, HAR, Payload, CRC16], …] вперемешку с текстом загрузчика. Логи - OK! DebugLog, Payload [уровень, тег, текст|байты, FHS]; графики - OK! DebugPlot, Payload {"Группа.Имя": float32} */
 import { cborToValue } from "./cbor/value.js"
 import { jsonToCbor } from "./cbor/json.js"
 import { DEFAULT_ARGUMENT_CODES, HEADER_CODES, nameByCode } from "./dictionary.js"
@@ -21,17 +21,17 @@ export type XPoeDebugItem =
       header: string
       argument: string
       reply: boolean
-      value: string /* HEX CBOR item Payload, пустой Payload — "" */
+      value: string /* HEX CBOR item Payload, пустой Payload - "" */
       valueBytes: Uint8Array
       crc: string
       crcOk: boolean
-      freeHeap: string /* FHS из DebugLog, у остальных пакетов — "" */
+      freeHeap: string /* FHS из DebugLog, у остальных пакетов - "" */
     }
   | { type: "raw"; text: string }
 
 const toHex = (bytes: Uint8Array) => Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0").toUpperCase()).join("")
 
-/* HAR по строкам словаря; неизвестные заголовок или аргумент — ошибка */
+/* HAR по строкам словаря; неизвестные заголовок или аргумент - ошибка */
 export const xPoeDebugHar = (header: string, argument: string, reply = true): number => {
   const hdr = HEADER_CODES[header]
   const arg = DEFAULT_ARGUMENT_CODES[argument]
@@ -39,7 +39,7 @@ export const xPoeDebugHar = (header: string, argument: string, reply = true): nu
   return makeHar(hdr, arg, reply)
 }
 
-/* Команда терминала — пакет из одной записи; value — CBOR item Payload, пустой — null */
+/* Команда терминала - пакет из одной записи; value - CBOR item Payload, пустой - null */
 export const encodeXPoeDebugFrame = (header: string, argument: string, value: Uint8Array, srcId = 0, trgId = 0, reply = true): Uint8Array => {
   if (![srcId, trgId].every((n) => Number.isInteger(n) && n >= 0 && n <= 0xffff)) throw new Error("TrgBusID и SrcBusID должны быть uint16")
   return encodePacket([{ trgBusID: trgId, srcBusID: srcId, har: xPoeDebugHar(header, argument, reply), payload: value }])
@@ -53,7 +53,7 @@ const textItems = (bytes: Uint8Array) =>
     .filter((line) => line && ![...line].some((char) => char.charCodeAt(0) < 0x20 && char !== "\t"))
     .map((text) => ({ type: "raw" as const, text }))
 
-/* FHS — четвёртый элемент Payload DebugLog */
+/* FHS - четвёртый элемент Payload DebugLog */
 const freeHeapOf = (argument: string, payload: Uint8Array): string => {
   if (argument !== DEBUG_LOG_ARGUMENT || !payload.length) return ""
   try {
@@ -82,7 +82,7 @@ const frameItem = (object: DecodedPacketObject): XPoeDebugItem => {
   }
 }
 
-/* Строка таблицы xPOE-Debug — общая для облака и терминала: пакет с неверным CRC — ⚠️ вместо заголовка (аргумент и значение обычно целы), текст вне пакетов — RAW */
+/* Строка таблицы xPOE-Debug - общая для облака и терминала: пакет с неверным CRC - ⚠️ вместо заголовка (аргумент и значение обычно целы), текст вне пакетов - RAW */
 export interface XPoeDebugRow {
   trgId: string
   srcId: string
@@ -108,7 +108,7 @@ export const xPoeDebugRow = (item: XPoeDebugItem): XPoeDebugRow =>
         freeHeap: item.freeHeap,
       }
 
-/* Начало пакета — 0x9F 0x85 (0x9F последним байтом буфера — возможное начало) */
+/* Начало пакета - 0x9F 0x85 (0x9F последним байтом буфера - возможное начало) */
 const packetStart = (buffer: Uint8Array): number => {
   for (let i = buffer.indexOf(PACKET_START); i >= 0; i = buffer.indexOf(PACKET_START, i + 1)) if (i + 1 >= buffer.length || buffer[i + 1] === RECORD) return i
   return -1
@@ -121,7 +121,7 @@ const concat = (a: Uint8Array, b: Uint8Array) => {
   return out
 }
 
-/* Потоковый разбор: пакеты в любом месте разреза, текст — построчно, мусор сдвигается по байту */
+/* Потоковый разбор: пакеты в любом месте разреза, текст - построчно, мусор сдвигается по байту */
 export const createXPoeDebugParser = () => {
   let buffer = new Uint8Array()
   return {
@@ -138,7 +138,7 @@ export const createXPoeDebugParser = () => {
           }
           break
         }
-        if (start + 1 >= buffer.length) break /* 0x9F последним байтом — ждём следующий */
+        if (start + 1 >= buffer.length) break /* 0x9F последним байтом - ждём следующий */
         if (start > 0) {
           items.push(...textItems(buffer.subarray(0, start)))
           buffer = buffer.slice(start)
@@ -161,7 +161,7 @@ export const createXPoeDebugParser = () => {
   }
 }
 
-/* Поле Value: готовый HEX CBOR проходит как есть, JSON кодируется в CBOR, пусто — пустой Payload */
+/* Поле Value: готовый HEX CBOR проходит как есть, JSON кодируется в CBOR, пусто - пустой Payload */
 export const xPoeDebugValueFromText = (text: string | undefined): Uint8Array => {
   const trimmed = (text ?? "").trim()
   if (!trimmed) return new Uint8Array()

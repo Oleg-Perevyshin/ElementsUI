@@ -1,4 +1,4 @@
-<!-- $lib/WidgetMap/mission/MapAgro.svelte — режим «Агро» карты, генератор миссии для агродрона: оператор рисует на карте поле и запретные зоны, задаёт угол проходов и ширину захвата, виджет строит траекторию покрытия с обходом зон и выгружает миссию -->
+<!-- $lib/WidgetMap/mission/MapAgro.svelte - режим «Агро» карты, генератор миссии для агродрона: оператор рисует на карте поле и запретные зоны, задаёт угол проходов и ширину захвата, виджет строит траекторию покрытия с обходом зон и выгружает миссию -->
 <script lang="ts">
   import { onMount, untrack, type Snippet } from "svelte"
   import { slide } from "svelte/transition"
@@ -70,14 +70,14 @@
   /* ********************************************************** */
   /* Рисование и правка контуров */
 
-  /* field — правка полей и обвод новых, hole — правка зон и обвод новых */
+  /* field - правка полей и обвод новых, hole - правка зон и обвод новых */
   type Mode = "idle" | "field" | "hole"
   let mode = $state<Mode>("idle")
   let draft: LngLat[] = $state([])
   let cursor: LngLat | null = $state(null)
   let mapInstance: any = $state()
 
-  /* fieldList — поля с углами, fields — их контуры */
+  /* fieldList - поля с углами, fields - их контуры */
   let fieldList = $derived(plan.fields ?? [])
   let fields = $derived(fieldList.map((f) => f.contour))
   let hasField = $derived(fields.some((f) => f.length >= 3))
@@ -116,7 +116,7 @@
     draft = [...draft, ll]
   }
 
-  /* Ручки: v:кольцо:вершина, m:кольцо:ребро, s — точка взлёта; кольца сначала поля, затем зоны */
+  /* Ручки: v:кольцо:вершина, m:кольцо:ребро, s - точка взлёта; кольца сначала поля, затем зоны */
   const ringOf = (r: number) => (r < fields.length ? fields[r] : plan.holes[r - fields.length])
   const setRing = (r: number, ring: LngLat[]) => {
     if (r < fields.length) update({ fields: fieldList.map((f, i) => (i === r ? { ...f, contour: ring } : f)) })
@@ -198,7 +198,7 @@
     try {
       for (const [k, contour] of contours.entries()) {
         const angle = await searchFieldAngle(contour, plan.holes, plan.spacing, plan.margin, plan.speed, (f) => (searching = (k + f) / contours.length))
-        /* Контур могли изменить или удалить, пока шёл подбор — тогда угол не ставится */
+        /* Контур могли изменить или удалить, пока шёл подбор - тогда угол не ставится */
         if (fieldList.some((f) => f.contour === contour)) update({ fields: fieldList.map((f) => (f.contour === contour ? { ...f, angle } : f)) })
       }
     } finally {
@@ -230,7 +230,7 @@
     }
   })
 
-  /* Путь для имитации: точка взлёта, затем все отрезки траектории; распыление — на проходах */
+  /* Путь для имитации: точка взлёта, затем все отрезки траектории; распыление - на проходах */
   let simProgress = $state(0)
   let simPath = $derived.by(() => {
     if (!result?.waypoints.length) return []
@@ -485,21 +485,6 @@
             >
           {/if}
         </div>
-        <p class="m-0 text-[12px] leading-snug text-(--muted-color)">
-          {#if draft.length}
-            {$T("widget.mission.helpDraw")}
-          {:else if mode === "field" && drawing}
-            {$T("widget.mission.helpField")} {$T("widget.mission.helpDraw")}
-          {:else if mode === "field"}
-            {$T("widget.mission.helpEditField")}
-          {:else if mode === "hole"}
-            {$T("widget.mission.helpHole")}
-          {:else if !hasField}
-            {$T("widget.mission.helpEmpty")}
-          {:else}
-            {$T("widget.mission.helpIdle")}
-          {/if}
-        </p>
       </div>
 
       <div style="height: {height}px">
@@ -532,12 +517,20 @@
           />
           {@render overlay?.()}
           {#if searching !== null}
-            <!-- Колесо ожидания поверх карты, пока подбирается угол -->
+            <!-- Колесо ожидания поверх карты, пока идёт авторасчёт: заголовок, ниже полоса и процент -->
             <div class="pointer-events-none absolute inset-0 z-10 flex items-center justify-center">
-              <div class="flex items-center gap-2 rounded-xl bg-white/90 px-4 py-2 text-[13px] font-semibold text-black shadow-lg tabular-nums">
-                <span class="size-6 text-(--accent-color)"><SpinnerIcon /></span>
-                {$T("widget.mission.searching")}
-                {Math.round(searching * 100)}%
+              <div class="flex items-center gap-3 rounded-xl bg-white/90 px-4 py-3 text-black shadow-lg">
+                <span class="size-8 shrink-0 text-(--accent-color)"><SpinnerIcon /></span>
+                <div class="flex min-w-48 flex-col gap-1.5">
+                  <span class="text-[13px] font-semibold">{$T("widget.mission.searching")}</span>
+                  <div class="flex items-center gap-2 text-[12px] tabular-nums">
+                    <span class="h-1.5 flex-1 overflow-hidden rounded-full bg-black/10"
+                      ><span class="block h-full rounded-full bg-(--accent-color) transition-[width]" style="width: {Math.round(searching * 100)}%"
+                      ></span></span
+                    >
+                    <span class="w-9 text-right">{Math.round(searching * 100)}%</span>
+                  </div>
+                </div>
               </div>
             </div>
           {/if}
@@ -554,7 +547,7 @@
             "settings",
             $T("widget.mission.settings"),
             [
-              `${$T(fieldList.length > 1 ? "widget.mission.s.angles" : "widget.mission.s.angle")} ${fieldList.map((f) => `${fmt(f.angle, 0)}°`).join(" / ") || "—"}`,
+              `${$T(fieldList.length > 1 ? "widget.mission.s.angles" : "widget.mission.s.angle")} ${fieldList.map((f) => `${fmt(f.angle, 0)}°`).join(" / ") || "-"}`,
               `${$T("widget.mission.s.swath")} ${plan.spacing} ${$T("widget.mission.m")}`,
               `${$T("widget.mission.s.alt")} ${plan.alt} ${$T("widget.mission.m")}`,
               `${$T("widget.mission.s.speed")} ${plan.speed} ${$T("widget.mission.ms")}`,

@@ -23,7 +23,7 @@
     forConstructor?: boolean
   } = $props()
 
-  /* Argument пуст — поле ниже лишь визуально показывает "ModCfg", реальное значение нужно проставить в состояние */
+  /* Argument пуст - поле ниже лишь визуально показывает "ModCfg", реальное значение нужно проставить в состояние */
   $effect(() => {
     if (!component.eventHandler?.Argument) onPropertyChange({ eventHandler: { Argument: "ModCfg" } })
   })

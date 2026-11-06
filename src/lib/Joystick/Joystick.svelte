@@ -202,7 +202,7 @@
         </div>
       </div>
 
-      <!-- Кнопка 0 — 32 px по общему правилу кнопок-иконок (design-handoff, раздел 9) -->
+      <!-- Кнопка 0 - 32 px по общему правилу кнопок-иконок (design-handoff, раздел 9) -->
       <div class="absolute {label.name ? 'top-4' : 'top-0'} w-55 flex items-center justify-end">
         <button
           class="flex size-[32px] cursor-pointer items-center justify-center rounded-full border border-(--hairline-color) bg-(--back-color) p-0.5 text-[15px] font-semibold

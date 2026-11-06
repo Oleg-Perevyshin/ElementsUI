@@ -10,15 +10,15 @@ export interface IMissionNav {
 }
 
 export interface IMissionProgress {
-  fraction: number /* 0..1 — доля пути */
+  fraction: number /* 0..1 - доля пути */
   sprayDone: number /* Пройдено с распылением, м */
   sprayTotal: number /* Всего с распылением, м */
   target: number /* Номер точки маршрута (с 1), к которой летит аппарат */
   total: number /* Точек маршрута */
-  finished: boolean /* Номер команды за концом миссии — миссия выполнена */
+  finished: boolean /* Номер команды за концом миссии - миссия выполнена */
 }
 
-/* wpNum — номер команды, которую сейчас выполняет автопилот; если это служебная команда (скорость, распылитель), целью считается следующая точка */
+/* wpNum - номер команды, которую сейчас выполняет автопилот; если это служебная команда (скорость, распылитель), целью считается следующая точка */
 export const missionProgress = (nav: IMissionNav[], wpNum: number | undefined, pos: LngLat | undefined): IMissionProgress | null => {
   if (nav.length < 2 || !wpNum || wpNum < 0) return null
   const cum = [0]

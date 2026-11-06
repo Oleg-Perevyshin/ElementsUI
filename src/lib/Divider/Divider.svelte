@@ -1,4 +1,4 @@
-<!-- $lib/Divider/Divider.svelte — волосяная линия вместо скруглённой полосы 2px. -->
+<!-- $lib/Divider/Divider.svelte - волосяная линия вместо скруглённой полосы 2px. -->
 <script lang="ts">
   import { twMerge } from "tailwind-merge"
   import type { IDividerProps } from "../types"

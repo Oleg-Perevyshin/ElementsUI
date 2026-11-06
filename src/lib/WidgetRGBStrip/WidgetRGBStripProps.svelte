@@ -1,4 +1,4 @@
-<!-- $lib/WidgetRGBStrip/WidgetRGBStripProps.svelte — панель пропсов конструктора для WidgetRGBStrip: заголовок, префикс группы (по умолчанию LST), мастер-цвет. -->
+<!-- $lib/WidgetRGBStrip/WidgetRGBStripProps.svelte - панель пропсов конструктора для WidgetRGBStrip: заголовок, префикс группы (по умолчанию LST), мастер-цвет. -->
 <script lang="ts">
   import TextsEditor from "../TextsEditor.svelte"
   import { T } from "../locales/i18n"

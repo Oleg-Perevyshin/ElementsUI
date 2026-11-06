@@ -45,7 +45,7 @@
 | `wrapperClass` | `string` | `""` | Классы обёртки |
 | `label.name`, `label.class` | `string` | `""` | Заголовок и его классы |
 | `streamingData.data` | `{ name, value }[] \| null` | `[]` | Текущие значения линий для живого режима |
-| `refreshRate` | `number` | `0` | Период добавления точек, мс. `0` — по изменению значений |
+| `refreshRate` | `number` | `0` | Период добавления точек, мс. `0` - по изменению значений |
 | `historyData` | `{ name, points: { value, timestamp }[] }[]` | `[]` | Готовый ряд для статического режима. `timestamp` в миллисекундах, как `Date.now()` |
 | `isTest` | `boolean` | `false` | Режим имитации: случайные данные, точка каждые 50 мс |
 

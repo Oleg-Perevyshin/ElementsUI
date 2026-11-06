@@ -1,4 +1,4 @@
-<!-- $lib/CopiedChip.svelte — общая всплывающая метка «Скопировано» после клика на кнопку копирования -->
+<!-- $lib/CopiedChip.svelte - общая всплывающая метка «Скопировано» после клика на кнопку копирования -->
 <script lang="ts">
   import { T } from "./locales/i18n"
   import { fade } from "svelte/transition"

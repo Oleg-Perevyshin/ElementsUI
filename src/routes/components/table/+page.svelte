@@ -16,7 +16,7 @@
     RenderMarkdown(readmeRaw).then((html) => (readmeHtml = html))
   })
 
-  /* Многоязычный текст для демо: в данных — { ru, en, zh }, тип поля — string (разрешается localizeDeep) */
+  /* Многоязычный текст для демо: в данных - { ru, en, zh }, тип поля - string (разрешается localizeDeep) */
   const L = (ru: string, en: string, zh: string) => ({ ru, en, zh }) as unknown as string
 
   /* Демо для конструктора: текст (сортировка, обрезка), шкала заряда и кнопка с командой */

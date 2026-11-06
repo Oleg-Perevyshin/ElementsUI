@@ -347,7 +347,7 @@ export class CborEncoder {
 
   /* Приватные методы */
 
-  /* Записать заголовок indefinite-length контейнера (значение 31 умещается в самом первом байте, доп. байты не нужны — writeHeader трактовал бы 31 как обычное число и ошибочно дописывал бы ещё один байт) */
+  /* Записать заголовок indefinite-length контейнера (значение 31 умещается в самом первом байте, доп. байты не нужны - writeHeader трактовал бы 31 как обычное число и ошибочно дописывал бы ещё один байт) */
   private writeIndefiniteHeader(majorType: CborMajorType): void {
     this.buffer.push((majorType << 5) | CborAdditionalInfo.Indefinite)
   }

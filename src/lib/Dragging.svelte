@@ -39,7 +39,7 @@
 
   /* Перетаскивание с MouseEvent */
   const startDrag = async (e: MouseEvent) => {
-    /* Строка ищется только внутри своего списка — id вида item-N есть и у других списков на странице */
+    /* Строка ищется только внутри своего списка - id вида item-N есть и у других списков на странице */
     const movedElement = container.querySelector(
       containerIndex == null ? `#${elementsId}-${elementIndex}` : `#${elementsId}-${elementIndex}-${containerIndex}`,
     ) as HTMLElement
@@ -49,7 +49,7 @@
     const element = movedElement.cloneNode(true) as HTMLElement
     const rect = movedElement.getBoundingClientRect()
 
-    /* Визуальный эффект перетаскивания — общий для библиотеки и приложений (dragStyle.ts) */
+    /* Визуальный эффект перетаскивания - общий для библиотеки и приложений (dragStyle.ts) */
     element.id = "drag-element"
     element.style.position = "fixed"
     element.style.zIndex = "9999"
@@ -93,7 +93,7 @@
     const ghost = dragState.ghostElement
     ghost.style.top = `${e.clientY - dragState.offsetY}px`
 
-    /* Место вставки — перед первой строкой, середина которой ниже курсора (иначе — в конец): меняется только при пересечении середины строки, без дрожания на границах. Соседние строки сдвигаются плавно (animateReorder) */
+    /* Место вставки - перед первой строкой, середина которой ниже курсора (иначе - в конец): меняется только при пересечении середины строки, без дрожания на границах. Соседние строки сдвигаются плавно (animateReorder) */
     const items = commandItems.filter((item) =>
       dragState.containerIndex === null ? true : Number(item.id.split("-")[2]) === dragState.containerIndex,
     ) as HTMLElement[]
@@ -101,7 +101,7 @@
     let target = items[items.length - 1]
     for (const item of items) {
       const rect = item.getBoundingClientRect()
-      /* Положение в раскладке, без сдвига идущей анимации — иначе движущаяся строка снова «пересекала» бы курсор */
+      /* Положение в раскладке, без сдвига идущей анимации - иначе движущаяся строка снова «пересекала» бы курсор */
       const transform = getComputedStyle(item).transform
       const shift = transform && transform !== "none" ? new DOMMatrixReadOnly(transform).m42 : 0
       if (e.clientY < rect.top - shift + rect.height / 2) {

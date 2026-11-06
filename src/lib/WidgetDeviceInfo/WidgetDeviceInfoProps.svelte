@@ -1,4 +1,4 @@
-<!-- $lib/WidgetDeviceInfo/WidgetDeviceInfoProps.svelte — панель пропсов конструктора для WidgetDeviceInfo: заголовок/мастер-цвет/префикс группы, переопределение имён полей устройства (keys) и команда перезагрузки — все с дефолтами, равными текущей прошивочной конвенции (см. DEFAULT_PROPS.WidgetDeviceInfo в DevCloud). -->
+<!-- $lib/WidgetDeviceInfo/WidgetDeviceInfoProps.svelte - панель пропсов конструктора для WidgetDeviceInfo: заголовок/мастер-цвет/префикс группы, переопределение имён полей устройства (keys) и команда перезагрузки - все с дефолтами, равными текущей прошивочной конвенции (см. DEFAULT_PROPS.WidgetDeviceInfo в DevCloud). -->
 <script lang="ts">
   import TextsEditor from "../TextsEditor.svelte"
   import { T } from "../locales/i18n"

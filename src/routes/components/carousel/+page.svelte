@@ -10,7 +10,7 @@
     RenderMarkdown(readmeRaw).then((html) => (readmeHtml = html))
   })
 
-  /* У Carousel нет CarouselProps.svelte/UIComponent — простое локальное состояние вместо схемы component/updateComponent */
+  /* У Carousel нет CarouselProps.svelte/UIComponent - простое локальное состояние вместо схемы component/updateComponent */
   let carouselProps: ICarouselProps = $state({
     id: crypto.randomUUID(),
     label: { name: "Карусель" },

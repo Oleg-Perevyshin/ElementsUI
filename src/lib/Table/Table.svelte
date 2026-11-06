@@ -30,14 +30,14 @@
   let isAutoscroll = $state(true)
   let container: HTMLElement | null = $state(null)
   let buffer: any[] = $state([])
-  /* body типизирован как T[] | T | null — нормализуем в массив один раз для рендера */
+  /* body типизирован как T[] | T | null - нормализуем в массив один раз для рендера */
   let bodyArray = $derived(body == null ? [] : Array.isArray(body) ? body : [body])
 
   let isDropdownOpen: { x: number; y: number; index: number } | null = $state(null)
   let selectSlideDuration: number = $state(250)
   let copiedCell: { x: number; y: number } | null = $state(null)
   let tooltip = $state({ show: false, text: "", x: 0, y: 0 })
-  /* Шаблон колонок общий для шапки и строк; кнопка очистки — отдельная узкая колонка, чтобы не перекрывать заголовки */
+  /* Шаблон колонок общий для шапки и строк; кнопка очистки - отдельная узкая колонка, чтобы не перекрывать заголовки */
   const ACTIONS_COLUMN = "2.5rem"
   let gridTemplate = $derived(
     [...(header || []).filter((c) => c.width !== "0%").map((c) => c.width || "minmax(0, 1fr)"), ...(dataBuffer.clearButton ? [ACTIONS_COLUMN] : [])].join(" "),
@@ -91,7 +91,7 @@
 
   const handleScroll = () => {
     if (!container) return
-    /* Контейнер рендерится только при наличии строк, поэтому слушатель — в разметке, а не addEventListener в onMount */
+    /* Контейнер рендерится только при наличии строк, поэтому слушатель - в разметке, а не addEventListener в onMount */
     if (autoscroll) handleAutoScroll()
     const { scrollTop, clientHeight, scrollHeight } = container
     if (scrollTop + clientHeight >= scrollHeight - 50 && cursor !== null && loader && !loader()) {
@@ -528,7 +528,7 @@
 
 <Modal isOpen={modalData.isOpen} title={$T("constructor.props.table.fulldata")} wrapperClass="max-h-[80%]" width="{0.8 * (container?.offsetWidth ?? 0)}px">
   {#snippet main()}
-    <!-- Длинные строки (hex пакета, base64, длинные значения) переносятся, отступы форматирования сохраняются — содержимое видно целиком -->
+    <!-- Длинные строки (hex пакета, base64, длинные значения) переносятся, отступы форматирования сохраняются - содержимое видно целиком -->
     <div class="text-left whitespace-pre-wrap [overflow-wrap:anywhere]">
       {@html modalData.formattedData}
     </div>

@@ -1,5 +1,5 @@
 /* $lib/locales/languages.ts */
-/* Единственный источник списка языков для библиотеки и всех приложений на ней (DevCloud, WebApp, терминал); без Svelte — годится и для серверного кода. Новый язык — одна запись здесь (код, название, флаг SVG): переключатели языка, окно «Тексты и переводы» и многоязычные тексты GUI подхватят его сами, а пока в словарях нет перевода — показывается текст языка по умолчанию. */
+/* Единственный источник списка языков для библиотеки и всех приложений на ней (DevCloud, WebApp, терминал); без Svelte - годится и для серверного кода. Новый язык - одна запись здесь (код, название, флаг SVG): переключатели языка, окно «Тексты и переводы» и многоязычные тексты GUI подхватят его сами, а пока в словарях нет перевода - показывается текст языка по умолчанию. */
 export const LANGUAGES = [
   {
     value: "ru",
@@ -23,10 +23,10 @@ export type LanguageCode = (typeof LANGUAGES)[number]["value"]
 /* Язык по умолчанию: обязателен в каждой строке словаря и в многоязычных текстах, им заменяется отсутствующий перевод */
 export const DEFAULT_LANGUAGE = "ru" satisfies LanguageCode
 
-/* Коды в порядке LANGUAGES — порядок показа в переключателях и колонках переводов */
+/* Коды в порядке LANGUAGES - порядок показа в переключателях и колонках переводов */
 export const LANGUAGE_CODES: LanguageCode[] = LANGUAGES.map((language) => language.value)
 
-/* Строка словаря: перевод по коду языка, обязателен только язык по умолчанию — порядок не важен, новый язык ничего не ломает */
+/* Строка словаря: перевод по коду языка, обязателен только язык по умолчанию - порядок не важен, новый язык ничего не ломает */
 export type Translation = Record<typeof DEFAULT_LANGUAGE, string> & Partial<Record<LanguageCode, string>>
 
 /* Словарь приложения или библиотеки: ключ → переводы */
@@ -34,13 +34,13 @@ export type Translations = Record<string, Translation>
 
 export const isLanguageCode = (value: unknown): value is LanguageCode => LANGUAGE_CODES.includes(value as LanguageCode)
 
-/* Код языка из произвольного значения (код, заголовок Accept-Language «en-US,en;q=0.9», язык браузера); неизвестный — язык по умолчанию */
+/* Код языка из произвольного значения (код, заголовок Accept-Language «en-US,en;q=0.9», язык браузера); неизвестный - язык по умолчанию */
 export const resolveLanguage = (value: string | null | undefined): LanguageCode => {
   const code = value?.split(/[,;]/)[0]?.trim().split("-")[0]?.toLowerCase()
   return isLanguageCode(code) ? code : DEFAULT_LANGUAGE
 }
 
-/* Ключи словаря без перевода на какой-либо язык — для проверки полноты словаря при добавлении языка */
+/* Ключи словаря без перевода на какой-либо язык - для проверки полноты словаря при добавлении языка */
 export const findMissingTranslations = (dictionary: Translations): { key: string; languages: LanguageCode[] }[] =>
   Object.entries(dictionary)
     .map(([key, row]) => ({ key, languages: LANGUAGE_CODES.filter((code) => !row[code]) }))

@@ -55,7 +55,7 @@
 | `id` | `string` | `"LST"` | Префикс группы |
 | `keys` | `Partial<Record<ключ, string>>` | имена ключей | Другие имена полей |
 | `value` | `Partial<IWidgetRGBStripConfig>` | | Поля группы |
-| `label.name` | `string` | | Заголовок. Пусто — «RGB лента» на языке пользователя |
+| `label.name` | `string` | | Заголовок. Пусто - «RGB лента» на языке пользователя |
 | `wrapperClass` | `string` | `""` | Классы обёртки |
 | `componentClass` | `string` | `""` | Мастер-цвет `bg-*` |
 | `collapsed` | `boolean` | `false` | Свёрнут ли |

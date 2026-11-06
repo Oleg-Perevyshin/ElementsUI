@@ -1,4 +1,4 @@
-<!-- $lib/Tabs/Tabs.svelte — вкладки: выбранная отмечается линией 2px акцентом; wrapperClass по умолчанию пустой, bg-* в нём красит панель -->
+<!-- $lib/Tabs/Tabs.svelte - вкладки: выбранная отмечается линией 2px акцентом; wrapperClass по умолчанию пустой, bg-* в нём красит панель -->
 <script lang="ts">
   import type { ITabsProps } from "../types"
   import { twMerge } from "tailwind-merge"
@@ -22,7 +22,7 @@
 
 <div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class="h-full w-full">
   <div class="flex h-full w-full flex-col overflow-hidden rounded-[14px] border border-(--hairline-color) bg-(--back-color)">
-    <!-- Полоса вкладок — outer оставлен «чистым» скролл-контейнером без justify-*: justify-content на самом overflow-x-auto блоке при контенте чуть шире контейнера даёт паразитный горизонтальный скролл на пару px даже когда прокручивать нечего (классический баг центрирования flex-контейнера с overflow). Поэтому justify-* из wrapperClass уходит на внутреннюю обёртку, а не на сам скролл-контейнер. -->
+    <!-- Полоса вкладок - outer оставлен «чистым» скролл-контейнером без justify-*: justify-content на самом overflow-x-auto блоке при контенте чуть шире контейнера даёт паразитный горизонтальный скролл на пару px даже когда прокручивать нечего (классический баг центрирования flex-контейнера с overflow). Поэтому justify-* из wrapperClass уходит на внутреннюю обёртку, а не на сам скролл-контейнер. -->
     <div class="sticky top-0 z-40 flex h-fit items-center overflow-x-auto border-b border-(--hairline-color) px-4">
       <div class={twMerge(`flex w-full items-center gap-6`, wrapperClass)}>
         {#each items as item, index}
@@ -65,7 +65,7 @@
       </div>
     </div>
 
-    <!-- Контент вкладки — overflow-x-hidden явно рядом с overflow-y-auto: у некоторых потребителей (например, кнопка отправки формы логина в DevCloud) есть элемент с col-start-2 при единственной явной колонке — он намеренно живёт в неявно создаваемой второй колонке грида. Без overflow-x-hidden спека CSS трактует это как реальное горизонтальное переполнение (раз overflow-y уже не visible, ось X тоже становится auto) и рисует паразитный горизонтальный скролл на пару px. -->
+    <!-- Контент вкладки - overflow-x-hidden явно рядом с overflow-y-auto: у некоторых потребителей (например, кнопка отправки формы логина в DevCloud) есть элемент с col-start-2 при единственной явной колонке - он намеренно живёт в неявно создаваемой второй колонке грида. Без overflow-x-hidden спека CSS трактует это как реальное горизонтальное переполнение (раз overflow-y уже не visible, ось X тоже становится auto) и рисует паразитный горизонтальный скролл на пару px. -->
     <div
       class="grid w-full min-h-0 flex-1 gap-3 overflow-x-hidden overflow-y-auto bg-(--back-color) p-4"
       style="grid-template-columns: repeat({size.width || 1}, minmax(0, 1fr)); grid-template-rows: repeat({size.height || 1}, auto);"

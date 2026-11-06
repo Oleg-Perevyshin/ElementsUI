@@ -1,4 +1,4 @@
-<!-- $lib/WidgetMap/WidgetMap.svelte — смарт-виджет «Карта», режим «Объекты» (по умолчанию), «Маршрут» (планировщик миссии, mission/MapRoute.svelte) или «Агро» (генератор миссии, mission/MapAgro.svelte); аппараты из групп полей рисуются во всех режимах. Режим «Объекты»: объекты из групп полей устройства (по умолчанию MAV) с полями Lat/Lon/Alt/Heading/Sat/DevName/DevSN (см. IWidgetMapData), каждая группа — свой маркер и своя траектория. Только отображение: ничего не отправляет и не знает про DeviceStore/WebSocket. Траекторию, длину трека и таймаут маркеров оператор переключает прямо поверх карты, «Показать все» — кнопка в шапке; вид карта сама не меняет — объектов может быть много. -->
+<!-- $lib/WidgetMap/WidgetMap.svelte - смарт-виджет «Карта», режим «Объекты» (по умолчанию), «Маршрут» (планировщик миссии, mission/MapRoute.svelte) или «Агро» (генератор миссии, mission/MapAgro.svelte); аппараты из групп полей рисуются во всех режимах. Режим «Объекты»: объекты из групп полей устройства (по умолчанию MAV) с полями Lat/Lon/Alt/Heading/Sat/DevName/DevSN (см. IWidgetMapData), каждая группа - свой маркер и своя траектория. Только отображение: ничего не отправляет и не знает про DeviceStore/WebSocket. Траекторию, длину трека и таймаут маркеров оператор переключает прямо поверх карты, «Показать все» - кнопка в шапке; вид карта сама не меняет - объектов может быть много. -->
 <script lang="ts">
   import { onMount, untrack } from "svelte"
   import { slide } from "svelte/transition"
@@ -43,12 +43,12 @@
     onSend,
   }: IWidgetMapProps = $props()
 
-  /* Подсказки — кнопка «?» в шапке, выбор общий для всех WidgetMap */
+  /* Подсказки - кнопка «?» в шапке, выбор общий для всех WidgetMap */
   const hints = hintsSetting("WidgetMap")
 
   let accentStyle = $derived(widgetAccentStyle(componentClass ?? ""))
 
-  /* Сворачивание тела по клику на шапку — как у остальных смарт-виджетов (см. WidgetWiFi.svelte) */
+  /* Сворачивание тела по клику на шапку - как у остальных смарт-виджетов (см. WidgetWiFi.svelte) */
   let hasMergedPersisted = false
   $effect(() => {
     if (hasMergedPersisted) return
@@ -73,7 +73,7 @@
   }
 
   const num = (v: unknown, fallback = 0) => (typeof v === "number" && Number.isFinite(v) ? v : fallback)
-  /* (0, 0) и нечисловые координаты — признак отсутствия фикса */
+  /* (0, 0) и нечисловые координаты - признак отсутствия фикса */
   const hasFix = (lat: unknown, lon: unknown) => Number.isFinite(lat) && Number.isFinite(lon) && (lat !== 0 || lon !== 0)
 
   /* Режим имитации: шесть аппаратов над одним районом сами выходят на связь и пропадают, данные и группы устройства не учитываются */
@@ -88,7 +88,7 @@
     "25.00.000-02_0000A0850000E31300004C5C:8D50",
     "50.00.000-00_0000DCDA00000C1800003194:2BC6",
   ]
-  /* Сдвиг маршрута каждого аппарата, м: север, восток — чтобы не летали друг за другом */
+  /* Сдвиг маршрута каждого аппарата, м: север, восток - чтобы не летали друг за другом */
   const SIM_SHIFT: [number, number][] = [
     [0, 0],
     [-400, 700],
@@ -100,7 +100,7 @@
   const randomSec = (min: number, max: number) => (min + Math.random() * (max - min)) * 1000
   let simValue: Record<string, Partial<IWidgetMapData>> | undefined = $state()
   $effect(() => {
-    /* В «Маршруте» и «Агро» имитация — полёт по своей траектории, аппараты SIM не нужны */
+    /* В «Маршруте» и «Агро» имитация - полёт по своей траектории, аппараты SIM не нужны */
     if (!isTest || mode !== "objects") return
     /* На связи всегда три аппарата: когда один пропадает, его сменяет тот, кто молчит дольше всех; молчащий маркер успевает покраснеть и скрыться */
     const fleet = SIM_GROUPS.map((group, i) => ({
@@ -113,7 +113,7 @@
     const kmLat = 111320
     const kmLon = 111320 * Math.cos((HOME.lat * Math.PI) / 180)
     const frames: Record<string, Partial<IWidgetMapData>> = {}
-    /* Модель летит всегда; пока аппарат без связи, его последний кадр не меняется — маркер краснеет, затем скрывается */
+    /* Модель летит всегда; пока аппарат без связи, его последний кадр не меняется - маркер краснеет, затем скрывается */
     const tick = (dt: number) => {
       const t = Date.now()
       fleet.forEach((f, i) => {
@@ -172,7 +172,7 @@
   let isCopied = $state(false)
   let isDarkMode = $state(false)
 
-  /* Объект обновляется только при реальной смене значений — свежесть считается от последнего изменения, а не от перерисовки */
+  /* Объект обновляется только при реальной смене значений - свежесть считается от последнего изменения, а не от перерисовки */
   $effect(() => {
     for (const group of groupList) {
       const v = value?.[group]
@@ -218,12 +218,12 @@
     return () => clearInterval(timer)
   })
 
-  /* Свежий — менялся за markerTimeout; устаревший (красный) — ещё markerTimeout; дальше скрыт до новых данных */
+  /* Свежий - менялся за markerTimeout; устаревший (красный) - ещё markerTimeout; дальше скрыт до новых данных */
   let visibleBoards = $derived(boards.filter((b) => groupList.includes(b.group) && b.lastChange > b.hiddenAt && now - b.lastChange < markerTimeout * 2))
   const isFresh = (b: Board) => now - b.lastChange < markerTimeout
   let freshCount = $derived(visibleBoards.filter(isFresh).length)
 
-  /* Вписывает в экран все видимые объекты, один объект — приближение к нему */
+  /* Вписывает в экран все видимые объекты, один объект - приближение к нему */
   const fitAllBoards = () => {
     if (!mapInstance || visibleBoards.length === 0) return
     if (visibleBoards.length === 1) return mapInstance.flyTo({ center: [visibleBoards[0].lon, visibleBoards[0].lat], zoom: 16 })
@@ -244,7 +244,7 @@
     followed = followed.filter((g) => g !== group)
   }
 
-  /* Слежение: один объект держится в центре карты, несколько — вписываются в карту при включении и дальше только центрируются; масштаб остаётся за оператором, карта отдаляется сама, лишь когда объект уходит за край */
+  /* Слежение: один объект держится в центре карты, несколько - вписываются в карту при включении и дальше только центрируются; масштаб остаётся за оператором, карта отдаляется сама, лишь когда объект уходит за край */
   let followed: string[] = $state([])
   const toggleFollow = (group: string) => (followed = followed.includes(group) ? followed.filter((g) => g !== group) : [...followed, group])
   const FOLLOW_PADDING = 60
@@ -287,7 +287,7 @@
     setTimeout(() => (isCopied = false), 1000)
   }
 
-  /* Тема карты — по ближайшему предку .dark/.light (как у токенов theme.css), а не по localStorage: работает и внутри блока с другой темой */
+  /* Тема карты - по ближайшему предку .dark/.light (как у токенов theme.css), а не по localStorage: работает и внутри блока с другой темой */
   let rootEl: HTMLDivElement | undefined = $state()
   const detectTheme = () => {
     const scope = rootEl?.closest(".dark, .light")
@@ -454,7 +454,7 @@
   {/each}
 {/snippet}
 
-<!-- Режим «Агро» — генератор миссии для агродрона, «Маршрут» — обычный планировщик миссии, остальное — карта объектов -->
+<!-- Режим «Агро» - генератор миссии для агродрона, «Маршрут» - обычный планировщик миссии, остальное - карта объектов -->
 {#if mode === "agro"}
   <MapAgro
     {wrapperClass}

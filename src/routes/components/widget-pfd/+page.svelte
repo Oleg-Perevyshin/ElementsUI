@@ -15,7 +15,7 @@
     RenderMarkdown(readmeRaw).then((html) => (readmeHtml = html))
   })
 
-  /* Имитация полёта — та же модель, что MavlinkTelemetry_Simulate в прошивке 20.00.000-01 (маршрут над Минском) */
+  /* Имитация полёта - та же модель, что MavlinkTelemetry_Simulate в прошивке 20.00.000-01 (маршрут над Минском) */
   const sim = createFlightSim()
   let flight: IWidgetPFDData = $state(sim(0))
   $effect(() => {

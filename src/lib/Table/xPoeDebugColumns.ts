@@ -1,5 +1,5 @@
 /* $lib/Table/xPoeDebugColumns.ts */
-/* Колонки таблицы xPOE-Debug — общие для облака и терминала (строка — xPoeDebugRow ядра протоколов) */
+/* Колонки таблицы xPOE-Debug - общие для облака и терминала (строка - xPoeDebugRow ядра протоколов) */
 import type { ITableHeader } from "../types"
 import { formatXPoeDebugModal, type XPoeDebugRow } from "../protocols/index.js"
 import { tableMonoWidth } from "./columnWidth"

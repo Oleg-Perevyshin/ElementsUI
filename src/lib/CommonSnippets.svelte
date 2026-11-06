@@ -53,7 +53,8 @@
     onUpdate={(value) => {
       updateProperty("id", (value as UI.IOption).value as string, component, onPropertyChange)
       onPropertyChange({
-        name: (value as UI.IOption).name?.split("—")[1]?.trim(),
+        /* \u041f\u043e\u0434\u043f\u0438\u0441\u044c \u043f\u0435\u0440\u0435\u043c\u0435\u043d\u043d\u043e\u0439 \u0438\u0437 \u043e\u0431\u043b\u0430\u043a\u0430 \u00ab<id> - <\u0438\u043c\u044f>\u00bb: \u0438\u043c\u044f - \u0432\u0441\u0451 \u043f\u043e\u0441\u043b\u0435 \u043f\u0435\u0440\u0432\u043e\u0433\u043e \u0440\u0430\u0437\u0434\u0435\u043b\u0438\u0442\u0435\u043b\u044f; \u043f\u0440\u0438\u043d\u0438\u043c\u0430\u0435\u0442\u0441\u044f \u0438 \u0434\u043b\u0438\u043d\u043d\u043e\u0435 \u0442\u0438\u0440\u0435 (\u2014) \u0441\u0442\u0430\u0440\u044b\u0445 \u043f\u043e\u0434\u043f\u0438\u0441\u0435\u0439 */
+        name: (value as UI.IOption).name?.match(/\s[\u2014-]\s(.*)/)?.[1]?.trim(),
         eventHandler: { Variables: [(value as UI.IOption).value as string] },
       })
     }}
@@ -238,7 +239,7 @@
   icons: { array: [string, string[]][]; selectArray?: false }
   icon: string | string[]
   updateProperty: (icon: string | string[]) => {}
-  /* compact — для строк списков в одну линию: квадратная кнопка с текущей иконкой и подсказкой вместо кнопки с текстом */
+  /* compact - для строк списков в одну линию: квадратная кнопка с текущей иконкой и подсказкой вместо кнопки с текстом */
   compact?: boolean
 })}
   <div class={initialValue.compact ? "relative flex shrink-0 items-center gap-1" : "relative mt-6 flex w-full gap-2"}>

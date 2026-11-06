@@ -14,7 +14,7 @@
     RenderMarkdown(readmeRaw).then((html) => (readmeHtml = html))
   })
 
-  /* Имитация устройства: CFG.FS как его отдаёт прошивка, закачка — Upload.Progress шагом 5% */
+  /* Имитация устройства: CFG.FS как его отдаёт прошивка, закачка - Upload.Progress шагом 5% */
   let fsInfo: IWidgetFileSystemInfo = $state({
     Total: 1441792,
     Used: 1105920,
@@ -45,7 +45,7 @@
     recalc()
   }
 
-  /* Скачивание — имитация чтения чанков и сохранение текстового файла-заглушки */
+  /* Скачивание - имитация чтения чанков и сохранение текстового файла-заглушки */
   const mockDownload = async (name: string) => {
     await new Promise((r) => setTimeout(r, 600))
     const url = URL.createObjectURL(new Blob([`mock ${name}`], { type: "application/octet-stream" }))

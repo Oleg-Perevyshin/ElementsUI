@@ -48,7 +48,7 @@ ${formatObjectToString(accordionComponent.properties as IAccordionProps)}
 
 <ComponentExample {codeText} {readmeHtml} bind:forConstructor>
   {#snippet component()}
-    <!-- isOpen — только через привязку: из развёрнутых свойств он перекрыл бы её -->
+    <!-- isOpen - только через привязку: из развёрнутых свойств он перекрыл бы её -->
     {@const { isOpen: _isOpen, ...accordionProps } = localizeDeep(accordionComponent.properties, $Language) as IAccordionProps}
     <Accordion
       {...accordionProps}
@@ -100,7 +100,7 @@ ${formatObjectToString(accordionComponent.properties as IAccordionProps)}
       <h1>Содержимое вложенного Accordion 3</h1>
     </Accordion>
 
-    <!-- Режим с фоновой картинкой (image) — сетка становится полупрозрачной поверх неё -->
+    <!-- Режим с фоновой картинкой (image) - сетка становится полупрозрачной поверх неё -->
     <Accordion
       label={{ name: "Accordion с фоном (image)", class: "" }}
       isOpen={true}

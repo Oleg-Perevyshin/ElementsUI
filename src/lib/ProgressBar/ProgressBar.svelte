@@ -1,4 +1,4 @@
-<!-- $lib/ProgressBar/ProgressBar.svelte — полоса 6px, подпись и значение над ней -->
+<!-- $lib/ProgressBar/ProgressBar.svelte - полоса 6px, подпись и значение над ней -->
 <script lang="ts">
   import { twMerge } from "tailwind-merge"
   import type { IProgressBarProps, IReceivingDataObject } from "../types"

@@ -1,4 +1,4 @@
-<!-- $lib/Modal.svelte — модальное окно: радиус 20, шапка и подвал через линии, подложка 40% с размытием, стек окон, закрытие по Escape и клику вне окна -->
+<!-- $lib/Modal.svelte - модальное окно: радиус 20, шапка и подвал через линии, подложка 40% с размытием, стек окон, закрытие по Escape и клику вне окна -->
 <script lang="ts">
   import { T } from "./locales/i18n"
   import { type Snippet } from "svelte"
@@ -104,7 +104,7 @@
       </div>
 
       {#if footer}
-        <!-- Подтверждающее действие — крайнее справа; row-reverse сохранён, поэтому порядок сниппетов в вызовах менять не нужно -->
+        <!-- Подтверждающее действие - крайнее справа; row-reverse сохранён, поэтому порядок сниппетов в вызовах менять не нужно -->
         <div class="flex flex-row-reverse items-center justify-start gap-2 border-t border-(--hairline-color) bg-(--container-color) px-5 py-3">
           {@render footer?.()}
         </div>

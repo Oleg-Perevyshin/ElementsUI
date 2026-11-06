@@ -1,10 +1,10 @@
-<!-- $lib/PeriodChart/PeriodChart.svelte — столбики за период и сегментированный переключатель периода, акцент только у выбранного -->
+<!-- $lib/PeriodChart/PeriodChart.svelte - столбики за период и сегментированный переключатель периода, акцент только у выбранного -->
 <script module lang="ts">
   import type { IPeriodChartLevel } from "../types"
 
   const randomLevelData = (n: number) => Array.from({ length: n }, () => Math.round(Math.random() * 100))
 
-  /* Демо-уровни, когда levels не заданы; name — ключ перевода */
+  /* Демо-уровни, когда levels не заданы; name - ключ перевода */
   export const DEFAULT_LEVELS: IPeriodChartLevel[] = [
     { name: "ui.period.year", data: randomLevelData(12) },
     { name: "ui.period.month", data: randomLevelData(31) },
@@ -51,7 +51,7 @@
     return { step, top: step * count, ticks: Array.from({ length: count + 1 }, (_, i) => step * (count - i)) }
   })
 
-  /* Подпись деления: k/M для больших значений, число знаков после запятой — по величине шага */
+  /* Подпись деления: k/M для больших значений, число знаков после запятой - по величине шага */
   const formatTick = (v: number) => {
     const [div, suffix] = axis.top >= 1e6 ? [1e6, "M"] : axis.top >= 1e4 ? [1e3, "k"] : [1, ""]
     const step = axis.step / div

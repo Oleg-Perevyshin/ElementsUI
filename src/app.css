@@ -1,4 +1,4 @@
-/* src/app.css — витрина ElementsUI: та же тема, что у облака (src/lib/theme.css), своих отличий нет */
+/* src/app.css - витрина ElementsUI: та же тема, что у облака (src/lib/theme.css), своих отличий нет */
 @import "tailwindcss";
 @import "./lib/theme.css";
 @custom-variant dark (&:where(.dark, .dark *));

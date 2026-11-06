@@ -66,7 +66,7 @@
 | `keys.FS` | `string` | `"FS"` | Имя поля устройства |
 | `argument` | `string` | `"FS"` | Аргумент команд |
 | `value` | `IWidgetFileSystemInfo` | | Состояние `CFG.FS` |
-| `label.name` | `string` | | Заголовок. Пусто — «Файловая система» на языке пользователя |
+| `label.name` | `string` | | Заголовок. Пусто - «Файловая система» на языке пользователя |
 | `wrapperClass` | `string` | `""` | Классы обёртки |
 | `componentClass` | `string` | `""` | Мастер-цвет `bg-*` |
 | `accept` | `string` | `"*/*"` | Какие файлы можно выбрать, например `.bin,.pem` |

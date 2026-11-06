@@ -1,5 +1,5 @@
 /* $lib/protocols/can.ts */
-/* Пакеты по CAN/CAN FD через slcan-адаптер (can_service прошивки): стандартный 11-битный ID — бит 10 «последний/единственный фрагмент», биты 0..9 — packet_id, одинаковый у всех фрагментов пакета; DATA — чистый payload без служебных байт. Адаптер говорит ASCII-кадрами slcan: [t|d|b|r]III L DD..DD\r (стандартный ID, 3 hex), [T|D|B|R]IIIIIIII L DD..\r (расширенный, 8 hex); t/T — CAN, d/D, b/B — CAN FD (b — с BRS) */
+/* Пакеты по CAN/CAN FD через slcan-адаптер (can_service прошивки): стандартный 11-битный ID - бит 10 «последний/единственный фрагмент», биты 0..9 - packet_id, одинаковый у всех фрагментов пакета; DATA - чистый payload без служебных байт. Адаптер говорит ASCII-кадрами slcan: [t|d|b|r]III L DD..DD\r (стандартный ID, 3 hex), [T|D|B|R]IIIIIIII L DD..\r (расширенный, 8 hex); t/T - CAN, d/D, b/B - CAN FD (b - с BRS) */
 import { decodePacket } from "./packet.js"
 
 export const CAN_FINAL_BIT = 0x400
@@ -14,7 +14,7 @@ export interface CanFrame {
   data: Uint8Array
 }
 
-/* Нарезка пакета на кадры — как CAN_Send прошивки: один кадр с битом «последний», иначе куски по 8 (CAN FD — 64) байт, бит только у последнего */
+/* Нарезка пакета на кадры - как CAN_Send прошивки: один кадр с битом «последний», иначе куски по 8 (CAN FD - 64) байт, бит только у последнего */
 export const canFragments = (payload: Uint8Array, fd: boolean, packetId = 1 + Math.floor(Math.random() * CAN_PACKET_ID_MASK)): CanFrame[] => {
   const max = fd ? CAN_FD_PAYLOAD : CAN_CLASSIC_PAYLOAD
   const id = packetId & CAN_PACKET_ID_MASK
@@ -29,7 +29,7 @@ export const canFragments = (payload: Uint8Array, fd: boolean, packetId = 1 + Ma
 
 const hex = (bytes: Uint8Array) => Array.from(bytes, (byte) => byte.toString(16).toUpperCase().padStart(2, "0")).join("")
 
-/* Кадр данных slcan (стандартный ID): CAN — «t», CAN FD — «b» (с BRS); данные CAN FD дополняются нулями до ближайшей допустимой длины */
+/* Кадр данных slcan (стандартный ID): CAN - «t», CAN FD - «b» (с BRS); данные CAN FD дополняются нулями до ближайшей допустимой длины */
 export const encodeSlcanFrame = ({ canId, data }: CanFrame, fd: boolean): string => {
   const id = (canId & 0x7ff).toString(16).toUpperCase().padStart(3, "0")
   if (!fd) return `t${id}${Math.min(data.length, 8).toString(16).toUpperCase()}${hex(data.subarray(0, 8))}\r`
@@ -60,7 +60,7 @@ const SLCAN_FRAME = /([tdbr])([0-9A-Fa-f]{3})([0-9A-Fa-f])([0-9A-Fa-f]*)\r|([TDB
 
 const fdLength = (code: number) => (code <= 8 ? code : (FD_SIZES[code - 9] ?? 0))
 
-/* CAN FD добивает последний кадр до допустимой длины — лишние байты после пакета poe_cbor_pkt (или нулевой хвост) отрезаем */
+/* CAN FD добивает последний кадр до допустимой длины - лишние байты после пакета poe_cbor_pkt (или нулевой хвост) отрезаем */
 const trimFdPadding = (data: Uint8Array): Uint8Array => {
   const parsed = decodePacket(data)
   if (parsed.status === "complete") return data.subarray(0, parsed.length)
@@ -98,7 +98,7 @@ export const createCanParser = ({ sessionTimeoutMs = 2000, maxPacketBytes = 8192
         }
         const session = sessions.get(packetId)
         if (!(canId & CAN_FINAL_BIT)) {
-          /* Промежуточный фрагмент: копим; потерян последний и пакет разросся — сбрасываем */
+          /* Промежуточный фрагмент: копим; потерян последний и пакет разросся - сбрасываем */
           const data = [...(session?.data ?? []), ...bytes]
           if (data.length > maxPacketBytes) sessions.delete(packetId)
           else sessions.set(packetId, { data, timestamp: session?.timestamp ?? now })
@@ -120,6 +120,6 @@ export const createCanParser = ({ sessionTimeoutMs = 2000, maxPacketBytes = 8192
   }
 }
 
-/* Команды открытия slcan-адаптера (CANable и совместимые): закрыть канал, скорость арбитража (S0..S8, SA..SD), для CAN FD — скорость данных (Y1..Y5), нормальный режим, без автоповтора, открыть канал — каждая строка заканчивается \r */
+/* Команды открытия slcan-адаптера (CANable и совместимые): закрыть канал, скорость арбитража (S0..S8, SA..SD), для CAN FD - скорость данных (Y1..Y5), нормальный режим, без автоповтора, открыть канал - каждая строка заканчивается \r */
 export const slcanOpenCommands = (bitrate: string, dataBitrate?: string): string[] =>
   ["C", bitrate, ...(dataBitrate ? [dataBitrate] : []), "M0", "A0", "O"].map((command) => `${command}\r`)

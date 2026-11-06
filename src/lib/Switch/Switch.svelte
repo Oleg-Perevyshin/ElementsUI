@@ -1,4 +1,4 @@
-<!-- $lib/Switch/Switch.svelte — тумблер, геометрия считается от пропа height; чекбокс 20px с радиусом 6 -->
+<!-- $lib/Switch/Switch.svelte - тумблер, геометрия считается от пропа height; чекбокс 20px с радиусом 6 -->
 <script lang="ts">
   import { twMerge } from "tailwind-merge"
   import type { ISwitchProps } from "../types"
@@ -58,7 +58,7 @@
 {#if type !== "checkbox"}
   <div class={twMerge(`relative flex w-full flex-col items-center justify-center gap-1.5`, wrapperClass)}>
     {#if label.name}
-      <!-- Подпись по умолчанию по центру — над переключателем, который тоже по центру; выравнивание из label.class важнее -->
+      <!-- Подпись по умолчанию по центру - над переключателем, который тоже по центру; выравнивание из label.class важнее -->
       <h5 class={twMerge(`w-full text-center text-[12px] font-semibold text-(--muted-color)`, label.class)}>{label.name}</h5>
     {/if}
     <div class="flex w-full {type == 'vertical' ? 'flex-wrap' : ''} items-center justify-around gap-4">
@@ -90,7 +90,7 @@
                 disabled={option.disabled}
                 onchange={() => handleToggle(index)}
               />
-              <!-- Дорожка: акцент во включённом состоянии, нейтральная серая в выключенном. Фолбэк var(--accent-color) — большинство вызовов Switch не передают wrapperClass с ролью цвета (bg-blue и т.п.), без фолбэка --bg-color остаётся не задан и дорожка становится невидимой при включении. -->
+              <!-- Дорожка: акцент во включённом состоянии, нейтральная серая в выключенном. Фолбэк var(--accent-color) - большинство вызовов Switch не передают wrapperClass с ролью цвета (bg-blue и т.п.), без фолбэка --bg-color остаётся не задан и дорожка становится невидимой при включении. -->
               <span
                 class="relative flex items-center rounded-full transition-colors duration-200
                   {checkedOptions[index] ? 'bg-(--bg-color,var(--accent-color))' : 'bg-(--border-color)'}

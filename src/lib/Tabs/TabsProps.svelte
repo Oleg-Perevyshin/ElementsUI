@@ -26,7 +26,7 @@
 
   let itemsContainer: HTMLDivElement | null = $state(null)
 
-  /* У каждой вкладки — стабильный id: по нему конструктор переносит её содержимое при перестановке и удалении вкладок */
+  /* У каждой вкладки - стабильный id: по нему конструктор переносит её содержимое при перестановке и удалении вкладок */
   $effect(() => {
     const items = component.properties.items ?? []
     if (items.every((item: { id?: string }) => item.id)) return
@@ -51,7 +51,7 @@
 
   const initialWidth = $derived(() => (component.properties.items?.some((item) => item.class?.split(" ").includes("flex-1")) ? 1 : 0))
 
-  /* «Равные» — flex-1 (место делится поровну с учётом gap), «Авто» — w-auto (ширина по содержимому) */
+  /* «Равные» - flex-1 (место делится поровну с учётом gap), «Авто» - w-auto (ширина по содержимому) */
   const setTabWidthClass = (existingClass: string | undefined, equal: boolean): string =>
     twMerge((existingClass ?? "").replace(/\bflex-1\b|\bw-auto\b/g, "").trim(), equal ? "flex-1" : "w-auto")
 </script>

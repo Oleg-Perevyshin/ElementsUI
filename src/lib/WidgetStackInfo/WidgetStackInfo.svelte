@@ -1,4 +1,4 @@
-<!-- $lib/WidgetStackInfo/WidgetStackInfo.svelte — отладочный смарт-виджет памяти и задач FreeRTOS. Данные — один объект StackInfo в том виде, в каком его отдают ProdFactory-ESP и ProdFactory-STM (API_GetStackInfo): Heap[{Name, Total, Free, MinFree}] и Tasks[{Name, FreeMin, Prio, Core?, State, CPU?}]. Ничего не знает про DeviceStore/WebSocket — value/onRefresh, автоопрос лишь периодически зовёт onRefresh. -->
+<!-- $lib/WidgetStackInfo/WidgetStackInfo.svelte - отладочный смарт-виджет памяти и задач FreeRTOS. Данные - один объект StackInfo в том виде, в каком его отдают ProdFactory-ESP и ProdFactory-STM (API_GetStackInfo): Heap[{Name, Total, Free, MinFree}] и Tasks[{Name, FreeMin, Prio, Core?, State, CPU?}]. Ничего не знает про DeviceStore/WebSocket - value/onRefresh, автоопрос лишь периодически зовёт onRefresh. -->
 <script lang="ts">
   import { T } from "../locales/i18n"
   import { slide } from "svelte/transition"
@@ -26,7 +26,7 @@
 
   let accentStyle = $derived(widgetAccentStyle(componentClass ?? ""))
 
-  /* Сворачивание тела по клику на шапку — как у остальных смарт-виджетов (см. WidgetWiFi.svelte) */
+  /* Сворачивание тела по клику на шапку - как у остальных смарт-виджетов (см. WidgetWiFi.svelte) */
   let hasMergedPersisted = false
   $effect(() => {
     if (hasMergedPersisted) return
@@ -52,15 +52,15 @@
 
   /* Размер в человекочитаемом виде: Б / КБ / МБ, одна цифра после запятой начиная с КБ */
   const formatBytes = (bytes: number) => {
-    if (!Number.isFinite(bytes) || bytes < 0) return "—"
+    if (!Number.isFinite(bytes) || bytes < 0) return "-"
     if (bytes < 1024) return $T("widget.common.bytes", { n: bytes })
     if (bytes < 1024 * 1024) return $T("widget.common.kbytes", { n: (bytes / 1024).toFixed(1) })
     return $T("widget.common.mbytes", { n: (bytes / (1024 * 1024)).toFixed(1) })
   }
   const percent = (part: number, total: number) => (total > 0 ? Math.min(100, Math.max(0, Math.round((part / total) * 100))) : 0)
 
-  /* Текущая занятость — мастер-цвет, пик занятости с момента старта (Total − MinFree) — его светлая подложка */
-  /* Подсказки — кнопка «?» в шапке, выбор общий для всех WidgetStackInfo */
+  /* Текущая занятость - мастер-цвет, пик занятости с момента старта (Total − MinFree) - его светлая подложка */
+  /* Подсказки - кнопка «?» в шапке, выбор общий для всех WidgetStackInfo */
   const hints = hintsSetting("WidgetStackInfo")
 
   let heaps = $derived(
@@ -70,7 +70,7 @@
       return { ...h, used, usedPercent: percent(used, h.Total), peakPercent: percent(peak, h.Total) }
     }),
   )
-  /* Код кучи из прошивки (Internal/PSRAM у ESP, Heap у STM) → подпись и подсказка на языке пользователя; неизвестный код — как есть */
+  /* Код кучи из прошивки (Internal/PSRAM у ESP, Heap у STM) → подпись и подсказка на языке пользователя; неизвестный код - как есть */
   const heapText = (kind: "name" | "hint", code: string) => {
     const key = `widget.stack.heap.${kind}.${code}`
     const text = $T(key)
@@ -78,7 +78,7 @@
   }
   const percentColor = (p: number) => (p >= 90 ? "var(--red-color)" : p >= 75 ? "var(--orange-color)" : "var(--muted-color)")
 
-  /* Имена задач приходят с устройства, а Table выводит ячейки через {@html} — экранируем */
+  /* Имена задач приходят с устройства, а Table выводит ячейки через {@html} - экранируем */
   const escapeHtml = (text: string) => text.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`)
   let STATES = $derived(["running", "ready", "blocked", "suspended", "deleted"].map((state) => $T(`widget.stack.state.${state}`)))
   const stackColor = (bytes: number) => (bytes < warnBytes ? "var(--red-color)" : bytes < warnBytes * 2 ? "var(--orange-color)" : "")
@@ -86,19 +86,19 @@
   type TaskRow = { Name: string; StateText: string; Prio: number; CoreText: string; CpuText: string; FreeMinText: string }
   let tasks = $derived([...(value?.Tasks ?? [])].sort((a, b) => a.FreeMin - b.FreeMin))
   let hasCore = $derived(tasks.some((t) => t.Core !== undefined))
-  /* Загрузка задачи, % одного ядра с прошлого ответа: от 50 % — оранжевая, от 80 % — красная; IDLE — это свободное время ядра, не подсвечивается */
+  /* Загрузка задачи, % одного ядра с прошлого ответа: от 50 % - оранжевая, от 80 % - красная; IDLE - это свободное время ядра, не подсвечивается */
   let hasCpu = $derived(tasks.some((t) => t.CPU !== undefined))
   const cpuColor = (cpu: number) => (cpu >= 80 ? "var(--red-color)" : cpu >= 50 ? "var(--orange-color)" : "")
   let lowCount = $derived(tasks.filter((t) => t.FreeMin < warnBytes).length)
 
-  /* Порядок фиксированный — по возрастанию запаса стека: при автоопросе сортировка кликом сбрасывалась бы каждый ответ */
+  /* Порядок фиксированный - по возрастанию запаса стека: при автоопросе сортировка кликом сбрасывалась бы каждый ответ */
   let rows: TaskRow[] = $derived(
     tasks.map((t: IWidgetStackInfoTask) => {
       const color = stackColor(t.FreeMin)
       const cpu = t.CPU === undefined ? "" : t.CPU.toFixed(1)
       return {
         Name: escapeHtml(t.Name),
-        StateText: STATES[t.State] ?? "—",
+        StateText: STATES[t.State] ?? "-",
         Prio: t.Prio,
         CoreText: t.Core === undefined ? "" : t.Core < 0 ? $T("widget.stack.core_any") : String(t.Core),
         CpuText: cpu && !t.Name.startsWith("IDLE") && cpuColor(t.CPU!) ? `<span style="color: ${cpuColor(t.CPU!)}; font-weight: 600">${cpu}</span>` : cpu,

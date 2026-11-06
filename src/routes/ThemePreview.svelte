@@ -1,4 +1,4 @@
-<!-- src/routes/ThemePreview.svelte — вкладка «Тема» главной витрины: палитра и все компоненты в порядке меню на стилях theme.css, тема — глобальная, переключается кнопкой в шапке витрины. -->
+<!-- src/routes/ThemePreview.svelte - вкладка «Тема» главной витрины: палитра и все компоненты в порядке меню на стилях theme.css, тема - глобальная, переключается кнопкой в шапке витрины. -->
 <script lang="ts">
   import * as UI from "#lib"
   import type {
@@ -132,7 +132,7 @@
     ApGW: "192.168.4.1",
   }
 
-  /* Файловая система: имитация устройства — список файлов, удаление и закачка с прогрессом */
+  /* Файловая система: имитация устройства - список файлов, удаление и закачка с прогрессом */
   let fsInfo: IWidgetFileSystemInfo = $state({
     Total: 1441792,
     Used: 931626,
@@ -198,7 +198,7 @@
 
 | Ключ | Тип | Описание |
 | ---- | --- | -------- |
-| \`Lat\` | \`number\` | широта, °; вместе с \`Lon\` = 0 — нет фикса |
+| \`Lat\` | \`number\` | широта, °; вместе с \`Lon\` = 0 - нет фикса |
 | \`content.info.side\` | \`"top" \\| "bottom" \\| "left" \\| "right"\` | сторона подсказки |
 
 > Цитата или примечание.
@@ -220,7 +220,7 @@ Telemetry_SendObject(g_telemetry_stream, g_mcfg.DevSN, "Data", mav, sizeof(mav) 
 {/snippet}
 
 {#snippet preview()}
-  <!-- Палитра и состояния — основа темы -->
+  <!-- Палитра и состояния - основа темы -->
   <div class="flex flex-col gap-3 ui-panel rounded-2xl p-4">
     <h6>Палитра</h6>
     <div class="grid grid-cols-5 gap-2">
@@ -247,7 +247,7 @@ Telemetry_SendObject(g_telemetry_stream, g_mcfg.DevSN, "Data", mav, sizeof(mav) 
     </div>
   </div>
 
-  <!-- Компоненты — в порядке меню слева, каждый тип в своём разделе -->
+  <!-- Компоненты - в порядке меню слева, каждый тип в своём разделе -->
   {#snippet WiFi()}<UI.WidgetWiFi componentClass="bg-blue" value={wifiConfig} onScan={mockScan} onSave={() => {}} />{/snippet}
   {@render section("WidgetWiFi", WiFi, false)}
 
@@ -365,14 +365,14 @@ Telemetry_SendObject(g_telemetry_stream, g_mcfg.DevSN, "Data", mav, sizeof(mav) 
     <div class="grid grid-cols-2 gap-3">
       <UI.Input label={{ name: "Имя устройства" }} value="Объект 1" />
       <UI.Input label={{ name: "Частота, Гц" }} type="number" value={20} number={{ minNum: 1, maxNum: 100, step: 1 }} />
-      <UI.Input label={{ name: "Код устройства — неверный формат" }} value="12.34.567" help={{ regExp: /^\d{2}\.\d{2}\.\d{3}-\d{2}$/ }} />
+      <UI.Input label={{ name: "Код устройства - неверный формат" }} value="12.34.567" help={{ regExp: /^\d{2}\.\d{2}\.\d{3}-\d{2}$/ }} />
       <UI.Input label={{ name: "Только чтение" }} value="20000001A1B2C3" readonly help={{ copyButton: true }} />
     </div>
     <UI.Input
       label={{ name: "Многострочный ввод" }}
       type="text-area"
       textareaRows={4}
-      value={"Первая строка заметки\nВторая строка — поле растёт по высоте на заданное число строк"}
+      value={"Первая строка заметки\nВторая строка - поле растёт по высоте на заданное число строк"}
     />
   {/snippet}
   {@render section("Input", Inputs)}
@@ -474,7 +474,7 @@ Telemetry_SendObject(g_telemetry_stream, g_mcfg.DevSN, "Data", mav, sizeof(mav) 
   </div>
 {/snippet}
 
-<!-- Раздел одного типа компонента: имя как в меню слева; виджеты — сами карточки, поэтому без своей панели (panel = false) -->
+<!-- Раздел одного типа компонента: имя как в меню слева; виджеты - сами карточки, поэтому без своей панели (panel = false) -->
 {#snippet section(title: string, body: Snippet, panel = true)}
   <section class="flex flex-col gap-2">
     <h6 class="px-1">{title}</h6>
@@ -486,7 +486,7 @@ Telemetry_SendObject(g_telemetry_stream, g_mcfg.DevSN, "Data", mav, sizeof(mav) 
 
 <div class="flex flex-col gap-10">
   <p class="text-sm text-(--muted-color)">
-    Интерфейс облака на одной странице — стили из <code>src/lib/theme.css</code>, тот же файл подключает DevCloud. Тема переключается кнопкой в шапке витрины;
+    Интерфейс облака на одной странице - стили из <code>src/lib/theme.css</code>, тот же файл подключает DevCloud. Тема переключается кнопкой в шапке витрины;
     правьте <code>theme.css</code> и смотрите результат здесь.
   </p>
   {@render preview()}

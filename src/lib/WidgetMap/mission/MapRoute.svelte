@@ -1,4 +1,4 @@
-<!-- $lib/WidgetMap/mission/MapRoute.svelte — режим «Маршрут» карты, обычный планировщик миссии: оператор ставит точки на карте, задаёт каждой высоту и скорость, виджет считает путь и время и выгружает миссию -->
+<!-- $lib/WidgetMap/mission/MapRoute.svelte - режим «Маршрут» карты, обычный планировщик миссии: оператор ставит точки на карте, задаёт каждой высоту и скорость, виджет считает путь и время и выгружает миссию -->
 <script lang="ts">
   import { onMount, untrack, type Snippet } from "svelte"
   import { slide } from "svelte/transition"
@@ -80,7 +80,7 @@
     selected = route.points.length - 1
   }
 
-  /* Ручки: w:i — точка, x:i — середина отрезка от точки i к следующей, s — точка взлёта */
+  /* Ручки: w:i - точка, x:i - середина отрезка от точки i к следующей, s - точка взлёта */
   let inserted: { id: string; index: number } | null = null
   const onDrag = (id: string, ll: LngLat) => {
     const [kind, i] = id.split(":")
@@ -303,9 +303,6 @@
             >
           {/if}
         </div>
-        <p class="m-0 text-[12px] leading-snug text-(--muted-color)">
-          {adding ? $T("widget.route.helpAdd") : route.points.length ? $T("widget.route.helpEdit") : $T("widget.route.helpEmpty")}
-        </p>
       </div>
 
       <div style="height: {height}px">
@@ -414,7 +411,7 @@
                       number={{ minNum: 0.5, maxNum: 40, step: 0.5 }}
                       onUpdate={(v) => Number.isFinite(Number(v)) && setPoint(i, { speed: Math.min(40, Math.max(0.5, Number(v))) })}
                     />
-                    <span class="text-right text-(--muted-color)">{leg ? `${fmt(leg.length, 0)} ${$T("widget.mission.m")}` : "—"}</span>
+                    <span class="text-right text-(--muted-color)">{leg ? `${fmt(leg.length, 0)} ${$T("widget.mission.m")}` : "-"}</span>
                     <button class="cursor-pointer border-none bg-transparent p-0 text-(--red-color)" onclick={() => removePoint(i)} aria-label="Delete"
                       >✕</button
                     >

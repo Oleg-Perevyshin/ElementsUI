@@ -1,4 +1,4 @@
-<!-- $lib/WidgetRGBStrip/WidgetRGBStrip.svelte — смарт-виджет адресной светодиодной ленты. Поля группы LST (RGB_Strip, ProdFactory-ESP): Color/Effect/Speed отправляются сразу (onChange), Count/Model/Order — одним пакетом по «Сохранить» (onSave): прошивка пересоздаёт драйвер ленты. Ничего не знает про DeviceStore/WebSocket — только value и колбэки. -->
+<!-- $lib/WidgetRGBStrip/WidgetRGBStrip.svelte - смарт-виджет адресной светодиодной ленты. Поля группы LST (RGB_Strip, ProdFactory-ESP): Color/Effect/Speed отправляются сразу (onChange), Count/Model/Order - одним пакетом по «Сохранить» (onSave): прошивка пересоздаёт драйвер ленты. Ничего не знает про DeviceStore/WebSocket - только value и колбэки. -->
 <script lang="ts">
   import { T } from "../locales/i18n"
   import { untrack } from "svelte"
@@ -16,12 +16,12 @@
 
   let { wrapperClass = "", componentClass = "", label = {}, value, collapsed = $bindable(false), persistKey, onChange, onSave }: IWidgetRGBStripProps = $props()
 
-  /* Подсказки — кнопка «?» в шапке, выбор общий для всех WidgetRGBStrip */
+  /* Подсказки - кнопка «?» в шапке, выбор общий для всех WidgetRGBStrip */
   const hints = hintsSetting("WidgetRGBStrip")
 
   let accentStyle = $derived(widgetAccentStyle(componentClass ?? ""))
 
-  /* Сворачивание тела по клику на шапку — как у остальных смарт-виджетов (см. WidgetWiFi.svelte) */
+  /* Сворачивание тела по клику на шапку - как у остальных смарт-виджетов (см. WidgetWiFi.svelte) */
   let hasMergedPersisted = false
   $effect(() => {
     if (hasMergedPersisted) return
@@ -67,7 +67,7 @@
       savedSnapshot = JSON.stringify(incoming)
     }
   })
-  /* Оборудование — редкие настройки, свёрнуты по умолчанию; несохранённые правки держат блок раскрытым */
+  /* Оборудование - редкие настройки, свёрнуты по умолчанию; несохранённые правки держат блок раскрытым */
   let hardwareOpen = $state(false)
   let countValid = $derived(Number.isInteger(hardware.Count) && hardware.Count >= 1 && hardware.Count <= maxCount)
   let hasWhite = $derived(hardware.Model === 1)
@@ -78,14 +78,14 @@
     savedSnapshot = JSON.stringify(hardware)
   }
 
-  /* Образец в шапке — цвет первого светодиода: отправленный сразу, до ответа устройства; новое значение с устройства его заменяет */
+  /* Образец в шапке - цвет первого светодиода: отправленный сразу, до ответа устройства; новое значение с устройства его заменяет */
   let sentColor: number[] | null = $state(null)
   let colorKey = $derived(color.join(","))
   $effect(() => {
     void colorKey
     sentColor = null
   })
-  /* Как превью палитры: оттенок без учёта яркости (тусклый светодиод светится тем же цветом), белый — своим уровнем */
+  /* Как превью палитры: оттенок без учёта яркости (тусклый светодиод светится тем же цветом), белый - своим уровнем */
   let headerColor = $derived.by(() => {
     const [r, g, b] = sentColor ?? color
     const max = Math.max(r, g, b)
@@ -161,7 +161,7 @@
           <span class="text-[12px] font-semibold text-(--muted-color)">
             {$T("widget.rgb.hardware")}
             <span class="font-normal text-(--faint-color)">
-              · {hardware.Count} LED · {MODELS[hardware.Model]?.name ?? "—"} · {ORDERS[hardware.Order]?.name ?? "—"}
+              · {hardware.Count} LED · {MODELS[hardware.Model]?.name ?? "-"} · {ORDERS[hardware.Order]?.name ?? "-"}
             </span>
           </span>
           <span

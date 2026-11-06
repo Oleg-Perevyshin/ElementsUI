@@ -70,6 +70,6 @@ ${formatObjectToString(graphComponent.properties as IGraphProps)}
   {/snippet}
   {#snippet examples()}
     <Graph label={{ name: "Пример компонента график" }} streamingData={{ data: dataForGraph }} isTest={true} />
-    <Graph label={{ name: "Статический режим — наведите курсор на график" }} historyData={historyExample} />
+    <Graph label={{ name: "Статический режим - наведите курсор на график" }} historyData={historyExample} />
   {/snippet}
 </ComponentExample>

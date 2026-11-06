@@ -61,7 +61,7 @@
 | `keys.StackInfo` | `string` | `"StackInfo"` | Имя объекта в ответе |
 | `argument` | `string` | `"StackInfo"` | Аргумент запроса |
 | `value` | `IWidgetStackInfo` | | Снимок `StackInfo` |
-| `label.name` | `string` | | Заголовок. Пусто — «Стек и задачи» на языке пользователя |
+| `label.name` | `string` | | Заголовок. Пусто - «Стек и задачи» на языке пользователя |
 | `wrapperClass` | `string` | `""` | Классы обёртки |
 | `componentClass` | `string` | `""` | Мастер-цвет `bg-*` |
 | `warnBytes` | `number` | `512` | Порог подсветки запаса стека, байт |

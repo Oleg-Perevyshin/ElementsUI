@@ -26,7 +26,7 @@
 | `id` | `string` | `crypto.randomUUID()` | Идентификатор |
 | `isOpen` | `boolean` | `false` | Открыт ли. Можно связать через `bind:isOpen` |
 | `wrapperClass` | `string` | `""` | Классы обёртки |
-| `componentClass` | `string` | `""` | Мастер-цвет: `bg-red`, `bg-green` и другие из `COLOR_OPTIONS`. Пусто — акцент темы |
+| `componentClass` | `string` | `""` | Мастер-цвет: `bg-red`, `bg-green` и другие из `COLOR_OPTIONS`. Пусто - акцент темы |
 | `size` | `{ width, height }` | `1 × 1` | Сетка содержимого: колонки и строки |
 | `label.name` | `string` | `""` | Заголовок |
 | `label.class` | `string` | `"text-left"` | Классы текста заголовка |

@@ -1,4 +1,4 @@
-/* JSON-совместимое значение → CBOR (поля ввода терминала и отладки): строки base64 под ключами с "BIN" — байты */
+/* JSON-совместимое значение → CBOR (поля ввода терминала и отладки): строки base64 под ключами с "BIN" - байты */
 
 import { type CborValue } from "./types.js"
 import { encodeCbor } from "./encoder.js"
@@ -28,7 +28,7 @@ class JsonToCbor {
 
     /* string */
     if (typeof value === "string") {
-      /* Ключ с "BIN"/"bin" — строка на самом деле Base64 бинарных данных */
+      /* Ключ с "BIN"/"bin" - строка на самом деле Base64 бинарных данных */
       if (parentKey && (parentKey.includes("BIN") || parentKey.includes("bin"))) {
         const bytes = base64ToBytes(value)
         return bytes

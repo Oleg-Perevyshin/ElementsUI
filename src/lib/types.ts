@@ -21,7 +21,7 @@ export const updateProperty = (
   onPropertyChange({ properties: newProperties })
 }
 
-/* Опция панели свойств, чьё значение содержит класс с префиксом из строки классов компонента (text-, justify-, py-...); класса нет — undefined */
+/* Опция панели свойств, чьё значение содержит класс с префиксом из строки классов компонента (text-, justify-, py-...); класса нет - undefined */
 export const findOptionByClass = <O extends { value?: unknown }>(options: O[], classes: string | undefined, prefix: string): O | undefined => {
   const cls = classes?.split(" ").find((c) => c.startsWith(prefix))
   return cls ? options.find((option) => String(option.value).includes(cls)) : undefined
@@ -136,7 +136,7 @@ export interface IAccordionProps {
   id?: string
   isOpen?: boolean
   wrapperClass?: string
-  /* Мастер-цвет "bg-red" и т.п. из COLOR_OPTIONS (см. widgetAccent.ts): иконка и текст заголовка — цвет, фон заголовка — его мягкий оттенок; "" — акцент темы */
+  /* Мастер-цвет "bg-red" и т.п. из COLOR_OPTIONS (см. widgetAccent.ts): иконка и текст заголовка - цвет, фон заголовка - его мягкий оттенок; "" - акцент темы */
   componentClass?: string
   size?: {
     height?: number
@@ -204,7 +204,7 @@ export interface IFileAttachProps {
   label?: { name?: string; class?: string }
   type?: "file" | "image" | "button"
   accept?: string
-  /* Только для type "button": подсказка при наведении и своя иконка (по умолчанию — документ со стрелкой вверх) */
+  /* Только для type "button": подсказка при наведении и своя иконка (по умолчанию - документ со стрелкой вверх) */
   info?: { text: string; side: "top" | "bottom" | "left" | "right" }
   icon?: ConstructorOfATypedSvelteComponent | string | null
   imageSize?: { height?: string; width?: string; fitMode?: "cover" | "contain"; form?: "square" | "circle" }
@@ -220,7 +220,7 @@ export interface IGraphDataObject {
   value: number
 }
 
-/* Точка статического (исторического) ряда. timestamp — Unix-эпоха в миллисекундах (как Date.now()) */
+/* Точка статического (исторического) ряда. timestamp - Unix-эпоха в миллисекундах (как Date.now()) */
 export interface IGraphHistoryPoint {
   value: number
   timestamp: number
@@ -237,9 +237,9 @@ export interface IGraphProps {
   label?: { name?: string; class?: string }
   streamingData?: { data: IGraphDataObject[] | null }
   isTest?: boolean
-  /* 0 = AUTO (рисовать точку на каждое новое значение из streamingData), иначе — интервал в мс */
+  /* 0 = AUTO (рисовать точку на каждое новое значение из streamingData), иначе - интервал в мс */
   refreshRate?: number
-  /* Если задан (непустой) — статический режим, весь массив разом по реальным timestamp, streamingData/refreshRate игнорируются */
+  /* Если задан (непустой) - статический режим, весь массив разом по реальным timestamp, streamingData/refreshRate игнорируются */
   historyData?: IGraphHistorySeries[]
 }
 
@@ -248,8 +248,8 @@ export interface IGraphProps {
 export interface IPeriodChartLevel {
   name: string /* Подпись вкладки переключателя, напр. "Час"/"Сутки"/"Месяц"/"Год" */
   variable?: string /* Имя переменной устройства, откуда берутся data этого уровня, напр. "PWR.EHour" */
-  data: number[] /* Значения — длина массива = число столбиков, ничем не ограничена */
-  labels?: string[] /* Подписи столбиков по X; если не заданы — используется индекс+1 */
+  data: number[] /* Значения - длина массива = число столбиков, ничем не ограничена */
+  labels?: string[] /* Подписи столбиков по X; если не заданы - используется индекс+1 */
 }
 
 export interface IPeriodChartProps {
@@ -258,7 +258,7 @@ export interface IPeriodChartProps {
   label?: { name?: string; class?: string }
   levels?: IPeriodChartLevel[] /* Порядок = порядок вкладок переключателя, всегда открывается на первом (индекс 0) */
   unit?: string /* Единицы для тултипа/подписи, напр. "Вт·ч" */
-  /* Только уведомление о смене вкладки — сам компонент ничего не запрашивает, консьюмер сам решает, догружать ли данные */
+  /* Только уведомление о смене вкладки - сам компонент ничего не запрашивает, консьюмер сам решает, догружать ли данные */
   onLevelChange?: (index: number, level: IPeriodChartLevel) => void
 }
 
@@ -344,7 +344,7 @@ export interface ISelectProps<T = unknown> {
   label?: { name?: string; class?: string }
   type?: "select" | "buttons" | "input"
   multiSelect?: boolean
-  /* Для type="buttons": группа по ширине содержимого — все кнопки одинаковой ширины по самой длинной подписи, текст без переноса и обрезки */
+  /* Для type="buttons": группа по ширине содержимого - все кнопки одинаковой ширины по самой длинной подписи, текст без переноса и обрезки */
   fitContent?: boolean
   listHeight?: string
   value?: IOption<T> | IOption<T>[] | null
@@ -360,7 +360,7 @@ export interface IOption<T = unknown> {
   name?: string
   class?: string
   disabled?: boolean
-  /* Иконка варианта: SVG-разметка или короткая метка ("S", "XL"). В type="buttons" показывается вместо name, name — подсказка и aria-label */
+  /* Иконка варианта: SVG-разметка или короткая метка ("S", "XL"). В type="buttons" показывается вместо name, name - подсказка и aria-label */
   icon?: string
 }
 
@@ -419,7 +419,7 @@ export interface ITableSelect<T extends object> {
 export interface ITableButton<T extends object> {
   name?: string | ((row: T) => string)
   icon?: ConstructorOfATypedSvelteComponent | string
-  /* Подсказка при наведении — обязательна для кнопки-значка без name */
+  /* Подсказка при наведении - обязательна для кнопки-значка без name */
   title?: string | ((row: T) => string)
   class?: string | ((row: T) => string)
   eventHandler?: IUIComponentHandler
@@ -481,7 +481,7 @@ export interface ITabsProps {
     width?: number
   }
   activeTab?: number
-  /* id — стабильный идентификатор вкладки: по нему конструктор переносит содержимое вкладки при перестановке/удалении (содержимое привязано к номеру вкладки) */
+  /* id - стабильный идентификатор вкладки: по нему конструктор переносит содержимое вкладки при перестановке/удалении (содержимое привязано к номеру вкладки) */
   items: {
     id?: string
     name?: string
@@ -517,11 +517,11 @@ export interface IVideoViewerProps {
   wrapperClass?: string
   label?: { name?: string; class?: string }
   showSelect?: boolean
-  /* "camera" — локальный getUserMedia (по умолчанию); "remote" — компонент только отображает кадры из пропа frame */
+  /* "camera" - локальный getUserMedia (по умолчанию); "remote" - компонент только отображает кадры из пропа frame */
   source?: "camera" | "remote"
-  /* Ключ потока для приложения/конструктора — самим компонентом не используется (WS не открывает) */
+  /* Ключ потока для приложения/конструктора - самим компонентом не используется (WS не открывает) */
   streamKey?: string
-  /* Последний полученный кадр в режиме remote — прокидывается родителем реактивно */
+  /* Последний полученный кадр в режиме remote - прокидывается родителем реактивно */
   frame?: Uint8Array | Blob | null
   status?: "connecting" | "live" | "offline" | "error"
 }
@@ -545,9 +545,9 @@ export interface IWidgetProps {
   onUpdate?: (value: number) => void
 }
 
-/* Смарт-виджеты — составные карточки конструктора с ФИКСИРОВАННЫМ набором полей устройства (в отличие от примитивов, где переменную выбирает пользователь через Select). Поля соответствуют реальной прошивочной конвенции (group prefix + предопределённые имена, как в config_service ProdFactory-ESP) — компонент ничего не знает про DeviceStore/WebSocket, только value/onSave: владелец рендера (GUIPreview.svelte) сам читает/пишет нужные ключи единым пакетом. */
+/* Смарт-виджеты - составные карточки конструктора с ФИКСИРОВАННЫМ набором полей устройства (в отличие от примитивов, где переменную выбирает пользователь через Select). Поля соответствуют реальной прошивочной конвенции (group prefix + предопределённые имена, как в config_service ProdFactory-ESP) - компонент ничего не знает про DeviceStore/WebSocket, только value/onSave: владелец рендера (GUIPreview.svelte) сам читает/пишет нужные ключи единым пакетом. */
 export interface IWidgetWiFiConfig {
-  WiFiMode: number /* 0=NULL, 1=STA, 2=AP, 3=STA+AP — как esp_wifi wifi_mode_t */
+  WiFiMode: number /* 0=NULL, 1=STA, 2=AP, 3=STA+AP - как esp_wifi wifi_mode_t */
   StaSSID: string
   StaPSK: string
   StaticIP: number /* 0=DHCP, 1=Static */
@@ -562,21 +562,21 @@ export interface IWidgetWiFiConfig {
 }
 
 export interface IWidgetWiFiProps {
-  /* В отличие от примитивов id — не биндинг одной переменной, а префикс прошивочной группы (обычно "CFG"), с которой работает весь набор полей виджета разом (см. keys ниже) */
+  /* В отличие от примитивов id - не биндинг одной переменной, а префикс прошивочной группы (обычно "CFG"), с которой работает весь набор полей виджета разом (см. keys ниже) */
   id?: string
   wrapperClass?: string
   componentClass?: string
   label?: { name?: string }
   value?: IWidgetWiFiConfig
-  /* Переопределение имени поля устройства для каждого ключа IWidgetWiFiConfig — по умолчанию совпадает с именем самого ключа (WiFiMode, StaSSID, ...), меняется только если у прошивки другая конвенция именования */
+  /* Переопределение имени поля устройства для каждого ключа IWidgetWiFiConfig - по умолчанию совпадает с именем самого ключа (WiFiMode, StaSSID, ...), меняется только если у прошивки другая конвенция именования */
   keys?: Partial<Record<keyof IWidgetWiFiConfig, string>>
-  /* Команда сканирования сетей — по умолчанию Header: GET, Argument: APsList */
+  /* Команда сканирования сетей - по умолчанию Header: GET, Argument: APsList */
   scanCommand?: { header?: string; argument?: string }
   allowedModes?: number[]
   confirmOnAP?: boolean
-  /* Свёрнут ли виджет по умолчанию — как isOpen у Accordion, задаётся в конструкторе и сохраняется в GUI, чтобы при входе на устройство все видели один и тот же задуманный вид интерфейса */
+  /* Свёрнут ли виджет по умолчанию - как isOpen у Accordion, задаётся в конструкторе и сохраняется в GUI, чтобы при входе на устройство все видели один и тот же задуманный вид интерфейса */
   collapsed?: boolean
-  /* Уникальный ключ виджета (обычно ModSN + id компонента) — если задан, поверх дефолта ещё запоминается личный выбор пользователя в localStorage и переживает перезагрузку страницы */
+  /* Уникальный ключ виджета (обычно ModSN + id компонента) - если задан, поверх дефолта ещё запоминается личный выбор пользователя в localStorage и переживает перезагрузку страницы */
   persistKey?: string
   onScan?: () => Promise<{ id: string; name: string; value: string }[]>
   onSave?: (config: IWidgetWiFiConfig) => void
@@ -591,7 +591,7 @@ export interface IWidgetDeviceInfoConfig {
   HostName: string
   WebUser: string
   WebPsw: string
-  /* Текущие IP-адреса устройства в обоих режимах WiFi (STA/AP) — только для отображения, реальное конфигурирование сети происходит в WidgetWiFi */
+  /* Текущие IP-адреса устройства в обоих режимах WiFi (STA/AP) - только для отображения, реальное конфигурирование сети происходит в WidgetWiFi */
   StaIP: string
   ApIP: string
 }
@@ -603,11 +603,11 @@ export interface IWidgetDeviceInfoProps {
   componentClass?: string
   label?: { name?: string }
   value?: IWidgetDeviceInfoConfig
-  /* Переопределение имени поля устройства для каждого ключа IWidgetDeviceInfoConfig — по умолчанию совпадает с именем самого ключа (DevSN, DevName, ...) */
+  /* Переопределение имени поля устройства для каждого ключа IWidgetDeviceInfoConfig - по умолчанию совпадает с именем самого ключа (DevSN, DevName, ...) */
   keys?: Partial<Record<keyof IWidgetDeviceInfoConfig, string>>
-  /* Команда перезагрузки — по умолчанию Header: SET, Argument: Restart */
+  /* Команда перезагрузки - по умолчанию Header: SET, Argument: Restart */
   restartCommand?: { header?: string; argument?: string }
-  /* Команда сброса всех настроек к заводским (очистка NVS и перезагрузка) — по умолчанию Header: SET, Argument: RstNVS */
+  /* Команда сброса всех настроек к заводским (очистка NVS и перезагрузка) - по умолчанию Header: SET, Argument: RstNVS */
   resetCommand?: { header?: string; argument?: string }
   collapsed?: boolean
   persistKey?: string
@@ -617,9 +617,9 @@ export interface IWidgetDeviceInfoProps {
   onFactoryReset?: () => void
 }
 
-/* Состояние файловой системы — объект CFG.FS в том виде, в каком его отдаёт прошивка (FS_WriteState, ProdFactory-ESP) */
+/* Состояние файловой системы - объект CFG.FS в том виде, в каком его отдаёт прошивка (FS_WriteState, ProdFactory-ESP) */
 export interface IWidgetFileSystemFile {
-  Name: string /* полный путь файла на устройстве — его же принимает SET FS {"Op": "Delete"} */
+  Name: string /* полный путь файла на устройстве - его же принимает SET FS {"Op": "Delete"} */
   Size: number /* байт */
 }
 
@@ -645,25 +645,25 @@ export interface IWidgetFileSystemProps {
   componentClass?: string
   label?: { name?: string }
   value?: IWidgetFileSystemInfo
-  /* Переопределение имени поля устройства — по умолчанию FS (итоговый ключ CFG.FS) */
+  /* Переопределение имени поля устройства - по умолчанию FS (итоговый ключ CFG.FS) */
   keys?: { FS?: string }
-  /* Аргумент команд файловой системы — по умолчанию "FS": GET FS — снимок, SET FS {"Op": ...} — операции */
+  /* Аргумент команд файловой системы - по умолчанию "FS": GET FS - снимок, SET FS {"Op": ...} - операции */
   argument?: string
   /* Какие файлы можно выбрать для закачки (атрибут accept), например ".bin, .txt, .pem" */
   accept?: string
-  /* Максимальная длина имени файла — ограничение прошивки (LittleFS, upload_file.c), по умолчанию 31 */
+  /* Максимальная длина имени файла - ограничение прошивки (LittleFS, upload_file.c), по умолчанию 31 */
   maxNameLength?: number
   collapsed?: boolean
   persistKey?: string
   onRefresh?: () => void
   onDelete?: (name: string) => void
-  /* Скачивание файла: протокол SET FS с Op DownloadStart/DownloadChunk/DownloadDone и сохранение — у вызывающего; виджет только отдаёт имя и ждёт завершения */
+  /* Скачивание файла: протокол SET FS с Op DownloadStart/DownloadChunk/DownloadDone и сохранение - у вызывающего; виджет только отдаёт имя и ждёт завершения */
   onDownload?: (name: string) => void | Promise<void>
-  /* Протокол закачки (SET FS с Op UploadStart/UploadChunk/UploadDone) реализует вызывающий — виджет только отдаёт выбранный файл */
+  /* Протокол закачки (SET FS с Op UploadStart/UploadChunk/UploadDone) реализует вызывающий - виджет только отдаёт выбранный файл */
   onUpload?: (file: File) => void | Promise<void>
 }
 
-/* Снимок памяти и задач — объект StackInfo в том виде, в каком его отдают ProdFactory-ESP и ProdFactory-STM (API_GetStackInfo) */
+/* Снимок памяти и задач - объект StackInfo в том виде, в каком его отдают ProdFactory-ESP и ProdFactory-STM (API_GetStackInfo) */
 export interface IWidgetStackInfoHeap {
   Name: string /* ESP: Internal / Default (вместе с PSRAM), STM: Heap */
   Total: number /* байт */
@@ -675,9 +675,9 @@ export interface IWidgetStackInfoTask {
   Name: string
   FreeMin: number /* минимальный запас стека с момента создания задачи, байт */
   Prio: number
-  Core?: number /* только ESP: ядро привязки, -1 — без привязки */
+  Core?: number /* только ESP: ядро привязки, -1 - без привязки */
   State: number /* eTaskState: 0 Running, 1 Ready, 2 Blocked, 3 Suspended, 4 Deleted */
-  CPU?: number /* загрузка задачи, % одного ядра с прошлого ответа (с запуска — в первом ответе) */
+  CPU?: number /* загрузка задачи, % одного ядра с прошлого ответа (с запуска - в первом ответе) */
 }
 
 export interface IWidgetStackInfo {
@@ -691,28 +691,28 @@ export interface IWidgetStackInfoProps {
   componentClass?: string
   label?: { name?: string }
   value?: IWidgetStackInfo
-  /* Переопределение имени объекта в ответе — по умолчанию StackInfo */
+  /* Переопределение имени объекта в ответе - по умолчанию StackInfo */
   keys?: { StackInfo?: string }
-  /* Аргумент запроса — по умолчанию "StackInfo" (GET StackInfo) */
+  /* Аргумент запроса - по умолчанию "StackInfo" (GET StackInfo) */
   argument?: string
-  /* Запас стека ниже порога (байт) подсвечивается красным, ниже удвоенного — оранжевым */
+  /* Запас стека ниже порога (байт) подсвечивается красным, ниже удвоенного - оранжевым */
   warnBytes?: number
-  /* Период автоопроса, мс; 0 — только по кнопке */
+  /* Период автоопроса, мс; 0 - только по кнопке */
   period?: number
   collapsed?: boolean
   persistKey?: string
   onRefresh?: () => void
 }
 
-/* Адресная лента — поля группы LST в том виде, в каком их отдаёт RGB_Strip (ProdFactory-ESP) */
+/* Адресная лента - поля группы LST в том виде, в каком их отдаёт RGB_Strip (ProdFactory-ESP) */
 export interface IWidgetRGBStripConfig {
   Color: number[] /* [R, G, B, W] 0..255; W используется только моделью SK6812 */
   Effect: number /* 0 статичный, 1 радуга, 2 дыхание, 3 палитра, 4 комета, 5 мерцание, 6 огонь, 7 бегущие огни */
-  Speed: number /* 0..10, 0 — пауза эффекта */
+  Speed: number /* 0..10, 0 - пауза эффекта */
   Count: number /* количество светодиодов 1..MaxCount */
   Model: number /* 0 WS2812, 1 SK6812 (RGBW), 2 WS2811 */
   Order: number /* 0 GRB, 1 RGB, 2 BRG, 3 RBG, 4 GBR, 5 BGR */
-  MaxCount: number /* ёмкость, заданная в прошивке, — только чтение */
+  MaxCount: number /* ёмкость, заданная в прошивке, - только чтение */
 }
 
 export interface IWidgetRGBStripProps {
@@ -726,70 +726,70 @@ export interface IWidgetRGBStripProps {
   keys?: Partial<Record<keyof IWidgetRGBStripConfig, string>>
   collapsed?: boolean
   persistKey?: string
-  /* Цвет, эффект, скорость — отправляются сразу */
+  /* Цвет, эффект, скорость - отправляются сразу */
   onChange?: (field: "Color" | "Effect" | "Speed", value: number | number[]) => void
-  /* Количество, модель, порядок — одним пакетом по «Сохранить» (лента перезапускается) */
+  /* Количество, модель, порядок - одним пакетом по «Сохранить» (лента перезапускается) */
   onSave?: (hardware: Pick<IWidgetRGBStripConfig, "Count" | "Model" | "Order">) => void
 }
 
-/* Пилотажный дисплей — поля группы (по умолчанию MAV) в том виде, в каком их отдаёт телеметрия MAVLink (20.00.000-01) */
+/* Пилотажный дисплей - поля группы (по умолчанию MAV) в том виде, в каком их отдаёт телеметрия MAVLink (20.00.000-01) */
 export interface IWidgetPFDData {
   Roll: number /* крен, ° (вправо +) */
   Pitch: number /* тангаж, ° (вверх +) */
   Heading: number /* курс, 0..360° */
   GSpeed: number /* путевая скорость, м/с */
   ASpeed: number /* воздушная скорость, м/с */
-  Load: number /* нормальная перегрузка, g: 1 — горизонтальный полёт; нет числа — плашка G скрыта */
-  Slip: number /* боковая перегрузка, g, вправо +; нет числа — шарик скольжения скрыт */
-  Thr: number /* газ, %; нет числа — плашка THR скрыта */
-  WindDir: number /* ветер: откуда дует, 0–360°; нет числа — плашка ветра скрыта */
+  Load: number /* нормальная перегрузка, g: 1 - горизонтальный полёт; нет числа - плашка G скрыта */
+  Slip: number /* боковая перегрузка, g, вправо +; нет числа - шарик скольжения скрыт */
+  Thr: number /* газ, %; нет числа - плашка THR скрыта */
+  WindDir: number /* ветер: откуда дует, 0-360°; нет числа - плашка ветра скрыта */
   WindSpd: number /* скорость ветра, м/с */
   Climb: number /* вертикальная скорость, м/с (вверх +) */
   Alt: number /* высота над точкой взлёта, м */
   AltMSL: number /* высота над уровнем моря, м */
   Lat: number /* широта, ° */
   Lon: number /* долгота, ° */
-  Vx: number /* скорость на север, м/с — для трека */
-  Vy: number /* скорость на восток, м/с — для трека */
+  Vx: number /* скорость на север, м/с - для трека */
+  Vy: number /* скорость на восток, м/с - для трека */
   Fix: number /* GPS_FIX_TYPE: 0-1 нет, 2 2D, 3 3D, 4 DGPS, 5 RTK float, 6 RTK fixed */
   Sat: number /* видимых спутников */
   BV: number /* напряжение батареи, В */
-  BC: number /* ток, А; -1 — не измеряется */
-  BRem: number /* остаток, %; -1 — неизвестно */
+  BC: number /* ток, А; -1 - не измеряется */
+  BRem: number /* остаток, %; -1 - неизвестно */
   Mode: number /* custom_mode HEARTBEAT */
-  VType: number /* MAV_TYPE — определяет названия режимов */
-  Armed: number /* 1 — взведён */
-  HomeLat: number /* точка взлёта, °; 0 — неизвестна */
+  VType: number /* MAV_TYPE - определяет названия режимов */
+  Armed: number /* 1 - взведён */
+  HomeLat: number /* точка взлёта, °; 0 - неизвестна */
   HomeLon: number
   Press: number /* давление, гПа */
   Temp: number /* температура, °C */
-  WPNum: number /* номер текущей точки маршрута; 0 — маршрута нет */
+  WPNum: number /* номер текущей точки маршрута; 0 - маршрута нет */
   WPDist: number /* расстояние до точки, м */
   WPBrg: number /* курс на точку, 0..360° */
   AltErr: number /* целевая высота минус текущая, м */
   SpdErr: number /* целевая воздушная скорость минус текущая, м/с */
   XTE: number /* боковое отклонение от линии маршрута, м */
-  RSSI: number /* уровень сигнала своей стороны, %; -1 — неизвестно */
-  RemRSSI: number /* уровень сигнала удалённой стороны, %; -1 — неизвестно */
+  RSSI: number /* уровень сигнала своей стороны, %; -1 - неизвестно */
+  RemRSSI: number /* уровень сигнала удалённой стороны, %; -1 - неизвестно */
   Drop: number /* потери пакетов, % */
-  HDOP: number /* точность GPS по горизонтали; -1 — неизвестно */
-  EKF: number /* наибольшая дисперсия навигационного фильтра: < 0.5 норма, < 0.8 внимание, дальше — тревога */
+  HDOP: number /* точность GPS по горизонтали; -1 - неизвестно */
+  EKF: number /* наибольшая дисперсия навигационного фильтра: < 0.5 норма, < 0.8 внимание, дальше - тревога */
   SensErr: number /* число включённых, но неисправных датчиков */
   Msg: string /* последнее сообщение автопилота (STATUSTEXT) */
-  MsgSev: number /* важность: 0–3 ошибка/авария, 4 предупреждение, 5–7 информация */
-  MsgSeq: number /* номер сообщения — новое сообщение даже с тем же текстом */
+  MsgSev: number /* важность: 0-3 ошибка/авария, 4 предупреждение, 5-7 информация */
+  MsgSeq: number /* номер сообщения - новое сообщение даже с тем же текстом */
 }
 
 /* Границы для цветовых зон; не заданная граница не рисуется */
 export interface IWidgetPFDLimits {
-  speedMin?: number /* м/с — ниже красная зона на ленте скорости */
-  speedMax?: number /* м/с — выше красная зона */
-  bankMax?: number /* ° — за пределом дуга крена красная */
-  altMax?: number /* м — выше красная зона на ленте высоты */
-  gMin?: number /* g — ниже перегрузка красная */
-  gMax?: number /* g — выше перегрузка красная */
-  battLow?: number /* % — ниже батарея подсвечивается */
-  staleMs?: number /* мс без новых данных — флаг «нет данных», по умолчанию 2000 */
+  speedMin?: number /* м/с - ниже красная зона на ленте скорости */
+  speedMax?: number /* м/с - выше красная зона */
+  bankMax?: number /* ° - за пределом дуга крена красная */
+  altMax?: number /* м - выше красная зона на ленте высоты */
+  gMin?: number /* g - ниже перегрузка красная */
+  gMax?: number /* g - выше перегрузка красная */
+  battLow?: number /* % - ниже батарея подсвечивается */
+  staleMs?: number /* мс без новых данных - флаг «нет данных», по умолчанию 2000 */
 }
 
 export interface IWidgetPFDProps {
@@ -807,15 +807,15 @@ export interface IWidgetPFDProps {
   persistKey?: string
 }
 
-/* Карта — поля одной группы борта (MAV, GNSS...); имена общие с WidgetPFD (Lat/Lon/Alt/Heading/Sat) и WidgetDeviceInfo (DevName/DevSN) */
+/* Карта - поля одной группы борта (MAV, GNSS...); имена общие с WidgetPFD (Lat/Lon/Alt/Heading/Sat) и WidgetDeviceInfo (DevName/DevSN) */
 export interface IWidgetMapData {
-  Lat: number /* широта, °; 0 вместе с Lon — нет фикса */
+  Lat: number /* широта, °; 0 вместе с Lon - нет фикса */
   Lon: number /* долгота, ° */
   Alt: number /* высота, м */
-  Heading: number /* курс, 0..360° — поворот маркера */
+  Heading: number /* курс, 0..360° - поворот маркера */
   Sat: number /* спутников */
-  DevName: string /* имя борта — подпись маркера и заголовок карточки */
-  DevSN: string /* серийный номер — в карточке */
+  DevName: string /* имя борта - подпись маркера и заголовок карточки */
+  DevSN: string /* серийный номер - в карточке */
   WPNum?: number /* номер текущей команды миссии; по нему режимы «Маршрут» и «Агро» показывают прогресс */
 }
 
@@ -824,7 +824,7 @@ export interface IWidgetMapProps {
   wrapperClass?: string
   componentClass?: string
   label?: { name?: string }
-  /* Префиксы групп полей — каждая группа отдельный борт (маркер и траектория), по умолчанию ["MAV"] */
+  /* Префиксы групп полей - каждая группа отдельный борт (маркер и траектория), по умолчанию ["MAV"] */
   groups?: string[]
   /* Значения по группам: { MAV: { Lat, Lon, ... }, GNSS: {...} } */
   value?: Record<string, Partial<IWidgetMapData>>
@@ -840,12 +840,12 @@ export interface IWidgetMapProps {
   isTest?: boolean
   collapsed?: boolean
   persistKey?: string
-  /* objects — карта объектов, route — планировщик миссии из точек, agro — генератор миссии для агродрона; аппараты из групп рисуются во всех режимах */
+  /* objects - карта объектов, route - планировщик миссии из точек, agro - генератор миссии для агродрона; аппараты из групп рисуются во всех режимах */
   mode?: "objects" | "route" | "agro"
-  /* План миссии; без него — демо-поле из DEFAULT_MISSION_PLAN. Можно связать через bind: */
+  /* План миссии; без него - демо-поле из DEFAULT_MISSION_PLAN. Можно связать через bind: */
   plan?: IMissionPlan
   onPlanChange?: (plan: IMissionPlan) => void
-  /* Маршрут режима route; без него — демо-облёт из DEFAULT_ROUTE_PLAN. Можно связать через bind: */
+  /* Маршрут режима route; без него - демо-облёт из DEFAULT_ROUTE_PLAN. Можно связать через bind: */
   route?: IRoutePlan
   onRouteChange?: (route: IRoutePlan) => void
   /* Отправка миссии (текст QGC WPL 110) на борт; без обработчика кнопка «Отправить» неактивна */

@@ -18,7 +18,7 @@
     RenderMarkdown(readmeRaw).then((html) => (readmeHtml = html))
   })
 
-  /* Многоязычный текст для демо: в данных — { ru, en, zh }, тип поля — string (разрешается localizeDeep) */
+  /* Многоязычный текст для демо: в данных - { ru, en, zh }, тип поля - string (разрешается localizeDeep) */
   const L = (ru: string, en: string, zh: string) => ({ ru, en, zh }) as unknown as string
 
   let tabsComponent: UIComponent = $state({
@@ -55,7 +55,7 @@ ${formatObjectToString(tabsComponent.properties as ITabsProps)}
 
 <ComponentExample {codeText} {readmeHtml} bind:forConstructor>
   {#snippet component()}
-    <!-- activeTab — только через привязку: из развёрнутых свойств он перекрыл бы её -->
+    <!-- activeTab - только через привязку: из развёрнутых свойств он перекрыл бы её -->
     {@const { activeTab: _activeTab, ...tabsProps } = localizeDeep(tabsComponent.properties, $Language) as ITabsProps}
     <div class="h-60">
       <Tabs

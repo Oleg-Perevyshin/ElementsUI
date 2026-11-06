@@ -4,7 +4,7 @@
   import { twMerge } from "tailwind-merge"
   import Button from "../Button/Button.svelte"
 
-  /* Иконка «открыть файл» для type "button" — документ со стрелкой вверх, контур 1.75 как у остальных кнопок */
+  /* Иконка «открыть файл» для type "button" - документ со стрелкой вверх, контур 1.75 как у остальных кнопок */
   const OPEN_FILE_ICON = `<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M12 18v-6"/><path d="m9 15 3-3 3 3"/></svg>`
 
   let {
@@ -49,7 +49,7 @@
     }
 
     onChange(event, file)
-    /* Кнопка «Открыть файл» — повторный выбор того же файла тоже должен срабатывать */
+    /* Кнопка «Открыть файл» - повторный выбор того же файла тоже должен срабатывать */
     if (type === "button") input.value = ""
   }
 
@@ -59,14 +59,14 @@
   }
 </script>
 
-<!-- По design-handoff (раздел 9): зона сброса — пунктир 1 px с радиусом 12 вместо залитой кнопки, высота как у Input; «Выбрать файл» — акцентный текст, имя файла — обычным цветом, пока не выбрано — бледным. -->
+<!-- По design-handoff (раздел 9): зона сброса - пунктир 1 px с радиусом 12 вместо залитой кнопки, высота как у Input; «Выбрать файл» - акцентный текст, имя файла - обычным цветом, пока не выбрано - бледным. -->
 <div class={twMerge(`flex flex-col items-center gap-1`, wrapperClass)}>
   {#if label.name}
     <span class={twMerge(`w-full text-[12px] font-semibold text-(--muted-color)`, label.class)}>{label.name}</span>
   {/if}
 
   {#if type === "button"}
-    <!-- Иконочная кнопка с подсказкой, как UI.Button; выбор файла — скрытый input за ней -->
+    <!-- Иконочная кнопка с подсказкой, как UI.Button; выбор файла - скрытый input за ней -->
     <Button {componentClass} {disabled} content={{ icon: icon ?? OPEN_FILE_ICON, info }} onClick={triggerFileInput} />
     <input id={ID} type="file" class="hidden" {accept} {disabled} onchange={handleFileChange} />
   {:else if type === "image"}

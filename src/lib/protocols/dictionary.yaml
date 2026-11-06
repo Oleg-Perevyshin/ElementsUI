@@ -1,6 +1,6 @@
-# Словарь аргументов протокола (поле arg в HAR, 0..8191) — единый для всех устройств, обоих фреймворков и приложений Строковое представление аргумента | Название в перечислении | Числовой код Источник — poe-svelte-ui-lib (src/lib/protocols/dictionary.yaml); .framework/Dictionary.yaml фреймворков — копии, не править
+# Словарь аргументов протокола (поле arg в HAR, 0..8191) - единый для всех устройств, обоих фреймворков и приложений Строковое представление аргумента | Название в перечислении | Числовой код Источник - poe-svelte-ui-lib (src/lib/protocols/dictionary.yaml); .framework/Dictionary.yaml фреймворков - копии, не править
 
-# 0 — отсутствие аргумента
+# 0 - отсутствие аргумента
 - [Unknown, A_UNKNOWN, 0]                   # Аргумент отсутствует
 
 # Служебные команды
@@ -13,13 +13,13 @@
 - [StackInfo, A_STACK_INFO, 8]              # GET: снимок куч и стеков задач
 - [BackUp, A_BACKUP, 9]                     # Резервная копия конфигурации
 - [BindMKey, A_BIND_MOD_KEY, 10]            # SET: привязка ключа модуля (ModBindKey)
-- [DebugLog, A_DEBUG_LOG, 11]               # OK!: сообщение отладки — CBOR-массив [уровень, тег, текст|байты, FHS]
-- [DebugPlot, A_DEBUG_PLOT, 12]             # OK!: значения графиков отладки — CBOR-карта {"Имя": float32} (LOG_PLOT)
+- [DebugLog, A_DEBUG_LOG, 11]               # OK!: сообщение отладки - CBOR-массив [уровень, тег, текст|байты, FHS]
+- [DebugPlot, A_DEBUG_PLOT, 12]             # OK!: значения графиков отладки - CBOR-карта {"Имя": float32} (LOG_PLOT)
 - [DataStream, A_DATA_STREAM, 15]           # OK!: поток данных групп конфигурации (CS_PushGroupStream)
 
 # Локальная сеть
 - [APsList, A_APS_LIST, 21]                 # GET: список точек доступа Wi-Fi
-- [FS, A_FS, 22]                            # Файловая система: GET FS — снимок, SET FS {Op: Delete|UploadStart|UploadChunk|UploadDone|DownloadStart|DownloadChunk|DownloadDone}
+- [FS, A_FS, 22]                            # Файловая система: GET FS - снимок, SET FS {Op: Delete|UploadStart|UploadChunk|UploadDone|DownloadStart|DownloadChunk|DownloadDone}
 - [JoinDev, A_JOIN_DEV, 23]                 # SET: подтверждение подключения устройства к облаку
 - [JoinUser, A_JOIN_USER, 24]               # SET: пользователь подключился к устройству
 - [LeaveUser, A_LEAVE_USER, 25]             # SET: пользователь отключился от устройства

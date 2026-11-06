@@ -1,5 +1,5 @@
 /* $lib/hints.ts */
-/* Подсказки смарт-виджетов: у каждого виджета своя кнопка «?» в шапке, выбор запоминается в браузере для виджетов этого типа (hintsSetting("WidgetPFD") — общий для всех PFD); элемент получает подсказку действием use:hint={{ text, enabled }} — всплывающее окно над ним в стиле темы */
+/* Подсказки смарт-виджетов: у каждого виджета своя кнопка «?» в шапке, выбор запоминается в браузере для виджетов этого типа (hintsSetting("WidgetPFD") - общий для всех PFD); элемент получает подсказку действием use:hint={{ text, enabled }} - всплывающее окно над ним в стиле темы */
 import { writable, type Writable } from "svelte/store"
 
 /* Другие ключи хранения, из которых читается выбор оператора */
@@ -20,7 +20,7 @@ export const hintsSetting = (widget: string): Writable<boolean> => {
       if (saved !== null) initial = saved === "1"
     }
   } catch {
-    /* хранилище недоступно — подсказки выключены */
+    /* хранилище недоступно - подсказки выключены */
   }
   const store = writable(initial)
   let first = true
@@ -30,7 +30,7 @@ export const hintsSetting = (widget: string): Writable<boolean> => {
     try {
       if (typeof localStorage !== "undefined") localStorage.setItem(storageKey, on ? "1" : "0")
     } catch {
-      /* хранилище недоступно — выбор действует до перезагрузки */
+      /* хранилище недоступно - выбор действует до перезагрузки */
     }
   })
   settings.set(widget, store)
@@ -85,7 +85,7 @@ export function hideHint() {
 
 export type HintParams = { text?: string; enabled: boolean }
 
-/* Действие для элемента виджета: use:hint={{ text: $T("…"), enabled: $hints }}; пустой текст или выключенные подсказки — ничего */
+/* Действие для элемента виджета: use:hint={{ text: $T("…"), enabled: $hints }}; пустой текст или выключенные подсказки - ничего */
 export const hint = (node: HTMLElement, params: HintParams) => {
   let current = params
   const enter = () => current.enabled && current.text && showHint(node, current.text)

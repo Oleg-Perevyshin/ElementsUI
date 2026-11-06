@@ -47,7 +47,7 @@
       .filter((s) => s.length > 0)
   const formatStrings = (arr: string[] | undefined): string => (arr || []).join(", ")
 
-  /* eventHandler.Variables — список всех PWR.*-переменных со всех уровней, чтобы рантайм подписался на них разом */
+  /* eventHandler.Variables - список всех PWR.*-переменных со всех уровней, чтобы рантайм подписался на них разом */
   const updateLevels = (levels: IPeriodChartLevel[]) => {
     updateProperty("levels", levels, component, onPropertyChange)
     onPropertyChange({ eventHandler: { Variables: levels.map((l) => l.variable).filter((v): v is string => !!v) } })

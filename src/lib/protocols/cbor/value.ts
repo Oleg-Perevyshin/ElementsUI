@@ -1,4 +1,4 @@
-/* Конвертация между CBOR и обычными JS-значениями (объекты/массивы/примитивы) — никакого JSON-текста нигде не участвует */
+/* Конвертация между CBOR и обычными JS-значениями (объекты/массивы/примитивы) - никакого JSON-текста нигде не участвует */
 
 import { type CborValue, CborTag } from "./types.js"
 import { decodeCbor } from "./decoder.js"
@@ -23,7 +23,7 @@ class CborToValue {
     /* string */
     if (typeof value === "string") return value
 
-    /* Uint8Array — нативные бинарные данные, отдаём как есть, без base64 */
+    /* Uint8Array - нативные бинарные данные, отдаём как есть, без base64 */
     if (value instanceof Uint8Array) return value
 
     /* Array */
@@ -94,10 +94,10 @@ class ValueToCbor {
     /* bigint (если передан) */
     if (typeof value === "bigint") return value
 
-    /* Uint8Array — нативные бинарные данные, сразу CBOR byte string (до typeof === "object", иначе уйдёт в Map по числовым индексам) */
+    /* Uint8Array - нативные бинарные данные, сразу CBOR byte string (до typeof === "object", иначе уйдёт в Map по числовым индексам) */
     if (value instanceof Uint8Array) return value
 
-    /* string — всегда текстовая CBOR-строка, бинарные данные передаются через Uint8Array напрямую, не через base64 */
+    /* string - всегда текстовая CBOR-строка, бинарные данные передаются через Uint8Array напрямую, не через base64 */
     if (typeof value === "string") return value
 
     /* object */

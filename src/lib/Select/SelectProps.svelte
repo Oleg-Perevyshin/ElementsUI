@@ -44,7 +44,7 @@
         : ($optionsStore.SELECT_VALUE_TYPE_OPTIONS[0] as ValueTypeOption),
   )
 
-  /* Диапазон битов bitMode; без range в свойствах — один нулевой бит */
+  /* Диапазон битов bitMode; без range в свойствах - один нулевой бит */
   const bitRange = $derived(component.properties.range ?? { start: 0, end: 0 })
 
   let Header: IOption = $derived(
@@ -65,7 +65,7 @@
     ),
   )
 
-  /* Argument пуст — поле ниже лишь визуально показывает "ModCfg", реальное значение нужно проставить в состояние */
+  /* Argument пуст - поле ниже лишь визуально показывает "ModCfg", реальное значение нужно проставить в состояние */
   $effect(() => {
     if (!component.eventHandler?.Argument) onPropertyChange({ eventHandler: { Argument: "ModCfg" } })
   })

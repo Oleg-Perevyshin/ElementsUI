@@ -1,4 +1,4 @@
-<!-- $lib/Select/Select.svelte — радиус 10, высота 36, выравнивание по левому краю, список — единственный элемент с тенью, группа type="buttons" без разрывов. -->
+<!-- $lib/Select/Select.svelte - радиус 10, высота 36, выравнивание по левому краю, список - единственный элемент с тенью, группа type="buttons" без разрывов. -->
 <script lang="ts" generics="T = unknown">
   import { slide } from "svelte/transition"
   import { onMount } from "svelte"
@@ -14,7 +14,7 @@
   let portalElement: HTMLDivElement | undefined = $state()
   let anchorRect: { top: number; bottom: number; left: number; width: number } | null = $state(null)
 
-  /* Список вариантов выносится в document.body (портал), чтобы его не обрезал overflow-hidden/overflow-auto ближайшего скроллящегося предка (например, панель свойств конструктора). Позиция считается от dropdownElement и обновляется, пока список открыт, при скролле/резайзе где угодно на странице. Атрибут data-ui-portal на контейнере — чтобы Modal.svelte не принимал клик по опции (физически лежащей вне [data-modal]) за клик "снаружи" и не закрывался. */
+  /* Список вариантов выносится в document.body (портал), чтобы его не обрезал overflow-hidden/overflow-auto ближайшего скроллящегося предка (например, панель свойств конструктора). Позиция считается от dropdownElement и обновляется, пока список открыт, при скролле/резайзе где угодно на странице. Атрибут data-ui-portal на контейнере - чтобы Modal.svelte не принимал клик по опции (физически лежащей вне [data-modal]) за клик "снаружи" и не закрывался. */
   function portal(node: HTMLElement) {
     document.body.appendChild(node)
     return {
@@ -124,7 +124,7 @@
     onUpdate?.(selectedOption)
   }
 
-  /* Общая база поля — та же, что у Input */
+  /* Общая база поля - та же, что у Input */
   const fieldBase = `h-8 w-full rounded-[10px] border border-(--border-color) bg-(--field-color) px-3 text-left text-[14px]
     transition-[border-color,box-shadow] duration-150 outline-none
     focus:border-(--accent-color) focus:shadow-(--focus-shadow-color)`
@@ -209,7 +209,7 @@
           {@const selected = value !== null && isSelected(option)}
           {@const hasOwnColor = !!option.class?.split(/\s+/).find((c) => c.startsWith("bg-"))}
           <!-- Заливка вне twMerge, чтобы не конфликтовать с bg-* из option.class: опции со своим цветом показывают его всегда и отмечаются рамкой, обычный сегмент-контрол заливает только выбранный пункт -->
-          <!-- Обёртка — позиционирующий предок подсказки; без overflow-hidden у группы, чтобы подсказка не обрезалась -->
+          <!-- Обёртка - позиционирующий предок подсказки; без overflow-hidden у группы, чтобы подсказка не обрезалась -->
           <div class="relative flex {fitContent ? '' : 'min-w-0 flex-1'}">
             <button
               id={option.id}

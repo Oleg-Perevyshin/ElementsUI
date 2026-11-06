@@ -30,7 +30,7 @@ export class CborDecoder {
     }
   }
 
-  /* Сколько байт уже прочитано — граница значения при разборе потока по одному значению */
+  /* Сколько байт уже прочитано - граница значения при разборе потока по одному значению */
   public get offset(): number {
     return this.state.offset
   }
@@ -223,7 +223,7 @@ export class CborDecoder {
 
       case CborMajorType.ByteString: {
         const bytesValue = header.value === BigInt(-1) ? this.readIndefiniteBytes() : this.decodeBytesWithLength(Number(header.value))
-        /* Не хватило байт — конец данных (в потоке это «ждать ещё»), а не испорченный CBOR */
+        /* Не хватило байт - конец данных (в потоке это «ждать ещё»), а не испорченный CBOR */
         if (!bytesValue) throw new CborEndOfDataError()
         return bytesValue.value
       }

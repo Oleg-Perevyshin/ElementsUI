@@ -65,4 +65,4 @@
 |---|---|---|
 | `component` | `UIComponent & { properties: Partial<IButtonProps> }` | Компонент и его свойства |
 | `onPropertyChange` | `(updates) => void` | Сообщает об изменении свойств |
-| `forConstructor` | `boolean` | `true` — полная панель конструктора, `false` — упрощённая для редактирования |
+| `forConstructor` | `boolean` | `true` - полная панель конструктора, `false` - упрощённая для редактирования |

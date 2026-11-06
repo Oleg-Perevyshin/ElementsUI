@@ -1,4 +1,4 @@
-<!-- $lib/WidgetWiFi/WidgetWiFi.svelte — смарт-виджет настройки WiFi (STA/AP) для конструктора. В отличие от примитивов не привязывается к одной произвольной переменной устройства — работает с фиксированным набором полей (см. IWidgetWiFiConfig в types.ts), которые соответствуют реальной прошивочной конвенции (main_config.c, группа "CFG", ProdFactory-ESP): WiFiMode / StaSSID/StaPSK/StaticIP/StaIP/StaMS/StaGW / ApSSID/ApPSK/ApIP/ApMS/ApGW. Ничего не знает про DeviceStore/WebSocket — value/onSave, вся отправка на стороне вызывающего. -->
+<!-- $lib/WidgetWiFi/WidgetWiFi.svelte - смарт-виджет настройки WiFi (STA/AP) для конструктора. В отличие от примитивов не привязывается к одной произвольной переменной устройства - работает с фиксированным набором полей (см. IWidgetWiFiConfig в types.ts), которые соответствуют реальной прошивочной конвенции (main_config.c, группа "CFG", ProdFactory-ESP): WiFiMode / StaSSID/StaPSK/StaticIP/StaIP/StaMS/StaGW / ApSSID/ApPSK/ApIP/ApMS/ApGW. Ничего не знает про DeviceStore/WebSocket - value/onSave, вся отправка на стороне вызывающего. -->
 <script lang="ts">
   import { T } from "../locales/i18n"
   import { untrack } from "svelte"
@@ -28,10 +28,10 @@
     onSave = () => {},
   }: IWidgetWiFiProps = $props()
 
-  /* Подсказки — кнопка «?» в шапке, выбор общий для всех WidgetWiFi */
+  /* Подсказки - кнопка «?» в шапке, выбор общий для всех WidgetWiFi */
   const hints = hintsSetting("WidgetWiFi")
 
-  /* "Мастер-цвет" виджета — переопределяет --accent-color/--accent-soft на корне, дальше это штатный каскад переменных, на котором и так построены компоненты библиотеки: значок, режимы STA/AP, фокус-кольцо у полей и кнопка "Сохранить" (маркер bg-accent) перекрашиваются вместе, одним источником истины; красной остаётся только кнопка подтверждения режима AP. */
+  /* "Мастер-цвет" виджета - переопределяет --accent-color/--accent-soft на корне, дальше это штатный каскад переменных, на котором и так построены компоненты библиотеки: значок, режимы STA/AP, фокус-кольцо у полей и кнопка "Сохранить" (маркер bg-accent) перекрашиваются вместе, одним источником истины; красной остаётся только кнопка подтверждения режима AP. */
   let accentStyle = $derived(widgetAccentStyle(componentClass ?? ""))
 
   let cfg: IWidgetWiFiConfig = $state(
@@ -59,7 +59,7 @@
   let MODE_OPTIONS = $derived(ALL_MODE_OPTIONS.filter((o) => (allowedModes ?? [1, 2, 3]).includes(o.value as number)))
   let selectedMode = $derived(MODE_OPTIONS.find((o) => o.value === cfg.WiFiMode) ?? MODE_OPTIONS[0])
 
-  /* Режим переключается сразу и только локально — иначе нельзя спокойно открыть секцию AP и заполнить SSID/пароль до реальной отправки. Предупреждение о разрыве связи с облаком показывается не здесь, а перед save() — в момент, когда конфиг действительно уходит на устройство и режим на нём меняется. STA+AP не предупреждаем: STA остаётся активным. */
+  /* Режим переключается сразу и только локально - иначе нельзя спокойно открыть секцию AP и заполнить SSID/пароль до реальной отправки. Предупреждение о разрыве связи с облаком показывается не здесь, а перед save() - в момент, когда конфиг действительно уходит на устройство и режим на нём меняется. STA+AP не предупреждаем: STA остаётся активным. */
   let showAPWarning = $state(false)
 
   let IP_MODE_OPTIONS: IOption<number>[] = $derived([
@@ -69,10 +69,10 @@
   let selectedIPMode = $derived(IP_MODE_OPTIONS.find((o) => o.value === cfg.StaticIP) ?? IP_MODE_OPTIONS[0])
 
   const IP_REGEXP = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
-  /* WPA2: пусто (открытая сеть) либо 8-63 символа — так же ограничивает сам чип */
+  /* WPA2: пусто (открытая сеть) либо 8-63 символа - так же ограничивает сам чип */
   const PSK_REGEXP = /^$|^.{8,63}$/
 
-  /* Сканирование сетей — на стороне вызывающего (в проде вызывает Header: GET, Argument: APsList) */
+  /* Сканирование сетей - на стороне вызывающего (в проде вызывает Header: GET, Argument: APsList) */
   let scanning = $state(false)
   let foundNetworks: IOption<string>[] = $state([])
   const scanNetworks = async () => {
@@ -82,7 +82,7 @@
     scanning = false
   }
 
-  /* Сворачивание тела виджета по клику на значок/заголовок (как аккордеон) — переключатель режима в шапке кликом не триггерит, только сама кнопка значок+заголовок (см. WidgetHeader.svelte). collapsed — bindable: в конструкторе родитель биндит его на component.properties.collapsed, клик по шапке сразу сохраняется в GUI (как isOpen у Accordion в ConstructorUI.svelte). На реальном устройстве (GUIPreview) проп передаётся однонаправленно — локальные изменения не утекают наверх, поверх дефолта только переживают перезагрузку через localStorage (persistKey). */
+  /* Сворачивание тела виджета по клику на значок/заголовок (как аккордеон) - переключатель режима в шапке кликом не триггерит, только сама кнопка значок+заголовок (см. WidgetHeader.svelte). collapsed - bindable: в конструкторе родитель биндит его на component.properties.collapsed, клик по шапке сразу сохраняется в GUI (как isOpen у Accordion в ConstructorUI.svelte). На реальном устройстве (GUIPreview) проп передаётся однонаправленно - локальные изменения не утекают наверх, поверх дефолта только переживают перезагрузку через localStorage (persistKey). */
   let hasMergedPersisted = false
   $effect(() => {
     if (hasMergedPersisted) return
@@ -92,11 +92,11 @@
   })
   $effect(() => writePersistedCollapsed(persistKey, collapsed))
 
-  /* Поля редактируются локально (как Argument: NoSend в реальной GUI) — отправка одним пакетом по кнопке */
+  /* Поля редактируются локально (как Argument: NoSend в реальной GUI) - отправка одним пакетом по кнопке */
   let savedSnapshot = $state(untrack(() => JSON.stringify(cfg)))
   let isDirty = $derived(JSON.stringify(cfg) !== savedSnapshot)
 
-  /* value — не однократный дефолт, а живой поток данных с устройства (GUIPreview.svelte пересчитывает его на каждое обновление DeviceStore). Подхватываем свежие данные, только если у пользователя нет несохранённых правок — иначе входящее значение затирало бы то, что он ещё не успел сохранить. untrack(isDirty) — чтобы этот эффект не перезапускался на каждое изменение cfg от самого пользователя, только на смену value. */
+  /* value - не однократный дефолт, а живой поток данных с устройства (GUIPreview.svelte пересчитывает его на каждое обновление DeviceStore). Подхватываем свежие данные, только если у пользователя нет несохранённых правок - иначе входящее значение затирало бы то, что он ещё не успел сохранить. untrack(isDirty) - чтобы этот эффект не перезапускался на каждое изменение cfg от самого пользователя, только на смену value. */
   $effect(() => {
     if (value !== undefined && !untrack(() => isDirty)) {
       const snapshot = JSON.stringify(value)
@@ -147,7 +147,7 @@
             >{$T("widget.wifi.sta")}</span
           >
 
-          <!-- SSID с поиском и пароль — одной строкой по 50%, на узком экране друг под другом -->
+          <!-- SSID с поиском и пароль - одной строкой по 50%, на узком экране друг под другом -->
           <div class="grid grid-cols-1 gap-x-4 gap-y-3 sm:grid-cols-2">
             <div class="flex min-w-0 items-end gap-2">
               <div class="min-w-0 flex-1" use:hint={{ text: $T("widget.wifi.hint.ssid"), enabled: $hints }}>
@@ -264,7 +264,7 @@
   {/if}
 
   {#if showAPWarning}
-    <!-- Подтверждение локально к виджету (не на весь экран) — предупреждение относится именно к этой карточке, а не к странице целиком -->
+    <!-- Подтверждение локально к виджету (не на весь экран) - предупреждение относится именно к этой карточке, а не к странице целиком -->
     <div class="absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-black/40 backdrop-blur-[2px]" transition:fade={{ duration: 150 }}>
       <div
         class="flex w-full max-w-80 flex-col gap-3 rounded-[16px] border border-(--hairline-color) bg-(--back-color) p-4 shadow-(--elevation-3)"

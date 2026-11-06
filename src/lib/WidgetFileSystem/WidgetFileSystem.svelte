@@ -1,4 +1,4 @@
-<!-- $lib/WidgetFileSystem/WidgetFileSystem.svelte — смарт-виджет файловой системы устройства. Данные — один объект CFG.FS в том виде, в каком его отдаёт прошивка (FS_WriteState, ProdFactory-ESP): Total/Used/Free/List[{Name, Size}] и Upload{Name, Size, Progress} — только пока идёт закачка. Ничего не знает про DeviceStore/WebSocket — value/onRefresh/onDelete/onUpload/onDownload, протоколы закачки и скачивания (SET FS с Op UploadStart/UploadChunk/UploadDone и DownloadStart/DownloadChunk/DownloadDone) и отправка команд на стороне вызывающего. -->
+<!-- $lib/WidgetFileSystem/WidgetFileSystem.svelte - смарт-виджет файловой системы устройства. Данные - один объект CFG.FS в том виде, в каком его отдаёт прошивка (FS_WriteState, ProdFactory-ESP): Total/Used/Free/List[{Name, Size}] и Upload{Name, Size, Progress} - только пока идёт закачка. Ничего не знает про DeviceStore/WebSocket - value/onRefresh/onDelete/onUpload/onDownload, протоколы закачки и скачивания (SET FS с Op UploadStart/UploadChunk/UploadDone и DownloadStart/DownloadChunk/DownloadDone) и отправка команд на стороне вызывающего. -->
 <script lang="ts">
   import { T } from "../locales/i18n"
   import { slide, fade, scale } from "svelte/transition"
@@ -29,12 +29,12 @@
     onDownload,
   }: IWidgetFileSystemProps = $props()
 
-  /* Подсказки — кнопка «?» в шапке, выбор общий для всех WidgetFileSystem */
+  /* Подсказки - кнопка «?» в шапке, выбор общий для всех WidgetFileSystem */
   const hints = hintsSetting("WidgetFileSystem")
 
   let accentStyle = $derived(widgetAccentStyle(componentClass ?? ""))
 
-  /* Сворачивание тела по клику на шапку — как у остальных смарт-виджетов (см. WidgetWiFi.svelte) */
+  /* Сворачивание тела по клику на шапку - как у остальных смарт-виджетов (см. WidgetWiFi.svelte) */
   let hasMergedPersisted = false
   $effect(() => {
     if (hasMergedPersisted) return
@@ -46,7 +46,7 @@
 
   /* Размер в человекочитаемом виде: Б / КБ / МБ, одна цифра после запятой начиная с КБ */
   const formatBytes = (bytes: number) => {
-    if (!Number.isFinite(bytes) || bytes < 0) return "—"
+    if (!Number.isFinite(bytes) || bytes < 0) return "-"
     if (bytes < 1024) return $T("widget.common.bytes", { n: bytes })
     if (bytes < 1024 * 1024) return $T("widget.common.kbytes", { n: (bytes / 1024).toFixed(1) })
     return $T("widget.common.mbytes", { n: (bytes / (1024 * 1024)).toFixed(1) })
@@ -57,10 +57,10 @@
   let free = $derived(value?.Free ?? Math.max(total - used, 0))
   let files = $derived(value?.List ?? [])
   let usedPercent = $derived(total > 0 ? Math.min(100, Math.round((used / total) * 100)) : 0)
-  /* Полоса — мастер-цвет виджета; почти заполненную ФС (закачка скоро начнёт падать) выдаёт только процент */
+  /* Полоса - мастер-цвет виджета; почти заполненную ФС (закачка скоро начнёт падать) выдаёт только процент */
   let percentColor = $derived(usedPercent >= 90 ? "var(--red-color)" : usedPercent >= 75 ? "var(--orange-color)" : "var(--muted-color)")
 
-  /* Таблица файлов: путь обрезается «…», размер — уже отформатирован; действия — значки без текста: скачать и удалить (с подтверждением) */
+  /* Таблица файлов: путь обрезается «…», размер - уже отформатирован; действия - значки без текста: скачать и удалить (с подтверждением) */
   type FileRow = IWidgetFileSystemFile & { SizeText: string }
   let rows: FileRow[] = $derived(files.map((f) => ({ ...f, SizeText: formatBytes(f.Size) })))
   let actions = $derived(
@@ -86,7 +86,7 @@
     ...(actions.length ? [{ label: { name: "" }, content: actions, width: `${actions.length * 2.5 + 1}rem`, align: "center" } as ITableHeader<FileRow>] : []),
   ])
 
-  /* Закачка видна, пока её ведёт этот клиент или пока устройство сообщает Upload (закачка с другого клиента); прогресс 0..100, нечисло — 0, а не «NaN%» */
+  /* Закачка видна, пока её ведёт этот клиент или пока устройство сообщает Upload (закачка с другого клиента); прогресс 0..100, нечисло - 0, а не «NaN%» */
   let upload = $derived(value?.Upload)
   let progress = $derived(Number.isFinite(Number(upload?.Progress)) ? Math.min(100, Math.max(0, Number(upload?.Progress))) : 0)
 

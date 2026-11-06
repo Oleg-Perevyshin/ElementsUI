@@ -43,7 +43,7 @@
 | `id` | `string` | `"CFG"` | Префикс группы полей |
 | `keys` | `Partial<Record<ключ, string>>` | имена ключей | Другие имена полей |
 | `value` | `IWidgetDeviceInfoConfig` | | Текущие значения |
-| `label.name` | `string` | | Заголовок. Пусто — «Об устройстве» на языке пользователя |
+| `label.name` | `string` | | Заголовок. Пусто - «Об устройстве» на языке пользователя |
 | `wrapperClass` | `string` | `""` | Классы обёртки |
 | `componentClass` | `string` | `""` | Мастер-цвет `bg-*` |
 | `restartCommand` | `{ header, argument }` | `SET`, `Restart` | Команда перезагрузки |

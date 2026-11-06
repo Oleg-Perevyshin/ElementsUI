@@ -1,4 +1,4 @@
-<!-- $lib/WidgetPFD/WidgetPFD.svelte — смарт-виджет «Пилотажный дисплей» (Primary Flight Display). Поля группы (по умолчанию MAV) — телеметрия автопилота MAVLink (см. IWidgetPFDData): авиагоризонт, ленты скорости/высоты/курса, строка состояния, цветовые зоны по границам (limits). Только отображение: ничего не отправляет и не знает про DeviceStore/WebSocket. Между пакетами ориентация сглаживается (Tween), устаревшие данные закрываются флагом «нет данных». В узкой ячейке ленты заменяются числами. -->
+<!-- $lib/WidgetPFD/WidgetPFD.svelte - смарт-виджет «Пилотажный дисплей» (Primary Flight Display). Поля группы (по умолчанию MAV) - телеметрия автопилота MAVLink (см. IWidgetPFDData): авиагоризонт, ленты скорости/высоты/курса, строка состояния, цветовые зоны по границам (limits). Только отображение: ничего не отправляет и не знает про DeviceStore/WebSocket. Между пакетами ориентация сглаживается (Tween), устаревшие данные закрываются флагом «нет данных». В узкой ячейке ленты заменяются числами. -->
 <script lang="ts">
   import { T } from "../locales/i18n"
   import { untrack } from "svelte"
@@ -32,7 +32,7 @@
 
   let accentStyle = $derived(widgetAccentStyle(componentClass ?? ""))
 
-  /* Сворачивание тела по клику на шапку — как у остальных смарт-виджетов (см. WidgetWiFi.svelte) */
+  /* Сворачивание тела по клику на шапку - как у остальных смарт-виджетов (см. WidgetWiFi.svelte) */
   let hasMergedPersisted = false
   $effect(() => {
     if (hasMergedPersisted) return
@@ -46,7 +46,7 @@
   const wrap360 = (deg: number) => ((deg % 360) + 360) % 360
   const toRad = (deg: number) => (deg * Math.PI) / 180
 
-  /* Плавность: ориентация и курс приходят ~20 Гц, между пакетами — короткая интерполяция */
+  /* Плавность: ориентация и курс приходят ~20 Гц, между пакетами - короткая интерполяция */
   const roll = new Tween(0, { duration: 120, easing: cubicOut })
   const pitch = new Tween(0, { duration: 120, easing: cubicOut })
   const heading = new Tween(0, { duration: 120, easing: cubicOut })
@@ -59,7 +59,7 @@
     if (r === undefined && p === undefined && h === undefined) return
     roll.target = num(r)
     pitch.target = num(p)
-    /* Курс без скачка через 0/360: цель — ближайшая к текущему значению */
+    /* Курс без скачка через 0/360: цель - ближайшая к текущему значению */
     const current = heading.target
     const delta = ((wrap360(num(h)) - wrap360(current) + 540) % 360) - 180
     heading.target = current + delta
@@ -77,7 +77,7 @@
   let gs = $derived(num(value?.GSpeed))
   let as = $derived(num(value?.ASpeed))
   let climb = $derived(num(value?.Climb))
-  /* Перегрузка (SCALED_IMU): плашка G только при наличии данных, минимум и максимум — за время просмотра */
+  /* Перегрузка (SCALED_IMU): плашка G только при наличии данных, минимум и максимум - за время просмотра */
   let load = $derived(typeof value?.Load === "number" && Number.isFinite(value.Load) ? value.Load : null)
   let loadMin = $state(Infinity)
   let loadMax = $state(-Infinity)
@@ -89,13 +89,13 @@
       loadMax = Math.max(loadMax, g)
     })
   })
-  /* Газ (VFR_HUD), %; нет числа — плашки нет */
+  /* Газ (VFR_HUD), %; нет числа - плашки нет */
   let thr = $derived(typeof value?.Thr === "number" && Number.isFinite(value.Thr) ? value.Thr : null)
   /* Боковая перегрузка (SCALED_IMU), g, вправо +; шарик смещается в обратную сторону, как в трубке указателя скольжения */
   let slip = $derived(typeof value?.Slip === "number" && Number.isFinite(value.Slip) ? value.Slip : null)
   const SLIP_PPG = 100 /* пикселей на 1 g, шарик упирается в край трубки на ±0.15 g */
   let slipX = $derived(slip === null ? 0 : Math.max(-15, Math.min(15, -slip * SLIP_PPG)))
-  /* Тренд путевой скорости: ускорение по новым значениям GSpeed, сглаженное; стрелка — куда придёт скорость через TREND_S */
+  /* Тренд путевой скорости: ускорение по новым значениям GSpeed, сглаженное; стрелка - куда придёт скорость через TREND_S */
   const TREND_S = 10
   let accel = $state(0)
   let lastGs: { v: number; t: number } | null = null
@@ -201,7 +201,7 @@
     15: "GUIDED",
   }
   let modeName = $derived.by(() => {
-    if (value?.Mode === undefined) return "—"
+    if (value?.Mode === undefined) return "-"
     const vtype = num(value?.VType)
     const mode = num(value?.Mode)
     const table = vtype === 1 || (vtype >= 19 && vtype <= 25) ? PLANE_MODES : vtype === 10 || vtype === 11 ? ROVER_MODES : COPTER_MODES
@@ -213,9 +213,9 @@
   let battLow = $derived(limits?.battLow !== undefined && battRem >= 0 && battRem <= limits.battLow)
   let battCurrent = $derived(num(value?.BC, -1))
 
-  /* Навигация к точке маршрута: метки целей на лентах (flight director); нет маршрута — меток нет */
+  /* Навигация к точке маршрута: метки целей на лентах (flight director); нет маршрута - меток нет */
   let wpNum = $derived(num(value?.WPNum))
-  /* Время до точки при текущей путевой скорости; почти на месте — не считается */
+  /* Время до точки при текущей путевой скорости; почти на месте - не считается */
   const fmtEta = (s: number) => {
     const t = Math.round(s)
     const mmss = `${Math.floor((t % 3600) / 60)}:${String(t % 60).padStart(2, "0")}`
@@ -242,11 +242,11 @@
   let hdop = $derived(num(value?.HDOP, -1))
   let sensErr = $derived(num(value?.SensErr))
   let ekf = $derived(num(value?.EKF, -1))
-  /* Пороги дисперсии EKF — как в Mission Planner: от 0.5 внимание, от 0.8 тревога; неисправный датчик — тревога */
+  /* Пороги дисперсии EKF - как в Mission Planner: от 0.5 внимание, от 0.8 тревога; неисправный датчик - тревога */
   let navState: "ok" | "warn" | "bad" | "none" = $derived(sensErr > 0 || ekf >= 0.8 ? "bad" : ekf >= 0.5 ? "warn" : ekf >= 0 ? "ok" : "none")
   const NAV_COLOR = { ok: "var(--green-color)", warn: "var(--orange-color)", bad: "var(--red-color)", none: "var(--faint-color)" }
 
-  /* Сообщения автопилота (STATUSTEXT): новое — по смене MsgSeq, последнее висит 10 с, история из 5 — в подсказке */
+  /* Сообщения автопилота (STATUSTEXT): новое - по смене MsgSeq, последнее висит 10 с, история из 5 - в подсказке */
   let SEVERITY = $derived(Array.from({ length: 8 }, (_, i) => $T(`pfd.sev.${i}`)))
   let messages: { text: string; sev: number; at: number }[] = $state([])
   let lastSeq = -1
@@ -261,7 +261,7 @@
   const sevClass = (sev: number) => (sev <= 3 ? "bg-(--red-color) text-white" : sev === 4 ? "bg-(--orange-color) text-white" : "bg-black/70 text-white")
   const clampTape = (y: number) => Math.min(Math.max(y, 22), HH - 8)
 
-  /* Компактный режим — ленты заменяются числами поверх горизонта */
+  /* Компактный режим - ленты заменяются числами поверх горизонта */
   let width = $state(600)
   let compact = $derived(width < 440)
 
@@ -296,16 +296,16 @@
 
   /* Вариометр: ±5 м/с на всю полувысоту полосы */
   let vsi = $derived(Math.max(-5, Math.min(5, climb)) * 20)
-  /* Уникальные id для clipPath — несколько виджетов на одной странице не должны делить отсечения */
+  /* Уникальные id для clipPath - несколько виджетов на одной странице не должны делить отсечения */
   const uid = crypto.randomUUID().slice(0, 8)
 
-  const fmt = (v: number, digits = 1) => (Number.isFinite(v) ? v.toFixed(digits) : "—")
+  const fmt = (v: number, digits = 1) => (Number.isFinite(v) ? v.toFixed(digits) : "-")
   const signed = (v: number) => `${v >= 0 ? "+" : ""}${fmt(v)}`
 
-  /* Подсказка: элементы прибора и строк помечены data-tip, текст всегда в одном месте — информационная строка внизу горизонта */
-  /* Ключ подсказки элемента под курсором; текст берётся из tips — обновляется вместе с данными */
+  /* Подсказка: элементы прибора и строк помечены data-tip, текст всегда в одном месте - информационная строка внизу горизонта */
+  /* Ключ подсказки элемента под курсором; текст берётся из tips - обновляется вместе с данными */
   let tip: string | null = $state(null)
-  /* Подсказки включаются кнопкой «?» в шапке — выбор общий для всех PFD в браузере (hints.ts) */
+  /* Подсказки включаются кнопкой «?» в шапке - выбор общий для всех PFD в браузере (hints.ts) */
   const hints = hintsSetting("WidgetPFD")
   $effect(() => {
     if (!$hints) tip = null
@@ -318,13 +318,13 @@
   const fmtDistance = (m: number) => (m >= 1000 ? $T("pfd.u.km", { n: (m / 1000).toFixed(2) }) : $T("pfd.u.m", { n: Math.round(m) }))
   const fmtAge = (s: number) => (Number.isFinite(s) ? $T("pfd.u.s", { n: s.toFixed(1) }) : $T("pfd.no_link"))
 
-  /* Тексты подсказок: первая строка — величина, единица и значение, дальше — что означают знаки, цвета и пороги */
+  /* Тексты подсказок: первая строка - величина, единица и значение, дальше - что означают знаки, цвета и пороги */
   let battText = $derived(
     [$T("pfd.batt.v", { v: fmt(num(value?.BV)) }), battCurrent >= 0 && $T("pfd.batt.a", { v: fmt(battCurrent) }), battRem >= 0 && `${battRem} %`]
       .filter(Boolean)
       .join(" · "),
   )
-  let latLonText = $derived(lat ? `${lat.toFixed(6)}, ${lon.toFixed(6)}` : "—")
+  let latLonText = $derived(lat ? `${lat.toFixed(6)}, ${lon.toFixed(6)}` : "-")
   const lines = (...rows: (string | false | null | undefined)[]) => rows.filter(Boolean).join("\n")
   let tips = $derived.by(() => {
     const hdg = Math.round(wrap360(heading.current))
@@ -350,7 +350,7 @@
         $T("pfd.tip.gps.hdop3"),
       ),
       link: lines(
-        $T("pfd.tip.link", { local: rssi >= 0 ? Math.round(rssi) : "—", remote: remRssi >= 0 ? Math.round(remRssi) : "—" }),
+        $T("pfd.tip.link", { local: rssi >= 0 ? Math.round(rssi) : "-", remote: remRssi >= 0 ? Math.round(remRssi) : "-" }),
         $T("pfd.tip.link.sides"),
         $T("pfd.tip.link.low"),
         drop >= 0 && $T("pfd.tip.link.drop", { v: fmt(drop) }),
@@ -430,7 +430,7 @@
       track: track !== null ? lines($T("pfd.tip.track", { v: Math.round(track) }), $T("pfd.tip.track.note"), $T("pfd.tip.track.drift")) : "",
       wpBug: wp ? lines($T("pfd.tip.wp.bearing", { n: wp.num, v: Math.round(wp.bearing) }), $T("pfd.distance", { d: fmtDistance(wp.dist) })) : "",
       homeMark: home ? lines($T("pfd.tip.home.bearing", { v: Math.round(home.bearing) }), homeLine) : "",
-      messages: lines($T("pfd.tip.messages", { n: messages.length }), ...messages.map((m) => `${SEVERITY[m.sev] ?? m.sev} — ${m.text}`)),
+      messages: lines($T("pfd.tip.messages", { n: messages.length }), ...messages.map((m) => `${SEVERITY[m.sev] ?? m.sev} - ${m.text}`)),
       route: wp
         ? lines(
             $T("pfd.tip.route", { n: wp.num }),
@@ -494,7 +494,7 @@
           <div class="flex min-w-0 items-center gap-2" data-tip="link">
             <span class="shrink-0 text-[10px] tracking-wide whitespace-nowrap text-(--faint-color) uppercase">{$T("pfd.link")}</span>
             <span class={Math.min(rssi, remRssi) >= 0 && Math.min(rssi, remRssi) < 30 ? "text-(--red-color)" : ""}
-              >{rssi >= 0 ? Math.round(rssi) : "—"} / {remRssi >= 0 ? Math.round(remRssi) : "—"} %</span
+              >{rssi >= 0 ? Math.round(rssi) : "-"} / {remRssi >= 0 ? Math.round(remRssi) : "-"} %</span
             >
             {#if drop >= 0}<span class={drop > 5 ? "text-(--orange-color)" : ""}>{$T("pfd.link.drop", { v: fmt(drop) })}</span>{/if}
           </div>
@@ -532,7 +532,7 @@
               {/each}
             </g>
 
-            <!-- Шкала крена: зона за пределом bankMax — красная -->
+            <!-- Шкала крена: зона за пределом bankMax - красная -->
             <path d={arcPath(-60, 60, ROLL_R)} fill="none" stroke="#fff" stroke-width="1.5" />
             {#if limits?.bankMax !== undefined && limits.bankMax < 60}
               <path d={arcPath(-60, -limits.bankMax, ROLL_R)} fill="none" stroke="#ef4444" stroke-width="4" />
@@ -549,7 +549,7 @@
                 fill={limits?.bankMax !== undefined && Math.abs(roll.current) > limits.bankMax ? "#ef4444" : "#facc15"}
               />
             </g>
-            <!-- Шарик скольжения под указателем крена, поворачивается вместе с ним; больше 0.1 g — оранжевый -->
+            <!-- Шарик скольжения под указателем крена, поворачивается вместе с ним; больше 0.1 g - оранжевый -->
             {#if slip !== null}
               <g transform="rotate({-roll.current} {CX} {CY})" data-tip="slip">
                 <rect x={CX - 21} y={CY - ROLL_R + 17} width="42" height="11" rx="5.5" fill="#000" fill-opacity="0.45" stroke="#fff" stroke-width="1" />
@@ -566,7 +566,7 @@
             </g>
             <circle cx={CX} cy={CY} r="3" fill="#facc15" />
 
-            <!-- Перегрузка (вне gMin/gMax — красная) и газ: одной строкой в верхних углах горизонта -->
+            <!-- Перегрузка (вне gMin/gMax - красная) и газ: одной строкой в верхних углах горизонта -->
             {#if load !== null}
               <g data-tip="load">
                 <rect x={HX + 8} y="8" width="64" height="22" rx="6" fill="#000" fill-opacity="0.55" />

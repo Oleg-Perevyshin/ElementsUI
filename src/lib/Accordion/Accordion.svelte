@@ -1,4 +1,4 @@
-<!-- $lib/Accordion/Accordion.svelte — заголовок не увеличивается при раскрытии, радиус 14. Мастер-цвет (componentClass) — как у смарт-виджетов: иконка и текст заголовка цветом, фон заголовка — его мягким оттенком. -->
+<!-- $lib/Accordion/Accordion.svelte - заголовок не увеличивается при раскрытии, радиус 14. Мастер-цвет (componentClass) - как у смарт-виджетов: иконка и текст заголовка цветом, фон заголовка - его мягким оттенком. -->
 <script lang="ts">
   import { slide } from "svelte/transition"
   import type { IAccordionProps } from "../types"
@@ -26,7 +26,7 @@
   transition:slide={{ duration: 200 }}
 >
   <div class="overflow-hidden rounded-[14px] border border-(--hairline-color) bg-(--back-color)">
-    <!-- Фон заголовка — мягкий оттенок мастер-цвета (светлый в светлой теме, тёмный в тёмной), текст — мастер-цвет с цветом шрифта 60/40, раскрытое содержимое остаётся на чистом фоне (--back-color). -->
+    <!-- Фон заголовка - мягкий оттенок мастер-цвета (светлый в светлой теме, тёмный в тёмной), текст - мастер-цвет с цветом шрифта 60/40, раскрытое содержимое остаётся на чистом фоне (--back-color). -->
     <button
       class="flex w-full cursor-pointer items-center justify-between gap-3 bg-(--accent-soft) px-4 py-3 text-left text-[color-mix(in_srgb,var(--accent-color)_60%,var(--font-color))] transition-colors duration-150 hover:bg-[color-mix(in_srgb,var(--accent-color)_12%,var(--accent-soft))]"
       onclick={toggle}

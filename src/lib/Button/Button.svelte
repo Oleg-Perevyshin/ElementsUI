@@ -1,4 +1,4 @@
-<!-- $lib/Button/Button.svelte — кнопка: роль по значению bg-*, радиус 10px (иконка без подписи — круг), высота 32px, кольцо фокуса, иконка в потоке через flex + gap -->
+<!-- $lib/Button/Button.svelte - кнопка: роль по значению bg-*, радиус 10px (иконка без подписи - круг), высота 32px, кольцо фокуса, иконка в потоке через flex + gap -->
 <script lang="ts">
   import { onMount } from "svelte"
   import type { IButtonProps } from "../types"
@@ -39,7 +39,7 @@
 
   const isIconOnly = $derived(!!content?.icon && !content.name?.trim())
 
-  /* bg-(--bg-color) намеренно не входит в roleClass: он приклеивается к готовому className вне twMerge (см. разметку ниже) — иначе twMerge видит его и явный bg-* из componentClass (bg-red, bg-max…) как конфликтующие утилиты одной группы и вырезает один из них, из-за чего заливка кнопки пропадает. */
+  /* bg-(--bg-color) намеренно не входит в roleClass: он приклеивается к готовому className вне twMerge (см. разметку ниже) - иначе twMerge видит его и явный bg-* из componentClass (bg-red, bg-max…) как конфликтующие утилиты одной группы и вырезает один из них, из-за чего заливка кнопки пропадает. */
   const roleBg = $derived.by(() => {
     if (disabled) return "bg-(--gray-color)"
     if (role === "plain") return "bg-transparent"

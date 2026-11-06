@@ -1,4 +1,4 @@
-<!-- $lib/Input/Input.svelte — радиус 10, высота 32 (h-8), выравнивание по левому краю, кольцо фокуса. -->
+<!-- $lib/Input/Input.svelte - радиус 10, высота 32 (h-8), выравнивание по левому краю, кольцо фокуса. -->
 <script lang="ts">
   import { T } from "../locales/i18n"
   import type { IInputProps } from "../types"
@@ -86,7 +86,7 @@
 
 <div class={twMerge(`relative flex w-full flex-col gap-1 ${type === "text-area" ? "h-full" : ""}`, wrapperClass)}>
   {#if label.name}
-    <!-- Метка слева, 12/600 — вместо центрированного h5 -->
+    <!-- Метка слева, 12/600 - вместо центрированного h5 -->
     <span class={twMerge(`text-[12px] font-semibold text-(--muted-color)`, label.class)}>{label.name}</span>
   {/if}
 

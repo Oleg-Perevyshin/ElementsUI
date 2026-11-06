@@ -33,14 +33,14 @@
   const initialAlign = $derived(findOptionByClass($optionsStore.TEXT_ALIGN_OPTIONS, component.properties.label?.class, "text-"))
 
   /* Обновление свойства */
-  /* Подсказка битового режима «Максимальное число: N» сразу на всех языках — иначе записалась бы на языке интерфейса конструктора */
+  /* Подсказка битового режима «Максимальное число: N» сразу на всех языках - иначе записалась бы на языке интерфейса конструктора */
   const maxNumInfo = (range: { start: number; end: number }) => {
     const max = Math.pow(2, range.end - range.start + 1) - 1
     const row = translations["constructor.props.maxnum"]
     return Object.fromEntries(LANGUAGE_CODES.map((lang) => [lang, `${row[lang] || row[DEFAULT_LANGUAGE]}: ${max}`]))
   }
 
-  /* Диапазон битов поля bitMode; без range в свойствах — один нулевой бит */
+  /* Диапазон битов поля bitMode; без range в свойствах - один нулевой бит */
   const bitRange = $derived(component.properties.range ?? { start: 0, end: 0 })
 
   const updateProperty = (path: string, value: string | object | boolean | number | RegExp) => {
@@ -105,7 +105,11 @@
     value={VARIABLE_OPTIONS.find((opt) => opt.value === component.properties.id)}
     onUpdate={(value) => {
       updateProperty("id", (value as IOption).value as string)
-      onPropertyChange({ name: (value as IOption).name?.split("—")[1]?.trim(), eventHandler: { Variables: [(value as IOption).value as string] } })
+      /* \u041f\u043e\u0434\u043f\u0438\u0441\u044c \u043f\u0435\u0440\u0435\u043c\u0435\u043d\u043d\u043e\u0439 \u0438\u0437 \u043e\u0431\u043b\u0430\u043a\u0430 \u00ab<id> - <\u0438\u043c\u044f>\u00bb: \u0438\u043c\u044f - \u0432\u0441\u0451 \u043f\u043e\u0441\u043b\u0435 \u043f\u0435\u0440\u0432\u043e\u0433\u043e \u0440\u0430\u0437\u0434\u0435\u043b\u0438\u0442\u0435\u043b\u044f; \u043f\u0440\u0438\u043d\u0438\u043c\u0430\u0435\u0442\u0441\u044f \u0438 \u0434\u043b\u0438\u043d\u043d\u043e\u0435 \u0442\u0438\u0440\u0435 (\u2014) \u0441\u0442\u0430\u0440\u044b\u0445 \u043f\u043e\u0434\u043f\u0438\u0441\u0435\u0439 */
+      onPropertyChange({
+        name: (value as IOption).name?.match(/\s[\u2014-]\s(.*)/)?.[1]?.trim(),
+        eventHandler: { Variables: [(value as IOption).value as string] },
+      })
     }}
   />
 {/snippet}

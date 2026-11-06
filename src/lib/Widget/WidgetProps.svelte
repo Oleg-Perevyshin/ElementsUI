@@ -25,7 +25,7 @@
 
   const initialColor = $derived(findColorOption($optionsStore.COLOR_OPTIONS, component.properties.settings?.class))
 
-  /* Один мастер-цвет bg-*, из него же выводится цвет иконки (COLOR_OPTIONS и TEXT_COLOR_OPTIONS — одна палитра, см. options.ts) */
+  /* Один мастер-цвет bg-*, из него же выводится цвет иконки (COLOR_OPTIONS и TEXT_COLOR_OPTIONS - одна палитра, см. options.ts) */
   const deriveIconColorClass = (bgClass: string): string => {
     const role = bgClass.match(/bg-(\w+)/)?.[1]
     const match = role && role !== "max" ? $optionsStore.TEXT_COLOR_OPTIONS.find((c) => c.id === `TEXT_COLOR_${role.toUpperCase()}`) : null

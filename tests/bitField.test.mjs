@@ -1,4 +1,4 @@
-/* tests/bitField.test.mjs — битовые поля слова конфигурации (Select/Input с bitMode) против эталона на BigInt, включая бит 31 */
+/* tests/bitField.test.mjs - битовые поля слова конфигурации (Select/Input с bitMode) против эталона на BigInt, включая бит 31 */
 import { test } from "node:test"
 import assert from "node:assert/strict"
 import { bitFieldGet, bitFieldSet } from "../dist/bitField.js"

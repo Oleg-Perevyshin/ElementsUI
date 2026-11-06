@@ -98,7 +98,7 @@
         {/if}
         {#each component.properties.options || [] as option, index (option.id)}
           <div class="grid {BIT_GRID} items-center gap-3 rounded-lg border border-(--hairline-color) bg-(--container-color)/60 px-2 py-1.5">
-            <!-- Имя варианта — короткая метка бита (до 4 символов) в битовом режиме, не переводится -->
+            <!-- Имя варианта - короткая метка бита (до 4 символов) в битовом режиме, не переводится -->
             <UI.Input
               value={option.name}
               maxlength={4}

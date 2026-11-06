@@ -7,7 +7,7 @@ import tailwindcss from "@tailwindcss/vite"
 import compression from "vite-plugin-compression"
 import { readFileSync } from "node:fs"
 
-/* Версия библиотеки для шапки витрины — из package.json при сборке, в бандл попадает только строка версии */
+/* Версия библиотеки для шапки витрины - из package.json при сборке, в бандл попадает только строка версии */
 const { version } = JSON.parse(readFileSync(new URL("./package.json", import.meta.url), "utf8")) as { version: string }
 
 export default defineConfig({

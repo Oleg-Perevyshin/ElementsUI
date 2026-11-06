@@ -1,4 +1,4 @@
-<!-- $lib/WidgetDeviceInfo/WidgetDeviceInfo.svelte — смарт-виджет информации об устройстве. Фиксированный набор полей (см. IWidgetDeviceInfoConfig в types.ts), соответствует реальной прошивочной конвенции (main_config.c, группа "CFG", ProdFactory-ESP): DevSN/DevID/DevFW/RunCnt — только чтение; DevName/HostName/WebUser/WebPsw — сохраняются одним пакетом; «Сброс настроек» — с подтверждением, все настройки к заводским. Ничего не знает про DeviceStore/WebSocket — value/onSave/onRestart/onFactoryReset. -->
+<!-- $lib/WidgetDeviceInfo/WidgetDeviceInfo.svelte - смарт-виджет информации об устройстве. Фиксированный набор полей (см. IWidgetDeviceInfoConfig в types.ts), соответствует реальной прошивочной конвенции (main_config.c, группа "CFG", ProdFactory-ESP): DevSN/DevID/DevFW/RunCnt - только чтение; DevName/HostName/WebUser/WebPsw - сохраняются одним пакетом; «Сброс настроек» - с подтверждением, все настройки к заводским. Ничего не знает про DeviceStore/WebSocket - value/onSave/onRestart/onFactoryReset. -->
 <script lang="ts">
   import { T } from "../locales/i18n"
   import { untrack } from "svelte"
@@ -25,7 +25,7 @@
     onFactoryReset,
   }: IWidgetDeviceInfoProps = $props()
 
-  /* Подсказки — кнопка «?» в шапке, выбор общий для всех WidgetDeviceInfo */
+  /* Подсказки - кнопка «?» в шапке, выбор общий для всех WidgetDeviceInfo */
   const hints = hintsSetting("WidgetDeviceInfo")
 
   let confirmReset = $state(false)
@@ -51,7 +51,7 @@
     },
   )
 
-  /* Сворачивание тела виджета по клику на значок/заголовок (как аккордеон). collapsed — bindable: в конструкторе родитель биндит его на component.properties.collapsed, клик по шапке сразу сохраняется в GUI (как isOpen у Accordion в ConstructorUI.svelte). На реальном устройстве (GUIPreview) проп передаётся однонаправленно — поверх дефолта только переживает перезагрузку через localStorage (persistKey). */
+  /* Сворачивание тела виджета по клику на значок/заголовок (как аккордеон). collapsed - bindable: в конструкторе родитель биндит его на component.properties.collapsed, клик по шапке сразу сохраняется в GUI (как isOpen у Accordion в ConstructorUI.svelte). На реальном устройстве (GUIPreview) проп передаётся однонаправленно - поверх дефолта только переживает перезагрузку через localStorage (persistKey). */
   let hasMergedPersisted = false
   $effect(() => {
     if (hasMergedPersisted) return
@@ -61,11 +61,11 @@
   })
   $effect(() => writePersistedCollapsed(persistKey, collapsed))
 
-  /* Поля редактируются локально (как Argument: NoSend в реальной GUI) — отправка одним пакетом по кнопке */
+  /* Поля редактируются локально (как Argument: NoSend в реальной GUI) - отправка одним пакетом по кнопке */
   let savedSnapshot = $state(untrack(() => JSON.stringify(info)))
   let isDirty = $derived(JSON.stringify(info) !== savedSnapshot)
 
-  /* value — живой поток данных с устройства (readonly-поля StaIP/DevFW/RunCnt и т.п. должны обновляться постоянно), а не однократный дефолт. Подхватываем свежие данные, только если у пользователя нет несохранённых правок редактируемых полей (DevName/HostName/...) — иначе входящее значение затёрло бы то, что он ещё не успел сохранить. */
+  /* value - живой поток данных с устройства (readonly-поля StaIP/DevFW/RunCnt и т.п. должны обновляться постоянно), а не однократный дефолт. Подхватываем свежие данные, только если у пользователя нет несохранённых правок редактируемых полей (DevName/HostName/...) - иначе входящее значение затёрло бы то, что он ещё не успел сохранить. */
   $effect(() => {
     if (value !== undefined && !untrack(() => isDirty)) {
       const snapshot = JSON.stringify(value)
@@ -74,7 +74,7 @@
     }
   })
 
-  /* Хост и пользователь веб — только латиница, цифры, "_" и "-", имени устройства можно ещё "." (STM по умолчанию — код изделия 00.00.491-01), паролю — любые печатаемые ASCII без пробела (прошивка декодирует %XX формы входа); лишнее вырезается при вводе, значение с устройства вне правила подсвечивается. Длины — буферы main_config.h без \0 */
+  /* Хост и пользователь веб - только латиница, цифры, "_" и "-", имени устройства можно ещё "." (STM по умолчанию - код изделия 00.00.491-01), паролю - любые печатаемые ASCII без пробела (прошивка декодирует %XX формы входа); лишнее вырезается при вводе, значение с устройства вне правила подсвечивается. Длины - буферы main_config.h без \0 */
   const NAME_REGEXP = /^[A-Za-z0-9_-]*$/
   const DEV_NAME_REGEXP = /^[A-Za-z0-9_.-]*$/
   const PSW_REGEXP = /^[!-~]*$/
@@ -110,7 +110,7 @@
     <div class="flex flex-col gap-4" transition:slide={{ duration: 150 }}>
       <!-- Только чтение -->
       <div class="flex flex-col gap-2 rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-3">
-        <!-- Серийник бывает длинным (напр. 00.00.000-00_0000AC670000B22B00007428:DBC5) — своя строка, чтобы не резался -->
+        <!-- Серийник бывает длинным (напр. 00.00.000-00_0000AC670000B22B00007428:DBC5) - своя строка, чтобы не резался -->
         <div use:hint={{ text: $T("widget.info.hint.sn"), enabled: $hints }}>
           <UI.Input label={{ name: $T("widget.info.sn") }} value={info.DevSN} readonly help={{ copyButton: true }} />
         </div>
@@ -148,7 +148,7 @@
               onUpdate={(input) => (info.DevName = onlyDevNameChars(input))}
             />
           </div>
-          <!-- Прошивка хранит имя без домена, ".local" добавляет mDNS — показываем его как неизменяемую часть адреса -->
+          <!-- Прошивка хранит имя без домена, ".local" добавляет mDNS - показываем его как неизменяемую часть адреса -->
           <div class="flex min-w-0 items-end gap-1.5" use:hint={{ text: $T("widget.info.hint.host"), enabled: $hints }}>
             <UI.Input
               wrapperClass="min-w-0 flex-1"
@@ -190,7 +190,7 @@
         <UI.Button wrapperClass="w-40" componentClass="bg-accent" content={{ name: $T("widget.common.save") }} disabled={!isDirty} onClick={save} />
       </div>
 
-      <!-- Сброс всех настроек к заводским — отдельно от сохранения, только с подтверждением -->
+      <!-- Сброс всех настроек к заводским - отдельно от сохранения, только с подтверждением -->
       {#if onFactoryReset}
         <div class="flex items-center justify-between gap-3 border-t border-(--hairline-color) pt-3">
           <span class="text-[12px] text-(--muted-color)">{$T("widget.info.factory_reset_hint")}</span>

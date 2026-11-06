@@ -1,13 +1,13 @@
 /* $lib/locales/localize.ts */
-/* Многоязычные тексты, введённые в конструкторе: строка (язык по умолчанию) или объект по кодам языков { ru, en, zh, ... }; язык по умолчанию (DEFAULT_LANGUAGE) — основной и запасной; набор и порядок языков — LANGUAGES (languages.ts) */
+/* Многоязычные тексты, введённые в конструкторе: строка (язык по умолчанию) или объект по кодам языков { ru, en, zh, ... }; язык по умолчанию (DEFAULT_LANGUAGE) - основной и запасной; набор и порядок языков - LANGUAGES (languages.ts) */
 import { DEFAULT_LANGUAGE, LANGUAGE_CODES, type LanguageCode } from "./languages.js"
 
-/* Ключ многоязычного текста: код языка из LANGUAGES или похожий на код (ru, en, pt-BR) — данные с языком, которого нет в списке, не ломаются */
+/* Ключ многоязычного текста: код языка из LANGUAGES или похожий на код (ru, en, pt-BR) - данные с языком, которого нет в списке, не ломаются */
 const LANGUAGE_KEY = /^[a-z]{2,3}(-[A-Z]{2})?$/
 
 export type LocalizedText = string | Partial<Record<LanguageCode, string>>
 
-/* Поля свойств, которые считаются текстом для пользователя — их показывает и правит окно «Тексты и переводы» (TextsEditor) */
+/* Поля свойств, которые считаются текстом для пользователя - их показывает и правит окно «Тексты и переводы» (TextsEditor) */
 const TEXT_KEYS = new Set([
   "name",
   "label",
@@ -40,7 +40,7 @@ export const localizeText = (value: LocalizedText | undefined, lang: string): st
   return value[lang as LanguageCode] || value[DEFAULT_LANGUAGE] || Object.values(value).find(Boolean) || ""
 }
 
-/* Копия структуры, где каждый многоязычный текст заменён строкой на языке lang; функции, компоненты и бинарные данные — как есть */
+/* Копия структуры, где каждый многоязычный текст заменён строкой на языке lang; функции, компоненты и бинарные данные - как есть */
 export function localizeDeep<T>(value: T, lang: string): T {
   if (isLocalizedText(value)) return localizeText(value, lang) as T
   if (Array.isArray(value)) return value.map((item) => localizeDeep(item, lang)) as T
@@ -48,12 +48,12 @@ export function localizeDeep<T>(value: T, lang: string): T {
   return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, localizeDeep(item, lang)])) as T
 }
 
-/* Поля с данными устройства/рантайма — тексты в них не ищутся */
+/* Поля с данными устройства/рантайма - тексты в них не ищутся */
 const SKIP_KEYS = new Set(["id", "streamingData", "historyData", "body", "value", "keys", "eventHandler", "class", "icon"])
 
 export type TextPath = (string | number)[]
 
-/* Все тексты свойств компонента (поля TEXT_KEYS со строкой или { ru, en, zh }) с путями — для окна «Тексты и переводы» */
+/* Все тексты свойств компонента (поля TEXT_KEYS со строкой или { ru, en, zh }) с путями - для окна «Тексты и переводы» */
 export function collectTexts(value: unknown, path: TextPath = [], key = ""): { path: TextPath; text: LocalizedText }[] {
   if (TEXT_KEYS.has(key) && (typeof value === "string" || isLocalizedText(value))) return [{ path, text: value }]
   if (Array.isArray(value)) return value.flatMap((item, i) => collectTexts(item, [...path, i], key === "labels" ? key : ""))
@@ -70,7 +70,7 @@ export function setAtPath<T>(target: T, path: TextPath, value: unknown): T {
   return copy as T
 }
 
-/* Текст из полей окна переводов (по полю на язык): пусто — "", только язык по умолчанию — строка, иначе объект из непустых языков */
+/* Текст из полей окна переводов (по полю на язык): пусто - "", только язык по умолчанию - строка, иначе объект из непустых языков */
 export const packLocalized = (values: Partial<Record<LanguageCode, string>>): LocalizedText => {
   const filled = Object.fromEntries(LANGUAGE_CODES.filter((lang) => values[lang]?.trim()).map((lang) => [lang, values[lang]!.trim()]))
   const langs = Object.keys(filled)

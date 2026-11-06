@@ -1,4 +1,4 @@
-<!-- $lib/WidgetPFD/WidgetPFDProps.svelte — панель пропсов конструктора для WidgetPFD: заголовок, префикс группы полей (по умолчанию MAV), режим имитации, мастер-цвет и границы цветовых зон. -->
+<!-- $lib/WidgetPFD/WidgetPFDProps.svelte - панель пропсов конструктора для WidgetPFD: заголовок, префикс группы полей (по умолчанию MAV), режим имитации, мастер-цвет и границы цветовых зон. -->
 <script lang="ts">
   import TextsEditor from "../TextsEditor.svelte"
   import { T } from "../locales/i18n"
@@ -16,7 +16,7 @@
     onPropertyChange: (updates: Partial<{ properties?: string | object; name?: string; access?: string }>) => void
   } = $props()
 
-  /* Пустое поле — граница не задана (зона не рисуется) */
+  /* Пустое поле - граница не задана (зона не рисуется) */
   const setLimit = (key: keyof IWidgetPFDLimits, raw: unknown) => {
     const text = String(raw ?? "").trim()
     const next: IWidgetPFDLimits = { ...(component.properties.limits ?? {}) }

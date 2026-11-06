@@ -44,7 +44,7 @@
 | `id` | `string` | `"CFG"` | Префикс группы полей |
 | `keys` | `Partial<Record<ключ, string>>` | имена ключей | Другие имена полей, если у прошивки иначе |
 | `value` | `IWidgetWiFiConfig` | | Текущие значения полей |
-| `label.name` | `string` | `"WiFi"` | Заголовок. Пусто — название на языке пользователя |
+| `label.name` | `string` | `"WiFi"` | Заголовок. Пусто - название на языке пользователя |
 | `wrapperClass` | `string` | `""` | Классы обёртки |
 | `componentClass` | `string` | `""` | Мастер-цвет `bg-*` |
 | `allowedModes` | `number[]` | `[1, 2, 3]` | Какие режимы можно выбрать |
