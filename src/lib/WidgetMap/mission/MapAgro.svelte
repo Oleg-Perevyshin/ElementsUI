@@ -11,9 +11,11 @@
   import * as UI from "../.."
   import { MapLibre, NavigationControl, ScaleControl, FullScreenControl } from "../mapWrapper"
   import MissionLayers from "./MissionLayers.svelte"
+  import MissionSim from "./MissionSim.svelte"
+  import { missionProgress } from "./progress"
   import MissionIcon from "./MissionIcon.svelte"
   import ArrowIcon from "../../libIcons/ArrowIcon.svelte"
-  import { planFields, bestFieldAngle, toWaypointsFile, fieldArea, fieldsArea, type LngLat, type SprayControl } from "./coverage"
+  import { planFields, bestFieldAngle, toMission, fieldArea, fieldsArea, type LngLat, type SprayControl } from "./coverage"
   import { DEFAULT_MISSION_PLAN, type IMissionPlan } from "./plan"
 
   /* Режим «Агро» карты: часть пропсов WidgetMap */
@@ -26,6 +28,8 @@
     collapsed?: boolean
     persistKey?: string
     overlay?: Snippet /* Аппараты карты поверх миссии */
+    simulate?: boolean /* Имитация полёта по рассчитанной траектории */
+    vehicle?: { point: LngLat; wpNum?: number } /* Аппарат из первой группы карты: положение и номер текущей команды миссии */
     onPlanChange?: (plan: IMissionPlan) => void
     onSend?: (mission: string, plan: IMissionPlan) => void | Promise<void>
   }
@@ -39,6 +43,8 @@
     collapsed = $bindable(false),
     persistKey,
     overlay,
+    simulate = false,
+    vehicle,
     onPlanChange,
     onSend,
   }: Props = $props()
@@ -210,6 +216,20 @@
     }
   })
 
+  /* Путь для имитации: точка взлёта, затем все отрезки траектории; распыление — на проходах */
+  let simProgress = $state(0)
+  let simPath = $derived.by(() => {
+    if (!result?.waypoints.length) return []
+    const out = [{ point: result.waypoints[0].point, alt: plan.alt, speed: plan.speed, spray: false }]
+    for (const seg of result.segments)
+      seg.points.forEach((pt, i) => {
+        const prev = out[out.length - 1].point
+        if (i === 0 && Math.abs(prev[0] - pt[0]) < 1e-9 && Math.abs(prev[1] - pt[1]) < 1e-9) return
+        out.push({ point: pt, alt: plan.alt, speed: plan.speed, spray: seg.kind === "spray" && i > 0 })
+      })
+    return out
+  })
+
   /* ********************************************************** */
   /* GeoJSON для слоёв */
 
@@ -283,13 +303,22 @@
     }
   })
 
-  const missionText = () => (result && hasField ? toWaypointsFile(result, plan.start ?? fields[0][0], missionOptions()) : "")
-  const missionOptions = () => ({
-    alt: plan.alt,
-    speed: plan.speed,
-    spray: plan.sprayControl,
-    servo: { channel: plan.servoChannel, on: plan.servoOn, off: plan.servoOff },
-  })
+  /* Миссия и номера её точек: выгрузка и прогресс реального полёта по WPNum */
+  let mission = $derived(
+    result && hasField
+      ? toMission(result, plan.start ?? fields[0][0], {
+          alt: plan.alt,
+          speed: plan.speed,
+          spray: plan.sprayControl,
+          servo: { channel: plan.servoChannel, on: plan.servoOn, off: plan.servoOff },
+        })
+      : null,
+  )
+  const missionText = () => mission?.text ?? ""
+  let live = $derived(mission && !simulate ? missionProgress(mission.nav, vehicle?.wpNum, vehicle?.point) : null)
+  /* Обработано: доля пройденных проходов от площади к обработке */
+  let treatedHa = $derived(live && stats && live.sprayTotal > 0 ? (stats.ha * live.sprayDone) / live.sprayTotal : 0)
+  let headerProgress = $derived(simulate ? simProgress : (live?.fraction ?? null))
   const download = () => {
     const text = missionText()
     if (!text) return
@@ -392,11 +421,22 @@
 >
   <WidgetHeader icon={MissionIcon} label={label?.name || $T("widget.mission.title")} bind:collapsed {hints}>
     {#snippet right()}
-      {#if stats}
-        <span class="text-[12px] font-semibold text-(--muted-color) tabular-nums"
-          >{fmt(stats.ha, 2)} {$T("widget.mission.ha")} · {fmt(stats.total, 2)} {$T("widget.mission.km")}</span
-        >
-      {/if}
+      <span class="flex items-center gap-3 text-[12px] font-semibold text-(--muted-color) tabular-nums">
+        {#if headerProgress !== null}
+          <span class="flex items-center gap-1.5" title={simulate ? $T("widget.sim.title") : $T("widget.mission.progressHint")}>
+            <span class="h-1.5 w-14 overflow-hidden rounded-full bg-(--hairline-color)"
+              ><span class="block h-full rounded-full bg-(--accent-color)" style="width: {Math.round(headerProgress * 100)}%"></span></span
+            >
+            {Math.round(headerProgress * 100)}%{#if live}
+              · {$T("widget.mission.treated")} {fmt(treatedHa, 2)} {$T("widget.mission.ha")}{/if}
+          </span>
+        {/if}
+        {#if stats}
+          <span class="text-[12px] font-semibold text-(--muted-color) tabular-nums"
+            >{fmt(stats.ha, 2)} {$T("widget.mission.ha")} · {fmt(stats.total, 2)} {$T("widget.mission.km")}</span
+          >
+        {/if}
+      </span>
     {/snippet}
   </WidgetHeader>
 
@@ -477,6 +517,9 @@
             onCursor={(ll) => (cursor = ll)}
           />
           {@render overlay?.()}
+          {#if simulate}
+            <MissionSim path={simPath} showSpray icon="quad" bind:progress={simProgress} />
+          {/if}
         </MapLibre>
       </div>
 

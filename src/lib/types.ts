@@ -816,6 +816,7 @@ export interface IWidgetMapData {
   Sat: number /* спутников */
   DevName: string /* имя борта — подпись маркера и заголовок карточки */
   DevSN: string /* серийный номер — в карточке */
+  WPNum?: number /* номер текущей команды миссии; по нему режимы «Маршрут» и «Агро» показывают прогресс */
 }
 
 export interface IWidgetMapProps {

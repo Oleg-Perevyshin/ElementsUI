@@ -72,14 +72,19 @@ export const routeStats = (plan: IRoutePlan) => {
 }
 
 /* Миссия: дом, взлёт на высоту первой точки, точки маршрута; DO_CHANGE_SPEED перед точкой, где меняется скорость; при необходимости возврат (RTL) */
-export const routeToWaypointsFile = (plan: IRoutePlan) => {
+export const routeToWaypointsFile = (plan: IRoutePlan) => routeMission(plan).text
+
+/* Миссия и номера команд её точек: взлёт (у точки взлёта), точки маршрута, возврат RTL — к точке взлёта */
+export const routeMission = (plan: IRoutePlan) => {
+  const nav: { point: LngLat; seq: number }[] = []
   const home = plan.start ?? plan.points[0]?.point
-  if (!home || !plan.points.length) return ""
+  if (!home || !plan.points.length) return { text: "", nav }
   const lines = ["QGC WPL 110"]
   let seq = 0
   const row = (current: number, frame: number, cmd: number, p: number[], ll: [number, number], alt: number) =>
     lines.push([seq++, current, frame, cmd, ...p, ll[1].toFixed(8), ll[0].toFixed(8), alt.toFixed(2), 1].join("\t"))
   row(1, 0, 16, [0, 0, 0, 0], home, 0)
+  nav.push({ point: home, seq })
   row(0, 3, 22, [0, 0, 0, 0], [0, 0], plan.points[0].alt)
   let speed = NaN
   for (const wp of plan.points) {
@@ -87,8 +92,12 @@ export const routeToWaypointsFile = (plan: IRoutePlan) => {
       speed = wp.speed
       row(0, 3, 178, [1, speed, -1, 0], [0, 0], 0)
     }
+    nav.push({ point: wp.point, seq })
     row(0, 3, 16, [0, 0, 0, 0], wp.point, wp.alt)
   }
-  if (plan.returnHome) row(0, 3, 20, [0, 0, 0, 0], [0, 0], 0)
-  return lines.join("\n") + "\n"
+  if (plan.returnHome) {
+    nav.push({ point: home, seq })
+    row(0, 3, 20, [0, 0, 0, 0], [0, 0], 0)
+  }
+  return { text: lines.join("\n") + "\n", nav }
 }

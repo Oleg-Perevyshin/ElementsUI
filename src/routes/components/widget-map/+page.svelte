@@ -3,42 +3,17 @@
   import { localizeDeep } from "#lib/locales/localize.ts"
   import { type UIComponent } from "#lib"
   import ComponentExample from "../../ComponentExample.svelte"
-  import { updateComponent, type IWidgetMapData, type IWidgetMapProps } from "#lib/types.ts"
+  import { updateComponent, type IWidgetMapProps } from "#lib/types.ts"
   import WidgetMap from "#lib/WidgetMap/WidgetMap.svelte"
   import WidgetMapProps from "#lib/WidgetMap/WidgetMapProps.svelte"
   import { formatObjectToString, RenderMarkdown } from "../../common"
   import readmeRaw from "#lib/WidgetMap/README.md?raw"
-  import { createFlightSim } from "#lib/flightSim.ts"
   import { DEFAULT_MISSION_PLAN, type IMissionPlan } from "#lib/WidgetMap/mission/plan.ts"
   import { DEFAULT_ROUTE_PLAN, type IRoutePlan } from "#lib/WidgetMap/mission/route.ts"
 
   let readmeHtml = $state("")
   $effect(() => {
     RenderMarkdown(readmeRaw).then((html) => (readmeHtml = html))
-  })
-
-  /* Два объекта по маршруту над Минском (модель MavlinkTelemetry_Simulate прошивки 20.00.000-01), второй стартует с другой точки */
-  const simMav = createFlightSim()
-  const simGnss = createFlightSim(3)
-  const pick = ({ Lat, Lon, Alt, Heading, Sat }: Omit<IWidgetMapData, "DevName" | "DevSN">, DevName: string, DevSN: string): IWidgetMapData => ({
-    Lat,
-    Lon,
-    Alt,
-    Heading,
-    Sat,
-    DevName,
-    DevSN,
-  })
-  let boards: Record<string, IWidgetMapData> = $state({
-    MAV: pick(simMav(0), "Объект 1", "20000001A1B2C3"),
-    GNSS: pick(simGnss(0), "Объект 2", "20000001D4E5F6"),
-  })
-  $effect(() => {
-    const timer = setInterval(
-      () => (boards = { MAV: pick(simMav(0.5), "Объект 1", "20000001A1B2C3"), GNSS: pick(simGnss(0.5), "Объект 2", "20000001D4E5F6") }),
-      500,
-    )
-    return () => clearInterval(timer)
   })
 
   let mapComponent: UIComponent = $state({
@@ -96,15 +71,14 @@
 
   let codeText = $derived(`
 <UI.WidgetMap
-${formatObjectToString(mapComponent.properties as IWidgetMapProps)}
-value={{ MAV: mav, GNSS: gnss }}${mapMode === "agro" ? "\nbind:plan\nonSend={(mission) => sendToDevice(mission)}" : mapMode === "route" ? "\nbind:route\nonSend={(mission) => sendToDevice(mission)}" : ""}
+${formatObjectToString(mapComponent.properties as IWidgetMapProps)}${mapMode === "agro" ? "\nbind:plan\nonSend={(mission) => sendToDevice(mission)}" : mapMode === "route" ? "\nbind:route\nonSend={(mission) => sendToDevice(mission)}" : ""}
 />`)
 </script>
 
 <ComponentExample {codeText} {readmeHtml} bind:forConstructor>
   {#snippet component()}
     <div class="m-auto w-full max-w-4xl">
-      <WidgetMap {...localizeDeep(mapComponent.properties, $Language) as IWidgetMapProps} value={boards} bind:plan bind:route onSend={send} />
+      <WidgetMap {...localizeDeep(mapComponent.properties, $Language) as IWidgetMapProps} bind:plan bind:route onSend={send} />
     </div>
   {/snippet}
   {#snippet componentProps()}
@@ -124,7 +98,7 @@ value={{ MAV: mav, GNSS: gnss }}${mapMode === "agro" ? "\nbind:plan\nonSend={(mi
           Демо-поле заново
         </button>
       </div>
-      <WidgetMap mode="agro" bind:plan height={520} onSend={send} groups={["MAV"]} value={boards} />
+      <WidgetMap mode="agro" bind:plan height={520} onSend={send} isTest />
       <div class="flex justify-end">
         <button
           class="cursor-pointer rounded-md border border-(--hairline-color) bg-transparent px-3 py-1 text-[12px]"
@@ -133,7 +107,7 @@ value={{ MAV: mav, GNSS: gnss }}${mapMode === "agro" ? "\nbind:plan\nonSend={(mi
           Демо-маршрут заново
         </button>
       </div>
-      <WidgetMap mode="route" bind:route height={520} onSend={send} groups={["MAV"]} value={boards} />
+      <WidgetMap mode="route" bind:route height={520} onSend={send} isTest />
     </div>
   {/snippet}
 </ComponentExample>

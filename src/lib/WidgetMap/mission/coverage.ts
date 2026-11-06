@@ -781,8 +781,12 @@ export interface IMissionExport {
   servo?: { channel: number; on: number; off: number } /* Канал и ШИМ насоса для режима servo */
 }
 
-export const toWaypointsFile = (res: ICoverageResult, home: LngLat, opt: IMissionExport) => {
+export const toWaypointsFile = (res: ICoverageResult, home: LngLat, opt: IMissionExport) => toMission(res, home, opt).text
+
+/* Миссия и номера команд её точек маршрута: по ним прогресс считается из WPNum телеметрии */
+export const toMission = (res: ICoverageResult, home: LngLat, opt: IMissionExport) => {
   const lines = ["QGC WPL 110"]
+  const nav: { point: LngLat; seq: number; spray?: boolean }[] = []
   let seq = 0
   const row = (current: number, frame: number, cmd: number, p: number[], ll: [number, number], alt: number) =>
     lines.push([seq++, current, frame, cmd, ...p, ll[1].toFixed(8), ll[0].toFixed(8), alt.toFixed(2), 1].join("\t"))
@@ -795,7 +799,10 @@ export const toWaypointsFile = (res: ICoverageResult, home: LngLat, opt: IMissio
   /* Перед полётом распыление явно выключено, чтобы не лить по дороге к полю */
   sprayRow(false)
   let spraying = false
+  let sprayOnLeg = false
   for (const wp of res.waypoints) {
+    nav.push({ point: wp.point, seq, spray: sprayOnLeg })
+    sprayOnLeg = wp.spray
     row(0, 3, 16, [0, 0, 0, 0], wp.point, opt.alt)
     if (wp.spray !== spraying) {
       spraying = wp.spray
@@ -803,5 +810,5 @@ export const toWaypointsFile = (res: ICoverageResult, home: LngLat, opt: IMissio
     }
   }
   if (spraying) sprayRow(false)
-  return lines.join("\n") + "\n"
+  return { text: lines.join("\n") + "\n", nav }
 }

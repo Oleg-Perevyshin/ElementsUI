@@ -11,19 +11,12 @@
   import * as UI from "../.."
   import { MapLibre, NavigationControl, ScaleControl, FullScreenControl } from "../mapWrapper"
   import MissionLayers from "./MissionLayers.svelte"
+  import MissionSim from "./MissionSim.svelte"
+  import { missionProgress } from "./progress"
   import MapIcon from "../MapIcon.svelte"
   import ArrowIcon from "../../libIcons/ArrowIcon.svelte"
   import type { LngLat } from "./coverage"
-  import {
-    DEFAULT_ROUTE_PLAN,
-    ROUTE_FIRST_ALT,
-    ROUTE_FIRST_SPEED,
-    routeLegs,
-    routeStats,
-    routeToWaypointsFile,
-    type IRoutePlan,
-    type IRouteWaypoint,
-  } from "./route"
+  import { DEFAULT_ROUTE_PLAN, ROUTE_FIRST_ALT, ROUTE_FIRST_SPEED, routeLegs, routeStats, routeMission, type IRoutePlan, type IRouteWaypoint } from "./route"
 
   /* Режим «Маршрут» карты: часть пропсов WidgetMap */
   interface Props {
@@ -35,6 +28,8 @@
     collapsed?: boolean
     persistKey?: string
     overlay?: Snippet /* Аппараты карты поверх миссии */
+    simulate?: boolean /* Имитация полёта по маршруту */
+    vehicle?: { point: LngLat; wpNum?: number } /* Аппарат из первой группы карты: положение и номер текущей команды миссии */
     onRouteChange?: (route: IRoutePlan) => void
     onSend?: (mission: string, route: IRoutePlan) => void | Promise<void>
   }
@@ -48,6 +43,8 @@
     collapsed = $bindable(false),
     persistKey,
     overlay,
+    simulate = false,
+    vehicle,
     onRouteChange,
     onSend,
   }: Props = $props()
@@ -127,6 +124,7 @@
   /* Расчёт и GeoJSON */
 
   let stats = $derived(routeStats(route))
+  let simProgress = $state(0)
   let legs = $derived(routeLegs(route))
 
   let pathGeo = $derived({
@@ -175,7 +173,11 @@
     }
   })
 
-  const missionText = () => routeToWaypointsFile(route)
+  /* Миссия и номера её точек: выгрузка и прогресс реального полёта по WPNum */
+  let mission = $derived(routeMission(route))
+  const missionText = () => mission.text
+  let live = $derived(simulate ? null : missionProgress(mission.nav, vehicle?.wpNum, vehicle?.point))
+  let headerProgress = $derived(simulate ? simProgress : (live?.fraction ?? null))
   const download = () => {
     const text = missionText()
     if (!text) return
@@ -261,7 +263,18 @@
 >
   <WidgetHeader icon={MapIcon} label={label?.name || $T("widget.route.title")} bind:collapsed {hints}>
     {#snippet right()}
-      <span class="text-[12px] font-semibold text-(--muted-color) tabular-nums">{stats.points} {$T("widget.route.pts")} · {km(stats.length)}</span>
+      <span class="flex items-center gap-3 text-[12px] font-semibold text-(--muted-color) tabular-nums">
+        {#if headerProgress !== null}
+          <span class="flex items-center gap-1.5" title={simulate ? $T("widget.sim.title") : $T("widget.mission.progressHint")}>
+            <span class="h-1.5 w-14 overflow-hidden rounded-full bg-(--hairline-color)"
+              ><span class="block h-full rounded-full bg-(--accent-color)" style="width: {Math.round(headerProgress * 100)}%"></span></span
+            >
+            {Math.round(headerProgress * 100)}%{#if live}
+              · {live.target > route.points.length ? $T("widget.route.returning") : `${$T("widget.route.toPoint")} ${live.target}/${route.points.length}`}{/if}
+          </span>
+        {/if}
+        <span>{stats.points} {$T("widget.route.pts")} · {km(stats.length)}</span>
+      </span>
     {/snippet}
   </WidgetHeader>
 
@@ -319,6 +332,9 @@
             onCursor={() => {}}
           />
           {@render overlay?.()}
+          {#if simulate}
+            <MissionSim path={legs.nodes} bind:progress={simProgress} />
+          {/if}
         </MapLibre>
       </div>
 

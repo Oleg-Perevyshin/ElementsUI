@@ -97,7 +97,8 @@
   const randomSec = (min: number, max: number) => (min + Math.random() * (max - min)) * 1000
   let simValue: Record<string, Partial<IWidgetMapData>> | undefined = $state()
   $effect(() => {
-    if (!isTest) return
+    /* В «Маршруте» и «Агро» имитация — полёт по своей траектории, аппараты SIM не нужны */
+    if (!isTest || mode !== "objects") return
     /* На связи всегда три аппарата: когда один пропадает, его сменяет тот, кто молчит дольше всех; молчащий маркер успевает покраснеть и скрыться */
     const fleet = SIM_GROUPS.map((group, i) => ({
       group,
@@ -143,6 +144,12 @@
   })
   let value = $derived(isTest ? simValue : deviceValue)
   let groupList = $derived(isTest ? SIM_GROUPS : groups.map((g) => g.trim()).filter(Boolean))
+  /* Аппарат для прогресса миссии в «Маршруте» и «Агро»: первая группа, положение и номер текущей команды */
+  let missionVehicle = $derived.by(() => {
+    const d = deviceValue?.[groupList[0]]
+    if (isTest || !d || !d.Lat || !d.Lon) return undefined
+    return { point: [d.Lon, d.Lat] as [number, number], wpNum: d.WPNum }
+  })
   let boards: Board[] = $state([])
   let now = $state(Date.now())
   let mapInstance: any = $state()
@@ -446,9 +453,35 @@
 
 <!-- Режим «Агро» — генератор миссии для агродрона, «Маршрут» — обычный планировщик миссии, остальное — карта объектов -->
 {#if mode === "agro"}
-  <MapAgro {wrapperClass} {componentClass} {label} height={height ?? 520} bind:plan bind:collapsed {persistKey} {onPlanChange} {onSend} overlay={vehicles} />
+  <MapAgro
+    {wrapperClass}
+    {componentClass}
+    {label}
+    height={height ?? 520}
+    bind:plan
+    bind:collapsed
+    {persistKey}
+    {onPlanChange}
+    {onSend}
+    overlay={isTest ? undefined : vehicles}
+    simulate={isTest}
+    vehicle={missionVehicle}
+  />
 {:else if mode === "route"}
-  <MapRoute {wrapperClass} {componentClass} {label} height={height ?? 520} bind:route bind:collapsed {persistKey} {onRouteChange} {onSend} overlay={vehicles} />
+  <MapRoute
+    {wrapperClass}
+    {componentClass}
+    {label}
+    height={height ?? 520}
+    bind:route
+    bind:collapsed
+    {persistKey}
+    {onRouteChange}
+    {onSend}
+    overlay={isTest ? undefined : vehicles}
+    simulate={isTest}
+    vehicle={missionVehicle}
+  />
 {:else}
   <div
     bind:this={rootEl}
