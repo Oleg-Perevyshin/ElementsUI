@@ -54,6 +54,20 @@ export { default as WidgetPFD } from "./WidgetPFD/WidgetPFD.svelte"
 export { default as WidgetPFDProps } from "./WidgetPFD/WidgetPFDProps.svelte"
 export { default as WidgetMap } from "./WidgetMap/WidgetMap.svelte"
 export { default as WidgetMapProps } from "./WidgetMap/WidgetMapProps.svelte"
+export { DEFAULT_MISSION_PLAN, type IMissionPlan, type IMissionField } from "./WidgetMap/mission/plan"
+export { DEFAULT_ROUTE_PLAN, routeStats, routeToWaypointsFile, type IRoutePlan, type IRouteWaypoint } from "./WidgetMap/mission/route"
+export {
+  planCoverage,
+  planFields,
+  optimizeAngle,
+  bestFieldAngle,
+  toWaypointsFile,
+  fieldArea,
+  fieldsArea,
+  type LngLat,
+  type SprayControl,
+  type ICoverageResult,
+} from "./WidgetMap/mission/coverage"
 
 export * from "./locales/i18n"
 export * from "./locales/languages"

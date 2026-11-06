@@ -1,4 +1,4 @@
-<!-- $lib/WidgetMap/WidgetMapProps.svelte — панель пропсов конструктора для WidgetMap: заголовок, режим имитации, группы полей (каждая — объект), мастер-цвет, высота карты, иконка маркера и начальные значения переключателей оператора. -->
+<!-- $lib/WidgetMap/WidgetMapProps.svelte — панель пропсов конструктора для WidgetMap: режим (объекты, маршрут или агро), заголовок, режим имитации, группы полей (каждая — объект), мастер-цвет, высота карты, иконка маркера и начальные значения переключателей оператора. -->
 <script lang="ts">
   import TextsEditor from "../TextsEditor.svelte"
   import { T } from "../locales/i18n"
@@ -25,6 +25,12 @@
     { value: 600, name: "L" },
     { value: 800, name: "XL" },
   ].map((o) => ({ id: crypto.randomUUID(), ...o }))
+  /* Режим карты: объекты в реальном времени, планировщик миссии из точек или генератор миссии для агродрона */
+  const MODE_OPTIONS = [
+    { value: "objects", name: $T("widget.map.mode.objects") },
+    { value: "route", name: $T("widget.map.mode.route") },
+    { value: "agro", name: $T("widget.map.mode.agro") },
+  ].map((o) => ({ id: crypto.randomUUID(), ...o }))
   const TRACK_LENGTH_OPTIONS = [100, 500, 1000, 5000, 10000, 50000].map((value) => ({ id: crypto.randomUUID(), value, name: String(value) }))
 
   /* Группы через пробел, как переменные кнопки (имя группы не содержит пробелов): "MAV GNSS" */
@@ -38,6 +44,15 @@
 </script>
 
 <div class="flex flex-col gap-2">
+  <PropsGroup>
+    <UI.Select
+      label={{ name: $T("widget.map.mode") }}
+      type="buttons"
+      options={MODE_OPTIONS}
+      value={MODE_OPTIONS.find((opt) => opt.value === (component.properties.mode ?? "objects")) ?? MODE_OPTIONS[0]}
+      onUpdate={(option) => updateProperty("mode", (option as { value: string }).value, component, onPropertyChange)}
+    />
+  </PropsGroup>
   <PropsGroup>
     <UI.Switch
       label={{ name: $T("constructor.props.simulation") }}

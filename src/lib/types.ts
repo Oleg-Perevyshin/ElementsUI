@@ -1,5 +1,7 @@
 // $lib/ElementsUI/types.ts
 import type { Snippet } from "svelte"
+import type { IMissionPlan } from "./WidgetMap/mission/plan"
+import type { IRoutePlan } from "./WidgetMap/mission/route"
 
 export const updateProperty = (
   path: string,
@@ -837,4 +839,14 @@ export interface IWidgetMapProps {
   isTest?: boolean
   collapsed?: boolean
   persistKey?: string
+  /* objects — карта объектов, route — планировщик миссии из точек, agro — генератор миссии для агродрона; аппараты из групп рисуются во всех режимах */
+  mode?: "objects" | "route" | "agro"
+  /* План миссии; без него — демо-поле из DEFAULT_MISSION_PLAN. Можно связать через bind: */
+  plan?: IMissionPlan
+  onPlanChange?: (plan: IMissionPlan) => void
+  /* Маршрут режима route; без него — демо-облёт из DEFAULT_ROUTE_PLAN. Можно связать через bind: */
+  route?: IRoutePlan
+  onRouteChange?: (route: IRoutePlan) => void
+  /* Отправка миссии (текст QGC WPL 110) на борт; без обработчика кнопка «Отправить» неактивна */
+  onSend?: (mission: string, plan: IMissionPlan | IRoutePlan) => void | Promise<void>
 }
