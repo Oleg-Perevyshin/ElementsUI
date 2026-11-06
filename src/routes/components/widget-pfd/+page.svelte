@@ -8,7 +8,7 @@
   import WidgetPFDProps from "#lib/WidgetPFD/WidgetPFDProps.svelte"
   import { formatObjectToString, RenderMarkdown } from "../../common"
   import readmeRaw from "#lib/WidgetPFD/README.md?raw"
-  import { createFlightSim } from "../flightSim"
+  import { createFlightSim } from "#lib/flightSim.ts"
 
   let readmeHtml = $state("")
   $effect(() => {

@@ -310,6 +310,7 @@ const translations: Translations = {
   "constructor.props.disabled": { ru: "Отключить", en: "Disable", zh: "禁用" },
   "constructor.props.readonly": { ru: "Только чтение", en: "Read only", zh: "只读" },
   "constructor.props.istest": { ru: "Тестовые данные", en: "Test data", zh: "测试数据" },
+  "constructor.props.simulation": { ru: "Режим имитации", en: "Simulation mode", zh: "模拟模式" },
   "constructor.props.refreshrate": { ru: "Скорость обновления", en: "Refresh rate", zh: "刷新速率" },
   "constructor.props.variable": { ru: "Имя переменной", en: "Variable name", zh: "变量名" },
   "constructor.props.widthMode": { ru: "Ширина кнопок", en: "Button width", zh: "按钮宽度" },

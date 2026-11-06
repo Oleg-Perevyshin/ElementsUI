@@ -15,7 +15,7 @@
   import { ICONS_ARRAY } from "#lib/icons.ts"
   import { onMount, type Snippet } from "svelte"
   import { RenderMarkdown } from "./common"
-  import { createFlightSim } from "./components/flightSim"
+  import { createFlightSim } from "#lib/flightSim.ts"
 
   /* Живые данные: тот же полёт над Минском, что в демо PFD и карты */
   const simMav = createFlightSim()

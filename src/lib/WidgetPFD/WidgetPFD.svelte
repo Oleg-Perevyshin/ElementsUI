@@ -6,14 +6,29 @@
   import { Tween } from "svelte/motion"
   import { cubicOut } from "svelte/easing"
   import { twMerge } from "tailwind-merge"
-  import type { IWidgetPFDProps } from "../types"
+  import type { IWidgetPFDProps, IWidgetPFDData } from "../types"
   import PlaneIcon from "./PlaneIcon.svelte"
   import WidgetHeader from "../WidgetHeader.svelte"
   import { hintsSetting } from "../hints"
   import { widgetAccentStyle } from "../widgetAccent"
   import { readPersistedCollapsed, writePersistedCollapsed } from "../widgetCollapse"
+  import { createFlightSim } from "../flightSim"
 
-  let { wrapperClass = "", componentClass = "", label = {}, value, limits, collapsed = $bindable(false), persistKey }: IWidgetPFDProps = $props()
+  let { wrapperClass = "", componentClass = "", label = {}, value: deviceValue, limits, isTest = false, collapsed = $bindable(false), persistKey }: IWidgetPFDProps = $props()
+
+  /* В режиме имитации данные устройства не учитываются, кадр полёта каждые 50 мс */
+  let simValue: IWidgetPFDData | undefined = $state()
+  $effect(() => {
+    if (!isTest) return
+    const sim = createFlightSim()
+    simValue = sim(0)
+    const timer = setInterval(() => (simValue = sim(0.05)), 50)
+    return () => {
+      clearInterval(timer)
+      simValue = undefined
+    }
+  })
+  let value = $derived(isTest ? simValue : deviceValue)
 
   let accentStyle = $derived(widgetAccentStyle(componentClass ?? ""))
 

@@ -8,7 +8,7 @@
   import WidgetMapProps from "#lib/WidgetMap/WidgetMapProps.svelte"
   import { formatObjectToString, RenderMarkdown } from "../../common"
   import readmeRaw from "#lib/WidgetMap/README.md?raw"
-  import { createFlightSim } from "../flightSim"
+  import { createFlightSim } from "#lib/flightSim.ts"
 
   let readmeHtml = $state("")
   $effect(() => {

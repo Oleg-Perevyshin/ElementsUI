@@ -4,13 +4,14 @@
   import { slide } from "svelte/transition"
   import { twMerge } from "tailwind-merge"
   import { T } from "../locales/i18n"
-  import type { IWidgetMapProps } from "../types"
+  import type { IWidgetMapProps, IWidgetMapData } from "../types"
   import CopiedChip from "../CopiedChip.svelte"
   import WidgetHeader from "../WidgetHeader.svelte"
   import { hint, hintsSetting } from "../hints"
   import { widgetAccentStyle } from "../widgetAccent"
   import { readPersistedCollapsed, writePersistedCollapsed } from "../widgetCollapse"
   import MapIcon from "./MapIcon.svelte"
+  import { createFlightSim, HOME } from "../flightSim"
   import FitIcon from "./FitIcon.svelte"
   import * as UI from ".."
   import { MapLibre, NavigationControl, ScaleControl, GeolocateControl, FullScreenControl, Marker, Popup, Line, CustomControl } from "./mapWrapper"
@@ -20,12 +21,13 @@
     componentClass = "",
     label = {},
     groups = ["MAV"],
-    value,
+    value: deviceValue,
     height = 400,
     markerIcon,
     trackEnabled = $bindable(false),
     trackLength = $bindable(1000),
     markerTimeout = $bindable(30_000),
+    isTest = false,
     collapsed = $bindable(false),
     persistKey,
   }: IWidgetMapProps = $props()
@@ -63,7 +65,24 @@
   /* (0, 0) и нечисловые координаты — признак отсутствия фикса */
   const hasFix = (lat: unknown, lon: unknown) => Number.isFinite(lat) && Number.isFinite(lon) && (lat !== 0 || lon !== 0)
 
-  let groupList = $derived(groups.map((g) => g.trim()).filter(Boolean))
+  /* Режим имитации: два объекта на одном маршруте, данные и группы устройства не учитываются */
+  const SIM_GROUPS = ["SIM-1", "SIM-2"]
+  const SIM_SN = ["10.10.001-01_0000804500006B3600004000:F76F", "10.10.001-01_0000804500006B3600004001:3A9C"]
+  let simValue: Record<string, Partial<IWidgetMapData>> | undefined = $state()
+  $effect(() => {
+    if (!isTest) return
+    const sims = [createFlightSim(), createFlightSim(3)]
+    const frame = (dt: number) =>
+      Object.fromEntries(SIM_GROUPS.map((group, i) => [group, { ...sims[i](dt), DevName: group, DevSN: SIM_SN[i] }]))
+    simValue = frame(0)
+    const timer = setInterval(() => (simValue = frame(0.5)), 500)
+    return () => {
+      clearInterval(timer)
+      simValue = undefined
+    }
+  })
+  let value = $derived(isTest ? simValue : deviceValue)
+  let groupList = $derived(isTest ? SIM_GROUPS : groups.map((g) => g.trim()).filter(Boolean))
   let boards: Board[] = $state([])
   let now = $state(Date.now())
   let mapInstance: any = $state()
@@ -75,6 +94,10 @@
     const save = () => (view = { center: map.getCenter(), zoom: map.getZoom(), bearing: map.getBearing() })
     map.on("moveend", save)
     return () => map.off("moveend", save)
+  })
+  /* При включении имитации карта переходит к району полёта */
+  $effect(() => {
+    if (isTest && mapInstance) untrack(() => mapInstance.jumpTo({ center: [HOME.lon, HOME.lat], zoom: 13.5 }))
   })
   let isCopied = $state(false)
   let isDarkMode = $state(false)

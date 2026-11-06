@@ -1,4 +1,4 @@
-<!-- $lib/WidgetPFD/WidgetPFDProps.svelte — панель пропсов конструктора для WidgetPFD: заголовок, префикс группы полей (по умолчанию MAV), мастер-цвет и границы цветовых зон. -->
+<!-- $lib/WidgetPFD/WidgetPFDProps.svelte — панель пропсов конструктора для WidgetPFD: заголовок, префикс группы полей (по умолчанию MAV), режим имитации, мастер-цвет и границы цветовых зон. -->
 <script lang="ts">
   import TextsEditor from "../TextsEditor.svelte"
   import { T } from "../locales/i18n"
@@ -29,8 +29,15 @@
 <div class="flex flex-col gap-2">
   <PropsGroup label={$T("constructor.props.group.general")}>
     <TextsEditor {component} {onPropertyChange} />
+    <UI.Switch
+      label={{ name: $T("constructor.props.simulation") }}
+      value={component.properties.isTest ? 1 : 0}
+      options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
+      onChange={(value) => updateProperty("isTest", value === 1, component, onPropertyChange)}
+    />
     <UI.Input
       label={{ name: $T("pfd.props.group") }}
+      disabled={component.properties.isTest}
       value={component.properties.id ?? "MAV"}
       onUpdate={(value) => updateProperty("id", value as string, component, onPropertyChange)}
     />
@@ -48,7 +55,7 @@
       <UI.Input label={{ name: $T("pfd.props.g_min") }} type="number" value={limits.gMin} onUpdate={(v) => setLimit("gMin", v)} />
       <UI.Input label={{ name: $T("pfd.props.g_max") }} type="number" value={limits.gMax} onUpdate={(v) => setLimit("gMax", v)} />
       <UI.Input label={{ name: $T("pfd.props.batt_low") }} type="number" value={limits.battLow} onUpdate={(v) => setLimit("battLow", v)} />
-      <UI.Input label={{ name: $T("pfd.props.stale") }} type="number" value={limits.staleMs ?? 2000} onUpdate={(v) => setLimit("staleMs", v)} />
+      <UI.Input disabled={component.properties.isTest} label={{ name: $T("pfd.props.stale") }} type="number" value={limits.staleMs ?? 2000} onUpdate={(v) => setLimit("staleMs", v)} />
     </div>
   </PropsGroup>
 </div>

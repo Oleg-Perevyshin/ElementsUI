@@ -1,4 +1,4 @@
-<!-- $lib/WidgetMap/WidgetMapProps.svelte — панель пропсов конструктора для WidgetMap: заголовок, группы полей (каждая — объект), мастер-цвет, высота карты, иконка маркера и начальные значения переключателей оператора. -->
+<!-- $lib/WidgetMap/WidgetMapProps.svelte — панель пропсов конструктора для WidgetMap: заголовок, режим имитации, группы полей (каждая — объект), мастер-цвет, высота карты, иконка маркера и начальные значения переключателей оператора. -->
 <script lang="ts">
   import TextsEditor from "../TextsEditor.svelte"
   import { T } from "../locales/i18n"
@@ -39,7 +39,13 @@
 <div class="flex flex-col gap-2">
   <PropsGroup label={$T("constructor.props.group.general")}>
     <TextsEditor {component} {onPropertyChange} />
-    <UI.Input label={{ name: $T("widget.map.groups") }} value={(component.properties.groups ?? ["MAV"]).join(" ")} onUpdate={setGroups} />
+    <UI.Switch
+      label={{ name: $T("constructor.props.simulation") }}
+      value={component.properties.isTest ? 1 : 0}
+      options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
+      onChange={(value) => updateProperty("isTest", value === 1, component, onPropertyChange)}
+    />
+    <UI.Input label={{ name: $T("widget.map.groups") }} disabled={component.properties.isTest} value={(component.properties.groups ?? ["MAV"]).join(" ")} onUpdate={setGroups} />
     <WidgetAccentPicker
       value={component.properties.componentClass ?? ""}
       onUpdate={(value) => updateProperty("componentClass", value, component, onPropertyChange)}

@@ -799,6 +799,8 @@ export interface IWidgetPFDProps {
   value?: Partial<IWidgetPFDData>
   keys?: Partial<Record<keyof IWidgetPFDData, string>>
   limits?: IWidgetPFDLimits
+  /* Режим имитации: полёт по маршруту вместо данных устройства, value и id не учитываются */
+  isTest?: boolean
   collapsed?: boolean
   persistKey?: string
 }
@@ -831,6 +833,8 @@ export interface IWidgetMapProps {
   trackEnabled?: boolean
   trackLength?: number
   markerTimeout?: number
+  /* Режим имитации: два объекта летают по маршруту, value и groups не учитываются */
+  isTest?: boolean
   collapsed?: boolean
   persistKey?: string
 }
