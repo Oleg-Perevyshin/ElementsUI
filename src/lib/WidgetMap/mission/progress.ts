@@ -15,6 +15,7 @@ export interface IMissionProgress {
   sprayTotal: number /* Всего с распылением, м */
   target: number /* Номер точки маршрута (с 1), к которой летит аппарат */
   total: number /* Точек маршрута */
+  finished: boolean /* Номер команды за концом миссии — миссия выполнена */
 }
 
 /* wpNum — номер команды, которую сейчас выполняет автопилот; если это служебная команда (скорость, распылитель), целью считается следующая точка */
@@ -31,8 +32,8 @@ export const missionProgress = (nav: IMissionNav[], wpNum: number | undefined, p
   if (total <= 0) return null
   let k = nav.findIndex((n) => n.seq >= wpNum)
   const sprayTotal = cumSpray[cumSpray.length - 1]
-  if (k === -1) return { fraction: 1, sprayDone: sprayTotal, sprayTotal, target: nav.length, total: nav.length }
-  if (k === 0) return { fraction: 0, sprayDone: 0, sprayTotal, target: 1, total: nav.length }
+  if (k === -1) return { fraction: 1, sprayDone: sprayTotal, sprayTotal, target: nav.length, total: nav.length, finished: true }
+  if (k === 0) return { fraction: 0, sprayDone: 0, sprayTotal, target: 1, total: nav.length, finished: false }
   /* Часть текущего отрезка: проекция положения аппарата на отрезок от прошлой точки к цели */
   const a = nav[k - 1].point
   const b = nav[k].point
@@ -49,5 +50,5 @@ export const missionProgress = (nav: IMissionNav[], wpNum: number | undefined, p
   }
   const done = cum[k - 1] + part * leg
   const sprayDone = cumSpray[k - 1] + (nav[k].spray ? part * leg : 0)
-  return { fraction: done / total, sprayDone, sprayTotal, target: k, total: nav.length }
+  return { fraction: done / total, sprayDone, sprayTotal, target: k, total: nav.length, finished: false }
 }

@@ -34,7 +34,7 @@
   let forConstructor = $state(false)
 
   /* Режим «Агро»: план сохраняется в браузере, отправка только имитируется — миссия выводится в консоль */
-  const PLAN_KEY = "WidgetMapAgroDemoPlan7"
+  const PLAN_KEY = "WidgetMapAgroDemoPlan8"
   const loadPlan = (): IMissionPlan => {
     try {
       const raw = localStorage.getItem(PLAN_KEY)
@@ -90,24 +90,9 @@ ${formatObjectToString(mapComponent.properties as IWidgetMapProps)}${mapMode ===
   {#snippet examples()}
     <div class="m-auto flex w-full max-w-4xl flex-col gap-6 p-2">
       <WidgetMap label={{ name: "Один объект, без данных" }} groups={["GPS"]} height={250} componentClass="bg-red" />
-      <div class="flex justify-end">
-        <button
-          class="cursor-pointer rounded-md border border-(--hairline-color) bg-transparent px-3 py-1 text-[12px]"
-          onclick={() => (plan = structuredClone(DEFAULT_MISSION_PLAN))}
-        >
-          Демо-поле заново
-        </button>
-      </div>
-      <WidgetMap mode="agro" bind:plan height={520} onSend={send} isTest />
-      <div class="flex justify-end">
-        <button
-          class="cursor-pointer rounded-md border border-(--hairline-color) bg-transparent px-3 py-1 text-[12px]"
-          onclick={() => (route = structuredClone(DEFAULT_ROUTE_PLAN))}
-        >
-          Демо-маршрут заново
-        </button>
-      </div>
-      <WidgetMap mode="route" bind:route height={520} onSend={send} isTest />
+      <!-- Без переданного плана, как в конструкторе DevCloud: виджет берёт демо-поле и демо-маршрут -->
+      <WidgetMap mode="agro" height={520} isTest />
+      <WidgetMap mode="route" height={520} isTest />
     </div>
   {/snippet}
 </ComponentExample>

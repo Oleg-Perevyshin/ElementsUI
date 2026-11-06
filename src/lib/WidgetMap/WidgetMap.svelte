@@ -15,6 +15,8 @@
   import FitIcon from "./FitIcon.svelte"
   import MapAgro from "./mission/MapAgro.svelte"
   import MapRoute from "./mission/MapRoute.svelte"
+  import { DEFAULT_MISSION_PLAN } from "./mission/plan"
+  import { DEFAULT_ROUTE_PLAN } from "./mission/route"
   import * as UI from ".."
   import { MapLibre, NavigationControl, ScaleControl, GeolocateControl, FullScreenControl, Marker, Popup, Line, CustomControl } from "./mapWrapper"
 
@@ -33,9 +35,10 @@
     collapsed = $bindable(false),
     persistKey,
     mode = "objects",
-    plan = $bindable(),
+    /* Значения по умолчанию обязательны: режимы получают их через bind:, а bind к undefined при запасном значении Svelte запрещает */
+    plan = $bindable(structuredClone(DEFAULT_MISSION_PLAN)),
     onPlanChange,
-    route = $bindable(),
+    route = $bindable(structuredClone(DEFAULT_ROUTE_PLAN)),
     onRouteChange,
     onSend,
   }: IWidgetMapProps = $props()

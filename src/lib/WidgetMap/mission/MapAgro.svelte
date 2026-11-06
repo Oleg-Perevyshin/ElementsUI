@@ -12,10 +12,11 @@
   import { MapLibre, NavigationControl, ScaleControl, FullScreenControl } from "../mapWrapper"
   import MissionLayers from "./MissionLayers.svelte"
   import MissionSim from "./MissionSim.svelte"
+  import SpinnerIcon from "./SpinnerIcon.svelte"
   import { missionProgress } from "./progress"
   import MissionIcon from "./MissionIcon.svelte"
   import ArrowIcon from "../../libIcons/ArrowIcon.svelte"
-  import { planFields, bestFieldAngle, toMission, fieldArea, fieldsArea, type LngLat, type SprayControl } from "./coverage"
+  import { planFields, bestFieldAngle, searchFieldAngle, toMission, fieldArea, fieldsArea, type LngLat, type SprayControl } from "./coverage"
   import { DEFAULT_MISSION_PLAN, type IMissionPlan } from "./plan"
 
   /* Режим «Агро» карты: часть пропсов WidgetMap */
@@ -39,7 +40,7 @@
     componentClass = "",
     label = {},
     height = 520,
-    plan = $bindable({ ...DEFAULT_MISSION_PLAN }),
+    plan = $bindable(structuredClone(DEFAULT_MISSION_PLAN)),
     collapsed = $bindable(false),
     persistKey,
     overlay,
@@ -95,11 +96,11 @@
   }
   const finishDraw = () => {
     if (draft.length >= 3) {
-      if (mode === "field")
-        update({
-          fields: [...fieldList, { contour: draft, angle: bestFieldAngle(draft, plan.holes, plan.spacing, plan.margin) }],
-          start: plan.start ?? draft[0],
-        })
+      if (mode === "field") {
+        const contour = draft
+        update({ fields: [...fieldList, { contour, angle: bestFieldAngle(contour, plan.holes, plan.spacing, plan.margin) }], start: plan.start ?? contour[0] })
+        searchAngles([contour])
+      }
       if (mode === "hole") update({ holes: [...plan.holes, draft] })
     }
     draft = []
@@ -189,9 +190,22 @@
     }),
   )
 
-  const autoAngle = () => {
-    update({ fields: fieldList.map((f) => ({ ...f, angle: bestFieldAngle(f.contour, plan.holes, plan.spacing, plan.margin) })) })
+  /* Подбор угла полным расчётом приближениями (searchFieldAngle): поля по очереди, угол поля обновляется сразу после его подбора; на кнопке и карте колесо ожидания с процентом */
+  let searching: number | null = $state(null)
+  const searchAngles = async (contours: LngLat[][]) => {
+    if (searching !== null || !contours.length) return
+    searching = 0
+    try {
+      for (const [k, contour] of contours.entries()) {
+        const angle = await searchFieldAngle(contour, plan.holes, plan.spacing, plan.margin, plan.speed, (f) => (searching = (k + f) / contours.length))
+        /* Контур могли изменить или удалить, пока шёл подбор — тогда угол не ставится */
+        if (fieldList.some((f) => f.contour === contour)) update({ fields: fieldList.map((f) => (f.contour === contour ? { ...f, angle } : f)) })
+      }
+    } finally {
+      searching = null
+    }
   }
+  const autoAngle = () => searchAngles(fieldList.filter((f) => f.contour.length >= 3).map((f) => f.contour))
 
   let stats = $derived.by(() => {
     const area = fieldsArea(fields, plan.holes)
@@ -517,6 +531,16 @@
             onCursor={(ll) => (cursor = ll)}
           />
           {@render overlay?.()}
+          {#if searching !== null}
+            <!-- Колесо ожидания поверх карты, пока подбирается угол -->
+            <div class="pointer-events-none absolute inset-0 z-10 flex items-center justify-center">
+              <div class="flex items-center gap-2 rounded-xl bg-white/90 px-4 py-2 text-[13px] font-semibold text-black shadow-lg tabular-nums">
+                <span class="size-6 text-(--accent-color)"><SpinnerIcon /></span>
+                {$T("widget.mission.searching")}
+                {Math.round(searching * 100)}%
+              </div>
+            </div>
+          {/if}
           {#if simulate}
             <MissionSim path={simPath} showSpray icon="quad" bind:progress={simProgress} />
           {/if}
@@ -555,7 +579,7 @@
                     wrapperClass="w-auto"
                     componentClass="bg-blue"
                     content={{ name: $T("widget.mission.auto"), info: { text: $T("widget.mission.autoHint"), side: "top" } }}
-                    disabled={!hasField}
+                    disabled={!hasField || searching !== null}
                     onClick={autoAngle}
                   />
                 </div>

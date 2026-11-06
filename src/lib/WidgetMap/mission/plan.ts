@@ -28,7 +28,7 @@ export interface IMissionPlan {
 export const DEFAULT_MISSION_PLAN: IMissionPlan = {
   fields: [
     {
-      angle: 24.5,
+      angle: 22.7,
       contour: [
         [27.458515, 53.888433],
         [27.458569, 53.888949],
@@ -49,7 +49,7 @@ export const DEFAULT_MISSION_PLAN: IMissionPlan = {
       ],
     },
     {
-      angle: 5,
+      angle: 12.1,
       contour: [
         [27.463107, 53.888261],
         [27.464298, 53.888191],

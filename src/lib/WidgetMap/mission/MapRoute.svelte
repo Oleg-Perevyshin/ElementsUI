@@ -270,7 +270,11 @@
               ><span class="block h-full rounded-full bg-(--accent-color)" style="width: {Math.round(headerProgress * 100)}%"></span></span
             >
             {Math.round(headerProgress * 100)}%{#if live}
-              · {live.target > route.points.length ? $T("widget.route.returning") : `${$T("widget.route.toPoint")} ${live.target}/${route.points.length}`}{/if}
+              · {live.finished
+                ? $T("widget.route.finished")
+                : live.target > route.points.length
+                  ? $T("widget.route.returning")
+                  : `${$T("widget.route.toPoint")} ${live.target}/${route.points.length}`}{/if}
           </span>
         {/if}
         <span>{stats.points} {$T("widget.route.pts")} · {km(stats.length)}</span>

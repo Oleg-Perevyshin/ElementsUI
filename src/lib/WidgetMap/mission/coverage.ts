@@ -768,6 +768,64 @@ export const planFields = (input: IFieldsInput): ICoverageResult | null => {
 export const bestFieldAngle = (contour: LngLat[], holes: LngLat[][], spacing: number, margin: number) =>
   Math.round(optimizeAngle({ field: contour, holes: holesOf(contour, holes), angle: 0, spacing, margin }) * 2) / 2
 
+/* Подбор угла поля приближениями по полному расчёту траектории: шаг 5° по всем 180° и направления сторон поля, затем шаг 1° около трёх лучших, затем 0.1° около победителя. Мерило — время облёта: путь со скоростью плюс около 4 с на разворот, недопокрытая площадь штрафуется. Считается частями, чтобы интерфейс не замирал */
+export const searchFieldAngle = async (
+  contour: LngLat[],
+  holes: LngLat[][],
+  spacing: number,
+  margin: number,
+  speed: number,
+  onProgress?: (fraction: number) => void,
+) => {
+  const own = holesOf(contour, holes)
+  const area = fieldArea(contour, own)
+  const norm = (a: number) => Math.round((((a % 180) + 180) % 180) * 10) / 10
+  const cache = new Map<number, number>()
+  const cost = (a: number) => {
+    const key = norm(a)
+    const hit = cache.get(key)
+    if (hit !== undefined) return hit
+    const r = planCoverage({ field: contour, holes: own, angle: key, spacing, margin })
+    /* Недопокрытая площадь штрафуется: недолитый метр прохода стоит как трёхкратный полёт по нему — за ним пришлось бы возвращаться */
+    const missed = r ? Math.max(0, area / spacing - r.sprayLength) : 0
+    const c = r ? (r.sprayLength + r.turnLength + r.transitLength + missed * 3) / Math.max(0.1, speed) + r.turns * 4 + r.unreachable * 1e6 : Infinity
+    cache.set(key, c)
+    return c
+  }
+  const yieldUi = () => new Promise((r) => setTimeout(r, 0))
+  /* Направления сторон поля: вдоль длинной стороны проходы часто ложатся лучше всего */
+  const kLon = Math.cos(((contour[0]?.[1] ?? 0) * Math.PI) / 180)
+  const edges = contour.map((p, i) => {
+    const q = contour[(i + 1) % contour.length]
+    return norm((Math.atan2((q[0] - p[0]) * kLon, q[1] - p[1]) * 180) / Math.PI)
+  })
+  const coarse = [...new Set([...Array.from({ length: 36 }, (_, i) => i * 5), ...edges])]
+  const stages = coarse.length + 3 * 9 + 11
+  let done = 0
+  const run = async (angles: number[]) => {
+    for (const a of angles) {
+      cost(a)
+      done++
+      onProgress?.(Math.min(1, done / stages))
+      await yieldUi()
+    }
+  }
+  await run(coarse)
+  /* Три лучших диапазона, не ближе 5° друг к другу */
+  const ranked = [...coarse].sort((a, b) => cost(a) - cost(b))
+  const seeds: number[] = []
+  for (const a of ranked) {
+    if (seeds.every((b) => Math.min(Math.abs(a - b), 180 - Math.abs(a - b)) >= 5)) seeds.push(a)
+    if (seeds.length === 3) break
+  }
+  await run(seeds.flatMap((sd) => Array.from({ length: 9 }, (_, i) => norm(sd - 4 + i))))
+  let best = [...cache.entries()].reduce((m, e) => (e[1] < m[1] ? e : m))[0]
+  await run(Array.from({ length: 11 }, (_, i) => norm(best - 0.5 + i * 0.1)))
+  best = [...cache.entries()].reduce((m, e) => (e[1] < m[1] ? e : m))[0]
+  onProgress?.(1)
+  return best
+}
+
 /* ********************************************************** */
 /* Миссия в формате QGC WPL 110 (Mission Planner, QGroundControl): точка дома, скорость, точки маршрута; распыление включается в начале прохода и выключается в конце */
 
