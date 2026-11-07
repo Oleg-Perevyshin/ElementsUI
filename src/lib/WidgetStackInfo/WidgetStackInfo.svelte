@@ -78,8 +78,6 @@
   }
   const percentColor = (p: number) => (p >= 90 ? "var(--red-color)" : p >= 75 ? "var(--orange-color)" : "var(--muted-color)")
 
-  /* Имена задач приходят с устройства, а Table выводит ячейки через {@html} - экранируем */
-  const escapeHtml = (text: string) => text.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`)
   let STATES = $derived(["running", "ready", "blocked", "suspended", "deleted"].map((state) => $T(`widget.stack.state.${state}`)))
   const stackColor = (bytes: number) => (bytes < warnBytes ? "var(--red-color)" : bytes < warnBytes * 2 ? "var(--orange-color)" : "")
 
@@ -97,7 +95,7 @@
       const color = stackColor(t.FreeMin)
       const cpu = t.CPU === undefined ? "" : t.CPU.toFixed(1)
       return {
-        Name: escapeHtml(t.Name),
+        Name: t.Name,
         StateText: STATES[t.State] ?? "-",
         Prio: t.Prio,
         CoreText: t.Core === undefined ? "" : t.Core < 0 ? $T("widget.stack.core_any") : String(t.Core),
@@ -124,13 +122,13 @@
       ? [
           {
             label: { name: $T("widget.stack.cpu") },
-            content: [{ type: "text", data: { key: "CpuText" } }],
+            content: [{ type: "text", data: { key: "CpuText", html: true } }],
             width: "5.5rem",
             align: "right",
           } as ITableHeader<TaskRow>,
         ]
       : []),
-    { label: { name: $T("widget.stack.free_min") }, content: [{ type: "text", data: { key: "FreeMinText" } }], width: "6rem", align: "right" },
+    { label: { name: $T("widget.stack.free_min") }, content: [{ type: "text", data: { key: "FreeMinText", html: true } }], width: "6rem", align: "right" },
   ])
 </script>
 

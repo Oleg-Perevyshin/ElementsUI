@@ -406,6 +406,9 @@ export interface ITableText<T extends object> {
   sortable?: boolean
   truncated?: boolean
   tooltip?: boolean
+  /* Значение ячейки - готовый HTML (вызывающий сам экранирует данные); по умолчанию выводится как текст */
+  html?: boolean
+  /* Результат - HTML для окна и подсказки: функция сама экранирует текст */
   formatting?: (text: string) => string
   copy?: boolean
   modal?: boolean

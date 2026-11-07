@@ -203,7 +203,7 @@ export function formatXPoeDebugModal(text: string): string {
   const hexIndex = text.lastIndexOf(separator)
   const hex = hexIndex < 0 ? "" : text.slice(hexIndex + separator.length)
   const pretty = hex ? formatXPoeDebugPrettyHtml(hex) : null
-  const decoded = pretty === null ? (hexIndex < 0 ? text : text.slice(0, hexIndex)) : pretty
+  const decoded = pretty === null ? escapeHtml(hexIndex < 0 ? text : text.slice(0, hexIndex)) : pretty
   const modalStyle = "display:flex;flex-direction:column;gap:.75rem;max-height:80vh;min-width:0;overflow-y:auto;overflow-x:hidden"
   const sectionStyle = "min-width:0;padding:.25rem 0 .75rem"
   const headingStyle = "display:flex;align-items:center;justify-content:space-between;gap:.75rem;margin:0 0 .5rem;font-weight:600"
@@ -214,5 +214,5 @@ export function formatXPoeDebugModal(text: string): string {
   const textStyle = "display:block;min-width:0;max-width:100%;margin:0;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;font:inherit"
   const pane = (title: string, target: string, value: string) =>
     `<section style="${sectionStyle}"><div style="${headingStyle}"><span>${title}</span><button type="button" class="${buttonClass}" data-xpoe-copy="${target}" aria-label="Копировать ${title}" style="${buttonStyle}">${COPY_ICON}</button></div><pre style="${textStyle}">${value}</pre></section>`
-  return `<div data-xpoe-debug-modal style="${modalStyle}">${pane("Value", "value", decoded)}${hexIndex < 0 ? "" : pane("HEX", "hex", hex)}</div>`
+  return `<div data-xpoe-debug-modal style="${modalStyle}">${pane("Value", "value", decoded)}${hexIndex < 0 ? "" : pane("HEX", "hex", escapeHtml(hex))}</div>`
 }

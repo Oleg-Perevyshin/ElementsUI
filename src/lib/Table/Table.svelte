@@ -8,6 +8,7 @@
   import { T } from "../locales/i18n"
   import { Button, Modal } from ".."
   import CopiedChip from "../CopiedChip.svelte"
+  import { escapeHtml, htmlToText } from "../html"
 
   let {
     id = crypto.randomUUID(),
@@ -150,18 +151,21 @@
     }, 250)
   }
 
+  /* Текст ячейки: из HTML-ячейки берётся видимый текст, formatting получает его и возвращает HTML */
+  const cellText = (value: unknown, html?: boolean) => (html ? htmlToText(String(value ?? "")) : String(value ?? ""))
+
   const showModal = async (text: string, formatting?: (text: string) => string) => {
     modalData = {
       isOpen: true,
       rawData: text,
-      formattedData: formatting ? formatting(text) : (text ?? ""),
+      formattedData: formatting ? formatting(text) : escapeHtml(text),
     }
   }
 
   const showTooltip = (event: MouseEvent, text: string, formatting?: (text: string) => string) => {
     tooltip = {
       show: true,
-      text: formatting ? formatting(text) : (text ?? ""),
+      text: formatting ? htmlToText(formatting(text)) : text,
       x: event.clientX,
       y: event.clientY,
     }
@@ -442,7 +446,7 @@
                         <div class="flex w-full min-w-0 items-center">
                           <div
                             class="w-full max-w-full min-w-0 wrap-break-word {text?.truncated ? 'truncate' : ' whitespace-normal'}"
-                            onmouseenter={text?.tooltip ? (e) => showTooltip(e, row[text?.key ?? ""], text?.formatting) : undefined}
+                            onmouseenter={text?.tooltip ? (e) => showTooltip(e, cellText(row[text?.key ?? ""], text?.html), text?.formatting) : undefined}
                             onmouseleave={() => (text?.tooltip ? (tooltip.show = false) : undefined)}
                             onmousemove={text?.tooltip
                               ? (e) => {
@@ -458,13 +462,15 @@
                                 class="cursor-pointer text-left {text?.truncated ? 'block w-full max-w-full truncate' : 'w-fit'}"
                                 onclick={(e) => {
                                   e.stopPropagation()
-                                  showModal(data.replace(/<[^>]*>/g, ""), text?.formatting)
+                                  showModal(cellText(data, text?.html), text?.formatting)
                                 }}
                               >
-                                {@html data}
+                                {#if text?.html}{@html data}{:else}{data}{/if}
                               </button>
-                            {:else}
+                            {:else if text?.html}
                               {@html data}
+                            {:else}
+                              {data}
                             {/if}
                           </div>
 
@@ -473,7 +479,7 @@
                               class="ml-1.5 flex size-5 shrink-0 cursor-pointer items-center justify-center rounded border-none bg-transparent text-(--faint-color) transition-colors duration-150 hover:bg-(--container-color) hover:text-(--font-color)"
                               onclick={(e) => {
                                 e.preventDefault()
-                                navigator.clipboard.writeText(row[text?.key ?? ""].replace(/<[^>]*>/g, ""))
+                                navigator.clipboard.writeText(cellText(row[text?.key ?? ""], text?.html))
                                 copiedCell = { x: j, y: i }
                                 setTimeout(() => (copiedCell = null), 1000)
                               }}
@@ -514,7 +520,7 @@
         transition:fly={{ y: 8, duration: 200 }}
         role="tooltip"
       >
-        {@html tooltip.text.replace(/<[^>]*>/g, "")}
+        {tooltip.text}
       </div>
     {/if}
     <!-- Нижнее поле для сводной информации -->

@@ -12,7 +12,7 @@ export const xPoeDebugTableColumns: ITableHeader<XPoeDebugRow>[] = [
   { label: { name: "ARG" }, content: [{ type: "text", data: { key: "argument" } }], width: tableMonoWidth(16, 3), align: "left" },
   {
     label: { name: "VALUE" },
-    content: [{ type: "text", data: { key: "value", truncated: true, formatting: formatXPoeDebugModal, copy: true, modal: true } }],
+    content: [{ type: "text", data: { key: "value", html: true, truncated: true, formatting: formatXPoeDebugModal, copy: true, modal: true } }],
     width: "1fr",
     align: "left",
   },
