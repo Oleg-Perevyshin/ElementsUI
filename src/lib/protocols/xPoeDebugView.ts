@@ -49,12 +49,12 @@ const hexRows = (bytes: Uint8Array): string => (bytesToHex(bytes).match(/.{1,48}
 /* Цвета развёрнутого вида - палитра темы: ключи, строки, числа, логические, null, байты */
 type PrettyKind = "key" | "string" | "number" | "boolean" | "null" | "bytes"
 const PRETTY_COLORS: Record<PrettyKind, string> = {
-  key: "--pink-color",
-  string: "--purple-color",
-  number: "--red-color",
-  boolean: "--orange-color",
-  null: "--cyan-color",
-  bytes: "--green-color",
+  key: "--pink-text",
+  string: "--purple-text",
+  number: "--red-text",
+  boolean: "--orange-text",
+  null: "--cyan-text",
+  bytes: "--green-text",
 }
 type Paint = (kind: PrettyKind, text: string) => string
 const plain: Paint = (_kind, text) => text

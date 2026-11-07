@@ -6,10 +6,10 @@
   import { T } from "../../locales/i18n"
   import WidgetHeader from "../../WidgetHeader.svelte"
   import { hint, hintsSetting } from "../../hints"
-  import { widgetAccentStyle } from "../../widgetAccent"
+  import { readMapColors, widgetAccentStyle, type IMapColors } from "../../widgetAccent"
   import { readPersistedCollapsed, writePersistedCollapsed } from "../../widgetCollapse"
   import * as UI from "../.."
-  import { MapLibre, NavigationControl, ScaleControl, FullScreenControl } from "../mapWrapper"
+  import { MapLibre, NavigationControl, ScaleControl, FullScreenControl, CustomControl } from "../mapWrapper"
   import MissionLayers from "./MissionLayers.svelte"
   import MissionSim from "./MissionSim.svelte"
   import { missionProgress } from "./progress"
@@ -61,9 +61,11 @@
   })
   $effect(() => writePersistedCollapsed(persistKey, collapsed))
 
+  /* Пока тянут точку, маршрут наружу не отдаётся: владелец получает его один раз, когда точку отпустили */
+  let dragging = false
   const update = (patch: Partial<IRoutePlan>) => {
     route = { ...route, ...patch }
-    onRouteChange?.(route)
+    if (!dragging) onRouteChange?.(route)
   }
 
   /* ********************************************************** */
@@ -83,6 +85,7 @@
   /* Ручки: w:i - точка, x:i - середина отрезка от точки i к следующей, s - точка взлёта */
   let inserted: { id: string; index: number } | null = null
   const onDrag = (id: string, ll: LngLat) => {
+    dragging = true
     const [kind, i] = id.split(":")
     if (kind === "s") return update({ start: ll })
     const idx = Number(i)
@@ -100,7 +103,11 @@
     selected = inserted.index
     update({ points: pts })
   }
-  const onDragEnd = () => (inserted = null)
+  const onDragEnd = () => {
+    inserted = null
+    dragging = false
+    onRouteChange?.(route)
+  }
 
   const removePoint = (i: number) => {
     update({ points: route.points.filter((_, k) => k !== i) })
@@ -220,10 +227,21 @@
     window.addEventListener("ThemeChange", detectTheme)
     return () => window.removeEventListener("ThemeChange", detectTheme)
   })
+  /* Цвета слоёв карты перечитываются при смене мастер-цвета и темы */
+  let mapColors = $state<IMapColors>(readMapColors(undefined))
+  $effect(() => {
+    void accentStyle
+    void isDarkMode
+    mapColors = readMapColors(rootEl)
+  })
 
   const fmt = (v: number, d = 1) => v.toLocaleString(undefined, { minimumFractionDigits: d, maximumFractionDigits: d })
-  const modeBtn =
-    "flex cursor-pointer items-center gap-2 rounded-lg border border-solid px-3 py-1.5 text-[13px] font-semibold whitespace-nowrap text-(--font-color) transition disabled:cursor-not-allowed disabled:opacity-50"
+  /* Кнопки панели на карте: стили кнопок MapLibre (размер 29px, прозрачный фон, без рамки) перебиваются */
+  const mapBtn =
+    "flex! h-auto! w-auto! cursor-pointer items-center gap-2 rounded-md! border! border-solid! px-2.5! py-1! text-[12px] font-semibold whitespace-nowrap text-(--font-color) transition disabled:cursor-not-allowed disabled:opacity-50"
+  const mapBtnIdle = "border-(--hairline-color)! bg-(--back-color)! hover:border-(--accent-color)!"
+  const mapBtnOn = "border-(--accent-color)! bg-[color-mix(in_srgb,var(--accent-color)_15%,var(--back-color))]!"
+  const mapBtnMain = "border-(--accent-color)! bg-(--accent-color)! text-(--on-accent)!"
   type Section = "summary"
   let open = $state<Record<Section, boolean>>({ summary: false })
   /* Сетка строки точки: ручка, номер, высота, скорость, расстояние от прошлой, удаление */
@@ -284,27 +302,6 @@
 
   {#if !collapsed}
     <div transition:slide={{ duration: 150 }} class="flex flex-col gap-4">
-      <!-- Добавление точек и подсказка -->
-      <div class="flex flex-col gap-2">
-        <div class="flex flex-wrap items-center gap-2">
-          <button
-            class="{modeBtn} {adding
-              ? 'border-(--accent-color) bg-(--accent-color)/15'
-              : 'border-(--hairline-color) bg-(--back-color) hover:border-(--accent-color)'}"
-            onclick={() => (adding = !adding)}
-            use:hint={{ text: $T("widget.route.hint.add"), enabled: $hints }}
-          >
-            <span class="size-3 shrink-0 rounded-full border-2 border-white bg-[#2563eb] outline outline-[#2563eb]"></span>
-            {$T("widget.route.add")}
-          </button>
-          {#if adding}
-            <button class="{modeBtn} ml-auto border-(--green-color) bg-(--green-color) text-white" onclick={() => (adding = false)}
-              >{$T("widget.mission.finish")}</button
-            >
-          {/if}
-        </div>
-      </div>
-
       <div style="height: {height}px">
         <MapLibre
           bind:map={mapInstance}
@@ -319,6 +316,22 @@
           <NavigationControl />
           <ScaleControl />
           <FullScreenControl />
+          <!-- Редактор точек прямо на карте -->
+          <CustomControl position="top-left">
+            <div class="flex flex-wrap items-center gap-1.5 rounded-[4px] bg-(--back-color) p-1.5">
+              <button
+                class="{mapBtn} {adding ? mapBtnOn : mapBtnIdle}"
+                onclick={() => (adding = !adding)}
+                use:hint={{ text: $T("widget.route.hint.add"), enabled: $hints }}
+              >
+                <span class="size-3 shrink-0 rounded-full border-2 border-white bg-(--accent-color) outline outline-(--accent-color)"></span>
+                {$T("widget.route.add")}
+              </button>
+              {#if adding}
+                <button class="{mapBtn} {mapBtnMain}" onclick={() => (adding = false)}>{$T("widget.mission.finish")}</button>
+              {/if}
+            </div>
+          </CustomControl>
           <MissionLayers
             zones={empty}
             path={pathGeo}
@@ -330,11 +343,12 @@
             {onDrag}
             {onDragEnd}
             {onHandleRightClick}
+            colors={mapColors}
             onCursor={() => {}}
           />
           {@render overlay?.()}
           {#if simulate}
-            <MissionSim path={legs.nodes} bind:progress={simProgress} />
+            <MissionSim path={legs.nodes} colors={mapColors} bind:progress={simProgress} />
           {/if}
         </MapLibre>
       </div>
@@ -346,22 +360,27 @@
           $T("widget.mission.summary"),
           [
             `${$T("widget.route.s.points")} ${stats.points}`,
+            `${$T("widget.route.s.maxAlt")} ${stats.maxAlt} ${$T("widget.mission.m")}`,
             `${$T("widget.mission.s.path")} ${km(stats.length)}`,
             `${$T("widget.mission.s.time")} ${fmt(stats.timeMin, 0)} ${$T("widget.mission.min")}`,
-            `${$T("widget.route.s.maxAlt")} ${stats.maxAlt} ${$T("widget.mission.m")}`,
           ].join(" · "),
         )}
         {#if open.summary}
           <!-- Сверху расчёт, ниже точки на всю ширину: у каждой высота и скорость -->
           <div class="flex flex-col gap-3" transition:slide={{ duration: 150 }}>
-            <div class="grid grid-cols-2 gap-x-4 gap-y-1.5 rounded-lg bg-(--container-color) p-3 text-[13px] tabular-nums">
-              <span class="text-(--muted-color)">{$T("widget.route.points")}</span><span class="text-right font-semibold">{stats.points}</span>
-              <span class="text-(--muted-color)">{$T("widget.mission.totalLen")}</span><span class="text-right font-semibold">{km(stats.length)}</span>
-              <span class="text-(--muted-color)" use:hint={{ text: $T("widget.route.hint.time"), enabled: $hints }}>{$T("widget.mission.time")}</span>
-              <span class="text-right font-semibold">{fmt(stats.timeMin, 0)} {$T("widget.mission.min")}</span>
-              <span class="text-(--muted-color)">{$T("widget.route.maxAlt")}</span><span class="text-right font-semibold"
-                >{stats.maxAlt} {$T("widget.mission.m")}</span
-              >
+            <!-- Расчёт в два столбца через вертикальный разделитель: слева точки и высота, справа путь и время -->
+            <div class="grid grid-cols-2 divide-x divide-(--border-color) rounded-lg bg-(--container-color) py-3 text-[13px] tabular-nums">
+              <div class="grid grid-cols-[1fr_auto] gap-x-4 gap-y-1.5 px-3">
+                <span class="text-(--muted-color)">{$T("widget.route.points")}</span><span class="text-right font-semibold">{stats.points}</span>
+                <span class="text-(--muted-color)">{$T("widget.route.maxAlt")}</span><span class="text-right font-semibold"
+                  >{stats.maxAlt} {$T("widget.mission.m")}</span
+                >
+              </div>
+              <div class="grid grid-cols-[1fr_auto] gap-x-4 gap-y-1.5 px-3">
+                <span class="text-(--muted-color)">{$T("widget.mission.totalLen")}</span><span class="text-right font-semibold">{km(stats.length)}</span>
+                <span class="text-(--muted-color)" use:hint={{ text: $T("widget.route.hint.time"), enabled: $hints }}>{$T("widget.mission.time")}</span>
+                <span class="text-right font-semibold">{fmt(stats.timeMin, 0)} {$T("widget.mission.min")}</span>
+              </div>
             </div>
             <span class="text-[11px] font-semibold tracking-wide text-(--faint-color) uppercase">{$T("widget.route.points")}</span>
             {#if route.points.length}
@@ -374,13 +393,14 @@
                 <span class="text-right whitespace-nowrap">{$T("widget.route.leg")}</span>
                 <span></span>
               </div>
-              <div bind:this={listEl} class="flex flex-col gap-2 text-[13px] tabular-nums">
+              <!-- Строки списком с разделителями; выше семи строк список прокручивается -->
+              <div
+                bind:this={listEl}
+                class="flex max-h-[17.5rem] flex-col divide-y divide-(--hairline-color) overflow-y-auto rounded-lg border border-(--hairline-color) bg-(--container-color)/60 text-[13px] tabular-nums"
+              >
                 {#each route.points as p, i}
                   {@const leg = legs.legs[route.start ? i : i - 1]}
-                  <div
-                    id="item-{i}-{listId}"
-                    class="grid {ROW_GRID} items-center gap-x-3 rounded-lg border border-(--hairline-color) bg-(--container-color)/60 px-2 py-1.5"
-                  >
+                  <div id="item-{i}-{listId}" class="grid {ROW_GRID} items-center gap-x-3 px-2 py-1">
                     <UI.Dragging
                       wrapperClass="size-5"
                       container={listEl!}
@@ -390,10 +410,10 @@
                       onUpdate={(arr) => update({ points: [...arr] })}
                     />
                     <button
-                      class="flex size-6 cursor-pointer items-center justify-center rounded-full border-none text-[11px] font-semibold text-white {selected ===
+                      class="flex size-6 cursor-pointer items-center justify-center rounded-full border-none bg-(--accent-color) text-[11px] font-semibold text-(--on-accent) {selected ===
                       i
-                        ? 'bg-(--accent-color)'
-                        : 'bg-[#2563eb]'}"
+                        ? 'ring-2 ring-(--font-color) ring-offset-1 ring-offset-(--back-color)'
+                        : ''}"
                       onclick={() => {
                         selected = i
                         mapInstance?.easeTo({ center: p.point, duration: 300 })
@@ -436,11 +456,11 @@
       <!-- Выгрузка миссии -->
       <div class="grid grid-cols-3 gap-3">
         <div class="min-w-0" use:hint={{ text: $T("widget.mission.hint.download"), enabled: $hints }}>
-          <UI.Button componentClass="bg-blue" content={{ name: $T("widget.mission.download") }} disabled={!route.points.length} onClick={download} />
+          <UI.Button componentClass="bg-accent" content={{ name: $T("widget.mission.download") }} disabled={!route.points.length} onClick={download} />
         </div>
         <div class="min-w-0" use:hint={{ text: $T("widget.mission.hint.copy"), enabled: $hints }}>
           <UI.Button
-            componentClass="bg-blue"
+            componentClass="bg-accent"
             content={{ name: copied ? $T("widget.mission.copied") : $T("widget.mission.copy") }}
             disabled={!route.points.length}
             onClick={copy}
@@ -448,7 +468,7 @@
         </div>
         <div class="min-w-0" use:hint={{ text: $T("widget.mission.hint.send"), enabled: $hints }}>
           <UI.Button
-            componentClass={sendState === "error" ? "bg-red" : "bg-blue"}
+            componentClass={sendState === "error" ? "bg-red" : "bg-accent"}
             content={{ name: $T(`widget.mission.send.${sendState}`) }}
             disabled={!route.points.length || !onSend || sendState === "busy"}
             onClick={send}

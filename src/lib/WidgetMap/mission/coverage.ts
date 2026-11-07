@@ -497,13 +497,25 @@ const makeProjection = (field: LngLat[], angleDeg: number) => {
   return { fwd, inv, kLat, kLon }
 }
 
-/* Площадь поля без зон, м² (зоны, частично выходящие за поле, считаются целиком - приближение) */
+/* Площадь поля без зон, м²: сумма свободных отрезков по полосам 0.2 м, поэтому зона за краем поля и наложенные зоны считаются верно */
 export const fieldArea = (field: LngLat[], holes: LngLat[][]) => {
   if (field.length < 3) return 0
   const { fwd } = makeProjection(field, 0)
-  const outer = Math.abs(ringArea(field.map(fwd)))
-  const inner = holes.filter((h) => h.length >= 3).reduce((s, h) => s + Math.abs(ringArea(h.map(fwd))), 0)
-  return Math.max(0, outer - inner)
+  const ring = field.map(fwd)
+  const rings = holes.filter((h) => h.length >= 3).map((h) => h.map(fwd))
+  const ys = ring.map((p) => p[1])
+  const lo = Math.min(...ys)
+  const span = Math.max(...ys) - lo
+  if (span <= 0) return 0
+  const n = Math.min(5000, Math.max(200, Math.ceil(span / 0.2)))
+  const h = span / n
+  let area = 0
+  for (let k = 0; k < n; k++) {
+    const y = lo + (k + 0.5) * h
+    const free = subtractSets(ringIntervals(ring, y), unionSets(rings.map((r) => ringIntervals(r, y))))
+    area += free.reduce((s, [a, b]) => s + (b - a), 0) * h
+  }
+  return area
 }
 
 /* ********************************************************** */
@@ -692,8 +704,17 @@ const insideRing = (pt: LngLat, ring: LngLat[]) => {
 }
 const centroid = (ring: LngLat[]): LngLat => [ring.reduce((s, p) => s + p[0], 0) / ring.length, ring.reduce((s, p) => s + p[1], 0) / ring.length]
 
-/* Зоны, центр которых лежит внутри поля */
-export const holesOf = (field: LngLat[], holes: LngLat[][]) => holes.filter((h) => h.length >= 3 && insideRing(centroid(h), field))
+/* Зоны, которые задевают поле: вершина одного контура внутри другого или пересечение сторон; зона может выступать за край поля */
+const ringsTouch = (a: LngLat[], b: LngLat[]) => {
+  if (a.some((p) => insideRing(p, b)) || b.some((p) => insideRing(p, a))) return true
+  for (let i = 0; i < a.length; i++) {
+    const a1 = a[i] as P
+    const a2 = a[(i + 1) % a.length] as P
+    for (let j = 0; j < b.length; j++) if (segmentsCross(a1, a2, b[j] as P, b[(j + 1) % b.length] as P)) return true
+  }
+  return false
+}
+export const holesOf = (field: LngLat[], holes: LngLat[][]) => holes.filter((h) => h.length >= 3 && ringsTouch(h, field))
 
 /* Площадь всех полей без их зон, м² */
 export const fieldsArea = (fields: LngLat[][], holes: LngLat[][]) => fields.reduce((s, f) => s + fieldArea(f, holesOf(f, holes)), 0)

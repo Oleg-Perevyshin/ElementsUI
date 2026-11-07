@@ -14,13 +14,16 @@
     onUpdate: (value: string) => void
     wrapperClass?: string
   } = $props()
+
+  /* bg-max не показываем: без выбора виджет и так синий, это цвет по умолчанию */
+  const options = $derived($optionsStore.COLOR_OPTIONS.filter((o) => o.value !== "bg-max"))
 </script>
 
 <Select
   {wrapperClass}
   label={{ name: $T("ui.accent") }}
   type="buttons"
-  options={$optionsStore.COLOR_OPTIONS}
-  value={$optionsStore.COLOR_OPTIONS.find((o) => o.value === value) ?? $optionsStore.COLOR_OPTIONS[0]}
+  {options}
+  value={options.find((o) => o.value === value) ?? options.find((o) => o.value === "bg-blue")}
   onUpdate={(option) => onUpdate((option as IOption<string>).value ?? "")}
 />

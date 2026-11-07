@@ -29,9 +29,11 @@
   <div class="overflow-hidden rounded-[14px] border border-(--hairline-color) bg-(--back-color)">
     <!-- Фон заголовка - мягкий оттенок мастер-цвета (светлый в светлой теме, тёмный в тёмной), текст - мастер-цвет с цветом шрифта 60/40, раскрытое содержимое остаётся на чистом фоне (--back-color). -->
     <!-- Заголовок: кнопка сворачивания на всю ширину и необязательные кнопки справа (actions) - вне неё, чтобы не сворачивать блок -->
-    <div class="flex w-full items-center bg-(--accent-soft)">
+    <div
+      class="flex w-full items-center bg-(--accent-soft) transition-colors duration-150 hover:bg-[color-mix(in_srgb,var(--accent-color)_12%,var(--accent-soft))]"
+    >
       <button
-        class="flex min-w-0 flex-1 cursor-pointer items-center justify-between gap-3 px-4 py-3 text-left text-[color-mix(in_srgb,var(--accent-color)_35%,var(--font-color))] transition-colors duration-150 hover:bg-[color-mix(in_srgb,var(--accent-color)_12%,var(--accent-soft))]"
+        class="flex min-w-0 flex-1 cursor-pointer items-center justify-between gap-3 px-4 py-3 text-left text-[color-mix(in_srgb,var(--accent-color)_35%,var(--font-color))]"
         onclick={toggle}
       >
         <div class="flex min-w-0 flex-1 items-center gap-3">

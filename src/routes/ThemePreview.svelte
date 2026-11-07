@@ -236,14 +236,16 @@ Telemetry_SendObject(g_telemetry_stream, g_mcfg.DevSN, "Data", mav, sizeof(mav) 
         <div class="flex flex-col gap-1">
           <div class="h-8 rounded-lg" style="background: var(--{role}-color)"></div>
           <div class="h-4 rounded-md" style="background: var(--{role}-soft)"></div>
+          <div class="h-1.5 rounded-full" style="background: var(--{role}-mark)"></div>
+          <span class="text-[11px] font-semibold" style="color: var(--{role}-text)">Aa</span>
           <span class="truncate font-mono text-[10px] text-(--muted-color)">{role}</span>
         </div>
       {/each}
     </div>
     <div class="flex flex-wrap gap-2 text-xs font-semibold">
-      <span class="rounded-full bg-(--green-soft) px-2.5 py-1 text-(--green-color)">В сети</span>
-      <span class="rounded-full bg-(--yellow-soft) px-2.5 py-1 text-(--yellow-color)">Обновление</span>
-      <span class="rounded-full bg-(--red-soft) px-2.5 py-1 text-(--red-color)">Ошибка датчика</span>
+      <span class="rounded-full bg-(--green-soft) px-2.5 py-1 text-(--green-text)">В сети</span>
+      <span class="rounded-full bg-(--yellow-soft) px-2.5 py-1 text-(--yellow-text)">Обновление</span>
+      <span class="rounded-full bg-(--red-soft) px-2.5 py-1 text-(--red-text)">Ошибка датчика</span>
     </div>
   </div>
 

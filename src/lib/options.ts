@@ -72,10 +72,11 @@ export const optionsStore = derived(T, ($T) => {
       { id: id(), value: "background", name: $T("constructor.props.background"), icon: PROPS_ICONS.highlight },
     ],
 
-    /* Семантическая палитра темы (--X-color и --X-soft): те же роли, что у мастер-цвета виджетов; bg-max - нейтральный вариант, свотч с ним отмечается рамкой; 7 различимых цветов, состав совпадает с TEXT_COLOR_OPTIONS */
+    /* Семантическая палитра темы (--X-color и --X-soft): те же роли, что у мастер-цвета виджетов; bg-max - нейтральный вариант, свотч с ним отмечается рамкой; 7 цветов тегов Apple */
     COLOR_OPTIONS: [
       { id: id(), name: "-", value: "bg-max", class: "bg-max text-transparent" },
       { id: id(), name: "", value: "bg-red", class: "bg-red" },
+      { id: id(), name: "", value: "bg-orange", class: "bg-orange" },
       { id: id(), name: "", value: "bg-yellow", class: "bg-yellow" },
       { id: id(), name: "", value: "bg-green", class: "bg-green" },
       { id: id(), name: "", value: "bg-blue", class: "bg-blue" },

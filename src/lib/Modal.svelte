@@ -82,7 +82,7 @@
     <div
       data-modal
       class={twMerge(
-        "flex w-300 flex-col overflow-hidden rounded-[20px] border border-(--hairline-color) bg-(--back-color) shadow-(--elevation-3)",
+        "flex max-h-[90vh] w-300 flex-col overflow-hidden rounded-[20px] border border-(--hairline-color) bg-(--back-color) shadow-(--elevation-3)",
         wrapperClass,
       )}
       style="width: {width}; z-index: {zIndex};"

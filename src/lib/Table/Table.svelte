@@ -380,7 +380,7 @@
                           {#if isDropdownOpen?.x === j && isDropdownOpen.y === i && isDropdownOpen.index === index}
                             {@const cords = document.getElementById(`select${i}-${j}-${index}`)?.getBoundingClientRect()}
                             <div
-                              class="fixed z-50 overflow-hidden rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-1 shadow-(--elevation-2)"
+                              class="fixed z-50 max-h-[40vh] overflow-y-auto rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-1 shadow-(--elevation-2)"
                               style="top: calc({cords?.bottom}px + 4px); left: {cords?.left}px; width: {cords?.width}px;"
                               transition:slide={{ duration: selectSlideDuration }}
                             >

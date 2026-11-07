@@ -3,6 +3,7 @@
   import { onDestroy, untrack } from "svelte"
   import { getMapContext } from "../mapWrapper"
   import type { LngLat } from "./coverage"
+  import type { IMapColors } from "../../widgetAccent"
 
   interface Props {
     zones: any /* GeoJSON FeatureCollection: поле и запретные зоны */
@@ -16,9 +17,30 @@
     onDragEnd: (id: string) => void
     onHandleRightClick: (id: string) => void
     onCursor: (ll: LngLat | null) => void
+    colors: IMapColors /* Маршрут и точки - мастер-цвет, поле, зоны и развороты - цвета по смыслу */
   }
 
-  let { zones, path, draft, handles, drawing, onMapClick, onMapDblClick, onDrag, onDragEnd, onHandleRightClick, onCursor }: Props = $props()
+  let { zones, path, draft, handles, drawing, onMapClick, onMapDblClick, onDrag, onDragEnd, onHandleRightClick, onCursor, colors }: Props = $props()
+
+  /* Краски слоёв от цветов виджета: одна таблица и для создания слоёв, и для перекраски */
+  const paints = (c: IMapColors): Record<string, Record<string, any>> => {
+    const byKind = ["match", ["get", "kind"], "hole", c.red, c.green]
+    return {
+      "msn-zones-fill": { "fill-color": byKind },
+      "msn-zones-line": { "line-color": byKind },
+      "msn-path-transit": { "line-color": c.accent },
+      "msn-path-turn": { "line-color": c.orange },
+      "msn-path-spray": { "line-color": c.green },
+      "msn-path-route": { "line-color": c.accent },
+      "msn-draft-line": { "line-color": byKind },
+      "msn-handles": {
+        "circle-color": ["match", ["get", "role"], "mid", "#ffffff", "start", c.accent, "wp", c.accent, byKind],
+        "circle-stroke-color": ["match", ["get", "role"], "mid", ["match", ["get", "kind"], "hole", c.red, "route", c.accent, c.green], "#ffffff"],
+      },
+      "msn-labels": { "text-color": c.onAccent },
+    }
+  }
+  const initial = paints(untrack(() => colors))
 
   const mapCtx = getMapContext()
   const map = mapCtx.map!
@@ -32,7 +54,7 @@
     type: "fill",
     source: "msn-zones",
     paint: {
-      "fill-color": ["match", ["get", "kind"], "hole", "#ef4444", "#22c55e"],
+      ...initial["msn-zones-fill"],
       "fill-opacity": ["match", ["get", "kind"], "hole", 0.28, 0.1],
     },
   })
@@ -40,7 +62,7 @@
     id: "msn-zones-line",
     type: "line",
     source: "msn-zones",
-    paint: { "line-color": ["match", ["get", "kind"], "hole", "#dc2626", "#16a34a"], "line-width": 2 },
+    paint: { ...initial["msn-zones-line"], "line-width": 2 },
   })
   mapCtx.addLayer({
     id: "msn-path-transit",
@@ -48,7 +70,7 @@
     source: "msn-path",
     filter: ["==", ["get", "kind"], "transit"],
     layout: { "line-join": "round", "line-cap": "round" },
-    paint: { "line-color": "#3b82f6", "line-width": 2, "line-dasharray": [2, 1.5] },
+    paint: { ...initial["msn-path-transit"], "line-width": 2, "line-dasharray": [2, 1.5] },
   })
   mapCtx.addLayer({
     id: "msn-path-turn",
@@ -56,7 +78,7 @@
     source: "msn-path",
     filter: ["==", ["get", "kind"], "turn"],
     layout: { "line-join": "round", "line-cap": "round" },
-    paint: { "line-color": "#f59e0b", "line-width": 1.5 },
+    paint: { ...initial["msn-path-turn"], "line-width": 1.5 },
   })
   mapCtx.addLayer({
     id: "msn-path-spray",
@@ -64,7 +86,7 @@
     source: "msn-path",
     filter: ["==", ["get", "kind"], "spray"],
     layout: { "line-join": "round", "line-cap": "round" },
-    paint: { "line-color": "#15803d", "line-width": 2.5 },
+    paint: { ...initial["msn-path-spray"], "line-width": 2.5 },
   })
   /* Маршрут из точек: сплошная линия режима «Маршрут» */
   mapCtx.addLayer({
@@ -73,13 +95,13 @@
     source: "msn-path",
     filter: ["==", ["get", "kind"], "route"],
     layout: { "line-join": "round", "line-cap": "round" },
-    paint: { "line-color": "#2563eb", "line-width": 3 },
+    paint: { ...initial["msn-path-route"], "line-width": 3 },
   })
   mapCtx.addLayer({
     id: "msn-draft-line",
     type: "line",
     source: "msn-draft",
-    paint: { "line-color": ["match", ["get", "kind"], "hole", "#dc2626", "#16a34a"], "line-width": 2, "line-dasharray": [1, 1] },
+    paint: { ...initial["msn-draft-line"], "line-width": 2, "line-dasharray": [1, 1] },
   })
   mapCtx.addLayer({
     id: "msn-handles",
@@ -87,19 +109,8 @@
     source: "msn-handles",
     paint: {
       "circle-radius": ["match", ["get", "role"], "mid", 4, "start", 8, "wp", 9, 6],
-      "circle-color": [
-        "match",
-        ["get", "role"],
-        "mid",
-        "#ffffff",
-        "start",
-        "#3b82f6",
-        "wp",
-        "#2563eb",
-        ["match", ["get", "kind"], "hole", "#dc2626", "#16a34a"],
-      ],
+      ...initial["msn-handles"],
       "circle-opacity": ["match", ["get", "role"], "mid", 0.75, 1],
-      "circle-stroke-color": ["match", ["get", "role"], "mid", ["match", ["get", "kind"], "hole", "#dc2626", "route", "#2563eb", "#16a34a"], "#ffffff"],
       "circle-stroke-width": 2,
     },
   })
@@ -110,7 +121,18 @@
     source: "msn-handles",
     filter: ["has", "label"],
     layout: { "text-field": ["get", "label"], "text-size": 11, "text-font": ["Open Sans Bold", "Arial Unicode MS Bold"], "text-allow-overlap": true },
-    paint: { "text-color": "#ffffff" },
+    paint: { ...initial["msn-labels"] },
+  })
+
+  /* Смена мастер-цвета или темы перекрашивает слои */
+  $effect(() => {
+    const next = paints(colors)
+    mapCtx.waitForStyleLoaded((m) => {
+      for (const [layer, props] of Object.entries(next)) {
+        if (!m.getLayer(layer)) continue
+        for (const [prop, value] of Object.entries(props)) m.setPaintProperty(layer, prop as any, value)
+      }
+    })
   })
 
   /* Данные читаются до проверок, чтобы эффекты подписались на них */
@@ -128,6 +150,14 @@
 
   let dragId: string | null = null
   let moved = false
+  /* Перетаскивание сообщается не чаще раза за кадр экрана: мышь шлёт движения чаще, чем карта успевает перерисоваться */
+  let pendingLL: LngLat | null = null
+  let frame = 0
+  const flushDrag = () => {
+    frame = 0
+    if (dragId && pendingLL) onDrag(dragId, pendingLL)
+    pendingLL = null
+  }
 
   const handleAt = (point: any) => {
     if (!map.getLayer("msn-handles")) return null
@@ -148,13 +178,16 @@
     moved = false
     map.dragPan.disable()
     map.getCanvas().style.cursor = "grabbing"
+    /* Кнопку могут отпустить и за пределами карты */
+    window.addEventListener("mouseup", onUp, { once: true })
   }
   const onMove = (e: any) => {
     const ll: LngLat = [e.lngLat.lng, e.lngLat.lat]
     onCursor(ll)
     if (dragId) {
       moved = true
-      onDrag(dragId, ll)
+      pendingLL = ll
+      if (!frame) frame = requestAnimationFrame(flushDrag)
       return
     }
     const id = handleAt(e.point)
@@ -162,6 +195,9 @@
   }
   const onUp = () => {
     if (!dragId) return
+    if (frame) cancelAnimationFrame(frame)
+    flushDrag()
+    window.removeEventListener("mouseup", onUp)
     const id = dragId
     dragId = null
     map.dragPan.enable()
@@ -195,6 +231,8 @@
   map.on("mouseout", onLeave)
 
   onDestroy(() => {
+    if (frame) cancelAnimationFrame(frame)
+    window.removeEventListener("mouseup", onUp)
     map.off("mousedown", onDown)
     map.off("mousemove", onMove)
     map.off("mouseup", onUp)

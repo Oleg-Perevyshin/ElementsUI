@@ -415,7 +415,7 @@
 
             <button
               class="flex cursor-pointer items-center gap-1 rounded-lg border px-2 py-0.5 text-xs font-semibold transition {isFollowed
-                ? 'border-(--accent-color) bg-(--accent-color) text-white'
+                ? 'border-(--accent-color) bg-(--accent-color) text-(--on-accent)'
                 : 'border-(--hairline-color) bg-transparent opacity-80 hover:opacity-100'}"
               aria-pressed={isFollowed}
               onclick={() => toggleFollow(board.group)}

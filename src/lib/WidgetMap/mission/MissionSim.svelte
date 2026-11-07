@@ -1,9 +1,10 @@
-<!-- $lib/WidgetMap/mission/MissionSim.svelte - имитация полёта по рассчитанной траектории режимов «Маршрут» и «Агро»: аппарат летит по пути с его скоростями, оставляет след, распыление видно цветом; пауза, ускорение и перезапуск на панели поверх карты -->
+<!-- $lib/WidgetMap/mission/MissionSim.svelte - имитация полёта по рассчитанной траектории режимов «Маршрут» и «Агро»: аппарат летит по пути с его скоростями, оставляет след, распыление видно цветом; пауза, ускорение и перезапуск на панели внизу карты -->
 <script lang="ts">
   import { onDestroy } from "svelte"
   import { T } from "../../locales/i18n"
-  import { Marker, Line, CustomControl } from "../mapWrapper"
+  import { Marker, Line } from "../mapWrapper"
   import type { LngLat } from "./coverage"
+  import type { IMapColors } from "../../widgetAccent"
 
   /* Вершина пути: speed и spray относятся к отрезку, который в неё приходит */
   interface ISimVertex {
@@ -18,8 +19,15 @@
     path,
     showSpray = false,
     icon = "arrow",
+    colors,
     progress = $bindable(0),
-  }: { path: ISimVertex[]; showSpray?: boolean; icon?: "arrow" | "quad"; progress?: number /* Доля пройденного пути 0..1, для шапки */ } = $props()
+  }: {
+    path: ISimVertex[]
+    showSpray?: boolean
+    icon?: "arrow" | "quad"
+    colors: IMapColors /* Аппарат и след - мастер-цвет виджета, распыление - зелёный */
+    progress?: number /* Доля пройденного пути 0..1, для шапки */
+  } = $props()
 
   const R = 6371000
   const toRad = Math.PI / 180
@@ -100,7 +108,7 @@
     }
   })
 
-  let fill = $derived(showSpray && pos?.spray ? "#16a34a" : "#0ea5e9")
+  let fill = $derived(showSpray && pos?.spray ? colors.green : colors.accent)
   /* Кнопки-иконки без рамки: стили группы кнопок MapLibre перебиваются */
   const iconBtn =
     "flex h-7! w-7! cursor-pointer items-center justify-center rounded-md border-0! bg-transparent p-0 text-gray-700 hover:bg-black/5 hover:text-black"
@@ -113,7 +121,7 @@
 </script>
 
 {#if pos}
-  <Line id="msn-sim-trail" coordinates={pos.trail} color="#0ea5e9" width={4} opacity={0.6} />
+  <Line id="msn-sim-trail" coordinates={pos.trail} color={colors.accent} width={4} opacity={0.6} />
   <Marker lnglat={{ lng: pos.point[0], lat: pos.point[1] }}>
     {#snippet content()}
       <div class="flex size-9 items-center justify-center" style="rotate: {pos.heading}deg">
@@ -137,8 +145,9 @@
     {/snippet}
   </Marker>
 
-  <CustomControl position="top-left">
-    <div class="flex w-max max-w-[calc(100vw-6rem)] flex-col gap-1 px-3 py-1.5 text-[12px] whitespace-nowrap text-black tabular-nums">
+  <!-- Панель имитации внизу карты по центру, оформлена как кнопки MapLibre -->
+  <div class="absolute bottom-2.5 left-1/2 z-10 w-max max-w-[calc(100%-8rem)] -translate-x-1/2 rounded-[4px] bg-white shadow-[0_0_0_2px_rgb(0_0_0_/_0.1)]">
+    <div class="flex flex-col gap-1 px-3 py-1.5 text-[12px] whitespace-nowrap text-black tabular-nums">
       <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
         <span class="font-semibold">{$T("widget.sim.title")}</span>
         <button
@@ -173,7 +182,8 @@
       <!-- Прокрутка пути: перетаскивание ставит полёт на паузу, чтобы рассмотреть любое место траектории -->
       <input
         type="range"
-        class="w-full cursor-pointer accent-sky-500"
+        class="w-full cursor-pointer"
+        style="accent-color: {colors.accent}"
         min="0"
         max={duration}
         step={Math.max(0.1, duration / 2000)}
@@ -185,5 +195,5 @@
         }}
       />
     </div>
-  </CustomControl>
+  </div>
 {/if}

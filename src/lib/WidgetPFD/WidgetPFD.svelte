@@ -267,7 +267,7 @@
     untrack(() => (messages = [{ text, sev: num(value?.MsgSev, 6), at: Date.now() }, ...messages].slice(0, 5)))
   })
   let banner = $derived(messages[0] && now - messages[0].at < 10_000 ? messages[0] : null)
-  const sevClass = (sev: number) => (sev <= 3 ? "bg-(--red-color) text-white" : sev === 4 ? "bg-(--orange-color) text-white" : "bg-black/70 text-white")
+  const sevClass = (sev: number) => (sev <= 3 ? "bg-(--red-color) text-white" : sev === 4 ? "bg-(--orange-color) text-(--on-orange)" : "bg-black/70 text-white")
   const clampTape = (y: number) => Math.min(Math.max(y, 22), HH - 8)
 
   /* Компактный режим - ленты заменяются числами поверх горизонта */

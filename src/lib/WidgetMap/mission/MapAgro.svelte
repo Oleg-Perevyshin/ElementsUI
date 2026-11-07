@@ -6,13 +6,15 @@
   import { T } from "../../locales/i18n"
   import WidgetHeader from "../../WidgetHeader.svelte"
   import { hint, hintsSetting } from "../../hints"
-  import { widgetAccentStyle } from "../../widgetAccent"
+  import { readMapColors, widgetAccentStyle, type IMapColors } from "../../widgetAccent"
   import { readPersistedCollapsed, writePersistedCollapsed } from "../../widgetCollapse"
   import * as UI from "../.."
-  import { MapLibre, NavigationControl, ScaleControl, FullScreenControl } from "../mapWrapper"
+  import { MapLibre, NavigationControl, ScaleControl, FullScreenControl, CustomControl } from "../mapWrapper"
   import MissionLayers from "./MissionLayers.svelte"
   import MissionSim from "./MissionSim.svelte"
   import SpinnerIcon from "./SpinnerIcon.svelte"
+  import HelpText from "./HelpText.svelte"
+  import InfoIcon from "../../libIcons/InfoIcon.svelte"
   import { missionProgress } from "./progress"
   import MissionIcon from "./MissionIcon.svelte"
   import ArrowIcon from "../../libIcons/ArrowIcon.svelte"
@@ -62,9 +64,11 @@
   })
   $effect(() => writePersistedCollapsed(persistKey, collapsed))
 
+  /* Пока тянут точку, план наружу не отдаётся: владелец получает его один раз, когда точку отпустили */
+  let dragging = $state(false)
   const update = (patch: Partial<IMissionPlan>) => {
     plan = { ...plan, ...patch }
-    onPlanChange?.(plan)
+    if (!dragging) onPlanChange?.(plan)
   }
 
   /* ********************************************************** */
@@ -125,6 +129,7 @@
   let inserted: { id: string; ring: number; index: number } | null = null
 
   const onDrag = (id: string, ll: LngLat) => {
+    dragging = true
     const [kind, r, i] = id.split(":")
     if (kind === "s") return update({ start: ll })
     const ring = Number(r)
@@ -140,7 +145,11 @@
     } else pts[inserted.index] = ll
     setRing(ring, pts)
   }
-  const onDragEnd = () => (inserted = null)
+  const onDragEnd = () => {
+    inserted = null
+    dragging = false
+    onPlanChange?.(plan)
+  }
 
   const onHandleRightClick = (id: string) => {
     const [kind, r, i] = id.split(":")
@@ -179,14 +188,20 @@
   /* ********************************************************** */
   /* Расчёт */
 
+  /* Полный расчёт траектории занимает около 0.1 с, поэтому пока тянут точку он не повторяется на каждое движение мыши: считается последний план до начала перетаскивания, после отпускания - новый */
+  let calcPlan = $state.raw(untrack(() => plan))
+  $effect.pre(() => {
+    const next = plan
+    if (!dragging) calcPlan = next
+  })
   let result = $derived.by(() =>
     planFields({
-      fields: fieldList,
-      holes: plan.holes,
-      spacing: plan.spacing,
-      margin: plan.margin,
-      start: plan.start,
-      returnHome: plan.returnHome,
+      fields: calcPlan.fields ?? [],
+      holes: calcPlan.holes,
+      spacing: calcPlan.spacing,
+      margin: calcPlan.margin,
+      start: calcPlan.start,
+      returnHome: calcPlan.returnHome,
     }),
   )
 
@@ -206,9 +221,13 @@
     }
   }
   const autoAngle = () => searchAngles(fieldList.filter((f) => f.contour.length >= 3).map((f) => f.contour))
+  let showAutoInfo = $state(false)
 
   let stats = $derived.by(() => {
-    const area = fieldsArea(fields, plan.holes)
+    const area = fieldsArea(
+      (calcPlan.fields ?? []).map((f) => f.contour),
+      calcPlan.holes,
+    )
     if (!result) return null
     const total = result.sprayLength + result.turnLength + result.transitLength
     const timeMin = plan.speed > 0 ? (total / plan.speed + result.turns * 4) / 60 : 0
@@ -257,9 +276,14 @@
       ...plan.holes.map((h) => ({ type: "Feature", properties: { kind: "hole" }, geometry: { type: "Polygon", coordinates: [closed(h)] } })),
     ],
   })
+  /* Во время перетаскивания проходы скрыты: старая траектория не совпала бы с новым контуром */
   let pathGeo = $derived({
     type: "FeatureCollection",
-    features: (result?.segments ?? []).map((s) => ({ type: "Feature", properties: { kind: s.kind }, geometry: { type: "LineString", coordinates: s.points } })),
+    features: (dragging ? [] : (result?.segments ?? [])).map((s) => ({
+      type: "Feature",
+      properties: { kind: s.kind },
+      geometry: { type: "LineString", coordinates: s.points },
+    })),
   })
   let draftGeo = $derived({
     type: "FeatureCollection",
@@ -375,6 +399,13 @@
     window.addEventListener("ThemeChange", detectTheme)
     return () => window.removeEventListener("ThemeChange", detectTheme)
   })
+  /* Цвета слоёв карты перечитываются при смене мастер-цвета и темы */
+  let mapColors = $state<IMapColors>(readMapColors(undefined))
+  $effect(() => {
+    void accentStyle
+    void isDarkMode
+    mapColors = readMapColors(rootEl)
+  })
 
   /* Мелкие зоны в м², остальное в га */
   const areaText = (m2: number) => (m2 < 1000 ? `${fmt(m2, 0)} ${$T("widget.mission.m2")}` : `${fmt(m2 / 10000, 2)} ${$T("widget.mission.ha")}`)
@@ -388,8 +419,12 @@
       if (Number.isFinite(n)) update({ [key]: Math.min(max, Math.max(min, n)) } as Partial<IMissionPlan>)
     },
   })
-  const modeBtn =
-    "flex cursor-pointer items-center gap-2 rounded-lg border border-solid px-3 py-1.5 text-[13px] font-semibold whitespace-nowrap text-(--font-color) transition disabled:cursor-not-allowed disabled:opacity-50"
+  /* Кнопки панели на карте: стили кнопок MapLibre (размер 29px, прозрачный фон, без рамки) перебиваются */
+  const mapBtn =
+    "flex! h-auto! w-auto! cursor-pointer items-center gap-2 rounded-md! border! border-solid! px-2.5! py-1! text-[12px] font-semibold whitespace-nowrap text-(--font-color) transition disabled:cursor-not-allowed disabled:opacity-50"
+  const mapBtnIdle = "border-(--hairline-color)! bg-(--back-color)! hover:border-(--accent-color)!"
+  const mapBtnOn = "border-(--accent-color)! bg-[color-mix(in_srgb,var(--accent-color)_15%,var(--back-color))]!"
+  const mapBtnMain = "border-(--accent-color)! bg-(--accent-color)! text-(--on-accent)!"
   /* Два сворачиваемых блока: «Маршрут и внесение» и «Итог» (контуры и расчёт) */
   type Section = "settings" | "summary"
   let open = $state<Record<Section, boolean>>({ settings: false, summary: false })
@@ -398,11 +433,11 @@
   let tools = $derived([
     {
       mode: "field" as Mode,
-      label: hasField ? "widget.mission.editField" : "widget.mission.drawField",
-      dot: "rounded-sm border-[#16a34a] bg-[#22c55e]/30",
+      label: "widget.mission.editField",
+      dot: "rounded-sm border-(--green-mark) bg-(--green-mark)/30",
       disabled: false,
     },
-    { mode: "hole" as Mode, label: "widget.mission.editHoles", dot: "rounded-sm border-[#dc2626] bg-[#ef4444]/40", disabled: !hasField },
+    { mode: "hole" as Mode, label: "widget.mission.editHoles", dot: "rounded-sm border-(--red-mark) bg-(--red-mark)/40", disabled: !hasField },
   ])
 </script>
 
@@ -456,37 +491,6 @@
 
   {#if !collapsed}
     <div transition:slide={{ duration: 150 }} class="flex flex-col gap-4">
-      <!-- Инструменты рисования и подсказка к текущему шагу -->
-      <div class="flex flex-col gap-2">
-        <div class="flex flex-wrap items-center gap-2">
-          {#each tools as tool}
-            <button
-              class="{modeBtn} {mode === tool.mode
-                ? 'border-(--accent-color) bg-(--accent-color)/15'
-                : 'border-(--hairline-color) bg-(--back-color) hover:border-(--accent-color)'}"
-              disabled={tool.disabled}
-              onclick={() => toggleMode(tool.mode)}
-              use:hint={{ text: $T(`widget.mission.hint.${tool.mode}`), enabled: $hints }}
-            >
-              <span class="size-3 shrink-0 border-2 {tool.dot}"></span>
-              {$T(tool.label)}
-            </button>
-          {/each}
-          {#if draft.length}
-            <div class="ml-auto flex gap-2">
-              <button class="{modeBtn} border-(--green-color) bg-(--green-color) text-white" disabled={draft.length < 3} onclick={finishDraw}>
-                {$T("widget.mission.close")} ({draft.length})
-              </button>
-              <button class="{modeBtn} border-(--hairline-color) bg-(--back-color)" onclick={() => (draft = [])}>{$T("widget.mission.cancel")}</button>
-            </div>
-          {:else if mode !== "idle"}
-            <button class="{modeBtn} ml-auto border-(--green-color) bg-(--green-color) text-white" onclick={() => (mode = "idle")}
-              >{$T("widget.mission.finish")}</button
-            >
-          {/if}
-        </div>
-      </div>
-
       <div style="height: {height}px">
         <MapLibre
           bind:map={mapInstance}
@@ -501,6 +505,30 @@
           <NavigationControl />
           <ScaleControl />
           <FullScreenControl />
+          <!-- Редакторы полей и запретных зон прямо на карте -->
+          <CustomControl position="top-left">
+            <div class="flex flex-wrap items-center gap-1.5 rounded-[4px] bg-(--back-color) p-1.5">
+              {#each tools as tool}
+                <button
+                  class="{mapBtn} {mode === tool.mode ? mapBtnOn : mapBtnIdle}"
+                  disabled={tool.disabled}
+                  onclick={() => toggleMode(tool.mode)}
+                  use:hint={{ text: $T(`widget.mission.hint.${tool.mode}`), enabled: $hints }}
+                >
+                  <span class="size-3 shrink-0 border-2 {tool.dot}"></span>
+                  {$T(tool.label)}
+                </button>
+              {/each}
+              {#if draft.length}
+                <button class="{mapBtn} {mapBtnMain}" disabled={draft.length < 3} onclick={finishDraw}>
+                  {$T("widget.mission.close")} ({draft.length})
+                </button>
+                <button class="{mapBtn} {mapBtnIdle}" onclick={() => (draft = [])}>{$T("widget.mission.cancel")}</button>
+              {:else if mode !== "idle"}
+                <button class="{mapBtn} {mapBtnMain}" onclick={() => (mode = "idle")}>{$T("widget.mission.finish")}</button>
+              {/if}
+            </div>
+          </CustomControl>
 
           <MissionLayers
             zones={zonesGeo}
@@ -513,6 +541,7 @@
             {onDrag}
             {onDragEnd}
             {onHandleRightClick}
+            colors={mapColors}
             onCursor={(ll) => (cursor = ll)}
           />
           {@render overlay?.()}
@@ -535,7 +564,7 @@
             </div>
           {/if}
           {#if simulate}
-            <MissionSim path={simPath} showSpray icon="quad" bind:progress={simProgress} />
+            <MissionSim path={simPath} showSpray icon="quad" colors={mapColors} bind:progress={simProgress} />
           {/if}
         </MapLibre>
       </div>
@@ -570,10 +599,16 @@
                   />
                   <UI.Button
                     wrapperClass="w-auto"
-                    componentClass="bg-blue"
+                    componentClass="bg-accent"
                     content={{ name: $T("widget.mission.auto"), info: { text: $T("widget.mission.autoHint"), side: "top" } }}
                     disabled={!hasField || searching !== null}
                     onClick={autoAngle}
+                  />
+                  <UI.Button
+                    wrapperClass="w-8 shrink-0"
+                    componentClass="bg-transparent p-1"
+                    content={{ icon: InfoIcon, info: { text: $T("widget.mission.autoInfoTitle"), side: "top" } }}
+                    onClick={() => (showAutoInfo = true)}
                   />
                 </div>
                 <div class="grid grid-cols-2 gap-2">
@@ -648,7 +683,9 @@
                 <div class="flex flex-col gap-1.5 rounded-lg bg-(--container-color) p-3 text-[13px] tabular-nums">
                   {#each fields as field, i}
                     <div class="flex items-center justify-between gap-2">
-                      <span class="flex items-center gap-2"><span class="size-2.5 rounded-sm bg-[#16a34a]"></span>{$T("widget.mission.field")} {i + 1}</span>
+                      <span class="flex items-center gap-2"
+                        ><span class="size-2.5 rounded-sm bg-(--green-mark)"></span>{$T("widget.mission.field")} {i + 1}</span
+                      >
                       <span class="flex items-center gap-3">
                         <span class="flex items-center gap-1" use:hint={{ text: $T("widget.mission.hint.fieldAngle"), enabled: $hints }}>
                           <UI.Input
@@ -670,7 +707,7 @@
                   {/each}
                   {#each plan.holes as hole, i}
                     <div class="flex items-center justify-between gap-2">
-                      <span class="flex items-center gap-2"><span class="size-2.5 rounded-sm bg-[#dc2626]"></span>{$T("widget.mission.hole")} {i + 1}</span>
+                      <span class="flex items-center gap-2"><span class="size-2.5 rounded-sm bg-(--red-mark)"></span>{$T("widget.mission.hole")} {i + 1}</span>
                       <span class="flex items-center gap-2">
                         <span class="font-semibold">{areaText(fieldArea(hole, []))}</span>
                         <button class="cursor-pointer border-none bg-transparent p-0 text-(--red-text)" onclick={() => removeHole(i)} aria-label="Delete"
@@ -681,7 +718,7 @@
                   {/each}
                   {#if plan.start}
                     <div class="flex items-center gap-2">
-                      <span class="size-2.5 rounded-full bg-[#3b82f6]"></span>{$T("widget.mission.start")}
+                      <span class="size-2.5 rounded-full bg-(--accent-color)"></span>{$T("widget.mission.start")}
                     </div>
                   {/if}
                 </div>
@@ -728,10 +765,10 @@
                     <span class="text-(--muted-color)">{$T("widget.mission.waypoints")}</span><span class="text-right font-semibold">{stats.waypoints}</span>
                   </div>
                   <div class="flex flex-wrap gap-3 text-[11px] text-(--muted-color)">
-                    <span class="flex items-center gap-1"><span class="h-0.5 w-4 bg-[#15803d]"></span>{$T("widget.mission.legendSpray")}</span>
-                    <span class="flex items-center gap-1"><span class="h-0.5 w-4 bg-[#f59e0b]"></span>{$T("widget.mission.legendTurn")}</span>
+                    <span class="flex items-center gap-1"><span class="h-0.5 w-4 bg-(--green-mark)"></span>{$T("widget.mission.legendSpray")}</span>
+                    <span class="flex items-center gap-1"><span class="h-0.5 w-4 bg-(--orange-mark)"></span>{$T("widget.mission.legendTurn")}</span>
                     <span class="flex items-center gap-1"
-                      ><span class="h-0.5 w-4 border-t-2 border-dashed border-[#3b82f6]"></span>{$T("widget.mission.legendTransit")}</span
+                      ><span class="h-0.5 w-4 border-t-2 border-dashed border-(--accent-color)"></span>{$T("widget.mission.legendTransit")}</span
                     >
                   </div>
                 {:else}
@@ -749,11 +786,11 @@
       <!-- Выгрузка миссии -->
       <div class="grid grid-cols-3 gap-3">
         <div class="min-w-0" use:hint={{ text: $T("widget.mission.hint.download"), enabled: $hints }}>
-          <UI.Button componentClass="bg-blue" content={{ name: $T("widget.mission.download") }} disabled={!stats} onClick={download} />
+          <UI.Button componentClass="bg-accent" content={{ name: $T("widget.mission.download") }} disabled={!stats} onClick={download} />
         </div>
         <div class="min-w-0" use:hint={{ text: $T("widget.mission.hint.copy"), enabled: $hints }}>
           <UI.Button
-            componentClass="bg-blue"
+            componentClass="bg-accent"
             content={{ name: copied ? $T("widget.mission.copied") : $T("widget.mission.copy") }}
             disabled={!stats}
             onClick={copy}
@@ -761,7 +798,7 @@
         </div>
         <div class="min-w-0" use:hint={{ text: $T("widget.mission.hint.send"), enabled: $hints }}>
           <UI.Button
-            componentClass={sendState === "error" ? "bg-red" : "bg-blue"}
+            componentClass={sendState === "error" ? "bg-red" : "bg-accent"}
             content={{ name: $T(`widget.mission.send.${sendState}`) }}
             disabled={!stats || !onSend || sendState === "busy"}
             onClick={send}
@@ -771,3 +808,10 @@
     </div>
   {/if}
 </div>
+
+<!-- Подробное описание авторасчёта -->
+<UI.Modal title={$T("widget.mission.autoInfoTitle")} bind:isOpen={showAutoInfo} wrapperClass="w-200">
+  {#snippet main()}
+    <HelpText text={$T("widget.mission.autoInfo")} />
+  {/snippet}
+</UI.Modal>

@@ -336,51 +336,64 @@
   --muted-color: #3f4651;
   --faint-color: #5f6774;
 
-  --accent-color: #4175c8;
-  --accent-hover: #33599e;
-  --accent-soft: rgb(65 117 200 / 0.1);
+  --accent-color: var(--blue-color);
+  --accent-hover: #005fc7;
+  --accent-soft: rgb(0 122 255 / 0.14);
   --on-accent: #ffffff;
+  --on-orange: #1d1d1f;
+  --on-yellow: #1d1d1f;
 
   --shadow-color: #34343a;
   --border-shadow-color: 0 1px 2px rgb(16 24 40 / 0.05);
-  --focus-shadow-color: 0 0 0 3px rgb(65 117 200 / 0.18);
+  --focus-shadow-color: 0 0 0 3px rgb(0 122 255 / 0.22);
   --elevation-1: 0 1px 2px rgb(16 24 40 / 0.06), 0 2px 6px rgb(16 24 40 / 0.04);
   --elevation-2: 0 4px 12px rgb(16 24 40 / 0.08);
   --elevation-3: 0 12px 32px rgb(16 24 40 / 0.12);
   --scrollbar-color: #c4c9d2;
 
-  /* Семантические заливки: светлая тема - светлые, но не кислотные тона (S=55%, L - самая светлая точка, где контраст с белым текстом ещё ≥ 4.5:1). Тёмная тема ниже - свои, тёмные. */
+  /* Цвета Apple. Заливки под белый текст: тон Apple, светлота подобрана под контраст с белым ≥ 4.6:1. Оранжевый и жёлтый - чистые цвета Apple под тёмный текст --on-orange и --on-yellow */
   --gray-color: #e4e7ec;
-  --red-color: #c94e45;
-  --orange-color: #9e6a2e;
-  --yellow-color: #8e7329;
-  --green-color: #278660;
-  --cyan-color: #2a7d92;
-  --blue-color: #4175c8;
-  --purple-color: #855dd0;
-  --pink-color: #c84182;
+  --red-color: #ea0c00;
+  --orange-color: #ff9500;
+  --yellow-color: #ffcc00;
+  --green-color: #23863c;
+  --cyan-color: #157cac;
+  --blue-color: #0070eb;
+  --purple-color: #a944db;
+  --pink-color: #ea002d;
 
-  /* Цветной текст: в светлой теме - те же цвета, что и заливки (контраст ≥ 4.5:1 на белом) */
+  /* Цветной текст: контраст ≥ 4.5:1 на всех фонах темы и на своём --*-soft */
   --gray-text: var(--muted-color);
-  --red-text: var(--red-color);
-  --orange-text: var(--orange-color);
-  --yellow-text: var(--yellow-color);
-  --green-text: var(--green-color);
-  --cyan-text: var(--cyan-color);
-  --blue-text: var(--blue-color);
-  --purple-text: var(--purple-color);
-  --pink-text: var(--pink-color);
+  --red-text: #c30a00;
+  --orange-text: #8d5200;
+  --yellow-text: #755e00;
+  --green-text: #1d6f32;
+  --cyan-text: #11678f;
+  --blue-text: #005dc3;
+  --purple-text: #9327ca;
+  --pink-text: #c40025;
 
   /* Мягкие тинты для фонов блоков и подсветки строк */
-  --gray-soft: #f0f2f5;
-  --red-soft: #fbeae8;
-  --orange-soft: #fcefe1;
-  --yellow-soft: #faf3dc;
-  --green-soft: #e4f4ec;
-  --cyan-soft: #e2f2f6;
-  --blue-soft: #e8f0fc;
-  --purple-soft: #efe9fb;
-  --pink-soft: #fbe7f0;
+  --gray-soft: #e1e5ea;
+  --red-soft: #ffd8d6;
+  --orange-soft: #ffeacc;
+  --yellow-soft: #fff5cc;
+  --green-soft: #d6f4de;
+  --cyan-soft: #d6effa;
+  --blue-soft: #cce4ff;
+  --purple-soft: #efdcf8;
+  --pink-soft: #ffd5dd;
+
+  /* Метки: чистые цвета Apple для полос, точек и индикаторов, не для текста */
+  --gray-mark: #8e8e93;
+  --red-mark: #ff3b30;
+  --orange-mark: #ff9500;
+  --yellow-mark: #ffcc00;
+  --green-mark: #34c759;
+  --cyan-mark: #32ade6;
+  --blue-mark: #007aff;
+  --purple-mark: #af52de;
+  --pink-mark: #ff2d55;
 }
 
 .dark {
@@ -396,50 +409,64 @@
   --muted-color: #b4bbc8;
   --faint-color: #939cac;
 
-  --accent-color: #3863a8;
-  --accent-hover: #4a78bf;
-  --accent-soft: rgb(56 99 168 / 0.18);
+  --accent-color: var(--blue-color);
+  --accent-hover: #2f7fd0;
+  --accent-soft: rgb(10 132 255 / 0.2);
   --on-accent: #ffffff;
+  --on-orange: #1d1d1f;
+  --on-yellow: #1d1d1f;
 
   --shadow-color: #000000;
   --border-shadow-color: 0 1px 2px rgb(0 0 0 / 0.4);
-  --focus-shadow-color: 0 0 0 3px rgb(56 99 168 / 0.32);
+  --focus-shadow-color: 0 0 0 3px rgb(10 132 255 / 0.32);
   --elevation-1: 0 1px 2px rgb(0 0 0 / 0.4);
   --elevation-2: 0 4px 12px rgb(0 0 0 / 0.45);
   --elevation-3: 0 12px 32px rgb(0 0 0 / 0.5);
   --scrollbar-color: #333a47;
 
-  /* Тёмная тема - тёмные, приглушённые тона (S=50%, L - самая тёмная точка, где контраст с белым текстом ещё ≥ 4.5:1 и с --bg-body ещё ≥ 3.2:1), а не светлее светлой темы */
+  /* Цвета Apple. Заливки под белый текст: тон Apple, светлота подобрана под контраст с белым ≥ 5.2:1. Оранжевый и жёлтый - чистые цвета Apple под тёмный текст */
   --gray-color: #2b313d;
-  --red-color: #a84038;
-  --orange-color: #825a2b;
-  --yellow-color: #776128;
-  --green-color: #256f51;
-  --cyan-color: #296a7a;
-  --blue-color: #3863a8;
-  --purple-color: #754bc3;
-  --pink-color: #a8386e;
+  --red-color: #cc3027;
+  --orange-color: #ff9f0a;
+  --yellow-color: #ffd60a;
+  --green-color: #187d31;
+  --cyan-color: #1d7498;
+  --blue-color: #236eba;
+  --purple-color: #aa2ad6;
+  --pink-color: #ce2749;
 
-  /* Цветной текст: тёмные заливки как текст нечитаемы, поэтому светлые оттенки с контрастом ≥ 6:1 на всех фонах темы */
+  /* Цветной текст: варианты Apple для повышенного контраста, ≥ 4.5:1 на всех фонах темы и на своём --*-soft */
   --gray-text: var(--muted-color);
-  --red-text: #f2867d;
-  --orange-text: #e6a65c;
-  --yellow-text: #dcc067;
-  --green-text: #5cc896;
-  --cyan-text: #5fc6dc;
-  --blue-text: #83abee;
-  --purple-text: #b49cf2;
-  --pink-text: #f084b8;
+  --red-text: #ff6961;
+  --orange-text: #ffb340;
+  --yellow-text: #ffd426;
+  --green-text: #30db5b;
+  --cyan-text: #70d7ff;
+  --blue-text: #409cff;
+  --purple-text: #da8fff;
+  --pink-text: #ff6482;
 
-  --gray-soft: rgb(255 255 255 / 0.06);
-  --red-soft: rgb(168 64 56 / 0.18);
-  --orange-soft: rgb(130 90 43 / 0.18);
-  --yellow-soft: rgb(119 97 40 / 0.18);
-  --green-soft: rgb(37 111 81 / 0.18);
-  --cyan-soft: rgb(41 106 122 / 0.18);
-  --blue-soft: rgb(56 99 168 / 0.18);
-  --purple-soft: rgb(117 75 195 / 0.18);
-  --pink-soft: rgb(168 56 110 / 0.18);
+  /* Мягкие тинты для фонов блоков и подсветки строк */
+  --gray-soft: rgb(255 255 255 / 0.1);
+  --red-soft: rgb(255 69 58 / 0.2);
+  --orange-soft: rgb(255 159 10 / 0.2);
+  --yellow-soft: rgb(255 214 10 / 0.2);
+  --green-soft: rgb(48 209 88 / 0.2);
+  --cyan-soft: rgb(100 210 255 / 0.2);
+  --blue-soft: rgb(10 132 255 / 0.2);
+  --purple-soft: rgb(191 90 242 / 0.2);
+  --pink-soft: rgb(255 55 95 / 0.2);
+
+  /* Метки: чистые цвета Apple для полос, точек и индикаторов, не для текста */
+  --gray-mark: #98989d;
+  --red-mark: #ff453a;
+  --orange-mark: #ff9f0a;
+  --yellow-mark: #ffd60a;
+  --green-mark: #30d158;
+  --cyan-mark: #64d2ff;
+  --blue-mark: #0a84ff;
+  --purple-mark: #bf5af2;
+  --pink-mark: #ff375f;
 }
 
 /* ─── Поверхности: фон страницы (--bg-body) → панель → вложенный блок → поле ─────────────── Один рецепт для всех приложений - каждая ступень заметна в обеих темах; панели не делаются полупрозрачными (bg-(--back-color)/50 сливается с фоном), отступы и скругление задаёт сама страница классами Tailwind */
@@ -469,9 +496,11 @@
 }
 .bg-orange {
   --bg-color: var(--orange-color);
+  --on-accent: var(--on-orange);
 }
 .bg-yellow {
   --bg-color: var(--yellow-color);
+  --on-accent: var(--on-yellow);
 }
 .bg-green {
   --bg-color: var(--green-color);
