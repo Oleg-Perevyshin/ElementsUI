@@ -35,7 +35,7 @@ jobs:
         run: npm run prepack
 
       - name: Публикация в NPM
-        run: npm publish --access public
+        run: npm publish --access public --provenance=false
 
   # Обновление библиотеки в DevCloud, подъём версии облака и переразвёртывание
   update-devcloud:
