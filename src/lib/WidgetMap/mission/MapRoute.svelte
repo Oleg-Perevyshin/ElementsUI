@@ -11,6 +11,8 @@
   import * as UI from "../.."
   import { MapLibre, NavigationControl, ScaleControl, FullScreenControl, CustomControl } from "../mapWrapper"
   import MissionLayers from "./MissionLayers.svelte"
+  import FitIcon from "../FitIcon.svelte"
+  import { createAutoFit, fitMapTo } from "./fit"
   import MissionSim from "./MissionSim.svelte"
   import { missionProgress } from "./progress"
   import MapIcon from "../MapIcon.svelte"
@@ -234,6 +236,14 @@
     void isDarkMode
     mapColors = readMapColors(rootEl)
   })
+  /* «Показать все» в шапке и вписывание при появлении карты */
+  const missionPoints = (): LngLat[] => [...(route.start ? [route.start] : []), ...route.points.map((p) => p.point)]
+  const fitAll = (animate = true) => fitMapTo(mapInstance, missionPoints(), animate)
+  const autoFit = createAutoFit()
+  $effect(() => {
+    const map = mapInstance
+    untrack(() => autoFit(map, () => fitAll(false)))
+  })
 
   const fmt = (v: number, d = 1) => v.toLocaleString(undefined, { minimumFractionDigits: d, maximumFractionDigits: d })
   /* Кнопки панели на карте: стили кнопок MapLibre (размер 29px, прозрачный фон, без рамки) перебиваются */
@@ -281,22 +291,31 @@
 >
   <WidgetHeader icon={MapIcon} label={label?.name || $T("widget.route.title")} bind:collapsed {hints}>
     {#snippet right()}
-      <span class="flex items-center gap-3 text-[12px] font-semibold text-(--muted-color) tabular-nums">
-        {#if headerProgress !== null}
-          <span class="flex items-center gap-1.5" title={simulate ? $T("widget.sim.title") : $T("widget.mission.progressHint")}>
-            <span class="h-1.5 w-14 overflow-hidden rounded-full bg-(--hairline-color)"
-              ><span class="block h-full rounded-full bg-(--accent-color)" style="width: {Math.round(headerProgress * 100)}%"></span></span
-            >
-            {Math.round(headerProgress * 100)}%{#if live}
-              · {live.finished
-                ? $T("widget.route.finished")
-                : live.target > route.points.length
-                  ? $T("widget.route.returning")
-                  : `${$T("widget.route.toPoint")} ${live.target}/${route.points.length}`}{/if}
-          </span>
-        {/if}
-        <span>{stats.points} {$T("widget.route.pts")} · {km(stats.length)}</span>
-      </span>
+      <div class="flex items-center gap-3">
+        <UI.Button
+          wrapperClass="w-auto"
+          componentClass="bg-transparent px-3"
+          content={{ icon: FitIcon, name: $T("constructor.props.map.fitAll"), info: { text: $T("widget.route.fitHint"), side: "bottom" } }}
+          disabled={collapsed || missionPoints().length === 0}
+          onClick={() => fitAll()}
+        />
+        <span class="flex items-center gap-3 text-[12px] font-semibold text-(--muted-color) tabular-nums">
+          {#if headerProgress !== null}
+            <span class="flex items-center gap-1.5" title={simulate ? $T("widget.sim.title") : $T("widget.mission.progressHint")}>
+              <span class="h-1.5 w-14 overflow-hidden rounded-full bg-(--hairline-color)"
+                ><span class="block h-full rounded-full bg-(--accent-color)" style="width: {Math.round(headerProgress * 100)}%"></span></span
+              >
+              {Math.round(headerProgress * 100)}%{#if live}
+                · {live.finished
+                  ? $T("widget.route.finished")
+                  : live.target > route.points.length
+                    ? $T("widget.route.returning")
+                    : `${$T("widget.route.toPoint")} ${live.target}/${route.points.length}`}{/if}
+            </span>
+          {/if}
+          <span>{stats.points} {$T("widget.route.pts")} · {km(stats.length)}</span>
+        </span>
+      </div>
     {/snippet}
   </WidgetHeader>
 

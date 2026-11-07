@@ -11,6 +11,8 @@
   import * as UI from "../.."
   import { MapLibre, NavigationControl, ScaleControl, FullScreenControl, CustomControl } from "../mapWrapper"
   import MissionLayers from "./MissionLayers.svelte"
+  import FitIcon from "../FitIcon.svelte"
+  import { createAutoFit, fitMapTo } from "./fit"
   import MissionSim from "./MissionSim.svelte"
   import SpinnerIcon from "./SpinnerIcon.svelte"
   import HelpText from "./HelpText.svelte"
@@ -430,6 +432,14 @@
     void isDarkMode
     mapColors = readMapColors(rootEl)
   })
+  /* «Показать все» в шапке и вписывание при появлении карты */
+  const missionPoints = (): LngLat[] => [...fields.flat(), ...plan.holes.flat(), ...(plan.start ? [plan.start] : [])]
+  const fitAll = (animate = true) => fitMapTo(mapInstance, missionPoints(), animate)
+  const autoFit = createAutoFit()
+  $effect(() => {
+    const map = mapInstance
+    untrack(() => autoFit(map, () => fitAll(false)))
+  })
 
   /* Мелкие зоны в м², остальное в га */
   const areaText = (m2: number) => (m2 < 1000 ? `${fmt(m2, 0)} ${$T("widget.mission.m2")}` : `${fmt(m2 / 10000, 2)} ${$T("widget.mission.ha")}`)
@@ -494,22 +504,31 @@
 >
   <WidgetHeader icon={MissionIcon} label={label?.name || $T("widget.mission.title")} bind:collapsed {hints}>
     {#snippet right()}
-      <span class="flex items-center gap-3 text-[12px] font-semibold text-(--muted-color) tabular-nums">
-        {#if headerProgress !== null}
-          <span class="flex items-center gap-1.5" title={simulate ? $T("widget.sim.title") : $T("widget.mission.progressHint")}>
-            <span class="h-1.5 w-14 overflow-hidden rounded-full bg-(--hairline-color)"
-              ><span class="block h-full rounded-full bg-(--accent-color)" style="width: {Math.round(headerProgress * 100)}%"></span></span
+      <div class="flex items-center gap-3">
+        <UI.Button
+          wrapperClass="w-auto"
+          componentClass="bg-transparent px-3"
+          content={{ icon: FitIcon, name: $T("constructor.props.map.fitAll"), info: { text: $T("widget.mission.fitHint"), side: "bottom" } }}
+          disabled={collapsed || missionPoints().length === 0}
+          onClick={() => fitAll()}
+        />
+        <span class="flex items-center gap-3 text-[12px] font-semibold text-(--muted-color) tabular-nums">
+          {#if headerProgress !== null}
+            <span class="flex items-center gap-1.5" title={simulate ? $T("widget.sim.title") : $T("widget.mission.progressHint")}>
+              <span class="h-1.5 w-14 overflow-hidden rounded-full bg-(--hairline-color)"
+                ><span class="block h-full rounded-full bg-(--accent-color)" style="width: {Math.round(headerProgress * 100)}%"></span></span
+              >
+              {Math.round(headerProgress * 100)}%{#if live}
+                · {$T("widget.mission.treated")} {fmt(treatedHa, 2)} {$T("widget.mission.ha")}{/if}
+            </span>
+          {/if}
+          {#if stats}
+            <span class="text-[12px] font-semibold text-(--muted-color) tabular-nums"
+              >{fmt(stats.ha, 2)} {$T("widget.mission.ha")} · {fmt(stats.total, 2)} {$T("widget.mission.km")}</span
             >
-            {Math.round(headerProgress * 100)}%{#if live}
-              · {$T("widget.mission.treated")} {fmt(treatedHa, 2)} {$T("widget.mission.ha")}{/if}
-          </span>
-        {/if}
-        {#if stats}
-          <span class="text-[12px] font-semibold text-(--muted-color) tabular-nums"
-            >{fmt(stats.ha, 2)} {$T("widget.mission.ha")} · {fmt(stats.total, 2)} {$T("widget.mission.km")}</span
-          >
-        {/if}
-      </span>
+          {/if}
+        </span>
+      </div>
     {/snippet}
   </WidgetHeader>
 
