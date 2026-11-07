@@ -332,8 +332,9 @@
   --hairline-color: rgb(17 24 39 / 0.11);
 
   --font-color: #10141a;
-  --muted-color: #545c6b;
-  --faint-color: #8b93a1;
+  /* Вторичный и подсказочный текст: контраст не ниже 4.8:1 на всех фонах темы (WCAG AA) */
+  --muted-color: #3f4651;
+  --faint-color: #5f6774;
 
   --accent-color: #4175c8;
   --accent-hover: #33599e;
@@ -359,6 +360,17 @@
   --purple-color: #855dd0;
   --pink-color: #c84182;
 
+  /* Цветной текст: в светлой теме - те же цвета, что и заливки (контраст ≥ 4.5:1 на белом) */
+  --gray-text: var(--muted-color);
+  --red-text: var(--red-color);
+  --orange-text: var(--orange-color);
+  --yellow-text: var(--yellow-color);
+  --green-text: var(--green-color);
+  --cyan-text: var(--cyan-color);
+  --blue-text: var(--blue-color);
+  --purple-text: var(--purple-color);
+  --pink-text: var(--pink-color);
+
   /* Мягкие тинты для фонов блоков и подсветки строк */
   --gray-soft: #f0f2f5;
   --red-soft: #fbeae8;
@@ -380,8 +392,9 @@
   --hairline-color: rgb(255 255 255 / 0.1);
 
   --font-color: #e9ebf0;
-  --muted-color: #9ba3b2;
-  --faint-color: #6d7686;
+  /* Вторичный и подсказочный текст: контраст не ниже 5.6:1 на всех фонах темы (WCAG AA) */
+  --muted-color: #b4bbc8;
+  --faint-color: #939cac;
 
   --accent-color: #3863a8;
   --accent-hover: #4a78bf;
@@ -406,6 +419,17 @@
   --blue-color: #3863a8;
   --purple-color: #754bc3;
   --pink-color: #a8386e;
+
+  /* Цветной текст: тёмные заливки как текст нечитаемы, поэтому светлые оттенки с контрастом ≥ 6:1 на всех фонах темы */
+  --gray-text: var(--muted-color);
+  --red-text: #f2867d;
+  --orange-text: #e6a65c;
+  --yellow-text: #dcc067;
+  --green-text: #5cc896;
+  --cyan-text: #5fc6dc;
+  --blue-text: #83abee;
+  --purple-text: #b49cf2;
+  --pink-text: #f084b8;
 
   --gray-soft: rgb(255 255 255 / 0.06);
   --red-soft: rgb(168 64 56 / 0.18);

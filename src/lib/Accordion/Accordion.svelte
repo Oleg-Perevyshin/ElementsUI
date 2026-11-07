@@ -31,13 +31,13 @@
     <!-- Заголовок: кнопка сворачивания на всю ширину и необязательные кнопки справа (actions) - вне неё, чтобы не сворачивать блок -->
     <div class="flex w-full items-center bg-(--accent-soft)">
       <button
-        class="flex min-w-0 flex-1 cursor-pointer items-center justify-between gap-3 px-4 py-3 text-left text-[color-mix(in_srgb,var(--accent-color)_60%,var(--font-color))] transition-colors duration-150 hover:bg-[color-mix(in_srgb,var(--accent-color)_12%,var(--accent-soft))]"
+        class="flex min-w-0 flex-1 cursor-pointer items-center justify-between gap-3 px-4 py-3 text-left text-[color-mix(in_srgb,var(--accent-color)_35%,var(--font-color))] transition-colors duration-150 hover:bg-[color-mix(in_srgb,var(--accent-color)_12%,var(--accent-soft))]"
         onclick={toggle}
       >
         <div class="flex min-w-0 flex-1 items-center gap-3">
           {#if label?.icon}
             <span
-              class="flex h-[18px] w-[18px] shrink-0 items-center justify-center text-[color-mix(in_srgb,var(--accent-color)_60%,var(--font-color))] [&_svg]:h-full [&_svg]:w-full"
+              class="flex h-[18px] w-[18px] shrink-0 items-center justify-center text-[color-mix(in_srgb,var(--accent-color)_35%,var(--font-color))] [&_svg]:h-full [&_svg]:w-full"
             >
               {#if typeof label?.icon === "string"}
                 {@html label.icon}
@@ -52,7 +52,7 @@
 
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          class="h-[14px] w-[14px] shrink-0 text-[color-mix(in_srgb,var(--accent-color)_60%,var(--font-color))] transition-transform duration-200"
+          class="h-[14px] w-[14px] shrink-0 text-[color-mix(in_srgb,var(--accent-color)_35%,var(--font-color))] transition-transform duration-200"
           style="transform: rotate({isOpen ? 180 : 0}deg)"
           viewBox="0 0 24 24"
         >

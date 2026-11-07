@@ -608,7 +608,7 @@
                     </label>
                   {/each}
                   {#if plan.sprayControl === "none"}
-                    <p class="m-0 text-[12px] text-(--red-color)">{$T("widget.mission.spray.noneWarn")}</p>
+                    <p class="m-0 text-[12px] text-(--red-text)">{$T("widget.mission.spray.noneWarn")}</p>
                   {/if}
                 </div>
                 {#if plan.sprayControl === "servo"}
@@ -660,7 +660,7 @@
                           />°
                         </span>
                         <span class="w-16 text-right font-semibold">{areaText(fieldArea(field, []))}</span>
-                        <button class="cursor-pointer border-none bg-transparent p-0 text-(--red-color)" onclick={() => removeField(i)} aria-label="Delete"
+                        <button class="cursor-pointer border-none bg-transparent p-0 text-(--red-text)" onclick={() => removeField(i)} aria-label="Delete"
                           >✕</button
                         >
                       </span>
@@ -673,7 +673,7 @@
                       <span class="flex items-center gap-2"><span class="size-2.5 rounded-sm bg-[#dc2626]"></span>{$T("widget.mission.hole")} {i + 1}</span>
                       <span class="flex items-center gap-2">
                         <span class="font-semibold">{areaText(fieldArea(hole, []))}</span>
-                        <button class="cursor-pointer border-none bg-transparent p-0 text-(--red-color)" onclick={() => removeHole(i)} aria-label="Delete"
+                        <button class="cursor-pointer border-none bg-transparent p-0 text-(--red-text)" onclick={() => removeHole(i)} aria-label="Delete"
                           >✕</button
                         >
                       </span>
@@ -697,7 +697,7 @@
                   </div>
                 {/if}
                 {#if fields.length || plan.holes.length}
-                  <button class="w-max cursor-pointer border-none bg-transparent p-0 text-[12px] text-(--red-color) underline" onclick={clearAll}>
+                  <button class="w-max cursor-pointer border-none bg-transparent p-0 text-[12px] text-(--red-text) underline" onclick={clearAll}>
                     {$T("widget.mission.clear")}
                   </button>
                 {/if}
@@ -741,7 +741,7 @@
             </div>
           {/if}
           {#if stats?.unreachable}
-            <p class="m-0 text-[12px] text-(--red-color)">{$T("widget.mission.unreachable")}: {stats.unreachable}</p>
+            <p class="m-0 text-[12px] text-(--red-text)">{$T("widget.mission.unreachable")}: {stats.unreachable}</p>
           {/if}
         </div>
       </div>

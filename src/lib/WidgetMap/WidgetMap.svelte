@@ -328,7 +328,7 @@
         <div class="flex flex-col items-center justify-center leading-none">
           <div
             class="flex size-8 shrink-0 items-center justify-center [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full
-          {isFresh(board) ? 'text-(--green-color)' : 'text-(--red-color)'}"
+          {isFresh(board) ? 'text-(--green-text)' : 'text-(--red-text)'}"
             style="rotate: {board.heading}deg;"
           >
             {#if markerIcon}
@@ -366,29 +366,29 @@
           <div class="flex items-center gap-1.5">
             <span class="size-2 shrink-0 rounded-full {isFresh(board) ? 'bg-(--green-color)' : 'bg-(--red-color)'}"></span>
             <h6 class="text-sm leading-none font-bold">{board.name}</h6>
-            {#if board.name !== board.group}<span class="text-[0.6rem] font-semibold uppercase opacity-60">{board.group}</span>{/if}
+            {#if board.name !== board.group}<span class="text-[11px] font-semibold uppercase text-(--muted-color)">{board.group}</span>{/if}
           </div>
 
           <div class="grid grid-cols-2 gap-x-3 gap-y-1 rounded-lg bg-(--container-color) p-2 text-xs">
             <div>
-              <p class="text-[0.6rem] font-semibold tracking-wide uppercase opacity-60">Lat / Lon</p>
+              <p class="text-[11px] font-semibold tracking-wide uppercase text-(--muted-color)">Lat / Lon</p>
               <p class="font-medium">{board.lat.toFixed(6)}, {board.lon.toFixed(6)}</p>
             </div>
             <div>
-              <p class="text-[0.6rem] font-semibold tracking-wide uppercase opacity-60">Alt</p>
+              <p class="text-[11px] font-semibold tracking-wide uppercase text-(--muted-color)">Alt</p>
               <p class="font-medium">{board.alt.toFixed(1)} m</p>
             </div>
             <div>
-              <p class="text-[0.6rem] font-semibold tracking-wide uppercase opacity-60">Heading</p>
+              <p class="text-[11px] font-semibold tracking-wide uppercase text-(--muted-color)">Heading</p>
               <p class="font-medium">{board.heading.toFixed(1)}°</p>
             </div>
             <div>
-              <p class="text-[0.6rem] font-semibold tracking-wide uppercase opacity-60">Satellites</p>
+              <p class="text-[11px] font-semibold tracking-wide uppercase text-(--muted-color)">Satellites</p>
               <p class="font-medium">{board.sat}</p>
             </div>
           </div>
 
-          {#if board.sn}<p class="text-center font-mono text-[0.6rem] tracking-wide uppercase">{board.sn}</p>{/if}
+          {#if board.sn}<p class="text-center font-mono text-[11px] tracking-wide uppercase">{board.sn}</p>{/if}
 
           <div class="grid grid-cols-[1fr_auto_1fr] items-center border-t border-(--hairline-color) pt-1">
             <div class="relative flex items-center justify-self-start">
@@ -431,7 +431,7 @@
             </button>
 
             <button
-              class="cursor-pointer justify-self-end rounded-lg border-none bg-transparent p-0.5 text-(--red-color) transition hover:opacity-80"
+              class="cursor-pointer justify-self-end rounded-lg border-none bg-transparent p-0.5 text-(--red-text) transition hover:opacity-80"
               aria-label="Hide"
               title="Hide"
               onclick={() => hideBoard(board.group)}
@@ -503,10 +503,10 @@
           />
           <span
             class="text-[12px] font-semibold tabular-nums {freshCount === 0
-              ? 'text-(--red-color)'
+              ? 'text-(--red-text)'
               : freshCount < groupList.length
                 ? 'text-(--muted-color)'
-                : 'text-(--green-color)'}"
+                : 'text-(--green-text)'}"
             use:hint={{ text: $T("widget.map.hint.boards"), enabled: $hints }}
           >
             {freshCount} / {groupList.length}

@@ -412,8 +412,7 @@
                       onUpdate={(v) => Number.isFinite(Number(v)) && setPoint(i, { speed: Math.min(40, Math.max(0.5, Number(v))) })}
                     />
                     <span class="text-right text-(--muted-color)">{leg ? `${fmt(leg.length, 0)} ${$T("widget.mission.m")}` : "-"}</span>
-                    <button class="cursor-pointer border-none bg-transparent p-0 text-(--red-color)" onclick={() => removePoint(i)} aria-label="Delete"
-                      >✕</button
+                    <button class="cursor-pointer border-none bg-transparent p-0 text-(--red-text)" onclick={() => removePoint(i)} aria-label="Delete">✕</button
                     >
                   </div>
                 {/each}
@@ -426,7 +425,7 @@
               {$T("widget.route.returnHome")}
             </label>
             {#if route.points.length}
-              <button class="w-max cursor-pointer border-none bg-transparent p-0 text-[12px] text-(--red-color) underline" onclick={clearAll}
+              <button class="w-max cursor-pointer border-none bg-transparent p-0 text-[12px] text-(--red-text) underline" onclick={clearAll}
                 >{$T("widget.mission.clear")}</button
               >
             {/if}

@@ -76,17 +76,17 @@
     const text = $T(key)
     return text === key ? (kind === "name" ? code : "") : text
   }
-  const percentColor = (p: number) => (p >= 90 ? "var(--red-color)" : p >= 75 ? "var(--orange-color)" : "var(--muted-color)")
+  const percentColor = (p: number) => (p >= 90 ? "var(--red-text)" : p >= 75 ? "var(--orange-text)" : "var(--muted-color)")
 
   let STATES = $derived(["running", "ready", "blocked", "suspended", "deleted"].map((state) => $T(`widget.stack.state.${state}`)))
-  const stackColor = (bytes: number) => (bytes < warnBytes ? "var(--red-color)" : bytes < warnBytes * 2 ? "var(--orange-color)" : "")
+  const stackColor = (bytes: number) => (bytes < warnBytes ? "var(--red-text)" : bytes < warnBytes * 2 ? "var(--orange-text)" : "")
 
   type TaskRow = { Name: string; StateText: string; Prio: number; CoreText: string; CpuText: string; FreeMinText: string }
   let tasks = $derived([...(value?.Tasks ?? [])].sort((a, b) => a.FreeMin - b.FreeMin))
   let hasCore = $derived(tasks.some((t) => t.Core !== undefined))
   /* Загрузка задачи, % одного ядра с прошлого ответа: от 50 % - оранжевая, от 80 % - красная; IDLE - это свободное время ядра, не подсвечивается */
   let hasCpu = $derived(tasks.some((t) => t.CPU !== undefined))
-  const cpuColor = (cpu: number) => (cpu >= 80 ? "var(--red-color)" : cpu >= 50 ? "var(--orange-color)" : "")
+  const cpuColor = (cpu: number) => (cpu >= 80 ? "var(--red-text)" : cpu >= 50 ? "var(--orange-text)" : "")
   let lowCount = $derived(tasks.filter((t) => t.FreeMin < warnBytes).length)
 
   /* Порядок фиксированный - по возрастанию запаса стека: при автоопросе сортировка кликом сбрасывалась бы каждый ответ */
@@ -202,7 +202,7 @@
           <div class="flex items-baseline justify-between gap-2 text-[12px] text-(--muted-color)">
             <span use:hint={{ text: $T("widget.stack.hint.tasks"), enabled: $hints }}>{$T("widget.stack.tasks", { n: tasks.length })}</span>
             {#if lowCount}
-              <span class="font-semibold text-(--red-color)" use:hint={{ text: $T("widget.stack.hint.low"), enabled: $hints }}
+              <span class="font-semibold text-(--red-text)" use:hint={{ text: $T("widget.stack.hint.low"), enabled: $hints }}
                 >{$T("widget.stack.low", { warn: warnBytes, n: lowCount })}</span
               >
             {/if}

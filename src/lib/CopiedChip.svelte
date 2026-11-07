@@ -8,7 +8,7 @@
 
 {#if show}
   <span
-    class="{className} absolute flex items-center gap-1 rounded-lg bg-(--green-soft) px-2 py-1 text-[11px] font-bold whitespace-nowrap text-(--green-color)"
+    class="{className} absolute flex items-center gap-1 rounded-lg bg-(--green-soft) px-2 py-1 text-[11px] font-bold whitespace-nowrap text-(--green-text)"
     transition:fade={{ duration: 150 }}
   >
     {$T("ui.copied")}

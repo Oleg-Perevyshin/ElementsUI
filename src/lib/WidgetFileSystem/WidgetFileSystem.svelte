@@ -58,7 +58,7 @@
   let files = $derived(value?.List ?? [])
   let usedPercent = $derived(total > 0 ? Math.min(100, Math.round((used / total) * 100)) : 0)
   /* Полоса - мастер-цвет виджета; почти заполненную ФС (закачка скоро начнёт падать) выдаёт только процент */
-  let percentColor = $derived(usedPercent >= 90 ? "var(--red-color)" : usedPercent >= 75 ? "var(--orange-color)" : "var(--muted-color)")
+  let percentColor = $derived(usedPercent >= 90 ? "var(--red-text)" : usedPercent >= 75 ? "var(--orange-text)" : "var(--muted-color)")
 
   /* Таблица файлов: путь обрезается «…», размер - уже отформатирован; действия - значки без текста: скачать и удалить (с подтверждением) */
   type FileRow = IWidgetFileSystemFile & { SizeText: string }
@@ -74,7 +74,7 @@
         data: {
           icon: ButtonDelete,
           title: $T("widget.common.delete"),
-          class: "bg-transparent px-0 text-(--red-color) hover:bg-(--red-color)/10",
+          class: "bg-transparent px-0 text-(--red-text) hover:bg-(--red-color)/10",
           onClick: (row: FileRow) => (pendingDelete = row.Name),
         },
       },
@@ -185,7 +185,7 @@
           >
         {/if}
         {#if downloadError}
-          <span class="mt-2 text-[12px] text-(--red-color)" transition:slide={{ duration: 100 }}>{downloadError}</span>
+          <span class="mt-2 text-[12px] text-(--red-text)" transition:slide={{ duration: 100 }}>{downloadError}</span>
         {/if}
       </div>
 
@@ -207,7 +207,7 @@
             </div>
           {/if}
           {#if uploadError}
-            <span class="text-[12px] text-(--red-color)" transition:slide={{ duration: 100 }}>{uploadError}</span>
+            <span class="text-[12px] text-(--red-text)" transition:slide={{ duration: 100 }}>{uploadError}</span>
           {/if}
         </div>
       {/if}

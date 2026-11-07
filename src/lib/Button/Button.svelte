@@ -126,7 +126,7 @@
     {#if content.name?.trim()}
       <span class="truncate">{content.name}</span>
       {#if keyBind.key && keyBind.showHint}
-        <span class="ml-1 text-[11px] font-medium tabular-nums opacity-60">
+        <span class="ml-1 text-[11px] font-medium tabular-nums opacity-80">
           {keyBind.ctrlKey ? "Ctrl+" : ""}{keyBind.shiftKey ? "Shift+" : ""}{keyBind.altKey ? "Alt+" : ""}{keyBind.key}
         </span>
       {/if}

@@ -263,7 +263,7 @@
   <div class="relative flex h-full w-full flex-col overflow-hidden rounded-[14px] border border-(--hairline-color) bg-(--back-color)">
     <!-- Table Header -->
     <div
-      class="grid border-b border-(--hairline-color) bg-[var(--table-header-color,var(--accent-soft))] text-[11px] font-bold tracking-[0.06em] text-[color-mix(in_srgb,var(--accent-color)_60%,var(--font-color))] uppercase"
+      class="grid border-b border-(--hairline-color) bg-[var(--table-header-color,var(--accent-soft))] text-[11px] font-bold tracking-[0.06em] text-[color-mix(in_srgb,var(--accent-color)_35%,var(--font-color))] uppercase"
       style={`grid-template-columns: ${gridTemplate}; padding-right: ${scrollbarWidth}px;`}
     >
       {#each header as column, index (column)}
@@ -294,7 +294,7 @@
       {#if dataBuffer.clearButton}
         <div class="flex items-center justify-center tracking-normal normal-case">
           <Button
-            componentClass={twMerge("size-7 p-1.5 text-(--muted-color) hover:text-(--red-color)", dataBuffer.clearClass)}
+            componentClass={twMerge("size-7 p-1.5 text-(--muted-color) hover:text-(--red-text)", dataBuffer.clearClass)}
             content={{ icon: ButtonClear, info: { text: $T("common.table.clear"), side: "left" } }}
             onClick={clearBuffer}
           />

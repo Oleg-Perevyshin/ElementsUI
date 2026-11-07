@@ -14,7 +14,16 @@
   import { readPersistedCollapsed, writePersistedCollapsed } from "../widgetCollapse"
   import { createFlightSim } from "../flightSim"
 
-  let { wrapperClass = "", componentClass = "", label = {}, value: deviceValue, limits, isTest = false, collapsed = $bindable(false), persistKey }: IWidgetPFDProps = $props()
+  let {
+    wrapperClass = "",
+    componentClass = "",
+    label = {},
+    value: deviceValue,
+    limits,
+    isTest = false,
+    collapsed = $bindable(false),
+    persistKey,
+  }: IWidgetPFDProps = $props()
 
   /* В режиме имитации данные устройства не учитываются, кадр полёта каждые 50 мс */
   let simValue: IWidgetPFDData | undefined = $state()
@@ -244,7 +253,7 @@
   let ekf = $derived(num(value?.EKF, -1))
   /* Пороги дисперсии EKF - как в Mission Planner: от 0.5 внимание, от 0.8 тревога; неисправный датчик - тревога */
   let navState: "ok" | "warn" | "bad" | "none" = $derived(sensErr > 0 || ekf >= 0.8 ? "bad" : ekf >= 0.5 ? "warn" : ekf >= 0 ? "ok" : "none")
-  const NAV_COLOR = { ok: "var(--green-color)", warn: "var(--orange-color)", bad: "var(--red-color)", none: "var(--faint-color)" }
+  const NAV_COLOR = { ok: "var(--green-text)", warn: "var(--orange-text)", bad: "var(--red-text)", none: "var(--faint-color)" }
 
   /* Сообщения автопилота (STATUSTEXT): новое - по смене MsgSeq, последнее висит 10 с, история из 5 - в подсказке */
   let SEVERITY = $derived(Array.from({ length: 8 }, (_, i) => $T(`pfd.sev.${i}`)))
@@ -455,7 +464,7 @@
   <WidgetHeader icon={PlaneIcon} label={label?.name || $T("pfd.title")} bind:collapsed {hints}>
     {#snippet right()}
       <div class="flex items-center gap-4">
-        <span class="text-[12px] font-semibold tabular-nums {stale ? 'text-(--red-color)' : 'text-(--muted-color)'}">{fmtAge(age)}</span>
+        <span class="text-[12px] font-semibold tabular-nums {stale ? 'text-(--red-text)' : 'text-(--muted-color)'}">{fmtAge(age)}</span>
       </div>
     {/snippet}
   </WidgetHeader>
@@ -474,7 +483,7 @@
         class="flex flex-wrap items-center justify-between gap-x-5 gap-y-1.5 rounded-[10px] border border-(--hairline-color) bg-(--back-color) px-3 py-2 text-[12px] font-semibold tabular-nums"
       >
         <div class="flex min-w-0 items-center gap-2" data-tip="system">
-          <span class="shrink-0 text-[10px] tracking-wide whitespace-nowrap text-(--faint-color) uppercase">{$T("pfd.system")}</span>
+          <span class="shrink-0 text-[11px] tracking-wide whitespace-nowrap text-(--faint-color) uppercase">{$T("pfd.system")}</span>
           <span class="rounded-md px-1.5 py-0.5 {armed ? 'bg-(--red-color) text-white' : 'bg-(--container-color) text-(--muted-color)'}" data-tip="armed"
             >{armed ? "ARMED" : "DISARMED"}</span
           >
@@ -486,21 +495,21 @@
           </span>
         </div>
         <div class="flex min-w-0 items-center gap-2" data-tip="gps">
-          <span class="shrink-0 text-[10px] tracking-wide whitespace-nowrap text-(--faint-color) uppercase">GPS</span>
-          <span class={fix < 3 ? "text-(--orange-color)" : ""}>{FIX[fix] ?? fix} · {$T("pfd.sat", { n: num(value?.Sat) })}</span>
-          {#if hdop >= 0}<span class={hdop > 2 ? "text-(--orange-color)" : ""}>HDOP {fmt(hdop, 2)}</span>{/if}
+          <span class="shrink-0 text-[11px] tracking-wide whitespace-nowrap text-(--faint-color) uppercase">GPS</span>
+          <span class={fix < 3 ? "text-(--orange-text)" : ""}>{FIX[fix] ?? fix} · {$T("pfd.sat", { n: num(value?.Sat) })}</span>
+          {#if hdop >= 0}<span class={hdop > 2 ? "text-(--orange-text)" : ""}>HDOP {fmt(hdop, 2)}</span>{/if}
         </div>
         {#if rssi >= 0 || remRssi >= 0 || drop >= 0}
           <div class="flex min-w-0 items-center gap-2" data-tip="link">
-            <span class="shrink-0 text-[10px] tracking-wide whitespace-nowrap text-(--faint-color) uppercase">{$T("pfd.link")}</span>
-            <span class={Math.min(rssi, remRssi) >= 0 && Math.min(rssi, remRssi) < 30 ? "text-(--red-color)" : ""}
+            <span class="shrink-0 text-[11px] tracking-wide whitespace-nowrap text-(--faint-color) uppercase">{$T("pfd.link")}</span>
+            <span class={Math.min(rssi, remRssi) >= 0 && Math.min(rssi, remRssi) < 30 ? "text-(--red-text)" : ""}
               >{rssi >= 0 ? Math.round(rssi) : "-"} / {remRssi >= 0 ? Math.round(remRssi) : "-"} %</span
             >
-            {#if drop >= 0}<span class={drop > 5 ? "text-(--orange-color)" : ""}>{$T("pfd.link.drop", { v: fmt(drop) })}</span>{/if}
+            {#if drop >= 0}<span class={drop > 5 ? "text-(--orange-text)" : ""}>{$T("pfd.link.drop", { v: fmt(drop) })}</span>{/if}
           </div>
         {/if}
-        <div class="flex items-center gap-2 {battLow ? 'text-(--red-color)' : ''}" data-tip="battery">
-          <span class="shrink-0 text-[10px] tracking-wide whitespace-nowrap text-(--faint-color) uppercase">{$T("pfd.battery")}</span>
+        <div class="flex items-center gap-2 {battLow ? 'text-(--red-text)' : ''}" data-tip="battery">
+          <span class="shrink-0 text-[11px] tracking-wide whitespace-nowrap text-(--faint-color) uppercase">{$T("pfd.battery")}</span>
           <span>{battText}</span>
         </div>
       </div>
@@ -764,7 +773,7 @@
       >
         {#if wp}
           <div class="flex min-w-0 items-center gap-2" data-tip="route">
-            <span class="shrink-0 text-[10px] font-semibold tracking-wide whitespace-nowrap text-(--faint-color) uppercase">{$T("pfd.route")}</span>
+            <span class="shrink-0 text-[11px] font-semibold tracking-wide whitespace-nowrap text-(--faint-color) uppercase">{$T("pfd.route")}</span>
             <span
               ><span style="color:#22d3ee">◆</span>
               {$T("pfd.route.line", { n: wp.num, d: fmtDistance(wp.dist), x: fmtDistance(Math.abs(wp.xte)) })}{eta ? ` · ${eta}` : ""}</span
@@ -773,22 +782,22 @@
         {/if}
         {#if home}
           <div class="flex min-w-0 items-center gap-2" data-tip="home">
-            <span class="shrink-0 text-[10px] font-semibold tracking-wide whitespace-nowrap text-(--faint-color) uppercase">{$T("pfd.home")}</span>
+            <span class="shrink-0 text-[11px] font-semibold tracking-wide whitespace-nowrap text-(--faint-color) uppercase">{$T("pfd.home")}</span>
             <span><span style="color:#22c55e">●</span> {fmtDistance(home.distance)} · {Math.round(home.bearing)}°</span>
           </div>
         {/if}
         {#if track !== null}
           <div class="flex items-center gap-2" data-tip="track">
-            <span class="shrink-0 text-[10px] font-semibold tracking-wide whitespace-nowrap text-(--faint-color) uppercase">{$T("pfd.track")}</span>
+            <span class="shrink-0 text-[11px] font-semibold tracking-wide whitespace-nowrap text-(--faint-color) uppercase">{$T("pfd.track")}</span>
             <span><span style="color:#ec4899">▲</span> {Math.round(track)}°</span>
           </div>
         {/if}
         <div class="flex min-w-0 items-center gap-2" data-tip="position">
-          <span class="shrink-0 text-[10px] font-semibold tracking-wide whitespace-nowrap text-(--faint-color) uppercase">{$T("pfd.position")}</span>
+          <span class="shrink-0 text-[11px] font-semibold tracking-wide whitespace-nowrap text-(--faint-color) uppercase">{$T("pfd.position")}</span>
           <span>{latLonText} · MSL {$T("pfd.u.m", { n: Math.round(altMsl) })}</span>
         </div>
         <div class="flex min-w-0 items-center gap-2" data-tip="air">
-          <span class="shrink-0 text-[10px] font-semibold tracking-wide whitespace-nowrap text-(--faint-color) uppercase">{$T("pfd.air")}</span>
+          <span class="shrink-0 text-[11px] font-semibold tracking-wide whitespace-nowrap text-(--faint-color) uppercase">{$T("pfd.air")}</span>
           <span>{fmt(num(value?.Press))} {$T("pfd.u.hpa")} · {fmt(num(value?.Temp))} °C</span>
         </div>
       </div>

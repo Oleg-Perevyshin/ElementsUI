@@ -110,7 +110,7 @@
         <!-- Шкала Y: подписи нулевой высоты, центр каждой ровно на своей линии сетки -->
         <div class="flex h-40 shrink-0 flex-col justify-between">
           {#each axis.ticks as tick}
-            <div class="flex h-0 items-center justify-end text-[10px] font-medium text-(--faint-color) tabular-nums">
+            <div class="flex h-0 items-center justify-end text-[11px] font-medium text-(--faint-color) tabular-nums">
               {formatTick(tick)}
             </div>
           {/each}
@@ -152,7 +152,7 @@
 
           <div class="flex w-full gap-1">
             {#each values as _, i}
-              <div class="flex-1 truncate text-center text-[10px] font-bold text-(--faint-color)">
+              <div class="flex-1 truncate text-center text-[11px] font-bold text-(--faint-color)">
                 {i % labelStep === 0 ? barLabel(i) : ""}
               </div>
             {/each}

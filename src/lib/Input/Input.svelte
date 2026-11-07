@@ -245,6 +245,6 @@
 
   {#if help.regExp && !isValid}
     <!-- Текст ошибки в потоке под полем и только когда поле невалидно: место заранее не резервируется, на соседей не наезжает -->
-    <span class="block text-[12px] font-semibold text-(--red-color)">{$T("ui.invalid_format")}</span>
+    <span class="block text-[12px] font-semibold text-(--red-text)">{$T("ui.invalid_format")}</span>
   {/if}
 </div>

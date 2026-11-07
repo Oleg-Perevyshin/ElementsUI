@@ -270,7 +270,7 @@
         class="flex w-full max-w-80 flex-col gap-3 rounded-[16px] border border-(--hairline-color) bg-(--back-color) p-4 shadow-(--elevation-3)"
         transition:scale={{ duration: 150, start: 0.96 }}
       >
-        <div class="flex items-center gap-2 text-(--orange-color)">
+        <div class="flex items-center gap-2 text-(--orange-text)">
           <WarningIcon />
           <h4 class="text-[15px] font-semibold text-(--font-color)">{$T("widget.wifi.ap_confirm_title")}</h4>
         </div>
