@@ -315,7 +315,7 @@
   /* Ключ подсказки элемента под курсором; текст берётся из tips - обновляется вместе с данными */
   let tip: string | null = $state(null)
   /* Подсказки включаются кнопкой «?» в шапке - выбор общий для всех PFD в браузере (hints.ts) */
-  const hints = hintsSetting("WidgetPFD")
+  const hints = $derived(hintsSetting("WidgetPFD", persistKey))
   $effect(() => {
     if (!$hints) tip = null
   })

@@ -52,7 +52,7 @@
     onSend,
   }: Props = $props()
 
-  const hints = hintsSetting("WidgetMap")
+  const hints = $derived(hintsSetting("WidgetMap", persistKey))
   let accentStyle = $derived(widgetAccentStyle(componentClass ?? ""))
 
   let hasMergedPersisted = false
@@ -285,6 +285,30 @@
       geometry: { type: "LineString", coordinates: s.points },
     })),
   })
+  /* Поле или зона, на которые навели в списке «Итога», подсвечиваются на карте; нажатие на название приближает карту к контуру */
+  let highlighted = $state<{ kind: "field" | "hole"; index: number } | null>(null)
+  let highlightGeo = $derived.by(() => {
+    if (!highlighted) return null
+    const ring = highlighted.kind === "field" ? fields[highlighted.index] : plan.holes[highlighted.index]
+    if (!ring || ring.length < 3) return null
+    return {
+      type: "FeatureCollection",
+      features: [{ type: "Feature", properties: { kind: highlighted.kind }, geometry: { type: "Polygon", coordinates: [closed(ring)] } }],
+    }
+  })
+  const flyTo = (ring: LngLat[]) => {
+    if (!mapInstance || ring.length < 3) return
+    const lngs = ring.map((p) => p[0])
+    const lats = ring.map((p) => p[1])
+    mapInstance.fitBounds(
+      [
+        [Math.min(...lngs), Math.min(...lats)],
+        [Math.max(...lngs), Math.max(...lats)],
+      ],
+      { padding: 60, maxZoom: 19, duration: 500 },
+    )
+  }
+
   let draftGeo = $derived({
     type: "FeatureCollection",
     features: drawing
@@ -542,6 +566,7 @@
             {onDragEnd}
             {onHandleRightClick}
             colors={mapColors}
+            highlight={highlightGeo}
             onCursor={(ll) => (cursor = ll)}
           />
           {@render overlay?.()}
@@ -682,9 +707,16 @@
                 <span class="text-[11px] font-semibold tracking-wide text-(--faint-color) uppercase">{$T("widget.mission.zones")}</span>
                 <div class="flex flex-col gap-1.5 rounded-lg bg-(--container-color) p-3 text-[13px] tabular-nums">
                   {#each fields as field, i}
-                    <div class="flex items-center justify-between gap-2">
-                      <span class="flex items-center gap-2"
-                        ><span class="size-2.5 rounded-sm bg-(--green-mark)"></span>{$T("widget.mission.field")} {i + 1}</span
+                    <div
+                      class="-mx-1.5 flex items-center justify-between gap-2 rounded-md px-1.5 transition-colors duration-150 hover:bg-(--green-soft)"
+                      role="listitem"
+                      onmouseenter={() => (highlighted = { kind: "field", index: i })}
+                      onmouseleave={() => (highlighted = null)}
+                    >
+                      <button
+                        class="flex cursor-pointer items-center gap-2 border-none bg-transparent p-0 text-left text-(--font-color)"
+                        title={$T("widget.mission.showOnMap")}
+                        onclick={() => flyTo(field)}><span class="size-2.5 rounded-sm bg-(--green-mark)"></span>{$T("widget.mission.field")} {i + 1}</button
                       >
                       <span class="flex items-center gap-3">
                         <span class="flex items-center gap-1" use:hint={{ text: $T("widget.mission.hint.fieldAngle"), enabled: $hints }}>
@@ -706,8 +738,17 @@
                     <span class="text-(--muted-color)">{$T("widget.mission.noField")}</span>
                   {/each}
                   {#each plan.holes as hole, i}
-                    <div class="flex items-center justify-between gap-2">
-                      <span class="flex items-center gap-2"><span class="size-2.5 rounded-sm bg-(--red-mark)"></span>{$T("widget.mission.hole")} {i + 1}</span>
+                    <div
+                      class="-mx-1.5 flex items-center justify-between gap-2 rounded-md px-1.5 transition-colors duration-150 hover:bg-(--red-soft)"
+                      role="listitem"
+                      onmouseenter={() => (highlighted = { kind: "hole", index: i })}
+                      onmouseleave={() => (highlighted = null)}
+                    >
+                      <button
+                        class="flex cursor-pointer items-center gap-2 border-none bg-transparent p-0 text-left text-(--font-color)"
+                        title={$T("widget.mission.showOnMap")}
+                        onclick={() => flyTo(hole)}><span class="size-2.5 rounded-sm bg-(--red-mark)"></span>{$T("widget.mission.hole")} {i + 1}</button
+                      >
                       <span class="flex items-center gap-2">
                         <span class="font-semibold">{areaText(fieldArea(hole, []))}</span>
                         <button class="cursor-pointer border-none bg-transparent p-0 text-(--red-text)" onclick={() => removeHole(i)} aria-label="Delete"

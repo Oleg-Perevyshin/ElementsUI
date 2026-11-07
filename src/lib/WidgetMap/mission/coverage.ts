@@ -78,6 +78,66 @@ const segmentsCross = (a: P, b: P, c: P, d: P) => {
 const segSegDist = (a: P, b: P, c: P, d: P) =>
   segmentsCross(a, b, c, d) ? 0 : Math.min(segPointDist(a, c, d), segPointDist(b, c, d), segPointDist(c, a, b), segPointDist(d, a, b))
 
+/* Те же проверки на числах, без временных массивов: их вызывают сотни тысяч раз за расчёт */
+const segPointDistXY = (px: number, py: number, ax: number, ay: number, bx: number, by: number) => {
+  const dx = bx - ax
+  const dy = by - ay
+  const len2 = dx * dx + dy * dy
+  const t = len2 < EPS ? 0 : Math.max(0, Math.min(1, ((px - ax) * dx + (py - ay) * dy) / len2))
+  return Math.hypot(px - ax - dx * t, py - ay - dy * t)
+}
+
+const segSegDistXY = (ax: number, ay: number, bx: number, by: number, cx: number, cy: number, dx: number, dy: number) => {
+  const d1 = (dx - cx) * (ay - cy) - (dy - cy) * (ax - cx)
+  const d2 = (dx - cx) * (by - cy) - (dy - cy) * (bx - cx)
+  const d3 = (bx - ax) * (cy - ay) - (by - ay) * (cx - ax)
+  const d4 = (bx - ax) * (dy - ay) - (by - ay) * (dx - ax)
+  if (((d1 > 0 && d2 < 0) || (d1 < 0 && d2 > 0)) && ((d3 > 0 && d4 < 0) || (d3 < 0 && d4 > 0))) return 0
+  return Math.min(
+    segPointDistXY(ax, ay, cx, cy, dx, dy),
+    segPointDistXY(bx, by, cx, cy, dx, dy),
+    segPointDistXY(cx, cy, ax, ay, bx, by),
+    segPointDistXY(dx, dy, ax, ay, bx, by),
+  )
+}
+
+const pointInRingXY = (x: number, y: number, r: P[]) => {
+  let inside = false
+  for (let i = 0, j = r.length - 1; i < r.length; j = i++) {
+    const xi = r[i][0]
+    const yi = r[i][1]
+    const xj = r[j][0]
+    const yj = r[j][1]
+    if (yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) inside = !inside
+  }
+  return inside
+}
+
+/* Стороны контуров с рамками: по 8 чисел на сторону (концы и границы рамки) */
+const packEdges = (rings: P[][]) => {
+  const out: number[] = []
+  for (const ring of rings)
+    for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+      const [ax, ay] = ring[j]
+      const [bx, by] = ring[i]
+      out.push(ax, ay, bx, by, Math.min(ax, bx), Math.min(ay, by), Math.max(ax, bx), Math.max(ay, by))
+    }
+  return Float64Array.from(out)
+}
+
+/* Отрезок не ближе clearance ни к одной стороне; стороны, чья рамка дальше clearance от рамки отрезка, не проверяются */
+const edgesClear = (edges: Float64Array, ax: number, ay: number, bx: number, by: number, clearance: number) => {
+  const minx = Math.min(ax, bx) - clearance
+  const maxx = Math.max(ax, bx) + clearance
+  const miny = Math.min(ay, by) - clearance
+  const maxy = Math.max(ay, by) + clearance
+  for (let k = 0; k < edges.length; k += 8) {
+    if (edges[k + 4] > maxx || edges[k + 6] < minx || edges[k + 5] > maxy || edges[k + 7] < miny) continue
+    if (segSegDistXY(ax, ay, bx, by, edges[k], edges[k + 1], edges[k + 2], edges[k + 3]) < clearance) return false
+  }
+  return true
+}
+
 /* ********************************************************** */
 /* Интервалы на прямой */
 
@@ -140,11 +200,17 @@ const unionSets = (sets: Interval[][]) => {
 /* Свободное пространство с отступом в повёрнутой системе: проходы идут вдоль оси x */
 
 class FreeSpace {
+  private allEdges: Float64Array
+  private holeEdges: Float64Array
+
   constructor(
     private field: P[],
     private holes: P[][],
     private margin: number,
-  ) {}
+  ) {
+    this.allEdges = packEdges([field, ...holes])
+    this.holeEdges = packEdges(holes)
+  }
 
   private vertexYs = () => [this.field, ...this.holes].flat().map((p) => p[1])
 
@@ -170,24 +236,19 @@ class FreeSpace {
 
   /* Отрезок пути допустим: внутри поля, вне зон, не ближе margin к их границам */
   segmentClear(a: P, b: P, clearance: number) {
-    const mid: P = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2]
-    if (!pointInRing(mid, this.field) || this.holes.some((h) => pointInRing(mid, h))) return false
-    for (const ring of [this.field, ...this.holes]) {
-      for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
-        if (segSegDist(a, b, ring[j], ring[i]) < clearance) return false
-      }
-    }
-    return true
+    const mx = (a[0] + b[0]) / 2
+    const my = (a[1] + b[1]) / 2
+    if (!pointInRingXY(mx, my, this.field)) return false
+    for (const h of this.holes) if (pointInRingXY(mx, my, h)) return false
+    return edgesClear(this.allEdges, a[0], a[1], b[0], b[1], clearance)
   }
 
   /* Для точки взлёта вне поля: граница поля не мешает, только запретные зоны с отступом */
   segmentClearOfHoles(a: P, b: P, clearance: number) {
-    const mid: P = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2]
-    if (this.holes.some((h) => pointInRing(mid, h))) return false
-    for (const ring of this.holes) {
-      for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) if (segSegDist(a, b, ring[j], ring[i]) < clearance) return false
-    }
-    return true
+    const mx = (a[0] + b[0]) / 2
+    const my = (a[1] + b[1]) / 2
+    for (const h of this.holes) if (pointInRingXY(mx, my, h)) return false
+    return edgesClear(this.holeEdges, a[0], a[1], b[0], b[1], clearance)
   }
 
   inField(p: P) {
@@ -235,11 +296,13 @@ class FreeSpace {
 }
 
 /* ********************************************************** */
-/* Кратчайшие пути в обход препятствий (граф видимости + Дейкстра) */
+/* Кратчайшие пути в обход препятствий: граф видимости, кратчайшие пути между его узлами считаются один раз (Флойд-Уоршелл) */
 
 class Router {
   private nodes: P[]
-  private adj: number[][] = []
+  /* Длины кратчайших путей между узлами и следующий узел на пути, матрицы n x n */
+  private far: Float64Array
+  private next: Int32Array
   private cache = new Map<string, { len: number; path: P[] }>()
 
   constructor(
@@ -248,56 +311,96 @@ class Router {
   ) {
     this.nodes = space.graphNodes()
     const n = this.nodes.length
-    for (let i = 0; i < n; i++) this.adj.push(new Array(n).fill(Infinity))
+    const far = new Float64Array(n * n).fill(Infinity)
+    const next = new Int32Array(n * n).fill(-1)
     for (let i = 0; i < n; i++) {
+      far[i * n + i] = 0
+      next[i * n + i] = i
       for (let j = i + 1; j < n; j++) {
-        if (space.segmentClear(this.nodes[i], this.nodes[j], clearance)) this.adj[i][j] = this.adj[j][i] = dist(this.nodes[i], this.nodes[j])
+        if (!space.segmentClear(this.nodes[i], this.nodes[j], clearance)) continue
+        const d = dist(this.nodes[i], this.nodes[j])
+        far[i * n + j] = far[j * n + i] = d
+        next[i * n + j] = j
+        next[j * n + i] = i
       }
     }
+    for (let k = 0; k < n; k++)
+      for (let i = 0; i < n; i++) {
+        const ik = far[i * n + k]
+        if (ik === Infinity) continue
+        for (let j = 0; j < n; j++) {
+          const c = ik + far[k * n + j]
+          if (c < far[i * n + j]) {
+            far[i * n + j] = c
+            next[i * n + j] = next[i * n + k]
+          }
+        }
+      }
+    this.far = far
+    this.next = next
+  }
+
+  /* Видимость точки из узлов графа: одна и та же точка входа или выхода ячейки участвует во многих маршрутах */
+  private visCache = new Map<string, Float64Array>()
+  private visibility(p: P, loose: boolean) {
+    const key = `${p[0]},${p[1]},${loose}`
+    let vis = this.visCache.get(key)
+    if (!vis) {
+      vis = new Float64Array(this.nodes.length)
+      for (let i = 0; i < this.nodes.length; i++) {
+        const q = this.nodes[i]
+        const ok = loose ? this.space.segmentClearOfHoles(p, q, this.clearance) : this.space.segmentClear(p, q, this.clearance)
+        vis[i] = ok ? dist(p, q) : Infinity
+      }
+      this.visCache.set(key, vis)
+    }
+    return vis
   }
 
   route(a: P, b: P): { len: number; path: P[] } {
+    const key = `${a[0]},${a[1]}>${b[0]},${b[1]}`
+    const hit = this.cache.get(key)
+    if (hit) return hit
     /* Конец вне поля (точка взлёта): его отрезки проверяются только на зоны */
     const outA = !this.space.inField(a)
     const outB = !this.space.inField(b)
-    const clear = (p: P, q: P, loose: boolean) => (loose ? this.space.segmentClearOfHoles(p, q, this.clearance) : this.space.segmentClear(p, q, this.clearance))
-    if (clear(a, b, outA || outB)) return { len: dist(a, b), path: [a, b] }
-    const key = `${a[0].toFixed(2)},${a[1].toFixed(2)}>${b[0].toFixed(2)},${b[1].toFixed(2)}`
-    const hit = this.cache.get(key)
-    if (hit) return hit
-    const n = this.nodes.length
-    /* Узлы 0..n-1 - граф, n - старт, n+1 - финиш */
-    const pos = [...this.nodes, a, b]
-    const edge = (i: number, j: number) => {
-      if (i < n && j < n) return this.adj[i][j]
-      const loose = (outA && (i === n || j === n)) || (outB && (i === n + 1 || j === n + 1))
-      return clear(pos[i], pos[j], loose) ? dist(pos[i], pos[j]) : Infinity
+    const loose = outA || outB
+    if (loose ? this.space.segmentClearOfHoles(a, b, this.clearance) : this.space.segmentClear(a, b, this.clearance)) {
+      const direct = { len: dist(a, b), path: [a, b] }
+      this.cache.set(key, direct)
+      return direct
     }
-    const total = n + 2
-    const best = new Array(total).fill(Infinity)
-    const prev = new Array(total).fill(-1)
-    const done = new Array(total).fill(false)
-    best[n] = 0
-    for (;;) {
-      let u = -1
-      for (let i = 0; i < total; i++) if (!done[i] && best[i] < Infinity && (u === -1 || best[i] < best[u])) u = i
-      if (u === -1 || u === n + 1) break
-      done[u] = true
-      for (let v = 0; v < total; v++) {
-        if (done[v] || v === u) continue
-        const w = edge(u, v)
-        if (w < Infinity && best[u] + w < best[v]) {
-          best[v] = best[u] + w
-          prev[v] = u
+    const n = this.nodes.length
+    const visA = this.visibility(a, outA)
+    const visB = this.visibility(b, outB)
+    /* Лучший путь: от a к видимому узлу i, по графу к узлу j, от j к b */
+    let len = Infinity
+    let bi = -1
+    let bj = -1
+    for (let i = 0; i < n; i++) {
+      const ai = visA[i]
+      if (ai === Infinity) continue
+      for (let j = 0; j < n; j++) {
+        const jb = visB[j]
+        if (jb === Infinity) continue
+        const c = ai + this.far[i * n + j] + jb
+        if (c < len) {
+          len = c
+          bi = i
+          bj = j
         }
       }
     }
     let res: { len: number; path: P[] }
-    if (best[n + 1] === Infinity) res = { len: Infinity, path: [a, b] }
+    if (len === Infinity) res = { len: Infinity, path: [a, b] }
     else {
-      const path: P[] = []
-      for (let v = n + 1; v !== -1; v = prev[v]) path.unshift(pos[v])
-      res = { len: best[n + 1], path }
+      const path: P[] = [a]
+      for (let v = bi; ; v = this.next[v * n + bj]) {
+        path.push(this.nodes[v])
+        if (v === bj) break
+      }
+      path.push(b)
+      res = { len, path }
     }
     this.cache.set(key, res)
     return res
@@ -376,16 +479,16 @@ const orderCells = (cells: Cell[], cost: (a: P, b: P) => number, start: P | null
     const par = new Int32Array(full * n * 4).fill(-1)
     const at = (mask: number, i: number, k: number) => (mask * n + i) * 4 + k
     for (let i = 0; i < n; i++) for (let k = 0; k < 4; k++) dp[at(1 << i, i, k)] = startCost(i, k)
-    const trans = new Map<string, number>()
-    const tc = (i: number, k: number, j: number, l: number) => {
-      const key = `${i}.${k}.${j}.${l}`
-      let c = trans.get(key)
-      if (c === undefined) {
-        c = cost(exits[i][k], entries[j][l])
-        trans.set(key, c)
-      }
-      return c
-    }
+    /* Стоимости всех переходов «выход варианта k ячейки i - вход варианта l ячейки j» заранее, числами: перебор обращается к ним сотни тысяч раз */
+    const m = n * 4
+    const trans = new Float64Array(m * m)
+    for (let i = 0; i < n; i++)
+      for (let k = 0; k < 4; k++)
+        for (let j = 0; j < n; j++) {
+          if (j === i) continue
+          for (let l = 0; l < 4; l++) trans[(i * 4 + k) * m + j * 4 + l] = cost(exits[i][k], entries[j][l])
+        }
+    const tc = (i: number, k: number, j: number, l: number) => trans[(i * 4 + k) * m + j * 4 + l]
     for (let mask = 1; mask < full; mask++) {
       for (let i = 0; i < n; i++) {
         if (!(mask & (1 << i))) continue
@@ -813,7 +916,13 @@ export const searchFieldAngle = async (
     cache.set(key, c)
     return c
   }
-  const yieldUi = () => new Promise((r) => setTimeout(r, 0))
+  /* Страница получает управление, когда расчёты заняли больше 12 мс: так она успевает отрисоваться, а лишних пауз между быстрыми расчётами нет */
+  let lastYield = performance.now()
+  const yieldUi = async () => {
+    if (performance.now() - lastYield < 12) return
+    await new Promise((r) => setTimeout(r, 0))
+    lastYield = performance.now()
+  }
   /* Направления сторон поля: вдоль длинной стороны проходы часто ложатся лучше всего */
   const kLon = Math.cos(((contour[0]?.[1] ?? 0) * Math.PI) / 180)
   const edges = contour.map((p, i) => {

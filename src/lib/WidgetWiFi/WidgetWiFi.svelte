@@ -29,7 +29,7 @@
   }: IWidgetWiFiProps = $props()
 
   /* Подсказки - кнопка «?» в шапке, выбор общий для всех WidgetWiFi */
-  const hints = hintsSetting("WidgetWiFi")
+  const hints = $derived(hintsSetting("WidgetWiFi", persistKey))
 
   /* "Мастер-цвет" виджета - переопределяет --accent-color/--accent-soft на корне, дальше это штатный каскад переменных, на котором и так построены компоненты библиотеки: значок, режимы STA/AP, фокус-кольцо у полей и кнопка "Сохранить" (маркер bg-accent) перекрашиваются вместе, одним источником истины; красной остаётся только кнопка подтверждения режима AP. */
   let accentStyle = $derived(widgetAccentStyle(componentClass ?? ""))

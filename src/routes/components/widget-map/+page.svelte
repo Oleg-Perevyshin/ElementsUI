@@ -34,7 +34,7 @@
   let forConstructor = $state(false)
 
   /* Режим «Агро»: план сохраняется в браузере, отправка только имитируется - миссия выводится в консоль */
-  const PLAN_KEY = "WidgetMapAgroDemoPlan13"
+  const PLAN_KEY = "WidgetMapAgroDemoPlan14"
   const loadPlan = (): IMissionPlan => {
     try {
       const raw = localStorage.getItem(PLAN_KEY)

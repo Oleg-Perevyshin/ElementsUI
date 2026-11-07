@@ -49,7 +49,7 @@
     onSend,
   }: Props = $props()
 
-  const hints = hintsSetting("WidgetMap")
+  const hints = $derived(hintsSetting("WidgetMap", persistKey))
   let accentStyle = $derived(widgetAccentStyle(componentClass ?? ""))
 
   let hasMergedPersisted = false

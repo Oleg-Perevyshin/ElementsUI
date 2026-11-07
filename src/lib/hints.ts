@@ -1,5 +1,5 @@
 /* $lib/hints.ts */
-/* Подсказки смарт-виджетов: у каждого виджета своя кнопка «?» в шапке, выбор запоминается в браузере для виджетов этого типа (hintsSetting("WidgetPFD") - общий для всех PFD); элемент получает подсказку действием use:hint={{ text, enabled }} - всплывающее окно над ним в стиле темы */
+/* Подсказки смарт-виджетов: у каждого виджета своя кнопка «?» в шапке, выбор запоминается в браузере для этого экземпляра (по persistKey) или, без него, для всех виджетов типа; элемент получает подсказку действием use:hint={{ text, enabled }} - всплывающее окно над ним в стиле темы */
 import { writable, type Writable } from "svelte/store"
 
 /* Другие ключи хранения, из которых читается выбор оператора */
@@ -7,16 +7,17 @@ const LEGACY_KEYS: Record<string, string> = { WidgetPFD: "WidgetPFD.tips" }
 
 const settings = new Map<string, Writable<boolean>>()
 
-/* Настройка подсказок виджета: выключены по умолчанию, одна на тип виджета; в браузер пишется только выбор оператора (нажатие «?»), ключ WidgetHints.<тип>; ключи Hints.<тип> выбором не являются и удаляются */
-export const hintsSetting = (widget: string): Writable<boolean> => {
-  const cached = settings.get(widget)
+/* Настройка подсказок виджета: выключены по умолчанию; с instanceKey (persistKey виджета) у каждого экземпляра своя, ключ WidgetHints.<тип>:<экземпляр>, без него - одна на тип, ключ WidgetHints.<тип>; в браузер пишется только выбор оператора (нажатие «?»); ключи Hints.<тип> выбором не являются и удаляются */
+export const hintsSetting = (widget: string, instanceKey?: string): Writable<boolean> => {
+  const id = instanceKey ? `${widget}:${instanceKey}` : widget
+  const cached = settings.get(id)
   if (cached) return cached
-  const storageKey = `WidgetHints.${widget}`
+  const storageKey = `WidgetHints.${id}`
   let initial = false
   try {
     if (typeof localStorage !== "undefined") {
       localStorage.removeItem(`Hints.${widget}`)
-      const saved = localStorage.getItem(storageKey) ?? localStorage.getItem(LEGACY_KEYS[widget] ?? "")
+      const saved = localStorage.getItem(storageKey) ?? (instanceKey ? null : localStorage.getItem(LEGACY_KEYS[widget] ?? ""))
       if (saved !== null) initial = saved === "1"
     }
   } catch {
@@ -33,7 +34,7 @@ export const hintsSetting = (widget: string): Writable<boolean> => {
       /* хранилище недоступно - выбор действует до перезагрузки */
     }
   })
-  settings.set(widget, store)
+  settings.set(id, store)
   return store
 }
 

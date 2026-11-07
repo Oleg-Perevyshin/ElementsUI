@@ -30,7 +30,7 @@
   }: IWidgetFileSystemProps = $props()
 
   /* Подсказки - кнопка «?» в шапке, выбор общий для всех WidgetFileSystem */
-  const hints = hintsSetting("WidgetFileSystem")
+  const hints = $derived(hintsSetting("WidgetFileSystem", persistKey))
 
   let accentStyle = $derived(widgetAccentStyle(componentClass ?? ""))
 

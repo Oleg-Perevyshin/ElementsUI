@@ -26,7 +26,7 @@
   }: IWidgetDeviceInfoProps = $props()
 
   /* Подсказки - кнопка «?» в шапке, выбор общий для всех WidgetDeviceInfo */
-  const hints = hintsSetting("WidgetDeviceInfo")
+  const hints = $derived(hintsSetting("WidgetDeviceInfo", persistKey))
 
   let confirmReset = $state(false)
   const factoryReset = () => {

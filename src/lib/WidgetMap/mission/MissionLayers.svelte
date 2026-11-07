@@ -1,4 +1,4 @@
-<!-- $lib/WidgetMap/mission/MissionLayers.svelte - слои карты генератора миссии: поле и зоны, траектория, черновик контура и ручки вершин; клики и перетаскивание ручек отдаёт наверх -->
+<!-- $lib/WidgetMap/mission/MissionLayers.svelte - слои карты генератора миссии: поле и зоны, траектория, подсветка выбранного в списке контура, черновик контура и ручки вершин; клики и перетаскивание ручек отдаёт наверх -->
 <script lang="ts">
   import { onDestroy, untrack } from "svelte"
   import { getMapContext } from "../mapWrapper"
@@ -18,9 +18,10 @@
     onHandleRightClick: (id: string) => void
     onCursor: (ll: LngLat | null) => void
     colors: IMapColors /* Маршрут и точки - мастер-цвет, поле, зоны и развороты - цвета по смыслу */
+    highlight?: any /* Контур, на который навели в списке «Итога»: поле или зона с kind */
   }
 
-  let { zones, path, draft, handles, drawing, onMapClick, onMapDblClick, onDrag, onDragEnd, onHandleRightClick, onCursor, colors }: Props = $props()
+  let { zones, path, draft, handles, drawing, onMapClick, onMapDblClick, onDrag, onDragEnd, onHandleRightClick, onCursor, colors, highlight }: Props = $props()
 
   /* Краски слоёв от цветов виджета: одна таблица и для создания слоёв, и для перекраски */
   const paints = (c: IMapColors): Record<string, Record<string, any>> => {
@@ -33,6 +34,8 @@
       "msn-path-spray": { "line-color": c.green },
       "msn-path-route": { "line-color": c.accent },
       "msn-draft-line": { "line-color": byKind },
+      "msn-highlight-fill": { "fill-color": byKind },
+      "msn-highlight-line": { "line-color": byKind },
       "msn-handles": {
         "circle-color": ["match", ["get", "role"], "mid", "#ffffff", "start", c.accent, "wp", c.accent, byKind],
         "circle-stroke-color": ["match", ["get", "role"], "mid", ["match", ["get", "kind"], "hole", c.red, "route", c.accent, c.green], "#ffffff"],
@@ -45,7 +48,7 @@
   const mapCtx = getMapContext()
   const map = mapCtx.map!
 
-  const SOURCES = ["msn-zones", "msn-path", "msn-draft", "msn-handles"]
+  const SOURCES = ["msn-zones", "msn-path", "msn-highlight", "msn-draft", "msn-handles"]
   const empty = { type: "FeatureCollection", features: [] }
 
   for (const id of SOURCES) mapCtx.addSource(id, { type: "geojson", data: empty as any })
@@ -97,6 +100,20 @@
     layout: { "line-join": "round", "line-cap": "round" },
     paint: { ...initial["msn-path-route"], "line-width": 3 },
   })
+  /* Подсветка контура поверх проходов: плотная заливка и толстая обводка, видна и у маленькой зоны */
+  mapCtx.addLayer({
+    id: "msn-highlight-fill",
+    type: "fill",
+    source: "msn-highlight",
+    paint: { ...initial["msn-highlight-fill"], "fill-opacity": 0.45 },
+  })
+  mapCtx.addLayer({
+    id: "msn-highlight-line",
+    type: "line",
+    source: "msn-highlight",
+    layout: { "line-join": "round" },
+    paint: { ...initial["msn-highlight-line"], "line-width": 5 },
+  })
   mapCtx.addLayer({
     id: "msn-draft-line",
     type: "line",
@@ -141,6 +158,7 @@
   $effect(() => setData("msn-path", $state.snapshot(path)))
   $effect(() => setData("msn-draft", $state.snapshot(draft)))
   $effect(() => setData("msn-handles", $state.snapshot(handles)))
+  $effect(() => setData("msn-highlight", $state.snapshot(highlight) ?? empty))
 
   /* Рисование: двойной клик закрывает контур, а не приближает карту */
   $effect(() => {

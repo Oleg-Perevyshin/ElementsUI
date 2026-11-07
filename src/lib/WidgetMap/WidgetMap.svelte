@@ -44,7 +44,7 @@
   }: IWidgetMapProps = $props()
 
   /* Подсказки - кнопка «?» в шапке, выбор общий для всех WidgetMap */
-  const hints = hintsSetting("WidgetMap")
+  const hints = $derived(hintsSetting("WidgetMap", persistKey))
 
   let accentStyle = $derived(widgetAccentStyle(componentClass ?? ""))
 

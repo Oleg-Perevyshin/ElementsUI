@@ -17,7 +17,7 @@
   let { wrapperClass = "", componentClass = "", label = {}, value, collapsed = $bindable(false), persistKey, onChange, onSave }: IWidgetRGBStripProps = $props()
 
   /* Подсказки - кнопка «?» в шапке, выбор общий для всех WidgetRGBStrip */
-  const hints = hintsSetting("WidgetRGBStrip")
+  const hints = $derived(hintsSetting("WidgetRGBStrip", persistKey))
 
   let accentStyle = $derived(widgetAccentStyle(componentClass ?? ""))
 

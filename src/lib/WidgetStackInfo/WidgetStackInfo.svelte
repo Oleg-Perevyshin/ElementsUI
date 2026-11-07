@@ -61,7 +61,7 @@
 
   /* Текущая занятость - мастер-цвет, пик занятости с момента старта (Total − MinFree) - его светлая подложка */
   /* Подсказки - кнопка «?» в шапке, выбор общий для всех WidgetStackInfo */
-  const hints = hintsSetting("WidgetStackInfo")
+  const hints = $derived(hintsSetting("WidgetStackInfo", persistKey))
 
   let heaps = $derived(
     (value?.Heap ?? []).map((h) => {
