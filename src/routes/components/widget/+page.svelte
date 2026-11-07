@@ -22,7 +22,7 @@
     properties: {
       id: crypto.randomUUID(),
       label: { name: "Пропеллер" },
-      icons: { array: ICONS_ARRAY[2][1], mode: "cycling", class: "text-[#333] dark:text-[#e2e3e7]" },
+      icons: { array: ICONS_ARRAY[2][1], mode: "cycling", class: "text-(color:--font-color)" },
       settings: {
         label: "Скорость",
         class: "bg-blue",

@@ -20,7 +20,7 @@
     access: "full",
     properties: {
       id: crypto.randomUUID(),
-      wrapperClass: "text-[#333] dark:text-[#e2e3e7]",
+      wrapperClass: "text-(color:--font-color)",
       content: {
         name: "Text Field",
         class: "text-center",

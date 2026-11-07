@@ -4,6 +4,7 @@
   import { onMount } from "svelte"
   import type { IOption, ISelectProps } from "../types"
   import { twMerge } from "tailwind-merge"
+  import { itemAccentStyle } from "../widgetAccent"
   import { T } from "../locales/i18n"
   import Tooltip from "../Tooltip.svelte"
 
@@ -220,8 +221,8 @@
                ${
                  hasOwnColor
                    ? selected
-                     ? 'ring-2 ring-inset ring-(--font-color)'
-                     : ''
+                     ? 'text-(--on-accent) ring-2 ring-inset ring-(--font-color)'
+                     : 'text-(--on-accent)'
                    : selected
                      ? 'text-(--on-accent)'
                      : 'text-(--font-color) hover:bg-(--container-color)'
@@ -230,6 +231,7 @@
                ${fitContent ? 'px-3 whitespace-nowrap' : ''}`,
                 option.class,
               )} {hasOwnColor ? 'bg-(--bg-color)' : selected ? 'bg-(--bg-color,var(--accent-color))' : 'bg-(--back-color)'}"
+              style={hasOwnColor ? itemAccentStyle(option.class) : undefined}
               onclick={(e) => selectOption(option, e)}
               disabled={option.disabled || disabled}
               aria-pressed={!!isSelected(option)}

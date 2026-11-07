@@ -3,7 +3,7 @@
   import { T } from "../locales/i18n"
   import { findOptionByClass, updateProperty, type ITextFieldProps, type IUIComponentHandler, type UIComponent } from "../types"
   import * as UI from "../index"
-  import { optionsStore, findColorOption } from "../options"
+  import { optionsStore, findColorOption, stripLegacyTextColor } from "../options"
   import { getContext } from "svelte"
   import { twMerge } from "tailwind-merge"
   import CommonSnippets from "../CommonSnippets.svelte"
@@ -49,7 +49,7 @@
     options={$optionsStore.TEXT_COLOR_OPTIONS}
     value={initialColor}
     onUpdate={(option) =>
-      updateProperty("wrapperClass", twMerge(component.properties.wrapperClass, (option as UI.IOption).value as string), component, onPropertyChange)}
+      updateProperty("wrapperClass", twMerge(stripLegacyTextColor(component.properties.wrapperClass), (option as UI.IOption).value as string), component, onPropertyChange)}
   />
 {/snippet}
 

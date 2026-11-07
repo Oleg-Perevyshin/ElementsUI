@@ -12,6 +12,7 @@
     componentClass = "",
     size = { width: 1, height: 1 },
     label = { name: "", class: "text-left", icon: null },
+    chevron = true,
     children,
     actions,
     image = "",
@@ -52,14 +53,16 @@
           <span class={twMerge(`min-w-0 truncate text-[14px] font-semibold`, label.class)}>{label?.name}</span>
         </div>
 
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="h-[14px] w-[14px] shrink-0 text-[color-mix(in_srgb,var(--accent-color)_35%,var(--font-color))] transition-transform duration-200"
-          style="transform: rotate({isOpen ? 180 : 0}deg)"
-          viewBox="0 0 24 24"
-        >
-          <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 9l6 6 6-6" />
-        </svg>
+        {#if chevron}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-[14px] w-[14px] shrink-0 text-[color-mix(in_srgb,var(--accent-color)_35%,var(--font-color))] transition-transform duration-200"
+            style="transform: rotate({isOpen ? 180 : 0}deg)"
+            viewBox="0 0 24 24"
+          >
+            <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 9l6 6 6-6" />
+          </svg>
+        {/if}
       </button>
       {#if actions}
         <div class="flex shrink-0 items-center gap-1 pr-3">{@render actions()}</div>

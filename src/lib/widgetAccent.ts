@@ -8,8 +8,8 @@ export const widgetAccentStyle = (componentClass: string): string => {
   const role = componentClass.match(/(?:^|\s)bg-(\w+)/)?.[1]
   if (!role || role === "max") return fill
   return (
-    `--accent-color: var(--${role}-color); --accent-soft: var(--${role}-soft); --accent-hover: var(--${role}-color); --on-accent: var(--on-${role}, #ffffff);` +
-    `--focus-shadow-color: 0 0 0 3px color-mix(in srgb, var(--${role}-color) 18%, transparent);` +
+    `--accent-color: var(--${role}-accent, var(--${role}-color)); --accent-soft: var(--${role}-soft); --accent-hover: var(--${role}-accent, var(--${role}-color)); --on-accent: var(--on-${role}, #ffffff);` +
+    `--focus-shadow-color: 0 0 0 3px color-mix(in srgb, var(--${role}-accent, var(--${role}-color)) 18%, transparent);` +
     fill
   )
 }
@@ -27,10 +27,16 @@ export const readMapColors = (el: Element | undefined): IMapColors => {
   const style = el ? getComputedStyle(el) : null
   const read = (name: string, fallback: string) => style?.getPropertyValue(name).trim() || fallback
   return {
-    accent: read("--accent-color", "#0070eb"),
+    accent: read("--accent-color", "#256bf7"),
     onAccent: read("--on-accent", "#ffffff"),
-    green: read("--green-mark", "#34c759"),
-    red: read("--red-mark", "#ff3b30"),
-    orange: read("--orange-mark", "#ff9500"),
+    green: read("--green-mark", "#00cc5f"),
+    red: read("--red-mark", "#ff252a"),
+    orange: read("--orange-mark", "#fb8900"),
   }
+}
+
+/* Мастер-цвет отдельного элемента (столбец прогресса, переключатель, пункт выбора): только если в классах есть роль bg-*, иначе элемент берёт цвет родителя */
+export const itemAccentStyle = (classString: string | undefined): string | undefined => {
+  const role = classString?.match(/(?:^|\s)bg-(\w+)/)?.[1]
+  return role && role !== "max" ? widgetAccentStyle(classString as string) : undefined
 }

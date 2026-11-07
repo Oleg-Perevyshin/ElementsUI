@@ -3,6 +3,7 @@
   import { T } from "../locales/i18n"
   import type { IInputProps } from "../types"
   import { twMerge } from "tailwind-merge"
+  import { widgetAccentStyle, itemAccentStyle } from "../widgetAccent"
   import InfoIcon from "../libIcons/InfoIcon.svelte"
   import Tooltip from "../Tooltip.svelte"
   import CopiedChip from "../CopiedChip.svelte"
@@ -71,20 +72,30 @@
     return Number(num.toFixed(5))
   }
 
+  /* Мастер-цвет поля (bg-* в componentClass): рамка и лёгкий фон цветом роли; сам класс bg-* в поле не передаётся, иначе он срезает фон */
+  const hasRole = $derived(!!itemAccentStyle(componentClass))
+  const fieldClass = $derived(
+    componentClass
+      .split(/\s+/)
+      .filter((cls) => !cls.startsWith("bg-"))
+      .join(" "),
+  )
+
   /* Единая база поля: высота 36, радиус 10, текст по левому краю. Правый отступ учитывает кнопки (глаз / копировать / счётчик). */
   const fieldBase = $derived(
     `w-full rounded-[10px] border bg-(--field-color) px-3 text-[14px] text-left leading-none
      transition-[border-color,box-shadow,background-color] duration-150 outline-none
      placeholder:text-(--faint-color)
      [&::-webkit-inner-spin-button]:hidden [&::-webkit-outer-spin-button]:hidden
-     ${isValid ? "border-(--border-color) focus:border-(--accent-color) focus:shadow-(--focus-shadow-color)" : "border-(--red-color) focus:border-(--red-color) focus:shadow-[0_0_0_3px_color-mix(in_srgb,var(--red-color),transparent_80%)]"}
+     ${hasRole && !disabled && !readonly ? "bg-[color-mix(in_srgb,var(--accent-color)_7%,var(--field-color))]" : ""}
+     ${isValid ? `${hasRole ? "border-[color-mix(in_srgb,var(--accent-color)_55%,var(--border-color))]" : "border-(--border-color)"} focus:border-(--accent-color) focus:shadow-(--focus-shadow-color)` : "border-(--red-color) focus:border-(--red-color) focus:shadow-[0_0_0_3px_color-mix(in_srgb,var(--red-color),transparent_80%)]"}
      ${disabled ? "cursor-not-allowed border-(--hairline-color) bg-(--container-color) text-(--faint-color)" : ""}
      ${readonly && !disabled ? "bg-(--container-color) text-(--muted-color)" : ""}
      ${help?.info ? "pl-9" : ""}`,
   )
 </script>
 
-<div class={twMerge(`relative flex w-full flex-col gap-1 ${type === "text-area" ? "h-full" : ""}`, wrapperClass)}>
+<div class={twMerge(`relative flex w-full flex-col gap-1 ${type === "text-area" ? "h-full" : ""}`, wrapperClass)} style={widgetAccentStyle(componentClass)}>
   {#if label.name}
     <!-- Метка слева, 12/600 - вместо центрированного h5 -->
     <span class={twMerge(`text-[12px] font-semibold text-(--muted-color)`, label.class)}>{label.name}</span>
@@ -94,7 +105,7 @@
     {#if type === "number"}
       <input
         bind:value
-        class={twMerge(fieldBase, "h-8 pr-9", componentClass)}
+        class={twMerge(fieldBase, "h-8 pr-9", fieldClass)}
         id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
         {placeholder}
         {disabled}
@@ -111,7 +122,7 @@
     {:else if type !== "text-area"}
       <input
         bind:value
-        class={twMerge(fieldBase, `h-8 ${help.copyButton || type === "password" ? "pr-9" : ""}`, componentClass)}
+        class={twMerge(fieldBase, `h-8 ${help.copyButton || type === "password" ? "pr-9" : ""}`, fieldClass)}
         id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
         {placeholder}
         {disabled}
@@ -125,7 +136,7 @@
     {:else}
       <textarea
         bind:value
-        class={twMerge(fieldBase, `h-full min-h-20 resize-y py-2 leading-[1.5] ${help.copyButton ? "pr-9" : ""}`, componentClass)}
+        class={twMerge(fieldBase, `h-full min-h-20 resize-y py-2 leading-[1.5] ${help.copyButton ? "pr-9" : ""}`, fieldClass)}
         id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
         {disabled}
         {maxlength}

@@ -6,6 +6,7 @@
   import type { IOption, IVideoViewerProps } from "../types"
   import { onMount } from "svelte"
   import { twMerge } from "tailwind-merge"
+  import { widgetAccentStyle } from "../widgetAccent"
 
   let {
     id = crypto.randomUUID(),
@@ -22,7 +23,7 @@
   /* Мастер-цвет bg-* рисуется кольцом ring вокруг кадра: ring не меняет размеры контейнера, в отличие от border */
   const roleBorderClass = $derived.by(() => {
     const role = wrapperClass?.match(/bg-(\w+)/)?.[1]
-    return role && role !== "max" ? `ring-2 ring-inset ring-(--border-color) border-${role}` : ""
+    return role && role !== "max" ? "ring-2 ring-inset ring-(--accent-color)" : ""
   })
 
   let videoElement = $state<HTMLVideoElement | null>(null)
@@ -141,7 +142,7 @@
   })
 </script>
 
-<div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class={twMerge("flex flex-col w-full h-full items-center", wrapperClass)}>
+<div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class={twMerge("flex flex-col w-full h-full items-center", wrapperClass)} style={widgetAccentStyle(wrapperClass ?? "")}>
   {#if label.name}
     <h5 class={twMerge(`w-full px-4 text-center`, label.class)}>{label.name}</h5>
   {/if}
@@ -151,7 +152,7 @@
       {#if status !== "live" || !remoteImgSrc}
         <div class="absolute z-10 flex h-full w-full flex-col items-center justify-center gap-4 rounded-[14px] bg-(--container-color) p-4 text-center">
           {#if status === "error"}
-            <svg class="w-12 h-12 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-12 h-12 text-(--red-text)" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
@@ -178,7 +179,7 @@
           {#if loading}
             <h2>{$T("constructor.props.camera.loading")}</h2>
           {:else if error}
-            <svg class="w-12 h-12 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-12 h-12 text-(--red-text)" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"

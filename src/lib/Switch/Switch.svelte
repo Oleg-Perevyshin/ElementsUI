@@ -1,6 +1,7 @@
 <!-- $lib/Switch/Switch.svelte - тумблер, геометрия считается от пропа height; чекбокс 20px с радиусом 6 -->
 <script lang="ts">
   import { twMerge } from "tailwind-merge"
+  import { itemAccentStyle } from "../widgetAccent"
   import type { ISwitchProps } from "../types"
   import Tooltip from "../Tooltip.svelte"
 
@@ -56,14 +57,14 @@
 </script>
 
 {#if type !== "checkbox"}
-  <div class={twMerge(`relative flex w-full flex-col items-center justify-center gap-1.5`, wrapperClass)}>
+  <div class={twMerge(`relative flex w-full flex-col items-center justify-center gap-1.5`, wrapperClass)} style={itemAccentStyle(wrapperClass)}>
     {#if label.name}
       <!-- Подпись по умолчанию по центру - над переключателем, который тоже по центру; выравнивание из label.class важнее -->
       <h5 class={twMerge(`w-full text-center text-[12px] font-semibold text-(--muted-color)`, label.class)}>{label.name}</h5>
     {/if}
     <div class="flex w-full {type == 'vertical' ? 'flex-wrap' : ''} items-center justify-around gap-4">
       {#each localOptions as option, index}
-        <div class={twMerge(`flex flex-col gap-1`, option.class)}>
+        <div class={twMerge(`flex flex-col gap-1`, option.class)} style={itemAccentStyle(option.class)}>
           {#if option.name && bitMode}
             <span class="text-center text-[12px] font-medium text-(--muted-color)">{option.name}</span>
           {/if}
@@ -132,6 +133,7 @@
       wrapperClass,
       options[0]?.class?.split(" ").find((cl) => cl.startsWith("bg-")),
     )}
+    style={itemAccentStyle(options[0]?.class) ?? itemAccentStyle(wrapperClass)}
   >
     <input
       id={ID}
@@ -145,7 +147,7 @@
         checked:after:absolute checked:after:top-[1px] checked:after:left-[6px]
         checked:after:h-[10px] checked:after:w-[5px] checked:after:rotate-45
         checked:after:border-2 checked:after:border-t-0 checked:after:border-l-0
-        checked:after:border-solid checked:after:border-white checked:after:opacity-100
+        checked:after:border-solid checked:after:border-(--on-accent) checked:after:opacity-100
         checked:after:content-['']
         focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent-color)
         disabled:cursor-not-allowed disabled:border-(--hairline-color) disabled:bg-(--container-color)

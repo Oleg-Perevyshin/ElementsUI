@@ -16,6 +16,7 @@
 <script lang="ts">
   import { T } from "../locales/i18n"
   import { twMerge } from "tailwind-merge"
+  import { widgetAccentStyle } from "../widgetAccent"
   import type { IPeriodChartProps } from "../types"
 
   let {
@@ -76,7 +77,7 @@
   const labelStep = $derived(Math.ceil(values.length / 12) || 1)
 </script>
 
-<div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class={twMerge("relative flex w-full flex-col gap-3", wrapperClass)}>
+<div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class={twMerge("relative flex w-full flex-col gap-3", wrapperClass)} style={widgetAccentStyle(wrapperClass)}>
   {#if label.name}
     <h5 class={twMerge("w-full text-[13px] font-semibold text-(--muted-color)", label.class)}>{label.name}</h5>
   {/if}

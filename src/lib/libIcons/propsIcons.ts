@@ -2,6 +2,14 @@
 const svg = (d: string) =>
   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="${d}"/></svg>`
 
+/* Иконка слайдера 44×20: fills - отрезки заливки [от, до], thumbs - центры бегунков по X */
+const sliderIcon = (fills: [number, number][], thumbs: number[]) =>
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 20" style="width:44px;height:20px" fill="currentColor" stroke="currentColor" stroke-linecap="round">` +
+  `<path d="M3 10h38" stroke-width="2.5" opacity="0.3"/>` +
+  fills.map(([a, b]) => `<path d="M${a} 10h${b - a}" stroke-width="3.5"/>`).join("") +
+  thumbs.map((x) => `<circle cx="${x}" cy="10" r="5.5" stroke="none"/>`).join("") +
+  `</svg>`
+
 export const PROPS_ICONS = {
   /* Выравнивание текста и блока */
   alignLeft: svg("M15 12H3M17 18H3M21 6H3"),
@@ -34,8 +42,9 @@ export const PROPS_ICONS = {
   checkbox: svg("M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zm4 9 2 2 4-4"),
 
   /* Слайдер и разделитель */
-  sliderSingle: svg("M3 12h2m6 0h10M8 9a3 3 0 1 0 0 6 3 3 0 1 0 0-6z"),
-  sliderRange: svg("M3 12h1m6 0h4m6 0h1M7 9a3 3 0 1 0 0 6 3 3 0 1 0 0-6zm10 0a3 3 0 1 0 0 6 3 3 0 1 0 0-6z"),
+  /* Типы слайдера - маленький слайдер: бледная дорожка, заливка и бегунки; шире обычной иконки, чтобы было видно, где заливка */
+  sliderSingle: sliderIcon([[3, 24]], [24]),
+  sliderRange: sliderIcon([[14, 30]], [14, 30]),
   dividerLine: svg("M3 12h18"),
   dividerSpace: svg("M4 6v12M20 6v12M8 12h8"),
 

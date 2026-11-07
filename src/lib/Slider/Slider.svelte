@@ -3,6 +3,7 @@
   import { T } from "../locales/i18n"
   import type { ISliderProps } from "../types"
   import { twMerge } from "tailwind-merge"
+  import { widgetAccentStyle } from "../widgetAccent"
 
   let {
     id = crypto.randomUUID(),
@@ -29,6 +30,17 @@
   const pct = (v: number) => {
     const span = Math.abs((number.maxNum ?? 10) - (number.minNum ?? 0)) || 1
     return Math.max(0, Math.min(100, ((v - (number.minNum ?? 0)) / span) * 100))
+  }
+  /* Центр бегунка: он ходит не по всей ширине, а от 9px до ширины минус 9px (половина размера 18px), заливка считается так же */
+  const thumbX = (v: number) => `calc(9px + (100% - 18px) * ${pct(v) / 100})`
+
+  /* Значение на сетке шага: браузер ставит бегунок только на min + k * step, заливка должна стоять там же */
+  const snap = (v: number) => {
+    const min = number.minNum ?? 0
+    const max = number.maxNum ?? 10
+    const step = number.step || 1
+    const k = Math.round((v - min) / step)
+    return roundToClean(Math.max(min, Math.min(max, min + k * step)))
   }
 
   $effect(() => {
@@ -57,10 +69,10 @@
 
   $effect(() => {
     if (Array.isArray(value)) {
-      lowerValue = roundToClean(value[0])
-      upperValue = roundToClean(value[1])
+      lowerValue = snap(value[0])
+      upperValue = snap(value[1])
     } else if (typeof value === "number") {
-      singleValue = roundToClean(value)
+      singleValue = snap(value)
     }
   })
 
@@ -88,7 +100,7 @@
   /* Двойной слайдер: оба input на всю ширину трека с ОДИНАКОВЫМ min/max, наложены друг на друга. pointer-events выключен на самом input и включён только на ::thumb (класс .range-overlay ниже) - тянуть можно исключительно за конкретный бегунок. Tailwind не генерирует CSS для сочетания произвольного варианта псевдоэлемента с pointer-events-*, поэтому это обычный style-блок ниже, а не класс. */
 </script>
 
-<div class={twMerge(`relative flex w-full flex-col gap-1.5`, wrapperClass)}>
+<div class={twMerge(`relative flex w-full flex-col gap-1.5`, wrapperClass)} style={widgetAccentStyle(wrapperClass)}>
   {#if label.name}
     <h5 class={twMerge(`w-full text-[12px] font-semibold text-(--muted-color)`, label.class)}>{label.name}</h5>
   {/if}
@@ -102,12 +114,12 @@
       {#if isRange}
         <div
           class="pointer-events-none absolute top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-(--bg-color,var(--accent-color))"
-          style="left: {pct(lowerValue)}%; width: {Math.max(0, pct(upperValue) - pct(lowerValue))}%;"
+          style="left: {thumbX(lowerValue)}; width: calc({thumbX(upperValue)} - {thumbX(lowerValue)});"
         ></div>
       {:else}
         <div
           class="pointer-events-none absolute top-1/2 left-0 h-1.5 -translate-y-1/2 rounded-full bg-(--bg-color,var(--accent-color))"
-          style="width: {pct(singleValue)}%;"
+          style="width: {thumbX(singleValue)};"
         ></div>
       {/if}
 

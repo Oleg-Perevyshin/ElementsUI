@@ -2,7 +2,7 @@
   import { T } from "../locales/i18n"
   import { updateProperty, type IUIComponentHandler, type UIComponent } from "../types"
   import * as UI from ".."
-  import { optionsStore, findColorOption } from "../options"
+  import { optionsStore, findColorOption, stripLegacyTextColor } from "../options"
   import { ICONS_ARRAY } from "../icons"
   import { twMerge } from "tailwind-merge"
   import CommonSnippets from "../CommonSnippets.svelte"
@@ -38,7 +38,7 @@
     value={(initialColor?.value as string) ?? ""}
     onUpdate={(bgClass) => {
       updateProperty("settings.class", twMerge(component.properties.settings?.class, bgClass), component, onPropertyChange)
-      updateProperty("icons.class", twMerge(component.properties.icons?.class, deriveIconColorClass(bgClass)), component, onPropertyChange)
+      updateProperty("icons.class", twMerge(stripLegacyTextColor(component.properties.icons?.class), deriveIconColorClass(bgClass)), component, onPropertyChange)
     }}
   />
 {/snippet}

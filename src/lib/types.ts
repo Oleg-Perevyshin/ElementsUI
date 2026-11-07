@@ -147,6 +147,8 @@ export interface IAccordionProps {
     class?: string
     icon?: ConstructorOfATypedSvelteComponent | string | null
   }
+  /* Стрелка раскрытия справа в заголовке; без неё блок всё так же сворачивается нажатием на заголовок */
+  chevron?: boolean
   children?: Snippet
   /* Кнопки справа в заголовке: нажатие на них не сворачивает и не разворачивает блок */
   actions?: Snippet

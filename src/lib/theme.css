@@ -337,62 +337,65 @@
   --faint-color: #5f6774;
 
   --accent-color: var(--blue-color);
-  --accent-hover: #005fc7;
-  --accent-soft: rgb(0 122 255 / 0.14);
+  --accent-hover: #135ae4;
+  --accent-soft: rgb(47 117 255 / 0.14);
   --on-accent: #ffffff;
   --on-orange: #1d1d1f;
   --on-yellow: #1d1d1f;
+  --on-cyan: #1d1d1f;
 
   --shadow-color: #34343a;
   --border-shadow-color: 0 1px 2px rgb(16 24 40 / 0.05);
-  --focus-shadow-color: 0 0 0 3px rgb(0 122 255 / 0.22);
+  --focus-shadow-color: 0 0 0 3px rgb(47 117 255 / 0.22);
   --elevation-1: 0 1px 2px rgb(16 24 40 / 0.06), 0 2px 6px rgb(16 24 40 / 0.04);
   --elevation-2: 0 4px 12px rgb(16 24 40 / 0.08);
   --elevation-3: 0 12px 32px rgb(16 24 40 / 0.12);
   --scrollbar-color: #c4c9d2;
 
-  /* Цвета Apple. Заливки под белый текст: тон Apple, светлота подобрана под контраст с белым ≥ 4.6:1. Оранжевый и жёлтый - чистые цвета Apple под тёмный текст --on-orange и --on-yellow */
+  /* Ровная гамма OKLCH: тоны 27, 58, 98, 150, 225, 262, 310, соседние цвета различаются одинаково хорошо. Заливки под белый текст: светлота подобрана под контраст с белым (светлая тема от 4.6:1, тёмная от 5.2:1). Оранжевый, жёлтый и голубой яркие, под тёмный текст --on-orange, --on-yellow и --on-cyan */
   --gray-color: #e4e7ec;
-  --red-color: #ea0c00;
-  --orange-color: #ff9500;
-  --yellow-color: #ffcc00;
-  --green-color: #23863c;
-  --cyan-color: #157cac;
-  --blue-color: #0070eb;
-  --purple-color: #a944db;
+  /* Серый как мастер-цвет: --gray-color это светлая поверхность, для акцента нужен средний серый под белый текст */
+  --gray-accent: #74747a;
+  --red-color: #e22729;
+  --orange-color: #fb8900;
+  --yellow-color: #f4d400;
+  --green-color: #00873d;
+  --cyan-color: #00c3f5;
+  --blue-color: #256bf7;
+  --purple-color: #a448dc;
   --pink-color: #ea002d;
 
   /* Цветной текст: контраст ≥ 4.5:1 на всех фонах темы и на своём --*-soft */
   --gray-text: var(--muted-color);
-  --red-text: #c30a00;
-  --orange-text: #8d5200;
-  --yellow-text: #755e00;
-  --green-text: #1d6f32;
-  --cyan-text: #11678f;
-  --blue-text: #005dc3;
-  --purple-text: #9327ca;
+  --red-text: #c70014;
+  --orange-text: #a25600;
+  --yellow-text: #7c6a00;
+  --green-text: #007b36;
+  --cyan-text: #007494;
+  --blue-text: #135ae4;
+  --purple-text: #9334c9;
   --pink-text: #c40025;
 
   /* Мягкие тинты для фонов блоков и подсветки строк */
   --gray-soft: #e1e5ea;
-  --red-soft: #ffd8d6;
-  --orange-soft: #ffeacc;
-  --yellow-soft: #fff5cc;
-  --green-soft: #d6f4de;
-  --cyan-soft: #d6effa;
-  --blue-soft: #cce4ff;
-  --purple-soft: #efdcf8;
+  --red-soft: #ffd3d4;
+  --orange-soft: #fee7cc;
+  --yellow-soft: #fdf6cc;
+  --green-soft: #ccf5df;
+  --cyan-soft: #ccf3fd;
+  --blue-soft: #d5e3ff;
+  --purple-soft: #f0dafd;
   --pink-soft: #ffd5dd;
 
-  /* Метки: чистые цвета Apple для полос, точек и индикаторов, не для текста */
+  /* Метки: самые яркие цвета гаммы для полос, точек, тегов и индикаторов, не для текста */
   --gray-mark: #8e8e93;
-  --red-mark: #ff3b30;
-  --orange-mark: #ff9500;
-  --yellow-mark: #ffcc00;
-  --green-mark: #34c759;
-  --cyan-mark: #32ade6;
-  --blue-mark: #007aff;
-  --purple-mark: #af52de;
+  --red-mark: #ff252a;
+  --orange-mark: #fb8900;
+  --yellow-mark: #f4d400;
+  --green-mark: #00cc5f;
+  --cyan-mark: #00c3f5;
+  --blue-mark: #2f75ff;
+  --purple-mark: #b345f3;
   --pink-mark: #ff2d55;
 }
 
@@ -410,62 +413,65 @@
   --faint-color: #939cac;
 
   --accent-color: var(--blue-color);
-  --accent-hover: #2f7fd0;
-  --accent-soft: rgb(10 132 255 / 0.2);
+  --accent-hover: #2f72f6;
+  --accent-soft: rgb(65 129 255 / 0.2);
   --on-accent: #ffffff;
   --on-orange: #1d1d1f;
   --on-yellow: #1d1d1f;
+  --on-cyan: #1d1d1f;
 
   --shadow-color: #000000;
   --border-shadow-color: 0 1px 2px rgb(0 0 0 / 0.4);
-  --focus-shadow-color: 0 0 0 3px rgb(10 132 255 / 0.32);
+  --focus-shadow-color: 0 0 0 3px rgb(65 129 255 / 0.32);
   --elevation-1: 0 1px 2px rgb(0 0 0 / 0.4);
   --elevation-2: 0 4px 12px rgb(0 0 0 / 0.45);
   --elevation-3: 0 12px 32px rgb(0 0 0 / 0.5);
   --scrollbar-color: #333a47;
 
-  /* Цвета Apple. Заливки под белый текст: тон Apple, светлота подобрана под контраст с белым ≥ 5.2:1. Оранжевый и жёлтый - чистые цвета Apple под тёмный текст */
+  /* Ровная гамма OKLCH: тоны 27, 58, 98, 150, 225, 262, 310, соседние цвета различаются одинаково хорошо. Заливки под белый текст: светлота подобрана под контраст с белым (светлая тема от 4.6:1, тёмная от 5.2:1). Оранжевый, жёлтый и голубой яркие, под тёмный текст --on-orange, --on-yellow и --on-cyan */
   --gray-color: #2b313d;
-  --red-color: #cc3027;
-  --orange-color: #ff9f0a;
-  --yellow-color: #ffd60a;
-  --green-color: #187d31;
-  --cyan-color: #1d7498;
-  --blue-color: #236eba;
-  --purple-color: #aa2ad6;
+  /* Серый как мастер-цвет: --gray-color это светлая поверхность, для акцента нужен средний серый под белый текст */
+  --gray-accent: #6c6c71;
+  --red-color: #d7141e;
+  --orange-color: #ff9739;
+  --yellow-color: #ffde0b;
+  --green-color: #007d37;
+  --cyan-color: #27cdff;
+  --blue-color: #1c62ed;
+  --purple-color: #9c3ed2;
   --pink-color: #ce2749;
 
-  /* Цветной текст: варианты Apple для повышенного контраста, ≥ 4.5:1 на всех фонах темы и на своём --*-soft */
+  /* Цветной текст: контраст от 6:1 на всех фонах темы и на своём --*-soft */
   --gray-text: var(--muted-color);
-  --red-text: #ff6961;
-  --orange-text: #ffb340;
-  --yellow-text: #ffd426;
-  --green-text: #30db5b;
-  --cyan-text: #70d7ff;
-  --blue-text: #409cff;
-  --purple-text: #da8fff;
+  --red-text: #ff9d92;
+  --orange-text: #ffb479;
+  --yellow-text: #f1d200;
+  --green-text: #0ee56c;
+  --cyan-text: #69d7ff;
+  --blue-text: #94baff;
+  --purple-text: #d8a2ff;
   --pink-text: #ff6482;
 
   /* Мягкие тинты для фонов блоков и подсветки строк */
   --gray-soft: rgb(255 255 255 / 0.1);
-  --red-soft: rgb(255 69 58 / 0.2);
-  --orange-soft: rgb(255 159 10 / 0.2);
-  --yellow-soft: rgb(255 214 10 / 0.2);
-  --green-soft: rgb(48 209 88 / 0.2);
-  --cyan-soft: rgb(100 210 255 / 0.2);
-  --blue-soft: rgb(10 132 255 / 0.2);
-  --purple-soft: rgb(191 90 242 / 0.2);
+  --red-soft: rgb(255 75 68 / 0.2);
+  --orange-soft: rgb(255 151 57 / 0.2);
+  --yellow-soft: rgb(255 222 11 / 0.2);
+  --green-soft: rgb(0 216 101 / 0.2);
+  --cyan-soft: rgb(39 205 255 / 0.2);
+  --blue-soft: rgb(65 129 255 / 0.2);
+  --purple-soft: rgb(189 80 253 / 0.2);
   --pink-soft: rgb(255 55 95 / 0.2);
 
-  /* Метки: чистые цвета Apple для полос, точек и индикаторов, не для текста */
+  /* Метки: самые яркие цвета гаммы для полос, точек, тегов и индикаторов, не для текста */
   --gray-mark: #98989d;
-  --red-mark: #ff453a;
-  --orange-mark: #ff9f0a;
-  --yellow-mark: #ffd60a;
-  --green-mark: #30d158;
-  --cyan-mark: #64d2ff;
-  --blue-mark: #0a84ff;
-  --purple-mark: #bf5af2;
+  --red-mark: #ff4b44;
+  --orange-mark: #ff9739;
+  --yellow-mark: #ffde0b;
+  --green-mark: #00d865;
+  --cyan-mark: #27cdff;
+  --blue-mark: #4181ff;
+  --purple-mark: #bd50fd;
   --pink-mark: #ff375f;
 }
 
@@ -484,6 +490,7 @@
   }
 }
 
+/* Каждая заливка задаёт и цвет текста на себе (--on-accent), иначе кнопка своего цвета внутри виджета берёт текст от мастер-цвета виджета */
 /* ─── Утилиты заливки (без изменений в именах) ───────────────────────── */
 .bg-max {
   --bg-color: var(--back-color);
@@ -493,6 +500,7 @@
 }
 .bg-red {
   --bg-color: var(--red-color);
+  --on-accent: #ffffff;
 }
 .bg-orange {
   --bg-color: var(--orange-color);
@@ -504,18 +512,23 @@
 }
 .bg-green {
   --bg-color: var(--green-color);
+  --on-accent: #ffffff;
 }
 .bg-cyan {
   --bg-color: var(--cyan-color);
+  --on-accent: var(--on-cyan);
 }
 .bg-blue {
   --bg-color: var(--blue-color);
+  --on-accent: #ffffff;
 }
 .bg-purple {
   --bg-color: var(--purple-color);
+  --on-accent: #ffffff;
 }
 .bg-pink {
   --bg-color: var(--pink-color);
+  --on-accent: #ffffff;
 }
 
 /* Мягкие варианты - для карточек, плашек и подсветки, где заливка не должна кричать */
@@ -573,6 +586,16 @@
 }
 .border-pink {
   --border-color: var(--pink-color);
+}
+
+/* Нативные чекбоксы, радиокнопки и ползунки окрашиваются акцентом: внутри виджета с мастер-цветом - его цветом */
+@layer base {
+  input[type="checkbox"],
+  input[type="radio"],
+  input[type="range"],
+  progress {
+    accent-color: var(--accent-color);
+  }
 }
 
 /* Подсказка placeholder */

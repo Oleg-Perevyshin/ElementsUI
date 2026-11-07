@@ -7,11 +7,18 @@ function id() {
   return crypto.randomUUID() as string
 }
 
-/* Достаёт роль master-цвета (класс bg-*) из строки классов компонента и находит соответствующую запись в COLOR_OPTIONS - общий хелпер для всех *Props-панелей, где нужно предзаполнить пикер цвета. */
+/* Находит в палитре (COLOR_OPTIONS, TEXT_COLOR_OPTIONS) вариант, класс которого есть в строке классов компонента - общий хелпер для *Props-панелей, где нужно предзаполнить пикер цвета */
 export const findColorOption = <T extends { value: string }>(options: T[], classString?: string, prefix: string = "bg-"): T | undefined => {
-  const colorClass = classString?.split(" ").find((cls) => cls.startsWith(prefix))
-  return colorClass ? options.find((c) => c.value.includes(colorClass)) : undefined
+  const classes = (classString ?? "").split(/\s+/).filter((cls) => cls.startsWith(prefix))
+  return options.find((c) => classes.includes(c.value.split(" ")[0]))
 }
+
+/* Убирает цвет текста старого формата (палитра Tailwind вида text-red-500 dark:text-red-400 и text-[#333]), чтобы новый цвет темы не перебивался в тёмной теме */
+export const stripLegacyTextColor = (classString: string = ""): string =>
+  classString
+    .split(/\s+/)
+    .filter((cls) => !/^(dark:)?text-(red|yellow|green|blue|purple|gray)-\d{3}$/.test(cls) && !/^(dark:)?text-\[#(333|e2e3e7)\]$/.test(cls))
+    .join(" ")
 
 export const optionsStore = derived(T, ($T) => {
   return {
@@ -72,7 +79,7 @@ export const optionsStore = derived(T, ($T) => {
       { id: id(), value: "background", name: $T("constructor.props.background"), icon: PROPS_ICONS.highlight },
     ],
 
-    /* Семантическая палитра темы: те же роли, что у мастер-цвета виджетов; свотч показывает чистый цвет Apple (--X-mark), как у тегов; порядок Apple, серый первым; bg-max - нейтральный вариант, свотч с ним отмечается рамкой */
+    /* Семантическая палитра темы: те же роли, что у мастер-цвета виджетов; свотч показывает яркий цвет гаммы (--X-mark), как у тегов; порядок по кругу тонов, серый первым; bg-max - нейтральный вариант, свотч с ним отмечается рамкой */
     COLOR_OPTIONS: [
       { id: id(), name: "-", value: "bg-max", class: "bg-max text-transparent" },
       { id: id(), name: "", value: "bg-gray", class: "bg-gray [--bg-color:var(--gray-mark)]!" },
@@ -80,48 +87,22 @@ export const optionsStore = derived(T, ($T) => {
       { id: id(), name: "", value: "bg-orange", class: "bg-orange [--bg-color:var(--orange-mark)]!" },
       { id: id(), name: "", value: "bg-yellow", class: "bg-yellow [--bg-color:var(--yellow-mark)]!" },
       { id: id(), name: "", value: "bg-green", class: "bg-green [--bg-color:var(--green-mark)]!" },
+      { id: id(), name: "", value: "bg-cyan", class: "bg-cyan [--bg-color:var(--cyan-mark)]!" },
       { id: id(), name: "", value: "bg-blue", class: "bg-blue [--bg-color:var(--blue-mark)]!" },
       { id: id(), name: "", value: "bg-purple", class: "bg-purple [--bg-color:var(--purple-mark)]!" },
     ],
 
+    /* Цвет текста из палитры темы (--X-text, контраст от 4.5:1), порядок как у мастер-цвета; первый вариант - обычный цвет текста */
     TEXT_COLOR_OPTIONS: [
-      {
-        id: "TEXT_COLOR_SHADOW",
-        name: "-",
-        value: "text-[#333] dark:text-[#e2e3e7]",
-        class: "bg-[var(--shadow-color)] dark:bg-[#e2e3e7] border-[var(--shadow-color)] dark:border-[#e2e3e7] text-transparent",
-      },
-      { id: "TEXT_COLOR_RED", name: "", value: "text-red-500 dark:text-red-400", class: "bg-red-500 dark:bg-red-400 border-red-500 dark:border-red-400" },
-      {
-        id: "TEXT_COLOR_YELLOW",
-        name: "",
-        value: "text-yellow-500 dark:text-yellow-400",
-        class: "bg-yellow-500 dark:bg-yellow-400 border-yellow-500 dark:border-yellow-400",
-      },
-      {
-        id: "TEXT_COLOR_GREEN",
-        name: "",
-        value: "text-green-500 dark:text-green-400",
-        class: "bg-green-500 dark:bg-green-400 border-green-500 dark:border-green-400",
-      },
-      {
-        id: "TEXT_COLOR_BLUE",
-        name: "",
-        value: "text-blue-500 dark:text-blue-400",
-        class: "bg-blue-500 dark:bg-blue-400 border-blue-500 dark:border-blue-400",
-      },
-      {
-        id: "TEXT_COLOR_PURPLE",
-        name: "",
-        value: "text-purple-500 dark:text-purple-400",
-        class: "bg-purple-500 dark:bg-purple-400 border-purple-500 dark:border-purple-400",
-      },
-      {
-        id: "TEXT_COLOR_GRAY",
-        name: "",
-        value: "text-gray-500 dark:text-gray-400",
-        class: "bg-gray-500 dark:bg-gray-400 border-gray-500 dark:border-gray-400",
-      },
+      { id: "TEXT_COLOR_DEFAULT", name: "-", value: "text-(color:--font-color)", class: "bg-(--font-color) text-transparent" },
+      { id: "TEXT_COLOR_GRAY", name: "", value: "text-(color:--gray-text)", class: "[--bg-color:var(--gray-mark)]! bg-(--gray-mark)" },
+      { id: "TEXT_COLOR_RED", name: "", value: "text-(color:--red-text)", class: "[--bg-color:var(--red-mark)]! bg-(--red-mark)" },
+      { id: "TEXT_COLOR_ORANGE", name: "", value: "text-(color:--orange-text)", class: "[--bg-color:var(--orange-mark)]! bg-(--orange-mark)" },
+      { id: "TEXT_COLOR_YELLOW", name: "", value: "text-(color:--yellow-text)", class: "[--bg-color:var(--yellow-mark)]! bg-(--yellow-mark)" },
+      { id: "TEXT_COLOR_GREEN", name: "", value: "text-(color:--green-text)", class: "[--bg-color:var(--green-mark)]! bg-(--green-mark)" },
+      { id: "TEXT_COLOR_CYAN", name: "", value: "text-(color:--cyan-text)", class: "[--bg-color:var(--cyan-mark)]! bg-(--cyan-mark)" },
+      { id: "TEXT_COLOR_BLUE", name: "", value: "text-(color:--blue-text)", class: "[--bg-color:var(--blue-mark)]! bg-(--blue-mark)" },
+      { id: "TEXT_COLOR_PURPLE", name: "", value: "text-(color:--purple-text)", class: "[--bg-color:var(--purple-mark)]! bg-(--purple-mark)" },
     ],
 
     TEXT_ALIGN_OPTIONS: [

@@ -3,6 +3,7 @@
   import type { IOption, ITableButton, ITableContent, ITableHeader, ITableImage, ITableProgressBar, ITableProps, ITableText } from "../types"
   import { fly, slide } from "svelte/transition"
   import { twMerge } from "tailwind-merge"
+  import { widgetAccentStyle } from "../widgetAccent"
   import { onMount, tick } from "svelte"
   import ButtonClear from "../libIcons/ButtonClear.svelte"
   import { T } from "../locales/i18n"
@@ -255,7 +256,7 @@
   })
 </script>
 
-<div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class={twMerge(`flex h-full w-full flex-col overflow-hidden`, wrapperClass)}>
+<div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class={twMerge(`flex h-full w-full flex-col overflow-hidden`, wrapperClass)} style={widgetAccentStyle(wrapperClass)}>
   {#if label.name}
     <span class={twMerge(`w-full pb-2 text-[12px] font-semibold text-(--muted-color)`, label.class)}>{label.name}</span>
   {/if}

@@ -1,5 +1,6 @@
 <script lang="ts">
   import { twMerge } from "tailwind-merge"
+  import { widgetAccentStyle } from "../widgetAccent"
   import type { IJoystickProps } from "../types"
 
   let {
@@ -123,14 +124,18 @@
   }
 </script>
 
-<div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class={twMerge(`bg-blue relative flex w-full flex-col items-center`, wrapperClass)}>
+<div
+  id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
+  class={twMerge(`bg-blue relative flex w-full flex-col items-center`, wrapperClass)}
+  style={widgetAccentStyle(twMerge("bg-blue", wrapperClass))}
+>
   {#if label.name}
     <h5 class={twMerge(`w-full px-4 text-center`, label.class)}>{label.name}</h5>
   {/if}
 
   {#if !readonly}
     <div class="flex w-1/2 items-center justify-center">
-      <div class="relative z-10 flex size-40 min-h-40 min-w-40 items-center justify-center rounded-full bg-(--bg-color) shadow-(--elevation-2)">
+      <div class="relative z-10 flex size-40 min-h-40 min-w-40 items-center justify-center rounded-full bg-(--bg-color) text-(--on-accent) shadow-(--elevation-2)">
         <!-- Основные кнопки (оси pitch и yaw) -->
         <div class="absolute h-full w-full overflow-hidden rounded-full">
           {#each directions as direction, index}
@@ -176,7 +181,7 @@
           {/each}
         </div>
         <!-- Кнопка по центру -->
-        <div class="z-20 flex size-20 items-center justify-center rounded-full bg-(--bg-color) shadow-(--elevation-2)">
+        <div class="z-20 flex size-20 items-center justify-center rounded-full bg-(--bg-color) text-(--on-accent) shadow-(--elevation-2)">
           <button
             class="flex size-18 cursor-pointer rounded-full p-2 origin-center active:scale-95
             [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
@@ -218,7 +223,7 @@
       <!-- Боковые кнопки (ось roll) -->
       {#if axes[2].name !== ""}
         <div
-          class="absolute flex h-15 w-65 items-center justify-between rounded-full shadow-(--elevation-2)"
+          class="absolute flex h-15 w-65 items-center justify-between rounded-full text-(--on-accent) shadow-(--elevation-2)"
           style="background: color-mix(in srgb, var(--bg-color), var(--shadow-color) 10%)"
         >
           <button
@@ -284,13 +289,9 @@
             class={twMerge(`m-0 inline-block min-w-0 flex-1 cursor-pointer items-center px-2 py-1 font-semibold shadow-sm transition-all duration-300
             select-none hover:shadow-md
             ${
-              option === sensitivity && sensitivity !== null
-                ? "z-10 py-1 shadow-[0_0_10px_var(--shadow-color)] hover:shadow-[0_0_15px_var(--shadow-color)]"
-                : ""
-            }  
-            ${sensitivityOptions.length > 0 && index === 0 ? "rounded-l-2xl" : ""} ${
-              index === sensitivityOptions.length - 1 ? "rounded-r-2xl" : ""
-            } bg-(--back-color)`)}
+              option === sensitivity && sensitivity !== null ? "z-10 bg-(--bg-color) text-(--on-accent)" : "bg-(--back-color)"
+            }
+            ${sensitivityOptions.length > 0 && index === 0 ? "rounded-l-2xl" : ""} ${index === sensitivityOptions.length - 1 ? "rounded-r-2xl" : ""}`)}
             onclick={() => {
               sensitivity = option
             }}

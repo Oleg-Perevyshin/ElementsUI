@@ -31,6 +31,7 @@
 | `label.name` | `string` | `""` | Заголовок |
 | `label.class` | `string` | `"text-left"` | Классы текста заголовка |
 | `label.icon` | `Component \| string \| null` | `null` | Иконка заголовка |
+| `chevron` | `boolean` | `true` | Стрелка раскрытия в заголовке. Без неё блок сворачивается нажатием на заголовок |
 | `image` | `string` | `""` | Картинка фона содержимого |
 | `children` | `Snippet` | | Содержимое |
 
