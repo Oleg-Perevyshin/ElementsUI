@@ -72,16 +72,16 @@ export const optionsStore = derived(T, ($T) => {
       { id: id(), value: "background", name: $T("constructor.props.background"), icon: PROPS_ICONS.highlight },
     ],
 
-    /* Семантическая палитра темы: те же роли, что у мастер-цвета виджетов; свотч показывает чистый цвет Apple (--X-mark), как у тегов; bg-max - нейтральный вариант, свотч с ним отмечается рамкой */
+    /* Семантическая палитра темы: те же роли, что у мастер-цвета виджетов; свотч показывает чистый цвет Apple (--X-mark), как у тегов; порядок Apple, серый первым; bg-max - нейтральный вариант, свотч с ним отмечается рамкой */
     COLOR_OPTIONS: [
       { id: id(), name: "-", value: "bg-max", class: "bg-max text-transparent" },
+      { id: id(), name: "", value: "bg-gray", class: "bg-gray [--bg-color:var(--gray-mark)]!" },
       { id: id(), name: "", value: "bg-red", class: "bg-red [--bg-color:var(--red-mark)]!" },
       { id: id(), name: "", value: "bg-orange", class: "bg-orange [--bg-color:var(--orange-mark)]!" },
       { id: id(), name: "", value: "bg-yellow", class: "bg-yellow [--bg-color:var(--yellow-mark)]!" },
       { id: id(), name: "", value: "bg-green", class: "bg-green [--bg-color:var(--green-mark)]!" },
       { id: id(), name: "", value: "bg-blue", class: "bg-blue [--bg-color:var(--blue-mark)]!" },
       { id: id(), name: "", value: "bg-purple", class: "bg-purple [--bg-color:var(--purple-mark)]!" },
-      { id: id(), name: "", value: "bg-gray", class: "bg-gray [--bg-color:var(--gray-mark)]!" },
     ],
 
     TEXT_COLOR_OPTIONS: [
