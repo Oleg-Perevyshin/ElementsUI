@@ -24,7 +24,7 @@
 
 **Компоненты.** Каждый привязывается к одной переменной устройства: `Input`, `Select`, `Switch`, `Slider`, `Button`, `Joystick`, `ProgressBar`, `Graph`, `PeriodChart`, `Table`, `FileAttach`, `VideoViewer`, `TextField`, `Widget`.
 
-**Раскладка.** `Accordion`, `Tabs`, `Divider`, `Carousel`, `Modal`.
+**Раскладка.** `Accordion`, `Tabs`, `Divider`, `Carousel`, `Modal`. У `Accordion` есть необязательный слот `actions` - кнопки справа в заголовке, нажатие на них блок не сворачивает.
 
 **Ядро протоколов** (`poe-svelte-ui-lib/protocols`). Кодирование и разбор пакетов для всех каналов связи с устройством. Работает без Svelte, в том числе под Node.
 

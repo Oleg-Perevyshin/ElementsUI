@@ -13,6 +13,7 @@
     size = { width: 1, height: 1 },
     label = { name: "", class: "text-left", icon: null },
     children,
+    actions,
     image = "",
   }: IAccordionProps = $props()
 
@@ -27,35 +28,41 @@
 >
   <div class="overflow-hidden rounded-[14px] border border-(--hairline-color) bg-(--back-color)">
     <!-- Фон заголовка - мягкий оттенок мастер-цвета (светлый в светлой теме, тёмный в тёмной), текст - мастер-цвет с цветом шрифта 60/40, раскрытое содержимое остаётся на чистом фоне (--back-color). -->
-    <button
-      class="flex w-full cursor-pointer items-center justify-between gap-3 bg-(--accent-soft) px-4 py-3 text-left text-[color-mix(in_srgb,var(--accent-color)_60%,var(--font-color))] transition-colors duration-150 hover:bg-[color-mix(in_srgb,var(--accent-color)_12%,var(--accent-soft))]"
-      onclick={toggle}
-    >
-      <div class="flex min-w-0 flex-1 items-center gap-3">
-        {#if label?.icon}
-          <span
-            class="flex h-[18px] w-[18px] shrink-0 items-center justify-center text-[color-mix(in_srgb,var(--accent-color)_60%,var(--font-color))] [&_svg]:h-full [&_svg]:w-full"
-          >
-            {#if typeof label?.icon === "string"}
-              {@html label.icon}
-            {:else}
-              {@const IconComponent = label?.icon}
-              <IconComponent />
-            {/if}
-          </span>
-        {/if}
-        <span class={twMerge(`min-w-0 truncate text-[14px] font-semibold`, label.class)}>{label?.name}</span>
-      </div>
-
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        class="h-[14px] w-[14px] shrink-0 text-[color-mix(in_srgb,var(--accent-color)_60%,var(--font-color))] transition-transform duration-200"
-        style="transform: rotate({isOpen ? 180 : 0}deg)"
-        viewBox="0 0 24 24"
+    <!-- Заголовок: кнопка сворачивания на всю ширину и необязательные кнопки справа (actions) - вне неё, чтобы не сворачивать блок -->
+    <div class="flex w-full items-center bg-(--accent-soft)">
+      <button
+        class="flex min-w-0 flex-1 cursor-pointer items-center justify-between gap-3 px-4 py-3 text-left text-[color-mix(in_srgb,var(--accent-color)_60%,var(--font-color))] transition-colors duration-150 hover:bg-[color-mix(in_srgb,var(--accent-color)_12%,var(--accent-soft))]"
+        onclick={toggle}
       >
-        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 9l6 6 6-6" />
-      </svg>
-    </button>
+        <div class="flex min-w-0 flex-1 items-center gap-3">
+          {#if label?.icon}
+            <span
+              class="flex h-[18px] w-[18px] shrink-0 items-center justify-center text-[color-mix(in_srgb,var(--accent-color)_60%,var(--font-color))] [&_svg]:h-full [&_svg]:w-full"
+            >
+              {#if typeof label?.icon === "string"}
+                {@html label.icon}
+              {:else}
+                {@const IconComponent = label?.icon}
+                <IconComponent />
+              {/if}
+            </span>
+          {/if}
+          <span class={twMerge(`min-w-0 truncate text-[14px] font-semibold`, label.class)}>{label?.name}</span>
+        </div>
+
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-[14px] w-[14px] shrink-0 text-[color-mix(in_srgb,var(--accent-color)_60%,var(--font-color))] transition-transform duration-200"
+          style="transform: rotate({isOpen ? 180 : 0}deg)"
+          viewBox="0 0 24 24"
+        >
+          <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 9l6 6 6-6" />
+        </svg>
+      </button>
+      {#if actions}
+        <div class="flex shrink-0 items-center gap-1 pr-3">{@render actions()}</div>
+      {/if}
+    </div>
 
     {#if isOpen}
       <div

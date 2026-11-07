@@ -148,6 +148,8 @@ export interface IAccordionProps {
     icon?: ConstructorOfATypedSvelteComponent | string | null
   }
   children?: Snippet
+  /* Кнопки справа в заголовке: нажатие на них не сворачивает и не разворачивает блок */
+  actions?: Snippet
   image?: string
 }
 
