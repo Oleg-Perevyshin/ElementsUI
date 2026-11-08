@@ -1,5 +1,6 @@
 <!-- $lib/WidgetFileSystem/WidgetFileSystem.svelte - смарт-виджет файловой системы устройства. Данные - один объект CFG.FS в том виде, в каком его отдаёт прошивка (FS_WriteState, ProdFactory-ESP): Total/Used/Free/List[{Name, Size}] и Upload{Name, Size, Progress} - только пока идёт закачка. Ничего не знает про DeviceStore/WebSocket - value/onRefresh/onDelete/onUpload/onDownload, протоколы закачки и скачивания (SET FS с Op UploadStart/UploadChunk/UploadDone и DownloadStart/DownloadChunk/DownloadDone) и отправка команд на стороне вызывающего. -->
 <script lang="ts">
+  import { untrack } from "svelte"
   import { T } from "../locales/i18n"
   import { slide, fade, scale } from "svelte/transition"
   import { twMerge } from "tailwind-merge"
@@ -35,14 +36,10 @@
   let accentStyle = $derived(widgetAccentStyle(componentClass ?? ""))
 
   /* Сворачивание тела по клику на шапку - как у остальных смарт-виджетов (см. WidgetWiFi.svelte) */
-  let hasMergedPersisted = false
-  $effect(() => {
-    if (hasMergedPersisted) return
-    hasMergedPersisted = true
-    const persisted = readPersistedCollapsed(persistKey, collapsed)
-    if (persisted !== collapsed) collapsed = persisted
-  })
-  $effect(() => writePersistedCollapsed(persistKey, collapsed))
+  /* Выбор пользователя в этом браузере применяется до первой отрисовки, без мигания; значение из GUI запоминается, чтобы его смена отменяла старый выбор */
+  const guiCollapsed = untrack(() => collapsed)
+  collapsed = readPersistedCollapsed(untrack(() => persistKey), guiCollapsed)
+  $effect(() => writePersistedCollapsed(persistKey, collapsed, guiCollapsed))
 
   /* Размер в человекочитаемом виде: Б / КБ / МБ, одна цифра после запятой начиная с КБ */
   const formatBytes = (bytes: number) => {

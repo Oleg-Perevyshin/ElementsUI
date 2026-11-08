@@ -7,7 +7,6 @@
   import WidgetHeader from "../../WidgetHeader.svelte"
   import { hint, hintsSetting } from "../../hints"
   import { readMapColors, widgetAccentStyle, type IMapColors } from "../../widgetAccent"
-  import { readPersistedCollapsed, writePersistedCollapsed } from "../../widgetCollapse"
   import * as UI from "../.."
   import { MapLibre, NavigationControl, ScaleControl, FullScreenControl, CustomControl } from "../mapWrapper"
   import MissionLayers from "./MissionLayers.svelte"
@@ -54,14 +53,6 @@
   const hints = $derived(hintsSetting("WidgetMap", persistKey))
   let accentStyle = $derived(widgetAccentStyle(componentClass ?? ""))
 
-  let hasMergedPersisted = false
-  $effect(() => {
-    if (hasMergedPersisted) return
-    hasMergedPersisted = true
-    const persisted = readPersistedCollapsed(persistKey, collapsed)
-    if (persisted !== collapsed) collapsed = persisted
-  })
-  $effect(() => writePersistedCollapsed(persistKey, collapsed))
 
   /* Пока тянут точку, маршрут наружу не отдаётся: владелец получает его один раз, когда точку отпустили */
   let dragging = false

@@ -1,5 +1,6 @@
 <!-- $lib/WidgetStackInfo/WidgetStackInfo.svelte - отладочный смарт-виджет памяти и задач FreeRTOS. Данные - один объект StackInfo в том виде, в каком его отдают ProdFactory-ESP и ProdFactory-STM (API_GetStackInfo): Heap[{Name, Total, Free, MinFree}] и Tasks[{Name, FreeMin, Prio, Core?, State, CPU?}]. Ничего не знает про DeviceStore/WebSocket - value/onRefresh, автоопрос лишь периодически зовёт onRefresh. -->
 <script lang="ts">
+  import { untrack } from "svelte"
   import { T } from "../locales/i18n"
   import { slide } from "svelte/transition"
   import { twMerge } from "tailwind-merge"
@@ -27,14 +28,10 @@
   let accentStyle = $derived(widgetAccentStyle(componentClass ?? ""))
 
   /* Сворачивание тела по клику на шапку - как у остальных смарт-виджетов (см. WidgetWiFi.svelte) */
-  let hasMergedPersisted = false
-  $effect(() => {
-    if (hasMergedPersisted) return
-    hasMergedPersisted = true
-    const persisted = readPersistedCollapsed(persistKey, collapsed)
-    if (persisted !== collapsed) collapsed = persisted
-  })
-  $effect(() => writePersistedCollapsed(persistKey, collapsed))
+  /* Выбор пользователя в этом браузере применяется до первой отрисовки, без мигания; значение из GUI запоминается, чтобы его смена отменяла старый выбор */
+  const guiCollapsed = untrack(() => collapsed)
+  collapsed = readPersistedCollapsed(untrack(() => persistKey), guiCollapsed)
+  $effect(() => writePersistedCollapsed(persistKey, collapsed, guiCollapsed))
 
   /* Автоопрос: сразу при включении и далее раз в period; свёрнутый виджет не опрашивает */
   let periods: IOption<number>[] = $derived([

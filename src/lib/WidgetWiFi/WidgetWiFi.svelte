@@ -83,14 +83,10 @@
   }
 
   /* Сворачивание тела виджета по клику на значок/заголовок (как аккордеон) - переключатель режима в шапке кликом не триггерит, только сама кнопка значок+заголовок (см. WidgetHeader.svelte). collapsed - bindable: в конструкторе родитель биндит его на component.properties.collapsed, клик по шапке сразу сохраняется в GUI (как isOpen у Accordion в ConstructorUI.svelte). На реальном устройстве (GUIPreview) проп передаётся однонаправленно - локальные изменения не утекают наверх, поверх дефолта только переживают перезагрузку через localStorage (persistKey). */
-  let hasMergedPersisted = false
-  $effect(() => {
-    if (hasMergedPersisted) return
-    hasMergedPersisted = true
-    const persisted = readPersistedCollapsed(persistKey, collapsed)
-    if (persisted !== collapsed) collapsed = persisted
-  })
-  $effect(() => writePersistedCollapsed(persistKey, collapsed))
+  /* Выбор пользователя в этом браузере применяется до первой отрисовки, без мигания; значение из GUI запоминается, чтобы его смена отменяла старый выбор */
+  const guiCollapsed = untrack(() => collapsed)
+  collapsed = readPersistedCollapsed(untrack(() => persistKey), guiCollapsed)
+  $effect(() => writePersistedCollapsed(persistKey, collapsed, guiCollapsed))
 
   /* Поля редактируются локально (как Argument: NoSend в реальной GUI) - отправка одним пакетом по кнопке */
   let savedSnapshot = $state(untrack(() => JSON.stringify(cfg)))

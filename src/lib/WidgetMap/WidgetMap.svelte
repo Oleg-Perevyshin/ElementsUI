@@ -49,14 +49,10 @@
   let accentStyle = $derived(widgetAccentStyle(componentClass ?? ""))
 
   /* Сворачивание тела по клику на шапку - как у остальных смарт-виджетов (см. WidgetWiFi.svelte) */
-  let hasMergedPersisted = false
-  $effect(() => {
-    if (hasMergedPersisted) return
-    hasMergedPersisted = true
-    const persisted = readPersistedCollapsed(persistKey, collapsed)
-    if (persisted !== collapsed) collapsed = persisted
-  })
-  $effect(() => writePersistedCollapsed(persistKey, collapsed))
+  /* Выбор пользователя в этом браузере применяется до первой отрисовки, без мигания; значение из GUI запоминается, чтобы его смена отменяла старый выбор */
+  const guiCollapsed = untrack(() => collapsed)
+  collapsed = readPersistedCollapsed(untrack(() => persistKey), guiCollapsed)
+  $effect(() => writePersistedCollapsed(persistKey, collapsed, guiCollapsed))
 
   interface Board {
     group: string
