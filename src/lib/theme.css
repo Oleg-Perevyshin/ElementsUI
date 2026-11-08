@@ -264,7 +264,7 @@
   }
 
   .markdown-content a {
-    color: var(--accent-color);
+    color: var(--accent-text);
     text-decoration: underline;
     text-underline-offset: 2px;
   }
@@ -284,18 +284,17 @@
   }
 
   a {
-    color: var(--accent-color);
+    color: var(--accent-text);
     text-decoration: none;
   }
 
   a:hover {
-    color: var(--accent-hover);
     text-decoration: underline;
   }
 
   /* Единое кольцо фокуса вместо размытых теней у каждого компонента */
   :where(button, a, input, select, textarea, [tabindex]):focus-visible {
-    outline: 2px solid var(--accent-color);
+    outline: 2px solid var(--accent-text);
     outline-offset: 2px;
     border-radius: 10px;
   }
@@ -328,16 +327,19 @@
   --back-color: #ffffff;
   --container-color: #f2f4f7;
   --field-color: #ffffff;
-  --border-color: #cfd5de;
+  /* Рамки полей, переключателей и кнопок: от 3:1 ко всем фонам темы (WCAG 1.4.11) */
+  --border-color: #7f8897;
   --hairline-color: rgb(17 24 39 / 0.11);
 
   --font-color: #10141a;
-  /* Вторичный и подсказочный текст: контраст не ниже 4.8:1 на всех фонах темы (WCAG AA) */
-  --muted-color: #3f4651;
-  --faint-color: #5f6774;
+  /* Единые нормы контраста для обеих тем (WCAG 2.1): вторичный текст от 7:1 (AAA), подсказочный от 4.6:1 (AA) на всех фонах темы */
+  --muted-color: #464e5c;
+  --faint-color: #616a79;
 
   --accent-color: var(--blue-color);
-  --accent-hover: #135ae4;
+  /* Акцент как текст, значок, рамка или кольцо фокуса: заливка --accent-color в тёмной теме темна для этого. В виджете с мастер-цветом - --X-text этого цвета */
+  --accent-text: var(--blue-text);
+  --accent-hover: #215ed9;
   --accent-soft: rgb(47 117 255 / 0.14);
   --on-accent: #ffffff;
   --on-orange: #1d1d1f;
@@ -352,10 +354,10 @@
   --elevation-3: 0 12px 32px rgb(16 24 40 / 0.12);
   --scrollbar-color: #c4c9d2;
 
-  /* Ровная гамма OKLCH: тоны 27, 58, 98, 150, 225, 262, 310, соседние цвета различаются одинаково хорошо. Заливки под белый текст: светлота подобрана под контраст с белым (светлая тема от 4.6:1, тёмная от 5.2:1). Оранжевый, жёлтый и голубой яркие, под тёмный текст --on-orange, --on-yellow и --on-cyan */
+  /* Ровная гамма OKLCH: тоны 27, 58, 98, 150, 225, 262, 310, соседние цвета различаются одинаково хорошо. Заливки: текст на них от 4.6:1 в обеих темах (белый, у оранжевого, жёлтого и голубого тёмный --on-orange, --on-yellow, --on-cyan) */
   --gray-color: #e4e7ec;
   /* Серый как мастер-цвет: --gray-color это светлая поверхность, для акцента нужен средний серый под белый текст */
-  --gray-accent: #74747a;
+  --gray-accent: #72757b;
   --red-color: #e22729;
   --orange-color: #fb8900;
   --yellow-color: #f4d400;
@@ -363,18 +365,18 @@
   --cyan-color: #00c3f5;
   --blue-color: #256bf7;
   --purple-color: #a448dc;
-  --pink-color: #ea002d;
+  --pink-color: #e02159;
 
-  /* Цветной текст: контраст ≥ 4.5:1 на всех фонах темы и на своём --*-soft */
+  /* Цветной текст: контраст от 6:1 на всех фонах темы и на своём --*-soft, в обеих темах одинаково */
   --gray-text: var(--muted-color);
-  --red-text: #c70014;
-  --orange-text: #a25600;
-  --yellow-text: #7c6a00;
-  --green-text: #007b36;
-  --cyan-text: #007494;
-  --blue-text: #135ae4;
-  --purple-text: #9334c9;
-  --pink-text: #c40025;
+  --red-text: #a4000f;
+  --orange-text: #864700;
+  --yellow-text: #665700;
+  --green-text: #00662c;
+  --cyan-text: #00607a;
+  --blue-text: #0046c8;
+  --purple-text: #7f18b3;
+  --pink-text: #a3003b;
 
   /* Мягкие тинты для фонов блоков и подсветки строк */
   --gray-soft: #e1e5ea;
@@ -385,7 +387,7 @@
   --cyan-soft: #ccf3fd;
   --blue-soft: #d5e3ff;
   --purple-soft: #f0dafd;
-  --pink-soft: #ffd5dd;
+  --pink-soft: #ffd4e1;
 
   /* Метки: самые яркие цвета гаммы для полос, точек, тегов и индикаторов, не для текста */
   --gray-mark: #8e8e93;
@@ -396,24 +398,28 @@
   --cyan-mark: #00c3f5;
   --blue-mark: #2f75ff;
   --purple-mark: #b345f3;
-  --pink-mark: #ff2d55;
+  --pink-mark: #ff2767;
 }
 
 .dark {
+  /* Родные элементы браузера (выпадающие списки, чекбоксы, прокрутка, поля дат) в тёмном исполнении */
+  color-scheme: dark;
   --bg-body: #0b0d12;
   --back-color: #171b23;
   --container-color: #20252f;
   --field-color: #12151b;
-  --border-color: #384050;
+  /* Рамки полей, переключателей и кнопок: от 3:1 ко всем фонам темы (WCAG 1.4.11) */
+  --border-color: #666f7d;
   --hairline-color: rgb(255 255 255 / 0.1);
 
   --font-color: #e9ebf0;
-  /* Вторичный и подсказочный текст: контраст не ниже 5.6:1 на всех фонах темы (WCAG AA) */
-  --muted-color: #b4bbc8;
-  --faint-color: #939cac;
+  /* Единые нормы контраста для обеих тем (WCAG 2.1): вторичный текст от 7:1 (AAA), подсказочный от 4.6:1 (AA) на всех фонах темы */
+  --muted-color: #a6b0bf;
+  --faint-color: #848e9d;
 
   --accent-color: var(--blue-color);
-  --accent-hover: #2f72f6;
+  --accent-text: var(--blue-text);
+  --accent-hover: #215ed9;
   --accent-soft: rgb(65 129 255 / 0.2);
   --on-accent: #ffffff;
   --on-orange: #1d1d1f;
@@ -428,20 +434,20 @@
   --elevation-3: 0 12px 32px rgb(0 0 0 / 0.5);
   --scrollbar-color: #333a47;
 
-  /* Ровная гамма OKLCH: тоны 27, 58, 98, 150, 225, 262, 310, соседние цвета различаются одинаково хорошо. Заливки под белый текст: светлота подобрана под контраст с белым (светлая тема от 4.6:1, тёмная от 5.2:1). Оранжевый, жёлтый и голубой яркие, под тёмный текст --on-orange, --on-yellow и --on-cyan */
+  /* Ровная гамма OKLCH: тоны 27, 58, 98, 150, 225, 262, 310, соседние цвета различаются одинаково хорошо. Заливки: текст на них от 4.6:1 в обеих темах (белый, у оранжевого, жёлтого и голубого тёмный --on-orange, --on-yellow, --on-cyan) */
   --gray-color: #2b313d;
   /* Серый как мастер-цвет: --gray-color это светлая поверхность, для акцента нужен средний серый под белый текст */
-  --gray-accent: #6c6c71;
-  --red-color: #d7141e;
+  --gray-accent: #72757b;
+  --red-color: #e22729;
   --orange-color: #ff9739;
   --yellow-color: #ffde0b;
-  --green-color: #007d37;
+  --green-color: #00873d;
   --cyan-color: #27cdff;
-  --blue-color: #1c62ed;
-  --purple-color: #9c3ed2;
-  --pink-color: #ce2749;
+  --blue-color: #256bf7;
+  --purple-color: #a448dc;
+  --pink-color: #e02159;
 
-  /* Цветной текст: контраст от 6:1 на всех фонах темы и на своём --*-soft */
+  /* Цветной текст: контраст от 6:1 на всех фонах темы и на своём --*-soft, в обеих темах одинаково */
   --gray-text: var(--muted-color);
   --red-text: #ff9d92;
   --orange-text: #ffb479;
@@ -450,7 +456,7 @@
   --cyan-text: #69d7ff;
   --blue-text: #94baff;
   --purple-text: #d8a2ff;
-  --pink-text: #ff6482;
+  --pink-text: #ff9ca8;
 
   /* Мягкие тинты для фонов блоков и подсветки строк */
   --gray-soft: rgb(255 255 255 / 0.1);
@@ -461,7 +467,7 @@
   --cyan-soft: rgb(39 205 255 / 0.2);
   --blue-soft: rgb(65 129 255 / 0.2);
   --purple-soft: rgb(189 80 253 / 0.2);
-  --pink-soft: rgb(255 55 95 / 0.2);
+  --pink-soft: rgb(255 77 117 / 0.2);
 
   /* Метки: самые яркие цвета гаммы для полос, точек, тегов и индикаторов, не для текста */
   --gray-mark: #98989d;
@@ -472,7 +478,7 @@
   --cyan-mark: #27cdff;
   --blue-mark: #4181ff;
   --purple-mark: #bd50fd;
-  --pink-mark: #ff375f;
+  --pink-mark: #ff4d75;
 }
 
 /* ─── Поверхности: фон страницы (--bg-body) → панель → вложенный блок → поле ─────────────── Один рецепт для всех приложений - каждая ступень заметна в обеих темах; панели не делаются полупрозрачными (bg-(--back-color)/50 сливается с фоном), отступы и скругление задаёт сама страница классами Tailwind */
@@ -586,6 +592,34 @@
 }
 .border-pink {
   --border-color: var(--pink-color);
+}
+/* В тёмной теме заливки ролей темны для тонкой рамки на тёмном фоне - рамка цветом метки */
+.dark .border-gray {
+  --border-color: var(--gray-mark);
+}
+.dark .border-red {
+  --border-color: var(--red-mark);
+}
+.dark .border-orange {
+  --border-color: var(--orange-mark);
+}
+.dark .border-yellow {
+  --border-color: var(--yellow-mark);
+}
+.dark .border-green {
+  --border-color: var(--green-mark);
+}
+.dark .border-cyan {
+  --border-color: var(--cyan-mark);
+}
+.dark .border-blue {
+  --border-color: var(--blue-mark);
+}
+.dark .border-purple {
+  --border-color: var(--purple-mark);
+}
+.dark .border-pink {
+  --border-color: var(--pink-mark);
 }
 
 /* Нативные чекбоксы, радиокнопки и ползунки окрашиваются акцентом: внутри виджета с мастер-цветом - его цветом */

@@ -88,7 +88,7 @@
      placeholder:text-(--faint-color)
      [&::-webkit-inner-spin-button]:hidden [&::-webkit-outer-spin-button]:hidden
      ${hasRole && !disabled && !readonly ? "bg-[color-mix(in_srgb,var(--accent-color)_7%,var(--field-color))]" : ""}
-     ${isValid ? `${hasRole ? "border-[color-mix(in_srgb,var(--accent-color)_55%,var(--border-color))]" : "border-(--border-color)"} focus:border-(--accent-color) focus:shadow-(--focus-shadow-color)` : "border-(--red-color) focus:border-(--red-color) focus:shadow-[0_0_0_3px_color-mix(in_srgb,var(--red-color),transparent_80%)]"}
+     ${isValid ? `${hasRole ? "border-[color-mix(in_srgb,var(--accent-color)_55%,var(--border-color))]" : "border-(--border-color)"} focus:border-(--accent-text) focus:shadow-(--focus-shadow-color)` : "border-(--red-text) focus:border-(--red-text) focus:shadow-[0_0_0_3px_color-mix(in_srgb,var(--red-color),transparent_80%)]"}
      ${disabled ? "cursor-not-allowed border-(--hairline-color) bg-(--container-color) text-(--faint-color)" : ""}
      ${readonly && !disabled ? "bg-(--container-color) text-(--muted-color)" : ""}
      ${help?.info ? "pl-9" : ""}`,
@@ -242,7 +242,7 @@
         type="button"
         class="button-info absolute left-2 flex size-5 items-center justify-center border-none bg-transparent text-(--faint-color) {type === 'text-area'
           ? 'top-2'
-          : ''} {disabled ? 'opacity-50' : 'cursor-pointer hover:text-(--accent-color)'}"
+          : ''} {disabled ? 'opacity-50' : 'cursor-pointer hover:text-(--accent-text)'}"
         onmouseenter={() => (showInfo = true)}
         onmouseleave={() => (showInfo = false)}
         aria-label={showInfo ? $T("ui.info.hide") : $T("ui.info.show")}

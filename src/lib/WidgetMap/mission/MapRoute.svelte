@@ -1,5 +1,6 @@
 <!-- $lib/WidgetMap/mission/MapRoute.svelte - режим «Маршрут» карты, обычный планировщик миссии: оператор ставит точки на карте, задаёт каждой высоту и скорость, виджет считает путь и время и выгружает миссию -->
 <script lang="ts">
+  import { isDarkTheme, watchTheme } from "../../themeWatch"
   import { onMount, untrack, type Snippet } from "svelte"
   import { slide } from "svelte/transition"
   import { twMerge } from "tailwind-merge"
@@ -211,14 +212,10 @@
 
   let rootEl: HTMLDivElement | undefined = $state()
   let isDarkMode = $state(false)
-  const detectTheme = () => {
-    const scope = rootEl?.closest(".dark, .light")
-    isDarkMode = scope ? scope.classList.contains("dark") : localStorage.getItem("AppTheme") !== "light"
-  }
+  const detectTheme = () => (isDarkMode = isDarkTheme(rootEl))
   onMount(() => {
     detectTheme()
-    window.addEventListener("ThemeChange", detectTheme)
-    return () => window.removeEventListener("ThemeChange", detectTheme)
+    return watchTheme(detectTheme)
   })
   /* Цвета слоёв карты перечитываются при смене мастер-цвета и темы */
   let mapColors = $state<IMapColors>(readMapColors(undefined))
@@ -240,8 +237,8 @@
   /* Кнопки панели на карте: стили кнопок MapLibre (размер 29px, прозрачный фон, без рамки) перебиваются */
   const mapBtn =
     "flex! h-auto! w-auto! cursor-pointer items-center gap-2 rounded-md! border! border-solid! px-2.5! py-1! text-[12px] font-semibold whitespace-nowrap text-(--font-color) transition disabled:cursor-not-allowed disabled:opacity-50"
-  const mapBtnIdle = "border-(--hairline-color)! bg-(--back-color)! hover:border-(--accent-color)!"
-  const mapBtnOn = "border-(--accent-color)! bg-[color-mix(in_srgb,var(--accent-color)_15%,var(--back-color))]!"
+  const mapBtnIdle = "border-(--hairline-color)! bg-(--back-color)! hover:border-(--accent-text)!"
+  const mapBtnOn = "border-(--accent-text)! bg-[color-mix(in_srgb,var(--accent-color)_15%,var(--back-color))]!"
   const mapBtnMain = "border-(--accent-color)! bg-(--accent-color)! text-(--on-accent)!"
   type Section = "summary"
   let open = $state<Record<Section, boolean>>({ summary: false })

@@ -149,7 +149,7 @@
   /* Общая база поля - та же, что у Input */
   const fieldBase = `h-8 w-full rounded-[10px] border border-(--border-color) bg-(--field-color) px-3 text-left text-[14px]
     transition-[border-color,box-shadow] duration-150 outline-none
-    focus:border-(--accent-color) focus:shadow-(--focus-shadow-color)`
+    focus:border-(--accent-text) focus:shadow-(--focus-shadow-color)`
 
   const listBase = `overflow-y-auto rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-1 shadow-(--elevation-2)`
 
@@ -205,7 +205,7 @@
                 value={option?.value ? String(option.value) : ""}
                 class={twMerge(
                   `${optionBase}
-                   ${isSelected(option) ? "bg-(--accent-soft) font-semibold text-(--accent-color)" : "hover:bg-(--container-color)"}
+                   ${isSelected(option) ? "bg-(--accent-soft) font-semibold text-(--accent-text)" : "hover:bg-(--container-color)"}
                    ${option.disabled ? "cursor-not-allowed text-(--faint-color)" : "cursor-pointer"}`,
                   option.class,
                 )}
@@ -303,7 +303,7 @@
                 value={option?.value ? String(option.value) : ""}
                 class={twMerge(
                   `${optionBase}
-                   ${isSelected(option) ? "bg-(--accent-soft) font-semibold text-(--accent-color)" : "hover:bg-(--container-color)"}
+                   ${isSelected(option) ? "bg-(--accent-soft) font-semibold text-(--accent-text)" : "hover:bg-(--container-color)"}
                    ${option.disabled ? "cursor-not-allowed text-(--faint-color)" : "cursor-pointer"}`,
                   option.class,
                 )}

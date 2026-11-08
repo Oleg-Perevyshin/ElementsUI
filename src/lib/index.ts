@@ -133,3 +133,6 @@ export {
   type IPeriodChartProps,
   type IPeriodChartLevel,
 } from "./types"
+export { ICONS, ICON_NAMES, ICONS_ARRAY } from "./icons"
+export { default as CopiedChip } from "./CopiedChip.svelte"
+export { default as IconsMatrix } from "./IconsMatrix.svelte"

@@ -8,7 +8,7 @@ export const widgetAccentStyle = (componentClass: string): string => {
   const role = componentClass.match(/(?:^|\s)bg-(\w+)/)?.[1]
   if (!role || role === "max") return fill
   return (
-    `--accent-color: var(--${role}-accent, var(--${role}-color)); --accent-soft: var(--${role}-soft); --accent-hover: var(--${role}-accent, var(--${role}-color)); --on-accent: var(--on-${role}, #ffffff);` +
+    `--accent-color: var(--${role}-accent, var(--${role}-color)); --accent-text: var(--${role}-text); --accent-soft: var(--${role}-soft); --accent-hover: var(--${role}-accent, var(--${role}-color)); --on-accent: var(--on-${role}, #ffffff);` +
     `--focus-shadow-color: 0 0 0 3px color-mix(in srgb, var(--${role}-accent, var(--${role}-color)) 18%, transparent);` +
     fill
   )
@@ -17,6 +17,8 @@ export const widgetAccentStyle = (componentClass: string): string => {
 /* Цвета для слоёв карты: MapLibre не понимает CSS-переменные, поэтому берём готовые значения с элемента виджета */
 export interface IMapColors {
   accent: string
+  /* Линии маршрута и следа: заметны на подложке своей темы (в тёмной заливка акцента темна для тонкой линии) */
+  line: string
   onAccent: string
   green: string
   red: string
@@ -28,6 +30,7 @@ export const readMapColors = (el: Element | undefined): IMapColors => {
   const read = (name: string, fallback: string) => style?.getPropertyValue(name).trim() || fallback
   return {
     accent: read("--accent-color", "#256bf7"),
+    line: read("--accent-text", "#0046c8"),
     onAccent: read("--on-accent", "#ffffff"),
     green: read("--green-mark", "#00cc5f"),
     red: read("--red-mark", "#ff252a"),

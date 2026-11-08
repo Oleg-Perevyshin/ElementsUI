@@ -1,5 +1,6 @@
 <!-- $lib/WidgetMap/WidgetMap.svelte - смарт-виджет «Карта», режим «Объекты» (по умолчанию), «Маршрут» (планировщик миссии, mission/MapRoute.svelte) или «Агро» (генератор миссии, mission/MapAgro.svelte); аппараты из групп полей рисуются во всех режимах. Режим «Объекты»: объекты из групп полей устройства (по умолчанию MAV) с полями Lat/Lon/Alt/Heading/Sat/DevName/DevSN (см. IWidgetMapData), каждая группа - свой маркер и своя траектория. Только отображение: ничего не отправляет и не знает про DeviceStore/WebSocket. Траекторию, длину трека и таймаут маркеров оператор переключает прямо поверх карты, «Показать все» - кнопка в шапке; вид карта сама не меняет - объектов может быть много. -->
 <script lang="ts">
+  import { isDarkTheme, watchTheme } from "../themeWatch"
   import { onMount, untrack } from "svelte"
   import { slide } from "svelte/transition"
   import { twMerge } from "tailwind-merge"
@@ -283,16 +284,12 @@
     setTimeout(() => (isCopied = false), 1000)
   }
 
-  /* Тема карты - по ближайшему предку .dark/.light (как у токенов theme.css), а не по localStorage: работает и внутри блока с другой темой */
+  /* Тема карты - по ближайшему предку .dark/.light (как у токенов theme.css): работает и внутри блока с другой темой, смена темы отслеживается */
   let rootEl: HTMLDivElement | undefined = $state()
-  const detectTheme = () => {
-    const scope = rootEl?.closest(".dark, .light")
-    isDarkMode = scope ? scope.classList.contains("dark") : localStorage.getItem("AppTheme") !== "light"
-  }
+  const detectTheme = () => (isDarkMode = isDarkTheme(rootEl))
   onMount(() => {
     detectTheme()
-    window.addEventListener("ThemeChange", detectTheme)
-    return () => window.removeEventListener("ThemeChange", detectTheme)
+    return watchTheme(detectTheme)
   })
 
   const trackLengthOptions = [100, 500, 1000, 5000, 10000, 50000]
@@ -531,7 +528,7 @@
 
           <!-- Панель оператора поверх карты -->
           <CustomControl position="top-left">
-            <div class="flex flex-wrap items-center gap-3 rounded-lg px-2 py-1 text-black">
+            <div class="flex flex-wrap items-center gap-3 rounded-lg px-2 py-1 text-(--font-color)">
               <label class="flex items-center gap-1.5 text-sm font-medium" use:hint={{ text: $T("widget.map.hint.track"), enabled: $hints }}>
                 <input type="checkbox" bind:checked={trackEnabled} />
                 {$T("constructor.props.map.track")}
@@ -539,7 +536,7 @@
               {#if trackEnabled}
                 <div class="flex items-center gap-2">
                   <span class="text-sm font-medium">{$T("constructor.props.map.trackLength")}</span>
-                  <select class="rounded px-2 py-1 text-sm" bind:value={trackLength}>
+                  <select class="rounded border border-(--border-color) bg-(--field-color) px-2 py-1 text-sm text-(--font-color)" bind:value={trackLength}>
                     {#each trackLengthOptions as opt}
                       <option value={opt}>{opt}</option>
                     {/each}
@@ -548,7 +545,7 @@
               {/if}
               <div class="flex items-center gap-2" use:hint={{ text: $T("widget.map.hint.timeout"), enabled: $hints }}>
                 <span class="text-sm font-medium">{$T("constructor.props.map.timeout")}</span>
-                <select class="rounded px-2 py-1 text-sm" bind:value={markerTimeout}>
+                <select class="rounded border border-(--border-color) bg-(--field-color) px-2 py-1 text-sm text-(--font-color)" bind:value={markerTimeout}>
                   {#each timeoutOptions as opt}
                     <option value={opt.value}>{opt.label}</option>
                   {/each}

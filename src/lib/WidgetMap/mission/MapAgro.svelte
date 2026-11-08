@@ -1,5 +1,6 @@
 <!-- $lib/WidgetMap/mission/MapAgro.svelte - режим «Агро» карты, генератор миссии для агродрона: оператор рисует на карте поле и запретные зоны, задаёт угол проходов и ширину захвата, виджет строит траекторию покрытия с обходом зон и выгружает миссию -->
 <script lang="ts">
+  import { isDarkTheme, watchTheme } from "../../themeWatch"
   import { onMount, untrack, type Snippet } from "svelte"
   import { slide } from "svelte/transition"
   import { twMerge } from "tailwind-merge"
@@ -407,14 +408,10 @@
 
   let rootEl: HTMLDivElement | undefined = $state()
   let isDarkMode = $state(false)
-  const detectTheme = () => {
-    const scope = rootEl?.closest(".dark, .light")
-    isDarkMode = scope ? scope.classList.contains("dark") : localStorage.getItem("AppTheme") !== "light"
-  }
+  const detectTheme = () => (isDarkMode = isDarkTheme(rootEl))
   onMount(() => {
     detectTheme()
-    window.addEventListener("ThemeChange", detectTheme)
-    return () => window.removeEventListener("ThemeChange", detectTheme)
+    return watchTheme(detectTheme)
   })
   /* Цвета слоёв карты перечитываются при смене мастер-цвета и темы */
   let mapColors = $state<IMapColors>(readMapColors(undefined))
@@ -447,8 +444,8 @@
   /* Кнопки панели на карте: стили кнопок MapLibre (размер 29px, прозрачный фон, без рамки) перебиваются */
   const mapBtn =
     "flex! h-auto! w-auto! cursor-pointer items-center gap-2 rounded-md! border! border-solid! px-2.5! py-1! text-[12px] font-semibold whitespace-nowrap text-(--font-color) transition disabled:cursor-not-allowed disabled:opacity-50"
-  const mapBtnIdle = "border-(--hairline-color)! bg-(--back-color)! hover:border-(--accent-color)!"
-  const mapBtnOn = "border-(--accent-color)! bg-[color-mix(in_srgb,var(--accent-color)_15%,var(--back-color))]!"
+  const mapBtnIdle = "border-(--hairline-color)! bg-(--back-color)! hover:border-(--accent-text)!"
+  const mapBtnOn = "border-(--accent-text)! bg-[color-mix(in_srgb,var(--accent-color)_15%,var(--back-color))]!"
   const mapBtnMain = "border-(--accent-color)! bg-(--accent-color)! text-(--on-accent)!"
   /* Два сворачиваемых блока: «Маршрут и внесение» и «Итог» (контуры и расчёт) */
   type Section = "settings" | "summary"
@@ -583,12 +580,12 @@
           {#if searching !== null}
             <!-- Колесо ожидания поверх карты, пока идёт авторасчёт: заголовок, ниже полоса и процент -->
             <div class="pointer-events-none absolute inset-0 z-10 flex items-center justify-center">
-              <div class="flex items-center gap-3 rounded-xl bg-white/90 px-4 py-3 text-black shadow-lg">
-                <span class="size-8 shrink-0 text-(--accent-color)"><SpinnerIcon /></span>
+              <div class="flex items-center gap-3 rounded-xl border border-(--hairline-color) bg-(--back-color) px-4 py-3 text-(--font-color) shadow-(--elevation-2)">
+                <span class="size-8 shrink-0 text-(--accent-text)"><SpinnerIcon /></span>
                 <div class="flex min-w-48 flex-col gap-1.5">
                   <span class="text-[13px] font-semibold">{$T("widget.mission.searching")}</span>
                   <div class="flex items-center gap-2 text-[12px] tabular-nums">
-                    <span class="h-1.5 flex-1 overflow-hidden rounded-full bg-black/10"
+                    <span class="h-1.5 flex-1 overflow-hidden rounded-full bg-(--container-color)"
                       ><span class="block h-full rounded-full bg-(--accent-color) transition-[width]" style="width: {Math.round(searching * 100)}%"
                       ></span></span
                     >
@@ -819,7 +816,7 @@
                     <span class="flex items-center gap-1"><span class="h-0.5 w-4 bg-(--green-mark)"></span>{$T("widget.mission.legendSpray")}</span>
                     <span class="flex items-center gap-1"><span class="h-0.5 w-4 bg-(--orange-mark)"></span>{$T("widget.mission.legendTurn")}</span>
                     <span class="flex items-center gap-1"
-                      ><span class="h-0.5 w-4 border-t-2 border-dashed border-(--accent-color)"></span>{$T("widget.mission.legendTransit")}</span
+                      ><span class="h-0.5 w-4 border-t-2 border-dashed border-(--accent-text)"></span>{$T("widget.mission.legendTransit")}</span
                     >
                   </div>
                 {:else}

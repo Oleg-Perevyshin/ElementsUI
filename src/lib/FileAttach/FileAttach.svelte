@@ -107,11 +107,11 @@
       <div
         class={twMerge(
           `flex h-8 w-full items-center gap-3 overflow-hidden rounded-[12px] border border-dashed border-(--border-color) bg-(--field-color) px-3 text-[14px]
-           transition-colors duration-150 ${disabled ? "opacity-45" : "hover:border-(--accent-color)"}`,
+           transition-colors duration-150 ${disabled ? "opacity-45" : "hover:border-(--accent-text)"}`,
           componentClass,
         )}
       >
-        <span class="shrink-0 font-semibold whitespace-nowrap text-(--accent-color)">
+        <span class="shrink-0 font-semibold whitespace-nowrap text-(--accent-text)">
           {$T("constructor.props.file.select")}
         </span>
         <div class="flex min-w-0 flex-1 items-center justify-start truncate {fileName ? 'text-(--font-color)' : 'text-(--faint-color)'}">

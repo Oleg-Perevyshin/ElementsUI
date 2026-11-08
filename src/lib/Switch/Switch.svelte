@@ -149,7 +149,7 @@
         checked:after:border-2 checked:after:border-t-0 checked:after:border-l-0
         checked:after:border-solid checked:after:border-(--on-accent) checked:after:opacity-100
         checked:after:content-['']
-        focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent-color)
+        focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent-text)
         disabled:cursor-not-allowed disabled:border-(--hairline-color) disabled:bg-(--container-color)
       "
       onchange={() => handleToggle(0)}

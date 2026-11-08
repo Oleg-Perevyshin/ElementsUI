@@ -33,7 +33,7 @@
                transition-colors duration-150 ${isCol && items.find((item) => item.icon) ? "h-20 flex-col" : ""}
                ${
                  index === activeTab
-                   ? "cursor-pointer font-semibold text-(--font-color) shadow-[inset_0_-2px_0_var(--accent-color)]"
+                   ? "cursor-pointer font-semibold text-(--font-color) shadow-[inset_0_-2px_0_var(--accent-text)]"
                    : item.disabled
                      ? "cursor-not-allowed font-medium text-(--faint-color)"
                      : "cursor-pointer font-medium text-(--muted-color) hover:text-(--font-color)"

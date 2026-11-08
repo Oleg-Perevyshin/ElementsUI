@@ -17,6 +17,7 @@
 <script lang="ts">
   import { T } from "../locales/i18n"
   import { onMount } from "svelte"
+  import { watchTheme } from "../themeWatch"
   import Select from "../Select/Select.svelte"
   import type { IGraphDataObject, IGraphProps } from "../types"
 
@@ -108,8 +109,11 @@
     }
   }
 
-  /* Вызываем инициализацию при монтировании и при изменении streamingData */
-  onMount(initializeGraphData)
+  /* Вызываем инициализацию при монтировании и при изменении streamingData; при смене темы сетка и подписи перерисовываются её цветами */
+  onMount(() => {
+    initializeGraphData()
+    return watchTheme(() => requestAnimationFrame(drawAllGraphs))
+  })
   $effect(() => {
     initializeGraphData()
   })
@@ -312,7 +316,7 @@
     const { padding, graphWidth, graphHeight, minX, timeSpan, yMin, yMax, getX, getY } = computeGeometry()
 
     /* Сетка в стиле PeriodChart: пунктир цветом --faint-color темы, подписи тем же цветом без прозрачности */
-    const gridColor = getComputedStyle(canvas).getPropertyValue("--faint-color").trim() || "#5f6774"
+    const gridColor = getComputedStyle(canvas).getPropertyValue("--faint-color").trim() || "#616a79"
     ctx.strokeStyle = gridColor
     ctx.fillStyle = gridColor
     ctx.lineWidth = 1

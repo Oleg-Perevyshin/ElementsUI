@@ -183,7 +183,7 @@
             bind:value={currentValue}
             class="h-8 w-full min-w-0 flex-1 rounded-[10px] border border-(--border-color) bg-(--field-color) px-3 text-center text-[14px] tabular-nums
               transition-[border-color,box-shadow] duration-150 outline-none
-              focus:border-(--accent-color) focus:shadow-(--focus-shadow-color)
+              focus:border-(--accent-text) focus:shadow-(--focus-shadow-color)
               [&::-webkit-inner-spin-button]:hidden [&::-webkit-outer-spin-button]:hidden"
             id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
             type="number"

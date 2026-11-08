@@ -25,7 +25,7 @@
   onclick={() => (isOpen = true)}
 >
   <span class="text-[11px] font-semibold text-(--muted-color)">{label} ({count})</span>
-  <span class="text-[12px] text-(--accent-color)">{$T("ui.configure")}</span>
+  <span class="text-[12px] text-(--accent-text)">{$T("ui.configure")}</span>
 </button>
 
 {#if isOpen}

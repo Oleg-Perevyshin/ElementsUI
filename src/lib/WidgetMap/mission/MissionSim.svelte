@@ -111,7 +111,7 @@
   let fill = $derived(showSpray && pos?.spray ? colors.green : colors.accent)
   /* Кнопки-иконки без рамки: стили группы кнопок MapLibre перебиваются */
   const iconBtn =
-    "flex h-7! w-7! cursor-pointer items-center justify-center rounded-md border-0! bg-transparent p-0 text-gray-700 hover:bg-black/5 hover:text-black"
+    "flex h-7! w-7! cursor-pointer items-center justify-center rounded-md border-0! bg-transparent p-0 text-(--muted-color) hover:bg-(--container-color) hover:text-(--font-color)"
   /* Запуск после конца пути начинает полёт заново */
   const togglePlay = () => {
     if (!playing && t >= duration) t = 0
@@ -121,7 +121,7 @@
 </script>
 
 {#if pos}
-  <Line id="msn-sim-trail" coordinates={pos.trail} color={colors.accent} width={4} opacity={0.6} />
+  <Line id="msn-sim-trail" coordinates={pos.trail} color={colors.line} width={4} opacity={0.6} />
   <Marker lnglat={{ lng: pos.point[0], lat: pos.point[1] }}>
     {#snippet content()}
       <div class="flex size-9 items-center justify-center" style="rotate: {pos.heading}deg">
@@ -146,8 +146,8 @@
   </Marker>
 
   <!-- Панель имитации внизу карты по центру, оформлена как кнопки MapLibre -->
-  <div class="absolute bottom-2.5 left-1/2 z-10 w-max max-w-[calc(100%-8rem)] -translate-x-1/2 rounded-[4px] bg-white shadow-[0_0_0_2px_rgb(0_0_0_/_0.1)]">
-    <div class="flex flex-col gap-1 px-3 py-1.5 text-[12px] whitespace-nowrap text-black tabular-nums">
+  <div class="absolute bottom-2.5 left-1/2 z-10 w-max max-w-[calc(100%-8rem)] -translate-x-1/2 rounded-[4px] bg-(--back-color) shadow-[0_0_0_1px_var(--hairline-color)]">
+    <div class="flex flex-col gap-1 px-3 py-1.5 text-[12px] whitespace-nowrap text-(--font-color) tabular-nums">
       <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
         <span class="font-semibold">{$T("widget.sim.title")}</span>
         <button
@@ -174,7 +174,7 @@
         <span>{clock(t)} / {clock(duration)} · {Math.round((t / Math.max(1, duration)) * 100)}%</span>
         <span>{pos.alt.toFixed(0)} {$T("widget.mission.m")} · {pos.speed.toFixed(1)} {$T("widget.mission.ms")}</span>
         {#if showSpray}
-          <span class="min-w-[7.5rem] font-semibold {pos.spray ? 'text-green-700' : 'text-gray-500'}"
+          <span class="min-w-[7.5rem] font-semibold {pos.spray ? 'text-(--green-text)' : 'text-(--muted-color)'}"
             >{pos.spray ? $T("widget.sim.sprayOn") : $T("widget.sim.sprayOff")}</span
           >
         {/if}

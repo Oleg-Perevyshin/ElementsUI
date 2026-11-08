@@ -29,10 +29,10 @@
     return {
       "msn-zones-fill": { "fill-color": byKind },
       "msn-zones-line": { "line-color": byKind },
-      "msn-path-transit": { "line-color": c.accent },
+      "msn-path-transit": { "line-color": c.line },
       "msn-path-turn": { "line-color": c.orange },
       "msn-path-spray": { "line-color": c.green },
-      "msn-path-route": { "line-color": c.accent },
+      "msn-path-route": { "line-color": c.line },
       "msn-draft-line": { "line-color": byKind },
       "msn-highlight-fill": { "fill-color": byKind },
       "msn-highlight-line": { "line-color": byKind },

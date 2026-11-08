@@ -102,3 +102,37 @@
     {@render children?.(map)}
   {/if}
 </div>
+
+<style>
+  /* Кнопки, шкала и атрибуция MapLibre цветами темы: стили библиотеки грузятся с CDN позже, поэтому селекторы с удвоенным классом сильнее их */
+  :global(.maplibregl-ctrl.maplibregl-ctrl-group) {
+    background: var(--back-color);
+    color: var(--font-color);
+    box-shadow: 0 0 0 1px var(--hairline-color);
+  }
+  :global(.maplibregl-ctrl-group.maplibregl-ctrl-group button + button) {
+    border-top-color: var(--hairline-color);
+  }
+  :global(.maplibregl-ctrl-group.maplibregl-ctrl-group button:not(:disabled):hover) {
+    background-color: var(--container-color);
+  }
+  /* Значки кнопок - тёмные картинки библиотеки: в тёмной теме инвертируются */
+  :global(.dark .maplibregl-ctrl-group .maplibregl-ctrl-icon) {
+    filter: invert(1) hue-rotate(180deg);
+  }
+  :global(.maplibregl-ctrl.maplibregl-ctrl-scale) {
+    background: color-mix(in srgb, var(--back-color) 80%, transparent);
+    color: var(--font-color);
+    border-color: var(--muted-color);
+  }
+  :global(.maplibregl-ctrl.maplibregl-ctrl-attrib) {
+    background: color-mix(in srgb, var(--back-color) 80%, transparent);
+    color: var(--muted-color);
+  }
+  :global(.maplibregl-ctrl.maplibregl-ctrl-attrib a) {
+    color: var(--muted-color);
+  }
+  :global(.dark .maplibregl-ctrl-attrib-button) {
+    filter: invert(1) hue-rotate(180deg);
+  }
+</style>

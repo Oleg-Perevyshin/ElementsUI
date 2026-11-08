@@ -38,7 +38,7 @@
       onclick={() => (collapsed = !collapsed)}
       aria-expanded={!collapsed}
     >
-      <span class="flex h-[18px] w-[18px] shrink-0 items-center justify-center text-(--accent-color) [&_svg]:h-full [&_svg]:w-full">
+      <span class="flex h-[18px] w-[18px] shrink-0 items-center justify-center text-(--accent-text) [&_svg]:h-full [&_svg]:w-full">
         <Icon />
       </span>
       <span class="min-w-0 truncate text-[14px] font-semibold">{label}</span>
@@ -59,7 +59,7 @@
         type="button"
         class="flex size-[22px] shrink-0 cursor-pointer items-center justify-center rounded-full border text-[12px] font-bold transition-colors duration-150
         {$hints
-          ? 'border-(--accent-color) bg-(--accent-soft) text-(--accent-color)'
+          ? 'border-(--accent-text) bg-(--accent-soft) text-(--accent-text)'
           : 'border-(--hairline-color) bg-transparent text-(--faint-color) hover:text-(--muted-color)'}"
         title={$hints ? $T("widget.hints.on") : $T("widget.hints.off")}
         aria-pressed={$hints}

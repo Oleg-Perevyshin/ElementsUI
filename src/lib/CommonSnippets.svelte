@@ -9,6 +9,7 @@
   /* Значок «нет иконки» для компактной кнопки выбора иконки */
   const ICON_PLACEHOLDER = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></svg>`
   import TextsEditor from "./TextsEditor.svelte"
+  import IconsMatrix from "./IconsMatrix.svelte"
 
   let {
     snippet = "",
@@ -257,33 +258,39 @@
       <UI.Button content={{ name: initialValue.name }} componentClass="bg-blue" onClick={() => (showIconLib = true)} />
     {/if}
     {#if showIconLib}
-      <UI.Modal bind:isOpen={showIconLib} wrapperClass="w-130">
-        {#snippet main()}
-          <div class="grid" style="grid-template-columns: repeat({initialValue.icons.selectArray ? 1 : 3}, minmax(0, 1fr));">
-            {#each initialValue.icons.array as category}
-              <div
-                class="relative m-1.5 rounded-xl border-2 border-(--border-color) p-3 {initialValue.icons.selectArray ? 'cursor-pointer' : ''}"
-                role="button"
-                tabindex={null}
-                onkeydown={null}
-                onclick={() => (initialValue.icons.selectArray ? initialValue.updateProperty(category[1]) : {})}
-              >
-                <div class="absolute -top-3.5 bg-(--back-color) px-1">{$T(`constructor.props.icon.${category[0]}`)}</div>
-                <div class="grid place-items-center gap-2" style="grid-template-columns: repeat({initialValue.icons.selectArray ? 9 : 3}, minmax(0, 1fr));">
-                  {#each category[1] as icon}
-                    <button
-                      class="h-8 w-8 cursor-pointer [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
-                      onclick={() => initialValue.updateProperty(icon)}
-                    >
-                      {@html icon}
-                    </button>
+      {#if initialValue.icons.selectArray}
+        <!-- Наборы состояний: выбирается весь ряд целиком -->
+        <UI.Modal bind:isOpen={showIconLib} wrapperClass="w-130">
+          {#snippet main()}
+            <div class="flex flex-col gap-2">
+              {#each initialValue.icons.array as category (category[0])}
+                <button
+                  class="flex cursor-pointer items-center gap-3 rounded-xl border border-(--border-color) p-3 hover:bg-(--container-color)"
+                  onclick={() => initialValue.updateProperty(category[1])}
+                >
+                  <span class="w-28 text-left text-sm">{$T(`constructor.props.icon.${category[0]}`)}</span>
+                  {#each category[1] as icon, i (i)}
+                    <span class="size-8 [&_svg]:h-full [&_svg]:w-full">{@html icon}</span>
                   {/each}
-                </div>
-              </div>
-            {/each}
-          </div>
-        {/snippet}
-      </UI.Modal>
+                </button>
+              {/each}
+            </div>
+          {/snippet}
+        </UI.Modal>
+      {:else}
+        <!-- Каталог иконок матрицей 4×4: категории рамками, поиск по имени или категории -->
+        <UI.Modal bind:isOpen={showIconLib} title={initialValue.name} wrapperClass="w-auto">
+          {#snippet main()}
+            <IconsMatrix
+              selected={typeof initialValue.icon === "string" ? initialValue.icon : ""}
+              onPick={(svg) => {
+                initialValue.updateProperty(svg)
+                showIconLib = false
+              }}
+            />
+          {/snippet}
+        </UI.Modal>
+      {/if}
     {/if}
     {#if initialValue.icon}
       <UI.Button

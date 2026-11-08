@@ -771,7 +771,7 @@
           <div class="flex min-w-0 items-center gap-2" data-tip="route">
             <span class="shrink-0 text-[11px] font-semibold tracking-wide whitespace-nowrap text-(--faint-color) uppercase">{$T("pfd.route")}</span>
             <span
-              ><span style="color:#22d3ee">◆</span>
+              ><span class="rounded-[3px] bg-black px-[3px]" style="color:#22d3ee">◆</span>
               {$T("pfd.route.line", { n: wp.num, d: fmtDistance(wp.dist), x: fmtDistance(Math.abs(wp.xte)) })}{eta ? ` · ${eta}` : ""}</span
             >
           </div>
@@ -779,13 +779,13 @@
         {#if home}
           <div class="flex min-w-0 items-center gap-2" data-tip="home">
             <span class="shrink-0 text-[11px] font-semibold tracking-wide whitespace-nowrap text-(--faint-color) uppercase">{$T("pfd.home")}</span>
-            <span><span style="color:#22c55e">●</span> {fmtDistance(home.distance)} · {Math.round(home.bearing)}°</span>
+            <span><span class="rounded-[3px] bg-black px-[3px]" style="color:#22c55e">●</span> {fmtDistance(home.distance)} · {Math.round(home.bearing)}°</span>
           </div>
         {/if}
         {#if track !== null}
           <div class="flex items-center gap-2" data-tip="track">
             <span class="shrink-0 text-[11px] font-semibold tracking-wide whitespace-nowrap text-(--faint-color) uppercase">{$T("pfd.track")}</span>
-            <span><span style="color:#ec4899">▲</span> {Math.round(track)}°</span>
+            <span><span class="rounded-[3px] bg-black px-[3px]" style="color:#ec4899">▲</span> {Math.round(track)}°</span>
           </div>
         {/if}
         <div class="flex min-w-0 items-center gap-2" data-tip="position">

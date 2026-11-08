@@ -47,7 +47,7 @@
   })
 
   const roleClass = $derived.by(() => {
-    if (disabled) return "text-(--faint-color) border border-transparent cursor-not-allowed"
+    if (disabled) return "text-(--muted-color) border border-transparent cursor-not-allowed"
     switch (role) {
       case "primary":
       case "destructive":
@@ -55,7 +55,7 @@
       case "secondary":
         return "text-(--font-color) border border-(--border-color) hover:bg-(--container-color)"
       default:
-        return "text-(--accent-color) border border-transparent hover:bg-(--accent-soft)"
+        return "text-(--accent-text) border border-transparent hover:bg-(--accent-soft)"
     }
   })
 
@@ -92,7 +92,7 @@
     class={`${twMerge(
       `relative inline-flex w-full items-center justify-center gap-2 leading-none font-semibold text-[14px] select-none
        transition-[background-color,filter,box-shadow] duration-150
-       focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent-color)
+       focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent-text)
        ${isIconOnly ? "aspect-square rounded-full p-0" : "h-8 rounded-[10px] px-4 py-2"}
        ${disabled ? "" : "cursor-pointer active:scale-[0.97]"}`,
       roleClass,

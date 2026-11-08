@@ -31,7 +31,7 @@
     {:else if block.kind === "ul"}
       <ul class="m-0 flex list-none flex-col gap-0.5 p-0">
         {#each block.items as item}
-          <li class="relative m-0 pl-4 before:absolute before:left-0 before:text-(--accent-color) before:content-['•']">{@render inline(item)}</li>
+          <li class="relative m-0 pl-4 before:absolute before:left-0 before:text-(--accent-text) before:content-['•']">{@render inline(item)}</li>
         {/each}
       </ul>
     {:else}

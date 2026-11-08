@@ -280,7 +280,7 @@
 
             {#if typeof column.content !== "function" && (column.content as ITableContent<any>[])?.some((c) => c.type === "text" && c.data.sortable)}
               <button
-                class="inline-flex cursor-pointer items-center rounded px-1 text-(--faint-color) transition-colors duration-150 hover:bg-(--back-color) hover:text-(--font-color)"
+                class="inline-flex cursor-pointer items-center rounded px-1 text-(--muted-color) transition-colors duration-150 hover:bg-(--back-color) hover:text-(--font-color)"
                 onclick={() =>
                   sortRows(
                     ((column.content as ITableContent<any>[])?.find((c) => c.type === "text" && c.data.sortable)?.data as ITableText<object>).key as string,
@@ -336,11 +336,11 @@
                         <button
                           class="{twMerge(`flex h-7 w-full cursor-pointer items-center justify-center gap-1.5 rounded-lg
                            px-3 text-[13px] font-semibold transition-colors duration-150 outline-none select-none
-                           focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent-color)
+                           focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent-text)
                            ${
                              ((button as ITableButton<object>).class as string)?.split(' ').find((cl: string) => cl === 'bg-transparent') ||
                              !((button as ITableButton<object>).class as string)?.split(' ').find((cl: string) => cl.startsWith('bg-'))
-                               ? 'bg-transparent text-(--accent-color) hover:bg-(--accent-soft)'
+                               ? 'bg-transparent text-(--accent-text) hover:bg-(--accent-soft)'
                                : 'border border-transparent text-(--on-accent) hover:brightness-90 dark:hover:brightness-115'
                            }
                           ${typeof button.class === 'function' ? button.class(row) : button.class}`)} bg-(--bg-color)"
@@ -368,7 +368,7 @@
                             id="select{i}-{j}-{index}"
                             class="h-7 w-full cursor-pointer rounded-lg border border-(--border-color) bg-(--field-color) px-2 text-left text-[13px]
         transition-[border-color,box-shadow] duration-150 outline-none hover:border-(--faint-color)
-        focus:border-(--accent-color) focus:shadow-(--focus-shadow-color)"
+        focus:border-(--accent-text) focus:shadow-(--focus-shadow-color)"
                             onclick={() =>
                               (isDropdownOpen =
                                 isDropdownOpen?.x === j && isDropdownOpen?.y === i && isDropdownOpen?.index === index ? null : { x: j, y: i, index })}

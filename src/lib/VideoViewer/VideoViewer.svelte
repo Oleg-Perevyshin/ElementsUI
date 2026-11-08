@@ -23,7 +23,7 @@
   /* Мастер-цвет bg-* рисуется кольцом ring вокруг кадра: ring не меняет размеры контейнера, в отличие от border */
   const roleBorderClass = $derived.by(() => {
     const role = wrapperClass?.match(/bg-(\w+)/)?.[1]
-    return role && role !== "max" ? "ring-2 ring-inset ring-(--accent-color)" : ""
+    return role && role !== "max" ? "ring-2 ring-inset ring-(--accent-text)" : ""
   })
 
   let videoElement = $state<HTMLVideoElement | null>(null)
@@ -160,7 +160,7 @@
                 d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
               />
             </svg>
-            <h5 class="text-red-600">{$T("constructor.props.video.viewer.error")}</h5>
+            <h5 class="text-(--red-text)">{$T("constructor.props.video.viewer.error")}</h5>
           {:else if status === "offline"}
             <h2>{$T("constructor.props.video.viewer.offline")}</h2>
           {:else}
@@ -187,7 +187,7 @@
                 d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
               />
             </svg>
-            <h5 class="text-red-600">{error}</h5>
+            <h5 class="text-(--red-text)">{error}</h5>
             <Button wrapperClass="w-fit" content={{ name: $T("library.retry") }} componentClass="bg-blue px-5" onClick={handlePermission} />
           {/if}
         </div>
