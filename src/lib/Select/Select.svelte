@@ -31,6 +31,27 @@
     anchorRect = { top: rect.top, bottom: rect.bottom, left: rect.left, width: rect.width }
   }
 
+  /* Список открывается вниз, а если снизу места меньше, чем ему нужно, и сверху больше - вверх; высота не больше свободного места */
+  const LIST_GAP = 4
+  const VIEWPORT_MARGIN = 8
+  const listMaxPx = $derived.by(() => {
+    const size = parseFloat(listHeight)
+    if (listHeight.endsWith("rem")) return size * parseFloat(getComputedStyle(document.documentElement).fontSize || "16")
+    return listHeight.endsWith("px") && size > 0 ? size : 256
+  })
+  const listPlacement = $derived.by(() => {
+    if (!anchorRect) return { style: "", maxHeight: listHeight }
+    const needed = Math.min(listMaxPx, options.length * 36 + 10)
+    const below = window.innerHeight - anchorRect.bottom - LIST_GAP - VIEWPORT_MARGIN
+    const above = anchorRect.top - LIST_GAP - VIEWPORT_MARGIN
+    const openUp = below < needed && above > below
+    const space = Math.max(openUp ? above : below, 72)
+    const position = openUp
+      ? `bottom: ${window.innerHeight - anchorRect.top + LIST_GAP}px;`
+      : `top: ${anchorRect.bottom + LIST_GAP}px;`
+    return { style: `${position} left: ${anchorRect.left}px; width: ${anchorRect.width}px;`, maxHeight: `${Math.min(listMaxPx, space)}px` }
+  })
+
   $effect(() => {
     if (!isDropdownOpen) return
     updateAnchorRect()
@@ -173,11 +194,11 @@
           use:portal
           bind:this={portalElement}
           data-ui-portal
-          class="fixed z-[9999] mt-1"
-          style="top: {anchorRect?.bottom ?? 0}px; left: {anchorRect?.left ?? 0}px; width: {anchorRect?.width ?? 0}px;"
+          class="fixed z-[9999]"
+          style={listPlacement.style}
           transition:slide={{ duration: 150 }}
         >
-          <div class={listBase} style="max-height: {listHeight};" role="listbox">
+          <div class={listBase} style="max-height: {listPlacement.maxHeight};" role="listbox">
             {#each options as option (option.id)}
               <button
                 id={option.id}
@@ -271,11 +292,11 @@
           use:portal
           bind:this={portalElement}
           data-ui-portal
-          class="fixed z-[9999] mt-1 select-none"
-          style="top: {anchorRect?.bottom ?? 0}px; left: {anchorRect?.left ?? 0}px; width: {anchorRect?.width ?? 0}px;"
+          class="fixed z-[9999] select-none"
+          style={listPlacement.style}
           transition:slide={{ duration: 150 }}
         >
-          <div class={listBase} style="max-height: {listHeight};" role="listbox">
+          <div class={listBase} style="max-height: {listPlacement.maxHeight};" role="listbox">
             {#each filteredOptions as option (option.id)}
               <button
                 id={option.id}

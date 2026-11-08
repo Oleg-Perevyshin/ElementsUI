@@ -37,6 +37,16 @@
 
   let isTopmost = $derived($ModalStack.at(-1) === modalId)
 
+  /* При открытии фокус в первое доступное поле ввода окна - можно сразу печатать */
+  let mainElement: HTMLDivElement | undefined = $state()
+  $effect(() => {
+    if (!isOpen || !mainElement) return
+    const field = mainElement.querySelector<HTMLElement>(
+      "input:not([type=hidden]):not([type=checkbox]):not([type=radio]):not([type=range]):not([disabled]):not([readonly]), textarea:not([disabled]):not([readonly])",
+    )
+    field?.focus({ preventScroll: true })
+  })
+
   $effect(() => {
     if (isOpen) ModalStack.open(modalId)
     else ModalStack.close(modalId)
@@ -99,13 +109,13 @@
         </button>
       </div>
 
-      <div class={twMerge("flex h-full w-full min-h-0 flex-col overflow-x-hidden overflow-y-auto p-5", mainClass)}>
+      <div bind:this={mainElement} class={twMerge("flex h-full w-full min-h-0 flex-col overflow-x-hidden overflow-y-auto p-5", mainClass)}>
         {@render main?.()}
       </div>
 
       {#if footer}
-        <!-- Подтверждающее действие - крайнее справа; row-reverse сохранён, поэтому порядок сниппетов в вызовах менять не нужно -->
-        <div class="flex flex-row-reverse items-center justify-start gap-2 border-t border-(--hairline-color) bg-(--container-color) px-5 py-3">
+        <!-- Кнопки по центру и одной ширины во всех окнах; row-reverse - подтверждающее действие первым в разметке, справа на экране -->
+        <div class="flex flex-row-reverse flex-wrap items-center justify-center gap-2 border-t border-(--hairline-color) bg-(--container-color) px-5 py-3 [&>*]:w-44!">
           {@render footer?.()}
         </div>
       {/if}
