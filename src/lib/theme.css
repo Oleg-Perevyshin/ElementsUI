@@ -365,7 +365,6 @@
   --cyan-color: #00c3f5;
   --blue-color: #256bf7;
   --purple-color: #a448dc;
-  --pink-color: #e02159;
 
   /* Цветной текст: контраст от 6:1 на всех фонах темы и на своём --*-soft, в обеих темах одинаково */
   --gray-text: var(--muted-color);
@@ -376,7 +375,6 @@
   --cyan-text: #00607a;
   --blue-text: #0046c8;
   --purple-text: #7f18b3;
-  --pink-text: #a3003b;
 
   /* Мягкие тинты для фонов блоков и подсветки строк */
   --gray-soft: #e1e5ea;
@@ -387,7 +385,6 @@
   --cyan-soft: #ccf3fd;
   --blue-soft: #d5e3ff;
   --purple-soft: #f0dafd;
-  --pink-soft: #ffd4e1;
 
   /* Метки: самые яркие цвета гаммы для полос, точек, тегов и индикаторов, не для текста */
   --gray-mark: #8e8e93;
@@ -398,7 +395,6 @@
   --cyan-mark: #00c3f5;
   --blue-mark: #2f75ff;
   --purple-mark: #b345f3;
-  --pink-mark: #ff2767;
 }
 
 .dark {
@@ -445,7 +441,6 @@
   --cyan-color: #27cdff;
   --blue-color: #256bf7;
   --purple-color: #a448dc;
-  --pink-color: #e02159;
 
   /* Цветной текст: контраст от 6:1 на всех фонах темы и на своём --*-soft, в обеих темах одинаково */
   --gray-text: var(--muted-color);
@@ -456,7 +451,6 @@
   --cyan-text: #69d7ff;
   --blue-text: #94baff;
   --purple-text: #d8a2ff;
-  --pink-text: #ff9ca8;
 
   /* Мягкие тинты для фонов блоков и подсветки строк */
   --gray-soft: rgb(255 255 255 / 0.1);
@@ -467,7 +461,6 @@
   --cyan-soft: rgb(39 205 255 / 0.2);
   --blue-soft: rgb(65 129 255 / 0.2);
   --purple-soft: rgb(189 80 253 / 0.2);
-  --pink-soft: rgb(255 77 117 / 0.2);
 
   /* Метки: самые яркие цвета гаммы для полос, точек, тегов и индикаторов, не для текста */
   --gray-mark: #98989d;
@@ -478,7 +471,6 @@
   --cyan-mark: #27cdff;
   --blue-mark: #4181ff;
   --purple-mark: #bd50fd;
-  --pink-mark: #ff4d75;
 }
 
 /* ─── Поверхности: фон страницы (--bg-body) → панель → вложенный блок → поле ─────────────── Один рецепт для всех приложений - каждая ступень заметна в обеих темах; панели не делаются полупрозрачными (bg-(--back-color)/50 сливается с фоном), отступы и скругление задаёт сама страница классами Tailwind */
@@ -532,10 +524,6 @@
   --bg-color: var(--purple-color);
   --on-accent: #ffffff;
 }
-.bg-pink {
-  --bg-color: var(--pink-color);
-  --on-accent: #ffffff;
-}
 
 /* Мягкие варианты - для карточек, плашек и подсветки, где заливка не должна кричать */
 .bg-red-soft {
@@ -558,9 +546,6 @@
 }
 .bg-purple-soft {
   --bg-color: var(--purple-soft);
-}
-.bg-pink-soft {
-  --bg-color: var(--pink-soft);
 }
 
 .border-max {
@@ -590,9 +575,6 @@
 .border-purple {
   --border-color: var(--purple-color);
 }
-.border-pink {
-  --border-color: var(--pink-color);
-}
 /* В тёмной теме заливки ролей темны для тонкой рамки на тёмном фоне - рамка цветом метки */
 .dark .border-gray {
   --border-color: var(--gray-mark);
@@ -617,9 +599,6 @@
 }
 .dark .border-purple {
   --border-color: var(--purple-mark);
-}
-.dark .border-pink {
-  --border-color: var(--pink-mark);
 }
 
 /* Нативные чекбоксы, радиокнопки и ползунки окрашиваются акцентом: внутри виджета с мастер-цветом - его цветом */

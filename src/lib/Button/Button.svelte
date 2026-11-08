@@ -21,9 +21,9 @@
 
   let showInfo = $state(false)
 
-  /* ─── Роль кнопки по последнему классу bg-* ───────────────────────── bg-blue / bg-green / bg-cyan / bg-purple / bg-orange / bg-yellow → primary (заливка + белый текст) bg-red / bg-pink → destructive bg-max / bg-gray / bg-*-soft → secondary (поверхность + контур) bg-transparent / без bg-* → plain (текст акцентом) */
+  /* ─── Роль кнопки по последнему классу bg-* ───────────────────────── bg-blue / bg-green / bg-cyan / bg-purple / bg-orange / bg-yellow → primary (заливка + белый текст) bg-red → destructive bg-max / bg-gray / bg-*-soft → secondary (поверхность + контур) bg-transparent / без bg-* → plain (текст акцентом) */
   const SURFACE_BG = ["bg-max", "bg-gray"]
-  const DANGER_BG = ["bg-red", "bg-pink"]
+  const DANGER_BG = ["bg-red"]
 
   const role = $derived.by(() => {
     const bg =

@@ -59,6 +59,6 @@ ${formatObjectToString(textFieldComponent.properties as ITextFieldProps)}
     <TextField content={{ name: "Random text", size: "huge", class: "italic" }} wrapperClass="text-sky-400" />
     <TextField content={{ name: "Random text", size: "massive", class: "italic font-bold" }} wrapperClass="text-blue-400" />
     <TextField content={{ name: "Random text", size: "massive", class: "font-bold" }} wrapperClass="text-purple-400" />
-    <TextField content={{ name: "Random text", size: "massive", class: "" }} wrapperClass="text-pink-400" background />
+    <TextField content={{ name: "Random text", size: "massive", class: "" }} wrapperClass="text-(--red-text)" background />
   {/snippet}
 </ComponentExample>

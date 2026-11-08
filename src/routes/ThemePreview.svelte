@@ -39,7 +39,7 @@
     DevSN,
   })
 
-  const ROLES = ["gray", "red", "orange", "yellow", "green", "cyan", "blue", "purple", "pink"]
+  const ROLES = ["gray", "red", "orange", "yellow", "green", "cyan", "blue", "purple"]
   const SURFACES = [
     "bg-body",
     "back-color",

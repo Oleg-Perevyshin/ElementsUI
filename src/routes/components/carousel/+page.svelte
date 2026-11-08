@@ -63,7 +63,7 @@
         <div class="w-72 min-w-72 h-16 bg-purple-100 p-2 rounded-md">
           <p>Контент 1</p>
         </div>
-        <div class="w-72 min-w-72 h-16 bg-pink-100 p-2 rounded-md">
+        <div class="w-72 min-w-72 h-16 bg-(--red-soft) p-2 rounded-md">
           <p>Контент 2</p>
         </div>
         <div class="w-72 min-w-72 h-16 bg-indigo-100 p-2 rounded-md">

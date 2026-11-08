@@ -79,7 +79,7 @@ ${formatObjectToString(sliderComponent.properties as ISliderProps)}
     </div>
     <div class="flex gap-2">
       <Slider wrapperClass="!w-1/2 bg-purple px-2" label={{ name: "Слайдер" }} value={0} number={{ minNum: -50, maxNum: 50, step: 1 }} disabled={false} />
-      <Slider wrapperClass="!w-1/2 bg-pink px-2" label={{ name: "Слайдер" }} value={25} number={{ minNum: -50, maxNum: 50, step: 1 }} disabled={false} />
+      <Slider wrapperClass="!w-1/2 bg-red px-2" label={{ name: "Слайдер" }} value={25} number={{ minNum: -50, maxNum: 50, step: 1 }} disabled={false} />
     </div>
   {/snippet}
 </ComponentExample>

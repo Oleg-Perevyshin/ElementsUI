@@ -248,7 +248,7 @@ ${formatObjectToString(tableComponent.properties as ITableProps<object>)}
       {#snippet footer()}
         <Button
           content={{ name: "Copy" }}
-          wrapperClass="w-20 bg-pink"
+          wrapperClass="w-20 bg-red"
           onClick={() => {
             navigator.clipboard.writeText(modalData.rawData)
             modalData.isOpen = false
