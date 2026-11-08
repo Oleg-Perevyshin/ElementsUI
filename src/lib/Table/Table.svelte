@@ -256,7 +256,11 @@
   })
 </script>
 
-<div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class={twMerge(`flex h-full w-full flex-col overflow-hidden`, wrapperClass)} style={widgetAccentStyle(wrapperClass)}>
+<div
+  id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
+  class={twMerge(`flex h-full w-full flex-col overflow-hidden`, wrapperClass)}
+  style={widgetAccentStyle(wrapperClass)}
+>
   {#if label.name}
     <span class={twMerge(`w-full pb-2 text-[12px] font-semibold text-(--muted-color)`, label.class)}>{label.name}</span>
   {/if}
@@ -516,7 +520,7 @@
 
     {#if tooltip.show}
       <div
-        class="fixed z-50 w-max max-w-[30%] rounded-lg border border-(--hairline-color) bg-(--back-color) px-2.5 py-1.5 text-left text-[12px] font-medium break-all whitespace-pre-wrap shadow-(--elevation-2)"
+        class="fixed z-50 w-max max-w-[30%] rounded-lg border border-(--hairline-color) bg-(--back-color) px-2.5 py-1.5 text-left text-[12px] font-medium wrap-break-word whitespace-pre-wrap shadow-(--elevation-2)"
         style="transform: translateX(-50%); left: {tooltip.x + 10}px; top: {tooltip.y + 10}px;"
         transition:fly={{ y: 8, duration: 200 }}
         role="tooltip"
