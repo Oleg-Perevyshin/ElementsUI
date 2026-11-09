@@ -98,7 +98,8 @@
       dragState.containerIndex === null ? true : Number(item.id.split("-")[2]) === dragState.containerIndex,
     ) as HTMLElement[]
     if (!items.length) return
-    let target = items[items.length - 1]
+    /* Курсор ниже середины последней строки - место в конце списка, после неё */
+    let target: HTMLElement | null = null
     for (const item of items) {
       const rect = item.getBoundingClientRect()
       /* Положение в раскладке, без сдвига идущей анимации - иначе движущаяся строка снова «пересекала» бы курсор */
@@ -109,13 +110,15 @@
         break
       }
     }
-    const newIndex = Number(target.id.split("-")[1])
-    if (newIndex === dragState.dropIndex && dragState.placeholderElement.nextSibling === target) return
+    const last = items[items.length - 1]
+    const newIndex = target ? Number(target.id.split("-")[1]) : Number(last.id.split("-")[1]) + 1
+    const anchor = target ?? last.nextSibling
+    const placeholder = dragState.placeholderElement
+    if (newIndex === dragState.dropIndex && placeholder.nextSibling === anchor) return
     dragState.dropIndex = newIndex
 
-    const placeholder = dragState.placeholderElement
-    if (target.parentNode && placeholder.nextSibling !== target) {
-      animateReorder(items, () => target.parentNode?.insertBefore(placeholder, target))
+    if (last.parentNode && placeholder.nextSibling !== anchor) {
+      animateReorder(items, () => last.parentNode?.insertBefore(placeholder, anchor))
     }
   }
 
