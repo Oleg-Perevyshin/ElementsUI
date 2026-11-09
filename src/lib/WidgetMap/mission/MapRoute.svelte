@@ -54,7 +54,6 @@
   const hints = $derived(hintsSetting("WidgetMap", persistKey))
   let accentStyle = $derived(widgetAccentStyle(componentClass ?? ""))
 
-
   /* Пока тянут точку, маршрут наружу не отдаётся: владелец получает его один раз, когда точку отпустили */
   let dragging = false
   const update = (patch: Partial<IRoutePlan>) => {

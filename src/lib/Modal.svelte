@@ -115,7 +115,9 @@
 
       {#if footer}
         <!-- Кнопки по центру и одной ширины во всех окнах; row-reverse - подтверждающее действие первым в разметке, справа на экране -->
-        <div class="flex flex-row-reverse flex-wrap items-center justify-center gap-2 border-t border-(--hairline-color) bg-(--container-color) px-5 py-3 [&>*]:w-44!">
+        <div
+          class="flex flex-row-reverse flex-wrap items-center justify-center gap-2 border-t border-(--hairline-color) bg-(--container-color) px-5 py-3 [&>*]:w-44!"
+        >
           {@render footer?.()}
         </div>
       {/if}

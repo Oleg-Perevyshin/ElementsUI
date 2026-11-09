@@ -12,6 +12,9 @@
 <div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class={twMerge(`flex h-full w-full flex-col ${anchorClass[anchor]}`, wrapperClass)}>
   {#if type === "line"}
     <!-- Без bg-* класса берём --hairline-color; явный bg-* - мастер-цвет, как у остальных компонентов -->
-    <div class={twMerge("w-full", color)} style="height: {width}px; {itemAccentStyle(color) ?? ''} background: {color ? 'var(--accent-color)' : 'var(--hairline-color)'};"></div>
+    <div
+      class={twMerge("w-full", color)}
+      style="height: {width}px; {itemAccentStyle(color) ?? ''} background: {color ? 'var(--accent-color)' : 'var(--hairline-color)'};"
+    ></div>
   {/if}
 </div>

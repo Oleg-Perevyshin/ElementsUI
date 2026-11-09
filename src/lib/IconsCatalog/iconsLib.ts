@@ -3,20 +3,7 @@ import fs from "fs"
 import { join } from "path"
 
 /* Порядок 12 категорий по 16 иконок (матрица 4×3 в пикере, в клетке сетка 4×4): темы и подсистемы устройства для заголовков аккордеонов, от простого оборудования к сложному, настройки и данные в конце */
-const CATEGORY_ORDER = [
-  "power",
-  "electronics",
-  "network",
-  "sensors",
-  "climate",
-  "light",
-  "industry",
-  "transport",
-  "space",
-  "media",
-  "home",
-  "settings",
-]
+const CATEGORY_ORDER = ["power", "electronics", "network", "sensors", "climate", "light", "industry", "transport", "space", "media", "home", "settings"]
 
 const dirPath = "src/lib/IconsCatalog"
 const files = fs.readdirSync(dirPath).sort()
@@ -24,7 +11,13 @@ const files = fs.readdirSync(dirPath).sort()
 /* Наборы состояний: папка - один набор иконок, которые виджет переключает по значению */
 const stateSets: [string, string[]][] = files
   .filter((file) => !file.includes("."))
-  .map((dir) => [dir, fs.readdirSync(join(dirPath, dir)).sort().map((file) => fs.readFileSync(join(dirPath, dir, file), "utf8").trim())])
+  .map((dir) => [
+    dir,
+    fs
+      .readdirSync(join(dirPath, dir))
+      .sort()
+      .map((file) => fs.readFileSync(join(dirPath, dir, file), "utf8").trim()),
+  ])
 
 const categories = new Map<string, { names: string[]; svgs: string[] }>()
 for (const file of files) {
@@ -55,4 +48,6 @@ export const ICONS_ARRAY: [string, string[]][] = ${JSON.stringify(stateSets, nul
 `
 
 fs.writeFileSync("src/lib/icons.ts", content)
-console.log(`icons.ts создан: ${ordered.reduce((sum, [, entry]) => sum + entry.svgs.length, 0)} иконок в ${ordered.length} категориях, наборов состояний ${stateSets.length}`)
+console.log(
+  `icons.ts создан: ${ordered.reduce((sum, [, entry]) => sum + entry.svgs.length, 0)} иконок в ${ordered.length} категориях, наборов состояний ${stateSets.length}`,
+)

@@ -49,7 +49,12 @@
     options={$optionsStore.TEXT_COLOR_OPTIONS}
     value={initialColor}
     onUpdate={(option) =>
-      updateProperty("wrapperClass", twMerge(stripLegacyTextColor(component.properties.wrapperClass), (option as UI.IOption).value as string), component, onPropertyChange)}
+      updateProperty(
+        "wrapperClass",
+        twMerge(stripLegacyTextColor(component.properties.wrapperClass), (option as UI.IOption).value as string),
+        component,
+        onPropertyChange,
+      )}
   />
 {/snippet}
 

@@ -38,7 +38,12 @@
     value={(initialColor?.value as string) ?? ""}
     onUpdate={(bgClass) => {
       updateProperty("settings.class", twMerge(component.properties.settings?.class, bgClass), component, onPropertyChange)
-      updateProperty("icons.class", twMerge(stripLegacyTextColor(component.properties.icons?.class), deriveIconColorClass(bgClass)), component, onPropertyChange)
+      updateProperty(
+        "icons.class",
+        twMerge(stripLegacyTextColor(component.properties.icons?.class), deriveIconColorClass(bgClass)),
+        component,
+        onPropertyChange,
+      )
     }}
   />
 {/snippet}

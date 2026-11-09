@@ -142,7 +142,11 @@
   })
 </script>
 
-<div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class={twMerge("flex flex-col w-full h-full items-center", wrapperClass)} style={widgetAccentStyle(wrapperClass ?? "")}>
+<div
+  id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
+  class={twMerge("flex flex-col w-full h-full items-center", wrapperClass)}
+  style={widgetAccentStyle(wrapperClass ?? "")}
+>
   {#if label.name}
     <h5 class={twMerge(`w-full px-4 text-center`, label.class)}>{label.name}</h5>
   {/if}

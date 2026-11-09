@@ -12,9 +12,7 @@
     ICONS.map(([category, svgs]) => {
       const title = $T(`constructor.props.icon.${category}`)
       const titleMatch = !!search && title.toLowerCase().includes(search)
-      const items = svgs
-        .map((svg, i) => ({ svg, name: ICON_NAMES[category]?.[i] ?? "" }))
-        .filter((item) => !search || titleMatch || item.name.includes(search))
+      const items = svgs.map((svg, i) => ({ svg, name: ICON_NAMES[category]?.[i] ?? "" })).filter((item) => !search || titleMatch || item.name.includes(search))
       return { category, title, items }
     }).filter((section) => section.items.length > 0),
   )

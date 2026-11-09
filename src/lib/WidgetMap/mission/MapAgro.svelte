@@ -57,7 +57,6 @@
   const hints = $derived(hintsSetting("WidgetMap", persistKey))
   let accentStyle = $derived(widgetAccentStyle(componentClass ?? ""))
 
-
   /* Пока тянут точку, план наружу не отдаётся: владелец получает его один раз, когда точку отпустили */
   let dragging = $state(false)
   const update = (patch: Partial<IMissionPlan>) => {
@@ -580,7 +579,9 @@
           {#if searching !== null}
             <!-- Колесо ожидания поверх карты, пока идёт авторасчёт: заголовок, ниже полоса и процент -->
             <div class="pointer-events-none absolute inset-0 z-10 flex items-center justify-center">
-              <div class="flex items-center gap-3 rounded-xl border border-(--hairline-color) bg-(--back-color) px-4 py-3 text-(--font-color) shadow-(--elevation-2)">
+              <div
+                class="flex items-center gap-3 rounded-xl border border-(--hairline-color) bg-(--back-color) px-4 py-3 text-(--font-color) shadow-(--elevation-2)"
+              >
                 <span class="size-8 shrink-0 text-(--accent-text)"><SpinnerIcon /></span>
                 <div class="flex min-w-48 flex-col gap-1.5">
                   <span class="text-[13px] font-semibold">{$T("widget.mission.searching")}</span>

@@ -46,9 +46,7 @@
     const above = anchorRect.top - LIST_GAP - VIEWPORT_MARGIN
     const openUp = below < needed && above > below
     const space = Math.max(openUp ? above : below, 72)
-    const position = openUp
-      ? `bottom: ${window.innerHeight - anchorRect.top + LIST_GAP}px;`
-      : `top: ${anchorRect.bottom + LIST_GAP}px;`
+    const position = openUp ? `bottom: ${window.innerHeight - anchorRect.top + LIST_GAP}px;` : `top: ${anchorRect.bottom + LIST_GAP}px;`
     return { style: `${position} left: ${anchorRect.left}px; width: ${anchorRect.width}px;`, maxHeight: `${Math.min(listMaxPx, space)}px` }
   })
 
@@ -190,14 +188,7 @@
       </button>
 
       {#if isDropdownOpen}
-        <div
-          use:portal
-          bind:this={portalElement}
-          data-ui-portal
-          class="fixed z-[9999]"
-          style={listPlacement.style}
-          transition:slide={{ duration: 150 }}
-        >
+        <div use:portal bind:this={portalElement} data-ui-portal class="fixed z-[9999]" style={listPlacement.style} transition:slide={{ duration: 150 }}>
           <div class={listBase} style="max-height: {listPlacement.maxHeight};" role="listbox">
             {#each options as option (option.id)}
               <button

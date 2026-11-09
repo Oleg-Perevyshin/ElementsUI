@@ -44,7 +44,10 @@
   /* Сворачивание тела по клику на шапку - как у остальных смарт-виджетов (см. WidgetWiFi.svelte) */
   /* Выбор пользователя в этом браузере применяется до первой отрисовки, без мигания; значение из GUI запоминается, чтобы его смена отменяла старый выбор */
   const guiCollapsed = untrack(() => collapsed)
-  collapsed = readPersistedCollapsed(untrack(() => persistKey), guiCollapsed)
+  collapsed = readPersistedCollapsed(
+    untrack(() => persistKey),
+    guiCollapsed,
+  )
   $effect(() => writePersistedCollapsed(persistKey, collapsed, guiCollapsed))
 
   const num = (v: unknown, fallback = 0) => (typeof v === "number" && Number.isFinite(v) ? v : fallback)

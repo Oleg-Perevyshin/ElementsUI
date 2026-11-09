@@ -146,7 +146,9 @@
   </Marker>
 
   <!-- Панель имитации внизу карты по центру, оформлена как кнопки MapLibre -->
-  <div class="absolute bottom-2.5 left-1/2 z-10 w-max max-w-[calc(100%-8rem)] -translate-x-1/2 rounded-[4px] bg-(--back-color) shadow-[0_0_0_1px_var(--hairline-color)]">
+  <div
+    class="absolute bottom-2.5 left-1/2 z-10 w-max max-w-[calc(100%-8rem)] -translate-x-1/2 rounded-[4px] bg-(--back-color) shadow-[0_0_0_1px_var(--hairline-color)]"
+  >
     <div class="flex flex-col gap-1 px-3 py-1.5 text-[12px] whitespace-nowrap text-(--font-color) tabular-nums">
       <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
         <span class="font-semibold">{$T("widget.sim.title")}</span>
