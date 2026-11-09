@@ -84,6 +84,21 @@ test("CBOR: значение и JSON-текст", () => {
   assert.deepEqual(m.cborToValue(m.jsonToCbor({ ...value, Value: { a: 1, bin: "AQI=" } })), value) /* строка base64 под ключом с "bin" - байты */
 })
 
+test("CBOR: строгий разбор", () => {
+  /* Неопределённая длина только у строк, массивов и карт, чанки строк только определённой длины */
+  assert.deepEqual(m.cborToValue(bytes("5f4101420203ff")), Uint8Array.of(1, 2, 3))
+  assert.equal(m.cborToValue(bytes("7f61616162ff")), "ab")
+  assert.deepEqual(m.cborToValue(bytes("bf616101ff")), { a: 1 })
+  for (const bad of ["1f", "3f", "df", "ff", "5f5f4101ffff", "7f7f6161ffff", "5f6161ff", "9f01", "bf616101", "5f4101", "7f6161"]) {
+    assert.throws(() => m.cborToValue(bytes(bad)), undefined, bad)
+  }
+  /* Ключ "__proto__" - обычное поле, прототип не подменяется */
+  const obj = m.cborToValue(bytes("a1695f5f70726f746f5f5fa1617801"))
+  assert.equal(Object.getPrototypeOf(obj), Object.prototype)
+  assert.deepEqual(Object.keys(obj), ["__proto__"])
+  assert.equal(obj.x, undefined)
+})
+
 /* CRC-16/KERMIT побайтно - эталон из common.c прошивки (вырезан и собран на компьютере): эмодзи, кириллица, сырой CBOR, все байты */
 const CRC_REF = {
   emoji: [[...new TextEncoder().encode("🔵")], 0x288e],

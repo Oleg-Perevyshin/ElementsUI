@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { sanitizeHtml } from "./html"
   import * as UI from "./index"
   import { T } from "./locales/i18n"
   import CrossIcon from "./libIcons/CrossIcon.svelte"
@@ -270,7 +271,7 @@
                 >
                   <span class="w-28 text-left text-sm">{$T(`constructor.props.icon.${category[0]}`)}</span>
                   {#each category[1] as icon, i (i)}
-                    <span class="size-8 [&_svg]:h-full [&_svg]:w-full">{@html icon}</span>
+                    <span class="size-8 [&_svg]:h-full [&_svg]:w-full">{@html sanitizeHtml(icon)}</span>
                   {/each}
                 </button>
               {/each}

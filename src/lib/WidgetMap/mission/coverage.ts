@@ -957,7 +957,7 @@ export const searchFieldAngle = async (
 }
 
 /* ********************************************************** */
-/* Миссия в формате QGC WPL 110 (Mission Planner, QGroundControl): точка дома, скорость, точки маршрута; распыление включается в начале прохода и выключается в конце */
+/* Миссия в формате QGC WPL 110 (Mission Planner, QGroundControl): точка дома, взлёт, скорость, точки маршрута, при необходимости возврат RTL; распыление включается в начале прохода и выключается в конце */
 
 /* none - без команд распыления; sprayer - MAV_CMD_DO_SPRAYER (ArduPilot Sprayer); servo - DO_SET_SERVO на канал насоса */
 export type SprayControl = "none" | "sprayer" | "servo"
@@ -967,6 +967,7 @@ export interface IMissionExport {
   speed: number /* м/с */
   spray: SprayControl
   servo?: { channel: number; on: number; off: number } /* Канал и ШИМ насоса для режима servo */
+  returnHome?: boolean /* В конце вернуться и сесть в точке взлёта (RTL) */
 }
 
 export const toWaypointsFile = (res: ICoverageResult, home: LngLat, opt: IMissionExport) => toMission(res, home, opt).text
@@ -983,6 +984,8 @@ export const toMission = (res: ICoverageResult, home: LngLat, opt: IMissionExpor
     if (opt.spray === "servo" && opt.servo) row(0, 3, 183, [opt.servo.channel, on ? opt.servo.on : opt.servo.off, 0, 0], [0, 0], 0)
   }
   row(1, 0, 16, [0, 0, 0, 0], home, 0)
+  /* Без NAV_TAKEOFF ArduCopter в AUTO на земле не взлетает */
+  row(0, 3, 22, [0, 0, 0, 0], [0, 0], opt.alt)
   row(0, 3, 178, [1, opt.speed, -1, 0], [0, 0], 0)
   /* Перед полётом распыление явно выключено, чтобы не лить по дороге к полю */
   sprayRow(false)
@@ -998,5 +1001,7 @@ export const toMission = (res: ICoverageResult, home: LngLat, opt: IMissionExpor
     }
   }
   if (spraying) sprayRow(false)
+  /* Без RTL дрон долетает до последней точки и висит над ней */
+  if (opt.returnHome) row(0, 3, 20, [0, 0, 0, 0], [0, 0], 0)
   return { text: lines.join("\n") + "\n", nav }
 }

@@ -1,5 +1,6 @@
 <!-- $lib/WidgetMap/WidgetMap.svelte - смарт-виджет «Карта», режим «Объекты» (по умолчанию), «Маршрут» (планировщик миссии, mission/MapRoute.svelte) или «Агро» (генератор миссии, mission/MapAgro.svelte); аппараты из групп полей рисуются во всех режимах. Режим «Объекты»: объекты из групп полей устройства (по умолчанию MAV) с полями Lat/Lon/Alt/Heading/Sat/DevName/DevSN (см. IWidgetMapData), каждая группа - свой маркер и своя траектория. Только отображение: ничего не отправляет и не знает про DeviceStore/WebSocket. Траекторию, длину трека и таймаут маркеров оператор переключает прямо поверх карты, «Показать все» - кнопка в шапке; вид карта сама не меняет - объектов может быть много. -->
 <script lang="ts">
+  import { sanitizeHtml } from "../html"
   import { isDarkTheme, watchTheme } from "../themeWatch"
   import { onMount, untrack } from "svelte"
   import { slide } from "svelte/transition"
@@ -329,7 +330,7 @@
           >
             {#if markerIcon}
               {#if typeof markerIcon === "string"}
-                {@html markerIcon}
+                {@html sanitizeHtml(markerIcon)}
               {:else}
                 {@const IconComponent = markerIcon}
                 <IconComponent />

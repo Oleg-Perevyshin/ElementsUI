@@ -6,6 +6,7 @@ export const bitFieldGet = (word: number, start: number, end: number): number =>
 
 export const bitFieldSet = (word: number, start: number, end: number, value: number): number => {
   const w = word >>> 0
+  if (!Number.isFinite(Number(value))) return w
   const size = span(start, end)
   const field = ((Math.trunc(value) % size) + size) % size
   return w - bitFieldGet(w, start, end) * 2 ** start + field * 2 ** start

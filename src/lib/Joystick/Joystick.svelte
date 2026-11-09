@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { sanitizeHtml } from "../html"
   import { twMerge } from "tailwind-merge"
   import { widgetAccentStyle } from "../widgetAccent"
   import type { IJoystickProps } from "../types"
@@ -195,7 +196,7 @@
           >
             {#if buttonIcon}
               {#if typeof buttonIcon === "string"}
-                {@html buttonIcon}
+                {@html sanitizeHtml(buttonIcon)}
               {:else}
                 {@const IconComponent = buttonIcon}
                 <IconComponent />

@@ -45,7 +45,8 @@ class CborToValue {
       for (const [key, val] of value) {
         /* Ключи приводим к строкам */
         const keyStr = this.keyToString(key as CborValue)
-        obj[keyStr] = this.convert(val as CborValue)
+        /* defineProperty: ключ "__proto__" становится обычным полем, а не подменяет прототип */
+        Object.defineProperty(obj, keyStr, { value: this.convert(val as CborValue), enumerable: true, writable: true, configurable: true })
       }
       return obj
     }

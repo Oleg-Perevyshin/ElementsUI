@@ -1,5 +1,6 @@
 <!-- $lib/Tabs/Tabs.svelte - вкладки: выбранная отмечается линией 2px акцентом; wrapperClass по умолчанию пустой, bg-* в нём красит панель -->
 <script lang="ts">
+  import { sanitizeHtml } from "../html"
   import type { ITabsProps } from "../types"
   import { twMerge } from "tailwind-merge"
   import { widgetAccentStyle } from "../widgetAccent"
@@ -51,7 +52,7 @@
             {#if item?.icon}
               <span class="flex size-[18px] items-center justify-center overflow-visible [&_svg]:h-full [&_svg]:w-full">
                 {#if typeof item.icon === "string"}
-                  {@html item.icon}
+                  {@html sanitizeHtml(item.icon)}
                 {:else}
                   {@const IconComponent = item.icon}
                   <IconComponent />

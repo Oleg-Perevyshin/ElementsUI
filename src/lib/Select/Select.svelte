@@ -1,5 +1,6 @@
 <!-- $lib/Select/Select.svelte - радиус 10, высота 36, выравнивание по левому краю, список - единственный элемент с тенью, группа type="buttons" без разрывов. -->
 <script lang="ts" generics="T = unknown">
+  import { sanitizeHtml } from "../html"
   import { slide } from "svelte/transition"
   import { onMount } from "svelte"
   import type { IOption, ISelectProps } from "../types"
@@ -252,7 +253,9 @@
               onmouseleave={() => (hoveredOptionId = null)}
             >
               {#if option.icon}
-                <span class="flex h-[18px] min-w-[18px] items-center justify-center leading-none [&_svg]:h-full [&_svg]:w-full">{@html option.icon}</span>
+                <span class="flex h-[18px] min-w-[18px] items-center justify-center leading-none [&_svg]:h-full [&_svg]:w-full"
+                  >{@html sanitizeHtml(option.icon)}</span
+                >
               {:else if option.name}
                 <span class="block truncate">{option.name}</span>
               {/if}

@@ -9,7 +9,7 @@
   import { T } from "../locales/i18n"
   import { Button, Modal } from ".."
   import CopiedChip from "../CopiedChip.svelte"
-  import { escapeHtml, htmlToText } from "../html"
+  import { escapeHtml, htmlToText, sanitizeHtml } from "../html"
 
   let {
     id = crypto.randomUUID(),
@@ -355,7 +355,7 @@
                           {#if button?.icon}
                             <span class={`flex size-4 shrink-0 items-center justify-center overflow-visible [&_svg]:h-full [&_svg]:w-full`}>
                               {#if typeof button?.icon === "string"}
-                                {@html button.icon}
+                                {@html sanitizeHtml(button.icon)}
                               {:else}
                                 {@const IconComponent = button?.icon}
                                 <IconComponent />
@@ -420,7 +420,7 @@
                             />
                           {:else if image.defaultIcon}
                             {#if typeof image.defaultIcon === "string"}
-                              {@html image.defaultIcon}
+                              {@html sanitizeHtml(image.defaultIcon)}
                             {:else}
                               <image.defaultIcon />
                             {/if}
@@ -470,10 +470,10 @@
                                   showModal(cellText(data, text?.html), text?.formatting)
                                 }}
                               >
-                                {#if text?.html}{@html data}{:else}{data}{/if}
+                                {#if text?.html}{@html sanitizeHtml(data)}{:else}{data}{/if}
                               </button>
                             {:else if text?.html}
-                              {@html data}
+                              {@html sanitizeHtml(data)}
                             {:else}
                               {data}
                             {/if}
@@ -541,7 +541,7 @@
   {#snippet main()}
     <!-- Длинные строки (hex пакета, base64, длинные значения) переносятся, отступы форматирования сохраняются - содержимое видно целиком -->
     <div class="text-left whitespace-pre-wrap [overflow-wrap:anywhere]">
-      {@html modalData.formattedData}
+      {@html sanitizeHtml(modalData.formattedData)}
     </div>
   {/snippet}
   {#snippet footer()}

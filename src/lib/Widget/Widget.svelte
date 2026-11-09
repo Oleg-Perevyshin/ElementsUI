@@ -1,5 +1,6 @@
 <!-- $lib/Widget/Widget.svelte - карточка значения: шапка фиксированной высоты и гибкое тело, кнопки ± 32px, дорожка слайдера 4px -->
 <script lang="ts">
+  import { sanitizeHtml } from "../html"
   import { T } from "../locales/i18n"
   import type { IWidgetProps } from "../types"
   import { twMerge } from "tailwind-merge"
@@ -82,7 +83,7 @@
   const currentImage = $derived(icons ? icons.array[currentIndex] : "")
 
   const handleCaptionClick = (newValue: number) => {
-    if (currentValue === newValue) return
+    if (readonly || currentValue === newValue) return
     currentValue = newValue
     onUpdate(newValue)
   }
@@ -132,7 +133,7 @@
     <div class="flex h-11 shrink-0 items-center gap-2.5 border-b border-(--hairline-color) px-3.5">
       {#if icons.array && icons.array.length !== 0}
         <div class="size-5 shrink-0 text-(--muted-color) [&_svg]:h-full [&_svg]:w-full {icons.class}">
-          {@html currentImage}
+          {@html sanitizeHtml(currentImage)}
         </div>
       {/if}
       <span class="min-w-0 flex-1 truncate text-left text-[13px] font-semibold {label.class}">{label.name}</span>
@@ -232,6 +233,7 @@
                 ? 'text-(--muted-color)'
                 : 'text-(--font-color)'}"
               style="width: {maxCaptionWidth}; text-align: end;"
+              disabled={readonly}
               onclick={() => handleCaptionClick(0)}>{settings.switch?.captionLeft}</button
             >
           {/if}
@@ -266,6 +268,7 @@
                 ? 'text-(--font-color)'
                 : 'text-(--muted-color)'}"
               style="width: {maxCaptionWidth}; text-align: start;"
+              disabled={readonly}
               onclick={() => handleCaptionClick(1)}>{settings.switch?.captionRight}</button
             >
           {/if}

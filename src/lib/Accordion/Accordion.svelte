@@ -1,5 +1,6 @@
 <!-- $lib/Accordion/Accordion.svelte - заголовок не увеличивается при раскрытии, радиус 14. Мастер-цвет (componentClass) - как у смарт-виджетов: иконка и текст заголовка его цветом текста, фон заголовка - 22% мастер-цвета поверх фона. -->
 <script lang="ts">
+  import { sanitizeHtml } from "../html"
   import { slide } from "svelte/transition"
   import type { IAccordionProps } from "../types"
   import { twMerge } from "tailwind-merge"
@@ -43,7 +44,7 @@
               class="flex h-[18px] w-[18px] shrink-0 items-center justify-center text-[color-mix(in_srgb,var(--accent-text)_70%,var(--font-color))] [&_svg]:h-full [&_svg]:w-full"
             >
               {#if typeof label?.icon === "string"}
-                {@html label.icon}
+                {@html sanitizeHtml(label.icon)}
               {:else}
                 {@const IconComponent = label?.icon}
                 <IconComponent />

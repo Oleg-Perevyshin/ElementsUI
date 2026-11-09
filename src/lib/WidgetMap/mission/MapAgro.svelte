@@ -366,6 +366,7 @@
           speed: plan.speed,
           spray: plan.sprayControl,
           servo: { channel: plan.servoChannel, on: plan.servoOn, off: plan.servoOff },
+          returnHome: plan.returnHome,
         })
       : null,
   )

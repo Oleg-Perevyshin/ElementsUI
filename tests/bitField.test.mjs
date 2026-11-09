@@ -26,4 +26,6 @@ test("битовые поля: любые диапазоны 0..31, отрица
   assert.equal(bitFieldGet(4188261681, 31, 31), 1)
   assert.equal(bitFieldGet(-106705551, 6, 7), 1)
   assert.equal(bitFieldSet(0, 0, 31, 0xffffffff), 0xffffffff)
+  /* Нечисло из поля ввода не портит слово: оно возвращается без изменений */
+  for (const bad of [NaN, Infinity, "abc", undefined]) assert.equal(bitFieldSet(4188261681, 6, 7, bad), 4188261681)
 })

@@ -1,5 +1,6 @@
 <!-- $lib/Button/Button.svelte - кнопка: роль по значению bg-*, радиус 10px (иконка без подписи - круг), высота 32px, кольцо фокуса, иконка в потоке через flex + gap -->
 <script lang="ts">
+  import { sanitizeHtml } from "../html"
   import { onMount } from "svelte"
   import type { IButtonProps } from "../types"
   import { twMerge } from "tailwind-merge"
@@ -115,7 +116,7 @@
           [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full`}
       >
         {#if typeof content?.icon === "string"}
-          {@html content.icon}
+          {@html sanitizeHtml(content.icon)}
         {:else}
           {@const IconComponent = content?.icon}
           <IconComponent />

@@ -1,5 +1,6 @@
 <!-- $lib/IconsMatrix.svelte - каталог иконок матрицей 4×3: рамка на категорию, внутри её 16 иконок сеткой 4×4, сверху поиск по имени иконки или названию категории. Общий для пикера конструктора и витрины -->
 <script lang="ts">
+  import { sanitizeHtml } from "./html"
   import { T } from "./locales/i18n"
   import { ICONS, ICON_NAMES } from "./icons"
   import Input from "./Input/Input.svelte"
@@ -53,7 +54,7 @@
                 onmouseleave={() => (hovered = null)}
                 onclick={() => onPick(item.svg, item.name)}
               >
-                {@html item.svg}
+                {@html sanitizeHtml(item.svg)}
                 <!-- В нижнем ряду матрицы подсказка вверх, иначе её срежет край прокрутки -->
                 <Tooltip show={hovered === key} text={item.name} side={lastRow ? "top" : "bottom"} />
               </button>

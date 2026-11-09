@@ -104,13 +104,18 @@ export class CborDecoder {
     const chunks: Uint8Array[] = []
     let totalLength = 0
 
-    while (this.state.offset < this.state.length) {
+    for (;;) {
+      if (this.state.offset >= this.state.length) return null
       if (this.peekUint8() === CBOR_BREAK) {
         this.readUint8()
         break
       }
 
-      const chunk = this.decodeBytes()
+      /* Чанк - только байтовая строка определённой длины (RFC 8949, 3.2.3) */
+      const chunkHeader = this.readHeader()
+      if (chunkHeader.majorType !== CborMajorType.ByteString || chunkHeader.value === BigInt(-1)) throw new CborError("Invalid indefinite byte string chunk")
+
+      const chunk = this.decodeBytesWithLength(Number(chunkHeader.value))
       if (!chunk) return null
 
       chunks.push(chunk.value)
@@ -132,14 +137,16 @@ export class CborDecoder {
     let value = ""
     let totalLength = 0
 
-    while (this.state.offset < this.state.length) {
+    for (;;) {
+      if (this.state.offset >= this.state.length) return null
       if (this.peekUint8() === CBOR_BREAK) {
         this.readUint8()
         break
       }
 
+      /* Чанк - только текстовая строка определённой длины (RFC 8949, 3.2.3) */
       const chunkHeader = this.readHeader()
-      if (chunkHeader.majorType !== CborMajorType.Utf8String || chunkHeader.value === BigInt(-1)) return null
+      if (chunkHeader.majorType !== CborMajorType.Utf8String || chunkHeader.value === BigInt(-1)) throw new CborError("Invalid indefinite text string chunk")
 
       const chunk = this.decodeStringWithLength(Number(chunkHeader.value))
       if (!chunk) return null
@@ -196,6 +203,9 @@ export class CborDecoder {
       /* Значение в дополнительных битах */
       value = BigInt(additional)
     } else if (additional === CborAdditionalInfo.Indefinite) {
+      /* Неопределённая длина допустима только у строк, массивов и карт; 0xFF вне контейнера - лишний BREAK */
+      if (majorType < CborMajorType.ByteString || majorType > CborMajorType.Map)
+        throw new CborError(`Indefinite length not allowed for major type ${majorType}`)
       value = BigInt(-1)
     } else if (additional === CborAdditionalInfo.NumByte) {
       value = BigInt(this.readUint8())
@@ -261,13 +271,15 @@ export class CborDecoder {
       case CborMajorType.ByteString:
       case CborMajorType.Utf8String:
         if (header.value === BigInt(-1)) {
-          /* Indefinite length - пропускаем до break */
+          /* Indefinite length - чанки той же строки определённой длины до BREAK */
           while (this.state.offset < this.state.length) {
             if (this.peekUint8() === CBOR_BREAK) {
               this.readUint8()
               return true
             }
-            if (!this.skipValue()) return false
+            const chunk = this.readHeader()
+            if (chunk.majorType !== header.majorType || chunk.value === BigInt(-1) || !this.hasBytes(Number(chunk.value))) return false
+            this.state.offset += Number(chunk.value)
           }
           return false
         }
@@ -311,10 +323,7 @@ export class CborDecoder {
         return this.skipValue()
 
       case CborMajorType.Simple:
-        if (header.value >= BigInt(24) && header.value <= BigInt(27)) {
-          const bytes = [2, 4, 8][Number(header.value) - 24]
-          return this.hasBytes(bytes) ? ((this.state.offset += bytes), true) : false
-        }
+        /* Байты float и simple(24) readHeader уже прочитал */
         return true
 
       default:
@@ -327,14 +336,14 @@ export class CborDecoder {
     if (header.value === BigInt(-1)) {
       /* Indefinite length */
       const result: CborValue[] = []
-      while (this.state.offset < this.state.length) {
+      for (;;) {
+        if (this.state.offset >= this.state.length) throw new CborEndOfDataError()
         if (this.peekUint8() === CBOR_BREAK) {
           this.readUint8()
-          break
+          return result
         }
         result.push(this.decode())
       }
-      return result
     }
 
     const count = Number(header.value)
@@ -350,16 +359,16 @@ export class CborDecoder {
     if (header.value === BigInt(-1)) {
       /* Indefinite length */
       const result = new Map<CborValue, CborValue>()
-      while (this.state.offset < this.state.length) {
+      for (;;) {
+        if (this.state.offset >= this.state.length) throw new CborEndOfDataError()
         if (this.peekUint8() === CBOR_BREAK) {
           this.readUint8()
-          break
+          return result
         }
         const key = this.decode()
         const value = this.decode()
         result.set(key, value)
       }
-      return result
     }
 
     const count = Number(header.value)
