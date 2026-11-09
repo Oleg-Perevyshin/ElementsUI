@@ -672,7 +672,7 @@ export interface IWidgetFileSystemProps {
 
 /* Снимок памяти и задач - объект StackInfo в том виде, в каком его отдают ProdFactory-ESP и ProdFactory-STM (API_GetStackInfo) */
 export interface IWidgetStackInfoHeap {
-  Name: string /* ESP: Internal / Default (вместе с PSRAM), STM: Heap */
+  Name: string /* ESP: Internal и PSRAM (если есть), STM: Heap */
   Total: number /* байт */
   Free: number
   MinFree: number /* минимум свободного с момента старта */

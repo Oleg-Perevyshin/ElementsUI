@@ -15,12 +15,19 @@
     options = [],
     bitMode = false,
     value = $bindable(),
+    disabled = false,
     onChange = () => {},
   }: ISwitchProps = $props()
 
   let showInfo = $state(false)
 
-  let localOptions = $derived(bitMode ? options : options.slice(0, 1))
+  /* Без options обычный тумблер всё равно рисуется одним вариантом; общий disabled выключает все варианты */
+  let localOptions = $derived(
+    (bitMode ? options : options.length ? options.slice(0, 1) : [{ id: `${id}-0`, name: "", value: 0 }]).map((option) => ({
+      ...option,
+      disabled: disabled || option.disabled,
+    })),
+  )
 
   let checkedOptions: boolean[] = $derived(
     (() => {
@@ -162,7 +169,7 @@
     />
     <Tooltip show={showInfo} text={hiddenInfo} side="top" />
     {#if label.name}
-      <label for={ID} class={twMerge(`text-[13px] select-none ${options[0]?.disabled ? "text-(--faint-color)" : "cursor-pointer"}`, label.class)}>
+      <label for={ID} class={twMerge(`text-[13px] select-none ${localOptions[0]?.disabled ? "text-(--faint-color)" : "cursor-pointer"}`, label.class)}>
         {label.name}
       </label>
     {/if}

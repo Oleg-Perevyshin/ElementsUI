@@ -39,6 +39,11 @@
   })
 
   const initialColor = $derived(findColorOption($optionsStore.COLOR_OPTIONS, component.properties.wrapperClass))
+  /* Цвет текста новой вкладки - токен темы из TEXT_COLOR_OPTIONS по мастер-цвету (bg-blue → --blue-text); у bg-max и без цвета - пусто */
+  const tabTextColor = () => {
+    const role = initialColor?.value?.slice(3)
+    return $optionsStore.TEXT_COLOR_OPTIONS.find((option) => option.value === `text-(color:--${role}-text)`)?.value ?? ""
+  }
 
   const initialPosition = $derived.by(() => {
     const flexClass = component.properties.items
@@ -105,7 +110,7 @@
                 const newItem: { id: string; name: string; icon: string; class: string } = {
                   id: crypto.randomUUID(),
                   name: "",
-                  class: `text-${initialColor?.value.slice(3)}-500 ${initialPosition?.value}`,
+                  class: `${tabTextColor()} ${initialPosition?.value}`.trim(),
                   icon: "",
                 }
                 const items = [...(component.properties?.items || []), newItem]

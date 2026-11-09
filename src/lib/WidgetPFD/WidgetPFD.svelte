@@ -706,7 +706,7 @@
             </g>
           {/if}
 
-          <!-- Лента курса: трек (розовый), направление на дом (зелёный) -->
+          <!-- Лента курса: трек (фиолетовый), направление на дом (зелёный) -->
           <g clip-path="url(#pfd-hdg-{uid})" data-tip="heading">
             <rect x={HX} y={HH + 6} width={HW} height="44" fill="#000" fill-opacity="0.72" />
             {#each hdgTicks as d (d)}
@@ -716,7 +716,7 @@
             {/each}
             {#if track !== null}
               {@const x = CX + hdgOffset(track)}
-              <polygon points="{x},{HH + 8} {x - 6},{HH + 18} {x + 6},{HH + 18}" fill="#ec4899" data-tip="track" />
+              <polygon points="{x},{HH + 8} {x - 6},{HH + 18} {x + 6},{HH + 18}" fill="#bd50fd" data-tip="track" />
             {/if}
             {#if wp}
               {@const x = CX + hdgOffset(wp.bearing)}
@@ -785,7 +785,7 @@
         {#if track !== null}
           <div class="flex items-center gap-2" data-tip="track">
             <span class="shrink-0 text-[11px] font-semibold tracking-wide whitespace-nowrap text-(--faint-color) uppercase">{$T("pfd.track")}</span>
-            <span><span class="rounded-[3px] bg-black px-[3px]" style="color:#ec4899">▲</span> {Math.round(track)}°</span>
+            <span><span class="rounded-[3px] bg-black px-[3px]" style="color:#bd50fd">▲</span> {Math.round(track)}°</span>
           </div>
         {/if}
         <div class="flex min-w-0 items-center gap-2" data-tip="position">

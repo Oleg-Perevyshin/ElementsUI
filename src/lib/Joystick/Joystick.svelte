@@ -135,7 +135,9 @@
 
   {#if !readonly}
     <div class="flex w-1/2 items-center justify-center">
-      <div class="relative z-10 flex size-40 min-h-40 min-w-40 items-center justify-center rounded-full bg-(--bg-color) text-(--on-accent) shadow-(--elevation-2)">
+      <div
+        class="relative z-10 flex size-40 min-h-40 min-w-40 items-center justify-center rounded-full bg-(--bg-color) text-(--on-accent) shadow-(--elevation-2)"
+      >
         <!-- Основные кнопки (оси pitch и yaw) -->
         <div class="absolute h-full w-full overflow-hidden rounded-full">
           {#each directions as direction, index}
@@ -186,7 +188,10 @@
             class="flex size-18 cursor-pointer rounded-full p-2 origin-center active:scale-95
             [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
             style="background: {value[3] == 1 ? 'color-mix(in srgb, var(--bg-color), var(--shadow-color) 10%)' : 'var(--bg-color)'}"
-            onclick={() => (value[3] = value[3] == 0 ? 1 : 0)}
+            onclick={() => {
+              value[3] = value[3] == 0 ? 1 : 0
+              onUpdate(value)
+            }}
           >
             {#if buttonIcon}
               {#if typeof buttonIcon === "string"}
@@ -214,14 +219,17 @@
            transition-colors duration-150 hover:border-(--border-color) [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
           style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"
           title=""
-          onclick={() => (value = [0, 0, 0, 0])}
+          onclick={() => {
+            value = [0, 0, 0, 0]
+            onUpdate(value)
+          }}
         >
           0
         </button>
       </div>
 
-      <!-- Боковые кнопки (ось roll) -->
-      {#if axes[2].name !== ""}
+      <!-- Боковые кнопки (ось roll): только если третья ось есть и у неё есть имя -->
+      {#if axes[2]?.name}
         <div
           class="absolute flex h-15 w-65 items-center justify-between rounded-full text-(--on-accent) shadow-(--elevation-2)"
           style="background: color-mix(in srgb, var(--bg-color), var(--shadow-color) 10%)"
@@ -288,9 +296,7 @@
             id={crypto.randomUUID()}
             class={twMerge(`m-0 inline-block min-w-0 flex-1 cursor-pointer items-center px-2 py-1 font-semibold shadow-sm transition-all duration-300
             select-none hover:shadow-md
-            ${
-              option === sensitivity && sensitivity !== null ? "z-10 bg-(--bg-color) text-(--on-accent)" : "bg-(--back-color)"
-            }
+            ${option === sensitivity && sensitivity !== null ? "z-10 bg-(--bg-color) text-(--on-accent)" : "bg-(--back-color)"}
             ${sensitivityOptions.length > 0 && index === 0 ? "rounded-l-2xl" : ""} ${index === sensitivityOptions.length - 1 ? "rounded-r-2xl" : ""}`)}
             onclick={() => {
               sensitivity = option

@@ -191,6 +191,18 @@
             min={settings.number?.minNum}
             max={settings.number?.maxNum}
             step={settings.number?.step}
+            onchange={() => {
+              /* Ручной ввод по Enter или уходу из поля: число зажимается в пределы и отправляется, не число - возвращается прежнее значение */
+              const num = Number(currentValue)
+              if (currentValue === null || currentValue === undefined || String(currentValue) === "" || isNaN(num)) {
+                currentValue = value
+                return
+              }
+              const lo = typeof settings.number?.minNum === "number" ? settings.number.minNum : -Infinity
+              const hi = typeof settings.number?.maxNum === "number" ? settings.number.maxNum : Infinity
+              currentValue = Math.min(Math.max(num, lo), hi)
+              onUpdate(currentValue as number)
+            }}
           />
           {#if !readonly}
             <button

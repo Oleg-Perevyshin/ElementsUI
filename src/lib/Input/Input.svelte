@@ -42,17 +42,18 @@
     else isValid = true
   })
 
+  /* Неверный ввод наружу не уходит: в приложении остаётся последнее верное значение, поле подсвечивает ошибку */
   const handleInputChange = (value: string | number) => {
     if (type === "number") {
       let numValue = typeof value === "string" ? parseFloat(value.replace(",", ".")) : Number(value)
-      if (!isNaN(numValue)) {
-        if (typeof number?.minNum === "number") numValue = Math.max(numValue, number.minNum)
-        if (typeof number?.maxNum === "number") numValue = Math.min(numValue, number.maxNum)
-        onUpdate?.(numValue)
-      } else onUpdate?.(value as string)
-    } else {
-      onUpdate?.(value as string)
+      if (isNaN(numValue)) return
+      if (typeof number?.minNum === "number") numValue = Math.max(numValue, number.minNum)
+      if (typeof number?.maxNum === "number") numValue = Math.min(numValue, number.maxNum)
+      onUpdate?.(numValue)
+      return
     }
+    if (help.regExp && !RegExpObj().test(String(value))) return
+    onUpdate?.(value as string)
   }
 
   const handleKeyDown = (e: KeyboardEvent) => {

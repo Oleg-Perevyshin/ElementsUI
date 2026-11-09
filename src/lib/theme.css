@@ -274,6 +274,41 @@
     font-size: 0.85em;
   }
 
+  /* Сворачиваемый блок <details>: технические подробности в описаниях, свёрнуты по умолчанию */
+  .markdown-content details {
+    margin: 0.6em 0;
+    border: 1px solid var(--hairline-color);
+    border-radius: 10px;
+    background: var(--container-color);
+  }
+
+  .markdown-content summary {
+    padding: 0.45em 0.8em;
+    font-weight: 600;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .markdown-content summary:hover {
+    color: var(--accent-text);
+  }
+
+  .markdown-content details[open] > summary {
+    border-bottom: 1px solid var(--hairline-color);
+  }
+
+  .markdown-content details > :not(summary) {
+    margin-inline: 0.8em;
+  }
+
+  .markdown-content details > :last-child {
+    margin-bottom: 0.7em;
+  }
+
+  .markdown-content details > summary + * {
+    margin-top: 0.6em;
+  }
+
   tbody tr:hover td {
     background-color: var(--accent-soft);
   }

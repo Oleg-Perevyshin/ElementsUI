@@ -36,7 +36,12 @@
     if (currentLevelIndex >= levels.length) currentLevelIndex = 0
   })
 
-  const levels = $derived(levelsProp ?? DEFAULT_LEVELS.map((level) => ({ ...level, name: $T(level.name) })))
+  /* Уровень без имени подписывается стандартным периодом по своему месту: год, месяц, день, час */
+  const levels = $derived(
+    levelsProp
+      ? levelsProp.map((level, i) => ({ ...level, name: level.name || $T(DEFAULT_LEVELS[i]?.name ?? "") }))
+      : DEFAULT_LEVELS.map((level) => ({ ...level, name: $T(level.name) })),
+  )
   const currentLevel = $derived<IPeriodChartLevel | undefined>(levels[currentLevelIndex])
   const values = $derived(currentLevel?.data ?? [])
 
@@ -77,15 +82,19 @@
   const labelStep = $derived(Math.ceil(values.length / 12) || 1)
 </script>
 
-<div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class={twMerge("relative flex w-full flex-col gap-3", wrapperClass)} style={widgetAccentStyle(wrapperClass)}>
+<div
+  id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
+  class={twMerge("relative flex w-full flex-col gap-3", wrapperClass)}
+  style={widgetAccentStyle(wrapperClass)}
+>
   {#if label.name}
     <h5 class={twMerge("w-full text-[13px] font-semibold text-(--muted-color)", label.class)}>{label.name}</h5>
   {/if}
 
-  <!-- Сегментированный переключатель уровней: при одном уровне переключать нечего -->
+  <!-- Сегментированный переключатель уровней: при одном уровне переключать нечего; без ключа - имена уровней могут быть пустыми и совпадать -->
   {#if levels.length > 1}
     <div class="flex w-full items-center gap-0.5 rounded-[10px] bg-(--container-color) p-[3px]">
-      {#each levels as level, index (level.name)}
+      {#each levels as level, index}
         <button
           type="button"
           class={twMerge(

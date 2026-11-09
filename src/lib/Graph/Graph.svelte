@@ -45,7 +45,7 @@
   let height = $state(125)
   let selectedRefreshRate = $derived(isTest ? 50 : (refreshRate ?? 0))
   const maxDataPoints = $derived(selectedRefreshRate == 0 ? 20 : 100)
-  const defaultColors = ["#3b82f6", "#ef4444", "#10b981", "#f59e0b", "#8b5cf6", "#ec4899"]
+  const defaultColors = ["#3b82f6", "#ef4444", "#10b981", "#f59e0b", "#8b5cf6", "#00c3f5"]
 
   let previousValues: number[] = $state([])
 
@@ -82,19 +82,28 @@
     items: [],
   })
 
+  /* Линии имитации, когда данных нет: в конструкторе у нового графика streamingData пустой */
+  const TEST_SERIES: IGraphDataObject[] = [
+    { name: "Test 1", value: 0 },
+    { name: "Test 2", value: 0 },
+    { name: "Test 3", value: 0 },
+  ]
+
   /* Инициализация данных графиков (потоковый режим) */
   const initializeGraphData = () => {
     if (isHistoryMode) return
     if (typeof streamingData === "string") {
       streamingData = JSON.parse(streamingData)
     }
-    if (!streamingData.data || streamingData.data.length === 0) {
+    const hasData = !!streamingData?.data && streamingData.data.length > 0
+    if (!hasData && !isTest) {
       graphData = []
       currentValues = []
       previousValues = []
       return
     }
-    const newGraphData = (streamingData.data as IGraphDataObject[]).slice(0, 6).map((d, i) => {
+    const series = hasData ? (streamingData.data as IGraphDataObject[]) : TEST_SERIES
+    const newGraphData = series.slice(0, 6).map((d, i) => {
       const existingData = graphData.find((g) => g.name === d.name) || graphData[i]
       return {
         id: existingData?.id || crypto.randomUUID(),
@@ -105,7 +114,7 @@
     })
     if (JSON.stringify(graphData) !== JSON.stringify(newGraphData)) {
       graphData = newGraphData
-      currentValues = (streamingData.data as IGraphDataObject[]).map((d) => d.value || 0)
+      currentValues = series.map((d) => d.value || 0)
     }
   }
 
@@ -406,7 +415,7 @@
           style="left: {Math.min(tooltip.x + 12, width - 150)}px; top: {Math.min(tooltip.y + 12, height - 16 - tooltip.items.length * 16)}px;"
         >
           <div class="mb-1 font-semibold">{formatTooltipTime(tooltip.time)}</div>
-          {#each tooltip.items as item (item.name)}
+          {#each tooltip.items as item}
             <div class="flex items-center gap-1.5">
               <span class="h-2 w-2 shrink-0 rounded-full" style="background-color: {item.color}"></span>
               <span>{item.name}:</span>

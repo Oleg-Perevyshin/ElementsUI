@@ -185,7 +185,7 @@ test("xPOE-Debug: неверный CRC, команда устройству, н�
   )
   assert.equal(m.formatXPoeDebugPretty("XYZ"), null)
   const modal = m.formatXPoeDebugModal(`x\nHEX\n${float32Map}`)
-  assert.ok(modal.includes('<span style="color:var(--pink-text)">&quot;T&quot;:</span> <span style="color:var(--red-text)">0.12</span>'))
+  assert.ok(modal.includes('<span style="color:var(--blue-text)">&quot;T&quot;:</span> <span style="color:var(--red-text)">0.12</span>'))
   assert.ok(modal.includes(`>${float32Map}</pre>`))
 })
 
