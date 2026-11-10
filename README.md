@@ -203,10 +203,10 @@ export const T = createTranslator(translations)
 ```bash
 npm run dev            # витрина на локальном сервере
 npm run check          # проверка типов
-npm run TestProtocols  # тесты протоколов и битовых полей
+npm run TestProtocols  # тесты: протоколы, битовые поля, очистка HTML, облёт поля
 npm run Formatting     # prettier
 npm run build          # сборка витрины в docs/
-npm pack               # сборка пакета в dist/ с проверками
+npm pack               # сборка пакета в dist/: проверка типов, тесты, publint
 ```
 
 Витрина устроена как конструктор DevCloud: слева компонент и его код, справа панель свойств той же ширины, что в облаке. Если подпись не влезает, это видно сразу.

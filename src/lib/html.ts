@@ -1,4 +1,3 @@
-/* $lib/html.ts */
 const HTML_ESCAPES: Record<string, string> = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }
 
 /* Текст для вставки в HTML: спецсимволы заменяются сущностями */
@@ -34,14 +33,23 @@ const SAFE_ATTRS = new Set(
 const TOKEN_RE = /<!--[\s\S]*?(?:-->|$)|<[!?][^>]*>?|<(\/?)([a-zA-Z][\w:-]*)((?:[^>"']|"[^"]*"|'[^']*')*)>|([^<]+)|</g
 const ATTR_RE = /([^\s"'=/>]+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+)))?/g
 
-/* Сущности оставляются, одиночные & и угловые скобки экранируются */
-const escapeKeepEntities = (text: string, quote: boolean) =>
-  text.replace(/&(?![a-zA-Z][a-zA-Z0-9]*;|#\d+;|#x[0-9a-fA-F]+;)/g, "&amp;").replace(quote ? /[<>"]/g : /[<>]/g, (char) => HTML_ESCAPES[char])
+/* Текст: сущности оставляются, одиночные & и угловые скобки экранируются */
+const escapeText = (text: string) => text.replace(/&(?![a-zA-Z][a-zA-Z0-9]*;|#\d+;|#x[0-9a-fA-F]+;)/g, "&amp;").replace(/[<>]/g, (char) => HTML_ESCAPES[char])
 
-/* Значение атрибута безопасно: ссылки только на свой фрагмент (#id) или http(s), в стилях и url() нет внешних ресурсов и скриптов */
+const NAMED_ENTITIES: Record<string, string> = { amp: "&", lt: "<", gt: ">", quot: '"', apos: "'", nbsp: "\u00a0" }
+
+/* Значение атрибута так, как его прочтёт браузер: числовые и основные именованные сущности раскрыты, остальные остаются текстом и при выводе экранируются */
+const decodeEntities = (text: string) =>
+  text.replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);?/gi, (entity, body: string) => {
+    if (body[0] !== "#") return NAMED_ENTITIES[body.toLowerCase()] ?? entity
+    const code = body[1] === "x" || body[1] === "X" ? parseInt(body.slice(2), 16) : Number(body.slice(1))
+    return code > 0 && code <= 0x10ffff ? String.fromCodePoint(code) : "\ufffd"
+  })
+
+/* Значение атрибута (уже раскрытое) безопасно: ссылки только на свой фрагмент (#id) или http(s), в стилях и url() нет внешних ресурсов и скриптов, CSS-экранирования запрещены */
 const safeAttrValue = (tag: string, name: string, value: string): boolean => {
   const v = value.replace(/[\s\u0000-\u001f]/g, "").toLowerCase()
-  if (v.includes("javascript:") || v.includes("vbscript:") || v.includes("expression(") || v.includes("@import")) return false
+  if (v.includes("javascript:") || v.includes("vbscript:") || v.includes("expression(") || v.includes("@import") || v.includes("\\")) return false
   if (/url\((?!['"]?#)/.test(v)) return false
   if (name === "href" || name === "xlink:href") return v.startsWith("#") || (tag === "a" && /^(https?:|mailto:)/.test(v))
   return true
@@ -61,7 +69,7 @@ export const sanitizeHtml = (html: unknown): string => {
   while ((match = TOKEN_RE.exec(source))) {
     const [token, closing, rawName, rawAttrs, text] = match
     if (text !== undefined) {
-      out += escapeKeepEntities(text, false)
+      out += escapeText(text)
       continue
     }
     if (rawName === undefined) {
@@ -87,9 +95,9 @@ export const sanitizeHtml = (html: unknown): string => {
     while ((attr = ATTR_RE.exec(rawAttrs))) {
       const name = attr[1].toLowerCase()
       if (!SAFE_ATTRS.has(name)) continue
-      const value = attr[2] ?? attr[3] ?? attr[4] ?? ""
+      const value = decodeEntities(attr[2] ?? attr[3] ?? attr[4] ?? "")
       if (!safeAttrValue(tag, name, value)) continue
-      attrs += ` ${attr[1]}="${escapeKeepEntities(value, true)}"`
+      attrs += ` ${attr[1]}="${escapeHtml(value)}"`
     }
     out += `<${rawName}${attrs}${/\/\s*$/.test(rawAttrs) ? " /" : ""}>`
   }
