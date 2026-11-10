@@ -4,7 +4,7 @@
   import type { IOption, ITableButton, ITableContent, ITableHeader, ITableProps, ITableText } from "../types"
   import { fly, slide } from "svelte/transition"
   import { twMerge } from "tailwind-merge"
-  import { accentStyle, type AccentColor } from "../accent"
+  import { accentStyle } from "../accent"
   import { onMount, tick, untrack, type Snippet } from "svelte"
   import { SvelteMap } from "svelte/reactivity"
   import ButtonClear from "../libIcons/ButtonClear.svelte"
@@ -18,6 +18,7 @@
 
   let {
     wrapperClass = "",
+    accent,
     label = { name: "", class: "" },
     body = [],
     header = [],
@@ -229,10 +230,7 @@
   })
 </script>
 
-<div
-  class={twMerge(`flex h-full w-full flex-col overflow-hidden`, wrapperClass)}
-  style={accentStyle(wrapperClass.match(/(?:^|\s)bg-(\w+)/)?.[1] as AccentColor)}
->
+<div class={twMerge(`flex h-full w-full flex-col overflow-hidden`, wrapperClass)} style={accentStyle(accent)}>
   {#if label.name}
     <span class={twMerge(`w-full pb-2 text-[12px] font-semibold text-(--muted-color)`, label.class)}>{label.name}</span>
   {/if}

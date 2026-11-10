@@ -49,7 +49,7 @@ const migrateOption = (option: Props): Props => {
 const isOptionObject = (value: unknown): value is { value: unknown } => !!value && typeof value === "object" && !Array.isArray(value) && "value" in value
 
 const SMART_WIDGETS = ["WidgetWiFi", "WidgetDeviceInfo", "WidgetFileSystem", "WidgetStackInfo", "WidgetRGBStrip", "WidgetPFD", "WidgetMap"]
-const WRAPPER_ACCENT = ["Slider", "Switch", "Joystick", "PeriodChart", "Tabs", "VideoViewer", "ProgressBar"]
+const WRAPPER_ACCENT = ["Slider", "Switch", "Joystick", "PeriodChart", "Tabs", "VideoViewer", "ProgressBar", "Table"]
 
 export const migrateProperties = <C extends UIComponent>(component: C): C => {
   if (!component?.properties || typeof component.properties !== "object") return component

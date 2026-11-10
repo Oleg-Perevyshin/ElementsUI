@@ -178,9 +178,6 @@ const constructorTranslations = {
   "constructor.props.switch": { ru: "Переключатель", en: "Switch", zh: "开关" },
 
   /* Общие для редактора свойств */
-  "constructor.props.id": { ru: "Идентификатор", en: "Identifier", zh: "标识符" },
-  "constructor.props.label.class": { ru: "Стили надписи", en: "Label styles", zh: "标签样式" },
-  "constructor.props.wrapperclass": { ru: "Стили обёртки", en: "Wrapper styles", zh: "容器样式" },
   "constructor.props.componentclass": { ru: "Стили компонента", en: "Component styles", zh: "组件样式" },
   "constructor.props.open": { ru: "Разворачивание", en: "Expand", zh: "展开" },
   "constructor.props.file.accept": { ru: "Допустимые файлы", en: "Allowed files", zh: "允许的文件" },

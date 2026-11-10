@@ -1,10 +1,9 @@
 <script lang="ts">
   import { Language } from "#lib/locales/i18n.ts"
   import { localizeDeep } from "#lib/locales/localize.ts"
-  import { Button, Modal, type ITableHeader, type ITableProps, type UIComponent } from "#lib"
+  import { type ITableHeader, type ITableProps, type UIComponent } from "#lib"
   import ComponentExample from "../../ComponentExample.svelte"
   import Table from "#lib/Table/Table.svelte"
-  import DebugDeleteIcon from "#lib/libIcons/ButtonDelete.svelte"
   import TableProps from "#lib/Table/TableProps.svelte"
   import { type IOption, type ITableButton } from "#lib/types.ts"
   import { onDestroy, onMount } from "svelte"
@@ -61,7 +60,7 @@
     access: "full",
     properties: {
       id: crypto.randomUUID(),
-      wrapperClass: "bg-blue",
+      accent: "blue",
       label: { name: L("Устройства объекта", "Site devices", "现场设备"), class: "text-center" },
       dataBuffer: { bufferSize: 10, visibleRows: 5, logger: false },
       header: DEMO_HEADER,
@@ -83,10 +82,6 @@
         device: `Value of device ${Math.floor(Math.random() * 10)}`,
         buttons: [],
       },
-      // {
-      //   id: `Value of id ${Math.floor(Math.random() * 10)}`,
-      //   device: `Value of device ${Math.floor(Math.random() * 10)}`,
-      // },
     ]
   }
 
@@ -177,8 +172,6 @@ ${formatObjectToString(tableComponent.properties as ITableProps<object>)}
       ],
     },
   ]
-  let modalData = $state({ isOpen: false, rawData: "", formattedData: "" })
-
   const loggerColumns: ITableHeader<{ "id-S": string; device: string }>[] = [
     { label: { name: "ID" }, content: [{ type: "text", data: { key: "id-S" } }], width: "50%" },
     { label: { name: "Device" }, content: [{ type: "text", data: { key: "device" } }], width: "50%" },
@@ -231,20 +224,5 @@ ${formatObjectToString(tableComponent.properties as ITableProps<object>)}
         dataBuffer={{ logger: true, stashData: true, bufferSize: 10, visibleRows: 5, clearButton: true }}
       />
     </div>
-    <Modal isOpen={modalData.isOpen} title="Full data">
-      {#snippet main()}
-        {@html modalData.formattedData}
-      {/snippet}
-      {#snippet footer()}
-        <Button
-          content={{ name: "Copy" }}
-          wrapperClass="w-20 bg-red"
-          onClick={() => {
-            navigator.clipboard.writeText(modalData.rawData)
-            modalData.isOpen = false
-          }}
-        />
-      {/snippet}
-    </Modal>
   {/snippet}
 </ComponentExample>

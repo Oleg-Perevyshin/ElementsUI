@@ -74,6 +74,12 @@ test("Мастер-цвет: componentClass, wrapperClass, settings.class, color
   })
 })
 
+test("Table: роль bg-* в wrapperClass -> accent, кнопки ячеек не трогаются", () => {
+  const header = [{ label: { name: "A" }, content: [{ type: "button", data: { name: "B", class: "bg-red" } }] }]
+  assert.deepEqual(props("Table", { wrapperClass: "h-40 bg-blue", header }), { accent: "blue", wrapperClass: "h-40", header })
+  assert.deepEqual(props("Table", { wrapperClass: "bg-max" }), {})
+})
+
 test("Явный accent не перезаписывается, исходный объект не меняется, повторный вызов ничего не меняет", () => {
   assert.equal(props("Slider", { accent: "green", wrapperClass: "bg-red" }).accent, "green")
   const source = component("Button", { componentClass: "bg-green" })

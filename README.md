@@ -30,7 +30,9 @@
 
 **Тема** (`poe-svelte-ui-lib/theme.css`) и **языки** (`poe-svelte-ui-lib/locales`).
 
-Полный список экспортов в `src/lib/index.ts`. У каждого компонента рядом с исходником есть свой README с пропсами и примерами.
+**Конструктор** (`poe-svelte-ui-lib/constructor`). Панели свойств, их общие части и словарь конструктора. Нужен только приложениям с конструктором, в бандл WebApp прошивки не попадает.
+
+Полный список экспортов в `src/lib/index.ts` и `src/lib/constructor.ts`. У каждого компонента рядом с исходником есть свой README с пропсами и примерами.
 
 ## Установка
 
@@ -70,7 +72,7 @@ npm install poe-svelte-ui-lib
 
 В DevCloud и WebApp значения устройства хранятся под ключами вида `<ModSN>|<ключ>`. Смарт-виджет читает свою группу целиком, например все поля `CFG.*` или `MAV.*`.
 
-У каждого компонента есть парный `<Компонент>Props.svelte`. Это панель свойств для конструктора DevCloud. Пропсы у всех панелей одинаковые:
+У каждого компонента есть парный `<Компонент>Props.svelte`. Это панель свойств для конструктора DevCloud, импорт из `poe-svelte-ui-lib/constructor` (в основной точке входа панелей нет). Импорт этой точки входа один раз, до отрисовки, подключает к `$T` словарь конструктора. Пропсы у всех панелей одинаковые:
 
 | Пропс              | Что это                                                                                                                                   |
 | ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------- |
@@ -206,9 +208,8 @@ export const T = createTranslator(translations)
 | `ProgressBar`                                                                                                       | `items: [{ name, class: "bg-red" }]`                      | `items: [{ name, accent: "red" }]`                       |
 | `Select`, `Switch` (биты)                                                                                           | `options: [{ ..., class: "bg-red" }]`                     | `options: [{ ..., accent: "red" }]`                      |
 | `Switch` (обычный)                                                                                                  | `options={[{ id, value: 0, class: "bg-red", disabled }]}` | `accent="red" disabled` (`options` только для `bitMode`) |
+| `Table`                                                                                                             | `wrapperClass="bg-red ..."`                               | `accent="red"` (кнопки ячеек - по-прежнему `class`)      |
 | Свой элемент в цвет компонента                                                                                      | `style={UI.widgetAccentStyle(componentClass)}`            | `style={UI.accentStyle(accent)}`                         |
-
-`Table` пока без изменений: цвет - роль `bg-*` в `wrapperClass`.
 
 **Колбэки.**
 
@@ -236,17 +237,81 @@ export const T = createTranslator(translations)
 
 **Панели свойств.**
 
-| Было                                                                                                                                           | Стало                                                                         |
-| ---------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| `<UI.SelectProps {component} {onPropertyChange} forConstructor={false} />`                                                                     | проп `forConstructor` удалён, панель одна                                     |
-| тип `onPropertyChange` копировался в приложение                                                                                                | `import type { PropertyChange } from "poe-svelte-ui-lib"`                     |
-| `updateProperty("label.class", v, component, onPropertyChange)`                                                                                | `createPropsEditor(component, onPropertyChange).patch("label", { class: v })` |
-| `updateComponent`, `findOptionByClass`, `findColorOption`, `stripLegacyTextColor`, `COLOR_OPTIONS`, `TEXT_COLOR_OPTIONS`, `WidgetAccentPicker` | удалены                                                                       |
+| Было                                                                                                                                           | Стало                                                                           |
+| ---------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| `UI.ButtonProps`, `UI.TableProps`, ... `UI.WidgetMapProps`, `UI.TextsEditor` из `"poe-svelte-ui-lib"`                                          | `import { ButtonProps, TextsEditor, ... } from "poe-svelte-ui-lib/constructor"` |
+| `component.info.*`, `constructor.*`, `library.*` в `$T` библиотеки всегда                                                                      | подключаются импортом `poe-svelte-ui-lib/constructor`                           |
+| `<UI.SelectProps {component} {onPropertyChange} forConstructor={false} />`                                                                     | проп `forConstructor` удалён, панель одна                                       |
+| тип `onPropertyChange` копировался в приложение                                                                                                | `import type { PropertyChange } from "poe-svelte-ui-lib/constructor"`           |
+| `updateProperty("label.class", v, component, onPropertyChange)`                                                                                | `createPropsEditor(component, onPropertyChange).patch("label", { class: v })`   |
+| `updateComponent`, `findOptionByClass`, `findColorOption`, `stripLegacyTextColor`, `COLOR_OPTIONS`, `TEXT_COLOR_OPTIONS`, `WidgetAccentPicker` | удалены                                                                         |
+
+В `poe-svelte-ui-lib/constructor` также `optionsStore`, `ACCENT_OPTIONS`, `CommonSnippets`, `createPropsEditor` и словарь `constructorTranslations`. В `i18n` добавлены `extendTranslations(dictionary)` и тип `TranslationKey` (подсказка ключей в `$T`, любая строка по-прежнему допустима).
+
+**Table.**
+
+| Было                                                                 | Стало                                                                                                                          |
+| -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| Журнал: `body` с `dataBuffer.stashData`, таблица сама очищала `body` | `bind:this={log}` и `log.push(rows)` (строка или массив); `body` в журнале не читается                                         |
+| `body: T[] \| T \| null`, `bind:body`                                | `body?: T[]`, не связывается; сортировка - внутри таблицы                                                                      |
+| `clearBuffer()`                                                      | `clear()`                                                                                                                      |
+| `onClick(eventHandler)` - таблица собирала `Value` из `Variables`    | `onClick(row, button)` - строка с выбранными в списках значениями и кнопка; пакет из `button.eventHandler` собирает приложение |
+| `text.formatting(text)` - HTML окна и подсказки                      | `text.render(row)` - содержимое ячейки; окно - `modal: true` или сниппет `Snippet<[row]>`                                      |
+
+Сборка пакета кнопки в рендерере (DevCloud и WebApp `GUIPreview`) - то, что раньше делала таблица:
+
+```ts
+onClick={(row, button) => {
+  const handler = button.eventHandler
+  if (!handler) return
+  const value = Object.fromEntries((handler.Variables ?? []).map((v) => {
+    const key = v.replace(/-S$/, "") /* у списка -S - варианты, значение - в поле без суффикса */
+    return [key, (row as Record<string, unknown>)[key]]
+  }))
+  handleUIComponentEvent({ ...handler, Value: JSON.stringify(value) }, null, null)
+}}
+```
+
+Журнал в рендерере: вместо `body` в режиме `stashData` - `bind:this` и `push` при каждом новом значении переменной. Колонки в `.ts` без разметки делают окно через `createRawSnippet` из `svelte`:
+
+```ts
+const canModal = createRawSnippet((row: () => CanRow) => ({ render: () => `<div class="whitespace-pre-wrap">${formatCanDataModal(row().data)}</div>` }))
+{ type: "text", data: { key: "data", truncated: true, copy: true, modal: canModal } }
+```
+
+**xPOE-Debug.**
+
+| Было                                                                                       | Стало                                                                                                             |
+| ------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------- |
+| `XPoeDebugItem.value` - HEX Payload                                                        | `valueBytes` - байты, `payload` - Payload, декодированный один раз при разборе                                    |
+| `XPoeDebugRow.value` - HEX, приложение заменяло его на `formatXPoeDebugValueForTable(...)` | `value` - готовый краткий текст, плюс `valueBytes` и `payload`; строки `xPoeDebugRow` кладутся в таблицу как есть |
+| `formatXPoeDebugValue(hex)` - HTML                                                         | `formatXPoeDebugValue(payload, bytes)` - текст                                                                    |
+| `formatXPoeDebugPretty(hex)`                                                               | `formatXPoeDebugPretty(payload, html?)`                                                                           |
+| `formatXPoeDebugValueForTable`, `formatXPoeDebugModal`, `bindXPoeDebugCopyButtons`         | удалены: окно строки - сниппет в `xPoeDebugTableColumns`                                                          |
+| `debugPlotValues(row.value)` - HEX                                                         | `debugPlotValues(row.payload)`                                                                                    |
+
+Строку отправленной команды (DevCloud `webserial.ts`) разбирают тем же парсером: `createXPoeDebugParser().push(frame).map(xPoeDebugRow)`.
+
+**Graph.**
+
+| Было                                                               | Стало                                                                                                   |
+| ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------- |
+| AUTO: опрос `streamingData` каждые 10 мс, точка при смене значений | точка на каждый новый массив `streamingData.data` или вызов `push(sample, time?)` через `bind:this`     |
+| `streamingData` строкой JSON                                       | только объект `{ data }`                                                                                |
+| цвета линий `#3b82f6`...                                           | метки темы `--blue-mark`, `--red-mark`, `--green-mark`, `--orange-mark`, `--purple-mark`, `--cyan-mark` |
+
+Значения, изменённые на месте в том же массиве, точек не дают: присваивайте новый массив или вызывайте `push`.
+
+**WidgetMap и имитация.**
+
+- MapLibre по умолчанию с CDN. Для точки доступа без интернета - `configureMapLibre({ module, css, styles })` до первой отрисовки карты; `module` - адрес ES-модуля или функция, отдающая модуль.
+- Имитация (`isTest`) у `WidgetMap`, `WidgetPFD` и `Graph` грузится отдельным модулем только при включении (у Vite - отдельные файлы рядом с бандлом). Сборка прошивки, которая кладёт во flash весь каталог, может их исключить.
+- Ключи `constructor.props.map.fitAll`, `fitAllHint`, `timeout`, `loading`, `noconnection` и `constructor.props.table.fulldata` переименованы в `widget.map.*` и `common.table.fulldata`.
 
 **Прочее.**
 
 - Компоненты не выводят случайные DOM id вида `${id}-xxxxxx`. Проп `id` примитива - переменная устройства, в разметку он не попадает (кроме `Button`, где это атрибут `id`).
-- Новые экспорты: `Icon`, `accentStyle`, `ACCENT_COLORS`, `AccentColor`, `createPropsEditor`, `PropertyChange`, `migrateProperties`, `migrateGUI`, `copyText`, `SelectValue`, `IconSource`.
+- Новые экспорты: `Icon`, `accentStyle`, `ACCENT_COLORS`, `AccentColor`, `migrateProperties`, `migrateGUI`, `copyText`, `SelectValue`, `IconSource`, `configureMapLibre`.
 - Ключи переводов `ui.info.show`, `ui.info.hide`, `library.for_constructor` удалены; добавлены `ui.joystick.*`, `widget.rgb.hue`, `widget.rgb.brightness`.
 
 ## Как описывать компонент

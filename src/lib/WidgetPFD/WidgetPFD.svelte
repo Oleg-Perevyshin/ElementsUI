@@ -12,7 +12,6 @@
   import { hintsSetting } from "../hints"
   import { accentStyle } from "../accent"
   import { readPersistedCollapsed, writePersistedCollapsed } from "../widgetCollapse"
-  import { createFlightSim } from "../flightSim"
 
   let {
     wrapperClass = "",
@@ -25,14 +24,20 @@
     persistKey,
   }: IWidgetPFDProps = $props()
 
-  /* В режиме имитации данные устройства не учитываются, кадр полёта каждые 50 мс */
+  /* В режиме имитации данные устройства не учитываются, кадр полёта каждые 50 мс; модуль имитации грузится только при isTest */
   let simValue: IWidgetPFDData | undefined = $state()
   $effect(() => {
     if (!isTest) return
-    const sim = createFlightSim()
-    simValue = sim(0)
-    const timer = setInterval(() => (simValue = sim(0.05)), 50)
+    let timer: ReturnType<typeof setInterval> | undefined
+    let stopped = false
+    import("../flightSim").then(({ createFlightSim }) => {
+      if (stopped) return
+      const sim = createFlightSim()
+      simValue = sim(0)
+      timer = setInterval(() => (simValue = sim(0.05)), 50)
+    })
     return () => {
+      stopped = true
       clearInterval(timer)
       simValue = undefined
     }

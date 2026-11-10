@@ -7,7 +7,6 @@
   import ButtonDelete from "../libIcons/ButtonDelete.svelte"
   import ButtonAdd from "../libIcons/ButtonAdd.svelte"
   import { ACCENT_OPTIONS, optionsStore } from "../options"
-  import { twMerge } from "tailwind-merge"
   import { ICONS } from "../icons"
   import CommonSnippets from "../CommonSnippets.svelte"
   import PropsGroup from "../PropsGroup.svelte"
@@ -19,11 +18,9 @@
   const {
     component,
     onPropertyChange,
-    forConstructor = true,
   }: {
     component: UIComponent & { properties: Partial<ITableProps<object>> }
     onPropertyChange: (change: PropertyChange<ITableProps<object>>) => void
-    forConstructor?: boolean
   } = $props()
 
   const edit = $derived(createPropsEditor(component, onPropertyChange))
@@ -33,7 +30,7 @@
 
   let isDropdownOpen = $state(-1)
 
-  /* Цвет таблицы пока задаётся ролью bg-* в wrapperClass */
+  /* Цвет кнопки ячейки - роль bg-* в её class */
   const roleOf = (classes: string | undefined) => (classes?.match(/(?:^|\s)bg-(\w+)/)?.[1] ?? "") as (typeof ACCENT_OPTIONS)[number]["value"]
 
   let settingsContainer: HTMLDivElement[] = $state([])
@@ -135,7 +132,7 @@
   />
 {/snippet}
 
-{#snippet TableColumnSettings(forConstructor: boolean)}
+{#snippet TableColumnSettings()}
   <PropsListModal label={$T("constructor.props.table.columns")} count={component.properties.header?.length ?? 0} wrapperClass="w-300 h-[85%]">
     {#snippet main()}
       <PropsGroup>
@@ -210,12 +207,12 @@
                       class="absolute top-full left-1/2 z-50 -translate-x-1/2 rounded-b-xl shadow-(--border-shadow-color) w-25"
                       transition:slide={{ duration: 250 }}
                     >
-                      {#each $optionsStore.TABLE_CONTENT_TYPE_OPTIONS.slice(0, forConstructor ? 4 : 5) as option, index (option.id)}
+                      {#each $optionsStore.TABLE_CONTENT_TYPE_OPTIONS as option, index (option.id)}
                         <button
                           id={option.id}
                           value={option?.value ? String(option.value) : ""}
                           class={`flex h-full w-full cursor-pointer items-center justify-center p-1  duration-250 hover:bg-(--field-color)
-              ${index === $optionsStore.TABLE_CONTENT_TYPE_OPTIONS.slice(0, forConstructor ? 4 : 5).length - 1 ? "rounded-b-xl" : ""} ${index === 0 ? "rounded-t-xl" : "inset-shadow-[0_10px_10px_-15px_rgb(0_0_0_/0.5)] dark:inset-shadow-[0_10px_10px_-15px_rgb(0_0_0_/0.5)]"}`}
+              ${index === $optionsStore.TABLE_CONTENT_TYPE_OPTIONS.length - 1 ? "rounded-b-xl" : ""} ${index === 0 ? "rounded-t-xl" : "inset-shadow-[0_10px_10px_-15px_rgb(0_0_0_/0.5)] dark:inset-shadow-[0_10px_10px_-15px_rgb(0_0_0_/0.5)]"}`}
                           onclick={(e) => addContent(option, e, columnIndex)}
                           style="background: color-mix(in srgb, var(--back-color), var(--back-color) 70%);"
                         >
@@ -284,7 +281,7 @@
                               value={$optionsStore.TABLE_TEXT_SETTING_OPTIONS.map((option) => option.value).filter(
                                 (key) => contentData(columnIndex, index)[key],
                               )}
-                              options={$optionsStore.TABLE_TEXT_SETTING_OPTIONS.slice(0, forConstructor ? 3 : 5)}
+                              options={$optionsStore.TABLE_TEXT_SETTING_OPTIONS}
                               onUpdate={(value) => changeColumnSettings(value, columnIndex, index)}
                             />
                           </div>
@@ -342,7 +339,7 @@
                                 label={{ name: $T("constructor.props.colors") }}
                                 type="buttons"
                                 options={ACCENT_OPTIONS.filter((option) => option.value)}
-                                value={roleOf(typeof button.class === "string" ? button.class : component.properties.wrapperClass)}
+                                value={roleOf(button.class as string) || (component.properties.accent ?? "")}
                                 onUpdate={(accent) =>
                                   updateContentProperty(
                                     columnIndex,
@@ -426,7 +423,7 @@
                               onUpdate={(value) => updateContentProperty(columnIndex, index, "units", value as string)}
                             />
                           </div>
-                        {:else if !forConstructor && content.type == "image"}
+                        {:else if content.type == "image"}
                           {@const image = content.data}
                           <div class="flex flex-wrap items-end gap-2">
                             <div class="relative min-w-32">
@@ -522,74 +519,31 @@
   />
 {/snippet}
 
-{#if forConstructor}
-  <div class="flex flex-col gap-2">
-    <PropsGroup label={$T("constructor.props.group.general")}>
-      <CommonSnippets snippet="Access" {component} {onPropertyChange} />
-      <CommonSnippets snippet="Variable" {VARIABLE_OPTIONS} {component} {onPropertyChange} />
-      {@render TableStashData()}
-      {#if component.properties.dataBuffer?.stashData}
-        <div class="flex items-end">
-          {@render TableClearButton()}
-          {@render TableLogger()}
-        </div>
-      {/if}
-    </PropsGroup>
-    <PropsGroup label={$T("constructor.props.group.appearance")}>
-      <UI.Select
-        label={{ name: $T("ui.accent") }}
-        type="buttons"
-        options={ACCENT_OPTIONS}
-        value={roleOf(component.properties.wrapperClass)}
-        onUpdate={(accent) => edit.set("wrapperClass", twMerge(component.properties.wrapperClass, accent ? `bg-${accent}` : "bg-max"))}
-      />
-      {@render TableOutline()}
-      {#if component.properties.dataBuffer?.stashData}
-        {@render TableBufferSize()}
-      {/if}
-    </PropsGroup>
-    <PropsGroup label={$T("constructor.props.group.content")}>
-      <CommonSnippets snippet="Label" {component} {onPropertyChange} />
-      <CommonSnippets snippet="LabelAlign" {component} {onPropertyChange} />
-      {#if component.properties.dataBuffer?.stashData}
-        {@render TableVisibleRows()}
-      {/if}
-    </PropsGroup>
-  </div>
-  {@render TableColumnSettings(forConstructor)}
-{:else}
-  <div class="flex flex-col gap-2">
-    <PropsGroup label={$T("constructor.props.group.general")}>
-      <CommonSnippets snippet="Identificator" {component} {onPropertyChange} />
-      <CommonSnippets snippet="WrapperClass" {component} {onPropertyChange} />
-      <UI.Select
-        label={{ name: $T("ui.accent") }}
-        type="buttons"
-        options={ACCENT_OPTIONS}
-        value={roleOf(component.properties.wrapperClass)}
-        onUpdate={(accent) => edit.set("wrapperClass", twMerge(component.properties.wrapperClass, accent ? `bg-${accent}` : "bg-max"))}
-      />
-      {@render TableOutline()}
-    </PropsGroup>
-
-    <PropsGroup label={$T("constructor.props.group.content")}>
-      <CommonSnippets snippet="Access" {component} {onPropertyChange} />
-      <CommonSnippets snippet="Label" {component} {onPropertyChange} />
-      <CommonSnippets snippet="LabelClass" {component} {onPropertyChange} />
-    </PropsGroup>
-
-    <PropsGroup label={$T("constructor.props.group.behavior")}>
+<div class="flex flex-col gap-2">
+  <PropsGroup label={$T("constructor.props.group.general")}>
+    <CommonSnippets snippet="Access" {component} {onPropertyChange} />
+    <CommonSnippets snippet="Variable" {VARIABLE_OPTIONS} {component} {onPropertyChange} />
+    {@render TableStashData()}
+    {#if component.properties.dataBuffer?.stashData}
       <div class="flex items-end">
-        {@render TableStashData()}
         {@render TableClearButton()}
+        {@render TableLogger()}
       </div>
-      {@render TableLogger()}
-
-      {#if component.properties.dataBuffer?.stashData}
-        {@render TableBufferSize()}
-        {@render TableVisibleRows()}
-      {/if}
-    </PropsGroup>
-  </div>
-  {@render TableColumnSettings(forConstructor)}
-{/if}
+    {/if}
+  </PropsGroup>
+  <PropsGroup label={$T("constructor.props.group.appearance")}>
+    <CommonSnippets snippet="Accent" {component} {onPropertyChange} />
+    {@render TableOutline()}
+    {#if component.properties.dataBuffer?.stashData}
+      {@render TableBufferSize()}
+    {/if}
+  </PropsGroup>
+  <PropsGroup label={$T("constructor.props.group.content")}>
+    <CommonSnippets snippet="Label" {component} {onPropertyChange} />
+    <CommonSnippets snippet="LabelAlign" {component} {onPropertyChange} />
+    {#if component.properties.dataBuffer?.stashData}
+      {@render TableVisibleRows()}
+    {/if}
+  </PropsGroup>
+</div>
+{@render TableColumnSettings()}

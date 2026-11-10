@@ -461,6 +461,8 @@ export interface ITableHeader<T extends object> {
 export interface ITableProps<T extends object> {
   id?: string
   wrapperClass?: string
+  /* Цвет шапки, кнопок без своего цвета и фокуса */
+  accent?: AccentColor
   label?: { name?: string; class?: string }
   header?: ITableHeader<T>[]
   /* Строки обычной таблицы; журнал (dataBuffer.stashData) строки получает методом push() через bind:this */

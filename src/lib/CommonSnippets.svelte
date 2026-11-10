@@ -33,20 +33,7 @@
     initialValue,
   }: {
     snippet:
-      | "Variable"
-      | "Access"
-      | "Accent"
-      | "Label"
-      | "LabelAlign"
-      | "LabelClass"
-      | "Identificator"
-      | "WrapperClass"
-      | "Disabled"
-      | "EventHandlerArgument"
-      | "IconsLib"
-      | "Readonly"
-      | "BitModeInfo"
-      | "MinMaxStep"
+      "Variable" | "Access" | "Accent" | "Label" | "LabelAlign" | "Disabled" | "EventHandlerArgument" | "IconsLib" | "Readonly" | "BitModeInfo" | "MinMaxStep"
     component: UI.UIComponent
     onPropertyChange: (change: PropertyChange<object>) => void
     VARIABLE_OPTIONS?: { id: string; value: string; name: string }[]
@@ -198,20 +185,6 @@
     value={optionByClass(alignOptions, properties[alignKey]?.class)?.value}
     options={alignOptions}
     onUpdate={(align) => onPropertyChange({ properties: { [alignKey]: { ...properties[alignKey], class: twMerge(properties[alignKey]?.class, align) } } })}
-  />
-{:else if snippet === "LabelClass"}
-  <UI.Input
-    label={{ name: $T("constructor.props.label.class") }}
-    value={properties.label?.class}
-    onUpdate={(value) => edit.patch("label", { class: String(value) })}
-  />
-{:else if snippet === "Identificator"}
-  <UI.Input label={{ name: $T("constructor.props.id") }} value={properties.id} onUpdate={(value) => edit.set("id", String(value))} />
-{:else if snippet === "WrapperClass"}
-  <UI.Input
-    label={{ name: $T("constructor.props.wrapperclass") }}
-    value={properties.wrapperClass}
-    onUpdate={(value) => edit.set("wrapperClass", String(value))}
   />
 {:else if snippet === "Disabled"}
   {@render Flag($T("constructor.props.disabled"), "disabled")}
