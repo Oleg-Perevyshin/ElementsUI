@@ -28,8 +28,8 @@ class JsonToCbor {
 
     /* string */
     if (typeof value === "string") {
-      /* Ключ с "BIN"/"bin" - строка на самом деле Base64 бинарных данных */
-      if (parentKey && (parentKey.includes("BIN") || parentKey.includes("bin"))) {
+      /* Ключ, оканчивающийся на "BIN"/"Bin"/"bin" (FileBin, DataBIN), - строка на самом деле Base64 бинарных данных */
+      if (parentKey && /bin$/i.test(parentKey)) {
         const bytes = base64ToBytes(value)
         return bytes
       }

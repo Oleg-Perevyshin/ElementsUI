@@ -84,6 +84,18 @@ test("CBOR: значение и JSON-текст", () => {
   assert.deepEqual(m.cborToValue(m.jsonToCbor({ ...value, Value: { a: 1, bin: "AQI=" } })), value) /* строка base64 под ключом с "bin" - байты */
 })
 
+test("CBOR: большие байтовые строки, предел uint64, ключи bin", () => {
+  /* 300 КБ кодируются без переполнения стека */
+  const big = new Uint8Array(300 * 1024).map((_, i) => i & 0xff)
+  assert.deepEqual(m.cborToValue(m.valueToCbor({ data: big })).data, big)
+  /* Целое больше uint64 - ошибка, а не обрезанное значение */
+  assert.throws(() => m.valueToCbor(2n ** 64n))
+  assert.equal(hex(m.valueToCbor(2n ** 64n - 1n)), "1bffffffffffffffff")
+  /* Base64 разбирается только под ключом, оканчивающимся на bin */
+  assert.deepEqual(m.cborToValue(m.jsonToCbor({ FileBin: "AQI=" })), { FileBin: Uint8Array.of(1, 2) })
+  assert.deepEqual(m.cborToValue(m.jsonToCbor({ Cabinet: "AQI=" })), { Cabinet: "AQI=" })
+})
+
 test("CBOR: строгий разбор", () => {
   /* Неопределённая длина только у строк, массивов и карт, чанки строк только определённой длины */
   assert.deepEqual(m.cborToValue(bytes("5f4101420203ff")), Uint8Array.of(1, 2, 3))

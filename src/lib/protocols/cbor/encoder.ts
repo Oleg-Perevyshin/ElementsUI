@@ -245,21 +245,20 @@ export class CborEncoder {
     const encoder = new TextEncoder()
     const bytes = encoder.encode(value)
     this.writeHeader(CborMajorType.Utf8String, BigInt(bytes.length))
-    this.writeBytes(Array.from(bytes))
+    this.writeBytes(bytes)
     return this
   }
 
   /* Закодировать байтовую строку */
   public encodeBytes(value: Uint8Array | number[]): this {
-    const bytes = value instanceof Uint8Array ? Array.from(value) : value
-    this.writeHeader(CborMajorType.ByteString, BigInt(bytes.length))
-    this.writeBytes(bytes)
+    this.writeHeader(CborMajorType.ByteString, BigInt(value.length))
+    this.writeBytes(value)
     return this
   }
 
   /* Добавить заранее проверенный CBOR item без повторного кодирования. */
   public encodeRaw(value: Uint8Array): this {
-    this.writeBytes(Array.from(value))
+    this.writeBytes(value)
     return this
   }
 
@@ -354,6 +353,8 @@ export class CborEncoder {
 
   /* Записать заголовок CBOR */
   private writeHeader(majorType: CborMajorType, value: bigint): void {
+    /* В заголовок CBOR помещается не больше 8 байт: большее число молча обрезалось бы */
+    if (value < BigInt(0) || value > BigInt("0xffffffffffffffff")) throw new CborError(`Value out of CBOR uint64 range: ${value}`)
     const major = majorType
     let additional: number
     let size: number
@@ -403,9 +404,9 @@ export class CborEncoder {
     return bytes
   }
 
-  /* Записать массив байтов в буфер */
-  private writeBytes(bytes: number[]): void {
-    this.buffer.push(...bytes)
+  /* Записать байты в буфер циклом: push(...bytes) на сотнях КБ переполняет стек вызова */
+  private writeBytes(bytes: ArrayLike<number>): void {
+    for (let i = 0; i < bytes.length; i++) this.buffer.push(bytes[i])
   }
 }
 

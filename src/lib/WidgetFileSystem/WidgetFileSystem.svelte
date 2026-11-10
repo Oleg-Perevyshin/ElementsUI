@@ -118,7 +118,8 @@
   const handleFile = async (_event: Event, file: File | null) => {
     uploadError = ""
     if (!file || !onUpload || uploading) return
-    if (file.name.length > maxNameLength) {
+    /* Прошивка ограничивает имя в байтах UTF-8: кириллица занимает по 2 байта на букву */
+    if (new TextEncoder().encode(file.name).length > maxNameLength) {
       uploadError = $T("widget.fs.name_too_long", { n: maxNameLength })
       return
     }

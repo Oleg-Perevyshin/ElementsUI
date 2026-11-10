@@ -62,6 +62,8 @@
 
   /* Сортировка столбцов */
   const sortRows = (key: string) => {
+    /* В режиме буфера body бывает null, строки лежат в buffer - сортировать нечего */
+    if (!body) return
     if (sortState.key === key) {
       sortState.direction = sortState.direction === "asc" ? "desc" : "asc"
     } else {
@@ -146,7 +148,8 @@
     isDropdownOpen = null
 
     setTimeout(() => {
-      if (existingItem) {
+      /* 0 и пустая строка - тоже значения ячейки */
+      if (existingItem !== undefined) {
         body = [...body].map((row, i) => (i === index ? { ...row, [key.slice(0, -2)]: option.value } : row))
       }
     }, 250)

@@ -1,94 +1,34 @@
 <!-- $lib/WidgetMap/mission/MissionSim.svelte - имитация полёта по рассчитанной траектории режимов «Маршрут» и «Агро»: аппарат летит по пути с его скоростями, оставляет след, распыление видно цветом; пауза, ускорение и перезапуск на панели внизу карты -->
 <script lang="ts">
-  import { onDestroy } from "svelte"
   import { T } from "../../locales/i18n"
   import { Marker, Line } from "../mapWrapper"
   import type { LngLat } from "./coverage"
   import type { IMapColors } from "../../widgetAccent"
+  import { SIM_RATES, type SimClock } from "./simClock.svelte"
 
-  /* Вершина пути: speed и spray относятся к отрезку, который в неё приходит */
-  interface ISimVertex {
-    point: LngLat
-    alt: number
-    speed: number
-    spray?: boolean
-  }
-
-  /* icon: arrow - стрелка, quad - квадрокоптер сверху */
+  /* icon: arrow - стрелка, quad - квадрокоптер сверху; часы имитации (clock) живут в режиме карты, слой только рисует */
   let {
-    path,
+    clock,
     showSpray = false,
     icon = "arrow",
     colors,
-    progress = $bindable(0),
   }: {
-    path: ISimVertex[]
+    clock: SimClock
     showSpray?: boolean
     icon?: "arrow" | "quad"
     colors: IMapColors /* Аппарат и след - мастер-цвет виджета, распыление - зелёный */
-    progress?: number /* Доля пройденного пути 0..1, для шапки */
   } = $props()
 
-  const R = 6371000
   const toRad = Math.PI / 180
-  const legLen = (a: LngLat, b: LngLat) => {
-    const dLat = (b[1] - a[1]) * toRad
-    const dLon = (b[0] - a[0]) * toRad
-    const h = Math.sin(dLat / 2) ** 2 + Math.cos(a[1] * toRad) * Math.cos(b[1] * toRad) * Math.sin(dLon / 2) ** 2
-    return 2 * R * Math.asin(Math.sqrt(h))
-  }
   const bearing = (a: LngLat, b: LngLat) => {
     const y = Math.sin((b[0] - a[0]) * toRad) * Math.cos(b[1] * toRad)
     const x = Math.cos(a[1] * toRad) * Math.sin(b[1] * toRad) - Math.sin(a[1] * toRad) * Math.cos(b[1] * toRad) * Math.cos((b[0] - a[0]) * toRad)
     return (Math.atan2(y, x) / toRad + 360) % 360
   }
 
-  /* Время прибытия в каждую вершину, с */
-  let times = $derived.by(() => {
-    const out = [0]
-    for (let i = 1; i < path.length; i++) {
-      const len = Math.hypot(legLen(path[i - 1].point, path[i].point), path[i].alt - path[i - 1].alt)
-      out.push(out[i - 1] + len / Math.max(0.1, path[i].speed))
-    }
-    return out
-  })
-  let duration = $derived(times[times.length - 1] ?? 0)
-
-  let t = $state(0)
-  /* Запуск вручную; в конце пути полёт останавливается */
-  let playing = $state(false)
-  let rate = $state(5)
-  const RATES = [1, 5, 10, 25]
-
-  $effect(() => {
-    progress = duration > 0 ? t / duration : 0
-  })
-
-  /* Новый путь - полёт заново */
-  $effect(() => {
-    path
-    t = 0
-    playing = false
-  })
-
-  let raf = 0
-  let last = 0
-  const tick = (now: number) => {
-    if (last && playing && duration > 0) {
-      t += ((now - last) / 1000) * rate
-      if (t >= duration) {
-        t = duration
-        playing = false
-      }
-    }
-    last = now
-    raf = requestAnimationFrame(tick)
-  }
-  raf = requestAnimationFrame(tick)
-  onDestroy(() => cancelAnimationFrame(raf))
-
-  /* Положение на пути в момент t */
+  /* Положение на пути в момент clock.t */
   let pos = $derived.by(() => {
+    const { path, times, t } = clock
     if (path.length < 2) return null
     let i = 1
     while (i < times.length - 1 && times[i] < t) i++
@@ -112,12 +52,7 @@
   /* Кнопки-иконки без рамки: стили группы кнопок MapLibre перебиваются */
   const iconBtn =
     "flex h-7! w-7! cursor-pointer items-center justify-center rounded-md border-0! bg-transparent p-0 text-(--muted-color) hover:bg-(--container-color) hover:text-(--font-color)"
-  /* Запуск после конца пути начинает полёт заново */
-  const togglePlay = () => {
-    if (!playing && t >= duration) t = 0
-    playing = !playing
-  }
-  const clock = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`
+  const clockText = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`
 </script>
 
 {#if pos}
@@ -154,11 +89,11 @@
         <span class="font-semibold">{$T("widget.sim.title")}</span>
         <button
           class={iconBtn}
-          onclick={togglePlay}
-          title={playing ? $T("widget.sim.pause") : $T("widget.sim.play")}
-          aria-label={playing ? $T("widget.sim.pause") : $T("widget.sim.play")}
+          onclick={() => clock.toggle()}
+          title={clock.playing ? $T("widget.sim.pause") : $T("widget.sim.play")}
+          aria-label={clock.playing ? $T("widget.sim.pause") : $T("widget.sim.play")}
         >
-          {#if playing}
+          {#if clock.playing}
             <svg viewBox="0 0 24 24" width="18" height="18"
               ><rect x="6" y="5" width="4" height="14" rx="1" fill="currentColor" /><rect x="14" y="5" width="4" height="14" rx="1" fill="currentColor" /></svg
             >
@@ -168,12 +103,12 @@
             >
           {/if}
         </button>
-        <select class="rounded px-1 py-0.5" bind:value={rate}>
-          {#each RATES as r}
+        <select class="rounded px-1 py-0.5" bind:value={clock.rate}>
+          {#each SIM_RATES as r}
             <option value={r}>×{r}</option>
           {/each}
         </select>
-        <span>{clock(t)} / {clock(duration)} · {Math.round((t / Math.max(1, duration)) * 100)}%</span>
+        <span>{clockText(clock.t)} / {clockText(clock.duration)} · {Math.round((clock.t / Math.max(1, clock.duration)) * 100)}%</span>
         <span>{pos.alt.toFixed(0)} {$T("widget.mission.m")} · {pos.speed.toFixed(1)} {$T("widget.mission.ms")}</span>
         {#if showSpray}
           <span class="min-w-[7.5rem] font-semibold {pos.spray ? 'text-(--green-text)' : 'text-(--muted-color)'}"
@@ -187,14 +122,11 @@
         class="w-full cursor-pointer"
         style="accent-color: {colors.accent}"
         min="0"
-        max={duration}
-        step={Math.max(0.1, duration / 2000)}
-        value={t}
+        max={clock.duration}
+        step={Math.max(0.1, clock.duration / 2000)}
+        value={clock.t}
         aria-label={$T("widget.sim.scrub")}
-        oninput={(e) => {
-          playing = false
-          t = Number(e.currentTarget.value)
-        }}
+        oninput={(e) => clock.seek(Number(e.currentTarget.value))}
       />
     </div>
   </div>

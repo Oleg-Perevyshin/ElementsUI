@@ -733,7 +733,11 @@ const translations: Translations = {
   "widget.fs.title": { ru: "Файловая система", en: "File System", zh: "文件系统" },
   "widget.fs.path": { ru: "Путь", en: "Path", zh: "路径" },
   "widget.fs.size": { ru: "Размер", en: "Size", zh: "大小" },
-  "widget.fs.name_too_long": { ru: "Имя файла длиннее {n} символов", en: "File name is longer than {n} characters", zh: "文件名超过 {n} 个字符" },
+  "widget.fs.name_too_long": {
+    ru: "Имя файла длиннее {n} байт (буква кириллицы занимает 2 байта)",
+    en: "File name is longer than {n} bytes (a Cyrillic letter takes 2 bytes)",
+    zh: "文件名超过 {n} 字节（每个西里尔字母占 2 字节）",
+  },
   "widget.fs.upload_failed": { ru: "Закачка прервана: {error}", en: "Upload aborted: {error}", zh: "上传中断：{error}" },
   "widget.fs.used": { ru: "Занято {used} из {total}", en: "Used {used} of {total}", zh: "已用 {used} / {total}" },
   "widget.fs.files": { ru: "Файлов: {n}", en: "Files: {n}", zh: "文件：{n}" },

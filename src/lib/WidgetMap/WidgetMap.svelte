@@ -74,8 +74,9 @@
   }
 
   const num = (v: unknown, fallback = 0) => (typeof v === "number" && Number.isFinite(v) ? v : fallback)
-  /* (0, 0) и нечисловые координаты - признак отсутствия фикса */
-  const hasFix = (lat: unknown, lon: unknown) => Number.isFinite(lat) && Number.isFinite(lon) && (lat !== 0 || lon !== 0)
+  /* (0, 0), нечисловые координаты и координаты вне ±90/±180 - признак отсутствия фикса */
+  const hasFix = (lat: unknown, lon: unknown) =>
+    typeof lat === "number" && typeof lon === "number" && Math.abs(lat) <= 90 && Math.abs(lon) <= 180 && (lat !== 0 || lon !== 0)
 
   /* Режим имитации: шесть аппаратов над одним районом сами выходят на связь и пропадают, данные и группы устройства не учитываются */
   const SIM_COUNT = 6

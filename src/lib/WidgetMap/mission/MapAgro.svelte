@@ -1,7 +1,7 @@
 <!-- $lib/WidgetMap/mission/MapAgro.svelte - режим «Агро» карты, генератор миссии для агродрона: оператор рисует на карте поле и запретные зоны, задаёт угол проходов и ширину захвата, виджет строит траекторию покрытия с обходом зон и выгружает миссию -->
 <script lang="ts">
   import { isDarkTheme, watchTheme } from "../../themeWatch"
-  import { onMount, untrack, type Snippet } from "svelte"
+  import { onMount, untrack, type Snippet, onDestroy } from "svelte"
   import { slide } from "svelte/transition"
   import { twMerge } from "tailwind-merge"
   import { T } from "../../locales/i18n"
@@ -14,6 +14,7 @@
   import FitIcon from "../FitIcon.svelte"
   import { createAutoFit, fitMapTo } from "./fit"
   import MissionSim from "./MissionSim.svelte"
+  import { SimClock } from "./simClock.svelte"
   import SpinnerIcon from "./SpinnerIcon.svelte"
   import HelpText from "./HelpText.svelte"
   import InfoIcon from "../../libIcons/InfoIcon.svelte"
@@ -243,7 +244,10 @@
   })
 
   /* Путь для имитации: точка взлёта, затем все отрезки траектории; распыление - на проходах */
-  let simProgress = $state(0)
+  /* Часы имитации в самом режиме: полёт и прогресс в шапке идут и при свёрнутой карте */
+  const sim = new SimClock()
+  onDestroy(() => sim.destroy())
+  $effect(() => sim.setPath(simPath))
   let simPath = $derived.by(() => {
     if (!result?.waypoints.length) return []
     const out = [{ point: result.waypoints[0].point, alt: plan.alt, speed: plan.speed, spray: false }]
@@ -374,7 +378,7 @@
   let live = $derived(mission && !simulate ? missionProgress(mission.nav, vehicle?.wpNum, vehicle?.point) : null)
   /* Обработано: доля пройденных проходов от площади к обработке */
   let treatedHa = $derived(live && stats && live.sprayTotal > 0 ? (stats.ha * live.sprayDone) / live.sprayTotal : 0)
-  let headerProgress = $derived(simulate ? simProgress : (live?.fraction ?? null))
+  let headerProgress = $derived(simulate ? sim.progress : (live?.fraction ?? null))
   const download = () => {
     const text = missionText()
     if (!text) return
@@ -598,7 +602,7 @@
             </div>
           {/if}
           {#if simulate}
-            <MissionSim path={simPath} showSpray icon="quad" colors={mapColors} bind:progress={simProgress} />
+            <MissionSim clock={sim} showSpray icon="quad" colors={mapColors} />
           {/if}
         </MapLibre>
       </div>

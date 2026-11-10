@@ -20,8 +20,8 @@
     value = $bindable(),
     collapsed = $bindable(false),
     persistKey,
-    onSave = () => {},
-    onRestart = () => {},
+    onSave,
+    onRestart,
     onFactoryReset,
   }: IWidgetDeviceInfoProps = $props()
 
@@ -81,8 +81,10 @@
   const onlyDevNameChars = (input: string | number) => String(input).replace(/[^A-Za-z0-9_.-]/g, "")
   const onlyPswChars = (input: string | number) => String(input).replace(/[^!-~]/g, "")
 
+  /* Без onSave отправлять некуда: правки остаются несохранёнными, а не помечаются сохранёнными */
   const save = () => {
-    onSave?.($state.snapshot(info))
+    if (!onSave) return
+    onSave($state.snapshot(info))
     savedSnapshot = JSON.stringify(info)
   }
 </script>
@@ -99,7 +101,8 @@
           wrapperClass="w-auto"
           componentClass="bg-transparent px-3"
           content={{ icon: RestartIcon, name: $T("widget.info.restart") }}
-          onClick={onRestart}
+          disabled={!onRestart}
+          onClick={() => onRestart?.()}
         />
       </div>
     {/snippet}
@@ -186,7 +189,7 @@
         {#if isDirty}
           <span class="text-[12px] text-(--muted-color)" transition:slide={{ duration: 100 }}>{$T("widget.common.unsaved")}</span>
         {/if}
-        <UI.Button wrapperClass="w-40" componentClass="bg-accent" content={{ name: $T("widget.common.save") }} disabled={!isDirty} onClick={save} />
+        <UI.Button wrapperClass="w-40" componentClass="bg-accent" content={{ name: $T("widget.common.save") }} disabled={!isDirty || !onSave} onClick={save} />
       </div>
 
       <!-- Сброс всех настроек к заводским - отдельно от сохранения, только с подтверждением -->

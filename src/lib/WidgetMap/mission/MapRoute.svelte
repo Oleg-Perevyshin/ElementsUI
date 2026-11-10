@@ -1,7 +1,7 @@
 <!-- $lib/WidgetMap/mission/MapRoute.svelte - режим «Маршрут» карты, обычный планировщик миссии: оператор ставит точки на карте, задаёт каждой высоту и скорость, виджет считает путь и время и выгружает миссию -->
 <script lang="ts">
   import { isDarkTheme, watchTheme } from "../../themeWatch"
-  import { onMount, untrack, type Snippet } from "svelte"
+  import { onMount, untrack, type Snippet, onDestroy } from "svelte"
   import { slide } from "svelte/transition"
   import { twMerge } from "tailwind-merge"
   import { T } from "../../locales/i18n"
@@ -14,6 +14,7 @@
   import FitIcon from "../FitIcon.svelte"
   import { createAutoFit, fitMapTo } from "./fit"
   import MissionSim from "./MissionSim.svelte"
+  import { SimClock } from "./simClock.svelte"
   import { missionProgress } from "./progress"
   import MapIcon from "../MapIcon.svelte"
   import ArrowIcon from "../../libIcons/ArrowIcon.svelte"
@@ -124,7 +125,10 @@
   /* Расчёт и GeoJSON */
 
   let stats = $derived(routeStats(route))
-  let simProgress = $state(0)
+  /* Часы имитации в самом режиме: полёт и прогресс в шапке идут и при свёрнутой карте */
+  const sim = new SimClock()
+  onDestroy(() => sim.destroy())
+  $effect(() => sim.setPath(legs.nodes))
   let legs = $derived(routeLegs(route))
 
   let pathGeo = $derived({
@@ -177,7 +181,7 @@
   let mission = $derived(routeMission(route))
   const missionText = () => mission.text
   let live = $derived(simulate ? null : missionProgress(mission.nav, vehicle?.wpNum, vehicle?.point))
-  let headerProgress = $derived(simulate ? simProgress : (live?.fraction ?? null))
+  let headerProgress = $derived(simulate ? sim.progress : (live?.fraction ?? null))
   const download = () => {
     const text = missionText()
     if (!text) return
@@ -354,7 +358,7 @@
           />
           {@render overlay?.()}
           {#if simulate}
-            <MissionSim path={legs.nodes} colors={mapColors} bind:progress={simProgress} />
+            <MissionSim clock={sim} colors={mapColors} />
           {/if}
         </MapLibre>
       </div>

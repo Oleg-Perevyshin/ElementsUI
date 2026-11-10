@@ -98,12 +98,25 @@
     },
   ]
 
+  /* Копия значения из 4 осей: проп не меняется на месте, нечисло и недостающая ось - 0 */
+  const normalize = (arr: unknown): number[] =>
+    Array.from({ length: 4 }, (_, i) => {
+      const n = Number((arr as number[] | undefined)?.[i])
+      return Number.isFinite(n) ? n : 0
+    })
+  const axisValue = (i: number) => normalize(value)[i]
+  const setAxis = (arr: unknown, i: number, v: number) => {
+    const next = normalize(arr)
+    next[i] = Number.isFinite(v) ? v : 0
+    return next
+  }
+
   const updateValue = (index: number, delta: number) => {
     const axis = axes[axes.length == 2 && index == 2 ? index - 1 : index]
     const min = axis.minNum ?? -360
     const max = axis.maxNum ?? 360
 
-    value[index] = Math.min(max, Math.max(min, roundToClean(value[index] + delta)))
+    value = setAxis(value, index, Math.min(max, Math.max(min, roundToClean(axisValue(index) + delta))))
   }
 
   const sensitivityOptions = [0.01, 0.1, 1.0, 10, 100]
@@ -188,9 +201,9 @@
           <button
             class="flex size-18 cursor-pointer rounded-full p-2 origin-center active:scale-95
             [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
-            style="background: {value[3] == 1 ? 'color-mix(in srgb, var(--bg-color), var(--shadow-color) 10%)' : 'var(--bg-color)'}"
+            style="background: {axisValue(3) == 1 ? 'color-mix(in srgb, var(--bg-color), var(--shadow-color) 10%)' : 'var(--bg-color)'}"
             onclick={() => {
-              value[3] = value[3] == 0 ? 1 : 0
+              value = setAxis(value, 3, axisValue(3) == 0 ? 1 : 0)
               onUpdate(value)
             }}
           >
@@ -239,12 +252,12 @@
             class="btn-segment h-full cursor-pointer rounded-l-full px-3.5"
             title=""
             onclick={() => {
-              if (value[2] - sensitivity <= (axes[2].minNum ?? -360)) {
-                value[2] = axes[2].minNum ?? -360
+              if (axisValue(2) - sensitivity <= (axes[2].minNum ?? -360)) {
+                value = setAxis(value, 2, axes[2].minNum ?? -360)
                 onUpdate(value)
                 return
               }
-              value[2] = roundToClean(value[2] - sensitivity)
+              value = setAxis(value, 2, roundToClean(axisValue(2) - sensitivity))
               onUpdate(value)
             }}
             onmouseenter={(e) => (e.currentTarget.style.backgroundColor = "color-mix(in srgb, var(--bg-color), var(--shadow-color) 30%)")}
@@ -263,12 +276,12 @@
             class="btn-segment h-full cursor-pointer rounded-r-full px-3.5"
             title=""
             onclick={() => {
-              if (value[2] + sensitivity >= (axes[2].maxNum ?? 360)) {
-                value[2] = axes[2].maxNum ?? 360
+              if (axisValue(2) + sensitivity >= (axes[2].maxNum ?? 360)) {
+                value = setAxis(value, 2, axes[2].maxNum ?? 360)
                 onUpdate(value)
                 return
               }
-              value[2] = roundToClean(value[2] + sensitivity)
+              value = setAxis(value, 2, roundToClean(axisValue(2) + sensitivity))
               onUpdate(value)
             }}
             onmouseenter={(e) => (e.currentTarget.style.backgroundColor = "color-mix(in srgb, var(--bg-color), var(--shadow-color) 30%)")}
@@ -326,7 +339,7 @@
               [&::-webkit-inner-spin-button]:hidden
               [&::-webkit-outer-spin-button]:hidden`}
               style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"
-              value={value[index]}
+              value={axisValue(index)}
               id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
               readonly
             />

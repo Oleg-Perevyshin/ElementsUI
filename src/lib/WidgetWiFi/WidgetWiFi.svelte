@@ -25,7 +25,7 @@
     collapsed = $bindable(false),
     persistKey,
     onScan,
-    onSave = () => {},
+    onSave,
   }: IWidgetWiFiProps = $props()
 
   /* Подсказки - кнопка «?» в шапке, выбор общий для всех WidgetWiFi */
@@ -78,8 +78,11 @@
   const scanNetworks = async () => {
     if (!onScan) return
     scanning = true
-    foundNetworks = await onScan()
-    scanning = false
+    try {
+      foundNetworks = await onScan()
+    } finally {
+      scanning = false
+    }
   }
 
   /* Сворачивание тела виджета по клику на значок/заголовок (как аккордеон) - переключатель режима в шапке кликом не триггерит, только сама кнопка значок+заголовок (см. WidgetHeader.svelte). collapsed - bindable: в конструкторе родитель биндит его на component.properties.collapsed, клик по шапке сразу сохраняется в GUI (как isOpen у Accordion в ConstructorUI.svelte). На реальном устройстве (GUIPreview) проп передаётся однонаправленно - локальные изменения не утекают наверх, поверх дефолта только переживают перезагрузку через localStorage (persistKey). */
@@ -104,8 +107,10 @@
     }
   })
 
+  /* Без onSave отправлять некуда: правки остаются несохранёнными, а не помечаются сохранёнными */
   const commitSave = () => {
-    onSave?.($state.snapshot(cfg))
+    if (!onSave) return
+    onSave($state.snapshot(cfg))
     savedSnapshot = JSON.stringify(cfg)
   }
   const save = () => {
@@ -257,7 +262,7 @@
         {#if isDirty}
           <span class="text-[12px] text-(--muted-color)" transition:slide={{ duration: 100 }}>{$T("widget.common.unsaved")}</span>
         {/if}
-        <UI.Button wrapperClass="w-40" componentClass="bg-accent" content={{ name: $T("widget.common.save") }} disabled={!isDirty} onClick={save} />
+        <UI.Button wrapperClass="w-40" componentClass="bg-accent" content={{ name: $T("widget.common.save") }} disabled={!isDirty || !onSave} onClick={save} />
       </div>
     </div>
   {/if}
