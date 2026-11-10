@@ -120,3 +120,12 @@ test("отказ старта и длинное имя; операции иду�
   const ops = device.sent.map((s) => s.op).filter((op) => op === "UploadStart" || op === "UploadDone")
   assert.deepEqual(ops, ["UploadStart", "UploadStart", "UploadDone", "UploadStart", "UploadDone"])
 })
+
+test("две передачи через один транспорт делят очередь: сессии устройства не пересекаются", async () => {
+  const device = fakeDevice()
+  await Promise.all([createFsTransfer(device.transport).upload("a.bin", bytes), createFsTransfer(device.transport).upload("b.bin", bytes)])
+  const ops = device.sent.map((s) => s.op).filter((op) => op === "UploadStart" || op === "UploadDone")
+  assert.deepEqual(ops, ["UploadStart", "UploadDone", "UploadStart", "UploadDone"])
+  assert.deepEqual(device.files["a.bin"], bytes)
+  assert.deepEqual(device.files["b.bin"], bytes)
+})

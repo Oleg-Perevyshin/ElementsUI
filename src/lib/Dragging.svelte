@@ -165,7 +165,6 @@
 </script>
 
 <div
-  id={crypto.randomUUID()}
   class={twMerge(
     `size-8 [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full ${array.length == 1 ? "opacity-50 cursor-not-allowed" : "cursor-move"} `,
     wrapperClass,

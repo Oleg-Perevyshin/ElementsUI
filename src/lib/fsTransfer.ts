@@ -40,14 +40,19 @@ const fsState = (payload: Record<string, unknown>) =>
     (value): value is IWidgetFileSystemInfo => !!value && typeof value === "object" && Array.isArray((value as { List?: unknown }).List),
   )
 
+/* Очередь операций на транспорт: GUIRenderer и приложение могут передавать файлы одному устройству одновременно */
+const queues = new WeakMap<DeviceTransport, Promise<unknown>>()
+
 export const createFsTransfer = (transport: DeviceTransport, options: FsTransferOptions = {}): FsTransfer => {
   const { argument = "FS", timeoutMs = 5000, retries = 3, maxNameLength = 31 } = options
 
-  /* Операции по очереди: у устройства одна сессия закачки и одна скачивания */
-  let queue: Promise<unknown> = Promise.resolve()
+  /* Операции по очереди: у устройства одна сессия закачки и одна скачивания, поэтому очередь общая для всех передач через этот транспорт */
   const exclusive = <R>(run: () => Promise<R>): Promise<R> => {
-    const result = queue.then(run, run)
-    queue = result.catch(() => {})
+    const result = (queues.get(transport) ?? Promise.resolve()).then(run, run)
+    queues.set(
+      transport,
+      result.catch(() => {}),
+    )
     return result
   }
 
