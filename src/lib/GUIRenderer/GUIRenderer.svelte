@@ -72,7 +72,18 @@
     if (components !== localized.src || lang !== localized.lang) localized = { src: components, lang, out: localizeDeep(components, lang) }
     return localized.out
   })
-  const childrenOf = (parent: UIComponent) => blocks.filter((c) => c.parentId === parent.parentId + parent.id)
+  /* Дети контейнеров одним проходом: ключ - parentId ребёнка (parentId + id родителя), корень - "" */
+  const tree = $derived.by(() => {
+    const map = new Map<string, UIComponent[]>()
+    for (const c of blocks) {
+      const key = c.parentId ?? ""
+      const list = map.get(key)
+      if (list) list.push(c)
+      else map.set(key, [c])
+    }
+    return map
+  })
+  const childrenOf = (parent: UIComponent) => tree.get((parent.parentId ?? "") + parent.id) ?? []
   const visible = (c: UIComponent) => !viewer || c.access === "full" || c.access === "viewOnly"
 
   const report = (error: unknown) => onError?.(error instanceof Error ? error.message : String(error))
@@ -184,7 +195,7 @@
 </script>
 
 <div class="grid gap-2" style="grid-template-columns: repeat({GUI_GRID.columns}, minmax(0, 1fr))">
-  {#each blocks.filter((c) => !c.parentId) as component (component.id)}
+  {#each tree.get("") ?? [] as component (component.id)}
     {@render Cell(component, false)}
   {/each}
 </div>
@@ -351,8 +362,9 @@
       {:else if component.type === "WidgetMap"}
         <WidgetMap
           {...component.properties}
-          value={Object.fromEntries(
-            widgetPrefixes(component.type, component.properties).map((group) => [group, fields(component, group, WIDGET_FIELDS.WidgetMap)]),
+          value={stable(
+            component.id,
+            Object.fromEntries(widgetPrefixes(component.type, component.properties).map((group) => [group, fields(component, group, WIDGET_FIELDS.WidgetMap)])),
           )}
           persistKey={persist(component)}
           plan={loadMission(component.id, "plan")}

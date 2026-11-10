@@ -36,14 +36,15 @@
   const bufferSize = $derived(dataBuffer.bufferSize ?? 10)
 
   /* ********************************************************** */
-  /* Журнал: кольцевой буфер вне реактивности, наружу - снимок строк один раз на пачку push() */
+  /* Журнал: кольцевой буфер вне реактивности, наружу - снимок строк не чаще кадра: пакеты приходят каждый своей задачей, перерисовка на каждый была бы лишней */
   type Entry = { key: number; row: Row }
   const ring = createRing<Entry>(untrack(() => bufferSize))
   let seq = 0
   let stream = $state.raw<Entry[]>([])
-  let queued = false
+  let frame = 0
   const flush = () => {
-    queued = false
+    if (frame) cancelAnimationFrame(frame)
+    frame = 0
     const entries = ring.toArray()
     stream = dataBuffer.logger ? entries.reverse() : entries
   }
@@ -51,10 +52,7 @@
   /* Добавляет строки в журнал (dataBuffer.stashData); старые вытесняются за bufferSize */
   export const push = (rows: Row | Row[]) => {
     for (const row of Array.isArray(rows) ? rows : [rows]) ring.push({ key: ++seq, row })
-    if (!queued) {
-      queued = true
-      queueMicrotask(flush)
-    }
+    frame ||= requestAnimationFrame(flush)
   }
 
   /* Очищает журнал */
@@ -226,6 +224,7 @@
     return () => {
       window.removeEventListener("scroll", closeDropdown, true)
       window.removeEventListener("resize", closeDropdown, true)
+      cancelAnimationFrame(frame)
     }
   })
 </script>
