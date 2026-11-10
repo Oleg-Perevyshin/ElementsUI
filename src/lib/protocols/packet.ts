@@ -1,9 +1,9 @@
-/* $lib/protocols/packet.ts */
 /* Общий пакет poe_cbor_pkt всех шин и консоли: indefinite ARRAY записей [TrgBusID, SrcBusID, HAR, Payload, CRC16]. Payload - ровно одно CBOR item (сырые данные - байтовая строка), пустой - null. CRC-16/KERMIT - по CBOR-байтам записи от её заголовка до конца Payload */
 import { CborDecoder } from "./cbor/decoder.js"
 import { CborEncoder } from "./cbor/encoder.js"
 import { CborEndOfDataError } from "./cbor/types.js"
 import { crc16Kermit } from "./crc.js"
+import { createFramer, type FramerOptions } from "./framer.js"
 
 /* BusID в полях ввода - HEX без "0x", 1-4 знака (uint16) */
 export const BUS_ID_REGEXP = /^[0-9A-Fa-f]{1,4}$/
@@ -30,8 +30,13 @@ export interface DecodedPacketObject extends PacketObject {
   crcOk: boolean
 }
 
-/* HAR = заголовок (0..3) в битах 14-15, аргумент (0..8191) в битах 1-13, флаг ответа в бите 0 - как HAR/HAR_NR в api_har.h прошивки */
-export const makeHar = (header: number, argument: number, reply = true): number => ((header & 0x03) << 14) | ((argument & 0x1fff) << 1) | (reply ? 1 : 0)
+const isUint = (value: number, max: number) => Number.isInteger(value) && value >= 0 && value <= max
+
+/* HAR = заголовок (0..3) в битах 14-15, аргумент (0..8191) в битах 1-13, флаг ответа в бите 0 - как HAR/HAR_NR в api_har.h прошивки; вне диапазона - ошибка */
+export const makeHar = (header: number, argument: number, reply = true): number => {
+  if (!isUint(header, 0x03) || !isUint(argument, 0x1fff)) throw new RangeError(`HAR: заголовок 0..3, аргумент 0..8191, получено ${header} ${argument}`)
+  return (header << 14) | (argument << 1) | (reply ? 1 : 0)
+}
 export const splitHar = (har: number): { header: number; argument: number; reply: boolean } => ({
   header: (har >> 14) & 0x03,
   argument: (har >> 1) & 0x1fff,
@@ -49,11 +54,12 @@ export const encodePacketBytesPayload = (bytes: Uint8Array): Uint8Array => {
   return encoder.getResult()
 }
 
-/* Пакет из одного или нескольких объектов - те же байты, что CBOR_PktEncAddRaw/CBOR_PktEncFinish прошивки */
+/* Пакет из одного или нескольких объектов - те же байты, что CBOR_PktEncAddRaw/CBOR_PktEncFinish прошивки; BusID и HAR вне uint16 - ошибка */
 export const encodePacket = (objects: PacketObject[]): Uint8Array => {
   const encoder = new CborEncoder()
   encoder.encodeArrayStart(null)
   for (const { trgBusID, srcBusID, har, payload } of objects) {
+    if (![trgBusID, srcBusID, har].every((value) => isUint(value, 0xffff))) throw new RangeError("TrgBusID, SrcBusID и HAR должны быть uint16")
     const item = payload.length ? payload : NULL_PAYLOAD
     const payloadDecoder = new CborDecoder(item)
     if (!payloadDecoder.skipValue() || payloadDecoder.offset !== item.length) throw new Error("Payload должен содержать ровно одно CBOR item")
@@ -74,8 +80,8 @@ export const encodePacket = (objects: PacketObject[]): Uint8Array => {
 export type PacketParse = { status: "complete"; length: number; objects: DecodedPacketObject[] } | { status: "incomplete" } | { status: "garbage" }
 
 /* Одно CBOR-значение с позиции offset: значение и сколько байт заняло; null - данных не хватает */
-const readValue = (bytes: Uint8Array, offset: number): { value: unknown; length: number } | null => {
-  const decoder = new CborDecoder(bytes.subarray(offset))
+const readValue = (bytes: Uint8Array, offset: number, maxItemBytes: number): { value: unknown; length: number } | null => {
+  const decoder = new CborDecoder(bytes.subarray(offset), maxItemBytes)
   try {
     const value = decoder.decode()
     return { value, length: decoder.offset }
@@ -85,7 +91,7 @@ const readValue = (bytes: Uint8Array, offset: number): { value: unknown; length:
   }
 }
 
-const toNumber = (value: unknown): number | null => (typeof value === "number" && Number.isInteger(value) && value >= 0 && value <= 0xffff ? value : null)
+const toNumber = (value: unknown): number | null => (typeof value === "number" && isUint(value, 0xffff) ? value : null)
 
 /* Объект пакета; не по формату (не 5 элементов, не те типы) - null, как CBOR_PktDecNext прошивки его пропускает */
 const toObject = (value: unknown, rawRecord: Uint8Array): DecodedPacketObject | null => {
@@ -106,8 +112,8 @@ const toObject = (value: unknown, rawRecord: Uint8Array): DecodedPacketObject | 
   return { trgBusID, srcBusID, har, payload, crc, crcOk: packetObjectCrc(prefix) === crc, ...splitHar(har) }
 }
 
-/* Разбор пакета с начала буфера - и для целого кадра (CAN), и для потока (RS485: «incomplete» - ждать ещё байт, «garbage» - сдвинуться на байт) */
-export const decodePacket = (bytes: Uint8Array): PacketParse => {
+/* Разбор пакета с начала буфера - и для целого кадра (CAN), и для потока (RS485: «incomplete» - ждать ещё байт, «garbage» - сдвинуться на байт); заявленная длина больше maxItemBytes - мусор, а не ожидание */
+export const decodePacket = (bytes: Uint8Array, maxItemBytes = Infinity): PacketParse => {
   if (bytes.length === 0) return { status: "incomplete" }
   const first = bytes[0]
   if (first >> 5 !== 4) return { status: "garbage" }
@@ -129,7 +135,7 @@ export const decodePacket = (bytes: Uint8Array): PacketParse => {
     for (let index = 0; count === null || index < count; index++) {
       if (offset >= bytes.length) return { status: "incomplete" }
       if (count === null && bytes[offset] === 0xff) return { status: "complete", length: offset + 1, objects }
-      const value = readValue(bytes, offset)
+      const value = readValue(bytes, offset, maxItemBytes)
       if (!value) return { status: "incomplete" }
       offset += value.length
       const object = toObject(value.value, bytes.subarray(offset - value.length, offset))
@@ -141,35 +147,21 @@ export const decodePacket = (bytes: Uint8Array): PacketParse => {
   return { status: "complete", length: offset, objects }
 }
 
-/* Потоковый разбор пакетов из сырого потока (RS485): пауза дольше gapMs обрывает недособранный пакет, мусор сдвигается по байту, без единого целого пакета буфер не растёт дальше maxBytes */
-export const createPacketStreamParser = ({ gapMs = 100, maxBytes = 4096 } = {}) => {
-  let buffer = new Uint8Array()
-  let last = 0
+/* Потоковый разбор пакетов из сырого потока (RS485): пауза дольше gapMs обрывает недособранный пакет, мусор сдвигается по байту */
+export const createPacketStreamParser = (options: FramerOptions = {}) => {
+  const framer = createFramer(options)
   return {
     push(chunk: Uint8Array, now = Date.now()): { bytes: Uint8Array; objects: DecodedPacketObject[] }[] {
-      if (buffer.length && now - last > gapMs) buffer = new Uint8Array()
-      last = now
-      const merged = new Uint8Array(buffer.length + chunk.length)
-      merged.set(buffer)
-      merged.set(chunk, buffer.length)
-      buffer = merged
-
       const packets: { bytes: Uint8Array; objects: DecodedPacketObject[] }[] = []
-      while (buffer.length) {
-        const parsed = decodePacket(buffer)
-        if (parsed.status === "incomplete") break
-        if (parsed.status === "garbage") {
-          buffer = buffer.slice(1)
-          continue
-        }
-        packets.push({ bytes: buffer.slice(0, parsed.length), objects: parsed.objects })
-        buffer = buffer.slice(parsed.length)
-      }
-      if (buffer.length > maxBytes) buffer = new Uint8Array()
+      framer.push(chunk, now, (bytes) => {
+        const parsed = decodePacket(bytes, framer.maxBytes)
+        if (parsed.status === "incomplete") return 0
+        if (parsed.status === "garbage") return 1
+        packets.push({ bytes: bytes.slice(0, parsed.length), objects: parsed.objects })
+        return parsed.length
+      })
       return packets
     },
-    reset() {
-      buffer = new Uint8Array()
-    },
+    reset: framer.reset,
   }
 }

@@ -48,6 +48,15 @@ test("разбор пакета прошивки", () => {
   assert.equal(m.makeHar(1, 36), 0x4049)
   assert.equal(m.makeHar(2, 37, false), 0x804a)
   assert.equal(m.makeHar(3, 8191), 0xffff)
+  for (const [h, a] of [
+    [4, 0],
+    [0, 8192],
+    [-1, 0],
+    [0, 1.5],
+  ])
+    assert.throws(() => m.makeHar(h, a), RangeError)
+  assert.throws(() => m.encodePacket([{ trgBusID: 0x10000, srcBusID: 0, har: 0, payload: new Uint8Array() }]), RangeError)
+  assert.throws(() => m.encodeXPoeDebugFrame("GET", "ModInfo", new Uint8Array(), -1), RangeError)
   assert.deepEqual(m.splitHar(0x804a), { header: 2, argument: 37, reply: false })
 })
 
@@ -56,6 +65,10 @@ test("поток: обрывок - incomplete, мусор - garbage, два па
   for (let n = 0; n < multi.length; n++) assert.equal(m.decodePacket(multi.subarray(0, n)).status, "incomplete", `обрывок ${n} байт`)
   assert.equal(m.decodePacket(Uint8Array.of(0x41, 0x42)).status, "garbage")
   assert.equal(m.decodePacket(Uint8Array.of(0xbf, 0xff)).status, "garbage") /* Map вместо массива - не пакет */
+  /* Заявленная длина больше предела - мусор, а не вечное ожидание */
+  const huge = Uint8Array.of(0x9f, 0x85, 0x00, 0x00, 0x00, 0x5a, 0xff, 0xff, 0xff, 0xff)
+  assert.equal(m.decodePacket(huge).status, "incomplete")
+  assert.equal(m.decodePacket(huge, 4096).status, "garbage")
   const stream = new Uint8Array([...bytes(REF.one), ...bytes(REF.empty)])
   const first = m.decodePacket(stream)
   assert.equal(first.status, "complete")
@@ -154,6 +167,19 @@ test("xPOE-Debug: разбор потока в любом месте разре�
     const items = [...parser.push(stream.subarray(0, cut)), ...parser.push(stream.subarray(cut))]
     assert.deepEqual(items.map(pick), expected, `разрез на ${cut} байте`)
   }
+})
+
+test("xPOE-Debug: обрыв пакета - пауза сбрасывает, мусорная длина не держит поток", () => {
+  const frame = deviceFrame("OK!", "DebugLog", m.valueToCbor([3, "Net", "x", 1]))
+  const parser = m.createXPoeDebugParser({ gapMs: 100 })
+  assert.deepEqual(parser.push(frame.subarray(0, 10), 0), [])
+  assert.equal(parser.push(frame, 1000)[0].argument, "DebugLog")
+  const huge = Uint8Array.of(0x9f, 0x85, 0x00, 0x00, 0x00, 0x5a, 0xff, 0xff, 0xff, 0xff)
+  const items = m.createXPoeDebugParser().push(Uint8Array.from([...huge, ...new TextEncoder().encode("ok\n"), ...frame]))
+  assert.deepEqual(
+    items.filter((item) => item.type === "frame").map((item) => item.argument),
+    ["DebugLog"],
+  )
 })
 
 test("xPOE-Debug: неверный CRC, команда устройству, несколько записей в пакете", () => {
@@ -289,6 +315,10 @@ test("CAN: чередование пакетов, remote-кадр, таймау�
     500,
   )
   assert.ok(late.length === 0 || late[0].data.length < bytes(REF.multi).length)
+  /* Поток без CR не копится: после мусора кадры разбираются */
+  const noise = m.createCanParser()
+  assert.deepEqual(noise.push(new TextEncoder().encode("x".repeat(20000)), 0), [])
+  assert.equal(noise.push(new TextEncoder().encode("\r" + m.encodeCanPacket(bytes(REF.one), false, 0x33)), 1)[0].packetId, 0x33)
 })
 
 test("RS485: пакеты из сырого потока, мусор, пауза", () => {
@@ -327,8 +357,15 @@ test("словарь, поле Value xPOE-Debug, команды slcan-адапт
     ModCfg: 36,
     OrData: 211,
   })
-  assert.equal(m.nameByCode(m.HEADER_CODES, 2), "OK!")
-  assert.equal(m.nameByCode(m.DEFAULT_ARGUMENT_CODES, 9999), "9999")
+  const custom = m.createDictionary({ ...m.DEFAULT_ARGUMENT_CODES, MyCmd: 300 })
+  assert.deepEqual(
+    [custom.header(2), custom.name(300), custom.name(9999), custom.code("MyCmd"), custom.code("constructor")],
+    ["OK!", "MyCmd", "9999", 300, undefined],
+  )
+  assert.throws(() => m.xPoeDebugHar("SET", "MyCmd")) /* во встроенном словаре нет */
+  const mine = m.encodeXPoeDebugFrame("SET", "MyCmd", new Uint8Array(), 0, 0, true, custom)
+  assert.equal(m.createXPoeDebugParser({ dictionary: custom }).push(mine)[0].argument, "MyCmd")
+  assert.equal(m.createXPoeDebugParser().push(mine)[0].argument, "300")
   assert.deepEqual([...m.xPoeDebugValueFromText("")], [])
   assert.deepEqual([...m.xPoeDebugValueFromText("A1 61 61 01")], [0xa1, 0x61, 0x61, 0x01])
   assert.deepEqual([...m.xPoeDebugValueFromText('{"a":1}')], [...m.valueToCbor({ a: 1 })])

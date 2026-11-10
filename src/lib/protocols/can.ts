@@ -1,5 +1,6 @@
-/* $lib/protocols/can.ts */
 /* Пакеты по CAN/CAN FD через slcan-адаптер (can_service прошивки): стандартный 11-битный ID - бит 10 «последний/единственный фрагмент», биты 0..9 - packet_id, одинаковый у всех фрагментов пакета; DATA - чистый payload без служебных байт. Адаптер говорит ASCII-кадрами slcan: [t|d|b|r]III L DD..DD\r (стандартный ID, 3 hex), [T|D|B|R]IIIIIIII L DD..\r (расширенный, 8 hex); t/T - CAN, d/D, b/B - CAN FD (b - с BRS) */
+import { createFramer } from "./framer.js"
+import { bytesToHex, hexToBytes } from "./hex.js"
 import { decodePacket } from "./packet.js"
 
 export const CAN_FINAL_BIT = 0x400
@@ -27,17 +28,15 @@ export const canFragments = (payload: Uint8Array, fd: boolean, packetId = 1 + Ma
   return frames
 }
 
-const hex = (bytes: Uint8Array) => Array.from(bytes, (byte) => byte.toString(16).toUpperCase().padStart(2, "0")).join("")
-
 /* Кадр данных slcan (стандартный ID): CAN - «t», CAN FD - «b» (с BRS); данные CAN FD дополняются нулями до ближайшей допустимой длины */
 export const encodeSlcanFrame = ({ canId, data }: CanFrame, fd: boolean): string => {
   const id = (canId & 0x7ff).toString(16).toUpperCase().padStart(3, "0")
-  if (!fd) return `t${id}${Math.min(data.length, 8).toString(16).toUpperCase()}${hex(data.subarray(0, 8))}\r`
+  if (!fd) return `t${id}${Math.min(data.length, 8).toString(16).toUpperCase()}${bytesToHex(data.subarray(0, 8))}\r`
   const code = data.length <= 8 ? data.length : 9 + FD_SIZES.findIndex((size) => size >= data.length)
   const size = code <= 8 ? code : FD_SIZES[code - 9]
   const padded = new Uint8Array(size)
   padded.set(data.subarray(0, size))
-  return `b${id}${code.toString(16).toUpperCase()}${hex(padded)}\r`
+  return `b${id}${code.toString(16).toUpperCase()}${bytesToHex(padded)}\r`
 }
 
 /* Пакет целиком в строку кадров slcan для отправки в адаптер */
@@ -56,7 +55,9 @@ export interface CanMessage {
   timestamp: number
 }
 
-const SLCAN_FRAME = /([tdbr])([0-9A-Fa-f]{3})([0-9A-Fa-f])([0-9A-Fa-f]*)\r|([TDBR])([0-9A-Fa-f]{8})([0-9A-Fa-f])([0-9A-Fa-f]*)\r/g
+/* Строка slcan до \r; мусор перед кадром пропускается */
+const SLCAN_FRAME = /([tdbr])([0-9A-Fa-f]{3})([0-9A-Fa-f])([0-9A-Fa-f]*)$|([TDBR])([0-9A-Fa-f]{8})([0-9A-Fa-f])([0-9A-Fa-f]*)$/
+const CR = 0x0d
 
 const fdLength = (code: number) => (code <= 8 ? code : (FD_SIZES[code - 9] ?? 0))
 
@@ -69,52 +70,62 @@ const trimFdPadding = (data: Uint8Array): Uint8Array => {
   return data.subarray(0, end)
 }
 
+const joinBytes = (parts: Uint8Array[], size: number): Uint8Array => {
+  const out = new Uint8Array(size)
+  let offset = 0
+  for (const part of parts) {
+    out.set(part, offset)
+    offset += part.length
+  }
+  return out
+}
+
 const decoder = new TextDecoder()
 
-/* Потоковый разбор ответа slcan-адаптера: push(байты порта, время) → собранные пакеты; незавершённые сессии живут sessionTimeoutMs */
+/* Потоковый разбор ответа slcan-адаптера: push(байты порта, время) → собранные пакеты; незавершённые сессии и обрывок строки живут sessionTimeoutMs, сессия длиннее maxPacketBytes сбрасывается */
 export const createCanParser = ({ sessionTimeoutMs = 2000, maxPacketBytes = 8192 } = {}) => {
-  let text = ""
-  const sessions = new Map<number, { data: number[]; timestamp: number }>()
+  const framer = createFramer({ gapMs: sessionTimeoutMs })
+  const sessions = new Map<number, { parts: Uint8Array[]; size: number; timestamp: number }>()
   return {
     push(chunk: Uint8Array, now = Date.now()): CanMessage[] {
-      text += decoder.decode(chunk, { stream: true })
       for (const [id, session] of sessions) if (now - session.timestamp > sessionTimeoutMs) sessions.delete(id)
-
       const messages: CanMessage[] = []
-      let consumed = 0
-      for (const match of text.matchAll(SLCAN_FRAME)) {
-        consumed = (match.index ?? 0) + match[0].length
+      framer.push(chunk, now, (bytes) => {
+        const end = bytes.indexOf(CR)
+        if (end < 0) return bytes.length > framer.maxBytes ? bytes.length : 0
+        const match = SLCAN_FRAME.exec(decoder.decode(bytes.subarray(0, end)))
+        if (!match) return end + 1
         const [type, idHex, dlcHex, dataHex] = match[1] ? match.slice(1, 5) : match.slice(5, 9)
         const lower = type.toLowerCase()
         const canId = parseInt(idHex, 16)
-        const dlc = parseInt(dlcHex, 16)
-        const size = lower === "t" || lower === "r" ? Math.min(dlc, 8) : fdLength(dlc)
-        const bytes = lower === "r" ? [] : Array.from({ length: Math.min(size, dataHex.length >> 1) }, (_, i) => parseInt(dataHex.slice(i * 2, i * 2 + 2), 16))
         const packetId = canId & CAN_PACKET_ID_MASK
-
         if (lower === "r") {
           messages.push({ canId, packetId, data: new Uint8Array(), remote: true, timestamp: now })
-          continue
+          return end + 1
         }
+        const dlc = parseInt(dlcHex, 16)
+        const size = Math.min(lower === "t" ? Math.min(dlc, 8) : fdLength(dlc), dataHex.length >> 1)
+        const data = hexToBytes(dataHex.slice(0, size * 2))!
         const session = sessions.get(packetId)
         if (!(canId & CAN_FINAL_BIT)) {
           /* Промежуточный фрагмент: копим; потерян последний и пакет разросся - сбрасываем */
-          const data = [...(session?.data ?? []), ...bytes]
-          if (data.length > maxPacketBytes) sessions.delete(packetId)
-          else sessions.set(packetId, { data, timestamp: session?.timestamp ?? now })
-          continue
+          if (!session) sessions.set(packetId, { parts: [data], size: data.length, timestamp: now })
+          else if (session.size + data.length > maxPacketBytes) sessions.delete(packetId)
+          else {
+            session.parts.push(data)
+            session.size += data.length
+          }
+          return end + 1
         }
         sessions.delete(packetId)
-        const data = Uint8Array.from([...(session?.data ?? []), ...bytes])
-        messages.push({ canId, packetId, data: lower === "t" ? data : trimFdPadding(data), remote: false, timestamp: session?.timestamp ?? now })
-      }
-      /* Разобранное убираем; хвост без конца кадра ждёт следующего чанка, мусор без \r не копится бесконечно */
-      text = text.slice(consumed)
-      if (text.length > 4 * maxPacketBytes) text = text.slice(text.lastIndexOf("\r") + 1)
+        const whole = session ? joinBytes([...session.parts, data], session.size + data.length) : data
+        messages.push({ canId, packetId, data: lower === "t" ? whole : trimFdPadding(whole), remote: false, timestamp: session?.timestamp ?? now })
+        return end + 1
+      })
       return messages
     },
     reset() {
-      text = ""
+      framer.reset()
       sessions.clear()
     },
   }

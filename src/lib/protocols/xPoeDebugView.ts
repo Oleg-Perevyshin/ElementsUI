@@ -1,9 +1,8 @@
+import { escapeHtml } from "../html.js"
 import { cborToValue } from "./cbor/value.js"
+import { bytesToHex, hexToBytes } from "./hex.js"
 
 const LOG_LEVELS: Record<number, string> = { 1: "🔴", 2: "🟡", 3: "🟢", 4: "🔵" }
-const HTML_ESCAPES: Record<string, string> = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }
-const escapeHtml = (value: string): string => value.replace(/[&<>"']/g, (char) => HTML_ESCAPES[char])
-const bytesToHex = (bytes: Uint8Array): string => Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0").toUpperCase()).join(" ")
 
 /* float32 с провода - кратчайшая запись, дающая то же float32 (0.12, а не 0.12000000476837158); double и целые - как есть */
 const shortNumber = (value: number): number => {
@@ -17,7 +16,7 @@ const shortNumber = (value: number): number => {
 
 const normalizeCborValue = (value: unknown): unknown => {
   if (typeof value === "number") return shortNumber(value)
-  if (value instanceof Uint8Array) return `h'${bytesToHex(value)}'`
+  if (value instanceof Uint8Array) return `h'${bytesToHex(value, " ")}'`
   if (Array.isArray(value)) return value.map(normalizeCborValue)
   if (value && typeof value === "object") return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, normalizeCborValue(item)]))
   return value
@@ -25,14 +24,8 @@ const normalizeCborValue = (value: unknown): unknown => {
 
 const compactCborValue = (value: unknown): string => {
   if (typeof value === "string") return escapeHtml(value)
-  if (value instanceof Uint8Array) return `bytes(${value.length}): ${escapeHtml(bytesToHex(value))}`
+  if (value instanceof Uint8Array) return `bytes(${value.length}): ${escapeHtml(bytesToHex(value, " "))}`
   return escapeHtml(JSON.stringify(normalizeCborValue(value)) ?? String(value))
-}
-
-const hexToBytes = (hex: string): Uint8Array | null => {
-  const clean = hex.replace(/\s/g, "")
-  if (!clean || clean.length % 2 !== 0 || !/^[0-9A-Fa-f]+$/.test(clean)) return null
-  return Uint8Array.from(clean.match(/.{2}/g)!, (byte) => parseInt(byte, 16))
 }
 
 const isDebugLog = (value: unknown): value is [number, string, string | Uint8Array, number?] =>
@@ -44,7 +37,7 @@ const isDebugLog = (value: unknown): value is [number, string, string | Uint8Arr
   (typeof value[2] === "string" || value[2] instanceof Uint8Array)
 
 /* Байты строками по 16 - для дампа DebugLog в Value */
-const hexRows = (bytes: Uint8Array): string => (bytesToHex(bytes).match(/.{1,48}/g) ?? []).map((row) => row.trim()).join("\n")
+const hexRows = (bytes: Uint8Array): string => (bytesToHex(bytes, " ").match(/.{1,48}/g) ?? []).map((row) => row.trim()).join("\n")
 
 /* Цвета развёрнутого вида - палитра темы: ключи, строки, числа, логические, null, байты */
 type PrettyKind = "key" | "string" | "number" | "boolean" | "null" | "bytes"
@@ -67,7 +60,7 @@ const prettyValue = (value: unknown, paint: Paint, indent = ""): string => {
   if (typeof value === "number") return paint("number", String(shortNumber(value)))
   if (typeof value === "bigint") return paint("number", String(value))
   if (typeof value === "boolean") return paint("boolean", String(value))
-  if (value instanceof Uint8Array) return paint("bytes", `h'${bytesToHex(value)}'`)
+  if (value instanceof Uint8Array) return paint("bytes", `h'${bytesToHex(value, " ")}'`)
   const inner = `${indent}  `
   if (Array.isArray(value)) {
     if (!value.length) return "[]"
@@ -90,35 +83,26 @@ const prettyPayload = (value: unknown, paint: Paint, html: boolean): string => {
   return prettyValue(value, paint)
 }
 
-/* Payload в развёрнутом виде, чистый текст: карты и массивы с отступами, DebugLog - уровень и тег, ниже текст или дамп и FHS; не CBOR - null */
-export function formatXPoeDebugPretty(hex: string): string | null {
+/* Payload из HEX в развёрнутом виде: карты и массивы с отступами, DebugLog - уровень и тег, ниже текст или дамп и FHS; не CBOR - null */
+const prettyHex = (hex: string, html: boolean): string | null => {
   const bytes = hexToBytes(hex)
   if (!bytes) return null
   try {
-    return prettyPayload(cborToValue(bytes), plain, false)
+    return prettyPayload(cborToValue(bytes), html ? colored : plain, html)
   } catch {
     return null
   }
 }
 
-/* То же в HTML с цветами палитры темы - для модалки */
-const formatXPoeDebugPrettyHtml = (hex: string): string | null => {
-  const bytes = hexToBytes(hex)
-  if (!bytes) return null
-  try {
-    return prettyPayload(cborToValue(bytes), colored, true)
-  } catch {
-    return null
-  }
-}
+/* Чистым текстом - для копирования */
+export const formatXPoeDebugPretty = (hex: string): string | null => prettyHex(hex, false)
 
 /* Payload в таблицу: CBOR как JSON, лог DebugLog [уровень, тег, текст|байты, FHS] - уровень · тег · текст */
 export function formatXPoeDebugValue(rawValue: string): string {
-  const hex = rawValue.trim().replace(/\s/g, "")
-  if (!hex || hex.length % 2 !== 0 || !/^[0-9A-Fa-f]+$/.test(hex)) return escapeHtml(rawValue)
-
+  const bytes = hexToBytes(rawValue)
+  if (!bytes) return escapeHtml(rawValue)
   try {
-    const value = cborToValue(Uint8Array.from(hex.match(/.{2}/g)!, (byte) => parseInt(byte, 16)))
+    const value = cborToValue(bytes)
     if (isDebugLog(value)) {
       const level = LOG_LEVELS[value[0]]
       const detail = compactCborValue(value[2])
@@ -202,7 +186,7 @@ export function formatXPoeDebugModal(text: string): string {
   const separator = "\nHEX\n"
   const hexIndex = text.lastIndexOf(separator)
   const hex = hexIndex < 0 ? "" : text.slice(hexIndex + separator.length)
-  const pretty = hex ? formatXPoeDebugPrettyHtml(hex) : null
+  const pretty = hex ? prettyHex(hex, true) : null
   const decoded = pretty === null ? escapeHtml(hexIndex < 0 ? text : text.slice(0, hexIndex)) : pretty
   const modalStyle = "display:flex;flex-direction:column;gap:.75rem;max-height:80vh;min-width:0;overflow-y:auto;overflow-x:hidden"
   const sectionStyle = "min-width:0;padding:.25rem 0 .75rem"

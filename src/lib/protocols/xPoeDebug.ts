@@ -1,13 +1,13 @@
-/* $lib/protocols/xPoeDebug.ts */
 /* xPOE-Debug - UART-консоль как ещё одна шина: пакеты poe_cbor_pkt [[TrgBusID, SrcBusID, HAR, Payload, CRC16], …] вперемешку с текстом загрузчика. Логи - OK! DebugLog, Payload [уровень, тег, текст|байты, FHS]; графики - OK! DebugPlot, Payload {"Группа.Имя": float32} */
 import { cborToValue } from "./cbor/value.js"
 import { jsonToCbor } from "./cbor/json.js"
-import { DEFAULT_ARGUMENT_CODES, HEADER_CODES, nameByCode } from "./dictionary.js"
-import { decodePacket, encodePacket, formatBusId, makeHar, type DecodedPacketObject } from "./packet.js"
+import { DEFAULT_DICTIONARY, type Dictionary } from "./dictionary.js"
+import { createFramer, type FramerOptions } from "./framer.js"
+import { bytesToHex, hexToBytes } from "./hex.js"
+import { decodePacket, encodePacket, formatBusId, type DecodedPacketObject } from "./packet.js"
 
 export const DEBUG_LOG_ARGUMENT = "DebugLog"
 const MAX_TEXT_TAIL = 4096
-const MAX_PACKET = 8192
 const PACKET_START = 0x9f
 const RECORD = 0x85
 const decoder = new TextDecoder()
@@ -29,21 +29,20 @@ export type XPoeDebugItem =
     }
   | { type: "raw"; text: string }
 
-const toHex = (bytes: Uint8Array) => Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0").toUpperCase()).join("")
-
-/* HAR по строкам словаря; неизвестные заголовок или аргумент - ошибка */
-export const xPoeDebugHar = (header: string, argument: string, reply = true): number => {
-  const hdr = HEADER_CODES[header]
-  const arg = DEFAULT_ARGUMENT_CODES[argument]
-  if (hdr === undefined || arg === undefined) throw new Error(`Hdr/Arg отсутствует в общем словаре: ${header} ${argument}`)
-  return makeHar(hdr, arg, reply)
-}
+/* HAR по строкам словаря (по умолчанию встроенного); неизвестные заголовок или аргумент - ошибка */
+export const xPoeDebugHar = (header: string, argument: string, reply = true, dictionary: Dictionary = DEFAULT_DICTIONARY): number =>
+  dictionary.har(header, argument, reply)
 
 /* Команда терминала - пакет из одной записи; value - CBOR item Payload, пустой - null */
-export const encodeXPoeDebugFrame = (header: string, argument: string, value: Uint8Array, srcId = 0, trgId = 0, reply = true): Uint8Array => {
-  if (![srcId, trgId].every((n) => Number.isInteger(n) && n >= 0 && n <= 0xffff)) throw new Error("TrgBusID и SrcBusID должны быть uint16")
-  return encodePacket([{ trgBusID: trgId, srcBusID: srcId, har: xPoeDebugHar(header, argument, reply), payload: value }])
-}
+export const encodeXPoeDebugFrame = (
+  header: string,
+  argument: string,
+  value: Uint8Array,
+  srcId = 0,
+  trgId = 0,
+  reply = true,
+  dictionary: Dictionary = DEFAULT_DICTIONARY,
+): Uint8Array => encodePacket([{ trgBusID: trgId, srcBusID: srcId, har: dictionary.har(header, argument, reply), payload: value }])
 
 const textItems = (bytes: Uint8Array) =>
   decoder
@@ -64,17 +63,17 @@ const freeHeapOf = (argument: string, payload: Uint8Array): string => {
   }
 }
 
-const frameItem = (object: DecodedPacketObject): XPoeDebugItem => {
-  const argument = nameByCode(DEFAULT_ARGUMENT_CODES, object.argument)
+const frameItem = (object: DecodedPacketObject, dictionary: Dictionary): XPoeDebugItem => {
+  const argument = dictionary.name(object.argument)
   return {
     type: "frame",
     trgId: object.trgBusID,
     srcId: object.srcBusID,
     har: object.har,
-    header: nameByCode(HEADER_CODES, object.header),
+    header: dictionary.header(object.header),
     argument,
     reply: object.reply,
-    value: toHex(object.payload),
+    value: bytesToHex(object.payload),
     valueBytes: object.payload.slice(),
     crc: object.crc.toString(16).toUpperCase().padStart(4, "0"),
     crcOk: object.crcOk,
@@ -108,56 +107,35 @@ export const xPoeDebugRow = (item: XPoeDebugItem): XPoeDebugRow =>
         freeHeap: item.freeHeap,
       }
 
-/* Начало пакета - 0x9F 0x85 (0x9F последним байтом буфера - возможное начало) */
-const packetStart = (buffer: Uint8Array): number => {
-  for (let i = buffer.indexOf(PACKET_START); i >= 0; i = buffer.indexOf(PACKET_START, i + 1)) if (i + 1 >= buffer.length || buffer[i + 1] === RECORD) return i
+/* Начало пакета - 0x9F 0x85, 0x9F последним байтом - возможное начало */
+const packetStart = (bytes: Uint8Array): number => {
+  for (let i = bytes.indexOf(PACKET_START); i >= 0; i = bytes.indexOf(PACKET_START, i + 1)) if (i + 1 >= bytes.length || bytes[i + 1] === RECORD) return i
   return -1
 }
 
-const concat = (a: Uint8Array, b: Uint8Array) => {
-  const out = new Uint8Array(a.length + b.length)
-  out.set(a)
-  out.set(b, a.length)
-  return out
-}
-
-/* Потоковый разбор: пакеты в любом месте разреза, текст - построчно, мусор сдвигается по байту */
-export const createXPoeDebugParser = () => {
-  let buffer = new Uint8Array()
+/* Потоковый разбор: пакеты в любом месте разреза, текст - построчно, мусор сдвигается по байту; пауза дольше gapMs обрывает недособранный пакет. Имена аргументов - из dictionary (по умолчанию встроенного) */
+export const createXPoeDebugParser = ({ dictionary = DEFAULT_DICTIONARY, ...options }: FramerOptions & { dictionary?: Dictionary } = {}) => {
+  const framer = createFramer(options)
   return {
-    push(chunk: Uint8Array): XPoeDebugItem[] {
-      buffer = concat(buffer, chunk)
+    push(chunk: Uint8Array, now = Date.now()): XPoeDebugItem[] {
       const items: XPoeDebugItem[] = []
-      while (buffer.length) {
-        const start = packetStart(buffer)
-        if (start < 0) {
-          const cut = buffer.length > MAX_TEXT_TAIL ? buffer.length : buffer.lastIndexOf(0x0a)
-          if (cut >= 0) {
-            items.push(...textItems(buffer.subarray(0, cut)))
-            buffer = buffer.slice(Math.min(cut + 1, buffer.length))
-          }
-          break
+      framer.push(chunk, now, (bytes) => {
+        const start = packetStart(bytes)
+        if (start === bytes.length - 1) return 0
+        if (start !== 0) {
+          const cut = start > 0 ? start : bytes.length > MAX_TEXT_TAIL ? bytes.length : bytes.lastIndexOf(0x0a) + 1
+          items.push(...textItems(bytes.subarray(0, cut)))
+          return cut
         }
-        if (start + 1 >= buffer.length) break /* 0x9F последним байтом - ждём следующий */
-        if (start > 0) {
-          items.push(...textItems(buffer.subarray(0, start)))
-          buffer = buffer.slice(start)
-          continue
-        }
-        const parsed = decodePacket(buffer)
-        if (parsed.status === "incomplete" && buffer.length <= MAX_PACKET) break
-        if (parsed.status !== "complete" || !parsed.objects.length) {
-          buffer = buffer.slice(1)
-          continue
-        }
-        items.push(...parsed.objects.map(frameItem))
-        buffer = buffer.slice(parsed.length)
-      }
+        const parsed = decodePacket(bytes, framer.maxBytes)
+        if (parsed.status === "incomplete") return 0
+        if (parsed.status === "garbage" || !parsed.objects.length) return 1
+        items.push(...parsed.objects.map((object) => frameItem(object, dictionary)))
+        return parsed.length
+      })
       return items
     },
-    reset() {
-      buffer = new Uint8Array()
-    },
+    reset: framer.reset,
   }
 }
 
@@ -165,7 +143,7 @@ export const createXPoeDebugParser = () => {
 export const xPoeDebugValueFromText = (text: string | undefined): Uint8Array => {
   const trimmed = (text ?? "").trim()
   if (!trimmed) return new Uint8Array()
-  if (/^([0-9A-Fa-f]{2}\s?)+$/.test(trimmed)) return Uint8Array.from(trimmed.replace(/\s/g, "").match(/../g) ?? [], (pair) => parseInt(pair, 16))
+  if (/^([0-9A-Fa-f]{2}\s?)+$/.test(trimmed)) return hexToBytes(trimmed)!
   let parsed: unknown
   try {
     parsed = JSON.parse(trimmed)

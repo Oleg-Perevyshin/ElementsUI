@@ -41,13 +41,15 @@
 - Телеметрию и потоки данных шлют без флага, чтобы не ждать подтверждений.
 - Имена `"GET"` и `"ModCfg"` по проводу не передаются, только коды.
 
-В прошивке `HAR` это `har_t` из `api_har.h`, собирается макросами `HAR(h, a)` (с ответом) и `HAR_NR(h, a)` (без). В библиотеке это `makeHar` и `splitHar`.
+В прошивке `HAR` это `har_t` из `api_har.h`, собирается макросами `HAR(h, a)` (с ответом) и `HAR_NR(h, a)` (без). В библиотеке это `makeHar` и `splitHar`. `makeHar` и `encodePacket` бросают `RangeError`, если заголовок, команда, BusID или HAR вне диапазона.
 
 ### Словарь
 
 Коды команд записаны в одном файле: `dictionary.yaml` этой библиотеки. В прошивках лежит его копия `.framework/Dictionary.yaml`, и сборка сверяет с ней `api_har.h`.
 
 Все отладочные команды начинаются с `Debug`: `DebugLog` это 11, `DebugPlot` это 12.
+
+У устройства словарь может быть свой. Его читают из файла `parseArgumentDictionary` и превращают в объект `createDictionary(codes)`: `code(имя)`, `name(код)`, `header(код)`, `har(заголовок, команда, ответ)`. Такой словарь принимают `xPoeDebugHar`, `encodeXPoeDebugFrame` (последний аргумент) и `createXPoeDebugParser({ dictionary })`. Без него берётся встроенный.
 
 ## Payload
 
@@ -84,6 +86,8 @@ CRC-16/KERMIT: полином `0x8408` (отражённый `0x1021`), нача
 | RS485        | Сплошной поток. Пакет начинается с `0x9F 0x85`, мусор пропускается по одному байту. Пауза сбрасывает недособранный пакет: в прошивке 20 мс, на компьютере 100 мс, потому что USB-адаптер отдаёт байты пачками |
 | LoRa         | Пакет целиком в одном радиокадре                                                                                                                                                                              |
 | UART-консоль | Сплошной поток вперемешку с текстом загрузчика. Пакет начинается с `0x9F 0x85`, остальное считается текстом. Недособранный пакет сбрасывается после 100 мс тишины                                             |
+
+Все три разборщика потока (`createPacketStreamParser`, `createXPoeDebugParser`, `createCanParser`) устроены одинаково. Пауза дольше `gapMs` (по умолчанию 100 мс, у CAN - `sessionTimeoutMs`) сбрасывает недособранное. Застрявшее начало длиннее `maxBytes` (по умолчанию 8192) пропускается по байту. Заявленная в CBOR длина больше `maxBytes` считается мусором, а не поводом ждать.
 
 ## Отладка в консоли
 
@@ -140,12 +144,12 @@ CRC-16/KERMIT: полином `0x8408` (отражённый `0x1021`), нача
 
 ## Функции
 
-| Что     | В прошивке (ESP и STM)                                                                                                                     | В `poe-svelte-ui-lib/protocols`                                                        |
-| ------- | ------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------- |
-| Пакет   | `CBOR_PktEncInit`, `CBOR_PktEncAddRaw`, `CBOR_PACK`, `CBOR_PktEncFinish`, `CBOR_PktDecInit`, `CBOR_PktDecNext`, поток `CBOR_PktStreamPush` | `encodePacket`, `decodePacket`, `createPacketStreamParser`, `encodePacketBytesPayload` |
-| HAR     | `har_t`, `HAR`, `HAR_NR`, `API_Service_HarName`, `API_Service_HarByName`                                                                   | `makeHar`, `splitHar`, `xPoeDebugHar`, `HEADER_CODES`, `DEFAULT_ARGUMENT_CODES`        |
-| Приём   | `API_Service_ReceiveBusPacket`, `API_Service_ReceiveWsPacket`, консоль в `system_console`                                                  | `createXPoeDebugParser`, `createCanParser`                                             |
-| Ответ   | `API_Service_BeginResponse`, `Writer_*`, `API_Service_FinishResponse`                                                                      |                                                                                        |
-| Консоль | `LOG_*`, `LOG_HEX`, `LOG_PLOT`                                                                                                             | `encodeXPoeDebugFrame`, `xPoeDebugRow`, `xPoeDebugTableColumns`, `debugPlotValues`     |
-| CAN     | `can_service`                                                                                                                              | `encodeCanPacket`, `createCanParser`, `slcanOpenCommands`                              |
-| Тесты   | `tests/` прошивок                                                                                                                          | `npm run TestProtocols` сверяет байты с эталонами из прошивки                          |
+| Что     | В прошивке (ESP и STM)                                                                                                                     | В `poe-svelte-ui-lib/protocols`                                                                     |
+| ------- | ------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------- |
+| Пакет   | `CBOR_PktEncInit`, `CBOR_PktEncAddRaw`, `CBOR_PACK`, `CBOR_PktEncFinish`, `CBOR_PktDecInit`, `CBOR_PktDecNext`, поток `CBOR_PktStreamPush` | `encodePacket`, `decodePacket`, `createPacketStreamParser`, `encodePacketBytesPayload`              |
+| HAR     | `har_t`, `HAR`, `HAR_NR`, `API_Service_HarName`, `API_Service_HarByName`                                                                   | `makeHar`, `splitHar`, `xPoeDebugHar`, `createDictionary`, `HEADER_CODES`, `DEFAULT_ARGUMENT_CODES` |
+| Приём   | `API_Service_ReceiveBusPacket`, `API_Service_ReceiveWsPacket`, консоль в `system_console`                                                  | `createXPoeDebugParser`, `createCanParser`                                                          |
+| Ответ   | `API_Service_BeginResponse`, `Writer_*`, `API_Service_FinishResponse`                                                                      |                                                                                                     |
+| Консоль | `LOG_*`, `LOG_HEX`, `LOG_PLOT`                                                                                                             | `encodeXPoeDebugFrame`, `xPoeDebugRow`, `xPoeDebugTableColumns`, `debugPlotValues`                  |
+| CAN     | `can_service`                                                                                                                              | `encodeCanPacket`, `createCanParser`, `slcanOpenCommands`                                           |
+| Тесты   | `tests/` прошивок                                                                                                                          | `npm run TestProtocols` сверяет байты с эталонами из прошивки                                       |

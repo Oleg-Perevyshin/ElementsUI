@@ -18,8 +18,11 @@ import {
 /* Класс декодера CBOR */
 export class CborDecoder {
   private state: CborParserState
+  private maxItemBytes: number
 
-  constructor(buffer: ArrayBuffer | Uint8Array) {
+  /* maxItemBytes - предел заявленной длины строки и числа элементов: больше - испорченные данные (в потоке - сдвиг), а не ожидание байт */
+  constructor(buffer: ArrayBuffer | Uint8Array, maxItemBytes = Infinity) {
+    this.maxItemBytes = maxItemBytes
     const uint8Array = buffer instanceof Uint8Array ? buffer : new Uint8Array(buffer)
 
     this.state = {
@@ -218,6 +221,8 @@ export class CborDecoder {
     } else {
       throw new CborError(`Unknown additional info: ${additional}`)
     }
+    if (majorType >= CborMajorType.ByteString && majorType <= CborMajorType.Map && Number(value) > this.maxItemBytes)
+      throw new CborError(`Declared length ${value} exceeds ${this.maxItemBytes}`)
 
     return { majorType: majorType as CborMajorType, additional, value }
   }
