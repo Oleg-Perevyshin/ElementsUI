@@ -4,7 +4,8 @@ import { widgetTitle } from "./locales/i18n"
 import type { UIComponent, UIComponentPropsMap, UIType } from "./types"
 
 const label = { name: "", class: "text-center" }
-const widget = (type: UIType) => ({ label: { name: widgetTitle(type) as unknown as string }, collapsed: false })
+/* Новый виджет на холсте свёрнут: холст не растягивается, автор раскрывает нужный */
+const widget = (type: UIType) => ({ label: { name: widgetTitle(type) as unknown as string }, collapsed: true })
 
 /* Свойства по умолчанию; у смарт-виджета id - группа полей устройства */
 export const COMPONENT_DEFAULTS: { [K in UIType]: Partial<UIComponentPropsMap[K]> } = {
@@ -79,18 +80,18 @@ export const COMPONENT_SIZES: Record<UIType, { width: number; height: number }> 
   Tabs: { width: GUI_GRID.columns, height: 4 },
   Input: { width: 3, height: 1 },
   Select: { width: 3, height: 1 },
-  Slider: { width: 3, height: 1 },
+  Slider: { width: 8, height: 1 },
   Switch: { width: 2, height: 1 },
   FileAttach: { width: 7, height: 1 },
-  Joystick: { width: 4, height: 3 },
+  Joystick: { width: 6, height: 3 },
   Button: { width: 2, height: 1 },
   Table: { width: 11, height: 2 },
   ProgressBar: { width: 3, height: 1 },
   TextField: { width: 3, height: 1 },
-  Graph: { width: 7, height: 3 },
+  Graph: { width: 8, height: 3 },
   PeriodChart: { width: 7, height: 4 },
   Widget: { width: 3, height: 3 },
-  VideoViewer: { width: 7, height: 7 },
+  VideoViewer: { width: 6, height: 3 },
   Divider: { width: GUI_GRID.columns, height: 1 },
 }
 

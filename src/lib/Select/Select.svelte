@@ -45,7 +45,7 @@
   let buttonsNeed = $state(0)
   $effect(() => {
     const element = measureElement
-    if (type !== "buttons" || !element) return
+    if (type !== "buttons" || fitContent || !element) return
     void options
     let alive = true
     const measure = () => {
@@ -59,7 +59,8 @@
     void document.fonts?.ready.then(measure)
     return () => (alive = false)
   })
-  const shownType = $derived(type === "buttons" && anchorWidth < buttonsNeed ? "select" : type)
+  /* fitContent: ширину задают сами кнопки, сворачивать нечего */
+  const shownType = $derived(type === "buttons" && !fitContent && anchorWidth < buttonsNeed ? "select" : type)
 
   const selectedValues = $derived(multiSelect ? (Array.isArray(value) ? (value as T[]) : []) : [value as T])
   const isSelected = (option: IOption<T>) => selectedValues.includes(option.value)
@@ -98,7 +99,7 @@
     const openUp = below < needed && above > below
     const position = openUp ? `bottom: ${window.innerHeight - anchorRect.top + GAP}px;` : `top: ${anchorRect.bottom + GAP}px;`
     return {
-      style: `${position} left: ${anchorRect.left}px; width: ${anchorRect.width}px;`,
+      style: `${position} left: ${anchorRect.left}px; min-width: ${anchorRect.width}px; max-width: ${Math.max(anchorRect.width, window.innerWidth - anchorRect.left - MARGIN)}px;`,
       maxHeight: `${Math.min(listMaxPx, Math.max(openUp ? above : below, 72))}px`,
     }
   })
@@ -202,7 +203,7 @@
   <div class="relative flex w-full flex-col gap-1" bind:this={anchorElement} bind:clientWidth={anchorWidth}>
     <FieldLabel {label} for={shownType === "buttons" ? undefined : uid} id={`${uid}-label`} />
 
-    {#if type === "buttons"}
+    {#if type === "buttons" && !fitContent}
       <!-- Невидимые подписи вариантов: по их ширине решается, помещается ли группа кнопок -->
       <div bind:this={measureElement} class="pointer-events-none invisible absolute top-0 left-0 flex h-0 w-max overflow-hidden" aria-hidden="true">
         {#each options as option, index (option.id ?? index)}
