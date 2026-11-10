@@ -67,8 +67,10 @@
   /* value - живой поток данных с устройства (readonly-поля StaIP/DevFW/RunCnt и т.п. должны обновляться постоянно), а не однократный дефолт. Подхватываем свежие данные, только если у пользователя нет несохранённых правок редактируемых полей (DevName/HostName/...) - иначе входящее значение затёрло бы то, что он ещё не успел сохранить. */
   $effect(() => {
     if (value !== undefined && !untrack(() => isDirty)) {
-      info = { ...EMPTY, ...value }
-      savedSnapshot = JSON.stringify(info)
+      /* Снимок с нового объекта, а не с info: чтение info подписало бы эффект на собственную запись - бесконечный цикл */
+      const incoming = { ...EMPTY, ...value }
+      info = incoming
+      savedSnapshot = JSON.stringify(incoming)
     }
   })
 
