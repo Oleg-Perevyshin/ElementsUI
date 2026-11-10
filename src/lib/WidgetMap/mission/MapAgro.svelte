@@ -9,6 +9,7 @@
   import { accentStyle, type AccentColor } from "../../accent"
   import { themeState } from "../mapTheme.svelte"
   import MissionActions from "./MissionActions.svelte"
+  import SectionHead from "../../SectionHead.svelte"
   import Button from "../../Button/Button.svelte"
   import Input from "../../Input/Input.svelte"
   import Modal from "../../Modal.svelte"
@@ -24,7 +25,6 @@
   import InfoIcon from "../../libIcons/InfoIcon.svelte"
   import { missionProgress } from "./progress"
   import MissionIcon from "./MissionIcon.svelte"
-  import ArrowIcon from "../../libIcons/ArrowIcon.svelte"
   import { planFields, bestFieldAngle, searchFieldAngle, toMission, fieldArea, fieldsArea, type LngLat, type SprayControl } from "./coverage"
   import { DEFAULT_MISSION_PLAN, type IMissionPlan } from "./plan"
 
@@ -384,44 +384,34 @@
   /* Два сворачиваемых блока: «Маршрут и внесение» и «Итог» (контуры и расчёт) */
   type Section = "settings" | "summary"
   let open = $state<Record<Section, boolean>>({ settings: false, summary: false })
+  /* Узкая карта: короткие подписи кнопок редакторов, компактная панель имитации */
+  let mapWidth = $state(0)
+  let compactMap = $derived(mapWidth > 0 && mapWidth < 480)
   const card = "flex flex-col gap-3 rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-3"
   /* Метка у кнопки повторяет цвет объекта на карте */
   let tools = $derived([
     {
       mode: "field" as Mode,
       label: "widget.mission.editField",
+      short: "widget.mission.editFieldShort",
       dot: "rounded-sm border-(--green-mark) bg-(--green-mark)/30",
       disabled: false,
     },
-    { mode: "hole" as Mode, label: "widget.mission.editHoles", dot: "rounded-sm border-(--red-mark) bg-(--red-mark)/40", disabled: !hasField },
+    {
+      mode: "hole" as Mode,
+      label: "widget.mission.editHoles",
+      short: "widget.mission.editHolesShort",
+      dot: "rounded-sm border-(--red-mark) bg-(--red-mark)/40",
+      disabled: !hasField,
+    },
   ])
 </script>
 
 <svelte:window onkeydown={onKey} />
 
-{#snippet head(key: Section, title: string, summary: string)}
-  <button
-    type="button"
-    class="flex w-full cursor-pointer items-center justify-between gap-2 border-none bg-transparent p-0 text-left"
-    aria-expanded={open[key]}
-    onclick={() => (open[key] = !open[key])}
-  >
-    <span class="text-[12px] font-semibold text-(--muted-color)">
-      {title}
-      <span class="font-normal text-(--faint-color) tabular-nums">· {summary}</span>
-    </span>
-    <span
-      class="flex size-3.5 shrink-0 text-(--faint-color) transition-transform duration-150 [&_svg]:h-full [&_svg]:w-full"
-      style="transform: rotate({open[key] ? 90 : 0}deg)"
-    >
-      <ArrowIcon />
-    </span>
-  </button>
-{/snippet}
-
 <div
   bind:this={rootEl}
-  class={twMerge("relative flex w-full flex-col gap-4 rounded-2xl border border-(--hairline-color) bg-(--container-color) p-4", wrapperClass)}
+  class={twMerge("@container relative flex w-full flex-col gap-4 rounded-2xl border border-(--hairline-color) bg-(--container-color) p-4", wrapperClass)}
   style={rootStyle}
 >
   <WidgetHeader icon={MissionIcon} label={label?.name || $T("widget.mission.title")} bind:collapsed {hints}>
@@ -457,7 +447,7 @@
 
   {#if !collapsed}
     <div transition:slide={{ duration: 150 }} class="flex flex-col gap-4">
-      <div style="height: {height}px">
+      <div style="height: {height}px" bind:clientWidth={mapWidth}>
         <MapLibre
           bind:map={mapInstance}
           class="h-full w-full overflow-hidden rounded-[14px] border border-(--hairline-color)"
@@ -480,7 +470,7 @@
                   use:hint={{ text: $T(`widget.mission.hint.${tool.mode}`), enabled: $hints }}
                 >
                   <span class="size-3 shrink-0 border-2 {tool.dot}"></span>
-                  {$T(tool.label)}
+                  {$T(compactMap ? tool.short : tool.label)}
                 </button>
               {/each}
               {#if draft.length}
@@ -531,7 +521,7 @@
             </div>
           {/if}
           {#if simulate}
-            <MissionSim clock={sim} showSpray icon="quad" colors={theme.colors} />
+            <MissionSim clock={sim} showSpray icon="quad" colors={theme.colors} compact={compactMap} />
           {/if}
         </MapLibre>
       </div>
@@ -539,26 +529,27 @@
       <!-- Маршрут и внесение, итог: свёрнуты по умолчанию, в заголовке краткая сводка -->
       <div class="flex flex-col gap-3">
         <div class={card}>
-          {@render head(
-            "settings",
-            $T("widget.mission.settings"),
-            [
+          <SectionHead
+            bind:open={open.settings}
+            title={$T("widget.mission.settings")}
+            summary={[
               `${$T(fieldList.length > 1 ? "widget.mission.s.angles" : "widget.mission.s.angle")} ${fieldList.map((f) => `${fmt(f.angle, 0)}°`).join(" / ") || "-"}`,
               `${$T("widget.mission.s.swath")} ${plan.spacing} ${$T("widget.mission.m")}`,
               `${$T("widget.mission.s.alt")} ${plan.alt} ${$T("widget.mission.m")}`,
               `${$T("widget.mission.s.speed")} ${plan.speed} ${$T("widget.mission.ms")}`,
               `${$T("widget.mission.s.rate")} ${plan.rate} ${$T("widget.mission.lha")}`,
               `${$T("widget.mission.s.tank")} ${plan.tank} ${$T("widget.mission.l")}`,
-            ].join(" · "),
-          )}
+            ].join(" · ")}
+          />
           {#if open.settings}
             <!-- Слева маршрут, справа внесение; на узком экране друг под другом -->
-            <div class="grid grid-cols-1 divide-y divide-(--hairline-color) md:grid-cols-2 md:divide-x md:divide-y-0" transition:slide={{ duration: 150 }}>
-              <div class="flex flex-col gap-3 pb-3 md:pr-4 md:pb-0">
+            <div class="grid grid-cols-1 divide-y divide-(--hairline-color) @xl:grid-cols-2 @xl:divide-x @xl:divide-y-0" transition:slide={{ duration: 150 }}>
+              <div class="flex flex-col gap-3 pb-3 @xl:pr-4 @xl:pb-0">
                 <span class="text-[11px] font-semibold tracking-wide text-(--faint-color) uppercase">{$T("widget.mission.passes")}</span>
-                <div class="flex items-end gap-2">
+                <!-- На узком месте ползунок во всю ширину, кнопки авторасчёта строкой ниже -->
+                <div class="flex flex-wrap items-end gap-2">
                   <Slider
-                    wrapperClass="flex-1"
+                    wrapperClass="flex-1 basis-full @md:basis-0"
                     label={{ name: `${$T(fieldList.length > 1 ? "widget.mission.angleAll" : "widget.mission.angle")}: ${fmt(allAngle, 1)}°` }}
                     value={allAngle}
                     number={{ minNum: 0, maxNum: 179, step: 1 }}
@@ -593,7 +584,7 @@
                   {$T("widget.mission.returnHome")}
                 </label>
               </div>
-              <div class="flex flex-col gap-3 pt-3 md:pt-0 md:pl-4">
+              <div class="flex flex-col gap-3 pt-3 @xl:pt-0 @xl:pl-4">
                 <span class="text-[11px] font-semibold tracking-wide text-(--faint-color) uppercase">{$T("widget.mission.spraying")}</span>
                 <div class="grid grid-cols-2 gap-2">
                   <Input type="number" label={{ name: $T("widget.mission.rate") }} {...numField("rate", 0, 500, 0.5)} />
@@ -626,10 +617,10 @@
         </div>
 
         <div class={card}>
-          {@render head(
-            "summary",
-            $T("widget.mission.summary"),
-            [
+          <SectionHead
+            bind:open={open.summary}
+            title={$T("widget.mission.summary")}
+            summary={[
               hasField ? `${$T("widget.mission.s.fields")}: ${fields.length}` : $T("widget.mission.noField"),
               `${$T("widget.mission.s.holes")}: ${plan.holes.length}`,
               ...(stats
@@ -640,12 +631,12 @@
                     `${$T("widget.mission.s.liquid")} ${fmt(stats.liquid, 0)} ${$T("widget.mission.l")}`,
                   ]
                 : []),
-            ].join(" · "),
-          )}
+            ].join(" · ")}
+          />
           {#if open.summary}
             <!-- Слева контуры, справа расчёт; на узком экране друг под другом -->
-            <div class="grid grid-cols-1 divide-y divide-(--hairline-color) md:grid-cols-2 md:divide-x md:divide-y-0" transition:slide={{ duration: 150 }}>
-              <div class="flex flex-col gap-3 pb-3 md:pr-4 md:pb-0">
+            <div class="grid grid-cols-1 divide-y divide-(--hairline-color) @xl:grid-cols-2 @xl:divide-x @xl:divide-y-0" transition:slide={{ duration: 150 }}>
+              <div class="flex flex-col gap-3 pb-3 @xl:pr-4 @xl:pb-0">
                 <span class="text-[11px] font-semibold tracking-wide text-(--faint-color) uppercase">{$T("widget.mission.zones")}</span>
                 <div class="flex flex-col gap-1.5 rounded-lg bg-(--container-color) p-3 text-[13px] tabular-nums">
                   {#each fields as field, i}
@@ -725,7 +716,7 @@
                 {/if}
               </div>
 
-              <div class="flex flex-col gap-3 pt-3 md:pt-0 md:pl-4">
+              <div class="flex flex-col gap-3 pt-3 @xl:pt-0 @xl:pl-4">
                 <span class="text-[11px] font-semibold tracking-wide text-(--faint-color) uppercase">{$T("widget.mission.calc")}</span>
                 {#if stats}
                   <div class="grid grid-cols-2 gap-x-4 gap-y-1.5 rounded-lg bg-(--container-color) p-3 text-[13px] tabular-nums">

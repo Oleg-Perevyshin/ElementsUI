@@ -12,11 +12,14 @@
     showSpray = false,
     icon = "arrow",
     colors,
+    compact = false,
   }: {
     clock: SimClock
     showSpray?: boolean
     icon?: "arrow" | "quad"
     colors: IMapColors /* Аппарат и след - мастер-цвет виджета, распыление - зелёный */
+    /* Узкая карта: без заголовка, высоты и скорости, панель почти во всю ширину над масштабом */
+    compact?: boolean
   } = $props()
 
   const toRad = Math.PI / 180
@@ -82,11 +85,13 @@
 
   <!-- Панель имитации внизу карты по центру, оформлена как кнопки MapLibre -->
   <div
-    class="absolute bottom-2.5 left-1/2 z-10 w-max max-w-[calc(100%-8rem)] -translate-x-1/2 rounded-[4px] bg-(--back-color) shadow-[0_0_0_1px_var(--hairline-color)]"
+    class="absolute left-1/2 z-10 w-max -translate-x-1/2 rounded-[4px] bg-(--back-color) shadow-[0_0_0_1px_var(--hairline-color)] {compact
+      ? 'bottom-9 max-w-[calc(100%-1rem)]'
+      : 'bottom-2.5 max-w-[calc(100%-8rem)]'}"
   >
     <div class="flex flex-col gap-1 px-3 py-1.5 text-[12px] whitespace-nowrap text-(--font-color) tabular-nums">
       <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
-        <span class="font-semibold">{$T("widget.sim.title")}</span>
+        {#if !compact}<span class="font-semibold">{$T("widget.sim.title")}</span>{/if}
         <button
           class={iconBtn}
           onclick={() => clock.toggle()}
@@ -109,9 +114,9 @@
           {/each}
         </select>
         <span>{clockText(clock.t)} / {clockText(clock.duration)} · {Math.round((clock.t / Math.max(1, clock.duration)) * 100)}%</span>
-        <span>{pos.alt.toFixed(0)} {$T("widget.mission.m")} · {pos.speed.toFixed(1)} {$T("widget.mission.ms")}</span>
+        {#if !compact}<span>{pos.alt.toFixed(0)} {$T("widget.mission.m")} · {pos.speed.toFixed(1)} {$T("widget.mission.ms")}</span>{/if}
         {#if showSpray}
-          <span class="min-w-[7.5rem] font-semibold {pos.spray ? 'text-(--green-text)' : 'text-(--muted-color)'}"
+          <span class="{compact ? '' : 'min-w-[7.5rem]'} font-semibold {pos.spray ? 'text-(--green-text)' : 'text-(--muted-color)'}"
             >{pos.spray ? $T("widget.sim.sprayOn") : $T("widget.sim.sprayOff")}</span
           >
         {/if}

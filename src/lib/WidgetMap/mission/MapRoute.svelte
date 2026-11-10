@@ -9,6 +9,7 @@
   import { accentStyle, type AccentColor } from "../../accent"
   import { themeState } from "../mapTheme.svelte"
   import MissionActions from "./MissionActions.svelte"
+  import SectionHead from "../../SectionHead.svelte"
   import Button from "../../Button/Button.svelte"
   import Dragging from "../../Dragging.svelte"
   import Input from "../../Input/Input.svelte"
@@ -20,7 +21,6 @@
   import { SimClock } from "./simClock.svelte"
   import { missionProgress } from "./progress"
   import MapIcon from "../MapIcon.svelte"
-  import ArrowIcon from "../../libIcons/ArrowIcon.svelte"
   import type { LngLat } from "./coverage"
   import { DEFAULT_ROUTE_PLAN, ROUTE_FIRST_ALT, ROUTE_FIRST_SPEED, routeLegs, routeStats, routeMission, type IRoutePlan, type IRouteWaypoint } from "./route"
 
@@ -186,8 +186,11 @@
   const mapBtnMain = "border-(--accent-color)! bg-(--accent-color)! text-(--on-accent)!"
   type Section = "summary"
   let open = $state<Record<Section, boolean>>({ summary: false })
-  /* Сетка строки точки: ручка, номер, высота, скорость, расстояние от прошлой, удаление */
-  const ROW_GRID = "grid-cols-[1.25rem_1.5rem_8rem_8rem_minmax(6rem,1fr)_1rem]"
+  /* Узкая карта: короткая подпись кнопки редактора, компактная панель имитации */
+  let mapWidth = $state(0)
+  let compactMap = $derived(mapWidth > 0 && mapWidth < 480)
+  /* Сетка строки точки: ручка, номер, высота, скорость, расстояние от прошлой, удаление; поля сужаются до узкой карточки, не шире 8rem */
+  const ROW_GRID = "grid-cols-[1.25rem_1.5rem_minmax(0,8rem)_minmax(0,8rem)_minmax(3.5rem,1fr)_1rem]"
   let listEl: HTMLDivElement | undefined = $state()
   const listId = Math.floor(Math.random() * 1e6)
   const card = "flex flex-col gap-3 rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-3"
@@ -196,29 +199,9 @@
 
 <svelte:window onkeydown={onKey} />
 
-{#snippet head(key: Section, title: string, summary: string)}
-  <button
-    type="button"
-    class="flex w-full cursor-pointer items-center justify-between gap-2 border-none bg-transparent p-0 text-left"
-    aria-expanded={open[key]}
-    onclick={() => (open[key] = !open[key])}
-  >
-    <span class="text-[12px] font-semibold text-(--muted-color)">
-      {title}
-      <span class="font-normal text-(--faint-color) tabular-nums">· {summary}</span>
-    </span>
-    <span
-      class="flex size-3.5 shrink-0 text-(--faint-color) transition-transform duration-150 [&_svg]:h-full [&_svg]:w-full"
-      style="transform: rotate({open[key] ? 90 : 0}deg)"
-    >
-      <ArrowIcon />
-    </span>
-  </button>
-{/snippet}
-
 <div
   bind:this={rootEl}
-  class={twMerge("relative flex w-full flex-col gap-4 rounded-2xl border border-(--hairline-color) bg-(--container-color) p-4", wrapperClass)}
+  class={twMerge("@container relative flex w-full flex-col gap-4 rounded-2xl border border-(--hairline-color) bg-(--container-color) p-4", wrapperClass)}
   style={rootStyle}
 >
   <WidgetHeader icon={MapIcon} label={label?.name || $T("widget.route.title")} bind:collapsed {hints}>
@@ -256,7 +239,7 @@
 
   {#if !collapsed}
     <div transition:slide={{ duration: 150 }} class="flex flex-col gap-4">
-      <div style="height: {height}px">
+      <div style="height: {height}px" bind:clientWidth={mapWidth}>
         <MapLibre
           bind:map={mapInstance}
           class="h-full w-full overflow-hidden rounded-[14px] border border-(--hairline-color)"
@@ -277,7 +260,7 @@
                 use:hint={{ text: $T("widget.route.hint.add"), enabled: $hints }}
               >
                 <span class="size-3 shrink-0 rounded-full border-2 border-white bg-(--accent-color) outline outline-(--accent-color)"></span>
-                {$T("widget.route.add")}
+                {$T(compactMap ? "widget.route.addShort" : "widget.route.add")}
               </button>
               {#if adding}
                 <button class="{mapBtn} {mapBtnMain}" onclick={() => (adding = false)}>{$T("widget.mission.finish")}</button>
@@ -300,23 +283,23 @@
           />
           {@render overlay?.()}
           {#if simulate}
-            <MissionSim clock={sim} colors={theme.colors} />
+            <MissionSim clock={sim} colors={theme.colors} compact={compactMap} />
           {/if}
         </MapLibre>
       </div>
 
       <!-- Итог: расчёт и точки с высотой и скоростью; свёрнут по умолчанию, в заголовке краткая сводка -->
       <div class={card}>
-        {@render head(
-          "summary",
-          $T("widget.mission.summary"),
-          [
+        <SectionHead
+          bind:open={open.summary}
+          title={$T("widget.mission.summary")}
+          summary={[
             `${$T("widget.route.s.points")} ${stats.points}`,
             `${$T("widget.route.s.maxAlt")} ${stats.maxAlt} ${$T("widget.mission.m")}`,
             `${$T("widget.mission.s.path")} ${km(stats.length)}`,
             `${$T("widget.mission.s.time")} ${fmt(stats.timeMin, 0)} ${$T("widget.mission.min")}`,
-          ].join(" · "),
-        )}
+          ].join(" · ")}
+        />
         {#if open.summary}
           <!-- Сверху расчёт, ниже точки на всю ширину: у каждой высота и скорость -->
           <div class="flex flex-col gap-3" transition:slide={{ duration: 150 }}>
@@ -337,7 +320,7 @@
             <span class="text-[11px] font-semibold tracking-wide text-(--faint-color) uppercase">{$T("widget.route.points")}</span>
             {#if route.points.length}
               <!-- Строки переставляются ручкой, как списки в панелях свойств (Dragging) -->
-              <div class="grid {ROW_GRID} items-end gap-x-3 border border-transparent px-2 text-[11px] leading-tight text-(--faint-color)">
+              <div class="grid {ROW_GRID} items-end gap-x-2 border border-transparent px-2 text-[11px] leading-tight text-(--faint-color)">
                 <span></span>
                 <span>№</span>
                 <span use:hint={{ text: $T("widget.route.hint.alt"), enabled: $hints }}>{$T("widget.route.alt")}</span>
@@ -352,7 +335,7 @@
               >
                 {#each route.points as p, i}
                   {@const leg = legs.legs[route.start ? i : i - 1]}
-                  <div id="item-{i}-{listId}" class="grid {ROW_GRID} items-center gap-x-3 px-2 py-1">
+                  <div id="item-{i}-{listId}" class="grid {ROW_GRID} items-center gap-x-2 px-2 py-1">
                     <Dragging
                       wrapperClass="size-5"
                       container={listEl!}

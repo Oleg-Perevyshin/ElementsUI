@@ -133,7 +133,7 @@
 </script>
 
 <div
-  class={twMerge("relative flex w-full flex-col gap-4 rounded-2xl border border-(--hairline-color) bg-(--container-color) p-4", wrapperClass)}
+  class={twMerge("@container relative flex w-full flex-col gap-4 rounded-2xl border border-(--hairline-color) bg-(--container-color) p-4", wrapperClass)}
   style={rootStyle}
 >
   <!-- Заголовок -->
@@ -170,7 +170,7 @@
         </div>
       {:else}
         <!-- Кучи -->
-        <div class="grid gap-3 {heaps.length > 1 ? 'sm:grid-cols-2' : ''}">
+        <div class="grid gap-3 {heaps.length > 1 ? '@sm:grid-cols-2' : ''}">
           {#each heaps as heap (heap.Name)}
             <div
               class="flex flex-col gap-2 rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-3"

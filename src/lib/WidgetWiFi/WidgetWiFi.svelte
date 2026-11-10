@@ -123,7 +123,7 @@
 </script>
 
 <div
-  class={twMerge("relative flex w-full flex-col gap-4 rounded-2xl border border-(--hairline-color) bg-(--container-color) p-4", wrapperClass)}
+  class={twMerge("@container relative flex w-full flex-col gap-4 rounded-2xl border border-(--hairline-color) bg-(--container-color) p-4", wrapperClass)}
   style={rootStyle}
 >
   <!-- Заголовок и переключатель режима -->
@@ -147,7 +147,7 @@
         <!-- Клиентский режим (STA) -->
         <div class="flex flex-col gap-3 rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-3" transition:slide={{ duration: 150 }}>
           <!-- SSID с поиском и пароль - одной строкой по 50%, на узком экране друг под другом -->
-          <div class="grid grid-cols-1 gap-x-4 gap-y-3 sm:grid-cols-2">
+          <div class="grid grid-cols-1 gap-x-4 gap-y-3 @sm:grid-cols-2">
             <div class="flex min-w-0 items-end gap-2">
               <div class="min-w-0 flex-1" use:hint={{ text: $T("widget.wifi.hint.ssid"), enabled: $hints }}>
                 <UI.Select
@@ -178,7 +178,7 @@
             />
           </div>
 
-          <div class="w-full sm:w-72" use:hint={{ text: $T("widget.wifi.hint.ip_mode"), enabled: $hints }}>
+          <div class="w-full @sm:w-72" use:hint={{ text: $T("widget.wifi.hint.ip_mode"), enabled: $hints }}>
             <UI.Select
               wrapperClass="w-full"
               type="buttons"
@@ -190,7 +190,7 @@
           </div>
 
           {#if cfg.StaticIP === 1}
-            <div class="grid grid-cols-1 gap-2 sm:grid-cols-3" transition:slide={{ duration: 150 }}>
+            <div class="grid grid-cols-1 gap-2 @md:grid-cols-3" transition:slide={{ duration: 150 }}>
               <div use:hint={{ text: $T("widget.wifi.hint.ip"), enabled: $hints }}>
                 <UI.Input
                   label={{ name: $T("widget.common.ip") }}
@@ -227,7 +227,7 @@
         <!-- Точка доступа (AP) -->
         <div class="flex flex-col gap-3 rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-3" transition:slide={{ duration: 150 }}>
           <!-- Те же колонки, что у STA: в режиме STA + AP пароли стоят друг под другом -->
-          <div class="grid grid-cols-1 gap-x-4 gap-y-3 sm:grid-cols-2">
+          <div class="grid grid-cols-1 gap-x-4 gap-y-3 @sm:grid-cols-2">
             <div use:hint={{ text: $T("widget.wifi.hint.ap"), enabled: $hints }}>
               <UI.Input label={{ name: $T("widget.wifi.ap_ssid") }} bind:value={cfg.ApSSID} maxlength={32} />
             </div>
@@ -240,7 +240,7 @@
             />
           </div>
 
-          <div class="grid grid-cols-1 gap-2 sm:grid-cols-3">
+          <div class="grid grid-cols-1 gap-2 @md:grid-cols-3">
             <div use:hint={{ text: $T("widget.wifi.hint.ap_ip"), enabled: $hints }}>
               <UI.Input label={{ name: $T("widget.common.ip") }} bind:value={cfg.ApIP} maxlength={15} help={{ regExp: IP_REGEXP }} />
             </div>

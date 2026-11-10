@@ -91,7 +91,7 @@
 </script>
 
 <div
-  class={twMerge("relative flex w-full flex-col gap-4 rounded-2xl border border-(--hairline-color) bg-(--container-color) p-4", wrapperClass)}
+  class={twMerge("@container relative flex w-full flex-col gap-4 rounded-2xl border border-(--hairline-color) bg-(--container-color) p-4", wrapperClass)}
   style={rootStyle}
 >
   <!-- Заголовок -->
@@ -119,7 +119,7 @@
         <div use:hint={{ text: $T("widget.info.hint.sn"), enabled: $hints }}>
           <UI.Input label={{ name: $T("widget.info.sn") }} value={info.DevSN} readonly help={{ copyButton: true }} />
         </div>
-        <div class="grid grid-cols-1 gap-2 sm:grid-cols-3">
+        <div class="grid grid-cols-1 gap-2 @md:grid-cols-3">
           <div use:hint={{ text: $T("widget.info.hint.id"), enabled: $hints }}>
             <UI.Input label={{ name: $T("widget.info.id") }} value={info.DevID} readonly />
           </div>
@@ -130,7 +130,7 @@
             <UI.Input label={{ name: $T("widget.info.runs") }} value={info.RunCnt} readonly />
           </div>
         </div>
-        <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
+        <div class="grid grid-cols-1 gap-2 @sm:grid-cols-2">
           <div use:hint={{ text: $T("widget.info.hint.sta_ip"), enabled: $hints }}>
             <UI.Input label={{ name: $T("widget.info.sta_ip") }} value={info.StaIP} readonly />
           </div>
@@ -142,7 +142,7 @@
 
       <!-- Редактируемые настройки -->
       <div class="flex flex-col gap-3 rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-3">
-        <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
+        <div class="grid grid-cols-1 gap-2 @sm:grid-cols-2">
           <div use:hint={{ text: $T("widget.info.hint.name"), enabled: $hints }}>
             <UI.Input
               label={{ name: $T("widget.info.name") }}

@@ -10,7 +10,7 @@
   import ColorPicker from "./ColorPicker.svelte"
   import WidgetHeader from "../WidgetHeader.svelte"
   import { hint, hintsSetting } from "../hints"
-  import ArrowIcon from "../libIcons/ArrowIcon.svelte"
+  import SectionHead from "../SectionHead.svelte"
   import { accentStyle } from "../accent"
   import { readPersistedCollapsed, writePersistedCollapsed } from "../widgetCollapse"
 
@@ -99,7 +99,7 @@
 </script>
 
 <div
-  class={twMerge("relative flex w-full flex-col gap-4 rounded-2xl border border-(--hairline-color) bg-(--container-color) p-4", wrapperClass)}
+  class={twMerge("@container relative flex w-full flex-col gap-4 rounded-2xl border border-(--hairline-color) bg-(--container-color) p-4", wrapperClass)}
   style={rootStyle}
 >
   <!-- Заголовок: образец текущего цвета -->
@@ -151,25 +151,12 @@
 
       <!-- Оборудование: свёрнуто по умолчанию, сохраняется одним пакетом, лента перезапускается -->
       <div class="flex flex-col gap-3 rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-3">
-        <button
-          type="button"
-          class="flex w-full cursor-pointer items-center justify-between gap-2 border-none bg-transparent p-0 text-left"
-          aria-expanded={hardwareOpen || isDirty}
-          onclick={() => (hardwareOpen = !hardwareOpen)}
-        >
-          <span class="text-[12px] font-semibold text-(--muted-color)">
-            {$T("widget.rgb.hardware")}
-            <span class="font-normal text-(--faint-color)">
-              · {hardware.Count} LED · {MODELS[hardware.Model]?.name ?? "-"} · {ORDERS[hardware.Order]?.name ?? "-"}
-            </span>
-          </span>
-          <span
-            class="flex size-3.5 shrink-0 text-(--faint-color) transition-transform duration-150 [&_svg]:h-full [&_svg]:w-full"
-            style="transform: rotate({hardwareOpen || isDirty ? 90 : 0}deg)"
-          >
-            <ArrowIcon />
-          </span>
-        </button>
+        <SectionHead
+          title={$T("widget.rgb.hardware")}
+          summary={`${hardware.Count} LED · ${MODELS[hardware.Model]?.name ?? "-"} · ${ORDERS[hardware.Order]?.name ?? "-"}`}
+          open={hardwareOpen || isDirty}
+          onToggle={() => (hardwareOpen = !hardwareOpen)}
+        />
         {#if hardwareOpen || isDirty}
           <div class="flex flex-col gap-3" transition:slide={{ duration: 150 }}>
             <div use:hint={{ text: $T("widget.rgb.hint.count"), enabled: $hints }}>

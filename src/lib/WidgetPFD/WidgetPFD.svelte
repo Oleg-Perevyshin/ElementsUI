@@ -278,8 +278,8 @@
   let width = $state(600)
   let compact = $derived(width < 440)
 
-  /* Геометрия прибора (viewBox 600×320) */
-  const VW = 600
+  /* Геометрия прибора: viewBox 600×320; в компактном режиме ширина viewBox - фактическая ширина прибора (не уже 300), чтобы он рисовался 1:1, а не сжимался */
+  let VW = $derived(compact ? Math.max(300, Math.round(width)) : 600)
   const HH = 270
   let HX = $derived(compact ? 0 : 80)
   let HW = $derived(compact ? VW : 440)
@@ -462,7 +462,7 @@
 </script>
 
 <div
-  class={twMerge("relative flex w-full flex-col gap-4 rounded-2xl border border-(--hairline-color) bg-(--container-color) p-4", wrapperClass)}
+  class={twMerge("@container relative flex w-full flex-col gap-4 rounded-2xl border border-(--hairline-color) bg-(--container-color) p-4", wrapperClass)}
   style={rootStyle}
 >
   <WidgetHeader icon={PlaneIcon} label={label?.name || $T("pfd.title")} bind:collapsed {hints}>

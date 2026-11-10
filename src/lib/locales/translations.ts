@@ -385,6 +385,8 @@ const translations = {
   "widget.mission.lha": { ru: "л/га", en: "l/ha", zh: "升/公顷" },
   "widget.mission.editField": { ru: "Редактор полей", en: "Field editor", zh: "田块编辑" },
   "widget.mission.editHoles": { ru: "Редактор запретных зон", en: "No-fly zone editor", zh: "禁飞区编辑" },
+  "widget.mission.editFieldShort": { ru: "Поля", en: "Fields", zh: "田块" },
+  "widget.mission.editHolesShort": { ru: "Запретные зоны", en: "No-fly zones", zh: "禁飞区" },
   "widget.mission.close": { ru: "Замкнуть", en: "Close", zh: "闭合" },
   "widget.mission.settings": { ru: "Маршрут и внесение", en: "Route and application", zh: "航线与喷洒" },
   "widget.mission.s.angle": { ru: "угол", en: "angle", zh: "角度" },
@@ -462,6 +464,7 @@ const translations = {
   "widget.route.title": { ru: "Планировщик маршрута", en: "Route planner", zh: "航线规划" },
   "widget.route.pts": { ru: "т.", en: "pts", zh: "点" },
   "widget.route.add": { ru: "Редактор точек", en: "Waypoint editor", zh: "航点编辑" },
+  "widget.route.addShort": { ru: "Точки", en: "Waypoints", zh: "航点" },
   "widget.route.helpEmpty": {
     ru: "Нажмите «Изменить точки» и кликайте по карте по порядку облёта.",
     en: "Press “Edit points” and click the map in flight order.",
