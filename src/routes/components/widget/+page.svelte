@@ -2,12 +2,13 @@
   import { Language } from "#lib/locales/i18n.ts"
   import { localizeDeep } from "#lib/locales/localize.ts"
   import { type UIComponent } from "#lib"
+  import { applyPropertyChange } from "#lib/propsEditor.ts"
   import ComponentExample from "../../ComponentExample.svelte"
   import { ICONS_ARRAY } from "#lib/icons.ts"
   import { type IWidgetProps } from "#lib/types.ts"
   import Widget from "#lib/Widget/Widget.svelte"
   import WidgetProps from "#lib/Widget/WidgetProps.svelte"
-  import { formatObjectToString, RenderMarkdown, applyChange } from "../../common"
+  import { formatObjectToString, RenderMarkdown } from "../../common"
   import readmeRaw from "#lib/Widget/README.md?raw"
 
   let readmeHtml = $state("")
@@ -15,7 +16,7 @@
     RenderMarkdown(readmeRaw).then((html) => (readmeHtml = html))
   })
 
-  let widgetComponent: UIComponent = $state({
+  let widgetComponent: UIComponent<"Widget"> = $state({
     id: crypto.randomUUID(),
     type: "Widget",
     access: "full",
@@ -51,15 +52,12 @@ ${formatObjectToString(widgetComponent.properties as IWidgetProps)}
     <div class="m-auto size-70">
       <Widget
         {...localizeDeep(widgetComponent.properties, $Language) as IWidgetProps}
-        onUpdate={(value) => (widgetComponent = applyChange(widgetComponent, { properties: { value } }))}
+        onUpdate={(value) => (widgetComponent = applyPropertyChange(widgetComponent, { properties: { value } }))}
       />
     </div>
   {/snippet}
   {#snippet componentProps()}
-    <WidgetProps
-      component={widgetComponent as UIComponent & { properties: Partial<IWidgetProps> }}
-      onPropertyChange={(updates) => (widgetComponent = applyChange(widgetComponent, updates))}
-    />
+    <WidgetProps component={widgetComponent} onPropertyChange={(updates) => (widgetComponent = applyPropertyChange(widgetComponent, updates))} />
   {/snippet}
   {#snippet examples()}
     <div class="flex">

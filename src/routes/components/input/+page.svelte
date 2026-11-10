@@ -2,10 +2,11 @@
   import { Language } from "#lib/locales/i18n.ts"
   import { localizeDeep } from "#lib/locales/localize.ts"
   import type { IInputProps, UIComponent } from "#lib"
+  import { applyPropertyChange } from "#lib/propsEditor.ts"
   import ComponentExample from "../../ComponentExample.svelte"
   import Input from "#lib/Input/Input.svelte"
   import InputProps from "#lib/Input/InputProps.svelte"
-  import { formatObjectToString, RenderMarkdown, applyChange } from "../../common"
+  import { formatObjectToString, RenderMarkdown } from "../../common"
   import readmeRaw from "#lib/Input/README.md?raw"
 
   let readmeHtml = $state("")
@@ -13,7 +14,7 @@
     RenderMarkdown(readmeRaw).then((html) => (readmeHtml = html))
   })
 
-  let inputComponent: UIComponent = $state({
+  let inputComponent: UIComponent<"Input"> = $state({
     id: crypto.randomUUID(),
     type: "Input",
     access: "full",
@@ -48,15 +49,12 @@
     <div>
       <Input
         {...localizeDeep(inputComponent.properties, $Language) as IInputProps}
-        onUpdate={(value) => (inputComponent = applyChange(inputComponent, { properties: { value } }))}
+        onUpdate={(value) => (inputComponent = applyPropertyChange(inputComponent, { properties: { value } }))}
       />
     </div>
   {/snippet}
   {#snippet componentProps()}
-    <InputProps
-      component={inputComponent as UIComponent & { properties: Partial<IInputProps> }}
-      onPropertyChange={(updates) => (inputComponent = applyChange(inputComponent, updates))}
-    />
+    <InputProps component={inputComponent} onPropertyChange={(updates) => (inputComponent = applyPropertyChange(inputComponent, updates))} />
   {/snippet}
   {#snippet examples()}
     <div class="flex w-full flex-col items-center gap-2">

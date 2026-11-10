@@ -19,7 +19,7 @@
     component,
     onPropertyChange,
   }: {
-    component: UIComponent & { properties: Partial<ISelectProps<unknown, boolean>> }
+    component: UIComponent<"Select">
     onPropertyChange: (change: PropertyChange<ISelectProps<unknown, boolean>>) => void
   } = $props()
 

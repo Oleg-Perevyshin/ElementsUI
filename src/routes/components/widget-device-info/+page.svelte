@@ -2,11 +2,12 @@
   import { Language } from "#lib/locales/i18n.ts"
   import { localizeDeep } from "#lib/locales/localize.ts"
   import { type UIComponent } from "#lib"
+  import { applyPropertyChange } from "#lib/propsEditor.ts"
   import ComponentExample from "../../ComponentExample.svelte"
   import { type IWidgetDeviceInfoProps } from "#lib/types.ts"
   import WidgetDeviceInfo from "#lib/WidgetDeviceInfo/WidgetDeviceInfo.svelte"
   import WidgetDeviceInfoProps from "#lib/WidgetDeviceInfo/WidgetDeviceInfoProps.svelte"
-  import { formatObjectToString, RenderMarkdown, applyChange } from "../../common"
+  import { formatObjectToString, RenderMarkdown } from "../../common"
   import readmeRaw from "#lib/WidgetDeviceInfo/README.md?raw"
 
   let readmeHtml = $state("")
@@ -27,7 +28,7 @@
     ApIP: "192.168.4.1",
   }
 
-  let deviceInfoComponent: UIComponent = $state({
+  let deviceInfoComponent: UIComponent<"WidgetDeviceInfo"> = $state({
     id: crypto.randomUUID(),
     type: "WidgetDeviceInfo",
     access: "full",
@@ -63,8 +64,8 @@ onFactoryReset={handleFactoryReset}
   {/snippet}
   {#snippet componentProps()}
     <WidgetDeviceInfoProps
-      component={deviceInfoComponent as UIComponent & { properties: Partial<IWidgetDeviceInfoProps> }}
-      onPropertyChange={(updates) => (deviceInfoComponent = applyChange(deviceInfoComponent, updates))}
+      component={deviceInfoComponent}
+      onPropertyChange={(updates) => (deviceInfoComponent = applyPropertyChange(deviceInfoComponent, updates))}
     />
   {/snippet}
   {#snippet examples()}

@@ -34,22 +34,22 @@
   /* "Мастер-цвет" виджета - переопределяет --accent-color/--accent-soft на корне, дальше это штатный каскад переменных, на котором и так построены компоненты библиотеки: значок, режимы STA/AP, фокус-кольцо у полей и кнопка "Сохранить" (маркер bg-accent) перекрашиваются вместе, одним источником истины; красной остаётся только кнопка подтверждения режима AP. */
   const rootStyle = $derived(accentStyle(accent))
 
-  let cfg: IWidgetWiFiConfig = $state(
-    value ?? {
-      WiFiMode: 1,
-      StaSSID: "",
-      StaPSK: "",
-      StaticIP: 0,
-      StaIP: "",
-      StaMS: "",
-      StaGW: "",
-      ApSSID: "",
-      ApPSK: "",
-      ApIP: "192.168.108.1",
-      ApMS: "255.255.255.0",
-      ApGW: "192.168.108.1",
-    },
-  )
+  /* Поля, которых нет в value, - пустые */
+  const EMPTY: IWidgetWiFiConfig = {
+    WiFiMode: 1,
+    StaSSID: "",
+    StaPSK: "",
+    StaticIP: 0,
+    StaIP: "",
+    StaMS: "",
+    StaGW: "",
+    ApSSID: "",
+    ApPSK: "",
+    ApIP: "192.168.108.1",
+    ApMS: "255.255.255.0",
+    ApGW: "192.168.108.1",
+  }
+  let cfg: IWidgetWiFiConfig = $state({ ...EMPTY, ...value })
 
   const ALL_MODE_OPTIONS: IOption<number>[] = [
     { id: "sta", name: "STA", value: 1 },
@@ -83,7 +83,7 @@
     }
   }
 
-  /* Сворачивание тела виджета по клику на значок/заголовок (как аккордеон) - переключатель режима в шапке кликом не триггерит, только сама кнопка значок+заголовок (см. WidgetHeader.svelte). collapsed - bindable: в конструкторе родитель биндит его на component.properties.collapsed, клик по шапке сразу сохраняется в GUI (как isOpen у Accordion в ConstructorUI.svelte). На реальном устройстве (GUIPreview) проп передаётся однонаправленно - локальные изменения не утекают наверх, поверх дефолта только переживают перезагрузку через localStorage (persistKey). */
+  /* Сворачивание тела виджета по клику на значок/заголовок (как аккордеон) - переключатель режима в шапке кликом не триггерит, только сама кнопка значок+заголовок (см. WidgetHeader.svelte). collapsed - bindable: в конструкторе родитель биндит его на component.properties.collapsed, клик по шапке сразу сохраняется в GUI (как isOpen у Accordion). В GUIRenderer проп передаётся однонаправленно - локальные изменения не утекают наверх, поверх дефолта только переживают перезагрузку через localStorage (persistKey). */
   /* Выбор пользователя в этом браузере применяется до первой отрисовки, без мигания; значение из GUI запоминается, чтобы его смена отменяла старый выбор */
   const guiCollapsed = untrack(() => collapsed)
   collapsed = readPersistedCollapsed(
@@ -96,12 +96,11 @@
   let savedSnapshot = $state(untrack(() => JSON.stringify(cfg)))
   let isDirty = $derived(JSON.stringify(cfg) !== savedSnapshot)
 
-  /* value - не однократный дефолт, а живой поток данных с устройства (GUIPreview.svelte пересчитывает его на каждое обновление DeviceStore). Подхватываем свежие данные, только если у пользователя нет несохранённых правок - иначе входящее значение затирало бы то, что он ещё не успел сохранить. untrack(isDirty) - чтобы этот эффект не перезапускался на каждое изменение cfg от самого пользователя, только на смену value. */
+  /* value - не однократный дефолт, а живой поток данных с устройства (GUIRenderer пересчитывает его на каждое обновление значений). Подхватываем свежие данные, только если у пользователя нет несохранённых правок - иначе входящее значение затирало бы то, что он ещё не успел сохранить. untrack(isDirty) - чтобы этот эффект не перезапускался на каждое изменение cfg от самого пользователя, только на смену value. */
   $effect(() => {
     if (value !== undefined && !untrack(() => isDirty)) {
-      const snapshot = JSON.stringify(value)
-      cfg = value
-      savedSnapshot = snapshot
+      cfg = { ...EMPTY, ...value }
+      savedSnapshot = JSON.stringify(cfg)
     }
   })
 

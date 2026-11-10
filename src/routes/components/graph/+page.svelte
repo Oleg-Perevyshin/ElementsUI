@@ -2,10 +2,11 @@
   import { Language } from "#lib/locales/i18n.ts"
   import { localizeDeep } from "#lib/locales/localize.ts"
   import { type IGraphProps, type UIComponent } from "#lib"
+  import { applyPropertyChange } from "#lib/propsEditor.ts"
   import ComponentExample from "../../ComponentExample.svelte"
   import Graph from "#lib/Graph/Graph.svelte"
   import GraphProps from "#lib/Graph/GraphProps.svelte"
-  import { formatObjectToString, RenderMarkdown, applyChange } from "../../common"
+  import { formatObjectToString, RenderMarkdown } from "../../common"
   import readmeRaw from "#lib/Graph/README.md?raw"
 
   let readmeHtml = $state("")
@@ -32,7 +33,7 @@
     },
   ]
 
-  let graphComponent: UIComponent = $state({
+  let graphComponent: UIComponent<"Graph"> = $state({
     id: crypto.randomUUID(),
     type: "Graph",
     access: "full",
@@ -59,10 +60,7 @@ ${formatObjectToString(graphComponent.properties as IGraphProps)}
     <Graph {...localizeDeep(graphComponent.properties, $Language) as IGraphProps} />
   {/snippet}
   {#snippet componentProps()}
-    <GraphProps
-      component={graphComponent as UIComponent & { properties: Partial<IGraphProps> }}
-      onPropertyChange={(updates) => (graphComponent = applyChange(graphComponent, updates))}
-    />
+    <GraphProps component={graphComponent} onPropertyChange={(updates) => (graphComponent = applyPropertyChange(graphComponent, updates))} />
   {/snippet}
   {#snippet examples()}
     <Graph label={{ name: "Пример компонента график" }} streamingData={{ data: dataForGraph }} isTest={true} />

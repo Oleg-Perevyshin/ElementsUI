@@ -14,7 +14,7 @@
     component,
     onPropertyChange,
   }: {
-    component: UIComponent & { properties: Partial<IWidgetProps> }
+    component: UIComponent<"Widget">
     onPropertyChange: (change: PropertyChange<IWidgetProps>) => void
   } = $props()
 

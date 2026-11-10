@@ -2,10 +2,11 @@
   import { Language } from "#lib/locales/i18n.ts"
   import { localizeDeep } from "#lib/locales/localize.ts"
   import { type ISliderProps, type UIComponent } from "#lib"
+  import { applyPropertyChange } from "#lib/propsEditor.ts"
   import ComponentExample from "../../ComponentExample.svelte"
   import Slider from "#lib/Slider/Slider.svelte"
   import SliderProps from "#lib/Slider/SliderProps.svelte"
-  import { formatObjectToString, RenderMarkdown, applyChange } from "../../common"
+  import { formatObjectToString, RenderMarkdown } from "../../common"
   import readmeRaw from "#lib/Slider/README.md?raw"
 
   let readmeHtml = $state("")
@@ -13,7 +14,7 @@
     RenderMarkdown(readmeRaw).then((html) => (readmeHtml = html))
   })
 
-  let sliderComponent: UIComponent = $state({
+  let sliderComponent: UIComponent<"Slider"> = $state({
     id: crypto.randomUUID(),
     type: "Slider",
     access: "full",
@@ -42,14 +43,11 @@ ${formatObjectToString(sliderComponent.properties as ISliderProps)}
   {#snippet component()}
     <Slider
       {...localizeDeep(sliderComponent.properties, $Language) as ISliderProps}
-      onUpdate={(value: number | [number, number]) => (sliderComponent = applyChange(sliderComponent, { properties: { value } }))}
+      onUpdate={(value: number | [number, number]) => (sliderComponent = applyPropertyChange(sliderComponent, { properties: { value } }))}
     />
   {/snippet}
   {#snippet componentProps()}
-    <SliderProps
-      component={sliderComponent as UIComponent & { properties: Partial<ISliderProps> }}
-      onPropertyChange={(updates) => (sliderComponent = applyChange(sliderComponent, updates))}
-    />
+    <SliderProps component={sliderComponent} onPropertyChange={(updates) => (sliderComponent = applyPropertyChange(sliderComponent, updates))} />
   {/snippet}
   {#snippet examples()}
     <div class="flex gap-2">

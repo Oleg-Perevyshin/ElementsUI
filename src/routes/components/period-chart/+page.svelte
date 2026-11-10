@@ -2,10 +2,11 @@
   import { Language } from "#lib/locales/i18n.ts"
   import { localizeDeep } from "#lib/locales/localize.ts"
   import { type IPeriodChartProps, type IPeriodChartLevel, type UIComponent } from "#lib"
+  import { applyPropertyChange } from "#lib/propsEditor.ts"
   import ComponentExample from "../../ComponentExample.svelte"
   import PeriodChart from "#lib/PeriodChart/PeriodChart.svelte"
   import PeriodChartProps from "#lib/PeriodChart/PeriodChartProps.svelte"
-  import { formatObjectToString, RenderMarkdown, applyChange } from "../../common"
+  import { formatObjectToString, RenderMarkdown } from "../../common"
   import readmeRaw from "#lib/PeriodChart/README.md?raw"
 
   let readmeHtml = $state("")
@@ -38,7 +39,7 @@
   ]
   const bigLevels: IPeriodChartLevel[] = [{ name: "Сутки", data: Array.from({ length: 24 }, () => Math.round(Math.random() * 2_400_000)) }]
 
-  let periodChartComponent: UIComponent = $state({
+  let periodChartComponent: UIComponent<"PeriodChart"> = $state({
     id: crypto.randomUUID(),
     type: "PeriodChart",
     access: "full",
@@ -66,8 +67,8 @@ ${formatObjectToString(periodChartComponent.properties as IPeriodChartProps)}
   {/snippet}
   {#snippet componentProps()}
     <PeriodChartProps
-      component={periodChartComponent as UIComponent & { properties: Partial<IPeriodChartProps> }}
-      onPropertyChange={(updates) => (periodChartComponent = applyChange(periodChartComponent, updates))}
+      component={periodChartComponent}
+      onPropertyChange={(updates) => (periodChartComponent = applyPropertyChange(periodChartComponent, updates))}
     />
   {/snippet}
   {#snippet examples()}

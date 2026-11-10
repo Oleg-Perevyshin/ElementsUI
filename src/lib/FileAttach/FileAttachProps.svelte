@@ -11,7 +11,7 @@
     component,
     onPropertyChange,
   }: {
-    component: UIComponent & { properties: Partial<IFileAttachProps> }
+    component: UIComponent<"FileAttach">
     onPropertyChange: (change: PropertyChange<IFileAttachProps>) => void
   } = $props()
 

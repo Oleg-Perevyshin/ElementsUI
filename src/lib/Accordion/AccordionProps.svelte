@@ -13,7 +13,7 @@
     component,
     onPropertyChange,
   }: {
-    component: UIComponent & { properties: Partial<IAccordionProps> }
+    component: UIComponent<"Accordion">
     onPropertyChange: (change: PropertyChange<IAccordionProps>) => void
   } = $props()
 

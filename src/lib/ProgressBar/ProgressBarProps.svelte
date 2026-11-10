@@ -19,7 +19,7 @@
     component,
     onPropertyChange,
   }: {
-    component: UIComponent & { properties: Partial<IProgressBarProps> }
+    component: UIComponent<"ProgressBar">
     onPropertyChange: (change: PropertyChange<IProgressBarProps>) => void
   } = $props()
 

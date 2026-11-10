@@ -13,7 +13,7 @@
     component,
     onPropertyChange,
   }: {
-    component: UIComponent & { properties: Partial<IWidgetPFDProps> }
+    component: UIComponent<"WidgetPFD">
     onPropertyChange: (change: PropertyChange<IWidgetPFDProps>) => void
   } = $props()
 

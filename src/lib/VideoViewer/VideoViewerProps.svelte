@@ -11,7 +11,7 @@
     component,
     onPropertyChange,
   }: {
-    component: UIComponent & { properties: Partial<IVideoViewerProps> }
+    component: UIComponent<"VideoViewer">
     onPropertyChange: (change: PropertyChange<IVideoViewerProps>) => void
   } = $props()
 

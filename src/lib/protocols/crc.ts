@@ -8,3 +8,14 @@ export const crc16Kermit = (crc: number, bytes: Uint8Array | number[]): number =
   }
   return crc & 0xffff
 }
+
+/* CRC-32 (IEEE, zlib): poly 0xEDB88320 reflected, init и xorout 0xFFFFFFFF, check("123456789") = 0xCBF43926 - целостность файла при обмене SET FS */
+const CRC32_TABLE = Uint32Array.from({ length: 256 }, (_, n) => {
+  for (let bit = 0; bit < 8; bit++) n = n & 1 ? (n >>> 1) ^ 0xedb88320 : n >>> 1
+  return n >>> 0
+})
+export const crc32 = (bytes: Uint8Array): number => {
+  let crc = 0xffffffff
+  for (const byte of bytes) crc = CRC32_TABLE[(crc ^ byte) & 0xff] ^ (crc >>> 8)
+  return (crc ^ 0xffffffff) >>> 0
+}

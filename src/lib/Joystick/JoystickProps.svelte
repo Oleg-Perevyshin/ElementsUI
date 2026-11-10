@@ -12,7 +12,7 @@
     component,
     onPropertyChange,
   }: {
-    component: UIComponent & { properties: Partial<IJoystickProps> }
+    component: UIComponent<"Joystick">
     onPropertyChange: (change: PropertyChange<IJoystickProps>) => void
   } = $props()
 

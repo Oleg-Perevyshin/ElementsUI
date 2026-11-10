@@ -3,6 +3,7 @@
   import { localizeDeep } from "#lib/locales/localize.ts"
   import { type ITabsProps, type UIComponent } from "#lib"
   import { TabsProps } from "#lib/constructor.ts"
+  import { applyPropertyChange } from "#lib/propsEditor.ts"
   import ComponentExample from "../../ComponentExample.svelte"
   import Input from "#lib/Input/Input.svelte"
   import IconGripVerticalLeft from "#lib/libIcons/IconGripVerticalLeft.svelte"
@@ -10,7 +11,7 @@
   import Tabs from "#lib/Tabs/Tabs.svelte"
   import IconGripHorizontalDown from "../../../appIcons/IconGripHorizontalDown.svelte"
   import IconGripHorizontalUp from "../../../appIcons/IconGripHorizontalUp.svelte"
-  import { formatObjectToString, RenderMarkdown, applyChange } from "../../common"
+  import { formatObjectToString, RenderMarkdown } from "../../common"
   import readmeRaw from "#lib/Tabs/README.md?raw"
 
   let readmeHtml = $state("")
@@ -21,7 +22,7 @@
   /* Многоязычный текст для демо: в данных - { ru, en, zh }, тип поля - string (разрешается localizeDeep) */
   const L = (ru: string, en: string, zh: string) => ({ ru, en, zh }) as unknown as string
 
-  let tabsComponent: UIComponent = $state({
+  let tabsComponent: UIComponent<"Tabs"> = $state({
     id: crypto.randomUUID(),
     type: "Tabs",
     access: "full",
@@ -60,17 +61,14 @@ ${formatObjectToString(tabsComponent.properties as ITabsProps)}
         {...tabsProps}
         bind:activeTab={
           () => (tabsComponent.properties as ITabsProps).activeTab ?? 0,
-          (activeTab) => (tabsComponent = applyChange(tabsComponent, { properties: { activeTab } }))
+          (activeTab) => (tabsComponent = applyPropertyChange(tabsComponent, { properties: { activeTab } }))
         }
         children={Tab}
       />
     </div>
   {/snippet}
   {#snippet componentProps()}
-    <TabsProps
-      component={tabsComponent as UIComponent & { properties: Partial<ITabsProps> }}
-      onPropertyChange={(updates) => (tabsComponent = applyChange(tabsComponent, updates))}
-    />
+    <TabsProps component={tabsComponent} onPropertyChange={(updates) => (tabsComponent = applyPropertyChange(tabsComponent, updates))} />
   {/snippet}
   {#snippet examples()}
     <div class="flex flex-col gap-5">

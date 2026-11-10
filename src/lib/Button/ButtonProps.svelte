@@ -18,7 +18,7 @@
     component,
     onPropertyChange,
   }: {
-    component: UIComponent & { properties: Partial<IButtonProps> }
+    component: UIComponent<"Button">
     onPropertyChange: (change: PropertyChange<IButtonProps>) => void
   } = $props()
 

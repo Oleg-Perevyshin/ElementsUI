@@ -12,7 +12,7 @@
     component,
     onPropertyChange,
   }: {
-    component: UIComponent & { properties: Partial<IWidgetRGBStripProps> }
+    component: UIComponent<"WidgetRGBStrip">
     onPropertyChange: (change: PropertyChange<IWidgetRGBStripProps>) => void
   } = $props()
 

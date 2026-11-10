@@ -2,73 +2,58 @@ import type { Snippet } from "svelte"
 import type { AccentColor } from "./accent"
 import type { IMissionPlan } from "./WidgetMap/mission/plan"
 import type { IRoutePlan } from "./WidgetMap/mission/route"
+import type { IWidgetWiFiConfig, IWidgetDeviceInfoConfig, IWidgetRGBStripConfig, IWidgetPFDData, IWidgetMapData } from "./gui"
 
 export type { AccentColor } from "./accent"
 export type { PropertyChange } from "./propsEditor"
+export type { IWidgetWiFiConfig, IWidgetDeviceInfoConfig, IWidgetRGBStripConfig, IWidgetPFDData, IWidgetMapData } from "./gui"
 
 /* Иконка: SVG-разметка или компонент */
 export type IconSource = ConstructorOfATypedSvelteComponent | string
 
-/* Интерфейс полного компонента */
-export interface UIComponent {
-  id: string
-  name?: string
-  access?: "full" | "viewOnly" | "hidden"
-  type:
-    | "Accordion"
-    | "Button"
-    | "Divider"
-    | "FileAttach"
-    | "Graph"
-    | "Input"
-    | "Joystick"
-    | "PeriodChart"
-    | "ProgressBar"
-    | "Select"
-    | "Slider"
-    | "Switch"
-    | "Table"
-    | "Tabs"
-    | "TextField"
-    | "VideoViewer"
-    | "Widget"
-    | "WidgetWiFi"
-    | "WidgetDeviceInfo"
-    | "WidgetFileSystem"
-    | "WidgetStackInfo"
-    | "WidgetRGBStrip"
-    | "WidgetPFD"
-    | "WidgetMap"
-
-  properties:
-    | IAccordionProps
-    | IButtonProps
-    | IDividerProps
-    | IFileAttachProps
-    | IGraphProps
-    | IInputProps
-    | IJoystickProps
-    | IPeriodChartProps
-    | IProgressBarProps
-    | ISelectProps
-    | ISliderProps
-    | ISwitchProps
-    | ITableProps<object>
-    | ITabsProps
-    | ITextFieldProps
-    | IWidgetProps
-    | IWidgetWiFiProps
-    | IWidgetDeviceInfoProps
-    | IWidgetFileSystemProps
-    | IWidgetStackInfoProps
-    | IWidgetRGBStripProps
-    | IWidgetPFDProps
-    | IWidgetMapProps
-
-  position: Required<Position>
-  parentId: string
-  eventHandler?: IUIComponentHandler
+/* Свойства компонента по типу GUI - источник типа UIComponent и реестра COMPONENTS */
+export interface UIComponentPropsMap {
+  Accordion: IAccordionProps
+  Button: IButtonProps
+  Divider: IDividerProps
+  FileAttach: IFileAttachProps
+  Graph: IGraphProps
+  Input: IInputProps
+  Joystick: IJoystickProps
+  PeriodChart: IPeriodChartProps
+  ProgressBar: IProgressBarProps
+  Select: ISelectProps<unknown, boolean>
+  Slider: ISliderProps
+  Switch: ISwitchProps
+  Table: ITableProps<Record<string, unknown>>
+  Tabs: ITabsProps
+  TextField: ITextFieldProps
+  VideoViewer: IVideoViewerProps
+  Widget: IWidgetProps
+  WidgetWiFi: IWidgetWiFiProps
+  WidgetDeviceInfo: IWidgetDeviceInfoProps
+  WidgetFileSystem: IWidgetFileSystemProps
+  WidgetStackInfo: IWidgetStackInfoProps
+  WidgetRGBStrip: IWidgetRGBStripProps
+  WidgetPFD: IWidgetPFDProps
+  WidgetMap: IWidgetMapProps
 }
+
+export type UIType = keyof UIComponentPropsMap
+
+/* Компонент GUI: по type сужаются properties (component.type === "Button" - properties: IButtonProps) */
+export type UIComponent<K extends UIType = UIType> = {
+  [Type in K]: {
+    id: string
+    name?: string
+    access?: "full" | "viewOnly" | "hidden"
+    type: Type
+    properties: UIComponentPropsMap[Type]
+    position: Required<Position>
+    parentId: string
+    eventHandler?: IUIComponentHandler
+  }
+}[K]
 
 /* Координаты и размер компонента */
 export interface Position {
@@ -561,29 +546,13 @@ export interface IWidgetProps {
   onInput?: (value: number) => void
 }
 
-/* Смарт-виджеты - составные карточки конструктора с ФИКСИРОВАННЫМ набором полей устройства (в отличие от примитивов, где переменную выбирает пользователь через Select). Поля соответствуют реальной прошивочной конвенции (group prefix + предопределённые имена, как в config_service ProdFactory-ESP) - компонент ничего не знает про DeviceStore/WebSocket, только value/onSave: владелец рендера (GUIPreview.svelte) сам читает/пишет нужные ключи единым пакетом. */
-export interface IWidgetWiFiConfig {
-  WiFiMode: number /* 0=NULL, 1=STA, 2=AP, 3=STA+AP - как esp_wifi wifi_mode_t */
-  StaSSID: string
-  StaPSK: string
-  StaticIP: number /* 0=DHCP, 1=Static */
-  StaIP: string
-  StaMS: string
-  StaGW: string
-  ApSSID: string
-  ApPSK: string
-  ApIP: string
-  ApMS: string
-  ApGW: string
-}
-
 export interface IWidgetWiFiProps {
   /* В отличие от примитивов id - не биндинг одной переменной, а префикс прошивочной группы (обычно "CFG"), с которой работает весь набор полей виджета разом (см. keys ниже) */
   id?: string
   wrapperClass?: string
   accent?: AccentColor
   label?: { name?: string }
-  value?: IWidgetWiFiConfig
+  value?: Partial<IWidgetWiFiConfig>
   /* Переопределение имени поля устройства для каждого ключа IWidgetWiFiConfig - по умолчанию совпадает с именем самого ключа (WiFiMode, StaSSID, ...), меняется только если у прошивки другая конвенция именования */
   keys?: Partial<Record<keyof IWidgetWiFiConfig, string>>
   /* Команда сканирования сетей - по умолчанию Header: GET, Argument: APsList */
@@ -598,27 +567,13 @@ export interface IWidgetWiFiProps {
   onSave?: (config: IWidgetWiFiConfig) => void
 }
 
-export interface IWidgetDeviceInfoConfig {
-  DevSN: string
-  DevID: string
-  DevFW: number
-  RunCnt: number
-  DevName: string
-  HostName: string
-  WebUser: string
-  WebPsw: string
-  /* Текущие IP-адреса устройства в обоих режимах WiFi (STA/AP) - только для отображения, реальное конфигурирование сети происходит в WidgetWiFi */
-  StaIP: string
-  ApIP: string
-}
-
 export interface IWidgetDeviceInfoProps {
   /* Префикс прошивочной группы (обычно "CFG"), с которой работает весь набор полей виджета разом */
   id?: string
   wrapperClass?: string
   accent?: AccentColor
   label?: { name?: string }
-  value?: IWidgetDeviceInfoConfig
+  value?: Partial<IWidgetDeviceInfoConfig>
   /* Переопределение имени поля устройства для каждого ключа IWidgetDeviceInfoConfig - по умолчанию совпадает с именем самого ключа (DevSN, DevName, ...) */
   keys?: Partial<Record<keyof IWidgetDeviceInfoConfig, string>>
   /* Команда перезагрузки - по умолчанию Header: SET, Argument: Restart */
@@ -673,9 +628,9 @@ export interface IWidgetFileSystemProps {
   persistKey?: string
   onRefresh?: () => void
   onDelete?: (name: string) => void
-  /* Скачивание файла: протокол SET FS с Op DownloadStart/DownloadChunk/DownloadDone и сохранение - у вызывающего; виджет только отдаёт имя и ждёт завершения */
+  /* Скачивание файла (createFsTransfer, GUIRenderer): виджет только отдаёт имя и ждёт завершения */
   onDownload?: (name: string) => void | Promise<void>
-  /* Протокол закачки (SET FS с Op UploadStart/UploadChunk/UploadDone) реализует вызывающий - виджет только отдаёт выбранный файл */
+  /* Закачка файла (createFsTransfer, GUIRenderer): виджет только отдаёт выбранный файл */
   onUpload?: (file: File) => void | Promise<void>
 }
 
@@ -720,17 +675,6 @@ export interface IWidgetStackInfoProps {
   onRefresh?: () => void
 }
 
-/* Адресная лента - поля группы LST в том виде, в каком их отдаёт RGB_Strip (ProdFactory-ESP) */
-export interface IWidgetRGBStripConfig {
-  Color: number[] /* [R, G, B, W] 0..255; W используется только моделью SK6812 */
-  Effect: number /* 0 статичный, 1 радуга, 2 дыхание, 3 палитра, 4 комета, 5 мерцание, 6 огонь, 7 бегущие огни */
-  Speed: number /* 0..10, 0 - пауза эффекта */
-  Count: number /* количество светодиодов 1..MaxCount */
-  Model: number /* 0 WS2812, 1 SK6812 (RGBW), 2 WS2811 */
-  Order: number /* 0 GRB, 1 RGB, 2 BRG, 3 RBG, 4 GBR, 5 BGR */
-  MaxCount: number /* ёмкость, заданная в прошивке, - только чтение */
-}
-
 export interface IWidgetRGBStripProps {
   /* Префикс прошивочной группы ленты, по умолчанию "LST" */
   id?: string
@@ -746,54 +690,6 @@ export interface IWidgetRGBStripProps {
   onUpdate?: (value: number | number[], field: "Color" | "Effect" | "Speed") => void
   /* Количество, модель, порядок - одним пакетом по «Сохранить» (лента перезапускается) */
   onSave?: (hardware: Pick<IWidgetRGBStripConfig, "Count" | "Model" | "Order">) => void
-}
-
-/* Пилотажный дисплей - поля группы (по умолчанию MAV) в том виде, в каком их отдаёт телеметрия MAVLink (20.00.000-01) */
-export interface IWidgetPFDData {
-  Roll: number /* крен, ° (вправо +) */
-  Pitch: number /* тангаж, ° (вверх +) */
-  Heading: number /* курс, 0..360° */
-  GSpeed: number /* путевая скорость, м/с */
-  ASpeed: number /* воздушная скорость, м/с */
-  Load: number /* нормальная перегрузка, g: 1 - горизонтальный полёт; нет числа - плашка G скрыта */
-  Slip: number /* боковая перегрузка, g, вправо +; нет числа - шарик скольжения скрыт */
-  Thr: number /* газ, %; нет числа - плашка THR скрыта */
-  WindDir: number /* ветер: откуда дует, 0-360°; нет числа - плашка ветра скрыта */
-  WindSpd: number /* скорость ветра, м/с */
-  Climb: number /* вертикальная скорость, м/с (вверх +) */
-  Alt: number /* высота над точкой взлёта, м */
-  AltMSL: number /* высота над уровнем моря, м */
-  Lat: number /* широта, ° */
-  Lon: number /* долгота, ° */
-  Vx: number /* скорость на север, м/с - для трека */
-  Vy: number /* скорость на восток, м/с - для трека */
-  Fix: number /* GPS_FIX_TYPE: 0-1 нет, 2 2D, 3 3D, 4 DGPS, 5 RTK float, 6 RTK fixed */
-  Sat: number /* видимых спутников */
-  BV: number /* напряжение батареи, В */
-  BC: number /* ток, А; -1 - не измеряется */
-  BRem: number /* остаток, %; -1 - неизвестно */
-  Mode: number /* custom_mode HEARTBEAT */
-  VType: number /* MAV_TYPE - определяет названия режимов */
-  Armed: number /* 1 - взведён */
-  HomeLat: number /* точка взлёта, °; 0 - неизвестна */
-  HomeLon: number
-  Press: number /* давление, гПа */
-  Temp: number /* температура, °C */
-  WPNum: number /* номер текущей точки маршрута; 0 - маршрута нет */
-  WPDist: number /* расстояние до точки, м */
-  WPBrg: number /* курс на точку, 0..360° */
-  AltErr: number /* целевая высота минус текущая, м */
-  SpdErr: number /* целевая воздушная скорость минус текущая, м/с */
-  XTE: number /* боковое отклонение от линии маршрута, м */
-  RSSI: number /* уровень сигнала своей стороны, %; -1 - неизвестно */
-  RemRSSI: number /* уровень сигнала удалённой стороны, %; -1 - неизвестно */
-  Drop: number /* потери пакетов, % */
-  HDOP: number /* точность GPS по горизонтали; -1 - неизвестно */
-  EKF: number /* наибольшая дисперсия навигационного фильтра: < 0.5 норма, < 0.8 внимание, дальше - тревога */
-  SensErr: number /* число включённых, но неисправных датчиков */
-  Msg: string /* последнее сообщение автопилота (STATUSTEXT) */
-  MsgSev: number /* важность: 0-3 ошибка/авария, 4 предупреждение, 5-7 информация */
-  MsgSeq: number /* номер сообщения - новое сообщение даже с тем же текстом */
 }
 
 /* Границы для цветовых зон; не заданная граница не рисуется */
@@ -821,18 +717,6 @@ export interface IWidgetPFDProps {
   isTest?: boolean
   collapsed?: boolean
   persistKey?: string
-}
-
-/* Карта - поля одной группы борта (MAV, GNSS...); имена общие с WidgetPFD (Lat/Lon/Alt/Heading/Sat) и WidgetDeviceInfo (DevName/DevSN) */
-export interface IWidgetMapData {
-  Lat: number /* широта, °; 0 вместе с Lon - нет фикса */
-  Lon: number /* долгота, ° */
-  Alt: number /* высота, м */
-  Heading: number /* курс, 0..360° - поворот маркера */
-  Sat: number /* спутников */
-  DevName: string /* имя борта - подпись маркера и заголовок карточки */
-  DevSN: string /* серийный номер - в карточке */
-  WPNum?: number /* номер текущей команды миссии; по нему режимы «Маршрут» и «Агро» показывают прогресс */
 }
 
 export interface IWidgetMapProps {

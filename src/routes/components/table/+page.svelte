@@ -2,12 +2,13 @@
   import { Language } from "#lib/locales/i18n.ts"
   import { localizeDeep } from "#lib/locales/localize.ts"
   import { type ITableHeader, type ITableProps, type UIComponent } from "#lib"
+  import { applyPropertyChange } from "#lib/propsEditor.ts"
   import ComponentExample from "../../ComponentExample.svelte"
   import Table from "#lib/Table/Table.svelte"
   import TableProps from "#lib/Table/TableProps.svelte"
   import { type IOption, type ITableButton } from "#lib/types.ts"
   import { onDestroy, onMount } from "svelte"
-  import { formatObjectToString, RenderMarkdown, applyChange } from "../../common"
+  import { formatObjectToString, RenderMarkdown } from "../../common"
   import readmeRaw from "#lib/Table/README.md?raw"
 
   let readmeHtml = $state("")
@@ -19,7 +20,7 @@
   const L = (ru: string, en: string, zh: string) => ({ ru, en, zh }) as unknown as string
 
   /* Демо для конструктора: текст (сортировка, обрезка), шкала заряда и кнопка с командой */
-  const DEMO_HEADER = [
+  const DEMO_HEADER: ITableHeader<Record<string, unknown>>[] = [
     {
       label: { name: L("Устройство", "Device", "设备") },
       width: "34%",
@@ -54,7 +55,7 @@
     }),
   )
 
-  let tableComponent: UIComponent = $state({
+  let tableComponent: UIComponent<"Table"> = $state({
     id: crypto.randomUUID(),
     type: "Table",
     access: "full",
@@ -198,10 +199,7 @@ ${formatObjectToString(tableComponent.properties as ITableProps<object>)}
   {/snippet}
 
   {#snippet componentProps()}
-    <TableProps
-      component={tableComponent as UIComponent & { properties: Partial<ITableProps<object>> }}
-      onPropertyChange={(updates) => (tableComponent = applyChange(tableComponent, updates))}
-    />
+    <TableProps component={tableComponent} onPropertyChange={(updates) => (tableComponent = applyPropertyChange(tableComponent, updates))} />
   {/snippet}
   {#snippet examples()}
     <Table

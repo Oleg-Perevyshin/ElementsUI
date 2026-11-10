@@ -2,11 +2,12 @@
   import { Language } from "#lib/locales/i18n.ts"
   import { localizeDeep } from "#lib/locales/localize.ts"
   import { type UIComponent } from "#lib"
+  import { applyPropertyChange } from "#lib/propsEditor.ts"
   import ComponentExample from "../../ComponentExample.svelte"
   import { type IWidgetPFDData, type IWidgetPFDProps } from "#lib/types.ts"
   import WidgetPFD from "#lib/WidgetPFD/WidgetPFD.svelte"
   import WidgetPFDProps from "#lib/WidgetPFD/WidgetPFDProps.svelte"
-  import { formatObjectToString, RenderMarkdown, applyChange } from "../../common"
+  import { formatObjectToString, RenderMarkdown } from "../../common"
   import readmeRaw from "#lib/WidgetPFD/README.md?raw"
   import { createFlightSim } from "#lib/flightSim.ts"
 
@@ -23,7 +24,7 @@
     return () => clearInterval(timer)
   })
 
-  let pfdComponent: UIComponent = $state({
+  let pfdComponent: UIComponent<"WidgetPFD"> = $state({
     id: crypto.randomUUID(),
     type: "WidgetPFD",
     access: "full",
@@ -51,10 +52,7 @@ value={mav}
     </div>
   {/snippet}
   {#snippet componentProps()}
-    <WidgetPFDProps
-      component={pfdComponent as UIComponent & { properties: Partial<IWidgetPFDProps> }}
-      onPropertyChange={(updates) => (pfdComponent = applyChange(pfdComponent, updates))}
-    />
+    <WidgetPFDProps component={pfdComponent} onPropertyChange={(updates) => (pfdComponent = applyPropertyChange(pfdComponent, updates))} />
   {/snippet}
   {#snippet examples()}
     <div class="m-auto flex w-full max-w-3xl flex-col gap-6 p-2">

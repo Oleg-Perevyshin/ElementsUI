@@ -81,6 +81,64 @@ npm install poe-svelte-ui-lib
 
 Своя панель свойств строится на `createPropsEditor(component, onPropertyChange)`: `set`, `patch`, `addItem`, `updateItem`, `removeItem` отправляют новые объекты, сами свойства не меняются на месте.
 
+## GUI устройства
+
+GUI из конструктора рисует `GUIRenderer`. Он раскладывает сетку (18 колонок, строка `6rem`), вкладывает компоненты в `Accordion` и `Tabs` (по `parentId`, номер вкладки - после 35-го знака `id`), берёт значения переменных, разбирает битовые поля, собирает пакеты команд и ведёт смарт-виджеты и файлы. Приложение отвечает за транспорт, выбор модуля, загрузку GUI и хранилище значений.
+
+```svelte
+<UI.GUIRenderer components={module.UIBlocks} {link} persistKey={module.ModSN} viewer={!canManage} render={{ VideoViewer: video }} onError={addMessage} />
+```
+
+| Пропс        | Что это                                                                                                       |
+| ------------ | ------------------------------------------------------------------------------------------------------------- |
+| `components` | `UIComponent[]` в формате 2.0 (`migrateGUI` применяется один раз к сохранённым GUI, рендерер его не вызывает) |
+| `link`       | `DeviceLink` выбранного модуля, см. ниже                                                                      |
+| `language`   | язык текстов GUI, по умолчанию язык библиотеки                                                                |
+| `viewer`     | наблюдатель: видны только `access` `full` и `viewOnly`, управление отключено                                  |
+| `persistKey` | ключ хранения в браузере (обычно `ModSN`): свёрнутость виджетов, планы `WidgetMap`                            |
+| `render`     | своя отрисовка типа: `{ VideoViewer: snippet }`, сниппет получает компонент                                   |
+| `onError`    | текст ошибки команды или передачи файла                                                                       |
+
+```ts
+interface DeviceLink {
+  get(key: string, module?: string): unknown /* значение переменной без префикса модуля; module - другой модуль (keyCol таблицы) */
+  set?(key: string, value: unknown): void /* своё значение до ответа устройства */
+  send(header: string, argument: string, payload: Record<string, unknown>): unknown /* конверт DevSN/ModSN добавляет приложение */
+  waitFor(
+    argument: string,
+    match: (reply: DeviceReply) => boolean,
+    timeoutMs: number,
+  ): Promise<DeviceReply | null> /* первый OK!/ER! с этим аргументом; null - таймаут */
+}
+interface DeviceReply {
+  ok: boolean
+  payload: Record<string, unknown>
+  message?: string
+}
+```
+
+`get` читает реактивное хранилище (`SvelteMap`), тогда рендерер обновляется сам. Ответы устройства приложение кладёт в хранилище функцией `mergeDevicePayload(values, "<ModSN>|", ARG, Payload)`: объект пишется целиком и по полям `имя-поле`, ход закачки `CFG.FS` дописывается к снимку, служебные поля `SET FS` пропускаются.
+
+Правила рендерера - чистые функции, их можно звать и без него:
+
+| Функция                                                 | Что делает                                                                                        |
+| ------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| `commandPacket(eventHandler, get, [key, value]?)`       | пакет компонента: `Value` - готовый Payload, иначе `Variables` (`группа-поле` - вложенный объект) |
+| `tablePacket(eventHandler, row)`                        | пакет кнопки строки таблицы: `Variables` из строки, у списка поле без `-S`                        |
+| `readBits` / `writeBits` / `bitRange`                   | битовое поле `Input` (`type: "bitMode"`) и `Select` (`bitMode`)                                   |
+| `readWidgetFields(get, prefix, fields, keys)`           | значения полей смарт-виджета                                                                      |
+| `widgetPacket(prefix, fields, values, keys)`            | Payload `SET ModCfg` виджета                                                                      |
+| `WIDGET_FIELDS`, `WIDGET_SAVE_FIELDS`, `widgetPrefixes` | поля смарт-виджетов (из них выведены `IWidgetWiFiConfig` и остальные), сохраняемые поля, группы   |
+| `GUI_GRID`, `spanRows`, `isWidgetType`                  | сетка                                                                                             |
+
+Отправка `SET Restart` и `SET RstNVS` идёт через `link.send`, приложение может по ним показать состояние перезагрузки.
+
+**Реестр.** `COMPONENTS[type]` - `{ view, io, fields? }`: компонент отрисовки, обмен с устройством (`none`, `read`, `write`, `readWrite`, `widget`) и поля смарт-виджета. `componentVariables(component)` - переменные устройства компонента (список переменных конструктора). `UIComponent` - объединение по `type`: после `component.type === "Button"` у `properties` тип `IButtonProps`, `UIComponent<"Button">` - компонент одного типа. В `poe-svelte-ui-lib/constructor`: `PANELS[type]` - панель свойств, `COMPONENT_DEFAULTS`, `COMPONENT_SIZES`, `minComponentWidth`, `createComponent(type, { col, row }, parentId, { tab, areaWidth })`, `applyPropertyChange(component, change)`.
+
+**Файлы.** `createFsTransfer(transport, { argument = "FS", timeoutMs = 5000, retries = 3, maxNameLength = 31 })` - обмен файлами по `SET FS` прошивки: `upload(name, bytes | Blob, onProgress?)`, `download(name, onProgress?)` - `Uint8Array`, `list()` - снимок ФС, `remove(name)` - снимок после удаления. Размер чанка задаёт устройство, чанк после `ER!` или таймаута повторяется, целостность - CRC-32 (`crc32` в `poe-svelte-ui-lib/protocols`). Операции идут по очереди. Рендерер сам ведёт файлы `WidgetFileSystem` и `FileAttach`.
+
+Рендерер и обмен файлами ничего не грузят из интернета. `WidgetMap` без сети через 10 с показывает «нет подключения»; для карты без интернета - `configureMapLibre`.
+
 ## Протоколы
 
 Пакет `poe_cbor_pkt` один для CAN, CAN FD, RS485 и UART-консоли. В нём адрес получателя, адрес отправителя, команда и данные в CBOR. Библиотека умеет:
@@ -189,7 +247,7 @@ export const T = createTranslator(translations)
 
 ## Переход на 2.0
 
-Версия 2.0 меняет API. Сохранённые GUI (каталог DevCloud, интерфейсы устройств) переводятся функцией `migrateGUI(components)` при загрузке, она же для одного компонента - `migrateProperties(component)`. Обе чистые: исходный объект не меняется, повторный вызов ничего не меняет. Код приложений правится вручную по списку ниже.
+Версия 2.0 меняет API. Сохранённые GUI (каталог DevCloud, интерфейсы устройств) переводятся один раз функцией `migrateGUI(components)`, для одного компонента - `migrateProperties(component)`; рендерер GUI старый формат не читает. Обе функции чистые: исходный объект не меняется, повторный вызов ничего не меняет. Код приложений правится вручную по списку ниже.
 
 **Цвет: `accent` вместо классов.** Классы `bg-*` и `text-*` в `componentClass`, `wrapperClass`, `settings.class`, `options[].class`, `items[].class` цвет больше не задают.
 
@@ -258,26 +316,34 @@ export const T = createTranslator(translations)
 | `onClick(eventHandler)` - таблица собирала `Value` из `Variables`    | `onClick(row, button)` - строка с выбранными в списках значениями и кнопка; пакет из `button.eventHandler` собирает приложение |
 | `text.formatting(text)` - HTML окна и подсказки                      | `text.render(row)` - содержимое ячейки; окно - `modal: true` или сниппет `Snippet<[row]>`                                      |
 
-Сборка пакета кнопки в рендерере (DevCloud и WebApp `GUIPreview`) - то, что раньше делала таблица:
-
-```ts
-onClick={(row, button) => {
-  const handler = button.eventHandler
-  if (!handler) return
-  const value = Object.fromEntries((handler.Variables ?? []).map((v) => {
-    const key = v.replace(/-S$/, "") /* у списка -S - варианты, значение - в поле без суффикса */
-    return [key, (row as Record<string, unknown>)[key]]
-  }))
-  handleUIComponentEvent({ ...handler, Value: JSON.stringify(value) }, null, null)
-}}
-```
-
-Журнал в рендерере: вместо `body` в режиме `stashData` - `bind:this` и `push` при каждом новом значении переменной. Колонки в `.ts` без разметки делают окно через `createRawSnippet` из `svelte`:
+Пакет кнопки строки собирает `tablePacket(button.eventHandler, row)`, журнал (`stashData`) в GUI ведёт `GUIRenderer`. Колонки в `.ts` без разметки делают окно через `createRawSnippet` из `svelte`:
 
 ```ts
 const canModal = createRawSnippet((row: () => CanRow) => ({ render: () => `<div class="whitespace-pre-wrap">${formatCanDataModal(row().data)}</div>` }))
 { type: "text", data: { key: "data", truncated: true, copy: true, modal: canModal } }
 ```
+
+**Рендерер GUI и конструктор.** Оба `GUIPreview.svelte` (DevCloud, WebApp) заменяются на `GUIRenderer`, приложение оставляет транспорт, список модулей, загрузку GUI и свои мосты потоков.
+
+| Было в приложении                                                                                                                            | Стало                                                                                               |
+| -------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| сетка и `{#snippet Components}` с ветвью на каждый тип, кэш `localizeDeep`                                                                   | `<UI.GUIRenderer components link persistKey viewer render onError />`                               |
+| `handleUIComponentEvent`, сборка Payload из `Variables`, `onClick` таблицы                                                                   | внутри рендерера (`commandPacket`, `tablePacket`)                                                   |
+| `bitFieldGet`/`bitFieldSet` у `Input` и `Select`, `-S` варианты `Select`, колонки-списки таблицы                                             | внутри рендерера (`readBits`, `writeBits`)                                                          |
+| `readWidgetFields`, `saveWidgetFields`, `sendWidgetCommand`, `readFileSystem`, `readStackInfo`, `scanWiFiNetworks`, `WIDGET_FIELDS` (WebApp) | внутри рендерера (`WIDGET_FIELDS`, `readWidgetFields`, `widgetPacket`)                              |
+| `uploadFile`, `downloadFile`, `fsStep`, `withRetry`, `handleFileUpload`, `crc32` приложения                                                  | `createFsTransfer(link)`, рендерер ведёт сам; `crc32` из `poe-svelte-ui-lib/protocols`              |
+| планы карты в `localStorage` (`loadMission`, `saveMission`)                                                                                  | рендерер по `persistKey`                                                                            |
+| `applyPayload` и разбор Payload в эффекте (`DATA_PAYLOAD_ARGS`, `FS_PROTOCOL_KEYS`, `topLevelToFlatten`)                                     | `mergeDevicePayload(values, "<ModSN>\|", ARG, Payload)`; набор ARG остаётся у приложения            |
+| начальные значения переменных компонентов (`0` или `""`) после загрузки GUI                                                                  | не нужны: компонент без значения берёт своё по умолчанию                                            |
+| `VideoViewerRemote` в ветке `VideoViewer`                                                                                                    | `render={{ VideoViewer: snippet }}`                                                                 |
+| `common.ts`: `CELL_HEIGHT`, `UIAreaCols`, `spanRows`, `isWidgetType`, `WIDGET_FIELD_GROUPS`, `WIDGET_EDITABLE_FIELD_GROUPS`                  | `GUI_GRID`, `spanRows`, `isWidgetType`, `WIDGET_FIELDS`, `WIDGET_SAVE_FIELDS`, `componentVariables` |
+| `common.ts`: `DEFAULT_PROPS`, `componentMap`, `WIDGET_MIN_WIDTH`, `minWidthOf`                                                               | `COMPONENT_DEFAULTS`, `COMPONENT_SIZES`, `minComponentWidth` (`/constructor`)                       |
+| `ConstructorUI`: `switch` по типу в `createComponent`, свой `updateComponent` для `properties`                                               | `createComponent(type, { col, row }, parentId, { tab, areaWidth })`, `applyPropertyChange`          |
+| ветвь панели на каждый тип с `as UI.UIComponent & { properties: Partial<...> }`                                                              | `{@const Panel = PANELS[c.type]}<Panel component={c} {onPropertyChange} />`                         |
+| `component.properties as UI.IButtonProps`                                                                                                    | `if (component.type === "Button")` - `properties` уже `IButtonProps`                                |
+| `IWidgetWiFiConfig` и др. - отдельные интерфейсы, `value` виджета - полный объект                                                            | выведены из `WIDGET_FIELDS`; `value` у `WidgetWiFi` и `WidgetDeviceInfo` - `Partial`                |
+
+Транспорт `waitFor` в WebApp пишется заново (сейчас там опрос `lastResponse`): первый пакет `OK!`/`ER!` с аргументом, прошедший `match`, или `null` по таймауту.
 
 **xPOE-Debug.**
 

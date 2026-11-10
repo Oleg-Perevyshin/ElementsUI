@@ -78,7 +78,7 @@ const telemetry_kv_t dev[] = {TLM_S("MAV.DevName", g_mcfg.DevName), TLM_S("MAV.D
 Telemetry_SendObject(g_telemetry_stream, g_mcfg.DevSN, "Data", dev, sizeof(dev) / sizeof(dev[0]));
 ```
 
-В DevCloud и WebApp `value` собирает `GUIPreview`: для каждой группы читает переменные `<ModSN>|<группа>.<ключ>`.
+`value` собирает `GUIRenderer`: для каждой группы читает переменные `<группа>.<ключ>` выбранного модуля.
 
 </details>
 
@@ -623,7 +623,7 @@ configureMapLibre({ module: "/maplibre-gl.mjs", css: "/maplibre-gl.css", styles:
 <UI.WidgetMap mode="agro" bind:plan groups={["MAV"]} value={{ MAV: mav }} onSend={(mission) => sendToDevice(mission)} />
 ```
 
-В DevCloud и WebApp `value` собирает `GUIPreview`: для каждой группы читает переменные `<ModSN>|<группа>.<ключ>`.
+`value` собирает `GUIRenderer`: для каждой группы читает переменные `<группа>.<ключ>` выбранного модуля.
 
 </details>
 

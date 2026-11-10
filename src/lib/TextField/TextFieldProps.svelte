@@ -15,7 +15,7 @@
     component,
     onPropertyChange,
   }: {
-    component: UIComponent & { properties: Partial<ITextFieldProps> }
+    component: UIComponent<"TextField">
     onPropertyChange: (change: PropertyChange<ITextFieldProps>) => void
   } = $props()
 

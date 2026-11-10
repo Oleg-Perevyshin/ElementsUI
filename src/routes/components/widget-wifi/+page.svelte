@@ -2,11 +2,12 @@
   import { Language } from "#lib/locales/i18n.ts"
   import { localizeDeep } from "#lib/locales/localize.ts"
   import { type UIComponent } from "#lib"
+  import { applyPropertyChange } from "#lib/propsEditor.ts"
   import ComponentExample from "../../ComponentExample.svelte"
   import { type IWidgetWiFiProps } from "#lib/types.ts"
   import WidgetWiFi from "#lib/WidgetWiFi/WidgetWiFi.svelte"
   import WidgetWiFiProps from "#lib/WidgetWiFi/WidgetWiFiProps.svelte"
-  import { formatObjectToString, RenderMarkdown, applyChange } from "../../common"
+  import { formatObjectToString, RenderMarkdown } from "../../common"
   import readmeRaw from "#lib/WidgetWiFi/README.md?raw"
 
   let readmeHtml = $state("")
@@ -23,7 +24,7 @@
     ]
   }
 
-  let wifiComponent: UIComponent = $state({
+  let wifiComponent: UIComponent<"WidgetWiFi"> = $state({
     id: crypto.randomUUID(),
     type: "WidgetWiFi",
     access: "full",
@@ -56,10 +57,7 @@ onSave={handleSave}
     </div>
   {/snippet}
   {#snippet componentProps()}
-    <WidgetWiFiProps
-      component={wifiComponent as UIComponent & { properties: Partial<IWidgetWiFiProps> }}
-      onPropertyChange={(updates) => (wifiComponent = applyChange(wifiComponent, updates))}
-    />
+    <WidgetWiFiProps component={wifiComponent} onPropertyChange={(updates) => (wifiComponent = applyPropertyChange(wifiComponent, updates))} />
   {/snippet}
   {#snippet examples()}
     <div class="flex flex-col gap-6 p-2">

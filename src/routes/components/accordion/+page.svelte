@@ -4,7 +4,8 @@
   import { Accordion } from "#lib"
   import AccordionProps from "#lib/Accordion/AccordionProps.svelte"
   import { type IAccordionProps, type UIComponent } from "#lib/types.ts"
-  import { formatObjectToString, RenderMarkdown, applyChange } from "../../common"
+  import { formatObjectToString, RenderMarkdown } from "../../common"
+  import { applyPropertyChange } from "#lib/propsEditor.ts"
   import ComponentExample from "../../ComponentExample.svelte"
   import { ICONS } from "#lib/icons.ts"
   import readmeRaw from "#lib/Accordion/README.md?raw"
@@ -14,7 +15,7 @@
     RenderMarkdown(readmeRaw).then((html) => (readmeHtml = html))
   })
 
-  let accordionComponent: UIComponent = $state({
+  let accordionComponent: UIComponent<"Accordion"> = $state({
     id: crypto.randomUUID(),
     type: "Accordion",
     access: "full",
@@ -52,7 +53,7 @@ ${formatObjectToString(accordionComponent.properties as IAccordionProps)}
       {...accordionProps}
       bind:isOpen={
         () => (accordionComponent.properties as IAccordionProps).isOpen ?? false,
-        (isOpen) => (accordionComponent = applyChange(accordionComponent, { properties: { isOpen } }))
+        (isOpen) => (accordionComponent = applyPropertyChange(accordionComponent, { properties: { isOpen } }))
       }
     >
       <div class="flex flex-col">
@@ -63,10 +64,7 @@ ${formatObjectToString(accordionComponent.properties as IAccordionProps)}
     </Accordion>
   {/snippet}
   {#snippet componentProps()}
-    <AccordionProps
-      component={accordionComponent as UIComponent & { properties: Partial<IAccordionProps> }}
-      onPropertyChange={(updates) => (accordionComponent = applyChange(accordionComponent, updates))}
-    />
+    <AccordionProps component={accordionComponent} onPropertyChange={(updates) => (accordionComponent = applyPropertyChange(accordionComponent, updates))} />
   {/snippet}
   {#snippet examples()}
     <Accordion label={{ name: "Accordion 1" }} isOpen={false} wrapperClass="col-span-3">

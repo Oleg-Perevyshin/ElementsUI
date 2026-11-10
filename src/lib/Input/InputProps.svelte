@@ -17,7 +17,7 @@
     component,
     onPropertyChange,
   }: {
-    component: UIComponent & { properties: Partial<IInputProps> }
+    component: UIComponent<"Input">
     onPropertyChange: (change: PropertyChange<IInputProps>) => void
   } = $props()
 

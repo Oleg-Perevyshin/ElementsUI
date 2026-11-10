@@ -2,10 +2,11 @@
   import { Language } from "#lib/locales/i18n.ts"
   import { localizeDeep } from "#lib/locales/localize.ts"
   import { type UIComponent } from "#lib"
+  import { applyPropertyChange } from "#lib/propsEditor.ts"
   import ComponentExample from "../../ComponentExample.svelte"
   import { type IVideoViewerProps } from "#lib/types.ts"
   import VideoViewer from "#lib/VideoViewer/VideoViewer.svelte"
-  import { formatObjectToString, RenderMarkdown, applyChange } from "../../common"
+  import { formatObjectToString, RenderMarkdown } from "../../common"
   import VideoViewerProps from "#lib/VideoViewer/VideoViewerProps.svelte"
   import { onMount } from "svelte"
   import readmeRaw from "#lib/VideoViewer/README.md?raw"
@@ -15,7 +16,7 @@
     RenderMarkdown(readmeRaw).then((html) => (readmeHtml = html))
   })
 
-  let videoViewerComponent: UIComponent = $state({
+  let videoViewerComponent: UIComponent<"VideoViewer"> = $state({
     id: crypto.randomUUID(),
     type: "VideoViewer",
     access: "full",
@@ -71,8 +72,8 @@ ${formatObjectToString(videoViewerComponent.properties as IVideoViewerProps)}
   {/snippet}
   {#snippet componentProps()}
     <VideoViewerProps
-      component={videoViewerComponent as UIComponent & { properties: Partial<IVideoViewerProps> }}
-      onPropertyChange={(updates) => (videoViewerComponent = applyChange(videoViewerComponent, updates))}
+      component={videoViewerComponent}
+      onPropertyChange={(updates) => (videoViewerComponent = applyPropertyChange(videoViewerComponent, updates))}
     />
   {/snippet}
   {#snippet examples()}

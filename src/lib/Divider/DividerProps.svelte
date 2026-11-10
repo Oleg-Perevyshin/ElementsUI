@@ -12,7 +12,7 @@
     component,
     onPropertyChange,
   }: {
-    component: UIComponent & { properties: Partial<IDividerProps> }
+    component: UIComponent<"Divider">
     onPropertyChange: (change: PropertyChange<IDividerProps>) => void
   } = $props()
 

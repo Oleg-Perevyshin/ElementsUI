@@ -17,7 +17,7 @@
     component,
     onPropertyChange,
   }: {
-    component: UIComponent & { properties: Partial<ISwitchProps> }
+    component: UIComponent<"Switch">
     onPropertyChange: (change: PropertyChange<ISwitchProps>) => void
   } = $props()
 

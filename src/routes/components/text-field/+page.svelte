@@ -2,10 +2,11 @@
   import { Language } from "#lib/locales/i18n.ts"
   import { localizeDeep } from "#lib/locales/localize.ts"
   import { type ITextFieldProps, type UIComponent } from "#lib"
+  import { applyPropertyChange } from "#lib/propsEditor.ts"
   import ComponentExample from "../../ComponentExample.svelte"
   import TextField from "#lib/TextField/TextField.svelte"
   import TextFieldProps from "#lib/TextField/TextFieldProps.svelte"
-  import { formatObjectToString, RenderMarkdown, applyChange } from "../../common"
+  import { formatObjectToString, RenderMarkdown } from "../../common"
   import readmeRaw from "#lib/TextField/README.md?raw"
 
   let readmeHtml = $state("")
@@ -13,7 +14,7 @@
     RenderMarkdown(readmeRaw).then((html) => (readmeHtml = html))
   })
 
-  let textFieldComponent: UIComponent = $state({
+  let textFieldComponent: UIComponent<"TextField"> = $state({
     id: crypto.randomUUID(),
     type: "TextField",
     access: "full",
@@ -43,10 +44,7 @@ ${formatObjectToString(textFieldComponent.properties as ITextFieldProps)}
     </div>
   {/snippet}
   {#snippet componentProps()}
-    <TextFieldProps
-      component={textFieldComponent as UIComponent & { properties: Partial<ITextFieldProps> }}
-      onPropertyChange={(updates) => (textFieldComponent = applyChange(textFieldComponent, updates))}
-    />
+    <TextFieldProps component={textFieldComponent} onPropertyChange={(updates) => (textFieldComponent = applyPropertyChange(textFieldComponent, updates))} />
   {/snippet}
   {#snippet examples()}
     <TextField content={{ name: "Random text", size: "small" }} wrapperClass="text-gray-400" />

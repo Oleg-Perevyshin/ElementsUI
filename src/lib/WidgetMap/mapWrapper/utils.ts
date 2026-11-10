@@ -31,6 +31,11 @@ export const configureMapLibre = ({ module, css, styles }: MapLibreSource) => {
 /* Одна загрузка на страницу: несколько карт ждут один и тот же промис */
 let loading: Promise<boolean> | null = null
 
+/* Без интернета у точки доступа устройства адрес CDN может не ответить вовсе: через LOAD_TIMEOUT_MS карта показывает «нет подключения» вместо вечной загрузки */
+const LOAD_TIMEOUT_MS = 10000
+const withTimeout = <T>(promise: Promise<T>): Promise<T> =>
+  Promise.race([promise, new Promise<never>((_, reject) => setTimeout(() => reject(new Error("MapLibre: timeout")), LOAD_TIMEOUT_MS))])
+
 export const loadMapLibre = (): Promise<boolean> => {
   if (typeof window === "undefined") return Promise.resolve(false)
   if (window.maplibregl) return Promise.resolve(true)
@@ -38,7 +43,7 @@ export const loadMapLibre = (): Promise<boolean> => {
 
   /* Модуль кладётся в window.maplibregl - через него к карте обращаются компоненты обёртки; не из бандла, чтобы не тянуть карту в приложения */
   const { module, css } = source
-  loading ??= Promise.all([typeof module === "string" ? (import(/* @vite-ignore */ module) as Promise<MapLibreModule>) : module(), loadCSS(css)])
+  loading ??= withTimeout(Promise.all([typeof module === "string" ? (import(/* @vite-ignore */ module) as Promise<MapLibreModule>) : module(), loadCSS(css)]))
     .then(([maplibregl]) => {
       window.maplibregl = maplibregl
       return true

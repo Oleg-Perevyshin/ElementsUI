@@ -1,0 +1,131 @@
+/* $lib/defaults.ts - новые компоненты конструктора: свойства и размер по умолчанию, создание компонента. Тексты пустые - задаются в «Тексты и переводы», заголовок смарт-виджета - его название на всех языках */
+import { GUI_GRID, isWidgetType } from "./gui"
+import { widgetTitle } from "./locales/i18n"
+import type { UIComponent, UIComponentPropsMap, UIType } from "./types"
+
+const label = { name: "", class: "text-center" }
+const widget = (type: UIType) => ({ label: { name: widgetTitle(type) as unknown as string }, collapsed: false })
+
+/* Свойства по умолчанию; у смарт-виджета id - группа полей устройства */
+export const COMPONENT_DEFAULTS: { [K in UIType]: Partial<UIComponentPropsMap[K]> } = {
+  WidgetWiFi: { ...widget("WidgetWiFi"), id: "CFG", allowedModes: [1, 2, 3], confirmOnAP: true },
+  WidgetDeviceInfo: { ...widget("WidgetDeviceInfo"), id: "CFG" },
+  WidgetFileSystem: { ...widget("WidgetFileSystem"), id: "CFG", accept: "*/*", maxNameLength: 31 },
+  WidgetStackInfo: { ...widget("WidgetStackInfo"), warnBytes: 512, period: 0 },
+  WidgetRGBStrip: { ...widget("WidgetRGBStrip"), id: "LST" },
+  WidgetPFD: { ...widget("WidgetPFD"), id: "MAV", limits: { staleMs: 2000 } },
+  WidgetMap: { ...widget("WidgetMap"), groups: ["MAV"], height: 400, trackEnabled: false, trackLength: 1000 },
+  Accordion: { label: { name: "", class: "text-left", icon: null }, isOpen: true, image: "" },
+  Tabs: {
+    activeTab: 0,
+    items: [
+      { name: "", class: "flex-row" },
+      { name: "", class: "flex-row" },
+    ],
+  },
+  Button: { content: { name: "" }, variant: "primary", accent: "blue", componentClass: "p-1", disabled: false },
+  Input: {
+    label,
+    type: "text",
+    disabled: false,
+    readonly: false,
+    range: { start: 0, end: 1 },
+    maxlength: 32,
+    number: { minNum: 0, maxNum: 10, step: 1 },
+    placeholder: "",
+    textareaRows: 2,
+    help: { info: "", copyButton: false },
+  },
+  Select: { label, type: "select", disabled: false, bitMode: false, range: { start: 0, end: 2 }, options: [{ value: "1", name: "" }] },
+  Switch: { label: { name: "", captionLeft: "", captionRight: "" }, type: "horizontal", accent: "blue", value: 0, disabled: false },
+  Slider: { label, accent: "blue", value: 5, number: { minNum: 0, maxNum: 10, step: 1 }, disabled: false },
+  TextField: { content: { name: "", class: "text-center", size: "base" } },
+  ProgressBar: {
+    accent: "blue",
+    items: [{ name: "" }],
+    value: [{ Name: "Label", Value: 40 }],
+    number: { minNum: 0, maxNum: 100, units: "" },
+    type: "horizontal",
+  },
+  Graph: { label, streamingData: { data: [] }, refreshRate: 0 },
+  PeriodChart: { label, accent: "blue", levels: Array.from({ length: 4 }, () => ({ name: "", variable: "", data: [] })), unit: "" },
+  Table: {
+    label,
+    accent: "blue",
+    header: [
+      { label: { name: "" }, width: "40%", align: "left", content: [{ type: "text", data: { key: "id", sortable: true } }] },
+      { label: { name: "" }, width: "60%", align: "left", content: [{ type: "text", data: { key: "device" } }] },
+    ],
+    body: [{ id: "Value of id", device: "Value of device" }],
+    dataBuffer: { stashData: false, bufferSize: 100, visibleRows: 10 },
+  },
+  FileAttach: { label, accept: "*/*" },
+  Joystick: { label, axes: Array.from({ length: 3 }, () => ({ name: "", minNum: -100, maxNum: 100 })) },
+  Widget: { label, accent: "blue", settings: { label: "", type: "slider", number: { minNum: 0, maxNum: 100, step: 1, units: "" } } },
+  VideoViewer: { label, showSelect: true },
+  Divider: { type: "line", width: 2, anchor: "center" },
+}
+
+/* Размер нового компонента в клетках сетки */
+export const COMPONENT_SIZES: Record<UIType, { width: number; height: number }> = {
+  WidgetWiFi: { width: 8, height: 1 },
+  WidgetDeviceInfo: { width: 8, height: 1 },
+  WidgetFileSystem: { width: 10, height: 1 },
+  WidgetStackInfo: { width: 10, height: 1 },
+  WidgetRGBStrip: { width: 8, height: 1 },
+  WidgetPFD: { width: 12, height: 1 },
+  WidgetMap: { width: 14, height: 1 },
+  Accordion: { width: GUI_GRID.columns, height: 1 },
+  Tabs: { width: GUI_GRID.columns, height: 4 },
+  Input: { width: 4, height: 1 },
+  Select: { width: 4, height: 1 },
+  Slider: { width: 4, height: 1 },
+  Switch: { width: 2, height: 1 },
+  FileAttach: { width: 5, height: 1 },
+  Joystick: { width: 4, height: 3 },
+  Button: { width: 2, height: 1 },
+  Table: { width: 12, height: 2 },
+  ProgressBar: { width: 4, height: 1 },
+  TextField: { width: 3, height: 1 },
+  Graph: { width: 10, height: 3 },
+  PeriodChart: { width: 10, height: 4 },
+  Widget: { width: 3, height: 3 },
+  VideoViewer: { width: 7, height: 7 },
+  Divider: { width: GUI_GRID.columns, height: 1 },
+}
+
+/* Наименьшая ширина: смарт-виджет не уже 6 клеток, иначе шапка и поля не помещаются */
+export const minComponentWidth = (type: string) => (isWidgetType(type) ? 6 : 1)
+
+/* Новый компонент в клетке (col, row) области шириной areaWidth; tab - номер вкладки родителя Tabs (последний знак id). Не помещающийся компонент сужается, но не меньше minComponentWidth - тогда сдвигается влево */
+export const createComponent = <K extends UIType>(
+  type: K,
+  { col = 1, row = 1 }: { col?: number; row?: number } = {},
+  parentId = "",
+  { tab, areaWidth = GUI_GRID.columns }: { tab?: number; areaWidth?: number } = {},
+): UIComponent<K> => {
+  const uuid = crypto.randomUUID() as string
+  const id = tab === undefined ? uuid : `${uuid.slice(1)}${tab}`
+  let { width, height } = COMPONENT_SIZES[type]
+  if (col + width - 1 > areaWidth) {
+    const min = Math.min(minComponentWidth(type), areaWidth)
+    if (areaWidth - col + 1 < min) col = areaWidth - min + 1
+    width = areaWidth - col + 1
+  }
+  const properties: Record<string, unknown> = structuredClone(COMPONENT_DEFAULTS[type] as Record<string, unknown>)
+  if (!isWidgetType(type)) properties.id = id
+  if (type === "Accordion") properties.size = { width, height }
+  if (type === "Tabs") {
+    properties.size = { width, height: height - 1 }
+    properties.items = (properties.items as object[]).map((item) => ({ ...item, id: crypto.randomUUID() }))
+  }
+  return {
+    id,
+    type,
+    properties,
+    position: { col, row, width, height },
+    parentId,
+    access: "full",
+    eventHandler: { Header: "SET", Argument: type === "Input" ? "NoSend" : "ModCfg", Variables: [] },
+  } as unknown as UIComponent<K>
+}

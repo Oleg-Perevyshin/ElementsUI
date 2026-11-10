@@ -1,5 +1,6 @@
 <!-- $lib/WidgetWiFi/WidgetWiFiProps.svelte - панель пропсов конструктора для WidgetWiFi. Виджет - самостоятельный тип компонента (не набор примитивов с привязкой полей), поэтому и панель проще: не "к какой переменной привязать", а "как виджет себя ведёт". -->
 <script lang="ts">
+  import { WIDGET_FIELDS } from "../gui"
   import TextsEditor from "../TextsEditor.svelte"
   import { T } from "../locales/i18n"
   import * as UI from ".."
@@ -9,26 +10,13 @@
   import CommonSnippets from "../CommonSnippets.svelte"
   import { optionsStore } from "../options"
 
-  const WIFI_KEYS: (keyof IWidgetWiFiConfig)[] = [
-    "WiFiMode",
-    "StaSSID",
-    "StaPSK",
-    "StaticIP",
-    "StaIP",
-    "StaMS",
-    "StaGW",
-    "ApSSID",
-    "ApPSK",
-    "ApIP",
-    "ApMS",
-    "ApGW",
-  ]
+  const WIFI_KEYS = Object.keys(WIDGET_FIELDS.WidgetWiFi) as (keyof IWidgetWiFiConfig)[]
 
   const {
     component,
     onPropertyChange,
   }: {
-    component: UIComponent & { properties: Partial<IWidgetWiFiProps> }
+    component: UIComponent<"WidgetWiFi">
     onPropertyChange: (change: PropertyChange<IWidgetWiFiProps>) => void
   } = $props()
 

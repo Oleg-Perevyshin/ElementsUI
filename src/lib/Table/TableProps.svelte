@@ -19,8 +19,8 @@
     component,
     onPropertyChange,
   }: {
-    component: UIComponent & { properties: Partial<ITableProps<object>> }
-    onPropertyChange: (change: PropertyChange<ITableProps<object>>) => void
+    component: UIComponent<"Table">
+    onPropertyChange: (change: PropertyChange<ITableProps<Record<string, unknown>>>) => void
   } = $props()
 
   const edit = $derived(createPropsEditor(component, onPropertyChange))
@@ -46,7 +46,8 @@
   ]
 
   /* В конструкторе содержимое столбца - сохранённые данные: массив, а не функция (row) => ... из кода приложений; data элемента правится как обычный объект полей */
-  const columnContent = (column: ITableHeader<object> | undefined): ITableContent<object>[] => (Array.isArray(column?.content) ? column.content : [])
+  const columnContent = (column: ITableHeader<Record<string, unknown>> | undefined): ITableContent<Record<string, unknown>>[] =>
+    Array.isArray(column?.content) ? column.content : []
   const contentData = (columnIndex: number, index: number) =>
     (columnContent(component.properties.header?.[columnIndex])[index]?.data ?? {}) as Record<string, unknown>
 
@@ -75,7 +76,7 @@
                 onClick: () => {},
               }
             : {},
-      } as ITableContent<object>,
+      } as ITableContent<Record<string, unknown>>,
     ]
 
     edit.set(
@@ -98,7 +99,7 @@
     if (!content[index]) return
     headers[columnIndex] = {
       ...headers[columnIndex],
-      content: content.map((item, i) => (i === index ? ({ ...item, data: { ...item.data, ...data } } as ITableContent<object>) : item)),
+      content: content.map((item, i) => (i === index ? ({ ...item, data: { ...item.data, ...data } } as ITableContent<Record<string, unknown>>) : item)),
     }
     edit.set("header", headers)
   }
@@ -177,7 +178,7 @@
                   label={{ name: $T("constructor.props.table.columns.width"), class: "px-0" }}
                   type="number"
                   accent={(component.properties.header ?? []).reduce(
-                    (width: number, h: ITableHeader<object>) => Number(h.width?.replace("%", "")) + width,
+                    (width: number, h: ITableHeader<Record<string, unknown>>) => Number(h.width?.replace("%", "")) + width,
                     0,
                   ) == 100
                     ? undefined
@@ -473,7 +474,10 @@
                         content={{ icon: ButtonDelete }}
                         onClick={() => {
                           const headers = [...(component.properties.header || [])]
-                          ;((headers as ITableHeader<object>[])[columnIndex].content as ITableContent<object>[]).splice(index, 1)
+                          ;((headers as ITableHeader<Record<string, unknown>>[])[columnIndex].content as ITableContent<Record<string, unknown>>[]).splice(
+                            index,
+                            1,
+                          )
                           edit.set("header", headers)
                         }}
                       />

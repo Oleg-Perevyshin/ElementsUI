@@ -1,5 +1,6 @@
-<!-- $lib/WidgetDeviceInfo/WidgetDeviceInfoProps.svelte - панель пропсов конструктора для WidgetDeviceInfo: заголовок/мастер-цвет/префикс группы, переопределение имён полей устройства (keys) и команда перезагрузки - все с дефолтами, равными текущей прошивочной конвенции (см. DEFAULT_PROPS.WidgetDeviceInfo в DevCloud). -->
+<!-- $lib/WidgetDeviceInfo/WidgetDeviceInfoProps.svelte - панель пропсов конструктора для WidgetDeviceInfo: заголовок/мастер-цвет/префикс группы, переопределение имён полей устройства (keys) и команда перезагрузки - все с дефолтами, равными текущей прошивочной конвенции (COMPONENT_DEFAULTS). -->
 <script lang="ts">
+  import { WIDGET_FIELDS } from "../gui"
   import TextsEditor from "../TextsEditor.svelte"
   import { T } from "../locales/i18n"
   import * as UI from ".."
@@ -9,13 +10,13 @@
   import CommonSnippets from "../CommonSnippets.svelte"
   import { optionsStore } from "../options"
 
-  const DEVICE_INFO_KEYS: (keyof IWidgetDeviceInfoConfig)[] = ["DevSN", "DevID", "DevFW", "RunCnt", "DevName", "HostName", "WebUser", "WebPsw", "StaIP", "ApIP"]
+  const DEVICE_INFO_KEYS = Object.keys(WIDGET_FIELDS.WidgetDeviceInfo) as (keyof IWidgetDeviceInfoConfig)[]
 
   const {
     component,
     onPropertyChange,
   }: {
-    component: UIComponent & { properties: Partial<IWidgetDeviceInfoProps> }
+    component: UIComponent<"WidgetDeviceInfo">
     onPropertyChange: (change: PropertyChange<IWidgetDeviceInfoProps>) => void
   } = $props()
 

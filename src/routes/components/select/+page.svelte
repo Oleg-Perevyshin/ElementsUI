@@ -1,11 +1,12 @@
 <script lang="ts">
   import { Language } from "#lib/locales/i18n.ts"
   import { localizeDeep } from "#lib/locales/localize.ts"
-  import { type ISelectProps, type UIComponent } from "#lib"
+  import { type IOption, type ISelectProps, type UIComponent } from "#lib"
+  import { applyPropertyChange } from "#lib/propsEditor.ts"
   import ComponentExample from "../../ComponentExample.svelte"
   import * as UI from "#lib"
   import { SelectProps } from "#lib/constructor.ts"
-  import { formatObjectToString, RenderMarkdown, applyChange } from "../../common"
+  import { formatObjectToString, RenderMarkdown } from "../../common"
   import readmeRaw from "#lib/Select/README.md?raw"
 
   let readmeHtml = $state("")
@@ -16,7 +17,7 @@
   /* Многоязычный текст для демо: в данных - { ru, en, zh }, тип поля - string (разрешается localizeDeep) */
   const L = (ru: string, en: string, zh: string) => ({ ru, en, zh }) as unknown as string
 
-  const DEMO_OPTIONS = [
+  const DEMO_OPTIONS: IOption<number>[] = [
     { id: "auto", value: 0, name: L("Авто", "Auto", "自动"), accent: "green" },
     { id: "manual", value: 1, name: L("Ручной", "Manual", "手动"), accent: "blue" },
     { id: "eco", value: 2, name: L("Эконом", "Eco", "节能"), accent: "cyan" },
@@ -24,7 +25,7 @@
     { id: "service", value: 4, name: L("Сервис", "Service", "维护"), accent: "red", disabled: true },
   ]
 
-  let selectComponent: UIComponent = $state({
+  let selectComponent: UIComponent<"Select"> = $state({
     id: crypto.randomUUID(),
     type: "Select",
     access: "full",
@@ -103,14 +104,11 @@ ${formatObjectToString(selectComponent.properties as ISelectProps)}
   {#snippet component()}
     <UI.Select
       {...localizeDeep(selectComponent.properties, $Language) as ISelectProps}
-      onUpdate={(value) => (selectComponent = applyChange(selectComponent, { properties: { value } }))}
+      onUpdate={(value) => (selectComponent = applyPropertyChange(selectComponent, { properties: { value } }))}
     />
   {/snippet}
   {#snippet componentProps()}
-    <SelectProps
-      component={selectComponent as UIComponent & { properties: Partial<ISelectProps> }}
-      onPropertyChange={(updates) => (selectComponent = applyChange(selectComponent, updates))}
-    />
+    <SelectProps component={selectComponent} onPropertyChange={(updates) => (selectComponent = applyPropertyChange(selectComponent, updates))} />
   {/snippet}
   {#snippet examples()}
     <p>{JSON.stringify(selectOption)}</p>

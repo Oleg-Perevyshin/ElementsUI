@@ -64,6 +64,12 @@
       attributionControl: { compact: true },
     })
     collapseAttribution(map)
+    /* Стиль подложки не загрузился (нет интернета, а styles не заданы локально) - без стиля карта пустая, показываем «нет подключения» */
+    let styleLoaded = false
+    map.once("style.load", () => (styleLoaded = true))
+    map.on("error", () => {
+      if (!styleLoaded) hasConnection = false
+    })
     mapCtx.map = map
   }
 

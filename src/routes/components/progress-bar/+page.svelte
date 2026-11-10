@@ -2,10 +2,11 @@
   import { Language } from "#lib/locales/i18n.ts"
   import { localizeDeep } from "#lib/locales/localize.ts"
   import { Button, ProgressBar, type IProgressBarProps, type UIComponent } from "#lib"
+  import { applyPropertyChange } from "#lib/propsEditor.ts"
   import ComponentExample from "../../ComponentExample.svelte"
   import ProgressBarProps from "#lib/ProgressBar/ProgressBarProps.svelte"
   import { type IReceivingDataObject } from "#lib/types.ts"
-  import { formatObjectToString, RenderMarkdown, applyChange } from "../../common"
+  import { formatObjectToString, RenderMarkdown } from "../../common"
   import readmeRaw from "#lib/ProgressBar/README.md?raw"
 
   let readmeHtml = $state("")
@@ -13,7 +14,7 @@
     RenderMarkdown(readmeRaw).then((html) => (readmeHtml = html))
   })
 
-  let progressBarComponent: UIComponent = $state({
+  let progressBarComponent: UIComponent<"ProgressBar"> = $state({
     id: crypto.randomUUID(),
     type: "ProgressBar",
     access: "full",
@@ -46,8 +47,8 @@ ${formatObjectToString(progressBarComponent.properties as IProgressBarProps)}
   {/snippet}
   {#snippet componentProps()}
     <ProgressBarProps
-      component={progressBarComponent as UIComponent & { properties: Partial<IProgressBarProps> }}
-      onPropertyChange={(updates) => (progressBarComponent = applyChange(progressBarComponent, updates))}
+      component={progressBarComponent}
+      onPropertyChange={(updates) => (progressBarComponent = applyPropertyChange(progressBarComponent, updates))}
     />
   {/snippet}
   {#snippet examples()}

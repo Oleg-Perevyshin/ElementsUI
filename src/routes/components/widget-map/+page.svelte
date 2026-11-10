@@ -2,11 +2,12 @@
   import { Language } from "#lib/locales/i18n.ts"
   import { localizeDeep } from "#lib/locales/localize.ts"
   import { type UIComponent } from "#lib"
+  import { applyPropertyChange } from "#lib/propsEditor.ts"
   import ComponentExample from "../../ComponentExample.svelte"
   import { type IWidgetMapProps } from "#lib/types.ts"
   import WidgetMap from "#lib/WidgetMap/WidgetMap.svelte"
   import WidgetMapProps from "#lib/WidgetMap/WidgetMapProps.svelte"
-  import { formatObjectToString, RenderMarkdown, applyChange } from "../../common"
+  import { formatObjectToString, RenderMarkdown } from "../../common"
   import readmeRaw from "#lib/WidgetMap/README.md?raw"
   import { DEFAULT_MISSION_PLAN, type IMissionPlan } from "#lib/WidgetMap/mission/plan.ts"
   import { DEFAULT_ROUTE_PLAN, type IRoutePlan } from "#lib/WidgetMap/mission/route.ts"
@@ -16,7 +17,7 @@
     RenderMarkdown(readmeRaw).then((html) => (readmeHtml = html))
   })
 
-  let mapComponent: UIComponent = $state({
+  let mapComponent: UIComponent<"WidgetMap"> = $state({
     id: crypto.randomUUID(),
     type: "WidgetMap",
     access: "full",
@@ -80,10 +81,7 @@ ${formatObjectToString(mapComponent.properties as IWidgetMapProps)}${mapMode ===
     </div>
   {/snippet}
   {#snippet componentProps()}
-    <WidgetMapProps
-      component={mapComponent as UIComponent & { properties: Partial<IWidgetMapProps> }}
-      onPropertyChange={(updates) => (mapComponent = applyChange(mapComponent, updates))}
-    />
+    <WidgetMapProps component={mapComponent} onPropertyChange={(updates) => (mapComponent = applyPropertyChange(mapComponent, updates))} />
   {/snippet}
   {#snippet examples()}
     <div class="m-auto flex w-full max-w-4xl flex-col gap-6 p-2">

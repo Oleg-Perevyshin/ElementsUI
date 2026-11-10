@@ -39,6 +39,29 @@ export * from "./locales/languages"
 export { localizeDeep, type LocalizedText } from "./locales/localize"
 export { accentStyle, ACCENT_COLORS, type AccentColor } from "./accent"
 export { migrateProperties, migrateGUI } from "./migrate"
+export { default as GUIRenderer } from "./GUIRenderer/GUIRenderer.svelte"
+export { COMPONENTS, componentVariables, type ComponentEntry, type ComponentIO } from "./registry"
+export {
+  GUI_GRID,
+  isWidgetType,
+  spanRows,
+  WIDGET_FIELDS,
+  WIDGET_SAVE_FIELDS,
+  widgetKey,
+  widgetPrefixes,
+  readWidgetFields,
+  widgetPacket,
+  bitRange,
+  readBits,
+  writeBits,
+  commandPacket,
+  tablePacket,
+  mergeDevicePayload,
+  type WidgetFieldsType,
+  type DeviceLink,
+  type DevicePacket,
+} from "./gui"
+export { createFsTransfer, type DeviceReply, type DeviceTransport, type FsTransfer, type FsTransferOptions, type FsProgress } from "./fsTransfer"
 export { copyText } from "./clipboard"
 export { default as Icon } from "./Icon.svelte"
 export { escapeHtml, htmlToText, sanitizeHtml } from "./html"
@@ -47,6 +70,8 @@ export { applyDragGhost, clearDragGhost, createDropPlaceholder } from "./dragSty
 
 export {
   type UIComponent,
+  type UIComponentPropsMap,
+  type UIType,
   type Position,
   type IUIComponentHandler,
   type IButtonProps,

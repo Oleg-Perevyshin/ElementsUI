@@ -19,7 +19,7 @@
     component,
     onPropertyChange,
   }: {
-    component: UIComponent & { properties: Partial<ITabsProps> }
+    component: UIComponent<"Tabs">
     onPropertyChange: (change: PropertyChange<ITabsProps>) => void
   } = $props()
 

@@ -36,22 +36,22 @@
 
   const rootStyle = $derived(accentStyle(accent))
 
-  let info: IWidgetDeviceInfoConfig = $state(
-    value ?? {
-      DevSN: "",
-      DevID: "",
-      DevFW: 0,
-      RunCnt: 0,
-      DevName: "",
-      HostName: "",
-      WebUser: "",
-      WebPsw: "",
-      StaIP: "",
-      ApIP: "",
-    },
-  )
+  /* Поля, которых нет в value, - пустые */
+  const EMPTY: IWidgetDeviceInfoConfig = {
+    DevSN: "",
+    DevID: "",
+    DevFW: 0,
+    RunCnt: 0,
+    DevName: "",
+    HostName: "",
+    WebUser: "",
+    WebPsw: "",
+    StaIP: "",
+    ApIP: "",
+  }
+  let info: IWidgetDeviceInfoConfig = $state({ ...EMPTY, ...value })
 
-  /* Сворачивание тела виджета по клику на значок/заголовок (как аккордеон). collapsed - bindable: в конструкторе родитель биндит его на component.properties.collapsed, клик по шапке сразу сохраняется в GUI (как isOpen у Accordion в ConstructorUI.svelte). На реальном устройстве (GUIPreview) проп передаётся однонаправленно - поверх дефолта только переживает перезагрузку через localStorage (persistKey). */
+  /* Сворачивание тела виджета по клику на значок/заголовок (как аккордеон). collapsed - bindable: в конструкторе родитель биндит его на component.properties.collapsed, клик по шапке сразу сохраняется в GUI (как isOpen у Accordion). В GUIRenderer проп передаётся однонаправленно - поверх дефолта только переживает перезагрузку через localStorage (persistKey). */
   /* Выбор пользователя в этом браузере применяется до первой отрисовки, без мигания; значение из GUI запоминается, чтобы его смена отменяла старый выбор */
   const guiCollapsed = untrack(() => collapsed)
   collapsed = readPersistedCollapsed(
@@ -67,9 +67,8 @@
   /* value - живой поток данных с устройства (readonly-поля StaIP/DevFW/RunCnt и т.п. должны обновляться постоянно), а не однократный дефолт. Подхватываем свежие данные, только если у пользователя нет несохранённых правок редактируемых полей (DevName/HostName/...) - иначе входящее значение затёрло бы то, что он ещё не успел сохранить. */
   $effect(() => {
     if (value !== undefined && !untrack(() => isDirty)) {
-      const snapshot = JSON.stringify(value)
-      info = value
-      savedSnapshot = snapshot
+      info = { ...EMPTY, ...value }
+      savedSnapshot = JSON.stringify(info)
     }
   })
 

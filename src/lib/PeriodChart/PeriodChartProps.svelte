@@ -17,7 +17,7 @@
     component,
     onPropertyChange,
   }: {
-    component: UIComponent & { properties: Partial<IPeriodChartProps> }
+    component: UIComponent<"PeriodChart">
     onPropertyChange: (change: PropertyChange<IPeriodChartProps>) => void
   } = $props()
 

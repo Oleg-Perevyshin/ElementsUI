@@ -2,10 +2,11 @@
   import { Language } from "#lib/locales/i18n.ts"
   import { localizeDeep } from "#lib/locales/localize.ts"
   import { type ISwitchProps, type UIComponent } from "#lib"
+  import { applyPropertyChange } from "#lib/propsEditor.ts"
   import ComponentExample from "../../ComponentExample.svelte"
   import Switch from "#lib/Switch/Switch.svelte"
   import SwitchProps from "#lib/Switch/SwitchProps.svelte"
-  import { formatObjectToString, RenderMarkdown, applyChange } from "../../common"
+  import { formatObjectToString, RenderMarkdown } from "../../common"
   import readmeRaw from "#lib/Switch/README.md?raw"
 
   let readmeHtml = $state("")
@@ -13,7 +14,7 @@
     RenderMarkdown(readmeRaw).then((html) => (readmeHtml = html))
   })
 
-  let switchComponent: UIComponent = $state({
+  let switchComponent: UIComponent<"Switch"> = $state({
     id: crypto.randomUUID(),
     type: "Switch",
     access: "full",
@@ -51,15 +52,12 @@ ${formatObjectToString(switchComponent.properties as ISwitchProps)}
       <Switch
         wrapperClass={(switchComponent.properties as ISwitchProps).bitMode ? "w-fit" : ""}
         {...localizeDeep(switchComponent.properties, $Language) as ISwitchProps}
-        onUpdate={(value) => (switchComponent = applyChange(switchComponent, { properties: { value } }))}
+        onUpdate={(value) => (switchComponent = applyPropertyChange(switchComponent, { properties: { value } }))}
       />
     </div>
   {/snippet}
   {#snippet componentProps()}
-    <SwitchProps
-      component={switchComponent as UIComponent & { properties: Partial<ISwitchProps> }}
-      onPropertyChange={(updates) => (switchComponent = applyChange(switchComponent, updates))}
-    />
+    <SwitchProps component={switchComponent} onPropertyChange={(updates) => (switchComponent = applyPropertyChange(switchComponent, updates))} />
   {/snippet}
   {#snippet examples()}
     <div class="flex items-center justify-between">

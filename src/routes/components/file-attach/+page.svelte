@@ -1,11 +1,12 @@
 <script lang="ts">
   import { Language } from "#lib/locales/i18n.ts"
   import { localizeDeep } from "#lib/locales/localize.ts"
+  import { applyPropertyChange } from "#lib/propsEditor.ts"
   import ComponentExample from "../../ComponentExample.svelte"
   import FileAttach from "#lib/FileAttach/FileAttach.svelte"
   import FileAttachProps from "#lib/FileAttach/FileAttachProps.svelte"
   import { type IFileAttachProps, type UIComponent } from "#lib/types.ts"
-  import { formatObjectToString, RenderMarkdown, applyChange } from "../../common"
+  import { formatObjectToString, RenderMarkdown } from "../../common"
   import readmeRaw from "#lib/FileAttach/README.md?raw"
 
   let readmeHtml = $state("")
@@ -13,7 +14,7 @@
     RenderMarkdown(readmeRaw).then((html) => (readmeHtml = html))
   })
 
-  let fileAttachComponent: UIComponent = $state({
+  let fileAttachComponent: UIComponent<"FileAttach"> = $state({
     id: crypto.randomUUID(),
     type: "FileAttach",
     access: "full",
@@ -40,7 +41,7 @@ ${formatObjectToString(fileAttachComponent.properties as IFileAttachProps)}
   const handleImageUpload = (file: File | null) => {
     if (!file) return
     const reader = new FileReader()
-    reader.onload = () => (fileAttachComponent = applyChange(fileAttachComponent, { properties: { currentImage: String(reader.result) } }))
+    reader.onload = () => (fileAttachComponent = applyPropertyChange(fileAttachComponent, { properties: { currentImage: String(reader.result) } }))
     reader.readAsDataURL(file)
   }
 </script>
@@ -51,8 +52,8 @@ ${formatObjectToString(fileAttachComponent.properties as IFileAttachProps)}
   {/snippet}
   {#snippet componentProps()}
     <FileAttachProps
-      component={fileAttachComponent as UIComponent & { properties: Partial<IFileAttachProps> }}
-      onPropertyChange={(updates) => (fileAttachComponent = applyChange(fileAttachComponent, updates))}
+      component={fileAttachComponent}
+      onPropertyChange={(updates) => (fileAttachComponent = applyPropertyChange(fileAttachComponent, updates))}
     />
   {/snippet}
   {#snippet examples()}

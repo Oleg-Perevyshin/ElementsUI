@@ -3,7 +3,8 @@
   import { localizeDeep } from "#lib/locales/localize.ts"
   import { Button } from "#lib"
   import { type IButtonProps, type UIComponent } from "#lib/types.ts"
-  import { formatObjectToString, RenderMarkdown, applyChange } from "../../common"
+  import { formatObjectToString, RenderMarkdown } from "../../common"
+  import { applyPropertyChange } from "#lib/propsEditor.ts"
   import ComponentExample from "../../ComponentExample.svelte"
   import ButtonProps from "#lib/Button/ButtonProps.svelte"
   import IconGripVerticalDual from "#lib/libIcons/IconGripVerticalDual.svelte"
@@ -16,7 +17,7 @@
     RenderMarkdown(readmeRaw).then((html) => (readmeHtml = html))
   })
 
-  let buttonComponent: UIComponent = $state({
+  let buttonComponent: UIComponent<"Button"> = $state({
     id: crypto.randomUUID(),
     type: "Button",
     access: "full",
@@ -50,10 +51,7 @@ ${formatObjectToString(buttonComponent.properties as IButtonProps)}
     </div>
   {/snippet}
   {#snippet componentProps()}
-    <ButtonProps
-      component={buttonComponent as UIComponent & { properties: Partial<IButtonProps> }}
-      onPropertyChange={(updates) => (buttonComponent = applyChange(buttonComponent, updates))}
-    />
+    <ButtonProps component={buttonComponent} onPropertyChange={(updates) => (buttonComponent = applyPropertyChange(buttonComponent, updates))} />
   {/snippet}
   {#snippet examples()}
     <div class="flex flex-col gap-2 w-1/2 mx-auto">

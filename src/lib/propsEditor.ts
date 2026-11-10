@@ -13,6 +13,15 @@ type Item<V> = V extends readonly (infer I)[] ? I : never
 type ArrayKey<P> = { [K in keyof P]-?: NonNullable<P[K]> extends readonly unknown[] ? K : never }[keyof P]
 type ObjectKey<P> = { [K in keyof P]-?: NonNullable<P[K]> extends readonly unknown[] ? never : NonNullable<P[K]> extends object ? K : never }[keyof P]
 
+/* Компонент после изменения панели: properties и eventHandler сливаются по ключам верхнего уровня */
+export const applyPropertyChange = <C extends UIComponent>(component: C, change: PropertyChange<object>): C => ({
+  ...component,
+  access: change.access ?? component.access,
+  name: change.name ?? component.name,
+  properties: change.properties ? { ...component.properties, ...change.properties } : component.properties,
+  eventHandler: change.eventHandler ? { ...component.eventHandler, ...change.eventHandler } : component.eventHandler,
+})
+
 export const createPropsEditor = <P extends object>(component: { properties: Partial<P> }, onPropertyChange: (change: PropertyChange<P>) => void) => {
   const set = <K extends keyof P>(key: K, value: P[K]) => onPropertyChange({ properties: { [key]: value } as unknown as Partial<P> })
   const list = <K extends ArrayKey<P>>(key: K) => (component.properties[key] ?? []) as Item<NonNullable<P[K]>>[]

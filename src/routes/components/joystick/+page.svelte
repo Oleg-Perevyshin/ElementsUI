@@ -2,11 +2,12 @@
   import { Language } from "#lib/locales/i18n.ts"
   import { localizeDeep } from "#lib/locales/localize.ts"
   import type { IJoystickProps, UIComponent } from "#lib"
+  import { applyPropertyChange } from "#lib/propsEditor.ts"
   import ComponentExample from "../../ComponentExample.svelte"
   import Joystick from "#lib/Joystick/Joystick.svelte"
   import JoystickProps from "#lib/Joystick/JoystickProps.svelte"
   import IconGripVerticalDual from "#lib/libIcons/IconGripVerticalDual.svelte"
-  import { formatObjectToString, RenderMarkdown, applyChange } from "../../common"
+  import { formatObjectToString, RenderMarkdown } from "../../common"
   import readmeRaw from "#lib/Joystick/README.md?raw"
 
   let readmeHtml = $state("")
@@ -14,7 +15,7 @@
     RenderMarkdown(readmeRaw).then((html) => (readmeHtml = html))
   })
 
-  let joystickComponent: UIComponent = $state({
+  let joystickComponent: UIComponent<"Joystick"> = $state({
     id: crypto.randomUUID(),
     type: "Joystick",
     access: "full",
@@ -43,14 +44,11 @@ ${formatObjectToString(joystickComponent.properties as IJoystickProps)}
   {#snippet component()}
     <Joystick
       {...localizeDeep(joystickComponent.properties, $Language) as IJoystickProps}
-      onUpdate={(value) => (joystickComponent = applyChange(joystickComponent, { properties: { value } }))}
+      onUpdate={(value) => (joystickComponent = applyPropertyChange(joystickComponent, { properties: { value } }))}
     />
   {/snippet}
   {#snippet componentProps()}
-    <JoystickProps
-      component={joystickComponent as UIComponent & { properties: Partial<IJoystickProps> }}
-      onPropertyChange={(updates) => (joystickComponent = applyChange(joystickComponent, updates))}
-    />
+    <JoystickProps component={joystickComponent} onPropertyChange={(updates) => (joystickComponent = applyPropertyChange(joystickComponent, updates))} />
   {/snippet}
   {#snippet examples()}
     <div class="flex">

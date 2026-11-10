@@ -2,11 +2,12 @@
   import { Language } from "#lib/locales/i18n.ts"
   import { localizeDeep } from "#lib/locales/localize.ts"
   import { type UIComponent } from "#lib"
+  import { applyPropertyChange } from "#lib/propsEditor.ts"
   import ComponentExample from "../../ComponentExample.svelte"
   import { type IWidgetStackInfo, type IWidgetStackInfoProps } from "#lib/types.ts"
   import WidgetStackInfo from "#lib/WidgetStackInfo/WidgetStackInfo.svelte"
   import WidgetStackInfoProps from "#lib/WidgetStackInfo/WidgetStackInfoProps.svelte"
-  import { formatObjectToString, RenderMarkdown, applyChange } from "../../common"
+  import { formatObjectToString, RenderMarkdown } from "../../common"
   import readmeRaw from "#lib/WidgetStackInfo/README.md?raw"
 
   let readmeHtml = $state("")
@@ -39,7 +40,7 @@
   }
   let stackInfo: IWidgetStackInfo | undefined = $state(makeInfo())
 
-  let stackComponent: UIComponent = $state({
+  let stackComponent: UIComponent<"WidgetStackInfo"> = $state({
     id: crypto.randomUUID(),
     type: "WidgetStackInfo",
     access: "full",
@@ -71,10 +72,7 @@ onRefresh={handleRefresh}
     </div>
   {/snippet}
   {#snippet componentProps()}
-    <WidgetStackInfoProps
-      component={stackComponent as UIComponent & { properties: Partial<IWidgetStackInfoProps> }}
-      onPropertyChange={(updates) => (stackComponent = applyChange(stackComponent, updates))}
-    />
+    <WidgetStackInfoProps component={stackComponent} onPropertyChange={(updates) => (stackComponent = applyPropertyChange(stackComponent, updates))} />
   {/snippet}
   {#snippet examples()}
     <div class="flex flex-col gap-6 p-2">

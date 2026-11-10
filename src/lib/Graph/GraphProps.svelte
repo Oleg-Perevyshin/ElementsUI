@@ -14,7 +14,7 @@
     component,
     onPropertyChange,
   }: {
-    component: UIComponent & { properties: Partial<IGraphProps> }
+    component: UIComponent<"Graph">
     onPropertyChange: (change: PropertyChange<IGraphProps>) => void
   } = $props()
 

@@ -2,10 +2,11 @@
   import { Language } from "#lib/locales/i18n.ts"
   import { localizeDeep } from "#lib/locales/localize.ts"
   import { type IDividerProps, type UIComponent } from "#lib"
+  import { applyPropertyChange } from "#lib/propsEditor.ts"
   import ComponentExample from "../../ComponentExample.svelte"
   import Divider from "#lib/Divider/Divider.svelte"
   import DividerProps from "#lib/Divider/DividerProps.svelte"
-  import { formatObjectToString, RenderMarkdown, applyChange } from "../../common"
+  import { formatObjectToString, RenderMarkdown } from "../../common"
   import readmeRaw from "#lib/Divider/README.md?raw"
 
   let readmeHtml = $state("")
@@ -13,7 +14,7 @@
     RenderMarkdown(readmeRaw).then((html) => (readmeHtml = html))
   })
 
-  let dividerComponent: UIComponent = $state({
+  let dividerComponent: UIComponent<"Divider"> = $state({
     id: crypto.randomUUID(),
     type: "Divider",
     access: "full",
@@ -41,10 +42,7 @@ ${formatObjectToString(dividerComponent.properties as IDividerProps)}
     </div>
   {/snippet}
   {#snippet componentProps()}
-    <DividerProps
-      component={dividerComponent as UIComponent & { properties: Partial<IDividerProps> }}
-      onPropertyChange={(updates) => (dividerComponent = applyChange(dividerComponent, updates))}
-    />
+    <DividerProps component={dividerComponent} onPropertyChange={(updates) => (dividerComponent = applyPropertyChange(dividerComponent, updates))} />
   {/snippet}
   {#snippet examples()}
     <div class="flex flex-col gap-2">

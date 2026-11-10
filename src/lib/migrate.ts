@@ -1,5 +1,6 @@
 /* $lib/migrate.ts - перевод сохранённого GUI 1.x в формат 2.0: цвет из классов (bg-*, text-*) в accent, Select хранит значение варианта, Switch - число. Чистые функции, повторный вызов ничего не меняет */
 import { isAccentColor, type AccentColor } from "./accent.js"
+import { isWidgetType } from "./gui.js"
 import type { UIComponent } from "./types"
 
 type Props = Record<string, any>
@@ -48,7 +49,6 @@ const migrateOption = (option: Props): Props => {
 
 const isOptionObject = (value: unknown): value is { value: unknown } => !!value && typeof value === "object" && !Array.isArray(value) && "value" in value
 
-const SMART_WIDGETS = ["WidgetWiFi", "WidgetDeviceInfo", "WidgetFileSystem", "WidgetStackInfo", "WidgetRGBStrip", "WidgetPFD", "WidgetMap"]
 const WRAPPER_ACCENT = ["Slider", "Switch", "Joystick", "PeriodChart", "Tabs", "VideoViewer", "ProgressBar", "Table"]
 
 export const migrateProperties = <C extends UIComponent>(component: C): C => {
@@ -56,7 +56,7 @@ export const migrateProperties = <C extends UIComponent>(component: C): C => {
   const props: Props = structuredClone(component.properties)
   const type = component.type
 
-  if (type === "Accordion" || type === "Input" || SMART_WIDGETS.includes(type)) moveColor(props, "componentClass")
+  if (type === "Accordion" || type === "Input" || isWidgetType(type)) moveColor(props, "componentClass")
   if (WRAPPER_ACCENT.includes(type)) moveColor(props, "wrapperClass")
 
   switch (type) {

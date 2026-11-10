@@ -13,7 +13,7 @@
     component,
     onPropertyChange,
   }: {
-    component: UIComponent & { properties: Partial<ISliderProps> }
+    component: UIComponent<"Slider">
     onPropertyChange: (change: PropertyChange<ISliderProps>) => void
   } = $props()
 

@@ -37,6 +37,7 @@
     Sat: d.Sat,
     DevName,
     DevSN,
+    WPNum: d.WPNum,
   })
 
   const ROLES = UI.ACCENT_COLORS

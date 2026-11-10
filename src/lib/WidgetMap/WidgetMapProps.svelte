@@ -14,7 +14,7 @@
     component,
     onPropertyChange,
   }: {
-    component: UIComponent & { properties: Partial<IWidgetMapProps> }
+    component: UIComponent<"WidgetMap">
     onPropertyChange: (change: PropertyChange<IWidgetMapProps>) => void
   } = $props()
 
