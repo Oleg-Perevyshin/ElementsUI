@@ -1,3 +1,4 @@
+<!-- Компас карты: возвращает её на север; кнопок масштаба нет - карта масштабируется колесом мыши и двумя пальцами -->
 <script lang="ts">
   import { onDestroy } from "svelte"
   import { getMapContext } from "../contexts.svelte.js"
@@ -5,7 +6,7 @@
   const mapCtx = getMapContext()
   if (!window.maplibregl || !mapCtx.map) throw new Error("Map instance is not initialized.")
 
-  const control = new window.maplibregl.NavigationControl()
+  const control = new window.maplibregl.NavigationControl({ showZoom: false })
   mapCtx.map.addControl(control)
 
   onDestroy(() => {

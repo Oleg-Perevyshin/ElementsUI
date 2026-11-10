@@ -44,15 +44,20 @@
   let anchorWidth = $state(Infinity)
   let buttonsNeed = $state(0)
   $effect(() => {
-    if (type !== "buttons" || !measureElement) return
+    const element = measureElement
+    if (type !== "buttons" || !element) return
     void options
+    let alive = true
     const measure = () => {
-      const widest = Math.max(0, ...[...measureElement!.children].map((child) => child.getBoundingClientRect().width))
+      if (!alive) return
+      const widest = Math.max(0, ...[...element.children].map((child) => child.getBoundingClientRect().width))
       /* сегменты равной ширины: самый широкий текст + отступы 2×12, разделители и рамка */
       buttonsNeed = options.length * (widest + 24) + options.length + 1
     }
     measure()
+    /* Шрифты могут догрузиться после замера; к тому времени компонент может быть уже убран */
     void document.fonts?.ready.then(measure)
+    return () => (alive = false)
   })
   const shownType = $derived(type === "buttons" && anchorWidth < buttonsNeed ? "select" : type)
 

@@ -21,7 +21,7 @@
   import { DEFAULT_MISSION_PLAN } from "./mission/plan"
   import { DEFAULT_ROUTE_PLAN } from "./mission/route"
   import Button from "../Button/Button.svelte"
-  import { MapLibre, NavigationControl, ScaleControl, GeolocateControl, FullScreenControl, Marker, Popup, Line, CustomControl } from "./mapWrapper"
+  import { MapLibre, NavigationControl, ScaleControl, FullScreenControl, Marker, Popup, Line, CustomControl } from "./mapWrapper"
 
   let {
     wrapperClass = "",
@@ -480,7 +480,6 @@
         >
           <NavigationControl />
           <ScaleControl />
-          <GeolocateControl />
           <FullScreenControl />
 
           <!-- Панель оператора поверх карты -->
