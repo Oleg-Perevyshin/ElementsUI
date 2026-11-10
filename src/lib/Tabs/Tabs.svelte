@@ -20,6 +20,9 @@
   }: ITabsProps = $props()
 
   const isCol = $derived(!!items.find((item) => item.class?.startsWith("flex-col")))
+
+  /* Номер вкладки дочернего компонента. Конструктор даёт id = UUID без первого символа (35 знаков) + номер вкладки: берём всё после 35-го знака, иначе цифра в конце UUID приклеилась бы к номеру. Прочие id - число в конце */
+  const tabOfComponent = (componentId: string) => (/^[0-9a-f-]{35}\d+$/i.test(componentId) ? componentId.slice(35) : componentId.match(/(\d+)$/)?.[1])
 </script>
 
 <div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class="h-full w-full" style={widgetAccentStyle(wrapperClass)}>
@@ -73,7 +76,7 @@
       style="grid-template-columns: repeat({size.width || 1}, minmax(0, 1fr)); grid-template-rows: repeat({size.height || 1}, auto);"
     >
       {#if Components}
-        {#each (apiArray ?? []).filter((c) => c.id.match(/(\d+)$/)?.[1] === `${activeTab}`) as comp}
+        {#each (apiArray ?? []).filter((c) => tabOfComponent(c.id) === `${activeTab}`) as comp}
           {@render Components(comp, false)}
         {/each}
       {:else if children}
