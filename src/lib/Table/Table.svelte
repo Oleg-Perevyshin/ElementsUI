@@ -381,10 +381,15 @@
                       {:else if content.type === "text"}
                         {@const text = content.data}
                         {@const value = cellContent(row, text)}
-                        <!-- w-full + min-w-0: при justify-items-start ячейка иначе берёт ширину по содержимому и truncate не даёт «…» -->
+                        {@const accent = text.accent?.(row)}
+                        <!-- w-full + min-w-0: при justify-items-start ячейка иначе берёт ширину по содержимому и truncate не даёт «…»; 
+ в тексте - перенос строки -->
                         <div class="flex w-full min-w-0 items-center">
                           <div
-                            class="w-full max-w-full min-w-0 wrap-break-word {text.truncated ? 'truncate' : 'whitespace-normal'}"
+                            class="max-w-full min-w-0 wrap-break-word {text.truncated ? 'truncate' : 'whitespace-pre-line'} {accent
+                              ? 'text-(--accent-text)'
+                              : ''} {accent && text.badge ? 'w-fit rounded-md bg-(--accent-soft) px-1.5 text-[12px] font-medium' : 'w-full'}"
+                            style={accentStyle(accent)}
                             onmouseenter={text.tooltip ? (e) => (tooltip = { show: true, text: cellText(row, text), x: e.clientX, y: e.clientY }) : undefined}
                             onmouseleave={text.tooltip ? () => (tooltip.show = false) : undefined}
                             onmousemove={text.tooltip ? (e) => ((tooltip.x = e.clientX), (tooltip.y = e.clientY)) : undefined}

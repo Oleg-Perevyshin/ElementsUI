@@ -38,7 +38,6 @@ export * from "./locales/i18n"
 export * from "./locales/languages"
 export { localizeDeep, type LocalizedText } from "./locales/localize"
 export { accentStyle, ACCENT_COLORS, type AccentColor } from "./accent"
-export { migrateProperties, migrateGUI } from "./migrate"
 export { default as GUIRenderer } from "./GUIRenderer/GUIRenderer.svelte"
 export { COMPONENTS, componentVariables, type ComponentEntry, type ComponentIO } from "./registry"
 export {

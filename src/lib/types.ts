@@ -399,7 +399,10 @@ export interface ITableText<T extends object> {
   copy?: boolean
   /* Полный вид по нажатию: true - содержимое ячейки целиком с кнопкой копирования, сниппет - своё содержимое окна, аргумент - строка */
   modal?: boolean | Snippet<[T]>
-  class?: string
+  /* Цвет текста ролью темы из строки (тип записи, уровень журнала); без цвета - обычный текст */
+  accent?: (row: T) => AccentColor | undefined
+  /* С accent: текст на мягкой подложке своего цвета (бейдж) */
+  badge?: boolean
 }
 export interface ITableSelect<T extends object> {
   key: keyof T

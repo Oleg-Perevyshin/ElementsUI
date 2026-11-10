@@ -89,15 +89,15 @@ GUI из конструктора рисует `GUIRenderer`. Он раскла�
 <UI.GUIRenderer components={module.UIBlocks} {link} persistKey={module.ModSN} viewer={!canManage} render={{ VideoViewer: video }} onError={addMessage} />
 ```
 
-| Пропс        | Что это                                                                                                       |
-| ------------ | ------------------------------------------------------------------------------------------------------------- |
-| `components` | `UIComponent[]` в формате 2.0 (`migrateGUI` применяется один раз к сохранённым GUI, рендерер его не вызывает) |
-| `link`       | `DeviceLink` выбранного модуля, см. ниже                                                                      |
-| `language`   | язык текстов GUI, по умолчанию язык библиотеки                                                                |
-| `viewer`     | наблюдатель: видны только `access` `full` и `viewOnly`, управление отключено                                  |
-| `persistKey` | ключ хранения в браузере (обычно `ModSN`): свёрнутость виджетов, планы `WidgetMap`                            |
-| `render`     | своя отрисовка типа: `{ VideoViewer: snippet }`, сниппет получает компонент                                   |
-| `onError`    | текст ошибки команды или передачи файла                                                                       |
+| Пропс        | Что это                                                                            |
+| ------------ | ---------------------------------------------------------------------------------- |
+| `components` | `UIComponent[]` в формате 2.0                                                      |
+| `link`       | `DeviceLink` выбранного модуля, см. ниже                                           |
+| `language`   | язык текстов GUI, по умолчанию язык библиотеки                                     |
+| `viewer`     | наблюдатель: видны только `access` `full` и `viewOnly`, управление отключено       |
+| `persistKey` | ключ хранения в браузере (обычно `ModSN`): свёрнутость виджетов, планы `WidgetMap` |
+| `render`     | своя отрисовка типа: `{ VideoViewer: snippet }`, сниппет получает компонент        |
+| `onError`    | текст ошибки команды или передачи файла                                            |
 
 ```ts
 interface DeviceLink {
@@ -247,7 +247,7 @@ export const T = createTranslator(translations)
 
 ## Переход на 2.0
 
-Версия 2.0 меняет API. Сохранённые GUI (каталог DevCloud, интерфейсы устройств) переводятся один раз функцией `migrateGUI(components)`, для одного компонента - `migrateProperties(component)`; рендерер GUI старый формат не читает. Обе функции чистые: исходный объект не меняется, повторный вызов ничего не меняет. Код приложений правится вручную по списку ниже.
+Версия 2.0 меняет API. Сохранённые GUI 1.x рендерер не читает: каталог DevCloud и интерфейсы устройств переведены один раз (функции перевода удалены в 2.1.0). Код приложений правится вручную по списку ниже.
 
 **Цвет: `accent` вместо классов.** Классы `bg-*` и `text-*` в `componentClass`, `wrapperClass`, `settings.class`, `options[].class`, `items[].class` цвет больше не задают.
 
@@ -377,7 +377,7 @@ const canModal = createRawSnippet((row: () => CanRow) => ({ render: () => `<div 
 **Прочее.**
 
 - Компоненты не выводят случайные DOM id вида `${id}-xxxxxx`. Проп `id` примитива - переменная устройства, в разметку он не попадает (кроме `Button`, где это атрибут `id`).
-- Новые экспорты: `Icon`, `accentStyle`, `ACCENT_COLORS`, `AccentColor`, `migrateProperties`, `migrateGUI`, `copyText`, `SelectValue`, `IconSource`, `configureMapLibre`.
+- Новые экспорты: `Icon`, `accentStyle`, `ACCENT_COLORS`, `AccentColor`, `copyText`, `SelectValue`, `IconSource`, `configureMapLibre`.
 - Ключи переводов `ui.info.show`, `ui.info.hide`, `library.for_constructor` удалены; добавлены `ui.joystick.*`, `widget.rgb.hue`, `widget.rgb.brightness`.
 
 ## Как описывать компонент
