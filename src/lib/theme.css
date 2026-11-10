@@ -26,6 +26,16 @@
   }
 }
 
+/* Сенсорный экран: поле ввода не мельче 16px, иначе Safari при нажатии на поле увеличивает страницу и кнопки уезжают за край. Масштаб не запрещаем (maximum-scale): на Android это отключает и увеличение двумя пальцами */
+@media (pointer: coarse) {
+  input:not([type="checkbox"], [type="radio"], [type="range"], [type="color"], [type="button"], [type="submit"], [type="reset"]),
+  textarea,
+  select,
+  [contenteditable="true"] {
+    font-size: 16px !important;
+  }
+}
+
 .font-display {
   font-family:
     "Montserrat",
