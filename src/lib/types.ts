@@ -395,8 +395,11 @@ export interface ITableText<T extends object> {
   html?: boolean
   sortable?: boolean
   truncated?: boolean
-  tooltip?: boolean
+  /* Подсказка у курсора: true - содержимое ячейки, функция - свой текст из строки */
+  tooltip?: boolean | ((row: T) => string)
   copy?: boolean
+  /* Нажатие на текст (открыть папку, перейти к записи) - текст выводится кнопкой */
+  onClick?: (row: T) => void
   /* Полный вид по нажатию: true - содержимое ячейки целиком с кнопкой копирования, сниппет - своё содержимое окна, аргумент - строка */
   modal?: boolean | Snippet<[T]>
   /* Цвет текста ролью темы из строки (тип записи, уровень журнала); без цвета - обычный текст */
@@ -444,6 +447,8 @@ export interface ITableHeader<T extends object> {
   label?: { name?: string; class?: string }
   width?: string
   align?: "left" | "center" | "right"
+  /* Несколько элементов ячейки - столбиком, а не в ряд (имя и под ним версия) */
+  stack?: boolean
   disableSelect?: boolean
   content?: ITableContent<T>[] | ((row: T) => ITableContent<T>[])
 }

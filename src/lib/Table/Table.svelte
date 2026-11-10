@@ -291,8 +291,12 @@
               {#each header as column, j (column)}
                 {#if column.width !== "0%"}
                   {@const contents = columnContent(column, row) as ITableContent<Row>[]}
+                  <!-- Одни бейджи - вплотную с переносом; stack - столбиком; иначе - в ряд равными долями -->
+                  {@const badges = contents.length > 1 && contents.every((c) => c.type === "text" && c.data.badge)}
                   <div
-                    class="relative grid min-h-7 w-full min-w-0 items-center gap-x-2 px-3 py-1 text-[length:var(--table-font-size,13px)] wrap-break-word
+                    class="relative {badges
+                      ? 'flex flex-wrap gap-1'
+                      : 'grid gap-x-2'} min-h-7 w-full min-w-0 items-center px-3 py-1 text-[length:var(--table-font-size,13px)] wrap-break-word
                     {column.align === 'center'
                       ? 'justify-center justify-items-center text-center'
                       : column.align === 'right'
@@ -301,7 +305,7 @@
                     {j !== 0 ? 'border-l' : ''} {outline ? 'border-(--hairline-color)' : 'border-transparent'} {column.disableSelect
                       ? 'select-none'
                       : 'select-all'}"
-                    style="grid-template-columns: repeat({contents.length}, minmax(0, 1fr));"
+                    style={badges ? undefined : `grid-template-columns: ${column.stack ? "minmax(0, 1fr)" : `repeat(${contents.length}, minmax(0, 1fr))`};`}
                   >
                     {#each contents as content, index}
                       {#if content.type === "button"}
@@ -390,7 +394,12 @@
                               ? 'text-(--accent-text)'
                               : ''} {accent && text.badge ? 'w-fit rounded-md bg-(--accent-soft) px-1.5 text-[12px] font-medium' : 'w-full'}"
                             style={accentStyle(accent)}
-                            onmouseenter={text.tooltip ? (e) => (tooltip = { show: true, text: cellText(row, text), x: e.clientX, y: e.clientY }) : undefined}
+                            onmouseenter={text.tooltip
+                              ? (e) => {
+                                  const tip = typeof text.tooltip === "function" ? text.tooltip(row) : cellText(row, text)
+                                  if (tip) tooltip = { show: true, text: tip, x: e.clientX, y: e.clientY }
+                                }
+                              : undefined}
                             onmouseleave={text.tooltip ? () => (tooltip.show = false) : undefined}
                             onmousemove={text.tooltip ? (e) => ((tooltip.x = e.clientX), (tooltip.y = e.clientY)) : undefined}
                             role="presentation"
@@ -406,6 +415,14 @@
                               >
                                 {#if text.html}{@html sanitizeHtml(value)}{:else}{value}{/if}
                               </button>
+                            {:else if text.onClick}
+                              <button
+                                class="cursor-pointer text-left hover:underline"
+                                onclick={(e) => {
+                                  e.stopPropagation()
+                                  text.onClick?.(row)
+                                }}>{value}</button
+                              >
                             {:else if text.href}
                               <a class="underline" href={text.href(row)}>{value}</a>
                             {:else if text.html}
