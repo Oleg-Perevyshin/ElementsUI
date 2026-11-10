@@ -140,11 +140,13 @@
 >
   <!-- Заголовок -->
   <WidgetHeader icon={StorageIcon} label={label?.name || $T("widget.fs.title")} bind:collapsed {hints}>
-    {#snippet right()}
+    {#snippet right(narrow: boolean)}
       <UI.Button
         wrapperClass="w-auto"
         componentClass="px-3"
-        content={{ icon: RefreshIcon, name: $T("widget.common.refresh") }}
+        content={narrow
+          ? { icon: RefreshIcon, info: { text: $T("widget.common.refresh"), side: "left" } }
+          : { icon: RefreshIcon, name: $T("widget.common.refresh") }}
         disabled={!onRefresh}
         onClick={() => onRefresh?.()}
       />

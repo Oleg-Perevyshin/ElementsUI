@@ -15,17 +15,20 @@
     icon: Component
     label: string
     collapsed?: boolean
-    right?: Snippet
+    /* Правая часть; narrow - шапка узкая: кнопки только значком, списки сжаты, чтобы всё стояло в одной строке */
+    right?: Snippet<[boolean]>
     /* Настройка подсказок этого виджета (hintsSetting) - показывает кнопку «?», переключающую только его подсказки */
     hints?: Writable<boolean>
   } = $props()
 
   const Icon = $derived(icon)
 
-  /* Правая часть уходит второй строкой, если не помещается рядом с заголовком (место под значок, заголовок и «?») */
-  const TITLE_MIN_PX = 180
+  /* Уже NARROW_PX шапка сжимает правую часть; если и сжатая не помещается рядом с заголовком (место под значок, заголовок и «?»), она уходит второй строкой */
+  const NARROW_PX = 640
+  const TITLE_MIN_PX = 120
   let headerWidth = $state(0)
   let rightWidth = $state(0)
+  let narrow = $derived(headerWidth > 0 && headerWidth < NARROW_PX)
   let wrapped = $derived(!!right && headerWidth > 0 && rightWidth + TITLE_MIN_PX + (hints ? 34 : 0) > headerWidth)
 </script>
 
@@ -51,7 +54,7 @@
     </button>
     {#if right && !wrapped}
       <div class="flex w-max shrink-0 items-center justify-end" bind:clientWidth={rightWidth}>
-        {@render right()}
+        {@render right(narrow)}
       </div>
     {/if}
     {#if hints}
@@ -68,9 +71,9 @@
     {/if}
   </div>
   {#if right && wrapped}
-    <!-- Во второй строке элементы могут переноситься; естественная ширина правой части - из первой строки -->
-    <div class="flex max-w-full flex-wrap items-center justify-end gap-2">
-      {@render right()}
+    <!-- Во второй строке элементы могут переноситься; ширина замеряется и здесь - сжатая часть возвращается в первую строку -->
+    <div class="flex w-max max-w-full flex-wrap items-center justify-end gap-2 self-end" bind:clientWidth={rightWidth}>
+      {@render right(narrow)}
     </div>
   {/if}
 </div>

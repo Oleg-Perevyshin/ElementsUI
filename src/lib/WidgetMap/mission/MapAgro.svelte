@@ -425,26 +425,27 @@
   style={rootStyle}
 >
   <WidgetHeader icon={MissionIcon} label={label?.name || $T("widget.mission.title")} bind:collapsed {hints}>
-    {#snippet right()}
+    {#snippet right(narrow: boolean)}
+      <!-- На узкой шапке: кнопка значком, во время полёта - только процент, иначе - сводка -->
       <div class="flex items-center gap-3">
         <Button
           wrapperClass="w-auto"
           componentClass="px-3"
-          content={{ icon: FitIcon, name: $T("widget.map.fitAll"), info: { text: $T("widget.mission.fitHint"), side: "bottom" } }}
+          content={{ icon: FitIcon, name: narrow ? undefined : $T("widget.map.fitAll"), info: { text: $T("widget.mission.fitHint"), side: "bottom" } }}
           disabled={collapsed || missionPoints().length === 0}
           onClick={() => fitAll()}
         />
         <span class="flex items-center gap-3 text-[12px] font-semibold text-(--muted-color) tabular-nums">
           {#if headerProgress !== null}
             <span class="flex items-center gap-1.5" title={simulate ? $T("widget.sim.title") : $T("widget.mission.progressHint")}>
-              <span class="h-1.5 w-14 overflow-hidden rounded-full bg-(--hairline-color)"
+              <span class="h-1.5 w-14 overflow-hidden rounded-full bg-(--hairline-color) {narrow ? 'hidden' : ''}"
                 ><span class="block h-full rounded-full bg-(--accent-color)" style="width: {Math.round(headerProgress * 100)}%"></span></span
               >
-              {Math.round(headerProgress * 100)}%{#if live}
+              {Math.round(headerProgress * 100)}%{#if live && !narrow}
                 · {$T("widget.mission.treated")} {fmt(treatedHa, 2)} {$T("widget.mission.ha")}{/if}
             </span>
           {/if}
-          {#if stats}
+          {#if stats && (!narrow || headerProgress === null)}
             <span class="text-[12px] font-semibold text-(--muted-color) tabular-nums"
               >{fmt(stats.ha, 2)} {$T("widget.mission.ha")} · {fmt(stats.total, 2)} {$T("widget.mission.km")}</span
             >

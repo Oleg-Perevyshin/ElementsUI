@@ -51,15 +51,22 @@
 </script>
 
 <!-- Три кнопки в ряд, на узком месте переносятся -->
-<div class="grid grid-cols-[repeat(auto-fit,minmax(7rem,1fr))] gap-3">
+<div class="grid grid-cols-[repeat(auto-fit,minmax(6.5rem,1fr))] gap-3">
   <div class="min-w-0" use:hint={{ text: $T("widget.mission.hint.download"), enabled: hints }}>
-    <Button variant="primary" content={{ name: $T("widget.mission.download") }} disabled={off} onClick={download} />
+    <Button componentClass="px-2" variant="primary" content={{ name: $T("widget.mission.download") }} disabled={off} onClick={download} />
   </div>
   <div class="min-w-0" use:hint={{ text: $T("widget.mission.hint.copy"), enabled: hints }}>
-    <Button variant="primary" content={{ name: $T(copied ? "widget.mission.copied" : "widget.mission.copy") }} disabled={off} onClick={copy} />
+    <Button
+      componentClass="px-2"
+      variant="primary"
+      content={{ name: $T(copied ? "widget.mission.copied" : "widget.mission.copy") }}
+      disabled={off}
+      onClick={copy}
+    />
   </div>
   <div class="min-w-0" use:hint={{ text: $T("widget.mission.hint.send"), enabled: hints }}>
     <Button
+      componentClass="px-2"
       variant="primary"
       accent={sendState === "error" ? "red" : undefined}
       content={{ name: $T(`widget.mission.send.${sendState}`) }}

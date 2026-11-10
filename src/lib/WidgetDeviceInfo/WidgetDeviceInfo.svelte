@@ -96,12 +96,14 @@
 >
   <!-- Заголовок -->
   <WidgetHeader icon={CpuIcon} label={label?.name || $T("widget.info.title")} bind:collapsed {hints}>
-    {#snippet right()}
+    {#snippet right(narrow: boolean)}
       <div use:hint={{ text: $T("widget.info.hint.restart"), enabled: $hints }}>
         <UI.Button
           wrapperClass="w-auto"
           componentClass="px-3"
-          content={{ icon: RestartIcon, name: $T("widget.info.restart") }}
+          content={narrow
+            ? { icon: RestartIcon, info: { text: $T("widget.info.restart"), side: "left" } }
+            : { icon: RestartIcon, name: $T("widget.info.restart") }}
           disabled={!onRestart}
           onClick={() => onRestart?.()}
         />

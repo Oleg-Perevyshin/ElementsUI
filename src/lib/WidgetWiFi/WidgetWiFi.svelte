@@ -128,8 +128,8 @@
 >
   <!-- Заголовок и переключатель режима -->
   <WidgetHeader icon={WifiIcon} label={label?.name || $T("widget.wifi.title")} bind:collapsed {hints}>
-    {#snippet right()}
-      <div class="w-full sm:w-72" use:hint={{ text: $T("widget.wifi.hint.mode"), enabled: $hints }}>
+    {#snippet right(narrow: boolean)}
+      <div class={narrow ? "w-36" : "w-72"} use:hint={{ text: $T("widget.wifi.hint.mode"), enabled: $hints }}>
         <UI.Select
           wrapperClass="w-full"
           type="buttons"

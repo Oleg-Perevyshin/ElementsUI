@@ -222,22 +222,23 @@
   style={rootStyle}
 >
   <WidgetHeader icon={MapIcon} label={label?.name || $T("widget.route.title")} bind:collapsed {hints}>
-    {#snippet right()}
+    {#snippet right(narrow: boolean)}
+      <!-- На узкой шапке: кнопка значком, во время полёта - только процент, иначе - сводка -->
       <div class="flex items-center gap-3">
         <Button
           wrapperClass="w-auto"
           componentClass="px-3"
-          content={{ icon: FitIcon, name: $T("widget.map.fitAll"), info: { text: $T("widget.route.fitHint"), side: "bottom" } }}
+          content={{ icon: FitIcon, name: narrow ? undefined : $T("widget.map.fitAll"), info: { text: $T("widget.route.fitHint"), side: "bottom" } }}
           disabled={collapsed || missionPoints().length === 0}
           onClick={() => fitAll()}
         />
         <span class="flex items-center gap-3 text-[12px] font-semibold text-(--muted-color) tabular-nums">
           {#if headerProgress !== null}
             <span class="flex items-center gap-1.5" title={simulate ? $T("widget.sim.title") : $T("widget.mission.progressHint")}>
-              <span class="h-1.5 w-14 overflow-hidden rounded-full bg-(--hairline-color)"
+              <span class="h-1.5 w-14 overflow-hidden rounded-full bg-(--hairline-color) {narrow ? 'hidden' : ''}"
                 ><span class="block h-full rounded-full bg-(--accent-color)" style="width: {Math.round(headerProgress * 100)}%"></span></span
               >
-              {Math.round(headerProgress * 100)}%{#if live}
+              {Math.round(headerProgress * 100)}%{#if live && !narrow}
                 · {live.finished
                   ? $T("widget.route.finished")
                   : live.target > route.points.length
@@ -245,7 +246,9 @@
                     : `${$T("widget.route.toPoint")} ${live.target}/${route.points.length}`}{/if}
             </span>
           {/if}
-          <span>{stats.points} {$T("widget.route.pts")} · {km(stats.length)}</span>
+          {#if !narrow || headerProgress === null}
+            <span>{stats.points} {$T("widget.route.pts")} · {km(stats.length)}</span>
+          {/if}
         </span>
       </div>
     {/snippet}

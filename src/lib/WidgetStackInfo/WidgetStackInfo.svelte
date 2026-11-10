@@ -138,13 +138,23 @@
 >
   <!-- Заголовок -->
   <WidgetHeader icon={MemoryIcon} label={label?.name || $T("widget.stack.title")} bind:collapsed {hints}>
-    {#snippet right()}
+    {#snippet right(narrow: boolean)}
       <div class="flex flex-wrap items-center justify-end gap-2" use:hint={{ text: $T("widget.stack.hint.poll"), enabled: $hints }}>
-        <UI.Select wrapperClass="w-64" type="buttons" options={periods} value={period} disabled={!onRefresh} onUpdate={(value) => (period = value)} />
+        <!-- На узком - список вместо ряда кнопок и кнопка значком -->
+        <UI.Select
+          wrapperClass={narrow ? "w-28" : "w-64"}
+          type="buttons"
+          options={periods}
+          value={period}
+          disabled={!onRefresh}
+          onUpdate={(value) => (period = value)}
+        />
         <UI.Button
           wrapperClass="w-auto"
           componentClass="px-3"
-          content={{ icon: RefreshIcon, name: $T("widget.common.refresh") }}
+          content={narrow
+            ? { icon: RefreshIcon, info: { text: $T("widget.common.refresh"), side: "left" } }
+            : { icon: RefreshIcon, name: $T("widget.common.refresh") }}
           disabled={!onRefresh}
           onClick={() => onRefresh?.()}
         />

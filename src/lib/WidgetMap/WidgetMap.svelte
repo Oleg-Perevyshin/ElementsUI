@@ -248,6 +248,8 @@
 
   /* Тема карты - по ближайшему предку .dark/.light (как у токенов theme.css): работает и внутри блока с другой темой, смена темы отслеживается */
   let rootEl: HTMLDivElement | undefined = $state()
+  /* Ширина карты: панель оператора поверх неё не заходит под кнопки справа */
+  let mapWidth = $state(0)
   const theme = themeState(
     () => rootEl,
     () => rootStyle,
@@ -442,12 +444,12 @@
     style={rootStyle}
   >
     <WidgetHeader icon={MapIcon} label={label?.name || $T("widget.map.title")} bind:collapsed {hints}>
-      {#snippet right()}
+      {#snippet right(narrow: boolean)}
         <div class="flex items-center gap-3">
           <Button
             wrapperClass="w-auto"
             componentClass="px-3"
-            content={{ icon: FitIcon, name: $T("widget.map.fitAll"), info: { text: $T("widget.map.fitAllHint"), side: "bottom" } }}
+            content={{ icon: FitIcon, name: narrow ? undefined : $T("widget.map.fitAll"), info: { text: $T("widget.map.fitAllHint"), side: "bottom" } }}
             disabled={collapsed || visibleBoards.length === 0}
             onClick={fitAllBoards}
           />
@@ -466,7 +468,7 @@
     </WidgetHeader>
 
     {#if !collapsed}
-      <div transition:slide={{ duration: 150 }} style="height: {height}px">
+      <div transition:slide={{ duration: 150 }} style="height: {height}px" bind:clientWidth={mapWidth}>
         <MapLibre
           bind:map={mapInstance}
           class="h-full w-full overflow-hidden rounded-[14px] border border-(--hairline-color)"
@@ -483,7 +485,11 @@
 
           <!-- Панель оператора поверх карты -->
           <CustomControl position="top-left">
-            <div class="flex flex-wrap items-center gap-3 rounded-lg px-2 py-1 text-(--font-color)">
+            <!-- Не шире карты без колонки кнопок справа: на узкой карте пункты переносятся -->
+            <div
+              class="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-lg px-2 py-1 text-(--font-color)"
+              style="max-width: {Math.max(mapWidth - 72, 120)}px"
+            >
               <label class="flex items-center gap-1.5 text-sm font-medium" use:hint={{ text: $T("widget.map.hint.track"), enabled: $hints }}>
                 <input type="checkbox" bind:checked={trackEnabled} />
                 {$T("constructor.props.map.track")}
