@@ -1,10 +1,10 @@
 /* $lib/gui.ts - чистые правила рендерера GUI устройства (GUIRenderer): сетка, поля смарт-виджетов, битовые поля, сборка пакетов команд, слияние ответа устройства в хранилище значений. Без Svelte - проверяются тестами против dist */
 import { bitFieldGet, bitFieldSet } from "./bitField.js"
 import type { DeviceTransport } from "./fsTransfer"
-import type { IUIComponentHandler, IWidgetFileSystemInfo, IWidgetStackInfo, UIComponent } from "./types"
+import type { IUIComponentHandler, IWidgetFileSystemInfo, IWidgetStackInfo, UIComponent, UIType } from "./types"
 
-/* Сетка GUI: 18 колонок, высота строки в rem - общая для конструктора и рендерера */
-export const GUI_GRID = { columns: 18, cellHeight: 6 } as const
+/* Сетка GUI: 23 колонки (2, 3, 4, 6 и 12 равных групп с пустой колонкой между ними), высота строки в rem - общая для конструктора и рендерера */
+export const GUI_GRID = { columns: 23, cellHeight: 6 } as const
 
 /* Смарт-виджет - тип с префиксом Widget, кроме примитива Widget */
 export const isWidgetType = (type: string) => type.startsWith("Widget") && type !== "Widget"
@@ -273,4 +273,102 @@ export const mergeDevicePayload = (
     }
     put(prefix + name, value)
   }
+}
+
+/* ********************************************************** */
+/* Раскладка по правилам автора: группа - блоки вплотную; группы разделяет пустая строка или блок во всю ширину (друг под другом), пустая колонка (рядом); см. README «Раскладка и правила для автора GUI» */
+const rows = (c: UIComponent): [number, number] => [c.position.row, c.position.row + spanRows(c)]
+const cols = (c: UIComponent): [number, number] => [c.position.col, c.position.col + c.position.width]
+
+/* Деление по оси: gap - новая часть только через пустую клетку (граница групп), без gap - на любой границе (строки формы) */
+const split = (list: UIComponent[], range: (c: UIComponent) => [number, number], gap: boolean) => {
+  const sorted = [...list].sort((a, b) => range(a)[0] - range(b)[0])
+  const parts: UIComponent[][] = []
+  let end = -Infinity
+  for (const c of sorted) {
+    const [start, stop] = range(c)
+    if (gap ? start > end : start >= end) parts.push([c])
+    else parts[parts.length - 1].push(c)
+    end = Math.max(end, stop)
+  }
+  return parts
+}
+
+/* stack - сверху вниз, groups - группы рядом (на телефоне карточки), line - строка формы (рядом с переносом) */
+export type FlowNode = { kind: "leaf"; component: UIComponent } | { kind: "stack" | "groups" | "line"; items: FlowNode[] }
+const leaf = (component: UIComponent): FlowNode => ({ kind: "leaf", component })
+
+/* Группа без пустых клеток внутри: строки формы сверху вниз, в строке блоки рядом; блок в несколько строк (джойстик) встаёт рядом со своими соседями */
+const form = (list: UIComponent[]): FlowNode => {
+  if (list.length === 1) return leaf(list[0])
+  const bands = split(list, rows, false)
+  if (bands.length > 1) return { kind: "stack", items: bands.map(form) }
+  const columns = split(list, cols, false)
+  if (columns.length > 1) return { kind: "line", items: columns.map(form) }
+  return { kind: "stack", items: [...list].sort((a, b) => a.position.row - b.position.row || a.position.col - b.position.col).map(leaf) }
+}
+
+/* Участки между блоками во всю ширину (разделитель, график): такой блок - тоже граница разделов */
+const parts = (list: UIComponent[]) => {
+  const out: UIComponent[][] = []
+  let run: UIComponent[] = []
+  for (const band of split(list, rows, false)) {
+    if (split(band, cols, false).length > 1) {
+      run.push(...band)
+      continue
+    }
+    if (run.length) out.push(run)
+    out.push(band)
+    run = []
+  }
+  if (run.length) out.push(run)
+  return out
+}
+
+export const layoutFlow = (list: UIComponent[]): FlowNode => {
+  if (list.length === 1) return leaf(list[0])
+  const sections = split(list, rows, true)
+  if (sections.length > 1) return { kind: "stack", items: sections.map(layoutFlow) }
+  const runs = parts(list)
+  if (runs.length > 1) return { kind: "stack", items: runs.map(layoutFlow) }
+  const groups = split(list, cols, true)
+  if (groups.length > 1) return { kind: "groups", items: groups.map(layoutFlow) }
+  return form(list)
+}
+
+/* Наименьшая удобная ширина блока на телефоне, px; не указан - во всю ширину */
+const MIN_PX: Partial<Record<UIType, number>> = {
+  Switch: 90,
+  Input: 120,
+  Select: 130,
+  Slider: 120,
+  Button: 110,
+  TextField: 100,
+  ProgressBar: 140,
+  Widget: 120,
+  Joystick: 200,
+}
+export const flowMinWidth = (node: FlowNode): number => {
+  if (node.kind === "leaf") {
+    /* Список кнопками - по ширине вариантов, не поместится в пол-экрана - во всю ширину */
+    const props = node.component.properties as { type?: string; options?: unknown[] }
+    if (node.component.type === "Select" && props.type === "buttons") {
+      const px = 44 * (props.options?.length ?? 2)
+      return px > 300 ? Infinity : Math.max(px, 120)
+    }
+    return MIN_PX[node.component.type] ?? Infinity
+  }
+  const widths = node.items.map(flowMinWidth)
+  return node.kind === "stack" ? Math.max(...widths) : widths.reduce((sum, w) => sum + w + 8, -8)
+}
+
+/* Компьютер: сетка из колонок автора, внутренние пустые колонки (границы групп) - узкая полоса вместо полной колонки */
+const GUTTER = "0.75rem"
+export const layoutColumns = (list: UIComponent[], total: number) => {
+  const used = new Set<number>()
+  for (const c of list) for (let col = c.position.col; col < c.position.col + c.position.width; col++) used.add(col)
+  const count = Math.max(total, ...list.map((c) => c.position.col + c.position.width - 1))
+  const first = Math.min(...used)
+  const last = Math.max(...used)
+  return Array.from({ length: count }, (_, i) => (i + 1 > first && i + 1 < last && !used.has(i + 1) ? GUTTER : "minmax(0, 1fr)")).join(" ")
 }

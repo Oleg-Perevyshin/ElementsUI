@@ -19,6 +19,10 @@
     widgetPacket,
     widgetPrefixes,
     writeBits,
+    layoutFlow,
+    layoutColumns,
+    flowMinWidth,
+    type FlowNode,
     type DeviceLink,
     type DevicePacket,
   } from "../gui"
@@ -182,7 +186,21 @@
     return (Array.isArray(external) ? external : (component.properties.options ?? [])) as IOption[]
   }
 
+  /* ********************************************************** */
+  /* Уже NARROW_MAX_PX (телефон, узкая панель) - раскладка по группам автора (layoutFlow в gui.ts), иначе его сетка */
+  const NARROW_MAX_PX = 640
+  let width = $state(0)
+  const narrow = $derived(width > 0 && width < NARROW_MAX_PX)
+
+  /* Группа из мелких блоков (канал, мотор) - в рамке; виджеты и графики - уже карточки */
+  const framed = (node: FlowNode) => node.kind !== "leaf" && Number.isFinite(flowMinWidth(node))
+
   const cellStyle = (component: UIComponent, fixedHeight: boolean) => {
+    /* Телефон: место задаёт раскладка, высота по содержимому; графику и видео - высота из конструктора, не больше 20rem */
+    if (narrow) {
+      const fixed = component.type === "Graph" || component.type === "PeriodChart" || component.type === "VideoViewer"
+      return fixed ? `height: min(${component.position.height * GUI_GRID.cellHeight}rem, 20rem);` : ""
+    }
     const area = `grid-area: ${component.position.row} / ${component.position.col} / span ${spanRows(component)} / span ${component.position.width};`
     const auto = component.type === "Accordion" || isWidgetType(component.type)
     const height = `${component.position.height * GUI_GRID.cellHeight}rem`
@@ -194,11 +212,57 @@
   const writable = (component: UIComponent) => !viewer && COMPONENTS[component.type].io !== "none"
 </script>
 
-<div class="grid gap-2" style="grid-template-columns: repeat({GUI_GRID.columns}, minmax(0, 1fr))">
-  {#each tree.get("") ?? [] as component (component.id)}
-    {@render Cell(component, false)}
-  {/each}
+<div bind:clientWidth={width}>
+  {@render Layout((tree.get("") ?? []).filter(visible), GUI_GRID.columns, false)}
 </div>
+
+<!-- Блоки одного контейнера: на телефоне раскладка по группам, на компьютере сетка автора -->
+{#snippet Layout(list: UIComponent[], total: number, fixedHeight: boolean)}
+  {#if narrow}
+    {@render Flow(layoutFlow(list))}
+  {:else}
+    <div class="grid gap-2" style="grid-template-columns: {layoutColumns(list, total)}">
+      {#each list as component (component.id)}
+        {@render Cell(component, fixedHeight)}
+      {/each}
+    </div>
+  {/if}
+{/snippet}
+
+{#snippet Flow(node: FlowNode)}
+  {#if node.kind === "leaf"}
+    {@render Cell(node.component, false)}
+  {:else if node.kind === "stack"}
+    <div class="flex min-w-0 flex-col gap-2">
+      {#each node.items as item, index (index)}
+        {@render Flow(item)}
+      {/each}
+    </div>
+  {:else}
+    {@const widths = node.items.map(flowMinWidth)}
+    {@const same = node.kind === "groups" && widths.every((w) => w === widths[0] && Number.isFinite(w))}
+    {#if same}
+      <!-- Одинаковые группы (каналы) - сеткой, сколько поместится -->
+      <div class="grid gap-2" style="grid-template-columns: repeat(auto-fill, minmax(min({widths[0] + 18}px, 100%), 1fr))">
+        {#each node.items as item, index (index)}
+          <div class="min-w-0 {framed(item) ? 'rounded-xl border border-(--hairline-color) p-2' : ''}">{@render Flow(item)}</div>
+        {/each}
+      </div>
+    {:else}
+      <div class="flex flex-wrap gap-2">
+        {#each node.items as item, index (index)}
+          {@const framedGroup = node.kind === "groups" && framed(item)}
+          <div
+            class="min-w-0 {framedGroup ? 'rounded-xl border border-(--hairline-color) p-2' : ''}"
+            style="flex: 1 1 {Number.isFinite(widths[index]) ? `${widths[index] + (framedGroup ? 18 : 0)}px` : '100%'}"
+          >
+            {@render Flow(item)}
+          </div>
+        {/each}
+      </div>
+    {/if}
+  {/if}
+{/snippet}
 
 {#snippet Cell(component: UIComponent, fixedHeight: boolean)}
   {#if visible(component)}
@@ -209,9 +273,10 @@
         {@render render[component.type]?.(component)}
       {:else if component.type === "Accordion"}
         <Accordion {...component.properties}>
-          {#each childrenOf(component) as child (child.id)}
-            {@render Cell(child, !!component.properties.image)}
-          {/each}
+          <!-- Своя сетка содержимого во всю ширину аккордеона: колонок не меньше, чем у самого дальнего блока -->
+          <div class="min-w-0" style="grid-column: 1 / -1; grid-row: 1 / -1">
+            {@render Layout(childrenOf(component).filter(visible), component.properties.size?.width ?? 1, !!component.properties.image)}
+          </div>
         </Accordion>
       {:else if component.type === "Tabs"}
         <Tabs {...component.properties} Components={Cell} apiArray={childrenOf(component)} />

@@ -1,4 +1,4 @@
-/* tests/gui.test.mjs - чистые правила GUIRenderer: поля смарт-виджетов, битовые поля, пакеты кнопки и таблицы, слияние ответа устройства */
+/* tests/gui.test.mjs - чистые правила GUIRenderer: поля смарт-виджетов, битовые поля, пакеты кнопки и таблицы, слияние ответа устройства, раскладка по группам */
 import { test } from "node:test"
 import assert from "node:assert/strict"
 import * as gui from "../dist/gui.js"
@@ -84,4 +84,44 @@ test("сетка: аккордеон и смарт-виджеты - одна с�
   assert.equal(gui.spanRows({ type: "WidgetMap", position: { height: 5 } }), 1)
   assert.equal(gui.spanRows({ type: "Widget", position: { height: 3 } }), 3)
   assert.equal(gui.isWidgetType("Widget"), false)
+})
+
+/* Блок сетки: тип, строка, колонка, ширина */
+const block = (id, type, row, col, width, extra = {}) => ({ id, type, properties: extra, position: { row, col, width, height: 1 } })
+/* Дерево раскладки в строку: leaf - id, узлы - kind(...) */
+const shape = (node) => (node.kind === "leaf" ? node.component.id : `${node.kind}(${node.items.map(shape).join(" ")})`)
+
+test("раскладка: группы рядом через пустую колонку, внутри группы - строки формы", () => {
+  /* Два мотора по 5 колонок: заголовок, затем «Напряжение | Ток» */
+  const list = [
+    block("roll", "TextField", 1, 1, 5),
+    block("u1", "Input", 2, 1, 3),
+    block("i1", "Input", 2, 4, 2),
+    block("pitch", "TextField", 1, 7, 5),
+    block("u2", "Input", 2, 7, 3),
+    block("i2", "Input", 2, 10, 2),
+  ]
+  assert.equal(shape(gui.layoutFlow(list)), "groups(stack(roll line(u1 i1)) stack(pitch line(u2 i2)))")
+})
+
+test("раскладка: пустая строка и блок во всю ширину делят на разделы, каналы вплотную по строкам не перемешиваются", () => {
+  const list = [
+    block("title", "TextField", 1, 1, 23),
+    block("a1", "Input", 2, 1, 2),
+    block("a2", "Switch", 3, 1, 2),
+    block("b1", "Input", 2, 4, 2),
+    block("b2", "Switch", 3, 4, 2),
+    block("line", "Divider", 4, 1, 23),
+    block("graph", "Graph", 6, 1, 23),
+  ]
+  assert.equal(shape(gui.layoutFlow(list)), "stack(stack(title groups(stack(a1 a2) stack(b1 b2)) line) graph)")
+})
+
+test("раскладка: ширина на телефоне и колонки сетки компьютера", () => {
+  const channel = gui.layoutFlow([block("x", "Input", 1, 1, 2), block("y", "Select", 2, 1, 2, { type: "buttons", options: [1, 2, 3] })])
+  assert.equal(gui.flowMinWidth(channel), 132)
+  assert.equal(gui.flowMinWidth(gui.layoutFlow([block("g", "Graph", 1, 1, 23)])), Infinity)
+  /* Внутренняя пустая колонка - узкая полоса, крайние пустые остаются полными */
+  const fr = "minmax(0, 1fr)"
+  assert.equal(gui.layoutColumns([block("l", "Input", 1, 1, 2), block("r", "Input", 1, 4, 2)], 6), [fr, fr, "0.75rem", fr, fr, fr].join(" "))
 })

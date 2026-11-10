@@ -66,36 +66,36 @@ export const COMPONENT_DEFAULTS: { [K in UIType]: Partial<UIComponentPropsMap[K]
   Divider: { type: "line", width: 2, anchor: "center" },
 }
 
-/* Размер нового компонента в клетках сетки */
+/* Размер нового компонента в клетках сетки: компактный, автор растягивает по месту; каркас (разделитель, аккордеон, вкладки) - во всю ширину */
 export const COMPONENT_SIZES: Record<UIType, { width: number; height: number }> = {
-  WidgetWiFi: { width: 8, height: 1 },
-  WidgetDeviceInfo: { width: 8, height: 1 },
-  WidgetFileSystem: { width: 10, height: 1 },
-  WidgetStackInfo: { width: 10, height: 1 },
-  WidgetRGBStrip: { width: 8, height: 1 },
-  WidgetPFD: { width: 12, height: 1 },
-  WidgetMap: { width: 14, height: 1 },
+  WidgetWiFi: { width: 7, height: 1 },
+  WidgetDeviceInfo: { width: 7, height: 1 },
+  WidgetFileSystem: { width: 7, height: 1 },
+  WidgetStackInfo: { width: 7, height: 1 },
+  WidgetRGBStrip: { width: 7, height: 1 },
+  WidgetPFD: { width: 7, height: 1 },
+  WidgetMap: { width: 7, height: 1 },
   Accordion: { width: GUI_GRID.columns, height: 1 },
   Tabs: { width: GUI_GRID.columns, height: 4 },
-  Input: { width: 4, height: 1 },
-  Select: { width: 4, height: 1 },
-  Slider: { width: 4, height: 1 },
+  Input: { width: 3, height: 1 },
+  Select: { width: 3, height: 1 },
+  Slider: { width: 3, height: 1 },
   Switch: { width: 2, height: 1 },
-  FileAttach: { width: 5, height: 1 },
+  FileAttach: { width: 7, height: 1 },
   Joystick: { width: 4, height: 3 },
   Button: { width: 2, height: 1 },
-  Table: { width: 12, height: 2 },
-  ProgressBar: { width: 4, height: 1 },
+  Table: { width: 11, height: 2 },
+  ProgressBar: { width: 3, height: 1 },
   TextField: { width: 3, height: 1 },
-  Graph: { width: 10, height: 3 },
-  PeriodChart: { width: 10, height: 4 },
+  Graph: { width: 7, height: 3 },
+  PeriodChart: { width: 7, height: 4 },
   Widget: { width: 3, height: 3 },
   VideoViewer: { width: 7, height: 7 },
   Divider: { width: GUI_GRID.columns, height: 1 },
 }
 
-/* Наименьшая ширина: смарт-виджет не уже 6 клеток, иначе шапка и поля не помещаются */
-export const minComponentWidth = (type: string) => (isWidgetType(type) ? 6 : 1)
+/* Наименьшая ширина: смарт-виджет не уже 7 клеток (треть сетки), иначе шапка и поля не помещаются */
+export const minComponentWidth = (type: string) => (isWidgetType(type) ? 7 : 1)
 
 /* Новый компонент в клетке (col, row) области шириной areaWidth; tab - номер вкладки родителя Tabs (последний знак id). Не помещающийся компонент сужается, но не меньше minComponentWidth - тогда сдвигается влево */
 export const createComponent = <K extends UIType>(
