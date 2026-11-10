@@ -35,8 +35,8 @@ export {
   type XPoeDebugItem,
   type XPoeDebugRow,
 } from "./xPoeDebug.js"
-/* Отображение Value xPOE-Debug в таблице/модалке и копирование Value/HEX */
-export { formatXPoeDebugValue, formatXPoeDebugValueForTable, formatXPoeDebugPretty, formatXPoeDebugModal, bindXPoeDebugCopyButtons } from "./xPoeDebugView.js"
+/* Вид Payload xPOE-Debug: кратко для строки таблицы и развёрнуто для окна */
+export { formatXPoeDebugValue, formatXPoeDebugPretty } from "./xPoeDebugView.js"
 /* CAN/CAN FD через slcan-адаптер: нарезка пакета на кадры как в can_service прошивки, кадры slcan, потоковый разбор со сборкой фрагментов */
 export {
   CAN_FINAL_BIT,

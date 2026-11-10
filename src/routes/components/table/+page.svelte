@@ -73,7 +73,7 @@
     parentId: "",
   })
 
-  let body: any | null = $state(null)
+  let loggerRef: Table<{ "id-S": string; device: string }> | undefined = $state()
   let intervalId: any | null = null
 
   const generateStashingData = (): { "id-S": string; device: string; buttons: ITableButton<object>[] }[] => {
@@ -94,7 +94,7 @@
 
   $effect(() => {
     if (!(tableComponent.properties as ITableProps<object>).dataBuffer?.stashData && tableRef) {
-      tableRef.clearBuffer()
+      tableRef.clear()
     }
   })
 
@@ -130,11 +130,7 @@ ${formatObjectToString(tableComponent.properties as ITableProps<object>)}
           data: {
             key: "status",
             truncated: true,
-            formatting: (text) => {
-              if (text === "online") {
-                return "1"
-              } else return "2"
-            },
+            render: (row) => (row.status === "online" ? "🟢 online" : "⚪ offline"),
           },
         },
       ],
@@ -190,11 +186,7 @@ ${formatObjectToString(tableComponent.properties as ITableProps<object>)}
   ]
 
   onMount(() => {
-    body = generateStashingData()
-
-    intervalId = setInterval(() => {
-      body = generateStashingData()
-    }, 1000)
+    intervalId = setInterval(() => loggerRef?.push(generateStashingData()), 1000)
   })
 
   onDestroy(() => {
@@ -226,7 +218,7 @@ ${formatObjectToString(tableComponent.properties as ITableProps<object>)}
       label={{ name: "Devices" }}
       header={columns}
       body={rows}
-      onClick={(eventHandler) => console.log(eventHandler)}
+      onClick={(row, button) => console.log(row, button)}
       footer={`rows: ${rows.length}`}
     />
     <div class="flex gap-4">
@@ -236,8 +228,8 @@ ${formatObjectToString(tableComponent.properties as ITableProps<object>)}
       <Table
         wrapperClass="h-60 flex-1"
         label={{ name: "Логгер (dataBuffer.logger)" }}
+        bind:this={loggerRef}
         header={loggerColumns}
-        {body}
         dataBuffer={{ logger: true, stashData: true, bufferSize: 10, visibleRows: 5, clearButton: true }}
       />
     </div>

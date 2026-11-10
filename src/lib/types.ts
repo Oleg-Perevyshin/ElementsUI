@@ -406,15 +406,16 @@ export interface ISwitchProps {
 
 export interface ITableText<T extends object> {
   key: keyof T
+  /* Содержимое ячейки из строки; по умолчанию - значение по key (варианты списка - их имена, объект - JSON) */
+  render?: (row: T) => string
+  /* Содержимое - готовый HTML (render или вызывающий сами экранируют данные); по умолчанию выводится как текст */
+  html?: boolean
   sortable?: boolean
   truncated?: boolean
   tooltip?: boolean
-  /* Значение ячейки - готовый HTML (вызывающий сам экранирует данные); по умолчанию выводится как текст */
-  html?: boolean
-  /* Результат - HTML для окна и подсказки: функция сама экранирует текст */
-  formatting?: (text: string) => string
   copy?: boolean
-  modal?: boolean
+  /* Полный вид по нажатию: true - содержимое ячейки целиком с кнопкой копирования, сниппет - своё содержимое окна, аргумент - строка */
+  modal?: boolean | Snippet<[T]>
   class?: string
 }
 export interface ITableSelect<T extends object> {
@@ -466,15 +467,18 @@ export interface ITableProps<T extends object> {
   wrapperClass?: string
   label?: { name?: string; class?: string }
   header?: ITableHeader<T>[]
-  body: T[] | T | null
+  /* Строки обычной таблицы; журнал (dataBuffer.stashData) строки получает методом push() через bind:this */
+  body?: T[]
   footer?: string
+  /* Журнал: stashData - строки копятся в кольцевом буфере bufferSize (по умолчанию 10), высота - по visibleRows строкам, logger - новые сверху */
   dataBuffer?: { stashData?: boolean; bufferSize?: number; visibleRows?: number; clearButton?: boolean; clearClass?: string; logger?: boolean }
   outline?: boolean
   cursor?: string | null
   loader?: () => boolean
   autoscroll?: boolean
   getData?: () => void
-  onClick?: (eventHandler: IUIComponentHandler) => void
+  /* Нажатие кнопки строки без своего onClick: строка с выбранными в списках значениями и описание кнопки; пакет команды строит приложение */
+  onClick?: (row: T, button: ITableButton<T>) => void
 }
 
 /* ********************************************************** */

@@ -3,7 +3,8 @@ import { cborToValue } from "./cbor/value.js"
 import { jsonToCbor } from "./cbor/json.js"
 import { DEFAULT_DICTIONARY, type Dictionary } from "./dictionary.js"
 import { createFramer, type FramerOptions } from "./framer.js"
-import { bytesToHex, hexToBytes } from "./hex.js"
+import { hexToBytes } from "./hex.js"
+import { formatXPoeDebugValue } from "./xPoeDebugView.js"
 import { decodePacket, encodePacket, formatBusId, type DecodedPacketObject } from "./packet.js"
 
 export const DEBUG_LOG_ARGUMENT = "DebugLog"
@@ -21,8 +22,8 @@ export type XPoeDebugItem =
       header: string
       argument: string
       reply: boolean
-      value: string /* HEX CBOR item Payload, пустой Payload - "" */
-      valueBytes: Uint8Array
+      valueBytes: Uint8Array /* Payload - CBOR item, пустой - нет байт */
+      payload: unknown /* Payload, декодированный при разборе; пустой или не CBOR - undefined */
       crc: string
       crcOk: boolean
       freeHeap: string /* FHS из DebugLog, у остальных пакетов - "" */
@@ -52,19 +53,18 @@ const textItems = (bytes: Uint8Array) =>
     .filter((line) => line && ![...line].some((char) => char.charCodeAt(0) < 0x20 && char !== "\t"))
     .map((text) => ({ type: "raw" as const, text }))
 
-/* FHS - четвёртый элемент Payload DebugLog */
-const freeHeapOf = (argument: string, payload: Uint8Array): string => {
-  if (argument !== DEBUG_LOG_ARGUMENT || !payload.length) return ""
+const decodePayload = (bytes: Uint8Array): unknown => {
+  if (!bytes.length) return undefined
   try {
-    const value = cborToValue(payload)
-    return Array.isArray(value) && typeof value[3] === "number" ? String(value[3]) : ""
+    return cborToValue(bytes)
   } catch {
-    return ""
+    return undefined
   }
 }
 
 const frameItem = (object: DecodedPacketObject, dictionary: Dictionary): XPoeDebugItem => {
   const argument = dictionary.name(object.argument)
+  const payload = decodePayload(object.payload)
   return {
     type: "frame",
     trgId: object.trgBusID,
@@ -73,11 +73,12 @@ const frameItem = (object: DecodedPacketObject, dictionary: Dictionary): XPoeDeb
     header: dictionary.header(object.header),
     argument,
     reply: object.reply,
-    value: bytesToHex(object.payload),
     valueBytes: object.payload.slice(),
+    payload,
     crc: object.crc.toString(16).toUpperCase().padStart(4, "0"),
     crcOk: object.crcOk,
-    freeHeap: freeHeapOf(argument, object.payload),
+    /* FHS - четвёртый элемент Payload DebugLog */
+    freeHeap: argument === DEBUG_LOG_ARGUMENT && Array.isArray(payload) && typeof payload[3] === "number" ? String(payload[3]) : "",
   }
 }
 
@@ -88,21 +89,25 @@ export interface XPoeDebugRow {
   har: string
   header: string
   argument: string
-  value: string
+  value: string /* Payload кратко: DebugLog - уровень · тег · текст, CBOR - JSON, не CBOR - HEX, RAW - сам текст */
+  valueBytes: Uint8Array /* Исходные байты Payload, у RAW - пусто */
+  payload: unknown /* Payload, декодированный при разборе */
   crc: string
   freeHeap: string
 }
 
 export const xPoeDebugRow = (item: XPoeDebugItem): XPoeDebugRow =>
   item.type === "raw"
-    ? { trgId: "", srcId: "", har: "", header: "RAW", argument: "", value: item.text, crc: "", freeHeap: "" }
+    ? { trgId: "", srcId: "", har: "", header: "RAW", argument: "", value: item.text, valueBytes: new Uint8Array(), payload: undefined, crc: "", freeHeap: "" }
     : {
         trgId: formatBusId(item.trgId),
         srcId: formatBusId(item.srcId),
         har: item.har.toString(16).toUpperCase().padStart(4, "0"),
         header: item.crcOk ? item.header : "⚠️",
         argument: item.argument,
-        value: item.value,
+        value: formatXPoeDebugValue(item.payload, item.valueBytes),
+        valueBytes: item.valueBytes,
+        payload: item.payload,
         crc: item.crc,
         freeHeap: item.freeHeap,
       }

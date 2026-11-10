@@ -160,7 +160,15 @@ test("xPOE-Debug: разбор потока в любом месте разре�
   ]
   const pick = (item) =>
     item.type === "frame"
-      ? { type: item.type, header: item.header, argument: item.argument, reply: item.reply, value: item.value, crcOk: item.crcOk, freeHeap: item.freeHeap }
+      ? {
+          type: item.type,
+          header: item.header,
+          argument: item.argument,
+          reply: item.reply,
+          value: toHex(item.valueBytes),
+          crcOk: item.crcOk,
+          freeHeap: item.freeHeap,
+        }
       : item
   for (let cut = 0; cut <= stream.length; cut++) {
     const parser = m.createXPoeDebugParser()
@@ -213,7 +221,8 @@ test("xPOE-Debug: неверный CRC, команда устройству, н�
   assert.equal(parsed.freeHeap, "")
   assert.deepEqual([...parsed.valueBytes], [...value])
   const empty = m.encodeXPoeDebugFrame("GET", "ModInfo", m.xPoeDebugValueFromText(""))
-  assert.equal(m.createXPoeDebugParser().push(empty)[0].value, "")
+  assert.equal(m.createXPoeDebugParser().push(empty)[0].valueBytes.length, 0)
+  assert.deepEqual(parsed.payload, { DevName: "Объект 1" })
   const two = m.encodePacket([
     { trgBusID: 0, srcBusID: 1, har: m.xPoeDebugHar("OK!", "ModCfg", false), payload: value },
     { trgBusID: 0, srcBusID: 1, har: m.xPoeDebugHar("OK!", "DebugPlot", false), payload: m.valueToCbor({ A: 1 }) },
@@ -231,31 +240,37 @@ test("xPOE-Debug: неверный CRC, команда устройству, н�
     har: parsed.har.toString(16).toUpperCase().padStart(4, "0"),
     header: "SET",
     argument: "ModCfg",
-    value: toHex(value),
+    value: '{"DevName":"Объект 1"}',
+    valueBytes: parsed.valueBytes,
+    payload: parsed.payload,
     crc: parsed.crc,
     freeHeap: "",
   })
   assert.equal(m.xPoeDebugRow(bad).header, "⚠️")
   assert.equal(m.xPoeDebugRow({ type: "raw", text: "boot" }).header, "RAW")
   assert.deepEqual([m.parseBusId("00FF"), m.parseBusId(""), m.parseBusId("XYZ", 7), m.parseBusId("10000", 7), m.formatBusId(0xab)], [255, 0, 7, 7, "0x00AB"])
-  /* таблица: DebugLog - уровень · тег · текст, FHS в отдельной колонке */
-  assert.equal(m.formatXPoeDebugValue(toHex(m.valueToCbor([2, "Net", "Нет связи", 1000]))), '<span class="font-semibold">🟡</span> · Net · Нет связи')
-  /* модалка: развёрнутый вид - карта с отступами, float32 кратко, DebugLog по строкам, дамп по 16 байт */
-  const float32Map = "A16154FA3DF5C28F" /* {"T": float32 0.12} */
-  assert.equal(m.formatXPoeDebugValue(float32Map), "{&quot;T&quot;:0.12}")
-  assert.equal(m.formatXPoeDebugPretty(toHex(m.valueToCbor({ Mode: 1, List: [1, 2] }))), '{\n  "Mode": 1,\n  "List": [\n    1,\n    2\n  ]\n}')
-  assert.equal(m.formatXPoeDebugPretty(toHex(m.valueToCbor([3, "API", "Запуск", 2048]))), "🟢 API\nЗапуск\nFHS: 2048")
+  /* таблица: DebugLog - уровень · тег · текст, FHS в отдельной колонке; не CBOR - HEX */
+  assert.equal(m.formatXPoeDebugValue([2, "Net", "Нет связи", 1000], new Uint8Array()), "🟡 · Net · Нет связи")
+  assert.equal(m.formatXPoeDebugValue(undefined, Uint8Array.of(0xab, 0xcd)), "AB CD")
+  /* окно: развёрнутый вид - карта с отступами, float32 кратко, DebugLog по строкам, дамп по 16 байт */
+  const float32Map = m.cborToValue(Uint8Array.from(Buffer.from("A16154FA3DF5C28F", "hex"))) /* {"T": float32 0.12} */
+  assert.equal(m.formatXPoeDebugValue(float32Map, new Uint8Array()), '{"T":0.12}')
+  assert.equal(m.formatXPoeDebugPretty({ Mode: 1, List: [1, 2] }), '{\n  "Mode": 1,\n  "List": [\n    1,\n    2\n  ]\n}')
+  assert.equal(m.formatXPoeDebugPretty([3, "API", "Запуск", 2048]), "🟢 API\nЗапуск\nFHS: 2048")
   assert.deepEqual(
     m
-      .formatXPoeDebugPretty(toHex(m.valueToCbor([4, "RX", new Uint8Array(17).fill(0xab), 1])))
+      .formatXPoeDebugPretty([4, "RX", new Uint8Array(17).fill(0xab), 1])
       .split("\n")
       .slice(1),
     ["bytes(17):", "AB AB AB AB AB AB AB AB AB AB AB AB AB AB AB AB", "AB", "FHS: 1"],
   )
-  assert.equal(m.formatXPoeDebugPretty("XYZ"), null)
-  const modal = m.formatXPoeDebugModal(`x\nHEX\n${float32Map}`)
-  assert.ok(modal.includes('<span style="color:var(--blue-text)">&quot;T&quot;:</span> <span style="color:var(--red-text)">0.12</span>'))
-  assert.ok(modal.includes(`>${float32Map}</pre>`))
+  assert.equal(m.formatXPoeDebugPretty(undefined), null)
+  assert.ok(
+    m
+      .formatXPoeDebugPretty(float32Map, true)
+      .includes('<span style="color:var(--blue-text)">&quot;T&quot;:</span> <span style="color:var(--red-text)">0.12</span>'),
+  )
+  assert.equal(m.formatXPoeDebugPretty("<b>", true), "&lt;b&gt;")
 })
 
 /* CAN/CAN FD через slcan */
@@ -399,7 +414,7 @@ test("графики: пакет DebugPlot - значения и порядок 
   const [frame] = parser.push(deviceFrame("OK!", m.DEBUG_PLOT_ARGUMENT, m.xPoeDebugValueFromText(DEBUG_PLOT_HEX)))
   assert.equal(frame.type, "frame")
   assert.ok(frame.crcOk)
-  const values = m.debugPlotValues(frame.value)
+  const values = m.debugPlotValues(frame.payload)
   assert.equal(values.length, 12)
   const plots = m.createPlotGroups()
   assert.deepEqual(plots.update(values), ["LIGHT", "SPEC"])
@@ -424,7 +439,8 @@ test("графики: пакет DebugPlot - значения и порядок 
       .slice(0, 2),
     ["415", "910"],
   )
-  assert.deepEqual(m.debugPlotValues("не cbor"), [])
+  assert.deepEqual(m.debugPlotValues(undefined), [])
+  assert.deepEqual(m.debugPlotValues([1, 2]), [])
   plots.clear()
   assert.deepEqual(plots.data("SPEC"), [])
 })
