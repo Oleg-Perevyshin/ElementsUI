@@ -64,17 +64,20 @@ npm install poe-svelte-ui-lib
 <UI.Button content={{ name: "Сохранить" }} onClick={() => console.log(value)} />
 ```
 
-Главное правило: компонент только показывает данные и сообщает об изменениях. Значения приходят через пропсы, изменения уходят колбэками (`onUpdate`, `onChange`, `onSave` и другие). Сетью, WebSocket и хранилищем значений занимается приложение.
+Главное правило: компонент только показывает данные и сообщает об изменениях. Значения приходят через пропсы, изменения уходят колбэками. Сетью, WebSocket и хранилищем значений занимается приложение.
+
+Смысл колбэков у всех компонентов один: `onUpdate` - принятое значение (Enter, уход из поля, отпущенный бегунок, выбор варианта), `onInput` - текущее значение во время ввода или перетаскивания. Значение всегда идёт первым аргументом. У `Select` значение - это `option.value`, а не сам вариант. Цвет компонента задаёт проп `accent` (роль темы: `gray`, `red`, `orange`, `yellow`, `green`, `cyan`, `blue`, `purple`), у `Button` ещё `variant`.
 
 В DevCloud и WebApp значения устройства хранятся под ключами вида `<ModSN>|<ключ>`. Смарт-виджет читает свою группу целиком, например все поля `CFG.*` или `MAV.*`.
 
 У каждого компонента есть парный `<Компонент>Props.svelte`. Это панель свойств для конструктора DevCloud. Пропсы у всех панелей одинаковые:
 
-| Пропс              | Что это                                                                      |
-| ------------------ | ---------------------------------------------------------------------------- |
-| `component`        | Компонент интерфейса и его свойства                                          |
-| `onPropertyChange` | Сообщает об изменении свойств, имени, доступа или события                    |
-| `forConstructor`   | `true` - полная панель конструктора, `false` - упрощённая для редактирования |
+| Пропс              | Что это                                                                                                                                   |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `component`        | Компонент интерфейса и его свойства                                                                                                       |
+| `onPropertyChange` | `(change: PropertyChange) => void`: новые `properties`, `name`, `access`, `eventHandler`; приложение сливает их по ключам верхнего уровня |
+
+Своя панель свойств строится на `createPropsEditor(component, onPropertyChange)`: `set`, `patch`, `addItem`, `updateItem`, `removeItem` отправляют новые объекты, сами свойства не меняются на месте.
 
 ## Протоколы
 
@@ -124,7 +127,7 @@ npm install poe-svelte-ui-lib
 - `--*-soft` - мягкий фон блока или строки;
 - `--*-mark` - самый яркий цвет гаммы для полос, точек, тегов и индикаторов. Для текста он не годится, жёлтый и голубой на белом не читаются.
 
-Акцентный цвет `--accent-color` - это синий из гаммы, заливка. Когда акцент нужен как текст, значок, рамка или кольцо фокуса, берут `--accent-text`: в тёмной теме заливка темна для тонкой линии. В виджете с мастер-цветом оба токена переопределяет `widgetAccentStyle`.
+Акцентный цвет `--accent-color` - это синий из гаммы, заливка. Когда акцент нужен как текст, значок, рамка или кольцо фокуса, берут `--accent-text`: в тёмной теме заливка темна для тонкой линии. У компонента с пропом `accent` оба токена переопределяет `accentStyle(accent)`.
 
 Цветной текст, рамки и линии пишут через `--red-text`, `--green-text`, `--orange-text` и так далее (классы `text-(--red-text)`, `border-(--red-text)`), а не через `--red-color`. Заливки `--*-color` как текст и тонкие линии плохо читаются: в тёмной теме они тёмные, а жёлтая и оранжевая слишком светлые на белом. Классы `border-*` в тёмной теме сами берут цвет метки.
 
@@ -147,7 +150,7 @@ npm install poe-svelte-ui-lib
 
 Текст ячейки `Table` выводится как текст, теги в данных устройства не работают. Если ячейке нужна разметка (цвет, ссылка), у колонки ставят `html: true`, а данные в ней экранируют сами функцией `escapeHtml`. `formatting` возвращает HTML для окна и подсказки и тоже сам экранирует текст.
 
-Шапку `Table` можно перекрасить переменной `--table-header-color`. По умолчанию она `--accent-soft`, смарт-виджеты задают её сами от своего цвета.
+Шапку `Table` можно перекрасить переменной `--table-header-color`. Компонент с `accent` задаёт её сам мягким оттенком своего цвета.
 
 Посмотреть всю тему разом можно на вкладке «Тема» на главной витрины. Там палитра, все компоненты с демо-данными, типографика и Markdown.
 
@@ -181,6 +184,70 @@ export const T = createTranslator(translations)
 
 - **Встроенные тексты компонентов**: подписи, кнопки, подсказки. Они только в словаре `src/lib/locales/translations.ts` и выводятся через `$T("ключ")`. Русских строк прямо в разметке быть не должно.
 - **Тексты из конструктора**: название поля, варианты списка, заголовки колонок. Это строка или объект `{ ru, en, zh }`. Приложение переводит всё описание интерфейса функцией `localizeDeep` перед показом. В конструкторе их правят в окне «Тексты и переводы», которое есть у каждого компонента.
+
+## Переход на 2.0
+
+Версия 2.0 меняет API. Сохранённые GUI (каталог DevCloud, интерфейсы устройств) переводятся функцией `migrateGUI(components)` при загрузке, она же для одного компонента - `migrateProperties(component)`. Обе чистые: исходный объект не меняется, повторный вызов ничего не меняет. Код приложений правится вручную по списку ниже.
+
+**Цвет: `accent` вместо классов.** Классы `bg-*` и `text-*` в `componentClass`, `wrapperClass`, `settings.class`, `options[].class`, `items[].class` цвет больше не задают.
+
+| Где                                                                                                                 | Было                                                      | Стало                                                    |
+| ------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- | -------------------------------------------------------- |
+| `Button`                                                                                                            | `componentClass="bg-green"`                               | `variant="primary" accent="green"`                       |
+| `Button`                                                                                                            | `componentClass="bg-max"`, `"bg-gray"`                    | `variant="secondary"`                                    |
+| `Button`                                                                                                            | `componentClass="bg-transparent p-1"`                     | `componentClass="p-1"` (`variant` по умолчанию `plain`)  |
+| `Button` внутри виджета                                                                                             | `componentClass="bg-accent"`                              | `variant="primary"`                                      |
+| `Accordion`, `Input`                                                                                                | `componentClass="bg-red"`                                 | `accent="red"`                                           |
+| `WidgetWiFi`, `WidgetDeviceInfo`, `WidgetFileSystem`, `WidgetStackInfo`, `WidgetRGBStrip`, `WidgetPFD`, `WidgetMap` | `componentClass="bg-red"` (проп удалён)                   | `accent="red"`                                           |
+| `Slider`, `Switch`, `Joystick`, `Tabs`, `PeriodChart`, `VideoViewer`, `ProgressBar`                                 | `wrapperClass="bg-red ..."`                               | `accent="red"` (у `Joystick` по умолчанию `blue`)        |
+| `Divider`                                                                                                           | `color="bg-red"` (проп удалён)                            | `accent="red"`                                           |
+| `TextField`                                                                                                         | `text-(color:--red-text)` в `wrapperClass`                | `accent="red"`                                           |
+| `Widget`                                                                                                            | `settings.class: "bg-red"`, `icons.class`                 | `accent: "red"`, `icons.class` удалён                    |
+| `ProgressBar`                                                                                                       | `items: [{ name, class: "bg-red" }]`                      | `items: [{ name, accent: "red" }]`                       |
+| `Select`, `Switch` (биты)                                                                                           | `options: [{ ..., class: "bg-red" }]`                     | `options: [{ ..., accent: "red" }]`                      |
+| `Switch` (обычный)                                                                                                  | `options={[{ id, value: 0, class: "bg-red", disabled }]}` | `accent="red" disabled` (`options` только для `bitMode`) |
+| Свой элемент в цвет компонента                                                                                      | `style={UI.widgetAccentStyle(componentClass)}`            | `style={UI.accentStyle(accent)}`                         |
+
+`Table` пока без изменений: цвет - роль `bg-*` в `wrapperClass`.
+
+**Колбэки.**
+
+| Компонент        | Было                                        | Стало                                                                              |
+| ---------------- | ------------------------------------------- | ---------------------------------------------------------------------------------- |
+| `Input`          | `onUpdate` на каждую клавишу                | `onUpdate` - Enter, уход из поля, счётчик; `onInput(text)` - каждый ввод           |
+| `Input`          | `bind:isValid`                              | проп удалён, проверка внутри (`aria-invalid`)                                      |
+| `Slider`         | `onUpdate` во время перетаскивания          | `onUpdate` - бегунок отпущен или `+/-`; `onInput(value)` - во время перетаскивания |
+| `Widget`         | `onUpdate` во время перетаскивания слайдера | `onUpdate` - принятое значение; `onInput(value)` - слайдер во время перетаскивания |
+| `Switch`         | `onChange={(value) => ...}`                 | `onUpdate={(value) => ...}`                                                        |
+| `FileAttach`     | `onChange={(event, file) => ...}`           | `onUpdate={(file, event) => ...}`                                                  |
+| `WidgetRGBStrip` | `onChange={(field, value) => ...}`          | `onUpdate={(value, field) => ...}`                                                 |
+
+**Select: значение варианта, а не вариант.**
+
+| Было                                                             | Стало                                                                       |
+| ---------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| `value={options.find((o) => o.value === x)}`                     | `value={x}` или `bind:value={x}`                                            |
+| `onUpdate={(o) => (x = (o as UI.IOption).value)}`                | `onUpdate={(v) => (x = v)}`                                                 |
+| `multiSelect`: `value` и `onUpdate` - массив вариантов           | массив значений                                                             |
+| `type="input"`: `onUpdate` на каждую клавишу и дважды при выборе | `onInput(text)` при вводе, `onUpdate` - Enter, уход из поля, выбор варианта |
+| `IOption`: `{ id: string; value?: T; class?: string; ... }`      | `{ id?: string; value: T; accent?: AccentColor; ... }`                      |
+
+Тип значения - `SelectValue<T, M>`, пропсы - `ISelectProps<T, M>`, где `M` - `multiSelect`. Список открывается стрелками, выбор - Enter, закрытие - Escape.
+
+**Панели свойств.**
+
+| Было                                                                                                                                           | Стало                                                                         |
+| ---------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| `<UI.SelectProps {component} {onPropertyChange} forConstructor={false} />`                                                                     | проп `forConstructor` удалён, панель одна                                     |
+| тип `onPropertyChange` копировался в приложение                                                                                                | `import type { PropertyChange } from "poe-svelte-ui-lib"`                     |
+| `updateProperty("label.class", v, component, onPropertyChange)`                                                                                | `createPropsEditor(component, onPropertyChange).patch("label", { class: v })` |
+| `updateComponent`, `findOptionByClass`, `findColorOption`, `stripLegacyTextColor`, `COLOR_OPTIONS`, `TEXT_COLOR_OPTIONS`, `WidgetAccentPicker` | удалены                                                                       |
+
+**Прочее.**
+
+- Компоненты не выводят случайные DOM id вида `${id}-xxxxxx`. Проп `id` примитива - переменная устройства, в разметку он не попадает (кроме `Button`, где это атрибут `id`).
+- Новые экспорты: `Icon`, `accentStyle`, `ACCENT_COLORS`, `AccentColor`, `createPropsEditor`, `PropertyChange`, `migrateProperties`, `migrateGUI`, `copyText`, `SelectValue`, `IconSource`.
+- Ключи переводов `ui.info.show`, `ui.info.hide`, `library.for_constructor` удалены; добавлены `ui.joystick.*`, `widget.rgb.hue`, `widget.rgb.brightness`.
 
 ## Как описывать компонент
 

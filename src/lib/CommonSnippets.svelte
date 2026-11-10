@@ -119,7 +119,7 @@
                 class="flex cursor-pointer items-center gap-3 rounded-xl border border-(--border-color) p-3 hover:bg-(--container-color)"
                 onclick={() => value.onUpdate(category[1])}
               >
-                <span class="w-28 text-left text-sm">{$T(`constructor.properties.icon.${category[0]}`)}</span>
+                <span class="w-28 text-left text-sm">{$T(`constructor.props.icon.${category[0]}`)}</span>
                 {#each category[1] as icon, i (i)}
                   <span class="size-8 [&_svg]:h-full [&_svg]:w-full">{@html sanitizeHtml(icon)}</span>
                 {/each}
@@ -157,7 +157,7 @@
 
 {#if snippet === "Variable"}
   <UI.Select
-    label={{ name: $T("constructor.properties.variable") }}
+    label={{ name: $T("constructor.props.variable") }}
     type="input"
     options={VARIABLE_OPTIONS}
     value={properties.id}
@@ -173,7 +173,7 @@
   />
 {:else if snippet === "Access"}
   <UI.Select
-    label={{ name: $T("constructor.properties.access") }}
+    label={{ name: $T("constructor.props.access") }}
     type="buttons"
     options={["Accordion", "Tabs", "ProgressBar", "TextField", "Graph", "PeriodChart"].includes(component.type)
       ? $optionsStore.ACCESS_OPTION.filter((option) => option.value !== "viewOnly")
@@ -193,7 +193,7 @@
   <TextsEditor {component} {onPropertyChange} />
 {:else if snippet === "LabelAlign"}
   <UI.Select
-    label={{ name: $T("constructor.properties.align") }}
+    label={{ name: $T("constructor.props.align") }}
     type="buttons"
     value={optionByClass(alignOptions, properties[alignKey]?.class)?.value}
     options={alignOptions}
@@ -201,25 +201,25 @@
   />
 {:else if snippet === "LabelClass"}
   <UI.Input
-    label={{ name: $T("constructor.properties.label.class") }}
+    label={{ name: $T("constructor.props.label.class") }}
     value={properties.label?.class}
     onUpdate={(value) => edit.patch("label", { class: String(value) })}
   />
 {:else if snippet === "Identificator"}
-  <UI.Input label={{ name: $T("constructor.properties.id") }} value={properties.id} onUpdate={(value) => edit.set("id", String(value))} />
+  <UI.Input label={{ name: $T("constructor.props.id") }} value={properties.id} onUpdate={(value) => edit.set("id", String(value))} />
 {:else if snippet === "WrapperClass"}
   <UI.Input
-    label={{ name: $T("constructor.properties.wrapperclass") }}
+    label={{ name: $T("constructor.props.wrapperclass") }}
     value={properties.wrapperClass}
     onUpdate={(value) => edit.set("wrapperClass", String(value))}
   />
 {:else if snippet === "Disabled"}
-  {@render Flag($T("constructor.properties.disabled"), "disabled")}
+  {@render Flag($T("constructor.props.disabled"), "disabled")}
 {:else if snippet === "Readonly"}
-  {@render Flag($T("constructor.properties.readonly"), "readonly")}
+  {@render Flag($T("constructor.props.readonly"), "readonly")}
 {:else if snippet === "EventHandlerArgument"}
   <UI.Select
-    label={{ name: $T("constructor.properties.action") }}
+    label={{ name: $T("constructor.props.action") }}
     type="buttons"
     value={component.eventHandler?.Argument}
     options={$optionsStore.SHORT_ARGUMENT_OPTION}

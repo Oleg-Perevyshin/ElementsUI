@@ -11,6 +11,7 @@
 - Escape и клик мимо окна закрывают только верхнее окно из открытых.
 - Выпадающие списки `Select` внутри окна вынесены в `body`. Клик по ним не считается кликом мимо окна.
 - Содержимое передаётся сниппетом `main`, обычные дочерние элементы не подойдут. Подвал `footer` необязателен.
+- Окно - это `role="dialog"` с `aria-modal`. Фокус не выходит за открытое окно, после закрытия он возвращается туда, где был.
 - Кнопки в подвале выстраиваются справа налево: первая в коде оказывается крайней справа. Ставьте подтверждающее действие первым.
 
 ## Пропсы
@@ -34,15 +35,15 @@
   let isOpen = $state(false)
 </script>
 
-<UI.Button content={{ name: "Удалить" }} componentClass="bg-red" onClick={() => (isOpen = true)} />
+<UI.Button content={{ name: "Удалить" }} variant="primary" accent="red" onClick={() => (isOpen = true)} />
 
 <UI.Modal bind:isOpen title="Удалить файл?" width="400px">
   {#snippet main()}
     <p>Файл будет удалён с устройства.</p>
   {/snippet}
   {#snippet footer()}
-    <UI.Button content={{ name: "Удалить" }} componentClass="bg-red" onClick={remove} />
-    <UI.Button content={{ name: "Отмена" }} componentClass="bg-gray" onClick={() => (isOpen = false)} />
+    <UI.Button content={{ name: "Удалить" }} variant="primary" accent="red" onClick={remove} />
+    <UI.Button content={{ name: "Отмена" }} variant="secondary" onClick={() => (isOpen = false)} />
   {/snippet}
 </UI.Modal>
 ```

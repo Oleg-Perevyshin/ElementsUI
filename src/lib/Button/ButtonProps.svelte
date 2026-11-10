@@ -54,57 +54,57 @@
 </script>
 
 <div class="flex flex-col gap-2">
-  <PropsGroup label={$T("constructor.properties.group.general")}>
+  <PropsGroup label={$T("constructor.props.group.general")}>
     <CommonSnippets snippet="Access" {component} {onPropertyChange} />
     <UI.Select
-      label={{ name: $T("constructor.properties.header") }}
+      label={{ name: $T("constructor.props.header") }}
       type="buttons"
       value={component.eventHandler?.Header}
       options={$optionsStore.HEADER_OPTIONS}
       onUpdate={(Header) => onPropertyChange({ eventHandler: { Header } })}
     />
     <UI.Input
-      label={{ name: $T("constructor.properties.argument") }}
+      label={{ name: $T("constructor.props.argument") }}
       value={component.eventHandler?.Argument || "ModCfg"}
       maxlength={32}
-      help={{ info: $T("constructor.properties.argument.info"), autocomplete: "on", regExp: /^[a-zA-Z0-9\-_]{0,32}$/ }}
+      help={{ info: $T("constructor.props.argument.info"), autocomplete: "on", regExp: /^[a-zA-Z0-9\-_]{0,32}$/ }}
       onUpdate={(value) => onPropertyChange({ eventHandler: { Argument: String(value) } })}
     />
   </PropsGroup>
-  <PropsGroup label={$T("constructor.properties.group.value")}>
+  <PropsGroup label={$T("constructor.props.group.value")}>
     {#if component.eventHandler?.Argument !== "ModCfg" || component.eventHandler?.Header === "SET"}
       <UI.Input
-        label={{ name: $T("constructor.properties.value") }}
+        label={{ name: $T("constructor.props.value") }}
         value={component.eventHandler?.Value}
-        help={{ info: $T("constructor.properties.value.info") }}
+        help={{ info: $T("constructor.props.value.info") }}
         maxlength={500}
         onUpdate={(value) => onPropertyChange({ eventHandler: { Value: String(value) } })}
       />
     {/if}
     <UI.Input
-      label={{ name: $T("constructor.properties.variables") }}
+      label={{ name: $T("constructor.props.variables") }}
       disabled={!!component.eventHandler?.Value}
       value={component.eventHandler?.Variables?.join(" ")}
-      help={{ info: $T("constructor.properties.variables.info"), autocomplete: "on", regExp: /^[a-zA-Z0-9.\-_ ":{}]{0,500}$/ }}
+      help={{ info: $T("constructor.props.variables.info"), autocomplete: "on", regExp: /^[a-zA-Z0-9.\-_ ":{}]{0,500}$/ }}
       maxlength={500}
       onUpdate={(value) => onPropertyChange({ eventHandler: { Variables: String(value).trim().split(/\s+/) } })}
     />
     <div class="flex items-end gap-2">
-      <UI.Button wrapperClass="w-8" content={{ icon: InfoIcon, info: { text: $T("constructor.properties.button.colors.hint"), side: "right" } }} />
-      <UI.Select label={{ name: $T("constructor.properties.colors") }} type="buttons" options={ACCENT_OPTIONS} value={colorValue} onUpdate={setColor} />
+      <UI.Button wrapperClass="w-8" content={{ icon: InfoIcon, info: { text: $T("constructor.props.button.colors.hint"), side: "right" } }} />
+      <UI.Select label={{ name: $T("constructor.props.colors") }} type="buttons" options={ACCENT_OPTIONS} value={colorValue} onUpdate={setColor} />
     </div>
   </PropsGroup>
-  <PropsGroup label={$T("constructor.properties.group.appearance")}>
+  <PropsGroup label={$T("constructor.props.group.appearance")}>
     <TextsEditor {component} {onPropertyChange} />
     <CommonSnippets
       snippet="IconsLib"
-      initialValue={{ name: $T("constructor.properties.buttonIcon"), icon: properties.content?.icon, onUpdate: setIcon, icons: { array: ICONS } }}
+      initialValue={{ name: $T("constructor.props.buttonIcon"), icon: properties.content?.icon, onUpdate: setIcon, icons: { array: ICONS } }}
       {component}
       {onPropertyChange}
     />
     {#if hasName || !properties.content?.icon}
       <UI.Select
-        label={{ name: $T("constructor.properties.height") }}
+        label={{ name: $T("constructor.props.height") }}
         type="buttons"
         options={$optionsStore.HEIGHT_OPTIONS}
         value={optionByClass($optionsStore.HEIGHT_OPTIONS, properties.componentClass)?.value}

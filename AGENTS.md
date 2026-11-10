@@ -37,10 +37,7 @@ ElementsUI - библиотека `poe-svelte-ui-lib` (npm, MIT): компоне
 
 Перепроверено по коду 2026-11-10 после этапа 2 аудита, не исправлено. Строки указаны на эту дату. Перед исправлением перепроверь по коду, исправленное удаляй из списка.
 
-- Select `type="input"` вызывает `onUpdate` на каждую клавишу и дважды при выборе, причём `handleSearch` получает старый текст (`Select.svelte:131-145,280`).
-- ColorPicker ищет слайдер через `document.querySelector`, только мышь (`ColorPicker.svelte:81,106-118,152-193`).
 - WidgetMap: трек до 50 000 точек лежит в глубоком `$state` (`:158,204,300`).
-- Доступность: у Modal нет `role="dialog"`, `aria-modal` и ловушки фокуса (`Modal.svelte:92`); у Accordion нет `aria-expanded` (`Accordion.svelte:37`); кнопки Joystick без подписей (`Joystick.svelte:147,190,220-266`).
 
 ## Форматирование
 
