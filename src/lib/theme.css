@@ -19,6 +19,13 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Телефон: базовый кегль на 1px меньше - вместе с ним всё в rem (отступы, значки, поля), как в мобильных мессенджерах */
+@media (max-width: 767.98px) {
+  :root {
+    font-size: 14px;
+  }
+}
+
 .font-display {
   font-family:
     "Montserrat",
@@ -85,6 +92,22 @@
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--muted-color);
+  }
+
+  /* Телефон: заголовки ступенью ниже, крупный кегль занимает пол-экрана */
+  @media (max-width: 767.98px) {
+    h1 {
+      font-size: 1.6rem; /* 22px */
+    }
+    h2 {
+      font-size: 1.4rem; /* 20px */
+    }
+    h3 {
+      font-size: 1.2rem; /* 17px */
+    }
+    h4 {
+      font-size: 1.07rem; /* 15px */
+    }
   }
 
   p {
