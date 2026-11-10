@@ -1,4 +1,3 @@
-<!-- $lib/ElementsUI/ButtonProps.svelte -->
 <script lang="ts">
   import { T } from "../locales/i18n"
   import { type IFileAttachProps, type IUIComponentHandler, type UIComponent, updateProperty, findOptionByClass } from "../types"

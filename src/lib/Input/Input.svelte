@@ -1,5 +1,6 @@
 <!-- $lib/Input/Input.svelte - радиус 10, высота 32 (h-8), выравнивание по левому краю, кольцо фокуса. -->
 <script lang="ts">
+  import { roundToClean } from "../number"
   import { T } from "../locales/i18n"
   import type { IInputProps } from "../types"
   import { twMerge } from "tailwind-merge"
@@ -62,17 +63,8 @@
   }
 
   $effect(() => {
-    if (type === "number" && typeof value == "number") value = roundToClean(value)
+    if (type === "number" && typeof value == "number") value = roundToClean(value, 5)
   })
-
-  const roundToClean = (num: number): number => {
-    if (Number.isInteger(num)) return num
-    for (const digits of [1, 2, 3, 4, 5]) {
-      const rounded = Number(num.toFixed(digits))
-      if (Math.abs(rounded - num) < 1e-10) return rounded
-    }
-    return Number(num.toFixed(5))
-  }
 
   /* Мастер-цвет поля (bg-* в componentClass): рамка и лёгкий фон цветом роли; сам класс bg-* в поле не передаётся, иначе он срезает фон */
   const hasRole = $derived(!!itemAccentStyle(componentClass))
@@ -216,7 +208,7 @@
               onUpdate(value as number)
               return
             }
-            value = roundToClean(Number(value) + (number.step ?? 1))
+            value = roundToClean(Number(value) + (number.step ?? 1), 5)
             onUpdate(value as number)
           }}
           aria-label={$T("ui.increase")}>▲</button
@@ -231,7 +223,7 @@
               onUpdate(value as number)
               return
             }
-            value = roundToClean(Number(value) - (number.step ?? 1))
+            value = roundToClean(Number(value) - (number.step ?? 1), 5)
             onUpdate(value as number)
           }}
           aria-label={$T("ui.decrease")}>▼</button

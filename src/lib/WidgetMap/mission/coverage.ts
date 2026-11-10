@@ -970,8 +970,6 @@ export interface IMissionExport {
   returnHome?: boolean /* В конце вернуться и сесть в точке взлёта (RTL) */
 }
 
-export const toWaypointsFile = (res: ICoverageResult, home: LngLat, opt: IMissionExport) => toMission(res, home, opt).text
-
 /* Миссия и номера команд её точек маршрута: по ним прогресс считается из WPNum телеметрии */
 export const toMission = (res: ICoverageResult, home: LngLat, opt: IMissionExport) => {
   const lines = ["QGC WPL 110"]

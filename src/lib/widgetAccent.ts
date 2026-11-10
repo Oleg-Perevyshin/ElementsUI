@@ -8,7 +8,7 @@ export const widgetAccentStyle = (componentClass: string): string => {
   const role = componentClass.match(/(?:^|\s)bg-(\w+)/)?.[1]
   if (!role || role === "max") return fill
   return (
-    `--accent-color: var(--${role}-accent, var(--${role}-color)); --accent-text: var(--${role}-text); --accent-soft: var(--${role}-soft); --accent-hover: var(--${role}-accent, var(--${role}-color)); --on-accent: var(--on-${role}, #ffffff);` +
+    `--accent-color: var(--${role}-accent, var(--${role}-color)); --accent-text: var(--${role}-text); --accent-soft: var(--${role}-soft); --on-accent: var(--on-${role}, #ffffff);` +
     `--focus-shadow-color: 0 0 0 3px color-mix(in srgb, var(--${role}-accent, var(--${role}-color)) 18%, transparent);` +
     fill
   )

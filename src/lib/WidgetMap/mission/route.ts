@@ -71,10 +71,7 @@ export const routeStats = (plan: IRoutePlan) => {
   }
 }
 
-/* Миссия: дом, взлёт на высоту первой точки, точки маршрута; DO_CHANGE_SPEED перед точкой, где меняется скорость; при необходимости возврат (RTL) */
-export const routeToWaypointsFile = (plan: IRoutePlan) => routeMission(plan).text
-
-/* Миссия и номера команд её точек: взлёт (у точки взлёта), точки маршрута, возврат RTL - к точке взлёта */
+/* Миссия и номера команд её точек: дом, взлёт на высоту первой точки (у точки взлёта), точки маршрута с DO_CHANGE_SPEED перед сменой скорости, при необходимости возврат RTL к точке взлёта */
 export const routeMission = (plan: IRoutePlan) => {
   const nav: { point: LngLat; seq: number }[] = []
   const home = plan.start ?? plan.points[0]?.point

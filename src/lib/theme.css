@@ -374,7 +374,6 @@
   --accent-color: var(--blue-color);
   /* Акцент как текст, значок, рамка или кольцо фокуса: заливка --accent-color в тёмной теме темна для этого. В виджете с мастер-цветом - --X-text этого цвета */
   --accent-text: var(--blue-text);
-  --accent-hover: #215ed9;
   --accent-soft: rgb(47 117 255 / 0.14);
   --on-accent: #ffffff;
   --on-orange: #1d1d1f;
@@ -450,7 +449,6 @@
 
   --accent-color: var(--blue-color);
   --accent-text: var(--blue-text);
-  --accent-hover: #215ed9;
   --accent-soft: rgb(65 129 255 / 0.2);
   --on-accent: #ffffff;
   --on-orange: #1d1d1f;

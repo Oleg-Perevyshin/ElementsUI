@@ -67,7 +67,7 @@
     mapCtx.map = map
   }
 
-  // Инициализация карты
+  /* Инициализация карты */
   $effect(createMap)
 
   $effect(() => {

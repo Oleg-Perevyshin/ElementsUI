@@ -512,7 +512,7 @@ Telemetry_SendObject(g_telemetry_stream, g_mcfg.DevSN, "Data", dev, sizeof(dev) 
 <details>
 <summary>🔬 Как устроено</summary>
 
-`toMission` / `toWaypointsFile`, формат QGC WPL 110: строки `seq, current, frame, command, p1-p4, lat, lon, alt, autocontinue` через табуляцию.
+`toMission`, формат QGC WPL 110: строки `seq, current, frame, command, p1-p4, lat, lon, alt, autocontinue` через табуляцию.
 
 | Команда                        | Код | frame       | Параметры                                                                                   |
 | ------------------------------ | --- | ----------- | ------------------------------------------------------------------------------------------- |
@@ -546,14 +546,14 @@ Telemetry_SendObject(g_telemetry_stream, g_mcfg.DevSN, "Data", dev, sizeof(dev) 
 | Площадь                     | `coverage.ts`: `fieldArea`, `fieldsArea`                              |
 | Быстрая оценка угла         | `coverage.ts`: `estimateAngleCost`, `optimizeAngle`, `bestFieldAngle` |
 | Точный подбор угла          | `coverage.ts`: `searchFieldAngle`                                     |
-| Миссия QGC WPL 110          | `coverage.ts`: `toMission`, `toWaypointsFile`                         |
+| Миссия QGC WPL 110          | `coverage.ts`: `toMission`                                            |
 | Прогресс по телеметрии      | `progress.ts`                                                         |
 | Интерфейс, итоги, подбор    | `MapAgro.svelte`                                                      |
 
-Расчёт можно вызвать и без карты. Из библиотеки экспортируются:
+Расчёт внутренний, наружу экспортируются только план и его типы, чтобы хранить его у себя:
 
-- режим «Агро»: `planFields` (несколько полей), `planCoverage` (одно поле), `optimizeAngle`, `bestFieldAngle`, `toWaypointsFile`, `fieldArea`, `fieldsArea`, `DEFAULT_MISSION_PLAN`, типы `IMissionPlan`, `IMissionField`, `LngLat`, `SprayControl`, `ICoverageResult`;
-- режим «Маршрут»: `routeStats`, `routeToWaypointsFile`, `DEFAULT_ROUTE_PLAN`, типы `IRoutePlan`, `IRouteWaypoint`.
+- режим «Агро»: `DEFAULT_MISSION_PLAN`, типы `IMissionPlan`, `IMissionField`, `LngLat`, `SprayControl`;
+- режим «Маршрут»: `DEFAULT_ROUTE_PLAN`, типы `IRoutePlan`, `IRouteWaypoint`.
 
 </details>
 

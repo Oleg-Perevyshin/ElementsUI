@@ -1,4 +1,3 @@
-// $lib/ElementsUI/types.ts
 import type { Snippet } from "svelte"
 import type { IMissionPlan } from "./WidgetMap/mission/plan"
 import type { IRoutePlan } from "./WidgetMap/mission/route"

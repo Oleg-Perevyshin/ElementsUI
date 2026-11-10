@@ -1,4 +1,3 @@
-/* $lib/hints.ts */
 /* Подсказки смарт-виджетов: у каждого виджета своя кнопка «?» в шапке, выбор запоминается в браузере для этого экземпляра (по persistKey) или, без него, для всех виджетов типа; элемент получает подсказку действием use:hint={{ text, enabled }} - всплывающее окно над ним в стиле темы */
 import { writable, type Writable } from "svelte/store"
 
@@ -80,7 +79,7 @@ const showHint = (node: HTMLElement, text: string) => {
   el.style.left = `${left}px`
 }
 
-export function hideHint() {
+function hideHint() {
   if (popup) popup.style.opacity = "0"
 }
 

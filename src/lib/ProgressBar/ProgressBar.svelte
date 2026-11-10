@@ -1,5 +1,6 @@
 <!-- $lib/ProgressBar/ProgressBar.svelte - полоса 6px, подпись и значение над ней -->
 <script lang="ts">
+  import { roundToClean } from "../number"
   import { twMerge } from "tailwind-merge"
   import { itemAccentStyle } from "../widgetAccent"
   import type { IProgressBarProps, IReceivingDataObject } from "../types"
@@ -54,13 +55,6 @@
   const progressPercent = (value: number) => {
     if (value) return (((Math.min(Math.max(value, min), max) - min) / (max - min)) * 100) as number
     return 0
-  }
-
-  const roundToClean = (num: number): number => {
-    if (Number.isInteger(num)) return num
-    const rounded1 = Number(num.toFixed(1))
-    if (Math.abs(rounded1 - num) < 1e-10) return rounded1
-    return Number(num.toFixed(2))
   }
 </script>
 

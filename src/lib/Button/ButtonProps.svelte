@@ -1,4 +1,3 @@
-<!-- $lib/ElementsUI/ButtonProps.svelte -->
 <script lang="ts">
   import TextsEditor from "../TextsEditor.svelte"
   import { localizeText } from "../locales/localize"

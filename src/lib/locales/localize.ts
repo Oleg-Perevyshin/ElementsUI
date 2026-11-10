@@ -1,4 +1,3 @@
-/* $lib/locales/localize.ts */
 /* Многоязычные тексты, введённые в конструкторе: строка (язык по умолчанию) или объект по кодам языков { ru, en, zh, ... }; язык по умолчанию (DEFAULT_LANGUAGE) - основной и запасной; набор и порядок языков - LANGUAGES (languages.ts) */
 import { DEFAULT_LANGUAGE, LANGUAGE_CODES, type LanguageCode } from "./languages.js"
 

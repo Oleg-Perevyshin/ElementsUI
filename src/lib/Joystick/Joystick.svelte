@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { roundToClean } from "../number"
   import { sanitizeHtml } from "../html"
   import { twMerge } from "tailwind-merge"
   import { widgetAccentStyle } from "../widgetAccent"
@@ -124,18 +125,6 @@
 
   let clipPos = Math.cos(Math.PI / directions.length) * 100
   let angle = 360 / directions.length
-
-  const roundToClean = (num: number): number => {
-    if (Number.isInteger(num)) return num
-
-    const rounded1 = Number(num.toFixed(1))
-    if (Math.abs(rounded1 - num) < 1e-10) return rounded1
-
-    const rounded2 = Number(num.toFixed(2))
-    if (Math.abs(rounded2 - num) < 1e-10) return rounded2
-
-    return rounded2
-  }
 </script>
 
 <div

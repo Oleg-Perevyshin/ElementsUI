@@ -1,4 +1,3 @@
-// $lib/ElementsUI/options.ts
 import { derived } from "svelte/store"
 import { T } from "./locales/i18n"
 import { PROPS_ICONS } from "./libIcons/propsIcons"

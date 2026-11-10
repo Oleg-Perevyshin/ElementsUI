@@ -1,4 +1,3 @@
-/* $lib/locales/translations.ts */
 /* Словарь библиотеки: переводы по кодам языков (languages.ts); обязателен язык по умолчанию, недостающий перевод показывается на нём */
 import type { Translations } from "./languages.js"
 
@@ -352,7 +351,6 @@ const translations: Translations = {
   "constructor.props.multiselect": { ru: "Мультивыбор", en: "Multi-select", zh: "多选" },
   "constructor.props.access": { ru: "Доступ (не для владельца)", en: "Access (non-owner)", zh: "访问权限（非所有者）" },
   "constructor.props.map.timeout": { ru: "Таймаут маркеров:", en: "Marker timeout:", zh: "标记超时：" },
-  "constructor.props.map.boards": { ru: "Объектов на связи", en: "Objects online", zh: "在线对象" },
   "constructor.props.map.fitAllHint": { ru: "Вписать все объекты в экран", en: "Fit all objects into view", zh: "将所有对象纳入视野" },
   "constructor.props.map.fitAll": { ru: "Показать все", en: "Show all", zh: "显示全部" },
   "constructor.props.map.track": { ru: "Траектория", en: "Track", zh: "轨迹" },

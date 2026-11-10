@@ -62,7 +62,6 @@
     onChange={(value) => {
       updateProperty("bitMode", value === 1, component, onPropertyChange)
       updateProperty("value", 0, component, onPropertyChange)
-      // if (!component.properties.bitMode) updateProperty("value", 0, component, onPropertyChange)
     }}
   />
 {/snippet}

@@ -1,5 +1,5 @@
-<!-- $lib/ElementsUI/Table.svelte -->
 <script lang="ts">
+  import { roundToClean } from "../number"
   import type { IOption, ITableButton, ITableContent, ITableHeader, ITableImage, ITableProgressBar, ITableProps, ITableText } from "../types"
   import { fly, slide } from "svelte/transition"
   import { twMerge } from "tailwind-merge"
@@ -188,18 +188,6 @@
     let min = progressBar?.minNum ?? 0
     let max = progressBar?.maxNum ?? 100
     if (value != null && !isNaN(value)) return (((Math.min(Math.max(value, min), max) - min) / (max - min)) * 100) as number
-  }
-
-  const roundToClean = (num: number): number => {
-    if (Number.isInteger(num)) return num
-
-    const rounded1 = Number(num.toFixed(1))
-    if (Math.abs(rounded1 - num) < 1e-10) return rounded1
-
-    const rounded2 = Number(num.toFixed(2))
-    if (Math.abs(rounded2 - num) < 1e-10) return rounded2
-
-    return rounded2
   }
 
   $effect(() => {

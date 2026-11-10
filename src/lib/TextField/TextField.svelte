@@ -11,7 +11,7 @@
     content = { name: "", class: "", size: "base" },
   }: ITextFieldProps = $props()
 
-  /* Было: text-sm / text-base / text-2xl / text-4xl / text-5xl - вне шкалы. Стало: 13 / 15 / 24 / 34 / 44 с весом и трекингом по роли. */
+  /* Размеры по шкале темы: 13 / 15 / 24 / 34 / 44 с весом и трекингом по роли */
   const textSize = {
     small: "text-[13px] leading-[1.45] text-(--muted-color)",
     base: "text-[15px] leading-[1.5]",

@@ -49,7 +49,7 @@
 
 ## Стек окон
 
-Какие окна открыты и в каком порядке, хранит `ModalStack` (`src/lib/ModalStackStore.ts`). Это store со списком id открытых окон:
+Какие окна открыты и в каком порядке, хранит внутренний `ModalStack` (`src/lib/ModalStackStore.ts`, наружу не экспортируется). Это store со списком id открытых окон:
 
 ```ts
 ModalStack.subscribe // список id в порядке открытия

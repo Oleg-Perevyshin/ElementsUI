@@ -77,13 +77,6 @@ export class CborEndOfDataError extends CborError {
   }
 }
 
-export class CborTypeMismatchError extends CborError {
-  constructor(expected: string, got: CborMajorType) {
-    super(`Expected ${expected}, got major type ${got}`)
-    this.name = "CborTypeMismatchError"
-  }
-}
-
 export class CborDepthLimitError extends CborError {
   constructor() {
     super("Maximum nesting depth exceeded")

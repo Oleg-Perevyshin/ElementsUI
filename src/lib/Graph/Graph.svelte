@@ -1,4 +1,3 @@
-<!-- $lib/ElementsUI/Graph.svelte -->
 <script module lang="ts">
   import type { IOption } from "../types"
 

@@ -1,6 +1,7 @@
 <!-- src/routes/IconsShowcase.svelte - вкладка «Иконки» на главной витрины: весь каталог по категориям с поиском по имени, клик копирует SVG -->
 <script lang="ts">
-  import { Input, T, CopiedChip, ICONS, ICON_NAMES, ICONS_ARRAY } from "#lib"
+  import { Input, T, ICONS, ICON_NAMES, ICONS_ARRAY } from "#lib"
+  import CopiedChip from "#lib/CopiedChip.svelte"
 
   let query = $state("")
   let copied: string | null = $state(null)

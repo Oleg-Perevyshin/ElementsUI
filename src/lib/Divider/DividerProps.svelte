@@ -1,4 +1,3 @@
-<!-- $lib/ElementsUI/DividerProps.svelte -->
 <script lang="ts">
   import { T } from "../locales/i18n"
   import { updateProperty, type IDividerProps, type IUIComponentHandler, type UIComponent } from "../types"

@@ -1,4 +1,3 @@
-<!-- $lib/ElementsUI/AccordionProps.svelte -->
 <script lang="ts">
   import { T } from "../locales/i18n"
   import { findOptionByClass, updateProperty, type IAccordionProps, type IUIComponentHandler, type UIComponent } from "../types"

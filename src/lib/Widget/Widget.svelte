@@ -1,5 +1,6 @@
 <!-- $lib/Widget/Widget.svelte - карточка значения: шапка фиксированной высоты и гибкое тело, кнопки ± 32px, дорожка слайдера 4px -->
 <script lang="ts">
+  import { roundToClean } from "../number"
   import { sanitizeHtml } from "../html"
   import { T } from "../locales/i18n"
   import type { IWidgetProps } from "../types"
@@ -93,13 +94,6 @@
       ? `${Math.max(settings.switch?.captionLeft?.length ?? 0, settings.switch?.captionRight?.length ?? 0)}ch`
       : "auto",
   )
-
-  const roundToClean = (num: number): number => {
-    if (Number.isInteger(num)) return num
-    const rounded1 = Number(num.toFixed(1))
-    if (Math.abs(rounded1 - num) < 1e-10) return rounded1
-    return Number(num.toFixed(2))
-  }
 
   const pct = $derived(() => {
     const lo = settings.number?.minNum ?? 0

@@ -8,4 +8,4 @@ export { default as Popup } from "./Popup.svelte"
 export { default as Line } from "./Line.svelte"
 export { default as CustomControl } from "./controls/CustomControl.svelte"
 
-export { getMapContext, getSourceContext, getMarkerContext } from "./contexts.svelte.js"
+export { getMapContext } from "./contexts.svelte.js"

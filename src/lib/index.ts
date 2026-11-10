@@ -55,28 +55,16 @@ export { default as WidgetPFDProps } from "./WidgetPFD/WidgetPFDProps.svelte"
 export { default as WidgetMap } from "./WidgetMap/WidgetMap.svelte"
 export { default as WidgetMapProps } from "./WidgetMap/WidgetMapProps.svelte"
 export { DEFAULT_MISSION_PLAN, type IMissionPlan, type IMissionField } from "./WidgetMap/mission/plan"
-export { DEFAULT_ROUTE_PLAN, routeStats, routeToWaypointsFile, type IRoutePlan, type IRouteWaypoint } from "./WidgetMap/mission/route"
-export {
-  planCoverage,
-  planFields,
-  optimizeAngle,
-  bestFieldAngle,
-  toWaypointsFile,
-  fieldArea,
-  fieldsArea,
-  type LngLat,
-  type SprayControl,
-  type ICoverageResult,
-} from "./WidgetMap/mission/coverage"
+export { DEFAULT_ROUTE_PLAN, type IRoutePlan, type IRouteWaypoint } from "./WidgetMap/mission/route"
+export { type LngLat, type SprayControl } from "./WidgetMap/mission/coverage"
 
 export * from "./locales/i18n"
 export * from "./locales/languages"
-export * from "./locales/localize"
+export { localizeDeep, type LocalizedText } from "./locales/localize"
 export { widgetAccentStyle } from "./widgetAccent"
 export { escapeHtml, htmlToText, sanitizeHtml } from "./html"
 export { hintsSetting, hint, type HintParams } from "./hints"
 export { applyDragGhost, clearDragGhost, createDropPlaceholder } from "./dragStyle"
-export * from "./ModalStackStore"
 
 export {
   type UIComponent,
@@ -134,5 +122,3 @@ export {
   type IPeriodChartLevel,
 } from "./types"
 export { ICONS, ICON_NAMES, ICONS_ARRAY } from "./icons"
-export { default as CopiedChip } from "./CopiedChip.svelte"
-export { default as IconsMatrix } from "./IconsMatrix.svelte"

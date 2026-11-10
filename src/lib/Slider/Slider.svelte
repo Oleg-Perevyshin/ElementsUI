@@ -1,5 +1,6 @@
 <!-- $lib/Slider/Slider.svelte - дорожка 4px, ползунок 18px; в диапазонном режиме оба <input> на всю ширину с одинаковыми min/max наложены друг на друга, события ловит только ::thumb, клик по пустой дорожке ползунок не двигает -->
 <script lang="ts">
+  import { roundToClean } from "../number"
   import { T } from "../locales/i18n"
   import type { ISliderProps } from "../types"
   import { twMerge } from "tailwind-merge"
@@ -7,7 +8,7 @@
 
   let {
     id = crypto.randomUUID(),
-    /* Было "bg-blue" - декоративная заливка. Цвет заливки дорожки берётся из --bg-color, который задаётся классом bg-* в вызове; без него используется акцент. */
+    /* Цвет заливки дорожки берётся из --bg-color, который задаётся классом bg-* в вызове; без него используется акцент */
     wrapperClass = "",
     label = { name: "", class: "" },
     type = "single",
@@ -76,15 +77,8 @@
     }
   })
 
-  const roundToClean = (num: number): number => {
-    if (Number.isInteger(num)) return num
-    const rounded1 = Number(num.toFixed(1))
-    if (Math.abs(rounded1 - num) < 1e-10) return rounded1
-    return Number(num.toFixed(2))
-  }
-
   /* Единые классы для нативного ползунка: высота input РАВНА высоте thumb (18px) - тогда центрирование по вертикали отдаётся обычному flexbox родителя (items-center), без ручного margin-top на ::-webkit-slider-thumb. Такой margin-top пришлось бы подбирать под конкретную высоту трека, и он даёт разный результат в Chromium и Safari/WebKit - при равных высотах input и thumb смещения нет по определению, это работает одинаково везде. */
-  /* Бегунок: было border-(--hairline-color) (почти прозрачная линия) + мягкая тень - на светлом фоне белый кружок буквально сливался с дорожкой. Рамка в 2px цветом заливки даёт чёткий, "премиальный" контур вместо почти невидимой линии. */
+  /* Бегунок: рамка 2px цветом заливки, чтобы белый кружок не сливался с дорожкой на светлом фоне */
   const THUMB = `w-full appearance-none bg-transparent h-[18px]
     [&::-webkit-slider-runnable-track]:h-[18px] [&::-webkit-slider-runnable-track]:bg-transparent
     [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:size-[18px]

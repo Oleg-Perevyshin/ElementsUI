@@ -156,7 +156,6 @@
               }
               const headers = [...(component.properties.header || []), newColumn]
               updateProperty("header", headers, component, onPropertyChange)
-              // updateTableBody()
             }}
           />
         {/snippet}
@@ -308,7 +307,6 @@
                                     i == index ? { ...textItem, data: { ...textItem.data, key: value } } : textItem,
                                   ),
                                 )
-                                // updateTableBody()
                               }}
                             />
                             <UI.Input
@@ -408,7 +406,6 @@
                                     i == index ? { ...textItem, data: { ...textItem.data, key: value } } : textItem,
                                   ),
                                 )
-                                // updateTableBody()
                               }}
                             />
                             <UI.Input
