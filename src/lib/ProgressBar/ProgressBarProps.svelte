@@ -6,7 +6,7 @@
   import type { IProgressBarProps, UIComponent } from "../types"
   import { createPropsEditor, type PropertyChange } from "../propsEditor"
   import * as UI from ".."
-  import { ACCENT_OPTIONS, optionsStore } from "../options"
+  import { optionsStore } from "../options"
   import TextsEditor from "../TextsEditor.svelte"
   import ButtonAdd from "../libIcons/ButtonAdd.svelte"
   import ButtonDelete from "../libIcons/ButtonDelete.svelte"
@@ -89,9 +89,9 @@
             <UI.Select
               wrapperClass="col-span-2"
               type="buttons"
-              options={ACCENT_OPTIONS.filter((option) => option.value)}
+              options={$optionsStore.ACCENT_OPTIONS}
               value={progress.accent}
-              onUpdate={(accent) => edit.updateItem("items", index, { accent: accent || undefined })}
+              onUpdate={(accent) => edit.updateItem("items", index, { accent: accent === progress.accent ? undefined : accent })}
             />
             <UI.Button wrapperClass="w-8" content={{ icon: ButtonDelete }} onClick={() => edit.removeItem("items", index)} />
           </div>

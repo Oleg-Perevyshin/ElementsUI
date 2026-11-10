@@ -7,7 +7,7 @@
   import * as UI from ".."
   import ButtonDelete from "../libIcons/ButtonDelete.svelte"
   import ButtonAdd from "../libIcons/ButtonAdd.svelte"
-  import { ACCENT_OPTIONS, optionsStore } from "../options"
+  import { optionsStore } from "../options"
   import CommonSnippets from "../CommonSnippets.svelte"
   import PropsGroup from "../PropsGroup.svelte"
   import PropsListModal from "../PropsListModal.svelte"
@@ -166,9 +166,9 @@
             />
             <UI.Select
               type="buttons"
-              options={ACCENT_OPTIONS}
-              value={option.accent ?? ""}
-              onUpdate={(accent) => edit.updateItem("options", index, { accent: accent || undefined })}
+              options={$optionsStore.ACCENT_OPTIONS}
+              value={option.accent}
+              onUpdate={(accent) => edit.updateItem("options", index, { accent: accent === option.accent ? undefined : accent })}
             />
             <UI.Button wrapperClass="w-8" content={{ icon: ButtonDelete }} onClick={() => edit.removeItem("options", index)} />
           </div>

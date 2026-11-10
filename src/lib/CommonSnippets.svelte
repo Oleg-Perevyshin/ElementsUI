@@ -4,7 +4,7 @@
   import * as UI from "./index"
   import { T } from "./locales/i18n"
   import CrossIcon from "./libIcons/CrossIcon.svelte"
-  import { ACCENT_OPTIONS, optionsStore } from "./options"
+  import { optionsStore } from "./options"
   import { createPropsEditor, optionByClass, type PropertyChange } from "./propsEditor"
   import type { AccentColor } from "./accent"
   import type { IOption } from "./types"
@@ -172,9 +172,9 @@
   <UI.Select
     label={{ name: $T("ui.accent") }}
     type="buttons"
-    options={ACCENT_OPTIONS.filter((option) => !initialValue?.exclude?.includes(option.value))}
-    value={properties.accent ?? ""}
-    onUpdate={(accent) => edit.set("accent", accent || undefined)}
+    options={$optionsStore.ACCENT_OPTIONS.filter((option) => !initialValue?.exclude?.includes(option.value))}
+    value={properties.accent}
+    onUpdate={(accent) => edit.set("accent", accent === properties.accent ? undefined : accent)}
   />
 {:else if snippet === "Label"}
   <TextsEditor {component} {onPropertyChange} />

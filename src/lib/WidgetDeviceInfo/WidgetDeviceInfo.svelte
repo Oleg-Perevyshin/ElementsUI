@@ -140,7 +140,6 @@
 
       <!-- Редактируемые настройки -->
       <div class="flex flex-col gap-3 rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-3">
-        <span class="text-[12px] font-semibold text-(--muted-color)">{$T("widget.info.settings")}</span>
         <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
           <div use:hint={{ text: $T("widget.info.hint.name"), enabled: $hints }}>
             <UI.Input

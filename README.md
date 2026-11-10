@@ -304,7 +304,7 @@ export const T = createTranslator(translations)
 | `updateProperty("label.class", v, component, onPropertyChange)`                                                                                | `createPropsEditor(component, onPropertyChange).patch("label", { class: v })`   |
 | `updateComponent`, `findOptionByClass`, `findColorOption`, `stripLegacyTextColor`, `COLOR_OPTIONS`, `TEXT_COLOR_OPTIONS`, `WidgetAccentPicker` | удалены                                                                         |
 
-В `poe-svelte-ui-lib/constructor` также `optionsStore`, `ACCENT_OPTIONS`, `CommonSnippets`, `createPropsEditor` и словарь `constructorTranslations`. В `i18n` добавлены `extendTranslations(dictionary)` и тип `TranslationKey` (подсказка ключей в `$T`, любая строка по-прежнему допустима).
+В `poe-svelte-ui-lib/constructor` также `optionsStore` (в нём и палитра `ACCENT_OPTIONS`; повторное нажатие на выбранный цвет снимает его), `CommonSnippets`, `createPropsEditor` и словарь `constructorTranslations`. В `i18n` добавлены `extendTranslations(dictionary)` и тип `TranslationKey` (подсказка ключей в `$T`, любая строка по-прежнему допустима).
 
 **Table.**
 

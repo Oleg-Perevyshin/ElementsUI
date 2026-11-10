@@ -5,7 +5,7 @@
   import type { UIComponent, ISwitchProps } from "../types"
   import { createPropsEditor, type PropertyChange } from "../propsEditor"
   import * as UI from ".."
-  import { ACCENT_OPTIONS, optionsStore } from "../options"
+  import { optionsStore } from "../options"
   import ButtonAdd from "../libIcons/ButtonAdd.svelte"
   import ButtonDelete from "../libIcons/ButtonDelete.svelte"
   import CommonSnippets from "../CommonSnippets.svelte"
@@ -52,7 +52,7 @@
     <CommonSnippets snippet="Label" {component} {onPropertyChange} />
     <CommonSnippets snippet="LabelAlign" {component} {onPropertyChange} />
     {#if !bitMode}
-      <CommonSnippets snippet="Accent" initialValue={{ exclude: ["", "gray"] }} {component} {onPropertyChange} />
+      <CommonSnippets snippet="Accent" initialValue={{ exclude: ["gray"] }} {component} {onPropertyChange} />
     {/if}
     {#if component.properties.type != "checkbox"}
       <UI.Switch
@@ -96,9 +96,9 @@
             />
             <UI.Select
               type="buttons"
-              options={ACCENT_OPTIONS.filter((option) => option.value && option.value !== "gray")}
+              options={$optionsStore.ACCENT_OPTIONS.filter((option) => option.value !== "gray")}
               value={bit.accent}
-              onUpdate={(accent) => edit.updateItem("options", index, { accent: accent || undefined })}
+              onUpdate={(accent) => edit.updateItem("options", index, { accent: accent === bit.accent ? undefined : accent })}
             />
             <UI.Switch
               label={{ captionRight: $T("constructor.props.disabled") }}

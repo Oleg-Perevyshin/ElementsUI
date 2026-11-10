@@ -6,11 +6,11 @@ import { ACCENT_COLORS, type AccentColor } from "./accent"
 /* Вариант со стабильным id по значению: id не меняется при смене языка */
 const opt = <const V>(value: V, name?: string, icon?: string) => ({ id: String(value), value, name, icon })
 
-/* Палитра ролей темы: "" - без цвета (акцент родителя или темы); порядок по кругу тонов, серый первым */
-export const ACCENT_OPTIONS = [opt<AccentColor | "">("", "-"), ...ACCENT_COLORS.map((accent) => ({ ...opt<AccentColor | "">(accent, ""), accent }))]
-
 export const optionsStore = derived(T, ($T) => {
   return {
+    /* Палитра ролей темы, порядок по кругу тонов, серый первым. Повторное нажатие на выбранный цвет снимает его: компонент берёт цвет родителя или темы */
+    ACCENT_OPTIONS: ACCENT_COLORS.map((accent) => ({ ...opt(accent, ""), accent })),
+
     /* Поля eventHandler - строки */
     HEADER_OPTIONS: ["GET", "SET", "OK!", "ER!"].map((header) => opt<string>(header, header)),
 

@@ -6,7 +6,8 @@
   import * as UI from ".."
   import ButtonDelete from "../libIcons/ButtonDelete.svelte"
   import ButtonAdd from "../libIcons/ButtonAdd.svelte"
-  import { ACCENT_OPTIONS, optionsStore } from "../options"
+  import { optionsStore } from "../options"
+  import { isAccentColor, type AccentColor } from "../accent"
   import { ICONS } from "../icons"
   import CommonSnippets from "../CommonSnippets.svelte"
   import PropsGroup from "../PropsGroup.svelte"
@@ -31,7 +32,11 @@
   let isDropdownOpen = $state(-1)
 
   /* Цвет кнопки ячейки - роль bg-* в её class */
-  const roleOf = (classes: string | undefined) => (classes?.match(/(?:^|\s)bg-(\w+)/)?.[1] ?? "") as (typeof ACCENT_OPTIONS)[number]["value"]
+  /* Цвет кнопки по классу bg-*: без него - цвет таблицы, bg-transparent - без цвета */
+  const roleOf = (classes: string | undefined, fallback?: AccentColor): AccentColor | undefined => {
+    const role = classes?.match(/(?:^|\s)bg-(\w+)/)?.[1]
+    return role === undefined ? fallback : isAccentColor(role) ? role : undefined
+  }
 
   let settingsContainer: HTMLDivElement[] = $state([])
   let columnContainer: HTMLDivElement | null = $state(null)
@@ -339,8 +344,8 @@
                                 wrapperClass="min-w-0 flex-1"
                                 label={{ name: $T("constructor.props.colors") }}
                                 type="buttons"
-                                options={ACCENT_OPTIONS.filter((option) => option.value)}
-                                value={roleOf(button.class as string) || (component.properties.accent ?? "")}
+                                options={$optionsStore.ACCENT_OPTIONS}
+                                value={roleOf(button.class as string, component.properties.accent)}
                                 onUpdate={(accent) =>
                                   updateContentProperty(
                                     columnIndex,

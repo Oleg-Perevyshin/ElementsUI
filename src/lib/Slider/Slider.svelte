@@ -72,10 +72,36 @@
   /* Двойной слайдер: оба input на всю ширину трека с ОДИНАКОВЫМ min/max, наложены друг на друга. pointer-events выключен на самом input и включён только на ::thumb (класс .range-overlay ниже) - тянуть можно исключительно за конкретный бегунок. Tailwind не генерирует CSS для сочетания произвольного варианта псевдоэлемента с pointer-events-*, поэтому это обычный style-блок ниже, а не класс. */
 </script>
 
+{#snippet counter(target: "lower" | "upper")}
+  {@const v = target === "lower" ? lower : upper}
+  <div class="flex h-7 shrink-0 items-center gap-1 rounded-lg border border-(--border-color) bg-(--field-color) px-1 {disabled ? 'opacity-45' : ''}">
+    {#each DIRECTIONS as direction (direction)}
+      <button
+        class="flex size-5 items-center justify-center rounded text-(--muted-color) transition-colors duration-150 hover:bg-(--container-color) disabled:cursor-not-allowed disabled:opacity-40 {direction ===
+        1
+          ? 'order-last'
+          : ''} {disabled ? 'cursor-not-allowed' : 'cursor-pointer'}"
+        onclick={() => adjust(target, direction)}
+        disabled={disabled ||
+          (direction === -1
+            ? target === "lower"
+              ? v <= number.minNum
+              : v <= lower + number.step
+            : target === "upper" || !isRange
+              ? v >= number.maxNum
+              : v >= upper - number.step)}
+        aria-label={direction === 1 ? $T("ui.increase") : $T("ui.decrease")}>{direction === 1 ? "+" : "−"}</button
+      >
+    {/each}
+    <span class="inline-block text-center text-[13px] font-semibold tabular-nums" style="width: {valueWidth}">{v}</span>
+  </div>
+{/snippet}
+
 <div class={twMerge(`relative flex w-full flex-col gap-1.5`, wrapperClass)} style={accentStyle(accent)}>
   <FieldLabel {label} for={uid} class="w-full" />
 
   <div class="flex w-full items-center gap-3">
+    {#if isRange}{@render counter("lower")}{/if}
     <!-- Дорожка: фон --border-color заметен на светлом фоне, заливка - акцент -->
     <div class="relative flex h-8 flex-1 items-center {disabled ? 'cursor-not-allowed opacity-45' : ''}">
       <div class="pointer-events-none absolute inset-x-0 top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-(--border-color)"></div>
@@ -111,31 +137,8 @@
       {/each}
     </div>
 
-    <!-- Значения со счётчиком -->
-    {#each targets as target (target)}
-      {@const v = target === "lower" ? lower : upper}
-      <div class="flex h-7 shrink-0 items-center gap-1 rounded-lg border border-(--border-color) bg-(--field-color) px-1 {disabled ? 'opacity-45' : ''}">
-        {#each DIRECTIONS as direction (direction)}
-          <button
-            class="flex size-5 items-center justify-center rounded text-(--muted-color) transition-colors duration-150 hover:bg-(--container-color) disabled:cursor-not-allowed disabled:opacity-40 {direction ===
-            1
-              ? 'order-last'
-              : ''} {disabled ? 'cursor-not-allowed' : 'cursor-pointer'}"
-            onclick={() => adjust(target, direction)}
-            disabled={disabled ||
-              (direction === -1
-                ? target === "lower"
-                  ? v <= number.minNum
-                  : v <= lower + number.step
-                : target === "upper" || !isRange
-                  ? v >= number.maxNum
-                  : v >= upper - number.step)}
-            aria-label={direction === 1 ? $T("ui.increase") : $T("ui.decrease")}>{direction === 1 ? "+" : "−"}</button
-          >
-        {/each}
-        <span class="inline-block text-center text-[13px] font-semibold tabular-nums" style="width: {valueWidth}">{v}</span>
-      </div>
-    {/each}
+    <!-- Значение со счётчиком: у диапазона нижнее слева от дорожки, верхнее справа -->
+    {@render counter(isRange ? "upper" : "lower")}
   </div>
 </div>
 

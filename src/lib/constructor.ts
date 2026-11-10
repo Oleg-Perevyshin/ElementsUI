@@ -31,7 +31,7 @@ import WidgetMapProps from "./WidgetMap/WidgetMapProps.svelte"
 extendTranslations(constructorTranslations)
 
 export { constructorTranslations }
-export { optionsStore, ACCENT_OPTIONS } from "./options"
+export { optionsStore } from "./options"
 export { createPropsEditor, applyPropertyChange, type PropertyChange } from "./propsEditor"
 export { default as CommonSnippets } from "./CommonSnippets.svelte"
 export { COMPONENT_DEFAULTS, COMPONENT_SIZES, minComponentWidth, createComponent } from "./defaults"

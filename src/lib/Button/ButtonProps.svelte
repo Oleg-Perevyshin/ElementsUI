@@ -7,7 +7,8 @@
   import type { UIComponent, IButtonProps } from "../types"
   import { createPropsEditor, optionByClass, type PropertyChange } from "../propsEditor"
   import * as UI from ".."
-  import { ACCENT_OPTIONS, optionsStore } from "../options"
+  import { optionsStore } from "../options"
+  import type { AccentColor } from "../accent"
   import { twMerge } from "tailwind-merge"
   import { ICONS } from "../icons"
   import CommonSnippets from "../CommonSnippets.svelte"
@@ -31,16 +32,16 @@
     if (!component.eventHandler?.Argument) onPropertyChange({ eventHandler: { Argument: "ModCfg" } })
   })
 
-  /* Один выбор цвета: "-" - secondary, цвет - primary этого цвета, повторное нажатие на выбранный - plain (без фона) */
-  const colorValue = $derived(properties.variant === "primary" ? (properties.accent ?? "blue") : properties.variant === "secondary" ? "" : undefined)
-  const setColor = (accent: (typeof ACCENT_OPTIONS)[number]["value"]) =>
+  /* Один выбор цвета: серый - secondary (поверхность с контуром), цвет - primary этого цвета, повторное нажатие на выбранный - plain (без фона) */
+  const colorValue = $derived(properties.variant === "primary" ? (properties.accent ?? "blue") : properties.variant === "secondary" ? "gray" : undefined)
+  const setColor = (accent: AccentColor) =>
     onPropertyChange({
       properties:
         accent === colorValue
           ? { variant: "plain", accent: undefined }
-          : accent
-            ? { variant: "primary", accent: accent === "blue" ? undefined : accent }
-            : { variant: "secondary", accent: undefined },
+          : accent === "gray"
+            ? { variant: "secondary", accent: undefined }
+            : { variant: "primary", accent: accent === "blue" ? undefined : accent },
     })
 
   /* Иконка без подписи - круглая кнопка по размеру иконки */
@@ -91,7 +92,13 @@
     />
     <div class="flex items-end gap-2">
       <UI.Button wrapperClass="w-8" content={{ icon: InfoIcon, info: { text: $T("constructor.props.button.colors.hint"), side: "right" } }} />
-      <UI.Select label={{ name: $T("constructor.props.colors") }} type="buttons" options={ACCENT_OPTIONS} value={colorValue} onUpdate={setColor} />
+      <UI.Select
+        label={{ name: $T("constructor.props.colors") }}
+        type="buttons"
+        options={$optionsStore.ACCENT_OPTIONS}
+        value={colorValue}
+        onUpdate={setColor}
+      />
     </div>
   </PropsGroup>
   <PropsGroup label={$T("constructor.props.group.appearance")}>

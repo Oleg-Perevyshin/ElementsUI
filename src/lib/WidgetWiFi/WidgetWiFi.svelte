@@ -146,10 +146,6 @@
       {#if cfg.WiFiMode === 1 || cfg.WiFiMode === 3}
         <!-- Клиентский режим (STA) -->
         <div class="flex flex-col gap-3 rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-3" transition:slide={{ duration: 150 }}>
-          <span class="w-fit text-[12px] font-semibold text-(--muted-color)" use:hint={{ text: $T("widget.wifi.hint.sta"), enabled: $hints }}
-            >{$T("widget.wifi.sta")}</span
-          >
-
           <!-- SSID с поиском и пароль - одной строкой по 50%, на узком экране друг под другом -->
           <div class="grid grid-cols-1 gap-x-4 gap-y-3 sm:grid-cols-2">
             <div class="flex min-w-0 items-end gap-2">
@@ -175,7 +171,7 @@
             <!-- one-time-code: менеджер паролей браузера не считает поле паролем входа и не накрывает список сетей у SSID своими сохранёнными логинами (autocomplete="off" для паролей Chrome игнорирует) -->
             <UI.Input
               type="password"
-              label={{ name: $T("widget.common.password") }}
+              label={{ name: $T("widget.wifi.sta_psk") }}
               bind:value={cfg.StaPSK}
               maxlength={64}
               help={{ autocomplete: "one-time-code", regExp: PSK_REGEXP }}
@@ -230,16 +226,14 @@
       {#if cfg.WiFiMode === 2 || cfg.WiFiMode === 3}
         <!-- Точка доступа (AP) -->
         <div class="flex flex-col gap-3 rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-3" transition:slide={{ duration: 150 }}>
-          <span class="w-fit text-[12px] font-semibold text-(--muted-color)" use:hint={{ text: $T("widget.wifi.hint.ap"), enabled: $hints }}
-            >{$T("widget.wifi.ap")}</span
-          >
-
           <!-- Те же колонки, что у STA: в режиме STA + AP пароли стоят друг под другом -->
           <div class="grid grid-cols-1 gap-x-4 gap-y-3 sm:grid-cols-2">
-            <UI.Input label={{ name: "SSID" }} bind:value={cfg.ApSSID} maxlength={32} />
+            <div use:hint={{ text: $T("widget.wifi.hint.ap"), enabled: $hints }}>
+              <UI.Input label={{ name: $T("widget.wifi.ap_ssid") }} bind:value={cfg.ApSSID} maxlength={32} />
+            </div>
             <UI.Input
               type="password"
-              label={{ name: $T("widget.common.password") }}
+              label={{ name: $T("widget.wifi.ap_psk") }}
               bind:value={cfg.ApPSK}
               maxlength={64}
               help={{ autocomplete: "one-time-code", regExp: PSK_REGEXP }}
