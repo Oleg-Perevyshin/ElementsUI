@@ -4,6 +4,7 @@
   import { type ISelectProps, type UIComponent } from "#lib"
   import ComponentExample from "../../ComponentExample.svelte"
   import * as UI from "#lib"
+  import { SelectProps } from "#lib/constructor.ts"
   import { updateComponent, type IOption } from "#lib/types.ts"
   import { formatObjectToString, RenderMarkdown } from "../../common"
   import readmeRaw from "#lib/Select/README.md?raw"
@@ -109,7 +110,7 @@ ${formatObjectToString(selectComponent.properties as ISelectProps)}
     />
   {/snippet}
   {#snippet componentProps()}
-    <UI.SelectProps
+    <SelectProps
       component={selectComponent as UIComponent & { properties: Partial<ISelectProps> }}
       onPropertyChange={(updates) => (selectComponent = updateComponent(selectComponent, updates as object))}
       {forConstructor}

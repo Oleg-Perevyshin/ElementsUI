@@ -112,7 +112,8 @@ ${formatObjectToString(tableComponent.properties as ITableProps<object>)}
     name: string
     status: "online" | "offline"
     lastActive: string
-    action?: IOption[]
+    "action-S"?: IOption[]
+    action?: string
   }
   const columns: ITableHeader<ITableRow>[] = [
     { label: { name: "ID" }, content: [{ type: "text", data: { key: "id", sortable: true } }], width: "5%", align: "center" },
@@ -143,7 +144,7 @@ ${formatObjectToString(tableComponent.properties as ITableProps<object>)}
     },
     {
       label: { name: "Actions" },
-      content: [{ type: "select", data: { key: "action", keyCol: "" } }],
+      content: [{ type: "select", data: { key: "action-S", keyCol: "" } }],
       width: "1fr",
       align: "left",
     },
@@ -156,7 +157,7 @@ ${formatObjectToString(tableComponent.properties as ITableProps<object>)}
       name: "Device A",
       status: "online",
       lastActive: String(new Date()),
-      action: [
+      "action-S": [
         { id: "Value of id1", name: "Value of id1", value: "Value of id1" },
         { id: "Value of id2", name: "Value of id2", value: "Value of id2" },
         { id: "Value of id3", name: "Value of id3", value: "Value of id3" },
@@ -170,7 +171,7 @@ ${formatObjectToString(tableComponent.properties as ITableProps<object>)}
       name: "Device B",
       status: "offline",
       lastActive: String(new Date(Date.now() - 86400000 * 4)),
-      action: [
+      "action-S": [
         { id: "Value of id1", name: "Value of id1", value: "Value of id1" },
         { id: "Value of id2", name: "Value of id2", value: "Value of id2" },
         { id: "Value of id3", name: "Value of id3", value: "Value of id3" },

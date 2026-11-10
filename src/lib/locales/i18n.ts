@@ -1,5 +1,6 @@
 import { derived, get, writable, type Readable } from "svelte/store"
 import translations from "./translations.js"
+import type constructorTranslations from "./constructor.js"
 import { DEFAULT_LANGUAGE, LANGUAGES, LANGUAGE_CODES, isLanguageCode, resolveLanguage, type LanguageCode, type Translations } from "./languages.js"
 
 /* Язык и механизм перевода - общие для библиотеки и приложений: приложение берёт отсюда Language/setLanguage/LOCALES и строит свой $T из своего словаря через createTranslator (см. README «Языки»); переключение языка одним setLanguage меняет и компоненты, и приложение */
@@ -47,7 +48,10 @@ export const LOCALES: { id: string; name: string; value: LanguageCode; flag: str
 /* Параметры перевода: {name} в строке заменяется значением params.name */
 export type TranslateParams = Record<string, string | number>
 
-export type Translator = (key: string, params?: TranslateParams) => string
+/* Ключ словаря библиотеки (компоненты и конструктор) - подсказка в редакторе; любая строка тоже допустима: ключи приложения, подписи из данных */
+export type TranslationKey = keyof typeof translations | keyof typeof constructorTranslations
+
+export type Translator = (key: TranslationKey | (string & {}), params?: TranslateParams) => string
 
 /* Перевод по словарю на заданный язык: язык → язык по умолчанию → сам ключ; без хранилища - для серверного кода (язык запроса) */
 export const translate = (dictionary: Translations, locale: string, key: string, params?: TranslateParams): string => {
@@ -63,6 +67,9 @@ export const createTranslator = (dictionary: Translations): Readable<Translator>
 /* $T самой библиотеки */
 export const T: Readable<Translator> = createTranslator(translations)
 
+/* Дополняет словарь библиотеки (точка входа "poe-svelte-ui-lib/constructor" подключает им словарь конструктора) */
+export const extendTranslations = (dictionary: Translations) => void Object.assign(translations, dictionary)
+
 /* Названия смарт-виджетов по умолчанию - ключи словаря библиотеки */
 const WIDGET_TITLE_KEYS: Record<string, string> = {
   WidgetWiFi: "widget.wifi.title",
@@ -76,6 +83,6 @@ const WIDGET_TITLE_KEYS: Record<string, string> = {
 
 /* Название виджета сразу на всех языках { ru, en, zh, ... } - конструктор заполняет им заголовок нового виджета, переводы видны и правятся в «Тексты и переводы»; для неизвестного типа - пустой объект */
 export const widgetTitle = (type: string): Partial<Record<LanguageCode, string>> => {
-  const entry = translations[WIDGET_TITLE_KEYS[type] ?? ""]
+  const entry = (translations as Translations)[WIDGET_TITLE_KEYS[type] ?? ""]
   return entry ? Object.fromEntries(LANGUAGE_CODES.filter((lang) => entry[lang]).map((lang) => [lang, entry[lang] as string])) : {}
 }

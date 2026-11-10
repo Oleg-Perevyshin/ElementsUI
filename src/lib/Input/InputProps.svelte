@@ -2,7 +2,7 @@
   import TextsEditor from "../TextsEditor.svelte"
   import { getContext } from "svelte"
   import { T } from "../locales/i18n"
-  import translations from "../locales/translations"
+  import translations from "../locales/constructor"
   import { DEFAULT_LANGUAGE, LANGUAGE_CODES } from "../locales/languages"
   import type { IInputProps, UIComponent, IOption, IUIComponentHandler } from "../types"
   import { findOptionByClass } from "../types"
