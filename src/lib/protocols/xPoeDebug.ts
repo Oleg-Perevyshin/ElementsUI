@@ -113,26 +113,35 @@ const packetStart = (bytes: Uint8Array): number => {
   return -1
 }
 
-/* Потоковый разбор: пакеты в любом месте разреза, текст - построчно, мусор сдвигается по байту; пауза дольше gapMs обрывает недособранный пакет. Имена аргументов - из dictionary (по умолчанию встроенного) */
+/* Потоковый разбор: пакеты в любом месте разреза, текст - построчно, мусор сдвигается по байту; пауза дольше gapMs обрывает недособранный пакет, а недописанную строку текста выдаёт как есть. Имена аргументов - из dictionary (по умолчанию встроенного) */
 export const createXPoeDebugParser = ({ dictionary = DEFAULT_DICTIONARY, ...options }: FramerOptions & { dictionary?: Dictionary } = {}) => {
   const framer = createFramer(options)
   return {
     push(chunk: Uint8Array, now = Date.now()): XPoeDebugItem[] {
       const items: XPoeDebugItem[] = []
-      framer.push(chunk, now, (bytes) => {
-        const start = packetStart(bytes)
-        if (start === bytes.length - 1) return 0
-        if (start !== 0) {
-          const cut = start > 0 ? start : bytes.length > MAX_TEXT_TAIL ? bytes.length : bytes.lastIndexOf(0x0a) + 1
-          items.push(...textItems(bytes.subarray(0, cut)))
-          return cut
-        }
-        const parsed = decodePacket(bytes, framer.maxBytes)
-        if (parsed.status === "incomplete") return 0
-        if (parsed.status === "garbage" || !parsed.objects.length) return 1
-        items.push(...parsed.objects.map((object) => frameItem(object, dictionary)))
-        return parsed.length
-      })
+      framer.push(
+        chunk,
+        now,
+        (bytes) => {
+          const start = packetStart(bytes)
+          if (start === bytes.length - 1) return 0
+          if (start !== 0) {
+            const cut = start > 0 ? start : bytes.length > MAX_TEXT_TAIL ? bytes.length : bytes.lastIndexOf(0x0a) + 1
+            items.push(...textItems(bytes.subarray(0, cut)))
+            return cut
+          }
+          const parsed = decodePacket(bytes, framer.maxBytes)
+          if (parsed.status === "incomplete") return 0
+          if (parsed.status === "garbage" || !parsed.objects.length) return 1
+          items.push(...parsed.objects.map((object) => frameItem(object, dictionary)))
+          return parsed.length
+        },
+        (bytes) => {
+          /* Текст до начала пакета выдаётся строкой, обрывок самого пакета отбрасывается */
+          const start = packetStart(bytes)
+          items.push(...textItems(start < 0 ? bytes : bytes.subarray(0, start)))
+        },
+      )
       return items
     },
     reset: framer.reset,

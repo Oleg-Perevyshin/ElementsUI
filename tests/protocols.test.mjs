@@ -182,6 +182,22 @@ test("xPOE-Debug: обрыв пакета - пауза сбрасывает, м�
   )
 })
 
+test("xPOE-Debug: недописанная строка после паузы выдаётся текстом, обрывок пакета - нет", () => {
+  const parser = m.createXPoeDebugParser({ gapMs: 100 })
+  assert.deepEqual(parser.push(new TextEncoder().encode("boot wait"), 0), [])
+  const frame = deviceFrame("OK!", "DebugLog", m.valueToCbor([3, "Net", "x", 1]))
+  const items = parser.push(frame, 1000)
+  assert.deepEqual(
+    items.map((item) => (item.type === "raw" ? item.text : item.argument)),
+    ["boot wait", "DebugLog"],
+  )
+  assert.deepEqual(parser.push(frame.subarray(0, 10), 2000), [])
+  assert.deepEqual(
+    parser.push(new TextEncoder().encode("x\n"), 3000).map((item) => item.text),
+    ["x"],
+  )
+})
+
 test("xPOE-Debug: неверный CRC, команда устройству, несколько записей в пакете", () => {
   const invalidFrame = deviceFrame("OK!", "DebugLog", m.valueToCbor([3, "test", "message", 1]))
   invalidFrame[invalidFrame.length - 2] ^= 1

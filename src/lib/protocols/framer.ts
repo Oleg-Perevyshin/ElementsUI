@@ -15,8 +15,12 @@ export const createFramer = ({ maxBytes = 8192, gapMs = 100 }: FramerOptions = {
   let last = 0
   return {
     maxBytes,
-    push(chunk: Uint8Array, now: number, step: FrameStep): void {
-      if (end > start && now - last > gapMs) start = end
+    /* stale получает недособранное перед сбросом по паузе - например, недописанную строку текста */
+    push(chunk: Uint8Array, now: number, step: FrameStep, stale?: (bytes: Uint8Array) => void): void {
+      if (end > start && now - last > gapMs) {
+        stale?.(buffer.subarray(start, end))
+        start = end
+      }
       last = now
       if (end + chunk.length > buffer.length) {
         const next = new Uint8Array(Math.max(1024, 2 * (end - start + chunk.length)))
