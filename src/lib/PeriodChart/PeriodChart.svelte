@@ -82,7 +82,7 @@
   const labelStep = $derived(Math.ceil(values.length / 12) || 1)
 </script>
 
-<div class={twMerge("relative flex w-full flex-col gap-3", wrapperClass)} style={accentStyle(accent)}>
+<div class={twMerge("@container relative flex w-full flex-col gap-3", wrapperClass)} style={accentStyle(accent)}>
   {#if label.name}
     <h5 class={twMerge("w-full text-[13px] font-semibold text-(--muted-color)", label.class)}>{label.name}</h5>
   {/if}
@@ -94,7 +94,8 @@
         <button
           type="button"
           class={twMerge(
-            "flex-1 cursor-pointer rounded-[7px] px-3 py-1.5 text-[13px] transition-colors duration-150",
+            /* на узком месте отступы меньше, длинное имя уровня переносится, а не выходит за край */
+            "min-w-0 flex-1 cursor-pointer rounded-[7px] px-1.5 py-1.5 text-[13px] leading-tight wrap-break-word transition-colors duration-150 @md:px-3",
             index === currentLevelIndex
               ? "bg-(--back-color) font-semibold text-(--font-color) shadow-(--elevation-1)"
               : "font-medium text-(--muted-color) hover:text-(--font-color)",

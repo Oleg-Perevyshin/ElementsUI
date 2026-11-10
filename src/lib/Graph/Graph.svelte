@@ -273,7 +273,7 @@
     ctx.clearRect(0, 0, width, height)
 
     const data = lines()
-    const { padding, minX, timeSpan, yMin, yMax, getX, getY } = computeGeometry(data)
+    const { padding, graphWidth, minX, timeSpan, yMin, yMax, getX, getY } = computeGeometry(data)
     const style = getComputedStyle(canvas)
 
     /* Сетка в стиле PeriodChart: пунктир цветом --faint-color темы, подписи тем же цветом без прозрачности */
@@ -287,6 +287,9 @@
     /* Сетка X */
     ctx.textAlign = "center"
 
+    /* Подпись на каждой линии сетки, если влезает; на узком холсте - через одну или реже, чтобы не слипались */
+    const labelWidth = Math.max(ctx.measureText(formatAxisLabel(minX, timeSpan)).width, ctx.measureText(formatAxisLabel(minX + timeSpan, timeSpan)).width)
+    const labelStep = [1, 2, 5, 10].find((step) => (graphWidth / 10) * step >= labelWidth + 6) ?? 10
     for (let i = 0; i <= 10; i++) {
       const t = minX + (i / 10) * timeSpan
       const x = getX(t)
@@ -297,7 +300,7 @@
       ctx.stroke()
       ctx.globalAlpha = 1
       ctx.textBaseline = "top"
-      ctx.fillText(formatAxisLabel(t, timeSpan), x, height - padding.bottom + 2)
+      if (i % labelStep === 0) ctx.fillText(formatAxisLabel(t, timeSpan), x, height - padding.bottom + 2)
     }
 
     /* Сетка Y */
@@ -349,12 +352,13 @@
   }
 </script>
 
-<div class={`relative flex w-full flex-col items-center justify-center ${wrapperClass}`}>
+<!-- @container: раскладка по ширине самого графика - уже 28rem панель уходит под холст -->
+<div class={`@container relative flex w-full flex-col items-center justify-center ${wrapperClass}`}>
   {#if label.name}
     <h5 class={`w-full px-4 text-center ${label.class}`}>{label.name}</h5>
   {/if}
 
-  <div class="flex w-full min-w-0 flex-row gap-4">
+  <div class="flex w-full min-w-0 flex-col gap-3 @md:flex-row @md:gap-4">
     <!-- График: холст абсолютно поверх контейнера - его пиксельная ширина не распирает контейнер, иначе в сетке/flex с 1fr ширина растёт по кругу (ResizeObserver) -->
     <!-- design-handoff, раздел 9: рамка --hairline-color без тени, тултип в оформлении общего Tooltip.svelte -->
     <div bind:this={container} class="relative h-64 min-w-0 grow overflow-hidden rounded-[14px] border border-(--hairline-color)">
@@ -378,8 +382,8 @@
       {/if}
     </div>
 
-    <!-- Панель настроек -->
-    <div class="flex w-48 flex-col gap-2">
+    <!-- Панель настроек: справа от холста, на узком - под ним, развёртка и значения рядом -->
+    <div class="grid w-full grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] gap-x-3 gap-y-2 @md:flex @md:w-48 @md:flex-col @md:gap-2">
       {#if !isHistoryMode}
         <!-- Развертка по горизонтали -->
         <Select
@@ -391,7 +395,7 @@
       {/if}
 
       <!-- Переменные и их значение: сетка, а не таблица - имя обрезается «…», значение не переносится -->
-      <div class="flex flex-col gap-1">
+      <div class="flex flex-col gap-1 first:col-span-full">
         <h5 class="text-[12px] font-semibold text-(--muted-color)">{$T("ui.graph.values")}</h5>
         <div class="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-2 gap-y-1 text-[13px]">
           {#each legend as item, i}

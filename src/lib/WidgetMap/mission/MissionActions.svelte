@@ -50,7 +50,8 @@
   let off = $derived(disabled || !text)
 </script>
 
-<div class="grid grid-cols-3 gap-3">
+<!-- Три кнопки в ряд, на узком месте переносятся -->
+<div class="grid grid-cols-[repeat(auto-fit,minmax(7rem,1fr))] gap-3">
   <div class="min-w-0" use:hint={{ text: $T("widget.mission.hint.download"), enabled: hints }}>
     <Button variant="primary" content={{ name: $T("widget.mission.download") }} disabled={off} onClick={download} />
   </div>

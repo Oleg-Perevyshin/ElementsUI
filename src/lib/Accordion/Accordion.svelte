@@ -39,7 +39,7 @@
             icon={label?.icon}
             class="flex h-[18px] w-[18px] shrink-0 items-center justify-center text-[color-mix(in_srgb,var(--accent-text)_70%,var(--font-color))] [&_svg]:h-full [&_svg]:w-full"
           />
-          <span class={twMerge(`min-w-0 truncate text-[15px] font-semibold`, label.class)}>{label?.name}</span>
+          <span class={twMerge(`min-w-0 text-[15px] leading-snug font-semibold wrap-break-word`, label.class)}>{label?.name}</span>
         </div>
 
         {#if chevron}

@@ -6,13 +6,13 @@
 
   let { wrapperClass = "", accent, background = false, underline = false, content = { name: "", class: "", size: "base" } }: ITextFieldProps = $props()
 
-  /* Размеры по шкале темы: 13 / 15 / 24 / 34 / 44 с весом и трекингом по роли */
+  /* Размеры по шкале темы: 13 / 15 / 24 / 34 / 44 с весом и трекингом по роли; на телефоне крупные меньше: 20 / 26 / 32 */
   const textSize = {
     small: "text-[13px] leading-[1.45] text-(--muted-color)",
     base: "text-[15px] leading-[1.5]",
-    large: "text-[24px] leading-[1.2] font-[650] tracking-[-0.015em]",
-    huge: "text-[34px] leading-[1.15] font-[650] tracking-[-0.02em]",
-    massive: "text-[44px] leading-[1.08] font-bold tracking-[-0.025em]",
+    large: "text-[24px] leading-[1.2] max-sm:text-[20px] font-[650] tracking-[-0.015em]",
+    huge: "text-[34px] leading-[1.15] max-sm:text-[26px] font-[650] tracking-[-0.02em]",
+    massive: "text-[44px] leading-[1.08] max-sm:text-[32px] font-bold tracking-[-0.025em]",
   } as const
 </script>
 
@@ -23,7 +23,7 @@
     wrapperClass,
   )}
 >
-  <p class={twMerge(`w-full text-pretty ${textSize[content.size ?? "base"]}`, accent ? "text-(--accent-text)" : "", content.class)}>
+  <p class={twMerge(`w-full text-pretty wrap-break-word ${textSize[content.size ?? "base"]}`, accent ? "text-(--accent-text)" : "", content.class)}>
     {content.name}
   </p>
 </div>

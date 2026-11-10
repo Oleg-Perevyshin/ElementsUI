@@ -113,6 +113,13 @@
   let gridTemplate = $derived(
     [...header.filter((c) => c.width !== "0%").map((c) => c.width || "minmax(0, 1fr)"), ...(dataBuffer.clearButton ? [ACTIONS_COLUMN] : [])].join(" "),
   )
+  /* Наименьшая ширина таблицы: заданные ширины колонок и по 5rem на гибкие; уже - прокрутка вбок, а не обрезка */
+  let minTableWidth = $derived(
+    `calc(${[
+      ...header.filter((c) => c.width !== "0%").map((c) => (!c.width || c.width.includes("fr") ? "5rem" : c.width)),
+      ...(dataBuffer.clearButton ? [ACTIONS_COLUMN] : []),
+    ].join(" + ")})`,
+  )
   const columnContent = (column: ITableHeader<Row>, row: Row) => (typeof column.content === "function" ? column.content(row) : (column.content ?? []))
   const sortKey = (column: ITableHeader<Row>) =>
     typeof column.content === "function"
@@ -135,17 +142,28 @@
     tableHeight = height
   }
 
+  /* Следующая порция, когда низ таблицы виден: при прокрутке и если строки ещё не заполнили высоту таблицы */
+  const loadMore = () => {
+    if (!container || cursor === null || !loader || loader()) return
+    const { scrollTop, clientHeight, scrollHeight } = container
+    if (scrollTop + clientHeight >= scrollHeight - 50) getData()
+  }
+
   $effect(() => {
     void entries
     tick().then(() => {
       measure()
       if (autoscroll && isAutoscroll && !dataBuffer.logger && container) container.scrollTop = container.scrollHeight
+      loadMore()
     })
   })
 
   $effect(() => {
     if (!container) return
-    const observer = new ResizeObserver(measure)
+    const observer = new ResizeObserver(() => {
+      measure()
+      loadMore()
+    })
     observer.observe(container)
     return () => observer.disconnect()
   })
@@ -154,7 +172,7 @@
     if (!container) return
     const { scrollTop, clientHeight, scrollHeight } = container
     isAutoscroll = scrollHeight - scrollTop <= clientHeight + 50
-    if (scrollTop + clientHeight >= scrollHeight - 50 && cursor !== null && loader && !loader()) getData()
+    loadMore()
   }
 
   /* ********************************************************** */
@@ -234,217 +252,219 @@
     <span class={twMerge(`w-full pb-2 text-[12px] font-semibold text-(--muted-color)`, label.class)}>{label.name}</span>
   {/if}
 
-  <div class="relative flex h-full w-full flex-col overflow-hidden rounded-[14px] border border-(--hairline-color) bg-(--back-color)">
-    <!-- Шапка -->
-    <div
-      class="grid border-b border-(--hairline-color) bg-[var(--table-header-color,var(--accent-soft))] text-[11px] font-bold tracking-[0.06em] text-[color-mix(in_srgb,var(--accent-color)_35%,var(--font-color))] uppercase"
-      style={`grid-template-columns: ${gridTemplate}; padding-right: ${scrollbarWidth}px;`}
-    >
-      {#each header as column, index (column)}
-        {#if column.width !== "0%"}
-          {@const key = sortKey(column)}
-          <div
-            class={twMerge(
-              `flex items-center gap-1 border-l px-3 py-2 ${outline && index !== 0 ? "border-(--hairline-color)" : "border-transparent"}
+  <div class="relative flex h-full w-full flex-col overflow-x-auto overflow-y-hidden rounded-[14px] border border-(--hairline-color) bg-(--back-color)">
+    <div class="flex min-h-0 w-full flex-1 flex-col" style="min-width: {minTableWidth};">
+      <!-- Шапка -->
+      <div
+        class="grid border-b border-(--hairline-color) bg-[var(--table-header-color,var(--accent-soft))] text-[11px] font-bold tracking-[0.06em] text-[color-mix(in_srgb,var(--accent-color)_35%,var(--font-color))] uppercase"
+        style={`grid-template-columns: ${gridTemplate}; padding-right: ${scrollbarWidth}px;`}
+      >
+        {#each header as column, index (column)}
+          {#if column.width !== "0%"}
+            {@const key = sortKey(column)}
+            <div
+              class={twMerge(
+                `flex items-center gap-1 border-l px-3 py-2 ${outline && index !== 0 ? "border-(--hairline-color)" : "border-transparent"}
             ${column.align === "center" ? "justify-center text-center" : column.align === "right" ? "justify-end text-right" : "justify-start text-left"}`,
-              column.label?.class,
-            )}
-          >
-            <span>{$T(column.label?.name ?? "")}</span>
-            {#if key !== undefined && !stash}
-              <button
-                class="inline-flex cursor-pointer items-center rounded px-1 text-(--muted-color) transition-colors duration-150 hover:bg-(--back-color) hover:text-(--font-color)"
-                onclick={() => sortBy(key)}
-              >
-                ↑↓
-              </button>
-            {/if}
+                column.label?.class,
+              )}
+            >
+              <span>{$T(column.label?.name ?? "")}</span>
+              {#if key !== undefined && !stash}
+                <button
+                  class="inline-flex cursor-pointer items-center rounded px-1 text-(--muted-color) transition-colors duration-150 hover:bg-(--back-color) hover:text-(--font-color)"
+                  onclick={() => sortBy(key)}
+                >
+                  ↑↓
+                </button>
+              {/if}
+            </div>
+          {/if}
+        {/each}
+        {#if dataBuffer.clearButton}
+          <div class="flex items-center justify-center tracking-normal normal-case">
+            <Button
+              componentClass={twMerge("size-7 p-1.5 text-(--muted-color) hover:text-(--red-text)", dataBuffer.clearClass)}
+              content={{ icon: ButtonClear, info: { text: $T("common.table.clear"), side: "left" } }}
+              onClick={clear}
+            />
           </div>
         {/if}
-      {/each}
-      {#if dataBuffer.clearButton}
-        <div class="flex items-center justify-center tracking-normal normal-case">
-          <Button
-            componentClass={twMerge("size-7 p-1.5 text-(--muted-color) hover:text-(--red-text)", dataBuffer.clearClass)}
-            content={{ icon: ButtonClear, info: { text: $T("common.table.clear"), side: "left" } }}
-            onClick={clear}
-          />
+      </div>
+
+      {#if entries.length > 0}
+        <!-- Тело с прокруткой -->
+        <div class="relative flex-1 overflow-y-auto bg-(--back-color)" bind:this={container} onscroll={handleScroll}>
+          <div
+            class="min-w-0"
+            bind:this={rowsEl}
+            style={dataBuffer.visibleRows && tableHeight && entries.length > dataBuffer.visibleRows ? `height: ${tableHeight}px;` : ""}
+          >
+            {#each entries as entry, i (entry.key)}
+              {@const row = withPicks(entry.row)}
+              <div
+                class="grid border-t border-(--hairline-color) transition-colors duration-150 hover:bg-(--accent-soft)"
+                style={`grid-template-columns: ${gridTemplate};`}
+              >
+                {#each header as column, j (column)}
+                  {#if column.width !== "0%"}
+                    {@const contents = columnContent(column, row) as ITableContent<Row>[]}
+                    <!-- Одни бейджи - вплотную с переносом; stack - столбиком; иначе - в ряд равными долями -->
+                    {@const badges = contents.length > 1 && contents.every((c) => c.type === "text" && c.data.badge)}
+                    <div
+                      class="relative {badges
+                        ? 'flex flex-wrap gap-1'
+                        : 'grid gap-x-2'} min-h-7 w-full min-w-0 items-center px-3 py-1 text-[length:var(--table-font-size,13px)] wrap-break-word
+                    {column.align === 'center'
+                        ? 'justify-center justify-items-center text-center'
+                        : column.align === 'right'
+                          ? 'justify-end justify-items-end text-right tabular-nums'
+                          : 'justify-start justify-items-start text-left'}
+                    {j !== 0 ? 'border-l' : ''} {outline ? 'border-(--hairline-color)' : 'border-transparent'} {column.disableSelect
+                        ? 'select-none'
+                        : 'select-all'}"
+                      style={badges ? undefined : `grid-template-columns: ${column.stack ? "minmax(0, 1fr)" : `repeat(${contents.length}, minmax(0, 1fr))`};`}
+                    >
+                      {#each contents as content, index}
+                        {#if content.type === "button"}
+                          {@const button = resolve(content.data, row)}
+                          {@const title = resolve(button.title, row)}
+                          <button class="{buttonClass(button, row)} bg-(--bg-color)" onclick={() => buttonClick(row, button)} {title} aria-label={title}>
+                            {#if button.icon}
+                              <span class="flex size-4 shrink-0 items-center justify-center overflow-visible [&_svg]:h-full [&_svg]:w-full">
+                                {#if typeof button.icon === "string"}
+                                  {@html sanitizeHtml(button.icon)}
+                                {:else}
+                                  <button.icon />
+                                {/if}
+                              </span>
+                            {/if}
+                            {$T(resolve(button.name, row) ?? "")}
+                          </button>
+                        {:else if content.type === "select"}
+                          {@const select = content.data}
+                          {@const options = (Array.isArray(row[select.key]) ? row[select.key] : []) as IOption<string | number>[]}
+                          {@const current = (row as Record<string, unknown>)[valueKey(select.key)]}
+                          {@const open = dropdown?.row === i && dropdown.col === j && dropdown.index === index ? dropdown : null}
+                          <div class="relative w-full select-none">
+                            <button
+                              class="h-7 w-full cursor-pointer rounded-lg border border-(--border-color) bg-(--field-color) px-2 text-left text-[13px] transition-[border-color,box-shadow] duration-150 outline-none hover:border-(--faint-color) focus:border-(--accent-text) focus:shadow-(--focus-shadow-color)"
+                              onclick={(e) => toggleDropdown(e, i, j, index)}
+                            >
+                              {options.find((o) => o.value === current)?.name ?? $T("common.select_tag")}
+                            </button>
+                            {#if open}
+                              <div
+                                class="fixed z-50 max-h-[40vh] overflow-y-auto rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-1 shadow-(--elevation-2)"
+                                style="top: {open.rect.bottom + 4}px; left: {open.rect.left}px; width: {open.rect.width}px;"
+                                transition:slide={{ duration: slideDuration }}
+                              >
+                                {#each options as option (option.id ?? option.value)}
+                                  <button
+                                    class={twMerge(
+                                      "flex h-8 w-full cursor-pointer items-center rounded-md px-2.5 text-left text-[13px] transition-colors duration-150 hover:bg-(--container-color)",
+                                      option.accent && "text-(--accent-text)",
+                                    )}
+                                    style={accentStyle(option.accent)}
+                                    onclick={(e) => selectOption(e, entry.row, select.key, option)}
+                                  >
+                                    {option.name}
+                                  </button>
+                                {/each}
+                              </div>
+                            {/if}
+                          </div>
+                        {:else if content.type === "image"}
+                          {@const image = content.data}
+                          {@const src = resolve(image.src, row)}
+                          <div
+                            class="flex items-center justify-center [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
+                            style={`width: ${image.width || "2rem"}; height: ${image.height || "2rem"};`}
+                          >
+                            {#if src}
+                              <img {src} alt={image.alt ?? "Image"} class={twMerge("h-full w-full object-cover", image.class)} loading="lazy" />
+                            {:else if typeof image.defaultIcon === "string"}
+                              {@html sanitizeHtml(image.defaultIcon)}
+                            {:else if image.defaultIcon}
+                              <image.defaultIcon />
+                            {/if}
+                          </div>
+                        {:else if content.type === "progressBar"}
+                          {@const bar = content.data}
+                          <div class="grid h-7 w-full grid-cols-[3.5rem_1fr] items-center gap-2">
+                            <span class="text-right text-[12px] font-semibold tabular-nums">{roundToClean(Number(row[bar.key] ?? 0))}{bar.units}</span>
+                            <div class="relative my-auto h-1.5 overflow-hidden rounded-full bg-(--container-color)">
+                              <div
+                                class="absolute top-0 left-0 flex h-full rounded-full bg-(--bg-color,var(--accent-color))"
+                                style="width: {progressPercent(row[bar.key] as number, bar.minNum, bar.maxNum)}%;"
+                              ></div>
+                            </div>
+                          </div>
+                        {:else if content.type === "text"}
+                          {@const text = content.data}
+                          {@const value = cellContent(row, text)}
+                          {@const accent = text.accent?.(row)}
+                          <!-- w-full + min-w-0: при justify-items-start ячейка иначе берёт ширину по содержимому и truncate не даёт «…»; 
+ в тексте - перенос строки -->
+                          <div class="flex w-full min-w-0 items-center">
+                            <div
+                              class="max-w-full min-w-0 wrap-break-word {text.truncated ? 'truncate' : 'whitespace-pre-line'} {accent
+                                ? 'text-(--accent-text)'
+                                : ''} {accent && text.badge ? 'w-fit rounded-md bg-(--accent-soft) px-1.5 text-[12px] font-medium' : 'w-full'}"
+                              style={accentStyle(accent)}
+                              onmouseenter={text.tooltip
+                                ? (e) => {
+                                    const tip = typeof text.tooltip === "function" ? text.tooltip(row) : cellText(row, text)
+                                    if (tip) tooltip = { show: true, text: tip, x: e.clientX, y: e.clientY }
+                                  }
+                                : undefined}
+                              onmouseleave={text.tooltip ? () => (tooltip.show = false) : undefined}
+                              onmousemove={text.tooltip ? (e) => ((tooltip.x = e.clientX), (tooltip.y = e.clientY)) : undefined}
+                              role="presentation"
+                            >
+                              {#if text.modal}
+                                <button
+                                  class="cursor-pointer text-left {text.truncated ? 'block w-full max-w-full truncate' : 'w-fit'}"
+                                  onclick={(e) => {
+                                    e.stopPropagation()
+                                    modal = { row, text }
+                                    modalOpen = true
+                                  }}
+                                >
+                                  {#if text.html}{@html sanitizeHtml(value)}{:else}{value}{/if}
+                                </button>
+                              {:else if text.onClick}
+                                <button
+                                  class="cursor-pointer text-left hover:underline"
+                                  onclick={(e) => {
+                                    e.stopPropagation()
+                                    text.onClick?.(row)
+                                  }}>{value}</button
+                                >
+                              {:else if text.href}
+                                <a class="underline" href={text.href(row)}>{value}</a>
+                              {:else if text.html}
+                                {@html sanitizeHtml(value)}
+                              {:else}
+                                {value}
+                              {/if}
+                            </div>
+                            {#if text.copy}
+                              <CopyButton class="ml-1.5" text={() => cellText(row, text)} />
+                            {/if}
+                          </div>
+                        {/if}
+                      {/each}
+                    </div>
+                  {/if}
+                {/each}
+                {#if dataBuffer.clearButton}<div></div>{/if}
+              </div>
+            {/each}
+          </div>
         </div>
       {/if}
     </div>
-
-    {#if entries.length > 0}
-      <!-- Тело с прокруткой -->
-      <div class="relative flex-1 overflow-y-auto bg-(--back-color)" bind:this={container} onscroll={handleScroll}>
-        <div
-          class="min-w-0"
-          bind:this={rowsEl}
-          style={dataBuffer.visibleRows && tableHeight && entries.length > dataBuffer.visibleRows ? `height: ${tableHeight}px;` : ""}
-        >
-          {#each entries as entry, i (entry.key)}
-            {@const row = withPicks(entry.row)}
-            <div
-              class="grid border-t border-(--hairline-color) transition-colors duration-150 hover:bg-(--accent-soft)"
-              style={`grid-template-columns: ${gridTemplate};`}
-            >
-              {#each header as column, j (column)}
-                {#if column.width !== "0%"}
-                  {@const contents = columnContent(column, row) as ITableContent<Row>[]}
-                  <!-- Одни бейджи - вплотную с переносом; stack - столбиком; иначе - в ряд равными долями -->
-                  {@const badges = contents.length > 1 && contents.every((c) => c.type === "text" && c.data.badge)}
-                  <div
-                    class="relative {badges
-                      ? 'flex flex-wrap gap-1'
-                      : 'grid gap-x-2'} min-h-7 w-full min-w-0 items-center px-3 py-1 text-[length:var(--table-font-size,13px)] wrap-break-word
-                    {column.align === 'center'
-                      ? 'justify-center justify-items-center text-center'
-                      : column.align === 'right'
-                        ? 'justify-end justify-items-end text-right tabular-nums'
-                        : 'justify-start justify-items-start text-left'}
-                    {j !== 0 ? 'border-l' : ''} {outline ? 'border-(--hairline-color)' : 'border-transparent'} {column.disableSelect
-                      ? 'select-none'
-                      : 'select-all'}"
-                    style={badges ? undefined : `grid-template-columns: ${column.stack ? "minmax(0, 1fr)" : `repeat(${contents.length}, minmax(0, 1fr))`};`}
-                  >
-                    {#each contents as content, index}
-                      {#if content.type === "button"}
-                        {@const button = resolve(content.data, row)}
-                        {@const title = resolve(button.title, row)}
-                        <button class="{buttonClass(button, row)} bg-(--bg-color)" onclick={() => buttonClick(row, button)} {title} aria-label={title}>
-                          {#if button.icon}
-                            <span class="flex size-4 shrink-0 items-center justify-center overflow-visible [&_svg]:h-full [&_svg]:w-full">
-                              {#if typeof button.icon === "string"}
-                                {@html sanitizeHtml(button.icon)}
-                              {:else}
-                                <button.icon />
-                              {/if}
-                            </span>
-                          {/if}
-                          {$T(resolve(button.name, row) ?? "")}
-                        </button>
-                      {:else if content.type === "select"}
-                        {@const select = content.data}
-                        {@const options = (Array.isArray(row[select.key]) ? row[select.key] : []) as IOption<string | number>[]}
-                        {@const current = (row as Record<string, unknown>)[valueKey(select.key)]}
-                        {@const open = dropdown?.row === i && dropdown.col === j && dropdown.index === index ? dropdown : null}
-                        <div class="relative w-full select-none">
-                          <button
-                            class="h-7 w-full cursor-pointer rounded-lg border border-(--border-color) bg-(--field-color) px-2 text-left text-[13px] transition-[border-color,box-shadow] duration-150 outline-none hover:border-(--faint-color) focus:border-(--accent-text) focus:shadow-(--focus-shadow-color)"
-                            onclick={(e) => toggleDropdown(e, i, j, index)}
-                          >
-                            {options.find((o) => o.value === current)?.name ?? $T("common.select_tag")}
-                          </button>
-                          {#if open}
-                            <div
-                              class="fixed z-50 max-h-[40vh] overflow-y-auto rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-1 shadow-(--elevation-2)"
-                              style="top: {open.rect.bottom + 4}px; left: {open.rect.left}px; width: {open.rect.width}px;"
-                              transition:slide={{ duration: slideDuration }}
-                            >
-                              {#each options as option (option.id ?? option.value)}
-                                <button
-                                  class={twMerge(
-                                    "flex h-8 w-full cursor-pointer items-center rounded-md px-2.5 text-left text-[13px] transition-colors duration-150 hover:bg-(--container-color)",
-                                    option.accent && "text-(--accent-text)",
-                                  )}
-                                  style={accentStyle(option.accent)}
-                                  onclick={(e) => selectOption(e, entry.row, select.key, option)}
-                                >
-                                  {option.name}
-                                </button>
-                              {/each}
-                            </div>
-                          {/if}
-                        </div>
-                      {:else if content.type === "image"}
-                        {@const image = content.data}
-                        {@const src = resolve(image.src, row)}
-                        <div
-                          class="flex items-center justify-center [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
-                          style={`width: ${image.width || "2rem"}; height: ${image.height || "2rem"};`}
-                        >
-                          {#if src}
-                            <img {src} alt={image.alt ?? "Image"} class={twMerge("h-full w-full object-cover", image.class)} loading="lazy" />
-                          {:else if typeof image.defaultIcon === "string"}
-                            {@html sanitizeHtml(image.defaultIcon)}
-                          {:else if image.defaultIcon}
-                            <image.defaultIcon />
-                          {/if}
-                        </div>
-                      {:else if content.type === "progressBar"}
-                        {@const bar = content.data}
-                        <div class="grid h-7 w-full grid-cols-[3.5rem_1fr] items-center gap-2">
-                          <span class="text-right text-[12px] font-semibold tabular-nums">{roundToClean(Number(row[bar.key] ?? 0))}{bar.units}</span>
-                          <div class="relative my-auto h-1.5 overflow-hidden rounded-full bg-(--container-color)">
-                            <div
-                              class="absolute top-0 left-0 flex h-full rounded-full bg-(--bg-color,var(--accent-color))"
-                              style="width: {progressPercent(row[bar.key] as number, bar.minNum, bar.maxNum)}%;"
-                            ></div>
-                          </div>
-                        </div>
-                      {:else if content.type === "text"}
-                        {@const text = content.data}
-                        {@const value = cellContent(row, text)}
-                        {@const accent = text.accent?.(row)}
-                        <!-- w-full + min-w-0: при justify-items-start ячейка иначе берёт ширину по содержимому и truncate не даёт «…»; 
- в тексте - перенос строки -->
-                        <div class="flex w-full min-w-0 items-center">
-                          <div
-                            class="max-w-full min-w-0 wrap-break-word {text.truncated ? 'truncate' : 'whitespace-pre-line'} {accent
-                              ? 'text-(--accent-text)'
-                              : ''} {accent && text.badge ? 'w-fit rounded-md bg-(--accent-soft) px-1.5 text-[12px] font-medium' : 'w-full'}"
-                            style={accentStyle(accent)}
-                            onmouseenter={text.tooltip
-                              ? (e) => {
-                                  const tip = typeof text.tooltip === "function" ? text.tooltip(row) : cellText(row, text)
-                                  if (tip) tooltip = { show: true, text: tip, x: e.clientX, y: e.clientY }
-                                }
-                              : undefined}
-                            onmouseleave={text.tooltip ? () => (tooltip.show = false) : undefined}
-                            onmousemove={text.tooltip ? (e) => ((tooltip.x = e.clientX), (tooltip.y = e.clientY)) : undefined}
-                            role="presentation"
-                          >
-                            {#if text.modal}
-                              <button
-                                class="cursor-pointer text-left {text.truncated ? 'block w-full max-w-full truncate' : 'w-fit'}"
-                                onclick={(e) => {
-                                  e.stopPropagation()
-                                  modal = { row, text }
-                                  modalOpen = true
-                                }}
-                              >
-                                {#if text.html}{@html sanitizeHtml(value)}{:else}{value}{/if}
-                              </button>
-                            {:else if text.onClick}
-                              <button
-                                class="cursor-pointer text-left hover:underline"
-                                onclick={(e) => {
-                                  e.stopPropagation()
-                                  text.onClick?.(row)
-                                }}>{value}</button
-                              >
-                            {:else if text.href}
-                              <a class="underline" href={text.href(row)}>{value}</a>
-                            {:else if text.html}
-                              {@html sanitizeHtml(value)}
-                            {:else}
-                              {value}
-                            {/if}
-                          </div>
-                          {#if text.copy}
-                            <CopyButton class="ml-1.5" text={() => cellText(row, text)} />
-                          {/if}
-                        </div>
-                      {/if}
-                    {/each}
-                  </div>
-                {/if}
-              {/each}
-              {#if dataBuffer.clearButton}<div></div>{/if}
-            </div>
-          {/each}
-        </div>
-      </div>
-    {/if}
 
     {#if tooltip.show}
       <div
@@ -458,7 +478,7 @@
     {/if}
     <!-- Нижнее поле для сводной информации -->
     {#if footer}
-      <div class="flex h-8 items-center justify-center border-t border-(--hairline-color) bg-(--container-color)">
+      <div class="sticky left-0 flex h-8 shrink-0 items-center justify-center border-t border-(--hairline-color) bg-(--container-color)">
         <span class="text-[12px] font-semibold text-(--muted-color)">{footer}</span>
       </div>
     {/if}

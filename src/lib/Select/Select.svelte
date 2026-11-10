@@ -39,10 +39,34 @@
   let portalElement: HTMLDivElement | undefined = $state()
   let anchorRect: DOMRect | null = $state(null)
 
+  /* type="buttons" на узком месте: если варианты не помещаются целиком, группа показывается выпадающим списком */
+  let measureElement: HTMLDivElement | undefined = $state()
+  let anchorWidth = $state(Infinity)
+  let buttonsNeed = $state(0)
+  $effect(() => {
+    if (type !== "buttons" || !measureElement) return
+    void options
+    const measure = () => {
+      const widest = Math.max(0, ...[...measureElement!.children].map((child) => child.getBoundingClientRect().width))
+      /* сегменты равной ширины: самый широкий текст + отступы 2×12, разделители и рамка */
+      buttonsNeed = options.length * (widest + 24) + options.length + 1
+    }
+    measure()
+    void document.fonts?.ready.then(measure)
+  })
+  const shownType = $derived(type === "buttons" && anchorWidth < buttonsNeed ? "select" : type)
+
   const selectedValues = $derived(multiSelect ? (Array.isArray(value) ? (value as T[]) : []) : [value as T])
   const isSelected = (option: IOption<T>) => selectedValues.includes(option.value)
   const current = $derived(multiSelect ? undefined : options.find((option) => option.value === value))
-  const valueText = $derived(current?.name ?? (value == null || Array.isArray(value) ? "" : String(value)))
+  const valueText = $derived(
+    multiSelect
+      ? options
+          .filter(isSelected)
+          .map((option) => option.name ?? String(option.value))
+          .join(", ")
+      : (current?.name ?? (value == null || Array.isArray(value) ? "" : String(value))),
+  )
   const visibleOptions = $derived(
     type === "input" && draft ? options.filter((option) => (option.name ?? "").toLowerCase().includes(draft!.toLowerCase())) : options,
   )
@@ -170,10 +194,19 @@
 </script>
 
 <div class={twMerge(`flex w-full flex-col gap-1`, wrapperClass)}>
-  <div class="relative flex w-full flex-col gap-1" bind:this={anchorElement}>
-    <FieldLabel {label} for={type === "buttons" ? undefined : uid} id={`${uid}-label`} />
+  <div class="relative flex w-full flex-col gap-1" bind:this={anchorElement} bind:clientWidth={anchorWidth}>
+    <FieldLabel {label} for={shownType === "buttons" ? undefined : uid} id={`${uid}-label`} />
 
-    {#if type === "select"}
+    {#if type === "buttons"}
+      <!-- Невидимые подписи вариантов: по их ширине решается, помещается ли группа кнопок -->
+      <div bind:this={measureElement} class="pointer-events-none invisible absolute top-0 left-0 flex h-0 w-max overflow-hidden" aria-hidden="true">
+        {#each options as option, index (option.id ?? index)}
+          <span class="text-[13px] font-semibold whitespace-nowrap {option.icon ? 'w-[18px]' : ''}">{option.icon ? "" : option.name}</span>
+        {/each}
+      </div>
+    {/if}
+
+    {#if shownType === "select"}
       <button
         id={uid}
         class={twMerge(`${fieldBase} flex items-center justify-between gap-2 ${fieldState}`, disabled ? "" : "cursor-pointer")}
@@ -198,7 +231,7 @@
           stroke-linejoin="round"><path d="M6 9l6 6 6-6" /></svg
         >
       </button>
-    {:else if type === "input"}
+    {:else if shownType === "input"}
       <input
         id={uid}
         value={draft ?? valueText}
@@ -271,7 +304,7 @@
       </div>
     {/if}
 
-    {#if isOpen && type !== "buttons"}
+    {#if isOpen && shownType !== "buttons"}
       <div
         use:portal
         bind:this={portalElement}

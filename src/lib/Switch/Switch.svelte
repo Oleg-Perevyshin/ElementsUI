@@ -54,7 +54,8 @@
       <!-- Подпись по умолчанию по центру - над переключателем, который тоже по центру; выравнивание из label.class важнее -->
       <h5 class={twMerge(`w-full text-center text-[12px] font-semibold text-(--muted-color)`, label.class)}>{label.name}</h5>
     {/if}
-    <div class="flex w-full {type == 'vertical' ? 'flex-wrap' : ''} items-center justify-around gap-4">
+    <!-- Биты переносятся на новую строку, если не помещаются -->
+    <div class="flex w-full flex-wrap items-center justify-around gap-x-4 gap-y-2">
       {#each bits as option, index (index)}
         <div class="flex flex-col gap-1" style={accentStyle(option.accent)}>
           {#if option.name && bitMode}

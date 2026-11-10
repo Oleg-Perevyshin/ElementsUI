@@ -4,6 +4,7 @@ import type { Translations } from "./languages.js"
 const constructorTranslations = {
   "library.overview": { ru: "Обзор", en: "Overview", zh: "概览" },
   "library.examples": { ru: "Примеры", en: "Examples", zh: "示例" },
+  "library.phone": { ru: "Телефон", en: "Phone", zh: "手机" },
   "library.regexp": { ru: "Регулярные выражения", en: "Regular expressions", zh: "正则表达式" },
   "library.theme": { ru: "Тема", en: "Theme", zh: "主题" },
   "library.icons": { ru: "Иконки", en: "Icons", zh: "图标" },

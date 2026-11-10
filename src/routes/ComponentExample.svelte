@@ -25,6 +25,26 @@
 
   let mainSnippet = $state("overview")
 
+  /* Предпросмотр шириной телефона (375px): компонент проверяется на узком экране прямо в витрине; выбор помнится в браузере */
+  const PHONE_KEY = "LibraryPhonePreview"
+  let phone = $state(false)
+  $effect(() => {
+    try {
+      phone = localStorage.getItem(PHONE_KEY) === "1"
+    } catch {
+      /* хранилище недоступно - режим не запоминается */
+    }
+  })
+  const togglePhone = () => {
+    phone = !phone
+    try {
+      localStorage.setItem(PHONE_KEY, phone ? "1" : "0")
+    } catch {
+      /* хранилище недоступно */
+    }
+  }
+  const frame = $derived(phone ? "mx-auto w-[375px] max-w-full rounded-[1.75rem] border-4 border-(--border-color) p-2" : "")
+
   /* Справка (i) - тот же текст component.info.<Тип>, что открывает конструктор DevCloud; тип - из адреса страницы */
   const TYPE_OVERRIDES: Record<string, string> = { WidgetWifi: "WidgetWiFi", WidgetRgbStrip: "WidgetRGBStrip", WidgetPfd: "WidgetPFD" }
   let componentType = $derived.by(() => {
@@ -53,17 +73,14 @@
 <!-- Раскладка как в конструкторе DevCloud: слева контент вкладки, справа всегда сайдбар свойств 24rem с p-2, чтобы переполнения подписей было видно здесь так же, как в облаке -->
 <div class="grid h-full w-full grid-cols-[1fr_24rem] gap-2">
   <div class="flex min-h-0 min-w-0 flex-col gap-2">
-    <Select
-      wrapperClass="w-full max-w-md mx-auto shrink-0"
-      type="buttons"
-      options={snippetOptions}
-      value={mainSnippet}
-      onUpdate={(value) => (mainSnippet = value)}
-    />
+    <div class="mx-auto flex w-full max-w-xl shrink-0 items-center gap-2">
+      <Select wrapperClass="flex-1" type="buttons" options={snippetOptions} value={mainSnippet} onUpdate={(value) => (mainSnippet = value)} />
+      <Button wrapperClass="w-auto shrink-0" variant={phone ? "primary" : "secondary"} content={{ name: $T("library.phone") }} onClick={togglePhone} />
+    </div>
     {#key mainSnippet}
       {#if mainSnippet === "examples" && examples}
         <div class="min-h-0 flex-1 overflow-y-auto">
-          {@render examples()}
+          <div class={frame}>{@render examples()}</div>
         </div>
       {:else if mainSnippet === "info"}
         <div class="markdown-content min-h-0 flex-1 overflow-y-auto text-left">
@@ -72,7 +89,7 @@
       {:else}
         <!-- Компонент занимает свободное место и прокручивается сам, код всегда прижат к низу -->
         <div class="min-h-40 flex-1 overflow-y-auto">
-          {@render component()}
+          <div class={frame}>{@render component()}</div>
         </div>
         <div class="relative max-h-[45%] shrink-0 overflow-y-auto">
           <button
