@@ -147,7 +147,12 @@
     <nav class="m-1 flex w-64 flex-col items-start gap-2 overflow-y-auto rounded-2xl border border-(--hairline-color) bg-(--back-color) p-4">
       {#each menuItems as item}
         <div class="flex w-full">
-          <UI.Button content={{ name: item.name }} componentClass="h-10  text-left bg-gray" onClick={() => goto(`/ElementsUI/components/${item.page}`)} />
+          <UI.Button
+            content={{ name: item.name }}
+            variant="secondary"
+            componentClass="h-10 text-left"
+            onClick={() => goto(`/ElementsUI/components/${item.page}`)}
+          />
           {#if activePage === item.page}
             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
               ><path

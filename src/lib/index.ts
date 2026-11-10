@@ -61,7 +61,11 @@ export { type LngLat, type SprayControl } from "./WidgetMap/mission/coverage"
 export * from "./locales/i18n"
 export * from "./locales/languages"
 export { localizeDeep, type LocalizedText } from "./locales/localize"
-export { widgetAccentStyle } from "./widgetAccent"
+export { accentStyle, ACCENT_COLORS, type AccentColor } from "./accent"
+export { createPropsEditor, type PropertyChange } from "./propsEditor"
+export { migrateProperties, migrateGUI } from "./migrate"
+export { copyText } from "./clipboard"
+export { default as Icon } from "./Icon.svelte"
 export { escapeHtml, htmlToText, sanitizeHtml } from "./html"
 export { hintsSetting, hint, type HintParams } from "./hints"
 export { applyDragGhost, clearDragGhost, createDropPlaceholder } from "./dragStyle"
@@ -75,6 +79,8 @@ export {
   type IInputProps,
   type ISelectProps,
   type IOption,
+  type SelectValue,
+  type IconSource,
   type ISwitchProps,
   type IDividerProps,
   type ISliderProps,

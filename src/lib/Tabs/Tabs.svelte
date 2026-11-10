@@ -1,13 +1,13 @@
 <!-- $lib/Tabs/Tabs.svelte - вкладки: выбранная отмечается линией 2px акцентом; wrapperClass по умолчанию пустой, bg-* в нём красит панель -->
 <script lang="ts">
-  import { sanitizeHtml } from "../html"
   import type { ITabsProps } from "../types"
   import { twMerge } from "tailwind-merge"
-  import { widgetAccentStyle } from "../widgetAccent"
+  import { accentStyle } from "../accent"
+  import Icon from "../Icon.svelte"
 
   let {
-    id = crypto.randomUUID(),
     wrapperClass = "",
+    accent,
     size = { width: 12, height: 6 },
     activeTab = $bindable(0),
     items = [
@@ -25,11 +25,11 @@
   const tabOfComponent = (componentId: string) => (/^[0-9a-f-]{35}\d+$/i.test(componentId) ? componentId.slice(35) : componentId.match(/(\d+)$/)?.[1])
 </script>
 
-<div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class="h-full w-full" style={widgetAccentStyle(wrapperClass)}>
+<div class="h-full w-full" style={accentStyle(accent)}>
   <div class="flex h-full w-full flex-col overflow-hidden rounded-[14px] border border-(--hairline-color) bg-(--back-color)">
     <!-- Полоса вкладок - outer оставлен «чистым» скролл-контейнером без justify-*: justify-content на самом overflow-x-auto блоке при контенте чуть шире контейнера даёт паразитный горизонтальный скролл на пару px даже когда прокручивать нечего (классический баг центрирования flex-контейнера с overflow). Поэтому justify-* из wrapperClass уходит на внутреннюю обёртку, а не на сам скролл-контейнер. -->
     <div class="sticky top-0 z-40 flex h-fit items-center overflow-x-auto border-b border-(--hairline-color) px-4">
-      <div class={twMerge(`flex w-full items-center gap-6`, wrapperClass)}>
+      <div class={twMerge(`flex w-full items-center gap-6`, wrapperClass)} role="tablist">
         {#each items as item, index}
           <button
             class={twMerge(
@@ -37,7 +37,7 @@
                transition-colors duration-150 ${isCol && items.find((item) => item.icon) ? "h-20 flex-col" : ""}
                ${
                  index === activeTab
-                   ? "cursor-pointer font-semibold text-(--font-color) shadow-[inset_0_-2px_0_var(--accent-text)]"
+                   ? `cursor-pointer font-semibold shadow-[inset_0_-2px_0_var(--accent-text)] ${accent ? "text-(--accent-text)" : "text-(--font-color)"}`
                    : item.disabled
                      ? "cursor-not-allowed font-medium text-(--faint-color)"
                      : "cursor-pointer font-medium text-(--muted-color) hover:text-(--font-color)"
@@ -52,16 +52,7 @@
             aria-selected={index === activeTab}
             role="tab"
           >
-            {#if item?.icon}
-              <span class="flex size-[18px] items-center justify-center overflow-visible [&_svg]:h-full [&_svg]:w-full">
-                {#if typeof item.icon === "string"}
-                  {@html sanitizeHtml(item.icon)}
-                {:else}
-                  {@const IconComponent = item.icon}
-                  <IconComponent />
-                {/if}
-              </span>
-            {/if}
+            <Icon icon={item?.icon} class="flex size-[18px] items-center justify-center overflow-visible [&_svg]:h-full [&_svg]:w-full" />
             {#if item?.name}
               <span class="whitespace-nowrap">{item.name}</span>
             {/if}

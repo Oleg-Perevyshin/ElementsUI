@@ -5,8 +5,7 @@
   import ComponentExample from "../../ComponentExample.svelte"
   import PeriodChart from "#lib/PeriodChart/PeriodChart.svelte"
   import PeriodChartProps from "#lib/PeriodChart/PeriodChartProps.svelte"
-  import { updateComponent } from "#lib/types.ts"
-  import { formatObjectToString, RenderMarkdown } from "../../common"
+  import { formatObjectToString, RenderMarkdown, applyChange } from "../../common"
   import readmeRaw from "#lib/PeriodChart/README.md?raw"
 
   let readmeHtml = $state("")
@@ -45,7 +44,7 @@
     access: "full",
     properties: {
       id: crypto.randomUUID(),
-      wrapperClass: "bg-blue",
+      accent: "blue",
       label: { name: "Расход энергии", class: "text-center" },
       levels: energyLevels,
       unit: " Вт·ч",
@@ -55,23 +54,20 @@
     parentId: "",
   })
 
-  let forConstructor = $state(false)
-
   let codeText = $derived(`
 <UI.PeriodChart
 ${formatObjectToString(periodChartComponent.properties as IPeriodChartProps)}
 />`)
 </script>
 
-<ComponentExample {codeText} {readmeHtml} bind:forConstructor>
+<ComponentExample {codeText} {readmeHtml}>
   {#snippet component()}
     <PeriodChart {...localizeDeep(periodChartComponent.properties, $Language) as IPeriodChartProps} />
   {/snippet}
   {#snippet componentProps()}
     <PeriodChartProps
       component={periodChartComponent as UIComponent & { properties: Partial<IPeriodChartProps> }}
-      onPropertyChange={(updates) => (periodChartComponent = updateComponent(periodChartComponent, updates as object))}
-      {forConstructor}
+      onPropertyChange={(updates) => (periodChartComponent = applyChange(periodChartComponent, updates))}
     />
   {/snippet}
   {#snippet examples()}
@@ -81,7 +77,7 @@ ${formatObjectToString(periodChartComponent.properties as IPeriodChartProps)}
       unit=" Вт·ч"
       onLevelChange={(_, level) => console.log("Переключились на", level.name)}
     />
-    <PeriodChart label={{ name: "Другая палитра" }} wrapperClass="bg-green" levels={energyLevels} unit=" Вт·ч" />
+    <PeriodChart label={{ name: "Другая палитра" }} accent="green" levels={energyLevels} unit=" Вт·ч" />
     <PeriodChart label={{ name: "Малые величины" }} levels={spectrumLevels} unit=" мкВт/см²" />
     <PeriodChart label={{ name: "Большие величины" }} levels={bigLevels} unit=" Вт·ч" />
     <PeriodChart label={{ name: "Без данных" }} levels={[{ name: "Час", data: [] }]} />

@@ -3,30 +3,26 @@
   import TextsEditor from "../TextsEditor.svelte"
   import { T } from "../locales/i18n"
   import * as UI from ".."
-  import { updateProperty, type UIComponent, type IWidgetRGBStripProps } from "../types"
-  import WidgetAccentPicker from "../WidgetAccentPicker.svelte"
+  import type { UIComponent, IWidgetRGBStripProps } from "../types"
+  import { createPropsEditor, type PropertyChange } from "../propsEditor"
   import PropsGroup from "../PropsGroup.svelte"
+  import CommonSnippets from "../CommonSnippets.svelte"
 
   const {
     component,
     onPropertyChange,
   }: {
     component: UIComponent & { properties: Partial<IWidgetRGBStripProps> }
-    onPropertyChange: (updates: Partial<{ properties?: string | object; name?: string; access?: string }>) => void
+    onPropertyChange: (change: PropertyChange<IWidgetRGBStripProps>) => void
   } = $props()
+
+  const edit = $derived(createPropsEditor(component, onPropertyChange))
 </script>
 
 <div class="flex flex-col gap-2">
   <PropsGroup label={$T("constructor.props.group.general")}>
     <TextsEditor {component} {onPropertyChange} />
-    <UI.Input
-      label={{ name: $T("widget.rgb.group") }}
-      value={component.properties.id ?? "LST"}
-      onUpdate={(value) => updateProperty("id", value as string, component, onPropertyChange)}
-    />
-    <WidgetAccentPicker
-      value={component.properties.componentClass ?? ""}
-      onUpdate={(value) => updateProperty("componentClass", value, component, onPropertyChange)}
-    />
+    <UI.Input label={{ name: $T("widget.rgb.group") }} value={component.properties.id ?? "LST"} onUpdate={(value) => edit.set("id", value as string)} />
+    <CommonSnippets snippet="Accent" {component} {onPropertyChange} />
   </PropsGroup>
 </div>

@@ -3,10 +3,10 @@
   import { localizeDeep } from "#lib/locales/localize.ts"
   import { type UIComponent } from "#lib"
   import ComponentExample from "../../ComponentExample.svelte"
-  import { updateComponent, type IWidgetWiFiProps } from "#lib/types.ts"
+  import { type IWidgetWiFiProps } from "#lib/types.ts"
   import WidgetWiFi from "#lib/WidgetWiFi/WidgetWiFi.svelte"
   import WidgetWiFiProps from "#lib/WidgetWiFi/WidgetWiFiProps.svelte"
-  import { formatObjectToString, RenderMarkdown } from "../../common"
+  import { formatObjectToString, RenderMarkdown, applyChange } from "../../common"
   import readmeRaw from "#lib/WidgetWiFi/README.md?raw"
 
   let readmeHtml = $state("")
@@ -31,13 +31,11 @@
       label: { name: "WiFi" },
       allowedModes: [1, 2, 3],
       confirmOnAP: true,
-      componentClass: "",
     },
     eventHandler: { Header: "SET", Argument: "ModCfg", Variables: [] },
     position: { row: 0, col: 0, width: 0, height: 0 },
     parentId: "",
   })
-  let forConstructor = $state(false)
 
   let codeText = $derived(`
 <UI.WidgetWiFi
@@ -47,7 +45,7 @@ onSave={handleSave}
 />`)
 </script>
 
-<ComponentExample {codeText} {readmeHtml} bind:forConstructor>
+<ComponentExample {codeText} {readmeHtml}>
   {#snippet component()}
     <div class="m-auto w-full max-w-3xl">
       <WidgetWiFi
@@ -60,16 +58,16 @@ onSave={handleSave}
   {#snippet componentProps()}
     <WidgetWiFiProps
       component={wifiComponent as UIComponent & { properties: Partial<IWidgetWiFiProps> }}
-      onPropertyChange={(updates) => (wifiComponent = updateComponent(wifiComponent, updates as object))}
+      onPropertyChange={(updates) => (wifiComponent = applyChange(wifiComponent, updates))}
     />
   {/snippet}
   {#snippet examples()}
     <div class="flex flex-col gap-6 p-2">
-      <WidgetWiFi label={{ name: "WiFi" }} componentClass="bg-blue" onScan={mockScan} onSave={(cfg) => console.log("SET CFG (mock):", cfg)} />
+      <WidgetWiFi label={{ name: "WiFi" }} accent="blue" onScan={mockScan} onSave={(cfg) => console.log("SET CFG (mock):", cfg)} />
       <WidgetWiFi
         label={{ name: "Только клиент" }}
         allowedModes={[1]}
-        componentClass="bg-purple"
+        accent="purple"
         onScan={mockScan}
         onSave={(cfg) => console.log("SET CFG (mock):", cfg)}
       />

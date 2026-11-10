@@ -1,13 +1,13 @@
+<!-- $lib/Input/InputProps.svelte - панель свойств конструктора для Input -->
 <script lang="ts">
-  import TextsEditor from "../TextsEditor.svelte"
   import { getContext } from "svelte"
   import { T } from "../locales/i18n"
   import translations from "../locales/translations"
   import { DEFAULT_LANGUAGE, LANGUAGE_CODES } from "../locales/languages"
-  import type { IInputProps, UIComponent, IOption, IUIComponentHandler } from "../types"
-  import { findOptionByClass } from "../types"
+  import type { IInputProps, IOption, UIComponent } from "../types"
+  import { createPropsEditor, optionByClass, type PropertyChange } from "../propsEditor"
   import * as UI from ".."
-  import { optionsStore, findColorOption } from "../options"
+  import { optionsStore } from "../options"
   import { twMerge } from "tailwind-merge"
   import Library from "../libIcons/Library.svelte"
   import CommonSnippets from "../CommonSnippets.svelte"
@@ -16,395 +16,176 @@
   const {
     component,
     onPropertyChange,
-    forConstructor = true,
   }: {
     component: UIComponent & { properties: Partial<IInputProps> }
-    onPropertyChange: (updates: Partial<{ properties?: string | object; name?: string; access?: string; eventHandler?: IUIComponentHandler }>) => void
-    forConstructor?: boolean
+    onPropertyChange: (change: PropertyChange<IInputProps>) => void
   } = $props()
 
-  let isValidRegExp = $state(true)
+  const edit = $derived(createPropsEditor(component, onPropertyChange))
+  const properties = $derived(component.properties)
+  const VARIABLE_OPTIONS = getContext<{ id: string; value: string; name: string }[] | undefined>("DeviceVariables") ?? []
+
   let showRegExpLibrary = $state(false)
-  const DeviceVariables = getContext<{ id: string; value: string; name: string }[]>("DeviceVariables")
-  let VARIABLE_OPTIONS = $derived(DeviceVariables && Array.isArray(DeviceVariables) ? DeviceVariables : [])
-
-  const initialColor = $derived(findColorOption($optionsStore.COLOR_OPTIONS, component.properties.componentClass))
-
-  const initialAlign = $derived(findOptionByClass($optionsStore.TEXT_ALIGN_OPTIONS, component.properties.label?.class, "text-"))
-
-  /* Обновление свойства */
-  /* Подсказка битового режима «Максимальное число: N» сразу на всех языках - иначе записалась бы на языке интерфейса конструктора */
-  const maxNumInfo = (range: { start: number; end: number }) => {
-    const max = Math.pow(2, range.end - range.start + 1) - 1
-    const row = translations["constructor.props.maxnum"]
-    return Object.fromEntries(LANGUAGE_CODES.map((lang) => [lang, `${row[lang] || row[DEFAULT_LANGUAGE]}: ${max}`]))
-  }
+  let isValidRegExp = $state(true)
 
   /* Диапазон битов поля bitMode; без range в свойствах - один нулевой бит */
-  const bitRange = $derived(component.properties.range ?? { start: 0, end: 0 })
+  const bitRange = $derived(properties.range ?? { start: 0, end: 0 })
+  const bitMax = (range: { start: number; end: number }) => Math.pow(2, range.end - range.start + 1) - 1
 
-  const updateProperty = (path: string, value: string | object | boolean | number | RegExp) => {
-    const newProperties = JSON.parse(JSON.stringify(component.properties))
-    if (path === "regExp") {
-      try {
-        let regex: RegExp
-        if (typeof value === "string") {
-          const pattern = value.match(/^\/(.*)\/([gimsuy]*)$/)
+  /* Подсказка битового режима «Максимальное число: N» сразу на всех языках - иначе записалась бы на языке интерфейса конструктора; текст на языках хранится как и остальные переводы */
+  const maxNumInfo = (range: { start: number; end: number }) => {
+    const row = translations["constructor.properties.maxnum"]
+    return Object.fromEntries(LANGUAGE_CODES.map((lang) => [lang, `${row[lang] || row[DEFAULT_LANGUAGE]}: ${bitMax(range)}`])) as unknown as string
+  }
+  const bitProps = (range: { start: number; end: number }) => ({
+    range,
+    number: { minNum: 0, maxNum: bitMax(range), step: 1 },
+    help: { ...properties.help, info: maxNumInfo(range) },
+  })
 
-          regex = pattern ? new RegExp(pattern[1], pattern[2]) : new RegExp(value)
-          if (pattern === null) return
-          regex.test("")
-        } else {
-          throw new Error("Invalid RegExp type")
-        }
+  const setType = (type: NonNullable<IInputProps["type"]>) =>
+    onPropertyChange({
+      properties:
+        type === "bitMode"
+          ? { type, ...bitProps(bitRange) }
+          : { type, help: { ...properties.help, info: "", copyButton: type === "password" ? false : properties.help?.copyButton } },
+    })
 
-        newProperties.regExp = regex
-        isValidRegExp = true
-      } catch (error) {
-        console.warn("Invalid RegExp:", error)
-        newProperties.regExp = typeof value === "string" ? value : String(value)
-        isValidRegExp = false
-        return
-      }
+  const isPattern = (text: string) => {
+    try {
+      const match = text.match(/^\/(.*)\/([gimsuy]*)$/)
+      new RegExp(match ? match[1] : text, match?.[2])
+      return true
+    } catch {
+      return false
     }
-
-    const parts = path.split(".")
-    let obj = newProperties
-
-    for (let i = 0; i < parts.length - 1; i++) {
-      const part = parts[i]
-      if (!obj[part]) obj[part] = {}
-      obj = obj[part]
-    }
-
-    obj[parts[parts.length - 1]] = value
-    onPropertyChange({ properties: newProperties })
+  }
+  const setRegExp = (regExp: string) => {
+    isValidRegExp = isPattern(regExp)
+    if (isValidRegExp) edit.patch("help", { regExp })
   }
 
-  const handleOptionColorChange = (color: string) => {
-    let componentClass = component.properties.componentClass || ""
-
-    componentClass = componentClass
-      .split(" ")
-      .filter((cls: string) => !cls.startsWith("bg-"))
-      .join(" ")
-
-    if (color) {
-      componentClass += ` ${color}`
-    }
-
-    updateProperty("componentClass", componentClass)
-  }
+  const settings = $derived([properties.readonly && "readonly", properties.help?.copyButton && "help.copyButton"].filter(Boolean) as string[])
+  const isText = $derived(properties.type === "text" || properties.type === "password" || properties.type === "text-area")
 </script>
 
-{#snippet InputVariable()}
-  <UI.Select
-    label={{ name: $T("constructor.props.variable") }}
-    type="input"
-    options={VARIABLE_OPTIONS}
-    value={VARIABLE_OPTIONS.find((opt) => opt.value === component.properties.id)}
-    onUpdate={(value) => {
-      updateProperty("id", (value as IOption).value as string)
-      /* \u041f\u043e\u0434\u043f\u0438\u0441\u044c \u043f\u0435\u0440\u0435\u043c\u0435\u043d\u043d\u043e\u0439 \u0438\u0437 \u043e\u0431\u043b\u0430\u043a\u0430 \u00ab<id> - <\u0438\u043c\u044f>\u00bb: \u0438\u043c\u044f - \u0432\u0441\u0451 \u043f\u043e\u0441\u043b\u0435 \u043f\u0435\u0440\u0432\u043e\u0433\u043e \u0440\u0430\u0437\u0434\u0435\u043b\u0438\u0442\u0435\u043b\u044f; \u043f\u0440\u0438\u043d\u0438\u043c\u0430\u0435\u0442\u0441\u044f \u0438 \u0434\u043b\u0438\u043d\u043d\u043e\u0435 \u0442\u0438\u0440\u0435 (\u2014) \u0441\u0442\u0430\u0440\u044b\u0445 \u043f\u043e\u0434\u043f\u0438\u0441\u0435\u0439 */
-      onPropertyChange({
-        name: (value as IOption).name?.match(/\s[\u2014-]\s(.*)/)?.[1]?.trim(),
-        eventHandler: { Variables: [(value as IOption).value as string] },
-      })
-    }}
-  />
-{/snippet}
-
-{#snippet InputAccess()}
-  <UI.Select
-    label={{ name: $T("constructor.props.access") }}
-    type="buttons"
-    options={$optionsStore.ACCESS_OPTION}
-    value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.access)}
-    onUpdate={(option) => onPropertyChange({ access: (option as IOption).value as string })}
-  />
-{/snippet}
-
-{#snippet InputLabel()}
-  <TextsEditor {component} {onPropertyChange} />
-{/snippet}
-
-{#snippet InputLabelAlign()}
-  <UI.Select
-    label={{ name: $T("constructor.props.align") }}
-    type="buttons"
-    value={initialAlign}
-    options={$optionsStore.TEXT_ALIGN_OPTIONS}
-    onUpdate={(option) => updateProperty("label.class", twMerge(component.properties.label?.class, (option as IOption<string>).value))}
-  />
-{/snippet}
-
-{#snippet InputType()}
-  <UI.Select
-    label={{ name: $T("constructor.props.type") }}
-    options={$optionsStore.INPUT_TYPE_OPTIONS}
-    type="buttons"
-    value={$optionsStore.INPUT_TYPE_OPTIONS.find((opt) => opt.value === (component.properties.type || "text"))}
-    onUpdate={(option) => {
-      if ((option as IOption<string>).value == "password" && component.properties.help?.copyButton) updateProperty("help.copyButton", false)
-      if ((option as IOption<string>).value === "bitMode") {
-        updateProperty("type", "number")
-        updateProperty("number.minNum", 0)
-        updateProperty("number.maxNum", Math.pow(2, bitRange.end - bitRange.start + 1) - 1)
-        updateProperty("number.step", 1)
-        updateProperty("help.info", maxNumInfo(bitRange))
-      } else {
-        updateProperty("help.info", "")
-      }
-
-      updateProperty("type", (option as UI.IOption).value as string)
-    }}
-  />
-  {#if component.properties.type === "text" || component.properties.type === "password" || component.properties.type === "text-area"}
-    <UI.Input
-      label={{ name: $T("constructor.props.maxlength") }}
-      type="number"
-      number={{ minNum: 1, maxNum: 1000000, step: 1 }}
-      value={component.properties.maxlength}
-      onUpdate={(value) => updateProperty("maxlength", value as string)}
+<div class="flex flex-col gap-2">
+  <PropsGroup label={$T("constructor.properties.group.general")}>
+    <CommonSnippets snippet="Access" {component} {onPropertyChange} />
+    <CommonSnippets snippet="Variable" {VARIABLE_OPTIONS} {component} {onPropertyChange} />
+    <UI.Select
+      label={{ name: $T("constructor.properties.type") }}
+      options={$optionsStore.INPUT_TYPE_OPTIONS}
+      type="buttons"
+      value={properties.type ?? "text"}
+      onUpdate={setType}
     />
-    <div class="flex items-end">
+    {#if isText}
       <UI.Input
-        label={{ name: $T("constructor.props.regexp") }}
-        value={component.properties.help?.regExp?.toString()}
-        maxlength={150}
-        componentClass={isValidRegExp === false ? "!border-2 !border-red-400" : ""}
-        onUpdate={(value) => updateProperty("help.regExp", value as string)}
+        label={{ name: $T("constructor.properties.maxlength") }}
+        type="number"
+        number={{ minNum: 1, maxNum: 1000000, step: 1 }}
+        value={properties.maxlength}
+        onUpdate={(value) => edit.set("maxlength", Number(value))}
       />
-      <UI.Button
-        wrapperClass="w-8"
-        content={{ icon: Library, info: { text: $T("constructor.props.regexp.library.info"), side: "top" } }}
-        onClick={() => {
-          showRegExpLibrary = !showRegExpLibrary
-        }}
-      />
-      {#if showRegExpLibrary}
-        <UI.Modal title={$T("constructor.props.regexp.library.info")} bind:isOpen={showRegExpLibrary} wrapperClass="w-200 h-[80%]">
+      <div class="flex items-end">
+        <UI.Input
+          label={{ name: $T("constructor.properties.regexp") }}
+          value={properties.help?.regExp?.toString()}
+          maxlength={150}
+          accent={isValidRegExp ? undefined : "red"}
+          onInput={(text) => (isValidRegExp = isPattern(text))}
+          onUpdate={(value) => setRegExp(String(value))}
+        />
+        <UI.Button
+          wrapperClass="w-8"
+          content={{ icon: Library, info: { text: $T("constructor.properties.regexp.library.info"), side: "top" } }}
+          onClick={() => (showRegExpLibrary = !showRegExpLibrary)}
+        />
+        <UI.Modal title={$T("constructor.properties.regexp.library.info")} bind:isOpen={showRegExpLibrary} wrapperClass="w-200 h-[80%]">
           {#snippet main()}
-            {#each $optionsStore.INPUT_REGEXP_OPTIONS as regexp}
-              <div
-                class="flex flex-col items-start justify-start m-1.5 rounded-xl border-2 border-(--border-color) p-3 cursor-pointer hover:bg-(--gray-color)/30 transition duration-150"
-                role="button"
-                tabindex={null}
-                onkeydown={null}
-                onclick={() => component.properties.help && (component.properties.help.regExp = regexp.value)}
+            {#each $optionsStore.INPUT_REGEXP_OPTIONS as regexp (regexp.id)}
+              <button
+                class="m-1.5 flex cursor-pointer flex-col items-start justify-start rounded-xl border-2 border-(--border-color) p-3 transition duration-150 hover:bg-(--gray-color)/30"
+                onclick={() => {
+                  setRegExp(regexp.value)
+                  showRegExpLibrary = false
+                }}
               >
                 <h5>{regexp.name}</h5>
                 <span>{regexp.value}</span>
-              </div>
+              </button>
             {/each}
           {/snippet}
         </UI.Modal>
+      </div>
+      {#if properties.type === "text-area"}
+        <UI.Input
+          label={{ name: $T("constructor.properties.textarea.rows") }}
+          type="number"
+          value={properties.textareaRows}
+          onUpdate={(value) => edit.set("textareaRows", Number(value))}
+        />
       {/if}
-    </div>
-
-    {#if component.properties.type === "text-area"}
-      <UI.Input
-        label={{ name: $T("constructor.props.textarea.rows") }}
-        value={component.properties.textareaRows}
-        onUpdate={(value) => updateProperty("textareaRows", value as string)}
+      {#if properties.type !== "password"}
+        <UI.Select
+          label={{ name: $T("constructor.properties.align.content") }}
+          options={$optionsStore.TEXT_ALIGN_OPTIONS}
+          type="buttons"
+          value={optionByClass($optionsStore.TEXT_ALIGN_OPTIONS, properties.componentClass)?.value ?? "text-left"}
+          onUpdate={(align) => edit.set("componentClass", twMerge(properties.componentClass, align))}
+        />
+      {/if}
+    {:else if properties.type === "number" && !properties.readonly && !properties.disabled}
+      <CommonSnippets
+        snippet="MinMaxStep"
+        initialValue={{ number: properties.number, onUpdate: (number: IInputProps["number"]) => edit.set("number", number) }}
+        {component}
+        {onPropertyChange}
+      />
+    {:else if properties.type === "bitMode"}
+      <UI.Slider
+        label={{ name: $T("constructor.properties.range") }}
+        type="range"
+        number={{ minNum: 0, maxNum: 31, step: 1 }}
+        value={[bitRange.start, bitRange.end]}
+        onUpdate={(value) => Array.isArray(value) && onPropertyChange({ properties: bitProps({ start: value[0], end: value[1] }) })}
       />
     {/if}
-    {#if component.properties.type === "text" || component.properties.type === "text-area"}
+  </PropsGroup>
+  <PropsGroup label={$T("constructor.properties.group.value")}>
+    <UI.Input
+      label={{ name: $T("constructor.properties.defaultvalue") }}
+      help={{ regExp: properties.type === "number" ? /^-?\d*\.?\d+$/ : undefined }}
+      value={properties.value}
+      onUpdate={(value) => edit.set("value", value)}
+    />
+    {#if properties.type !== "bitMode"}
       <UI.Select
-        label={{ name: $T("constructor.props.align.content") }}
-        options={$optionsStore.TEXT_ALIGN_OPTIONS}
+        options={$optionsStore.INPUT_SETTING_OPTIONS.map((option) => ({
+          ...option,
+          disabled: properties.type === "password" && option.value === "help.copyButton",
+        }))}
         type="buttons"
-        value={$optionsStore.TEXT_ALIGN_OPTIONS.find(
-          (opt) => opt.value === (component.properties.componentClass?.split(" ").find((cl: string) => cl.startsWith("text-")) || "text-center"),
-        )}
-        onUpdate={(option) => {
-          updateProperty("componentClass", twMerge(component.properties.componentClass, (option as IOption<string>).value))
-        }}
+        multiSelect
+        value={settings}
+        onUpdate={(values) =>
+          onPropertyChange({
+            properties: { readonly: values.includes("readonly"), help: { ...properties.help, copyButton: values.includes("help.copyButton") } },
+          })}
       />
     {/if}
-  {:else if component.properties.type === "number" && !component.properties.readonly && !component.properties.disabled}
-    <div class="flex">
-      <UI.Input
-        label={{ name: $T("constructor.props.min") }}
-        value={component.properties.number?.minNum as number}
-        type="number"
-        onUpdate={(value) => {
-          updateProperty("number.minNum", Number(value))
-        }}
-      />
-      <UI.Input
-        label={{ name: $T("constructor.props.max") }}
-        value={component.properties.number?.maxNum as number}
-        type="number"
-        onUpdate={(value) => {
-          updateProperty("number.maxNum", Number(value))
-        }}
-      />
-      <UI.Input
-        label={{ name: $T("constructor.props.step") }}
-        value={component.properties.number?.step as number}
-        type="number"
-        onUpdate={(value) => updateProperty("number.step", Number(value))}
-      />
-    </div>
-  {:else if component.properties.type === "bitMode"}
-    <UI.Slider
-      label={{ name: $T("constructor.props.range") }}
-      type="range"
-      number={{ minNum: 0, maxNum: 31, step: 1 }}
-      value={[bitRange.start, bitRange.end]}
-      onUpdate={(value) => {
-        if (Array.isArray(value)) {
-          updateProperty("range.start", value[0] as number)
-          updateProperty("range.end", value[1] as number)
-          updateProperty("number.minNum", 0)
-          updateProperty("number.maxNum", Math.pow(2, bitRange.end - bitRange.start + 1) - 1)
-          updateProperty("number.step", 1)
-          updateProperty("help.info", maxNumInfo({ start: value[0] as number, end: value[1] as number }))
-        }
-      }}
-    />
-  {/if}
-{/snippet}
-
-{#snippet InputSettings()}
-  {#if component.properties.type !== "bitMode"}
+    <CommonSnippets snippet="BitModeInfo" {component} {onPropertyChange} />
+  </PropsGroup>
+  <PropsGroup label={$T("constructor.properties.group.appearance")}>
+    <CommonSnippets snippet="Label" {component} {onPropertyChange} />
+    <CommonSnippets snippet="LabelAlign" {component} {onPropertyChange} />
     <UI.Select
-      options={$optionsStore.INPUT_SETTING_OPTIONS.map((o) => {
-        if (component.properties.type === "password" && o.value == "help.copyButton") return { ...o, disabled: true }
-        else return o
-      })}
-      type="buttons"
-      multiSelect={true}
-      value={$optionsStore.INPUT_SETTING_OPTIONS.filter((opt) => {
-        if (opt.value.split(".").reduce((o: any, key) => o?.[key], component.properties)) return opt
-      })}
-      onUpdate={(value) => {
-        const currentActiveValues = $optionsStore.INPUT_SETTING_OPTIONS.filter((opt) => {
-          if (!opt?.value) return false
-          return opt.value.split(".").reduce((o: any, key) => o?.[key], component.properties)
-        }).map((opt) => opt.value)
-        if (Array.isArray(value)) {
-          value.forEach((opt) => {
-            updateProperty(opt.value ?? "", true)
-          })
-
-          currentActiveValues.forEach((activeValue) => {
-            if (!value.some((opt) => opt?.value === activeValue)) {
-              updateProperty(activeValue, false)
-            }
-          })
-        }
-      }}
+      label={{ name: $T("constructor.properties.autocomplete") }}
+      options={$optionsStore.AUTOCOMPLETE_CONSTRUCTOR_OPTIONS as IOption<string>[]}
+      value={properties.help?.autocomplete || "off"}
+      onUpdate={(autocomplete) => edit.patch("help", { autocomplete: autocomplete as NonNullable<IInputProps["help"]>["autocomplete"] })}
     />
-  {/if}
-{/snippet}
-
-{#snippet InputAutocomplete()}
-  <UI.Select
-    label={{ name: $T("constructor.props.autocomplete") }}
-    options={$optionsStore.AUTOCOMPLETE_CONSTRUCTOR_OPTIONS}
-    value={$optionsStore.AUTOCOMPLETE_CONSTRUCTOR_OPTIONS.find((opt) => opt.value === (component.properties.help?.autocomplete || "off"))}
-    onUpdate={(option) => updateProperty("help.autocomplete", (option as UI.IOption).value as string)}
-  />
-{/snippet}
-
-{#snippet InputColors()}
-  <UI.Select
-    wrapperClass="h-14"
-    label={{ name: $T("constructor.props.colors") }}
-    type="buttons"
-    options={$optionsStore.COLOR_OPTIONS}
-    value={initialColor}
-    onUpdate={(option) => handleOptionColorChange((option as UI.IOption).value as string)}
-  />
-{/snippet}
-
-{#snippet InputIdentificator()}
-  <UI.Input label={{ name: $T("constructor.props.id") }} value={component.properties.id} onUpdate={(value) => updateProperty("id", value as string)} />
-{/snippet}
-
-{#snippet InputWrapperClass()}
-  <UI.Input
-    label={{ name: $T("constructor.props.wrapperclass") }}
-    value={component.properties.wrapperClass}
-    onUpdate={(value) => updateProperty("wrapperClass", value as string)}
-  />
-{/snippet}
-
-{#snippet InputLabelClass()}
-  <UI.Input
-    label={{ name: $T("constructor.props.label.class") }}
-    value={component.properties.label?.class}
-    onUpdate={(value) => updateProperty("label.class", value as string)}
-  />
-{/snippet}
-
-{#snippet InputComponentClass()}
-  <UI.Input
-    label={{ name: $T("constructor.props.componentclass") }}
-    value={component.properties.componentClass}
-    onUpdate={(value) => updateProperty("componentClass", twMerge(component.properties.componentClass, value as string))}
-  />
-{/snippet}
-
-{#snippet InputValue()}
-  <UI.Input
-    label={{ name: $T("constructor.props.defaultvalue") }}
-    help={{ regExp: component.properties.type === "number" ? /^\d*\.?\d+$/ : /^.*$/ }}
-    value={component.properties.value}
-    onUpdate={(value) => updateProperty("value", value as string)}
-  />
-{/snippet}
-
-{#snippet InputDisabled()}
-  <UI.Switch
-    label={{ name: $T("constructor.props.disabled") }}
-    value={component.properties.disabled ? 1 : 0}
-    options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-    onChange={(value) => updateProperty("disabled", value === 1)}
-  />
-{/snippet}
-
-{#if forConstructor}
-  <div class="flex flex-col gap-2">
-    <PropsGroup label={$T("constructor.props.group.general")}>
-      {@render InputAccess()}
-      {@render InputVariable()}
-      {@render InputType()}
-    </PropsGroup>
-    <PropsGroup label={$T("constructor.props.group.value")}>
-      {@render InputValue()}
-      {@render InputSettings()}
-      <CommonSnippets snippet="BitModeInfo" {component} {onPropertyChange} />
-    </PropsGroup>
-    <PropsGroup label={$T("constructor.props.group.appearance")}>
-      {@render InputLabel()}
-      {@render InputLabelAlign()}
-      {@render InputAutocomplete()}
-      {@render InputColors()}
-    </PropsGroup>
-  </div>
-{:else}
-  <div class="flex flex-col gap-2">
-    <PropsGroup label={$T("constructor.props.group.general")}>
-      {@render InputIdentificator()}
-      {@render InputWrapperClass()}
-      {@render InputLabel()}
-      {@render InputLabelClass()}
-      {@render InputComponentClass()}
-      {@render InputColors()}
-    </PropsGroup>
-    <PropsGroup label={$T("constructor.props.group.value")}>
-      {@render InputAccess()}
-      {@render InputValue()}
-      {@render InputType()}
-      <CommonSnippets snippet="BitModeInfo" {component} {onPropertyChange} />
-    </PropsGroup>
-    <PropsGroup label={$T("constructor.props.group.behavior")}>
-      {@render InputAutocomplete()}
-      {@render InputSettings()}
-      {@render InputDisabled()}
-    </PropsGroup>
-  </div>
-{/if}
+    <CommonSnippets snippet="Accent" {component} {onPropertyChange} />
+  </PropsGroup>
+</div>

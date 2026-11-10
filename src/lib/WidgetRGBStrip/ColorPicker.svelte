@@ -1,24 +1,16 @@
-<!-- $lib/WidgetRGBStrip/ColorPicker.svelte - внутренняя палитра виджета «RGB лента» (HSV + белый), отдельным компонентом библиотеки не экспортируется -->
+<!-- $lib/WidgetRGBStrip/ColorPicker.svelte - внутренняя палитра виджета «RGB лента» (HSV + белый): мышь, касание, стрелки клавиатуры; onUpdate - когда палец или кнопка отпущены -->
 <script lang="ts">
   import { twMerge } from "tailwind-merge"
+  import { T } from "../locales/i18n"
 
   interface IColorPickerProps {
-    id?: string
     wrapperClass?: string
-    label?: { name?: string; class?: string }
     value?: number[]
     readonly?: boolean
-    onChange?: (value: number[]) => void
+    onUpdate?: (value: number[]) => void
   }
 
-  let {
-    id = crypto.randomUUID(),
-    readonly = false,
-    wrapperClass = "",
-    label = { name: "", class: "" },
-    value = [0, 0, 0],
-    onChange = () => {},
-  }: IColorPickerProps = $props()
+  let { readonly = false, wrapperClass = "", value = [0, 0, 0], onUpdate }: IColorPickerProps = $props()
 
   const hsv = $state({ h: 0, s: 100, v: 100 })
   let huePointer = $state(0)
@@ -77,45 +69,56 @@
     return [Math.round((r + m) * 255), Math.round((g + m) * 255), Math.round((b + m) * 255)]
   }
 
-  const handleDrag = (e: MouseEvent, target: "hue" | "brightness" | "white") => {
-    const slider = document.querySelector(`.${target}-slider`) as HTMLElement
-    const rect = slider.getBoundingClientRect()
-    let currentHSV = { ...hsv }
-    let currentWhite = whiteValue
-    if (target === "hue" || target === "brightness") {
-      if (mode === "white") hsv.s = 100
-      mode = "hsv"
-    } else mode = "white"
-    const onMove = (event: MouseEvent) => {
-      const x = Math.max(0, Math.min(event.clientX - rect.left, rect.width))
-      const percent = (x / rect.width) * 100
-      if (target === "hue") {
-        huePointer = percent
-        currentHSV.h = (x / rect.width) * 360
-        hsv.h = currentHSV.h
-      } else if (target === "brightness") {
-        brightnessPointer = percent
-        currentHSV.v = percent
-        hsv.v = currentHSV.v
-      } else if (target === "white") {
-        currentWhite = percent
-        whiteValue = currentWhite
-      }
-    }
-    const onUp = () => {
-      window.removeEventListener("mousemove", onMove)
-      window.removeEventListener("mouseup", onUp)
+  type Target = "hue" | "brightness" | "white"
 
-      if (mode === "hsv") {
-        onChange(hsvToRgb(currentHSV.h, hsv.s, currentHSV.v))
-      } else {
-        const val = Math.round((currentWhite / 100) * 255)
-        onChange([val, val, val])
-      }
+  /* Положение ползунка в процентах; белый включает режим белого, цветные - режим HSV */
+  const setPercent = (target: Target, percent: number) => {
+    percent = Math.max(0, Math.min(100, percent))
+    if (target === "white") {
+      mode = "white"
+      whiteValue = percent
+      return
     }
-    onMove(e)
-    window.addEventListener("mousemove", onMove)
-    window.addEventListener("mouseup", onUp)
+    if (mode === "white") hsv.s = 100
+    mode = "hsv"
+    if (target === "hue") {
+      huePointer = percent
+      hsv.h = (percent / 100) * 360
+    } else {
+      brightnessPointer = percent
+      hsv.v = percent
+    }
+  }
+
+  const commit = () => {
+    const white = Math.round((whiteValue / 100) * 255)
+    onUpdate?.(mode === "hsv" ? hsvToRgb(hsv.h, hsv.s, hsv.v) : [white, white, white])
+  }
+
+  /* Перетаскивание указателем (мышь, палец, перо): захват указателя за полосой, отправка при отпускании */
+  const handleDrag = (event: PointerEvent, target: Target) => {
+    const slider = event.currentTarget as HTMLElement
+    const rect = slider.getBoundingClientRect()
+    const onMove = (e: PointerEvent) => setPercent(target, ((e.clientX - rect.left) / rect.width) * 100)
+    const onUp = () => {
+      slider.removeEventListener("pointermove", onMove)
+      slider.removeEventListener("pointerup", onUp)
+      slider.removeEventListener("pointercancel", onUp)
+      commit()
+    }
+    slider.setPointerCapture(event.pointerId)
+    onMove(event)
+    slider.addEventListener("pointermove", onMove)
+    slider.addEventListener("pointerup", onUp)
+    slider.addEventListener("pointercancel", onUp)
+  }
+
+  const handleKey = (event: KeyboardEvent, target: Target, percent: number) => {
+    const step = { ArrowRight: 2, ArrowUp: 2, ArrowLeft: -2, ArrowDown: -2 }[event.key]
+    if (!step) return
+    event.preventDefault()
+    setPercent(target, percent + step)
+    commit()
   }
 
   const rgb = $derived(() => (mode === "white" ? [whiteValue, whiteValue, whiteValue].map((v) => Math.round((v / 100) * 255)) : hsvToRgb(hsv.h, hsv.s, hsv.v)))
@@ -134,72 +137,50 @@
   })
 </script>
 
-<div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class={twMerge(`relative flex w-full flex-col items-center`, wrapperClass)}>
-  {#if label.name}
-    <h5 class={twMerge(`w-full px-4 text-center`, label.class)}>{label.name}</h5>
-  {/if}
+{#snippet slider(target: Target, percent: number, name: string, className: string, track: string, showPointer: boolean)}
+  <div
+    class="relative w-full cursor-pointer touch-none overflow-hidden rounded-[10px] border border-(--hairline-color) {className}"
+    role="slider"
+    tabindex="0"
+    aria-label={name}
+    aria-valuemin={0}
+    aria-valuemax={100}
+    aria-valuenow={Math.round(percent)}
+    onpointerdown={(e) => handleDrag(e, target)}
+    onkeydown={(e) => handleKey(e, target, percent)}
+  >
+    <div class="absolute inset-0" style="background: {track}"></div>
+    {#if showPointer}
+      <div
+        class="pointer-events-none absolute inset-y-0 w-[2px] -translate-x-1/2 bg-white shadow-[0_0_0_1px_rgb(0_0_0/0.25),0_1px_3px_rgb(0_0_0/0.4)]"
+        style="left: {percent}%"
+      ></div>
+    {/if}
+  </div>
+{/snippet}
 
+<div class={twMerge(`relative flex w-full flex-col items-center`, wrapperClass)}>
   <div class="flex w-full flex-row items-center gap-2">
     <!-- Слайдеры цвета -->
     {#if !readonly}
       <div class="flex w-full flex-col gap-2">
-        <!-- Выбор цвета -->
-        <div
-          class="hue-slider relative h-7 w-full cursor-pointer overflow-hidden rounded-[10px] border border-(--hairline-color)"
-          role="slider"
-          aria-valuenow={null}
-          tabindex={null}
-          onmousedown={(e) => handleDrag(e, "hue")}
-        >
-          <div
-            class="absolute inset-0"
-            style={`background: linear-gradient(to right, ${Array.from({ length: 7 }, (_, i) => {
-              const [r, g, b] = hsvToRgb(i * 60, 100, 100)
-              return `rgb(${r},${g},${b})`
-            }).join(", ")})`}
-          ></div>
-          {#if mode === "hsv"}
-            <div
-              class="pointer-events-none absolute inset-y-0 w-[2px] -translate-x-1/2 bg-white shadow-[0_0_0_1px_rgb(0_0_0/0.25),0_1px_3px_rgb(0_0_0/0.4)]"
-              style={`left: ${huePointer}%`}
-            ></div>
-          {/if}
-        </div>
-
-        <!-- Яркость цвета -->
-        <div
-          class="brightness-slider relative h-4 w-full cursor-pointer overflow-hidden rounded-[10px] border border-(--hairline-color)"
-          role="slider"
-          aria-valuenow={null}
-          tabindex={null}
-          onmousedown={(e) => handleDrag(e, "brightness")}
-        >
-          {#if mode === "hsv"}
-            <div class="absolute inset-0" style={`background: linear-gradient(to right, rgb(0,0,0), rgb(${hsvToRgb(hsv.h, hsv.s, 100).join(",")}))`}></div>
-
-            <div
-              class="pointer-events-none absolute inset-y-0 w-[2px] -translate-x-1/2 bg-white shadow-[0_0_0_1px_rgb(0_0_0/0.25),0_1px_3px_rgb(0_0_0/0.4)]"
-              style={`left: ${brightnessPointer}%`}
-            ></div>
-          {/if}
-        </div>
-
-        <!-- Яркость белого цвета -->
-        <div
-          class="white-slider relative mt-4 h-4 w-full cursor-pointer overflow-hidden rounded-[10px] border border-(--hairline-color)"
-          role="slider"
-          aria-valuenow={null}
-          tabindex={null}
-          onmousedown={(e) => handleDrag(e, "white")}
-        >
-          <div class="absolute inset-0 bg-linear-to-r from-black to-white"></div>
-          {#if mode === "white"}
-            <div
-              class="pointer-events-none absolute inset-y-0 w-[2px] -translate-x-1/2 bg-white shadow-[0_0_0_1px_rgb(0_0_0/0.25),0_1px_3px_rgb(0_0_0/0.4)]"
-              style={`left: ${whiteValue}%`}
-            ></div>
-          {/if}
-        </div>
+        {@render slider(
+          "hue",
+          huePointer,
+          $T("widget.rgb.hue"),
+          "h-7",
+          `linear-gradient(to right, ${Array.from({ length: 7 }, (_, i) => `rgb(${hsvToRgb(i * 60, 100, 100).join(",")})`).join(", ")})`,
+          mode === "hsv",
+        )}
+        {@render slider(
+          "brightness",
+          brightnessPointer,
+          $T("widget.rgb.brightness"),
+          "h-4",
+          mode === "hsv" ? `linear-gradient(to right, rgb(0,0,0), rgb(${hsvToRgb(hsv.h, hsv.s, 100).join(",")}))` : "transparent",
+          mode === "hsv",
+        )}
+        {@render slider("white", whiteValue, $T("widget.rgb.white"), "mt-4 h-4", "linear-gradient(to right, #000, #fff)", mode === "white")}
       </div>
     {/if}
 

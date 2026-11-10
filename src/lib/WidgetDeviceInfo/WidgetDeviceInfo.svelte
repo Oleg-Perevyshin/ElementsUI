@@ -10,12 +10,12 @@
   import RestartIcon from "./RestartIcon.svelte"
   import WidgetHeader from "../WidgetHeader.svelte"
   import { hint, hintsSetting } from "../hints"
-  import { widgetAccentStyle } from "../widgetAccent"
+  import { accentStyle } from "../accent"
   import { readPersistedCollapsed, writePersistedCollapsed } from "../widgetCollapse"
 
   let {
     wrapperClass = "",
-    componentClass = "",
+    accent,
     label = {},
     value = $bindable(),
     collapsed = $bindable(false),
@@ -34,7 +34,7 @@
     onFactoryReset?.()
   }
 
-  let accentStyle = $derived(widgetAccentStyle(componentClass ?? ""))
+  const rootStyle = $derived(accentStyle(accent))
 
   let info: IWidgetDeviceInfoConfig = $state(
     value ?? {
@@ -91,7 +91,7 @@
 
 <div
   class={twMerge("relative flex w-full flex-col gap-4 rounded-2xl border border-(--hairline-color) bg-(--container-color) p-4", wrapperClass)}
-  style={accentStyle}
+  style={rootStyle}
 >
   <!-- Заголовок -->
   <WidgetHeader icon={CpuIcon} label={label?.name || $T("widget.info.title")} bind:collapsed {hints}>
@@ -99,7 +99,7 @@
       <div use:hint={{ text: $T("widget.info.hint.restart"), enabled: $hints }}>
         <UI.Button
           wrapperClass="w-auto"
-          componentClass="bg-transparent px-3"
+          componentClass="px-3"
           content={{ icon: RestartIcon, name: $T("widget.info.restart") }}
           disabled={!onRestart}
           onClick={() => onRestart?.()}
@@ -189,7 +189,7 @@
         {#if isDirty}
           <span class="text-[12px] text-(--muted-color)" transition:slide={{ duration: 100 }}>{$T("widget.common.unsaved")}</span>
         {/if}
-        <UI.Button wrapperClass="w-40" componentClass="bg-accent" content={{ name: $T("widget.common.save") }} disabled={!isDirty || !onSave} onClick={save} />
+        <UI.Button wrapperClass="w-40" variant="primary" content={{ name: $T("widget.common.save") }} disabled={!isDirty || !onSave} onClick={save} />
       </div>
 
       <!-- Сброс всех настроек к заводским - отдельно от сохранения, только с подтверждением -->
@@ -198,7 +198,9 @@
           <span class="text-[12px] text-(--muted-color)">{$T("widget.info.factory_reset_hint")}</span>
           <UI.Button
             wrapperClass="w-auto shrink-0"
-            componentClass="bg-red px-3"
+            variant="primary"
+            accent="red"
+            componentClass="px-3"
             content={{ name: $T("widget.info.factory_reset") }}
             onClick={() => (confirmReset = true)}
           />
@@ -217,13 +219,8 @@
         <h4 class="text-[15px] font-semibold">{$T("widget.info.factory_reset_title")}</h4>
         <p class="text-[13px] text-(--muted-color)">{$T("widget.info.factory_reset_text")}</p>
         <div class="flex gap-2">
-          <UI.Button
-            wrapperClass="flex-1"
-            componentClass="bg-transparent"
-            content={{ name: $T("widget.common.cancel") }}
-            onClick={() => (confirmReset = false)}
-          />
-          <UI.Button wrapperClass="flex-1" componentClass="bg-red" content={{ name: $T("widget.info.factory_reset") }} onClick={factoryReset} />
+          <UI.Button wrapperClass="flex-1" content={{ name: $T("widget.common.cancel") }} onClick={() => (confirmReset = false)} />
+          <UI.Button wrapperClass="flex-1" variant="primary" accent="red" content={{ name: $T("widget.info.factory_reset") }} onClick={factoryReset} />
         </div>
       </div>
     </div>

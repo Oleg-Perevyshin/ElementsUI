@@ -1,11 +1,13 @@
+<!-- $lib/Select/SelectProps.svelte - панель свойств конструктора для Select -->
 <script lang="ts">
-  import { getContext, onMount } from "svelte"
+  import { getContext } from "svelte"
   import { Language, T } from "../locales/i18n"
-  import { type UIComponent, type ISelectProps, type IOption, updateProperty, findOptionByClass, type IUIComponentHandler } from "../types"
+  import type { UIComponent, ISelectProps, IOption } from "../types"
+  import { createPropsEditor, optionByClass, type PropertyChange } from "../propsEditor"
   import * as UI from ".."
   import ButtonDelete from "../libIcons/ButtonDelete.svelte"
   import ButtonAdd from "../libIcons/ButtonAdd.svelte"
-  import { optionsStore, findColorOption } from "../options.js"
+  import { ACCENT_OPTIONS, optionsStore } from "../options"
   import CommonSnippets from "../CommonSnippets.svelte"
   import PropsGroup from "../PropsGroup.svelte"
   import PropsListModal from "../PropsListModal.svelte"
@@ -16,54 +18,24 @@
   const {
     component,
     onPropertyChange,
-    forConstructor = true,
   }: {
-    component: UIComponent & { properties: Partial<ISelectProps> }
-    onPropertyChange: (updates: Partial<{ properties?: string | object; name?: string; access?: string; eventHandler?: IUIComponentHandler }>) => void
-    forConstructor?: boolean
+    component: UIComponent & { properties: Partial<ISelectProps<unknown, boolean>> }
+    onPropertyChange: (change: PropertyChange<ISelectProps<unknown, boolean>>) => void
   } = $props()
 
-  const DeviceVariables = getContext<{ id: string; value: string; name: string }[]>("DeviceVariables")
-  let VARIABLE_OPTIONS = $derived(DeviceVariables && Array.isArray(DeviceVariables) ? DeviceVariables : [])
+  const edit = $derived(createPropsEditor(component, onPropertyChange))
+  const VARIABLE_OPTIONS = getContext<{ id: string; value: string; name: string }[] | undefined>("DeviceVariables") ?? []
 
   let itemsContainer: HTMLDivElement | null = $state(null)
-  /* Колонки строки варианта: ручка, номер и текст, значение, цвет/стили, удаление */
+  /* Колонки строки варианта: ручка, номер и текст, значение, цвет, удаление */
   const OPTION_GRID = "grid-cols-[2rem_minmax(8rem,1fr)_minmax(6rem,1fr)_minmax(0,2fr)_2rem]"
 
-  type ValueTypeOption = {
-    id: string
-    value: "text" | "number"
-    name: string
-    class: string
-  }
-  let currentValueType = $derived(
-    !component.properties.options?.[0]
-      ? ($optionsStore.SELECT_VALUE_TYPE_OPTIONS[0] as ValueTypeOption)
-      : typeof component.properties.options?.[0]?.value === "number"
-        ? $optionsStore.SELECT_VALUE_TYPE_OPTIONS[1]
-        : ($optionsStore.SELECT_VALUE_TYPE_OPTIONS[0] as ValueTypeOption),
-  )
-
+  const options = $derived(component.properties.options ?? [])
+  const valueType = $derived(typeof options[0]?.value === "number" ? "number" : "text")
   /* Диапазон битов bitMode; без range в свойствах - один нулевой бит */
   const bitRange = $derived(component.properties.range ?? { start: 0, end: 0 })
-
-  let Header: IOption = $derived(
-    $optionsStore.HEADER_OPTIONS.find((h) => h.value === component.eventHandler?.Header) ?? {
-      id: "",
-      name: "",
-      value: "",
-      class: "!w-1/4",
-    },
-  )
-
-  let currentType = $derived($optionsStore.SELECT_TYPE_OPTIONS.find((t) => t.value === component.properties.type))
-
-  const initialAlign = $derived(findOptionByClass($optionsStore.TEXT_ALIGN_OPTIONS, component.properties.label?.class, "text-"))
-  const initialContentAlign = $derived(
-    $optionsStore.TEXT_ALIGN_OPTIONS.slice(0, -1).find((a) =>
-      (a.value as string).includes(component.properties.componentClass?.split(" ").find((cls: string) => cls.startsWith("text-")) ?? "text-left"),
-    ),
-  )
+  const bitMax = $derived(Math.pow(2, bitRange.end - bitRange.start + 1) - 1)
+  const contentAlignOptions = $derived($optionsStore.TEXT_ALIGN_OPTIONS.slice(0, -1))
 
   /* Argument пуст - поле ниже лишь визуально показывает "ModCfg", реальное значение нужно проставить в состояние */
   $effect(() => {
@@ -71,248 +43,138 @@
   })
 </script>
 
-{#snippet SelectArgument()}
-  <UI.Input
-    label={{ name: $T("constructor.props.argument") }}
-    value={component.eventHandler?.Argument || "ModCfg"}
-    maxlength={32}
-    help={{ info: $T("constructor.props.argument.info"), autocomplete: "on", regExp: /^[a-zA-Z0-9\-_]{0,32}$/ }}
-    onUpdate={(value) => onPropertyChange({ eventHandler: { Argument: value as string } })}
-  />
-{/snippet}
-
-{#snippet SelectContentAlign()}
-  <UI.Select
-    label={{ name: $T("constructor.props.align.content") }}
-    type="buttons"
-    value={initialContentAlign}
-    options={$optionsStore.TEXT_ALIGN_OPTIONS.slice(0, -1)}
-    onUpdate={(option) =>
-      updateProperty("componentClass", twMerge(component.properties.componentClass, (option as UI.IOption<string>).value), component, onPropertyChange)}
-  />
-{/snippet}
-
-{#snippet SelectType()}
-  <UI.Select
-    label={{ name: $T("constructor.props.type") }}
-    type="buttons"
-    value={currentType}
-    options={$optionsStore.SELECT_TYPE_OPTIONS}
-    onUpdate={(option) => {
-      if ((option as UI.IOption).value !== "buttons" && Array.isArray(component.properties.value))
-        updateProperty("value", component.properties.value[0], component, onPropertyChange)
-
-      updateProperty("type", (option as UI.IOption).value as string, component, onPropertyChange)
-    }}
-  />
-{/snippet}
-
-{#snippet SelectValueType()}
-  <UI.Select
-    wrapperClass="h-14"
-    label={{ name: $T("constructor.props.valuetype") }}
-    type="buttons"
-    disabled={component.properties.bitMode}
-    options={$optionsStore.SELECT_VALUE_TYPE_OPTIONS}
-    value={currentValueType}
-    onUpdate={(value) => {
-      currentValueType = value as ValueTypeOption
-      const options = [...(component.properties?.options || [])]
-      const newType = !Array.isArray(value) ? value.value : value[0].value
-      options.forEach((option) => {
-        if (newType === "number") option.value = option.value !== undefined ? Number(option.value) : 0
-        else option.value = option.value !== undefined ? String(option.value) : ""
-      })
-      updateProperty("options", options, component, onPropertyChange)
-    }}
-  />
-{/snippet}
-
-{#snippet SelectSettings()}
-  <UI.Switch
-    label={{ name: $T("constructor.props.bitMode") }}
-    value={component.properties.bitMode ? 1 : 0}
-    options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-    onChange={(value) => {
-      updateProperty("bitMode", value === 1, component, onPropertyChange)
-      const options = [...(component.properties?.options || [])]
-      const maxNumber = Math.pow(2, bitRange.end - bitRange.start + 1) - 1
-      options.forEach((option) => {
-        option.value = option.value != null && Number(option.value) > 0 ? Math.min(Number(option.value), maxNumber) : 0
-      })
-      updateProperty("options", options, component, onPropertyChange)
-    }}
-  />
-
-  {#if component.properties.type === "buttons" && !component.properties.bitMode}
+<div class="flex flex-col gap-2">
+  <PropsGroup label={$T("constructor.props.group.general")}>
+    <CommonSnippets snippet="Access" {component} {onPropertyChange} />
+    <CommonSnippets snippet="Variable" {VARIABLE_OPTIONS} {component} {onPropertyChange} />
+    <UI.Input
+      label={{ name: $T("constructor.props.argument") }}
+      value={component.eventHandler?.Argument || "ModCfg"}
+      maxlength={32}
+      help={{ info: $T("constructor.props.argument.info"), autocomplete: "on", regExp: /^[a-zA-Z0-9\-_]{0,32}$/ }}
+      onUpdate={(value) => onPropertyChange({ eventHandler: { Argument: String(value) } })}
+    />
+  </PropsGroup>
+  <PropsGroup label={$T("constructor.props.group.value")}>
+    <UI.Select
+      label={{ name: $T("constructor.props.type") }}
+      type="buttons"
+      value={component.properties.type}
+      options={$optionsStore.SELECT_TYPE_OPTIONS}
+      onUpdate={(type) =>
+        onPropertyChange({
+          properties: {
+            type,
+            /* Несколько значений - только у кнопок */
+            ...(type !== "buttons" && Array.isArray(component.properties.value) ? { value: component.properties.value[0], multiSelect: false } : {}),
+          },
+        })}
+    />
+    <UI.Select
+      wrapperClass="h-14"
+      label={{ name: $T("constructor.props.valuetype") }}
+      type="buttons"
+      disabled={component.properties.bitMode}
+      options={$optionsStore.SELECT_VALUE_TYPE_OPTIONS}
+      value={valueType}
+      onUpdate={(type) =>
+        edit.set(
+          "options",
+          options.map((option) => ({ ...option, value: type === "number" ? Number(option.value ?? 0) || 0 : String(option.value ?? "") })),
+        )}
+    />
+    <CommonSnippets snippet="BitModeInfo" {component} {onPropertyChange} />
+  </PropsGroup>
+  <PropsGroup label={$T("constructor.props.group.appearance")}>
+    <CommonSnippets snippet="Label" {component} {onPropertyChange} />
+    <CommonSnippets snippet="LabelAlign" {component} {onPropertyChange} />
+    <UI.Select
+      label={{ name: $T("constructor.props.align.content") }}
+      type="buttons"
+      value={optionByClass(contentAlignOptions, component.properties.componentClass)?.value ?? "text-left"}
+      options={contentAlignOptions}
+      onUpdate={(align) => edit.set("componentClass", twMerge(component.properties.componentClass, align))}
+    />
     <UI.Switch
-      label={{ name: $T("constructor.props.multiselect") }}
-      value={component.properties.multiSelect ? 1 : 0}
-      options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-      onChange={(value) => {
-        updateProperty("multiSelect", value === 1, component, onPropertyChange)
-      }}
+      label={{ name: $T("constructor.props.bitMode") }}
+      value={component.properties.bitMode ? 1 : 0}
+      onUpdate={(value) =>
+        onPropertyChange({
+          properties: {
+            bitMode: value === 1,
+            options: options.map((option) => ({ ...option, value: Math.min(Math.max(Number(option.value) || 0, 0), bitMax) })),
+          },
+        })}
     />
-  {/if}
+    {#if component.properties.type === "buttons" && !component.properties.bitMode}
+      <UI.Switch
+        label={{ name: $T("constructor.props.multiselect") }}
+        value={component.properties.multiSelect ? 1 : 0}
+        onUpdate={(value) => edit.set("multiSelect", value === 1)}
+      />
+    {/if}
+    {#if component.properties.bitMode}
+      <UI.Slider
+        label={{ name: $T("constructor.props.range") }}
+        type="range"
+        number={{ minNum: 0, maxNum: 31, step: 1 }}
+        value={[bitRange.start, bitRange.end]}
+        onUpdate={(value) => Array.isArray(value) && edit.set("range", { start: value[0], end: value[1] })}
+      />
+    {/if}
+  </PropsGroup>
+</div>
 
-  {#if component.properties.bitMode}
-    <UI.Slider
-      label={{ name: $T("constructor.props.range") }}
-      type="range"
-      number={{ minNum: 0, maxNum: 31, step: 1 }}
-      value={[bitRange.start, bitRange.end]}
-      onUpdate={(value) => {
-        if (Array.isArray(value)) {
-          updateProperty("range.start", value[0] as number, component, onPropertyChange)
-          updateProperty("range.end", value[1] as number, component, onPropertyChange)
-        }
-      }}
-    />
-  {/if}
-{/snippet}
+<PropsListModal label={$T("constructor.props.options.title")} count={options.length} wrapperClass="w-200 h-[70%]">
+  {#snippet main()}
+    <PropsGroup>
+      {#snippet headerActions()}
+        <UI.Button
+          wrapperClass="w-8"
+          content={{ icon: ButtonAdd }}
+          onClick={() =>
+            edit.addItem("options", {
+              id: crypto.randomUUID(),
+              name: "",
+              value: valueType === "number" ? options.length + 1 : String(options.length + 1),
+            } as IOption)}
+        />
+      {/snippet}
 
-{#snippet SelectOptions()}
-  <PropsListModal label={$T("constructor.props.options.title")} count={component.properties.options?.length ?? 0} wrapperClass="w-200 h-[70%]">
-    {#snippet main()}
-      <PropsGroup>
-        {#snippet headerActions()}
-          <UI.Button
-            wrapperClass="w-8"
-            content={{ icon: ButtonAdd }}
-            onClick={() => {
-              const newOption: IOption = {
-                id: crypto.randomUUID(),
-                name: "",
-                value: (component.properties.options?.length ?? 0) + 1,
-                class: "bg-max",
-              }
-              const options = [...(component.properties?.options || []), newOption]
-              updateProperty("options", options, component, onPropertyChange)
-            }}
+      <div bind:this={itemsContainer} class="flex flex-col gap-2">
+        {#if options.length}
+          <PropsListHeader
+            gridClass={OPTION_GRID}
+            captions={["", $T("constructor.props.item"), $T("constructor.props.optionvalue"), $T("constructor.props.colors"), ""]}
           />
-        {/snippet}
-
-        <div bind:this={itemsContainer} class="flex flex-col gap-2">
-          {#if component.properties.options?.length}
-            <PropsListHeader
-              gridClass={OPTION_GRID}
-              captions={[
-                "",
-                $T("constructor.props.item"),
-                $T("constructor.props.optionvalue"),
-                forConstructor ? $T("constructor.props.colors") : $T("constructor.props.optionclass"),
-                "",
-              ]}
-            />
-          {/if}
-          {#each component.properties.options || [] as option, index (option.id)}
-            <div
-              id="item-{index}"
-              class="grid {OPTION_GRID} items-center gap-3 rounded-lg border border-(--hairline-color) bg-(--container-color)/60 px-2 py-1.5"
-            >
-              <UI.Dragging
-                container={itemsContainer}
-                array={component.properties.options ?? []}
-                elementIndex={index}
-                onUpdate={(updatedArray) => {
-                  updateProperty("options", updatedArray, component, onPropertyChange)
-                }}
-              />
-              <div class="flex min-w-0 items-baseline gap-2 text-[13px]">
-                <span class="shrink-0 font-semibold">{$T("constructor.props.options.item", { n: index + 1 })}</span>
-                <span class="truncate text-(--muted-color)">{localizeText(option.name, $Language) || $T("constructor.props.tabs.untitled")}</span>
-              </div>
-              <UI.Input
-                value={option.value as string | number | undefined}
-                type={currentValueType.value}
-                number={component.properties.bitMode
-                  ? { minNum: 0, maxNum: Math.pow(2, bitRange.end - bitRange.start + 1) - 1, step: 1 }
-                  : { minNum: -1000000, maxNum: 1000000, step: 1 }}
-                onUpdate={(value) => {
-                  const options = [...(component.properties?.options || [])]
-                  options[index]["value"] = value
-                  updateProperty("options", options, component, onPropertyChange)
-                }}
-              />
-              {#if forConstructor}
-                <UI.Select
-                  type="buttons"
-                  options={$optionsStore.COLOR_OPTIONS}
-                  value={findColorOption($optionsStore.COLOR_OPTIONS, option.class)}
-                  onUpdate={(option) => {
-                    const options = [...(component.properties?.options || [])]
-                    options[index]["class"] = (option as UI.IOption).value as string
-                    updateProperty("options", options, component, onPropertyChange)
-                  }}
-                />
-              {:else}
-                <UI.Input
-                  value={option.class}
-                  onUpdate={(value) => {
-                    const options = [...(component.properties?.options || [])]
-                    options[index]["class"] = value as string
-                    updateProperty("options", options, component, onPropertyChange)
-                  }}
-                />
-              {/if}
-              <UI.Button
-                wrapperClass="w-8"
-                content={{ icon: ButtonDelete }}
-                onClick={() => {
-                  const options = [...(component.properties?.options || [])]
-                  options.splice(index, 1)
-                  updateProperty("options", options, component, onPropertyChange)
-                }}
-              />
+        {/if}
+        {#each options as option, index (option.id ?? index)}
+          <div
+            id="item-{index}"
+            class="grid {OPTION_GRID} items-center gap-3 rounded-lg border border-(--hairline-color) bg-(--container-color)/60 px-2 py-1.5"
+          >
+            <UI.Dragging container={itemsContainer} array={options} elementIndex={index} onUpdate={(updated) => edit.set("options", updated)} />
+            <div class="flex min-w-0 items-baseline gap-2 text-[13px]">
+              <span class="shrink-0 font-semibold">{$T("constructor.props.options.item", { n: index + 1 })}</span>
+              <span class="truncate text-(--muted-color)">{localizeText(option.name, $Language) || $T("constructor.props.tabs.untitled")}</span>
             </div>
-          {/each}
-          <div id="item-{component.properties.options?.length ?? 0}" class="min-h-4"></div>
-        </div>
-      </PropsGroup>
-    {/snippet}
-  </PropsListModal>
-{/snippet}
-
-{#if forConstructor}
-  <div class="flex flex-col gap-2">
-    <PropsGroup label={$T("constructor.props.group.general")}>
-      <CommonSnippets snippet="Access" {component} {onPropertyChange} />
-      <CommonSnippets snippet="Variable" {VARIABLE_OPTIONS} {component} {onPropertyChange} />
-      {@render SelectArgument()}
+            <UI.Input
+              value={option.value as string | number | undefined}
+              type={valueType}
+              number={component.properties.bitMode ? { minNum: 0, maxNum: bitMax, step: 1 } : { minNum: -1000000, maxNum: 1000000, step: 1 }}
+              onUpdate={(value) => edit.updateItem("options", index, { value })}
+            />
+            <UI.Select
+              type="buttons"
+              options={ACCENT_OPTIONS}
+              value={option.accent ?? ""}
+              onUpdate={(accent) => edit.updateItem("options", index, { accent: accent || undefined })}
+            />
+            <UI.Button wrapperClass="w-8" content={{ icon: ButtonDelete }} onClick={() => edit.removeItem("options", index)} />
+          </div>
+        {/each}
+        <div id="item-{options.length}" class="min-h-4"></div>
+      </div>
     </PropsGroup>
-    <PropsGroup label={$T("constructor.props.group.value")}>
-      {@render SelectType()}
-      {@render SelectValueType()}
-      <CommonSnippets snippet="BitModeInfo" {component} {onPropertyChange} />
-    </PropsGroup>
-    <PropsGroup label={$T("constructor.props.group.appearance")}>
-      <CommonSnippets snippet="Label" {component} {onPropertyChange} />
-      <CommonSnippets snippet="LabelAlign" initialValue={initialAlign} {component} {onPropertyChange} />
-      {@render SelectContentAlign()}
-      {@render SelectSettings()}
-    </PropsGroup>
-  </div>
-  {@render SelectOptions()}
-{:else}
-  <div class="flex flex-col gap-2">
-    <PropsGroup label={$T("constructor.props.group.general")}>
-      <CommonSnippets snippet="Identificator" {component} {onPropertyChange} />
-      <CommonSnippets snippet="Access" {component} {onPropertyChange} />
-      <CommonSnippets snippet="WrapperClass" {component} {onPropertyChange} />
-    </PropsGroup>
-    <PropsGroup label={$T("constructor.props.group.appearance")}>
-      <CommonSnippets snippet="Label" {component} {onPropertyChange} />
-      <CommonSnippets snippet="LabelClass" {component} {onPropertyChange} />
-      {@render SelectContentAlign()}
-      <CommonSnippets snippet="Disabled" {component} {onPropertyChange} />
-      <CommonSnippets snippet="BitModeInfo" {component} {onPropertyChange} />
-    </PropsGroup>
-    <PropsGroup label={$T("constructor.props.group.value")} contentClass="items-center">
-      {@render SelectType()}
-      {@render SelectValueType()}
-      {@render SelectSettings()}
-    </PropsGroup>
-  </div>
-
-  {@render SelectOptions()}
-{/if}
+  {/snippet}
+</PropsListModal>

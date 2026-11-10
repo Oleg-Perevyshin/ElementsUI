@@ -12,12 +12,12 @@
   import WarningIcon from "./WarningIcon.svelte"
   import WidgetHeader from "../WidgetHeader.svelte"
   import { hint, hintsSetting } from "../hints"
-  import { widgetAccentStyle } from "../widgetAccent"
+  import { accentStyle } from "../accent"
   import { readPersistedCollapsed, writePersistedCollapsed } from "../widgetCollapse"
 
   let {
     wrapperClass = "",
-    componentClass = "",
+    accent,
     label = { name: "WiFi" },
     value = $bindable(),
     allowedModes = [1, 2, 3],
@@ -32,7 +32,7 @@
   const hints = $derived(hintsSetting("WidgetWiFi", persistKey))
 
   /* "Мастер-цвет" виджета - переопределяет --accent-color/--accent-soft на корне, дальше это штатный каскад переменных, на котором и так построены компоненты библиотеки: значок, режимы STA/AP, фокус-кольцо у полей и кнопка "Сохранить" (маркер bg-accent) перекрашиваются вместе, одним источником истины; красной остаётся только кнопка подтверждения режима AP. */
-  let accentStyle = $derived(widgetAccentStyle(componentClass ?? ""))
+  const rootStyle = $derived(accentStyle(accent))
 
   let cfg: IWidgetWiFiConfig = $state(
     value ?? {
@@ -57,7 +57,6 @@
     { id: "apsta", name: "STA + AP", value: 3 },
   ]
   let MODE_OPTIONS = $derived(ALL_MODE_OPTIONS.filter((o) => (allowedModes ?? [1, 2, 3]).includes(o.value as number)))
-  let selectedMode = $derived(MODE_OPTIONS.find((o) => o.value === cfg.WiFiMode) ?? MODE_OPTIONS[0])
 
   /* Режим переключается сразу и только локально - иначе нельзя спокойно открыть секцию AP и заполнить SSID/пароль до реальной отправки. Предупреждение о разрыве связи с облаком показывается не здесь, а перед save() - в момент, когда конфиг действительно уходит на устройство и режим на нём меняется. STA+AP не предупреждаем: STA остаётся активным. */
   let showAPWarning = $state(false)
@@ -66,7 +65,6 @@
     { id: "dhcp", name: "DHCP", value: 0 },
     { id: "static", name: $T("widget.wifi.static"), value: 1 },
   ])
-  let selectedIPMode = $derived(IP_MODE_OPTIONS.find((o) => o.value === cfg.StaticIP) ?? IP_MODE_OPTIONS[0])
 
   const IP_REGEXP = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
   /* WPA2: пусто (открытая сеть) либо 8-63 символа - так же ограничивает сам чип */
@@ -125,7 +123,7 @@
 
 <div
   class={twMerge("relative flex w-full flex-col gap-4 rounded-2xl border border-(--hairline-color) bg-(--container-color) p-4", wrapperClass)}
-  style={accentStyle}
+  style={rootStyle}
 >
   <!-- Заголовок и переключатель режима -->
   <WidgetHeader icon={WifiIcon} label={label?.name || $T("widget.wifi.title")} bind:collapsed {hints}>
@@ -134,9 +132,9 @@
         <UI.Select
           wrapperClass="w-full"
           type="buttons"
-          value={selectedMode}
+          value={MODE_OPTIONS.some((o) => o.value === cfg.WiFiMode) ? cfg.WiFiMode : MODE_OPTIONS[0]?.value}
           options={MODE_OPTIONS}
-          onUpdate={(option) => (cfg.WiFiMode = (option as IOption<number>).value as number)}
+          onUpdate={(option) => (cfg.WiFiMode = option)}
         />
       </div>
     {/snippet}
@@ -159,9 +157,9 @@
                   wrapperClass="w-full"
                   type="input"
                   label={{ name: $T("widget.wifi.ssid") }}
-                  value={{ id: "current", name: cfg.StaSSID, value: cfg.StaSSID }}
+                  value={cfg.StaSSID}
                   options={foundNetworks}
-                  onUpdate={(option) => (cfg.StaSSID = String((option as IOption<string>).value ?? (option as IOption<string>).name ?? ""))}
+                  onUpdate={(ssid) => (cfg.StaSSID = String(ssid))}
                 />
               </div>
               <UI.Button
@@ -188,9 +186,9 @@
               wrapperClass="w-full"
               type="buttons"
               label={{ name: $T("widget.wifi.ip_mode") }}
-              value={selectedIPMode}
+              value={cfg.StaticIP}
               options={IP_MODE_OPTIONS}
-              onUpdate={(option) => (cfg.StaticIP = (option as IOption<number>).value as number)}
+              onUpdate={(option) => (cfg.StaticIP = option)}
             />
           </div>
 
@@ -262,7 +260,7 @@
         {#if isDirty}
           <span class="text-[12px] text-(--muted-color)" transition:slide={{ duration: 100 }}>{$T("widget.common.unsaved")}</span>
         {/if}
-        <UI.Button wrapperClass="w-40" componentClass="bg-accent" content={{ name: $T("widget.common.save") }} disabled={!isDirty || !onSave} onClick={save} />
+        <UI.Button wrapperClass="w-40" variant="primary" content={{ name: $T("widget.common.save") }} disabled={!isDirty || !onSave} onClick={save} />
       </div>
     </div>
   {/if}
@@ -282,13 +280,8 @@
           {$T("widget.wifi.ap_confirm_text")}
         </p>
         <div class="flex gap-2">
-          <UI.Button
-            wrapperClass="flex-1"
-            componentClass="bg-transparent"
-            content={{ name: $T("widget.common.cancel") }}
-            onClick={() => (showAPWarning = false)}
-          />
-          <UI.Button wrapperClass="flex-1" componentClass="bg-red" content={{ name: $T("widget.common.save") }} onClick={confirmAndSave} />
+          <UI.Button wrapperClass="flex-1" content={{ name: $T("widget.common.cancel") }} onClick={() => (showAPWarning = false)} />
+          <UI.Button wrapperClass="flex-1" variant="primary" accent="red" content={{ name: $T("widget.common.save") }} onClick={confirmAndSave} />
         </div>
       </div>
     </div>

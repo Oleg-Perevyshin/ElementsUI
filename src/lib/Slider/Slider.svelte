@@ -1,81 +1,59 @@
-<!-- $lib/Slider/Slider.svelte - дорожка 4px, ползунок 18px; в диапазонном режиме оба <input> на всю ширину с одинаковыми min/max наложены друг на друга, события ловит только ::thumb, клик по пустой дорожке ползунок не двигает -->
+<!-- $lib/Slider/Slider.svelte - дорожка 6px, ползунок 18px; onInput - во время перетаскивания, onUpdate - бегунок отпущен или нажата кнопка +/-. В диапазонном режиме оба <input> на всю ширину с одинаковыми min/max наложены друг на друга, события ловит только ::thumb -->
 <script lang="ts">
   import { roundToClean } from "../number"
   import { T } from "../locales/i18n"
   import type { ISliderProps } from "../types"
   import { twMerge } from "tailwind-merge"
-  import { widgetAccentStyle } from "../widgetAccent"
+  import { accentStyle } from "../accent"
+  import FieldLabel from "../FieldLabel.svelte"
 
   let {
-    id = crypto.randomUUID(),
-    /* Цвет заливки дорожки берётся из --bg-color, который задаётся классом bg-* в вызове; без него используется акцент */
     wrapperClass = "",
-    label = { name: "", class: "" },
+    accent,
+    label,
     type = "single",
-    value = 0,
+    value = $bindable(),
     number = { minNum: 0, maxNum: 10, step: 1 },
     disabled = false,
-    onUpdate = () => {},
+    onUpdate,
+    onInput,
   }: ISliderProps = $props()
 
+  const uid = $props.id()
   const isRange = $derived(type === "range" || (Array.isArray(value) && value.length === 2))
-
-  const maxDigits = $derived(String(number.maxNum ?? 10).length)
-  const valueWidth = $derived(`${maxDigits + 1}ch`)
-
-  let singleValue = $derived(!isRange && typeof value === "number" ? value : number.minNum)
-  let lowerValue = $derived(isRange && Array.isArray(value) ? value[0] : number.minNum)
-  let upperValue = $derived(isRange && Array.isArray(value) ? value[1] : number.maxNum)
-
-  /* Позиция значения в процентах - для отрисовки заливки */
-  const pct = (v: number) => {
-    const span = Math.abs((number.maxNum ?? 10) - (number.minNum ?? 0)) || 1
-    return Math.max(0, Math.min(100, ((v - (number.minNum ?? 0)) / span) * 100))
-  }
-  /* Центр бегунка: он ходит не по всей ширине, а от 9px до ширины минус 9px (половина размера 18px), заливка считается так же */
-  const thumbX = (v: number) => `calc(9px + (100% - 18px) * ${pct(v) / 100})`
+  const valueWidth = $derived(`${String(number.maxNum ?? 10).length + 1}ch`)
 
   /* Значение на сетке шага: браузер ставит бегунок только на min + k * step, заливка должна стоять там же */
   const snap = (v: number) => {
-    const min = number.minNum ?? 0
-    const max = number.maxNum ?? 10
-    const step = number.step || 1
-    const k = Math.round((v - min) / step)
-    return roundToClean(Math.max(min, Math.min(max, min + k * step)))
+    const k = Math.round((v - number.minNum) / (number.step || 1))
+    return roundToClean(Math.max(number.minNum, Math.min(number.maxNum, number.minNum + k * (number.step || 1))))
   }
 
-  $effect(() => {
-    if (value === undefined || value === null) {
-      if (type === "single" && !value) value = number.minNum
-      if (type === "range" && !value) value = [number.minNum, number.maxNum]
-    }
-  })
+  /* Текущие значения: от пропа, во время перетаскивания - локальные до следующего значения снаружи */
+  let lower = $derived(isRange ? snap(Array.isArray(value) ? value[0] : number.minNum) : snap(typeof value === "number" ? value : number.minNum))
+  let upper = $derived(isRange && Array.isArray(value) ? snap(value[1]) : number.maxNum)
+  const current = (): number | [number, number] => (isRange ? [lower, upper] : lower)
+  const DIRECTIONS = [-1, 1] as const
+  const targets = $derived(isRange ? (["lower", "upper"] as const) : (["lower"] as const))
 
-  const adjustValue = (target: "lower" | "upper" | "single", direction: "increment" | "decrement") => {
-    const stepValue = direction === "increment" ? number.step : -number.step
-    if (isRange && target !== "single") {
-      if (target === "lower") {
-        lowerValue = roundToClean(Math.max(number.minNum, Math.min(lowerValue + stepValue, upperValue)))
-        lowerValue = roundToClean(lowerValue == upperValue ? upperValue - number.step : lowerValue)
-      } else {
-        upperValue = roundToClean(Math.min(number.maxNum, Math.max(upperValue + stepValue, lowerValue)))
-        upperValue = roundToClean(upperValue == lowerValue ? upperValue + number.step : upperValue)
-      }
-      onUpdate([lowerValue, upperValue])
-    } else {
-      singleValue = roundToClean(Math.max(number.minNum, Math.min(singleValue + stepValue, number.maxNum)))
-      onUpdate(singleValue)
-    }
+  const live = () => onInput?.(current())
+  const commit = () => {
+    value = current()
+    onUpdate?.(value)
   }
 
-  $effect(() => {
-    if (Array.isArray(value)) {
-      lowerValue = snap(value[0])
-      upperValue = snap(value[1])
-    } else if (typeof value === "number") {
-      singleValue = snap(value)
-    }
-  })
+  /* Нижний бегунок не заходит за верхний и наоборот: между ними минимум шаг */
+  const setLower = (v: number) => (lower = isRange ? roundToClean(Math.max(number.minNum, Math.min(v, upper - number.step))) : snap(v))
+  const setUpper = (v: number) => (upper = roundToClean(Math.min(number.maxNum, Math.max(v, lower + number.step))))
+  const adjust = (target: "lower" | "upper", direction: 1 | -1) => {
+    if (target === "lower") setLower(lower + direction * number.step)
+    else setUpper(upper + direction * number.step)
+    commit()
+  }
+
+  /* Позиция значения в процентах; центр бегунка ходит от 9px до ширины минус 9px (половина размера 18px), заливка считается так же */
+  const pct = (v: number) => Math.max(0, Math.min(100, ((v - number.minNum) / (Math.abs(number.maxNum - number.minNum) || 1)) * 100))
+  const thumbX = (v: number) => `calc(9px + (100% - 18px) * ${pct(v) / 100})`
 
   /* Единые классы для нативного ползунка: высота input РАВНА высоте thumb (18px) - тогда центрирование по вертикали отдаётся обычному flexbox родителя (items-center), без ручного margin-top на ::-webkit-slider-thumb. Такой margin-top пришлось бы подбирать под конкретную высоту трека, и он даёт разный результат в Chromium и Safari/WebKit - при равных высотах input и thumb смещения нет по определению, это работает одинаково везде. */
   /* Бегунок: рамка 2px цветом заливки, чтобы белый кружок не сливался с дорожкой на светлом фоне */
@@ -83,143 +61,81 @@
     [&::-webkit-slider-runnable-track]:h-[18px] [&::-webkit-slider-runnable-track]:bg-transparent
     [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:size-[18px]
     [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white
-    [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-(--bg-color,var(--accent-color))
+    [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-(--accent-color)
     [&::-webkit-slider-thumb]:shadow-[0_1px_4px_rgb(16_24_40/0.35)]
     [&::-moz-range-track]:h-[18px] [&::-moz-range-track]:bg-transparent [&::-moz-range-track]:border-0
     [&::-moz-range-thumb]:size-[18px] [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white
-    [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-(--bg-color,var(--accent-color))
+    [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-(--accent-color)
     [&::-moz-range-thumb]:shadow-[0_1px_4px_rgb(16_24_40/0.35)]
     focus-visible:outline-none`
 
   /* Двойной слайдер: оба input на всю ширину трека с ОДИНАКОВЫМ min/max, наложены друг на друга. pointer-events выключен на самом input и включён только на ::thumb (класс .range-overlay ниже) - тянуть можно исключительно за конкретный бегунок. Tailwind не генерирует CSS для сочетания произвольного варианта псевдоэлемента с pointer-events-*, поэтому это обычный style-блок ниже, а не класс. */
 </script>
 
-<div class={twMerge(`relative flex w-full flex-col gap-1.5`, wrapperClass)} style={widgetAccentStyle(wrapperClass)}>
-  {#if label.name}
-    <h5 class={twMerge(`w-full text-[12px] font-semibold text-(--muted-color)`, label.class)}>{label.name}</h5>
-  {/if}
+<div class={twMerge(`relative flex w-full flex-col gap-1.5`, wrapperClass)} style={accentStyle(accent)}>
+  <FieldLabel {label} for={uid} class="w-full" />
 
   <div class="flex w-full items-center gap-3">
-    <!-- Дорожка -->
-    <div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class="relative flex h-8 flex-1 items-center {disabled ? 'cursor-not-allowed opacity-45' : ''}">
-      <!-- Фон дорожки 6px - --container-color здесь давал слишком слабый контраст с фоном страницы (#f0f2f5 на белом), дорожка визуально пропадала; --border-color заметно контрастнее и совпадает с рамкой счётчика ниже. -->
+    <!-- Дорожка: фон --border-color заметен на светлом фоне, заливка - акцент -->
+    <div class="relative flex h-8 flex-1 items-center {disabled ? 'cursor-not-allowed opacity-45' : ''}">
       <div class="pointer-events-none absolute inset-x-0 top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-(--border-color)"></div>
-      <!-- Заливка -->
-      {#if isRange}
-        <div
-          class="pointer-events-none absolute top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-(--bg-color,var(--accent-color))"
-          style="left: {thumbX(lowerValue)}; width: calc({thumbX(upperValue)} - {thumbX(lowerValue)});"
-        ></div>
-      {:else}
-        <div
-          class="pointer-events-none absolute top-1/2 left-0 h-1.5 -translate-y-1/2 rounded-full bg-(--bg-color,var(--accent-color))"
-          style="width: {thumbX(singleValue)};"
-        ></div>
-      {/if}
+      <div
+        class="pointer-events-none absolute top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-(--accent-color)"
+        style={isRange ? `left: ${thumbX(lower)}; width: calc(${thumbX(upper)} - ${thumbX(lower)});` : `left: 0; width: ${thumbX(lower)};`}
+      ></div>
 
-      {#if isRange}
+      {#each targets as target (target)}
         <input
+          id={target === "lower" ? uid : undefined}
           type="range"
           min={number.minNum}
           max={number.maxNum}
           step={number.step}
-          bind:value={lowerValue}
-          oninput={disabled
-            ? undefined
-            : (e) => {
-                const newValue = Math.min(Number((e.target as HTMLInputElement).value), upperValue - number.step)
-                lowerValue = roundToClean(Math.max(number.minNum, newValue))
-                onUpdate([lowerValue, upperValue])
-              }}
+          value={target === "lower" ? lower : upper}
           {disabled}
+          aria-label={isRange ? `${label?.name ?? ""} ${target === "lower" ? "min" : "max"}`.trim() : undefined}
+          oninput={(event) => {
+            const v = Number(event.currentTarget.value)
+            if (target === "lower") setLower(v)
+            else setUpper(v)
+            event.currentTarget.value = String(target === "lower" ? lower : upper)
+            live()
+          }}
+          onchange={commit}
           class="{twMerge(
             THUMB,
-            'absolute inset-x-0 top-1/2 -translate-y-1/2',
+            isRange ? 'absolute inset-x-0 top-1/2 -translate-y-1/2' : 'relative',
             disabled ? '[&::-webkit-slider-thumb]:cursor-not-allowed' : '[&::-webkit-slider-thumb]:cursor-pointer',
-          )} range-overlay"
+          )} {isRange ? 'range-overlay' : ''}"
         />
-        <input
-          type="range"
-          min={number.minNum}
-          max={number.maxNum}
-          step={number.step}
-          bind:value={upperValue}
-          oninput={disabled
-            ? undefined
-            : (e) => {
-                const newValue = Math.max(Number((e.target as HTMLInputElement).value), lowerValue + number.step)
-                upperValue = roundToClean(Math.min(number.maxNum, newValue))
-                onUpdate([lowerValue, upperValue])
-              }}
-          {disabled}
-          class="{twMerge(
-            THUMB,
-            'absolute inset-x-0 top-1/2 -translate-y-1/2',
-            disabled ? '[&::-webkit-slider-thumb]:cursor-not-allowed' : '[&::-webkit-slider-thumb]:cursor-pointer',
-          )} range-overlay"
-        />
-      {:else}
-        <input
-          type="range"
-          min={number.minNum}
-          max={number.maxNum}
-          step={number.step}
-          bind:value={singleValue}
-          {disabled}
-          oninput={() => onUpdate(singleValue)}
-          class={twMerge(THUMB, "relative", disabled ? "[&::-webkit-slider-thumb]:cursor-not-allowed" : "[&::-webkit-slider-thumb]:cursor-pointer")}
-        />
-      {/if}
+      {/each}
     </div>
 
     <!-- Значения со счётчиком -->
-    {#if isRange}
-      {#each ["lower", "upper"] as t (t)}
-        <div class="flex h-7 shrink-0 items-center gap-1 rounded-lg border border-(--border-color) bg-(--field-color) px-1 {disabled ? 'opacity-45' : ''}">
-          <button
-            class="flex size-5 items-center justify-center rounded text-(--muted-color) transition-colors duration-150 hover:bg-(--container-color) disabled:cursor-not-allowed disabled:opacity-40 {disabled
-              ? 'cursor-not-allowed'
-              : 'cursor-pointer'}"
-            onclick={disabled ? undefined : () => adjustValue(t as "lower" | "upper", "decrement")}
-            disabled={disabled || (t === "lower" ? lowerValue <= number.minNum : upperValue <= lowerValue)}
-            aria-label={$T("ui.decrease")}>−</button
-          >
-          <span class="inline-block text-center text-[13px] font-semibold tabular-nums" style={`width: ${valueWidth}`}>
-            {t === "lower" ? lowerValue : upperValue}
-          </span>
-          <button
-            class="flex size-5 items-center justify-center rounded text-(--muted-color) transition-colors duration-150 hover:bg-(--container-color) disabled:cursor-not-allowed disabled:opacity-40 {disabled
-              ? 'cursor-not-allowed'
-              : 'cursor-pointer'}"
-            onclick={disabled ? undefined : () => adjustValue(t as "lower" | "upper", "increment")}
-            disabled={disabled || (t === "lower" ? lowerValue >= upperValue : upperValue >= number.maxNum)}
-            aria-label={$T("ui.increase")}>+</button
-          >
-        </div>
-      {/each}
-    {:else}
+    {#each targets as target (target)}
+      {@const v = target === "lower" ? lower : upper}
       <div class="flex h-7 shrink-0 items-center gap-1 rounded-lg border border-(--border-color) bg-(--field-color) px-1 {disabled ? 'opacity-45' : ''}">
-        <button
-          class="flex size-5 items-center justify-center rounded text-(--muted-color) transition-colors duration-150 hover:bg-(--container-color) disabled:cursor-not-allowed disabled:opacity-40 {disabled
-            ? 'cursor-not-allowed'
-            : 'cursor-pointer'}"
-          onclick={disabled ? undefined : () => adjustValue("single", "decrement")}
-          disabled={disabled || singleValue <= number.minNum}
-          aria-label={$T("ui.decrease")}>−</button
-        >
-        <span class="inline-block text-center text-[13px] font-semibold tabular-nums" style={`width: ${valueWidth}`}>
-          {singleValue}
-        </span>
-        <button
-          class="flex size-5 items-center justify-center rounded text-(--muted-color) transition-colors duration-150 hover:bg-(--container-color) disabled:cursor-not-allowed disabled:opacity-40 {disabled
-            ? 'cursor-not-allowed'
-            : 'cursor-pointer'}"
-          onclick={disabled ? undefined : () => adjustValue("single", "increment")}
-          disabled={disabled || singleValue >= number.maxNum}
-          aria-label={$T("ui.increase")}>+</button
-        >
+        {#each DIRECTIONS as direction (direction)}
+          <button
+            class="flex size-5 items-center justify-center rounded text-(--muted-color) transition-colors duration-150 hover:bg-(--container-color) disabled:cursor-not-allowed disabled:opacity-40 {direction ===
+            1
+              ? 'order-last'
+              : ''} {disabled ? 'cursor-not-allowed' : 'cursor-pointer'}"
+            onclick={() => adjust(target, direction)}
+            disabled={disabled ||
+              (direction === -1
+                ? target === "lower"
+                  ? v <= number.minNum
+                  : v <= lower + number.step
+                : target === "upper" || !isRange
+                  ? v >= number.maxNum
+                  : v >= upper - number.step)}
+            aria-label={direction === 1 ? $T("ui.increase") : $T("ui.decrease")}>{direction === 1 ? "+" : "−"}</button
+          >
+        {/each}
+        <span class="inline-block text-center text-[13px] font-semibold tabular-nums" style="width: {valueWidth}">{v}</span>
       </div>
-    {/if}
+    {/each}
   </div>
 </div>
 

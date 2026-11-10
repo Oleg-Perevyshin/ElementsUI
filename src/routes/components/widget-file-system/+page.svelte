@@ -3,10 +3,10 @@
   import { localizeDeep } from "#lib/locales/localize.ts"
   import { type UIComponent } from "#lib"
   import ComponentExample from "../../ComponentExample.svelte"
-  import { updateComponent, type IWidgetFileSystemInfo, type IWidgetFileSystemProps } from "#lib/types.ts"
+  import { type IWidgetFileSystemInfo, type IWidgetFileSystemProps } from "#lib/types.ts"
   import WidgetFileSystem from "#lib/WidgetFileSystem/WidgetFileSystem.svelte"
   import WidgetFileSystemProps from "#lib/WidgetFileSystem/WidgetFileSystemProps.svelte"
-  import { formatObjectToString, RenderMarkdown } from "../../common"
+  import { formatObjectToString, RenderMarkdown, applyChange } from "../../common"
   import readmeRaw from "#lib/WidgetFileSystem/README.md?raw"
 
   let readmeHtml = $state("")
@@ -60,14 +60,12 @@
     access: "full",
     properties: {
       label: { name: "" },
-      componentClass: "",
       accept: ".bin, .txt, .md, .pem",
     },
     eventHandler: { Header: "GET", Argument: "FS", Variables: [] },
     position: { row: 0, col: 0, width: 0, height: 0 },
     parentId: "",
   })
-  let forConstructor = $state(false)
 
   let codeText = $derived(`
 <UI.WidgetFileSystem
@@ -80,7 +78,7 @@ onDownload={handleDownload}
 />`)
 </script>
 
-<ComponentExample {codeText} {readmeHtml} bind:forConstructor>
+<ComponentExample {codeText} {readmeHtml}>
   {#snippet component()}
     <div class="m-auto w-full max-w-3xl">
       <WidgetFileSystem
@@ -96,12 +94,12 @@ onDownload={handleDownload}
   {#snippet componentProps()}
     <WidgetFileSystemProps
       component={fsComponent as UIComponent & { properties: Partial<IWidgetFileSystemProps> }}
-      onPropertyChange={(updates) => (fsComponent = updateComponent(fsComponent, updates as object))}
+      onPropertyChange={(updates) => (fsComponent = applyChange(fsComponent, updates))}
     />
   {/snippet}
   {#snippet examples()}
     <div class="flex flex-col gap-6 p-2">
-      <WidgetFileSystem value={{ Total: 1441792, Used: 8192, Free: 1433600, List: [] }} componentClass="bg-green" />
+      <WidgetFileSystem value={{ Total: 1441792, Used: 8192, Free: 1433600, List: [] }} accent="green" />
     </div>
   {/snippet}
 </ComponentExample>

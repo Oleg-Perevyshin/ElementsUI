@@ -5,8 +5,7 @@
   import ComponentExample from "../../ComponentExample.svelte"
   import Switch from "#lib/Switch/Switch.svelte"
   import SwitchProps from "#lib/Switch/SwitchProps.svelte"
-  import { updateComponent } from "#lib/types.ts"
-  import { formatObjectToString, RenderMarkdown } from "../../common"
+  import { formatObjectToString, RenderMarkdown, applyChange } from "../../common"
   import readmeRaw from "#lib/Switch/README.md?raw"
 
   let readmeHtml = $state("")
@@ -27,8 +26,8 @@
       label: { name: "Label", captionLeft: "Off", captionRight: "On" },
       value: 1,
       options: [
-        { id: crypto.randomUUID(), value: 0, name: "0", class: "bg-red", disabled: false },
-        { id: crypto.randomUUID(), value: 5, name: "5", class: "bg-green", disabled: false },
+        { id: crypto.randomUUID(), value: 0, name: "0", accent: "red", disabled: false },
+        { id: crypto.randomUUID(), value: 5, name: "5", accent: "green", disabled: false },
       ],
     },
     eventHandler: { Header: "SET", Argument: "NoSend", Variables: [] },
@@ -36,71 +35,52 @@
     parentId: "",
   })
 
-  let forConstructor = $state(false)
-
   let codeText = $derived(`
 <UI.Switch
 ${formatObjectToString(switchComponent.properties as ISwitchProps)} 
-  onChange={() => {}}
+  onUpdate={() => {}}
 />`)
   let switchValue = $state(0)
   let fullSwitchValue = $state(10)
   let highBitValue = $state(0)
 </script>
 
-<ComponentExample {codeText} {readmeHtml} bind:forConstructor>
+<ComponentExample {codeText} {readmeHtml}>
   {#snippet component()}
     <div class="my-10 flex w-full justify-center">
       <Switch
         wrapperClass={(switchComponent.properties as ISwitchProps).bitMode ? "w-fit" : ""}
         {...localizeDeep(switchComponent.properties, $Language) as ISwitchProps}
-        onChange={(value) => (switchComponent = updateComponent(switchComponent, { properties: { value } }))}
+        onUpdate={(value) => (switchComponent = applyChange(switchComponent, { properties: { value } }))}
       />
     </div>
   {/snippet}
   {#snippet componentProps()}
     <SwitchProps
       component={switchComponent as UIComponent & { properties: Partial<ISwitchProps> }}
-      onPropertyChange={(updates) => (switchComponent = updateComponent(switchComponent, updates as object))}
-      {forConstructor}
+      onPropertyChange={(updates) => (switchComponent = applyChange(switchComponent, updates))}
     />
   {/snippet}
   {#snippet examples()}
     <div class="flex items-center justify-between">
-      <Switch
-        wrapperClass="w-1/3"
-        label={{ name: "Переключатель 1", captionLeft: "Off", captionRight: "On" }}
-        bind:value={switchValue}
-        options={[{ id: crypto.randomUUID(), value: 0, class: "bg-blue" }]}
-      />
-      <Switch
-        wrapperClass="w-1/3"
-        label={{ name: "Переключатель 2" }}
-        type="vertical"
-        bind:value={switchValue}
-        options={[{ id: crypto.randomUUID(), value: 0, class: "bg-red" }]}
-      />
-      <Switch
-        wrapperClass="bg-yellow w-1/3"
-        label={{ name: "Галочка" }}
-        type="checkbox"
-        bind:value={switchValue}
-        options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-      />
+      <Switch wrapperClass="w-1/3" label={{ name: "Переключатель 1", captionLeft: "Off", captionRight: "On" }} bind:value={switchValue} accent="blue" />
+      <Switch wrapperClass="w-1/3" label={{ name: "Переключатель 2" }} type="vertical" bind:value={switchValue} accent="red" />
+      <Switch accent="yellow" wrapperClass="w-1/3" label={{ name: "Галочка" }} type="checkbox" bind:value={switchValue} />
     </div>
     <span>Выбранное значение: {switchValue}</span>
     <div class="mt-4 flex justify-center">
       <Switch
-        wrapperClass="bg-yellow w-1/3"
+        accent="yellow"
+        wrapperClass="w-1/3"
         label={{ name: "Битовый режим" }}
         type="vertical"
         bitMode
         bind:value={fullSwitchValue}
         options={[
-          { id: crypto.randomUUID(), value: 3, class: "bg-green" },
-          { id: crypto.randomUUID(), value: 2, class: "bg-green" },
-          { id: crypto.randomUUID(), value: 1, class: "bg-purple" },
-          { id: crypto.randomUUID(), value: 0, class: "bg-purple" },
+          { id: crypto.randomUUID(), value: 3, accent: "green" },
+          { id: crypto.randomUUID(), value: 2, accent: "green" },
+          { id: crypto.randomUUID(), value: 1, accent: "purple" },
+          { id: crypto.randomUUID(), value: 0, accent: "purple" },
         ]}
       />
     </div>
@@ -109,14 +89,15 @@ ${formatObjectToString(switchComponent.properties as ISwitchProps)}
     <!-- Регрессионный пример: биты 29/30/31 (старший, знаковый бит int32) - проверка, что переключение одного флага не задевает соседние (баг из-за Math.abs на 32-битных знаковых операциях) -->
     <div class="mt-4 flex justify-center">
       <Switch
-        wrapperClass="bg-yellow w-1/2"
+        accent="yellow"
+        wrapperClass="w-1/2"
         label={{ name: "Управление датчиками (биты 29/30/31)" }}
         bitMode
         bind:value={highBitValue}
         options={[
-          { id: crypto.randomUUID(), value: 29, name: "A", class: "bg-blue" },
-          { id: crypto.randomUUID(), value: 31, name: "T", class: "bg-red" },
-          { id: crypto.randomUUID(), value: 30, name: "G", class: "bg-blue" },
+          { id: crypto.randomUUID(), value: 29, name: "A", accent: "blue" },
+          { id: crypto.randomUUID(), value: 31, name: "T", accent: "red" },
+          { id: crypto.randomUUID(), value: 30, name: "G", accent: "blue" },
         ]}
       />
     </div>

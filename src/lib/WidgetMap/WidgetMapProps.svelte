@@ -3,9 +3,9 @@
   import TextsEditor from "../TextsEditor.svelte"
   import { T } from "../locales/i18n"
   import * as UI from ".."
-  import { updateProperty, type UIComponent, type IWidgetMapProps } from "../types"
+  import type { UIComponent, IWidgetMapProps } from "../types"
+  import { createPropsEditor, type PropertyChange } from "../propsEditor"
   import { ICONS } from "../icons"
-  import WidgetAccentPicker from "../WidgetAccentPicker.svelte"
   import CommonSnippets from "../CommonSnippets.svelte"
   import PropsGroup from "../PropsGroup.svelte"
   import { twMerge } from "tailwind-merge"
@@ -15,8 +15,10 @@
     onPropertyChange,
   }: {
     component: UIComponent & { properties: Partial<IWidgetMapProps> }
-    onPropertyChange: (updates: Partial<{ properties?: string | object; name?: string; access?: string }>) => void
+    onPropertyChange: (change: PropertyChange<IWidgetMapProps>) => void
   } = $props()
+
+  const edit = $derived(createPropsEditor(component, onPropertyChange))
 
   /* Высота карты размерами, как у текстового поля: S/M/L/XL */
   const HEIGHT_OPTIONS = [
@@ -24,14 +26,10 @@
     { value: 400, name: "M" },
     { value: 600, name: "L" },
     { value: 800, name: "XL" },
-  ].map((o) => ({ id: crypto.randomUUID(), ...o }))
+  ]
   /* Режим карты: объекты в реальном времени, планировщик миссии из точек или генератор миссии для агродрона */
-  const MODE_OPTIONS = [
-    { value: "objects", name: $T("widget.map.mode.objects") },
-    { value: "route", name: $T("widget.map.mode.route") },
-    { value: "agro", name: $T("widget.map.mode.agro") },
-  ].map((o) => ({ id: crypto.randomUUID(), ...o }))
-  const TRACK_LENGTH_OPTIONS = [100, 500, 1000, 5000, 10000, 50000].map((value) => ({ id: crypto.randomUUID(), value, name: String(value) }))
+  const MODE_OPTIONS = $derived((["objects", "route", "agro"] as const).map((value) => ({ value, name: $T(`widget.map.mode.${value}`) })))
+  const TRACK_LENGTH_OPTIONS = [100, 500, 1000, 5000, 10000, 50000].map((value) => ({ value, name: String(value) }))
 
   /* Группы через пробел, как переменные кнопки (имя группы не содержит пробелов): "MAV GNSS" */
   const setGroups = (raw: unknown) => {
@@ -39,7 +37,7 @@
       .trim()
       .split(/[\s,]+/)
       .filter(Boolean)
-    updateProperty("groups", list.length ? list : ["MAV"], component, onPropertyChange)
+    edit.set("groups", list.length ? list : ["MAV"])
   }
 </script>
 
@@ -49,16 +47,15 @@
       label={{ name: $T("widget.map.mode") }}
       type="buttons"
       options={MODE_OPTIONS}
-      value={MODE_OPTIONS.find((opt) => opt.value === (component.properties.mode ?? "objects")) ?? MODE_OPTIONS[0]}
-      onUpdate={(option) => updateProperty("mode", (option as { value: string }).value, component, onPropertyChange)}
+      value={component.properties.mode ?? "objects"}
+      onUpdate={(mode) => edit.set("mode", mode)}
     />
   </PropsGroup>
   <PropsGroup>
     <UI.Switch
       label={{ name: $T("constructor.props.simulation") }}
       value={component.properties.isTest ? 1 : 0}
-      options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-      onChange={(value) => updateProperty("isTest", value === 1, component, onPropertyChange)}
+      onUpdate={(value) => edit.set("isTest", value === 1)}
     />
   </PropsGroup>
   <!-- В режиме имитации остальные свойства не учитываются, поэтому вся панель бледная и недоступна -->
@@ -66,25 +63,22 @@
     <PropsGroup label={$T("constructor.props.group.general")}>
       <TextsEditor {component} {onPropertyChange} />
       <UI.Input label={{ name: $T("widget.map.groups") }} value={(component.properties.groups ?? ["MAV"]).join(" ")} onUpdate={setGroups} />
-      <WidgetAccentPicker
-        value={component.properties.componentClass ?? ""}
-        onUpdate={(value) => updateProperty("componentClass", value, component, onPropertyChange)}
-      />
+      <CommonSnippets snippet="Accent" {component} {onPropertyChange} />
     </PropsGroup>
     <PropsGroup label={$T("constructor.props.group.appearance")}>
       <UI.Select
         label={{ name: $T("widget.map.height") }}
         type="buttons"
         options={HEIGHT_OPTIONS}
-        value={HEIGHT_OPTIONS.find((opt) => opt.value === (component.properties.height ?? 400)) ?? HEIGHT_OPTIONS[1]}
-        onUpdate={(option) => updateProperty("height", (option as { value: number }).value, component, onPropertyChange)}
+        value={component.properties.height ?? 400}
+        onUpdate={(height) => edit.set("height", height)}
       />
       <CommonSnippets
         snippet="IconsLib"
         initialValue={{
           name: $T("constructor.props.markerIcon"),
           icon: component.properties.markerIcon,
-          updateProperty: (icon: string) => updateProperty("markerIcon", icon as string, component, onPropertyChange),
+          onUpdate: (icon: string) => edit.set("markerIcon", icon),
           icons: { array: ICONS },
         }}
         {component}
@@ -95,15 +89,14 @@
       <UI.Switch
         label={{ name: $T("constructor.props.map.track") }}
         value={component.properties.trackEnabled ? 1 : 0}
-        options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-        onChange={(value) => updateProperty("trackEnabled", Boolean(value), component, onPropertyChange)}
+        onUpdate={(value) => edit.set("trackEnabled", Boolean(value))}
       />
       <UI.Select
         label={{ name: $T("constructor.props.map.trackLength") }}
         type="input"
         options={TRACK_LENGTH_OPTIONS}
-        value={TRACK_LENGTH_OPTIONS.find((opt) => opt.value === (component.properties.trackLength ?? 1000))}
-        onUpdate={(option) => updateProperty("trackLength", (option as { value: number }).value, component, onPropertyChange)}
+        value={component.properties.trackLength ?? 1000}
+        onUpdate={(length) => edit.set("trackLength", Number(length) || 1000)}
       />
     </PropsGroup>
   </div>

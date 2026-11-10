@@ -6,9 +6,9 @@
   import Table from "#lib/Table/Table.svelte"
   import DebugDeleteIcon from "#lib/libIcons/ButtonDelete.svelte"
   import TableProps from "#lib/Table/TableProps.svelte"
-  import { updateComponent, type IOption, type ITableButton } from "#lib/types.ts"
+  import { type IOption, type ITableButton } from "#lib/types.ts"
   import { onDestroy, onMount } from "svelte"
-  import { formatObjectToString, RenderMarkdown } from "../../common"
+  import { formatObjectToString, RenderMarkdown, applyChange } from "../../common"
   import readmeRaw from "#lib/Table/README.md?raw"
 
   let readmeHtml = $state("")
@@ -97,8 +97,6 @@
       tableRef.clearBuffer()
     }
   })
-
-  let forConstructor = $state(false)
 
   let codeText = $derived(`
 <UI.Table
@@ -202,7 +200,7 @@ ${formatObjectToString(tableComponent.properties as ITableProps<object>)}
   })
 </script>
 
-<ComponentExample {codeText} {readmeHtml} bind:forConstructor>
+<ComponentExample {codeText} {readmeHtml}>
   {#snippet component()}
     <div class="h-60">
       <Table
@@ -216,8 +214,7 @@ ${formatObjectToString(tableComponent.properties as ITableProps<object>)}
   {#snippet componentProps()}
     <TableProps
       component={tableComponent as UIComponent & { properties: Partial<ITableProps<object>> }}
-      onPropertyChange={(updates) => (tableComponent = updateComponent(tableComponent, updates as object))}
-      {forConstructor}
+      onPropertyChange={(updates) => (tableComponent = applyChange(tableComponent, updates))}
     />
   {/snippet}
   {#snippet examples()}

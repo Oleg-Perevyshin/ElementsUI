@@ -12,12 +12,12 @@
   import ButtonDelete from "../libIcons/ButtonDelete.svelte"
   import WidgetHeader from "../WidgetHeader.svelte"
   import { hint, hintsSetting } from "../hints"
-  import { widgetAccentStyle } from "../widgetAccent"
+  import { accentStyle } from "../accent"
   import { readPersistedCollapsed, writePersistedCollapsed } from "../widgetCollapse"
 
   let {
     wrapperClass = "",
-    componentClass = "",
+    accent,
     label = {},
     value,
     accept = "*/*",
@@ -33,7 +33,7 @@
   /* Подсказки - кнопка «?» в шапке, выбор общий для всех WidgetFileSystem */
   const hints = $derived(hintsSetting("WidgetFileSystem", persistKey))
 
-  let accentStyle = $derived(widgetAccentStyle(componentClass ?? ""))
+  const rootStyle = $derived(accentStyle(accent))
 
   /* Сворачивание тела по клику на шапку - как у остальных смарт-виджетов (см. WidgetWiFi.svelte) */
   /* Выбор пользователя в этом браузере применяется до первой отрисовки, без мигания; значение из GUI запоминается, чтобы его смена отменяла старый выбор */
@@ -115,7 +115,7 @@
   /* Закачка: имя проверяется до отправки (прошивка отвергнет длинное имя уже после UploadStart) */
   let uploading = $state(false)
   let uploadError = $state("")
-  const handleFile = async (_event: Event, file: File | null) => {
+  const handleFile = async (file: File | null) => {
     uploadError = ""
     if (!file || !onUpload || uploading) return
     /* Прошивка ограничивает имя в байтах UTF-8: кириллица занимает по 2 байта на букву */
@@ -136,14 +136,14 @@
 
 <div
   class={twMerge("relative flex w-full flex-col gap-4 rounded-2xl border border-(--hairline-color) bg-(--container-color) p-4", wrapperClass)}
-  style={accentStyle}
+  style={rootStyle}
 >
   <!-- Заголовок -->
   <WidgetHeader icon={StorageIcon} label={label?.name || $T("widget.fs.title")} bind:collapsed {hints}>
     {#snippet right()}
       <UI.Button
         wrapperClass="w-auto"
-        componentClass="bg-transparent px-3"
+        componentClass="px-3"
         content={{ icon: RefreshIcon, name: $T("widget.common.refresh") }}
         disabled={!onRefresh}
         onClick={() => onRefresh?.()}
@@ -194,7 +194,7 @@
       {#if onUpload}
         <div class="flex flex-col gap-2 rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-3">
           <div use:hint={{ text: $T("widget.fs.hint.upload"), enabled: $hints }}>
-            <UI.FileAttach label={{ name: $T("widget.fs.upload") }} {accept} disabled={uploading || !!upload} onChange={handleFile} />
+            <UI.FileAttach label={{ name: $T("widget.fs.upload") }} {accept} disabled={uploading || !!upload} onUpdate={handleFile} />
           </div>
           {#if uploading || upload}
             <div class="flex items-center gap-2 text-[12px]" transition:slide={{ duration: 100 }}>
@@ -225,13 +225,8 @@
         <h4 class="text-[15px] font-semibold">{$T("widget.fs.delete_confirm")}</h4>
         <p class="text-[13px] break-all text-(--muted-color)">{pendingDelete}</p>
         <div class="flex gap-2">
-          <UI.Button
-            wrapperClass="flex-1"
-            componentClass="bg-transparent"
-            content={{ name: $T("widget.common.cancel") }}
-            onClick={() => (pendingDelete = null)}
-          />
-          <UI.Button wrapperClass="flex-1" componentClass="bg-red" content={{ name: $T("widget.common.delete") }} onClick={confirmDelete} />
+          <UI.Button wrapperClass="flex-1" content={{ name: $T("widget.common.cancel") }} onClick={() => (pendingDelete = null)} />
+          <UI.Button wrapperClass="flex-1" variant="primary" accent="red" content={{ name: $T("widget.common.delete") }} onClick={confirmDelete} />
         </div>
       </div>
     </div>

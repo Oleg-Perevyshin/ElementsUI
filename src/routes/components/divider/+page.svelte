@@ -5,8 +5,7 @@
   import ComponentExample from "../../ComponentExample.svelte"
   import Divider from "#lib/Divider/Divider.svelte"
   import DividerProps from "#lib/Divider/DividerProps.svelte"
-  import { updateComponent } from "#lib/types.ts"
-  import { formatObjectToString, RenderMarkdown } from "../../common"
+  import { formatObjectToString, RenderMarkdown, applyChange } from "../../common"
   import readmeRaw from "#lib/Divider/README.md?raw"
 
   let readmeHtml = $state("")
@@ -23,14 +22,11 @@
       wrapperClass: "",
       type: "line",
       width: 2,
-      color: "bg-max",
       anchor: "center",
     },
     position: { row: 0, col: 0, width: 0, height: 0 },
     parentId: "",
   })
-
-  let forConstructor = $state(false)
 
   let codeText = $derived(`
 <UI.Divider
@@ -38,7 +34,7 @@ ${formatObjectToString(dividerComponent.properties as IDividerProps)}
 />`)
 </script>
 
-<ComponentExample {codeText} {readmeHtml} bind:forConstructor>
+<ComponentExample {codeText} {readmeHtml}>
   {#snippet component()}
     <div class="h-24 w-full border border-dashed border-gray-500">
       <Divider {...localizeDeep(dividerComponent.properties, $Language) as IDividerProps} />
@@ -47,20 +43,19 @@ ${formatObjectToString(dividerComponent.properties as IDividerProps)}
   {#snippet componentProps()}
     <DividerProps
       component={dividerComponent as UIComponent & { properties: Partial<IDividerProps> }}
-      onPropertyChange={(updates) => (dividerComponent = updateComponent(dividerComponent, updates as object))}
-      {forConstructor}
+      onPropertyChange={(updates) => (dividerComponent = applyChange(dividerComponent, updates))}
     />
   {/snippet}
   {#snippet examples()}
     <div class="flex flex-col gap-2">
       <div class="h-16 w-full border border-dashed border-gray-500">
-        <Divider type="line" width={2} color="bg-max" anchor="top" />
+        <Divider type="line" width={2} anchor="top" />
       </div>
       <div class="h-16 w-full border border-dashed border-gray-500">
-        <Divider type="line" width={2} color="bg-blue" anchor="center" />
+        <Divider type="line" width={2} accent="blue" anchor="center" />
       </div>
       <div class="h-16 w-full border border-dashed border-gray-500">
-        <Divider type="line" width={4} color="bg-red" anchor="bottom" />
+        <Divider type="line" width={4} accent="red" anchor="bottom" />
       </div>
       <div class="h-16 w-full border border-dashed border-gray-500">
         <Divider type="empty" />

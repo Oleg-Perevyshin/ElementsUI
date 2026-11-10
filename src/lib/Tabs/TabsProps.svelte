@@ -1,245 +1,134 @@
+<!-- $lib/Tabs/TabsProps.svelte - панель свойств конструктора для Tabs -->
 <script lang="ts">
   import TextsEditor from "../TextsEditor.svelte"
-  import { T } from "../locales/i18n"
-  import { updateProperty, type ITabsProps, type IUIComponentHandler, type UIComponent } from "../types"
+  import { Language, T } from "../locales/i18n"
+  import { localizeText } from "../locales/localize"
+  import type { UIComponent, ITabsProps } from "../types"
+  import { createPropsEditor, optionByClass, type PropertyChange } from "../propsEditor"
   import * as UI from ".."
-  import { optionsStore, findColorOption } from "../options"
-  import { ICONS } from "../icons"
-  import ButtonAdd from "../libIcons/ButtonAdd.svelte"
-  import ButtonDelete from "../libIcons/ButtonDelete.svelte"
+  import { optionsStore } from "../options"
   import { twMerge } from "tailwind-merge"
+  import { ICONS } from "../icons"
+  import ButtonDelete from "../libIcons/ButtonDelete.svelte"
+  import ButtonAdd from "../libIcons/ButtonAdd.svelte"
   import CommonSnippets from "../CommonSnippets.svelte"
   import PropsGroup from "../PropsGroup.svelte"
   import PropsListModal from "../PropsListModal.svelte"
-  import { Language } from "../locales/i18n"
-  import { localizeText } from "../locales/localize"
 
   const {
     component,
     onPropertyChange,
-    forConstructor = true,
   }: {
     component: UIComponent & { properties: Partial<ITabsProps> }
-    onPropertyChange: (updates: Partial<{ properties?: string | object; name?: string; access?: string; eventHandler?: IUIComponentHandler }>) => void
-    forConstructor?: boolean
+    onPropertyChange: (change: PropertyChange<ITabsProps>) => void
   } = $props()
 
+  const edit = $derived(createPropsEditor(component, onPropertyChange))
   let itemsContainer: HTMLDivElement | null = $state(null)
+  const items = $derived(component.properties.items ?? [])
 
   /* У каждой вкладки - стабильный id: по нему конструктор переносит её содержимое при перестановке и удалении вкладок */
   $effect(() => {
-    const items = component.properties.items ?? []
-    if (items.every((item: { id?: string }) => item.id)) return
-    updateProperty(
-      "items",
-      items.map((item: { id?: string }) => (item.id ? item : { ...item, id: crypto.randomUUID() })),
-      component,
-      onPropertyChange,
-    )
+    if (items.some((item) => !item.id))
+      edit.set(
+        "items",
+        items.map((item) => (item.id ? item : { ...item, id: crypto.randomUUID() })),
+      )
   })
 
-  const initialColor = $derived(findColorOption($optionsStore.COLOR_OPTIONS, component.properties.wrapperClass))
-  /* Цвет текста новой вкладки - токен темы из TEXT_COLOR_OPTIONS по мастер-цвету (bg-blue → --blue-text); у bg-max и без цвета - пусто */
-  const tabTextColor = () => {
-    const role = initialColor?.value?.slice(3)
-    return $optionsStore.TEXT_COLOR_OPTIONS.find((option) => option.value === `text-(color:--${role}-text)`)?.value ?? ""
-  }
-
-  const initialPosition = $derived.by(() => {
-    const flexClass = component.properties.items
-      ?.find((item) => item.class?.includes("flex-"))
-      ?.class?.split(" ")
-      .find((cls: string) => cls.startsWith("flex-"))
-    if (!flexClass) return undefined
-    return $optionsStore.ICON_TEXT_POSITION_OPTIONS.find((c) => (c.value as string).includes(flexClass))
-  })
-
-  const initialWidth = $derived(() => (component.properties.items?.some((item) => item.class?.split(" ").includes("flex-1")) ? 1 : 0))
-
+  /* Положение иконки и ширина вкладок - классы, общие для всех вкладок */
+  const position = $derived(items.map((item) => optionByClass($optionsStore.ICON_TEXT_POSITION_OPTIONS, item.class)).find(Boolean)?.value)
+  const equalWidth = $derived(items.some((item) => item.class?.split(" ").includes("flex-1")))
   /* «Равные» - flex-1 (место делится поровну с учётом gap), «Авто» - w-auto (ширина по содержимому) */
-  const setTabWidthClass = (existingClass: string | undefined, equal: boolean): string =>
-    twMerge((existingClass ?? "").replace(/\bflex-1\b|\bw-auto\b/g, "").trim(), equal ? "flex-1" : "w-auto")
+  const tabClass = (cls: string | undefined, equal: boolean, pos = position) =>
+    twMerge((cls ?? "").replace(/\bflex-1\b|\bw-auto\b/g, "").trim(), pos, equal ? "flex-1" : "w-auto")
+  const setItems = (next: ITabsProps["items"], equal = equalWidth, pos = position) =>
+    edit.set(
+      "items",
+      next.map((item) => ({ ...item, class: tabClass(item.class, equal, pos) })),
+    )
 </script>
 
-{#snippet TabsIconPosition()}
-  <UI.Select
-    wrapperClass="h-14"
-    label={{ name: $T("constructor.props.icon.text.position") }}
-    type="buttons"
-    options={$optionsStore.ICON_TEXT_POSITION_OPTIONS}
-    value={initialPosition}
-    onUpdate={(option) => {
-      ;(component.properties.items ?? []).forEach((_item: any, index: number) => {
-        const items = [...(component.properties?.items || [])]
-        items[index]["class"] = twMerge(items[index].class, (option as UI.IOption).value as string)
-        updateProperty("items", items, component, onPropertyChange)
-      })
-    }}
-  />
-{/snippet}
+<div class="flex flex-col gap-2">
+  <PropsGroup label={$T("constructor.props.group.general")}>
+    <CommonSnippets snippet="Access" {component} {onPropertyChange} />
+    <TextsEditor {component} {onPropertyChange} />
+    <CommonSnippets snippet="Accent" {component} {onPropertyChange} />
+  </PropsGroup>
+  <PropsGroup label={$T("constructor.props.group.appearance")}>
+    <UI.Select
+      wrapperClass="h-14"
+      label={{ name: $T("constructor.props.icon.text.position") }}
+      type="buttons"
+      options={$optionsStore.ICON_TEXT_POSITION_OPTIONS}
+      value={position}
+      onUpdate={(pos) => setItems(items, equalWidth, pos)}
+    />
+    <UI.Switch
+      label={{ name: $T("constructor.props.widthMode"), captionLeft: $T("constructor.props.height.small"), captionRight: $T("constructor.props.equal") }}
+      value={equalWidth ? 1 : 0}
+      onUpdate={(value) => setItems(items, value === 1)}
+    />
+  </PropsGroup>
+</div>
 
-{#snippet TabsWidthMode()}
-  <UI.Switch
-    label={{
-      name: $T("constructor.props.widthMode"),
-      captionLeft: $T("constructor.props.height.small"),
-      captionRight: $T("constructor.props.equal"),
-    }}
-    value={initialWidth()}
-    options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-    onChange={(value) => {
-      ;(component.properties.items ?? []).forEach((_item: any, index: number) => {
-        const items = [...(component.properties?.items || [])]
-        items[index]["class"] = setTabWidthClass(items[index].class, Boolean(value))
-        updateProperty("items", items, component, onPropertyChange)
-      })
-    }}
-  />
-{/snippet}
+<PropsListModal label={$T("constructor.props.tabs.title")} count={items.length} wrapperClass="w-200 h-[70%]">
+  {#snippet main()}
+    <PropsGroup>
+      {#snippet headerActions()}
+        {#if items.length < 10}
+          <UI.Button
+            wrapperClass="w-8"
+            content={{ icon: ButtonAdd }}
+            onClick={() => setItems([...items, { id: crypto.randomUUID(), name: "", icon: "", class: "" }])}
+          />
+        {/if}
+      {/snippet}
 
-{#snippet TabsSettings()}
-  <PropsListModal label={$T("constructor.props.tabs.title")} count={component.properties.items?.length ?? 0} wrapperClass="w-200 h-[70%]">
-    {#snippet main()}
-      <PropsGroup>
-        {#snippet headerActions()}
-          {#if (component.properties.items?.length ?? 0) < 10}
-            <UI.Button
-              wrapperClass="w-8"
-              content={{ icon: ButtonAdd }}
-              onClick={() => {
-                const newItem: { id: string; name: string; icon: string; class: string } = {
-                  id: crypto.randomUUID(),
-                  name: "",
-                  class: `${tabTextColor()} ${initialPosition?.value}`.trim(),
-                  icon: "",
-                }
-                const items = [...(component.properties?.items || []), newItem]
-                items.forEach((_item: any, index: number) => {
-                  items[index]["class"] = setTabWidthClass(items[index].class, Boolean(initialWidth()))
-                  updateProperty("items", items, component, onPropertyChange)
-                })
-              }}
+      <div bind:this={itemsContainer} class="flex flex-col gap-2">
+        {#each items as tab, index (tab.id ?? index)}
+          <!-- Строка в одну линию: ручка, какая это вкладка, иконка, «Отключить», удаление -->
+          <div
+            id="item-{index}"
+            class="grid grid-cols-[auto_minmax(0,1fr)_auto_auto_auto] items-center gap-3 rounded-lg border border-(--hairline-color) bg-(--container-color)/60 px-2 py-1.5"
+          >
+            <UI.Dragging
+              wrapperClass="shrink-0"
+              container={itemsContainer}
+              array={items}
+              elementIndex={index}
+              onUpdate={(updated) => edit.set("items", updated)}
             />
-          {/if}
-        {/snippet}
-
-        <div bind:this={itemsContainer} class="flex flex-col gap-2">
-          {#each component.properties.items || [] as tab, index}
-            <!-- Строка в одну линию: ручка, какая это вкладка, иконка, «Отключить», удаление -->
-            <div
-              id="item-{index}"
-              class="grid grid-cols-[auto_minmax(0,1fr)_auto_auto_auto] items-center gap-3 rounded-lg border border-(--hairline-color) bg-(--container-color)/60 px-2 py-1.5"
-            >
-              <UI.Dragging
-                wrapperClass="shrink-0"
-                container={itemsContainer}
-                array={component.properties.items ?? []}
-                elementIndex={index}
-                onUpdate={(updatedArray) => {
-                  updateProperty("items", updatedArray, component, onPropertyChange)
-                }}
-              />
-              <!-- Номер и название на текущем языке (название правится в «Тексты и переводы») -->
-              <div class="flex min-w-0 items-baseline gap-2 text-[13px]">
-                <span class="shrink-0 font-semibold">{$T("constructor.props.tabs.item", { n: index + 1 })}</span>
-                <span class="truncate text-(--muted-color)">{localizeText(tab.name, $Language) || $T("constructor.props.tabs.untitled")}</span>
-              </div>
-              <CommonSnippets
-                snippet="IconsLib"
-                initialValue={{
-                  name: $T("constructor.props.table.type.icon"),
-                  icon: tab.icon,
-                  updateProperty: (icon: string) => {
-                    const items = [...(component.properties?.items || [])]
-                    items[index]["icon"] = icon as string
-                    updateProperty("items", items, component, onPropertyChange)
-                  },
-                  icons: { array: ICONS },
-                  compact: true,
-                }}
-                {component}
-                {onPropertyChange}
-              />
-              <UI.Switch
-                wrapperClass="w-auto"
-                label={{ captionRight: $T("constructor.props.disabled") }}
-                value={tab?.disabled ? 1 : 0}
-                options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-                onChange={(value) => {
-                  const items = [...(component.properties?.items || [])]
-                  items[index]["disabled"] = value === 1
-                  updateProperty("items", items, component, onPropertyChange)
-                }}
-              />
-              {#if (component.properties.items?.length ?? 0) > 1}
-                <UI.Button
-                  wrapperClass="w-8 shrink-0"
-                  content={{ icon: ButtonDelete }}
-                  onClick={() => {
-                    const items = [...(component.properties?.items || [])]
-                    items.splice(index, 1)
-                    items.forEach((_item: any, index: number) => {
-                      items[index]["class"] = setTabWidthClass(items[index].class, Boolean(initialWidth()))
-                    })
-                    updateProperty("items", items, component, onPropertyChange)
-                  }}
-                />
-              {/if}
+            <!-- Номер и название на текущем языке (название правится в «Тексты и переводы») -->
+            <div class="flex min-w-0 items-baseline gap-2 text-[13px]">
+              <span class="shrink-0 font-semibold">{$T("constructor.props.tabs.item", { n: index + 1 })}</span>
+              <span class="truncate text-(--muted-color)">{localizeText(tab.name, $Language) || $T("constructor.props.tabs.untitled")}</span>
             </div>
-          {/each}
-          <div id="item-{component.properties.items?.length ?? 0}" class="min-h-4"></div>
-        </div>
-      </PropsGroup>
-    {/snippet}
-  </PropsListModal>
-{/snippet}
-
-{#snippet TabsSize()}
-  <div class="flex w-full gap-4">
-    <UI.Input
-      label={{ name: $T("constructor.props.size.height") }}
-      value={component.properties.size?.height}
-      onUpdate={(value) => updateProperty("size.height", value as number, component, onPropertyChange)}
-      number={{ minNum: 1, maxNum: 1000, step: 1 }}
-      type="number"
-    />
-    <UI.Input
-      label={{ name: $T("constructor.props.size.width") }}
-      value={component.properties.size?.width}
-      onUpdate={(value) => updateProperty("size.width", value as number, component, onPropertyChange)}
-      number={{ minNum: 1, maxNum: 1000, step: 1 }}
-      type="number"
-    />
-  </div>
-{/snippet}
-
-{#if forConstructor}
-  <div class="flex flex-col gap-2">
-    <PropsGroup label={$T("constructor.props.group.general")}>
-      <CommonSnippets snippet="Access" {component} {onPropertyChange} />
-      <TextsEditor {component} {onPropertyChange} />
-      <CommonSnippets snippet="Colors" initialValue={{ color: initialColor, uselessColors: ["bg-max"] }} {component} {onPropertyChange} />
+            <CommonSnippets
+              snippet="IconsLib"
+              initialValue={{
+                name: $T("constructor.props.table.type.icon"),
+                icon: tab.icon,
+                onUpdate: (icon: string) => edit.updateItem("items", index, { icon }),
+                icons: { array: ICONS },
+                compact: true,
+              }}
+              {component}
+              {onPropertyChange}
+            />
+            <UI.Switch
+              wrapperClass="w-auto"
+              label={{ captionRight: $T("constructor.props.disabled") }}
+              value={tab.disabled ? 1 : 0}
+              onUpdate={(value) => edit.updateItem("items", index, { disabled: value === 1 })}
+            />
+            {#if items.length > 1}
+              <UI.Button wrapperClass="w-8 shrink-0" content={{ icon: ButtonDelete }} onClick={() => edit.removeItem("items", index)} />
+            {/if}
+          </div>
+        {/each}
+        <div id="item-{items.length}" class="min-h-4"></div>
+      </div>
     </PropsGroup>
-    <PropsGroup label={$T("constructor.props.group.appearance")}>
-      {@render TabsIconPosition()}
-      {@render TabsWidthMode()}
-    </PropsGroup>
-  </div>
-  {@render TabsSettings()}
-{:else}
-  <div class="flex flex-col gap-2">
-    <PropsGroup label={$T("constructor.props.group.general")}>
-      <CommonSnippets snippet="Identificator" {component} {onPropertyChange} />
-      <CommonSnippets snippet="WrapperClass" {component} {onPropertyChange} />
-      {@render TabsSize()}
-    </PropsGroup>
-    <PropsGroup label={$T("constructor.props.group.appearance")}>
-      <CommonSnippets snippet="Access" {component} {onPropertyChange} />
-      <TextsEditor {component} {onPropertyChange} />
-      <CommonSnippets snippet="Colors" initialValue={{ color: initialColor, uselessColors: ["bg-max"] }} {component} {onPropertyChange} />
-      {@render TabsIconPosition()}
-      {@render TabsWidthMode()}
-    </PropsGroup>
-  </div>
-  {@render TabsSettings()}
-{/if}
+  {/snippet}
+</PropsListModal>

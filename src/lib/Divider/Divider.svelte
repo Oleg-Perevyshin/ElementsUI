@@ -1,20 +1,21 @@
 <!-- $lib/Divider/Divider.svelte - волосяная линия вместо скруглённой полосы 2px. -->
 <script lang="ts">
   import { twMerge } from "tailwind-merge"
-  import { itemAccentStyle } from "../widgetAccent"
+  import { accentStyle } from "../accent"
   import type { IDividerProps } from "../types"
 
-  let { id = crypto.randomUUID(), wrapperClass = "", type = "line", width = 1, color = "", anchor = "center" }: IDividerProps = $props()
+  let { wrapperClass = "", type = "line", width = 1, accent, anchor = "center" }: IDividerProps = $props()
 
   const anchorClass = { top: "justify-start", center: "justify-center", bottom: "justify-end" } as const
 </script>
 
-<div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class={twMerge(`flex h-full w-full flex-col ${anchorClass[anchor]}`, wrapperClass)}>
+<div class={twMerge(`flex h-full w-full flex-col ${anchorClass[anchor]}`, wrapperClass)}>
   {#if type === "line"}
-    <!-- Без bg-* класса берём --hairline-color; явный bg-* - мастер-цвет, как у остальных компонентов -->
+    <!-- Без accent - волосяная линия темы -->
     <div
-      class={twMerge("w-full", color)}
-      style="height: {width}px; {itemAccentStyle(color) ?? ''} background: {color ? 'var(--accent-color)' : 'var(--hairline-color)'};"
+      class="w-full"
+      role="separator"
+      style="height: {width}px; {accentStyle(accent)} background: {accent ? 'var(--accent-color)' : 'var(--hairline-color)'};"
     ></div>
   {/if}
 </div>

@@ -3,9 +3,9 @@
   import { localizeDeep } from "#lib/locales/localize.ts"
   import { type UIComponent } from "#lib"
   import ComponentExample from "../../ComponentExample.svelte"
-  import { updateComponent, type IVideoViewerProps } from "#lib/types.ts"
+  import { type IVideoViewerProps } from "#lib/types.ts"
   import VideoViewer from "#lib/VideoViewer/VideoViewer.svelte"
-  import { formatObjectToString, RenderMarkdown } from "../../common"
+  import { formatObjectToString, RenderMarkdown, applyChange } from "../../common"
   import VideoViewerProps from "#lib/VideoViewer/VideoViewerProps.svelte"
   import { onMount } from "svelte"
   import readmeRaw from "#lib/VideoViewer/README.md?raw"
@@ -27,8 +27,6 @@
     position: { row: 0, col: 0, width: 0, height: 0 },
     parentId: "",
   })
-
-  let forConstructor = $state(false)
 
   let codeText = $derived(`
 <UI.VideoViewer
@@ -65,7 +63,7 @@ ${formatObjectToString(videoViewerComponent.properties as IVideoViewerProps)}
   })
 </script>
 
-<ComponentExample {codeText} {readmeHtml} bind:forConstructor>
+<ComponentExample {codeText} {readmeHtml}>
   {#snippet component()}
     <div class="h-full">
       <VideoViewer {...localizeDeep(videoViewerComponent.properties, $Language) as IVideoViewerProps} />
@@ -74,8 +72,7 @@ ${formatObjectToString(videoViewerComponent.properties as IVideoViewerProps)}
   {#snippet componentProps()}
     <VideoViewerProps
       component={videoViewerComponent as UIComponent & { properties: Partial<IVideoViewerProps> }}
-      onPropertyChange={(updates) => (videoViewerComponent = updateComponent(videoViewerComponent, updates as object))}
-      {forConstructor}
+      onPropertyChange={(updates) => (videoViewerComponent = applyChange(videoViewerComponent, updates))}
     />
   {/snippet}
   {#snippet examples()}

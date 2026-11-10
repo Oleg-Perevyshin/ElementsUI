@@ -5,8 +5,7 @@
   import ComponentExample from "../../ComponentExample.svelte"
   import Input from "#lib/Input/Input.svelte"
   import InputProps from "#lib/Input/InputProps.svelte"
-  import { updateComponent } from "#lib/types.ts"
-  import { formatObjectToString, RenderMarkdown } from "../../common"
+  import { formatObjectToString, RenderMarkdown, applyChange } from "../../common"
   import readmeRaw from "#lib/Input/README.md?raw"
 
   let readmeHtml = $state("")
@@ -21,7 +20,7 @@
     properties: {
       id: crypto.randomUUID(),
       label: { name: "Label", class: "text-center" },
-      componentClass: "bg-max resize-none",
+      componentClass: "resize-none",
       type: "text",
       value: "2",
       range: { start: 0, end: 1 },
@@ -35,8 +34,6 @@
     parentId: "",
   })
 
-  let forConstructor = $state(false)
-
   let codeText = $derived(`
   <UI.Input
   ${formatObjectToString(inputComponent.properties as IInputProps)}
@@ -46,20 +43,19 @@
   let inputNumber: number = $state(7)
 </script>
 
-<ComponentExample {codeText} {readmeHtml} bind:forConstructor>
+<ComponentExample {codeText} {readmeHtml}>
   {#snippet component()}
     <div>
       <Input
         {...localizeDeep(inputComponent.properties, $Language) as IInputProps}
-        onUpdate={(value) => (inputComponent = updateComponent(inputComponent, { properties: { value } }))}
+        onUpdate={(value) => (inputComponent = applyChange(inputComponent, { properties: { value } }))}
       />
     </div>
   {/snippet}
   {#snippet componentProps()}
     <InputProps
       component={inputComponent as UIComponent & { properties: Partial<IInputProps> }}
-      onPropertyChange={(updates) => (inputComponent = updateComponent(inputComponent, updates as object))}
-      {forConstructor}
+      onPropertyChange={(updates) => (inputComponent = applyChange(inputComponent, updates))}
     />
   {/snippet}
   {#snippet examples()}
@@ -77,7 +73,8 @@
         disabled
       />
       <Input
-        wrapperClass="!w-30 bg-green"
+        accent="green"
+        wrapperClass="!w-30"
         value={inputNumber}
         type="number"
         maxlength={3}

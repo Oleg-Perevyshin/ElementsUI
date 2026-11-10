@@ -7,10 +7,9 @@
   import IconGripVerticalLeft from "#lib/libIcons/IconGripVerticalLeft.svelte"
   import IconGripVerticalRight from "#lib/libIcons/IconGripVerticalRight.svelte"
   import Tabs from "#lib/Tabs/Tabs.svelte"
-  import { updateComponent } from "#lib/types.ts"
   import IconGripHorizontalDown from "../../../appIcons/IconGripHorizontalDown.svelte"
   import IconGripHorizontalUp from "../../../appIcons/IconGripHorizontalUp.svelte"
-  import { formatObjectToString, RenderMarkdown } from "../../common"
+  import { formatObjectToString, RenderMarkdown, applyChange } from "../../common"
   import readmeRaw from "#lib/Tabs/README.md?raw"
 
   let readmeHtml = $state("")
@@ -27,7 +26,7 @@
     access: "full",
     properties: {
       id: crypto.randomUUID(),
-      wrapperClass: "bg-blue",
+      accent: "blue",
       size: {
         height: 1,
         width: 1,
@@ -44,8 +43,6 @@
     parentId: "",
   })
 
-  let forConstructor = $state(false)
-
   let codeText = $derived(`
 <UI.Tabs
 ${formatObjectToString(tabsComponent.properties as ITabsProps)}
@@ -53,7 +50,7 @@ ${formatObjectToString(tabsComponent.properties as ITabsProps)}
 />`)
 </script>
 
-<ComponentExample {codeText} {readmeHtml} bind:forConstructor>
+<ComponentExample {codeText} {readmeHtml}>
   {#snippet component()}
     <!-- activeTab - только через привязку: из развёрнутых свойств он перекрыл бы её -->
     {@const { activeTab: _activeTab, ...tabsProps } = localizeDeep(tabsComponent.properties, $Language) as ITabsProps}
@@ -62,7 +59,7 @@ ${formatObjectToString(tabsComponent.properties as ITabsProps)}
         {...tabsProps}
         bind:activeTab={
           () => (tabsComponent.properties as ITabsProps).activeTab ?? 0,
-          (activeTab) => (tabsComponent = updateComponent(tabsComponent, { properties: { activeTab } }))
+          (activeTab) => (tabsComponent = applyChange(tabsComponent, { properties: { activeTab } }))
         }
         children={Tab}
       />
@@ -71,8 +68,7 @@ ${formatObjectToString(tabsComponent.properties as ITabsProps)}
   {#snippet componentProps()}
     <TabsProps
       component={tabsComponent as UIComponent & { properties: Partial<ITabsProps> }}
-      onPropertyChange={(updates) => (tabsComponent = updateComponent(tabsComponent, updates as object))}
-      {forConstructor}
+      onPropertyChange={(updates) => (tabsComponent = applyChange(tabsComponent, updates))}
     />
   {/snippet}
   {#snippet examples()}
@@ -94,7 +90,7 @@ ${formatObjectToString(tabsComponent.properties as ITabsProps)}
           { name: "Tab1", icon: IconGripHorizontalUp, class: "flex-col" },
           { name: "Tab2", icon: IconGripVerticalRight, class: "flex-row-reverse" },
           { name: "Tab3", icon: IconGripHorizontalDown, class: "flex-col-reverse" },
-          { name: "Tab4", icon: IconGripVerticalLeft, class: "" },
+          { name: "Tab4", icon: IconGripVerticalLeft },
         ]}
         children={Tab}
         size={{ height: 1, width: 1 }}

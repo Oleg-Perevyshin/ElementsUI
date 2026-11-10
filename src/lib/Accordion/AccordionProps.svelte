@@ -1,151 +1,72 @@
+<!-- $lib/Accordion/AccordionProps.svelte - панель свойств конструктора для Accordion -->
 <script lang="ts">
   import { T } from "../locales/i18n"
-  import { findOptionByClass, updateProperty, type IAccordionProps, type IUIComponentHandler, type UIComponent } from "../types"
+  import type { IAccordionProps, UIComponent } from "../types"
+  import { createPropsEditor, type PropertyChange } from "../propsEditor"
   import * as UI from ".."
-  import { optionsStore } from "../options"
   import { ICONS } from "../icons"
-  import Button from "../Button/Button.svelte"
   import CrossIcon from "../libIcons/CrossIcon.svelte"
   import CommonSnippets from "../CommonSnippets.svelte"
   import PropsGroup from "../PropsGroup.svelte"
-  import WidgetAccentPicker from "../WidgetAccentPicker.svelte"
 
   const {
     component,
     onPropertyChange,
-    forConstructor = true,
   }: {
     component: UIComponent & { properties: Partial<IAccordionProps> }
-    onPropertyChange: (updates: Partial<{ properties?: string | object; name?: string; access?: string; eventHandler?: IUIComponentHandler }>) => void
-    forConstructor?: boolean
+    onPropertyChange: (change: PropertyChange<IAccordionProps>) => void
   } = $props()
 
-  const initialAlign = $derived(findOptionByClass($optionsStore.JUSTIFY_ALIGN_OPTIONS, component.properties.label?.class, "justify-"))
+  const edit = $derived(createPropsEditor(component, onPropertyChange))
 
-  const handleImageUpload = (event: Event) => {
-    const input = event.target as HTMLInputElement
-    if (!input.files || input.files.length === 0) return
-
-    const file = input.files[0]
+  /* Фон - картинка в data URL прямо в свойствах */
+  const setImage = (file: File | null) => {
+    if (!file) return
     const reader = new FileReader()
-    reader.onload = (e) => {
-      const base64String = e.target?.result as string
-      updateProperty("image", base64String, component, onPropertyChange)
-    }
+    reader.onload = () => edit.set("image", String(reader.result))
     reader.readAsDataURL(file)
   }
-
-  let currentImage = $derived(component.properties.image ?? "")
 </script>
 
-{#snippet AccordionBackgroundImage()}
-  <div class="flex items-center">
-    <UI.FileAttach
-      type="image"
-      label={{ name: $T("constructor.props.image") }}
-      accept="image/png, image/jpeg, image/webp"
-      bind:currentImage
-      onChange={handleImageUpload}
+<div class="flex flex-col gap-2">
+  <PropsGroup label={$T("constructor.props.group.general")}>
+    <CommonSnippets snippet="Access" {component} {onPropertyChange} />
+  </PropsGroup>
+  <PropsGroup label={$T("constructor.props.group.content")}>
+    <CommonSnippets snippet="Label" {component} {onPropertyChange} />
+    <CommonSnippets snippet="LabelAlign" {component} {onPropertyChange} />
+    <CommonSnippets
+      snippet="IconsLib"
+      initialValue={{
+        name: $T("constructor.props.labelicon"),
+        icon: component.properties.label?.icon,
+        onUpdate: (icon: string) => edit.patch("label", { icon }),
+        icons: { array: ICONS },
+      }}
+      {component}
+      {onPropertyChange}
     />
-    {#if currentImage}
-      <Button
-        wrapperClass="w-8 mt-6"
-        componentClass="p-0.5 bg-red"
-        content={{ icon: CrossIcon }}
-        onClick={() => {
-          updateProperty("image", "", component, onPropertyChange)
-        }}
+  </PropsGroup>
+  <PropsGroup label={$T("constructor.props.group.appearance")} contentClass="items-center">
+    <CommonSnippets snippet="Accent" {component} {onPropertyChange} />
+    <div class="flex items-center">
+      <UI.FileAttach
+        type="image"
+        label={{ name: $T("constructor.props.image") }}
+        accept="image/png, image/jpeg, image/webp"
+        currentImage={component.properties.image ?? ""}
+        onUpdate={setImage}
       />
-    {/if}
-  </div>
-{/snippet}
-
-{#snippet AccordionSize()}
-  <div class="flex w-full gap-4">
-    <UI.Input
-      label={{ name: $T("constructor.props.size.height") }}
-      value={component.properties.size?.height}
-      onUpdate={(value) => updateProperty("size.height", value as number, component, onPropertyChange)}
-      number={{ minNum: 1, maxNum: 1000, step: 1 }}
-      type="number"
-    />
-    <UI.Input
-      label={{ name: $T("constructor.props.size.width") }}
-      value={component.properties.size?.width}
-      onUpdate={(value) => updateProperty("size.width", value as number, component, onPropertyChange)}
-      number={{ minNum: 1, maxNum: 1000, step: 1 }}
-      type="number"
-    />
-  </div>
-{/snippet}
-
-{#snippet AccordionIsOpen()}
-  <UI.Switch
-    label={{ name: $T("constructor.props.open") }}
-    value={component.properties.isOpen ? 1 : 0}
-    options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-    onChange={(value) => updateProperty("isOpen", value === 1, component, onPropertyChange)}
-  />
-{/snippet}
-
-{#if forConstructor}
-  <div class="flex flex-col gap-2">
-    <PropsGroup label={$T("constructor.props.group.general")}>
-      <CommonSnippets snippet="Access" {component} {onPropertyChange} />
-    </PropsGroup>
-    <PropsGroup label={$T("constructor.props.group.content")}>
-      <CommonSnippets snippet="Label" {component} {onPropertyChange} />
-      <CommonSnippets snippet="LabelAlign" initialValue={initialAlign} {component} {onPropertyChange} />
-      <CommonSnippets
-        snippet="IconsLib"
-        initialValue={{
-          name: $T("constructor.props.labelicon"),
-          icon: component.properties.label?.icon,
-          updateProperty: (icon: string) => updateProperty("label.icon", icon as string, component, onPropertyChange),
-          icons: { array: ICONS },
-        }}
-        {component}
-        {onPropertyChange}
-      />
-    </PropsGroup>
-    <PropsGroup label={$T("constructor.props.group.appearance")} contentClass="items-center">
-      <WidgetAccentPicker
-        value={component.properties.componentClass ?? ""}
-        onUpdate={(value) => updateProperty("componentClass", value, component, onPropertyChange)}
-      />
-      {@render AccordionBackgroundImage()}
-    </PropsGroup>
-  </div>
-{:else}
-  <div class="flex flex-col gap-2">
-    <PropsGroup label={$T("constructor.props.group.general")}>
-      <CommonSnippets snippet="Identificator" {component} {onPropertyChange} />
-      <CommonSnippets snippet="Access" {component} {onPropertyChange} />
-      <CommonSnippets snippet="WrapperClass" {component} {onPropertyChange} />
-      {@render AccordionSize()}
-    </PropsGroup>
-    <PropsGroup label={$T("constructor.props.group.content")}>
-      <CommonSnippets snippet="Label" {component} {onPropertyChange} />
-      <CommonSnippets snippet="LabelClass" initialValue={initialAlign} {component} {onPropertyChange} />
-      <CommonSnippets
-        snippet="IconsLib"
-        initialValue={{
-          name: $T("constructor.props.labelicon"),
-          icons: { array: ICONS },
-          icon: component.properties.label?.icon,
-          updateProperty: (icon: string) => updateProperty("label.icon", icon as string, component, onPropertyChange),
-        }}
-        {component}
-        {onPropertyChange}
-      />
-      {@render AccordionIsOpen()}
-    </PropsGroup>
-    <PropsGroup label={$T("constructor.props.group.appearance")} contentClass="items-center">
-      <WidgetAccentPicker
-        value={component.properties.componentClass ?? ""}
-        onUpdate={(value) => updateProperty("componentClass", value, component, onPropertyChange)}
-      />
-      {@render AccordionBackgroundImage()}
-    </PropsGroup>
-  </div>
-{/if}
+      {#if component.properties.image}
+        <UI.Button
+          wrapperClass="w-8 mt-6"
+          variant="primary"
+          accent="red"
+          componentClass="p-0.5"
+          content={{ icon: CrossIcon }}
+          onClick={() => edit.set("image", "")}
+        />
+      {/if}
+    </div>
+  </PropsGroup>
+</div>

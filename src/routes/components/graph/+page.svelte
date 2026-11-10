@@ -5,8 +5,7 @@
   import ComponentExample from "../../ComponentExample.svelte"
   import Graph from "#lib/Graph/Graph.svelte"
   import GraphProps from "#lib/Graph/GraphProps.svelte"
-  import { updateComponent } from "#lib/types.ts"
-  import { formatObjectToString, RenderMarkdown } from "../../common"
+  import { formatObjectToString, RenderMarkdown, applyChange } from "../../common"
   import readmeRaw from "#lib/Graph/README.md?raw"
 
   let readmeHtml = $state("")
@@ -49,23 +48,20 @@
     parentId: "",
   })
 
-  let forConstructor = $state(false)
-
   let codeText = $derived(`
 <UI.Graph
 ${formatObjectToString(graphComponent.properties as IGraphProps)}
 />`)
 </script>
 
-<ComponentExample {codeText} {readmeHtml} bind:forConstructor>
+<ComponentExample {codeText} {readmeHtml}>
   {#snippet component()}
     <Graph {...localizeDeep(graphComponent.properties, $Language) as IGraphProps} />
   {/snippet}
   {#snippet componentProps()}
     <GraphProps
       component={graphComponent as UIComponent & { properties: Partial<IGraphProps> }}
-      onPropertyChange={(updates) => (graphComponent = updateComponent(graphComponent, updates as object))}
-      {forConstructor}
+      onPropertyChange={(updates) => (graphComponent = applyChange(graphComponent, updates))}
     />
   {/snippet}
   {#snippet examples()}

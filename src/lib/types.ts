@@ -1,48 +1,13 @@
 import type { Snippet } from "svelte"
+import type { AccentColor } from "./accent"
 import type { IMissionPlan } from "./WidgetMap/mission/plan"
 import type { IRoutePlan } from "./WidgetMap/mission/route"
 
-export const updateProperty = (
-  path: string,
-  value: string | number | boolean | object | string[],
-  component: UIComponent & { properties: Partial<UIComponent["properties"]> },
-  onPropertyChange: (updates: Partial<{ properties?: string | object; name?: string; access?: string; eventHandler?: IUIComponentHandler }>) => void,
-) => {
-  const newProperties = JSON.parse(JSON.stringify(component.properties))
-  const parts = path.split(".")
-  let obj = newProperties
-  for (let i = 0; i < parts.length - 1; i++) {
-    const part = parts[i]
-    if (!obj[part]) obj[part] = {}
-    obj = obj[part]
-  }
-  obj[parts[parts.length - 1]] = value
-  onPropertyChange({ properties: newProperties })
-}
+export type { AccentColor } from "./accent"
+export type { PropertyChange } from "./propsEditor"
 
-/* Опция панели свойств, чьё значение содержит класс с префиксом из строки классов компонента (text-, justify-, py-...); класса нет - undefined */
-export const findOptionByClass = <O extends { value?: unknown }>(options: O[], classes: string | undefined, prefix: string): O | undefined => {
-  const cls = classes?.split(" ").find((c) => c.startsWith(prefix))
-  return cls ? options.find((option) => String(option.value).includes(cls)) : undefined
-}
-
-export const updateComponent = (
-  component: UIComponent,
-  updates: Partial<{
-    name: string
-    access: "full" | "viewOnly" | "hidden"
-    properties: Partial<UIComponent["properties"]>
-    eventHandler: IUIComponentHandler
-  }>,
-) => {
-  return {
-    ...component,
-    access: updates.access ?? component.access,
-    name: updates.name ?? component.name,
-    properties: updates.properties ? { ...component.properties, ...updates.properties } : component.properties,
-    eventHandler: updates.eventHandler ? { ...component.eventHandler, ...updates.eventHandler } : component.eventHandler,
-  }
-}
+/* Иконка: SVG-разметка или компонент */
+export type IconSource = ConstructorOfATypedSvelteComponent | string
 
 /* Интерфейс полного компонента */
 export interface UIComponent {
@@ -135,8 +100,8 @@ export interface IAccordionProps {
   id?: string
   isOpen?: boolean
   wrapperClass?: string
-  /* Мастер-цвет "bg-red" и т.п. из COLOR_OPTIONS (см. widgetAccent.ts): иконка и текст заголовка - цвет, фон заголовка - его мягкий оттенок; "" - акцент темы */
-  componentClass?: string
+  /* Цвет роли: иконка и текст заголовка - его цвет, фон заголовка - мягкий оттенок; без него - акцент темы */
+  accent?: AccentColor
   size?: {
     height?: number
     width?: number
@@ -144,7 +109,7 @@ export interface IAccordionProps {
   label?: {
     name?: string
     class?: string
-    icon?: ConstructorOfATypedSvelteComponent | string | null
+    icon?: IconSource | null
   }
   /* Стрелка раскрытия справа в заголовке; без неё блок всё так же сворачивается нажатием на заголовок */
   chevron?: boolean
@@ -160,11 +125,14 @@ export interface IButtonProps {
   id?: string
   wrapperClass?: string
   componentClass?: string
+  /* primary - заливка цветом accent, secondary - поверхность с контуром, plain - текст цветом accent (по умолчанию) */
+  variant?: "primary" | "secondary" | "plain"
+  accent?: AccentColor
   disabled?: boolean
   content?: {
     name?: string
     info?: { text: string; side: "top" | "bottom" | "left" | "right" }
-    icon?: ConstructorOfATypedSvelteComponent | string | null
+    icon?: IconSource | null
   }
   keyBind?: {
     showHint?: boolean
@@ -194,7 +162,8 @@ export interface IDividerProps {
   wrapperClass?: string
   type?: "line" | "empty"
   width?: number
-  color?: string
+  /* Без цвета - волосяная линия темы */
+  accent?: AccentColor
   anchor?: "top" | "center" | "bottom"
 }
 
@@ -209,11 +178,12 @@ export interface IFileAttachProps {
   accept?: string
   /* Только для type "button": подсказка при наведении и своя иконка (по умолчанию - документ со стрелкой вверх) */
   info?: { text: string; side: "top" | "bottom" | "left" | "right" }
-  icon?: ConstructorOfATypedSvelteComponent | string | null
+  icon?: IconSource | null
   imageSize?: { height?: string; width?: string; fitMode?: "cover" | "contain"; form?: "square" | "circle" }
   disabled?: boolean
   currentImage?: string | null
-  onChange?: (event: Event, file: File | null) => void
+  /* Выбранный файл; null - выбор отменён */
+  onUpdate?: (file: File | null, event: Event) => void
 }
 
 /* ********************************************************** */
@@ -258,6 +228,7 @@ export interface IPeriodChartLevel {
 export interface IPeriodChartProps {
   id?: string
   wrapperClass?: string
+  accent?: AccentColor
   label?: { name?: string; class?: string }
   levels?: IPeriodChartLevel[] /* Порядок = порядок вкладок переключателя, всегда открывается на первом (индекс 0) */
   unit?: string /* Единицы для тултипа/подписи, напр. "Вт·ч" */
@@ -273,6 +244,8 @@ export interface IInputProps {
   wrapperClass?: string
   label?: { name?: string; class?: string }
   componentClass?: string
+  /* Цвет роли: рамка и лёгкий фон поля */
+  accent?: AccentColor
   disabled?: boolean
   readonly?: boolean
   value?: string | number
@@ -280,7 +253,6 @@ export interface IInputProps {
   maxlength?: number
   textareaRows?: number
   placeholder?: string
-  isValid?: boolean
   number?: { minNum?: number; maxNum?: number; step?: number }
   help?: {
     info?: string
@@ -306,7 +278,10 @@ export interface IInputProps {
       | "tel"
       | null
   }
+  /* Принятое значение: Enter, уход из поля, кнопки счётчика; неверный ввод не уходит */
   onUpdate?: (value: string | number) => void
+  /* Текст при каждом вводе */
+  onInput?: (value: string) => void
 }
 
 /* ********************************************************** */
@@ -314,11 +289,13 @@ export interface IInputProps {
 export interface IJoystickProps {
   id?: string
   wrapperClass?: string
+  /* По умолчанию blue */
+  accent?: AccentColor
   label?: { name?: string; class?: string }
   value?: number[]
   readonly?: boolean
   axes?: { name: string; minNum?: number; maxNum?: number }[]
-  buttonIcon?: ConstructorOfATypedSvelteComponent | string
+  buttonIcon?: IconSource
   onUpdate?: (value: number[]) => void
 }
 
@@ -326,7 +303,9 @@ export interface IJoystickProps {
 /* Интерфейс индикатора прогресса */
 export interface IProgressBarProps {
   id?: string
-  items?: { name?: string; class?: string }[]
+  accent?: AccentColor
+  /* accent полосы важнее общего */
+  items?: { name?: string; accent?: AccentColor }[]
   value?: IReceivingDataObject[]
   number?: {
     minNum?: number
@@ -339,30 +318,41 @@ export interface IProgressBarProps {
 
 /* ********************************************************** */
 /* Интерфейс элемента выбора и его опций */
-export interface ISelectProps<T = unknown> {
+/* Значение Select: при multiSelect - массив значений вариантов */
+export type SelectValue<T, M extends boolean = false> = M extends true ? T[] : T
+
+export interface ISelectProps<T = unknown, M extends boolean = false> {
   id?: string
   wrapperClass?: string
   componentClass?: string
   disabled?: boolean
   label?: { name?: string; class?: string }
+  /* input - поле с подсказками: значение - выбранный вариант или введённый текст (число, если варианты числовые) */
   type?: "select" | "buttons" | "input"
-  multiSelect?: boolean
+  /* Только для type="buttons" */
+  multiSelect?: M
   /* Для type="buttons": группа по ширине содержимого - все кнопки одинаковой ширины по самой длинной подписи, текст без переноса и обрезки */
   fitContent?: boolean
   listHeight?: string
-  value?: IOption<T> | IOption<T>[] | null
+  /* Значение варианта (option.value), не сам вариант */
+  value?: SelectValue<T, M> | null
   options?: IOption<T>[]
   bitMode?: boolean
   range?: { start: number; end: number }
-  onUpdate?: (value: IOption<T> | IOption<T>[]) => void
+  /* Выбранное значение: выбор варианта, для type="input" - ещё Enter и уход из поля */
+  onUpdate?: (value: SelectValue<T, M>) => void
+  /* Только type="input": текст при каждом вводе */
+  onInput?: (text: string) => void
 }
 
 export interface IOption<T = unknown> {
-  id: string
-  value?: T
+  /* Ключ варианта; без него - значение */
+  id?: string
+  value: T
   name?: string
-  class?: string
   disabled?: boolean
+  /* Цвет варианта: в type="buttons" вариант залит им всегда, у Switch - цвет бита */
+  accent?: AccentColor
   /* Иконка варианта: SVG-разметка или короткая метка ("S", "XL"). В type="buttons" показывается вместо name, name - подсказка и aria-label */
   icon?: string
 }
@@ -372,12 +362,16 @@ export interface IOption<T = unknown> {
 export interface ISliderProps {
   id?: string
   wrapperClass?: string
+  accent?: AccentColor
   label?: { name?: string; class?: string }
   value?: number | [number, number]
   type?: "single" | "range"
   number?: { minNum: number; maxNum: number; step: number }
   disabled?: boolean
+  /* Принятое значение: бегунок отпущен, кнопки +/- */
   onUpdate?: (value: number | [number, number]) => void
+  /* Значение во время перетаскивания */
+  onInput?: (value: number | [number, number]) => void
 }
 
 /* ********************************************************** */
@@ -394,11 +388,13 @@ export interface ISwitchProps {
     captionRight?: string
   }
   hiddenInfo?: string
+  accent?: AccentColor
+  /* Только bitMode: биты (value - номер бита, name - подпись, accent - цвет) */
   options?: IOption<number>[]
   bitMode?: boolean
   type?: "horizontal" | "vertical" | "checkbox"
   value?: number
-  onChange?: (value: number) => void
+  onUpdate?: (value: number) => void
 }
 
 /* ********************************************************** */
@@ -482,6 +478,7 @@ export interface ITableProps<T extends object> {
 export interface ITabsProps {
   id?: string
   wrapperClass?: string
+  accent?: AccentColor
   size?: {
     height?: number
     width?: number
@@ -491,10 +488,10 @@ export interface ITabsProps {
   items: {
     id?: string
     name?: string
-    icon?: ConstructorOfATypedSvelteComponent | string
+    icon?: IconSource
     class?: string
     children?: Snippet
-    onClick?: () => {}
+    onClick?: () => void
     disabled?: boolean
   }[]
   children?: Snippet<[any]>
@@ -507,6 +504,8 @@ export interface ITabsProps {
 export interface ITextFieldProps {
   id?: string
   wrapperClass?: string
+  /* Цвет текста; без него - обычный */
+  accent?: AccentColor
   background?: boolean
   underline?: boolean
   content?: {
@@ -530,6 +529,7 @@ export interface IVideoViewerProps {
   /* Последний полученный кадр в режиме remote - прокидывается родителем реактивно */
   frame?: Uint8Array | Blob | null
   status?: "connecting" | "live" | "offline" | "error"
+  accent?: AccentColor
 }
 
 /* ********************************************************** */
@@ -537,18 +537,22 @@ export interface IVideoViewerProps {
 export interface IWidgetProps {
   id?: string
   wrapperClass?: string
+  /* Цвет роли: иконка, переключатель, слайдер, фокус поля */
+  accent?: AccentColor
   label?: { name?: string; class?: string }
   value?: number
   readonly?: boolean
   settings?: {
     label?: string
-    class?: string
     type?: "input" | "switch" | "slider"
     number?: { minNum?: number; maxNum?: number; step?: number; units?: string }
     switch?: { captionLeft?: string; captionRight?: string }
   }
-  icons?: { array: string[]; cycling?: boolean; class?: string }
+  icons?: { array: string[]; cycling?: boolean }
+  /* Принятое значение */
   onUpdate?: (value: number) => void
+  /* Значение слайдера во время перетаскивания */
+  onInput?: (value: number) => void
 }
 
 /* Смарт-виджеты - составные карточки конструктора с ФИКСИРОВАННЫМ набором полей устройства (в отличие от примитивов, где переменную выбирает пользователь через Select). Поля соответствуют реальной прошивочной конвенции (group prefix + предопределённые имена, как в config_service ProdFactory-ESP) - компонент ничего не знает про DeviceStore/WebSocket, только value/onSave: владелец рендера (GUIPreview.svelte) сам читает/пишет нужные ключи единым пакетом. */
@@ -571,7 +575,7 @@ export interface IWidgetWiFiProps {
   /* В отличие от примитивов id - не биндинг одной переменной, а префикс прошивочной группы (обычно "CFG"), с которой работает весь набор полей виджета разом (см. keys ниже) */
   id?: string
   wrapperClass?: string
-  componentClass?: string
+  accent?: AccentColor
   label?: { name?: string }
   value?: IWidgetWiFiConfig
   /* Переопределение имени поля устройства для каждого ключа IWidgetWiFiConfig - по умолчанию совпадает с именем самого ключа (WiFiMode, StaSSID, ...), меняется только если у прошивки другая конвенция именования */
@@ -606,7 +610,7 @@ export interface IWidgetDeviceInfoProps {
   /* Префикс прошивочной группы (обычно "CFG"), с которой работает весь набор полей виджета разом */
   id?: string
   wrapperClass?: string
-  componentClass?: string
+  accent?: AccentColor
   label?: { name?: string }
   value?: IWidgetDeviceInfoConfig
   /* Переопределение имени поля устройства для каждого ключа IWidgetDeviceInfoConfig - по умолчанию совпадает с именем самого ключа (DevSN, DevName, ...) */
@@ -648,7 +652,7 @@ export interface IWidgetFileSystemProps {
   /* Префикс прошивочной группы (обычно "CFG"), в которой живёт объект FS */
   id?: string
   wrapperClass?: string
-  componentClass?: string
+  accent?: AccentColor
   label?: { name?: string }
   value?: IWidgetFileSystemInfo
   /* Переопределение имени поля устройства - по умолчанию FS (итоговый ключ CFG.FS) */
@@ -694,7 +698,7 @@ export interface IWidgetStackInfo {
 export interface IWidgetStackInfoProps {
   id?: string
   wrapperClass?: string
-  componentClass?: string
+  accent?: AccentColor
   label?: { name?: string }
   value?: IWidgetStackInfo
   /* Переопределение имени объекта в ответе - по умолчанию StackInfo */
@@ -725,7 +729,7 @@ export interface IWidgetRGBStripProps {
   /* Префикс прошивочной группы ленты, по умолчанию "LST" */
   id?: string
   wrapperClass?: string
-  componentClass?: string
+  accent?: AccentColor
   label?: { name?: string }
   value?: Partial<IWidgetRGBStripConfig>
   /* Переопределение имён полей устройства, по умолчанию совпадают с ключами IWidgetRGBStripConfig */
@@ -733,7 +737,7 @@ export interface IWidgetRGBStripProps {
   collapsed?: boolean
   persistKey?: string
   /* Цвет, эффект, скорость - отправляются сразу */
-  onChange?: (field: "Color" | "Effect" | "Speed", value: number | number[]) => void
+  onUpdate?: (value: number | number[], field: "Color" | "Effect" | "Speed") => void
   /* Количество, модель, порядок - одним пакетом по «Сохранить» (лента перезапускается) */
   onSave?: (hardware: Pick<IWidgetRGBStripConfig, "Count" | "Model" | "Order">) => void
 }
@@ -802,7 +806,7 @@ export interface IWidgetPFDProps {
   /* Префикс группы полей, по умолчанию "MAV" */
   id?: string
   wrapperClass?: string
-  componentClass?: string
+  accent?: AccentColor
   label?: { name?: string }
   value?: Partial<IWidgetPFDData>
   keys?: Partial<Record<keyof IWidgetPFDData, string>>
@@ -828,7 +832,7 @@ export interface IWidgetMapData {
 export interface IWidgetMapProps {
   id?: string
   wrapperClass?: string
-  componentClass?: string
+  accent?: AccentColor
   label?: { name?: string }
   /* Префиксы групп полей - каждая группа отдельный борт (маркер и траектория), по умолчанию ["MAV"] */
   groups?: string[]
@@ -837,7 +841,7 @@ export interface IWidgetMapProps {
   keys?: Partial<Record<keyof IWidgetMapData, string>>
   /* Высота карты, px */
   height?: number
-  markerIcon?: ConstructorOfATypedSvelteComponent | string
+  markerIcon?: IconSource
   /* Начальные значения переключателей оператора поверх карты */
   trackEnabled?: boolean
   trackLength?: number

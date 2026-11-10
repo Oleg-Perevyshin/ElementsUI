@@ -5,8 +5,7 @@
   import ComponentExample from "../../ComponentExample.svelte"
   import Slider from "#lib/Slider/Slider.svelte"
   import SliderProps from "#lib/Slider/SliderProps.svelte"
-  import { updateComponent } from "#lib/types.ts"
-  import { formatObjectToString, RenderMarkdown } from "../../common"
+  import { formatObjectToString, RenderMarkdown, applyChange } from "../../common"
   import readmeRaw from "#lib/Slider/README.md?raw"
 
   let readmeHtml = $state("")
@@ -20,7 +19,7 @@
     access: "full",
     properties: {
       id: crypto.randomUUID(),
-      wrapperClass: "bg-blue",
+      accent: "blue",
       label: { name: "Label", class: "text-center" },
       value: 3,
       type: "single",
@@ -32,8 +31,6 @@
     parentId: "",
   })
 
-  let forConstructor = $state(false)
-
   let codeText = $derived(`
 <UI.Slider
 ${formatObjectToString(sliderComponent.properties as ISliderProps)} 
@@ -41,32 +38,33 @@ ${formatObjectToString(sliderComponent.properties as ISliderProps)}
 />`)
 </script>
 
-<ComponentExample {codeText} {readmeHtml} bind:forConstructor>
+<ComponentExample {codeText} {readmeHtml}>
   {#snippet component()}
     <Slider
       {...localizeDeep(sliderComponent.properties, $Language) as ISliderProps}
-      onUpdate={(value: number | [number, number]) => (sliderComponent = updateComponent(sliderComponent, { properties: { value } }))}
+      onUpdate={(value: number | [number, number]) => (sliderComponent = applyChange(sliderComponent, { properties: { value } }))}
     />
   {/snippet}
   {#snippet componentProps()}
     <SliderProps
       component={sliderComponent as UIComponent & { properties: Partial<ISliderProps> }}
-      onPropertyChange={(updates) => (sliderComponent = updateComponent(sliderComponent, updates as object))}
-      {forConstructor}
+      onPropertyChange={(updates) => (sliderComponent = applyChange(sliderComponent, updates))}
     />
   {/snippet}
   {#snippet examples()}
     <div class="flex gap-2">
-      <Slider wrapperClass="!w-1/3 bg-red px-2" label={{ name: "Слайдер" }} value={0} number={{ minNum: -50, maxNum: 50, step: 1 }} disabled={false} />
+      <Slider accent="red" wrapperClass="!w-1/3 px-2" label={{ name: "Слайдер" }} value={0} number={{ minNum: -50, maxNum: 50, step: 1 }} disabled={false} />
       <Slider
-        wrapperClass="!w-1/3 bg-blue px-2"
+        accent="blue"
+        wrapperClass="!w-1/3 px-2"
         label={{ name: "Слайдер с диапазоном" }}
         value={[-12, 35]}
         number={{ minNum: -50, maxNum: 50, step: 1 }}
         disabled={false}
       />
       <Slider
-        wrapperClass="!w-1/3 bg-blue px-2"
+        accent="blue"
+        wrapperClass="!w-1/3 px-2"
         label={{ name: "Слайдер с диапазоном (не активный)" }}
         value={[-10, 12]}
         number={{ minNum: -15, maxNum: 15, step: 1 }}
@@ -74,12 +72,26 @@ ${formatObjectToString(sliderComponent.properties as ISliderProps)}
       />
     </div>
     <div class="flex gap-2">
-      <Slider wrapperClass="!w-1/2 bg-green px-2" label={{ name: "Слайдер" }} value={-10} number={{ minNum: -25, maxNum: 25, step: 1 }} disabled={false} />
-      <Slider wrapperClass="!w-1/2 bg-yellow px-2" label={{ name: "Слайдер" }} value={-25} number={{ minNum: -50, maxNum: 50, step: 1 }} disabled={false} />
+      <Slider
+        accent="green"
+        wrapperClass="!w-1/2 px-2"
+        label={{ name: "Слайдер" }}
+        value={-10}
+        number={{ minNum: -25, maxNum: 25, step: 1 }}
+        disabled={false}
+      />
+      <Slider
+        accent="yellow"
+        wrapperClass="!w-1/2 px-2"
+        label={{ name: "Слайдер" }}
+        value={-25}
+        number={{ minNum: -50, maxNum: 50, step: 1 }}
+        disabled={false}
+      />
     </div>
     <div class="flex gap-2">
-      <Slider wrapperClass="!w-1/2 bg-purple px-2" label={{ name: "Слайдер" }} value={0} number={{ minNum: -50, maxNum: 50, step: 1 }} disabled={false} />
-      <Slider wrapperClass="!w-1/2 bg-red px-2" label={{ name: "Слайдер" }} value={25} number={{ minNum: -50, maxNum: 50, step: 1 }} disabled={false} />
+      <Slider accent="purple" wrapperClass="!w-1/2 px-2" label={{ name: "Слайдер" }} value={0} number={{ minNum: -50, maxNum: 50, step: 1 }} disabled={false} />
+      <Slider accent="red" wrapperClass="!w-1/2 px-2" label={{ name: "Слайдер" }} value={25} number={{ minNum: -50, maxNum: 50, step: 1 }} disabled={false} />
     </div>
   {/snippet}
 </ComponentExample>

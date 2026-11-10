@@ -4,8 +4,8 @@
   import { Button, ProgressBar, type IProgressBarProps, type UIComponent } from "#lib"
   import ComponentExample from "../../ComponentExample.svelte"
   import ProgressBarProps from "#lib/ProgressBar/ProgressBarProps.svelte"
-  import { updateComponent, type IReceivingDataObject } from "#lib/types.ts"
-  import { formatObjectToString, RenderMarkdown } from "../../common"
+  import { type IReceivingDataObject } from "#lib/types.ts"
+  import { formatObjectToString, RenderMarkdown, applyChange } from "../../common"
   import readmeRaw from "#lib/ProgressBar/README.md?raw"
 
   let readmeHtml = $state("")
@@ -28,8 +28,6 @@
     parentId: "",
   })
 
-  let forConstructor = $state(false)
-
   let codeText = $derived(`
 <UI.ProgressBar
 ${formatObjectToString(progressBarComponent.properties as IProgressBarProps)} 
@@ -42,24 +40,25 @@ ${formatObjectToString(progressBarComponent.properties as IProgressBarProps)}
   ])
 </script>
 
-<ComponentExample {codeText} {readmeHtml} bind:forConstructor>
+<ComponentExample {codeText} {readmeHtml}>
   {#snippet component()}
     <ProgressBar {...localizeDeep(progressBarComponent.properties, $Language) as IProgressBarProps} />
   {/snippet}
   {#snippet componentProps()}
     <ProgressBarProps
       component={progressBarComponent as UIComponent & { properties: Partial<IProgressBarProps> }}
-      onPropertyChange={(updates) => (progressBarComponent = updateComponent(progressBarComponent, updates as object))}
-      {forConstructor}
+      onPropertyChange={(updates) => (progressBarComponent = applyChange(progressBarComponent, updates))}
     />
   {/snippet}
   {#snippet examples()}
-    <ProgressBar value={progressBarValue} wrapperClass="bg-red" />
+    <ProgressBar value={progressBarValue} accent="red" />
     <div class="flex justify-center">
       <Button
         wrapperClass="m-2 !w-10"
         content={{ name: "-" }}
-        componentClass="h-10 rounded-full bg-purple"
+        variant="primary"
+        accent="purple"
+        componentClass="h-10 rounded-full"
         onClick={() => {
           if (progressBarValue[0] && typeof progressBarValue[0].Value === "number") progressBarValue[0].Value -= 5
         }}
@@ -67,14 +66,16 @@ ${formatObjectToString(progressBarComponent.properties as IProgressBarProps)}
       <Button
         wrapperClass="m-2 !w-10"
         content={{ name: "+" }}
-        componentClass="h-10 rounded-full bg-purple"
+        variant="primary"
+        accent="purple"
+        componentClass="h-10 rounded-full"
         onClick={() => {
           if (progressBarValue[0] && typeof progressBarValue[0].Value === "number") progressBarValue[0].Value += 5
         }}
       />
     </div>
     <div class="flex h-40 justify-center gap-6">
-      <ProgressBar type="vertical" wrapperClass="bg-green" items={[{ name: "CPU" }, { name: "RAM" }, { name: "Flash" }]} value={verticalValue} />
+      <ProgressBar type="vertical" accent="green" items={[{ name: "CPU" }, { name: "RAM" }, { name: "Flash" }]} value={verticalValue} />
     </div>
   {/snippet}
 </ComponentExample>

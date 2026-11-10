@@ -3,7 +3,7 @@
   import { T } from "../../locales/i18n"
   import { Marker, Line } from "../mapWrapper"
   import type { LngLat } from "./coverage"
-  import type { IMapColors } from "../../widgetAccent"
+  import type { IMapColors } from "../../accent"
   import { SIM_RATES, type SimClock } from "./simClock.svelte"
 
   /* icon: arrow - стрелка, quad - квадрокоптер сверху; часы имитации (clock) живут в режиме карты, слой только рисует */

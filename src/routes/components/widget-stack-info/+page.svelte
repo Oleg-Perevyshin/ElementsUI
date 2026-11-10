@@ -3,10 +3,10 @@
   import { localizeDeep } from "#lib/locales/localize.ts"
   import { type UIComponent } from "#lib"
   import ComponentExample from "../../ComponentExample.svelte"
-  import { updateComponent, type IWidgetStackInfo, type IWidgetStackInfoProps } from "#lib/types.ts"
+  import { type IWidgetStackInfo, type IWidgetStackInfoProps } from "#lib/types.ts"
   import WidgetStackInfo from "#lib/WidgetStackInfo/WidgetStackInfo.svelte"
   import WidgetStackInfoProps from "#lib/WidgetStackInfo/WidgetStackInfoProps.svelte"
-  import { formatObjectToString, RenderMarkdown } from "../../common"
+  import { formatObjectToString, RenderMarkdown, applyChange } from "../../common"
   import readmeRaw from "#lib/WidgetStackInfo/README.md?raw"
 
   let readmeHtml = $state("")
@@ -45,14 +45,12 @@
     access: "full",
     properties: {
       label: { name: "" },
-      componentClass: "",
       warnBytes: 512,
     },
     eventHandler: { Header: "GET", Argument: "StackInfo", Variables: [] },
     position: { row: 0, col: 0, width: 0, height: 0 },
     parentId: "",
   })
-  let forConstructor = $state(false)
 
   let codeText = $derived(`
 <UI.WidgetStackInfo
@@ -62,7 +60,7 @@ onRefresh={handleRefresh}
 />`)
 </script>
 
-<ComponentExample {codeText} {readmeHtml} bind:forConstructor>
+<ComponentExample {codeText} {readmeHtml}>
   {#snippet component()}
     <div class="m-auto w-full max-w-3xl">
       <WidgetStackInfo
@@ -75,13 +73,13 @@ onRefresh={handleRefresh}
   {#snippet componentProps()}
     <WidgetStackInfoProps
       component={stackComponent as UIComponent & { properties: Partial<IWidgetStackInfoProps> }}
-      onPropertyChange={(updates) => (stackComponent = updateComponent(stackComponent, updates as object))}
+      onPropertyChange={(updates) => (stackComponent = applyChange(stackComponent, updates))}
     />
   {/snippet}
   {#snippet examples()}
     <div class="flex flex-col gap-6 p-2">
       <WidgetStackInfo
-        componentClass="bg-green"
+        accent="green"
         label={{ name: "STM32: одна куча, без ядра" }}
         value={{
           Heap: [{ Name: "Heap", Total: 65536, Free: 12800, MinFree: 6200 }],
@@ -92,7 +90,7 @@ onRefresh={handleRefresh}
           ],
         }}
       />
-      <WidgetStackInfo componentClass="bg-blue" label={{ name: "Нет данных" }} onRefresh={() => {}} />
+      <WidgetStackInfo accent="blue" label={{ name: "Нет данных" }} onRefresh={() => {}} />
     </div>
   {/snippet}
 </ComponentExample>

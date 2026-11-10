@@ -5,8 +5,7 @@
   import ComponentExample from "../../ComponentExample.svelte"
   import TextField from "#lib/TextField/TextField.svelte"
   import TextFieldProps from "#lib/TextField/TextFieldProps.svelte"
-  import { updateComponent } from "#lib/types.ts"
-  import { formatObjectToString, RenderMarkdown } from "../../common"
+  import { formatObjectToString, RenderMarkdown, applyChange } from "../../common"
   import readmeRaw from "#lib/TextField/README.md?raw"
 
   let readmeHtml = $state("")
@@ -31,15 +30,13 @@
     parentId: "",
   })
 
-  let forConstructor = $state(false)
-
   let codeText = $derived(`
 <UI.TextField
 ${formatObjectToString(textFieldComponent.properties as ITextFieldProps)}
 />`)
 </script>
 
-<ComponentExample {codeText} {readmeHtml} bind:forConstructor>
+<ComponentExample {codeText} {readmeHtml}>
   {#snippet component()}
     <div>
       <TextField {...localizeDeep(textFieldComponent.properties, $Language) as ITextFieldProps} />
@@ -48,17 +45,16 @@ ${formatObjectToString(textFieldComponent.properties as ITextFieldProps)}
   {#snippet componentProps()}
     <TextFieldProps
       component={textFieldComponent as UIComponent & { properties: Partial<ITextFieldProps> }}
-      onPropertyChange={(updates) => (textFieldComponent = updateComponent(textFieldComponent, updates as object))}
-      {forConstructor}
+      onPropertyChange={(updates) => (textFieldComponent = applyChange(textFieldComponent, updates))}
     />
   {/snippet}
   {#snippet examples()}
-    <TextField content={{ name: "Random text", size: "small", class: "" }} wrapperClass="text-gray-400" />
+    <TextField content={{ name: "Random text", size: "small" }} wrapperClass="text-gray-400" />
     <TextField content={{ name: "Random text", size: "base", class: "font-bold" }} wrapperClass="text-red-400" />
-    <TextField content={{ name: "Random text", size: "large", class: "" }} wrapperClass="text-lime-400" />
+    <TextField content={{ name: "Random text", size: "large" }} wrapperClass="text-lime-400" />
     <TextField content={{ name: "Random text", size: "huge", class: "italic" }} wrapperClass="text-sky-400" />
     <TextField content={{ name: "Random text", size: "massive", class: "italic font-bold" }} wrapperClass="text-blue-400" />
     <TextField content={{ name: "Random text", size: "massive", class: "font-bold" }} wrapperClass="text-purple-400" />
-    <TextField content={{ name: "Random text", size: "massive", class: "" }} wrapperClass="text-(--red-text)" background />
+    <TextField content={{ name: "Random text", size: "massive" }} wrapperClass="text-(--red-text)" background />
   {/snippet}
 </ComponentExample>

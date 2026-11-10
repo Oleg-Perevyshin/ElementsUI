@@ -1,118 +1,61 @@
+<!-- $lib/Joystick/JoystickProps.svelte - панель свойств конструктора для Joystick -->
 <script lang="ts">
   import { getContext } from "svelte"
   import { T } from "../locales/i18n"
-  import { type UIComponent, type IJoystickProps, updateProperty, findOptionByClass, type IUIComponentHandler } from "../types"
-  import * as UI from ".."
+  import type { UIComponent, IJoystickProps } from "../types"
+  import { createPropsEditor, type PropertyChange } from "../propsEditor"
   import { ICONS } from "../icons"
-  import { optionsStore, findColorOption } from "../options"
   import CommonSnippets from "../CommonSnippets.svelte"
   import PropsGroup from "../PropsGroup.svelte"
 
   const {
     component,
     onPropertyChange,
-    forConstructor = true,
   }: {
     component: UIComponent & { properties: Partial<IJoystickProps> }
-    onPropertyChange: (updates: Partial<{ properties?: string | object; name?: string; access?: string; eventHandler?: IUIComponentHandler }>) => void
-    forConstructor?: boolean
+    onPropertyChange: (change: PropertyChange<IJoystickProps>) => void
   } = $props()
 
-  const DeviceVariables = getContext<{ id: string; value: string; name: string }[]>("DeviceVariables")
-  let VARIABLE_OPTIONS = $derived(DeviceVariables && Array.isArray(DeviceVariables) ? DeviceVariables : [])
-
-  const initialAlign = $derived(findOptionByClass($optionsStore.TEXT_ALIGN_OPTIONS, component.properties.label?.class, "text-"))
-
-  const initialColor = $derived(findColorOption($optionsStore.COLOR_OPTIONS, component.properties.wrapperClass))
+  const edit = $derived(createPropsEditor(component, onPropertyChange))
+  const VARIABLE_OPTIONS = getContext<{ id: string; value: string; name: string }[] | undefined>("DeviceVariables") ?? []
 </script>
 
-{#snippet JoystickAxesMinMax()}
+<div class="flex flex-col gap-2">
+  <PropsGroup label={$T("constructor.props.group.general")}>
+    <CommonSnippets snippet="Access" {component} {onPropertyChange} />
+    <CommonSnippets snippet="Variable" {VARIABLE_OPTIONS} {component} {onPropertyChange} />
+    <CommonSnippets snippet="EventHandlerArgument" {component} {onPropertyChange} />
+  </PropsGroup>
+  <PropsGroup label={$T("constructor.props.group.content")}>
+    <CommonSnippets snippet="Label" {component} {onPropertyChange} />
+    <CommonSnippets snippet="LabelAlign" {component} {onPropertyChange} />
+  </PropsGroup>
+  <PropsGroup label={$T("constructor.props.group.appearance")}>
+    <CommonSnippets
+      snippet="IconsLib"
+      initialValue={{
+        name: $T("constructor.props.buttonIcon"),
+        icon: component.properties.buttonIcon,
+        onUpdate: (icon: string) => edit.set("buttonIcon", icon),
+        icons: { array: ICONS },
+      }}
+      {component}
+      {onPropertyChange}
+    />
+    <CommonSnippets snippet="Accent" {component} {onPropertyChange} />
+  </PropsGroup>
   <PropsGroup label={$T("constructor.props.group.value")} wrapperClass="mt-3" contentClass="flex-row flex-wrap justify-around gap-2">
-    {#each component.properties.axes as axe, index}
-      {@const axesOptions = [
-        { name: $T("constructor.props.joystick.pitch.axe"), info: "", regExp: /^[\p{L}0-9\-_"':{}]+$/u },
-        { name: $T("constructor.props.joystick.yaw.axe"), info: "", regExp: /^[\p{L}0-9\-_"':{}]+$/u },
-        { name: $T("constructor.props.joystick.roll.axe"), info: $T("constructor.props.joystick.axes.info"), regExp: /^[\p{L}0-9\-_"':{}]*$/u },
-      ]}
-      <div class="flex flex-col gap-1">
-        <CommonSnippets
-          snippet="MinMaxStep"
-          initialValue={{
-            number: { minNum: axe.minNum, maxNum: axe.maxNum },
-            bitMode: index == 2 && axe.name == "",
-            updateProperty: (value: number, property: string) => {
-              updateProperty(
-                "axes",
-                (component.properties.axes ?? []).map((a: any, i: number) => (i === index ? { ...a, [property.split(".")[1]]: value } : a)),
-                component,
-                onPropertyChange,
-              )
-            },
-          }}
-          {component}
-          {onPropertyChange}
-        />
-      </div>
+    {#each component.properties.axes ?? [] as axis, index (index)}
+      <CommonSnippets
+        snippet="MinMaxStep"
+        initialValue={{
+          number: { minNum: axis.minNum, maxNum: axis.maxNum },
+          bitMode: index == 2 && axis.name == "",
+          onUpdate: (number: { minNum?: number; maxNum?: number }) => edit.updateItem("axes", index, { minNum: number.minNum, maxNum: number.maxNum }),
+        }}
+        {component}
+        {onPropertyChange}
+      />
     {/each}
   </PropsGroup>
-{/snippet}
-
-{#if forConstructor}
-  <div>
-    <div class="flex flex-col gap-2">
-      <PropsGroup label={$T("constructor.props.group.general")}>
-        <CommonSnippets snippet="Access" {component} {onPropertyChange} />
-        <CommonSnippets snippet="Variable" {VARIABLE_OPTIONS} {component} {onPropertyChange} />
-        <CommonSnippets snippet="EventHandlerArgument" {component} {onPropertyChange} />
-      </PropsGroup>
-      <PropsGroup label={$T("constructor.props.group.content")}>
-        <CommonSnippets snippet="Label" {component} {onPropertyChange} />
-        <CommonSnippets snippet="LabelAlign" initialValue={initialAlign} {component} {onPropertyChange} />
-      </PropsGroup>
-      <PropsGroup label={$T("constructor.props.group.appearance")}>
-        <CommonSnippets
-          snippet="IconsLib"
-          initialValue={{
-            name: $T("constructor.props.buttonIcon"),
-            icon: component.properties.buttonIcon,
-            updateProperty: (icon: string) => updateProperty("buttonIcon", icon as string, component, onPropertyChange),
-            icons: { array: ICONS },
-          }}
-          {component}
-          {onPropertyChange}
-        />
-        <CommonSnippets snippet="Colors" initialValue={{ color: initialColor }} {component} {onPropertyChange} />
-      </PropsGroup>
-    </div>
-    {@render JoystickAxesMinMax()}
-  </div>
-{:else}
-  <div>
-    <div class="flex flex-col gap-2">
-      <PropsGroup label={$T("constructor.props.group.general")}>
-        <CommonSnippets snippet="Identificator" {component} {onPropertyChange} />
-        <CommonSnippets snippet="Access" {component} {onPropertyChange} />
-      </PropsGroup>
-      <PropsGroup label={$T("constructor.props.group.content")}>
-        <CommonSnippets snippet="Label" {component} {onPropertyChange} />
-        <CommonSnippets snippet="LabelClass" {component} {onPropertyChange} />
-        <CommonSnippets snippet="Readonly" {component} {onPropertyChange} />
-      </PropsGroup>
-      <PropsGroup label={$T("constructor.props.group.appearance")}>
-        <CommonSnippets
-          snippet="IconsLib"
-          initialValue={{
-            name: $T("constructor.props.buttonIcon"),
-            icon: component.properties.buttonIcon,
-            updateProperty: (icon: string) => updateProperty("buttonIcon", icon as string, component, onPropertyChange),
-            icons: { array: ICONS },
-          }}
-          {component}
-          {onPropertyChange}
-        />
-        <CommonSnippets snippet="Colors" initialValue={{ color: initialColor }} {component} {onPropertyChange} />
-      </PropsGroup>
-    </div>
-    {@render JoystickAxesMinMax()}
-  </div>
-{/if}
+</div>

@@ -3,8 +3,8 @@
   import { localizeDeep } from "#lib/locales/localize.ts"
   import { Accordion } from "#lib"
   import AccordionProps from "#lib/Accordion/AccordionProps.svelte"
-  import { updateComponent, type IAccordionProps, type UIComponent } from "#lib/types.ts"
-  import { formatObjectToString, RenderMarkdown } from "../../common"
+  import { type IAccordionProps, type UIComponent } from "#lib/types.ts"
+  import { formatObjectToString, RenderMarkdown, applyChange } from "../../common"
   import ComponentExample from "../../ComponentExample.svelte"
   import { ICONS } from "#lib/icons.ts"
   import readmeRaw from "#lib/Accordion/README.md?raw"
@@ -34,8 +34,6 @@
     parentId: "",
   })
 
-  let forConstructor = $state(false)
-
   let codeText = $derived(`
 <UI.Accordion
 ${formatObjectToString(accordionComponent.properties as IAccordionProps)}
@@ -46,7 +44,7 @@ ${formatObjectToString(accordionComponent.properties as IAccordionProps)}
 </UI.Accordion>`)
 </script>
 
-<ComponentExample {codeText} {readmeHtml} bind:forConstructor>
+<ComponentExample {codeText} {readmeHtml}>
   {#snippet component()}
     <!-- isOpen - только через привязку: из развёрнутых свойств он перекрыл бы её -->
     {@const { isOpen: _isOpen, ...accordionProps } = localizeDeep(accordionComponent.properties, $Language) as IAccordionProps}
@@ -54,7 +52,7 @@ ${formatObjectToString(accordionComponent.properties as IAccordionProps)}
       {...accordionProps}
       bind:isOpen={
         () => (accordionComponent.properties as IAccordionProps).isOpen ?? false,
-        (isOpen) => (accordionComponent = updateComponent(accordionComponent, { properties: { isOpen } }))
+        (isOpen) => (accordionComponent = applyChange(accordionComponent, { properties: { isOpen } }))
       }
     >
       <div class="flex flex-col">
@@ -67,14 +65,13 @@ ${formatObjectToString(accordionComponent.properties as IAccordionProps)}
   {#snippet componentProps()}
     <AccordionProps
       component={accordionComponent as UIComponent & { properties: Partial<IAccordionProps> }}
-      onPropertyChange={(updates) => (accordionComponent = updateComponent(accordionComponent, updates as object))}
-      {forConstructor}
+      onPropertyChange={(updates) => (accordionComponent = applyChange(accordionComponent, updates))}
     />
   {/snippet}
   {#snippet examples()}
-    <Accordion label={{ name: "Accordion 1", class: "" }} isOpen={false} wrapperClass="col-span-3">
+    <Accordion label={{ name: "Accordion 1" }} isOpen={false} wrapperClass="col-span-3">
       <div class="flex">
-        <Accordion label={{ name: "Accordion 1", class: "" }} isOpen={true} wrapperClass="col-span-3">
+        <Accordion label={{ name: "Accordion 1" }} isOpen={true} wrapperClass="col-span-3">
           <h6>Содержимое вложенного Accordion 1</h6>
           <h5>Содержимое вложенного Accordion 1</h5>
           <h4>Содержимое вложенного Accordion 1</h4>
@@ -83,7 +80,7 @@ ${formatObjectToString(accordionComponent.properties as IAccordionProps)}
           <h1>Содержимое вложенного Accordion 1</h1>
         </Accordion>
 
-        <Accordion label={{ name: "Accordion 2", class: "" }} isOpen={false} wrapperClass="col-span-3">
+        <Accordion label={{ name: "Accordion 2" }} isOpen={false} wrapperClass="col-span-3">
           <h1>Содержимое вложенного Accordion 2</h1>
           <h2>Содержимое вложенного Accordion 2</h2>
           <h3>Содержимое вложенного Accordion 2</h3>
@@ -93,7 +90,7 @@ ${formatObjectToString(accordionComponent.properties as IAccordionProps)}
       </div>
     </Accordion>
 
-    <Accordion label={{ name: "Accordion 2", class: "", icon: ICONS[4][1][2] }} isOpen={false} wrapperClass="col-span-3">
+    <Accordion label={{ name: "Accordion 2", icon: ICONS[4][1][2] }} isOpen={false} wrapperClass="col-span-3">
       <h4>Содержимое вложенного Accordion 3</h4>
       <h3>Содержимое вложенного Accordion 3</h3>
       <h2>Содержимое вложенного Accordion 3</h2>
@@ -102,7 +99,7 @@ ${formatObjectToString(accordionComponent.properties as IAccordionProps)}
 
     <!-- Режим с фоновой картинкой (image) - сетка становится полупрозрачной поверх неё -->
     <Accordion
-      label={{ name: "Accordion с фоном (image)", class: "" }}
+      label={{ name: "Accordion с фоном (image)" }}
       isOpen={true}
       wrapperClass="col-span-3"
       size={{ width: 2, height: 1 }}

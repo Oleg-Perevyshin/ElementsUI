@@ -10,12 +10,12 @@
   import RefreshIcon from "./RefreshIcon.svelte"
   import WidgetHeader from "../WidgetHeader.svelte"
   import { hint, hintsSetting } from "../hints"
-  import { widgetAccentStyle } from "../widgetAccent"
+  import { accentStyle } from "../accent"
   import { readPersistedCollapsed, writePersistedCollapsed } from "../widgetCollapse"
 
   let {
     wrapperClass = "",
-    componentClass = "",
+    accent,
     label = {},
     value,
     warnBytes = 512,
@@ -25,7 +25,7 @@
     onRefresh,
   }: IWidgetStackInfoProps = $props()
 
-  let accentStyle = $derived(widgetAccentStyle(componentClass ?? ""))
+  const rootStyle = $derived(accentStyle(accent))
 
   /* Сворачивание тела по клику на шапку - как у остальных смарт-виджетов (см. WidgetWiFi.svelte) */
   /* Выбор пользователя в этом браузере применяется до первой отрисовки, без мигания; значение из GUI запоминается, чтобы его смена отменяла старый выбор */
@@ -134,23 +134,16 @@
 
 <div
   class={twMerge("relative flex w-full flex-col gap-4 rounded-2xl border border-(--hairline-color) bg-(--container-color) p-4", wrapperClass)}
-  style={accentStyle}
+  style={rootStyle}
 >
   <!-- Заголовок -->
   <WidgetHeader icon={MemoryIcon} label={label?.name || $T("widget.stack.title")} bind:collapsed {hints}>
     {#snippet right()}
       <div class="flex flex-wrap items-center justify-end gap-2" use:hint={{ text: $T("widget.stack.hint.poll"), enabled: $hints }}>
-        <UI.Select
-          wrapperClass="w-64"
-          type="buttons"
-          options={periods}
-          value={periods.find((p) => p.value === period) ?? periods[0]}
-          disabled={!onRefresh}
-          onUpdate={(option) => !Array.isArray(option) && (period = option.value ?? 0)}
-        />
+        <UI.Select wrapperClass="w-64" type="buttons" options={periods} value={period} disabled={!onRefresh} onUpdate={(value) => (period = value)} />
         <UI.Button
           wrapperClass="w-auto"
-          componentClass="bg-transparent px-3"
+          componentClass="px-3"
           content={{ icon: RefreshIcon, name: $T("widget.common.refresh") }}
           disabled={!onRefresh}
           onClick={() => onRefresh?.()}

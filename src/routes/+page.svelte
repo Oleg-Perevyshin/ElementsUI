@@ -13,7 +13,7 @@
     { id: "icons", value: "icons", name: $T("library.icons") },
     { id: "regexp", value: "regexp", name: $T("library.regexp") },
   ])
-  let tab = $state("overview")
+  let tab: string = $state("overview")
 
   let readmeHtml = $state("")
   let regexpHtml = $state("")
@@ -24,13 +24,7 @@
 </script>
 
 <div class="flex h-full flex-col gap-3">
-  <Select
-    wrapperClass="w-full max-w-2xl mx-auto shrink-0"
-    type="buttons"
-    options={tabs}
-    value={tabs.find((o) => o.value === tab)}
-    onUpdate={(value) => (tab = (value as IOption<string>).value ?? "overview")}
-  />
+  <Select wrapperClass="w-full max-w-2xl mx-auto shrink-0" type="buttons" options={tabs} value={tab} onUpdate={(value) => (tab = value)} />
   <div class="min-h-0 flex-1 overflow-y-auto">
     {#if tab === "theme"}
       <ThemePreview />

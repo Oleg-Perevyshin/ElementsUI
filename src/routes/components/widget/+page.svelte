@@ -4,10 +4,10 @@
   import { type UIComponent } from "#lib"
   import ComponentExample from "../../ComponentExample.svelte"
   import { ICONS_ARRAY } from "#lib/icons.ts"
-  import { updateComponent, type IWidgetProps } from "#lib/types.ts"
+  import { type IWidgetProps } from "#lib/types.ts"
   import Widget from "#lib/Widget/Widget.svelte"
   import WidgetProps from "#lib/Widget/WidgetProps.svelte"
-  import { formatObjectToString, RenderMarkdown } from "../../common"
+  import { formatObjectToString, RenderMarkdown, applyChange } from "../../common"
   import readmeRaw from "#lib/Widget/README.md?raw"
 
   let readmeHtml = $state("")
@@ -22,10 +22,10 @@
     properties: {
       id: crypto.randomUUID(),
       label: { name: "Пропеллер" },
-      icons: { array: ICONS_ARRAY[2][1], mode: "cycling", class: "text-(color:--font-color)" },
+      accent: "blue",
+      icons: { array: ICONS_ARRAY[2][1], cycling: true },
       settings: {
         label: "Скорость",
-        class: "bg-blue",
         type: "slider",
         number: {
           minNum: 0,
@@ -33,17 +33,12 @@
           step: 1,
           units: "м/с",
         },
-        switch: {
-          // captionLeft: "Off",
-          // captionRight: "On",
-        },
       },
     },
     eventHandler: { Header: "SET", Argument: "ModCfg", Variables: [] },
     position: { row: 0, col: 0, width: 0, height: 0 },
     parentId: "",
   })
-  let forConstructor = $state(false)
 
   let codeText = $derived(`
 <UI.Widget
@@ -51,20 +46,19 @@ ${formatObjectToString(widgetComponent.properties as IWidgetProps)}
 />`)
 </script>
 
-<ComponentExample {codeText} {readmeHtml} bind:forConstructor>
+<ComponentExample {codeText} {readmeHtml}>
   {#snippet component()}
     <div class="m-auto size-70">
       <Widget
         {...localizeDeep(widgetComponent.properties, $Language) as IWidgetProps}
-        onUpdate={(value) => (widgetComponent = updateComponent(widgetComponent, { properties: { value } }))}
+        onUpdate={(value) => (widgetComponent = applyChange(widgetComponent, { properties: { value } }))}
       />
     </div>
   {/snippet}
   {#snippet componentProps()}
     <WidgetProps
       component={widgetComponent as UIComponent & { properties: Partial<IWidgetProps> }}
-      onPropertyChange={(updates) => (widgetComponent = updateComponent(widgetComponent, updates as object))}
-      {forConstructor}
+      onPropertyChange={(updates) => (widgetComponent = applyChange(widgetComponent, updates))}
     />
   {/snippet}
   {#snippet examples()}

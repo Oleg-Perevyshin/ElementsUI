@@ -1,16 +1,15 @@
-<!-- $lib/Accordion/Accordion.svelte - заголовок не увеличивается при раскрытии, радиус 14. Мастер-цвет (componentClass) - как у смарт-виджетов: иконка и текст заголовка его цветом текста, фон заголовка - 22% мастер-цвета поверх фона. -->
+<!-- $lib/Accordion/Accordion.svelte - заголовок не увеличивается при раскрытии, радиус 14. Цвет accent: иконка и текст заголовка его цветом текста, фон заголовка - 22% цвета поверх фона -->
 <script lang="ts">
-  import { sanitizeHtml } from "../html"
   import { slide } from "svelte/transition"
   import type { IAccordionProps } from "../types"
   import { twMerge } from "tailwind-merge"
-  import { widgetAccentStyle } from "../widgetAccent"
+  import { accentStyle } from "../accent"
+  import Icon from "../Icon.svelte"
 
   let {
-    id = crypto.randomUUID(),
     isOpen = $bindable(false),
     wrapperClass = "",
-    componentClass = "",
+    accent,
     size = { width: 1, height: 1 },
     label = { name: "", class: "text-left", icon: null },
     chevron = true,
@@ -19,15 +18,10 @@
     image = "",
   }: IAccordionProps = $props()
 
-  const toggle = () => (isOpen = !isOpen)
+  const uid = $props.id()
 </script>
 
-<div
-  id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
-  class={twMerge(`w-full`, wrapperClass)}
-  style={widgetAccentStyle(componentClass)}
-  transition:slide={{ duration: 200 }}
->
+<div class={twMerge(`w-full`, wrapperClass)} style={accentStyle(accent)} transition:slide={{ duration: 200 }}>
   <div class="overflow-hidden rounded-[14px] border border-(--hairline-color) bg-(--back-color)">
     <!-- Фон заголовка - мастер-цвет 22% поверх фона, чтобы свёрнутый раздел не сливался с панелью; текст - цвет текста мастер-цвета 70% с цветом шрифта; раскрытое содержимое на чистом фоне (--back-color). -->
     <!-- Заголовок: кнопка сворачивания на всю ширину и необязательные кнопки справа (actions) - вне неё, чтобы не сворачивать блок -->
@@ -36,21 +30,15 @@
     >
       <button
         class="flex min-w-0 flex-1 cursor-pointer items-center justify-between gap-3 px-4 py-3 text-left text-[color-mix(in_srgb,var(--accent-text)_70%,var(--font-color))]"
-        onclick={toggle}
+        onclick={() => (isOpen = !isOpen)}
+        aria-expanded={isOpen}
+        aria-controls={`${uid}-content`}
       >
         <div class="flex min-w-0 flex-1 items-center gap-3">
-          {#if label?.icon}
-            <span
-              class="flex h-[18px] w-[18px] shrink-0 items-center justify-center text-[color-mix(in_srgb,var(--accent-text)_70%,var(--font-color))] [&_svg]:h-full [&_svg]:w-full"
-            >
-              {#if typeof label?.icon === "string"}
-                {@html sanitizeHtml(label.icon)}
-              {:else}
-                {@const IconComponent = label?.icon}
-                <IconComponent />
-              {/if}
-            </span>
-          {/if}
+          <Icon
+            icon={label?.icon}
+            class="flex h-[18px] w-[18px] shrink-0 items-center justify-center text-[color-mix(in_srgb,var(--accent-text)_70%,var(--font-color))] [&_svg]:h-full [&_svg]:w-full"
+          />
           <span class={twMerge(`min-w-0 truncate text-[15px] font-semibold`, label.class)}>{label?.name}</span>
         </div>
 
@@ -72,6 +60,7 @@
 
     {#if isOpen}
       <div
+        id={`${uid}-content`}
         class="grid w-full gap-3 border-t border-(--hairline-color) bg-(--back-color) p-4"
         transition:slide={{ duration: 200 }}
         style="grid-template-columns: repeat({size.width || 1}, minmax(0, 1fr));

@@ -1,4 +1,4 @@
-import type { UIComponent } from "#lib"
+import type { PropertyChange, UIComponent } from "#lib"
 import { marked } from "marked"
 import DOMPurify from "dompurify"
 
@@ -121,3 +121,12 @@ export const RenderMarkdown = async (text: string) => {
     return ""
   }
 }
+
+/* Изменение от панели свойств - как его применяет конструктор DevCloud: properties и eventHandler сливаются по ключам верхнего уровня */
+export const applyChange = <C extends UIComponent>(component: C, change: PropertyChange<object>): C => ({
+  ...component,
+  access: change.access ?? component.access,
+  name: change.name ?? component.name,
+  properties: change.properties ? { ...component.properties, ...change.properties } : component.properties,
+  eventHandler: change.eventHandler ? { ...component.eventHandler, ...change.eventHandler } : component.eventHandler,
+})

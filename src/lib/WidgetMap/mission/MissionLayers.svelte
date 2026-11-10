@@ -3,7 +3,7 @@
   import { onDestroy, untrack } from "svelte"
   import { getMapContext } from "../mapWrapper"
   import type { LngLat } from "./coverage"
-  import type { IMapColors } from "../../widgetAccent"
+  import type { IMapColors } from "../../accent"
 
   interface Props {
     zones: any /* GeoJSON FeatureCollection: поле и запретные зоны */

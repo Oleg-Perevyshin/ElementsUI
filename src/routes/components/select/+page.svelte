@@ -4,8 +4,7 @@
   import { type ISelectProps, type UIComponent } from "#lib"
   import ComponentExample from "../../ComponentExample.svelte"
   import * as UI from "#lib"
-  import { updateComponent, type IOption } from "#lib/types.ts"
-  import { formatObjectToString, RenderMarkdown } from "../../common"
+  import { formatObjectToString, RenderMarkdown, applyChange } from "../../common"
   import readmeRaw from "#lib/Select/README.md?raw"
 
   let readmeHtml = $state("")
@@ -17,11 +16,11 @@
   const L = (ru: string, en: string, zh: string) => ({ ru, en, zh }) as unknown as string
 
   const DEMO_OPTIONS = [
-    { id: "auto", value: 0, name: L("Авто", "Auto", "自动"), class: "bg-green" },
-    { id: "manual", value: 1, name: L("Ручной", "Manual", "手动"), class: "bg-blue" },
-    { id: "eco", value: 2, name: L("Эконом", "Eco", "节能"), class: "bg-cyan" },
-    { id: "boost", value: 3, name: L("Форсаж", "Boost", "增强"), class: "bg-orange" },
-    { id: "service", value: 4, name: L("Сервис", "Service", "维护"), class: "bg-red", disabled: true },
+    { id: "auto", value: 0, name: L("Авто", "Auto", "自动"), accent: "green" },
+    { id: "manual", value: 1, name: L("Ручной", "Manual", "手动"), accent: "blue" },
+    { id: "eco", value: 2, name: L("Эконом", "Eco", "节能"), accent: "cyan" },
+    { id: "boost", value: 3, name: L("Форсаж", "Boost", "增强"), accent: "orange" },
+    { id: "service", value: 4, name: L("Сервис", "Service", "维护"), accent: "red", disabled: true },
   ]
 
   let selectComponent: UIComponent = $state({
@@ -30,7 +29,7 @@
     access: "full",
     properties: {
       id: crypto.randomUUID(),
-      wrapperClass: "bg-max h-25",
+      wrapperClass: "h-25",
       disabled: false,
       label: { name: L("Режим работы", "Operating mode", "工作模式"), class: "text-center" },
       type: "select",
@@ -38,14 +37,12 @@
       bitMode: false,
       range: { start: 0, end: 1 },
       options: DEMO_OPTIONS,
-      value: DEMO_OPTIONS[1],
+      value: 1,
     },
     eventHandler: { Header: "SET", Argument: "ModCfg", Variables: [] },
     position: { row: 0, col: 0, width: 0, height: 0 },
     parentId: "",
   })
-
-  let forConstructor = $state(false)
 
   let codeText = $derived(`
 <UI.Select
@@ -70,49 +67,48 @@ ${formatObjectToString(selectComponent.properties as ISelectProps)}
   }
 
   const bitModeOptions = [
-    { id: crypto.randomUUID(), value: 0, name: "0000", class: "bg-max" },
-    { id: crypto.randomUUID(), value: 1, name: "0001", class: "bg-max" },
-    { id: crypto.randomUUID(), value: 2, name: "0010", class: "bg-max" },
-    { id: crypto.randomUUID(), value: 3, name: "0011", class: "bg-max" },
-    { id: crypto.randomUUID(), value: 4, name: "0100", class: "bg-max" },
-    { id: crypto.randomUUID(), value: 5, name: "0101", class: "bg-max" },
-    { id: crypto.randomUUID(), value: 6, name: "0110", class: "bg-max" },
-    { id: crypto.randomUUID(), value: 7, name: "0111", class: "bg-max" },
-    { id: crypto.randomUUID(), value: 8, name: "1000", class: "bg-max" },
-    { id: crypto.randomUUID(), value: 9, name: "1001", class: "bg-max" },
-    { id: crypto.randomUUID(), value: 10, name: "1010", class: "bg-max" },
-    { id: crypto.randomUUID(), value: 11, name: "1011", class: "bg-max" },
-    { id: crypto.randomUUID(), value: 12, name: "1100", class: "bg-max" },
-    { id: crypto.randomUUID(), value: 13, name: "1101", class: "bg-max" },
-    { id: crypto.randomUUID(), value: 14, name: "1110", class: "bg-max" },
-    { id: crypto.randomUUID(), value: 15, name: "1111", class: "bg-max" },
+    { id: crypto.randomUUID(), value: 0, name: "0000" },
+    { id: crypto.randomUUID(), value: 1, name: "0001" },
+    { id: crypto.randomUUID(), value: 2, name: "0010" },
+    { id: crypto.randomUUID(), value: 3, name: "0011" },
+    { id: crypto.randomUUID(), value: 4, name: "0100" },
+    { id: crypto.randomUUID(), value: 5, name: "0101" },
+    { id: crypto.randomUUID(), value: 6, name: "0110" },
+    { id: crypto.randomUUID(), value: 7, name: "0111" },
+    { id: crypto.randomUUID(), value: 8, name: "1000" },
+    { id: crypto.randomUUID(), value: 9, name: "1001" },
+    { id: crypto.randomUUID(), value: 10, name: "1010" },
+    { id: crypto.randomUUID(), value: 11, name: "1011" },
+    { id: crypto.randomUUID(), value: 12, name: "1100" },
+    { id: crypto.randomUUID(), value: 13, name: "1101" },
+    { id: crypto.randomUUID(), value: 14, name: "1110" },
+    { id: crypto.randomUUID(), value: 15, name: "1111" },
   ]
 
-  let selectOption: IOption = $state({ id: "Button", name: "Button", value: "Button" })
+  let selectOption = $state("Button")
   let COMPONENT_OPTIONS = Object.keys(componentMap).map((name) => ({ id: name, name: name, value: name }))
   let fullSwitchValue = $state(10)
 
   /* type="buttons" с явным bg-* у опций - регрессионный пример для конфликта twMerge между заливкой выбранной кнопки и цветом опции (см. Select.svelte) */
-  const statusOptions = [
-    { id: crypto.randomUUID(), value: "online", name: "Online", class: "bg-green" },
-    { id: crypto.randomUUID(), value: "updating", name: "Updating", class: "bg-yellow" },
-    { id: crypto.randomUUID(), value: "offline", name: "Offline", class: "bg-red" },
+  const statusOptions: UI.IOption<string>[] = [
+    { value: "online", name: "Online", accent: "green" },
+    { value: "updating", name: "Updating", accent: "yellow" },
+    { value: "offline", name: "Offline", accent: "red" },
   ]
-  let statusValue: IOption = $state(statusOptions[0])
+  let statusValue = $state("online")
 </script>
 
-<ComponentExample {codeText} {readmeHtml} bind:forConstructor>
+<ComponentExample {codeText} {readmeHtml}>
   {#snippet component()}
     <UI.Select
       {...localizeDeep(selectComponent.properties, $Language) as ISelectProps}
-      onUpdate={(value) => (selectComponent = updateComponent(selectComponent, { properties: { value } }))}
+      onUpdate={(value) => (selectComponent = applyChange(selectComponent, { properties: { value } }))}
     />
   {/snippet}
   {#snippet componentProps()}
     <UI.SelectProps
       component={selectComponent as UIComponent & { properties: Partial<ISelectProps> }}
-      onPropertyChange={(updates) => (selectComponent = updateComponent(selectComponent, updates as object))}
-      {forConstructor}
+      onPropertyChange={(updates) => (selectComponent = applyChange(selectComponent, updates))}
     />
   {/snippet}
   {#snippet examples()}
@@ -121,34 +117,21 @@ ${formatObjectToString(selectComponent.properties as ISelectProps)}
       type="input"
       label={{ name: "Компоненты" }}
       options={COMPONENT_OPTIONS}
-      value={selectOption}
-      onUpdate={(option) => (selectOption = option as IOption)}
+      bind:value={selectOption}
+      onInput={(text) => console.log("ввод:", text)}
     />
-    <UI.Select label={{ name: "Компоненты" }} options={COMPONENT_OPTIONS} value={selectOption} onUpdate={(option) => (selectOption = option as IOption)} />
-    <UI.Select
-      type="buttons"
-      label={{ name: "Компоненты" }}
-      options={COMPONENT_OPTIONS}
-      value={selectOption}
-      onUpdate={(option) => (selectOption = option as IOption)}
-    />
+    <UI.Select label={{ name: "Компоненты" }} options={COMPONENT_OPTIONS} bind:value={selectOption} />
+    <UI.Select type="buttons" label={{ name: "Компоненты" }} options={COMPONENT_OPTIONS} bind:value={selectOption} />
     <div class="mt-4 flex items-end">
       <UI.Select
         label={{ name: "Битовый режим", class: "text-center" }}
         bitMode={true}
         range={{ start: 0, end: 3 }}
-        value={bitModeOptions.find((o) => o.value === fullSwitchValue)}
         options={bitModeOptions}
-        onUpdate={() => {}}
+        bind:value={fullSwitchValue}
       />
       <span>Выбранное значение: {fullSwitchValue}</span>
     </div>
-    <UI.Select
-      type="buttons"
-      label={{ name: "Статус (buttons + цвет опции)" }}
-      options={statusOptions}
-      value={statusValue}
-      onUpdate={(option) => (statusValue = option as IOption)}
-    />
+    <UI.Select type="buttons" label={{ name: "Статус (buttons + цвет опции)" }} options={statusOptions} bind:value={statusValue} />
   {/snippet}
 </ComponentExample>

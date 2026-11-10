@@ -1,333 +1,234 @@
+<!-- $lib/CommonSnippets.svelte - общие пункты панелей свойств конструктора: переменная, доступ, цвет, подпись, выравнивание, флаги, пределы, иконки -->
 <script lang="ts">
   import { sanitizeHtml } from "./html"
   import * as UI from "./index"
   import { T } from "./locales/i18n"
   import CrossIcon from "./libIcons/CrossIcon.svelte"
-  import { optionsStore } from "./options"
-  import { updateProperty } from "./types"
+  import { ACCENT_OPTIONS, optionsStore } from "./options"
+  import { createPropsEditor, optionByClass, type PropertyChange } from "./propsEditor"
+  import type { AccentColor } from "./accent"
+  import type { IOption } from "./types"
   import { twMerge } from "tailwind-merge"
-
-  /* Значок «нет иконки» для компактной кнопки выбора иконки */
-  const ICON_PLACEHOLDER = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></svg>`
   import TextsEditor from "./TextsEditor.svelte"
   import IconsMatrix from "./IconsMatrix.svelte"
 
+  /* Значок «нет иконки» для компактной кнопки выбора иконки */
+  const ICON_PLACEHOLDER = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></svg>`
+
+  type NumberRange = { minNum?: number; maxNum?: number; step?: number }
+  type IconsLibValue = {
+    name: string
+    icons: { array: [string, string[]][]; selectArray?: boolean }
+    icon: string | string[] | undefined
+    onUpdate: (icon: string | string[]) => void
+    /* Для строк списков в одну линию: квадратная кнопка с текущей иконкой и подсказкой вместо кнопки с текстом */
+    compact?: boolean
+  }
+
   let {
-    snippet = "",
+    snippet,
     component,
     onPropertyChange,
     VARIABLE_OPTIONS = [],
     initialValue,
   }: {
-    snippet: snippetNames
+    snippet:
+      | "Variable"
+      | "Access"
+      | "Accent"
+      | "Label"
+      | "LabelAlign"
+      | "LabelClass"
+      | "Identificator"
+      | "WrapperClass"
+      | "Disabled"
+      | "EventHandlerArgument"
+      | "IconsLib"
+      | "Readonly"
+      | "BitModeInfo"
+      | "MinMaxStep"
     component: UI.UIComponent
-    onPropertyChange: (updates: Partial<{ properties?: string | object; name?: string; access?: string; eventHandler?: UI.IUIComponentHandler }>) => void
+    onPropertyChange: (change: PropertyChange<object>) => void
     VARIABLE_OPTIONS?: { id: string; value: string; name: string }[]
+    /* Accent: { exclude?: значения, которые не предлагать }; MinMaxStep: { number, bitMode?, onUpdate }; IconsLib: IconsLibValue */
     initialValue?: any
   } = $props()
 
-  type snippetNames =
-    | "Variable"
-    | "Access"
-    | "Colors"
-    | "Label"
-    | "LabelAlign"
-    | "LabelClass"
-    | "Identificator"
-    | "WrapperClass"
-    | "Disabled"
-    | "EventHandlerArgument"
-    | "IconsLib"
-    | "Readonly"
-    | "BitModeInfo"
-    | "MinMaxStep"
-    | ""
+  /* Свойства всех типов как один объект: пункты ниже сами проверяют, есть ли поле у компонента */
+  type AnyProps = {
+    id?: string
+    wrapperClass?: string
+    accent?: AccentColor
+    disabled?: boolean
+    readonly?: boolean
+    label?: { name?: string; class?: string }
+  }
+  const properties = $derived(component.properties as AnyProps & Record<string, any>)
+  const edit = $derived(createPropsEditor<AnyProps>(component as { properties: AnyProps }, onPropertyChange as (change: PropertyChange<AnyProps>) => void))
 
-  let showIconLib: boolean = $state(false)
+  /* У TextField выравнивается текст (content.class), у остальных - подпись (label.class) */
+  const alignKey = $derived(component.type === "TextField" ? "content" : "label")
+  const alignOptions: IOption<string>[] = $derived(
+    component.type === "Accordion" ? $optionsStore.JUSTIFY_ALIGN_OPTIONS : $optionsStore.TEXT_ALIGN_OPTIONS.slice(0, -1),
+  )
+
+  let showIconLib = $state(false)
 </script>
 
-{#snippet Variable()}
-  <UI.Select
-    label={{ name: $T("constructor.props.variable") }}
-    type="input"
-    options={VARIABLE_OPTIONS}
-    value={VARIABLE_OPTIONS.find((opt) => opt.value === component.properties.id)}
-    onUpdate={(value) => {
-      updateProperty("id", (value as UI.IOption).value as string, component, onPropertyChange)
-      onPropertyChange({
-        /* Подпись переменной из облака «<id> - <имя>»: имя - всё после первого разделителя; принимается и длинное тире U+2014 старых подписей */
-        name: (value as UI.IOption).name?.match(/\s[\u2014-]\s(.*)/)?.[1]?.trim(),
-        eventHandler: { Variables: [(value as UI.IOption).value as string] },
-      })
-    }}
-  />
+{#snippet Flag(name: string, key: "disabled" | "readonly")}
+  <UI.Switch label={{ name }} value={properties[key] ? 1 : 0} onUpdate={(value) => edit.set(key, value === 1)} />
 {/snippet}
 
-{#snippet Access()}
-  <UI.Select
-    label={{ name: $T("constructor.props.access") }}
-    type="buttons"
-    options={component.type === "Accordion" ||
-    component.type === "Tabs" ||
-    component.type === "ProgressBar" ||
-    component.type === "TextField" ||
-    component.type === "Graph" ||
-    component.type === "PeriodChart"
-      ? $optionsStore.ACCESS_OPTION.filter((o) => o.value !== "viewOnly")
-      : $optionsStore.ACCESS_OPTION}
-    value={$optionsStore.ACCESS_OPTION.find((o) => o.value === component.access)}
-    onUpdate={(option) => onPropertyChange({ access: (option as UI.IOption).value as string })}
-  />
-{/snippet}
-
-{#snippet Colors(initialValue: { color: UI.IOption<string>; uselessColors?: string[]; updateProperty?: (option: UI.IOption | UI.IOption[]) => {} })}
-  <UI.Select
-    label={{ name: $T("constructor.props.colors") }}
-    type="buttons"
-    options={$optionsStore.COLOR_OPTIONS.filter((o) => !initialValue.uselessColors?.includes(o.value))}
-    value={initialValue.color}
-    onUpdate={(option) =>
-      initialValue.updateProperty
-        ? initialValue.updateProperty(option)
-        : updateProperty("wrapperClass", twMerge(component.properties.wrapperClass, (option as UI.IOption<string>).value), component, onPropertyChange)}
-  />
-{/snippet}
-
-{#snippet Label()}
-  <TextsEditor {component} {onPropertyChange} />
-{/snippet}
-
-{#snippet LabelAlign(initialAlign: UI.IOption<string>)}
-  <UI.Select
-    label={{ name: $T("constructor.props.align") }}
-    type="buttons"
-    value={initialAlign}
-    options={component.type == "Accordion" ? $optionsStore.JUSTIFY_ALIGN_OPTIONS : $optionsStore.TEXT_ALIGN_OPTIONS.slice(0, -1)}
-    onUpdate={(option) =>
-      updateProperty(
-        component.type == "TextField" ? "content.class" : "label.class",
-        twMerge(
-          (
-            component.properties as
-              | UI.IAccordionProps
-              | UI.IInputProps
-              | UI.ISwitchProps
-              | UI.ISliderProps
-              | UI.IGraphProps
-              | UI.ITableProps<object>
-              | UI.IFileAttachProps
-              | UI.IJoystickProps
-          ).label?.class,
-          (option as UI.IOption<string>).value,
-        ),
-        component,
-        onPropertyChange,
-      )}
-  />
-{/snippet}
-
-{#snippet LabelClass()}
-  <UI.Input
-    label={{ name: $T("constructor.props.label.class") }}
-    value={(
-      component.properties as
-        | UI.IAccordionProps
-        | UI.IInputProps
-        | UI.ISwitchProps
-        | UI.ISliderProps
-        | UI.IGraphProps
-        | UI.ITableProps<object>
-        | UI.IFileAttachProps
-        | UI.IJoystickProps
-    ).label?.class}
-    onUpdate={(value) => updateProperty("label.class", value as string, component, onPropertyChange)}
-  />
-{/snippet}
-
-{#snippet Identificator()}
-  <UI.Input
-    label={{ name: $T("constructor.props.id") }}
-    value={component.properties.id}
-    onUpdate={(value) => updateProperty("id", value as string, component, onPropertyChange)}
-  />
-{/snippet}
-
-{#snippet WrapperClass()}
-  <UI.Input
-    label={{ name: $T("constructor.props.wrapperclass") }}
-    value={component.properties.wrapperClass}
-    onUpdate={(value) => updateProperty("wrapperClass", value as string, component, onPropertyChange)}
-  />
-{/snippet}
-
-{#snippet Disabled()}
-  <UI.Switch
-    label={{ name: $T("constructor.props.disabled") }}
-    value={(component.properties as UI.IInputProps | UI.ISwitchProps | UI.ISliderProps | UI.IFileAttachProps)?.disabled ? 1 : 0}
-    options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-    onChange={(value) => updateProperty("disabled", value === 1, component, onPropertyChange)}
-  />
-{/snippet}
-
-{#snippet EventHandlerArgument()}
-  <UI.Select
-    label={{ name: $T("constructor.props.action") }}
-    type="buttons"
-    value={$optionsStore.SHORT_ARGUMENT_OPTION.find((h) => h.value === component.eventHandler?.Argument)}
-    options={$optionsStore.SHORT_ARGUMENT_OPTION}
-    onUpdate={(option) => {
-      updateProperty("eventHandler.Argument", (option as UI.IOption).value as string, component, onPropertyChange)
-      onPropertyChange({ eventHandler: { Argument: (option as UI.IOption).value as string } })
-    }}
-  />
-{/snippet}
-
-{#snippet Readonly()}
-  <UI.Switch
-    label={{ name: $T("constructor.props.readonly") }}
-    value={Number((component.properties as UI.IInputProps | UI.IJoystickProps | UI.IWidgetProps).readonly)}
-    options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-    onChange={(value) => updateProperty("readonly", value === 1, component, onPropertyChange)}
-  />
-{/snippet}
-
-{#snippet BitModeInfo()}
-  {#if (component.properties as UI.IInputProps).type === "bitMode" || (component.properties as UI.ISelectProps).bitMode || (component.properties as UI.ISwitchProps).bitMode}
-    <UI.TextField
-      wrapperClass="mt-5 shadow-(--border-shadow-color) bg-(--blue-color)/20"
-      content={{
-        name: $T("ui.bit_range"),
-      }}
-      background
-    />
-  {/if}
-{/snippet}
-
-{#snippet MinMaxStep(initialValue: {
-  number: { minNum: number; maxNum: number; step?: number }
-  bitMode?: boolean
-  updateProperty: (value: number, property: string) => {}
-})}
+{#snippet MinMaxStep({ number, bitMode, onUpdate }: { number?: NumberRange; bitMode?: boolean; onUpdate: (number: NumberRange) => void })}
   <div class="flex">
-    <UI.Input
-      label={{ name: $T("constructor.props.min") }}
-      value={initialValue.number?.minNum}
-      type="number"
-      readonly={initialValue.bitMode}
-      onUpdate={(value) => initialValue.updateProperty(value as number, "number.minNum")}
-    />
-    <UI.Input
-      label={{ name: $T("constructor.props.max") }}
-      value={initialValue.number?.maxNum}
-      type="number"
-      readonly={initialValue.bitMode}
-      onUpdate={(value) => initialValue.updateProperty(value as number, "number.maxNum")}
-    />
-    {#if component.type !== "ProgressBar" && component.type !== "Joystick"}
-      <UI.Input
-        label={{ name: $T("constructor.props.step") }}
-        value={initialValue.number?.step}
-        type="number"
-        number={{ minNum: 0, maxNum: 1000000, step: 1 }}
-        readonly={initialValue.bitMode}
-        onUpdate={(value) => initialValue.updateProperty(value as number, "number.step")}
-      />
-    {/if}
+    {#each [["minNum", "min"], ["maxNum", "max"], ["step", "step"]] as const as [key, caption] (key)}
+      {#if key !== "step" || (component.type !== "ProgressBar" && component.type !== "Joystick")}
+        <UI.Input
+          label={{ name: $T(`constructor.props.${caption}`) }}
+          value={number?.[key]}
+          type="number"
+          number={key === "step" ? { minNum: 0, maxNum: 1000000, step: 1 } : undefined}
+          readonly={bitMode}
+          onUpdate={(value) => onUpdate({ ...number, [key]: value as number })}
+        />
+      {/if}
+    {/each}
   </div>
 {/snippet}
 
-{#snippet IconsLib(initialValue: {
-  name: string
-  icons: { array: [string, string[]][]; selectArray?: false }
-  icon: string | string[]
-  updateProperty: (icon: string | string[]) => {}
-  /* compact - для строк списков в одну линию: квадратная кнопка с текущей иконкой и подсказкой вместо кнопки с текстом */
-  compact?: boolean
-})}
-  <div class={initialValue.compact ? "relative flex shrink-0 items-center gap-1" : "relative mt-6 flex w-full gap-2"}>
-    {#if initialValue.compact}
+{#snippet IconsLib(value: IconsLibValue)}
+  <div class={value.compact ? "relative flex shrink-0 items-center gap-1" : "relative mt-6 flex w-full gap-2"}>
+    {#if value.compact}
       <UI.Button
         wrapperClass="w-auto"
-        componentClass="size-8 rounded-[10px] p-[6px] bg-max"
-        content={{
-          icon: typeof initialValue.icon === "string" && initialValue.icon ? initialValue.icon : ICON_PLACEHOLDER,
-          info: { text: initialValue.name, side: "top" },
-        }}
+        variant="secondary"
+        componentClass="size-8 rounded-[10px] p-[6px]"
+        content={{ icon: typeof value.icon === "string" && value.icon ? value.icon : ICON_PLACEHOLDER, info: { text: value.name, side: "top" } }}
         onClick={() => (showIconLib = true)}
       />
     {:else}
-      <UI.Button content={{ name: initialValue.name }} componentClass="bg-blue" onClick={() => (showIconLib = true)} />
+      <UI.Button content={{ name: value.name }} variant="primary" onClick={() => (showIconLib = true)} />
     {/if}
-    {#if showIconLib}
-      {#if initialValue.icons.selectArray}
-        <!-- Наборы состояний: выбирается весь ряд целиком -->
-        <UI.Modal bind:isOpen={showIconLib} wrapperClass="w-130">
-          {#snippet main()}
-            <div class="flex flex-col gap-2">
-              {#each initialValue.icons.array as category (category[0])}
-                <button
-                  class="flex cursor-pointer items-center gap-3 rounded-xl border border-(--border-color) p-3 hover:bg-(--container-color)"
-                  onclick={() => initialValue.updateProperty(category[1])}
-                >
-                  <span class="w-28 text-left text-sm">{$T(`constructor.props.icon.${category[0]}`)}</span>
-                  {#each category[1] as icon, i (i)}
-                    <span class="size-8 [&_svg]:h-full [&_svg]:w-full">{@html sanitizeHtml(icon)}</span>
-                  {/each}
-                </button>
-              {/each}
-            </div>
-          {/snippet}
-        </UI.Modal>
-      {:else}
-        <!-- Каталог иконок матрицей 4×4: категории рамками, поиск по имени или категории -->
-        <UI.Modal bind:isOpen={showIconLib} title={initialValue.name} wrapperClass="w-auto">
-          {#snippet main()}
-            <IconsMatrix
-              selected={typeof initialValue.icon === "string" ? initialValue.icon : ""}
-              onPick={(svg) => {
-                initialValue.updateProperty(svg)
-                showIconLib = false
-              }}
-            />
-          {/snippet}
-        </UI.Modal>
-      {/if}
+    {#if showIconLib && value.icons.selectArray}
+      <!-- Наборы состояний: выбирается весь ряд целиком -->
+      <UI.Modal bind:isOpen={showIconLib} wrapperClass="w-130">
+        {#snippet main()}
+          <div class="flex flex-col gap-2">
+            {#each value.icons.array as category (category[0])}
+              <button
+                class="flex cursor-pointer items-center gap-3 rounded-xl border border-(--border-color) p-3 hover:bg-(--container-color)"
+                onclick={() => value.onUpdate(category[1])}
+              >
+                <span class="w-28 text-left text-sm">{$T(`constructor.properties.icon.${category[0]}`)}</span>
+                {#each category[1] as icon, i (i)}
+                  <span class="size-8 [&_svg]:h-full [&_svg]:w-full">{@html sanitizeHtml(icon)}</span>
+                {/each}
+              </button>
+            {/each}
+          </div>
+        {/snippet}
+      </UI.Modal>
+    {:else if showIconLib}
+      <!-- Каталог иконок матрицей 4×4: категории рамками, поиск по имени или категории -->
+      <UI.Modal bind:isOpen={showIconLib} title={value.name} wrapperClass="w-auto">
+        {#snippet main()}
+          <IconsMatrix
+            selected={typeof value.icon === "string" ? value.icon : ""}
+            onPick={(svg) => {
+              value.onUpdate(svg)
+              showIconLib = false
+            }}
+          />
+        {/snippet}
+      </UI.Modal>
     {/if}
-    {#if initialValue.icon}
+    {#if value.icon?.length}
       <UI.Button
-        wrapperClass={initialValue.compact ? "w-auto" : "w-8"}
-        componentClass={initialValue.compact ? "size-8 rounded-[10px] p-[7px] bg-transparent" : "p-0.5 bg-red"}
+        wrapperClass={value.compact ? "w-auto" : "w-8"}
+        variant={value.compact ? "plain" : "primary"}
+        accent={value.compact ? undefined : "red"}
+        componentClass={value.compact ? "size-8 rounded-[10px] p-[7px]" : "p-0.5"}
         content={{ icon: CrossIcon }}
-        onClick={() => initialValue.updateProperty("")}
+        onClick={() => value.onUpdate("")}
       />
     {/if}
   </div>
 {/snippet}
 
 {#if snippet === "Variable"}
-  {@render Variable()}
+  <UI.Select
+    label={{ name: $T("constructor.properties.variable") }}
+    type="input"
+    options={VARIABLE_OPTIONS}
+    value={properties.id}
+    onUpdate={(value) =>
+      onPropertyChange({
+        properties: { id: value },
+        /* Подпись переменной из облака «<id> - <имя>»: имя - всё после первого разделителя; принимается и длинное тире U+2014 старых подписей */
+        name: VARIABLE_OPTIONS.find((option) => option.value === value)
+          ?.name.match(/\s[—-]\s(.*)/)?.[1]
+          ?.trim(),
+        eventHandler: { Variables: [value] },
+      })}
+  />
 {:else if snippet === "Access"}
-  {@render Access()}
-{:else if snippet === "Colors"}
-  {@render Colors(initialValue)}
+  <UI.Select
+    label={{ name: $T("constructor.properties.access") }}
+    type="buttons"
+    options={["Accordion", "Tabs", "ProgressBar", "TextField", "Graph", "PeriodChart"].includes(component.type)
+      ? $optionsStore.ACCESS_OPTION.filter((option) => option.value !== "viewOnly")
+      : $optionsStore.ACCESS_OPTION}
+    value={component.access}
+    onUpdate={(access) => onPropertyChange({ access })}
+  />
+{:else if snippet === "Accent"}
+  <UI.Select
+    label={{ name: $T("ui.accent") }}
+    type="buttons"
+    options={ACCENT_OPTIONS.filter((option) => !initialValue?.exclude?.includes(option.value))}
+    value={properties.accent ?? ""}
+    onUpdate={(accent) => edit.set("accent", accent || undefined)}
+  />
 {:else if snippet === "Label"}
-  {@render Label()}
+  <TextsEditor {component} {onPropertyChange} />
 {:else if snippet === "LabelAlign"}
-  {@render LabelAlign(initialValue)}
+  <UI.Select
+    label={{ name: $T("constructor.properties.align") }}
+    type="buttons"
+    value={optionByClass(alignOptions, properties[alignKey]?.class)?.value}
+    options={alignOptions}
+    onUpdate={(align) => onPropertyChange({ properties: { [alignKey]: { ...properties[alignKey], class: twMerge(properties[alignKey]?.class, align) } } })}
+  />
 {:else if snippet === "LabelClass"}
-  {@render LabelClass()}
+  <UI.Input
+    label={{ name: $T("constructor.properties.label.class") }}
+    value={properties.label?.class}
+    onUpdate={(value) => edit.patch("label", { class: String(value) })}
+  />
 {:else if snippet === "Identificator"}
-  {@render Identificator()}
+  <UI.Input label={{ name: $T("constructor.properties.id") }} value={properties.id} onUpdate={(value) => edit.set("id", String(value))} />
 {:else if snippet === "WrapperClass"}
-  {@render WrapperClass()}
+  <UI.Input
+    label={{ name: $T("constructor.properties.wrapperclass") }}
+    value={properties.wrapperClass}
+    onUpdate={(value) => edit.set("wrapperClass", String(value))}
+  />
 {:else if snippet === "Disabled"}
-  {@render Disabled()}
-{:else if snippet === "EventHandlerArgument"}
-  {@render EventHandlerArgument()}
+  {@render Flag($T("constructor.properties.disabled"), "disabled")}
 {:else if snippet === "Readonly"}
-  {@render Readonly()}
+  {@render Flag($T("constructor.properties.readonly"), "readonly")}
+{:else if snippet === "EventHandlerArgument"}
+  <UI.Select
+    label={{ name: $T("constructor.properties.action") }}
+    type="buttons"
+    value={component.eventHandler?.Argument}
+    options={$optionsStore.SHORT_ARGUMENT_OPTION}
+    onUpdate={(Argument) => onPropertyChange({ eventHandler: { Argument } })}
+  />
 {:else if snippet === "BitModeInfo"}
-  {@render BitModeInfo()}
+  {#if properties.type === "bitMode" || properties.bitMode}
+    <UI.TextField wrapperClass="mt-5 shadow-(--border-shadow-color) bg-(--blue-color)/20" content={{ name: $T("ui.bit_range") }} background />
+  {/if}
 {:else if snippet === "IconsLib"}
   {@render IconsLib(initialValue)}
 {:else if snippet === "MinMaxStep"}

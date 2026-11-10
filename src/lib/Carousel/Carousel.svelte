@@ -4,7 +4,7 @@
   import { slide } from "svelte/transition"
   import type { ICarouselProps } from "../types"
 
-  let { id = crypto.randomUUID(), wrapperClass = "", label = { name: "", class: "text-left" }, scrollValue = 200, children }: ICarouselProps = $props()
+  let { wrapperClass = "", label = { name: "", class: "text-left" }, scrollValue = 200, children }: ICarouselProps = $props()
 
   let carouselRef: HTMLDivElement | null = $state(null)
   let isAtStart = $state(true)
@@ -64,7 +64,7 @@
       </button>
     {/if}
 
-    <div {id} bind:this={carouselRef} class="flex overflow-hidden gap-2 p-2">
+    <div bind:this={carouselRef} class="flex overflow-hidden gap-2 p-2">
       {@render children?.()}
     </div>
   </div>

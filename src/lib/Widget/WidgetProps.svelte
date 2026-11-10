@@ -1,146 +1,69 @@
+<!-- $lib/Widget/WidgetProps.svelte - панель свойств конструктора для Widget -->
 <script lang="ts">
+  import { getContext } from "svelte"
   import { T } from "../locales/i18n"
-  import { updateProperty, type IUIComponentHandler, type UIComponent } from "../types"
+  import type { IWidgetProps, UIComponent } from "../types"
+  import { createPropsEditor, type PropertyChange } from "../propsEditor"
   import * as UI from ".."
-  import { optionsStore, findColorOption, stripLegacyTextColor } from "../options"
+  import { optionsStore } from "../options"
   import { ICONS_ARRAY } from "../icons"
-  import { twMerge } from "tailwind-merge"
   import CommonSnippets from "../CommonSnippets.svelte"
   import PropsGroup from "../PropsGroup.svelte"
-  import WidgetAccentPicker from "../WidgetAccentPicker.svelte"
-  import { getContext } from "svelte"
 
   const {
     component,
     onPropertyChange,
-    forConstructor = true,
   }: {
-    component: UIComponent & { properties: Partial<UI.IWidgetProps> }
-    onPropertyChange: (updates: Partial<{ properties?: string | object; name?: string; access?: string; eventHandler?: IUIComponentHandler }>) => void
-    forConstructor?: boolean
+    component: UIComponent & { properties: Partial<IWidgetProps> }
+    onPropertyChange: (change: PropertyChange<IWidgetProps>) => void
   } = $props()
 
-  const DeviceVariables = getContext<{ id: string; value: string; name: string }[]>("DeviceVariables")
-  let VARIABLE_OPTIONS = $derived(DeviceVariables && Array.isArray(DeviceVariables) ? DeviceVariables : [])
-
-  const initialColor = $derived(findColorOption($optionsStore.COLOR_OPTIONS, component.properties.settings?.class))
-
-  /* Один мастер-цвет bg-*, из него же выводится цвет иконки (COLOR_OPTIONS и TEXT_COLOR_OPTIONS - одна палитра, см. options.ts) */
-  const deriveIconColorClass = (bgClass: string): string => {
-    const role = bgClass.match(/bg-(\w+)/)?.[1]
-    const match = role && role !== "max" ? $optionsStore.TEXT_COLOR_OPTIONS.find((c) => c.id === `TEXT_COLOR_${role.toUpperCase()}`) : null
-    return (match ?? $optionsStore.TEXT_COLOR_OPTIONS[0]).value as string
-  }
+  const edit = $derived(createPropsEditor(component, onPropertyChange))
+  const VARIABLE_OPTIONS = getContext<{ id: string; value: string; name: string }[] | undefined>("DeviceVariables") ?? []
+  const settings = $derived(component.properties.settings)
 </script>
 
-{#snippet WidgetSettingsColor()}
-  <WidgetAccentPicker
-    value={(initialColor?.value as string) ?? ""}
-    onUpdate={(bgClass) => {
-      updateProperty("settings.class", twMerge(component.properties.settings?.class, bgClass), component, onPropertyChange)
-      updateProperty(
-        "icons.class",
-        twMerge(stripLegacyTextColor(component.properties.icons?.class), deriveIconColorClass(bgClass)),
-        component,
-        onPropertyChange,
-      )
-    }}
-  />
-{/snippet}
-
-{#snippet WidgetType()}
-  <UI.Select
-    label={{ name: $T("constructor.props.settings.type") }}
-    type="buttons"
-    options={$optionsStore.WIDGET_TYPE_OPTIONS}
-    value={$optionsStore.WIDGET_TYPE_OPTIONS.find((o) => o.value == component.properties.settings?.type)}
-    onUpdate={(option) => {
-      updateProperty("settings.type", (option as UI.IOption).value as string, component, onPropertyChange)
-    }}
-  />
-{/snippet}
-
-{#snippet WidgetSwitchingMode()}
-  <UI.Switch
-    label={{ name: $T("constructor.props.widget.mode") }}
-    value={component.properties.icons?.cycling ? 1 : 0}
-    options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-    onChange={(value) => updateProperty("icons.cycling", value === 1, component, onPropertyChange)}
-  />
-{/snippet}
-
-{#snippet WidgetIcons()}
-  <CommonSnippets
-    snippet="IconsLib"
-    initialValue={{
-      name: $T("constructor.props.labelicon"),
-      icon: component.properties.icons?.array,
-      updateProperty: (icons: string[]) => updateProperty("icons.array", icons as string[], component, onPropertyChange),
-      icons: { array: ICONS_ARRAY, selectArray: true },
-    }}
-    {component}
-    {onPropertyChange}
-  />
-{/snippet}
-
-{#if forConstructor}
-  <div class="flex flex-col gap-2">
-    <PropsGroup label={$T("constructor.props.group.general")}>
-      <CommonSnippets snippet="Access" {component} {onPropertyChange} />
-      <CommonSnippets snippet="Variable" {VARIABLE_OPTIONS} {component} {onPropertyChange} />
-      <CommonSnippets snippet="EventHandlerArgument" {component} {onPropertyChange} />
-    </PropsGroup>
-    <PropsGroup label={$T("constructor.props.group.content")}>
-      <CommonSnippets snippet="Label" {component} {onPropertyChange} />
-      {@render WidgetIcons()}
-      {@render WidgetSwitchingMode()}
-    </PropsGroup>
-    <PropsGroup label={$T("constructor.props.group.appearance")}>
-      {@render WidgetSettingsColor()}
-      {@render WidgetType()}
-      {#if component.properties.settings?.type == "input" || component.properties.settings?.type == "slider"}
-        <CommonSnippets
-          snippet="MinMaxStep"
-          initialValue={{
-            number: component.properties.settings?.number,
-            updateProperty: (value: number, property: string) => {
-              updateProperty(`settings.${property}`, Number(value), component, onPropertyChange)
-            },
-          }}
-          {component}
-          {onPropertyChange}
-        />
-      {/if}
-    </PropsGroup>
-  </div>
-{:else}
-  <div class="flex flex-col gap-2">
-    <PropsGroup label={$T("constructor.props.group.general")}>
-      <CommonSnippets snippet="Identificator" {component} {onPropertyChange} />
-      <CommonSnippets snippet="Access" {component} {onPropertyChange} />
-      <CommonSnippets snippet="Label" {component} {onPropertyChange} />
-      <CommonSnippets snippet="Readonly" {component} {onPropertyChange} />
-    </PropsGroup>
-    <PropsGroup label={$T("constructor.props.group.content")}>
-      {@render WidgetIcons()}
-      {@render WidgetSwitchingMode()}
-    </PropsGroup>
-    <PropsGroup label={$T("constructor.props.group.appearance")}>
-      {@render WidgetSettingsColor()}
-      {@render WidgetType()}
-      {#if component.properties.settings?.type == "input" || component.properties.settings?.type == "slider"}
-        <CommonSnippets
-          snippet="MinMaxStep"
-          initialValue={{
-            number: component.properties.settings?.number,
-            updateProperty: (value: number, property: string) => {
-              updateProperty(`settings.${property}`, Number(value), component, onPropertyChange)
-            },
-          }}
-          {component}
-          {onPropertyChange}
-        />
-      {/if}
-    </PropsGroup>
-  </div>
-{/if}
+<div class="flex flex-col gap-2">
+  <PropsGroup label={$T("constructor.props.group.general")}>
+    <CommonSnippets snippet="Access" {component} {onPropertyChange} />
+    <CommonSnippets snippet="Variable" {VARIABLE_OPTIONS} {component} {onPropertyChange} />
+    <CommonSnippets snippet="EventHandlerArgument" {component} {onPropertyChange} />
+  </PropsGroup>
+  <PropsGroup label={$T("constructor.props.group.content")}>
+    <CommonSnippets snippet="Label" {component} {onPropertyChange} />
+    <CommonSnippets
+      snippet="IconsLib"
+      initialValue={{
+        name: $T("constructor.props.labelicon"),
+        icon: component.properties.icons?.array,
+        onUpdate: (array: string[]) => edit.patch("icons", { array }),
+        icons: { array: ICONS_ARRAY, selectArray: true },
+      }}
+      {component}
+      {onPropertyChange}
+    />
+    <UI.Switch
+      label={{ name: $T("constructor.props.widget.mode") }}
+      value={component.properties.icons?.cycling ? 1 : 0}
+      onUpdate={(value) => edit.set("icons", { array: [], ...component.properties.icons, cycling: value === 1 })}
+    />
+  </PropsGroup>
+  <PropsGroup label={$T("constructor.props.group.appearance")}>
+    <CommonSnippets snippet="Accent" initialValue={{ exclude: [""] }} {component} {onPropertyChange} />
+    <UI.Select
+      label={{ name: $T("constructor.props.settings.type") }}
+      type="buttons"
+      options={$optionsStore.WIDGET_TYPE_OPTIONS}
+      value={settings?.type}
+      onUpdate={(type) => edit.patch("settings", { type })}
+    />
+    {#if settings?.type == "input" || settings?.type == "slider"}
+      <CommonSnippets
+        snippet="MinMaxStep"
+        initialValue={{ number: settings?.number, onUpdate: (number: NonNullable<IWidgetProps["settings"]>["number"]) => edit.patch("settings", { number }) }}
+        {component}
+        {onPropertyChange}
+      />
+    {/if}
+  </PropsGroup>
+</div>

@@ -2,14 +2,9 @@
 <script lang="ts">
   import { twMerge } from "tailwind-merge"
   import type { ITextFieldProps } from "../types"
+  import { accentStyle } from "../accent"
 
-  let {
-    id = crypto.randomUUID(),
-    wrapperClass = "",
-    background = false,
-    underline = false,
-    content = { name: "", class: "", size: "base" },
-  }: ITextFieldProps = $props()
+  let { wrapperClass = "", accent, background = false, underline = false, content = { name: "", class: "", size: "base" } }: ITextFieldProps = $props()
 
   /* Размеры по шкале темы: 13 / 15 / 24 / 34 / 44 с весом и трекингом по роли */
   const textSize = {
@@ -22,13 +17,13 @@
 </script>
 
 <div
-  id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
+  style={accentStyle(accent)}
   class={twMerge(
     `relative flex w-full flex-col ${background ? "rounded-[14px] border border-(--hairline-color) bg-(--back-color) px-5 py-3" : ""} ${underline ? "underline" : ""}`,
     wrapperClass,
   )}
 >
-  <p class={twMerge(`w-full text-pretty ${textSize[content.size ?? "base"]}`, content.class)}>
+  <p class={twMerge(`w-full text-pretty ${textSize[content.size ?? "base"]}`, accent ? "text-(--accent-text)" : "", content.class)}>
     {content.name}
   </p>
 </div>

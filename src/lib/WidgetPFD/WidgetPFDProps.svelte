@@ -3,9 +3,10 @@
   import TextsEditor from "../TextsEditor.svelte"
   import { T } from "../locales/i18n"
   import * as UI from ".."
-  import { updateProperty, type UIComponent, type IWidgetPFDProps, type IWidgetPFDLimits } from "../types"
-  import WidgetAccentPicker from "../WidgetAccentPicker.svelte"
+  import type { UIComponent, IWidgetPFDProps, IWidgetPFDLimits } from "../types"
+  import { createPropsEditor, type PropertyChange } from "../propsEditor"
   import PropsGroup from "../PropsGroup.svelte"
+  import CommonSnippets from "../CommonSnippets.svelte"
   import { twMerge } from "tailwind-merge"
 
   const {
@@ -13,8 +14,10 @@
     onPropertyChange,
   }: {
     component: UIComponent & { properties: Partial<IWidgetPFDProps> }
-    onPropertyChange: (updates: Partial<{ properties?: string | object; name?: string; access?: string }>) => void
+    onPropertyChange: (change: PropertyChange<IWidgetPFDProps>) => void
   } = $props()
+
+  const edit = $derived(createPropsEditor(component, onPropertyChange))
 
   /* Пустое поле - граница не задана (зона не рисуется) */
   const setLimit = (key: keyof IWidgetPFDLimits, raw: unknown) => {
@@ -22,7 +25,7 @@
     const next: IWidgetPFDLimits = { ...(component.properties.limits ?? {}) }
     if (text === "" || !Number.isFinite(Number(text))) delete next[key]
     else next[key] = Number(text)
-    updateProperty("limits", next, component, onPropertyChange)
+    edit.set("limits", next)
   }
   const limits = $derived((component.properties.limits ?? {}) as IWidgetPFDLimits)
 </script>
@@ -32,23 +35,15 @@
     <UI.Switch
       label={{ name: $T("constructor.props.simulation") }}
       value={component.properties.isTest ? 1 : 0}
-      options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-      onChange={(value) => updateProperty("isTest", value === 1, component, onPropertyChange)}
+      onUpdate={(value) => edit.set("isTest", value === 1)}
     />
   </PropsGroup>
   <!-- В режиме имитации остальные свойства не учитываются, поэтому вся панель бледная и недоступна -->
   <div class={twMerge("flex flex-col gap-2 transition-opacity", component.properties.isTest && "opacity-40 grayscale")} inert={component.properties.isTest}>
     <PropsGroup label={$T("constructor.props.group.general")}>
       <TextsEditor {component} {onPropertyChange} />
-      <UI.Input
-        label={{ name: $T("pfd.props.group") }}
-        value={component.properties.id ?? "MAV"}
-        onUpdate={(value) => updateProperty("id", value as string, component, onPropertyChange)}
-      />
-      <WidgetAccentPicker
-        value={component.properties.componentClass ?? ""}
-        onUpdate={(value) => updateProperty("componentClass", value, component, onPropertyChange)}
-      />
+      <UI.Input label={{ name: $T("pfd.props.group") }} value={component.properties.id ?? "MAV"} onUpdate={(value) => edit.set("id", value as string)} />
+      <CommonSnippets snippet="Accent" {component} {onPropertyChange} />
     </PropsGroup>
     <PropsGroup label={$T("pfd.limits")}>
       <div class="grid grid-cols-2 gap-2">

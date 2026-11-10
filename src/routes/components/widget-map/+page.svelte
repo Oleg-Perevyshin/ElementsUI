@@ -3,10 +3,10 @@
   import { localizeDeep } from "#lib/locales/localize.ts"
   import { type UIComponent } from "#lib"
   import ComponentExample from "../../ComponentExample.svelte"
-  import { updateComponent, type IWidgetMapProps } from "#lib/types.ts"
+  import { type IWidgetMapProps } from "#lib/types.ts"
   import WidgetMap from "#lib/WidgetMap/WidgetMap.svelte"
   import WidgetMapProps from "#lib/WidgetMap/WidgetMapProps.svelte"
-  import { formatObjectToString, RenderMarkdown } from "../../common"
+  import { formatObjectToString, RenderMarkdown, applyChange } from "../../common"
   import readmeRaw from "#lib/WidgetMap/README.md?raw"
   import { DEFAULT_MISSION_PLAN, type IMissionPlan } from "#lib/WidgetMap/mission/plan.ts"
   import { DEFAULT_ROUTE_PLAN, type IRoutePlan } from "#lib/WidgetMap/mission/route.ts"
@@ -23,7 +23,6 @@
     properties: {
       label: { name: "" },
       groups: ["MAV", "GNSS"],
-      componentClass: "",
       height: 400,
       trackEnabled: true,
     },
@@ -31,7 +30,6 @@
     position: { row: 0, col: 0, width: 0, height: 0 },
     parentId: "",
   })
-  let forConstructor = $state(false)
 
   /* Режим «Агро»: план сохраняется в браузере, отправка только имитируется - миссия выводится в консоль */
   const PLAN_KEY = "WidgetMapAgroDemoPlan14"
@@ -75,7 +73,7 @@ ${formatObjectToString(mapComponent.properties as IWidgetMapProps)}${mapMode ===
 />`)
 </script>
 
-<ComponentExample {codeText} {readmeHtml} bind:forConstructor>
+<ComponentExample {codeText} {readmeHtml}>
   {#snippet component()}
     <div class="m-auto w-full max-w-4xl">
       <WidgetMap {...localizeDeep(mapComponent.properties, $Language) as IWidgetMapProps} bind:plan bind:route onSend={send} />
@@ -84,12 +82,12 @@ ${formatObjectToString(mapComponent.properties as IWidgetMapProps)}${mapMode ===
   {#snippet componentProps()}
     <WidgetMapProps
       component={mapComponent as UIComponent & { properties: Partial<IWidgetMapProps> }}
-      onPropertyChange={(updates) => (mapComponent = updateComponent(mapComponent, updates as object))}
+      onPropertyChange={(updates) => (mapComponent = applyChange(mapComponent, updates))}
     />
   {/snippet}
   {#snippet examples()}
     <div class="m-auto flex w-full max-w-4xl flex-col gap-6 p-2">
-      <WidgetMap label={{ name: "Один объект, без данных" }} groups={["GPS"]} height={250} componentClass="bg-red" />
+      <WidgetMap label={{ name: "Один объект, без данных" }} groups={["GPS"]} height={250} accent="red" />
       <!-- Без переданного плана, как в конструкторе DevCloud: виджет берёт демо-поле и демо-маршрут -->
       <WidgetMap mode="agro" height={520} isTest />
       <WidgetMap mode="route" height={520} isTest />

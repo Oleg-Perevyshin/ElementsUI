@@ -1,4 +1,4 @@
-<!-- $lib/WidgetRGBStrip/WidgetRGBStrip.svelte - смарт-виджет адресной светодиодной ленты. Поля группы LST (RGB_Strip, ProdFactory-ESP): Color/Effect/Speed отправляются сразу (onChange), Count/Model/Order - одним пакетом по «Сохранить» (onSave): прошивка пересоздаёт драйвер ленты. Ничего не знает про DeviceStore/WebSocket - только value и колбэки. -->
+<!-- $lib/WidgetRGBStrip/WidgetRGBStrip.svelte - смарт-виджет адресной светодиодной ленты. Поля группы LST (RGB_Strip, ProdFactory-ESP): Color/Effect/Speed отправляются сразу (onUpdate), Count/Model/Order - одним пакетом по «Сохранить» (onSave): прошивка пересоздаёт драйвер ленты. Ничего не знает про DeviceStore/WebSocket - только value и колбэки. -->
 <script lang="ts">
   import { T } from "../locales/i18n"
   import { untrack } from "svelte"
@@ -11,15 +11,15 @@
   import WidgetHeader from "../WidgetHeader.svelte"
   import { hint, hintsSetting } from "../hints"
   import ArrowIcon from "../libIcons/ArrowIcon.svelte"
-  import { widgetAccentStyle } from "../widgetAccent"
+  import { accentStyle } from "../accent"
   import { readPersistedCollapsed, writePersistedCollapsed } from "../widgetCollapse"
 
-  let { wrapperClass = "", componentClass = "", label = {}, value, collapsed = $bindable(false), persistKey, onChange, onSave }: IWidgetRGBStripProps = $props()
+  let { wrapperClass = "", accent, label = {}, value, collapsed = $bindable(false), persistKey, onUpdate, onSave }: IWidgetRGBStripProps = $props()
 
   /* Подсказки - кнопка «?» в шапке, выбор общий для всех WidgetRGBStrip */
   const hints = $derived(hintsSetting("WidgetRGBStrip", persistKey))
 
-  let accentStyle = $derived(widgetAccentStyle(componentClass ?? ""))
+  const rootStyle = $derived(accentStyle(accent))
 
   /* Сворачивание тела по клику на шапку - как у остальных смарт-виджетов (см. WidgetWiFi.svelte) */
   /* Выбор пользователя в этом браузере применяется до первой отрисовки, без мигания; значение из GUI запоминается, чтобы его смена отменяла старый выбор */
@@ -94,13 +94,13 @@
 
   const sendColor = (rgbw: number[]) => {
     sentColor = rgbw
-    onChange?.("Color", rgbw)
+    onUpdate?.(rgbw, "Color")
   }
 </script>
 
 <div
   class={twMerge("relative flex w-full flex-col gap-4 rounded-2xl border border-(--hairline-color) bg-(--container-color) p-4", wrapperClass)}
-  style={accentStyle}
+  style={rootStyle}
 >
   <!-- Заголовок: образец текущего цвета -->
   <WidgetHeader icon={LightIcon} label={label?.name || $T("widget.rgb.title")} bind:collapsed {hints}>
@@ -117,14 +117,14 @@
     <div class="flex flex-col gap-4" transition:slide={{ duration: 150 }}>
       <!-- Свечение: применяется сразу -->
       <div class="flex flex-col gap-3 rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-3">
-        <ColorPicker value={color.slice(0, 3)} readonly={!onChange} onChange={(rgb) => sendColor([...rgb, color[3]])} />
+        <ColorPicker value={color.slice(0, 3)} readonly={!onUpdate} onUpdate={(rgb) => sendColor([...rgb, color[3]])} />
         {#if hasWhite}
           <div use:hint={{ text: $T("widget.rgb.hint.white"), enabled: $hints }}>
             <UI.Slider
               label={{ name: $T("widget.rgb.white") }}
               value={color[3]}
               number={{ minNum: 0, maxNum: 255, step: 1 }}
-              disabled={!onChange}
+              disabled={!onUpdate}
               onUpdate={(w) => sendColor([color[0], color[1], color[2], w as number])}
             />
           </div>
@@ -133,9 +133,9 @@
           <UI.Select
             label={{ name: $T("widget.rgb.effect") }}
             options={EFFECTS}
-            value={EFFECTS.find((o) => o.value === effectIndex) ?? EFFECTS[0]}
-            disabled={!onChange}
-            onUpdate={(option) => !Array.isArray(option) && onChange?.("Effect", option.value ?? 0)}
+            value={effectIndex}
+            disabled={!onUpdate}
+            onUpdate={(effect) => onUpdate?.(effect, "Effect")}
           />
         </div>
         <div use:hint={{ text: $T("widget.rgb.hint.speed"), enabled: $hints }}>
@@ -143,8 +143,8 @@
             label={{ name: $T("widget.rgb.speed") }}
             value={speed}
             number={{ minNum: 0, maxNum: 10, step: 1 }}
-            disabled={!onChange || effectIndex === 0}
-            onUpdate={(v) => onChange?.("Speed", v as number)}
+            disabled={!onUpdate || effectIndex === 0}
+            onUpdate={(speed) => onUpdate?.(speed as number, "Speed")}
           />
         </div>
       </div>
@@ -186,8 +186,8 @@
                 label={{ name: $T("widget.rgb.model") }}
                 type="buttons"
                 options={MODELS}
-                value={MODELS.find((o) => o.value === hardware.Model) ?? MODELS[0]}
-                onUpdate={(option) => !Array.isArray(option) && (hardware.Model = option.value ?? 0)}
+                value={hardware.Model}
+                onUpdate={(model) => (hardware.Model = model)}
               />
             </div>
             <div use:hint={{ text: $T("widget.rgb.hint.order"), enabled: $hints }}>
@@ -195,8 +195,8 @@
                 label={{ name: $T("widget.rgb.order") }}
                 type="buttons"
                 options={ORDERS}
-                value={ORDERS.find((o) => o.value === hardware.Order) ?? ORDERS[0]}
-                onUpdate={(option) => !Array.isArray(option) && (hardware.Order = option.value ?? 0)}
+                value={hardware.Order}
+                onUpdate={(order) => (hardware.Order = order)}
               />
             </div>
             {#if isDirty}
@@ -204,7 +204,7 @@
                 {countValid ? $T("widget.rgb.restart_note") : $T("widget.rgb.count_invalid", { max: maxCount })}
               </span>
             {/if}
-            <UI.Button componentClass="bg-accent" content={{ name: $T("widget.common.save") }} disabled={!onSave || !isDirty || !countValid} onClick={save} />
+            <UI.Button variant="primary" content={{ name: $T("widget.common.save") }} disabled={!onSave || !isDirty || !countValid} onClick={save} />
           </div>
         {/if}
       </div>

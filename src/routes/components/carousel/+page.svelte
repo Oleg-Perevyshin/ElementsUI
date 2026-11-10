@@ -10,14 +10,12 @@
     RenderMarkdown(readmeRaw).then((html) => (readmeHtml = html))
   })
 
-  /* У Carousel нет CarouselProps.svelte/UIComponent - простое локальное состояние вместо схемы component/updateComponent */
+  /* У Carousel нет панели свойств - простое локальное состояние */
   let carouselProps: ICarouselProps = $state({
     id: crypto.randomUUID(),
     label: { name: "Карусель" },
     scrollValue: 200,
   })
-
-  let forConstructor = $state(false)
 
   let codeText = $derived(`
 <UI.Carousel label={{ name: "${carouselProps.label?.name ?? ""}" }} scrollValue={${carouselProps.scrollValue}}>
@@ -28,7 +26,7 @@
 </UI.Carousel>`)
 </script>
 
-<ComponentExample {codeText} {readmeHtml} bind:forConstructor>
+<ComponentExample {codeText} {readmeHtml}>
   {#snippet component()}
     <div class="relative mx-40 my-20">
       <Carousel id={carouselProps.id} label={carouselProps.label} scrollValue={carouselProps.scrollValue}>

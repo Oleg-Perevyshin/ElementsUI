@@ -2,13 +2,13 @@
 <script lang="ts">
   import { roundToClean } from "../number"
   import { twMerge } from "tailwind-merge"
-  import { itemAccentStyle } from "../widgetAccent"
+  import { accentStyle } from "../accent"
   import type { IProgressBarProps, IReceivingDataObject } from "../types"
 
   let {
-    id = crypto.randomUUID(),
     wrapperClass = "",
-    items = [{ name: "Label", class: "" }],
+    accent,
+    items = [{ name: "Label" }],
     value,
     type = "horizontal",
     number = {
@@ -59,20 +59,16 @@
 </script>
 
 <div
-  id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
   class={twMerge(`relative flex w-full ${type == "vertical" ? "h-full flex-wrap justify-center gap-6" : "flex-col gap-3"}`, wrapperClass)}
-  style={itemAccentStyle(wrapperClass)}
+  style={accentStyle(accent)}
 >
   {#each items as progress, index}
     {#if type === "vertical"}
       <div class="flex h-full flex-col items-center gap-2">
         <span class="text-[12px] font-semibold text-(--muted-color)">{getItemName(index)}</span>
         <!-- Дорожка 6px, заливка снизу вверх -->
-        <div
-          class={twMerge("relative w-1.5 flex-1 overflow-hidden rounded-full bg-(--container-color)", progress.class)}
-          style={itemAccentStyle(progress.class)}
-        >
-          <div class="absolute bottom-0 left-0 w-full bg-(--bg-color)" style="height: {progressPercent(getItemValue(index))}%;"></div>
+        <div class="relative w-1.5 flex-1 overflow-hidden rounded-full bg-(--container-color)" style={accentStyle(progress.accent)}>
+          <div class="absolute bottom-0 left-0 w-full bg-(--accent-color)" style="height: {progressPercent(getItemValue(index))}%;"></div>
         </div>
         <span class="text-[13px] font-semibold tabular-nums">{roundToClean(Number(numericValue(getItemValue(index))))}{number.units}</span>
         {#if getItemInfo(index)}
@@ -85,11 +81,8 @@
           <span class="truncate text-[12px] font-semibold text-(--muted-color)">{getItemName(index)}</span>
           <span class="shrink-0 text-[12px] font-semibold tabular-nums">{roundToClean(Number(numericValue(getItemValue(index))))}{number.units}</span>
         </div>
-        <div
-          class={twMerge("relative h-1.5 w-full overflow-hidden rounded-full bg-(--container-color)", progress.class)}
-          style={itemAccentStyle(progress.class)}
-        >
-          <div class="absolute top-0 left-0 h-full bg-(--bg-color)" style="width: {progressPercent(getItemValue(index))}%;"></div>
+        <div class="relative h-1.5 w-full overflow-hidden rounded-full bg-(--container-color)" style={accentStyle(progress.accent)}>
+          <div class="absolute top-0 left-0 h-full bg-(--accent-color)" style="width: {progressPercent(getItemValue(index))}%;"></div>
         </div>
         {#if getItemInfo(index)}
           <span class="text-[12px] text-(--faint-color)">{getItemInfo(index)}</span>

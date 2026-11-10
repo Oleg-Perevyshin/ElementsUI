@@ -3,7 +3,7 @@
   import type { IOption, ITableButton, ITableContent, ITableHeader, ITableImage, ITableProgressBar, ITableProps, ITableText } from "../types"
   import { fly, slide } from "svelte/transition"
   import { twMerge } from "tailwind-merge"
-  import { widgetAccentStyle } from "../widgetAccent"
+  import { accentStyle, type AccentColor } from "../accent"
   import { onMount, tick } from "svelte"
   import ButtonClear from "../libIcons/ButtonClear.svelte"
   import { T } from "../locales/i18n"
@@ -250,7 +250,7 @@
 <div
   id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
   class={twMerge(`flex h-full w-full flex-col overflow-hidden`, wrapperClass)}
-  style={widgetAccentStyle(wrapperClass)}
+  style={accentStyle(wrapperClass.match(/(?:^|\s)bg-(\w+)/)?.[1] as AccentColor)}
 >
   {#if label.name}
     <span class={twMerge(`w-full pb-2 text-[12px] font-semibold text-(--muted-color)`, label.class)}>{label.name}</span>
@@ -539,7 +539,7 @@
     <Button
       content={{ name: $T("constructor.props.copy") }}
       wrapperClass="w-50"
-      componentClass="bg-blue"
+      variant="primary"
       onClick={() => {
         navigator.clipboard.writeText(modalData.rawData ?? "")
         modalData.isOpen = false

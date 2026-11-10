@@ -1,261 +1,201 @@
 import { derived } from "svelte/store"
 import { T } from "./locales/i18n"
 import { PROPS_ICONS } from "./libIcons/propsIcons"
+import { ACCENT_COLORS, type AccentColor } from "./accent"
 
-function id() {
-  return crypto.randomUUID() as string
-}
+/* Вариант со стабильным id по значению: id не меняется при смене языка */
+const opt = <const V>(value: V, name?: string, icon?: string) => ({ id: String(value), value, name, icon })
 
-/* Находит в палитре (COLOR_OPTIONS, TEXT_COLOR_OPTIONS) вариант, класс которого есть в строке классов компонента - общий хелпер для *Props-панелей, где нужно предзаполнить пикер цвета */
-export const findColorOption = <T extends { value: string }>(options: T[], classString?: string, prefix: string = "bg-"): T | undefined => {
-  const classes = (classString ?? "").split(/\s+/).filter((cls) => cls.startsWith(prefix))
-  return options.find((c) => classes.includes(c.value.split(" ")[0]))
-}
-
-/* Убирает цвет текста старого формата (палитра Tailwind вида text-red-500 dark:text-red-400 и text-[#333]), чтобы новый цвет темы не перебивался в тёмной теме */
-export const stripLegacyTextColor = (classString: string = ""): string =>
-  classString
-    .split(/\s+/)
-    .filter((cls) => !/^(dark:)?text-(red|yellow|green|blue|purple|gray)-\d{3}$/.test(cls) && !/^(dark:)?text-\[#(333|e2e3e7)\]$/.test(cls))
-    .join(" ")
+/* Палитра ролей темы: "" - без цвета (акцент родителя или темы); порядок по кругу тонов, серый первым */
+export const ACCENT_OPTIONS = [opt<AccentColor | "">("", "-"), ...ACCENT_COLORS.map((accent) => ({ ...opt<AccentColor | "">(accent, ""), accent }))]
 
 export const optionsStore = derived(T, ($T) => {
   return {
-    HEADER_OPTIONS: [
-      { id: id(), name: "GET", value: "GET" },
-      { id: id(), name: "SET", value: "SET" },
-      { id: id(), name: "OK!", value: "OK!" },
-      { id: id(), name: "ER!", value: "ER!" },
-    ],
+    /* Поля eventHandler - строки */
+    HEADER_OPTIONS: ["GET", "SET", "OK!", "ER!"].map((header) => opt<string>(header, header)),
 
-    SHORT_ARGUMENT_OPTION: [
-      { id: id(), value: "ModCfg", name: $T("constructor.props.action.save") },
-      { id: id(), value: "NoSend", name: $T("constructor.props.action.nosend") },
-    ],
+    SHORT_ARGUMENT_OPTION: [opt<string>("ModCfg", $T("constructor.props.action.save")), opt<string>("NoSend", $T("constructor.props.action.nosend"))],
 
     ACCESS_OPTION: [
-      { id: id(), value: "full", name: $T("constructor.props.type.full") },
-      { id: id(), value: "viewOnly", name: $T("constructor.props.type.viewOnly") },
-      { id: id(), value: "hidden", name: $T("constructor.props.type.hidden") },
+      opt("full", $T("constructor.props.type.full")),
+      opt("viewOnly", $T("constructor.props.type.viewOnly")),
+      opt("hidden", $T("constructor.props.type.hidden")),
     ],
 
     INPUT_TYPE_OPTIONS: [
-      { id: id(), value: "text", name: $T("constructor.props.type.text"), icon: "Aa" },
-      { id: id(), value: "password", name: $T("constructor.props.type.password"), icon: "•••" },
-      { id: id(), value: "number", name: $T("constructor.props.type.number"), icon: "123" },
-      { id: id(), value: "text-area", name: $T("constructor.props.type.textarea"), icon: "¶" },
-      { id: id(), value: "bitMode", name: $T("constructor.props.type.bitMode"), icon: "01" },
+      opt("text", $T("constructor.props.type.text"), "Aa"),
+      opt("password", $T("constructor.props.type.password"), "•••"),
+      opt("number", $T("constructor.props.type.number"), "123"),
+      opt("text-area", $T("constructor.props.type.textarea"), "¶"),
+      opt("bitMode", $T("constructor.props.type.bitMode"), "01"),
     ],
 
     SELECT_TYPE_OPTIONS: [
-      { id: id(), value: "select", name: $T("constructor.props.type.select") },
-      { id: id(), value: "buttons", name: $T("constructor.props.type.buttons") },
-      { id: id(), value: "input", name: $T("constructor.props.type.selectput") },
+      opt("select", $T("constructor.props.type.select")),
+      opt("buttons", $T("constructor.props.type.buttons")),
+      opt("input", $T("constructor.props.type.selectput")),
     ],
 
-    SELECT_VALUE_TYPE_OPTIONS: [
-      { id: id(), value: "text" as const, name: $T("constructor.props.valuetype.text") },
-      { id: id(), value: "number" as const, name: $T("constructor.props.valuetype.number") },
-    ],
+    SELECT_VALUE_TYPE_OPTIONS: [opt("text", $T("constructor.props.valuetype.text")), opt("number", $T("constructor.props.valuetype.number"))],
 
     SLIDER_TYPE_OPTIONS: [
-      { id: id(), value: "single", name: $T("constructor.props.type.single"), icon: PROPS_ICONS.sliderSingle },
-      { id: id(), value: "range", name: $T("constructor.props.type.range"), icon: PROPS_ICONS.sliderRange },
+      opt("single", $T("constructor.props.type.single"), PROPS_ICONS.sliderSingle),
+      opt("range", $T("constructor.props.type.range"), PROPS_ICONS.sliderRange),
     ],
 
     TEXTFIELD_SIZE_OPTIONS: [
-      { id: id(), value: "small", name: $T("constructor.props.type.small"), icon: "S" },
-      { id: id(), value: "base", name: $T("constructor.props.type.base"), icon: "M" },
-      { id: id(), value: "large", name: $T("constructor.props.type.large"), icon: "L" },
-      { id: id(), value: "huge", name: $T("constructor.props.type.huge"), icon: "XL" },
-      { id: id(), value: "massive", name: $T("constructor.props.type.massive"), icon: "XXL" },
+      opt("small", $T("constructor.props.type.small"), "S"),
+      opt("base", $T("constructor.props.type.base"), "M"),
+      opt("large", $T("constructor.props.type.large"), "L"),
+      opt("huge", $T("constructor.props.type.huge"), "XL"),
+      opt("massive", $T("constructor.props.type.massive"), "XXL"),
     ],
 
     TEXTFIELD_SETTINGS_OPTIONS: [
-      { id: id(), value: "bold", name: $T("constructor.props.bold"), icon: PROPS_ICONS.bold },
-      { id: id(), value: "italic", name: $T("constructor.props.italic"), icon: PROPS_ICONS.italic },
-      { id: id(), value: "underline", name: $T("constructor.props.underline"), icon: PROPS_ICONS.underline },
-      { id: id(), value: "background", name: $T("constructor.props.background"), icon: PROPS_ICONS.highlight },
-    ],
-
-    /* Семантическая палитра темы: те же роли, что у мастер-цвета виджетов; свотч показывает яркий цвет гаммы (--X-mark), как у тегов; порядок по кругу тонов, серый первым; bg-max - нейтральный вариант, свотч с ним отмечается рамкой */
-    COLOR_OPTIONS: [
-      { id: id(), name: "-", value: "bg-max", class: "bg-max text-transparent" },
-      { id: id(), name: "", value: "bg-gray", class: "bg-gray [--bg-color:var(--gray-mark)]!" },
-      { id: id(), name: "", value: "bg-red", class: "bg-red [--bg-color:var(--red-mark)]!" },
-      { id: id(), name: "", value: "bg-orange", class: "bg-orange [--bg-color:var(--orange-mark)]!" },
-      { id: id(), name: "", value: "bg-yellow", class: "bg-yellow [--bg-color:var(--yellow-mark)]!" },
-      { id: id(), name: "", value: "bg-green", class: "bg-green [--bg-color:var(--green-mark)]!" },
-      { id: id(), name: "", value: "bg-cyan", class: "bg-cyan [--bg-color:var(--cyan-mark)]!" },
-      { id: id(), name: "", value: "bg-blue", class: "bg-blue [--bg-color:var(--blue-mark)]!" },
-      { id: id(), name: "", value: "bg-purple", class: "bg-purple [--bg-color:var(--purple-mark)]!" },
-    ],
-
-    /* Цвет текста из палитры темы (--X-text, контраст от 4.5:1), порядок как у мастер-цвета; первый вариант - обычный цвет текста */
-    TEXT_COLOR_OPTIONS: [
-      { id: "TEXT_COLOR_DEFAULT", name: "-", value: "text-(color:--font-color)", class: "bg-(--font-color) text-transparent" },
-      { id: "TEXT_COLOR_GRAY", name: "", value: "text-(color:--gray-text)", class: "[--bg-color:var(--gray-mark)]! bg-(--gray-mark)" },
-      { id: "TEXT_COLOR_RED", name: "", value: "text-(color:--red-text)", class: "[--bg-color:var(--red-mark)]! bg-(--red-mark)" },
-      { id: "TEXT_COLOR_ORANGE", name: "", value: "text-(color:--orange-text)", class: "[--bg-color:var(--orange-mark)]! bg-(--orange-mark)" },
-      { id: "TEXT_COLOR_YELLOW", name: "", value: "text-(color:--yellow-text)", class: "[--bg-color:var(--yellow-mark)]! bg-(--yellow-mark)" },
-      { id: "TEXT_COLOR_GREEN", name: "", value: "text-(color:--green-text)", class: "[--bg-color:var(--green-mark)]! bg-(--green-mark)" },
-      { id: "TEXT_COLOR_CYAN", name: "", value: "text-(color:--cyan-text)", class: "[--bg-color:var(--cyan-mark)]! bg-(--cyan-mark)" },
-      { id: "TEXT_COLOR_BLUE", name: "", value: "text-(color:--blue-text)", class: "[--bg-color:var(--blue-mark)]! bg-(--blue-mark)" },
-      { id: "TEXT_COLOR_PURPLE", name: "", value: "text-(color:--purple-text)", class: "[--bg-color:var(--purple-mark)]! bg-(--purple-mark)" },
+      opt("bold", $T("constructor.props.bold"), PROPS_ICONS.bold),
+      opt("italic", $T("constructor.props.italic"), PROPS_ICONS.italic),
+      opt("underline", $T("constructor.props.underline"), PROPS_ICONS.underline),
+      opt("background", $T("constructor.props.background"), PROPS_ICONS.highlight),
     ],
 
     TEXT_ALIGN_OPTIONS: [
-      { id: id(), value: "text-left", name: $T("constructor.props.align.left"), icon: PROPS_ICONS.alignLeft },
-      { id: id(), value: "text-center", name: $T("constructor.props.align.center"), icon: PROPS_ICONS.alignCenter },
-      { id: id(), value: "text-right", name: $T("constructor.props.align.right"), icon: PROPS_ICONS.alignRight },
-      { id: id(), value: "text-justify", name: $T("constructor.props.align.justify"), icon: PROPS_ICONS.alignJustify },
+      opt("text-left", $T("constructor.props.align.left"), PROPS_ICONS.alignLeft),
+      opt("text-center", $T("constructor.props.align.center"), PROPS_ICONS.alignCenter),
+      opt("text-right", $T("constructor.props.align.right"), PROPS_ICONS.alignRight),
+      opt("text-justify", $T("constructor.props.align.justify"), PROPS_ICONS.alignJustify),
     ],
 
     ALIGN_OPTIONS: [
-      { id: id(), value: "left", name: $T("constructor.props.align.left"), icon: PROPS_ICONS.alignLeft },
-      { id: id(), value: "center", name: $T("constructor.props.align.center"), icon: PROPS_ICONS.alignCenter },
-      { id: id(), value: "right", name: $T("constructor.props.align.right"), icon: PROPS_ICONS.alignRight },
+      opt("left", $T("constructor.props.align.left"), PROPS_ICONS.alignLeft),
+      opt("center", $T("constructor.props.align.center"), PROPS_ICONS.alignCenter),
+      opt("right", $T("constructor.props.align.right"), PROPS_ICONS.alignRight),
     ],
 
     JUSTIFY_ALIGN_OPTIONS: [
-      { id: id(), value: "justify-start", name: $T("constructor.props.align.left"), icon: PROPS_ICONS.alignLeft },
-      { id: id(), value: "justify-center", name: $T("constructor.props.align.center"), icon: PROPS_ICONS.alignCenter },
-      { id: id(), value: "justify-end", name: $T("constructor.props.align.right"), icon: PROPS_ICONS.alignRight },
+      opt("justify-start", $T("constructor.props.align.left"), PROPS_ICONS.alignLeft),
+      opt("justify-center", $T("constructor.props.align.center"), PROPS_ICONS.alignCenter),
+      opt("justify-end", $T("constructor.props.align.right"), PROPS_ICONS.alignRight),
     ],
 
     ICON_TEXT_POSITION_OPTIONS: [
-      { id: id(), value: "flex-row", name: $T("constructor.props.iconpos.left"), icon: PROPS_ICONS.arrowLeft },
-      { id: id(), value: "flex-col", name: $T("constructor.props.iconpos.top"), icon: PROPS_ICONS.arrowUp },
-      { id: id(), value: "flex-row-reverse", name: $T("constructor.props.iconpos.right"), icon: PROPS_ICONS.arrowRight },
-      { id: id(), value: "flex-col-reverse", name: $T("constructor.props.iconpos.bottom"), icon: PROPS_ICONS.arrowDown },
+      opt("flex-row", $T("constructor.props.iconpos.left"), PROPS_ICONS.arrowLeft),
+      opt("flex-col", $T("constructor.props.iconpos.top"), PROPS_ICONS.arrowUp),
+      opt("flex-row-reverse", $T("constructor.props.iconpos.right"), PROPS_ICONS.arrowRight),
+      opt("flex-col-reverse", $T("constructor.props.iconpos.bottom"), PROPS_ICONS.arrowDown),
     ],
 
     TABLE_TEXT_SETTING_OPTIONS: [
-      { id: id(), value: "sortable", name: $T("constructor.props.table.columns.sortable"), icon: PROPS_ICONS.sort },
-      { id: id(), value: "copy", name: $T("constructor.props.copy"), icon: PROPS_ICONS.copy },
-      { id: id(), value: "truncated", name: $T("constructor.props.table.columns.truncated"), icon: PROPS_ICONS.ellipsis },
-      { id: id(), value: "tooltip", name: $T("constructor.props.table.columns.tooltip"), icon: PROPS_ICONS.tooltip },
-      { id: id(), value: "modal", name: $T("constructor.props.table.columns.modal"), icon: PROPS_ICONS.modal },
+      opt("sortable", $T("constructor.props.table.columns.sortable"), PROPS_ICONS.sort),
+      opt("copy", $T("constructor.props.copy"), PROPS_ICONS.copy),
+      opt("truncated", $T("constructor.props.table.columns.truncated"), PROPS_ICONS.ellipsis),
+      opt("tooltip", $T("constructor.props.table.columns.tooltip"), PROPS_ICONS.tooltip),
+      opt("modal", $T("constructor.props.table.columns.modal"), PROPS_ICONS.modal),
     ],
 
     HEIGHT_OPTIONS: [
-      { id: id(), value: "py-1", name: $T("constructor.props.height.small"), icon: "S" },
-      { id: id(), value: "py-2", name: $T("constructor.props.height.medium"), icon: "M" },
-      { id: id(), value: "py-3", name: $T("constructor.props.height.large"), icon: "L" },
+      opt("py-1", $T("constructor.props.height.small"), "S"),
+      opt("py-2", $T("constructor.props.height.medium"), "M"),
+      opt("py-3", $T("constructor.props.height.large"), "L"),
     ],
 
     FILE_ATTACH_TYPE_OPTIONS: [
-      { id: id(), value: "file", name: $T("constructor.props.type.file"), icon: PROPS_ICONS.file },
-      { id: id(), value: "image", name: $T("constructor.props.type.image"), icon: PROPS_ICONS.image },
+      opt("file", $T("constructor.props.type.file"), PROPS_ICONS.file),
+      opt("image", $T("constructor.props.type.image"), PROPS_ICONS.image),
     ],
 
     DIVIDER_TYPE_OPTIONS: [
-      { id: id(), value: "line", name: $T("constructor.props.divider.type.line"), icon: PROPS_ICONS.dividerLine },
-      { id: id(), value: "empty", name: $T("constructor.props.divider.type.empty"), icon: PROPS_ICONS.dividerSpace },
+      opt("line", $T("constructor.props.divider.type.line"), PROPS_ICONS.dividerLine),
+      opt("empty", $T("constructor.props.divider.type.empty"), PROPS_ICONS.dividerSpace),
     ],
 
     DIVIDER_ANCHOR_OPTIONS: [
-      { id: id(), value: "top", name: $T("constructor.props.divider.anchor.top"), icon: PROPS_ICONS.anchorTop },
-      { id: id(), value: "center", name: $T("constructor.props.divider.anchor.center"), icon: PROPS_ICONS.anchorCenter },
-      { id: id(), value: "bottom", name: $T("constructor.props.divider.anchor.bottom"), icon: PROPS_ICONS.anchorBottom },
+      opt("top", $T("constructor.props.divider.anchor.top"), PROPS_ICONS.anchorTop),
+      opt("center", $T("constructor.props.divider.anchor.center"), PROPS_ICONS.anchorCenter),
+      opt("bottom", $T("constructor.props.divider.anchor.bottom"), PROPS_ICONS.anchorBottom),
     ],
 
     FITMODE_OPTIONS: [
-      { id: id(), value: "cover", name: $T("constructor.props.type.cover"), icon: PROPS_ICONS.fitCover },
-      { id: id(), value: "contain", name: $T("constructor.props.type.contain"), icon: PROPS_ICONS.fitContain },
+      opt("cover", $T("constructor.props.type.cover"), PROPS_ICONS.fitCover),
+      opt("contain", $T("constructor.props.type.contain"), PROPS_ICONS.fitContain),
     ],
 
     SWITCH_OPTIONS: [
-      { id: id(), value: "horizontal", name: $T("constructor.props.type.horizontal"), icon: PROPS_ICONS.toggleHorizontal },
-      { id: id(), value: "vertical", name: $T("constructor.props.type.vertical"), icon: PROPS_ICONS.toggleVertical },
-      { id: id(), value: "checkbox", name: $T("constructor.props.type.checkbox"), icon: PROPS_ICONS.checkbox },
+      opt("horizontal", $T("constructor.props.type.horizontal"), PROPS_ICONS.toggleHorizontal),
+      opt("vertical", $T("constructor.props.type.vertical"), PROPS_ICONS.toggleVertical),
+      opt("checkbox", $T("constructor.props.type.checkbox"), PROPS_ICONS.checkbox),
     ],
 
     INFO_SIDE_OPTIONS: [
-      { id: id(), value: "top", name: $T("constructor.props.info.top"), icon: PROPS_ICONS.arrowUp },
-      { id: id(), value: "bottom", name: $T("constructor.props.info.bottom"), icon: PROPS_ICONS.arrowDown },
-      { id: id(), value: "left", name: $T("constructor.props.info.left"), icon: PROPS_ICONS.arrowLeft },
-      { id: id(), value: "right", name: $T("constructor.props.info.right"), icon: PROPS_ICONS.arrowRight },
+      opt("top", $T("constructor.props.info.top"), PROPS_ICONS.arrowUp),
+      opt("bottom", $T("constructor.props.info.bottom"), PROPS_ICONS.arrowDown),
+      opt("left", $T("constructor.props.info.left"), PROPS_ICONS.arrowLeft),
+      opt("right", $T("constructor.props.info.right"), PROPS_ICONS.arrowRight),
     ],
 
     FORM_OPTIONS: [
-      { id: id(), value: "square", name: $T("constructor.props.type.square"), icon: PROPS_ICONS.square },
-      { id: id(), value: "circle", name: $T("constructor.props.type.circle"), icon: PROPS_ICONS.circle },
+      opt("square", $T("constructor.props.type.square"), PROPS_ICONS.square),
+      opt("circle", $T("constructor.props.type.circle"), PROPS_ICONS.circle),
     ],
 
     TABLE_CONTENT_TYPE_OPTIONS: [
-      { id: id(), value: "text", name: $T("constructor.props.table.type.text") },
-      { id: id(), value: "select", name: $T("constructor.props.table.type.select") },
-      { id: id(), value: "button", name: $T("constructor.props.table.type.button") },
-      { id: id(), value: "progressBar", name: $T("constructor.props.table.type.progressbar") },
-      { id: id(), value: "image", name: $T("constructor.props.table.type.icon") },
+      opt("text", $T("constructor.props.table.type.text")),
+      opt("select", $T("constructor.props.table.type.select")),
+      opt("button", $T("constructor.props.table.type.button")),
+      opt("progressBar", $T("constructor.props.table.type.progressbar")),
+      opt("image", $T("constructor.props.table.type.icon")),
     ],
 
     INPUT_SETTING_OPTIONS: [
-      { id: id(), value: "readonly", name: $T("constructor.props.readonly"), icon: PROPS_ICONS.lock },
-      { id: id(), value: "help.copyButton", name: $T("constructor.props.copy"), icon: PROPS_ICONS.copy },
+      opt("readonly", $T("constructor.props.readonly"), PROPS_ICONS.lock),
+      opt("help.copyButton", $T("constructor.props.copy"), PROPS_ICONS.copy),
     ],
 
-    BUFFER_SIZE_OPTIONS: [
-      { id: id(), value: 10, name: "10" },
-      { id: id(), value: 50, name: "50" },
-      { id: id(), value: 100, name: "100" },
-      { id: id(), value: 500, name: "500" },
-      { id: id(), value: 1000, name: "1000" },
-    ],
+    BUFFER_SIZE_OPTIONS: [opt(10, "10"), opt(50, "50"), opt(100, "100"), opt(500, "500"), opt(1000, "1000")],
 
-    VISIBLE_ROWS_OPTIONS: [
-      { id: id(), value: 5, name: "5" },
-      { id: id(), value: 10, name: "10" },
-      { id: id(), value: 20, name: "20" },
-    ],
+    VISIBLE_ROWS_OPTIONS: [opt(5, "5"), opt(10, "10"), opt(20, "20")],
 
     WIDGET_TYPE_OPTIONS: [
-      { id: id(), value: "input", name: $T("constructor.props.input") },
-      { id: id(), value: "slider", name: $T("constructor.props.slider") },
-      { id: id(), value: "switch", name: $T("constructor.props.switch") },
+      opt("input", $T("constructor.props.input")),
+      opt("slider", $T("constructor.props.slider")),
+      opt("switch", $T("constructor.props.switch")),
     ],
 
     INPUT_REGEXP_OPTIONS: [
-      { id: id(), value: "/^[0-9a-z]{0,10}$/", name: $T("constructor.props.regexp.latin10") },
-      { id: id(), value: "/^[а-яА-яЁё]{0,10}$/", name: $T("constructor.props.regexp.kiril10") },
-      {
-        id: id(),
-        value: "/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/",
-        name: $T("constructor.props.regexp.ipv4"),
-      },
-      { id: id(), value: "/((^|:)([0-9a-fA-F]{0,4})){1,8}$/", name: $T("constructor.props.regexp.ipv6") },
-      { id: id(), value: "/^(0[1-9]|[12][0-9]|3[01])[.](0[1-9]|1[012])[.](19|20)\\d\\d$/", name: $T("constructor.props.regexp.date") },
-      { id: id(), value: "/^([01]?[0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9])?$/", name: $T("constructor.props.regexp.time") },
-      { id: id(), value: "/^[a-zA-Z0-9.!#$%&'*+/=?^_{|}~-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)+$/", name: $T("constructor.props.regexp.email") },
-      { id: id(), value: "/^https?:\\/\\/[\\w.-]+(?:\\.[a-zA-Z]{2,})+(?:[/?#]\\S*)?$/", name: $T("constructor.props.regexp.url") },
-      { id: id(), value: "/^-?\\d+(\\.\\d+)?$/", name: $T("constructor.props.regexp.numbers") },
-      { id: id(), value: "/^#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/", name: $T("constructor.props.regexp.colorhex") },
-      { id: id(), value: "/^[0-9A-F]{0,4}$/", name: $T("constructor.props.regexp.devid") },
-      { id: id(), value: "/^[0-9a-fA-F]{4}-[0-9a-fA-F]{24}[:][0-9a-fA-F]{2}$|^$/", name: $T("constructor.props.regexp.serialnum") },
-      { id: id(), value: "/^(\\+7|8)[\\s-]?\\(?\\d{3}\\)?[\\s-]?\\d{3}[\\s-]?\\d{2}[\\s-]?\\d{2}$/", name: $T("constructor.props.regexp.phone") },
-      { id: id(), value: "/^([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}$/", name: $T("constructor.props.regexp.mac") },
-      { id: id(), value: "/^[a-zA-Z0-9_]{3,16}$/", name: $T("constructor.props.regexp.username") },
-      { id: id(), value: "/^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d!@#$%^&*]{8,}$/", name: $T("constructor.props.regexp.password") },
+      opt("/^[0-9a-z]{0,10}$/", $T("constructor.props.regexp.latin10")),
+      opt("/^[а-яА-яЁё]{0,10}$/", $T("constructor.props.regexp.kiril10")),
+      opt("/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/", $T("constructor.props.regexp.ipv4")),
+      opt("/((^|:)([0-9a-fA-F]{0,4})){1,8}$/", $T("constructor.props.regexp.ipv6")),
+      opt("/^(0[1-9]|[12][0-9]|3[01])[.](0[1-9]|1[012])[.](19|20)\\d\\d$/", $T("constructor.props.regexp.date")),
+      opt("/^([01]?[0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9])?$/", $T("constructor.props.regexp.time")),
+      opt("/^[a-zA-Z0-9.!#$%&'*+/=?^_{|}~-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)+$/", $T("constructor.props.regexp.email")),
+      opt("/^https?:\\/\\/[\\w.-]+(?:\\.[a-zA-Z]{2,})+(?:[/?#]\\S*)?$/", $T("constructor.props.regexp.url")),
+      opt("/^-?\\d+(\\.\\d+)?$/", $T("constructor.props.regexp.numbers")),
+      opt("/^#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/", $T("constructor.props.regexp.colorhex")),
+      opt("/^[0-9A-F]{0,4}$/", $T("constructor.props.regexp.devid")),
+      opt("/^[0-9a-fA-F]{4}-[0-9a-fA-F]{24}[:][0-9a-fA-F]{2}$|^$/", $T("constructor.props.regexp.serialnum")),
+      opt("/^(\\+7|8)[\\s-]?\\(?\\d{3}\\)?[\\s-]?\\d{3}[\\s-]?\\d{2}[\\s-]?\\d{2}$/", $T("constructor.props.regexp.phone")),
+      opt("/^([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}$/", $T("constructor.props.regexp.mac")),
+      opt("/^[a-zA-Z0-9_]{3,16}$/", $T("constructor.props.regexp.username")),
+      opt("/^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d!@#$%^&*]{8,}$/", $T("constructor.props.regexp.password")),
     ],
 
     AUTOCOMPLETE_CONSTRUCTOR_OPTIONS: [
-      { id: id(), value: "on", name: $T("constructor.props.autocomplete.on") },
-      { id: id(), value: "off", name: $T("constructor.props.autocomplete.off") },
-      { id: id(), value: "given-name", name: $T("constructor.props.autocomplete.given-name") },
-      { id: id(), value: "family-name", name: $T("constructor.props.autocomplete.family-name") },
-      { id: id(), value: "nickname", name: $T("constructor.props.autocomplete.nickname") },
-      { id: id(), value: "username", name: $T("constructor.props.autocomplete.username") },
-      { id: id(), value: "new-password", name: $T("constructor.props.autocomplete.new-password") },
-      { id: id(), value: "current-password", name: $T("constructor.props.autocomplete.current-password") },
-      { id: id(), value: "organization-title", name: $T("constructor.props.autocomplete.organization-title") },
-      { id: id(), value: "country-name", name: $T("constructor.props.autocomplete.country-name") },
-      { id: id(), value: "address-level1", name: $T("constructor.props.autocomplete.address-level1") },
-      { id: id(), value: "address-level2", name: $T("constructor.props.autocomplete.address-level2") },
-      { id: id(), value: "street-address", name: $T("constructor.props.autocomplete.street-address") },
-      { id: id(), value: "postal-code", name: $T("constructor.props.autocomplete.postal-code") },
-      { id: id(), value: "email", name: $T("constructor.props.autocomplete.email") },
-      { id: id(), value: "tel", name: $T("constructor.props.autocomplete.tel") },
+      opt("on", $T("constructor.props.autocomplete.on")),
+      opt("off", $T("constructor.props.autocomplete.off")),
+      opt("given-name", $T("constructor.props.autocomplete.given-name")),
+      opt("family-name", $T("constructor.props.autocomplete.family-name")),
+      opt("nickname", $T("constructor.props.autocomplete.nickname")),
+      opt("username", $T("constructor.props.autocomplete.username")),
+      opt("new-password", $T("constructor.props.autocomplete.new-password")),
+      opt("current-password", $T("constructor.props.autocomplete.current-password")),
+      opt("organization-title", $T("constructor.props.autocomplete.organization-title")),
+      opt("country-name", $T("constructor.props.autocomplete.country-name")),
+      opt("address-level1", $T("constructor.props.autocomplete.address-level1")),
+      opt("address-level2", $T("constructor.props.autocomplete.address-level2")),
+      opt("street-address", $T("constructor.props.autocomplete.street-address")),
+      opt("postal-code", $T("constructor.props.autocomplete.postal-code")),
+      opt("email", $T("constructor.props.autocomplete.email")),
+      opt("tel", $T("constructor.props.autocomplete.tel")),
     ],
   }
 })

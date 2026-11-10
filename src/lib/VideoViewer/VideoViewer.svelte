@@ -6,25 +6,14 @@
   import type { IOption, IVideoViewerProps } from "../types"
   import { onMount } from "svelte"
   import { twMerge } from "tailwind-merge"
-  import { widgetAccentStyle } from "../widgetAccent"
+  import { accentStyle } from "../accent"
 
-  let {
-    id = crypto.randomUUID(),
-    wrapperClass,
-    label = { name: "", class: "" },
-    showSelect = true,
-    source = "camera",
-    frame = null,
-    status,
-  }: IVideoViewerProps = $props()
+  let { accent, wrapperClass, label = { name: "", class: "" }, showSelect = true, source = "camera", frame = null, status }: IVideoViewerProps = $props()
 
   const isRemote = $derived(source === "remote")
 
-  /* Мастер-цвет bg-* рисуется кольцом ring вокруг кадра: ring не меняет размеры контейнера, в отличие от border */
-  const roleBorderClass = $derived.by(() => {
-    const role = wrapperClass?.match(/bg-(\w+)/)?.[1]
-    return role && role !== "max" ? "ring-2 ring-inset ring-(--accent-text)" : ""
-  })
+  /* Цвет accent рисуется кольцом ring вокруг кадра: ring не меняет размеры контейнера, в отличие от border */
+  const roleBorderClass = $derived(accent ? "ring-2 ring-inset ring-(--accent-text)" : "")
 
   let videoElement = $state<HTMLVideoElement | null>(null)
   let stream = $state<MediaStream | null>(null)
@@ -142,11 +131,7 @@
   })
 </script>
 
-<div
-  id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
-  class={twMerge("flex flex-col w-full h-full items-center", wrapperClass)}
-  style={widgetAccentStyle(wrapperClass ?? "")}
->
+<div class={twMerge("flex flex-col w-full h-full items-center", wrapperClass)} style={accentStyle(accent)}>
   {#if label.name}
     <h5 class={twMerge(`w-full px-4 text-center`, label.class)}>{label.name}</h5>
   {/if}
@@ -192,7 +177,7 @@
               />
             </svg>
             <h5 class="text-(--red-text)">{error}</h5>
-            <Button wrapperClass="w-fit" content={{ name: $T("library.retry") }} componentClass="bg-blue px-5" onClick={handlePermission} />
+            <Button wrapperClass="w-fit" content={{ name: $T("library.retry") }} variant="primary" componentClass="px-5" onClick={handlePermission} />
           {/if}
         </div>
       {/if}
@@ -211,11 +196,11 @@
       disabled={deviceOptions.length == 0}
       type="buttons"
       label={{ name: $T("constructor.props.source") }}
-      value={deviceOptions.find((p) => p.value == devId) || deviceOptions[0]}
+      value={devId || deviceOptions[0]?.value}
       options={deviceOptions}
       onUpdate={async (value) => {
         stopStream()
-        devId = (value as IOption).value as string
+        devId = value
         await startStream(devId)
       }}
     />

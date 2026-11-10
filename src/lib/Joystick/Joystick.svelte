@@ -1,13 +1,14 @@
 <script lang="ts">
   import { roundToClean } from "../number"
-  import { sanitizeHtml } from "../html"
   import { twMerge } from "tailwind-merge"
-  import { widgetAccentStyle } from "../widgetAccent"
+  import { accentStyle } from "../accent"
+  import { T } from "../locales/i18n"
   import type { IJoystickProps } from "../types"
+  import Icon from "../Icon.svelte"
 
   let {
-    id = crypto.randomUUID(),
     wrapperClass = "",
+    accent = "blue",
     label = { name: "", class: "" },
     value = $bindable([0, 0, 0, 0]),
     readonly = false,
@@ -17,87 +18,26 @@
       { name: "Roll", minNum: -360, maxNum: 360 },
     ],
     buttonIcon,
-    onUpdate = () => {},
+    onUpdate,
   }: IJoystickProps = $props()
 
+  /* Сектора по кругу от «вправо» по часовой: приращения осей 0 (pitch) и 1 (yaw), главные кнопки крупнее */
   const directions = [
-    {
-      id: "right",
-      angle: 30.5,
-      mainButton: true,
-      onClick: () => {
-        updateValue(1, +sensitivity)
-        onUpdate(value)
-      },
-    },
-    {
-      id: "bottom-right",
-      angle: 58,
-      mainButton: false,
-      onClick: () => {
-        updateValue(1, +sensitivity)
-        updateValue(0, -sensitivity)
-        onUpdate(value)
-      },
-    },
-    {
-      id: "bottom",
-      angle: 122,
-      mainButton: true,
-      onClick: () => {
-        updateValue(0, -sensitivity)
-        onUpdate(value)
-      },
-    },
-    {
-      id: "bottom-left",
-      angle: 149.5,
-      mainButton: false,
-      onClick: () => {
-        updateValue(1, -sensitivity)
-        updateValue(0, -sensitivity)
-        onUpdate(value)
-      },
-    },
-    {
-      id: "left",
-      angle: 212,
-      mainButton: true,
-      onClick: () => {
-        updateValue(1, -sensitivity)
-        onUpdate(value)
-      },
-    },
-    {
-      id: "top-left",
-      angle: 239,
-      mainButton: false,
-      onClick: () => {
-        updateValue(0, +sensitivity)
-        updateValue(1, -sensitivity)
-        onUpdate(value)
-      },
-    },
-    {
-      id: "top",
-      angle: 301,
-      mainButton: true,
-      onClick: () => {
-        updateValue(0, +sensitivity)
-        onUpdate(value)
-      },
-    },
-    {
-      id: "top-right",
-      angle: 328,
-      mainButton: false,
-      onClick: () => {
-        updateValue(0, +sensitivity)
-        updateValue(1, +sensitivity)
-        onUpdate(value)
-      },
-    },
+    { name: "right", angle: 30.5, main: true, delta: [0, 1] },
+    { name: "bottom_right", angle: 58, main: false, delta: [-1, 1] },
+    { name: "bottom", angle: 122, main: true, delta: [-1, 0] },
+    { name: "bottom_left", angle: 149.5, main: false, delta: [-1, -1] },
+    { name: "left", angle: 212, main: true, delta: [0, -1] },
+    { name: "top_left", angle: 239, main: false, delta: [1, -1] },
+    { name: "top", angle: 301, main: true, delta: [1, 0] },
+    { name: "top_right", angle: 328, main: false, delta: [1, 1] },
   ]
+
+  const emit = () => onUpdate?.(value)
+  const move = (delta: number[]) => {
+    delta.forEach((d, axis) => d && updateValue(axis, d * sensitivity))
+    emit()
+  }
 
   /* Копия значения из 4 осей: проп не меняется на месте, нечисло и недостающая ось - 0 */
   const normalize = (arr: unknown): number[] =>
@@ -114,10 +54,7 @@
 
   const updateValue = (index: number, delta: number) => {
     const axis = axes[axes.length == 2 && index == 2 ? index - 1 : index]
-    const min = axis.minNum ?? -360
-    const max = axis.maxNum ?? 360
-
-    value = setAxis(value, index, Math.min(max, Math.max(min, roundToClean(axisValue(index) + delta))))
+    value = setAxis(value, index, Math.min(axis.maxNum ?? 360, Math.max(axis.minNum ?? -360, roundToClean(axisValue(index) + delta))))
   }
 
   const sensitivityOptions = [0.01, 0.1, 1.0, 10, 100]
@@ -127,11 +64,7 @@
   let angle = 360 / directions.length
 </script>
 
-<div
-  id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
-  class={twMerge(`bg-blue relative flex w-full flex-col items-center`, wrapperClass)}
-  style={widgetAccentStyle(twMerge("bg-blue", wrapperClass))}
->
+<div class={twMerge(`relative flex w-full flex-col items-center`, wrapperClass)} style="{accentStyle(accent)} --bg-color: var(--accent-color);">
   {#if label.name}
     <h5 class={twMerge(`w-full px-4 text-center`, label.class)}>{label.name}</h5>
   {/if}
@@ -146,13 +79,13 @@
           {#each directions as direction, index}
             <button
               class="btn-segment pointer-events-none absolute top-1/2 left-1/2 block w-1/2 -translate-y-1/2 cursor-pointer"
-              onclick={direction.onClick}
-              title=""
+              onclick={() => move(direction.delta)}
+              aria-label={$T(`ui.joystick.${direction.name}`)}
             >
               <span
                 class="relative flex w-full origin-left items-center justify-center pl-[60%] pointer-events-auto
-                {direction.mainButton ? 'bg-(--bg-color)' : ''}"
-                style=" height: {direction.mainButton ? 2 * 5 * Math.sin((Math.PI * 65) / 360) : 2 * 5 * Math.sin((Math.PI * 25) / 360)}rem; 
+                {direction.main ? 'bg-(--bg-color)' : ''}"
+                style=" height: {direction.main ? 2 * 5 * Math.sin((Math.PI * 65) / 360) : 2 * 5 * Math.sin((Math.PI * 25) / 360)}rem; 
                   transform: rotate({angle * index}deg); clip-path: polygon(100% 0, {clipPos}% 0, 0 50%, {clipPos}% 100%, 100% 100%)"
                 role="application"
                 onmouseenter={(e) => (e.currentTarget.style.backgroundColor = "color-mix(in srgb, var(--bg-color), var(--shadow-color) 20%)")}
@@ -161,8 +94,8 @@
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   class="segment-icon"
-                  width={direction.mainButton ? 32 : 16}
-                  height={direction.mainButton ? 32 : 16}
+                  width={direction.main ? 32 : 16}
+                  height={direction.main ? 32 : 16}
                   viewBox="0 0 24 24"
                   ><path
                     fill="currentColor"
@@ -193,16 +126,13 @@
             style="background: {axisValue(3) == 1 ? 'color-mix(in srgb, var(--bg-color), var(--shadow-color) 10%)' : 'var(--bg-color)'}"
             onclick={() => {
               value = setAxis(value, 3, axisValue(3) == 0 ? 1 : 0)
-              onUpdate(value)
+              emit()
             }}
+            aria-label={$T("ui.joystick.center")}
+            aria-pressed={axisValue(3) == 1}
           >
             {#if buttonIcon}
-              {#if typeof buttonIcon === "string"}
-                {@html sanitizeHtml(buttonIcon)}
-              {:else}
-                {@const IconComponent = buttonIcon}
-                <IconComponent />
-              {/if}
+              <Icon icon={buttonIcon} class="contents" />
             {:else}
               <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
                 ><path
@@ -221,10 +151,10 @@
           class="flex size-[32px] cursor-pointer items-center justify-center rounded-full border border-(--hairline-color) bg-(--back-color) p-0.5 text-[15px] font-semibold
            transition-colors duration-150 hover:border-(--border-color) [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
           style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"
-          title=""
+          aria-label={$T("ui.joystick.reset")}
           onclick={() => {
             value = [0, 0, 0, 0]
-            onUpdate(value)
+            emit()
           }}
         >
           0
@@ -239,16 +169,8 @@
         >
           <button
             class="btn-segment h-full cursor-pointer rounded-l-full px-3.5"
-            title=""
-            onclick={() => {
-              if (axisValue(2) - sensitivity <= (axes[2].minNum ?? -360)) {
-                value = setAxis(value, 2, axes[2].minNum ?? -360)
-                onUpdate(value)
-                return
-              }
-              value = setAxis(value, 2, roundToClean(axisValue(2) - sensitivity))
-              onUpdate(value)
-            }}
+            aria-label={$T("ui.joystick.roll_left")}
+            onclick={() => move([0, 0, -1])}
             onmouseenter={(e) => (e.currentTarget.style.backgroundColor = "color-mix(in srgb, var(--bg-color), var(--shadow-color) 30%)")}
             onmouseleave={(e) => (e.currentTarget.style.backgroundColor = "")}
           >
@@ -263,16 +185,8 @@
           </button>
           <button
             class="btn-segment h-full cursor-pointer rounded-r-full px-3.5"
-            title=""
-            onclick={() => {
-              if (axisValue(2) + sensitivity >= (axes[2].maxNum ?? 360)) {
-                value = setAxis(value, 2, axes[2].maxNum ?? 360)
-                onUpdate(value)
-                return
-              }
-              value = setAxis(value, 2, roundToClean(axisValue(2) + sensitivity))
-              onUpdate(value)
-            }}
+            aria-label={$T("ui.joystick.roll_right")}
+            onclick={() => move([0, 0, +1])}
             onmouseenter={(e) => (e.currentTarget.style.backgroundColor = "color-mix(in srgb, var(--bg-color), var(--shadow-color) 30%)")}
             onmouseleave={(e) => (e.currentTarget.style.backgroundColor = "")}
           >
@@ -293,10 +207,10 @@
   <!-- Нижняя панель -->
   <div class="mt-3 flex w-80 flex-col gap-1">
     {#if !readonly}
-      <div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class="flex w-full justify-center rounded-full">
-        {#each sensitivityOptions as option, index}
+      <div class="flex w-full justify-center rounded-full" role="group" aria-label={$T("ui.joystick.step")}>
+        {#each sensitivityOptions as option, index (option)}
           <button
-            id={crypto.randomUUID()}
+            aria-pressed={option === sensitivity}
             class={twMerge(`m-0 inline-block min-w-0 flex-1 cursor-pointer items-center px-2 py-1 font-semibold shadow-sm transition-all duration-300
             select-none hover:shadow-md
             ${option === sensitivity && sensitivity !== null ? "z-10 bg-(--bg-color) text-(--on-accent)" : "bg-(--back-color)"}
@@ -329,7 +243,7 @@
               [&::-webkit-outer-spin-button]:hidden`}
               style="background: color-mix(in srgb, var(--bg-color), var(--back-color) 70%);"
               value={axisValue(index)}
-              id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
+              aria-label={axe.name}
               readonly
             />
           </div>

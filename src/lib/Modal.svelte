@@ -1,4 +1,4 @@
-<!-- $lib/Modal.svelte - модальное окно: радиус 20, шапка и подвал через линии, подложка 40% с размытием, стек окон, закрытие по Escape и клику вне окна -->
+<!-- $lib/Modal.svelte - модальное окно: радиус 20, шапка и подвал через линии, подложка 40% с размытием, стек окон, закрытие по Escape и клику вне окна, фокус не выходит из окна -->
 <script lang="ts">
   import { T } from "./locales/i18n"
   import { type Snippet } from "svelte"
@@ -27,7 +27,7 @@
     onCancel?: () => void
   } = $props()
 
-  let modalId = $state(crypto.randomUUID())
+  const modalId = $props.id()
 
   let zIndex = $derived.by(() => {
     const stack = $ModalStack
@@ -37,15 +37,36 @@
 
   let isTopmost = $derived($ModalStack.at(-1) === modalId)
 
-  /* При открытии фокус в первое доступное поле ввода окна - можно сразу печатать */
+  /* При открытии фокус в первое поле ввода окна (можно сразу печатать), иначе на само окно; при закрытии - туда, где был */
+  let dialogElement: HTMLDivElement | undefined = $state()
   let mainElement: HTMLDivElement | undefined = $state()
   $effect(() => {
-    if (!isOpen || !mainElement) return
+    if (!isOpen || !dialogElement || !mainElement) return
+    const previous = document.activeElement as HTMLElement | null
     const field = mainElement.querySelector<HTMLElement>(
       "input:not([type=hidden]):not([type=checkbox]):not([type=radio]):not([type=range]):not([disabled]):not([readonly]), textarea:not([disabled]):not([readonly])",
     )
-    field?.focus({ preventScroll: true })
+    ;(field ?? dialogElement).focus({ preventScroll: true })
+    return () => previous?.focus({ preventScroll: true })
   })
+
+  /* Ловушка фокуса: Tab с последнего элемента окна - на первый, Shift+Tab с первого - на последний */
+  const FOCUSABLE =
+    "a[href], button:not([disabled]), input:not([disabled]):not([type=hidden]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex='-1'])"
+  const trapFocus = (event: KeyboardEvent) => {
+    if (event.key !== "Tab" || !dialogElement) return
+    const items = [...dialogElement.querySelectorAll<HTMLElement>(FOCUSABLE)].filter((el) => el.offsetParent !== null)
+    if (!items.length) return event.preventDefault()
+    const first = items[0]
+    const last = items[items.length - 1]
+    if (event.shiftKey && (document.activeElement === first || document.activeElement === dialogElement)) {
+      event.preventDefault()
+      last.focus()
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault()
+      first.focus()
+    }
+  }
 
   $effect(() => {
     if (isOpen) ModalStack.open(modalId)
@@ -90,16 +111,22 @@
     style="z-index: {zIndex - 1};"
   >
     <div
+      bind:this={dialogElement}
       data-modal
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby={title ? `${modalId}-title` : undefined}
+      tabindex="-1"
+      onkeydown={trapFocus}
       class={twMerge(
-        "flex max-h-[90vh] w-300 flex-col overflow-hidden rounded-[20px] border border-(--hairline-color) bg-(--back-color) shadow-(--elevation-3)",
+        "flex max-h-[90vh] w-300 flex-col overflow-hidden rounded-[20px] border border-(--hairline-color) bg-(--back-color) shadow-(--elevation-3) outline-none",
         wrapperClass,
       )}
       style="width: {width}; z-index: {zIndex};"
       transition:scale={{ duration: 200, start: 0.96 }}
     >
       <div class="flex items-center justify-between gap-4 border-b border-(--hairline-color) px-5 py-4">
-        <h4 class="min-w-0 truncate text-[17px] font-semibold">{title}</h4>
+        <h4 id="{modalId}-title" class="min-w-0 truncate text-[17px] font-semibold">{title}</h4>
         <button
           class="flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-lg text-(--faint-color) transition-colors duration-150 hover:bg-(--container-color) hover:text-(--font-color) [&_svg]:size-4"
           onclick={onCancel}

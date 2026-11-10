@@ -1,19 +1,13 @@
 <script lang="ts">
   import { getContext } from "svelte"
   import { T } from "../locales/i18n"
-  import {
-    type UIComponent,
-    type ITableProps,
-    type ITableHeader,
-    updateProperty,
-    findOptionByClass,
-    type IUIComponentHandler,
-    type ITableContent,
-  } from "../types"
+  import type { UIComponent, ITableProps, ITableHeader, ITableContent } from "../types"
+  import { createPropsEditor, type PropertyChange } from "../propsEditor"
   import * as UI from ".."
   import ButtonDelete from "../libIcons/ButtonDelete.svelte"
   import ButtonAdd from "../libIcons/ButtonAdd.svelte"
-  import { optionsStore, findColorOption } from "../options"
+  import { ACCENT_OPTIONS, optionsStore } from "../options"
+  import { twMerge } from "tailwind-merge"
   import { ICONS } from "../icons"
   import CommonSnippets from "../CommonSnippets.svelte"
   import PropsGroup from "../PropsGroup.svelte"
@@ -28,18 +22,19 @@
     forConstructor = true,
   }: {
     component: UIComponent & { properties: Partial<ITableProps<object>> }
-    onPropertyChange: (updates: Partial<{ properties?: string | object; name?: string; access?: string; eventHandler?: IUIComponentHandler }>) => void
+    onPropertyChange: (change: PropertyChange<ITableProps<object>>) => void
     forConstructor?: boolean
   } = $props()
+
+  const edit = $derived(createPropsEditor(component, onPropertyChange))
 
   const DeviceVariables = getContext<{ id: string; value: string; name: string }[]>("DeviceVariables")
   let VARIABLE_OPTIONS = $derived(DeviceVariables && Array.isArray(DeviceVariables) ? DeviceVariables : [])
 
   let isDropdownOpen = $state(-1)
 
-  const initialColor = $derived(findColorOption($optionsStore.COLOR_OPTIONS, component.properties.wrapperClass))
-
-  const initialAlign = $derived(findOptionByClass($optionsStore.TEXT_ALIGN_OPTIONS, component.properties.label?.class, "text-"))
+  /* Цвет таблицы пока задаётся ролью bg-* в wrapperClass */
+  const roleOf = (classes: string | undefined) => (classes?.match(/(?:^|\s)bg-(\w+)/)?.[1] ?? "") as (typeof ACCENT_OPTIONS)[number]["value"]
 
   let settingsContainer: HTMLDivElement[] = $state([])
   let columnContainer: HTMLDivElement | null = $state(null)
@@ -58,56 +53,57 @@
   const contentData = (columnIndex: number, index: number) =>
     (columnContent(component.properties.header?.[columnIndex])[index]?.data ?? {}) as Record<string, unknown>
 
-  const changeColumnSettings = (settings: UI.IOption<string> | UI.IOption<string>[], columnIndex: number, index: number) => {
-    const data = contentData(columnIndex, index)
-    const currentActiveValues = $optionsStore.TABLE_TEXT_SETTING_OPTIONS.filter((opt) => opt.value && data[opt.value] === true).map((opt) => opt.value)
-
-    if (Array.isArray(settings)) {
-      settings.forEach((opt) => {
-        if (opt?.value) data[opt.value] = true
-      })
-
-      currentActiveValues.forEach((activeValue) => {
-        if (activeValue && !settings.some((opt) => opt?.value === activeValue)) data[activeValue] = false
-      })
-    }
-  }
+  const changeColumnSettings = (settings: string[], columnIndex: number, index: number) =>
+    updateContentData(
+      columnIndex,
+      index,
+      Object.fromEntries($optionsStore.TABLE_TEXT_SETTING_OPTIONS.map((option) => [option.value, settings.includes(option.value)])),
+    )
 
   const addContent = (option: UI.IOption, event: MouseEvent, columnIndex: number) => {
     event.stopPropagation()
     const header = component.properties.header ?? []
     const column = header[columnIndex]
     if (!column) return
-    if (!Array.isArray(column.content)) column.content = []
-    column.content.push({
-      type: option.value,
-      data:
-        option.value === "button"
-          ? {
-              name: `button`,
-              class: "bg-blue",
-              eventHandler: { Header: "SET", Argument: "ModCfg", Variables: [] },
-              onClick: () => {},
-            }
-          : {},
-    } as ITableContent<object>)
+    const content = [
+      ...columnContent(column),
+      {
+        type: option.value,
+        data:
+          option.value === "button"
+            ? {
+                name: `button`,
+                class: "bg-blue",
+                eventHandler: { Header: "SET", Argument: "ModCfg", Variables: [] },
+                onClick: () => {},
+              }
+            : {},
+      } as ITableContent<object>,
+    ]
 
-    updateProperty("header", header, component, onPropertyChange)
+    edit.set(
+      "header",
+      header.map((col, i) => (i === columnIndex ? { ...col, content } : col)),
+    )
     isDropdownOpen = -1
   }
 
   const updateTableHeader = (index: number, field: string, value: any) => {
     const headers = [...(component.properties.header ?? [])]
     headers[index] = { ...headers[index], [field]: value }
-    updateProperty("header", headers, component, onPropertyChange)
+    edit.set("header", headers)
   }
 
-  const updateContentProperty = (columnIndex: number, index: number, field: string, value: any) => {
+  const updateContentProperty = (columnIndex: number, index: number, field: string, value: any) => updateContentData(columnIndex, index, { [field]: value })
+  const updateContentData = (columnIndex: number, index: number, data: Record<string, unknown>) => {
     const headers = [...(component.properties.header ?? [])]
-    const item = columnContent(headers[columnIndex])[index]
-    if (!item) return
-    item.data = { ...item.data, [field]: value }
-    updateProperty("header", headers, component, onPropertyChange)
+    const content = columnContent(headers[columnIndex])
+    if (!content[index]) return
+    headers[columnIndex] = {
+      ...headers[columnIndex],
+      content: content.map((item, i) => (i === index ? ({ ...item, data: { ...item.data, ...data } } as ITableContent<object>) : item)),
+    }
+    edit.set("header", headers)
   }
 </script>
 
@@ -115,8 +111,7 @@
   <UI.Switch
     label={{ name: $T("constructor.props.outline") }}
     value={component.properties.outline ? 1 : 0}
-    options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-    onChange={(value) => updateProperty("outline", value === 1, component, onPropertyChange)}
+    onUpdate={(value) => edit.set("outline", value === 1)}
   />
 {/snippet}
 
@@ -124,9 +119,9 @@
   <UI.Select
     label={{ name: $T("constructor.props.table.buffersize") }}
     type="buttons"
-    options={$optionsStore.BUFFER_SIZE_OPTIONS}
-    value={$optionsStore.BUFFER_SIZE_OPTIONS.find((o) => o.value === component.properties.dataBuffer?.bufferSize)}
-    onUpdate={(value) => updateProperty("dataBuffer.bufferSize", (value as UI.IOption<number>).value as number, component, onPropertyChange)}
+    options={$optionsStore.BUFFER_SIZE_OPTIONS as UI.IOption<number>[]}
+    value={component.properties.dataBuffer?.bufferSize}
+    onUpdate={(value) => edit.patch("dataBuffer", { bufferSize: value })}
   />
 {/snippet}
 
@@ -134,9 +129,9 @@
   <UI.Select
     label={{ name: $T("constructor.props.table.visibleRows") }}
     type="buttons"
-    options={$optionsStore.VISIBLE_ROWS_OPTIONS}
-    value={$optionsStore.VISIBLE_ROWS_OPTIONS.find((o) => o.value === component.properties.dataBuffer?.visibleRows)}
-    onUpdate={(value) => updateProperty("dataBuffer.visibleRows", (value as UI.IOption<number>).value as number, component, onPropertyChange)}
+    options={$optionsStore.VISIBLE_ROWS_OPTIONS as UI.IOption<number>[]}
+    value={component.properties.dataBuffer?.visibleRows}
+    onUpdate={(value) => edit.patch("dataBuffer", { visibleRows: value })}
   />
 {/snippet}
 
@@ -155,7 +150,7 @@
                 content: [{ type: "text", data: { key: "" } }],
               }
               const headers = [...(component.properties.header || []), newColumn]
-              updateProperty("header", headers, component, onPropertyChange)
+              edit.set("header", headers)
             }}
           />
         {/snippet}
@@ -176,7 +171,7 @@
                 elementIndex={columnIndex}
                 onUpdate={(updatedArray) => {
                   if (Array.isArray(updatedArray) && updatedArray.every((item) => typeof item === "object" && "content" in item)) {
-                    updateProperty("header", updatedArray, component, onPropertyChange)
+                    edit.set("header", updatedArray)
                   }
                 }}
               />
@@ -184,19 +179,21 @@
                 <UI.Input
                   label={{ name: $T("constructor.props.table.columns.width"), class: "px-0" }}
                   type="number"
-                  isValid={(component.properties.header ?? []).reduce(
+                  accent={(component.properties.header ?? []).reduce(
                     (width: number, h: ITableHeader<object>) => Number(h.width?.replace("%", "")) + width,
                     0,
-                  ) == 100}
+                  ) == 100
+                    ? undefined
+                    : "red"}
                   value={Number(column.width?.replace("%", ""))}
                   onUpdate={(value) => updateTableHeader(columnIndex, "width", `${value}%`)}
                 />
                 <UI.Select
                   label={{ name: $T("constructor.props.align.content") }}
                   type="buttons"
-                  value={$optionsStore.ALIGN_OPTIONS.find((a) => (a.value as string).includes(column.align ?? "left"))}
+                  value={column.align ?? "left"}
                   options={$optionsStore.ALIGN_OPTIONS}
-                  onUpdate={(option) => updateTableHeader(columnIndex, "align", (option as UI.IOption).value)}
+                  onUpdate={(option) => updateTableHeader(columnIndex, "align", option)}
                 />
                 <div
                   class="relative flex items-end"
@@ -234,7 +231,7 @@
                   onClick={() => {
                     const headers = [...(component.properties.header || [])]
                     headers.splice(columnIndex, 1)
-                    updateProperty("header", headers, component, onPropertyChange)
+                    edit.set("header", headers)
                   }}
                 />
               </div>
@@ -256,7 +253,7 @@
                           if (index === columnIndex) {
                             const headers = [...(component.properties.header ?? [])]
                             headers[columnIndex].content = updatedArray
-                            updateProperty("header", headers, component, onPropertyChange)
+                            edit.set("header", headers)
                           }
                         }}
                       />
@@ -284,9 +281,9 @@
                               label={{ name: $T("constructor.props.tablecolumn.settings") }}
                               type="buttons"
                               multiSelect={true}
-                              value={$optionsStore.TABLE_TEXT_SETTING_OPTIONS.slice(0, forConstructor ? 3 : 5).filter((opt) => {
-                                if (opt.value && contentData(columnIndex, index)[opt.value]) return opt
-                              })}
+                              value={$optionsStore.TABLE_TEXT_SETTING_OPTIONS.map((option) => option.value).filter(
+                                (key) => contentData(columnIndex, index)[key],
+                              )}
                               options={$optionsStore.TABLE_TEXT_SETTING_OPTIONS.slice(0, forConstructor ? 3 : 5)}
                               onUpdate={(value) => changeColumnSettings(value, columnIndex, index)}
                             />
@@ -328,7 +325,7 @@
                                 initialValue={{
                                   name: $T("constructor.props.table.type.icon"),
                                   icon: button.icon,
-                                  updateProperty: (icon: string) => updateContentProperty(columnIndex, index, "icon", icon),
+                                  onUpdate: (icon: string) => updateContentProperty(columnIndex, index, "icon", icon),
                                   icons: { array: ICONS },
                                 }}
                                 {component}
@@ -344,15 +341,15 @@
                                 wrapperClass="min-w-0 flex-1"
                                 label={{ name: $T("constructor.props.colors") }}
                                 type="buttons"
-                                options={$optionsStore.COLOR_OPTIONS.filter((option) => option.value !== "bg-max")}
-                                value={findColorOption(
-                                  $optionsStore.COLOR_OPTIONS,
-                                  typeof button.class === "string" ? button.class : component.properties.wrapperClass,
-                                )}
-                                onUpdate={(option) => {
-                                  if (button.class === (option as UI.IOption).value) updateContentProperty(columnIndex, index, "class", "bg-transparent")
-                                  else updateContentProperty(columnIndex, index, "class", (option as UI.IOption).value)
-                                }}
+                                options={ACCENT_OPTIONS.filter((option) => option.value)}
+                                value={roleOf(typeof button.class === "string" ? button.class : component.properties.wrapperClass)}
+                                onUpdate={(accent) =>
+                                  updateContentProperty(
+                                    columnIndex,
+                                    index,
+                                    "class",
+                                    roleOf(button.class as string) === accent ? "bg-transparent" : `bg-${accent}`,
+                                  )}
                               />
                             </div>
                           </div>
@@ -361,10 +358,10 @@
                               wrapperClass="min-w-56 flex-1"
                               label={{ name: $T("constructor.props.header") }}
                               type="buttons"
-                              value={$optionsStore.HEADER_OPTIONS.find((h) => h.value === button.eventHandler?.Header)}
+                              value={button.eventHandler?.Header}
                               options={$optionsStore.HEADER_OPTIONS}
                               onUpdate={(option) => {
-                                const handler = { ...button.eventHandler, Header: (option as UI.IOption).value as string }
+                                const handler = { ...button.eventHandler, Header: option }
                                 updateContentProperty(columnIndex, index, "eventHandler", handler)
                               }}
                             />
@@ -438,7 +435,7 @@
                                 initialValue={{
                                   name: $T("constructor.props.table.columns.defaultIcon"),
                                   icon: image?.defaultIcon ?? "",
-                                  updateProperty: (icon: string) => {
+                                  onUpdate: (icon: string) => {
                                     updateContentProperty(columnIndex, index, "defaultIcon", icon)
                                     if (!image?.width || image?.width === "0rem") updateContentProperty(columnIndex, index, "width", "1rem")
                                     if (!image?.width || image?.height === "0rem") updateContentProperty(columnIndex, index, "height", "1rem")
@@ -480,7 +477,7 @@
                         onClick={() => {
                           const headers = [...(component.properties.header || [])]
                           ;((headers as ITableHeader<object>[])[columnIndex].content as ITableContent<object>[]).splice(index, 1)
-                          updateProperty("header", headers, component, onPropertyChange)
+                          edit.set("header", headers)
                         }}
                       />
                     </div>
@@ -501,14 +498,7 @@
   <UI.Switch
     label={{ name: $T("constructor.props.table.stashData") }}
     value={component.properties.dataBuffer?.stashData ? 1 : 0}
-    options={[{ id: crypto.randomUUID(), value: 0, class: "" }]}
-    onChange={(value) => {
-      updateProperty("dataBuffer.stashData", value === 1, component, onPropertyChange)
-      if (value == 0) {
-        updateProperty("dataBuffer.clearButton", false, component, onPropertyChange)
-        updateProperty("dataBuffer.logger", 0, component, onPropertyChange)
-      }
-    }}
+    onUpdate={(value) => edit.patch("dataBuffer", value === 1 ? { stashData: true } : { stashData: false, clearButton: false, logger: false })}
   />
 {/snippet}
 
@@ -518,8 +508,8 @@
       name: $T("constructor.props.table.clearButton"),
     }}
     value={component.properties.dataBuffer?.clearButton ? 1 : 0}
-    options={[{ id: crypto.randomUUID(), value: 0, class: "", disabled: !component.properties.dataBuffer?.stashData }]}
-    onChange={(value) => updateProperty("dataBuffer.clearButton", value === 1, component, onPropertyChange)}
+    disabled={!component.properties.dataBuffer?.stashData}
+    onUpdate={(value) => edit.patch("dataBuffer", { clearButton: value === 1 })}
   />
 {/snippet}
 
@@ -527,8 +517,8 @@
   <UI.Switch
     label={{ name: $T("constructor.props.table.logger"), captionLeft: $T("constructor.props.info.bottom"), captionRight: $T("constructor.props.info.top") }}
     value={component.properties.dataBuffer?.logger ? 1 : 0}
-    options={[{ id: crypto.randomUUID(), value: 0, class: "", disabled: !component.properties.dataBuffer?.stashData }]}
-    onChange={(value) => updateProperty("dataBuffer.logger", value === 1, component, onPropertyChange)}
+    disabled={!component.properties.dataBuffer?.stashData}
+    onUpdate={(value) => edit.patch("dataBuffer", { logger: value === 1 })}
   />
 {/snippet}
 
@@ -546,7 +536,13 @@
       {/if}
     </PropsGroup>
     <PropsGroup label={$T("constructor.props.group.appearance")}>
-      <CommonSnippets snippet="Colors" initialValue={{ color: initialColor }} {component} {onPropertyChange} />
+      <UI.Select
+        label={{ name: $T("ui.accent") }}
+        type="buttons"
+        options={ACCENT_OPTIONS}
+        value={roleOf(component.properties.wrapperClass)}
+        onUpdate={(accent) => edit.set("wrapperClass", twMerge(component.properties.wrapperClass, accent ? `bg-${accent}` : "bg-max"))}
+      />
       {@render TableOutline()}
       {#if component.properties.dataBuffer?.stashData}
         {@render TableBufferSize()}
@@ -554,7 +550,7 @@
     </PropsGroup>
     <PropsGroup label={$T("constructor.props.group.content")}>
       <CommonSnippets snippet="Label" {component} {onPropertyChange} />
-      <CommonSnippets snippet="LabelAlign" initialValue={initialAlign} {component} {onPropertyChange} />
+      <CommonSnippets snippet="LabelAlign" {component} {onPropertyChange} />
       {#if component.properties.dataBuffer?.stashData}
         {@render TableVisibleRows()}
       {/if}
@@ -566,7 +562,13 @@
     <PropsGroup label={$T("constructor.props.group.general")}>
       <CommonSnippets snippet="Identificator" {component} {onPropertyChange} />
       <CommonSnippets snippet="WrapperClass" {component} {onPropertyChange} />
-      <CommonSnippets snippet="Colors" initialValue={{ color: initialColor }} {component} {onPropertyChange} />
+      <UI.Select
+        label={{ name: $T("ui.accent") }}
+        type="buttons"
+        options={ACCENT_OPTIONS}
+        value={roleOf(component.properties.wrapperClass)}
+        onUpdate={(accent) => edit.set("wrapperClass", twMerge(component.properties.wrapperClass, accent ? `bg-${accent}` : "bg-max"))}
+      />
       {@render TableOutline()}
     </PropsGroup>
 

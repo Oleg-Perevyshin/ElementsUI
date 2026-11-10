@@ -3,10 +3,10 @@
   import { localizeDeep } from "#lib/locales/localize.ts"
   import { type UIComponent } from "#lib"
   import ComponentExample from "../../ComponentExample.svelte"
-  import { updateComponent, type IWidgetDeviceInfoProps } from "#lib/types.ts"
+  import { type IWidgetDeviceInfoProps } from "#lib/types.ts"
   import WidgetDeviceInfo from "#lib/WidgetDeviceInfo/WidgetDeviceInfo.svelte"
   import WidgetDeviceInfoProps from "#lib/WidgetDeviceInfo/WidgetDeviceInfoProps.svelte"
-  import { formatObjectToString, RenderMarkdown } from "../../common"
+  import { formatObjectToString, RenderMarkdown, applyChange } from "../../common"
   import readmeRaw from "#lib/WidgetDeviceInfo/README.md?raw"
 
   let readmeHtml = $state("")
@@ -33,13 +33,11 @@
     access: "full",
     properties: {
       label: { name: "" },
-      componentClass: "",
     },
     eventHandler: { Header: "SET", Argument: "ModCfg", Variables: [] },
     position: { row: 0, col: 0, width: 0, height: 0 },
     parentId: "",
   })
-  let forConstructor = $state(false)
 
   let codeText = $derived(`
 <UI.WidgetDeviceInfo
@@ -51,7 +49,7 @@ onFactoryReset={handleFactoryReset}
 />`)
 </script>
 
-<ComponentExample {codeText} {readmeHtml} bind:forConstructor>
+<ComponentExample {codeText} {readmeHtml}>
   {#snippet component()}
     <div class="m-auto w-full max-w-3xl">
       <WidgetDeviceInfo
@@ -66,14 +64,14 @@ onFactoryReset={handleFactoryReset}
   {#snippet componentProps()}
     <WidgetDeviceInfoProps
       component={deviceInfoComponent as UIComponent & { properties: Partial<IWidgetDeviceInfoProps> }}
-      onPropertyChange={(updates) => (deviceInfoComponent = updateComponent(deviceInfoComponent, updates as object))}
+      onPropertyChange={(updates) => (deviceInfoComponent = applyChange(deviceInfoComponent, updates))}
     />
   {/snippet}
   {#snippet examples()}
     <div class="flex flex-col gap-6 p-2">
       <WidgetDeviceInfo
         value={mockValue}
-        componentClass="bg-green"
+        accent="green"
         onSave={(info) => console.log("SET CFG (mock):", info)}
         onRestart={() => console.log("RESTART (mock)")}
         onFactoryReset={() => console.log("FACTORY RESET (mock)")}

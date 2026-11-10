@@ -3,10 +3,10 @@
   import { localizeDeep } from "#lib/locales/localize.ts"
   import { type UIComponent } from "#lib"
   import ComponentExample from "../../ComponentExample.svelte"
-  import { updateComponent, type IWidgetPFDData, type IWidgetPFDProps } from "#lib/types.ts"
+  import { type IWidgetPFDData, type IWidgetPFDProps } from "#lib/types.ts"
   import WidgetPFD from "#lib/WidgetPFD/WidgetPFD.svelte"
   import WidgetPFDProps from "#lib/WidgetPFD/WidgetPFDProps.svelte"
-  import { formatObjectToString, RenderMarkdown } from "../../common"
+  import { formatObjectToString, RenderMarkdown, applyChange } from "../../common"
   import readmeRaw from "#lib/WidgetPFD/README.md?raw"
   import { createFlightSim } from "#lib/flightSim.ts"
 
@@ -30,14 +30,12 @@
     properties: {
       id: "MAV",
       label: { name: "" },
-      componentClass: "",
       limits: { speedMin: 8, speedMax: 25, bankMax: 30, altMax: 170, gMin: -1, gMax: 3.8, battLow: 20 },
     },
     eventHandler: { Header: "GET", Argument: "ModCfg", Variables: [] },
     position: { row: 0, col: 0, width: 0, height: 0 },
     parentId: "",
   })
-  let forConstructor = $state(false)
 
   let codeText = $derived(`
 <UI.WidgetPFD
@@ -46,7 +44,7 @@ value={mav}
 />`)
 </script>
 
-<ComponentExample {codeText} {readmeHtml} bind:forConstructor>
+<ComponentExample {codeText} {readmeHtml}>
   {#snippet component()}
     <div class="m-auto w-full max-w-3xl">
       <WidgetPFD {...localizeDeep(pfdComponent.properties, $Language) as IWidgetPFDProps} value={flight} />
@@ -55,13 +53,13 @@ value={mav}
   {#snippet componentProps()}
     <WidgetPFDProps
       component={pfdComponent as UIComponent & { properties: Partial<IWidgetPFDProps> }}
-      onPropertyChange={(updates) => (pfdComponent = updateComponent(pfdComponent, updates as object))}
+      onPropertyChange={(updates) => (pfdComponent = applyChange(pfdComponent, updates))}
     />
   {/snippet}
   {#snippet examples()}
     <div class="m-auto flex w-full max-w-3xl flex-col gap-6 p-2">
-      <div class="w-80"><WidgetPFD label={{ name: "Узкая ячейка" }} value={flight} componentClass="bg-blue" /></div>
-      <WidgetPFD label={{ name: "Нет данных" }} componentClass="bg-red" />
+      <div class="w-80"><WidgetPFD label={{ name: "Узкая ячейка" }} value={flight} accent="blue" /></div>
+      <WidgetPFD label={{ name: "Нет данных" }} accent="red" />
     </div>
   {/snippet}
 </ComponentExample>

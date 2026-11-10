@@ -1,11 +1,13 @@
+<!-- $lib/Button/ButtonProps.svelte - панель свойств конструктора для Button -->
 <script lang="ts">
   import TextsEditor from "../TextsEditor.svelte"
   import { localizeText } from "../locales/localize"
   import { DEFAULT_LANGUAGE } from "../locales/languages"
   import { T } from "../locales/i18n"
-  import { type UIComponent, type IButtonProps, type IOption, updateProperty, findOptionByClass, type IUIComponentHandler } from "../types"
+  import type { UIComponent, IButtonProps } from "../types"
+  import { createPropsEditor, optionByClass, type PropertyChange } from "../propsEditor"
   import * as UI from ".."
-  import { optionsStore, findColorOption } from "../options"
+  import { ACCENT_OPTIONS, optionsStore } from "../options"
   import { twMerge } from "tailwind-merge"
   import { ICONS } from "../icons"
   import CommonSnippets from "../CommonSnippets.svelte"
@@ -15,190 +17,99 @@
   const {
     component,
     onPropertyChange,
-    forConstructor = true,
   }: {
     component: UIComponent & { properties: Partial<IButtonProps> }
-    onPropertyChange: (updates: Partial<{ properties?: string | object; name?: string; access?: string; eventHandler?: IUIComponentHandler }>) => void
-    forConstructor?: boolean
+    onPropertyChange: (change: PropertyChange<IButtonProps>) => void
   } = $props()
+
+  const edit = $derived(createPropsEditor(component, onPropertyChange))
+  const properties = $derived(component.properties)
+  const hasName = $derived(!!localizeText(properties.content?.name, DEFAULT_LANGUAGE).trim())
 
   /* Argument пуст - поле ниже лишь визуально показывает "ModCfg", реальное значение нужно проставить в состояние */
   $effect(() => {
     if (!component.eventHandler?.Argument) onPropertyChange({ eventHandler: { Argument: "ModCfg" } })
   })
 
-  let hasValue: boolean = $derived(!!component.eventHandler?.Value)
+  /* Один выбор цвета: "-" - secondary, цвет - primary этого цвета, повторное нажатие на выбранный - plain (без фона) */
+  const colorValue = $derived(properties.variant === "primary" ? (properties.accent ?? "blue") : properties.variant === "secondary" ? "" : undefined)
+  const setColor = (accent: (typeof ACCENT_OPTIONS)[number]["value"]) =>
+    onPropertyChange({
+      properties:
+        accent === colorValue
+          ? { variant: "plain", accent: undefined }
+          : accent
+            ? { variant: "primary", accent: accent === "blue" ? undefined : accent }
+            : { variant: "secondary", accent: undefined },
+    })
 
-  let Header: IOption = $derived(
-    $optionsStore.HEADER_OPTIONS.find((h) => h.value === component.eventHandler?.Header) ?? { id: "", name: "", value: "", class: "!w-1/4" },
-  )
-
-  const initialColor = $derived(findColorOption($optionsStore.COLOR_OPTIONS, component.properties.componentClass))
-
-  const initialHeight = $derived(findOptionByClass($optionsStore.HEIGHT_OPTIONS, component.properties.componentClass, "py-"))
-  const updateIconProperty = (propertyName: string, value: string) => {
-    updateProperty(propertyName, value, component, onPropertyChange)
-    if (component.properties.content?.icon && !localizeText(component.properties.content?.name, DEFAULT_LANGUAGE).trim())
-      updateProperty("componentClass", twMerge((component.properties as UI.IButtonProps).componentClass, "w-fit p-2"), component, onPropertyChange)
-    else if (
-      (component.properties.content?.icon && localizeText(component.properties.content?.name, DEFAULT_LANGUAGE).trim()) ||
-      (!component.properties.content?.icon && !localizeText(component.properties.content?.name, DEFAULT_LANGUAGE).trim())
-    )
-      updateProperty("componentClass", twMerge((component.properties as UI.IButtonProps).componentClass, "w-full px-1 py-1"), component, onPropertyChange)
-  }
-
-  const updateButtonColor = (option: UI.IOption<string>) => {
-    if (initialColor?.value === option.value)
-      updateProperty("componentClass", twMerge(component.properties.componentClass, "bg-transparent"), component, onPropertyChange)
-    else
-      updateProperty(
-        "componentClass",
-        twMerge((component.properties as UI.IButtonProps).componentClass, (option as UI.IOption<string>).value),
-        component,
-        onPropertyChange,
-      )
-  }
+  /* Иконка без подписи - круглая кнопка по размеру иконки */
+  const setIcon = (icon: string) =>
+    onPropertyChange({
+      properties: {
+        content: { ...properties.content, icon },
+        ...(icon || !hasName ? { componentClass: twMerge(properties.componentClass, icon && !hasName ? "w-fit p-2" : "w-full px-1 py-1") } : {}),
+      },
+    })
 </script>
 
-{#snippet ButtonHeaderArgument()}
-  <UI.Select
-    label={{ name: $T("constructor.props.header") }}
-    type="buttons"
-    value={Header}
-    options={$optionsStore.HEADER_OPTIONS}
-    onUpdate={(option) => onPropertyChange({ eventHandler: { Header: (option as IOption<string>).value as string } })}
-  />
-  <UI.Input
-    label={{ name: $T("constructor.props.argument") }}
-    value={component.eventHandler?.Argument || "ModCfg"}
-    maxlength={32}
-    help={{ info: $T("constructor.props.argument.info"), autocomplete: "on", regExp: /^[a-zA-Z0-9\-_]{0,32}$/ }}
-    onUpdate={(value) => onPropertyChange({ eventHandler: { Argument: value as string } })}
-  />
-{/snippet}
-
-{#snippet ButtonVariables()}
-  {#if component.eventHandler?.Argument !== "ModCfg" || Header.value === "SET"}
-    <UI.Input
-      label={{ name: $T("constructor.props.value") }}
-      value={component.eventHandler?.Value}
-      help={{ info: $T("constructor.props.value.info") }}
-      maxlength={500}
-      onUpdate={(value) => onPropertyChange({ eventHandler: { Value: value as string } })}
-    />
-  {/if}
-  <UI.Input
-    label={{ name: $T("constructor.props.variables") }}
-    disabled={hasValue}
-    value={component.eventHandler?.Variables?.join(" ")}
-    help={{ info: $T("constructor.props.variables.info"), autocomplete: "on", regExp: /^[a-zA-Z0-9.\-_ ":{}]{0,500}$/ }}
-    maxlength={500}
-    onUpdate={(value) => onPropertyChange({ eventHandler: { Variables: (value as string).trim().split(/\s+/) } })}
-  />
-{/snippet}
-
-{#snippet ButtonName()}
-  <TextsEditor {component} {onPropertyChange} />
-{/snippet}
-
-{#snippet ButtonHeight()}
-  {#if !(!localizeText(component.properties.content?.name, DEFAULT_LANGUAGE).trim() && component.properties.content?.icon)}
+<div class="flex flex-col gap-2">
+  <PropsGroup label={$T("constructor.properties.group.general")}>
+    <CommonSnippets snippet="Access" {component} {onPropertyChange} />
     <UI.Select
-      label={{ name: $T("constructor.props.height") }}
+      label={{ name: $T("constructor.properties.header") }}
       type="buttons"
-      options={$optionsStore.HEIGHT_OPTIONS}
-      value={initialHeight}
-      onUpdate={(option) =>
-        updateProperty("componentClass", twMerge(component.properties.componentClass, (option as IOption<string>).value), component, onPropertyChange)}
+      value={component.eventHandler?.Header}
+      options={$optionsStore.HEADER_OPTIONS}
+      onUpdate={(Header) => onPropertyChange({ eventHandler: { Header } })}
     />
-  {/if}
-{/snippet}
-
-{#snippet ButtonInfoSide()}
-  <UI.Select
-    label={{ name: $T("constructor.props.info.side") }}
-    type="buttons"
-    options={$optionsStore.INFO_SIDE_OPTIONS}
-    value={$optionsStore.INFO_SIDE_OPTIONS.find((h) => h.value === component.properties.content?.info?.side)}
-    onUpdate={(option) => updateProperty("content.info.side", (option as IOption<string>).value as string, component, onPropertyChange)}
-  />
-{/snippet}
-
-{#snippet ButtonComponentClass()}
-  <UI.Input
-    label={{ name: $T("constructor.props.componentclass") }}
-    value={component.properties.componentClass}
-    onUpdate={(value) => updateProperty("componentClass", value as string, component, onPropertyChange)}
-  />
-{/snippet}
-
-{#snippet ButtonColors()}
-  <div class="flex items-end gap-2">
-    <UI.Button wrapperClass="w-8" content={{ icon: InfoIcon, info: { text: $T("constructor.props.button.colors.hint"), side: "right" } }} />
+    <UI.Input
+      label={{ name: $T("constructor.properties.argument") }}
+      value={component.eventHandler?.Argument || "ModCfg"}
+      maxlength={32}
+      help={{ info: $T("constructor.properties.argument.info"), autocomplete: "on", regExp: /^[a-zA-Z0-9\-_]{0,32}$/ }}
+      onUpdate={(value) => onPropertyChange({ eventHandler: { Argument: String(value) } })}
+    />
+  </PropsGroup>
+  <PropsGroup label={$T("constructor.properties.group.value")}>
+    {#if component.eventHandler?.Argument !== "ModCfg" || component.eventHandler?.Header === "SET"}
+      <UI.Input
+        label={{ name: $T("constructor.properties.value") }}
+        value={component.eventHandler?.Value}
+        help={{ info: $T("constructor.properties.value.info") }}
+        maxlength={500}
+        onUpdate={(value) => onPropertyChange({ eventHandler: { Value: String(value) } })}
+      />
+    {/if}
+    <UI.Input
+      label={{ name: $T("constructor.properties.variables") }}
+      disabled={!!component.eventHandler?.Value}
+      value={component.eventHandler?.Variables?.join(" ")}
+      help={{ info: $T("constructor.properties.variables.info"), autocomplete: "on", regExp: /^[a-zA-Z0-9.\-_ ":{}]{0,500}$/ }}
+      maxlength={500}
+      onUpdate={(value) => onPropertyChange({ eventHandler: { Variables: String(value).trim().split(/\s+/) } })}
+    />
+    <div class="flex items-end gap-2">
+      <UI.Button wrapperClass="w-8" content={{ icon: InfoIcon, info: { text: $T("constructor.properties.button.colors.hint"), side: "right" } }} />
+      <UI.Select label={{ name: $T("constructor.properties.colors") }} type="buttons" options={ACCENT_OPTIONS} value={colorValue} onUpdate={setColor} />
+    </div>
+  </PropsGroup>
+  <PropsGroup label={$T("constructor.properties.group.appearance")}>
+    <TextsEditor {component} {onPropertyChange} />
     <CommonSnippets
-      snippet="Colors"
-      initialValue={{
-        color: initialColor,
-        updateProperty: (option: UI.IOption<string>) => updateButtonColor(option),
-      }}
+      snippet="IconsLib"
+      initialValue={{ name: $T("constructor.properties.buttonIcon"), icon: properties.content?.icon, onUpdate: setIcon, icons: { array: ICONS } }}
       {component}
       {onPropertyChange}
     />
-  </div>
-{/snippet}
-
-{#if forConstructor}
-  <div class="flex flex-col gap-2">
-    <PropsGroup label={$T("constructor.props.group.general")}>
-      <CommonSnippets snippet="Access" {component} {onPropertyChange} />
-      {@render ButtonHeaderArgument()}
-    </PropsGroup>
-    <PropsGroup label={$T("constructor.props.group.value")}>
-      {@render ButtonVariables()}
-      {@render ButtonColors()}
-    </PropsGroup>
-    <PropsGroup label={$T("constructor.props.group.appearance")}>
-      {@render ButtonName()}
-      <CommonSnippets
-        snippet="IconsLib"
-        initialValue={{
-          name: $T("constructor.props.buttonIcon"),
-          icon: component.properties.content?.icon,
-          updateProperty: (icon: string) => updateIconProperty("content.icon", icon as string),
-          icons: { array: ICONS },
-        }}
-        {component}
-        {onPropertyChange}
+    {#if hasName || !properties.content?.icon}
+      <UI.Select
+        label={{ name: $T("constructor.properties.height") }}
+        type="buttons"
+        options={$optionsStore.HEIGHT_OPTIONS}
+        value={optionByClass($optionsStore.HEIGHT_OPTIONS, properties.componentClass)?.value}
+        onUpdate={(height) => edit.set("componentClass", twMerge(properties.componentClass, height))}
       />
-      {@render ButtonHeight()}
-    </PropsGroup>
-  </div>
-{:else}
-  <div class="flex flex-col gap-2">
-    <PropsGroup label={$T("constructor.props.group.general")}>
-      <CommonSnippets snippet="Identificator" {component} {onPropertyChange} />
-      <CommonSnippets snippet="Access" {component} {onPropertyChange} />
-      <CommonSnippets snippet="WrapperClass" {component} {onPropertyChange} />
-      <CommonSnippets snippet="Disabled" {component} {onPropertyChange} />
-    </PropsGroup>
-    <PropsGroup label={$T("constructor.props.group.content")}>
-      {@render ButtonName()}
-      {@render ButtonInfoSide()}
-    </PropsGroup>
-    <PropsGroup label={$T("constructor.props.group.appearance")}>
-      {@render ButtonComponentClass()}
-      {@render ButtonColors()}
-      <CommonSnippets
-        snippet="IconsLib"
-        initialValue={{
-          name: $T("constructor.props.buttonIcon"),
-          icon: component.properties.content?.icon,
-          updateProperty: (icon: string) => updateIconProperty("content.icon", icon as string),
-          icons: { array: ICONS },
-        }}
-        {component}
-        {onPropertyChange}
-      />
-    </PropsGroup>
-  </div>
-{/if}
+    {/if}
+  </PropsGroup>
+</div>

@@ -4,8 +4,8 @@
   import ComponentExample from "../../ComponentExample.svelte"
   import FileAttach from "#lib/FileAttach/FileAttach.svelte"
   import FileAttachProps from "#lib/FileAttach/FileAttachProps.svelte"
-  import { updateComponent, type IFileAttachProps, type UIComponent } from "#lib/types.ts"
-  import { formatObjectToString, RenderMarkdown } from "../../common"
+  import { type IFileAttachProps, type UIComponent } from "#lib/types.ts"
+  import { formatObjectToString, RenderMarkdown, applyChange } from "../../common"
   import readmeRaw from "#lib/FileAttach/README.md?raw"
 
   let readmeHtml = $state("")
@@ -31,37 +31,28 @@
     parentId: "",
   })
 
-  let forConstructor = $state(false)
-
   let codeText = $derived(`
 <UI.FileAttach
 ${formatObjectToString(fileAttachComponent.properties as IFileAttachProps)}
-  onChange={() => {}}
+  onUpdate={() => {}}
 />`)
 
-  const handleImageUpload = (event: Event) => {
-    const target = event.target as HTMLInputElement
-    const file = target.files?.[0]
+  const handleImageUpload = (file: File | null) => {
     if (!file) return
-
     const reader = new FileReader()
-    reader.onload = () => {
-      const base64WithPrefix = reader.result as string
-      updateComponent(fileAttachComponent, { properties: { ["currentImage"]: base64WithPrefix } })
-    }
+    reader.onload = () => (fileAttachComponent = applyChange(fileAttachComponent, { properties: { currentImage: String(reader.result) } }))
     reader.readAsDataURL(file)
   }
 </script>
 
-<ComponentExample {codeText} {readmeHtml} bind:forConstructor>
+<ComponentExample {codeText} {readmeHtml}>
   {#snippet component()}
-    <FileAttach {...localizeDeep(fileAttachComponent.properties, $Language) as IFileAttachProps} onChange={(event) => handleImageUpload(event)} />
+    <FileAttach {...localizeDeep(fileAttachComponent.properties, $Language) as IFileAttachProps} onUpdate={handleImageUpload} />
   {/snippet}
   {#snippet componentProps()}
     <FileAttachProps
       component={fileAttachComponent as UIComponent & { properties: Partial<IFileAttachProps> }}
-      onPropertyChange={(updates) => (fileAttachComponent = updateComponent(fileAttachComponent, updates as object))}
-      {forConstructor}
+      onPropertyChange={(updates) => (fileAttachComponent = applyChange(fileAttachComponent, updates))}
     />
   {/snippet}
   {#snippet examples()}
@@ -72,7 +63,7 @@ ${formatObjectToString(fileAttachComponent.properties as IFileAttachProps)}
         id={crypto.randomUUID()}
         label={{ name: "Кнопка" }}
         type="button"
-        componentClass="size-8 rounded-[10px] p-[6px] bg-max"
+        componentClass="size-8 rounded-[10px] p-[6px]"
         info={{ text: "Открыть файл", side: "top" }}
       />
       <FileAttach

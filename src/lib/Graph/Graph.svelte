@@ -2,14 +2,14 @@
   import type { IOption } from "../types"
 
   /* Константы и настройки - экспортируются для переиспользования в GraphProps.svelte (редактор конструктора) */
-  export const REFRESH_OPTIONS: IOption[] = [
-    { id: "RefreshOption-AUTO", name: "AUTO", value: 0, class: "" },
-    { id: "RefreshOption-50", name: "50", value: 50, class: "" },
-    { id: "RefreshOption-100", name: "100", value: 100, class: "" },
-    { id: "RefreshOption-250", name: "250", value: 250, class: "" },
-    { id: "RefreshOption-500", name: "500", value: 500, class: "" },
-    { id: "RefreshOption-1000", name: "1000", value: 1000, class: "" },
-    { id: "RefreshOption-5000", name: "5000", value: 5000, class: "" },
+  export const REFRESH_OPTIONS: IOption<number>[] = [
+    { id: "RefreshOption-AUTO", name: "AUTO", value: 0 },
+    { id: "RefreshOption-50", name: "50", value: 50 },
+    { id: "RefreshOption-100", name: "100", value: 100 },
+    { id: "RefreshOption-250", name: "250", value: 250 },
+    { id: "RefreshOption-500", name: "500", value: 500 },
+    { id: "RefreshOption-1000", name: "1000", value: 1000 },
+    { id: "RefreshOption-5000", name: "5000", value: 5000 },
   ]
 </script>
 
@@ -432,8 +432,8 @@
         <Select
           label={{ name: $T("ui.graph.refresh"), class: "" }}
           options={REFRESH_OPTIONS}
-          value={REFRESH_OPTIONS.find((o) => o.value == selectedRefreshRate)}
-          onUpdate={(value) => (selectedRefreshRate = (value as IOption).value as number)}
+          value={selectedRefreshRate}
+          onUpdate={(value) => (selectedRefreshRate = value)}
         />
       {/if}
 

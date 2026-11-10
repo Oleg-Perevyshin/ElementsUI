@@ -16,11 +16,11 @@
 <script lang="ts">
   import { T } from "../locales/i18n"
   import { twMerge } from "tailwind-merge"
-  import { widgetAccentStyle } from "../widgetAccent"
+  import { accentStyle } from "../accent"
   import type { IPeriodChartProps } from "../types"
 
   let {
-    id = crypto.randomUUID(),
+    accent,
     /* Панель без заливки, цвет можно передать явно через bg-* */
     wrapperClass = "",
     label = { name: "", class: "" },
@@ -82,11 +82,7 @@
   const labelStep = $derived(Math.ceil(values.length / 12) || 1)
 </script>
 
-<div
-  id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
-  class={twMerge("relative flex w-full flex-col gap-3", wrapperClass)}
-  style={widgetAccentStyle(wrapperClass)}
->
+<div class={twMerge("relative flex w-full flex-col gap-3", wrapperClass)} style={accentStyle(accent)}>
   {#if label.name}
     <h5 class={twMerge("w-full text-[13px] font-semibold text-(--muted-color)", label.class)}>{label.name}</h5>
   {/if}

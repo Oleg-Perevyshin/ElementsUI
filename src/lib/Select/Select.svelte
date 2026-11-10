@@ -1,40 +1,61 @@
-<!-- $lib/Select/Select.svelte - радиус 10, высота 36, выравнивание по левому краю, список - единственный элемент с тенью, группа type="buttons" без разрывов. -->
-<script lang="ts" generics="T = unknown">
+<!-- $lib/Select/Select.svelte - радиус 10, высота 32, список - единственный элемент с тенью и вынесен в body; группа type="buttons" без разрывов. Значение - option.value, клавиатура: стрелки, Enter, Escape -->
+<script lang="ts" generics="T = unknown, M extends boolean = false">
   import { sanitizeHtml } from "../html"
   import { slide } from "svelte/transition"
-  import { onMount } from "svelte"
-  import type { IOption, ISelectProps } from "../types"
+  import type { IOption, ISelectProps, SelectValue } from "../types"
   import { twMerge } from "tailwind-merge"
-  import { itemAccentStyle } from "../widgetAccent"
-  import { T } from "../locales/i18n"
+  import { accentStyle } from "../accent"
+  import { T as Tr } from "../locales/i18n"
   import Tooltip from "../Tooltip.svelte"
+  import FieldLabel from "../FieldLabel.svelte"
 
-  let isDropdownOpen = $state(false)
+  let {
+    wrapperClass = "",
+    componentClass = "",
+    disabled = false,
+    label,
+    multiSelect,
+    fitContent = false,
+    listHeight = "16rem",
+    type = "select",
+    value = $bindable(),
+    options = [],
+    onUpdate,
+    onInput,
+  }: ISelectProps<T, M> = $props()
+
+  const uid = $props.id()
+  const listId = `${uid}-list`
+  const optionId = (index: number) => `${uid}-option-${index}`
+
+  let isOpen = $state(false)
+  /* Вариант под клавиатурой в открытом списке */
+  let activeIndex = $state(-1)
+  /* Текст type="input", пока пользователь печатает; null - показывается текущее значение */
+  let draft = $state<string | null>(null)
   /* Вариант-иконка под курсором в type="buttons": его name показывается подсказкой */
-  let hoveredOptionId: string | null = $state(null)
-  let dropdownElement: HTMLDivElement
+  let hoveredIndex = $state(-1)
+  let anchorElement: HTMLDivElement | undefined = $state()
   let portalElement: HTMLDivElement | undefined = $state()
-  let anchorRect: { top: number; bottom: number; left: number; width: number } | null = $state(null)
+  let anchorRect: DOMRect | null = $state(null)
 
-  /* Список вариантов выносится в document.body (портал), чтобы его не обрезал overflow-hidden/overflow-auto ближайшего скроллящегося предка (например, панель свойств конструктора). Позиция считается от dropdownElement и обновляется, пока список открыт, при скролле/резайзе где угодно на странице. Атрибут data-ui-portal на контейнере - чтобы Modal.svelte не принимал клик по опции (физически лежащей вне [data-modal]) за клик "снаружи" и не закрывался. */
-  function portal(node: HTMLElement) {
+  const selectedValues = $derived(multiSelect ? (Array.isArray(value) ? (value as T[]) : []) : [value as T])
+  const isSelected = (option: IOption<T>) => selectedValues.includes(option.value)
+  const current = $derived(multiSelect ? undefined : options.find((option) => option.value === value))
+  const valueText = $derived(current?.name ?? (value == null || Array.isArray(value) ? "" : String(value)))
+  const visibleOptions = $derived(
+    type === "input" && draft ? options.filter((option) => (option.name ?? "").toLowerCase().includes(draft!.toLowerCase())) : options,
+  )
+
+  /* Список выносится в body, чтобы его не обрезал overflow предка (панель свойств); data-ui-portal - Modal не считает клик по нему кликом снаружи */
+  const portal = (node: HTMLElement) => {
     document.body.appendChild(node)
-    return {
-      destroy() {
-        node.remove()
-      },
-    }
-  }
-
-  function updateAnchorRect() {
-    if (!dropdownElement) return
-    const rect = dropdownElement.getBoundingClientRect()
-    anchorRect = { top: rect.top, bottom: rect.bottom, left: rect.left, width: rect.width }
+    return { destroy: () => node.remove() }
   }
 
   /* Список открывается вниз, а если снизу места меньше, чем ему нужно, и сверху больше - вверх; высота не больше свободного места */
-  const LIST_GAP = 4
-  const VIEWPORT_MARGIN = 8
+  const GAP = 4
+  const MARGIN = 8
   const listMaxPx = $derived.by(() => {
     const size = parseFloat(listHeight)
     if (listHeight.endsWith("rem")) return size * parseFloat(getComputedStyle(document.documentElement).fontSize || "16")
@@ -42,143 +63,133 @@
   })
   const listPlacement = $derived.by(() => {
     if (!anchorRect) return { style: "", maxHeight: listHeight }
-    const needed = Math.min(listMaxPx, options.length * 36 + 10)
-    const below = window.innerHeight - anchorRect.bottom - LIST_GAP - VIEWPORT_MARGIN
-    const above = anchorRect.top - LIST_GAP - VIEWPORT_MARGIN
+    const needed = Math.min(listMaxPx, visibleOptions.length * 36 + 10)
+    const below = window.innerHeight - anchorRect.bottom - GAP - MARGIN
+    const above = anchorRect.top - GAP - MARGIN
     const openUp = below < needed && above > below
-    const space = Math.max(openUp ? above : below, 72)
-    const position = openUp ? `bottom: ${window.innerHeight - anchorRect.top + LIST_GAP}px;` : `top: ${anchorRect.bottom + LIST_GAP}px;`
-    return { style: `${position} left: ${anchorRect.left}px; width: ${anchorRect.width}px;`, maxHeight: `${Math.min(listMaxPx, space)}px` }
+    const position = openUp ? `bottom: ${window.innerHeight - anchorRect.top + GAP}px;` : `top: ${anchorRect.bottom + GAP}px;`
+    return {
+      style: `${position} left: ${anchorRect.left}px; width: ${anchorRect.width}px;`,
+      maxHeight: `${Math.min(listMaxPx, Math.max(openUp ? above : below, 72))}px`,
+    }
   })
 
+  /* Пока список открыт: позиция следует за полем, клик вне поля и списка закрывает */
   $effect(() => {
-    if (!isDropdownOpen) return
-    updateAnchorRect()
-    window.addEventListener("scroll", updateAnchorRect, true)
-    window.addEventListener("resize", updateAnchorRect)
+    if (!isOpen) return
+    const place = () => (anchorRect = anchorElement?.getBoundingClientRect() ?? null)
+    const outside = (event: PointerEvent) => {
+      const target = event.target as Node
+      if (!anchorElement?.contains(target) && !portalElement?.contains(target)) close()
+    }
+    place()
+    window.addEventListener("scroll", place, true)
+    window.addEventListener("resize", place)
+    document.addEventListener("pointerdown", outside)
     return () => {
-      window.removeEventListener("scroll", updateAnchorRect, true)
-      window.removeEventListener("resize", updateAnchorRect)
+      window.removeEventListener("scroll", place, true)
+      window.removeEventListener("resize", place)
+      document.removeEventListener("pointerdown", outside)
     }
   })
 
-  let {
-    id = crypto.randomUUID(),
-    wrapperClass = "",
-    componentClass = "",
-    disabled = false,
-    label = { name: "", class: "" },
-    multiSelect = false,
-    fitContent = false,
-    listHeight = "16rem",
-    type = "select",
-    value = $bindable(),
-    options = [],
-    onUpdate,
-  }: ISelectProps<T> = $props()
-
-  let searchValue: any = $derived(
-    (() => {
-      if (type === "input" && !Array.isArray(value)) return value?.name ?? ""
-    })(),
-  )
-
-  let filteredOptions = $derived<IOption<T>[]>(
-    (() => {
-      const firstOptions = options.filter((option) => {
-        const optionName = option.name?.toString() || ""
-        return optionName.toLowerCase().includes(searchValue.toLowerCase())
-      })
-      return [...firstOptions, ...options.filter((option) => !firstOptions.some((filtered) => filtered.id === option.id))]
-    })(),
-  )
-
-  const handleClickOutside = (event: MouseEvent) => {
-    const target = event.target as Node
-    const insideAnchor = !!dropdownElement?.contains(target)
-    const insidePortal = !!portalElement?.contains(target)
-    if (!insideAnchor && !insidePortal) isDropdownOpen = false
+  const open = () => {
+    if (disabled || isOpen) return
+    isOpen = true
+    activeIndex = visibleOptions.findIndex(isSelected)
+  }
+  const close = () => {
+    isOpen = false
+    activeIndex = -1
   }
 
-  onMount(() => {
-    if (type === "select" || type === "input") document.addEventListener("click", handleClickOutside)
-    return () => {
-      if (type === "select" || type === "input") document.removeEventListener("click", handleClickOutside)
-    }
-  })
-
-  const toggleDropdown = (event: MouseEvent) => {
-    event.stopPropagation()
-    if (!disabled) isDropdownOpen = !isDropdownOpen
+  const commit = (next: SelectValue<T, M>) => {
+    value = next
+    onUpdate?.(next)
   }
 
-  const isSelected = (option: IOption<any>) => {
-    if (type === "buttons" && multiSelect && Array.isArray(value)) return value.find((v) => v.value === option.value)
-    else return option.value === (value as IOption)?.value
+  const pick = (option: IOption<T>) => {
+    if (disabled || option.disabled) return
+    if (multiSelect) {
+      const list = selectedValues
+      commit((list.includes(option.value) ? list.filter((v) => v !== option.value) : [...list, option.value]) as SelectValue<T, M>)
+    } else commit(option.value as SelectValue<T, M>)
+    draft = null
+    close()
   }
 
-  const selectOption = (option: IOption<T>, event: MouseEvent) => {
-    event.stopPropagation()
-
-    if (type === "buttons" && multiSelect) {
-      const current = Array.isArray(value) ? value : value ? [value] : []
-      value = current.find((v) => v.value === option.value) ? current.filter((op) => op.value !== option.value) : [...current, option]
-    } else {
-      value = option
-    }
-
-    if (type === "input") {
-      handleSearch()
-      searchValue = option.name?.toString() ?? ""
-    }
-    isDropdownOpen = false
-    onUpdate?.(value)
+  /* type="input": введённый текст - вариант с таким именем, иначе сам текст (числом, если варианты числовые) */
+  const commitDraft = () => {
+    if (draft === null) return
+    const text = draft
+    draft = null
+    const match = options.find((option) => option.name === text)
+    if (match) return pick(match)
+    const numeric = typeof options[0]?.value === "number" && text.trim() !== "" && Number.isFinite(Number(text))
+    commit((numeric ? Number(text) : text) as SelectValue<T, M>)
   }
 
-  const handleSearch = () => {
-    const selectedOption = options.find((option) => option.name?.toString() === searchValue) || {
-      id: `input-${Date.now()}`,
-      name: searchValue,
-      value: typeof options[0]?.value == "number" && searchValue !== "" && !isNaN(Number(searchValue)) ? (Number(searchValue) as T) : (searchValue as T),
+  const moveActive = (step: number) => {
+    const count = visibleOptions.length
+    for (let n = 0, i = activeIndex; n < count; n++) {
+      i = (i + step + count) % count
+      if (!visibleOptions[i].disabled) return (activeIndex = i)
     }
-    value = selectedOption
-    onUpdate?.(selectedOption)
+  }
+
+  const onKeydown = (event: KeyboardEvent) => {
+    if (disabled) return
+    if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+      event.preventDefault()
+      if (isOpen) moveActive(event.key === "ArrowDown" ? 1 : -1)
+      else open()
+    } else if (event.key === "Enter") {
+      if (isOpen && visibleOptions[activeIndex]) {
+        event.preventDefault()
+        pick(visibleOptions[activeIndex])
+      } else if (type === "input") {
+        commitDraft()
+        close()
+      }
+    } else if (event.key === "Escape" && isOpen) {
+      /* Escape закрывает только список, не модальное окно вокруг */
+      event.preventDefault()
+      event.stopPropagation()
+      draft = null
+      close()
+    }
   }
 
   /* Общая база поля - та же, что у Input */
   const fieldBase = `h-8 w-full rounded-[10px] border border-(--border-color) bg-(--field-color) px-3 text-left text-[14px]
     transition-[border-color,box-shadow] duration-150 outline-none
     focus:border-(--accent-text) focus:shadow-(--focus-shadow-color)`
-
-  const listBase = `overflow-y-auto rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-1 shadow-(--elevation-2)`
-
-  const optionBase = `flex h-8 w-full items-center rounded-md px-2.5 text-left text-[14px] transition-colors duration-150`
+  const fieldState = $derived(
+    disabled ? "cursor-not-allowed border-(--hairline-color) bg-(--container-color) text-(--faint-color)" : "hover:border-(--faint-color)",
+  )
 </script>
 
 <div class={twMerge(`flex w-full flex-col gap-1`, wrapperClass)}>
-  <div class="relative flex w-full flex-col gap-1" bind:this={dropdownElement}>
-    {#if label.name}
-      <span class={twMerge(`text-[12px] font-semibold text-(--muted-color)`, label.class)}>{label.name}</span>
-    {/if}
+  <div class="relative flex w-full flex-col gap-1" bind:this={anchorElement}>
+    <FieldLabel {label} for={type === "buttons" ? undefined : uid} id={`${uid}-label`} />
 
-    {#if type === "select" && !Array.isArray(value)}
+    {#if type === "select"}
       <button
-        id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
-        value={value?.value ? String(value.value) : ""}
-        class={twMerge(
-          `${fieldBase} flex items-center justify-between gap-2
-           ${disabled ? "cursor-not-allowed border-(--hairline-color) bg-(--container-color) text-(--faint-color)" : "cursor-pointer hover:border-(--faint-color)"}`,
-          value?.class,
-        )}
-        onclick={toggleDropdown}
+        id={uid}
+        class={twMerge(`${fieldBase} flex items-center justify-between gap-2 ${fieldState}`, disabled ? "" : "cursor-pointer")}
+        onclick={() => (isOpen ? close() : open())}
+        onkeydown={onKeydown}
+        role="combobox"
         aria-haspopup="listbox"
-        aria-expanded={isDropdownOpen}
+        aria-expanded={isOpen}
+        aria-controls={listId}
+        aria-activedescendant={isOpen && activeIndex >= 0 ? optionId(activeIndex) : undefined}
         {disabled}
       >
-        <span class="min-w-0 flex-1 truncate {value?.name ? '' : 'text-(--faint-color)'} {componentClass}">{value?.name || $T("common.select_tag")}</span>
+        <span class="min-w-0 flex-1 truncate {valueText ? '' : 'text-(--faint-color)'} {componentClass}">{valueText || $Tr("common.select_tag")}</span>
         <svg
           class="size-3.5 shrink-0 text-(--faint-color) transition-transform duration-150"
-          style="transform: rotate({isDropdownOpen ? 180 : 0}deg)"
+          style="transform: rotate({isOpen ? 180 : 0}deg)"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
@@ -187,70 +198,62 @@
           stroke-linejoin="round"><path d="M6 9l6 6 6-6" /></svg
         >
       </button>
-
-      {#if isDropdownOpen}
-        <div use:portal bind:this={portalElement} data-ui-portal class="fixed z-[9999]" style={listPlacement.style} transition:slide={{ duration: 150 }}>
-          <div class={listBase} style="max-height: {listPlacement.maxHeight};" role="listbox">
-            {#each options as option (option.id)}
-              <button
-                id={option.id}
-                value={option?.value ? String(option.value) : ""}
-                class={twMerge(
-                  `${optionBase}
-                   ${isSelected(option) ? "bg-(--accent-soft) font-semibold text-(--accent-text)" : "hover:bg-(--container-color)"}
-                   ${option.disabled ? "cursor-not-allowed text-(--faint-color)" : "cursor-pointer"}`,
-                  option.class,
-                )}
-                onclick={(e) => selectOption(option, e)}
-                disabled={option.disabled}
-              >
-                <span class="min-w-0 truncate">{option.name}</span>
-              </button>
-            {/each}
-          </div>
-        </div>
-      {/if}
-    {:else if type === "buttons"}
+    {:else if type === "input"}
+      <input
+        id={uid}
+        value={draft ?? valueText}
+        class={twMerge(fieldBase, fieldState, disabled ? "" : "cursor-text", componentClass)}
+        autocomplete="off"
+        role="combobox"
+        aria-autocomplete="list"
+        aria-expanded={isOpen}
+        aria-controls={listId}
+        aria-activedescendant={isOpen && activeIndex >= 0 ? optionId(activeIndex) : undefined}
+        {disabled}
+        oninput={(event) => {
+          draft = event.currentTarget.value
+          activeIndex = -1
+          isOpen = true
+          onInput?.(draft)
+        }}
+        onclick={open}
+        onkeydown={onKeydown}
+        onblur={() => {
+          commitDraft()
+          close()
+        }}
+      />
+    {:else}
       <!-- Сплошная группа: общий контур, разделители внутри, без зазоров и теней -->
       <div
-        id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
         class="{fitContent ? 'grid w-max auto-cols-fr grid-flow-col' : 'flex w-full'} rounded-[10px] border border-(--border-color) {disabled
           ? 'opacity-45'
           : ''}"
         role="group"
+        aria-labelledby={label?.name ? `${uid}-label` : undefined}
       >
-        {#each options as option, index (option.id)}
-          {@const selected = value !== null && isSelected(option)}
-          {@const hasOwnColor = !!option.class?.split(/\s+/).find((c) => c.startsWith("bg-"))}
-          <!-- Заливка вне twMerge, чтобы не конфликтовать с bg-* из option.class: опции со своим цветом показывают его всегда и отмечаются рамкой, обычный сегмент-контрол заливает только выбранный пункт -->
+        {#each options as option, index (option.id ?? index)}
+          {@const selected = isSelected(option)}
+          <!-- Вариант со своим цветом залит им всегда и отмечается рамкой, обычный сегмент заливает только выбранный пункт -->
           <!-- Обёртка - позиционирующий предок подсказки; без overflow-hidden у группы, чтобы подсказка не обрезалась -->
-          <div class="relative flex {fitContent ? '' : 'min-w-0 flex-1'}">
+          <div class="relative flex {fitContent ? '' : 'min-w-0 flex-1'}" style={accentStyle(option.accent)}>
             <button
-              id={option.id}
-              class="{twMerge(
-                `flex h-8 w-full min-w-0 items-center justify-center px-3 py-2 text-[13px] font-semibold transition-colors duration-150
-               ${index === 0 ? 'rounded-l-[9px]' : ''} ${index === options.length - 1 ? 'rounded-r-[9px]' : ''}
-               ${index > 0 ? 'border-l border-(--border-color)' : ''}
-               ${
-                 hasOwnColor
-                   ? selected
-                     ? 'text-(--on-accent) ring-2 ring-inset ring-(--font-color)'
-                     : 'text-(--on-accent)'
-                   : selected
-                     ? 'text-(--on-accent)'
-                     : 'text-(--font-color) hover:bg-(--container-color)'
-               }
-               ${option.disabled || disabled ? 'cursor-not-allowed text-(--faint-color)' : 'cursor-pointer'}
-               ${fitContent ? 'px-3 whitespace-nowrap' : ''}`,
-                option.class,
-              )} {hasOwnColor ? 'bg-(--bg-color)' : selected ? 'bg-(--bg-color,var(--accent-color))' : 'bg-(--back-color)'}"
-              style={hasOwnColor ? itemAccentStyle(option.class) : undefined}
-              onclick={(e) => selectOption(option, e)}
+              class="flex h-8 w-full min-w-0 items-center justify-center px-3 py-2 text-[13px] font-semibold transition-colors duration-150
+               {index === 0 ? 'rounded-l-[9px]' : ''} {index === options.length - 1 ? 'rounded-r-[9px]' : ''}
+               {index > 0 ? 'border-l border-(--border-color)' : ''}
+               {option.accent
+                ? `bg-(--accent-color) text-(--on-accent) ${selected ? 'ring-2 ring-(--font-color) ring-inset' : ''}`
+                : selected
+                  ? 'bg-(--accent-color) text-(--on-accent)'
+                  : 'bg-(--back-color) text-(--font-color) hover:bg-(--container-color)'}
+               {option.disabled || disabled ? 'cursor-not-allowed text-(--faint-color)' : 'cursor-pointer'}
+               {fitContent ? 'whitespace-nowrap' : ''}"
+              onclick={() => pick(option)}
               disabled={option.disabled || disabled}
-              aria-pressed={!!isSelected(option)}
+              aria-pressed={selected}
               aria-label={option.icon ? option.name : undefined}
-              onmouseenter={() => (hoveredOptionId = option.icon && option.name ? option.id : null)}
-              onmouseleave={() => (hoveredOptionId = null)}
+              onmouseenter={() => (hoveredIndex = option.icon && option.name ? index : -1)}
+              onmouseleave={() => (hoveredIndex = -1)}
             >
               {#if option.icon}
                 <span class="flex h-[18px] min-w-[18px] items-center justify-center leading-none [&_svg]:h-full [&_svg]:w-full"
@@ -261,55 +264,54 @@
               {/if}
             </button>
             {#if option.icon && option.name}
-              <Tooltip show={hoveredOptionId === option.id} text={option.name} side="top" />
+              <Tooltip show={hoveredIndex === index} text={option.name} side="top" />
             {/if}
           </div>
         {/each}
       </div>
-    {:else if type === "input"}
-      <input
-        bind:value={searchValue}
-        class={twMerge(
-          fieldBase,
-          disabled ? "cursor-not-allowed border-(--hairline-color) bg-(--container-color) text-(--faint-color)" : "cursor-text hover:border-(--faint-color)",
-          componentClass,
-        )}
-        id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
-        autocomplete="off"
-        {disabled}
-        oninput={handleSearch}
-        onclick={(e) => toggleDropdown(e)}
-      />
+    {/if}
 
-      {#if isDropdownOpen}
+    {#if isOpen && type !== "buttons"}
+      <div
+        use:portal
+        bind:this={portalElement}
+        data-ui-portal
+        class="fixed z-[9999] select-none"
+        style={listPlacement.style}
+        transition:slide={{ duration: 150 }}
+        role="presentation"
+        onpointerdown={(event) => event.preventDefault()}
+      >
         <div
-          use:portal
-          bind:this={portalElement}
-          data-ui-portal
-          class="fixed z-[9999] select-none"
-          style={listPlacement.style}
-          transition:slide={{ duration: 150 }}
+          id={listId}
+          class="overflow-y-auto rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-1 shadow-(--elevation-2)"
+          style="max-height: {listPlacement.maxHeight};"
+          role="listbox"
         >
-          <div class={listBase} style="max-height: {listPlacement.maxHeight};" role="listbox">
-            {#each filteredOptions as option (option.id)}
-              <button
-                id={option.id}
-                value={option?.value ? String(option.value) : ""}
-                class={twMerge(
-                  `${optionBase}
-                   ${isSelected(option) ? "bg-(--accent-soft) font-semibold text-(--accent-text)" : "hover:bg-(--container-color)"}
-                   ${option.disabled ? "cursor-not-allowed text-(--faint-color)" : "cursor-pointer"}`,
-                  option.class,
-                )}
-                onclick={(e) => selectOption(option, e)}
-                disabled={option.disabled}
-              >
-                <span class="min-w-0 truncate">{option.name}</span>
-              </button>
-            {/each}
-          </div>
+          {#each visibleOptions as option, index (option.id ?? index)}
+            <div
+              id={optionId(index)}
+              class="flex h-8 w-full items-center rounded-md px-2.5 text-left text-[14px] transition-colors duration-150
+                {isSelected(option)
+                ? 'bg-(--accent-soft) font-semibold text-(--accent-text)'
+                : index === activeIndex
+                  ? 'bg-(--container-color)'
+                  : 'hover:bg-(--container-color)'}
+                {option.disabled ? 'cursor-not-allowed text-(--faint-color)' : 'cursor-pointer'}"
+              style={accentStyle(option.accent)}
+              role="option"
+              tabindex="-1"
+              aria-selected={isSelected(option)}
+              aria-disabled={option.disabled}
+              onclick={() => pick(option)}
+              onkeydown={onKeydown}
+              onmouseenter={() => (activeIndex = index)}
+            >
+              <span class="min-w-0 truncate">{option.name ?? String(option.value)}</span>
+            </div>
+          {/each}
         </div>
-      {/if}
+      </div>
     {/if}
   </div>
 </div>

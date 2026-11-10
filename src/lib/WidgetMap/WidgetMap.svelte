@@ -1,6 +1,6 @@
 <!-- $lib/WidgetMap/WidgetMap.svelte - смарт-виджет «Карта», режим «Объекты» (по умолчанию), «Маршрут» (планировщик миссии, mission/MapRoute.svelte) или «Агро» (генератор миссии, mission/MapAgro.svelte); аппараты из групп полей рисуются во всех режимах. Режим «Объекты»: объекты из групп полей устройства (по умолчанию MAV) с полями Lat/Lon/Alt/Heading/Sat/DevName/DevSN (см. IWidgetMapData), каждая группа - свой маркер и своя траектория. Только отображение: ничего не отправляет и не знает про DeviceStore/WebSocket. Траекторию, длину трека и таймаут маркеров оператор переключает прямо поверх карты, «Показать все» - кнопка в шапке; вид карта сама не меняет - объектов может быть много. -->
 <script lang="ts">
-  import { sanitizeHtml } from "../html"
+  import Icon from "../Icon.svelte"
   import { isDarkTheme, watchTheme } from "../themeWatch"
   import { onMount, untrack } from "svelte"
   import { slide } from "svelte/transition"
@@ -10,7 +10,8 @@
   import CopiedChip from "../CopiedChip.svelte"
   import WidgetHeader from "../WidgetHeader.svelte"
   import { hint, hintsSetting } from "../hints"
-  import { widgetAccentStyle } from "../widgetAccent"
+  import { accentStyle } from "../accent"
+  import { copyText } from "../clipboard"
   import { readPersistedCollapsed, writePersistedCollapsed } from "../widgetCollapse"
   import MapIcon from "./MapIcon.svelte"
   import { createFlightSim, HOME } from "../flightSim"
@@ -24,7 +25,7 @@
 
   let {
     wrapperClass = "",
-    componentClass = "",
+    accent,
     label = {},
     groups = ["MAV"],
     value: deviceValue,
@@ -48,7 +49,7 @@
   /* Подсказки - кнопка «?» в шапке, выбор общий для всех WidgetMap */
   const hints = $derived(hintsSetting("WidgetMap", persistKey))
 
-  let accentStyle = $derived(widgetAccentStyle(componentClass ?? ""))
+  const rootStyle = $derived(accentStyle(accent))
 
   /* Сворачивание тела по клику на шапку - как у остальных смарт-виджетов (см. WidgetWiFi.svelte) */
   /* Выбор пользователя в этом браузере применяется до первой отрисовки, без мигания; значение из GUI запоминается, чтобы его смена отменяла старый выбор */
@@ -281,11 +282,10 @@
     })
   })
 
-  const copyBoard = (b: Board) => {
-    navigator.clipboard.writeText(
+  const copyBoard = async (b: Board) => {
+    isCopied = await copyText(
       `DevName: ${b.name}\nDevSN: ${b.sn}\nGroup: ${b.group}\nLat: ${b.lat.toFixed(6)} | Lon: ${b.lon.toFixed(6)} | Alt: ${b.alt.toFixed(1)}\nHeading: ${b.heading.toFixed(1)} | Satellites: ${b.sat}`,
     )
-    isCopied = true
     setTimeout(() => (isCopied = false), 1000)
   }
 
@@ -330,12 +330,7 @@
             style="rotate: {board.heading}deg;"
           >
             {#if markerIcon}
-              {#if typeof markerIcon === "string"}
-                {@html sanitizeHtml(markerIcon)}
-              {:else}
-                {@const IconComponent = markerIcon}
-                <IconComponent />
-              {/if}
+              <Icon icon={markerIcon} class="contents" />
             {:else}
               <div class="rotate-270">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
@@ -456,7 +451,7 @@
 {#if mode === "agro"}
   <MapAgro
     {wrapperClass}
-    {componentClass}
+    {accent}
     {label}
     height={height ?? 520}
     bind:plan
@@ -471,7 +466,7 @@
 {:else if mode === "route"}
   <MapRoute
     {wrapperClass}
-    {componentClass}
+    {accent}
     {label}
     height={height ?? 520}
     bind:route
@@ -487,14 +482,14 @@
   <div
     bind:this={rootEl}
     class={twMerge("relative flex w-full flex-col gap-4 rounded-2xl border border-(--hairline-color) bg-(--container-color) p-4", wrapperClass)}
-    style={accentStyle}
+    style={rootStyle}
   >
     <WidgetHeader icon={MapIcon} label={label?.name || $T("widget.map.title")} bind:collapsed {hints}>
       {#snippet right()}
         <div class="flex items-center gap-3">
           <UI.Button
             wrapperClass="w-auto"
-            componentClass="bg-transparent px-3"
+            componentClass="px-3"
             content={{ icon: FitIcon, name: $T("constructor.props.map.fitAll"), info: { text: $T("constructor.props.map.fitAllHint"), side: "bottom" } }}
             disabled={collapsed || visibleBoards.length === 0}
             onClick={fitAllBoards}

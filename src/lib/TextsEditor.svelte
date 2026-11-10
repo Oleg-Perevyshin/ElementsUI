@@ -6,14 +6,15 @@
   import Button from "./Button/Button.svelte"
   import Input from "./Input/Input.svelte"
   import Modal from "./Modal.svelte"
-  import type { IUIComponentHandler, UIComponent } from "./types"
+  import type { UIComponent } from "./types"
+  import type { PropertyChange } from "./propsEditor"
 
   let {
     component,
     onPropertyChange,
   }: {
     component: UIComponent
-    onPropertyChange: (updates: Partial<{ properties?: string | object; name?: string; access?: string; eventHandler?: IUIComponentHandler }>) => void
+    onPropertyChange: (change: PropertyChange<object>) => void
   } = $props()
 
   type Row = { path: TextPath; values: Partial<Record<LanguageCode, string>> }
@@ -52,7 +53,7 @@
   }
 </script>
 
-<Button wrapperClass="w-full" componentClass="bg-blue" content={{ name: $T("constructor.texts.button") }} onClick={open} />
+<Button wrapperClass="w-full" variant="primary" content={{ name: $T("constructor.texts.button") }} onClick={open} />
 
 <Modal title={$T("constructor.texts.button")} bind:isOpen wrapperClass="w-200">
   {#snippet main()}
@@ -79,6 +80,6 @@
     {/if}
   {/snippet}
   {#snippet footer()}
-    <Button wrapperClass="w-40" componentClass="bg-green" content={{ name: $T("constructor.texts.save") }} disabled={!rows.length} onClick={save} />
+    <Button wrapperClass="w-40" variant="primary" accent="green" content={{ name: $T("constructor.texts.save") }} disabled={!rows.length} onClick={save} />
   {/snippet}
 </Modal>

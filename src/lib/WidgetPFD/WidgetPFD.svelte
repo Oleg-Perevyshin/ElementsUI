@@ -10,13 +10,13 @@
   import PlaneIcon from "./PlaneIcon.svelte"
   import WidgetHeader from "../WidgetHeader.svelte"
   import { hintsSetting } from "../hints"
-  import { widgetAccentStyle } from "../widgetAccent"
+  import { accentStyle } from "../accent"
   import { readPersistedCollapsed, writePersistedCollapsed } from "../widgetCollapse"
   import { createFlightSim } from "../flightSim"
 
   let {
     wrapperClass = "",
-    componentClass = "",
+    accent,
     label = {},
     value: deviceValue,
     limits,
@@ -39,7 +39,7 @@
   })
   let value = $derived(isTest ? simValue : deviceValue)
 
-  let accentStyle = $derived(widgetAccentStyle(componentClass ?? ""))
+  const rootStyle = $derived(accentStyle(accent))
 
   /* Сворачивание тела по клику на шапку - как у остальных смарт-виджетов (см. WidgetWiFi.svelte) */
   /* Выбор пользователя в этом браузере применяется до первой отрисовки, без мигания; значение из GUI запоминается, чтобы его смена отменяла старый выбор */
@@ -305,7 +305,7 @@
   /* Вариометр: ±5 м/с на всю полувысоту полосы */
   let vsi = $derived(Math.max(-5, Math.min(5, climb)) * 20)
   /* Уникальные id для clipPath - несколько виджетов на одной странице не должны делить отсечения */
-  const uid = crypto.randomUUID().slice(0, 8)
+  const uid = $props.id()
 
   const fmt = (v: number, digits = 1) => (Number.isFinite(v) ? v.toFixed(digits) : "-")
   const signed = (v: number) => `${v >= 0 ? "+" : ""}${fmt(v)}`
@@ -458,7 +458,7 @@
 
 <div
   class={twMerge("relative flex w-full flex-col gap-4 rounded-2xl border border-(--hairline-color) bg-(--container-color) p-4", wrapperClass)}
-  style={accentStyle}
+  style={rootStyle}
 >
   <WidgetHeader icon={PlaneIcon} label={label?.name || $T("pfd.title")} bind:collapsed {hints}>
     {#snippet right()}

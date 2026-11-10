@@ -39,7 +39,7 @@
     DevSN,
   })
 
-  const ROLES = ["gray", "red", "orange", "yellow", "green", "cyan", "blue", "purple"]
+  const ROLES = UI.ACCENT_COLORS
   const SURFACES = [
     "bg-body",
     "back-color",
@@ -59,7 +59,7 @@
     { id: "m2", value: 2, name: "Точка" },
     { id: "m3", value: 3, name: "Оба" },
   ]
-  let mode: IOption<number> = $state(modeOptions[1])
+  let mode = $state(modeOptions[1].value)
 
   interface IRow {
     name: string
@@ -250,12 +250,12 @@ Telemetry_SendObject(g_telemetry_stream, g_mcfg.DevSN, "Data", mav, sizeof(mav) 
   </div>
 
   <!-- Компоненты - в порядке меню слева, каждый тип в своём разделе -->
-  {#snippet WiFi()}<UI.WidgetWiFi componentClass="bg-blue" value={wifiConfig} onScan={mockScan} onSave={() => {}} />{/snippet}
+  {#snippet WiFi()}<UI.WidgetWiFi accent="blue" value={wifiConfig} onScan={mockScan} onSave={() => {}} />{/snippet}
   {@render section("WidgetWiFi", WiFi, false)}
 
   {#snippet DeviceInfo()}
     <UI.WidgetDeviceInfo
-      componentClass="bg-blue"
+      accent="blue"
       value={{
         DevSN: "20000001A1B2C3",
         DevID: "20.00.000-01",
@@ -277,7 +277,7 @@ Telemetry_SendObject(g_telemetry_stream, g_mcfg.DevSN, "Data", mav, sizeof(mav) 
 
   {#snippet FileSystem()}<UI.WidgetFileSystem
       value={fsInfo}
-      componentClass="bg-cyan"
+      accent="cyan"
       accept=".bin, .txt, .md, .pem"
       onRefresh={() => {}}
       onDelete={fsDelete}
@@ -286,14 +286,14 @@ Telemetry_SendObject(g_telemetry_stream, g_mcfg.DevSN, "Data", mav, sizeof(mav) 
     />{/snippet}
   {@render section("WidgetFileSystem", FileSystem, false)}
 
-  {#snippet StackInfo()}<UI.WidgetStackInfo componentClass="bg-green" value={stackInfo} warnBytes={1024} onRefresh={() => {}} />{/snippet}
+  {#snippet StackInfo()}<UI.WidgetStackInfo accent="green" value={stackInfo} warnBytes={1024} onRefresh={() => {}} />{/snippet}
   {@render section("WidgetStackInfo", StackInfo, false)}
 
   {#snippet RGBStrip()}
     <UI.WidgetRGBStrip
-      componentClass="bg-purple"
+      accent="purple"
       value={{ Color: [255, 120, 0, 0], Effect: 2, Speed: 4, Count: 64, Model: 0, Order: 0, MaxCount: 128 }}
-      onChange={() => {}}
+      onUpdate={() => {}}
       onSave={() => {}}
     />
   {/snippet}
@@ -315,7 +315,7 @@ Telemetry_SendObject(g_telemetry_stream, g_mcfg.DevSN, "Data", mav, sizeof(mav) 
   {#snippet Accordion()}
     <UI.Accordion label={{ name: "Аккордеон" }} isOpen={true} size={{ width: 2, height: 1 }}>
       <UI.Input label={{ name: "Поле внутри" }} value="Значение" />
-      <UI.Switch label={{ name: "Переключатель" }} value={0} options={[{ id: "sw", value: 0, class: "" }]} />
+      <UI.Switch label={{ name: "Переключатель" }} value={0} options={[{ id: "sw", value: 0 }]} />
     </UI.Accordion>
   {/snippet}
   {@render section("Accordion", Accordion)}
@@ -323,13 +323,13 @@ Telemetry_SendObject(g_telemetry_stream, g_mcfg.DevSN, "Data", mav, sizeof(mav) 
   {#snippet Buttons()}
     <div class="grid grid-cols-3 gap-2">
       {#each ROLES as role}
-        <UI.Button content={{ name: role }} componentClass={`bg-${role}`} />
+        <UI.Button content={{ name: role }} variant="primary" accent={role} />
       {/each}
     </div>
     <div class="grid grid-cols-3 gap-2">
-      <UI.Button content={{ name: "Отключена" }} componentClass="bg-blue" disabled />
+      <UI.Button content={{ name: "Отключена" }} variant="primary" disabled />
       <UI.Button content={{ name: "Без роли" }} />
-      <UI.Button componentClass="bg-blue" content={{ name: "Открыть окно" }} onClick={() => (isModalOpen = true)} />
+      <UI.Button variant="primary" content={{ name: "Открыть окно" }} onClick={() => (isModalOpen = true)} />
     </div>
   {/snippet}
   {@render section("Button", Buttons)}
@@ -344,8 +344,8 @@ Telemetry_SendObject(g_telemetry_stream, g_mcfg.DevSN, "Data", mav, sizeof(mav) 
   {@render section("Carousel", Carousel)}
 
   {#snippet Divider()}
-    <UI.Divider type="line" width={2} color="bg-blue" anchor="center" />
-    <UI.Divider type="line" width={4} color="bg-red" anchor="center" />
+    <UI.Divider type="line" width={2} accent="blue" anchor="center" />
+    <UI.Divider type="line" width={4} accent="red" anchor="center" />
   {/snippet}
   {@render section("Divider", Divider)}
 
@@ -388,8 +388,8 @@ Telemetry_SendObject(g_telemetry_stream, g_mcfg.DevSN, "Data", mav, sizeof(mav) 
   {#snippet ProgressBar()}
     <UI.ProgressBar
       items={[
-        { name: "Заряд", class: "bg-green" },
-        { name: "Память", class: "bg-orange" },
+        { name: "Заряд", accent: "green" },
+        { name: "Память", accent: "orange" },
       ]}
       value={[{ Value: 72 }, { Value: 38 }]}
     />
@@ -397,8 +397,8 @@ Telemetry_SendObject(g_telemetry_stream, g_mcfg.DevSN, "Data", mav, sizeof(mav) 
   {@render section("ProgressBar", ProgressBar)}
 
   {#snippet Select()}
-    <UI.Select label={{ name: "Режим Wi-Fi" }} type="buttons" options={modeOptions} value={mode} onUpdate={(v) => !Array.isArray(v) && (mode = v)} />
-    <UI.Select label={{ name: "Список" }} options={modeOptions} value={mode} onUpdate={(v) => !Array.isArray(v) && (mode = v)} />
+    <UI.Select label={{ name: "Режим Wi-Fi" }} type="buttons" options={modeOptions} bind:value={mode} />
+    <UI.Select label={{ name: "Список" }} options={modeOptions} bind:value={mode} />
   {/snippet}
   {@render section("Select", Select)}
 
@@ -412,8 +412,8 @@ Telemetry_SendObject(g_telemetry_stream, g_mcfg.DevSN, "Data", mav, sizeof(mav) 
 
   {#snippet Switch()}
     <div class="grid grid-cols-2 gap-3">
-      <UI.Switch label={{ name: "Реле", captionLeft: "Выкл", captionRight: "Вкл" }} value={1} options={[{ id: "sw", value: 0, class: "" }]} />
-      <UI.Switch label={{ name: "Выключен" }} value={0} options={[{ id: "sw", value: 0, class: "" }]} />
+      <UI.Switch label={{ name: "Реле", captionLeft: "Выкл", captionRight: "Вкл" }} value={1} options={[{ id: "sw", value: 0 }]} />
+      <UI.Switch label={{ name: "Выключен" }} value={0} options={[{ id: "sw", value: 0 }]} />
     </div>
   {/snippet}
   {@render section("Switch", Switch)}
@@ -430,7 +430,7 @@ Telemetry_SendObject(g_telemetry_stream, g_mcfg.DevSN, "Data", mav, sizeof(mav) 
 
   {#snippet TextField()}
     <UI.TextField content={{ name: "Текстовое поле", size: "large", class: "font-bold" }} />
-    <UI.TextField content={{ name: "С подложкой", size: "base", class: "" }} background />
+    <UI.TextField content={{ name: "С подложкой", size: "base" }} background />
   {/snippet}
   {@render section("TextField", TextField)}
 
@@ -500,6 +500,6 @@ Telemetry_SendObject(g_telemetry_stream, g_mcfg.DevSN, "Data", mav, sizeof(mav) 
     <div class="ui-inset mt-3 rounded-xl p-3">Вложенный блок внутри окна</div>
   {/snippet}
   {#snippet footer()}
-    <UI.Button wrapperClass="w-32" componentClass="bg-green" content={{ name: "Готово" }} onClick={() => (isModalOpen = false)} />
+    <UI.Button wrapperClass="w-32" variant="primary" accent="green" content={{ name: "Готово" }} onClick={() => (isModalOpen = false)} />
   {/snippet}
 </UI.Modal>

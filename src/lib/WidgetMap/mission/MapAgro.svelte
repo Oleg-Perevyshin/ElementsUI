@@ -7,7 +7,8 @@
   import { T } from "../../locales/i18n"
   import WidgetHeader from "../../WidgetHeader.svelte"
   import { hint, hintsSetting } from "../../hints"
-  import { readMapColors, widgetAccentStyle, type IMapColors } from "../../widgetAccent"
+  import { copyText } from "../../clipboard"
+  import { readMapColors, accentStyle, type AccentColor, type IMapColors } from "../../accent"
   import * as UI from "../.."
   import { MapLibre, NavigationControl, ScaleControl, FullScreenControl, CustomControl } from "../mapWrapper"
   import MissionLayers from "./MissionLayers.svelte"
@@ -27,7 +28,7 @@
   /* Режим «Агро» карты: часть пропсов WidgetMap */
   interface Props {
     wrapperClass?: string
-    componentClass?: string
+    accent?: AccentColor
     label?: { name?: string }
     height?: number
     plan?: IMissionPlan
@@ -42,7 +43,7 @@
 
   let {
     wrapperClass = "",
-    componentClass = "",
+    accent,
     label = {},
     height = 520,
     plan = $bindable(structuredClone(DEFAULT_MISSION_PLAN)),
@@ -56,7 +57,7 @@
   }: Props = $props()
 
   const hints = $derived(hintsSetting("WidgetMap", persistKey))
-  let accentStyle = $derived(widgetAccentStyle(componentClass ?? ""))
+  const rootStyle = $derived(accentStyle(accent))
 
   /* Пока тянут точку, план наружу не отдаётся: владелец получает его один раз, когда точку отпустили */
   let dragging = $state(false)
@@ -391,8 +392,7 @@
   let copied = $state(false)
   const copy = async () => {
     const text = missionText()
-    if (!text) return
-    await navigator.clipboard.writeText(text)
+    if (!text || !(await copyText(text))) return
     copied = true
     setTimeout(() => (copied = false), 1000)
   }
@@ -420,7 +420,7 @@
   /* Цвета слоёв карты перечитываются при смене мастер-цвета и темы */
   let mapColors = $state<IMapColors>(readMapColors(undefined))
   $effect(() => {
-    void accentStyle
+    void rootStyle
     void isDarkMode
     mapColors = readMapColors(rootEl)
   })
@@ -492,14 +492,14 @@
 <div
   bind:this={rootEl}
   class={twMerge("relative flex w-full flex-col gap-4 rounded-2xl border border-(--hairline-color) bg-(--container-color) p-4", wrapperClass)}
-  style={accentStyle}
+  style={rootStyle}
 >
   <WidgetHeader icon={MissionIcon} label={label?.name || $T("widget.mission.title")} bind:collapsed {hints}>
     {#snippet right()}
       <div class="flex items-center gap-3">
         <UI.Button
           wrapperClass="w-auto"
-          componentClass="bg-transparent px-3"
+          componentClass="px-3"
           content={{ icon: FitIcon, name: $T("constructor.props.map.fitAll"), info: { text: $T("widget.mission.fitHint"), side: "bottom" } }}
           disabled={collapsed || missionPoints().length === 0}
           onClick={() => fitAll()}
@@ -637,14 +637,14 @@
                   />
                   <UI.Button
                     wrapperClass="w-auto"
-                    componentClass="bg-accent"
+                    variant="primary"
                     content={{ name: $T("widget.mission.auto"), info: { text: $T("widget.mission.autoHint"), side: "top" } }}
                     disabled={!hasField || searching !== null}
                     onClick={autoAngle}
                   />
                   <UI.Button
                     wrapperClass="w-8 shrink-0"
-                    componentClass="bg-transparent p-1"
+                    componentClass="p-1"
                     content={{ icon: InfoIcon, info: { text: $T("widget.mission.autoInfoTitle"), side: "top" } }}
                     onClick={() => (showAutoInfo = true)}
                   />
@@ -840,19 +840,15 @@
       <!-- Выгрузка миссии -->
       <div class="grid grid-cols-3 gap-3">
         <div class="min-w-0" use:hint={{ text: $T("widget.mission.hint.download"), enabled: $hints }}>
-          <UI.Button componentClass="bg-accent" content={{ name: $T("widget.mission.download") }} disabled={!stats} onClick={download} />
+          <UI.Button variant="primary" content={{ name: $T("widget.mission.download") }} disabled={!stats} onClick={download} />
         </div>
         <div class="min-w-0" use:hint={{ text: $T("widget.mission.hint.copy"), enabled: $hints }}>
-          <UI.Button
-            componentClass="bg-accent"
-            content={{ name: copied ? $T("widget.mission.copied") : $T("widget.mission.copy") }}
-            disabled={!stats}
-            onClick={copy}
-          />
+          <UI.Button variant="primary" content={{ name: copied ? $T("widget.mission.copied") : $T("widget.mission.copy") }} disabled={!stats} onClick={copy} />
         </div>
         <div class="min-w-0" use:hint={{ text: $T("widget.mission.hint.send"), enabled: $hints }}>
           <UI.Button
-            componentClass={sendState === "error" ? "bg-red" : "bg-accent"}
+            variant="primary"
+            accent={sendState === "error" ? "red" : undefined}
             content={{ name: $T(`widget.mission.send.${sendState}`) }}
             disabled={!stats || !onSend || sendState === "busy"}
             onClick={send}
