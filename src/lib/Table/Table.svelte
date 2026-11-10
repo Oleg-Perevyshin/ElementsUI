@@ -401,6 +401,8 @@
                               >
                                 {#if text.html}{@html sanitizeHtml(value)}{:else}{value}{/if}
                               </button>
+                            {:else if text.href}
+                              <a class="underline" href={text.href(row)}>{value}</a>
                             {:else if text.html}
                               {@html sanitizeHtml(value)}
                             {:else}

@@ -389,6 +389,8 @@ export interface ITableText<T extends object> {
   key: keyof T
   /* Содержимое ячейки из строки; по умолчанию - значение по key (варианты списка - их имена, объект - JSON) */
   render?: (row: T) => string
+  /* Ссылка из строки: содержимое ячейки выводится текстом внутри <a>, без HTML и санитайзера */
+  href?: (row: T) => string
   /* Содержимое - готовый HTML (render или вызывающий сами экранируют данные); по умолчанию выводится как текст */
   html?: boolean
   sortable?: boolean
