@@ -1,26 +1,26 @@
 <!-- $lib/WidgetMap/WidgetMap.svelte - смарт-виджет «Карта», режим «Объекты» (по умолчанию), «Маршрут» (планировщик миссии, mission/MapRoute.svelte) или «Агро» (генератор миссии, mission/MapAgro.svelte); аппараты из групп полей рисуются во всех режимах. Режим «Объекты»: объекты из групп полей устройства (по умолчанию MAV) с полями Lat/Lon/Alt/Heading/Sat/DevName/DevSN (см. IWidgetMapData), каждая группа - свой маркер и своя траектория. Только отображение: ничего не отправляет и не знает про DeviceStore/WebSocket. Траекторию, длину трека и таймаут маркеров оператор переключает прямо поверх карты, «Показать все» - кнопка в шапке; вид карта сама не меняет - объектов может быть много. -->
 <script lang="ts">
   import Icon from "../Icon.svelte"
-  import { isDarkTheme, watchTheme } from "../themeWatch"
-  import { onMount, untrack } from "svelte"
+  import { untrack } from "svelte"
   import { slide } from "svelte/transition"
   import { twMerge } from "tailwind-merge"
   import { T } from "../locales/i18n"
   import type { IWidgetMapProps, IWidgetMapData } from "../types"
   import CopiedChip from "../CopiedChip.svelte"
+  import { createRing, type Ring } from "../ring"
+  import { themeState } from "./mapTheme.svelte"
   import WidgetHeader from "../WidgetHeader.svelte"
   import { hint, hintsSetting } from "../hints"
   import { accentStyle } from "../accent"
   import { copyText } from "../clipboard"
   import { readPersistedCollapsed, writePersistedCollapsed } from "../widgetCollapse"
   import MapIcon from "./MapIcon.svelte"
-  import { createFlightSim, HOME } from "../flightSim"
   import FitIcon from "./FitIcon.svelte"
   import MapAgro from "./mission/MapAgro.svelte"
   import MapRoute from "./mission/MapRoute.svelte"
   import { DEFAULT_MISSION_PLAN } from "./mission/plan"
   import { DEFAULT_ROUTE_PLAN } from "./mission/route"
-  import * as UI from ".."
+  import Button from "../Button/Button.svelte"
   import { MapLibre, NavigationControl, ScaleControl, GeolocateControl, FullScreenControl, Marker, Popup, Line, CustomControl } from "./mapWrapper"
 
   let {
@@ -69,7 +69,7 @@
     sat: number
     name: string
     sn: string
-    track: [number, number][]
+    track: [number, number][] /* Снимок траектории из кольцевого буфера группы */
     lastChange: number
     hiddenAt: number
   }
@@ -79,84 +79,34 @@
   const hasFix = (lat: unknown, lon: unknown) =>
     typeof lat === "number" && typeof lon === "number" && Math.abs(lat) <= 90 && Math.abs(lon) <= 180 && (lat !== 0 || lon !== 0)
 
-  /* Режим имитации: шесть аппаратов над одним районом сами выходят на связь и пропадают, данные и группы устройства не учитываются */
-  const SIM_COUNT = 6
-  const SIM_ONLINE = 3
-  const SIM_GROUPS = Array.from({ length: SIM_COUNT }, (_, i) => `SIM-${i + 1}`)
-  const SIM_SN = [
-    "10.10.001-01_0000804500006B3600004000:F76F",
-    "10.10.001-01_0000441B0000F68C0000561C:36B1",
-    "20.00.000-01_000068B60000B33B0000A520:5180",
-    "00.00.000-00_0000AC670000B22B00007428:DBC5",
-    "25.00.000-02_0000A0850000E31300004C5C:8D50",
-    "50.00.000-00_0000DCDA00000C1800003194:2BC6",
-  ]
-  /* Сдвиг маршрута каждого аппарата, м: север, восток - чтобы не летали друг за другом */
-  const SIM_SHIFT: [number, number][] = [
-    [0, 0],
-    [-400, 700],
-    [700, -900],
-    [-800, 600],
-    [1100, 900],
-    [-600, -1200],
-  ]
-  const randomSec = (min: number, max: number) => (min + Math.random() * (max - min)) * 1000
-  let simValue: Record<string, Partial<IWidgetMapData>> | undefined = $state()
+  /* Имитация «Объектов»: модуль с аппаратами грузится только при isTest, в «Маршруте» и «Агро» имитация - полёт по своей траектории */
+  let sim = $state.raw<{ groups: string[]; home: { lat: number; lon: number }; value?: Record<string, Partial<IWidgetMapData>> } | null>(null)
   $effect(() => {
-    /* В «Маршруте» и «Агро» имитация - полёт по своей траектории, аппараты SIM не нужны */
     if (!isTest || mode !== "objects") return
-    /* На связи всегда три аппарата: когда один пропадает, его сменяет тот, кто молчит дольше всех; молчащий маркер успевает покраснеть и скрыться */
-    const fleet = SIM_GROUPS.map((group, i) => ({
-      group,
-      sim: createFlightSim(i % 7),
-      online: i < SIM_ONLINE,
-      switchAt: i < SIM_ONLINE ? Date.now() + randomSec(20 + i * 25, 40 + i * 25) : 0,
-      offlineSince: i,
-    }))
-    const kmLat = 111320
-    const kmLon = 111320 * Math.cos((HOME.lat * Math.PI) / 180)
-    const frames: Record<string, Partial<IWidgetMapData>> = {}
-    /* Модель летит всегда; пока аппарат без связи, его последний кадр не меняется - маркер краснеет, затем скрывается */
-    const tick = (dt: number) => {
-      const t = Date.now()
-      fleet.forEach((f, i) => {
-        const data = f.sim(dt)
-        if (f.online && t >= f.switchAt) {
-          const next = fleet.filter((x) => !x.online).sort((a, b) => a.offlineSince - b.offlineSince)[0]
-          f.online = false
-          f.offlineSince = t
-          next.online = true
-          next.switchAt = t + randomSec(40, 100)
-        }
-        if (!f.online) return
-        frames[f.group] = {
-          Lat: data.Lat + SIM_SHIFT[i][0] / kmLat,
-          Lon: data.Lon + SIM_SHIFT[i][1] / kmLon,
-          Alt: data.Alt + i * 15,
-          Heading: data.Heading,
-          Sat: data.Sat - (i % 3),
-          DevName: f.group,
-          DevSN: SIM_SN[i],
-        }
-      })
-      simValue = { ...frames }
-    }
-    tick(0)
-    const timer = setInterval(() => tick(0.5), 500)
+    let stop: (() => void) | undefined
+    let stopped = false
+    import("./simFleet").then(({ startSimFleet, SIM_GROUPS, HOME }) => {
+      if (stopped) return
+      sim = { groups: SIM_GROUPS, home: HOME }
+      stop = startSimFleet((value) => (sim = { groups: SIM_GROUPS, home: HOME, value }))
+    })
     return () => {
-      clearInterval(timer)
-      simValue = undefined
+      stopped = true
+      stop?.()
+      sim = null
     }
   })
-  let value = $derived(isTest ? simValue : deviceValue)
-  let groupList = $derived(isTest ? SIM_GROUPS : groups.map((g) => g.trim()).filter(Boolean))
+  let value = $derived(isTest ? sim?.value : deviceValue)
+  let groupList = $derived(isTest ? (sim?.groups ?? []) : groups.map((g) => g.trim()).filter(Boolean))
   /* Аппарат для прогресса миссии в «Маршруте» и «Агро»: первая группа, положение и номер текущей команды */
   let missionVehicle = $derived.by(() => {
     const d = deviceValue?.[groupList[0]]
     if (isTest || !d || !d.Lat || !d.Lon) return undefined
     return { point: [d.Lon, d.Lat] as [number, number], wpNum: d.WPNum }
   })
-  let boards: Board[] = $state([])
+  /* Объекты - неизменяемые записи в $state.raw, траектории - кольцевые буферы групп вне реактивности */
+  let boards = $state.raw<Board[]>([])
+  const tracks = new Map<string, Ring<[number, number]>>()
   let now = $state(Date.now())
   let mapInstance: any = $state()
   /* Вид карты (центр, масштаб, поворот) переживает сворачивание: тело виджета пересоздаёт карту, и она открывается там, где её оставили */
@@ -169,11 +119,12 @@
     return () => map.off("moveend", save)
   })
   /* При включении имитации карта переходит к району полёта */
+  let simHome = $derived(sim?.home)
   $effect(() => {
-    if (isTest && mapInstance) untrack(() => mapInstance.jumpTo({ center: [HOME.lon, HOME.lat], zoom: 13.5 }))
+    const home = simHome
+    if (home && mapInstance) untrack(() => mapInstance.jumpTo({ center: [home.lon, home.lat], zoom: 13.5 }))
   })
   let isCopied = $state(false)
-  let isDarkMode = $state(false)
 
   /* Объект обновляется только при реальной смене значений - свежесть считается от последнего изменения, а не от перерисовки */
   $effect(() => {
@@ -201,11 +152,15 @@
           prev.sn === sn
         )
           return
-        const moved = !prev || prev.lat !== lat || prev.lon !== lon
-        const track = moved ? [...(prev?.track ?? []), [lon, lat] as [number, number]].slice(-trackLength) : prev!.track
+        let track = prev?.track ?? []
+        if (!prev || prev.lat !== lat || prev.lon !== lon) {
+          let ring = tracks.get(group)
+          if (!ring) tracks.set(group, (ring = createRing(trackLength)))
+          ring.push([lon, lat])
+          track = ring.toArray()
+        }
         const next: Board = { group, lat, lon, alt, heading, sat, name, sn, track, lastChange: Date.now(), hiddenAt: prev?.hiddenAt ?? 0 }
-        if (idx === -1) boards.push(next)
-        else boards[idx] = next
+        boards = idx === -1 ? [...boards, next] : boards.with(idx, next)
       })
     }
   })
@@ -213,7 +168,10 @@
   /* Подрезает накопленные траектории при уменьшении trackLength */
   $effect(() => {
     const limit = trackLength
-    untrack(() => boards.forEach((b) => b.track.length > limit && (b.track = b.track.slice(-limit))))
+    untrack(() => {
+      tracks.forEach((ring) => ring.resize(limit))
+      boards = boards.map((b) => (b.track.length > limit ? { ...b, track: tracks.get(b.group)?.toArray() ?? [] } : b))
+    })
   })
 
   $effect(() => {
@@ -242,8 +200,7 @@
   }
 
   const hideBoard = (group: string) => {
-    const b = boards.find((x) => x.group === group)
-    if (b) b.hiddenAt = b.lastChange
+    boards = boards.map((b) => (b.group === group ? { ...b, hiddenAt: b.lastChange } : b))
     followed = followed.filter((g) => g !== group)
   }
 
@@ -291,21 +248,21 @@
 
   /* Тема карты - по ближайшему предку .dark/.light (как у токенов theme.css): работает и внутри блока с другой темой, смена темы отслеживается */
   let rootEl: HTMLDivElement | undefined = $state()
-  const detectTheme = () => (isDarkMode = isDarkTheme(rootEl))
-  onMount(() => {
-    detectTheme()
-    return watchTheme(detectTheme)
-  })
+  const theme = themeState(
+    () => rootEl,
+    () => rootStyle,
+  )
 
   const trackLengthOptions = [100, 500, 1000, 5000, 10000, 50000]
-  const timeoutOptions: { label: string; value: number }[] = [
-    { label: "30 sec", value: 30_000 },
-    { label: "1 min", value: 60_000 },
-    { label: "3 min", value: 180_000 },
-    { label: "5 min", value: 300_000 },
-    { label: "10 min", value: 600_000 },
-    { label: "30 min", value: 1_800_000 },
-    { label: "1 h", value: 3_600_000 },
+  /* Таймаут маркеров: значение, мс - подпись числом и единицей словаря */
+  const timeoutOptions: [number, number, "sec" | "min" | "h"][] = [
+    [30_000, 30, "sec"],
+    [60_000, 1, "min"],
+    [180_000, 3, "min"],
+    [300_000, 5, "min"],
+    [600_000, 10, "min"],
+    [1_800_000, 30, "min"],
+    [3_600_000, 1, "h"],
   ]
 </script>
 
@@ -314,7 +271,7 @@
   {#if trackEnabled}
     {#each visibleBoards as board (board.group)}
       {#if board.track.length >= 2}
-        <Line id={`track-${board.group}`} coordinates={board.track} color={isFresh(board) ? "#22c55e" : "#ef4444"} />
+        <Line id={`track-${board.group}`} coordinates={board.track} color={isFresh(board) ? theme.colors.green : theme.colors.red} />
       {/if}
     {/each}
   {/if}
@@ -349,7 +306,7 @@
           <p class="font-bold">{board.name}</p>
           <!-- Метка слежения видна и при закрытом окне деталей -->
           {#if isFollowed}
-            <span class="mt-0.5 size-2 rounded-full bg-(--accent-color) ring-2 ring-white" title={$T("widget.map.follow")}></span>
+            <span class="mt-0.5 size-2 rounded-full bg-(--accent-color) ring-2 ring-(--back-color)" title={$T("widget.map.follow")}></span>
           {/if}
         </div>
       {/snippet}
@@ -391,8 +348,8 @@
                   e.preventDefault()
                   copyBoard(board)
                 }}
-                aria-label="Copy"
-                title="Copy"
+                aria-label={$T("ui.copy_text")}
+                title={$T("ui.copy_text")}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="1.25rem" height="1.25rem" viewBox="0 0 24 24">
                   <g fill="none" stroke="currentColor" stroke-width="1.5">
@@ -425,8 +382,8 @@
 
             <button
               class="cursor-pointer justify-self-end rounded-lg border-none bg-transparent p-0.5 text-(--red-text) transition hover:opacity-80"
-              aria-label="Hide"
-              title="Hide"
+              aria-label={$T("widget.map.hide")}
+              title={$T("widget.map.hide")}
               onclick={() => hideBoard(board.group)}
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="1.25rem" height="1.25rem" viewBox="0 0 24 24"
@@ -487,10 +444,10 @@
     <WidgetHeader icon={MapIcon} label={label?.name || $T("widget.map.title")} bind:collapsed {hints}>
       {#snippet right()}
         <div class="flex items-center gap-3">
-          <UI.Button
+          <Button
             wrapperClass="w-auto"
             componentClass="px-3"
-            content={{ icon: FitIcon, name: $T("constructor.props.map.fitAll"), info: { text: $T("constructor.props.map.fitAllHint"), side: "bottom" } }}
+            content={{ icon: FitIcon, name: $T("widget.map.fitAll"), info: { text: $T("widget.map.fitAllHint"), side: "bottom" } }}
             disabled={collapsed || visibleBoards.length === 0}
             onClick={fitAllBoards}
           />
@@ -513,9 +470,7 @@
         <MapLibre
           bind:map={mapInstance}
           class="h-full w-full overflow-hidden rounded-[14px] border border-(--hairline-color)"
-          style={isDarkMode
-            ? "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json"
-            : "https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json"}
+          style={theme.style}
           zoom={view.zoom}
           center={view.center}
           bearing={view.bearing}
@@ -544,10 +499,10 @@
                 </div>
               {/if}
               <div class="flex items-center gap-2" use:hint={{ text: $T("widget.map.hint.timeout"), enabled: $hints }}>
-                <span class="text-sm font-medium">{$T("constructor.props.map.timeout")}</span>
+                <span class="text-sm font-medium">{$T("widget.map.timeout")}</span>
                 <select class="rounded border border-(--border-color) bg-(--field-color) px-2 py-1 text-sm text-(--font-color)" bind:value={markerTimeout}>
-                  {#each timeoutOptions as opt}
-                    <option value={opt.value}>{opt.label}</option>
+                  {#each timeoutOptions as [ms, n, unit]}
+                    <option value={ms}>{$T(`widget.map.unit.${unit}`, { n })}</option>
                   {/each}
                 </select>
               </div>

@@ -1,6 +1,4 @@
 /* Графики отладки: пакет xPOE-Debug OK! DebugPlot (LOG_PLOT прошивки), Payload - CBOR-карта {"Группа.Имя": float32, …} в порядке вызова. График на группу - префикс имени до первой точки, без префикса - общая группа ""; серии в порядке карты, у серий, которых в кадре нет, - после них */
-import { cborToValue } from "./cbor/value.js"
-import { xPoeDebugValueFromText } from "./xPoeDebug.js"
 
 export const DEBUG_PLOT_ARGUMENT = "DebugPlot"
 
@@ -9,15 +7,15 @@ export interface PlotPoint {
   value: number
 }
 
-/* Значения графиков из Payload пакета DebugPlot (HEX CBOR-карты); не карта - пустой список */
-export const debugPlotValues = (value: string): [string, number][] => {
-  try {
-    const decoded = cborToValue(xPoeDebugValueFromText(value))
-    const entries = decoded instanceof Map ? [...decoded] : decoded && typeof decoded === "object" ? Object.entries(decoded) : []
-    return entries.filter((e): e is [string, number] => typeof e[0] === "string" && typeof e[1] === "number" && Number.isFinite(e[1]))
-  } catch {
-    return []
-  }
+/* Значения графиков из декодированного Payload пакета DebugPlot (payload строки xPoeDebugRow); не карта - пустой список */
+export const debugPlotValues = (payload: unknown): [string, number][] => {
+  const entries =
+    payload instanceof Map
+      ? [...payload]
+      : payload && typeof payload === "object" && !Array.isArray(payload) && !ArrayBuffer.isView(payload)
+        ? Object.entries(payload)
+        : []
+  return entries.filter((e): e is [string, number] => typeof e[0] === "string" && typeof e[1] === "number" && Number.isFinite(e[1]))
 }
 
 export const createPlotGroups = () => {

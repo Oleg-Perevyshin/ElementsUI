@@ -1,15 +1,18 @@
 <!-- $lib/WidgetMap/mission/MapAgro.svelte - режим «Агро» карты, генератор миссии для агродрона: оператор рисует на карте поле и запретные зоны, задаёт угол проходов и ширину захвата, виджет строит траекторию покрытия с обходом зон и выгружает миссию -->
 <script lang="ts">
-  import { isDarkTheme, watchTheme } from "../../themeWatch"
-  import { onMount, untrack, type Snippet, onDestroy } from "svelte"
+  import { untrack, type Snippet, onDestroy } from "svelte"
   import { slide } from "svelte/transition"
   import { twMerge } from "tailwind-merge"
   import { T } from "../../locales/i18n"
   import WidgetHeader from "../../WidgetHeader.svelte"
   import { hint, hintsSetting } from "../../hints"
-  import { copyText } from "../../clipboard"
-  import { readMapColors, accentStyle, type AccentColor, type IMapColors } from "../../accent"
-  import * as UI from "../.."
+  import { accentStyle, type AccentColor } from "../../accent"
+  import { themeState } from "../mapTheme.svelte"
+  import MissionActions from "./MissionActions.svelte"
+  import Button from "../../Button/Button.svelte"
+  import Input from "../../Input/Input.svelte"
+  import Modal from "../../Modal.svelte"
+  import Slider from "../../Slider/Slider.svelte"
   import { MapLibre, NavigationControl, ScaleControl, FullScreenControl, CustomControl } from "../mapWrapper"
   import MissionLayers from "./MissionLayers.svelte"
   import FitIcon from "../FitIcon.svelte"
@@ -294,18 +297,6 @@
       features: [{ type: "Feature", properties: { kind: highlighted.kind }, geometry: { type: "Polygon", coordinates: [closed(ring)] } }],
     }
   })
-  const flyTo = (ring: LngLat[]) => {
-    if (!mapInstance || ring.length < 3) return
-    const lngs = ring.map((p) => p[0])
-    const lats = ring.map((p) => p[1])
-    mapInstance.fitBounds(
-      [
-        [Math.min(...lngs), Math.min(...lats)],
-        [Math.max(...lngs), Math.max(...lats)],
-      ],
-      { padding: 60, maxZoom: 19, duration: 500 },
-    )
-  }
 
   let draftGeo = $derived({
     type: "FeatureCollection",
@@ -342,27 +333,6 @@
   /* ********************************************************** */
   /* Вид карты и выгрузка */
 
-  const fitField = () => {
-    const pts = [...fields.flat(), ...(plan.start ? [plan.start] : [])]
-    if (!mapInstance || pts.length === 0) return
-    const lons = pts.map((p) => p[0])
-    const lats = pts.map((p) => p[1])
-    mapInstance.fitBounds(
-      [
-        [Math.min(...lons), Math.min(...lats)],
-        [Math.max(...lons), Math.max(...lats)],
-      ],
-      { padding: 60, maxZoom: 18, duration: 0 },
-    )
-  }
-  let fitted = false
-  $effect(() => {
-    if (mapInstance && !fitted) {
-      fitted = true
-      untrack(fitField)
-    }
-  })
-
   /* Миссия и номера её точек: выгрузка и прогресс реального полёта по WPNum */
   let mission = $derived(
     result && hasField
@@ -375,55 +345,15 @@
         })
       : null,
   )
-  const missionText = () => mission?.text ?? ""
   let live = $derived(mission && !simulate ? missionProgress(mission.nav, vehicle?.wpNum, vehicle?.point) : null)
   /* Обработано: доля пройденных проходов от площади к обработке */
   let treatedHa = $derived(live && stats && live.sprayTotal > 0 ? (stats.ha * live.sprayDone) / live.sprayTotal : 0)
   let headerProgress = $derived(simulate ? sim.progress : (live?.fraction ?? null))
-  const download = () => {
-    const text = missionText()
-    if (!text) return
-    const a = document.createElement("a")
-    a.href = URL.createObjectURL(new Blob([text], { type: "text/plain" }))
-    a.download = `mission_${new Date().toISOString().slice(0, 16).replace(/[-:T]/g, "")}.waypoints`
-    a.click()
-    URL.revokeObjectURL(a.href)
-  }
-  let copied = $state(false)
-  const copy = async () => {
-    const text = missionText()
-    if (!text || !(await copyText(text))) return
-    copied = true
-    setTimeout(() => (copied = false), 1000)
-  }
-  let sendState: "idle" | "busy" | "done" | "error" = $state("idle")
-  const send = async () => {
-    const text = missionText()
-    if (!text || !onSend || sendState === "busy") return
-    sendState = "busy"
-    try {
-      await onSend(text, $state.snapshot(plan))
-      sendState = "done"
-    } catch {
-      sendState = "error"
-    }
-    setTimeout(() => (sendState = "idle"), 1500)
-  }
-
   let rootEl: HTMLDivElement | undefined = $state()
-  let isDarkMode = $state(false)
-  const detectTheme = () => (isDarkMode = isDarkTheme(rootEl))
-  onMount(() => {
-    detectTheme()
-    return watchTheme(detectTheme)
-  })
-  /* Цвета слоёв карты перечитываются при смене мастер-цвета и темы */
-  let mapColors = $state<IMapColors>(readMapColors(undefined))
-  $effect(() => {
-    void rootStyle
-    void isDarkMode
-    mapColors = readMapColors(rootEl)
-  })
+  const theme = themeState(
+    () => rootEl,
+    () => rootStyle,
+  )
   /* «Показать все» в шапке и вписывание при появлении карты */
   const missionPoints = (): LngLat[] => [...fields.flat(), ...plan.holes.flat(), ...(plan.start ? [plan.start] : [])]
   const fitAll = (animate = true) => fitMapTo(mapInstance, missionPoints(), animate)
@@ -497,10 +427,10 @@
   <WidgetHeader icon={MissionIcon} label={label?.name || $T("widget.mission.title")} bind:collapsed {hints}>
     {#snippet right()}
       <div class="flex items-center gap-3">
-        <UI.Button
+        <Button
           wrapperClass="w-auto"
           componentClass="px-3"
-          content={{ icon: FitIcon, name: $T("constructor.props.map.fitAll"), info: { text: $T("widget.mission.fitHint"), side: "bottom" } }}
+          content={{ icon: FitIcon, name: $T("widget.map.fitAll"), info: { text: $T("widget.mission.fitHint"), side: "bottom" } }}
           disabled={collapsed || missionPoints().length === 0}
           onClick={() => fitAll()}
         />
@@ -530,9 +460,7 @@
         <MapLibre
           bind:map={mapInstance}
           class="h-full w-full overflow-hidden rounded-[14px] border border-(--hairline-color)"
-          style={isDarkMode
-            ? "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json"
-            : "https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json"}
+          style={theme.style}
           zoom={15}
           center={fields[0]?.[0] ? { lng: fields[0][0][0], lat: fields[0][0][1] } : { lng: 27.559, lat: 53.9006 }}
           maxPitch={0}
@@ -576,7 +504,7 @@
             {onDrag}
             {onDragEnd}
             {onHandleRightClick}
-            colors={mapColors}
+            colors={theme.colors}
             highlight={highlightGeo}
             onCursor={(ll) => (cursor = ll)}
           />
@@ -602,7 +530,7 @@
             </div>
           {/if}
           {#if simulate}
-            <MissionSim clock={sim} showSpray icon="quad" colors={mapColors} />
+            <MissionSim clock={sim} showSpray icon="quad" colors={theme.colors} />
           {/if}
         </MapLibre>
       </div>
@@ -628,21 +556,21 @@
               <div class="flex flex-col gap-3 pb-3 md:pr-4 md:pb-0">
                 <span class="text-[11px] font-semibold tracking-wide text-(--faint-color) uppercase">{$T("widget.mission.passes")}</span>
                 <div class="flex items-end gap-2">
-                  <UI.Slider
+                  <Slider
                     wrapperClass="flex-1"
                     label={{ name: `${$T(fieldList.length > 1 ? "widget.mission.angleAll" : "widget.mission.angle")}: ${fmt(allAngle, 1)}°` }}
                     value={allAngle}
                     number={{ minNum: 0, maxNum: 179, step: 1 }}
                     onUpdate={(v) => setAllAngles(v as number)}
                   />
-                  <UI.Button
+                  <Button
                     wrapperClass="w-auto"
                     variant="primary"
                     content={{ name: $T("widget.mission.auto"), info: { text: $T("widget.mission.autoHint"), side: "top" } }}
                     disabled={!hasField || searching !== null}
                     onClick={autoAngle}
                   />
-                  <UI.Button
+                  <Button
                     wrapperClass="w-8 shrink-0"
                     componentClass="p-1"
                     content={{ icon: InfoIcon, info: { text: $T("widget.mission.autoInfoTitle"), side: "top" } }}
@@ -651,13 +579,13 @@
                 </div>
                 <div class="grid grid-cols-2 gap-2">
                   <div use:hint={{ text: $T("widget.mission.hint.spacing"), enabled: $hints }}>
-                    <UI.Input type="number" label={{ name: $T("widget.mission.spacing") }} {...numField("spacing", 0.5, 100, 0.5)} />
+                    <Input type="number" label={{ name: $T("widget.mission.spacing") }} {...numField("spacing", 0.5, 100, 0.5)} />
                   </div>
                   <div use:hint={{ text: $T("widget.mission.hint.margin"), enabled: $hints }}>
-                    <UI.Input type="number" label={{ name: $T("widget.mission.margin") }} {...numField("margin", 0, 50, 0.5)} />
+                    <Input type="number" label={{ name: $T("widget.mission.margin") }} {...numField("margin", 0, 50, 0.5)} />
                   </div>
-                  <UI.Input type="number" label={{ name: $T("widget.mission.alt") }} {...numField("alt", 1, 200, 0.5)} />
-                  <UI.Input type="number" label={{ name: $T("widget.mission.speed") }} {...numField("speed", 0.5, 30, 0.5)} />
+                  <Input type="number" label={{ name: $T("widget.mission.alt") }} {...numField("alt", 1, 200, 0.5)} />
+                  <Input type="number" label={{ name: $T("widget.mission.speed") }} {...numField("speed", 0.5, 30, 0.5)} />
                 </div>
                 <label class="flex items-center gap-2 text-[13px]">
                   <input type="checkbox" checked={plan.returnHome} onchange={(e) => update({ returnHome: e.currentTarget.checked })} />
@@ -667,8 +595,8 @@
               <div class="flex flex-col gap-3 pt-3 md:pt-0 md:pl-4">
                 <span class="text-[11px] font-semibold tracking-wide text-(--faint-color) uppercase">{$T("widget.mission.spraying")}</span>
                 <div class="grid grid-cols-2 gap-2">
-                  <UI.Input type="number" label={{ name: $T("widget.mission.rate") }} {...numField("rate", 0, 500, 0.5)} />
-                  <UI.Input type="number" label={{ name: $T("widget.mission.tank") }} {...numField("tank", 1, 1000, 1)} />
+                  <Input type="number" label={{ name: $T("widget.mission.rate") }} {...numField("rate", 0, 500, 0.5)} />
+                  <Input type="number" label={{ name: $T("widget.mission.tank") }} {...numField("tank", 1, 1000, 1)} />
                 </div>
                 <div class="flex flex-col gap-1.5 text-[13px]">
                   <span class="w-max text-(--muted-color)" use:hint={{ text: $T("widget.mission.hint.sprayControl"), enabled: $hints }}
@@ -686,9 +614,9 @@
                 </div>
                 {#if plan.sprayControl === "servo"}
                   <div class="grid grid-cols-3 gap-2">
-                    <UI.Input type="number" label={{ name: $T("widget.mission.servoChannel") }} {...numField("servoChannel", 1, 16, 1)} />
-                    <UI.Input type="number" label={{ name: $T("widget.mission.servoOn") }} {...numField("servoOn", 800, 2200, 10)} />
-                    <UI.Input type="number" label={{ name: $T("widget.mission.servoOff") }} {...numField("servoOff", 800, 2200, 10)} />
+                    <Input type="number" label={{ name: $T("widget.mission.servoChannel") }} {...numField("servoChannel", 1, 16, 1)} />
+                    <Input type="number" label={{ name: $T("widget.mission.servoOn") }} {...numField("servoOn", 800, 2200, 10)} />
+                    <Input type="number" label={{ name: $T("widget.mission.servoOff") }} {...numField("servoOff", 800, 2200, 10)} />
                   </div>
                 {/if}
               </div>
@@ -729,11 +657,12 @@
                       <button
                         class="flex cursor-pointer items-center gap-2 border-none bg-transparent p-0 text-left text-(--font-color)"
                         title={$T("widget.mission.showOnMap")}
-                        onclick={() => flyTo(field)}><span class="size-2.5 rounded-sm bg-(--green-mark)"></span>{$T("widget.mission.field")} {i + 1}</button
+                        onclick={() => fitMapTo(mapInstance, field)}
+                        ><span class="size-2.5 rounded-sm bg-(--green-mark)"></span>{$T("widget.mission.field")} {i + 1}</button
                       >
                       <span class="flex items-center gap-3">
                         <span class="flex items-center gap-1" use:hint={{ text: $T("widget.mission.hint.fieldAngle"), enabled: $hints }}>
-                          <UI.Input
+                          <Input
                             wrapperClass="w-20"
                             type="number"
                             value={fieldList[i].angle}
@@ -760,7 +689,8 @@
                       <button
                         class="flex cursor-pointer items-center gap-2 border-none bg-transparent p-0 text-left text-(--font-color)"
                         title={$T("widget.mission.showOnMap")}
-                        onclick={() => flyTo(hole)}><span class="size-2.5 rounded-sm bg-(--red-mark)"></span>{$T("widget.mission.hole")} {i + 1}</button
+                        onclick={() => fitMapTo(mapInstance, hole)}
+                        ><span class="size-2.5 rounded-sm bg-(--red-mark)"></span>{$T("widget.mission.hole")} {i + 1}</button
                       >
                       <span class="flex items-center gap-2">
                         <span class="font-semibold">{areaText(fieldArea(hole, []))}</span>
@@ -838,30 +768,20 @@
       </div>
 
       <!-- Выгрузка миссии -->
-      <div class="grid grid-cols-3 gap-3">
-        <div class="min-w-0" use:hint={{ text: $T("widget.mission.hint.download"), enabled: $hints }}>
-          <UI.Button variant="primary" content={{ name: $T("widget.mission.download") }} disabled={!stats} onClick={download} />
-        </div>
-        <div class="min-w-0" use:hint={{ text: $T("widget.mission.hint.copy"), enabled: $hints }}>
-          <UI.Button variant="primary" content={{ name: copied ? $T("widget.mission.copied") : $T("widget.mission.copy") }} disabled={!stats} onClick={copy} />
-        </div>
-        <div class="min-w-0" use:hint={{ text: $T("widget.mission.hint.send"), enabled: $hints }}>
-          <UI.Button
-            variant="primary"
-            accent={sendState === "error" ? "red" : undefined}
-            content={{ name: $T(`widget.mission.send.${sendState}`) }}
-            disabled={!stats || !onSend || sendState === "busy"}
-            onClick={send}
-          />
-        </div>
-      </div>
+      <MissionActions
+        text={mission?.text ?? ""}
+        name="mission"
+        disabled={!stats}
+        hints={$hints}
+        onSend={onSend && ((text) => onSend(text, $state.snapshot(plan)))}
+      />
     </div>
   {/if}
 </div>
 
 <!-- Подробное описание авторасчёта -->
-<UI.Modal title={$T("widget.mission.autoInfoTitle")} bind:isOpen={showAutoInfo} wrapperClass="w-200">
+<Modal title={$T("widget.mission.autoInfoTitle")} bind:isOpen={showAutoInfo} wrapperClass="w-200">
   {#snippet main()}
     <HelpText text={$T("widget.mission.autoInfo")} />
   {/snippet}
-</UI.Modal>
+</Modal>

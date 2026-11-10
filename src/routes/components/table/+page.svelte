@@ -73,7 +73,7 @@
     parentId: "",
   })
 
-  let body: any | null = $state(null)
+  let loggerRef: Table<{ "id-S": string; device: string }> | undefined = $state()
   let intervalId: any | null = null
 
   const generateStashingData = (): { "id-S": string; device: string; buttons: ITableButton<object>[] }[] => {
@@ -94,7 +94,7 @@
 
   $effect(() => {
     if (!(tableComponent.properties as ITableProps<object>).dataBuffer?.stashData && tableRef) {
-      tableRef.clearBuffer()
+      tableRef.clear()
     }
   })
 
@@ -110,7 +110,8 @@ ${formatObjectToString(tableComponent.properties as ITableProps<object>)}
     name: string
     status: "online" | "offline"
     lastActive: string
-    action?: IOption[]
+    "action-S"?: IOption[]
+    action?: string
   }
   const columns: ITableHeader<ITableRow>[] = [
     { label: { name: "ID" }, content: [{ type: "text", data: { key: "id", sortable: true } }], width: "5%", align: "center" },
@@ -128,11 +129,7 @@ ${formatObjectToString(tableComponent.properties as ITableProps<object>)}
           data: {
             key: "status",
             truncated: true,
-            formatting: (text) => {
-              if (text === "online") {
-                return "1"
-              } else return "2"
-            },
+            render: (row) => (row.status === "online" ? "🟢 online" : "⚪ offline"),
           },
         },
       ],
@@ -145,7 +142,7 @@ ${formatObjectToString(tableComponent.properties as ITableProps<object>)}
     },
     {
       label: { name: "Actions" },
-      content: [{ type: "select", data: { key: "action", keyCol: "" } }],
+      content: [{ type: "select", data: { key: "action-S", keyCol: "" } }],
       width: "1fr",
       align: "left",
     },
@@ -158,7 +155,7 @@ ${formatObjectToString(tableComponent.properties as ITableProps<object>)}
       name: "Device A",
       status: "online",
       lastActive: String(new Date()),
-      action: [
+      "action-S": [
         { id: "Value of id1", name: "Value of id1", value: "Value of id1" },
         { id: "Value of id2", name: "Value of id2", value: "Value of id2" },
         { id: "Value of id3", name: "Value of id3", value: "Value of id3" },
@@ -172,7 +169,7 @@ ${formatObjectToString(tableComponent.properties as ITableProps<object>)}
       name: "Device B",
       status: "offline",
       lastActive: String(new Date(Date.now() - 86400000 * 4)),
-      action: [
+      "action-S": [
         { id: "Value of id1", name: "Value of id1", value: "Value of id1" },
         { id: "Value of id2", name: "Value of id2", value: "Value of id2" },
         { id: "Value of id3", name: "Value of id3", value: "Value of id3" },
@@ -188,11 +185,7 @@ ${formatObjectToString(tableComponent.properties as ITableProps<object>)}
   ]
 
   onMount(() => {
-    body = generateStashingData()
-
-    intervalId = setInterval(() => {
-      body = generateStashingData()
-    }, 1000)
+    intervalId = setInterval(() => loggerRef?.push(generateStashingData()), 1000)
   })
 
   onDestroy(() => {
@@ -223,7 +216,7 @@ ${formatObjectToString(tableComponent.properties as ITableProps<object>)}
       label={{ name: "Devices" }}
       header={columns}
       body={rows}
-      onClick={(eventHandler) => console.log(eventHandler)}
+      onClick={(row, button) => console.log(row, button)}
       footer={`rows: ${rows.length}`}
     />
     <div class="flex gap-4">
@@ -233,8 +226,8 @@ ${formatObjectToString(tableComponent.properties as ITableProps<object>)}
       <Table
         wrapperClass="h-60 flex-1"
         label={{ name: "Логгер (dataBuffer.logger)" }}
+        bind:this={loggerRef}
         header={loggerColumns}
-        {body}
         dataBuffer={{ logger: true, stashData: true, bufferSize: 10, visibleRows: 5, clearButton: true }}
       />
     </div>

@@ -35,6 +35,10 @@
       "default": "./dist/protocols/index.js"
     },
     "./protocols/dictionary.yaml": "./dist/protocols/dictionary.yaml",
+    "./constructor": {
+      "types": "./dist/constructor.d.ts",
+      "svelte": "./dist/constructor.js"
+    },
     "./locales": {
       "types": "./dist/locales/index.d.ts",
       "default": "./dist/locales/index.js"

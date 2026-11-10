@@ -1,254 +1,235 @@
-<script lang="ts">
+<!-- $lib/Table/Table.svelte - таблица: обычная (строки в body) или журнал (строки добавляет push() через bind:this, хранятся в кольцевом буфере) -->
+<script lang="ts" generics="Row extends object">
   import { roundToClean } from "../number"
-  import type { IOption, ITableButton, ITableContent, ITableHeader, ITableImage, ITableProgressBar, ITableProps, ITableText } from "../types"
+  import type { IOption, ITableButton, ITableContent, ITableHeader, ITableProps, ITableText } from "../types"
   import { fly, slide } from "svelte/transition"
   import { twMerge } from "tailwind-merge"
   import { accentStyle, type AccentColor } from "../accent"
-  import { onMount, tick } from "svelte"
+  import { onMount, tick, untrack, type Snippet } from "svelte"
+  import { SvelteMap } from "svelte/reactivity"
   import ButtonClear from "../libIcons/ButtonClear.svelte"
   import { T } from "../locales/i18n"
-  import { Button, Modal } from ".."
-  import CopiedChip from "../CopiedChip.svelte"
-  import { escapeHtml, htmlToText, sanitizeHtml } from "../html"
+  import Button from "../Button/Button.svelte"
+  import Modal from "../Modal.svelte"
+  import CopyButton from "./CopyButton.svelte"
+  import { htmlToText, sanitizeHtml } from "../html"
+  import { createRing } from "../ring"
+  import { copyText } from "../clipboard"
 
   let {
-    id = crypto.randomUUID(),
     wrapperClass = "",
     label = { name: "", class: "" },
-    body = $bindable(),
+    body = [],
     header = [],
     footer = "",
-    dataBuffer = { stashData: false, bufferSize: 10, clearButton: false, clearClass: "", logger: false, visibleRows: 5 },
+    dataBuffer = {},
     outline = false,
     cursor = null,
     loader,
     autoscroll = false,
     getData = () => {},
     onClick,
-  }: ITableProps<any> = $props()
+  }: ITableProps<Row> = $props()
 
-  /* Сортировка */
-  let sortState: { key: string | null; direction: "asc" | "desc" | null } = { key: null, direction: null }
-  let isAutoscroll = $state(true)
-  let container: HTMLElement | null = $state(null)
-  let buffer: any[] = $state([])
-  /* body типизирован как T[] | T | null - нормализуем в массив один раз для рендера */
-  let bodyArray = $derived(body == null ? [] : Array.isArray(body) ? body : [body])
+  const stash = $derived(!!dataBuffer.stashData)
+  const bufferSize = $derived(dataBuffer.bufferSize ?? 10)
 
-  let isDropdownOpen: { x: number; y: number; index: number } | null = $state(null)
-  let selectSlideDuration: number = $state(250)
-  let copiedCell: { x: number; y: number } | null = $state(null)
-  let tooltip = $state({ show: false, text: "", x: 0, y: 0 })
-  /* Шаблон колонок общий для шапки и строк; кнопка очистки - отдельная узкая колонка, чтобы не перекрывать заголовки */
-  const ACTIONS_COLUMN = "2.5rem"
-  let gridTemplate = $derived(
-    [...(header || []).filter((c) => c.width !== "0%").map((c) => c.width || "minmax(0, 1fr)"), ...(dataBuffer.clearButton ? [ACTIONS_COLUMN] : [])].join(" "),
-  )
-  /* Фактическая ширина полосы прокрутки тела, на неё сдвигается шапка (0 для оверлейных полос) */
-  let scrollbarWidth = $state(0)
-  const measureScrollbar = () => (scrollbarWidth = container ? container.offsetWidth - container.clientWidth : 0)
+  /* ********************************************************** */
+  /* Журнал: кольцевой буфер вне реактивности, наружу - снимок строк один раз на пачку push() */
+  type Entry = { key: number; row: Row }
+  const ring = createRing<Entry>(untrack(() => bufferSize))
+  let seq = 0
+  let stream = $state.raw<Entry[]>([])
+  let queued = false
+  const flush = () => {
+    queued = false
+    const entries = ring.toArray()
+    stream = dataBuffer.logger ? entries.reverse() : entries
+  }
 
-  $effect(() => {
-    void [body, buffer.length, tableHeight]
-    tick().then(measureScrollbar)
-  })
-  let tableHeight = $state(0)
-  let modalData: { isOpen: boolean; rawData?: string; formattedData?: string } = $state({ isOpen: false, rawData: "", formattedData: "" })
+  /* Добавляет строки в журнал (dataBuffer.stashData); старые вытесняются за bufferSize */
+  export const push = (rows: Row | Row[]) => {
+    for (const row of Array.isArray(rows) ? rows : [rows]) ring.push({ key: ++seq, row })
+    if (!queued) {
+      queued = true
+      queueMicrotask(flush)
+    }
+  }
 
-  export const clearBuffer = async () => {
-    buffer = []
+  /* Очищает журнал */
+  export const clear = () => {
+    ring.clear()
+    stream = []
     tableHeight = 0
   }
 
-  /* Сортировка столбцов */
-  const sortRows = (key: string) => {
-    /* В режиме буфера body бывает null, строки лежат в buffer - сортировать нечего */
-    if (!body) return
-    if (sortState.key === key) {
-      sortState.direction = sortState.direction === "asc" ? "desc" : "asc"
-    } else {
-      sortState.key = key
-      sortState.direction = "asc"
-    }
+  $effect(() => {
+    ring.resize(bufferSize)
+    void dataBuffer.logger
+    untrack(flush)
+  })
 
-    body = [...body].sort((a, b) => {
-      const aValue = a[key]
-      const bValue = b[key]
-      if (typeof aValue === "number" && typeof bValue === "number") {
-        return sortState.direction === "asc" ? aValue - bValue : bValue - aValue
-      }
-      if (aValue instanceof Date && bValue instanceof Date) {
-        return sortState.direction === "asc" ? aValue.getTime() - bValue.getTime() : bValue.getTime() - aValue.getTime()
-      }
-      const strA = String(aValue).toLowerCase()
-      const strB = String(bValue).toLowerCase()
-      const numA = strA.match(/\d+/g)?.[0] || ""
-      const numB = strB.match(/\d+/g)?.[0] || ""
-      if (numA && numB) {
-        const numCompare = parseInt(numA, 10) - parseInt(numB, 10)
-        if (numCompare !== 0) return sortState.direction === "asc" ? numCompare : -numCompare
-      }
-      const stringCompare = strA.localeCompare(strB)
-      return sortState.direction === "asc" ? stringCompare : -stringCompare
-    })
+  /* ********************************************************** */
+  /* Обычная таблица: сортировка копии body, выбранные в списках значения - поверх строк до следующего body */
+  let sortState = $state<{ key: keyof Row | null; direction: 1 | -1 }>({ key: null, direction: 1 })
+  const picks = new SvelteMap<Row, Record<string, unknown>>()
+  $effect.pre(() => {
+    void body
+    untrack(() => picks.clear())
+  })
+
+  const compare = (a: unknown, b: unknown): number => {
+    if (typeof a === "number" && typeof b === "number") return a - b
+    if (a instanceof Date && b instanceof Date) return a.getTime() - b.getTime()
+    const strA = String(a).toLowerCase()
+    const strB = String(b).toLowerCase()
+    const numA = strA.match(/\d+/)?.[0]
+    const numB = strB.match(/\d+/)?.[0]
+    if (numA && numB && numA !== numB) return parseInt(numA, 10) - parseInt(numB, 10)
+    return strA.localeCompare(strB)
   }
+
+  const sortBy = (key: keyof Row) => (sortState = { key, direction: sortState.key === key ? (-sortState.direction as 1 | -1) : 1 })
+
+  let entries: Entry[] = $derived.by(() => {
+    if (stash) return stream.slice(-bufferSize)
+    const rows = (body ?? []).filter((row) => Object.keys(row).length)
+    const { key, direction } = sortState
+    if (key !== null) rows.sort((a, b) => direction * compare(a[key], b[key]))
+    return rows.map((row, i) => ({ key: i, row }))
+  })
+
+  /* Строка с выбранными значениями списков - её получают отрисовка и onClick */
+  const withPicks = (row: Row): Row => {
+    const picked = picks.get(row)
+    return picked ? { ...row, ...picked } : row
+  }
+
+  /* Ключ выбранного значения списка: ключ вариантов без суффикса -S */
+  const valueKey = (key: keyof Row) => String(key).replace(/-S$/, "")
+
+  /* ********************************************************** */
+  /* Разметка: шаблон колонок общий для шапки и строк; кнопка очистки - отдельная узкая колонка */
+  const ACTIONS_COLUMN = "2.5rem"
+  let gridTemplate = $derived(
+    [...header.filter((c) => c.width !== "0%").map((c) => c.width || "minmax(0, 1fr)"), ...(dataBuffer.clearButton ? [ACTIONS_COLUMN] : [])].join(" "),
+  )
+  const columnContent = (column: ITableHeader<Row>, row: Row) => (typeof column.content === "function" ? column.content(row) : (column.content ?? []))
+  const sortKey = (column: ITableHeader<Row>) =>
+    typeof column.content === "function"
+      ? undefined
+      : column.content?.find((c): c is { type: "text"; data: ITableText<Row> } => c.type === "text" && !!c.data.sortable)?.data.key
+
+  let container: HTMLElement | null = $state(null)
+  let rowsEl: HTMLElement | null = $state(null)
+  let scrollbarWidth = $state(0)
+  let tableHeight = $state(0)
+  let isAutoscroll = true
+
+  /* Высота журнала - по первым visibleRows строкам; ширина полосы прокрутки - сдвиг шапки */
+  const measure = () => {
+    if (!container) return
+    scrollbarWidth = container.offsetWidth - container.clientWidth
+    if (!stash || !dataBuffer.visibleRows || !rowsEl) return
+    let height = 0
+    for (const row of [...rowsEl.children].slice(0, dataBuffer.visibleRows)) height += (row as HTMLElement).offsetHeight
+    tableHeight = height
+  }
+
+  $effect(() => {
+    void entries
+    tick().then(() => {
+      measure()
+      if (autoscroll && isAutoscroll && !dataBuffer.logger && container) container.scrollTop = container.scrollHeight
+    })
+  })
+
+  $effect(() => {
+    if (!container) return
+    const observer = new ResizeObserver(measure)
+    observer.observe(container)
+    return () => observer.disconnect()
+  })
 
   const handleScroll = () => {
     if (!container) return
-    /* Контейнер рендерится только при наличии строк, поэтому слушатель - в разметке, а не addEventListener в onMount */
-    if (autoscroll) handleAutoScroll()
     const { scrollTop, clientHeight, scrollHeight } = container
-    if (scrollTop + clientHeight >= scrollHeight - 50 && cursor !== null && loader && !loader()) {
-      getData()
-    }
+    isAutoscroll = scrollHeight - scrollTop <= clientHeight + 50
+    if (scrollTop + clientHeight >= scrollHeight - 50 && cursor !== null && loader && !loader()) getData()
   }
 
-  /* Обработчик автоскролла */
-  const handleAutoScroll = () => {
-    if (!container) return
-    isAutoscroll = container.scrollHeight - container.scrollTop <= container.clientHeight + 50
+  /* ********************************************************** */
+  /* Кнопки, списки, ячейки текста */
+
+  const buttonClick = (row: Row, button: ITableButton<Row>) => (button.onClick ? button.onClick(row) : onClick?.(row, button))
+  const resolve = <V,>(value: V | ((row: Row) => V), row: Row): V => (typeof value === "function" ? (value as (row: Row) => V)(row) : value)
+
+  /* Кнопка без своего фона (bg-*) - прозрачная с акцентным текстом, с фоном - текст на акценте */
+  const buttonClass = (button: ITableButton<Row>, row: Row) => {
+    const cls = resolve(button.class, row) ?? ""
+    const classes = cls.split(" ")
+    const transparent = classes.includes("bg-transparent") || !classes.some((c) => c.startsWith("bg-"))
+    return twMerge(
+      "flex h-7 w-full cursor-pointer items-center justify-center gap-1.5 rounded-lg px-3 text-[13px] font-semibold transition-colors duration-150 outline-none select-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent-text)",
+      transparent
+        ? "bg-transparent text-(--accent-text) hover:bg-(--accent-soft)"
+        : "border border-transparent text-(--on-accent) hover:brightness-90 dark:hover:brightness-115",
+      cls,
+    )
   }
 
-  const scrollToBottom = () => {
-    if (isAutoscroll && container) {
-      container.scrollTop = container.scrollHeight
-    }
+  let dropdown: { row: number; col: number; index: number; rect: DOMRect } | null = $state(null)
+  let slideDuration = $state(250)
+  const toggleDropdown = (e: MouseEvent, row: number, col: number, index: number) =>
+    (dropdown =
+      dropdown?.row === row && dropdown.col === col && dropdown.index === index
+        ? null
+        : { row, col, index, rect: (e.currentTarget as HTMLElement).getBoundingClientRect() })
+
+  const selectOption = (e: MouseEvent, row: Row, key: keyof Row, option: IOption<string | number>) => {
+    e.stopPropagation()
+    dropdown = null
+    const field = valueKey(key)
+    setTimeout(() => picks.set(row, { ...picks.get(row), [field]: option.value }), 250)
   }
 
-  $effect(() => {
-    if (autoscroll && buffer && buffer.length > 0 && !dataBuffer.logger) {
-      scrollToBottom()
-    }
-  })
-
-  const buttonClick = (row: any, button: any) => {
-    if (button.onClick) button.onClick(row)
-    else if (button.eventHandler && onClick) {
-      let value: Record<string, boolean | string | number | number[] | object | null> = {}
-      ;(button.eventHandler.Variables ?? []).forEach((v: string) => {
-        if (
-          header.some(
-            (h) =>
-              (h.content as ITableContent<any>[])?.some((c) => c.type == "select") &&
-              (h.content as ITableContent<any>[]).some((c) => c.type == "select" && c.data.key === v),
-          )
-        )
-          value[v.slice(0, -2)] = row[v.slice(0, -2)]
-        else value[v] = row[v]
-      })
-      button.eventHandler.Value = JSON.stringify(value)
-      onClick(button.eventHandler)
-    }
+  /* Содержимое ячейки: render или значение по key (варианты списка - их имена, объект - JSON) */
+  const cellContent = (row: Row, text: ITableText<Row>): string => {
+    if (text.render) return text.render(row)
+    const value = row[text.key] as unknown
+    if (Array.isArray(value) && value[0] && typeof value[0] === "object" && "value" in value[0]) return value.map((item: IOption) => item.name).join(", ")
+    return value !== null && typeof value === "object" ? JSON.stringify(value) : String(value ?? "")
   }
+  /* Видимый текст ячейки - для подсказки и копирования */
+  const cellText = (row: Row, text: ITableText<Row>) => (text.html ? htmlToText(cellContent(row, text)) : cellContent(row, text))
 
-  const selectOption = async (index: number, key: any, selectIndex: number, option: IOption<string | number>, event: MouseEvent) => {
-    event.stopPropagation()
+  let tooltip = $state({ show: false, text: "", x: 0, y: 0 })
 
-    let existingItem = body[index][key.slice(0, -2)]
-    isDropdownOpen = null
+  /* Окно полного вида: сниппет столбца или содержимое ячейки целиком */
+  let modalOpen = $state(false)
+  let modal = $state.raw<{ row: Row; text: ITableText<Row> } | null>(null)
+  const modalSnippet = $derived(typeof modal?.text.modal === "function" ? (modal.text.modal as Snippet<[Row]>) : null)
 
-    setTimeout(() => {
-      /* 0 и пустая строка - тоже значения ячейки */
-      if (existingItem !== undefined) {
-        body = [...body].map((row, i) => (i === index ? { ...row, [key.slice(0, -2)]: option.value } : row))
-      }
-    }, 250)
-  }
-
-  /* Текст ячейки: из HTML-ячейки берётся видимый текст, formatting получает его и возвращает HTML */
-  const cellText = (value: unknown, html?: boolean) => (html ? htmlToText(String(value ?? "")) : String(value ?? ""))
-
-  const showModal = async (text: string, formatting?: (text: string) => string) => {
-    modalData = {
-      isOpen: true,
-      rawData: text,
-      formattedData: formatting ? formatting(text) : escapeHtml(text),
-    }
-  }
-
-  const showTooltip = (event: MouseEvent, text: string, formatting?: (text: string) => string) => {
-    tooltip = {
-      show: true,
-      text: formatting ? htmlToText(formatting(text)) : text,
-      x: event.clientX,
-      y: event.clientY,
-    }
-  }
-
-  /* Требует явного src: (row) => row.icon ? `data:image/png;base64,${row.icon}` : '' в описании столбца */
-  const hasImage = (column: ITableHeader<any>, row: any, index: number): boolean => {
-    let content = (column.content as ITableContent<any>[])?.[index]
-    const src = content?.type === "image" && typeof content.data.src === "function" ? content.data.src(row) : (content?.data as ITableImage<object>).src
-    return !!src
-  }
-
-  const progressPercent = (content: ITableContent<any>, value: number) => {
-    let progressBar = content.data as ITableProgressBar<object>
-
-    let min = progressBar?.minNum ?? 0
-    let max = progressBar?.maxNum ?? 100
-    if (value != null && !isNaN(value)) return (((Math.min(Math.max(value, min), max) - min) / (max - min)) * 100) as number
-  }
-
-  $effect(() => {
-    if (!container) return () => (buffer = [])
-    const observer = new ResizeObserver(measureScrollbar)
-    observer.observe(container)
-    if (container.firstElementChild) observer.observe(container.firstElementChild)
-    return () => {
-      observer.disconnect()
-      buffer = []
-    }
-  })
-
-  $effect(() => {
-    ;(async () => {
-      if (body && dataBuffer.stashData) {
-        if (Array.isArray(body)) {
-          for (let i = 0; i < body.length; i++) {
-            let item = { ...(dataBuffer.logger ? body.toReversed()[i] : body[i]), __rowId: crypto.randomUUID() }
-            dataBuffer.logger ? (buffer = [item, ...buffer]) : (buffer = [...buffer, item])
-          }
-        } else dataBuffer.logger ? (buffer = [body, ...buffer]) : (buffer = [...buffer, body])
-        if (buffer.length > (dataBuffer.bufferSize ?? 10)) {
-          dataBuffer.logger ? (buffer = buffer.slice(0, dataBuffer.bufferSize ?? 10)) : (buffer = buffer.slice(-(dataBuffer.bufferSize ?? 10)))
-        }
-
-        body = null
-        await tick()
-        if (document && dataBuffer.visibleRows) {
-          for (let i = 0; i < (dataBuffer.visibleRows ?? 5); i++) {
-            const rowHeight = document.getElementById(`rowDiv${i}-0`)?.offsetHeight ?? 0
-            tableHeight = i == 0 ? 0 + rowHeight : tableHeight + rowHeight
-          }
-        }
-      }
-    })()
-  })
+  const progressPercent = (value: number, min = 0, max = 100) =>
+    value != null && !isNaN(value) ? ((Math.min(Math.max(value, min), max) - min) / (max - min)) * 100 : 0
 
   onMount(() => {
-    if (autoscroll) scrollToBottom()
-
-    const handlePageScroll = () => {
-      isDropdownOpen = null
-      selectSlideDuration = 0
-      setTimeout(() => {
-        selectSlideDuration = 250
-      }, 10)
+    /* Прокрутка страницы закрывает выпадающий список мгновенно, без анимации */
+    const closeDropdown = () => {
+      dropdown = null
+      slideDuration = 0
+      setTimeout(() => (slideDuration = 250), 10)
     }
-
-    window.addEventListener("scroll", handlePageScroll, true)
-    window.addEventListener("resize", handlePageScroll, true)
-
+    window.addEventListener("scroll", closeDropdown, true)
+    window.addEventListener("resize", closeDropdown, true)
     return () => {
-      window.removeEventListener("scroll", handlePageScroll, true)
-      window.removeEventListener("resize", handlePageScroll, true)
+      window.removeEventListener("scroll", closeDropdown, true)
+      window.removeEventListener("resize", closeDropdown, true)
     }
   })
 </script>
 
 <div
-  id={`${id}-${crypto.randomUUID().slice(0, 6)}`}
   class={twMerge(`flex h-full w-full flex-col overflow-hidden`, wrapperClass)}
   style={accentStyle(wrapperClass.match(/(?:^|\s)bg-(\w+)/)?.[1] as AccentColor)}
 >
@@ -257,29 +238,26 @@
   {/if}
 
   <div class="relative flex h-full w-full flex-col overflow-hidden rounded-[14px] border border-(--hairline-color) bg-(--back-color)">
-    <!-- Table Header -->
+    <!-- Шапка -->
     <div
       class="grid border-b border-(--hairline-color) bg-[var(--table-header-color,var(--accent-soft))] text-[11px] font-bold tracking-[0.06em] text-[color-mix(in_srgb,var(--accent-color)_35%,var(--font-color))] uppercase"
       style={`grid-template-columns: ${gridTemplate}; padding-right: ${scrollbarWidth}px;`}
     >
       {#each header as column, index (column)}
         {#if column.width !== "0%"}
+          {@const key = sortKey(column)}
           <div
             class={twMerge(
-              `flex items-center border-l ${outline && index !== 0 ? " border-(--hairline-color)" : "border-transparent"}
-            ${column.align === "center" ? "justify-center text-center" : column.align === "right" ? "justify-end text-right" : "justify-start text-left"} gap-1 px-3 py-2`,
+              `flex items-center gap-1 border-l px-3 py-2 ${outline && index !== 0 ? "border-(--hairline-color)" : "border-transparent"}
+            ${column.align === "center" ? "justify-center text-center" : column.align === "right" ? "justify-end text-right" : "justify-start text-left"}`,
               column.label?.class,
             )}
           >
             <span>{$T(column.label?.name ?? "")}</span>
-
-            {#if typeof column.content !== "function" && (column.content as ITableContent<any>[])?.some((c) => c.type === "text" && c.data.sortable)}
+            {#if key !== undefined && !stash}
               <button
                 class="inline-flex cursor-pointer items-center rounded px-1 text-(--muted-color) transition-colors duration-150 hover:bg-(--back-color) hover:text-(--font-color)"
-                onclick={() =>
-                  sortRows(
-                    ((column.content as ITableContent<any>[])?.find((c) => c.type === "text" && c.data.sortable)?.data as ITableText<object>).key as string,
-                  )}
+                onclick={() => sortBy(key)}
               >
                 ↑↓
               </button>
@@ -292,103 +270,83 @@
           <Button
             componentClass={twMerge("size-7 p-1.5 text-(--muted-color) hover:text-(--red-text)", dataBuffer.clearClass)}
             content={{ icon: ButtonClear, info: { text: $T("common.table.clear"), side: "left" } }}
-            onClick={clearBuffer}
+            onClick={clear}
           />
         </div>
       {/if}
     </div>
 
-    {#if bodyArray.length > 0 || buffer.length > 0}
-      {@const rows = dataBuffer.stashData ? buffer.slice(-(dataBuffer.bufferSize ?? 10)) : bodyArray.filter((row: any) => Object.entries(row).length != 0)}
-      <!-- Table Body с прокруткой -->
+    {#if entries.length > 0}
+      <!-- Тело с прокруткой -->
       <div class="relative flex-1 overflow-y-auto bg-(--back-color)" bind:this={container} onscroll={handleScroll}>
-        <div class="min-w-0" style={`height: ${dataBuffer.visibleRows && tableHeight && rows.length > dataBuffer.visibleRows ? `${tableHeight}px` : ""};`}>
-          {#each rows as row, i (row.__rowId ?? row)}
+        <div
+          class="min-w-0"
+          bind:this={rowsEl}
+          style={dataBuffer.visibleRows && tableHeight && entries.length > dataBuffer.visibleRows ? `height: ${tableHeight}px;` : ""}
+        >
+          {#each entries as entry, i (entry.key)}
+            {@const row = withPicks(entry.row)}
             <div
               class="grid border-t border-(--hairline-color) transition-colors duration-150 hover:bg-(--accent-soft)"
               style={`grid-template-columns: ${gridTemplate};`}
             >
               {#each header as column, j (column)}
                 {#if column.width !== "0%"}
-                  {@const contentArray = typeof column.content === "function" ? column.content(row) : column.content}
+                  {@const contents = columnContent(column, row) as ITableContent<Row>[]}
                   <div
-                    id="rowDiv{i}-{j}"
                     class="relative grid min-h-7 w-full min-w-0 items-center gap-x-2 px-3 py-1 text-[length:var(--table-font-size,13px)] wrap-break-word
-              {column.align === 'center'
+                    {column.align === 'center'
                       ? 'justify-center justify-items-center text-center'
                       : column.align === 'right'
                         ? 'justify-end justify-items-end text-right tabular-nums'
                         : 'justify-start justify-items-start text-left'}
-               {j !== 0 ? ' border-l ' : ''} {outline ? 'border-(--hairline-color)' : 'border-transparent'} {column.disableSelect
+                    {j !== 0 ? 'border-l' : ''} {outline ? 'border-(--hairline-color)' : 'border-transparent'} {column.disableSelect
                       ? 'select-none'
                       : 'select-all'}"
-                    style=" grid-template-columns: repeat({contentArray?.length}, minmax(0, 1fr));"
+                    style="grid-template-columns: repeat({contents.length}, minmax(0, 1fr));"
                   >
-                    {#each contentArray as content, index}
+                    {#each contents as content, index}
                       {#if content.type === "button"}
-                        {@const button = typeof content.data === "function" ? content.data(row) : content.data}
-
-                        <button
-                          class="{twMerge(`flex h-7 w-full cursor-pointer items-center justify-center gap-1.5 rounded-lg
-                           px-3 text-[13px] font-semibold transition-colors duration-150 outline-none select-none
-                           focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent-text)
-                           ${
-                             ((button as ITableButton<object>).class as string)?.split(' ').find((cl: string) => cl === 'bg-transparent') ||
-                             !((button as ITableButton<object>).class as string)?.split(' ').find((cl: string) => cl.startsWith('bg-'))
-                               ? 'bg-transparent text-(--accent-text) hover:bg-(--accent-soft)'
-                               : 'border border-transparent text-(--on-accent) hover:brightness-90 dark:hover:brightness-115'
-                           }
-                          ${typeof button.class === 'function' ? button.class(row) : button.class}`)} bg-(--bg-color)"
-                          onclick={() => buttonClick(row, button)}
-                          title={typeof button.title === "function" ? button.title(row) : button.title}
-                          aria-label={typeof button.title === "function" ? button.title(row) : button.title}
-                        >
-                          {#if button?.icon}
-                            <span class={`flex size-4 shrink-0 items-center justify-center overflow-visible [&_svg]:h-full [&_svg]:w-full`}>
-                              {#if typeof button?.icon === "string"}
+                        {@const button = resolve(content.data, row)}
+                        {@const title = resolve(button.title, row)}
+                        <button class="{buttonClass(button, row)} bg-(--bg-color)" onclick={() => buttonClick(row, button)} {title} aria-label={title}>
+                          {#if button.icon}
+                            <span class="flex size-4 shrink-0 items-center justify-center overflow-visible [&_svg]:h-full [&_svg]:w-full">
+                              {#if typeof button.icon === "string"}
                                 {@html sanitizeHtml(button.icon)}
                               {:else}
-                                {@const IconComponent = button?.icon}
-                                <IconComponent />
+                                <button.icon />
                               {/if}
                             </span>
                           {/if}
-                          {typeof button.name === "function" ? $T(button.name(row)) : $T(button.name ?? "")}
+                          {$T(resolve(button.name, row) ?? "")}
                         </button>
                       {:else if content.type === "select"}
                         {@const select = content.data}
-                        {@const options = Array.isArray(row[select.key]) ? row[select.key] : []}
+                        {@const options = (Array.isArray(row[select.key]) ? row[select.key] : []) as IOption<string | number>[]}
+                        {@const current = (row as Record<string, unknown>)[valueKey(select.key)]}
+                        {@const open = dropdown?.row === i && dropdown.col === j && dropdown.index === index ? dropdown : null}
                         <div class="relative w-full select-none">
                           <button
-                            id="select{i}-{j}-{index}"
-                            class="h-7 w-full cursor-pointer rounded-lg border border-(--border-color) bg-(--field-color) px-2 text-left text-[13px]
-        transition-[border-color,box-shadow] duration-150 outline-none hover:border-(--faint-color)
-        focus:border-(--accent-text) focus:shadow-(--focus-shadow-color)"
-                            onclick={() =>
-                              (isDropdownOpen =
-                                isDropdownOpen?.x === j && isDropdownOpen?.y === i && isDropdownOpen?.index === index ? null : { x: j, y: i, index })}
+                            class="h-7 w-full cursor-pointer rounded-lg border border-(--border-color) bg-(--field-color) px-2 text-left text-[13px] transition-[border-color,box-shadow] duration-150 outline-none hover:border-(--faint-color) focus:border-(--accent-text) focus:shadow-(--focus-shadow-color)"
+                            onclick={(e) => toggleDropdown(e, i, j, index)}
                           >
-                            {options.some((o: IOption) => o.value === row[(select?.key as string).slice(0, -2)])
-                              ? row[select?.key].find((o: IOption) => o.value === row[(select?.key as string).slice(0, -2)]).name
-                              : $T("common.select_tag")}
+                            {options.find((o) => o.value === current)?.name ?? $T("common.select_tag")}
                           </button>
-
-                          {#if isDropdownOpen?.x === j && isDropdownOpen.y === i && isDropdownOpen.index === index}
-                            {@const cords = document.getElementById(`select${i}-${j}-${index}`)?.getBoundingClientRect()}
+                          {#if open}
                             <div
                               class="fixed z-50 max-h-[40vh] overflow-y-auto rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-1 shadow-(--elevation-2)"
-                              style="top: calc({cords?.bottom}px + 4px); left: {cords?.left}px; width: {cords?.width}px;"
-                              transition:slide={{ duration: selectSlideDuration }}
+                              style="top: {open.rect.bottom + 4}px; left: {open.rect.left}px; width: {open.rect.width}px;"
+                              transition:slide={{ duration: slideDuration }}
                             >
-                              {#each options as option, option_index (option.id)}
+                              {#each options as option (option.id ?? option.value)}
                                 <button
-                                  id={option.id}
-                                  value={option?.value ? String(option.value) : ""}
                                   class={twMerge(
-                                    `flex h-8 w-full cursor-pointer items-center rounded-md px-2.5 text-left text-[13px] transition-colors duration-150 hover:bg-(--container-color)`,
-                                    option.class,
+                                    "flex h-8 w-full cursor-pointer items-center rounded-md px-2.5 text-left text-[13px] transition-colors duration-150 hover:bg-(--container-color)",
+                                    option.accent && "text-(--accent-text)",
                                   )}
-                                  onclick={(e) => selectOption(i, select?.key, index, option, e)}
+                                  style={accentStyle(option.accent)}
+                                  onclick={(e) => selectOption(e, entry.row, select.key, option)}
                                 >
                                   {option.name}
                                 </button>
@@ -398,103 +356,61 @@
                         </div>
                       {:else if content.type === "image"}
                         {@const image = content.data}
+                        {@const src = resolve(image.src, row)}
                         <div
                           class="flex items-center justify-center [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
-                          style={`width: ${image.width || "2rem"}; height: ${image.height || "2rem"}; `}
+                          style={`width: ${image.width || "2rem"}; height: ${image.height || "2rem"};`}
                         >
-                          {#if hasImage(column, row, index)}
-                            <img
-                              src={typeof image?.src === "function" ? image.src(row) : image?.src || ""}
-                              alt={image.alt ?? "Image"}
-                              class={twMerge(`h-full w-full object-cover ${image.class || ""}`)}
-                              loading="lazy"
-                            />
+                          {#if src}
+                            <img {src} alt={image.alt ?? "Image"} class={twMerge("h-full w-full object-cover", image.class)} loading="lazy" />
+                          {:else if typeof image.defaultIcon === "string"}
+                            {@html sanitizeHtml(image.defaultIcon)}
                           {:else if image.defaultIcon}
-                            {#if typeof image.defaultIcon === "string"}
-                              {@html sanitizeHtml(image.defaultIcon)}
-                            {:else}
-                              <image.defaultIcon />
-                            {/if}
+                            <image.defaultIcon />
                           {/if}
                         </div>
                       {:else if content.type === "progressBar"}
-                        {@const progressBar = content.data}
+                        {@const bar = content.data}
                         <div class="grid h-7 w-full grid-cols-[3.5rem_1fr] items-center gap-2">
-                          <span class="text-right text-[12px] font-semibold tabular-nums"
-                            >{roundToClean(Number(row[progressBar.key] ?? 0))}{progressBar?.units}</span
-                          >
+                          <span class="text-right text-[12px] font-semibold tabular-nums">{roundToClean(Number(row[bar.key] ?? 0))}{bar.units}</span>
                           <div class="relative my-auto h-1.5 overflow-hidden rounded-full bg-(--container-color)">
                             <div
                               class="absolute top-0 left-0 flex h-full rounded-full bg-(--bg-color,var(--accent-color))"
-                              style="width: {progressPercent(content, row[progressBar.key] as number)}%;"
+                              style="width: {progressPercent(row[bar.key] as number, bar.minNum, bar.maxNum)}%;"
                             ></div>
                           </div>
                         </div>
                       {:else if content.type === "text"}
                         {@const text = content.data}
-                        {@const data =
-                          Array.isArray(row[text.key]) && row[text.key][0] && "value" in row[text.key][0]
-                            ? row[text.key].map((item: IOption) => item.name)
-                            : typeof row[text.key] == "object"
-                              ? JSON.stringify(row[text.key])
-                              : row[text.key]}
+                        {@const value = cellContent(row, text)}
                         <!-- w-full + min-w-0: при justify-items-start ячейка иначе берёт ширину по содержимому и truncate не даёт «…» -->
                         <div class="flex w-full min-w-0 items-center">
                           <div
-                            class="w-full max-w-full min-w-0 wrap-break-word {text?.truncated ? 'truncate' : ' whitespace-normal'}"
-                            onmouseenter={text?.tooltip ? (e) => showTooltip(e, cellText(row[text?.key ?? ""], text?.html), text?.formatting) : undefined}
-                            onmouseleave={() => (text?.tooltip ? (tooltip.show = false) : undefined)}
-                            onmousemove={text?.tooltip
-                              ? (e) => {
-                                  tooltip.x = e.clientX
-                                  tooltip.y = e.clientY
-                                }
-                              : undefined}
-                            role="columnheader"
-                            tabindex={null}
+                            class="w-full max-w-full min-w-0 wrap-break-word {text.truncated ? 'truncate' : 'whitespace-normal'}"
+                            onmouseenter={text.tooltip ? (e) => (tooltip = { show: true, text: cellText(row, text), x: e.clientX, y: e.clientY }) : undefined}
+                            onmouseleave={text.tooltip ? () => (tooltip.show = false) : undefined}
+                            onmousemove={text.tooltip ? (e) => ((tooltip.x = e.clientX), (tooltip.y = e.clientY)) : undefined}
+                            role="presentation"
                           >
-                            {#if text?.modal}
+                            {#if text.modal}
                               <button
-                                class="cursor-pointer text-left {text?.truncated ? 'block w-full max-w-full truncate' : 'w-fit'}"
+                                class="cursor-pointer text-left {text.truncated ? 'block w-full max-w-full truncate' : 'w-fit'}"
                                 onclick={(e) => {
                                   e.stopPropagation()
-                                  showModal(cellText(data, text?.html), text?.formatting)
+                                  modal = { row, text }
+                                  modalOpen = true
                                 }}
                               >
-                                {#if text?.html}{@html sanitizeHtml(data)}{:else}{data}{/if}
+                                {#if text.html}{@html sanitizeHtml(value)}{:else}{value}{/if}
                               </button>
-                            {:else if text?.html}
-                              {@html sanitizeHtml(data)}
+                            {:else if text.html}
+                              {@html sanitizeHtml(value)}
                             {:else}
-                              {data}
+                              {value}
                             {/if}
                           </div>
-
-                          {#if text?.copy}
-                            <button
-                              class="ml-1.5 flex size-5 shrink-0 cursor-pointer items-center justify-center rounded border-none bg-transparent text-(--faint-color) transition-colors duration-150 hover:bg-(--container-color) hover:text-(--font-color)"
-                              onclick={(e) => {
-                                e.preventDefault()
-                                navigator.clipboard.writeText(cellText(row[text?.key ?? ""], text?.html))
-                                copiedCell = { x: j, y: i }
-                                setTimeout(() => (copiedCell = null), 1000)
-                              }}
-                              aria-label={$T("ui.copy_text")}
-                            >
-                              <div class="size-3.5 [&_svg]:h-full [&_svg]:w-full">
-                                {#if !(copiedCell?.y === i && copiedCell.x === j)}
-                                  <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
-                                    <g fill="none" stroke="currentColor" stroke-width="1.5">
-                                      <path
-                                        d="M6 11c0-2.828 0-4.243.879-5.121C7.757 5 9.172 5 12 5h3c2.828 0 4.243 0 5.121.879C21 6.757 21 8.172 21 11v5c0 2.828 0 4.243-.879 5.121C19.243 22 17.828 22 15 22h-3c-2.828 0-4.243 0-5.121-.879C6 20.243 6 18.828 6 16z"
-                                      />
-                                      <path d="M6 19a3 3 0 0 1-3-3v-6c0-3.771 0-5.657 1.172-6.828S7.229 2 11 2h4a3 3 0 0 1 3 3" />
-                                    </g>
-                                  </svg>
-                                {/if}
-                                <CopiedChip show={copiedCell?.y === i && copiedCell.x === j} class="top-1/2 right-3 z-10 -translate-y-1/2" />
-                              </div>
-                            </button>
+                          {#if text.copy}
+                            <CopyButton class="ml-1.5" text={() => cellText(row, text)} />
                           {/if}
                         </div>
                       {/if}
@@ -528,22 +444,32 @@
   </div>
 </div>
 
-<Modal isOpen={modalData.isOpen} title={$T("constructor.props.table.fulldata")} wrapperClass="max-h-[80%]" width="{0.8 * (container?.offsetWidth ?? 0)}px">
+{#snippet copyFooter()}
+  <Button
+    content={{ name: $T("ui.copy_text") }}
+    variant="primary"
+    onClick={() => {
+      if (modal) copyText(cellText(modal.row, modal.text))
+      modalOpen = false
+    }}
+  />
+{/snippet}
+
+<Modal
+  bind:isOpen={modalOpen}
+  title={$T("common.table.fulldata")}
+  wrapperClass="max-h-[80%]"
+  width="{0.8 * (container?.offsetWidth ?? 0)}px"
+  footer={modalSnippet ? undefined : copyFooter}
+>
   {#snippet main()}
-    <!-- Длинные строки (hex пакета, base64, длинные значения) переносятся, отступы форматирования сохраняются - содержимое видно целиком -->
-    <div class="text-left whitespace-pre-wrap [overflow-wrap:anywhere]">
-      {@html sanitizeHtml(modalData.formattedData)}
-    </div>
-  {/snippet}
-  {#snippet footer()}
-    <Button
-      content={{ name: $T("constructor.props.copy") }}
-      wrapperClass="w-50"
-      variant="primary"
-      onClick={() => {
-        navigator.clipboard.writeText(modalData.rawData ?? "")
-        modalData.isOpen = false
-      }}
-    />
+    {#if modal && modalSnippet}
+      {@render modalSnippet(modal.row)}
+    {:else if modal}
+      <!-- Длинные строки переносятся, отступы сохраняются - содержимое видно целиком -->
+      <div class="text-left whitespace-pre-wrap [overflow-wrap:anywhere]">
+        {#if modal.text.html}{@html sanitizeHtml(cellContent(modal.row, modal.text))}{:else}{cellContent(modal.row, modal.text)}{/if}
+      </div>
+    {/if}
   {/snippet}
 </Modal>

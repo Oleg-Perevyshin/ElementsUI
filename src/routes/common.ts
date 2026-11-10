@@ -1,4 +1,5 @@
-import type { PropertyChange, UIComponent } from "#lib"
+import type { UIComponent } from "#lib"
+import type { PropertyChange } from "#lib/constructor.ts"
 import { marked } from "marked"
 import DOMPurify from "dompurify"
 

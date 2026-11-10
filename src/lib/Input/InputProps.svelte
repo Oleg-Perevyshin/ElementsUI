@@ -2,7 +2,7 @@
 <script lang="ts">
   import { getContext } from "svelte"
   import { T } from "../locales/i18n"
-  import translations from "../locales/translations"
+  import translations from "../locales/constructor"
   import { DEFAULT_LANGUAGE, LANGUAGE_CODES } from "../locales/languages"
   import type { IInputProps, IOption, UIComponent } from "../types"
   import { createPropsEditor, optionByClass, type PropertyChange } from "../propsEditor"

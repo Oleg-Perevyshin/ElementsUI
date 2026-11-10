@@ -1,7 +1,8 @@
 <script lang="ts">
   import { Language } from "#lib/locales/i18n.ts"
   import { localizeDeep } from "#lib/locales/localize.ts"
-  import { TabsProps, type ITabsProps, type UIComponent } from "#lib"
+  import { type ITabsProps, type UIComponent } from "#lib"
+  import { TabsProps } from "#lib/constructor.ts"
   import ComponentExample from "../../ComponentExample.svelte"
   import Input from "#lib/Input/Input.svelte"
   import IconGripVerticalLeft from "#lib/libIcons/IconGripVerticalLeft.svelte"
