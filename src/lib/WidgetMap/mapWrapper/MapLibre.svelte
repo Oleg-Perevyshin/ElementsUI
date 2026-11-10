@@ -95,7 +95,7 @@
 <div class="{className} {!hasConnection ? 'bg-(--border-color)/50' : ''}" bind:this={container}>
   {#if isLoading || !hasConnection}
     <div class="h-full w-full flex items-center justify-center">
-      <h2>{isLoading ? $T("constructor.props.map.loading") : $T("constructor.props.map.noconnection")}</h2>
+      <h2>{isLoading ? $T("widget.map.loading") : $T("widget.map.noconnection")}</h2>
     </div>{/if}
 
   {#if map}

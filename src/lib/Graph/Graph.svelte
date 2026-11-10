@@ -15,14 +15,13 @@
 
 <script lang="ts">
   import { T } from "../locales/i18n"
-  import { onMount } from "svelte"
+  import { onMount, untrack } from "svelte"
   import { watchTheme } from "../themeWatch"
   import Select from "../Select/Select.svelte"
+  import { createRing, type Ring } from "../ring"
   import type { IGraphDataObject, IGraphProps } from "../types"
 
-  /* Инициализация пропсов с дефолтными значениями */
   let {
-    id = crypto.randomUUID(),
     wrapperClass = "",
     label = { name: "", class: "" },
     streamingData = { data: [] },
@@ -34,9 +33,13 @@
   /* Статический режим: historyData передан целиком с реальными timestamp (Unix-эпоха в мс) */
   const isHistoryMode = $derived(!!historyData && historyData.length > 0)
 
-  /* Состояние компонента */
-  let graphData = $state<{ id: string; points: { x: number; y: number }[]; color: string; name: string }[]>([])
-  let currentValues = $state<number[]>([])
+  type Point = { x: number; y: number }
+  type Line = { name: string; points: Point[] }
+
+  /* Цвета линий - метки палитры темы по порядку */
+  const COLORS = ["--blue-mark", "--red-mark", "--green-mark", "--orange-mark", "--purple-mark", "--cyan-mark"]
+  const MAX_LINES = COLORS.length
+
   let container: HTMLDivElement
   let canvas: HTMLCanvasElement
   let ctx: CanvasRenderingContext2D
@@ -44,12 +47,69 @@
   let height = $state(125)
   let selectedRefreshRate = $derived(isTest ? 50 : (refreshRate ?? 0))
   const maxDataPoints = $derived(selectedRefreshRate == 0 ? 20 : 100)
-  const defaultColors = ["#3b82f6", "#ef4444", "#10b981", "#f59e0b", "#8b5cf6", "#00c3f5"]
 
-  let previousValues: number[] = $state([])
+  /* Живой режим: точки линий в кольцевых буферах вне реактивности, наружу - только последние значения для легенды */
+  let live: { name: string; points: Ring<Point> }[] = []
+  let liveValues = $state.raw<IGraphDataObject[]>([])
+  $effect(() => {
+    const size = maxDataPoints
+    untrack(() => live.forEach((line) => line.points.resize(size)))
+  })
 
-  /* Автомасштаб Y для живого режима: диапазон плавно "подъезжает" к фактическому min/max буфера (±10% отступ) */
-  let liveYRange = $state<{ min: number; max: number } | null>(null)
+  /* Статический режим: ряды по времени */
+  const history: Line[] = $derived(
+    historyData.slice(0, MAX_LINES).map((s, i) => ({
+      name: s.name || `Value ${i}`,
+      points: [...s.points].sort((a, b) => a.timestamp - b.timestamp).map((p) => ({ x: p.timestamp, y: p.value })),
+    })),
+  )
+
+  const lines = (): Line[] => (isHistoryMode ? history : live.map((line) => ({ name: line.name, points: line.points.toArray() })))
+  let legend = $derived(isHistoryMode ? history.map((line) => ({ name: line.name, value: line.points.at(-1)?.y ?? 0 })) : liveValues)
+
+  /* Добавляет точку живого графика: значения линий в момент time; линия с новым именем начинается заново */
+  export const push = (sample: IGraphDataObject[], time = Date.now()) => {
+    if (isHistoryMode) return
+    const values = sample.slice(0, MAX_LINES)
+    live = values.map((d, i) => {
+      const name = d.name || `Value ${i}`
+      const line = live[i]?.name === name ? live[i] : { name, points: createRing<Point>(maxDataPoints) }
+      line.points.push({ x: time, y: d.value })
+      return line
+    })
+    liveValues = values
+    updateLiveYRange()
+    scheduleDraw()
+  }
+
+  /* AUTO: точка на каждый новый массив streamingData.data */
+  let lastData: IGraphDataObject[] | null = null
+  $effect(() => {
+    const data = streamingData?.data
+    if (isHistoryMode || isTest || selectedRefreshRate !== 0 || !data?.length || data === lastData) return
+    lastData = data
+    untrack(() => push(data))
+  })
+
+  /* Интервал: последние значения streamingData раз в selectedRefreshRate; имитация - случайные значения, модуль грузится только при isTest */
+  $effect(() => {
+    if (isHistoryMode || selectedRefreshRate <= 0) return
+    const rate = selectedRefreshRate
+    let timer: ReturnType<typeof setInterval> | undefined
+    let stopped = false
+    const start = (sample: () => IGraphDataObject[] | null | undefined) => {
+      if (!stopped) timer = setInterval(() => sample()?.length && push(sample()!), rate)
+    }
+    if (isTest) import("./testSeries").then(({ testSample }) => start(() => testSample((streamingData?.data ?? []).map((d) => d.name))))
+    else start(() => streamingData?.data)
+    return () => {
+      stopped = true
+      clearInterval(timer)
+    }
+  })
+
+  /* Автомасштаб Y живого режима: диапазон плавно подъезжает к фактическому min/max буфера (±10% отступ) */
+  let liveYRange: { min: number; max: number } | null = null
 
   const computeAutoYRange = (values: number[]): { min: number; max: number } => {
     if (values.length === 0) return { min: -1, max: 1 }
@@ -60,19 +120,14 @@
   }
 
   const updateLiveYRange = () => {
-    const target = computeAutoYRange(graphData.flatMap((g) => g.points.map((p) => p.y)))
-    if (!liveYRange) {
-      liveYRange = target
-      return
-    }
+    const target = computeAutoYRange(lines().flatMap((line) => line.points.map((p) => p.y)))
     const smoothing = 0.15
-    liveYRange = {
-      min: liveYRange.min + (target.min - liveYRange.min) * smoothing,
-      max: liveYRange.max + (target.max - liveYRange.max) * smoothing,
-    }
+    liveYRange = liveYRange
+      ? { min: liveYRange.min + (target.min - liveYRange.min) * smoothing, max: liveYRange.max + (target.max - liveYRange.max) * smoothing }
+      : target
   }
 
-  /* Тултип при наведении - время и значения всех серий в ближайшей к курсору точке */
+  /* Тултип при наведении - время и значения всех линий в ближайшей к курсору точке */
   let tooltip = $state<{ visible: boolean; x: number; y: number; time: number; items: { name: string; value: number; color: string }[] }>({
     visible: false,
     x: 0,
@@ -81,113 +136,19 @@
     items: [],
   })
 
-  /* Линии имитации, когда данных нет: в конструкторе у нового графика streamingData пустой */
-  const TEST_SERIES: IGraphDataObject[] = [
-    { name: "Test 1", value: 0 },
-    { name: "Test 2", value: 0 },
-    { name: "Test 3", value: 0 },
-  ]
-
-  /* Инициализация данных графиков (потоковый режим) */
-  const initializeGraphData = () => {
-    if (isHistoryMode) return
-    if (typeof streamingData === "string") {
-      streamingData = JSON.parse(streamingData)
-    }
-    const hasData = !!streamingData?.data && streamingData.data.length > 0
-    if (!hasData && !isTest) {
-      graphData = []
-      currentValues = []
-      previousValues = []
-      return
-    }
-    const series = hasData ? (streamingData.data as IGraphDataObject[]) : TEST_SERIES
-    const newGraphData = series.slice(0, 6).map((d, i) => {
-      const existingData = graphData.find((g) => g.name === d.name) || graphData[i]
-      return {
-        id: existingData?.id || crypto.randomUUID(),
-        points: existingData?.points || [],
-        color: defaultColors[i % defaultColors.length],
-        name: d.name || `Value ${i}`,
-      }
-    })
-    if (JSON.stringify(graphData) !== JSON.stringify(newGraphData)) {
-      graphData = newGraphData
-      currentValues = series.map((d) => d.value || 0)
-    }
-  }
-
-  /* Вызываем инициализацию при монтировании и при изменении streamingData; при смене темы сетка и подписи перерисовываются её цветами */
+  /* Отрисовка не чаще кадра; при смене темы сетка, подписи и линии перерисовываются её цветами */
+  let frame = 0
+  const scheduleDraw = () => (frame ||= requestAnimationFrame(() => ((frame = 0), drawAllGraphs())))
   onMount(() => {
-    initializeGraphData()
-    return watchTheme(() => requestAnimationFrame(drawAllGraphs))
-  })
-  $effect(() => {
-    initializeGraphData()
-  })
-
-  /* Статический режим: строим graphData один раз */
-  $effect(() => {
-    if (!isHistoryMode) return
-    const series = historyData.slice(0, 6).map((s, i) => {
-      const sortedPoints = [...s.points].sort((a, b) => a.timestamp - b.timestamp).map((p) => ({ x: p.timestamp, y: p.value }))
-      return {
-        id: crypto.randomUUID(),
-        points: sortedPoints,
-        color: defaultColors[i % defaultColors.length],
-        name: s.name || `Value ${i}`,
-      }
-    })
-    graphData = series
-    currentValues = series.map((s) => (s.points.length ? s.points[s.points.length - 1].y : 0))
-    drawAllGraphs()
-  })
-
-  /* Обработка входящих потоковых данных */
-  let intervalId: ReturnType<typeof setInterval>
-  $effect(() => {
-    clearInterval(intervalId)
-    if (isHistoryMode) return
-    if (selectedRefreshRate > 0) {
-      intervalId = setInterval(() => {
-        if (!isTest && (!streamingData.data || streamingData.data.length === 0)) return
-        let newValues
-        if (isTest) newValues = graphData.map(() => Math.random() * 100 - 50)
-        else newValues = (streamingData.data as IGraphDataObject[]).map((dataset) => dataset.value)
-        const now = Date.now()
-        newValues.forEach((value, i) => {
-          if (!graphData[i]) return
-          graphData[i].points.push({ x: now, y: value })
-          if (graphData[i].points.length > maxDataPoints) {
-            graphData[i].points.shift()
-          }
-          currentValues[i] = value
-        })
-        updateLiveYRange()
-        drawAllGraphs()
-      }, selectedRefreshRate)
-    } else if (selectedRefreshRate == 0 && !isTest) {
-      /* AUTO: streamingData не несёт признак "новый пакет" - опрашиваем каждые 10мс, рисуем точку только при реальном изменении значений */
-      intervalId = setInterval(() => {
-        if (!streamingData.data || streamingData.data.length === 0) return
-        const newValues = (streamingData.data as IGraphDataObject[]).map((dataset) => dataset.value)
-        if (JSON.stringify(newValues) === JSON.stringify(previousValues)) return
-        previousValues = newValues
-
-        const now = Date.now()
-        newValues.forEach((value, i) => {
-          if (!graphData[i]) return
-          graphData[i].points.push({ x: now, y: value })
-          if (graphData[i].points.length > maxDataPoints) {
-            graphData[i].points.shift()
-          }
-          currentValues[i] = value
-        })
-        updateLiveYRange()
-        drawAllGraphs()
-      }, 10)
+    const unwatch = watchTheme(scheduleDraw)
+    return () => {
+      unwatch()
+      cancelAnimationFrame(frame)
     }
-    return () => clearInterval(intervalId)
+  })
+  $effect(() => {
+    void history
+    scheduleDraw()
   })
 
   let resizeObserver: ResizeObserver
@@ -211,39 +172,28 @@
   })
 
   /* Общая геометрия осей - переиспользуется отрисовкой и обработчиком наведения мыши, чтобы не дублировать формулы */
-  const computeGeometry = () => {
+  const computeGeometry = (data: Line[]) => {
     const padding = { top: 10, right: 10, bottom: 20, left: 35 }
     const graphWidth = width - padding.left - padding.right
     const graphHeight = height - padding.top - padding.bottom
 
-    const allPoints = graphData.flatMap((g) => g.points)
+    const allPoints = data.flatMap((line) => line.points)
     const minX = allPoints.length ? Math.min(...allPoints.map((p) => p.x)) : 0
     const maxX = allPoints.length ? Math.max(...allPoints.map((p) => p.x)) : 1
     const timeSpan = maxX - minX || 1
 
     /* Авто-масштаб по данным (±10%): статический - разово по массиву, живой - через сглаженный liveYRange (updateLiveYRange) */
-    let yMin: number
-    let yMax: number
-    if (isHistoryMode) {
-      const values = allPoints.map((p) => p.y)
-      const range = computeAutoYRange(values)
-      yMin = range.min
-      yMax = range.max
-    } else {
-      const range = liveYRange ?? computeAutoYRange(allPoints.map((p) => p.y))
-      yMin = range.min
-      yMax = range.max
-    }
+    const { min: yMin, max: yMax } = (!isHistoryMode && liveYRange) || computeAutoYRange(allPoints.map((p) => p.y))
     const ySpan = yMax - yMin || 1
 
     const getX = (x: number) => padding.left + ((x - minX) / timeSpan) * graphWidth
     const getY = (y: number) => padding.top + graphHeight - ((y - yMin) / ySpan) * graphHeight
 
-    return { padding, graphWidth, graphHeight, minX, maxX, timeSpan, yMin, yMax, ySpan, getX, getY }
+    return { padding, graphWidth, minX, timeSpan, yMin, yMax, getX, getY }
   }
 
-  /* Бинарный поиск ближайшей по времени точки - точки в graphData всегда отсортированы по x (по построению) */
-  const findNearestPoint = (points: { x: number; y: number }[], t: number): { x: number; y: number } | null => {
+  /* Бинарный поиск ближайшей по времени точки - точки линий всегда отсортированы по x (по построению) */
+  const findNearestPoint = (points: Point[], t: number): Point | null => {
     if (points.length === 0) return null
     let lo = 0
     let hi = points.length - 1
@@ -277,25 +227,26 @@
   }
 
   const handleMouseMove = (e: MouseEvent) => {
-    if (!canvas || graphData.length === 0) return
+    const data = lines()
+    if (!canvas || data.length === 0) return
     const rect = canvas.getBoundingClientRect()
     const mouseX = e.clientX - rect.left
     const mouseY = e.clientY - rect.top
-    const { padding, graphWidth, minX, timeSpan } = computeGeometry()
+    const { padding, graphWidth, minX, timeSpan } = computeGeometry(data)
 
     if (mouseX < padding.left || mouseX > width - padding.right) {
       if (tooltip.visible) {
         tooltip = { ...tooltip, visible: false }
-        drawAllGraphs()
+        scheduleDraw()
       }
       return
     }
 
     const t = minX + ((mouseX - padding.left) / graphWidth) * timeSpan
-    const items = graphData
-      .map((g) => {
-        const nearest = findNearestPoint(g.points, t)
-        return nearest ? { name: g.name, value: nearest.y, color: g.color, time: nearest.x } : null
+    const items = data
+      .map((line, i) => {
+        const nearest = findNearestPoint(line.points, t)
+        return nearest ? { name: line.name, value: nearest.y, color: `var(${COLORS[i]})`, time: nearest.x } : null
       })
       .filter((v): v is { name: string; value: number; color: string; time: number } => v !== null)
 
@@ -305,13 +256,13 @@
     }
 
     tooltip = { visible: true, x: mouseX, y: mouseY, time: items[0].time, items }
-    drawAllGraphs()
+    scheduleDraw()
   }
 
   const handleMouseLeave = () => {
     if (!tooltip.visible) return
     tooltip = { ...tooltip, visible: false }
-    drawAllGraphs()
+    scheduleDraw()
   }
 
   /* Прозрачность линий сетки - общая с PeriodChart (border-(--faint-color)/40) */
@@ -321,10 +272,12 @@
     if (!ctx) return
     ctx.clearRect(0, 0, width, height)
 
-    const { padding, graphWidth, graphHeight, minX, timeSpan, yMin, yMax, getX, getY } = computeGeometry()
+    const data = lines()
+    const { padding, minX, timeSpan, yMin, yMax, getX, getY } = computeGeometry(data)
+    const style = getComputedStyle(canvas)
 
     /* Сетка в стиле PeriodChart: пунктир цветом --faint-color темы, подписи тем же цветом без прозрачности */
-    const gridColor = getComputedStyle(canvas).getPropertyValue("--faint-color").trim() || "#616a79"
+    const gridColor = style.getPropertyValue("--faint-color").trim()
     ctx.strokeStyle = gridColor
     ctx.fillStyle = gridColor
     ctx.lineWidth = 1
@@ -366,9 +319,9 @@
 
     /* Отрисовка графиков */
     ctx.lineWidth = 2
-    graphData.forEach(({ points, color }) => {
+    data.forEach(({ points }, i) => {
       if (points.length < 2) return
-      ctx.strokeStyle = color
+      ctx.strokeStyle = style.getPropertyValue(COLORS[i]).trim()
       ctx.beginPath()
       ctx.moveTo(getX(points[0].x), getY(points[0].y))
       for (let i = 1; i < points.length - 1; i++) {
@@ -386,7 +339,7 @@
     /* Вертикальная линия-указатель под тултипом */
     if (tooltip.visible) {
       const x = getX(tooltip.time)
-      ctx.strokeStyle = "rgba(120, 120, 120, 0.6)"
+      ctx.strokeStyle = style.getPropertyValue("--muted-color").trim()
       ctx.lineWidth = 1
       ctx.beginPath()
       ctx.moveTo(x, padding.top)
@@ -396,7 +349,7 @@
   }
 </script>
 
-<div id={`${id}-${crypto.randomUUID().slice(0, 6)}`} class={`relative flex w-full flex-col items-center justify-center ${wrapperClass}`}>
+<div class={`relative flex w-full flex-col items-center justify-center ${wrapperClass}`}>
   {#if label.name}
     <h5 class={`w-full px-4 text-center ${label.class}`}>{label.name}</h5>
   {/if}
@@ -441,10 +394,10 @@
       <div class="flex flex-col gap-1">
         <h5 class="text-[12px] font-semibold text-(--muted-color)">{$T("ui.graph.values")}</h5>
         <div class="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-2 gap-y-1 text-[13px]">
-          {#each graphData as data, i (data.id)}
-            <span class="size-2.5 rounded-full" style="background-color: {data.color}"></span>
-            <span class="truncate font-semibold" title={data.name}>{data.name}</span>
-            <span class="text-right whitespace-nowrap tabular-nums">{currentValues[i]?.toFixed(2)}</span>
+          {#each legend as item, i}
+            <span class="size-2.5 rounded-full" style="background-color: var({COLORS[i]})"></span>
+            <span class="truncate font-semibold" title={item.name}>{item.name}</span>
+            <span class="text-right whitespace-nowrap tabular-nums">{item.value?.toFixed(2)}</span>
           {/each}
         </div>
       </div>

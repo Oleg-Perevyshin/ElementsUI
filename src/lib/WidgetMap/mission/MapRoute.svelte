@@ -1,14 +1,17 @@
 <!-- $lib/WidgetMap/mission/MapRoute.svelte - режим «Маршрут» карты, обычный планировщик миссии: оператор ставит точки на карте, задаёт каждой высоту и скорость, виджет считает путь и время и выгружает миссию -->
 <script lang="ts">
-  import { isDarkTheme, watchTheme } from "../../themeWatch"
-  import { onMount, untrack, type Snippet, onDestroy } from "svelte"
+  import { untrack, type Snippet, onDestroy } from "svelte"
   import { slide } from "svelte/transition"
   import { twMerge } from "tailwind-merge"
   import { T } from "../../locales/i18n"
   import WidgetHeader from "../../WidgetHeader.svelte"
   import { hint, hintsSetting } from "../../hints"
-  import { readMapColors, widgetAccentStyle, type IMapColors } from "../../widgetAccent"
-  import * as UI from "../.."
+  import { widgetAccentStyle } from "../../widgetAccent"
+  import { themeState } from "../mapTheme.svelte"
+  import MissionActions from "./MissionActions.svelte"
+  import Button from "../../Button/Button.svelte"
+  import Dragging from "../../Dragging.svelte"
+  import Input from "../../Input/Input.svelte"
   import { MapLibre, NavigationControl, ScaleControl, FullScreenControl, CustomControl } from "../mapWrapper"
   import MissionLayers from "./MissionLayers.svelte"
   import FitIcon from "../FitIcon.svelte"
@@ -156,77 +159,15 @@
   /* ********************************************************** */
   /* Вид карты и выгрузка */
 
-  const fitRoute = () => {
-    const pts = [...route.points.map((p) => p.point), ...(route.start ? [route.start] : [])]
-    if (!mapInstance || pts.length === 0) return
-    const lons = pts.map((p) => p[0])
-    const lats = pts.map((p) => p[1])
-    mapInstance.fitBounds(
-      [
-        [Math.min(...lons), Math.min(...lats)],
-        [Math.max(...lons), Math.max(...lats)],
-      ],
-      { padding: 60, maxZoom: 18, duration: 0 },
-    )
-  }
-  let fitted = false
-  $effect(() => {
-    if (mapInstance && !fitted) {
-      fitted = true
-      untrack(fitRoute)
-    }
-  })
-
   /* Миссия и номера её точек: выгрузка и прогресс реального полёта по WPNum */
   let mission = $derived(routeMission(route))
-  const missionText = () => mission.text
   let live = $derived(simulate ? null : missionProgress(mission.nav, vehicle?.wpNum, vehicle?.point))
   let headerProgress = $derived(simulate ? sim.progress : (live?.fraction ?? null))
-  const download = () => {
-    const text = missionText()
-    if (!text) return
-    const a = document.createElement("a")
-    a.href = URL.createObjectURL(new Blob([text], { type: "text/plain" }))
-    a.download = `route_${new Date().toISOString().slice(0, 16).replace(/[-:T]/g, "")}.waypoints`
-    a.click()
-    URL.revokeObjectURL(a.href)
-  }
-  let copied = $state(false)
-  const copy = async () => {
-    const text = missionText()
-    if (!text) return
-    await navigator.clipboard.writeText(text)
-    copied = true
-    setTimeout(() => (copied = false), 1000)
-  }
-  let sendState: "idle" | "busy" | "done" | "error" = $state("idle")
-  const send = async () => {
-    const text = missionText()
-    if (!text || !onSend || sendState === "busy") return
-    sendState = "busy"
-    try {
-      await onSend(text, $state.snapshot(route))
-      sendState = "done"
-    } catch {
-      sendState = "error"
-    }
-    setTimeout(() => (sendState = "idle"), 1500)
-  }
-
   let rootEl: HTMLDivElement | undefined = $state()
-  let isDarkMode = $state(false)
-  const detectTheme = () => (isDarkMode = isDarkTheme(rootEl))
-  onMount(() => {
-    detectTheme()
-    return watchTheme(detectTheme)
-  })
-  /* Цвета слоёв карты перечитываются при смене мастер-цвета и темы */
-  let mapColors = $state<IMapColors>(readMapColors(undefined))
-  $effect(() => {
-    void accentStyle
-    void isDarkMode
-    mapColors = readMapColors(rootEl)
-  })
+  const theme = themeState(
+    () => rootEl,
+    () => accentStyle,
+  )
   /* «Показать все» в шапке и вписывание при появлении карты */
   const missionPoints = (): LngLat[] => [...(route.start ? [route.start] : []), ...route.points.map((p) => p.point)]
   const fitAll = (animate = true) => fitMapTo(mapInstance, missionPoints(), animate)
@@ -283,10 +224,10 @@
   <WidgetHeader icon={MapIcon} label={label?.name || $T("widget.route.title")} bind:collapsed {hints}>
     {#snippet right()}
       <div class="flex items-center gap-3">
-        <UI.Button
+        <Button
           wrapperClass="w-auto"
           componentClass="bg-transparent px-3"
-          content={{ icon: FitIcon, name: $T("constructor.props.map.fitAll"), info: { text: $T("widget.route.fitHint"), side: "bottom" } }}
+          content={{ icon: FitIcon, name: $T("widget.map.fitAll"), info: { text: $T("widget.route.fitHint"), side: "bottom" } }}
           disabled={collapsed || missionPoints().length === 0}
           onClick={() => fitAll()}
         />
@@ -316,9 +257,7 @@
         <MapLibre
           bind:map={mapInstance}
           class="h-full w-full overflow-hidden rounded-[14px] border border-(--hairline-color)"
-          style={isDarkMode
-            ? "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json"
-            : "https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json"}
+          style={theme.style}
           zoom={15}
           center={route.start ? { lng: route.start[0], lat: route.start[1] } : { lng: 27.559, lat: 53.9006 }}
           maxPitch={0}
@@ -353,12 +292,12 @@
             {onDrag}
             {onDragEnd}
             {onHandleRightClick}
-            colors={mapColors}
+            colors={theme.colors}
             onCursor={() => {}}
           />
           {@render overlay?.()}
           {#if simulate}
-            <MissionSim clock={sim} colors={mapColors} />
+            <MissionSim clock={sim} colors={theme.colors} />
           {/if}
         </MapLibre>
       </div>
@@ -411,7 +350,7 @@
                 {#each route.points as p, i}
                   {@const leg = legs.legs[route.start ? i : i - 1]}
                   <div id="item-{i}-{listId}" class="grid {ROW_GRID} items-center gap-x-3 px-2 py-1">
-                    <UI.Dragging
+                    <Dragging
                       wrapperClass="size-5"
                       container={listEl!}
                       array={[...route.points]}
@@ -429,13 +368,13 @@
                         mapInstance?.easeTo({ center: p.point, duration: 300 })
                       }}>{i + 1}</button
                     >
-                    <UI.Input
+                    <Input
                       type="number"
                       value={p.alt}
                       number={{ minNum: 1, maxNum: 500, step: 1 }}
                       onUpdate={(v) => Number.isFinite(Number(v)) && setPoint(i, { alt: Math.min(500, Math.max(1, Number(v))) })}
                     />
-                    <UI.Input
+                    <Input
                       type="number"
                       value={p.speed}
                       number={{ minNum: 0.5, maxNum: 40, step: 0.5 }}
@@ -464,27 +403,13 @@
       </div>
 
       <!-- Выгрузка миссии -->
-      <div class="grid grid-cols-3 gap-3">
-        <div class="min-w-0" use:hint={{ text: $T("widget.mission.hint.download"), enabled: $hints }}>
-          <UI.Button componentClass="bg-accent" content={{ name: $T("widget.mission.download") }} disabled={!route.points.length} onClick={download} />
-        </div>
-        <div class="min-w-0" use:hint={{ text: $T("widget.mission.hint.copy"), enabled: $hints }}>
-          <UI.Button
-            componentClass="bg-accent"
-            content={{ name: copied ? $T("widget.mission.copied") : $T("widget.mission.copy") }}
-            disabled={!route.points.length}
-            onClick={copy}
-          />
-        </div>
-        <div class="min-w-0" use:hint={{ text: $T("widget.mission.hint.send"), enabled: $hints }}>
-          <UI.Button
-            componentClass={sendState === "error" ? "bg-red" : "bg-accent"}
-            content={{ name: $T(`widget.mission.send.${sendState}`) }}
-            disabled={!route.points.length || !onSend || sendState === "busy"}
-            onClick={send}
-          />
-        </div>
-      </div>
+      <MissionActions
+        text={mission.text}
+        name="route"
+        disabled={!route.points.length}
+        hints={$hints}
+        onSend={onSend && ((text) => onSend(text, $state.snapshot(route)))}
+      />
     </div>
   {/if}
 </div>

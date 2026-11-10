@@ -240,7 +240,7 @@ export interface IGraphProps {
   label?: { name?: string; class?: string }
   streamingData?: { data: IGraphDataObject[] | null }
   isTest?: boolean
-  /* 0 = AUTO (рисовать точку на каждое новое значение из streamingData), иначе - интервал в мс */
+  /* 0 = AUTO - точка на каждый новый массив streamingData.data (или вызов push() через bind:this), иначе - последние значения раз в столько мс */
   refreshRate?: number
   /* Если задан (непустой) - статический режим, весь массив разом по реальным timestamp, streamingData/refreshRate игнорируются */
   historyData?: IGraphHistorySeries[]
