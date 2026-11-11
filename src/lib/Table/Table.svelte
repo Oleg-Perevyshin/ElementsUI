@@ -435,7 +435,7 @@
                                 </button>
                               {:else if text.onClick}
                                 <button
-                                  class="cursor-pointer text-left hover:underline"
+                                  class="cursor-pointer text-left hover:underline {text.truncated ? 'block w-full max-w-full truncate' : ''}"
                                   onclick={(e) => {
                                     e.stopPropagation()
                                     text.onClick?.(row)
