@@ -10,3 +10,6 @@ bun.lockb
 
 # Словарь протокола: выравнивание комментариев по столбцу, копируется во фреймворки как есть
 src/lib/protocols/dictionary.yaml
+
+# Справочник для ИИ собирает .knowledgebase/build.mjs
+KnowledgeBase-*.md

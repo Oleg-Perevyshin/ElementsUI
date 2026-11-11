@@ -1,0 +1,5 @@
+{
+  "project": "ElementsUI",
+  "include": ["**/*.md"],
+  "exclude": ["LICENSE.md"]
+}
