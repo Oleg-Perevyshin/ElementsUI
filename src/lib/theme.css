@@ -677,6 +677,14 @@
   }
 }
 
+/* Свой глазик у Input type="password": встроенную кнопку показа пароля Edge и Chrome на Windows прячем, иначе в поле два значка */
+@layer base {
+  input::-ms-reveal,
+  input::-ms-clear {
+    display: none;
+  }
+}
+
 /* Подсказка placeholder */
 @layer base {
   input::placeholder,
