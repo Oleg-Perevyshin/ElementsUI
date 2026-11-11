@@ -1,0 +1,6 @@
+#!/bin/sh
+# .githooks/pre-commit - справочник для ИИ собирается из того, что коммитится, и входит в этот же коммит
+# Включение в копии репозитория (один раз): git config core.hooksPath .githooks
+command -v node >/dev/null 2>&1 || { echo "pre-commit: нет node - справочник KnowledgeBase не собран" >&2; exit 0; }
+node .knowledgebase/build.mjs --staged >/dev/null || exit 1
+git add KnowledgeBase-*.md

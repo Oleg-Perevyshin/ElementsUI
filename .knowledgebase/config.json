@@ -1,5 +1,5 @@
 {
   "project": "ElementsUI",
   "include": ["**/*.md"],
-  "exclude": ["LICENSE.md"]
+  "exclude": ["LICENSE.md", "AGENTS.md"]
 }

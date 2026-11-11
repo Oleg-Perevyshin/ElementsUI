@@ -21,7 +21,8 @@
     "UpdateIconsLib": "tsx src/lib/IconsCatalog/iconsLib.ts",
     "Formatting": "prettier --write .",
     "Dictionary": "node scripts/GenerateDictionary.mjs",
-    "TestProtocols": "node scripts/GenerateDictionary.mjs && svelte-package && node --test tests/*.test.mjs"
+    "TestProtocols": "node scripts/GenerateDictionary.mjs && svelte-package && node --test tests/*.test.mjs",
+    "prepare": "node -e \"try{require('child_process').execSync('git config core.hooksPath .githooks',{stdio:'ignore'})}catch{}\""
   },
   "svelte": "./dist/index.js",
   "types": "./dist/index.d.ts",

@@ -1,5 +1,5 @@
 /* .knowledgebase/build.mjs - сборка справочника KnowledgeBase-<Проект>.md для ИИ: обзор Overview.md + вся документация проекта из git. Одинаковый во всех проектах стека */
-/* Запуск из корня проекта: node .knowledgebase/build.mjs - пересобрать; node .knowledgebase/build.mjs --check - только сверить (CI), код 1 если устарел */
+/* Запуск из корня проекта: node .knowledgebase/build.mjs - из рабочей копии; --staged - из индекса git (так зовёт хук .githooks/pre-commit, справочник входит в тот же коммит) */
 import { execFileSync } from "node:child_process"
 import { existsSync, readFileSync, writeFileSync } from "node:fs"
 import { dirname, join } from "node:path"
@@ -52,7 +52,11 @@ const shiftHeadings = (text, shift) => {
     .join("\n")
 }
 
-const read = (path) => readFileSync(join(ROOT, path), "utf8").replace(/\r\n/g, "\n").replace(/^﻿/, "").trim()
+const STAGED = process.argv.includes("--staged")
+/* Содержимое файла: с --staged - версия из индекса, то есть ровно то, что войдёт в коммит */
+const raw = (path) =>
+  STAGED ? execFileSync("git", ["show", `:${path}`], { cwd: ROOT, encoding: "utf8", maxBuffer: 64 * 1024 * 1024 }) : readFileSync(join(ROOT, path), "utf8")
+const read = (path) => raw(path).replace(/\r\n/g, "\n").replace(/^﻿/, "").trim()
 
 const overviewPath = ".knowledgebase/Overview.md"
 if (!existsSync(join(ROOT, overviewPath))) throw new Error(`Нет ${overviewPath}`)
@@ -70,13 +74,7 @@ const content = parts.join("\n\n") + "\n"
 
 const target = join(ROOT, OUTPUT)
 const current = existsSync(target) ? readFileSync(target, "utf8").replace(/\r\n/g, "\n") : ""
-if (process.argv.includes("--check")) {
-  if (current === content) console.log(`${OUTPUT}: актуален`)
-  else {
-    console.error(`${OUTPUT} устарел: запусти node .knowledgebase/build.mjs и закоммить результат`)
-    process.exit(1)
-  }
-} else if (current === content) console.log(`${OUTPUT}: без изменений`)
+if (current === content) console.log(`${OUTPUT}: без изменений`)
 else {
   writeFileSync(target, content)
   console.log(`${OUTPUT}: собран (${sources.length} файлов, ${Math.round(content.length / 1024)} КБ)`)
