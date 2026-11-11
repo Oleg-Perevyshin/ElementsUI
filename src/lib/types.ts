@@ -312,6 +312,8 @@ export interface ISelectProps<T = unknown, M extends boolean = false> {
   componentClass?: string
   disabled?: boolean
   label?: { name?: string; class?: string }
+  /* info - значок ⓘ после подписи, при наведении всплывает пояснение; без подписи не показывается */
+  help?: { info?: string }
   /* input - поле с подсказками: значение - выбранный вариант или введённый текст (число, если варианты числовые) */
   type?: "select" | "buttons" | "input"
   /* Только для type="buttons" */
@@ -372,6 +374,8 @@ export interface ISwitchProps {
     captionLeft?: string
     captionRight?: string
   }
+  /* info - значок ⓘ после подписи, при наведении всплывает пояснение; без подписи не показывается */
+  help?: { info?: string }
   hiddenInfo?: string
   accent?: AccentColor
   /* Только bitMode: биты (value - номер бита, name - подпись, accent - цвет) */

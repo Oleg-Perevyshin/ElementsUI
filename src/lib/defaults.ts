@@ -37,8 +37,8 @@ export const COMPONENT_DEFAULTS: { [K in UIType]: Partial<UIComponentPropsMap[K]
     textareaRows: 2,
     help: { info: "", copyButton: false },
   },
-  Select: { label, type: "select", disabled: false, bitMode: false, range: { start: 0, end: 2 }, options: [{ value: "1", name: "" }] },
-  Switch: { label: { name: "", captionLeft: "", captionRight: "" }, type: "horizontal", accent: "blue", value: 0, disabled: false },
+  Select: { label, help: { info: "" }, type: "select", disabled: false, bitMode: false, range: { start: 0, end: 2 }, options: [{ value: "1", name: "" }] },
+  Switch: { label: { name: "", captionLeft: "", captionRight: "" }, help: { info: "" }, type: "horizontal", accent: "blue", value: 0, disabled: false },
   Slider: { label, accent: "blue", value: 5, number: { minNum: 0, maxNum: 10, step: 1 }, disabled: false },
   TextField: { content: { name: "", class: "text-center", size: "base" } },
   ProgressBar: {

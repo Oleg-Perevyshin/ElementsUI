@@ -167,7 +167,7 @@ ElementsUI/
 - Смарт-виджеты: `WidgetWiFi`, `WidgetDeviceInfo`, `WidgetFileSystem`, `WidgetStackInfo`, `WidgetRGBStrip`, `WidgetPFD`, `WidgetMap`.
 - `WidgetMap` - самый большой модуль: обёртка MapLibre (`mapWrapper/`), миссии (`mission/`: режимы «Маршрут» и «Агро», расчёт покрытия поля, прогресс, выгрузка QGC WPL 110, имитация).
 
-Общие части интерфейса в корне `lib`: `WidgetHeader` (шапка виджета), `SectionHead` и `ExpandIcon` (сворачиваемые разделы), `FieldLabel`, `Tooltip`, `CopiedChip`, `Icon`, `IconsMatrix` (выбор иконки), `TextsEditor` (окно «Тексты и переводы»), `CommonSnippets`, `PropsGroup`, `PropsListHeader`, `PropsListModal` (части панелей свойств).
+Общие части интерфейса в корне `lib`: `WidgetHeader` (шапка виджета), `SectionHead` и `ExpandIcon` (сворачиваемые разделы), `FieldLabel` (подпись поля, с `info` - значок ⓘ с пояснением), `InfoHint` (сам значок ⓘ, пояснение позиционируется от окна и не обрезается), `Tooltip`, `CopiedChip`, `Icon`, `IconsMatrix` (выбор иконки), `TextsEditor` (окно «Тексты и переводы»), `CommonSnippets`, `PropsGroup`, `PropsListHeader`, `PropsListModal` (части панелей свойств).
 
 </details>
 
@@ -3025,6 +3025,7 @@ ModalStack.close(id) // убрать
 | `fitContent`                     | `boolean`                          | `false`      | Кнопки по ширине содержимого, только для `buttons`                                                                 |
 | `listHeight`                     | `string`                           | `"16rem"`    | Наибольшая высота списка для `select` и `input`                                                                    |
 | `label.name`, `label.class`      | `string`                           | `""`         | Заголовок и его классы                                                                                             |
+| `help.info`                      | `string`                           | `""`         | Пояснение: значок ⓘ после заголовка, текст всплывает при наведении. Без заголовка не показывается                  |
 | `wrapperClass`, `componentClass` | `string`                           | `""`         | Классы обёртки и поля                                                                                              |
 | `disabled`                       | `boolean`                          | `false`      | Неактивен                                                                                                          |
 | `bitMode`                        | `boolean`                          |              | Битовый режим, только для панели свойств и облака                                                                  |
@@ -3269,21 +3270,22 @@ ModalStack.close(id) // убрать
 <details>
 <summary>⚙️ Пропсы</summary>
 
-| Название                                  | Тип                                        | По умолчанию   | Описание                                                                              |
-| ----------------------------------------- | ------------------------------------------ | -------------- | ------------------------------------------------------------------------------------- |
-| `id`                                      | `string`                                   |                | Переменная устройства. Компонент её не использует                                     |
-| `type`                                    | `"horizontal" \| "vertical" \| "checkbox"` | `"horizontal"` | Вид                                                                                   |
-| `value`                                   | `number`                                   |                | 0 или 1, в битовом режиме маска. Можно связать через `bind:value`                     |
-| `bitMode`                                 | `boolean`                                  | `false`        | Битовый режим                                                                         |
-| `accent`                                  | `AccentColor`                              |                | Цвет включённого тумблера и галочки                                                   |
-| `options`                                 | `IOption<number>[]`                        | `[]`           | Только `bitMode`: биты. `name` подпись, `value` номер бита, `accent` цвет, `disabled` |
-| `height`                                  | `string`                                   | `"1.625rem"`   | Высота тумблера                                                                       |
-| `label.name`, `label.class`               | `string`                                   | `""`           | Заголовок и его классы                                                                |
-| `label.captionLeft`, `label.captionRight` | `string`                                   | `""`           | Подписи слева и справа                                                                |
-| `hiddenInfo`                              | `string`                                   | `""`           | Подсказка для галочки                                                                 |
-| `wrapperClass`                            | `string`                                   | `""`           | Классы обёртки                                                                        |
-| `disabled`                                | `boolean`                                  | `false`        | Неактивен весь переключатель. Отдельный тумблер выключает `options[].disabled`        |
-| `onUpdate`                                | `(value: number) => void`                  |                | Значение изменилось                                                                   |
+| Название                                  | Тип                                        | По умолчанию   | Описание                                                                                       |
+| ----------------------------------------- | ------------------------------------------ | -------------- | ---------------------------------------------------------------------------------------------- |
+| `id`                                      | `string`                                   |                | Переменная устройства. Компонент её не использует                                              |
+| `type`                                    | `"horizontal" \| "vertical" \| "checkbox"` | `"horizontal"` | Вид                                                                                            |
+| `value`                                   | `number`                                   |                | 0 или 1, в битовом режиме маска. Можно связать через `bind:value`                              |
+| `bitMode`                                 | `boolean`                                  | `false`        | Битовый режим                                                                                  |
+| `accent`                                  | `AccentColor`                              |                | Цвет включённого тумблера и галочки                                                            |
+| `options`                                 | `IOption<number>[]`                        | `[]`           | Только `bitMode`: биты. `name` подпись, `value` номер бита, `accent` цвет, `disabled`          |
+| `height`                                  | `string`                                   | `"1.625rem"`   | Высота тумблера                                                                                |
+| `label.name`, `label.class`               | `string`                                   | `""`           | Заголовок и его классы                                                                         |
+| `label.captionLeft`, `label.captionRight` | `string`                                   | `""`           | Подписи слева и справа                                                                         |
+| `help.info`                               | `string`                                   | `""`           | Пояснение: значок ⓘ после заголовка (у галочки - после подписи), текст всплывает при наведении |
+| `hiddenInfo`                              | `string`                                   | `""`           | Подсказка для галочки                                                                          |
+| `wrapperClass`                            | `string`                                   | `""`           | Классы обёртки                                                                                 |
+| `disabled`                                | `boolean`                                  | `false`        | Неактивен весь переключатель. Отдельный тумблер выключает `options[].disabled`                 |
+| `onUpdate`                                | `(value: number) => void`                  |                | Значение изменилось                                                                            |
 
 </details>
 

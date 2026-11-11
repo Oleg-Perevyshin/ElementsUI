@@ -14,6 +14,7 @@
     componentClass = "",
     disabled = false,
     label,
+    help,
     multiSelect,
     fitContent = false,
     listHeight = "16rem",
@@ -201,7 +202,7 @@
 
 <div class={twMerge(`flex w-full flex-col gap-1`, wrapperClass)}>
   <div class="relative flex w-full flex-col gap-1" bind:this={anchorElement} bind:clientWidth={anchorWidth}>
-    <FieldLabel {label} for={shownType === "buttons" ? undefined : uid} id={`${uid}-label`} />
+    <FieldLabel {label} info={help?.info} for={shownType === "buttons" ? undefined : uid} id={`${uid}-label`} />
 
     {#if type === "buttons" && !fitContent}
       <!-- Невидимые подписи вариантов: по их ширине решается, помещается ли группа кнопок -->

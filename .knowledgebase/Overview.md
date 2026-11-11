@@ -163,7 +163,7 @@ ElementsUI/
 - Смарт-виджеты: `WidgetWiFi`, `WidgetDeviceInfo`, `WidgetFileSystem`, `WidgetStackInfo`, `WidgetRGBStrip`, `WidgetPFD`, `WidgetMap`.
 - `WidgetMap` - самый большой модуль: обёртка MapLibre (`mapWrapper/`), миссии (`mission/`: режимы «Маршрут» и «Агро», расчёт покрытия поля, прогресс, выгрузка QGC WPL 110, имитация).
 
-Общие части интерфейса в корне `lib`: `WidgetHeader` (шапка виджета), `SectionHead` и `ExpandIcon` (сворачиваемые разделы), `FieldLabel`, `Tooltip`, `CopiedChip`, `Icon`, `IconsMatrix` (выбор иконки), `TextsEditor` (окно «Тексты и переводы»), `CommonSnippets`, `PropsGroup`, `PropsListHeader`, `PropsListModal` (части панелей свойств).
+Общие части интерфейса в корне `lib`: `WidgetHeader` (шапка виджета), `SectionHead` и `ExpandIcon` (сворачиваемые разделы), `FieldLabel` (подпись поля, с `info` - значок ⓘ с пояснением), `InfoHint` (сам значок ⓘ, пояснение позиционируется от окна и не обрезается), `Tooltip`, `CopiedChip`, `Icon`, `IconsMatrix` (выбор иконки), `TextsEditor` (окно «Тексты и переводы»), `CommonSnippets`, `PropsGroup`, `PropsListHeader`, `PropsListModal` (части панелей свойств).
 
 </details>
 

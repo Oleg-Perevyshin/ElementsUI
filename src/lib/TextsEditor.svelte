@@ -8,6 +8,7 @@
   import Modal from "./Modal.svelte"
   import type { UIComponent } from "./types"
   import type { PropertyChange } from "./propsEditor"
+  import { COMPONENT_DEFAULTS } from "./defaults"
 
   let {
     component,
@@ -40,7 +41,10 @@
 
   const open = () => {
     const skip = NOT_TEXTS[component.type] ?? []
-    rows = collectTexts(component.properties)
+    /* Пояснение help.info есть в окне и у компонентов, созданных до его появления: недостающее берётся из умолчаний типа */
+    const defaultHelp = (COMPONENT_DEFAULTS as Record<string, { help?: object }>)[component.type]?.help
+    const properties = component.properties as { help?: object }
+    rows = collectTexts(defaultHelp ? { ...properties, help: { ...defaultHelp, ...properties.help } } : properties)
       .filter(({ path }) => !skip.includes(String(path[0])))
       .map(({ path, text }) => ({ path, values: typeof text === "string" ? { [DEFAULT_LANGUAGE]: text } : { ...text } }))
     isOpen = true

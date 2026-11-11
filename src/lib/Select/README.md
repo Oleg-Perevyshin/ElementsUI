@@ -83,6 +83,7 @@
 | `fitContent`                     | `boolean`                          | `false`      | Кнопки по ширине содержимого, только для `buttons`                                                                 |
 | `listHeight`                     | `string`                           | `"16rem"`    | Наибольшая высота списка для `select` и `input`                                                                    |
 | `label.name`, `label.class`      | `string`                           | `""`         | Заголовок и его классы                                                                                             |
+| `help.info`                      | `string`                           | `""`         | Пояснение: значок ⓘ после заголовка, текст всплывает при наведении. Без заголовка не показывается                  |
 | `wrapperClass`, `componentClass` | `string`                           | `""`         | Классы обёртки и поля                                                                                              |
 | `disabled`                       | `boolean`                          | `false`      | Неактивен                                                                                                          |
 | `bitMode`                        | `boolean`                          |              | Битовый режим, только для панели свойств и облака                                                                  |

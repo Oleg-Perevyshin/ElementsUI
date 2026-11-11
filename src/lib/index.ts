@@ -2,6 +2,8 @@
 export { default as Accordion } from "./Accordion/Accordion.svelte"
 export { default as ExpandIcon } from "./ExpandIcon.svelte"
 export { default as SectionHead } from "./SectionHead.svelte"
+export { default as FieldLabel } from "./FieldLabel.svelte"
+export { default as InfoHint } from "./InfoHint.svelte"
 export { default as Button } from "./Button/Button.svelte"
 export { default as Carousel } from "./Carousel/Carousel.svelte"
 export { default as Divider } from "./Divider/Divider.svelte"

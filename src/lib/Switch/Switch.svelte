@@ -4,10 +4,12 @@
   import { accentStyle } from "../accent"
   import type { ISwitchProps } from "../types"
   import Tooltip from "../Tooltip.svelte"
+  import InfoHint from "../InfoHint.svelte"
 
   let {
     wrapperClass = "",
     label = { name: "", class: "", captionLeft: "", captionRight: "" },
+    help,
     hiddenInfo = "",
     height = "1.625rem",
     type = "horizontal",
@@ -52,7 +54,9 @@
   <div class={twMerge(`relative flex w-full flex-col items-center justify-center gap-1.5`, wrapperClass)} style={accentStyle(accent)}>
     {#if label.name}
       <!-- Подпись по умолчанию по центру - над переключателем, который тоже по центру; выравнивание из label.class важнее -->
-      <h5 class={twMerge(`w-full text-center text-[12px] font-semibold text-(--muted-color)`, label.class)}>{label.name}</h5>
+      <h5 class={twMerge(`flex w-full items-center justify-center gap-1 text-center text-[12px] font-semibold text-(--muted-color)`, label.class)}>
+        {label.name}{#if help?.info}<InfoHint text={help.info} />{/if}
+      </h5>
     {/if}
     <!-- Биты переносятся на новую строку, если не помещаются -->
     <div class="flex w-full flex-wrap items-center justify-around gap-x-4 gap-y-2">
@@ -152,6 +156,7 @@
       <label for={uid} class={twMerge(`text-[13px] select-none ${bits[0].disabled ? "text-(--faint-color)" : "cursor-pointer"}`, label.class)}>
         {label.name}
       </label>
+      {#if help?.info}<InfoHint text={help.info} />{/if}
     {/if}
   </div>
 {/if}

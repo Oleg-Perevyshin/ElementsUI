@@ -25,6 +25,7 @@
       type: "horizontal",
       bitMode: false,
       label: { name: "Label", captionLeft: "Off", captionRight: "On" },
+      help: { info: "Hint" },
       value: 1,
       options: [
         { id: crypto.randomUUID(), value: 0, name: "0", accent: "red", disabled: false },
