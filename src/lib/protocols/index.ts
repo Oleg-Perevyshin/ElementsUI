@@ -28,7 +28,6 @@ export { createPlotGroups, debugPlotValues, DEBUG_PLOT_ARGUMENT, type PlotPoint 
 export {
   encodeXPoeDebugFrame,
   createXPoeDebugParser,
-  xPoeDebugHar,
   xPoeDebugValueFromText,
   xPoeDebugRow,
   DEBUG_LOG_ARGUMENT,
@@ -49,7 +48,19 @@ export {
   type CanFrame,
   type CanMessage,
 } from "./can.js"
-/* Словарь заголовков и аргументов HAR - по умолчанию из мастер-словаря dictionary.yaml библиотеки, разбор файла словаря, словарь устройства с обратным поиском для xPOE-Debug */
-export { HEADER_CODES, DEFAULT_ARGUMENT_CODES, DEFAULT_DICTIONARY, parseArgumentDictionary, createDictionary, type Dictionary } from "./dictionary.js"
-/* Конверт WebSocket {HDR, ARG, VAL}: ARG - имя или код аргумента; модулю за хабом - код, входящий код переводится в имя */
-export { isModuleTarget, wsArgumentCode, wsArgumentName, wsEnvelope, readWsEnvelope, type WsArgument, type WsEnvelope } from "./wsEnvelope.js"
+/* Словарь заголовков и аргументов HAR - по умолчанию из мастер-словаря dictionary.yaml библиотеки (устройства и облако), разбор файла словаря, словарь устройства с обратным поиском; HAR из слов и обратно */
+export {
+  HEADER_CODES,
+  DEFAULT_ARGUMENT_CODES,
+  DEFAULT_DICTIONARY,
+  parseArgumentDictionary,
+  createDictionary,
+  encodeHar,
+  decodeHar,
+  type Dictionary,
+  type HarParts,
+} from "./dictionary.js"
+/* Конверт WebSocket {HAR, VAL} на всех соединениях: сборка из заголовка и аргумента (имя или код), разбор в слова по словарю */
+export { encodeWsEnvelope, decodeWsEnvelope, type WsEnvelope, type WsMessage } from "./wsEnvelope.js"
+/* ВРЕМЕННО, переход (удаляется в следующем выпуске): старый конверт {HDR, ARG, VAL} прошивок до {HAR, VAL} - разбор в ту же структуру и сборка ответа старому устройству */
+export { decodeLegacyWsEnvelope, encodeLegacyWsEnvelope, type LegacyWsEnvelope } from "./wsEnvelope.js"

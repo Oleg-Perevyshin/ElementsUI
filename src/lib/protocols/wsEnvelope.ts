@@ -1,38 +1,70 @@
-/* Конверт WebSocket {HDR, ARG, VAL}: HDR - имя заголовка, ARG - имя аргумента или его код из словаря (число 0..8191, те же биты 13-1 HAR без заголовка и флага ответа). Команда модулю за хабом (ModSN не равен DevSN) уходит с кодом - хаб пересылает его модулю без перевода; входящий числовой ARG переводится в имя до разбора */
-import { DEFAULT_DICTIONARY, type Dictionary } from "./dictionary.js"
-
-export type WsArgument = string | number
+/* Конверт WebSocket {HAR, VAL} - на всех соединениях (браузер - облако, облако - устройство, WebApp - устройство): HAR - то же 16-битное число, что на шине (заголовок, код аргумента из словаря, флаг ответа), VAL - объект данных. Имена заголовка и аргумента по проводу не ходят, только для справки (интерфейсы, журналы) */
+import { DEFAULT_DICTIONARY, decodeHar, encodeHar, type Dictionary, type HarParts } from "./dictionary.js"
 
 export interface WsEnvelope<V = Record<string, unknown>> {
-  HDR: string
-  ARG: WsArgument
+  HAR: number
   VAL: V
 }
 
-/* Адресат - модуль за хабом: ModSN задан и не равен DevSN */
-export const isModuleTarget = (val: unknown): boolean => {
-  if (!val || typeof val !== "object") return false
-  const { DevSN, ModSN } = val as { DevSN?: unknown; ModSN?: unknown }
-  return typeof ModSN === "string" && ModSN !== "" && ModSN !== DevSN
+/* Разобранный конверт: части HAR словами и VAL как есть */
+export interface WsMessage<V = Record<string, unknown>> extends HarParts {
+  VAL: V
 }
 
-/* Имя → код по словарю; неизвестное имя остаётся строкой */
-export const wsArgumentCode = (argument: WsArgument, dictionary: Dictionary = DEFAULT_DICTIONARY): WsArgument =>
-  typeof argument === "number" ? argument : (dictionary.code(argument) ?? argument)
+/* Флаг ответа по умолчанию: запросы GET и SET ждут ответа, ответы OK! и ER! - без флага */
+const defaultReply = (header: string) => header === "GET" || header === "SET"
 
-/* Код → имя по словарю; неизвестный код - строкой из числа ("4097"), имя - как есть */
-export const wsArgumentName = (argument: WsArgument, dictionary: Dictionary = DEFAULT_DICTIONARY): string =>
-  typeof argument === "number" ? dictionary.name(argument) : argument
+/* Исходящий конверт: аргумент - имя или код из словаря; неизвестное имя или значение вне диапазона - ошибка */
+export const encodeWsEnvelope = <V>(
+  header: string,
+  argument: string | number,
+  VAL: V,
+  reply = defaultReply(header),
+  dictionary: Dictionary = DEFAULT_DICTIONARY,
+): WsEnvelope<V> => ({ HAR: encodeHar(header, argument, reply, dictionary), VAL })
 
-/* Исходящий конверт: модулю за хабом ARG - код из словаря, хабу и облаку - имя */
-export const wsEnvelope = <V extends object>(header: string, argument: string, val: V, dictionary: Dictionary = DEFAULT_DICTIONARY): WsEnvelope<V> => ({
-  HDR: header,
-  ARG: isModuleTarget(val) ? wsArgumentCode(argument, dictionary) : argument,
-  VAL: val,
-})
+/* Входящий конверт: HAR - целое 0..65535, VAL - объект; иначе null (не конверт) */
+export const decodeWsEnvelope = <V extends object = Record<string, unknown>>(
+  packet: unknown,
+  dictionary: Dictionary = DEFAULT_DICTIONARY,
+): WsMessage<V> | null => {
+  if (!packet || typeof packet !== "object") return null
+  const { HAR, VAL } = packet as { HAR?: unknown; VAL?: unknown }
+  if (typeof HAR !== "number" || !Number.isInteger(HAR) || HAR < 0 || HAR > 0xffff) return null
+  if (!VAL || typeof VAL !== "object" || Array.isArray(VAL)) return null
+  return { ...decodeHar(HAR, dictionary), VAL: VAL as V }
+}
 
-/* Входящий конверт с ARG-именем: числовой ARG переводится по словарю, остальное как есть */
-export const readWsEnvelope = <P extends { ARG: WsArgument }>(packet: P, dictionary: Dictionary = DEFAULT_DICTIONARY): P & { ARG: string } => ({
-  ...packet,
-  ARG: wsArgumentName(packet.ARG, dictionary),
-})
+/* ВРЕМЕННО, только для перехода (удаляется в следующем выпуске библиотеки): старый конверт {HDR, ARG, VAL} прошивок до {HAR, VAL}. HDR - имя заголовка, ARG - имя аргумента или его код, флага ответа нет */
+export interface LegacyWsEnvelope<V = Record<string, unknown>> {
+  HDR: string
+  ARG: string | number
+  VAL: V
+}
+
+/* ВРЕМЕННО: старый конверт в ту же структуру, что decodeWsEnvelope; reply - как у запроса (GET/SET) или ответа (OK!/ER!). Неизвестный заголовок, имя аргумента не из словаря, код вне 0..8191, VAL не объект - null */
+export const decodeLegacyWsEnvelope = <V extends object = Record<string, unknown>>(
+  packet: unknown,
+  dictionary: Dictionary = DEFAULT_DICTIONARY,
+): WsMessage<V> | null => {
+  if (!packet || typeof packet !== "object") return null
+  const { HDR, ARG, VAL } = packet as { HDR?: unknown; ARG?: unknown; VAL?: unknown }
+  if (typeof HDR !== "string" || !(typeof ARG === "string" || typeof ARG === "number")) return null
+  if (!VAL || typeof VAL !== "object" || Array.isArray(VAL)) return null
+  try {
+    return decodeWsEnvelope<V>({ HAR: encodeHar(HDR, ARG, defaultReply(HDR), dictionary), VAL }, dictionary)
+  } catch {
+    return null
+  }
+}
+
+/* ВРЕМЕННО: старый конверт для устройства на старой прошивке: ARG - имя по словарю, код без имени - числом; неизвестный заголовок или имя - ошибка */
+export const encodeLegacyWsEnvelope = <V>(
+  header: string,
+  argument: string | number,
+  VAL: V,
+  dictionary: Dictionary = DEFAULT_DICTIONARY,
+): LegacyWsEnvelope<V> => {
+  const { header: HDR, argument: name, code } = decodeHar(encodeHar(header, argument, false, dictionary), dictionary)
+  return { HDR, ARG: name === String(code) ? code : name, VAL }
+}

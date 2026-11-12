@@ -4,7 +4,7 @@
   import { Language, T } from "../locales/i18n"
   import { localizeDeep } from "../locales/localize"
   import type { ITableButton, ITableContent, IOption, UIComponent, UIType } from "../types"
-  import { createFsTransfer, FsTransferError } from "../fsTransfer"
+  import { argumentCode, createFsTransfer, FsTransferError, sendCommand } from "../fsTransfer"
   import {
     GUI_GRID,
     WIDGET_FIELDS,
@@ -101,10 +101,19 @@
 
   const get = (key: string) => link.get(key)
 
+  /* Команда по именам из eventHandler и свойств виджета: в провод уходит HAR по словарю связи; имя не из словаря - уведомление, пакет не уходит */
+  const send = (header: string, argument: string, payload: Record<string, unknown>) => {
+    try {
+      sendCommand(link, header, argument, payload)
+    } catch (error) {
+      report(error)
+    }
+  }
+
   const dispatch = (packet: DevicePacket | null) => {
     if (!packet) return onError?.($T("gui.error.event_handler"))
     for (const [key, value] of packet.writes) link.set?.(key, value)
-    if (packet.send) link.send(packet.header, packet.argument, packet.payload)
+    if (packet.send) send(packet.header, packet.argument, packet.payload)
   }
 
   /* Изменение значения компонента: битовое поле собирается в слово, пакет - по eventHandler */
@@ -128,15 +137,21 @@
   const saveFields = <K extends string>(prefix: string, save: readonly K[], values: Partial<Record<K, unknown>>, keys?: Partial<Record<K, string>>) => {
     const payload = widgetPacket(prefix, save, values, keys)
     for (const [key, value] of Object.entries(payload)) link.set?.(key, value)
-    link.send("SET", "ModCfg", payload)
+    send("SET", "ModCfg", payload)
   }
 
   /* Поиск сетей WiFi: устройство отвечает списком { id, name, value } в поле "{префикс}.{StaSSID}-S" */
   const scanWiFi = async (prefix: string, keys: Partial<Record<string, string>> | undefined, command?: { header?: string; argument?: string }) => {
     const listKey = `${widgetKey(prefix, "StaSSID", keys)}-S`
     const argument = command?.argument || "APsList"
-    const pending = link.waitFor(argument, (reply) => !reply.ok || Array.isArray(reply.payload[listKey]), 3000)
-    link.send(command?.header || "GET", argument, {})
+    let pending: ReturnType<typeof link.waitFor>
+    try {
+      pending = link.waitFor(argumentCode(link, argument), (reply) => !reply.ok || Array.isArray(reply.payload[listKey]), 3000)
+      sendCommand(link, command?.header || "GET", argument, {})
+    } catch (error) {
+      report(error)
+      return []
+    }
     const reply = await pending
     if (reply?.ok) return reply.payload[listKey] as { id: string; name: string; value: string }[]
     /* ER! или таймаут - уведомление, список пустой */
@@ -394,8 +409,8 @@
           value={fields(component, prefix, WIDGET_FIELDS.WidgetDeviceInfo)}
           persistKey={persist(component)}
           onSave={locked ? undefined : (info) => saveFields(prefix, WIDGET_SAVE_FIELDS.WidgetDeviceInfo, info, props.keys)}
-          onRestart={locked ? undefined : () => link.send(props.restartCommand?.header || "SET", props.restartCommand?.argument || "Restart", {})}
-          onFactoryReset={locked ? undefined : () => link.send(props.resetCommand?.header || "SET", props.resetCommand?.argument || "RstNVS", {})}
+          onRestart={locked ? undefined : () => send(props.restartCommand?.header || "SET", props.restartCommand?.argument || "Restart", {})}
+          onFactoryReset={locked ? undefined : () => send(props.resetCommand?.header || "SET", props.resetCommand?.argument || "RstNVS", {})}
         />
       {:else if component.type === "WidgetFileSystem"}
         {@const props = component.properties}
@@ -405,7 +420,7 @@
           {...props}
           value={fields(component, widgetPrefixes(component.type, props)[0], WIDGET_FIELDS.WidgetFileSystem).FS}
           persistKey={persist(component)}
-          onRefresh={() => link.send("GET", argument, {})}
+          onRefresh={() => send("GET", argument, {})}
           onDelete={locked ? undefined : (name) => transfer().remove(name).catch(fail)}
           onUpload={locked ? undefined : (file) => transfer().upload(file.name, file).catch(fail)}
           onDownload={locked
@@ -421,7 +436,7 @@
           {...props}
           value={fields(component, "", WIDGET_FIELDS.WidgetStackInfo).StackInfo}
           persistKey={persist(component)}
-          onRefresh={() => link.send("GET", props.argument || "StackInfo", {})}
+          onRefresh={() => send("GET", props.argument || "StackInfo", {})}
         />
       {:else if component.type === "WidgetRGBStrip"}
         {@const props = component.properties}

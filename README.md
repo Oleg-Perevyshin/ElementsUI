@@ -158,12 +158,13 @@
 interface DeviceLink {
   get(key: string, module?: string): unknown /* значение переменной без префикса модуля; module - другой модуль (keyCol таблицы) */
   set?(key: string, value: unknown): void /* своё значение до ответа устройства */
-  send(header: string, argument: string, payload: Record<string, unknown>): unknown /* конверт DevSN/ModSN добавляет приложение */
+  dictionary?: Dictionary /* словарь имён в коды, по умолчанию встроенный */
+  send(har: number, payload: Record<string, unknown>): unknown /* готовый HAR; конверт {HAR, VAL: {DevSN, ModSN, Payload}} собирает приложение */
   waitFor(
-    argument: string,
+    code: number,
     match: (reply: DeviceReply) => boolean,
     timeoutMs: number,
-  ): Promise<DeviceReply | null> /* первый OK!/ER! с этим аргументом; null - таймаут */
+  ): Promise<DeviceReply | null> /* первый OK!/ER! с этим кодом аргумента; null - таймаут */
 }
 interface DeviceReply {
   ok: boolean
@@ -173,28 +174,34 @@ interface DeviceReply {
 ```
 
 - `get` читает реактивное хранилище (`SvelteMap`), тогда рендерер обновляется сам.
-- Ответы устройства приложение кладёт в хранилище функцией `mergeDevicePayload(values, "<ModSN>|", ARG, Payload)`: объект пишется целиком и по полям `имя-поле`, ход закачки `CFG.FS` дописывается к снимку, служебные поля `SET FS` пропускаются. `ARG` может быть числом (кодом из словаря) - функция сама переводит его в имя.
-- Отправка `SET Restart` и `SET RstNVS` идёт через `link.send`, приложение может по ним показать состояние перезагрузки.
+- Ответы устройства приложение кладёт в хранилище функцией `mergeDevicePayload(values, "<ModSN>|", argument, Payload)`: объект пишется целиком и по полям `имя-поле`, ход закачки `CFG.FS` дописывается к снимку, служебные поля `SET FS` пропускаются. `argument` - имя из разобранного конверта (`decodeWsEnvelope`).
+- Отправка `SET Restart` и `SET RstNVS` идёт через `link.send`, приложение узнаёт их по `HAR` (`encodeHar("SET", "Restart")`) и может показать состояние перезагрузки.
+- Имя аргумента не из словаря рендерер не отправляет и сообщает через `onError`.
 
 </details>
 
 <details>
-<summary>🔢 Команды модулю за хабом: ARG числом</summary>
+<summary>🔢 Команды в провод: HAR</summary>
 
-Рендерер всегда передаёт в `link.send` и `link.waitFor` имя аргумента (`"ModCfg"`). Конверт WebSocket собирает приложение, и для модуля за хабом аргумент в нём - число из словаря. Подробно - раздел «WebSocket» в [PROTOCOL.md](src/lib/protocols/PROTOCOL.md).
+В `eventHandler` команда записана именами (`SET`, `ModCfg`) - это справка автора GUI. В `link.send` рендерер отдаёт уже число `HAR` (заголовок, код из словаря, флаг ответа), а ответ ждёт по коду аргумента. Конверт WebSocket `{HAR, VAL}` собирает приложение. Подробно - раздел «WebSocket» в [PROTOCOL.md](src/lib/protocols/PROTOCOL.md).
 
-- В `send` собирайте конверт функцией `wsEnvelope(header, argument, { DevSN, ModSN, Payload })` из `poe-svelte-ui-lib/protocols`. Если `ModSN` задан и не равен `DevSN`, `ARG` станет кодом (`ModCfg` - 36), иначе останется именем.
-- Входящий конверт сначала пропустите через `readWsEnvelope(packet)`: числовой `ARG` станет именем, и `waitFor`, `mergeDevicePayload` и обработчики приложения работают с именами как раньше.
-- У устройства со своим словарём передайте его последним аргументом (`createDictionary(parseArgumentDictionary(text))`), иначе берётся встроенный `DEFAULT_DICTIONARY`.
+- Свою команду по именам приложение шлёт так же: `sendCommand(link, header, argument, payload)` (аргумент - имя или код), код для ожидания - `argumentCode(link, argument)`.
+- Входящий конверт разберите `decodeWsEnvelope(packet)`: получите `{ header, argument, code, reply, VAL }`. По `code` будите `waitFor`, по `argument` зовите `mergeDevicePayload`.
+- У устройства со своим словарём положите его в `link.dictionary` и передайте в `decodeWsEnvelope` (`createDictionary(parseArgumentDictionary(text))`), иначе берётся встроенный `DEFAULT_DICTIONARY`.
 
 ```ts
-import { wsEnvelope, readWsEnvelope } from "poe-svelte-ui-lib/protocols"
+import { encodeWsEnvelope, decodeWsEnvelope, valueToCbor, cborToValue } from "poe-svelte-ui-lib/protocols"
 
 const link: DeviceLink = {
-  send: (header, argument, payload) => socket.send(valueToCbor(wsEnvelope(header, argument, { DevSN: hub.DevSN, ModSN: module.ModSN, Payload: payload }))),
+  send: (har, payload) => socket.send(valueToCbor({ HAR: har, VAL: { DevSN: hub.DevSN, ModSN: module.ModSN, Payload: payload } })),
   /* ... */
 }
-socket.onmessage = (event) => handle(readWsEnvelope(cborToValue(new Uint8Array(event.data))))
+socket.onmessage = (event) => {
+  const message = decodeWsEnvelope(cborToValue(new Uint8Array(event.data)))
+  if (message) handle(message) /* message.header === "OK!", message.code === 36, message.argument === "ModCfg" */
+}
+/* Своя команда облаку или устройству по именам */
+socket.send(valueToCbor(encodeWsEnvelope("SET", "JoinDev", { DevSN, Watch: true })))
 ```
 
 </details>
@@ -226,7 +233,7 @@ socket.onmessage = (event) => handle(readWsEnvelope(cborToValue(new Uint8Array(e
 <details>
 <summary>📁 Обмен файлами</summary>
 
-`createFsTransfer(transport, { argument = "FS", timeoutMs = 5000, retries = 3, maxNameLength = 31 })` - обмен файлами по `SET FS` прошивки. `maxNameLength` - предел имени в байтах UTF-8 (буква кириллицы - 2 байта). Слишком длинное или пустое имя `upload` отвергает ещё до `UploadStart` ошибкой `FsNameError` (поле `maxBytes`). Это единственная проверка имени: `GUIRenderer` передаёт сюда `maxNameLength` из свойств `WidgetFileSystem`, сам виджет имя не проверяет и только переводит сообщение.
+`createFsTransfer(transport, { argument = "FS", timeoutMs = 5000, retries = 3, maxNameLength = 31 })` - обмен файлами по `SET FS` прошивки. `transport` - тот же `DeviceLink` (`send(har, payload)`, `waitFor(code, ...)`), `argument` - имя или код; имя не из словаря - отказ без отправки. `maxNameLength` - предел имени в байтах UTF-8 (буква кириллицы - 2 байта). Слишком длинное или пустое имя `upload` отвергает ещё до `UploadStart` ошибкой `FsNameError` (поле `maxBytes`). Это единственная проверка имени: `GUIRenderer` передаёт сюда `maxNameLength` из свойств `WidgetFileSystem`, сам виджет имя не проверяет и только переводит сообщение.
 
 <details>
 <summary>Ошибки передачи</summary>
@@ -269,7 +276,8 @@ socket.onmessage = (event) => handle(readWsEnvelope(cborToValue(new Uint8Array(e
 - 🚌 резать пакет на кадры CAN и CAN FD и собирать обратно, общаться со slcan-адаптером;
 - 🖥️ разбирать поток консоли xPOE-Debug, где пакеты идут вперемешку с текстом загрузчика;
 - 🐞 показывать отладочные логи `DebugLog` и графики `DebugPlot` из прошивки;
-- 🔄 переводить значения между JSON и CBOR.
+- 🔄 переводить значения между JSON и CBOR;
+- 🌐 собирать и разбирать WebSocket-конверт `{HAR, VAL}` (`encodeWsEnvelope`, `decodeWsEnvelope`): команда в нём то же число `HAR`, что на шине.
 
 Формат пакета, адресация, транспорты и список функций описаны в [PROTOCOL.md](src/lib/protocols/PROTOCOL.md).
 
@@ -291,7 +299,7 @@ socket.onmessage = (event) => handle(readWsEnvelope(cborToValue(new Uint8Array(e
 
 ## 📖 Словарь команд
 
-Все команды (`GET`, `SET`, `ModCfg`, `Restart` и остальные) записаны в одном файле `src/lib/protocols/dictionary.yaml`. Новую команду сначала добавляют сюда, потом копируют в оба фреймворка прошивок.
+Все команды (`GET`, `SET`, `ModCfg`, `Restart` и остальные) записаны в одном файле `src/lib/protocols/dictionary.yaml`. Новую команду сначала добавляют сюда, потом копируют в оба фреймворка прошивок. Коды 0-4095 - команды устройств, 7000-7999 - команды самого облака DevCloud (чаты, журнал, состояние устройств).
 
 <details>
 <summary>⚙️ Как словарь попадает в код</summary>
@@ -561,23 +569,23 @@ const canModal = createRawSnippet((row: () => CanRow) => ({ render: () => `<div 
 
 Оба `GUIPreview.svelte` (DevCloud, WebApp) заменяются на `GUIRenderer`, приложение оставляет транспорт, список модулей, загрузку GUI и свои мосты потоков.
 
-| Было в приложении                                                                                                                            | Стало                                                                                               |
-| -------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| сетка и `{#snippet Components}` с ветвью на каждый тип, кэш `localizeDeep`                                                                   | `<UI.GUIRenderer components link persistKey viewer render onError />`                               |
-| `handleUIComponentEvent`, сборка Payload из `Variables`, `onClick` таблицы                                                                   | внутри рендерера (`commandPacket`, `tablePacket`)                                                   |
-| `bitFieldGet`/`bitFieldSet` у `Input` и `Select`, `-S` варианты `Select`, колонки-списки таблицы                                             | внутри рендерера (`readBits`, `writeBits`)                                                          |
-| `readWidgetFields`, `saveWidgetFields`, `sendWidgetCommand`, `readFileSystem`, `readStackInfo`, `scanWiFiNetworks`, `WIDGET_FIELDS` (WebApp) | внутри рендерера (`WIDGET_FIELDS`, `readWidgetFields`, `widgetPacket`)                              |
-| `uploadFile`, `downloadFile`, `fsStep`, `withRetry`, `handleFileUpload`, `crc32` приложения                                                  | `createFsTransfer(link)`, рендерер ведёт сам; `crc32` из `poe-svelte-ui-lib/protocols`              |
-| планы карты в `localStorage` (`loadMission`, `saveMission`)                                                                                  | рендерер по `persistKey`                                                                            |
-| `applyPayload` и разбор Payload в эффекте (`DATA_PAYLOAD_ARGS`, `FS_PROTOCOL_KEYS`, `topLevelToFlatten`)                                     | `mergeDevicePayload(values, "<ModSN>\|", ARG, Payload)`; набор ARG остаётся у приложения            |
-| начальные значения переменных компонентов (`0` или `""`) после загрузки GUI                                                                  | не нужны: компонент без значения берёт своё по умолчанию                                            |
-| `VideoViewerRemote` в ветке `VideoViewer`                                                                                                    | `render={{ VideoViewer: snippet }}`                                                                 |
-| `common.ts`: `CELL_HEIGHT`, `UIAreaCols`, `spanRows`, `isWidgetType`, `WIDGET_FIELD_GROUPS`, `WIDGET_EDITABLE_FIELD_GROUPS`                  | `GUI_GRID`, `spanRows`, `isWidgetType`, `WIDGET_FIELDS`, `WIDGET_SAVE_FIELDS`, `componentVariables` |
-| `common.ts`: `DEFAULT_PROPS`, `componentMap`, `WIDGET_MIN_WIDTH`, `minWidthOf`                                                               | `COMPONENT_DEFAULTS`, `COMPONENT_SIZES`, `minComponentWidth` (`/constructor`)                       |
-| `ConstructorUI`: `switch` по типу в `createComponent`, свой `updateComponent` для `properties`                                               | `createComponent(type, { col, row }, parentId, { tab, areaWidth })`, `applyPropertyChange`          |
-| ветвь панели на каждый тип с `as UI.UIComponent & { properties: Partial<...> }`                                                              | `{@const Panel = PANELS[c.type]}<Panel component={c} {onPropertyChange} />`                         |
-| `component.properties as UI.IButtonProps`                                                                                                    | `if (component.type === "Button")` - `properties` уже `IButtonProps`                                |
-| `IWidgetWiFiConfig` и др. - отдельные интерфейсы, `value` виджета - полный объект                                                            | выведены из `WIDGET_FIELDS`; `value` у `WidgetWiFi` и `WidgetDeviceInfo` - `Partial`                |
+| Было в приложении                                                                                                                            | Стало                                                                                                |
+| -------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| сетка и `{#snippet Components}` с ветвью на каждый тип, кэш `localizeDeep`                                                                   | `<UI.GUIRenderer components link persistKey viewer render onError />`                                |
+| `handleUIComponentEvent`, сборка Payload из `Variables`, `onClick` таблицы                                                                   | внутри рендерера (`commandPacket`, `tablePacket`)                                                    |
+| `bitFieldGet`/`bitFieldSet` у `Input` и `Select`, `-S` варианты `Select`, колонки-списки таблицы                                             | внутри рендерера (`readBits`, `writeBits`)                                                           |
+| `readWidgetFields`, `saveWidgetFields`, `sendWidgetCommand`, `readFileSystem`, `readStackInfo`, `scanWiFiNetworks`, `WIDGET_FIELDS` (WebApp) | внутри рендерера (`WIDGET_FIELDS`, `readWidgetFields`, `widgetPacket`)                               |
+| `uploadFile`, `downloadFile`, `fsStep`, `withRetry`, `handleFileUpload`, `crc32` приложения                                                  | `createFsTransfer(link)`, рендерер ведёт сам; `crc32` из `poe-svelte-ui-lib/protocols`               |
+| планы карты в `localStorage` (`loadMission`, `saveMission`)                                                                                  | рендерер по `persistKey`                                                                             |
+| `applyPayload` и разбор Payload в эффекте (`DATA_PAYLOAD_ARGS`, `FS_PROTOCOL_KEYS`, `topLevelToFlatten`)                                     | `mergeDevicePayload(values, "<ModSN>\|", argument, Payload)`; набор аргументов остаётся у приложения |
+| начальные значения переменных компонентов (`0` или `""`) после загрузки GUI                                                                  | не нужны: компонент без значения берёт своё по умолчанию                                             |
+| `VideoViewerRemote` в ветке `VideoViewer`                                                                                                    | `render={{ VideoViewer: snippet }}`                                                                  |
+| `common.ts`: `CELL_HEIGHT`, `UIAreaCols`, `spanRows`, `isWidgetType`, `WIDGET_FIELD_GROUPS`, `WIDGET_EDITABLE_FIELD_GROUPS`                  | `GUI_GRID`, `spanRows`, `isWidgetType`, `WIDGET_FIELDS`, `WIDGET_SAVE_FIELDS`, `componentVariables`  |
+| `common.ts`: `DEFAULT_PROPS`, `componentMap`, `WIDGET_MIN_WIDTH`, `minWidthOf`                                                               | `COMPONENT_DEFAULTS`, `COMPONENT_SIZES`, `minComponentWidth` (`/constructor`)                        |
+| `ConstructorUI`: `switch` по типу в `createComponent`, свой `updateComponent` для `properties`                                               | `createComponent(type, { col, row }, parentId, { tab, areaWidth })`, `applyPropertyChange`           |
+| ветвь панели на каждый тип с `as UI.UIComponent & { properties: Partial<...> }`                                                              | `{@const Panel = PANELS[c.type]}<Panel component={c} {onPropertyChange} />`                          |
+| `component.properties as UI.IButtonProps`                                                                                                    | `if (component.type === "Button")` - `properties` уже `IButtonProps`                                 |
+| `IWidgetWiFiConfig` и др. - отдельные интерфейсы, `value` виджета - полный объект                                                            | выведены из `WIDGET_FIELDS`; `value` у `WidgetWiFi` и `WidgetDeviceInfo` - `Partial`                 |
 
 Транспорт `waitFor` в WebApp уже есть (`WebSocketStore.ts`): он ждёт первый пакет `OK!`/`ER!` с аргументом, прошедший `match`, или возвращает `null` по таймауту.
 

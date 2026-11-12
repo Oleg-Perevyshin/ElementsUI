@@ -231,8 +231,8 @@ test("xPOE-Debug: неверный CRC, команда устройству, н�
   assert.equal(m.createXPoeDebugParser().push(empty)[0].valueBytes.length, 0)
   assert.deepEqual(parsed.payload, { DevName: "Объект 1" })
   const two = m.encodePacket([
-    { trgBusID: 0, srcBusID: 1, har: m.xPoeDebugHar("OK!", "ModCfg", false), payload: value },
-    { trgBusID: 0, srcBusID: 1, har: m.xPoeDebugHar("OK!", "DebugPlot", false), payload: m.valueToCbor({ A: 1 }) },
+    { trgBusID: 0, srcBusID: 1, har: m.encodeHar("OK!", "ModCfg", false), payload: value },
+    { trgBusID: 0, srcBusID: 1, har: m.encodeHar("OK!", "DebugPlot", false), payload: m.valueToCbor({ A: 1 }) },
   ])
   assert.deepEqual(
     m
@@ -420,7 +420,7 @@ test("словарь, поле Value xPOE-Debug, команды slcan-адапт
     [custom.header(2), custom.name(300), custom.name(9999), custom.code("MyCmd"), custom.code("constructor")],
     ["OK!", "MyCmd", "9999", 300, undefined],
   )
-  assert.throws(() => m.xPoeDebugHar("SET", "MyCmd")) /* во встроенном словаре нет */
+  assert.throws(() => m.encodeHar("SET", "MyCmd")) /* во встроенном словаре нет */
   const mine = m.encodeXPoeDebugFrame("SET", "MyCmd", new Uint8Array(), 0, 0, true, custom)
   assert.equal(m.createXPoeDebugParser({ dictionary: custom }).push(mine)[0].argument, "MyCmd")
   assert.equal(m.createXPoeDebugParser().push(mine)[0].argument, "300")
@@ -478,28 +478,110 @@ test("графики: пакет DebugPlot - значения и порядок 
   assert.deepEqual(plots.data("SPEC"), [])
 })
 
-test("конверт WebSocket: модулю за хабом ARG кодом из словаря, входящий код переводится в имя", () => {
-  assert.equal(m.wsArgumentCode("ModCfg"), 36)
-  assert.equal(m.wsArgumentCode("NoSuchArg"), "NoSuchArg")
-  assert.equal(m.wsArgumentName(36), "ModCfg")
-  assert.equal(m.wsArgumentName("ModCfg"), "ModCfg")
-  assert.equal(m.wsArgumentName(4097), "4097")
-  /* Модуль за хабом - число; хаб сам или без ModSN - имя */
-  assert.deepEqual(m.wsEnvelope("GET", "ModCfg", { DevSN: "HUB", ModSN: "MOD", Payload: {} }), {
-    HDR: "GET",
-    ARG: 36,
-    VAL: { DevSN: "HUB", ModSN: "MOD", Payload: {} },
+test("конверт WebSocket {HAR, VAL}: сборка и разбор, HAR как на шине", () => {
+  /* HAR из слов и обратно - те же биты, что makeHar/splitHar */
+  assert.equal(m.encodeHar("GET", "ModCfg"), 0x0049)
+  assert.equal(m.encodeHar("GET", 36), m.makeHar(0, 36, true))
+  assert.equal(m.encodeHar("OK!", "ModCfg", false), 0x8048)
+  assert.deepEqual(m.decodeHar(0x0049), { header: "GET", argument: "ModCfg", code: 36, reply: true })
+  assert.throws(() => m.encodeHar("GET", "NoSuchArg"), /NoSuchArg/)
+  assert.throws(() => m.encodeHar("PUT", "ModCfg"))
+  assert.throws(() => m.encodeHar("GET", 8192), RangeError)
+  /* Запрос туда: GET и SET по умолчанию с флагом ответа, имя и код дают одно и то же */
+  const VAL = { DevSN: "HUB", ModSN: "MOD", Payload: {} }
+  assert.deepEqual(m.encodeWsEnvelope("GET", "ModCfg", VAL), { HAR: 0x0049, VAL })
+  assert.deepEqual(m.encodeWsEnvelope("GET", 36, VAL), m.encodeWsEnvelope("GET", "ModCfg", VAL))
+  assert.equal(m.encodeWsEnvelope("SET", "ModCfg", VAL).HAR & 1, 1)
+  /* Ответ обратно: OK! и ER! по умолчанию без флага, флаг можно задать явно */
+  const answer = m.encodeWsEnvelope("OK!", "ModCfg", { DevSN: "HUB", ModSN: "MOD", Message: "", Payload: { A: 1 } })
+  assert.equal(answer.HAR, 0x8048)
+  assert.equal(m.encodeWsEnvelope("GET", "ModCfg", VAL, false).HAR, 0x0048)
+  /* Разбор: части HAR словами, VAL как есть; через CBOR туда и обратно */
+  assert.deepEqual(m.decodeWsEnvelope(m.cborToValue(m.valueToCbor(answer))), {
+    header: "OK!",
+    argument: "ModCfg",
+    code: 36,
+    reply: false,
+    VAL: { DevSN: "HUB", ModSN: "MOD", Message: "", Payload: { A: 1 } },
   })
-  assert.equal(m.wsEnvelope("GET", "ModCfg", { DevSN: "HUB", ModSN: "HUB" }).ARG, "ModCfg")
-  assert.equal(m.wsEnvelope("GET", "ModCfg", { DevSN: "HUB" }).ARG, "ModCfg")
-  assert.equal(m.wsEnvelope("SET", "MyCmd", { DevSN: "HUB", ModSN: "MOD" }).ARG, "MyCmd")
-  /* Код совпадает с битами 13-1 HAR */
-  assert.equal(m.splitHar(m.makeHar(0, m.wsEnvelope("GET", "ModCfg", { DevSN: "H", ModSN: "M" }).ARG)).argument, m.DEFAULT_ARGUMENT_CODES.ModCfg)
-  /* Входящий: число в имя, имя как есть */
-  assert.deepEqual(m.readWsEnvelope({ HDR: "OK!", ARG: 36, VAL: { ModSN: "MOD" } }), { HDR: "OK!", ARG: "ModCfg", VAL: { ModSN: "MOD" } })
-  assert.equal(m.readWsEnvelope({ HDR: "OK!", ARG: "Update", VAL: {} }).ARG, "Update")
+  /* Не конверт - null */
+  for (const bad of [
+    null,
+    5,
+    {},
+    { HAR: "GET", VAL: {} },
+    { HAR: -1, VAL: {} },
+    { HAR: 0x10000, VAL: {} },
+    { HAR: 1.5, VAL: {} },
+    { HAR: 73 },
+    { HAR: 73, VAL: [] },
+  ])
+    assert.equal(m.decodeWsEnvelope(bad), null)
+})
+
+test("словарь: коды облака DevCloud, неизвестный код и свой словарь", () => {
+  /* Команды облака - диапазон 7000..7999, устройства - ниже 4096 */
+  const cloud = {
+    ChatMessage: 7000,
+    ChatMessages: 7001,
+    SystemMessage: 7002,
+    EditMessage: 7003,
+    DeleteMessage: 7004,
+    UpdateLastRead: 7005,
+    JoinChat: 7006,
+    UserConnected: 7007,
+    ChatUnread: 7008,
+    ChatPins: 7009,
+    EditChatGroup: 7010,
+    RemoveFromChat: 7011,
+    DeviceMessages: 7100,
+    DeviceConnection: 7101,
+    LeaveGroup: 7102,
+    LeaveGroups: 7103,
+    ResetDevToken: 7104,
+  }
+  for (const [name, code] of Object.entries(cloud)) assert.equal(m.DEFAULT_ARGUMENT_CODES[name], code, name)
+  for (const [name, code] of Object.entries(m.DEFAULT_ARGUMENT_CODES)) assert.ok(name in cloud ? code >= 7000 && code <= 7999 : code < 4096, name)
+  /* Команды устройств, которыми пользуется и облако, - со своими кодами */
+  assert.deepEqual(
+    ["JoinDev", "JoinUser", "LeaveUser", "FS", "Update", "DataStream"].map((name) => m.DEFAULT_ARGUMENT_CODES[name]),
+    [23, 24, 25, 22, 7, 15],
+  )
+  assert.deepEqual(m.decodeWsEnvelope(m.encodeWsEnvelope("SET", "ChatMessage", { ChatID: "c", Message: "hi" })), {
+    header: "SET",
+    argument: "ChatMessage",
+    code: 7000,
+    reply: true,
+    VAL: { ChatID: "c", Message: "hi" },
+  })
+  assert.equal(m.encodeWsEnvelope("OK!", "DeviceConnection", {}).HAR, (2 << 14) | (7101 << 1))
+  /* Неизвестный код - строкой из числа, код сохраняется */
+  assert.deepEqual(m.decodeWsEnvelope({ HAR: m.makeHar(2, 4097, false), VAL: {} }), { header: "OK!", argument: "4097", code: 4097, reply: false, VAL: {} })
+  assert.deepEqual(m.decodeHar(m.makeHar(3, 8191, true)), { header: "ER!", argument: "8191", code: 8191, reply: true })
   /* Свой словарь устройства */
   const own = m.createDictionary({ MyCmd: 4000 })
-  assert.equal(m.wsEnvelope("SET", "MyCmd", { DevSN: "H", ModSN: "M" }, own).ARG, 4000)
-  assert.equal(m.readWsEnvelope({ HDR: "OK!", ARG: 4000, VAL: {} }, own).ARG, "MyCmd")
+  assert.equal(m.encodeWsEnvelope("SET", "MyCmd", {}, true, own).HAR, m.makeHar(1, 4000, true))
+  assert.equal(m.decodeWsEnvelope({ HAR: m.makeHar(2, 4000, false), VAL: {} }, own).argument, "MyCmd")
+})
+
+test("переход: старый конверт {HDR, ARG, VAL} разбирается в ту же структуру и собирается для старой прошивки", () => {
+  const VAL = { DevSN: "HUB", ModSN: "MOD", Payload: {} }
+  /* Имя и код дают ту же структуру, что новый конверт; флаг ответа - по заголовку */
+  assert.deepEqual(m.decodeLegacyWsEnvelope({ HDR: "GET", ARG: "ModCfg", VAL }), m.decodeWsEnvelope(m.encodeWsEnvelope("GET", "ModCfg", VAL)))
+  assert.deepEqual(m.decodeLegacyWsEnvelope({ HDR: "OK!", ARG: 36, VAL }), { header: "OK!", argument: "ModCfg", code: 36, reply: false, VAL })
+  assert.deepEqual(m.decodeLegacyWsEnvelope({ HDR: "OK!", ARG: 4097, VAL: {} }), { header: "OK!", argument: "4097", code: 4097, reply: false, VAL: {} })
+  for (const bad of [
+    null,
+    { HAR: 73, VAL: {} },
+    { HDR: "PUT", ARG: "ModCfg", VAL: {} },
+    { HDR: "GET", ARG: "NoSuchArg", VAL: {} },
+    { HDR: "GET", ARG: 8192, VAL: {} },
+    { HDR: "GET", ARG: "ModCfg" },
+  ])
+    assert.equal(m.decodeLegacyWsEnvelope(bad), null)
+  /* Ответ старому устройству: имя по словарю, код без имени - числом */
+  assert.deepEqual(m.encodeLegacyWsEnvelope("SET", "JoinDev", { DevToken: "t" }), { HDR: "SET", ARG: "JoinDev", VAL: { DevToken: "t" } })
+  assert.deepEqual(m.encodeLegacyWsEnvelope("GET", 36, VAL), { HDR: "GET", ARG: "ModCfg", VAL })
+  assert.equal(m.encodeLegacyWsEnvelope("GET", 4097, VAL).ARG, 4097)
+  assert.throws(() => m.encodeLegacyWsEnvelope("GET", "NoSuchArg", VAL))
 })

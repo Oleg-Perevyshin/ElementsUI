@@ -66,6 +66,8 @@ export {
 } from "./gui"
 export {
   createFsTransfer,
+  sendCommand,
+  argumentCode,
   FsTransferError,
   FsNameError,
   type FsErrorCode,

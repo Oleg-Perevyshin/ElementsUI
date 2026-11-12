@@ -1,8 +1,6 @@
 /* $lib/gui.ts - чистые правила рендерера GUI устройства (GUIRenderer): сетка, поля смарт-виджетов, битовые поля, сборка пакетов команд, слияние ответа устройства в хранилище значений. Без Svelte - проверяются тестами против dist */
 import { bitFieldGet, bitFieldSet } from "./bitField.js"
 import type { DeviceTransport } from "./fsTransfer"
-import type { Dictionary } from "./protocols/dictionary.js"
-import { wsArgumentName, type WsArgument } from "./protocols/wsEnvelope.js"
 import type { IUIComponentHandler, IWidgetFileSystemInfo, IWidgetStackInfo, UIComponent, UIType } from "./types"
 
 /* Сетка GUI: 23 колонки (2, 3, 4, 6 и 12 равных групп с пустой колонкой между ними), высота строки в rem - общая для конструктора и рендерера */
@@ -190,13 +188,13 @@ export const writeBits = (component: UIComponent, word: unknown, value: unknown)
 }
 
 /* ********************************************************** */
-/* Связь рендерера с выбранным модулем: get - значение переменной (реактивное, если хранилище реактивное), module - переменная другого модуля (колонка keyCol таблицы); set - своё значение до ответа устройства; send и waitFor - транспорт команд */
+/* Связь рендерера с выбранным модулем: get - значение переменной (реактивное, если хранилище реактивное), module - переменная другого модуля (колонка keyCol таблицы); set - своё значение до ответа устройства; send и waitFor - транспорт команд с HAR, dictionary - словарь имён в коды */
 export interface DeviceLink extends DeviceTransport {
   get(key: string, module?: string): unknown
   set?(key: string, value: unknown): void
 }
 
-/* Пакет команды: Payload и локальные записи значений (оптимистичное обновление) */
+/* Пакет команды: заголовок и аргумент именами из eventHandler (в провод их переводит sendCommand в HAR), Payload и локальные записи значений (оптимистичное обновление) */
 export interface DevicePacket {
   header: string
   argument: string
@@ -254,16 +252,14 @@ export const tablePacket = (handler: IUIComponentHandler | undefined, row: objec
 /* Служебные поля диалога SET FS - не состояние устройства */
 const FS_PROTOCOL_KEYS = new Set(["Op", "CurrentID", "ChunkSize", "ChunkIndex", "Name", "FileSize", "CRC32", "Data"])
 
-/* Payload ответа устройства в хранилище значений (Map, SvelteMap): ключ prefix + имя; объект пишется целиком и ещё по полям "имя-поле"; объект без List поверх сохранённого с List - ход закачки CFG.FS, дописывается. Пишутся только изменившиеся значения; ARG кодом (ответ модуля за хабом) переводится в имя по словарю */
+/* Payload ответа устройства в хранилище значений (Map, SvelteMap): ключ prefix + имя; объект пишется целиком и ещё по полям "имя-поле"; объект без List поверх сохранённого с List - ход закачки CFG.FS, дописывается. Пишутся только изменившиеся значения; argument - имя аргумента из разобранного конверта (decodeWsEnvelope) */
 export const mergeDevicePayload = (
   values: { get(key: string): unknown; set(key: string, value: never): unknown },
   prefix: string,
-  arg: WsArgument,
+  argument: string,
   payload: unknown,
-  dictionary?: Dictionary,
 ) => {
   if (!isRecord(payload)) return
-  const argument = wsArgumentName(arg, dictionary)
   const put = (key: string, value: unknown) => {
     if (values.get(key) !== value) values.set(key, value as never)
   }

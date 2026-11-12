@@ -28,10 +28,6 @@ export type XPoeDebugItem =
     }
   | { type: "raw"; text: string }
 
-/* HAR по строкам словаря (по умолчанию встроенного); неизвестные заголовок или аргумент - ошибка */
-export const xPoeDebugHar = (header: string, argument: string, reply = true, dictionary: Dictionary = DEFAULT_DICTIONARY): number =>
-  dictionary.har(header, argument, reply)
-
 /* Команда терминала - пакет из одной записи; value - CBOR item Payload, пустой - null */
 export const encodeXPoeDebugFrame = (
   header: string,

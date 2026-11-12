@@ -78,9 +78,6 @@ test("слияние ответа: объект целиком и по поля�
   assert.equal(map.get("M|Op"), "x")
   gui.mergeDevicePayload(map, "M|", "ModCfg", [1, 2])
   assert.equal(map.size, 6)
-  /* ARG кодом (FS = 22) - служебные поля SET FS так же пропускаются */
-  gui.mergeDevicePayload(map, "M|", 22, { ChunkIndex: 3 })
-  assert.equal(map.has("M|ChunkIndex"), false)
 })
 
 test("сетка: аккордеон и смарт-виджеты - одна строка", () => {

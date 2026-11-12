@@ -1,5 +1,6 @@
 /* $lib/fsTransfer.ts - обмен файлами с устройством по SET/GET FS (file_system прошивки): закачка, скачивание, список, удаление. Транспорт - у приложения (send, waitFor), операции идут строго по одной */
 import { crc32 } from "./protocols/crc.js"
+import { DEFAULT_DICTIONARY, encodeHar, type Dictionary } from "./protocols/dictionary.js"
 import type { IWidgetFileSystemInfo } from "./types"
 
 /* Ответ устройства на команду: ok - OK!, иначе ER!; payload - Payload ответа, message - Message */
@@ -9,15 +10,27 @@ export interface DeviceReply {
   message?: string
 }
 
-/* Транспорт к выбранному модулю: send - пакет без ответа, аргумент - имя (конверт DevSN/ModSN собирает приложение через wsEnvelope: модулю за хабом ARG уходит кодом); waitFor - первый ответ OK! или ER! с аргументом argument (имя, входящий код приложение переводит readWsEnvelope), для которого match вернул true, null - таймаут. waitFor вызывается до send */
+/* Транспорт к выбранному модулю: send - команда с готовым HAR (заголовок, код аргумента, флаг ответа), приложение кладёт её в конверт {HAR, VAL: {DevSN, ModSN, Payload}}; waitFor - первый ответ OK! или ER! с кодом аргумента code, для которого match вернул true, null - таймаут. waitFor вызывается до send. dictionary - словарь для перевода имён в коды, по умолчанию встроенный */
 export interface DeviceTransport {
-  send(header: string, argument: string, payload: Record<string, unknown>): unknown
-  waitFor(argument: string, match: (reply: DeviceReply) => boolean, timeoutMs: number): Promise<DeviceReply | null>
+  dictionary?: Dictionary
+  send(har: number, payload: Record<string, unknown>): unknown
+  waitFor(code: number, match: (reply: DeviceReply) => boolean, timeoutMs: number): Promise<DeviceReply | null>
 }
 
+/* Код аргумента (имя или код) по словарю транспорта; неизвестное имя - ошибка */
+export const argumentCode = (transport: DeviceTransport, argument: string | number): number => {
+  const code = typeof argument === "number" ? argument : (transport.dictionary ?? DEFAULT_DICTIONARY).code(argument)
+  if (code === undefined) throw new Error(`Аргумент отсутствует в словаре: ${argument}`)
+  return code
+}
+
+/* Команда по именам заголовка и аргумента: HAR по словарю транспорта, по умолчанию с флагом ответа; неизвестное имя - ошибка */
+export const sendCommand = (transport: DeviceTransport, header: string, argument: string | number, payload: Record<string, unknown>, reply = true) =>
+  transport.send(encodeHar(header, argument, reply, transport.dictionary), payload)
+
 export interface FsTransferOptions {
-  /* Аргумент команд, по умолчанию "FS" */
-  argument?: string
+  /* Аргумент команд (имя или код), по умолчанию "FS" */
+  argument?: string | number
   /* Ожидание ответа на шаг, мс, по умолчанию 5000 */
   timeoutMs?: number
   /* Повторов чанка после ER! или таймаута, по умолчанию 3 */
@@ -86,8 +99,8 @@ export const createFsTransfer = (transport: DeviceTransport, options: FsTransfer
 
   /* Команда и ответ на неё; ER! и таймаут - исключение с текстом устройства */
   const request = async (header: string, payload: Record<string, unknown>, match: (reply: DeviceReply) => boolean, step: string) => {
-    const pending = transport.waitFor(argument, match, timeoutMs)
-    transport.send(header, argument, payload)
+    const pending = transport.waitFor(argumentCode(transport, argument), match, timeoutMs)
+    sendCommand(transport, header, argument, payload)
     const reply = await pending
     if (!reply) throw new FsTransferError("timeout", { step }, `${step}: timeout`)
     if (!reply.ok) throw new FsTransferError("device", { step, message: reply.message || "ER!" }, reply.message || `${step}: ER!`)

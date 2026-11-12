@@ -213,8 +213,8 @@ ElementsUI/
 3. Рендерер переводит тексты (`localizeDeep`, кэш по ссылке и языку), строит дерево вложенности по `parentId` (дети `Accordion` и `Tabs`), раскладывает сетку и для каждого компонента берёт значение через `link.get(key)`.
 4. Пользователь меняет значение. Компонент вызывает `onUpdate`, рендерер собирает пакет `commandPacket(eventHandler, get, [key, value])`: если в `eventHandler.Value` готовый JSON - он и есть Payload, иначе Payload собирается из `Variables` (ключ `группа-поле` становится вложенным объектом). Битовые поля пишутся через `writeBits`.
 5. Рендерер записывает значение заранее (`link.set`, оптимистичное обновление) и отправляет `link.send(header, argument, payload)`. При `Argument: "NoSend"` значение только записывается, пакет не уходит.
-6. Приложение заворачивает команду в свой транспорт (WebSocket-конверт с `DevSN`/`ModSN`, функция `wsEnvelope`: модулю за хабом `ARG` уходит кодом из словаря), устройство отвечает `OK!`/`ER!`. Входящий конверт приложение пропускает через `readWsEnvelope` (числовой `ARG` в имя).
-7. Приложение кладёт ответ в реактивное хранилище (`SvelteMap`) функцией `mergeDevicePayload(values, "<ModSN>|", ARG, Payload)` (`ARG` строкой или кодом). `get` читает это хранилище, рендерер обновляется сам.
+6. Рендерер переводит имена команды в число `HAR` по словарю (`sendCommand`) и отдаёт его в `link.send(har, payload)`. Приложение заворачивает его в WebSocket-конверт `{HAR, VAL: {DevSN, ModSN, Payload}}`, устройство отвечает `OK!`/`ER!`. Входящий конверт приложение разбирает `decodeWsEnvelope` в `{ header, argument, code, reply, VAL }`.
+7. Приложение кладёт ответ в реактивное хранилище (`SvelteMap`) функцией `mergeDevicePayload(values, "<ModSN>|", argument, Payload)` (`argument` - имя из разобранного конверта). `get` читает это хранилище, рендерер обновляется сам.
 
 Смарт-виджеты работают с группой полей по префиксу (`CFG`, `LST`, `MAV`): читают `readWidgetFields`, сохраняют одним `SET ModCfg` из `widgetPacket` (только поля из `WIDGET_SAVE_FIELDS`). Поиск сетей - `GET APsList` с ожиданием ответа 3000 мс, перезагрузка - `SET Restart`, сброс - `SET RstNVS`, обновление снимков - `GET FS` и `GET StackInfo`. Файлы `WidgetFileSystem` и `FileAttach` рендерер ведёт сам через `createFsTransfer(link)`.
 
@@ -262,7 +262,7 @@ ElementsUI/
 - 🔁 **Компонент говорит колбэками:** `onUpdate` - значение принято, `onInput` - значение во время ввода, `onPropertyChange` - правка свойств в конструкторе.
 - 🌉 **Рендерер связан с приложением через `DeviceLink`:** читать значение, записать, отправить команду, дождаться ответа.
 - 📦 **Пакет по проводу - `poe_cbor_pkt`:** адрес получателя и отправителя, заголовок с командой, тело и CRC.
-- 📖 **Команда - имя или номер из словаря** `dictionary.yaml`.
+- 📖 **Команда в проводе - число `HAR`** (заголовок, код из словаря `dictionary.yaml`, флаг ответа) и на шине, и в WebSocket-конверте `{HAR, VAL}`. Имена - только для людей.
 - 📁 **Файлы передаются командой `SET FS`** по кускам с повторами и проверкой CRC-32.
 
 <details>
@@ -363,13 +363,13 @@ interface DeviceReply {
 - Разборщики: пауза дольше `gapMs` (по умолчанию 100 мс; у CAN - `sessionTimeoutMs`) сбрасывает недособранное, предел `maxBytes` по умолчанию 8192. Пауза RS485 в прошивке - 20 мс.
 - Пример `GET ModCfg {}` из терминала: `9F 85 00 00 18 49 A0 19 66 06 FF` (HAR `0x0049`, CRC `0x6606`).
 
-| Канал                   | Передача                                                                                                                                                                                                                                                                                                                                     |
-| ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| CAN, CAN FD             | Кадры 8 или 64 байта; 11-битный ID: бит 10 - последний кадр (`CAN_FINAL_BIT`), биты 0-9 - номер пакета                                                                                                                                                                                                                                       |
-| RS485                   | Сплошной поток, поиск `0x9F 0x85`                                                                                                                                                                                                                                                                                                            |
-| LoRa                    | Пакет целиком в одном радиокадре                                                                                                                                                                                                                                                                                                             |
-| UART-консоль xPOE-Debug | Поток вперемешку с текстом загрузчика; логи `OK! DebugLog` `[уровень, тег, текст \| байты, FHS]`, графики `OK! DebugPlot` `{"Группа.Имя": float32}`                                                                                                                                                                                          |
-| WebSocket               | Свой конверт: запрос `{HDR, ARG, VAL: {DevSN, ModSN?, TrgBusID?, SrcBusID?, Payload?}}`, ответ `{HDR, ARG, VAL: {DevSN, ModSN, Message, Payload}}`; заголовок строкой, команда строкой, а для модуля за хабом (`ModSN` не равен `DevSN`) и в ответе модуля, имени которого хаб не знает, - кодом из словаря (`wsEnvelope`, `readWsEnvelope`) |
+| Канал                   | Передача                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| CAN, CAN FD             | Кадры 8 или 64 байта; 11-битный ID: бит 10 - последний кадр (`CAN_FINAL_BIT`), биты 0-9 - номер пакета                                                                                                                                                                                                                                                                                                                                                                                                        |
+| RS485                   | Сплошной поток, поиск `0x9F 0x85`                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| LoRa                    | Пакет целиком в одном радиокадре                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| UART-консоль xPOE-Debug | Поток вперемешку с текстом загрузчика; логи `OK! DebugLog` `[уровень, тег, текст \| байты, FHS]`, графики `OK! DebugPlot` `{"Группа.Имя": float32}`                                                                                                                                                                                                                                                                                                                                                           |
+| WebSocket               | Конверт `{HAR, VAL}` на всех соединениях (браузер - облако, облако - устройство, WebApp - устройство): `HAR` - то же 16-битное число, что на шине (заголовок, код из словаря, флаг ответа), имён в проводе нет. Запрос `VAL: {DevSN, ModSN?, TrgBusID?, SrcBusID?, Payload?}`, ответ `VAL: {DevSN, ModSN, Message, Payload}`. Сборка и разбор - `encodeWsEnvelope`, `decodeWsEnvelope`; на один выпуск для перехода облака - `decodeLegacyWsEnvelope`, `encodeLegacyWsEnvelope` для старого `{HDR, ARG, VAL}` |
 
 Аутентификация устройства в облаке (TOFU) описана в `PROTOCOL.md`: токен 64 hex-символа, передаётся `Authorization: Bearer`, выдаётся в `SET JoinDev {DevToken}`, неверный токен после подтверждения - закрытие кодом `1008`.
 
@@ -378,17 +378,19 @@ interface DeviceReply {
 <details>
 <summary>📖 Словарь команд (`dictionary.yaml`)</summary>
 
-Строка словаря: `- [Строка, Перечисление, Код]`, код 0..8191 (13 бит). Группы кодов:
+Строка словаря: `- [Строка, Перечисление, Код]`, код 0..8191 (13 бит). Диапазоны: 0-4095 - команды устройств, 7000-7999 - команды самого облака DevCloud по `/ws` (устройства их не получают), 4096-6999 и 8000-8191 - резерв. Группы кодов:
 
-| Диапазон | Группа                      | Примеры                                                                                                                                                          |
-| -------- | --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 0        | нет аргумента               | `Unknown`                                                                                                                                                        |
-| 1-15     | служебные                   | `Restart` 1, `DefCfg` 2, `DlFW` 3, `RstNVS` 5, `LocTime` 6, `Update` 7, `StackInfo` 8, `BackUp` 9, `BindMKey` 10, `DebugLog` 11, `DebugPlot` 12, `DataStream` 15 |
-| 21-25    | локальная сеть              | `APsList` 21, `FS` 22, `JoinDev` 23, `JoinUser` 24, `LeaveUser` 25                                                                                               |
-| 31-46    | модули изделия              | `ModFind` 31, `ModList` 32, `ModCap` 33, `ModInfo` 34, `ModMode` 35, `ModCfg` 36, телеметрия `ModT1-5` 37-41, потоки `ModS1-5` 42-46                             |
-| 51-54    | обновление прошивки по шине | `FwUpgS`, `FwUpgP`, `FwUpgD`, `FwUpgE`                                                                                                                           |
-| 111-117  | модули перемещения          | `MotInit`, `MotMode`, `MotPos`, `MotPID`, `MotInfo`, `MotCfg`, `MotCal`                                                                                          |
-| 141-144  | модули ориентации           | `OrData`, `OrOfs`, `OrAccCal`, `OrMagCal`                                                                                                                        |
+| Диапазон  | Группа                      | Примеры                                                                                                                                                                                              |
+| --------- | --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 0         | нет аргумента               | `Unknown`                                                                                                                                                                                            |
+| 1-15      | служебные                   | `Restart` 1, `DefCfg` 2, `DlFW` 3, `RstNVS` 5, `LocTime` 6, `Update` 7, `StackInfo` 8, `BackUp` 9, `BindMKey` 10, `DebugLog` 11, `DebugPlot` 12, `DataStream` 15                                     |
+| 21-25     | локальная сеть              | `APsList` 21, `FS` 22, `JoinDev` 23, `JoinUser` 24, `LeaveUser` 25                                                                                                                                   |
+| 31-46     | модули изделия              | `ModFind` 31, `ModList` 32, `ModCap` 33, `ModInfo` 34, `ModMode` 35, `ModCfg` 36, телеметрия `ModT1-5` 37-41, потоки `ModS1-5` 42-46                                                                 |
+| 51-54     | обновление прошивки по шине | `FwUpgS`, `FwUpgP`, `FwUpgD`, `FwUpgE`                                                                                                                                                               |
+| 111-117   | модули перемещения          | `MotInit`, `MotMode`, `MotPos`, `MotPID`, `MotInfo`, `MotCfg`, `MotCal`                                                                                                                              |
+| 141-144   | модули ориентации           | `OrData`, `OrOfs`, `OrAccCal`, `OrMagCal`                                                                                                                                                            |
+| 7000-7011 | облако: чаты                | `ChatMessage` 7000, `ChatMessages`, `SystemMessage`, `EditMessage`, `DeleteMessage`, `UpdateLastRead`, `JoinChat`, `UserConnected`, `ChatUnread`, `ChatPins`, `EditChatGroup`, `RemoveFromChat` 7011 |
+| 7100-7104 | облако: устройства          | `DeviceMessages` 7100, `DeviceConnection` 7101, `LeaveGroup` 7102, `LeaveGroups` 7103, `ResetDevToken` 7104                                                                                          |
 
 Задел: `BackUp`, `BindMKey`, `ModList`, `ModMode`, `ModT2-ModT5`, `FwUpgE`, `OrOfs`, `OrAccCal`, `OrMagCal` есть в словаре, но ни одна прошивка ESP/STM их пока не обрабатывает. Коды закреплены и не меняются, описания в `dictionary.yaml` - план, а не текущее поведение. В примерах документации берут команды, которые прошивки реально обрабатывают: `ModCfg`, `ModInfo`, `FS`, `APsList`, `StackInfo`.
 
@@ -886,12 +888,13 @@ interface DeviceReply {
 interface DeviceLink {
   get(key: string, module?: string): unknown /* значение переменной без префикса модуля; module - другой модуль (keyCol таблицы) */
   set?(key: string, value: unknown): void /* своё значение до ответа устройства */
-  send(header: string, argument: string, payload: Record<string, unknown>): unknown /* конверт DevSN/ModSN добавляет приложение */
+  dictionary?: Dictionary /* словарь имён в коды, по умолчанию встроенный */
+  send(har: number, payload: Record<string, unknown>): unknown /* готовый HAR; конверт {HAR, VAL: {DevSN, ModSN, Payload}} собирает приложение */
   waitFor(
-    argument: string,
+    code: number,
     match: (reply: DeviceReply) => boolean,
     timeoutMs: number,
-  ): Promise<DeviceReply | null> /* первый OK!/ER! с этим аргументом; null - таймаут */
+  ): Promise<DeviceReply | null> /* первый OK!/ER! с этим кодом аргумента; null - таймаут */
 }
 interface DeviceReply {
   ok: boolean
@@ -901,28 +904,34 @@ interface DeviceReply {
 ```
 
 - `get` читает реактивное хранилище (`SvelteMap`), тогда рендерер обновляется сам.
-- Ответы устройства приложение кладёт в хранилище функцией `mergeDevicePayload(values, "<ModSN>|", ARG, Payload)`: объект пишется целиком и по полям `имя-поле`, ход закачки `CFG.FS` дописывается к снимку, служебные поля `SET FS` пропускаются. `ARG` может быть числом (кодом из словаря) - функция сама переводит его в имя.
-- Отправка `SET Restart` и `SET RstNVS` идёт через `link.send`, приложение может по ним показать состояние перезагрузки.
+- Ответы устройства приложение кладёт в хранилище функцией `mergeDevicePayload(values, "<ModSN>|", argument, Payload)`: объект пишется целиком и по полям `имя-поле`, ход закачки `CFG.FS` дописывается к снимку, служебные поля `SET FS` пропускаются. `argument` - имя из разобранного конверта (`decodeWsEnvelope`).
+- Отправка `SET Restart` и `SET RstNVS` идёт через `link.send`, приложение узнаёт их по `HAR` (`encodeHar("SET", "Restart")`) и может показать состояние перезагрузки.
+- Имя аргумента не из словаря рендерер не отправляет и сообщает через `onError`.
 
 </details>
 
 <details>
-<summary>🔢 Команды модулю за хабом: ARG числом</summary>
+<summary>🔢 Команды в провод: HAR</summary>
 
-Рендерер всегда передаёт в `link.send` и `link.waitFor` имя аргумента (`"ModCfg"`). Конверт WebSocket собирает приложение, и для модуля за хабом аргумент в нём - число из словаря. Подробно - раздел «WebSocket» в [PROTOCOL.md](src/lib/protocols/PROTOCOL.md).
+В `eventHandler` команда записана именами (`SET`, `ModCfg`) - это справка автора GUI. В `link.send` рендерер отдаёт уже число `HAR` (заголовок, код из словаря, флаг ответа), а ответ ждёт по коду аргумента. Конверт WebSocket `{HAR, VAL}` собирает приложение. Подробно - раздел «WebSocket» в [PROTOCOL.md](src/lib/protocols/PROTOCOL.md).
 
-- В `send` собирайте конверт функцией `wsEnvelope(header, argument, { DevSN, ModSN, Payload })` из `poe-svelte-ui-lib/protocols`. Если `ModSN` задан и не равен `DevSN`, `ARG` станет кодом (`ModCfg` - 36), иначе останется именем.
-- Входящий конверт сначала пропустите через `readWsEnvelope(packet)`: числовой `ARG` станет именем, и `waitFor`, `mergeDevicePayload` и обработчики приложения работают с именами как раньше.
-- У устройства со своим словарём передайте его последним аргументом (`createDictionary(parseArgumentDictionary(text))`), иначе берётся встроенный `DEFAULT_DICTIONARY`.
+- Свою команду по именам приложение шлёт так же: `sendCommand(link, header, argument, payload)` (аргумент - имя или код), код для ожидания - `argumentCode(link, argument)`.
+- Входящий конверт разберите `decodeWsEnvelope(packet)`: получите `{ header, argument, code, reply, VAL }`. По `code` будите `waitFor`, по `argument` зовите `mergeDevicePayload`.
+- У устройства со своим словарём положите его в `link.dictionary` и передайте в `decodeWsEnvelope` (`createDictionary(parseArgumentDictionary(text))`), иначе берётся встроенный `DEFAULT_DICTIONARY`.
 
 ```ts
-import { wsEnvelope, readWsEnvelope } from "poe-svelte-ui-lib/protocols"
+import { encodeWsEnvelope, decodeWsEnvelope, valueToCbor, cborToValue } from "poe-svelte-ui-lib/protocols"
 
 const link: DeviceLink = {
-  send: (header, argument, payload) => socket.send(valueToCbor(wsEnvelope(header, argument, { DevSN: hub.DevSN, ModSN: module.ModSN, Payload: payload }))),
+  send: (har, payload) => socket.send(valueToCbor({ HAR: har, VAL: { DevSN: hub.DevSN, ModSN: module.ModSN, Payload: payload } })),
   /* ... */
 }
-socket.onmessage = (event) => handle(readWsEnvelope(cborToValue(new Uint8Array(event.data))))
+socket.onmessage = (event) => {
+  const message = decodeWsEnvelope(cborToValue(new Uint8Array(event.data)))
+  if (message) handle(message) /* message.header === "OK!", message.code === 36, message.argument === "ModCfg" */
+}
+/* Своя команда облаку или устройству по именам */
+socket.send(valueToCbor(encodeWsEnvelope("SET", "JoinDev", { DevSN, Watch: true })))
 ```
 
 </details>
@@ -954,7 +963,7 @@ socket.onmessage = (event) => handle(readWsEnvelope(cborToValue(new Uint8Array(e
 <details>
 <summary>📁 Обмен файлами</summary>
 
-`createFsTransfer(transport, { argument = "FS", timeoutMs = 5000, retries = 3, maxNameLength = 31 })` - обмен файлами по `SET FS` прошивки. `maxNameLength` - предел имени в байтах UTF-8 (буква кириллицы - 2 байта). Слишком длинное или пустое имя `upload` отвергает ещё до `UploadStart` ошибкой `FsNameError` (поле `maxBytes`). Это единственная проверка имени: `GUIRenderer` передаёт сюда `maxNameLength` из свойств `WidgetFileSystem`, сам виджет имя не проверяет и только переводит сообщение.
+`createFsTransfer(transport, { argument = "FS", timeoutMs = 5000, retries = 3, maxNameLength = 31 })` - обмен файлами по `SET FS` прошивки. `transport` - тот же `DeviceLink` (`send(har, payload)`, `waitFor(code, ...)`), `argument` - имя или код; имя не из словаря - отказ без отправки. `maxNameLength` - предел имени в байтах UTF-8 (буква кириллицы - 2 байта). Слишком длинное или пустое имя `upload` отвергает ещё до `UploadStart` ошибкой `FsNameError` (поле `maxBytes`). Это единственная проверка имени: `GUIRenderer` передаёт сюда `maxNameLength` из свойств `WidgetFileSystem`, сам виджет имя не проверяет и только переводит сообщение.
 
 <details>
 <summary>Ошибки передачи</summary>
@@ -997,7 +1006,8 @@ socket.onmessage = (event) => handle(readWsEnvelope(cborToValue(new Uint8Array(e
 - 🚌 резать пакет на кадры CAN и CAN FD и собирать обратно, общаться со slcan-адаптером;
 - 🖥️ разбирать поток консоли xPOE-Debug, где пакеты идут вперемешку с текстом загрузчика;
 - 🐞 показывать отладочные логи `DebugLog` и графики `DebugPlot` из прошивки;
-- 🔄 переводить значения между JSON и CBOR.
+- 🔄 переводить значения между JSON и CBOR;
+- 🌐 собирать и разбирать WebSocket-конверт `{HAR, VAL}` (`encodeWsEnvelope`, `decodeWsEnvelope`): команда в нём то же число `HAR`, что на шине.
 
 Формат пакета, адресация, транспорты и список функций описаны в [PROTOCOL.md](src/lib/protocols/PROTOCOL.md).
 
@@ -1019,7 +1029,7 @@ socket.onmessage = (event) => handle(readWsEnvelope(cborToValue(new Uint8Array(e
 
 #### 📖 Словарь команд
 
-Все команды (`GET`, `SET`, `ModCfg`, `Restart` и остальные) записаны в одном файле `src/lib/protocols/dictionary.yaml`. Новую команду сначала добавляют сюда, потом копируют в оба фреймворка прошивок.
+Все команды (`GET`, `SET`, `ModCfg`, `Restart` и остальные) записаны в одном файле `src/lib/protocols/dictionary.yaml`. Новую команду сначала добавляют сюда, потом копируют в оба фреймворка прошивок. Коды 0-4095 - команды устройств, 7000-7999 - команды самого облака DevCloud (чаты, журнал, состояние устройств).
 
 <details>
 <summary>⚙️ Как словарь попадает в код</summary>
@@ -1289,23 +1299,23 @@ const canModal = createRawSnippet((row: () => CanRow) => ({ render: () => `<div 
 
 Оба `GUIPreview.svelte` (DevCloud, WebApp) заменяются на `GUIRenderer`, приложение оставляет транспорт, список модулей, загрузку GUI и свои мосты потоков.
 
-| Было в приложении                                                                                                                            | Стало                                                                                               |
-| -------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| сетка и `{#snippet Components}` с ветвью на каждый тип, кэш `localizeDeep`                                                                   | `<UI.GUIRenderer components link persistKey viewer render onError />`                               |
-| `handleUIComponentEvent`, сборка Payload из `Variables`, `onClick` таблицы                                                                   | внутри рендерера (`commandPacket`, `tablePacket`)                                                   |
-| `bitFieldGet`/`bitFieldSet` у `Input` и `Select`, `-S` варианты `Select`, колонки-списки таблицы                                             | внутри рендерера (`readBits`, `writeBits`)                                                          |
-| `readWidgetFields`, `saveWidgetFields`, `sendWidgetCommand`, `readFileSystem`, `readStackInfo`, `scanWiFiNetworks`, `WIDGET_FIELDS` (WebApp) | внутри рендерера (`WIDGET_FIELDS`, `readWidgetFields`, `widgetPacket`)                              |
-| `uploadFile`, `downloadFile`, `fsStep`, `withRetry`, `handleFileUpload`, `crc32` приложения                                                  | `createFsTransfer(link)`, рендерер ведёт сам; `crc32` из `poe-svelte-ui-lib/protocols`              |
-| планы карты в `localStorage` (`loadMission`, `saveMission`)                                                                                  | рендерер по `persistKey`                                                                            |
-| `applyPayload` и разбор Payload в эффекте (`DATA_PAYLOAD_ARGS`, `FS_PROTOCOL_KEYS`, `topLevelToFlatten`)                                     | `mergeDevicePayload(values, "<ModSN>\|", ARG, Payload)`; набор ARG остаётся у приложения            |
-| начальные значения переменных компонентов (`0` или `""`) после загрузки GUI                                                                  | не нужны: компонент без значения берёт своё по умолчанию                                            |
-| `VideoViewerRemote` в ветке `VideoViewer`                                                                                                    | `render={{ VideoViewer: snippet }}`                                                                 |
-| `common.ts`: `CELL_HEIGHT`, `UIAreaCols`, `spanRows`, `isWidgetType`, `WIDGET_FIELD_GROUPS`, `WIDGET_EDITABLE_FIELD_GROUPS`                  | `GUI_GRID`, `spanRows`, `isWidgetType`, `WIDGET_FIELDS`, `WIDGET_SAVE_FIELDS`, `componentVariables` |
-| `common.ts`: `DEFAULT_PROPS`, `componentMap`, `WIDGET_MIN_WIDTH`, `minWidthOf`                                                               | `COMPONENT_DEFAULTS`, `COMPONENT_SIZES`, `minComponentWidth` (`/constructor`)                       |
-| `ConstructorUI`: `switch` по типу в `createComponent`, свой `updateComponent` для `properties`                                               | `createComponent(type, { col, row }, parentId, { tab, areaWidth })`, `applyPropertyChange`          |
-| ветвь панели на каждый тип с `as UI.UIComponent & { properties: Partial<...> }`                                                              | `{@const Panel = PANELS[c.type]}<Panel component={c} {onPropertyChange} />`                         |
-| `component.properties as UI.IButtonProps`                                                                                                    | `if (component.type === "Button")` - `properties` уже `IButtonProps`                                |
-| `IWidgetWiFiConfig` и др. - отдельные интерфейсы, `value` виджета - полный объект                                                            | выведены из `WIDGET_FIELDS`; `value` у `WidgetWiFi` и `WidgetDeviceInfo` - `Partial`                |
+| Было в приложении                                                                                                                            | Стало                                                                                                |
+| -------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| сетка и `{#snippet Components}` с ветвью на каждый тип, кэш `localizeDeep`                                                                   | `<UI.GUIRenderer components link persistKey viewer render onError />`                                |
+| `handleUIComponentEvent`, сборка Payload из `Variables`, `onClick` таблицы                                                                   | внутри рендерера (`commandPacket`, `tablePacket`)                                                    |
+| `bitFieldGet`/`bitFieldSet` у `Input` и `Select`, `-S` варианты `Select`, колонки-списки таблицы                                             | внутри рендерера (`readBits`, `writeBits`)                                                           |
+| `readWidgetFields`, `saveWidgetFields`, `sendWidgetCommand`, `readFileSystem`, `readStackInfo`, `scanWiFiNetworks`, `WIDGET_FIELDS` (WebApp) | внутри рендерера (`WIDGET_FIELDS`, `readWidgetFields`, `widgetPacket`)                               |
+| `uploadFile`, `downloadFile`, `fsStep`, `withRetry`, `handleFileUpload`, `crc32` приложения                                                  | `createFsTransfer(link)`, рендерер ведёт сам; `crc32` из `poe-svelte-ui-lib/protocols`               |
+| планы карты в `localStorage` (`loadMission`, `saveMission`)                                                                                  | рендерер по `persistKey`                                                                             |
+| `applyPayload` и разбор Payload в эффекте (`DATA_PAYLOAD_ARGS`, `FS_PROTOCOL_KEYS`, `topLevelToFlatten`)                                     | `mergeDevicePayload(values, "<ModSN>\|", argument, Payload)`; набор аргументов остаётся у приложения |
+| начальные значения переменных компонентов (`0` или `""`) после загрузки GUI                                                                  | не нужны: компонент без значения берёт своё по умолчанию                                             |
+| `VideoViewerRemote` в ветке `VideoViewer`                                                                                                    | `render={{ VideoViewer: snippet }}`                                                                  |
+| `common.ts`: `CELL_HEIGHT`, `UIAreaCols`, `spanRows`, `isWidgetType`, `WIDGET_FIELD_GROUPS`, `WIDGET_EDITABLE_FIELD_GROUPS`                  | `GUI_GRID`, `spanRows`, `isWidgetType`, `WIDGET_FIELDS`, `WIDGET_SAVE_FIELDS`, `componentVariables`  |
+| `common.ts`: `DEFAULT_PROPS`, `componentMap`, `WIDGET_MIN_WIDTH`, `minWidthOf`                                                               | `COMPONENT_DEFAULTS`, `COMPONENT_SIZES`, `minComponentWidth` (`/constructor`)                        |
+| `ConstructorUI`: `switch` по типу в `createComponent`, свой `updateComponent` для `properties`                                               | `createComponent(type, { col, row }, parentId, { tab, areaWidth })`, `applyPropertyChange`           |
+| ветвь панели на каждый тип с `as UI.UIComponent & { properties: Partial<...> }`                                                              | `{@const Panel = PANELS[c.type]}<Panel component={c} {onPropertyChange} />`                          |
+| `component.properties as UI.IButtonProps`                                                                                                    | `if (component.type === "Button")` - `properties` уже `IButtonProps`                                 |
+| `IWidgetWiFiConfig` и др. - отдельные интерфейсы, `value` виджета - полный объект                                                            | выведены из `WIDGET_FIELDS`; `value` у `WidgetWiFi` и `WidgetDeviceInfo` - `Partial`                 |
 
 Транспорт `waitFor` в WebApp уже есть (`WebSocketStore.ts`): он ждёт первый пакет `OK!`/`ER!` с аргументом, прошедший `match`, или возвращает `null` по таймауту.
 
@@ -2768,7 +2778,7 @@ ModalStack.close(id) // убрать
 - 📬 В пакете есть адрес получателя, адрес отправителя, команда, данные и контрольная сумма.
 - 📨 В одном пакете может быть несколько записей, в том числе разным получателям.
 - 🛡️ Каждая запись защищена своей контрольной суммой: испорченная запись пропускается, остальные принимаются.
-- 🌐 Свой конверт есть только у WebSocket, через который с устройством говорят облако и локальный веб-интерфейс.
+- 🌐 У WebSocket свой конверт `{HAR, VAL}`: команда в нём то же число `HAR`, что на шине. Так говорят браузер с облаком, облако с устройством и веб-интерфейс ESP с устройством.
 - 🔐 Устройство доказывает облаку, что оно то самое, токеном, который получает при первом подключении.
 
 #### 🧩 Где живёт код
@@ -2811,7 +2821,7 @@ ModalStack.close(id) // убрать
 
 - 🙋 Устройство отвечает только на запрос с флагом ответа. Сам ответ всегда без флага.
 - 📈 Телеметрию и потоки данных шлют без флага, чтобы не ждать подтверждений.
-- 🔢 Имена `"GET"` и `"ModCfg"` по проводу не передаются, только коды.
+- 🔢 Имена `"GET"` и `"ModCfg"` не передаются ни по шине, ни по WebSocket, только коды. Имена нужны людям: интерфейсы, журналы и документация расшифровывают `HAR` по словарю.
 
 <details>
 <summary>🔬 Раскладка битов</summary>
@@ -2822,13 +2832,46 @@ ModalStack.close(id) // убрать
 бит 0       ответ      1 - получатель должен ответить
 ```
 
-В прошивке `HAR` это `har_t` из `api_har.h`, собирается макросами `HAR(h, a)` (с ответом) и `HAR_NR(h, a)` (без). В библиотеке это `makeHar` и `splitHar`. `makeHar` и `encodePacket` бросают `RangeError`, если заголовок, команда, BusID или HAR вне диапазона.
+В прошивке `HAR` это `har_t` из `api_har.h`, собирается макросами `HAR(h, a)` (с ответом) и `HAR_NR(h, a)` (без). В библиотеке числами это `makeHar` и `splitHar`, словами - `encodeHar(заголовок, аргумент, ответ?, словарь?)` (аргумент - имя или код) и `decodeHar(har, словарь?)`, который возвращает `{ header, argument, code, reply }`. `makeHar`, `encodeHar` и `encodePacket` бросают `RangeError`, если заголовок, команда, BusID или HAR вне диапазона; `encodeHar` с неизвестным заголовком или именем не из словаря бросает `Error`.
 
 </details>
 
 #### 📖 Словарь команд
 
-Коды команд записаны в одном файле: `dictionary.yaml` этой библиотеки. Все отладочные команды начинаются с `Debug`: `DebugLog` это 11, `DebugPlot` это 12.
+Коды команд записаны в одном файле: `dictionary.yaml` этой библиотеки. Им пользуются все: прошивки, облако, терминал и веб-интерфейс. Все отладочные команды начинаются с `Debug`: `DebugLog` это 11, `DebugPlot` это 12.
+
+- 🔧 Команды устройств - коды 0-4095.
+- ☁️ Команды самого облака DevCloud (чаты, журнал, состояние устройств) - коды 7000-7999.
+- 🧱 4096-6999 и 8000-8191 - резерв.
+
+<details>
+<summary>☁️ Облако: коды команд DevCloud</summary>
+
+Эти команды ходят только между браузером и облаком по `/ws`, устройства их не получают. Команды устройств, которыми пользуется и облако (`JoinDev` 23, `JoinUser` 24, `LeaveUser` 25, `FS` 22, `Update` 7, `DataStream` 15, `ModCfg` 36 и другие), остаются со своими кодами.
+
+| Код  | Имя                | Заголовки | Что делает                               |
+| ---- | ------------------ | --------- | ---------------------------------------- |
+| 7000 | `ChatMessage`      | SET       | Новое сообщение в чат                    |
+| 7001 | `ChatMessages`     | GET, OK!  | Страница истории чата                    |
+| 7002 | `SystemMessage`    | SET       | Сообщение в системный чат, администратор |
+| 7003 | `EditMessage`      | SET, OK!  | Правка своего сообщения                  |
+| 7004 | `DeleteMessage`    | SET, OK!  | Удаление своего сообщения                |
+| 7005 | `UpdateLastRead`   | SET       | Чат прочитан, вкладка чата закрыта       |
+| 7006 | `JoinChat`         | SET, OK!  | Вход в чат                               |
+| 7007 | `UserConnected`    | SET       | Собеседник открыл чат                    |
+| 7008 | `ChatUnread`       | OK!       | Число непрочитанных в чате               |
+| 7009 | `ChatPins`         | OK!       | Закреплённые чаты пользователя           |
+| 7010 | `EditChatGroup`    | OK!       | Чат создан или изменён                   |
+| 7011 | `RemoveFromChat`   | OK!       | Пользователь удалён из чата              |
+| 7100 | `DeviceMessages`   | GET, OK!  | Страница журнала устройства              |
+| 7101 | `DeviceConnection` | OK!       | Устройство в сети или ушло из сети       |
+| 7102 | `LeaveGroup`       | SET, OK!  | Выход из группы устройства               |
+| 7103 | `LeaveGroups`      | SET       | Выход из групп всех устройств            |
+| 7104 | `ResetDevToken`    | SET, OK!  | Сброс токена устройства (TOFU)           |
+
+Новая команда облака получает свободный код из 7000-7999 в `dictionary.yaml`, потом словарь копируется в прошивки, как любая другая команда. Потоки `/ws-stream` - отдельный канал с текстовыми командами подписки, конверта `{HAR, VAL}` там нет.
+
+</details>
 
 <details>
 <summary>⚙️ Копии словаря и словарь устройства</summary>
@@ -2836,7 +2879,7 @@ ModalStack.close(id) // убрать
 - В прошивках лежит копия словаря `.framework/Dictionary.yaml`, и сборка сверяет с ней `api_har.h`.
 - Часть аргументов словаря - задел, прошивки их пока не обрабатывают: `BackUp`, `BindMKey`, `ModList`, `ModMode`, `ModT2-ModT5`, `FwUpgE`, `OrOfs`, `OrAccCal`, `OrMagCal`. Коды у них закреплены и не меняются. Такой аргумент модуль примет, но ответа не будет, поэтому в примерах берут реальные команды (`ModCfg`, `ModInfo`, `FS`).
 - У устройства словарь может быть свой. Его читают из файла `parseArgumentDictionary` и превращают в объект `createDictionary(codes)`: `code(имя)`, `name(код)`, `header(код)`, `har(заголовок, команда, ответ)`.
-- Такой словарь принимают `xPoeDebugHar`, `encodeXPoeDebugFrame` (последний аргумент) и `createXPoeDebugParser({ dictionary })`. Без него берётся встроенный.
+- Такой словарь принимают `encodeHar`, `decodeHar`, `encodeWsEnvelope`, `decodeWsEnvelope`, `encodeXPoeDebugFrame` (последний аргумент), `createXPoeDebugParser({ dictionary })` и связь `GUIRenderer` (поле `dictionary`). Без него берётся встроенный.
 
 </details>
 
@@ -2959,55 +3002,90 @@ ModalStack.close(id) // убрать
 
 #### 🌐 WebSocket
 
-Облако и локальный веб-интерфейс говорят с устройством через WebSocket. Здесь у пакета свой конверт, а заголовок и команда передаются словами: `"GET"`, `"ModCfg"`. Команда модулю за хабом передаётся числом из словаря: `36` вместо `"ModCfg"`.
+Облако, браузер и локальный веб-интерфейс ESP говорят через WebSocket. Сообщение здесь - конверт из двух полей: `HAR` (то же число, что на шине) и `VAL` (данные). Так устроены все соединения: браузер - облако, облако - устройство, веб-интерфейс - устройство.
 
-- 🆔 В каждом запросе указан серийный номер устройства.
-- 🧩 Можно обратиться к конкретному модулю на шине, устройство-хаб перешлёт запрос.
-- 🔢 Модулю за хабом команда уходит кодом из словаря, хаб пересылает его без перевода. Так модуль получает и команды, которых хаб не знает.
+- 🔢 Команда всегда числом `HAR`: заголовок, код из словаря и флаг ответа. Имён в конверте нет.
+- 🆔 В запросе к устройству указан серийный номер устройства.
+- 🧩 Можно обратиться к конкретному модулю на шине, устройство-хаб перешлёт запрос с тем же `HAR` без перевода. Так модуль получает и команды, которых хаб не знает.
+- 🙋 Флаг ответа работает как на шине: запрос с флагом ждёт ответа, ответ и телеметрия идут без флага.
 - 📝 Текст события из ответа облако сохраняет в журнал устройства.
 
 <details>
 <summary>📦 Конверт</summary>
 
 ```
-запрос  {HDR, ARG, VAL: {DevSN, ModSN?, TrgBusID?, SrcBusID?, Payload?}}
-ответ   {HDR, ARG, VAL: {DevSN, ModSN, Message, Payload}}
+запрос  {HAR, VAL: {DevSN, ModSN?, TrgBusID?, SrcBusID?, Payload?}}
+ответ   {HAR, VAL: {DevSN, ModSN, Message, Payload}}
 ```
 
-- `DevSN` обязателен и должен совпасть с серийным номером устройства.
-- `ModSN` это модуль, которому адресован запрос. Без него запрос идёт самому устройству.
-- `Message` в ответе это текст события. DevCloud сохраняет непустой `Message` в журнал устройства.
+| Поле  | Тип    | Что это                                                                             |
+| ----- | ------ | ----------------------------------------------------------------------------------- |
+| `HAR` | uint16 | Заголовок (биты 15-14), код аргумента (биты 13-1), флаг ответа (бит 0)              |
+| `VAL` | объект | Данные: адрес (`DevSN`, `ModSN`), `Payload`, у ответа `Message`, у облака свои поля |
 
-В прошивке запрос принимает `API_Service_ReceiveWsPacket`, ответ собирает `API_Service_BeginResponse`. Ответ модуля с шины устройство-хаб само заворачивает в конверт.
+| Заголовок | Код (биты 15-14) | Флаг ответа по умолчанию |
+| --------- | ---------------- | ------------------------ |
+| `GET`     | 0                | есть                     |
+| `SET`     | 1                | есть                     |
+| `OK!`     | 2                | нет                      |
+| `ER!`     | 3                | нет                      |
+
+- `DevSN` обязателен в запросе к устройству и должен совпасть с его серийным номером.
+- `ModSN` - модуль, которому адресован запрос. Без него запрос идёт самому устройству.
+- `Message` в ответе - текст события. DevCloud сохраняет непустой `Message` в журнал устройства.
+- Флаг ответа (бит 0): устройство отвечает только на запрос с флагом. Ответ, пуш и телеметрия - без флага.
+- Сообщение без целого `HAR` 0..65535 или с `VAL` не объектом - не конверт, его отбрасывают.
+- Код, которого нет в словаре получателя, не ошибка: имя для журнала - строка из числа (`"4097"`), сам код сохраняется.
+
+В прошивке запрос принимает `API_Service_ReceiveWsPacket`, ответ собирает `API_Service_BeginResponse`. Ответ модуля с шины устройство-хаб заворачивает в конверт с тем же `HAR`.
 
 </details>
 
 <details>
-<summary>🔢 ARG: имя или код</summary>
+<summary>🔁 Пример туда и обратно: GET ModCfg модулю за хабом</summary>
 
-`HDR` всегда строка (`"GET"`, `"SET"`, `"OK!"`, `"ER!"`). `ARG` - строка с именем аргумента или целое число, код аргумента из словаря: тот же номер, что `A_*` в `api_har.h` и третье поле строки `dictionary.yaml`. Это только биты 13-1 поля HAR (0..8191): без заголовка (биты 15-14) и флага ответа (бит 0). Флаг ответа WebSocket не передаёт, как и раньше.
-
-| Направление                                                            | ARG                                                |
-| ---------------------------------------------------------------------- | -------------------------------------------------- |
-| Команда самому хабу или облаку (нет `ModSN` или `ModSN` равен `DevSN`) | имя                                                |
-| Команда модулю за хабом (`ModSN` задан и не равен `DevSN`)             | число. Хаб кладёт его в HAR как есть, без перевода |
-| Ответ или пуш модуля, имя которого хаб знает                           | имя (как раньше)                                   |
-| Ответ или пуш модуля, имени которого хаб не знает                      | число. Получатель переводит его в имя по словарю   |
-
-Пример: запрос настроек модуля `GET ModCfg` (`ModCfg` = 36) и ответ.
+`ModCfg` = 36. Запрос с флагом ответа: `HAR = (0 << 14) | (36 << 1) | 1 = 0x0049` (73). Ответ `OK!` без флага: `HAR = (2 << 14) | (36 << 1) = 0x8048` (32840).
 
 ```
-туда     {HDR: "GET", ARG: 36, VAL: {DevSN: "HUB-SN", ModSN: "MOD-SN", Payload: {}}}
-на шине  HAR = makeHar(0, 36, true) = 0x0049
-обратно  {HDR: "OK!", ARG: 36, VAL: {DevSN: "HUB-SN", ModSN: "MOD-SN", Message: "", Payload: {...}}}
-         или ARG: "ModCfg", если хаб знает имя
+туда     {HAR: 73, VAL: {DevSN: "HUB-SN", ModSN: "MOD-SN", Payload: {}}}
+на шине  [TrgBusID модуля, SrcBusID хаба, HAR 0x0049, {}, CRC16]
+обратно  {HAR: 32840, VAL: {DevSN: "HUB-SN", ModSN: "MOD-SN", Message: "", Payload: {...}}}
 ```
 
-- Отправитель: `wsEnvelope(header, argument, VAL, dictionary?)` ставит код, если адресат - модуль за хабом. Имя, которого нет в словаре, остаётся строкой.
-- Получатель: `readWsEnvelope(packet, dictionary?)` переводит числовой `ARG` в имя до разбора. Код, которого нет в словаре, становится строкой из числа (`"4097"`).
-- Пара перевода - `wsArgumentCode` (имя в код) и `wsArgumentName` (код в имя), обе опираются на `createDictionary`. Словарь по умолчанию - встроенный `DEFAULT_DICTIONARY`.
-- `mergeDevicePayload` принимает `ARG` и строкой, и числом.
-- Хаб, получив числовой `ARG` для модуля, собирает `HAR = (код HDR << 14) | (ARG << 1) | 1` (`GET` 0, `SET` 1, `OK!` 2, `ER!` 3) и пересылает запись на шину. Ответ модуля с кодом, имени которого в словаре хаба нет, хаб отдаёт в конверте с числом.
+То же в коде:
+
+```ts
+import { encodeWsEnvelope, decodeWsEnvelope, valueToCbor, cborToValue } from "poe-svelte-ui-lib/protocols"
+
+socket.send(valueToCbor(encodeWsEnvelope("GET", "ModCfg", { DevSN, ModSN, Payload: {} })))
+/* { header: "OK!", argument: "ModCfg", code: 36, reply: false, VAL: {...} } или null */
+const message = decodeWsEnvelope(cborToValue(new Uint8Array(event.data)))
+```
+
+</details>
+
+<details>
+<summary>🧰 Функции конверта</summary>
+
+| Функция                                                                           | Что делает                                                                                                                                                        |
+| --------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `encodeWsEnvelope(header, argument, VAL, reply?, dictionary?)`                    | Собирает `{HAR, VAL}`. `argument` - имя или код. `reply` по умолчанию: `GET`/`SET` - да, `OK!`/`ER!` - нет. Имя не из словаря или значение вне диапазона - ошибка |
+| `decodeWsEnvelope(packet, dictionary?)`                                           | Разбирает `{HAR, VAL}` в `{ header, argument, code, reply, VAL }`, не конверт - `null`. Неизвестный код - `argument` строкой из числа                             |
+| `encodeHar(header, argument, reply?, dictionary?)`, `decodeHar(har, dictionary?)` | То же для одного числа `HAR`, общие для шины, xPOE-Debug и WebSocket                                                                                              |
+
+Связь `GUIRenderer` (`DeviceLink`) и `createFsTransfer` отдают приложению уже готовый `HAR`: `send(har, payload)`, а ответ ждут по коду аргумента: `waitFor(code, match, timeoutMs)`. Имена `Header`/`Argument` в `eventHandler` компонента - справка автора GUI, в провод они уходят числом.
+
+</details>
+
+<details>
+<summary>⏳ Переход со старого конверта {HDR, ARG, VAL} (временно)</summary>
+
+Прошивки до перехода шлют старый конверт `{HDR, ARG, VAL}`: `HDR` и `ARG` строками (`ARG` модуля за хабом - числом), флага ответа нет. Чтобы обновить все устройства удалённо через облако, облако один выпуск понимает оба формата.
+
+- `decodeLegacyWsEnvelope(packet, dictionary?)` разбирает старый конверт в ту же структуру `{ header, argument, code, reply, VAL }`. `reply` - по заголовку (`GET`/`SET` - да). Неизвестный заголовок, имя не из словаря, код вне 0..8191 или `VAL` не объект - `null`.
+- `encodeLegacyWsEnvelope(header, argument, VAL, dictionary?)` собирает ответ старому устройству: `ARG` - имя по словарю, код без имени - числом.
+- Порядок разбора в облаке: сначала `decodeWsEnvelope`, при `null` - `decodeLegacyWsEnvelope`. Устройству, приславшему старый конверт, облако отвечает старым конвертом.
+- ⚠️ Обе функции и тип `LegacyWsEnvelope` удаляются в следующем выпуске библиотеки, когда прошивки всех устройств будут на `{HAR, VAL}`.
 
 </details>
 
@@ -3055,16 +3133,16 @@ ModalStack.close(id) // убрать
 <details>
 <summary>📋 Соответствие прошивки и библиотеки</summary>
 
-| Что     | В прошивке (ESP и STM)                                                                                                                     | В `poe-svelte-ui-lib/protocols`                                                                     |
-| ------- | ------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------- |
-| Пакет   | `CBOR_PktEncInit`, `CBOR_PktEncAddRaw`, `CBOR_PACK`, `CBOR_PktEncFinish`, `CBOR_PktDecInit`, `CBOR_PktDecNext`, поток `CBOR_PktStreamPush` | `encodePacket`, `decodePacket`, `createPacketStreamParser`, `encodePacketBytesPayload`              |
-| HAR     | `har_t`, `HAR`, `HAR_NR`, `API_Service_HarName`, `API_Service_HarByName`                                                                   | `makeHar`, `splitHar`, `xPoeDebugHar`, `createDictionary`, `HEADER_CODES`, `DEFAULT_ARGUMENT_CODES` |
-| WS ARG  | `API_Service_ReceiveWsPacket`                                                                                                              | `wsEnvelope`, `readWsEnvelope`, `wsArgumentCode`, `wsArgumentName`                                  |
-| Приём   | `API_Service_ReceiveBusPacket`, `API_Service_ReceiveWsPacket`, консоль в `system_console`                                                  | `createXPoeDebugParser`, `createCanParser`                                                          |
-| Ответ   | `API_Service_BeginResponse`, `Writer_*`, `API_Service_FinishResponse`                                                                      |                                                                                                     |
-| Консоль | `LOG_*`, `LOG_HEX`, `LOG_PLOT`                                                                                                             | `encodeXPoeDebugFrame`, `xPoeDebugRow`, `xPoeDebugTableColumns`, `debugPlotValues`                  |
-| CAN     | `can_service`                                                                                                                              | `encodeCanPacket`, `createCanParser`, `slcanOpenCommands`                                           |
-| Тесты   | `tests/` прошивок                                                                                                                          | `npm run TestProtocols` сверяет байты с эталонами из прошивки                                       |
+| Что     | В прошивке (ESP и STM)                                                                                                                     | В `poe-svelte-ui-lib/protocols`                                                                               |
+| ------- | ------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------- |
+| Пакет   | `CBOR_PktEncInit`, `CBOR_PktEncAddRaw`, `CBOR_PACK`, `CBOR_PktEncFinish`, `CBOR_PktDecInit`, `CBOR_PktDecNext`, поток `CBOR_PktStreamPush` | `encodePacket`, `decodePacket`, `createPacketStreamParser`, `encodePacketBytesPayload`                        |
+| HAR     | `har_t`, `HAR`, `HAR_NR`, коды `A_*` в `api_har.h` (имён в прошивке нет, лог печатает `HAR 0x%04X`)                                        | `makeHar`, `splitHar`, `encodeHar`, `decodeHar`, `createDictionary`, `HEADER_CODES`, `DEFAULT_ARGUMENT_CODES` |
+| WS      | `API_Service_ReceiveWsPacket`, `API_Service_BeginResponse`                                                                                 | `encodeWsEnvelope`, `decodeWsEnvelope` (переход: `decodeLegacyWsEnvelope`, `encodeLegacyWsEnvelope`)          |
+| Приём   | `API_Service_ReceiveBusPacket`, `API_Service_ReceiveWsPacket`, консоль в `system_console`                                                  | `createXPoeDebugParser`, `createCanParser`                                                                    |
+| Ответ   | `API_Service_BeginResponse`, `Writer_*`, `API_Service_FinishResponse`                                                                      |                                                                                                               |
+| Консоль | `LOG_*`, `LOG_HEX`, `LOG_PLOT`                                                                                                             | `encodeXPoeDebugFrame`, `xPoeDebugRow`, `xPoeDebugTableColumns`, `debugPlotValues`                            |
+| CAN     | `can_service`                                                                                                                              | `encodeCanPacket`, `createCanParser`, `slcanOpenCommands`                                                     |
+| Тесты   | `tests/` прошивок                                                                                                                          | `npm run TestProtocols` сверяет байты с эталонами из прошивки                                                 |
 
 `xPoeDebugTableColumns` - колонки таблицы `Table`, поэтому он экспортируется из основной точки входа `poe-svelte-ui-lib`, а не из `poe-svelte-ui-lib/protocols`.
 

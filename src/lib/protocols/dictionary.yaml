@@ -1,4 +1,7 @@
-# Словарь аргументов протокола (поле arg в HAR, 0..8191) - единый для всех устройств, обоих фреймворков и приложений Строковое представление аргумента | Название в перечислении | Числовой код Источник - poe-svelte-ui-lib (src/lib/protocols/dictionary.yaml); .framework/Dictionary.yaml фреймворков - копии, не править
+# Словарь аргументов протокола (поле arg в HAR, 0..8191) - единый для всех устройств, обоих фреймворков и приложений, на шине и в WebSocket-конверте {HAR, VAL}
+# Строка: Строковое представление аргумента | Название в перечислении | Числовой код
+# Диапазоны: 0..4095 - устройства (команды прошивок), 4096..6999 - резерв, 7000..7999 - облако DevCloud (команды самого облака, не устройств), 8000..8191 - резерв
+# Источник - poe-svelte-ui-lib (src/lib/protocols/dictionary.yaml); .framework/Dictionary.yaml фреймворков - копии, не править
 
 # 0 - отсутствие аргумента
 - [Unknown, A_UNKNOWN, 0]                   # Аргумент отсутствует
@@ -63,3 +66,25 @@
 - [OrOfs, A_ORIENTATION_OFFSET, 142]        # Смещения ориентации
 - [OrAccCal, A_ORIENTATION_ACC_CALIB, 143]  # Калибровка акселерометра
 - [OrMagCal, A_ORIENTATION_MAG_CALIB, 144]  # Калибровка магнетометра
+
+# Облако DevCloud (7000..7999): команды самого облака по /ws, устройства их не получают
+# Чаты (7000..7099)
+- [ChatMessage, A_CLOUD_CHAT_MESSAGE, 7000]       # SET: новое сообщение в чат (браузер - облако - участники)
+- [ChatMessages, A_CLOUD_CHAT_MESSAGES, 7001]     # GET/OK!: страница истории чата
+- [SystemMessage, A_CLOUD_SYSTEM_MESSAGE, 7002]   # SET: сообщение в системный чат (администратор)
+- [EditMessage, A_CLOUD_EDIT_MESSAGE, 7003]       # SET/OK!: правка своего сообщения
+- [DeleteMessage, A_CLOUD_DELETE_MESSAGE, 7004]   # SET/OK!: удаление своего сообщения
+- [UpdateLastRead, A_CLOUD_UPDATE_LAST_READ, 7005] # SET: чат прочитан, вкладка чата закрыта
+- [JoinChat, A_CLOUD_JOIN_CHAT, 7006]             # SET/OK!: вход в чат
+- [UserConnected, A_CLOUD_USER_CONNECTED, 7007]   # SET: собеседник открыл чат
+- [ChatUnread, A_CLOUD_CHAT_UNREAD, 7008]         # OK!: число непрочитанных в чате
+- [ChatPins, A_CLOUD_CHAT_PINS, 7009]             # OK!: закреплённые чаты пользователя
+- [EditChatGroup, A_CLOUD_EDIT_CHAT_GROUP, 7010]  # OK!: чат создан или изменён
+- [RemoveFromChat, A_CLOUD_REMOVE_FROM_CHAT, 7011] # OK!: пользователь удалён из чата
+
+# Устройства в облаке (7100..7199)
+- [DeviceMessages, A_CLOUD_DEVICE_MESSAGES, 7100] # GET/OK!: страница журнала устройства
+- [DeviceConnection, A_CLOUD_DEVICE_CONNECTION, 7101] # OK!: устройство в сети или ушло из сети
+- [LeaveGroup, A_CLOUD_LEAVE_GROUP, 7102]         # SET/OK!: выход из группы устройства
+- [LeaveGroups, A_CLOUD_LEAVE_GROUPS, 7103]       # SET: выход из групп всех устройств
+- [ResetDevToken, A_CLOUD_RESET_DEV_TOKEN, 7104]  # SET/OK!: сброс токена устройства (TOFU)
