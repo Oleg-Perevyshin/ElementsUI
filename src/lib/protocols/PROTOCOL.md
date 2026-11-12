@@ -309,18 +309,6 @@ const message = decodeWsEnvelope(cborToValue(new Uint8Array(event.data)))
 </details>
 
 <details>
-<summary>⏳ Переход со старого конверта {HDR, ARG, VAL} (временно)</summary>
-
-Прошивки до перехода шлют старый конверт `{HDR, ARG, VAL}`: `HDR` и `ARG` строками (`ARG` модуля за хабом - числом), флага ответа нет. Чтобы обновить все устройства удалённо через облако, облако один выпуск понимает оба формата.
-
-- `decodeLegacyWsEnvelope(packet, dictionary?)` разбирает старый конверт в ту же структуру `{ header, argument, code, reply, VAL }`. `reply` - по заголовку (`GET`/`SET` - да). Неизвестный заголовок, имя не из словаря, код вне 0..8191 или `VAL` не объект - `null`.
-- `encodeLegacyWsEnvelope(header, argument, VAL, dictionary?)` собирает ответ старому устройству: `ARG` - имя по словарю, код без имени - числом.
-- Порядок разбора в облаке: сначала `decodeWsEnvelope`, при `null` - `decodeLegacyWsEnvelope`. Устройству, приславшему старый конверт, облако отвечает старым конвертом.
-- ⚠️ Обе функции и тип `LegacyWsEnvelope` удаляются в следующем выпуске библиотеки, когда прошивки всех устройств будут на `{HAR, VAL}`.
-
-</details>
-
-<details>
 <summary>🔐 Аутентификация устройства в облаке (TOFU)</summary>
 
 Устройство подключается к облаку `wss://{SrvDomain}/ws?DevSN&DevName&DevFW` и публикует потоки в `wss://{SrvDomain}/ws-stream?DevSN&Key&role=publisher`. Доверие устанавливается при первом подключении: облако выдаёт устройству токен, дальше устройство предъявляет его при каждом подключении.
@@ -368,7 +356,7 @@ const message = decodeWsEnvelope(cborToValue(new Uint8Array(event.data)))
 | ------- | ------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------- |
 | Пакет   | `CBOR_PktEncInit`, `CBOR_PktEncAddRaw`, `CBOR_PACK`, `CBOR_PktEncFinish`, `CBOR_PktDecInit`, `CBOR_PktDecNext`, поток `CBOR_PktStreamPush` | `encodePacket`, `decodePacket`, `createPacketStreamParser`, `encodePacketBytesPayload`                        |
 | HAR     | `har_t`, `HAR`, `HAR_NR`, коды `A_*` в `api_har.h` (имён в прошивке нет, лог печатает `HAR 0x%04X`)                                        | `makeHar`, `splitHar`, `encodeHar`, `decodeHar`, `createDictionary`, `HEADER_CODES`, `DEFAULT_ARGUMENT_CODES` |
-| WS      | `API_Service_ReceiveWsPacket`, `API_Service_BeginResponse`                                                                                 | `encodeWsEnvelope`, `decodeWsEnvelope` (переход: `decodeLegacyWsEnvelope`, `encodeLegacyWsEnvelope`)          |
+| WS      | `API_Service_ReceiveWsPacket`, `API_Service_BeginResponse`                                                                                 | `encodeWsEnvelope`, `decodeWsEnvelope`                                                                        |
 | Приём   | `API_Service_ReceiveBusPacket`, `API_Service_ReceiveWsPacket`, консоль в `system_console`                                                  | `createXPoeDebugParser`, `createCanParser`                                                                    |
 | Ответ   | `API_Service_BeginResponse`, `Writer_*`, `API_Service_FinishResponse`                                                                      |                                                                                                               |
 | Консоль | `LOG_*`, `LOG_HEX`, `LOG_PLOT`                                                                                                             | `encodeXPoeDebugFrame`, `xPoeDebugRow`, `xPoeDebugTableColumns`, `debugPlotValues`                            |

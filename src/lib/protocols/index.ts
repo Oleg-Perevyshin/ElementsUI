@@ -62,5 +62,3 @@ export {
 } from "./dictionary.js"
 /* Конверт WebSocket {HAR, VAL} на всех соединениях: сборка из заголовка и аргумента (имя или код), разбор в слова по словарю */
 export { encodeWsEnvelope, decodeWsEnvelope, type WsEnvelope, type WsMessage } from "./wsEnvelope.js"
-/* ВРЕМЕННО, переход (удаляется в следующем выпуске): старый конверт {HDR, ARG, VAL} прошивок до {HAR, VAL} - разбор в ту же структуру и сборка ответа старому устройству */
-export { decodeLegacyWsEnvelope, encodeLegacyWsEnvelope, type LegacyWsEnvelope } from "./wsEnvelope.js"

@@ -563,25 +563,3 @@ test("словарь: коды облака DevCloud, неизвестный к�
   assert.equal(m.encodeWsEnvelope("SET", "MyCmd", {}, true, own).HAR, m.makeHar(1, 4000, true))
   assert.equal(m.decodeWsEnvelope({ HAR: m.makeHar(2, 4000, false), VAL: {} }, own).argument, "MyCmd")
 })
-
-test("переход: старый конверт {HDR, ARG, VAL} разбирается в ту же структуру и собирается для старой прошивки", () => {
-  const VAL = { DevSN: "HUB", ModSN: "MOD", Payload: {} }
-  /* Имя и код дают ту же структуру, что новый конверт; флаг ответа - по заголовку */
-  assert.deepEqual(m.decodeLegacyWsEnvelope({ HDR: "GET", ARG: "ModCfg", VAL }), m.decodeWsEnvelope(m.encodeWsEnvelope("GET", "ModCfg", VAL)))
-  assert.deepEqual(m.decodeLegacyWsEnvelope({ HDR: "OK!", ARG: 36, VAL }), { header: "OK!", argument: "ModCfg", code: 36, reply: false, VAL })
-  assert.deepEqual(m.decodeLegacyWsEnvelope({ HDR: "OK!", ARG: 4097, VAL: {} }), { header: "OK!", argument: "4097", code: 4097, reply: false, VAL: {} })
-  for (const bad of [
-    null,
-    { HAR: 73, VAL: {} },
-    { HDR: "PUT", ARG: "ModCfg", VAL: {} },
-    { HDR: "GET", ARG: "NoSuchArg", VAL: {} },
-    { HDR: "GET", ARG: 8192, VAL: {} },
-    { HDR: "GET", ARG: "ModCfg" },
-  ])
-    assert.equal(m.decodeLegacyWsEnvelope(bad), null)
-  /* Ответ старому устройству: имя по словарю, код без имени - числом */
-  assert.deepEqual(m.encodeLegacyWsEnvelope("SET", "JoinDev", { DevToken: "t" }), { HDR: "SET", ARG: "JoinDev", VAL: { DevToken: "t" } })
-  assert.deepEqual(m.encodeLegacyWsEnvelope("GET", 36, VAL), { HDR: "GET", ARG: "ModCfg", VAL })
-  assert.equal(m.encodeLegacyWsEnvelope("GET", 4097, VAL).ARG, 4097)
-  assert.throws(() => m.encodeLegacyWsEnvelope("GET", "NoSuchArg", VAL))
-})
