@@ -1,11 +1,11 @@
-/* $lib/IconsCatalog/iconsLib.ts - сборка icons.ts из файлов каталога: «категория.имя.svg» (Tabler Icons, MIT) и папки наборов состояний (battery, bulb, propeller). Запуск: npm run UpdateIconsLib */
+/* scripts/UpdateIconsLib.ts - сборка src/lib/icons.ts из каталога assets/IconsCatalog (в npm-пакет не входит): «категория.имя.svg» (Tabler Icons, MIT) и папки наборов состояний (battery, bulb, propeller). Запуск: npm run UpdateIconsLib */
 import fs from "fs"
 import { join } from "path"
 
 /* Порядок 12 категорий по 16 иконок (матрица 4×3 в пикере, в клетке сетка 4×4): темы и подсистемы устройства для заголовков аккордеонов, от простого оборудования к сложному, настройки и данные в конце */
 const CATEGORY_ORDER = ["power", "electronics", "network", "sensors", "climate", "light", "industry", "transport", "space", "media", "home", "settings"]
 
-const dirPath = "src/lib/IconsCatalog"
+const dirPath = "assets/IconsCatalog"
 const files = fs.readdirSync(dirPath).sort()
 
 /* Наборы состояний: папка - один набор иконок, которые виджет переключает по значению */
@@ -32,8 +32,8 @@ for (const file of files) {
 }
 const ordered = CATEGORY_ORDER.filter((category) => categories.has(category)).map((category) => [category, categories.get(category)!] as const)
 
-const content = `/* $lib/icons.ts - собран из IconsCatalog скриптом npm run UpdateIconsLib, вручную не править */
-/* Иконки по категориям: [категория, SVG[]], порядок категорий - CATEGORY_ORDER в iconsLib.ts */
+const content = `/* $lib/icons.ts - собран из assets/IconsCatalog скриптом npm run UpdateIconsLib, вручную не править */
+/* Иконки по категориям: [категория, SVG[]], порядок категорий - CATEGORY_ORDER в scripts/UpdateIconsLib.ts */
 export const ICONS: [string, string[]][] = ${JSON.stringify(
   ordered.map(([category, entry]) => [category, entry.svgs]),
   null,

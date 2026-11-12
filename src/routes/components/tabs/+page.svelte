@@ -11,16 +11,13 @@
   import Tabs from "#lib/Tabs/Tabs.svelte"
   import IconGripHorizontalDown from "../../../appIcons/IconGripHorizontalDown.svelte"
   import IconGripHorizontalUp from "../../../appIcons/IconGripHorizontalUp.svelte"
-  import { formatObjectToString, RenderMarkdown } from "../../common"
+  import { formatObjectToString, L, RenderMarkdown } from "../../common"
   import readmeRaw from "#lib/Tabs/README.md?raw"
 
   let readmeHtml = $state("")
   $effect(() => {
     RenderMarkdown(readmeRaw).then((html) => (readmeHtml = html))
   })
-
-  /* Многоязычный текст для демо: в данных - { ru, en, zh }, тип поля - string (разрешается localizeDeep) */
-  const L = (ru: string, en: string, zh: string) => ({ ru, en, zh }) as unknown as string
 
   let tabsComponent: UIComponent<"Tabs"> = $state({
     id: crypto.randomUUID(),

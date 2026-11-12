@@ -25,16 +25,16 @@ jobs:
           node-version: "24"
           registry-url: "https://registry.npmjs.org"
 
-      - name: Обновление npm
-        run: npm install -g npm@latest
+      # Версия npm закреплена (публикация по OIDC требует npm 11.5.1+); поднимать вместе с локальной
+      - name: Установка npm
+        run: npm install -g npm@11.20.0
 
+      # Ровно по package-lock.json, как проверено локально
       - name: Установка зависимостей
-        run: npm install
+        run: npm ci
 
-      - name: Сборка библиотеки
-        run: npm run prepack
-
-      - name: Публикация в NPM
+      # npm publish сам запускает prepack: словарь, проверка типов, сборка, тесты, publint
+      - name: Сборка и публикация в NPM
         run: npm publish --access public --provenance=false
 
   # Обновление библиотеки в DevCloud, подъём версии облака и переразвёртывание

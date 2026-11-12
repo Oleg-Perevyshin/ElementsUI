@@ -1,7 +1,7 @@
 /* tests/fsTransfer.test.mjs - обмен файлами SET FS против модели прошивки (file_system ProdFactory-ESP): чанки, повтор после ER! и таймаута, CRC32, очередь операций */
 import { test } from "node:test"
 import assert from "node:assert/strict"
-import { createFsTransfer } from "../dist/fsTransfer.js"
+import { createFsTransfer, FsNameError, FsTransferError } from "../dist/fsTransfer.js"
 import { crc32 } from "../dist/protocols/crc.js"
 
 /* Устройство: отвечает на SET/GET FS как прошивка; fail(op, index) - сколько раз отказать (ER!) или промолчать ("drop") */
@@ -115,7 +115,20 @@ test("отказ старта и длинное имя; операции иду�
   const device = fakeDevice({ faults: [{ op: "UploadStart", kind: "er" }] })
   const fs = createFsTransfer(device.transport)
   await assert.rejects(fs.upload("x.bin", bytes), /ER: Chunk/)
+  /* Ошибка с кодом для перевода: ER! - device с шагом и текстом устройства, имя - name с пределом */
+  const refused = createFsTransfer(fakeDevice({ faults: [{ op: "UploadStart", kind: "er" }] }).transport)
+  await assert.rejects(
+    refused.upload("x.bin", bytes),
+    (error) => error instanceof FsTransferError && error.code === "device" && error.params.step === "UploadStart" && error.key === "widget.fs.error.device",
+  )
+  await assert.rejects(fs.upload("", bytes), (error) => error instanceof FsTransferError && error.code === "name" && error.params.n === 31)
   await assert.rejects(fs.upload("x".repeat(32), bytes), /1-31/)
+  /* Предел в байтах UTF-8: 20 букв кириллицы - 40 байт, длиннее 31; ошибка - FsNameError с пределом */
+  await assert.rejects(fs.upload("ф".repeat(20) + ".b", bytes), (error) => error instanceof FsNameError && error.maxBytes === 31)
+  await assert.rejects(fs.upload("", bytes), FsNameError)
+  /* Свой предел из свойств WidgetFileSystem */
+  const wide = createFsTransfer(fakeDevice().transport, { maxNameLength: 64 })
+  await wide.upload("ф".repeat(20) + ".b", bytes)
   await Promise.all([fs.upload("1.bin", bytes), fs.upload("2.bin", bytes.subarray(0, 3))])
   const ops = device.sent.map((s) => s.op).filter((op) => op === "UploadStart" || op === "UploadDone")
   assert.deepEqual(ops, ["UploadStart", "UploadStart", "UploadDone", "UploadStart", "UploadDone"])

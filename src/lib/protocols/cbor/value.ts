@@ -29,13 +29,13 @@ class CborToValue {
     /* Array */
     if (Array.isArray(value)) return value.map((item) => this.convert(item))
 
-    /* bigint */
+    /* bigint: декодер отдаёт его для целых вне safe integer (uint64 устройства) */
     if (typeof value === "bigint") {
-      /* Если в пределах safe integer - возвращаем как число */
+      /* В пределах safe integer - число */
       if (value >= BigInt(Number.MIN_SAFE_INTEGER) && value <= BigInt(Number.MAX_SAFE_INTEGER)) {
         return Number(value)
       }
-      /* Иначе возвращаем как строку */
+      /* Иначе строка: число потеряло бы точность */
       return value.toString()
     }
 

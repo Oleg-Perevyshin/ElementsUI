@@ -14,6 +14,7 @@
   import { hint, hintsSetting } from "../hints"
   import { accentStyle } from "../accent"
   import { readPersistedCollapsed, writePersistedCollapsed } from "../widgetCollapse"
+  import { FsNameError, FsTransferError } from "../fsTransfer"
 
   let {
     wrapperClass = "",
@@ -21,7 +22,6 @@
     label = {},
     value,
     accept = "*/*",
-    maxNameLength = 31,
     collapsed = $bindable(false),
     persistKey,
     onRefresh,
@@ -96,6 +96,10 @@
     pendingDelete = null
   }
 
+  /* Текст ошибки: код FsTransferError переводится словарём, чужая ошибка - её message */
+  const errorText = (error: unknown) =>
+    error instanceof FsTransferError ? $T(error.key, error.params) : error instanceof Error ? error.message : String(error)
+
   /* Скачивание: одно за раз, ошибка вызывающего показывается под таблицей */
   let downloading: string | null = $state(null)
   let downloadError = $state("")
@@ -106,28 +110,23 @@
     try {
       await onDownload(name)
     } catch (error) {
-      downloadError = $T("widget.fs.download_failed", { error: error instanceof Error ? error.message : String(error) })
+      downloadError = $T("widget.fs.download_failed", { error: errorText(error) })
     } finally {
       downloading = null
     }
   }
 
-  /* Закачка: имя проверяется до отправки (прошивка отвергнет длинное имя уже после UploadStart) */
+  /* Закачка: длину имени проверяет createFsTransfer (FsNameError) до UploadStart, виджет только переводит сообщение */
   let uploading = $state(false)
   let uploadError = $state("")
   const handleFile = async (file: File | null) => {
     uploadError = ""
     if (!file || !onUpload || uploading) return
-    /* Прошивка ограничивает имя в байтах UTF-8: кириллица занимает по 2 байта на букву */
-    if (new TextEncoder().encode(file.name).length > maxNameLength) {
-      uploadError = $T("widget.fs.name_too_long", { n: maxNameLength })
-      return
-    }
     uploading = true
     try {
       await onUpload(file)
     } catch (error) {
-      uploadError = $T("widget.fs.upload_failed", { error: error instanceof Error ? error.message : String(error) })
+      uploadError = error instanceof FsNameError ? errorText(error) : $T("widget.fs.upload_failed", { error: errorText(error) })
     } finally {
       uploading = false
     }

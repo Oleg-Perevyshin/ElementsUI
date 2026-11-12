@@ -1,5 +1,6 @@
 <!-- $lib/ProgressBar/ProgressBar.svelte - полоса 6px, подпись и значение над ней -->
 <script lang="ts">
+  import FieldLabel from "../FieldLabel.svelte"
   import { roundToClean } from "../number"
   import { twMerge } from "tailwind-merge"
   import { accentStyle } from "../accent"
@@ -8,6 +9,8 @@
   let {
     wrapperClass = "",
     accent,
+    label = { name: "", class: "" },
+    help,
     items = [{ name: "Label" }],
     value,
     type = "horizontal",
@@ -62,6 +65,7 @@
   class={twMerge(`relative flex w-full ${type == "vertical" ? "h-full flex-wrap justify-center gap-6" : "flex-col gap-3"}`, wrapperClass)}
   style={accentStyle(accent)}
 >
+  <FieldLabel {label} info={help?.info} class="w-full" />
   {#each items as progress, index}
     {#if type === "vertical"}
       <div class="flex h-full flex-col items-center gap-2">

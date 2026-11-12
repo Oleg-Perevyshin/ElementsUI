@@ -83,15 +83,3 @@ export class CborDepthLimitError extends CborError {
     this.name = "CborDepthLimitError"
   }
 }
-
-/* Типы для JSON совместимости */
-export interface JsonPrimitive {
-  type: "null" | "boolean" | "number" | "string"
-  value: unknown
-}
-
-export interface JsonObject {
-  [key: string]: JsonValue
-}
-
-export type JsonValue = JsonPrimitive | JsonObject | JsonValue[]

@@ -11,6 +11,7 @@
     wrapperClass = "",
     accent,
     label,
+    help,
     type = "single",
     value = $bindable(),
     number = { minNum: 0, maxNum: 10, step: 1 },
@@ -98,7 +99,7 @@
 {/snippet}
 
 <div class={twMerge(`relative flex w-full flex-col gap-1.5`, wrapperClass)} style={accentStyle(accent)}>
-  <FieldLabel {label} for={uid} class="w-full" />
+  <FieldLabel {label} info={help?.info} for={uid} class="w-full" />
 
   <div class="flex w-full items-center gap-3">
     {#if isRange}{@render counter("lower")}{/if}

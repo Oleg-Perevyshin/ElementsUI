@@ -10,7 +10,7 @@
   import RefreshIcon from "./RefreshIcon.svelte"
   import WidgetHeader from "../WidgetHeader.svelte"
   import { hint, hintsSetting } from "../hints"
-  import { accentStyle } from "../accent"
+  import { accentStyle, type AccentColor } from "../accent"
   import { readPersistedCollapsed, writePersistedCollapsed } from "../widgetCollapse"
 
   let {
@@ -79,28 +79,38 @@
   const percentColor = (p: number) => (p >= 90 ? "var(--red-text)" : p >= 75 ? "var(--orange-text)" : "var(--muted-color)")
 
   let STATES = $derived(["running", "ready", "blocked", "suspended", "deleted"].map((state) => $T(`widget.stack.state.${state}`)))
-  const stackColor = (bytes: number) => (bytes < warnBytes ? "var(--red-text)" : bytes < warnBytes * 2 ? "var(--orange-text)" : "")
+  const stackColor = (bytes: number): AccentColor | undefined => (bytes < warnBytes ? "red" : bytes < warnBytes * 2 ? "orange" : undefined)
 
-  type TaskRow = { Name: string; StateText: string; Prio: number; CoreText: string; CpuText: string; FreeMinText: string }
+  type TaskRow = {
+    Name: string
+    StateText: string
+    Prio: number
+    CoreText: string
+    CpuText: string
+    CpuAccent?: AccentColor
+    FreeMin: number
+    FreeMinAccent?: AccentColor
+  }
   let tasks = $derived([...(value?.Tasks ?? [])].sort((a, b) => a.FreeMin - b.FreeMin))
   let hasCore = $derived(tasks.some((t) => t.Core !== undefined))
   /* Загрузка задачи, % одного ядра с прошлого ответа: от 50 % - оранжевая, от 80 % - красная; IDLE - это свободное время ядра, не подсвечивается */
   let hasCpu = $derived(tasks.some((t) => t.CPU !== undefined))
-  const cpuColor = (cpu: number) => (cpu >= 80 ? "var(--red-text)" : cpu >= 50 ? "var(--orange-text)" : "")
+  const cpuColor = (cpu: number): AccentColor | undefined => (cpu >= 80 ? "red" : cpu >= 50 ? "orange" : undefined)
   let lowCount = $derived(tasks.filter((t) => t.FreeMin < warnBytes).length)
 
   /* Порядок фиксированный - по возрастанию запаса стека: при автоопросе сортировка кликом сбрасывалась бы каждый ответ */
   let rows: TaskRow[] = $derived(
     tasks.map((t: IWidgetStackInfoTask) => {
-      const color = stackColor(t.FreeMin)
       const cpu = t.CPU === undefined ? "" : t.CPU.toFixed(1)
       return {
         Name: t.Name,
         StateText: STATES[t.State] ?? "-",
         Prio: t.Prio,
         CoreText: t.Core === undefined ? "" : t.Core < 0 ? $T("widget.stack.core_any") : String(t.Core),
-        CpuText: cpu && !t.Name.startsWith("IDLE") && cpuColor(t.CPU!) ? `<span style="color: ${cpuColor(t.CPU!)}; font-weight: 600">${cpu}</span>` : cpu,
-        FreeMinText: color ? `<span style="color: ${color}; font-weight: 600">${t.FreeMin}</span>` : String(t.FreeMin),
+        CpuText: cpu,
+        CpuAccent: t.CPU === undefined || t.Name.startsWith("IDLE") ? undefined : cpuColor(t.CPU),
+        FreeMin: t.FreeMin,
+        FreeMinAccent: stackColor(t.FreeMin),
       }
     }),
   )
@@ -122,13 +132,18 @@
       ? [
           {
             label: { name: $T("widget.stack.cpu") },
-            content: [{ type: "text", data: { key: "CpuText", html: true } }],
+            content: [{ type: "text", data: { key: "CpuText", accent: (row) => row.CpuAccent } }],
             width: "5.5rem",
             align: "right",
           } as ITableHeader<TaskRow>,
         ]
       : []),
-    { label: { name: $T("widget.stack.free_min") }, content: [{ type: "text", data: { key: "FreeMinText", html: true } }], width: "6rem", align: "right" },
+    {
+      label: { name: $T("widget.stack.free_min") },
+      content: [{ type: "text", data: { key: "FreeMin", accent: (row) => row.FreeMinAccent } }],
+      width: "6rem",
+      align: "right",
+    },
   ])
 </script>
 

@@ -112,29 +112,28 @@ const toObject = (value: unknown, rawRecord: Uint8Array): DecodedPacketObject | 
   return { trgBusID, srcBusID, har, payload, crc, crcOk: packetObjectCrc(prefix) === crc, ...splitHar(har) }
 }
 
-/* Разбор пакета с начала буфера - и для целого кадра (CAN), и для потока (RS485: «incomplete» - ждать ещё байт, «garbage» - сдвинуться на байт); заявленная длина больше maxItemBytes - мусор, а не ожидание */
+/* Начало пакета - indefinite-массив 0x9F, за ним запись-массив из 5 полей 0x85 (как CBOR_PktStreamPush прошивки) */
+const PACKET_START = 0x9f
+const PACKET_RECORD = 0x85
+
+/* Позиция начала пакета 0x9F 0x85 в буфере; 0x9F последним байтом - возможное начало; -1 - начала нет */
+export const packetStart = (bytes: Uint8Array): number => {
+  for (let i = bytes.indexOf(PACKET_START); i >= 0; i = bytes.indexOf(PACKET_START, i + 1))
+    if (i + 1 >= bytes.length || bytes[i + 1] === PACKET_RECORD) return i
+  return -1
+}
+
+/* Разбор пакета с начала буфера - и для целого кадра (CAN), и для потока (RS485: «incomplete» - ждать ещё байт, «garbage» - сдвинуться на байт); заявленная длина больше maxItemBytes - мусор, а не ожидание. Пакет - только indefinite-массив 0x9F ... 0xFF: definite-массивы прошивка (CBOR_PktDecInit) отвергает */
 export const decodePacket = (bytes: Uint8Array, maxItemBytes = Infinity): PacketParse => {
   if (bytes.length === 0) return { status: "incomplete" }
-  const first = bytes[0]
-  if (first >> 5 !== 4) return { status: "garbage" }
+  if (bytes[0] !== PACKET_START) return { status: "garbage" }
 
-  /* Число объектов: indefinite (0x9F, до BREAK) или definite - прямо в байте либо в следующих 1/2 байтах */
   let offset = 1
-  let count: number | null = null
-  const info = first & 0x1f
-  if (info < 24) count = info
-  else if (info === 24 || info === 25) {
-    const size = info === 24 ? 1 : 2
-    if (bytes.length < 1 + size) return { status: "incomplete" }
-    count = size === 1 ? bytes[1] : (bytes[1] << 8) | bytes[2]
-    offset += size
-  } else if (info !== 31) return { status: "garbage" }
-
   const objects: DecodedPacketObject[] = []
   try {
-    for (let index = 0; count === null || index < count; index++) {
+    for (;;) {
       if (offset >= bytes.length) return { status: "incomplete" }
-      if (count === null && bytes[offset] === 0xff) return { status: "complete", length: offset + 1, objects }
+      if (bytes[offset] === 0xff) return { status: "complete", length: offset + 1, objects }
       const value = readValue(bytes, offset, maxItemBytes)
       if (!value) return { status: "incomplete" }
       offset += value.length
@@ -144,19 +143,21 @@ export const decodePacket = (bytes: Uint8Array, maxItemBytes = Infinity): Packet
   } catch {
     return { status: "garbage" }
   }
-  return { status: "complete", length: offset, objects }
 }
 
-/* Потоковый разбор пакетов из сырого потока (RS485): пауза дольше gapMs обрывает недособранный пакет, мусор сдвигается по байту */
+/* Потоковый разбор пакетов из сырого потока (RS485): пакет ищется по метке 0x9F 0x85, байты до неё - мусор; пакет без записей - тоже мусор (сдвиг на байт); пауза дольше gapMs обрывает недособранный пакет */
 export const createPacketStreamParser = (options: FramerOptions = {}) => {
   const framer = createFramer(options)
   return {
     push(chunk: Uint8Array, now = Date.now()): { bytes: Uint8Array; objects: DecodedPacketObject[] }[] {
       const packets: { bytes: Uint8Array; objects: DecodedPacketObject[] }[] = []
       framer.push(chunk, now, (bytes) => {
+        const start = packetStart(bytes)
+        if (start < 0) return bytes.length
+        if (start > 0) return start
         const parsed = decodePacket(bytes, framer.maxBytes)
         if (parsed.status === "incomplete") return 0
-        if (parsed.status === "garbage") return 1
+        if (parsed.status === "garbage" || !parsed.objects.length) return 1
         packets.push({ bytes: bytes.slice(0, parsed.length), objects: parsed.objects })
         return parsed.length
       })

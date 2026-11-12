@@ -183,9 +183,9 @@ const constructorTranslations = {
   "constructor.props.open": { ru: "Разворачивание", en: "Expand", zh: "展开" },
   "constructor.props.file.accept": { ru: "Допустимые файлы", en: "Allowed files", zh: "允许的文件" },
   "constructor.props.file.accept.help": {
-    ru: "'audio/*', 'video/*', 'image/*' или расширения файлов через пробел в формате '.pdf'",
-    en: "'audio/*', 'video/*', 'image/*' or comma-separated file extensions like '.pdf'",
-    zh: "'audio/*'、'video/*'、'image/*' 或以逗号分隔的文件扩展名，如 '.pdf'",
+    ru: "'audio/*', 'video/*', 'image/*' или расширения файлов через запятую, например '.bin,.pem'",
+    en: "'audio/*', 'video/*', 'image/*' or comma-separated file extensions like '.bin,.pem'",
+    zh: "'audio/*'、'video/*'、'image/*' 或以逗号分隔的文件扩展名，如 '.bin,.pem'",
   },
   "constructor.props.imageSize.height": { ru: "Высота, rem", en: "Height, rem", zh: "高度，rem" },
   "constructor.props.imageSize.width": { ru: "Ширина, rem", en: "Width, rem", zh: "宽度，rem" },
@@ -202,9 +202,9 @@ const constructorTranslations = {
   "constructor.props.header": { ru: "Заголовок пакета", en: "Packet header", zh: "数据包头" },
   "constructor.props.argument": { ru: "Аргумент", en: "Argument", zh: "参数" },
   "constructor.props.argument.info": {
-    ru: "Пользовательский аргумент (a-z, A-Z, 0-9, -_!)",
-    en: "Custom argument (a-z, A-Z, 0-9, -_!)",
-    zh: "自定义参数（a-z、A-Z、0-9、-_!）",
+    ru: "Имя аргумента из словаря команд (например ModCfg, Restart, FS) или NoSend - не отправлять. Неизвестное имя подсвечивается и не сохраняется",
+    en: "Argument name from the command dictionary (e.g. ModCfg, Restart, FS) or NoSend - do not send. An unknown name is highlighted and not saved",
+    zh: "命令字典中的参数名（例如 ModCfg、Restart、FS）或 NoSend - 不发送。未知名称会高亮显示且不保存",
   },
   "constructor.props.variables": { ru: "Перечень переменных", en: "List of variables", zh: "变量列表" },
   "constructor.props.variables.info": {

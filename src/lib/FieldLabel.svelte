@@ -11,8 +11,10 @@
     class: className = "",
   }: { label?: { name?: string; class?: string }; for?: string; id?: string; info?: string; class?: string } = $props()
 
-  /* С пояснением подпись - строка из текста и значка; выравнивание по label.class (justify-center и т.п.) */
-  const base = $derived(twMerge("text-[12px] font-semibold text-(--muted-color)", info ? "flex items-center gap-1" : "", className, label?.class))
+  /* С пояснением подпись - строка из текста и значка (flex): выравнивание text-center/text-right из классов переводится в justify-*, иначе подпись со значком уезжала бы влево */
+  const classes = $derived(`${className} ${label?.class ?? ""}`)
+  const align = $derived(!info ? "" : /(^|\s)text-center(\s|$)/.test(classes) ? "justify-center" : /(^|\s)text-right(\s|$)/.test(classes) ? "justify-end" : "")
+  const base = $derived(twMerge("text-[12px] font-semibold text-(--muted-color)", info ? "flex items-center gap-1" : "", align, className, label?.class))
 </script>
 
 {#if label?.name}

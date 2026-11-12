@@ -104,6 +104,8 @@
 | `component`        | Компонент интерфейса и его свойства                                                                                                       |
 | `onPropertyChange` | `(change: PropertyChange) => void`: новые `properties`, `name`, `access`, `eventHandler`; приложение сливает их по ключам верхнего уровня |
 
+Поле «Аргумент» в панелях (`Button`, `Select`, кнопки `Table`, команды `WidgetDeviceInfo`) принимает только имя из мастер-словаря `dictionary.yaml` или служебный `NoSend`, до 31 знака (`ARGUMENT_REGEXP`, `ARGUMENT_MAX_LENGTH` в `options.ts`). Прошивка читает аргумент в `char[32]`, а неизвестное имя молча превращает в `A_UNKNOWN`, поэтому опечатка подсвечивается сразу и не сохраняется.
+
 Своя панель свойств строится на `createPropsEditor(component, onPropertyChange)`: `set`, `patch`, `addItem`, `updateItem`, `removeItem` отправляют новые объекты, сами свойства не меняются на месте.
 
 </details>
@@ -135,21 +137,22 @@
 - На компьютере сетка такая, как в конструкторе; пустая колонка между группами сжимается до узкой полосы, пустая строка - до обычного зазора.
 - Если рендерер уже 640px (телефон, узкая панель), блоки раскладываются по группам: одинаковые группы из мелких блоков (каналы) - карточками по 2-3 в ряд, остальные - друг под другом, поля группы - строками с переносом.
 - `Accordion` раскладывает своё содержимое так же, колонок у него не меньше, чем у самого дальнего блока.
+- `Tabs` раскладывает содержимое выбранной вкладки так же, как `Accordion` (сниппет `Content`): на компьютере - сетка автора внутри вкладки, на телефоне - по группам. Без этого блоки вкладки сжались бы в одну колонку из `size.width`.
 
 </details>
 
 <details>
 <summary>⚙️ Пропсы GUIRenderer и DeviceLink</summary>
 
-| Пропс        | Что это                                                                            |
-| ------------ | ---------------------------------------------------------------------------------- |
-| `components` | `UIComponent[]` в формате 2.0                                                      |
-| `link`       | `DeviceLink` выбранного модуля, см. ниже                                           |
-| `language`   | язык текстов GUI, по умолчанию язык библиотеки                                     |
-| `viewer`     | наблюдатель: видны только `access` `full` и `viewOnly`, управление отключено       |
-| `persistKey` | ключ хранения в браузере (обычно `ModSN`): свёрнутость виджетов, планы `WidgetMap` |
-| `render`     | своя отрисовка типа: `{ VideoViewer: snippet }`, сниппет получает компонент        |
-| `onError`    | текст ошибки команды или передачи файла                                            |
+| Пропс        | Что это                                                                                                                                                         |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `components` | `UIComponent[]` в формате 2.0                                                                                                                                   |
+| `link`       | `DeviceLink` выбранного модуля, см. ниже                                                                                                                        |
+| `language`   | язык текстов GUI, по умолчанию язык библиотеки                                                                                                                  |
+| `viewer`     | наблюдатель: видны только `access` `full` и `viewOnly`, управление отключено; `WidgetWiFi` и `WidgetDeviceInfo` без `onSave` - только для чтения, пароли маской |
+| `persistKey` | ключ хранения в браузере (обычно `ModSN`): свёрнутость виджетов, планы `WidgetMap`                                                                              |
+| `render`     | своя отрисовка типа: `{ VideoViewer: snippet }`, сниппет получает компонент                                                                                     |
+| `onError`    | готовый текст ошибки на языке библиотеки: команда не собрана, ошибка передачи файла, сбой поиска сетей WiFi (ER! или нет ответа)                                |
 
 ```ts
 interface DeviceLink {
@@ -170,8 +173,29 @@ interface DeviceReply {
 ```
 
 - `get` читает реактивное хранилище (`SvelteMap`), тогда рендерер обновляется сам.
-- Ответы устройства приложение кладёт в хранилище функцией `mergeDevicePayload(values, "<ModSN>|", ARG, Payload)`: объект пишется целиком и по полям `имя-поле`, ход закачки `CFG.FS` дописывается к снимку, служебные поля `SET FS` пропускаются.
+- Ответы устройства приложение кладёт в хранилище функцией `mergeDevicePayload(values, "<ModSN>|", ARG, Payload)`: объект пишется целиком и по полям `имя-поле`, ход закачки `CFG.FS` дописывается к снимку, служебные поля `SET FS` пропускаются. `ARG` может быть числом (кодом из словаря) - функция сама переводит его в имя.
 - Отправка `SET Restart` и `SET RstNVS` идёт через `link.send`, приложение может по ним показать состояние перезагрузки.
+
+</details>
+
+<details>
+<summary>🔢 Команды модулю за хабом: ARG числом</summary>
+
+Рендерер всегда передаёт в `link.send` и `link.waitFor` имя аргумента (`"ModCfg"`). Конверт WebSocket собирает приложение, и для модуля за хабом аргумент в нём - число из словаря. Подробно - раздел «WebSocket» в [PROTOCOL.md](src/lib/protocols/PROTOCOL.md).
+
+- В `send` собирайте конверт функцией `wsEnvelope(header, argument, { DevSN, ModSN, Payload })` из `poe-svelte-ui-lib/protocols`. Если `ModSN` задан и не равен `DevSN`, `ARG` станет кодом (`ModCfg` - 36), иначе останется именем.
+- Входящий конверт сначала пропустите через `readWsEnvelope(packet)`: числовой `ARG` станет именем, и `waitFor`, `mergeDevicePayload` и обработчики приложения работают с именами как раньше.
+- У устройства со своим словарём передайте его последним аргументом (`createDictionary(parseArgumentDictionary(text))`), иначе берётся встроенный `DEFAULT_DICTIONARY`.
+
+```ts
+import { wsEnvelope, readWsEnvelope } from "poe-svelte-ui-lib/protocols"
+
+const link: DeviceLink = {
+  send: (header, argument, payload) => socket.send(valueToCbor(wsEnvelope(header, argument, { DevSN: hub.DevSN, ModSN: module.ModSN, Payload: payload }))),
+  /* ... */
+}
+socket.onmessage = (event) => handle(readWsEnvelope(cborToValue(new Uint8Array(event.data))))
+```
 
 </details>
 
@@ -202,7 +226,26 @@ interface DeviceReply {
 <details>
 <summary>📁 Обмен файлами</summary>
 
-`createFsTransfer(transport, { argument = "FS", timeoutMs = 5000, retries = 3, maxNameLength = 31 })` - обмен файлами по `SET FS` прошивки:
+`createFsTransfer(transport, { argument = "FS", timeoutMs = 5000, retries = 3, maxNameLength = 31 })` - обмен файлами по `SET FS` прошивки. `maxNameLength` - предел имени в байтах UTF-8 (буква кириллицы - 2 байта). Слишком длинное или пустое имя `upload` отвергает ещё до `UploadStart` ошибкой `FsNameError` (поле `maxBytes`). Это единственная проверка имени: `GUIRenderer` передаёт сюда `maxNameLength` из свойств `WidgetFileSystem`, сам виджет имя не проверяет и только переводит сообщение.
+
+<details>
+<summary>Ошибки передачи</summary>
+
+Все ошибки передачи - `FsTransferError` с кодом `code` и параметрами `params`. Текст для человека берут из словаря библиотеки: `$T(error.key, error.params)`, ключ `widget.fs.error.<code>`. `message` - то же по-английски, для журнала. `FsNameError` - её частный случай с кодом `name`.
+
+| `code`        | Когда                                                      | `params`          |
+| ------------- | ---------------------------------------------------------- | ----------------- |
+| `timeout`     | устройство не ответило на шаг                              | `step`            |
+| `device`      | устройство ответило `ER!`                                  | `step`, `message` |
+| `noChunkSize` | в ответе на `UploadStart` нет `ChunkSize`                  |                   |
+| `badStart`    | в ответе на `DownloadStart` нет `FileSize` или `ChunkSize` |                   |
+| `badChunk`    | чанк скачивания не того типа или размера                   | `index`           |
+| `crc`         | CRC32 скачанного файла не совпала                          |                   |
+| `name`        | имя пустое или длиннее `maxNameLength` байт                | `n`               |
+
+`GUIRenderer` и `WidgetFileSystem` переводят коды сами.
+
+</details>
 
 | Метод                                      | Что делает                  |
 | ------------------------------------------ | --------------------------- |
@@ -229,6 +272,15 @@ interface DeviceReply {
 - 🔄 переводить значения между JSON и CBOR.
 
 Формат пакета, адресация, транспорты и список функций описаны в [PROTOCOL.md](src/lib/protocols/PROTOCOL.md).
+
+<details>
+<summary>🧭 Приём потока и поле Value</summary>
+
+- Пакет - только indefinite-массив `0x9F ... 0xFF`, как в прошивке. `decodePacket` считает definite-массивы мусором, а `createPacketStreamParser` (RS485) ищет метку `0x9F 0x85` и пропускает пакеты без записей. Шум вроде `0x80` или `0x81` перед пакетом больше не даёт пустых строк и не проглатывает настоящий пакет.
+- `createCanParser` считает `sessionTimeoutMs` от последнего фрагмента и выдаёт только целый пакет. Хвост с потерянным началом отбрасывается.
+- Поле Value консоли (`xPoeDebugValueFromText`): HEX только как `h'0A 1B'` или `0x0A1B`, всё остальное - JSON. `12` уходит числом 12, а не байтом `0x12`. Подсказки у поля Value в приложениях пишутся по этому правилу.
+
+</details>
 
 <details>
 <summary>🧪 Проверка</summary>
@@ -328,7 +380,7 @@ interface DeviceReply {
 <details>
 <summary>📋 Таблица: разметка в ячейках и цвет шапки</summary>
 
-- Текст ячейки `Table` выводится как текст, теги в данных устройства не работают. Если ячейке нужна разметка (цвет, ссылка), у колонки ставят `html: true`, а данные в ней экранируют сами функцией `escapeHtml`. `formatting` возвращает HTML для окна и подсказки и тоже сам экранирует текст.
+- Текст ячейки `Table` выводится как текст, теги в данных устройства не работают. Если ячейке нужна разметка (цвет, жирный текст, ссылка на `#id` или `mailto:`), у колонки ставят `html: true`, а данные в ней экранируют сами функцией `escapeHtml`. Внешние ссылки `sanitizeHtml` вырезает. Для обычного текста разметка не нужна: содержимое ячейки задаёт `render(row)`, подсказку - `tooltip` (`true` или функция от строки), окно по нажатию - `modal` (`true` или сниппет), цвет текста - `accent(row)`. Всё это выводится как текст.
 - Шапку `Table` можно перекрасить переменной `--table-header-color`. Компонент с `accent` задаёт её сам мягким оттенком своего цвета.
 
 </details>
@@ -353,17 +405,26 @@ interface DeviceReply {
 <details>
 <summary>🛡️ Безопасный вывод SVG и HTML</summary>
 
-Иконки и HTML из GUI и данных устройства компоненты выводят только через `sanitizeHtml` (`src/lib/html.ts`, экспортируется из библиотеки). Он заново собирает разметку из разрешённых тегов SVG и простого текста: скрипты, обработчики `on*`, внешние ссылки и `url()` на чужие ресурсы выбрасываются. Работает одинаково в браузере и при серверном рендере. Приложение, которое само вставляет такую разметку через `{@html}`, тоже пропускает её через `sanitizeHtml`.
+Иконки и HTML из GUI и данных устройства компоненты выводят только через `sanitizeHtml` (`src/lib/html.ts`, экспортируется из библиотеки). Он заново собирает разметку из разрешённых тегов SVG и простого текста: скрипты, обработчики `on*`, внешние ссылки и `url()` на чужие ресурсы выбрасываются. Работает одинаково в браузере и при серверном рендере.
+
+<details>
+<summary>🛡️ Что именно пропускает sanitizeHtml</summary>
+
+- Ссылки `href` и `xlink:href`: только на свой фрагмент `#id`, у `<a>` ещё `mailto:`. Адреса `http(s):`, `//...`, `javascript:` и прочие выбрасываются вместе с атрибутом.
+- `style`: остаются только свойства для цвета и значков - `color`, `background-color`, `opacity`, `fill*`, `stroke*`, `stop-color`, `stop-opacity`, `width`, `height`, `font-size`, `font-weight`, `font-style`, `text-decoration`, `text-align`, `vertical-align`, `white-space`. `position`, `inset`, `top`, `z-index`, `transform` и всё остальное выбрасывается, поэтому разметка из данных не может накрыть страницу невидимым блоком. `url()` допустим только на `#id`.
+- `class`: выбрасываются классы Tailwind, которыми элемент выносится поверх страницы (`fixed`, `absolute`, `sticky`, `inset-*`, `top-*`, `z-*`, `translate-*` и подобные, в том числе с `md:`, `hover:` и `!`). Остальные классы остаются.
+
+</details> Приложение, которое само вставляет такую разметку через `{@html}`, тоже пропускает её через `sanitizeHtml`.
 
 </details>
 
 <details>
 <summary>🛠️ Как устроен каталог</summary>
 
-- Каталог лежит в `src/lib/IconsCatalog`.
+- Каталог лежит в `assets/IconsCatalog`, скрипт сборки - `scripts/UpdateIconsLib.ts`. Оба в npm-пакет не входят: иконки уже вшиты строками в `src/lib/icons.ts`.
 - Файл называется `категория.имя.svg`, имя - как в Tabler.
 - Скрипт `npm run UpdateIconsLib` собирает из файлов `icons.ts`: `ICONS` (иконки по категориям), `ICON_NAMES` (имена для поиска и подсказок) и `ICONS_ARRAY` (наборы состояний из папок `battery`, `bulb`, `propeller`, их переключает `Widget` по значению).
-- Порядок категорий задан в `CATEGORY_ORDER` в `iconsLib.ts`, название категории - ключ `constructor.props.icon.<категория>` в словаре.
+- Порядок категорий задан в `CATEGORY_ORDER` в `scripts/UpdateIconsLib.ts`, название категории - ключ `constructor.props.icon.<категория>` в словаре.
 - Окно выбора в конструкторе - `IconsMatrix`: категории матрицей 4×3 (в клетке 4×4), сверху поиск по имени или категории, при наведении подсказка с именем.
 - Иконка сохраняется в GUI как SVG, поэтому перестановка каталога не ломает сохранённые интерфейсы.
 
@@ -396,6 +457,7 @@ export const T = createTranslator(translations)
 
 - **Встроенные тексты компонентов**: подписи, кнопки, подсказки. Они только в словаре `src/lib/locales/translations.ts` и выводятся через `$T("ключ")`. Русских строк прямо в разметке быть не должно.
 - **Тексты из конструктора**: название поля, варианты списка, заголовки колонок. Это строка или объект `{ ru, en, zh }`. Приложение переводит всё описание интерфейса функцией `localizeDeep` перед показом. В конструкторе их правят в окне «Тексты и переводы», которое есть у каждого компонента.
+- `localizeDeep` переводит только поля текстов (`name`, `label`, `labels`, `placeholder`, `text`, `info`, `title`, `captionLeft`, `captionRight`, `units`, `unit`, `footer`, `hiddenInfo`, `alt`) - те же, что показывает окно «Тексты и переводы». Объект считается переводом, если все его ключи похожи на коды языков и хотя бы один есть в `LANGUAGES`. Остальные объекты (данные колонки `{ key: "device" }`, картинка `{ src, alt }`) остаются как есть.
 
 </details>
 
@@ -517,7 +579,7 @@ const canModal = createRawSnippet((row: () => CanRow) => ({ render: () => `<div 
 | `component.properties as UI.IButtonProps`                                                                                                    | `if (component.type === "Button")` - `properties` уже `IButtonProps`                                |
 | `IWidgetWiFiConfig` и др. - отдельные интерфейсы, `value` виджета - полный объект                                                            | выведены из `WIDGET_FIELDS`; `value` у `WidgetWiFi` и `WidgetDeviceInfo` - `Partial`                |
 
-Транспорт `waitFor` в WebApp пишется заново (сейчас там опрос `lastResponse`): первый пакет `OK!`/`ER!` с аргументом, прошедший `match`, или `null` по таймауту.
+Транспорт `waitFor` в WebApp уже есть (`WebSocketStore.ts`): он ждёт первый пакет `OK!`/`ER!` с аргументом, прошедший `match`, или возвращает `null` по таймауту.
 
 </details>
 
@@ -633,6 +695,7 @@ npm pack               # сборка пакета в dist/: проверка т
 - 🧱 Стили тегов в приложении пишите только внутри `@layer base`, иначе подписи компонентов станут крупнее.
 - 🛡️ Разметку из данных устройства выводите только через `sanitizeHtml`.
 - 🌐 Карта `WidgetMap` без интернета работает только со своим модулем MapLibre (`configureMapLibre`).
+- ℹ️ Значок ⓘ с пояснением (`help.info`) после заголовка есть у `Input`, `Select`, `Switch`, `Slider`, `Graph`, `Joystick`, `PeriodChart`, `ProgressBar`, `Table` и `VideoViewer`. Значок - общий `InfoHint`, у всех, кроме `Switch`, вместе с подписью через `FieldLabel`. Пояснение задаётся в «Тексты и переводы», `GUIRenderer` передаёт его вместе с остальными свойствами.
 - 🟢 Под Node без Vite языки берите из `poe-svelte-ui-lib/locales`, а протоколы из `poe-svelte-ui-lib/protocols`.
 
 ---

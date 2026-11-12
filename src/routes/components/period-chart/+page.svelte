@@ -6,7 +6,7 @@
   import ComponentExample from "../../ComponentExample.svelte"
   import PeriodChart from "#lib/PeriodChart/PeriodChart.svelte"
   import PeriodChartProps from "#lib/PeriodChart/PeriodChartProps.svelte"
-  import { formatObjectToString, RenderMarkdown } from "../../common"
+  import { formatObjectToString, L, RenderMarkdown } from "../../common"
   import readmeRaw from "#lib/PeriodChart/README.md?raw"
 
   let readmeHtml = $state("")
@@ -47,6 +47,7 @@
       id: crypto.randomUUID(),
       accent: "blue",
       label: { name: "Расход энергии", class: "text-center" },
+      help: { info: L("Наведите на столбец, чтобы увидеть значение", "Hover over a bar to see its value", "将鼠标悬停在柱形上查看数值") },
       levels: energyLevels,
       unit: " Вт·ч",
     },

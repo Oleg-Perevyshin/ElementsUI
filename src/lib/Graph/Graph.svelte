@@ -14,6 +14,7 @@
 </script>
 
 <script lang="ts">
+  import FieldLabel from "../FieldLabel.svelte"
   import { T } from "../locales/i18n"
   import { onMount, untrack } from "svelte"
   import { watchTheme } from "../themeWatch"
@@ -24,6 +25,7 @@
   let {
     wrapperClass = "",
     label = { name: "", class: "" },
+    help,
     streamingData = { data: [] },
     isTest = false,
     refreshRate = 0,
@@ -354,9 +356,7 @@
 
 <!-- @container: раскладка по ширине самого графика - уже 28rem панель уходит под холст -->
 <div class={`@container relative flex w-full flex-col items-center justify-center ${wrapperClass}`}>
-  {#if label.name}
-    <h5 class={`w-full px-4 text-center ${label.class}`}>{label.name}</h5>
-  {/if}
+  <FieldLabel {label} info={help?.info} class="w-full justify-center px-4 text-center" />
 
   <div class="flex w-full min-w-0 flex-col gap-3 @md:flex-row @md:gap-4">
     <!-- График: холст абсолютно поверх контейнера - его пиксельная ширина не распирает контейнер, иначе в сетке/flex с 1fr ширина растёт по кругу (ResizeObserver) -->

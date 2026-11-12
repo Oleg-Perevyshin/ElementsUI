@@ -1,5 +1,6 @@
 <!-- $lib/Table/Table.svelte - таблица: обычная (строки в body) или журнал (строки добавляет push() через bind:this, хранятся в кольцевом буфере) -->
 <script lang="ts" generics="Row extends object">
+  import FieldLabel from "../FieldLabel.svelte"
   import { roundToClean } from "../number"
   import type { IOption, ITableButton, ITableContent, ITableHeader, ITableProps, ITableText } from "../types"
   import { fly, slide } from "svelte/transition"
@@ -20,6 +21,7 @@
     wrapperClass = "",
     accent,
     label = { name: "", class: "" },
+    help,
     body = [],
     header = [],
     footer = "",
@@ -248,9 +250,7 @@
 </script>
 
 <div class={twMerge(`flex h-full w-full flex-col overflow-hidden`, wrapperClass)} style={accentStyle(accent)}>
-  {#if label.name}
-    <span class={twMerge(`w-full pb-2 text-[12px] font-semibold text-(--muted-color)`, label.class)}>{label.name}</span>
-  {/if}
+  <FieldLabel {label} info={help?.info} class="w-full pb-2" />
 
   <div class="relative flex h-full w-full flex-col overflow-x-auto overflow-y-hidden rounded-[14px] border border-(--hairline-color) bg-(--back-color)">
     <div class="flex min-h-0 w-full flex-1 flex-col" style="min-width: {minTableWidth};">

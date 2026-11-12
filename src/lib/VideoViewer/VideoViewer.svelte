@@ -1,6 +1,6 @@
 <script lang="ts">
+  import FieldLabel from "../FieldLabel.svelte"
   import Button from "../Button/Button.svelte"
-  import Error from "../libIcons/Error.svelte"
   import { T } from "../locales/i18n"
   import Select from "../Select/Select.svelte"
   import type { IOption, IVideoViewerProps } from "../types"
@@ -8,7 +8,7 @@
   import { twMerge } from "tailwind-merge"
   import { accentStyle } from "../accent"
 
-  let { accent, wrapperClass, label = { name: "", class: "" }, showSelect = true, source = "camera", frame = null, status }: IVideoViewerProps = $props()
+  let { accent, wrapperClass, label = { name: "", class: "" }, help, showSelect = true, source = "camera", frame = null, status }: IVideoViewerProps = $props()
 
   const isRemote = $derived(source === "remote")
 
@@ -22,6 +22,9 @@
   let sources = $state<MediaDeviceInfo[]>([])
   let loading = $state(false)
   let devId: string = $state("")
+  /* Компонент убран или запрошен другой поток: камера, полученная после этого, сразу выключается */
+  let destroyed = false
+  let request = 0
 
   export const getDevices = async (): Promise<MediaDeviceInfo[]> => {
     try {
@@ -39,6 +42,7 @@
 
     try {
       if (stream) stopStream()
+      const current = ++request
 
       const deviceId = devId ?? sources[0].deviceId
 
@@ -52,7 +56,12 @@
         audio: false,
       }
 
-      stream = await navigator.mediaDevices.getUserMedia(constraints)
+      const acquired = await navigator.mediaDevices.getUserMedia(constraints)
+      if (destroyed || current !== request) {
+        acquired.getTracks().forEach((track) => track.stop())
+        return
+      }
+      stream = acquired
 
       if (videoElement) {
         videoElement.srcObject = stream as MediaStream
@@ -69,6 +78,7 @@
   }
 
   export const stopStream = () => {
+    request++
     if (stream) {
       stream.getTracks().forEach((track) => track.stop())
       stream = null
@@ -98,12 +108,13 @@
     }
   }
 
+  /* Список камер обновляется по событию devicechange (камеру подключили или отключили), без опроса */
   $effect(() => {
-    if (isRemote) return
-    const interval = setInterval(async () => {
-      sources = await getDevices()
-    }, 1000)
-    return () => clearInterval(interval)
+    if (isRemote || typeof navigator === "undefined" || !navigator.mediaDevices) return
+    const media = navigator.mediaDevices
+    const onChange = () => void getDevices()
+    media.addEventListener("devicechange", onChange)
+    return () => media.removeEventListener("devicechange", onChange)
   })
 
   onMount(() => {
@@ -113,6 +124,7 @@
       handlePermission()
     }
     return () => {
+      destroyed = true
       stopStream()
     }
   })
@@ -132,9 +144,7 @@
 </script>
 
 <div class={twMerge("flex flex-col w-full h-full items-center", wrapperClass)} style={accentStyle(accent)}>
-  {#if label.name}
-    <h5 class={twMerge(`w-full px-4 text-center`, label.class)}>{label.name}</h5>
-  {/if}
+  <FieldLabel {label} info={help?.info} class="w-full justify-center px-4 text-center" />
   <!-- design-handoff, раздел 9: фон --container-color, радиус 14, оверлей загрузки без фиксированных отступов -->
   <div class={twMerge("relative flex w-full flex-1 items-center justify-center rounded-[14px]", roleBorderClass)}>
     {#if isRemote}

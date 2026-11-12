@@ -6,11 +6,8 @@ import { CborMajorType, CborAdditionalInfo, CborSimpleValue, type CborValue, Cbo
 export class CborEncoder {
   private buffer: number[]
 
-  constructor(initialCapacity: number = 256) {
+  constructor() {
     this.buffer = []
-    /* Pre-allocate buffer */
-    this.buffer.length = initialCapacity
-    this.buffer.length = 0
   }
 
   /* Получить закодированные данные как Uint8Array */
@@ -112,8 +109,8 @@ export class CborEncoder {
       return value > 0 ? this.encodeFloat64(Infinity) : this.encodeFloat64(-Infinity)
     }
 
-    /* Проверяем можно ли сохранить как integer */
-    if (Number.isInteger(value)) {
+    /* Целым кодируется только точное целое (safe integer): 1e20 и подобные идут как float64, иначе writeHeader вышел бы за uint64 */
+    if (Number.isSafeInteger(value)) {
       return this.encodeInt(value)
     }
 

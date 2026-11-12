@@ -1,7 +1,7 @@
 /* Многоязычные тексты, введённые в конструкторе: строка (язык по умолчанию) или объект по кодам языков { ru, en, zh, ... }; язык по умолчанию (DEFAULT_LANGUAGE) - основной и запасной; набор и порядок языков - LANGUAGES (languages.ts) */
 import { DEFAULT_LANGUAGE, LANGUAGE_CODES, type LanguageCode } from "./languages.js"
 
-/* Ключ многоязычного текста: код языка из LANGUAGES или похожий на код (ru, en, pt-BR) - данные с языком, которого нет в списке, не ломаются */
+/* Ключ многоязычного текста похож на код языка (ru, en, pt-BR); хотя бы один ключ - код из LANGUAGE_CODES */
 const LANGUAGE_KEY = /^[a-z]{2,3}(-[A-Z]{2})?$/
 
 export type LocalizedText = string | Partial<Record<LanguageCode, string>>
@@ -30,7 +30,7 @@ const isPlainObject = (value: unknown): value is Record<string, unknown> =>
 export const isLocalizedText = (value: unknown): value is Partial<Record<LanguageCode, string>> => {
   if (!isPlainObject(value)) return false
   const keys = Object.keys(value)
-  return keys.length > 0 && keys.every((key) => LANGUAGE_KEY.test(key) && typeof value[key] === "string")
+  return keys.some((key) => LANGUAGE_CODES.includes(key as LanguageCode)) && keys.every((key) => LANGUAGE_KEY.test(key) && typeof value[key] === "string")
 }
 
 /* Текст на нужном языке: сам язык → язык по умолчанию → первый непустой */
@@ -39,12 +39,16 @@ export const localizeText = (value: LocalizedText | undefined, lang: string): st
   return value[lang as LanguageCode] || value[DEFAULT_LANGUAGE] || Object.values(value).find(Boolean) || ""
 }
 
-/* Копия структуры, где каждый многоязычный текст заменён строкой на языке lang; функции, компоненты и бинарные данные - как есть */
+/* Копия структуры, где многоязычный текст под ключом из TEXT_KEYS заменён строкой на языке lang; прочие объекты (данные колонки { key }, { src, alt }) обходятся без замены; функции, компоненты и бинарные данные - как есть */
 export function localizeDeep<T>(value: T, lang: string): T {
-  if (isLocalizedText(value)) return localizeText(value, lang) as T
-  if (Array.isArray(value)) return value.map((item) => localizeDeep(item, lang)) as T
+  return localizeAt(value, lang, "")
+}
+
+function localizeAt<T>(value: T, lang: string, key: string): T {
+  if (TEXT_KEYS.has(key) && isLocalizedText(value)) return localizeText(value, lang) as T
+  if (Array.isArray(value)) return value.map((item) => localizeAt(item, lang, key === "labels" ? key : "")) as T
   if (!isPlainObject(value)) return value
-  return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, localizeDeep(item, lang)])) as T
+  return Object.fromEntries(Object.entries(value).map(([k, item]) => [k, localizeAt(item, lang, k)])) as T
 }
 
 /* Поля с данными устройства/рантайма - тексты в них не ищутся */

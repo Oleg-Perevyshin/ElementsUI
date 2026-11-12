@@ -50,4 +50,6 @@ export {
   type CanMessage,
 } from "./can.js"
 /* Словарь заголовков и аргументов HAR - по умолчанию из мастер-словаря dictionary.yaml библиотеки, разбор файла словаря, словарь устройства с обратным поиском для xPOE-Debug */
-export { HEADER_CODES, DEFAULT_ARGUMENT_CODES, parseArgumentDictionary, createDictionary, type Dictionary } from "./dictionary.js"
+export { HEADER_CODES, DEFAULT_ARGUMENT_CODES, DEFAULT_DICTIONARY, parseArgumentDictionary, createDictionary, type Dictionary } from "./dictionary.js"
+/* Конверт WebSocket {HDR, ARG, VAL}: ARG - имя или код аргумента; модулю за хабом - код, входящий код переводится в имя */
+export { isModuleTarget, wsArgumentCode, wsArgumentName, wsEnvelope, readWsEnvelope, type WsArgument, type WsEnvelope } from "./wsEnvelope.js"

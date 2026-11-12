@@ -14,6 +14,7 @@
 </script>
 
 <script lang="ts">
+  import FieldLabel from "../FieldLabel.svelte"
   import { T } from "../locales/i18n"
   import { twMerge } from "tailwind-merge"
   import { accentStyle } from "../accent"
@@ -24,6 +25,7 @@
     /* Панель без заливки, цвет можно передать явно через bg-* */
     wrapperClass = "",
     label = { name: "", class: "" },
+    help,
     levels: levelsProp,
     unit = "",
     onLevelChange = () => {},
@@ -83,9 +85,7 @@
 </script>
 
 <div class={twMerge("@container relative flex w-full flex-col gap-3", wrapperClass)} style={accentStyle(accent)}>
-  {#if label.name}
-    <h5 class={twMerge("w-full text-[13px] font-semibold text-(--muted-color)", label.class)}>{label.name}</h5>
-  {/if}
+  <FieldLabel {label} info={help?.info} class="w-full" />
 
   <!-- Сегментированный переключатель уровней: при одном уровне переключать нечего; без ключа - имена уровней могут быть пустыми и совпадать -->
   {#if levels.length > 1}

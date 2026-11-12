@@ -8,7 +8,7 @@
   import { createPropsEditor, type PropertyChange } from "../propsEditor"
   import PropsGroup from "../PropsGroup.svelte"
   import CommonSnippets from "../CommonSnippets.svelte"
-  import { optionsStore } from "../options"
+  import { ARGUMENT_MAX_LENGTH, ARGUMENT_REGEXP, optionsStore } from "../options"
 
   const DEVICE_INFO_KEYS = Object.keys(WIDGET_FIELDS.WidgetDeviceInfo) as (keyof IWidgetDeviceInfoConfig)[]
 
@@ -40,6 +40,8 @@
   <UI.Input
     label={{ name: $T("widget.common.argument") }}
     value={component.properties[path]?.argument ?? defaultArgument}
+    maxlength={ARGUMENT_MAX_LENGTH}
+    help={{ info: $T("constructor.props.argument.info"), regExp: ARGUMENT_REGEXP }}
     onUpdate={(value) => edit.patch(path, { argument: String(value) })}
   />
 {/snippet}

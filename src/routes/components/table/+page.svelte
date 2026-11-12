@@ -8,16 +8,13 @@
   import TableProps from "#lib/Table/TableProps.svelte"
   import { type IOption, type ITableButton } from "#lib/types.ts"
   import { onDestroy, onMount } from "svelte"
-  import { formatObjectToString, RenderMarkdown } from "../../common"
+  import { formatObjectToString, L, RenderMarkdown } from "../../common"
   import readmeRaw from "#lib/Table/README.md?raw"
 
   let readmeHtml = $state("")
   $effect(() => {
     RenderMarkdown(readmeRaw).then((html) => (readmeHtml = html))
   })
-
-  /* Многоязычный текст для демо: в данных - { ru, en, zh }, тип поля - string (разрешается localizeDeep) */
-  const L = (ru: string, en: string, zh: string) => ({ ru, en, zh }) as unknown as string
 
   /* Демо для конструктора: текст (сортировка, обрезка), шкала заряда и кнопка с командой */
   const DEMO_HEADER: ITableHeader<Record<string, unknown>>[] = [
@@ -63,6 +60,7 @@
       id: crypto.randomUUID(),
       accent: "blue",
       label: { name: L("Устройства объекта", "Site devices", "现场设备"), class: "text-center" },
+      help: { info: L("Нажмите на заголовок колонки, чтобы отсортировать", "Click a column header to sort", "点击列标题进行排序") },
       dataBuffer: { bufferSize: 10, visibleRows: 5, logger: false },
       header: DEMO_HEADER,
       body: DEMO_BODY,

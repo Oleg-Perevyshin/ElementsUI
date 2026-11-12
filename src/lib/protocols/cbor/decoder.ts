@@ -15,6 +15,8 @@ import {
   CborDepthLimitError,
 } from "./types.js"
 
+const MAX_SAFE = BigInt(Number.MAX_SAFE_INTEGER)
+
 /* Класс декодера CBOR */
 export class CborDecoder {
   private state: CborParserState
@@ -75,30 +77,6 @@ export class CborDecoder {
     } catch {
       this.state.depth--
       return false
-    }
-  }
-
-  /* Декодировать байтовую строку (в т.ч. indefinite-length, через чанки) */
-  public decodeBytes(): { value: Uint8Array; length: number } | null {
-    const savedOffset = this.state.offset
-    try {
-      const header = this.readHeader()
-
-      if (header.majorType !== CborMajorType.ByteString) {
-        this.state.offset = savedOffset
-        return null
-      }
-
-      const result = header.value === BigInt(-1) ? this.readIndefiniteBytes() : this.decodeBytesWithLength(Number(header.value))
-
-      if (!result) {
-        this.state.offset = savedOffset
-        return null
-      }
-      return result
-    } catch {
-      this.state.offset = savedOffset
-      return null
     }
   }
 
@@ -230,11 +208,12 @@ export class CborDecoder {
   /* Декодировать значение по типу заголовка */
   private decodeByType(header: CborHeader): CborValue {
     switch (header.majorType) {
+      /* Целое вне safe integer - bigint, чтобы не терять точность (CborToValue отдаст его строкой) */
       case CborMajorType.UnsignedInteger:
-        return Number(header.value)
+        return header.value <= MAX_SAFE ? Number(header.value) : header.value
 
       case CborMajorType.NegativeInteger:
-        return -1 - Number(header.value)
+        return header.value < MAX_SAFE ? -1 - Number(header.value) : -BigInt(1) - header.value
 
       case CborMajorType.ByteString: {
         const bytesValue = header.value === BigInt(-1) ? this.readIndefiniteBytes() : this.decodeBytesWithLength(Number(header.value))

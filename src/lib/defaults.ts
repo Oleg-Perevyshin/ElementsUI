@@ -39,19 +39,22 @@ export const COMPONENT_DEFAULTS: { [K in UIType]: Partial<UIComponentPropsMap[K]
   },
   Select: { label, help: { info: "" }, type: "select", disabled: false, bitMode: false, range: { start: 0, end: 2 }, options: [{ value: "1", name: "" }] },
   Switch: { label: { name: "", captionLeft: "", captionRight: "" }, help: { info: "" }, type: "horizontal", accent: "blue", value: 0, disabled: false },
-  Slider: { label, accent: "blue", value: 5, number: { minNum: 0, maxNum: 10, step: 1 }, disabled: false },
+  Slider: { label, help: { info: "" }, accent: "blue", value: 5, number: { minNum: 0, maxNum: 10, step: 1 }, disabled: false },
   TextField: { content: { name: "", class: "text-center", size: "base" } },
   ProgressBar: {
+    label: { name: "", class: "" },
+    help: { info: "" },
     accent: "blue",
     items: [{ name: "" }],
     value: [{ Name: "Label", Value: 40 }],
     number: { minNum: 0, maxNum: 100, units: "" },
     type: "horizontal",
   },
-  Graph: { label, streamingData: { data: [] }, refreshRate: 0 },
-  PeriodChart: { label, accent: "blue", levels: Array.from({ length: 4 }, () => ({ name: "", variable: "", data: [] })), unit: "" },
+  Graph: { label, help: { info: "" }, streamingData: { data: [] }, refreshRate: 0 },
+  PeriodChart: { label, help: { info: "" }, accent: "blue", levels: Array.from({ length: 4 }, () => ({ name: "", variable: "", data: [] })), unit: "" },
   Table: {
     label,
+    help: { info: "" },
     accent: "blue",
     header: [
       { label: { name: "" }, width: "40%", align: "left", content: [{ type: "text", data: { key: "id", sortable: true } }] },
@@ -61,9 +64,9 @@ export const COMPONENT_DEFAULTS: { [K in UIType]: Partial<UIComponentPropsMap[K]
     dataBuffer: { stashData: false, bufferSize: 100, visibleRows: 10 },
   },
   FileAttach: { label, accept: "*/*" },
-  Joystick: { label, axes: Array.from({ length: 3 }, () => ({ name: "", minNum: -100, maxNum: 100 })) },
+  Joystick: { label, help: { info: "" }, axes: Array.from({ length: 3 }, () => ({ name: "", minNum: -100, maxNum: 100 })) },
   Widget: { label, accent: "blue", settings: { label: "", type: "slider", number: { minNum: 0, maxNum: 100, step: 1, units: "" } } },
-  VideoViewer: { label, showSelect: true },
+  VideoViewer: { label, help: { info: "" }, showSelect: true },
   Divider: { type: "line", width: 2, anchor: "center" },
 }
 

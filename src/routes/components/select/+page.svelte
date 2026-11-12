@@ -6,16 +6,13 @@
   import ComponentExample from "../../ComponentExample.svelte"
   import * as UI from "#lib"
   import { SelectProps } from "#lib/constructor.ts"
-  import { formatObjectToString, RenderMarkdown } from "../../common"
+  import { formatObjectToString, L, RenderMarkdown } from "../../common"
   import readmeRaw from "#lib/Select/README.md?raw"
 
   let readmeHtml = $state("")
   $effect(() => {
     RenderMarkdown(readmeRaw).then((html) => (readmeHtml = html))
   })
-
-  /* Многоязычный текст для демо: в данных - { ru, en, zh }, тип поля - string (разрешается localizeDeep) */
-  const L = (ru: string, en: string, zh: string) => ({ ru, en, zh }) as unknown as string
 
   const DEMO_OPTIONS: IOption<number>[] = [
     { id: "auto", value: 0, name: L("Авто", "Auto", "自动"), accent: "green" },

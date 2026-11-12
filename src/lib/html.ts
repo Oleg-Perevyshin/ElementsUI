@@ -46,13 +46,50 @@ const decodeEntities = (text: string) =>
     return code > 0 && code <= 0x10ffff ? String.fromCodePoint(code) : "\ufffd"
   })
 
-/* Значение атрибута (уже раскрытое) безопасно: ссылки только на свой фрагмент (#id) или http(s), в стилях и url() нет внешних ресурсов и скриптов, CSS-экранирования запрещены */
-const safeAttrValue = (tag: string, name: string, value: string): boolean => {
+/* Свойства style, которые остаются: цвет, заливка, обводка, прозрачность, размер текста или значка; position, inset, z-index, transform и прочее, чем можно накрыть страницу, выбрасываются */
+const SAFE_STYLE_PROPS = new Set(
+  (
+    "color background-color opacity fill fill-opacity fill-rule stroke stroke-width stroke-opacity stroke-linecap stroke-linejoin stroke-miterlimit " +
+    "stroke-dasharray stroke-dashoffset stop-color stop-opacity width height font-size font-weight font-style text-decoration text-align vertical-align white-space"
+  ).split(" "),
+)
+
+/* Классы Tailwind, которыми можно вынести элемент поверх страницы (fixed inset-0 z-50 и подобные), в том числе с вариантами md:, hover: и ! */
+const UNSAFE_CLASS = /^(?:[^:\s]+:)*!?-?(?:fixed|absolute|sticky|inset|top|right|bottom|left|start|end|z|translate|scale|rotate|transform)(?:-|!|$)/
+
+/* Значение атрибута (уже раскрытое) без скриптов, внешних url() и CSS-экранирований */
+const safeValue = (value: string): boolean => {
   const v = value.replace(/[\s\u0000-\u001f]/g, "").toLowerCase()
   if (v.includes("javascript:") || v.includes("vbscript:") || v.includes("expression(") || v.includes("@import") || v.includes("\\")) return false
-  if (/url\((?!['"]?#)/.test(v)) return false
-  if (name === "href" || name === "xlink:href") return v.startsWith("#") || (tag === "a" && /^(https?:|mailto:)/.test(v))
-  return true
+  return !/url\((?!['"]?#)/.test(v)
+}
+
+/* Очищенное значение атрибута или null - атрибут выбрасывается: ссылки только на свой фрагмент (#id), у <a> ещё mailto:; style - только свойства SAFE_STYLE_PROPS; class - без классов раскладки поверх страницы */
+const cleanAttrValue = (tag: string, name: string, value: string): string | null => {
+  if (!safeValue(value)) return null
+  if (name === "href" || name === "xlink:href") {
+    const v = value.replace(/[\s\u0000-\u001f]/g, "").toLowerCase()
+    return v.startsWith("#") || (tag === "a" && name === "href" && v.startsWith("mailto:")) ? value : null
+  }
+  if (name === "style") {
+    const kept = value
+      .split(";")
+      .map((declaration) => declaration.trim())
+      .filter((declaration) =>
+        SAFE_STYLE_PROPS.has(
+          declaration
+            .slice(0, Math.max(0, declaration.indexOf(":")))
+            .trim()
+            .toLowerCase(),
+        ),
+      )
+    return kept.length ? kept.join("; ") : null
+  }
+  if (name === "class") {
+    const kept = value.split(/\s+/).filter((token) => token && !UNSAFE_CLASS.test(token))
+    return kept.length ? kept.join(" ") : null
+  }
+  return value
 }
 
 const sanitizeCache = new Map<string, string>()
@@ -95,8 +132,8 @@ export const sanitizeHtml = (html: unknown): string => {
     while ((attr = ATTR_RE.exec(rawAttrs))) {
       const name = attr[1].toLowerCase()
       if (!SAFE_ATTRS.has(name)) continue
-      const value = decodeEntities(attr[2] ?? attr[3] ?? attr[4] ?? "")
-      if (!safeAttrValue(tag, name, value)) continue
+      const value = cleanAttrValue(tag, name, decodeEntities(attr[2] ?? attr[3] ?? attr[4] ?? ""))
+      if (value === null) continue
       attrs += ` ${attr[1]}="${escapeHtml(value)}"`
     }
     out += `<${rawName}${attrs}${/\/\s*$/.test(rawAttrs) ? " /" : ""}>`

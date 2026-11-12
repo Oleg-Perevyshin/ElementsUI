@@ -6,7 +6,7 @@
   import ComponentExample from "../../ComponentExample.svelte"
   import Slider from "#lib/Slider/Slider.svelte"
   import SliderProps from "#lib/Slider/SliderProps.svelte"
-  import { formatObjectToString, RenderMarkdown } from "../../common"
+  import { formatObjectToString, L, RenderMarkdown } from "../../common"
   import readmeRaw from "#lib/Slider/README.md?raw"
 
   let readmeHtml = $state("")
@@ -22,6 +22,13 @@
       id: crypto.randomUUID(),
       accent: "blue",
       label: { name: "Label", class: "text-center" },
+      help: {
+        info: L(
+          "Значение уходит на устройство, когда ползунок отпущен",
+          "The value is sent to the device when the slider is released",
+          "松开滑块时数值发送到设备",
+        ),
+      },
       value: 3,
       type: "single",
       number: { minNum: 0, maxNum: 10, step: 1.2 },

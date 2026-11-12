@@ -78,26 +78,6 @@ export const formatObjectToString = (properties: UIComponent["properties"]): str
   return lines.join("\n")
 }
 
-const promises: Record<string, Promise<any>> = {}
-export const importModule = async (url: string): Promise<any> => {
-  if (await promises[url]) {
-    return promises[url]
-  }
-
-  promises[url] = new Promise<any>((resolve, reject) => {
-    const s = document.createElement("script")
-    s.src = url
-    s.type = "module"
-    s.addEventListener("load", () => {
-      resolve(undefined)
-    })
-    s.addEventListener("error", reject)
-    document.head.appendChild(s)
-  })
-
-  return promises[url]
-}
-
 export const RenderMarkdown = async (text: string) => {
   if (typeof text !== "string") {
     return ""
@@ -106,11 +86,12 @@ export const RenderMarkdown = async (text: string) => {
   try {
     /* Установка опций для обработки Markdown */
     marked.setOptions({
-      async: false, // Отключаем асинхронный режим
-      breaks: true, // Включает поддержку разрыва строк
-      gfm: true, // Поддержка GitHub Flavored Markdown
-      pedantic: false, // Отключает строгий режим
-      silent: true, // Не вызывает ошибок при рендеринге
+      /* Синхронный режим, перенос строки как <br>, GitHub Flavored Markdown, без строгого режима и без исключений при рендеринге */
+      async: false,
+      breaks: true,
+      gfm: true,
+      pedantic: false,
+      silent: true,
     })
 
     /* Преобразуем Markdown в HTML и очищаем */
@@ -122,4 +103,5 @@ export const RenderMarkdown = async (text: string) => {
   }
 }
 
-/* Изменение от панели свойств - как его применяет конструктор DevCloud: properties и eventHandler сливаются по ключам верхнего уровня */
+/* Многоязычный текст для демо: в данных - { ru, en, zh }, тип поля - string (разрешается localizeDeep) */
+export const L = (ru: string, en: string, zh: string) => ({ ru, en, zh }) as unknown as string

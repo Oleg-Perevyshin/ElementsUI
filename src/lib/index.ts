@@ -64,7 +64,17 @@ export {
   type DeviceLink,
   type DevicePacket,
 } from "./gui"
-export { createFsTransfer, type DeviceReply, type DeviceTransport, type FsTransfer, type FsTransferOptions, type FsProgress } from "./fsTransfer"
+export {
+  createFsTransfer,
+  FsTransferError,
+  FsNameError,
+  type FsErrorCode,
+  type DeviceReply,
+  type DeviceTransport,
+  type FsTransfer,
+  type FsTransferOptions,
+  type FsProgress,
+} from "./fsTransfer"
 export { copyText } from "./clipboard"
 export { default as Icon } from "./Icon.svelte"
 export { escapeHtml, htmlToText, sanitizeHtml } from "./html"

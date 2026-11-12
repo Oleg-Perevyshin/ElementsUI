@@ -17,6 +17,7 @@
     children,
     apiArray = [],
     Components,
+    Content,
   }: ITabsProps = $props()
 
   const isCol = $derived(!!items.find((item) => item.class?.startsWith("flex-col")))
@@ -66,7 +67,12 @@
       class="grid w-full min-h-0 flex-1 gap-3 overflow-x-hidden overflow-y-auto bg-(--back-color) p-4"
       style="grid-template-columns: repeat({size.width || 1}, minmax(0, 1fr)); grid-template-rows: repeat({size.height || 1}, auto);"
     >
-      {#if Components}
+      {#if Content}
+        <!-- Содержимое вкладки целиком (GUIRenderer: своя раскладка, на телефоне - по группам): во всю ширину сетки вкладки -->
+        <div class="min-w-0" style="grid-column: 1 / -1; grid-row: 1 / -1">
+          {@render Content((apiArray ?? []).filter((c) => tabOfComponent(c.id) === `${activeTab}`))}
+        </div>
+      {:else if Components}
         {#each (apiArray ?? []).filter((c) => tabOfComponent(c.id) === `${activeTab}`) as comp}
           {@render Components(comp, false)}
         {/each}

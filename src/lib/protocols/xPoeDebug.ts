@@ -5,12 +5,10 @@ import { DEFAULT_DICTIONARY, type Dictionary } from "./dictionary.js"
 import { createFramer, type FramerOptions } from "./framer.js"
 import { hexToBytes } from "./hex.js"
 import { formatXPoeDebugValue } from "./xPoeDebugView.js"
-import { decodePacket, encodePacket, formatBusId, type DecodedPacketObject } from "./packet.js"
+import { decodePacket, encodePacket, formatBusId, packetStart, type DecodedPacketObject } from "./packet.js"
 
 export const DEBUG_LOG_ARGUMENT = "DebugLog"
 const MAX_TEXT_TAIL = 4096
-const PACKET_START = 0x9f
-const RECORD = 0x85
 const decoder = new TextDecoder()
 
 export type XPoeDebugItem =
@@ -112,12 +110,6 @@ export const xPoeDebugRow = (item: XPoeDebugItem): XPoeDebugRow =>
         freeHeap: item.freeHeap,
       }
 
-/* Начало пакета - 0x9F 0x85, 0x9F последним байтом - возможное начало */
-const packetStart = (bytes: Uint8Array): number => {
-  for (let i = bytes.indexOf(PACKET_START); i >= 0; i = bytes.indexOf(PACKET_START, i + 1)) if (i + 1 >= bytes.length || bytes[i + 1] === RECORD) return i
-  return -1
-}
-
 /* Потоковый разбор: пакеты в любом месте разреза, текст - построчно, мусор сдвигается по байту; пауза дольше gapMs обрывает недособранный пакет, а недописанную строку текста выдаёт как есть. Имена аргументов - из dictionary (по умолчанию встроенного) */
 export const createXPoeDebugParser = ({ dictionary = DEFAULT_DICTIONARY, ...options }: FramerOptions & { dictionary?: Dictionary } = {}) => {
   const framer = createFramer(options)
@@ -153,16 +145,24 @@ export const createXPoeDebugParser = ({ dictionary = DEFAULT_DICTIONARY, ...opti
   }
 }
 
-/* Поле Value: готовый HEX CBOR проходит как есть, JSON кодируется в CBOR, пусто - пустой Payload */
+/* Готовые байты Payload только явным синтаксисом: h'0A 1B' (как показывает formatXPoeDebugValue) или 0x0A1B */
+const HEX_VALUE = /^(?:h'([0-9A-Fa-f\s]*)'|0[xX]([0-9A-Fa-f]+))$/
+
+/* Поле Value: h'..' или 0x.. - готовые байты Payload (CBOR) как есть, всё остальное - JSON в CBOR («12» - число 12), пусто - пустой Payload */
 export const xPoeDebugValueFromText = (text: string | undefined): Uint8Array => {
   const trimmed = (text ?? "").trim()
   if (!trimmed) return new Uint8Array()
-  if (/^([0-9A-Fa-f]{2}\s?)+$/.test(trimmed)) return hexToBytes(trimmed)!
+  const hex = HEX_VALUE.exec(trimmed)
+  if (hex) {
+    const bytes = hexToBytes(hex[1] ?? hex[2])
+    if (!bytes) throw new Error(`Value: нечётное число HEX-цифр: ${trimmed}`)
+    return bytes
+  }
   let parsed: unknown
   try {
     parsed = JSON.parse(trimmed)
   } catch {
-    throw new Error(`Value не является ни hex, ни JSON: ${trimmed}`)
+    throw new Error(`Value не является ни HEX (h'..' или 0x..), ни JSON: ${trimmed}`)
   }
   return jsonToCbor(parsed)
 }

@@ -9,7 +9,7 @@ export interface DeviceReply {
   message?: string
 }
 
-/* Транспорт к выбранному модулю: send - пакет без ответа (конверт DevSN/ModSN добавляет приложение); waitFor - первый ответ OK! или ER! с аргументом argument, для которого match вернул true, null - таймаут. waitFor вызывается до send */
+/* Транспорт к выбранному модулю: send - пакет без ответа, аргумент - имя (конверт DevSN/ModSN собирает приложение через wsEnvelope: модулю за хабом ARG уходит кодом); waitFor - первый ответ OK! или ER! с аргументом argument (имя, входящий код приложение переводит readWsEnvelope), для которого match вернул true, null - таймаут. waitFor вызывается до send */
 export interface DeviceTransport {
   send(header: string, argument: string, payload: Record<string, unknown>): unknown
   waitFor(argument: string, match: (reply: DeviceReply) => boolean, timeoutMs: number): Promise<DeviceReply | null>
@@ -22,9 +22,37 @@ export interface FsTransferOptions {
   timeoutMs?: number
   /* Повторов чанка после ER! или таймаута, по умолчанию 3 */
   retries?: number
-  /* Предел длины имени файла прошивки (LittleFS), по умолчанию 31 */
+  /* Предел длины имени файла прошивки (LittleFS) в байтах UTF-8, по умолчанию 31 */
   maxNameLength?: number
 }
+
+/* Причина ошибки передачи: timeout - нет ответа на шаг, device - ответ ER! (message - текст устройства), noChunkSize/badStart - неполный ответ на начало, badChunk - чанк не того размера, crc - контрольная сумма скачанного не совпала, name - имя файла пустое или длинное */
+export type FsErrorCode = "timeout" | "device" | "noChunkSize" | "badStart" | "badChunk" | "crc" | "name"
+
+/* Ошибка передачи с кодом: текст для пользователя - $T(error.key, error.params) из словаря библиотеки, message - тот же смысл по-английски для журнала */
+export class FsTransferError extends Error {
+  constructor(
+    readonly code: FsErrorCode,
+    readonly params: Record<string, string | number> = {},
+    message: string = code,
+  ) {
+    super(message)
+    this.name = "FsTransferError"
+  }
+  get key() {
+    return `widget.fs.error.${this.code}`
+  }
+}
+
+/* Имя файла пустое или длиннее maxBytes байт UTF-8 - закачка не начинается */
+export class FsNameError extends FsTransferError {
+  constructor(readonly maxBytes: number) {
+    super("name", { n: maxBytes }, `File name must be 1-${maxBytes} bytes UTF-8`)
+    this.name = "FsNameError"
+  }
+}
+
+const encoder = new TextEncoder()
 
 export type FsProgress = (done: number, total: number) => void
 
@@ -61,8 +89,8 @@ export const createFsTransfer = (transport: DeviceTransport, options: FsTransfer
     const pending = transport.waitFor(argument, match, timeoutMs)
     transport.send(header, argument, payload)
     const reply = await pending
-    if (!reply) throw new Error(`${step}: timeout`)
-    if (!reply.ok) throw new Error(reply.message || `${step}: ER!`)
+    if (!reply) throw new FsTransferError("timeout", { step }, `${step}: timeout`)
+    if (!reply.ok) throw new FsTransferError("device", { step, message: reply.message || "ER!" }, reply.message || `${step}: ER!`)
     return reply.payload
   }
 
@@ -91,13 +119,14 @@ export const createFsTransfer = (transport: DeviceTransport, options: FsTransfer
 
   const upload = (name: string, data: Uint8Array | Blob, onProgress?: FsProgress) =>
     exclusive(async () => {
-      if (!name || name.length > maxNameLength) throw new Error(`File name must be 1-${maxNameLength} characters`)
+      /* Прошивка ограничивает имя в байтах UTF-8: буква кириллицы - 2 байта */
+      if (!name || encoder.encode(name).length > maxNameLength) throw new FsNameError(maxNameLength)
       const bytes = data instanceof Uint8Array ? data : new Uint8Array(await data.arrayBuffer())
       const id = sessionId()
       /* Расширение - последний сегмент: имена вида "web_ui.yaml.gz" */
       const start = await step(id, { Op: "UploadStart", FileName: name, FileExtension: name.split(".").pop(), FileSize: bytes.length })
       const chunkSize = Number(start.ChunkSize)
-      if (!(chunkSize > 0)) throw new Error("UploadStart: no ChunkSize")
+      if (!(chunkSize > 0)) throw new FsTransferError("noChunkSize", {}, "UploadStart: no ChunkSize")
       for (let index = 0; index * chunkSize < bytes.length; index++) {
         const Data = bytes.subarray(index * chunkSize, (index + 1) * chunkSize)
         await withRetry(() => step(id, { Op: "UploadChunk", ChunkIndex: index, Data }))
@@ -112,18 +141,19 @@ export const createFsTransfer = (transport: DeviceTransport, options: FsTransfer
       const start = await step(id, { Op: "DownloadStart", Name: name })
       const size = Number(start.FileSize)
       const chunkSize = Number(start.ChunkSize)
-      if (!(size >= 0) || !(chunkSize > 0)) throw new Error("DownloadStart: no FileSize or ChunkSize")
+      if (!(size >= 0) || !(chunkSize > 0)) throw new FsTransferError("badStart", {}, "DownloadStart: no FileSize or ChunkSize")
       const bytes = new Uint8Array(size)
       for (let index = 0; index * chunkSize < size; index++) {
         const chunk = await withRetry(async () => {
           const data = (await step(id, { Op: "DownloadChunk", ChunkIndex: index })).Data
-          if (!(data instanceof Uint8Array) || index * chunkSize + data.length > size) throw new Error(`DownloadChunk ${index}: bad data`)
+          if (!(data instanceof Uint8Array) || index * chunkSize + data.length > size)
+            throw new FsTransferError("badChunk", { index }, `DownloadChunk ${index}: bad data`)
           return data
         })
         bytes.set(chunk, index * chunkSize)
         onProgress?.(Math.min((index + 1) * chunkSize, size), size)
       }
-      if (crc32(bytes) !== Number(start.CRC32)) throw new Error("CRC32 mismatch")
+      if (crc32(bytes) !== Number(start.CRC32)) throw new FsTransferError("crc", {}, "CRC32 mismatch")
       await step(id, { Op: "DownloadDone" })
       return bytes
     })

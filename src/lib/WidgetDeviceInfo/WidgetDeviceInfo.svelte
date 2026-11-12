@@ -74,17 +74,22 @@
     }
   })
 
-  /* Хост и пользователь веб - только латиница, цифры, "_" и "-", имени устройства можно ещё "." (STM по умолчанию - код изделия 00.00.491-01), паролю - любые печатаемые ASCII без пробела (прошивка декодирует %XX формы входа); лишнее вырезается при вводе, значение с устройства вне правила подсвечивается. Длины - буферы main_config.h без \0 */
+  /* Хост и пользователь веб - только латиница, цифры, "_" и "-", имени устройства можно ещё "." (STM по умолчанию - код изделия 00.00.491-01), паролю - любые печатаемые ASCII без пробела (прошивка декодирует %XX формы входа); имя устройства обязательно - с пустым облако не принимает подключение; лишнее вырезается при вводе, значение с устройства вне правила подсвечивается. Длины - буферы main_config.h без \0 */
   const NAME_REGEXP = /^[A-Za-z0-9_-]*$/
-  const DEV_NAME_REGEXP = /^[A-Za-z0-9_.-]*$/
+  const DEV_NAME_REGEXP = /^[A-Za-z0-9_.-]+$/
   const PSW_REGEXP = /^[!-~]*$/
   const onlyNameChars = (input: string | number) => String(input).replace(/[^A-Za-z0-9_-]/g, "")
   const onlyDevNameChars = (input: string | number) => String(input).replace(/[^A-Za-z0-9_.-]/g, "")
   const onlyPswChars = (input: string | number) => String(input).replace(/[^!-~]/g, "")
 
+  const nameMissing = $derived(!String(info.DevName ?? "").trim())
+
+  /* Без onSave (наблюдатель, управление закрыто) - только просмотр: поля только для чтения, пароль маской без глазика */
+  const readOnly = $derived(!onSave)
+
   /* Без onSave отправлять некуда: правки остаются несохранёнными, а не помечаются сохранёнными */
   const save = () => {
-    if (!onSave) return
+    if (!onSave || nameMissing) return
     onSave($state.snapshot(info))
     savedSnapshot = JSON.stringify(info)
   }
@@ -147,6 +152,7 @@
             <UI.Input
               label={{ name: $T("widget.info.name") }}
               bind:value={info.DevName}
+              readonly={readOnly}
               maxlength={15}
               help={{ regExp: DEV_NAME_REGEXP }}
               onUpdate={(input) => (info.DevName = onlyDevNameChars(input))}
@@ -158,6 +164,7 @@
               wrapperClass="min-w-0 flex-1"
               label={{ name: $T("widget.info.host") }}
               bind:value={info.HostName}
+              readonly={readOnly}
               maxlength={18}
               help={{ regExp: NAME_REGEXP }}
               onUpdate={(input) => (info.HostName = onlyNameChars(input))}
@@ -168,30 +175,43 @@
             <UI.Input
               label={{ name: $T("widget.info.web_user") }}
               bind:value={info.WebUser}
+              readonly={readOnly}
               maxlength={15}
               help={{ regExp: NAME_REGEXP }}
               onUpdate={(input) => (info.WebUser = onlyNameChars(input))}
             />
           </div>
           <div use:hint={{ text: $T("widget.info.hint.web_psw"), enabled: $hints }}>
-            <UI.Input
-              type="password"
-              label={{ name: $T("widget.info.web_psw") }}
-              bind:value={info.WebPsw}
-              maxlength={15}
-              help={{ autocomplete: "one-time-code", regExp: PSW_REGEXP }}
-              onUpdate={(input) => (info.WebPsw = onlyPswChars(input))}
-            />
+            {#if readOnly}
+              <UI.Input label={{ name: $T("widget.info.web_psw") }} value={info.WebPsw ? "••••••••" : ""} readonly />
+            {:else}
+              <UI.Input
+                type="password"
+                label={{ name: $T("widget.info.web_psw") }}
+                bind:value={info.WebPsw}
+                maxlength={15}
+                help={{ autocomplete: "one-time-code", regExp: PSW_REGEXP }}
+                onUpdate={(input) => (info.WebPsw = onlyPswChars(input))}
+              />
+            {/if}
           </div>
         </div>
       </div>
 
       <!-- Сохранение -->
       <div class="flex flex-col items-center gap-2">
-        {#if isDirty}
+        {#if isDirty && nameMissing}
+          <span class="text-[12px] text-(--red-color)" transition:slide={{ duration: 100 }}>{$T("widget.info.name_required")}</span>
+        {:else if isDirty}
           <span class="text-[12px] text-(--muted-color)" transition:slide={{ duration: 100 }}>{$T("widget.common.unsaved")}</span>
         {/if}
-        <UI.Button wrapperClass="w-40" variant="primary" content={{ name: $T("widget.common.save") }} disabled={!isDirty || !onSave} onClick={save} />
+        <UI.Button
+          wrapperClass="w-40"
+          variant="primary"
+          content={{ name: $T("widget.common.save") }}
+          disabled={!isDirty || !onSave || nameMissing}
+          onClick={save}
+        />
       </div>
 
       <!-- Сброс всех настроек к заводским - отдельно от сохранения, только с подтверждением -->

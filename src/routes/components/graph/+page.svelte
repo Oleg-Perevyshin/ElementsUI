@@ -6,7 +6,7 @@
   import ComponentExample from "../../ComponentExample.svelte"
   import Graph from "#lib/Graph/Graph.svelte"
   import GraphProps from "#lib/Graph/GraphProps.svelte"
-  import { formatObjectToString, RenderMarkdown } from "../../common"
+  import { formatObjectToString, L, RenderMarkdown } from "../../common"
   import readmeRaw from "#lib/Graph/README.md?raw"
 
   let readmeHtml = $state("")
@@ -41,6 +41,7 @@
       id: crypto.randomUUID(),
       wrapperClass: "",
       label: { name: "Label", class: "text-center" },
+      help: { info: L("Значения переменной устройства во времени", "Device variable values over time", "设备变量随时间变化的值") },
       streamingData: { data: dataForGraph },
       isTest: true,
     },

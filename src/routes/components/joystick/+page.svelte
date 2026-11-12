@@ -7,7 +7,7 @@
   import Joystick from "#lib/Joystick/Joystick.svelte"
   import JoystickProps from "#lib/Joystick/JoystickProps.svelte"
   import IconGripVerticalDual from "#lib/libIcons/IconGripVerticalDual.svelte"
-  import { formatObjectToString, RenderMarkdown } from "../../common"
+  import { formatObjectToString, L, RenderMarkdown } from "../../common"
   import readmeRaw from "#lib/Joystick/README.md?raw"
 
   let readmeHtml = $state("")
@@ -23,6 +23,7 @@
       id: crypto.randomUUID(),
       accent: "blue",
       label: { name: "Label", class: "text-center" },
+      help: { info: L("Стрелки меняют значения осей на выбранный шаг", "Arrows change the axis values by the selected step", "箭头按所选步长改变各轴的值") },
       axes: [
         { name: "Pitch", minNum: -100, maxNum: 100 },
         { name: "Yaw", minNum: -100, maxNum: 100 },

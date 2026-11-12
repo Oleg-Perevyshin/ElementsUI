@@ -82,13 +82,13 @@ const joinBytes = (parts: Uint8Array[], size: number): Uint8Array => {
 
 const decoder = new TextDecoder()
 
-/* Потоковый разбор ответа slcan-адаптера: push(байты порта, время) → собранные пакеты; незавершённые сессии и обрывок строки живут sessionTimeoutMs, сессия длиннее maxPacketBytes сбрасывается */
+/* Потоковый разбор ответа slcan-адаптера: push(байты порта, время) → собранные пакеты; незавершённая сессия живёт sessionTimeoutMs от последнего фрагмента, обрывок строки - столько же, сессия длиннее maxPacketBytes сбрасывается. Собранное выдаётся, только если это целый пакет 0x9F ... 0xFF: при потерянном или истёкшем начале обрывок отбрасывается */
 export const createCanParser = ({ sessionTimeoutMs = 2000, maxPacketBytes = 8192 } = {}) => {
   const framer = createFramer({ gapMs: sessionTimeoutMs })
-  const sessions = new Map<number, { parts: Uint8Array[]; size: number; timestamp: number }>()
+  const sessions = new Map<number, { parts: Uint8Array[]; size: number; timestamp: number; last: number }>()
   return {
     push(chunk: Uint8Array, now = Date.now()): CanMessage[] {
-      for (const [id, session] of sessions) if (now - session.timestamp > sessionTimeoutMs) sessions.delete(id)
+      for (const [id, session] of sessions) if (now - session.last > sessionTimeoutMs) sessions.delete(id)
       const messages: CanMessage[] = []
       framer.push(chunk, now, (bytes) => {
         const end = bytes.indexOf(CR)
@@ -109,16 +109,19 @@ export const createCanParser = ({ sessionTimeoutMs = 2000, maxPacketBytes = 8192
         const session = sessions.get(packetId)
         if (!(canId & CAN_FINAL_BIT)) {
           /* Промежуточный фрагмент: копим; потерян последний и пакет разросся - сбрасываем */
-          if (!session) sessions.set(packetId, { parts: [data], size: data.length, timestamp: now })
+          if (!session) sessions.set(packetId, { parts: [data], size: data.length, timestamp: now, last: now })
           else if (session.size + data.length > maxPacketBytes) sessions.delete(packetId)
           else {
             session.parts.push(data)
             session.size += data.length
+            session.last = now
           }
           return end + 1
         }
         sessions.delete(packetId)
         const whole = session ? joinBytes([...session.parts, data], session.size + data.length) : data
+        /* Начало потеряно или истекло - обрывок пакетом не выдаётся */
+        if (decodePacket(whole).status !== "complete") return end + 1
         messages.push({ canId, packetId, data: lower === "t" ? whole : trimFdPadding(whole), remote: false, timestamp: session?.timestamp ?? now })
         return end + 1
       })

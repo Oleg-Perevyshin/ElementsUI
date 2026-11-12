@@ -5,6 +5,11 @@ const translations = {
   "common.select_tag": { ru: "Сделайте выбор", en: "Make a choice", zh: "请选择" },
   "common.table.clear": { ru: "Очистить таблицу", en: "Clear table", zh: "清空表格" },
   "library.retry": { ru: "Повторить", en: "Retry", zh: "重试" },
+  "gui.error.event_handler": {
+    ru: "Команда компонента не собрана: проверьте eventHandler",
+    en: "Component command not built: check eventHandler",
+    zh: "组件命令未生成：请检查 eventHandler",
+  },
 
   /* Документация компонентов для ⓘ в конструкторе (приложение читает через UI.T) - механизм общий для всех типов компонентов, заполнено пока только там, где есть что объяснить (фиксированная прошивочная конвенция у смарт-виджетов) */
   "widget.map.timeout": { ru: "Таймаут маркеров:", en: "Marker timeout:", zh: "标记超时：" },
@@ -49,6 +54,8 @@ const translations = {
   "widget.wifi.ap_ssid": { ru: "Имя точки доступа (SSID)", en: "Access point name (SSID)", zh: "接入点名称 (SSID)" },
   "widget.wifi.ap_psk": { ru: "Пароль точки доступа", en: "Access point password", zh: "接入点密码" },
   "widget.wifi.scan": { ru: "Сканировать сети", en: "Scan networks", zh: "扫描网络" },
+  "widget.wifi.scan_failed": { ru: "Поиск сетей не удался: {message}", en: "Network scan failed: {message}", zh: "网络扫描失败：{message}" },
+  "widget.wifi.scan_timeout": { ru: "Устройство не ответило на поиск сетей", en: "Device did not respond to the network scan", zh: "设备未响应网络扫描" },
   "widget.wifi.ip_mode": { ru: "Получение IP", en: "IP assignment", zh: "IP 获取方式" },
   "widget.wifi.ap_confirm_title": { ru: "Сохранить режим AP?", en: "Save AP mode?", zh: "保存 AP 模式？" },
   "widget.wifi.ap_confirm_text": {
@@ -68,6 +75,7 @@ const translations = {
   "widget.info.host": { ru: "Имя хоста", en: "Host name", zh: "主机名" },
   "widget.info.web_user": { ru: "Пользователь Web", en: "Web user", zh: "Web 用户" },
   "widget.info.web_psw": { ru: "Пароль Web", en: "Web password", zh: "Web 密码" },
+  "widget.info.name_required": { ru: "Укажите имя устройства", en: "Enter the device name", zh: "请输入设备名称" },
   "widget.stack.title": { ru: "Стек и задачи", en: "Stack and Tasks", zh: "堆栈与任务" },
   "widget.stack.off": { ru: "Выкл", en: "Off", zh: "关" },
   "widget.stack.sec": { ru: "{n} с", en: "{n} s", zh: "{n} 秒" },
@@ -193,9 +201,9 @@ const translations = {
     zh: "设备在自身热点中的地址 - 用于无路由器时的设置",
   },
   "widget.info.hint.name": {
-    ru: "Имя устройства в облаке и в интерфейсе. Латинские буквы, цифры, «_», «-» и «.», до 15 символов",
-    en: "Device name in the cloud and in the interface. Latin letters, digits, “_”, “-” and “.”, up to 15 characters",
-    zh: "设备在云端和界面中的名称。拉丁字母、数字、“_”、“-”和“.”，最多 15 个字符",
+    ru: "Имя устройства в облаке и в интерфейсе. Латинские буквы, цифры, «_», «-» и «.», от 1 до 15 символов, пустое имя не сохраняется",
+    en: "Device name in the cloud and in the interface. Latin letters, digits, “_”, “-” and “.”, 1 to 15 characters, an empty name is not saved",
+    zh: "设备在云端和界面中的名称。拉丁字母、数字、“_”、“-”和“.”，1 到 15 个字符，空名称无法保存",
   },
   "widget.info.hint.host": {
     ru: "Сетевое имя: устройство открывается в браузере по адресу http://имя.local. Вводите без «.local» - домен добавляет устройство. Латинские буквы, цифры, «_» и «-», до 18 символов",
@@ -280,10 +288,24 @@ const translations = {
   "widget.fs.title": { ru: "Файловая система", en: "File System", zh: "文件系统" },
   "widget.fs.path": { ru: "Путь", en: "Path", zh: "路径" },
   "widget.fs.size": { ru: "Размер", en: "Size", zh: "大小" },
-  "widget.fs.name_too_long": {
-    ru: "Имя файла длиннее {n} байт (буква кириллицы занимает 2 байта)",
-    en: "File name is longer than {n} bytes (a Cyrillic letter takes 2 bytes)",
-    zh: "文件名超过 {n} 字节（每个西里尔字母占 2 字节）",
+  "widget.fs.error.timeout": { ru: "Устройство не ответило ({step})", en: "Device did not respond ({step})", zh: "设备无响应（{step}）" },
+  "widget.fs.error.device": {
+    ru: "Устройство ответило ошибкой ({step}): {message}",
+    en: "Device returned an error ({step}): {message}",
+    zh: "设备返回错误（{step}）：{message}",
+  },
+  "widget.fs.error.noChunkSize": { ru: "Устройство не сообщило размер блока", en: "Device did not report the chunk size", zh: "设备未报告块大小" },
+  "widget.fs.error.badStart": {
+    ru: "Устройство не сообщило размер файла или блока",
+    en: "Device did not report the file or chunk size",
+    zh: "设备未报告文件或块大小",
+  },
+  "widget.fs.error.badChunk": { ru: "Блок {index} пришёл с неверными данными", en: "Chunk {index} arrived with invalid data", zh: "第 {index} 块数据无效" },
+  "widget.fs.error.crc": { ru: "Контрольная сумма файла не совпала", en: "File checksum mismatch", zh: "文件校验和不匹配" },
+  "widget.fs.error.name": {
+    ru: "Имя файла пустое или длиннее {n} байт (буква кириллицы занимает 2 байта)",
+    en: "File name is empty or longer than {n} bytes (a Cyrillic letter takes 2 bytes)",
+    zh: "文件名为空或超过 {n} 字节（每个西里尔字母占 2 字节）",
   },
   "widget.fs.upload_failed": { ru: "Закачка прервана: {error}", en: "Upload aborted: {error}", zh: "上传中断：{error}" },
   "widget.fs.used": { ru: "Занято {used} из {total}", en: "Used {used} of {total}", zh: "已用 {used} / {total}" },

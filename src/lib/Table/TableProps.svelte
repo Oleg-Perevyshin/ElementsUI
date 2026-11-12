@@ -6,7 +6,7 @@
   import * as UI from ".."
   import ButtonDelete from "../libIcons/ButtonDelete.svelte"
   import ButtonAdd from "../libIcons/ButtonAdd.svelte"
-  import { optionsStore } from "../options"
+  import { ARGUMENT_MAX_LENGTH, ARGUMENT_REGEXP, optionsStore } from "../options"
   import { isAccentColor, type AccentColor } from "../accent"
   import { ICONS } from "../icons"
   import CommonSnippets from "../CommonSnippets.svelte"
@@ -372,6 +372,8 @@
                               wrapperClass="min-w-28 flex-1"
                               label={{ name: $T("constructor.props.argument") }}
                               value={button.eventHandler?.Argument}
+                              maxlength={ARGUMENT_MAX_LENGTH}
+                              help={{ info: $T("constructor.props.argument.info"), regExp: ARGUMENT_REGEXP }}
                               onUpdate={(value) => {
                                 const handler = { ...button.eventHandler, Argument: value as string }
                                 updateContentProperty(columnIndex, index, "eventHandler", handler)

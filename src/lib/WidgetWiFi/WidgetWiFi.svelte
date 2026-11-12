@@ -106,6 +106,10 @@
     }
   })
 
+  /* Без onSave (наблюдатель, управление закрыто) - только просмотр: поля только для чтения, режимы и поиск неактивны, пароли маской без глазика */
+  const readOnly = $derived(!onSave)
+  const mask = (secret: string | undefined) => (secret ? "••••••••" : "")
+
   /* Без onSave отправлять некуда: правки остаются несохранёнными, а не помечаются сохранёнными */
   const commitSave = () => {
     if (!onSave) return
@@ -135,6 +139,7 @@
           type="buttons"
           value={MODE_OPTIONS.some((o) => o.value === cfg.WiFiMode) ? cfg.WiFiMode : MODE_OPTIONS[0]?.value}
           options={MODE_OPTIONS}
+          disabled={readOnly}
           onUpdate={(option) => (cfg.WiFiMode = option)}
         />
       </div>
@@ -156,6 +161,7 @@
                   label={{ name: $T("widget.wifi.ssid") }}
                   value={cfg.StaSSID}
                   options={foundNetworks}
+                  disabled={readOnly}
                   onUpdate={(ssid) => (cfg.StaSSID = String(ssid))}
                 />
               </div>
@@ -163,19 +169,23 @@
                 wrapperClass="w-8"
                 componentClass="p-1"
                 content={{ icon: scanning ? LoaderIcon : SearchIcon, info: { text: $T("widget.wifi.scan"), side: "top" } }}
-                disabled={scanning || !onScan}
+                disabled={scanning || !onScan || readOnly}
                 onClick={scanNetworks}
               />
             </div>
 
             <!-- one-time-code: менеджер паролей браузера не считает поле паролем входа и не накрывает список сетей у SSID своими сохранёнными логинами (autocomplete="off" для паролей Chrome игнорирует) -->
-            <UI.Input
-              type="password"
-              label={{ name: $T("widget.wifi.sta_psk") }}
-              bind:value={cfg.StaPSK}
-              maxlength={64}
-              help={{ autocomplete: "one-time-code", regExp: PSK_REGEXP }}
-            />
+            {#if readOnly}
+              <UI.Input label={{ name: $T("widget.wifi.sta_psk") }} value={mask(cfg.StaPSK)} readonly />
+            {:else}
+              <UI.Input
+                type="password"
+                label={{ name: $T("widget.wifi.sta_psk") }}
+                bind:value={cfg.StaPSK}
+                maxlength={64}
+                help={{ autocomplete: "one-time-code", regExp: PSK_REGEXP }}
+              />
+            {/if}
           </div>
 
           <div class="w-full @sm:w-72" use:hint={{ text: $T("widget.wifi.hint.ip_mode"), enabled: $hints }}>
@@ -185,6 +195,7 @@
               label={{ name: $T("widget.wifi.ip_mode") }}
               value={cfg.StaticIP}
               options={IP_MODE_OPTIONS}
+              disabled={readOnly}
               onUpdate={(option) => (cfg.StaticIP = option)}
             />
           </div>
@@ -195,6 +206,7 @@
                 <UI.Input
                   label={{ name: $T("widget.common.ip") }}
                   bind:value={cfg.StaIP}
+                  readonly={readOnly}
                   maxlength={15}
                   placeholder="192.168.1.100"
                   help={{ regExp: IP_REGEXP }}
@@ -204,6 +216,7 @@
                 <UI.Input
                   label={{ name: $T("widget.common.mask") }}
                   bind:value={cfg.StaMS}
+                  readonly={readOnly}
                   maxlength={15}
                   placeholder="255.255.255.0"
                   help={{ regExp: IP_REGEXP }}
@@ -213,6 +226,7 @@
                 <UI.Input
                   label={{ name: $T("widget.common.gateway") }}
                   bind:value={cfg.StaGW}
+                  readonly={readOnly}
                   maxlength={15}
                   placeholder="192.168.1.1"
                   help={{ regExp: IP_REGEXP }}
@@ -229,23 +243,27 @@
           <!-- Те же колонки, что у STA: в режиме STA + AP пароли стоят друг под другом -->
           <div class="grid grid-cols-1 gap-x-4 gap-y-3 @sm:grid-cols-2">
             <div use:hint={{ text: $T("widget.wifi.hint.ap"), enabled: $hints }}>
-              <UI.Input label={{ name: $T("widget.wifi.ap_ssid") }} bind:value={cfg.ApSSID} maxlength={32} />
+              <UI.Input label={{ name: $T("widget.wifi.ap_ssid") }} bind:value={cfg.ApSSID} readonly={readOnly} maxlength={32} />
             </div>
-            <UI.Input
-              type="password"
-              label={{ name: $T("widget.wifi.ap_psk") }}
-              bind:value={cfg.ApPSK}
-              maxlength={64}
-              help={{ autocomplete: "one-time-code", regExp: PSK_REGEXP }}
-            />
+            {#if readOnly}
+              <UI.Input label={{ name: $T("widget.wifi.ap_psk") }} value={mask(cfg.ApPSK)} readonly />
+            {:else}
+              <UI.Input
+                type="password"
+                label={{ name: $T("widget.wifi.ap_psk") }}
+                bind:value={cfg.ApPSK}
+                maxlength={64}
+                help={{ autocomplete: "one-time-code", regExp: PSK_REGEXP }}
+              />
+            {/if}
           </div>
 
           <div class="grid grid-cols-1 gap-2 @md:grid-cols-3">
             <div use:hint={{ text: $T("widget.wifi.hint.ap_ip"), enabled: $hints }}>
-              <UI.Input label={{ name: $T("widget.common.ip") }} bind:value={cfg.ApIP} maxlength={15} help={{ regExp: IP_REGEXP }} />
+              <UI.Input label={{ name: $T("widget.common.ip") }} bind:value={cfg.ApIP} readonly={readOnly} maxlength={15} help={{ regExp: IP_REGEXP }} />
             </div>
-            <UI.Input label={{ name: $T("widget.common.mask") }} bind:value={cfg.ApMS} maxlength={15} help={{ regExp: IP_REGEXP }} />
-            <UI.Input label={{ name: $T("widget.common.gateway") }} bind:value={cfg.ApGW} maxlength={15} help={{ regExp: IP_REGEXP }} />
+            <UI.Input label={{ name: $T("widget.common.mask") }} bind:value={cfg.ApMS} readonly={readOnly} maxlength={15} help={{ regExp: IP_REGEXP }} />
+            <UI.Input label={{ name: $T("widget.common.gateway") }} bind:value={cfg.ApGW} readonly={readOnly} maxlength={15} help={{ regExp: IP_REGEXP }} />
           </div>
         </div>
       {/if}

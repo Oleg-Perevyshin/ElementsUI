@@ -6,7 +6,7 @@
 
 ## 🎯 Назначение и место в стеке
 
-ElementsUI - репозиторий npm-библиотеки `poe-svelte-ui-lib` (лицензия MIT, текущая версия в `package.json` - `2.3.5`). Это общий слой интерфейса и протокола для всего стека xPOE-DevStack: компоненты Svelte 5, смарт-виджеты устройства, рендерер GUI из конструктора, панели свойств конструктора, тема, языки RU/EN/ZH, ядро протоколов обмена с устройствами и мастер-словарь команд.
+ElementsUI - репозиторий npm-библиотеки `poe-svelte-ui-lib` (лицензия MIT, мажорная версия 2.x; точный номер - поле `version` в `package.json`). Это общий слой интерфейса и протокола для всего стека xPOE-DevStack: компоненты Svelte 5, смарт-виджеты устройства, рендерер GUI из конструктора, панели свойств конструктора, тема, языки RU/EN/ZH, ядро протоколов обмена с устройствами и мастер-словарь команд.
 
 ### ✨ Что умеет
 
@@ -41,12 +41,12 @@ ElementsUI - репозиторий npm-библиотеки `poe-svelte-ui-lib`
 
 Стек xPOE-DevStack (папка `D:\Projects`):
 
-| Проект          | Что это                                                                          | Как связан с ElementsUI                                                                                                                                                                                                                                                                             |
-| --------------- | -------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| DevCloud        | Облако: конструктор GUI устройства, панель управления, отладка, WebSocket-сервер | Зависимость `poe-svelte-ui-lib` (`^2.3.5`). Использует компоненты, `GUIRenderer`, точку входа `/constructor` (панели свойств, `createComponent`, `PANELS`), `/protocols` (кодек, xPOE-Debug), `/locales` (серверный код под Node без Vite). Версию библиотеки в облаке поднимает CI этой библиотеки |
-| DevTerminal     | Настольный терминал отладки через COM-порт                                       | Зависимость `poe-svelte-ui-lib` (`^2.3.5`). Ядро `/protocols`: пакеты, разбор консоли xPOE-Debug, CAN через slcan, колонки таблицы `xPoeDebugTableColumns`, графики `DebugPlot`                                                                                                                     |
-| ProdFactory-ESP | Прошивки ESP32 и их веб-интерфейс `WebApp`, который устройство раздаёт само      | `WebApp/package.json` зависит от `poe-svelte-ui-lib` (`^2.3.5`): `GUIRenderer`, смарт-виджеты, тема. Конструктор в бандл WebApp не попадает. Прошивка держит копию словаря `.framework/Dictionary.yaml`, сборка сверяет её с `api_har.h`                                                            |
-| ProdFactory-STM | Прошивки STM32 (модули на шине)                                                  | Копия словаря `.framework/Dictionary.yaml`; байты пакетов совпадают с кодеком библиотеки (компоненты `poe_cbor`, `api_service`)                                                                                                                                                                     |
+| Проект          | Что это                                                                          | Как связан с ElementsUI                                                                                                                                                                                                                                                                                                                    |
+| --------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| DevCloud        | Облако: конструктор GUI устройства, панель управления, отладка, WebSocket-сервер | Зависимость `poe-svelte-ui-lib` (`^2.x`, точный номер - в `package.json` проекта). Использует компоненты, `GUIRenderer`, точку входа `/constructor` (панели свойств, `createComponent`, `PANELS`), `/protocols` (кодек, xPOE-Debug), `/locales` (серверный код под Node без Vite). Версию библиотеки в облаке поднимает CI этой библиотеки |
+| DevTerminal     | Настольный терминал отладки через COM-порт                                       | Зависимость `poe-svelte-ui-lib` (`^2.x`, точный номер - в `package.json` проекта). Ядро `/protocols`: пакеты, разбор консоли xPOE-Debug, CAN через slcan, колонки таблицы `xPoeDebugTableColumns`, графики `DebugPlot`                                                                                                                     |
+| ProdFactory-ESP | Прошивки ESP32 и их веб-интерфейс `WebApp`, который устройство раздаёт само      | `WebApp/package.json` зависит от `poe-svelte-ui-lib` (`^2.x`, точный номер - там же): `GUIRenderer`, смарт-виджеты, тема. Конструктор в бандл WebApp не попадает. Прошивка держит копию словаря `.framework/Dictionary.yaml`, сборка сверяет её с `api_har.h`                                                                              |
+| ProdFactory-STM | Прошивки STM32 (модули на шине)                                                  | Копия словаря `.framework/Dictionary.yaml`; байты пакетов совпадают с кодеком библиотеки (компоненты `poe_cbor`, `api_service`)                                                                                                                                                                                                            |
 
 </details>
 
@@ -80,7 +80,7 @@ ElementsUI - репозиторий npm-библиотеки `poe-svelte-ui-lib`
 | @sveltejs/package | `^3.0.2`                                                            | Сборка пакета в `dist/`                                                                                                           |
 | Vite              | `^8.3.6`, `@sveltejs/vite-plugin-svelte ^7.3.1`                     | Dev-сервер и сборка                                                                                                               |
 | TypeScript        | `^6.0.3`, `svelte-check ^4.7.8`                                     | Типы, `strict: true`                                                                                                              |
-| MapLibre GL       | dev `^6.17.0`                                                       | Карта `WidgetMap`; в бандле внешняя (`external: ["maplibre-gl"]`), по умолчанию грузится с CDN, для офлайна - `configureMapLibre` |
+| MapLibre GL       | dev `^6.17.0` (установлена 6.18.0, с CDN грузится та же)            | Карта `WidgetMap`; в бандле внешняя (`external: ["maplibre-gl"]`), по умолчанию грузится с CDN, для офлайна - `configureMapLibre` |
 | marked, dompurify | dev                                                                 | Только витрина: показ README и Markdown                                                                                           |
 | Prettier          | `^3.9.10` + `prettier-plugin-svelte`, `prettier-plugin-tailwindcss` | Форматирование                                                                                                                    |
 | publint           | `^0.3.25`                                                           | Проверка экспорта пакета перед публикацией                                                                                        |
@@ -107,7 +107,7 @@ ElementsUI - репозиторий npm-библиотеки `poe-svelte-ui-lib`
 
 ```
 ElementsUI/
-├─ package.json            версия, скрипты, exports (5 точек входа), allowScripts
+├─ package.json            версия, скрипты, exports (6 точек входа: ., /protocols, /protocols/dictionary.yaml, /constructor, /locales, /theme.css), allowScripts
 ├─ vite.config.ts          SvelteKit + Tailwind, витрина в docs/, base /ElementsUI, __LIB_VERSION__
 ├─ tsconfig.json           strict, include src/**
 ├─ .prettierrc             printWidth 160, без точек с запятой, LF
@@ -118,6 +118,8 @@ ElementsUI/
 │  ├─ npm_publish.yaml     [publish]: публикация в npm + автообновление DevCloud
 │  └─ ghpages_deploy.yaml  [deploy]: витрина на GitHub Pages
 ├─ scripts/GenerateDictionary.mjs   dictionary.yaml -> src/lib/protocols/dictionaryCodes.ts
+├─ scripts/UpdateIconsLib.ts       assets/IconsCatalog -> src/lib/icons.ts (npm run UpdateIconsLib)
+├─ assets/IconsCatalog/    SVG каталога (категория.имя.svg), наборы battery/bulb/propeller; в npm-пакет не входит
 ├─ tests/                  node:test против собранного dist/ (+ dist-types.tsconfig.json)
 ├─ static/                 favicon, .nojekyll для Pages
 ├─ src/
@@ -137,7 +139,6 @@ ElementsUI/
 │     ├─ GUIRenderer/      GUIRenderer.svelte, DeviceTable.svelte
 │     ├─ protocols/        ядро протоколов, PROTOCOL.md, dictionary.yaml, cbor/
 │     ├─ locales/          languages.ts, i18n.ts, localize.ts, translations.ts, constructor.ts, index.ts
-│     ├─ IconsCatalog/     SVG каталога (категория.имя.svg), наборы battery/bulb/propeller, iconsLib.ts
 │     ├─ libIcons/         служебные значки компонентов и панелей
 │     ├─ gui.ts            чистые правила рендерера (сетка, виджеты, биты, пакеты, раскладка)
 │     ├─ registry.ts       COMPONENTS: отрисовка и тип обмена по типу компонента
@@ -145,7 +146,7 @@ ElementsUI/
 │     ├─ propsEditor.ts    неизменяемая правка свойств из панелей
 │     ├─ fsTransfer.ts     обмен файлами по SET/GET FS
 │     ├─ types.ts          все интерфейсы пропсов, UIComponent
-│     ├─ icons.ts          СГЕНЕРИРОВАН из IconsCatalog
+│     ├─ icons.ts          СГЕНЕРИРОВАН из assets/IconsCatalog
 │     └─ html.ts, accent.ts, bitField.ts, themeWatch.ts, hints.ts, ring.ts, ...  общие утилиты
 ├─ dist/   (в .gitignore)  собранный пакет
 └─ docs/   (в .gitignore)  собранная витрина
@@ -208,8 +209,8 @@ ElementsUI/
 3. Рендерер переводит тексты (`localizeDeep`, кэш по ссылке и языку), строит дерево вложенности по `parentId` (дети `Accordion` и `Tabs`), раскладывает сетку и для каждого компонента берёт значение через `link.get(key)`.
 4. Пользователь меняет значение. Компонент вызывает `onUpdate`, рендерер собирает пакет `commandPacket(eventHandler, get, [key, value])`: если в `eventHandler.Value` готовый JSON - он и есть Payload, иначе Payload собирается из `Variables` (ключ `группа-поле` становится вложенным объектом). Битовые поля пишутся через `writeBits`.
 5. Рендерер записывает значение заранее (`link.set`, оптимистичное обновление) и отправляет `link.send(header, argument, payload)`. При `Argument: "NoSend"` значение только записывается, пакет не уходит.
-6. Приложение заворачивает команду в свой транспорт (WebSocket-конверт с `DevSN`/`ModSN`), устройство отвечает `OK!`/`ER!`.
-7. Приложение кладёт ответ в реактивное хранилище (`SvelteMap`) функцией `mergeDevicePayload(values, "<ModSN>|", ARG, Payload)`. `get` читает это хранилище, рендерер обновляется сам.
+6. Приложение заворачивает команду в свой транспорт (WebSocket-конверт с `DevSN`/`ModSN`, функция `wsEnvelope`: модулю за хабом `ARG` уходит кодом из словаря), устройство отвечает `OK!`/`ER!`. Входящий конверт приложение пропускает через `readWsEnvelope` (числовой `ARG` в имя).
+7. Приложение кладёт ответ в реактивное хранилище (`SvelteMap`) функцией `mergeDevicePayload(values, "<ModSN>|", ARG, Payload)` (`ARG` строкой или кодом). `get` читает это хранилище, рендерер обновляется сам.
 
 Смарт-виджеты работают с группой полей по префиксу (`CFG`, `LST`, `MAV`): читают `readWidgetFields`, сохраняют одним `SET ModCfg` из `widgetPacket` (только поля из `WIDGET_SAVE_FIELDS`). Поиск сетей - `GET APsList` с ожиданием ответа 3000 мс, перезагрузка - `SET Restart`, сброс - `SET RstNVS`, обновление снимков - `GET FS` и `GET StackInfo`. Файлы `WidgetFileSystem` и `FileAttach` рендерер ведёт сам через `createFsTransfer(link)`.
 
@@ -221,30 +222,31 @@ ElementsUI/
 1. Команда собирается `encodePacket` в `poe_cbor_pkt`: CBOR-массив неопределённой длины `0x9F [TrgBusID, SrcBusID, HAR, Payload, CRC16] ... 0xFF`.
 2. Для CAN/CAN FD пакет режется `canFragments`/`encodeCanPacket` на кадры 8 или 64 байта и уходит через slcan-адаптер (`slcanOpenCommands`, `encodeSlcanFrame`).
 3. Для RS485 и UART-консоли пакет идёт сплошным потоком; на приёме разборщик ищет начало `0x9F 0x85`.
-4. Приём: `createPacketStreamParser` (RS485), `createXPoeDebugParser` (консоль, пакеты вперемешку с текстом загрузчика), `createCanParser` (сборка фрагментов CAN). Общий буфер - `framer.ts`.
-5. Строки консоли превращаются в строки таблицы `xPoeDebugRow` (колонки `xPoeDebugTableColumns`), значения `DebugPlot` - в графики `createPlotGroups`/`debugPlotValues`.
+4. Приём: `createPacketStreamParser` (RS485), `createXPoeDebugParser` (консоль, пакеты вперемешку с текстом загрузчика), `createCanParser` (сборка фрагментов CAN). Общий буфер - `framer.ts`. RS485 и консоль ищут начало общей `packetStart` (`packet.ts`, метка `0x9F 0x85`), пакет без записей - мусор; `decodePacket` принимает только indefinite-массив `0x9F` (definite прошивка отвергает). CAN считает `sessionTimeoutMs` от последнего фрагмента и выдаёт только целый пакет.
+5. Поле Value консоли - `xPoeDebugValueFromText`: HEX только явно (`h'0A 1B'` или `0x0A1B`), остальное - JSON в CBOR (`12` - число 12).
+6. Строки консоли превращаются в строки таблицы `xPoeDebugRow` (колонки `xPoeDebugTableColumns`), значения `DebugPlot` - в графики `createPlotGroups`/`debugPlotValues`.
 
 </details>
 
 <details>
 <summary>🧩 Основные модули и обязанности</summary>
 
-| Модуль                                    | Обязанность                                                                                                                                                                       |
-| ----------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `GUIRenderer/GUIRenderer.svelte`          | Отрисовка GUI: сетка, вложенность, значения, биты, пакеты, виджеты, файлы, журнал таблицы, узкий экран (`NARROW_MAX_PX = 640`)                                                    |
-| `gui.ts`                                  | Чистые функции без Svelte: `GUI_GRID`, `WIDGET_FIELDS`, `commandPacket`, `tablePacket`, `readBits`/`writeBits`, `mergeDevicePayload`, `layoutFlow`/`layoutColumns`/`flowMinWidth` |
-| `registry.ts`                             | `COMPONENTS[type] = { view, io, fields? }`, `componentVariables`                                                                                                                  |
-| `defaults.ts`                             | `COMPONENT_DEFAULTS`, `COMPONENT_SIZES`, `minComponentWidth`, `createComponent`                                                                                                   |
-| `propsEditor.ts`                          | `createPropsEditor` (`set`, `patch`, `addItem`, `updateItem`, `removeItem`), `applyPropertyChange`                                                                                |
-| `fsTransfer.ts`                           | Файлы по `SET FS`: чанки, повторы, CRC-32, общая очередь операций на транспорт                                                                                                    |
-| `protocols/`                              | CBOR, пакет, HAR, CRC, словарь, xPOE-Debug, CAN, графики отладки                                                                                                                  |
-| `locales/`                                | Список языков, переводчик `$T`, многоязычные тексты GUI                                                                                                                           |
-| `theme.css`, `accent.ts`, `themeWatch.ts` | Тема, цвет роли компонента, слежение за темой из JS                                                                                                                               |
-| `html.ts`                                 | `escapeHtml`, `htmlToText`, `sanitizeHtml` (белый список тегов SVG и текста)                                                                                                      |
-| `bitField.ts`                             | Битовое поле 32-битного слова без знаковых операций JS (бит 31 корректен)                                                                                                         |
-| `widgetCollapse.ts`, `hints.ts`           | Свёрнутость виджетов и подсказки «?» в `localStorage` по `persistKey`                                                                                                             |
-| `ring.ts`                                 | Кольцевой буфер для потоков строк таблицы, точек графика, трека карты                                                                                                             |
-| `flightSim.ts`                            | Имитация полёта для `WidgetPFD`/`WidgetMap` (та же модель, что в прошивке)                                                                                                        |
+| Модуль                                    | Обязанность                                                                                                                                                                                       |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `GUIRenderer/GUIRenderer.svelte`          | Отрисовка GUI: сетка, вложенность, значения, биты, пакеты, виджеты, файлы, журнал таблицы, узкий экран (`NARROW_MAX_PX = 640`)                                                                    |
+| `gui.ts`                                  | Чистые функции без Svelte: `GUI_GRID`, `WIDGET_FIELDS`, `commandPacket`, `tablePacket`, `readBits`/`writeBits`, `mergeDevicePayload`, `layoutFlow`/`layoutColumns`/`flowMinWidth`                 |
+| `registry.ts`                             | `COMPONENTS[type] = { view, io, fields? }`, `componentVariables`                                                                                                                                  |
+| `defaults.ts`                             | `COMPONENT_DEFAULTS`, `COMPONENT_SIZES`, `minComponentWidth`, `createComponent`                                                                                                                   |
+| `propsEditor.ts`                          | `createPropsEditor` (`set`, `patch`, `addItem`, `updateItem`, `removeItem`), `applyPropertyChange`                                                                                                |
+| `fsTransfer.ts`                           | Файлы по `SET FS`: чанки, повторы, CRC-32, общая очередь операций на транспорт                                                                                                                    |
+| `protocols/`                              | CBOR, пакет, HAR, CRC, словарь, xPOE-Debug, CAN, графики отладки                                                                                                                                  |
+| `locales/`                                | Список языков, переводчик `$T`, многоязычные тексты GUI                                                                                                                                           |
+| `theme.css`, `accent.ts`, `themeWatch.ts` | Тема, цвет роли компонента, слежение за темой из JS                                                                                                                                               |
+| `html.ts`                                 | `escapeHtml`, `htmlToText`, `sanitizeHtml` (белый список тегов SVG и текста; `href` только `#id` и у `<a>` `mailto:`, `style` только свойства цвета и значков, `class` без `fixed`/`inset`/`z-*`) |
+| `bitField.ts`                             | Битовое поле 32-битного слова без знаковых операций JS (бит 31 корректен)                                                                                                                         |
+| `widgetCollapse.ts`, `hints.ts`           | Свёрнутость виджетов и подсказки «?» в `localStorage` по `persistKey`                                                                                                                             |
+| `ring.ts`                                 | Кольцевой буфер для потоков строк таблицы, точек графика, трека карты                                                                                                                             |
+| `flightSim.ts`                            | Имитация полёта для `WidgetPFD`/`WidgetMap` (та же модель, что в прошивке)                                                                                                                        |
 
 </details>
 
@@ -357,13 +359,13 @@ interface DeviceReply {
 - Разборщики: пауза дольше `gapMs` (по умолчанию 100 мс; у CAN - `sessionTimeoutMs`) сбрасывает недособранное, предел `maxBytes` по умолчанию 8192. Пауза RS485 в прошивке - 20 мс.
 - Пример `GET ModCfg {}` из терминала: `9F 85 00 00 18 49 A0 19 66 06 FF` (HAR `0x0049`, CRC `0x6606`).
 
-| Канал                   | Передача                                                                                                                                                                         |
-| ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| CAN, CAN FD             | Кадры 8 или 64 байта; 11-битный ID: бит 10 - последний кадр (`CAN_FINAL_BIT`), биты 0-9 - номер пакета                                                                           |
-| RS485                   | Сплошной поток, поиск `0x9F 0x85`                                                                                                                                                |
-| LoRa                    | Пакет целиком в одном радиокадре                                                                                                                                                 |
-| UART-консоль xPOE-Debug | Поток вперемешку с текстом загрузчика; логи `OK! DebugLog` `[уровень, тег, текст                                                                                                 | байты, FHS]`, графики `OK! DebugPlot` `{"Группа.Имя": float32}` |
-| WebSocket               | Свой конверт: запрос `{HDR, ARG, VAL: {DevSN, ModSN?, TrgBusID?, SrcBusID?, Payload?}}`, ответ `{HDR, ARG, VAL: {DevSN, ModSN, Message, Payload}}`; заголовок и команда строками |
+| Канал                   | Передача                                                                                                                                                                                                                                                                                                                                     |
+| ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| CAN, CAN FD             | Кадры 8 или 64 байта; 11-битный ID: бит 10 - последний кадр (`CAN_FINAL_BIT`), биты 0-9 - номер пакета                                                                                                                                                                                                                                       |
+| RS485                   | Сплошной поток, поиск `0x9F 0x85`                                                                                                                                                                                                                                                                                                            |
+| LoRa                    | Пакет целиком в одном радиокадре                                                                                                                                                                                                                                                                                                             |
+| UART-консоль xPOE-Debug | Поток вперемешку с текстом загрузчика; логи `OK! DebugLog` `[уровень, тег, текст \| байты, FHS]`, графики `OK! DebugPlot` `{"Группа.Имя": float32}`                                                                                                                                                                                          |
+| WebSocket               | Свой конверт: запрос `{HDR, ARG, VAL: {DevSN, ModSN?, TrgBusID?, SrcBusID?, Payload?}}`, ответ `{HDR, ARG, VAL: {DevSN, ModSN, Message, Payload}}`; заголовок строкой, команда строкой, а для модуля за хабом (`ModSN` не равен `DevSN`) и в ответе модуля, имени которого хаб не знает, - кодом из словаря (`wsEnvelope`, `readWsEnvelope`) |
 
 Аутентификация устройства в облаке (TOFU) описана в `PROTOCOL.md`: токен 64 hex-символа, передаётся `Authorization: Bearer`, выдаётся в `SET JoinDev {DevToken}`, неверный токен после подтверждения - закрытие кодом `1008`.
 
@@ -384,6 +386,8 @@ interface DeviceReply {
 | 111-117  | модули перемещения          | `MotInit`, `MotMode`, `MotPos`, `MotPID`, `MotInfo`, `MotCfg`, `MotCal`                                                                                          |
 | 141-144  | модули ориентации           | `OrData`, `OrOfs`, `OrAccCal`, `OrMagCal`                                                                                                                        |
 
+Задел: `BackUp`, `BindMKey`, `ModList`, `ModMode`, `ModT2-ModT5`, `FwUpgE`, `OrOfs`, `OrAccCal`, `OrMagCal` есть в словаре, но ни одна прошивка ESP/STM их пока не обрабатывает. Коды закреплены и не меняются, описания в `dictionary.yaml` - план, а не текущее поведение. В примерах документации берут команды, которые прошивки реально обрабатывают: `ModCfg`, `ModInfo`, `FS`, `APsList`, `StackInfo`.
+
 `scripts/GenerateDictionary.mjs` превращает словарь в `DEFAULT_ARGUMENT_CODES` (`dictionaryCodes.ts`, не править руками) и падает на повторе имени или кода и на коде больше `0x1FFF`. Словарь конкретного устройства читается `parseArgumentDictionary` и оборачивается `createDictionary(codes)`.
 
 </details>
@@ -398,7 +402,7 @@ interface DeviceReply {
 | `list()`              | `GET FS` без `Op` - снимок                                                                                                    |
 | `remove(name)`        | `SET FS {Op: "Delete", Name}` - снимок после удаления                                                                         |
 
-Параметры `createFsTransfer`: `argument = "FS"`, `timeoutMs = 5000`, `retries = 3`, `maxNameLength = 31`. Размер чанка задаёт устройство, ответ сверяется по `Op`, `CurrentID` и `ChunkIndex`, чанк после `ER!` или таймаута повторяется. Операции идут строго по одной в очереди, общей для транспорта.
+Параметры `createFsTransfer`: `argument = "FS"`, `timeoutMs = 5000`, `retries = 3`, `maxNameLength = 31` (байты UTF-8; длинное или пустое имя - `FsNameError` до `UploadStart`, единственная проверка имени; `GUIRenderer` берёт предел из свойств `WidgetFileSystem`, очередь передач по ключу `аргумент:предел`). Размер чанка задаёт устройство, ответ сверяется по `Op`, `CurrentID` и `ChunkIndex`, чанк после `ER!` или таймаута повторяется. Операции идут строго по одной в очереди, общей для транспорта.
 
 </details>
 
@@ -475,7 +479,7 @@ interface DeviceReply {
 | `npm run check`                  | `svelte-kit sync` + `svelte-check` (типы)                                                                                                                                                                                |
 | `npm run TestProtocols`          | Генерация словаря, `svelte-package`, `node --test tests/*.test.mjs`                                                                                                                                                      |
 | `npm run Dictionary`             | `dictionary.yaml` -> `dictionaryCodes.ts`                                                                                                                                                                                |
-| `npm run UpdateIconsLib`         | `tsx src/lib/IconsCatalog/iconsLib.ts`: каталог -> `icons.ts` (`ICONS`, `ICON_NAMES`, `ICONS_ARRAY`)                                                                                                                     |
+| `npm run UpdateIconsLib`         | `tsx scripts/UpdateIconsLib.ts`: каталог `assets/IconsCatalog` -> `src/lib/icons.ts` (`ICONS`, `ICON_NAMES`, `ICONS_ARRAY`)                                                                                              |
 | `npm run Formatting`             | `prettier --write .` - единственный способ форматирования, перед каждым коммитом                                                                                                                                         |
 | `npm run build`                  | Сборка витрины в `docs/`                                                                                                                                                                                                 |
 | `npm pack` (запускает `prepack`) | Словарь -> `svelte-kit sync` -> `svelte-check` -> `svelte-package` (в `dist/`) -> `tsc -p tests/dist-types.tsconfig.json` (проверка `.d.ts` так, как их видит приложение) -> `node --test tests/*.test.mjs` -> `publint` |
@@ -496,6 +500,8 @@ interface DeviceReply {
 | `fsTransfer.test.mjs` | Обмен файлами против модели `file_system` ProdFactory-ESP: чанки, повтор после `ER!` и таймаута, CRC32, очередь |
 | `html.test.mjs`       | `sanitizeHtml` против типовых XSS и внешних ресурсов                                                            |
 | `coverage.test.mjs`   | Облёт поля `WidgetMap` (агро): площадь и число проходов                                                         |
+| `localize.test.mjs`   | Перевод текстов GUI (`localizeDeep`)                                                                            |
+| `maplibre.test.mjs`   | Версия MapLibre на CDN (`MAPLIBRE_VERSION`) совпадает с установленной `maplibre-gl`                             |
 
 Ручная проверка узкого экрана: кнопка «Телефон» в витрине (рамка 375 px) и временная страница `src/routes/<новое имя>` с `GUIRenderer`/виджетами на 320-414 px; перед коммитом страницу удалить.
 
@@ -516,7 +522,7 @@ interface DeviceReply {
 
 | Тег         | Workflow                                                 | Что происходит                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
 | ----------- | -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `[publish]` | `.github/workflows/npm_publish.yaml`, job `publish`      | Ubuntu 24.04, Node 24, `npm install -g npm@latest`, `npm install`, `npm run prepack`, `npm publish --access public --provenance=false`. Публикация через trusted publisher npm (OIDC, `id-token: write`), постоянного токена нет                                                                                                                                                                                                                                                              |
+| `[publish]` | `.github/workflows/npm_publish.yaml`, job `publish`      | Ubuntu 24.04, Node 24, `npm install -g npm@11.20.0` (версия закреплена), `npm ci` (ровно по `package-lock.json`), `npm publish --access public --provenance=false` (prepack запускается один раз, самим `npm publish`). Публикация через trusted publisher npm (OIDC, `id-token: write`), постоянного токена нет                                                                                                                                                                              |
 | `[publish]` | тот же workflow, job `update-devcloud` (после `publish`) | Ждёт версию в реестре npm (до 40 попыток по 15 с, 10 минут), клонирует DevCloud с `git.xpoe.pro/xPOE-Studio/DevCloud.git` по секрету `DEVCLOUD_ACCESS_TOKEN`, ставит `poe-svelte-ui-lib@VERSION`, `svelte-kit sync`, `prisma generate` (с фиктивным `DATABASE_URL`), `svelte-check --threshold error`. Если всё прошло и `package.json` изменился - `npm version minor` в DevCloud и коммит `X.Y [deploy] Обновление ElementsUI до X.Y.Z` в `main` облака, что запускает развёртывание облака |
 | `[deploy]`  | `.github/workflows/ghpages_deploy.yaml`                  | Node 24, `npm install`, `npm run build`, выгрузка `./docs` в GitHub Pages                                                                                                                                                                                                                                                                                                                                                                                                                     |
 
@@ -573,6 +579,8 @@ interface DeviceReply {
 - Версия 2.0 сломала API. Сохранённые GUI 1.x рендерер не читает; каталог DevCloud и интерфейсы устройств переведены один раз, функции перевода удалены в 2.1.0. Таблицы «было/стало» - в `README.md`, раздел «Переход на 2.0».
 - Сетка 23 колонки выбрана, чтобы ровно вставали 2, 3, 4, 6 и 12 одинаковых групп с пустой колонкой между ними (11, 7, 5, 3 и 1 колонка на группу). Рендерер понимает GUI по группам, поэтому автор соблюдает 7 правил раскладки из README (раздел «GUI устройства», «Правила для автора GUI»).
 - `Accordion` и смарт-виджеты занимают одну строку сетки и растут по содержимому (`spanRows`).
+- Содержимое `Accordion` и выбранной вкладки `Tabs` рендерер рисует через `Layout` (у `Tabs` - сниппет `Content`): на узком экране по группам `layoutFlow`, а не в сетке `size.width`.
+- `VideoViewer`: камера, полученная после размонтирования (флаг `destroyed` после `await getUserMedia`), сразу выключается; список камер - по событию `devicechange`, без опроса.
 - Сворачиваемые разделы внутри виджетов - `SectionHead` с круглым `ExpandIcon`; в шапках виджетов и в `Accordion` осталась маленькая стрелка (решение владельца).
 - `Select type="buttons"` без `fitContent` сам становится выпадающим списком, если варианты не помещаются; с `fitContent` не сворачивается никогда.
 - `WidgetPFD` уже 440 px рисуется 1:1. На карте нет кнопок масштаба и местоположения (колесо и два пальца), остались компас и полный экран.
@@ -670,7 +678,7 @@ interface DeviceReply {
 | Токены темы              | CSS-переменные: `--bg-body`, `--back-color`, `--container-color`, `--field-color`, `--font-color`, `--muted-color`, `--faint-color`, `--*-color/text/soft/mark` |
 | `ui-panel`, `ui-inset`   | Готовые классы поверхностей: блок на фоне страницы и блок внутри панели                                                                                         |
 | `persistKey`             | Ключ хранения в браузере (обычно `ModSN`) для свёрнутости, подсказок и планов карты                                                                             |
-| `viewer`                 | Режим наблюдателя: только `access` `full`/`viewOnly`, управление отключено                                                                                      |
+| `viewer`                 | Режим наблюдателя: только `access` `full`/`viewOnly`, управление отключено (`WidgetWiFi`/`WidgetDeviceInfo` без `onSave` - только чтение, пароли маской)        |
 | Узкий экран              | Рендерер уже 640 px: блоки раскладываются по группам, карточками и строками формы                                                                               |
 | Режим «Телефон»          | Кнопка витрины: пример в рамке 375 px                                                                                                                           |
 | `[publish]`, `[deploy]`  | Теги в сообщении коммита в `main`: публикация в npm и выкладка витрины                                                                                          |

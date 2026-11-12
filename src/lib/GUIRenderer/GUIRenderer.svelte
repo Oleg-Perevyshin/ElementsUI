@@ -1,10 +1,10 @@
 <!-- $lib/GUIRenderer/GUIRenderer.svelte - GUI устройства из конструктора: сетка, вложенность Accordion/Tabs, значения переменных, битовые поля, пакеты команд, смарт-виджеты и файлы. Транспорт и маршрутизация к модулю - у приложения (link) -->
 <script lang="ts">
   import type { Snippet } from "svelte"
-  import { Language } from "../locales/i18n"
+  import { Language, T } from "../locales/i18n"
   import { localizeDeep } from "../locales/localize"
   import type { ITableButton, ITableContent, IOption, UIComponent, UIType } from "../types"
-  import { createFsTransfer } from "../fsTransfer"
+  import { createFsTransfer, FsTransferError } from "../fsTransfer"
   import {
     GUI_GRID,
     WIDGET_FIELDS,
@@ -90,7 +90,9 @@
   const childrenOf = (parent: UIComponent) => tree.get((parent.parentId ?? "") + parent.id) ?? []
   const visible = (c: UIComponent) => !viewer || c.access === "full" || c.access === "viewOnly"
 
-  const report = (error: unknown) => onError?.(error instanceof Error ? error.message : String(error))
+  /* Текст для уведомления: коды FsTransferError переводятся словарём библиотеки, текст устройства (ER!) остаётся как есть */
+  const report = (error: unknown) =>
+    onError?.(error instanceof FsTransferError ? $T(error.key, error.params) : error instanceof Error ? error.message : String(error))
   /* Ошибка для виджета: уведомление и отказ промиса - виджет показывает её у поля */
   const fail = (error: unknown): never => {
     report(error)
@@ -100,7 +102,7 @@
   const get = (key: string) => link.get(key)
 
   const dispatch = (packet: DevicePacket | null) => {
-    if (!packet) return onError?.("Invalid eventHandler")
+    if (!packet) return onError?.($T("gui.error.event_handler"))
     for (const [key, value] of packet.writes) link.set?.(key, value)
     if (packet.send) link.send(packet.header, packet.argument, packet.payload)
   }
@@ -136,12 +138,19 @@
     const pending = link.waitFor(argument, (reply) => !reply.ok || Array.isArray(reply.payload[listKey]), 3000)
     link.send(command?.header || "GET", argument, {})
     const reply = await pending
-    return reply?.ok ? (reply.payload[listKey] as { id: string; name: string; value: string }[]) : []
+    if (reply?.ok) return reply.payload[listKey] as { id: string; name: string; value: string }[]
+    /* ER! или таймаут - уведомление, список пустой */
+    report(reply ? $T("widget.wifi.scan_failed", { message: reply.message || "ER!" }) : $T("widget.wifi.scan_timeout"))
+    return []
   }
 
   /* Файлы: очередь на аргумент команд, своя у каждой связи (модуля) */
   const transfers = $derived(link && new Map<string, ReturnType<typeof createFsTransfer>>())
-  const fs = (argument = "FS") => transfers.get(argument) ?? transfers.set(argument, createFsTransfer(link, { argument })).get(argument)!
+  /* Передача на аргумент и предел имени (maxNameLength из свойств WidgetFileSystem); проверка имени только в createFsTransfer */
+  const fs = (argument = "FS", maxNameLength = 31) => {
+    const key = `${argument}:${maxNameLength}`
+    return transfers.get(key) ?? transfers.set(key, createFsTransfer(link, { argument, maxNameLength })).get(key)!
+  }
   const saveFile = (name: string, bytes: Uint8Array) => {
     const url = URL.createObjectURL(new Blob([bytes as BlobPart], { type: "application/octet-stream" }))
     Object.assign(document.createElement("a"), { href: url, download: name.split("/").pop() || "file" }).click()
@@ -279,7 +288,12 @@
           </div>
         </Accordion>
       {:else if component.type === "Tabs"}
-        <Tabs {...component.properties} Components={Cell} apiArray={childrenOf(component)} />
+        <!-- Содержимое вкладки - через Layout, как у Accordion: на телефоне раскладка по группам, а не одна колонка сетки size.width -->
+        <Tabs {...component.properties} apiArray={childrenOf(component)}>
+          {#snippet Content(list: UIComponent[])}
+            {@render Layout(list.filter(visible), component.properties.size?.width ?? 1, false)}
+          {/snippet}
+        </Tabs>
       {:else if component.type === "Button"}
         <Button
           {...component.properties}
@@ -386,17 +400,18 @@
       {:else if component.type === "WidgetFileSystem"}
         {@const props = component.properties}
         {@const argument = props.argument || "FS"}
+        {@const transfer = () => fs(argument, props.maxNameLength)}
         <WidgetFileSystem
           {...props}
           value={fields(component, widgetPrefixes(component.type, props)[0], WIDGET_FIELDS.WidgetFileSystem).FS}
           persistKey={persist(component)}
           onRefresh={() => link.send("GET", argument, {})}
-          onDelete={locked ? undefined : (name) => fs(argument).remove(name).catch(fail)}
-          onUpload={locked ? undefined : (file) => fs(argument).upload(file.name, file).catch(fail)}
+          onDelete={locked ? undefined : (name) => transfer().remove(name).catch(fail)}
+          onUpload={locked ? undefined : (file) => transfer().upload(file.name, file).catch(fail)}
           onDownload={locked
             ? undefined
             : (name) =>
-                fs(argument)
+                transfer()
                   .download(name)
                   .then((bytes) => saveFile(name, bytes), fail)}
         />

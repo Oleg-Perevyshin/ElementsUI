@@ -1,5 +1,5 @@
-/* Версия совпадает с devDependency maplibre-gl (типы); пакет 6.x - только ES-модуль, без UMD-скрипта и глобала */
-const MAPLIBRE_VERSION = "6.16.0"
+/* Версия должна совпадать с установленной devDependency maplibre-gl (по ней проверяются типы): после обновления зависимостей поднять и здесь, сверку делает tests/maplibre.test.mjs; пакет 6.x - только ES-модуль, без UMD-скрипта и глобала */
+const MAPLIBRE_VERSION = "6.18.0"
 const CDN = `https://cdn.jsdelivr.net/npm/maplibre-gl@${MAPLIBRE_VERSION}/dist`
 
 type MapLibreModule = typeof import("maplibre-gl")

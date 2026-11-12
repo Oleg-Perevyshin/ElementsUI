@@ -53,7 +53,9 @@
 
   const isPattern = (text: string) => {
     try {
-      const match = text.match(/^\/(.*)\/([gimsuy]*)$/)
+      /* В конструкторе только флаги i, m, s, u: g и y дают плавающую проверку */
+      const match = text.match(/^\/(.*)\/([dgimsuvy]*)$/)
+      if (match && !/^[imsu]*$/.test(match[2])) return false
       new RegExp(match ? match[1] : text, match?.[2])
       return true
     } catch {

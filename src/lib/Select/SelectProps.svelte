@@ -7,7 +7,7 @@
   import * as UI from ".."
   import ButtonDelete from "../libIcons/ButtonDelete.svelte"
   import ButtonAdd from "../libIcons/ButtonAdd.svelte"
-  import { optionsStore } from "../options"
+  import { ARGUMENT_MAX_LENGTH, ARGUMENT_REGEXP, optionsStore } from "../options"
   import CommonSnippets from "../CommonSnippets.svelte"
   import PropsGroup from "../PropsGroup.svelte"
   import PropsListModal from "../PropsListModal.svelte"
@@ -50,8 +50,8 @@
     <UI.Input
       label={{ name: $T("constructor.props.argument") }}
       value={component.eventHandler?.Argument || "ModCfg"}
-      maxlength={32}
-      help={{ info: $T("constructor.props.argument.info"), autocomplete: "on", regExp: /^[a-zA-Z0-9\-_]{0,32}$/ }}
+      maxlength={ARGUMENT_MAX_LENGTH}
+      help={{ info: $T("constructor.props.argument.info"), autocomplete: "on", regExp: ARGUMENT_REGEXP }}
       onUpdate={(value) => onPropertyChange({ eventHandler: { Argument: String(value) } })}
     />
   </PropsGroup>

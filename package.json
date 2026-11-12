@@ -1,6 +1,6 @@
 {
   "name": "poe-svelte-ui-lib",
-  "version": "2.3.8",
+  "version": "2.4.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Oleg-Perevyshin/ElementsUI.git"
@@ -18,7 +18,7 @@
     "prepack": "node scripts/GenerateDictionary.mjs && svelte-kit sync && svelte-check --tsconfig ./tsconfig.json && svelte-package && tsc -p tests/dist-types.tsconfig.json && node --test tests/*.test.mjs && publint",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "CheckUpdate": "npx npm-check-updates -u && npm install",
-    "UpdateIconsLib": "tsx src/lib/IconsCatalog/iconsLib.ts",
+    "UpdateIconsLib": "tsx scripts/UpdateIconsLib.ts",
     "Formatting": "prettier --write .",
     "Dictionary": "node scripts/GenerateDictionary.mjs",
     "TestProtocols": "node scripts/GenerateDictionary.mjs && svelte-package && node --test tests/*.test.mjs",

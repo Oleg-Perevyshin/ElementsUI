@@ -193,6 +193,8 @@ export interface IGraphProps {
   id?: string
   wrapperClass?: string
   label?: { name?: string; class?: string }
+  /* info - значок ⓘ после подписи, при наведении всплывает пояснение; без подписи не показывается */
+  help?: { info?: string }
   streamingData?: { data: IGraphDataObject[] | null }
   isTest?: boolean
   /* 0 = AUTO - точка на каждый новый массив streamingData.data (или вызов push() через bind:this), иначе - последние значения раз в столько мс */
@@ -215,6 +217,8 @@ export interface IPeriodChartProps {
   wrapperClass?: string
   accent?: AccentColor
   label?: { name?: string; class?: string }
+  /* info - значок ⓘ после подписи, при наведении всплывает пояснение; без подписи не показывается */
+  help?: { info?: string }
   levels?: IPeriodChartLevel[] /* Порядок = порядок вкладок переключателя, всегда открывается на первом (индекс 0) */
   unit?: string /* Единицы для тултипа/подписи, напр. "Вт·ч" */
   /* Только уведомление о смене вкладки - сам компонент ничего не запрашивает, консьюмер сам решает, догружать ли данные */
@@ -277,6 +281,8 @@ export interface IJoystickProps {
   /* По умолчанию blue */
   accent?: AccentColor
   label?: { name?: string; class?: string }
+  /* info - значок ⓘ после подписи, при наведении всплывает пояснение; без подписи не показывается */
+  help?: { info?: string }
   value?: number[]
   readonly?: boolean
   axes?: { name: string; minNum?: number; maxNum?: number }[]
@@ -289,6 +295,10 @@ export interface IJoystickProps {
 export interface IProgressBarProps {
   id?: string
   accent?: AccentColor
+  /* Подпись над всеми полосами; пустая не выводится */
+  label?: { name?: string; class?: string }
+  /* info - значок ⓘ после подписи, при наведении всплывает пояснение; без подписи не показывается */
+  help?: { info?: string }
   /* accent полосы важнее общего */
   items?: { name?: string; accent?: AccentColor }[]
   value?: IReceivingDataObject[]
@@ -351,6 +361,8 @@ export interface ISliderProps {
   wrapperClass?: string
   accent?: AccentColor
   label?: { name?: string; class?: string }
+  /* info - значок ⓘ после подписи, при наведении всплывает пояснение; без подписи не показывается */
+  help?: { info?: string }
   value?: number | [number, number]
   type?: "single" | "range"
   number?: { minNum: number; maxNum: number; step: number }
@@ -463,6 +475,8 @@ export interface ITableProps<T extends object> {
   /* Цвет шапки, кнопок без своего цвета и фокуса */
   accent?: AccentColor
   label?: { name?: string; class?: string }
+  /* info - значок ⓘ после подписи, при наведении всплывает пояснение; без подписи не показывается */
+  help?: { info?: string }
   header?: ITableHeader<T>[]
   /* Строки обычной таблицы; журнал (dataBuffer.stashData) строки получает методом push() через bind:this */
   body?: T[]
@@ -502,6 +516,8 @@ export interface ITabsProps {
   children?: Snippet<[any]>
   apiArray?: UIComponent[]
   Components?: Snippet<[component: UIComponent, fixedHeight: boolean]>
+  /* Содержимое выбранной вкладки целиком: получает компоненты apiArray этой вкладки и сам их раскладывает (GUIRenderer - через Layout, как Accordion) */
+  Content?: Snippet<[components: UIComponent[]]>
 }
 
 /* ********************************************************** */
@@ -526,6 +542,8 @@ export interface IVideoViewerProps {
   id?: string
   wrapperClass?: string
   label?: { name?: string; class?: string }
+  /* info - значок ⓘ после подписи, при наведении всплывает пояснение; без подписи не показывается */
+  help?: { info?: string }
   showSelect?: boolean
   /* "camera" - локальный getUserMedia (по умолчанию); "remote" - компонент только отображает кадры из пропа frame */
   source?: "camera" | "remote"
@@ -636,7 +654,7 @@ export interface IWidgetFileSystemProps {
   argument?: string
   /* Какие файлы можно выбрать для закачки (атрибут accept), например ".bin, .txt, .pem" */
   accept?: string
-  /* Максимальная длина имени файла - ограничение прошивки (LittleFS, upload_file.c), по умолчанию 31 */
+  /* Предел имени файла в байтах UTF-8 - ограничение прошивки (LittleFS, upload_file.c), по умолчанию 31; GUIRenderer передаёт его в createFsTransfer, сам виджет имя не проверяет */
   maxNameLength?: number
   collapsed?: boolean
   persistKey?: string

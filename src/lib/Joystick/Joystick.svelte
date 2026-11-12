@@ -1,4 +1,5 @@
 <script lang="ts">
+  import FieldLabel from "../FieldLabel.svelte"
   import { roundToClean } from "../number"
   import { twMerge } from "tailwind-merge"
   import { accentStyle } from "../accent"
@@ -10,6 +11,7 @@
     wrapperClass = "",
     accent = "blue",
     label = { name: "", class: "" },
+    help,
     value = $bindable([0, 0, 0, 0]),
     readonly = false,
     axes = [
@@ -65,9 +67,7 @@
 </script>
 
 <div class={twMerge(`relative flex w-full flex-col items-center`, wrapperClass)} style="{accentStyle(accent)} --bg-color: var(--accent-color);">
-  {#if label.name}
-    <h5 class={twMerge(`w-full px-4 text-center`, label.class)}>{label.name}</h5>
-  {/if}
+  <FieldLabel {label} info={help?.info} class="w-full justify-center px-4 text-center" />
 
   {#if !readonly}
     <div class="flex w-1/2 items-center justify-center">

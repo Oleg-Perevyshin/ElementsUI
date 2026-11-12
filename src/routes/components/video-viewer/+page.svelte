@@ -6,7 +6,7 @@
   import ComponentExample from "../../ComponentExample.svelte"
   import { type IVideoViewerProps } from "#lib/types.ts"
   import VideoViewer from "#lib/VideoViewer/VideoViewer.svelte"
-  import { formatObjectToString, RenderMarkdown } from "../../common"
+  import { formatObjectToString, L, RenderMarkdown } from "../../common"
   import VideoViewerProps from "#lib/VideoViewer/VideoViewerProps.svelte"
   import { onMount } from "svelte"
   import readmeRaw from "#lib/VideoViewer/README.md?raw"
@@ -23,6 +23,7 @@
     properties: {
       id: crypto.randomUUID(),
       label: { name: "Label" },
+      help: { info: L("Нужно разрешение браузера на камеру", "Browser camera permission is required", "需要浏览器摄像头权限") },
       showSelect: true,
     },
     position: { row: 0, col: 0, width: 0, height: 0 },

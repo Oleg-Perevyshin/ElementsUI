@@ -104,6 +104,13 @@ test("CBOR: большие байтовые строки, предел uint64, �
   /* Целое больше uint64 - ошибка, а не обрезанное значение */
   assert.throws(() => m.valueToCbor(2n ** 64n))
   assert.equal(hex(m.valueToCbor(2n ** 64n - 1n)), "1bffffffffffffffff")
+  /* Большое целое double (не safe integer) кодируется как float64, а не падает на пределе uint64 */
+  assert.equal(m.cborToValue(m.valueToCbor(1e20)), 1e20)
+  assert.equal(hex(m.valueToCbor(2 ** 53)), "fa5a000000")
+  /* uint64 вне safe integer приходит строкой без потери точности, в пределах - числом */
+  assert.equal(m.cborToValue(m.valueToCbor(2n ** 53n + 1n)), "9007199254740993")
+  assert.equal(m.cborToValue(m.valueToCbor(-(2n ** 64n))), "-18446744073709551616")
+  assert.equal(m.cborToValue(m.valueToCbor(2n ** 53n - 1n)), Number.MAX_SAFE_INTEGER)
   /* Base64 разбирается только под ключом, оканчивающимся на bin */
   assert.deepEqual(m.cborToValue(m.jsonToCbor({ FileBin: "AQI=" })), { FileBin: Uint8Array.of(1, 2) })
   assert.deepEqual(m.cborToValue(m.jsonToCbor({ Cabinet: "AQI=" })), { Cabinet: "AQI=" })
@@ -345,7 +352,14 @@ test("CAN: чередование пакетов, remote-кадр, таймау�
     ),
     500,
   )
-  assert.ok(late.length === 0 || late[0].data.length < bytes(REF.multi).length)
+  /* Начало истекло - обрезанный хвост не выдаётся пакетом */
+  assert.deepEqual(late, [])
+  /* Медленный, но непрерывный поток: таймаут считается от последнего фрагмента */
+  const slow = m.createCanParser({ sessionTimeoutMs: 2000 })
+  const received = a.flatMap((frame, index) => slow.push(new TextEncoder().encode(m.encodeSlcanFrame(frame, false)), index * 500))
+  assert.equal(received.length, 1)
+  assert.deepEqual([...received[0].data], [...bytes(REF.multi)])
+  assert.equal(received[0].timestamp, 0)
   /* Поток без CR не копится: после мусора кадры разбираются */
   const noise = m.createCanParser()
   assert.deepEqual(noise.push(new TextEncoder().encode("x".repeat(20000)), 0), [])
@@ -365,6 +379,19 @@ test("RS485: пакеты из сырого потока, мусор, пауза
       `разрез ${cut}`,
     )
   }
+  /* Шум 0x80/0x81/0x83 (definite-массивы) перед пакетом: ни пустых пакетов, ни проглоченного настоящего */
+  for (const noise of [[0x80], [0x81], [0x83, 1, 2, 3], [0x80, 0x41, 0x83, 1, 2, 3, 0x81]]) {
+    const packets = m.createPacketStreamParser().push(Uint8Array.from([...noise, ...one]), 0)
+    assert.deepEqual(
+      packets.map((packet) => [hex(packet.bytes), packet.objects.length]),
+      [[REF.one, 1]],
+      `шум ${hex(Uint8Array.from(noise))}`,
+    )
+  }
+  assert.equal(m.decodePacket(Uint8Array.of(0x83, 1, 2, 3)).status, "garbage")
+  assert.equal(m.decodePacket(Uint8Array.of(0x81, ...one)).status, "garbage")
+  /* Пакет без записей (0x9F 0xFF) - мусор для потока */
+  assert.deepEqual(m.createPacketStreamParser().push(Uint8Array.of(0x9f, 0xff, ...one), 0).length, 1)
   const parser = m.createPacketStreamParser({ gapMs: 100 })
   assert.equal(parser.push(multi.subarray(0, 10), 0).length, 0)
   assert.deepEqual(
@@ -398,7 +425,13 @@ test("словарь, поле Value xPOE-Debug, команды slcan-адапт
   assert.equal(m.createXPoeDebugParser({ dictionary: custom }).push(mine)[0].argument, "MyCmd")
   assert.equal(m.createXPoeDebugParser().push(mine)[0].argument, "300")
   assert.deepEqual([...m.xPoeDebugValueFromText("")], [])
-  assert.deepEqual([...m.xPoeDebugValueFromText("A1 61 61 01")], [0xa1, 0x61, 0x61, 0x01])
+  assert.deepEqual([...m.xPoeDebugValueFromText("h'A1 61 61 01'")], [0xa1, 0x61, 0x61, 0x01])
+  assert.deepEqual([...m.xPoeDebugValueFromText("0xA1616101")], [0xa1, 0x61, 0x61, 0x01])
+  /* Число из цифр - JSON, а не HEX: «12» - CBOR 12 (0x0C), «1234» - 0x19 0x04 0xD2 */
+  assert.deepEqual([...m.xPoeDebugValueFromText("12")], [0x0c])
+  assert.deepEqual([...m.xPoeDebugValueFromText("1234")], [0x19, 0x04, 0xd2])
+  assert.throws(() => m.xPoeDebugValueFromText("A1 61")) /* HEX без h'..' или 0x - не JSON */
+  assert.throws(() => m.xPoeDebugValueFromText("0xABC"))
   assert.deepEqual([...m.xPoeDebugValueFromText('{"a":1}')], [...m.valueToCbor({ a: 1 })])
   assert.throws(() => m.xPoeDebugValueFromText("не json"))
   assert.deepEqual(m.slcanOpenCommands("S6"), ["C\r", "S6\r", "M0\r", "A0\r", "O\r"])
@@ -411,7 +444,7 @@ const DEBUG_PLOT_HEX =
 
 test("графики: пакет DebugPlot - значения и порядок серий из CBOR-карты устройства", () => {
   const parser = m.createXPoeDebugParser()
-  const [frame] = parser.push(deviceFrame("OK!", m.DEBUG_PLOT_ARGUMENT, m.xPoeDebugValueFromText(DEBUG_PLOT_HEX)))
+  const [frame] = parser.push(deviceFrame("OK!", m.DEBUG_PLOT_ARGUMENT, m.xPoeDebugValueFromText(`0x${DEBUG_PLOT_HEX}`)))
   assert.equal(frame.type, "frame")
   assert.ok(frame.crcOk)
   const values = m.debugPlotValues(frame.payload)
@@ -443,4 +476,30 @@ test("графики: пакет DebugPlot - значения и порядок 
   assert.deepEqual(m.debugPlotValues([1, 2]), [])
   plots.clear()
   assert.deepEqual(plots.data("SPEC"), [])
+})
+
+test("конверт WebSocket: модулю за хабом ARG кодом из словаря, входящий код переводится в имя", () => {
+  assert.equal(m.wsArgumentCode("ModCfg"), 36)
+  assert.equal(m.wsArgumentCode("NoSuchArg"), "NoSuchArg")
+  assert.equal(m.wsArgumentName(36), "ModCfg")
+  assert.equal(m.wsArgumentName("ModCfg"), "ModCfg")
+  assert.equal(m.wsArgumentName(4097), "4097")
+  /* Модуль за хабом - число; хаб сам или без ModSN - имя */
+  assert.deepEqual(m.wsEnvelope("GET", "ModCfg", { DevSN: "HUB", ModSN: "MOD", Payload: {} }), {
+    HDR: "GET",
+    ARG: 36,
+    VAL: { DevSN: "HUB", ModSN: "MOD", Payload: {} },
+  })
+  assert.equal(m.wsEnvelope("GET", "ModCfg", { DevSN: "HUB", ModSN: "HUB" }).ARG, "ModCfg")
+  assert.equal(m.wsEnvelope("GET", "ModCfg", { DevSN: "HUB" }).ARG, "ModCfg")
+  assert.equal(m.wsEnvelope("SET", "MyCmd", { DevSN: "HUB", ModSN: "MOD" }).ARG, "MyCmd")
+  /* Код совпадает с битами 13-1 HAR */
+  assert.equal(m.splitHar(m.makeHar(0, m.wsEnvelope("GET", "ModCfg", { DevSN: "H", ModSN: "M" }).ARG)).argument, m.DEFAULT_ARGUMENT_CODES.ModCfg)
+  /* Входящий: число в имя, имя как есть */
+  assert.deepEqual(m.readWsEnvelope({ HDR: "OK!", ARG: 36, VAL: { ModSN: "MOD" } }), { HDR: "OK!", ARG: "ModCfg", VAL: { ModSN: "MOD" } })
+  assert.equal(m.readWsEnvelope({ HDR: "OK!", ARG: "Update", VAL: {} }).ARG, "Update")
+  /* Свой словарь устройства */
+  const own = m.createDictionary({ MyCmd: 4000 })
+  assert.equal(m.wsEnvelope("SET", "MyCmd", { DevSN: "H", ModSN: "M" }, own).ARG, 4000)
+  assert.equal(m.readWsEnvelope({ HDR: "OK!", ARG: 4000, VAL: {} }, own).ARG, "MyCmd")
 })

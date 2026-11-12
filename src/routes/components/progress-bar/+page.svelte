@@ -6,7 +6,7 @@
   import ComponentExample from "../../ComponentExample.svelte"
   import ProgressBarProps from "#lib/ProgressBar/ProgressBarProps.svelte"
   import { type IReceivingDataObject } from "#lib/types.ts"
-  import { formatObjectToString, RenderMarkdown } from "../../common"
+  import { formatObjectToString, L, RenderMarkdown } from "../../common"
   import readmeRaw from "#lib/ProgressBar/README.md?raw"
 
   let readmeHtml = $state("")
@@ -20,9 +20,13 @@
     access: "full",
     properties: {
       id: crypto.randomUUID(),
+      label: { name: L("Загрузка устройства", "Device load", "设备负载"), class: "" },
+      help: {
+        info: L("Доля от максимума, значение приходит с устройства", "Share of the maximum, the value comes from the device", "占最大值的比例，数值来自设备"),
+      },
       type: "horizontal",
-      items: [],
-      value: [],
+      items: [{ name: "CPU" }],
+      value: [{ Name: "CPU", Value: 66 }],
       number: { minNum: 0, maxNum: 100, units: "%" },
     },
     position: { row: 0, col: 0, width: 0, height: 0 },

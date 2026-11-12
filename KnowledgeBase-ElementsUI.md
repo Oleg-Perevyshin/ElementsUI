@@ -10,7 +10,7 @@
 
 ## 🎯 Назначение и место в стеке
 
-ElementsUI - репозиторий npm-библиотеки `poe-svelte-ui-lib` (лицензия MIT, текущая версия в `package.json` - `2.3.5`). Это общий слой интерфейса и протокола для всего стека xPOE-DevStack: компоненты Svelte 5, смарт-виджеты устройства, рендерер GUI из конструктора, панели свойств конструктора, тема, языки RU/EN/ZH, ядро протоколов обмена с устройствами и мастер-словарь команд.
+ElementsUI - репозиторий npm-библиотеки `poe-svelte-ui-lib` (лицензия MIT, мажорная версия 2.x; точный номер - поле `version` в `package.json`). Это общий слой интерфейса и протокола для всего стека xPOE-DevStack: компоненты Svelte 5, смарт-виджеты устройства, рендерер GUI из конструктора, панели свойств конструктора, тема, языки RU/EN/ZH, ядро протоколов обмена с устройствами и мастер-словарь команд.
 
 ### ✨ Что умеет
 
@@ -45,12 +45,12 @@ ElementsUI - репозиторий npm-библиотеки `poe-svelte-ui-lib`
 
 Стек xPOE-DevStack (папка `D:\Projects`):
 
-| Проект          | Что это                                                                          | Как связан с ElementsUI                                                                                                                                                                                                                                                                             |
-| --------------- | -------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| DevCloud        | Облако: конструктор GUI устройства, панель управления, отладка, WebSocket-сервер | Зависимость `poe-svelte-ui-lib` (`^2.3.5`). Использует компоненты, `GUIRenderer`, точку входа `/constructor` (панели свойств, `createComponent`, `PANELS`), `/protocols` (кодек, xPOE-Debug), `/locales` (серверный код под Node без Vite). Версию библиотеки в облаке поднимает CI этой библиотеки |
-| DevTerminal     | Настольный терминал отладки через COM-порт                                       | Зависимость `poe-svelte-ui-lib` (`^2.3.5`). Ядро `/protocols`: пакеты, разбор консоли xPOE-Debug, CAN через slcan, колонки таблицы `xPoeDebugTableColumns`, графики `DebugPlot`                                                                                                                     |
-| ProdFactory-ESP | Прошивки ESP32 и их веб-интерфейс `WebApp`, который устройство раздаёт само      | `WebApp/package.json` зависит от `poe-svelte-ui-lib` (`^2.3.5`): `GUIRenderer`, смарт-виджеты, тема. Конструктор в бандл WebApp не попадает. Прошивка держит копию словаря `.framework/Dictionary.yaml`, сборка сверяет её с `api_har.h`                                                            |
-| ProdFactory-STM | Прошивки STM32 (модули на шине)                                                  | Копия словаря `.framework/Dictionary.yaml`; байты пакетов совпадают с кодеком библиотеки (компоненты `poe_cbor`, `api_service`)                                                                                                                                                                     |
+| Проект          | Что это                                                                          | Как связан с ElementsUI                                                                                                                                                                                                                                                                                                                    |
+| --------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| DevCloud        | Облако: конструктор GUI устройства, панель управления, отладка, WebSocket-сервер | Зависимость `poe-svelte-ui-lib` (`^2.x`, точный номер - в `package.json` проекта). Использует компоненты, `GUIRenderer`, точку входа `/constructor` (панели свойств, `createComponent`, `PANELS`), `/protocols` (кодек, xPOE-Debug), `/locales` (серверный код под Node без Vite). Версию библиотеки в облаке поднимает CI этой библиотеки |
+| DevTerminal     | Настольный терминал отладки через COM-порт                                       | Зависимость `poe-svelte-ui-lib` (`^2.x`, точный номер - в `package.json` проекта). Ядро `/protocols`: пакеты, разбор консоли xPOE-Debug, CAN через slcan, колонки таблицы `xPoeDebugTableColumns`, графики `DebugPlot`                                                                                                                     |
+| ProdFactory-ESP | Прошивки ESP32 и их веб-интерфейс `WebApp`, который устройство раздаёт само      | `WebApp/package.json` зависит от `poe-svelte-ui-lib` (`^2.x`, точный номер - там же): `GUIRenderer`, смарт-виджеты, тема. Конструктор в бандл WebApp не попадает. Прошивка держит копию словаря `.framework/Dictionary.yaml`, сборка сверяет её с `api_har.h`                                                                              |
+| ProdFactory-STM | Прошивки STM32 (модули на шине)                                                  | Копия словаря `.framework/Dictionary.yaml`; байты пакетов совпадают с кодеком библиотеки (компоненты `poe_cbor`, `api_service`)                                                                                                                                                                                                            |
 
 </details>
 
@@ -84,7 +84,7 @@ ElementsUI - репозиторий npm-библиотеки `poe-svelte-ui-lib`
 | @sveltejs/package | `^3.0.2`                                                            | Сборка пакета в `dist/`                                                                                                           |
 | Vite              | `^8.3.6`, `@sveltejs/vite-plugin-svelte ^7.3.1`                     | Dev-сервер и сборка                                                                                                               |
 | TypeScript        | `^6.0.3`, `svelte-check ^4.7.8`                                     | Типы, `strict: true`                                                                                                              |
-| MapLibre GL       | dev `^6.17.0`                                                       | Карта `WidgetMap`; в бандле внешняя (`external: ["maplibre-gl"]`), по умолчанию грузится с CDN, для офлайна - `configureMapLibre` |
+| MapLibre GL       | dev `^6.17.0` (установлена 6.18.0, с CDN грузится та же)            | Карта `WidgetMap`; в бандле внешняя (`external: ["maplibre-gl"]`), по умолчанию грузится с CDN, для офлайна - `configureMapLibre` |
 | marked, dompurify | dev                                                                 | Только витрина: показ README и Markdown                                                                                           |
 | Prettier          | `^3.9.10` + `prettier-plugin-svelte`, `prettier-plugin-tailwindcss` | Форматирование                                                                                                                    |
 | publint           | `^0.3.25`                                                           | Проверка экспорта пакета перед публикацией                                                                                        |
@@ -111,7 +111,7 @@ ElementsUI - репозиторий npm-библиотеки `poe-svelte-ui-lib`
 
 ```
 ElementsUI/
-├─ package.json            версия, скрипты, exports (5 точек входа), allowScripts
+├─ package.json            версия, скрипты, exports (6 точек входа: ., /protocols, /protocols/dictionary.yaml, /constructor, /locales, /theme.css), allowScripts
 ├─ vite.config.ts          SvelteKit + Tailwind, витрина в docs/, base /ElementsUI, __LIB_VERSION__
 ├─ tsconfig.json           strict, include src/**
 ├─ .prettierrc             printWidth 160, без точек с запятой, LF
@@ -122,6 +122,8 @@ ElementsUI/
 │  ├─ npm_publish.yaml     [publish]: публикация в npm + автообновление DevCloud
 │  └─ ghpages_deploy.yaml  [deploy]: витрина на GitHub Pages
 ├─ scripts/GenerateDictionary.mjs   dictionary.yaml -> src/lib/protocols/dictionaryCodes.ts
+├─ scripts/UpdateIconsLib.ts       assets/IconsCatalog -> src/lib/icons.ts (npm run UpdateIconsLib)
+├─ assets/IconsCatalog/    SVG каталога (категория.имя.svg), наборы battery/bulb/propeller; в npm-пакет не входит
 ├─ tests/                  node:test против собранного dist/ (+ dist-types.tsconfig.json)
 ├─ static/                 favicon, .nojekyll для Pages
 ├─ src/
@@ -141,7 +143,6 @@ ElementsUI/
 │     ├─ GUIRenderer/      GUIRenderer.svelte, DeviceTable.svelte
 │     ├─ protocols/        ядро протоколов, PROTOCOL.md, dictionary.yaml, cbor/
 │     ├─ locales/          languages.ts, i18n.ts, localize.ts, translations.ts, constructor.ts, index.ts
-│     ├─ IconsCatalog/     SVG каталога (категория.имя.svg), наборы battery/bulb/propeller, iconsLib.ts
 │     ├─ libIcons/         служебные значки компонентов и панелей
 │     ├─ gui.ts            чистые правила рендерера (сетка, виджеты, биты, пакеты, раскладка)
 │     ├─ registry.ts       COMPONENTS: отрисовка и тип обмена по типу компонента
@@ -149,7 +150,7 @@ ElementsUI/
 │     ├─ propsEditor.ts    неизменяемая правка свойств из панелей
 │     ├─ fsTransfer.ts     обмен файлами по SET/GET FS
 │     ├─ types.ts          все интерфейсы пропсов, UIComponent
-│     ├─ icons.ts          СГЕНЕРИРОВАН из IconsCatalog
+│     ├─ icons.ts          СГЕНЕРИРОВАН из assets/IconsCatalog
 │     └─ html.ts, accent.ts, bitField.ts, themeWatch.ts, hints.ts, ring.ts, ...  общие утилиты
 ├─ dist/   (в .gitignore)  собранный пакет
 └─ docs/   (в .gitignore)  собранная витрина
@@ -212,8 +213,8 @@ ElementsUI/
 3. Рендерер переводит тексты (`localizeDeep`, кэш по ссылке и языку), строит дерево вложенности по `parentId` (дети `Accordion` и `Tabs`), раскладывает сетку и для каждого компонента берёт значение через `link.get(key)`.
 4. Пользователь меняет значение. Компонент вызывает `onUpdate`, рендерер собирает пакет `commandPacket(eventHandler, get, [key, value])`: если в `eventHandler.Value` готовый JSON - он и есть Payload, иначе Payload собирается из `Variables` (ключ `группа-поле` становится вложенным объектом). Битовые поля пишутся через `writeBits`.
 5. Рендерер записывает значение заранее (`link.set`, оптимистичное обновление) и отправляет `link.send(header, argument, payload)`. При `Argument: "NoSend"` значение только записывается, пакет не уходит.
-6. Приложение заворачивает команду в свой транспорт (WebSocket-конверт с `DevSN`/`ModSN`), устройство отвечает `OK!`/`ER!`.
-7. Приложение кладёт ответ в реактивное хранилище (`SvelteMap`) функцией `mergeDevicePayload(values, "<ModSN>|", ARG, Payload)`. `get` читает это хранилище, рендерер обновляется сам.
+6. Приложение заворачивает команду в свой транспорт (WebSocket-конверт с `DevSN`/`ModSN`, функция `wsEnvelope`: модулю за хабом `ARG` уходит кодом из словаря), устройство отвечает `OK!`/`ER!`. Входящий конверт приложение пропускает через `readWsEnvelope` (числовой `ARG` в имя).
+7. Приложение кладёт ответ в реактивное хранилище (`SvelteMap`) функцией `mergeDevicePayload(values, "<ModSN>|", ARG, Payload)` (`ARG` строкой или кодом). `get` читает это хранилище, рендерер обновляется сам.
 
 Смарт-виджеты работают с группой полей по префиксу (`CFG`, `LST`, `MAV`): читают `readWidgetFields`, сохраняют одним `SET ModCfg` из `widgetPacket` (только поля из `WIDGET_SAVE_FIELDS`). Поиск сетей - `GET APsList` с ожиданием ответа 3000 мс, перезагрузка - `SET Restart`, сброс - `SET RstNVS`, обновление снимков - `GET FS` и `GET StackInfo`. Файлы `WidgetFileSystem` и `FileAttach` рендерер ведёт сам через `createFsTransfer(link)`.
 
@@ -225,30 +226,31 @@ ElementsUI/
 1. Команда собирается `encodePacket` в `poe_cbor_pkt`: CBOR-массив неопределённой длины `0x9F [TrgBusID, SrcBusID, HAR, Payload, CRC16] ... 0xFF`.
 2. Для CAN/CAN FD пакет режется `canFragments`/`encodeCanPacket` на кадры 8 или 64 байта и уходит через slcan-адаптер (`slcanOpenCommands`, `encodeSlcanFrame`).
 3. Для RS485 и UART-консоли пакет идёт сплошным потоком; на приёме разборщик ищет начало `0x9F 0x85`.
-4. Приём: `createPacketStreamParser` (RS485), `createXPoeDebugParser` (консоль, пакеты вперемешку с текстом загрузчика), `createCanParser` (сборка фрагментов CAN). Общий буфер - `framer.ts`.
-5. Строки консоли превращаются в строки таблицы `xPoeDebugRow` (колонки `xPoeDebugTableColumns`), значения `DebugPlot` - в графики `createPlotGroups`/`debugPlotValues`.
+4. Приём: `createPacketStreamParser` (RS485), `createXPoeDebugParser` (консоль, пакеты вперемешку с текстом загрузчика), `createCanParser` (сборка фрагментов CAN). Общий буфер - `framer.ts`. RS485 и консоль ищут начало общей `packetStart` (`packet.ts`, метка `0x9F 0x85`), пакет без записей - мусор; `decodePacket` принимает только indefinite-массив `0x9F` (definite прошивка отвергает). CAN считает `sessionTimeoutMs` от последнего фрагмента и выдаёт только целый пакет.
+5. Поле Value консоли - `xPoeDebugValueFromText`: HEX только явно (`h'0A 1B'` или `0x0A1B`), остальное - JSON в CBOR (`12` - число 12).
+6. Строки консоли превращаются в строки таблицы `xPoeDebugRow` (колонки `xPoeDebugTableColumns`), значения `DebugPlot` - в графики `createPlotGroups`/`debugPlotValues`.
 
 </details>
 
 <details>
 <summary>🧩 Основные модули и обязанности</summary>
 
-| Модуль                                    | Обязанность                                                                                                                                                                       |
-| ----------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `GUIRenderer/GUIRenderer.svelte`          | Отрисовка GUI: сетка, вложенность, значения, биты, пакеты, виджеты, файлы, журнал таблицы, узкий экран (`NARROW_MAX_PX = 640`)                                                    |
-| `gui.ts`                                  | Чистые функции без Svelte: `GUI_GRID`, `WIDGET_FIELDS`, `commandPacket`, `tablePacket`, `readBits`/`writeBits`, `mergeDevicePayload`, `layoutFlow`/`layoutColumns`/`flowMinWidth` |
-| `registry.ts`                             | `COMPONENTS[type] = { view, io, fields? }`, `componentVariables`                                                                                                                  |
-| `defaults.ts`                             | `COMPONENT_DEFAULTS`, `COMPONENT_SIZES`, `minComponentWidth`, `createComponent`                                                                                                   |
-| `propsEditor.ts`                          | `createPropsEditor` (`set`, `patch`, `addItem`, `updateItem`, `removeItem`), `applyPropertyChange`                                                                                |
-| `fsTransfer.ts`                           | Файлы по `SET FS`: чанки, повторы, CRC-32, общая очередь операций на транспорт                                                                                                    |
-| `protocols/`                              | CBOR, пакет, HAR, CRC, словарь, xPOE-Debug, CAN, графики отладки                                                                                                                  |
-| `locales/`                                | Список языков, переводчик `$T`, многоязычные тексты GUI                                                                                                                           |
-| `theme.css`, `accent.ts`, `themeWatch.ts` | Тема, цвет роли компонента, слежение за темой из JS                                                                                                                               |
-| `html.ts`                                 | `escapeHtml`, `htmlToText`, `sanitizeHtml` (белый список тегов SVG и текста)                                                                                                      |
-| `bitField.ts`                             | Битовое поле 32-битного слова без знаковых операций JS (бит 31 корректен)                                                                                                         |
-| `widgetCollapse.ts`, `hints.ts`           | Свёрнутость виджетов и подсказки «?» в `localStorage` по `persistKey`                                                                                                             |
-| `ring.ts`                                 | Кольцевой буфер для потоков строк таблицы, точек графика, трека карты                                                                                                             |
-| `flightSim.ts`                            | Имитация полёта для `WidgetPFD`/`WidgetMap` (та же модель, что в прошивке)                                                                                                        |
+| Модуль                                    | Обязанность                                                                                                                                                                                       |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `GUIRenderer/GUIRenderer.svelte`          | Отрисовка GUI: сетка, вложенность, значения, биты, пакеты, виджеты, файлы, журнал таблицы, узкий экран (`NARROW_MAX_PX = 640`)                                                                    |
+| `gui.ts`                                  | Чистые функции без Svelte: `GUI_GRID`, `WIDGET_FIELDS`, `commandPacket`, `tablePacket`, `readBits`/`writeBits`, `mergeDevicePayload`, `layoutFlow`/`layoutColumns`/`flowMinWidth`                 |
+| `registry.ts`                             | `COMPONENTS[type] = { view, io, fields? }`, `componentVariables`                                                                                                                                  |
+| `defaults.ts`                             | `COMPONENT_DEFAULTS`, `COMPONENT_SIZES`, `minComponentWidth`, `createComponent`                                                                                                                   |
+| `propsEditor.ts`                          | `createPropsEditor` (`set`, `patch`, `addItem`, `updateItem`, `removeItem`), `applyPropertyChange`                                                                                                |
+| `fsTransfer.ts`                           | Файлы по `SET FS`: чанки, повторы, CRC-32, общая очередь операций на транспорт                                                                                                                    |
+| `protocols/`                              | CBOR, пакет, HAR, CRC, словарь, xPOE-Debug, CAN, графики отладки                                                                                                                                  |
+| `locales/`                                | Список языков, переводчик `$T`, многоязычные тексты GUI                                                                                                                                           |
+| `theme.css`, `accent.ts`, `themeWatch.ts` | Тема, цвет роли компонента, слежение за темой из JS                                                                                                                                               |
+| `html.ts`                                 | `escapeHtml`, `htmlToText`, `sanitizeHtml` (белый список тегов SVG и текста; `href` только `#id` и у `<a>` `mailto:`, `style` только свойства цвета и значков, `class` без `fixed`/`inset`/`z-*`) |
+| `bitField.ts`                             | Битовое поле 32-битного слова без знаковых операций JS (бит 31 корректен)                                                                                                                         |
+| `widgetCollapse.ts`, `hints.ts`           | Свёрнутость виджетов и подсказки «?» в `localStorage` по `persistKey`                                                                                                                             |
+| `ring.ts`                                 | Кольцевой буфер для потоков строк таблицы, точек графика, трека карты                                                                                                                             |
+| `flightSim.ts`                            | Имитация полёта для `WidgetPFD`/`WidgetMap` (та же модель, что в прошивке)                                                                                                                        |
 
 </details>
 
@@ -361,13 +363,13 @@ interface DeviceReply {
 - Разборщики: пауза дольше `gapMs` (по умолчанию 100 мс; у CAN - `sessionTimeoutMs`) сбрасывает недособранное, предел `maxBytes` по умолчанию 8192. Пауза RS485 в прошивке - 20 мс.
 - Пример `GET ModCfg {}` из терминала: `9F 85 00 00 18 49 A0 19 66 06 FF` (HAR `0x0049`, CRC `0x6606`).
 
-| Канал                   | Передача                                                                                                                                                                         |
-| ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| CAN, CAN FD             | Кадры 8 или 64 байта; 11-битный ID: бит 10 - последний кадр (`CAN_FINAL_BIT`), биты 0-9 - номер пакета                                                                           |
-| RS485                   | Сплошной поток, поиск `0x9F 0x85`                                                                                                                                                |
-| LoRa                    | Пакет целиком в одном радиокадре                                                                                                                                                 |
-| UART-консоль xPOE-Debug | Поток вперемешку с текстом загрузчика; логи `OK! DebugLog` `[уровень, тег, текст                                                                                                 | байты, FHS]`, графики `OK! DebugPlot` `{"Группа.Имя": float32}` |
-| WebSocket               | Свой конверт: запрос `{HDR, ARG, VAL: {DevSN, ModSN?, TrgBusID?, SrcBusID?, Payload?}}`, ответ `{HDR, ARG, VAL: {DevSN, ModSN, Message, Payload}}`; заголовок и команда строками |
+| Канал                   | Передача                                                                                                                                                                                                                                                                                                                                     |
+| ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| CAN, CAN FD             | Кадры 8 или 64 байта; 11-битный ID: бит 10 - последний кадр (`CAN_FINAL_BIT`), биты 0-9 - номер пакета                                                                                                                                                                                                                                       |
+| RS485                   | Сплошной поток, поиск `0x9F 0x85`                                                                                                                                                                                                                                                                                                            |
+| LoRa                    | Пакет целиком в одном радиокадре                                                                                                                                                                                                                                                                                                             |
+| UART-консоль xPOE-Debug | Поток вперемешку с текстом загрузчика; логи `OK! DebugLog` `[уровень, тег, текст \| байты, FHS]`, графики `OK! DebugPlot` `{"Группа.Имя": float32}`                                                                                                                                                                                          |
+| WebSocket               | Свой конверт: запрос `{HDR, ARG, VAL: {DevSN, ModSN?, TrgBusID?, SrcBusID?, Payload?}}`, ответ `{HDR, ARG, VAL: {DevSN, ModSN, Message, Payload}}`; заголовок строкой, команда строкой, а для модуля за хабом (`ModSN` не равен `DevSN`) и в ответе модуля, имени которого хаб не знает, - кодом из словаря (`wsEnvelope`, `readWsEnvelope`) |
 
 Аутентификация устройства в облаке (TOFU) описана в `PROTOCOL.md`: токен 64 hex-символа, передаётся `Authorization: Bearer`, выдаётся в `SET JoinDev {DevToken}`, неверный токен после подтверждения - закрытие кодом `1008`.
 
@@ -388,6 +390,8 @@ interface DeviceReply {
 | 111-117  | модули перемещения          | `MotInit`, `MotMode`, `MotPos`, `MotPID`, `MotInfo`, `MotCfg`, `MotCal`                                                                                          |
 | 141-144  | модули ориентации           | `OrData`, `OrOfs`, `OrAccCal`, `OrMagCal`                                                                                                                        |
 
+Задел: `BackUp`, `BindMKey`, `ModList`, `ModMode`, `ModT2-ModT5`, `FwUpgE`, `OrOfs`, `OrAccCal`, `OrMagCal` есть в словаре, но ни одна прошивка ESP/STM их пока не обрабатывает. Коды закреплены и не меняются, описания в `dictionary.yaml` - план, а не текущее поведение. В примерах документации берут команды, которые прошивки реально обрабатывают: `ModCfg`, `ModInfo`, `FS`, `APsList`, `StackInfo`.
+
 `scripts/GenerateDictionary.mjs` превращает словарь в `DEFAULT_ARGUMENT_CODES` (`dictionaryCodes.ts`, не править руками) и падает на повторе имени или кода и на коде больше `0x1FFF`. Словарь конкретного устройства читается `parseArgumentDictionary` и оборачивается `createDictionary(codes)`.
 
 </details>
@@ -402,7 +406,7 @@ interface DeviceReply {
 | `list()`              | `GET FS` без `Op` - снимок                                                                                                    |
 | `remove(name)`        | `SET FS {Op: "Delete", Name}` - снимок после удаления                                                                         |
 
-Параметры `createFsTransfer`: `argument = "FS"`, `timeoutMs = 5000`, `retries = 3`, `maxNameLength = 31`. Размер чанка задаёт устройство, ответ сверяется по `Op`, `CurrentID` и `ChunkIndex`, чанк после `ER!` или таймаута повторяется. Операции идут строго по одной в очереди, общей для транспорта.
+Параметры `createFsTransfer`: `argument = "FS"`, `timeoutMs = 5000`, `retries = 3`, `maxNameLength = 31` (байты UTF-8; длинное или пустое имя - `FsNameError` до `UploadStart`, единственная проверка имени; `GUIRenderer` берёт предел из свойств `WidgetFileSystem`, очередь передач по ключу `аргумент:предел`). Размер чанка задаёт устройство, ответ сверяется по `Op`, `CurrentID` и `ChunkIndex`, чанк после `ER!` или таймаута повторяется. Операции идут строго по одной в очереди, общей для транспорта.
 
 </details>
 
@@ -479,7 +483,7 @@ interface DeviceReply {
 | `npm run check`                  | `svelte-kit sync` + `svelte-check` (типы)                                                                                                                                                                                |
 | `npm run TestProtocols`          | Генерация словаря, `svelte-package`, `node --test tests/*.test.mjs`                                                                                                                                                      |
 | `npm run Dictionary`             | `dictionary.yaml` -> `dictionaryCodes.ts`                                                                                                                                                                                |
-| `npm run UpdateIconsLib`         | `tsx src/lib/IconsCatalog/iconsLib.ts`: каталог -> `icons.ts` (`ICONS`, `ICON_NAMES`, `ICONS_ARRAY`)                                                                                                                     |
+| `npm run UpdateIconsLib`         | `tsx scripts/UpdateIconsLib.ts`: каталог `assets/IconsCatalog` -> `src/lib/icons.ts` (`ICONS`, `ICON_NAMES`, `ICONS_ARRAY`)                                                                                              |
 | `npm run Formatting`             | `prettier --write .` - единственный способ форматирования, перед каждым коммитом                                                                                                                                         |
 | `npm run build`                  | Сборка витрины в `docs/`                                                                                                                                                                                                 |
 | `npm pack` (запускает `prepack`) | Словарь -> `svelte-kit sync` -> `svelte-check` -> `svelte-package` (в `dist/`) -> `tsc -p tests/dist-types.tsconfig.json` (проверка `.d.ts` так, как их видит приложение) -> `node --test tests/*.test.mjs` -> `publint` |
@@ -500,6 +504,8 @@ interface DeviceReply {
 | `fsTransfer.test.mjs` | Обмен файлами против модели `file_system` ProdFactory-ESP: чанки, повтор после `ER!` и таймаута, CRC32, очередь |
 | `html.test.mjs`       | `sanitizeHtml` против типовых XSS и внешних ресурсов                                                            |
 | `coverage.test.mjs`   | Облёт поля `WidgetMap` (агро): площадь и число проходов                                                         |
+| `localize.test.mjs`   | Перевод текстов GUI (`localizeDeep`)                                                                            |
+| `maplibre.test.mjs`   | Версия MapLibre на CDN (`MAPLIBRE_VERSION`) совпадает с установленной `maplibre-gl`                             |
 
 Ручная проверка узкого экрана: кнопка «Телефон» в витрине (рамка 375 px) и временная страница `src/routes/<новое имя>` с `GUIRenderer`/виджетами на 320-414 px; перед коммитом страницу удалить.
 
@@ -520,7 +526,7 @@ interface DeviceReply {
 
 | Тег         | Workflow                                                 | Что происходит                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
 | ----------- | -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `[publish]` | `.github/workflows/npm_publish.yaml`, job `publish`      | Ubuntu 24.04, Node 24, `npm install -g npm@latest`, `npm install`, `npm run prepack`, `npm publish --access public --provenance=false`. Публикация через trusted publisher npm (OIDC, `id-token: write`), постоянного токена нет                                                                                                                                                                                                                                                              |
+| `[publish]` | `.github/workflows/npm_publish.yaml`, job `publish`      | Ubuntu 24.04, Node 24, `npm install -g npm@11.20.0` (версия закреплена), `npm ci` (ровно по `package-lock.json`), `npm publish --access public --provenance=false` (prepack запускается один раз, самим `npm publish`). Публикация через trusted publisher npm (OIDC, `id-token: write`), постоянного токена нет                                                                                                                                                                              |
 | `[publish]` | тот же workflow, job `update-devcloud` (после `publish`) | Ждёт версию в реестре npm (до 40 попыток по 15 с, 10 минут), клонирует DevCloud с `git.xpoe.pro/xPOE-Studio/DevCloud.git` по секрету `DEVCLOUD_ACCESS_TOKEN`, ставит `poe-svelte-ui-lib@VERSION`, `svelte-kit sync`, `prisma generate` (с фиктивным `DATABASE_URL`), `svelte-check --threshold error`. Если всё прошло и `package.json` изменился - `npm version minor` в DevCloud и коммит `X.Y [deploy] Обновление ElementsUI до X.Y.Z` в `main` облака, что запускает развёртывание облака |
 | `[deploy]`  | `.github/workflows/ghpages_deploy.yaml`                  | Node 24, `npm install`, `npm run build`, выгрузка `./docs` в GitHub Pages                                                                                                                                                                                                                                                                                                                                                                                                                     |
 
@@ -577,6 +583,8 @@ interface DeviceReply {
 - Версия 2.0 сломала API. Сохранённые GUI 1.x рендерер не читает; каталог DevCloud и интерфейсы устройств переведены один раз, функции перевода удалены в 2.1.0. Таблицы «было/стало» - в `README.md`, раздел «Переход на 2.0».
 - Сетка 23 колонки выбрана, чтобы ровно вставали 2, 3, 4, 6 и 12 одинаковых групп с пустой колонкой между ними (11, 7, 5, 3 и 1 колонка на группу). Рендерер понимает GUI по группам, поэтому автор соблюдает 7 правил раскладки из README (раздел «GUI устройства», «Правила для автора GUI»).
 - `Accordion` и смарт-виджеты занимают одну строку сетки и растут по содержимому (`spanRows`).
+- Содержимое `Accordion` и выбранной вкладки `Tabs` рендерер рисует через `Layout` (у `Tabs` - сниппет `Content`): на узком экране по группам `layoutFlow`, а не в сетке `size.width`.
+- `VideoViewer`: камера, полученная после размонтирования (флаг `destroyed` после `await getUserMedia`), сразу выключается; список камер - по событию `devicechange`, без опроса.
 - Сворачиваемые разделы внутри виджетов - `SectionHead` с круглым `ExpandIcon`; в шапках виджетов и в `Accordion` осталась маленькая стрелка (решение владельца).
 - `Select type="buttons"` без `fitContent` сам становится выпадающим списком, если варианты не помещаются; с `fitContent` не сворачивается никогда.
 - `WidgetPFD` уже 440 px рисуется 1:1. На карте нет кнопок масштаба и местоположения (колесо и два пальца), остались компас и полный экран.
@@ -674,7 +682,7 @@ interface DeviceReply {
 | Токены темы              | CSS-переменные: `--bg-body`, `--back-color`, `--container-color`, `--field-color`, `--font-color`, `--muted-color`, `--faint-color`, `--*-color/text/soft/mark` |
 | `ui-panel`, `ui-inset`   | Готовые классы поверхностей: блок на фоне страницы и блок внутри панели                                                                                         |
 | `persistKey`             | Ключ хранения в браузере (обычно `ModSN`) для свёрнутости, подсказок и планов карты                                                                             |
-| `viewer`                 | Режим наблюдателя: только `access` `full`/`viewOnly`, управление отключено                                                                                      |
+| `viewer`                 | Режим наблюдателя: только `access` `full`/`viewOnly`, управление отключено (`WidgetWiFi`/`WidgetDeviceInfo` без `onSave` - только чтение, пароли маской)        |
 | Узкий экран              | Рендерер уже 640 px: блоки раскладываются по группам, карточками и строками формы                                                                               |
 | Режим «Телефон»          | Кнопка витрины: пример в рамке 375 px                                                                                                                           |
 | `[publish]`, `[deploy]`  | Теги в сообщении коммита в `main`: публикация в npm и выкладка витрины                                                                                          |
@@ -824,6 +832,8 @@ interface DeviceReply {
 | `component`        | Компонент интерфейса и его свойства                                                                                                       |
 | `onPropertyChange` | `(change: PropertyChange) => void`: новые `properties`, `name`, `access`, `eventHandler`; приложение сливает их по ключам верхнего уровня |
 
+Поле «Аргумент» в панелях (`Button`, `Select`, кнопки `Table`, команды `WidgetDeviceInfo`) принимает только имя из мастер-словаря `dictionary.yaml` или служебный `NoSend`, до 31 знака (`ARGUMENT_REGEXP`, `ARGUMENT_MAX_LENGTH` в `options.ts`). Прошивка читает аргумент в `char[32]`, а неизвестное имя молча превращает в `A_UNKNOWN`, поэтому опечатка подсвечивается сразу и не сохраняется.
+
 Своя панель свойств строится на `createPropsEditor(component, onPropertyChange)`: `set`, `patch`, `addItem`, `updateItem`, `removeItem` отправляют новые объекты, сами свойства не меняются на месте.
 
 </details>
@@ -855,21 +865,22 @@ interface DeviceReply {
 - На компьютере сетка такая, как в конструкторе; пустая колонка между группами сжимается до узкой полосы, пустая строка - до обычного зазора.
 - Если рендерер уже 640px (телефон, узкая панель), блоки раскладываются по группам: одинаковые группы из мелких блоков (каналы) - карточками по 2-3 в ряд, остальные - друг под другом, поля группы - строками с переносом.
 - `Accordion` раскладывает своё содержимое так же, колонок у него не меньше, чем у самого дальнего блока.
+- `Tabs` раскладывает содержимое выбранной вкладки так же, как `Accordion` (сниппет `Content`): на компьютере - сетка автора внутри вкладки, на телефоне - по группам. Без этого блоки вкладки сжались бы в одну колонку из `size.width`.
 
 </details>
 
 <details>
 <summary>⚙️ Пропсы GUIRenderer и DeviceLink</summary>
 
-| Пропс        | Что это                                                                            |
-| ------------ | ---------------------------------------------------------------------------------- |
-| `components` | `UIComponent[]` в формате 2.0                                                      |
-| `link`       | `DeviceLink` выбранного модуля, см. ниже                                           |
-| `language`   | язык текстов GUI, по умолчанию язык библиотеки                                     |
-| `viewer`     | наблюдатель: видны только `access` `full` и `viewOnly`, управление отключено       |
-| `persistKey` | ключ хранения в браузере (обычно `ModSN`): свёрнутость виджетов, планы `WidgetMap` |
-| `render`     | своя отрисовка типа: `{ VideoViewer: snippet }`, сниппет получает компонент        |
-| `onError`    | текст ошибки команды или передачи файла                                            |
+| Пропс        | Что это                                                                                                                                                         |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `components` | `UIComponent[]` в формате 2.0                                                                                                                                   |
+| `link`       | `DeviceLink` выбранного модуля, см. ниже                                                                                                                        |
+| `language`   | язык текстов GUI, по умолчанию язык библиотеки                                                                                                                  |
+| `viewer`     | наблюдатель: видны только `access` `full` и `viewOnly`, управление отключено; `WidgetWiFi` и `WidgetDeviceInfo` без `onSave` - только для чтения, пароли маской |
+| `persistKey` | ключ хранения в браузере (обычно `ModSN`): свёрнутость виджетов, планы `WidgetMap`                                                                              |
+| `render`     | своя отрисовка типа: `{ VideoViewer: snippet }`, сниппет получает компонент                                                                                     |
+| `onError`    | готовый текст ошибки на языке библиотеки: команда не собрана, ошибка передачи файла, сбой поиска сетей WiFi (ER! или нет ответа)                                |
 
 ```ts
 interface DeviceLink {
@@ -890,8 +901,29 @@ interface DeviceReply {
 ```
 
 - `get` читает реактивное хранилище (`SvelteMap`), тогда рендерер обновляется сам.
-- Ответы устройства приложение кладёт в хранилище функцией `mergeDevicePayload(values, "<ModSN>|", ARG, Payload)`: объект пишется целиком и по полям `имя-поле`, ход закачки `CFG.FS` дописывается к снимку, служебные поля `SET FS` пропускаются.
+- Ответы устройства приложение кладёт в хранилище функцией `mergeDevicePayload(values, "<ModSN>|", ARG, Payload)`: объект пишется целиком и по полям `имя-поле`, ход закачки `CFG.FS` дописывается к снимку, служебные поля `SET FS` пропускаются. `ARG` может быть числом (кодом из словаря) - функция сама переводит его в имя.
 - Отправка `SET Restart` и `SET RstNVS` идёт через `link.send`, приложение может по ним показать состояние перезагрузки.
+
+</details>
+
+<details>
+<summary>🔢 Команды модулю за хабом: ARG числом</summary>
+
+Рендерер всегда передаёт в `link.send` и `link.waitFor` имя аргумента (`"ModCfg"`). Конверт WebSocket собирает приложение, и для модуля за хабом аргумент в нём - число из словаря. Подробно - раздел «WebSocket» в [PROTOCOL.md](src/lib/protocols/PROTOCOL.md).
+
+- В `send` собирайте конверт функцией `wsEnvelope(header, argument, { DevSN, ModSN, Payload })` из `poe-svelte-ui-lib/protocols`. Если `ModSN` задан и не равен `DevSN`, `ARG` станет кодом (`ModCfg` - 36), иначе останется именем.
+- Входящий конверт сначала пропустите через `readWsEnvelope(packet)`: числовой `ARG` станет именем, и `waitFor`, `mergeDevicePayload` и обработчики приложения работают с именами как раньше.
+- У устройства со своим словарём передайте его последним аргументом (`createDictionary(parseArgumentDictionary(text))`), иначе берётся встроенный `DEFAULT_DICTIONARY`.
+
+```ts
+import { wsEnvelope, readWsEnvelope } from "poe-svelte-ui-lib/protocols"
+
+const link: DeviceLink = {
+  send: (header, argument, payload) => socket.send(valueToCbor(wsEnvelope(header, argument, { DevSN: hub.DevSN, ModSN: module.ModSN, Payload: payload }))),
+  /* ... */
+}
+socket.onmessage = (event) => handle(readWsEnvelope(cborToValue(new Uint8Array(event.data))))
+```
 
 </details>
 
@@ -922,7 +954,26 @@ interface DeviceReply {
 <details>
 <summary>📁 Обмен файлами</summary>
 
-`createFsTransfer(transport, { argument = "FS", timeoutMs = 5000, retries = 3, maxNameLength = 31 })` - обмен файлами по `SET FS` прошивки:
+`createFsTransfer(transport, { argument = "FS", timeoutMs = 5000, retries = 3, maxNameLength = 31 })` - обмен файлами по `SET FS` прошивки. `maxNameLength` - предел имени в байтах UTF-8 (буква кириллицы - 2 байта). Слишком длинное или пустое имя `upload` отвергает ещё до `UploadStart` ошибкой `FsNameError` (поле `maxBytes`). Это единственная проверка имени: `GUIRenderer` передаёт сюда `maxNameLength` из свойств `WidgetFileSystem`, сам виджет имя не проверяет и только переводит сообщение.
+
+<details>
+<summary>Ошибки передачи</summary>
+
+Все ошибки передачи - `FsTransferError` с кодом `code` и параметрами `params`. Текст для человека берут из словаря библиотеки: `$T(error.key, error.params)`, ключ `widget.fs.error.<code>`. `message` - то же по-английски, для журнала. `FsNameError` - её частный случай с кодом `name`.
+
+| `code`        | Когда                                                      | `params`          |
+| ------------- | ---------------------------------------------------------- | ----------------- |
+| `timeout`     | устройство не ответило на шаг                              | `step`            |
+| `device`      | устройство ответило `ER!`                                  | `step`, `message` |
+| `noChunkSize` | в ответе на `UploadStart` нет `ChunkSize`                  |                   |
+| `badStart`    | в ответе на `DownloadStart` нет `FileSize` или `ChunkSize` |                   |
+| `badChunk`    | чанк скачивания не того типа или размера                   | `index`           |
+| `crc`         | CRC32 скачанного файла не совпала                          |                   |
+| `name`        | имя пустое или длиннее `maxNameLength` байт                | `n`               |
+
+`GUIRenderer` и `WidgetFileSystem` переводят коды сами.
+
+</details>
 
 | Метод                                      | Что делает                  |
 | ------------------------------------------ | --------------------------- |
@@ -949,6 +1000,15 @@ interface DeviceReply {
 - 🔄 переводить значения между JSON и CBOR.
 
 Формат пакета, адресация, транспорты и список функций описаны в [PROTOCOL.md](src/lib/protocols/PROTOCOL.md).
+
+<details>
+<summary>🧭 Приём потока и поле Value</summary>
+
+- Пакет - только indefinite-массив `0x9F ... 0xFF`, как в прошивке. `decodePacket` считает definite-массивы мусором, а `createPacketStreamParser` (RS485) ищет метку `0x9F 0x85` и пропускает пакеты без записей. Шум вроде `0x80` или `0x81` перед пакетом больше не даёт пустых строк и не проглатывает настоящий пакет.
+- `createCanParser` считает `sessionTimeoutMs` от последнего фрагмента и выдаёт только целый пакет. Хвост с потерянным началом отбрасывается.
+- Поле Value консоли (`xPoeDebugValueFromText`): HEX только как `h'0A 1B'` или `0x0A1B`, всё остальное - JSON. `12` уходит числом 12, а не байтом `0x12`. Подсказки у поля Value в приложениях пишутся по этому правилу.
+
+</details>
 
 <details>
 <summary>🧪 Проверка</summary>
@@ -1048,7 +1108,7 @@ interface DeviceReply {
 <details>
 <summary>📋 Таблица: разметка в ячейках и цвет шапки</summary>
 
-- Текст ячейки `Table` выводится как текст, теги в данных устройства не работают. Если ячейке нужна разметка (цвет, ссылка), у колонки ставят `html: true`, а данные в ней экранируют сами функцией `escapeHtml`. `formatting` возвращает HTML для окна и подсказки и тоже сам экранирует текст.
+- Текст ячейки `Table` выводится как текст, теги в данных устройства не работают. Если ячейке нужна разметка (цвет, жирный текст, ссылка на `#id` или `mailto:`), у колонки ставят `html: true`, а данные в ней экранируют сами функцией `escapeHtml`. Внешние ссылки `sanitizeHtml` вырезает. Для обычного текста разметка не нужна: содержимое ячейки задаёт `render(row)`, подсказку - `tooltip` (`true` или функция от строки), окно по нажатию - `modal` (`true` или сниппет), цвет текста - `accent(row)`. Всё это выводится как текст.
 - Шапку `Table` можно перекрасить переменной `--table-header-color`. Компонент с `accent` задаёт её сам мягким оттенком своего цвета.
 
 </details>
@@ -1073,17 +1133,26 @@ interface DeviceReply {
 <details>
 <summary>🛡️ Безопасный вывод SVG и HTML</summary>
 
-Иконки и HTML из GUI и данных устройства компоненты выводят только через `sanitizeHtml` (`src/lib/html.ts`, экспортируется из библиотеки). Он заново собирает разметку из разрешённых тегов SVG и простого текста: скрипты, обработчики `on*`, внешние ссылки и `url()` на чужие ресурсы выбрасываются. Работает одинаково в браузере и при серверном рендере. Приложение, которое само вставляет такую разметку через `{@html}`, тоже пропускает её через `sanitizeHtml`.
+Иконки и HTML из GUI и данных устройства компоненты выводят только через `sanitizeHtml` (`src/lib/html.ts`, экспортируется из библиотеки). Он заново собирает разметку из разрешённых тегов SVG и простого текста: скрипты, обработчики `on*`, внешние ссылки и `url()` на чужие ресурсы выбрасываются. Работает одинаково в браузере и при серверном рендере.
+
+<details>
+<summary>🛡️ Что именно пропускает sanitizeHtml</summary>
+
+- Ссылки `href` и `xlink:href`: только на свой фрагмент `#id`, у `<a>` ещё `mailto:`. Адреса `http(s):`, `//...`, `javascript:` и прочие выбрасываются вместе с атрибутом.
+- `style`: остаются только свойства для цвета и значков - `color`, `background-color`, `opacity`, `fill*`, `stroke*`, `stop-color`, `stop-opacity`, `width`, `height`, `font-size`, `font-weight`, `font-style`, `text-decoration`, `text-align`, `vertical-align`, `white-space`. `position`, `inset`, `top`, `z-index`, `transform` и всё остальное выбрасывается, поэтому разметка из данных не может накрыть страницу невидимым блоком. `url()` допустим только на `#id`.
+- `class`: выбрасываются классы Tailwind, которыми элемент выносится поверх страницы (`fixed`, `absolute`, `sticky`, `inset-*`, `top-*`, `z-*`, `translate-*` и подобные, в том числе с `md:`, `hover:` и `!`). Остальные классы остаются.
+
+</details> Приложение, которое само вставляет такую разметку через `{@html}`, тоже пропускает её через `sanitizeHtml`.
 
 </details>
 
 <details>
 <summary>🛠️ Как устроен каталог</summary>
 
-- Каталог лежит в `src/lib/IconsCatalog`.
+- Каталог лежит в `assets/IconsCatalog`, скрипт сборки - `scripts/UpdateIconsLib.ts`. Оба в npm-пакет не входят: иконки уже вшиты строками в `src/lib/icons.ts`.
 - Файл называется `категория.имя.svg`, имя - как в Tabler.
 - Скрипт `npm run UpdateIconsLib` собирает из файлов `icons.ts`: `ICONS` (иконки по категориям), `ICON_NAMES` (имена для поиска и подсказок) и `ICONS_ARRAY` (наборы состояний из папок `battery`, `bulb`, `propeller`, их переключает `Widget` по значению).
-- Порядок категорий задан в `CATEGORY_ORDER` в `iconsLib.ts`, название категории - ключ `constructor.props.icon.<категория>` в словаре.
+- Порядок категорий задан в `CATEGORY_ORDER` в `scripts/UpdateIconsLib.ts`, название категории - ключ `constructor.props.icon.<категория>` в словаре.
 - Окно выбора в конструкторе - `IconsMatrix`: категории матрицей 4×3 (в клетке 4×4), сверху поиск по имени или категории, при наведении подсказка с именем.
 - Иконка сохраняется в GUI как SVG, поэтому перестановка каталога не ломает сохранённые интерфейсы.
 
@@ -1116,6 +1185,7 @@ export const T = createTranslator(translations)
 
 - **Встроенные тексты компонентов**: подписи, кнопки, подсказки. Они только в словаре `src/lib/locales/translations.ts` и выводятся через `$T("ключ")`. Русских строк прямо в разметке быть не должно.
 - **Тексты из конструктора**: название поля, варианты списка, заголовки колонок. Это строка или объект `{ ru, en, zh }`. Приложение переводит всё описание интерфейса функцией `localizeDeep` перед показом. В конструкторе их правят в окне «Тексты и переводы», которое есть у каждого компонента.
+- `localizeDeep` переводит только поля текстов (`name`, `label`, `labels`, `placeholder`, `text`, `info`, `title`, `captionLeft`, `captionRight`, `units`, `unit`, `footer`, `hiddenInfo`, `alt`) - те же, что показывает окно «Тексты и переводы». Объект считается переводом, если все его ключи похожи на коды языков и хотя бы один есть в `LANGUAGES`. Остальные объекты (данные колонки `{ key: "device" }`, картинка `{ src, alt }`) остаются как есть.
 
 </details>
 
@@ -1237,7 +1307,7 @@ const canModal = createRawSnippet((row: () => CanRow) => ({ render: () => `<div 
 | `component.properties as UI.IButtonProps`                                                                                                    | `if (component.type === "Button")` - `properties` уже `IButtonProps`                                |
 | `IWidgetWiFiConfig` и др. - отдельные интерфейсы, `value` виджета - полный объект                                                            | выведены из `WIDGET_FIELDS`; `value` у `WidgetWiFi` и `WidgetDeviceInfo` - `Partial`                |
 
-Транспорт `waitFor` в WebApp пишется заново (сейчас там опрос `lastResponse`): первый пакет `OK!`/`ER!` с аргументом, прошедший `match`, или `null` по таймауту.
+Транспорт `waitFor` в WebApp уже есть (`WebSocketStore.ts`): он ждёт первый пакет `OK!`/`ER!` с аргументом, прошедший `match`, или возвращает `null` по таймауту.
 
 </details>
 
@@ -1353,6 +1423,7 @@ npm pack               # сборка пакета в dist/: проверка т
 - 🧱 Стили тегов в приложении пишите только внутри `@layer base`, иначе подписи компонентов станут крупнее.
 - 🛡️ Разметку из данных устройства выводите только через `sanitizeHtml`.
 - 🌐 Карта `WidgetMap` без интернета работает только со своим модулем MapLibre (`configureMapLibre`).
+- ℹ️ Значок ⓘ с пояснением (`help.info`) после заголовка есть у `Input`, `Select`, `Switch`, `Slider`, `Graph`, `Joystick`, `PeriodChart`, `ProgressBar`, `Table` и `VideoViewer`. Значок - общий `InfoHint`, у всех, кроме `Switch`, вместе с подписью через `FieldLabel`. Пояснение задаётся в «Тексты и переводы», `GUIRenderer` передаёт его вместе с остальными свойствами.
 - 🟢 Под Node без Vite языки берите из `poe-svelte-ui-lib/locales`, а протоколы из `poe-svelte-ui-lib/protocols`.
 
 ---
@@ -1502,7 +1573,7 @@ npm pack               # сборка пакета в dist/: проверка т
 <details>
 <summary>📦 Что уходит на устройство</summary>
 
-- По нажатию уходит **Заголовок** и **Аргумент**, например `SET` и `Restart`.
+- По нажатию уходит **Заголовок** и **Аргумент**, например `SET` и `Restart`. В конструкторе аргумент - только имя из словаря команд или `NoSend`, до 31 знака: опечатка подсвечивается и не сохраняется.
 - **Переменные.** Текущие значения других компонентов кладутся в тот же пакет. Так делается кнопка «Сохранить» для полей с аргументом `NoSend`.
 - **Фиксированное значение** (JSON) отправляется как есть вместо переменных, например `{"Mode": 2}`.
 - Значение с устройства кнопка не показывает.
@@ -1987,6 +2058,7 @@ npm pack               # сборка пакета в dist/: проверка т
 - ✂️ Длинное имя линии обрезается, полное видно в подсказке при наведении.
 - 🧹 Старые точки удаляются сами, память не растёт.
 - 📊 Для накопленных значений по периодам (энергия за час или сутки) удобнее PeriodChart.
+- ℹ️ Пояснение к заголовку (`help.info`) задаётся в «Тексты и переводы», строка «Справка · Подсказка». Значок ⓘ стоит сразу после заголовка, текст всплывает при наведении поверх страницы и не обрезается краем окна или блока. Без заголовка значка нет.
 
 <details>
 <summary>📦 Данные устройства</summary>
@@ -2035,14 +2107,15 @@ npm pack               # сборка пакета в dist/: проверка т
 <details>
 <summary>⚙️ Пропсы</summary>
 
-| Название                    | Тип                                          | По умолчанию | Описание                                                                           |
-| --------------------------- | -------------------------------------------- | ------------ | ---------------------------------------------------------------------------------- |
-| `wrapperClass`              | `string`                                     | `""`         | Классы обёртки                                                                     |
-| `label.name`, `label.class` | `string`                                     | `""`         | Заголовок и его классы                                                             |
-| `streamingData.data`        | `{ name, value }[] \| null`                  | `[]`         | Текущие значения линий для живого режима                                           |
-| `refreshRate`               | `number`                                     | `0`          | Период добавления точек, мс. `0` - на каждый новый `streamingData.data`            |
-| `historyData`               | `{ name, points: { value, timestamp }[] }[]` | `[]`         | Готовый ряд для статического режима. `timestamp` в миллисекундах, как `Date.now()` |
-| `isTest`                    | `boolean`                                    | `false`      | Режим имитации: случайные данные, точка каждые 50 мс                               |
+| Название                    | Тип                                          | По умолчанию | Описание                                                                                          |
+| --------------------------- | -------------------------------------------- | ------------ | ------------------------------------------------------------------------------------------------- |
+| `wrapperClass`              | `string`                                     | `""`         | Классы обёртки                                                                                    |
+| `label.name`, `label.class` | `string`                                     | `""`         | Заголовок и его классы                                                                            |
+| `help.info`                 | `string`                                     | `""`         | Пояснение: значок ⓘ после заголовка, текст всплывает при наведении. Без заголовка не показывается |
+| `streamingData.data`        | `{ name, value }[] \| null`                  | `[]`         | Текущие значения линий для живого режима                                                          |
+| `refreshRate`               | `number`                                     | `0`          | Период добавления точек, мс. `0` - на каждый новый `streamingData.data`                           |
+| `historyData`               | `{ name, points: { value, timestamp }[] }[]` | `[]`         | Готовый ряд для статического режима. `timestamp` в миллисекундах, как `Date.now()`                |
+| `isTest`                    | `boolean`                                    | `false`      | Режим имитации: случайные данные, точка каждые 50 мс                                              |
 
 Колбэков нет. Метод через `bind:this`: `push(sample, time?)`.
 
@@ -2160,7 +2233,7 @@ npm pack               # сборка пакета в dist/: проверка т
 | `bitMode`    | Целое число для части 32-битного слова. Поле со стрелками, предел задайте через `number.maxNum` |
 
 - Проверка `help.regExp` работает для всех типов, кроме `number`. Неверный ввод подсвечивается красной рамкой, под полем появляется текст ошибки, у поля ставится `aria-invalid`, `onUpdate` не вызывается.
-- `help.regExp` принимает `RegExp`, строку выражения или строку вида `/.../флаги`.
+- `help.regExp` принимает `RegExp`, строку выражения или строку вида `/.../флаги`. Флаги `g` и `y` компонент убирает (с ними проверка одного и того же значения то проходит, то нет), конструктор принимает только `i`, `m`, `s`, `u`.
 - Длину ограничивает `maxlength` самого поля: лишние знаки просто не вводятся.
 - `number` и `bitMode`: введённое число подтягивается к `minNum` и `maxNum`, у `bitMode` дробная часть отбрасывается. `onUpdate` получает число. Если ввод не число (например, поле очищено), `onUpdate` не вызывается, и слово конфигурации не портится.
 - Стрелки есть у `number` и `bitMode`, кроме `readonly` и `disabled`. Пустое значение стрелка сначала ставит в `minNum`. Шаг за предел ставит ровно предел.
@@ -2270,6 +2343,7 @@ npm pack               # сборка пакета в dist/: проверка т
 - 🚧 Значение оси не выходит за свои пределы.
 - 🙈 Если третьей оси не дать имя, её кнопки и поле прячутся.
 - 👀 В режиме «только чтение» остаются только значения осей, без кнопок.
+- ℹ️ Пояснение к заголовку (`help.info`) задаётся в «Тексты и переводы», строка «Справка · Подсказка». Значок ⓘ стоит сразу после заголовка, текст всплывает при наведении поверх страницы и не обрезается краем окна или блока. Без заголовка значка нет.
 
 <details>
 <summary>📦 Данные устройства</summary>
@@ -2310,17 +2384,18 @@ npm pack               # сборка пакета в dist/: проверка т
 <details>
 <summary>⚙️ Пропсы</summary>
 
-| Название                    | Тип                            | По умолчанию     | Описание                                                                  |
-| --------------------------- | ------------------------------ | ---------------- | ------------------------------------------------------------------------- |
-| `id`                        | `string`                       |                  | Переменная устройства. Компонент её не использует                         |
-| `wrapperClass`              | `string`                       | `""`             | Классы обёртки                                                            |
-| `accent`                    | `AccentColor`                  | `"blue"`         | Цвет джойстика                                                            |
-| `label.name`, `label.class` | `string`                       | `""`             | Заголовок и его классы                                                    |
-| `value`                     | `number[]`                     | `[0, 0, 0, 0]`   | Значения осей и флаг центральной кнопки. Можно связать через `bind:value` |
-| `axes`                      | `{ name, minNum?, maxNum? }[]` | Pitch, Yaw, Roll | Оси. Пределы по умолчанию -360 и 360                                      |
-| `buttonIcon`                | `Component \| string`          |                  | Иконка центральной кнопки                                                 |
-| `readonly`                  | `boolean`                      | `false`          | Только показ                                                              |
-| `onUpdate`                  | `(value: number[]) => void`    |                  | Нажата кнопка направления или боковая                                     |
+| Название                    | Тип                            | По умолчанию     | Описание                                                                                          |
+| --------------------------- | ------------------------------ | ---------------- | ------------------------------------------------------------------------------------------------- |
+| `id`                        | `string`                       |                  | Переменная устройства. Компонент её не использует                                                 |
+| `wrapperClass`              | `string`                       | `""`             | Классы обёртки                                                                                    |
+| `accent`                    | `AccentColor`                  | `"blue"`         | Цвет джойстика                                                                                    |
+| `label.name`, `label.class` | `string`                       | `""`             | Заголовок и его классы                                                                            |
+| `help.info`                 | `string`                       | `""`             | Пояснение: значок ⓘ после заголовка, текст всплывает при наведении. Без заголовка не показывается |
+| `value`                     | `number[]`                     | `[0, 0, 0, 0]`   | Значения осей и флаг центральной кнопки. Можно связать через `bind:value`                         |
+| `axes`                      | `{ name, minNum?, maxNum? }[]` | Pitch, Yaw, Roll | Оси. Пределы по умолчанию -360 и 360                                                              |
+| `buttonIcon`                | `Component \| string`          |                  | Иконка центральной кнопки                                                                         |
+| `readonly`                  | `boolean`                      | `false`          | Только показ                                                                                      |
+| `onUpdate`                  | `(value: number[]) => void`    |                  | Нажата кнопка направления или боковая                                                             |
 
 </details>
 
@@ -2483,6 +2558,7 @@ ModalStack.close(id) // убрать
 - ➖ Отрицательные значения не показываются, шкала всегда начинается с нуля.
 - 🔍 Даже очень маленькое положительное значение видно как тонкий столбик.
 - 📈 Диаграмма рассчитана на десятки столбиков. Для сотен и тысяч точек лучше Graph.
+- ℹ️ Пояснение к заголовку (`help.info`) задаётся в «Тексты и переводы», строка «Справка · Подсказка». Значок ⓘ стоит сразу после заголовка, текст всплывает при наведении поверх страницы и не обрезается краем окна или блока. Без заголовка значка нет.
 
 <details>
 <summary>📦 Данные устройства</summary>
@@ -2532,6 +2608,7 @@ ModalStack.close(id) // убрать
 | `wrapperClass`      | `string`                               | `""`          | Классы обёртки                                                                                                                         |
 | `accent`            | `AccentColor`                          |               | Цвет столбиков. Без него - акцент темы                                                                                                 |
 | `label`             | `{ name, class }`                      |               | Заголовок над графиком                                                                                                                 |
+| `help.info`         | `string`                               | `""`          | Пояснение: значок ⓘ после заголовка, текст всплывает при наведении. Без заголовка не показывается                                      |
 | `levels`            | `{ name, variable?, data, labels? }[]` | 4 демо-уровня | Уровни в порядке вкладок                                                                                                               |
 | `levels[].name`     | `string`                               |               | Подпись вкладки, например «Час». Пустая подпись заменяется периодом по месту уровня: год, месяц, сутки, час. Подписи могут повторяться |
 | `levels[].variable` | `string`                               |               | Переменная устройства, например `PWR.EHour`. Нужна конструктору для подписки, сам компонент её не читает                               |
@@ -2600,6 +2677,8 @@ ModalStack.close(id) // убрать
 - 📌 Значение за пределами шкалы прижимается к краю.
 - 📐 Вертикальным полосам нужна высота, задайте её контейнеру.
 - 👀 Компонент только показывает и ничего не отправляет.
+- 🏷️ Над полосами можно вывести общий заголовок (`label`), как у остальных компонентов. Пустой заголовок не выводится, место не занимает. У каждой полосы остаётся своя подпись (`items[].name`). Новый компонент в конструкторе сразу с одной полосой.
+- ℹ️ Пояснение к заголовку (`help.info`) задаётся в «Тексты и переводы», строка «Справка · Подсказка». Значок ⓘ стоит сразу после заголовка, текст всплывает при наведении поверх страницы и не обрезается краем окна или блока. Без заголовка значка нет.
 
 <details>
 <summary>📦 Данные устройства</summary>
@@ -2638,16 +2717,18 @@ ModalStack.close(id) // убрать
 <details>
 <summary>⚙️ Пропсы</summary>
 
-| Название                         | Тип                                     | По умолчанию          | Описание                                                      |
-| -------------------------------- | --------------------------------------- | --------------------- | ------------------------------------------------------------- |
-| `id`                             | `string`                                |                       | Переменная устройства. Компонент её не использует             |
-| `wrapperClass`                   | `string`                                | `""`                  | Классы обёртки                                                |
-| `accent`                         | `AccentColor`                           |                       | Общий цвет полос                                              |
-| `items`                          | `{ name?, accent? }[]`                  | `[{ name: "Label" }]` | Полосы: подпись и цвет. Цвет полосы важнее общего             |
-| `value`                          | `{ Name?, Value, Info?, Timestamp? }[]` |                       | Значения по порядку полос. `Name` заменяет подпись из `items` |
-| `type`                           | `"horizontal" \| "vertical"`            | `"horizontal"`        | Направление                                                   |
-| `number.minNum`, `number.maxNum` | `number`                                | `0`, `100`            | Пределы шкалы                                                 |
-| `number.units`                   | `string`                                | `"%"`                 | Единицы                                                       |
+| Название                         | Тип                                     | По умолчанию          | Описание                                                                                          |
+| -------------------------------- | --------------------------------------- | --------------------- | ------------------------------------------------------------------------------------------------- |
+| `id`                             | `string`                                |                       | Переменная устройства. Компонент её не использует                                                 |
+| `wrapperClass`                   | `string`                                | `""`                  | Классы обёртки                                                                                    |
+| `accent`                         | `AccentColor`                           |                       | Общий цвет полос                                                                                  |
+| `label.name`, `label.class`      | `string`                                | `""`                  | Общий заголовок над полосами. Пустой не выводится                                                 |
+| `help.info`                      | `string`                                | `""`                  | Пояснение: значок ⓘ после заголовка, текст всплывает при наведении. Без заголовка не показывается |
+| `items`                          | `{ name?, accent? }[]`                  | `[{ name: "Label" }]` | Полосы: подпись и цвет. Цвет полосы важнее общего                                                 |
+| `value`                          | `{ Name?, Value, Info?, Timestamp? }[]` |                       | Значения по порядку полос. `Name` заменяет подпись из `items`                                     |
+| `type`                           | `"horizontal" \| "vertical"`            | `"horizontal"`        | Направление                                                                                       |
+| `number.minNum`, `number.maxNum` | `number`                                | `0`, `100`            | Пределы шкалы                                                                                     |
+| `number.units`                   | `string`                                | `"%"`                 | Единицы                                                                                           |
 
 Колбэков нет.
 
@@ -2753,6 +2834,7 @@ ModalStack.close(id) // убрать
 <summary>⚙️ Копии словаря и словарь устройства</summary>
 
 - В прошивках лежит копия словаря `.framework/Dictionary.yaml`, и сборка сверяет с ней `api_har.h`.
+- Часть аргументов словаря - задел, прошивки их пока не обрабатывают: `BackUp`, `BindMKey`, `ModList`, `ModMode`, `ModT2-ModT5`, `FwUpgE`, `OrOfs`, `OrAccCal`, `OrMagCal`. Коды у них закреплены и не меняются. Такой аргумент модуль примет, но ответа не будет, поэтому в примерах берут реальные команды (`ModCfg`, `ModInfo`, `FS`).
 - У устройства словарь может быть свой. Его читают из файла `parseArgumentDictionary` и превращают в объект `createDictionary(codes)`: `code(имя)`, `name(код)`, `header(код)`, `har(заголовок, команда, ответ)`.
 - Такой словарь принимают `xPoeDebugHar`, `encodeXPoeDebugFrame` (последний аргумент) и `createXPoeDebugParser({ dictionary })`. Без него берётся встроенный.
 
@@ -2796,7 +2878,7 @@ ModalStack.close(id) // убрать
 
 - BusID модуля это CRC-16 его серийного номера. Значения `0x0000` и `0xFFFF` модулю не выдаются.
 - На шине модуль принимает записи со своим BusID и с `0xFFFF`. Свои же записи, вернувшиеся эхом (так бывает на CAN и RS485), он узнаёт по `SrcBusID` и пропускает.
-- В консоли адрес `0x0000`, свой BusID и `0xFFFF` значат «этот модуль». BusID другого модуля из списка `ModList` значит, что модуль консоли перешлёт команду по шине и вернёт ответ.
+- В консоли адрес `0x0000`, свой BusID и `0xFFFF` значат «этот модуль». BusID другого модуля изделия значит, что модуль консоли перешлёт команду по шине и вернёт ответ.
 - Если обработчика команды нет, `OK!`, `ER!` и широковещательные записи отбрасываются молча. `GET` и `SET`, адресованные модулю, отбрасываются с записью в лог.
 
 </details>
@@ -2811,12 +2893,12 @@ ModalStack.close(id) // убрать
 <details>
 <summary>🔬 Подробно по каналам</summary>
 
-| Канал        | Как передаётся                                                                                                                                                                                                |
-| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| CAN, CAN FD  | Пакет режется на кадры по 8 или 64 байта. В 11-битном ID бит 10 значит «последний кадр», биты 0-9 это номер пакета. Хвост кадра CAN FD отрезается по длине пакета                                             |
-| RS485        | Сплошной поток. Пакет начинается с `0x9F 0x85`, мусор пропускается по одному байту. Пауза сбрасывает недособранный пакет: в прошивке 20 мс, на компьютере 100 мс, потому что USB-адаптер отдаёт байты пачками |
-| LoRa         | Пакет целиком в одном радиокадре                                                                                                                                                                              |
-| UART-консоль | Сплошной поток вперемешку с текстом загрузчика. Пакет начинается с `0x9F 0x85`, остальное считается текстом. Недособранный пакет сбрасывается после 100 мс тишины                                             |
+| Канал        | Как передаётся                                                                                                                                                                                                                       |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| CAN, CAN FD  | Пакет режется на кадры по 8 или 64 байта. В 11-битном ID бит 10 значит «последний кадр», биты 0-9 это номер пакета. Хвост кадра CAN FD отрезается по длине пакета                                                                    |
+| RS485        | Сплошной поток. Пакет начинается с `0x9F 0x85`, байты до этой метки и пакет без записей считаются мусором. Пауза сбрасывает недособранный пакет: в прошивке 20 мс, на компьютере 100 мс, потому что USB-адаптер отдаёт байты пачками |
+| LoRa         | Пакет целиком в одном радиокадре                                                                                                                                                                                                     |
+| UART-консоль | Сплошной поток вперемешку с текстом загрузчика. Пакет начинается с `0x9F 0x85`, остальное считается текстом. Недособранный пакет сбрасывается после 100 мс тишины                                                                    |
 
 </details>
 
@@ -2825,9 +2907,19 @@ ModalStack.close(id) // убрать
 
 Все три разборщика потока (`createPacketStreamParser`, `createXPoeDebugParser`, `createCanParser`) устроены одинаково:
 
-- Пауза дольше `gapMs` (по умолчанию 100 мс) сбрасывает недособранное. У CAN вместо неё `sessionTimeoutMs` (по умолчанию 2000 мс): столько живут незавершённые сессии и обрывок строки slcan.
+- Пауза дольше `gapMs` (по умолчанию 100 мс) сбрасывает недособранное. У CAN вместо неё `sessionTimeoutMs` (по умолчанию 2000 мс): столько незавершённая сессия ждёт следующий фрагмент (отсчёт от последнего кадра, а не от первого) и столько живёт обрывок строки slcan. Поэтому длинный пакет на медленной шине собирается целиком, если кадры идут без больших пауз.
+- Пакет - только indefinite-массив `0x9F ... 0xFF`, как в прошивке (`CBOR_PktDecInit`). Definite-массивы (`0x80`-`0x9B`) `decodePacket` считает мусором. `createPacketStreamParser` (RS485) и `createXPoeDebugParser` ищут начало одной общей функцией по метке `0x9F 0x85`, а пакет без записей пропускают. Шумовой байт перед пакетом не съедает настоящий пакет.
+- `createCanParser` выдаёт собранное, только если это целый пакет. Если начало потеряно или сессия истекла, хвост пакета отбрасывается, а не выдаётся обрезанным сообщением.
 - Застрявшее начало длиннее `maxBytes` (по умолчанию 8192) пропускается по байту. У CAN сессия длиннее `maxPacketBytes` (по умолчанию 8192) сбрасывается.
 - Заявленная в CBOR длина больше `maxBytes` считается мусором, а не поводом ждать.
+
+</details>
+
+<details>
+<summary>🔢 Целые и дробные числа в кодеке</summary>
+
+- `valueToCbor` пишет число как целое CBOR, только если оно точное целое JS (`Number.isSafeInteger`, до 2^53 - 1). Большое «целое» вроде `1e20` уходит как float (кратчайший из float16/float32/float64, без потери значения). Целое за пределами uint64 передают только как `bigint`, и тогда кодек бросает ошибку, а не обрезает значение.
+- `cborToValue` отдаёт целое CBOR числом, если оно помещается в safe integer, иначе строкой с точным значением (uint64 и int64 устройства не теряют младшие цифры). Сам `CborDecoder` для таких целых возвращает `bigint`.
 
 </details>
 
@@ -2849,12 +2941,29 @@ ModalStack.close(id) // убрать
 
 </details>
 
+<details>
+<summary>✍️ Поле Value в консоли</summary>
+
+Значение команды из консоли (DevCloud, DevTerminal) превращает в `Payload` функция `xPoeDebugValueFromText(text)`:
+
+| Ввод                    | Что уходит                                                    |
+| ----------------------- | ------------------------------------------------------------- |
+| пусто                   | пустой `Payload`                                              |
+| `h'0A 1B'` или `0x0A1B` | эти байты как есть, это уже готовый CBOR                      |
+| всё остальное           | JSON, закодированный в CBOR: `12` - число 12, `"12"` - строка |
+
+- HEX пишется только явно: `h'..'` (так байты показывает таблица консоли) или префикс `0x`. Голые цифры вроде `10` - это число, а не байт `0x10`.
+- Нечётное число HEX-цифр и текст, который не JSON, дают ошибку.
+
+</details>
+
 #### 🌐 WebSocket
 
-Облако и локальный веб-интерфейс говорят с устройством через WebSocket. Здесь у пакета свой конверт, а заголовок и команда передаются словами: `"GET"`, `"ModCfg"`.
+Облако и локальный веб-интерфейс говорят с устройством через WebSocket. Здесь у пакета свой конверт, а заголовок и команда передаются словами: `"GET"`, `"ModCfg"`. Команда модулю за хабом передаётся числом из словаря: `36` вместо `"ModCfg"`.
 
 - 🆔 В каждом запросе указан серийный номер устройства.
 - 🧩 Можно обратиться к конкретному модулю на шине, устройство-хаб перешлёт запрос.
+- 🔢 Модулю за хабом команда уходит кодом из словаря, хаб пересылает его без перевода. Так модуль получает и команды, которых хаб не знает.
 - 📝 Текст события из ответа облако сохраняет в журнал устройства.
 
 <details>
@@ -2870,6 +2979,35 @@ ModalStack.close(id) // убрать
 - `Message` в ответе это текст события. DevCloud сохраняет непустой `Message` в журнал устройства.
 
 В прошивке запрос принимает `API_Service_ReceiveWsPacket`, ответ собирает `API_Service_BeginResponse`. Ответ модуля с шины устройство-хаб само заворачивает в конверт.
+
+</details>
+
+<details>
+<summary>🔢 ARG: имя или код</summary>
+
+`HDR` всегда строка (`"GET"`, `"SET"`, `"OK!"`, `"ER!"`). `ARG` - строка с именем аргумента или целое число, код аргумента из словаря: тот же номер, что `A_*` в `api_har.h` и третье поле строки `dictionary.yaml`. Это только биты 13-1 поля HAR (0..8191): без заголовка (биты 15-14) и флага ответа (бит 0). Флаг ответа WebSocket не передаёт, как и раньше.
+
+| Направление                                                            | ARG                                                |
+| ---------------------------------------------------------------------- | -------------------------------------------------- |
+| Команда самому хабу или облаку (нет `ModSN` или `ModSN` равен `DevSN`) | имя                                                |
+| Команда модулю за хабом (`ModSN` задан и не равен `DevSN`)             | число. Хаб кладёт его в HAR как есть, без перевода |
+| Ответ или пуш модуля, имя которого хаб знает                           | имя (как раньше)                                   |
+| Ответ или пуш модуля, имени которого хаб не знает                      | число. Получатель переводит его в имя по словарю   |
+
+Пример: запрос настроек модуля `GET ModCfg` (`ModCfg` = 36) и ответ.
+
+```
+туда     {HDR: "GET", ARG: 36, VAL: {DevSN: "HUB-SN", ModSN: "MOD-SN", Payload: {}}}
+на шине  HAR = makeHar(0, 36, true) = 0x0049
+обратно  {HDR: "OK!", ARG: 36, VAL: {DevSN: "HUB-SN", ModSN: "MOD-SN", Message: "", Payload: {...}}}
+         или ARG: "ModCfg", если хаб знает имя
+```
+
+- Отправитель: `wsEnvelope(header, argument, VAL, dictionary?)` ставит код, если адресат - модуль за хабом. Имя, которого нет в словаре, остаётся строкой.
+- Получатель: `readWsEnvelope(packet, dictionary?)` переводит числовой `ARG` в имя до разбора. Код, которого нет в словаре, становится строкой из числа (`"4097"`).
+- Пара перевода - `wsArgumentCode` (имя в код) и `wsArgumentName` (код в имя), обе опираются на `createDictionary`. Словарь по умолчанию - встроенный `DEFAULT_DICTIONARY`.
+- `mergeDevicePayload` принимает `ARG` и строкой, и числом.
+- Хаб, получив числовой `ARG` для модуля, собирает `HAR = (код HDR << 14) | (ARG << 1) | 1` (`GET` 0, `SET` 1, `OK!` 2, `ER!` 3) и пересылает запись на шину. Ответ модуля с кодом, имени которого в словаре хаба нет, хаб отдаёт в конверте с числом.
 
 </details>
 
@@ -2921,6 +3059,7 @@ ModalStack.close(id) // убрать
 | ------- | ------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------- |
 | Пакет   | `CBOR_PktEncInit`, `CBOR_PktEncAddRaw`, `CBOR_PACK`, `CBOR_PktEncFinish`, `CBOR_PktDecInit`, `CBOR_PktDecNext`, поток `CBOR_PktStreamPush` | `encodePacket`, `decodePacket`, `createPacketStreamParser`, `encodePacketBytesPayload`              |
 | HAR     | `har_t`, `HAR`, `HAR_NR`, `API_Service_HarName`, `API_Service_HarByName`                                                                   | `makeHar`, `splitHar`, `xPoeDebugHar`, `createDictionary`, `HEADER_CODES`, `DEFAULT_ARGUMENT_CODES` |
+| WS ARG  | `API_Service_ReceiveWsPacket`                                                                                                              | `wsEnvelope`, `readWsEnvelope`, `wsArgumentCode`, `wsArgumentName`                                  |
 | Приём   | `API_Service_ReceiveBusPacket`, `API_Service_ReceiveWsPacket`, консоль в `system_console`                                                  | `createXPoeDebugParser`, `createCanParser`                                                          |
 | Ответ   | `API_Service_BeginResponse`, `Writer_*`, `API_Service_FinishResponse`                                                                      |                                                                                                     |
 | Консоль | `LOG_*`, `LOG_HEX`, `LOG_PLOT`                                                                                                             | `encodeXPoeDebugFrame`, `xPoeDebugRow`, `xPoeDebugTableColumns`, `debugPlotValues`                  |
@@ -2981,7 +3120,7 @@ ModalStack.close(id) // убрать
 
 - Читает и пишет одну переменную с выбранным значением.
 - Варианты задаются в настройках или приходят с устройства отдельной переменной `<имя>-S`. Так строится, например, список найденных WiFi-сетей. Список с устройства заменяет варианты из настроек.
-- Отправка настраивается в событии: **Заголовок** `SET` и **Аргумент** (по умолчанию `ModCfg`). С `NoSend` значение сразу не уходит, его отправит другой компонент.
+- Отправка настраивается в событии: **Заголовок** `SET` и **Аргумент** (по умолчанию `ModCfg`). С `NoSend` значение сразу не уходит, его отправит другой компонент. В конструкторе аргумент - только имя из словаря команд или `NoSend`, до 31 знака.
 - В битовом режиме меняются только биты с N по M (`range`), остальные биты переменной сохраняются.
 
 | Ключ             | Описание                                                                                      |
@@ -3116,6 +3255,7 @@ ModalStack.close(id) // убрать
 - 🔒 Два ползунка диапазона не сходятся ближе одного шага.
 - 📨 Значение уходит, когда ползунок отпустили, а не во время перемещения.
 - 🧺 Если значение не должно уходить сразу, его можно отправить позже другой кнопкой «Сохранить».
+- ℹ️ Пояснение к заголовку (`help.info`) задаётся в «Тексты и переводы», строка «Справка · Подсказка». Значок ⓘ стоит сразу после заголовка, текст всплывает при наведении поверх страницы и не обрезается краем окна или блока. Без заголовка значка нет.
 
 <details>
 <summary>📦 Данные устройства</summary>
@@ -3154,19 +3294,20 @@ ModalStack.close(id) // убрать
 <details>
 <summary>⚙️ Пропсы</summary>
 
-| Название                         | Тип                          | По умолчанию | Описание                                                      |
-| -------------------------------- | ---------------------------- | ------------ | ------------------------------------------------------------- |
-| `id`                             | `string`                     |              | Переменная устройства. Компонент её не использует             |
-| `type`                           | `"single" \| "range"`        | `"single"`   | Одно значение или диапазон                                    |
-| `value`                          | `number \| [number, number]` | `0`          | Значение. Можно связать через `bind:value`                    |
-| `number.minNum`, `number.maxNum` | `number`                     | `0`, `10`    | Пределы                                                       |
-| `number.step`                    | `number`                     | `1`          | Шаг, больше нуля                                              |
-| `label.name`, `label.class`      | `string`                     | `""`         | Заголовок и его классы                                        |
-| `wrapperClass`                   | `string`                     | `""`         | Классы обёртки                                                |
-| `accent`                         | `AccentColor`                |              | Цвет дорожки и ползунка                                       |
-| `disabled`                       | `boolean`                    | `false`      | Неактивен                                                     |
-| `onUpdate`                       | `(value) => void`            |              | Значение принято: ползунок отпущен, нажата «минус» или «плюс» |
-| `onInput`                        | `(value) => void`            |              | Значение во время перетаскивания                              |
+| Название                         | Тип                          | По умолчанию | Описание                                                                                          |
+| -------------------------------- | ---------------------------- | ------------ | ------------------------------------------------------------------------------------------------- |
+| `id`                             | `string`                     |              | Переменная устройства. Компонент её не использует                                                 |
+| `type`                           | `"single" \| "range"`        | `"single"`   | Одно значение или диапазон                                                                        |
+| `value`                          | `number \| [number, number]` | `0`          | Значение. Можно связать через `bind:value`                                                        |
+| `number.minNum`, `number.maxNum` | `number`                     | `0`, `10`    | Пределы                                                                                           |
+| `number.step`                    | `number`                     | `1`          | Шаг, больше нуля                                                                                  |
+| `label.name`, `label.class`      | `string`                     | `""`         | Заголовок и его классы                                                                            |
+| `help.info`                      | `string`                     | `""`         | Пояснение: значок ⓘ после заголовка, текст всплывает при наведении. Без заголовка не показывается |
+| `wrapperClass`                   | `string`                     | `""`         | Классы обёртки                                                                                    |
+| `accent`                         | `AccentColor`                |              | Цвет дорожки и ползунка                                                                           |
+| `disabled`                       | `boolean`                    | `false`      | Неактивен                                                                                         |
+| `onUpdate`                       | `(value) => void`            |              | Значение принято: ползунок отпущен, нажата «минус» или «плюс»                                     |
+| `onInput`                        | `(value) => void`            |              | Значение во время перетаскивания                                                                  |
 
 </details>
 
@@ -3368,6 +3509,7 @@ ModalStack.close(id) // убрать
 - 🛡️ Текст из данных выводится как обычный текст, разметка в нём не срабатывает.
 - 🔤 Размер текста строк можно поменять сразу для всей таблицы.
 - 🎨 Шапка окрашивается мягким оттенком цвета таблицы.
+- ℹ️ Пояснение к заголовку (`help.info`) задаётся в «Тексты и переводы», строка «Справка · Подсказка». Значок ⓘ стоит сразу после заголовка, текст всплывает при наведении поверх страницы и не обрезается краем окна или блока. Без заголовка значка нет.
 
 <details>
 <summary>📦 Данные устройства</summary>
@@ -3431,26 +3573,27 @@ ModalStack.close(id) // убрать
 <details>
 <summary>⚙️ Пропсы</summary>
 
-| Название                    | Тип                     | По умолчанию | Описание                                     |
-| --------------------------- | ----------------------- | ------------ | -------------------------------------------- |
-| `label.name`, `label.class` | `string`                | `""`         | Заголовок и его классы                       |
-| `wrapperClass`              | `string`                | `""`         | Классы обёртки                               |
-| `accent`                    | `AccentColor`           | -            | Цвет шапки, фокуса и кнопок без своего цвета |
-| `header`                    | `ITableHeader[]`        | `[]`         | Колонки                                      |
-| `body`                      | `T[]`                   | `[]`         | Строки обычной таблицы                       |
-| `footer`                    | `string`                | `""`         | Текст в нижней панели                        |
-| `dataBuffer.stashData`      | `boolean`               | `false`      | Копить строки в буфере                       |
-| `dataBuffer.bufferSize`     | `number`                | `10`         | Размер буфера                                |
-| `dataBuffer.visibleRows`    | `number`                | `5`          | Сколько строк видно без прокрутки            |
-| `dataBuffer.logger`         | `boolean`               | `false`      | Новые строки сверху                          |
-| `dataBuffer.clearButton`    | `boolean`               | `false`      | Кнопка очистки                               |
-| `dataBuffer.clearClass`     | `string`                | `""`         | Классы кнопки очистки                        |
-| `outline`                   | `boolean`               | `false`      | Рамки строк и колонок                        |
-| `autoscroll`                | `boolean`               | `false`      | Прокручивать к последней строке              |
-| `cursor`                    | `string \| null`        | `null`       | Курсор подгрузки                             |
-| `loader`                    | `() => boolean`         |              | Идёт ли загрузка                             |
-| `getData`                   | `() => void`            |              | Загрузить следующую порцию                   |
-| `onClick`                   | `(row, button) => void` |              | Нажата кнопка без своего `onClick`           |
+| Название                    | Тип                     | По умолчанию | Описание                                                                                          |
+| --------------------------- | ----------------------- | ------------ | ------------------------------------------------------------------------------------------------- |
+| `label.name`, `label.class` | `string`                | `""`         | Заголовок и его классы                                                                            |
+| `help.info`                 | `string`                | `""`         | Пояснение: значок ⓘ после заголовка, текст всплывает при наведении. Без заголовка не показывается |
+| `wrapperClass`              | `string`                | `""`         | Классы обёртки                                                                                    |
+| `accent`                    | `AccentColor`           | -            | Цвет шапки, фокуса и кнопок без своего цвета                                                      |
+| `header`                    | `ITableHeader[]`        | `[]`         | Колонки                                                                                           |
+| `body`                      | `T[]`                   | `[]`         | Строки обычной таблицы                                                                            |
+| `footer`                    | `string`                | `""`         | Текст в нижней панели                                                                             |
+| `dataBuffer.stashData`      | `boolean`               | `false`      | Копить строки в буфере                                                                            |
+| `dataBuffer.bufferSize`     | `number`                | `10`         | Размер буфера                                                                                     |
+| `dataBuffer.visibleRows`    | `number`                | `5`          | Сколько строк видно без прокрутки                                                                 |
+| `dataBuffer.logger`         | `boolean`               | `false`      | Новые строки сверху                                                                               |
+| `dataBuffer.clearButton`    | `boolean`               | `false`      | Кнопка очистки                                                                                    |
+| `dataBuffer.clearClass`     | `string`                | `""`         | Классы кнопки очистки                                                                             |
+| `outline`                   | `boolean`               | `false`      | Рамки строк и колонок                                                                             |
+| `autoscroll`                | `boolean`               | `false`      | Прокручивать к последней строке                                                                   |
+| `cursor`                    | `string \| null`        | `null`       | Курсор подгрузки                                                                                  |
+| `loader`                    | `() => boolean`         |              | Идёт ли загрузка                                                                                  |
+| `getData`                   | `() => void`            |              | Загрузить следующую порцию                                                                        |
+| `onClick`                   | `(row, button) => void` |              | Нажата кнопка без своего `onClick`                                                                |
 
 Методы через `bind:this`: `push(rows)` - добавить строку или массив строк в журнал, `clear()` - очистить журнал.
 
@@ -3578,11 +3721,12 @@ ModalStack.close(id) // убрать
 - В конструкторе у каждой вкладки есть постоянный `id`. Если его нет, панель свойств сама его добавляет. По нему содержимое переезжает вместе с вкладкой, когда вкладки переставляют или удаляют.
 - Полоса вкладок прилипает к верху и прокручивается вбок, если вкладки не помещаются.
 
-Содержимое можно передать тремя способами (если переданы несколько, работает первый по списку):
+Содержимое можно передать четырьмя способами (если переданы несколько, работает первый по списку):
 
-1. список компонентов `apiArray` и сниппет `Components`, который их рисует. Так делают конструктор и превью интерфейса. На вкладке показываются компоненты, у которых `id` оканчивается номером этой вкладки (с нуля). У id из конструктора (UUID без первого символа, 35 знаков, + номер) номер берётся после 35-го знака, поэтому цифра в конце UUID не мешает;
-2. общий сниппет `children`, он получает текущую вкладку;
-3. сниппет у каждой вкладки `items[].children`.
+1. список компонентов `apiArray` и сниппет `Content`, который получает все компоненты выбранной вкладки и сам их раскладывает. Его вывод занимает всю ширину сетки вкладки. Так делает `GUIRenderer`: содержимое вкладки идёт через ту же раскладку, что и у `Accordion`, поэтому на телефоне блоки встают по группам, а не сжимаются в одну колонку сетки `size.width`;
+2. список компонентов `apiArray` и сниппет `Components`, который их рисует. Так делают конструктор и превью интерфейса. На вкладке показываются компоненты, у которых `id` оканчивается номером этой вкладки (с нуля). У id из конструктора (UUID без первого символа, 35 знаков, + номер) номер берётся после 35-го знака, поэтому цифра в конце UUID не мешает;
+3. общий сниппет `children`, он получает текущую вкладку;
+4. сниппет у каждой вкладки `items[].children`.
 
 </details>
 
@@ -3617,8 +3761,9 @@ ModalStack.close(id) // убрать
 | `accent`           | `AccentColor`                       |              | Цвет выбранной вкладки. Без него - акцент темы                |
 | `size`             | `{ width, height }`                 | `12 × 6`     | Сетка содержимого: колонки и строки                           |
 | `children`         | `Snippet<[item]>`                   |              | Общее содержимое                                              |
-| `apiArray`         | `UIComponent[]`                     | `[]`         | Компоненты для `Components`                                   |
+| `apiArray`         | `UIComponent[]`                     | `[]`         | Компоненты для `Content` или `Components`                     |
 | `Components`       | `Snippet<[component, fixedHeight]>` |              | Как рисовать компонент из `apiArray`                          |
+| `Content`          | `Snippet<[components]>`             |              | Как рисовать всё содержимое вкладки из `apiArray`             |
 
 </details>
 
@@ -3774,6 +3919,7 @@ ModalStack.close(id) // убрать
 - 🔐 Для камеры компьютера браузер спросит разрешение. Без него видео не появится.
 - 🖼️ Видео занимает всё окно и сохраняет пропорции, ничего не обрезается.
 - 👀 Компонент только показывает. Он ничего не отправляет на устройство и не сохраняет запись.
+- ℹ️ Пояснение к заголовку (`help.info`) задаётся в «Тексты и переводы», строка «Справка · Подсказка». Значок ⓘ стоит сразу после заголовка, текст всплывает при наведении поверх страницы и не обрезается краем окна или блока. Без заголовка значка нет.
 
 <details>
 <summary>📦 Данные устройства</summary>
@@ -3791,10 +3937,10 @@ ModalStack.close(id) // убрать
 <details>
 <summary>🔬 Как устроено</summary>
 
-- **Камера.** Запрашивается видео без звука, желательно 640 × 480, фронтальная камера (`facingMode: "user"`). По умолчанию запускается первая камера из списка. Список камер обновляется раз в секунду. Выбор камеры появляется, если камер больше одной и `showSelect` включён. Если доступа нет, поверх кадра показывается сообщение и кнопка «Повторить», которая снова запрашивает разрешение.
+- **Камера.** Запрашивается видео без звука, желательно 640 × 480, фронтальная камера (`facingMode: "user"`). По умолчанию запускается первая камера из списка. Список камер обновляется, когда камеру подключают или отключают (событие `devicechange`), без опроса по таймеру. Выбор камеры появляется, если камер больше одной и `showSelect` включён. Если доступа нет, поверх кадра показывается текст причины от браузера (`message` ошибки `getUserMedia`: доступ запрещён, камера занята другой программой и т.п.), а если браузер причину не дал - общий текст «Камера недоступна». Рядом кнопка «Повторить», она снова запрашивает разрешение.
 - **С устройства.** Компонент сам соединений не открывает. Приложение получает кадры JPEG (например, по WebSocket `/ws-stream`) и передаёт в `frame`, а состояние соединения в `status`. `Uint8Array` оборачивается в `Blob` с типом `image/jpeg`. Пока кадров нет или соединение не `live`, поверх кадра виден индикатор: `connecting` - «подключение», `offline` - «нет связи», `error` - значок и текст ошибки.
 - Видео и кадр вписываются с сохранением пропорций (`object-contain`).
-- Поток камеры и таймеры останавливаются при размонтировании. Ссылка на каждый кадр освобождается перед следующим, память не растёт.
+- Поток камеры останавливается при размонтировании. Если окно убрали, пока браузер ещё выдаёт камеру (ждём `getUserMedia`), полученный поток сразу выключается, камера не остаётся гореть. То же с потоком, запрошенным до `stopStream()` или до выбора другой камеры. Ссылка на каждый кадр освобождается перед следующим, память не растёт.
 
 </details>
 
@@ -3810,17 +3956,18 @@ ModalStack.close(id) // убрать
 <details>
 <summary>⚙️ Пропсы</summary>
 
-| Название                    | Тип                                              | По умолчанию | Описание                                                   |
-| --------------------------- | ------------------------------------------------ | ------------ | ---------------------------------------------------------- |
-| `id`                        | `string`                                         |              | Идентификатор в конструкторе. Компонент его не использует  |
-| `source`                    | `"camera" \| "remote"`                           | `"camera"`   | Откуда картинка                                            |
-| `frame`                     | `Uint8Array \| Blob \| null`                     | `null`       | Последний кадр JPEG для `remote`                           |
-| `status`                    | `"connecting" \| "live" \| "offline" \| "error"` |              | Состояние соединения для `remote`                          |
-| `streamKey`                 | `string`                                         |              | Ключ потока. Нужен приложению, сам компонент его не читает |
-| `showSelect`                | `boolean`                                        | `true`       | Показывать выбор камеры                                    |
-| `label.name`, `label.class` | `string`                                         | `""`         | Заголовок и его классы                                     |
-| `wrapperClass`              | `string`                                         | `""`         | Классы обёртки                                             |
-| `accent`                    | `AccentColor`                                    |              | Цвет кольца вокруг кадра. Без него кольца нет              |
+| Название                    | Тип                                              | По умолчанию | Описание                                                                                          |
+| --------------------------- | ------------------------------------------------ | ------------ | ------------------------------------------------------------------------------------------------- |
+| `id`                        | `string`                                         |              | Идентификатор в конструкторе. Компонент его не использует                                         |
+| `source`                    | `"camera" \| "remote"`                           | `"camera"`   | Откуда картинка                                                                                   |
+| `frame`                     | `Uint8Array \| Blob \| null`                     | `null`       | Последний кадр JPEG для `remote`                                                                  |
+| `status`                    | `"connecting" \| "live" \| "offline" \| "error"` |              | Состояние соединения для `remote`                                                                 |
+| `streamKey`                 | `string`                                         |              | Ключ потока. Нужен приложению, сам компонент его не читает                                        |
+| `showSelect`                | `boolean`                                        | `true`       | Показывать выбор камеры                                                                           |
+| `label.name`, `label.class` | `string`                                         | `""`         | Заголовок и его классы                                                                            |
+| `help.info`                 | `string`                                         | `""`         | Пояснение: значок ⓘ после заголовка, текст всплывает при наведении. Без заголовка не показывается |
+| `wrapperClass`              | `string`                                         | `""`         | Классы обёртки                                                                                    |
+| `accent`                    | `AccentColor`                                    |              | Цвет кольца вокруг кадра. Без него кольца нет                                                     |
 
 Колбэков нет. Для режима камеры через `bind:this` доступны методы:
 
@@ -4009,11 +4156,13 @@ ModalStack.close(id) // убрать
 
 #### 💡 Полезно знать
 
+- 🏷️ Имя устройства обязательно. Пока поле пустое, «Сохранить» неактивна и под ней красная подсказка «Укажите имя устройства»: без имени облако не примет подключение устройства.
 - ⌨️ В поля имени и логина нельзя ввести лишние символы: они сразу вырезаются. Какие символы разрешены, написано в подсказках.
 - 🔗 Сетевое имя вводится без «.local» - эту часть устройство добавляет само, и она показана рядом с полем.
 - ⚡ Перезагрузка срабатывает сразу, без вопроса. Связь пропадёт на несколько секунд.
 - 🧨 После сброса устройство перезагрузится, и связь по WiFi может пропасть.
 - ✋ Пока у пользователя есть несохранённые правки, свежие данные с устройства их не затирают.
+- 👀 Без `onSave` (наблюдатель, нет прав на запись) виджет только показывает данные: поля не правятся, пароль Web закрыт точками и без глазика.
 - 📐 Виджет занимает всю ширину своей ячейки, а высота подстраивается под содержимое.
 
 <details>
@@ -4037,7 +4186,7 @@ ModalStack.close(id) // убрать
 | `DevFW`             | Версия прошивки, только чтение                                                                                                     |
 | `RunCnt`            | Сколько раз устройство включалось, только чтение                                                                                   |
 | `StaIP`, `ApIP`     | Текущие адреса в сети роутера и своей точки доступа, только чтение. `0.0.0.0` в `StaIP` - к роутеру не подключено                  |
-| `DevName`           | Имя устройства: латиница, цифры, `_`, `-` и `.`, до 15 символов                                                                    |
+| `DevName`           | Имя устройства, обязательно: латиница, цифры, `_`, `-` и `.`, от 1 до 15 символов                                                  |
 | `HostName`          | Сетевое имя без `.local`, домен добавляет устройство. Латиница, цифры, `_` и `-`, до 18 символов                                   |
 | `WebUser`, `WebPsw` | Логин и пароль веб-интерфейса, до 15 символов. Логин: латиница, цифры, `_` и `-`. Пароль: любые печатные символы ASCII без пробела |
 
@@ -4047,35 +4196,35 @@ ModalStack.close(id) // убрать
 <summary>🔬 Как устроено</summary>
 
 - **Паспорт.** Серийный номер длинный (например `00.00.000-00_0000AC670000B22B00007428:DBC5`), поэтому стоит своей строкой, не обрезается и имеет кнопку копирования. Ниже в ряд код изделия, версия и счётчик запусков, затем два адреса.
-- **Ограничения полей.** Длина задана `maxlength`. Недопустимые символы вырезаются при вводе, значение с устройства вне правила подсвечивается проверкой `regExp`.
+- **Ограничения полей.** Длина задана `maxlength`. Недопустимые символы вырезаются при вводе, значение с устройства вне правила подсвечивается проверкой `regExp`. У имени устройства правило `/^[A-Za-z0-9_.-]+$/`, поэтому пустое имя тоже подсвечивается, а `save` его не отправляет: прошивка пустое имя принимает, облако отклоняет такое устройство при подключении.
 - **Пароль Web** с `autocomplete="one-time-code"`, браузер не подставляет в него сохранённые логины.
 - **Кнопка сброса** есть, только если передан `onFactoryReset`. Подтверждение открывается поверх карточки. Перезагрузка подтверждения не спрашивает.
 - **Живые данные.** `value` это поток с устройства: поля только для чтения обновляются постоянно, а новое значение подхватывается, только если нет несохранённых правок.
 - **Сворачивание.** Шапка сворачивает виджет. Свёрнутость по умолчанию задаётся в конструкторе (`collapsed`). С `persistKey` личный выбор пользователя запоминается в браузере и применяется сразу, без мигания. Если в GUI поменяли `collapsed`, прежний выбор сбрасывается.
 - **Подсказки.** Кнопка «?» включает подсказки, по умолчанию они выключены. Выбор запоминается для каждого экземпляра по `persistKey`, без него он общий для всех виджетов этого типа.
 - **Мастер-цвет.** `accent` перекрашивает весь виджет через `accentStyle`. Кнопки сброса остаются красными.
-- **В `GUIRenderer`** `persistKey` равен `<persistKey рендерера>|id компонента`. В режиме только просмотра `onSave`, `onRestart` и `onFactoryReset` не передаются. В сетке виджет занимает одну строку, по умолчанию 8 клеток в ширину и не уже 6.
+- **В `GUIRenderer`** `persistKey` равен `<persistKey рендерера>|id компонента`. В режиме только просмотра `onSave`, `onRestart` и `onFactoryReset` не передаются. Без `onSave` поля `DevName`, `HostName`, `WebUser` - `readonly`, а `WebPsw` выводится обычным полем с маской `••••••••` (пустой пароль - пустое поле), поэтому глазика нет. Сам пароль в браузер всё равно приходит, маска только не показывает его. В сетке виджет занимает одну строку, по умолчанию 8 клеток в ширину и не уже 6.
 
 </details>
 
 <details>
 <summary>⚙️ Пропсы</summary>
 
-| Название         | Тип                             | По умолчанию     | Описание                                                              |
-| ---------------- | ------------------------------- | ---------------- | --------------------------------------------------------------------- |
-| `id`             | `string`                        | `"CFG"`          | Префикс группы полей                                                  |
-| `keys`           | `Partial<Record<ключ, string>>` | имена ключей     | Другие имена полей                                                    |
-| `value`          | `IWidgetDeviceInfoConfig`       |                  | Текущие значения                                                      |
-| `label.name`     | `string`                        |                  | Заголовок. Пусто - «Об устройстве» на языке пользователя              |
-| `wrapperClass`   | `string`                        | `""`             | Классы обёртки                                                        |
-| `accent`         | `AccentColor`                   |                  | Мастер-цвет                                                           |
-| `restartCommand` | `{ header, argument }`          | `SET`, `Restart` | Команда перезагрузки                                                  |
-| `resetCommand`   | `{ header, argument }`          | `SET`, `RstNVS`  | Команда сброса настроек                                               |
-| `collapsed`      | `boolean`                       | `false`          | Свёрнут ли. Можно связать через `bind:collapsed`                      |
-| `persistKey`     | `string`                        |                  | Ключ для запоминания свёрнутости и подсказок                          |
-| `onSave`         | `(info) => void`                |                  | Нажата «Сохранить», в `info` все поля. Без него «Сохранить» неактивна |
-| `onRestart`      | `() => void`                    |                  | Нажата «Перезагрузить». Без него кнопка неактивна                     |
-| `onFactoryReset` | `() => void`                    |                  | Сброс подтверждён. Без него кнопки сброса нет                         |
+| Название         | Тип                             | По умолчанию     | Описание                                                                                                                                     |
+| ---------------- | ------------------------------- | ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`             | `string`                        | `"CFG"`          | Префикс группы полей                                                                                                                         |
+| `keys`           | `Partial<Record<ключ, string>>` | имена ключей     | Другие имена полей                                                                                                                           |
+| `value`          | `IWidgetDeviceInfoConfig`       |                  | Текущие значения                                                                                                                             |
+| `label.name`     | `string`                        |                  | Заголовок. Пусто - «Об устройстве» на языке пользователя                                                                                     |
+| `wrapperClass`   | `string`                        | `""`             | Классы обёртки                                                                                                                               |
+| `accent`         | `AccentColor`                   |                  | Мастер-цвет                                                                                                                                  |
+| `restartCommand` | `{ header, argument }`          | `SET`, `Restart` | Команда перезагрузки                                                                                                                         |
+| `resetCommand`   | `{ header, argument }`          | `SET`, `RstNVS`  | Команда сброса настроек                                                                                                                      |
+| `collapsed`      | `boolean`                       | `false`          | Свёрнут ли. Можно связать через `bind:collapsed`                                                                                             |
+| `persistKey`     | `string`                        |                  | Ключ для запоминания свёрнутости и подсказок                                                                                                 |
+| `onSave`         | `(info) => void`                |                  | Нажата «Сохранить», в `info` все поля. Без него поля только для чтения, пароль маской. Без него или с пустым `DevName` «Сохранить» неактивна |
+| `onRestart`      | `() => void`                    |                  | Нажата «Перезагрузить». Без него кнопка неактивна                                                                                            |
+| `onFactoryReset` | `() => void`                    |                  | Сброс подтверждён. Без него кнопки сброса нет                                                                                                |
 
 </details>
 
@@ -4150,7 +4299,7 @@ ModalStack.close(id) // убрать
 
 #### 💡 Полезно знать
 
-- ✏️ Имя файла проверяется ещё до отправки. По умолчанию оно не длиннее 31 байта UTF-8 (буква кириллицы занимает 2 байта) - это ограничение прошивки.
+- ✏️ Имя файла проверяется ещё до отправки на устройство. По умолчанию оно не длиннее 31 байта UTF-8 (буква кириллицы занимает 2 байта) - это ограничение прошивки.
 - ⏳ Пока идёт закачка, выбрать второй файл нельзя. Скачивать тоже можно только по одному файлу.
 - ⚠️ Если закачка или скачивание сорвались, причина появится прямо под полем или под списком.
 - 👁️ В режиме только для просмотра кнопок скачивания, удаления и закачки нет.
@@ -4214,9 +4363,9 @@ ModalStack.close(id) // убрать
 - **Занятость.** «Занято X из Y», процент и полоса мастер-цвета. Процент оранжевый от 75%, красный от 90%. Размеры в Б, КБ и МБ, начиная с КБ одна цифра после запятой. Под полосой «Свободно» и число файлов.
 - **Файлы.** Таблица «Путь, Размер, действия» высотой до `max-h-72`, дальше прокрутка. Длинный путь обрезается, по пути можно сортировать. Действия это значки с подсказкой: «Скачать» есть, только если передан `onDownload`, «Удалить» только с `onDelete`. Пустой список показывает «Файлов нет».
 - **Удаление.** Подтверждение открывается поверх карточки, а не на весь экран, и показывает полный путь файла.
-- **Закачка.** Блок есть, только если передан `onUpload`. Имя проверяется по `maxNameLength` до отправки, потому что прошивка отвергла бы длинное имя уже после `UploadStart`. Поле выбора неактивно, пока идёт своя закачка или пока устройство сообщает `Upload` (закачка с другого клиента). Прогресс берётся из `value.Upload`, нечисловое значение считается 0.
+- **Закачка.** Блок есть, только если передан `onUpload`. Длину имени проверяет одно место - `createFsTransfer`, в байтах UTF-8 и до `UploadStart` (прошивка отвергла бы длинное имя уже после него). `GUIRenderer` создаёт передачу с `maxNameLength` из свойств виджета. Сам виджет имя не проверяет: на ошибку `FsNameError` из `onUpload` он показывает переведённое «Имя файла пустое или длиннее N байт». Приложение, которое передаёт свой `onUpload` без `createFsTransfer`, проверяет имя само. Поле выбора неактивно, пока идёт своя закачка или пока устройство сообщает `Upload` (закачка с другого клиента). Прогресс берётся из `value.Upload`, нечисловое значение считается 0.
 - **Скачивание.** Одновременно идёт только одно, под таблицей видно «Скачивание: имя».
-- Ошибку, брошенную из `onUpload` или `onDownload`, виджет показывает под полем или под таблицей.
+- Ошибку, брошенную из `onUpload` или `onDownload`, виджет показывает под полем или под таблицей. Ошибку `FsTransferError` (из `createFsTransfer`) он переводит по коду (`widget.fs.error.<code>`), у другой ошибки показывает `message`.
 - Без `onRefresh` кнопка «Обновить» неактивна.
 - **Сворачивание.** Шапка сворачивает виджет. Свёрнутость по умолчанию задаётся в конструкторе (`collapsed`). С `persistKey` личный выбор пользователя запоминается в браузере и применяется сразу, без мигания. Если в GUI поменяли `collapsed`, прежний выбор сбрасывается.
 - **Подсказки.** Кнопка «?» включает подсказки, по умолчанию они выключены. Выбор запоминается для каждого экземпляра по `persistKey`, без него он общий для всех виджетов этого типа.
@@ -4228,23 +4377,23 @@ ModalStack.close(id) // убрать
 <details>
 <summary>⚙️ Пропсы</summary>
 
-| Название        | Тип                                     | По умолчанию | Описание                                                    |
-| --------------- | --------------------------------------- | ------------ | ----------------------------------------------------------- |
-| `id`            | `string`                                | `"CFG"`      | Префикс группы. Используется приложением при чтении         |
-| `keys.FS`       | `string`                                | `"FS"`       | Имя поля устройства                                         |
-| `argument`      | `string`                                | `"FS"`       | Аргумент команд                                             |
-| `value`         | `IWidgetFileSystemInfo`                 |              | Состояние `CFG.FS`                                          |
-| `label.name`    | `string`                                |              | Заголовок. Пусто - «Файловая система» на языке пользователя |
-| `wrapperClass`  | `string`                                | `""`         | Классы обёртки                                              |
-| `accent`        | `AccentColor`                           |              | Мастер-цвет                                                 |
-| `accept`        | `string`                                | `"*/*"`      | Какие файлы можно выбрать, например `.bin,.pem`             |
-| `maxNameLength` | `number`                                | `31`         | Наибольшая длина имени файла в байтах UTF-8                 |
-| `collapsed`     | `boolean`                               | `false`      | Свёрнут ли. Можно связать через `bind:collapsed`            |
-| `persistKey`    | `string`                                |              | Ключ для запоминания свёрнутости и подсказок                |
-| `onRefresh`     | `() => void`                            |              | Нажата «Обновить». Без него кнопка неактивна                |
-| `onDelete`      | `(name) => void`                        |              | Удаление подтверждено. `name` полный путь                   |
-| `onUpload`      | `(file: File) => void \| Promise<void>` |              | Закачать выбранный файл                                     |
-| `onDownload`    | `(name) => void \| Promise<void>`       |              | Скачать файл и сохранить на компьютер                       |
+| Название        | Тип                                     | По умолчанию | Описание                                                                              |
+| --------------- | --------------------------------------- | ------------ | ------------------------------------------------------------------------------------- |
+| `id`            | `string`                                | `"CFG"`      | Префикс группы. Используется приложением при чтении                                   |
+| `keys.FS`       | `string`                                | `"FS"`       | Имя поля устройства                                                                   |
+| `argument`      | `string`                                | `"FS"`       | Аргумент команд                                                                       |
+| `value`         | `IWidgetFileSystemInfo`                 |              | Состояние `CFG.FS`                                                                    |
+| `label.name`    | `string`                                |              | Заголовок. Пусто - «Файловая система» на языке пользователя                           |
+| `wrapperClass`  | `string`                                | `""`         | Классы обёртки                                                                        |
+| `accent`        | `AccentColor`                           |              | Мастер-цвет                                                                           |
+| `accept`        | `string`                                | `"*/*"`      | Какие файлы можно выбрать, например `.bin,.pem`                                       |
+| `maxNameLength` | `number`                                | `31`         | Наибольшая длина имени в байтах UTF-8: `GUIRenderer` передаёт её в `createFsTransfer` |
+| `collapsed`     | `boolean`                               | `false`      | Свёрнут ли. Можно связать через `bind:collapsed`                                      |
+| `persistKey`    | `string`                                |              | Ключ для запоминания свёрнутости и подсказок                                          |
+| `onRefresh`     | `() => void`                            |              | Нажата «Обновить». Без него кнопка неактивна                                          |
+| `onDelete`      | `(name) => void`                        |              | Удаление подтверждено. `name` полный путь                                             |
+| `onUpload`      | `(file: File) => void \| Promise<void>` |              | Закачать выбранный файл                                                               |
+| `onDownload`    | `(name) => void \| Promise<void>`       |              | Скачать файл и сохранить на компьютер                                                 |
 
 </details>
 
@@ -4405,6 +4554,13 @@ configureMapLibre({ module: "/maplibre-gl.mjs", css: "/maplibre-gl.css", styles:
 ```
 
 С CDN без сети видна заглушка «Карта не загружена»; со своим модулем проверка сети не делается.
+
+<details>
+<summary>Версия MapLibre на CDN</summary>
+
+С CDN грузится та же версия, что стоит в devDependency `maplibre-gl` (по ней проверяются типы): константа `MAPLIBRE_VERSION` в `mapWrapper/utils.ts`. После `npm run CheckUpdate` её поднимают вручную до установленной версии. Если забыть, тест `tests/maplibre.test.mjs` в `npm run prepack` упадёт и покажет, какую версию поставить.
+
+</details>
 
 - **Подложка.** Стили CARTO (Voyager для светлой темы, Dark Matter для тёмной) на данных OpenStreetMap. Указывать источник обязательно, подпись свёрнута в кнопку «i» в углу карты.
 - Сворачивание, мастер-цвет и кнопка «?» с подсказками работают как у `WidgetWiFi`.
@@ -5364,7 +5520,7 @@ configureMapLibre({ module: "/maplibre-gl.mjs", css: "/maplibre-gl.css", styles:
 - **Имена куч** переводятся на язык пользователя: `Internal` «Встроенная ОЗУ», `PSRAM` «Внешняя ОЗУ (PSRAM)», `Heap` (у STM) «ОЗУ». В подсказке объяснено, что это за память. Неизвестное имя выводится как есть, без подсказки.
 - **Задачи.** Таблица «Задача, Состояние, Приор., Ядро, CPU %, Запас Б» высотой до `max-h-80`, дальше прокрутка. Колонка «Ядро» есть, только если хоть у одной задачи пришёл `Core`, колонка «CPU» - только если пришёл `CPU`.
 - **Подсветка запаса.** Меньше `warnBytes` красный, меньше двойного `warnBytes` оранжевый. Над таблицей число задач и, если есть, красная строка «Запас стека меньше N Б: K».
-- **Подсветка CPU.** От 50% оранжевая, от 80% красная. Задачи `IDLE*` не подсвечиваются: это свободное время ядра.
+- **Подсветка CPU.** От 50% оранжевая, от 80% красная. Задачи `IDLE*` не подсвечиваются: это свободное время ядра. Цвет задаёт `accent(row)` колонки таблицы (роли темы `orange` и `red`), в ячейке - обычный текст без HTML.
 - **Обновление.** Кнопка «Обновить» и автоопрос: выключен, 1, 5 или 10 секунд. Без `onRefresh` и кнопка, и автоопрос неактивны. Если `period` задан не из этого списка (в панели свойств можно ввести любое число), переключатель показывает «Выкл», но опрос идёт с заданным периодом.
 - **Сворачивание.** Шапка сворачивает виджет. Свёрнутость по умолчанию задаётся в конструкторе (`collapsed`). С `persistKey` личный выбор пользователя запоминается в браузере и применяется сразу, без мигания. Если в GUI поменяли `collapsed`, прежний выбор сбрасывается.
 - **Подсказки.** Кнопка «?» включает подсказки, по умолчанию они выключены. Выбор запоминается для каждого экземпляра по `persistKey`, без него он общий для всех виджетов этого типа.
@@ -5450,6 +5606,7 @@ configureMapLibre({ module: "/maplibre-gl.mjs", css: "/maplibre-gl.css", styles:
 - ✋ Пока у пользователя есть несохранённые правки, свежие данные с устройства их не затирают.
 - 🛑 Предупреждение появляется только при сохранении, само переключение режима ничего не отправляет.
 - 🔑 Браузер не подсовывает в поля пароля сохранённые логины.
+- 👀 Без `onSave` (наблюдатель, нет прав на запись) виджет только показывает настройки: поля не правятся, режимы и поиск неактивны, пароли закрыты точками и без глазика.
 - 📐 Виджет занимает всю ширину своей ячейки, а высота подстраивается под содержимое.
 
 <details>
@@ -5487,32 +5644,33 @@ configureMapLibre({ module: "/maplibre-gl.mjs", css: "/maplibre-gl.css", styles:
 - **Пароли.** У полей пароля `autocomplete="one-time-code"`, поэтому менеджер паролей браузера не накрывает список сетей своими логинами.
 - **Предупреждение.** Перед сохранением режима `2` при `confirmOnAP` поверх карточки открывается окно: клиент STA выключится, устройство отключится от облака и будет доступно только по своей точке доступа. Кнопка подтверждения красная. Для `STA + AP` предупреждения нет, STA остаётся активным.
 - **Живые данные.** `value` это поток с устройства. Новое значение подхватывается, только если нет несохранённых правок.
+- **Только просмотр.** Если `onSave` не передан, поля `readonly`, переключатели режима и IP и поиск сети `disabled`. Пароли `StaPSK` и `ApPSK` выводятся обычным полем с маской `••••••••` (пустой пароль - пустое поле), поэтому глазика нет. Правок не бывает, и живые данные всегда обновляются. Сами пароли при этом в браузер всё равно приходят, маска только не показывает их.
 - **Без данных** виджет стартует с режима `1`, DHCP и точкой доступа `192.168.108.1` / `255.255.255.0` / `192.168.108.1`.
 - **Сворачивание.** Шапка сворачивает виджет, клик по переключателю режима не сворачивает. Свёрнутость по умолчанию задаётся в конструкторе (`collapsed`). С `persistKey` личный выбор пользователя запоминается в браузере и применяется сразу, без мигания. Если в GUI поменяли `collapsed`, прежний выбор сбрасывается. Так работают все смарт-виджеты.
 - **Подсказки.** Кнопка «?» включает подсказки, по умолчанию они выключены. Выбор запоминается для каждого экземпляра по `persistKey`, без него он общий для всех виджетов этого типа.
 - **Мастер-цвет.** `accent` через `accentStyle` красит значок, переключатели, рамку фокуса, кнопку «Сохранить» и шапку таблиц в виджете.
-- **В `GUIRenderer`** `persistKey` равен `<persistKey рендерера>|id компонента`. Ответ на поиск рендерер ждёт до 3 секунд (`link.waitFor`) в поле `<префикс>.<StaSSID>-S`.<StaSSID>-S`. В режиме только просмотра `onScan`и`onSave` не передаются. В сетке виджет занимает одну строку, по умолчанию 8 клеток в ширину и не уже 6.
+- **В `GUIRenderer`** `persistKey` равен `<persistKey рендерера>|id компонента`. Ответ на поиск рендерер ждёт до 3 секунд (`link.waitFor`) в поле `<префикс>.<StaSSID>-S`. Если устройство ответило `ER!` или не ответило, рендерер сообщает об этом через `onError`, а список остаётся пустым. В режиме только просмотра `onScan` и `onSave` не передаются, и виджет становится только для чтения. В сетке виджет занимает одну строку, по умолчанию 8 клеток в ширину и не уже 6.
 
 </details>
 
 <details>
 <summary>⚙️ Пропсы</summary>
 
-| Название       | Тип                                    | По умолчанию     | Описание                                                                                    |
-| -------------- | -------------------------------------- | ---------------- | ------------------------------------------------------------------------------------------- |
-| `id`           | `string`                               | `"CFG"`          | Префикс группы полей                                                                        |
-| `keys`         | `Partial<Record<ключ, string>>`        | имена ключей     | Другие имена полей, если у прошивки иначе                                                   |
-| `value`        | `IWidgetWiFiConfig`                    |                  | Текущие значения полей                                                                      |
-| `label.name`   | `string`                               | `"WiFi"`         | Заголовок. Пусто - название на языке пользователя                                           |
-| `wrapperClass` | `string`                               | `""`             | Классы обёртки                                                                              |
-| `accent`       | `AccentColor`                          |                  | Мастер-цвет                                                                                 |
-| `allowedModes` | `number[]`                             | `[1, 2, 3]`      | Какие режимы можно выбрать                                                                  |
-| `confirmOnAP`  | `boolean`                              | `true`           | Предупреждать при сохранении режима точки доступа                                           |
-| `scanCommand`  | `{ header, argument }`                 | `GET`, `APsList` | Команда поиска сетей                                                                        |
-| `collapsed`    | `boolean`                              | `false`          | Свёрнут ли. Можно связать через `bind:collapsed`                                            |
-| `persistKey`   | `string`                               |                  | Ключ для запоминания свёрнутости и подсказок                                                |
-| `onScan`       | `() => Promise<{ id, name, value }[]>` |                  | Найти сети. `name` подпись в списке, `value` SSID                                           |
-| `onSave`       | `(config) => void`                     |                  | Нажата «Сохранить», в `config` все поля `IWidgetWiFiConfig`. Без него «Сохранить» неактивна |
+| Название       | Тип                                    | По умолчанию     | Описание                                                                                                                           |
+| -------------- | -------------------------------------- | ---------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `id`           | `string`                               | `"CFG"`          | Префикс группы полей                                                                                                               |
+| `keys`         | `Partial<Record<ключ, string>>`        | имена ключей     | Другие имена полей, если у прошивки иначе                                                                                          |
+| `value`        | `IWidgetWiFiConfig`                    |                  | Текущие значения полей                                                                                                             |
+| `label.name`   | `string`                               | `"WiFi"`         | Заголовок. Пусто - название на языке пользователя                                                                                  |
+| `wrapperClass` | `string`                               | `""`             | Классы обёртки                                                                                                                     |
+| `accent`       | `AccentColor`                          |                  | Мастер-цвет                                                                                                                        |
+| `allowedModes` | `number[]`                             | `[1, 2, 3]`      | Какие режимы можно выбрать                                                                                                         |
+| `confirmOnAP`  | `boolean`                              | `true`           | Предупреждать при сохранении режима точки доступа                                                                                  |
+| `scanCommand`  | `{ header, argument }`                 | `GET`, `APsList` | Команда поиска сетей                                                                                                               |
+| `collapsed`    | `boolean`                              | `false`          | Свёрнут ли. Можно связать через `bind:collapsed`                                                                                   |
+| `persistKey`   | `string`                               |                  | Ключ для запоминания свёрнутости и подсказок                                                                                       |
+| `onScan`       | `() => Promise<{ id, name, value }[]>` |                  | Найти сети. `name` подпись в списке, `value` SSID                                                                                  |
+| `onSave`       | `(config) => void`                     |                  | Нажата «Сохранить», в `config` все поля `IWidgetWiFiConfig`. Без него «Сохранить» неактивна, поля только для чтения, пароли маской |
 
 </details>
 

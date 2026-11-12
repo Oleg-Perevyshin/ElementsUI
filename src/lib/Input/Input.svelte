@@ -39,9 +39,11 @@
   const pattern = $derived.by(() => {
     const source = help.regExp
     if (!source) return undefined
-    if (source instanceof RegExp) return source
+    /* Флаги g и y убираются: с ними test() помнит lastIndex и одно и то же значение то проходит, то нет */
+    const stable = (flags: string) => flags.replace(/[gy]/g, "")
+    if (source instanceof RegExp) return source.global || source.sticky ? new RegExp(source.source, stable(source.flags)) : source
     const match = source.match(/^\/(.*)\/([gimsuy]*)$/)
-    return match ? new RegExp(match[1], match[2]) : new RegExp(source)
+    return match ? new RegExp(match[1], stable(match[2])) : new RegExp(source)
   })
   const isValid = $derived(!pattern || isNumeric || pattern.test(String(value ?? "")))
 
@@ -84,7 +86,8 @@
      ${readonly && !disabled ? "bg-(--container-color) text-(--muted-color)" : ""}
      ${help.info ? "pl-9" : ""}`,
   )
-  const iconButton = `flex size-7 cursor-pointer items-center justify-center rounded-lg border-none bg-transparent text-(--faint-color) transition-colors duration-150 hover:bg-(--container-color) hover:text-(--font-color)`
+  /* Кнопка-значок внутри поля: у глазика пароля фон при наведении не появляется, меняется только цвет значка */
+  const iconButton = `flex size-7 cursor-pointer items-center justify-center rounded-lg border-none bg-transparent text-(--faint-color) transition-colors duration-150 hover:text-(--font-color)`
 </script>
 
 <div class={twMerge(`relative flex w-full flex-col gap-1 ${type === "text-area" ? "h-full" : ""}`, wrapperClass)} style={accentStyle(accent)}>
@@ -149,7 +152,9 @@
     {#if help.copyButton && type !== "password" && !disabled}
       <button
         type="button"
-        class="absolute {type == 'number' ? 'right-10' : 'right-1.5'} {type === 'text-area' ? 'top-1.5' : ''} {iconButton} [&_svg]:size-4"
+        class="absolute {type == 'number' ? 'right-10' : 'right-1.5'} {type === 'text-area'
+          ? 'top-1.5'
+          : ''} {iconButton} hover:bg-(--container-color) [&_svg]:size-4"
         onclick={async () => {
           isCopied = await copyText(String(value ?? ""))
           setTimeout(() => (isCopied = false), 1000)

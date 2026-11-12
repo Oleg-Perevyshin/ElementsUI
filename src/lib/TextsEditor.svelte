@@ -41,10 +41,14 @@
 
   const open = () => {
     const skip = NOT_TEXTS[component.type] ?? []
-    /* Пояснение help.info есть в окне и у компонентов, созданных до его появления: недостающее берётся из умолчаний типа */
-    const defaultHelp = (COMPONENT_DEFAULTS as Record<string, { help?: object }>)[component.type]?.help
-    const properties = component.properties as { help?: object }
-    rows = collectTexts(defaultHelp ? { ...properties, help: { ...defaultHelp, ...properties.help } } : properties)
+    /* Подпись label и пояснение help.info есть в окне и у компонентов, созданных до их появления: недостающее берётся из умолчаний типа */
+    const defaults = (COMPONENT_DEFAULTS as Record<string, { help?: object; label?: object }>)[component.type] ?? {}
+    const properties = component.properties as { help?: object; label?: object }
+    rows = collectTexts({
+      ...properties,
+      ...(defaults.label && !properties.label && { label: defaults.label }),
+      ...(defaults.help && { help: { ...defaults.help, ...properties.help } }),
+    })
       .filter(({ path }) => !skip.includes(String(path[0])))
       .map(({ path, text }) => ({ path, values: typeof text === "string" ? { [DEFAULT_LANGUAGE]: text } : { ...text } }))
     isOpen = true

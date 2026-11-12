@@ -2,6 +2,11 @@ import { derived } from "svelte/store"
 import { T } from "./locales/i18n"
 import { PROPS_ICONS } from "./libIcons/propsIcons"
 import { ACCENT_COLORS, type AccentColor } from "./accent"
+import { DEFAULT_ARGUMENT_CODES } from "./protocols/dictionaryCodes"
+
+/* Аргумент команды в конструкторе: только имя из мастер-словаря или служебный NoSend. Прошивка читает ARG в char[32] (до 31 знака), неизвестное имя даёт A_UNKNOWN без ответа */
+export const ARGUMENT_MAX_LENGTH = 31
+export const ARGUMENT_REGEXP = new RegExp(`^(${[...Object.keys(DEFAULT_ARGUMENT_CODES).filter((name) => name !== "Unknown"), "NoSend"].join("|")})$`)
 
 /* Вариант со стабильным id по значению: id не меняется при смене языка */
 const opt = <const V>(value: V, name?: string, icon?: string) => ({ id: String(value), value, name, icon })
