@@ -88,7 +88,8 @@
 <summary>🔌 Колбэки, цвет и ключи значений</summary>
 
 - Смысл колбэков у всех компонентов один: `onUpdate` - принятое значение (Enter, уход из поля, отпущенный бегунок, выбор варианта), `onInput` - текущее значение во время ввода или перетаскивания. Значение всегда идёт первым аргументом.
-- У `Select` значение - это `option.value`, а не сам вариант.
+- У `Select` значение - это `option.value`, а не сам вариант. Тип значения - `SelectValue<T, M>`, пропсы - `ISelectProps<T, M>`, где `M` - `multiSelect` (тогда значение - массив значений).
+- Компоненты не выводят случайные DOM id. Проп `id` примитива - переменная устройства, в разметку он не попадает (кроме `Button`, где это атрибут `id`).
 - Цвет компонента задаёт проп `accent` (роль темы: `gray`, `red`, `orange`, `yellow`, `green`, `cyan`, `blue`, `purple`), у `Button` ещё `variant`.
 - В DevCloud и WebApp значения устройства хранятся под ключами вида `<ModSN>|<ключ>`. Смарт-виджет читает свою группу целиком, например все поля `CFG.*` или `MAV.*`.
 
@@ -107,6 +108,8 @@
 Поле «Аргумент» в панелях (`Button`, `Select`, кнопки `Table`, команды `WidgetDeviceInfo`) принимает только имя из мастер-словаря `dictionary.yaml` или служебный `NoSend`, до 31 знака (`ARGUMENT_REGEXP`, `ARGUMENT_MAX_LENGTH` в `options.ts`). Прошивка читает аргумент в `char[32]`, а неизвестное имя молча превращает в `A_UNKNOWN`, поэтому опечатка подсвечивается сразу и не сохраняется.
 
 Своя панель свойств строится на `createPropsEditor(component, onPropertyChange)`: `set`, `patch`, `addItem`, `updateItem`, `removeItem` отправляют новые объекты, сами свойства не меняются на месте.
+
+В `poe-svelte-ui-lib/constructor` также `optionsStore` (в нём и палитра `ACCENT_OPTIONS`; повторное нажатие на выбранный цвет снимает его), `CommonSnippets` и словарь `constructorTranslations`.
 
 </details>
 
@@ -146,7 +149,7 @@
 
 | Пропс        | Что это                                                                                                                                                         |
 | ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `components` | `UIComponent[]` в формате 2.0                                                                                                                                   |
+| `components` | `UIComponent[]` из конструктора                                                                                                                                 |
 | `link`       | `DeviceLink` выбранного модуля, см. ниже                                                                                                                        |
 | `language`   | язык текстов GUI, по умолчанию язык библиотеки                                                                                                                  |
 | `viewer`     | наблюдатель: видны только `access` `full` и `viewOnly`, управление отключено; `WidgetWiFi` и `WidgetDeviceInfo` без `onSave` - только для чтения, пароли маской |
@@ -284,7 +287,7 @@ socket.send(valueToCbor(encodeWsEnvelope("SET", "JoinDev", { DevSN, Watch: true 
 <details>
 <summary>🧭 Приём потока и поле Value</summary>
 
-- Пакет - только indefinite-массив `0x9F ... 0xFF`, как в прошивке. `decodePacket` считает definite-массивы мусором, а `createPacketStreamParser` (RS485) ищет метку `0x9F 0x85` и пропускает пакеты без записей. Шум вроде `0x80` или `0x81` перед пакетом больше не даёт пустых строк и не проглатывает настоящий пакет.
+- Пакет - только indefinite-массив `0x9F ... 0xFF`, как в прошивке. `decodePacket` считает definite-массивы мусором, а `createPacketStreamParser` (RS485) ищет метку `0x9F 0x85` и пропускает пакеты без записей. Шум вроде `0x80` или `0x81` перед пакетом пропускается: пустых строк нет, настоящий пакет не теряется.
 - `createCanParser` считает `sessionTimeoutMs` от последнего фрагмента и выдаёт только целый пакет. Хвост с потерянным началом отбрасывается.
 - Поле Value консоли (`xPoeDebugValueFromText`): HEX только как `h'0A 1B'` или `0x0A1B`, всё остальное - JSON. `12` уходит числом 12, а не байтом `0x12`. Подсказки у поля Value в приложениях пишутся по этому правилу.
 
@@ -455,6 +458,7 @@ socket.send(valueToCbor(encodeWsEnvelope("SET", "JoinDev", { DevSN, Watch: true 
 export const T = createTranslator(translations)
 ```
 
+- Свой словарь к `$T` библиотеки добавляет `extendTranslations(dictionary)`. Тип `TranslationKey` подсказывает ключи в `$T`, любая строка тоже допустима.
 - В SSR-приложениях сохранённый язык восстанавливают вызовом `restoreLanguage()` в `onMount` корневого layout.
 - Серверный код, который запускается под Node без Vite, импортирует языки из `poe-svelte-ui-lib/locales`. Корень пакета тянет Svelte-компоненты, и Node его не загрузит.
 
@@ -466,175 +470,6 @@ export const T = createTranslator(translations)
 - **Встроенные тексты компонентов**: подписи, кнопки, подсказки. Они только в словаре `src/lib/locales/translations.ts` и выводятся через `$T("ключ")`. Русских строк прямо в разметке быть не должно.
 - **Тексты из конструктора**: название поля, варианты списка, заголовки колонок. Это строка или объект `{ ru, en, zh }`. Приложение переводит всё описание интерфейса функцией `localizeDeep` перед показом. В конструкторе их правят в окне «Тексты и переводы», которое есть у каждого компонента.
 - `localizeDeep` переводит только поля текстов (`name`, `label`, `labels`, `placeholder`, `text`, `info`, `title`, `captionLeft`, `captionRight`, `units`, `unit`, `footer`, `hiddenInfo`, `alt`) - те же, что показывает окно «Тексты и переводы». Объект считается переводом, если все его ключи похожи на коды языков и хотя бы один есть в `LANGUAGES`. Остальные объекты (данные колонки `{ key: "device" }`, картинка `{ src, alt }`) остаются как есть.
-
-</details>
-
-## 🔄 Переход на 2.0
-
-Версия 2.0 меняет API. Сохранённые GUI 1.x рендерер не читает: каталог DevCloud и интерфейсы устройств переведены один раз (функции перевода удалены в 2.1.0). Код приложений правится вручную по таблицам ниже.
-
-<details>
-<summary>🎨 Цвет: accent вместо классов</summary>
-
-Классы `bg-*` и `text-*` в `componentClass`, `wrapperClass`, `settings.class`, `options[].class`, `items[].class` цвет больше не задают.
-
-| Где                                                                                                                 | Было                                                      | Стало                                                    |
-| ------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- | -------------------------------------------------------- |
-| `Button`                                                                                                            | `componentClass="bg-green"`                               | `variant="primary" accent="green"`                       |
-| `Button`                                                                                                            | `componentClass="bg-max"`, `"bg-gray"`                    | `variant="secondary"`                                    |
-| `Button`                                                                                                            | `componentClass="bg-transparent p-1"`                     | `componentClass="p-1"` (`variant` по умолчанию `plain`)  |
-| `Button` внутри виджета                                                                                             | `componentClass="bg-accent"`                              | `variant="primary"`                                      |
-| `Accordion`, `Input`                                                                                                | `componentClass="bg-red"`                                 | `accent="red"`                                           |
-| `WidgetWiFi`, `WidgetDeviceInfo`, `WidgetFileSystem`, `WidgetStackInfo`, `WidgetRGBStrip`, `WidgetPFD`, `WidgetMap` | `componentClass="bg-red"` (проп удалён)                   | `accent="red"`                                           |
-| `Slider`, `Switch`, `Joystick`, `Tabs`, `PeriodChart`, `VideoViewer`, `ProgressBar`                                 | `wrapperClass="bg-red ..."`                               | `accent="red"` (у `Joystick` по умолчанию `blue`)        |
-| `Divider`                                                                                                           | `color="bg-red"` (проп удалён)                            | `accent="red"`                                           |
-| `TextField`                                                                                                         | `text-(color:--red-text)` в `wrapperClass`                | `accent="red"`                                           |
-| `Widget`                                                                                                            | `settings.class: "bg-red"`, `icons.class`                 | `accent: "red"`, `icons.class` удалён                    |
-| `ProgressBar`                                                                                                       | `items: [{ name, class: "bg-red" }]`                      | `items: [{ name, accent: "red" }]`                       |
-| `Select`, `Switch` (биты)                                                                                           | `options: [{ ..., class: "bg-red" }]`                     | `options: [{ ..., accent: "red" }]`                      |
-| `Switch` (обычный)                                                                                                  | `options={[{ id, value: 0, class: "bg-red", disabled }]}` | `accent="red" disabled` (`options` только для `bitMode`) |
-| `Table`                                                                                                             | `wrapperClass="bg-red ..."`                               | `accent="red"` (кнопки ячеек - по-прежнему `class`)      |
-| Свой элемент в цвет компонента                                                                                      | `style={UI.widgetAccentStyle(componentClass)}`            | `style={UI.accentStyle(accent)}`                         |
-
-</details>
-
-<details>
-<summary>🔌 Колбэки</summary>
-
-| Компонент        | Было                                        | Стало                                                                              |
-| ---------------- | ------------------------------------------- | ---------------------------------------------------------------------------------- |
-| `Input`          | `onUpdate` на каждую клавишу                | `onUpdate` - Enter, уход из поля, счётчик; `onInput(text)` - каждый ввод           |
-| `Input`          | `bind:isValid`                              | проп удалён, проверка внутри (`aria-invalid`)                                      |
-| `Slider`         | `onUpdate` во время перетаскивания          | `onUpdate` - бегунок отпущен или `+/-`; `onInput(value)` - во время перетаскивания |
-| `Widget`         | `onUpdate` во время перетаскивания слайдера | `onUpdate` - принятое значение; `onInput(value)` - слайдер во время перетаскивания |
-| `Switch`         | `onChange={(value) => ...}`                 | `onUpdate={(value) => ...}`                                                        |
-| `FileAttach`     | `onChange={(event, file) => ...}`           | `onUpdate={(file, event) => ...}`                                                  |
-| `WidgetRGBStrip` | `onChange={(field, value) => ...}`          | `onUpdate={(value, field) => ...}`                                                 |
-
-</details>
-
-<details>
-<summary>🔽 Select: значение варианта, а не вариант</summary>
-
-| Было                                                             | Стало                                                                       |
-| ---------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| `value={options.find((o) => o.value === x)}`                     | `value={x}` или `bind:value={x}`                                            |
-| `onUpdate={(o) => (x = (o as UI.IOption).value)}`                | `onUpdate={(v) => (x = v)}`                                                 |
-| `multiSelect`: `value` и `onUpdate` - массив вариантов           | массив значений                                                             |
-| `type="input"`: `onUpdate` на каждую клавишу и дважды при выборе | `onInput(text)` при вводе, `onUpdate` - Enter, уход из поля, выбор варианта |
-| `IOption`: `{ id: string; value?: T; class?: string; ... }`      | `{ id?: string; value: T; accent?: AccentColor; ... }`                      |
-
-Тип значения - `SelectValue<T, M>`, пропсы - `ISelectProps<T, M>`, где `M` - `multiSelect`. Список открывается стрелками, выбор - Enter, закрытие - Escape.
-
-</details>
-
-<details>
-<summary>🛠️ Панели свойств</summary>
-
-| Было                                                                                                                                           | Стало                                                                           |
-| ---------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| `UI.ButtonProps`, `UI.TableProps`, ... `UI.WidgetMapProps`, `UI.TextsEditor` из `"poe-svelte-ui-lib"`                                          | `import { ButtonProps, TextsEditor, ... } from "poe-svelte-ui-lib/constructor"` |
-| `component.info.*`, `constructor.*`, `library.*` в `$T` библиотеки всегда                                                                      | подключаются импортом `poe-svelte-ui-lib/constructor`                           |
-| `<UI.SelectProps {component} {onPropertyChange} forConstructor={false} />`                                                                     | проп `forConstructor` удалён, панель одна                                       |
-| тип `onPropertyChange` копировался в приложение                                                                                                | `import type { PropertyChange } from "poe-svelte-ui-lib/constructor"`           |
-| `updateProperty("label.class", v, component, onPropertyChange)`                                                                                | `createPropsEditor(component, onPropertyChange).patch("label", { class: v })`   |
-| `updateComponent`, `findOptionByClass`, `findColorOption`, `stripLegacyTextColor`, `COLOR_OPTIONS`, `TEXT_COLOR_OPTIONS`, `WidgetAccentPicker` | удалены                                                                         |
-
-В `poe-svelte-ui-lib/constructor` также `optionsStore` (в нём и палитра `ACCENT_OPTIONS`; повторное нажатие на выбранный цвет снимает его), `CommonSnippets`, `createPropsEditor` и словарь `constructorTranslations`. В `i18n` добавлены `extendTranslations(dictionary)` и тип `TranslationKey` (подсказка ключей в `$T`, любая строка по-прежнему допустима).
-
-</details>
-
-<details>
-<summary>📋 Table</summary>
-
-| Было                                                                 | Стало                                                                                                                          |
-| -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| Журнал: `body` с `dataBuffer.stashData`, таблица сама очищала `body` | `bind:this={log}` и `log.push(rows)` (строка или массив); `body` в журнале не читается                                         |
-| `body: T[] \| T \| null`, `bind:body`                                | `body?: T[]`, не связывается; сортировка - внутри таблицы                                                                      |
-| `clearBuffer()`                                                      | `clear()`                                                                                                                      |
-| `onClick(eventHandler)` - таблица собирала `Value` из `Variables`    | `onClick(row, button)` - строка с выбранными в списках значениями и кнопка; пакет из `button.eventHandler` собирает приложение |
-| `text.formatting(text)` - HTML окна и подсказки                      | `text.render(row)` - содержимое ячейки; окно - `modal: true` или сниппет `Snippet<[row]>`                                      |
-
-Пакет кнопки строки собирает `tablePacket(button.eventHandler, row)`, журнал (`stashData`) в GUI ведёт `GUIRenderer`. Колонки в `.ts` без разметки делают окно через `createRawSnippet` из `svelte`:
-
-```ts
-const canModal = createRawSnippet((row: () => CanRow) => ({ render: () => `<div class="whitespace-pre-wrap">${formatCanDataModal(row().data)}</div>` }))
-{ type: "text", data: { key: "data", truncated: true, copy: true, modal: canModal } }
-```
-
-</details>
-
-<details>
-<summary>🖥️ Рендерер GUI и конструктор</summary>
-
-Оба `GUIPreview.svelte` (DevCloud, WebApp) заменяются на `GUIRenderer`, приложение оставляет транспорт, список модулей, загрузку GUI и свои мосты потоков.
-
-| Было в приложении                                                                                                                            | Стало                                                                                                |
-| -------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| сетка и `{#snippet Components}` с ветвью на каждый тип, кэш `localizeDeep`                                                                   | `<UI.GUIRenderer components link persistKey viewer render onError />`                                |
-| `handleUIComponentEvent`, сборка Payload из `Variables`, `onClick` таблицы                                                                   | внутри рендерера (`commandPacket`, `tablePacket`)                                                    |
-| `bitFieldGet`/`bitFieldSet` у `Input` и `Select`, `-S` варианты `Select`, колонки-списки таблицы                                             | внутри рендерера (`readBits`, `writeBits`)                                                           |
-| `readWidgetFields`, `saveWidgetFields`, `sendWidgetCommand`, `readFileSystem`, `readStackInfo`, `scanWiFiNetworks`, `WIDGET_FIELDS` (WebApp) | внутри рендерера (`WIDGET_FIELDS`, `readWidgetFields`, `widgetPacket`)                               |
-| `uploadFile`, `downloadFile`, `fsStep`, `withRetry`, `handleFileUpload`, `crc32` приложения                                                  | `createFsTransfer(link)`, рендерер ведёт сам; `crc32` из `poe-svelte-ui-lib/protocols`               |
-| планы карты в `localStorage` (`loadMission`, `saveMission`)                                                                                  | рендерер по `persistKey`                                                                             |
-| `applyPayload` и разбор Payload в эффекте (`DATA_PAYLOAD_ARGS`, `FS_PROTOCOL_KEYS`, `topLevelToFlatten`)                                     | `mergeDevicePayload(values, "<ModSN>\|", argument, Payload)`; набор аргументов остаётся у приложения |
-| начальные значения переменных компонентов (`0` или `""`) после загрузки GUI                                                                  | не нужны: компонент без значения берёт своё по умолчанию                                             |
-| `VideoViewerRemote` в ветке `VideoViewer`                                                                                                    | `render={{ VideoViewer: snippet }}`                                                                  |
-| `common.ts`: `CELL_HEIGHT`, `UIAreaCols`, `spanRows`, `isWidgetType`, `WIDGET_FIELD_GROUPS`, `WIDGET_EDITABLE_FIELD_GROUPS`                  | `GUI_GRID`, `spanRows`, `isWidgetType`, `WIDGET_FIELDS`, `WIDGET_SAVE_FIELDS`, `componentVariables`  |
-| `common.ts`: `DEFAULT_PROPS`, `componentMap`, `WIDGET_MIN_WIDTH`, `minWidthOf`                                                               | `COMPONENT_DEFAULTS`, `COMPONENT_SIZES`, `minComponentWidth` (`/constructor`)                        |
-| `ConstructorUI`: `switch` по типу в `createComponent`, свой `updateComponent` для `properties`                                               | `createComponent(type, { col, row }, parentId, { tab, areaWidth })`, `applyPropertyChange`           |
-| ветвь панели на каждый тип с `as UI.UIComponent & { properties: Partial<...> }`                                                              | `{@const Panel = PANELS[c.type]}<Panel component={c} {onPropertyChange} />`                          |
-| `component.properties as UI.IButtonProps`                                                                                                    | `if (component.type === "Button")` - `properties` уже `IButtonProps`                                 |
-| `IWidgetWiFiConfig` и др. - отдельные интерфейсы, `value` виджета - полный объект                                                            | выведены из `WIDGET_FIELDS`; `value` у `WidgetWiFi` и `WidgetDeviceInfo` - `Partial`                 |
-
-Транспорт `waitFor` в WebApp уже есть (`WebSocketStore.ts`): он ждёт первый пакет `OK!`/`ER!` с аргументом, прошедший `match`, или возвращает `null` по таймауту.
-
-</details>
-
-<details>
-<summary>🐞 xPOE-Debug</summary>
-
-| Было                                                                                       | Стало                                                                                                             |
-| ------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------- |
-| `XPoeDebugItem.value` - HEX Payload                                                        | `valueBytes` - байты, `payload` - Payload, декодированный один раз при разборе                                    |
-| `XPoeDebugRow.value` - HEX, приложение заменяло его на `formatXPoeDebugValueForTable(...)` | `value` - готовый краткий текст, плюс `valueBytes` и `payload`; строки `xPoeDebugRow` кладутся в таблицу как есть |
-| `formatXPoeDebugValue(hex)` - HTML                                                         | `formatXPoeDebugValue(payload, bytes)` - текст                                                                    |
-| `formatXPoeDebugPretty(hex)`                                                               | `formatXPoeDebugPretty(payload, html?)`                                                                           |
-| `formatXPoeDebugValueForTable`, `formatXPoeDebugModal`, `bindXPoeDebugCopyButtons`         | удалены: окно строки - сниппет в `xPoeDebugTableColumns`                                                          |
-| `debugPlotValues(row.value)` - HEX                                                         | `debugPlotValues(row.payload)`                                                                                    |
-
-Строку отправленной команды (DevCloud `webserial.ts`) разбирают тем же парсером: `createXPoeDebugParser().push(frame).map(xPoeDebugRow)`.
-
-</details>
-
-<details>
-<summary>📈 Graph</summary>
-
-| Было                                                               | Стало                                                                                                   |
-| ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------- |
-| AUTO: опрос `streamingData` каждые 10 мс, точка при смене значений | точка на каждый новый массив `streamingData.data` или вызов `push(sample, time?)` через `bind:this`     |
-| `streamingData` строкой JSON                                       | только объект `{ data }`                                                                                |
-| цвета линий `#3b82f6`...                                           | метки темы `--blue-mark`, `--red-mark`, `--green-mark`, `--orange-mark`, `--purple-mark`, `--cyan-mark` |
-
-Значения, изменённые на месте в том же массиве, точек не дают: присваивайте новый массив или вызывайте `push`.
-
-</details>
-
-<details>
-<summary>🗺️ WidgetMap и имитация</summary>
-
-- MapLibre по умолчанию с CDN. Для точки доступа без интернета - `configureMapLibre({ module, css, styles })` до первой отрисовки карты; `module` - адрес ES-модуля или функция, отдающая модуль.
-- Имитация (`isTest`) у `WidgetMap`, `WidgetPFD` и `Graph` грузится отдельным модулем только при включении (у Vite - отдельные файлы рядом с бандлом). Сборка прошивки, которая кладёт во flash весь каталог, может их исключить.
-- Ключи `constructor.props.map.fitAll`, `fitAllHint`, `timeout`, `loading`, `noconnection` и `constructor.props.table.fulldata` переименованы в `widget.map.*` и `common.table.fulldata`.
-
-</details>
-
-<details>
-<summary>🧹 Прочее</summary>
-
-- Компоненты не выводят случайные DOM id вида `${id}-xxxxxx`. Проп `id` примитива - переменная устройства, в разметку он не попадает (кроме `Button`, где это атрибут `id`).
-- Новые экспорты: `Icon`, `accentStyle`, `ACCENT_COLORS`, `AccentColor`, `copyText`, `SelectValue`, `IconSource`, `configureMapLibre`.
-- Ключи переводов `ui.info.show`, `ui.info.hide`, `library.for_constructor` удалены; добавлены `ui.joystick.*`, `widget.rgb.hue`, `widget.rgb.brightness`.
 
 </details>
 
@@ -692,7 +527,7 @@ npm pack               # сборка пакета в dist/: проверка т
 <summary>🔐 Публикация и обновление облака</summary>
 
 - Публикация идёт через trusted publisher npm, постоянный токен не нужен. Связь настроена на npmjs.com в настройках пакета: GitHub Actions, репозиторий `Oleg-Perevyshin/ElementsUI`, workflow `npm_publish.yaml`.
-- После публикации workflow ставит новую версию в DevCloud, проверяет типы и, если всё прошло, поднимает вторую цифру версии облака и пушит туда коммит вида `1.6 [deploy] Обновление ElementsUI до 1.84.0`.
+- После публикации workflow ставит новую версию в DevCloud, проверяет типы и, если всё прошло, поднимает вторую цифру версии облака и пушит туда коммит вида `X.Y [deploy] Обновление ElementsUI до X.Y.Z`.
 - Если проверка упала, облако остаётся на старой версии, причину ищите в логе job `update-devcloud`.
 
 </details>

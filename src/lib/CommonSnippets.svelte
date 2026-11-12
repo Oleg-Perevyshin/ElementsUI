@@ -151,9 +151,9 @@
     onUpdate={(value) =>
       onPropertyChange({
         properties: { id: value },
-        /* Подпись переменной из облака «<id> - <имя>»: имя - всё после первого разделителя; принимается и длинное тире U+2014 старых подписей */
+        /* Подпись переменной из облака «<id> - <имя>»: имя - всё после первого разделителя */
         name: VARIABLE_OPTIONS.find((option) => option.value === value)
-          ?.name.match(/\s[—-]\s(.*)/)?.[1]
+          ?.name.match(/\s-\s(.*)/)?.[1]
           ?.trim(),
         eventHandler: { Variables: [value] },
       })}

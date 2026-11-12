@@ -174,6 +174,13 @@
 { type: "text", data: { key: "status", render: (row) => (row.online ? "🟢 в сети" : "⚪ нет связи"), modal: detailsSnippet } }
 ```
 
+Колонки в `.ts` без разметки делают окно через `createRawSnippet` из `svelte`:
+
+```ts
+const canModal = createRawSnippet((row: () => CanRow) => ({ render: () => `<div class="whitespace-pre-wrap">${formatCanDataModal(row().data)}</div>` }))
+{ type: "text", data: { key: "data", truncated: true, copy: true, modal: canModal } }
+```
+
 Готовые колонки отладочной таблицы xPOE лежат в `xPoeDebugColumns.ts` (`xPoeDebugTableColumns`), их используют облако и терминал. Строки - `xPoeDebugRow` ядра протоколов: `value` - Payload кратко, `payload` - декодированный один раз при разборе, `valueBytes` - исходные байты. Окно строки (`XPoeDebugModal.svelte`) показывает Payload развёрнуто в цветах темы и HEX, у каждого раздела своя кнопка копирования.
 
 </details>

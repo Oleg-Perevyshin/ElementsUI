@@ -8,7 +8,6 @@
   import Modal from "./Modal.svelte"
   import type { UIComponent } from "./types"
   import type { PropertyChange } from "./propsEditor"
-  import { COMPONENT_DEFAULTS } from "./defaults"
 
   let {
     component,
@@ -41,14 +40,7 @@
 
   const open = () => {
     const skip = NOT_TEXTS[component.type] ?? []
-    /* Подпись label и пояснение help.info есть в окне и у компонентов, созданных до их появления: недостающее берётся из умолчаний типа */
-    const defaults = (COMPONENT_DEFAULTS as Record<string, { help?: object; label?: object }>)[component.type] ?? {}
-    const properties = component.properties as { help?: object; label?: object }
-    rows = collectTexts({
-      ...properties,
-      ...(defaults.label && !properties.label && { label: defaults.label }),
-      ...(defaults.help && { help: { ...defaults.help, ...properties.help } }),
-    })
+    rows = collectTexts(component.properties)
       .filter(({ path }) => !skip.includes(String(path[0])))
       .map(({ path, text }) => ({ path, values: typeof text === "string" ? { [DEFAULT_LANGUAGE]: text } : { ...text } }))
     isOpen = true
