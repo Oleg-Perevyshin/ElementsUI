@@ -98,8 +98,8 @@
     {/if}
 
     {#if content.name?.trim()}
-      <!-- Длинная подпись на узкой кнопке - в две строки, а не обрезка -->
-      <span class="line-clamp-2 text-center leading-[1.05]">{content.name}</span>
+      <!-- Длинная подпись на узкой кнопке - в две строки, а не обрезка; строка обрезана по высоте заглавных (текст точно по центру), запас py/-my - чтобы overflow line-clamp не срезал выносные элементы букв -->
+      <span class="line-clamp-2 text-center leading-[1.05] [text-box:trim-both_cap_alphabetic] -my-[0.3em] py-[0.3em]">{content.name}</span>
       {#if keyBind.key && keyBind.showHint}
         <span class="ml-1 text-[11px] font-medium tabular-nums opacity-80">
           {keyBind.ctrlKey ? "Ctrl+" : ""}{keyBind.shiftKey ? "Shift+" : ""}{keyBind.altKey ? "Alt+" : ""}{keyBind.key}
