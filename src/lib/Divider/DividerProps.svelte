@@ -32,10 +32,17 @@
   </PropsGroup>
   <PropsGroup label={$T("constructor.props.group.layout")}>
     <UI.Select
+      label={{ name: $T("constructor.props.orientation") }}
+      type="buttons"
+      value={component.properties.orientation ?? "horizontal"}
+      options={$optionsStore.ORIENTATION_OPTIONS}
+      onUpdate={(orientation) => edit.set("orientation", orientation)}
+    />
+    <UI.Select
       label={{ name: $T("constructor.props.divider.anchor") }}
       type="buttons"
       value={component.properties.anchor}
-      options={$optionsStore.DIVIDER_ANCHOR_OPTIONS}
+      options={component.properties.orientation === "vertical" ? $optionsStore.DIVIDER_ANCHOR_VERTICAL_OPTIONS : $optionsStore.DIVIDER_ANCHOR_OPTIONS}
       onUpdate={(anchor) => edit.set("anchor", anchor)}
     />
     <UI.Input

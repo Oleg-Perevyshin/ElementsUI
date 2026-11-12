@@ -85,8 +85,16 @@ export interface IAccordionProps {
   id?: string
   isOpen?: boolean
   wrapperClass?: string
+  /* Классы рамки блока (тень, свой радиус) */
+  componentClass?: string
   /* Цвет роли: иконка и текст заголовка - его цвет, фон заголовка - мягкий оттенок; без него - акцент темы */
   accent?: AccentColor
+  /* Цветная полоса 6px слева цветом метки accent (--<цвет>-mark), радиус рамки 15 */
+  stripe?: boolean
+  /* false - без рамки и скругления (блок внутри своей карточки); по умолчанию true */
+  outline?: boolean
+  /* Раскрытый блок занимает всю высоту родителя (родитель - flex-колонка), содержимое - одна строка сетки на всю высоту; свёрнутый не растягивается */
+  fill?: boolean
   size?: {
     height?: number
     width?: number
@@ -114,11 +122,17 @@ export interface IButtonProps {
   variant?: "primary" | "secondary" | "plain"
   accent?: AccentColor
   disabled?: boolean
+  /* Кнопка-переключатель: true - нажата (вид выбранного варианта, aria-pressed="true"), false - отжата; без пропа - обычная кнопка */
+  pressed?: boolean
+  /* Идёт действие: крутилка вместо значка (или перед подписью), кнопка не нажимается */
+  loading?: boolean
   content?: {
     name?: string
     info?: { text: string; side: "top" | "bottom" | "left" | "right" }
     icon?: IconSource | null
   }
+  /* Кнопка открывает всплывающую панель (Dropdown, своё меню): aria-haspopup, aria-expanded и aria-controls на самой кнопке */
+  aria?: { haspopup?: "menu" | "dialog" | "listbox" | true; expanded?: boolean; controls?: string }
   keyBind?: {
     showHint?: boolean
     key?: string
@@ -128,6 +142,57 @@ export interface IButtonProps {
     metaKey?: boolean /* Поддержка Meta (Cmd на Mac) */
   }
   onClick?: () => void
+}
+
+/* ********************************************************** */
+/* Интерфейс выпадающего меню */
+export interface IDropdownItem {
+  /* Ключ пункта; без него - номер */
+  id?: string
+  name?: string
+  icon?: IconSource | null
+  /* Цвет пункта: значок и текст цветом роли, например red для «Удалить» */
+  accent?: AccentColor
+  disabled?: boolean
+  /* Разделитель вместо пункта: тонкая линия между группами */
+  divider?: boolean
+  onClick?: () => void
+}
+
+/* Атрибуты кнопки-триггера для сниппета trigger: разверните их на своей кнопке - <button {...props}> */
+export interface IDropdownTriggerProps {
+  id: string
+  "aria-haspopup": "menu" | "dialog"
+  "aria-expanded": boolean
+  "aria-controls": string
+  disabled: boolean
+  onclick: (event: MouseEvent) => void
+  onkeydown: (event: KeyboardEvent) => void
+}
+
+export interface IDropdownProps {
+  wrapperClass?: string
+  /* Классы панели */
+  componentClass?: string
+  /* Открыта ли панель, можно связать через bind:isOpen */
+  isOpen?: boolean
+  disabled?: boolean
+  /* Кнопка-триггер, если нет сниппета trigger: те же пропсы, что у Button (без onClick) */
+  button?: Omit<IButtonProps, "onClick" | "disabled" | "aria" | "pressed" | "loading">
+  /* Свой триггер: кнопка с атрибутами props (клик, клавиатура, aria) */
+  trigger?: Snippet<[props: IDropdownTriggerProps, isOpen: boolean]>
+  /* Пункты меню; без них панель рисует children */
+  items?: IDropdownItem[]
+  /* Произвольное содержимое панели (форма, список); close - закрыть панель */
+  children?: Snippet<[close: () => void]>
+  /* Край панели: start - по левому краю триггера, end - по правому */
+  align?: "start" | "end"
+  /* Наибольшая высота панели, дальше прокрутка */
+  maxHeight?: string
+  /* Выбран пункт (после его собственного onClick) */
+  onSelect?: (item: IDropdownItem, index: number) => void
+  /* Панель открылась или закрылась */
+  onOpenChange?: (isOpen: boolean) => void
 }
 
 /* ********************************************************** */
@@ -146,6 +211,8 @@ export interface IDividerProps {
   id?: string
   wrapperClass?: string
   type?: "line" | "empty"
+  /* vertical - линия сверху вниз на всю высоту места (между колонками), anchor - слева, по центру или справа */
+  orientation?: "horizontal" | "vertical"
   width?: number
   /* Без цвета - волосяная линия темы */
   accent?: AccentColor
@@ -154,21 +221,27 @@ export interface IDividerProps {
 
 /* ********************************************************** */
 /* Интерфейс прикрепления файлов */
-export interface IFileAttachProps {
+/* Значение FileAttach: при multiple - список выбранных файлов, иначе один файл или null (выбор отменён) */
+export type FileAttachValue<M extends boolean = false> = M extends true ? File[] : File | null
+
+export interface IFileAttachProps<M extends boolean = false> {
   id?: string
   wrapperClass?: string
   componentClass?: string
   label?: { name?: string; class?: string }
   type?: "file" | "image" | "button"
   accept?: string
-  /* Только для type "button": подсказка при наведении и своя иконка (по умолчанию - документ со стрелкой вверх) */
+  /* Выбор нескольких файлов сразу: onUpdate получает массив */
+  multiple?: M
+  /* Только для type "button": подсказка при наведении, своя иконка (по умолчанию - документ со стрелкой вверх) и подпись рядом со значком */
   info?: { text: string; side: "top" | "bottom" | "left" | "right" }
   icon?: IconSource | null
+  caption?: string
   imageSize?: { height?: string; width?: string; fitMode?: "cover" | "contain"; form?: "square" | "circle" }
   disabled?: boolean
   currentImage?: string | null
-  /* Выбранный файл; null - выбор отменён */
-  onUpdate?: (file: File | null, event: Event) => void
+  /* Выбранный файл (или список при multiple); null или пустой список - выбор отменён */
+  onUpdate?: (value: FileAttachValue<M>, event: Event) => void
 }
 
 /* ********************************************************** */
@@ -193,7 +266,7 @@ export interface IGraphProps {
   id?: string
   wrapperClass?: string
   label?: { name?: string; class?: string }
-  /* info - значок ⓘ после подписи, при наведении всплывает пояснение; без подписи не показывается */
+  /* info - значок ⓘ после подписи, при наведении всплывает пояснение; без подписи значок стоит на её месте */
   help?: { info?: string }
   streamingData?: { data: IGraphDataObject[] | null }
   isTest?: boolean
@@ -217,7 +290,7 @@ export interface IPeriodChartProps {
   wrapperClass?: string
   accent?: AccentColor
   label?: { name?: string; class?: string }
-  /* info - значок ⓘ после подписи, при наведении всплывает пояснение; без подписи не показывается */
+  /* info - значок ⓘ после подписи, при наведении всплывает пояснение; без подписи значок стоит на её месте */
   help?: { info?: string }
   levels?: IPeriodChartLevel[] /* Порядок = порядок вкладок переключателя, всегда открывается на первом (индекс 0) */
   unit?: string /* Единицы для тултипа/подписи, напр. "Вт·ч" */
@@ -267,6 +340,14 @@ export interface IInputProps {
       | "tel"
       | null
   }
+  /* Ошибка от приложения (например, ответ сервера): красная рамка и этот текст под полем; пустая строка - ошибки нет */
+  error?: string
+  /* Фокус в поле сразу после появления */
+  autofocus?: boolean
+  /* Только text-area: подпись и поле заполняют высоту родителя (родитель - flex-колонка или блок с высотой) */
+  fill?: boolean
+  /* Элемент поля (input или textarea), можно связать через bind:ref */
+  ref?: HTMLInputElement | HTMLTextAreaElement | null
   /* Принятое значение: Enter, уход из поля, кнопки счётчика; неверный ввод не уходит */
   onUpdate?: (value: string | number) => void
   /* Текст при каждом вводе */
@@ -281,7 +362,7 @@ export interface IJoystickProps {
   /* По умолчанию blue */
   accent?: AccentColor
   label?: { name?: string; class?: string }
-  /* info - значок ⓘ после подписи, при наведении всплывает пояснение; без подписи не показывается */
+  /* info - значок ⓘ после подписи, при наведении всплывает пояснение; без подписи значок стоит на её месте */
   help?: { info?: string }
   value?: number[]
   readonly?: boolean
@@ -297,7 +378,7 @@ export interface IProgressBarProps {
   accent?: AccentColor
   /* Подпись над всеми полосами; пустая не выводится */
   label?: { name?: string; class?: string }
-  /* info - значок ⓘ после подписи, при наведении всплывает пояснение; без подписи не показывается */
+  /* info - значок ⓘ после подписи, при наведении всплывает пояснение; без подписи значок стоит на её месте */
   help?: { info?: string }
   /* accent полосы важнее общего */
   items?: { name?: string; accent?: AccentColor }[]
@@ -322,14 +403,16 @@ export interface ISelectProps<T = unknown, M extends boolean = false> {
   componentClass?: string
   disabled?: boolean
   label?: { name?: string; class?: string }
-  /* info - значок ⓘ после подписи, при наведении всплывает пояснение; без подписи не показывается */
+  /* info - значок ⓘ после подписи, при наведении всплывает пояснение; без подписи значок стоит на её месте */
   help?: { info?: string }
-  /* input - поле с подсказками: значение - выбранный вариант или введённый текст (число, если варианты числовые) */
-  type?: "select" | "buttons" | "input"
+  /* input - поле с подсказками: значение - выбранный вариант или введённый текст (число, если варианты числовые); radio - радиокнопки в строку, выбор одного варианта */
+  type?: "select" | "buttons" | "input" | "radio"
   /* Только для type="buttons" */
   multiSelect?: M
   /* Для type="buttons": группа по ширине содержимого - все кнопки одинаковой ширины по самой длинной подписи, текст без переноса и обрезки */
   fitContent?: boolean
+  /* Для type="buttons": у вариантов со значком подпись рядом со значком, а не в подсказке */
+  showNames?: boolean
   listHeight?: string
   /* Значение варианта (option.value), не сам вариант */
   value?: SelectValue<T, M> | null
@@ -350,8 +433,8 @@ export interface IOption<T = unknown> {
   disabled?: boolean
   /* Цвет варианта: в type="buttons" вариант залит им всегда, у Switch - цвет бита */
   accent?: AccentColor
-  /* Иконка варианта: SVG-разметка или короткая метка ("S", "XL"). В type="buttons" показывается вместо name, name - подсказка и aria-label */
-  icon?: string
+  /* Значок варианта: SVG-разметка, компонент или короткая метка ("S", "XL"). В type="buttons" показывается вместо name (name - подсказка и aria-label), с showNames - рядом с name; в списке и у выбранного значения - перед name */
+  icon?: IconSource
 }
 
 /* ********************************************************** */
@@ -361,7 +444,7 @@ export interface ISliderProps {
   wrapperClass?: string
   accent?: AccentColor
   label?: { name?: string; class?: string }
-  /* info - значок ⓘ после подписи, при наведении всплывает пояснение; без подписи не показывается */
+  /* info - значок ⓘ после подписи, при наведении всплывает пояснение; без подписи значок стоит на её месте */
   help?: { info?: string }
   value?: number | [number, number]
   type?: "single" | "range"
@@ -386,7 +469,7 @@ export interface ISwitchProps {
     captionLeft?: string
     captionRight?: string
   }
-  /* info - значок ⓘ после подписи, при наведении всплывает пояснение; без подписи не показывается */
+  /* info - значок ⓘ после подписи, при наведении всплывает пояснение; без подписи значок стоит на её месте */
   help?: { info?: string }
   hiddenInfo?: string
   accent?: AccentColor
@@ -475,7 +558,7 @@ export interface ITableProps<T extends object> {
   /* Цвет шапки, кнопок без своего цвета и фокуса */
   accent?: AccentColor
   label?: { name?: string; class?: string }
-  /* info - значок ⓘ после подписи, при наведении всплывает пояснение; без подписи не показывается */
+  /* info - значок ⓘ после подписи, при наведении всплывает пояснение; без подписи значок стоит на её месте */
   help?: { info?: string }
   header?: ITableHeader<T>[]
   /* Строки обычной таблицы; журнал (dataBuffer.stashData) строки получает методом push() через bind:this */
@@ -498,6 +581,8 @@ export interface ITabsProps {
   id?: string
   wrapperClass?: string
   accent?: AccentColor
+  /* vertical - вкладки столбцом слева от содержимого; на месте уже 448 px - строкой сверху */
+  orientation?: "horizontal" | "vertical"
   size?: {
     height?: number
     width?: number
@@ -542,7 +627,7 @@ export interface IVideoViewerProps {
   id?: string
   wrapperClass?: string
   label?: { name?: string; class?: string }
-  /* info - значок ⓘ после подписи, при наведении всплывает пояснение; без подписи не показывается */
+  /* info - значок ⓘ после подписи, при наведении всплывает пояснение; без подписи значок стоит на её месте */
   help?: { info?: string }
   showSelect?: boolean
   /* "camera" - локальный getUserMedia (по умолчанию); "remote" - компонент только отображает кадры из пропа frame */

@@ -43,6 +43,9 @@
     if (!bits[0]?.disabled) set(next)
   }
 
+  /* Пояснение без заголовка: после правой подписи тумблера, а если её нет - значком на месте заголовка */
+  const infoAfterCaption = $derived(!label.name && !!help?.info && type === "horizontal" && !bitMode && !!label.captionRight)
+
   const maxCaptionWidth = $derived(
     Math.max(label.captionLeft?.length ?? 0, label.captionRight?.length ?? 0) > 0
       ? `${Math.max(label.captionLeft?.length ?? 0, label.captionRight?.length ?? 0)}ch`
@@ -52,7 +55,7 @@
 
 {#if type !== "checkbox"}
   <div class={twMerge(`relative flex w-full flex-col items-center justify-center gap-1.5`, wrapperClass)} style={accentStyle(accent)}>
-    {#if label.name}
+    {#if label.name || (help?.info && !infoAfterCaption)}
       <!-- Подпись по умолчанию по центру - над переключателем, который тоже по центру; выравнивание из label.class важнее -->
       <h5 class={twMerge(`flex w-full items-center justify-center gap-1 text-center text-[12px] font-semibold text-(--muted-color)`, label.class)}>
         {label.name}{#if help?.info}<InfoHint text={help.info} />{/if}
@@ -118,6 +121,7 @@
                 style="width: {maxCaptionWidth}; text-align: start;"
                 onclick={() => handleCaptionClick(1)}>{label.captionRight}</button
               >
+              {#if infoAfterCaption && help?.info}<span class="ml-1 flex"><InfoHint text={help.info} /></span>{/if}
             {/if}
           </div>
         </div>
@@ -156,7 +160,7 @@
       <label for={uid} class={twMerge(`text-[13px] select-none ${bits[0].disabled ? "text-(--faint-color)" : "cursor-pointer"}`, label.class)}>
         {label.name}
       </label>
-      {#if help?.info}<InfoHint text={help.info} />{/if}
     {/if}
+    {#if help?.info}<InfoHint text={help.info} />{/if}
   </div>
 {/if}

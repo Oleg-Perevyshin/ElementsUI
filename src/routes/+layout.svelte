@@ -33,6 +33,7 @@
     { page: "button", name: "Button" },
     { page: "carousel", name: "Carousel" },
     { page: "divider", name: "Divider" },
+    { page: "dropdown", name: "Dropdown" },
     { page: "file-attach", name: "FileAttach" },
     { page: "graph", name: "Graph" },
     { page: "input", name: "Input" },

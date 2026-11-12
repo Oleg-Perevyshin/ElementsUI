@@ -1,6 +1,5 @@
-<!-- $lib/Select/Select.svelte - радиус 10, высота 32, список - единственный элемент с тенью и вынесен в body; группа type="buttons" без разрывов. Значение - option.value, клавиатура: стрелки, Enter, Escape -->
+<!-- $lib/Select/Select.svelte - радиус 10, высота 32, список - единственный элемент с тенью и вынесен в body; группа type="buttons" без разрывов, type="radio" - радиокнопки в строку. Значение - option.value, клавиатура: стрелки, Enter, Escape -->
 <script lang="ts" generics="T = unknown, M extends boolean = false">
-  import { sanitizeHtml } from "../html"
   import { slide } from "svelte/transition"
   import type { IOption, ISelectProps, SelectValue } from "../types"
   import { twMerge } from "tailwind-merge"
@@ -8,6 +7,8 @@
   import { T as Tr } from "../locales/i18n"
   import Tooltip from "../Tooltip.svelte"
   import FieldLabel from "../FieldLabel.svelte"
+  import Icon from "../Icon.svelte"
+  import { nextEnabled } from "../popup"
 
   let {
     wrapperClass = "",
@@ -17,6 +18,7 @@
     help,
     multiSelect,
     fitContent = false,
+    showNames = false,
     listHeight = "16rem",
     type = "select",
     value = $bindable(),
@@ -160,12 +162,9 @@
     commit((numeric ? Number(text) : text) as SelectValue<T, M>)
   }
 
-  const moveActive = (step: number) => {
-    const count = visibleOptions.length
-    for (let n = 0, i = activeIndex; n < count; n++) {
-      i = (i + step + count) % count
-      if (!visibleOptions[i].disabled) return (activeIndex = i)
-    }
+  const moveActive = (step: 1 | -1) => {
+    const next = nextEnabled(visibleOptions.length, activeIndex, step, (index) => !!visibleOptions[index].disabled)
+    if (next >= 0) activeIndex = next
   }
 
   const onKeydown = (event: KeyboardEvent) => {
@@ -191,6 +190,26 @@
     }
   }
 
+  /* Значок варианта: SVG, компонент или короткая метка ("S", "XL") */
+  const OPTION_ICON = "flex h-[18px] min-w-[18px] shrink-0 items-center justify-center leading-none [&_svg]:h-full [&_svg]:w-full"
+
+  /* type="radio": фокус стоит на выбранном варианте (или первом доступном), стрелки выбирают соседний доступный */
+  let radioElements: HTMLButtonElement[] = $state([])
+  const radioFocusIndex = $derived.by(() => {
+    const selected = options.findIndex((option) => isSelected(option) && !option.disabled)
+    return selected >= 0 ? selected : options.findIndex((option) => !option.disabled)
+  })
+  const onRadioKeydown = (event: KeyboardEvent) => {
+    if (disabled) return
+    const step = event.key === "ArrowRight" || event.key === "ArrowDown" ? 1 : event.key === "ArrowLeft" || event.key === "ArrowUp" ? -1 : 0
+    if (step === 0) return
+    event.preventDefault()
+    const index = nextEnabled(options.length, radioFocusIndex, step, (i) => !!options[i].disabled)
+    if (index < 0) return
+    pick(options[index])
+    radioElements[index]?.focus()
+  }
+
   /* Общая база поля - та же, что у Input */
   const fieldBase = `h-8 w-full rounded-[10px] border border-(--border-color) bg-(--field-color) px-3 text-left text-[14px]
     transition-[border-color,box-shadow] duration-150 outline-none
@@ -202,13 +221,15 @@
 
 <div class={twMerge(`flex w-full flex-col gap-1`, wrapperClass)}>
   <div class="relative flex w-full flex-col gap-1" bind:this={anchorElement} bind:clientWidth={anchorWidth}>
-    <FieldLabel {label} info={help?.info} for={shownType === "buttons" ? undefined : uid} id={`${uid}-label`} />
+    <FieldLabel {label} info={help?.info} for={shownType === "buttons" || shownType === "radio" ? undefined : uid} id={`${uid}-label`} />
 
     {#if type === "buttons" && !fitContent}
       <!-- Невидимые подписи вариантов: по их ширине решается, помещается ли группа кнопок -->
       <div bind:this={measureElement} class="pointer-events-none invisible absolute top-0 left-0 flex h-0 w-max overflow-hidden" aria-hidden="true">
         {#each options as option, index (option.id ?? index)}
-          <span class="text-[13px] font-semibold whitespace-nowrap {option.icon ? 'w-[18px]' : ''}">{option.icon ? "" : option.name}</span>
+          <span class="flex gap-1.5 text-[13px] font-semibold whitespace-nowrap"
+            >{#if option.icon}<span class="w-[18px]"></span>{/if}{option.icon && !showNames ? "" : option.name}</span
+          >
         {/each}
       </div>
     {/if}
@@ -226,7 +247,10 @@
         aria-activedescendant={isOpen && activeIndex >= 0 ? optionId(activeIndex) : undefined}
         {disabled}
       >
-        <span class="min-w-0 flex-1 truncate {valueText ? '' : 'text-(--faint-color)'} {componentClass}">{valueText || $Tr("common.select_tag")}</span>
+        <span class="flex min-w-0 flex-1 items-center gap-2 {valueText ? '' : 'text-(--faint-color)'} {componentClass}">
+          <Icon icon={current?.icon} class={OPTION_ICON} />
+          <span class="min-w-0 truncate">{valueText || $Tr("common.select_tag")}</span>
+        </span>
         <svg
           class="size-3.5 shrink-0 text-(--faint-color) transition-transform duration-150"
           style="transform: rotate({isOpen ? 180 : 0}deg)"
@@ -263,6 +287,43 @@
           close()
         }}
       />
+    {:else if shownType === "radio"}
+      <!-- Радиокнопки в строку (переносятся, если не помещаются): одна точка табуляции на группу, стрелки выбирают соседний вариант -->
+      <div
+        class="flex w-full flex-wrap items-center gap-x-4 gap-y-1.5 {componentClass}"
+        role="radiogroup"
+        aria-labelledby={label?.name ? `${uid}-label` : undefined}
+        aria-disabled={disabled || undefined}
+      >
+        {#each options as option, index (option.id ?? index)}
+          {@const selected = isSelected(option)}
+          {@const off = disabled || option.disabled}
+          <button
+            bind:this={radioElements[index]}
+            type="button"
+            class="flex min-h-6 items-center gap-2 border-none bg-transparent p-0 text-left text-[14px] {off
+              ? 'cursor-not-allowed text-(--faint-color)'
+              : 'cursor-pointer text-(--font-color)'} focus-visible:rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent-text)"
+            style={accentStyle(option.accent)}
+            role="radio"
+            aria-checked={selected}
+            aria-disabled={off || undefined}
+            tabindex={index === radioFocusIndex ? 0 : -1}
+            onclick={() => pick(option)}
+            onkeydown={onRadioKeydown}
+          >
+            <span
+              class="flex size-[18px] shrink-0 items-center justify-center rounded-full border transition-colors duration-150 {selected
+                ? 'border-(--accent-color)'
+                : 'border-(--border-color) bg-(--field-color)'} {off ? 'opacity-45' : ''}"
+            >
+              {#if selected}<span class="size-2.5 rounded-full bg-(--accent-color)"></span>{/if}
+            </span>
+            <Icon icon={option.icon} class={OPTION_ICON} />
+            {#if option.name}<span class="min-w-0">{option.name}</span>{/if}
+          </button>
+        {/each}
+      </div>
     {:else}
       <!-- Сплошная группа: общий контур, разделители внутри, без зазоров и теней -->
       <div
@@ -291,19 +352,19 @@
               onclick={() => pick(option)}
               disabled={option.disabled || disabled}
               aria-pressed={selected}
-              aria-label={option.icon ? option.name : undefined}
-              onmouseenter={() => (hoveredIndex = option.icon && option.name ? index : -1)}
+              aria-label={option.icon && !showNames ? option.name : undefined}
+              onmouseenter={() => (hoveredIndex = option.icon && option.name && !showNames ? index : -1)}
               onmouseleave={() => (hoveredIndex = -1)}
             >
-              {#if option.icon}
-                <span class="flex h-[18px] min-w-[18px] items-center justify-center leading-none [&_svg]:h-full [&_svg]:w-full"
-                  >{@html sanitizeHtml(option.icon)}</span
-                >
-              {:else if option.name}
-                <span class="block truncate">{option.name}</span>
-              {/if}
+              <!-- Значок вместо подписи (подпись - в подсказке), с showNames - значок и подпись рядом -->
+              <span class="flex min-w-0 items-center justify-center gap-1.5">
+                <Icon icon={option.icon} class={OPTION_ICON} />
+                {#if option.name && (!option.icon || showNames)}
+                  <span class="block truncate">{option.name}</span>
+                {/if}
+              </span>
             </button>
-            {#if option.icon && option.name}
+            {#if option.icon && option.name && !showNames}
               <Tooltip show={hoveredIndex === index} text={option.name} side="top" />
             {/if}
           </div>
@@ -311,7 +372,7 @@
       </div>
     {/if}
 
-    {#if isOpen && shownType !== "buttons"}
+    {#if isOpen && (shownType === "select" || shownType === "input")}
       <div
         use:portal
         bind:this={portalElement}
@@ -347,6 +408,7 @@
               onkeydown={onKeydown}
               onmouseenter={() => (activeIndex = index)}
             >
+              <Icon icon={option.icon} class="mr-2 {OPTION_ICON}" />
               <span class="min-w-0 truncate">{option.name ?? String(option.value)}</span>
             </div>
           {/each}

@@ -1,4 +1,4 @@
-<!-- $lib/Input/Input.svelte - радиус 10, высота 32 (h-8), кольцо фокуса. onInput - каждый ввод, onUpdate - принятое значение (Enter, уход из поля, счётчик) -->
+<!-- $lib/Input/Input.svelte - радиус 10, высота 32 (h-8), кольцо фокуса. onInput - каждый ввод, onUpdate - принятое значение (Enter, уход из поля, счётчик). error - ошибка от приложения, fill - text-area с подписью на всю высоту родителя, focus() - фокус извне через bind:this -->
 <script lang="ts">
   import { roundToClean } from "../number"
   import { T } from "../locales/i18n"
@@ -26,6 +26,10 @@
     textareaRows = 3,
     number = { minNum: -1000000, maxNum: 1000000, step: 1 },
     help = { info: "", autocomplete: "off", copyButton: false },
+    error = "",
+    autofocus = false,
+    fill = false,
+    ref = $bindable(null),
     onUpdate,
     onInput,
   }: IInputProps = $props()
@@ -46,6 +50,17 @@
     return match ? new RegExp(match[1], stable(match[2])) : new RegExp(source)
   })
   const isValid = $derived(!pattern || isNumeric || pattern.test(String(value ?? "")))
+  /* Ошибка приложения важнее ошибки формата */
+  const errorText = $derived(error || (isValid ? "" : $T("ui.invalid_format")))
+  const errorId = `${uid}-error`
+
+  /* Фокус извне: bind:this={input}, затем input.focus() */
+  export const focus = () => ref?.focus()
+
+  /* autofocus атрибутом браузер ставит только при загрузке страницы, поэтому фокус - после монтирования */
+  $effect(() => {
+    if (autofocus) ref?.focus()
+  })
 
   /* Число зажимается в пределы и округляется; не число - null */
   const toNumber = (raw: unknown): number | null => {
@@ -81,7 +96,7 @@
      placeholder:text-(--faint-color)
      [&::-webkit-inner-spin-button]:hidden [&::-webkit-outer-spin-button]:hidden
      ${accent && !disabled && !readonly ? "bg-[color-mix(in_srgb,var(--accent-color)_7%,var(--field-color))]" : ""}
-     ${isValid ? `${accent ? "border-[color-mix(in_srgb,var(--accent-color)_55%,var(--border-color))]" : "border-(--border-color)"} focus:border-(--accent-text) focus:shadow-(--focus-shadow-color)` : "border-(--red-text) focus:border-(--red-text) focus:shadow-[0_0_0_3px_color-mix(in_srgb,var(--red-color),transparent_80%)]"}
+     ${!errorText ? `${accent ? "border-[color-mix(in_srgb,var(--accent-color)_55%,var(--border-color))]" : "border-(--border-color)"} focus:border-(--accent-text) focus:shadow-(--focus-shadow-color)` : "border-(--red-text) focus:border-(--red-text) focus:shadow-[0_0_0_3px_color-mix(in_srgb,var(--red-color),transparent_80%)]"}
      ${disabled ? "cursor-not-allowed border-(--hairline-color) bg-(--container-color) text-(--faint-color)" : ""}
      ${readonly && !disabled ? "bg-(--container-color) text-(--muted-color)" : ""}
      ${help.info ? "pl-9" : ""}`,
@@ -90,26 +105,33 @@
   const iconButton = `flex size-7 cursor-pointer items-center justify-center rounded-lg border-none bg-transparent text-(--faint-color) transition-colors duration-150 hover:text-(--font-color)`
 </script>
 
-<div class={twMerge(`relative flex w-full flex-col gap-1 ${type === "text-area" ? "h-full" : ""}`, wrapperClass)} style={accentStyle(accent)}>
-  <FieldLabel {label} for={uid} />
+<!-- fill: подпись, поле и ошибка - колонка на всю высоту родителя, поле занимает всё, что осталось -->
+<div
+  class={twMerge(`relative flex w-full flex-col gap-1 ${type === "text-area" ? "h-full" : ""} ${fill ? "min-h-0 flex-1" : ""}`, wrapperClass)}
+  style={accentStyle(accent)}
+>
+  <FieldLabel {label} for={uid} class={fill ? "shrink-0" : ""} />
 
-  <div class="relative flex w-full items-center {type === 'text-area' ? 'h-full' : ''}">
+  <div class="relative flex w-full items-center {fill ? 'min-h-0 flex-1' : type === 'text-area' ? 'h-full' : ''}">
     {#if type === "text-area"}
       <textarea
         id={uid}
+        bind:this={ref}
         bind:value
-        class={twMerge(fieldBase, `h-full min-h-20 resize-y py-2 leading-[1.5] ${help.copyButton ? "pr-9" : ""}`, componentClass)}
+        class={twMerge(fieldBase, `h-full min-h-20 py-2 leading-[1.5] ${fill ? "resize-none" : "resize-y"} ${help.copyButton ? "pr-9" : ""}`, componentClass)}
         {disabled}
         {maxlength}
         rows={textareaRows}
         {placeholder}
         {readonly}
-        aria-invalid={!isValid}
+        aria-invalid={!!errorText}
+        aria-describedby={errorText ? errorId : undefined}
         oninput={(event) => onInput?.(event.currentTarget.value)}
         onchange={(event) => commit(event.currentTarget.value)}></textarea>
     {:else}
       <input
         id={uid}
+        bind:this={ref}
         bind:value
         class={twMerge(fieldBase, `h-8 ${isNumeric || help.copyButton || type === "password" ? "pr-9" : ""}`, componentClass)}
         type={type === "number" ? "number" : type === "password" && !showPassword ? "password" : "text"}
@@ -121,7 +143,8 @@
         max={type === "number" ? number.maxNum : undefined}
         step={type === "number" ? number.step : undefined}
         autocomplete={help.autocomplete}
-        aria-invalid={!isValid}
+        aria-invalid={!!errorText}
+        aria-describedby={errorText ? errorId : undefined}
         oninput={(event) => onInput?.(event.currentTarget.value)}
         onchange={(event) => commit(event.currentTarget.value)}
         {onkeydown}
@@ -201,8 +224,8 @@
     {/if}
   </div>
 
-  {#if !isValid}
-    <!-- Текст ошибки в потоке под полем и только когда поле невалидно: место заранее не резервируется -->
-    <span class="block text-[12px] font-semibold text-(--red-text)">{$T("ui.invalid_format")}</span>
+  {#if errorText}
+    <!-- Текст ошибки в потоке под полем и только когда она есть: место заранее не резервируется -->
+    <span id={errorId} class="block shrink-0 text-[12px] font-semibold text-(--red-text)" role="alert">{errorText}</span>
   {/if}
 </div>

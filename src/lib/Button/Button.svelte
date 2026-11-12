@@ -1,10 +1,11 @@
-<!-- $lib/Button/Button.svelte - кнопка: вид variant, цвет accent, радиус 10px (иконка без подписи - круг), высота 32px, кольцо фокуса -->
+<!-- $lib/Button/Button.svelte - кнопка: вид variant, цвет accent, радиус 10px (иконка без подписи - круг), высота 32px, кольцо фокуса. pressed - кнопка-переключатель (вид выбранной кнопки, aria-pressed), loading - крутилка вместо значка, кнопка не нажимается -->
 <script lang="ts">
   import type { IButtonProps } from "../types"
   import { twMerge } from "tailwind-merge"
   import { accentStyle } from "../accent"
   import Tooltip from "../Tooltip.svelte"
   import Icon from "../Icon.svelte"
+  import Loader from "../Loader/Loader.svelte"
 
   let {
     id,
@@ -13,6 +14,9 @@
     variant = "plain",
     accent,
     disabled = false,
+    pressed,
+    loading = false,
+    aria,
     content = { name: "", info: { text: "", side: "top" }, icon: null },
     keyBind = { showHint: true },
     onClick,
@@ -20,10 +24,14 @@
 
   let showInfo = $state(false)
   const isIconOnly = $derived(!!content?.icon && !content.name?.trim())
+  /* Во время загрузки кнопка не нажимается, но вид не серый: видно, какое действие выполняется */
+  const blocked = $derived(disabled || loading)
 
-  /* primary - заливка цветом роли, secondary - поверхность с контуром, plain - текст цветом роли */
+  /* primary - заливка цветом роли, secondary - поверхность с контуром, plain - текст цветом роли; нажатая (pressed) - как выбранный вариант группы Select */
   const variantClass = $derived.by(() => {
     if (disabled) return "bg-(--gray-color) text-(--muted-color) border border-transparent cursor-not-allowed"
+    if (pressed)
+      return `bg-(--accent-color) text-(--on-accent) border border-transparent hover:brightness-90 dark:hover:brightness-115 ${variant === "primary" ? "ring-2 ring-(--font-color) ring-inset" : ""}`
     if (variant === "primary")
       return "bg-(--accent-color) text-(--on-accent) border border-transparent shadow-(--elevation-1) hover:brightness-90 dark:hover:brightness-115"
     if (variant === "secondary") return "bg-(--back-color) text-(--font-color) border border-(--border-color) hover:bg-(--container-color)"
@@ -31,13 +39,13 @@
   })
 
   const handleClick = (event: Event) => {
-    if (disabled || !onClick) return
+    if (blocked || !onClick) return
     event.stopPropagation()
     onClick()
   }
 
   const handleKeyDown = (event: KeyboardEvent) => {
-    if (disabled || !keyBind.key || !onClick) return
+    if (blocked || !keyBind.key || !onClick) return
     const isKeyMatch = event.key === keyBind.key
     const isCtrlMatch = keyBind.ctrlKey === undefined || event.ctrlKey === keyBind.ctrlKey
     const isShiftMatch = keyBind.shiftKey === undefined || event.shiftKey === keyBind.shiftKey
@@ -60,24 +68,34 @@
        transition-[background-color,filter,box-shadow] duration-150
        focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent-text)
        ${isIconOnly ? "aspect-square rounded-full p-0" : "h-8 rounded-[10px] px-4 py-2"}
-       ${disabled ? "" : "cursor-pointer active:scale-[0.97]"}`,
+       ${disabled ? "" : loading ? "cursor-progress" : "cursor-pointer active:scale-[0.97]"}`,
       variantClass,
       componentClass,
     )}
     onclick={handleClick}
-    {disabled}
+    disabled={blocked}
+    aria-pressed={pressed}
+    aria-busy={loading || undefined}
+    aria-haspopup={aria?.haspopup}
+    aria-expanded={aria?.expanded}
+    aria-controls={aria?.controls}
     aria-label={content.name || content.info?.text || undefined}
     onmouseenter={() => (showInfo = !!content.info?.text)}
     onmouseleave={() => (showInfo = false)}
     onfocus={() => (showInfo = !!content.info?.text)}
     onblur={() => (showInfo = false)}
   >
-    <Icon
-      icon={content?.icon}
-      class="flex shrink-0 items-center justify-center overflow-visible {content.name?.trim()
-        ? 'h-[18px] w-[18px]'
-        : 'h-full w-full'} [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
-    />
+    {#if loading}
+      <!-- Крутилка на месте значка: у кнопки-значка размер кнопки не меняется -->
+      <Loader size={content.name?.trim() ? "18px" : "100%"} />
+    {:else}
+      <Icon
+        icon={content?.icon}
+        class="flex shrink-0 items-center justify-center overflow-visible {content.name?.trim()
+          ? 'h-[18px] w-[18px]'
+          : 'h-full w-full'} [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
+      />
+    {/if}
 
     {#if content.name?.trim()}
       <!-- Длинная подпись на узкой кнопке - в две строки, а не обрезка -->

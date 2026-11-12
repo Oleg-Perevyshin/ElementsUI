@@ -8,7 +8,6 @@
   import type { IWidgetWiFiConfig, IWidgetWiFiProps, IOption } from "../types"
   import WifiIcon from "./WifiIcon.svelte"
   import SearchIcon from "./SearchIcon.svelte"
-  import LoaderIcon from "./LoaderIcon.svelte"
   import WarningIcon from "./WarningIcon.svelte"
   import WidgetHeader from "../WidgetHeader.svelte"
   import { hint, hintsSetting } from "../hints"
@@ -168,8 +167,9 @@
               <UI.Button
                 wrapperClass="w-8"
                 componentClass="p-1"
-                content={{ icon: scanning ? LoaderIcon : SearchIcon, info: { text: $T("widget.wifi.scan"), side: "top" } }}
-                disabled={scanning || !onScan || readOnly}
+                content={{ icon: SearchIcon, info: { text: $T("widget.wifi.scan"), side: "top" } }}
+                loading={scanning}
+                disabled={!onScan || readOnly}
                 onClick={scanNetworks}
               />
             </div>

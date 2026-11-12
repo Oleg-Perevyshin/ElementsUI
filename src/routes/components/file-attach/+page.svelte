@@ -44,6 +44,8 @@ ${formatObjectToString(fileAttachComponent.properties as IFileAttachProps)}
     reader.onload = () => (fileAttachComponent = applyPropertyChange(fileAttachComponent, { properties: { currentImage: String(reader.result) } }))
     reader.readAsDataURL(file)
   }
+
+  let pickedFiles: string[] = $state([])
 </script>
 
 <ComponentExample {codeText} {readmeHtml}>
@@ -69,6 +71,14 @@ ${formatObjectToString(fileAttachComponent.properties as IFileAttachProps)}
       />
       <FileAttach
         id={crypto.randomUUID()}
+        label={{ name: "Подпись и несколько файлов" }}
+        type="button"
+        caption="Загрузить"
+        multiple
+        onUpdate={(files) => (pickedFiles = files.map((file) => file.name))}
+      />
+      <FileAttach
+        id={crypto.randomUUID()}
         label={{ name: "Выберите изображение" }}
         type="image"
         imageSize={{ height: "10rem", width: "10rem", fitMode: "contain" }}
@@ -87,5 +97,6 @@ ${formatObjectToString(fileAttachComponent.properties as IFileAttachProps)}
         imageSize={{ height: "10rem", width: "10rem", fitMode: "cover" }}
       />
     </div>
+    <p>Выбрано (multiple): {pickedFiles.join(", ") || "-"}</p>
   {/snippet}
 </ComponentExample>

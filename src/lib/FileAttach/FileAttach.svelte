@@ -1,6 +1,7 @@
-<script lang="ts">
+<!-- $lib/FileAttach/FileAttach.svelte - выбор файла: строка с пунктиром (file), картинка с превью (image) или кнопка (button, значок и необязательная подпись). multiple - несколько файлов, onUpdate получает массив -->
+<script lang="ts" generics="M extends boolean = false">
   import { T } from "../locales/i18n"
-  import type { IFileAttachProps } from "../types"
+  import type { FileAttachValue, IFileAttachProps } from "../types"
   import { twMerge } from "tailwind-merge"
   import Button from "../Button/Button.svelte"
   import FieldLabel from "../FieldLabel.svelte"
@@ -14,13 +15,15 @@
     label,
     type = "file",
     accept = "*/*",
+    multiple,
     imageSize = { height: "10rem", width: "10rem", fitMode: "cover", form: "square" },
     disabled = false,
     currentImage = $bindable(""),
     info,
     icon,
+    caption = "",
     onUpdate,
-  }: IFileAttachProps = $props()
+  }: IFileAttachProps<M> = $props()
 
   const uid = $props.id()
   let input: HTMLInputElement | undefined = $state()
@@ -33,13 +36,14 @@
   const previewUrl = $derived(objectUrl ?? (currentImage ? (currentImage.startsWith("data:") ? currentImage : `data:image/png;base64,${currentImage}`) : null))
 
   const handleFileChange = (event: Event & { currentTarget: HTMLInputElement }) => {
-    const file = event.currentTarget.files?.[0] ?? null
-    fileName = file?.name ?? ""
+    const files = [...(event.currentTarget.files ?? [])]
+    const file = files[0] ?? null
+    fileName = files.map((item) => item.name).join(", ")
     if (file?.type.startsWith("image/")) {
       if (objectUrl) URL.revokeObjectURL(objectUrl)
       objectUrl = URL.createObjectURL(file)
     }
-    onUpdate?.(file, event)
+    onUpdate?.((multiple ? files : file) as FileAttachValue<M>, event)
     /* Кнопка «Открыть файл» - повторный выбор того же файла тоже должен срабатывать */
     if (type === "button") event.currentTarget.value = ""
   }
@@ -51,8 +55,8 @@
 
   {#if type === "button"}
     <!-- Иконочная кнопка с подсказкой, как UI.Button; выбор файла - скрытый input за ней -->
-    <Button {componentClass} {disabled} content={{ icon: icon ?? OPEN_FILE_ICON, info }} onClick={() => input?.click()} />
-    <input bind:this={input} id={uid} type="file" class="hidden" {accept} {disabled} onchange={handleFileChange} />
+    <Button {componentClass} {disabled} content={{ icon: icon ?? OPEN_FILE_ICON, name: caption, info }} onClick={() => input?.click()} />
+    <input bind:this={input} id={uid} type="file" class="hidden" {accept} {multiple} {disabled} onchange={handleFileChange} />
   {:else if type === "image"}
     <div class="relative">
       <button
@@ -77,7 +81,16 @@
           <span class="text-[12px] font-medium text-(--faint-color)">Image</span>
         {/if}
       </button>
-      <input bind:this={input} id={uid} type="file" class="absolute -z-10 h-0 w-0 overflow-hidden opacity-0" {accept} {disabled} onchange={handleFileChange} />
+      <input
+        bind:this={input}
+        id={uid}
+        type="file"
+        class="absolute -z-10 h-0 w-0 overflow-hidden opacity-0"
+        {accept}
+        {multiple}
+        {disabled}
+        onchange={handleFileChange}
+      />
     </div>
   {:else}
     <label class="relative inline-block w-full">
@@ -86,6 +99,7 @@
         type="file"
         class="absolute left-0 z-1 h-8 w-full opacity-0 {disabled ? 'cursor-not-allowed' : 'cursor-pointer'}"
         {accept}
+        {multiple}
         {disabled}
         onchange={handleFileChange}
       />

@@ -1,9 +1,12 @@
-<!-- $lib/ExpandIcon.svelte - значок раскрытия области: круглая кнопка со стрелкой вниз (можно раскрыть) или вверх (свернуть); рамка подсвечивается при наведении на предка с классом group -->
+<!-- $lib/ExpandIcon.svelte - значок раскрытия области: круглая кнопка со стрелкой. direction="down" (по умолчанию) - вниз (можно раскрыть) или вверх (свернуть), "right" - для раскрытия вбок: вправо или влево. Рамка подсвечивается при наведении на предка с классом group -->
 <script lang="ts">
   import { twMerge } from "tailwind-merge"
   import ArrowIcon from "./libIcons/ArrowIcon.svelte"
 
-  let { open = false, class: className = "" }: { open?: boolean; class?: string } = $props()
+  let { open = false, direction = "down", class: className = "" }: { open?: boolean; direction?: "down" | "right"; class?: string } = $props()
+
+  /* ArrowIcon смотрит вправо: поворот до нужной стороны */
+  const angle = $derived(direction === "right" ? (open ? 180 : 0) : open ? -90 : 90)
 </script>
 
 <span
@@ -13,7 +16,7 @@
   )}
   aria-hidden="true"
 >
-  <span class="flex size-3.5 transition-transform duration-150 [&_svg]:h-full [&_svg]:w-full" style="transform: rotate({open ? -90 : 90}deg)">
+  <span class="flex size-3.5 transition-transform duration-150 [&_svg]:h-full [&_svg]:w-full" style="transform: rotate({angle}deg)">
     <ArrowIcon />
   </span>
 </span>

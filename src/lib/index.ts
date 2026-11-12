@@ -7,6 +7,8 @@ export { default as InfoHint } from "./InfoHint.svelte"
 export { default as Button } from "./Button/Button.svelte"
 export { default as Carousel } from "./Carousel/Carousel.svelte"
 export { default as Divider } from "./Divider/Divider.svelte"
+export { default as Dropdown } from "./Dropdown/Dropdown.svelte"
+export { default as Loader } from "./Loader/Loader.svelte"
 export { default as Dragging } from "./Dragging.svelte"
 export { default as FileAttach } from "./FileAttach/FileAttach.svelte"
 export { default as Graph } from "./Graph/Graph.svelte"
@@ -79,6 +81,21 @@ export {
 } from "./fsTransfer"
 export { copyText } from "./clipboard"
 export { default as Icon } from "./Icon.svelte"
+/* Значки библиотеки: контур currentColor, размер задаёт родитель ([&_svg]:size-*) */
+export { default as IconArrow } from "./libIcons/ArrowIcon.svelte"
+export { default as IconCross } from "./libIcons/CrossIcon.svelte"
+export { default as IconClear } from "./libIcons/ButtonClear.svelte"
+export { default as IconDelete } from "./libIcons/ButtonDelete.svelte"
+export { default as IconAdd } from "./libIcons/ButtonAdd.svelte"
+export { default as IconDownload } from "./libIcons/ButtonDownload.svelte"
+export { default as IconCopy } from "./libIcons/CopyIcon.svelte"
+export { default as IconInfo } from "./libIcons/InfoIcon.svelte"
+export { default as IconError } from "./libIcons/Error.svelte"
+export { default as IconLibrary } from "./libIcons/Library.svelte"
+export { default as IconMoveVertical } from "./libIcons/MoveVerticalIcon.svelte"
+export { default as IconGripVerticalDual } from "./libIcons/IconGripVerticalDual.svelte"
+export { default as IconGripVerticalLeft } from "./libIcons/IconGripVerticalLeft.svelte"
+export { default as IconGripVerticalRight } from "./libIcons/IconGripVerticalRight.svelte"
 export { escapeHtml, htmlToText, sanitizeHtml } from "./html"
 export { hintsSetting, hint, type HintParams } from "./hints"
 export { applyDragGhost, clearDragGhost, createDropPlaceholder } from "./dragStyle"
@@ -136,6 +153,10 @@ export {
   type ITabsProps,
   type IJoystickProps,
   type IFileAttachProps,
+  type FileAttachValue,
+  type IDropdownProps,
+  type IDropdownItem,
+  type IDropdownTriggerProps,
   type ICarouselProps,
   type IReceivingDataObject,
   type IVideoViewerProps,

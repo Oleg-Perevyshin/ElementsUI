@@ -42,6 +42,9 @@
   />`)
   let inputString: string = $state("String Data")
   let inputNumber: number = $state(7)
+
+  /* Поле для вызова focus() извне */
+  let focusTarget: ReturnType<typeof Input> | undefined = $state()
 </script>
 
 <ComponentExample {codeText} {readmeHtml}>
@@ -89,6 +92,15 @@
         maxlength={150}
         textareaRows={2}
       />
+      <h5>Ошибка от приложения, фокус извне, text-area на всю высоту</h5>
+      <Input wrapperClass="!w-60" label={{ name: "Логин" }} value="admin" error="Пользователь уже существует" />
+      <div class="flex w-60 items-end gap-2">
+        <Input bind:this={focusTarget} label={{ name: "Фокус по кнопке" }} />
+        <button class="h-8 shrink-0 rounded-[10px] border border-(--border-color) px-3 text-[13px]" onclick={() => focusTarget?.focus()}>focus()</button>
+      </div>
+      <div class="flex h-48 w-150 flex-col rounded-xl border border-dashed border-(--border-color) p-2">
+        <Input label={{ name: "Заметки (fill)" }} type="text-area" fill bind:value={inputString} help={{ info: "Подсказка внутри поля" }} />
+      </div>
       <p>string: {inputString}</p>
       <p>number: {inputNumber}</p>
     </div>

@@ -10,6 +10,8 @@
 - 🖼️ Может быть с текстом, с иконкой или только с иконкой - тогда она круглая.
 - ⌨️ Нажимается и горячей клавишей, например Ctrl+R.
 - 💬 Показывает подсказку при наведении.
+- 📌 Бывает кнопкой-переключателем: нажатая выглядит как выбранная кнопка группы.
+- ⏳ Показывает крутилку, пока идёт действие, и в это время не нажимается.
 
 ## 🧩 Как настроить в конструкторе
 
@@ -47,26 +49,32 @@
 - Кнопка с иконкой и без текста круглая.
 - Горячая клавиша (`keyBind`) слушается на всём окне.
 - Подсказка `content.info` показывает только текст, без разметки.
+- `pressed` - кнопка-переключатель: `true` - залита цветом `accent`, как выбранный вариант `Select type="buttons"` (у `primary` ещё внутренняя рамка), у кнопки `aria-pressed`. Без пропа кнопка обычная.
+- `loading` - крутилка `Loader` на месте значка (у кнопки без значка - перед подписью). Кнопка не нажимается и не реагирует на горячую клавишу, но не серая, у неё `aria-busy`.
+- `aria` - для кнопки, открывающей панель: `haspopup`, `expanded`, `controls` ставятся на саму кнопку. Так делает `Dropdown`.
 
 </details>
 
 <details>
 <summary>⚙️ Пропсы</summary>
 
-| Название           | Тип                                   | По умолчанию         | Описание                                                           |
-| ------------------ | ------------------------------------- | -------------------- | ------------------------------------------------------------------ |
-| `id`               | `string`                              |                      | Атрибут `id` кнопки                                                |
-| `wrapperClass`     | `string`                              | `""`                 | Классы обёртки                                                     |
-| `componentClass`   | `string`                              | `""`                 | Классы самой кнопки                                                |
-| `variant`          | `"primary" \| "secondary" \| "plain"` | `"plain"`            | Вид: заливка, контур или текст                                     |
-| `accent`           | `AccentColor`                         |                      | Цвет: `red`, `green`, `blue` и другие. Без него - акцент темы      |
-| `disabled`         | `boolean`                             | `false`              | Кнопка неактивна                                                   |
-| `content.name`     | `string`                              |                      | Текст                                                              |
-| `content.icon`     | `Component \| string \| null`         | `null`               | Иконка: Svelte-компонент или SVG-строка                            |
-| `content.info`     | `{ text, side }`                      |                      | Подсказка при наведении. `side`: `top`, `bottom`, `left`, `right`  |
-| `keyBind`          | `object`                              | `{ showHint: true }` | Горячая клавиша: `key`, `ctrlKey`, `shiftKey`, `altKey`, `metaKey` |
-| `keyBind.showHint` | `boolean`                             | `true`               | Показывать клавишу на кнопке                                       |
-| `onClick`          | `() => void`                          |                      | Нажатие кнопкой мыши или горячей клавишей                          |
+| Название           | Тип                                   | По умолчанию         | Описание                                                                          |
+| ------------------ | ------------------------------------- | -------------------- | --------------------------------------------------------------------------------- |
+| `id`               | `string`                              |                      | Атрибут `id` кнопки                                                               |
+| `wrapperClass`     | `string`                              | `""`                 | Классы обёртки                                                                    |
+| `componentClass`   | `string`                              | `""`                 | Классы самой кнопки                                                               |
+| `variant`          | `"primary" \| "secondary" \| "plain"` | `"plain"`            | Вид: заливка, контур или текст                                                    |
+| `accent`           | `AccentColor`                         |                      | Цвет: `red`, `green`, `blue` и другие. Без него - акцент темы                     |
+| `disabled`         | `boolean`                             | `false`              | Кнопка неактивна                                                                  |
+| `pressed`          | `boolean`                             |                      | Кнопка-переключатель: нажата или нет (`aria-pressed`). Без пропа - обычная кнопка |
+| `loading`          | `boolean`                             | `false`              | Идёт действие: крутилка вместо значка, кнопка не нажимается                       |
+| `aria`             | `{ haspopup, expanded, controls }`    |                      | Атрибуты кнопки, открывающей панель                                               |
+| `content.name`     | `string`                              |                      | Текст                                                                             |
+| `content.icon`     | `Component \| string \| null`         | `null`               | Иконка: Svelte-компонент или SVG-строка                                           |
+| `content.info`     | `{ text, side }`                      |                      | Подсказка при наведении. `side`: `top`, `bottom`, `left`, `right`                 |
+| `keyBind`          | `object`                              | `{ showHint: true }` | Горячая клавиша: `key`, `ctrlKey`, `shiftKey`, `altKey`, `metaKey`                |
+| `keyBind.showHint` | `boolean`                             | `true`               | Показывать клавишу на кнопке                                                      |
+| `onClick`          | `() => void`                          |                      | Нажатие кнопкой мыши или горячей клавишей                                         |
 
 </details>
 
@@ -85,6 +93,10 @@
 <UI.Button content={{ name: "Обновить", info: { text: "Ctrl+R", side: "bottom" } }} keyBind={{ key: "r", ctrlKey: true }} onClick={refresh} />
 
 <UI.Button content={{ icon: IconSettings }} onClick={openSettings} />
+
+<UI.Button variant="secondary" pressed={pinned} content={{ name: "Закрепить" }} onClick={() => (pinned = !pinned)} />
+
+<UI.Button variant="primary" loading={saving} content={{ name: "Сохранить", icon: UI.IconAdd }} onClick={save} />
 ```
 
 </details>

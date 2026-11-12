@@ -160,11 +160,11 @@ ElementsUI/
 У каждого своя папка с README и панелью свойств `*Props.svelte`:
 
 - Компоненты: `Input`, `Select`, `Switch`, `Slider`, `Button`, `Joystick`, `ProgressBar`, `Graph`, `PeriodChart`, `Table`, `FileAttach`, `VideoViewer`, `TextField`, `Widget`.
-- Раскладка: `Accordion`, `Tabs`, `Divider`, `Carousel`; в корне `lib` - `Modal.svelte`, `Dragging.svelte` (свои README рядом: `Modal.README.md`, `Dragging.README.md`).
+- Раскладка: `Accordion`, `Tabs`, `Divider`, `Carousel`, `Dropdown` (меню у кнопки, без панели свойств); в корне `lib` - `Modal.svelte`, `Dragging.svelte` (свои README рядом: `Modal.README.md`, `Dragging.README.md`).
 - Смарт-виджеты: `WidgetWiFi`, `WidgetDeviceInfo`, `WidgetFileSystem`, `WidgetStackInfo`, `WidgetRGBStrip`, `WidgetPFD`, `WidgetMap`.
 - `WidgetMap` - самый большой модуль: обёртка MapLibre (`mapWrapper/`), миссии (`mission/`: режимы «Маршрут» и «Агро», расчёт покрытия поля, прогресс, выгрузка QGC WPL 110, имитация).
 
-Общие части интерфейса в корне `lib`: `WidgetHeader` (шапка виджета), `SectionHead` и `ExpandIcon` (сворачиваемые разделы), `FieldLabel` (подпись поля, с `info` - значок ⓘ с пояснением), `InfoHint` (сам значок ⓘ, пояснение позиционируется от окна и не обрезается), `Tooltip`, `CopiedChip`, `Icon`, `IconsMatrix` (выбор иконки), `TextsEditor` (окно «Тексты и переводы»), `CommonSnippets`, `PropsGroup`, `PropsListHeader`, `PropsListModal` (части панелей свойств).
+Общие части интерфейса в корне `lib`: `WidgetHeader` (шапка виджета), `SectionHead` и `ExpandIcon` (сворачиваемые разделы), `FieldLabel` (подпись поля, с `info` - значок ⓘ с пояснением), `InfoHint` (сам значок ⓘ, пояснение позиционируется от окна и не обрезается), `Tooltip`, `CopiedChip`, `Icon`, `IconsMatrix` (выбор иконки), `Loader/` (крутилка, без панели свойств), значки `libIcons/` (экспорт под именами `IconArrow`, `IconCross` и другими), `TextsEditor` (окно «Тексты и переводы»), `CommonSnippets`, `PropsGroup`, `PropsListHeader`, `PropsListModal` (части панелей свойств).
 
 </details>
 

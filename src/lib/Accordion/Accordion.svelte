@@ -1,4 +1,4 @@
-<!-- $lib/Accordion/Accordion.svelte - заголовок не увеличивается при раскрытии, радиус 14. Цвет accent: иконка и текст заголовка его цветом текста, фон заголовка - 22% цвета поверх фона -->
+<!-- $lib/Accordion/Accordion.svelte - заголовок не увеличивается при раскрытии, радиус 14. Цвет accent: иконка и текст заголовка его цветом текста, фон заголовка - 22% цвета поверх фона. stripe - полоса 6px слева цветом метки (радиус 15), outline=false - без рамки и скругления, fill - раскрытый блок занимает всю высоту родителя-колонки -->
 <script lang="ts">
   import { slide } from "svelte/transition"
   import type { IAccordionProps } from "../types"
@@ -9,7 +9,11 @@
   let {
     isOpen = $bindable(false),
     wrapperClass = "",
+    componentClass = "",
     accent,
+    stripe = false,
+    outline = true,
+    fill = false,
     size = { width: 1, height: 1 },
     label = { name: "", class: "text-left", icon: null },
     chevron = true,
@@ -19,14 +23,31 @@
   }: IAccordionProps = $props()
 
   const uid = $props.id()
+
+  /* Рамка блока: обычная, с цветной полосой слева или никакой */
+  const frameClass = $derived(
+    stripe
+      ? "rounded-[15px] border border-l-[6px] border-(--hairline-color)"
+      : outline
+        ? "rounded-[14px] border border-(--hairline-color)"
+        : "rounded-none border-0",
+  )
 </script>
 
-<div class={twMerge(`w-full`, wrapperClass)} style={accentStyle(accent)} transition:slide={{ duration: 200 }}>
-  <div class="overflow-hidden rounded-[14px] border border-(--hairline-color) bg-(--back-color)">
+<!-- fill: обёртка, рамка и содержимое - колонки, содержимое забирает остаток высоты; свёрнутый блок не растягивается -->
+<div
+  class={twMerge(`w-full ${fill ? `flex min-h-0 flex-col ${isOpen ? "flex-1" : "shrink-0"}` : ""}`, wrapperClass)}
+  style={accentStyle(accent)}
+  transition:slide={{ duration: 200 }}
+>
+  <div
+    class={twMerge(`overflow-hidden bg-(--back-color) ${frameClass} ${fill && isOpen ? "flex min-h-0 flex-1 flex-col" : ""}`, componentClass)}
+    style={stripe ? `border-left-color: ${accent ? `var(--${accent}-mark)` : "var(--accent-color)"};` : undefined}
+  >
     <!-- Фон заголовка - мастер-цвет 22% поверх фона, чтобы свёрнутый раздел не сливался с панелью; текст - цвет текста мастер-цвета 70% с цветом шрифта; раскрытое содержимое на чистом фоне (--back-color). -->
     <!-- Заголовок: кнопка сворачивания на всю ширину и необязательные кнопки справа (actions) - вне неё, чтобы не сворачивать блок -->
     <div
-      class="flex w-full items-center bg-[color-mix(in_srgb,var(--accent-color)_22%,var(--back-color))] transition-colors duration-150 hover:bg-[color-mix(in_srgb,var(--accent-color)_30%,var(--back-color))]"
+      class="flex w-full shrink-0 items-center bg-[color-mix(in_srgb,var(--accent-color)_22%,var(--back-color))] transition-colors duration-150 hover:bg-[color-mix(in_srgb,var(--accent-color)_30%,var(--back-color))]"
     >
       <button
         class="flex min-w-0 flex-1 cursor-pointer items-center justify-between gap-3 px-4 py-3 text-left text-[color-mix(in_srgb,var(--accent-text)_70%,var(--font-color))]"
@@ -61,10 +82,10 @@
     {#if isOpen}
       <div
         id={`${uid}-content`}
-        class="grid w-full gap-3 border-t border-(--hairline-color) bg-(--back-color) p-4"
+        class="grid w-full gap-3 border-t border-(--hairline-color) bg-(--back-color) p-4 {fill ? 'min-h-0 flex-1' : ''}"
         transition:slide={{ duration: 200 }}
         style="grid-template-columns: repeat({size.width || 1}, minmax(0, 1fr));
-          grid-template-rows: repeat({size.height || 1}, {image ? 'minmax(6.5rem, auto)' : 'auto'});
+          grid-template-rows: {fill ? 'minmax(0, 1fr)' : `repeat(${size.height || 1}, ${image ? 'minmax(6.5rem, auto)' : 'auto'})`};
           {image ? `background-image: url(${image}); background-size: cover; background-position: center;` : ''}"
       >
         {@render children?.()}

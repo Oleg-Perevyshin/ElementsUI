@@ -49,6 +49,19 @@
   </PropsGroup>
   <PropsGroup label={$T("constructor.props.group.appearance")} contentClass="items-center">
     <CommonSnippets snippet="Accent" {component} {onPropertyChange} />
+    <UI.Switch
+      type="checkbox"
+      label={{ name: $T("constructor.props.accordion.stripe") }}
+      value={component.properties.stripe ? 1 : 0}
+      onUpdate={(value) => edit.set("stripe", value === 1)}
+    />
+    <UI.Switch
+      type="checkbox"
+      label={{ name: $T("constructor.props.accordion.outline") }}
+      value={component.properties.outline === false ? 0 : 1}
+      disabled={!!component.properties.stripe}
+      onUpdate={(value) => edit.set("outline", value === 1)}
+    />
     <div class="flex items-center">
       <UI.FileAttach
         type="image"

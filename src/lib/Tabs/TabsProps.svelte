@@ -57,6 +57,13 @@
   </PropsGroup>
   <PropsGroup label={$T("constructor.props.group.appearance")}>
     <UI.Select
+      label={{ name: $T("constructor.props.orientation") }}
+      type="buttons"
+      options={$optionsStore.ORIENTATION_OPTIONS}
+      value={component.properties.orientation ?? "horizontal"}
+      onUpdate={(orientation) => edit.set("orientation", orientation)}
+    />
+    <UI.Select
       wrapperClass="h-14"
       label={{ name: $T("constructor.props.icon.text.position") }}
       type="buttons"

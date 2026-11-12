@@ -36,7 +36,9 @@
 
 **🧩 Компоненты.** Каждый привязывается к одной переменной устройства: `Input`, `Select`, `Switch`, `Slider`, `Button`, `Joystick`, `ProgressBar`, `Graph`, `PeriodChart`, `Table`, `FileAttach`, `VideoViewer`, `TextField`, `Widget`.
 
-**🗂️ Раскладка.** `Accordion`, `Tabs`, `Divider`, `Carousel`, `Modal`. У `Accordion` есть необязательный слот `actions` - кнопки справа в заголовке, нажатие на них блок не сворачивает.
+**🗂️ Раскладка.** `Accordion`, `Tabs`, `Divider`, `Carousel`, `Modal`, `Dropdown`. У `Accordion` есть необязательный слот `actions` - кнопки справа в заголовке, нажатие на них блок не сворачивает. `Dropdown` - выпадающее меню или всплывающая панель у кнопки.
+
+**🔣 Значки и мелочи.** Крутилка `Loader`, значок раскрытия `ExpandIcon` (вниз или вбок), подпись поля `FieldLabel` с пояснением `InfoHint` и значки библиотеки: `IconArrow`, `IconCross`, `IconClear`, `IconDelete`, `IconAdd`, `IconDownload`, `IconCopy`, `IconInfo`, `IconError`, `IconLibrary`, `IconMoveVertical`, `IconGripVerticalDual`, `IconGripVerticalLeft`, `IconGripVerticalRight`. Значки рисуются цветом текста (`currentColor`), размер задаёт родитель, например `[&_svg]:size-5`. Держать их копии в приложении не нужно.
 
 **📡 Ядро протоколов** (`poe-svelte-ui-lib/protocols`). Кодирование и разбор пакетов для всех каналов связи с устройством. Работает без Svelte, в том числе под Node.
 
@@ -538,7 +540,7 @@ npm pack               # сборка пакета в dist/: проверка т
 - 🧱 Стили тегов в приложении пишите только внутри `@layer base`, иначе подписи компонентов станут крупнее.
 - 🛡️ Разметку из данных устройства выводите только через `sanitizeHtml`.
 - 🌐 Карта `WidgetMap` без интернета работает только со своим модулем MapLibre (`configureMapLibre`).
-- ℹ️ Значок ⓘ с пояснением (`help.info`) после заголовка есть у `Input`, `Select`, `Switch`, `Slider`, `Graph`, `Joystick`, `PeriodChart`, `ProgressBar`, `Table` и `VideoViewer`. Значок - общий `InfoHint`, у всех, кроме `Switch`, вместе с подписью через `FieldLabel`. Пояснение задаётся в «Тексты и переводы», `GUIRenderer` передаёт его вместе с остальными свойствами.
+- ℹ️ Значок ⓘ с пояснением (`help.info`) после заголовка есть у `Select`, `Switch`, `Slider`, `Graph`, `Joystick`, `PeriodChart`, `ProgressBar`, `Table` и `VideoViewer`. Без заголовка значок стоит на его месте. Значок - общий `InfoHint`, у всех, кроме `Switch`, вместе с подписью через `FieldLabel`. У `Input` значок ⓘ внутри поля слева и от заголовка не зависит. Пояснение задаётся в «Тексты и переводы», `GUIRenderer` передаёт его вместе с остальными свойствами.
 - 🟢 Под Node без Vite языки берите из `poe-svelte-ui-lib/locales`, а протоколы из `poe-svelte-ui-lib/protocols`.
 
 ---

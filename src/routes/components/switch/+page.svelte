@@ -67,6 +67,15 @@ ${formatObjectToString(switchComponent.properties as ISwitchProps)}
       <Switch accent="yellow" wrapperClass="w-1/3" label={{ name: "Галочка" }} type="checkbox" bind:value={switchValue} />
     </div>
     <span>Выбранное значение: {switchValue}</span>
+    <div class="mt-4 flex items-center justify-around">
+      <Switch
+        wrapperClass="w-1/3"
+        label={{ captionLeft: "Выкл", captionRight: "Вкл" }}
+        help={{ info: "Пояснение без заголовка - после правой подписи" }}
+        bind:value={switchValue}
+      />
+      <Switch type="checkbox" help={{ info: "Галочка без подписи тоже с пояснением" }} bind:value={switchValue} />
+    </div>
     <div class="mt-4 flex justify-center">
       <Switch
         accent="yellow"

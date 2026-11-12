@@ -20,7 +20,7 @@
   import { createAutoFit, fitMapTo } from "./fit"
   import MissionSim from "./MissionSim.svelte"
   import { SimClock } from "./simClock.svelte"
-  import SpinnerIcon from "./SpinnerIcon.svelte"
+  import Loader from "../../Loader/Loader.svelte"
   import HelpText from "./HelpText.svelte"
   import InfoIcon from "../../libIcons/InfoIcon.svelte"
   import { missionProgress } from "./progress"
@@ -506,7 +506,7 @@
               <div
                 class="flex items-center gap-3 rounded-xl border border-(--hairline-color) bg-(--back-color) px-4 py-3 text-(--font-color) shadow-(--elevation-2)"
               >
-                <span class="size-8 shrink-0 text-(--accent-text)"><SpinnerIcon /></span>
+                <Loader size="2rem" class="text-(--accent-text)" />
                 <div class="flex min-w-48 flex-col gap-1.5">
                   <span class="text-[13px] font-semibold">{$T("widget.mission.searching")}</span>
                   <div class="flex items-center gap-2 text-[12px] tabular-nums">

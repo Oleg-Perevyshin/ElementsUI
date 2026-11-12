@@ -96,6 +96,16 @@ ${formatObjectToString(selectComponent.properties as ISelectProps)}
     { value: "offline", name: "Offline", accent: "red" },
   ]
   let statusValue = $state("online")
+
+  /* Значки вариантов: SVG-строка (флаг) или компонент */
+  const languageOptions: IOption<string>[] = UI.LANGUAGES.map((language) => ({ value: language.value, name: language.name, icon: language.flag }))
+  let languageValue = $state("ru")
+  const actionOptions: IOption<string>[] = [
+    { value: "add", name: "Добавить", icon: UI.IconAdd },
+    { value: "copy", name: "Копировать", icon: UI.IconCopy },
+    { value: "delete", name: "Удалить", icon: UI.IconDelete, disabled: true },
+  ]
+  let actionValue = $state("add")
 </script>
 
 <ComponentExample {codeText} {readmeHtml}>
@@ -130,5 +140,8 @@ ${formatObjectToString(selectComponent.properties as ISelectProps)}
       <span>Выбранное значение: {fullSwitchValue}</span>
     </div>
     <UI.Select type="buttons" label={{ name: "Статус (buttons + цвет опции)" }} options={statusOptions} bind:value={statusValue} />
+    <UI.Select label={{ name: "Язык (значки в списке)" }} options={languageOptions} bind:value={languageValue} />
+    <UI.Select type="buttons" showNames label={{ name: "Значок и подпись, свой disabled у варианта" }} options={actionOptions} bind:value={actionValue} />
+    <UI.Select type="radio" label={{ name: "Радиокнопки (type=radio)" }} options={statusOptions} bind:value={statusValue} />
   {/snippet}
 </ComponentExample>

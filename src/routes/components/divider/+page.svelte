@@ -58,6 +58,12 @@ ${formatObjectToString(dividerComponent.properties as IDividerProps)}
       <div class="h-16 w-full border border-dashed border-gray-500">
         <Divider type="empty" />
       </div>
+      <!-- Вертикальная линия в строке занимает только свою толщину -->
+      <div class="flex h-16 w-full items-center gap-3 border border-dashed border-gray-500 px-3">
+        <span>Слева</span>
+        <Divider orientation="vertical" width={2} accent="blue" />
+        <span>Справа</span>
+      </div>
     </div>
   {/snippet}
 </ComponentExample>

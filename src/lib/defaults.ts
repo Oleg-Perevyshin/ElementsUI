@@ -16,9 +16,10 @@ export const COMPONENT_DEFAULTS: { [K in UIType]: Partial<UIComponentPropsMap[K]
   WidgetRGBStrip: { ...widget("WidgetRGBStrip"), id: "LST" },
   WidgetPFD: { ...widget("WidgetPFD"), id: "MAV", limits: { staleMs: 2000 } },
   WidgetMap: { ...widget("WidgetMap"), groups: ["MAV"], height: 400, trackEnabled: false, trackLength: 1000 },
-  Accordion: { label: { name: "", class: "text-left", icon: null }, isOpen: true, image: "" },
+  Accordion: { label: { name: "", class: "text-left", icon: null }, isOpen: true, image: "", stripe: false, outline: true },
   Tabs: {
     activeTab: 0,
+    orientation: "horizontal",
     items: [
       { name: "", class: "flex-row" },
       { name: "", class: "flex-row" },
@@ -67,7 +68,7 @@ export const COMPONENT_DEFAULTS: { [K in UIType]: Partial<UIComponentPropsMap[K]
   Joystick: { label, help: { info: "" }, axes: Array.from({ length: 3 }, () => ({ name: "", minNum: -100, maxNum: 100 })) },
   Widget: { label, accent: "blue", settings: { label: "", type: "slider", number: { minNum: 0, maxNum: 100, step: 1, units: "" } } },
   VideoViewer: { label, help: { info: "" }, showSelect: true },
-  Divider: { type: "line", width: 2, anchor: "center" },
+  Divider: { type: "line", orientation: "horizontal", width: 2, anchor: "center" },
 }
 
 /* Размер нового компонента в клетках сетки: компактный, автор растягивает по месту; каркас (разделитель, аккордеон, вкладки) - во всю ширину */

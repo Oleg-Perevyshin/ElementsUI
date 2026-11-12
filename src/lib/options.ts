@@ -46,6 +46,7 @@ export const optionsStore = derived(T, ($T) => {
       opt("select", $T("constructor.props.type.select")),
       opt("buttons", $T("constructor.props.type.buttons")),
       opt("input", $T("constructor.props.type.selectput")),
+      opt("radio", $T("constructor.props.type.radio")),
     ],
 
     SELECT_VALUE_TYPE_OPTIONS: [opt("text", $T("constructor.props.valuetype.text")), opt("number", $T("constructor.props.valuetype.number"))],
@@ -118,6 +119,18 @@ export const optionsStore = derived(T, ($T) => {
     DIVIDER_TYPE_OPTIONS: [
       opt("line", $T("constructor.props.divider.type.line"), PROPS_ICONS.dividerLine),
       opt("empty", $T("constructor.props.divider.type.empty"), PROPS_ICONS.dividerSpace),
+    ],
+
+    ORIENTATION_OPTIONS: [
+      opt("horizontal", $T("constructor.props.orientation.horizontal"), PROPS_ICONS.arrowRight),
+      opt("vertical", $T("constructor.props.orientation.vertical"), PROPS_ICONS.arrowDown),
+    ],
+
+    /* Привязка вертикального разделителя: те же значения anchor, что у горизонтального (top - слева, bottom - справа) */
+    DIVIDER_ANCHOR_VERTICAL_OPTIONS: [
+      opt("top", $T("constructor.props.align.left"), PROPS_ICONS.alignLeft),
+      opt("center", $T("constructor.props.align.center"), PROPS_ICONS.alignCenter),
+      opt("bottom", $T("constructor.props.align.right"), PROPS_ICONS.alignRight),
     ],
 
     DIVIDER_ANCHOR_OPTIONS: [

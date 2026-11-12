@@ -95,6 +95,21 @@ ${formatObjectToString(accordionComponent.properties as IAccordionProps)}
       <h1>Содержимое вложенного Accordion 3</h1>
     </Accordion>
 
+    <!-- Полоса слева (stripe), без рамки (outline=false), на всю высоту родителя (fill) -->
+    <Accordion label={{ name: "Полоса слева (stripe)" }} accent="purple" stripe isOpen={true} componentClass="shadow-(--elevation-1)">
+      <p>Цветная полоса цветом метки accent, рамка с радиусом 15</p>
+    </Accordion>
+    <div class="rounded-[14px] border border-dashed border-(--border-color)">
+      <Accordion label={{ name: "Без рамки (outline=false)" }} accent="green" outline={false} isOpen={true}>
+        <p>Блок внутри своей карточки</p>
+      </Accordion>
+    </div>
+    <div class="flex h-64 flex-col gap-2 rounded-xl border border-dashed border-(--border-color) p-2">
+      <Accordion label={{ name: "fill - на всю высоту" }} accent="cyan" stripe fill isOpen={true}>
+        <div class="h-full overflow-y-auto rounded-lg bg-(--container-color) p-2">Содержимое растягивается до низа родителя</div>
+      </Accordion>
+    </div>
+
     <!-- Режим с фоновой картинкой (image) - сетка становится полупрозрачной поверх неё -->
     <Accordion
       label={{ name: "Accordion с фоном (image)" }}

@@ -1,4 +1,4 @@
-<!-- $lib/FieldLabel.svelte - подпись поля 12/600: с for связана с полем, без него - подпись группы (id для aria-labelledby); info - значок ⓘ с пояснением после подписи -->
+<!-- $lib/FieldLabel.svelte - подпись поля 12/600: с for связана с полем, без него - подпись группы (id для aria-labelledby); info - значок ⓘ с пояснением после подписи, без подписи - один значок на месте подписи -->
 <script lang="ts">
   import { twMerge } from "tailwind-merge"
   import InfoHint from "./InfoHint.svelte"
@@ -27,4 +27,6 @@
       >{label.name}{#if info}<InfoHint text={info} />{/if}</span
     >
   {/if}
+{:else if info}
+  <span class={twMerge(base, "min-h-4")}><InfoHint text={info} /></span>
 {/if}

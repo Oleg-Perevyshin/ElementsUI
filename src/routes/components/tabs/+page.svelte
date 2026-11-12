@@ -81,6 +81,15 @@ ${formatObjectToString(tabsComponent.properties as ITabsProps)}
         size={{ height: 1, width: 1 }}
       />
 
+      <div class="h-56">
+        <Tabs
+          orientation="vertical"
+          accent="purple"
+          items={[{ name: "Общие" }, { name: "Сеть" }, { name: "Отладка", disabled: true }]}
+          children={Tab}
+          size={{ height: 1, width: 1 }}
+        />
+      </div>
       <Tabs
         items={[
           { name: "Tab1", icon: IconGripHorizontalUp, class: "flex-col" },

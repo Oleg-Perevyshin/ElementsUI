@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Language } from "#lib/locales/i18n.ts"
   import { localizeDeep } from "#lib/locales/localize.ts"
-  import { Button } from "#lib"
+  import { Button, Loader, IconDelete, IconCopy, IconAdd } from "#lib"
   import { type IButtonProps, type UIComponent } from "#lib/types.ts"
   import { formatObjectToString, RenderMarkdown } from "../../common"
   import { applyPropertyChange } from "#lib/propsEditor.ts"
@@ -42,6 +42,14 @@
 ${formatObjectToString(buttonComponent.properties as IButtonProps)} 
   onClick={() => {}}
 />`)
+
+  /* Кнопка-переключатель и кнопка с загрузкой */
+  let pinned = $state(false)
+  let saving = $state(false)
+  const save = () => {
+    saving = true
+    setTimeout(() => (saving = false), 1500)
+  }
 </script>
 
 <ComponentExample {codeText} {readmeHtml}>
@@ -59,6 +67,17 @@ ${formatObjectToString(buttonComponent.properties as IButtonProps)}
       <Button content={{ name: "Button 2", info: { text: "Info for Button 2", side: "top" } }} variant="primary" accent="yellow" />
       <Button content={{ name: "Button 3" }} variant="primary" disabled />
       <Button content={{ name: "Button 4", icon: IconGripVerticalDual }} variant="primary" accent="green" componentClass="h-12 rounded-3xl" />
+      <h5 class="mt-2 text-center">Нажата (pressed) и загрузка (loading)</h5>
+      <div class="flex items-center gap-2">
+        <Button variant="secondary" pressed={pinned} content={{ name: pinned ? "Закреплено" : "Закрепить" }} onClick={() => (pinned = !pinned)} />
+        <Button variant="primary" accent="green" loading={saving} content={{ name: "Сохранить", icon: IconAdd }} onClick={save} />
+        <Button wrapperClass="w-8" loading={saving} content={{ icon: IconCopy, info: { text: "Копировать", side: "top" } }} onClick={save} />
+      </div>
+      <div class="flex items-center justify-center gap-4 text-(--accent-text)">
+        <Loader />
+        <Loader size="2rem" label="Загрузка" />
+        <span class="size-6 [&_svg]:size-full"><IconDelete /></span>
+      </div>
       <div class="flex h-10 items-center justify-around">
         <Button content={{ icon: IconGripHorizontalUp }} wrapperClass="w-10 h-10" variant="primary" accent="purple" componentClass="rounded-full" />
         <Button content={{ icon: IconGripHorizontalDown, info: { text: "Info for Icon Button", side: "right" } }} wrapperClass="w-10" />
