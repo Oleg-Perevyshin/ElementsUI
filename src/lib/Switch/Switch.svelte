@@ -5,6 +5,7 @@
   import type { ISwitchProps } from "../types"
   import Tooltip from "../Tooltip.svelte"
   import InfoHint from "../InfoHint.svelte"
+  import { isHoverPointer } from "../popup"
 
   let {
     wrapperClass = "",
@@ -148,12 +149,8 @@
         disabled:cursor-not-allowed disabled:border-(--hairline-color) disabled:bg-(--container-color)
       "
       onchange={() => toggle(0)}
-      onmouseenter={() => {
-        if (hiddenInfo) showInfo = true
-      }}
-      onmouseleave={() => {
-        if (hiddenInfo) showInfo = false
-      }}
+      onpointerenter={(event) => (showInfo = !!hiddenInfo && isHoverPointer(event))}
+      onpointerleave={() => (showInfo = false)}
     />
     <Tooltip show={showInfo} text={hiddenInfo} side="top" />
     {#if label.name}

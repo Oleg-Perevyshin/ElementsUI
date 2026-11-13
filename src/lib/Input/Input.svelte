@@ -9,7 +9,7 @@
   import InfoIcon from "../libIcons/InfoIcon.svelte"
   import CopyIcon from "../libIcons/CopyIcon.svelte"
   import Tooltip from "../Tooltip.svelte"
-  import { isKeyboardFocus } from "../popup"
+  import { isHoverPointer, isKeyboardFocus } from "../popup"
   import CopiedChip from "../CopiedChip.svelte"
   import FieldLabel from "../FieldLabel.svelte"
 
@@ -38,6 +38,9 @@
   const uid = $props.id()
   let showPassword = $state(false)
   let showInfo = $state(false)
+  /* Последнее нажатие на ⓘ - пальцем: тогда пояснение открывает и закрывает касание */
+  let infoTouch = false
+  let infoButton: HTMLButtonElement | null = $state(null)
   let isCopied = $state(false)
 
   const isNumeric = $derived(type === "number" || type === "bitMode")
@@ -105,6 +108,9 @@
   /* Кнопка-значок внутри поля: у глазика пароля фон при наведении не появляется, меняется только цвет значка */
   const iconButton = `flex size-7 cursor-pointer items-center justify-center rounded-lg border-none bg-transparent text-(--faint-color) transition-colors duration-150 hover:text-(--font-color)`
 </script>
+
+<!-- На телефоне пояснение ⓘ закрывается касанием в любом другом месте -->
+<svelte:window onpointerdown={(event) => showInfo && !infoButton?.contains(event.target as Node) && (showInfo = false)} />
 
 <!-- fill: подпись, поле и ошибка - колонка на всю высоту родителя, поле занимает всё, что осталось -->
 <div
@@ -213,12 +219,15 @@
 
     {#if help.info}
       <button
+        bind:this={infoButton}
         type="button"
         class="absolute left-2 flex size-5 items-center justify-center border-none bg-transparent text-(--faint-color) [&_svg]:size-full {type === 'text-area'
           ? 'top-2'
           : ''} {disabled ? 'opacity-50' : 'cursor-pointer hover:text-(--accent-text)'}"
-        onmouseenter={() => (showInfo = true)}
-        onmouseleave={() => (showInfo = false)}
+        onpointerdown={(event) => (infoTouch = !isHoverPointer(event))}
+        onclick={() => infoTouch && (showInfo = !showInfo)}
+        onpointerenter={(event) => isHoverPointer(event) && (showInfo = true)}
+        onpointerleave={(event) => isHoverPointer(event) && (showInfo = false)}
         onfocus={(event) => (showInfo = isKeyboardFocus(event))}
         onblur={() => (showInfo = false)}
         aria-label={help.info}

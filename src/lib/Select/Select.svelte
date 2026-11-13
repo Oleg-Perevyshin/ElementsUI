@@ -8,7 +8,7 @@
   import Tooltip from "../Tooltip.svelte"
   import FieldLabel from "../FieldLabel.svelte"
   import Icon from "../Icon.svelte"
-  import { nextEnabled } from "../popup"
+  import { isHoverPointer, nextEnabled } from "../popup"
 
   let {
     wrapperClass = "",
@@ -195,7 +195,8 @@
   }
 
   /* Значок варианта: SVG, компонент или короткая метка ("S", "XL") */
-  const OPTION_ICON = "flex h-[18px] min-w-[18px] shrink-0 items-center justify-center leading-none [&_svg]:h-full [&_svg]:w-full"
+  /* Размер значка задан явно: SVG без width и height Safari растягивает до 300 px */
+  const OPTION_ICON = "flex size-[18px] shrink-0 items-center justify-center leading-none [&_svg]:size-full"
 
   /* type="radio": фокус стоит на выбранном варианте (или первом доступном), стрелки выбирают соседний доступный */
   let radioElements: HTMLButtonElement[] = $state([])
@@ -360,8 +361,8 @@
               disabled={option.disabled || disabled}
               aria-pressed={selected}
               aria-label={option.icon && !showNames ? option.name : undefined}
-              onmouseenter={() => (hoveredIndex = option.icon && option.name && !showNames ? index : -1)}
-              onmouseleave={() => (hoveredIndex = -1)}
+              onpointerenter={(event) => (hoveredIndex = option.icon && option.name && !showNames && isHoverPointer(event) ? index : -1)}
+              onpointerleave={() => (hoveredIndex = -1)}
             >
               <!-- Значок вместо подписи (подпись - в подсказке), с showNames - значок и подпись рядом -->
               <span class="flex min-w-0 items-center justify-center gap-1.5">

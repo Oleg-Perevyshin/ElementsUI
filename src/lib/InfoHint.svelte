@@ -1,8 +1,8 @@
-<!-- $lib/InfoHint.svelte - значок ⓘ рядом с подписью поля, при наведении или фокусе всплывает пояснение (help.info у Select и Switch). Пояснение позиционируется от окна (fixed), поэтому его не обрезают блоки с overflow и прокрутка; сверху, если там хватает места, иначе снизу -->
+<!-- $lib/InfoHint.svelte - значок ⓘ рядом с подписью поля, при наведении мышью, фокусе с клавиатуры или касании всплывает пояснение (help.info у Select и Switch). Пояснение позиционируется от окна (fixed), поэтому его не обрезают блоки с overflow и прокрутка; сверху, если там хватает места, иначе снизу -->
 <script lang="ts">
   import { fly } from "svelte/transition"
   import InfoIcon from "./libIcons/InfoIcon.svelte"
-  import { isKeyboardFocus } from "./popup"
+  import { isHoverPointer, isKeyboardFocus } from "./popup"
 
   let { text }: { text: string } = $props()
 
@@ -15,6 +15,8 @@
   /* Позиция остаётся после ухода мыши: по ней доигрывает анимация исчезновения */
   let place = $state({ left: 0, top: 0, above: true })
   let show = $state(false)
+  /* Последнее нажатие - пальцем: тогда пояснение открывает и закрывает касание */
+  let touch = false
 
   function open() {
     if (!anchor) return
@@ -26,15 +28,22 @@
   }
 </script>
 
+<!-- На телефоне пояснение закрывается касанием в любом другом месте -->
+<svelte:window onpointerdown={(event) => show && !anchor?.contains(event.target as Node) && (show = false)} />
+
 <!-- Щелчок по значку внутри <label> не переводит фокус на поле и не открывает список -->
 <button
   bind:this={anchor}
   type="button"
   class="inline-flex size-4 shrink-0 cursor-help items-center justify-center border-none bg-transparent p-0 text-(--faint-color) hover:text-(--accent-text) [&_svg]:size-full"
   aria-label={text}
-  onclick={(event) => event.preventDefault()}
-  onmouseenter={open}
-  onmouseleave={() => (show = false)}
+  onpointerdown={(event) => (touch = !isHoverPointer(event))}
+  onclick={(event) => {
+    event.preventDefault()
+    if (touch) show ? (show = false) : open()
+  }}
+  onpointerenter={(event) => isHoverPointer(event) && open()}
+  onpointerleave={(event) => isHoverPointer(event) && (show = false)}
   onfocus={(event) => isKeyboardFocus(event) && open()}
   onblur={() => (show = false)}
 >

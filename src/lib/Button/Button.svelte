@@ -6,7 +6,7 @@
   import Tooltip from "../Tooltip.svelte"
   import Icon from "../Icon.svelte"
   import Loader from "../Loader/Loader.svelte"
-  import { isKeyboardFocus } from "../popup"
+  import { isHoverPointer, isKeyboardFocus } from "../popup"
 
   let {
     id,
@@ -83,8 +83,8 @@
     aria-expanded={aria?.expanded}
     aria-controls={aria?.controls}
     aria-label={content.name || content.info?.text || undefined}
-    onmouseenter={() => (showInfo = !!content.info?.text)}
-    onmouseleave={() => (showInfo = false)}
+    onpointerenter={(event) => (showInfo = !!content.info?.text && isHoverPointer(event))}
+    onpointerleave={() => (showInfo = false)}
     onfocus={(event) => (showInfo = !!content.info?.text && isKeyboardFocus(event))}
     onblur={() => (showInfo = false)}
   >

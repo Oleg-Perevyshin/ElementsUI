@@ -32,6 +32,8 @@
   let anchorElement: HTMLDivElement | undefined = $state()
   let panelElement: HTMLDivElement | undefined = $state()
   let anchorRect: DOMRect | null = $state(null)
+  /* Ширина открытой панели: панель шире места до края окна сдвигается внутрь */
+  let panelWidth = $state(0)
 
   /* Панель выносится в body, чтобы её не обрезал overflow предка; data-ui-portal - Modal не считает клик по ней кликом снаружи */
   const portal = (node: HTMLElement) => {
@@ -42,7 +44,7 @@
   /* Панель открывается вниз, а если снизу места мало и сверху больше - вверх; по краю триггера, но не за край окна */
   const placement = $derived.by(() => {
     if (!anchorRect) return ""
-    const place = popupPlace(anchorRect, { width: window.innerWidth, height: window.innerHeight }, align)
+    const place = popupPlace(anchorRect, { width: window.innerWidth, height: window.innerHeight }, align, { minWidth: Math.max(panelWidth, 160) })
     const sides = (["top", "bottom", "left", "right"] as const).filter((side) => place[side] !== undefined).map((side) => `${side}: ${place[side]}px;`)
     return `${sides.join(" ")} min-width: max(${anchorRect.width}px, 10rem); max-width: calc(100vw - 16px); --dropdown-space: ${place.space}px;`
   })
@@ -167,6 +169,7 @@
   <div
     use:portal
     bind:this={panelElement}
+    bind:offsetWidth={panelWidth}
     id={panelId}
     data-ui-portal
     class={twMerge(

@@ -5,6 +5,7 @@
   import { ICONS, ICON_NAMES } from "./icons"
   import Input from "./Input/Input.svelte"
   import Tooltip from "./Tooltip.svelte"
+  import { isHoverPointer } from "./popup"
 
   let {
     onPick,
@@ -50,8 +51,8 @@
                 class="relative flex size-10 cursor-pointer items-center justify-center rounded-lg text-(--font-color) transition-colors duration-150 hover:bg-(--container-color) [&_svg]:size-6
                   {selected === item.svg ? 'bg-(--accent-soft) text-(--accent-text)' : ''}"
                 aria-label={item.name}
-                onmouseenter={() => (hovered = key)}
-                onmouseleave={() => (hovered = null)}
+                onpointerenter={(event) => (hovered = isHoverPointer(event) ? key : null)}
+                onpointerleave={() => (hovered = null)}
                 onclick={() => onPick(item.svg, item.name)}
               >
                 {@html sanitizeHtml(item.svg)}

@@ -31,7 +31,7 @@ export interface PopupPlace {
   space: number
 }
 
-/* Вниз, если снизу хватает minBelow или там места больше, чем сверху; по левому или правому краю триггера, но не за край окна */
+/* Вниз, если снизу хватает minBelow или там места больше, чем сверху; по левому или правому краю триггера, но не за край окна: minWidth - ширина панели, панель шире места до края сдвигается внутрь */
 export const popupPlace = (
   anchor: PopupRect,
   viewport: { width: number; height: number },
@@ -44,10 +44,13 @@ export const popupPlace = (
   const vertical = openUp ? { bottom: viewport.height - anchor.top + gap } : { top: anchor.bottom + gap }
   const horizontal =
     align === "end"
-      ? { right: Math.max(margin, viewport.width - anchor.right) }
+      ? { right: Math.max(margin, Math.min(viewport.width - anchor.right, viewport.width - margin - minWidth)) }
       : { left: Math.max(margin, Math.min(anchor.left, viewport.width - margin - minWidth)) }
   return { openUp, ...vertical, ...horizontal, space: Math.max(openUp ? above : below, 96) }
 }
+
+/* Наведение мышью или пером: касание на телефоне тоже присылает события наведения, и подсказки всплывали бы от каждого нажатия */
+export const isHoverPointer = (event: PointerEvent): boolean => event.pointerType !== "touch"
 
 /* Фокус с клавиатуры (:focus-visible): подсказка по фокусу показывается только при нём, а не когда фокус вернулся на кнопку после закрытия окна или меню */
 export const isKeyboardFocus = (event: FocusEvent): boolean => {

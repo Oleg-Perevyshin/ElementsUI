@@ -18,6 +18,7 @@
   import { htmlToText, sanitizeHtml } from "../html"
   import { createRing } from "../ring"
   import { copyText } from "../clipboard"
+  import { isHoverPointer } from "../popup"
 
   let {
     wrapperClass = "",
@@ -473,13 +474,14 @@
                                 ? 'text-(--accent-text)'
                                 : ''} {accent && text.badge ? 'w-fit rounded-md bg-(--accent-soft) px-1.5 text-[12px] font-medium' : 'w-full'}"
                               style={accentStyle(accent)}
-                              onmouseenter={text.tooltip
+                              onpointerenter={text.tooltip
                                 ? (e) => {
+                                    if (!isHoverPointer(e)) return
                                     const tip = typeof text.tooltip === "function" ? text.tooltip(row) : cellText(row, text)
                                     if (tip) tooltip = { show: true, text: tip, x: e.clientX, y: e.clientY }
                                   }
                                 : undefined}
-                              onmouseleave={text.tooltip ? () => (tooltip.show = false) : undefined}
+                              onpointerleave={text.tooltip ? () => (tooltip.show = false) : undefined}
                               onmousemove={text.tooltip ? (e) => ((tooltip.x = e.clientX), (tooltip.y = e.clientY)) : undefined}
                               role="presentation"
                             >

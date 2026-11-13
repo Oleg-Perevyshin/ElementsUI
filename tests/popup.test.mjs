@@ -29,4 +29,6 @@ test("панель у триггера: вниз или вверх по мест
   const end = popupPlace({ top: 100, bottom: 132, left: 900, right: 995, width: 95 }, viewport, "end")
   assert.equal(end.right, 8)
   assert.equal(end.left, undefined)
+  const wide = popupPlace({ top: 10, bottom: 54, left: 270, right: 314, width: 44 }, { width: 375, height: 800 }, "end", { minWidth: 343 })
+  assert.equal(wide.right, 375 - 8 - 343)
 })
