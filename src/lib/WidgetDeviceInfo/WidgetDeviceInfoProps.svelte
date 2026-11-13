@@ -1,4 +1,4 @@
-<!-- $lib/WidgetDeviceInfo/WidgetDeviceInfoProps.svelte - панель пропсов конструктора для WidgetDeviceInfo: заголовок/мастер-цвет/префикс группы, показываемые поля (show), переопределение имён полей устройства (keys) и команды перезагрузки и сброса - все с дефолтами, равными текущей прошивочной конвенции (COMPONENT_DEFAULTS). -->
+<!-- $lib/WidgetDeviceInfo/WidgetDeviceInfoProps.svelte - панель пропсов конструктора для WidgetDeviceInfo: заголовок/мастер-цвет/префикс группы, поля списком: галочка - показывать (show), рядом у включённых - ключ поля в прошивке (keys) и команды перезагрузки и сброса - все с дефолтами, равными текущей прошивочной конвенции (COMPONENT_DEFAULTS). -->
 <script lang="ts">
   import { DEVICE_INFO_DEFAULT_FIELDS, WIDGET_FIELDS } from "../gui"
   import TextsEditor from "../TextsEditor.svelte"
@@ -21,11 +21,35 @@
   } = $props()
 
   const edit = $derived(createPropsEditor(component, onPropertyChange))
+  const shown = $derived(new Set<string>(component.properties.show ?? DEVICE_INFO_DEFAULT_FIELDS))
+
+  /* Порядок show - как в списке полей, а не как щёлкали */
+  const toggleField = (key: keyof IWidgetDeviceInfoConfig, on: boolean) =>
+    edit.set(
+      "show",
+      DEVICE_INFO_KEYS.filter((field) => (field === key ? on : shown.has(field))),
+    )
 </script>
 
-{#snippet WidgetKeys()}
+<!-- Поле - строка: галочка с именем, у включённого рядом ключ в прошивке; выключенные - одной строкой без ключа -->
+{#snippet WidgetFields()}
   {#each DEVICE_INFO_KEYS as key (key)}
-    <UI.Input label={{ name: key }} value={component.properties.keys?.[key] ?? key} onUpdate={(value) => edit.patch("keys", { [key]: String(value) })} />
+    <div class="flex h-8 items-center gap-2">
+      <UI.Switch
+        type="checkbox"
+        wrapperClass="w-28 shrink-0 justify-start"
+        label={{ name: key }}
+        value={shown.has(key) ? 1 : 0}
+        onUpdate={(value) => toggleField(key, value === 1)}
+      />
+      {#if shown.has(key)}
+        <UI.Input
+          wrapperClass="min-w-0 flex-1"
+          value={component.properties.keys?.[key] ?? key}
+          onUpdate={(value) => edit.patch("keys", { [key]: String(value) })}
+        />
+      {/if}
+    </div>
   {/each}
 {/snippet}
 
@@ -53,21 +77,8 @@
     <CommonSnippets snippet="Accent" {component} {onPropertyChange} />
   </PropsGroup>
   <PropsGroup label={$T("widget.info.fields")}>
-    <UI.Select
-      type="buttons"
-      multiSelect
-      help={{ info: $T("widget.info.fields.info") }}
-      options={DEVICE_INFO_KEYS.map((key) => ({ value: key, name: key }))}
-      value={component.properties.show ?? DEVICE_INFO_DEFAULT_FIELDS}
-      onUpdate={(fields) =>
-        edit.set(
-          "show",
-          DEVICE_INFO_KEYS.filter((key) => (fields as string[]).includes(key)),
-        )}
-    />
-  </PropsGroup>
-  <PropsGroup label={$T("widget.common.device_keys")}>
-    {@render WidgetKeys()}
+    <UI.FieldLabel label={{ name: $T("widget.info.fields.list") }} info={$T("widget.info.fields.info")} />
+    {@render WidgetFields()}
   </PropsGroup>
   <PropsGroup label={$T("widget.info.restart_command")}>
     {@render WidgetCommand("restartCommand", "Restart")}
