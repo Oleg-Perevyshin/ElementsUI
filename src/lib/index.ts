@@ -89,6 +89,7 @@ export { default as IconDelete } from "./libIcons/ButtonDelete.svelte"
 export { default as IconAdd } from "./libIcons/ButtonAdd.svelte"
 export { default as IconDownload } from "./libIcons/ButtonDownload.svelte"
 export { default as IconCopy } from "./libIcons/CopyIcon.svelte"
+export { default as IconMore } from "./libIcons/MoreIcon.svelte"
 export { default as IconInfo } from "./libIcons/InfoIcon.svelte"
 export { default as IconError } from "./libIcons/Error.svelte"
 export { default as IconLibrary } from "./libIcons/Library.svelte"
@@ -146,6 +147,7 @@ export {
   type ITableText,
   type ITableSelect,
   type ITableButton,
+  type ITableMenu,
   type ITableProgressBar,
   type ITableImage,
   type ITableContent,

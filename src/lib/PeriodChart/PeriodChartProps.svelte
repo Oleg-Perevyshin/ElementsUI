@@ -85,7 +85,13 @@
               <UI.Input value={level.data.join(", ")} onUpdate={(value) => updateLevel(index, { data: parseNumbers(String(value)) })} />
               <UI.Input value={(level.labels ?? []).join(", ")} onUpdate={(value) => updateLevel(index, { labels: parseList(String(value)) })} />
               {#if levels.length > 1}
-                <UI.Button wrapperClass="w-8" content={{ icon: ButtonDelete }} onClick={() => setLevels(levels.filter((_, i) => i !== index))} />
+                <UI.Button
+                  wrapperClass="w-8"
+                  variant="primary"
+                  accent="red"
+                  content={{ icon: ButtonDelete }}
+                  onClick={() => setLevels(levels.filter((_, i) => i !== index))}
+                />
               {:else}
                 <span></span>
               {/if}

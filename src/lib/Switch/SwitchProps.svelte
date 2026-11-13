@@ -106,7 +106,7 @@
               onUpdate={(value) => edit.updateItem("options", index, { disabled: value === 1 })}
             />
             {#if bits.length > 1}
-              <UI.Button wrapperClass="w-8" content={{ icon: ButtonDelete }} onClick={() => edit.removeItem("options", index)} />
+              <UI.Button wrapperClass="w-8" variant="primary" accent="red" content={{ icon: ButtonDelete }} onClick={() => edit.removeItem("options", index)} />
             {:else}
               <span></span>
             {/if}

@@ -928,7 +928,7 @@ interface DeviceReply {
 
 - Свою команду по именам приложение шлёт так же: `sendCommand(link, header, argument, payload)` (аргумент - имя или код), код для ожидания - `argumentCode(link, argument)`.
 - Входящий конверт разберите `decodeWsEnvelope(packet)`: получите `{ header, argument, code, reply, VAL }`. По `code` будите `waitFor`, по `argument` зовите `mergeDevicePayload`.
-- У устройства со своим словарём положите его в `link.dictionary` и передайте в `decodeWsEnvelope` (`createDictionary(parseArgumentDictionary(text))`), иначе берётся встроенный `DEFAULT_DICTIONARY`.
+- Словарь - встроенный `DEFAULT_DICTIONARY`. Команду, которой в нём нет, передайте кодом: числом или строкой `"4097"`/`"0x1001"`.
 
 ```ts
 import { encodeWsEnvelope, decodeWsEnvelope, valueToCbor, cborToValue } from "poe-svelte-ui-lib/protocols"
@@ -3010,7 +3010,8 @@ ModalStack.close(id) // убрать
 
 - `api_har.h` прошивок генерируется из `commands.yaml` командой `npm run Dictionary` (`src/lib/dictionaries/firmware/api_har.h`, вручную не править). В прошивках лежат копии словаря `.framework/Dictionary.yaml` и заголовка, сборка сверяет их между собой.
 - Часть аргументов словаря - задел, прошивки их пока не обрабатывают: `BackUp`, `BindMKey`, `ModList`, `ModMode`, `ModT2-ModT5`, `FwUpgE`, `OrOfs`, `OrAccCal`, `OrMagCal`. Коды у них закреплены и не меняются. Такой аргумент модуль примет, но ответа не будет, поэтому в примерах берут реальные команды (`ModCfg`, `ModInfo`, `FS`).
-- У устройства словарь может быть свой. Его читают из файла `parseArgumentDictionary` и превращают в объект `createDictionary(codes)`: `code(имя)`, `name(код)`, `header(код)`, `har(заголовок, команда, ответ)`.
+- Словарь один на стек: прошивки собираются с его копией, поэтому приложения берут встроенный `DEFAULT_DICTIONARY`. Объект словаря (`createDictionary(codes)`): `code(имя)`, `name(код)`, `header(код)`, `har(заголовок, команда, ответ)`.
+- Команду, которой нет в словаре, задают числом: `code` и `har` принимают код строкой, десятичный или HEX (`"4097"`, `"0x1001"`), а `name` для неизвестного кода возвращает его же числом строкой, так что запись «туда и обратно» сходится.
 - Такой словарь принимают `encodeHar`, `decodeHar`, `encodeWsEnvelope`, `decodeWsEnvelope`, `encodeXPoeDebugFrame` (последний аргумент), `createXPoeDebugParser({ dictionary })` и связь `GUIRenderer` (поле `dictionary`). Без него берётся встроенный.
 
 </details>
@@ -3828,6 +3829,7 @@ const message = decodeWsEnvelope(cborToValue(new Uint8Array(event.data)))
 
 - 📄 Показывает список строк, которые прислало устройство: одна строка на запись.
 - 🔘 В ячейке может стоять кнопка: таблица сообщает приложению, какая кнопка нажата и в какой строке, команду отправляет приложение.
+- ⋯ В ячейке может стоять меню действий строки (кнопка «⋯» и пункты `Dropdown`), например «Изменить» и красное «Удалить».
 - 🔽 Можно выбрать значение из списка прямо в ячейке.
 - 📊 Число можно показать полосой прогресса с единицами измерения.
 - 🖼️ В ячейке может быть картинка или иконка.
@@ -3886,7 +3888,7 @@ const message = decodeWsEnvelope(cborToValue(new Uint8Array(event.data)))
 - `logger` пишет новые строки сверху.
 - `autoscroll` держит таблицу прокрученной к последней строке, пока пользователь сам не отмотал её выше. В режиме `logger` не прокручивает.
 - `visibleRows` - сколько строк видно без прокрутки. Высоту таблица считает по первым строкам.
-- `clearButton` добавляет кнопку очистки в узкой колонке справа (`2.5rem`), она не перекрывает заголовки. Очистку можно вызвать и из кода: `clear()`.
+- `clearButton` добавляет красную кнопку очистки в узкой колонке справа (`2.5rem`), она не перекрывает заголовки. Очистку можно вызвать и из кода: `clear()`.
 
 **Подгрузка.** Если задан `cursor` и передан `loader`, при прокрутке почти до конца (последние 50 px) таблица вызывает `getData`. Если строк меньше высоты таблицы, она сама зовёт `getData`, пока не заполнится. Пока `loader()` возвращает `true`, повторных вызовов нет. `cursor = null` выключает подгрузку. Без `loader` подгрузка не работает.
 
@@ -3961,6 +3963,7 @@ const message = decodeWsEnvelope(cborToValue(new Uint8Array(event.data)))
 | `text`        | `key`, `render(row)`, `href(row)`, `html`, `sortable`, `truncated`, `tooltip` (`true` или функция от строки), `copy`, `modal` (`true` или сниппет), `accent(row)`, `badge`, `onClick(row)` |
 | `button`      | `name`, `icon`, `title`, `class` (строки или функции от строки), `eventHandler`, `onClick(row)`. У кнопки-иконки без `name` обязательно `title`. Весь `data` может быть функцией от строки |
 | `select`      | `key` (массив вариантов в строке), `keyCol`, `onChange`                                                                                                                                    |
+| `menu`        | `items(row)` - пункты `Dropdown` для строки, `icon` (по умолчанию «⋯», `IconMore`), `title`. Только из кода приложения, в конструкторе нет; удаление - пункт с `accent: "red"`             |
 | `progressBar` | `key`, `minNum`, `maxNum`, `units`                                                                                                                                                         |
 | `image`       | `src` (строка или функция), `alt`, `class`, `width`, `height`, `defaultIcon`                                                                                                               |
 

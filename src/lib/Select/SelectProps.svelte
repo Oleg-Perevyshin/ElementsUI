@@ -170,7 +170,7 @@
               value={option.accent}
               onUpdate={(accent) => edit.updateItem("options", index, { accent: accent === option.accent ? undefined : accent })}
             />
-            <UI.Button wrapperClass="w-8" content={{ icon: ButtonDelete }} onClick={() => edit.removeItem("options", index)} />
+            <UI.Button wrapperClass="w-8" variant="primary" accent="red" content={{ icon: ButtonDelete }} onClick={() => edit.removeItem("options", index)} />
           </div>
         {/each}
         <div id="item-{options.length}" class="min-h-4"></div>

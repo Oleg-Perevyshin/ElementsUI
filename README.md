@@ -194,7 +194,7 @@ interface DeviceReply {
 
 - Свою команду по именам приложение шлёт так же: `sendCommand(link, header, argument, payload)` (аргумент - имя или код), код для ожидания - `argumentCode(link, argument)`.
 - Входящий конверт разберите `decodeWsEnvelope(packet)`: получите `{ header, argument, code, reply, VAL }`. По `code` будите `waitFor`, по `argument` зовите `mergeDevicePayload`.
-- У устройства со своим словарём положите его в `link.dictionary` и передайте в `decodeWsEnvelope` (`createDictionary(parseArgumentDictionary(text))`), иначе берётся встроенный `DEFAULT_DICTIONARY`.
+- Словарь - встроенный `DEFAULT_DICTIONARY`. Команду, которой в нём нет, передайте кодом: числом или строкой `"4097"`/`"0x1001"`.
 
 ```ts
 import { encodeWsEnvelope, decodeWsEnvelope, valueToCbor, cborToValue } from "poe-svelte-ui-lib/protocols"

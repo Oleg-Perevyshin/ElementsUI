@@ -415,7 +415,11 @@ test("RS485: пакеты из сырого потока, мусор, пауза
 
 test("словарь, поле Value xPOE-Debug, команды slcan-адаптера", () => {
   /* DEFAULT_ARGUMENT_CODES - ровно мастер-словарь команд dictionaries/commands.yaml (сгенерирован npm run Dictionary, файл поставляется в пакете) */
-  assert.deepEqual(m.DEFAULT_ARGUMENT_CODES, m.parseArgumentDictionary(readFileSync(new URL("../dist/dictionaries/commands.yaml", import.meta.url), "utf8")))
+  const commandsYaml = readFileSync(new URL("../dist/dictionaries/commands.yaml", import.meta.url), "utf8")
+  assert.deepEqual(
+    m.DEFAULT_ARGUMENT_CODES,
+    Object.fromEntries([...commandsYaml.matchAll(/^- \[\s*([^,\]]+?)\s*,\s*[^,\]]+?\s*,\s*(\d+)\s*\]/gm)].map(([, name, code]) => [name, Number(code)])),
+  )
   assert.equal(
     Object.keys(m.DEFAULT_ARGUMENT_CODES).length,
     Number(readFileSync(new URL("../dist/dictionaries/commands.yaml", import.meta.url), "utf8").match(/^- \[/gm).length),
@@ -424,10 +428,14 @@ test("словарь, поле Value xPOE-Debug, команды slcan-адапт
   assert.equal(m.DEFAULT_ARGUMENT_CODES.DebugPlot, 12)
   assert.equal(m.DEFAULT_ARGUMENT_CODES.DataStream, 15)
   assert.equal(m.DEFAULT_ARGUMENT_CODES.FDwS, undefined)
-  assert.deepEqual(m.parseArgumentDictionary("# комментарий\n- [ModCfg, A_MOD_CONFIG, 36]   # хвост\n- [OrData, A_OR_DATA, 211]\n"), {
-    ModCfg: 36,
-    OrData: 211,
-  })
+  /* Команда, которой нет в словаре, - кодом, десятичным или HEX, туда и обратно через name() */
+  assert.deepEqual(
+    [m.DEFAULT_DICTIONARY.code("4097"), m.DEFAULT_DICTIONARY.code("0x1001"), m.DEFAULT_DICTIONARY.code("0x"), m.DEFAULT_DICTIONARY.name(4097)],
+    [4097, 4097, undefined, "4097"],
+  )
+  assert.equal(m.encodeHar("SET", "4097"), m.encodeHar("SET", 4097))
+  assert.equal(m.encodeHar("SET", "0x1001"), m.encodeHar("SET", 4097))
+  assert.throws(() => m.encodeHar("SET", "9000")) /* больше 8191 */
   const custom = m.createDictionary({ ...m.DEFAULT_ARGUMENT_CODES, MyCmd: 300 })
   assert.deepEqual(
     [custom.header(2), custom.name(300), custom.name(9999), custom.code("MyCmd"), custom.code("constructor")],

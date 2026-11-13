@@ -53,7 +53,6 @@ export {
   HEADER_CODES,
   DEFAULT_ARGUMENT_CODES,
   DEFAULT_DICTIONARY,
-  parseArgumentDictionary,
   createDictionary,
   encodeHar,
   decodeHar,

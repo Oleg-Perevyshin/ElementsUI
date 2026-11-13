@@ -1,4 +1,4 @@
-/* Словарь заголовков и аргументов протокола - заголовок и аргумент поля HAR (makeHar/splitHar) на шине и в WebSocket-конверте {HAR, VAL}. Аргументы по умолчанию - из мастер-словаря команд src/lib/dictionaries/commands.yaml (единственный источник; .framework/Dictionary.yaml прошивок - его справочные копии), DEFAULT_ARGUMENT_CODES генерируется из него (dictionaries/generated/commands.ts, npm run Dictionary); у устройства словарь может быть свой - его загружают из файла (parseArgumentDictionary) и передают в createDictionary, своих копий словаря в приложениях не держим */
+/* Словарь заголовков и аргументов протокола - заголовок и аргумент поля HAR (makeHar/splitHar) на шине и в WebSocket-конверте {HAR, VAL}. Аргументы по умолчанию - из мастер-словаря команд src/lib/dictionaries/commands.yaml (единственный источник; .framework/Dictionary.yaml прошивок - его справочные копии), DEFAULT_ARGUMENT_CODES генерируется из него (dictionaries/generated/commands.ts, npm run Dictionary): прошивки собираются с его копией, поэтому приложения берут только встроенный словарь; аргумент, которого в словаре нет, задаётся числом (кодом) */
 import { DEFAULT_ARGUMENT_CODES } from "../dictionaries/generated/commands.js"
 import { makeHar, splitHar } from "./packet.js"
 
@@ -12,18 +12,18 @@ export const HEADER_CODES: Record<string, number> = {
 }
 const HEADER_NAMES = Object.keys(HEADER_CODES)
 
-/* Аргументы из текста Dictionary.yaml (или его фрагмента): строки «- [Строка, Enum, Число]», комментарии и прочее пропускаются */
-export const parseArgumentDictionary = (text: string): Record<string, number> =>
-  Object.fromEntries([...text.matchAll(/^\s*-\s*\[\s*([^,\]]+?)\s*,\s*[^,\]]+?\s*,\s*(\d+)\s*\]/gm)].map(([, name, code]) => [name, Number(code)]))
+/* Аргумент числом, если его нет в словаре: десятичный «4097» или HEX «0x1001»; иначе undefined */
+const numericArgument = (text: string): number | undefined =>
+  /^\d+$/.test(text) ? Number(text) : /^0[xX][0-9A-Fa-f]+$/.test(text) ? parseInt(text, 16) : undefined
 
 export interface Dictionary {
-  /* Код аргумента по имени; неизвестное имя - undefined */
+  /* Код аргумента по имени или числу («4097», «0x1001»); неизвестное имя - undefined */
   code(name: string): number | undefined
   /* Имя аргумента по коду; неизвестный код - строкой из числа ("4097") */
   name(code: number): string
   /* Имя заголовка по коду; неизвестный код - строкой из числа */
   header(code: number): string
-  /* HAR из имени заголовка и аргумента (имя или код 0..8191); неизвестные заголовок или имя аргумента, код вне диапазона - ошибка */
+  /* HAR из имени заголовка и аргумента (имя, код 0..8191 или его запись строкой «4097»/«0x1001»); неизвестные заголовок или имя аргумента, код вне диапазона - ошибка */
   har(header: string, argument: string | number, reply?: boolean): number
 }
 
@@ -33,12 +33,12 @@ export const createDictionary = (codes: Record<string, number>): Dictionary => {
   const byCode = new Map<number, string>()
   for (const [name, code] of byName) if (!byCode.has(code)) byCode.set(code, name)
   return {
-    code: (name) => byName.get(name),
+    code: (name) => byName.get(name) ?? numericArgument(name.trim()),
     name: (code) => byCode.get(code) ?? String(code),
     header: (code) => HEADER_NAMES[code] ?? String(code),
     har(header, argument, reply = true) {
       const hdr = HEADER_NAMES.indexOf(header)
-      const arg = typeof argument === "number" ? argument : byName.get(argument)
+      const arg = typeof argument === "number" ? argument : (byName.get(argument) ?? numericArgument(argument.trim()))
       if (hdr < 0 || arg === undefined) throw new Error(`Hdr/Arg отсутствует в словаре: ${header} ${argument}`)
       return makeHar(hdr, arg, reply)
     },

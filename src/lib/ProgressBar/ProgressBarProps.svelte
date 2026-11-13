@@ -93,7 +93,7 @@
               value={progress.accent}
               onUpdate={(accent) => edit.updateItem("items", index, { accent: accent === progress.accent ? undefined : accent })}
             />
-            <UI.Button wrapperClass="w-8" content={{ icon: ButtonDelete }} onClick={() => edit.removeItem("items", index)} />
+            <UI.Button wrapperClass="w-8" variant="primary" accent="red" content={{ icon: ButtonDelete }} onClick={() => edit.removeItem("items", index)} />
           </div>
         {/each}
         <div id="item-{items.length}" class="min-h-4"></div>

@@ -130,7 +130,13 @@
               onUpdate={(value) => edit.updateItem("items", index, { disabled: value === 1 })}
             />
             {#if items.length > 1}
-              <UI.Button wrapperClass="w-8 shrink-0" content={{ icon: ButtonDelete }} onClick={() => edit.removeItem("items", index)} />
+              <UI.Button
+                wrapperClass="w-8 shrink-0"
+                variant="primary"
+                accent="red"
+                content={{ icon: ButtonDelete }}
+                onClick={() => edit.removeItem("items", index)}
+              />
             {/if}
           </div>
         {/each}

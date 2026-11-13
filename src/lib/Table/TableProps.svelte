@@ -231,6 +231,8 @@
                 </div>
                 <UI.Button
                   wrapperClass="w-8"
+                  variant="primary"
+                  accent="red"
                   content={{ icon: ButtonDelete }}
                   onClick={() => {
                     const headers = [...(component.properties.header || [])]
@@ -479,6 +481,8 @@
                       </div>
                       <UI.Button
                         wrapperClass="w-8 shrink-0"
+                        variant="primary"
+                        accent="red"
                         content={{ icon: ButtonDelete }}
                         onClick={() => {
                           const headers = [...(component.properties.header || [])]

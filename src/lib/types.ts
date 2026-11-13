@@ -535,8 +535,16 @@ export interface ITableImage<T extends object> {
   defaultIcon?: ConstructorOfATypedSvelteComponent | string
 }
 
+/* Меню действий строки: кнопка «⋯» (или свой значок) и пункты Dropdown для этой строки; удаление - пункт с accent "red" */
+export interface ITableMenu<T extends object> {
+  icon?: IconSource
+  title?: string
+  items: (row: T) => IDropdownItem[]
+}
+
 export type ITableContent<T extends object> =
   | { type: "text"; data: ITableText<T> }
+  | { type: "menu"; data: ITableMenu<T> }
   | { type: "select"; data: ITableSelect<T> }
   | { type: "button"; data: ITableButton<T> | ((row: T) => ITableButton<T>) }
   | { type: "progressBar"; data: ITableProgressBar<T> }

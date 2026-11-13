@@ -13,6 +13,8 @@
   import Button from "../Button/Button.svelte"
   import Modal from "../Modal.svelte"
   import CopyButton from "./CopyButton.svelte"
+  import Dropdown from "../Dropdown/Dropdown.svelte"
+  import MoreIcon from "../libIcons/MoreIcon.svelte"
   import { htmlToText, sanitizeHtml } from "../html"
   import { createRing } from "../ring"
   import { copyText } from "../clipboard"
@@ -114,7 +116,8 @@
   const ACTIONS_COLUMN = "2.5rem"
   /* Колонка по содержимому: width "fit" или без width с одними кнопками */
   const isFit = (column: ITableHeader<Row>) =>
-    column.width === "fit" || (!column.width && Array.isArray(column.content) && column.content.length > 0 && column.content.every((c) => c.type === "button"))
+    column.width === "fit" ||
+    (!column.width && Array.isArray(column.content) && column.content.length > 0 && column.content.every((c) => c.type === "button" || c.type === "menu"))
   /* Ширины колонок по содержимому в px (замер после отрисовки), ключ - номер колонки в header */
   let fitWidths = $state<Record<number, number>>({})
   const hasFit = $derived(header.some((c) => c.width !== "0%" && isFit(c)))
@@ -321,7 +324,7 @@
         {#if dataBuffer.clearButton}
           <div class="flex items-center justify-center tracking-normal normal-case">
             <Button
-              componentClass={twMerge("size-7 p-1.5 text-(--muted-color) hover:text-(--red-text)", dataBuffer.clearClass)}
+              componentClass={twMerge("size-7 p-1.5 text-(--red-text) hover:bg-(--red-color)/10", dataBuffer.clearClass)}
               content={{ icon: ButtonClear, info: { text: $T("common.table.clear"), side: "left" } }}
               onClick={clear}
             />
@@ -385,6 +388,20 @@
                             {/if}
                             {$T(resolve(button.name, row) ?? "")}
                           </button>
+                        {:else if content.type === "menu"}
+                          <Dropdown
+                            align="end"
+                            button={{
+                              variant: "plain",
+                              wrapperClass: "w-fit shrink-0",
+                              componentClass: "aspect-auto h-7 w-auto rounded-lg px-2 py-0 [&>span]:size-4",
+                              content: {
+                                icon: content.data.icon ?? MoreIcon,
+                                info: content.data.title ? { text: $T(content.data.title), side: "left" } : undefined,
+                              },
+                            }}
+                            items={content.data.items(row)}
+                          />
                         {:else if content.type === "select"}
                           {@const select = content.data}
                           {@const options = (Array.isArray(row[select.key]) ? row[select.key] : []) as IOption<string | number>[]}

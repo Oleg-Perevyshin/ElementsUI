@@ -110,7 +110,8 @@
 
 - `api_har.h` прошивок генерируется из `commands.yaml` командой `npm run Dictionary` (`src/lib/dictionaries/firmware/api_har.h`, вручную не править). В прошивках лежат копии словаря `.framework/Dictionary.yaml` и заголовка, сборка сверяет их между собой.
 - Часть аргументов словаря - задел, прошивки их пока не обрабатывают: `BackUp`, `BindMKey`, `ModList`, `ModMode`, `ModT2-ModT5`, `FwUpgE`, `OrOfs`, `OrAccCal`, `OrMagCal`. Коды у них закреплены и не меняются. Такой аргумент модуль примет, но ответа не будет, поэтому в примерах берут реальные команды (`ModCfg`, `ModInfo`, `FS`).
-- У устройства словарь может быть свой. Его читают из файла `parseArgumentDictionary` и превращают в объект `createDictionary(codes)`: `code(имя)`, `name(код)`, `header(код)`, `har(заголовок, команда, ответ)`.
+- Словарь один на стек: прошивки собираются с его копией, поэтому приложения берут встроенный `DEFAULT_DICTIONARY`. Объект словаря (`createDictionary(codes)`): `code(имя)`, `name(код)`, `header(код)`, `har(заголовок, команда, ответ)`.
+- Команду, которой нет в словаре, задают числом: `code` и `har` принимают код строкой, десятичный или HEX (`"4097"`, `"0x1001"`), а `name` для неизвестного кода возвращает его же числом строкой, так что запись «туда и обратно» сходится.
 - Такой словарь принимают `encodeHar`, `decodeHar`, `encodeWsEnvelope`, `decodeWsEnvelope`, `encodeXPoeDebugFrame` (последний аргумент), `createXPoeDebugParser({ dictionary })` и связь `GUIRenderer` (поле `dictionary`). Без него берётся встроенный.
 
 </details>
