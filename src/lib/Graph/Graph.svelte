@@ -175,10 +175,6 @@
 
   /* Общая геометрия осей - переиспользуется отрисовкой и обработчиком наведения мыши, чтобы не дублировать формулы */
   const computeGeometry = (data: Line[]) => {
-    const padding = { top: 10, right: 10, bottom: 20, left: 35 }
-    const graphWidth = width - padding.left - padding.right
-    const graphHeight = height - padding.top - padding.bottom
-
     const allPoints = data.flatMap((line) => line.points)
     const minX = allPoints.length ? Math.min(...allPoints.map((p) => p.x)) : 0
     const maxX = allPoints.length ? Math.max(...allPoints.map((p) => p.x)) : 1
@@ -188,10 +184,18 @@
     const { min: yMin, max: yMax } = (!isHistoryMode && liveYRange) || computeAutoYRange(allPoints.map((p) => p.y))
     const ySpan = yMax - yMin || 1
 
+    /* Подписи Y на круглых значениях; левое поле по самой длинной подписи (моноширинный 10px - около 6 px на знак) */
+    const yStep = niceStep(ySpan, 6)
+    const yDecimals = stepDecimals(yStep)
+    const yLabelChars = Math.max(...[yMin, yMax].map((v) => (Math.ceil(Math.abs(v) / yStep) * yStep * Math.sign(v)).toFixed(yDecimals).length))
+    const padding = { top: 10, right: 10, bottom: 20, left: Math.max(35, Math.ceil(yLabelChars * 6.2) + 10) }
+    const graphWidth = width - padding.left - padding.right
+    const graphHeight = height - padding.top - padding.bottom
+
     const getX = (x: number) => padding.left + ((x - minX) / timeSpan) * graphWidth
     const getY = (y: number) => padding.top + graphHeight - ((y - yMin) / ySpan) * graphHeight
 
-    return { padding, graphWidth, minX, timeSpan, yMin, yMax, getX, getY }
+    return { padding, graphWidth, minX, timeSpan, yMin, yMax, yStep, yDecimals, getX, getY }
   }
 
   /* Бинарный поиск ближайшей по времени точки - точки линий всегда отсортированы по x (по построению) */
@@ -210,15 +214,40 @@
 
   const pad2 = (n: number) => String(n).padStart(2, "0")
 
-  /* Компактная адаптивная подпись сетки по оси X: относительное время для живого режима, дата/время - для статического */
-  const formatAxisLabel = (t: number, spanMs: number): string => {
-    if (!isHistoryMode) return `${((t - Date.now()) / 1000).toFixed(0)}s`
+  /* Круглый шаг сетки значений: 1, 2, 2.5 или 5 × 10^n, не меньше span / target */
+  const niceStep = (span: number, target: number): number => {
+    const raw = span / target || 1
+    const pow = 10 ** Math.floor(Math.log10(raw))
+    return ([1, 2, 2.5, 5, 10].find((m) => m * pow >= raw) ?? 10) * pow
+  }
+
+  /* Знаков после запятой для подписей с шагом step */
+  const stepDecimals = (step: number): number => {
+    let d = 0
+    while (d < 6 && Math.abs(Math.round(step * 10 ** d) - step * 10 ** d) > 1e-9) d++
+    return d
+  }
+
+  /* Шаги сетки времени, мс: от 0.1 с до года */
+  const TIME_STEPS = [
+    100, 200, 500, 1e3, 2e3, 5e3, 1e4, 15e3, 3e4, 6e4, 12e4, 3e5, 6e5, 9e5, 18e5, 36e5, 72e5, 108e5, 216e5, 432e5, 864e5, 1728e5, 6048e5, 2592e6, 7776e6,
+    31536e6,
+  ]
+
+  /* Компактная адаптивная подпись сетки по оси X: относительное время для живого режима (точность по шагу сетки), дата/время - для статического */
+  const formatAxisLabel = (t: number, spanMs: number, stepMs = 1000): string => {
+    if (!isHistoryMode) {
+      const s = (t - Date.now()) / 1000
+      const text = s.toFixed(stepMs < 1000 ? 1 : 0)
+      return `${Number(text) === 0 ? "0" : text}s`
+    }
     const d = new Date(t)
     const hhmm = `${pad2(d.getHours())}:${pad2(d.getMinutes())}`
-    if (spanMs < 24 * 60 * 60 * 1000) return hhmm
     const ddmm = `${pad2(d.getDate())}.${pad2(d.getMonth() + 1)}`
-    if (spanMs < 365 * 24 * 60 * 60 * 1000) return `${ddmm} ${hhmm}`
-    return `${ddmm}.${d.getFullYear()}`
+    if (stepMs >= 2592e6) return `${pad2(d.getMonth() + 1)}.${d.getFullYear()}`
+    if (stepMs >= 864e5) return spanMs < 31536e6 ? ddmm : `${ddmm}.${d.getFullYear()}`
+    const time = stepMs < 6e4 ? `${hhmm}:${pad2(d.getSeconds())}` : hhmm
+    return spanMs < 864e5 ? time : `${ddmm} ${time}`
   }
 
   /* Полная подпись времени в тултипе */
@@ -275,7 +304,7 @@
     ctx.clearRect(0, 0, width, height)
 
     const data = lines()
-    const { padding, graphWidth, minX, timeSpan, yMin, yMax, getX, getY } = computeGeometry(data)
+    const { padding, graphWidth, minX, timeSpan, yMin, yMax, yStep, yDecimals, getX, getY } = computeGeometry(data)
     const style = getComputedStyle(canvas)
 
     /* Сетка в стиле PeriodChart: пунктир цветом --faint-color темы, подписи тем же цветом без прозрачности */
@@ -289,11 +318,14 @@
     /* Сетка X */
     ctx.textAlign = "center"
 
-    /* Подпись на каждой линии сетки, если влезает; на узком холсте - через одну или реже, чтобы не слипались */
-    const labelWidth = Math.max(ctx.measureText(formatAxisLabel(minX, timeSpan)).width, ctx.measureText(formatAxisLabel(minX + timeSpan, timeSpan)).width)
-    const labelStep = [1, 2, 5, 10].find((step) => (graphWidth / 10) * step >= labelWidth + 6) ?? 10
-    for (let i = 0; i <= 10; i++) {
-      const t = minX + (i / 10) * timeSpan
+    /* Линии сетки на круглых отметках времени: самый мелкий шаг, при котором подписи не слипаются (не меньше 50 px) */
+    const labelWidthAt = (step: number) =>
+      Math.max(ctx.measureText(formatAxisLabel(minX, timeSpan, step)).width, ctx.measureText(formatAxisLabel(minX + timeSpan, timeSpan, step)).width)
+    const stepMs = TIME_STEPS.find((step) => (step / timeSpan) * graphWidth >= Math.max(labelWidthAt(step) + 12, 50)) ?? TIME_STEPS.at(-1)!
+    const labelWidth = labelWidthAt(stepMs)
+    /* Живой режим - отметки кратны шагу от текущего момента («0s», «-5s»), статический - кратны шагу в местном времени */
+    const anchor = isHistoryMode ? -new Date(minX).getTimezoneOffset() * 60_000 : Date.now()
+    for (let t = anchor + Math.ceil((minX - anchor) / stepMs) * stepMs; t <= minX + timeSpan + 1e-6; t += stepMs) {
       const x = getX(t)
       ctx.globalAlpha = GRID_ALPHA
       ctx.beginPath()
@@ -302,15 +334,17 @@
       ctx.stroke()
       ctx.globalAlpha = 1
       ctx.textBaseline = "top"
-      if (i % labelStep === 0) ctx.fillText(formatAxisLabel(t, timeSpan), x, height - padding.bottom + 2)
+      ctx.fillText(
+        formatAxisLabel(t, timeSpan, stepMs),
+        Math.min(Math.max(x, padding.left + labelWidth / 2), width - padding.right - labelWidth / 2),
+        height - padding.bottom + 2,
+      )
     }
 
-    /* Сетка Y */
+    /* Сетка Y на круглых значениях (1, 2, 2.5, 5 × 10^n), линий не больше 8 */
     ctx.textAlign = "right"
     ctx.textBaseline = "middle"
-    const ySteps = 8
-    for (let i = 0; i <= ySteps; i++) {
-      const yVal = yMax - (i * (yMax - yMin)) / ySteps
+    for (let yVal = Math.ceil(yMin / yStep) * yStep; yVal <= yMax + yStep * 1e-9; yVal += yStep) {
       const y = getY(yVal)
       ctx.globalAlpha = GRID_ALPHA
       ctx.beginPath()
@@ -318,7 +352,8 @@
       ctx.lineTo(width - padding.right, y)
       ctx.stroke()
       ctx.globalAlpha = 1
-      ctx.fillText(yVal.toFixed(1), padding.left - 5, y)
+      const text = (Math.abs(yVal) < yStep * 1e-9 ? 0 : yVal).toFixed(yDecimals)
+      ctx.fillText(text, padding.left - 5, y)
     }
     ctx.setLineDash([])
 
