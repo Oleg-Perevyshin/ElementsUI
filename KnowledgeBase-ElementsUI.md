@@ -140,13 +140,14 @@ ElementsUI/
 │     ├─ constructor.ts    точка входа "poe-svelte-ui-lib/constructor"
 │     ├─ theme.css         точка входа "poe-svelte-ui-lib/theme.css"
 │     ├─ <Компонент>/      Компонент.svelte + КомпонентProps.svelte + README.md (+ вспомогательные .ts)
-│     ├─ GUIRenderer/      GUIRenderer.svelte, DeviceTable.svelte
+│     ├─ GUIRenderer/      GUIRenderer.svelte, DeviceTable.svelte, extras.ts (GUI_EXTRAS - тяжёлые компоненты)
 │     ├─ protocols/        ядро протоколов, PROTOCOL.md, cbor/
 │     ├─ dictionaries/     commands.yaml, messages.yaml, generated/ (TS), firmware/ (api_har.h, api_msg.h), README.md
 │     ├─ locales/          languages.ts, i18n.ts, localize.ts, translations.ts, constructor.ts, index.ts
 │     ├─ libIcons/         служебные значки компонентов и панелей
 │     ├─ gui.ts            чистые правила рендерера (сетка, виджеты, биты, пакеты, раскладка)
-│     ├─ registry.ts       COMPONENTS: отрисовка и тип обмена по типу компонента
+│     ├─ registry.ts       COMPONENTS: отрисовка и метаданные по типу компонента (для конструктора)
+│     ├─ componentMeta.ts  COMPONENT_META: тип обмена и поля смарт-виджета, без компонентов (для GUIRenderer)
 │     ├─ defaults.ts       свойства и размеры новых компонентов, createComponent
 │     ├─ propsEditor.ts    неизменяемая правка свойств из панелей
 │     ├─ fsTransfer.ts     обмен файлами по SET/GET FS
@@ -240,7 +241,7 @@ ElementsUI/
 | ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `GUIRenderer/GUIRenderer.svelte`          | Отрисовка GUI: сетка, вложенность, значения, биты, пакеты, виджеты, файлы, журнал таблицы, узкий экран (`NARROW_MAX_PX = 640`)                                                                    |
 | `gui.ts`                                  | Чистые функции без Svelte: `GUI_GRID`, `WIDGET_FIELDS`, `commandPacket`, `tablePacket`, `readBits`/`writeBits`, `mergeDevicePayload`, `layoutFlow`/`layoutColumns`/`flowMinWidth`                 |
-| `registry.ts`                             | `COMPONENTS[type] = { view, io, fields? }`, `componentVariables`                                                                                                                                  |
+| `registry.ts`                             | `COMPONENTS[type] = { view, io, fields? }` для конструктора; `COMPONENT_META` и `componentVariables` - в `componentMeta.ts`, без компонентов                                                      |
 | `defaults.ts`                             | `COMPONENT_DEFAULTS`, `COMPONENT_SIZES`, `minComponentWidth`, `createComponent`                                                                                                                   |
 | `propsEditor.ts`                          | `createPropsEditor` (`set`, `patch`, `addItem`, `updateItem`, `removeItem`), `applyPropertyChange`                                                                                                |
 | `fsTransfer.ts`                           | Файлы по `SET FS`: чанки, повторы, CRC-32, общая очередь операций на транспорт                                                                                                                    |
@@ -554,7 +555,7 @@ interface DeviceReply {
 
 - Svelte 5 на рунах, TypeScript `strict`. Компонент - только показ и колбэки, без сети и состояния устройств.
 - Внутри `src/lib` импорты относительные; витрина импортирует библиотеку через `#lib` (поле `imports` в `package.json`). В ядре протоколов и `locales` импорты с расширением `.js`.
-- У каждого компонента: `Компонент.svelte`, парная панель `КомпонентProps.svelte` (только через `/constructor`), `README.md` рядом. Новый тип добавляется в `UIComponentPropsMap` (`types.ts`), `COMPONENTS` (`registry.ts`), `PANELS` (`constructor.ts`), `COMPONENT_DEFAULTS` и `COMPONENT_SIZES` (`defaults.ts`).
+- У каждого компонента: `Компонент.svelte`, парная панель `КомпонентProps.svelte` (только через `/constructor`), `README.md` рядом. Новый тип добавляется в `UIComponentPropsMap` (`types.ts`), `COMPONENT_META` (`componentMeta.ts`), `COMPONENTS` (`registry.ts`; тяжёлый - ещё в `GUI_EXTRAS` и `EXTRA_TYPES` `GUIRenderer`), `PANELS` (`constructor.ts`), `COMPONENT_DEFAULTS` и `COMPONENT_SIZES` (`defaults.ts`).
 - Панели свойств не меняют свойства на месте: `createPropsEditor` отправляет новые объекты верхнего уровня одним `PropertyChange`.
 - Описание компонента два: короткое по кнопке (i) (ключ `component.info.<Тип>` словаря конструктора: Назначение, Пакет данных, Ключи, Особенности, Настройки) и подробное `src/lib/<Компонент>/README.md` (открывается на вкладке «Инфо» витрины). Оно не должно противоречить короткому. В интерфейсе пользователя описаний для программиста нет.
 - Тексты компонентов только через `$T("ключ")` из `translations.ts`, русских строк в разметке нет. Тексты из конструктора - строка или `{ ru, en, zh }`, переводятся `localizeDeep`.
@@ -856,8 +857,18 @@ interface DeviceReply {
 Интерфейс, собранный в конструкторе, рисует компонент `GUIRenderer`. Он сам раскладывает блоки по сетке, берёт значения переменных, отправляет команды и ведёт смарт-виджеты и файлы. Приложению остаётся транспорт, выбор модуля, загрузка GUI и хранилище значений.
 
 ```svelte
-<UI.GUIRenderer components={module.UIBlocks} {link} persistKey={module.ModSN} viewer={!canManage} render={{ VideoViewer: video }} onError={addMessage} />
+<UI.GUIRenderer
+  components={module.UIBlocks}
+  {link}
+  persistKey={module.ModSN}
+  viewer={!canManage}
+  render={{ VideoViewer: video }}
+  extras={UI.GUI_EXTRAS}
+  onError={addMessage}
+/>
 ```
+
+**📦 Что попадает в сборку.** Тяжёлые компоненты - `WidgetMap`, `WidgetPFD`, `VideoViewer` и `Joystick` - `GUIRenderer` берёт из пропса `extras`. Передайте `UI.GUI_EXTRAS` целиком или только нужные из них. Чего нет в `extras`, то не попадает в сборку приложения и рисуется заглушкой «Компонент не входит в эту сборку». Так веб-интерфейс прошивки без карты и пилотажного прибора меньше примерно на 48 КБ сжатого JS. Облако и терминал передают полный набор.
 
 **📐 Правила для автора GUI.** Рендерер понимает интерфейс по группам, поэтому при сборке в конструкторе соблюдайте правила:
 
@@ -893,6 +904,7 @@ interface DeviceReply {
 | `viewer`     | наблюдатель: видны только `access` `full` и `viewOnly`, управление отключено; `WidgetWiFi` и `WidgetDeviceInfo` без `onSave` - только для чтения, пароли маской |
 | `persistKey` | ключ хранения в браузере (обычно `ModSN`): свёрнутость виджетов, планы `WidgetMap`                                                                              |
 | `render`     | своя отрисовка типа: `{ VideoViewer: snippet }`, сниппет получает компонент                                                                                     |
+| `extras`     | тяжёлые компоненты: `GUI_EXTRAS` или их часть; тип без компонента рисуется заглушкой                                                                            |
 | `onError`    | готовый текст ошибки на языке библиотеки: команда не собрана, ошибка передачи файла, сбой поиска сетей WiFi (ER! или нет ответа)                                |
 
 ```ts
@@ -964,7 +976,9 @@ socket.send(valueToCbor(encodeWsEnvelope("SET", "JoinDev", { DevSN, Watch: true 
 
 **Реестр.**
 
-- `COMPONENTS[type]` - `{ view, io, fields? }`: компонент отрисовки, обмен с устройством (`none`, `read`, `write`, `readWrite`, `widget`) и поля смарт-виджета.
+- `COMPONENT_META[type]` - `{ io, fields? }`: обмен с устройством (`none`, `read`, `write`, `readWrite`, `widget`) и поля смарт-виджета, без самих компонентов (`componentMeta.ts`). Его берёт `GUIRenderer`.
+- `COMPONENTS[type]` - `{ view, io, fields? }`: то же плюс компонент отрисовки, для конструктора. Тянет в сборку все виджеты, поэтому в рендерере не используется.
+- `package.json` объявляет `"sideEffects": ["**/*.css"]`: без этого сборщик приложения не может выбросить неиспользуемые модули библиотеки.
 - `componentVariables(component)` - переменные устройства компонента (список переменных конструктора).
 - `UIComponent` - объединение по `type`: после `component.type === "Button"` у `properties` тип `IButtonProps`, `UIComponent<"Button">` - компонент одного типа.
 - В `poe-svelte-ui-lib/constructor`: `PANELS[type]` - панель свойств, `COMPONENT_DEFAULTS`, `COMPONENT_SIZES`, `minComponentWidth`, `createComponent(type, { col, row }, parentId, { tab, areaWidth })`, `applyPropertyChange(component, change)`.

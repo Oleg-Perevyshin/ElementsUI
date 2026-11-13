@@ -27,7 +27,7 @@
     type DeviceLink,
     type DevicePacket,
   } from "../gui"
-  import { COMPONENTS } from "../registry"
+  import { COMPONENT_META } from "../componentMeta"
   import Accordion from "../Accordion/Accordion.svelte"
   import Tabs from "../Tabs/Tabs.svelte"
   import Button from "../Button/Button.svelte"
@@ -35,7 +35,6 @@
   import Select from "../Select/Select.svelte"
   import Switch from "../Switch/Switch.svelte"
   import Slider from "../Slider/Slider.svelte"
-  import Joystick from "../Joystick/Joystick.svelte"
   import Widget from "../Widget/Widget.svelte"
   import TextField from "../TextField/TextField.svelte"
   import Divider from "../Divider/Divider.svelte"
@@ -43,15 +42,13 @@
   import Graph from "../Graph/Graph.svelte"
   import PeriodChart from "../PeriodChart/PeriodChart.svelte"
   import FileAttach from "../FileAttach/FileAttach.svelte"
-  import VideoViewer from "../VideoViewer/VideoViewer.svelte"
   import WidgetWiFi from "../WidgetWiFi/WidgetWiFi.svelte"
   import WidgetDeviceInfo from "../WidgetDeviceInfo/WidgetDeviceInfo.svelte"
   import WidgetFileSystem from "../WidgetFileSystem/WidgetFileSystem.svelte"
   import WidgetStackInfo from "../WidgetStackInfo/WidgetStackInfo.svelte"
   import WidgetRGBStrip from "../WidgetRGBStrip/WidgetRGBStrip.svelte"
-  import WidgetPFD from "../WidgetPFD/WidgetPFD.svelte"
-  import WidgetMap from "../WidgetMap/WidgetMap.svelte"
   import DeviceTable from "./DeviceTable.svelte"
+  import type { GuiExtras } from "./extras"
 
   interface Props {
     components: UIComponent[]
@@ -64,11 +61,16 @@
     persistKey?: string
     /* Своя отрисовка типа (например VideoViewer с потоком приложения) */
     render?: Partial<Record<UIType, Snippet<[UIComponent]>>>
+    /* Тяжёлые компоненты (GUI_EXTRAS или их часть): без них тип рисуется заглушкой и не попадает в сборку приложения */
+    extras?: GuiExtras
     /* Ошибка команды или передачи файла, для уведомления */
     onError?: (message: string) => void
   }
 
-  let { components, link, language, viewer = false, persistKey, render, onError }: Props = $props()
+  let { components, link, language, viewer = false, persistKey, render, extras, onError }: Props = $props()
+
+  /* Типы из GUI_EXTRAS - списком, а не из модуля: импорт GUI_EXTRAS сюда затянул бы их в любую сборку */
+  const EXTRA_TYPES: readonly UIType[] = ["Joystick", "VideoViewer", "WidgetPFD", "WidgetMap"]
 
   /* Кэш по ссылке и языку: localizeDeep создаёт новые объекты, без кэша обновление значений сбрасывало бы раскрытые аккордеоны и вкладки */
   let localized: { src?: UIComponent[]; lang?: string; out: UIComponent[] } = { out: [] }
@@ -234,7 +236,7 @@
   }
 
   const persist = (component: UIComponent) => (persistKey ? `${persistKey}|${component.id}` : undefined)
-  const writable = (component: UIComponent) => !viewer && COMPONENTS[component.type].io !== "none"
+  const writable = (component: UIComponent) => !viewer && COMPONENT_META[component.type].io !== "none"
 </script>
 
 <div bind:clientWidth={width}>
@@ -345,7 +347,10 @@
           value={link.get(id) as number | [number, number]}
           onUpdate={(value) => change(component, value)}
         />
-      {:else if component.type === "Joystick"}
+      {:else if EXTRA_TYPES.includes(component.type) && !extras?.[component.type as keyof GuiExtras]}
+        <p class="flex h-full items-center justify-center p-2 text-center text-[12px] text-(--muted-color)">{$T("gui.extra_missing")}: {component.type}</p>
+      {:else if component.type === "Joystick" && extras?.Joystick}
+        {@const Joystick = extras.Joystick}
         <Joystick
           {...component.properties}
           readonly={locked || component.properties.readonly}
@@ -390,7 +395,8 @@
           disabled={locked || component.properties.disabled}
           onUpdate={(file) => file && fs().upload(file.name, file).catch(report)}
         />
-      {:else if component.type === "VideoViewer"}
+      {:else if component.type === "VideoViewer" && extras?.VideoViewer}
+        {@const VideoViewer = extras.VideoViewer}
         <VideoViewer {...component.properties} />
       {:else if component.type === "WidgetWiFi"}
         {@const props = component.properties}
@@ -457,13 +463,15 @@
           onUpdate={locked ? undefined : (value, field) => saveFields(prefix, [field], { [field]: value }, props.keys)}
           onSave={locked ? undefined : (hardware) => saveFields(prefix, WIDGET_SAVE_FIELDS.WidgetRGBStrip, hardware, props.keys)}
         />
-      {:else if component.type === "WidgetPFD"}
+      {:else if component.type === "WidgetPFD" && extras?.WidgetPFD}
+        {@const WidgetPFD = extras.WidgetPFD}
         <WidgetPFD
           {...component.properties}
           value={fields(component, widgetPrefixes(component.type, component.properties)[0], WIDGET_FIELDS.WidgetPFD)}
           persistKey={persist(component)}
         />
-      {:else if component.type === "WidgetMap"}
+      {:else if component.type === "WidgetMap" && extras?.WidgetMap}
+        {@const WidgetMap = extras.WidgetMap}
         <WidgetMap
           {...component.properties}
           value={stable(
