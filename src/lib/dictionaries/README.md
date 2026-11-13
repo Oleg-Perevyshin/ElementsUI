@@ -1,13 +1,14 @@
 # 📚 Словари протокола
 
-Единые словари команд и сообщений устройств для всего стека: прошивок ESP и STM, облака DevCloud, терминала DevTerminal и веб-интерфейса прошивок.
+Единые словари команд и сообщений устройств и список компонентов GUI для всего стека: прошивок ESP и STM, облака DevCloud, терминала DevTerminal и веб-интерфейса прошивок.
 
 ## ✨ Что умеет
 
 - 📖 `commands.yaml` - словарь команд: имя аргумента, имя в перечислении C и код поля HAR.
 - 💬 `messages.yaml` - словарь сообщений устройств: группы с диапазонами кодов и сообщения (код, группа, имя, уровень, короткий понятный текст на RU, EN, ZH).
+- 🧩 `components.yaml` - список компонентов GUI: тип (значение `type` в GUI и имя экспорта компонента) и обмен с устройством.
 - ⚙️ Из словарей генерируется код для JS (`generated/`) и заголовки для прошивок (`firmware/api_har.h`, `firmware/api_msg.h`).
-- 📦 Файлы поставляются в пакете: `poe-svelte-ui-lib/dictionaries/commands.yaml`, `poe-svelte-ui-lib/dictionaries/messages.yaml`, `poe-svelte-ui-lib/dictionaries/firmware/api_har.h`, `poe-svelte-ui-lib/dictionaries/firmware/api_msg.h`.
+- 📦 Файлы поставляются в пакете: `poe-svelte-ui-lib/dictionaries/commands.yaml`, `poe-svelte-ui-lib/dictionaries/messages.yaml`, `poe-svelte-ui-lib/dictionaries/components.yaml`, `poe-svelte-ui-lib/dictionaries/firmware/api_har.h`, `poe-svelte-ui-lib/dictionaries/firmware/api_msg.h`.
 
 ## 🧩 Как пользоваться
 
@@ -22,6 +23,12 @@
 1. Добавить строку в раздел `messages` файла `messages.yaml`: `- { code, group, name, level, ru, en, zh }` - в свою группу, код из её диапазона, имя с приставкой группы (`FS_...`). Текст короткий и понятный пользователю: причина без технических подробностей, параметр `{0}` - только если без него теряется смысл. Нужна новая группа ядра - добавить её в раздел `groups` с диапазоном из резерва 500-999.
 2. `npm run Dictionary`.
 3. Скопировать `messages.yaml` в `.framework/Messages.yaml` и `firmware/api_msg.h` в `components/core/api_service/api_msg.h` обоих фреймворков.
+
+Новый компонент GUI:
+
+1. Добавить строку в `components.yaml`: `- [Тип, обмен]   # описание`, обмен - `none`, `read`, `write`, `readWrite` или `widget`.
+2. `npm run Dictionary`. Тип должен быть и в `UIComponentPropsMap` (`types.ts`), и в `GUI_VIEWS` (`guiViews.ts`), иначе библиотека не скомпилируется.
+3. Скопировать `components.yaml` в `.framework/Components.yaml` фреймворков: сборка веб-интерфейса прошивки сверяет с ним GUI устройства.
 
 В JS словари доступны через `poe-svelte-ui-lib/protocols`: `DEFAULT_ARGUMENT_CODES`, `DEFAULT_DICTIONARY`, `DEVICE_MESSAGES`, `MESSAGE_GROUPS`, `MESSAGE_CODES`, `formatDeviceMessage`.
 
@@ -50,6 +57,16 @@
 - Генератор падает на повторе имени или кода и на коде вне диапазона.
 - `generated/commands.ts` - `DEFAULT_ARGUMENT_CODES` (имя -> код), из него `DEFAULT_DICTIONARY` ядра протоколов.
 - `firmware/api_har.h` - `har_t`, макросы `HAR`/`HAR_NR`, `api_header_t` и `enum api_argument_t` (`A_* = код`) с комментариями разделов и строк. При сборке прошивки `.framework/Dictionary.yaml` сверяется с заголовком.
+
+</details>
+
+<details>
+<summary>🧩 Список компонентов</summary>
+
+- Строка: `- [Тип, обмен]`, комментарий после `#` - описание. Тип в PascalCase - это и значение `type` в GUI, и имя экспорта компонента.
+- Генератор падает на повторе типа и на обмене не из списка.
+- `generated/components.ts` - `COMPONENT_TYPES` (кортеж типов) и `COMPONENT_IO` (тип -> обмен). Из них `componentMeta.ts` строит `COMPONENT_META`; присваивания там не скомпилируются, если список и `UIType` разошлись в любую сторону.
+- Во фреймворках `.framework/Components.yaml` - копия: сборка веба прошивки останавливается, если в GUI устройства тип не из списка.
 
 </details>
 

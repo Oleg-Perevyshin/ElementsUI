@@ -158,3 +158,14 @@ test("api_msg.h: MSG_NONE = 0, MSG_<name> = код для каждого соо�
   delete enumCodes.NONE
   assert.deepEqual(enumCodes, MESSAGE_CODES)
 })
+
+test("список компонентов: components.yaml в пакете совпадает со сгенерированными COMPONENT_TYPES и COMPONENT_IO", async () => {
+  const { COMPONENT_TYPES, COMPONENT_IO } = await import("../dist/dictionaries/generated/components.js")
+  const listed = [...dictionaryFile("components.yaml").matchAll(/^\s*-\s*\[\s*([^,\]]+?)\s*,\s*([^,\]]+?)\s*\]/gm)].map(([, type, io]) => [type, io])
+  assert.ok(listed.length > 0)
+  assert.deepEqual(
+    [...COMPONENT_TYPES],
+    listed.map(([type]) => type),
+  )
+  assert.deepEqual(Object.entries(COMPONENT_IO), listed)
+})

@@ -1,4 +1,4 @@
-/* scripts/GenerateDictionary.mjs - генерирует из мастер-словарей src/lib/dictionaries: generated/commands.ts из commands.yaml (строки «- [Строка, Enum, Число]», тот же разбор, что parseArgumentDictionary), generated/messages.ts из messages.yaml (группы с диапазонами и сообщения), заголовки прошивок firmware/api_har.h и firmware/api_msg.h сразу в стиле .clang-format прошивок; запускается npm run Dictionary и перед упаковкой (prepack) */
+/* scripts/GenerateDictionary.mjs - генерирует из мастер-словарей src/lib/dictionaries: generated/commands.ts из commands.yaml (строки «- [Строка, Enum, Число]», тот же разбор, что parseArgumentDictionary), generated/messages.ts из messages.yaml (группы с диапазонами и сообщения), generated/components.ts из components.yaml (типы компонентов GUI и обмен), заголовки прошивок firmware/api_har.h и firmware/api_msg.h сразу в стиле .clang-format прошивок; запускается npm run Dictionary и перед упаковкой (prepack) */
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs"
 
 const root = new URL("../src/lib/dictionaries/", import.meta.url)
@@ -272,3 +272,23 @@ writeFileSync(
     `#pragma once\n\n#include <stdint.h>\n\ntypedef enum {\n${formatEnum(msgItems)}\n} api_msg_t;\n`,
 )
 console.log(`generated/messages.ts, firmware/api_msg.h: ${messages.length} сообщений в ${groups.length} группах`)
+
+/* ********************************************************** */
+/* Список компонентов GUI components.yaml (строки «- [Тип, обмен]») -> COMPONENT_TYPES и COMPONENT_IO; componentMeta.ts при компиляции сверяет список с UIType в обе стороны */
+const IO_KINDS = new Set(["none", "read", "write", "readWrite", "widget"])
+const componentsYaml = readFileSync(new URL("components.yaml", root), "utf8")
+const components = [...componentsYaml.matchAll(/^\s*-\s*\[\s*([^,\]]+?)\s*,\s*([^,\]]+?)\s*\]/gm)].map(([, type, io]) => ({ type, io }))
+const componentTypes = new Set()
+for (const { type, io } of components) {
+  if (!/^[A-Z][A-Za-z0-9]*$/.test(type)) throw new Error(`components.yaml: тип не PascalCase - ${type}`)
+  if (componentTypes.has(type)) throw new Error(`components.yaml: повтор типа ${type}`)
+  if (!IO_KINDS.has(io)) throw new Error(`components.yaml: обмен ${type} = ${io} не из ${[...IO_KINDS].join(", ")}`)
+  componentTypes.add(type)
+}
+writeFileSync(
+  new URL("components.ts", generated),
+  `/* $lib/dictionaries/generated/components.ts - СГЕНЕРИРОВАНО из components.yaml (npm run Dictionary), руками не править */\n\n` +
+    `export const COMPONENT_TYPES = [${components.map(({ type }) => JSON.stringify(type)).join(", ")}] as const\n\n` +
+    `export const COMPONENT_IO = {\n${components.map(({ type, io }) => `  ${type}: ${JSON.stringify(io)},`).join("\n")}\n} as const\n`,
+)
+console.log(`generated/components.ts: ${components.length} компонентов`)
