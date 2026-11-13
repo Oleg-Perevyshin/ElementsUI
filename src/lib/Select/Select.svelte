@@ -196,7 +196,7 @@
 
   /* Значок варианта: SVG, компонент или короткая метка ("S", "XL") */
   /* Размер значка задан явно: SVG без width и height Safari растягивает до 300 px */
-  const OPTION_ICON = "flex size-[18px] shrink-0 items-center justify-center leading-none [&_svg]:size-full"
+  const OPTION_ICON = "flex size-(--icon-size) shrink-0 items-center justify-center leading-none [&_svg]:size-full"
 
   /* type="radio": фокус стоит на выбранном варианте (или первом доступном), стрелки выбирают соседний доступный */
   let radioElements: HTMLButtonElement[] = $state([])
@@ -233,7 +233,7 @@
       <div bind:this={measureElement} class="pointer-events-none invisible absolute top-0 left-0 flex h-0 w-max overflow-hidden" aria-hidden="true">
         {#each options as option, index (option.id ?? index)}
           <span class="flex gap-1.5 text-[13px] font-semibold whitespace-nowrap"
-            >{#if option.icon}<span class="w-[18px]"></span>{/if}{option.icon && !showNames ? "" : option.name}</span
+            >{#if option.icon}<span class="w-(--icon-size)"></span>{/if}{option.icon && !showNames ? "" : option.name}</span
           >
         {/each}
       </div>
@@ -257,7 +257,7 @@
           <span class="min-w-0 truncate">{valueText || $Tr("common.select_tag")}</span>
         </span>
         <svg
-          class="size-3.5 shrink-0 text-(--faint-color) transition-transform duration-150"
+          class="size-(--icon-size-sm) shrink-0 text-(--faint-color) transition-transform duration-150"
           style="transform: rotate({isOpen ? 180 : 0}deg)"
           viewBox="0 0 24 24"
           fill="none"

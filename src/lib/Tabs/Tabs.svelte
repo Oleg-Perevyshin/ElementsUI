@@ -63,7 +63,7 @@
             aria-selected={index === activeTab}
             role="tab"
           >
-            <Icon icon={item?.icon} class="flex size-[18px] shrink-0 items-center justify-center overflow-visible [&_svg]:h-full [&_svg]:w-full" />
+            <Icon icon={item?.icon} class="flex size-(--icon-size) shrink-0 items-center justify-center overflow-visible [&_svg]:h-full [&_svg]:w-full" />
             {#if item?.name}
               <!-- В столбце подпись длиннее предела списка обрезается многоточием, целиком - в подсказке -->
               <span class="whitespace-nowrap {vertical ? '@md:truncate' : ''}" title={vertical ? item.name : undefined}>{item.name}</span>

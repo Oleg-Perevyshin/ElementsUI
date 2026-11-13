@@ -564,7 +564,6 @@
                   />
                   <Button
                     wrapperClass="w-8 shrink-0"
-                    componentClass="p-1"
                     content={{ icon: InfoIcon, info: { text: $T("widget.mission.autoInfoTitle"), side: "top" } }}
                     onClick={() => (showAutoInfo = true)}
                   />

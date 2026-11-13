@@ -128,7 +128,7 @@
       <div class="flex items-center justify-between gap-4 border-b border-(--hairline-color) px-5 py-4">
         <h4 id="{modalId}-title" class="min-w-0 truncate text-[17px] font-semibold">{title}</h4>
         <button
-          class="flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-lg text-(--faint-color) transition-colors duration-150 hover:bg-(--container-color) hover:text-(--font-color) [&_svg]:size-4"
+          class="flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-lg text-(--faint-color) transition-colors duration-150 hover:bg-(--container-color) hover:text-(--font-color) [&_svg]:size-(--icon-size)"
           onclick={onCancel}
           aria-label={$T("ui.close")}
         >

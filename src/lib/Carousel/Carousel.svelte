@@ -48,7 +48,7 @@
     {#if !isAtStart}
       <button
         transition:slide={{ axis: "x" }}
-        class="absolute z-10 size-[32px] -translate-y-1/2 cursor-pointer top-1/2 left-1 p-1.5 rounded-full border border-(--hairline-color) bg-(--back-color) text-(--muted-color) transition-colors duration-150 hover:text-(--font-color) [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full shadow-(--elevation-2) rotate-180"
+        class="absolute z-10 size-[32px] -translate-y-1/2 cursor-pointer top-1/2 left-1 flex items-center justify-center rounded-full border border-(--hairline-color) bg-(--back-color) text-(--muted-color) transition-colors duration-150 hover:text-(--font-color) [&_svg]:size-(--icon-size) shadow-(--elevation-2) rotate-180"
         onclick={() => scrollCarousel(-scrollValue)}
       >
         <ArrowIcon />
@@ -57,7 +57,7 @@
     {#if !isAtEnd}
       <button
         transition:slide={{ axis: "x" }}
-        class="absolute z-10 size-[32px] -translate-y-1/2 cursor-pointer top-1/2 right-1 p-1.5 rounded-full border border-(--hairline-color) bg-(--back-color) text-(--muted-color) transition-colors duration-150 hover:text-(--font-color) [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full shadow-(--elevation-2)"
+        class="absolute z-10 size-[32px] -translate-y-1/2 cursor-pointer top-1/2 right-1 flex items-center justify-center rounded-full border border-(--hairline-color) bg-(--back-color) text-(--muted-color) transition-colors duration-150 hover:text-(--font-color) [&_svg]:size-(--icon-size) shadow-(--elevation-2)"
         onclick={() => scrollCarousel(scrollValue)}
       >
         <ArrowIcon />

@@ -325,7 +325,7 @@
         {#if dataBuffer.clearButton}
           <div class="flex items-center justify-center tracking-normal normal-case">
             <Button
-              componentClass={twMerge("size-7 p-1.5 text-(--red-text) hover:bg-(--red-color)/10", dataBuffer.clearClass)}
+              componentClass={twMerge("size-7 text-(--red-text) hover:bg-(--red-color)/10", dataBuffer.clearClass)}
               content={{ icon: ButtonClear, info: { text: $T("common.table.clear"), side: "left" } }}
               onClick={clear}
             />
@@ -379,7 +379,7 @@
                           {@const title = resolve(button.title, row)}
                           <button class="{buttonClass(button, row, fit)} bg-(--bg-color)" onclick={() => buttonClick(row, button)} {title} aria-label={title}>
                             {#if button.icon}
-                              <span class="flex size-4 shrink-0 items-center justify-center overflow-visible [&_svg]:h-full [&_svg]:w-full">
+                              <span class="flex size-(--icon-size) shrink-0 items-center justify-center overflow-visible [&_svg]:size-full">
                                 {#if typeof button.icon === "string"}
                                   {@html sanitizeHtml(button.icon)}
                                 {:else}
@@ -395,7 +395,7 @@
                             button={{
                               variant: "plain",
                               wrapperClass: "w-fit shrink-0",
-                              componentClass: "aspect-auto h-7 w-auto rounded-lg px-2 py-0 [&>span]:size-4",
+                              componentClass: "aspect-auto h-7 w-auto rounded-lg px-2 py-0",
                               content: {
                                 icon: content.data.icon ?? MoreIcon,
                                 info: content.data.title ? { text: $T(content.data.title), side: "left" } : undefined,

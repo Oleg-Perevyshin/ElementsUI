@@ -114,7 +114,7 @@
   <div class="flex min-h-0 w-full flex-col overflow-hidden rounded-2xl bg-(--back-color)/50">
     <div class="flex shrink-0 items-start justify-end gap-2 p-2">
       {#if hasInfo}
-        <Button wrapperClass="w-6 h-6 shrink-0" componentClass="p-0" content={{ icon: InfoIcon }} onClick={openInfo} />
+        <Button wrapperClass="w-6 h-6 shrink-0" content={{ icon: InfoIcon }} onClick={openInfo} />
       {/if}
     </div>
     <div class="min-h-0 flex-1 overflow-auto p-2" transition:fade={{ duration: 200 }}>

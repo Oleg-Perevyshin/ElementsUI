@@ -188,7 +188,7 @@
         type="button"
         class="absolute {type == 'number' ? 'right-10' : 'right-1.5'} {type === 'text-area'
           ? 'top-1.5'
-          : ''} {iconButton} hover:bg-(--container-color) [&_svg]:size-4"
+          : ''} {iconButton} hover:bg-(--container-color) [&_svg]:size-(--icon-size)"
         onclick={async () => {
           isCopied = await copyText(String(value ?? ""))
           setTimeout(() => (isCopied = false), 1000)
@@ -221,7 +221,8 @@
       <button
         bind:this={infoButton}
         type="button"
-        class="absolute left-2 flex size-5 items-center justify-center border-none bg-transparent text-(--faint-color) [&_svg]:size-full {type === 'text-area'
+        class="absolute left-2 flex size-(--icon-size) items-center justify-center border-none bg-transparent text-(--faint-color) [&_svg]:size-full {type ===
+        'text-area'
           ? 'top-2'
           : ''} {disabled ? 'opacity-50' : 'cursor-pointer hover:text-(--accent-text)'}"
         onpointerdown={(event) => (infoTouch = !isHoverPointer(event))}

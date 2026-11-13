@@ -58,7 +58,7 @@
         <div class="flex min-w-0 flex-1 items-center gap-3">
           <Icon
             icon={label?.icon}
-            class="flex h-[18px] w-[18px] shrink-0 items-center justify-center text-[color-mix(in_srgb,var(--accent-text)_70%,var(--font-color))] [&_svg]:h-full [&_svg]:w-full"
+            class="flex size-(--icon-size) shrink-0 items-center justify-center text-[color-mix(in_srgb,var(--accent-text)_70%,var(--font-color))] [&_svg]:h-full [&_svg]:w-full"
           />
           <span class={twMerge(`min-w-0 text-[15px] leading-snug font-semibold wrap-break-word`, label.class)}>{label?.name}</span>
         </div>
@@ -66,7 +66,7 @@
         {#if chevron}
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            class="h-[14px] w-[14px] shrink-0 text-[color-mix(in_srgb,var(--accent-text)_70%,var(--font-color))] transition-transform duration-200"
+            class="size-(--icon-size-sm) shrink-0 text-[color-mix(in_srgb,var(--accent-text)_70%,var(--font-color))] transition-transform duration-200"
             style="transform: rotate({isOpen ? 180 : 0}deg)"
             viewBox="0 0 24 24"
           >

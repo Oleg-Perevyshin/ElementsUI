@@ -89,7 +89,7 @@
       <UI.Button
         wrapperClass="w-auto"
         variant="secondary"
-        componentClass="size-8 rounded-[10px] p-[6px]"
+        componentClass="size-8 rounded-[10px]"
         content={{ icon: typeof value.icon === "string" && value.icon ? value.icon : ICON_PLACEHOLDER, info: { text: value.name, side: "top" } }}
         onClick={() => (showIconLib = true)}
       />

@@ -166,7 +166,6 @@
               </div>
               <UI.Button
                 wrapperClass="w-8"
-                componentClass="p-1"
                 content={{ icon: SearchIcon, info: { text: $T("widget.wifi.scan"), side: "top" } }}
                 loading={scanning}
                 disabled={!onScan || readOnly}

@@ -203,7 +203,7 @@
               if (!item.disabled) event.currentTarget.focus()
             }}
           >
-            <Icon icon={item.icon} class="flex size-[18px] shrink-0 items-center justify-center [&_svg]:h-full [&_svg]:w-full" />
+            <Icon icon={item.icon} class="flex size-(--icon-size) shrink-0 items-center justify-center [&_svg]:h-full [&_svg]:w-full" />
             <span class="min-w-0 flex-1 truncate">{item.name}</span>
           </button>
         {/if}

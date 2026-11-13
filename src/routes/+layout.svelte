@@ -118,12 +118,7 @@
     </div>
     <div class="flex items-center gap-4">
       <div class="relative mx-1 flex h-full items-center" role="button" tabindex="0">
-        <UI.Button
-          wrapperClass="lang-button w-9"
-          componentClass="p-1"
-          content={{ icon: currentLanguage.flag }}
-          onClick={() => (showLanguageModal = !showLanguageModal)}
-        />
+        <UI.Button wrapperClass="lang-button w-9" content={{ icon: currentLanguage.flag }} onClick={() => (showLanguageModal = !showLanguageModal)} />
         {#if showLanguageModal}
           <div
             class="absolute top-full left-full z-50 w-44 -translate-x-1/2 transform rounded-2xl bg-(--container-color) px-2 shadow-lg"

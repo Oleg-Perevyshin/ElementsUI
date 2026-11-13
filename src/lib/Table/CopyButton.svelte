@@ -22,6 +22,6 @@
   onclick={copy}
   aria-label={$T("ui.copy_text")}
 >
-  <span class="flex size-3.5 [&_svg]:size-full" aria-hidden="true"><CopyIcon /></span>
+  <span class="flex size-(--icon-size-sm) [&_svg]:size-full" aria-hidden="true"><CopyIcon /></span>
   <CopiedChip show={copied} class="top-1/2 right-full z-10 mr-1 -translate-y-1/2" />
 </button>

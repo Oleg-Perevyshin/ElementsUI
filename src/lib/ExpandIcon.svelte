@@ -16,7 +16,7 @@
   )}
   aria-hidden="true"
 >
-  <span class="flex size-3.5 transition-transform duration-150 [&_svg]:h-full [&_svg]:w-full" style="transform: rotate({angle}deg)">
+  <span class="flex size-(--icon-size-sm) transition-transform duration-150 [&_svg]:h-full [&_svg]:w-full" style="transform: rotate({angle}deg)">
     <ArrowIcon />
   </span>
 </span>

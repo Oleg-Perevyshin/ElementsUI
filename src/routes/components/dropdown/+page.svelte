@@ -49,7 +49,7 @@
         {#snippet trigger(props)}
           <button
             {...props}
-            class="flex size-8 cursor-pointer items-center justify-center rounded-full border border-(--border-color) [&_svg]:size-5"
+            class="flex size-8 cursor-pointer items-center justify-center rounded-full border border-(--border-color) [&_svg]:size-(--icon-size)"
             aria-label="Язык"
           >
             {@html currentFlag}

@@ -1,4 +1,4 @@
-<!-- $lib/Button/Button.svelte - кнопка: вид variant, цвет accent, радиус 10px (иконка без подписи - круг 32px или во всю ширину wrapperClass), высота 32px, кольцо фокуса. pressed - кнопка-переключатель (вид выбранной кнопки, aria-pressed), loading - крутилка вместо значка, кнопка не нажимается -->
+<!-- $lib/Button/Button.svelte - кнопка: вид variant, цвет accent, радиус 10px (иконка без подписи - круг 32px или во всю ширину wrapperClass), высота 32px, кольцо фокуса. Значок всегда размером --icon-size из темы, не больше кнопки. pressed - кнопка-переключатель (вид выбранной кнопки, aria-pressed), loading - крутилка вместо значка, кнопка не нажимается -->
 <script lang="ts">
   import type { IButtonProps } from "../types"
   import { twMerge } from "tailwind-merge"
@@ -90,13 +90,11 @@
   >
     {#if loading}
       <!-- Крутилка на месте значка: у кнопки-значка размер кнопки не меняется -->
-      <Loader size={content.name?.trim() ? "18px" : "100%"} />
+      <Loader size="var(--icon-size)" />
     {:else}
       <Icon
         icon={content?.icon}
-        class="flex shrink-0 items-center justify-center overflow-visible {content.name?.trim()
-          ? 'h-[18px] w-[18px]'
-          : 'h-full w-full'} [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
+        class="flex aspect-square w-(--icon-size) max-w-full shrink-0 items-center justify-center overflow-visible [&_svg]:size-full"
       />
     {/if}
 

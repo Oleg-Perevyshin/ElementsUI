@@ -41,12 +41,12 @@
       onclick={() => (collapsed = !collapsed)}
       aria-expanded={!collapsed}
     >
-      <span class="flex h-[18px] w-[18px] shrink-0 items-center justify-center text-(--accent-text) [&_svg]:h-full [&_svg]:w-full">
+      <span class="flex size-(--icon-size) shrink-0 items-center justify-center text-(--accent-text) [&_svg]:h-full [&_svg]:w-full">
         <Icon />
       </span>
       <span class="min-w-0 truncate text-[14px] font-semibold">{label}</span>
       <span
-        class="flex h-[14px] w-[14px] shrink-0 items-center justify-center text-(--faint-color) transition-transform duration-150 [&_svg]:h-full [&_svg]:w-full"
+        class="flex size-(--icon-size-sm) shrink-0 items-center justify-center text-(--faint-color) transition-transform duration-150 [&_svg]:h-full [&_svg]:w-full"
         style="transform: rotate({collapsed ? 0 : 90}deg)"
       >
         <ArrowIcon />

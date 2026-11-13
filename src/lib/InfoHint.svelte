@@ -35,7 +35,7 @@
 <button
   bind:this={anchor}
   type="button"
-  class="inline-flex size-4 shrink-0 cursor-help items-center justify-center border-none bg-transparent p-0 text-(--faint-color) hover:text-(--accent-text) [&_svg]:size-full"
+  class="inline-flex size-(--icon-size-sm) shrink-0 cursor-help items-center justify-center border-none bg-transparent p-0 text-(--faint-color) hover:text-(--accent-text) [&_svg]:size-full"
   aria-label={text}
   onpointerdown={(event) => (touch = !isHoverPointer(event))}
   onclick={(event) => {

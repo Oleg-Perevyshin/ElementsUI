@@ -106,7 +106,7 @@
     <!-- Шапка: иконка + название, фиксированная высота -->
     <div class="flex h-11 shrink-0 items-center gap-2.5 border-b border-(--hairline-color) px-3.5">
       {#if icons.array?.length}
-        <div class="size-5 shrink-0 {accent ? 'text-(--accent-text)' : 'text-(--muted-color)'} [&_svg]:h-full [&_svg]:w-full">
+        <div class="size-(--icon-size) shrink-0 {accent ? 'text-(--accent-text)' : 'text-(--muted-color)'} [&_svg]:h-full [&_svg]:w-full">
           {@html sanitizeHtml(icons.array[iconIndex] ?? "")}
         </div>
       {/if}

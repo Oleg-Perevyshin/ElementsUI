@@ -71,14 +71,7 @@
         onUpdate={setImage}
       />
       {#if component.properties.image}
-        <UI.Button
-          wrapperClass="w-8 mt-6"
-          variant="primary"
-          accent="red"
-          componentClass="p-0.5"
-          content={{ icon: CrossIcon }}
-          onClick={() => edit.set("image", "")}
-        />
+        <UI.Button wrapperClass="w-8 mt-6" variant="primary" accent="red" content={{ icon: CrossIcon }} onClick={() => edit.set("image", "")} />
       {/if}
     </div>
   </PropsGroup>
