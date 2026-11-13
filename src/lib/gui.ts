@@ -388,3 +388,6 @@ export const layoutColumns = (list: UIComponent[], total: number) => {
   const last = Math.max(...used)
   return Array.from({ length: count }, (_, i) => (i + 1 > first && i + 1 < last && !used.has(i + 1) ? GUTTER : "minmax(0, 1fr)")).join(" ")
 }
+
+/* Типы компонентов, которые встречаются в GUI (по порядку первого появления): по ним приложение собирает views для GUIRenderer, чтобы в сборку попали только они */
+export const guiTypes = (components: readonly { type: UIType }[]): UIType[] => [...new Set(components.map((component) => component.type))]

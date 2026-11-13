@@ -140,7 +140,7 @@ ElementsUI/
 │     ├─ constructor.ts    точка входа "poe-svelte-ui-lib/constructor"
 │     ├─ theme.css         точка входа "poe-svelte-ui-lib/theme.css"
 │     ├─ <Компонент>/      Компонент.svelte + КомпонентProps.svelte + README.md (+ вспомогательные .ts)
-│     ├─ GUIRenderer/      GUIRenderer.svelte, DeviceTable.svelte, extras.ts (GUI_EXTRAS - тяжёлые компоненты)
+│     ├─ GUIRenderer/      GUIRenderer.svelte, DeviceTable.svelte, views.ts (GUI_VIEWS - компоненты всех типов; рендерер берёт их из пропса views)
 │     ├─ protocols/        ядро протоколов, PROTOCOL.md, cbor/
 │     ├─ dictionaries/     commands.yaml, messages.yaml, generated/ (TS), firmware/ (api_har.h, api_msg.h), README.md
 │     ├─ locales/          languages.ts, i18n.ts, localize.ts, translations.ts, constructor.ts, index.ts
@@ -555,7 +555,7 @@ interface DeviceReply {
 
 - Svelte 5 на рунах, TypeScript `strict`. Компонент - только показ и колбэки, без сети и состояния устройств.
 - Внутри `src/lib` импорты относительные; витрина импортирует библиотеку через `#lib` (поле `imports` в `package.json`). В ядре протоколов и `locales` импорты с расширением `.js`.
-- У каждого компонента: `Компонент.svelte`, парная панель `КомпонентProps.svelte` (только через `/constructor`), `README.md` рядом. Новый тип добавляется в `UIComponentPropsMap` (`types.ts`), `COMPONENT_META` (`componentMeta.ts`), `COMPONENTS` (`registry.ts`; тяжёлый - ещё в `GUI_EXTRAS` и `EXTRA_TYPES` `GUIRenderer`), `PANELS` (`constructor.ts`), `COMPONENT_DEFAULTS` и `COMPONENT_SIZES` (`defaults.ts`).
+- У каждого компонента: `Компонент.svelte`, парная панель `КомпонентProps.svelte` (только через `/constructor`), `README.md` рядом. Новый тип добавляется в `UIComponentPropsMap` (`types.ts`), `COMPONENT_META` (`componentMeta.ts`), `COMPONENTS` (`registry.ts`; ещё в `GUI_VIEWS` (`GUIRenderer/views.ts`) и ветку в `GUIRenderer`), `PANELS` (`constructor.ts`), `COMPONENT_DEFAULTS` и `COMPONENT_SIZES` (`defaults.ts`).
 - Панели свойств не меняют свойства на месте: `createPropsEditor` отправляет новые объекты верхнего уровня одним `PropertyChange`.
 - Описание компонента два: короткое по кнопке (i) (ключ `component.info.<Тип>` словаря конструктора: Назначение, Пакет данных, Ключи, Особенности, Настройки) и подробное `src/lib/<Компонент>/README.md` (открывается на вкладке «Инфо» витрины). Оно не должно противоречить короткому. В интерфейсе пользователя описаний для программиста нет.
 - Тексты компонентов только через `$T("ключ")` из `translations.ts`, русских строк в разметке нет. Тексты из конструктора - строка или `{ ru, en, zh }`, переводятся `localizeDeep`.
@@ -863,12 +863,12 @@ interface DeviceReply {
   persistKey={module.ModSN}
   viewer={!canManage}
   render={{ VideoViewer: video }}
-  extras={UI.GUI_EXTRAS}
+  views={UI.GUI_VIEWS}
   onError={addMessage}
 />
 ```
 
-**📦 Что попадает в сборку.** Тяжёлые компоненты - `WidgetMap`, `WidgetPFD`, `VideoViewer` и `Joystick` - `GUIRenderer` берёт из пропса `extras`. Передайте `UI.GUI_EXTRAS` целиком или только нужные из них. Чего нет в `extras`, то не попадает в сборку приложения и рисуется заглушкой «Компонент не входит в эту сборку». Так веб-интерфейс прошивки без карты и пилотажного прибора меньше примерно на 48 КБ сжатого JS. Облако и терминал передают полный набор.
+**📦 Что попадает в сборку.** `GUIRenderer` сам не импортирует ни одного компонента: каждый тип он берёт из пропса `views`. Облако и терминал передают `UI.GUI_VIEWS` - все типы. Приложению с ограниченной памятью (веб-интерфейс прошивки) достаточно перечислить только нужные: `{ Button: UI.Button, Input: UI.Input, ... }`. Чего нет в `views`, то не попадает в сборку и рисуется заглушкой «Компонент не входит в эту сборку». Какие типы есть в GUI, возвращает `guiTypes(components)`.
 
 **📐 Правила для автора GUI.** Рендерер понимает интерфейс по группам, поэтому при сборке в конструкторе соблюдайте правила:
 
@@ -904,7 +904,7 @@ interface DeviceReply {
 | `viewer`     | наблюдатель: видны только `access` `full` и `viewOnly`, управление отключено; `WidgetWiFi` и `WidgetDeviceInfo` без `onSave` - только для чтения, пароли маской |
 | `persistKey` | ключ хранения в браузере (обычно `ModSN`): свёрнутость виджетов, планы `WidgetMap`                                                                              |
 | `render`     | своя отрисовка типа: `{ VideoViewer: snippet }`, сниппет получает компонент                                                                                     |
-| `extras`     | тяжёлые компоненты: `GUI_EXTRAS` или их часть; тип без компонента рисуется заглушкой                                                                            |
+| `views`      | компоненты отрисовки по типу: `GUI_VIEWS` или только нужные; тип без компонента рисуется заглушкой                                                              |
 | `onError`    | готовый текст ошибки на языке библиотеки: команда не собрана, ошибка передачи файла, сбой поиска сетей WiFi (ER! или нет ответа)                                |
 
 ```ts
@@ -973,6 +973,7 @@ socket.send(valueToCbor(encodeWsEnvelope("SET", "JoinDev", { DevSN, Watch: true 
 | `widgetPacket(prefix, fields, values, keys)`            | Payload `SET ModCfg` виджета                                                                      |
 | `WIDGET_FIELDS`, `WIDGET_SAVE_FIELDS`, `widgetPrefixes` | поля смарт-виджетов (из них выведены `IWidgetWiFiConfig` и остальные), сохраняемые поля, группы   |
 | `GUI_GRID`, `spanRows`, `isWidgetType`                  | сетка                                                                                             |
+| `guiTypes`                                              | типы компонентов в GUI - из них приложение собирает `views` рендерера                             |
 
 **Реестр.**
 

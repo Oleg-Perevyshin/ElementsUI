@@ -5,7 +5,7 @@ const translations = {
   "common.select_tag": { ru: "Сделайте выбор", en: "Make a choice", zh: "请选择" },
   "common.table.clear": { ru: "Очистить таблицу", en: "Clear table", zh: "清空表格" },
   "library.retry": { ru: "Повторить", en: "Retry", zh: "重试" },
-  "gui.extra_missing": { ru: "Компонент не входит в эту сборку", en: "Component is not included in this build", zh: "此版本不包含该组件" },
+  "gui.view_missing": { ru: "Компонент не входит в эту сборку", en: "Component is not included in this build", zh: "此版本不包含该组件" },
   "gui.error.event_handler": {
     ru: "Команда компонента не собрана: проверьте eventHandler",
     en: "Component command not built: check eventHandler",

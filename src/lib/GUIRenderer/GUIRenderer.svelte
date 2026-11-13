@@ -28,27 +28,8 @@
     type DevicePacket,
   } from "../gui"
   import { COMPONENT_META } from "../componentMeta"
-  import Accordion from "../Accordion/Accordion.svelte"
-  import Tabs from "../Tabs/Tabs.svelte"
-  import Button from "../Button/Button.svelte"
-  import Input from "../Input/Input.svelte"
-  import Select from "../Select/Select.svelte"
-  import Switch from "../Switch/Switch.svelte"
-  import Slider from "../Slider/Slider.svelte"
-  import Widget from "../Widget/Widget.svelte"
-  import TextField from "../TextField/TextField.svelte"
-  import Divider from "../Divider/Divider.svelte"
-  import ProgressBar from "../ProgressBar/ProgressBar.svelte"
-  import Graph from "../Graph/Graph.svelte"
-  import PeriodChart from "../PeriodChart/PeriodChart.svelte"
-  import FileAttach from "../FileAttach/FileAttach.svelte"
-  import WidgetWiFi from "../WidgetWiFi/WidgetWiFi.svelte"
-  import WidgetDeviceInfo from "../WidgetDeviceInfo/WidgetDeviceInfo.svelte"
-  import WidgetFileSystem from "../WidgetFileSystem/WidgetFileSystem.svelte"
-  import WidgetStackInfo from "../WidgetStackInfo/WidgetStackInfo.svelte"
-  import WidgetRGBStrip from "../WidgetRGBStrip/WidgetRGBStrip.svelte"
   import DeviceTable from "./DeviceTable.svelte"
-  import type { GuiExtras } from "./extras"
+  import type { GuiViews } from "./views"
 
   interface Props {
     components: UIComponent[]
@@ -61,16 +42,13 @@
     persistKey?: string
     /* Своя отрисовка типа (например VideoViewer с потоком приложения) */
     render?: Partial<Record<UIType, Snippet<[UIComponent]>>>
-    /* Тяжёлые компоненты (GUI_EXTRAS или их часть): без них тип рисуется заглушкой и не попадает в сборку приложения */
-    extras?: GuiExtras
+    /* Компоненты отрисовки по типу (GUI_VIEWS или только нужные): тип без компонента рисуется заглушкой и не попадает в сборку приложения */
+    views: GuiViews
     /* Ошибка команды или передачи файла, для уведомления */
     onError?: (message: string) => void
   }
 
-  let { components, link, language, viewer = false, persistKey, render, extras, onError }: Props = $props()
-
-  /* Типы из GUI_EXTRAS - списком, а не из модуля: импорт GUI_EXTRAS сюда затянул бы их в любую сборку */
-  const EXTRA_TYPES: readonly UIType[] = ["Joystick", "VideoViewer", "WidgetPFD", "WidgetMap"]
+  let { components, link, language, viewer = false, persistKey, render, views, onError }: Props = $props()
 
   /* Кэш по ссылке и языку: localizeDeep создаёт новые объекты, без кэша обновление значений сбрасывало бы раскрытые аккордеоны и вкладки */
   let localized: { src?: UIComponent[]; lang?: string; out: UIComponent[] } = { out: [] }
@@ -298,34 +276,39 @@
     <div class={component.type === "Accordion" ? "" : "flex flex-col justify-start"} style={cellStyle(component, fixedHeight)}>
       {#if render?.[component.type]}
         {@render render[component.type]?.(component)}
-      {:else if component.type === "Accordion"}
+      {:else if component.type === "Accordion" && views.Accordion}
+        {@const Accordion = views.Accordion}
         <Accordion {...component.properties}>
           <!-- Своя сетка содержимого во всю ширину аккордеона: колонок не меньше, чем у самого дальнего блока -->
           <div class="min-w-0" style="grid-column: 1 / -1; grid-row: 1 / -1">
             {@render Layout(childrenOf(component).filter(visible), component.properties.size?.width ?? 1, !!component.properties.image)}
           </div>
         </Accordion>
-      {:else if component.type === "Tabs"}
+      {:else if component.type === "Tabs" && views.Tabs}
+        {@const Tabs = views.Tabs}
         <!-- Содержимое вкладки - через Layout, как у Accordion: на телефоне раскладка по группам, а не одна колонка сетки size.width -->
         <Tabs {...component.properties} apiArray={childrenOf(component)}>
           {#snippet Content(list: UIComponent[])}
             {@render Layout(list.filter(visible), component.properties.size?.width ?? 1, false)}
           {/snippet}
         </Tabs>
-      {:else if component.type === "Button"}
+      {:else if component.type === "Button" && views.Button}
+        {@const Button = views.Button}
         <Button
           {...component.properties}
           disabled={locked || component.properties.disabled}
           onClick={() => dispatch(commandPacket(component.eventHandler, get))}
         />
-      {:else if component.type === "Input"}
+      {:else if component.type === "Input" && views.Input}
+        {@const Input = views.Input}
         <Input
           {...component.properties}
           readonly={locked || component.properties.readonly}
           value={(readBits(component, link.get(id)) as string | number | undefined) ?? component.properties.value}
           onUpdate={(value) => change(component, value)}
         />
-      {:else if component.type === "Select"}
+      {:else if component.type === "Select" && views.Select}
+        {@const Select = views.Select}
         <Select
           {...component.properties}
           disabled={locked || component.properties.disabled}
@@ -333,49 +316,57 @@
           options={selectOptions(component)}
           onUpdate={(value) => change(component, value)}
         />
-      {:else if component.type === "Switch"}
+      {:else if component.type === "Switch" && views.Switch}
+        {@const Switch = views.Switch}
         <Switch
           {...component.properties}
           disabled={locked || component.properties.disabled}
           value={link.get(id) as number}
           onUpdate={(value) => change(component, value)}
         />
-      {:else if component.type === "Slider"}
+      {:else if component.type === "Slider" && views.Slider}
+        {@const Slider = views.Slider}
         <Slider
           {...component.properties}
           disabled={locked || component.properties.disabled}
           value={link.get(id) as number | [number, number]}
           onUpdate={(value) => change(component, value)}
         />
-      {:else if EXTRA_TYPES.includes(component.type) && !extras?.[component.type as keyof GuiExtras]}
-        <p class="flex h-full items-center justify-center p-2 text-center text-[12px] text-(--muted-color)">{$T("gui.extra_missing")}: {component.type}</p>
-      {:else if component.type === "Joystick" && extras?.Joystick}
-        {@const Joystick = extras.Joystick}
+      {:else if !views[component.type]}
+        <p class="flex h-full items-center justify-center p-2 text-center text-[12px] text-(--muted-color)">{$T("gui.view_missing")}: {component.type}</p>
+      {:else if component.type === "Joystick" && views.Joystick}
+        {@const Joystick = views.Joystick}
         <Joystick
           {...component.properties}
           readonly={locked || component.properties.readonly}
           value={link.get(id) as number[]}
           onUpdate={(value) => change(component, value)}
         />
-      {:else if component.type === "Widget"}
+      {:else if component.type === "Widget" && views.Widget}
+        {@const Widget = views.Widget}
         <Widget
           {...component.properties}
           readonly={locked || component.properties.readonly}
           value={link.get(id) as number}
           onUpdate={(value) => change(component, value)}
         />
-      {:else if component.type === "TextField"}
+      {:else if component.type === "TextField" && views.TextField}
+        {@const TextField = views.TextField}
         <TextField {...component.properties} />
-      {:else if component.type === "Divider"}
+      {:else if component.type === "Divider" && views.Divider}
+        {@const Divider = views.Divider}
         <Divider {...component.properties} />
-      {:else if component.type === "ProgressBar"}
+      {:else if component.type === "ProgressBar" && views.ProgressBar}
+        {@const ProgressBar = views.ProgressBar}
         <ProgressBar {...component.properties} value={link.get(id) as never} />
-      {:else if component.type === "Graph"}
+      {:else if component.type === "Graph" && views.Graph}
+        {@const Graph = views.Graph}
         <Graph
           {...component.properties}
           streamingData={{ data: component.properties.isTest ? (component.properties.streamingData?.data ?? null) : (link.get(id) as never) }}
         />
-      {:else if component.type === "PeriodChart"}
+      {:else if component.type === "PeriodChart" && views.PeriodChart}
+        {@const PeriodChart = views.PeriodChart}
         <PeriodChart
           {...component.properties}
           levels={(component.properties.levels ?? []).map((level) => ({
@@ -383,22 +374,25 @@
             data: ((level.variable && link.get(level.variable)) as number[] | undefined) ?? level.data ?? [],
           }))}
         />
-      {:else if component.type === "Table"}
+      {:else if component.type === "Table" && views.Table}
         <DeviceTable
+          view={views.Table}
           properties={component.properties}
           value={tableRows(component)}
           onClick={locked ? undefined : (row: Row, button: ITableButton<Row>) => dispatch(tablePacket(button.eventHandler, row))}
         />
-      {:else if component.type === "FileAttach"}
+      {:else if component.type === "FileAttach" && views.FileAttach}
+        {@const FileAttach = views.FileAttach}
         <FileAttach
           {...component.properties}
           disabled={locked || component.properties.disabled}
           onUpdate={(file) => file && fs().upload(file.name, file).catch(report)}
         />
-      {:else if component.type === "VideoViewer" && extras?.VideoViewer}
-        {@const VideoViewer = extras.VideoViewer}
+      {:else if component.type === "VideoViewer" && views.VideoViewer}
+        {@const VideoViewer = views.VideoViewer}
         <VideoViewer {...component.properties} />
-      {:else if component.type === "WidgetWiFi"}
+      {:else if component.type === "WidgetWiFi" && views.WidgetWiFi}
+        {@const WidgetWiFi = views.WidgetWiFi}
         {@const props = component.properties}
         {@const prefix = widgetPrefixes(component.type, props)[0]}
         <WidgetWiFi
@@ -408,7 +402,8 @@
           onScan={locked ? undefined : () => scanWiFi(prefix, props.keys, props.scanCommand)}
           onSave={locked ? undefined : (config) => saveFields(prefix, WIDGET_SAVE_FIELDS.WidgetWiFi, config, props.keys)}
         />
-      {:else if component.type === "WidgetDeviceInfo"}
+      {:else if component.type === "WidgetDeviceInfo" && views.WidgetDeviceInfo}
+        {@const WidgetDeviceInfo = views.WidgetDeviceInfo}
         {@const props = component.properties}
         {@const prefix = widgetPrefixes(component.type, props)[0]}
         <WidgetDeviceInfo
@@ -427,7 +422,8 @@
           onRestart={locked ? undefined : () => send(props.restartCommand?.header || "SET", props.restartCommand?.argument || "Restart", {})}
           onFactoryReset={locked ? undefined : () => send(props.resetCommand?.header || "SET", props.resetCommand?.argument || "RstNVS", {})}
         />
-      {:else if component.type === "WidgetFileSystem"}
+      {:else if component.type === "WidgetFileSystem" && views.WidgetFileSystem}
+        {@const WidgetFileSystem = views.WidgetFileSystem}
         {@const props = component.properties}
         {@const argument = props.argument || "FS"}
         {@const transfer = () => fs(argument, props.maxNameLength)}
@@ -445,7 +441,8 @@
                   .download(name)
                   .then((bytes) => saveFile(name, bytes), fail)}
         />
-      {:else if component.type === "WidgetStackInfo"}
+      {:else if component.type === "WidgetStackInfo" && views.WidgetStackInfo}
+        {@const WidgetStackInfo = views.WidgetStackInfo}
         {@const props = component.properties}
         <WidgetStackInfo
           {...props}
@@ -453,7 +450,8 @@
           persistKey={persist(component)}
           onRefresh={() => send("GET", props.argument || "StackInfo", {})}
         />
-      {:else if component.type === "WidgetRGBStrip"}
+      {:else if component.type === "WidgetRGBStrip" && views.WidgetRGBStrip}
+        {@const WidgetRGBStrip = views.WidgetRGBStrip}
         {@const props = component.properties}
         {@const prefix = widgetPrefixes(component.type, props)[0]}
         <WidgetRGBStrip
@@ -463,15 +461,15 @@
           onUpdate={locked ? undefined : (value, field) => saveFields(prefix, [field], { [field]: value }, props.keys)}
           onSave={locked ? undefined : (hardware) => saveFields(prefix, WIDGET_SAVE_FIELDS.WidgetRGBStrip, hardware, props.keys)}
         />
-      {:else if component.type === "WidgetPFD" && extras?.WidgetPFD}
-        {@const WidgetPFD = extras.WidgetPFD}
+      {:else if component.type === "WidgetPFD" && views.WidgetPFD}
+        {@const WidgetPFD = views.WidgetPFD}
         <WidgetPFD
           {...component.properties}
           value={fields(component, widgetPrefixes(component.type, component.properties)[0], WIDGET_FIELDS.WidgetPFD)}
           persistKey={persist(component)}
         />
-      {:else if component.type === "WidgetMap" && extras?.WidgetMap}
-        {@const WidgetMap = extras.WidgetMap}
+      {:else if component.type === "WidgetMap" && views.WidgetMap}
+        {@const WidgetMap = views.WidgetMap}
         <WidgetMap
           {...component.properties}
           value={stable(

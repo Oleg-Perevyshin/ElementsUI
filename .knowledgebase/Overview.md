@@ -136,7 +136,7 @@ ElementsUI/
 │     ├─ constructor.ts    точка входа "poe-svelte-ui-lib/constructor"
 │     ├─ theme.css         точка входа "poe-svelte-ui-lib/theme.css"
 │     ├─ <Компонент>/      Компонент.svelte + КомпонентProps.svelte + README.md (+ вспомогательные .ts)
-│     ├─ GUIRenderer/      GUIRenderer.svelte, DeviceTable.svelte, extras.ts (GUI_EXTRAS - тяжёлые компоненты)
+│     ├─ GUIRenderer/      GUIRenderer.svelte, DeviceTable.svelte, views.ts (GUI_VIEWS - компоненты всех типов; рендерер берёт их из пропса views)
 │     ├─ protocols/        ядро протоколов, PROTOCOL.md, cbor/
 │     ├─ dictionaries/     commands.yaml, messages.yaml, generated/ (TS), firmware/ (api_har.h, api_msg.h), README.md
 │     ├─ locales/          languages.ts, i18n.ts, localize.ts, translations.ts, constructor.ts, index.ts
@@ -551,7 +551,7 @@ interface DeviceReply {
 
 - Svelte 5 на рунах, TypeScript `strict`. Компонент - только показ и колбэки, без сети и состояния устройств.
 - Внутри `src/lib` импорты относительные; витрина импортирует библиотеку через `#lib` (поле `imports` в `package.json`). В ядре протоколов и `locales` импорты с расширением `.js`.
-- У каждого компонента: `Компонент.svelte`, парная панель `КомпонентProps.svelte` (только через `/constructor`), `README.md` рядом. Новый тип добавляется в `UIComponentPropsMap` (`types.ts`), `COMPONENT_META` (`componentMeta.ts`), `COMPONENTS` (`registry.ts`; тяжёлый - ещё в `GUI_EXTRAS` и `EXTRA_TYPES` `GUIRenderer`), `PANELS` (`constructor.ts`), `COMPONENT_DEFAULTS` и `COMPONENT_SIZES` (`defaults.ts`).
+- У каждого компонента: `Компонент.svelte`, парная панель `КомпонентProps.svelte` (только через `/constructor`), `README.md` рядом. Новый тип добавляется в `UIComponentPropsMap` (`types.ts`), `COMPONENT_META` (`componentMeta.ts`), `COMPONENTS` (`registry.ts`; ещё в `GUI_VIEWS` (`GUIRenderer/views.ts`) и ветку в `GUIRenderer`), `PANELS` (`constructor.ts`), `COMPONENT_DEFAULTS` и `COMPONENT_SIZES` (`defaults.ts`).
 - Панели свойств не меняют свойства на месте: `createPropsEditor` отправляет новые объекты верхнего уровня одним `PropertyChange`.
 - Описание компонента два: короткое по кнопке (i) (ключ `component.info.<Тип>` словаря конструктора: Назначение, Пакет данных, Ключи, Особенности, Настройки) и подробное `src/lib/<Компонент>/README.md` (открывается на вкладке «Инфо» витрины). Оно не должно противоречить короткому. В интерфейсе пользователя описаний для программиста нет.
 - Тексты компонентов только через `$T("ключ")` из `translations.ts`, русских строк в разметке нет. Тексты из конструктора - строка или `{ ru, en, zh }`, переводятся `localizeDeep`.

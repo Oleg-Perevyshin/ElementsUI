@@ -125,3 +125,8 @@ test("раскладка: ширина на телефоне и колонки �
   const fr = "minmax(0, 1fr)"
   assert.equal(gui.layoutColumns([block("l", "Input", 1, 1, 2), block("r", "Input", 1, 4, 2)], 6), [fr, fr, "0.75rem", fr, fr, fr].join(" "))
 })
+
+test("guiTypes: типы GUI без повторов в порядке первого появления", () => {
+  const types = gui.guiTypes([{ type: "Tabs" }, { type: "Button" }, { type: "Tabs" }, { type: "WidgetMap" }, { type: "Button" }])
+  assert.deepEqual(types, ["Tabs", "Button", "WidgetMap"])
+})
