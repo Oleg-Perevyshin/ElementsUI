@@ -18,7 +18,7 @@
 - 🔧 В прошивках: компоненты `poe_cbor` и `api_service`.
 - 💻 В программах: `poe-svelte-ui-lib/protocols` из этой библиотеки.
 
-Байты в обоих местах совпадают, это проверяют тесты: `npm run TestProtocols` сверяет байты с эталонами из прошивки. Таблица соответствия функций - в конце документа.
+Байты в обоих местах совпадают, это проверяют тесты: `npm run Test` сверяет байты с эталонами из прошивки. Таблица соответствия функций - в конце документа.
 
 ## 📦 Пакет
 
@@ -108,7 +108,7 @@
 <details>
 <summary>⚙️ Копии словаря и словарь устройства</summary>
 
-- `api_har.h` прошивок генерируется из `commands.yaml` командой `npm run Dictionary` (`src/lib/dictionaries/firmware/api_har.h`, вручную не править). В прошивках лежат копии словаря `.framework/Dictionary.yaml` и заголовка, сборка сверяет их между собой.
+- `api_har.h` прошивок генерируется из `commands.yaml` командой `npm run Generate` (`src/lib/dictionaries/firmware/api_har.h`, вручную не править). В прошивках лежат копии словаря `.framework/Dictionary.yaml` и заголовка, сборка сверяет их между собой.
 - Часть аргументов словаря - задел, прошивки их пока не обрабатывают: `BackUp`, `BindMKey`, `ModList`, `ModMode`, `ModT2-ModT5`, `FwUpgE`, `OrOfs`, `OrAccCal`, `OrMagCal`. Коды у них закреплены и не меняются. Такой аргумент модуль примет, но ответа не будет, поэтому в примерах берут реальные команды (`ModCfg`, `ModInfo`, `FS`).
 - Словарь один на стек: прошивки собираются с его копией, поэтому приложения берут встроенный `DEFAULT_DICTIONARY`. Объект словаря (`createDictionary(codes)`): `code(имя)`, `name(код)`, `header(код)`, `har(заголовок, команда, ответ)`.
 - Команду, которой нет в словаре, задают числом: `code` и `har` принимают код строкой, десятичный или HEX (`"4097"`, `"0x1001"`), а `name` для неизвестного кода возвращает его же числом строкой, так что запись «туда и обратно» сходится.
@@ -151,7 +151,7 @@ WebSocket, ответ или пуш   {HAR, VAL: {DevSN, ModSN, Message: 404, Ar
 
 - `Message` - число 0..65535, `Args` - массив строк и чисел, только если у сообщения есть параметры. Тип в библиотеке - `DeviceMessage = { Message: number, Args?: (string | number)[] }`.
 - `messages.yaml`: раздел `groups` (`ИМЯ: { range: [от, до], ru, en, zh }`) и раздел `messages` (строки `- { code, group, name, level, ru, en, zh }`). `name` - имя для C в стиле `UPPER_SNAKE` с приставкой группы (`FS_FILE_NOT_FOUND`), в прошивке это `MSG_<name>` из `api_msg.h`. Префиксов `ER:`/`WR:` в тексте нет, вид сообщения задаёт `level`.
-- `npm run Dictionary` (и `prepack`) из `messages.yaml` генерирует `dictionaries/generated/messages.ts` (`MESSAGE_GROUPS`: группа -> диапазон и название на языках, `DEVICE_MESSAGES`: код -> запись с группой, `MESSAGE_CODES`: имя -> код) и `dictionaries/firmware/api_msg.h` (`typedef enum { MSG_NONE = 0, MSG_SYS_RESTARTING = 1, ... } api_msg_t`, раздел-комментарий на каждую группу). Генератор падает на пересечении диапазонов групп, коде вне диапазона своей группы, имени без приставки группы, повторе кода или имени, неизвестном `level`, пустом тексте и разных параметрах в языках. Оба файла не правятся руками, `messages.yaml` и оба заголовка прошивок есть в пакете (`poe-svelte-ui-lib/dictionaries/messages.yaml`, `poe-svelte-ui-lib/dictionaries/firmware/api_har.h`, `poe-svelte-ui-lib/dictionaries/firmware/api_msg.h`).
+- `npm run Generate` (и `prepack`) из `messages.yaml` генерирует `dictionaries/generated/messages.ts` (`MESSAGE_GROUPS`: группа -> диапазон и название на языках, `DEVICE_MESSAGES`: код -> запись с группой, `MESSAGE_CODES`: имя -> код) и `dictionaries/firmware/api_msg.h` (`typedef enum { MSG_NONE = 0, MSG_SYS_RESTARTING = 1, ... } api_msg_t`, раздел-комментарий на каждую группу). Генератор падает на пересечении диапазонов групп, коде вне диапазона своей группы, имени без приставки группы, повторе кода или имени, неизвестном `level`, пустом тексте и разных параметрах в языках. Оба файла не правятся руками, `messages.yaml` и оба заголовка прошивок есть в пакете (`poe-svelte-ui-lib/dictionaries/messages.yaml`, `poe-svelte-ui-lib/dictionaries/firmware/api_har.h`, `poe-svelte-ui-lib/dictionaries/firmware/api_msg.h`).
 - `formatDeviceMessage(code, args?, lang?)` возвращает `{ text, level, group, groupName }` (тип `FormattedDeviceMessage`) или `null` (0, нет кода, не число). `group` - код группы (`"FS"`), `groupName` - её название на языке (`"Файлы"`). Без `lang` - язык по умолчанию, приложение передаёт текущий язык (`getLanguage()`). Нет перевода на язык - английский текст. Неизвестный код - `"#1234"` (с параметрами `"#1234: a, b"`) и уровень `info`, группа - по диапазону кода, код из резерва - `group` и `groupName` равны `null`. Параметра не хватило - на его месте `?`.
 - Параметры есть у четырёх сообщений: `CFG_NOT_APPLIED` (100) - `{0}` поля настроек, которые не приняты, через запятую (причины по полям прошивка пишет в свой журнал); `FW_RESYNC` (307) - `{0}` номер части прошивки, с которой загрузчик модуля ждёт передачу (число, раздел «Обновление модуля по шине»); `WIFI_CONNECT_FAILED` (404) - `{0}` SSID, к которой не удалось подключиться (устройство вернулось к прежней сети); `DEV_POWER_LIMIT` (1000) - `{0}` номер канала, который отключён.
 
@@ -498,7 +498,7 @@ const message = decodeWsEnvelope(cborToValue(new Uint8Array(event.data)))
 | Ответ   | `API_Service_BeginResponse`, `Writer_*`, `API_Service_FinishResponse`                                                                      |                                                                                                                                |
 | Консоль | `LOG_*`, `LOG_HEX`, `LOG_PLOT`                                                                                                             | `encodeXPoeDebugFrame`, `xPoeDebugRow`, `xPoeDebugTableColumns`, `debugPlotValues`, `parseDebugLogMessage`, `xPoeDebugMessage` |
 | CAN     | `can_service`                                                                                                                              | `encodeCanPacket`, `createCanParser`, `slcanOpenCommands`                                                                      |
-| Тесты   | `tests/` прошивок                                                                                                                          | `npm run TestProtocols` сверяет байты с эталонами из прошивки                                                                  |
+| Тесты   | `tests/` прошивок                                                                                                                          | `npm run Test` сверяет байты с эталонами из прошивки                                                                           |
 
 `xPoeDebugTableColumns` - колонки таблицы `Table`, поэтому он экспортируется из основной точки входа `poe-svelte-ui-lib`, а не из `poe-svelte-ui-lib/protocols`.
 

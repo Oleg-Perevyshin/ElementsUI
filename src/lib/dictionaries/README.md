@@ -15,19 +15,19 @@
 Новая команда:
 
 1. Добавить строку в `commands.yaml`: `- [Имя, A_ИМЯ, код]   # описание`, в свой раздел и диапазон.
-2. `npm run Dictionary`.
+2. `npm run Generate`.
 3. Скопировать `commands.yaml` в `.framework/Dictionary.yaml` и `firmware/api_har.h` в `components/core/api_service/api_har.h` обоих фреймворков (ProdFactory-ESP и ProdFactory-STM).
 
 Новое сообщение:
 
 1. Добавить строку в раздел `messages` файла `messages.yaml`: `- { code, group, name, level, ru, en, zh }` - в свою группу, код из её диапазона, имя с приставкой группы (`FS_...`). Текст короткий и понятный пользователю: причина без технических подробностей, параметр `{0}` - только если без него теряется смысл. Нужна новая группа ядра - добавить её в раздел `groups` с диапазоном из резерва 500-999.
-2. `npm run Dictionary`.
+2. `npm run Generate`.
 3. Скопировать `messages.yaml` в `.framework/Messages.yaml` и `firmware/api_msg.h` в `components/core/api_service/api_msg.h` обоих фреймворков.
 
 Новый компонент GUI:
 
 1. Добавить строку в `components.yaml`: `- [Тип, обмен]   # описание`, обмен - `none`, `read`, `write`, `readWrite` или `widget`.
-2. `npm run Dictionary`. Тип должен быть и в `UIComponentPropsMap` (`types.ts`), и в `GUI_VIEWS` (`guiViews.ts`), иначе библиотека не скомпилируется.
+2. `npm run Generate`. Тип должен быть и в `UIComponentPropsMap` (`types.ts`), и в `GUI_VIEWS` (`guiViews.ts`), иначе библиотека не скомпилируется.
 3. Скопировать `components.yaml` в `.framework/Components.yaml` фреймворков: сборка веб-интерфейса прошивки сверяет с ним GUI устройства.
 
 В JS словари доступны через `poe-svelte-ui-lib/protocols`: `DEFAULT_ARGUMENT_CODES`, `DEFAULT_DICTIONARY`, `DEVICE_MESSAGES`, `MESSAGE_GROUPS`, `MESSAGE_CODES`, `formatDeviceMessage`.
@@ -45,9 +45,9 @@
 
 ## 💡 Полезно знать
 
-- Сгенерированные файлы (`generated/`, `firmware/`) руками не правят: их перезаписывает `npm run Dictionary`, перед публикацией он запускается сам.
+- Сгенерированные файлы (`generated/`, `firmware/`) руками не правят: их перезаписывает `npm run Generate`, перед публикацией он запускается сам.
 - Заголовки прошивок сразу в стиле `.clang-format` прошивок: команда «Format» их не меняет.
-- После правки словарей - `npm run TestProtocols`.
+- После правки словарей - `npm run Test`.
 
 <details>
 <summary>📖 Словарь команд</summary>

@@ -4,7 +4,7 @@
 # Код 0 (или нет поля Message) - сообщения нет. {0}, {1}... - параметры из массива Args по порядку, только где без них теряется смысл; что значат - комментарий после строки
 # Резерв: 500..999 - новые группы ядра, 2000..65535 - на будущее. Новое сообщение - в свою группу, новая группа ядра - диапазон из 500..999
 # Источник - poe-svelte-ui-lib (src/lib/dictionaries/messages.yaml); .framework/Messages.yaml и api_msg.h фреймворков - копии, не править
-# После правки - npm run Dictionary (generated/messages.ts и firmware/api_msg.h), затем копии во фреймворки
+# После правки - npm run Generate (generated/messages.ts и firmware/api_msg.h), затем копии во фреймворки
 
 groups:
   SYS: { range: [1, 99], ru: "Система", en: "System", zh: "系统" }

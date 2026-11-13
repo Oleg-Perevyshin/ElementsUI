@@ -315,7 +315,7 @@ socket.send(valueToCbor(encodeWsEnvelope("SET", "JoinDev", { DevSN, Watch: true 
 <details>
 <summary>🧪 Проверка</summary>
 
-Байты совпадают с тем, что собирает прошивка. Это проверяет `npm run TestProtocols`: тесты сверяют результат с эталонными пакетами, собранными кодом прошивки.
+Байты совпадают с тем, что собирает прошивка. Это проверяет `npm run Test`: тесты сверяют результат с эталонными пакетами, собранными кодом прошивки.
 
 </details>
 
@@ -325,7 +325,7 @@ socket.send(valueToCbor(encodeWsEnvelope("SET", "JoinDev", { DevSN, Watch: true 
 
 - 📖 Коды команд 0-4095 - команды устройств, 7000-7999 - команды самого облака DevCloud (чаты, журнал, состояние устройств).
 - 💬 Устройство шлёт только код сообщения и параметры, текст на языке пользователя собирает `formatDeviceMessage(code, args?, lang?)` из `poe-svelte-ui-lib/protocols`. Сообщения разбиты на группы со своими диапазонами кодов: `SYS` 1-99, `CFG` 100-199, `FS` 200-299, `FW` 300-399, `WIFI` 400-499, `DEV` 1000-1999 (500-999 и 2000+ - резерв).
-- ⚙️ `npm run Dictionary` (перед публикацией запускается сам) генерирует код для JS и заголовки прошивок `api_har.h`, `api_msg.h`.
+- ⚙️ `npm run Generate` (перед публикацией запускается сам) генерирует код для JS и заголовки прошивок `api_har.h`, `api_msg.h`.
 
 Как добавить команду или сообщение, что генерируется и куда копировать - в [src/lib/dictionaries/README.md](src/lib/dictionaries/README.md). Формат на проводе - в [PROTOCOL.md](src/lib/protocols/PROTOCOL.md).
 
@@ -451,7 +451,7 @@ socket.send(valueToCbor(encodeWsEnvelope("SET", "JoinDev", { DevSN, Watch: true 
 
 - Каталог лежит в `assets/IconsCatalog`, скрипт сборки - `scripts/UpdateIconsLib.ts`. Оба в npm-пакет не входят: иконки уже вшиты строками в `src/lib/icons.ts`.
 - Файл называется `категория.имя.svg`, имя - как в Tabler.
-- Скрипт `npm run UpdateIconsLib` собирает из файлов `icons.ts`: `ICONS` (иконки по категориям), `ICON_NAMES` (имена для поиска и подсказок) и `ICONS_ARRAY` (наборы состояний из папок `battery`, `bulb`, `propeller`, их переключает `Widget` по значению).
+- Скрипт `npm run Generate` собирает из файлов `icons.ts`: `ICONS` (иконки по категориям), `ICON_NAMES` (имена для поиска и подсказок) и `ICONS_ARRAY` (наборы состояний из папок `battery`, `bulb`, `propeller`, их переключает `Widget` по значению).
 - Порядок категорий задан в `CATEGORY_ORDER` в `scripts/UpdateIconsLib.ts`, название категории - ключ `constructor.props.icon.<категория>` в словаре.
 - Окно выбора в конструкторе - `IconsMatrix`: категории матрицей 4×3 (в клетке 4×4), сверху поиск по имени или категории, при наведении подсказка с именем.
 - Иконка сохраняется в GUI как SVG, поэтому перестановка каталога не ломает сохранённые интерфейсы.
@@ -522,8 +522,8 @@ export const T = createTranslator(translations)
 
 ```bash
 npm run dev            # витрина на локальном сервере
-npm run check          # проверка типов
-npm run TestProtocols  # тесты: протоколы, битовые поля, очистка HTML, облёт поля
+npm run prepack        # всё перед публикацией: словари, типы, сборка, тесты, publint
+npm run Test           # тесты: протоколы, словари, битовые поля, очистка HTML, облёт поля
 npm run Formatting     # prettier
 npm run build          # сборка витрины в docs/
 npm pack               # сборка пакета в dist/: проверка типов, тесты, publint

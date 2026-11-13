@@ -17,15 +17,12 @@
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
-    "preview": "vite preview",
-    "prepack": "node scripts/GenerateDictionary.mjs && svelte-kit sync && svelte-check --tsconfig ./tsconfig.json && svelte-package && tsc -p tests/dist-types.tsconfig.json && node --test tests/*.test.mjs && publint",
-    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-    "CheckUpdate": "npx npm-check-updates -u && npm install",
-    "UpdateIconsLib": "tsx scripts/UpdateIconsLib.ts",
+    "prepare": "node -e \"try{require('child_process').execSync('git config core.hooksPath .githooks',{stdio:'ignore'})}catch{}\"",
+    "prepack": "npm run Generate && svelte-kit sync && svelte-check --tsconfig ./tsconfig.json && svelte-package && tsc -p tests/dist-types.tsconfig.json && node --test tests/*.test.mjs && publint",
+    "Generate": "node scripts/GenerateDictionary.mjs && tsx scripts/UpdateIconsLib.ts && prettier --write --log-level warn src/lib/icons.ts",
+    "Test": "npm run Generate && svelte-package && node --test tests/*.test.mjs",
     "Formatting": "prettier --write .",
-    "Dictionary": "node scripts/GenerateDictionary.mjs",
-    "TestProtocols": "node scripts/GenerateDictionary.mjs && svelte-package && node --test tests/*.test.mjs",
-    "prepare": "node -e \"try{require('child_process').execSync('git config core.hooksPath .githooks',{stdio:'ignore'})}catch{}\""
+    "CheckUpdate": "npx npm-check-updates -u && npm install"
   },
   "svelte": "./dist/index.js",
   "types": "./dist/index.d.ts",

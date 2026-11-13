@@ -1,4 +1,4 @@
-/* tests/protocols.test.mjs - ядро протоколов (poe-svelte-ui-lib/protocols) против эталонных байт прошивки: запуск `npm run TestProtocols` */
+/* tests/protocols.test.mjs - ядро протоколов (poe-svelte-ui-lib/protocols) против эталонных байт прошивки: запуск `npm run Test` */
 import { test } from "node:test"
 import assert from "node:assert/strict"
 import { readFileSync } from "node:fs"
@@ -414,7 +414,7 @@ test("RS485: пакеты из сырого потока, мусор, пауза
 })
 
 test("словарь, поле Value xPOE-Debug, команды slcan-адаптера", () => {
-  /* DEFAULT_ARGUMENT_CODES - ровно мастер-словарь команд dictionaries/commands.yaml (сгенерирован npm run Dictionary, файл поставляется в пакете) */
+  /* DEFAULT_ARGUMENT_CODES - ровно мастер-словарь команд dictionaries/commands.yaml (сгенерирован npm run Generate, файл поставляется в пакете) */
   const commandsYaml = readFileSync(new URL("../dist/dictionaries/commands.yaml", import.meta.url), "utf8")
   assert.deepEqual(
     m.DEFAULT_ARGUMENT_CODES,

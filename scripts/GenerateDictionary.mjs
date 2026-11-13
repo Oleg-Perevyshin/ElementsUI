@@ -1,4 +1,4 @@
-/* scripts/GenerateDictionary.mjs - генерирует из мастер-словарей src/lib/dictionaries: generated/commands.ts из commands.yaml (строки «- [Строка, Enum, Число]», тот же разбор, что parseArgumentDictionary), generated/messages.ts из messages.yaml (группы с диапазонами и сообщения), generated/components.ts из components.yaml (типы компонентов GUI и обмен), заголовки прошивок firmware/api_har.h и firmware/api_msg.h сразу в стиле .clang-format прошивок; запускается npm run Dictionary и перед упаковкой (prepack) */
+/* scripts/GenerateDictionary.mjs - генерирует из мастер-словарей src/lib/dictionaries: generated/commands.ts из commands.yaml (строки «- [Строка, Enum, Число]», тот же разбор, что parseArgumentDictionary), generated/messages.ts из messages.yaml (группы с диапазонами и сообщения), generated/components.ts из components.yaml (типы компонентов GUI и обмен), заголовки прошивок firmware/api_har.h и firmware/api_msg.h сразу в стиле .clang-format прошивок; запускается npm run Generate и перед упаковкой (prepack) */
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs"
 
 const root = new URL("../src/lib/dictionaries/", import.meta.url)
@@ -114,7 +114,7 @@ for (const [name, code] of commands) {
 
 writeFileSync(
   new URL("commands.ts", generated),
-  `/* $lib/dictionaries/generated/commands.ts - СГЕНЕРИРОВАНО из commands.yaml (npm run Dictionary), руками не править */\n\nexport const DEFAULT_ARGUMENT_CODES: Record<string, number> = {\n${commands
+  `/* $lib/dictionaries/generated/commands.ts - СГЕНЕРИРОВАНО из commands.yaml (npm run Generate), руками не править */\n\nexport const DEFAULT_ARGUMENT_CODES: Record<string, number> = {\n${commands
     .map(([name, code]) => `  ${/^[A-Za-z_$][\w$]*$/.test(name) ? name : JSON.stringify(name)}: ${code},`)
     .join("\n")}\n}\n`,
 )
@@ -126,7 +126,7 @@ const harItems = enumItems(commandsYaml, (line) => {
 })
 writeFileSync(
   new URL("api_har.h", firmware),
-  `/* api_har.h - СГЕНЕРИРОВАНО из commands.yaml библиотеки poe-svelte-ui-lib (npm run Dictionary), вручную не править */\n` +
+  `/* api_har.h - СГЕНЕРИРОВАНО из commands.yaml библиотеки poe-svelte-ui-lib (npm run Generate), вручную не править */\n` +
     `#pragma once\n#include <stdint.h>\n\n` +
     `/* ********************************************************** */\n` +
     `/* Команда пакета: заголовок, аргумент и признак «нужен ответ» в одном 16-битном слове */\n` +
@@ -239,7 +239,7 @@ const tsObject = (value) =>
 
 writeFileSync(
   new URL("messages.ts", generated),
-  `/* $lib/dictionaries/generated/messages.ts - СГЕНЕРИРОВАНО из messages.yaml (npm run Dictionary), руками не править */\n\n` +
+  `/* $lib/dictionaries/generated/messages.ts - СГЕНЕРИРОВАНО из messages.yaml (npm run Generate), руками не править */\n\n` +
     `export type DeviceMessageLevel = "info" | "warn" | "error"\n` +
     `export type DeviceMessageEntry = { group: string; name: string; level: DeviceMessageLevel; ru: string; en: string; zh: string }\n` +
     `export type DeviceMessageGroup = { from: number; to: number; ru: string; en: string; zh: string }\n\n` +
@@ -266,7 +266,7 @@ for (const { group, list } of byGroup) {
 }
 writeFileSync(
   new URL("api_msg.h", firmware),
-  `/* api_msg.h - СГЕНЕРИРОВАНО из messages.yaml библиотеки poe-svelte-ui-lib (npm run Dictionary), вручную не править */\n` +
+  `/* api_msg.h - СГЕНЕРИРОВАНО из messages.yaml библиотеки poe-svelte-ui-lib (npm run Generate), вручную не править */\n` +
     `/* Код сообщения - поле Message в VAL ответа и push и в Payload ER! модуля (0 - сообщения нет), параметры шаблона {0}, {1}... - массив Args */\n` +
     `/* Группы: ${groups.map(({ name, from, to }) => `${name} ${from}-${to}`).join(", ")}; резерв: ${reserve.join(", ")} */\n` +
     `#pragma once\n\n#include <stdint.h>\n\ntypedef enum {\n${formatEnum(msgItems)}\n} api_msg_t;\n`,
@@ -287,7 +287,7 @@ for (const { type, io } of components) {
 }
 writeFileSync(
   new URL("components.ts", generated),
-  `/* $lib/dictionaries/generated/components.ts - СГЕНЕРИРОВАНО из components.yaml (npm run Dictionary), руками не править */\n\n` +
+  `/* $lib/dictionaries/generated/components.ts - СГЕНЕРИРОВАНО из components.yaml (npm run Generate), руками не править */\n\n` +
     `export const COMPONENT_TYPES = [${components.map(({ type }) => JSON.stringify(type)).join(", ")}] as const\n\n` +
     `export const COMPONENT_IO = {\n${components.map(({ type, io }) => `  ${type}: ${JSON.stringify(io)},`).join("\n")}\n} as const\n`,
 )

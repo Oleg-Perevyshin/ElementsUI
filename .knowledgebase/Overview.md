@@ -118,7 +118,7 @@ ElementsUI/
 │  ├─ npm_publish.yaml     [publish]: публикация в npm + автообновление DevCloud
 │  └─ ghpages_deploy.yaml  [deploy]: витрина на GitHub Pages
 ├─ scripts/GenerateDictionary.mjs   src/lib/dictionaries: commands.yaml -> generated/commands.ts, messages.yaml -> generated/messages.ts, components.yaml -> generated/components.ts; заголовки прошивок firmware/api_har.h, api_msg.h в стиле .clang-format прошивок
-├─ scripts/UpdateIconsLib.ts       assets/IconsCatalog -> src/lib/icons.ts (npm run UpdateIconsLib)
+├─ scripts/UpdateIconsLib.ts       assets/IconsCatalog -> src/lib/icons.ts (npm run Generate)
 ├─ assets/IconsCatalog/    SVG каталога (категория.имя.svg), наборы battery/bulb/propeller; в npm-пакет не входит
 ├─ tests/                  node:test против собранного dist/ (+ dist-types.tsconfig.json)
 ├─ static/                 favicon, .nojekyll для Pages
@@ -478,18 +478,16 @@ interface DeviceReply {
 <details>
 <summary>⌨️ Команды</summary>
 
-| Команда                          | Что делает                                                                                                                                                                                                               |
-| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `npm install`                    | Зависимости                                                                                                                                                                                                              |
-| `npm run dev`                    | Витрина на dev-сервере Vite                                                                                                                                                                                              |
-| `npm run check`                  | `svelte-kit sync` + `svelte-check` (типы)                                                                                                                                                                                |
-| `npm run TestProtocols`          | Генерация словаря, `svelte-package`, `node --test tests/*.test.mjs`                                                                                                                                                      |
-| `npm run Dictionary`             | `dictionaries/`: `commands.yaml` -> `generated/commands.ts`, `messages.yaml` -> `generated/messages.ts`, `components.yaml` -> `generated/components.ts`, заголовки прошивок `firmware/api_har.h` и `firmware/api_msg.h`  |
-| `npm run UpdateIconsLib`         | `tsx scripts/UpdateIconsLib.ts`: каталог `assets/IconsCatalog` -> `src/lib/icons.ts` (`ICONS`, `ICON_NAMES`, `ICONS_ARRAY`)                                                                                              |
-| `npm run Formatting`             | `prettier --write .` - единственный способ форматирования, перед каждым коммитом                                                                                                                                         |
-| `npm run build`                  | Сборка витрины в `docs/`                                                                                                                                                                                                 |
-| `npm pack` (запускает `prepack`) | Словарь -> `svelte-kit sync` -> `svelte-check` -> `svelte-package` (в `dist/`) -> `tsc -p tests/dist-types.tsconfig.json` (проверка `.d.ts` так, как их видит приложение) -> `node --test tests/*.test.mjs` -> `publint` |
-| `npm run CheckUpdate`            | `npx npm-check-updates -u && npm install`                                                                                                                                                                                |
+| Команда                          | Что делает                                                                                                                                                                                                                                                                        |
+| -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm install`                    | Зависимости                                                                                                                                                                                                                                                                       |
+| `npm run dev`                    | Витрина на dev-сервере Vite                                                                                                                                                                                                                                                       |
+| `npm run Test`                   | Генерация словаря, `svelte-package`, `node --test tests/*.test.mjs`                                                                                                                                                                                                               |
+| `npm run Generate`               | всё сгенерированное: словари `dictionaries/` (`commands.yaml`, `messages.yaml`, `components.yaml` -> `generated/*.ts`, заголовки прошивок `firmware/api_har.h`, `api_msg.h`) и `src/lib/icons.ts` из каталога `assets/IconsCatalog`; перед публикацией и в `Test` запускается сам |
+| `npm run Formatting`             | `prettier --write .` - единственный способ форматирования, перед каждым коммитом                                                                                                                                                                                                  |
+| `npm run build`                  | Сборка витрины в `docs/`                                                                                                                                                                                                                                                          |
+| `npm pack` (запускает `prepack`) | Словарь -> `svelte-kit sync` -> `svelte-check` -> `svelte-package` (в `dist/`) -> `tsc -p tests/dist-types.tsconfig.json` (проверка `.d.ts` так, как их видит приложение) -> `node --test tests/*.test.mjs` -> `publint`                                                          |
+| `npm run CheckUpdate`            | `npx npm-check-updates -u && npm install`                                                                                                                                                                                                                                         |
 
 </details>
 
@@ -559,7 +557,7 @@ interface DeviceReply {
 - Цвета только токенами темы: цветной текст и линии - `--*-text`, заливки - `--*-color`, мягкий фон - `--*-soft`, метки - `--*-mark`, акцент как текст - `--accent-text`. Текст не делают полупрозрачным, подписи не мельче 11px, панели не полупрозрачные.
 - Узкий экран: корень виджета `@container`, колонки `@sm:`/`@md:`/`@xl:`; классы `sm:`/`md:` (ширина окна) в компонентах не используются (исключение - размеры текста `TextField`, `max-sm:`). Шапка виджета всегда одна строка.
 - HTML из GUI и данных устройства - только через `sanitizeHtml`. Ячейка `Table` по умолчанию текст; разметка - `html: true` и экранирование `escapeHtml` на стороне данных.
-- Новая команда протокола или сообщение устройства: правка `src/lib/dictionaries/commands.yaml` или `messages.yaml`, `npm run Dictionary` (генерирует и `src/lib/dictionaries/firmware/api_har.h`, `api_msg.h`), затем копирование `commands.yaml`/`messages.yaml` в `.framework/Dictionary.yaml`/`Messages.yaml` и обоих заголовков в `api_service` обоих фреймворков; после правки протоколов - `npm run TestProtocols`.
+- Новая команда протокола или сообщение устройства: правка `src/lib/dictionaries/commands.yaml` или `messages.yaml`, `npm run Generate` (генерирует и `src/lib/dictionaries/firmware/api_har.h`, `api_msg.h`), затем копирование `commands.yaml`/`messages.yaml` в `.framework/Dictionary.yaml`/`Messages.yaml` и обоих заголовков в `api_service` обоих фреймворков; после правки протоколов - `npm run Test`.
 - Компоненты не выводят случайные DOM id; проп `id` примитива - переменная устройства, в разметку не попадает (кроме `Button`).
 - Комментарии в коде только однострочные `/* ... */`, без истории «было/стало». Документация описывает только текущее состояние. В текстах обычный дефис, без длинных и средних тире.
 - Форматирование: Prettier (`printWidth` 160, без точек с запятой, двойные кавычки по умолчанию, `trailingComma: all`, LF), только `npm run Formatting`.

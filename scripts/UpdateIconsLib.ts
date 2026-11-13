@@ -1,4 +1,4 @@
-/* scripts/UpdateIconsLib.ts - сборка src/lib/icons.ts из каталога assets/IconsCatalog (в npm-пакет не входит): «категория.имя.svg» (Tabler Icons, MIT) и папки наборов состояний (battery, bulb, propeller). Запуск: npm run UpdateIconsLib */
+/* scripts/UpdateIconsLib.ts - сборка src/lib/icons.ts из каталога assets/IconsCatalog (в npm-пакет не входит): «категория.имя.svg» (Tabler Icons, MIT) и папки наборов состояний (battery, bulb, propeller). Запуск: npm run Generate */
 import fs from "fs"
 import { join } from "path"
 
@@ -32,7 +32,7 @@ for (const file of files) {
 }
 const ordered = CATEGORY_ORDER.filter((category) => categories.has(category)).map((category) => [category, categories.get(category)!] as const)
 
-const content = `/* $lib/icons.ts - собран из assets/IconsCatalog скриптом npm run UpdateIconsLib, вручную не править */
+const content = `/* $lib/icons.ts - собран из assets/IconsCatalog скриптом npm run Generate, вручную не править */
 /* Иконки по категориям: [категория, SVG[]], порядок категорий - CATEGORY_ORDER в scripts/UpdateIconsLib.ts */
 export const ICONS: [string, string[]][] = ${JSON.stringify(
   ordered.map(([category, entry]) => [category, entry.svgs]),

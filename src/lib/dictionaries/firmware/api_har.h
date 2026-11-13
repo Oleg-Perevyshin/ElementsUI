@@ -1,4 +1,4 @@
-/* api_har.h - СГЕНЕРИРОВАНО из commands.yaml библиотеки poe-svelte-ui-lib (npm run Dictionary), вручную не править */
+/* api_har.h - СГЕНЕРИРОВАНО из commands.yaml библиотеки poe-svelte-ui-lib (npm run Generate), вручную не править */
 #pragma once
 #include <stdint.h>
 

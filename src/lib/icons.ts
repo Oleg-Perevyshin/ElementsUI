@@ -1,4 +1,4 @@
-/* $lib/icons.ts - собран из assets/IconsCatalog скриптом npm run UpdateIconsLib, вручную не править */
+/* $lib/icons.ts - собран из assets/IconsCatalog скриптом npm run Generate, вручную не править */
 /* Иконки по категориям: [категория, SVG[]], порядок категорий - CATEGORY_ORDER в scripts/UpdateIconsLib.ts */
 export const ICONS: [string, string[]][] = [
   [

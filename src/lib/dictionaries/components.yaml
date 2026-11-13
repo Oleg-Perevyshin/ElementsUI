@@ -2,7 +2,7 @@
 # Строка: - [Тип, обмен с устройством]   # описание. Тип - значение type в GUI (web_ui.yaml.gz) и имя экспорта компонента в poe-svelte-ui-lib
 # Обмен: none - оформление, read - показывает переменную properties.id, write - только отправляет команду, readWrite - показывает и меняет, widget - смарт-виджет с набором полей группы
 # Источник - poe-svelte-ui-lib (src/lib/dictionaries/components.yaml); .framework/Components.yaml фреймворков - копии, не править
-# После правки - npm run Dictionary (generated/components.ts), затем копии во фреймворки
+# После правки - npm run Generate (generated/components.ts), затем копии во фреймворки
 
 components:
   # Контейнеры и оформление

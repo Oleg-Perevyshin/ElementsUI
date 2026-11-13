@@ -1,4 +1,4 @@
-/* $lib/dictionaries/generated/messages.ts - СГЕНЕРИРОВАНО из messages.yaml (npm run Dictionary), руками не править */
+/* $lib/dictionaries/generated/messages.ts - СГЕНЕРИРОВАНО из messages.yaml (npm run Generate), руками не править */
 
 export type DeviceMessageLevel = "info" | "warn" | "error"
 export type DeviceMessageEntry = { group: string; name: string; level: DeviceMessageLevel; ru: string; en: string; zh: string }

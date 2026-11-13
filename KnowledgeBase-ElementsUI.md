@@ -122,7 +122,7 @@ ElementsUI/
 │  ├─ npm_publish.yaml     [publish]: публикация в npm + автообновление DevCloud
 │  └─ ghpages_deploy.yaml  [deploy]: витрина на GitHub Pages
 ├─ scripts/GenerateDictionary.mjs   src/lib/dictionaries: commands.yaml -> generated/commands.ts, messages.yaml -> generated/messages.ts, components.yaml -> generated/components.ts; заголовки прошивок firmware/api_har.h, api_msg.h в стиле .clang-format прошивок
-├─ scripts/UpdateIconsLib.ts       assets/IconsCatalog -> src/lib/icons.ts (npm run UpdateIconsLib)
+├─ scripts/UpdateIconsLib.ts       assets/IconsCatalog -> src/lib/icons.ts (npm run Generate)
 ├─ assets/IconsCatalog/    SVG каталога (категория.имя.svg), наборы battery/bulb/propeller; в npm-пакет не входит
 ├─ tests/                  node:test против собранного dist/ (+ dist-types.tsconfig.json)
 ├─ static/                 favicon, .nojekyll для Pages
@@ -482,18 +482,16 @@ interface DeviceReply {
 <details>
 <summary>⌨️ Команды</summary>
 
-| Команда                          | Что делает                                                                                                                                                                                                               |
-| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `npm install`                    | Зависимости                                                                                                                                                                                                              |
-| `npm run dev`                    | Витрина на dev-сервере Vite                                                                                                                                                                                              |
-| `npm run check`                  | `svelte-kit sync` + `svelte-check` (типы)                                                                                                                                                                                |
-| `npm run TestProtocols`          | Генерация словаря, `svelte-package`, `node --test tests/*.test.mjs`                                                                                                                                                      |
-| `npm run Dictionary`             | `dictionaries/`: `commands.yaml` -> `generated/commands.ts`, `messages.yaml` -> `generated/messages.ts`, `components.yaml` -> `generated/components.ts`, заголовки прошивок `firmware/api_har.h` и `firmware/api_msg.h`  |
-| `npm run UpdateIconsLib`         | `tsx scripts/UpdateIconsLib.ts`: каталог `assets/IconsCatalog` -> `src/lib/icons.ts` (`ICONS`, `ICON_NAMES`, `ICONS_ARRAY`)                                                                                              |
-| `npm run Formatting`             | `prettier --write .` - единственный способ форматирования, перед каждым коммитом                                                                                                                                         |
-| `npm run build`                  | Сборка витрины в `docs/`                                                                                                                                                                                                 |
-| `npm pack` (запускает `prepack`) | Словарь -> `svelte-kit sync` -> `svelte-check` -> `svelte-package` (в `dist/`) -> `tsc -p tests/dist-types.tsconfig.json` (проверка `.d.ts` так, как их видит приложение) -> `node --test tests/*.test.mjs` -> `publint` |
-| `npm run CheckUpdate`            | `npx npm-check-updates -u && npm install`                                                                                                                                                                                |
+| Команда                          | Что делает                                                                                                                                                                                                                                                                        |
+| -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm install`                    | Зависимости                                                                                                                                                                                                                                                                       |
+| `npm run dev`                    | Витрина на dev-сервере Vite                                                                                                                                                                                                                                                       |
+| `npm run Test`                   | Генерация словаря, `svelte-package`, `node --test tests/*.test.mjs`                                                                                                                                                                                                               |
+| `npm run Generate`               | всё сгенерированное: словари `dictionaries/` (`commands.yaml`, `messages.yaml`, `components.yaml` -> `generated/*.ts`, заголовки прошивок `firmware/api_har.h`, `api_msg.h`) и `src/lib/icons.ts` из каталога `assets/IconsCatalog`; перед публикацией и в `Test` запускается сам |
+| `npm run Formatting`             | `prettier --write .` - единственный способ форматирования, перед каждым коммитом                                                                                                                                                                                                  |
+| `npm run build`                  | Сборка витрины в `docs/`                                                                                                                                                                                                                                                          |
+| `npm pack` (запускает `prepack`) | Словарь -> `svelte-kit sync` -> `svelte-check` -> `svelte-package` (в `dist/`) -> `tsc -p tests/dist-types.tsconfig.json` (проверка `.d.ts` так, как их видит приложение) -> `node --test tests/*.test.mjs` -> `publint`                                                          |
+| `npm run CheckUpdate`            | `npx npm-check-updates -u && npm install`                                                                                                                                                                                                                                         |
 
 </details>
 
@@ -563,7 +561,7 @@ interface DeviceReply {
 - Цвета только токенами темы: цветной текст и линии - `--*-text`, заливки - `--*-color`, мягкий фон - `--*-soft`, метки - `--*-mark`, акцент как текст - `--accent-text`. Текст не делают полупрозрачным, подписи не мельче 11px, панели не полупрозрачные.
 - Узкий экран: корень виджета `@container`, колонки `@sm:`/`@md:`/`@xl:`; классы `sm:`/`md:` (ширина окна) в компонентах не используются (исключение - размеры текста `TextField`, `max-sm:`). Шапка виджета всегда одна строка.
 - HTML из GUI и данных устройства - только через `sanitizeHtml`. Ячейка `Table` по умолчанию текст; разметка - `html: true` и экранирование `escapeHtml` на стороне данных.
-- Новая команда протокола или сообщение устройства: правка `src/lib/dictionaries/commands.yaml` или `messages.yaml`, `npm run Dictionary` (генерирует и `src/lib/dictionaries/firmware/api_har.h`, `api_msg.h`), затем копирование `commands.yaml`/`messages.yaml` в `.framework/Dictionary.yaml`/`Messages.yaml` и обоих заголовков в `api_service` обоих фреймворков; после правки протоколов - `npm run TestProtocols`.
+- Новая команда протокола или сообщение устройства: правка `src/lib/dictionaries/commands.yaml` или `messages.yaml`, `npm run Generate` (генерирует и `src/lib/dictionaries/firmware/api_har.h`, `api_msg.h`), затем копирование `commands.yaml`/`messages.yaml` в `.framework/Dictionary.yaml`/`Messages.yaml` и обоих заголовков в `api_service` обоих фреймворков; после правки протоколов - `npm run Test`.
 - Компоненты не выводят случайные DOM id; проп `id` примитива - переменная устройства, в разметку не попадает (кроме `Button`).
 - Комментарии в коде только однострочные `/* ... */`, без истории «было/стало». Документация описывает только текущее состояние. В текстах обычный дефис, без длинных и средних тире.
 - Форматирование: Prettier (`printWidth` 160, без точек с запятой, двойные кавычки по умолчанию, `trailingComma: all`, LF), только `npm run Formatting`.
@@ -1051,7 +1049,7 @@ socket.send(valueToCbor(encodeWsEnvelope("SET", "JoinDev", { DevSN, Watch: true 
 <details>
 <summary>🧪 Проверка</summary>
 
-Байты совпадают с тем, что собирает прошивка. Это проверяет `npm run TestProtocols`: тесты сверяют результат с эталонными пакетами, собранными кодом прошивки.
+Байты совпадают с тем, что собирает прошивка. Это проверяет `npm run Test`: тесты сверяют результат с эталонными пакетами, собранными кодом прошивки.
 
 </details>
 
@@ -1061,7 +1059,7 @@ socket.send(valueToCbor(encodeWsEnvelope("SET", "JoinDev", { DevSN, Watch: true 
 
 - 📖 Коды команд 0-4095 - команды устройств, 7000-7999 - команды самого облака DevCloud (чаты, журнал, состояние устройств).
 - 💬 Устройство шлёт только код сообщения и параметры, текст на языке пользователя собирает `formatDeviceMessage(code, args?, lang?)` из `poe-svelte-ui-lib/protocols`. Сообщения разбиты на группы со своими диапазонами кодов: `SYS` 1-99, `CFG` 100-199, `FS` 200-299, `FW` 300-399, `WIFI` 400-499, `DEV` 1000-1999 (500-999 и 2000+ - резерв).
-- ⚙️ `npm run Dictionary` (перед публикацией запускается сам) генерирует код для JS и заголовки прошивок `api_har.h`, `api_msg.h`.
+- ⚙️ `npm run Generate` (перед публикацией запускается сам) генерирует код для JS и заголовки прошивок `api_har.h`, `api_msg.h`.
 
 Как добавить команду или сообщение, что генерируется и куда копировать - в [src/lib/dictionaries/README.md](src/lib/dictionaries/README.md). Формат на проводе - в [PROTOCOL.md](src/lib/protocols/PROTOCOL.md).
 
@@ -1187,7 +1185,7 @@ socket.send(valueToCbor(encodeWsEnvelope("SET", "JoinDev", { DevSN, Watch: true 
 
 - Каталог лежит в `assets/IconsCatalog`, скрипт сборки - `scripts/UpdateIconsLib.ts`. Оба в npm-пакет не входят: иконки уже вшиты строками в `src/lib/icons.ts`.
 - Файл называется `категория.имя.svg`, имя - как в Tabler.
-- Скрипт `npm run UpdateIconsLib` собирает из файлов `icons.ts`: `ICONS` (иконки по категориям), `ICON_NAMES` (имена для поиска и подсказок) и `ICONS_ARRAY` (наборы состояний из папок `battery`, `bulb`, `propeller`, их переключает `Widget` по значению).
+- Скрипт `npm run Generate` собирает из файлов `icons.ts`: `ICONS` (иконки по категориям), `ICON_NAMES` (имена для поиска и подсказок) и `ICONS_ARRAY` (наборы состояний из папок `battery`, `bulb`, `propeller`, их переключает `Widget` по значению).
 - Порядок категорий задан в `CATEGORY_ORDER` в `scripts/UpdateIconsLib.ts`, название категории - ключ `constructor.props.icon.<категория>` в словаре.
 - Окно выбора в конструкторе - `IconsMatrix`: категории матрицей 4×3 (в клетке 4×4), сверху поиск по имени или категории, при наведении подсказка с именем.
 - Иконка сохраняется в GUI как SVG, поэтому перестановка каталога не ломает сохранённые интерфейсы.
@@ -1258,8 +1256,8 @@ export const T = createTranslator(translations)
 
 ```bash
 npm run dev            # витрина на локальном сервере
-npm run check          # проверка типов
-npm run TestProtocols  # тесты: протоколы, битовые поля, очистка HTML, облёт поля
+npm run prepack        # всё перед публикацией: словари, типы, сборка, тесты, publint
+npm run Test           # тесты: протоколы, словари, битовые поля, очистка HTML, облёт поля
 npm run Formatting     # prettier
 npm run build          # сборка витрины в docs/
 npm pack               # сборка пакета в dist/: проверка типов, тесты, publint
@@ -1657,19 +1655,19 @@ npm pack               # сборка пакета в dist/: проверка т
 Новая команда:
 
 1. Добавить строку в `commands.yaml`: `- [Имя, A_ИМЯ, код]   # описание`, в свой раздел и диапазон.
-2. `npm run Dictionary`.
+2. `npm run Generate`.
 3. Скопировать `commands.yaml` в `.framework/Dictionary.yaml` и `firmware/api_har.h` в `components/core/api_service/api_har.h` обоих фреймворков (ProdFactory-ESP и ProdFactory-STM).
 
 Новое сообщение:
 
 1. Добавить строку в раздел `messages` файла `messages.yaml`: `- { code, group, name, level, ru, en, zh }` - в свою группу, код из её диапазона, имя с приставкой группы (`FS_...`). Текст короткий и понятный пользователю: причина без технических подробностей, параметр `{0}` - только если без него теряется смысл. Нужна новая группа ядра - добавить её в раздел `groups` с диапазоном из резерва 500-999.
-2. `npm run Dictionary`.
+2. `npm run Generate`.
 3. Скопировать `messages.yaml` в `.framework/Messages.yaml` и `firmware/api_msg.h` в `components/core/api_service/api_msg.h` обоих фреймворков.
 
 Новый компонент GUI:
 
 1. Добавить строку в `components.yaml`: `- [Тип, обмен]   # описание`, обмен - `none`, `read`, `write`, `readWrite` или `widget`.
-2. `npm run Dictionary`. Тип должен быть и в `UIComponentPropsMap` (`types.ts`), и в `GUI_VIEWS` (`guiViews.ts`), иначе библиотека не скомпилируется.
+2. `npm run Generate`. Тип должен быть и в `UIComponentPropsMap` (`types.ts`), и в `GUI_VIEWS` (`guiViews.ts`), иначе библиотека не скомпилируется.
 3. Скопировать `components.yaml` в `.framework/Components.yaml` фреймворков: сборка веб-интерфейса прошивки сверяет с ним GUI устройства.
 
 В JS словари доступны через `poe-svelte-ui-lib/protocols`: `DEFAULT_ARGUMENT_CODES`, `DEFAULT_DICTIONARY`, `DEVICE_MESSAGES`, `MESSAGE_GROUPS`, `MESSAGE_CODES`, `formatDeviceMessage`.
@@ -1687,9 +1685,9 @@ npm pack               # сборка пакета в dist/: проверка т
 
 #### 💡 Полезно знать
 
-- Сгенерированные файлы (`generated/`, `firmware/`) руками не правят: их перезаписывает `npm run Dictionary`, перед публикацией он запускается сам.
+- Сгенерированные файлы (`generated/`, `firmware/`) руками не правят: их перезаписывает `npm run Generate`, перед публикацией он запускается сам.
 - Заголовки прошивок сразу в стиле `.clang-format` прошивок: команда «Format» их не меняет.
-- После правки словарей - `npm run TestProtocols`.
+- После правки словарей - `npm run Test`.
 
 <details>
 <summary>📖 Словарь команд</summary>
@@ -2951,7 +2949,7 @@ ModalStack.close(id) // убрать
 - 🔧 В прошивках: компоненты `poe_cbor` и `api_service`.
 - 💻 В программах: `poe-svelte-ui-lib/protocols` из этой библиотеки.
 
-Байты в обоих местах совпадают, это проверяют тесты: `npm run TestProtocols` сверяет байты с эталонами из прошивки. Таблица соответствия функций - в конце документа.
+Байты в обоих местах совпадают, это проверяют тесты: `npm run Test` сверяет байты с эталонами из прошивки. Таблица соответствия функций - в конце документа.
 
 #### 📦 Пакет
 
@@ -3041,7 +3039,7 @@ ModalStack.close(id) // убрать
 <details>
 <summary>⚙️ Копии словаря и словарь устройства</summary>
 
-- `api_har.h` прошивок генерируется из `commands.yaml` командой `npm run Dictionary` (`src/lib/dictionaries/firmware/api_har.h`, вручную не править). В прошивках лежат копии словаря `.framework/Dictionary.yaml` и заголовка, сборка сверяет их между собой.
+- `api_har.h` прошивок генерируется из `commands.yaml` командой `npm run Generate` (`src/lib/dictionaries/firmware/api_har.h`, вручную не править). В прошивках лежат копии словаря `.framework/Dictionary.yaml` и заголовка, сборка сверяет их между собой.
 - Часть аргументов словаря - задел, прошивки их пока не обрабатывают: `BackUp`, `BindMKey`, `ModList`, `ModMode`, `ModT2-ModT5`, `FwUpgE`, `OrOfs`, `OrAccCal`, `OrMagCal`. Коды у них закреплены и не меняются. Такой аргумент модуль примет, но ответа не будет, поэтому в примерах берут реальные команды (`ModCfg`, `ModInfo`, `FS`).
 - Словарь один на стек: прошивки собираются с его копией, поэтому приложения берут встроенный `DEFAULT_DICTIONARY`. Объект словаря (`createDictionary(codes)`): `code(имя)`, `name(код)`, `header(код)`, `har(заголовок, команда, ответ)`.
 - Команду, которой нет в словаре, задают числом: `code` и `har` принимают код строкой, десятичный или HEX (`"4097"`, `"0x1001"`), а `name` для неизвестного кода возвращает его же числом строкой, так что запись «туда и обратно» сходится.
@@ -3084,7 +3082,7 @@ WebSocket, ответ или пуш   {HAR, VAL: {DevSN, ModSN, Message: 404, Ar
 
 - `Message` - число 0..65535, `Args` - массив строк и чисел, только если у сообщения есть параметры. Тип в библиотеке - `DeviceMessage = { Message: number, Args?: (string | number)[] }`.
 - `messages.yaml`: раздел `groups` (`ИМЯ: { range: [от, до], ru, en, zh }`) и раздел `messages` (строки `- { code, group, name, level, ru, en, zh }`). `name` - имя для C в стиле `UPPER_SNAKE` с приставкой группы (`FS_FILE_NOT_FOUND`), в прошивке это `MSG_<name>` из `api_msg.h`. Префиксов `ER:`/`WR:` в тексте нет, вид сообщения задаёт `level`.
-- `npm run Dictionary` (и `prepack`) из `messages.yaml` генерирует `dictionaries/generated/messages.ts` (`MESSAGE_GROUPS`: группа -> диапазон и название на языках, `DEVICE_MESSAGES`: код -> запись с группой, `MESSAGE_CODES`: имя -> код) и `dictionaries/firmware/api_msg.h` (`typedef enum { MSG_NONE = 0, MSG_SYS_RESTARTING = 1, ... } api_msg_t`, раздел-комментарий на каждую группу). Генератор падает на пересечении диапазонов групп, коде вне диапазона своей группы, имени без приставки группы, повторе кода или имени, неизвестном `level`, пустом тексте и разных параметрах в языках. Оба файла не правятся руками, `messages.yaml` и оба заголовка прошивок есть в пакете (`poe-svelte-ui-lib/dictionaries/messages.yaml`, `poe-svelte-ui-lib/dictionaries/firmware/api_har.h`, `poe-svelte-ui-lib/dictionaries/firmware/api_msg.h`).
+- `npm run Generate` (и `prepack`) из `messages.yaml` генерирует `dictionaries/generated/messages.ts` (`MESSAGE_GROUPS`: группа -> диапазон и название на языках, `DEVICE_MESSAGES`: код -> запись с группой, `MESSAGE_CODES`: имя -> код) и `dictionaries/firmware/api_msg.h` (`typedef enum { MSG_NONE = 0, MSG_SYS_RESTARTING = 1, ... } api_msg_t`, раздел-комментарий на каждую группу). Генератор падает на пересечении диапазонов групп, коде вне диапазона своей группы, имени без приставки группы, повторе кода или имени, неизвестном `level`, пустом тексте и разных параметрах в языках. Оба файла не правятся руками, `messages.yaml` и оба заголовка прошивок есть в пакете (`poe-svelte-ui-lib/dictionaries/messages.yaml`, `poe-svelte-ui-lib/dictionaries/firmware/api_har.h`, `poe-svelte-ui-lib/dictionaries/firmware/api_msg.h`).
 - `formatDeviceMessage(code, args?, lang?)` возвращает `{ text, level, group, groupName }` (тип `FormattedDeviceMessage`) или `null` (0, нет кода, не число). `group` - код группы (`"FS"`), `groupName` - её название на языке (`"Файлы"`). Без `lang` - язык по умолчанию, приложение передаёт текущий язык (`getLanguage()`). Нет перевода на язык - английский текст. Неизвестный код - `"#1234"` (с параметрами `"#1234: a, b"`) и уровень `info`, группа - по диапазону кода, код из резерва - `group` и `groupName` равны `null`. Параметра не хватило - на его месте `?`.
 - Параметры есть у четырёх сообщений: `CFG_NOT_APPLIED` (100) - `{0}` поля настроек, которые не приняты, через запятую (причины по полям прошивка пишет в свой журнал); `FW_RESYNC` (307) - `{0}` номер части прошивки, с которой загрузчик модуля ждёт передачу (число, раздел «Обновление модуля по шине»); `WIFI_CONNECT_FAILED` (404) - `{0}` SSID, к которой не удалось подключиться (устройство вернулось к прежней сети); `DEV_POWER_LIMIT` (1000) - `{0}` номер канала, который отключён.
 
@@ -3431,7 +3429,7 @@ const message = decodeWsEnvelope(cborToValue(new Uint8Array(event.data)))
 | Ответ   | `API_Service_BeginResponse`, `Writer_*`, `API_Service_FinishResponse`                                                                      |                                                                                                                                |
 | Консоль | `LOG_*`, `LOG_HEX`, `LOG_PLOT`                                                                                                             | `encodeXPoeDebugFrame`, `xPoeDebugRow`, `xPoeDebugTableColumns`, `debugPlotValues`, `parseDebugLogMessage`, `xPoeDebugMessage` |
 | CAN     | `can_service`                                                                                                                              | `encodeCanPacket`, `createCanParser`, `slcanOpenCommands`                                                                      |
-| Тесты   | `tests/` прошивок                                                                                                                          | `npm run TestProtocols` сверяет байты с эталонами из прошивки                                                                  |
+| Тесты   | `tests/` прошивок                                                                                                                          | `npm run Test` сверяет байты с эталонами из прошивки                                                                           |
 
 `xPoeDebugTableColumns` - колонки таблицы `Table`, поэтому он экспортируется из основной точки входа `poe-svelte-ui-lib`, а не из `poe-svelte-ui-lib/protocols`.
 
