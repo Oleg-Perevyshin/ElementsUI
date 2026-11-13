@@ -42,10 +42,11 @@
   let portalElement: HTMLDivElement | undefined = $state()
   let anchorRect: DOMRect | null = $state(null)
 
-  /* type="buttons" на узком месте: если варианты не помещаются целиком, группа показывается выпадающим списком */
+  /* type="buttons" на узком месте: сначала сжимаются отступы кнопок, и только если подписи не помещаются и так - группа показывается выпадающим списком */
   let measureElement: HTMLDivElement | undefined = $state()
   let anchorWidth = $state(Infinity)
   let buttonsNeed = $state(0)
+  let compactNeed = $state(0)
   $effect(() => {
     const element = measureElement
     if (type !== "buttons" || fitContent || !element) return
@@ -54,8 +55,9 @@
     const measure = () => {
       if (!alive) return
       const widest = Math.max(0, ...[...element.children].map((child) => child.getBoundingClientRect().width))
-      /* сегменты равной ширины: самый широкий текст + отступы 2×12, разделители и рамка */
+      /* сегменты равной ширины: самый широкий текст + отступы 2×12 (сжатые - 2×4), разделители и рамка */
       buttonsNeed = options.length * (widest + 24) + options.length + 1
+      compactNeed = options.length * (widest + 8) + options.length + 1
     }
     measure()
     /* Шрифты могут догрузиться после замера; к тому времени компонент может быть уже убран */
@@ -63,7 +65,9 @@
     return () => (alive = false)
   })
   /* fitContent: ширину задают сами кнопки, сворачивать нечего */
-  const shownType = $derived(type === "buttons" && !fitContent && anchorWidth < buttonsNeed ? "select" : type)
+  const shownType = $derived(type === "buttons" && !fitContent && anchorWidth < compactNeed ? "select" : type)
+  /* Кнопки с узкими отступами: обычные не помещаются, сжатые - да */
+  const compactButtons = $derived(type === "buttons" && !fitContent && anchorWidth < buttonsNeed)
 
   const selectedValues = $derived(multiSelect ? (Array.isArray(value) ? (value as T[]) : []) : [value as T])
   const isSelected = (option: IOption<T>) => selectedValues.includes(option.value)
@@ -340,7 +344,9 @@
           <!-- Обёртка - позиционирующий предок подсказки; без overflow-hidden у группы, чтобы подсказка не обрезалась -->
           <div class="relative flex {fitContent ? '' : 'min-w-0 flex-1'}" style={accentStyle(option.accent)}>
             <button
-              class="flex h-8 w-full min-w-0 items-center justify-center px-3 py-2 text-[13px] font-semibold transition-colors duration-150
+              class="flex h-8 w-full min-w-0 items-center justify-center {compactButtons
+                ? 'px-1'
+                : 'px-3'} py-2 text-[13px] font-semibold transition-colors duration-150
                {index === 0 ? 'rounded-l-[9px]' : ''} {index === options.length - 1 ? 'rounded-r-[9px]' : ''}
                {index > 0 ? 'border-l border-(--border-color)' : ''}
                {option.accent

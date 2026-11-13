@@ -15,6 +15,15 @@ import {
   CborDepthLimitError,
 } from "./types.js"
 
+/* float32 - кратчайшая запись, дающая то же float32 (0.12, а не 0.12000000476837158): кодировщик отдаст её обратно тем же float32, точность не теряется; double и целые - как есть */
+export const shortNumber = (value: number): number => {
+  if (Number.isInteger(value) || !Number.isFinite(value) || Math.fround(value) !== value) return value
+  for (let digits = 1; digits <= 9; digits++) {
+    const short = Number(value.toPrecision(digits))
+    if (Math.fround(short) === value) return short
+  }
+  return value
+}
 const MAX_SAFE = BigInt(Number.MAX_SAFE_INTEGER)
 
 /* Класс декодера CBOR */
@@ -479,12 +488,12 @@ export class CborDecoder {
     return Math.pow(-1, sign) * Math.pow(2, exp - 25) * (mant | 0x400)
   }
 
-  /* Преобразовать биты в float32 */
+  /* Преобразовать биты в float32: кратчайшая десятичная запись того же float32 (0.005, а не 0.004999999888241291) */
   private bitsToFloat32(bits: number): number {
     const buffer = new ArrayBuffer(4)
     const view = new DataView(buffer)
     view.setUint32(0, bits, false)
-    return view.getFloat32(0, false)
+    return shortNumber(view.getFloat32(0, false))
   }
 
   /* Преобразовать биты в float64 */

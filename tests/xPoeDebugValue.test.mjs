@@ -156,8 +156,12 @@ test("round-trip: VALUE вставляется в поле Value и даёт т�
     const shown = m.formatXPoeDebugValue(m.cborToValue(bytes), bytes)
     assert.equal(hex(m.xPoeDebugValueFromText(shown)), hex(bytes), shown)
   }
-  /* float32 с провода: значение в поле то же, ширину выбирает кодер */
+  /* float32 с провода декодируется кратчайшей записью того же float32 (12.3, а не 12.300000190734863), в поле и обратно - то же число */
   const float32 = Uint8Array.from(Buffer.from("A16154FA4144CCCD", "hex"))
+  assert.equal(m.cborToValue(float32).T, 12.3)
+  assert.equal(Math.fround(m.cborToValue(float32).T), Math.fround(12.3))
   const back = m.cborToValue(m.xPoeDebugValueFromText(flow(m.cborToValue(float32))))
-  assert.equal(Math.fround(back.T), m.cborToValue(float32).T)
+  assert.equal(back.T, 12.3)
+  /* 0.005 настройки прошивки (Writer_AddFloat) - без хвоста 0.004999999888241291 */
+  assert.equal(m.cborToValue(Uint8Array.from(Buffer.from("FA3BA3D70A", "hex"))), 0.005)
 })

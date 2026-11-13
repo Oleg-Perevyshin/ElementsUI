@@ -44,6 +44,8 @@ export const WIDGET_FIELDS = {
     /* Текущие адреса STA/AP - только отображение, сеть настраивает WidgetWiFi */
     StaIP: text,
     ApIP: text,
+    DevBusID: num /* адрес на шине (STM, хабы) - только чтение, показывается HEX */,
+    SCLL: num /* уровень логов консоли: 0 OFF, 1 ERROR, 2 WARNING, 3 INFO, 4 DEBUG */,
   },
   /* Объект FS (FS_WriteState прошивки): Total/Used/Free/List и Upload во время закачки */
   WidgetFileSystem: { FS: {} as IWidgetFileSystemInfo },
@@ -143,9 +145,23 @@ export const widgetPrefixes = (type: WidgetFieldsType, props: { id?: string; gro
 /* Поля, которые виджет сохраняет одним SET ModCfg; остальные только читаются */
 export const WIDGET_SAVE_FIELDS = {
   WidgetWiFi: Object.keys(WIDGET_FIELDS.WidgetWiFi) as (keyof IWidgetWiFiConfig)[],
-  WidgetDeviceInfo: ["DevName", "HostName", "WebUser", "WebPsw"] as (keyof IWidgetDeviceInfoConfig)[],
+  WidgetDeviceInfo: ["DevName", "HostName", "WebUser", "WebPsw", "SCLL"] as (keyof IWidgetDeviceInfoConfig)[],
   WidgetRGBStrip: ["Count", "Model", "Order"] as (keyof IWidgetRGBStripConfig)[],
 }
+
+/* Поля WidgetDeviceInfo без своего выбора (show): набор ESP-шлюза. STM - DevSN, DevBusID, DevFW, RunCnt, DevName, SCLL */
+export const DEVICE_INFO_DEFAULT_FIELDS: (keyof IWidgetDeviceInfoConfig)[] = [
+  "DevSN",
+  "DevID",
+  "DevFW",
+  "RunCnt",
+  "StaIP",
+  "ApIP",
+  "DevName",
+  "HostName",
+  "WebUser",
+  "WebPsw",
+]
 
 /* Ключ поля на устройстве; пустой префикс - ключ без группы */
 export const widgetKey = (prefix: string, field: string, keys?: Partial<Record<string, string>>) => `${prefix ? `${prefix}.` : ""}${keys?.[field] || field}`

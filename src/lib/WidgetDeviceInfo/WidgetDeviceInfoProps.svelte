@@ -1,6 +1,6 @@
-<!-- $lib/WidgetDeviceInfo/WidgetDeviceInfoProps.svelte - панель пропсов конструктора для WidgetDeviceInfo: заголовок/мастер-цвет/префикс группы, переопределение имён полей устройства (keys) и команда перезагрузки - все с дефолтами, равными текущей прошивочной конвенции (COMPONENT_DEFAULTS). -->
+<!-- $lib/WidgetDeviceInfo/WidgetDeviceInfoProps.svelte - панель пропсов конструктора для WidgetDeviceInfo: заголовок/мастер-цвет/префикс группы, показываемые поля (show), переопределение имён полей устройства (keys) и команды перезагрузки и сброса - все с дефолтами, равными текущей прошивочной конвенции (COMPONENT_DEFAULTS). -->
 <script lang="ts">
-  import { WIDGET_FIELDS } from "../gui"
+  import { DEVICE_INFO_DEFAULT_FIELDS, WIDGET_FIELDS } from "../gui"
   import TextsEditor from "../TextsEditor.svelte"
   import { T } from "../locales/i18n"
   import * as UI from ".."
@@ -51,6 +51,20 @@
     <TextsEditor {component} {onPropertyChange} />
     <UI.Input label={{ name: $T("widget.common.group_prefix") }} value={component.properties.id} onUpdate={(value) => edit.set("id", value as string)} />
     <CommonSnippets snippet="Accent" {component} {onPropertyChange} />
+  </PropsGroup>
+  <PropsGroup label={$T("widget.info.fields")}>
+    <UI.Select
+      type="buttons"
+      multiSelect
+      help={{ info: $T("widget.info.fields.info") }}
+      options={DEVICE_INFO_KEYS.map((key) => ({ value: key, name: key }))}
+      value={component.properties.show ?? DEVICE_INFO_DEFAULT_FIELDS}
+      onUpdate={(fields) =>
+        edit.set(
+          "show",
+          DEVICE_INFO_KEYS.filter((key) => (fields as string[]).includes(key)),
+        )}
+    />
   </PropsGroup>
   <PropsGroup label={$T("widget.common.device_keys")}>
     {@render WidgetKeys()}

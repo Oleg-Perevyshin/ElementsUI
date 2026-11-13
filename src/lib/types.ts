@@ -701,6 +701,8 @@ export interface IWidgetDeviceInfoProps {
   value?: Partial<IWidgetDeviceInfoConfig>
   /* Переопределение имени поля устройства для каждого ключа IWidgetDeviceInfoConfig - по умолчанию совпадает с именем самого ключа (DevSN, DevName, ...) */
   keys?: Partial<Record<keyof IWidgetDeviceInfoConfig, string>>
+  /* Поля, которые виджет показывает и сохраняет; нет - DEVICE_INFO_DEFAULT_FIELDS (ESP). Скрытые поля не уходят в SET: прошивка отвергает пакет с незнакомым ключом целиком */
+  show?: (keyof IWidgetDeviceInfoConfig)[]
   /* Команда перезагрузки - по умолчанию Header: SET, Argument: Restart */
   restartCommand?: { header?: string; argument?: string }
   /* Команда сброса всех настроек к заводским (очистка NVS и перезагрузка) - по умолчанию Header: SET, Argument: RstNVS */

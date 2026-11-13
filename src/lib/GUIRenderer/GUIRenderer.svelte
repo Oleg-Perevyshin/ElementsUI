@@ -9,6 +9,7 @@
     GUI_GRID,
     WIDGET_FIELDS,
     WIDGET_SAVE_FIELDS,
+    DEVICE_INFO_DEFAULT_FIELDS,
     commandPacket,
     isWidgetType,
     readBits,
@@ -408,7 +409,15 @@
           {...props}
           value={fields(component, prefix, WIDGET_FIELDS.WidgetDeviceInfo)}
           persistKey={persist(component)}
-          onSave={locked ? undefined : (info) => saveFields(prefix, WIDGET_SAVE_FIELDS.WidgetDeviceInfo, info, props.keys)}
+          onSave={locked
+            ? undefined
+            : (info) =>
+                saveFields(
+                  prefix,
+                  WIDGET_SAVE_FIELDS.WidgetDeviceInfo.filter((field) => (props.show ?? DEVICE_INFO_DEFAULT_FIELDS).includes(field)),
+                  info,
+                  props.keys,
+                )}
           onRestart={locked ? undefined : () => send(props.restartCommand?.header || "SET", props.restartCommand?.argument || "Restart", {})}
           onFactoryReset={locked ? undefined : () => send(props.resetCommand?.header || "SET", props.resetCommand?.argument || "RstNVS", {})}
         />

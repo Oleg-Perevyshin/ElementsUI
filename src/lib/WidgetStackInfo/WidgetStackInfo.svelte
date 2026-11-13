@@ -166,7 +166,7 @@
         />
         <UI.Button
           wrapperClass="w-auto"
-          componentClass="px-3"
+          componentClass={narrow ? "p-1.5" : "px-3"}
           content={narrow
             ? { icon: RefreshIcon, info: { text: $T("widget.common.refresh"), side: "left" } }
             : { icon: RefreshIcon, name: $T("widget.common.refresh") }}

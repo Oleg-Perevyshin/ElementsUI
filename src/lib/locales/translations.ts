@@ -79,6 +79,14 @@ const translations = {
   "widget.info.host": { ru: "Имя хоста", en: "Host name", zh: "主机名" },
   "widget.info.web_user": { ru: "Пользователь Web", en: "Web user", zh: "Web 用户" },
   "widget.info.web_psw": { ru: "Пароль Web", en: "Web password", zh: "Web 密码" },
+  "widget.info.bus_id": { ru: "Адрес на шине", en: "Bus address", zh: "总线地址" },
+  "widget.info.log_level": { ru: "Уровень логов", en: "Log level", zh: "日志级别" },
+  "widget.info.fields": { ru: "Поля", en: "Fields", zh: "字段" },
+  "widget.info.fields.info": {
+    ru: "Какие поля показывать и сохранять. Скрытые поля не уходят в устройство: STM - DevSN, DevBusID, DevFW, RunCnt, DevName, SCLL",
+    en: "Which fields to show and save. Hidden fields are not sent to the device: STM - DevSN, DevBusID, DevFW, RunCnt, DevName, SCLL",
+    zh: "显示和保存哪些字段。隐藏字段不会发送到设备：STM - DevSN、DevBusID、DevFW、RunCnt、DevName、SCLL",
+  },
   "widget.info.name_required": { ru: "Укажите имя устройства", en: "Enter the device name", zh: "请输入设备名称" },
   "widget.stack.title": { ru: "Стек и задачи", en: "Stack and Tasks", zh: "堆栈与任务" },
   "widget.stack.off": { ru: "Выкл", en: "Off", zh: "关" },
@@ -223,6 +231,16 @@ const translations = {
     ru: "Пароль для входа в веб-интерфейс устройства. Латинские буквы, цифры и спецсимволы без пробела, до 15 символов",
     en: "Password for the device web interface. Latin letters, digits and special characters without spaces, up to 15 characters",
     zh: "设备网页界面的密码。拉丁字母、数字和特殊字符（不含空格），最多 15 个字符",
+  },
+  "widget.info.hint.bus_id": {
+    ru: "Адрес модуля на шине CAN или RS485, HEX. Модуль считает его сам из номера чипа",
+    en: "Module address on the CAN or RS485 bus, HEX. The module derives it from the chip number",
+    zh: "模块在 CAN 或 RS485 总线上的地址（十六进制），由芯片编号自动生成",
+  },
+  "widget.info.hint.log_level": {
+    ru: "Какие сообщения модуль пишет в отладочную консоль: OFF - ничего, DEBUG - всё. Графики PLOT выводятся от уровня INFO",
+    en: "Which messages the module writes to the debug console: OFF - none, DEBUG - all. PLOT graphs are sent from INFO",
+    zh: "模块向调试控制台输出哪些消息：OFF - 不输出，DEBUG - 全部。PLOT 图表从 INFO 级别开始输出",
   },
   "widget.info.hint.restart": {
     ru: "Перезагрузить устройство - настройки сохраняются, связь пропадёт на несколько секунд",

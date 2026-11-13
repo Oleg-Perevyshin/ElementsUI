@@ -1,4 +1,4 @@
-<!-- $lib/WidgetDeviceInfo/WidgetDeviceInfo.svelte - смарт-виджет информации об устройстве. Фиксированный набор полей (см. IWidgetDeviceInfoConfig в types.ts), соответствует реальной прошивочной конвенции (main_config.c, группа "CFG", ProdFactory-ESP): DevSN/DevID/DevFW/RunCnt - только чтение; DevName/HostName/WebUser/WebPsw - сохраняются одним пакетом; «Сброс настроек» - с подтверждением, все настройки к заводским. Ничего не знает про DeviceStore/WebSocket - value/onSave/onRestart/onFactoryReset. -->
+<!-- $lib/WidgetDeviceInfo/WidgetDeviceInfo.svelte - смарт-виджет информации об устройстве: поля группы "CFG" (main_config.c в ProdFactory-ESP и ProdFactory-STM), набор выбирается свойством show. DevSN/DevID/DevBusID/DevFW/RunCnt/StaIP/ApIP - только чтение; DevName/HostName/WebUser/WebPsw/SCLL - сохраняются одним пакетом; «Сброс настроек» - с подтверждением, все настройки к заводским. Ничего не знает про DeviceStore/WebSocket - value/onSave/onRestart/onFactoryReset. -->
 <script lang="ts">
   import { T } from "../locales/i18n"
   import { untrack } from "svelte"
@@ -6,6 +6,7 @@
   import { twMerge } from "tailwind-merge"
   import * as UI from ".."
   import type { IWidgetDeviceInfoConfig, IWidgetDeviceInfoProps } from "../types"
+  import { DEVICE_INFO_DEFAULT_FIELDS } from "../gui"
   import CpuIcon from "./CpuIcon.svelte"
   import RestartIcon from "./RestartIcon.svelte"
   import WidgetHeader from "../WidgetHeader.svelte"
@@ -18,6 +19,7 @@
     accent,
     label = {},
     value = $bindable(),
+    show,
     collapsed = $bindable(false),
     persistKey,
     onSave,
@@ -48,6 +50,8 @@
     WebPsw: "",
     StaIP: "",
     ApIP: "",
+    DevBusID: 0,
+    SCLL: 0,
   }
   let info: IWidgetDeviceInfoConfig = $state({ ...EMPTY, ...value })
 
@@ -82,7 +86,21 @@
   const onlyDevNameChars = (input: string | number) => String(input).replace(/[^A-Za-z0-9_.-]/g, "")
   const onlyPswChars = (input: string | number) => String(input).replace(/[^!-~]/g, "")
 
-  const nameMissing = $derived(!String(info.DevName ?? "").trim())
+  /* Показываемые поля; имя обязательно, только если оно показано */
+  const shown = $derived(new Set(show ?? DEVICE_INFO_DEFAULT_FIELDS))
+  const idFields = $derived((["DevID", "DevBusID", "DevFW", "RunCnt"] as const).filter((field) => shown.has(field)))
+  const hasReadonly = $derived(shown.has("DevSN") || idFields.length > 0 || shown.has("StaIP") || shown.has("ApIP"))
+  const hasEditable = $derived((["DevName", "HostName", "WebUser", "WebPsw", "SCLL"] as const).some((field) => shown.has(field)))
+  const nameMissing = $derived(shown.has("DevName") && !String(info.DevName ?? "").trim())
+  /* Адрес на шине - 4 знака HEX, как в журнале терминала */
+  const busId = $derived(info.DevBusID ? Number(info.DevBusID).toString(16).toUpperCase().padStart(4, "0") : "")
+  const LOG_LEVELS = [
+    { value: 0, name: "OFF" },
+    { value: 1, name: "ERROR" },
+    { value: 2, name: "WARNING" },
+    { value: 3, name: "INFO" },
+    { value: 4, name: "DEBUG" },
+  ]
 
   /* Без onSave (наблюдатель, управление закрыто) - только просмотр: поля только для чтения, пароль маской без глазика */
   const readOnly = $derived(!onSave)
@@ -119,100 +137,146 @@
   {#if !collapsed}
     <div class="flex flex-col gap-4" transition:slide={{ duration: 150 }}>
       <!-- Только чтение -->
-      <div class="flex flex-col gap-2 rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-3">
-        <!-- Серийник бывает длинным (напр. 00.00.000-00_0000AC670000B22B00007428:DBC5) - своя строка, чтобы не резался -->
-        <div use:hint={{ text: $T("widget.info.hint.sn"), enabled: $hints }}>
-          <UI.Input label={{ name: $T("widget.info.sn") }} value={info.DevSN} readonly help={{ copyButton: true }} />
+      {#if hasReadonly}
+        <div class="flex flex-col gap-2 rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-3">
+          <!-- Серийник бывает длинным (напр. 00.00.000-00_0000AC670000B22B00007428:DBC5) - своя строка, чтобы не резался -->
+          {#if shown.has("DevSN")}
+            <div use:hint={{ text: $T("widget.info.hint.sn"), enabled: $hints }}>
+              <UI.Input label={{ name: $T("widget.info.sn") }} value={info.DevSN} readonly help={{ copyButton: true }} />
+            </div>
+          {/if}
+          {#if idFields.length}
+            <div class="grid grid-cols-1 gap-2 {idFields.length > 2 ? '@md:grid-cols-3' : '@sm:grid-cols-2'}">
+              {#if shown.has("DevID")}
+                <div use:hint={{ text: $T("widget.info.hint.id"), enabled: $hints }}>
+                  <UI.Input label={{ name: $T("widget.info.id") }} value={info.DevID} readonly />
+                </div>
+              {/if}
+              {#if shown.has("DevBusID")}
+                <div use:hint={{ text: $T("widget.info.hint.bus_id"), enabled: $hints }}>
+                  <UI.Input label={{ name: $T("widget.info.bus_id") }} value={busId} readonly />
+                </div>
+              {/if}
+              {#if shown.has("DevFW")}
+                <div use:hint={{ text: $T("widget.info.hint.fw"), enabled: $hints }}>
+                  <UI.Input label={{ name: $T("widget.info.fw") }} value={info.DevFW} readonly />
+                </div>
+              {/if}
+              {#if shown.has("RunCnt")}
+                <div use:hint={{ text: $T("widget.info.hint.runs"), enabled: $hints }}>
+                  <UI.Input label={{ name: $T("widget.info.runs") }} value={info.RunCnt} readonly />
+                </div>
+              {/if}
+            </div>
+          {/if}
+          {#if shown.has("StaIP") || shown.has("ApIP")}
+            <div class="grid grid-cols-1 gap-2 @sm:grid-cols-2">
+              {#if shown.has("StaIP")}
+                <div use:hint={{ text: $T("widget.info.hint.sta_ip"), enabled: $hints }}>
+                  <UI.Input label={{ name: $T("widget.info.sta_ip") }} value={info.StaIP} readonly />
+                </div>
+              {/if}
+              {#if shown.has("ApIP")}
+                <div use:hint={{ text: $T("widget.info.hint.ap_ip"), enabled: $hints }}>
+                  <UI.Input label={{ name: $T("widget.info.ap_ip") }} value={info.ApIP} readonly />
+                </div>
+              {/if}
+            </div>
+          {/if}
         </div>
-        <div class="grid grid-cols-1 gap-2 @md:grid-cols-3">
-          <div use:hint={{ text: $T("widget.info.hint.id"), enabled: $hints }}>
-            <UI.Input label={{ name: $T("widget.info.id") }} value={info.DevID} readonly />
-          </div>
-          <div use:hint={{ text: $T("widget.info.hint.fw"), enabled: $hints }}>
-            <UI.Input label={{ name: $T("widget.info.fw") }} value={info.DevFW} readonly />
-          </div>
-          <div use:hint={{ text: $T("widget.info.hint.runs"), enabled: $hints }}>
-            <UI.Input label={{ name: $T("widget.info.runs") }} value={info.RunCnt} readonly />
-          </div>
-        </div>
-        <div class="grid grid-cols-1 gap-2 @sm:grid-cols-2">
-          <div use:hint={{ text: $T("widget.info.hint.sta_ip"), enabled: $hints }}>
-            <UI.Input label={{ name: $T("widget.info.sta_ip") }} value={info.StaIP} readonly />
-          </div>
-          <div use:hint={{ text: $T("widget.info.hint.ap_ip"), enabled: $hints }}>
-            <UI.Input label={{ name: $T("widget.info.ap_ip") }} value={info.ApIP} readonly />
-          </div>
-        </div>
-      </div>
+      {/if}
 
       <!-- Редактируемые настройки -->
-      <div class="flex flex-col gap-3 rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-3">
-        <div class="grid grid-cols-1 gap-2 @sm:grid-cols-2">
-          <div use:hint={{ text: $T("widget.info.hint.name"), enabled: $hints }}>
-            <UI.Input
-              label={{ name: $T("widget.info.name") }}
-              bind:value={info.DevName}
-              readonly={readOnly}
-              maxlength={15}
-              help={{ regExp: DEV_NAME_REGEXP }}
-              onUpdate={(input) => (info.DevName = onlyDevNameChars(input))}
-            />
-          </div>
-          <!-- Прошивка хранит имя без домена, ".local" добавляет mDNS - показываем его как неизменяемую часть адреса -->
-          <div class="flex min-w-0 items-end gap-1.5" use:hint={{ text: $T("widget.info.hint.host"), enabled: $hints }}>
-            <UI.Input
-              wrapperClass="min-w-0 flex-1"
-              label={{ name: $T("widget.info.host") }}
-              bind:value={info.HostName}
-              readonly={readOnly}
-              maxlength={18}
-              help={{ regExp: NAME_REGEXP }}
-              onUpdate={(input) => (info.HostName = onlyNameChars(input))}
-            />
-            <span class="flex h-8 shrink-0 items-center text-[14px] text-(--muted-color) select-none">.local</span>
-          </div>
-          <div use:hint={{ text: $T("widget.info.hint.web_user"), enabled: $hints }}>
-            <UI.Input
-              label={{ name: $T("widget.info.web_user") }}
-              bind:value={info.WebUser}
-              readonly={readOnly}
-              maxlength={15}
-              help={{ regExp: NAME_REGEXP }}
-              onUpdate={(input) => (info.WebUser = onlyNameChars(input))}
-            />
-          </div>
-          <div use:hint={{ text: $T("widget.info.hint.web_psw"), enabled: $hints }}>
-            {#if readOnly}
-              <UI.Input label={{ name: $T("widget.info.web_psw") }} value={info.WebPsw ? "••••••••" : ""} readonly />
-            {:else}
-              <UI.Input
-                type="password"
-                label={{ name: $T("widget.info.web_psw") }}
-                bind:value={info.WebPsw}
-                maxlength={15}
-                help={{ autocomplete: "one-time-code", regExp: PSW_REGEXP }}
-                onUpdate={(input) => (info.WebPsw = onlyPswChars(input))}
-              />
+      {#if hasEditable}
+        <div class="flex flex-col gap-3 rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-3">
+          <div class="grid grid-cols-1 gap-2 @sm:grid-cols-2">
+            {#if shown.has("DevName")}
+              <div use:hint={{ text: $T("widget.info.hint.name"), enabled: $hints }}>
+                <UI.Input
+                  label={{ name: $T("widget.info.name") }}
+                  bind:value={info.DevName}
+                  readonly={readOnly}
+                  maxlength={15}
+                  help={{ regExp: DEV_NAME_REGEXP }}
+                  onUpdate={(input) => (info.DevName = onlyDevNameChars(input))}
+                />
+              </div>
+            {/if}
+            {#if shown.has("HostName")}
+              <!-- Прошивка хранит имя без домена, ".local" добавляет mDNS - показываем его как неизменяемую часть адреса -->
+              <div class="flex min-w-0 items-end gap-1.5" use:hint={{ text: $T("widget.info.hint.host"), enabled: $hints }}>
+                <UI.Input
+                  wrapperClass="min-w-0 flex-1"
+                  label={{ name: $T("widget.info.host") }}
+                  bind:value={info.HostName}
+                  readonly={readOnly}
+                  maxlength={18}
+                  help={{ regExp: NAME_REGEXP }}
+                  onUpdate={(input) => (info.HostName = onlyNameChars(input))}
+                />
+                <span class="flex h-8 shrink-0 items-center text-[14px] text-(--muted-color) select-none">.local</span>
+              </div>
+            {/if}
+            {#if shown.has("WebUser")}
+              <div use:hint={{ text: $T("widget.info.hint.web_user"), enabled: $hints }}>
+                <UI.Input
+                  label={{ name: $T("widget.info.web_user") }}
+                  bind:value={info.WebUser}
+                  readonly={readOnly}
+                  maxlength={15}
+                  help={{ regExp: NAME_REGEXP }}
+                  onUpdate={(input) => (info.WebUser = onlyNameChars(input))}
+                />
+              </div>
+            {/if}
+            {#if shown.has("WebPsw")}
+              <div use:hint={{ text: $T("widget.info.hint.web_psw"), enabled: $hints }}>
+                {#if readOnly}
+                  <UI.Input label={{ name: $T("widget.info.web_psw") }} value={info.WebPsw ? "••••••••" : ""} readonly />
+                {:else}
+                  <UI.Input
+                    type="password"
+                    label={{ name: $T("widget.info.web_psw") }}
+                    bind:value={info.WebPsw}
+                    maxlength={15}
+                    help={{ autocomplete: "one-time-code", regExp: PSW_REGEXP }}
+                    onUpdate={(input) => (info.WebPsw = onlyPswChars(input))}
+                  />
+                {/if}
+              </div>
+            {/if}
+            {#if shown.has("SCLL")}
+              <div use:hint={{ text: $T("widget.info.hint.log_level"), enabled: $hints }}>
+                <UI.Select
+                  label={{ name: $T("widget.info.log_level") }}
+                  options={LOG_LEVELS}
+                  value={Number(info.SCLL)}
+                  disabled={readOnly}
+                  onUpdate={(level) => (info.SCLL = Number(level))}
+                />
+              </div>
             {/if}
           </div>
         </div>
-      </div>
+      {/if}
 
       <!-- Сохранение -->
-      <div class="flex flex-col items-center gap-2">
-        {#if isDirty && nameMissing}
-          <span class="text-[12px] text-(--red-color)" transition:slide={{ duration: 100 }}>{$T("widget.info.name_required")}</span>
-        {:else if isDirty}
-          <span class="text-[12px] text-(--muted-color)" transition:slide={{ duration: 100 }}>{$T("widget.common.unsaved")}</span>
-        {/if}
-        <UI.Button
-          wrapperClass="w-40"
-          variant="primary"
-          content={{ name: $T("widget.common.save") }}
-          disabled={!isDirty || !onSave || nameMissing}
-          onClick={save}
-        />
-      </div>
+      {#if hasEditable}
+        <div class="flex flex-col items-center gap-2">
+          {#if isDirty && nameMissing}
+            <span class="text-[12px] text-(--red-color)" transition:slide={{ duration: 100 }}>{$T("widget.info.name_required")}</span>
+          {:else if isDirty}
+            <span class="text-[12px] text-(--muted-color)" transition:slide={{ duration: 100 }}>{$T("widget.common.unsaved")}</span>
+          {/if}
+          <UI.Button
+            wrapperClass="w-40"
+            variant="primary"
+            content={{ name: $T("widget.common.save") }}
+            disabled={!isDirty || !onSave || nameMissing}
+            onClick={save}
+          />
+        </div>
+      {/if}
 
       <!-- Сброс всех настроек к заводским - отдельно от сохранения, только с подтверждением -->
       {#if onFactoryReset}

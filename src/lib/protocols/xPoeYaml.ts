@@ -1,5 +1,6 @@
 /* Вид CBOR в стиле YAML для xPOE-Debug: строка VALUE - поток (корневая карта без скобок), окно - блок с отступом 2; разбор поля Value - поток YAML или JSON */
 import { base64ToBytes } from "./cbor/base64.js"
+import { shortNumber } from "./cbor/decoder.js"
 import { encodeCbor } from "./cbor/encoder.js"
 import type { CborValue } from "./cbor/types.js"
 import { bytesToHex, hexToBytes } from "./hex.js"
@@ -8,16 +9,6 @@ import { bytesToHex, hexToBytes } from "./hex.js"
 export type YamlKind = "key" | "string" | "number" | "boolean" | "null" | "bytes"
 export type YamlPaint = (kind: YamlKind, text: string) => string
 const plain: YamlPaint = (_kind, text) => text
-
-/* float32 с провода - кратчайшая запись, дающая то же float32 (0.12, а не 0.12000000476837158); double и целые - как есть */
-export const shortNumber = (value: number): number => {
-  if (Number.isInteger(value) || !Number.isFinite(value) || Math.fround(value) !== value) return value
-  for (let digits = 1; digits <= 9; digits++) {
-    const short = Number(value.toPrecision(digits))
-    if (Math.fround(short) === value) return short
-  }
-  return value
-}
 
 const NUMBER = /^[-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][-+]?\d+)?$/
 const SPECIAL = /^(?:null|Null|NULL|~|true|True|TRUE|false|False|FALSE|[-+]?\.(?:inf|Inf|INF)|\.(?:nan|NaN|NAN))$/

@@ -448,7 +448,7 @@
         <div class="flex items-center gap-3">
           <Button
             wrapperClass="w-auto"
-            componentClass="px-3"
+            componentClass={narrow ? "p-1.5" : "px-3"}
             content={{ icon: FitIcon, name: narrow ? undefined : $T("widget.map.fitAll"), info: { text: $T("widget.map.fitAllHint"), side: "bottom" } }}
             disabled={collapsed || visibleBoards.length === 0}
             onClick={fitAllBoards}
