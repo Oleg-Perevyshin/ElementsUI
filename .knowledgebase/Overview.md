@@ -55,7 +55,7 @@ ElementsUI - репозиторий npm-библиотеки `poe-svelte-ui-lib`
 
 - Компонент только показывает данные и сообщает об изменениях (пропсы и колбэки). Сеть, WebSocket, выбор модуля и хранилище значений - у приложения.
 - `src/lib/protocols/` - единственный источник протокола и кодека для программ. В прошивках тот же протокол реализован в C (`poe_cbor`, `api_service`), совпадение байт проверяют тесты.
-- `src/lib/protocols/dictionary.yaml` - мастер-словарь команд для всего стека.
+- `src/lib/dictionaries/` - мастер-словари для всего стека: команды `commands.yaml` и сообщения устройств `messages.yaml`, из них генерируются код для JS и заголовки прошивок `api_har.h`, `api_msg.h`.
 - Любая правка компонента, темы или протокола сразу затрагивает DevCloud, WebApp и DevTerminal.
 
 Витрина с живыми примерами публикуется на GitHub Pages: `https://oleg-perevyshin.github.io/ElementsUI/`. Репозиторий: `github.com/Oleg-Perevyshin/ElementsUI`.
@@ -107,7 +107,7 @@ ElementsUI - репозиторий npm-библиотеки `poe-svelte-ui-lib`
 
 ```
 ElementsUI/
-├─ package.json            версия, скрипты, exports (6 точек входа: ., /protocols, /protocols/dictionary.yaml, /constructor, /locales, /theme.css), allowScripts
+├─ package.json            версия, скрипты, exports (6 точек входа: ., /protocols, /dictionaries/*, /constructor, /locales, /theme.css), allowScripts
 ├─ vite.config.ts          SvelteKit + Tailwind, витрина в docs/, base /ElementsUI, __LIB_VERSION__
 ├─ tsconfig.json           strict, include src/**
 ├─ .prettierrc             printWidth 160, без точек с запятой, LF
@@ -117,7 +117,7 @@ ElementsUI/
 ├─ .github/workflows/
 │  ├─ npm_publish.yaml     [publish]: публикация в npm + автообновление DevCloud
 │  └─ ghpages_deploy.yaml  [deploy]: витрина на GitHub Pages
-├─ scripts/GenerateDictionary.mjs   dictionary.yaml -> src/lib/protocols/dictionaryCodes.ts
+├─ scripts/GenerateDictionary.mjs   src/lib/dictionaries: commands.yaml -> generated/commands.ts, messages.yaml -> generated/messages.ts; заголовки прошивок firmware/api_har.h, api_msg.h в стиле .clang-format прошивок
 ├─ scripts/UpdateIconsLib.ts       assets/IconsCatalog -> src/lib/icons.ts (npm run UpdateIconsLib)
 ├─ assets/IconsCatalog/    SVG каталога (категория.имя.svg), наборы battery/bulb/propeller; в npm-пакет не входит
 ├─ tests/                  node:test против собранного dist/ (+ dist-types.tsconfig.json)
@@ -137,7 +137,8 @@ ElementsUI/
 │     ├─ theme.css         точка входа "poe-svelte-ui-lib/theme.css"
 │     ├─ <Компонент>/      Компонент.svelte + КомпонентProps.svelte + README.md (+ вспомогательные .ts)
 │     ├─ GUIRenderer/      GUIRenderer.svelte, DeviceTable.svelte
-│     ├─ protocols/        ядро протоколов, PROTOCOL.md, dictionary.yaml, cbor/
+│     ├─ protocols/        ядро протоколов, PROTOCOL.md, cbor/
+│     ├─ dictionaries/     commands.yaml, messages.yaml, generated/ (TS), firmware/ (api_har.h, api_msg.h), README.md
 │     ├─ locales/          languages.ts, i18n.ts, localize.ts, translations.ts, constructor.ts, index.ts
 │     ├─ libIcons/         служебные значки компонентов и панелей
 │     ├─ gui.ts            чистые правила рендерера (сетка, виджеты, биты, пакеты, раскладка)
@@ -188,14 +189,14 @@ ElementsUI/
 <details>
 <summary>🚪 Точки входа пакета</summary>
 
-| Импорт                                        | Файл в dist          | Что даёт                                                                                                                                                                                                         | Svelte нужен           |
-| --------------------------------------------- | -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------- |
-| `poe-svelte-ui-lib`                           | `index.js`           | Компоненты, виджеты, `GUIRenderer`, правила `gui.ts`, реестр `COMPONENTS`, `createFsTransfer`, i18n, `sanitizeHtml`, иконки, все типы                                                                            | да                     |
-| `poe-svelte-ui-lib/constructor`               | `constructor.js`     | Панели свойств `*Props`, `PANELS`, `COMPONENT_DEFAULTS`, `COMPONENT_SIZES`, `createComponent`, `createPropsEditor`, `applyPropertyChange`, `optionsStore`, `TextsEditor`, `CommonSnippets`, словарь конструктора | да                     |
-| `poe-svelte-ui-lib/protocols`                 | `protocols/index.js` | CBOR, пакет `poe_cbor_pkt`, HAR, CRC, словарь, xPOE-Debug, CAN/slcan, графики отладки                                                                                                                            | нет, работает под Node |
-| `poe-svelte-ui-lib/protocols/dictionary.yaml` | файл словаря         | Мастер-словарь команд как файл                                                                                                                                                                                   | -                      |
-| `poe-svelte-ui-lib/locales`                   | `locales/index.js`   | `LANGUAGES`, переводчик, `localizeDeep` без компонентов                                                                                                                                                          | нет, для Node          |
-| `poe-svelte-ui-lib/theme.css`                 | `theme.css`          | Палитра `.light`/`.dark`, типографика, роли `bg-*`/`border-*`                                                                                                                                                    | -                      |
+| Импорт                             | Файл в dist          | Что даёт                                                                                                                                                                                                         | Svelte нужен           |
+| ---------------------------------- | -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------- |
+| `poe-svelte-ui-lib`                | `index.js`           | Компоненты, виджеты, `GUIRenderer`, правила `gui.ts`, реестр `COMPONENTS`, `createFsTransfer`, i18n, `sanitizeHtml`, иконки, все типы                                                                            | да                     |
+| `poe-svelte-ui-lib/constructor`    | `constructor.js`     | Панели свойств `*Props`, `PANELS`, `COMPONENT_DEFAULTS`, `COMPONENT_SIZES`, `createComponent`, `createPropsEditor`, `applyPropertyChange`, `optionsStore`, `TextsEditor`, `CommonSnippets`, словарь конструктора | да                     |
+| `poe-svelte-ui-lib/protocols`      | `protocols/index.js` | CBOR, пакет `poe_cbor_pkt`, HAR, CRC, словарь, xPOE-Debug, CAN/slcan, графики отладки                                                                                                                            | нет, работает под Node |
+| `poe-svelte-ui-lib/dictionaries/*` | файлы словарей       | `commands.yaml`, `messages.yaml`, `firmware/api_har.h`, `firmware/api_msg.h` как файлы                                                                                                                           | -                      |
+| `poe-svelte-ui-lib/locales`        | `locales/index.js`   | `LANGUAGES`, переводчик, `localizeDeep` без компонентов                                                                                                                                                          | нет, для Node          |
+| `poe-svelte-ui-lib/theme.css`      | `theme.css`          | Палитра `.light`/`.dark`, типографика, роли `bg-*`/`border-*`                                                                                                                                                    | -                      |
 
 Импорт `/constructor` один раз до отрисовки подключает словарь конструктора к `$T` библиотеки (`extendTranslations`). Ядро протоколов и `locales` используют импорты с расширением `.js`, чтобы их разрешал сам Node без бандлера.
 
@@ -223,8 +224,8 @@ ElementsUI/
 2. Для CAN/CAN FD пакет режется `canFragments`/`encodeCanPacket` на кадры 8 или 64 байта и уходит через slcan-адаптер (`slcanOpenCommands`, `encodeSlcanFrame`).
 3. Для RS485 и UART-консоли пакет идёт сплошным потоком; на приёме разборщик ищет начало `0x9F 0x85`.
 4. Приём: `createPacketStreamParser` (RS485), `createXPoeDebugParser` (консоль, пакеты вперемешку с текстом загрузчика), `createCanParser` (сборка фрагментов CAN). Общий буфер - `framer.ts`. RS485 и консоль ищут начало общей `packetStart` (`packet.ts`, метка `0x9F 0x85`), пакет без записей - мусор; `decodePacket` принимает только indefinite-массив `0x9F` (definite прошивка отвергает). CAN считает `sessionTimeoutMs` от последнего фрагмента и выдаёт только целый пакет.
-5. Поле Value консоли - `xPoeDebugValueFromText`: HEX только явно (`h'0A 1B'` или `0x0A1B`), остальное - JSON в CBOR (`12` - число 12).
-6. Строки консоли превращаются в строки таблицы `xPoeDebugRow` (колонки `xPoeDebugTableColumns`), значения `DebugPlot` - в графики `createPlotGroups`/`debugPlotValues`.
+5. Поле Value консоли - `xPoeDebugValueFromText`: поток YAML как в колонке VALUE (корневая карта без скобок, `h'0A1B'` - байтовая строка) или JSON, `0x0A1B` - готовый CBOR как есть, `12` - число 12.
+6. Строки консоли превращаются в строки таблицы `xPoeDebugRow` (колонки `xPoeDebugTableColumns`: `TRG | SRC | КОМАНДА | VALUE | FHS`; `VALUE` - Payload как пришёл в стиле YAML (`A: 1, B: [1, 2]`, вставляется в поле Value тем же CBOR; окно - блочный YAML), сообщение устройства и HAR - в `КОМАНДЕ` и её подсказке), значения `DebugPlot` - в графики `createPlotGroups`/`debugPlotValues`.
 
 </details>
 
@@ -239,7 +240,8 @@ ElementsUI/
 | `defaults.ts`                             | `COMPONENT_DEFAULTS`, `COMPONENT_SIZES`, `minComponentWidth`, `createComponent`                                                                                                                   |
 | `propsEditor.ts`                          | `createPropsEditor` (`set`, `patch`, `addItem`, `updateItem`, `removeItem`), `applyPropertyChange`                                                                                                |
 | `fsTransfer.ts`                           | Файлы по `SET FS`: чанки, повторы, CRC-32, общая очередь операций на транспорт                                                                                                                    |
-| `protocols/`                              | CBOR, пакет, HAR, CRC, словарь, xPOE-Debug, CAN, графики отладки                                                                                                                                  |
+| `protocols/`                              | CBOR, пакет, HAR, CRC, словарь, xPOE-Debug, CAN, графики отладки, `formatDeviceMessage`                                                                                                           |
+| `dictionaries/`                           | Мастер-словари команд и сообщений, сгенерированный TS и заголовки прошивок                                                                                                                        |
 | `locales/`                                | Список языков, переводчик `$T`, многоязычные тексты GUI                                                                                                                                           |
 | `theme.css`, `accent.ts`, `themeWatch.ts` | Тема, цвет роли компонента, слежение за темой из JS                                                                                                                                               |
 | `html.ts`                                 | `escapeHtml`, `htmlToText`, `sanitizeHtml` (белый список тегов SVG и текста; `href` только `#id` и у `<a>` `mailto:`, `style` только свойства цвета и значков, `class` без `fixed`/`inset`/`z-*`) |
@@ -258,7 +260,7 @@ ElementsUI/
 - 🔁 **Компонент говорит колбэками:** `onUpdate` - значение принято, `onInput` - значение во время ввода, `onPropertyChange` - правка свойств в конструкторе.
 - 🌉 **Рендерер связан с приложением через `DeviceLink`:** читать значение, записать, отправить команду, дождаться ответа.
 - 📦 **Пакет по проводу - `poe_cbor_pkt`:** адрес получателя и отправителя, заголовок с командой, тело и CRC.
-- 📖 **Команда в проводе - число `HAR`** (заголовок, код из словаря `dictionary.yaml`, флаг ответа) и на шине, и в WebSocket-конверте `{HAR, VAL}`. Имена - только для людей.
+- 📖 **Команда в проводе - число `HAR`** (заголовок, код из словаря `commands.yaml`, флаг ответа) и на шине, и в WebSocket-конверте `{HAR, VAL}`. Имена - только для людей.
 - 📁 **Файлы передаются командой `SET FS`** по кускам с повторами и проверкой CRC-32.
 
 <details>
@@ -359,20 +361,20 @@ interface DeviceReply {
 - Разборщики: пауза дольше `gapMs` (по умолчанию 100 мс; у CAN - `sessionTimeoutMs`) сбрасывает недособранное, предел `maxBytes` по умолчанию 8192. Пауза RS485 в прошивке - 20 мс.
 - Пример `GET ModCfg {}` из терминала: `9F 85 00 00 18 49 A0 19 66 06 FF` (HAR `0x0049`, CRC `0x6606`).
 
-| Канал                   | Передача                                                                                                                                                                                                                                                                                                                                                                               |
-| ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| CAN, CAN FD             | Кадры 8 или 64 байта; 11-битный ID: бит 10 - последний кадр (`CAN_FINAL_BIT`), биты 0-9 - номер пакета                                                                                                                                                                                                                                                                                 |
-| RS485                   | Сплошной поток, поиск `0x9F 0x85`                                                                                                                                                                                                                                                                                                                                                      |
-| LoRa                    | Пакет целиком в одном радиокадре                                                                                                                                                                                                                                                                                                                                                       |
-| UART-консоль xPOE-Debug | Поток вперемешку с текстом загрузчика; логи `OK! DebugLog` `[уровень, тег, текст \| байты, FHS]`, графики `OK! DebugPlot` `{"Группа.Имя": float32}`                                                                                                                                                                                                                                    |
-| WebSocket               | Конверт `{HAR, VAL}` на всех соединениях (браузер - облако, облако - устройство, WebApp - устройство): `HAR` - то же 16-битное число, что на шине (заголовок, код из словаря, флаг ответа), имён в проводе нет. Запрос `VAL: {DevSN, ModSN?, TrgBusID?, SrcBusID?, Payload?}`, ответ `VAL: {DevSN, ModSN, Message, Payload}`. Сборка и разбор - `encodeWsEnvelope`, `decodeWsEnvelope` |
+| Канал                   | Передача                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| CAN, CAN FD             | Кадры 8 или 64 байта; 11-битный ID: бит 10 - последний кадр (`CAN_FINAL_BIT`), биты 0-9 - номер пакета                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| RS485                   | Сплошной поток, поиск `0x9F 0x85`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| LoRa                    | Пакет целиком в одном радиокадре                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| UART-консоль xPOE-Debug | Поток вперемешку с текстом загрузчика; логи `OK! DebugLog` `[уровень, тег, текст \| байты, FHS]`, графики `OK! DebugPlot` `{"Группа.Имя": float32}`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| WebSocket               | Конверт `{HAR, VAL}` на всех соединениях (браузер - облако, облако - устройство, WebApp - устройство): `HAR` - то же 16-битное число, что на шине (заголовок, код из словаря, флаг ответа), имён в проводе нет. Запрос `VAL: {DevSN, ModSN?, TrgBusID?, SrcBusID?, Payload?}`, ответ `VAL: {DevSN, ModSN, Message, Args?, Payload}`, `Message` - код из `messages.yaml` (0 - нет сообщения; группы `SYS` 1-99, `CFG` 100-199, `FS` 200-299, `FW` 300-399, `WIFI` 400-499, `DEV` 1000-1999), `Args` - параметры шаблона, текст, уровень и группа - `formatDeviceMessage`. У `ER!` модуля на шине `Payload` - карта `{Message, Args?}`, хаб переносит её в `VAL`; в консоли сообщение - `DebugLog` с тегом `HAR 0x....` и текстом `MSG <код>[ <арг1>[<TAB><арг2>...]]` (`parseDebugLogMessage`). Сборка и разбор - `encodeWsEnvelope`, `decodeWsEnvelope` |
 
 Аутентификация устройства в облаке (TOFU) описана в `PROTOCOL.md`: токен 64 hex-символа, передаётся `Authorization: Bearer`, выдаётся в `SET JoinDev {DevToken}`, неверный токен после подтверждения - закрытие кодом `1008`.
 
 </details>
 
 <details>
-<summary>📖 Словарь команд (`dictionary.yaml`)</summary>
+<summary>📖 Словарь команд (`dictionaries/commands.yaml`)</summary>
 
 Строка словаря: `- [Строка, Перечисление, Код]`, код 0..8191 (13 бит). Диапазоны: 0-4095 - команды устройств, 7000-7999 - команды самого облака DevCloud по `/ws` (устройства их не получают), 4096-6999 и 8000-8191 - резерв. Группы кодов:
 
@@ -388,9 +390,9 @@ interface DeviceReply {
 | 7000-7011 | облако: чаты                | `ChatMessage` 7000, `ChatMessages`, `SystemMessage`, `EditMessage`, `DeleteMessage`, `UpdateLastRead`, `JoinChat`, `UserConnected`, `ChatUnread`, `ChatPins`, `EditChatGroup`, `RemoveFromChat` 7011 |
 | 7100-7104 | облако: устройства          | `DeviceMessages` 7100, `DeviceConnection` 7101, `LeaveGroup` 7102, `LeaveGroups` 7103, `ResetDevToken` 7104                                                                                          |
 
-Задел: `BackUp`, `BindMKey`, `ModList`, `ModMode`, `ModT2-ModT5`, `FwUpgE`, `OrOfs`, `OrAccCal`, `OrMagCal` есть в словаре, но ни одна прошивка ESP/STM их пока не обрабатывает. Коды закреплены и не меняются, описания в `dictionary.yaml` - план, а не текущее поведение. В примерах документации берут команды, которые прошивки реально обрабатывают: `ModCfg`, `ModInfo`, `FS`, `APsList`, `StackInfo`.
+Задел: `BackUp`, `BindMKey`, `ModList`, `ModMode`, `ModT2-ModT5`, `FwUpgE`, `OrOfs`, `OrAccCal`, `OrMagCal` есть в словаре, но ни одна прошивка ESP/STM их пока не обрабатывает. Коды закреплены и не меняются, описания в `commands.yaml` - план, а не текущее поведение. В примерах документации берут команды, которые прошивки реально обрабатывают: `ModCfg`, `ModInfo`, `FS`, `APsList`, `StackInfo`.
 
-`scripts/GenerateDictionary.mjs` превращает словарь в `DEFAULT_ARGUMENT_CODES` (`dictionaryCodes.ts`, не править руками) и падает на повторе имени или кода и на коде больше `0x1FFF`. Словарь конкретного устройства читается `parseArgumentDictionary` и оборачивается `createDictionary(codes)`.
+`scripts/GenerateDictionary.mjs` превращает словарь в `DEFAULT_ARGUMENT_CODES` (`dictionaries/generated/commands.ts`, не править руками) и падает на повторе имени или кода и на коде больше `0x1FFF`. Словарь конкретного устройства читается `parseArgumentDictionary` и оборачивается `createDictionary(codes)`.
 
 </details>
 
@@ -480,7 +482,7 @@ interface DeviceReply {
 | `npm run dev`                    | Витрина на dev-сервере Vite                                                                                                                                                                                              |
 | `npm run check`                  | `svelte-kit sync` + `svelte-check` (типы)                                                                                                                                                                                |
 | `npm run TestProtocols`          | Генерация словаря, `svelte-package`, `node --test tests/*.test.mjs`                                                                                                                                                      |
-| `npm run Dictionary`             | `dictionary.yaml` -> `dictionaryCodes.ts`                                                                                                                                                                                |
+| `npm run Dictionary`             | `dictionaries/`: `commands.yaml` -> `generated/commands.ts`, `messages.yaml` -> `generated/messages.ts`, заголовки прошивок `firmware/api_har.h` и `firmware/api_msg.h`                                                  |
 | `npm run UpdateIconsLib`         | `tsx scripts/UpdateIconsLib.ts`: каталог `assets/IconsCatalog` -> `src/lib/icons.ts` (`ICONS`, `ICON_NAMES`, `ICONS_ARRAY`)                                                                                              |
 | `npm run Formatting`             | `prettier --write .` - единственный способ форматирования, перед каждым коммитом                                                                                                                                         |
 | `npm run build`                  | Сборка витрины в `docs/`                                                                                                                                                                                                 |
@@ -555,12 +557,12 @@ interface DeviceReply {
 - Цвета только токенами темы: цветной текст и линии - `--*-text`, заливки - `--*-color`, мягкий фон - `--*-soft`, метки - `--*-mark`, акцент как текст - `--accent-text`. Текст не делают полупрозрачным, подписи не мельче 11px, панели не полупрозрачные.
 - Узкий экран: корень виджета `@container`, колонки `@sm:`/`@md:`/`@xl:`; классы `sm:`/`md:` (ширина окна) в компонентах не используются (исключение - размеры текста `TextField`, `max-sm:`). Шапка виджета всегда одна строка.
 - HTML из GUI и данных устройства - только через `sanitizeHtml`. Ячейка `Table` по умолчанию текст; разметка - `html: true` и экранирование `escapeHtml` на стороне данных.
-- Новая команда протокола: сначала `dictionary.yaml`, потом копии в `.framework/Dictionary.yaml` и `api_har.h` обоих фреймворков; после правки протоколов - `npm run TestProtocols`.
+- Новая команда протокола или сообщение устройства: правка `src/lib/dictionaries/commands.yaml` или `messages.yaml`, `npm run Dictionary` (генерирует и `src/lib/dictionaries/firmware/api_har.h`, `api_msg.h`), затем копирование `commands.yaml`/`messages.yaml` в `.framework/Dictionary.yaml`/`Messages.yaml` и обоих заголовков в `api_service` обоих фреймворков; после правки протоколов - `npm run TestProtocols`.
 - Компоненты не выводят случайные DOM id; проп `id` примитива - переменная устройства, в разметку не попадает (кроме `Button`).
 - Комментарии в коде только однострочные `/* ... */`, без истории «было/стало». Документация описывает только текущее состояние. В текстах обычный дефис, без длинных и средних тире.
 - Форматирование: Prettier (`printWidth` 160, без точек с запятой, двойные кавычки по умолчанию, `trailingComma: all`, LF), только `npm run Formatting`.
 - Коммит только после показа изменений и явного «коммить», без строк соавторства. Ненужное удаляется сразу.
-- Генерируемые файлы не правятся руками: `src/lib/protocols/dictionaryCodes.ts`, `src/lib/icons.ts`.
+- Генерируемые файлы не правятся руками: `src/lib/dictionaries/generated/`, `src/lib/dictionaries/firmware/api_har.h`, `src/lib/dictionaries/firmware/api_msg.h`, `src/lib/icons.ts`.
 
 </details>
 
@@ -605,6 +607,7 @@ interface DeviceReply {
 | ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `README.md`                          | Главное руководство: что внутри, установка, колбэки, `GUIRenderer` и правила раскладки, `DeviceLink`, функции рендерера, реестр, файлы, протокол кратко, словарь, тема и контраст, иконки, языки, как описывать компонент, разработка, выпуск. Тот же текст на вкладке «Обзор» витрины и на npm |
 | `AGENTS.md`                          | Правила для ИИ-агентов: границы библиотеки, узкий экран, подводные камни Vite, выпуск, правила работы с пользователем, известные проблемы, форматирование                                                                                                                                       |
+| `src/lib/dictionaries/README.md`     | Словари команд и сообщений: как добавить команду или сообщение, генерация, копирование во фреймворки, стиль заголовков прошивок                                                                                                                                                                 |
 | `src/lib/protocols/PROTOCOL.md`      | Протокол целиком: пакет, HAR, словарь, Payload, CRC, адреса, каналы, отладка в консоли, WebSocket-конверт, TOFU-аутентификация, пример байт, соответствие функций прошивки и библиотеки                                                                                                         |
 | `src/routes/RegExp.md`               | Справочник регулярных выражений для проверки полей ввода (вкладка витрины)                                                                                                                                                                                                                      |
 | `src/lib/Modal.README.md`            | Модальное окно: стек окон, Escape, фокус                                                                                                                                                                                                                                                        |
@@ -668,7 +671,7 @@ interface DeviceReply {
 | BusID                    | Адрес модуля на шине: CRC-16 серийного номера                                                                                                                   |
 | Заголовок                | `GET`, `SET`, `OK!`, `ER!`                                                                                                                                      |
 | Аргумент / команда       | Имя или код из словаря (`ModCfg` = 36)                                                                                                                          |
-| Мастер-словарь           | `src/lib/protocols/dictionary.yaml`; копии в `.framework/Dictionary.yaml` прошивок                                                                              |
+| Мастер-словари           | `src/lib/dictionaries/commands.yaml`, `messages.yaml`; копии в `.framework/Dictionary.yaml`, `Messages.yaml` прошивок                                           |
 | xPOE-Debug               | UART-консоль устройства как шина: пакеты вперемешку с текстом, логи `DebugLog`, графики `DebugPlot`                                                             |
 | FHS                      | Свободная память устройства в записи `DebugLog`                                                                                                                 |
 | slcan                    | Текстовый протокол USB-CAN адаптера, через который терминал работает с CAN                                                                                      |

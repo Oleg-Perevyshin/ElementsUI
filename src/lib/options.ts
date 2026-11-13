@@ -2,7 +2,7 @@ import { derived } from "svelte/store"
 import { T } from "./locales/i18n"
 import { PROPS_ICONS } from "./libIcons/propsIcons"
 import { ACCENT_COLORS, type AccentColor } from "./accent"
-import { DEFAULT_ARGUMENT_CODES } from "./protocols/dictionaryCodes"
+import { DEFAULT_ARGUMENT_CODES } from "./dictionaries/generated/commands"
 
 /* Аргумент команды в конструкторе: только имя команды устройства из мастер-словаря (коды 1..4095, без команд облака 7000..7999) или служебный NoSend; в провод имя уходит кодом в HAR. Предел длины поля ввода - 31 знак */
 export const ARGUMENT_MAX_LENGTH = 31

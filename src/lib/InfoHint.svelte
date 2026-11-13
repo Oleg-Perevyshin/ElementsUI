@@ -2,6 +2,7 @@
 <script lang="ts">
   import { fly } from "svelte/transition"
   import InfoIcon from "./libIcons/InfoIcon.svelte"
+  import { isKeyboardFocus } from "./popup"
 
   let { text }: { text: string } = $props()
 
@@ -34,7 +35,7 @@
   onclick={(event) => event.preventDefault()}
   onmouseenter={open}
   onmouseleave={() => (show = false)}
-  onfocus={open}
+  onfocus={(event) => isKeyboardFocus(event) && open()}
   onblur={() => (show = false)}
 >
   <InfoIcon />

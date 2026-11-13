@@ -33,7 +33,7 @@
     },
     {
       label: { name: "" },
-      width: "18%",
+      width: "fit",
       align: "center",
       content: [
         {

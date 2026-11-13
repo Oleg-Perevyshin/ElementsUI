@@ -1,4 +1,4 @@
-/* $lib/protocols/dictionaryCodes.ts - СГЕНЕРИРОВАНО из dictionary.yaml (npm run Dictionary), руками не править */
+/* $lib/dictionaries/generated/commands.ts - СГЕНЕРИРОВАНО из commands.yaml (npm run Dictionary), руками не править */
 
 export const DEFAULT_ARGUMENT_CODES: Record<string, number> = {
   Unknown: 0,

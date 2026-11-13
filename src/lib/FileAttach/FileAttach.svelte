@@ -35,17 +35,18 @@
   })
   const previewUrl = $derived(objectUrl ?? (currentImage ? (currentImage.startsWith("data:") ? currentImage : `data:image/png;base64,${currentImage}`) : null))
 
+  /* Файлы забираются из input, и он сразу сбрасывается: повторный выбор того же файла снова срабатывает, в input не остаётся уже отданного файла. Имя (file) и превью (image) остаются на экране из своего состояния */
   const handleFileChange = (event: Event & { currentTarget: HTMLInputElement }) => {
     const files = [...(event.currentTarget.files ?? [])]
-    const file = files[0] ?? null
-    fileName = files.map((item) => item.name).join(", ")
-    if (file?.type.startsWith("image/")) {
+    event.currentTarget.value = ""
+    if (!files.length) return
+    const file = files[0]
+    if (type === "file") fileName = files.map((item) => item.name).join(", ")
+    if (file.type.startsWith("image/")) {
       if (objectUrl) URL.revokeObjectURL(objectUrl)
       objectUrl = URL.createObjectURL(file)
     }
     onUpdate?.((multiple ? files : file) as FileAttachValue<M>, event)
-    /* Кнопка «Открыть файл» - повторный выбор того же файла тоже должен срабатывать */
-    if (type === "button") event.currentTarget.value = ""
   }
 </script>
 

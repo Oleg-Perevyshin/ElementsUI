@@ -112,15 +112,31 @@
   /* ********************************************************** */
   /* Разметка: шаблон колонок общий для шапки и строк; кнопка очистки - отдельная узкая колонка */
   const ACTIONS_COLUMN = "2.5rem"
+  /* Колонка по содержимому: width "fit" или без width с одними кнопками */
+  const isFit = (column: ITableHeader<Row>) =>
+    column.width === "fit" || (!column.width && Array.isArray(column.content) && column.content.length > 0 && column.content.every((c) => c.type === "button"))
+  /* Ширины колонок по содержимому в px (замер после отрисовки), ключ - номер колонки в header */
+  let fitWidths = $state<Record<number, number>>({})
+  const hasFit = $derived(header.some((c) => c.width !== "0%" && isFit(c)))
+  /* Рядом с колонкой по содержимому проценты становятся долями остатка: "20%" - 20fr */
+  const trackWidth = (column: ITableHeader<Row>, index: number) => {
+    if (isFit(column)) return fitWidths[index] ? `${fitWidths[index]}px` : "max-content"
+    if (!column.width) return "minmax(0, 1fr)"
+    if (hasFit && column.width.endsWith("%")) return `minmax(0, ${parseFloat(column.width) || 1}fr)`
+    return column.width
+  }
+  const minWidth = (column: ITableHeader<Row>, index: number) => {
+    if (isFit(column)) return fitWidths[index] ? `${fitWidths[index]}px` : "2.5rem"
+    if (!column.width || column.width.includes("fr") || (hasFit && column.width.endsWith("%"))) return "5rem"
+    return column.width
+  }
+  const visibleColumns = $derived(header.map((column, index) => ({ column, index })).filter(({ column }) => column.width !== "0%"))
   let gridTemplate = $derived(
-    [...header.filter((c) => c.width !== "0%").map((c) => c.width || "minmax(0, 1fr)"), ...(dataBuffer.clearButton ? [ACTIONS_COLUMN] : [])].join(" "),
+    [...visibleColumns.map(({ column, index }) => trackWidth(column, index)), ...(dataBuffer.clearButton ? [ACTIONS_COLUMN] : [])].join(" "),
   )
   /* Наименьшая ширина таблицы: заданные ширины колонок и по 5rem на гибкие; уже - прокрутка вбок, а не обрезка */
   let minTableWidth = $derived(
-    `calc(${[
-      ...header.filter((c) => c.width !== "0%").map((c) => (!c.width || c.width.includes("fr") ? "5rem" : c.width)),
-      ...(dataBuffer.clearButton ? [ACTIONS_COLUMN] : []),
-    ].join(" + ")})`,
+    `calc(${[...visibleColumns.map(({ column, index }) => minWidth(column, index)), ...(dataBuffer.clearButton ? [ACTIONS_COLUMN] : [])].join(" + ")})`,
   )
   const columnContent = (column: ITableHeader<Row>, row: Row) => (typeof column.content === "function" ? column.content(row) : (column.content ?? []))
   const sortKey = (column: ITableHeader<Row>) =>
@@ -136,12 +152,30 @@
 
   /* Высота журнала - по первым visibleRows строкам; ширина полосы прокрутки - сдвиг шапки */
   const measure = () => {
+    measureFit()
     if (!container) return
     scrollbarWidth = container.offsetWidth - container.clientWidth
     if (!stash || !dataBuffer.visibleRows || !rowsEl) return
     let height = 0
     for (const row of [...rowsEl.children].slice(0, dataBuffer.visibleRows)) height += (row as HTMLElement).offsetHeight
     tableHeight = height
+  }
+
+  /* Ширина колонки по содержимому: от левого края первого до правого края последнего элемента ячейки плюс отступы и рамка ячейки; берётся наибольшая по шапке и строкам */
+  let tableEl: HTMLElement | null = $state(null)
+  const measureFit = () => {
+    if (!tableEl || !hasFit) return
+    const widths: Record<number, number> = {}
+    for (const cell of tableEl.querySelectorAll<HTMLElement>("[data-fit]")) {
+      const items = [...cell.children] as HTMLElement[]
+      if (!items.length) continue
+      const span = Math.max(...items.map((el) => el.offsetLeft + el.offsetWidth)) - Math.min(...items.map((el) => el.offsetLeft))
+      const style = getComputedStyle(cell)
+      const width = Math.ceil(span + parseFloat(style.paddingLeft) + parseFloat(style.paddingRight) + parseFloat(style.borderLeftWidth))
+      const index = Number(cell.dataset.fit)
+      widths[index] = Math.max(widths[index] ?? 0, width)
+    }
+    if (Object.keys(widths).some((key) => widths[+key] !== fitWidths[+key]) || Object.keys(widths).length !== Object.keys(fitWidths).length) fitWidths = widths
   }
 
   /* Следующая порция, когда низ таблицы виден: при прокрутке и если строки ещё не заполнили высоту таблицы */
@@ -153,6 +187,7 @@
 
   $effect(() => {
     void entries
+    void header
     tick().then(() => {
       measure()
       if (autoscroll && isAutoscroll && !dataBuffer.logger && container) container.scrollTop = container.scrollHeight
@@ -184,7 +219,7 @@
   const resolve = <V,>(value: V | ((row: Row) => V), row: Row): V => (typeof value === "function" ? (value as (row: Row) => V)(row) : value)
 
   /* Кнопка без своего фона (bg-*) - прозрачная с акцентным текстом, с фоном - текст на акценте */
-  const buttonClass = (button: ITableButton<Row>, row: Row) => {
+  const buttonClass = (button: ITableButton<Row>, row: Row, fit: boolean) => {
     const cls = resolve(button.class, row) ?? ""
     const classes = cls.split(" ")
     const transparent = classes.includes("bg-transparent") || !classes.some((c) => c.startsWith("bg-"))
@@ -193,6 +228,7 @@
       transparent
         ? "bg-transparent text-(--accent-text) hover:bg-(--accent-soft)"
         : "border border-transparent text-(--on-accent) hover:brightness-90 dark:hover:brightness-115",
+      fit && "w-auto shrink-0",
       cls,
     )
   }
@@ -253,7 +289,7 @@
   <FieldLabel {label} info={help?.info} class="w-full pb-2" />
 
   <div class="relative flex h-full w-full flex-col overflow-x-auto overflow-y-hidden rounded-[14px] border border-(--hairline-color) bg-(--back-color)">
-    <div class="flex min-h-0 w-full flex-1 flex-col" style="min-width: {minTableWidth};">
+    <div class="flex min-h-0 w-full flex-1 flex-col" style="min-width: {minTableWidth};" bind:this={tableEl}>
       <!-- Шапка -->
       <div
         class="grid border-b border-(--hairline-color) bg-[var(--table-header-color,var(--accent-soft))] text-[11px] font-bold tracking-[0.06em] text-[color-mix(in_srgb,var(--accent-color)_35%,var(--font-color))] uppercase"
@@ -263,6 +299,7 @@
           {#if column.width !== "0%"}
             {@const key = sortKey(column)}
             <div
+              data-fit={isFit(column) ? index : undefined}
               class={twMerge(
                 `flex items-center gap-1 border-l px-3 py-2 ${outline && index !== 0 ? "border-(--hairline-color)" : "border-transparent"}
             ${column.align === "center" ? "justify-center text-center" : column.align === "right" ? "justify-end text-right" : "justify-start text-left"}`,
@@ -311,10 +348,15 @@
                     {@const contents = columnContent(column, row) as ITableContent<Row>[]}
                     <!-- Одни бейджи - вплотную с переносом; stack - столбиком; иначе - в ряд равными долями -->
                     {@const badges = contents.length > 1 && contents.every((c) => c.type === "text" && c.data.badge)}
+                    {@const fit = isFit(column)}
+                    <!-- Колонка по содержимому: элементы в ряд своей ширины, без переноса -->
                     <div
-                      class="relative {badges
-                        ? 'flex flex-wrap gap-1'
-                        : 'grid gap-x-2'} min-h-7 w-full min-w-0 items-center px-3 py-1 text-[length:var(--table-font-size,13px)] wrap-break-word
+                      data-fit={fit ? j : undefined}
+                      class="relative {fit
+                        ? 'flex gap-2 whitespace-nowrap'
+                        : badges
+                          ? 'flex flex-wrap gap-1'
+                          : 'grid gap-x-2'} min-h-7 w-full min-w-0 items-center px-3 py-1 text-[length:var(--table-font-size,13px)] wrap-break-word
                     {column.align === 'center'
                         ? 'justify-center justify-items-center text-center'
                         : column.align === 'right'
@@ -323,13 +365,15 @@
                     {j !== 0 ? 'border-l' : ''} {outline ? 'border-(--hairline-color)' : 'border-transparent'} {column.disableSelect
                         ? 'select-none'
                         : 'select-all'}"
-                      style={badges ? undefined : `grid-template-columns: ${column.stack ? "minmax(0, 1fr)" : `repeat(${contents.length}, minmax(0, 1fr))`};`}
+                      style={badges || fit
+                        ? undefined
+                        : `grid-template-columns: ${column.stack ? "minmax(0, 1fr)" : `repeat(${contents.length}, minmax(0, 1fr))`};`}
                     >
                       {#each contents as content, index}
                         {#if content.type === "button"}
                           {@const button = resolve(content.data, row)}
                           {@const title = resolve(button.title, row)}
-                          <button class="{buttonClass(button, row)} bg-(--bg-color)" onclick={() => buttonClick(row, button)} {title} aria-label={title}>
+                          <button class="{buttonClass(button, row, fit)} bg-(--bg-color)" onclick={() => buttonClick(row, button)} {title} aria-label={title}>
                             {#if button.icon}
                               <span class="flex size-4 shrink-0 items-center justify-center overflow-visible [&_svg]:h-full [&_svg]:w-full">
                                 {#if typeof button.icon === "string"}

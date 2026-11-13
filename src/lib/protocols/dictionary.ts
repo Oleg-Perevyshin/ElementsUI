@@ -1,5 +1,5 @@
-/* Словарь заголовков и аргументов протокола - заголовок и аргумент поля HAR (makeHar/splitHar) на шине и в WebSocket-конверте {HAR, VAL}. Аргументы по умолчанию - из мастер-словаря dictionary.yaml рядом (единственный источник; .framework/Dictionary.yaml прошивок - его справочные копии), DEFAULT_ARGUMENT_CODES генерируется из него (dictionaryCodes.ts, npm run Dictionary); у устройства словарь может быть свой - его загружают из файла (parseArgumentDictionary) и передают в createDictionary, своих копий словаря в приложениях не держим */
-import { DEFAULT_ARGUMENT_CODES } from "./dictionaryCodes.js"
+/* Словарь заголовков и аргументов протокола - заголовок и аргумент поля HAR (makeHar/splitHar) на шине и в WebSocket-конверте {HAR, VAL}. Аргументы по умолчанию - из мастер-словаря команд src/lib/dictionaries/commands.yaml (единственный источник; .framework/Dictionary.yaml прошивок - его справочные копии), DEFAULT_ARGUMENT_CODES генерируется из него (dictionaries/generated/commands.ts, npm run Dictionary); у устройства словарь может быть свой - его загружают из файла (parseArgumentDictionary) и передают в createDictionary, своих копий словаря в приложениях не держим */
+import { DEFAULT_ARGUMENT_CODES } from "../dictionaries/generated/commands.js"
 import { makeHar, splitHar } from "./packet.js"
 
 export { DEFAULT_ARGUMENT_CODES }

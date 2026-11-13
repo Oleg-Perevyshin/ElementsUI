@@ -312,12 +312,13 @@
             onclick={() => pick(option)}
             onkeydown={onRadioKeydown}
           >
+            <!-- Кружок 18 и точка 10 по центру сетки: контур - inset-ring (не border), он не сдвигает содержимое; разница размеров чётная, без полупикселей -->
             <span
-              class="flex size-[18px] shrink-0 items-center justify-center rounded-full border transition-colors duration-150 {selected
-                ? 'border-(--accent-color)'
-                : 'border-(--border-color) bg-(--field-color)'} {off ? 'opacity-45' : ''}"
+              class="grid size-[18px] shrink-0 place-items-center rounded-full bg-(--field-color) inset-ring transition-colors duration-150 {selected
+                ? 'inset-ring-(--accent-color)'
+                : 'inset-ring-(--border-color)'} {off ? 'opacity-45' : ''}"
             >
-              {#if selected}<span class="size-2.5 rounded-full bg-(--accent-color)"></span>{/if}
+              {#if selected}<span class="size-[10px] rounded-full bg-(--accent-color)"></span>{/if}
             </span>
             <Icon icon={option.icon} class={OPTION_ICON} />
             {#if option.name}<span class="min-w-0">{option.name}</span>{/if}

@@ -1,4 +1,4 @@
-<!-- $lib/Table/XPoeDebugModal.svelte - окно полного вида строки xPOE-Debug: Payload развёрнуто в цветах темы и исходные байты HEX, у каждого раздела кнопка копирования -->
+<!-- $lib/Table/XPoeDebugModal.svelte - окно полного вида строки xPOE-Debug: Payload развёрнуто блочным YAML в цветах темы, сообщение устройства и исходные байты HEX, у каждого раздела кнопка копирования -->
 <script module lang="ts">
   import { escapeHtml } from "../html"
   import { bytesToHex } from "../protocols/hex.js"
@@ -20,11 +20,14 @@
 {/snippet}
 
 {#snippet xPoeDebugModal(row: XPoeDebugRow)}
-  {@const pretty = formatXPoeDebugPretty(row.payload, true)}
+  {@const pretty = formatXPoeDebugPretty(row.payload, true, row.valueBytes)}
   {@const hex = bytesToHex(row.valueBytes)}
   <div class="flex min-w-0 flex-col gap-3 text-left">
     <!-- Развёрнутый вид собран из экранированных данных (formatXPoeDebugPretty), HEX - только цифры -->
-    {@render pane("Value", () => formatXPoeDebugPretty(row.payload) ?? row.value, pretty ?? escapeHtml(row.value))}
+    {@render pane("Value", () => formatXPoeDebugPretty(row.payload, false, row.valueBytes) ?? row.value, pretty ?? escapeHtml(row.value))}
+    {#if row.message}
+      {@render pane("Message", () => row.message ?? "", escapeHtml(row.message))}
+    {/if}
     {#if hex}
       {@render pane("HEX", () => hex, hex)}
     {/if}

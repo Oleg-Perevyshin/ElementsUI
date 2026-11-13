@@ -1,0 +1,57 @@
+# Словарь сообщений устройств (поле Message в VAL ответа и push, в Payload ER! модуля на шине) - единый для обоих фреймворков, всех прошивок и приложений
+# groups: группа -> { range: [первый код, последний код], ru, en, zh: название группы }. Имя группы - приставка имён её сообщений (SYS_..., FS_...)
+# messages: { code: код из диапазона группы, group: группа, name: <группа>_<ИМЯ> (MSG_<name> в api_msg.h), level: info|warn|error, ru, en, zh: шаблоны текста }
+# Код 0 (или нет поля Message) - сообщения нет. {0}, {1}... - параметры из массива Args по порядку, только где без них теряется смысл; что значат - комментарий после строки
+# Резерв: 500..999 - новые группы ядра, 2000..65535 - на будущее. Новое сообщение - в свою группу, новая группа ядра - диапазон из 500..999
+# Источник - poe-svelte-ui-lib (src/lib/dictionaries/messages.yaml); .framework/Messages.yaml и api_msg.h фреймворков - копии, не править
+# После правки - npm run Dictionary (generated/messages.ts и firmware/api_msg.h), затем копии во фреймворки
+
+groups:
+  SYS: { range: [1, 99], ru: "Система", en: "System", zh: "系统" }
+  CFG: { range: [100, 199], ru: "Настройки", en: "Settings", zh: "设置" }
+  FS: { range: [200, 299], ru: "Файлы", en: "Files", zh: "文件" }
+  FW: { range: [300, 399], ru: "Обновление", en: "Update", zh: "更新" }
+  WIFI: { range: [400, 499], ru: "Wi-Fi", en: "Wi-Fi", zh: "Wi-Fi" }
+  DEV: { range: [1000, 1999], ru: "Изделия", en: "Devices", zh: "设备" }
+
+messages:
+  - { code: 1, group: SYS, name: SYS_RESTARTING, level: info, ru: "Перезагрузка", en: "Restarting", zh: "正在重启" }
+  - { code: 2, group: SYS, name: SYS_UNKNOWN_COMMAND, level: error, ru: "Неизвестная команда", en: "Unknown command", zh: "未知命令" }
+  - { code: 3, group: SYS, name: SYS_INVALID_REQUEST, level: error, ru: "Неверные данные запроса", en: "Invalid request data", zh: "请求数据无效" }
+  - { code: 4, group: SYS, name: SYS_NO_MEMORY, level: error, ru: "Недостаточно памяти устройства", en: "Not enough device memory", zh: "设备内存不足" }
+  - { code: 5, group: SYS, name: SYS_INTERNAL_ERROR, level: error, ru: "Внутренняя ошибка устройства", en: "Internal device error", zh: "设备内部错误" }
+  - { code: 6, group: SYS, name: SYS_TIME_UNAVAILABLE, level: error, ru: "Не удалось получить время", en: "Could not get the time", zh: "无法获取时间" }
+  - { code: 7, group: SYS, name: SYS_MODLIST_CHANGED, level: info, ru: "Список модулей изменён", en: "Module list changed", zh: "模块列表已更改" }
+
+  - { code: 100, group: CFG, name: CFG_NOT_APPLIED, level: error, ru: "Настройки не применены: {0}", en: "Settings not applied: {0}", zh: "设置未应用：{0}" } # {0} - поля через запятую
+  - { code: 101, group: CFG, name: CFG_INVALID, level: error, ru: "Неверные данные настроек", en: "Invalid settings data", zh: "设置数据无效" }
+  - { code: 102, group: CFG, name: CFG_GROUP_NOT_FOUND, level: warn, ru: "Группа настроек не найдена", en: "Settings group not found", zh: "未找到设置组" }
+
+  - { code: 200, group: FS, name: FS_FILE_DELETED, level: info, ru: "Файл удалён", en: "File deleted", zh: "文件已删除" }
+  - { code: 201, group: FS, name: FS_FILE_UPLOADED, level: info, ru: "Файл загружен", en: "File uploaded", zh: "文件已上传" }
+  - { code: 202, group: FS, name: FS_FILE_NOT_FOUND, level: error, ru: "Файл не найден", en: "File not found", zh: "未找到文件" }
+  - { code: 203, group: FS, name: FS_INVALID_NAME, level: error, ru: "Недопустимое имя файла", en: "Invalid file name", zh: "文件名无效" }
+  - { code: 204, group: FS, name: FS_UNSUPPORTED_TYPE, level: error, ru: "Тип файла не поддерживается", en: "File type not supported", zh: "不支持该文件类型" }
+  - { code: 205, group: FS, name: FS_INVALID_REQUEST, level: error, ru: "Неверный запрос к файловой системе", en: "Invalid file system request", zh: "文件系统请求无效" }
+  - { code: 206, group: FS, name: FS_NO_SPACE, level: error, ru: "Недостаточно места", en: "Not enough space", zh: "空间不足" }
+  - { code: 207, group: FS, name: FS_FILE_TOO_LARGE, level: error, ru: "Файл больше заявленного размера", en: "File is larger than declared", zh: "文件大于声明的大小" }
+  - { code: 208, group: FS, name: FS_TRANSFER_INTERRUPTED, level: error, ru: "Передача файла прервана, повторите", en: "File transfer interrupted, try again", zh: "文件传输中断，请重试" }
+  - { code: 209, group: FS, name: FS_TRANSFER_CORRUPTED, level: error, ru: "Файл повреждён при передаче, повторите", en: "File corrupted in transfer, try again", zh: "文件传输时损坏，请重试" }
+  - { code: 210, group: FS, name: FS_ERROR, level: error, ru: "Ошибка файловой системы", en: "File system error", zh: "文件系统错误" }
+
+  - { code: 300, group: FW, name: FW_DOWNLOADING, level: info, ru: "Загрузка прошивки", en: "Downloading firmware", zh: "正在下载固件" }
+  - { code: 301, group: FW, name: FW_DOWNLOADED, level: info, ru: "Прошивка загружена", en: "Firmware downloaded", zh: "固件已下载" }
+  - { code: 302, group: FW, name: FW_DOWNLOAD_TIMEOUT, level: error, ru: "Сервер не ответил при загрузке прошивки", en: "Server did not respond during firmware download", zh: "下载固件时服务器无响应" }
+  - { code: 303, group: FW, name: FW_DOWNLOAD_FAILED, level: error, ru: "Не удалось загрузить прошивку", en: "Could not download firmware", zh: "无法下载固件" }
+  - { code: 304, group: FW, name: FW_UPGRADING, level: info, ru: "Обновление прошивки", en: "Updating firmware", zh: "正在更新固件" }
+  - { code: 305, group: FW, name: FW_UPGRADED, level: info, ru: "Прошивка обновлена", en: "Firmware updated", zh: "固件已更新" }
+  - { code: 306, group: FW, name: FW_UPGRADE_FAILED, level: error, ru: "Ошибка обновления прошивки", en: "Firmware update failed", zh: "固件更新失败" }
+  - { code: 307, group: FW, name: FW_RESYNC, level: warn, ru: "Повтор передачи прошивки с части {0}", en: "Resending firmware from part {0}", zh: "从第 {0} 部分重新发送固件" } # {0} - номер части, с которой загрузчик ждёт передачу
+
+  - { code: 400, group: WIFI, name: WIFI_UNAVAILABLE, level: error, ru: "Wi-Fi недоступен", en: "Wi-Fi unavailable", zh: "Wi-Fi 不可用" }
+  - { code: 401, group: WIFI, name: WIFI_NOT_STA, level: error, ru: "Нужен режим клиента Wi-Fi", en: "Wi-Fi client mode required", zh: "需要 Wi-Fi 客户端模式" }
+  - { code: 402, group: WIFI, name: WIFI_SCAN_BUSY, level: warn, ru: "Поиск сетей уже идёт", en: "Network scan already running", zh: "网络扫描正在进行" }
+  - { code: 403, group: WIFI, name: WIFI_SCAN_FAILED, level: error, ru: "Не удалось выполнить поиск сетей", en: "Could not scan networks", zh: "无法扫描网络" }
+  - { code: 404, group: WIFI, name: WIFI_CONNECT_FAILED, level: warn, ru: "Не удалось подключиться к Wi-Fi {0}, восстановлена прежняя сеть", en: "Could not connect to Wi-Fi {0}, previous network restored", zh: "无法连接 Wi-Fi {0}，已恢复之前的网络" } # {0} - SSID
+
+  - { code: 1000, group: DEV, name: DEV_POWER_LIMIT, level: warn, ru: "Превышен предел мощности канала {0}, канал отключён", en: "Channel {0} power limit exceeded, channel turned off", zh: "通道 {0} 功率超限，通道已关闭" } # {0} - канал

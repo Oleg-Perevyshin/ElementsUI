@@ -182,13 +182,14 @@
                 <UI.Input
                   label={{ name: $T("constructor.props.table.columns.width"), class: "px-0" }}
                   type="number"
-                  accent={(component.properties.header ?? []).reduce(
-                    (width: number, h: ITableHeader<Record<string, unknown>>) => Number(h.width?.replace("%", "")) + width,
+                  accent={(component.properties.header ?? []).some((h: ITableHeader<Record<string, unknown>>) => h.width === "fit") ||
+                  (component.properties.header ?? []).reduce(
+                    (width: number, h: ITableHeader<Record<string, unknown>>) => (h.width?.endsWith("%") ? parseFloat(h.width) || 0 : 0) + width,
                     0,
                   ) == 100
                     ? undefined
                     : "red"}
-                  value={Number(column.width?.replace("%", ""))}
+                  value={column.width?.endsWith("%") ? parseFloat(column.width) : undefined}
                   onUpdate={(value) => updateTableHeader(columnIndex, "width", `${value}%`)}
                 />
                 <UI.Select

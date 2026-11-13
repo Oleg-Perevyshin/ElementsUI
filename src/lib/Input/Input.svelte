@@ -9,6 +9,7 @@
   import InfoIcon from "../libIcons/InfoIcon.svelte"
   import CopyIcon from "../libIcons/CopyIcon.svelte"
   import Tooltip from "../Tooltip.svelte"
+  import { isKeyboardFocus } from "../popup"
   import CopiedChip from "../CopiedChip.svelte"
   import FieldLabel from "../FieldLabel.svelte"
 
@@ -112,13 +113,17 @@
 >
   <FieldLabel {label} for={uid} class={fill ? "shrink-0" : ""} />
 
-  <div class="relative flex w-full items-center {fill ? 'min-h-0 flex-1' : type === 'text-area' ? 'h-full' : ''}">
+  <div class="relative flex w-full {fill ? 'min-h-0 flex-1 flex-col' : type === 'text-area' ? 'h-full items-center' : 'items-center'}">
     {#if type === "text-area"}
       <textarea
         id={uid}
         bind:this={ref}
         bind:value
-        class={twMerge(fieldBase, `h-full min-h-20 py-2 leading-[1.5] ${fill ? "resize-none" : "resize-y"} ${help.copyButton ? "pr-9" : ""}`, componentClass)}
+        class={twMerge(
+          fieldBase,
+          `${fill ? "min-h-0 flex-1 resize-none" : "h-full min-h-20 resize-y"} py-2 leading-[1.5] ${help.copyButton ? "pr-9" : ""}`,
+          componentClass,
+        )}
         {disabled}
         {maxlength}
         rows={textareaRows}
@@ -209,12 +214,12 @@
     {#if help.info}
       <button
         type="button"
-        class="absolute left-2 flex size-5 items-center justify-center border-none bg-transparent text-(--faint-color) {type === 'text-area'
+        class="absolute left-2 flex size-5 items-center justify-center border-none bg-transparent text-(--faint-color) [&_svg]:size-full {type === 'text-area'
           ? 'top-2'
           : ''} {disabled ? 'opacity-50' : 'cursor-pointer hover:text-(--accent-text)'}"
         onmouseenter={() => (showInfo = true)}
         onmouseleave={() => (showInfo = false)}
-        onfocus={() => (showInfo = true)}
+        onfocus={(event) => (showInfo = isKeyboardFocus(event))}
         onblur={() => (showInfo = false)}
         aria-label={help.info}
       >

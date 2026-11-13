@@ -105,7 +105,7 @@
       <div use:hint={{ text: $T("widget.info.hint.restart"), enabled: $hints }}>
         <UI.Button
           wrapperClass="w-auto"
-          componentClass="px-3"
+          componentClass={narrow ? "p-1.5" : "px-3"}
           content={narrow
             ? { icon: RestartIcon, info: { text: $T("widget.info.restart"), side: "left" } }
             : { icon: RestartIcon, name: $T("widget.info.restart") }}

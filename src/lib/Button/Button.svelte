@@ -1,4 +1,4 @@
-<!-- $lib/Button/Button.svelte - кнопка: вид variant, цвет accent, радиус 10px (иконка без подписи - круг), высота 32px, кольцо фокуса. pressed - кнопка-переключатель (вид выбранной кнопки, aria-pressed), loading - крутилка вместо значка, кнопка не нажимается -->
+<!-- $lib/Button/Button.svelte - кнопка: вид variant, цвет accent, радиус 10px (иконка без подписи - круг 32px или во всю ширину wrapperClass), высота 32px, кольцо фокуса. pressed - кнопка-переключатель (вид выбранной кнопки, aria-pressed), loading - крутилка вместо значка, кнопка не нажимается -->
 <script lang="ts">
   import type { IButtonProps } from "../types"
   import { twMerge } from "tailwind-merge"
@@ -6,6 +6,7 @@
   import Tooltip from "../Tooltip.svelte"
   import Icon from "../Icon.svelte"
   import Loader from "../Loader/Loader.svelte"
+  import { isKeyboardFocus } from "../popup"
 
   let {
     id,
@@ -24,6 +25,8 @@
 
   let showInfo = $state(false)
   const isIconOnly = $derived(!!content?.icon && !content.name?.trim())
+  /* Ширина в wrapperClass (w-8, size-10...) - кнопка-значок заполняет обёртку кругом, иначе она размером с поле (32px); w-auto/w-fit/w-max/w-min/w-full ширины не задают */
+  const wrapperSized = $derived(/(^|\s)(?:[^\s:]+:)*(?:w|size)-(?!(?:auto|fit|max|min|full)(?:\s|$))\S+/.test(wrapperClass))
   /* Во время загрузки кнопка не нажимается, но вид не серый: видно, какое действие выполняется */
   const blocked = $derived(disabled || loading)
 
@@ -67,7 +70,7 @@
       `relative inline-flex w-full items-center justify-center gap-2 leading-none font-semibold text-[14px] select-none
        transition-[background-color,filter,box-shadow] duration-150
        focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent-text)
-       ${isIconOnly ? "aspect-square rounded-full p-0" : "h-8 rounded-[10px] px-4 py-2"}
+       ${isIconOnly ? `${wrapperSized ? "w-full" : "size-8"} aspect-square rounded-full p-0` : "h-8 rounded-[10px] px-4 py-2"}
        ${disabled ? "" : loading ? "cursor-progress" : "cursor-pointer active:scale-[0.97]"}`,
       variantClass,
       componentClass,
@@ -82,7 +85,7 @@
     aria-label={content.name || content.info?.text || undefined}
     onmouseenter={() => (showInfo = !!content.info?.text)}
     onmouseleave={() => (showInfo = false)}
-    onfocus={() => (showInfo = !!content.info?.text)}
+    onfocus={(event) => (showInfo = !!content.info?.text && isKeyboardFocus(event))}
     onblur={() => (showInfo = false)}
   >
     {#if loading}

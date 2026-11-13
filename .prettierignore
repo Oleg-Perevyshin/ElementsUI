@@ -8,8 +8,10 @@ bun.lockb
 # Miscellaneous
 /static/
 
-# Словарь протокола: выравнивание комментариев по столбцу, копируется во фреймворки как есть
-src/lib/protocols/dictionary.yaml
+# Словари команд и сообщений: выравнивание по столбцу, одна строка на запись, копируются во фреймворки как есть; generated/ и заголовки прошивок firmware/ генерирует npm run Dictionary
+src/lib/dictionaries/*.yaml
+src/lib/dictionaries/generated/
+src/lib/dictionaries/firmware/
 
 # Справочник для ИИ собирает .knowledgebase/build.mjs
 KnowledgeBase-*.md

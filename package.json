@@ -1,6 +1,6 @@
 {
   "name": "poe-svelte-ui-lib",
-  "version": "2.7.1",
+  "version": "2.8.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Oleg-Perevyshin/ElementsUI.git"
@@ -35,7 +35,7 @@
       "types": "./dist/protocols/index.d.ts",
       "default": "./dist/protocols/index.js"
     },
-    "./protocols/dictionary.yaml": "./dist/protocols/dictionary.yaml",
+    "./dictionaries/*": "./dist/dictionaries/*",
     "./constructor": {
       "types": "./dist/constructor.d.ts",
       "svelte": "./dist/constructor.js"

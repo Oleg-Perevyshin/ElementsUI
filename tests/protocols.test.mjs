@@ -247,7 +247,8 @@ test("xPOE-Debug: неверный CRC, команда устройству, н�
     har: parsed.har.toString(16).toUpperCase().padStart(4, "0"),
     header: "SET",
     argument: "ModCfg",
-    value: '{"DevName":"Объект 1"}',
+    reply: true,
+    value: "DevName: Объект 1",
     valueBytes: parsed.valueBytes,
     payload: parsed.payload,
     crc: parsed.crc,
@@ -255,14 +256,28 @@ test("xPOE-Debug: неверный CRC, команда устройству, н�
   })
   assert.equal(m.xPoeDebugRow(bad).header, "⚠️")
   assert.equal(m.xPoeDebugRow({ type: "raw", text: "boot" }).header, "RAW")
+  /* сообщение устройства - в message и level, VALUE - как пришёл */
+  const [error] = m.createXPoeDebugParser().push(deviceFrame("ER!", "ModCfg", m.valueToCbor({ Message: 404, Args: ["Home"] })))
+  const errorRow = m.xPoeDebugRow(error, "en")
+  assert.deepEqual(
+    [errorRow.value, errorRow.message, errorRow.level, errorRow.reply],
+    ["Message: 404, Args: [Home]", "Could not connect to Wi-Fi Home, previous network restored", "warn", false],
+  )
+  const [log] = m.createXPoeDebugParser().push(deviceFrame("OK!", "DebugLog", m.valueToCbor([2, "HAR 0xC048", "MSG 404 Home 5G", 1000])))
+  const logRow = m.xPoeDebugRow(log, "en")
+  assert.deepEqual(
+    [logRow.value, logRow.message, logRow.freeHeap],
+    ["🟡 · HAR 0xC048 · MSG 404 Home 5G", "Could not connect to Wi-Fi Home 5G, previous network restored", "1000"],
+  )
+  assert.equal("message" in m.xPoeDebugRow(parsed), false)
   assert.deepEqual([m.parseBusId("00FF"), m.parseBusId(""), m.parseBusId("XYZ", 7), m.parseBusId("10000", 7), m.formatBusId(0xab)], [255, 0, 7, 7, "0x00AB"])
   /* таблица: DebugLog - уровень · тег · текст, FHS в отдельной колонке; не CBOR - HEX */
   assert.equal(m.formatXPoeDebugValue([2, "Net", "Нет связи", 1000], new Uint8Array()), "🟡 · Net · Нет связи")
   assert.equal(m.formatXPoeDebugValue(undefined, Uint8Array.of(0xab, 0xcd)), "AB CD")
   /* окно: развёрнутый вид - карта с отступами, float32 кратко, DebugLog по строкам, дамп по 16 байт */
   const float32Map = m.cborToValue(Uint8Array.from(Buffer.from("A16154FA3DF5C28F", "hex"))) /* {"T": float32 0.12} */
-  assert.equal(m.formatXPoeDebugValue(float32Map, new Uint8Array()), '{"T":0.12}')
-  assert.equal(m.formatXPoeDebugPretty({ Mode: 1, List: [1, 2] }), '{\n  "Mode": 1,\n  "List": [\n    1,\n    2\n  ]\n}')
+  assert.equal(m.formatXPoeDebugValue(float32Map, new Uint8Array()), "T: 0.12")
+  assert.equal(m.formatXPoeDebugPretty({ Mode: 1, List: [1, 2] }), "Mode: 1\nList:\n  - 1\n  - 2")
   assert.equal(m.formatXPoeDebugPretty([3, "API", "Запуск", 2048]), "🟢 API\nЗапуск\nFHS: 2048")
   assert.deepEqual(
     m
@@ -273,11 +288,9 @@ test("xPOE-Debug: неверный CRC, команда устройству, н�
   )
   assert.equal(m.formatXPoeDebugPretty(undefined), null)
   assert.ok(
-    m
-      .formatXPoeDebugPretty(float32Map, true)
-      .includes('<span style="color:var(--blue-text)">&quot;T&quot;:</span> <span style="color:var(--red-text)">0.12</span>'),
+    m.formatXPoeDebugPretty(float32Map, true).includes('<span style="color:var(--blue-text)">T:</span> <span style="color:var(--red-text)">0.12</span>'),
   )
-  assert.equal(m.formatXPoeDebugPretty("<b>", true), "&lt;b&gt;")
+  assert.equal(m.formatXPoeDebugPretty("<b>", true), '<span style="color:var(--purple-text)">&lt;b&gt;</span>')
 })
 
 /* CAN/CAN FD через slcan */
@@ -401,11 +414,11 @@ test("RS485: пакеты из сырого потока, мусор, пауза
 })
 
 test("словарь, поле Value xPOE-Debug, команды slcan-адаптера", () => {
-  /* DEFAULT_ARGUMENT_CODES - ровно мастер-словарь dictionary.yaml (сгенерирован npm run Dictionary, файл поставляется в пакете) */
-  assert.deepEqual(m.DEFAULT_ARGUMENT_CODES, m.parseArgumentDictionary(readFileSync(new URL("../dist/protocols/dictionary.yaml", import.meta.url), "utf8")))
+  /* DEFAULT_ARGUMENT_CODES - ровно мастер-словарь команд dictionaries/commands.yaml (сгенерирован npm run Dictionary, файл поставляется в пакете) */
+  assert.deepEqual(m.DEFAULT_ARGUMENT_CODES, m.parseArgumentDictionary(readFileSync(new URL("../dist/dictionaries/commands.yaml", import.meta.url), "utf8")))
   assert.equal(
     Object.keys(m.DEFAULT_ARGUMENT_CODES).length,
-    Number(readFileSync(new URL("../dist/protocols/dictionary.yaml", import.meta.url), "utf8").match(/^- \[/gm).length),
+    Number(readFileSync(new URL("../dist/dictionaries/commands.yaml", import.meta.url), "utf8").match(/^- \[/gm).length),
   )
   assert.equal(m.DEFAULT_ARGUMENT_CODES.DebugLog, 11)
   assert.equal(m.DEFAULT_ARGUMENT_CODES.DebugPlot, 12)
@@ -425,15 +438,15 @@ test("словарь, поле Value xPOE-Debug, команды slcan-адапт
   assert.equal(m.createXPoeDebugParser({ dictionary: custom }).push(mine)[0].argument, "MyCmd")
   assert.equal(m.createXPoeDebugParser().push(mine)[0].argument, "300")
   assert.deepEqual([...m.xPoeDebugValueFromText("")], [])
-  assert.deepEqual([...m.xPoeDebugValueFromText("h'A1 61 61 01'")], [0xa1, 0x61, 0x61, 0x01])
+  assert.deepEqual([...m.xPoeDebugValueFromText("h'A1 61 61 01'")], [0x44, 0xa1, 0x61, 0x61, 0x01]) /* h'..' - байтовая строка CBOR */
   assert.deepEqual([...m.xPoeDebugValueFromText("0xA1616101")], [0xa1, 0x61, 0x61, 0x01])
   /* Число из цифр - JSON, а не HEX: «12» - CBOR 12 (0x0C), «1234» - 0x19 0x04 0xD2 */
   assert.deepEqual([...m.xPoeDebugValueFromText("12")], [0x0c])
   assert.deepEqual([...m.xPoeDebugValueFromText("1234")], [0x19, 0x04, 0xd2])
-  assert.throws(() => m.xPoeDebugValueFromText("A1 61")) /* HEX без h'..' или 0x - не JSON */
+  assert.deepEqual([...m.xPoeDebugValueFromText("A1 61")], [...m.valueToCbor("A1 61")]) /* HEX без h'..' или 0x - строка */
   assert.throws(() => m.xPoeDebugValueFromText("0xABC"))
   assert.deepEqual([...m.xPoeDebugValueFromText('{"a":1}')], [...m.valueToCbor({ a: 1 })])
-  assert.throws(() => m.xPoeDebugValueFromText("не json"))
+  assert.throws(() => m.xPoeDebugValueFromText("{a: 1"), /Value не разобран/)
   assert.deepEqual(m.slcanOpenCommands("S6"), ["C\r", "S6\r", "M0\r", "A0\r", "O\r"])
   assert.deepEqual(m.slcanOpenCommands("S6", "Y2"), ["C\r", "S6\r", "Y2\r", "M0\r", "A0\r", "O\r"])
 })

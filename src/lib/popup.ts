@@ -48,3 +48,14 @@ export const popupPlace = (
       : { left: Math.max(margin, Math.min(anchor.left, viewport.width - margin - minWidth)) }
   return { openUp, ...vertical, ...horizontal, space: Math.max(openUp ? above : below, 96) }
 }
+
+/* Фокус с клавиатуры (:focus-visible): подсказка по фокусу показывается только при нём, а не когда фокус вернулся на кнопку после закрытия окна или меню */
+export const isKeyboardFocus = (event: FocusEvent): boolean => {
+  const target = event.currentTarget
+  if (!(target instanceof Element)) return false
+  try {
+    return target.matches(":focus-visible")
+  } catch {
+    return false
+  }
+}

@@ -38,9 +38,11 @@
 
 **🗂️ Раскладка.** `Accordion`, `Tabs`, `Divider`, `Carousel`, `Modal`, `Dropdown`. У `Accordion` есть необязательный слот `actions` - кнопки справа в заголовке, нажатие на них блок не сворачивает. `Dropdown` - выпадающее меню или всплывающая панель у кнопки.
 
-**🔣 Значки и мелочи.** Крутилка `Loader`, значок раскрытия `ExpandIcon` (вниз или вбок), подпись поля `FieldLabel` с пояснением `InfoHint` и значки библиотеки: `IconArrow`, `IconCross`, `IconClear`, `IconDelete`, `IconAdd`, `IconDownload`, `IconCopy`, `IconInfo`, `IconError`, `IconLibrary`, `IconMoveVertical`, `IconGripVerticalDual`, `IconGripVerticalLeft`, `IconGripVerticalRight`. Значки рисуются цветом текста (`currentColor`), размер задаёт родитель, например `[&_svg]:size-5`. Держать их копии в приложении не нужно.
+**🔣 Значки и мелочи.** Крутилка `Loader`, значок раскрытия `ExpandIcon` (вниз или вбок), подпись поля `FieldLabel` с пояснением `InfoHint` и значки библиотеки: `IconArrow`, `IconCross`, `IconClear`, `IconDelete`, `IconAdd`, `IconDownload`, `IconCopy`, `IconInfo`, `IconError`, `IconLibrary`, `IconMoveVertical`, `IconGripVerticalDual`, `IconGripVerticalLeft`, `IconGripVerticalRight`. Значки рисуются цветом текста (`currentColor`), своя ширина значка - `1em` или `1.5em` от размера текста, точный размер задаёт родитель, например `[&_svg]:size-5`. Держать их копии в приложении не нужно.
 
 **📡 Ядро протоколов** (`poe-svelte-ui-lib/protocols`). Кодирование и разбор пакетов для всех каналов связи с устройством. Работает без Svelte, в том числе под Node.
+
+**📚 Словари** (`poe-svelte-ui-lib/dictionaries/*`). Мастер-словари команд и сообщений устройств и заголовки для прошивок, см. [src/lib/dictionaries/README.md](src/lib/dictionaries/README.md).
 
 **🎨 Тема** (`poe-svelte-ui-lib/theme.css`) и **🌍 языки** (`poe-svelte-ui-lib/locales`).
 
@@ -107,7 +109,7 @@
 | `component`        | Компонент интерфейса и его свойства                                                                                                       |
 | `onPropertyChange` | `(change: PropertyChange) => void`: новые `properties`, `name`, `access`, `eventHandler`; приложение сливает их по ключам верхнего уровня |
 
-Поле «Аргумент» в панелях (`Button`, `Select`, кнопки `Table`, команды `WidgetDeviceInfo`) принимает только имя из мастер-словаря `dictionary.yaml` или служебный `NoSend`, до 31 знака (`ARGUMENT_REGEXP`, `ARGUMENT_MAX_LENGTH` в `options.ts`). Прошивка читает аргумент в `char[32]`, а неизвестное имя молча превращает в `A_UNKNOWN`, поэтому опечатка подсвечивается сразу и не сохраняется.
+Поле «Аргумент» в панелях (`Button`, `Select`, кнопки `Table`, команды `WidgetDeviceInfo`) принимает только имя из мастер-словаря команд `commands.yaml` или служебный `NoSend`, до 31 знака (`ARGUMENT_REGEXP`, `ARGUMENT_MAX_LENGTH` в `options.ts`). Прошивка читает аргумент в `char[32]`, а неизвестное имя молча превращает в `A_UNKNOWN`, поэтому опечатка подсвечивается сразу и не сохраняется.
 
 Своя панель свойств строится на `createPropsEditor(component, onPropertyChange)`: `set`, `patch`, `addItem`, `updateItem`, `removeItem` отправляют новые объекты, сами свойства не меняются на месте.
 
@@ -282,7 +284,8 @@ socket.send(valueToCbor(encodeWsEnvelope("SET", "JoinDev", { DevSN, Watch: true 
 - 🖥️ разбирать поток консоли xPOE-Debug, где пакеты идут вперемешку с текстом загрузчика;
 - 🐞 показывать отладочные логи `DebugLog` и графики `DebugPlot` из прошивки;
 - 🔄 переводить значения между JSON и CBOR;
-- 🌐 собирать и разбирать WebSocket-конверт `{HAR, VAL}` (`encodeWsEnvelope`, `decodeWsEnvelope`): команда в нём то же число `HAR`, что на шине.
+- 🌐 собирать и разбирать WebSocket-конверт `{HAR, VAL}` (`encodeWsEnvelope`, `decodeWsEnvelope`): команда в нём то же число `HAR`, что на шине;
+- 💬 показывать сообщения устройств на языке пользователя: устройство шлёт код `Message` и параметры `Args`, `formatDeviceMessage` даёт текст, уровень и группу сообщения.
 
 Формат пакета, адресация, транспорты и список функций описаны в [PROTOCOL.md](src/lib/protocols/PROTOCOL.md).
 
@@ -291,7 +294,7 @@ socket.send(valueToCbor(encodeWsEnvelope("SET", "JoinDev", { DevSN, Watch: true 
 
 - Пакет - только indefinite-массив `0x9F ... 0xFF`, как в прошивке. `decodePacket` считает definite-массивы мусором, а `createPacketStreamParser` (RS485) ищет метку `0x9F 0x85` и пропускает пакеты без записей. Шум вроде `0x80` или `0x81` перед пакетом пропускается: пустых строк нет, настоящий пакет не теряется.
 - `createCanParser` считает `sessionTimeoutMs` от последнего фрагмента и выдаёт только целый пакет. Хвост с потерянным началом отбрасывается.
-- Поле Value консоли (`xPoeDebugValueFromText`): HEX только как `h'0A 1B'` или `0x0A1B`, всё остальное - JSON. `12` уходит числом 12, а не байтом `0x12`. Подсказки у поля Value в приложениях пишутся по этому правилу.
+- Колонка VALUE консоли (`formatXPoeDebugValue`) показывает Payload в стиле YAML: `CFG.WiFiMode: 1, List: [1, 2]`, байты `h'0C73'`, строки в кавычках, только если иначе читаются не так (`"123"`). Поле Value (`xPoeDebugValueFromText`) принимает этот же вид и JSON: скопированное из VALUE уходит тем же CBOR. `h'..'` - байтовая строка, `0x0A1B` - готовый CBOR как есть, `12` - число 12. Подсказки у поля Value в приложениях пишутся по этому правилу.
 
 </details>
 
@@ -302,17 +305,15 @@ socket.send(valueToCbor(encodeWsEnvelope("SET", "JoinDev", { DevSN, Watch: true 
 
 </details>
 
-## 📖 Словарь команд
+## 📚 Словари команд и сообщений
 
-Все команды (`GET`, `SET`, `ModCfg`, `Restart` и остальные) записаны в одном файле `src/lib/protocols/dictionary.yaml`. Новую команду сначала добавляют сюда, потом копируют в оба фреймворка прошивок. Коды 0-4095 - команды устройств, 7000-7999 - команды самого облака DevCloud (чаты, журнал, состояние устройств).
+Все команды (`GET`, `SET`, `ModCfg`, `Restart` и остальные) и тексты событий устройств («Файл удалён», «Прошивка обновлена») записаны в двух файлах папки `src/lib/dictionaries/`: `commands.yaml` и `messages.yaml`. Это единственный источник для прошивок, облака, терминала и веб-интерфейса. Новую команду или сообщение сначала добавляют сюда, потом копируют в оба фреймворка прошивок.
 
-<details>
-<summary>⚙️ Как словарь попадает в код</summary>
+- 📖 Коды команд 0-4095 - команды устройств, 7000-7999 - команды самого облака DevCloud (чаты, журнал, состояние устройств).
+- 💬 Устройство шлёт только код сообщения и параметры, текст на языке пользователя собирает `formatDeviceMessage(code, args?, lang?)` из `poe-svelte-ui-lib/protocols`. Сообщения разбиты на группы со своими диапазонами кодов: `SYS` 1-99, `CFG` 100-199, `FS` 200-299, `FW` 300-399, `WIFI` 400-499, `DEV` 1000-1999 (500-999 и 2000+ - резерв).
+- ⚙️ `npm run Dictionary` (перед публикацией запускается сам) генерирует код для JS и заголовки прошивок `api_har.h`, `api_msg.h`.
 
-- Из `dictionary.yaml` генерируется `DEFAULT_ARGUMENT_CODES` для JS (`npm run Dictionary`, перед публикацией запускается сам).
-- Прошивки ProdFactory-ESP и ProdFactory-STM держат копию словаря в `.framework/Dictionary.yaml`. При сборке прошивки она сверяется с `api_har.h`.
-
-</details>
+Как добавить команду или сообщение, что генерируется и куда копировать - в [src/lib/dictionaries/README.md](src/lib/dictionaries/README.md). Формат на проводе - в [PROTOCOL.md](src/lib/protocols/PROTOCOL.md).
 
 ## 🎨 Тема
 
