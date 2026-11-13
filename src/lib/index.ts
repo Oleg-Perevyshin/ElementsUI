@@ -45,7 +45,7 @@ export * from "./locales/languages"
 export { localizeDeep, type LocalizedText } from "./locales/localize"
 export { accentStyle, ACCENT_COLORS, type AccentColor } from "./accent"
 export { default as GUIRenderer } from "./GUIRenderer/GUIRenderer.svelte"
-export { GUI_VIEWS, type GuiViews } from "./GUIRenderer/views"
+export { GUI_VIEWS, type GuiViews } from "./guiViews"
 export { COMPONENTS, type ComponentEntry } from "./registry"
 export { COMPONENT_META, componentVariables, type ComponentMeta, type ComponentIO } from "./componentMeta"
 export {

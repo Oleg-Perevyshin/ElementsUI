@@ -29,7 +29,7 @@
   } from "../gui"
   import { COMPONENT_META } from "../componentMeta"
   import DeviceTable from "./DeviceTable.svelte"
-  import type { GuiViews } from "./views"
+  import type { GuiViews } from "../guiViews"
 
   interface Props {
     components: UIComponent[]
