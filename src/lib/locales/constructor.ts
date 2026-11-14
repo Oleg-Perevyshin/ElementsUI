@@ -368,6 +368,7 @@ const constructorTranslations = {
   "constructor.props.table.place.table": { ru: "Таблица", en: "Table", zh: "表格" },
   "constructor.props.table.place.details": { ru: "Подробности", en: "Details", zh: "详情" },
   "constructor.props.table.place.both": { ru: "Оба", en: "Both", zh: "两者" },
+  "constructor.props.table.place.wide": { ru: "По ширине", en: "By width", zh: "按宽度" },
   "constructor.props.table.columns.sortable": { ru: "Сортировка", en: "Sortable", zh: "排序" },
   "constructor.props.table.columns.truncated": { ru: "Сократить контент", en: "Truncate content", zh: "截断内容" },
   "constructor.props.table.columns.tooltip": { ru: "Всплывающее окно", en: "Tooltip", zh: "工具提示" },

@@ -24,8 +24,14 @@
       align: "left",
       content: [{ type: "text", data: { key: "name", sortable: true, truncated: true } }],
     },
-    { label: { name: L("Состояние", "State", "状态") }, width: "20%", align: "center", content: [{ type: "text", data: { key: "state", sortable: true } }] },
-    /* Только в окне подробностей строки: кнопка ⓘ в конце строки */
+    {
+      label: { name: L("Состояние", "State", "状态") },
+      width: "20%",
+      align: "center",
+      place: "wide",
+      content: [{ type: "text", data: { key: "state", sortable: true } }],
+    },
+    /* «Состояние» - по ширине: на узкой таблице уходит в подробности; «Серийный номер» - только в окне подробностей строки (кнопка ⓘ в конце строки) */
     {
       label: { name: L("Серийный номер", "Serial number", "序列号") },
       width: "20%",

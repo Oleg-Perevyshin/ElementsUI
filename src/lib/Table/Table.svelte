@@ -116,11 +116,17 @@
   /* ********************************************************** */
   /* Разметка: шаблон колонок общий для шапки и строк; кнопка очистки - отдельная узкая колонка */
   const ACTIONS_COLUMN = "2.5rem"
-  /* Столбец в строке таблицы: не скрыт шириной 0% и не только в подробностях */
-  const inTable = (column: ITableHeader<Row>) => column.width !== "0%" && column.place !== "details"
+  /* Узкая таблица (уже 640 px, как везде в библиотеке): колонки wide уходят в подробности; ширина - места таблицы, а не окна */
+  const NARROW_WIDTH = 640
+  let rootWidth = $state(0)
+  const narrow = $derived(rootWidth > 0 && rootWidth < NARROW_WIDTH)
+  /* Столбец в строке таблицы: не скрыт шириной 0%, не только в подробностях и не wide на узкой таблице */
+  const inTable = (column: ITableHeader<Row>) => column.width !== "0%" && column.place !== "details" && !(column.place === "wide" && narrow)
   /* Столбцы окна подробностей строки; есть хоть один - в конце строки кнопка «Подробнее» */
   const detailColumns = $derived(
-    header.map((column, index) => ({ column, index })).filter(({ column }) => column.place === "details" || column.place === "both"),
+    header
+      .map((column, index) => ({ column, index }))
+      .filter(({ column }) => column.place === "details" || column.place === "both" || (column.place === "wide" && narrow)),
   )
   const hasDetails = $derived(detailColumns.length > 0)
   const extraColumns = $derived([...(hasDetails ? [ACTIONS_COLUMN] : []), ...(dataBuffer.clearButton ? [ACTIONS_COLUMN] : [])])
@@ -301,7 +307,7 @@
   })
 </script>
 
-<div class={twMerge(`flex h-full w-full flex-col overflow-hidden`, wrapperClass)} style={accentStyle(accent)}>
+<div class={twMerge(`flex h-full w-full flex-col overflow-hidden`, wrapperClass)} style={accentStyle(accent)} bind:clientWidth={rootWidth}>
   <FieldLabel {label} info={help?.info} class="w-full pb-2" />
 
   <div class="relative flex h-full w-full flex-col overflow-x-auto overflow-y-hidden rounded-[14px] border border-(--hairline-color) bg-(--back-color)">

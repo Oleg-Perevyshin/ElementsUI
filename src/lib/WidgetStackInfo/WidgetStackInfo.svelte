@@ -114,20 +114,15 @@
       }
     }),
   )
+  /* Колонки по важности: задача, запас стека, загрузка CPU; состояние, приоритет и ядро - по ширине, на узкой таблице в окне подробностей */
   let header: ITableHeader<TaskRow>[] = $derived([
     { label: { name: $T("widget.stack.task") }, content: [{ type: "text", data: { key: "Name", truncated: true } }], width: "1fr", align: "left" },
-    { label: { name: $T("widget.stack.state") }, content: [{ type: "text", data: { key: "StateText", truncated: true } }], width: "9.5rem", align: "left" },
-    { label: { name: $T("widget.stack.prio") }, content: [{ type: "text", data: { key: "Prio" } }], width: "5.5rem", align: "center" },
-    ...(hasCore
-      ? [
-          {
-            label: { name: $T("widget.stack.core") },
-            content: [{ type: "text", data: { key: "CoreText" } }],
-            width: "5.5rem",
-            align: "center",
-          } as ITableHeader<TaskRow>,
-        ]
-      : []),
+    {
+      label: { name: $T("widget.stack.free_min") },
+      content: [{ type: "text", data: { key: "FreeMin", accent: (row) => row.FreeMinAccent } }],
+      width: "6rem",
+      align: "right",
+    },
     ...(hasCpu
       ? [
           {
@@ -139,11 +134,24 @@
         ]
       : []),
     {
-      label: { name: $T("widget.stack.free_min") },
-      content: [{ type: "text", data: { key: "FreeMin", accent: (row) => row.FreeMinAccent } }],
-      width: "6rem",
-      align: "right",
+      label: { name: $T("widget.stack.state") },
+      content: [{ type: "text", data: { key: "StateText", truncated: true } }],
+      width: "9.5rem",
+      align: "left",
+      place: "wide",
     },
+    { label: { name: $T("widget.stack.prio") }, content: [{ type: "text", data: { key: "Prio" } }], width: "5.5rem", align: "center", place: "wide" },
+    ...(hasCore
+      ? [
+          {
+            label: { name: $T("widget.stack.core") },
+            content: [{ type: "text", data: { key: "CoreText" } }],
+            width: "5.5rem",
+            align: "center",
+            place: "wide",
+          } as ITableHeader<TaskRow>,
+        ]
+      : []),
   ])
 </script>
 

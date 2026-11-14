@@ -166,6 +166,7 @@ export const optionsStore = derived(T, ($T) => {
       opt("table", $T("constructor.props.table.place.table")),
       opt("details", $T("constructor.props.table.place.details")),
       opt("both", $T("constructor.props.table.place.both")),
+      opt("wide", $T("constructor.props.table.place.wide")),
     ],
 
     TABLE_CONTENT_TYPE_OPTIONS: [

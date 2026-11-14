@@ -564,8 +564,8 @@ export interface ITableHeader<T extends object> {
   /* Несколько элементов ячейки - столбиком, а не в ряд (имя и под ним версия) */
   stack?: boolean
   disableSelect?: boolean
-  /* Где показывать столбец: table - в строке (по умолчанию), details - только в окне подробностей строки, both - и там, и там */
-  place?: "table" | "details" | "both"
+  /* Где показывать столбец: table - в строке (по умолчанию), details - только в окне подробностей строки, both - и там, и там, wide - в строке, пока таблица не уже 640 px, на узкой - в подробностях */
+  place?: "table" | "details" | "both" | "wide"
   content?: ITableContent<T>[] | ((row: T) => ITableContent<T>[])
 }
 
