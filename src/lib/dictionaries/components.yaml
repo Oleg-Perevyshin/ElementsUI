@@ -28,6 +28,7 @@ components:
   # Смарт-виджеты
   - [WidgetWiFi, widget]       # настройки Wi-Fi
   - [WidgetDeviceInfo, widget] # об устройстве
+  - [WidgetLoRa, widget]       # настройки радио LoRa
   - [WidgetFileSystem, widget] # файлы устройства
   - [WidgetStackInfo, widget]  # задачи и память
   - [WidgetRGBStrip, widget]   # светодиодная лента

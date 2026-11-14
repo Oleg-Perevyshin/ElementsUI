@@ -30,6 +30,8 @@ export { default as VideoViewer } from "./VideoViewer/VideoViewer.svelte"
 export { default as Widget } from "./Widget/Widget.svelte"
 export { default as WidgetWiFi } from "./WidgetWiFi/WidgetWiFi.svelte"
 export { default as WidgetDeviceInfo } from "./WidgetDeviceInfo/WidgetDeviceInfo.svelte"
+export { default as WidgetLoRa } from "./WidgetLoRa/WidgetLoRa.svelte"
+export { LORA_PARAMS, LORA_PRESETS, loraDecode, loraEncode, loraKeys } from "./WidgetLoRa/lora"
 export { default as WidgetFileSystem } from "./WidgetFileSystem/WidgetFileSystem.svelte"
 export { default as WidgetStackInfo } from "./WidgetStackInfo/WidgetStackInfo.svelte"
 export { default as WidgetRGBStrip } from "./WidgetRGBStrip/WidgetRGBStrip.svelte"
@@ -126,6 +128,9 @@ export {
   type IWidgetWiFiConfig,
   type IWidgetDeviceInfoProps,
   type IWidgetDeviceInfoConfig,
+  type IWidgetLoRaProps,
+  type LoRaParams,
+  type ILoRaParamConfig,
   type IWidgetFileSystemProps,
   type IWidgetFileSystemInfo,
   type IWidgetFileSystemFile,

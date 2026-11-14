@@ -20,6 +20,7 @@ import VideoViewer from "./VideoViewer/VideoViewer.svelte"
 import Widget from "./Widget/Widget.svelte"
 import WidgetWiFi from "./WidgetWiFi/WidgetWiFi.svelte"
 import WidgetDeviceInfo from "./WidgetDeviceInfo/WidgetDeviceInfo.svelte"
+import WidgetLoRa from "./WidgetLoRa/WidgetLoRa.svelte"
 import WidgetFileSystem from "./WidgetFileSystem/WidgetFileSystem.svelte"
 import WidgetStackInfo from "./WidgetStackInfo/WidgetStackInfo.svelte"
 import WidgetRGBStrip from "./WidgetRGBStrip/WidgetRGBStrip.svelte"
@@ -47,6 +48,7 @@ export interface GuiViewsAll {
   Widget: typeof Widget
   WidgetWiFi: typeof WidgetWiFi
   WidgetDeviceInfo: typeof WidgetDeviceInfo
+  WidgetLoRa: typeof WidgetLoRa
   WidgetFileSystem: typeof WidgetFileSystem
   WidgetStackInfo: typeof WidgetStackInfo
   WidgetRGBStrip: typeof WidgetRGBStrip
@@ -75,6 +77,7 @@ export const GUI_VIEWS: GuiViewsAll = {
   Widget,
   WidgetWiFi,
   WidgetDeviceInfo,
+  WidgetLoRa,
   WidgetFileSystem,
   WidgetStackInfo,
   WidgetRGBStrip,

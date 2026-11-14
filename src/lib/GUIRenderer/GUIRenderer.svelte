@@ -27,6 +27,7 @@
     type DeviceLink,
     type DevicePacket,
   } from "../gui"
+  import { loraKeys } from "../WidgetLoRa/lora"
   import { COMPONENT_META } from "../componentMeta"
   import DeviceTable from "./DeviceTable.svelte"
   import type { GuiViews } from "../guiViews"
@@ -421,6 +422,17 @@
                 )}
           onRestart={locked ? undefined : () => send(props.restartCommand?.header || "SET", props.restartCommand?.argument || "Restart", {})}
           onFactoryReset={locked ? undefined : () => send(props.resetCommand?.header || "SET", props.resetCommand?.argument || "RstNVS", {})}
+        />
+      {:else if component.type === "WidgetLoRa" && views.WidgetLoRa}
+        {@const WidgetLoRa = views.WidgetLoRa}
+        {@const props = component.properties}
+        {@const prefix = props.id || "LORA"}
+        {@const keys = loraKeys(props.params ?? {})}
+        <WidgetLoRa
+          {...props}
+          value={stable(`${component.id}|${prefix}`, Object.fromEntries(keys.map((key) => [key, get(widgetKey(prefix, key))])))}
+          persistKey={persist(component)}
+          onSave={locked ? undefined : (values) => saveFields(prefix, Object.keys(values), values)}
         />
       {:else if component.type === "WidgetFileSystem" && views.WidgetFileSystem}
         {@const WidgetFileSystem = views.WidgetFileSystem}

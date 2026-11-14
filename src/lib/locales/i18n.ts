@@ -74,6 +74,7 @@ export const extendTranslations = (dictionary: Translations) => void Object.assi
 const WIDGET_TITLE_KEYS: Record<string, string> = {
   WidgetWiFi: "widget.wifi.title",
   WidgetDeviceInfo: "widget.info.title",
+  WidgetLoRa: "widget.lora.title",
   WidgetFileSystem: "widget.fs.title",
   WidgetStackInfo: "widget.stack.title",
   WidgetRGBStrip: "widget.rgb.title",

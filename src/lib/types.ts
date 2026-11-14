@@ -3,10 +3,12 @@ import type { AccentColor } from "./accent"
 import type { IMissionPlan } from "./WidgetMap/mission/plan"
 import type { IRoutePlan } from "./WidgetMap/mission/route"
 import type { IWidgetWiFiConfig, IWidgetDeviceInfoConfig, IWidgetRGBStripConfig, IWidgetPFDData, IWidgetMapData } from "./gui"
+import type { LoRaParams } from "./WidgetLoRa/lora"
 
 export type { AccentColor } from "./accent"
 export type { PropertyChange } from "./propsEditor"
 export type { IWidgetWiFiConfig, IWidgetDeviceInfoConfig, IWidgetRGBStripConfig, IWidgetPFDData, IWidgetMapData } from "./gui"
+export type { LoRaParams, LoRaParam, LoRaValues, ILoRaParamConfig, ILoRaOption } from "./WidgetLoRa/lora"
 
 /* Иконка: SVG-разметка или компонент */
 export type IconSource = ConstructorOfATypedSvelteComponent | string
@@ -32,6 +34,7 @@ export interface UIComponentPropsMap {
   Widget: IWidgetProps
   WidgetWiFi: IWidgetWiFiProps
   WidgetDeviceInfo: IWidgetDeviceInfoProps
+  WidgetLoRa: IWidgetLoRaProps
   WidgetFileSystem: IWidgetFileSystemProps
   WidgetStackInfo: IWidgetStackInfoProps
   WidgetRGBStrip: IWidgetRGBStripProps
@@ -715,6 +718,25 @@ export interface IWidgetDeviceInfoProps {
   onRestart?: () => void
   /* Без колбэка кнопка «Сброс настроек» не показывается */
   onFactoryReset?: () => void
+}
+
+/* Настройки радио LoRa: параметры и их место в прошивке задаются в params (шаблоны LORA_PRESETS), виджет не знает драйвера */
+export interface IWidgetLoRaProps {
+  /* Префикс прошивочной группы, обычно "LORA" */
+  id?: string
+  wrapperClass?: string
+  accent?: AccentColor
+  label?: { name?: string }
+  /* Значения ключей группы без префикса: { Cfg: слово, Freq: Гц } */
+  value?: Record<string, unknown>
+  /* Показываемые параметры и их место в прошивке; нет параметра - он скрыт и не отправляется */
+  params?: LoRaParams
+  /* Шаблон, которым заполнены params (только для конструктора) */
+  preset?: string
+  collapsed?: boolean
+  persistKey?: string
+  /* Значения ключей для SET ModCfg: { Cfg: слово, Freq: Гц }; без колбэка - только просмотр */
+  onSave?: (values: Record<string, number>) => void
 }
 
 /* Состояние файловой системы - объект CFG.FS в том виде, в каком его отдаёт прошивка (FS_WriteState, ProdFactory-ESP) */

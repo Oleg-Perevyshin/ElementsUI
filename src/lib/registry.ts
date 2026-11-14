@@ -19,6 +19,7 @@ import VideoViewer from "./VideoViewer/VideoViewer.svelte"
 import Widget from "./Widget/Widget.svelte"
 import WidgetWiFi from "./WidgetWiFi/WidgetWiFi.svelte"
 import WidgetDeviceInfo from "./WidgetDeviceInfo/WidgetDeviceInfo.svelte"
+import WidgetLoRa from "./WidgetLoRa/WidgetLoRa.svelte"
 import WidgetFileSystem from "./WidgetFileSystem/WidgetFileSystem.svelte"
 import WidgetStackInfo from "./WidgetStackInfo/WidgetStackInfo.svelte"
 import WidgetRGBStrip from "./WidgetRGBStrip/WidgetRGBStrip.svelte"
@@ -52,6 +53,7 @@ const VIEWS: Record<UIType, Component<any, any, any>> = {
   Widget,
   WidgetWiFi,
   WidgetDeviceInfo,
+  WidgetLoRa,
   WidgetFileSystem,
   WidgetStackInfo,
   WidgetRGBStrip,

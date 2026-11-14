@@ -164,7 +164,7 @@ ElementsUI/
 
 - Компоненты: `Input`, `Select`, `Switch`, `Slider`, `Button`, `Joystick`, `ProgressBar`, `Graph`, `PeriodChart`, `Table`, `FileAttach`, `VideoViewer`, `TextField`, `Widget`.
 - Раскладка: `Accordion`, `Tabs`, `Divider`, `Carousel`, `Dropdown` (меню у кнопки, без панели свойств); в корне `lib` - `Modal.svelte`, `Dragging.svelte` (свои README рядом: `Modal.README.md`, `Dragging.README.md`).
-- Смарт-виджеты: `WidgetWiFi`, `WidgetDeviceInfo`, `WidgetFileSystem`, `WidgetStackInfo`, `WidgetRGBStrip`, `WidgetPFD`, `WidgetMap`.
+- Смарт-виджеты: `WidgetWiFi`, `WidgetDeviceInfo`, `WidgetLoRa`, `WidgetFileSystem`, `WidgetStackInfo`, `WidgetRGBStrip`, `WidgetPFD`, `WidgetMap`.
 - `WidgetMap` - самый большой модуль: обёртка MapLibre (`mapWrapper/`), миссии (`mission/`: режимы «Маршрут» и «Агро», расчёт покрытия поля, прогресс, выгрузка QGC WPL 110, имитация).
 
 Общие части интерфейса в корне `lib`: `WidgetHeader` (шапка виджета), `SectionHead` и `ExpandIcon` (сворачиваемые разделы), `FieldLabel` (подпись поля, с `info` - значок ⓘ с пояснением), `InfoHint` (сам значок ⓘ, пояснение позиционируется от окна и не обрезается), `Tooltip`, `CopiedChip`, `Icon`, `IconsMatrix` (выбор иконки), `Loader/` (крутилка, без панели свойств), значки `libIcons/` (экспорт под именами `IconArrow`, `IconCross` и другими), `TextsEditor` (окно «Тексты и переводы»), `CommonSnippets`, `PropsGroup`, `PropsListHeader`, `PropsListModal` (части панелей свойств).
@@ -298,15 +298,16 @@ ElementsUI/
 
 Ключ поля на устройстве - `{префикс}.{keys[поле] ?? поле}`.
 
-| Виджет             | Префикс по умолчанию | Поля (кратко)                                                                                                                | Сохраняемые поля                           |
-| ------------------ | -------------------- | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------ |
-| `WidgetWiFi`       | `CFG`                | `WiFiMode` (0 NULL, 1 STA, 2 AP, 3 STA+AP), `StaSSID`, `StaPSK`, `StaticIP`, `StaIP/MS/GW`, `ApSSID/PSK/IP/MS/GW`            | все                                        |
-| `WidgetDeviceInfo` | `CFG`                | `DevSN`, `DevID`, `DevFW`, `RunCnt`, `DevName`, `HostName`, `WebUser`, `WebPsw`, `StaIP`, `ApIP`                             | `DevName`, `HostName`, `WebUser`, `WebPsw` |
-| `WidgetFileSystem` | `CFG`                | объект `FS` (Total/Used/Free/List, Upload во время закачки)                                                                  | -                                          |
-| `WidgetStackInfo`  | без группы           | объект `StackInfo` (кучи и стеки задач)                                                                                      | -                                          |
-| `WidgetRGBStrip`   | `LST`                | `Color` [R,G,B,W], `Effect` 0-7, `Speed` 0-10, `Count`, `Model` (WS2812/SK6812/WS2811), `Order`, `MaxCount`                  | `Count`, `Model`, `Order`                  |
-| `WidgetPFD`        | `MAV`                | телеметрия MAVLink: ориентация, скорости, высоты, GPS, батарея, режим, маршрут, связь, сообщения (`Msg`, `MsgSev`, `MsgSeq`) | -                                          |
-| `WidgetMap`        | `groups: ["MAV"]`    | на каждый борт: `Lat`, `Lon`, `Alt`, `Heading`, `Sat`, `DevName`, `DevSN`, `WPNum`                                           | -                                          |
+| Виджет             | Префикс по умолчанию | Поля (кратко)                                                                                                                | Сохраняемые поля                             |
+| ------------------ | -------------------- | ---------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
+| `WidgetWiFi`       | `CFG`                | `WiFiMode` (0 NULL, 1 STA, 2 AP, 3 STA+AP), `StaSSID`, `StaPSK`, `StaticIP`, `StaIP/MS/GW`, `ApSSID/PSK/IP/MS/GW`            | все                                          |
+| `WidgetDeviceInfo` | `CFG`                | `DevSN`, `DevID`, `DevFW`, `RunCnt`, `DevName`, `HostName`, `WebUser`, `WebPsw`, `StaIP`, `ApIP`                             | `DevName`, `HostName`, `WebUser`, `WebPsw`   |
+| `WidgetLoRa`       | `LORA`               | ключи из `params` (шаблон HT_CT62 - одно слово `Cfg`)                                                                        | те же ключи, свои биты поверх текущего слова |
+| `WidgetFileSystem` | `CFG`                | объект `FS` (Total/Used/Free/List, Upload во время закачки)                                                                  | -                                            |
+| `WidgetStackInfo`  | без группы           | объект `StackInfo` (кучи и стеки задач)                                                                                      | -                                            |
+| `WidgetRGBStrip`   | `LST`                | `Color` [R,G,B,W], `Effect` 0-7, `Speed` 0-10, `Count`, `Model` (WS2812/SK6812/WS2811), `Order`, `MaxCount`                  | `Count`, `Model`, `Order`                    |
+| `WidgetPFD`        | `MAV`                | телеметрия MAVLink: ориентация, скорости, высоты, GPS, батарея, режим, маршрут, связь, сообщения (`Msg`, `MsgSev`, `MsgSeq`) | -                                            |
+| `WidgetMap`        | `groups: ["MAV"]`    | на каждый борт: `Lat`, `Lon`, `Alt`, `Heading`, `Sat`, `DevName`, `DevSN`, `WPNum`                                           | -                                            |
 
 </details>
 
@@ -632,6 +633,7 @@ interface DeviceReply {
 | `src/lib/Widget/README.md`           | Примитив-виджет со значком и слайдером                                                                                                                                                                                                                                                          |
 | `src/lib/WidgetWiFi/README.md`       | Режим сети, STA/AP, поиск сетей                                                                                                                                                                                                                                                                 |
 | `src/lib/WidgetDeviceInfo/README.md` | Паспорт устройства, настройки, перезагрузка и сброс                                                                                                                                                                                                                                             |
+| `src/lib/WidgetLoRa/README.md`       | Настройки радио LoRa: параметры, их место в прошивке и шаблоны драйверов                                                                                                                                                                                                                        |
 | `src/lib/WidgetFileSystem/README.md` | Файловая система устройства, закачка и удаление                                                                                                                                                                                                                                                 |
 | `src/lib/WidgetStackInfo/README.md`  | Память и стеки задач                                                                                                                                                                                                                                                                            |
 | `src/lib/WidgetRGBStrip/README.md`   | Адресная светодиодная лента                                                                                                                                                                                                                                                                     |

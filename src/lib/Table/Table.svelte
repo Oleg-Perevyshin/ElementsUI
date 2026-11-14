@@ -228,7 +228,7 @@
     const classes = cls.split(" ")
     const transparent = classes.includes("bg-transparent") || !classes.some((c) => c.startsWith("bg-"))
     return twMerge(
-      "flex h-7 w-full cursor-pointer items-center justify-center gap-1.5 rounded-lg px-3 text-[13px] font-semibold transition-colors duration-150 outline-none select-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent-text)",
+      "flex h-7 w-full cursor-pointer items-center justify-center gap-1.5 rounded-lg px-3 text-[13px] font-semibold transition-[color,background-color,filter,scale] duration-150 outline-none select-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent-text) active:scale-[0.97] active:brightness-85",
       transparent
         ? "bg-transparent text-(--accent-text) hover:bg-(--accent-soft)"
         : "border border-transparent text-(--on-accent) hover:brightness-90 dark:hover:brightness-115",

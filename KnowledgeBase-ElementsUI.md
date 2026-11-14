@@ -1,4 +1,4 @@
-<!-- Файл собирает node .knowledgebase/build.mjs из .knowledgebase/Overview.md и документации проекта (33 файлов). Вручную не править: правь источники и пересобери -->
+<!-- Файл собирает node .knowledgebase/build.mjs из .knowledgebase/Overview.md и документации проекта (34 файлов). Вручную не править: правь источники и пересобери -->
 
 # База знаний ElementsUI
 
@@ -168,7 +168,7 @@ ElementsUI/
 
 - Компоненты: `Input`, `Select`, `Switch`, `Slider`, `Button`, `Joystick`, `ProgressBar`, `Graph`, `PeriodChart`, `Table`, `FileAttach`, `VideoViewer`, `TextField`, `Widget`.
 - Раскладка: `Accordion`, `Tabs`, `Divider`, `Carousel`, `Dropdown` (меню у кнопки, без панели свойств); в корне `lib` - `Modal.svelte`, `Dragging.svelte` (свои README рядом: `Modal.README.md`, `Dragging.README.md`).
-- Смарт-виджеты: `WidgetWiFi`, `WidgetDeviceInfo`, `WidgetFileSystem`, `WidgetStackInfo`, `WidgetRGBStrip`, `WidgetPFD`, `WidgetMap`.
+- Смарт-виджеты: `WidgetWiFi`, `WidgetDeviceInfo`, `WidgetLoRa`, `WidgetFileSystem`, `WidgetStackInfo`, `WidgetRGBStrip`, `WidgetPFD`, `WidgetMap`.
 - `WidgetMap` - самый большой модуль: обёртка MapLibre (`mapWrapper/`), миссии (`mission/`: режимы «Маршрут» и «Агро», расчёт покрытия поля, прогресс, выгрузка QGC WPL 110, имитация).
 
 Общие части интерфейса в корне `lib`: `WidgetHeader` (шапка виджета), `SectionHead` и `ExpandIcon` (сворачиваемые разделы), `FieldLabel` (подпись поля, с `info` - значок ⓘ с пояснением), `InfoHint` (сам значок ⓘ, пояснение позиционируется от окна и не обрезается), `Tooltip`, `CopiedChip`, `Icon`, `IconsMatrix` (выбор иконки), `Loader/` (крутилка, без панели свойств), значки `libIcons/` (экспорт под именами `IconArrow`, `IconCross` и другими), `TextsEditor` (окно «Тексты и переводы»), `CommonSnippets`, `PropsGroup`, `PropsListHeader`, `PropsListModal` (части панелей свойств).
@@ -302,15 +302,16 @@ ElementsUI/
 
 Ключ поля на устройстве - `{префикс}.{keys[поле] ?? поле}`.
 
-| Виджет             | Префикс по умолчанию | Поля (кратко)                                                                                                                | Сохраняемые поля                           |
-| ------------------ | -------------------- | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------ |
-| `WidgetWiFi`       | `CFG`                | `WiFiMode` (0 NULL, 1 STA, 2 AP, 3 STA+AP), `StaSSID`, `StaPSK`, `StaticIP`, `StaIP/MS/GW`, `ApSSID/PSK/IP/MS/GW`            | все                                        |
-| `WidgetDeviceInfo` | `CFG`                | `DevSN`, `DevID`, `DevFW`, `RunCnt`, `DevName`, `HostName`, `WebUser`, `WebPsw`, `StaIP`, `ApIP`                             | `DevName`, `HostName`, `WebUser`, `WebPsw` |
-| `WidgetFileSystem` | `CFG`                | объект `FS` (Total/Used/Free/List, Upload во время закачки)                                                                  | -                                          |
-| `WidgetStackInfo`  | без группы           | объект `StackInfo` (кучи и стеки задач)                                                                                      | -                                          |
-| `WidgetRGBStrip`   | `LST`                | `Color` [R,G,B,W], `Effect` 0-7, `Speed` 0-10, `Count`, `Model` (WS2812/SK6812/WS2811), `Order`, `MaxCount`                  | `Count`, `Model`, `Order`                  |
-| `WidgetPFD`        | `MAV`                | телеметрия MAVLink: ориентация, скорости, высоты, GPS, батарея, режим, маршрут, связь, сообщения (`Msg`, `MsgSev`, `MsgSeq`) | -                                          |
-| `WidgetMap`        | `groups: ["MAV"]`    | на каждый борт: `Lat`, `Lon`, `Alt`, `Heading`, `Sat`, `DevName`, `DevSN`, `WPNum`                                           | -                                          |
+| Виджет             | Префикс по умолчанию | Поля (кратко)                                                                                                                | Сохраняемые поля                             |
+| ------------------ | -------------------- | ---------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
+| `WidgetWiFi`       | `CFG`                | `WiFiMode` (0 NULL, 1 STA, 2 AP, 3 STA+AP), `StaSSID`, `StaPSK`, `StaticIP`, `StaIP/MS/GW`, `ApSSID/PSK/IP/MS/GW`            | все                                          |
+| `WidgetDeviceInfo` | `CFG`                | `DevSN`, `DevID`, `DevFW`, `RunCnt`, `DevName`, `HostName`, `WebUser`, `WebPsw`, `StaIP`, `ApIP`                             | `DevName`, `HostName`, `WebUser`, `WebPsw`   |
+| `WidgetLoRa`       | `LORA`               | ключи из `params` (шаблон HT_CT62 - одно слово `Cfg`)                                                                        | те же ключи, свои биты поверх текущего слова |
+| `WidgetFileSystem` | `CFG`                | объект `FS` (Total/Used/Free/List, Upload во время закачки)                                                                  | -                                            |
+| `WidgetStackInfo`  | без группы           | объект `StackInfo` (кучи и стеки задач)                                                                                      | -                                            |
+| `WidgetRGBStrip`   | `LST`                | `Color` [R,G,B,W], `Effect` 0-7, `Speed` 0-10, `Count`, `Model` (WS2812/SK6812/WS2811), `Order`, `MaxCount`                  | `Count`, `Model`, `Order`                    |
+| `WidgetPFD`        | `MAV`                | телеметрия MAVLink: ориентация, скорости, высоты, GPS, батарея, режим, маршрут, связь, сообщения (`Msg`, `MsgSev`, `MsgSeq`) | -                                            |
+| `WidgetMap`        | `groups: ["MAV"]`    | на каждый борт: `Lat`, `Lon`, `Alt`, `Heading`, `Sat`, `DevName`, `DevSN`, `WPNum`                                           | -                                            |
 
 </details>
 
@@ -636,6 +637,7 @@ interface DeviceReply {
 | `src/lib/Widget/README.md`           | Примитив-виджет со значком и слайдером                                                                                                                                                                                                                                                          |
 | `src/lib/WidgetWiFi/README.md`       | Режим сети, STA/AP, поиск сетей                                                                                                                                                                                                                                                                 |
 | `src/lib/WidgetDeviceInfo/README.md` | Паспорт устройства, настройки, перезагрузка и сброс                                                                                                                                                                                                                                             |
+| `src/lib/WidgetLoRa/README.md`       | Настройки радио LoRa: параметры, их место в прошивке и шаблоны драйверов                                                                                                                                                                                                                        |
 | `src/lib/WidgetFileSystem/README.md` | Файловая система устройства, закачка и удаление                                                                                                                                                                                                                                                 |
 | `src/lib/WidgetStackInfo/README.md`  | Память и стеки задач                                                                                                                                                                                                                                                                            |
 | `src/lib/WidgetRGBStrip/README.md`   | Адресная светодиодная лента                                                                                                                                                                                                                                                                     |
@@ -723,6 +725,7 @@ interface DeviceReply {
 - `src/lib/Widget/README.md`
 - `src/lib/WidgetDeviceInfo/README.md`
 - `src/lib/WidgetFileSystem/README.md`
+- `src/lib/WidgetLoRa/README.md`
 - `src/lib/WidgetMap/README.md`
 - `src/lib/WidgetPFD/README.md`
 - `src/lib/WidgetRGBStrip/README.md`
@@ -762,6 +765,7 @@ interface DeviceReply {
 
 - 📶 `WidgetWiFi` - режим сети, подключение к точке доступа, своя точка доступа, поиск сетей.
 - 🪪 `WidgetDeviceInfo` - паспорт устройства, основные настройки, перезагрузка.
+- 📡 `WidgetLoRa` - настройки радио LoRa любой микросхемы: где лежит каждый параметр, задаётся в конструкторе.
 - 🗂️ `WidgetFileSystem` - занятая память, список файлов, загрузка и удаление.
 - 🧠 `WidgetStackInfo` - свободная память и запас стека задач, для отладки.
 - 🌈 `WidgetRGBStrip` - адресная светодиодная лента: цвет, эффекты, параметры.
@@ -3861,7 +3865,7 @@ const message = decodeWsEnvelope(cborToValue(new Uint8Array(event.data)))
 #### ✨ Что умеет
 
 - 📄 Показывает список строк, которые прислало устройство: одна строка на запись.
-- 🔘 В ячейке может стоять кнопка: таблица сообщает приложению, какая кнопка нажата и в какой строке, команду отправляет приложение.
+- 🔘 В ячейке может стоять кнопка: таблица сообщает приложению, какая кнопка нажата и в какой строке, команду отправляет приложение. При нажатии кнопка слегка сжимается и темнеет, как обычная `Button`.
 - ⋯ В ячейке может стоять меню действий строки (кнопка «⋯» и пункты `Dropdown`), например «Изменить» и красное «Удалить».
 - 🔽 Можно выбрать значение из списка прямо в ячейке.
 - 📊 Число можно показать полосой прогресса с единицами измерения.
@@ -4828,6 +4832,52 @@ const canModal = createRawSnippet((row: () => CanRow) => ({ render: () => `<div 
 | ------------------ | ---------------------------------- | ----------------------------------------------------- |
 | `component`        | `UIComponent<"WidgetFileSystem">`  | Компонент и его свойства                              |
 | `onPropertyChange` | `(change: PropertyChange) => void` | Сообщает об изменении: свойства, имя, доступ, событие |
+
+</details>
+
+## Файл `src/lib/WidgetLoRa/README.md`
+
+### 📡 WidgetLoRa
+
+Карточка настроек радио LoRa: частота, мощность, полоса, спред-фактор, скорость кодирования, преамбула, CRC и инверсия IQ. Виджет не привязан к микросхеме или драйверу: где каждый параметр лежит в прошивке, задаётся в конструкторе.
+
+#### ✨ Что умеет
+
+- 📻 Показывает и меняет параметры радио понятными значениями: частоту в МГц, мощность в дБм, полосу в кГц.
+- 🧩 Показывает только выбранные параметры и отправляет только их.
+- 🧱 Параметр может лежать в своём ключе или в битах общего слова. Чужие биты слова при сохранении не меняются.
+- 📋 Готовые шаблоны драйверов заполняют всё сразу, дальше любое поле правится.
+- 💾 Правки уходят на устройство одной кнопкой «Сохранить». Пока не сохранили, под кнопкой висит напоминание.
+- 🔽 Сворачивается по клику на заголовок, кнопка «?» включает подсказки.
+
+#### 🧩 Как настроить в конструкторе
+
+1. Перетащите виджет на макет и задайте префикс группы, обычно `LORA`.
+2. Выберите шаблон драйвера. Он заполнит, где лежит каждый параметр.
+3. Если прошивка другая, поправьте параметры: галочка показывает параметр, рядом ключ, биты и коды.
+
+#### 💡 Полезно знать
+
+- 📡 У базы и всех её модулей радио должно быть настроено одинаково, иначе связь пропадёт. Меняйте настройки сначала у модулей, потом у базы.
+- 🔢 Число в прошивке = значение × масштаб + смещение. Например, частота в Гц при показе в МГц - масштаб 1000000.
+- 📝 Таблица кодов - пары `имя=код` через пробел, например `125=4 250=5 500=6`. С ней параметр выбирается из списка.
+
+<details>
+<summary>⚙️ Свойства и шаблоны</summary>
+
+| Свойство         | Что это                                                                                                                            |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `id`             | Префикс группы, ключи на устройстве - `{id}.{key}`                                                                                 |
+| `value`          | Значения ключей группы без префикса: `{ Cfg: 1820660393 }`                                                                         |
+| `params`         | Параметры: `{ Freq: { key, bits?: { start, end }, scale?, offset?, min?, max?, step?, options? }, ... }`. Нет параметра - он скрыт |
+| `preset`         | Шаблон, которым заполнены `params`, только для конструктора                                                                        |
+| `onSave(values)` | Значения ключей для `SET ModCfg`: `{ Cfg: слово }`. Без колбэка - только просмотр                                                  |
+
+Шаблоны (`LORA_PRESETS`):
+
+- `HT_CT62` - общее слово драйвера HT_CT62 ProdFactory-ESP и `lora_service` ProdFactory-STM (STM32WL). Всё в слове `Cfg`: биты 2-6 мощность (дБм), 7-10 код полосы SX126x (4 = 125, 5 = 250, 6 = 500 кГц), 11-13 SF минус 5 (SF7-SF12), 14-15 CR минус 1 (0 = 4/5), 16 CRC, 17 инверсия IQ, 18-20 индекс длины преамбулы (6, 8, 10, 12, 16, 20, 24, 32), 21-30 частота в МГц. Биты 0-1 - режим работы драйвера, виджет их не трогает.
+
+`loraDecode(params, value)` и `loraEncode(params, value, values)` из `lora.ts` - чтение и сборка слов без Svelte, их проверяет `tests/lora.test.mjs`.
 
 </details>
 

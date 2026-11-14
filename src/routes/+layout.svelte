@@ -24,6 +24,7 @@
   const menuItems = [
     { page: "widget-wifi", name: "WidgetWiFi" },
     { page: "widget-device-info", name: "WidgetDeviceInfo" },
+    { page: "widget-lora", name: "WidgetLoRa" },
     { page: "widget-file-system", name: "WidgetFileSystem" },
     { page: "widget-stack-info", name: "WidgetStackInfo" },
     { page: "widget-rgb-strip", name: "WidgetRGBStrip" },

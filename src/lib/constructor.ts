@@ -22,6 +22,7 @@ import VideoViewerProps from "./VideoViewer/VideoViewerProps.svelte"
 import WidgetProps from "./Widget/WidgetProps.svelte"
 import WidgetWiFiProps from "./WidgetWiFi/WidgetWiFiProps.svelte"
 import WidgetDeviceInfoProps from "./WidgetDeviceInfo/WidgetDeviceInfoProps.svelte"
+import WidgetLoRaProps from "./WidgetLoRa/WidgetLoRaProps.svelte"
 import WidgetFileSystemProps from "./WidgetFileSystem/WidgetFileSystemProps.svelte"
 import WidgetStackInfoProps from "./WidgetStackInfo/WidgetStackInfoProps.svelte"
 import WidgetRGBStripProps from "./WidgetRGBStrip/WidgetRGBStripProps.svelte"
@@ -55,6 +56,7 @@ export {
   WidgetProps,
   WidgetWiFiProps,
   WidgetDeviceInfoProps,
+  WidgetLoRaProps,
   WidgetFileSystemProps,
   WidgetStackInfoProps,
   WidgetRGBStripProps,
@@ -83,6 +85,7 @@ export const PANELS: Record<UIType, Component<any>> = {
   Widget: WidgetProps,
   WidgetWiFi: WidgetWiFiProps,
   WidgetDeviceInfo: WidgetDeviceInfoProps,
+  WidgetLoRa: WidgetLoRaProps,
   WidgetFileSystem: WidgetFileSystemProps,
   WidgetStackInfo: WidgetStackInfoProps,
   WidgetRGBStrip: WidgetRGBStripProps,

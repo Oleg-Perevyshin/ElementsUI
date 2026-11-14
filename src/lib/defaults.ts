@@ -2,6 +2,7 @@
 import { GUI_GRID, isWidgetType } from "./gui"
 import { widgetTitle } from "./locales/i18n"
 import type { UIComponent, UIComponentPropsMap, UIType } from "./types"
+import { LORA_PRESETS } from "./WidgetLoRa/lora"
 
 const label = { name: "", class: "text-center" }
 /* Новый виджет на холсте свёрнут: холст не растягивается, автор раскрывает нужный */
@@ -11,6 +12,7 @@ const widget = (type: UIType) => ({ label: { name: widgetTitle(type) as unknown 
 export const COMPONENT_DEFAULTS: { [K in UIType]: Partial<UIComponentPropsMap[K]> } = {
   WidgetWiFi: { ...widget("WidgetWiFi"), id: "CFG", allowedModes: [1, 2, 3], confirmOnAP: true },
   WidgetDeviceInfo: { ...widget("WidgetDeviceInfo"), id: "CFG" },
+  WidgetLoRa: { ...widget("WidgetLoRa"), id: "LORA", preset: "HT_CT62", params: structuredClone(LORA_PRESETS.HT_CT62.params) },
   WidgetFileSystem: { ...widget("WidgetFileSystem"), id: "CFG", accept: "*/*", maxNameLength: 31 },
   WidgetStackInfo: { ...widget("WidgetStackInfo"), warnBytes: 512, period: 0 },
   WidgetRGBStrip: { ...widget("WidgetRGBStrip"), id: "LST" },
@@ -75,6 +77,7 @@ export const COMPONENT_DEFAULTS: { [K in UIType]: Partial<UIComponentPropsMap[K]
 export const COMPONENT_SIZES: Record<UIType, { width: number; height: number }> = {
   WidgetWiFi: { width: 7, height: 1 },
   WidgetDeviceInfo: { width: 7, height: 1 },
+  WidgetLoRa: { width: 7, height: 1 },
   WidgetFileSystem: { width: 7, height: 1 },
   WidgetStackInfo: { width: 7, height: 1 },
   WidgetRGBStrip: { width: 7, height: 1 },
