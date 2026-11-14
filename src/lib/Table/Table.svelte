@@ -474,7 +474,7 @@
       {@const options = (Array.isArray(row[select.key]) ? row[select.key] : []) as IOption<string | number>[]}
       {@const current = (row as Record<string, unknown>)[valueKey(select.key)]}
       {@const open = dropdown?.row === i && dropdown.col === j && dropdown.index === index ? dropdown : null}
-      <div class="relative w-full select-none">
+      <div class="cell-select relative w-full select-none">
         <button
           class="h-7 w-full cursor-pointer rounded-lg border border-(--border-color) bg-(--field-color) px-2 text-left text-[13px] transition-[border-color,box-shadow] duration-150 outline-none hover:border-(--faint-color) focus:border-(--accent-text) focus:shadow-(--focus-shadow-color)"
           onclick={(e) => toggleDropdown(e, i, j, index)}
@@ -621,13 +621,18 @@
   {#snippet main()}
     {#if detailsEntry}
       {@const row = withPicks(detailsEntry.row)}
-      <!-- Строки разделены чертой, название жирным; на узком окне название над значением -->
+      <!-- Строки разделены чертой, название жирным и отделено вертикальной чертой; на узком окне название над значением -->
       <div class="@container flex flex-col divide-y divide-(--border-color) text-left">
         {#each detailColumns as { column, index } (index)}
-          <div class="grid gap-1.5 py-3 first:pt-0 last:pb-0 @sm:grid-cols-[9rem_minmax(0,1fr)] @sm:items-center @sm:gap-4">
-            <div class="text-[13px] font-bold">{$T(column.label?.name ?? "")}</div>
+          <div class="group grid @sm:grid-cols-[9rem_minmax(0,1fr)]">
+            <div class="flex items-center pt-3 text-[13px] font-bold group-first:pt-0 @sm:py-3 @sm:pr-4 @sm:group-last:pb-0">
+              {$T(column.label?.name ?? "")}
+            </div>
             <!-- Выпадающие списки окна - со своими номерами строк, чтобы не открывался список той же ячейки в таблице -->
-            <div class="flex min-w-0 flex-wrap items-center gap-2 text-[13px] [&>*]:min-w-0">
+            <!-- Список и кнопки в одну строку: список забирает остаток ширины, на перенос уходит только при ширине меньше 10rem -->
+            <div
+              class="flex min-w-0 flex-wrap items-center gap-2 pt-1.5 pb-3 text-[13px] group-last:pb-0 @sm:border-l @sm:border-(--border-color) @sm:py-3 @sm:pl-4 @sm:group-first:pt-0 [&>*]:min-w-0 [&>.cell-select]:w-auto [&>.cell-select]:flex-1 [&>.cell-select]:basis-40"
+            >
               {@render items(row, detailsEntry.row, columnContent(column, row) as ITableContent<Row>[], true, -1 - detailsIndex, index)}
             </div>
           </div>
