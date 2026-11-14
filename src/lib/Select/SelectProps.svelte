@@ -53,6 +53,7 @@
   <PropsGroup label={$T("constructor.props.group.value")}>
     <UI.Select
       label={{ name: $T("constructor.props.type") }}
+      help={{ info: $T("constructor.props.select.type.info") }}
       type="buttons"
       value={component.properties.type}
       options={$optionsStore.SELECT_TYPE_OPTIONS}
@@ -68,6 +69,7 @@
     <UI.Select
       wrapperClass="h-14"
       label={{ name: $T("constructor.props.valuetype") }}
+      help={{ info: $T("constructor.props.valuetype.info") }}
       type="buttons"
       disabled={component.properties.bitMode}
       options={$optionsStore.SELECT_VALUE_TYPE_OPTIONS}
@@ -85,6 +87,7 @@
     <CommonSnippets snippet="LabelAlign" {component} {onPropertyChange} />
     <UI.Select
       label={{ name: $T("constructor.props.align.content") }}
+      help={{ info: $T("constructor.props.select.align.info") }}
       type="buttons"
       value={optionByClass(contentAlignOptions, component.properties.componentClass)?.value ?? "text-left"}
       options={contentAlignOptions}
@@ -92,6 +95,7 @@
     />
     <UI.Switch
       label={{ name: $T("constructor.props.bitMode") }}
+      help={{ info: $T("constructor.props.bitMode.info") }}
       value={component.properties.bitMode ? 1 : 0}
       onUpdate={(value) =>
         onPropertyChange({
@@ -104,6 +108,7 @@
     {#if component.properties.type === "buttons" && !component.properties.bitMode}
       <UI.Switch
         label={{ name: $T("constructor.props.multiselect") }}
+        help={{ info: $T("constructor.props.multiselect.info") }}
         value={component.properties.multiSelect ? 1 : 0}
         onUpdate={(value) => edit.set("multiSelect", value === 1)}
       />
@@ -111,6 +116,7 @@
     {#if component.properties.bitMode}
       <UI.Slider
         label={{ name: $T("constructor.props.range") }}
+        help={{ info: $T("constructor.props.range.info") }}
         type="range"
         number={{ minNum: 0, maxNum: 31, step: 1 }}
         value={[bitRange.start, bitRange.end]}

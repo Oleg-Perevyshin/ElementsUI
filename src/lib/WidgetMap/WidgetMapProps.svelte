@@ -45,6 +45,7 @@
   <PropsGroup>
     <UI.Select
       label={{ name: $T("widget.map.mode") }}
+      help={{ info: $T("widget.map.mode.info") }}
       type="buttons"
       options={MODE_OPTIONS}
       value={component.properties.mode ?? "objects"}
@@ -54,6 +55,7 @@
   <PropsGroup>
     <UI.Switch
       label={{ name: $T("constructor.props.simulation") }}
+      help={{ info: $T("widget.map.simulation.info") }}
       value={component.properties.isTest ? 1 : 0}
       onUpdate={(value) => edit.set("isTest", value === 1)}
     />
@@ -62,12 +64,18 @@
   <div class={twMerge("flex flex-col gap-2 transition-opacity", component.properties.isTest && "opacity-40 grayscale")} inert={component.properties.isTest}>
     <PropsGroup label={$T("constructor.props.group.general")}>
       <TextsEditor {component} {onPropertyChange} />
-      <UI.Input label={{ name: $T("widget.map.groups") }} value={(component.properties.groups ?? ["MAV"]).join(" ")} onUpdate={setGroups} />
+      <UI.Input
+        label={{ name: $T("widget.map.groups") }}
+        help={{ info: $T("widget.map.groups.info") }}
+        value={(component.properties.groups ?? ["MAV"]).join(" ")}
+        onUpdate={setGroups}
+      />
       <CommonSnippets snippet="Accent" {component} {onPropertyChange} />
     </PropsGroup>
     <PropsGroup label={$T("constructor.props.group.appearance")}>
       <UI.Select
         label={{ name: $T("widget.map.height") }}
+        help={{ info: $T("widget.map.height.info") }}
         type="buttons"
         options={HEIGHT_OPTIONS}
         value={component.properties.height ?? 400}
@@ -88,11 +96,13 @@
     <PropsGroup label={$T("widget.map.defaults")}>
       <UI.Switch
         label={{ name: $T("constructor.props.map.track") }}
+        help={{ info: $T("widget.map.track.info") }}
         value={component.properties.trackEnabled ? 1 : 0}
         onUpdate={(value) => edit.set("trackEnabled", Boolean(value))}
       />
       <UI.Select
         label={{ name: $T("constructor.props.map.trackLength") }}
+        help={{ info: $T("widget.map.track_length.info") }}
         type="input"
         options={TRACK_LENGTH_OPTIONS}
         value={component.properties.trackLength ?? 1000}

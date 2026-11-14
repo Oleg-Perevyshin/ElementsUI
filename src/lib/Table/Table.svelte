@@ -621,12 +621,15 @@
   {#snippet main()}
     {#if detailsEntry}
       {@const row = withPicks(detailsEntry.row)}
-      <div class="grid grid-cols-[minmax(6rem,max-content)_minmax(0,1fr)] items-center gap-x-4 gap-y-2.5 text-left">
+      <!-- Строки разделены чертой, название жирным; на узком окне название над значением -->
+      <div class="@container flex flex-col divide-y divide-(--border-color) text-left">
         {#each detailColumns as { column, index } (index)}
-          <div class="text-[12px] font-semibold text-(--muted-color)">{$T(column.label?.name ?? "")}</div>
-          <!-- Выпадающие списки окна - со своими номерами строк, чтобы не открывался список той же ячейки в таблице -->
-          <div class="flex min-w-0 flex-wrap items-center gap-2 text-[13px] [&>*]:min-w-0">
-            {@render items(row, detailsEntry.row, columnContent(column, row) as ITableContent<Row>[], true, -1 - detailsIndex, index)}
+          <div class="grid gap-1.5 py-3 first:pt-0 last:pb-0 @sm:grid-cols-[9rem_minmax(0,1fr)] @sm:items-center @sm:gap-4">
+            <div class="text-[13px] font-bold">{$T(column.label?.name ?? "")}</div>
+            <!-- Выпадающие списки окна - со своими номерами строк, чтобы не открывался список той же ячейки в таблице -->
+            <div class="flex min-w-0 flex-wrap items-center gap-2 text-[13px] [&>*]:min-w-0">
+              {@render items(row, detailsEntry.row, columnContent(column, row) as ITableContent<Row>[], true, -1 - detailsIndex, index)}
+            </div>
           </div>
         {/each}
       </div>

@@ -41,6 +41,7 @@
     <UI.Select
       wrapperClass="!h-14"
       label={{ name: $T("constructor.props.type") }}
+      help={{ info: $T("constructor.props.progressbar.type.info") }}
       type="buttons"
       options={$optionsStore.SWITCH_OPTIONS.filter((option) => option.value !== "checkbox")}
       value={component.properties.type}

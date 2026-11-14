@@ -52,12 +52,14 @@
     <UI.Switch
       type="checkbox"
       label={{ name: $T("constructor.props.accordion.stripe") }}
+      help={{ info: $T("constructor.props.accordion.stripe.info") }}
       value={component.properties.stripe ? 1 : 0}
       onUpdate={(value) => edit.set("stripe", value === 1)}
     />
     <UI.Switch
       type="checkbox"
       label={{ name: $T("constructor.props.accordion.outline") }}
+      help={{ info: $T("constructor.props.accordion.outline.info") }}
       value={component.properties.outline === false ? 0 : 1}
       disabled={!!component.properties.stripe}
       onUpdate={(value) => edit.set("outline", value === 1)}
@@ -66,6 +68,7 @@
       <UI.FileAttach
         type="image"
         label={{ name: $T("constructor.props.image") }}
+        help={{ info: $T("constructor.props.accordion.image.info") }}
         accept="image/png, image/jpeg, image/webp"
         currentImage={component.properties.image ?? ""}
         onUpdate={setImage}

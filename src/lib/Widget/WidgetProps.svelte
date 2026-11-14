@@ -44,6 +44,7 @@
     />
     <UI.Switch
       label={{ name: $T("constructor.props.widget.mode") }}
+      help={{ info: $T("constructor.props.widget.cycling.info") }}
       value={component.properties.icons?.cycling ? 1 : 0}
       onUpdate={(value) => edit.set("icons", { array: [], ...component.properties.icons, cycling: value === 1 })}
     />
@@ -52,6 +53,7 @@
     <CommonSnippets snippet="Accent" initialValue={{ exclude: [""] }} {component} {onPropertyChange} />
     <UI.Select
       label={{ name: $T("constructor.props.settings.type") }}
+      help={{ info: $T("constructor.props.widget.settings.type.info") }}
       type="buttons"
       options={$optionsStore.WIDGET_TYPE_OPTIONS}
       value={settings?.type}

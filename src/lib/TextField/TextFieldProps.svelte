@@ -58,6 +58,7 @@
   <PropsGroup label={$T("constructor.props.group.appearance")}>
     <UI.Select
       label={{ name: $T("constructor.props.size") }}
+      help={{ info: $T("constructor.props.textfield.size.info") }}
       type="buttons"
       value={component.properties.content?.size}
       options={$optionsStore.TEXTFIELD_SIZE_OPTIONS}
@@ -65,6 +66,7 @@
     />
     <UI.Select
       label={{ name: $T("constructor.props.textfield.settings") }}
+      help={{ info: $T("constructor.props.textfield.settings.info") }}
       type="buttons"
       multiSelect
       value={settings}

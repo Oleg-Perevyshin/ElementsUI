@@ -26,6 +26,7 @@
   <PropsGroup>
     <UI.Switch
       label={{ name: $T("constructor.props.simulation") }}
+      help={{ info: $T("constructor.props.graph.simulation.info") }}
       value={component.properties.isTest ? 1 : 0}
       onUpdate={(value) => edit.set("isTest", value === 1)}
     />
@@ -43,6 +44,7 @@
     <PropsGroup label={$T("constructor.props.group.behavior")}>
       <UI.Select
         label={{ name: $T("constructor.props.refreshrate") }}
+        help={{ info: $T("constructor.props.graph.refreshrate.info") }}
         options={REFRESH_OPTIONS}
         value={component.properties.refreshRate ?? 0}
         onUpdate={(refreshRate) => edit.set("refreshRate", refreshRate)}

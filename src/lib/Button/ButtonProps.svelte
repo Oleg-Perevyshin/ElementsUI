@@ -60,6 +60,7 @@
     <CommonSnippets snippet="Access" {component} {onPropertyChange} />
     <UI.Select
       label={{ name: $T("constructor.props.header") }}
+      help={{ info: $T("constructor.props.button.header.info") }}
       type="buttons"
       value={component.eventHandler?.Header}
       options={$optionsStore.HEADER_OPTIONS}
@@ -89,6 +90,7 @@
       <UI.Button wrapperClass="w-8" content={{ icon: InfoIcon, info: { text: $T("constructor.props.button.colors.hint"), side: "right" } }} />
       <UI.Select
         label={{ name: $T("constructor.props.colors") }}
+        help={{ info: $T("constructor.props.button.colors.info") }}
         type="buttons"
         options={$optionsStore.ACCENT_OPTIONS}
         value={colorValue}
@@ -107,6 +109,7 @@
     {#if hasName || !properties.content?.icon}
       <UI.Select
         label={{ name: $T("constructor.props.height") }}
+        help={{ info: $T("constructor.props.button.height.info") }}
         type="buttons"
         options={$optionsStore.HEIGHT_OPTIONS}
         value={optionByClass($optionsStore.HEIGHT_OPTIONS, properties.componentClass)?.value}

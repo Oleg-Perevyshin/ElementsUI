@@ -29,6 +29,7 @@
   <PropsGroup label={$T("constructor.props.group.value")}>
     <UI.Select
       label={{ name: $T("constructor.props.type") }}
+      help={{ info: $T("constructor.props.slider.type.info") }}
       type="buttons"
       value={component.properties.type ?? "single"}
       options={$optionsStore.SLIDER_TYPE_OPTIONS}

@@ -22,7 +22,12 @@
 <div class="flex flex-col gap-2">
   <PropsGroup label={$T("constructor.props.group.general")}>
     <TextsEditor {component} {onPropertyChange} />
-    <UI.Input label={{ name: $T("widget.rgb.group") }} value={component.properties.id ?? "LST"} onUpdate={(value) => edit.set("id", value as string)} />
+    <UI.Input
+      label={{ name: $T("widget.rgb.group") }}
+      help={{ info: $T("widget.rgb.group.info") }}
+      value={component.properties.id ?? "LST"}
+      onUpdate={(value) => edit.set("id", value as string)}
+    />
     <CommonSnippets snippet="Accent" {component} {onPropertyChange} />
   </PropsGroup>
 </div>

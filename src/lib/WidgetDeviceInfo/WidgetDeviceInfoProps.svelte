@@ -57,6 +57,7 @@
 {#snippet WidgetCommand(path: "restartCommand" | "resetCommand", defaultArgument: string)}
   <UI.Select
     label={{ name: $T("widget.common.packet_header") }}
+    help={{ info: $T("constructor.props.button.header.info") }}
     type="buttons"
     options={$optionsStore.HEADER_OPTIONS}
     value={component.properties[path]?.header || "SET"}
@@ -72,7 +73,12 @@
 <div class="flex flex-col gap-2">
   <PropsGroup label={$T("constructor.props.group.general")}>
     <TextsEditor {component} {onPropertyChange} />
-    <UI.Input label={{ name: $T("widget.common.group_prefix") }} value={component.properties.id} onUpdate={(value) => edit.set("id", value as string)} />
+    <UI.Input
+      label={{ name: $T("widget.common.group_prefix") }}
+      help={{ info: $T("widget.common.group_prefix.info") }}
+      value={component.properties.id}
+      onUpdate={(value) => edit.set("id", value as string)}
+    />
     <CommonSnippets snippet="Accent" {component} {onPropertyChange} />
   </PropsGroup>
   <PropsGroup label={$T("widget.info.fields")}>

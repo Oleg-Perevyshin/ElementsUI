@@ -6,6 +6,7 @@
   import type { UIComponent, IWidgetStackInfoProps } from "../types"
   import { createPropsEditor, type PropertyChange } from "../propsEditor"
   import PropsGroup from "../PropsGroup.svelte"
+  import ArgumentSelect from "../ArgumentSelect.svelte"
   import CommonSnippets from "../CommonSnippets.svelte"
 
   const {
@@ -27,6 +28,7 @@
   <PropsGroup label={$T("widget.stack.display")}>
     <UI.Input
       label={{ name: $T("widget.stack.warn_bytes") }}
+      help={{ info: $T("widget.stack.warn_bytes.info") }}
       type="number"
       number={{ minNum: 0, maxNum: 65535, step: 64 }}
       value={component.properties.warnBytes ?? 512}
@@ -34,6 +36,7 @@
     />
     <UI.Input
       label={{ name: $T("widget.stack.period") }}
+      help={{ info: $T("widget.stack.period.info") }}
       type="number"
       number={{ minNum: 0, maxNum: 60000, step: 1000 }}
       value={component.properties.period ?? 0}
@@ -43,13 +46,14 @@
   <PropsGroup label={$T("widget.common.device")}>
     <UI.Input
       label={{ name: $T("widget.stack.response") }}
+      help={{ info: $T("widget.stack.response.info") }}
       value={component.properties.keys?.StackInfo ?? "StackInfo"}
       onUpdate={(value) => edit.patch("keys", { StackInfo: value as string })}
     />
-    <UI.Input
-      label={{ name: $T("widget.stack.request") }}
+    <ArgumentSelect
+      label={$T("widget.stack.request")}
       value={component.properties.argument ?? "StackInfo"}
-      onUpdate={(value) => edit.set("argument", value as string)}
+      onUpdate={(argument) => edit.set("argument", argument)}
     />
   </PropsGroup>
 </div>

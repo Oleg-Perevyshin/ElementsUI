@@ -63,7 +63,12 @@
 </script>
 
 {#snippet Flag(name: string, key: "disabled" | "readonly")}
-  <UI.Switch label={{ name }} value={properties[key] ? 1 : 0} onUpdate={(value) => edit.set(key, value === 1)} />
+  <UI.Switch
+    label={{ name }}
+    help={{ info: $T(`constructor.props.${key}.info`) }}
+    value={properties[key] ? 1 : 0}
+    onUpdate={(value) => edit.set(key, value === 1)}
+  />
 {/snippet}
 
 {#snippet MinMaxStep({ number, bitMode, onUpdate }: { number?: NumberRange; bitMode?: boolean; onUpdate: (number: NumberRange) => void })}
@@ -72,6 +77,7 @@
       {#if key !== "step" || (component.type !== "ProgressBar" && component.type !== "Joystick")}
         <UI.Input
           label={{ name: $T(`constructor.props.${caption}`) }}
+          help={{ info: $T(`constructor.props.${caption}.info`) }}
           value={number?.[key]}
           type="number"
           number={key === "step" ? { minNum: 0, maxNum: 1000000, step: 1 } : undefined}
@@ -145,6 +151,7 @@
 {#if snippet === "Variable"}
   <UI.Select
     label={{ name: $T("constructor.props.variable") }}
+    help={{ info: $T("constructor.props.variable.info") }}
     type="input"
     options={VARIABLE_OPTIONS}
     value={properties.id}
@@ -161,6 +168,7 @@
 {:else if snippet === "Access"}
   <UI.Select
     label={{ name: $T("constructor.props.access") }}
+    help={{ info: $T("constructor.props.access.info") }}
     type="buttons"
     options={["Accordion", "Tabs", "ProgressBar", "TextField", "Graph", "PeriodChart"].includes(component.type)
       ? $optionsStore.ACCESS_OPTION.filter((option) => option.value !== "viewOnly")
@@ -171,6 +179,7 @@
 {:else if snippet === "Accent"}
   <UI.Select
     label={{ name: $T("ui.accent") }}
+    help={{ info: $T("ui.accent.info") }}
     type="buttons"
     options={$optionsStore.ACCENT_OPTIONS.filter((option) => !initialValue?.exclude?.includes(option.value))}
     value={properties.accent}
@@ -181,6 +190,7 @@
 {:else if snippet === "LabelAlign"}
   <UI.Select
     label={{ name: $T("constructor.props.align") }}
+    help={{ info: $T("constructor.props.align.info") }}
     type="buttons"
     value={optionByClass(alignOptions, properties[alignKey]?.class)?.value}
     options={alignOptions}
@@ -193,6 +203,7 @@
 {:else if snippet === "EventHandlerArgument"}
   <UI.Select
     label={{ name: $T("constructor.props.action") }}
+    help={{ info: $T("constructor.props.action.info") }}
     type="buttons"
     value={component.eventHandler?.Argument}
     options={$optionsStore.SHORT_ARGUMENT_OPTION}

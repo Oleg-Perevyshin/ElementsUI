@@ -30,6 +30,7 @@
         captionLeft: $T("constructor.props.video.viewer.source.camera"),
         captionRight: $T("constructor.props.video.viewer.source.remote"),
       }}
+      help={{ info: $T("constructor.props.video.source.info") }}
       value={component.properties.source === "remote" ? 1 : 0}
       onUpdate={(value) => edit.set("source", value === 1 ? "remote" : "camera")}
     />
@@ -37,12 +38,14 @@
   <PropsGroup label={$T("constructor.props.group.appearance")}>
     <UI.Switch
       label={{ name: $T("constructor.props.showSelect") }}
+      help={{ info: $T("constructor.props.video.showSelect.info") }}
       value={component.properties.showSelect ? 1 : 0}
       onUpdate={(value) => edit.set("showSelect", value === 1)}
     />
     {#if component.properties.source === "remote"}
       <UI.Input
         label={{ name: $T("constructor.props.video.viewer.stream.key") }}
+        help={{ info: $T("constructor.props.video.streamKey.info") }}
         value={component.properties.streamKey ?? ""}
         onUpdate={(value) => edit.set("streamKey", String(value))}
       />

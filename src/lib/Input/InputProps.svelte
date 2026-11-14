@@ -77,6 +77,7 @@
     <CommonSnippets snippet="Variable" {VARIABLE_OPTIONS} {component} {onPropertyChange} />
     <UI.Select
       label={{ name: $T("constructor.props.type") }}
+      help={{ info: $T("constructor.props.input.type.info") }}
       options={$optionsStore.INPUT_TYPE_OPTIONS}
       type="buttons"
       value={properties.type ?? "text"}
@@ -85,6 +86,7 @@
     {#if isText}
       <UI.Input
         label={{ name: $T("constructor.props.maxlength") }}
+        help={{ info: $T("constructor.props.maxlength.info") }}
         type="number"
         number={{ minNum: 1, maxNum: 1000000, step: 1 }}
         value={properties.maxlength}
@@ -93,6 +95,7 @@
       <div class="flex items-end">
         <UI.Input
           label={{ name: $T("constructor.props.regexp") }}
+          help={{ info: $T("constructor.props.regexp.info") }}
           value={properties.help?.regExp?.toString()}
           maxlength={150}
           accent={isValidRegExp ? undefined : "red"}
@@ -124,6 +127,7 @@
       {#if properties.type === "text-area"}
         <UI.Input
           label={{ name: $T("constructor.props.textarea.rows") }}
+          help={{ info: $T("constructor.props.textarea.rows.info") }}
           type="number"
           value={properties.textareaRows}
           onUpdate={(value) => edit.set("textareaRows", Number(value))}
@@ -132,6 +136,7 @@
       {#if properties.type !== "password"}
         <UI.Select
           label={{ name: $T("constructor.props.align.content") }}
+          help={{ info: $T("constructor.props.align.content.info") }}
           options={$optionsStore.TEXT_ALIGN_OPTIONS}
           type="buttons"
           value={optionByClass($optionsStore.TEXT_ALIGN_OPTIONS, properties.componentClass)?.value ?? "text-left"}
@@ -148,6 +153,7 @@
     {:else if properties.type === "bitMode"}
       <UI.Slider
         label={{ name: $T("constructor.props.range") }}
+        help={{ info: $T("constructor.props.range.info") }}
         type="range"
         number={{ minNum: 0, maxNum: 31, step: 1 }}
         value={[bitRange.start, bitRange.end]}
@@ -158,7 +164,7 @@
   <PropsGroup label={$T("constructor.props.group.value")}>
     <UI.Input
       label={{ name: $T("constructor.props.defaultvalue") }}
-      help={{ regExp: properties.type === "number" ? /^-?\d*\.?\d+$/ : undefined }}
+      help={{ info: $T("constructor.props.defaultvalue.info"), regExp: properties.type === "number" ? /^-?\d*\.?\d+$/ : undefined }}
       value={properties.value}
       onUpdate={(value) => edit.set("value", value)}
     />
@@ -184,6 +190,7 @@
     <CommonSnippets snippet="LabelAlign" {component} {onPropertyChange} />
     <UI.Select
       label={{ name: $T("constructor.props.autocomplete") }}
+      help={{ info: $T("constructor.props.autocomplete.info") }}
       options={$optionsStore.AUTOCOMPLETE_CONSTRUCTOR_OPTIONS as IOption<string>[]}
       value={properties.help?.autocomplete || "off"}
       onUpdate={(autocomplete) => edit.patch("help", { autocomplete: autocomplete as NonNullable<IInputProps["help"]>["autocomplete"] })}

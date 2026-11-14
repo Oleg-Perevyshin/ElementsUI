@@ -7,6 +7,7 @@
   import type { UIComponent, IWidgetWiFiProps, IWidgetWiFiConfig, IOption } from "../types"
   import { createPropsEditor, type PropertyChange } from "../propsEditor"
   import PropsGroup from "../PropsGroup.svelte"
+  import ArgumentSelect from "../ArgumentSelect.svelte"
   import CommonSnippets from "../CommonSnippets.svelte"
   import { optionsStore } from "../options"
 
@@ -34,33 +35,45 @@
 {/snippet}
 
 {#snippet WidgetGroupPrefix()}
-  <UI.Input label={{ name: $T("widget.common.group_prefix") }} value={component.properties.id} onUpdate={(value) => edit.set("id", value as string)} />
+  <UI.Input
+    label={{ name: $T("widget.common.group_prefix") }}
+    help={{ info: $T("widget.common.group_prefix.info") }}
+    value={component.properties.id}
+    onUpdate={(value) => edit.set("id", value as string)}
+  />
 {/snippet}
 
 {#snippet WidgetKeys()}
   {#each WIFI_KEYS as key (key)}
-    <UI.Input label={{ name: key }} value={component.properties.keys?.[key] ?? key} onUpdate={(value) => edit.patch("keys", { [key]: String(value) })} />
+    <UI.Input
+      label={{ name: key }}
+      help={{ info: $T("widget.common.key.info") }}
+      value={component.properties.keys?.[key] ?? key}
+      onUpdate={(value) => edit.patch("keys", { [key]: String(value) })}
+    />
   {/each}
 {/snippet}
 
 {#snippet WidgetScanCommand()}
   <UI.Select
     label={{ name: $T("widget.common.packet_header") }}
+    help={{ info: $T("constructor.props.button.header.info") }}
     type="buttons"
     options={$optionsStore.HEADER_OPTIONS}
     value={component.properties.scanCommand?.header || "GET"}
     onUpdate={(option) => edit.patch("scanCommand", { header: option })}
   />
-  <UI.Input
-    label={{ name: $T("widget.common.argument") }}
+  <ArgumentSelect
+    label={$T("widget.common.argument")}
     value={component.properties.scanCommand?.argument ?? "APsList"}
-    onUpdate={(value) => edit.patch("scanCommand", { argument: value as string })}
+    onUpdate={(argument) => edit.patch("scanCommand", { argument })}
   />
 {/snippet}
 
 {#snippet WidgetAllowedModes()}
   <UI.Select
     label={{ name: $T("widget.wifi.allowed_modes") }}
+    help={{ info: $T("widget.wifi.allowed_modes.info") }}
     type="buttons"
     multiSelect
     options={MODE_OPTIONS}
@@ -72,6 +85,7 @@
 {#snippet WidgetConfirmAP()}
   <UI.Switch
     label={{ name: $T("widget.wifi.ap_confirm") }}
+    help={{ info: $T("widget.wifi.ap_confirm.info") }}
     value={component.properties.confirmOnAP === false ? 0 : 1}
     onUpdate={(value) => edit.set("confirmOnAP", value === 1)}
   />

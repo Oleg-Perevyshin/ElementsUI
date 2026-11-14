@@ -39,6 +39,7 @@
     <UI.Select
       wrapperClass="!h-14"
       label={{ name: $T("constructor.props.type") }}
+      help={{ info: $T("constructor.props.switch.type.info") }}
       type="buttons"
       options={$optionsStore.SWITCH_OPTIONS.map((option) => ({ ...option, disabled: bitMode && option.value == "checkbox" }))}
       value={component.properties.type}
@@ -57,6 +58,7 @@
     {#if component.properties.type != "checkbox"}
       <UI.Switch
         label={{ name: $T("constructor.props.bitMode") }}
+        help={{ info: $T("constructor.props.switch.bitMode.info") }}
         value={bitMode ? 1 : 0}
         onUpdate={(value) => onPropertyChange({ properties: { bitMode: value === 1, value: 0 } })}
       />
@@ -102,6 +104,7 @@
             />
             <UI.Switch
               label={{ captionRight: $T("constructor.props.disabled") }}
+              help={{ info: $T("constructor.props.switch.bit.disabled.info") }}
               value={bit.disabled ? 1 : 0}
               onUpdate={(value) => edit.updateItem("options", index, { disabled: value === 1 })}
             />

@@ -58,6 +58,7 @@
   <PropsGroup label={$T("constructor.props.group.appearance")}>
     <UI.Select
       label={{ name: $T("constructor.props.orientation") }}
+      help={{ info: $T("constructor.props.tabs.orientation.info") }}
       type="buttons"
       options={$optionsStore.ORIENTATION_OPTIONS}
       value={component.properties.orientation ?? "horizontal"}
@@ -66,6 +67,7 @@
     <UI.Select
       wrapperClass="h-14"
       label={{ name: $T("constructor.props.icon.text.position") }}
+      help={{ info: $T("constructor.props.tabs.iconpos.info") }}
       type="buttons"
       options={$optionsStore.ICON_TEXT_POSITION_OPTIONS}
       value={position}
@@ -73,6 +75,7 @@
     />
     <UI.Switch
       label={{ name: $T("constructor.props.widthMode"), captionLeft: $T("constructor.props.height.small"), captionRight: $T("constructor.props.equal") }}
+      help={{ info: $T("constructor.props.tabs.widthMode.info") }}
       value={equalWidth ? 1 : 0}
       onUpdate={(value) => setItems(items, value === 1)}
     />
@@ -126,6 +129,7 @@
             <UI.Switch
               wrapperClass="w-auto"
               label={{ captionRight: $T("constructor.props.disabled") }}
+              help={{ info: $T("constructor.props.tabs.tab.disabled.info") }}
               value={tab.disabled ? 1 : 0}
               onUpdate={(value) => edit.updateItem("items", index, { disabled: value === 1 })}
             />

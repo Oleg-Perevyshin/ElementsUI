@@ -75,9 +75,9 @@ const constructorTranslations = {
     zh: "🎯 **用途**\n开启和关闭：继电器、模式、标志。\n\n📦 **数据包**\n- 读写一个变量\n- 切换时立即发送值\n- 发送 - 按设置中的事件：**标头**（通常为 `SET`）、**参数**（通常为 `ModCfg`；`NoSend` - 不立即发送，值随其他组件一起发出，例如「保存」按钮）和 **变量** - 同一数据包中还要包含哪些值\n\n🔑 **键**\n- `<变量>` - `0` 或 `1`；位模式 - 整数掩码，每个开关控制自己的位 0-31\n\n⚙️ **设置**\n- 视图：带左右标签的横向或纵向拨动开关，复选框 - 紧凑版\n- 位模式：每个开关的位号",
   },
   "component.info.Table": {
-    ru: '🎯 **Назначение**\nСписок строк с данными устройства: файлы, журнал, параметры.\n\n📦 **Пакет данных**\n- Читает одну переменную - массив объектов, одна строка на объект\n- Ячейка-кнопка отправляет своё событие, остальные ячейки - только отображение\n\n🔑 **Ключи**\n- `<переменная>` - массив `[{ "<ключ колонки>": значение, ... }, ...]`; ключи колонок задаются в настройках\n\n✨ **Особенности**\n- Накопление данных: новые строки дописываются в буфер заданного размера - таблица работает как журнал, вверху или внизу, с кнопкой очистки\n\n⚙️ **Настройки**\n- Колонки: ключ поля, ширина, выравнивание, тип ячейки - текст (сортировка, копирование, обрезка «…», подсказка, окно с полным текстом), список, кнопка, полоса прогресса, иконка\n- Накопление, размер буфера, видимое число строк',
-    en: '🎯 **Purpose**\nRows of device data: files, log, parameters.\n\n📦 **Data packet**\n- Reads one variable - an array of objects, one row per object\n- A button cell sends its own event, other cells are display only\n\n🔑 **Keys**\n- `<variable>` - array `[{ "<column key>": value, ... }, ...]`; column keys are set in settings\n\n✨ **Features**\n- Data accumulation: new rows are appended to a buffer of the set size - the table works as a log, at the top or bottom, with a clear button\n\n⚙️ **Settings**\n- Columns: field key, width, alignment, cell type - text (sorting, copy, "…" truncation, tooltip, full-text window), select, button, progress bar, icon\n- Accumulation, buffer size, visible row count',
-    zh: '🎯 **用途**\n设备数据行列表：文件、日志、参数。\n\n📦 **数据包**\n- 读取一个变量 - 对象数组，每个对象一行\n- 按钮单元格发送自己的事件，其余单元格仅显示\n\n🔑 **键**\n- `<变量>` - 数组 `[{ "<列键>": 值, ... }, ...]`；列键在设置中指定\n\n✨ **特点**\n- 数据累积：新行追加到指定大小的缓冲区 - 表格作为日志使用，可在顶部或底部添加，带清除按钮\n\n⚙️ **设置**\n- 列：字段键、宽度、对齐、单元格类型 - 文本（排序、复制、「…」截断、提示、全文窗口）、列表、按钮、进度条、图标\n- 累积、缓冲区大小、可见行数',
+    ru: '🎯 **Назначение**\nСписок строк с данными устройства: файлы, журнал, параметры.\n\n📦 **Пакет данных**\n- Читает одну переменную - массив объектов, одна строка на объект\n- Ячейка-кнопка отправляет своё событие, остальные ячейки - только отображение\n\n🔑 **Ключи**\n- `<переменная>` - массив `[{ "<ключ колонки>": значение, ... }, ...]`; ключи колонок задаются в настройках\n\n✨ **Особенности**\n- Накопление данных: новые строки дописываются в буфер заданного размера - таблица работает как журнал, вверху или внизу, с кнопкой очистки\n- Окно подробностей: кнопка «›» в конце строки открывает все её поля. Колонки с местом «Подробности» видны только там, «Оба» - и в строке, и в окне, «По ширине» - в строке, а на узкой таблице (телефон) уходят в окно\n\n⚙️ **Настройки**\n- Колонки: ключ поля, ширина, выравнивание, тип ячейки - текст (сортировка, копирование, обрезка «…», подсказка, окно с полным текстом), список, кнопка, полоса прогресса, иконка\n- Накопление, размер буфера, видимое число строк',
+    en: '🎯 **Purpose**\nRows of device data: files, log, parameters.\n\n📦 **Data packet**\n- Reads one variable - an array of objects, one row per object\n- A button cell sends its own event, other cells are display only\n\n🔑 **Keys**\n- `<variable>` - array `[{ "<column key>": value, ... }, ...]`; column keys are set in settings\n\n✨ **Features**\n- Data accumulation: new rows are appended to a buffer of the set size - the table works as a log, at the top or bottom, with a clear button\n- Details window: the «›» button at the end of a row opens all its fields. Columns placed in "Details" are shown only there, "Both" - in the row and in the window, "By width" - in the row, and on a narrow table (phone) they move to the window\n\n⚙️ **Settings**\n- Columns: field key, width, alignment, cell type - text (sorting, copy, "…" truncation, tooltip, full-text window), select, button, progress bar, icon\n- Accumulation, buffer size, visible row count',
+    zh: '🎯 **用途**\n设备数据行列表：文件、日志、参数。\n\n📦 **数据包**\n- 读取一个变量 - 对象数组，每个对象一行\n- 按钮单元格发送自己的事件，其余单元格仅显示\n\n🔑 **键**\n- `<变量>` - 数组 `[{ "<列键>": 值, ... }, ...]`；列键在设置中指定\n\n✨ **特点**\n- 数据累积：新行追加到指定大小的缓冲区 - 表格作为日志使用，可在顶部或底部添加，带清除按钮\n- 详情窗口：行末的「›」按钮打开该行所有字段。位置为「详情」的列只在窗口中显示，「两者」- 行中和窗口中都显示，「按宽度」- 在行中显示，表格较窄（手机）时移入窗口\n\n⚙️ **设置**\n- 列：字段键、宽度、对齐、单元格类型 - 文本（排序、复制、「…」截断、提示、全文窗口）、列表、按钮、进度条、图标\n- 累积、缓冲区大小、可见行数',
   },
   "component.info.Tabs": {
     ru: "🎯 **Назначение**\nНесколько страниц компонентов в одном месте.\n\n📦 **Пакет данных**\nНе связаны с устройством.\n\n✨ **Особенности**\n- У каждой вкладки своя сетка: компоненты размещаются на активной вкладке конструктора\n- Не больше 10 вкладок\n\n⚙️ **Настройки**\n- Вкладки: название и иконка каждой\n- Расположение: вкладки строкой сверху или столбцом слева (на узком месте - всё равно строкой сверху)\n- Ширина кнопок: по содержимому или поровну; иконка слева, сверху, справа или снизу от названия",
@@ -229,9 +229,9 @@ const constructorTranslations = {
   "constructor.props.align.content": { ru: "Выравнивание контента", en: "Content alignment", zh: "内容对齐" },
   "constructor.props.tablecolumn.settings": { ru: "Настройки текста", en: "Text settings", zh: "文本设置" },
   "constructor.props.tablecolumn.settings.info": {
-    ru: "Как показывать текст ячейки:\n**↑↓ Сортировка** - стрелки в заголовке колонки сортируют строки по этому полю.\n**Копирование** - кнопка рядом с текстом копирует его.\n**… Обрезать** - длинный текст в одну строку с многоточием в конце.\n**Подсказка при наведении** - весь текст всплывает у курсора мыши.\n**Окно с полным текстом** - нажатие на текст открывает окно, где он виден целиком и копируется.",
-    en: "How the cell text is shown:\n**↑↓ Sort** - arrows in the column header sort rows by this field.\n**Copy** - a button next to the text copies it.\n**… Truncate** - long text on one line with an ellipsis.\n**Hover hint** - the whole text pops up at the mouse cursor.\n**Full text window** - clicking the text opens a window with the whole text and a copy button.",
-    zh: "单元格文本的显示方式：\n**↑↓ 排序** - 列标题中的箭头按此字段排序。\n**复制** - 文本旁的按钮复制文本。\n**… 截断** - 长文本单行显示，末尾带省略号。\n**悬停提示** - 完整文本在鼠标处弹出。\n**完整文本窗口** - 点击文本打开窗口，显示完整文本并可复制。",
+    ru: "**Как показывать текст ячейки:**\n**↑↓ Сортировка** - стрелки в заголовке колонки сортируют строки по этому полю.\n**Копирование** - кнопка рядом с текстом копирует его.\n**… Обрезать** - длинный текст в одну строку с многоточием в конце.\n**Подсказка при наведении** - весь текст всплывает у курсора мыши.\n**Окно с полным текстом** - нажатие на текст открывает окно, где он виден целиком и копируется.",
+    en: "**How the cell text is shown:**\n**↑↓ Sort** - arrows in the column header sort rows by this field.\n**Copy** - a button next to the text copies it.\n**… Truncate** - long text on one line with an ellipsis.\n**Hover hint** - the whole text pops up at the mouse cursor.\n**Full text window** - clicking the text opens a window with the whole text and a copy button.",
+    zh: "**单元格文本的显示方式：**\n**↑↓ 排序** - 列标题中的箭头按此字段排序。\n**复制** - 文本旁的按钮复制文本。\n**… 截断** - 长文本单行显示，末尾带省略号。\n**悬停提示** - 完整文本在鼠标处弹出。\n**完整文本窗口** - 点击文本打开窗口，显示完整文本并可复制。",
   },
   "constructor.props.textfield.settings": { ru: "Настройки текста", en: "Text settings", zh: "文本设置" },
   "constructor.props.image": { ru: "Фоновое изображение", en: "Background image", zh: "背景图片" },
@@ -371,9 +371,9 @@ const constructorTranslations = {
   "constructor.props.table.columns.width": { ru: "Ширина, %", en: "Width, %", zh: "宽度，%" },
   "constructor.props.table.columns.place": { ru: "Где показывать", en: "Show in", zh: "显示位置" },
   "constructor.props.table.columns.place.info": {
-    ru: "Где видна колонка:\n**Таблица** - в строке.\n**Подробности** - только в окне строки, его открывает стрелка «›» в конце строки.\n**Оба** - и в строке, и в окне.\n**По ширине** - в строке, пока таблица шире 640 px. На телефоне и в узкой ячейке - в окне.",
-    en: "Where the column is shown:\n**Table** - in the row.\n**Details** - only in the row window opened by the «›» arrow at the end of the row.\n**Both** - in the row and in the window.\n**By width** - in the row while the table is wider than 640 px. On a phone or in a narrow cell - in the window.",
-    zh: "列的显示位置：\n**表格** - 显示在行中。\n**详情** - 仅在行窗口中显示，点击行末的「›」箭头打开。\n**两者** - 行中和窗口中都显示。\n**按宽度** - 表格宽于 640 px 时显示在行中；在手机或窄单元格中显示在窗口中。",
+    ru: "**Где видна колонка:**\n**Таблица** - в строке.\n**Подробности** - только в окне строки, его открывает стрелка «›» в конце строки.\n**Оба** - и в строке, и в окне.\n**По ширине** - в строке, пока таблица шире 640 px. На телефоне и в узкой ячейке - в окне.",
+    en: "**Where the column is shown:**\n**Table** - in the row.\n**Details** - only in the row window opened by the «›» arrow at the end of the row.\n**Both** - in the row and in the window.\n**By width** - in the row while the table is wider than 640 px. On a phone or in a narrow cell - in the window.",
+    zh: "**列的显示位置：**\n**表格** - 显示在行中。\n**详情** - 仅在行窗口中显示，点击行末的「›」箭头打开。\n**两者** - 行中和窗口中都显示。\n**按宽度** - 表格宽于 640 px 时显示在行中；在手机或窄单元格中显示在窗口中。",
   },
   "constructor.props.table.place.table": { ru: "Таблица", en: "Table", zh: "表格" },
   "constructor.props.table.place.details": { ru: "Подробности", en: "Details", zh: "详情" },
@@ -568,9 +568,9 @@ const constructorTranslations = {
     zh: "按钮颜色。\n**红色** - 用于删除和其他危险操作。",
   },
   "constructor.props.table.button.header.info": {
-    ru: "Что команда делает с устройством:\n**GET** - запросить данные.\n**SET** - изменить или выполнить.\n**OK! и ER!** - ответы устройства, кнопке обычно не нужны.",
-    en: "What the command does to the device:\n**GET** - request data.\n**SET** - change or run.\n**OK! and ER!** - device replies, a button rarely needs them.",
-    zh: "命令对设备的作用：\n**GET** - 请求数据。\n**SET** - 修改或执行。\n**OK! 和 ER!** - 设备应答，按钮通常不需要。",
+    ru: "**Что команда делает с устройством:**\n**GET** - запросить данные.\n**SET** - изменить или выполнить.\n**OK! и ER!** - ответы устройства, кнопке обычно не нужны.",
+    en: "**What the command does to the device:**\n**GET** - request data.\n**SET** - change or run.\n**OK! and ER!** - device replies, a button rarely needs them.",
+    zh: "**命令对设备的作用：**\n**GET** - 请求数据。\n**SET** - 修改或执行。\n**OK! 和 ER!** - 设备应答，按钮通常不需要。",
   },
   "constructor.props.table.progress.min.info": {
     ru: "Значение, при котором полоса пустая.",
@@ -613,9 +613,9 @@ const constructorTranslations = {
     zh: "表头中用于清空日志的红色按钮。",
   },
   "constructor.props.table.logger.info": {
-    ru: "Где появляются новые строки журнала:\n**снизу** - как в консоли,\n**сверху** - самое свежее всегда на виду.",
-    en: "Where new log rows appear:\n**at the bottom** - like a console,\n**at the top** - the newest is always in view.",
-    zh: "新日志行的出现位置：\n**底部** - 类似控制台，\n**顶部** - 最新内容始终可见。",
+    ru: "**Где появляются новые строки журнала:**\n**снизу** - как в консоли,\n**сверху** - самое свежее всегда на виду.",
+    en: "**Where new log rows appear:**\n**at the bottom** - like a console,\n**at the top** - the newest is always in view.",
+    zh: "**新日志行的出现位置：**\n**底部** - 类似控制台，\n**顶部** - 最新内容始终可见。",
   },
   "constructor.props.table.text.key.info": {
     ru: "Поле строки, из которого берётся текст ячейки.\n**Каждая строка таблицы** - запись с полями, ключ - имя поля.\n**Пример**: в списке модулей CFG.ModList есть ключи ModName, ModSN и RSSI.",
@@ -631,6 +631,391 @@ const constructorTranslations = {
     ru: "Поле строки с числом для полосы.\n**Пример**: Progress - процент обновления модуля.",
     en: "The row field with the number for the bar.\n**Example**: Progress - the module update percentage.",
     zh: "行中用于进度条的数值字段。\n**示例：Progress** - 模块更新百分比。",
+  },
+  "constructor.props.variable.info": {
+    ru: "Переменная устройства, с которой связан компонент: он показывает её значение и отправляет новое.\nВыберите из списка переменных модели или введите имя.\n**Пример**: CFG.DevName - имя устройства, APP.Single - период отправки датчика.",
+    en: "The device variable the component is bound to: it shows its value and sends a new one.\nPick it from the model's variable list or type the name.\n**Example**: CFG.DevName - device name, APP.Single - sensor send period.",
+    zh: "组件绑定的设备变量：显示其值并发送新值。\n从型号的变量列表中选择或输入名称。\n**示例：CFG.DevName** - 设备名称，APP.Single - 传感器发送周期。",
+  },
+  "constructor.props.access.info": {
+    ru: "**Что видит наблюдатель** - пользователь с ролью «Наблюдатель» на устройстве.\nВладелец, администратор и пользователь видят компонент всегда и могут им управлять.\n**Полный** - наблюдатель видит компонент, управлять не может.\n**Просмотр** - так же: видит, управлять не может.\n**Скрыто** - наблюдатель компонент не видит.",
+    en: "**What a viewer sees** - a user with the Viewer role on the device.\nThe owner, admin and user always see the component and can control it.\n**Full** - the viewer sees the component but cannot control it.\n**View only** - the same: sees it, cannot control it.\n**Hidden** - the viewer does not see the component.",
+    zh: "观察者（在设备上具有「观察者」角色的用户）看到的内容。\n所有者、管理员和用户始终可见并可操作该组件。\n**完全** - 观察者可见，但不能操作。\n**只读** - 同样：可见，但不能操作。\n**隐藏** - 观察者看不到该组件。",
+  },
+  "ui.accent.info": {
+    ru: "Основной цвет компонента: кнопки, переключатели, выделение.\nПовторное нажатие на выбранный цвет возвращает цвет по умолчанию.",
+    en: "The component's main color: buttons, switches, highlight.\nClicking the selected color again returns the default color.",
+    zh: "组件的主色：按钮、开关、高亮。\n再次点击已选颜色恢复默认颜色。",
+  },
+  "constructor.props.align.info": {
+    ru: "Как прижать подпись: влево, по центру или вправо.",
+    en: "How the label is aligned: left, center or right.",
+    zh: "标签的对齐方式：左、中或右。",
+  },
+  "constructor.props.action.info": {
+    ru: "**Что сделать, когда значение изменили:**\n**Сохранить** - сразу отправить устройству SET ModCfg с новым значением.\n**Без отправки** - только запомнить. Значение уйдёт вместе с кнопкой «Сохранить», если переменная есть в её списке.",
+    en: "**What to do when the value changes:**\n**Save** - send SET ModCfg with the new value to the device at once.\n**No send** - only remember it. The value goes with a Save button whose variable list contains it.",
+    zh: "**值改变时的操作：**\n**保存** - 立即向设备发送带新值的 SET ModCfg。\n**不发送** - 仅记住。该值随「保存」按钮一起发送（需在其变量列表中）。",
+  },
+  "constructor.props.disabled.info": {
+    ru: "Компонент виден, но не нажимается и не меняется.",
+    en: "The component is visible but cannot be pressed or changed.",
+    zh: "组件可见，但不能点击或修改。",
+  },
+  "constructor.props.readonly.info": {
+    ru: "Значение видно и копируется, но изменить его нельзя.",
+    en: "The value is visible and can be copied, but not changed.",
+    zh: "值可见且可复制，但不能修改。",
+  },
+  "constructor.props.min.info": {
+    ru: "Наименьшее значение.",
+    en: "The smallest value.",
+    zh: "最小值。",
+  },
+  "constructor.props.max.info": {
+    ru: "Наибольшее значение.",
+    en: "The largest value.",
+    zh: "最大值。",
+  },
+  "constructor.props.step.info": {
+    ru: "На сколько меняется значение за один шаг: стрелками, колесом мыши или ползунком.",
+    en: "How much the value changes per step: with the arrows, the mouse wheel or the slider.",
+    zh: "每步的变化量：使用箭头、鼠标滚轮或滑块。",
+  },
+  "constructor.props.button.header.info": {
+    ru: "**Что команда делает с устройством:**\n**GET** - запросить данные.\n**SET** - изменить или выполнить.\n**OK! и ER!** - ответы устройства, кнопке обычно не нужны.",
+    en: "**What the command does to the device:**\n**GET** - request data.\n**SET** - change or run.\n**OK! and ER!** - device replies, a button rarely needs them.",
+    zh: "**命令对设备的作用：**\n**GET** - 请求数据。\n**SET** - 修改或执行。\n**OK! 和 ER!** - 设备应答，按钮通常不需要。",
+  },
+  "constructor.props.button.colors.info": {
+    ru: "Цвет кнопки.\n**Красный** - для удаления и других опасных действий.",
+    en: "Button color.\n**Red** - for deleting and other dangerous actions.",
+    zh: "按钮颜色。\n**红色** - 用于删除和其他危险操作。",
+  },
+  "constructor.props.button.height.info": {
+    ru: "**Высота кнопки:**\n**S** - 28 px, M - 32 px, как у полей ввода, L - 40 px.",
+    en: "**Button height:**\n**S** - 28 px, M - 32 px, like input fields, L - 40 px.",
+    zh: "**按钮高度：**\n**S** - 28 px，M - 32 px（与输入框相同），L - 40 px。",
+  },
+  "constructor.props.accordion.stripe.info": {
+    ru: "Цветная полоса слева, как у разделов админки.\n**Цвет** - мастер-цвет блока. С полосой рамка есть всегда.",
+    en: "A colored stripe on the left, like admin sections.\nThe color is the block's accent color. With a stripe there is always an outline.",
+    zh: "左侧彩色条，类似管理后台的分区。\n颜色为区块主色。有色条时始终有边框。",
+  },
+  "constructor.props.accordion.outline.info": {
+    ru: "Рамка и скругление блока.\nВыключите, если блок уже лежит в своей карточке, иначе выйдет двойная рамка.",
+    en: "The block's outline and rounded corners.\nTurn it off if the block already sits in its own card, otherwise you get a double border.",
+    zh: "区块的边框和圆角。\n如果区块已在自己的卡片中，请关闭，否则会出现双边框。",
+  },
+  "constructor.props.accordion.image.info": {
+    ru: "Картинка фона под содержимым блока.\nРастягивается на всю область, строки блока становятся не ниже 6.5 rem.\nКрестик справа убирает картинку.",
+    en: "A background picture under the block's content.\nIt is stretched over the whole area, block rows become at least 6.5 rem tall.\nThe cross on the right removes the picture.",
+    zh: "区块内容下方的背景图片。\n拉伸至整个区域，区块行高至少 6.5 rem。\n右侧的叉号删除图片。",
+  },
+  "constructor.props.divider.type.info": {
+    ru: "**Как выглядит разделитель:**\n**Полоса** - видимая черта.\n**Пустота** - только отступ без черты, чтобы разнести группы.",
+    en: "**What the divider looks like:**\n**Line** - a visible line.\n**Empty** - only spacing without a line, to separate groups.",
+    zh: "**分隔符的样式：**\n**线** - 可见的线。\n**空白** - 仅留间距、无线，用于分隔组。",
+  },
+  "constructor.props.divider.orientation.info": {
+    ru: "**Направление линии:**\n**Горизонтально** - слева направо на всю ширину.\n**Вертикально** - сверху вниз на всю высоту ячейки.",
+    en: "**Line direction:**\n**Horizontal** - left to right across the full width.\n**Vertical** - top to bottom over the full cell height.",
+    zh: "**线的方向：**\n**水平** - 从左到右贯穿全宽。\n**垂直** - 从上到下贯穿单元格全高。",
+  },
+  "constructor.props.divider.anchor.info": {
+    ru: "Где стоит линия внутри своей ячейки сетки.\n**Для горизонтальной** - сверху, посередине или снизу, для вертикальной - слева, посередине или справа.",
+    en: "Where the line sits inside its grid cell.\n**For a horizontal one** - top, middle or bottom, for a vertical one - left, middle or right.",
+    zh: "线在其网格单元中的位置。\n**水平线** - 上、中或下；垂直线 - 左、中或右。",
+  },
+  "constructor.props.divider.width.info": {
+    ru: "Толщина линии в пикселях.",
+    en: "Line thickness in pixels.",
+    zh: "线的粗细（像素）。",
+  },
+  "constructor.props.graph.simulation.info": {
+    ru: "Показать случайные данные без устройства: удобно проверить вид графика в конструкторе.\nНа рабочем экране выключите.",
+    en: "Show random data without a device: handy to check the chart in the constructor.\nTurn it off on a working screen.",
+    zh: "无需设备即显示随机数据：便于在构建器中查看图表效果。\n正式界面请关闭。",
+  },
+  "constructor.props.graph.refreshrate.info": {
+    ru: "**Как часто рисуется новая точка:**\n**Авто** - на каждые новые данные с устройства.\n**Число** - раз в столько миллисекунд, по последним значениям.",
+    en: "**How often a new point is drawn:**\n**Auto** - on every new data from the device.\n**Number** - once per that many milliseconds, from the latest values.",
+    zh: "**绘制新点的频率：**\n**自动** - 每次收到设备新数据时。\n**数值** - 每隔该毫秒数，根据最新值绘制。",
+  },
+  "constructor.props.progressbar.type.info": {
+    ru: "**Направление полос:**\n**Горизонтально** - слева направо.\n**Вертикально** - снизу вверх, как столбики.",
+    en: "**Bar direction:**\n**Horizontal** - left to right.\n**Vertical** - bottom to top, like columns.",
+    zh: "**进度条方向：**\n**水平** - 从左到右。\n**垂直** - 从下到上，像柱状图。",
+  },
+  "constructor.props.slider.type.info": {
+    ru: "**Сколько бегунков:**\n**Простой** - одно значение.\n**Диапазон** - два бегунка, от и до.",
+    en: "**How many handles:**\n**Single** - one value.\n**Range** - two handles, from and to.",
+    zh: "**滑块数量：**\n**单个** - 一个值。\n**范围** - 两个滑块，起止值。",
+  },
+  "constructor.props.switch.type.info": {
+    ru: "**Вид переключателя:**\n**Горизонтально** - тумблер с подписями слева и справа.\n**Вертикально** - тумблер, подписи сверху и снизу.\n**Галочка** - флажок, в битовом режиме недоступен.",
+    en: "**Switch look:**\n**Horizontal** - a toggle with captions left and right.\n**Vertical** - a toggle with captions above and below.\n**Checkbox** - a check mark, not available in bit mode.",
+    zh: "**开关样式：**\n**水平** - 左右带标签的开关。\n**垂直** - 上下带标签的开关。\n**复选框** - 勾选框，位模式下不可用。",
+  },
+  "constructor.props.switch.bitMode.info": {
+    ru: "**Одно число** - несколько тумблеров: каждый тумблер включает свой бит числа.\n**Пример**: биты 0 и 1 - два реле в одной переменной RELAY.Mask.\nНомер бита (0-31) и подпись задаются в списке ниже.",
+    en: "**One number** - several toggles: each toggle sets its own bit of the number.\n**Example**: bits 0 and 1 - two relays in one variable RELAY.Mask.\nThe bit number (0-31) and caption are set in the list below.",
+    zh: "**一个数值** - 多个开关：每个开关控制数值中的一位。\n**示例：位 0 和 1** - 同一变量 RELAY.Mask 中的两个继电器。\n位号（0-31）和标签在下方列表中设置。",
+  },
+  "constructor.props.switch.bit.disabled.info": {
+    ru: "Этот тумблер виден, но не нажимается.",
+    en: "This toggle is visible but cannot be pressed.",
+    zh: "该开关可见，但不能点击。",
+  },
+  "constructor.props.tabs.orientation.info": {
+    ru: "**Где кнопки вкладок:**\n**Горизонтально** - строкой сверху.\n**Вертикально** - столбцом слева.",
+    en: "**Where the tab buttons are:**\n**Horizontal** - a row on top.\n**Vertical** - a column on the left.",
+    zh: "**选项卡按钮的位置：**\n**水平** - 顶部一行。\n**垂直** - 左侧一列。",
+  },
+  "constructor.props.tabs.iconpos.info": {
+    ru: "Где значок относительно подписи вкладки: слева, сверху, справа или снизу.",
+    en: "Where the icon is relative to the tab caption: left, top, right or bottom.",
+    zh: "图标相对于选项卡标签的位置：左、上、右或下。",
+  },
+  "constructor.props.tabs.widthMode.info": {
+    ru: "**Ширина кнопок вкладок:**\n**Авто** - по своей подписи.\n**Равные** - одинаковые, на всю ширину.",
+    en: "**Tab button width:**\n**Auto** - by their own caption.\n**Equal** - the same width, filling the row.",
+    zh: "**选项卡按钮宽度：**\n**小** - 按各自标签宽度。\n**相等** - 宽度相同，填满整行。",
+  },
+  "constructor.props.tabs.tab.disabled.info": {
+    ru: "Вкладка видна, но не открывается.",
+    en: "The tab is visible but cannot be opened.",
+    zh: "选项卡可见，但不能打开。",
+  },
+  "constructor.props.textfield.size.info": {
+    ru: "Размер текста: от маленького до очень крупного.\n**Крупные размеры** - для заголовков и показаний, которые видно издалека.",
+    en: "Text size: from small to very large.\nLarge sizes are for headings and readings seen from afar.",
+    zh: "文本大小：从小到特大。\n大号适用于标题和远处可见的读数。",
+  },
+  "constructor.props.textfield.settings.info": {
+    ru: "**Оформление текста, можно выбрать несколько:**\nЖирный, Курсив, Подчёркнутый.\n**Фон** - текст на мягкой цветной подложке.",
+    en: "**Text styling, several can be chosen:**\nBold, Italic, Underline.\n**Background** - text on a soft colored backing.",
+    zh: "**文本样式，可多选：**\n粗体、斜体、下划线。\n**背景** - 文本带柔和彩色底。",
+  },
+  "constructor.props.video.source.info": {
+    ru: "**Откуда картинка:**\n**Камера** - камера компьютера или телефона, на котором открыт экран.\n**Удалённо** - кадры, которые устройство передаёт через облако по ключу потока.",
+    en: "**Where the picture comes from:**\n**Camera** - the camera of the computer or phone showing the screen.\n**Remote** - frames the device sends through the cloud by the stream key.",
+    zh: "**画面来源：**\n**摄像头** - 打开界面的电脑或手机的摄像头。\n**来自设备** - 设备通过云端按流键发送的帧。",
+  },
+  "constructor.props.video.showSelect.info": {
+    ru: "Показать список камер, чтобы пользователь сам выбрал камеру.\n**Выключено** - берётся первая камера.",
+    en: "Show the camera list so the user can pick a camera.\n**Off** - the first camera is used.",
+    zh: "显示摄像头列表，让用户自行选择。\n**关闭** - 使用第一个摄像头。",
+  },
+  "constructor.props.video.streamKey.info": {
+    ru: "Имя потока, по которому устройство шлёт кадры.\nДолжно совпадать с ключом в прошивке.\n**Пример**: CAM.Video.",
+    en: "The stream name the device sends frames under.\nIt must match the key in the firmware.\n**Example**: CAM.Video.",
+    zh: "设备发送帧所用的流名称。\n必须与固件中的键一致。\n**示例**：CAM.Video。",
+  },
+  "constructor.props.widget.cycling.info": {
+    ru: "Иконки сменяются по кругу, как анимация.\nЧем больше значение, тем быстрее смена. Пример: вентилятор крутится быстрее на высоких оборотах.",
+    en: "Icons change in a loop like an animation.\nThe larger the value, the faster they change. Example: a fan spins faster at high speed.",
+    zh: "图标循环切换，像动画一样。\n值越大切换越快。示例：风扇转速越高转得越快。",
+  },
+  "constructor.props.widget.settings.type.info": {
+    ru: "**Чем управлять значением в карточке:**\n**Поле ввода** - число с кнопками ±.\n**Ползунок** - слайдер с кнопками ±.\n**Переключатель** - 0 или 1.\n**Не выбрано** - карточка только показывает Off или On.",
+    en: "**How the value is controlled in the card:**\n**Input** - a number with ± buttons.\n**Slider** - a slider with ± buttons.\n**Switch** - 0 or 1.\n**None** - the card only shows Off or On.",
+    zh: "**卡片中控制值的方式：**\n**输入框** - 带 ± 按钮的数字。\n**滑块** - 带 ± 按钮的滑块。\n**开关** - 0 或 1。\n**未选择** - 卡片仅显示 Off 或 On。",
+  },
+  "constructor.props.input.type.info": {
+    ru: "**Что вводит пользователь:**\n**Текст** - одна строка.\n**Пароль** - знаки скрыты, есть кнопка «показать», копировать нельзя.\n**Число** - число со стрелками, предел и шаг задаются ниже.\n**Многострочный текст** - несколько строк, высоту можно растянуть.\n**Битовое поле** - целое число в части битов переменной, остальные биты не меняются.",
+    en: "**What the user enters:**\n**Text** - one line.\n**Password** - characters are hidden, there is a Show button, copying is off.\n**Number** - a number with arrows, limits and step are set below.\n**Multiline text** - several lines, the height can be stretched.\n**Bit field** - an integer in some bits of the variable, other bits stay unchanged.",
+    zh: "**用户输入的内容：**\n**文本** - 单行。\n**密码** - 字符隐藏，有「显示」按钮，不能复制。\n**数字** - 带箭头的数字，范围和步长在下方设置。\n**多行文本** - 多行，可拉伸高度。\n**位字段** - 变量部分位中的整数，其余位不变。",
+  },
+  "constructor.props.maxlength.info": {
+    ru: "Сколько знаков можно ввести. Лишние знаки просто не вводятся.\n**Пример**: 32 для имени устройства.",
+    en: "How many characters can be entered. Extra characters are not typed.\n**Example**: 32 for a device name.",
+    zh: "可输入的字符数。多余的字符不会被输入。\n**示例**：设备名称为 32。",
+  },
+  "constructor.props.regexp.info": {
+    ru: "**Правило проверки ввода** - регулярное выражение. Неверный ввод подсвечивается красной рамкой и не отправляется.\n**Готовые правила** - кнопка справа.\n**Пример**: ^[0-9]{4}$ - ровно 4 цифры.\n**Пустое поле** - без проверки.",
+    en: "**An input check rule** - a regular expression. Wrong input gets a red border and is not sent.\n**Ready rules** - the button on the right.\n**Example**: ^[0-9]{4}$ - exactly 4 digits.\n**Empty field** - no check.",
+    zh: "**输入校验规则** - 正则表达式。错误输入显示红框且不发送。\n**现成规则** - 右侧按钮。\n**示例：^[0-9]{4}$** - 恰好 4 位数字。\n**留空** - 不校验。",
+  },
+  "constructor.props.textarea.rows.info": {
+    ru: "Высота поля в строках текста. Пользователь может растянуть поле сам.",
+    en: "Field height in text lines. The user can stretch the field.",
+    zh: "以文本行数表示的字段高度。用户可自行拉伸。",
+  },
+  "constructor.props.align.content.info": {
+    ru: "Как прижать значение внутри поля: влево, по центру или вправо.",
+    en: "How the value is aligned inside the field: left, center or right.",
+    zh: "值在字段内的对齐方式：左、中或右。",
+  },
+  "constructor.props.range.info": {
+    ru: "Какие биты переменной занимает значение: с N по M, считая с 0.\nОстальные биты переменной сохраняются.\nПредел значения считается сам: 2 в степени числа битов минус 1.\n**Пример**: биты 4-7 - значение от 0 до 15.",
+    en: "Which bits of the variable hold the value: from N to M, counting from 0.\nOther bits of the variable are kept.\nThe value limit is computed: 2 to the power of the bit count minus 1.\n**Example**: bits 4-7 - a value from 0 to 15.",
+    zh: "值占用变量的哪些位：从 N 到 M，从 0 开始计数。\n变量的其余位保持不变。\n值的上限自动计算：2 的位数次方减 1。\n**示例：位 4-7** - 值为 0 到 15。",
+  },
+  "constructor.props.defaultvalue.info": {
+    ru: "Значение в поле, пока устройство не прислало своё. Обычно оставляют пустым.",
+    en: "The value in the field until the device sends its own. Usually left empty.",
+    zh: "设备发送自己的值之前字段中的值。通常留空。",
+  },
+  "constructor.props.autocomplete.info": {
+    ru: "Подсказка браузеру, чем заполнить поле автоматически.\n**Включено** - браузер сам решает, что подставить.\n**Выключено** - браузер ничего не подставляет. Подходит для настроек устройства.\n**Имя пользователя, Текущий пароль** - браузер предложит сохранённый вход.\n**Новый пароль** - браузер предложит сложный пароль.",
+    en: "A hint for the browser on how to fill the field.\n**On** - the browser decides what to fill.\n**Off** - the browser fills nothing. Good for device settings.\n**Username, Current password** - the browser offers a saved login.\n**New password** - the browser offers a strong password.",
+    zh: "提示浏览器如何自动填充字段。\n**开启** - 浏览器自行决定填充内容。\n**关闭** - 浏览器不填充。适用于设备设置。\n**用户名、当前密码** - 浏览器提供已保存的登录。\n**新密码** - 浏览器建议强密码。",
+  },
+  "constructor.props.select.type.info": {
+    ru: "**Как показать варианты:**\n**Список** - выпадающий список.\n**Кнопки** - ряд кнопок, удобно для 2-4 коротких вариантов. Только этот вид умеет выбирать несколько вариантов.\n**С вводом** - поле с поиском по названиям, для длинных списков.\n**Радио** - кружки в строку, один выбранный вариант.",
+    en: "**How to show the options:**\n**List** - a drop-down list.\n**Buttons** - a row of buttons, handy for 2-4 short options. Only this view can pick several options.\n**With input** - a field with search by name, for long lists.\n**Radio** - circles in a row, one chosen option.",
+    zh: "**选项的显示方式：**\n**列表** - 下拉列表。\n**按钮组** - 一排按钮，适合 2-4 个短选项。只有此方式可多选。\n**可输入** - 按名称搜索的输入框，适合长列表。\n**单选** - 一行圆点，只能选一个。",
+  },
+  "constructor.props.valuetype.info": {
+    ru: '**В каком виде значение варианта уходит на устройство:**\n**Строка** - как текст, например "auto".\n**Число** - как число, например 3.',
+    en: '**How the option value is sent to the device:**\n**String** - as text, for example "auto".\n**Number** - as a number, for example 3.',
+    zh: '**选项值发送到设备的形式：**\n**字符串** - 作为文本，例如 "auto"。\n**数字** - 作为数字，例如 3。',
+  },
+  "constructor.props.select.align.info": {
+    ru: "Как прижать варианты: влево, по центру или вправо.",
+    en: "How the options are aligned: left, center or right.",
+    zh: "选项的对齐方式：左、中或右。",
+  },
+  "constructor.props.bitMode.info": {
+    ru: "Значение занимает только часть битов числовой переменной.\nВыбор варианта меняет биты с N по M, остальные биты сохраняются.\n**Пример**: режим в битах 0-1, флаги в остальных битах.",
+    en: "The value takes only some bits of a numeric variable.\nPicking an option changes bits N to M, other bits are kept.\n**Example**: a mode in bits 0-1, flags in the other bits.",
+    zh: "值只占用数值变量的部分位。\n选择选项会修改第 N 到 M 位，其余位保持不变。\n**示例**：模式在位 0-1，其余位为标志。",
+  },
+  "constructor.props.multiselect.info": {
+    ru: "Можно выбрать несколько кнопок сразу. На устройство уходит список выбранных значений.",
+    en: "Several buttons can be chosen at once. The list of chosen values is sent to the device.",
+    zh: "可同时选择多个按钮。发送到设备的是所选值的列表。",
+  },
+  "widget.common.group_prefix.info": {
+    ru: "Группа переменных устройства, с которой работает виджет.\nПеременная виджета на устройстве называется «группа.поле».\n**Пример**: CFG - имя устройства придёт в CFG.DevName.\nОбычно оставляют как есть.",
+    en: 'The device variable group the widget works with.\nA widget variable on the device is named "group.field".\n**Example**: CFG - the device name comes in CFG.DevName.\nUsually left as is.',
+    zh: "小部件使用的设备变量组。\n设备上的小部件变量命名为「组.字段」。\n**示例：CFG** - 设备名称在 CFG.DevName 中。\n通常保持不变。",
+  },
+  "widget.common.key.info": {
+    ru: "Имя поля на устройстве для этого значения.\nМеняют, только если прошивка называет поле иначе.",
+    en: "The device field name for this value.\nChange it only if the firmware names the field differently.",
+    zh: "此值在设备上的字段名。\n仅当固件使用不同名称时才修改。",
+  },
+  "widget.fs.accept.info": {
+    ru: "Какие файлы можно выбрать для закачки: расширения через запятую.\n**Пример**: .bin, .pem\n*/* - любые файлы.",
+    en: "Which files can be picked for upload: extensions separated by commas.\n**Example**: .bin, .pem\n*/* - any files.",
+    zh: "可选择上传的文件：用逗号分隔的扩展名。\n**示例**：.bin, .pem\n*/* - 任意文件。",
+  },
+  "widget.fs.max_name.info": {
+    ru: "Наибольшая длина имени файла в байтах. Русская буква занимает 2 байта.\nДолжна совпадать с пределом файловой системы прошивки, обычно 31.",
+    en: "The longest file name in bytes. A non-Latin letter takes 2-3 bytes.\nMust match the firmware file system limit, usually 31.",
+    zh: "文件名的最大字节数。中文字符占 3 字节。\n必须与固件文件系统的限制一致，通常为 31。",
+  },
+  "widget.fs.state_field.info": {
+    ru: "Поле устройства со списком файлов и местом на диске.\nОбычно FS, меняют, только если прошивка называет его иначе.",
+    en: "The device field with the file list and disk space.\nUsually FS, change it only if the firmware names it differently.",
+    zh: "包含文件列表和磁盘空间的设备字段。\n通常为 FS，仅当固件使用不同名称时才修改。",
+  },
+  "widget.rgb.group.info": {
+    ru: "Группа переменных ленты на устройстве.\n**Пример**: LST - цвет придёт в LST.Color.\nОбычно оставляют LST.",
+    en: "The strip variable group on the device.\n**Example**: LST - the color comes in LST.Color.\nUsually left as LST.",
+    zh: "设备上灯带的变量组。\n**示例：LST** - 颜色在 LST.Color 中。\n通常保持 LST。",
+  },
+  "widget.stack.warn_bytes.info": {
+    ru: "**Когда подсвечивать запас стека задачи:**\n**Красный** - запас меньше порога.\n**Оранжевый** - меньше двух порогов.\n**Пример**: 512 - красный ниже 512 байт, оранжевый ниже 1024.",
+    en: "**When to highlight a task's stack headroom:**\n**Red** - headroom below the threshold.\n**Orange** - below twice the threshold.\n**Example**: 512 - red below 512 bytes, orange below 1024.",
+    zh: "**何时高亮任务的栈余量：**\n**红色** - 余量低于阈值。\n**橙色** - 低于两倍阈值。\n**示例：512** - 低于 512 字节为红色，低于 1024 为橙色。",
+  },
+  "widget.stack.period.info": {
+    ru: "Как часто виджет сам запрашивает данные, в миллисекундах.\n**0** - только по кнопке «Обновить».\n**Пример**: 5000 - раз в 5 секунд. Пользователь может сменить период в самом виджете.",
+    en: "How often the widget requests data by itself, in milliseconds.\n**0** - only with the Refresh button.\n**Example**: 5000 - every 5 seconds. The user can change the period in the widget.",
+    zh: "小部件自动请求数据的频率，单位毫秒。\n**0** - 仅通过「刷新」按钮。\n**示例：5000** - 每 5 秒。用户可在小部件中修改周期。",
+  },
+  "widget.stack.response.info": {
+    ru: "Имя объекта в ответе устройства, где лежат кучи и задачи.\nОбычно StackInfo.",
+    en: "The object name in the device reply that holds heaps and tasks.\nUsually StackInfo.",
+    zh: "设备应答中包含堆和任务的对象名。\n通常为 StackInfo。",
+  },
+  "widget.wifi.allowed_modes.info": {
+    ru: "**Какие режимы Wi-Fi пользователь может выбрать:**\n**STA** - устройство подключается к роутеру.\n**AP** - устройство само раздаёт сеть.\n**STA + AP** - оба сразу.\nМожно выбрать несколько.",
+    en: "**Which Wi-Fi modes the user can pick:**\n**STA** - the device connects to a router.\n**AP** - the device runs its own network.\n**STA + AP** - both at once.\nSeveral can be chosen.",
+    zh: "**用户可选择的 Wi-Fi 模式：**\n**STA** - 设备连接到路由器。\n**AP** - 设备自建网络。\n**STA + AP** - 两者同时。\n可多选。",
+  },
+  "widget.wifi.ap_confirm.info": {
+    ru: "Перед сохранением режима AP спросить подтверждение.\nВ режиме AP устройство отключится от роутера и может пропасть из облака.",
+    en: "Ask for confirmation before saving the AP mode.\nIn AP mode the device leaves the router and may drop out of the cloud.",
+    zh: "保存 AP 模式前请求确认。\n在 AP 模式下设备会断开路由器，可能从云端掉线。",
+  },
+  "widget.map.mode.info": {
+    ru: "**Что делает карта:**\n**Объекты** - показывает аппараты устройства и их траектории.\n**Маршрут** - планировщик маршрута по точкам с отправкой миссии.\n**Агро** - расчёт облёта полей для агродрона с отправкой миссии.",
+    en: "**What the map does:**\n**Objects** - shows the device vehicles and their tracks.\n**Route** - a waypoint route planner that sends a mission.\n**Agro** - field coverage planning for an agro drone that sends a mission.",
+    zh: "**地图的功能：**\n**对象** - 显示设备的飞行器及其轨迹。\n**航线** - 航点航线规划并发送任务。\n**农业** - 农业无人机田块覆盖规划并发送任务。",
+  },
+  "widget.map.simulation.info": {
+    ru: "Показать работу карты без устройства: аппараты летают сами.\nОстальные настройки при этом не учитываются.\nДля проверки макета, в рабочем GUI выключите.",
+    en: "Show the map working without a device: the vehicles fly by themselves.\nOther settings are ignored meanwhile.\nFor checking a layout, turn it off in a working GUI.",
+    zh: "无设备演示地图：飞行器自动飞行。\n此时其他设置不生效。\n用于检查布局，正式 GUI 中请关闭。",
+  },
+  "widget.map.groups.info": {
+    ru: "Группы полей устройства через пробел. Каждая группа - отдельный аппарат на карте.\nКоординаты читаются из полей «группа.Lat» и «группа.Lon».\n**Пример**: MAV GNSS - автопилот и отдельный приёмник.",
+    en: 'Device field groups separated by spaces. Each group is a separate vehicle on the map.\nCoordinates are read from "group.Lat" and "group.Lon".\n**Example**: MAV GNSS - an autopilot and a separate receiver.',
+    zh: "用空格分隔的设备字段组。每个组是地图上的一个飞行器。\n坐标读取自「组.Lat」和「组.Lon」。\n**示例：MAV GNSS** - 自动驾驶仪和独立接收机。",
+  },
+  "widget.map.height.info": {
+    ru: "Высота карты в пикселях.",
+    en: "Map height in pixels.",
+    zh: "地图高度，单位像素。",
+  },
+  "widget.map.track.info": {
+    ru: "Рисовать путь аппарата линией. Пользователь может включить и выключить путь на самой карте.",
+    en: "Draw the vehicle path as a line. The user can turn the path on and off on the map.",
+    zh: "以线条绘制飞行器路径。用户可在地图上开关路径。",
+  },
+  "widget.map.track_length.info": {
+    ru: "Сколько последних точек пути хранить. Старые точки стираются.\n**Пример**: 1000 - около 15 минут при записи раз в секунду.",
+    en: "How many last path points to keep. Old points are erased.\n**Example**: 1000 - about 15 minutes at one point per second.",
+    zh: "保留的最近路径点数。旧点会被清除。\n**示例：1000** - 每秒一点约 15 分钟。",
+  },
+  "pfd.simulation.info": {
+    ru: "Показать прибор без устройства: учебный полёт по маршруту.\nОстальные настройки при этом не учитываются.\nДля проверки макета, в рабочем GUI выключите.",
+    en: "Show the instrument without a device: a demo flight along a route.\nOther settings are ignored meanwhile.\nFor checking a layout, turn it off in a working GUI.",
+    zh: "无设备演示仪表：沿航线的演示飞行。\n此时其他设置不生效。\n用于检查布局，正式 GUI 中请关闭。",
+  },
+  "pfd.props.group.info": {
+    ru: "Группа полей аппарата на устройстве.\n**Пример**: MAV - крен придёт в MAV.Roll.\nОбычно MAV.",
+    en: "The vehicle field group on the device.\n**Example**: MAV - the bank comes in MAV.Roll.\nUsually MAV.",
+    zh: "设备上飞行器的字段组。\n**示例：MAV** - 横滚在 MAV.Roll 中。\n通常为 MAV。",
+  },
+  "pfd.props.speed.info": {
+    ru: "Скорость ниже минимума и выше максимума показывается на ленте красной зоной.\n**Пример**: 8 и 25 м/с для самолёта.",
+    en: "Speed below the minimum and above the maximum is shown as a red zone on the tape.\n**Example**: 8 and 25 m/s for a plane.",
+    zh: "低于最小值和高于最大值的速度在刻度带上显示为红区。\n**示例**：固定翼为 8 和 25 m/s。",
+  },
+  "pfd.props.bank_max.info": {
+    ru: "Крен больше этого угла в любую сторону красит дугу и указатель крена красным.\n**Пример**: 30°.",
+    en: "Bank beyond this angle either way turns the bank arc and pointer red.\n**Example**: 30°.",
+    zh: "任一方向超过此角度的横滚使横滚弧和指针变红。\n**示例**：30°。",
+  },
+  "pfd.props.alt_max.info": {
+    ru: "Высота выше этой показывается на ленте красной зоной.\n**Пример**: 150 м.",
+    en: "Altitude above this is shown as a red zone on the tape.\n**Example**: 150 m.",
+    zh: "高于此值的高度在刻度带上显示为红区。\n**示例**：150 m。",
+  },
+  "pfd.props.g.info": {
+    ru: "Перегрузка вне пределов от минимума до максимума красит плашку G красным.\n**Пример**: -1 и 3.8 g.",
+    en: "Load factor outside the minimum to maximum range turns the G badge red.\n**Example**: -1 and 3.8 g.",
+    zh: "过载超出最小至最大范围时 G 标签变红。\n**示例**：-1 和 3.8 g。",
+  },
+  "pfd.props.batt_low.info": {
+    ru: "Заряд батареи не выше этого значения показывается красным.\n**Пример**: 20%.",
+    en: "Battery charge at or below this value is shown in red.\n**Example**: 20%.",
+    zh: "电量不高于此值时显示为红色。\n**示例**：20%。",
+  },
+  "pfd.props.stale.info": {
+    ru: "Если данные не приходят дольше этого времени, прибор перечёркивается с надписью «NO DATA».\n**Пример**: 2000 - 2 секунды.",
+    en: 'If no data arrives for longer than this, the instrument is crossed out with "NO DATA".\n**Example**: 2000 - 2 seconds.',
+    zh: "若超过此时间未收到数据，仪表被划掉并显示「NO DATA」。\n**示例：2000** - 2 秒。",
+  },
+  "widget.lora.props.preset.info": {
+    ru: "Готовый набор параметров под радиомодуль.\nВыбор заполняет список параметров ниже, потом их можно поправить.",
+    en: "A ready parameter set for a radio module.\nPicking it fills the parameter list below, which can then be edited.",
+    zh: "针对射频模块的现成参数集。\n选择后填充下方参数列表，之后可修改。",
   },
 } satisfies Translations
 

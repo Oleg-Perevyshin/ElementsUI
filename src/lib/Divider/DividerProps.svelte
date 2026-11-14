@@ -24,6 +24,7 @@
     <CommonSnippets snippet="Access" {component} {onPropertyChange} />
     <UI.Select
       label={{ name: $T("constructor.props.divider.type") }}
+      help={{ info: $T("constructor.props.divider.type.info") }}
       type="buttons"
       value={component.properties.type}
       options={$optionsStore.DIVIDER_TYPE_OPTIONS}
@@ -33,6 +34,7 @@
   <PropsGroup label={$T("constructor.props.group.layout")}>
     <UI.Select
       label={{ name: $T("constructor.props.orientation") }}
+      help={{ info: $T("constructor.props.divider.orientation.info") }}
       type="buttons"
       value={component.properties.orientation ?? "horizontal"}
       options={$optionsStore.ORIENTATION_OPTIONS}
@@ -40,6 +42,7 @@
     />
     <UI.Select
       label={{ name: $T("constructor.props.divider.anchor") }}
+      help={{ info: $T("constructor.props.divider.anchor.info") }}
       type="buttons"
       value={component.properties.anchor}
       options={component.properties.orientation === "vertical" ? $optionsStore.DIVIDER_ANCHOR_VERTICAL_OPTIONS : $optionsStore.DIVIDER_ANCHOR_OPTIONS}
@@ -47,6 +50,7 @@
     />
     <UI.Input
       label={{ name: $T("constructor.props.divider.width") }}
+      help={{ info: $T("constructor.props.divider.width.info") }}
       value={component.properties.width}
       onUpdate={(value) => edit.set("width", Number(value))}
       number={{ minNum: 1, maxNum: 20, step: 1 }}
