@@ -13,7 +13,7 @@ const plain: YamlPaint = (_kind, text) => text
 const NUMBER = /^[-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][-+]?\d+)?$/
 const SPECIAL = /^(?:null|Null|NULL|~|true|True|TRUE|false|False|FALSE|[-+]?\.(?:inf|Inf|INF)|\.(?:nan|NaN|NAN))$/
 
-/* Строка без кавычек только если читается обратно той же строкой: не похожа на число, true/false/null, не пустая, без «:,[]{}#», управляющих символов и крайних пробелов, не начинается с кавычки, h' или знака YAML */
+/* Ключ-строка без кавычек только если читается обратно той же строкой: не похожа на число, true/false/null, не пустая, без «:,[]{}#», управляющих символов и крайних пробелов, не начинается с кавычки, h' или знака YAML */
 const needsQuotes = (text: string): boolean =>
   !text ||
   text !== text.trim() ||
@@ -34,7 +34,7 @@ const scalar = (value: unknown, paint: YamlPaint): string | null => {
   if (typeof value === "boolean") return paint("boolean", String(value))
   if (typeof value === "number") return paint("number", formatNumber(value))
   if (typeof value === "bigint") return paint("number", String(value))
-  if (typeof value === "string") return paint("string", quote(value))
+  if (typeof value === "string") return paint("string", JSON.stringify(value)) /* Строка-значение всегда в кавычках: не путается с числом, IP или true */
   if (value instanceof Uint8Array) return paint("bytes", `h'${bytesToHex(value)}'`)
   return null
 }

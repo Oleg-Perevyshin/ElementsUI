@@ -11,14 +11,15 @@ const map = (entries) => new Map(entries)
 test("VALUE: корневая карта без скобок, вложенные - в скобках, массивы", () => {
   assert.equal(
     flow({ "CFG.DevName": "ESP32-Pico-1", "CFG.WiFiMode": 1, "CFG.StaSSID": "Home 5G" }),
-    "CFG.DevName: ESP32-Pico-1, CFG.WiFiMode: 1, CFG.StaSSID: Home 5G",
+    'CFG.DevName: "ESP32-Pico-1", CFG.WiFiMode: 1, CFG.StaSSID: "Home 5G"',
   )
-  assert.equal(flow({ Message: 100, Args: ["CFG.DevSN"] }), "Message: 100, Args: [CFG.DevSN]")
+  assert.equal(flow({ Message: 100, Args: ["CFG.DevSN"] }), 'Message: 100, Args: ["CFG.DevSN"]')
   assert.equal(flow({ a: { b: 1, c: [1, 2] }, d: {}, e: [] }), "a: {b: 1, c: [1, 2]}, d: {}, e: []")
   assert.deepEqual([flow({}), flow([]), flow([1, [2, 3]]), flow(42), flow(null), flow(true)], ["{}", "[]", "[1, [2, 3]]", "42", "null", "true"])
 })
 
-test("VALUE: кавычки только где строка иначе прочиталась бы не так", () => {
+test("VALUE: строка-значение всегда в кавычках, ключ - только где иначе прочитался бы не так", () => {
+  for (const text of ["Home", "Home 5G", "123", "192.168.10.163", "true", "", "a\nb", '"q"']) assert.equal(flow(text), JSON.stringify(text), text)
   const cases = {
     Home: "Home",
     "Home 5G": "Home 5G",
@@ -43,7 +44,7 @@ test("VALUE: кавычки только где строка иначе проч
     "'q'": "\"'q'\"",
     "h'01'": "\"h'01'\"",
   }
-  for (const [text, shown] of Object.entries(cases)) assert.equal(flow(text), shown, text)
+  for (const [text, shown] of Object.entries(cases)) assert.equal(flow({ [text]: 1 }), `${shown}: 1`, text)
   assert.equal(flow({ 1: 2, "": 3, "a b": 4 }), '"1": 2, "": 3, a b: 4')
 })
 
@@ -67,9 +68,21 @@ test("VALUE: байты h'..', float32 кратко, большие и особ�
 test("окно: блочный YAML с отступом 2", () => {
   assert.equal(
     m.formatXPoeDebugPretty({ Mode: 1, Net: { SSID: "Home 5G", Ch: [1, 6] }, List: [{ a: 1, b: "x" }, [1, 2], []], Raw: Uint8Array.of(1) }),
-    ["Mode: 1", "Net:", "  SSID: Home 5G", "  Ch:", "    - 1", "    - 6", "List:", "  - a: 1", "    b: x", "  - - 1", "    - 2", "  - []", "Raw: h'01'"].join(
-      "\n",
-    ),
+    [
+      "Mode: 1",
+      "Net:",
+      '  SSID: "Home 5G"',
+      "  Ch:",
+      "    - 1",
+      "    - 6",
+      "List:",
+      "  - a: 1",
+      '    b: "x"',
+      "  - - 1",
+      "    - 2",
+      "  - []",
+      "Raw: h'01'",
+    ].join("\n"),
   )
   assert.deepEqual([m.formatXPoeDebugPretty({}), m.formatXPoeDebugPretty("123"), m.formatXPoeDebugPretty(Uint8Array.of(0xab))], ["{}", '"123"', "h'AB'"])
 })

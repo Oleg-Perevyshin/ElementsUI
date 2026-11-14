@@ -248,7 +248,7 @@ test("xPOE-Debug: неверный CRC, команда устройству, н�
     header: "SET",
     argument: "ModCfg",
     reply: true,
-    value: "DevName: Объект 1",
+    value: 'DevName: "Объект 1"',
     valueBytes: parsed.valueBytes,
     payload: parsed.payload,
     crc: parsed.crc,
@@ -261,7 +261,7 @@ test("xPOE-Debug: неверный CRC, команда устройству, н�
   const errorRow = m.xPoeDebugRow(error, "en")
   assert.deepEqual(
     [errorRow.value, errorRow.message, errorRow.level, errorRow.reply],
-    ["Message: 404, Args: [Home]", "Could not connect to Wi-Fi Home, previous network restored", "warn", false],
+    ['Message: 404, Args: ["Home"]', "Could not connect to Wi-Fi Home, previous network restored", "warn", false],
   )
   const [log] = m.createXPoeDebugParser().push(deviceFrame("OK!", "DebugLog", m.valueToCbor([2, "HAR 0xC048", "MSG 404 Home 5G", 1000])))
   const logRow = m.xPoeDebugRow(log, "en")
@@ -290,7 +290,7 @@ test("xPOE-Debug: неверный CRC, команда устройству, н�
   assert.ok(
     m.formatXPoeDebugPretty(float32Map, true).includes('<span style="color:var(--blue-text)">T:</span> <span style="color:var(--red-text)">0.12</span>'),
   )
-  assert.equal(m.formatXPoeDebugPretty("<b>", true), '<span style="color:var(--purple-text)">&lt;b&gt;</span>')
+  assert.equal(m.formatXPoeDebugPretty("<b>", true), '<span style="color:var(--purple-text)">&quot;&lt;b&gt;&quot;</span>')
 })
 
 /* CAN/CAN FD через slcan */
