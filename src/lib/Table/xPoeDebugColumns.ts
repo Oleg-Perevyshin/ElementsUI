@@ -47,7 +47,7 @@ export const xPoeDebugTableColumns: ITableHeader<XPoeDebugRow>[] = [
   },
   /* Payload как пришёл, без пояснений - копируется чистым; окно - Payload развёрнуто, сообщение и HEX; у RAW - сам текст */
   {
-    label: { name: "VALUE" },
+    label: { name: "common.table.xpoe.value" },
     content: [{ type: "text", data: { key: "value", truncated: true, copy: true, modal: xPoeDebugModal } }],
     width: "1fr",
     align: "left",

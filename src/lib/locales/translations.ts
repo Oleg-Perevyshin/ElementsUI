@@ -40,6 +40,7 @@ const translations = {
   "common.table.fulldata": { ru: "Полные данные", en: "Full data", zh: "完整数据" },
   "common.table.details": { ru: "Подробнее", en: "Details", zh: "详情" },
   "common.table.xpoe.command": { ru: "Команда", en: "Command", zh: "命令" },
+  "common.table.xpoe.value": { ru: "Значение", en: "Value", zh: "值" },
   "common.table.xpoe.reply": { ru: "ждёт ответа", en: "reply requested", zh: "需要应答" },
   "common.table.xpoe.no_reply": { ru: "без ответа", en: "no reply", zh: "无需应答" },
   "common.table.xpoe.crc": { ru: "Неверная CRC, заголовок не показан", en: "CRC mismatch, header not shown", zh: "CRC 错误，未显示报头" },
