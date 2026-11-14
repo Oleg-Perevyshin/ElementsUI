@@ -1,4 +1,4 @@
-<!-- $lib/Button/Button.svelte - кнопка: вид variant, цвет accent, радиус 10px (иконка без подписи - круг 32px или во всю ширину wrapperClass), высота 32px, кольцо фокуса. Значок всегда размером --icon-size из темы, не больше кнопки. pressed - кнопка-переключатель (вид выбранной кнопки, aria-pressed), loading - крутилка вместо значка, кнопка не нажимается -->
+<!-- $lib/Button/Button.svelte - кнопка: вид variant, цвет accent, радиус 10px (иконка без подписи - круг 32px или во всю ширину wrapperClass), высота 32px (в конструкторе S 28px, M 32px, L 40px), кольцо фокуса. Значок всегда размером --icon-size из темы, не больше кнопки. pressed - кнопка-переключатель (вид выбранной кнопки, aria-pressed), loading - крутилка вместо значка, кнопка не нажимается -->
 <script lang="ts">
   import type { IButtonProps } from "../types"
   import { twMerge } from "tailwind-merge"
@@ -27,6 +27,8 @@
   const isIconOnly = $derived(!!content?.icon && !content.name?.trim())
   /* Ширина в wrapperClass (w-8, size-10...) - кнопка-значок заполняет обёртку кругом, иначе она размером с поле (32px); w-auto/w-fit/w-max/w-min/w-full ширины не задают */
   const wrapperSized = $derived(/(^|\s)(?:[^\s:]+:)*(?:w|size)-(?!(?:auto|fit|max|min|full)(?:\s|$))\S+/.test(wrapperClass))
+  /* Высота из конструктора (HEIGHT_OPTIONS хранит py-1/py-2/py-3): S 28px, M 32px как у полей, L 40px */
+  const heightClass = $derived(/(^|\s)py-1(\s|$)/.test(componentClass) ? "h-7" : /(^|\s)py-3(\s|$)/.test(componentClass) ? "h-10" : "h-8")
   /* Во время загрузки кнопка не нажимается, но вид не серый: видно, какое действие выполняется */
   const blocked = $derived(disabled || loading)
 
@@ -70,10 +72,10 @@
       `relative inline-flex w-full items-center justify-center gap-2 leading-none font-semibold text-[14px] select-none
        transition-[background-color,filter,box-shadow] duration-150
        focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent-text)
-       ${isIconOnly ? `${wrapperSized ? "w-full" : "size-8"} aspect-square rounded-full p-0` : "h-8 rounded-[10px] px-4 py-2"}
+       ${isIconOnly ? `${wrapperSized ? "w-full" : "size-8"} aspect-square rounded-full p-0` : `${heightClass} rounded-[10px] px-4 py-0`}
        ${disabled ? "" : loading ? "cursor-progress" : "cursor-pointer active:scale-[0.97]"}`,
       variantClass,
-      componentClass,
+      componentClass.replace(/(^|\s)py-[123](?=\s|$)/g, " "),
     )}
     onclick={handleClick}
     disabled={blocked}

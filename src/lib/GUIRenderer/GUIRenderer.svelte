@@ -274,7 +274,11 @@
   {#if visible(component)}
     {@const id = component.properties.id ?? ""}
     {@const locked = !writable(component)}
-    <div class={component.type === "Accordion" ? "" : "flex flex-col justify-start"} style={cellStyle(component, fixedHeight)}>
+    <!-- Кнопка прижата к низу ячейки - вровень с полями, у которых подпись сверху -->
+    <div
+      class={component.type === "Accordion" ? "" : `flex flex-col ${component.type === "Button" ? "justify-end" : "justify-start"}`}
+      style={cellStyle(component, fixedHeight)}
+    >
       {#if render?.[component.type]}
         {@render render[component.type]?.(component)}
       {:else if component.type === "Accordion" && views.Accordion}
