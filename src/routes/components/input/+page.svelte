@@ -28,7 +28,7 @@
       maxlength: 32,
       number: { minNum: 1, maxNum: 10, step: 0.001 },
       textareaRows: 5,
-      help: { copyButton: false, info: "", autocomplete: "off", regExp: "^[0-9a-zA-Z_-]{0,32}$" },
+      help: { copyButton: false, info: "Латиница, цифры, _ и -, до 32 знаков", autocomplete: "off", regExp: "^[0-9a-zA-Z_-]{0,32}$" },
     },
     eventHandler: { Header: "SET", Argument: "NoSend", Variables: [] },
     position: { row: 0, col: 0, width: 0, height: 0 },
@@ -99,7 +99,7 @@
         <button class="h-8 shrink-0 rounded-[10px] border border-(--border-color) px-3 text-[13px]" onclick={() => focusTarget?.focus()}>focus()</button>
       </div>
       <div class="flex h-48 w-150 flex-col rounded-xl border border-dashed border-(--border-color) p-2">
-        <Input label={{ name: "Заметки (fill)" }} type="text-area" fill bind:value={inputString} help={{ info: "Подсказка внутри поля" }} />
+        <Input label={{ name: "Заметки (fill)" }} type="text-area" fill bind:value={inputString} help={{ info: "Подсказка у подписи" }} />
       </div>
       <p>string: {inputString}</p>
       <p>number: {inputNumber}</p>

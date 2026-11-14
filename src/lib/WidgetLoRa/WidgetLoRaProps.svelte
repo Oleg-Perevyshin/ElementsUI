@@ -103,12 +103,12 @@
             wrapperClass="w-24"
             label={{ name: $T("widget.lora.props.key") }}
             value={p.key}
-            help={{ regExp: /^[A-Za-z0-9_]{1,12}$/ }}
+            help={{ info: $T("widget.lora.props.key.info"), regExp: /^[A-Za-z0-9_]{1,12}$/ }}
             onUpdate={(value) => setParam(name, { key: String(value) })}
           />
           <UI.Switch
             type="checkbox"
-            wrapperClass="w-auto shrink-0 justify-start self-center"
+            wrapperClass="h-8 w-auto shrink-0 justify-start"
             label={{ name: $T("widget.lora.props.bits") }}
             help={{ info: $T("widget.lora.props.bits.info") }}
             value={p.bits ? 1 : 0}
@@ -140,17 +140,21 @@
             onUpdate={(value) => setParam(name, { options: parseOptions(String(value)) })}
           />
           {#if !p.options?.length}
-            <div class="flex flex-wrap items-end gap-2">
-              {#each [["scale", 1], ["offset", 0], ["min", ""], ["max", ""], ["step", 1]] as [field, fallback] (field)}
-                <UI.Input
-                  wrapperClass="w-20"
-                  type="number"
-                  label={{ name: $T(`widget.lora.props.${field}`) }}
-                  value={p[field as "scale"] ?? fallback}
-                  onUpdate={(value) => setParam(name, { [field as string]: num(value) })}
-                />
-              {/each}
-            </div>
+            <!-- Пересчёт в прошивку - один ряд, пределы ввода в GUI - другой -->
+            {#each [[["scale", 1], ["offset", 0]], [["min", ""], ["max", ""], ["step", 1]]] as row, rowIndex (rowIndex)}
+              <div class="grid gap-2 {row.length === 3 ? 'grid-cols-3' : 'grid-cols-2'}">
+                {#each row as [field, fallback] (field)}
+                  <UI.Input
+                    wrapperClass="min-w-0"
+                    type="number"
+                    label={{ name: $T(`widget.lora.props.${field}`) }}
+                    help={{ info: $T(`widget.lora.props.${field}.info`) }}
+                    value={p[field as "scale"] ?? fallback}
+                    onUpdate={(value) => setParam(name, { [field as string]: num(value) })}
+                  />
+                {/each}
+              </div>
+            {/each}
           {/if}
         {/if}
       </div>

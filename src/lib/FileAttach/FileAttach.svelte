@@ -20,6 +20,7 @@
     disabled = false,
     currentImage = $bindable(""),
     info,
+    help,
     icon,
     caption = "",
     onUpdate,
@@ -52,7 +53,7 @@
 
 <!-- По design-handoff (раздел 9): зона сброса - пунктир 1 px с радиусом 12 вместо залитой кнопки, высота как у Input; «Выбрать файл» - акцентный текст, имя файла - обычным цветом, пока не выбрано - бледным. -->
 <div class={twMerge(`flex flex-col items-center gap-1`, wrapperClass)}>
-  <FieldLabel {label} for={uid} class="w-full" />
+  <FieldLabel {label} info={help?.info} for={uid} class="w-full" />
 
   {#if type === "button"}
     <!-- Иконочная кнопка с подсказкой, как UI.Button; выбор файла - скрытый input за ней -->

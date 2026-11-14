@@ -6,10 +6,7 @@
   import { twMerge } from "tailwind-merge"
   import { accentStyle } from "../accent"
   import { copyText } from "../clipboard"
-  import InfoIcon from "../libIcons/InfoIcon.svelte"
   import CopyIcon from "../libIcons/CopyIcon.svelte"
-  import Tooltip from "../Tooltip.svelte"
-  import { isHoverPointer, isKeyboardFocus } from "../popup"
   import CopiedChip from "../CopiedChip.svelte"
   import FieldLabel from "../FieldLabel.svelte"
 
@@ -37,10 +34,6 @@
 
   const uid = $props.id()
   let showPassword = $state(false)
-  let showInfo = $state(false)
-  /* Последнее нажатие на ⓘ - пальцем: тогда пояснение открывает и закрывает касание */
-  let infoTouch = false
-  let infoButton: HTMLButtonElement | null = $state(null)
   let isCopied = $state(false)
 
   const isNumeric = $derived(type === "number" || type === "bitMode")
@@ -102,22 +95,19 @@
      ${accent && !disabled && !readonly ? "bg-[color-mix(in_srgb,var(--accent-color)_7%,var(--field-color))]" : ""}
      ${!errorText ? `${accent ? "border-[color-mix(in_srgb,var(--accent-color)_55%,var(--border-color))]" : "border-(--border-color)"} focus:border-(--accent-text) focus:shadow-(--focus-shadow-color)` : "border-(--red-text) focus:border-(--red-text) focus:shadow-[0_0_0_3px_color-mix(in_srgb,var(--red-color),transparent_80%)]"}
      ${disabled ? "cursor-not-allowed border-(--hairline-color) bg-(--container-color) text-(--faint-color)" : ""}
-     ${readonly && !disabled ? "bg-(--container-color) text-(--muted-color)" : ""}
-     ${help.info ? "pl-9" : ""}`,
+     ${readonly && !disabled ? "bg-(--container-color) text-(--muted-color)" : ""}`,
   )
   /* Кнопка-значок внутри поля: у глазика пароля фон при наведении не появляется, меняется только цвет значка */
   const iconButton = `flex size-7 cursor-pointer items-center justify-center rounded-lg border-none bg-transparent text-(--faint-color) transition-colors duration-150 hover:text-(--font-color)`
 </script>
-
-<!-- На телефоне пояснение ⓘ закрывается касанием в любом другом месте -->
-<svelte:window onpointerdown={(event) => showInfo && !infoButton?.contains(event.target as Node) && (showInfo = false)} />
 
 <!-- fill: подпись, поле и ошибка - колонка на всю высоту родителя, поле занимает всё, что осталось -->
 <div
   class={twMerge(`relative flex w-full flex-col gap-1 ${type === "text-area" ? "h-full" : ""} ${fill ? "min-h-0 flex-1" : ""}`, wrapperClass)}
   style={accentStyle(accent)}
 >
-  <FieldLabel {label} for={uid} class={fill ? "shrink-0" : ""} />
+  <!-- ⓘ пояснения - после подписи, как у Select и Switch: всплывает от окна (InfoHint) и не обрезается краем; без подписи значок стоит на её месте -->
+  <FieldLabel {label} info={help.info} for={uid} class={fill ? "shrink-0" : ""} />
 
   <div class="relative flex w-full {fill ? 'min-h-0 flex-1 flex-col' : type === 'text-area' ? 'h-full items-center' : 'items-center'}">
     {#if type === "text-area"}
@@ -215,27 +205,6 @@
           >
         {/each}
       </div>
-    {/if}
-
-    {#if help.info}
-      <button
-        bind:this={infoButton}
-        type="button"
-        class="absolute left-2 flex size-(--icon-size) items-center justify-center border-none bg-transparent text-(--faint-color) [&_svg]:size-full {type ===
-        'text-area'
-          ? 'top-2'
-          : ''} {disabled ? 'opacity-50' : 'cursor-pointer hover:text-(--accent-text)'}"
-        onpointerdown={(event) => (infoTouch = !isHoverPointer(event))}
-        onclick={() => infoTouch && (showInfo = !showInfo)}
-        onpointerenter={(event) => isHoverPointer(event) && (showInfo = true)}
-        onpointerleave={(event) => isHoverPointer(event) && (showInfo = false)}
-        onfocus={(event) => (showInfo = isKeyboardFocus(event))}
-        onblur={() => (showInfo = false)}
-        aria-label={help.info}
-      >
-        <InfoIcon />
-      </button>
-      <Tooltip show={showInfo} text={help.info} side="top" align="start" />
     {/if}
   </div>
 

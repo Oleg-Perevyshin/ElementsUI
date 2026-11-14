@@ -240,6 +240,8 @@ export interface IFileAttachProps<M extends boolean = false> {
   info?: { text: string; side: "top" | "bottom" | "left" | "right" }
   icon?: IconSource | null
   caption?: string
+  /* info - значок ⓘ после подписи, при наведении всплывает пояснение; без подписи значок стоит на её месте */
+  help?: { info?: string }
   imageSize?: { height?: string; width?: string; fitMode?: "cover" | "contain"; form?: "square" | "circle" }
   disabled?: boolean
   currentImage?: string | null

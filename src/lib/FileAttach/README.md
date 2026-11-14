@@ -72,6 +72,7 @@
 | `imageSize`                 | `{ height, width, fitMode, form }` | `10rem`, `10rem`, `cover`, `square` | Размер превью, масштабирование (`cover`, `contain`) и форма (`square`, `circle`) |
 | `currentImage`              | `string \| null`                   | `""`                                | Текущая картинка: data-URL или base64. Можно связать через `bind:`               |
 | `info`                      | `{ text, side }`                   |                                     | Только `button`: подсказка, как у `Button`                                       |
+| `help.info`                 | `string`                           |                                     | Значок ⓘ после подписи с пояснением, как у `Input`; без подписи - на её месте    |
 | `icon`                      | `Component \| string`              | документ со стрелкой                | Только `button`: своя иконка                                                     |
 | `disabled`                  | `boolean`                          | `false`                             | Неактивен                                                                        |
 | `onUpdate`                  | `(value, event) => void`           |                                     | Выбор: `File`, при `multiple` - `File[]`. При отмене окна выбора не вызывается   |

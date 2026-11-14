@@ -66,7 +66,7 @@ export const COMPONENT_DEFAULTS: { [K in UIType]: Partial<UIComponentPropsMap[K]
     body: [{ id: "Value of id", device: "Value of device" }],
     dataBuffer: { stashData: false, bufferSize: 100, visibleRows: 10 },
   },
-  FileAttach: { label, accept: "*/*" },
+  FileAttach: { label, help: { info: "" }, accept: "*/*" },
   Joystick: { label, help: { info: "" }, axes: Array.from({ length: 3 }, () => ({ name: "", minNum: -100, maxNum: 100 })) },
   Widget: { label, accent: "blue", settings: { label: "", type: "slider", number: { minNum: 0, maxNum: 100, step: 1, units: "" } } },
   VideoViewer: { label, help: { info: "" }, showSelect: true },
