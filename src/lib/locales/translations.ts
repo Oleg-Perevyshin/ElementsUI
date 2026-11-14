@@ -38,6 +38,7 @@ const translations = {
   "constructor.props.video.viewer.error": { ru: "Нет сигнала", en: "No signal", zh: "无信号" },
   "constructor.props.source": { ru: "Источник", en: "Source", zh: "来源" },
   "common.table.fulldata": { ru: "Полные данные", en: "Full data", zh: "完整数据" },
+  "common.table.details": { ru: "Подробнее", en: "Details", zh: "详情" },
   "common.table.xpoe.command": { ru: "Команда", en: "Command", zh: "命令" },
   "common.table.xpoe.reply": { ru: "ждёт ответа", en: "reply requested", zh: "需要应答" },
   "common.table.xpoe.no_reply": { ru: "без ответа", en: "no reply", zh: "无需应答" },

@@ -178,7 +178,7 @@
                   }
                 }}
               />
-              <div class="py-1.5 pl-9 grid grid-cols-[minmax(5rem,7rem)_minmax(18rem,22rem)_2rem_2rem_1fr] items-end gap-1.5">
+              <div class="py-1.5 pl-9 grid grid-cols-[minmax(5rem,7rem)_minmax(18rem,22rem)_minmax(16rem,20rem)_2rem_2rem_1fr] items-end gap-1.5">
                 <UI.Input
                   label={{ name: $T("constructor.props.table.columns.width"), class: "px-0" }}
                   type="number"
@@ -198,6 +198,13 @@
                   value={column.align ?? "left"}
                   options={$optionsStore.ALIGN_OPTIONS}
                   onUpdate={(option) => updateTableHeader(columnIndex, "align", option)}
+                />
+                <UI.Select
+                  label={{ name: $T("constructor.props.table.columns.place") }}
+                  type="buttons"
+                  value={column.place ?? "table"}
+                  options={$optionsStore.TABLE_PLACE_OPTIONS}
+                  onUpdate={(option) => updateTableHeader(columnIndex, "place", option)}
                 />
                 <div
                   class="relative flex items-end"

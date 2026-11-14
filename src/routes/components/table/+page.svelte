@@ -25,6 +25,13 @@
       content: [{ type: "text", data: { key: "name", sortable: true, truncated: true } }],
     },
     { label: { name: L("Состояние", "State", "状态") }, width: "20%", align: "center", content: [{ type: "text", data: { key: "state", sortable: true } }] },
+    /* Только в окне подробностей строки: кнопка ⓘ в конце строки */
+    {
+      label: { name: L("Серийный номер", "Serial number", "序列号") },
+      width: "20%",
+      place: "details",
+      content: [{ type: "text", data: { key: "sn", copy: true } }],
+    },
     {
       label: { name: L("Заряд", "Battery", "电量") },
       width: "24%",
@@ -32,13 +39,14 @@
       content: [{ type: "progressBar", data: { key: "battery", minNum: 0, maxNum: 100, units: "%" } }],
     },
     {
-      label: { name: "" },
+      label: { name: L("Действия", "Actions", "操作") },
       width: "fit",
       align: "center",
+      place: "both",
       content: [
         {
           type: "button",
-          data: { name: L("Сброс", "Reset", "重置"), class: "bg-accent", eventHandler: { Header: "SET", Argument: "Reset", Variables: [] } },
+          data: { name: L("Сброс", "Reset", "重置"), class: "bg-blue", eventHandler: { Header: "SET", Argument: "Reset", Variables: [] } },
         },
       ],
     },

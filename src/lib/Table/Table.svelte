@@ -15,6 +15,7 @@
   import CopyButton from "./CopyButton.svelte"
   import Dropdown from "../Dropdown/Dropdown.svelte"
   import MoreIcon from "../libIcons/MoreIcon.svelte"
+  import InfoIcon from "../libIcons/InfoIcon.svelte"
   import { htmlToText, sanitizeHtml } from "../html"
   import { createRing } from "../ring"
   import { copyText } from "../clipboard"
@@ -115,13 +116,21 @@
   /* ********************************************************** */
   /* Разметка: шаблон колонок общий для шапки и строк; кнопка очистки - отдельная узкая колонка */
   const ACTIONS_COLUMN = "2.5rem"
+  /* Столбец в строке таблицы: не скрыт шириной 0% и не только в подробностях */
+  const inTable = (column: ITableHeader<Row>) => column.width !== "0%" && column.place !== "details"
+  /* Столбцы окна подробностей строки; есть хоть один - в конце строки кнопка «Подробнее» */
+  const detailColumns = $derived(
+    header.map((column, index) => ({ column, index })).filter(({ column }) => column.place === "details" || column.place === "both"),
+  )
+  const hasDetails = $derived(detailColumns.length > 0)
+  const extraColumns = $derived([...(hasDetails ? [ACTIONS_COLUMN] : []), ...(dataBuffer.clearButton ? [ACTIONS_COLUMN] : [])])
   /* Колонка по содержимому: width "fit" или без width с одними кнопками */
   const isFit = (column: ITableHeader<Row>) =>
     column.width === "fit" ||
     (!column.width && Array.isArray(column.content) && column.content.length > 0 && column.content.every((c) => c.type === "button" || c.type === "menu"))
   /* Ширины колонок по содержимому в px (замер после отрисовки), ключ - номер колонки в header */
   let fitWidths = $state<Record<number, number>>({})
-  const hasFit = $derived(header.some((c) => c.width !== "0%" && isFit(c)))
+  const hasFit = $derived(header.some((c) => inTable(c) && isFit(c)))
   /* Рядом с колонкой по содержимому проценты становятся долями остатка: "20%" - 20fr */
   const trackWidth = (column: ITableHeader<Row>, index: number) => {
     if (isFit(column)) return fitWidths[index] ? `${fitWidths[index]}px` : "max-content"
@@ -134,14 +143,10 @@
     if (!column.width || column.width.includes("fr") || (hasFit && column.width.endsWith("%"))) return "5rem"
     return column.width
   }
-  const visibleColumns = $derived(header.map((column, index) => ({ column, index })).filter(({ column }) => column.width !== "0%"))
-  let gridTemplate = $derived(
-    [...visibleColumns.map(({ column, index }) => trackWidth(column, index)), ...(dataBuffer.clearButton ? [ACTIONS_COLUMN] : [])].join(" "),
-  )
+  const visibleColumns = $derived(header.map((column, index) => ({ column, index })).filter(({ column }) => inTable(column)))
+  let gridTemplate = $derived([...visibleColumns.map(({ column, index }) => trackWidth(column, index)), ...extraColumns].join(" "))
   /* Наименьшая ширина таблицы: заданные ширины колонок и по 5rem на гибкие; уже - прокрутка вбок, а не обрезка */
-  let minTableWidth = $derived(
-    `calc(${[...visibleColumns.map(({ column, index }) => minWidth(column, index)), ...(dataBuffer.clearButton ? [ACTIONS_COLUMN] : [])].join(" + ")})`,
-  )
+  let minTableWidth = $derived(`calc(${[...visibleColumns.map(({ column, index }) => minWidth(column, index)), ...extraColumns].join(" + ")})`)
   const columnContent = (column: ITableHeader<Row>, row: Row) => (typeof column.content === "function" ? column.content(row) : (column.content ?? []))
   const sortKey = (column: ITableHeader<Row>) =>
     typeof column.content === "function"
@@ -269,6 +274,12 @@
   let modal = $state.raw<{ row: Row; text: ITableText<Row> } | null>(null)
   const modalSnippet = $derived(typeof modal?.text.modal === "function" ? (modal.text.modal as Snippet<[Row]>) : null)
 
+  /* Окно подробностей: ключ строки, а не сама строка - содержимое обновляется вместе с таблицей */
+  let detailsOpen = $state(false)
+  let detailsKey = $state<number | null>(null)
+  const detailsEntry = $derived(detailsKey === null ? null : (entries.find((e) => e.key === detailsKey) ?? null))
+  const detailsIndex = $derived(detailsEntry ? entries.indexOf(detailsEntry) : -1)
+
   const progressPercent = (value: number, min = 0, max = 100) =>
     value != null && !isNaN(value) ? ((Math.min(Math.max(value, min), max) - min) / (max - min)) * 100 : 0
 
@@ -296,11 +307,11 @@
     <div class="flex min-h-0 w-full flex-1 flex-col" style="min-width: {minTableWidth};" bind:this={tableEl}>
       <!-- Шапка -->
       <div
-        class="grid border-b border-(--hairline-color) bg-[var(--table-header-color,var(--accent-soft))] text-[11px] font-bold tracking-[0.06em] text-[color-mix(in_srgb,var(--accent-color)_35%,var(--font-color))] uppercase"
+        class="grid border-b border-(--hairline-color) bg-[var(--table-header-color,var(--accent-soft))] text-[12px] font-semibold text-[color-mix(in_srgb,var(--accent-color)_35%,var(--font-color))]"
         style={`grid-template-columns: ${gridTemplate}; padding-right: ${scrollbarWidth}px;`}
       >
         {#each header as column, index (column)}
-          {#if column.width !== "0%"}
+          {#if inTable(column)}
             {@const key = sortKey(column)}
             <div
               data-fit={isFit(column) ? index : undefined}
@@ -322,8 +333,9 @@
             </div>
           {/if}
         {/each}
+        {#if hasDetails}<div></div>{/if}
         {#if dataBuffer.clearButton}
-          <div class="flex items-center justify-center tracking-normal normal-case">
+          <div class="flex items-center justify-center">
             <Button
               componentClass={twMerge("size-7 text-(--red-text) hover:bg-(--red-color)/10", dataBuffer.clearClass)}
               content={{ icon: ButtonClear, info: { text: $T("common.table.clear"), side: "left" } }}
@@ -348,7 +360,7 @@
                 style={`grid-template-columns: ${gridTemplate};`}
               >
                 {#each header as column, j (column)}
-                  {#if column.width !== "0%"}
+                  {#if inTable(column)}
                     {@const contents = columnContent(column, row) as ITableContent<Row>[]}
                     <!-- Одни бейджи - вплотную с переносом; stack - столбиком; иначе - в ряд равными долями -->
                     {@const badges = contents.length > 1 && contents.every((c) => c.type === "text" && c.data.badge)}
@@ -373,156 +385,22 @@
                         ? undefined
                         : `grid-template-columns: ${column.stack ? "minmax(0, 1fr)" : `repeat(${contents.length}, minmax(0, 1fr))`};`}
                     >
-                      {#each contents as content, index}
-                        {#if content.type === "button"}
-                          {@const button = resolve(content.data, row)}
-                          {@const title = resolve(button.title, row)}
-                          {#if !button.hideIf?.key || String((row as Record<string, unknown>)[button.hideIf.key] ?? "") !== String(button.hideIf.value ?? "")}
-                            <button class="{buttonClass(button, row, fit)} bg-(--bg-color)" onclick={() => buttonClick(row, button)} {title} aria-label={title}>
-                              {#if button.icon}
-                                <span class="flex size-(--icon-size) shrink-0 items-center justify-center overflow-visible [&_svg]:size-full">
-                                  {#if typeof button.icon === "string"}
-                                    {@html sanitizeHtml(button.icon)}
-                                  {:else}
-                                    <button.icon />
-                                  {/if}
-                                </span>
-                              {/if}
-                              {$T(resolve(button.name, row) ?? "")}
-                            </button>
-                          {/if}
-                        {:else if content.type === "menu"}
-                          <Dropdown
-                            align="end"
-                            button={{
-                              variant: "plain",
-                              wrapperClass: "w-fit shrink-0",
-                              componentClass: "aspect-auto h-7 w-auto rounded-lg px-2 py-0",
-                              content: {
-                                icon: content.data.icon ?? MoreIcon,
-                                info: content.data.title ? { text: $T(content.data.title), side: "left" } : undefined,
-                              },
-                            }}
-                            items={content.data.items(row)}
-                          />
-                        {:else if content.type === "select"}
-                          {@const select = content.data}
-                          {@const options = (Array.isArray(row[select.key]) ? row[select.key] : []) as IOption<string | number>[]}
-                          {@const current = (row as Record<string, unknown>)[valueKey(select.key)]}
-                          {@const open = dropdown?.row === i && dropdown.col === j && dropdown.index === index ? dropdown : null}
-                          <div class="relative w-full select-none">
-                            <button
-                              class="h-7 w-full cursor-pointer rounded-lg border border-(--border-color) bg-(--field-color) px-2 text-left text-[13px] transition-[border-color,box-shadow] duration-150 outline-none hover:border-(--faint-color) focus:border-(--accent-text) focus:shadow-(--focus-shadow-color)"
-                              onclick={(e) => toggleDropdown(e, i, j, index)}
-                            >
-                              {options.find((o) => o.value === current)?.name ?? $T("common.select_tag")}
-                            </button>
-                            {#if open}
-                              <div
-                                class="fixed z-50 max-h-[40vh] overflow-y-auto rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-1 shadow-(--elevation-2)"
-                                style="top: {open.rect.bottom + 4}px; left: {open.rect.left}px; width: {open.rect.width}px;"
-                                transition:slide={{ duration: slideDuration }}
-                              >
-                                {#each options as option (option.id ?? option.value)}
-                                  <button
-                                    class={twMerge(
-                                      "flex h-8 w-full cursor-pointer items-center rounded-md px-2.5 text-left text-[13px] transition-colors duration-150 hover:bg-(--container-color)",
-                                      option.accent && "text-(--accent-text)",
-                                    )}
-                                    style={accentStyle(option.accent)}
-                                    onclick={(e) => selectOption(e, entry.row, select.key, option)}
-                                  >
-                                    {option.name}
-                                  </button>
-                                {/each}
-                              </div>
-                            {/if}
-                          </div>
-                        {:else if content.type === "image"}
-                          {@const image = content.data}
-                          {@const src = resolve(image.src, row)}
-                          <div
-                            class="flex items-center justify-center [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
-                            style={`width: ${image.width || "2rem"}; height: ${image.height || "2rem"};`}
-                          >
-                            {#if src}
-                              <img {src} alt={image.alt ?? "Image"} class={twMerge("h-full w-full object-cover", image.class)} loading="lazy" />
-                            {:else if typeof image.defaultIcon === "string"}
-                              {@html sanitizeHtml(image.defaultIcon)}
-                            {:else if image.defaultIcon}
-                              <image.defaultIcon />
-                            {/if}
-                          </div>
-                        {:else if content.type === "progressBar"}
-                          {@const bar = content.data}
-                          <div class="grid h-7 w-full grid-cols-[3.5rem_1fr] items-center gap-2">
-                            <span class="text-right text-[12px] font-semibold tabular-nums">{roundToClean(Number(row[bar.key] ?? 0))}{bar.units}</span>
-                            <div class="relative my-auto h-1.5 overflow-hidden rounded-full bg-(--container-color)">
-                              <div
-                                class="absolute top-0 left-0 flex h-full rounded-full bg-(--bg-color,var(--accent-color))"
-                                style="width: {progressPercent(row[bar.key] as number, bar.minNum, bar.maxNum)}%;"
-                              ></div>
-                            </div>
-                          </div>
-                        {:else if content.type === "text"}
-                          {@const text = content.data}
-                          {@const value = cellContent(row, text)}
-                          {@const accent = text.accent?.(row)}
-                          <!-- w-full + min-w-0: при justify-items-start ячейка иначе берёт ширину по содержимому и truncate не даёт «…»; 
- в тексте - перенос строки -->
-                          <div class="flex w-full min-w-0 items-center">
-                            <div
-                              class="max-w-full min-w-0 wrap-break-word {text.truncated ? 'truncate' : 'whitespace-pre-line'} {accent
-                                ? 'text-(--accent-text)'
-                                : ''} {accent && text.badge ? 'w-fit rounded-md bg-(--accent-soft) px-1.5 text-[12px] font-medium' : 'w-full'}"
-                              style={accentStyle(accent)}
-                              onpointerenter={text.tooltip
-                                ? (e) => {
-                                    if (!isHoverPointer(e)) return
-                                    const tip = typeof text.tooltip === "function" ? text.tooltip(row) : cellText(row, text)
-                                    if (tip) tooltip = { show: true, text: tip, x: e.clientX, y: e.clientY }
-                                  }
-                                : undefined}
-                              onpointerleave={text.tooltip ? () => (tooltip.show = false) : undefined}
-                              onmousemove={text.tooltip ? (e) => ((tooltip.x = e.clientX), (tooltip.y = e.clientY)) : undefined}
-                              role="presentation"
-                            >
-                              {#if text.modal}
-                                <button
-                                  class="cursor-pointer text-left {text.truncated ? 'block w-full max-w-full truncate' : 'w-fit'}"
-                                  onclick={(e) => {
-                                    e.stopPropagation()
-                                    modal = { row, text }
-                                    modalOpen = true
-                                  }}
-                                >
-                                  {#if text.html}{@html sanitizeHtml(value)}{:else}{value}{/if}
-                                </button>
-                              {:else if text.onClick}
-                                <button
-                                  class="cursor-pointer text-left hover:underline {text.truncated ? 'block w-full max-w-full truncate' : ''}"
-                                  onclick={(e) => {
-                                    e.stopPropagation()
-                                    text.onClick?.(row)
-                                  }}>{value}</button
-                                >
-                              {:else if text.href}
-                                <a class="underline" href={text.href(row)}>{value}</a>
-                              {:else if text.html}
-                                {@html sanitizeHtml(value)}
-                              {:else}
-                                {value}
-                              {/if}
-                            </div>
-                            {#if text.copy}
-                              <CopyButton class="ml-1.5" text={() => cellText(row, text)} />
-                            {/if}
-                          </div>
-                        {/if}
-                      {/each}
+                      {@render items(row, entry.row, contents, fit, i, j)}
                     </div>
                   {/if}
                 {/each}
+                {#if hasDetails}
+                  <div class="flex items-center justify-center">
+                    <Button
+                      componentClass="size-7 text-(--accent-text) hover:bg-(--accent-soft)"
+                      content={{ icon: InfoIcon, info: { text: $T("common.table.details"), side: "left" } }}
+                      onClick={() => {
+                        detailsKey = entry.key
+                        detailsOpen = true
+                      }}
+                    />
+                  </div>
+                {/if}
                 {#if dataBuffer.clearButton}<div></div>{/if}
               </div>
             {/each}
@@ -550,6 +428,158 @@
   </div>
 </div>
 
+<!-- Содержимое ячейки - общее для строки таблицы и окна подробностей; entryRow - исходная строка (ключ выбранных значений списков), i и j - строка и столбец выпадающего списка -->
+{#snippet items(row: Row, entryRow: Row, contents: ITableContent<Row>[], fit: boolean, i: number, j: number)}
+  {#each contents as content, index}
+    {#if content.type === "button"}
+      {@const button = resolve(content.data, row)}
+      {@const title = resolve(button.title, row)}
+      {#if !button.hideIf?.key || String((row as Record<string, unknown>)[button.hideIf.key] ?? "") !== String(button.hideIf.value ?? "")}
+        <button class="{buttonClass(button, row, fit)} bg-(--bg-color)" onclick={() => buttonClick(row, button)} {title} aria-label={title}>
+          {#if button.icon}
+            <span class="flex size-(--icon-size) shrink-0 items-center justify-center overflow-visible [&_svg]:size-full">
+              {#if typeof button.icon === "string"}
+                {@html sanitizeHtml(button.icon)}
+              {:else}
+                <button.icon />
+              {/if}
+            </span>
+          {/if}
+          {$T(resolve(button.name, row) ?? "")}
+        </button>
+      {/if}
+    {:else if content.type === "menu"}
+      <Dropdown
+        align="end"
+        button={{
+          variant: "plain",
+          wrapperClass: "w-fit shrink-0",
+          componentClass: "aspect-auto h-7 w-auto rounded-lg px-2 py-0",
+          content: {
+            icon: content.data.icon ?? MoreIcon,
+            info: content.data.title ? { text: $T(content.data.title), side: "left" } : undefined,
+          },
+        }}
+        items={content.data.items(row)}
+      />
+    {:else if content.type === "select"}
+      {@const select = content.data}
+      {@const options = (Array.isArray(row[select.key]) ? row[select.key] : []) as IOption<string | number>[]}
+      {@const current = (row as Record<string, unknown>)[valueKey(select.key)]}
+      {@const open = dropdown?.row === i && dropdown.col === j && dropdown.index === index ? dropdown : null}
+      <div class="relative w-full select-none">
+        <button
+          class="h-7 w-full cursor-pointer rounded-lg border border-(--border-color) bg-(--field-color) px-2 text-left text-[13px] transition-[border-color,box-shadow] duration-150 outline-none hover:border-(--faint-color) focus:border-(--accent-text) focus:shadow-(--focus-shadow-color)"
+          onclick={(e) => toggleDropdown(e, i, j, index)}
+        >
+          {options.find((o) => o.value === current)?.name ?? $T("common.select_tag")}
+        </button>
+        {#if open}
+          <div
+            class="fixed z-[300] max-h-[40vh] overflow-y-auto rounded-[10px] border border-(--hairline-color) bg-(--back-color) p-1 shadow-(--elevation-2)"
+            style="top: {open.rect.bottom + 4}px; left: {open.rect.left}px; width: {open.rect.width}px;"
+            transition:slide={{ duration: slideDuration }}
+          >
+            {#each options as option (option.id ?? option.value)}
+              <button
+                class={twMerge(
+                  "flex h-8 w-full cursor-pointer items-center rounded-md px-2.5 text-left text-[13px] transition-colors duration-150 hover:bg-(--container-color)",
+                  option.accent && "text-(--accent-text)",
+                )}
+                style={accentStyle(option.accent)}
+                onclick={(e) => selectOption(e, entryRow, select.key, option)}
+              >
+                {option.name}
+              </button>
+            {/each}
+          </div>
+        {/if}
+      </div>
+    {:else if content.type === "image"}
+      {@const image = content.data}
+      {@const src = resolve(image.src, row)}
+      <div
+        class="flex items-center justify-center [&_svg]:h-full [&_svg]:max-h-full [&_svg]:w-full [&_svg]:max-w-full"
+        style={`width: ${image.width || "2rem"}; height: ${image.height || "2rem"};`}
+      >
+        {#if src}
+          <img {src} alt={image.alt ?? "Image"} class={twMerge("h-full w-full object-cover", image.class)} loading="lazy" />
+        {:else if typeof image.defaultIcon === "string"}
+          {@html sanitizeHtml(image.defaultIcon)}
+        {:else if image.defaultIcon}
+          <image.defaultIcon />
+        {/if}
+      </div>
+    {:else if content.type === "progressBar"}
+      {@const bar = content.data}
+      <div class="grid h-7 w-full grid-cols-[3.5rem_1fr] items-center gap-2">
+        <span class="text-right text-[12px] font-semibold tabular-nums">{roundToClean(Number(row[bar.key] ?? 0))}{bar.units}</span>
+        <div class="relative my-auto h-1.5 overflow-hidden rounded-full bg-(--container-color)">
+          <div
+            class="absolute top-0 left-0 flex h-full rounded-full bg-(--bg-color,var(--accent-color))"
+            style="width: {progressPercent(row[bar.key] as number, bar.minNum, bar.maxNum)}%;"
+          ></div>
+        </div>
+      </div>
+    {:else if content.type === "text"}
+      {@const text = content.data}
+      {@const value = cellContent(row, text)}
+      {@const accent = text.accent?.(row)}
+      <!-- w-full + min-w-0: при justify-items-start ячейка иначе берёт ширину по содержимому и truncate не даёт «…»; 
+ в тексте - перенос строки -->
+      <div class="flex w-full min-w-0 items-center">
+        <div
+          class="max-w-full min-w-0 wrap-break-word {text.truncated ? 'truncate' : 'whitespace-pre-line'} {accent ? 'text-(--accent-text)' : ''} {accent &&
+          text.badge
+            ? 'w-fit rounded-md bg-(--accent-soft) px-1.5 text-[12px] font-medium'
+            : 'w-full'}"
+          style={accentStyle(accent)}
+          onpointerenter={text.tooltip
+            ? (e) => {
+                if (!isHoverPointer(e)) return
+                const tip = typeof text.tooltip === "function" ? text.tooltip(row) : cellText(row, text)
+                if (tip) tooltip = { show: true, text: tip, x: e.clientX, y: e.clientY }
+              }
+            : undefined}
+          onpointerleave={text.tooltip ? () => (tooltip.show = false) : undefined}
+          onmousemove={text.tooltip ? (e) => ((tooltip.x = e.clientX), (tooltip.y = e.clientY)) : undefined}
+          role="presentation"
+        >
+          {#if text.modal}
+            <button
+              class="cursor-pointer text-left {text.truncated ? 'block w-full max-w-full truncate' : 'w-fit'}"
+              onclick={(e) => {
+                e.stopPropagation()
+                modal = { row, text }
+                modalOpen = true
+              }}
+            >
+              {#if text.html}{@html sanitizeHtml(value)}{:else}{value}{/if}
+            </button>
+          {:else if text.onClick}
+            <button
+              class="cursor-pointer text-left hover:underline {text.truncated ? 'block w-full max-w-full truncate' : ''}"
+              onclick={(e) => {
+                e.stopPropagation()
+                text.onClick?.(row)
+              }}>{value}</button
+            >
+          {:else if text.href}
+            <a class="underline" href={text.href(row)}>{value}</a>
+          {:else if text.html}
+            {@html sanitizeHtml(value)}
+          {:else}
+            {value}
+          {/if}
+        </div>
+        {#if text.copy}
+          <CopyButton class="ml-1.5" text={() => cellText(row, text)} />
+        {/if}
+      </div>
+    {/if}
+  {/each}
+{/snippet}
+
 {#snippet copyFooter()}
   <Button
     content={{ name: $T("ui.copy_text") }}
@@ -575,6 +605,23 @@
       <!-- Длинные строки переносятся, отступы сохраняются - содержимое видно целиком -->
       <div class="text-left whitespace-pre-wrap [overflow-wrap:anywhere]">
         {#if modal.text.html}{@html sanitizeHtml(cellContent(modal.row, modal.text))}{:else}{cellContent(modal.row, modal.text)}{/if}
+      </div>
+    {/if}
+  {/snippet}
+</Modal>
+
+<Modal bind:isOpen={detailsOpen} title={$T("common.table.details")} width="min(36rem, 92vw)">
+  {#snippet main()}
+    {#if detailsEntry}
+      {@const row = withPicks(detailsEntry.row)}
+      <div class="grid grid-cols-[minmax(6rem,max-content)_minmax(0,1fr)] items-center gap-x-4 gap-y-2.5 text-left">
+        {#each detailColumns as { column, index } (index)}
+          <div class="text-[12px] font-semibold text-(--muted-color)">{$T(column.label?.name ?? "")}</div>
+          <!-- Выпадающие списки окна - со своими номерами строк, чтобы не открывался список той же ячейки в таблице -->
+          <div class="flex min-w-0 flex-wrap items-center gap-2 text-[13px] [&>*]:min-w-0">
+            {@render items(row, detailsEntry.row, columnContent(column, row) as ITableContent<Row>[], true, -1 - detailsIndex, index)}
+          </div>
+        {/each}
       </div>
     {/if}
   {/snippet}

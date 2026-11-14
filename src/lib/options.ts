@@ -162,6 +162,12 @@ export const optionsStore = derived(T, ($T) => {
       opt("circle", $T("constructor.props.type.circle"), PROPS_ICONS.circle),
     ],
 
+    TABLE_PLACE_OPTIONS: [
+      opt("table", $T("constructor.props.table.place.table")),
+      opt("details", $T("constructor.props.table.place.details")),
+      opt("both", $T("constructor.props.table.place.both")),
+    ],
+
     TABLE_CONTENT_TYPE_OPTIONS: [
       opt("text", $T("constructor.props.table.type.text")),
       opt("select", $T("constructor.props.table.type.select")),
