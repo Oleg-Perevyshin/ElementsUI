@@ -52,7 +52,7 @@
       content: [
         {
           type: "button",
-          data: { name: L("Сброс", "Reset", "重置"), class: "bg-blue", eventHandler: { Header: "SET", Argument: "Reset", Variables: [] } },
+          data: { name: L("Сброс", "Reset", "重置"), class: "bg-blue", eventHandler: { Header: "SET", Argument: "DefCfg", Variables: [] } },
         },
       ],
     },

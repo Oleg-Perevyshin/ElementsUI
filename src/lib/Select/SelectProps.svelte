@@ -7,7 +7,8 @@
   import * as UI from ".."
   import ButtonDelete from "../libIcons/ButtonDelete.svelte"
   import ButtonAdd from "../libIcons/ButtonAdd.svelte"
-  import { ARGUMENT_MAX_LENGTH, ARGUMENT_REGEXP, optionsStore } from "../options"
+  import { optionsStore } from "../options"
+  import ArgumentSelect from "../ArgumentSelect.svelte"
   import CommonSnippets from "../CommonSnippets.svelte"
   import PropsGroup from "../PropsGroup.svelte"
   import PropsListModal from "../PropsListModal.svelte"
@@ -47,13 +48,7 @@
   <PropsGroup label={$T("constructor.props.group.general")}>
     <CommonSnippets snippet="Access" {component} {onPropertyChange} />
     <CommonSnippets snippet="Variable" {VARIABLE_OPTIONS} {component} {onPropertyChange} />
-    <UI.Input
-      label={{ name: $T("constructor.props.argument") }}
-      value={component.eventHandler?.Argument || "ModCfg"}
-      maxlength={ARGUMENT_MAX_LENGTH}
-      help={{ info: $T("constructor.props.argument.info"), autocomplete: "on", regExp: ARGUMENT_REGEXP }}
-      onUpdate={(value) => onPropertyChange({ eventHandler: { Argument: String(value) } })}
-    />
+    <ArgumentSelect value={component.eventHandler?.Argument || "ModCfg"} onUpdate={(Argument) => onPropertyChange({ eventHandler: { Argument } })} />
   </PropsGroup>
   <PropsGroup label={$T("constructor.props.group.value")}>
     <UI.Select

@@ -33,6 +33,15 @@ export const hintsSetting = (widget: string, instanceKey?: string): Writable<boo
   return store
 }
 
+/* Разметка текста подсказки: **жирное** (названия вариантов), перенос строки - \n; части выводятся текстом, без HTML */
+export const hintParts = (text: string): { text: string; bold: boolean }[] =>
+  text
+    .split(/\*\*(.+?)\*\*/g)
+    .map((part, i) => ({ text: part, bold: i % 2 === 1 }))
+    .filter((part) => part.text)
+/* Текст подсказки без разметки - для aria-label */
+export const hintPlain = (text: string) => text.replace(/\*\*(.+?)\*\*/g, "$1")
+
 /* Одно всплывающее окно на страницу: создаётся при первом показе, позиционируется над элементом (или под ним, если сверху нет места) */
 let popup: HTMLDivElement | null = null
 
@@ -64,7 +73,15 @@ const ensurePopup = () => {
 
 const showHint = (node: HTMLElement, text: string) => {
   const el = ensurePopup()
-  el.textContent = text
+  el.replaceChildren(
+    ...hintParts(text).map((part) => {
+      if (!part.bold) return document.createTextNode(part.text)
+      const bold = document.createElement("b")
+      bold.style.fontWeight = "700"
+      bold.textContent = part.text
+      return bold
+    }),
+  )
   el.style.opacity = "1"
   const rect = node.getBoundingClientRect()
   const box = el.getBoundingClientRect()

@@ -4,16 +4,13 @@ import { PROPS_ICONS } from "./libIcons/propsIcons"
 import { ACCENT_COLORS, type AccentColor } from "./accent"
 import { DEFAULT_ARGUMENT_CODES } from "./dictionaries/generated/commands"
 
-/* Аргумент команды в конструкторе: только имя команды устройства из мастер-словаря (коды 1..4095, без команд облака 7000..7999) или служебный NoSend; в провод имя уходит кодом в HAR. Предел длины поля ввода - 31 знак */
-export const ARGUMENT_MAX_LENGTH = 31
-export const ARGUMENT_REGEXP = new RegExp(
-  `^(${[
-    ...Object.entries(DEFAULT_ARGUMENT_CODES)
-      .filter(([, code]) => code > 0 && code < 4096)
-      .map(([name]) => name),
-    "NoSend",
-  ].join("|")})$`,
-)
+/* Аргумент команды в конструкторе: только имя команды устройства из мастер-словаря (коды 1..4095, без команд облака 7000..7999) или служебный NoSend - не отправлять; в провод имя уходит кодом в HAR */
+export const ARGUMENT_NAMES: string[] = [
+  ...Object.entries(DEFAULT_ARGUMENT_CODES)
+    .filter(([, code]) => code > 0 && code < 4096)
+    .map(([name]) => name),
+  "NoSend",
+]
 
 /* Вариант со стабильным id по значению: id не меняется при смене языка */
 const opt = <const V>(value: V, name?: string, icon?: string) => ({ id: String(value), value, name, icon })

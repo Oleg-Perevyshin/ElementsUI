@@ -3,6 +3,7 @@
   import { fly } from "svelte/transition"
   import InfoIcon from "./libIcons/InfoIcon.svelte"
   import { isHoverPointer, isKeyboardFocus } from "./popup"
+  import { hintParts, hintPlain } from "./hints"
 
   let { text }: { text: string } = $props()
 
@@ -36,7 +37,7 @@
   bind:this={anchor}
   type="button"
   class="inline-flex size-(--icon-size-sm) shrink-0 cursor-help items-center justify-center border-none bg-transparent p-0 text-(--faint-color) hover:text-(--accent-text) [&_svg]:size-full"
-  aria-label={text}
+  aria-label={hintPlain(text)}
   onpointerdown={(event) => (touch = !isHoverPointer(event))}
   onclick={(event) => {
     event.preventDefault()
@@ -58,8 +59,8 @@
     transition:fly={{ y: place.above ? -6 : 6, duration: 150 }}
   >
     <span
-      class="w-max max-w-full rounded-lg border border-(--hairline-color) bg-(--back-color) px-2.5 py-1.5 text-left text-[12px] font-medium whitespace-normal text-(--font-color) normal-case shadow-(--elevation-2)"
-      >{text}</span
+      class="w-max max-w-full rounded-lg border border-(--hairline-color) bg-(--back-color) px-2.5 py-1.5 text-left text-[12px] font-medium whitespace-pre-line text-(--font-color) normal-case shadow-(--elevation-2)"
+      >{#each hintParts(text) as part}{#if part.bold}<b class="font-bold">{part.text}</b>{:else}{part.text}{/if}{/each}</span
     >
   </div>
 {/if}

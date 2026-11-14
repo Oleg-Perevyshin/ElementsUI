@@ -7,7 +7,8 @@
   import type { UIComponent, IButtonProps } from "../types"
   import { createPropsEditor, optionByClass, type PropertyChange } from "../propsEditor"
   import * as UI from ".."
-  import { ARGUMENT_MAX_LENGTH, ARGUMENT_REGEXP, optionsStore } from "../options"
+  import { optionsStore } from "../options"
+  import ArgumentSelect from "../ArgumentSelect.svelte"
   import type { AccentColor } from "../accent"
   import { twMerge } from "tailwind-merge"
   import { ICONS } from "../icons"
@@ -64,13 +65,7 @@
       options={$optionsStore.HEADER_OPTIONS}
       onUpdate={(Header) => onPropertyChange({ eventHandler: { Header } })}
     />
-    <UI.Input
-      label={{ name: $T("constructor.props.argument") }}
-      value={component.eventHandler?.Argument || "ModCfg"}
-      maxlength={ARGUMENT_MAX_LENGTH}
-      help={{ info: $T("constructor.props.argument.info"), autocomplete: "on", regExp: ARGUMENT_REGEXP }}
-      onUpdate={(value) => onPropertyChange({ eventHandler: { Argument: String(value) } })}
-    />
+    <ArgumentSelect value={component.eventHandler?.Argument || "ModCfg"} onUpdate={(Argument) => onPropertyChange({ eventHandler: { Argument } })} />
   </PropsGroup>
   <PropsGroup label={$T("constructor.props.group.value")}>
     {#if component.eventHandler?.Argument !== "ModCfg" || component.eventHandler?.Header === "SET"}
