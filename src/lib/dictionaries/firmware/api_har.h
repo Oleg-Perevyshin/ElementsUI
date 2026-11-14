@@ -37,6 +37,7 @@ typedef enum {
   A_BIND_MOD_KEY      = 10, /* SET: привязка ключа модуля (ModBindKey) */
   A_DEBUG_LOG         = 11, /* OK!: сообщение отладки - CBOR-массив [уровень, тег, текст|байты, FHS] */
   A_DEBUG_PLOT        = 12, /* OK!: значения графиков отладки - CBOR-карта {"Имя": float32} (LOG_PLOT) */
+  A_DEBUG_MIRROR      = 13, /* OK!: копия пакета другого интерфейса в консоль (уровень TRACE) - {Dir, If, Trg, Src, HAR, ModSN, Val} */
   A_DATA_STREAM       = 15, /* OK!: поток данных групп конфигурации (CS_PushGroupStream) */
 
   /* Локальная сеть */

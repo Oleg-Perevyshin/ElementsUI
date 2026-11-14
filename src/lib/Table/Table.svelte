@@ -308,7 +308,7 @@
 </script>
 
 <div class={twMerge(`flex h-full w-full flex-col overflow-hidden`, wrapperClass)} style={accentStyle(accent)} bind:clientWidth={rootWidth}>
-  <FieldLabel {label} info={help?.info} class="w-full pb-2" />
+  <FieldLabel {label} info={help?.info ? $T(help.info) : undefined} class="w-full pb-2" />
 
   <div class="relative flex h-full w-full flex-col overflow-x-auto overflow-y-hidden rounded-[14px] border border-(--hairline-color) bg-(--back-color)">
     <div class="flex min-h-0 w-full flex-1 flex-col" style="min-width: {minTableWidth};" bind:this={tableEl}>

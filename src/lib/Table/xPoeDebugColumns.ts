@@ -36,9 +36,22 @@ const commandTooltip = (row: XPoeDebugRow): string => {
     .join("\n")
 }
 
+/* Ячейка SRC → TRG: отправитель и адресат одной строкой, HEX без 0x (пояснение - в справке таблицы); у RAW адресов нет - пусто */
+const routeText = (row: XPoeDebugRow): string => {
+  const id = (value: string) => value.replace(/^0x/i, "")
+  return row.srcId || row.trgId ? `${id(row.srcId)} → ${id(row.trgId)}` : ""
+}
+
+/* Справка таблицы xPOE-Debug (help таблицы): что в каждой колонке */
+export const xPoeDebugTableHelp = { info: "common.table.xpoe.info" }
+
 export const xPoeDebugTableColumns: ITableHeader<XPoeDebugRow>[] = [
-  { label: { name: "TRG" }, content: [{ type: "text", data: { key: "trgId" } }], width: tableMonoWidth(6, 3), align: "center" },
-  { label: { name: "SRC" }, content: [{ type: "text", data: { key: "srcId" } }], width: tableMonoWidth(6, 3), align: "center" },
+  {
+    label: { name: "SRC → TRG" },
+    content: [{ type: "text", data: { key: "srcId", render: routeText } }],
+    width: tableMonoWidth(11, 11),
+    align: "center",
+  },
   {
     label: { name: "common.table.xpoe.command" },
     content: [{ type: "text", data: { key: "argument", render: commandHtml, html: true, tooltip: commandTooltip } }],

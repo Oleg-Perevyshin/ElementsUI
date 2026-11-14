@@ -39,6 +39,11 @@ const translations = {
   "constructor.props.source": { ru: "Источник", en: "Source", zh: "来源" },
   "common.table.fulldata": { ru: "Полные данные", en: "Full data", zh: "完整数据" },
   "common.table.details": { ru: "Подробнее", en: "Details", zh: "详情" },
+  "common.table.xpoe.info": {
+    ru: "**SRC → TRG** - кто отправил пакет и кому, адреса шины (BusID) в HEX. **0000** - внешний клиент (терминал, облако, веб), в TRG - ещё и модуль консоли. **FFFF** - всем модулям шины.\n**Команда** - заголовок цветной меткой и аргумент, ниже - сообщение устройства. Наведите курсор - будет HAR и флаг ответа.\n**Значение** - данные пакета как пришли. Клик открывает их целиком.\n**FHS** - свободная память устройства, байт.",
+    en: "**SRC → TRG** - who sent the packet and to whom, bus addresses (BusID) in HEX. **0000** - an external client (terminal, cloud, web), in TRG also the console module. **FFFF** - all modules on the bus.\n**Command** - the header as a colored badge and the argument, below - the device message. Hover to see the HAR and the reply flag.\n**Value** - the packet data as received. Click to open it in full.\n**FHS** - free device memory, bytes.",
+    zh: "**SRC → TRG** - 数据包由谁发给谁，总线地址 (BusID)，HEX 格式。**0000** - 外部客户端（终端、云端、网页），在 TRG 中也表示控制台模块。**FFFF** - 总线上的所有模块。\n**命令** - 彩色标记的报头和参数，下方为设备消息。悬停可查看 HAR 和应答标志。\n**值** - 收到的数据包数据。点击可查看完整内容。\n**FHS** - 设备空闲内存，字节。",
+  },
   "common.table.xpoe.command": { ru: "Команда", en: "Command", zh: "命令" },
   "common.table.xpoe.value": { ru: "Значение", en: "Value", zh: "值" },
   "common.table.xpoe.reply": { ru: "ждёт ответа", en: "reply requested", zh: "需要应答" },
@@ -242,9 +247,9 @@ const translations = {
     zh: "模块在 CAN 或 RS485 总线上的地址（十六进制），由芯片编号自动生成",
   },
   "widget.info.hint.log_level": {
-    ru: "Какие сообщения модуль пишет в отладочную консоль: OFF - ничего, DEBUG - всё. Графики PLOT выводятся от уровня INFO",
-    en: "Which messages the module writes to the debug console: OFF - none, DEBUG - all. PLOT graphs are sent from INFO",
-    zh: "模块向调试控制台输出哪些消息：OFF - 不输出，DEBUG - 全部。PLOT 图表从 INFO 级别开始输出",
+    ru: "Какие сообщения модуль пишет в отладочную консоль: OFF - ничего, DEBUG - все логи, TRACE - ещё и копии всех пакетов обмена с облаком, вебом и шиной. Графики PLOT выводятся от уровня INFO",
+    en: "Which messages the module writes to the debug console: OFF - none, DEBUG - all logs, TRACE - also copies of all packets exchanged with the cloud, web and bus. PLOT graphs are sent from INFO",
+    zh: "模块向调试控制台输出哪些消息：OFF - 不输出，DEBUG - 全部日志，TRACE - 另外输出与云端、网页和总线交换的所有数据包副本。PLOT 图表从 INFO 级别开始输出",
   },
   "widget.info.hint.restart": {
     ru: "Перезагрузить устройство - настройки сохраняются, связь пропадёт на несколько секунд",

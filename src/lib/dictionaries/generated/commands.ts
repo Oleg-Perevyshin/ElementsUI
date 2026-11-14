@@ -13,6 +13,7 @@ export const DEFAULT_ARGUMENT_CODES: Record<string, number> = {
   BindMKey: 10,
   DebugLog: 11,
   DebugPlot: 12,
+  DebugMirror: 13,
   DataStream: 15,
   APsList: 21,
   FS: 22,

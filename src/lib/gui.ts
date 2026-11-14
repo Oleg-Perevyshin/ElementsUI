@@ -45,7 +45,7 @@ export const WIDGET_FIELDS = {
     StaIP: text,
     ApIP: text,
     DevBusID: num /* адрес на шине (STM, хабы) - только чтение, показывается HEX */,
-    SCLL: num /* уровень логов консоли: 0 OFF, 1 ERROR, 2 WARNING, 3 INFO, 4 DEBUG */,
+    SCLL: num /* уровень логов консоли: 0 OFF, 1 ERROR, 2 WARNING, 3 INFO, 4 DEBUG, 5 TRACE (и копии всех пакетов) */,
   },
   /* Объект FS (FS_WriteState прошивки): Total/Used/Free/List и Upload во время закачки */
   WidgetFileSystem: { FS: {} as IWidgetFileSystemInfo },
