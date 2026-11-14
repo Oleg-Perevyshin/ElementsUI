@@ -226,6 +226,40 @@ socket.send(valueToCbor(encodeWsEnvelope("SET", "JoinDev", { DevSN, Watch: true 
 </details>
 
 <details>
+<summary>🔌 Мост шины: GUI через консоль, CAN и RS485</summary>
+
+Веб и облако дают рендереру связь поверх WebSocket. Для порта (консоль xPOE-Debug, CAN, RS485) ту же связь даёт `createBusBridge`: GUI тот же, команды от кнопок те же, устройство отвечает как вебу.
+
+```ts
+const values = new SvelteMap<string, unknown>()
+const bridge = UI.createBusBridge(channel, {
+  values /* значения "<ModSN>|ключ", как DeviceStore веба */,
+  dictionary,
+  language: UI.getLanguage,
+  selfTarget: 0x0000 /* консоль; на шинах CAN и RS485 - 0xFFFF */,
+  onMessage: (text, level, module) => UI.addToast(text, module?.ModName, level),
+  onModules: (list) => (modules = list),
+})
+/* <UI.GUIRenderer components={gui} link={bridge.link(ModSN)} ... /> */
+```
+
+- `channel` - `{ send(trgId, har, payload), listen(handler) }`: отправка пакета адресату по BusID и подписка на принятые пакеты `{ trgId, srcId, header, argument, code, payload }`.
+- Модули - из `CFG.ModList` модуля порта, как в вебе. Списка нет (датчик) - модуль один, его серийный номер мост берёт из `CFG.DevSN`. Список модулей принимается только от модуля порта: у модулей за ним свой ModList из одного себя.
+- Адрес команды: модулю порта - `selfTarget`, остальным - их BusID (`busIdFromSN`: HEX после `:` в ModSN), головной модуль пересылает сам.
+- Значения: Payload ответов и рассылок `Update`, `DataStream`, `ModCfg`, `FS`, `ModInfo`, `APsList`, `StackInfo` - в `values` под ModSN отправителя.
+- Сообщения: консоль шлёт `Message` отдельным `DebugLog` («HAR 0x....», «MSG код аргументы») прямо перед ответом. Мост склеивает их обратно: `waitFor` получает `reply.message`, как в вебе, а `onMessage` - текст на языке пользователя и уровень.
+- `bridge.link(ModSN)` - одна связь на модуль (на неё завязана очередь передачи файлов), `bridge.modules()`, `bridge.self()`, `bridge.dispose()`.
+
+</details>
+
+<details>
+<summary>🔔 Всплывающие уведомления</summary>
+
+`<UI.Toasts />` - стопка уведомлений в левом нижнем углу, как в облаке: заголовок, текст цветом уровня, крестик, полоса времени жизни 7 с. `UI.addToast(text, title?, level?)` добавляет уведомление (уровни `info`, `warn`, `error`; префиксы `OK: `, `WR: `, `ER: ` в тексте тоже задают уровень), такое же уже на экране - живёт дольше. `UI.removeToast(id)`, `UI.toasts` - стор очереди.
+
+</details>
+
+<details>
 <summary>🧮 Чистые функции и реестр</summary>
 
 Правила рендерера - чистые функции, их можно звать и без него:
