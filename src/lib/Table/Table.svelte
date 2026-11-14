@@ -131,16 +131,17 @@
   /* Ширины колонок по содержимому в px (замер после отрисовки), ключ - номер колонки в header */
   let fitWidths = $state<Record<number, number>>({})
   const hasFit = $derived(header.some((c) => inTable(c) && isFit(c)))
-  /* Рядом с колонкой по содержимому проценты становятся долями остатка: "20%" - 20fr */
+  /* Рядом с колонкой по содержимому или служебной (кнопка подробностей, очистка журнала) проценты становятся долями остатка: "20%" - 20fr, иначе служебная колонка уходит за край */
+  const shareRest = $derived(hasFit || hasDetails || !!dataBuffer.clearButton)
   const trackWidth = (column: ITableHeader<Row>, index: number) => {
     if (isFit(column)) return fitWidths[index] ? `${fitWidths[index]}px` : "max-content"
     if (!column.width) return "minmax(0, 1fr)"
-    if (hasFit && column.width.endsWith("%")) return `minmax(0, ${parseFloat(column.width) || 1}fr)`
+    if (shareRest && column.width.endsWith("%")) return `minmax(0, ${parseFloat(column.width) || 1}fr)`
     return column.width
   }
   const minWidth = (column: ITableHeader<Row>, index: number) => {
     if (isFit(column)) return fitWidths[index] ? `${fitWidths[index]}px` : "2.5rem"
-    if (!column.width || column.width.includes("fr") || (hasFit && column.width.endsWith("%"))) return "5rem"
+    if (!column.width || column.width.includes("fr") || (shareRest && column.width.endsWith("%"))) return "5rem"
     return column.width
   }
   const visibleColumns = $derived(header.map((column, index) => ({ column, index })).filter(({ column }) => inTable(column)))
