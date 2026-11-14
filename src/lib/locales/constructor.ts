@@ -368,6 +368,13 @@ const constructorTranslations = {
   "constructor.props.table.columns.image.width": { ru: "Ширина иконки, rem", en: "Icon width, rem", zh: "图标宽度，rem" },
   "constructor.props.table.columns.image.height": { ru: "Высота иконки, rem", en: "Icon height, rem", zh: "图标高度，rem" },
   "constructor.props.table.keys": { ru: "Перечень ключей", en: "List of keys", zh: "键列表" },
+  "constructor.props.table.hideIf.key": { ru: "Скрыть, если ключ", en: "Hide if key", zh: "隐藏条件键" },
+  "constructor.props.table.hideIf.value": { ru: "равен", en: "equals", zh: "等于" },
+  "constructor.props.table.hideIf.info": {
+    ru: "Кнопка не показывается в строке, где значение этого ключа равно заданному. Пусто - кнопка во всех строках",
+    en: "The button is hidden in rows where this key equals the given value. Empty - the button is in every row",
+    zh: "当该键的值等于给定值时，该行不显示按钮。为空 - 所有行都显示按钮",
+  },
   "constructor.props.table.keys.info": {
     ru: "Ключи колонок, значения которых будут возвращаться. Перечислить через пробел",
     en: "Column keys whose values will be returned. List them separated by spaces",

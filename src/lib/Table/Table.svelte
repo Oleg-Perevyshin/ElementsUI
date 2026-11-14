@@ -377,18 +377,20 @@
                         {#if content.type === "button"}
                           {@const button = resolve(content.data, row)}
                           {@const title = resolve(button.title, row)}
-                          <button class="{buttonClass(button, row, fit)} bg-(--bg-color)" onclick={() => buttonClick(row, button)} {title} aria-label={title}>
-                            {#if button.icon}
-                              <span class="flex size-(--icon-size) shrink-0 items-center justify-center overflow-visible [&_svg]:size-full">
-                                {#if typeof button.icon === "string"}
-                                  {@html sanitizeHtml(button.icon)}
-                                {:else}
-                                  <button.icon />
-                                {/if}
-                              </span>
-                            {/if}
-                            {$T(resolve(button.name, row) ?? "")}
-                          </button>
+                          {#if !button.hideIf?.key || String((row as Record<string, unknown>)[button.hideIf.key] ?? "") !== String(button.hideIf.value ?? "")}
+                            <button class="{buttonClass(button, row, fit)} bg-(--bg-color)" onclick={() => buttonClick(row, button)} {title} aria-label={title}>
+                              {#if button.icon}
+                                <span class="flex size-(--icon-size) shrink-0 items-center justify-center overflow-visible [&_svg]:size-full">
+                                  {#if typeof button.icon === "string"}
+                                    {@html sanitizeHtml(button.icon)}
+                                  {:else}
+                                    <button.icon />
+                                  {/if}
+                                </span>
+                              {/if}
+                              {$T(resolve(button.name, row) ?? "")}
+                            </button>
+                          {/if}
                         {:else if content.type === "menu"}
                           <Dropdown
                             align="end"

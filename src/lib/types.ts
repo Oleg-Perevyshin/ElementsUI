@@ -519,6 +519,8 @@ export interface ITableButton<T extends object> {
   class?: string | ((row: T) => string)
   eventHandler?: IUIComponentHandler
   onClick?: (row: T) => void
+  /* Не показывать кнопку в строке, где значение поля key равно value (сравнение строками) - задаётся в YAML, например своя строка шлюза в ModList */
+  hideIf?: { key: string; value: string | number }
 }
 export interface ITableProgressBar<T extends object> {
   key: keyof T

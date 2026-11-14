@@ -395,6 +395,31 @@
                               }}
                             />
                           </div>
+                          <div class="flex flex-wrap items-end gap-2">
+                            <UI.Input
+                              wrapperClass="min-w-28 flex-1"
+                              label={{ name: $T("constructor.props.table.hideIf.key") }}
+                              value={button.hideIf?.key ?? ""}
+                              maxlength={32}
+                              help={{ info: $T("constructor.props.table.hideIf.info"), regExp: /^[a-zA-Z0-9\-._]{0,32}$/ }}
+                              onUpdate={(value) =>
+                                updateContentProperty(
+                                  columnIndex,
+                                  index,
+                                  "hideIf",
+                                  value ? { key: value as string, value: button.hideIf?.value ?? "" } : undefined,
+                                )}
+                            />
+                            <UI.Input
+                              wrapperClass="min-w-28 flex-1"
+                              label={{ name: $T("constructor.props.table.hideIf.value") }}
+                              value={button.hideIf?.value ?? ""}
+                              maxlength={64}
+                              onUpdate={(value) => {
+                                if (button.hideIf?.key) updateContentProperty(columnIndex, index, "hideIf", { key: button.hideIf.key, value: value as string })
+                              }}
+                            />
+                          </div>
                         {:else if content.type == "progressBar"}
                           {@const progressBar = content.data}
                           <div class="flex flex-wrap items-end gap-2">
