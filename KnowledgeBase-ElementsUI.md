@@ -1110,6 +1110,7 @@ const bridge = UI.createBusBridge(channel, {
 - 🌗 Контраст в светлой и тёмной теме одинаковый и проходит нормы WCAG 2.1.
 - 🌈 Восемь цветов ролей: серый, красный, оранжевый, жёлтый, зелёный, голубой, синий, фиолетовый.
 - ✍️ Текст в три ступени: основной, вторичный и подсказки.
+- 🖱️ Родные элементы браузера (выпадающие списки, флажки, ползунки, полосы прокрутки) следуют теме: `color-scheme` у `.light` и `.dark`, пункты списков - цветами темы.
 - 🔣 Значки двух размеров: `--icon-size` (18px) везде и `--icon-size-sm` (14px) у мелкого текста - стрелки раскрытия, копирование, ⓘ. Свой значок в приложении задают так же: `size-(--icon-size)`.
 - 👀 Всю тему разом можно посмотреть на вкладке «Тема» на главной витрины: палитра, все компоненты с демо-данными, типографика и Markdown.
 
@@ -4036,6 +4037,8 @@ const message = decodeWsEnvelope(cborToValue(new Uint8Array(event.data)))
 | `stack`         | `boolean`                                     | Элементы ячейки столбиком                                                                                                                                                                |
 | `disableSelect` | `boolean`                                     | Запретить выделение текста                                                                                                                                                               |
 | `place`         | `"table" \| "details" \| "both" \| "wide"`    | Где показывать: в строке (по умолчанию), только в окне подробностей, и там, и там, `wide` - в строке, пока таблица не уже 640 px (ширина места таблицы, а не окна), иначе в подробностях |
+| `id`            | `string`                                      | Ключ колонки для выбора колонок, по умолчанию `label.name`                                                                                                                               |
+| `hidden`        | `boolean`                                     | Колонка скрыта, пока её не включат в выборе колонок                                                                                                                                      |
 | `content`       | `ITableContent[] \| (row) => ITableContent[]` | Что в ячейке: список или функция от строки                                                                                                                                               |
 
 ##### Содержимое ячейки `ITableContent`
@@ -4087,6 +4090,8 @@ const message = decodeWsEnvelope(cborToValue(new Uint8Array(event.data)))
 const canModal = createRawSnippet((row: () => CanRow) => ({ render: () => `<div class="whitespace-pre-wrap">${formatCanDataModal(row().data)}</div>` }))
 { type: "text", data: { key: "data", truncated: true, copy: true, modal: canModal } }
 ```
+
+**Выбор колонок.** Таблица скрывает колонки из `hiddenColumns` (ключи `id` или `label.name`), а без него - колонки с `hidden: true`. Кнопка `<UI.TableColumns {header} bind:hidden onChange />` - флажки колонок и «По умолчанию», как у таблиц БД в облаке. Где запомнить выбор и где поставить кнопку, решает приложение: `hidden` равно `undefined` - выбор по умолчанию. Так на экране остаётся главное, а остальные данные включаются по нужде.
 
 Готовые колонки отладочной таблицы xPOE и её справка лежат в `xPoeDebugColumns.ts` (`xPoeDebugTableColumns`, `xPoeDebugTableHelp` - передайте в `help` таблицы), их используют облако и терминал: `TRG | SRC | Команда | Значение | FHS` (TRG, SRC и FHS - сокращения, «Команда» и «Значение» переводятся). Строки - `xPoeDebugRow` ядра протоколов.
 

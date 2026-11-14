@@ -1,6 +1,7 @@
 <!-- $lib/Table/Table.svelte - таблица: обычная (строки в body) или журнал (строки добавляет push() через bind:this, хранятся в кольцевом буфере) -->
 <script lang="ts" generics="Row extends object">
   import FieldLabel from "../FieldLabel.svelte"
+  import { columnId, defaultHiddenColumns } from "./columns"
   import { roundToClean } from "../number"
   import type { IOption, ITableButton, ITableContent, ITableHeader, ITableProps, ITableText } from "../types"
   import { fly, slide } from "svelte/transition"
@@ -28,6 +29,7 @@
     help,
     body = [],
     header = [],
+    hiddenColumns,
     footer = "",
     dataBuffer = {},
     outline = false,
@@ -121,12 +123,16 @@
   let rootWidth = $state(0)
   const narrow = $derived(rootWidth > 0 && rootWidth < NARROW_WIDTH)
   /* Столбец в строке таблицы: не скрыт шириной 0%, не только в подробностях и не wide на узкой таблице */
-  const inTable = (column: ITableHeader<Row>) => column.width !== "0%" && column.place !== "details" && !(column.place === "wide" && narrow)
+  /* Скрытые выбором колонок: заданные или по умолчанию (hidden) */
+  const hiddenSet = $derived(new Set(hiddenColumns ?? defaultHiddenColumns(header)))
+  const isHidden = (column: ITableHeader<Row>) => hiddenSet.has(columnId(column))
+  const inTable = (column: ITableHeader<Row>) =>
+    column.width !== "0%" && !isHidden(column) && column.place !== "details" && !(column.place === "wide" && narrow)
   /* Столбцы окна подробностей строки; есть хоть один - в конце строки кнопка «Подробнее» */
   const detailColumns = $derived(
     header
       .map((column, index) => ({ column, index }))
-      .filter(({ column }) => column.place === "details" || column.place === "both" || (column.place === "wide" && narrow)),
+      .filter(({ column }) => !isHidden(column) && (column.place === "details" || column.place === "both" || (column.place === "wide" && narrow))),
   )
   const hasDetails = $derived(detailColumns.length > 0)
   const extraColumns = $derived([...(hasDetails ? [ACTIONS_COLUMN] : []), ...(dataBuffer.clearButton ? [ACTIONS_COLUMN] : [])])

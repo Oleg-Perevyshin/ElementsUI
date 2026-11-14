@@ -45,7 +45,27 @@ const routeText = (row: XPoeDebugRow): string => {
 /* Справка таблицы xPOE-Debug (help таблицы): что в каждой колонке */
 export const xPoeDebugTableHelp = { info: "common.table.xpoe.info" }
 
+/* Направление строки: стрелка и rx/tx */
+const dirText = (row: XPoeDebugRow): string => (row.dir === "tx" ? "→ tx" : row.dir === "rx" ? "← rx" : "")
+
 export const xPoeDebugTableColumns: ITableHeader<XPoeDebugRow>[] = [
+  /* Необязательные колонки (hidden): включаются выбором колонок TableColumns; time и dir пишет приложение */
+  {
+    id: "time",
+    label: { name: "common.table.xpoe.time" },
+    hidden: true,
+    content: [{ type: "text", data: { key: "time" } }],
+    width: tableMonoWidth(12, 5),
+    align: "center",
+  },
+  {
+    id: "dir",
+    label: { name: "common.table.xpoe.dir" },
+    hidden: true,
+    content: [{ type: "text", data: { key: "dir", render: dirText } }],
+    width: tableMonoWidth(5, 11),
+    align: "center",
+  },
   {
     label: { name: "SRC → TRG" },
     content: [{ type: "text", data: { key: "srcId", render: routeText } }],
@@ -65,6 +85,8 @@ export const xPoeDebugTableColumns: ITableHeader<XPoeDebugRow>[] = [
     width: "1fr",
     align: "left",
   },
+  { id: "har", label: { name: "HAR" }, hidden: true, content: [{ type: "text", data: { key: "har" } }], width: tableMonoWidth(4, 3), align: "center" },
+  { id: "crc", label: { name: "CRC" }, hidden: true, content: [{ type: "text", data: { key: "crc" } }], width: tableMonoWidth(4, 3), align: "center" },
   /* Свободная куча устройства из DebugLog */
   { label: { name: "FHS" }, content: [{ type: "text", data: { key: "freeHeap" } }], width: tableMonoWidth(7, 3), align: "center" },
 ]

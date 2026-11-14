@@ -559,6 +559,10 @@ export type ITableContent<T extends object> =
 
 export interface ITableHeader<T extends object> {
   label?: { name?: string; class?: string }
+  /* Ключ колонки для выбора колонок (hiddenColumns, TableColumns); нет - label.name */
+  id?: string
+  /* Колонка скрыта, пока её не включат в выборе колонок */
+  hidden?: boolean
   width?: string
   align?: "left" | "center" | "right"
   /* Несколько элементов ячейки - столбиком, а не в ряд (имя и под ним версия) */
@@ -578,6 +582,8 @@ export interface ITableProps<T extends object> {
   /* info - значок ⓘ после подписи, при наведении всплывает пояснение; без подписи значок стоит на её месте */
   help?: { info?: string }
   header?: ITableHeader<T>[]
+  /* Скрытые колонки по ключу (id или label.name); не задано - скрыты колонки с hidden. Выбор - TableColumns */
+  hiddenColumns?: string[]
   /* Строки обычной таблицы; журнал (dataBuffer.stashData) строки получает методом push() через bind:this */
   body?: T[]
   footer?: string

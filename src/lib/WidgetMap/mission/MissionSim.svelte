@@ -55,6 +55,14 @@
   /* Кнопки-иконки без рамки: стили группы кнопок MapLibre перебиваются */
   const iconBtn =
     "flex h-7! w-7! cursor-pointer items-center justify-center rounded-md border-0! bg-transparent p-0 text-(--muted-color) hover:bg-(--container-color) hover:text-(--font-color)"
+  /* Бегунок прокрутки - как у Slider: дорожка и заливка цветами темы, белый кружок с рамкой акцента */
+  const THUMB = `w-full appearance-none bg-transparent h-3.5 relative cursor-pointer
+    [&::-webkit-slider-runnable-track]:h-3.5 [&::-webkit-slider-runnable-track]:bg-transparent
+    [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:size-3.5 [&::-webkit-slider-thumb]:rounded-full
+    [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-(--sim-accent)
+    [&::-moz-range-track]:h-3.5 [&::-moz-range-track]:bg-transparent [&::-moz-range-track]:border-0
+    [&::-moz-range-thumb]:size-3.5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white
+    [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-(--sim-accent) focus-visible:outline-none`
   const clockText = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`
 </script>
 
@@ -108,7 +116,7 @@
             >
           {/if}
         </button>
-        <select class="rounded px-1 py-0.5" bind:value={clock.rate}>
+        <select class="rounded border border-(--border-color) bg-(--field-color) px-1 py-0.5 text-(--font-color)" bind:value={clock.rate}>
           {#each SIM_RATES as r}
             <option value={r}>×{r}</option>
           {/each}
@@ -122,17 +130,23 @@
         {/if}
       </div>
       <!-- Прокрутка пути: перетаскивание ставит полёт на паузу, чтобы рассмотреть любое место траектории -->
-      <input
-        type="range"
-        class="w-full cursor-pointer"
-        style="accent-color: {colors.accent}"
-        min="0"
-        max={clock.duration}
-        step={Math.max(0.1, clock.duration / 2000)}
-        value={clock.t}
-        aria-label={$T("widget.sim.scrub")}
-        oninput={(e) => clock.seek(Number(e.currentTarget.value))}
-      />
+      <div class="relative flex items-center" style="--sim-accent: {colors.accent}">
+        <div class="pointer-events-none absolute inset-x-0 top-1/2 h-1 -translate-y-1/2 rounded-full bg-(--border-color)"></div>
+        <div
+          class="pointer-events-none absolute top-1/2 left-0 h-1 -translate-y-1/2 rounded-full bg-(--sim-accent)"
+          style="width: calc(7px + (100% - 14px) * {clock.t / Math.max(1, clock.duration)})"
+        ></div>
+        <input
+          type="range"
+          class={THUMB}
+          min="0"
+          max={clock.duration}
+          step={Math.max(0.1, clock.duration / 2000)}
+          value={clock.t}
+          aria-label={$T("widget.sim.scrub")}
+          oninput={(e) => clock.seek(Number(e.currentTarget.value))}
+        />
+      </div>
     </div>
   </div>
 {/if}
