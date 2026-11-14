@@ -978,7 +978,7 @@ socket.send(valueToCbor(encodeWsEnvelope("SET", "JoinDev", { DevSN, Watch: true 
 
 - `COMPONENT_META[type]` - `{ io, fields? }`: обмен с устройством (`none`, `read`, `write`, `readWrite`, `widget`) и поля смарт-виджета, без самих компонентов (`componentMeta.ts`). Его берёт `GUIRenderer`.
 - `COMPONENTS[type]` - `{ view, io, fields? }`: то же плюс компонент отрисовки, для конструктора. Тянет в сборку все виджеты, поэтому в рендерере не используется.
-- `package.json` объявляет `"sideEffects": ["**/*.css"]`: без этого сборщик приложения не может выбросить неиспользуемые модули библиотеки.
+- `package.json` объявляет побочные эффекты только у CSS и у `constructor` (его импорт подключает словарь конструктора): без этого сборщик приложения не может выбросить неиспользуемые модули библиотеки, а без `constructor` в списке выбрасывает импорт `import "poe-svelte-ui-lib/constructor"` и тексты панелей показываются ключами.
 - `componentVariables(component)` - переменные устройства компонента (список переменных конструктора).
 - `UIComponent` - объединение по `type`: после `component.type === "Button"` у `properties` тип `IButtonProps`, `UIComponent<"Button">` - компонент одного типа.
 - В `poe-svelte-ui-lib/constructor`: `PANELS[type]` - панель свойств, `COMPONENT_DEFAULTS`, `COMPONENT_SIZES`, `minComponentWidth`, `createComponent(type, { col, row }, parentId, { tab, areaWidth })`, `applyPropertyChange(component, change)`.
