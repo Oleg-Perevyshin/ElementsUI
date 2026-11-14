@@ -15,7 +15,7 @@
   import CopyButton from "./CopyButton.svelte"
   import Dropdown from "../Dropdown/Dropdown.svelte"
   import MoreIcon from "../libIcons/MoreIcon.svelte"
-  import InfoIcon from "../libIcons/InfoIcon.svelte"
+  import ArrowIcon from "../libIcons/ArrowIcon.svelte"
   import { htmlToText, sanitizeHtml } from "../html"
   import { createRing } from "../ring"
   import { copyText } from "../clipboard"
@@ -400,7 +400,7 @@
                   <div class="flex items-center justify-center">
                     <Button
                       componentClass="size-7 text-(--accent-text) hover:bg-(--accent-soft)"
-                      content={{ icon: InfoIcon, info: { text: $T("common.table.details"), side: "left" } }}
+                      content={{ icon: ArrowIcon, info: { text: $T("common.table.details"), side: "left" } }}
                       onClick={() => {
                         detailsKey = entry.key
                         detailsOpen = true
