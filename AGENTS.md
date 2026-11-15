@@ -41,6 +41,7 @@ ElementsUI - библиотека `poe-svelte-ui-lib` (npm, MIT): компоне
 
 - Версия в `package.json`, выпуск сообщением коммита в `main`: `[publish]` - npm, `[deploy]` - витрина на GitHub Pages. Обычно оба: `X.Y.Z [deploy] [publish] ...`.
 - После публикации CI сам ставит версию в DevCloud и выкатывает облако коммитом `X.Y [deploy] Обновление ElementsUI до X.Y.Z`. Вручную версию библиотеки в облаке не поднимать.
+- Остальные приложения на библиотеке обновляются в том же выпуске, чтобы не отставать от облака: DevTerminal и WebApp ProdFactory-ESP - `npm install poe-svelte-ui-lib@^X.Y.Z`, проверка типов и форматирование. После WebApp веб всех устройств ESP пересобирается (кнопка Web расширения poe-esp-tools со всеми галочками или `npm run BuildCatalog` в `WebApp`) и коммитится в ProdFactory-ESP.
 - После обновления зависимостей проверь `allowScripts` в `package.json`: версии там должны совпадать с установленными.
 - После обновления `maplibre-gl` подними `MAPLIBRE_VERSION` в `src/lib/WidgetMap/mapWrapper/utils.ts` до установленной (сверяет `tests/maplibre.test.mjs`). Версия npm в `npm_publish.yaml` закреплена, поднимать вручную.
 
