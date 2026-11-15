@@ -88,19 +88,19 @@ test('консоль: DebugLog "MSG <код>[ <арг1>[<TAB><арг2>...]]" - �
 test("неизвестный код - #код с параметрами, уровень info, группа по диапазону кода, в резерве - null", () => {
   assert.deepEqual(formatDeviceMessage(65000, [], "ru"), { text: "#65000", level: "info", group: null, groupName: null })
   assert.deepEqual(formatDeviceMessage(65000, ["a", 2], "ru"), { text: "#65000: a, 2", level: "info", group: null, groupName: null })
-  assert.deepEqual(formatDeviceMessage(750, [], "en"), { text: "#750", level: "info", group: null, groupName: null })
+  assert.deepEqual(formatDeviceMessage(950, [], "en"), { text: "#950", level: "info", group: null, groupName: null })
   assert.deepEqual(formatDeviceMessage(299, [], "en"), { text: "#299", level: "info", group: "FS", groupName: "Files" })
 })
 
-test("группы: диапазоны в 1..65535 без пересечений, резерв 500-999 и 2000+, названия на трёх языках", () => {
+test("группы: диапазоны в 1..65535 без пересечений, резерв 900-999 и 3000+, названия на трёх языках", () => {
   const ranges = Object.values(MESSAGE_GROUPS).sort((a, b) => a.from - b.from)
-  assert.deepEqual(Object.keys(MESSAGE_GROUPS), ["SYS", "CFG", "FS", "FW", "WIFI", "DEV"])
+  assert.deepEqual(Object.keys(MESSAGE_GROUPS), ["SYS", "CFG", "FS", "FW", "WIFI", "API", "BUS", "NET", "LORA", "DEV", "DRV"])
   for (const [index, group] of ranges.entries()) {
     assert.ok(group.from >= 1 && group.from <= group.to && group.to <= 65535)
     if (index) assert.ok(group.from > ranges[index - 1].to, "диапазоны пересекаются")
     for (const lang of ["ru", "en", "zh"]) assert.ok(group[lang])
   }
-  for (const code of [500, 999, 2000, 65535]) assert.ok(!ranges.some((group) => code >= group.from && code <= group.to), `${code} не в резерве`)
+  for (const code of [900, 999, 3000, 65535]) assert.ok(!ranges.some((group) => code >= group.from && code <= group.to), `${code} не в резерве`)
 })
 
 test("сообщения: код в диапазоне своей группы, имя с приставкой группы, параметры одинаковы в языках", () => {
@@ -152,7 +152,7 @@ test("api_har.h: те же коды, что commands.yaml (DEFAULT_ARGUMENT_CODE
 test("api_msg.h: MSG_NONE = 0, MSG_<name> = код для каждого сообщения messages.yaml, раздел на каждую группу, резерв в шапке", () => {
   const header = dictionaryFile("firmware/api_msg.h")
   for (const [name, { from, to, ru }] of Object.entries(MESSAGE_GROUPS)) assert.ok(header.includes(`  /* ${name} ${from}-${to}: ${ru} */\n`), name)
-  assert.ok(header.includes("резерв: 500-999, 2000-65535 */"))
+  assert.ok(header.includes("резерв: 900-999, 3000-65535 */"))
   const enumCodes = Object.fromEntries([...header.matchAll(/^\s*MSG_(\w+)\s*=\s*(\d+),/gm)].map(([, name, code]) => [name, Number(code)]))
   assert.equal(enumCodes.NONE, 0)
   delete enumCodes.NONE
