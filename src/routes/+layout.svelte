@@ -20,6 +20,15 @@
   /* Сегмент страницы компонента - точное сравнение, иначе "widget" совпадал бы с "widget-file-system" */
   let activePage = $derived(page.url.pathname.split("/").filter(Boolean)[2] ?? "")
 
+  const T = UI.T
+  /* Разделы о библиотеке целиком: протокол, словари, GUI устройства, окна и уведомления */
+  const guideItems = $derived([
+    { page: "protocol", name: $T("library.protocol") },
+    { page: "dictionaries", name: $T("library.dictionaries") },
+    { page: "gui", name: $T("library.gui") },
+    { page: "misc", name: $T("library.misc") },
+  ])
+
   /* Список всех компонентов - смарт-виджеты идут первыми (тот же принцип, что и в DevCloud'овской палитре конструктора) */
   const menuItems = [
     { page: "widget-wifi", name: "WidgetWiFi" },
@@ -143,6 +152,21 @@
   <div class="mb-2 flex flex-1 overflow-hidden">
     <!-- Панель навигации -->
     <nav class="m-1 flex w-64 flex-col items-start gap-2 overflow-y-auto rounded-2xl border border-(--hairline-color) bg-(--back-color) p-4">
+      <span class="px-1 text-xs font-semibold tracking-wide text-(--muted-color) uppercase">{$T("library.section_library")}</span>
+      {#each guideItems as item}
+        <div class="flex w-full">
+          <UI.Button content={{ name: item.name }} variant="secondary" componentClass="h-10 text-left" onClick={() => goto(`/ElementsUI/guide/${item.page}`)} />
+          {#if activePage === item.page}
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
+              ><path
+                fill="currentColor"
+                d="M12.6 12L8.7 8.1q-.275-.275-.275-.7t.275-.7t.7-.275t.7.275l4.6 4.6q.15.15.213.325t.062.375t-.062.375t-.213.325l-4.6 4.6q-.275.275-.7.275t-.7-.275t-.275-.7t.275-.7z"
+              /></svg
+            >
+          {/if}
+        </div>
+      {/each}
+      <span class="mt-2 px-1 text-xs font-semibold tracking-wide text-(--muted-color) uppercase">{$T("library.section_components")}</span>
       {#each menuItems as item}
         <div class="flex w-full">
           <UI.Button
