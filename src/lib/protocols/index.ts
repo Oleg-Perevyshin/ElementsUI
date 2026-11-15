@@ -74,3 +74,7 @@ export {
   type DeviceMessageLevel,
   type FormattedDeviceMessage,
 } from "./messages.js"
+/* Simple Serial: текст порта построчно и строка журнала с кодами управляющих символов */
+export { createSimpleSerialParser, simpleSerialHtml } from "./simpleSerial.js"
+/* Набор команд отладки (SC-Preset.yaml, файлы команд DevCloud и DevTerminal): типы и заполнение адресов по умолчанию */
+export { COMMAND_SET_PROTOCOLS, normalizeSavedCommands, type ISavedCommands, type ISimpleSerial, type IXPoeDebug, type IPOECanable } from "./commandSet.js"

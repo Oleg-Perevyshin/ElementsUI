@@ -584,3 +584,40 @@ test("словарь: коды облака DevCloud, неизвестный к�
   assert.equal(m.encodeWsEnvelope("SET", "MyCmd", {}, true, own).HAR, m.makeHar(1, 4000, true))
   assert.equal(m.decodeWsEnvelope({ HAR: m.makeHar(2, 4000, false), VAL: {} }, own).argument, "MyCmd")
 })
+
+test("Simple Serial: строки по CR/LF, кириллица через границу куска, хвост после паузы, пустые строки пропускаются", async () => {
+  const lines = []
+  const parser = m.createSimpleSerialParser((got) => lines.push(...got), 20)
+  const text = new TextEncoder().encode("Привет\r\n\nok\r\n>")
+  parser.push(text.subarray(0, 3))
+  parser.push(text.subarray(3))
+  assert.deepEqual(lines, ["Привет", "ok"])
+  await new Promise((resolve) => setTimeout(resolve, 40))
+  assert.deepEqual(lines, ["Привет", "ok", ">"])
+  parser.push(new TextEncoder().encode("x"))
+  parser.reset()
+  await new Promise((resolve) => setTimeout(resolve, 40))
+  assert.deepEqual(lines, ["Привет", "ok", ">"])
+})
+
+test("Simple Serial: управляющие символы кодом, кириллица и спецсимволы HTML текстом", () => {
+  assert.equal(m.simpleSerialHtml("a\tб<"), 'a<span class="text-(--red-text)">[0x09]</span>б&lt;')
+  assert.equal(m.simpleSerialHtml("\x7f"), '<span class="text-(--red-text)">[0x7F]</span>')
+})
+
+test("Набор команд: адреса и флаг ответа по умолчанию, не набор - null", () => {
+  const set = m.normalizeSavedCommands({
+    SimpleSerial: [{ name: "s", data: "AT", endPackage: "\r\n" }],
+    "xPOE-Debug": [{ name: "x", header: "GET", argument: "ModCfg", value: "{}" }],
+    POECanable: [{ name: "c", header: "0", argument: "6", data: "", TrgBusID: "1234", Reply: false }],
+  })
+  assert.equal(set["xPOE-Debug"][0].TrgBusID, "0000")
+  assert.equal(set["xPOE-Debug"][0].SrcBusID, "0000")
+  assert.equal(set["xPOE-Debug"][0].Reply, true)
+  assert.equal(set.POECanable[0].TrgBusID, "1234")
+  assert.equal(set.POECanable[0].Reply, false)
+  assert.equal(set.SimpleSerial[0].TrgBusID, undefined)
+  assert.equal(m.normalizeSavedCommands({ SimpleSerial: [] }), null)
+  assert.equal(m.normalizeSavedCommands({ SimpleSerial: [{ data: "AT" }], "xPOE-Debug": [], POECanable: [] }), null)
+  assert.equal(m.normalizeSavedCommands(null), null)
+})

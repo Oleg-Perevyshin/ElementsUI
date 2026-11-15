@@ -857,7 +857,7 @@ interface DeviceReply {
 
 #### 🖥️ GUI устройства
 
-Интерфейс, собранный в конструкторе, рисует компонент `GUIRenderer`. Он сам раскладывает блоки по сетке, берёт значения переменных, отправляет команды и ведёт смарт-виджеты и файлы. Приложению остаётся транспорт, выбор модуля, загрузка GUI и хранилище значений.
+Интерфейс, собранный в конструкторе, рисует компонент `GUIRenderer`. Файл GUI приложение читает своим YAML, а проверяет функциями библиотеки: `toGuiFile` - есть ли список компонентов, `guiMetadataError` - какое поле метаданных неверное. Он сам раскладывает блоки по сетке, берёт значения переменных, отправляет команды и ведёт смарт-виджеты и файлы. Приложению остаётся транспорт, выбор модуля, загрузка GUI и хранилище значений.
 
 ```svelte
 <UI.GUIRenderer
@@ -1071,6 +1071,7 @@ const bridge = UI.createBusBridge(channel, {
 - 🐞 показывать отладочные логи `DebugLog` и графики `DebugPlot` из прошивки;
 - 🔄 переводить значения между JSON и CBOR;
 - 🌐 собирать и разбирать WebSocket-конверт `{HAR, VAL}` (`encodeWsEnvelope`, `decodeWsEnvelope`): команда в нём то же число `HAR`, что на шине;
+- 📝 резать текст порта Simple Serial на строки (кириллица и строка без конца строки не теряются) и читать наборы команд отладки;
 - 💬 показывать сообщения устройств на языке пользователя: устройство шлёт код `Message` и параметры `Args`, `formatDeviceMessage` даёт текст, уровень и группу сообщения.
 
 Формат пакета, адресация, транспорты и список функций описаны в [PROTOCOL.md](src/lib/protocols/PROTOCOL.md).
@@ -3501,9 +3502,11 @@ const message = decodeWsEnvelope(cborToValue(new Uint8Array(event.data)))
 | Ответ   | `API_Service_BeginResponse`, `Writer_*`, `API_Service_FinishResponse`                                                                      |                                                                                                                                |
 | Консоль | `LOG_*`, `LOG_HEX`, `LOG_PLOT`                                                                                                             | `encodeXPoeDebugFrame`, `xPoeDebugRow`, `xPoeDebugTableColumns`, `debugPlotValues`, `parseDebugLogMessage`, `xPoeDebugMessage` |
 | CAN     | `can_service`                                                                                                                              | `encodeCanPacket`, `createCanParser`, `slcanOpenCommands`                                                                      |
+| Текст   | `UART_Send` в `uart_service`, консоль загрузчика                                                                                           | `createSimpleSerialParser`, `simpleSerialHtml`, `simpleSerialTableColumns`                                                     |
+| Команды | `SC-Preset.yaml` устройства, наборы команд DevCloud и DevTerminal                                                                          | `normalizeSavedCommands`, типы `ISavedCommands`, `ISimpleSerial`, `IXPoeDebug`, `IPOECanable`                                  |
 | Тесты   | `tests/` прошивок                                                                                                                          | `npm run Test` сверяет байты с эталонами из прошивки                                                                           |
 
-`xPoeDebugTableColumns` - колонки таблицы `Table`, поэтому он экспортируется из основной точки входа `poe-svelte-ui-lib`, а не из `poe-svelte-ui-lib/protocols`.
+`xPoeDebugTableColumns` и `simpleSerialTableColumns` - колонки таблицы `Table`, поэтому они экспортируются из основной точки входа `poe-svelte-ui-lib`, а не из `poe-svelte-ui-lib/protocols`.
 
 </details>
 
@@ -4117,6 +4120,8 @@ const canModal = createRawSnippet((row: () => CanRow) => ({ render: () => `<div 
 **Выбор колонок.** Таблица скрывает колонки из `hiddenColumns` (ключи `id` или `label.name`), а без него - колонки с `hidden: true`. Кнопка `<UI.TableColumns {header} bind:hidden onChange />` - флажки колонок и «По умолчанию», как у таблиц БД в облаке. Где запомнить выбор и где поставить кнопку, решает приложение: `hidden` равно `undefined` - выбор по умолчанию. Так на экране остаётся главное, а остальные данные включаются по нужде.
 
 Готовые колонки отладочной таблицы xPOE и её справка лежат в `xPoeDebugColumns.ts` (`xPoeDebugTableColumns`, `xPoeDebugTableHelp` - передайте в `help` таблицы), их используют облако и терминал: `TRG | SRC | Команда | Значение | FHS` (TRG, SRC и FHS - сокращения, «Команда» и «Значение» переводятся). Строки - `xPoeDebugRow` ядра протоколов.
+
+Для Simple Serial - одна колонка `simpleSerialTableColumns` из `simpleSerialColumns.ts`: строка порта как есть, управляющие символы кодом `[0xNN]` красным, отправленная строка (`sent: true`) - зелёным. Строки - `{ data, sent? }` из `createSimpleSerialParser`.
 
 - «Команда» - одна ячейка (`render` с `html: true`): заголовок цветной меткой (`GET` синий, `SET` оранжевый, `OK!` зелёный, `ER!` красный, `⚠️` - неверная CRC - жёлтый, `RAW` и прочие серые), рядом аргумент. Ниже мелко - `message`, сообщение устройства цветом `level` (`error` красный, `warn` жёлтый, `info` приглушённый), не больше двух строк. Подсказка при наведении - `HAR 0x....`, флаг ответа (`reply`), неверная CRC и сообщение целиком. Ширина постоянная, `tableMonoWidth(21, 7)`.
 - «Значение» - `value`, Payload кратко как пришёл, в стиле YAML (`CFG.WiFiMode: 1, List: [1, 2]`, байты `h'0C73'`), без пояснений: копируется чистым и вставляется в поле Value тем же CBOR. Окно строки показывает Payload блочным YAML с отступом 2. `payload` - декодированный один раз при разборе, `valueBytes` - исходные байты.

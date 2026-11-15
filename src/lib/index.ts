@@ -24,6 +24,7 @@ export { default as Table } from "./Table/Table.svelte"
 export { tableMonoWidth } from "./Table/columnWidth"
 export { default as TableColumns } from "./Table/TableColumns.svelte"
 export { columnId, defaultHiddenColumns } from "./Table/columns"
+export { simpleSerialTableColumns, type SimpleSerialRow } from "./Table/simpleSerialColumns"
 export { xPoeDebugTableColumns, xPoeDebugTableHelp } from "./Table/xPoeDebugColumns"
 export { bitFieldGet, bitFieldSet } from "./bitField"
 export { default as Tabs } from "./Tabs/Tabs.svelte"
@@ -71,6 +72,9 @@ export {
   commandPacket,
   tablePacket,
   mergeDevicePayload,
+  toGuiFile,
+  guiMetadataError,
+  type GuiFile,
   type WidgetFieldsType,
   type DeviceLink,
   type DevicePacket,

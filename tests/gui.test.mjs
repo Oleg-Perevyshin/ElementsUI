@@ -130,3 +130,16 @@ test("guiTypes: типы GUI без повторов в порядке перв�
   const types = gui.guiTypes([{ type: "Tabs" }, { type: "Button" }, { type: "Tabs" }, { type: "WidgetMap" }, { type: "Button" }])
   assert.deepEqual(types, ["Tabs", "Button", "WidgetMap"])
 })
+
+test("Файл GUI: components обязателен, metadata по умолчанию пустая; метаданные - имя неверного поля", () => {
+  assert.deepEqual(gui.toGuiFile({ components: [] }), { metadata: {}, components: [] })
+  assert.equal(gui.toGuiFile({ metadata: {} }), null)
+  assert.equal(gui.toGuiFile(null), null)
+  const ok = { DevID: "25.00.000-02", VerFW: 3, Author: "DevCloud", Date: "2026-11-15" }
+  assert.equal(gui.guiMetadataError(ok), null)
+  assert.equal(gui.guiMetadataError(undefined), "metadata")
+  assert.equal(gui.guiMetadataError({ ...ok, DevID: " " }), "DevID")
+  assert.equal(gui.guiMetadataError({ ...ok, VerFW: 0 }), "VerFW")
+  assert.equal(gui.guiMetadataError({ ...ok, Author: "" }), "Author")
+  assert.equal(gui.guiMetadataError({ ...ok, Date: "15.11.2026" }), "Date")
+})

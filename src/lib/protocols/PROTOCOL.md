@@ -518,9 +518,11 @@ const message = decodeWsEnvelope(cborToValue(new Uint8Array(event.data)))
 | Ответ   | `API_Service_BeginResponse`, `Writer_*`, `API_Service_FinishResponse`                                                                      |                                                                                                                                |
 | Консоль | `LOG_*`, `LOG_HEX`, `LOG_PLOT`                                                                                                             | `encodeXPoeDebugFrame`, `xPoeDebugRow`, `xPoeDebugTableColumns`, `debugPlotValues`, `parseDebugLogMessage`, `xPoeDebugMessage` |
 | CAN     | `can_service`                                                                                                                              | `encodeCanPacket`, `createCanParser`, `slcanOpenCommands`                                                                      |
+| Текст   | `UART_Send` в `uart_service`, консоль загрузчика                                                                                           | `createSimpleSerialParser`, `simpleSerialHtml`, `simpleSerialTableColumns`                                                     |
+| Команды | `SC-Preset.yaml` устройства, наборы команд DevCloud и DevTerminal                                                                          | `normalizeSavedCommands`, типы `ISavedCommands`, `ISimpleSerial`, `IXPoeDebug`, `IPOECanable`                                  |
 | Тесты   | `tests/` прошивок                                                                                                                          | `npm run Test` сверяет байты с эталонами из прошивки                                                                           |
 
-`xPoeDebugTableColumns` - колонки таблицы `Table`, поэтому он экспортируется из основной точки входа `poe-svelte-ui-lib`, а не из `poe-svelte-ui-lib/protocols`.
+`xPoeDebugTableColumns` и `simpleSerialTableColumns` - колонки таблицы `Table`, поэтому они экспортируются из основной точки входа `poe-svelte-ui-lib`, а не из `poe-svelte-ui-lib/protocols`.
 
 </details>
 

@@ -329,7 +329,7 @@
             <div
               data-fit={isFit(column) ? index : undefined}
               class={twMerge(
-                `flex items-center gap-1 border-l px-3 py-2 ${outline && index !== 0 ? "border-(--hairline-color)" : "border-transparent"}
+                `flex items-center gap-1 px-3 py-2 ${index !== 0 ? "border-l" : ""} ${outline ? "border-(--hairline-color)" : "border-transparent"}
             ${column.align === "center" ? "justify-center text-center" : column.align === "right" ? "justify-end text-right" : "justify-start text-left"}`,
                 column.label?.class,
               )}

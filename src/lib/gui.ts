@@ -391,3 +391,28 @@ export const layoutColumns = (list: UIComponent[], total: number) => {
 
 /* Типы компонентов, которые встречаются в GUI (по порядку первого появления): по ним приложение собирает views для GUIRenderer, чтобы в сборку попали только они */
 export const guiTypes = (components: readonly { type: UIType }[]): UIType[] => [...new Set(components.map((component) => component.type))]
+
+/* ********************************************************** */
+/* Файл GUI - YAML { metadata, components }, как сохраняет конструктор DevCloud; YAML читает и пишет приложение, здесь - проверка уже разобранных данных */
+export interface GuiFile {
+  metadata: Record<string, unknown>
+  components: UIComponent[]
+}
+
+/* Разобранный YAML в файл GUI; нет списка components - null */
+export const toGuiFile = (data: unknown): GuiFile | null => {
+  if (!data || typeof data !== "object" || !Array.isArray((data as GuiFile).components)) return null
+  const { metadata } = data as Partial<GuiFile>
+  return { metadata: metadata && typeof metadata === "object" ? metadata : {}, components: (data as GuiFile).components }
+}
+
+/* Метаданные файла GUI или набора команд: имя неверного поля (metadata, DevID, VerFW, Author, Date) или null */
+export const guiMetadataError = (metadata: unknown): "metadata" | "DevID" | "VerFW" | "Author" | "Date" | null => {
+  if (!metadata || typeof metadata !== "object") return "metadata"
+  const { DevID, VerFW, Author, Date } = metadata as Record<string, unknown>
+  if (typeof DevID !== "string" || !DevID.trim()) return "DevID"
+  if (typeof VerFW !== "number" || VerFW <= 0) return "VerFW"
+  if (typeof Author !== "string" || !Author.trim()) return "Author"
+  if (typeof Date !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(Date)) return "Date"
+  return null
+}
