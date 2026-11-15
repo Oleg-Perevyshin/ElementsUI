@@ -452,6 +452,15 @@ const constructorTranslations = {
   "constructor.props.table.columns.image.width": { ru: "Ширина иконки, rem", en: "Icon width, rem", zh: "图标宽度，rem" },
   "constructor.props.table.columns.image.height": { ru: "Высота иконки, rem", en: "Icon height, rem", zh: "图标高度，rem" },
   "constructor.props.table.keys": { ru: "Перечень ключей", en: "List of keys", zh: "键列表" },
+  "constructor.props.table.groupBy.key": { ru: "Группы по ключу", en: "Group by key", zh: "按键分组" },
+  "constructor.props.table.groupBy.value": { ru: "Значение", en: "Value", zh: "值" },
+  "constructor.props.table.groupBy.name": { ru: "Группа", en: "Group", zh: "分组" },
+  "constructor.props.table.groupBy.add": { ru: "Добавить группу", en: "Add group", zh: "添加分组" },
+  "constructor.props.table.groupBy.info": {
+    ru: "Разбить строки на группы с подписью во всю ширину, как в метриках облака.\n**Ключ** - поле строки: строка попадает в группу с тем же **значением**, значение «*» - все остальные строки.\n**Порядок групп** - как в списке, строки без группы - в конце. Сортировка по колонке - внутри группы.\n**Пример**: ключ ModIFace, группа 1 «База», группа * «Датчики».",
+    en: "Split rows into groups with a full-width caption, like the cloud metrics.\n**Key** - a row field: a row goes to the group with the same **value**, value «*» - all other rows.\n**Group order** - as listed, rows without a group go last. Column sorting works inside a group.\n**Example**: key ModIFace, group 1 Base, group * Sensors.",
+    zh: "将行分组，每组带通栏标题，类似云端指标。\n**键** - 行字段：行归入**值**相同的分组，值「*」- 其余所有行。\n**分组顺序** - 按列表，无分组的行在最后。按列排序在组内进行。\n**示例**：键 ModIFace，分组 1 为「基站」，分组 * 为「传感器」。",
+  },
   "constructor.props.table.hideIf.key": { ru: "Скрыть, если ключ", en: "Hide if key", zh: "隐藏条件键" },
   "constructor.props.table.hideIf.value": { ru: "равен", en: "equals", zh: "等于" },
   "constructor.props.table.hideIf.info": {

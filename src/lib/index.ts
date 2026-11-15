@@ -180,6 +180,7 @@ export {
   type ITableImage,
   type ITableContent,
   type ITableProps,
+  type ITableGroupBy,
   type ITabsProps,
   type IJoystickProps,
   type IFileAttachProps,

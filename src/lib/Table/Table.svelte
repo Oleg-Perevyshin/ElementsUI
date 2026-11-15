@@ -39,6 +39,7 @@
     getData = () => {},
     onClick,
     group,
+    groupBy,
   }: ITableProps<Row> = $props()
 
   const stash = $derived(!!dataBuffer.stashData)
@@ -99,15 +100,27 @@
 
   const sortBy = (key: keyof Row) => (sortState = { key, direction: sortState.key === key ? (-sortState.direction as 1 | -1) : 1 })
 
+  /* Группа строки: функция приложения или groupBy из конструктора («*» - все остальные строки, без совпадения - пустая подпись) */
+  const groupOf = $derived.by((): ((row: Row) => string) | undefined => {
+    if (group) return group
+    const by = groupBy
+    if (!by?.key || !by.groups?.length) return undefined
+    return (row) => {
+      const value = String((row as Record<string, unknown>)[by.key] ?? "")
+      return (by.groups.find((g) => g.value === value) ?? by.groups.find((g) => g.value === "*"))?.name ?? ""
+    }
+  })
+
   let entries: Entry[] = $derived.by(() => {
     if (stash) return stream.slice(-bufferSize)
     const rows = (body ?? []).filter((row) => Object.keys(row).length)
     const { key, direction } = sortState
-    /* С группами порядок групп - как в body, сортировка - внутри группы */
+    /* С группами порядок групп - как в groupBy (без группы - в конце) или как в body, сортировка - внутри группы */
     const order = new Map<string, number>()
-    if (group) for (const row of rows) if (!order.has(group(row))) order.set(group(row), order.size)
-    const byGroup = (a: Row, b: Row) => (group ? order.get(group(a))! - order.get(group(b))! : 0)
-    if (key !== null || group) rows.sort((a, b) => byGroup(a, b) || (key !== null ? direction * compare(a[key], b[key]) : 0))
+    if (!group && groupOf) for (const g of groupBy!.groups) if (!order.has(g.name)) order.set(g.name, order.size)
+    if (groupOf) for (const row of rows) if (!order.has(groupOf(row))) order.set(groupOf(row), groupOf(row) || group ? order.size : Infinity)
+    const byGroup = (a: Row, b: Row) => (groupOf ? order.get(groupOf(a))! - order.get(groupOf(b))! || 0 : 0)
+    if (key !== null || groupOf) rows.sort((a, b) => byGroup(a, b) || (key !== null ? direction * compare(a[key], b[key]) : 0))
     return rows.map((row, i) => ({ key: i, row }))
   })
 
@@ -442,7 +455,7 @@
           >
             {#each entries as entry, i (entry.key)}
               {@const row = withPicks(entry.row)}
-              {#if group && !stash && (i === 0 || group(entries[i - 1].row) !== group(entry.row))}
+              {#if groupOf && !stash && groupOf(entry.row) && (i === 0 || groupOf(entries[i - 1].row) !== groupOf(entry.row))}
                 <!-- Подпись группы во всю ширину строки -->
                 <div
                   class="border-t border-(--hairline-color) bg-(--container-color) px-3 py-1.5 text-[12px] font-semibold text-[color-mix(in_srgb,var(--accent-color)_35%,var(--font-color))] {i ===
@@ -450,7 +463,7 @@
                     ? 'border-t-0'
                     : ''}"
                 >
-                  {$T(group(entry.row))}
+                  {$T(groupOf(entry.row))}
                 </div>
               {/if}
               <div

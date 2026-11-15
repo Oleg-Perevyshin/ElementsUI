@@ -575,6 +575,12 @@ export interface ITableHeader<T extends object> {
   content?: ITableContent<T>[] | ((row: T) => ITableContent<T>[])
 }
 
+/* Группы строк по ключу: строки, где key равен value, идут под подписью name; value "*" - все остальные строки; порядок групп - как в списке, строки без группы - в конце без подписи */
+export interface ITableGroupBy {
+  key: string
+  groups: { value: string; name: string }[]
+}
+
 export interface ITableProps<T extends object> {
   id?: string
   wrapperClass?: string
@@ -591,6 +597,8 @@ export interface ITableProps<T extends object> {
   footer?: string
   /* Группа строки: строки одной группы идут подряд под её подписью во всю ширину, сортировка - внутри группы; порядок групп - как в body */
   group?: (row: T) => string
+  /* Группы из конструктора по значению ключа строки (действует, если нет group) */
+  groupBy?: ITableGroupBy
   /* Журнал: stashData - строки копятся в кольцевом буфере bufferSize (по умолчанию 10), высота - по visibleRows строкам, logger - новые сверху */
   dataBuffer?: { stashData?: boolean; bufferSize?: number; visibleRows?: number; clearButton?: boolean; clearClass?: string; logger?: boolean }
   outline?: boolean

@@ -7,6 +7,7 @@
   import Table from "#lib/Table/Table.svelte"
   import TableProps from "#lib/Table/TableProps.svelte"
   import { type IOption, type ITableButton } from "#lib/types.ts"
+  import { IconDelete, IconRestart, IconCopy } from "#lib"
   import { onDestroy, onMount } from "svelte"
   import { formatObjectToString, L, RenderMarkdown } from "../../common"
   import readmeRaw from "#lib/Table/README.md?raw"
@@ -190,6 +191,122 @@ ${formatObjectToString(tableComponent.properties as ITableProps<object>)}
     { label: { name: "Device" }, content: [{ type: "text", data: { key: "device" } }], width: "50%" },
   ]
 
+  /* Пример «Колонки по содержимому»: имя и серийный номер столбиком (fit), состояние делит место (fill), заметка сжимается и уходит в подробности (wide), действия - кнопки-значки */
+  interface IUserRow {
+    name: string
+    sn: string
+    online: string
+    note: string
+  }
+  const fitColumns: ITableHeader<IUserRow>[] = [
+    {
+      label: { name: "Имя" },
+      stack: true,
+      width: "fit",
+      content: [
+        { type: "text", data: { key: "name", sortable: true } },
+        { type: "text", data: { key: "sn", copy: true, accent: () => "gray" } },
+      ],
+    },
+    { label: { name: "В сети" }, width: "fill", align: "center", content: [{ type: "text", data: { key: "online" } }] },
+    { label: { name: "Заметка" }, place: "wide", content: [{ type: "text", data: { key: "note", truncated: true, modal: true } }] },
+    {
+      label: { name: "Действия" },
+      width: "fit",
+      align: "right",
+      content: [
+        { type: "button", data: { icon: IconRestart, title: "Перезапустить", onClick: (row) => console.log("restart", row.sn) } },
+        { type: "button", data: { icon: IconDelete, title: "Удалить", accent: "red", onClick: (row) => console.log("delete", row.sn) } },
+      ],
+    },
+  ]
+  const fitRows: IUserRow[] = [
+    { name: "Насос", sn: "0A3F20-1000", online: "🟢\n15.11.2026 · 13:06", note: "Подвал, щит 2. Проверить сальник при следующем обслуживании." },
+    { name: "Котёл", sn: "0A3F45-1113", online: "⚪\n14.11.2026 · 22:40", note: "Резервный контур" },
+    { name: "Шлюз RS485", sn: "0A3F6A-1226", online: "🟢\n15.11.2026 · 13:05", note: "" },
+  ]
+
+  /* Пример «Группы по ключу» (groupBy, есть в конструкторе): база отдельно, датчики отдельно, «*» - все остальные строки */
+  const groupColumns: ITableHeader<Record<string, unknown>>[] = [
+    { label: { name: "Имя" }, width: "fill", content: [{ type: "text", data: { key: "ModName", sortable: true } }] },
+    { label: { name: "Батарея, В" }, width: "fit", align: "center", content: [{ type: "text", data: { key: "VBat", sortable: true } }] },
+    { label: { name: "Темп., ℃" }, width: "fit", align: "center", content: [{ type: "text", data: { key: "Temp" } }] },
+    { label: { name: "RSSI, дБм" }, width: "fit", align: "center", content: [{ type: "text", data: { key: "RSSI" } }] },
+    {
+      label: { name: "Действия" },
+      width: "fit",
+      align: "right",
+      content: [{ type: "button", data: { icon: IconDelete, title: "Удалить", accent: "red", hideIf: { key: "ModIFace", value: 1 } } }],
+    },
+  ]
+  const groupRows = [
+    { ModName: "LoRa-Base", ModIFace: 1 },
+    { ModName: "Датчик двери", ModIFace: 16, VBat: "3.61", Temp: "21.4", RSSI: "-87" },
+    { ModName: "Датчик окна", ModIFace: 16, VBat: "3.12", Temp: "19.8", RSSI: "-101" },
+    { ModName: "Датчик ворот", ModIFace: 16, VBat: "3.58", Temp: "20.9", RSSI: "-92" },
+  ]
+
+  /* Пример «Группы функцией и бейджи» (group, только в коде): метрики сервера - метки бейджами под именем, тип цветным бейджем, значение вправо с копированием */
+  interface IMetricRow {
+    group: string
+    name: string
+    labels: string[]
+    type: string
+    value: string
+  }
+  const metricColumns: ITableHeader<IMetricRow>[] = [
+    {
+      label: { name: "Метрика" },
+      width: "fit",
+      stack: true,
+      content: (row) => [
+        { type: "text", data: { key: "name", sortable: true } },
+        ...row.labels.map((label) => ({
+          type: "text" as const,
+          data: { key: "labels" as const, render: () => label, accent: () => "gray" as const, badge: true },
+        })),
+      ],
+    },
+    {
+      label: { name: "Тип" },
+      width: "fit",
+      align: "center",
+      content: [{ type: "text", data: { key: "type", badge: true, accent: (row) => (row.type === "counter" ? "orange" : "blue") } }],
+    },
+    { label: { name: "Значение" }, width: "fill", align: "right", content: [{ type: "text", data: { key: "value", copy: true, tooltip: true } }] },
+  ]
+  const metricRows: IMetricRow[] = [
+    { group: "Сервер", name: "server_uptime", labels: [], type: "gauge", value: "2 д 4 ч 15 мин" },
+    { group: "Сервер", name: "host_memory", labels: ["cgroup"], type: "gauge", value: "412 MB / 1 GB" },
+    { group: "Подключения", name: "ws_devices", labels: [], type: "gauge", value: "3" },
+    { group: "Подключения", name: "ws_dropped_hour", labels: ["code≠1000"], type: "counter", value: "1" },
+    { group: "База данных", name: "db_ping", labels: [], type: "gauge", value: "4.2 мс" },
+  ]
+
+  /* Пример «Меню действий»: действий много - пункты в меню «⋯», а не кнопками; итог внизу при прокрутке */
+  const menuColumns: ITableHeader<{ file: string; size: string }>[] = [
+    { label: { name: "Файл" }, width: "fill", content: [{ type: "text", data: { key: "file", sortable: true } }] },
+    { label: { name: "Размер" }, width: "fit", align: "right", content: [{ type: "text", data: { key: "size" } }] },
+    {
+      label: { name: "" },
+      width: "fit",
+      align: "center",
+      content: [
+        {
+          type: "menu",
+          data: {
+            title: "Действия",
+            items: (row) => [
+              { name: "Скопировать имя", icon: IconCopy, onClick: () => navigator.clipboard?.writeText(row.file) },
+              { name: "Удалить", icon: IconDelete, accent: "red", onClick: () => console.log("delete", row.file) },
+            ],
+          },
+        },
+      ],
+    },
+  ]
+  const menuRows = Array.from({ length: 14 }, (_, i) => ({ file: `log_${String(i + 1).padStart(2, "0")}.txt`, size: `${(i * 3.7 + 1).toFixed(1)} KB` }))
+
   onMount(() => {
     intervalId = setInterval(() => loggerRef?.push(generateStashingData()), 1000)
   })
@@ -214,6 +331,41 @@ ${formatObjectToString(tableComponent.properties as ITableProps<object>)}
     <TableProps component={tableComponent} onPropertyChange={(updates) => (tableComponent = applyPropertyChange(tableComponent, updates))} />
   {/snippet}
   {#snippet examples()}
+    <!-- Колонки по содержимому: fit - по самому длинному значению без переноса, fill - делят свободное место, wide - сжимаются и уходят в подробности -->
+    <Table label={{ name: "Колонки по содержимому: fit, fill, wide" }} header={fitColumns} body={fitRows} footer={`Всего: ${fitRows.length}`} outline />
+    <!-- groupBy: группы по значению ключа строки, так их задают в конструкторе -->
+    <Table
+      label={{ name: "Группы по ключу (groupBy)" }}
+      header={groupColumns}
+      body={groupRows}
+      groupBy={{
+        key: "ModIFace",
+        groups: [
+          { value: "1", name: "База" },
+          { value: "*", name: "Датчики" },
+        ],
+      }}
+      footer={`Модулей: ${groupRows.length}`}
+      outline
+    />
+    <!-- group: группа функцией из кода, метки и тип бейджами -->
+    <Table
+      label={{ name: "Группы функцией (group) и бейджи" }}
+      header={metricColumns}
+      body={metricRows}
+      group={(row) => row.group}
+      footer={`Показателей: ${metricRows.length}`}
+      outline
+    />
+    <!-- Высота ограничена: прокручиваются только строки, итог всегда внизу -->
+    <Table
+      wrapperClass="h-60"
+      label={{ name: "Меню действий и итог внизу при прокрутке" }}
+      header={menuColumns}
+      body={menuRows}
+      footer={`Файлов: ${menuRows.length}`}
+      outline
+    />
     <Table
       wrapperClass="h-71"
       label={{ name: "Devices" }}

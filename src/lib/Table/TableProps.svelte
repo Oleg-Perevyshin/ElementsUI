@@ -16,6 +16,8 @@
   import { slide } from "svelte/transition"
   import Dragging from "../Dragging.svelte"
   import InfoIcon from "../libIcons/InfoIcon.svelte"
+  import { DEFAULT_LANGUAGE } from "../locales/languages"
+  import { isLocalizedText, localizeText, type LocalizedText } from "../locales/localize"
 
   const {
     component,
@@ -140,6 +142,55 @@
     value={component.properties.dataBuffer?.visibleRows}
     onUpdate={(value) => edit.patch("dataBuffer", { visibleRows: value })}
   />
+{/snippet}
+
+{#snippet TableGroupBy()}
+  {@const groupBy = component.properties.groupBy}
+  {@const groups = groupBy?.groups ?? []}
+  <!-- Подпись группы правится на языке по умолчанию, переводы остаются - их правят в «Текстах и переводах» -->
+  {@const setGroups = (list: typeof groups) => edit.set("groupBy", { key: groupBy?.key ?? "", groups: list })}
+  <UI.Input
+    label={{ name: $T("constructor.props.table.groupBy.key") }}
+    value={groupBy?.key ?? ""}
+    maxlength={32}
+    help={{ info: $T("constructor.props.table.groupBy.info"), regExp: /^[a-zA-Z0-9\-._]{0,32}$/ }}
+    onUpdate={(value) => edit.set("groupBy", value ? { key: value as string, groups } : undefined)}
+  />
+  {#if groupBy?.key}
+    {#each groups as item, index (index)}
+      <div class="flex items-end gap-2">
+        <UI.Input
+          wrapperClass="w-28 shrink-0"
+          label={{ name: $T("constructor.props.table.groupBy.value") }}
+          value={item.value}
+          maxlength={64}
+          onUpdate={(value) => setGroups(groups.map((g, i) => (i === index ? { ...g, value: String(value ?? "") } : g)))}
+        />
+        <UI.Input
+          wrapperClass="min-w-0 flex-1"
+          label={{ name: $T("constructor.props.table.groupBy.name") }}
+          value={localizeText(item.name as LocalizedText, DEFAULT_LANGUAGE)}
+          maxlength={64}
+          onUpdate={(value) => {
+            const text = String(value ?? "")
+            const name = isLocalizedText(item.name) ? { ...(item.name as object), [DEFAULT_LANGUAGE]: text } : text
+            setGroups(groups.map((g, i) => (i === index ? { ...g, name: name as string } : g)))
+          }}
+        />
+        <UI.Button
+          wrapperClass="w-8 shrink-0"
+          variant="primary"
+          accent="red"
+          content={{ icon: ButtonDelete }}
+          onClick={() => setGroups(groups.filter((_, i) => i !== index))}
+        />
+      </div>
+    {/each}
+    <UI.Button
+      content={{ name: $T("constructor.props.table.groupBy.add"), icon: ButtonAdd }}
+      onClick={() => setGroups([...groups, { value: groups.length ? "*" : "", name: `${$T("constructor.props.table.groupBy.name")} ${groups.length + 1}` }])}
+    />
+  {/if}
 {/snippet}
 
 {#snippet TableColumnSettings()}
@@ -606,6 +657,8 @@
     <CommonSnippets snippet="LabelAlign" {component} {onPropertyChange} />
     {#if component.properties.dataBuffer?.stashData}
       {@render TableVisibleRows()}
+    {:else}
+      {@render TableGroupBy()}
     {/if}
   </PropsGroup>
 </div>
