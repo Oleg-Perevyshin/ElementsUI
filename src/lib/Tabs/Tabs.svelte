@@ -37,7 +37,7 @@
         : ''}"
     >
       <div
-        class={twMerge(`flex w-full items-center gap-6 ${vertical ? "@md:flex-col @md:items-stretch @md:gap-0" : ""}`, wrapperClass)}
+        class={twMerge(`flex w-full items-center gap-6 ${vertical ? "@md:flex-col @md:items-stretch @md:gap-0.5 @md:p-1" : ""}`, wrapperClass)}
         role="tablist"
         aria-orientation={vertical ? "vertical" : "horizontal"}
       >
@@ -45,13 +45,13 @@
           <button
             class={twMerge(
               `tab relative flex min-w-fit shrink-0 items-center justify-center gap-2 border-0 bg-transparent py-3 text-[14px]
-               transition-colors duration-150 ${vertical ? "@md:min-w-0 @md:justify-start @md:px-4 @md:py-2.5" : ""} ${isCol && items.find((item) => item.icon) ? "h-20 flex-col" : ""}
+               transition-colors duration-150 ${vertical ? "@md:min-w-0 @md:justify-start @md:rounded-lg @md:px-3 @md:py-2" : ""} ${isCol && items.find((item) => item.icon) ? "h-20 flex-col" : ""}
                ${
                  index === activeTab
-                   ? `cursor-pointer font-semibold shadow-[inset_0_-2px_0_var(--accent-text)] ${vertical ? "@md:shadow-[inset_-2px_0_0_var(--accent-text)]" : ""} ${accent ? "text-(--accent-text)" : "text-(--font-color)"}`
+                   ? `cursor-pointer font-semibold shadow-[inset_0_-2px_0_var(--accent-text)] ${vertical ? "@md:bg-(--accent-soft) @md:text-(--accent-text) @md:shadow-none" : ""} ${accent ? "text-(--accent-text)" : "text-(--font-color)"}`
                    : item.disabled
                      ? "cursor-not-allowed font-medium text-(--faint-color)"
-                     : "cursor-pointer font-medium text-(--muted-color) hover:text-(--font-color)"
+                     : `cursor-pointer font-medium text-(--muted-color) hover:text-(--font-color) ${vertical ? "@md:hover:bg-(--container-color)" : ""}`
                }`,
               item.class,
             )}

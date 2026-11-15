@@ -522,6 +522,8 @@ export interface ITableButton<T extends object> {
   /* Подсказка при наведении - обязательна для кнопки-значка без name */
   title?: string | ((row: T) => string)
   class?: string | ((row: T) => string)
+  /* Цвет прозрачной кнопки: текст и подсветка при наведении цветом accent, например red у «Удалить» */
+  accent?: AccentColor | ((row: T) => AccentColor | undefined)
   eventHandler?: IUIComponentHandler
   onClick?: (row: T) => void
   /* Не показывать кнопку в строке, где значение поля key равно value (сравнение строками) - задаётся в YAML, например своя строка шлюза в ModList */
@@ -587,6 +589,8 @@ export interface ITableProps<T extends object> {
   /* Строки обычной таблицы; журнал (dataBuffer.stashData) строки получает методом push() через bind:this */
   body?: T[]
   footer?: string
+  /* Группа строки: строки одной группы идут подряд под её подписью во всю ширину, сортировка - внутри группы; порядок групп - как в body */
+  group?: (row: T) => string
   /* Журнал: stashData - строки копятся в кольцевом буфере bufferSize (по умолчанию 10), высота - по visibleRows строкам, logger - новые сверху */
   dataBuffer?: { stashData?: boolean; bufferSize?: number; visibleRows?: number; clearButton?: boolean; clearClass?: string; logger?: boolean }
   outline?: boolean

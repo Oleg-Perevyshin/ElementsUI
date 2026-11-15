@@ -24,6 +24,7 @@
     ["IconAdd", UI.IconAdd],
     ["IconDownload", UI.IconDownload],
     ["IconCopy", UI.IconCopy],
+    ["IconColumns", UI.IconColumns],
     ["IconInfo", UI.IconInfo],
     ["IconError", UI.IconError],
     ["IconLibrary", UI.IconLibrary],

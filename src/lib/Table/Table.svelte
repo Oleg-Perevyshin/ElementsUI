@@ -38,6 +38,7 @@
     autoscroll = false,
     getData = () => {},
     onClick,
+    group,
   }: ITableProps<Row> = $props()
 
   const stash = $derived(!!dataBuffer.stashData)
@@ -102,7 +103,11 @@
     if (stash) return stream.slice(-bufferSize)
     const rows = (body ?? []).filter((row) => Object.keys(row).length)
     const { key, direction } = sortState
-    if (key !== null) rows.sort((a, b) => direction * compare(a[key], b[key]))
+    /* С группами порядок групп - как в body, сортировка - внутри группы */
+    const order = new Map<string, number>()
+    if (group) for (const row of rows) if (!order.has(group(row))) order.set(group(row), order.size)
+    const byGroup = (a: Row, b: Row) => (group ? order.get(group(a))! - order.get(group(b))! : 0)
+    if (key !== null || group) rows.sort((a, b) => byGroup(a, b) || (key !== null ? direction * compare(a[key], b[key]) : 0))
     return rows.map((row, i) => ({ key: i, row }))
   })
 
@@ -118,10 +123,12 @@
   /* ********************************************************** */
   /* Разметка: шаблон колонок общий для шапки и строк; кнопка очистки - отдельная узкая колонка */
   const ACTIONS_COLUMN = "2.5rem"
-  /* Узкая таблица (уже 640 px, как везде в библиотеке): колонки wide уходят в подробности; ширина - места таблицы, а не окна */
+  /* Узкая таблица: уже 640 px (как везде в библиотеке) или колонки с wide не помещаются - колонки wide уходят в подробности; ширина - места таблицы, а не окна */
   const NARROW_WIDTH = 640
   let rootWidth = $state(0)
-  const narrow = $derived(rootWidth > 0 && rootWidth < NARROW_WIDTH)
+  /* Ширина, которая была нужна таблице с колонками wide, когда они не поместились: шире - они возвращаются */
+  let wideNeed = $state(0)
+  const narrow = $derived(rootWidth > 0 && (rootWidth < NARROW_WIDTH || rootWidth < wideNeed))
   /* Столбец в строке таблицы: не скрыт шириной 0%, не только в подробностях и не wide на узкой таблице */
   /* Скрытые выбором колонок: заданные или по умолчанию (hidden) */
   const hiddenSet = $derived(new Set(hiddenColumns ?? defaultHiddenColumns(header)))
@@ -137,34 +144,42 @@
   const hasDetails = $derived(detailColumns.length > 0)
   const extraColumns = $derived([...(hasDetails ? [ACTIONS_COLUMN] : []), ...(dataBuffer.clearButton ? [ACTIONS_COLUMN] : [])])
   /* Колонка по содержимому: width "fit" или без width с одними кнопками */
+  /* fill - тоже по содержимому, но делит свободную ширину с такими же колонками */
   const isFit = (column: ITableHeader<Row>) =>
     column.width === "fit" ||
+    column.width === "fill" ||
     (!column.width && Array.isArray(column.content) && column.content.length > 0 && column.content.every((c) => c.type === "button" || c.type === "menu"))
   /* Ширины колонок по содержимому в px (замер после отрисовки), ключ - номер колонки в header */
   let fitWidths = $state<Record<number, number>>({})
+  /* Ширина подписи шапки в одну строку (с кнопкой сортировки, отступами и рамкой), px: колонка не бывает уже, шапка не переносится */
+  let headWidths = $state<Record<number, number>>({})
   const hasFit = $derived(header.some((c) => inTable(c) && isFit(c)))
   /* Рядом с колонкой по содержимому или служебной (кнопка подробностей, очистка журнала) проценты становятся долями остатка: "20%" - 20fr, иначе служебная колонка уходит за край */
   const shareRest = $derived(hasFit || hasDetails || !!dataBuffer.clearButton)
   const trackWidth = (column: ITableHeader<Row>, index: number) => {
+    if (column.width === "fill") return `minmax(${fitWidths[index] ? `${fitWidths[index]}px` : "max-content"}, 1fr)`
     if (isFit(column)) return fitWidths[index] ? `${fitWidths[index]}px` : "max-content"
-    if (!column.width) return "minmax(0, 1fr)"
-    if (shareRest && column.width.endsWith("%")) return `minmax(0, ${parseFloat(column.width) || 1}fr)`
-    return column.width
+    const head = `${headWidths[index] ?? 0}px`
+    if (!column.width) return `minmax(${head}, 1fr)`
+    if (shareRest && column.width.endsWith("%")) return `minmax(${head}, ${parseFloat(column.width) || 1}fr)`
+    return `minmax(${head}, ${column.width})`
   }
   const minWidth = (column: ITableHeader<Row>, index: number) => {
     if (isFit(column)) return fitWidths[index] ? `${fitWidths[index]}px` : "2.5rem"
-    if (!column.width || column.width.includes("fr") || (shareRest && column.width.endsWith("%"))) return "5rem"
-    return column.width
+    const head = `${headWidths[index] ?? 0}px`
+    if (!column.width || column.width.includes("fr") || (shareRest && column.width.endsWith("%"))) return `max(5rem, ${head})`
+    return `max(${column.width}, ${head})`
   }
   const visibleColumns = $derived(header.map((column, index) => ({ column, index })).filter(({ column }) => inTable(column)))
   let gridTemplate = $derived([...visibleColumns.map(({ column, index }) => trackWidth(column, index)), ...extraColumns].join(" "))
   /* Наименьшая ширина таблицы: заданные ширины колонок и по 5rem на гибкие; уже - прокрутка вбок, а не обрезка */
   let minTableWidth = $derived(`calc(${[...visibleColumns.map(({ column, index }) => minWidth(column, index)), ...extraColumns].join(" + ")})`)
   const columnContent = (column: ITableHeader<Row>, row: Row) => (typeof column.content === "function" ? column.content(row) : (column.content ?? []))
-  const sortKey = (column: ITableHeader<Row>) =>
-    typeof column.content === "function"
-      ? undefined
-      : column.content?.find((c): c is { type: "text"; data: ITableText<Row> } => c.type === "text" && !!c.data.sortable)?.data.key
+  /* Ключ сортировки - текст с sortable; содержимое по строке берётся у первой строки */
+  const sortKey = (column: ITableHeader<Row>) => {
+    const contents = typeof column.content === "function" ? (body[0] ? column.content(body[0]) : []) : (column.content ?? [])
+    return contents.find((c): c is { type: "text"; data: ITableText<Row> } => c.type === "text" && !!c.data.sortable)?.data.key
+  }
 
   let container: HTMLElement | null = $state(null)
   let rowsEl: HTMLElement | null = $state(null)
@@ -174,13 +189,39 @@
 
   /* Высота журнала - по первым visibleRows строкам; ширина полосы прокрутки - сдвиг шапки */
   const measure = () => {
+    measureHeads()
     measureFit()
+    measureWide()
     if (!container) return
     scrollbarWidth = container.offsetWidth - container.clientWidth
     if (!stash || !dataBuffer.visibleRows || !rowsEl) return
     let height = 0
     for (const row of [...rowsEl.children].slice(0, dataBuffer.visibleRows)) height += (row as HTMLElement).offsetHeight
     tableHeight = height
+  }
+
+  /* Колонки wide не помещаются (таблица шире своего места) - запоминается нужная ширина, и они уходят в подробности, пока места не станет больше */
+  const measureWide = () => {
+    if (!tableEl || narrow || !header.some((column) => column.place === "wide" && inTable(column))) return
+    const need = tableEl.scrollWidth
+    if (need > rootWidth + 1) wideNeed = need
+  }
+
+  /* Подпись шапки в одну строку: ширины её элементов (подпись не сжимается - nowrap) с промежутками, отступами и рамкой ячейки */
+  const measureHeads = () => {
+    if (!tableEl) return
+    const widths: Record<number, number> = {}
+    for (const cell of tableEl.querySelectorAll<HTMLElement>("[data-head]")) {
+      const items = [...cell.children] as HTMLElement[]
+      const style = getComputedStyle(cell)
+      const gap = parseFloat(style.columnGap) || 0
+      const content = items.reduce((sum, el) => sum + el.offsetWidth, 0) + gap * Math.max(0, items.length - 1)
+      widths[Number(cell.dataset.head)] = Math.ceil(
+        content + parseFloat(style.paddingLeft) + parseFloat(style.paddingRight) + parseFloat(style.borderLeftWidth),
+      )
+    }
+    if (Object.keys(widths).some((key) => widths[+key] !== headWidths[+key]) || Object.keys(widths).length !== Object.keys(headWidths).length)
+      headWidths = widths
   }
 
   /* Ширина колонки по содержимому: от левого края первого до правого края последнего элемента ячейки плюс отступы и рамка ячейки; берётся наибольшая по шапке и строкам */
@@ -191,8 +232,38 @@
     for (const cell of tableEl.querySelectorAll<HTMLElement>("[data-fit]")) {
       const items = [...cell.children] as HTMLElement[]
       if (!items.length) continue
-      const span = Math.max(...items.map((el) => el.offsetLeft + el.offsetWidth)) - Math.min(...items.map((el) => el.offsetLeft))
+      /* Текст в колонке по содержимому не переносится: его ширина - по самому тексту, а не по блоку ячейки */
+      const origin = cell.getBoundingClientRect().left + cell.clientLeft
+      const box = (el: HTMLElement) => {
+        if (!("text" in el.dataset)) return { left: el.offsetLeft, right: el.offsetLeft + el.offsetWidth }
+        /* Края текста внутри: блоки ячейки растянуты на всю ширину и не в счёт */
+        const rects: DOMRect[] = []
+        const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT)
+        for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+          if (!node.textContent?.trim()) continue
+          const range = document.createRange()
+          range.selectNodeContents(node)
+          rects.push(range.getBoundingClientRect())
+        }
+        /* Блоки по содержимому (подложка значка, кнопка-текст) - целиком, с их отступами */
+        for (const fitted of el.querySelectorAll<HTMLElement>(".w-fit")) rects.push(fitted.getBoundingClientRect())
+        /* Кнопки-значки (копирование) - своей шириной с отступами: при узкой колонке они наезжают на текст, и их края не годятся */
+        const buttons = [...el.querySelectorAll("button")].filter((button) => !button.textContent?.trim())
+        const extra = buttons.reduce((sum, button) => {
+          const style = getComputedStyle(button)
+          return sum + button.offsetWidth + parseFloat(style.marginLeft) + parseFloat(style.marginRight)
+        }, 0)
+        if (!rects.length) return { left: el.offsetLeft, right: el.offsetLeft + extra }
+        const left = Math.min(...rects.map((r) => r.left)) - origin
+        return { left, right: Math.max(...rects.map((r) => r.right)) - origin + extra }
+      }
+      const boxes = items.map(box)
       const style = getComputedStyle(cell)
+      /* Элементы в ряд (бейджи счётчиков) в узкой колонке наезжают друг на друга: ширина - сумма их собственных ширин с промежутками, столбиком - самый широкий */
+      const inRow = items.length > 1 && !style.flexDirection.startsWith("column")
+      const span = inRow
+        ? boxes.reduce((sum, b) => sum + (b.right - b.left), 0) + (parseFloat(style.columnGap) || 0) * (items.length - 1)
+        : Math.max(...boxes.map((b) => b.right)) - Math.min(...boxes.map((b) => b.left))
       const width = Math.ceil(span + parseFloat(style.paddingLeft) + parseFloat(style.paddingRight) + parseFloat(style.borderLeftWidth))
       const index = Number(cell.dataset.fit)
       widths[index] = Math.max(widths[index] ?? 0, width)
@@ -251,6 +322,8 @@
         ? "bg-transparent text-(--accent-text) hover:bg-(--accent-soft)"
         : "border border-transparent text-(--on-accent) hover:brightness-90 dark:hover:brightness-115",
       fit && "w-auto shrink-0",
+      /* Кнопка-значок без подписи - квадрат по высоте строки */
+      button.icon && !resolve(button.name, row) && "aspect-square w-7 shrink-0 px-0",
       cls,
     )
   }
@@ -328,8 +401,9 @@
             {@const key = sortKey(column)}
             <div
               data-fit={isFit(column) ? index : undefined}
+              data-head={index}
               class={twMerge(
-                `flex items-center gap-1 px-3 py-2 ${index !== 0 ? "border-l" : ""} ${outline ? "border-(--hairline-color)" : "border-transparent"}
+                `flex items-center gap-1 px-3 py-2 whitespace-nowrap ${index !== 0 ? "border-l" : ""} ${outline ? "border-(--hairline-color)" : "border-transparent"}
             ${column.align === "center" ? "justify-center text-center" : column.align === "right" ? "justify-end text-right" : "justify-start text-left"}`,
                 column.label?.class,
               )}
@@ -368,6 +442,17 @@
           >
             {#each entries as entry, i (entry.key)}
               {@const row = withPicks(entry.row)}
+              {#if group && !stash && (i === 0 || group(entries[i - 1].row) !== group(entry.row))}
+                <!-- Подпись группы во всю ширину строки -->
+                <div
+                  class="border-t border-(--hairline-color) bg-(--container-color) px-3 py-1.5 text-[12px] font-semibold text-[color-mix(in_srgb,var(--accent-color)_35%,var(--font-color))] {i ===
+                  0
+                    ? 'border-t-0'
+                    : ''}"
+                >
+                  {$T(group(entry.row))}
+                </div>
+              {/if}
               <div
                 class="grid border-t border-(--hairline-color) transition-colors duration-150 hover:bg-(--accent-soft)"
                 style={`grid-template-columns: ${gridTemplate};`}
@@ -378,19 +463,22 @@
                     <!-- Одни бейджи - вплотную с переносом; stack - столбиком; иначе - в ряд равными долями -->
                     {@const badges = contents.length > 1 && contents.every((c) => c.type === "text" && c.data.badge)}
                     {@const fit = isFit(column)}
-                    <!-- Колонка по содержимому: элементы в ряд своей ширины, без переноса -->
+                    {@const fitStack = fit && column.stack}
+                    <!-- Колонка по содержимому: элементы своей ширины без переноса - в ряд, со stack столбиком -->
                     <div
                       data-fit={fit ? j : undefined}
-                      class="relative {fit
-                        ? 'flex gap-2 whitespace-nowrap'
-                        : badges
-                          ? 'flex flex-wrap gap-1'
-                          : 'grid gap-x-2'} min-h-7 w-full min-w-0 items-center px-3 py-1 text-[length:var(--table-font-size,13px)] wrap-break-word
+                      class="relative {fitStack
+                        ? 'flex flex-col justify-center whitespace-nowrap'
+                        : fit
+                          ? 'flex items-center gap-2 whitespace-nowrap'
+                          : badges
+                            ? 'flex flex-wrap items-center gap-1'
+                            : 'grid items-center gap-x-2'} min-h-7 w-full min-w-0 px-3 py-1 text-[length:var(--table-font-size,13px)] wrap-break-word
                     {column.align === 'center'
-                        ? 'justify-center justify-items-center text-center'
+                        ? `${fitStack ? 'items-center' : 'justify-center justify-items-center'} text-center`
                         : column.align === 'right'
-                          ? 'justify-end justify-items-end text-right tabular-nums'
-                          : 'justify-start justify-items-start text-left'}
+                          ? `${fitStack ? 'items-end' : 'justify-end justify-items-end'} text-right tabular-nums`
+                          : `${fitStack ? 'items-start' : 'justify-start justify-items-start'} text-left`}
                     {j !== 0 ? 'border-l' : ''} {outline ? 'border-(--hairline-color)' : 'border-transparent'} {column.disableSelect
                         ? 'select-none'
                         : 'select-all'}"
@@ -448,7 +536,13 @@
       {@const button = resolve(content.data, row)}
       {@const title = resolve(button.title, row)}
       {#if !button.hideIf?.key || String((row as Record<string, unknown>)[button.hideIf.key] ?? "") !== String(button.hideIf.value ?? "")}
-        <button class="{buttonClass(button, row, fit)} bg-(--bg-color)" onclick={() => buttonClick(row, button)} {title} aria-label={title}>
+        <button
+          class="{buttonClass(button, row, fit)} bg-(--bg-color)"
+          style={accentStyle(resolve(button.accent, row))}
+          onclick={() => buttonClick(row, button)}
+          {title}
+          aria-label={title}
+        >
           {#if button.icon}
             <span class="flex size-(--icon-size) shrink-0 items-center justify-center overflow-visible [&_svg]:size-full">
               {#if typeof button.icon === "string"}
@@ -540,12 +634,12 @@
       {@const accent = text.accent?.(row)}
       <!-- w-full + min-w-0: при justify-items-start ячейка иначе берёт ширину по содержимому и truncate не даёт «…»; 
  в тексте - перенос строки -->
-      <div class="flex w-full min-w-0 items-center">
+      {@const nowrap = fit && i >= 0}
+      <div class="flex w-full min-w-0 items-center" data-text>
         <div
-          class="max-w-full min-w-0 wrap-break-word {text.truncated ? 'truncate' : 'whitespace-pre-line'} {accent ? 'text-(--accent-text)' : ''} {accent &&
-          text.badge
-            ? 'w-fit rounded-md bg-(--accent-soft) px-1.5 text-[12px] font-medium'
-            : 'w-full'}"
+          class="max-w-full min-w-0 wrap-break-word {nowrap ? 'whitespace-pre' : text.truncated ? 'truncate' : 'whitespace-pre-line'} {accent
+            ? 'text-(--accent-text)'
+            : ''} {accent && text.badge ? 'w-fit rounded-md bg-(--accent-soft) px-1.5 text-[12px] font-medium' : 'w-full'}"
           style={accentStyle(accent)}
           onpointerenter={text.tooltip
             ? (e) => {
