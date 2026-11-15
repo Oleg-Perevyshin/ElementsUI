@@ -74,6 +74,7 @@ export {
   mergeDevicePayload,
   toGuiFile,
   guiMetadataError,
+  DEVICE_INFO_COMMON_FIELDS,
   type GuiFile,
   type WidgetFieldsType,
   type DeviceLink,

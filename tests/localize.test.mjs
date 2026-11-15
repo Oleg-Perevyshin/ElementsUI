@@ -23,3 +23,11 @@ test("данные колонки и картинки не принимаютс�
   /* Языка нет - язык по умолчанию */
   assert.equal(localizeDeep({ name: { ru: "Привет" } }, "zh").name, "Привет")
 })
+
+test("словари библиотеки переведены на все языки", async () => {
+  const { findMissingTranslations } = await import("../dist/locales/languages.js")
+  for (const file of ["translations", "constructor"]) {
+    const { default: dictionary } = await import(`../dist/locales/${file}.js`)
+    assert.deepEqual(findMissingTranslations(dictionary), [], file)
+  }
+})

@@ -149,7 +149,10 @@ export const WIDGET_SAVE_FIELDS = {
   WidgetRGBStrip: ["Count", "Model", "Order"] as (keyof IWidgetRGBStripConfig)[],
 }
 
-/* Поля WidgetDeviceInfo без своего выбора (show): набор ESP-шлюза. STM - DevSN, DevBusID, DevFW, RunCnt, DevName, SCLL */
+/* Поля main_config, которые есть у каждой прошивки: весь набор STM, у ESP он тоже есть; заглушка GUI облака показывает их у любого устройства */
+export const DEVICE_INFO_COMMON_FIELDS: (keyof IWidgetDeviceInfoConfig)[] = ["DevSN", "DevName", "DevBusID", "DevFW", "RunCnt", "SCLL"]
+
+/* Поля WidgetDeviceInfo без своего выбора (show): набор ESP-шлюза */
 export const DEVICE_INFO_DEFAULT_FIELDS: (keyof IWidgetDeviceInfoConfig)[] = [
   "DevSN",
   "DevID",
