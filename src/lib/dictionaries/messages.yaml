@@ -148,6 +148,7 @@ messages:
   - { code: 517, group: API, name: API_INVALID_SN, level: warn, ru: "Неверный серийный номер {0}", en: "Invalid serial number {0}", zh: "序列号 {0} 无效" }
   - { code: 518, group: API, name: API_UNKNOWN_MODSN, level: warn, ru: "Модуль {0} не найден, пакет отброшен", en: "Module {0} not found, packet dropped", zh: "未找到模块 {0}，数据包已丢弃" }
   - { code: 519, group: API, name: API_BUFFER_ERROR, level: error, ru: "Ошибка буфера пакетов", en: "Packet buffer error", zh: "数据包缓冲区错误" }
+  - { code: 520, group: API, name: API_REPLY_TOO_LARGE, level: error, ru: "Ответ не поместился в пакет", en: "Reply did not fit the packet", zh: "回复超出数据包" }
 
   - { code: 600, group: BUS, name: BUS_TX_BUSY, level: error, ru: "Передатчик занят", en: "Transmitter busy", zh: "发送器忙" }
   - { code: 601, group: BUS, name: BUS_RX_OVERFLOW, level: error, ru: "Переполнен приёмный буфер", en: "Receive buffer overflow", zh: "接收缓冲区溢出" }

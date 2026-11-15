@@ -142,6 +142,7 @@ typedef enum {
   MSG_API_INVALID_SN           = 517, /* warn: Invalid serial number {0} */
   MSG_API_UNKNOWN_MODSN        = 518, /* warn: Module {0} not found, packet dropped */
   MSG_API_BUFFER_ERROR         = 519, /* error: Packet buffer error */
+  MSG_API_REPLY_TOO_LARGE      = 520, /* error: Reply did not fit the packet */
 
   /* BUS 600-699: Шины */
   MSG_BUS_TX_BUSY              = 600, /* error: Transmitter busy */
