@@ -4,7 +4,6 @@
   import "../app.css"
   import * as UI from "#lib/index.ts"
   import "#lib/constructor.ts"
-  import IconLightDark from "../appIcons/IconLightDark.svelte"
   import GitHub from "../appIcons/GitHub.svelte"
   import { goto } from "$app/navigation"
   import { page } from "$app/state"
@@ -144,7 +143,7 @@
           </div>
         {/if}
       </div>
-      <UI.Button componentClass="w-8" content={{ icon: IconLightDark }} onClick={switchTheme} />
+      <UI.Button componentClass="w-8" content={{ icon: UI.IconTheme }} onClick={switchTheme} />
       <UI.Button componentClass="w-8" content={{ icon: GitHub }} onClick={() => window.open("https://github.com/Oleg-Perevyshin/ElementsUI", "_blank")} />
     </div>
   </header>

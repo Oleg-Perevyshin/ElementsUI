@@ -1,4 +1,4 @@
-import type { Snippet } from "svelte"
+import type { Component, Snippet } from "svelte"
 import type { AccentColor } from "./accent"
 import type { IMissionPlan } from "./WidgetMap/mission/plan"
 import type { IRoutePlan } from "./WidgetMap/mission/route"
@@ -11,7 +11,7 @@ export type { IWidgetWiFiConfig, IWidgetDeviceInfoConfig, IWidgetRGBStripConfig,
 export type { LoRaParams, LoRaParam, LoRaValues, ILoRaParamConfig, ILoRaOption } from "./WidgetLoRa/lora"
 
 /* Иконка: SVG-разметка или компонент */
-export type IconSource = ConstructorOfATypedSvelteComponent | string
+export type IconSource = Component<any> | string
 
 /* Свойства компонента по типу GUI - источник типа UIComponent и реестра COMPONENTS */
 export interface UIComponentPropsMap {
@@ -518,7 +518,7 @@ export interface ITableSelect<T extends object> {
 }
 export interface ITableButton<T extends object> {
   name?: string | ((row: T) => string)
-  icon?: ConstructorOfATypedSvelteComponent | string
+  icon?: IconSource
   /* Подсказка при наведении - обязательна для кнопки-значка без name */
   title?: string | ((row: T) => string)
   class?: string | ((row: T) => string)
@@ -539,7 +539,7 @@ export interface ITableImage<T extends object> {
   class?: string
   width?: string
   height?: string
-  defaultIcon?: ConstructorOfATypedSvelteComponent | string
+  defaultIcon?: IconSource
 }
 
 /* Меню действий строки: кнопка «⋯» (или свой значок) и пункты Dropdown для этой строки; удаление - пункт с accent "red" */

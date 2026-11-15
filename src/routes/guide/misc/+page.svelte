@@ -29,6 +29,15 @@
     ["IconLibrary", UI.IconLibrary],
     ["IconMoveVertical", UI.IconMoveVertical],
     ["IconGripVerticalDual", UI.IconGripVerticalDual],
+    ["IconCommandList", UI.IconCommandList],
+    ["IconRestart", UI.IconRestart],
+    ["IconTheme", UI.IconTheme],
+    ["IconEye", UI.IconEye],
+    ["IconEyeSlash", UI.IconEyeSlash],
+    ["IconPlug", UI.IconPlug],
+    ["IconUnplug", UI.IconUnplug],
+    ["IconSend", UI.IconSend],
+    ["IconGraph", UI.IconGraph],
   ] as const
 
   let docHtml = $state("")
@@ -59,7 +68,7 @@
   <section class="flex flex-wrap items-center gap-3 rounded-2xl border border-(--hairline-color) p-4">
     <h2 class="w-full text-lg font-semibold">{$T("library.misc_icons")}</h2>
     {#each icons as [name, Icon] (name)}
-      <div class="flex w-36 items-center gap-2 text-sm"><span class="[&_svg]:size-5"><Icon /></span><code>{name}</code></div>
+      <div class="flex w-48 items-center gap-2 text-sm"><span class="[&_svg]:size-5"><Icon /></span><code class="whitespace-nowrap">{name}</code></div>
     {/each}
   </section>
 
