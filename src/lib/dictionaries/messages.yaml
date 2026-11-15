@@ -2,7 +2,7 @@
 # groups: группа -> { range: [первый код, последний код], ru, en, zh: название группы }. Имя группы - приставка имён её сообщений (SYS_..., FS_...)
 # messages: { code: код из диапазона группы, group: группа, name: <группа>_<ИМЯ> (MSG_<name> в api_msg.h), level: info|warn|error, ru, en, zh: шаблоны текста }
 # Код 0 (или нет поля Message) - сообщения нет. {0}, {1}... - параметры из массива Args по порядку, только где без них теряется смысл; что значат - комментарий после строки
-# Резерв: 500..999 - новые группы ядра, 2000..65535 - на будущее. Новое сообщение - в свою группу, новая группа ядра - диапазон из 500..999
+# Резерв: 900..999 - новые группы ядра, 3000..65535 - на будущее. Новое сообщение - в свою группу, новая группа ядра - диапазон из 900..999
 # Источник - poe-svelte-ui-lib (src/lib/dictionaries/messages.yaml); .framework/Messages.yaml и api_msg.h фреймворков - копии, не править
 # После правки - npm run Generate (generated/messages.ts и firmware/api_msg.h), затем копии во фреймворки
 
@@ -12,7 +12,12 @@ groups:
   FS: { range: [200, 299], ru: "Файлы", en: "Files", zh: "文件" }
   FW: { range: [300, 399], ru: "Обновление", en: "Update", zh: "更新" }
   WIFI: { range: [400, 499], ru: "Wi-Fi", en: "Wi-Fi", zh: "Wi-Fi" }
+  API: { range: [500, 599], ru: "Обмен", en: "Messaging", zh: "通信" }
+  BUS: { range: [600, 699], ru: "Шины", en: "Buses", zh: "总线" }
+  NET: { range: [700, 799], ru: "Сеть", en: "Network", zh: "网络" }
+  LORA: { range: [800, 899], ru: "LoRa", en: "LoRa", zh: "LoRa" }
   DEV: { range: [1000, 1999], ru: "Изделия", en: "Devices", zh: "设备" }
+  DRV: { range: [2000, 2999], ru: "Драйверы", en: "Drivers", zh: "驱动" }
 
 messages:
   - { code: 1, group: SYS, name: SYS_RESTARTING, level: info, ru: "Перезагрузка", en: "Restarting", zh: "正在重启" }
@@ -22,10 +27,53 @@ messages:
   - { code: 5, group: SYS, name: SYS_INTERNAL_ERROR, level: error, ru: "Внутренняя ошибка устройства", en: "Internal device error", zh: "设备内部错误" }
   - { code: 6, group: SYS, name: SYS_TIME_UNAVAILABLE, level: error, ru: "Не удалось получить время", en: "Could not get the time", zh: "无法获取时间" }
   - { code: 7, group: SYS, name: SYS_MODLIST_CHANGED, level: info, ru: "Список модулей изменён", en: "Module list changed", zh: "模块列表已更改" }
+  - { code: 8, group: SYS, name: SYS_INVALID_ARG, level: error, ru: "Неверный аргумент", en: "Invalid argument", zh: "参数无效" }
+  - { code: 9, group: SYS, name: SYS_INVALID_STATE, level: error, ru: "Неверное состояние", en: "Invalid state", zh: "状态无效" }
+  - { code: 10, group: SYS, name: SYS_NOT_FOUND, level: error, ru: "Не найдено", en: "Not found", zh: "未找到" }
+  - { code: 11, group: SYS, name: SYS_INVALID_SIZE, level: error, ru: "Неверный размер", en: "Invalid size", zh: "大小无效" }
+  - { code: 12, group: SYS, name: SYS_TIMEOUT, level: error, ru: "Время ожидания истекло", en: "Timed out", zh: "超时" }
+  - { code: 13, group: SYS, name: SYS_NOT_SUPPORTED, level: error, ru: "Не поддерживается", en: "Not supported", zh: "不支持" }
+  - { code: 14, group: SYS, name: SYS_NOT_ALLOWED, level: error, ru: "Действие запрещено", en: "Not allowed", zh: "不允许" }
+  - { code: 15, group: SYS, name: SYS_INVALID_CRC, level: error, ru: "Неверная контрольная сумма", en: "Invalid checksum", zh: "校验和无效" }
+  - { code: 16, group: SYS, name: SYS_TASK_CREATE_FAILED, level: error, ru: "Не удалось создать задачу", en: "Could not create task", zh: "无法创建任务" }
+  - { code: 17, group: SYS, name: SYS_TASK_STOPPED, level: error, ru: "Задача остановилась", en: "Task stopped", zh: "任务已停止" }
+  - { code: 18, group: SYS, name: SYS_ALREADY_INIT, level: warn, ru: "Уже запущен", en: "Already started", zh: "已启动" }
+  - { code: 19, group: SYS, name: SYS_APP_STARTED, level: info, ru: "Устройство запущено", en: "Device started", zh: "设备已启动" }
+  - { code: 20, group: SYS, name: SYS_STACK_OVERFLOW, level: error, ru: "Переполнен стек задачи {0}", en: "Task {0} stack overflow", zh: "任务 {0} 栈溢出" }
+  - { code: 21, group: SYS, name: SYS_HEAP_OVERFLOW, level: error, ru: "Закончилась память", en: "Out of memory", zh: "内存耗尽" }
+  - { code: 22, group: SYS, name: SYS_LOW_VOLTAGE, level: warn, ru: "Низкое напряжение питания", en: "Low supply voltage", zh: "电源电压低" }
 
   - { code: 100, group: CFG, name: CFG_NOT_APPLIED, level: error, ru: "Настройки не применены: {0}", en: "Settings not applied: {0}", zh: "设置未应用：{0}" } # {0} - поля через запятую
   - { code: 101, group: CFG, name: CFG_INVALID, level: error, ru: "Неверные данные настроек", en: "Invalid settings data", zh: "设置数据无效" }
   - { code: 102, group: CFG, name: CFG_GROUP_NOT_FOUND, level: warn, ru: "Группа настроек не найдена", en: "Settings group not found", zh: "未找到设置组" }
+  - { code: 103, group: CFG, name: CFG_GROUP_REG_FAILED, level: error, ru: "Не удалось зарегистрировать группу настроек", en: "Could not register settings group", zh: "无法注册设置组" }
+  - { code: 104, group: CFG, name: CFG_GROUP_LOAD_FAILED, level: warn, ru: "Настройки не прочитаны, взяты заводские", en: "Settings not loaded, factory values used", zh: "未读取设置，使用出厂值" }
+  - { code: 105, group: CFG, name: CFG_NAME_TOO_LONG, level: error, ru: "Имя {0} длиннее {1} знаков", en: "Name {0} is longer than {1} characters", zh: "名称 {0} 超过 {1} 个字符" }
+  - { code: 106, group: CFG, name: CFG_TOKEN_SAVE_FAILED, level: warn, ru: "Токен устройства не сохранён", en: "Device token not saved", zh: "设备令牌未保存" }
+  - { code: 107, group: CFG, name: CFG_KEY_NOT_FOUND, level: warn, ru: "Настройки {0} нет, взято заводское значение", en: "Setting {0} missing, factory value used", zh: "缺少设置 {0}，使用出厂值" }
+  - { code: 108, group: CFG, name: CFG_STORAGE_FAILED, level: error, ru: "Хранилище настроек недоступно", en: "Settings storage unavailable", zh: "设置存储不可用" }
+  - { code: 109, group: CFG, name: CFG_SAVE_FAILED, level: error, ru: "Настройка {0} не сохранена", en: "Setting {0} not saved", zh: "设置 {0} 未保存" }
+  - { code: 110, group: CFG, name: CFG_DEFAULTS, level: warn, ru: "Настроек нет, взяты заводские", en: "No settings, factory values used", zh: "没有设置，使用出厂值" }
+  - { code: 111, group: CFG, name: CFG_DEFAULTS_ADDED, level: warn, ru: "Новым настройкам {0} заданы заводские значения", en: "Factory values set for new settings {0}", zh: "已为新设置 {0} 设定出厂值" }
+  - { code: 112, group: CFG, name: CFG_OUT_OF_RANGE, level: warn, ru: "Настройка {0} вне диапазона, взято заводское значение", en: "Setting {0} out of range, factory value used", zh: "设置 {0} 超出范围，使用出厂值" }
+  - { code: 113, group: CFG, name: CFG_READ_FAILED, level: warn, ru: "Настройка {0} не прочитана", en: "Setting {0} not read", zh: "设置 {0} 未读取" }
+  - { code: 114, group: CFG, name: CFG_ERASED, level: info, ru: "Настройки стёрты", en: "Settings erased", zh: "设置已擦除" }
+  - { code: 115, group: CFG, name: CFG_ERASED_TOKEN_KEPT, level: info, ru: "Настройки стёрты, токен устройства сохранён", en: "Settings erased, device token kept", zh: "设置已擦除，设备令牌已保留" }
+  - { code: 116, group: CFG, name: CFG_GROUP_FAILED, level: warn, ru: "Группа {0} не отдана", en: "Group {0} not sent", zh: "组 {0} 未发送" }
+  - { code: 117, group: CFG, name: CFG_CHANGES_NOT_REPORTED, level: warn, ru: "Изменение {0} применено, но не отправлено: слишком много изменений", en: "Change {0} applied but not sent: too many changes", zh: "更改 {0} 已应用但未发送：更改过多" }
+  - { code: 118, group: CFG, name: CFG_GROUP_TOO_LARGE, level: error, ru: "Группа {0}: {1} байт больше страницы {2} байт", en: "Group {0}: {1} bytes exceed page of {2} bytes", zh: "组 {0}：{1} 字节超过 {2} 字节的页" }
+  - { code: 119, group: CFG, name: CFG_PAGE_INVALID, level: warn, ru: "Страница {0} настроек испорчена ({1}), стирается", en: "Settings page {0} invalid ({1}), erasing", zh: "设置页 {0} 无效（{1}），正在擦除" }
+  - { code: 120, group: CFG, name: CFG_PAGE_RECOVERED, level: warn, ru: "Страница {0} восстановлена после прерванного уплотнения", en: "Page {0} recovered after interrupted compaction", zh: "中断压缩后已恢复页 {0}" }
+  - { code: 121, group: CFG, name: CFG_STORAGE_FULL, level: warn, ru: "Хранилище настроек заполнено", en: "Settings storage full", zh: "设置存储已满" }
+  - { code: 122, group: CFG, name: CFG_GROUP_SAVE_FAILED, level: error, ru: "Группа настроек не сохранена", en: "Settings group not saved", zh: "设置组未保存" }
+  - { code: 123, group: CFG, name: CFG_DEVNAME_GENERATED, level: warn, ru: "Пустое имя устройства заменено на {0}", en: "Empty device name replaced with {0}", zh: "空设备名称已替换为 {0}" }
+  - { code: 124, group: CFG, name: CFG_NO_DEVICE_ID, level: error, ru: "Не задан код модели устройства", en: "Device model code not set", zh: "未设置设备型号代码" }
+  - { code: 125, group: CFG, name: CFG_FIELD_READ_ONLY, level: warn, ru: "Настройка {0} только для чтения", en: "Setting {0} is read-only", zh: "设置 {0} 为只读" }
+  - { code: 126, group: CFG, name: CFG_FIELD_BYTES_EXPECTED, level: warn, ru: "Настройка {0}: нужны байты 0-255", en: "Setting {0}: bytes 0-255 expected", zh: "设置 {0}：需要 0-255 的字节" }
+  - { code: 127, group: CFG, name: CFG_FIELD_TOO_LONG, level: warn, ru: "Настройка {0} слишком длинная", en: "Setting {0} is too long", zh: "设置 {0} 过长" }
+  - { code: 128, group: CFG, name: CFG_FIELD_OUT_OF_TYPE, level: warn, ru: "Настройка {0} вне диапазона типа", en: "Setting {0} out of type range", zh: "设置 {0} 超出类型范围" }
+  - { code: 129, group: CFG, name: CFG_FIELD_OUT_OF_RANGE, level: warn, ru: "Настройка {0} вне диапазона {1}..{2}", en: "Setting {0} out of range {1}..{2}", zh: "设置 {0} 超出范围 {1}..{2}" }
+  - { code: 130, group: CFG, name: CFG_FLASH_ERROR, level: error, ru: "Ошибка записи или стирания Flash", en: "Flash write or erase error", zh: "Flash 写入或擦除错误" }
 
   - { code: 200, group: FS, name: FS_FILE_DELETED, level: info, ru: "Файл удалён", en: "File deleted", zh: "文件已删除" }
   - { code: 201, group: FS, name: FS_FILE_UPLOADED, level: info, ru: "Файл загружен", en: "File uploaded", zh: "文件已上传" }
@@ -38,6 +86,8 @@ messages:
   - { code: 208, group: FS, name: FS_TRANSFER_INTERRUPTED, level: error, ru: "Передача файла прервана, повторите", en: "File transfer interrupted, try again", zh: "文件传输中断，请重试" }
   - { code: 209, group: FS, name: FS_TRANSFER_CORRUPTED, level: error, ru: "Файл повреждён при передаче, повторите", en: "File corrupted in transfer, try again", zh: "文件传输时损坏，请重试" }
   - { code: 210, group: FS, name: FS_ERROR, level: error, ru: "Ошибка файловой системы", en: "File system error", zh: "文件系统错误" }
+  - { code: 211, group: FS, name: FS_SESSION_TIMEOUT, level: warn, ru: "Передача файла {0} прервана по времени", en: "File {0} transfer timed out", zh: "文件 {0} 传输超时" }
+  - { code: 212, group: FS, name: FS_SIZE_MISMATCH, level: error, ru: "Получено {0} байт, ожидалось {1}", en: "Received {0} bytes, expected {1}", zh: "收到 {0} 字节，预期 {1}" }
 
   - { code: 300, group: FW, name: FW_DOWNLOADING, level: info, ru: "Загрузка прошивки", en: "Downloading firmware", zh: "正在下载固件" }
   - { code: 301, group: FW, name: FW_DOWNLOADED, level: info, ru: "Прошивка загружена", en: "Firmware downloaded", zh: "固件已下载" }
@@ -47,11 +97,175 @@ messages:
   - { code: 305, group: FW, name: FW_UPGRADED, level: info, ru: "Прошивка обновлена", en: "Firmware updated", zh: "固件已更新" }
   - { code: 306, group: FW, name: FW_UPGRADE_FAILED, level: error, ru: "Ошибка обновления прошивки", en: "Firmware update failed", zh: "固件更新失败" }
   - { code: 307, group: FW, name: FW_RESYNC, level: warn, ru: "Повтор передачи прошивки с части {0}", en: "Resending firmware from part {0}", zh: "从第 {0} 部分重新发送固件" } # {0} - номер части, с которой загрузчик ждёт передачу
+  - { code: 308, group: FW, name: FW_FILE_SIZE_INVALID, level: error, ru: "Размер прошивки {0} больше {1}", en: "Firmware size {0} exceeds {1}", zh: "固件大小 {0} 超过 {1}" }
+  - { code: 309, group: FW, name: FW_WRITE_FAILED, level: error, ru: "Прошивка не записана", en: "Firmware not written", zh: "固件未写入" }
+  - { code: 310, group: FW, name: FW_IMAGE_INVALID, level: error, ru: "Образ прошивки неверный", en: "Invalid firmware image", zh: "固件映像无效" }
+  - { code: 311, group: FW, name: FW_TARGET_NO_RESPONSE, level: error, ru: "Модуль не ответил на начало обновления", en: "Module did not answer update start", zh: "模块未响应更新开始" }
+  - { code: 312, group: FW, name: FW_BLOCK_SIZE_INVALID, level: error, ru: "Модуль прислал неверный размер блока", en: "Module sent invalid block size", zh: "模块发送的块大小无效" }
+  - { code: 313, group: FW, name: FW_RESYNC_FAILED, level: error, ru: "Повтор с блока {0} из {1} не удался", en: "Resend from block {0} of {1} failed", zh: "从块 {0}/{1} 重发失败" }
+  - { code: 314, group: FW, name: FW_FRAME_REJECTED, level: error, ru: "Модуль отклонил блок {0}, сообщение {1}", en: "Module rejected block {0}, message {1}", zh: "模块拒绝块 {0}，消息 {1}" }
+  - { code: 315, group: FW, name: FW_RADIO_RESTORE_FAILED, level: warn, ru: "Профиль радио не возвращён", en: "Radio profile not restored", zh: "无线电配置未恢复" }
+  - { code: 316, group: FW, name: FW_BUSY, level: warn, ru: "Обновление уже идёт", en: "Update already in progress", zh: "更新已在进行中" }
+  - { code: 317, group: FW, name: FW_MARKED_VALID, level: info, ru: "Новая прошивка подтверждена", en: "New firmware confirmed", zh: "新固件已确认" }
+  - { code: 318, group: FW, name: FW_MARK_VALID_FAILED, level: warn, ru: "Новая прошивка не подтверждена", en: "New firmware not confirmed", zh: "新固件未确认" }
+  - { code: 319, group: FW, name: FW_VALIDATING, level: warn, ru: "Новая прошивка, подтверждение через {0} с", en: "New firmware, confirmation in {0} s", zh: "新固件，{0} 秒后确认" }
+  - { code: 320, group: FW, name: FW_FILE_FAILED, level: error, ru: "Файл прошивки не прочитан", en: "Firmware file not read", zh: "未读取固件文件" }
 
   - { code: 400, group: WIFI, name: WIFI_UNAVAILABLE, level: error, ru: "Wi-Fi недоступен", en: "Wi-Fi unavailable", zh: "Wi-Fi 不可用" }
   - { code: 401, group: WIFI, name: WIFI_NOT_STA, level: error, ru: "Нужен режим клиента Wi-Fi", en: "Wi-Fi client mode required", zh: "需要 Wi-Fi 客户端模式" }
   - { code: 402, group: WIFI, name: WIFI_SCAN_BUSY, level: warn, ru: "Поиск сетей уже идёт", en: "Network scan already running", zh: "网络扫描正在进行" }
   - { code: 403, group: WIFI, name: WIFI_SCAN_FAILED, level: error, ru: "Не удалось выполнить поиск сетей", en: "Could not scan networks", zh: "无法扫描网络" }
   - { code: 404, group: WIFI, name: WIFI_CONNECT_FAILED, level: warn, ru: "Не удалось подключиться к Wi-Fi {0}, восстановлена прежняя сеть", en: "Could not connect to Wi-Fi {0}, previous network restored", zh: "无法连接 Wi-Fi {0}，已恢复之前的网络" } # {0} - SSID
+  - { code: 405, group: WIFI, name: WIFI_AP_PSK_INVALID, level: warn, ru: "Пароль точки доступа отклонён: пустой или 8-63 знака", en: "Access point password rejected: empty or 8-63 characters", zh: "接入点密码被拒绝：须为空或 8-63 个字符" }
+  - { code: 406, group: WIFI, name: WIFI_SAFE_AP, level: warn, ru: "Неверные настройки Wi-Fi, включена резервная точка доступа", en: "Invalid Wi-Fi settings, backup access point on", zh: "Wi-Fi 设置无效，已开启备用接入点" }
+  - { code: 407, group: WIFI, name: WIFI_APPLY_FAILED, level: error, ru: "Настройки Wi-Fi не применены, шаг {0}", en: "Wi-Fi settings not applied, step {0}", zh: "Wi-Fi 设置未应用，步骤 {0}" }
+  - { code: 408, group: WIFI, name: WIFI_STATIC_IP_EMPTY, level: warn, ru: "Статический адрес не задан, включён DHCP", en: "Static address not set, DHCP on", zh: "未设置静态地址，已启用 DHCP" }
+  - { code: 409, group: WIFI, name: WIFI_DISCONNECTED, level: warn, ru: "Wi-Fi отключился, причина {0}, попытка {1} из {2}", en: "Wi-Fi disconnected, reason {0}, attempt {1} of {2}", zh: "Wi-Fi 已断开，原因 {0}，第 {1}/{2} 次" }
+  - { code: 410, group: WIFI, name: WIFI_RECONNECT_FAILED, level: warn, ru: "Переподключение не удалось, причина {0}", en: "Reconnect failed, reason {0}", zh: "重新连接失败，原因 {0}" }
+  - { code: 411, group: WIFI, name: WIFI_CONNECTED_SAVED, level: info, ru: "Подключено к {0}, сохранено", en: "Connected to {0}, saved", zh: "已连接 {0}，已保存" }
+  - { code: 412, group: WIFI, name: WIFI_RESTORED, level: error, ru: "Нет подключения к {0}, возвращена {1}", en: "Not connected to {0}, restored {1}", zh: "未连接 {0}，已恢复 {1}" }
+  - { code: 413, group: WIFI, name: WIFI_NOTICE_DROPPED, level: warn, ru: "Облако не подключено, уведомление не отправлено", en: "Cloud not connected, notice not sent", zh: "云端未连接，通知未发送" }
+  - { code: 414, group: WIFI, name: WIFI_MODE_CHANGE_FAILED, level: error, ru: "Режим Wi-Fi не сменился, включена резервная точка доступа", en: "Wi-Fi mode not changed, backup access point on", zh: "Wi-Fi 模式未更改，已开启备用接入点" }
+  - { code: 415, group: WIFI, name: WIFI_SAFE_AP_FAILED, level: error, ru: "Резервная точка доступа не включилась", en: "Backup access point did not start", zh: "备用接入点未启动" }
+
+  - { code: 500, group: API, name: API_PAYLOAD_TOO_LARGE, level: error, ru: "Данные {0} байт не помещаются в пакет", en: "Data of {0} bytes does not fit the packet", zh: "{0} 字节数据超出数据包" }
+  - { code: 501, group: API, name: API_ENCODE_FAILED, level: error, ru: "Пакет не собран", en: "Packet not encoded", zh: "数据包未编码" }
+  - { code: 502, group: API, name: API_SEND_FAILED, level: warn, ru: "Пакет не отправлен", en: "Packet not sent", zh: "数据包未发送" }
+  - { code: 503, group: API, name: API_NO_BUFFER, level: warn, ru: "Нет свободного буфера пакета", en: "No free packet buffer", zh: "没有空闲的数据包缓冲区" }
+  - { code: 504, group: API, name: API_TOKEN_SAVED, level: info, ru: "Токен устройства сохранён, переподключение", en: "Device token saved, reconnecting", zh: "设备令牌已保存，正在重新连接" }
+  - { code: 505, group: API, name: API_TOKEN_REISSUED, level: warn, ru: "Облако выдаёт токен снова, переподключения нет", en: "Cloud keeps reissuing the token, no reconnect", zh: "云端反复签发令牌，不重新连接" }
+  - { code: 506, group: API, name: API_UNKNOWN_COMMAND, level: warn, ru: "Нет обработчика команды {0}", en: "No handler for command {0}", zh: "命令 {0} 没有处理程序" }
+  - { code: 507, group: API, name: API_BUFFER_EXPIRED, level: error, ru: "Буфер пакета {0} занят слишком долго", en: "Packet buffer {0} held too long", zh: "数据包缓冲区 {0} 占用过久" }
+  - { code: 508, group: API, name: API_QUEUE_FULL, level: error, ru: "Очередь пакетов переполнена", en: "Packet queue full", zh: "数据包队列已满" }
+  - { code: 509, group: API, name: API_INVALID_ENVELOPE, level: warn, ru: "Пакет WebSocket без HAR, VAL или DevSN", en: "WebSocket packet without HAR, VAL or DevSN", zh: "WebSocket 数据包缺少 HAR、VAL 或 DevSN" }
+  - { code: 510, group: API, name: API_INVALID_MODSN, level: warn, ru: "Неверный серийный номер модуля {0}", en: "Invalid module serial number {0}", zh: "模块序列号 {0} 无效" }
+  - { code: 511, group: API, name: API_BOOTLOADER, level: info, ru: "Перезапуск в загрузчик", en: "Restarting into bootloader", zh: "重启进入引导程序" }
+  - { code: 512, group: API, name: API_PLOT_TOO_MANY, level: warn, ru: "Слишком много значений графика: {0}", en: "Too many plot values: {0}", zh: "图表值过多：{0}" }
+  - { code: 513, group: API, name: API_UNKNOWN_BUSID, level: warn, ru: "Неизвестный адрес {0}", en: "Unknown address {0}", zh: "未知地址 {0}" }
+  - { code: 514, group: API, name: API_BAD_PACKET, level: warn, ru: "Битый пакет", en: "Corrupted packet", zh: "数据包已损坏" }
+  - { code: 515, group: API, name: API_MODLIST_FULL, level: warn, ru: "Список модулей заполнен: {0}", en: "Module list full: {0}", zh: "模块列表已满：{0}" }
+  - { code: 516, group: API, name: API_NEIGHBORS_FULL, level: warn, ru: "Список соседей заполнен: {0}", en: "Neighbor list full: {0}", zh: "邻居列表已满：{0}" }
+  - { code: 517, group: API, name: API_INVALID_SN, level: warn, ru: "Неверный серийный номер {0}", en: "Invalid serial number {0}", zh: "序列号 {0} 无效" }
+  - { code: 518, group: API, name: API_UNKNOWN_MODSN, level: warn, ru: "Модуль {0} не найден, пакет отброшен", en: "Module {0} not found, packet dropped", zh: "未找到模块 {0}，数据包已丢弃" }
+  - { code: 519, group: API, name: API_BUFFER_ERROR, level: error, ru: "Ошибка буфера пакетов", en: "Packet buffer error", zh: "数据包缓冲区错误" }
+
+  - { code: 600, group: BUS, name: BUS_TX_BUSY, level: error, ru: "Передатчик занят", en: "Transmitter busy", zh: "发送器忙" }
+  - { code: 601, group: BUS, name: BUS_RX_OVERFLOW, level: error, ru: "Переполнен приёмный буфер", en: "Receive buffer overflow", zh: "接收缓冲区溢出" }
+  - { code: 602, group: BUS, name: BUS_CAN_OFF, level: error, ru: "Шина CAN отключилась, перезапуск", en: "CAN bus off, restarting", zh: "CAN 总线关闭，正在重启" }
+  - { code: 603, group: BUS, name: BUS_REINIT_FAILED, level: error, ru: "Перезапуск контроллера не удался", en: "Controller restart failed", zh: "控制器重启失败" }
+  - { code: 604, group: BUS, name: BUS_GPIO_FAILED, level: error, ru: "Вывод не настроен", en: "Pin not configured", zh: "引脚未配置" }
+  - { code: 605, group: BUS, name: BUS_NOT_SUPPORTED, level: error, ru: "Шина не поддерживается", en: "Bus not supported", zh: "不支持该总线" }
+  - { code: 606, group: BUS, name: BUS_INIT_FAILED, level: error, ru: "Шина не запустилась", en: "Bus did not start", zh: "总线未启动" }
+  - { code: 607, group: BUS, name: BUS_NOT_INIT, level: error, ru: "Шина {0} не запущена", en: "Bus {0} not started", zh: "总线 {0} 未启动" }
+  - { code: 608, group: BUS, name: BUS_DEV_EXISTS, level: warn, ru: "Шина {0}: устройство {1} уже подключено", en: "Bus {0}: device {1} already attached", zh: "总线 {0}：设备 {1} 已连接" }
+  - { code: 609, group: BUS, name: BUS_DEV_LIMIT, level: error, ru: "Подключено максимум устройств: {0}", en: "Device limit reached: {0}", zh: "已达到设备上限：{0}" }
+  - { code: 610, group: BUS, name: BUS_DEV_FAILED, level: error, ru: "Шина {0}: устройство {1} не отвечает", en: "Bus {0}: device {1} not responding", zh: "总线 {0}：设备 {1} 无响应" }
+  - { code: 611, group: BUS, name: BUS_SCAN_FOUND, level: info, ru: "Шина {0}: найдены {1}", en: "Bus {0}: found {1}", zh: "总线 {0}：发现 {1}" }
+  - { code: 612, group: BUS, name: BUS_SCAN_EMPTY, level: info, ru: "Шина {0}: устройств нет", en: "Bus {0}: no devices", zh: "总线 {0}：没有设备" }
+  - { code: 613, group: BUS, name: BUS_STUCK_LOW, level: error, ru: "Линия шины прижата к нулю", en: "Bus line held low", zh: "总线被拉低" }
+  - { code: 614, group: BUS, name: BUS_PACKET_LOST, level: error, ru: "Пакет потерян после {0} попыток", en: "Packet lost after {0} attempts", zh: "{0} 次尝试后数据包丢失" }
+  - { code: 615, group: BUS, name: BUS_BITRATE_DEFAULT, level: warn, ru: "Скорость {0} не поддерживается, взята {1}", en: "Bitrate {0} not supported, using {1}", zh: "不支持速率 {0}，改用 {1}" }
+  - { code: 616, group: BUS, name: BUS_XFER_FAILED, level: error, ru: "Ошибка обмена по шине", en: "Bus transfer error", zh: "总线传输错误" }
+  - { code: 617, group: BUS, name: BUS_ADC_NO_CALIB, level: warn, ru: "У АЦП {0} нет калибровки, значения без поправки", en: "ADC {0} has no calibration, raw values used", zh: "ADC {0} 没有校准，使用原始值" }
+  - { code: 618, group: BUS, name: BUS_EXTI_BUSY, level: error, ru: "Линия прерывания {0} занята", en: "Interrupt line {0} busy", zh: "中断线 {0} 已占用" }
+  - { code: 619, group: BUS, name: BUS_CAN_RX_LOST, level: error, ru: "Пакет {0} потерян при приёме", en: "Packet {0} lost on receive", zh: "接收时丢失数据包 {0}" }
+  - { code: 620, group: BUS, name: BUS_TX_RETRY, level: warn, ru: "Не отправлено, попытка {0} из {1}", en: "Not sent, attempt {0} of {1}", zh: "未发送，第 {0}/{1} 次" }
+
+  - { code: 700, group: NET, name: NET_TASK_KEPT, level: error, ru: "Задача не завершилась", en: "Task did not exit", zh: "任务未退出" }
+  - { code: 701, group: NET, name: NET_LOGIN_FAILED, level: warn, ru: "Неверный вход, следующая попытка через {0} мс", en: "Login failed, next attempt in {0} ms", zh: "登录失败，{0} ms 后可再试" }
+  - { code: 702, group: NET, name: NET_FOREIGN_ORIGIN, level: warn, ru: "Запрос с чужого сайта отклонён", en: "Request from foreign site rejected", zh: "已拒绝来自外部站点的请求" }
+  - { code: 703, group: NET, name: NET_NO_SESSION, level: warn, ru: "Подключение без сессии отклонено", en: "Connection without session rejected", zh: "已拒绝无会话的连接" }
+  - { code: 704, group: NET, name: NET_HTTP_FAILED, level: error, ru: "Веб-сервер не запустился", en: "Web server did not start", zh: "Web 服务器未启动" }
+  - { code: 705, group: NET, name: NET_URI_FAILED, level: error, ru: "Адрес {0} не зарегистрирован", en: "URI {0} not registered", zh: "未注册 URI {0}" }
+  - { code: 706, group: NET, name: NET_MDNS_FAILED, level: error, ru: "mDNS не запустился", en: "mDNS did not start", zh: "mDNS 未启动" }
+  - { code: 707, group: NET, name: NET_SSDP_BAD_REPLY, level: warn, ru: "Неверный ответ SSDP", en: "Invalid SSDP reply", zh: "SSDP 回复无效" }
+  - { code: 708, group: NET, name: NET_NOT_READY, level: warn, ru: "Сеть не готова", en: "Network not ready", zh: "网络未就绪" }
+  - { code: 709, group: NET, name: NET_DOWNLOAD_TIMEOUT, level: error, ru: "Скачивание прервано: {0} с без ответа", en: "Download aborted: no response for {0} s", zh: "下载中止：{0} 秒无响应" }
+  - { code: 710, group: NET, name: NET_CLIENT_FAILED, level: error, ru: "Клиент не создан", en: "Client not created", zh: "未创建客户端" }
+  - { code: 711, group: NET, name: NET_METADATA_FAILED, level: warn, ru: "Описание прошивки не получено: ошибка {0}, HTTP {1}", en: "Firmware info not received: error {0}, HTTP {1}", zh: "未收到固件信息：错误 {0}，HTTP {1}" }
+  - { code: 712, group: NET, name: NET_METADATA_INVALID, level: warn, ru: "Описание прошивки неверное", en: "Firmware info invalid", zh: "固件信息无效" }
+  - { code: 713, group: NET, name: NET_METADATA_MISMATCH, level: warn, ru: "Пришла прошивка {0} v{1}, запрошена {2} v{3}", en: "Received firmware {0} v{1}, requested {2} v{3}", zh: "收到固件 {0} v{1}，请求的是 {2} v{3}" }
+  - { code: 714, group: NET, name: NET_DOWNLOAD_BUSY, level: warn, ru: "Скачивание уже идёт", en: "Download already in progress", zh: "下载已在进行中" }
+  - { code: 715, group: NET, name: NET_WS_FAILED, level: error, ru: "WebSocket не запустился", en: "WebSocket did not start", zh: "WebSocket 未启动" }
+  - { code: 716, group: NET, name: NET_STREAM_LIMIT, level: error, ru: "Потоков не больше {0}", en: "No more than {0} streams", zh: "流数量不超过 {0}" }
+  - { code: 717, group: NET, name: NET_SOCKET_ERROR, level: error, ru: "Ошибка сокета {0}", en: "Socket error {0}", zh: "套接字错误 {0}" }
+
+  - { code: 800, group: LORA, name: LORA_SEND_LOST, level: error, ru: "Пакет потерян после трёх попыток", en: "Packet lost after three attempts", zh: "三次尝试后数据包丢失" }
+  - { code: 801, group: LORA, name: LORA_MODE_DONE, level: info, ru: "{0} завершён, обычный режим", en: "{0} finished, normal mode", zh: "{0} 已结束，恢复正常模式" }
+  - { code: 802, group: LORA, name: LORA_TX_PENDING, level: warn, ru: "Прежний пакет ещё не отправлен, новый отброшен", en: "Previous packet still pending, new one dropped", zh: "上一个数据包仍在等待，新包已丢弃" }
+  - { code: 803, group: LORA, name: LORA_IGNORED_UPGRADE, level: warn, ru: "{0} пропущен: идёт обновление модуля", en: "{0} skipped: module update in progress", zh: "{0} 已跳过：模块正在更新" }
+  - { code: 804, group: LORA, name: LORA_PROFILE_TIMEOUT, level: error, ru: "Профиль обновления {0} не включился", en: "Update profile {0} did not switch on", zh: "更新配置 {0} 未启用" }
+  - { code: 805, group: LORA, name: LORA_CONFIG_REJECTED, level: error, ru: "Настройки радио {0} отклонены: {1} МГц, SF{2}, полоса {3}, {4} дБм", en: "Radio settings {0} rejected: {1} MHz, SF{2}, bandwidth {3}, {4} dBm", zh: "无线电设置 {0} 被拒绝：{1} MHz，SF{2}，带宽 {3}，{4} dBm" }
+  - { code: 806, group: LORA, name: LORA_BUSY, level: warn, ru: "{0}: радио занято", en: "{0}: radio busy", zh: "{0}：无线电忙" }
+  - { code: 807, group: LORA, name: LORA_CONFIG_RESET, level: error, ru: "Сохранённые настройки радио неверны, взяты заводские", en: "Stored radio settings invalid, factory values used", zh: "已存储的无线电设置无效，使用出厂值" }
+  - { code: 808, group: LORA, name: LORA_RADIO_FAILED, level: error, ru: "Радио не отвечает", en: "Radio not responding", zh: "无线电无响应" }
 
   - { code: 1000, group: DEV, name: DEV_POWER_LIMIT, level: warn, ru: "Превышен предел мощности канала {0}, канал отключён", en: "Channel {0} power limit exceeded, channel turned off", zh: "通道 {0} 功率超限，通道已关闭" } # {0} - канал
+  - { code: 1001, group: DEV, name: DEV_NO_IMU_SAMPLES, level: warn, ru: "Нет данных IMU, проверьте настройку {0}", en: "No IMU data, check setting {0}", zh: "没有 IMU 数据，请检查设置 {0}" }
+  - { code: 1002, group: DEV, name: DEV_EMPTY_NAME, level: warn, ru: "Пустое имя модуля {0}", en: "Empty module name {0}", zh: "模块名称 {0} 为空" }
+  - { code: 1003, group: DEV, name: DEV_MISSING_MODSN, level: warn, ru: "Не указан серийный номер модуля", en: "Module serial number missing", zh: "缺少模块序列号" }
+  - { code: 1004, group: DEV, name: DEV_NOT_LORA, level: warn, ru: "Модуль {0} не LoRa", en: "Module {0} is not LoRa", zh: "模块 {0} 不是 LoRa 模块" }
+  - { code: 1005, group: DEV, name: DEV_CAPTURE_STARTED, level: info, ru: "Захват модуля {0}", en: "Capturing module {0}", zh: "正在捕获模块 {0}" }
+  - { code: 1006, group: DEV, name: DEV_MODULE_REMOVED, level: info, ru: "Модуль {0} удалён", en: "Module {0} removed", zh: "模块 {0} 已删除" }
+  - { code: 1007, group: DEV, name: DEV_CAPTURED, level: info, ru: "Модуль {0} захвачен", en: "Module {0} captured", zh: "模块 {0} 已捕获" }
+  - { code: 1008, group: DEV, name: DEV_RELEASED, level: info, ru: "Модуль {0} отпущен", en: "Module {0} released", zh: "模块 {0} 已释放" }
+  - { code: 1009, group: DEV, name: DEV_CAPTURED_BY, level: info, ru: "Захвачен базой {0}, служебный режим", en: "Captured by base {0}, service mode", zh: "已被基站 {0} 捕获，服务模式" }
+  - { code: 1010, group: DEV, name: DEV_MODE, level: info, ru: "Режим {0}", en: "Mode {0}", zh: "模式 {0}" }
+  - { code: 1011, group: DEV, name: DEV_NO_BASE, level: warn, ru: "База не отвечает, отправка раз в 5 с", en: "Base not responding, sending every 5 s", zh: "基站无响应，每 5 秒发送一次" }
+  - { code: 1012, group: DEV, name: DEV_ADC_FAILED, level: error, ru: "АЦП не запущен", en: "ADC not started", zh: "ADC 未启动" }
+  - { code: 1013, group: DEV, name: DEV_FOC_TUNE_FAILED, level: error, ru: "Автонастройка {0} не удалась", en: "Auto-tuning {0} failed", zh: "自动整定 {0} 失败" }
+
+  - { code: 2000, group: DRV, name: DRV_SELFTEST_FAILED, level: error, ru: "Самопроверка не пройдена", en: "Self-test failed", zh: "自检失败" }
+  - { code: 2001, group: DRV, name: DRV_BUS_REG_FAILED, level: error, ru: "Не удалось подключить устройство к шине", en: "Could not attach device to bus", zh: "无法将设备连接到总线" }
+  - { code: 2002, group: DRV, name: DRV_ID_MISMATCH, level: error, ru: "Чужая микросхема, идентификатор {0}", en: "Unexpected chip, ID {0}", zh: "芯片不符，标识 {0}" }
+  - { code: 2003, group: DRV, name: DRV_NO_RESPONSE, level: error, ru: "Устройство не отвечает", en: "Device not responding", zh: "设备无响应" }
+  - { code: 2004, group: DRV, name: DRV_GROUP_APPLY_FAILED, level: warn, ru: "Настройки {0} не применены", en: "Settings {0} not applied", zh: "设置 {0} 未应用" }
+  - { code: 2005, group: DRV, name: DRV_GROUP_READ_FAILED, level: warn, ru: "Данные {0} не прочитаны", en: "Data {0} not read", zh: "未读取数据 {0}" }
+  - { code: 2006, group: DRV, name: DRV_READ_FAILED, level: error, ru: "Ошибка чтения устройства", en: "Device read error", zh: "设备读取错误" }
+  - { code: 2007, group: DRV, name: DRV_WRITE_FAILED, level: error, ru: "Ошибка записи в устройство", en: "Device write error", zh: "设备写入错误" }
+  - { code: 2008, group: DRV, name: DRV_START_FAILED, level: error, ru: "Не удалось запустить измерение", en: "Could not start measurement", zh: "无法启动测量" }
+  - { code: 2009, group: DRV, name: DRV_CRC_ERROR, level: warn, ru: "Ошибка контрольной суммы данных", en: "Data checksum error", zh: "数据校验和错误" }
+  - { code: 2010, group: DRV, name: DRV_COMM_RECOVERED, level: warn, ru: "Связь восстановлена, настройки применены заново", en: "Link restored, settings reapplied", zh: "通信已恢复，设置已重新应用" }
+  - { code: 2011, group: DRV, name: DRV_STARTED, level: info, ru: "Запущен", en: "Started", zh: "已启动" }
+  - { code: 2012, group: DRV, name: DRV_MAVLINK_NO_CHANNEL, level: error, ru: "Нет свободного канала MAVLink, всего {0}", en: "No free MAVLink channel, total {0}", zh: "没有空闲的 MAVLink 通道，共 {0}" }
+  - { code: 2013, group: DRV, name: DRV_FRAME_DROPPED, level: warn, ru: "Кадр пропущен", en: "Frame dropped", zh: "丢帧" }
+  - { code: 2014, group: DRV, name: DRV_CONFIG_RANGE, level: error, ru: "Частота {0} МГц вне диапазона 150-960", en: "Frequency {0} MHz out of range 150-960", zh: "频率 {0} MHz 超出 150-960 范围" }
+  - { code: 2015, group: DRV, name: DRV_APPLY_FAILED, level: error, ru: "Настройки не применены", en: "Settings not applied", zh: "设置未应用" }
+  - { code: 2016, group: DRV, name: DRV_IMU_CALIB_START, level: info, ru: "Калибровка: держите датчик неподвижно, ось Z вверх", en: "Calibration: keep sensor still, Z axis up", zh: "校准：保持传感器静止，Z 轴向上" }
+  - { code: 2017, group: DRV, name: DRV_IMU_ACCEL_CALIB, level: info, ru: "Акселерометр: [{0}, {1}, {2}], смещение [{3}, {4}, {5}] g", en: "Accelerometer: [{0}, {1}, {2}], offset [{3}, {4}, {5}] g", zh: "加速度计：[{0}, {1}, {2}]，偏移 [{3}, {4}, {5}] g" }
+  - { code: 2018, group: DRV, name: DRV_IMU_GYRO_CALIB, level: info, ru: "Гироскоп: [{0}, {1}, {2}], смещение [{3}, {4}, {5}] °/с", en: "Gyroscope: [{0}, {1}, {2}], offset [{3}, {4}, {5}] dps", zh: "陀螺仪：[{0}, {1}, {2}]，偏移 [{3}, {4}, {5}] °/s" }
+  - { code: 2019, group: DRV, name: DRV_FIFO_TIMEOUT, level: warn, ru: "Нет данных в буфере датчика", en: "No data in sensor buffer", zh: "传感器缓冲区无数据" }
+  - { code: 2020, group: DRV, name: DRV_DRDY_TIMEOUT, level: error, ru: "Нет сигнала готовности данных", en: "No data ready signal", zh: "无数据就绪信号" }
+  - { code: 2021, group: DRV, name: DRV_PIN_FAILED, level: error, ru: "Не удалось настроить вывод прерывания", en: "Could not set up interrupt pin", zh: "无法配置中断引脚" }
+  - { code: 2022, group: DRV, name: DRV_BIST_FAILED, level: error, ru: "Самопроверка: ошибка генератора, BIST {0}, оси {1}", en: "Self-test: oscillator error, BIST {0}, axes {1}", zh: "自检：振荡器错误，BIST {0}，轴 {1}" }
+  - { code: 2023, group: DRV, name: DRV_MAG_CALIB_START, level: info, ru: "Вращайте устройство: нужно {0} точек, не дольше {1} с", en: "Rotate device: {0} points needed, within {1} s", zh: "旋转设备：需要 {0} 个点，{1} 秒内" }
+  - { code: 2024, group: DRV, name: DRV_CALIB_TIMEOUT, level: warn, ru: "Калибровка прервана: прошло {0} с", en: "Calibration stopped: {0} s passed", zh: "校准已中止：已过 {0} 秒" }
+  - { code: 2025, group: DRV, name: DRV_MAG_CALIB_DONE, level: info, ru: "Жёсткое железо [{0}, {1}, {2}] мкТл, мягкое железо {3}, {4}, {5}, качество {6}%, радиус {7} мкТл", en: "Hard iron [{0}, {1}, {2}] uT, soft iron {3}, {4}, {5}, quality {6}%, radius {7} uT", zh: "硬铁 [{0}, {1}, {2}] uT，软铁 {3}, {4}, {5}，质量 {6}%，半径 {7} uT" }
+  - { code: 2026, group: DRV, name: DRV_CONDITIONING_DONE, level: info, ru: "Подготовка датчика завершена, SRAW_VOC {0}", en: "Sensor conditioning done, SRAW_VOC {0}", zh: "传感器调理完成，SRAW_VOC {0}" }
+  - { code: 2027, group: DRV, name: DRV_CONDITIONING_FAILED, level: warn, ru: "Подготовка датчика не удалась", en: "Sensor conditioning failed", zh: "传感器调理失败" }
+  - { code: 2028, group: DRV, name: DRV_GNSS_NOT_ACK, level: warn, ru: "Приёмник не принял команду {0}", en: "Receiver did not accept command {0}", zh: "接收机未接受命令 {0}" }
+  - { code: 2029, group: DRV, name: DRV_MOUNT_FAILED, level: error, ru: "Файловая система не подключена", en: "File system not mounted", zh: "文件系统未挂载" }
+  - { code: 2030, group: DRV, name: DRV_UNMOUNT_FAILED, level: warn, ru: "Файловая система не отключена", en: "File system not unmounted", zh: "文件系统未卸载" }
+  - { code: 2031, group: DRV, name: DRV_AHRS_CALIB_START, level: info, ru: "Калибровка: держите устройство неподвижно {0} с", en: "Calibration: keep device still for {0} s", zh: "校准：保持设备静止 {0} 秒" }
+  - { code: 2032, group: DRV, name: DRV_AHRS_CALIB_DONE, level: info, ru: "Смещение гироскопа [{0}, {1}, {2}] °/с, крен {3}, тангаж {4}", en: "Gyro bias [{0}, {1}, {2}] dps, roll {3}, pitch {4}", zh: "陀螺偏置 [{0}, {1}, {2}] °/s，横滚 {3}，俯仰 {4}" }
+  - { code: 2033, group: DRV, name: DRV_AHRS_ALIGN, level: info, ru: "Курс {0}, поле {1} мкТл", en: "Heading {0}, field {1} uT", zh: "航向 {0}，磁场 {1} uT" }
+  - { code: 2034, group: DRV, name: DRV_ENC_ZERO_DONE, level: info, ru: "Ноль энкодера {0} сохранён", en: "Encoder zero {0} saved", zh: "编码器零点 {0} 已保存" }
+  - { code: 2035, group: DRV, name: DRV_ENC_CAL_START, level: info, ru: "Калибровка энкодера на {0} об/мин", en: "Encoder calibration at {0} RPM", zh: "编码器校准 {0} RPM" }
+  - { code: 2036, group: DRV, name: DRV_ENC_CAL_FAILED, level: error, ru: "Калибровка энкодера не удалась: проверьте скорость и магнит", en: "Encoder calibration failed: check speed and magnet", zh: "编码器校准失败：检查转速和磁铁" }
+  - { code: 2037, group: DRV, name: DRV_FOC_MOTOR_PARAMS, level: error, ru: "Проверьте параметры двигателя: R {0}, L {1}", en: "Check motor parameters: R {0}, L {1}", zh: "检查电机参数：R {0}，L {1}" }
+  - { code: 2038, group: DRV, name: DRV_FOC_CURRENT_LOOP, level: info, ru: "Контур тока: полоса {0} Гц, Kp {1}, Ki {2}, Tf {3} мс", en: "Current loop: bandwidth {0} Hz, Kp {1}, Ki {2}, Tf {3} ms", zh: "电流环：带宽 {0} Hz，Kp {1}，Ki {2}，Tf {3} ms" }
+  - { code: 2039, group: DRV, name: DRV_FOC_DISABLED, level: info, ru: "Двигатель {0} выключен", en: "Motor {0} disabled", zh: "电机 {0} 已关闭" }
+  - { code: 2040, group: DRV, name: DRV_FOC_TUNE_RESULT, level: info, ru: "Ku {0}, Pu {1} с, Kp {2}", en: "Ku {0}, Pu {1} s, Kp {2}", zh: "Ku {0}，Pu {1} s，Kp {2}" }
+  - { code: 2041, group: DRV, name: DRV_FOC_TUNE_INVALID, level: error, ru: "Автонастройка: неверные Ku {0}, Pu {1}", en: "Auto-tuning: invalid Ku {0}, Pu {1}", zh: "自动整定：Ku {0}、Pu {1} 无效" }
+  - { code: 2042, group: DRV, name: DRV_ECC_ERROR, level: error, ru: "Ошибка памяти контроллера, ECC {0}", en: "Controller memory error, ECC {0}", zh: "控制器存储器错误，ECC {0}" }
+  - { code: 2043, group: DRV, name: DRV_CANFD_MODE_LOST, level: warn, ru: "Контроллер CAN FD вышел из рабочего режима", en: "CAN FD controller left operating mode", zh: "CAN FD 控制器退出工作模式" }
+  - { code: 2044, group: DRV, name: DRV_CANFD_MODE_INVALID, level: error, ru: "Сохранён неверный режим {0}, взят заводской {1}", en: "Invalid stored mode {0}, factory mode {1} used", zh: "已存储的模式 {0} 无效，使用出厂模式 {1}" }
+  - { code: 2045, group: DRV, name: DRV_CANFD_BITTIME, level: error, ru: "Неверная настройка скорости {0}", en: "Invalid bit timing {0}", zh: "位时序 {0} 无效" }
+  - { code: 2046, group: DRV, name: DRV_CANFD_INIT_FAILED, level: error, ru: "Контроллер CAN FD не настроен, шаг {0}", en: "CAN FD controller setup failed, step {0}", zh: "CAN FD 控制器配置失败，步骤 {0}" }
+  - { code: 2047, group: DRV, name: DRV_RGB_SPI_REQUIRED, level: error, ru: "Для SPI укажите RGB_Strip_SPI в config.yaml", en: "SPI requires RGB_Strip_SPI in config.yaml", zh: "SPI 需要在 config.yaml 中指定 RGB_Strip_SPI" }
+  - { code: 2048, group: DRV, name: DRV_RGB_RMT_FALLBACK, level: warn, ru: "Нет {0} символов RMT, взято {1}", en: "{0} RMT symbols unavailable, using {1}", zh: "没有 {0} 个 RMT 符号，改用 {1}" }
+  - { code: 2049, group: DRV, name: DRV_RGB_APPLY_FAILED, level: error, ru: "Ленту не настроить: {0} светодиодов, модель {1}, порядок {2}", en: "Strip setup failed: {0} LEDs, model {1}, order {2}", zh: "灯带配置失败：{0} 个 LED，型号 {1}，顺序 {2}" }
+  - { code: 2050, group: DRV, name: DRV_RGB_DRIVER_FAILED, level: error, ru: "Драйвер ленты не запущен, интерфейс {0}", en: "Strip driver not started, interface {0}", zh: "灯带驱动未启动，接口 {0}" }
+  - { code: 2051, group: DRV, name: DRV_ENC_CAL_DONE, level: info, ru: "Калибровка энкодера завершена", en: "Encoder calibration done", zh: "编码器校准完成" }
+  - { code: 2052, group: DRV, name: DRV_CALIB_FAILED, level: error, ru: "Заводская калибровка не прочитана", en: "Factory calibration not read", zh: "未读取出厂校准" }
+  - { code: 2053, group: DRV, name: DRV_SENSOR_NOT_READY, level: warn, ru: "Датчик не готов", en: "Sensor not ready", zh: "传感器未就绪" }
