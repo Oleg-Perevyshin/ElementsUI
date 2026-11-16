@@ -161,7 +161,7 @@
           <Switch wrapperClass="w-fit justify-self-center" value={draft.reply ? 1 : 0} onUpdate={(v) => (draft.reply = !!v)} />
           <Input bind:value={draft.trg} maxlength={6} />
           <Input bind:value={draft.src} maxlength={6} />
-          <Input bind:value={draft.payload} />
+          <Input bind:value={draft.payload} maxlength={8192} />
           {#if drafts.length > 1}
             <Button
               wrapperClass="w-8"
@@ -213,7 +213,7 @@
 
   <section class="flex flex-col gap-3 rounded-2xl border border-(--hairline-color) p-4">
     <h2 class="text-lg font-semibold">{$T("library.proto_parse")}</h2>
-    <Input type="text-area" textareaRows={3} label={{ name: $T("library.proto_hex") }} bind:value={parseText} onInput={() => (parseTouched = true)} />
+    <Input type="text-area" textareaRows={3} maxlength={8192} label={{ name: $T("library.proto_hex") }} bind:value={parseText} onInput={() => (parseTouched = true)} />
     {#if parsed.error}
       <p class="text-sm text-(--red-text)">{parsed.error}</p>
     {:else}
