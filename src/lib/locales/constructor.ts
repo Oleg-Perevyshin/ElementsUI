@@ -78,6 +78,11 @@ const constructorTranslations = {
   },
   "library.proto_bad_busid": { ru: "BusID - от 1 до 4 hex-знаков", en: "BusID is 1 to 4 hex digits", zh: "BusID 为 1 到 4 位十六进制" },
   "library.proto_hex_odd": { ru: "Нечётное число hex-знаков", en: "Odd number of hex digits", zh: "十六进制位数为奇数" },
+  "library.proto_payload_only": {
+    ru: "Нет начала пакета 0x9F - разобрано как отдельный Payload",
+    en: "No 0x9F packet start - decoded as a bare Payload",
+    zh: "缺少数据包开头 0x9F - 按单独的 Payload 解析",
+  },
   "library.proto_status_incomplete": { ru: "Пакет не закончен", en: "Packet incomplete", zh: "数据包不完整" },
   "library.proto_status_garbage": { ru: "Это не пакет: нет начала 0x9F", en: "Not a packet: no 0x9F start", zh: "不是数据包：缺少 0x9F 开头" },
   "library.dict_messages": { ru: "События", en: "Events", zh: "事件" },

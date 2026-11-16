@@ -116,7 +116,16 @@
   })
   const parsed = $derived.by(() => {
     try {
-      const result = decodePacket(fromHex(parseText))
+      const bytes = fromHex(parseText)
+      const result = decodePacket(bytes)
+      /* Нет начала пакета 0x9F - возможно, это отдельный Payload (например, из столбца консоли): показать его значение */
+      if (result.status === "garbage" && bytes.length) {
+        try {
+          return { title: $T("library.proto_payload_only"), yaml: `Payload: ${payloadYaml(bytes)}`, bad: false }
+        } catch {
+          return { error: $T("library.proto_status_garbage") }
+        }
+      }
       if (result.status !== "complete") return { error: $T(`library.proto_status_${result.status}`) }
       return {
         count: result.objects.length,
@@ -213,11 +222,18 @@
 
   <section class="flex flex-col gap-3 rounded-2xl border border-(--hairline-color) p-4">
     <h2 class="text-lg font-semibold">{$T("library.proto_parse")}</h2>
-    <Input type="text-area" textareaRows={3} maxlength={8192} label={{ name: $T("library.proto_hex") }} bind:value={parseText} onInput={() => (parseTouched = true)} />
+    <Input
+      type="text-area"
+      textareaRows={3}
+      maxlength={8192}
+      label={{ name: $T("library.proto_hex") }}
+      bind:value={parseText}
+      onInput={() => (parseTouched = true)}
+    />
     {#if parsed.error}
       <p class="text-sm text-(--red-text)">{parsed.error}</p>
     {:else}
-      <span class="text-[12px] font-semibold text-(--muted-color)">{$T("library.proto_parsed", { n: parsed.count ?? 0 })}</span>
+      <span class="text-[12px] font-semibold text-(--muted-color)">{parsed.title ?? $T("library.proto_parsed", { n: parsed.count ?? 0 })}</span>
       <pre
         class="overflow-x-auto rounded-xl border border-(--hairline-color) bg-(--back-color) p-3 font-mono text-[13px] whitespace-pre {parsed.bad
           ? 'text-(--red-text)'
