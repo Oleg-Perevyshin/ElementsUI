@@ -49,7 +49,7 @@
       label={{ name: $T("widget.stack.response") }}
       maxlength={KEY_MAX_LEN}
       help={{ info: $T("widget.stack.response.info"), regExp: keyRegExp(KEY_MAX_LEN, 1) }}
-      value={component.properties.keys?.StackInfo ?? "SystemStackInfo"}
+      value={component.properties.keys?.StackInfo ?? "StackInfo"}
       onUpdate={(value) => edit.patch("keys", { StackInfo: value as string })}
     />
     <ArgumentSelect

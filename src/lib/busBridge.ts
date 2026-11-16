@@ -45,7 +45,7 @@ export interface BusBridgeOptions {
   selfTarget?: number
 }
 
-/* Аргументы, чей Payload ложится в значения - как в вебе (README протокола: Update, DataStream и др.) */
+/* Аргументы, чей Payload ложится в значения - как в вебе (README протокола: Update, SystemDataStream и др.) */
 const DATA_ARGUMENTS = new Set([
   "SystemDataUpdate",
   "SystemDataStream",
@@ -99,7 +99,7 @@ export const createBusBridge = (channel: BusChannel, options: BusBridgeOptions) 
     onModules?.(modules)
   }
 
-  /* Свой серийный номер из ответа модуля консоли: CFG.DevSN или ModSN в ModInfo */
+  /* Свой серийный номер из ответа модуля консоли: CFG.DevSN или ModSN в ModuleInfo */
   const learnSelf = (packet: BusPacket) => {
     if (!isRecord(packet.payload)) return
     const sn = packet.payload["CFG.DevSN"] ?? (packet.argument === "ModuleInfo" ? packet.payload.ModSN : undefined)

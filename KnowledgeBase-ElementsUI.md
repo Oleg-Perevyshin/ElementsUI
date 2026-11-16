@@ -955,10 +955,10 @@ const link: DeviceLink = {
 }
 socket.onmessage = (event) => {
   const message = decodeWsEnvelope(cborToValue(new Uint8Array(event.data)))
-  if (message) handle(message) /* message.header === "OK!", message.code === 36, message.argument === "ModCfg" */
+  if (message) handle(message) /* message.header === "OK!", message.code === 36, message.argument === "ModuleConfig" */
 }
 /* Своя команда облаку или устройству по именам */
-socket.send(valueToCbor(encodeWsEnvelope("SET", "JoinDev", { DevSN, Watch: true })))
+socket.send(valueToCbor(encodeWsEnvelope("SET", "CloudJoinDevice", { DevSN, Watch: true })))
 ```
 
 </details>
@@ -3055,7 +3055,7 @@ ModalStack.close(id) // убрать
 
 - 🙋 Устройство отвечает только на запрос с флагом ответа. Сам ответ всегда без флага.
 - 📈 Телеметрию и потоки данных шлют без флага, чтобы не ждать подтверждений.
-- 🔢 Имена `"GET"` и `"ModCfg"` не передаются ни по шине, ни по WebSocket, только коды. Имена нужны людям: интерфейсы, журналы и документация расшифровывают `HAR` по словарю.
+- 🔢 Имена `"GET"` и `"ModuleConfig"` не передаются ни по шине, ни по WebSocket, только коды. Имена нужны людям: интерфейсы, журналы и документация расшифровывают `HAR` по словарю.
 
 <details>
 <summary>🔬 Раскладка битов</summary>
@@ -3446,7 +3446,7 @@ Raw: h'01'
 ```ts
 import { encodeWsEnvelope, decodeWsEnvelope, valueToCbor, cborToValue } from "poe-svelte-ui-lib/protocols"
 
-socket.send(valueToCbor(encodeWsEnvelope("GET", "ModCfg", { DevSN, ModSN, Payload: {} })))
+socket.send(valueToCbor(encodeWsEnvelope("GET", "ModuleConfig", { DevSN, ModSN, Payload: {} })))
 /* { header: "OK!", argument: "ModuleConfig", code: 36, reply: false, VAL: {...} } или null */
 const message = decodeWsEnvelope(cborToValue(new Uint8Array(event.data)))
 ```
@@ -3494,7 +3494,7 @@ const message = decodeWsEnvelope(cborToValue(new Uint8Array(event.data)))
 │   │   │   │   │      │   │         └ конец пакета
 │   │   │   │   │      │   └ CRC16 = 0x6606
 │   │   │   │   │      └ Payload = {}
-│   │   │   │   └ HAR = 0x0049: GET, команда 36 (ModCfg), с ответом
+│   │   │   │   └ HAR = 0x0049: GET, команда 36 (ModuleConfig), с ответом
 │   │   │   └ SrcBusID = 0x0000, терминал
 │   │   └ TrgBusID = 0x0000, модуль консоли
 │   └ запись из пяти полей
@@ -4748,19 +4748,19 @@ const canModal = createRawSnippet((row: () => CanRow) => ({ render: () => `<div 
 <details>
 <summary>🔑 Ключи</summary>
 
-| Ключ                | Описание                                                                                                                                                                                                    |
-| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `DevSN`             | Серийный номер, только чтение                                                                                                                                                                               |
-| `DevID`             | Код изделия, только чтение                                                                                                                                                                                  |
-| `DevFW`             | Версия прошивки, только чтение                                                                                                                                                                              |
-| `RunCnt`            | Сколько раз устройство включалось, только чтение                                                                                                                                                            |
-| `DevBusID`          | Адрес на шине CAN или RS485, только чтение, показывается HEX из 4 знаков                                                                                                                                    |
-| `SCLL`              | Уровень логов консоли: 0 OFF, 1 ERROR, 2 WARNING, 3 INFO, 4 DEBUG, 5 TRACE (ещё и копии всех пакетов, `DebugMirror`). Графики PLOT уходят от уровня INFO                                                    |
-| `StaIP`, `ApIP`     | Текущие адреса в сети роутера и своей точки доступа, только чтение. `0.0.0.0` в `StaIP` - к роутеру не подключено                                                                                           |
-| `DevName`           | Имя устройства, обязательно: латиница, цифры, `_`, `-` и `.`, от 1 до 15 символов                                                                                                                           |
-| `BindKey`           | Ключ привязки - роль модуля для ядра изделия вида `ГРУППА.Роль` (`GMBL.Roll`, `LRBS.Sen1`): латиница, цифры, `_` и `-`, группа до 4 символов, всего до 15, как ключ переменной, пустой - модуль не привязан |
-| `HostName`          | Сетевое имя без `.local`, домен добавляет устройство. Латиница, цифры, `_` и `-`, до 18 символов                                                                                                            |
-| `WebUser`, `WebPsw` | Логин и пароль веб-интерфейса, до 15 символов. Логин: латиница, цифры, `_` и `-`. Пароль: любые печатные символы ASCII без пробела                                                                          |
+| Ключ                | Описание                                                                                                                                                                                                                                               |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `DevSN`             | Серийный номер, только чтение                                                                                                                                                                                                                          |
+| `DevID`             | Код изделия, только чтение                                                                                                                                                                                                                             |
+| `DevFW`             | Версия прошивки, только чтение                                                                                                                                                                                                                         |
+| `RunCnt`            | Сколько раз устройство включалось, только чтение                                                                                                                                                                                                       |
+| `DevBusID`          | Адрес на шине CAN или RS485, только чтение, показывается HEX из 4 знаков                                                                                                                                                                               |
+| `SCLL`              | Уровень логов консоли: 0 OFF, 1 ERROR, 2 WARNING, 3 INFO, 4 DEBUG, 5 TRACE (ещё и копии всех пакетов, `DebugMirror`). Графики PLOT уходят от уровня INFO                                                                                               |
+| `StaIP`, `ApIP`     | Текущие адреса в сети роутера и своей точки доступа, только чтение. `0.0.0.0` в `StaIP` - к роутеру не подключено                                                                                                                                      |
+| `DevName`           | Имя устройства, обязательно: латиница, цифры, `_`, `-` и `.`, от 1 до 15 символов                                                                                                                                                                      |
+| `BindKey`           | Ключ привязки - роль модуля для ядра изделия вида `ГРУППА.Роль` (`GMBL.Roll`, `LRBS.Sen1`): латиница, цифры, `_` и `-`, группа до 4 символов, всего до 15, как ключ переменной, пустой - модуль не привязан. У самого ядра - группа без точки (`GMBL`) |
+| `HostName`          | Сетевое имя без `.local`, домен добавляет устройство. Латиница, цифры, `_` и `-`, до 18 символов                                                                                                                                                       |
+| `WebUser`, `WebPsw` | Логин и пароль веб-интерфейса, до 15 символов. Логин: латиница, цифры, `_` и `-`. Пароль: любые печатные символы ASCII без пробела                                                                                                                     |
 
 </details>
 
@@ -4820,8 +4820,8 @@ const canModal = createRawSnippet((row: () => CanRow) => ({ render: () => `<div 
     ApIP: "192.168.4.1",
   }}
   onSave={(info) => sendModCfg(info)}
-  onRestart={() => send("SET", "Restart")}
-  onFactoryReset={() => send("SET", "RstNVS")}
+  onRestart={() => send("SET", "SystemRestart")}
+  onFactoryReset={() => send("SET", "SystemResetStorage")}
 />
 ```
 
@@ -4980,8 +4980,8 @@ CFG.FS:
 <UI.WidgetFileSystem
   value={fs}
   accept=".bin,.pem"
-  onRefresh={() => send("GET", "FS")}
-  onDelete={(name) => send("SET", "FS", { Op: "Delete", Name: name })}
+  onRefresh={() => send("GET", "SystemFileSystem")}
+  onDelete={(name) => send("SET", "SystemFileSystem", { Op: "Delete", Name: name })}
   onUpload={(file) => uploadFile(file)}
   onDownload={(name) => downloadFile(name)}
 />
@@ -6174,7 +6174,7 @@ StackInfo:
 <summary>💻 Примеры кода</summary>
 
 ```svelte
-<UI.WidgetStackInfo value={stackInfo} warnBytes={1024} onRefresh={() => send("GET", "StackInfo")} />
+<UI.WidgetStackInfo value={stackInfo} warnBytes={1024} onRefresh={() => send("GET", "SystemStackInfo")} />
 ```
 
 </details>

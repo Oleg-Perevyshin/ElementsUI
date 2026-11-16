@@ -217,10 +217,10 @@ const link: DeviceLink = {
 }
 socket.onmessage = (event) => {
   const message = decodeWsEnvelope(cborToValue(new Uint8Array(event.data)))
-  if (message) handle(message) /* message.header === "OK!", message.code === 36, message.argument === "ModCfg" */
+  if (message) handle(message) /* message.header === "OK!", message.code === 36, message.argument === "ModuleConfig" */
 }
 /* Своя команда облаку или устройству по именам */
-socket.send(valueToCbor(encodeWsEnvelope("SET", "JoinDev", { DevSN, Watch: true })))
+socket.send(valueToCbor(encodeWsEnvelope("SET", "CloudJoinDevice", { DevSN, Watch: true })))
 ```
 
 </details>

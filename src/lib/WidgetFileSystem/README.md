@@ -132,8 +132,8 @@ CFG.FS:
 <UI.WidgetFileSystem
   value={fs}
   accept=".bin,.pem"
-  onRefresh={() => send("GET", "FS")}
-  onDelete={(name) => send("SET", "FS", { Op: "Delete", Name: name })}
+  onRefresh={() => send("GET", "SystemFileSystem")}
+  onDelete={(name) => send("SET", "SystemFileSystem", { Op: "Delete", Name: name })}
   onUpload={(file) => uploadFile(file)}
   onDownload={(name) => downloadFile(name)}
 />

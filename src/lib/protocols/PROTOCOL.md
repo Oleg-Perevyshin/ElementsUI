@@ -53,7 +53,7 @@
 
 - 🙋 Устройство отвечает только на запрос с флагом ответа. Сам ответ всегда без флага.
 - 📈 Телеметрию и потоки данных шлют без флага, чтобы не ждать подтверждений.
-- 🔢 Имена `"GET"` и `"ModCfg"` не передаются ни по шине, ни по WebSocket, только коды. Имена нужны людям: интерфейсы, журналы и документация расшифровывают `HAR` по словарю.
+- 🔢 Имена `"GET"` и `"ModuleConfig"` не передаются ни по шине, ни по WebSocket, только коды. Имена нужны людям: интерфейсы, журналы и документация расшифровывают `HAR` по словарю.
 
 <details>
 <summary>🔬 Раскладка битов</summary>
@@ -444,7 +444,7 @@ Raw: h'01'
 ```ts
 import { encodeWsEnvelope, decodeWsEnvelope, valueToCbor, cborToValue } from "poe-svelte-ui-lib/protocols"
 
-socket.send(valueToCbor(encodeWsEnvelope("GET", "ModCfg", { DevSN, ModSN, Payload: {} })))
+socket.send(valueToCbor(encodeWsEnvelope("GET", "ModuleConfig", { DevSN, ModSN, Payload: {} })))
 /* { header: "OK!", argument: "ModuleConfig", code: 36, reply: false, VAL: {...} } или null */
 const message = decodeWsEnvelope(cborToValue(new Uint8Array(event.data)))
 ```
@@ -492,7 +492,7 @@ const message = decodeWsEnvelope(cborToValue(new Uint8Array(event.data)))
 │   │   │   │   │      │   │         └ конец пакета
 │   │   │   │   │      │   └ CRC16 = 0x6606
 │   │   │   │   │      └ Payload = {}
-│   │   │   │   └ HAR = 0x0049: GET, команда 36 (ModCfg), с ответом
+│   │   │   │   └ HAR = 0x0049: GET, команда 36 (ModuleConfig), с ответом
 │   │   │   └ SrcBusID = 0x0000, терминал
 │   │   └ TrgBusID = 0x0000, модуль консоли
 │   └ запись из пяти полей

@@ -326,9 +326,9 @@ const constructorTranslations = {
   "constructor.props.header": { ru: "Заголовок пакета", en: "Packet header", zh: "数据包头" },
   "constructor.props.argument": { ru: "Аргумент", en: "Argument", zh: "参数" },
   "constructor.props.argument.info": {
-    ru: "Команда, которую отправит кнопка или поле.\nНачните вводить имя, например ModCfg, Restart или FS, и выберите его из списка.\n**NoSend** - ничего не отправлять.\nИмя не из словаря команд не сохраняется.",
-    en: "The command the button or field sends.\nStart typing the name, e.g. ModCfg, Restart or FS, and pick it from the list.\n**NoSend** - send nothing.\nA name that is not in the command dictionary is not saved.",
-    zh: "按钮或字段发送的命令。\n输入名称（例如 ModCfg、Restart 或 FS）并从列表中选择。\n**NoSend** - 不发送。\n不在命令字典中的名称不会保存。",
+    ru: "Команда, которую отправит кнопка или поле.\nНачните вводить имя, например ModuleConfig, SystemRestart или SystemFileSystem, и выберите его из списка.\n**NoSend** - ничего не отправлять.\nИмя не из словаря команд не сохраняется.",
+    en: "The command the button or field sends.\nStart typing the name, e.g. ModuleConfig, SystemRestart or SystemFileSystem, and pick it from the list.\n**NoSend** - send nothing.\nA name that is not in the command dictionary is not saved.",
+    zh: "按钮或字段发送的命令。\n输入名称（例如 ModuleConfig、SystemRestart 或 SystemFileSystem）并从列表中选择。\n**NoSend** - 不发送。\n不在命令字典中的名称不会保存。",
   },
   "constructor.props.variables": { ru: "Перечень переменных", en: "List of variables", zh: "变量列表" },
   "constructor.props.variables.info": {

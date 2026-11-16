@@ -114,7 +114,7 @@ StackInfo:
 <summary>💻 Примеры кода</summary>
 
 ```svelte
-<UI.WidgetStackInfo value={stackInfo} warnBytes={1024} onRefresh={() => send("GET", "StackInfo")} />
+<UI.WidgetStackInfo value={stackInfo} warnBytes={1024} onRefresh={() => send("GET", "SystemStackInfo")} />
 ```
 
 </details>

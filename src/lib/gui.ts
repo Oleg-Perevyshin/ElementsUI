@@ -133,8 +133,8 @@ export type IWidgetMapData = typeof WIDGET_FIELDS.WidgetMap
 export const KEY_MAX_LEN = 15
 /* Группа до 4 символов, с точкой - 5 (CFG_GROUP_MAX_LEN прошивки) */
 export const GROUP_MAX_LEN = 4
-/* Ключ переменной целиком: до 15 символов, группа перед точкой - до 4; без группы тоже можно (SystemStackInfo) */
-export const VARIABLE_KEY_REGEXP = new RegExp(`^(?=.{0,${KEY_MAX_LEN}}$)([A-Za-z0-9_-]{1,${GROUP_MAX_LEN}}[.])?[A-Za-z0-9_-]*$`)
+/* Ключ целиком: до 15 символов, группа перед точкой - до 4, после точки - хотя бы один символ; без группы тоже можно (StackInfo, GMBL у ядра); пустой - нет ключа */
+export const VARIABLE_KEY_REGEXP = new RegExp(`^(?=.{0,${KEY_MAX_LEN}}$)(([A-Za-z0-9_-]{1,${GROUP_MAX_LEN}}[.])?[A-Za-z0-9_-]+)?$`)
 export const keyRegExp = (max: number, min = 0) => new RegExp(`^[A-Za-z0-9_.-]{${min},${Math.max(min, max)}}$`)
 /* Префикс группы - без точки, её добавляет виджет */
 export const groupRegExp = (max: number) => new RegExp(`^[A-Za-z0-9_-]{0,${max}}$`)
