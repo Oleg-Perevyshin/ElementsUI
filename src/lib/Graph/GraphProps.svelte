@@ -61,12 +61,14 @@
           type="number"
           value={component.properties.settings?.min ?? ""}
           onUpdate={(value) => edit.set("settings", { ...component.properties.settings, min: toBound(value) })}
+          onInput={(text) => !text.trim() && edit.set("settings", { ...component.properties.settings, min: undefined })}
         />
         <UI.Input
           label={{ name: $T("constructor.props.scale.max") }}
           type="number"
           value={component.properties.settings?.max ?? ""}
           onUpdate={(value) => edit.set("settings", { ...component.properties.settings, max: toBound(value) })}
+          onInput={(text) => !text.trim() && edit.set("settings", { ...component.properties.settings, max: undefined })}
         />
       </div>
     </PropsGroup>

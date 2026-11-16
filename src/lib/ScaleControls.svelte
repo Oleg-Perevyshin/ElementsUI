@@ -76,8 +76,16 @@
           type="number"
           value={limits.min ?? ""}
           onUpdate={(value) => onChange({ ...limits, min: toBound(value) })}
+          onInput={(text) => !text.trim() && limits.min !== undefined && onChange({ ...limits, min: undefined })}
         />
-        <Input label={{ name: $T("ui.scale.max") }} type="number" value={limits.max ?? ""} onUpdate={(value) => onChange({ ...limits, max: toBound(value) })} />
+        <!-- Числовое поле не сообщает пустое значение через onUpdate: очистку ловит onInput и сразу снимает предел -->
+        <Input
+          label={{ name: $T("ui.scale.max") }}
+          type="number"
+          value={limits.max ?? ""}
+          onUpdate={(value) => onChange({ ...limits, max: toBound(value) })}
+          onInput={(text) => !text.trim() && limits.max !== undefined && onChange({ ...limits, max: undefined })}
+        />
         <Button
           wrapperClass="w-8"
           variant="primary"

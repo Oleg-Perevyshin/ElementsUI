@@ -88,8 +88,19 @@
               <UI.Select type="input" options={VARIABLE_OPTIONS} value={level.variable} onUpdate={(variable) => updateLevel(index, { variable })} />
               <UI.Input value={level.data.join(", ")} onUpdate={(value) => updateLevel(index, { data: parseNumbers(String(value)) })} />
               <UI.Input value={(level.labels ?? []).join(", ")} onUpdate={(value) => updateLevel(index, { labels: parseList(String(value)) })} />
-              <UI.Input type="number" value={level.min ?? ""} onUpdate={(value) => updateLevel(index, { min: toBound(value) })} />
-              <UI.Input type="number" value={level.max ?? ""} onUpdate={(value) => updateLevel(index, { max: toBound(value) })} />
+              <!-- Пустое поле - предел снят: числовое поле не сообщает пустое значение через onUpdate, его ловит onInput -->
+              <UI.Input
+                type="number"
+                value={level.min ?? ""}
+                onUpdate={(value) => updateLevel(index, { min: toBound(value) })}
+                onInput={(text) => !text.trim() && updateLevel(index, { min: undefined })}
+              />
+              <UI.Input
+                type="number"
+                value={level.max ?? ""}
+                onUpdate={(value) => updateLevel(index, { max: toBound(value) })}
+                onInput={(text) => !text.trim() && updateLevel(index, { max: undefined })}
+              />
               {#if levels.length > 1}
                 <UI.Button
                   wrapperClass="w-8"
