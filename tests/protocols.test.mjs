@@ -91,13 +91,12 @@ test("порча и одинаковые адреса", () => {
   ) /* одному адресату - оба, по порядку */
 })
 
-test("CBOR: значение и JSON-текст", () => {
+test("CBOR: значение с байтами", () => {
   const value = { Header: "GET", Argument: "ModInfo", Value: { a: 1, bin: Uint8Array.of(1, 2) } }
   assert.deepEqual(m.cborToValue(m.valueToCbor(value)), value)
-  assert.deepEqual(m.cborToValue(m.jsonToCbor({ ...value, Value: { a: 1, bin: "AQI=" } })), value) /* строка base64 под ключом с "bin" - байты */
 })
 
-test("CBOR: большие байтовые строки, предел uint64, ключи bin", () => {
+test("CBOR: большие байтовые строки, предел uint64", () => {
   /* 300 КБ кодируются без переполнения стека */
   const big = new Uint8Array(300 * 1024).map((_, i) => i & 0xff)
   assert.deepEqual(m.cborToValue(m.valueToCbor({ data: big })).data, big)
@@ -111,9 +110,6 @@ test("CBOR: большие байтовые строки, предел uint64, �
   assert.equal(m.cborToValue(m.valueToCbor(2n ** 53n + 1n)), "9007199254740993")
   assert.equal(m.cborToValue(m.valueToCbor(-(2n ** 64n))), "-18446744073709551616")
   assert.equal(m.cborToValue(m.valueToCbor(2n ** 53n - 1n)), Number.MAX_SAFE_INTEGER)
-  /* Base64 разбирается только под ключом, оканчивающимся на bin */
-  assert.deepEqual(m.cborToValue(m.jsonToCbor({ FileBin: "AQI=" })), { FileBin: Uint8Array.of(1, 2) })
-  assert.deepEqual(m.cborToValue(m.jsonToCbor({ Cabinet: "AQI=" })), { Cabinet: "AQI=" })
 })
 
 test("CBOR: строгий разбор", () => {
@@ -448,7 +444,7 @@ test("словарь, поле Value xPOE-Debug, команды slcan-адапт
   assert.deepEqual([...m.xPoeDebugValueFromText("")], [])
   assert.deepEqual([...m.xPoeDebugValueFromText("h'A1 61 61 01'")], [0x44, 0xa1, 0x61, 0x61, 0x01]) /* h'..' - байтовая строка CBOR */
   assert.deepEqual([...m.xPoeDebugValueFromText("0xA1616101")], [0xa1, 0x61, 0x61, 0x01])
-  /* Число из цифр - JSON, а не HEX: «12» - CBOR 12 (0x0C), «1234» - 0x19 0x04 0xD2 */
+  /* Число из цифр - число, а не HEX: «12» - CBOR 12 (0x0C), «1234» - 0x19 0x04 0xD2 */
   assert.deepEqual([...m.xPoeDebugValueFromText("12")], [0x0c])
   assert.deepEqual([...m.xPoeDebugValueFromText("1234")], [0x19, 0x04, 0xd2])
   assert.deepEqual([...m.xPoeDebugValueFromText("A1 61")], [...m.valueToCbor("A1 61")]) /* HEX без h'..' или 0x - строка */

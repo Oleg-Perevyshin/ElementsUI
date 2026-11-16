@@ -82,6 +82,12 @@ ${formatObjectToString(periodChartComponent.properties as IPeriodChartProps)}
     <PeriodChart label={{ name: "Другая палитра" }} accent="green" levels={energyLevels} unit=" Вт·ч" />
     <PeriodChart label={{ name: "Малые величины" }} levels={spectrumLevels} unit=" мкВт/см²" />
     <PeriodChart label={{ name: "Большие величины" }} levels={bigLevels} unit=" Вт·ч" />
+    <PeriodChart
+      label={{ name: "Отрицательные значения - кнопка настроек справа задаёт пределы шкалы, например -50 и 100" }}
+      accent="purple"
+      levels={[{ name: "Сутки", data: Array.from({ length: 24 }, (_, i) => Math.round(Math.sin(i / 3) * 60 + 10)) }]}
+      unit=" Вт·ч"
+    />
     <PeriodChart label={{ name: "Без данных" }} levels={[{ name: "Час", data: [] }]} />
   {/snippet}
 </ComponentExample>

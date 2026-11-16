@@ -33,6 +33,17 @@
     },
   ]
 
+  /* Пример фиксированной шкалы: курс 0-360°, иногда выскакивает за верх шкалы */
+  let heading = 180
+  let headingData = $state.raw([{ name: "Курс, °", value: heading }])
+  $effect(() => {
+    const timer = setInterval(() => {
+      heading = Math.min(Math.max(heading + (Math.random() - 0.5) * 40, 0), 380)
+      headingData = [{ name: "Курс, °", value: Math.round(heading) }]
+    }, 300)
+    return () => clearInterval(timer)
+  })
+
   let graphComponent: UIComponent<"Graph"> = $state({
     id: crypto.randomUUID(),
     type: "Graph",
@@ -66,5 +77,6 @@ ${formatObjectToString(graphComponent.properties as IGraphProps)}
   {#snippet examples()}
     <Graph label={{ name: "Пример компонента график" }} streamingData={{ data: dataForGraph }} isTest={true} />
     <Graph label={{ name: "Статический режим - наведите курсор на график" }} historyData={historyExample} />
+    <Graph label={{ name: "Курс 0-360: в настройках (кнопка справа вверху) задайте пределы 0 и 360" }} streamingData={{ data: headingData }} />
   {/snippet}
 </ComponentExample>

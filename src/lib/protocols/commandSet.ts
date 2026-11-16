@@ -13,7 +13,7 @@ export interface ISimpleSerial extends ICommandBase {
   endPackage: string
 }
 
-/* Пакет консоли xPOE-Debug: заголовок и аргумент именами, Payload в виде поля Value (YAML, JSON, h'..', 0x..) */
+/* Пакет консоли xPOE-Debug: заголовок и аргумент именами, Payload в виде поля Value (YAML, h'..', 0x..) */
 export interface IXPoeDebug extends ICommandBase {
   header: string
   argument: string

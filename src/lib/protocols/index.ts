@@ -3,8 +3,6 @@ export * from "./cbor/types.js"
 export { bytesToBase64, base64ToBytes } from "./cbor/base64.js"
 /* Значение ↔ CBOR: двоичные данные - Uint8Array как есть (WebSocket, хранилище, телеметрия) */
 export { cborToValue, valueToCbor } from "./cbor/value.js"
-/* JSON-значение → CBOR: строки base64 под ключами с "BIN" кодируются байтами (поля ввода терминала и отладки) */
-export { jsonToCbor } from "./cbor/json.js"
 /* Контрольная сумма и пакет poe_cbor_pkt [[TrgBusID, SrcBusID, HAR, Payload, CRC16], …] - все шины и консоль */
 export { crc16Kermit, crc32 } from "./crc.js"
 export {

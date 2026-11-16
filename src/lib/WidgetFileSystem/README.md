@@ -46,11 +46,11 @@
 <details>
 <summary>🔑 Ключи</summary>
 
-| Ключ                    | Описание                                                                                              |
-| ----------------------- | ----------------------------------------------------------------------------------------------------- |
-| `Total`, `Used`, `Free` | Объём, занято и свободно, байт. Если `Free` нет, он считается как `Total - Used`                      |
-| `List`                  | Файлы `[{ "Name", "Size" }]`: полный путь и размер в байтах                                           |
-| `Upload`                | Идущая закачка `{ "Name", "Size", "Progress" }`. Есть только во время закачки, `Progress` от 0 до 100 |
+| Ключ                    | Описание                                                                                      |
+| ----------------------- | --------------------------------------------------------------------------------------------- |
+| `Total`, `Used`, `Free` | Объём, занято и свободно, байт. Если `Free` нет, он считается как `Total - Used`              |
+| `List`                  | Файлы `[{Name, Size}]`: полный путь и размер в байтах                                         |
+| `Upload`                | Идущая закачка `{Name, Size, Progress}`. Есть только во время закачки, `Progress` от 0 до 100 |
 
 </details>
 
@@ -59,25 +59,27 @@
 
 Всё состояние файловой системы это один объект:
 
-```
-"CFG.FS": {
-  "Total": 1441792, "Used": 98304, "Free": 1343488,
-  "List": [{ "Name": "/storage/cert.pem", "Size": 1834 }],
-  "Upload": { "Name": "fw.bin", "Size": 917504, "Progress": 35 }
-}
+```yaml
+CFG.FS:
+  Total: 1441792
+  Used: 98304
+  Free: 1343488
+  List:
+    - { Name: "/storage/cert.pem", Size: 1834 }
+  Upload: { Name: "fw.bin", Size: 917504, Progress: 35 }
 ```
 
-Полный снимок со списком файлов приходит на `GET ModCfg`, `GET FS`, после удаления, после конца или ошибки закачки и в рассылке `OK! Update`. Во время закачки раз в 5% приходит только `{"Upload": {...}}` без списка. Снимок со списком заменяет состояние целиком.
+Полный снимок со списком файлов приходит на `GET ModCfg`, `GET FS`, после удаления, после конца или ошибки закачки и в рассылке `OK! Update`. Во время закачки раз в 5% приходит только `{Upload: {...}}` без списка. Снимок со списком заменяет состояние целиком.
 
 Все команды идут с аргументом `FS`, операция в поле `Op`. Ответ тоже `FS` с тем же `Op`.
 
-| Запрос                                                                               | Ответ                                                     |
-| ------------------------------------------------------------------------------------ | --------------------------------------------------------- |
-| `GET FS`                                                                             | Снимок `CFG.FS`                                           |
-| `SET FS {"Op": "Delete", "Name": "/storage/a.bin"}`                                  | `Op` и снимок                                             |
-| `SET FS {"Op": "UploadStart", "FileName", "FileExtension", "FileSize", "CurrentID"}` | `Op`, `CurrentID`, `ChunkSize`, `CFG.FS.Upload`           |
-| `SET FS {"Op": "UploadChunk", "ChunkIndex", "Data", "CurrentID"}`                    | `Op`, `ChunkIndex`, `CurrentID`, раз в 5% `CFG.FS.Upload` |
-| `SET FS {"Op": "UploadDone", "CRC32", "CurrentID"}`                                  | `Op`, `CurrentID`, снимок                                 |
+| Запрос                                                                     | Ответ                                                     |
+| -------------------------------------------------------------------------- | --------------------------------------------------------- |
+| `GET FS`                                                                   | Снимок `CFG.FS`                                           |
+| `SET FS {Op: "Delete", Name: "/storage/a.bin"}`                            | `Op` и снимок                                             |
+| `SET FS {Op: "UploadStart", FileName, FileExtension, FileSize, CurrentID}` | `Op`, `CurrentID`, `ChunkSize`, `CFG.FS.Upload`           |
+| `SET FS {Op: "UploadChunk", ChunkIndex, Data, CurrentID}`                  | `Op`, `ChunkIndex`, `CurrentID`, раз в 5% `CFG.FS.Upload` |
+| `SET FS {Op: "UploadDone", CRC32, CurrentID}`                              | `Op`, `CurrentID`, снимок                                 |
 
 Ошибка приходит как `ER! FS` с тем же `Op`, у закачки ещё и с `CurrentID`. Ошибка закачки несёт снимок.
 

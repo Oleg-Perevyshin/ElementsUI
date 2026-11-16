@@ -168,7 +168,7 @@ export const createXPoeDebugParser = ({ dictionary = DEFAULT_DICTIONARY, ...opti
 /* Готовые байты Payload (CBOR как есть) - только 0x0A1B */
 const RAW_VALUE = /^0[xX]([0-9A-Fa-f]*)$/
 
-/* Поле Value: 0x.. - готовые байты Payload как есть; поток YAML, как в строке VALUE, и JSON как его часть (в JSON строки Base64 под ключами на BIN - байты): «A: 1, B: [1, 2]» (корневая карта без скобок), h'0A1B' - байтовая строка, «12» - число, "12" - строка; пусто - пустой Payload */
+/* Поле Value: 0x.. - готовые байты Payload как есть; поток YAML, как в строке VALUE: «A: 1, B: [1, 2]» (корневая карта без скобок), h'0A1B' - байтовая строка, «12» - число, "12" - строка; пусто - пустой Payload */
 export const xPoeDebugValueFromText = (text: string | undefined): Uint8Array => {
   const trimmed = (text ?? "").trim()
   if (!trimmed) return new Uint8Array()
@@ -178,15 +178,9 @@ export const xPoeDebugValueFromText = (text: string | undefined): Uint8Array => 
     if (!bytes?.length) throw new Error(`Value: после 0x нужны HEX-цифры парами: ${trimmed}`)
     return bytes
   }
-  let json = true
   try {
-    JSON.parse(trimmed)
-  } catch {
-    json = false
-  }
-  try {
-    return yamlFlowToCbor(trimmed, json)
+    return yamlFlowToCbor(trimmed)
   } catch (err) {
-    throw new Error(`Value не разобран (YAML, JSON или 0x..): ${err instanceof Error ? err.message : err}: ${trimmed}`)
+    throw new Error(`Value не разобран (YAML или 0x..): ${err instanceof Error ? err.message : err}: ${trimmed}`)
   }
 }

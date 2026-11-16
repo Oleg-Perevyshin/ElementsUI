@@ -1,5 +1,4 @@
-/* Вид CBOR в стиле YAML для xPOE-Debug: строка VALUE - поток (корневая карта без скобок), окно - блок с отступом 2; разбор поля Value - поток YAML или JSON */
-import { base64ToBytes } from "./cbor/base64.js"
+/* Вид CBOR в стиле YAML для xPOE-Debug: строка VALUE - поток (корневая карта без скобок), окно - блок с отступом 2; разбор поля Value - поток YAML */
 import { shortNumber } from "./cbor/decoder.js"
 import { encodeCbor } from "./cbor/encoder.js"
 import type { CborValue } from "./cbor/types.js"
@@ -87,13 +86,10 @@ const blockLines = (value: unknown, paint: YamlPaint, indent: string): string[] 
 export const formatYamlBlock = (value: unknown, paint: YamlPaint = plain): string =>
   isBlock(value) ? blockLines(value, paint, "").join("\n") : flow(value, paint)
 
-/* Разбор потока YAML (и JSON как его подмножества) в значение CBOR: h'..' - байтовая строка, корневая карта может быть без скобок */
+/* Разбор потока YAML в значение CBOR: h'..' - байтовая строка, корневая карта может быть без скобок */
 class FlowParser {
   private pos = 0
-  constructor(
-    private readonly text: string,
-    private readonly binBase64: boolean,
-  ) {}
+  constructor(private readonly text: string) {}
 
   private fail(reason: string): never {
     throw new Error(`${reason} (позиция ${this.pos + 1})`)
@@ -138,8 +134,7 @@ class FlowParser {
       /* «ключ:» без значения - null */
       const empty = this.pos >= this.text.length || this.peek() === "," || this.peek() === close
       const value = empty ? null : this.value()
-      /* JSON: строка под ключом на BIN (FileBin, DataBIN) - Base64 байтов */
-      map.set(key, this.binBase64 && typeof value === "string" && typeof key === "string" && /bin$/i.test(key) ? base64ToBytes(value) : value)
+      map.set(key, value)
       this.skip()
       if (this.peek() === ",") {
         this.pos++
@@ -214,7 +209,7 @@ class FlowParser {
     return this.plainScalar()
   }
 
-  /* "..." - экранирование как в JSON, '...' - кавычка удваивается */
+  /* "..." - экранирование обратной косой чертой (\n, \", \uXXXX), '...' - кавычка удваивается */
   private quoted(): string {
     const open = this.peek()
     const start = this.pos
@@ -268,5 +263,5 @@ const resolvePlain = (token: string): CborValue => {
   return token
 }
 
-/* Поток YAML в байты CBOR; binBase64 - строки под ключами на BIN как Base64 байтов (так читается JSON); ошибка - с причиной и позицией */
-export const yamlFlowToCbor = (text: string, binBase64 = false): Uint8Array => encodeCbor(new FlowParser(text, binBase64).root())
+/* Поток YAML в байты CBOR; ошибка - с причиной и позицией */
+export const yamlFlowToCbor = (text: string): Uint8Array => encodeCbor(new FlowParser(text).root())

@@ -19,6 +19,7 @@
   import { onMount, untrack } from "svelte"
   import { watchTheme } from "../themeWatch"
   import Select from "../Select/Select.svelte"
+  import ScaleControls from "../ScaleControls.svelte"
   import { createRing, type Ring } from "../ring"
   import type { IGraphDataObject, IGraphProps } from "../types"
 
@@ -129,6 +130,28 @@
       : target
   }
 
+  /* Пределы шкалы задаёт пользователь в окне кнопки настроек на графике; без них шкала подстраивается под данные.
+     Заданы оба (min < max) - шкала фиксируется на них, кнопка-замок отпускает её и возвращает */
+  let limits = $state<{ min?: number; max?: number }>({})
+  const bounds = $derived(limits.min !== undefined && limits.max !== undefined && limits.max > limits.min ? { min: limits.min, max: limits.max } : null)
+  let unlocked = $state(false)
+  const locked = $derived(!!bounds && !unlocked)
+  $effect(() => {
+    void bounds
+    untrack(() => {
+      unlocked = false
+      scheduleDraw()
+    })
+  })
+  const setLimits = (next: { min?: number; max?: number }) => (limits = next)
+  const toggleLock = () => {
+    unlocked = !unlocked
+    scheduleDraw()
+  }
+
+  /* Последние значения вне зафиксированной шкалы - подсвечиваются в списке значений */
+  let outOfScale = $state.raw<boolean[]>([])
+
   /* Тултип при наведении - время и значения всех линий в ближайшей к курсору точке */
   let tooltip = $state<{ visible: boolean; x: number; y: number; time: number; items: { name: string; value: number; color: string }[] }>({
     visible: false,
@@ -180,8 +203,8 @@
     const maxX = allPoints.length ? Math.max(...allPoints.map((p) => p.x)) : 1
     const timeSpan = maxX - minX || 1
 
-    /* Авто-масштаб по данным (±10%): статический - разово по массиву, живой - через сглаженный liveYRange (updateLiveYRange) */
-    const { min: yMin, max: yMax } = (!isHistoryMode && liveYRange) || computeAutoYRange(allPoints.map((p) => p.y))
+    /* Авто-масштаб по данным (±10%): статический - разово по массиву, живой - через сглаженный liveYRange (updateLiveYRange); зафиксированная - границы scale */
+    const { min: yMin, max: yMax } = (locked && bounds) || (!isHistoryMode && liveYRange) || computeAutoYRange(allPoints.map((p) => p.y))
     const ySpan = yMax - yMin || 1
 
     /* Подписи Y на круглых значениях; левое поле по самой длинной подписи (моноширинный 10px - около 6 px на знак) */
@@ -195,7 +218,7 @@
     const getX = (x: number) => padding.left + ((x - minX) / timeSpan) * graphWidth
     const getY = (y: number) => padding.top + graphHeight - ((y - yMin) / ySpan) * graphHeight
 
-    return { padding, graphWidth, minX, timeSpan, yMin, yMax, yStep, yDecimals, getX, getY }
+    return { padding, graphWidth, graphHeight, minX, timeSpan, yMin, yMax, yStep, yDecimals, getX, getY }
   }
 
   /* Бинарный поиск ближайшей по времени точки - точки линий всегда отсортированы по x (по построению) */
@@ -219,6 +242,13 @@
     const raw = span / target || 1
     const pow = 10 ** Math.floor(Math.log10(raw))
     return ([1, 2, 2.5, 5, 10].find((m) => m * pow >= raw) ?? 10) * pow
+  }
+
+  /* Знаков после запятой у значения, не больше 4 (границы шкалы вроде 0.37) */
+  const decimalsOf = (x: number): number => {
+    let d = 0
+    while (d < 4 && Math.abs(Math.round(x * 10 ** d) - x * 10 ** d) > 1e-6) d++
+    return d
   }
 
   /* Знаков после запятой для подписей с шагом step */
@@ -304,7 +334,7 @@
     ctx.clearRect(0, 0, width, height)
 
     const data = lines()
-    const { padding, graphWidth, minX, timeSpan, yMin, yMax, yStep, yDecimals, getX, getY } = computeGeometry(data)
+    const { padding, graphWidth, graphHeight, minX, timeSpan, yMin, yMax, yStep, yDecimals, getX, getY } = computeGeometry(data)
     const style = getComputedStyle(canvas)
 
     /* Сетка в стиле PeriodChart: пунктир цветом --faint-color темы, подписи тем же цветом без прозрачности */
@@ -341,10 +371,14 @@
       )
     }
 
-    /* Сетка Y на круглых значениях (1, 2, 2.5, 5 × 10^n), линий не больше 8 */
+    /* Сетка Y на круглых значениях (1, 2, 2.5, 5 × 10^n), линий не больше 8; у зафиксированной шкалы подписаны и её границы, круглое деление вплотную к границе пропускается */
     ctx.textAlign = "right"
     ctx.textBaseline = "middle"
-    for (let yVal = Math.ceil(yMin / yStep) * yStep; yVal <= yMax + yStep * 1e-9; yVal += yStep) {
+    const yTicks: number[] = []
+    for (let yVal = Math.ceil(yMin / yStep) * yStep; yVal <= yMax + yStep * 1e-9; yVal += yStep) yTicks.push(Math.abs(yVal) < yStep * 1e-9 ? 0 : yVal)
+    const nearEdge = (v: number) => Math.abs(v - yMin) < yStep * 0.4 || Math.abs(v - yMax) < yStep * 0.4
+    const gridValues = locked ? [yMin, ...yTicks.filter((v) => !nearEdge(v)), yMax] : yTicks
+    for (const yVal of gridValues) {
       const y = getY(yVal)
       ctx.globalAlpha = GRID_ALPHA
       ctx.beginPath()
@@ -352,12 +386,15 @@
       ctx.lineTo(width - padding.right, y)
       ctx.stroke()
       ctx.globalAlpha = 1
-      const text = (Math.abs(yVal) < yStep * 1e-9 ? 0 : yVal).toFixed(yDecimals)
-      ctx.fillText(text, padding.left - 5, y)
+      ctx.fillText(yVal.toFixed(Math.max(yDecimals, decimalsOf(yVal))), padding.left - 5, y)
     }
     ctx.setLineDash([])
 
-    /* Отрисовка графиков */
+    /* Отрисовка графиков: линии обрезаются по области графика, значение за шкалой упирается в край */
+    ctx.save()
+    ctx.beginPath()
+    ctx.rect(padding.left, padding.top, graphWidth, graphHeight)
+    ctx.clip()
     ctx.lineWidth = 2
     data.forEach(({ points }, i) => {
       if (points.length < 2) return
@@ -375,6 +412,28 @@
       ctx.lineTo(getX(last.x), getY(last.y))
       ctx.stroke()
     })
+    ctx.restore()
+
+    /* Последнее значение линии вне зафиксированной шкалы - треугольник её цвета у верхнего или нижнего края */
+    const out = data.map(({ points }) => {
+      const last = points.at(-1)
+      return !!last && locked && (last.y > yMax || last.y < yMin)
+    })
+    data.forEach(({ points }, i) => {
+      const last = points.at(-1)
+      if (!last || !out[i]) return
+      const x = Math.min(getX(last.x), width - padding.right - 6)
+      const up = last.y > yMax
+      const edge = up ? padding.top + 1 : height - padding.bottom - 1
+      ctx.fillStyle = style.getPropertyValue(COLORS[i]).trim()
+      ctx.beginPath()
+      ctx.moveTo(x, edge)
+      ctx.lineTo(x - 6, edge + (up ? 9 : -9))
+      ctx.lineTo(x + 6, edge + (up ? 9 : -9))
+      ctx.closePath()
+      ctx.fill()
+    })
+    if (out.some((v, i) => v !== outOfScale[i]) || out.length !== outOfScale.length) outOfScale = out
 
     /* Вертикальная линия-указатель под тултипом */
     if (tooltip.visible) {
@@ -399,6 +458,19 @@
     <div bind:this={container} class="relative h-64 min-w-0 grow overflow-hidden rounded-[14px] border border-(--hairline-color)">
       <canvas class="absolute inset-0 h-full w-full bg-(--back-color)" bind:this={canvas} onmousemove={handleMouseMove} onmouseleave={handleMouseLeave}
       ></canvas>
+      <!-- Кнопки поверх холста: настройки (развёртка, пределы шкалы) и замок шкалы -->
+      <ScaleControls {limits} {locked} hasBounds={!!bounds} onChange={setLimits} onToggle={toggleLock} class="absolute top-2 right-2 z-10">
+        {#snippet settings()}
+          {#if !isHistoryMode}
+            <Select
+              label={{ name: $T("ui.graph.refresh"), class: "" }}
+              options={REFRESH_OPTIONS}
+              value={selectedRefreshRate}
+              onUpdate={(value) => (selectedRefreshRate = value)}
+            />
+          {/if}
+        {/snippet}
+      </ScaleControls>
 
       {#if tooltip.visible}
         <div
@@ -417,26 +489,19 @@
       {/if}
     </div>
 
-    <!-- Панель настроек: справа от холста, на узком - под ним, развёртка и значения рядом -->
-    <div class="grid w-full grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] gap-x-3 gap-y-2 @md:flex @md:w-48 @md:flex-col @md:gap-2">
-      {#if !isHistoryMode}
-        <!-- Развертка по горизонтали -->
-        <Select
-          label={{ name: $T("ui.graph.refresh"), class: "" }}
-          options={REFRESH_OPTIONS}
-          value={selectedRefreshRate}
-          onUpdate={(value) => (selectedRefreshRate = value)}
-        />
-      {/if}
-
+    <!-- Значения переменных: справа от холста шириной по именам (не больше 14rem), под число место на 10 знаков - ширина не прыгает от значений; на узком - под холстом -->
+    <div class="flex w-full flex-col gap-2 @md:w-auto @md:max-w-56 @md:shrink-0">
       <!-- Переменные и их значение: сетка, а не таблица - имя обрезается «…», значение не переносится -->
-      <div class="flex flex-col gap-1 first:col-span-full">
+      <div class="flex flex-col gap-1">
         <h5 class="text-[12px] font-semibold text-(--muted-color)">{$T("ui.graph.values")}</h5>
         <div class="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-2 gap-y-1 text-[13px]">
           {#each legend as item, i}
             <span class="size-2.5 rounded-full" style="background-color: var({COLORS[i]})"></span>
             <span class="truncate font-semibold" title={item.name}>{item.name}</span>
-            <span class="text-right whitespace-nowrap tabular-nums">{item.value?.toFixed(2)}</span>
+            <span
+              class="min-w-[10ch] text-right whitespace-nowrap tabular-nums {outOfScale[i] ? 'text-(--red-text)' : ''}"
+              title={outOfScale[i] ? $T("ui.scale.out") : undefined}>{item.value?.toFixed(2)}</span
+            >
           {/each}
         </div>
       </div>

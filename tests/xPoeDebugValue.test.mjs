@@ -104,15 +104,15 @@ test("поле Value: поток YAML, корневая карта без ско
   assert.throws(() => m.xPoeDebugValueFromText("[1, 2"), /позиция 6/)
 })
 
-test("поле Value: прежний JSON разбирается как раньше, включая base64 под ключами BIN", () => {
-  const json = (text, value) => assert.equal(hex(m.xPoeDebugValueFromText(text)), hex(m.valueToCbor(value)), text)
-  json("{}", {})
-  json('{"CfgGroup":"CFG"}', { CfgGroup: "CFG" })
-  json('{"LST.Color":[255,0,0]}', { "LST.Color": [255, 0, 0] })
-  json('"12"', "12")
-  json("12", 12)
-  json("null", null)
-  assert.equal(hex(m.xPoeDebugValueFromText('{"FileBin":"AQI="}')), hex(m.valueToCbor({ FileBin: Uint8Array.of(1, 2) })))
+test("поле Value: карта в скобках и строки в кавычках - тоже YAML; Base64 под ключами BIN остаётся строкой", () => {
+  const yaml = (text, value) => assert.equal(hex(m.xPoeDebugValueFromText(text)), hex(m.valueToCbor(value)), text)
+  yaml("{}", {})
+  yaml('{"CfgGroup": "CFG"}', { CfgGroup: "CFG" })
+  yaml('{"LST.Color": [255, 0, 0]}', { "LST.Color": [255, 0, 0] })
+  yaml('"12"', "12")
+  yaml("12", 12)
+  yaml("null", null)
+  yaml('{FileBin: "AQI="}', { FileBin: "AQI=" })
 })
 
 test("round-trip: VALUE вставляется в поле Value и даёт тот же CBOR", () => {

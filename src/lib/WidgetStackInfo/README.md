@@ -41,10 +41,10 @@
 <details>
 <summary>🔑 Ключи</summary>
 
-| Ключ    | Описание                                                                                                                 |
-| ------- | ------------------------------------------------------------------------------------------------------------------------ |
-| `Heap`  | Кучи памяти `[{ "Name", "Total", "Free", "MinFree" }]`, байт. `MinFree` это наименьший свободный объём с момента запуска |
-| `Tasks` | Задачи `[{ "Name", "State", "Prio", "Core", "CPU", "FreeMin" }]`                                                         |
+| Ключ    | Описание                                                                                                       |
+| ------- | -------------------------------------------------------------------------------------------------------------- |
+| `Heap`  | Кучи памяти `[{Name, Total, Free, MinFree}]`, байт. `MinFree` это наименьший свободный объём с момента запуска |
+| `Tasks` | Задачи `[{Name, State, Prio, Core, CPU, FreeMin}]`                                                             |
 
 Поля задачи:
 
@@ -61,14 +61,13 @@
 <details>
 <summary>📡 Протокол устройства</summary>
 
-```
-"StackInfo": {
-  "Heap": [
-    { "Name": "Internal", "Total": 327680, "Free": 118000, "MinFree": 92000 },
-    { "Name": "PSRAM", "Total": 4194304, "Free": 3980000, "MinFree": 3920000 }
-  ],
-  "Tasks": [{ "Name": "api_rx_task", "FreeMin": 1240, "Prio": 5, "Core": 1, "State": 2, "CPU": 3.5 }]
-}
+```yaml
+StackInfo:
+  Heap:
+    - { Name: "Internal", Total: 327680, Free: 118000, MinFree: 92000 }
+    - { Name: "PSRAM", Total: 4194304, Free: 3980000, MinFree: 3920000 }
+  Tasks:
+    - { Name: "api_rx_task", FreeMin: 1240, Prio: 5, Core: 1, State: 2, CPU: 3.5 }
 ```
 
 Формат общий у ProdFactory-ESP и ProdFactory-STM, его отдаёт `API_GetStackInfo`. Все размеры в байтах.
