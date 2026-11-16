@@ -13,6 +13,7 @@
   import CommonSnippets from "../CommonSnippets.svelte"
   import PropsGroup from "../PropsGroup.svelte"
   import PropsListModal from "../PropsListModal.svelte"
+  import { KEY_MAX_LEN, keyRegExp } from "../gui"
   import { slide } from "svelte/transition"
   import Dragging from "../Dragging.svelte"
   import InfoIcon from "../libIcons/InfoIcon.svelte"
@@ -152,8 +153,8 @@
   <UI.Input
     label={{ name: $T("constructor.props.table.groupBy.key") }}
     value={groupBy?.key ?? ""}
-    maxlength={32}
-    help={{ info: $T("constructor.props.table.groupBy.info"), regExp: /^[a-zA-Z0-9\-._]{0,32}$/ }}
+    maxlength={KEY_MAX_LEN}
+    help={{ info: $T("constructor.props.table.groupBy.info"), regExp: keyRegExp(KEY_MAX_LEN) }}
     onUpdate={(value) => edit.set("groupBy", value ? { key: value as string, groups } : undefined)}
   />
   {#if groupBy?.key}
@@ -336,7 +337,7 @@
                               wrapperClass="min-w-32 flex-1"
                               label={{ name: $T("constructor.props.table.text.key") }}
                               value={text.key}
-                              help={{ info: $T("constructor.props.table.text.key.info"), regExp: /^[0-9a-zA-Z_.-]{0,16}$/ }}
+                              help={{ info: $T("constructor.props.table.text.key.info"), regExp: keyRegExp(KEY_MAX_LEN) }}
                               onUpdate={(value) => {
                                 updateTableHeader(
                                   columnIndex,
@@ -367,7 +368,7 @@
                               wrapperClass="min-w-32 flex-1"
                               label={{ name: $T("constructor.props.table.select.key") }}
                               value={select.key}
-                              help={{ info: $T("constructor.props.table.select.key.info"), regExp: /^[0-9a-zA-Z_.-]{0,16}$/ }}
+                              help={{ info: $T("constructor.props.table.select.key.info"), regExp: keyRegExp(KEY_MAX_LEN) }}
                               onUpdate={(value) => {
                                 updateTableHeader(
                                   columnIndex,
@@ -462,8 +463,8 @@
                               wrapperClass="min-w-28 flex-1"
                               label={{ name: $T("constructor.props.table.hideIf.key") }}
                               value={button.hideIf?.key ?? ""}
-                              maxlength={32}
-                              help={{ info: $T("constructor.props.table.hideIf.info"), regExp: /^[a-zA-Z0-9\-._]{0,32}$/ }}
+                              maxlength={KEY_MAX_LEN}
+                              help={{ info: $T("constructor.props.table.hideIf.info"), regExp: keyRegExp(KEY_MAX_LEN) }}
                               onUpdate={(value) =>
                                 updateContentProperty(
                                   columnIndex,
@@ -483,6 +484,32 @@
                               }}
                             />
                           </div>
+                          <div class="flex flex-wrap items-end gap-2">
+                            <UI.Input
+                              wrapperClass="min-w-28 flex-1"
+                              label={{ name: $T("constructor.props.table.showIf.key") }}
+                              value={button.showIf?.key ?? ""}
+                              maxlength={KEY_MAX_LEN}
+                              help={{ info: $T("constructor.props.table.showIf.info"), regExp: keyRegExp(KEY_MAX_LEN) }}
+                              onUpdate={(value) =>
+                                updateContentProperty(
+                                  columnIndex,
+                                  index,
+                                  "showIf",
+                                  value ? { key: value as string, value: button.showIf?.value ?? "" } : undefined,
+                                )}
+                            />
+                            <UI.Input
+                              wrapperClass="min-w-28 flex-1"
+                              label={{ name: $T("constructor.props.table.hideIf.value") }}
+                              help={{ info: $T("constructor.props.table.showIf.value.info") }}
+                              value={button.showIf?.value ?? ""}
+                              maxlength={64}
+                              onUpdate={(value) => {
+                                if (button.showIf?.key) updateContentProperty(columnIndex, index, "showIf", { key: button.showIf.key, value: value as string })
+                              }}
+                            />
+                          </div>
                         {:else if content.type == "progressBar"}
                           {@const progressBar = content.data}
                           <div class="flex flex-wrap items-end gap-2">
@@ -490,7 +517,7 @@
                               wrapperClass="min-w-28 flex-1"
                               label={{ name: $T("constructor.props.table.progressBar.key") }}
                               value={progressBar.key}
-                              help={{ info: $T("constructor.props.table.progressBar.key.info"), regExp: /^[0-9a-zA-Z_.-]{0,16}$/ }}
+                              help={{ info: $T("constructor.props.table.progressBar.key.info"), regExp: keyRegExp(KEY_MAX_LEN) }}
                               onUpdate={(value) => {
                                 updateTableHeader(
                                   columnIndex,

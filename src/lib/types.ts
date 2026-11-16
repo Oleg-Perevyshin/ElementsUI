@@ -450,6 +450,8 @@ export interface ISelectProps<T = unknown, M extends boolean = false> {
   onUpdate?: (value: SelectValue<T, M>) => void
   /* Только type="input": текст при каждом вводе */
   onInput?: (text: string) => void
+  /* Только type="input": предел длины текста */
+  maxlength?: number
 }
 
 export interface IOption<T = unknown> {
@@ -550,6 +552,8 @@ export interface ITableButton<T extends object> {
   onClick?: (row: T) => void
   /* Не показывать кнопку в строке, где значение поля key равно value (сравнение строками) - задаётся в YAML, например своя строка шлюза в ModList */
   hideIf?: { key: string; value: string | number }
+  /* Показывать кнопку только в строке, где значение поля key равно value (сравнение строками), например только у модулей LoRa */
+  showIf?: { key: string; value: string | number }
 }
 export interface ITableProgressBar<T extends object> {
   key: keyof T

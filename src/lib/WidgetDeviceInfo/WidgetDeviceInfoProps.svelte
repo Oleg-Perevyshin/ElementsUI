@@ -1,6 +1,6 @@
 <!-- $lib/WidgetDeviceInfo/WidgetDeviceInfoProps.svelte - панель пропсов конструктора для WidgetDeviceInfo: заголовок/мастер-цвет/префикс группы, поля списком: галочка - показывать (show), рядом у включённых - ключ поля в прошивке (keys) и команды перезагрузки и сброса - все с дефолтами, равными текущей прошивочной конвенции (COMPONENT_DEFAULTS). -->
 <script lang="ts">
-  import { DEVICE_INFO_DEFAULT_FIELDS, WIDGET_FIELDS } from "../gui"
+  import { DEVICE_INFO_DEFAULT_FIELDS, WIDGET_FIELDS, WIDGET_PREFIX, fieldMaxLen, groupRegExp, keyRegExp, prefixMaxLen } from "../gui"
   import TextsEditor from "../TextsEditor.svelte"
   import { T } from "../locales/i18n"
   import * as UI from ".."
@@ -23,6 +23,9 @@
 
   const edit = $derived(createPropsEditor(component, onPropertyChange))
   const shown = $derived(new Set<string>(component.properties.show ?? DEVICE_INFO_DEFAULT_FIELDS))
+  /* Полный ключ «префикс.поле» до 15 символов: поле ограничено префиксом, префикс - самым длинным показанным полем */
+  const fieldMax = $derived(fieldMaxLen(component.properties.id || WIDGET_PREFIX.WidgetDeviceInfo))
+  const prefixMax = $derived(prefixMaxLen([...shown].map((key) => component.properties.keys?.[key as keyof IWidgetDeviceInfoConfig] ?? key)))
 
   /* Порядок show - как в списке полей, а не как щёлкали */
   const toggleField = (key: keyof IWidgetDeviceInfoConfig, on: boolean) =>
@@ -46,6 +49,8 @@
       {#if shown.has(key)}
         <UI.Input
           wrapperClass="min-w-0 flex-1"
+          maxlength={fieldMax}
+          help={{ regExp: keyRegExp(fieldMax, 1) }}
           value={component.properties.keys?.[key] ?? key}
           onUpdate={(value) => edit.patch("keys", { [key]: String(value) })}
         />
@@ -75,7 +80,8 @@
     <TextsEditor {component} {onPropertyChange} />
     <UI.Input
       label={{ name: $T("widget.common.group_prefix") }}
-      help={{ info: $T("widget.common.group_prefix.info") }}
+      maxlength={prefixMax}
+      help={{ info: $T("widget.common.group_prefix.info"), regExp: groupRegExp(prefixMax) }}
       value={component.properties.id}
       onUpdate={(value) => edit.set("id", value as string)}
     />

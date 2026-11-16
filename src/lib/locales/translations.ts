@@ -92,6 +92,7 @@ const translations = {
   "widget.info.web_user": { ru: "Пользователь Web", en: "Web user", zh: "Web 用户" },
   "widget.info.web_psw": { ru: "Пароль Web", en: "Web password", zh: "Web 密码" },
   "widget.info.bus_id": { ru: "Адрес на шине", en: "Bus address", zh: "总线地址" },
+  "widget.info.bind_key": { ru: "Ключ привязки", en: "Binding key", zh: "绑定键" },
   "widget.info.log_level": { ru: "Уровень логов", en: "Log level", zh: "日志级别" },
   "widget.info.fields": { ru: "Поля", en: "Fields", zh: "字段" },
   "widget.info.fields.info": {
@@ -244,6 +245,11 @@ const translations = {
     ru: "Пароль для входа в веб-интерфейс устройства. Латинские буквы, цифры и спецсимволы без пробела, до 15 символов",
     en: "Password for the device web interface. Latin letters, digits and special characters without spaces, up to 15 characters",
     zh: "设备网页界面的密码。拉丁字母、数字和特殊字符（不含空格），最多 15 个字符",
+  },
+  "widget.info.hint.bind_key": {
+    ru: "Роль модуля для ядра изделия, например GMBL.Roll или LRBS.Sen1: по ключу ядро понимает, какой из найденных модулей что делает. Латинские буквы, цифры, «_» и «-», вид ГРУППА.Роль: группа до 4 символов, всего до 15, пустой - модуль не привязан",
+    en: "Module role for the product core, e.g. GMBL.Roll or LRBS.Sen1: by this key the core knows which found module does what. Latin letters, digits, “_” and “-”, as GROUP.Role: group up to 4 characters, up to 15 in total, empty - the module is not bound",
+    zh: "模块在产品核心中的角色，例如 GMBL.Roll 或 LRBS.Sen1：核心按此键识别找到的各模块的用途。拉丁字母、数字、“_”和“-”，格式为 组.角色：组最多 4 个字符，总共最多 15 个，为空 - 模块未绑定",
   },
   "widget.info.hint.bus_id": {
     ru: "Адрес модуля на шине CAN или RS485, HEX. Модуль считает его сам из номера чипа",

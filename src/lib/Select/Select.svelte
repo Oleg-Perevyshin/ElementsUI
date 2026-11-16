@@ -25,6 +25,7 @@
     options = [],
     onUpdate,
     onInput,
+    maxlength,
   }: ISelectProps<T, M> = $props()
 
   const uid = $props.id()
@@ -273,6 +274,7 @@
         value={draft ?? valueText}
         class={twMerge(fieldBase, fieldState, disabled ? "" : "cursor-text", componentClass)}
         autocomplete="off"
+        {maxlength}
         role="combobox"
         aria-autocomplete="list"
         aria-expanded={isOpen}

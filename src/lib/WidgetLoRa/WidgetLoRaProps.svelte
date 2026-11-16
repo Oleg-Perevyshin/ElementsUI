@@ -7,6 +7,7 @@
   import { createPropsEditor, type PropertyChange } from "../propsEditor"
   import PropsGroup from "../PropsGroup.svelte"
   import CommonSnippets from "../CommonSnippets.svelte"
+  import { fieldMaxLen, groupRegExp, keyRegExp, prefixMaxLen } from "../gui"
   import { LORA_PARAMS, LORA_PRESETS, LORA_SWITCHES, type ILoRaOption, type ILoRaParamConfig, type LoRaParam } from "./lora"
   import SectionHead from "../SectionHead.svelte"
   import { slide } from "svelte/transition"
@@ -22,6 +23,9 @@
 
   const edit = $derived(createPropsEditor(component, onPropertyChange))
   const params = $derived(component.properties.params ?? {})
+  /* Полный ключ «префикс.поле» до 15 символов: поле ограничено префиксом, префикс - самым длинным ключом параметров */
+  const fieldMax = $derived(fieldMaxLen(component.properties.id || "LORA"))
+  const prefixMax = $derived(prefixMaxLen(Object.values(params).map((param) => param?.key ?? "")))
 
   const PRESET_OPTIONS = Object.entries(LORA_PRESETS).map(([value, preset]) => ({ id: value, name: preset.name, value }))
 
@@ -103,7 +107,8 @@
             wrapperClass="w-24"
             label={{ name: $T("widget.lora.props.key") }}
             value={p.key}
-            help={{ info: $T("widget.lora.props.key.info"), regExp: /^[A-Za-z0-9_]{1,12}$/ }}
+            maxlength={fieldMax}
+            help={{ info: $T("widget.lora.props.key.info"), regExp: keyRegExp(fieldMax, 1) }}
             onUpdate={(value) => setParam(name, { key: String(value) })}
           />
           <UI.Switch
@@ -167,7 +172,8 @@
     <TextsEditor {component} {onPropertyChange} />
     <UI.Input
       label={{ name: $T("widget.common.group_prefix") }}
-      help={{ info: $T("widget.common.group_prefix.info") }}
+      maxlength={prefixMax}
+      help={{ info: $T("widget.common.group_prefix.info"), regExp: groupRegExp(prefixMax) }}
       value={component.properties.id}
       onUpdate={(value) => edit.set("id", value as string)}
     />

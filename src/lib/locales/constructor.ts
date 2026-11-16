@@ -667,6 +667,17 @@ const constructorTranslations = {
   "constructor.texts.progressBars": { ru: "Шкала", en: "Bar", zh: "进度条" },
   "constructor.texts.buttons": { ru: "Кнопка", en: "Button", zh: "按钮" },
   "widget.info.reset_command": { ru: "Команда сброса настроек", en: "Factory reset command", zh: "恢复出厂命令" },
+  "constructor.props.table.showIf.key": { ru: "Показать, если ключ", en: "Show if key", zh: "显示条件键" },
+  "constructor.props.table.showIf.info": {
+    ru: "Показывать кнопку только в некоторых строках.\n**Слева** - ключ строки, справа - значение: кнопка есть только там, где они совпадают.\n**Пусто** - кнопка во всех строках.\n**Пример**: ключ ModIFace, значение 8388608 - кнопки «Захват» и «Удалить» только у модулей LoRa в списке модулей базы.",
+    en: "Show the button only in some rows.\n**Left** - a row key, right - a value: the button is only where they match.\n**Empty** - the button is in every row.\n**Example**: key ModIFace, value 8388608 - Capture and Delete buttons only for LoRa modules in the hub's module list.",
+    zh: "仅在部分行中显示按钮。\n左侧为行的键，右侧为值：仅在两者相等的行显示按钮。\n**为空** - 每行都显示按钮。\n**示例：键 ModIFace，值 8388608** - 基站模块列表中仅 LoRa 模块显示「捕获」和「删除」按钮。",
+  },
+  "constructor.props.table.showIf.value.info": {
+    ru: "Значение ключа, при котором кнопка показана.\nСравнивается как текст: 1 и «1» - одно и то же.",
+    en: 'The key value at which the button is shown.\nCompared as text: 1 and "1" are the same.',
+    zh: "显示按钮时键的值。\n按文本比较：1 和「1」相同。",
+  },
   "constructor.props.table.hideIf.value.info": {
     ru: "Значение ключа, при котором кнопка скрыта.\nСравнивается как текст: 1 и «1» - одно и то же.",
     en: 'The key value at which the button is hidden.\nCompared as text: 1 and "1" are the same.',

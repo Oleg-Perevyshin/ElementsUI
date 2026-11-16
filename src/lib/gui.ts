@@ -38,6 +38,7 @@ export const WIDGET_FIELDS = {
     DevFW: num,
     RunCnt: num,
     DevName: text,
+    BindKey: text /* ключ привязки: метка роли модуля, по ней ядро изделия связывает с ним свою сущность (ось подвеса, датчик) */,
     HostName: text,
     WebUser: text,
     WebPsw: text,
@@ -128,8 +129,22 @@ export type IWidgetRGBStripConfig = typeof WIDGET_FIELDS.WidgetRGBStrip
 export type IWidgetPFDData = typeof WIDGET_FIELDS.WidgetPFD
 export type IWidgetMapData = typeof WIDGET_FIELDS.WidgetMap
 
+/* Ключ переменной устройства «ГРУППА.Поле» - до 15 символов: буфер прошивки 16 с \0, это и предел ключа NVS в ESP-IDF */
+export const KEY_MAX_LEN = 15
+/* Группа до 4 символов, с точкой - 5 (CFG_GROUP_MAX_LEN прошивки) */
+export const GROUP_MAX_LEN = 4
+/* Ключ переменной целиком: до 15 символов, группа перед точкой - до 4; без группы тоже можно (SystemStackInfo) */
+export const VARIABLE_KEY_REGEXP = new RegExp(`^(?=.{0,${KEY_MAX_LEN}}$)([A-Za-z0-9_-]{1,${GROUP_MAX_LEN}}[.])?[A-Za-z0-9_-]*$`)
+export const keyRegExp = (max: number, min = 0) => new RegExp(`^[A-Za-z0-9_.-]{${min},${Math.max(min, max)}}$`)
+/* Префикс группы - без точки, её добавляет виджет */
+export const groupRegExp = (max: number) => new RegExp(`^[A-Za-z0-9_-]{0,${max}}$`)
+/* Сколько символов остаётся полю после префикса группы с точкой */
+export const fieldMaxLen = (prefix: string) => (prefix ? KEY_MAX_LEN - prefix.length - 1 : KEY_MAX_LEN)
+/* Сколько символов остаётся префиксу группы: не больше 4 и не больше, чем оставляет самое длинное поле */
+export const prefixMaxLen = (fields: string[]) => Math.min(GROUP_MAX_LEN, KEY_MAX_LEN - 1 - Math.max(0, ...fields.map((field) => field.length)))
+
 /* Группа полей по умолчанию (properties.id пуст); у StackInfo группы нет, у карты группы - groups */
-const WIDGET_PREFIX: Record<WidgetFieldsType, string> = {
+export const WIDGET_PREFIX: Record<WidgetFieldsType, string> = {
   WidgetWiFi: "CFG",
   WidgetDeviceInfo: "CFG",
   WidgetFileSystem: "CFG",
@@ -145,12 +160,12 @@ export const widgetPrefixes = (type: WidgetFieldsType, props: { id?: string; gro
 /* Поля, которые виджет сохраняет одним SET ModuleConfig; остальные только читаются */
 export const WIDGET_SAVE_FIELDS = {
   WidgetWiFi: Object.keys(WIDGET_FIELDS.WidgetWiFi) as (keyof IWidgetWiFiConfig)[],
-  WidgetDeviceInfo: ["DevName", "HostName", "WebUser", "WebPsw", "SCLL"] as (keyof IWidgetDeviceInfoConfig)[],
+  WidgetDeviceInfo: ["DevName", "BindKey", "HostName", "WebUser", "WebPsw", "SCLL"] as (keyof IWidgetDeviceInfoConfig)[],
   WidgetRGBStrip: ["Count", "Model", "Order"] as (keyof IWidgetRGBStripConfig)[],
 }
 
 /* Поля main_config, которые есть у каждой прошивки: весь набор STM, у ESP он тоже есть; заглушка GUI облака показывает их у любого устройства */
-export const DEVICE_INFO_COMMON_FIELDS: (keyof IWidgetDeviceInfoConfig)[] = ["DevSN", "DevName", "DevBusID", "DevFW", "RunCnt", "SCLL"]
+export const DEVICE_INFO_COMMON_FIELDS: (keyof IWidgetDeviceInfoConfig)[] = ["DevSN", "DevName", "BindKey", "DevBusID", "DevFW", "RunCnt", "SCLL"]
 
 /* Поля WidgetDeviceInfo без своего выбора (show): набор ESP-шлюза */
 export const DEVICE_INFO_DEFAULT_FIELDS: (keyof IWidgetDeviceInfoConfig)[] = [
@@ -161,6 +176,7 @@ export const DEVICE_INFO_DEFAULT_FIELDS: (keyof IWidgetDeviceInfoConfig)[] = [
   "StaIP",
   "ApIP",
   "DevName",
+  "BindKey",
   "HostName",
   "WebUser",
   "WebPsw",

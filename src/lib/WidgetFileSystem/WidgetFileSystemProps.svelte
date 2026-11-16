@@ -8,6 +8,7 @@
   import PropsGroup from "../PropsGroup.svelte"
   import ArgumentSelect from "../ArgumentSelect.svelte"
   import CommonSnippets from "../CommonSnippets.svelte"
+  import { WIDGET_PREFIX, fieldMaxLen, groupRegExp, keyRegExp, prefixMaxLen } from "../gui"
 
   const {
     component,
@@ -18,6 +19,9 @@
   } = $props()
 
   const edit = $derived(createPropsEditor(component, onPropertyChange))
+  /* Полный ключ «префикс.поле» до 15 символов */
+  const fieldMax = $derived(fieldMaxLen(component.properties.id || WIDGET_PREFIX.WidgetFileSystem))
+  const prefixMax = $derived(prefixMaxLen([component.properties.keys?.FS ?? "FS"]))
 </script>
 
 <div class="flex flex-col gap-2">
@@ -25,7 +29,8 @@
     <TextsEditor {component} {onPropertyChange} />
     <UI.Input
       label={{ name: $T("widget.common.group_prefix") }}
-      help={{ info: $T("widget.common.group_prefix.info") }}
+      maxlength={prefixMax}
+      help={{ info: $T("widget.common.group_prefix.info"), regExp: groupRegExp(prefixMax) }}
       value={component.properties.id}
       onUpdate={(value) => edit.set("id", value as string)}
     />
@@ -51,7 +56,8 @@
   <PropsGroup label={$T("widget.common.device")}>
     <UI.Input
       label={{ name: $T("widget.fs.state_field") }}
-      help={{ info: $T("widget.fs.state_field.info") }}
+      maxlength={fieldMax}
+      help={{ info: $T("widget.fs.state_field.info"), regExp: keyRegExp(fieldMax, 1) }}
       value={component.properties.keys?.FS ?? "FS"}
       onUpdate={(value) => edit.patch("keys", { FS: value as string })}
     />

@@ -1,6 +1,6 @@
 <!-- $lib/WidgetWiFi/WidgetWiFiProps.svelte - панель пропсов конструктора для WidgetWiFi. Виджет - самостоятельный тип компонента (не набор примитивов с привязкой полей), поэтому и панель проще: не "к какой переменной привязать", а "как виджет себя ведёт". -->
 <script lang="ts">
-  import { WIDGET_FIELDS } from "../gui"
+  import { WIDGET_FIELDS, WIDGET_PREFIX, fieldMaxLen, groupRegExp, keyRegExp, prefixMaxLen } from "../gui"
   import TextsEditor from "../TextsEditor.svelte"
   import { T } from "../locales/i18n"
   import * as UI from ".."
@@ -22,6 +22,9 @@
   } = $props()
 
   const edit = $derived(createPropsEditor(component, onPropertyChange))
+  /* Полный ключ «префикс.поле» до 15 символов: поле ограничено префиксом, префикс - самым длинным полем */
+  const fieldMax = $derived(fieldMaxLen(component.properties.id || WIDGET_PREFIX.WidgetWiFi))
+  const prefixMax = $derived(prefixMaxLen(WIFI_KEYS.map((key) => component.properties.keys?.[key] ?? key)))
 
   const MODE_OPTIONS: IOption<number>[] = [
     { id: "sta", name: "STA", value: 1 },
@@ -37,7 +40,8 @@
 {#snippet WidgetGroupPrefix()}
   <UI.Input
     label={{ name: $T("widget.common.group_prefix") }}
-    help={{ info: $T("widget.common.group_prefix.info") }}
+    maxlength={prefixMax}
+    help={{ info: $T("widget.common.group_prefix.info"), regExp: groupRegExp(prefixMax) }}
     value={component.properties.id}
     onUpdate={(value) => edit.set("id", value as string)}
   />
@@ -47,7 +51,8 @@
   {#each WIFI_KEYS as key (key)}
     <UI.Input
       label={{ name: key }}
-      help={{ info: $T("widget.common.key.info") }}
+      maxlength={fieldMax}
+      help={{ info: $T("widget.common.key.info"), regExp: keyRegExp(fieldMax, 1) }}
       value={component.properties.keys?.[key] ?? key}
       onUpdate={(value) => edit.patch("keys", { [key]: String(value) })}
     />

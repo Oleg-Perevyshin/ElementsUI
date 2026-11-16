@@ -14,7 +14,14 @@ test("поля виджета: ключи с префиксом и переоп�
   assert.deepEqual(value, { WiFiMode: 3, StaSSID: "home", StaPSK: "" })
   assert.equal(gui.widgetKey("", "SystemStackInfo"), "SystemStackInfo")
   const packet = gui.widgetPacket("CFG", gui.WIDGET_SAVE_FIELDS.WidgetDeviceInfo, { DevName: "Hub", DevSN: "X", HostName: "hub" }, { DevName: "Name" })
-  assert.deepEqual(packet, { "CFG.Name": "Hub", "CFG.HostName": "hub", "CFG.WebUser": undefined, "CFG.WebPsw": undefined, "CFG.SCLL": undefined })
+  assert.deepEqual(packet, {
+    "CFG.Name": "Hub",
+    "CFG.BindKey": undefined,
+    "CFG.HostName": "hub",
+    "CFG.WebUser": undefined,
+    "CFG.WebPsw": undefined,
+    "CFG.SCLL": undefined,
+  })
   assert.deepEqual(gui.widgetPrefixes("WidgetMap", {}), ["MAV"])
   assert.deepEqual(gui.widgetPrefixes("WidgetRGBStrip", { id: "" }), ["LST"])
   assert.deepEqual(gui.widgetPrefixes("WidgetStackInfo", { id: "CFG" }), [""])

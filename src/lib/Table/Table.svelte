@@ -548,7 +548,7 @@
     {#if content.type === "button"}
       {@const button = resolve(content.data, row)}
       {@const title = resolve(button.title, row)}
-      {#if !button.hideIf?.key || String((row as Record<string, unknown>)[button.hideIf.key] ?? "") !== String(button.hideIf.value ?? "")}
+      {#if (!button.hideIf?.key || String((row as Record<string, unknown>)[button.hideIf.key] ?? "") !== String(button.hideIf.value ?? "")) && (!button.showIf?.key || String((row as Record<string, unknown>)[button.showIf.key] ?? "") === String(button.showIf.value ?? ""))}
         <button
           class="{buttonClass(button, row, fit)} bg-(--bg-color)"
           style={accentStyle(resolve(button.accent, row))}

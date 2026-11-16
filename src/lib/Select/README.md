@@ -103,6 +103,7 @@
 | `range`                          | `{ start, end }`                              |              | Биты битового поля, только для панели свойств и облака                                                             |
 | `onUpdate`                       | `(value: T \| T[]) => void`                   |              | Выбрано значение. Для `input` ещё Enter и уход из поля                                                             |
 | `onInput`                        | `(text: string) => void`                      |              | Только `input`: текст при каждом вводе                                                                             |
+| `maxlength`                      | `number`                                      |              | Только `input`: предел длины текста                                                                                |
 
 Вариант `IOption`:
 

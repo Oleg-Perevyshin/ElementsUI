@@ -7,6 +7,7 @@
   import { createPropsEditor, type PropertyChange } from "../propsEditor"
   import { ICONS } from "../icons"
   import CommonSnippets from "../CommonSnippets.svelte"
+  import { WIDGET_FIELDS, prefixMaxLen } from "../gui"
   import PropsGroup from "../PropsGroup.svelte"
   import { twMerge } from "tailwind-merge"
 
@@ -32,6 +33,10 @@
   const TRACK_LENGTH_OPTIONS = [100, 500, 1000, 5000, 10000, 50000].map((value) => ({ value, name: String(value) }))
 
   /* Группы через пробел, как переменные кнопки (имя группы не содержит пробелов): "MAV GNSS" */
+  /* Каждая группа ограничена самым длинным полем: полный ключ «группа.поле» до 15 символов */
+  const GROUP_MAX = prefixMaxLen(Object.keys(WIDGET_FIELDS.WidgetMap))
+  const GROUPS_REGEXP = new RegExp(`^[A-Za-z0-9_-]{0,${GROUP_MAX}}([ ,]+[A-Za-z0-9_-]{1,${GROUP_MAX}})*[ ,]*$`)
+
   const setGroups = (raw: unknown) => {
     const list = String(raw ?? "")
       .trim()
@@ -66,7 +71,7 @@
       <TextsEditor {component} {onPropertyChange} />
       <UI.Input
         label={{ name: $T("widget.map.groups") }}
-        help={{ info: $T("widget.map.groups.info") }}
+        help={{ info: $T("widget.map.groups.info"), regExp: GROUPS_REGEXP }}
         value={(component.properties.groups ?? ["MAV"]).join(" ")}
         onUpdate={setGroups}
       />

@@ -1,5 +1,5 @@
 /* $lib/busBridge.ts - мост GUI к устройству через шину (консоль xPOE-Debug, CAN, RS485): та же связь DeviceLink, что у веба и облака, - модули по ModSN, значения "<ModSN>|ключ", сообщения устройства в ответах */
-import { formatDeviceMessage, splitHar, type DeviceMessageLevel, type Dictionary } from "./protocols"
+import { formatDeviceMessage, isNeighborModule, splitHar, type DeviceMessageLevel, type Dictionary } from "./protocols"
 import type { DeviceReply } from "./fsTransfer"
 import { mergeDevicePayload, type DeviceLink } from "./gui"
 import { DEFAULT_LANGUAGE, type LanguageCode } from "./locales/languages"
@@ -117,14 +117,17 @@ export const createBusBridge = (channel: BusChannel, options: BusBridgeOptions) 
     if (!Array.isArray(list) || !list.length || packet.srcId !== busIdFromSN(String(list[0]?.ModSN ?? "")) || (selfSN && list[0].ModSN !== selfSN)) return
     selfSN = String(list[0].ModSN)
     setModules(
-      list.filter(isRecord).map((m) => ({
-        ModSN: String(m.ModSN ?? ""),
-        ModName: String(m.ModName ?? m.ModSN ?? ""),
-        VerFW: Number(m.VerFW) || 0,
-        ModIFace: typeof m.ModIFace === "number" ? m.ModIFace : undefined,
-        Progress: typeof m.Progress === "number" ? m.Progress : undefined,
-        self: m.ModSN === selfSN,
-      })),
+      list
+        .filter(isRecord)
+        .filter((m) => !isNeighborModule(m))
+        .map((m) => ({
+          ModSN: String(m.ModSN ?? ""),
+          ModName: String(m.ModName ?? m.ModSN ?? ""),
+          VerFW: Number(m.VerFW) || 0,
+          ModIFace: typeof m.ModIFace === "number" ? m.ModIFace : undefined,
+          Progress: typeof m.Progress === "number" ? m.Progress : undefined,
+          self: m.ModSN === selfSN,
+        })),
     )
   }
 

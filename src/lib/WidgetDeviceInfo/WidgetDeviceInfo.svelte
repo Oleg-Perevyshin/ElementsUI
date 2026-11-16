@@ -6,7 +6,7 @@
   import { twMerge } from "tailwind-merge"
   import * as UI from ".."
   import type { IWidgetDeviceInfoConfig, IWidgetDeviceInfoProps } from "../types"
-  import { DEVICE_INFO_DEFAULT_FIELDS } from "../gui"
+  import { DEVICE_INFO_DEFAULT_FIELDS, VARIABLE_KEY_REGEXP } from "../gui"
   import CpuIcon from "./CpuIcon.svelte"
   import RestartIcon from "./RestartIcon.svelte"
   import WidgetHeader from "../WidgetHeader.svelte"
@@ -45,6 +45,7 @@
     DevFW: 0,
     RunCnt: 0,
     DevName: "",
+    BindKey: "",
     HostName: "",
     WebUser: "",
     WebPsw: "",
@@ -90,7 +91,7 @@
   const shown = $derived(new Set(show ?? DEVICE_INFO_DEFAULT_FIELDS))
   const idFields = $derived((["DevID", "DevBusID", "DevFW", "RunCnt"] as const).filter((field) => shown.has(field)))
   const hasReadonly = $derived(shown.has("DevSN") || idFields.length > 0 || shown.has("StaIP") || shown.has("ApIP"))
-  const hasEditable = $derived((["DevName", "HostName", "WebUser", "WebPsw", "SCLL"] as const).some((field) => shown.has(field)))
+  const hasEditable = $derived((["DevName", "BindKey", "HostName", "WebUser", "WebPsw", "SCLL"] as const).some((field) => shown.has(field)))
   const nameMissing = $derived(shown.has("DevName") && !String(info.DevName ?? "").trim())
   /* Адрес на шине - 4 знака HEX, как в журнале терминала */
   const busId = $derived(info.DevBusID ? Number(info.DevBusID).toString(16).toUpperCase().padStart(4, "0") : "")
@@ -200,6 +201,19 @@
                   maxlength={15}
                   help={{ regExp: DEV_NAME_REGEXP }}
                   onUpdate={(input) => (info.DevName = onlyDevNameChars(input))}
+                />
+              </div>
+            {/if}
+            {#if shown.has("BindKey")}
+              <!-- Ключ привязки: метка роли модуля вида ГРУППА.Роль, пустой - модуль ни к чему не привязан; 15 символов вместе с группой до 4, как ключ переменной (буфер прошивки 16 с \0) -->
+              <div use:hint={{ text: $T("widget.info.hint.bind_key"), enabled: $hints }}>
+                <UI.Input
+                  label={{ name: $T("widget.info.bind_key") }}
+                  bind:value={info.BindKey}
+                  readonly={readOnly}
+                  maxlength={15}
+                  help={{ regExp: VARIABLE_KEY_REGEXP }}
+                  onUpdate={(input) => (info.BindKey = onlyDevNameChars(input))}
                 />
               </div>
             {/if}

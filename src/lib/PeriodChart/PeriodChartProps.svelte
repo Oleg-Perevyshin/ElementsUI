@@ -12,6 +12,7 @@
   import PropsGroup from "../PropsGroup.svelte"
   import PropsListHeader from "../PropsListHeader.svelte"
   import PropsListModal from "../PropsListModal.svelte"
+  import { KEY_MAX_LEN } from "../gui"
 
   const {
     component,
@@ -85,7 +86,13 @@
                 <span class="font-semibold">{$T("constructor.props.periodchart.item", { n: index + 1 })}</span>
                 <span class="truncate text-(--muted-color)">{localizeText(level.name, $Language) || $T("constructor.props.tabs.untitled")}</span>
               </div>
-              <UI.Select type="input" options={VARIABLE_OPTIONS} value={level.variable} onUpdate={(variable) => updateLevel(index, { variable })} />
+              <UI.Select
+                type="input"
+                maxlength={KEY_MAX_LEN}
+                options={VARIABLE_OPTIONS}
+                value={level.variable}
+                onUpdate={(variable) => updateLevel(index, { variable })}
+              />
               <UI.Input value={level.data.join(", ")} onUpdate={(value) => updateLevel(index, { data: parseNumbers(String(value)) })} />
               <UI.Input value={(level.labels ?? []).join(", ")} onUpdate={(value) => updateLevel(index, { labels: parseList(String(value)) })} />
               <!-- Пустое поле - предел снят: числовое поле не сообщает пустое значение через onUpdate, его ловит onInput -->

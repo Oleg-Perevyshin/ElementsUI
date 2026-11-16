@@ -7,6 +7,7 @@
   import { createPropsEditor, type PropertyChange } from "../propsEditor"
   import PropsGroup from "../PropsGroup.svelte"
   import CommonSnippets from "../CommonSnippets.svelte"
+  import { WIDGET_FIELDS, groupRegExp, prefixMaxLen } from "../gui"
 
   const {
     component,
@@ -17,6 +18,8 @@
   } = $props()
 
   const edit = $derived(createPropsEditor(component, onPropertyChange))
+  /* Полный ключ «группа.поле» до 15 символов: группа ограничена самым длинным полем */
+  const PREFIX_MAX = prefixMaxLen(Object.keys(WIDGET_FIELDS.WidgetRGBStrip))
 </script>
 
 <div class="flex flex-col gap-2">
@@ -24,7 +27,8 @@
     <TextsEditor {component} {onPropertyChange} />
     <UI.Input
       label={{ name: $T("widget.rgb.group") }}
-      help={{ info: $T("widget.rgb.group.info") }}
+      maxlength={PREFIX_MAX}
+      help={{ info: $T("widget.rgb.group.info"), regExp: groupRegExp(PREFIX_MAX) }}
       value={component.properties.id ?? "LST"}
       onUpdate={(value) => edit.set("id", value as string)}
     />

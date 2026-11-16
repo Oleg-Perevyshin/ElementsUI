@@ -8,6 +8,7 @@
   import PropsGroup from "../PropsGroup.svelte"
   import ArgumentSelect from "../ArgumentSelect.svelte"
   import CommonSnippets from "../CommonSnippets.svelte"
+  import { KEY_MAX_LEN, keyRegExp } from "../gui"
 
   const {
     component,
@@ -46,7 +47,8 @@
   <PropsGroup label={$T("widget.common.device")}>
     <UI.Input
       label={{ name: $T("widget.stack.response") }}
-      help={{ info: $T("widget.stack.response.info") }}
+      maxlength={KEY_MAX_LEN}
+      help={{ info: $T("widget.stack.response.info"), regExp: keyRegExp(KEY_MAX_LEN, 1) }}
       value={component.properties.keys?.StackInfo ?? "SystemStackInfo"}
       onUpdate={(value) => edit.patch("keys", { StackInfo: value as string })}
     />

@@ -7,6 +7,7 @@
   import { createPropsEditor, type PropertyChange } from "../propsEditor"
   import PropsGroup from "../PropsGroup.svelte"
   import CommonSnippets from "../CommonSnippets.svelte"
+  import { WIDGET_FIELDS, groupRegExp, prefixMaxLen } from "../gui"
   import { twMerge } from "tailwind-merge"
 
   const {
@@ -18,6 +19,8 @@
   } = $props()
 
   const edit = $derived(createPropsEditor(component, onPropertyChange))
+  /* Полный ключ «группа.поле» до 15 символов: группа ограничена самым длинным полем */
+  const PREFIX_MAX = prefixMaxLen(Object.keys(WIDGET_FIELDS.WidgetPFD))
 
   /* Пустое поле - граница не задана (зона не рисуется) */
   const setLimit = (key: keyof IWidgetPFDLimits, raw: unknown) => {
@@ -45,7 +48,8 @@
       <TextsEditor {component} {onPropertyChange} />
       <UI.Input
         label={{ name: $T("pfd.props.group") }}
-        help={{ info: $T("pfd.props.group.info") }}
+        maxlength={PREFIX_MAX}
+        help={{ info: $T("pfd.props.group.info"), regExp: groupRegExp(PREFIX_MAX) }}
         value={component.properties.id ?? "MAV"}
         onUpdate={(value) => edit.set("id", value as string)}
       />

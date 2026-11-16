@@ -5,6 +5,8 @@ export { bytesToBase64, base64ToBytes } from "./cbor/base64.js"
 export { cborToValue, valueToCbor } from "./cbor/value.js"
 /* Контрольная сумма и пакет poe_cbor_pkt [[TrgBusID, SrcBusID, HAR, Payload, CRC16], …] - все шины и консоль */
 export { crc16Kermit, crc32 } from "./crc.js"
+/* Список модулей изделия: соседи по SSDP в состав не входят */
+export { MOD_IFACE_NEIGHBOR, isNeighborModule } from "./modList.js"
 export {
   BUS_ID_REGEXP,
   parseBusId,
