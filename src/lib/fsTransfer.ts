@@ -1,4 +1,4 @@
-/* $lib/fsTransfer.ts - обмен файлами с устройством по SET/GET FS (file_system прошивки): закачка, скачивание, список, удаление. Транспорт - у приложения (send, waitFor), операции идут строго по одной */
+/* $lib/fsTransfer.ts - обмен файлами с устройством по SET/GET SystemFileSystem (file_system прошивки): закачка, скачивание, список, удаление. Транспорт - у приложения (send, waitFor), операции идут строго по одной */
 import { crc32 } from "./protocols/crc.js"
 import { DEFAULT_DICTIONARY, encodeHar, type Dictionary } from "./protocols/dictionary.js"
 import type { IWidgetFileSystemInfo } from "./types"
@@ -29,7 +29,7 @@ export const sendCommand = (transport: DeviceTransport, header: string, argument
   transport.send(encodeHar(header, argument, reply, transport.dictionary), payload)
 
 export interface FsTransferOptions {
-  /* Аргумент команд (имя или код), по умолчанию "FS" */
+  /* Аргумент команд (имя или код), по умолчанию "SystemFileSystem" */
   argument?: string | number
   /* Ожидание ответа на шаг, мс, по умолчанию 5000 */
   timeoutMs?: number
@@ -85,7 +85,7 @@ const fsState = (payload: Record<string, unknown>) =>
 const queues = new WeakMap<DeviceTransport, Promise<unknown>>()
 
 export const createFsTransfer = (transport: DeviceTransport, options: FsTransferOptions = {}): FsTransfer => {
-  const { argument = "FS", timeoutMs = 5000, retries = 3, maxNameLength = 31 } = options
+  const { argument = "SystemFileSystem", timeoutMs = 5000, retries = 3, maxNameLength = 31 } = options
 
   /* Операции по очереди: у устройства одна сессия закачки и одна скачивания, поэтому очередь общая для всех передач через этот транспорт */
   const exclusive = <R>(run: () => Promise<R>): Promise<R> => {

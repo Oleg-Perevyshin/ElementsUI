@@ -39,7 +39,7 @@
       options: DEMO_OPTIONS,
       value: 1,
     },
-    eventHandler: { Header: "SET", Argument: "ModCfg", Variables: [] },
+    eventHandler: { Header: "SET", Argument: "ModuleConfig", Variables: [] },
     position: { row: 0, col: 0, width: 0, height: 0 },
     parentId: "",
   })

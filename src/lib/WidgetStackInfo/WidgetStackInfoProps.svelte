@@ -47,12 +47,12 @@
     <UI.Input
       label={{ name: $T("widget.stack.response") }}
       help={{ info: $T("widget.stack.response.info") }}
-      value={component.properties.keys?.StackInfo ?? "StackInfo"}
+      value={component.properties.keys?.StackInfo ?? "SystemStackInfo"}
       onUpdate={(value) => edit.patch("keys", { StackInfo: value as string })}
     />
     <ArgumentSelect
       label={$T("widget.stack.request")}
-      value={component.properties.argument ?? "StackInfo"}
+      value={component.properties.argument ?? "SystemStackInfo"}
       onUpdate={(argument) => edit.set("argument", argument)}
     />
   </PropsGroup>

@@ -28,9 +28,9 @@
   const properties = $derived(component.properties)
   const hasName = $derived(!!localizeText(properties.content?.name, DEFAULT_LANGUAGE).trim())
 
-  /* Argument пуст - поле ниже лишь визуально показывает "ModCfg", реальное значение нужно проставить в состояние */
+  /* Argument пуст - поле ниже лишь визуально показывает "ModuleConfig", реальное значение нужно проставить в состояние */
   $effect(() => {
-    if (!component.eventHandler?.Argument) onPropertyChange({ eventHandler: { Argument: "ModCfg" } })
+    if (!component.eventHandler?.Argument) onPropertyChange({ eventHandler: { Argument: "ModuleConfig" } })
   })
 
   /* Один выбор цвета: серый - secondary (поверхность с контуром), цвет - primary этого цвета, повторное нажатие на выбранный - plain (без фона) */
@@ -66,10 +66,10 @@
       options={$optionsStore.HEADER_OPTIONS}
       onUpdate={(Header) => onPropertyChange({ eventHandler: { Header } })}
     />
-    <ArgumentSelect value={component.eventHandler?.Argument || "ModCfg"} onUpdate={(Argument) => onPropertyChange({ eventHandler: { Argument } })} />
+    <ArgumentSelect value={component.eventHandler?.Argument || "ModuleConfig"} onUpdate={(Argument) => onPropertyChange({ eventHandler: { Argument } })} />
   </PropsGroup>
   <PropsGroup label={$T("constructor.props.group.value")}>
-    {#if component.eventHandler?.Argument !== "ModCfg" || component.eventHandler?.Header === "SET"}
+    {#if component.eventHandler?.Argument !== "ModuleConfig" || component.eventHandler?.Header === "SET"}
       <UI.Input
         label={{ name: $T("constructor.props.value") }}
         value={component.eventHandler?.Value}

@@ -193,8 +193,8 @@ interface DeviceReply {
 ```
 
 - `get` читает реактивное хранилище (`SvelteMap`), тогда рендерер обновляется сам.
-- Ответы устройства приложение кладёт в хранилище функцией `mergeDevicePayload(values, "<ModSN>|", argument, Payload)`: объект пишется целиком и по полям `имя-поле`, ход закачки `CFG.FS` дописывается к снимку, служебные поля `SET FS` пропускаются. `argument` - имя из разобранного конверта (`decodeWsEnvelope`).
-- Отправка `SET Restart` и `SET RstNVS` идёт через `link.send`, приложение узнаёт их по `HAR` (`encodeHar("SET", "Restart")`) и может показать состояние перезагрузки.
+- Ответы устройства приложение кладёт в хранилище функцией `mergeDevicePayload(values, "<ModSN>|", argument, Payload)`: объект пишется целиком и по полям `имя-поле`, ход закачки `CFG.FS` дописывается к снимку, служебные поля `SET SystemFileSystem` пропускаются. `argument` - имя из разобранного конверта (`decodeWsEnvelope`).
+- Отправка `SET SystemRestart` и `SET SystemResetStorage` идёт через `link.send`, приложение узнаёт их по `HAR` (`encodeHar("SET", "Restart")`) и может показать состояние перезагрузки.
 - Имя аргумента не из словаря рендерер не отправляет и сообщает через `onError`.
 
 </details>
@@ -202,7 +202,7 @@ interface DeviceReply {
 <details>
 <summary>🔢 Команды в провод: HAR</summary>
 
-В `eventHandler` команда записана именами (`SET`, `ModCfg`) - это справка автора GUI. В `link.send` рендерер отдаёт уже число `HAR` (заголовок, код из словаря, флаг ответа), а ответ ждёт по коду аргумента. Конверт WebSocket `{HAR, VAL}` собирает приложение. Подробно - раздел «WebSocket» в [PROTOCOL.md](src/lib/protocols/PROTOCOL.md).
+В `eventHandler` команда записана именами (`SET`, `ModuleConfig`) - это справка автора GUI. В `link.send` рендерер отдаёт уже число `HAR` (заголовок, код из словаря, флаг ответа), а ответ ждёт по коду аргумента. Конверт WebSocket `{HAR, VAL}` собирает приложение. Подробно - раздел «WebSocket» в [PROTOCOL.md](src/lib/protocols/PROTOCOL.md).
 
 - Свою команду по именам приложение шлёт так же: `sendCommand(link, header, argument, payload)` (аргумент - имя или код), код для ожидания - `argumentCode(link, argument)`.
 - Входящий конверт разберите `decodeWsEnvelope(packet)`: получите `{ header, argument, code, reply, VAL }`. По `code` будите `waitFor`, по `argument` зовите `mergeDevicePayload`.
@@ -246,7 +246,7 @@ const bridge = UI.createBusBridge(channel, {
 - `channel` - `{ send(trgId, har, payload), listen(handler) }`: отправка пакета адресату по BusID и подписка на принятые пакеты `{ trgId, srcId, header, argument, code, payload }`.
 - Модули - из `CFG.ModList` модуля порта, как в вебе. Списка нет (датчик) - модуль один, его серийный номер мост берёт из `CFG.DevSN`. Список модулей принимается только от модуля порта: у модулей за ним свой ModList из одного себя.
 - Адрес команды: модулю порта - `selfTarget`, остальным - их BusID (`busIdFromSN`: HEX после `:` в ModSN), головной модуль пересылает сам.
-- Значения: Payload ответов и рассылок `Update`, `DataStream`, `ModCfg`, `FS`, `ModInfo`, `APsList`, `StackInfo` - в `values` под ModSN отправителя.
+- Значения: Payload ответов и рассылок `SystemDataUpdate`, `SystemDataStream`, `ModuleConfig`, `SystemFileSystem`, `ModuleInfo`, `NetworkAccessPoints`, `SystemStackInfo` - в `values` под ModSN отправителя.
 - Сообщения: консоль шлёт `Message` отдельным `DebugLog` («HAR 0x....», «MSG код аргументы») прямо перед ответом. Мост склеивает их обратно: `waitFor` получает `reply.message`, как в вебе, а `onMessage` - текст на языке пользователя и уровень.
 - `bridge.link(ModSN)` - одна связь на модуль (на неё завязана очередь передачи файлов), `bridge.modules()`, `bridge.self()`, `bridge.dispose()`.
 
@@ -270,7 +270,7 @@ const bridge = UI.createBusBridge(channel, {
 | `tablePacket(eventHandler, row)`                        | пакет кнопки строки таблицы: `Variables` из строки, у списка поле без `-S`                        |
 | `readBits` / `writeBits` / `bitRange`                   | битовое поле `Input` (`type: "bitMode"`) и `Select` (`bitMode`)                                   |
 | `readWidgetFields(get, prefix, fields, keys)`           | значения полей смарт-виджета                                                                      |
-| `widgetPacket(prefix, fields, values, keys)`            | Payload `SET ModCfg` виджета                                                                      |
+| `widgetPacket(prefix, fields, values, keys)`            | Payload `SET ModuleConfig` виджета                                                                |
 | `WIDGET_FIELDS`, `WIDGET_SAVE_FIELDS`, `widgetPrefixes` | поля смарт-виджетов (из них выведены `IWidgetWiFiConfig` и остальные), сохраняемые поля, группы   |
 | `GUI_GRID`, `spanRows`, `isWidgetType`                  | сетка                                                                                             |
 | `guiTypes`                                              | типы компонентов в GUI - из них приложение собирает `views` рендерера                             |
@@ -289,7 +289,7 @@ const bridge = UI.createBusBridge(channel, {
 <details>
 <summary>📁 Обмен файлами</summary>
 
-`createFsTransfer(transport, { argument = "FS", timeoutMs = 5000, retries = 3, maxNameLength = 31 })` - обмен файлами по `SET FS` прошивки. `transport` - тот же `DeviceLink` (`send(har, payload)`, `waitFor(code, ...)`), `argument` - имя или код; имя не из словаря - отказ без отправки. `maxNameLength` - предел имени в байтах UTF-8 (буква кириллицы - 2 байта). Слишком длинное или пустое имя `upload` отвергает ещё до `UploadStart` ошибкой `FsNameError` (поле `maxBytes`). Это единственная проверка имени: `GUIRenderer` передаёт сюда `maxNameLength` из свойств `WidgetFileSystem`, сам виджет имя не проверяет и только переводит сообщение.
+`createFsTransfer(transport, { argument = "SystemFileSystem", timeoutMs = 5000, retries = 3, maxNameLength = 31 })` - обмен файлами по `SET SystemFileSystem` прошивки. `transport` - тот же `DeviceLink` (`send(har, payload)`, `waitFor(code, ...)`), `argument` - имя или код; имя не из словаря - отказ без отправки. `maxNameLength` - предел имени в байтах UTF-8 (буква кириллицы - 2 байта). Слишком длинное или пустое имя `upload` отвергает ещё до `UploadStart` ошибкой `FsNameError` (поле `maxBytes`). Это единственная проверка имени: `GUIRenderer` передаёт сюда `maxNameLength` из свойств `WidgetFileSystem`, сам виджет имя не проверяет и только переводит сообщение.
 
 <details>
 <summary>Ошибки передачи</summary>
@@ -357,7 +357,7 @@ const bridge = UI.createBusBridge(channel, {
 
 ## 📚 Словари команд и сообщений
 
-Все команды (`GET`, `SET`, `ModCfg`, `Restart` и остальные) и тексты событий устройств («Файл удалён», «Прошивка обновлена») записаны в двух файлах папки `src/lib/dictionaries/`: `poe_cmd.yaml` и `poe_msg.yaml`. Это единственный источник для прошивок, облака, терминала и веб-интерфейса. Новую команду или сообщение сначала добавляют сюда, потом копируют в оба фреймворка прошивок.
+Все команды (`GET`, `SET`, `ModuleConfig`, `SystemRestart` и остальные) и тексты событий устройств («Файл удалён», «Прошивка обновлена») записаны в двух файлах папки `src/lib/dictionaries/`: `poe_cmd.yaml` и `poe_msg.yaml`. Это единственный источник для прошивок, облака, терминала и веб-интерфейса. Новую команду или сообщение сначала добавляют сюда, потом копируют в оба фреймворка прошивок.
 
 - 📖 Коды команд 0-4095 - команды устройств, 7000-7999 - команды самого облака DevCloud (чаты, журнал, состояние устройств).
 - 💬 Устройство шлёт только код сообщения и параметры, текст на языке пользователя собирает `formatDeviceMessage(code, args?, lang?)` из `poe-svelte-ui-lib/protocols`. Сообщения разбиты на группы со своими диапазонами кодов: `SYS` 1-99, `CFG` 100-199, `FS` 200-299, `FW` 300-399, `WIFI` 400-499, `API` 500-599, `BUS` 600-699, `NET` 700-799, `LORA` 800-899, `DEV` 1000-1999, `DRV` 2000-2999 (900-999 и 3000+ - резерв).

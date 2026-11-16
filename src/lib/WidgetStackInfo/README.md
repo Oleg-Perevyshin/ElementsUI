@@ -33,7 +33,7 @@
 <details>
 <summary>📦 Данные устройства</summary>
 
-- Работает с объектом `StackInfo` из ответа на `GET StackInfo`. Объект лежит в `Payload` ответа, а не в группе `CFG`, поэтому префикса группы у виджета нет.
+- Работает с объектом `SystemStackInfo` из ответа на `GET SystemStackInfo`. Объект лежит в `Payload` ответа, а не в группе `CFG`, поэтому префикса группы у виджета нет.
 - Запрос отправляется кнопкой «Обновить» или автоопросом. Сам виджет только вызывает `onRefresh`.
 
 </details>
@@ -98,7 +98,7 @@ StackInfo:
 | `id`             | `string`           |               | Не используется: префикса группы у виджета нет                                 |
 | `keys.StackInfo` | `string`           | `"StackInfo"` | Имя объекта в ответе                                                           |
 | `argument`       | `string`           | `"StackInfo"` | Аргумент запроса                                                               |
-| `value`          | `IWidgetStackInfo` |               | Снимок `StackInfo`                                                             |
+| `value`          | `IWidgetStackInfo` |               | Снимок `SystemStackInfo`                                                       |
 | `label.name`     | `string`           |               | Заголовок. Пусто - «Стек и задачи» на языке пользователя                       |
 | `wrapperClass`   | `string`           | `""`          | Классы обёртки                                                                 |
 | `accent`         | `AccentColor`      |               | Мастер-цвет                                                                    |

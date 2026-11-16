@@ -46,7 +46,15 @@ export interface BusBridgeOptions {
 }
 
 /* Аргументы, чей Payload ложится в значения - как в вебе (README протокола: Update, DataStream и др.) */
-const DATA_ARGUMENTS = new Set(["Update", "DataStream", "ModCfg", "FS", "ModInfo", "APsList", "StackInfo"])
+const DATA_ARGUMENTS = new Set([
+  "SystemDataUpdate",
+  "SystemDataStream",
+  "ModuleConfig",
+  "SystemFileSystem",
+  "ModuleInfo",
+  "NetworkAccessPoints",
+  "SystemStackInfo",
+])
 /* Сообщение консоли приходит пакетом DebugLog прямо перед своим ответом - склеиваются в этом окне, мс */
 const MESSAGE_WINDOW_MS = 500
 
@@ -94,7 +102,7 @@ export const createBusBridge = (channel: BusChannel, options: BusBridgeOptions) 
   /* Свой серийный номер из ответа модуля консоли: CFG.DevSN или ModSN в ModInfo */
   const learnSelf = (packet: BusPacket) => {
     if (!isRecord(packet.payload)) return
-    const sn = packet.payload["CFG.DevSN"] ?? (packet.argument === "ModInfo" ? packet.payload.ModSN : undefined)
+    const sn = packet.payload["CFG.DevSN"] ?? (packet.argument === "ModuleInfo" ? packet.payload.ModSN : undefined)
     if (selfSN || typeof sn !== "string" || busIdFromSN(sn) !== packet.srcId) return
     selfSN = sn
     if (!modules.some((m) => m.self)) {

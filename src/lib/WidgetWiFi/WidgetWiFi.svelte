@@ -69,7 +69,7 @@
   /* WPA2: пусто (открытая сеть) либо 8-63 символа - так же ограничивает сам чип */
   const PSK_REGEXP = /^$|^.{8,63}$/
 
-  /* Сканирование сетей - на стороне вызывающего (в проде вызывает Header: GET, Argument: APsList) */
+  /* Сканирование сетей - на стороне вызывающего (в проде вызывает Header: GET, Argument: NetworkAccessPoints) */
   let scanning = $state(false)
   let foundNetworks: IOption<string>[] = $state([])
   const scanNetworks = async () => {

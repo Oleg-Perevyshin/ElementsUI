@@ -35,10 +35,10 @@
 <summary>📦 Данные устройства</summary>
 
 - Виджет работает с одним объектом `CFG.FS`. Префикс группы (`CFG`) и имя поля (`FS`) меняются в настройках.
-- «Обновить» отправляет `GET FS`.
-- «Удалить» после подтверждения отправляет `SET FS` с `Op: Delete`.
-- Закачка: `SET FS` с `Op` по очереди `UploadStart`, `UploadChunk`, `UploadDone`.
-- Скачивание: `SET FS` с `Op` по очереди `DownloadStart`, `DownloadChunk`, `DownloadDone`.
+- «Обновить» отправляет `GET SystemFileSystem`.
+- «Удалить» после подтверждения отправляет `SET SystemFileSystem` с `Op: Delete`.
+- Закачка: `SET SystemFileSystem` с `Op` по очереди `UploadStart`, `UploadChunk`, `UploadDone`.
+- Скачивание: `SET SystemFileSystem` с `Op` по очереди `DownloadStart`, `DownloadChunk`, `DownloadDone`.
 - Сам виджет протоколы закачки и скачивания не ведёт: он только отдаёт приложению выбранный файл или имя и ждёт завершения.
 
 </details>
@@ -69,19 +69,19 @@ CFG.FS:
   Upload: { Name: "fw.bin", Size: 917504, Progress: 35 }
 ```
 
-Полный снимок со списком файлов приходит на `GET ModCfg`, `GET FS`, после удаления, после конца или ошибки закачки и в рассылке `OK! Update`. Во время закачки раз в 5% приходит только `{Upload: {...}}` без списка. Снимок со списком заменяет состояние целиком.
+Полный снимок со списком файлов приходит на `GET ModuleConfig`, `GET SystemFileSystem`, после удаления, после конца или ошибки закачки и в рассылке `OK! SystemDataUpdate`. Во время закачки раз в 5% приходит только `{Upload: {...}}` без списка. Снимок со списком заменяет состояние целиком.
 
-Все команды идут с аргументом `FS`, операция в поле `Op`. Ответ тоже `FS` с тем же `Op`.
+Все команды идут с аргументом `SystemFileSystem`, операция в поле `Op`. Ответ тоже `SystemFileSystem` с тем же `Op`.
 
-| Запрос                                                                     | Ответ                                                     |
-| -------------------------------------------------------------------------- | --------------------------------------------------------- |
-| `GET FS`                                                                   | Снимок `CFG.FS`                                           |
-| `SET FS {Op: "Delete", Name: "/storage/a.bin"}`                            | `Op` и снимок                                             |
-| `SET FS {Op: "UploadStart", FileName, FileExtension, FileSize, CurrentID}` | `Op`, `CurrentID`, `ChunkSize`, `CFG.FS.Upload`           |
-| `SET FS {Op: "UploadChunk", ChunkIndex, Data, CurrentID}`                  | `Op`, `ChunkIndex`, `CurrentID`, раз в 5% `CFG.FS.Upload` |
-| `SET FS {Op: "UploadDone", CRC32, CurrentID}`                              | `Op`, `CurrentID`, снимок                                 |
+| Запрос                                                                                   | Ответ                                                     |
+| ---------------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| `GET SystemFileSystem`                                                                   | Снимок `CFG.FS`                                           |
+| `SET SystemFileSystem {Op: "Delete", Name: "/storage/a.bin"}`                            | `Op` и снимок                                             |
+| `SET SystemFileSystem {Op: "UploadStart", FileName, FileExtension, FileSize, CurrentID}` | `Op`, `CurrentID`, `ChunkSize`, `CFG.FS.Upload`           |
+| `SET SystemFileSystem {Op: "UploadChunk", ChunkIndex, Data, CurrentID}`                  | `Op`, `ChunkIndex`, `CurrentID`, раз в 5% `CFG.FS.Upload` |
+| `SET SystemFileSystem {Op: "UploadDone", CRC32, CurrentID}`                              | `Op`, `CurrentID`, снимок                                 |
 
-Ошибка приходит как `ER! FS` с тем же `Op`, у закачки ещё и с `CurrentID`. Ошибка закачки несёт снимок.
+Ошибка приходит как `ER! SystemFileSystem` с тем же `Op`, у закачки ещё и с `CurrentID`. Ошибка закачки несёт снимок.
 
 </details>
 

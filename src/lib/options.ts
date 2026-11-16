@@ -23,7 +23,7 @@ export const optionsStore = derived(T, ($T) => {
     /* Поля eventHandler - строки */
     HEADER_OPTIONS: ["GET", "SET", "OK!", "ER!"].map((header) => opt<string>(header, header)),
 
-    SHORT_ARGUMENT_OPTION: [opt<string>("ModCfg", $T("constructor.props.action.save")), opt<string>("NoSend", $T("constructor.props.action.nosend"))],
+    SHORT_ARGUMENT_OPTION: [opt<string>("ModuleConfig", $T("constructor.props.action.save")), opt<string>("NoSend", $T("constructor.props.action.nosend"))],
 
     ACCESS_OPTION: [
       opt("full", $T("constructor.props.type.full")),

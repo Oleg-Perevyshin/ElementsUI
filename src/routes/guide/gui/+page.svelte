@@ -18,9 +18,9 @@
       c.id = `sample-${type}-${row}-${col}`
       Object.assign(c.properties as Record<string, unknown>, patch)
       c.position.width = width
-      /* Команда как из конструктора: SET ModCfg со своей переменной */
+      /* Команда как из конструктора: SET ModuleConfig со своей переменной */
       const id = (c.properties as { id?: string }).id
-      if (id?.includes(".")) c.eventHandler = { Header: "SET", Argument: "ModCfg", Variables: [id] }
+      if (id?.includes(".")) c.eventHandler = { Header: "SET", Argument: "ModuleConfig", Variables: [id] }
       list.push(c as UIComponent)
       if (newRow) row += c.position.height
     }
@@ -35,7 +35,7 @@
     add("Switch", 17, { id: "APP.Relay", label: { name: $T("library.gui_sample_relay") } }, true)
     add("Slider", 1, { id: "APP.Level", label: { name: $T("library.gui_sample_level") }, number: { minNum: 0, maxNum: 100, step: 5 } }, false, 15)
     add("Button", 17, { content: { name: $T("library.gui_sample_restart") } }, true)
-    list[list.length - 1].eventHandler = { Header: "SET", Argument: "Restart", Variables: [] }
+    list[list.length - 1].eventHandler = { Header: "SET", Argument: "SystemRestart", Variables: [] }
     /* Графики: настройки (пределы шкалы, замок, развёртка) запоминаются в браузере по persistKey */
     add("Graph", 1, { label: { name: $T("library.gui_sample_graph") }, isTest: true }, true, 23)
     add(

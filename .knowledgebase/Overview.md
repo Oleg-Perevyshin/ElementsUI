@@ -147,7 +147,7 @@ ElementsUI/
 │     ├─ guiViews.ts       GUI_VIEWS: компоненты отрисовки всех типов; GUIRenderer берёт их из пропса views
 │     ├─ defaults.ts       свойства и размеры новых компонентов, createComponent
 │     ├─ propsEditor.ts    неизменяемая правка свойств из панелей
-│     ├─ fsTransfer.ts     обмен файлами по SET/GET FS
+│     ├─ fsTransfer.ts     обмен файлами по SET/GET SystemFileSystem
 │     ├─ types.ts          все интерфейсы пропсов, UIComponent
 │     ├─ icons.ts          СГЕНЕРИРОВАН из assets/IconsCatalog
 │     └─ html.ts, accent.ts, bitField.ts, themeWatch.ts, hints.ts, ring.ts, ...  общие утилиты
@@ -215,7 +215,7 @@ ElementsUI/
 6. Рендерер переводит имена команды в число `HAR` по словарю (`sendCommand`) и отдаёт его в `link.send(har, payload)`. Приложение заворачивает его в WebSocket-конверт `{HAR, VAL: {DevSN, ModSN, Payload}}`, устройство отвечает `OK!`/`ER!`. Входящий конверт приложение разбирает `decodeWsEnvelope` в `{ header, argument, code, reply, VAL }`.
 7. Приложение кладёт ответ в реактивное хранилище (`SvelteMap`) функцией `mergeDevicePayload(values, "<ModSN>|", argument, Payload)` (`argument` - имя из разобранного конверта). `get` читает это хранилище, рендерер обновляется сам.
 
-Смарт-виджеты работают с группой полей по префиксу (`CFG`, `LST`, `MAV`): читают `readWidgetFields`, сохраняют одним `SET ModCfg` из `widgetPacket` (только поля из `WIDGET_SAVE_FIELDS`). Поиск сетей - `GET APsList` с ожиданием ответа 3000 мс, перезагрузка - `SET Restart`, сброс - `SET RstNVS`, обновление снимков - `GET FS` и `GET StackInfo`. Файлы `WidgetFileSystem` и `FileAttach` рендерер ведёт сам через `createFsTransfer(link)`.
+Смарт-виджеты работают с группой полей по префиксу (`CFG`, `LST`, `MAV`): читают `readWidgetFields`, сохраняют одним `SET ModuleConfig` из `widgetPacket` (только поля из `WIDGET_SAVE_FIELDS`). Поиск сетей - `GET NetworkAccessPoints` с ожиданием ответа 3000 мс, перезагрузка - `SET SystemRestart`, сброс - `SET SystemResetStorage`, обновление снимков - `GET SystemFileSystem` и `GET SystemStackInfo`. Файлы `WidgetFileSystem` и `FileAttach` рендерер ведёт сам через `createFsTransfer(link)`.
 
 </details>
 
@@ -241,7 +241,7 @@ ElementsUI/
 | `registry.ts`                             | `COMPONENTS[type] = { view, io, fields? }` для конструктора; `COMPONENT_META` и `componentVariables` - в `componentMeta.ts`, без компонентов                                                      |
 | `defaults.ts`                             | `COMPONENT_DEFAULTS`, `COMPONENT_SIZES`, `minComponentWidth`, `createComponent`                                                                                                                   |
 | `propsEditor.ts`                          | `createPropsEditor` (`set`, `patch`, `addItem`, `updateItem`, `removeItem`), `applyPropertyChange`                                                                                                |
-| `fsTransfer.ts`                           | Файлы по `SET FS`: чанки, повторы, CRC-32, общая очередь операций на транспорт                                                                                                                    |
+| `fsTransfer.ts`                           | Файлы по `SET SystemFileSystem`: чанки, повторы, CRC-32, общая очередь операций на транспорт                                                                                                      |
 | `protocols/`                              | CBOR, пакет, HAR, CRC, словарь, xPOE-Debug, CAN, графики отладки, `formatDeviceMessage`                                                                                                           |
 | `dictionaries/`                           | Мастер-словари команд и сообщений, сгенерированный TS и заголовки прошивок                                                                                                                        |
 | `locales/`                                | Список языков, переводчик `$T`, многоязычные тексты GUI                                                                                                                                           |
@@ -263,7 +263,7 @@ ElementsUI/
 - 🌉 **Рендерер связан с приложением через `DeviceLink`:** читать значение, записать, отправить команду, дождаться ответа.
 - 📦 **Пакет по проводу - `poe_cbor_pkt`:** адрес получателя и отправителя, заголовок с командой, тело и CRC.
 - 📖 **Команда в проводе - число `HAR`** (заголовок, код из словаря `poe_cmd.yaml`, флаг ответа) и на шине, и в WebSocket-конверте `{HAR, VAL}`. Имена - только для людей.
-- 📁 **Файлы передаются командой `SET FS`** по кускам с повторами и проверкой CRC-32.
+- 📁 **Файлы передаются командой `SET SystemFileSystem`** по кускам с повторами и проверкой CRC-32.
 
 <details>
 <summary>🧾 Компонент GUI (`UIComponent`)</summary>
@@ -276,7 +276,7 @@ ElementsUI/
 | `position`     | `{ row, col, width, height }`                | Клетки сетки 23 колонки                                                                        |
 | `parentId`     | string                                       | Родитель-контейнер, `""` - корень                                                              |
 | `access`       | `full` / `viewOnly` / `hidden`               | В режиме `viewer` видны только `full` и `viewOnly`                                             |
-| `eventHandler` | `{ Header?, Argument?, Value?, Variables? }` | Команда компонента; по умолчанию `SET ModCfg`, у `Input` - `NoSend`                            |
+| `eventHandler` | `{ Header?, Argument?, Value?, Variables? }` | Команда компонента; по умолчанию `SET ModuleConfig`, у `Input` - `NoSend`                      |
 
 </details>
 
@@ -304,7 +304,7 @@ ElementsUI/
 | `WidgetDeviceInfo` | `CFG`                | `DevSN`, `DevID`, `DevFW`, `RunCnt`, `DevName`, `HostName`, `WebUser`, `WebPsw`, `StaIP`, `ApIP`                             | `DevName`, `HostName`, `WebUser`, `WebPsw`   |
 | `WidgetLoRa`       | `LORA`               | ключи из `params` (шаблон HT_CT62 - одно слово `Cfg`)                                                                        | те же ключи, свои биты поверх текущего слова |
 | `WidgetFileSystem` | `CFG`                | объект `FS` (Total/Used/Free/List, Upload во время закачки)                                                                  | -                                            |
-| `WidgetStackInfo`  | без группы           | объект `StackInfo` (кучи и стеки задач)                                                                                      | -                                            |
+| `WidgetStackInfo`  | без группы           | объект `SystemStackInfo` (кучи и стеки задач)                                                                                | -                                            |
 | `WidgetRGBStrip`   | `LST`                | `Color` [R,G,B,W], `Effect` 0-7, `Speed` 0-10, `Count`, `Model` (WS2812/SK6812/WS2811), `Order`, `MaxCount`                  | `Count`, `Model`, `Order`                    |
 | `WidgetPFD`        | `MAV`                | телеметрия MAVLink: ориентация, скорости, высоты, GPS, батарея, режим, маршрут, связь, сообщения (`Msg`, `MsgSev`, `MsgSeq`) | -                                            |
 | `WidgetMap`        | `groups: ["MAV"]`    | на каждый борт: `Lat`, `Lon`, `Alt`, `Heading`, `Sat`, `DevName`, `DevSN`, `WPNum`                                           | -                                            |
@@ -362,7 +362,7 @@ interface DeviceReply {
 - BusID модуля - CRC-16 его серийного номера, `0x0000` и `0xFFFF` не выдаются.
 - Запись с неверной CRC пропускается, остальные записи пакета принимаются.
 - Разборщики: пауза дольше `gapMs` (по умолчанию 100 мс; у CAN - `sessionTimeoutMs`) сбрасывает недособранное, предел `maxBytes` по умолчанию 8192. Пауза RS485 в прошивке - 20 мс.
-- Пример `GET ModCfg {}` из терминала: `9F 85 00 00 18 49 A0 19 66 06 FF` (HAR `0x0049`, CRC `0x6606`).
+- Пример `GET ModuleConfig {}` из терминала: `9F 85 00 00 18 49 A0 19 66 06 FF` (HAR `0x0049`, CRC `0x6606`).
 
 | Канал                   | Передача                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -372,7 +372,7 @@ interface DeviceReply {
 | UART-консоль xPOE-Debug | Поток вперемешку с текстом загрузчика; логи `OK! DebugLog` `[уровень, тег, текст \| байты, FHS]`, графики `OK! DebugPlot` `{Группа.Имя: float32}`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 | WebSocket               | Конверт `{HAR, VAL}` на всех соединениях (браузер - облако, облако - устройство, WebApp - устройство): `HAR` - то же 16-битное число, что на шине (заголовок, код из словаря, флаг ответа), имён в проводе нет. Запрос `VAL: {DevSN, ModSN?, TrgBusID?, SrcBusID?, Payload?}`, ответ `VAL: {DevSN, ModSN, Message, Args?, Payload}`, `Message` - код из `poe_msg.yaml` (0 - нет сообщения; группы `SYS` 1-99, `CFG` 100-199, `FS` 200-299, `FW` 300-399, `WIFI` 400-499, `DEV` 1000-1999), `Args` - параметры шаблона, текст, уровень и группа - `formatDeviceMessage`. У `ER!` модуля на шине `Payload` - карта `{Message, Args?}`, хаб переносит её в `VAL`; в консоли сообщение - `DebugLog` с тегом `HAR 0x....` и текстом `MSG <код>[ <арг1>[<TAB><арг2>...]]` (`parseDebugLogMessage`). Сборка и разбор - `encodeWsEnvelope`, `decodeWsEnvelope` |
 
-Аутентификация устройства в облаке (TOFU) описана в `PROTOCOL.md`: токен 64 hex-символа, передаётся `Authorization: Bearer`, выдаётся в `SET JoinDev {DevToken}`, неверный токен после подтверждения - закрытие кодом `1008`.
+Аутентификация устройства в облаке (TOFU) описана в `PROTOCOL.md`: токен 64 hex-символа, передаётся `Authorization: Bearer`, выдаётся в `SET CloudJoinDevice {DevToken}`, неверный токен после подтверждения - закрытие кодом `1008`.
 
 </details>
 
@@ -381,35 +381,35 @@ interface DeviceReply {
 
 Строка словаря: `- [Строка, Перечисление, Код]`, код 0..8191 (13 бит). Диапазоны: 0-4095 - команды устройств, 7000-7999 - команды самого облака DevCloud по `/ws` (устройства их не получают), 4096-6999 и 8000-8191 - резерв. Группы кодов:
 
-| Диапазон  | Группа                      | Примеры                                                                                                                                                                                              |
-| --------- | --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 0         | нет аргумента               | `Unknown`                                                                                                                                                                                            |
-| 1-15      | служебные                   | `Restart` 1, `DefCfg` 2, `DlFW` 3, `RstNVS` 5, `LocTime` 6, `Update` 7, `StackInfo` 8, `BackUp` 9, `BindMKey` 10, `DebugLog` 11, `DebugPlot` 12, `DataStream` 15                                     |
-| 21-25     | локальная сеть              | `APsList` 21, `FS` 22, `JoinDev` 23, `JoinUser` 24, `LeaveUser` 25                                                                                                                                   |
-| 31-46     | модули изделия              | `ModFind` 31, `ModList` 32, `ModCap` 33, `ModInfo` 34, `ModMode` 35, `ModCfg` 36, телеметрия `ModT1-5` 37-41, потоки `ModS1-5` 42-46                                                                 |
-| 51-54     | обновление прошивки по шине | `FwUpgS`, `FwUpgP`, `FwUpgD`, `FwUpgE`                                                                                                                                                               |
-| 111-117   | модули перемещения          | `MotInit`, `MotMode`, `MotPos`, `MotPID`, `MotInfo`, `MotCfg`, `MotCal`                                                                                                                              |
-| 141-144   | модули ориентации           | `OrData`, `OrOfs`, `OrAccCal`, `OrMagCal`                                                                                                                                                            |
-| 7000-7011 | облако: чаты                | `ChatMessage` 7000, `ChatMessages`, `SystemMessage`, `EditMessage`, `DeleteMessage`, `UpdateLastRead`, `JoinChat`, `UserConnected`, `ChatUnread`, `ChatPins`, `EditChatGroup`, `RemoveFromChat` 7011 |
-| 7100-7104 | облако: устройства          | `DeviceMessages` 7100, `DeviceConnection` 7101, `LeaveGroup` 7102, `LeaveGroups` 7103, `ResetDevToken` 7104                                                                                          |
+| Диапазон  | Группа                      | Примеры                                                                                                                                                                                                                                                                                      |
+| --------- | --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 0         | нет аргумента               | `Unknown`                                                                                                                                                                                                                                                                                    |
+| 1-15      | служебные                   | `SystemRestart` 1, `SystemDefaultConfig` 2, `FirmwareDownload` 3, `SystemFileSystem` 4, `SystemResetStorage` 5, `SystemLocalTime` 6, `SystemDataUpdate` 7, `SystemStackInfo` 8, `SystemBackup` 9, `ModuleBindKey` 10, `DebugLog` 11, `DebugPlot` 12, `DebugMirror` 13, `SystemDataStream` 15 |
+| 21-25     | локальная сеть              | `NetworkAccessPoints` 21, `CloudJoinDevice` 23, `CloudJoinUser` 24, `CloudLeaveUser` 25                                                                                                                                                                                                      |
+| 31-46     | модули изделия              | `ModuleFind` 31, `ModuleList` 32, `ModuleCapture` 33, `ModuleInfo` 34, `ModuleMode` 35, `ModuleConfig` 36, телеметрия `ModuleTelemetry1-5` 37-41, потоки `ModuleStream1-5` 42-46                                                                                                             |
+| 51-54     | обновление прошивки по шине | `FirmwareUpgradeStart`, `FirmwareUpgradeChunk`, `FirmwareUpgradeDone`, `FirmwareUpgradeError`                                                                                                                                                                                                |
+| 111-119   | модули перемещения          | `MotionInit`, `MotionMode`, `MotionTarget`, `MotionPID`, `MotionInfo`, `MotionConfig`, `MotionCalibrate`, `MotionVelocity` 118, `MotionAngle` 119                                                                                                                                            |
+| 141-145   | модули ориентации           | `OrientationData`, `OrientationOffset`, `OrientationAccelCalibrate`, `OrientationMagCalibrate`, `OrientationGyroscopeCalibrate`                                                                                                                                                              |
+| 7000-7011 | облако: чаты                | `ChatMessage` 7000, `ChatMessages`, `ChatSystemMessage`, `ChatEditMessage`, `ChatDeleteMessage`, `ChatLastRead`, `ChatJoin`, `ChatUserConnected`, `ChatUnread`, `ChatPins`, `ChatEditGroup`, `ChatRemoveUser` 7011                                                                           |
+| 7100-7104 | облако: устройства          | `DeviceMessages` 7100, `DeviceConnection` 7101, `DeviceLeaveGroup` 7102, `DeviceLeaveGroups` 7103, `DeviceResetToken` 7104                                                                                                                                                                   |
 
-Задел: `BackUp`, `BindMKey`, `ModList`, `ModMode`, `ModT2-ModT5`, `FwUpgE`, `OrOfs`, `OrAccCal`, `OrMagCal` есть в словаре, но ни одна прошивка ESP/STM их пока не обрабатывает. Коды закреплены и не меняются, описания в `poe_cmd.yaml` - план, а не текущее поведение. В примерах документации берут команды, которые прошивки реально обрабатывают: `ModCfg`, `ModInfo`, `FS`, `APsList`, `StackInfo`.
+Задел: `SystemBackup`, `ModuleBindKey`, `ModList`, `ModuleMode`, `ModuleTelemetry2-ModuleTelemetry5`, `FirmwareUpgradeError`, `MotionVelocity`, `MotionAngle`, `OrientationOffset`, `OrientationAccelCalibrate`, `OrientationMagCalibrate`, `OrientationGyroscopeCalibrate` есть в словаре, но ни одна прошивка ESP/STM их пока не обрабатывает. Коды закреплены и не меняются, описания в `poe_cmd.yaml` - план, а не текущее поведение. В примерах документации берут команды, которые прошивки реально обрабатывают: `ModuleConfig`, `ModuleInfo`, `SystemFileSystem`, `NetworkAccessPoints`, `SystemStackInfo`.
 
 `scripts/GenerateDictionary.mjs` превращает словарь в `DEFAULT_ARGUMENT_CODES` (`dictionaries/generated/poe_cmd.ts`, не править руками) и падает на повторе имени или кода и на коде больше `0x1FFF`. Словарь конкретного устройства читается `parseArgumentDictionary` и оборачивается `createDictionary(codes)`.
 
 </details>
 
 <details>
-<summary>📁 Обмен файлами (`SET FS`)</summary>
+<summary>📁 Обмен файлами (`SET SystemFileSystem`)</summary>
 
 | Операция              | Шаги `Op`                                                                                                                     |
 | --------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
 | `upload(name, bytes)` | `UploadStart` (`FileName`, `FileExtension`, `FileSize`) -> `UploadChunk` (`ChunkIndex`, `Data`) ... -> `UploadDone` (`CRC32`) |
 | `download(name)`      | `DownloadStart` (`Name`) -> `DownloadChunk` ... -> `DownloadDone`                                                             |
-| `list()`              | `GET FS` без `Op` - снимок                                                                                                    |
-| `remove(name)`        | `SET FS {Op: "Delete", Name}` - снимок после удаления                                                                         |
+| `list()`              | `GET SystemFileSystem` без `Op` - снимок                                                                                      |
+| `remove(name)`        | `SET SystemFileSystem {Op: "Delete", Name}` - снимок после удаления                                                           |
 
-Параметры `createFsTransfer`: `argument = "FS"`, `timeoutMs = 5000`, `retries = 3`, `maxNameLength = 31` (байты UTF-8; длинное или пустое имя - `FsNameError` до `UploadStart`, единственная проверка имени; `GUIRenderer` берёт предел из свойств `WidgetFileSystem`, очередь передач по ключу `аргумент:предел`). Размер чанка задаёт устройство, ответ сверяется по `Op`, `CurrentID` и `ChunkIndex`, чанк после `ER!` или таймаута повторяется. Операции идут строго по одной в очереди, общей для транспорта.
+Параметры `createFsTransfer`: `argument = "SystemFileSystem"`, `timeoutMs = 5000`, `retries = 3`, `maxNameLength = 31` (байты UTF-8; длинное или пустое имя - `FsNameError` до `UploadStart`, единственная проверка имени; `GUIRenderer` берёт предел из свойств `WidgetFileSystem`, очередь передач по ключу `аргумент:предел`). Размер чанка задаёт устройство, ответ сверяется по `Op`, `CurrentID` и `ChunkIndex`, чанк после `ER!` или таймаута повторяется. Операции идут строго по одной в очереди, общей для транспорта.
 
 </details>
 
@@ -665,14 +665,14 @@ interface DeviceReply {
 | Примитив                 | Обычный компонент, привязанный к одной переменной устройства                                                                                                    |
 | Группа полей / префикс   | Часть ключа до точки: `CFG`, `LST`, `MAV` (группы `config_service` прошивки)                                                                                    |
 | `ModSN`, `DevSN`         | Серийный номер модуля и устройства; ключ хранилища `<ModSN>                                                                                                     | <ключ>` |
-| `ModCfg`                 | Команда 36: чтение и запись конфигурации модуля                                                                                                                 |
+| `ModuleConfig`           | Команда 36: чтение и запись конфигурации модуля                                                                                                                 |
 | `NoSend`                 | Аргумент `eventHandler`: значение записывается локально, пакет не отправляется                                                                                  |
 | Битовое поле (`bitMode`) | Режим `Input`/`Select`: компонент читает и пишет биты `range` 32-битного слова                                                                                  |
 | `poe_cbor_pkt`           | Пакет протокола: CBOR-массив записей `[TrgBusID, SrcBusID, HAR, Payload, CRC16]`                                                                                |
 | HAR                      | 16-битное поле: заголовок, команда, флаг ответа                                                                                                                 |
 | BusID                    | Адрес модуля на шине: CRC-16 серийного номера                                                                                                                   |
 | Заголовок                | `GET`, `SET`, `OK!`, `ER!`                                                                                                                                      |
-| Аргумент / команда       | Имя или код из словаря (`ModCfg` = 36)                                                                                                                          |
+| Аргумент / команда       | Имя или код из словаря (`ModuleConfig` = 36)                                                                                                                    |
 | Мастер-словари           | `src/lib/dictionaries/poe_cmd.yaml`, `poe_msg.yaml`; копии в `.framework/poe_cmd.yaml`, `poe_msg.yaml` прошивок                                                 |
 | xPOE-Debug               | UART-консоль устройства как шина: пакеты вперемешку с текстом, логи `DebugLog`, графики `DebugPlot`                                                             |
 | FHS                      | Свободная память устройства в записи `DebugLog`                                                                                                                 |

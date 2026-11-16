@@ -56,7 +56,7 @@ test("разбор пакета прошивки", () => {
   ])
     assert.throws(() => m.makeHar(h, a), RangeError)
   assert.throws(() => m.encodePacket([{ trgBusID: 0x10000, srcBusID: 0, har: 0, payload: new Uint8Array() }]), RangeError)
-  assert.throws(() => m.encodeXPoeDebugFrame("GET", "ModInfo", new Uint8Array(), -1), RangeError)
+  assert.throws(() => m.encodeXPoeDebugFrame("GET", "ModuleInfo", new Uint8Array(), -1), RangeError)
   assert.deepEqual(m.splitHar(0x804a), { header: 2, argument: 37, reply: false })
 })
 
@@ -92,7 +92,7 @@ test("порча и одинаковые адреса", () => {
 })
 
 test("CBOR: значение с байтами", () => {
-  const value = { Header: "GET", Argument: "ModInfo", Value: { a: 1, bin: Uint8Array.of(1, 2) } }
+  const value = { Header: "GET", Argument: "ModuleInfo", Value: { a: 1, bin: Uint8Array.of(1, 2) } }
   assert.deepEqual(m.cborToValue(m.valueToCbor(value)), value)
 })
 
@@ -215,7 +215,7 @@ test("xPOE-Debug: неверный CRC, команда устройству, н�
   const [bad] = m.createXPoeDebugParser().push(invalidFrame)
   assert.equal(bad.crcOk, false)
   const value = m.valueToCbor({ DevName: "Объект 1" })
-  const frame = m.encodeXPoeDebugFrame("SET", "ModCfg", value)
+  const frame = m.encodeXPoeDebugFrame("SET", "ModuleConfig", value)
   assert.deepEqual([frame[0], frame[1]], [0x9f, 0x85])
   const [parsed] = m.createXPoeDebugParser().push(frame)
   assert.equal(parsed.crcOk, true)
@@ -223,11 +223,11 @@ test("xPOE-Debug: неверный CRC, команда устройству, н�
   assert.equal(parsed.reply, true)
   assert.equal(parsed.freeHeap, "")
   assert.deepEqual([...parsed.valueBytes], [...value])
-  const empty = m.encodeXPoeDebugFrame("GET", "ModInfo", m.xPoeDebugValueFromText(""))
+  const empty = m.encodeXPoeDebugFrame("GET", "ModuleInfo", m.xPoeDebugValueFromText(""))
   assert.equal(m.createXPoeDebugParser().push(empty)[0].valueBytes.length, 0)
   assert.deepEqual(parsed.payload, { DevName: "Объект 1" })
   const two = m.encodePacket([
-    { trgBusID: 0, srcBusID: 1, har: m.encodeHar("OK!", "ModCfg", false), payload: value },
+    { trgBusID: 0, srcBusID: 1, har: m.encodeHar("OK!", "ModuleConfig", false), payload: value },
     { trgBusID: 0, srcBusID: 1, har: m.encodeHar("OK!", "DebugPlot", false), payload: m.valueToCbor({ A: 1 }) },
   ])
   assert.deepEqual(
@@ -235,14 +235,14 @@ test("xPOE-Debug: неверный CRC, команда устройству, н�
       .createXPoeDebugParser()
       .push(two)
       .map((item) => item.argument),
-    ["ModCfg", "DebugPlot"],
+    ["ModuleConfig", "DebugPlot"],
   ) /* строка таблицы - общая для облака и терминала */
   assert.deepEqual(m.xPoeDebugRow(parsed), {
     trgId: "0x0000",
     srcId: "0x0000",
     har: parsed.har.toString(16).toUpperCase().padStart(4, "0"),
     header: "SET",
-    argument: "ModCfg",
+    argument: "ModuleConfig",
     reply: true,
     value: 'DevName: "Объект 1"',
     valueBytes: parsed.valueBytes,
@@ -253,7 +253,7 @@ test("xPOE-Debug: неверный CRC, команда устройству, н�
   assert.equal(m.xPoeDebugRow(bad).header, "⚠️")
   assert.equal(m.xPoeDebugRow({ type: "raw", text: "boot" }).header, "RAW")
   /* сообщение устройства - в message и level, VALUE - как пришёл */
-  const [error] = m.createXPoeDebugParser().push(deviceFrame("ER!", "ModCfg", m.valueToCbor({ Message: 404, Args: ["Home"] })))
+  const [error] = m.createXPoeDebugParser().push(deviceFrame("ER!", "ModuleConfig", m.valueToCbor({ Message: 404, Args: ["Home"] })))
   const errorRow = m.xPoeDebugRow(error, "en")
   assert.deepEqual(
     [errorRow.value, errorRow.message, errorRow.level, errorRow.reply],
@@ -422,7 +422,7 @@ test("словарь, поле Value xPOE-Debug, команды slcan-адапт
   )
   assert.equal(m.DEFAULT_ARGUMENT_CODES.DebugLog, 11)
   assert.equal(m.DEFAULT_ARGUMENT_CODES.DebugPlot, 12)
-  assert.equal(m.DEFAULT_ARGUMENT_CODES.DataStream, 15)
+  assert.equal(m.DEFAULT_ARGUMENT_CODES.SystemDataStream, 15)
   assert.equal(m.DEFAULT_ARGUMENT_CODES.FDwS, undefined)
   /* Команда, которой нет в словаре, - кодом, десятичным или HEX, туда и обратно через name() */
   assert.deepEqual(
@@ -497,26 +497,26 @@ test("графики: пакет DebugPlot - значения и порядок 
 
 test("конверт WebSocket {HAR, VAL}: сборка и разбор, HAR как на шине", () => {
   /* HAR из слов и обратно - те же биты, что makeHar/splitHar */
-  assert.equal(m.encodeHar("GET", "ModCfg"), 0x0049)
+  assert.equal(m.encodeHar("GET", "ModuleConfig"), 0x0049)
   assert.equal(m.encodeHar("GET", 36), m.makeHar(0, 36, true))
-  assert.equal(m.encodeHar("OK!", "ModCfg", false), 0x8048)
-  assert.deepEqual(m.decodeHar(0x0049), { header: "GET", argument: "ModCfg", code: 36, reply: true })
+  assert.equal(m.encodeHar("OK!", "ModuleConfig", false), 0x8048)
+  assert.deepEqual(m.decodeHar(0x0049), { header: "GET", argument: "ModuleConfig", code: 36, reply: true })
   assert.throws(() => m.encodeHar("GET", "NoSuchArg"), /NoSuchArg/)
-  assert.throws(() => m.encodeHar("PUT", "ModCfg"))
+  assert.throws(() => m.encodeHar("PUT", "ModuleConfig"))
   assert.throws(() => m.encodeHar("GET", 8192), RangeError)
   /* Запрос туда: GET и SET по умолчанию с флагом ответа, имя и код дают одно и то же */
   const VAL = { DevSN: "HUB", ModSN: "MOD", Payload: {} }
-  assert.deepEqual(m.encodeWsEnvelope("GET", "ModCfg", VAL), { HAR: 0x0049, VAL })
-  assert.deepEqual(m.encodeWsEnvelope("GET", 36, VAL), m.encodeWsEnvelope("GET", "ModCfg", VAL))
-  assert.equal(m.encodeWsEnvelope("SET", "ModCfg", VAL).HAR & 1, 1)
+  assert.deepEqual(m.encodeWsEnvelope("GET", "ModuleConfig", VAL), { HAR: 0x0049, VAL })
+  assert.deepEqual(m.encodeWsEnvelope("GET", 36, VAL), m.encodeWsEnvelope("GET", "ModuleConfig", VAL))
+  assert.equal(m.encodeWsEnvelope("SET", "ModuleConfig", VAL).HAR & 1, 1)
   /* Ответ обратно: OK! и ER! по умолчанию без флага, флаг можно задать явно */
-  const answer = m.encodeWsEnvelope("OK!", "ModCfg", { DevSN: "HUB", ModSN: "MOD", Message: "", Payload: { A: 1 } })
+  const answer = m.encodeWsEnvelope("OK!", "ModuleConfig", { DevSN: "HUB", ModSN: "MOD", Message: "", Payload: { A: 1 } })
   assert.equal(answer.HAR, 0x8048)
-  assert.equal(m.encodeWsEnvelope("GET", "ModCfg", VAL, false).HAR, 0x0048)
+  assert.equal(m.encodeWsEnvelope("GET", "ModuleConfig", VAL, false).HAR, 0x0048)
   /* Разбор: части HAR словами, VAL как есть; через CBOR туда и обратно */
   assert.deepEqual(m.decodeWsEnvelope(m.cborToValue(m.valueToCbor(answer))), {
     header: "OK!",
-    argument: "ModCfg",
+    argument: "ModuleConfig",
     code: 36,
     reply: false,
     VAL: { DevSN: "HUB", ModSN: "MOD", Message: "", Payload: { A: 1 } },
@@ -541,28 +541,30 @@ test("словарь: коды облака DevCloud, неизвестный к�
   const cloud = {
     ChatMessage: 7000,
     ChatMessages: 7001,
-    SystemMessage: 7002,
-    EditMessage: 7003,
-    DeleteMessage: 7004,
-    UpdateLastRead: 7005,
-    JoinChat: 7006,
-    UserConnected: 7007,
+    ChatSystemMessage: 7002,
+    ChatEditMessage: 7003,
+    ChatDeleteMessage: 7004,
+    ChatLastRead: 7005,
+    ChatJoin: 7006,
+    ChatUserConnected: 7007,
     ChatUnread: 7008,
     ChatPins: 7009,
-    EditChatGroup: 7010,
-    RemoveFromChat: 7011,
+    ChatEditGroup: 7010,
+    ChatRemoveUser: 7011,
     DeviceMessages: 7100,
     DeviceConnection: 7101,
-    LeaveGroup: 7102,
-    LeaveGroups: 7103,
-    ResetDevToken: 7104,
+    DeviceLeaveGroup: 7102,
+    DeviceLeaveGroups: 7103,
+    DeviceResetToken: 7104,
   }
   for (const [name, code] of Object.entries(cloud)) assert.equal(m.DEFAULT_ARGUMENT_CODES[name], code, name)
   for (const [name, code] of Object.entries(m.DEFAULT_ARGUMENT_CODES)) assert.ok(name in cloud ? code >= 7000 && code <= 7999 : code < 4096, name)
   /* Команды устройств, которыми пользуется и облако, - со своими кодами */
   assert.deepEqual(
-    ["JoinDev", "JoinUser", "LeaveUser", "FS", "Update", "DataStream"].map((name) => m.DEFAULT_ARGUMENT_CODES[name]),
-    [23, 24, 25, 22, 7, 15],
+    ["CloudJoinDevice", "CloudJoinUser", "CloudLeaveUser", "SystemFileSystem", "SystemDataUpdate", "SystemDataStream"].map(
+      (name) => m.DEFAULT_ARGUMENT_CODES[name],
+    ),
+    [23, 24, 25, 4, 7, 15],
   )
   assert.deepEqual(m.decodeWsEnvelope(m.encodeWsEnvelope("SET", "ChatMessage", { ChatID: "c", Message: "hi" })), {
     header: "SET",
@@ -604,7 +606,7 @@ test("Simple Serial: управляющие символы кодом, кири�
 test("Набор команд: адреса и флаг ответа по умолчанию, не набор - null", () => {
   const set = m.normalizeSavedCommands({
     SimpleSerial: [{ name: "s", data: "AT", endPackage: "\r\n" }],
-    "xPOE-Debug": [{ name: "x", header: "GET", argument: "ModCfg", value: "{}" }],
+    "xPOE-Debug": [{ name: "x", header: "GET", argument: "ModuleConfig", value: "{}" }],
     POECanable: [{ name: "c", header: "0", argument: "6", data: "", TrgBusID: "1234", Reply: false }],
   })
   assert.equal(set["xPOE-Debug"][0].TrgBusID, "0000")

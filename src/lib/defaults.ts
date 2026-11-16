@@ -134,6 +134,6 @@ export const createComponent = <K extends UIType>(
     position: { col, row, width, height },
     parentId,
     access: "full",
-    eventHandler: { Header: "SET", Argument: type === "Input" ? "NoSend" : "ModCfg", Variables: [] },
+    eventHandler: { Header: "SET", Argument: type === "Input" ? "NoSend" : "ModuleConfig", Variables: [] },
   } as unknown as UIComponent<K>
 }

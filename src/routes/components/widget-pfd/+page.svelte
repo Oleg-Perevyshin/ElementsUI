@@ -33,7 +33,7 @@
       label: { name: "" },
       limits: { speedMin: 8, speedMax: 25, bankMax: 30, altMax: 170, gMin: -1, gMax: 3.8, battLow: 20 },
     },
-    eventHandler: { Header: "GET", Argument: "ModCfg", Variables: [] },
+    eventHandler: { Header: "GET", Argument: "ModuleConfig", Variables: [] },
     position: { row: 0, col: 0, width: 0, height: 0 },
     parentId: "",
   })

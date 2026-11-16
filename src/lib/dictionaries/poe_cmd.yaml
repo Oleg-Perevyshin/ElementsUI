@@ -1,91 +1,94 @@
 # Словарь аргументов протокола (поле arg в HAR, 0..8191) - единый для всех устройств, обоих фреймворков и приложений, на шине и в WebSocket-конверте {HAR, VAL}
 # Строка: Строковое представление аргумента | Название в перечислении | Числовой код
+# Имя - полными словами, сначала группа (System, Debug, Network, Cloud, Module, Firmware, Motion, Orientation, Chat, Device), затем действие; перечисление - A_ и то же имя заглавными через подчёркивание (у команд облака A_CLOUD_)
 # Диапазоны: 0..4095 - устройства (команды прошивок), 4096..6999 - резерв, 7000..7999 - облако DevCloud (команды самого облака, не устройств), 8000..8191 - резерв
 # Источник - poe-svelte-ui-lib (src/lib/dictionaries/poe_cmd.yaml); .framework/poe_cmd.yaml фреймворков - копии, не править
 
 # 0 - отсутствие аргумента
-- [Unknown, A_UNKNOWN, 0]                   # Аргумент отсутствует
+- [Unknown, A_UNKNOWN, 0] # Аргумент отсутствует
 
-# Служебные команды
-- [Restart, A_RESTART, 1]                   # SET: перезагрузка устройства
-- [DefCfg, A_DEF_CONFIG, 2]                 # SET: сброс конфигурации к заводской
-- [DlFW, A_DOWNLOAD_FIRMWARE, 3]            # SET: скачивание прошивки с сервера (http_client)
-- [RstNVS, A_RESET_NVS, 5]                  # SET: очистка NVS и перезагрузка
-- [LocTime, A_LOCAL_TIME, 6]                # GET: локальное время устройства
-- [Update, A_UPDATE, 7]                     # OK!/ER!: обновление данных в интерфейсе (DevCloud ретранслирует DataStream)
-- [StackInfo, A_STACK_INFO, 8]              # GET: снимок куч и стеков задач
-- [BackUp, A_BACKUP, 9]                     # Резервная копия конфигурации
-- [BindMKey, A_BIND_MOD_KEY, 10]            # SET: привязка ключа модуля (ModBindKey)
-- [DebugLog, A_DEBUG_LOG, 11]               # OK!: сообщение отладки - CBOR-массив [уровень, тег, текст|байты, FHS]
-- [DebugPlot, A_DEBUG_PLOT, 12]             # OK!: значения графиков отладки - CBOR-карта {"Имя": float32} (LOG_PLOT)
-- [DebugMirror, A_DEBUG_MIRROR, 13]         # OK!: копия пакета другого интерфейса в консоль (уровень TRACE) - {Dir, If, Trg, Src, HAR, ModSN, Val}
-- [DataStream, A_DATA_STREAM, 15]           # OK!: поток данных групп конфигурации (CS_PushGroupStream)
+# Служебные команды и отладка
+- [SystemRestart, A_SYSTEM_RESTART, 1]              # SET: перезагрузка устройства
+- [SystemDefaultConfig, A_SYSTEM_DEFAULT_CONFIG, 2] # SET: сброс конфигурации к заводской
+- [FirmwareDownload, A_FIRMWARE_DOWNLOAD, 3]        # SET: скачивание прошивки с сервера (http_client)
+- [SystemFileSystem, A_SYSTEM_FILE_SYSTEM, 4]       # Файловая система: GET - снимок, SET {Op: Delete|UploadStart|UploadChunk|UploadDone|DownloadStart|DownloadChunk|DownloadDone}
+- [SystemResetStorage, A_SYSTEM_RESET_STORAGE, 5]   # SET: очистка хранилища настроек (NVS/Flash) и перезагрузка
+- [SystemLocalTime, A_SYSTEM_LOCAL_TIME, 6]         # GET: локальное время устройства
+- [SystemDataUpdate, A_SYSTEM_DATA_UPDATE, 7]       # OK!/ER!: обновление данных в интерфейсе (DevCloud ретранслирует SystemDataStream)
+- [SystemStackInfo, A_SYSTEM_STACK_INFO, 8]         # GET: снимок куч и стеков задач
+- [SystemBackup, A_SYSTEM_BACKUP, 9]                # Резервная копия конфигурации
+- [ModuleBindKey, A_MODULE_BIND_KEY, 10]            # SET: привязка ключа модуля (ModBindKey)
+- [DebugLog, A_DEBUG_LOG, 11]                       # OK!: сообщение отладки - CBOR-массив [уровень, тег, текст|байты, FHS]
+- [DebugPlot, A_DEBUG_PLOT, 12]                     # OK!: значения графиков отладки - CBOR-карта {"Имя": float32} (LOG_PLOT)
+- [DebugMirror, A_DEBUG_MIRROR, 13]                 # OK!: копия пакета другого интерфейса в консоль (уровень TRACE) - {Dir, If, Trg, Src, HAR, ModSN, Val}
+- [SystemDataStream, A_SYSTEM_DATA_STREAM, 15]      # OK!: поток данных групп конфигурации (CS_PushGroupStream)
 
-# Локальная сеть
-- [APsList, A_APS_LIST, 21]                 # GET: список точек доступа Wi-Fi
-- [FS, A_FS, 22]                            # Файловая система: GET FS - снимок, SET FS {Op: Delete|UploadStart|UploadChunk|UploadDone|DownloadStart|DownloadChunk|DownloadDone}
-- [JoinDev, A_JOIN_DEV, 23]                 # SET: подтверждение подключения устройства к облаку
-- [JoinUser, A_JOIN_USER, 24]               # SET: пользователь подключился к устройству
-- [LeaveUser, A_LEAVE_USER, 25]             # SET: пользователь отключился от устройства
+# Локальная сеть и подключение к облаку
+- [NetworkAccessPoints, A_NETWORK_ACCESS_POINTS, 21] # GET: список точек доступа Wi-Fi
+- [CloudJoinDevice, A_CLOUD_JOIN_DEVICE, 23]         # SET: подтверждение подключения устройства к облаку
+- [CloudJoinUser, A_CLOUD_JOIN_USER, 24]             # SET: пользователь подключился к устройству
+- [CloudLeaveUser, A_CLOUD_LEAVE_USER, 25]           # SET: пользователь отключился от устройства
 
 # Модули в рамках изделия
-- [ModFind, A_MODULE_FIND, 31]              # GET/OK!: поиск модулей на шинах изделия
-- [ModList, A_MODULE_LIST, 32]              # Список модулей изделия (CFG.ModList)
-- [ModCap, A_MODULE_CAPTURE, 33]            # GET/OK!: захват модуля для привязки
-- [ModInfo, A_MODULE_INFO, 34]              # GET/OK!: информация о модуле
-- [ModMode, A_MODULE_MODE, 35]              # SET: режим работы модуля
-- [ModCfg, A_MODULE_CFG, 36]                # GET/SET: конфигурация модуля (группы config_service)
-- [ModT1, A_MODULE_TELEMETRY_1, 37]         # Телеметрия модуля, канал 1
-- [ModT2, A_MODULE_TELEMETRY_2, 38]         # Телеметрия модуля, канал 2
-- [ModT3, A_MODULE_TELEMETRY_3, 39]         # Телеметрия модуля, канал 3
-- [ModT4, A_MODULE_TELEMETRY_4, 40]         # Телеметрия модуля, канал 4
-- [ModT5, A_MODULE_TELEMETRY_5, 41]         # Телеметрия модуля, канал 5
-- [ModS1, A_MODULE_STREAM_1, 42]            # Поток данных модуля, канал 1
-- [ModS2, A_MODULE_STREAM_2, 43]            # Поток данных модуля, канал 2
-- [ModS3, A_MODULE_STREAM_3, 44]            # Поток данных модуля, канал 3
-- [ModS4, A_MODULE_STREAM_4, 45]            # Поток данных модуля, канал 4
-- [ModS5, A_MODULE_STREAM_5, 46]            # Поток данных модуля, канал 5
+- [ModuleFind, A_MODULE_FIND, 31]              # GET/OK!: поиск модулей на шинах изделия
+- [ModuleList, A_MODULE_LIST, 32]              # Список модулей изделия (CFG.ModList)
+- [ModuleCapture, A_MODULE_CAPTURE, 33]        # GET/OK!: захват модуля для привязки
+- [ModuleInfo, A_MODULE_INFO, 34]              # GET/OK!: информация о модуле
+- [ModuleMode, A_MODULE_MODE, 35]              # SET: режим работы модуля
+- [ModuleConfig, A_MODULE_CONFIG, 36]          # GET/SET: конфигурация модуля (группы config_service)
+- [ModuleTelemetry1, A_MODULE_TELEMETRY_1, 37] # Телеметрия модуля, канал 1
+- [ModuleTelemetry2, A_MODULE_TELEMETRY_2, 38] # Телеметрия модуля, канал 2
+- [ModuleTelemetry3, A_MODULE_TELEMETRY_3, 39] # Телеметрия модуля, канал 3
+- [ModuleTelemetry4, A_MODULE_TELEMETRY_4, 40] # Телеметрия модуля, канал 4
+- [ModuleTelemetry5, A_MODULE_TELEMETRY_5, 41] # Телеметрия модуля, канал 5
+- [ModuleStream1, A_MODULE_STREAM_1, 42]       # Поток данных модуля, канал 1
+- [ModuleStream2, A_MODULE_STREAM_2, 43]       # Поток данных модуля, канал 2
+- [ModuleStream3, A_MODULE_STREAM_3, 44]       # Поток данных модуля, канал 3
+- [ModuleStream4, A_MODULE_STREAM_4, 45]       # Поток данных модуля, канал 4
+- [ModuleStream5, A_MODULE_STREAM_5, 46]       # Поток данных модуля, канал 5
 
 # Обновление прошивки
-- [FwUpgS, A_UPGRADE_START, 51]             # Старт обновления прошивки модуля по шине
-- [FwUpgP, A_UPGRADE_PROC, 52]              # Блок прошивки при обновлении по шине
-- [FwUpgD, A_UPGRADE_DONE, 53]              # Завершение обновления прошивки по шине
-- [FwUpgE, A_UPGRADE_ERR, 54]               # Ошибка обновления прошивки по шине
-
+- [FirmwareUpgradeStart, A_FIRMWARE_UPGRADE_START, 51] # Старт обновления прошивки модуля по шине
+- [FirmwareUpgradeChunk, A_FIRMWARE_UPGRADE_CHUNK, 52] # Блок прошивки при обновлении по шине
+- [FirmwareUpgradeDone, A_FIRMWARE_UPGRADE_DONE, 53]   # Завершение обновления прошивки по шине
+- [FirmwareUpgradeError, A_FIRMWARE_UPGRADE_ERROR, 54] # Ошибка обновления прошивки по шине
 
 # Работа с модулями перемещения (оси подвесов, линейные перемещения, серво приводы и подобные)
-- [MotInit, A_MOTION_INIT, 111]             # SET: включение/калибровка (1 байт: команда)
-- [MotMode, A_MOTION_MODE, 112]             # SET: режим управления (2 байта: ctrl_mode + torque_mode)
-- [MotPos, A_MOTION_POS, 113]               # GET/SET: целевое значение (4 байта: float)
-- [MotPID, A_MOTION_PID, 114]               # SET: коэффициенты PID (13 байт: selector + Kp + Ki + Kd)
-- [MotInfo, A_MOTION_INFO, 115]             # GET: телеметрия (32 байта: angle+vel+Iq+Id+target+flags)
-- [MotCfg, A_MOTION_CFG, 116]               # GET/SET: конфигурация мотора (28 байт: лимиты+параметры)
-- [MotCal, A_MOTION_CAL, 117]               # SET: запуск калибровки нулевого угла (0 байт)
+- [MotionInit, A_MOTION_INIT, 111]           # SET: включение/калибровка (1 байт: команда)
+- [MotionMode, A_MOTION_MODE, 112]           # SET: режим управления (2 байта: ctrl_mode + torque_mode)
+- [MotionTarget, A_MOTION_TARGET, 113]       # GET/SET: целевое значение (4 байта: float)
+- [MotionPID, A_MOTION_PID, 114]             # SET: коэффициенты PID (13 байт: selector + Kp + Ki + Kd)
+- [MotionInfo, A_MOTION_INFO, 115]           # GET: телеметрия (32 байта: angle+vel+Iq+Id+target+flags)
+- [MotionConfig, A_MOTION_CONFIG, 116]       # GET/SET: конфигурация мотора (28 байт: лимиты+параметры)
+- [MotionCalibrate, A_MOTION_CALIBRATE, 117] # SET: запуск калибровки нулевого угла (0 байт)
+- [MotionVelocity, A_MOTION_VELOCITY, 118]   # SET: уставка скорости оси, рад/с (float); с флагом ответа - OK! с состоянием оси (angle, vel, iq, flags)
+- [MotionAngle, A_MOTION_ANGLE, 119]         # SET: уставка угла оси, рад (float); с флагом ответа - OK! с состоянием оси (angle, vel, iq, flags)
 
 # Работа с модулями ориентации (IMU, магнетометры, GNSS и подобные)
-- [OrData, A_ORIENTATION_DATA, 141]         # SET: углы ориентации от модуля
-- [OrOfs, A_ORIENTATION_OFFSET, 142]        # Смещения ориентации
-- [OrAccCal, A_ORIENTATION_ACC_CALIB, 143]  # Калибровка акселерометра
-- [OrMagCal, A_ORIENTATION_MAG_CALIB, 144]  # Калибровка магнетометра
+- [OrientationData, A_ORIENTATION_DATA, 141]                              # SET: углы ориентации от модуля
+- [OrientationOffset, A_ORIENTATION_OFFSET, 142]                          # Смещения ориентации
+- [OrientationAccelCalibrate, A_ORIENTATION_ACCEL_CALIBRATE, 143]         # Калибровка акселерометра
+- [OrientationMagCalibrate, A_ORIENTATION_MAG_CALIBRATE, 144]             # Калибровка магнетометра
+- [OrientationGyroscopeCalibrate, A_ORIENTATION_GYROSCOPE_CALIBRATE, 145] # Калибровка гироскопа
 
 # Облако DevCloud (7000..7999): команды самого облака по /ws, устройства их не получают
 # Чаты (7000..7099)
-- [ChatMessage, A_CLOUD_CHAT_MESSAGE, 7000]       # SET: новое сообщение в чат (браузер - облако - участники)
-- [ChatMessages, A_CLOUD_CHAT_MESSAGES, 7001]     # GET/OK!: страница истории чата
-- [SystemMessage, A_CLOUD_SYSTEM_MESSAGE, 7002]   # SET: сообщение в системный чат (администратор)
-- [EditMessage, A_CLOUD_EDIT_MESSAGE, 7003]       # SET/OK!: правка своего сообщения
-- [DeleteMessage, A_CLOUD_DELETE_MESSAGE, 7004]   # SET/OK!: удаление своего сообщения
-- [UpdateLastRead, A_CLOUD_UPDATE_LAST_READ, 7005] # SET: чат прочитан, вкладка чата закрыта
-- [JoinChat, A_CLOUD_JOIN_CHAT, 7006]             # SET/OK!: вход в чат
-- [UserConnected, A_CLOUD_USER_CONNECTED, 7007]   # SET: собеседник открыл чат
-- [ChatUnread, A_CLOUD_CHAT_UNREAD, 7008]         # OK!: число непрочитанных в чате
-- [ChatPins, A_CLOUD_CHAT_PINS, 7009]             # OK!: закреплённые чаты пользователя
-- [EditChatGroup, A_CLOUD_EDIT_CHAT_GROUP, 7010]  # OK!: чат создан или изменён
-- [RemoveFromChat, A_CLOUD_REMOVE_FROM_CHAT, 7011] # OK!: пользователь удалён из чата
+- [ChatMessage, A_CLOUD_CHAT_MESSAGE, 7000]              # SET: новое сообщение в чат (браузер - облако - участники)
+- [ChatMessages, A_CLOUD_CHAT_MESSAGES, 7001]            # GET/OK!: страница истории чата
+- [ChatSystemMessage, A_CLOUD_CHAT_SYSTEM_MESSAGE, 7002] # SET: сообщение в системный чат (администратор)
+- [ChatEditMessage, A_CLOUD_CHAT_EDIT_MESSAGE, 7003]     # SET/OK!: правка своего сообщения
+- [ChatDeleteMessage, A_CLOUD_CHAT_DELETE_MESSAGE, 7004] # SET/OK!: удаление своего сообщения
+- [ChatLastRead, A_CLOUD_CHAT_LAST_READ, 7005]           # SET: чат прочитан, вкладка чата закрыта
+- [ChatJoin, A_CLOUD_CHAT_JOIN, 7006]                    # SET/OK!: вход в чат
+- [ChatUserConnected, A_CLOUD_CHAT_USER_CONNECTED, 7007] # SET: собеседник открыл чат
+- [ChatUnread, A_CLOUD_CHAT_UNREAD, 7008]                # OK!: число непрочитанных в чате
+- [ChatPins, A_CLOUD_CHAT_PINS, 7009]                    # OK!: закреплённые чаты пользователя
+- [ChatEditGroup, A_CLOUD_CHAT_EDIT_GROUP, 7010]         # OK!: чат создан или изменён
+- [ChatRemoveUser, A_CLOUD_CHAT_REMOVE_USER, 7011]       # OK!: пользователь удалён из чата
 
 # Устройства в облаке (7100..7199)
-- [DeviceMessages, A_CLOUD_DEVICE_MESSAGES, 7100] # GET/OK!: страница журнала устройства
-- [DeviceConnection, A_CLOUD_DEVICE_CONNECTION, 7101] # OK!: устройство в сети или ушло из сети
-- [LeaveGroup, A_CLOUD_LEAVE_GROUP, 7102]         # SET/OK!: выход из группы устройства
-- [LeaveGroups, A_CLOUD_LEAVE_GROUPS, 7103]       # SET: выход из групп всех устройств
-- [ResetDevToken, A_CLOUD_RESET_DEV_TOKEN, 7104]  # SET/OK!: сброс токена устройства (TOFU)
+- [DeviceMessages, A_CLOUD_DEVICE_MESSAGES, 7100]        # GET/OK!: страница журнала устройства
+- [DeviceConnection, A_CLOUD_DEVICE_CONNECTION, 7101]    # OK!: устройство в сети или ушло из сети
+- [DeviceLeaveGroup, A_CLOUD_DEVICE_LEAVE_GROUP, 7102]   # SET/OK!: выход из группы устройства
+- [DeviceLeaveGroups, A_CLOUD_DEVICE_LEAVE_GROUPS, 7103] # SET: выход из групп всех устройств
+- [DeviceResetToken, A_CLOUD_DEVICE_RESET_TOKEN, 7104]   # SET/OK!: сброс токена устройства (TOFU)

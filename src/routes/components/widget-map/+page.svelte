@@ -27,7 +27,7 @@
       height: 400,
       trackEnabled: true,
     },
-    eventHandler: { Header: "GET", Argument: "ModCfg", Variables: [] },
+    eventHandler: { Header: "GET", Argument: "ModuleConfig", Variables: [] },
     position: { row: 0, col: 0, width: 0, height: 0 },
     parentId: "",
   })

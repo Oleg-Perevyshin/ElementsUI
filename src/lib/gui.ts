@@ -142,7 +142,7 @@ const WIDGET_PREFIX: Record<WidgetFieldsType, string> = {
 export const widgetPrefixes = (type: WidgetFieldsType, props: { id?: string; groups?: string[] }): string[] =>
   type === "WidgetMap" ? (props.groups ?? [WIDGET_PREFIX.WidgetMap]) : type === "WidgetStackInfo" ? [""] : [props.id || WIDGET_PREFIX[type]]
 
-/* Поля, которые виджет сохраняет одним SET ModCfg; остальные только читаются */
+/* Поля, которые виджет сохраняет одним SET ModuleConfig; остальные только читаются */
 export const WIDGET_SAVE_FIELDS = {
   WidgetWiFi: Object.keys(WIDGET_FIELDS.WidgetWiFi) as (keyof IWidgetWiFiConfig)[],
   WidgetDeviceInfo: ["DevName", "HostName", "WebUser", "WebPsw", "SCLL"] as (keyof IWidgetDeviceInfoConfig)[],
@@ -182,7 +182,7 @@ export const readWidgetFields = <F extends object>(
       .filter(([, value]) => value !== undefined),
   ) as Partial<F>
 
-/* Payload SET ModCfg из значений виджета: только перечисленные поля, ключи устройства */
+/* Payload SET ModuleConfig из значений виджета: только перечисленные поля, ключи устройства */
 export const widgetPacket = <K extends string>(prefix: string, fields: readonly K[], values: Partial<Record<K, unknown>>, keys?: Partial<Record<K, string>>) =>
   Object.fromEntries(fields.map((field) => [widgetKey(prefix, field, keys), values[field]])) as Record<string, unknown>
 
@@ -268,7 +268,7 @@ export const tablePacket = (handler: IUIComponentHandler | undefined, row: objec
 }
 
 /* ********************************************************** */
-/* Служебные поля диалога SET FS - не состояние устройства */
+/* Служебные поля диалога SET SystemFileSystem - не состояние устройства */
 const FS_PROTOCOL_KEYS = new Set(["Op", "CurrentID", "ChunkSize", "ChunkIndex", "Name", "FileSize", "CRC32", "Data"])
 
 /* Payload ответа устройства в хранилище значений (Map, SvelteMap): ключ prefix + имя; объект пишется целиком и ещё по полям "имя-поле"; объект без List поверх сохранённого с List - ход закачки CFG.FS, дописывается. Пишутся только изменившиеся значения; argument - имя аргумента из разобранного конверта (decodeWsEnvelope) */
@@ -283,7 +283,7 @@ export const mergeDevicePayload = (
     if (values.get(key) !== value) values.set(key, value as never)
   }
   for (const [name, raw] of Object.entries(payload)) {
-    if (argument === "FS" && FS_PROTOCOL_KEYS.has(name)) continue
+    if (argument === "SystemFileSystem" && FS_PROTOCOL_KEYS.has(name)) continue
     let value = raw
     if (isRecord(raw)) {
       const stored = values.get(prefix + name)

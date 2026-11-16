@@ -38,9 +38,9 @@
   const bitMax = $derived(Math.pow(2, bitRange.end - bitRange.start + 1) - 1)
   const contentAlignOptions = $derived($optionsStore.TEXT_ALIGN_OPTIONS.slice(0, -1))
 
-  /* Argument пуст - поле ниже лишь визуально показывает "ModCfg", реальное значение нужно проставить в состояние */
+  /* Argument пуст - поле ниже лишь визуально показывает "ModuleConfig", реальное значение нужно проставить в состояние */
   $effect(() => {
-    if (!component.eventHandler?.Argument) onPropertyChange({ eventHandler: { Argument: "ModCfg" } })
+    if (!component.eventHandler?.Argument) onPropertyChange({ eventHandler: { Argument: "ModuleConfig" } })
   })
 </script>
 
@@ -48,7 +48,7 @@
   <PropsGroup label={$T("constructor.props.group.general")}>
     <CommonSnippets snippet="Access" {component} {onPropertyChange} />
     <CommonSnippets snippet="Variable" {VARIABLE_OPTIONS} {component} {onPropertyChange} />
-    <ArgumentSelect value={component.eventHandler?.Argument || "ModCfg"} onUpdate={(Argument) => onPropertyChange({ eventHandler: { Argument } })} />
+    <ArgumentSelect value={component.eventHandler?.Argument || "ModuleConfig"} onUpdate={(Argument) => onPropertyChange({ eventHandler: { Argument } })} />
   </PropsGroup>
   <PropsGroup label={$T("constructor.props.group.value")}>
     <UI.Select

@@ -161,7 +161,7 @@
     fsInfo.List = [...fsInfo.List.filter((f) => f.Name !== `/storage/${file.name}`), { Name: `/storage/${file.name}`, Size: file.size }]
     recalcFs()
   }
-  const fsDownload = (name: string) => new Promise<void>((r) => setTimeout(() => (console.log("SET FS Download (mock)", name), r()), 600))
+  const fsDownload = (name: string) => new Promise<void>((r) => setTimeout(() => (console.log("SET SystemFileSystem Download (mock)", name), r()), 600))
 
   let isModalOpen = $state(false)
 

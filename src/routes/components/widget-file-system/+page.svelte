@@ -63,7 +63,7 @@
       label: { name: "" },
       accept: ".bin, .txt, .md, .pem",
     },
-    eventHandler: { Header: "GET", Argument: "FS", Variables: [] },
+    eventHandler: { Header: "GET", Argument: "SystemFileSystem", Variables: [] },
     position: { row: 0, col: 0, width: 0, height: 0 },
     parentId: "",
   })
@@ -85,7 +85,7 @@ onDownload={handleDownload}
       <WidgetFileSystem
         {...localizeDeep(fsComponent.properties, $Language) as IWidgetFileSystemProps}
         value={fsInfo}
-        onRefresh={() => console.log("GET FS (mock)")}
+        onRefresh={() => console.log("GET SystemFileSystem (mock)")}
         onDelete={mockDelete}
         onUpload={mockUpload}
         onDownload={mockDownload}

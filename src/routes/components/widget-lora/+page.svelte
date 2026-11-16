@@ -24,7 +24,7 @@
     type: "WidgetLoRa",
     access: "full",
     properties: { label: { name: "" }, id: "LORA", preset: "HT_CT62", params: structuredClone(LORA_PRESETS.HT_CT62.params) },
-    eventHandler: { Header: "SET", Argument: "ModCfg", Variables: [] },
+    eventHandler: { Header: "SET", Argument: "ModuleConfig", Variables: [] },
     position: { row: 0, col: 0, width: 0, height: 0 },
     parentId: "",
   })

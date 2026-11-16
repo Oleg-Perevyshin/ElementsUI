@@ -3,6 +3,7 @@
   import { Button, IconAdd, IconDelete, Input, Select, Switch, T, type IOption } from "#lib"
   import {
     BUS_ID_REGEXP,
+    DEFAULT_ARGUMENT_CODES,
     HEADER_CODES,
     cborToValue,
     decodeHar,
@@ -23,8 +24,8 @@
   type Draft = { id: number; header: string; argument: string; reply: boolean; trg: string; src: string; payload: string }
   let nextId = 3
   let drafts = $state<Draft[]>([
-    { id: 1, header: "GET", argument: "ModCfg", reply: true, trg: "0001", src: "0000", payload: "CfgGroup: CFG" },
-    { id: 2, header: "SET", argument: "ModCfg", reply: false, trg: "0002", src: "0000", payload: 'CFG.DevName: "Pump-2", CFG.Power: [255, 0, 0]' },
+    { id: 1, header: "GET", argument: "ModuleConfig", reply: true, trg: "0001", src: "0000", payload: "CfgGroup: CFG" },
+    { id: 2, header: "SET", argument: "ModuleConfig", reply: false, trg: "0002", src: "0000", payload: 'CFG.DevName: "Pump-2", CFG.Power: [255, 0, 0]' },
   ])
   /* Примеры Payload для подсказки: текст поля и ключ пояснения */
   const PAYLOAD_FORMATS = [
@@ -45,7 +46,7 @@
     drafts.push({
       id: nextId++,
       header: last?.header ?? "GET",
-      argument: last?.argument ?? "ModInfo",
+      argument: last?.argument ?? "ModuleInfo",
       reply: true,
       trg: last?.trg ?? "0001",
       src: last?.src ?? "0000",
@@ -55,7 +56,11 @@
   const removeDraft = (id: number) => (drafts = drafts.filter((d) => d.id !== id))
 
   /* Колонки строки записи: номер, заголовок, аргумент, ответ, получатель, отправитель, Payload, кнопка */
-  const ROW_GRID = "grid-cols-[1.5rem_6rem_10rem_3rem_5.5rem_5.5rem_minmax(0,1fr)_2rem]"
+  const ROW_GRID = "grid-cols-[1.5rem_6rem_17rem_3rem_5.5rem_5.5rem_minmax(0,1fr)_2rem]"
+  /* Аргумент: выбор из словаря команд устройств (1..4095) с поиском, можно вписать и число кода */
+  const argumentOptions = Object.entries(DEFAULT_ARGUMENT_CODES)
+    .filter(([, code]) => code > 0 && code < 4096)
+    .map(([name]) => ({ id: name, value: name, name }))
 
   const hex = (bytes: Uint8Array) => Array.from(bytes, (b) => b.toString(16).padStart(2, "0").toUpperCase()).join(" ")
   const fromHex = (text: string) => {
@@ -152,7 +157,7 @@
 
     <!-- Записи таблицей: одна запись - одна строка, подписи колонок один раз; + добавляет запись, корзина убирает -->
     <div class="overflow-x-auto">
-      <div class="grid min-w-[52rem] {ROW_GRID} items-center gap-x-2 gap-y-1.5">
+      <div class="grid min-w-[59rem] {ROW_GRID} items-center gap-x-2 gap-y-1.5">
         <span class="text-[11px] font-semibold text-(--muted-color)">#</span>
         <span class="text-[11px] font-semibold text-(--muted-color)">{$T("library.proto_header")}</span>
         <span class="text-[11px] font-semibold text-(--muted-color)">{$T("library.proto_argument")}</span>
@@ -166,7 +171,7 @@
           {@const record = records[i]}
           <span class="text-center text-[13px] font-semibold text-(--muted-color) tabular-nums">{i + 1}</span>
           <Select options={headers} value={draft.header} onUpdate={(v) => (draft.header = v)} />
-          <Input bind:value={draft.argument} maxlength={31} />
+          <Select type="input" options={argumentOptions} value={draft.argument} onUpdate={(v) => (draft.argument = String(v ?? ""))} />
           <Switch wrapperClass="w-fit justify-self-center" value={draft.reply ? 1 : 0} onUpdate={(v) => (draft.reply = !!v)} />
           <Input bind:value={draft.trg} maxlength={6} />
           <Input bind:value={draft.src} maxlength={6} />

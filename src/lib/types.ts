@@ -729,7 +729,7 @@ export interface IWidgetWiFiProps {
   value?: Partial<IWidgetWiFiConfig>
   /* Переопределение имени поля устройства для каждого ключа IWidgetWiFiConfig - по умолчанию совпадает с именем самого ключа (WiFiMode, StaSSID, ...), меняется только если у прошивки другая конвенция именования */
   keys?: Partial<Record<keyof IWidgetWiFiConfig, string>>
-  /* Команда сканирования сетей - по умолчанию Header: GET, Argument: APsList */
+  /* Команда сканирования сетей - по умолчанию Header: GET, Argument: NetworkAccessPoints */
   scanCommand?: { header?: string; argument?: string }
   allowedModes?: number[]
   confirmOnAP?: boolean
@@ -752,9 +752,9 @@ export interface IWidgetDeviceInfoProps {
   keys?: Partial<Record<keyof IWidgetDeviceInfoConfig, string>>
   /* Поля, которые виджет показывает и сохраняет; нет - DEVICE_INFO_DEFAULT_FIELDS (ESP). Скрытые поля не уходят в SET: прошивка отвергает пакет с незнакомым ключом целиком */
   show?: (keyof IWidgetDeviceInfoConfig)[]
-  /* Команда перезагрузки - по умолчанию Header: SET, Argument: Restart */
+  /* Команда перезагрузки - по умолчанию Header: SET, Argument: SystemRestart */
   restartCommand?: { header?: string; argument?: string }
-  /* Команда сброса всех настроек к заводским (очистка NVS и перезагрузка) - по умолчанию Header: SET, Argument: RstNVS */
+  /* Команда сброса всех настроек к заводским (очистка NVS и перезагрузка) - по умолчанию Header: SET, Argument: SystemResetStorage */
   resetCommand?: { header?: string; argument?: string }
   collapsed?: boolean
   persistKey?: string
@@ -779,13 +779,13 @@ export interface IWidgetLoRaProps {
   preset?: string
   collapsed?: boolean
   persistKey?: string
-  /* Значения ключей для SET ModCfg: { Cfg: слово, Freq: Гц }; без колбэка - только просмотр */
+  /* Значения ключей для SET ModuleConfig: { Cfg: слово, Freq: Гц }; без колбэка - только просмотр */
   onSave?: (values: Record<string, number>) => void
 }
 
 /* Состояние файловой системы - объект CFG.FS в том виде, в каком его отдаёт прошивка (FS_WriteState, ProdFactory-ESP) */
 export interface IWidgetFileSystemFile {
-  Name: string /* полный путь файла на устройстве - его же принимает SET FS {"Op": "Delete"} */
+  Name: string /* полный путь файла на устройстве - его же принимает SET SystemFileSystem {"Op": "Delete"} */
   Size: number /* байт */
 }
 
@@ -813,7 +813,7 @@ export interface IWidgetFileSystemProps {
   value?: IWidgetFileSystemInfo
   /* Переопределение имени поля устройства - по умолчанию FS (итоговый ключ CFG.FS) */
   keys?: { FS?: string }
-  /* Аргумент команд файловой системы - по умолчанию "FS": GET FS - снимок, SET FS {"Op": ...} - операции */
+  /* Аргумент команд файловой системы - по умолчанию "SystemFileSystem": GET SystemFileSystem - снимок, SET SystemFileSystem {"Op": ...} - операции */
   argument?: string
   /* Какие файлы можно выбрать для закачки (атрибут accept), например ".bin, .txt, .pem" */
   accept?: string
@@ -859,7 +859,7 @@ export interface IWidgetStackInfoProps {
   value?: IWidgetStackInfo
   /* Переопределение имени объекта в ответе - по умолчанию StackInfo */
   keys?: { StackInfo?: string }
-  /* Аргумент запроса - по умолчанию "StackInfo" (GET StackInfo) */
+  /* Аргумент запроса - по умолчанию "SystemStackInfo" (GET SystemStackInfo) */
   argument?: string
   /* Запас стека ниже порога (байт) подсвечивается красным, ниже удвоенного - оранжевым */
   warnBytes?: number

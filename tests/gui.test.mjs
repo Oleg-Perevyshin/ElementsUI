@@ -12,7 +12,7 @@ test("поля виджета: ключи с префиксом и переоп�
   const { get } = store({ "CFG.StaSSID": "home", "CFG.Mode": 3, "CFG.StaPSK": "" })
   const value = gui.readWidgetFields(get, "CFG", gui.WIDGET_FIELDS.WidgetWiFi, { WiFiMode: "Mode" })
   assert.deepEqual(value, { WiFiMode: 3, StaSSID: "home", StaPSK: "" })
-  assert.equal(gui.widgetKey("", "StackInfo"), "StackInfo")
+  assert.equal(gui.widgetKey("", "SystemStackInfo"), "SystemStackInfo")
   const packet = gui.widgetPacket("CFG", gui.WIDGET_SAVE_FIELDS.WidgetDeviceInfo, { DevName: "Hub", DevSN: "X", HostName: "hub" }, { DevName: "Name" })
   assert.deepEqual(packet, { "CFG.Name": "Hub", "CFG.HostName": "hub", "CFG.WebUser": undefined, "CFG.WebPsw": undefined, "CFG.SCLL": undefined })
   assert.deepEqual(gui.widgetPrefixes("WidgetMap", {}), ["MAV"])
@@ -34,9 +34,9 @@ test("битовые поля: Input bitMode и Select bitMode читают и �
 
 test("пакет кнопки: Value - готовый Payload; Variables - значения, группа-поле вложенно, изменённая переменная - новое значение", () => {
   const { get } = store({ "CFG.A": 1, "LST-Speed": 4, "LST-Count": 10 })
-  assert.deepEqual(gui.commandPacket({ Header: "SET", Argument: "Restart", Value: '{"Now":true}' }, get), {
+  assert.deepEqual(gui.commandPacket({ Header: "SET", Argument: "SystemRestart", Value: '{"Now":true}' }, get), {
     header: "SET",
-    argument: "Restart",
+    argument: "SystemRestart",
     payload: { Now: true },
     writes: [],
     send: true,
@@ -44,7 +44,7 @@ test("пакет кнопки: Value - готовый Payload; Variables - зн�
   assert.equal(gui.commandPacket({ Header: "SET", Argument: "X", Value: "[1]" }, get), null)
   assert.equal(gui.commandPacket({ Header: "SET", Argument: "X", Value: "{" }, get), null)
   assert.equal(gui.commandPacket({ Argument: "X" }, get), null)
-  const packet = gui.commandPacket({ Header: "SET", Argument: "ModCfg", Variables: ["CFG.A", "LST-Speed", "LST-Count"] }, get, ["LST-Speed", 7])
+  const packet = gui.commandPacket({ Header: "SET", Argument: "ModuleConfig", Variables: ["CFG.A", "LST-Speed", "LST-Count"] }, get, ["LST-Speed", 7])
   assert.deepEqual(packet.payload, { "CFG.A": 1, LST: { Speed: 7, Count: 10 } })
   assert.deepEqual(packet.writes, [
     ["CFG.A", 1],
@@ -68,15 +68,15 @@ test("пакет кнопки таблицы: значения Variables из с
 
 test("слияние ответа: объект целиком и по полям, ход закачки поверх снимка, служебные поля FS пропускаются", () => {
   const map = new Map()
-  gui.mergeDevicePayload(map, "M|", "FS", { "CFG.FS": { Total: 10, List: [] }, Op: "Delete", "CFG.A": 1 })
+  gui.mergeDevicePayload(map, "M|", "SystemFileSystem", { "CFG.FS": { Total: 10, List: [] }, Op: "Delete", "CFG.A": 1 })
   assert.deepEqual(map.get("M|CFG.FS"), { Total: 10, List: [] })
   assert.equal(map.get("M|CFG.FS-Total"), 10)
   assert.equal(map.has("M|Op"), false)
-  gui.mergeDevicePayload(map, "M|", "FS", { "CFG.FS": { Upload: { Progress: 5 } } })
+  gui.mergeDevicePayload(map, "M|", "SystemFileSystem", { "CFG.FS": { Upload: { Progress: 5 } } })
   assert.deepEqual(map.get("M|CFG.FS"), { Total: 10, List: [], Upload: { Progress: 5 } })
-  gui.mergeDevicePayload(map, "M|", "ModCfg", { Op: "x" })
+  gui.mergeDevicePayload(map, "M|", "ModuleConfig", { Op: "x" })
   assert.equal(map.get("M|Op"), "x")
-  gui.mergeDevicePayload(map, "M|", "ModCfg", [1, 2])
+  gui.mergeDevicePayload(map, "M|", "ModuleConfig", [1, 2])
   assert.equal(map.size, 6)
 })
 

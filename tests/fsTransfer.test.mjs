@@ -1,11 +1,11 @@
-/* tests/fsTransfer.test.mjs - обмен файлами SET FS против модели прошивки (file_system ProdFactory-ESP): чанки, повтор после ER! и таймаута, CRC32, очередь операций */
+/* tests/fsTransfer.test.mjs - обмен файлами SET SystemFileSystem против модели прошивки (file_system ProdFactory-ESP): чанки, повтор после ER! и таймаута, CRC32, очередь операций */
 import { test } from "node:test"
 import assert from "node:assert/strict"
 import { createFsTransfer, FsNameError, FsTransferError } from "../dist/fsTransfer.js"
 import { crc32 } from "../dist/protocols/crc.js"
 import { decodeHar } from "../dist/protocols/dictionary.js"
 
-/* Устройство: отвечает на SET/GET FS как прошивка; fail(op, index) - сколько раз отказать (ER!) или промолчать ("drop") */
+/* Устройство: отвечает на SET/GET SystemFileSystem как прошивка; fail(op, index) - сколько раз отказать (ER!) или промолчать ("drop") */
 const fakeDevice = ({ chunkSize = 4, files = {}, faults = [] } = {}) => {
   const waiters = []
   const sent = []
@@ -108,8 +108,8 @@ test("повтор чанка после ER! и таймаута на любом
   await fs.upload("a.bin", bytes)
   assert.deepEqual(device.files["a.bin"], bytes)
   assert.equal(device.sent.filter((s) => s.op === "UploadChunk").length, 5)
-  /* В провод - HAR: SET FS (код 22) с флагом ответа */
-  assert.deepEqual([device.sent[0].header, device.sent[0].argument, device.sent[0].code, device.sent[0].wantsReply], ["SET", "FS", 22, true])
+  /* В провод - HAR: SET SystemFileSystem (код 4) с флагом ответа */
+  assert.deepEqual([device.sent[0].header, device.sent[0].argument, device.sent[0].code, device.sent[0].wantsReply], ["SET", "SystemFileSystem", 4, true])
   assert.deepEqual([...(await fs.download("a.bin"))], [...bytes])
 
   const broken = fakeDevice({ faults: Array.from({ length: 4 }, () => ({ op: "UploadChunk", index: 1, kind: "er" })) })
@@ -150,8 +150,8 @@ test("две передачи через один транспорт делят 
 
 test("аргумент передачи - код или имя своего словаря; неизвестное имя - отказ без отправки", async () => {
   const device = fakeDevice()
-  await createFsTransfer(device.transport, { argument: 22 }).upload("c.bin", bytes)
-  assert.ok(device.sent.every((s) => s.code === 22))
+  await createFsTransfer(device.transport, { argument: 4 }).upload("c.bin", bytes)
+  assert.ok(device.sent.every((s) => s.code === 4))
   const unknown = fakeDevice()
   await assert.rejects(createFsTransfer(unknown.transport, { argument: "NoSuchArg" }).list(), /NoSuchArg/)
   assert.equal(unknown.sent.length, 0)

@@ -151,7 +151,7 @@ ElementsUI/
 │     ├─ guiViews.ts       GUI_VIEWS: компоненты отрисовки всех типов; GUIRenderer берёт их из пропса views
 │     ├─ defaults.ts       свойства и размеры новых компонентов, createComponent
 │     ├─ propsEditor.ts    неизменяемая правка свойств из панелей
-│     ├─ fsTransfer.ts     обмен файлами по SET/GET FS
+│     ├─ fsTransfer.ts     обмен файлами по SET/GET SystemFileSystem
 │     ├─ types.ts          все интерфейсы пропсов, UIComponent
 │     ├─ icons.ts          СГЕНЕРИРОВАН из assets/IconsCatalog
 │     └─ html.ts, accent.ts, bitField.ts, themeWatch.ts, hints.ts, ring.ts, ...  общие утилиты
@@ -219,7 +219,7 @@ ElementsUI/
 6. Рендерер переводит имена команды в число `HAR` по словарю (`sendCommand`) и отдаёт его в `link.send(har, payload)`. Приложение заворачивает его в WebSocket-конверт `{HAR, VAL: {DevSN, ModSN, Payload}}`, устройство отвечает `OK!`/`ER!`. Входящий конверт приложение разбирает `decodeWsEnvelope` в `{ header, argument, code, reply, VAL }`.
 7. Приложение кладёт ответ в реактивное хранилище (`SvelteMap`) функцией `mergeDevicePayload(values, "<ModSN>|", argument, Payload)` (`argument` - имя из разобранного конверта). `get` читает это хранилище, рендерер обновляется сам.
 
-Смарт-виджеты работают с группой полей по префиксу (`CFG`, `LST`, `MAV`): читают `readWidgetFields`, сохраняют одним `SET ModCfg` из `widgetPacket` (только поля из `WIDGET_SAVE_FIELDS`). Поиск сетей - `GET APsList` с ожиданием ответа 3000 мс, перезагрузка - `SET Restart`, сброс - `SET RstNVS`, обновление снимков - `GET FS` и `GET StackInfo`. Файлы `WidgetFileSystem` и `FileAttach` рендерер ведёт сам через `createFsTransfer(link)`.
+Смарт-виджеты работают с группой полей по префиксу (`CFG`, `LST`, `MAV`): читают `readWidgetFields`, сохраняют одним `SET ModuleConfig` из `widgetPacket` (только поля из `WIDGET_SAVE_FIELDS`). Поиск сетей - `GET NetworkAccessPoints` с ожиданием ответа 3000 мс, перезагрузка - `SET SystemRestart`, сброс - `SET SystemResetStorage`, обновление снимков - `GET SystemFileSystem` и `GET SystemStackInfo`. Файлы `WidgetFileSystem` и `FileAttach` рендерер ведёт сам через `createFsTransfer(link)`.
 
 </details>
 
@@ -245,7 +245,7 @@ ElementsUI/
 | `registry.ts`                             | `COMPONENTS[type] = { view, io, fields? }` для конструктора; `COMPONENT_META` и `componentVariables` - в `componentMeta.ts`, без компонентов                                                      |
 | `defaults.ts`                             | `COMPONENT_DEFAULTS`, `COMPONENT_SIZES`, `minComponentWidth`, `createComponent`                                                                                                                   |
 | `propsEditor.ts`                          | `createPropsEditor` (`set`, `patch`, `addItem`, `updateItem`, `removeItem`), `applyPropertyChange`                                                                                                |
-| `fsTransfer.ts`                           | Файлы по `SET FS`: чанки, повторы, CRC-32, общая очередь операций на транспорт                                                                                                                    |
+| `fsTransfer.ts`                           | Файлы по `SET SystemFileSystem`: чанки, повторы, CRC-32, общая очередь операций на транспорт                                                                                                      |
 | `protocols/`                              | CBOR, пакет, HAR, CRC, словарь, xPOE-Debug, CAN, графики отладки, `formatDeviceMessage`                                                                                                           |
 | `dictionaries/`                           | Мастер-словари команд и сообщений, сгенерированный TS и заголовки прошивок                                                                                                                        |
 | `locales/`                                | Список языков, переводчик `$T`, многоязычные тексты GUI                                                                                                                                           |
@@ -267,7 +267,7 @@ ElementsUI/
 - 🌉 **Рендерер связан с приложением через `DeviceLink`:** читать значение, записать, отправить команду, дождаться ответа.
 - 📦 **Пакет по проводу - `poe_cbor_pkt`:** адрес получателя и отправителя, заголовок с командой, тело и CRC.
 - 📖 **Команда в проводе - число `HAR`** (заголовок, код из словаря `poe_cmd.yaml`, флаг ответа) и на шине, и в WebSocket-конверте `{HAR, VAL}`. Имена - только для людей.
-- 📁 **Файлы передаются командой `SET FS`** по кускам с повторами и проверкой CRC-32.
+- 📁 **Файлы передаются командой `SET SystemFileSystem`** по кускам с повторами и проверкой CRC-32.
 
 <details>
 <summary>🧾 Компонент GUI (`UIComponent`)</summary>
@@ -280,7 +280,7 @@ ElementsUI/
 | `position`     | `{ row, col, width, height }`                | Клетки сетки 23 колонки                                                                        |
 | `parentId`     | string                                       | Родитель-контейнер, `""` - корень                                                              |
 | `access`       | `full` / `viewOnly` / `hidden`               | В режиме `viewer` видны только `full` и `viewOnly`                                             |
-| `eventHandler` | `{ Header?, Argument?, Value?, Variables? }` | Команда компонента; по умолчанию `SET ModCfg`, у `Input` - `NoSend`                            |
+| `eventHandler` | `{ Header?, Argument?, Value?, Variables? }` | Команда компонента; по умолчанию `SET ModuleConfig`, у `Input` - `NoSend`                      |
 
 </details>
 
@@ -308,7 +308,7 @@ ElementsUI/
 | `WidgetDeviceInfo` | `CFG`                | `DevSN`, `DevID`, `DevFW`, `RunCnt`, `DevName`, `HostName`, `WebUser`, `WebPsw`, `StaIP`, `ApIP`                             | `DevName`, `HostName`, `WebUser`, `WebPsw`   |
 | `WidgetLoRa`       | `LORA`               | ключи из `params` (шаблон HT_CT62 - одно слово `Cfg`)                                                                        | те же ключи, свои биты поверх текущего слова |
 | `WidgetFileSystem` | `CFG`                | объект `FS` (Total/Used/Free/List, Upload во время закачки)                                                                  | -                                            |
-| `WidgetStackInfo`  | без группы           | объект `StackInfo` (кучи и стеки задач)                                                                                      | -                                            |
+| `WidgetStackInfo`  | без группы           | объект `SystemStackInfo` (кучи и стеки задач)                                                                                | -                                            |
 | `WidgetRGBStrip`   | `LST`                | `Color` [R,G,B,W], `Effect` 0-7, `Speed` 0-10, `Count`, `Model` (WS2812/SK6812/WS2811), `Order`, `MaxCount`                  | `Count`, `Model`, `Order`                    |
 | `WidgetPFD`        | `MAV`                | телеметрия MAVLink: ориентация, скорости, высоты, GPS, батарея, режим, маршрут, связь, сообщения (`Msg`, `MsgSev`, `MsgSeq`) | -                                            |
 | `WidgetMap`        | `groups: ["MAV"]`    | на каждый борт: `Lat`, `Lon`, `Alt`, `Heading`, `Sat`, `DevName`, `DevSN`, `WPNum`                                           | -                                            |
@@ -366,7 +366,7 @@ interface DeviceReply {
 - BusID модуля - CRC-16 его серийного номера, `0x0000` и `0xFFFF` не выдаются.
 - Запись с неверной CRC пропускается, остальные записи пакета принимаются.
 - Разборщики: пауза дольше `gapMs` (по умолчанию 100 мс; у CAN - `sessionTimeoutMs`) сбрасывает недособранное, предел `maxBytes` по умолчанию 8192. Пауза RS485 в прошивке - 20 мс.
-- Пример `GET ModCfg {}` из терминала: `9F 85 00 00 18 49 A0 19 66 06 FF` (HAR `0x0049`, CRC `0x6606`).
+- Пример `GET ModuleConfig {}` из терминала: `9F 85 00 00 18 49 A0 19 66 06 FF` (HAR `0x0049`, CRC `0x6606`).
 
 | Канал                   | Передача                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -376,7 +376,7 @@ interface DeviceReply {
 | UART-консоль xPOE-Debug | Поток вперемешку с текстом загрузчика; логи `OK! DebugLog` `[уровень, тег, текст \| байты, FHS]`, графики `OK! DebugPlot` `{Группа.Имя: float32}`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 | WebSocket               | Конверт `{HAR, VAL}` на всех соединениях (браузер - облако, облако - устройство, WebApp - устройство): `HAR` - то же 16-битное число, что на шине (заголовок, код из словаря, флаг ответа), имён в проводе нет. Запрос `VAL: {DevSN, ModSN?, TrgBusID?, SrcBusID?, Payload?}`, ответ `VAL: {DevSN, ModSN, Message, Args?, Payload}`, `Message` - код из `poe_msg.yaml` (0 - нет сообщения; группы `SYS` 1-99, `CFG` 100-199, `FS` 200-299, `FW` 300-399, `WIFI` 400-499, `DEV` 1000-1999), `Args` - параметры шаблона, текст, уровень и группа - `formatDeviceMessage`. У `ER!` модуля на шине `Payload` - карта `{Message, Args?}`, хаб переносит её в `VAL`; в консоли сообщение - `DebugLog` с тегом `HAR 0x....` и текстом `MSG <код>[ <арг1>[<TAB><арг2>...]]` (`parseDebugLogMessage`). Сборка и разбор - `encodeWsEnvelope`, `decodeWsEnvelope` |
 
-Аутентификация устройства в облаке (TOFU) описана в `PROTOCOL.md`: токен 64 hex-символа, передаётся `Authorization: Bearer`, выдаётся в `SET JoinDev {DevToken}`, неверный токен после подтверждения - закрытие кодом `1008`.
+Аутентификация устройства в облаке (TOFU) описана в `PROTOCOL.md`: токен 64 hex-символа, передаётся `Authorization: Bearer`, выдаётся в `SET CloudJoinDevice {DevToken}`, неверный токен после подтверждения - закрытие кодом `1008`.
 
 </details>
 
@@ -385,35 +385,35 @@ interface DeviceReply {
 
 Строка словаря: `- [Строка, Перечисление, Код]`, код 0..8191 (13 бит). Диапазоны: 0-4095 - команды устройств, 7000-7999 - команды самого облака DevCloud по `/ws` (устройства их не получают), 4096-6999 и 8000-8191 - резерв. Группы кодов:
 
-| Диапазон  | Группа                      | Примеры                                                                                                                                                                                              |
-| --------- | --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 0         | нет аргумента               | `Unknown`                                                                                                                                                                                            |
-| 1-15      | служебные                   | `Restart` 1, `DefCfg` 2, `DlFW` 3, `RstNVS` 5, `LocTime` 6, `Update` 7, `StackInfo` 8, `BackUp` 9, `BindMKey` 10, `DebugLog` 11, `DebugPlot` 12, `DataStream` 15                                     |
-| 21-25     | локальная сеть              | `APsList` 21, `FS` 22, `JoinDev` 23, `JoinUser` 24, `LeaveUser` 25                                                                                                                                   |
-| 31-46     | модули изделия              | `ModFind` 31, `ModList` 32, `ModCap` 33, `ModInfo` 34, `ModMode` 35, `ModCfg` 36, телеметрия `ModT1-5` 37-41, потоки `ModS1-5` 42-46                                                                 |
-| 51-54     | обновление прошивки по шине | `FwUpgS`, `FwUpgP`, `FwUpgD`, `FwUpgE`                                                                                                                                                               |
-| 111-117   | модули перемещения          | `MotInit`, `MotMode`, `MotPos`, `MotPID`, `MotInfo`, `MotCfg`, `MotCal`                                                                                                                              |
-| 141-144   | модули ориентации           | `OrData`, `OrOfs`, `OrAccCal`, `OrMagCal`                                                                                                                                                            |
-| 7000-7011 | облако: чаты                | `ChatMessage` 7000, `ChatMessages`, `SystemMessage`, `EditMessage`, `DeleteMessage`, `UpdateLastRead`, `JoinChat`, `UserConnected`, `ChatUnread`, `ChatPins`, `EditChatGroup`, `RemoveFromChat` 7011 |
-| 7100-7104 | облако: устройства          | `DeviceMessages` 7100, `DeviceConnection` 7101, `LeaveGroup` 7102, `LeaveGroups` 7103, `ResetDevToken` 7104                                                                                          |
+| Диапазон  | Группа                      | Примеры                                                                                                                                                                                                                                                                                      |
+| --------- | --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 0         | нет аргумента               | `Unknown`                                                                                                                                                                                                                                                                                    |
+| 1-15      | служебные                   | `SystemRestart` 1, `SystemDefaultConfig` 2, `FirmwareDownload` 3, `SystemFileSystem` 4, `SystemResetStorage` 5, `SystemLocalTime` 6, `SystemDataUpdate` 7, `SystemStackInfo` 8, `SystemBackup` 9, `ModuleBindKey` 10, `DebugLog` 11, `DebugPlot` 12, `DebugMirror` 13, `SystemDataStream` 15 |
+| 21-25     | локальная сеть              | `NetworkAccessPoints` 21, `CloudJoinDevice` 23, `CloudJoinUser` 24, `CloudLeaveUser` 25                                                                                                                                                                                                      |
+| 31-46     | модули изделия              | `ModuleFind` 31, `ModuleList` 32, `ModuleCapture` 33, `ModuleInfo` 34, `ModuleMode` 35, `ModuleConfig` 36, телеметрия `ModuleTelemetry1-5` 37-41, потоки `ModuleStream1-5` 42-46                                                                                                             |
+| 51-54     | обновление прошивки по шине | `FirmwareUpgradeStart`, `FirmwareUpgradeChunk`, `FirmwareUpgradeDone`, `FirmwareUpgradeError`                                                                                                                                                                                                |
+| 111-119   | модули перемещения          | `MotionInit`, `MotionMode`, `MotionTarget`, `MotionPID`, `MotionInfo`, `MotionConfig`, `MotionCalibrate`, `MotionVelocity` 118, `MotionAngle` 119                                                                                                                                            |
+| 141-145   | модули ориентации           | `OrientationData`, `OrientationOffset`, `OrientationAccelCalibrate`, `OrientationMagCalibrate`, `OrientationGyroscopeCalibrate`                                                                                                                                                              |
+| 7000-7011 | облако: чаты                | `ChatMessage` 7000, `ChatMessages`, `ChatSystemMessage`, `ChatEditMessage`, `ChatDeleteMessage`, `ChatLastRead`, `ChatJoin`, `ChatUserConnected`, `ChatUnread`, `ChatPins`, `ChatEditGroup`, `ChatRemoveUser` 7011                                                                           |
+| 7100-7104 | облако: устройства          | `DeviceMessages` 7100, `DeviceConnection` 7101, `DeviceLeaveGroup` 7102, `DeviceLeaveGroups` 7103, `DeviceResetToken` 7104                                                                                                                                                                   |
 
-Задел: `BackUp`, `BindMKey`, `ModList`, `ModMode`, `ModT2-ModT5`, `FwUpgE`, `OrOfs`, `OrAccCal`, `OrMagCal` есть в словаре, но ни одна прошивка ESP/STM их пока не обрабатывает. Коды закреплены и не меняются, описания в `poe_cmd.yaml` - план, а не текущее поведение. В примерах документации берут команды, которые прошивки реально обрабатывают: `ModCfg`, `ModInfo`, `FS`, `APsList`, `StackInfo`.
+Задел: `SystemBackup`, `ModuleBindKey`, `ModList`, `ModuleMode`, `ModuleTelemetry2-ModuleTelemetry5`, `FirmwareUpgradeError`, `MotionVelocity`, `MotionAngle`, `OrientationOffset`, `OrientationAccelCalibrate`, `OrientationMagCalibrate`, `OrientationGyroscopeCalibrate` есть в словаре, но ни одна прошивка ESP/STM их пока не обрабатывает. Коды закреплены и не меняются, описания в `poe_cmd.yaml` - план, а не текущее поведение. В примерах документации берут команды, которые прошивки реально обрабатывают: `ModuleConfig`, `ModuleInfo`, `SystemFileSystem`, `NetworkAccessPoints`, `SystemStackInfo`.
 
 `scripts/GenerateDictionary.mjs` превращает словарь в `DEFAULT_ARGUMENT_CODES` (`dictionaries/generated/poe_cmd.ts`, не править руками) и падает на повторе имени или кода и на коде больше `0x1FFF`. Словарь конкретного устройства читается `parseArgumentDictionary` и оборачивается `createDictionary(codes)`.
 
 </details>
 
 <details>
-<summary>📁 Обмен файлами (`SET FS`)</summary>
+<summary>📁 Обмен файлами (`SET SystemFileSystem`)</summary>
 
 | Операция              | Шаги `Op`                                                                                                                     |
 | --------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
 | `upload(name, bytes)` | `UploadStart` (`FileName`, `FileExtension`, `FileSize`) -> `UploadChunk` (`ChunkIndex`, `Data`) ... -> `UploadDone` (`CRC32`) |
 | `download(name)`      | `DownloadStart` (`Name`) -> `DownloadChunk` ... -> `DownloadDone`                                                             |
-| `list()`              | `GET FS` без `Op` - снимок                                                                                                    |
-| `remove(name)`        | `SET FS {Op: "Delete", Name}` - снимок после удаления                                                                         |
+| `list()`              | `GET SystemFileSystem` без `Op` - снимок                                                                                      |
+| `remove(name)`        | `SET SystemFileSystem {Op: "Delete", Name}` - снимок после удаления                                                           |
 
-Параметры `createFsTransfer`: `argument = "FS"`, `timeoutMs = 5000`, `retries = 3`, `maxNameLength = 31` (байты UTF-8; длинное или пустое имя - `FsNameError` до `UploadStart`, единственная проверка имени; `GUIRenderer` берёт предел из свойств `WidgetFileSystem`, очередь передач по ключу `аргумент:предел`). Размер чанка задаёт устройство, ответ сверяется по `Op`, `CurrentID` и `ChunkIndex`, чанк после `ER!` или таймаута повторяется. Операции идут строго по одной в очереди, общей для транспорта.
+Параметры `createFsTransfer`: `argument = "SystemFileSystem"`, `timeoutMs = 5000`, `retries = 3`, `maxNameLength = 31` (байты UTF-8; длинное или пустое имя - `FsNameError` до `UploadStart`, единственная проверка имени; `GUIRenderer` берёт предел из свойств `WidgetFileSystem`, очередь передач по ключу `аргумент:предел`). Размер чанка задаёт устройство, ответ сверяется по `Op`, `CurrentID` и `ChunkIndex`, чанк после `ER!` или таймаута повторяется. Операции идут строго по одной в очереди, общей для транспорта.
 
 </details>
 
@@ -669,14 +669,14 @@ interface DeviceReply {
 | Примитив                 | Обычный компонент, привязанный к одной переменной устройства                                                                                                    |
 | Группа полей / префикс   | Часть ключа до точки: `CFG`, `LST`, `MAV` (группы `config_service` прошивки)                                                                                    |
 | `ModSN`, `DevSN`         | Серийный номер модуля и устройства; ключ хранилища `<ModSN>                                                                                                     | <ключ>` |
-| `ModCfg`                 | Команда 36: чтение и запись конфигурации модуля                                                                                                                 |
+| `ModuleConfig`           | Команда 36: чтение и запись конфигурации модуля                                                                                                                 |
 | `NoSend`                 | Аргумент `eventHandler`: значение записывается локально, пакет не отправляется                                                                                  |
 | Битовое поле (`bitMode`) | Режим `Input`/`Select`: компонент читает и пишет биты `range` 32-битного слова                                                                                  |
 | `poe_cbor_pkt`           | Пакет протокола: CBOR-массив записей `[TrgBusID, SrcBusID, HAR, Payload, CRC16]`                                                                                |
 | HAR                      | 16-битное поле: заголовок, команда, флаг ответа                                                                                                                 |
 | BusID                    | Адрес модуля на шине: CRC-16 серийного номера                                                                                                                   |
 | Заголовок                | `GET`, `SET`, `OK!`, `ER!`                                                                                                                                      |
-| Аргумент / команда       | Имя или код из словаря (`ModCfg` = 36)                                                                                                                          |
+| Аргумент / команда       | Имя или код из словаря (`ModuleConfig` = 36)                                                                                                                    |
 | Мастер-словари           | `src/lib/dictionaries/poe_cmd.yaml`, `poe_msg.yaml`; копии в `.framework/poe_cmd.yaml`, `poe_msg.yaml` прошивок                                                 |
 | xPOE-Debug               | UART-консоль устройства как шина: пакеты вперемешку с текстом, логи `DebugLog`, графики `DebugPlot`                                                             |
 | FHS                      | Свободная память устройства в записи `DebugLog`                                                                                                                 |
@@ -931,8 +931,8 @@ interface DeviceReply {
 ```
 
 - `get` читает реактивное хранилище (`SvelteMap`), тогда рендерер обновляется сам.
-- Ответы устройства приложение кладёт в хранилище функцией `mergeDevicePayload(values, "<ModSN>|", argument, Payload)`: объект пишется целиком и по полям `имя-поле`, ход закачки `CFG.FS` дописывается к снимку, служебные поля `SET FS` пропускаются. `argument` - имя из разобранного конверта (`decodeWsEnvelope`).
-- Отправка `SET Restart` и `SET RstNVS` идёт через `link.send`, приложение узнаёт их по `HAR` (`encodeHar("SET", "Restart")`) и может показать состояние перезагрузки.
+- Ответы устройства приложение кладёт в хранилище функцией `mergeDevicePayload(values, "<ModSN>|", argument, Payload)`: объект пишется целиком и по полям `имя-поле`, ход закачки `CFG.FS` дописывается к снимку, служебные поля `SET SystemFileSystem` пропускаются. `argument` - имя из разобранного конверта (`decodeWsEnvelope`).
+- Отправка `SET SystemRestart` и `SET SystemResetStorage` идёт через `link.send`, приложение узнаёт их по `HAR` (`encodeHar("SET", "Restart")`) и может показать состояние перезагрузки.
 - Имя аргумента не из словаря рендерер не отправляет и сообщает через `onError`.
 
 </details>
@@ -940,7 +940,7 @@ interface DeviceReply {
 <details>
 <summary>🔢 Команды в провод: HAR</summary>
 
-В `eventHandler` команда записана именами (`SET`, `ModCfg`) - это справка автора GUI. В `link.send` рендерер отдаёт уже число `HAR` (заголовок, код из словаря, флаг ответа), а ответ ждёт по коду аргумента. Конверт WebSocket `{HAR, VAL}` собирает приложение. Подробно - раздел «WebSocket» в [PROTOCOL.md](src/lib/protocols/PROTOCOL.md).
+В `eventHandler` команда записана именами (`SET`, `ModuleConfig`) - это справка автора GUI. В `link.send` рендерер отдаёт уже число `HAR` (заголовок, код из словаря, флаг ответа), а ответ ждёт по коду аргумента. Конверт WebSocket `{HAR, VAL}` собирает приложение. Подробно - раздел «WebSocket» в [PROTOCOL.md](src/lib/protocols/PROTOCOL.md).
 
 - Свою команду по именам приложение шлёт так же: `sendCommand(link, header, argument, payload)` (аргумент - имя или код), код для ожидания - `argumentCode(link, argument)`.
 - Входящий конверт разберите `decodeWsEnvelope(packet)`: получите `{ header, argument, code, reply, VAL }`. По `code` будите `waitFor`, по `argument` зовите `mergeDevicePayload`.
@@ -984,7 +984,7 @@ const bridge = UI.createBusBridge(channel, {
 - `channel` - `{ send(trgId, har, payload), listen(handler) }`: отправка пакета адресату по BusID и подписка на принятые пакеты `{ trgId, srcId, header, argument, code, payload }`.
 - Модули - из `CFG.ModList` модуля порта, как в вебе. Списка нет (датчик) - модуль один, его серийный номер мост берёт из `CFG.DevSN`. Список модулей принимается только от модуля порта: у модулей за ним свой ModList из одного себя.
 - Адрес команды: модулю порта - `selfTarget`, остальным - их BusID (`busIdFromSN`: HEX после `:` в ModSN), головной модуль пересылает сам.
-- Значения: Payload ответов и рассылок `Update`, `DataStream`, `ModCfg`, `FS`, `ModInfo`, `APsList`, `StackInfo` - в `values` под ModSN отправителя.
+- Значения: Payload ответов и рассылок `SystemDataUpdate`, `SystemDataStream`, `ModuleConfig`, `SystemFileSystem`, `ModuleInfo`, `NetworkAccessPoints`, `SystemStackInfo` - в `values` под ModSN отправителя.
 - Сообщения: консоль шлёт `Message` отдельным `DebugLog` («HAR 0x....», «MSG код аргументы») прямо перед ответом. Мост склеивает их обратно: `waitFor` получает `reply.message`, как в вебе, а `onMessage` - текст на языке пользователя и уровень.
 - `bridge.link(ModSN)` - одна связь на модуль (на неё завязана очередь передачи файлов), `bridge.modules()`, `bridge.self()`, `bridge.dispose()`.
 
@@ -1008,7 +1008,7 @@ const bridge = UI.createBusBridge(channel, {
 | `tablePacket(eventHandler, row)`                        | пакет кнопки строки таблицы: `Variables` из строки, у списка поле без `-S`                        |
 | `readBits` / `writeBits` / `bitRange`                   | битовое поле `Input` (`type: "bitMode"`) и `Select` (`bitMode`)                                   |
 | `readWidgetFields(get, prefix, fields, keys)`           | значения полей смарт-виджета                                                                      |
-| `widgetPacket(prefix, fields, values, keys)`            | Payload `SET ModCfg` виджета                                                                      |
+| `widgetPacket(prefix, fields, values, keys)`            | Payload `SET ModuleConfig` виджета                                                                |
 | `WIDGET_FIELDS`, `WIDGET_SAVE_FIELDS`, `widgetPrefixes` | поля смарт-виджетов (из них выведены `IWidgetWiFiConfig` и остальные), сохраняемые поля, группы   |
 | `GUI_GRID`, `spanRows`, `isWidgetType`                  | сетка                                                                                             |
 | `guiTypes`                                              | типы компонентов в GUI - из них приложение собирает `views` рендерера                             |
@@ -1027,7 +1027,7 @@ const bridge = UI.createBusBridge(channel, {
 <details>
 <summary>📁 Обмен файлами</summary>
 
-`createFsTransfer(transport, { argument = "FS", timeoutMs = 5000, retries = 3, maxNameLength = 31 })` - обмен файлами по `SET FS` прошивки. `transport` - тот же `DeviceLink` (`send(har, payload)`, `waitFor(code, ...)`), `argument` - имя или код; имя не из словаря - отказ без отправки. `maxNameLength` - предел имени в байтах UTF-8 (буква кириллицы - 2 байта). Слишком длинное или пустое имя `upload` отвергает ещё до `UploadStart` ошибкой `FsNameError` (поле `maxBytes`). Это единственная проверка имени: `GUIRenderer` передаёт сюда `maxNameLength` из свойств `WidgetFileSystem`, сам виджет имя не проверяет и только переводит сообщение.
+`createFsTransfer(transport, { argument = "SystemFileSystem", timeoutMs = 5000, retries = 3, maxNameLength = 31 })` - обмен файлами по `SET SystemFileSystem` прошивки. `transport` - тот же `DeviceLink` (`send(har, payload)`, `waitFor(code, ...)`), `argument` - имя или код; имя не из словаря - отказ без отправки. `maxNameLength` - предел имени в байтах UTF-8 (буква кириллицы - 2 байта). Слишком длинное или пустое имя `upload` отвергает ещё до `UploadStart` ошибкой `FsNameError` (поле `maxBytes`). Это единственная проверка имени: `GUIRenderer` передаёт сюда `maxNameLength` из свойств `WidgetFileSystem`, сам виджет имя не проверяет и только переводит сообщение.
 
 <details>
 <summary>Ошибки передачи</summary>
@@ -1095,7 +1095,7 @@ const bridge = UI.createBusBridge(channel, {
 
 #### 📚 Словари команд и сообщений
 
-Все команды (`GET`, `SET`, `ModCfg`, `Restart` и остальные) и тексты событий устройств («Файл удалён», «Прошивка обновлена») записаны в двух файлах папки `src/lib/dictionaries/`: `poe_cmd.yaml` и `poe_msg.yaml`. Это единственный источник для прошивок, облака, терминала и веб-интерфейса. Новую команду или сообщение сначала добавляют сюда, потом копируют в оба фреймворка прошивок.
+Все команды (`GET`, `SET`, `ModuleConfig`, `SystemRestart` и остальные) и тексты событий устройств («Файл удалён», «Прошивка обновлена») записаны в двух файлах папки `src/lib/dictionaries/`: `poe_cmd.yaml` и `poe_msg.yaml`. Это единственный источник для прошивок, облака, терминала и веб-интерфейса. Новую команду или сообщение сначала добавляют сюда, потом копируют в оба фреймворка прошивок.
 
 - 📖 Коды команд 0-4095 - команды устройств, 7000-7999 - команды самого облака DevCloud (чаты, журнал, состояние устройств).
 - 💬 Устройство шлёт только код сообщения и параметры, текст на языке пользователя собирает `formatDeviceMessage(code, args?, lang?)` из `poe-svelte-ui-lib/protocols`. Сообщения разбиты на группы со своими диапазонами кодов: `SYS` 1-99, `CFG` 100-199, `FS` 200-299, `FW` 300-399, `WIFI` 400-499, `API` 500-599, `BUS` 600-699, `NET` 700-799, `LORA` 800-899, `DEV` 1000-1999, `DRV` 2000-2999 (900-999 и 3000+ - резерв).
@@ -1499,7 +1499,7 @@ npm pack               # сборка пакета в dist/: проверка т
 
 1. Перетащите кнопку на макет и подпишите её.
 2. Выберите иконку и цвет, если нужно.
-3. Укажите, какую команду отправлять: например `SET` и `Restart`.
+3. Укажите, какую команду отправлять: например `SET` и `SystemRestart`.
 4. Если кнопка должна отправить значения других полей, перечислите их переменные. Если всегда одно и то же значение - задайте его.
 
 #### 💡 Полезно знать
@@ -1513,7 +1513,7 @@ npm pack               # сборка пакета в dist/: проверка т
 <details>
 <summary>📦 Что уходит на устройство</summary>
 
-- По нажатию уходит **Заголовок** и **Аргумент**, например `SET` и `Restart`. В конструкторе аргумент выбирается из словаря команд с поиском по имени, есть и `NoSend`. Имя не из словаря не сохраняется.
+- По нажатию уходит **Заголовок** и **Аргумент**, например `SET` и `SystemRestart`. В конструкторе аргумент выбирается из словаря команд с поиском по имени, есть и `NoSend`. Имя не из словаря не сохраняется.
 - **Переменные.** Текущие значения других компонентов кладутся в тот же пакет. Так делается кнопка «Сохранить» для полей с аргументом `NoSend`.
 - **Фиксированное значение** (JSON) отправляется как есть вместо переменных, например `{"Mode": 2}`.
 - Значение с устройства кнопка не показывает.
@@ -1703,6 +1703,7 @@ npm pack               # сборка пакета в dist/: проверка т
 Новая команда:
 
 1. Добавить строку в `poe_cmd.yaml`: `- [Имя, A_ИМЯ, код]   # описание`, в свой раздел и диапазон.
+   Имя - полными словами, сначала группа (`System`, `Debug`, `Network`, `Cloud`, `Module`, `Firmware`, `Motion`, `Orientation`, `Chat`, `Device`), затем действие: `ModuleConfig`, `MotionVelocity`. Длина имени на прошивку не влияет: на проводе и в прошивке только код. Перечисление - `A_` и то же имя заглавными через подчёркивание (`A_MODULE_CONFIG`), у команд облака - `A_CLOUD_`.
 2. `npm run Generate`.
 3. В обоих фреймворках (ProdFactory-ESP и ProdFactory-STM) нажать кнопку Dict расширения: она копирует `poe_cmd.yaml` в `.framework/poe_cmd.yaml` и `firmware/poe_cmd.h` в `components/core/common/poe_cmd.h` из `../ElementsUI`.
 
@@ -2109,7 +2110,7 @@ npm pack               # сборка пакета в dist/: проверка т
 <details>
 <summary>📦 Данные устройства</summary>
 
-- Выбранный файл приложение отправляет частями командой `SET FS`: `UploadStart`, затем `UploadChunk`, затем `UploadDone`.
+- Выбранный файл приложение отправляет частями командой `SET SystemFileSystem`: `UploadStart`, затем `UploadChunk`, затем `UploadDone`.
 - Файлы с устройства компонент не показывает.
 - Список файлов, удаление и прогресс закачки показывает виджет «Файловая система» (`WidgetFileSystem`).
 
@@ -2529,7 +2530,7 @@ npm pack               # сборка пакета в dist/: проверка т
 #### 🧩 Как настроить в конструкторе
 
 1. Перетащите джойстик на макет и подпишите его.
-2. Выберите переменную устройства и команду отправки, например `SET` и `ModCfg`.
+2. Выберите переменную устройства и команду отправки, например `SET` и `ModuleConfig`.
 3. Выберите иконку центральной кнопки и цвет.
 4. Задайте каждой оси минимум и максимум.
 
@@ -2546,7 +2547,7 @@ npm pack               # сборка пакета в dist/: проверка т
 
 - Читает и пишет одну переменную со значениями всех осей.
 - Значение отправляется (`onUpdate`) при каждом нажатии любой кнопки: направлений, боковых, центральной и «0».
-- Отправка настраивается в событии: **Заголовок** (обычно `SET`) и **Аргумент** (обычно `ModCfg`). С `NoSend` значение сразу не уходит, его отправит другой компонент.
+- Отправка настраивается в событии: **Заголовок** (обычно `SET`) и **Аргумент** (обычно `ModuleConfig`). С `NoSend` значение сразу не уходит, его отправит другой компонент.
 
 | Ключ           | Описание                                                                                                                             |
 | -------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
@@ -2617,7 +2618,7 @@ npm pack               # сборка пакета в dist/: проверка т
 <details>
 <summary>🛠️ Панель свойств (JoystickProps.svelte)</summary>
 
-- В панели задают доступ, переменную, действие (`ModCfg` или `NoSend`); заголовок и его выравнивание; иконку центральной кнопки, цвет; минимум и максимум каждой оси.
+- В панели задают доступ, переменную, действие (`ModuleConfig` или `NoSend`); заголовок и его выравнивание; иконку центральной кнопки, цвет; минимум и максимум каждой оси.
 - Пределы третьей оси недоступны для правки, если у неё пустое имя.
 - Имена осей и режим «только чтение» в панели не задаются.
 
@@ -3080,27 +3081,27 @@ ModalStack.close(id) // убрать
 <details>
 <summary>☁️ Облако: коды команд DevCloud</summary>
 
-Эти команды ходят только между браузером и облаком по `/ws`, устройства их не получают. Команды устройств, которыми пользуется и облако (`JoinDev` 23, `JoinUser` 24, `LeaveUser` 25, `FS` 22, `Update` 7, `DataStream` 15, `ModCfg` 36 и другие), остаются со своими кодами.
+Эти команды ходят только между браузером и облаком по `/ws`, устройства их не получают. Команды устройств, которыми пользуется и облако (`CloudJoinDevice` 23, `CloudJoinUser` 24, `CloudLeaveUser` 25, `SystemFileSystem` 4, `SystemDataUpdate` 7, `SystemDataStream` 15, `ModuleConfig` 36 и другие), остаются со своими кодами.
 
-| Код  | Имя                | Заголовки | Что делает                               |
-| ---- | ------------------ | --------- | ---------------------------------------- |
-| 7000 | `ChatMessage`      | SET       | Новое сообщение в чат                    |
-| 7001 | `ChatMessages`     | GET, OK!  | Страница истории чата                    |
-| 7002 | `SystemMessage`    | SET       | Сообщение в системный чат, администратор |
-| 7003 | `EditMessage`      | SET, OK!  | Правка своего сообщения                  |
-| 7004 | `DeleteMessage`    | SET, OK!  | Удаление своего сообщения                |
-| 7005 | `UpdateLastRead`   | SET       | Чат прочитан, вкладка чата закрыта       |
-| 7006 | `JoinChat`         | SET, OK!  | Вход в чат                               |
-| 7007 | `UserConnected`    | SET       | Собеседник открыл чат                    |
-| 7008 | `ChatUnread`       | OK!       | Число непрочитанных в чате               |
-| 7009 | `ChatPins`         | OK!       | Закреплённые чаты пользователя           |
-| 7010 | `EditChatGroup`    | OK!       | Чат создан или изменён                   |
-| 7011 | `RemoveFromChat`   | OK!       | Пользователь удалён из чата              |
-| 7100 | `DeviceMessages`   | GET, OK!  | Страница журнала устройства              |
-| 7101 | `DeviceConnection` | OK!       | Устройство в сети или ушло из сети       |
-| 7102 | `LeaveGroup`       | SET, OK!  | Выход из группы устройства               |
-| 7103 | `LeaveGroups`      | SET       | Выход из групп всех устройств            |
-| 7104 | `ResetDevToken`    | SET, OK!  | Сброс токена устройства (TOFU)           |
+| Код  | Имя                 | Заголовки | Что делает                               |
+| ---- | ------------------- | --------- | ---------------------------------------- |
+| 7000 | `ChatMessage`       | SET       | Новое сообщение в чат                    |
+| 7001 | `ChatMessages`      | GET, OK!  | Страница истории чата                    |
+| 7002 | `ChatSystemMessage` | SET       | Сообщение в системный чат, администратор |
+| 7003 | `ChatEditMessage`   | SET, OK!  | Правка своего сообщения                  |
+| 7004 | `ChatDeleteMessage` | SET, OK!  | Удаление своего сообщения                |
+| 7005 | `ChatLastRead`      | SET       | Чат прочитан, вкладка чата закрыта       |
+| 7006 | `ChatJoin`          | SET, OK!  | Вход в чат                               |
+| 7007 | `ChatUserConnected` | SET       | Собеседник открыл чат                    |
+| 7008 | `ChatUnread`        | OK!       | Число непрочитанных в чате               |
+| 7009 | `ChatPins`          | OK!       | Закреплённые чаты пользователя           |
+| 7010 | `ChatEditGroup`     | OK!       | Чат создан или изменён                   |
+| 7011 | `ChatRemoveUser`    | OK!       | Пользователь удалён из чата              |
+| 7100 | `DeviceMessages`    | GET, OK!  | Страница журнала устройства              |
+| 7101 | `DeviceConnection`  | OK!       | Устройство в сети или ушло из сети       |
+| 7102 | `DeviceLeaveGroup`  | SET, OK!  | Выход из группы устройства               |
+| 7103 | `DeviceLeaveGroups` | SET       | Выход из групп всех устройств            |
+| 7104 | `DeviceResetToken`  | SET, OK!  | Сброс токена устройства (TOFU)           |
 
 Новая команда облака получает свободный код из 7000-7999 в `poe_cmd.yaml`, потом словарь копируется в прошивки, как любая другая команда. Потоки `/ws-stream` - отдельный канал с текстовыми командами подписки, конверта `{HAR, VAL}` там нет.
 
@@ -3110,7 +3111,7 @@ ModalStack.close(id) // убрать
 <summary>⚙️ Копии словаря и словарь устройства</summary>
 
 - `poe_cmd.h` прошивок генерируется из `poe_cmd.yaml` командой `npm run Generate` (`src/lib/dictionaries/firmware/poe_cmd.h`, вручную не править). В прошивках лежат копии словаря `.framework/poe_cmd.yaml` и заголовка, сборка сверяет их между собой.
-- Часть аргументов словаря - задел, прошивки их пока не обрабатывают: `BackUp`, `BindMKey`, `ModList`, `ModMode`, `ModT2-ModT5`, `FwUpgE`, `OrOfs`, `OrAccCal`, `OrMagCal`. Коды у них закреплены и не меняются. Такой аргумент модуль примет, но ответа не будет, поэтому в примерах берут реальные команды (`ModCfg`, `ModInfo`, `FS`).
+- Часть аргументов словаря - задел, прошивки их пока не обрабатывают: `SystemBackup`, `ModuleBindKey`, `ModList`, `ModuleMode`, `ModuleTelemetry2-ModuleTelemetry5`, `FirmwareUpgradeError`, `MotionVelocity`, `MotionAngle`, `OrientationOffset`, `OrientationAccelCalibrate`, `OrientationMagCalibrate`, `OrientationGyroscopeCalibrate`. Коды у них закреплены и не меняются. Такой аргумент модуль примет, но ответа не будет, поэтому в примерах берут реальные команды (`ModuleConfig`, `ModuleInfo`, `SystemFileSystem`).
 - Словарь один на стек: прошивки собираются с его копией, поэтому приложения берут встроенный `DEFAULT_DICTIONARY`. Объект словаря (`createDictionary(codes)`): `code(имя)`, `name(код)`, `header(код)`, `har(заголовок, команда, ответ)`.
 - Команду, которой нет в словаре, задают числом: `code` и `har` принимают код строкой, десятичный или HEX (`"4097"`, `"0x1001"`), а `name` для неизвестного кода возвращает его же числом строкой, так что запись «туда и обратно» сходится.
 - Такой словарь принимают `encodeHar`, `decodeHar`, `encodeWsEnvelope`, `decodeWsEnvelope`, `encodeXPoeDebugFrame` (последний аргумент), `createXPoeDebugParser({ dictionary })` и связь `GUIRenderer` (поле `dictionary`). Без него берётся встроенный.
@@ -3127,21 +3128,21 @@ ModalStack.close(id) // убрать
 - 🗂️ Новое сообщение - в свою группу: код из её диапазона, имя с её приставкой. Новая группа ядра получает диапазон из резерва 900-999.
 - 🧯 Те же коды прошивки возвращают при ошибках и пишут в свой журнал, текст на языке пользователя показывает отладочная консоль.
 
-| Группа | Коды      | Название   | Что                                                        |
-| ------ | --------- | ---------- | ---------------------------------------------------------- |
-| `SYS`  | 1-99      | Система    | Перезагрузка, неизвестная команда, неверный запрос, память |
-| `CFG`  | 100-199   | Настройки  | Приём настроек (`config_service`)                          |
-| `FS`   | 200-299   | Файлы      | Файловая система, загрузка и выгрузка файлов               |
-| `FW`   | 300-399   | Обновление | Загрузка и обновление прошивки, обновление модуля по шине  |
-| `WIFI` | 400-499   | Wi-Fi      | Поиск сетей и подключение                                  |
-| `API`  | 500-599   | Обмен      | Пакеты, буферы, модули и маршруты                          |
-| `BUS`  | 600-699   | Шины       | UART, CAN, SPI, I2C, GPIO, прерывания                      |
-| `NET`  | 700-799   | Сеть       | Веб-сервер, HTTP, WebSocket, SSDP                          |
-| `LORA` | 800-899   | LoRa       | Радио LoRa                                                 |
-| -      | 900-999   | -          | Резерв для новых групп ядра                                |
-| `DEV`  | 1000-1999 | Изделия    | Сообщения изделий каталога (`catalog/<CatalogID>`)         |
-| `DRV`  | 2000-2999 | Драйверы   | Драйверы датчиков и микросхем, утилиты                     |
-| -      | 3000+     | -          | Резерв                                                     |
+| Группа             | Коды      | Название   | Что                                                        |
+| ------------------ | --------- | ---------- | ---------------------------------------------------------- |
+| `SYS`              | 1-99      | Система    | Перезагрузка, неизвестная команда, неверный запрос, память |
+| `CFG`              | 100-199   | Настройки  | Приём настроек (`config_service`)                          |
+| `SystemFileSystem` | 200-299   | Файлы      | Файловая система, загрузка и выгрузка файлов               |
+| `FW`               | 300-399   | Обновление | Загрузка и обновление прошивки, обновление модуля по шине  |
+| `WIFI`             | 400-499   | Wi-Fi      | Поиск сетей и подключение                                  |
+| `API`              | 500-599   | Обмен      | Пакеты, буферы, модули и маршруты                          |
+| `BUS`              | 600-699   | Шины       | UART, CAN, SPI, I2C, GPIO, прерывания                      |
+| `NET`              | 700-799   | Сеть       | Веб-сервер, HTTP, WebSocket, SSDP                          |
+| `LORA`             | 800-899   | LoRa       | Радио LoRa                                                 |
+| -                  | 900-999   | -          | Резерв для новых групп ядра                                |
+| `DEV`              | 1000-1999 | Изделия    | Сообщения изделий каталога (`catalog/<CatalogID>`)         |
+| `DRV`              | 2000-2999 | Драйверы   | Драйверы датчиков и микросхем, утилиты                     |
+| -                  | 3000+     | -          | Резерв                                                     |
 
 <details>
 <summary>🧯 Коды ошибок и журнал прошивок</summary>
@@ -3206,19 +3207,19 @@ const shown = formatDeviceMessage(VAL.Message, VAL.Args, getLanguage())
 
 #### 🔄 Обновление модуля по шине
 
-Хаб ESP передаёт прошивку загрузчику модуля STM тремя командами: `FwUpgS` (51) - размер и CRC32 образа, `FwUpgP` (52) - части образа по порядку, `FwUpgD` (53) - проверка CRC32 и запуск приложения. Загрузчик отвечает тем же пакетом `poe_cbor_pkt`, что и все модули.
+Хаб ESP передаёт прошивку загрузчику модуля STM тремя командами: `FirmwareUpgradeStart` (51) - размер и CRC32 образа, `FirmwareUpgradeChunk` (52) - части образа по порядку, `FirmwareUpgradeDone` (53) - проверка CRC32 и запуск приложения. Загрузчик отвечает тем же пакетом `poe_cbor_pkt`, что и все модули.
 
 <details>
 <summary>⚙️ Ответы загрузчика</summary>
 
-| Команда  | `OK!` (`Payload` - байтовая строка, поля подряд, little-endian) | `ER!` (`Payload` - карта)                                                                   |
-| -------- | --------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| `FwUpgS` | размер части, `u8`                                              | `{Message: 3}` неверный размер, `{Message: 5}` Flash не стёрлась                            |
-| `FwUpgP` | номер принятой части, `u32`                                     | `{Message: 307, Args: [номер]}` - передать заново с этой части; `{Message: 3}` - нет сеанса |
-| `FwUpgD` | ничего (`null`)                                                 | `{Message: 3}` пришло не всё, `{Message: 306}` CRC32 не совпала                             |
+| Команда                | `OK!` (`Payload` - байтовая строка, поля подряд, little-endian) | `ER!` (`Payload` - карта)                                                                   |
+| ---------------------- | --------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| `FirmwareUpgradeStart` | размер части, `u8`                                              | `{Message: 3}` неверный размер, `{Message: 5}` Flash не стёрлась                            |
+| `FirmwareUpgradeChunk` | номер принятой части, `u32`                                     | `{Message: 307, Args: [номер]}` - передать заново с этой части; `{Message: 3}` - нет сеанса |
+| `FirmwareUpgradeDone`  | ничего (`null`)                                                 | `{Message: 3}` пришло не всё, `{Message: 306}` CRC32 не совпала                             |
 
 ```
-шина, ER! FwUpgP   [TrgBusID, SrcBusID, HAR (ER! FwUpgP), {Message: 307, Args: [17]}, CRC16]
+шина, ER! FirmwareUpgradeChunk   [TrgBusID, SrcBusID, HAR (ER! FirmwareUpgradeChunk), {Message: 307, Args: [17]}, CRC16]
 ```
 
 - `FW_RESYNC` (307): номер в `Args[0]` - число CBOR, а не строка. Пришёл не тот номер части - загрузчик ждёт свой следующий, часть с неверной CRC16 или не записалась - тот же номер. Хаб продолжает передачу с этой части; иной код `Message` - отказ обновления (`MSG_FW_UPGRADE_FAILED` клиенту).
@@ -3309,7 +3310,7 @@ const shown = formatDeviceMessage(VAL.Message, VAL.Args, getLanguage())
 | `OK! DebugPlot`   | `{Группа.Имя: float32, ...}`, один вызов `LOG_PLOT`                                               |
 | `OK! DebugMirror` | `{Dir, If, Trg, Src, HAR, ModSN, Val}`: копия пакета другого интерфейса, только на уровне `TRACE` |
 
-Рассылки устройства без запроса (`OK! ModCfg` при изменениях, `Update`, `DataStream`, сообщения) идут в консоль так же, как в веб и облако, при любом уровне логов, кроме `OFF`.
+Рассылки устройства без запроса (`OK! ModuleConfig` при изменениях, `SystemDataUpdate`, `SystemDataStream`, сообщения) идут в консоль так же, как в веб и облако, при любом уровне логов, кроме `OFF`.
 
 На уровне `TRACE` консоль получает копию каждого пакета других интерфейсов в обёртке `OK! DebugMirror`: `Dir` - `rx` (принят) или `tx` (отправлен), `If` - биты интерфейсов (`iface_t` фреймворка), `Trg`, `Src` - адреса, `HAR` - число HAR пакета, `ModSN` - серийный номер (если есть), `Val` - данные пакета как есть (конверт `{HAR, VAL}` WebSocket или Payload шины). Пакеты самой консоли не копируются. GUI устройства обёртку не разбирает, его значения приходят обычными рассылками.
 
@@ -3430,9 +3431,9 @@ Raw: h'01'
 </details>
 
 <details>
-<summary>🔁 Пример туда и обратно: GET ModCfg модулю за хабом</summary>
+<summary>🔁 Пример туда и обратно: GET ModuleConfig модулю за хабом</summary>
 
-`ModCfg` = 36. Запрос с флагом ответа: `HAR = (0 << 14) | (36 << 1) | 1 = 0x0049` (73). Ответ `OK!` без флага: `HAR = (2 << 14) | (36 << 1) = 0x8048` (32840).
+`ModuleConfig` = 36. Запрос с флагом ответа: `HAR = (0 << 14) | (36 << 1) | 1 = 0x0049` (73). Ответ `OK!` без флага: `HAR = (2 << 14) | (36 << 1) = 0x8048` (32840).
 
 ```
 туда     {HAR: 73, VAL: {DevSN: "HUB-SN", ModSN: "MOD-SN", Payload: {}}}
@@ -3446,7 +3447,7 @@ Raw: h'01'
 import { encodeWsEnvelope, decodeWsEnvelope, valueToCbor, cborToValue } from "poe-svelte-ui-lib/protocols"
 
 socket.send(valueToCbor(encodeWsEnvelope("GET", "ModCfg", { DevSN, ModSN, Payload: {} })))
-/* { header: "OK!", argument: "ModCfg", code: 36, reply: false, VAL: {...} } или null */
+/* { header: "OK!", argument: "ModuleConfig", code: 36, reply: false, VAL: {...} } или null */
 const message = decodeWsEnvelope(cborToValue(new Uint8Array(event.data)))
 ```
 
@@ -3472,16 +3473,16 @@ const message = decodeWsEnvelope(cborToValue(new Uint8Array(event.data)))
 
 - Токен: 64 hex-символа (32 случайных байта). Облако хранит только его SHA-256 и признак «подтверждён».
 - Устройство передаёт токен заголовком `Authorization: Bearer <токен>` в обоих подключениях. В query токен не кладётся.
-- Выдача: если у устройства нет подтверждённого токена, облако принимает подключение и присылает новый токен в `SET JoinDev`, `Payload: {DevToken: "<токен>"}`. Устройство принимает `DevToken` только из облачного WebSocket, сохраняет его и переподключается.
+- Выдача: если у устройства нет подтверждённого токена, облако принимает подключение и присылает новый токен в `SET CloudJoinDevice`, `Payload: {DevToken: "<токен>"}`. Устройство принимает `DevToken` только из облачного WebSocket, сохраняет его и переподключается.
 - Подтверждение: первое подключение с верным токеном помечает его подтверждённым. После этого подключение без токена или с неверным токеном облако закрывает кодом `1008`.
 - Прошивка без поддержки токена игнорирует `DevToken` и подключается без него. Облако её принимает, пока токен не подтверждён.
-- Токен хранится в разделе NVS `config` отдельным ключом `DevToken`, вне групп `ModCfg`: его не отдаёт `GET ModCfg`, не меняют `SET ModCfg` и `DefCfg`. При стирании раздела (`RstNVS`, полный сброс настроек, восстановление после повреждения) токен сохраняется в памяти и записывается обратно.
+- Токен хранится в разделе NVS `config` отдельным ключом `DevToken`, вне групп `ModuleConfig`: его не отдаёт `GET ModuleConfig`, не меняют `SET ModuleConfig` и `SystemDefaultConfig`. При стирании раздела (`SystemResetStorage`, полный сброс настроек, восстановление после повреждения) токен сохраняется в памяти и записывается обратно.
 - Если токен потерян (полное стирание флеша) или выдан чужому, администратор сбрасывает его в DevCloud; при следующем подключении устройство получит новый.
 - Модули на шине (STM32) к облаку не подключаются, их представляет устройство-хаб.
 
 </details>
 
-#### 🔍 Пример: `GET ModCfg {}` из терминала
+#### 🔍 Пример: `GET ModuleConfig {}` из терминала
 
 Терминал просит у модуля консоли его настройки. Весь запрос занимает 11 байт.
 
@@ -3564,7 +3565,7 @@ const message = decodeWsEnvelope(cborToValue(new Uint8Array(event.data)))
 3. Добавьте варианты: подпись, значение и при желании цвет.
 4. Выберите тип значения: текст или число.
 5. Если значение занимает только несколько битов числа, включите битовый режим и задайте диапазон битов.
-6. Укажите аргумент команды, обычно `ModCfg`.
+6. Укажите аргумент команды, обычно `ModuleConfig`.
 
 #### 💡 Полезно знать
 
@@ -3578,7 +3579,7 @@ const message = decodeWsEnvelope(cborToValue(new Uint8Array(event.data)))
 
 - Читает и пишет одну переменную с выбранным значением.
 - Варианты задаются в настройках или приходят с устройства отдельной переменной `<имя>-S`. Так строится, например, список найденных WiFi-сетей. Список с устройства заменяет варианты из настроек.
-- Отправка настраивается в событии: **Заголовок** `SET` и **Аргумент** (по умолчанию `ModCfg`). С `NoSend` значение сразу не уходит, его отправит другой компонент. В конструкторе аргумент выбирается из словаря команд с поиском по имени, есть и `NoSend`.
+- Отправка настраивается в событии: **Заголовок** `SET` и **Аргумент** (по умолчанию `ModuleConfig`). С `NoSend` значение сразу не уходит, его отправит другой компонент. В конструкторе аргумент выбирается из словаря команд с поиском по имени, есть и `NoSend`.
 - В битовом режиме меняются только биты с N по M (`range`), остальные биты переменной сохраняются.
 
 | Ключ             | Описание                                                                                      |
@@ -3681,7 +3682,7 @@ const message = decodeWsEnvelope(cborToValue(new Uint8Array(event.data)))
 
 Панель для конструктора DevCloud.
 
-- **Общее:** доступ, переменная, аргумент команды. Пустой аргумент сразу заменяется на `ModCfg`. Заголовок команды в панели не настраивается.
+- **Общее:** доступ, переменная, аргумент команды. Пустой аргумент сразу заменяется на `ModuleConfig`. Заголовок команды в панели не настраивается.
 - **Значение:** вид, тип значения (текст или число). Смена типа переводит значения всех вариантов. В битовом режиме тип значения недоступен.
 - **Внешний вид:** заголовок, его выравнивание, выравнивание содержимого, битовый режим. Для вида «кнопки» без битового режима - переключатель множественного выбора.
 - **Битовый режим:** диапазон битов от 0 до 31. Значения вариантов ограничиваются числом `2^(end - start + 1) - 1`, при включении режима лишнее обрезается.
@@ -3716,7 +3717,7 @@ const message = decodeWsEnvelope(cborToValue(new Uint8Array(event.data)))
 2. Выберите переменную устройства, которую он меняет.
 3. Выберите вид: одно значение или диапазон.
 4. Задайте минимум, максимум и шаг.
-5. Укажите, какую команду отправлять: обычно `SET` и `ModCfg`.
+5. Укажите, какую команду отправлять: обычно `SET` и `ModuleConfig`.
 
 #### 💡 Полезно знать
 
@@ -3731,7 +3732,7 @@ const message = decodeWsEnvelope(cborToValue(new Uint8Array(event.data)))
 
 - Читает и пишет одну переменную.
 - Значение отправляется (`onUpdate`), когда ползунок отпущен, и при нажатии кнопок «минус» и «плюс». Во время перетаскивания вызывается только `onInput`.
-- Отправка настраивается в событии: **Заголовок** (обычно `SET`) и **Аргумент** (обычно `ModCfg`). С `NoSend` значение сразу не уходит, его отправит другой компонент.
+- Отправка настраивается в событии: **Заголовок** (обычно `SET`) и **Аргумент** (обычно `ModuleConfig`). С `NoSend` значение сразу не уходит, его отправит другой компонент.
 
 | Ключ           | Описание                               |
 | -------------- | -------------------------------------- |
@@ -3892,7 +3893,7 @@ const message = decodeWsEnvelope(cborToValue(new Uint8Array(event.data)))
 #### 🧩 Как настроить в конструкторе
 
 1. Перетащите переключатель на макет и подпишите его.
-2. Выберите переменную устройства и команду отправки, например `SET` и `ModCfg`.
+2. Выберите переменную устройства и команду отправки, например `SET` и `ModuleConfig`.
 3. Выберите вид: горизонтальный, вертикальный или галочка.
 4. Если одно число хранит много флагов, включите битовый режим и добавьте тумблеры: у каждого короткое имя, номер бита и цвет.
 
@@ -3914,7 +3915,7 @@ const message = decodeWsEnvelope(cborToValue(new Uint8Array(event.data)))
 
 - Читает и пишет одну переменную.
 - Значение отправляется сразу при переключении.
-- Отправка настраивается в событии: **Заголовок** (обычно `SET`) и **Аргумент** (обычно `ModCfg`). С `NoSend` значение сразу не уходит, его отправит другой компонент.
+- Отправка настраивается в событии: **Заголовок** (обычно `SET`) и **Аргумент** (обычно `ModuleConfig`). С `NoSend` значение сразу не уходит, его отправит другой компонент.
 
 | Ключ           | Описание                                                                                         |
 | -------------- | ------------------------------------------------------------------------------------------------ |
@@ -3995,7 +3996,7 @@ const message = decodeWsEnvelope(cborToValue(new Uint8Array(event.data)))
 <details>
 <summary>🛠️ Панель свойств (SwitchProps.svelte)</summary>
 
-- В панели задают доступ, переменную, действие (`ModCfg` или `NoSend`); вид и неактивность; заголовок и его выравнивание, цвет (без серого и «нет цвета»), битовый режим. Неактивность и цвет в битовом режиме скрыты.
+- В панели задают доступ, переменную, действие (`ModuleConfig` или `NoSend`); вид и неактивность; заголовок и его выравнивание, цвет (без серого и «нет цвета»), битовый режим. Неактивность и цвет в битовом режиме скрыты.
 - Вид «галочка» недоступен, пока включён битовый режим, а переключатель битового режима скрыт для галочки.
 - В битовом режиме открывается список битов: имя (до 4 символов), позиция (0-31), цвет, неактивность, удаление. Битов не больше 32, последний удалить нельзя. Новый бит получает следующий номер и цвет `blue`.
 
@@ -4228,7 +4229,7 @@ const canModal = createRawSnippet((row: () => CanRow) => ({ render: () => `<div 
 - Типы содержимого: текст, список, кнопка, полоса прогресса, картинка (иконка по умолчанию, классы, ширина и высота).
 - У текста настраиваются ключ и опции «сортировка», «копирование», «обрезка», «подсказка», «окно полного значения».
 - У списка - ключ и «Ключ строки» (`keyCol`).
-- У кнопки - иконка, цвет, заголовок и аргумент команды, перечень ключей строки. Новая кнопка: `bg-blue`, `SET`, `ModCfg`. Повторный выбор того же цвета делает кнопку прозрачной.
+- У кнопки - иконка, цвет, заголовок и аргумент команды, перечень ключей строки. Новая кнопка: `bg-blue`, `SET`, `ModuleConfig`. Повторный выбор того же цвета делает кнопку прозрачной.
 - У полосы прогресса - ключ, минимум, максимум, единицы.
 
 | Пропс              | Тип                                | Описание                                              |
@@ -4585,7 +4586,7 @@ const canModal = createRawSnippet((row: () => CanRow) => ({ render: () => `<div 
 #### 🧩 Как настроить в конструкторе
 
 1. Перетащите карточку на макет и подпишите её.
-2. Выберите переменную устройства и команду отправки, например `SET` и `ModCfg`.
+2. Выберите переменную устройства и команду отправки, например `SET` и `ModuleConfig`.
 3. Выберите иконки и включите анимацию, если нужно.
 4. Выберите цвет и вид управления. Для поля и слайдера задайте минимум, максимум и шаг.
 
@@ -4601,7 +4602,7 @@ const canModal = createRawSnippet((row: () => CanRow) => ({ render: () => `<div 
 
 - Читает и пишет одну переменную.
 - Изменение отправляется сразу.
-- Отправка настраивается в событии: **Заголовок** (обычно `SET`) и **Аргумент** (обычно `ModCfg`). С `NoSend` значение сразу не уходит, его отправит другой компонент.
+- Отправка настраивается в событии: **Заголовок** (обычно `SET`) и **Аргумент** (обычно `ModuleConfig`). С `NoSend` значение сразу не уходит, его отправит другой компонент.
 
 | Ключ           | Описание                                  |
 | -------------- | ----------------------------------------- |
@@ -4684,7 +4685,7 @@ const canModal = createRawSnippet((row: () => CanRow) => ({ render: () => `<div 
 <details>
 <summary>🛠️ Панель свойств (WidgetProps.svelte)</summary>
 
-- В панели задают доступ, переменную, действие (`ModCfg` или `NoSend`); заголовок, иконки из библиотеки, анимацию; цвет (без «нет цвета»), вид управления, для поля и слайдера - минимум, максимум и шаг.
+- В панели задают доступ, переменную, действие (`ModuleConfig` или `NoSend`); заголовок, иконки из библиотеки, анимацию; цвет (без «нет цвета»), вид управления, для поля и слайдера - минимум, максимум и шаг.
 - Единицы и подпись над управлением в панели не задаются.
 
 | Пропс              | Тип                                | Описание                                              |
@@ -4736,9 +4737,9 @@ const canModal = createRawSnippet((row: () => CanRow) => ({ render: () => `<div 
 <summary>📦 Данные устройства</summary>
 
 - Работает с полями группы `CFG`. Группу можно сменить префиксом в настройках.
-- «Сохранить» отдаёт в `onSave` все поля, а приложение отправляет одним пакетом `SET ModCfg` только показанные редактируемые: из `DevName`, `HostName`, `WebUser`, `WebPsw`, `SCLL`. Скрытые поля не уходят: прошивка отвергает пакет с незнакомым ключом целиком (у STM нет `HostName`, `WebUser`, `WebPsw`).
-- «Перезагрузить» отправляет `SET Restart`.
-- «Сброс настроек» после подтверждения отправляет `SET RstNVS`. Прошивка стирает все настройки (WiFi, имя, пароль Web, настройки модулей) и перезагружается.
+- «Сохранить» отдаёт в `onSave` все поля, а приложение отправляет одним пакетом `SET ModuleConfig` только показанные редактируемые: из `DevName`, `HostName`, `WebUser`, `WebPsw`, `SCLL`. Скрытые поля не уходят: прошивка отвергает пакет с незнакомым ключом целиком (у STM нет `HostName`, `WebUser`, `WebPsw`).
+- «Перезагрузить» отправляет `SET SystemRestart`.
+- «Сброс настроек» после подтверждения отправляет `SET SystemResetStorage`. Прошивка стирает все настройки (WiFi, имя, пароль Web, настройки модулей) и перезагружается.
 - Сам виджет с устройством не говорит. Читает и пишет поля приложение.
 
 </details>
@@ -4780,22 +4781,22 @@ const canModal = createRawSnippet((row: () => CanRow) => ({ render: () => `<div 
 <details>
 <summary>⚙️ Пропсы</summary>
 
-| Название         | Тип                             | По умолчанию     | Описание                                                                                                                                     |
-| ---------------- | ------------------------------- | ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| `id`             | `string`                        | `"CFG"`          | Префикс группы полей                                                                                                                         |
-| `keys`           | `Partial<Record<ключ, string>>` | имена ключей     | Другие имена полей                                                                                                                           |
-| `show`           | `ключ[]`                        | набор ESP        | Какие поля показывать и сохранять                                                                                                            |
-| `value`          | `IWidgetDeviceInfoConfig`       |                  | Текущие значения                                                                                                                             |
-| `label.name`     | `string`                        |                  | Заголовок. Пусто - «Об устройстве» на языке пользователя                                                                                     |
-| `wrapperClass`   | `string`                        | `""`             | Классы обёртки                                                                                                                               |
-| `accent`         | `AccentColor`                   |                  | Мастер-цвет                                                                                                                                  |
-| `restartCommand` | `{ header, argument }`          | `SET`, `Restart` | Команда перезагрузки                                                                                                                         |
-| `resetCommand`   | `{ header, argument }`          | `SET`, `RstNVS`  | Команда сброса настроек                                                                                                                      |
-| `collapsed`      | `boolean`                       | `false`          | Свёрнут ли. Можно связать через `bind:collapsed`                                                                                             |
-| `persistKey`     | `string`                        |                  | Ключ для запоминания свёрнутости и подсказок                                                                                                 |
-| `onSave`         | `(info) => void`                |                  | Нажата «Сохранить», в `info` все поля. Без него поля только для чтения, пароль маской. Без него или с пустым `DevName` «Сохранить» неактивна |
-| `onRestart`      | `() => void`                    |                  | Нажата «Перезагрузить». Без него кнопка неактивна                                                                                            |
-| `onFactoryReset` | `() => void`                    |                  | Сброс подтверждён. Без него кнопки сброса нет                                                                                                |
+| Название         | Тип                             | По умолчанию                | Описание                                                                                                                                     |
+| ---------------- | ------------------------------- | --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`             | `string`                        | `"CFG"`                     | Префикс группы полей                                                                                                                         |
+| `keys`           | `Partial<Record<ключ, string>>` | имена ключей                | Другие имена полей                                                                                                                           |
+| `show`           | `ключ[]`                        | набор ESP                   | Какие поля показывать и сохранять                                                                                                            |
+| `value`          | `IWidgetDeviceInfoConfig`       |                             | Текущие значения                                                                                                                             |
+| `label.name`     | `string`                        |                             | Заголовок. Пусто - «Об устройстве» на языке пользователя                                                                                     |
+| `wrapperClass`   | `string`                        | `""`                        | Классы обёртки                                                                                                                               |
+| `accent`         | `AccentColor`                   |                             | Мастер-цвет                                                                                                                                  |
+| `restartCommand` | `{ header, argument }`          | `SET`, `SystemRestart`      | Команда перезагрузки                                                                                                                         |
+| `resetCommand`   | `{ header, argument }`          | `SET`, `SystemResetStorage` | Команда сброса настроек                                                                                                                      |
+| `collapsed`      | `boolean`                       | `false`                     | Свёрнут ли. Можно связать через `bind:collapsed`                                                                                             |
+| `persistKey`     | `string`                        |                             | Ключ для запоминания свёрнутости и подсказок                                                                                                 |
+| `onSave`         | `(info) => void`                |                             | Нажата «Сохранить», в `info` все поля. Без него поля только для чтения, пароль маской. Без него или с пустым `DevName` «Сохранить» неактивна |
+| `onRestart`      | `() => void`                    |                             | Нажата «Перезагрузить». Без него кнопка неактивна                                                                                            |
+| `onFactoryReset` | `() => void`                    |                             | Сброс подтверждён. Без него кнопки сброса нет                                                                                                |
 
 </details>
 
@@ -4880,10 +4881,10 @@ const canModal = createRawSnippet((row: () => CanRow) => ({ render: () => `<div 
 <summary>📦 Данные устройства</summary>
 
 - Виджет работает с одним объектом `CFG.FS`. Префикс группы (`CFG`) и имя поля (`FS`) меняются в настройках.
-- «Обновить» отправляет `GET FS`.
-- «Удалить» после подтверждения отправляет `SET FS` с `Op: Delete`.
-- Закачка: `SET FS` с `Op` по очереди `UploadStart`, `UploadChunk`, `UploadDone`.
-- Скачивание: `SET FS` с `Op` по очереди `DownloadStart`, `DownloadChunk`, `DownloadDone`.
+- «Обновить» отправляет `GET SystemFileSystem`.
+- «Удалить» после подтверждения отправляет `SET SystemFileSystem` с `Op: Delete`.
+- Закачка: `SET SystemFileSystem` с `Op` по очереди `UploadStart`, `UploadChunk`, `UploadDone`.
+- Скачивание: `SET SystemFileSystem` с `Op` по очереди `DownloadStart`, `DownloadChunk`, `DownloadDone`.
 - Сам виджет протоколы закачки и скачивания не ведёт: он только отдаёт приложению выбранный файл или имя и ждёт завершения.
 
 </details>
@@ -4914,19 +4915,19 @@ CFG.FS:
   Upload: { Name: "fw.bin", Size: 917504, Progress: 35 }
 ```
 
-Полный снимок со списком файлов приходит на `GET ModCfg`, `GET FS`, после удаления, после конца или ошибки закачки и в рассылке `OK! Update`. Во время закачки раз в 5% приходит только `{Upload: {...}}` без списка. Снимок со списком заменяет состояние целиком.
+Полный снимок со списком файлов приходит на `GET ModuleConfig`, `GET SystemFileSystem`, после удаления, после конца или ошибки закачки и в рассылке `OK! SystemDataUpdate`. Во время закачки раз в 5% приходит только `{Upload: {...}}` без списка. Снимок со списком заменяет состояние целиком.
 
-Все команды идут с аргументом `FS`, операция в поле `Op`. Ответ тоже `FS` с тем же `Op`.
+Все команды идут с аргументом `SystemFileSystem`, операция в поле `Op`. Ответ тоже `SystemFileSystem` с тем же `Op`.
 
-| Запрос                                                                     | Ответ                                                     |
-| -------------------------------------------------------------------------- | --------------------------------------------------------- |
-| `GET FS`                                                                   | Снимок `CFG.FS`                                           |
-| `SET FS {Op: "Delete", Name: "/storage/a.bin"}`                            | `Op` и снимок                                             |
-| `SET FS {Op: "UploadStart", FileName, FileExtension, FileSize, CurrentID}` | `Op`, `CurrentID`, `ChunkSize`, `CFG.FS.Upload`           |
-| `SET FS {Op: "UploadChunk", ChunkIndex, Data, CurrentID}`                  | `Op`, `ChunkIndex`, `CurrentID`, раз в 5% `CFG.FS.Upload` |
-| `SET FS {Op: "UploadDone", CRC32, CurrentID}`                              | `Op`, `CurrentID`, снимок                                 |
+| Запрос                                                                                   | Ответ                                                     |
+| ---------------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| `GET SystemFileSystem`                                                                   | Снимок `CFG.FS`                                           |
+| `SET SystemFileSystem {Op: "Delete", Name: "/storage/a.bin"}`                            | `Op` и снимок                                             |
+| `SET SystemFileSystem {Op: "UploadStart", FileName, FileExtension, FileSize, CurrentID}` | `Op`, `CurrentID`, `ChunkSize`, `CFG.FS.Upload`           |
+| `SET SystemFileSystem {Op: "UploadChunk", ChunkIndex, Data, CurrentID}`                  | `Op`, `ChunkIndex`, `CurrentID`, раз в 5% `CFG.FS.Upload` |
+| `SET SystemFileSystem {Op: "UploadDone", CRC32, CurrentID}`                              | `Op`, `CurrentID`, снимок                                 |
 
-Ошибка приходит как `ER! FS` с тем же `Op`, у закачки ещё и с `CurrentID`. Ошибка закачки несёт снимок.
+Ошибка приходит как `ER! SystemFileSystem` с тем же `Op`, у закачки ещё и с `CurrentID`. Ошибка закачки несёт снимок.
 
 </details>
 
@@ -5038,7 +5039,7 @@ CFG.FS:
 | `value`          | Значения ключей группы без префикса: `{ Cfg: 1820660393 }`                                                                         |
 | `params`         | Параметры: `{ Freq: { key, bits?: { start, end }, scale?, offset?, min?, max?, step?, options? }, ... }`. Нет параметра - он скрыт |
 | `preset`         | Шаблон, которым заполнены `params`, только для конструктора                                                                        |
-| `onSave(values)` | Значения ключей для `SET ModCfg`: `{ Cfg: слово }`. Без колбэка - только просмотр                                                  |
+| `onSave(values)` | Значения ключей для `SET ModuleConfig`: `{ Cfg: слово }`. Без колбэка - только просмотр                                            |
 
 Шаблоны (`LORA_PRESETS`):
 
@@ -5957,8 +5958,8 @@ configureMapLibre({ module: "/maplibre-gl.mjs", css: "/maplibre-gl.css", styles:
 <summary>📦 Данные устройства</summary>
 
 - Работает с полями группы `LST` драйвера `RGB_Strip` прошивки ProdFactory-ESP. Группу можно сменить префиксом в настройках.
-- Цвет, эффект и скорость отправляются сразу, по одному полю: `onUpdate(value, field)`, приложение шлёт `SET ModCfg` с этим ключом.
-- Блок «Оборудование» правится на месте и уходит одним пакетом `SET ModCfg` с `Count`, `Model`, `Order` по «Сохранить». Прошивка после этого перезапускает ленту.
+- Цвет, эффект и скорость отправляются сразу, по одному полю: `onUpdate(value, field)`, приложение шлёт `SET ModuleConfig` с этим ключом.
+- Блок «Оборудование» правится на месте и уходит одним пакетом `SET ModuleConfig` с `Count`, `Model`, `Order` по «Сохранить». Прошивка после этого перезапускает ленту.
 
 </details>
 
@@ -5990,7 +5991,7 @@ configureMapLibre({ module: "/maplibre-gl.mjs", css: "/maplibre-gl.css", styles:
 "LST.MaxCount": 64
 ```
 
-Изменения отправляются `SET ModCfg` с нужными ключами группы. Пин данных и способ передачи (RMT или SPI) задаются в прошивке (`RGB_Strip_Init`), через виджет их не поменять.
+Изменения отправляются `SET ModuleConfig` с нужными ключами группы. Пин данных и способ передачи (RMT или SPI) задаются в прошивке (`RGB_Strip_Init`), через виджет их не поменять.
 
 </details>
 
@@ -6090,7 +6091,7 @@ configureMapLibre({ module: "/maplibre-gl.mjs", css: "/maplibre-gl.css", styles:
 <details>
 <summary>📦 Данные устройства</summary>
 
-- Работает с объектом `StackInfo` из ответа на `GET StackInfo`. Объект лежит в `Payload` ответа, а не в группе `CFG`, поэтому префикса группы у виджета нет.
+- Работает с объектом `SystemStackInfo` из ответа на `GET SystemStackInfo`. Объект лежит в `Payload` ответа, а не в группе `CFG`, поэтому префикса группы у виджета нет.
 - Запрос отправляется кнопкой «Обновить» или автоопросом. Сам виджет только вызывает `onRefresh`.
 
 </details>
@@ -6155,7 +6156,7 @@ StackInfo:
 | `id`             | `string`           |               | Не используется: префикса группы у виджета нет                                 |
 | `keys.StackInfo` | `string`           | `"StackInfo"` | Имя объекта в ответе                                                           |
 | `argument`       | `string`           | `"StackInfo"` | Аргумент запроса                                                               |
-| `value`          | `IWidgetStackInfo` |               | Снимок `StackInfo`                                                             |
+| `value`          | `IWidgetStackInfo` |               | Снимок `SystemStackInfo`                                                       |
 | `label.name`     | `string`           |               | Заголовок. Пусто - «Стек и задачи» на языке пользователя                       |
 | `wrapperClass`   | `string`           | `""`          | Классы обёртки                                                                 |
 | `accent`         | `AccentColor`      |               | Мастер-цвет                                                                    |
@@ -6231,8 +6232,8 @@ StackInfo:
 <summary>📦 Данные устройства</summary>
 
 - Работает с полями группы `CFG`. Группу можно сменить префиксом в настройках.
-- Поля правятся на месте. «Сохранить» отдаёт в `onSave` все 12 полей, а приложение отправляет их одним пакетом `SET ModCfg`.
-- Кнопка поиска (лупа) отправляет `GET APsList`. Найденные сети появляются в списке у поля SSID.
+- Поля правятся на месте. «Сохранить» отдаёт в `onSave` все 12 полей, а приложение отправляет их одним пакетом `SET ModuleConfig`.
+- Кнопка поиска (лупа) отправляет `GET NetworkAccessPoints`. Найденные сети появляются в списке у поля SSID.
 - Сам виджет с устройством не говорит. Читает и пишет поля `GUIRenderer`.
 
 </details>
@@ -6274,21 +6275,21 @@ StackInfo:
 <details>
 <summary>⚙️ Пропсы</summary>
 
-| Название       | Тип                                    | По умолчанию     | Описание                                                                                                                           |
-| -------------- | -------------------------------------- | ---------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| `id`           | `string`                               | `"CFG"`          | Префикс группы полей                                                                                                               |
-| `keys`         | `Partial<Record<ключ, string>>`        | имена ключей     | Другие имена полей, если у прошивки иначе                                                                                          |
-| `value`        | `IWidgetWiFiConfig`                    |                  | Текущие значения полей                                                                                                             |
-| `label.name`   | `string`                               | `"WiFi"`         | Заголовок. Пусто - название на языке пользователя                                                                                  |
-| `wrapperClass` | `string`                               | `""`             | Классы обёртки                                                                                                                     |
-| `accent`       | `AccentColor`                          |                  | Мастер-цвет                                                                                                                        |
-| `allowedModes` | `number[]`                             | `[1, 2, 3]`      | Какие режимы можно выбрать                                                                                                         |
-| `confirmOnAP`  | `boolean`                              | `true`           | Предупреждать при сохранении режима точки доступа                                                                                  |
-| `scanCommand`  | `{ header, argument }`                 | `GET`, `APsList` | Команда поиска сетей                                                                                                               |
-| `collapsed`    | `boolean`                              | `false`          | Свёрнут ли. Можно связать через `bind:collapsed`                                                                                   |
-| `persistKey`   | `string`                               |                  | Ключ для запоминания свёрнутости и подсказок                                                                                       |
-| `onScan`       | `() => Promise<{ id, name, value }[]>` |                  | Найти сети. `name` подпись в списке, `value` SSID                                                                                  |
-| `onSave`       | `(config) => void`                     |                  | Нажата «Сохранить», в `config` все поля `IWidgetWiFiConfig`. Без него «Сохранить» неактивна, поля только для чтения, пароли маской |
+| Название       | Тип                                    | По умолчанию                 | Описание                                                                                                                           |
+| -------------- | -------------------------------------- | ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `id`           | `string`                               | `"CFG"`                      | Префикс группы полей                                                                                                               |
+| `keys`         | `Partial<Record<ключ, string>>`        | имена ключей                 | Другие имена полей, если у прошивки иначе                                                                                          |
+| `value`        | `IWidgetWiFiConfig`                    |                              | Текущие значения полей                                                                                                             |
+| `label.name`   | `string`                               | `"WiFi"`                     | Заголовок. Пусто - название на языке пользователя                                                                                  |
+| `wrapperClass` | `string`                               | `""`                         | Классы обёртки                                                                                                                     |
+| `accent`       | `AccentColor`                          |                              | Мастер-цвет                                                                                                                        |
+| `allowedModes` | `number[]`                             | `[1, 2, 3]`                  | Какие режимы можно выбрать                                                                                                         |
+| `confirmOnAP`  | `boolean`                              | `true`                       | Предупреждать при сохранении режима точки доступа                                                                                  |
+| `scanCommand`  | `{ header, argument }`                 | `GET`, `NetworkAccessPoints` | Команда поиска сетей                                                                                                               |
+| `collapsed`    | `boolean`                              | `false`                      | Свёрнут ли. Можно связать через `bind:collapsed`                                                                                   |
+| `persistKey`   | `string`                               |                              | Ключ для запоминания свёрнутости и подсказок                                                                                       |
+| `onScan`       | `() => Promise<{ id, name, value }[]>` |                              | Найти сети. `name` подпись в списке, `value` SSID                                                                                  |
+| `onSave`       | `(config) => void`                     |                              | Нажата «Сохранить», в `config` все поля `IWidgetWiFiConfig`. Без него «Сохранить» неактивна, поля только для чтения, пароли маской |
 
 </details>
 

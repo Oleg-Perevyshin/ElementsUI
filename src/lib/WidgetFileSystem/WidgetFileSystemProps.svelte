@@ -55,6 +55,10 @@
       value={component.properties.keys?.FS ?? "FS"}
       onUpdate={(value) => edit.patch("keys", { FS: value as string })}
     />
-    <ArgumentSelect label={$T("widget.fs.command_arg")} value={component.properties.argument ?? "FS"} onUpdate={(argument) => edit.set("argument", argument)} />
+    <ArgumentSelect
+      label={$T("widget.fs.command_arg")}
+      value={component.properties.argument ?? "SystemFileSystem"}
+      onUpdate={(argument) => edit.set("argument", argument)}
+    />
   </PropsGroup>
 </div>

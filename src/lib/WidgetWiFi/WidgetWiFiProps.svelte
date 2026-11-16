@@ -65,7 +65,7 @@
   />
   <ArgumentSelect
     label={$T("widget.common.argument")}
-    value={component.properties.scanCommand?.argument ?? "APsList"}
+    value={component.properties.scanCommand?.argument ?? "NetworkAccessPoints"}
     onUpdate={(argument) => edit.patch("scanCommand", { argument })}
   />
 {/snippet}

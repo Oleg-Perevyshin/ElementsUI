@@ -119,13 +119,13 @@
   const saveFields = <K extends string>(prefix: string, save: readonly K[], values: Partial<Record<K, unknown>>, keys?: Partial<Record<K, string>>) => {
     const payload = widgetPacket(prefix, save, values, keys)
     for (const [key, value] of Object.entries(payload)) link.set?.(key, value)
-    send("SET", "ModCfg", payload)
+    send("SET", "ModuleConfig", payload)
   }
 
   /* Поиск сетей WiFi: устройство отвечает списком { id, name, value } в поле "{префикс}.{StaSSID}-S" */
   const scanWiFi = async (prefix: string, keys: Partial<Record<string, string>> | undefined, command?: { header?: string; argument?: string }) => {
     const listKey = `${widgetKey(prefix, "StaSSID", keys)}-S`
-    const argument = command?.argument || "APsList"
+    const argument = command?.argument || "NetworkAccessPoints"
     let pending: ReturnType<typeof link.waitFor>
     try {
       pending = link.waitFor(argumentCode(link, argument), (reply) => !reply.ok || Array.isArray(reply.payload[listKey]), 3000)
@@ -144,7 +144,7 @@
   /* Файлы: очередь на аргумент команд, своя у каждой связи (модуля) */
   const transfers = $derived(link && new Map<string, ReturnType<typeof createFsTransfer>>())
   /* Передача на аргумент и предел имени (maxNameLength из свойств WidgetFileSystem); проверка имени только в createFsTransfer */
-  const fs = (argument = "FS", maxNameLength = 31) => {
+  const fs = (argument = "SystemFileSystem", maxNameLength = 31) => {
     const key = `${argument}:${maxNameLength}`
     return transfers.get(key) ?? transfers.set(key, createFsTransfer(link, { argument, maxNameLength })).get(key)!
   }
@@ -448,8 +448,8 @@
                   info,
                   props.keys,
                 )}
-          onRestart={locked ? undefined : () => send(props.restartCommand?.header || "SET", props.restartCommand?.argument || "Restart", {})}
-          onFactoryReset={locked ? undefined : () => send(props.resetCommand?.header || "SET", props.resetCommand?.argument || "RstNVS", {})}
+          onRestart={locked ? undefined : () => send(props.restartCommand?.header || "SET", props.restartCommand?.argument || "SystemRestart", {})}
+          onFactoryReset={locked ? undefined : () => send(props.resetCommand?.header || "SET", props.resetCommand?.argument || "SystemResetStorage", {})}
         />
       {:else if component.type === "WidgetLoRa" && views.WidgetLoRa}
         {@const WidgetLoRa = views.WidgetLoRa}
@@ -465,7 +465,7 @@
       {:else if component.type === "WidgetFileSystem" && views.WidgetFileSystem}
         {@const WidgetFileSystem = views.WidgetFileSystem}
         {@const props = component.properties}
-        {@const argument = props.argument || "FS"}
+        {@const argument = props.argument || "SystemFileSystem"}
         {@const transfer = () => fs(argument, props.maxNameLength)}
         <WidgetFileSystem
           {...props}
@@ -488,7 +488,7 @@
           {...props}
           value={fields(component, "", WIDGET_FIELDS.WidgetStackInfo).StackInfo}
           persistKey={persist(component)}
-          onRefresh={() => send("GET", props.argument || "StackInfo", {})}
+          onRefresh={() => send("GET", props.argument || "SystemStackInfo", {})}
         />
       {:else if component.type === "WidgetRGBStrip" && views.WidgetRGBStrip}
         {@const WidgetRGBStrip = views.WidgetRGBStrip}

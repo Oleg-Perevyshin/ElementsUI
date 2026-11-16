@@ -16,6 +16,7 @@
 Новая команда:
 
 1. Добавить строку в `poe_cmd.yaml`: `- [Имя, A_ИМЯ, код]   # описание`, в свой раздел и диапазон.
+   Имя - полными словами, сначала группа (`System`, `Debug`, `Network`, `Cloud`, `Module`, `Firmware`, `Motion`, `Orientation`, `Chat`, `Device`), затем действие: `ModuleConfig`, `MotionVelocity`. Длина имени на прошивку не влияет: на проводе и в прошивке только код. Перечисление - `A_` и то же имя заглавными через подчёркивание (`A_MODULE_CONFIG`), у команд облака - `A_CLOUD_`.
 2. `npm run Generate`.
 3. В обоих фреймворках (ProdFactory-ESP и ProdFactory-STM) нажать кнопку Dict расширения: она копирует `poe_cmd.yaml` в `.framework/poe_cmd.yaml` и `firmware/poe_cmd.h` в `components/core/common/poe_cmd.h` из `../ElementsUI`.
 

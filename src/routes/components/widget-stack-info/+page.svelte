@@ -48,7 +48,7 @@
       label: { name: "" },
       warnBytes: 512,
     },
-    eventHandler: { Header: "GET", Argument: "StackInfo", Variables: [] },
+    eventHandler: { Header: "GET", Argument: "SystemStackInfo", Variables: [] },
     position: { row: 0, col: 0, width: 0, height: 0 },
     parentId: "",
   })

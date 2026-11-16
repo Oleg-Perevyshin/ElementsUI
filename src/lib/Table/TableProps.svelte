@@ -80,7 +80,7 @@
             ? {
                 name: `button`,
                 class: "bg-blue",
-                eventHandler: { Header: "SET", Argument: "ModCfg", Variables: [] },
+                eventHandler: { Header: "SET", Argument: "ModuleConfig", Variables: [] },
                 onClick: () => {},
               }
             : {},

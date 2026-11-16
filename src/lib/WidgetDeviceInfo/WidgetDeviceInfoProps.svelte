@@ -86,9 +86,9 @@
     {@render WidgetFields()}
   </PropsGroup>
   <PropsGroup label={$T("widget.info.restart_command")}>
-    {@render WidgetCommand("restartCommand", "Restart")}
+    {@render WidgetCommand("restartCommand", "SystemRestart")}
   </PropsGroup>
   <PropsGroup label={$T("widget.info.reset_command")}>
-    {@render WidgetCommand("resetCommand", "RstNVS")}
+    {@render WidgetCommand("resetCommand", "SystemResetStorage")}
   </PropsGroup>
 </div>
