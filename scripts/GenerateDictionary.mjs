@@ -253,6 +253,8 @@ writeFileSync(
     `export const MESSAGE_CODES: Record<string, number> = {\n${ordered.map(({ name, code }) => `  ${name}: ${code},`).join("\n")}\n}\n`,
 )
 
+/* Комментарий элемента api_msg.h - по-русски: уровень и текст сообщения */
+const LEVEL_RU = { info: "событие", warn: "предупреждение", error: "ошибка" }
 const msgItems = [{ name: "MSG_NONE", value: 0 }]
 for (const { group, list } of byGroup) {
   if (!list.length) continue
@@ -261,7 +263,7 @@ for (const { group, list } of byGroup) {
     msgItems.push({
       name: `MSG_${message.name}`,
       value: message.code,
-      comment: cComment(`${message.level}: ${message.en}${message.note ? `; ${message.note}` : ""}`),
+      comment: cComment(`${LEVEL_RU[message.level]}: ${message.ru}${message.note ? `; ${message.note}` : ""}`),
     })
 }
 writeFileSync(

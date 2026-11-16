@@ -17,19 +17,19 @@
 
 1. Добавить строку в `commands.yaml`: `- [Имя, A_ИМЯ, код]   # описание`, в свой раздел и диапазон.
 2. `npm run Generate`.
-3. Скопировать `commands.yaml` в `.framework/Dictionary.yaml` и `firmware/api_har.h` в `components/core/api_service/api_har.h` обоих фреймворков (ProdFactory-ESP и ProdFactory-STM).
+3. В обоих фреймворках (ProdFactory-ESP и ProdFactory-STM) нажать кнопку Dict расширения: она копирует `commands.yaml` в `.framework/Dictionary.yaml` и `firmware/api_har.h` в `components/core/api_service/api_har.h` из `../ElementsUI`.
 
 Новое сообщение:
 
 1. Добавить строку в раздел `messages` файла `messages.yaml`: `- { code, group, name, level, ru, en, zh }` - в свою группу, код из её диапазона, имя с приставкой группы (`FS_...`). Текст короткий и понятный пользователю: причина без технических подробностей, параметр `{0}` - только если без него теряется смысл. Нужна новая группа ядра - добавить её в раздел `groups` с диапазоном из резерва 900-999.
 2. `npm run Generate`.
-3. Скопировать `messages.yaml` в `.framework/Messages.yaml` и `firmware/api_msg.h` в `components/core/common/api_msg.h` обоих фреймворков.
+3. Кнопка Dict в обоих фреймворках: `messages.yaml` → `.framework/Messages.yaml`, `firmware/api_msg.h` → `components/core/common/api_msg.h`.
 
 Новый компонент GUI:
 
 1. Добавить строку в `components.yaml`: `- [Тип, обмен]   # описание`, обмен - `none`, `read`, `write`, `readWrite` или `widget`.
 2. `npm run Generate`. Тип должен быть и в `UIComponentPropsMap` (`types.ts`), и в `GUI_VIEWS` (`guiViews.ts`), иначе библиотека не скомпилируется.
-3. Скопировать `components.yaml` в `.framework/Components.yaml` фреймворков: сборка веб-интерфейса прошивки сверяет с ним GUI устройства.
+3. Кнопка Dict в ProdFactory-ESP копирует `components.yaml` в `.framework/Components.yaml`: сборка веб-интерфейса прошивки сверяет с ним GUI устройства.
 
 В JS словари доступны через `poe-svelte-ui-lib/protocols`: `DEFAULT_ARGUMENT_CODES`, `DEFAULT_DICTIONARY`, `DEVICE_MESSAGES`, `MESSAGE_GROUPS`, `MESSAGE_CODES`, `formatDeviceMessage`.
 
@@ -84,7 +84,7 @@
 - `name` в стиле `UPPER_SNAKE`, в прошивке это `MSG_<name>`.
 - Генератор падает, если: диапазоны групп пересекаются или выходят за 1-65535; у группы нет названия на одном из языков; у сообщения нет группы, код вне её диапазона или имя без приставки `ГРУППА_`; повтор имени или кода; неизвестный `level`; пустой текст; параметры `{0}`, `{1}` в языках разные.
 - `generated/messages.ts` - `MESSAGE_GROUPS` (группа -> `{ from, to, ru, en, zh }`), `DEVICE_MESSAGES` (код -> `{ group, name, level, ru, en, zh }`) и `MESSAGE_CODES` (имя -> код). Порядок - по группам, внутри группы по коду.
-- `firmware/api_msg.h` - `typedef enum { MSG_NONE = 0, MSG_SYS_RESTARTING = 1, ... } api_msg_t`: раздел-комментарий на каждую группу (`/* FS 200-299: Файлы */`), у элемента в комментарии уровень и английский текст, в шапке файла - список групп и резерв.
+- `firmware/api_msg.h` - `typedef enum { MSG_NONE = 0, MSG_SYS_RESTARTING = 1, ... } api_msg_t`: раздел-комментарий на каждую группу (`/* FS 200-299: Файлы */`), у элемента комментарий по-русски: уровень (событие, предупреждение, ошибка) и текст сообщения, в шапке файла - список групп и резерв.
 - Как сообщение идёт по проводу (VAL ответа и push, Payload `ER!` модуля, текст `MSG <код>` в консоли) - в [PROTOCOL.md](../protocols/PROTOCOL.md), раздел «Сообщения устройств».
 
 </details>
