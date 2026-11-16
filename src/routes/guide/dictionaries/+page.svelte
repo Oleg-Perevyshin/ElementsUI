@@ -3,8 +3,8 @@
   import { Input, Language, Select, T, type IOption } from "#lib"
   import { DEVICE_MESSAGES, MESSAGE_GROUPS } from "#lib/protocols/index.ts"
   import { RenderMarkdown } from "../../common"
-  import commandsRaw from "#lib/dictionaries/commands.yaml?raw"
-  import componentsRaw from "#lib/dictionaries/components.yaml?raw"
+  import commandsRaw from "#lib/dictionaries/poe_cmd.yaml?raw"
+  import componentsRaw from "#lib/dictionaries/poe_gui.yaml?raw"
   import readmeRaw from "#lib/dictionaries/README.md?raw"
 
   type Lang = "ru" | "en" | "zh"

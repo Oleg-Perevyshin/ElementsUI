@@ -32,7 +32,7 @@ export interface DecodedPacketObject extends PacketObject {
 
 const isUint = (value: number, max: number) => Number.isInteger(value) && value >= 0 && value <= max
 
-/* HAR = заголовок (0..3) в битах 14-15, аргумент (0..8191) в битах 1-13, флаг ответа в бите 0 - как HAR/HAR_NR в api_har.h прошивки; вне диапазона - ошибка */
+/* HAR = заголовок (0..3) в битах 14-15, аргумент (0..8191) в битах 1-13, флаг ответа в бите 0 - как HAR/HAR_NR в poe_cmd.h прошивки; вне диапазона - ошибка */
 export const makeHar = (header: number, argument: number, reply = true): number => {
   if (!isUint(header, 0x03) || !isUint(argument, 0x1fff)) throw new RangeError(`HAR: заголовок 0..3, аргумент 0..8191, получено ${header} ${argument}`)
   return (header << 14) | (argument << 1) | (reply ? 1 : 0)

@@ -4,32 +4,32 @@
 
 ## ✨ Что умеет
 
-- 📖 `commands.yaml` - словарь команд: имя аргумента, имя в перечислении C и код поля HAR.
-- 💬 `messages.yaml` - словарь сообщений устройств: группы с диапазонами кодов и сообщения (код, группа, имя, уровень, короткий понятный текст на RU, EN, ZH).
+- 📖 `poe_cmd.yaml` - словарь команд: имя аргумента, имя в перечислении C и код поля HAR.
+- 💬 `poe_msg.yaml` - словарь сообщений устройств: группы с диапазонами кодов и сообщения (код, группа, имя, уровень, короткий понятный текст на RU, EN, ZH).
 - 🧯 Те же коды - коды ошибок прошивок: функции обоих фреймворков возвращают `poe_err_t` (`POE_OK` = `MSG_NONE`, иначе `MSG_*` причины), стандартные ошибки - группа `SYS` (`SYS_INVALID_ARG`, `SYS_NO_MEMORY`, `SYS_TIMEOUT`...). В логе прошивки только код, текст даёт библиотека.
-- 🧩 `components.yaml` - список компонентов GUI: тип (значение `type` в GUI и имя экспорта компонента) и обмен с устройством.
-- ⚙️ Из словарей генерируется код для JS (`generated/`) и заголовки для прошивок (`firmware/api_har.h`, `firmware/api_msg.h`).
-- 📦 Файлы поставляются в пакете: `poe-svelte-ui-lib/dictionaries/commands.yaml`, `poe-svelte-ui-lib/dictionaries/messages.yaml`, `poe-svelte-ui-lib/dictionaries/components.yaml`, `poe-svelte-ui-lib/dictionaries/firmware/api_har.h`, `poe-svelte-ui-lib/dictionaries/firmware/api_msg.h`.
+- 🧩 `poe_gui.yaml` - список компонентов GUI: тип (значение `type` в GUI и имя экспорта компонента) и обмен с устройством.
+- ⚙️ Из словарей генерируется код для JS (`generated/`) и заголовки для прошивок (`firmware/poe_cmd.h`, `firmware/poe_msg.h`).
+- 📦 Файлы поставляются в пакете: `poe-svelte-ui-lib/dictionaries/poe_cmd.yaml`, `poe-svelte-ui-lib/dictionaries/poe_msg.yaml`, `poe-svelte-ui-lib/dictionaries/poe_gui.yaml`, `poe-svelte-ui-lib/dictionaries/firmware/poe_cmd.h`, `poe-svelte-ui-lib/dictionaries/firmware/poe_msg.h`.
 
 ## 🧩 Как пользоваться
 
 Новая команда:
 
-1. Добавить строку в `commands.yaml`: `- [Имя, A_ИМЯ, код]   # описание`, в свой раздел и диапазон.
+1. Добавить строку в `poe_cmd.yaml`: `- [Имя, A_ИМЯ, код]   # описание`, в свой раздел и диапазон.
 2. `npm run Generate`.
-3. В обоих фреймворках (ProdFactory-ESP и ProdFactory-STM) нажать кнопку Dict расширения: она копирует `commands.yaml` в `.framework/Dictionary.yaml` и `firmware/api_har.h` в `components/core/api_service/api_har.h` из `../ElementsUI`.
+3. В обоих фреймворках (ProdFactory-ESP и ProdFactory-STM) нажать кнопку Dict расширения: она копирует `poe_cmd.yaml` в `.framework/poe_cmd.yaml` и `firmware/poe_cmd.h` в `components/core/common/poe_cmd.h` из `../ElementsUI`.
 
 Новое сообщение:
 
-1. Добавить строку в раздел `messages` файла `messages.yaml`: `- { code, group, name, level, ru, en, zh }` - в свою группу, код из её диапазона, имя с приставкой группы (`FS_...`). Текст короткий и понятный пользователю: причина без технических подробностей, параметр `{0}` - только если без него теряется смысл. Нужна новая группа ядра - добавить её в раздел `groups` с диапазоном из резерва 900-999.
+1. Добавить строку в раздел `messages` файла `poe_msg.yaml`: `- { code, group, name, level, ru, en, zh }` - в свою группу, код из её диапазона, имя с приставкой группы (`FS_...`). Текст короткий и понятный пользователю: причина без технических подробностей, параметр `{0}` - только если без него теряется смысл. Нужна новая группа ядра - добавить её в раздел `groups` с диапазоном из резерва 900-999.
 2. `npm run Generate`.
-3. Кнопка Dict в обоих фреймворках: `messages.yaml` → `.framework/Messages.yaml`, `firmware/api_msg.h` → `components/core/common/api_msg.h`.
+3. Кнопка Dict в обоих фреймворках: `poe_msg.yaml` → `.framework/poe_msg.yaml`, `firmware/poe_msg.h` → `components/core/common/poe_msg.h`.
 
 Новый компонент GUI:
 
-1. Добавить строку в `components.yaml`: `- [Тип, обмен]   # описание`, обмен - `none`, `read`, `write`, `readWrite` или `widget`.
+1. Добавить строку в `poe_gui.yaml`: `- [Тип, обмен]   # описание`, обмен - `none`, `read`, `write`, `readWrite` или `widget`.
 2. `npm run Generate`. Тип должен быть и в `UIComponentPropsMap` (`types.ts`), и в `GUI_VIEWS` (`guiViews.ts`), иначе библиотека не скомпилируется.
-3. Кнопка Dict в ProdFactory-ESP копирует `components.yaml` в `.framework/Components.yaml`: сборка веб-интерфейса прошивки сверяет с ним GUI устройства.
+3. Кнопка Dict в ProdFactory-ESP копирует `poe_gui.yaml` в `.framework/poe_gui.yaml`: сборка веб-интерфейса прошивки сверяет с ним GUI устройства.
 
 В JS словари доступны через `poe-svelte-ui-lib/protocols`: `DEFAULT_ARGUMENT_CODES`, `DEFAULT_DICTIONARY`, `DEVICE_MESSAGES`, `MESSAGE_GROUPS`, `MESSAGE_CODES`, `formatDeviceMessage`.
 
@@ -52,7 +52,7 @@
 ## 💡 Полезно знать
 
 - Сгенерированные файлы (`generated/`, `firmware/`) руками не правят: их перезаписывает `npm run Generate`, перед публикацией он запускается сам.
-- Заголовки прошивок сразу в стиле `.clang-format` прошивок: команда «Format» их не меняет.
+- В заголовках прошивок перечисление выровнено целиком и обёрнуто в `clang-format off`: команда «Format» его не меняет.
 - После правки словарей - `npm run Test`.
 
 <details>
@@ -61,8 +61,8 @@
 - Строка: `- [Строковое имя, Имя в enum, Код]`, комментарий после `#` переходит в заголовок.
 - Диапазоны: 0-4095 - устройства (команды прошивок), 4096-6999 - резерв, 7000-7999 - облако DevCloud (команды самого облака, не устройств), 8000-8191 - резерв. Код не больше `0x1FFF` (13 бит аргумента).
 - Генератор падает на повторе имени или кода и на коде вне диапазона.
-- `generated/commands.ts` - `DEFAULT_ARGUMENT_CODES` (имя -> код), из него `DEFAULT_DICTIONARY` ядра протоколов.
-- `firmware/api_har.h` - `har_t`, макросы `HAR`/`HAR_NR`, `api_header_t` и `enum api_argument_t` (`A_* = код`) с комментариями разделов и строк. При сборке прошивки `.framework/Dictionary.yaml` сверяется с заголовком.
+- `generated/poe_cmd.ts` - `DEFAULT_ARGUMENT_CODES` (имя -> код), из него `DEFAULT_DICTIONARY` ядра протоколов.
+- `firmware/poe_cmd.h` - `har_t`, макросы `HAR`/`HAR_NR`, `api_header_t` и `enum api_argument_t` (`A_* = код`) с комментариями разделов и строк. При сборке прошивки `.framework/poe_cmd.yaml` сверяется с заголовком.
 
 </details>
 
@@ -71,8 +71,8 @@
 
 - Строка: `- [Тип, обмен]`, комментарий после `#` - описание. Тип в PascalCase - это и значение `type` в GUI, и имя экспорта компонента.
 - Генератор падает на повторе типа и на обмене не из списка.
-- `generated/components.ts` - `COMPONENT_TYPES` (кортеж типов) и `COMPONENT_IO` (тип -> обмен). Из них `componentMeta.ts` строит `COMPONENT_META`; присваивания там не скомпилируются, если список и `UIType` разошлись в любую сторону.
-- Во фреймворках `.framework/Components.yaml` - копия: сборка веба прошивки останавливается, если в GUI устройства тип не из списка.
+- `generated/poe_gui.ts` - `COMPONENT_TYPES` (кортеж типов) и `COMPONENT_IO` (тип -> обмен). Из них `componentMeta.ts` строит `COMPONENT_META`; присваивания там не скомпилируются, если список и `UIType` разошлись в любую сторону.
+- Во фреймворках `.framework/poe_gui.yaml` - копия: сборка веба прошивки останавливается, если в GUI устройства тип не из списка.
 
 </details>
 
@@ -83,8 +83,8 @@
 - Код 1-65535, 0 - сообщения нет. Резерв: 900-999 - для новых групп ядра, 3000-65535 - на будущее.
 - `name` в стиле `UPPER_SNAKE`, в прошивке это `MSG_<name>`.
 - Генератор падает, если: диапазоны групп пересекаются или выходят за 1-65535; у группы нет названия на одном из языков; у сообщения нет группы, код вне её диапазона или имя без приставки `ГРУППА_`; повтор имени или кода; неизвестный `level`; пустой текст; параметры `{0}`, `{1}` в языках разные.
-- `generated/messages.ts` - `MESSAGE_GROUPS` (группа -> `{ from, to, ru, en, zh }`), `DEVICE_MESSAGES` (код -> `{ group, name, level, ru, en, zh }`) и `MESSAGE_CODES` (имя -> код). Порядок - по группам, внутри группы по коду.
-- `firmware/api_msg.h` - `typedef enum { MSG_NONE = 0, MSG_SYS_RESTARTING = 1, ... } api_msg_t`: раздел-комментарий на каждую группу (`/* FS 200-299: Файлы */`), у элемента комментарий по-русски: уровень (событие, предупреждение, ошибка) и текст сообщения, в шапке файла - список групп и резерв.
+- `generated/poe_msg.ts` - `MESSAGE_GROUPS` (группа -> `{ from, to, ru, en, zh }`), `DEVICE_MESSAGES` (код -> `{ group, name, level, ru, en, zh }`) и `MESSAGE_CODES` (имя -> код). Порядок - по группам, внутри группы по коду.
+- `firmware/poe_msg.h` - `typedef enum { MSG_NONE = 0, MSG_SYS_RESTARTING = 1, ... } api_msg_t`: раздел-комментарий на каждую группу (`/* FS 200-299: Файлы */`), у элемента комментарий по-русски: уровень (событие, предупреждение, ошибка) и текст сообщения, в шапке файла - список групп и резерв.
 - Как сообщение идёт по проводу (VAL ответа и push, Payload `ER!` модуля, текст `MSG <код>` в консоли) - в [PROTOCOL.md](../protocols/PROTOCOL.md), раздел «Сообщения устройств».
 
 </details>
@@ -92,9 +92,9 @@
 <details>
 <summary>⚙️ Стиль заголовков прошивок</summary>
 
-- Генератор `scripts/GenerateDictionary.mjs` выравнивает перечисления так же, как `clang-format` со стилем прошивок (`ColumnLimit: 150`, выравнивание `=` и комментариев в конце строк через пустые строки и комментарии).
-- `=` выравнивается по самому длинному имени, пока строки помещаются в 150 столбцов; строка длиннее начинает новую последовательность.
-- Комментарии в конце строк выравниваются внутри раздела.
-- Проверка: `clang-format --dry-run -Werror --style=file:<ProdFactory-ESP>/.clang-format api_har.h api_msg.h` (бинарник из `esp-clang` ESP-IDF) - без замечаний.
+- Генератор `scripts/GenerateDictionary.mjs` выравнивает всё перечисление одной колонкой: `=` по самому длинному имени, комментарии в конце строк - по самому длинному `= код,`.
+- Длинный комментарий выравнивание не ломает: перечисление стоит между `/* clang-format off */` и `/* clang-format on */`, поэтому строки длиннее 150 столбцов clang-format не трогает.
+- Остальное (шапка, `har_t`, макросы) - в стиле `.clang-format` прошивок.
+- Проверка: `clang-format --dry-run -Werror --style=file:<ProdFactory-ESP>/.clang-format poe_cmd.h poe_msg.h` (бинарник из `esp-clang` ESP-IDF) - без замечаний.
 
 </details>

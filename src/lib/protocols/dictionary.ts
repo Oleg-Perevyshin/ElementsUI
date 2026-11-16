@@ -1,5 +1,5 @@
-/* Словарь заголовков и аргументов протокола - заголовок и аргумент поля HAR (makeHar/splitHar) на шине и в WebSocket-конверте {HAR, VAL}. Аргументы по умолчанию - из мастер-словаря команд src/lib/dictionaries/commands.yaml (единственный источник; .framework/Dictionary.yaml прошивок - его справочные копии), DEFAULT_ARGUMENT_CODES генерируется из него (dictionaries/generated/commands.ts, npm run Generate): прошивки собираются с его копией, поэтому приложения берут только встроенный словарь; аргумент, которого в словаре нет, задаётся числом (кодом) */
-import { DEFAULT_ARGUMENT_CODES } from "../dictionaries/generated/commands.js"
+/* Словарь заголовков и аргументов протокола - заголовок и аргумент поля HAR (makeHar/splitHar) на шине и в WebSocket-конверте {HAR, VAL}. Аргументы по умолчанию - из мастер-словаря команд src/lib/dictionaries/poe_cmd.yaml (единственный источник; .framework/poe_cmd.yaml прошивок - его справочные копии), DEFAULT_ARGUMENT_CODES генерируется из него (dictionaries/generated/poe_cmd.ts, npm run Generate): прошивки собираются с его копией, поэтому приложения берут только встроенный словарь; аргумент, которого в словаре нет, задаётся числом (кодом) */
+import { DEFAULT_ARGUMENT_CODES } from "../dictionaries/generated/poe_cmd.js"
 import { makeHar, splitHar } from "./packet.js"
 
 export { DEFAULT_ARGUMENT_CODES }

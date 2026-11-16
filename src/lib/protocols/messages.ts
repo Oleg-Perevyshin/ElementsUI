@@ -1,6 +1,6 @@
-/* Сообщения устройств: в VAL ответа и push поле Message - код из мастер-словаря src/lib/dictionaries/messages.yaml (0 или нет поля - сообщения нет), Args - параметры шаблона {0}, {1}... Коды разбиты на группы с диапазонами (MESSAGE_GROUPS). Текст на языке интерфейса, уровень и группу собирает formatDeviceMessage; DEVICE_MESSAGES, MESSAGE_GROUPS и MESSAGE_CODES генерируются из словаря (dictionaries/generated/messages.ts, npm run Generate) */
+/* Сообщения устройств: в VAL ответа и push поле Message - код из мастер-словаря src/lib/dictionaries/poe_msg.yaml (0 или нет поля - сообщения нет), Args - параметры шаблона {0}, {1}... Коды разбиты на группы с диапазонами (MESSAGE_GROUPS). Текст на языке интерфейса, уровень и группу собирает formatDeviceMessage; DEVICE_MESSAGES, MESSAGE_GROUPS и MESSAGE_CODES генерируются из словаря (dictionaries/generated/poe_msg.ts, npm run Generate) */
 import { DEFAULT_LANGUAGE, type LanguageCode } from "../locales/languages.js"
-import { DEVICE_MESSAGES, MESSAGE_GROUPS, type DeviceMessageEntry, type DeviceMessageLevel } from "../dictionaries/generated/messages.js"
+import { DEVICE_MESSAGES, MESSAGE_GROUPS, type DeviceMessageEntry, type DeviceMessageLevel } from "../dictionaries/generated/poe_msg.js"
 
 export {
   DEVICE_MESSAGES,
@@ -9,7 +9,7 @@ export {
   type DeviceMessageEntry,
   type DeviceMessageGroup,
   type DeviceMessageLevel,
-} from "../dictionaries/generated/messages.js"
+} from "../dictionaries/generated/poe_msg.js"
 
 /* Сообщение в VAL пакета устройства */
 export type DeviceMessage = { Message: number; Args?: (string | number)[] }

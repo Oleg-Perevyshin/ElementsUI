@@ -1,4 +1,4 @@
-/* tests/dictionaries.test.mjs - словари dictionaries/: сообщения устройств (код -> текст на языке, уровень и группа, параметры шаблона, неизвестный код), группы (диапазоны, приставки имён), заголовки прошивок api_har.h и api_msg.h совпадают с commands.yaml и messages.yaml */
+/* tests/dictionaries.test.mjs - словари dictionaries/: сообщения устройств (код -> текст на языке, уровень и группа, параметры шаблона, неизвестный код), группы (диапазоны, приставки имён), заголовки прошивок poe_cmd.h и poe_msg.h совпадают с poe_cmd.yaml и poe_msg.yaml */
 import { test } from "node:test"
 import assert from "node:assert/strict"
 import { readFileSync } from "node:fs"
@@ -114,8 +114,8 @@ test("сообщения: код в диапазоне своей группы, 
   }
 })
 
-test("messages.yaml: коды 1..65535 без повторов, у каждого три языка, DEVICE_MESSAGES - ровно словарь", () => {
-  const lines = dictionaryFile("messages.yaml").match(/^\s+- \{.*$/gm)
+test("poe_msg.yaml: коды 1..65535 без повторов, у каждого три языка, DEVICE_MESSAGES - ровно словарь", () => {
+  const lines = dictionaryFile("poe_msg.yaml").match(/^\s+- \{.*$/gm)
   assert.equal(Object.keys(DEVICE_MESSAGES).length, lines.length)
   for (const [code, entry] of Object.entries(DEVICE_MESSAGES)) {
     assert.ok(+code >= 1 && +code <= 65535)
@@ -134,10 +134,10 @@ test("messages.yaml: коды 1..65535 без повторов, у каждог�
   }
 })
 
-test("api_har.h: те же коды, что commands.yaml (DEFAULT_ARGUMENT_CODES), плюс har_t и макросы", () => {
-  const header = dictionaryFile("firmware/api_har.h")
+test("poe_cmd.h: те же коды, что poe_cmd.yaml (DEFAULT_ARGUMENT_CODES), плюс har_t и макросы", () => {
+  const header = dictionaryFile("firmware/poe_cmd.h")
   const yamlEnums = Object.fromEntries(
-    [...dictionaryFile("commands.yaml").matchAll(/^- \[\s*[^,\]]+?\s*,\s*(\w+)\s*,\s*(\d+)\s*\]/gm)].map(([, name, code]) => [name, Number(code)]),
+    [...dictionaryFile("poe_cmd.yaml").matchAll(/^- \[\s*[^,\]]+?\s*,\s*(\w+)\s*,\s*(\d+)\s*\]/gm)].map(([, name, code]) => [name, Number(code)]),
   )
   const headerEnums = Object.fromEntries([...header.matchAll(/^\s*(A_\w+)\s*=\s*(\d+),/gm)].map(([, name, code]) => [name, Number(code)]))
   assert.deepEqual(headerEnums, yamlEnums)
@@ -149,8 +149,8 @@ test("api_har.h: те же коды, что commands.yaml (DEFAULT_ARGUMENT_CODE
     assert.ok(header.includes(part), part)
 })
 
-test("api_msg.h: MSG_NONE = 0, MSG_<name> = код для каждого сообщения messages.yaml, раздел на каждую группу, резерв в шапке", () => {
-  const header = dictionaryFile("firmware/api_msg.h")
+test("poe_msg.h: MSG_NONE = 0, MSG_<name> = код для каждого сообщения poe_msg.yaml, раздел на каждую группу, резерв в шапке", () => {
+  const header = dictionaryFile("firmware/poe_msg.h")
   for (const [name, { from, to, ru }] of Object.entries(MESSAGE_GROUPS)) assert.ok(header.includes(`  /* ${name} ${from}-${to}: ${ru} */\n`), name)
   assert.ok(header.includes("резерв: 900-999, 3000-65535 */"))
   const enumCodes = Object.fromEntries([...header.matchAll(/^\s*MSG_(\w+)\s*=\s*(\d+),/gm)].map(([, name, code]) => [name, Number(code)]))
@@ -159,9 +159,9 @@ test("api_msg.h: MSG_NONE = 0, MSG_<name> = код для каждого соо�
   assert.deepEqual(enumCodes, MESSAGE_CODES)
 })
 
-test("список компонентов: components.yaml в пакете совпадает со сгенерированными COMPONENT_TYPES и COMPONENT_IO", async () => {
-  const { COMPONENT_TYPES, COMPONENT_IO } = await import("../dist/dictionaries/generated/components.js")
-  const listed = [...dictionaryFile("components.yaml").matchAll(/^\s*-\s*\[\s*([^,\]]+?)\s*,\s*([^,\]]+?)\s*\]/gm)].map(([, type, io]) => [type, io])
+test("список компонентов: poe_gui.yaml в пакете совпадает со сгенерированными COMPONENT_TYPES и COMPONENT_IO", async () => {
+  const { COMPONENT_TYPES, COMPONENT_IO } = await import("../dist/dictionaries/generated/poe_gui.js")
+  const listed = [...dictionaryFile("poe_gui.yaml").matchAll(/^\s*-\s*\[\s*([^,\]]+?)\s*,\s*([^,\]]+?)\s*\]/gm)].map(([, type, io]) => [type, io])
   assert.ok(listed.length > 0)
   assert.deepEqual(
     [...COMPONENT_TYPES],

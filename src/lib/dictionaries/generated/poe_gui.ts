@@ -1,4 +1,4 @@
-/* $lib/dictionaries/generated/components.ts - СГЕНЕРИРОВАНО из components.yaml (npm run Generate), руками не править */
+/* $lib/dictionaries/generated/poe_gui.ts - СГЕНЕРИРОВАНО из poe_gui.yaml (npm run Generate), руками не править */
 
 export const COMPONENT_TYPES = ["Accordion", "Tabs", "TextField", "Divider", "Button", "FileAttach", "Input", "Select", "Switch", "Slider", "Joystick", "Widget", "ProgressBar", "Graph", "PeriodChart", "Table", "VideoViewer", "WidgetWiFi", "WidgetDeviceInfo", "WidgetLoRa", "WidgetFileSystem", "WidgetStackInfo", "WidgetRGBStrip", "WidgetPFD", "WidgetMap"] as const
 

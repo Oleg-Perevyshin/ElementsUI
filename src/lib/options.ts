@@ -2,7 +2,7 @@ import { derived } from "svelte/store"
 import { T } from "./locales/i18n"
 import { PROPS_ICONS } from "./libIcons/propsIcons"
 import { ACCENT_COLORS, type AccentColor } from "./accent"
-import { DEFAULT_ARGUMENT_CODES } from "./dictionaries/generated/commands"
+import { DEFAULT_ARGUMENT_CODES } from "./dictionaries/generated/poe_cmd"
 
 /* Аргумент команды в конструкторе: только имя команды устройства из мастер-словаря (коды 1..4095, без команд облака 7000..7999) или служебный NoSend - не отправлять; в провод имя уходит кодом в HAR */
 export const ARGUMENT_NAMES: string[] = [

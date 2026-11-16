@@ -49,8 +49,8 @@ ElementsUI - репозиторий npm-библиотеки `poe-svelte-ui-lib`
 | --------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | DevCloud        | Облако: конструктор GUI устройства, панель управления, отладка, WebSocket-сервер | Зависимость `poe-svelte-ui-lib` (`^2.x`, точный номер - в `package.json` проекта). Использует компоненты, `GUIRenderer`, точку входа `/constructor` (панели свойств, `createComponent`, `PANELS`), `/protocols` (кодек, xPOE-Debug), `/locales` (серверный код под Node без Vite). Версию библиотеки в облаке поднимает CI этой библиотеки |
 | DevTerminal     | Настольный терминал отладки через COM-порт                                       | Зависимость `poe-svelte-ui-lib` (`^2.x`, точный номер - в `package.json` проекта). Ядро `/protocols`: пакеты, разбор консоли xPOE-Debug, CAN через slcan, колонки таблицы `xPoeDebugTableColumns`, графики `DebugPlot`                                                                                                                     |
-| ProdFactory-ESP | Прошивки ESP32 и их веб-интерфейс `WebApp`, который устройство раздаёт само      | `WebApp/package.json` зависит от `poe-svelte-ui-lib` (`^2.x`, точный номер - там же): `GUIRenderer`, смарт-виджеты, тема. Конструктор в бандл WebApp не попадает. Прошивка держит копию словаря `.framework/Dictionary.yaml`, сборка сверяет её с `api_har.h`                                                                              |
-| ProdFactory-STM | Прошивки STM32 (модули на шине)                                                  | Копия словаря `.framework/Dictionary.yaml`; байты пакетов совпадают с кодеком библиотеки (компоненты `poe_cbor`, `api_service`)                                                                                                                                                                                                            |
+| ProdFactory-ESP | Прошивки ESP32 и их веб-интерфейс `WebApp`, который устройство раздаёт само      | `WebApp/package.json` зависит от `poe-svelte-ui-lib` (`^2.x`, точный номер - там же): `GUIRenderer`, смарт-виджеты, тема. Конструктор в бандл WebApp не попадает. Прошивка держит копию словаря `.framework/poe_cmd.yaml`, сборка сверяет её с `poe_cmd.h`                                                                                 |
+| ProdFactory-STM | Прошивки STM32 (модули на шине)                                                  | Копия словаря `.framework/poe_cmd.yaml`; байты пакетов совпадают с кодеком библиотеки (компоненты `poe_cbor`, `api_service`)                                                                                                                                                                                                               |
 
 </details>
 
@@ -59,7 +59,7 @@ ElementsUI - репозиторий npm-библиотеки `poe-svelte-ui-lib`
 
 - Компонент только показывает данные и сообщает об изменениях (пропсы и колбэки). Сеть, WebSocket, выбор модуля и хранилище значений - у приложения.
 - `src/lib/protocols/` - единственный источник протокола и кодека для программ. В прошивках тот же протокол реализован в C (`poe_cbor`, `api_service`), совпадение байт проверяют тесты.
-- `src/lib/dictionaries/` - мастер-словари для всего стека: команды `commands.yaml`, сообщения устройств `messages.yaml` и список компонентов GUI `components.yaml`, из них генерируются код для JS и заголовки прошивок `api_har.h`, `api_msg.h`.
+- `src/lib/dictionaries/` - мастер-словари для всего стека: команды `poe_cmd.yaml`, сообщения устройств `poe_msg.yaml` и список компонентов GUI `poe_gui.yaml`, из них генерируются код для JS и заголовки прошивок `poe_cmd.h`, `poe_msg.h`.
 - Любая правка компонента, темы или протокола сразу затрагивает DevCloud, WebApp и DevTerminal.
 
 Витрина с живыми примерами публикуется на GitHub Pages: `https://oleg-perevyshin.github.io/ElementsUI/`. Репозиторий: `github.com/Oleg-Perevyshin/ElementsUI`.
@@ -121,7 +121,7 @@ ElementsUI/
 ├─ .github/workflows/
 │  ├─ npm_publish.yaml     [publish]: публикация в npm + автообновление DevCloud
 │  └─ ghpages_deploy.yaml  [deploy]: витрина на GitHub Pages
-├─ scripts/GenerateDictionary.mjs   src/lib/dictionaries: commands.yaml -> generated/commands.ts, messages.yaml -> generated/messages.ts, components.yaml -> generated/components.ts; заголовки прошивок firmware/api_har.h, api_msg.h в стиле .clang-format прошивок
+├─ scripts/GenerateDictionary.mjs   src/lib/dictionaries: poe_cmd.yaml -> generated/poe_cmd.ts, poe_msg.yaml -> generated/poe_msg.ts, poe_gui.yaml -> generated/poe_gui.ts; заголовки прошивок firmware/poe_cmd.h, poe_msg.h (перечисление выровнено целиком, в clang-format off)
 ├─ scripts/UpdateIconsLib.ts       assets/IconsCatalog -> src/lib/icons.ts (npm run Generate)
 ├─ assets/IconsCatalog/    SVG каталога (категория.имя.svg), наборы battery/bulb/propeller; в npm-пакет не входит
 ├─ tests/                  node:test против собранного dist/ (+ dist-types.tsconfig.json)
@@ -142,7 +142,7 @@ ElementsUI/
 │     ├─ <Компонент>/      Компонент.svelte + КомпонентProps.svelte + README.md (+ вспомогательные .ts)
 │     ├─ GUIRenderer/      GUIRenderer.svelte, DeviceTable.svelte
 │     ├─ protocols/        ядро протоколов, PROTOCOL.md, cbor/
-│     ├─ dictionaries/     commands.yaml, messages.yaml, components.yaml, generated/ (TS), firmware/ (api_har.h, api_msg.h), README.md
+│     ├─ dictionaries/     poe_cmd.yaml, poe_msg.yaml, poe_gui.yaml, generated/ (TS), firmware/ (poe_cmd.h, poe_msg.h), README.md
 │     ├─ locales/          languages.ts, i18n.ts, localize.ts, translations.ts, constructor.ts, index.ts
 │     ├─ libIcons/         служебные значки компонентов и панелей
 │     ├─ gui.ts            чистые правила рендерера (сетка, виджеты, биты, пакеты, раскладка)
@@ -200,7 +200,7 @@ ElementsUI/
 | `poe-svelte-ui-lib`                | `index.js`           | Компоненты, виджеты, `GUIRenderer`, правила `gui.ts`, реестр `COMPONENTS`, `createFsTransfer`, i18n, `sanitizeHtml`, иконки, все типы                                                                            | да                     |
 | `poe-svelte-ui-lib/constructor`    | `constructor.js`     | Панели свойств `*Props`, `PANELS`, `COMPONENT_DEFAULTS`, `COMPONENT_SIZES`, `createComponent`, `createPropsEditor`, `applyPropertyChange`, `optionsStore`, `TextsEditor`, `CommonSnippets`, словарь конструктора | да                     |
 | `poe-svelte-ui-lib/protocols`      | `protocols/index.js` | CBOR, пакет `poe_cbor_pkt`, HAR, CRC, словарь, xPOE-Debug, CAN/slcan, графики отладки                                                                                                                            | нет, работает под Node |
-| `poe-svelte-ui-lib/dictionaries/*` | файлы словарей       | `commands.yaml`, `messages.yaml`, `components.yaml`, `firmware/api_har.h`, `firmware/api_msg.h` как файлы                                                                                                        | -                      |
+| `poe-svelte-ui-lib/dictionaries/*` | файлы словарей       | `poe_cmd.yaml`, `poe_msg.yaml`, `poe_gui.yaml`, `firmware/poe_cmd.h`, `firmware/poe_msg.h` как файлы                                                                                                             | -                      |
 | `poe-svelte-ui-lib/locales`        | `locales/index.js`   | `LANGUAGES`, переводчик, `localizeDeep` без компонентов                                                                                                                                                          | нет, для Node          |
 | `poe-svelte-ui-lib/theme.css`      | `theme.css`          | Палитра `.light`/`.dark`, типографика, роли `bg-*`/`border-*`                                                                                                                                                    | -                      |
 
@@ -266,7 +266,7 @@ ElementsUI/
 - 🔁 **Компонент говорит колбэками:** `onUpdate` - значение принято, `onInput` - значение во время ввода, `onPropertyChange` - правка свойств в конструкторе.
 - 🌉 **Рендерер связан с приложением через `DeviceLink`:** читать значение, записать, отправить команду, дождаться ответа.
 - 📦 **Пакет по проводу - `poe_cbor_pkt`:** адрес получателя и отправителя, заголовок с командой, тело и CRC.
-- 📖 **Команда в проводе - число `HAR`** (заголовок, код из словаря `commands.yaml`, флаг ответа) и на шине, и в WebSocket-конверте `{HAR, VAL}`. Имена - только для людей.
+- 📖 **Команда в проводе - число `HAR`** (заголовок, код из словаря `poe_cmd.yaml`, флаг ответа) и на шине, и в WebSocket-конверте `{HAR, VAL}`. Имена - только для людей.
 - 📁 **Файлы передаются командой `SET FS`** по кускам с повторами и проверкой CRC-32.
 
 <details>
@@ -368,20 +368,20 @@ interface DeviceReply {
 - Разборщики: пауза дольше `gapMs` (по умолчанию 100 мс; у CAN - `sessionTimeoutMs`) сбрасывает недособранное, предел `maxBytes` по умолчанию 8192. Пауза RS485 в прошивке - 20 мс.
 - Пример `GET ModCfg {}` из терминала: `9F 85 00 00 18 49 A0 19 66 06 FF` (HAR `0x0049`, CRC `0x6606`).
 
-| Канал                   | Передача                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| CAN, CAN FD             | Кадры 8 или 64 байта; 11-битный ID: бит 10 - последний кадр (`CAN_FINAL_BIT`), биты 0-9 - номер пакета                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| RS485                   | Сплошной поток, поиск `0x9F 0x85`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| LoRa                    | Пакет целиком в одном радиокадре                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| UART-консоль xPOE-Debug | Поток вперемешку с текстом загрузчика; логи `OK! DebugLog` `[уровень, тег, текст \| байты, FHS]`, графики `OK! DebugPlot` `{"Группа.Имя": float32}`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| WebSocket               | Конверт `{HAR, VAL}` на всех соединениях (браузер - облако, облако - устройство, WebApp - устройство): `HAR` - то же 16-битное число, что на шине (заголовок, код из словаря, флаг ответа), имён в проводе нет. Запрос `VAL: {DevSN, ModSN?, TrgBusID?, SrcBusID?, Payload?}`, ответ `VAL: {DevSN, ModSN, Message, Args?, Payload}`, `Message` - код из `messages.yaml` (0 - нет сообщения; группы `SYS` 1-99, `CFG` 100-199, `FS` 200-299, `FW` 300-399, `WIFI` 400-499, `DEV` 1000-1999), `Args` - параметры шаблона, текст, уровень и группа - `formatDeviceMessage`. У `ER!` модуля на шине `Payload` - карта `{Message, Args?}`, хаб переносит её в `VAL`; в консоли сообщение - `DebugLog` с тегом `HAR 0x....` и текстом `MSG <код>[ <арг1>[<TAB><арг2>...]]` (`parseDebugLogMessage`). Сборка и разбор - `encodeWsEnvelope`, `decodeWsEnvelope` |
+| Канал                   | Передача                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| CAN, CAN FD             | Кадры 8 или 64 байта; 11-битный ID: бит 10 - последний кадр (`CAN_FINAL_BIT`), биты 0-9 - номер пакета                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| RS485                   | Сплошной поток, поиск `0x9F 0x85`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| LoRa                    | Пакет целиком в одном радиокадре                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| UART-консоль xPOE-Debug | Поток вперемешку с текстом загрузчика; логи `OK! DebugLog` `[уровень, тег, текст \| байты, FHS]`, графики `OK! DebugPlot` `{"Группа.Имя": float32}`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| WebSocket               | Конверт `{HAR, VAL}` на всех соединениях (браузер - облако, облако - устройство, WebApp - устройство): `HAR` - то же 16-битное число, что на шине (заголовок, код из словаря, флаг ответа), имён в проводе нет. Запрос `VAL: {DevSN, ModSN?, TrgBusID?, SrcBusID?, Payload?}`, ответ `VAL: {DevSN, ModSN, Message, Args?, Payload}`, `Message` - код из `poe_msg.yaml` (0 - нет сообщения; группы `SYS` 1-99, `CFG` 100-199, `FS` 200-299, `FW` 300-399, `WIFI` 400-499, `DEV` 1000-1999), `Args` - параметры шаблона, текст, уровень и группа - `formatDeviceMessage`. У `ER!` модуля на шине `Payload` - карта `{Message, Args?}`, хаб переносит её в `VAL`; в консоли сообщение - `DebugLog` с тегом `HAR 0x....` и текстом `MSG <код>[ <арг1>[<TAB><арг2>...]]` (`parseDebugLogMessage`). Сборка и разбор - `encodeWsEnvelope`, `decodeWsEnvelope` |
 
 Аутентификация устройства в облаке (TOFU) описана в `PROTOCOL.md`: токен 64 hex-символа, передаётся `Authorization: Bearer`, выдаётся в `SET JoinDev {DevToken}`, неверный токен после подтверждения - закрытие кодом `1008`.
 
 </details>
 
 <details>
-<summary>📖 Словарь команд (`dictionaries/commands.yaml`)</summary>
+<summary>📖 Словарь команд (`dictionaries/poe_cmd.yaml`)</summary>
 
 Строка словаря: `- [Строка, Перечисление, Код]`, код 0..8191 (13 бит). Диапазоны: 0-4095 - команды устройств, 7000-7999 - команды самого облака DevCloud по `/ws` (устройства их не получают), 4096-6999 и 8000-8191 - резерв. Группы кодов:
 
@@ -397,9 +397,9 @@ interface DeviceReply {
 | 7000-7011 | облако: чаты                | `ChatMessage` 7000, `ChatMessages`, `SystemMessage`, `EditMessage`, `DeleteMessage`, `UpdateLastRead`, `JoinChat`, `UserConnected`, `ChatUnread`, `ChatPins`, `EditChatGroup`, `RemoveFromChat` 7011 |
 | 7100-7104 | облако: устройства          | `DeviceMessages` 7100, `DeviceConnection` 7101, `LeaveGroup` 7102, `LeaveGroups` 7103, `ResetDevToken` 7104                                                                                          |
 
-Задел: `BackUp`, `BindMKey`, `ModList`, `ModMode`, `ModT2-ModT5`, `FwUpgE`, `OrOfs`, `OrAccCal`, `OrMagCal` есть в словаре, но ни одна прошивка ESP/STM их пока не обрабатывает. Коды закреплены и не меняются, описания в `commands.yaml` - план, а не текущее поведение. В примерах документации берут команды, которые прошивки реально обрабатывают: `ModCfg`, `ModInfo`, `FS`, `APsList`, `StackInfo`.
+Задел: `BackUp`, `BindMKey`, `ModList`, `ModMode`, `ModT2-ModT5`, `FwUpgE`, `OrOfs`, `OrAccCal`, `OrMagCal` есть в словаре, но ни одна прошивка ESP/STM их пока не обрабатывает. Коды закреплены и не меняются, описания в `poe_cmd.yaml` - план, а не текущее поведение. В примерах документации берут команды, которые прошивки реально обрабатывают: `ModCfg`, `ModInfo`, `FS`, `APsList`, `StackInfo`.
 
-`scripts/GenerateDictionary.mjs` превращает словарь в `DEFAULT_ARGUMENT_CODES` (`dictionaries/generated/commands.ts`, не править руками) и падает на повторе имени или кода и на коде больше `0x1FFF`. Словарь конкретного устройства читается `parseArgumentDictionary` и оборачивается `createDictionary(codes)`.
+`scripts/GenerateDictionary.mjs` превращает словарь в `DEFAULT_ARGUMENT_CODES` (`dictionaries/generated/poe_cmd.ts`, не править руками) и падает на повторе имени или кода и на коде больше `0x1FFF`. Словарь конкретного устройства читается `parseArgumentDictionary` и оборачивается `createDictionary(codes)`.
 
 </details>
 
@@ -483,16 +483,16 @@ interface DeviceReply {
 <details>
 <summary>⌨️ Команды</summary>
 
-| Команда                          | Что делает                                                                                                                                                                                                                                                                        |
-| -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `npm install`                    | Зависимости                                                                                                                                                                                                                                                                       |
-| `npm run dev`                    | Витрина на dev-сервере Vite                                                                                                                                                                                                                                                       |
-| `npm run Test`                   | Генерация словаря, `svelte-package`, `node --test tests/*.test.mjs`                                                                                                                                                                                                               |
-| `npm run Generate`               | всё сгенерированное: словари `dictionaries/` (`commands.yaml`, `messages.yaml`, `components.yaml` -> `generated/*.ts`, заголовки прошивок `firmware/api_har.h`, `api_msg.h`) и `src/lib/icons.ts` из каталога `assets/IconsCatalog`; перед публикацией и в `Test` запускается сам |
-| `npm run Formatting`             | `prettier --write .` - единственный способ форматирования, перед каждым коммитом                                                                                                                                                                                                  |
-| `npm run build`                  | Сборка витрины в `docs/`                                                                                                                                                                                                                                                          |
-| `npm pack` (запускает `prepack`) | Словарь -> `svelte-kit sync` -> `svelte-check` -> `svelte-package` (в `dist/`) -> `tsc -p tests/dist-types.tsconfig.json` (проверка `.d.ts` так, как их видит приложение) -> `node --test tests/*.test.mjs` -> `publint`                                                          |
-| `npm run CheckUpdate`            | `npx npm-check-updates -u && npm install`                                                                                                                                                                                                                                         |
+| Команда                          | Что делает                                                                                                                                                                                                                                                                   |
+| -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm install`                    | Зависимости                                                                                                                                                                                                                                                                  |
+| `npm run dev`                    | Витрина на dev-сервере Vite                                                                                                                                                                                                                                                  |
+| `npm run Test`                   | Генерация словаря, `svelte-package`, `node --test tests/*.test.mjs`                                                                                                                                                                                                          |
+| `npm run Generate`               | всё сгенерированное: словари `dictionaries/` (`poe_cmd.yaml`, `poe_msg.yaml`, `poe_gui.yaml` -> `generated/*.ts`, заголовки прошивок `firmware/poe_cmd.h`, `poe_msg.h`) и `src/lib/icons.ts` из каталога `assets/IconsCatalog`; перед публикацией и в `Test` запускается сам |
+| `npm run Formatting`             | `prettier --write .` - единственный способ форматирования, перед каждым коммитом                                                                                                                                                                                             |
+| `npm run build`                  | Сборка витрины в `docs/`                                                                                                                                                                                                                                                     |
+| `npm pack` (запускает `prepack`) | Словарь -> `svelte-kit sync` -> `svelte-check` -> `svelte-package` (в `dist/`) -> `tsc -p tests/dist-types.tsconfig.json` (проверка `.d.ts` так, как их видит приложение) -> `node --test tests/*.test.mjs` -> `publint`                                                     |
+| `npm run CheckUpdate`            | `npx npm-check-updates -u && npm install`                                                                                                                                                                                                                                    |
 
 </details>
 
@@ -562,12 +562,12 @@ interface DeviceReply {
 - Цвета только токенами темы: цветной текст и линии - `--*-text`, заливки - `--*-color`, мягкий фон - `--*-soft`, метки - `--*-mark`, акцент как текст - `--accent-text`. Текст не делают полупрозрачным, подписи не мельче 11px, панели не полупрозрачные.
 - Узкий экран: корень виджета `@container`, колонки `@sm:`/`@md:`/`@xl:`; классы `sm:`/`md:` (ширина окна) в компонентах не используются (исключение - размеры текста `TextField`, `max-sm:`). Шапка виджета всегда одна строка.
 - HTML из GUI и данных устройства - только через `sanitizeHtml`. Ячейка `Table` по умолчанию текст; разметка - `html: true` и экранирование `escapeHtml` на стороне данных.
-- Новая команда протокола или сообщение устройства: правка `src/lib/dictionaries/commands.yaml` или `messages.yaml`, `npm run Generate` (генерирует и `src/lib/dictionaries/firmware/api_har.h`, `api_msg.h`), затем копирование `commands.yaml`/`messages.yaml` в `.framework/Dictionary.yaml`/`Messages.yaml` и обоих заголовков в `api_service` обоих фреймворков; после правки протоколов - `npm run Test`.
+- Новая команда протокола или сообщение устройства: правка `src/lib/dictionaries/poe_cmd.yaml` или `poe_msg.yaml`, `npm run Generate` (генерирует и `src/lib/dictionaries/firmware/poe_cmd.h`, `poe_msg.h`), затем копирование `poe_cmd.yaml`/`poe_msg.yaml` в `.framework/poe_cmd.yaml`/`poe_msg.yaml` и обоих заголовков в `components/core/common/` обоих фреймворков (кнопка Dict расширений); после правки протоколов - `npm run Test`.
 - Компоненты не выводят случайные DOM id; проп `id` примитива - переменная устройства, в разметку не попадает (кроме `Button`).
 - Комментарии в коде только однострочные `/* ... */`, без истории «было/стало». Документация описывает только текущее состояние. В текстах обычный дефис, без длинных и средних тире.
 - Форматирование: Prettier (`printWidth` 160, без точек с запятой, двойные кавычки по умолчанию, `trailingComma: all`, LF), только `npm run Formatting`.
 - Коммит только после показа изменений и явного «коммить», без строк соавторства. Ненужное удаляется сразу.
-- Генерируемые файлы не правятся руками: `src/lib/dictionaries/generated/`, `src/lib/dictionaries/firmware/api_har.h`, `src/lib/dictionaries/firmware/api_msg.h`, `src/lib/icons.ts`.
+- Генерируемые файлы не правятся руками: `src/lib/dictionaries/generated/`, `src/lib/dictionaries/firmware/poe_cmd.h`, `src/lib/dictionaries/firmware/poe_msg.h`, `src/lib/icons.ts`.
 
 </details>
 
@@ -677,7 +677,7 @@ interface DeviceReply {
 | BusID                    | Адрес модуля на шине: CRC-16 серийного номера                                                                                                                   |
 | Заголовок                | `GET`, `SET`, `OK!`, `ER!`                                                                                                                                      |
 | Аргумент / команда       | Имя или код из словаря (`ModCfg` = 36)                                                                                                                          |
-| Мастер-словари           | `src/lib/dictionaries/commands.yaml`, `messages.yaml`; копии в `.framework/Dictionary.yaml`, `Messages.yaml` прошивок                                           |
+| Мастер-словари           | `src/lib/dictionaries/poe_cmd.yaml`, `poe_msg.yaml`; копии в `.framework/poe_cmd.yaml`, `poe_msg.yaml` прошивок                                                 |
 | xPOE-Debug               | UART-консоль устройства как шина: пакеты вперемешку с текстом, логи `DebugLog`, графики `DebugPlot`                                                             |
 | FHS                      | Свободная память устройства в записи `DebugLog`                                                                                                                 |
 | slcan                    | Текстовый протокол USB-CAN адаптера, через который терминал работает с CAN                                                                                      |
@@ -848,7 +848,7 @@ interface DeviceReply {
 | `component`        | Компонент интерфейса и его свойства                                                                                                       |
 | `onPropertyChange` | `(change: PropertyChange) => void`: новые `properties`, `name`, `access`, `eventHandler`; приложение сливает их по ключам верхнего уровня |
 
-Поле «Аргумент» в панелях (`Button`, `Select`, кнопки `Table`, команды `WidgetDeviceInfo`) принимает только имя из мастер-словаря команд `commands.yaml` или служебный `NoSend`, до 31 знака (`ARGUMENT_REGEXP`, `ARGUMENT_MAX_LENGTH` в `options.ts`). Прошивка читает аргумент в `char[32]`, а неизвестное имя молча превращает в `A_UNKNOWN`, поэтому опечатка подсвечивается сразу и не сохраняется.
+Поле «Аргумент» в панелях (`Button`, `Select`, кнопки `Table`, команды `WidgetDeviceInfo`) принимает только имя из мастер-словаря команд `poe_cmd.yaml` или служебный `NoSend`, до 31 знака (`ARGUMENT_REGEXP`, `ARGUMENT_MAX_LENGTH` в `options.ts`). Прошивка читает аргумент в `char[32]`, а неизвестное имя молча превращает в `A_UNKNOWN`, поэтому опечатка подсвечивается сразу и не сохраняется.
 
 Своя панель свойств строится на `createPropsEditor(component, onPropertyChange)`: `set`, `patch`, `addItem`, `updateItem`, `removeItem` отправляют новые объекты, сами свойства не меняются на месте.
 
@@ -1095,13 +1095,13 @@ const bridge = UI.createBusBridge(channel, {
 
 #### 📚 Словари команд и сообщений
 
-Все команды (`GET`, `SET`, `ModCfg`, `Restart` и остальные) и тексты событий устройств («Файл удалён», «Прошивка обновлена») записаны в двух файлах папки `src/lib/dictionaries/`: `commands.yaml` и `messages.yaml`. Это единственный источник для прошивок, облака, терминала и веб-интерфейса. Новую команду или сообщение сначала добавляют сюда, потом копируют в оба фреймворка прошивок.
+Все команды (`GET`, `SET`, `ModCfg`, `Restart` и остальные) и тексты событий устройств («Файл удалён», «Прошивка обновлена») записаны в двух файлах папки `src/lib/dictionaries/`: `poe_cmd.yaml` и `poe_msg.yaml`. Это единственный источник для прошивок, облака, терминала и веб-интерфейса. Новую команду или сообщение сначала добавляют сюда, потом копируют в оба фреймворка прошивок.
 
 - 📖 Коды команд 0-4095 - команды устройств, 7000-7999 - команды самого облака DevCloud (чаты, журнал, состояние устройств).
 - 💬 Устройство шлёт только код сообщения и параметры, текст на языке пользователя собирает `formatDeviceMessage(code, args?, lang?)` из `poe-svelte-ui-lib/protocols`. Сообщения разбиты на группы со своими диапазонами кодов: `SYS` 1-99, `CFG` 100-199, `FS` 200-299, `FW` 300-399, `WIFI` 400-499, `API` 500-599, `BUS` 600-699, `NET` 700-799, `LORA` 800-899, `DEV` 1000-1999, `DRV` 2000-2999 (900-999 и 3000+ - резерв).
 - 🧯 Те же коды прошивки возвращают при ошибках и пишут в свой журнал, текст на языке пользователя показывает отладочная консоль.
 - 🔎 На витрине библиотеки раздел «Словари» показывает все события, команды и компоненты GUI с поиском, «Протокол» собирает и разбирает пакет, «GUI устройства» рисует файл GUI из каталога DevCloud.
-- ⚙️ `npm run Generate` (перед публикацией запускается сам) генерирует код для JS и заголовки прошивок `api_har.h`, `api_msg.h`.
+- ⚙️ `npm run Generate` (перед публикацией запускается сам) генерирует код для JS и заголовки прошивок `poe_cmd.h`, `poe_msg.h`.
 
 Как добавить команду или сообщение, что генерируется и куда копировать - в [src/lib/dictionaries/README.md](src/lib/dictionaries/README.md). Формат на проводе - в [PROTOCOL.md](src/lib/protocols/PROTOCOL.md).
 
@@ -1691,32 +1691,32 @@ npm pack               # сборка пакета в dist/: проверка т
 
 #### ✨ Что умеет
 
-- 📖 `commands.yaml` - словарь команд: имя аргумента, имя в перечислении C и код поля HAR.
-- 💬 `messages.yaml` - словарь сообщений устройств: группы с диапазонами кодов и сообщения (код, группа, имя, уровень, короткий понятный текст на RU, EN, ZH).
+- 📖 `poe_cmd.yaml` - словарь команд: имя аргумента, имя в перечислении C и код поля HAR.
+- 💬 `poe_msg.yaml` - словарь сообщений устройств: группы с диапазонами кодов и сообщения (код, группа, имя, уровень, короткий понятный текст на RU, EN, ZH).
 - 🧯 Те же коды - коды ошибок прошивок: функции обоих фреймворков возвращают `poe_err_t` (`POE_OK` = `MSG_NONE`, иначе `MSG_*` причины), стандартные ошибки - группа `SYS` (`SYS_INVALID_ARG`, `SYS_NO_MEMORY`, `SYS_TIMEOUT`...). В логе прошивки только код, текст даёт библиотека.
-- 🧩 `components.yaml` - список компонентов GUI: тип (значение `type` в GUI и имя экспорта компонента) и обмен с устройством.
-- ⚙️ Из словарей генерируется код для JS (`generated/`) и заголовки для прошивок (`firmware/api_har.h`, `firmware/api_msg.h`).
-- 📦 Файлы поставляются в пакете: `poe-svelte-ui-lib/dictionaries/commands.yaml`, `poe-svelte-ui-lib/dictionaries/messages.yaml`, `poe-svelte-ui-lib/dictionaries/components.yaml`, `poe-svelte-ui-lib/dictionaries/firmware/api_har.h`, `poe-svelte-ui-lib/dictionaries/firmware/api_msg.h`.
+- 🧩 `poe_gui.yaml` - список компонентов GUI: тип (значение `type` в GUI и имя экспорта компонента) и обмен с устройством.
+- ⚙️ Из словарей генерируется код для JS (`generated/`) и заголовки для прошивок (`firmware/poe_cmd.h`, `firmware/poe_msg.h`).
+- 📦 Файлы поставляются в пакете: `poe-svelte-ui-lib/dictionaries/poe_cmd.yaml`, `poe-svelte-ui-lib/dictionaries/poe_msg.yaml`, `poe-svelte-ui-lib/dictionaries/poe_gui.yaml`, `poe-svelte-ui-lib/dictionaries/firmware/poe_cmd.h`, `poe-svelte-ui-lib/dictionaries/firmware/poe_msg.h`.
 
 #### 🧩 Как пользоваться
 
 Новая команда:
 
-1. Добавить строку в `commands.yaml`: `- [Имя, A_ИМЯ, код]   # описание`, в свой раздел и диапазон.
+1. Добавить строку в `poe_cmd.yaml`: `- [Имя, A_ИМЯ, код]   # описание`, в свой раздел и диапазон.
 2. `npm run Generate`.
-3. В обоих фреймворках (ProdFactory-ESP и ProdFactory-STM) нажать кнопку Dict расширения: она копирует `commands.yaml` в `.framework/Dictionary.yaml` и `firmware/api_har.h` в `components/core/api_service/api_har.h` из `../ElementsUI`.
+3. В обоих фреймворках (ProdFactory-ESP и ProdFactory-STM) нажать кнопку Dict расширения: она копирует `poe_cmd.yaml` в `.framework/poe_cmd.yaml` и `firmware/poe_cmd.h` в `components/core/common/poe_cmd.h` из `../ElementsUI`.
 
 Новое сообщение:
 
-1. Добавить строку в раздел `messages` файла `messages.yaml`: `- { code, group, name, level, ru, en, zh }` - в свою группу, код из её диапазона, имя с приставкой группы (`FS_...`). Текст короткий и понятный пользователю: причина без технических подробностей, параметр `{0}` - только если без него теряется смысл. Нужна новая группа ядра - добавить её в раздел `groups` с диапазоном из резерва 900-999.
+1. Добавить строку в раздел `messages` файла `poe_msg.yaml`: `- { code, group, name, level, ru, en, zh }` - в свою группу, код из её диапазона, имя с приставкой группы (`FS_...`). Текст короткий и понятный пользователю: причина без технических подробностей, параметр `{0}` - только если без него теряется смысл. Нужна новая группа ядра - добавить её в раздел `groups` с диапазоном из резерва 900-999.
 2. `npm run Generate`.
-3. Кнопка Dict в обоих фреймворках: `messages.yaml` → `.framework/Messages.yaml`, `firmware/api_msg.h` → `components/core/common/api_msg.h`.
+3. Кнопка Dict в обоих фреймворках: `poe_msg.yaml` → `.framework/poe_msg.yaml`, `firmware/poe_msg.h` → `components/core/common/poe_msg.h`.
 
 Новый компонент GUI:
 
-1. Добавить строку в `components.yaml`: `- [Тип, обмен]   # описание`, обмен - `none`, `read`, `write`, `readWrite` или `widget`.
+1. Добавить строку в `poe_gui.yaml`: `- [Тип, обмен]   # описание`, обмен - `none`, `read`, `write`, `readWrite` или `widget`.
 2. `npm run Generate`. Тип должен быть и в `UIComponentPropsMap` (`types.ts`), и в `GUI_VIEWS` (`guiViews.ts`), иначе библиотека не скомпилируется.
-3. Кнопка Dict в ProdFactory-ESP копирует `components.yaml` в `.framework/Components.yaml`: сборка веб-интерфейса прошивки сверяет с ним GUI устройства.
+3. Кнопка Dict в ProdFactory-ESP копирует `poe_gui.yaml` в `.framework/poe_gui.yaml`: сборка веб-интерфейса прошивки сверяет с ним GUI устройства.
 
 В JS словари доступны через `poe-svelte-ui-lib/protocols`: `DEFAULT_ARGUMENT_CODES`, `DEFAULT_DICTIONARY`, `DEVICE_MESSAGES`, `MESSAGE_GROUPS`, `MESSAGE_CODES`, `formatDeviceMessage`.
 
@@ -1739,7 +1739,7 @@ npm pack               # сборка пакета в dist/: проверка т
 #### 💡 Полезно знать
 
 - Сгенерированные файлы (`generated/`, `firmware/`) руками не правят: их перезаписывает `npm run Generate`, перед публикацией он запускается сам.
-- Заголовки прошивок сразу в стиле `.clang-format` прошивок: команда «Format» их не меняет.
+- В заголовках прошивок перечисление выровнено целиком и обёрнуто в `clang-format off`: команда «Format» его не меняет.
 - После правки словарей - `npm run Test`.
 
 <details>
@@ -1748,8 +1748,8 @@ npm pack               # сборка пакета в dist/: проверка т
 - Строка: `- [Строковое имя, Имя в enum, Код]`, комментарий после `#` переходит в заголовок.
 - Диапазоны: 0-4095 - устройства (команды прошивок), 4096-6999 - резерв, 7000-7999 - облако DevCloud (команды самого облака, не устройств), 8000-8191 - резерв. Код не больше `0x1FFF` (13 бит аргумента).
 - Генератор падает на повторе имени или кода и на коде вне диапазона.
-- `generated/commands.ts` - `DEFAULT_ARGUMENT_CODES` (имя -> код), из него `DEFAULT_DICTIONARY` ядра протоколов.
-- `firmware/api_har.h` - `har_t`, макросы `HAR`/`HAR_NR`, `api_header_t` и `enum api_argument_t` (`A_* = код`) с комментариями разделов и строк. При сборке прошивки `.framework/Dictionary.yaml` сверяется с заголовком.
+- `generated/poe_cmd.ts` - `DEFAULT_ARGUMENT_CODES` (имя -> код), из него `DEFAULT_DICTIONARY` ядра протоколов.
+- `firmware/poe_cmd.h` - `har_t`, макросы `HAR`/`HAR_NR`, `api_header_t` и `enum api_argument_t` (`A_* = код`) с комментариями разделов и строк. При сборке прошивки `.framework/poe_cmd.yaml` сверяется с заголовком.
 
 </details>
 
@@ -1758,8 +1758,8 @@ npm pack               # сборка пакета в dist/: проверка т
 
 - Строка: `- [Тип, обмен]`, комментарий после `#` - описание. Тип в PascalCase - это и значение `type` в GUI, и имя экспорта компонента.
 - Генератор падает на повторе типа и на обмене не из списка.
-- `generated/components.ts` - `COMPONENT_TYPES` (кортеж типов) и `COMPONENT_IO` (тип -> обмен). Из них `componentMeta.ts` строит `COMPONENT_META`; присваивания там не скомпилируются, если список и `UIType` разошлись в любую сторону.
-- Во фреймворках `.framework/Components.yaml` - копия: сборка веба прошивки останавливается, если в GUI устройства тип не из списка.
+- `generated/poe_gui.ts` - `COMPONENT_TYPES` (кортеж типов) и `COMPONENT_IO` (тип -> обмен). Из них `componentMeta.ts` строит `COMPONENT_META`; присваивания там не скомпилируются, если список и `UIType` разошлись в любую сторону.
+- Во фреймворках `.framework/poe_gui.yaml` - копия: сборка веба прошивки останавливается, если в GUI устройства тип не из списка.
 
 </details>
 
@@ -1770,8 +1770,8 @@ npm pack               # сборка пакета в dist/: проверка т
 - Код 1-65535, 0 - сообщения нет. Резерв: 900-999 - для новых групп ядра, 3000-65535 - на будущее.
 - `name` в стиле `UPPER_SNAKE`, в прошивке это `MSG_<name>`.
 - Генератор падает, если: диапазоны групп пересекаются или выходят за 1-65535; у группы нет названия на одном из языков; у сообщения нет группы, код вне её диапазона или имя без приставки `ГРУППА_`; повтор имени или кода; неизвестный `level`; пустой текст; параметры `{0}`, `{1}` в языках разные.
-- `generated/messages.ts` - `MESSAGE_GROUPS` (группа -> `{ from, to, ru, en, zh }`), `DEVICE_MESSAGES` (код -> `{ group, name, level, ru, en, zh }`) и `MESSAGE_CODES` (имя -> код). Порядок - по группам, внутри группы по коду.
-- `firmware/api_msg.h` - `typedef enum { MSG_NONE = 0, MSG_SYS_RESTARTING = 1, ... } api_msg_t`: раздел-комментарий на каждую группу (`/* FS 200-299: Файлы */`), у элемента комментарий по-русски: уровень (событие, предупреждение, ошибка) и текст сообщения, в шапке файла - список групп и резерв.
+- `generated/poe_msg.ts` - `MESSAGE_GROUPS` (группа -> `{ from, to, ru, en, zh }`), `DEVICE_MESSAGES` (код -> `{ group, name, level, ru, en, zh }`) и `MESSAGE_CODES` (имя -> код). Порядок - по группам, внутри группы по коду.
+- `firmware/poe_msg.h` - `typedef enum { MSG_NONE = 0, MSG_SYS_RESTARTING = 1, ... } api_msg_t`: раздел-комментарий на каждую группу (`/* FS 200-299: Файлы */`), у элемента комментарий по-русски: уровень (событие, предупреждение, ошибка) и текст сообщения, в шапке файла - список групп и резерв.
 - Как сообщение идёт по проводу (VAL ответа и push, Payload `ER!` модуля, текст `MSG <код>` в консоли) - в [PROTOCOL.md](../protocols/PROTOCOL.md), раздел «Сообщения устройств».
 
 </details>
@@ -1779,10 +1779,10 @@ npm pack               # сборка пакета в dist/: проверка т
 <details>
 <summary>⚙️ Стиль заголовков прошивок</summary>
 
-- Генератор `scripts/GenerateDictionary.mjs` выравнивает перечисления так же, как `clang-format` со стилем прошивок (`ColumnLimit: 150`, выравнивание `=` и комментариев в конце строк через пустые строки и комментарии).
-- `=` выравнивается по самому длинному имени, пока строки помещаются в 150 столбцов; строка длиннее начинает новую последовательность.
-- Комментарии в конце строк выравниваются внутри раздела.
-- Проверка: `clang-format --dry-run -Werror --style=file:<ProdFactory-ESP>/.clang-format api_har.h api_msg.h` (бинарник из `esp-clang` ESP-IDF) - без замечаний.
+- Генератор `scripts/GenerateDictionary.mjs` выравнивает всё перечисление одной колонкой: `=` по самому длинному имени, комментарии в конце строк - по самому длинному `= код,`.
+- Длинный комментарий выравнивание не ломает: перечисление стоит между `/* clang-format off */` и `/* clang-format on */`, поэтому строки длиннее 150 столбцов clang-format не трогает.
+- Остальное (шапка, `har_t`, макросы) - в стиле `.clang-format` прошивок.
+- Проверка: `clang-format --dry-run -Werror --style=file:<ProdFactory-ESP>/.clang-format poe_cmd.h poe_msg.h` (бинарник из `esp-clang` ESP-IDF) - без замечаний.
 
 </details>
 
@@ -2996,7 +2996,7 @@ ModalStack.close(id) // убрать
 - 📨 В одном пакете может быть несколько записей, в том числе разным получателям.
 - 🛡️ Каждая запись защищена своей контрольной суммой: испорченная запись пропускается, остальные принимаются.
 - 🌐 У WebSocket свой конверт `{HAR, VAL}`: команда в нём то же число `HAR`, что на шине. Так говорят браузер с облаком, облако с устройством и веб-интерфейс ESP с устройством.
-- 💬 Текст события устройство шлёт кодом из словаря сообщений `dictionaries/messages.yaml`, облако показывает его на языке пользователя.
+- 💬 Текст события устройство шлёт кодом из словаря сообщений `dictionaries/poe_msg.yaml`, облако показывает его на языке пользователя.
 - 🔐 Устройство доказывает облаку, что оно то самое, токеном, который получает при первом подключении.
 
 #### 🧩 Где живёт код
@@ -3050,13 +3050,13 @@ ModalStack.close(id) // убрать
 бит 0       ответ      1 - получатель должен ответить
 ```
 
-В прошивке `HAR` это `har_t` из `api_har.h`, собирается макросами `HAR(h, a)` (с ответом) и `HAR_NR(h, a)` (без). В библиотеке числами это `makeHar` и `splitHar`, словами - `encodeHar(заголовок, аргумент, ответ?, словарь?)` (аргумент - имя или код) и `decodeHar(har, словарь?)`, который возвращает `{ header, argument, code, reply }`. `makeHar`, `encodeHar` и `encodePacket` бросают `RangeError`, если заголовок, команда, BusID или HAR вне диапазона; `encodeHar` с неизвестным заголовком или именем не из словаря бросает `Error`.
+В прошивке `HAR` это `har_t` из `poe_cmd.h`, собирается макросами `HAR(h, a)` (с ответом) и `HAR_NR(h, a)` (без). В библиотеке числами это `makeHar` и `splitHar`, словами - `encodeHar(заголовок, аргумент, ответ?, словарь?)` (аргумент - имя или код) и `decodeHar(har, словарь?)`, который возвращает `{ header, argument, code, reply }`. `makeHar`, `encodeHar` и `encodePacket` бросают `RangeError`, если заголовок, команда, BusID или HAR вне диапазона; `encodeHar` с неизвестным заголовком или именем не из словаря бросает `Error`.
 
 </details>
 
 #### 📖 Словарь команд
 
-Коды команд записаны в одном файле: `src/lib/dictionaries/commands.yaml` этой библиотеки (как добавить команду - в [README словарей](../dictionaries/README.md)). Им пользуются все: прошивки, облако, терминал и веб-интерфейс. Все отладочные команды начинаются с `Debug`: `DebugLog` это 11, `DebugPlot` это 12.
+Коды команд записаны в одном файле: `src/lib/dictionaries/poe_cmd.yaml` этой библиотеки (как добавить команду - в [README словарей](../dictionaries/README.md)). Им пользуются все: прошивки, облако, терминал и веб-интерфейс. Все отладочные команды начинаются с `Debug`: `DebugLog` это 11, `DebugPlot` это 12.
 
 - 🔧 Команды устройств - коды 0-4095.
 - ☁️ Команды самого облака DevCloud (чаты, журнал, состояние устройств) - коды 7000-7999.
@@ -3087,14 +3087,14 @@ ModalStack.close(id) // убрать
 | 7103 | `LeaveGroups`      | SET       | Выход из групп всех устройств            |
 | 7104 | `ResetDevToken`    | SET, OK!  | Сброс токена устройства (TOFU)           |
 
-Новая команда облака получает свободный код из 7000-7999 в `commands.yaml`, потом словарь копируется в прошивки, как любая другая команда. Потоки `/ws-stream` - отдельный канал с текстовыми командами подписки, конверта `{HAR, VAL}` там нет.
+Новая команда облака получает свободный код из 7000-7999 в `poe_cmd.yaml`, потом словарь копируется в прошивки, как любая другая команда. Потоки `/ws-stream` - отдельный канал с текстовыми командами подписки, конверта `{HAR, VAL}` там нет.
 
 </details>
 
 <details>
 <summary>⚙️ Копии словаря и словарь устройства</summary>
 
-- `api_har.h` прошивок генерируется из `commands.yaml` командой `npm run Generate` (`src/lib/dictionaries/firmware/api_har.h`, вручную не править). В прошивках лежат копии словаря `.framework/Dictionary.yaml` и заголовка, сборка сверяет их между собой.
+- `poe_cmd.h` прошивок генерируется из `poe_cmd.yaml` командой `npm run Generate` (`src/lib/dictionaries/firmware/poe_cmd.h`, вручную не править). В прошивках лежат копии словаря `.framework/poe_cmd.yaml` и заголовка, сборка сверяет их между собой.
 - Часть аргументов словаря - задел, прошивки их пока не обрабатывают: `BackUp`, `BindMKey`, `ModList`, `ModMode`, `ModT2-ModT5`, `FwUpgE`, `OrOfs`, `OrAccCal`, `OrMagCal`. Коды у них закреплены и не меняются. Такой аргумент модуль примет, но ответа не будет, поэтому в примерах берут реальные команды (`ModCfg`, `ModInfo`, `FS`).
 - Словарь один на стек: прошивки собираются с его копией, поэтому приложения берут встроенный `DEFAULT_DICTIONARY`. Объект словаря (`createDictionary(codes)`): `code(имя)`, `name(код)`, `header(код)`, `har(заголовок, команда, ответ)`.
 - Команду, которой нет в словаре, задают числом: `code` и `har` принимают код строкой, десятичный или HEX (`"4097"`, `"0x1001"`), а `name` для неизвестного кода возвращает его же числом строкой, так что запись «туда и обратно» сходится.
@@ -3104,11 +3104,11 @@ ModalStack.close(id) // убрать
 
 #### 💬 Сообщения устройств
 
-Текст события в ответе или пуше устройство шлёт не строкой, а кодом. Все коды записаны в одном файле: `src/lib/dictionaries/messages.yaml` этой библиотеки, рядом со словарём команд `commands.yaml`. Коды разбиты на группы, у каждой свой диапазон и приставка имени. У каждого кода уровень (`info`, `warn`, `error`) и текст на русском, английском и китайском. Облако и веб-интерфейс показывают сообщение на языке пользователя.
+Текст события в ответе или пуше устройство шлёт не строкой, а кодом. Все коды записаны в одном файле: `src/lib/dictionaries/poe_msg.yaml` этой библиотеки, рядом со словарём команд `poe_cmd.yaml`. Коды разбиты на группы, у каждой свой диапазон и приставка имени. У каждого кода уровень (`info`, `warn`, `error`) и текст на русском, английском и китайском. Облако и веб-интерфейс показывают сообщение на языке пользователя.
 
 - 0 или нет поля `Message` - сообщения нет.
 - Тексты короткие и понятные пользователю: причина без технических подробностей (подробности прошивка пишет в свой журнал). Изменяемую часть (SSID, номер канала, список полей) устройство шлёт отдельно, массивом `Args`, только если без неё теряется смысл. В шаблоне это `{0}`, `{1}` и дальше по порядку.
-- 📚 Новое сообщение сначала добавляют в `messages.yaml`, потом копируют в прошивки (`.framework/Messages.yaml` и `api_msg.h` обоих фреймворков).
+- 📚 Новое сообщение сначала добавляют в `poe_msg.yaml`, потом копируют в прошивки (`.framework/poe_msg.yaml` и `poe_msg.h` обоих фреймворков).
 - 🗂️ Новое сообщение - в свою группу: код из её диапазона, имя с её приставкой. Новая группа ядра получает диапазон из резерва 900-999.
 - 🧯 Те же коды прошивки возвращают при ошибках и пишут в свой журнал, текст на языке пользователя показывает отладочная консоль.
 
@@ -3133,7 +3133,7 @@ ModalStack.close(id) // убрать
 
 - Функции обоих фреймворков возвращают `poe_err_t`: `POE_OK` (0) - успех, иначе код причины из этого словаря.
 - Событие в журнале - тоже код: `LOG_E("RM3100", MSG_DRV_BIST_FAILED, "0x%02X\t0x%02X", bist, axes)` уходит в консоль пакетом `DebugLog` с текстом `MSG 2022 0x30\t0x40`, xPOE-Debug показывает его на языке пользователя.
-- Текстов событий в прошивках нет, новое событие сначала добавляют в `messages.yaml`.
+- Текстов событий в прошивках нет, новое событие сначала добавляют в `poe_msg.yaml`.
 
 </details>
 
@@ -3151,8 +3151,8 @@ WebSocket, ответ или пуш   {HAR, VAL: {DevSN, ModSN, Message: 404, Ar
 - 🖥️ Консоль: сообщение приходит отдельным пакетом `DebugLog` с тегом `HAR 0x....` (HAR ответа) и текстом `MSG <код>[ <арг1>[<TAB><арг2>...]]`: пробел после кода, TAB между параметрами (в SSID бывают пробелы). Таблица консоли оставляет текст в колонке «Значение» как пришёл (`MSG 404 Home 5G`), а сообщение на языке (`Не удалось подключиться к Wi-Fi Home 5G, восстановлена прежняя сеть`) показывает в колонке «Команда» под командой. Строка `xPoeDebugRow` несёт его в полях `message` и `level`, их собирает `xPoeDebugMessage(payload, lang)` - и для `DebugLog`, и для карты `{Message, Args}` в `Payload` ответа `ER!`. Разбор текста - `parseDebugLogMessage(text)` -> `{ Message, Args? }` или `null`.
 
 - `Message` - число 0..65535, `Args` - массив строк и чисел, только если у сообщения есть параметры. Тип в библиотеке - `DeviceMessage = { Message: number, Args?: (string | number)[] }`.
-- `messages.yaml`: раздел `groups` (`ИМЯ: { range: [от, до], ru, en, zh }`) и раздел `messages` (строки `- { code, group, name, level, ru, en, zh }`). `name` - имя для C в стиле `UPPER_SNAKE` с приставкой группы (`FS_FILE_NOT_FOUND`), в прошивке это `MSG_<name>` из `api_msg.h`. Префиксов `ER:`/`WR:` в тексте нет, вид сообщения задаёт `level`.
-- `npm run Generate` (и `prepack`) из `messages.yaml` генерирует `dictionaries/generated/messages.ts` (`MESSAGE_GROUPS`: группа -> диапазон и название на языках, `DEVICE_MESSAGES`: код -> запись с группой, `MESSAGE_CODES`: имя -> код) и `dictionaries/firmware/api_msg.h` (`typedef enum { MSG_NONE = 0, MSG_SYS_RESTARTING = 1, ... } api_msg_t`, раздел-комментарий на каждую группу). Генератор падает на пересечении диапазонов групп, коде вне диапазона своей группы, имени без приставки группы, повторе кода или имени, неизвестном `level`, пустом тексте и разных параметрах в языках. Оба файла не правятся руками, `messages.yaml` и оба заголовка прошивок есть в пакете (`poe-svelte-ui-lib/dictionaries/messages.yaml`, `poe-svelte-ui-lib/dictionaries/firmware/api_har.h`, `poe-svelte-ui-lib/dictionaries/firmware/api_msg.h`).
+- `poe_msg.yaml`: раздел `groups` (`ИМЯ: { range: [от, до], ru, en, zh }`) и раздел `messages` (строки `- { code, group, name, level, ru, en, zh }`). `name` - имя для C в стиле `UPPER_SNAKE` с приставкой группы (`FS_FILE_NOT_FOUND`), в прошивке это `MSG_<name>` из `poe_msg.h`. Префиксов `ER:`/`WR:` в тексте нет, вид сообщения задаёт `level`.
+- `npm run Generate` (и `prepack`) из `poe_msg.yaml` генерирует `dictionaries/generated/poe_msg.ts` (`MESSAGE_GROUPS`: группа -> диапазон и название на языках, `DEVICE_MESSAGES`: код -> запись с группой, `MESSAGE_CODES`: имя -> код) и `dictionaries/firmware/poe_msg.h` (`typedef enum { MSG_NONE = 0, MSG_SYS_RESTARTING = 1, ... } api_msg_t`, раздел-комментарий на каждую группу). Генератор падает на пересечении диапазонов групп, коде вне диапазона своей группы, имени без приставки группы, повторе кода или имени, неизвестном `level`, пустом тексте и разных параметрах в языках. Оба файла не правятся руками, `poe_msg.yaml` и оба заголовка прошивок есть в пакете (`poe-svelte-ui-lib/dictionaries/poe_msg.yaml`, `poe-svelte-ui-lib/dictionaries/firmware/poe_cmd.h`, `poe-svelte-ui-lib/dictionaries/firmware/poe_msg.h`).
 - `formatDeviceMessage(code, args?, lang?)` возвращает `{ text, level, group, groupName }` (тип `FormattedDeviceMessage`) или `null` (0, нет кода, не число). `group` - код группы (`"FS"`), `groupName` - её название на языке (`"Файлы"`). Без `lang` - язык по умолчанию, приложение передаёт текущий язык (`getLanguage()`). Нет перевода на язык - английский текст. Неизвестный код - `"#1234"` (с параметрами `"#1234: a, b"`) и уровень `info`, группа - по диапазону кода, код из резерва - `group` и `groupName` равны `null`. Параметра не хватило - на его месте `?`.
 - Параметры `{0}`, `{1}`... у сообщения есть, только если без них теряется смысл: поля настроек, SSID, номер канала, адрес или значение регистра. Что значит каждый параметр, видно из текста шаблона.
 
@@ -3406,7 +3406,7 @@ Raw: h'01'
 
 - `DevSN` обязателен в запросе к устройству и должен совпасть с его серийным номером.
 - `ModSN` - модуль, которому адресован запрос. Без него запрос идёт самому устройству.
-- `Message` в ответе - код события из `messages.yaml`, `Args` - его параметры (раздел «Сообщения устройств»). DevCloud сохраняет сообщение с кодом не 0 в журнал устройства.
+- `Message` в ответе - код события из `poe_msg.yaml`, `Args` - его параметры (раздел «Сообщения устройств»). DevCloud сохраняет сообщение с кодом не 0 в журнал устройства.
 - Флаг ответа (бит 0): устройство отвечает только на запрос с флагом. Ответ, пуш и телеметрия - без флага.
 - Сообщение без целого `HAR` 0..65535 или с `VAL` не объектом - не конверт, его отбрасывают.
 - Код, которого нет в словаре получателя, не ошибка: имя для журнала - строка из числа (`"4097"`), сам код сохраняется.
@@ -3498,8 +3498,8 @@ const message = decodeWsEnvelope(cborToValue(new Uint8Array(event.data)))
 | Что     | В прошивке (ESP и STM)                                                                                                                     | В `poe-svelte-ui-lib/protocols`                                                                                                |
 | ------- | ------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
 | Пакет   | `CBOR_PktEncInit`, `CBOR_PktEncAddRaw`, `CBOR_PACK`, `CBOR_PktEncFinish`, `CBOR_PktDecInit`, `CBOR_PktDecNext`, поток `CBOR_PktStreamPush` | `encodePacket`, `decodePacket`, `createPacketStreamParser`, `encodePacketBytesPayload`                                         |
-| HAR     | `har_t`, `HAR`, `HAR_NR`, коды `A_*` в `api_har.h` (имён в прошивке нет, лог печатает `HAR 0x%04X`)                                        | `makeHar`, `splitHar`, `encodeHar`, `decodeHar`, `createDictionary`, `HEADER_CODES`, `DEFAULT_ARGUMENT_CODES`                  |
-| WS      | `API_Service_ReceiveWsPacket`, `API_Service_BeginResponse`, коды `MSG_*` в `api_msg.h`                                                     | `encodeWsEnvelope`, `decodeWsEnvelope`, `formatDeviceMessage`, `DEVICE_MESSAGES`, `MESSAGE_GROUPS`, `MESSAGE_CODES`            |
+| HAR     | `har_t`, `HAR`, `HAR_NR`, коды `A_*` в `poe_cmd.h` (имён в прошивке нет, лог печатает `HAR 0x%04X`)                                        | `makeHar`, `splitHar`, `encodeHar`, `decodeHar`, `createDictionary`, `HEADER_CODES`, `DEFAULT_ARGUMENT_CODES`                  |
+| WS      | `API_Service_ReceiveWsPacket`, `API_Service_BeginResponse`, коды `MSG_*` в `poe_msg.h`                                                     | `encodeWsEnvelope`, `decodeWsEnvelope`, `formatDeviceMessage`, `DEVICE_MESSAGES`, `MESSAGE_GROUPS`, `MESSAGE_CODES`            |
 | Приём   | `API_Service_ReceiveBusPacket`, `API_Service_ReceiveWsPacket`, консоль в `system_console`                                                  | `createXPoeDebugParser`, `createCanParser`                                                                                     |
 | Ответ   | `API_Service_BeginResponse`, `Writer_*`, `API_Service_FinishResponse`                                                                      |                                                                                                                                |
 | Консоль | `LOG_*`, `LOG_HEX`, `LOG_PLOT`                                                                                                             | `encodeXPoeDebugFrame`, `xPoeDebugRow`, `xPoeDebugTableColumns`, `debugPlotValues`, `parseDebugLogMessage`, `xPoeDebugMessage` |
@@ -3516,7 +3516,7 @@ const message = decodeWsEnvelope(cborToValue(new Uint8Array(event.data)))
 
 - 🧭 Пара байт `0x9F 0x85` - примета начала пакета в любом потоке.
 - 🔇 На телеметрию устройство не отвечает: у неё нет флага ответа.
-- 📚 Новую команду сначала добавляют в `dictionaries/commands.yaml` библиотеки, новое сообщение - в `dictionaries/messages.yaml`, потом копируют в прошивки.
+- 📚 Новую команду сначала добавляют в `dictionaries/poe_cmd.yaml` библиотеки, новое сообщение - в `dictionaries/poe_msg.yaml`, потом копируют в прошивки.
 - 🛰️ Модули на шине к облаку сами не подключаются, их представляет устройство-хаб.
 
 ## Файл `src/lib/Select/README.md`

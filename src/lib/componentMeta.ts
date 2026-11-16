@@ -1,7 +1,7 @@
 /* $lib/componentMeta.ts - метаданные типов GUI без самих компонентов: обмен с устройством и поля смарт-виджетов. GUIRenderer берёт их отсюда, а не из registry.ts, иначе в сборку приложения попали бы все виджеты */
 import { WIDGET_FIELDS, widgetKey, widgetPrefixes, type WidgetFieldsType } from "./gui"
 import type { UIType } from "./types"
-import { COMPONENT_IO, COMPONENT_TYPES } from "./dictionaries/generated/components"
+import { COMPONENT_IO, COMPONENT_TYPES } from "./dictionaries/generated/poe_gui"
 
 /* Обмен с устройством: none - оформление; read - показывает переменную properties.id; write - только отправляет команду; readWrite - показывает и меняет; widget - набор полей группы properties.id (fields) */
 export type ComponentIO = "none" | "read" | "write" | "readWrite" | "widget"
@@ -12,7 +12,7 @@ export interface ComponentMeta {
   fields?: object
 }
 
-/* Типы и обмен - из списка компонентов dictionaries/components.yaml: присваивания ниже не скомпилируются, если список и UIType разошлись в любую сторону */
+/* Типы и обмен - из списка компонентов dictionaries/poe_gui.yaml: присваивания ниже не скомпилируются, если список и UIType разошлись в любую сторону */
 const LISTED_TYPES: readonly UIType[] = COMPONENT_TYPES
 const LISTED_IO: Record<UIType, ComponentIO> = COMPONENT_IO
 

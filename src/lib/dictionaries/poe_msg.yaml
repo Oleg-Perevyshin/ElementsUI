@@ -1,10 +1,10 @@
 # Словарь сообщений устройств (поле Message в VAL ответа и push, в Payload ER! модуля на шине) - единый для обоих фреймворков, всех прошивок и приложений
 # groups: группа -> { range: [первый код, последний код], ru, en, zh: название группы }. Имя группы - приставка имён её сообщений (SYS_..., FS_...)
-# messages: { code: код из диапазона группы, group: группа, name: <группа>_<ИМЯ> (MSG_<name> в api_msg.h), level: info|warn|error, ru, en, zh: шаблоны текста }
+# messages: { code: код из диапазона группы, group: группа, name: <группа>_<ИМЯ> (MSG_<name> в poe_msg.h), level: info|warn|error, ru, en, zh: шаблоны текста }
 # Код 0 (или нет поля Message) - сообщения нет. {0}, {1}... - параметры из массива Args по порядку, только где без них теряется смысл; что значат - комментарий после строки
 # Резерв: 900..999 - новые группы ядра, 3000..65535 - на будущее. Новое сообщение - в свою группу, новая группа ядра - диапазон из 900..999
-# Источник - poe-svelte-ui-lib (src/lib/dictionaries/messages.yaml); .framework/Messages.yaml и api_msg.h фреймворков - копии, не править
-# После правки - npm run Generate (generated/messages.ts и firmware/api_msg.h), затем копии во фреймворки
+# Источник - poe-svelte-ui-lib (src/lib/dictionaries/poe_msg.yaml); .framework/poe_msg.yaml и poe_msg.h фреймворков - копии, не править
+# После правки - npm run Generate (generated/poe_msg.ts и firmware/poe_msg.h), затем копии во фреймворки
 
 groups:
   SYS: { range: [1, 99], ru: "Система", en: "System", zh: "系统" }

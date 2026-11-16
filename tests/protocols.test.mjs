@@ -44,7 +44,7 @@ test("разбор пакета прошивки", () => {
   assert.ok(parsed.objects.every((object) => object.crcOk))
   assert.deepEqual([parsed.objects[0].header, parsed.objects[0].argument, parsed.objects[0].reply], [3, 0x0091, true])
   assert.deepEqual([...parsed.objects[2].payload], [0x43, 1, 2, 3]) /* Payload - CBOR item, сырые поля байтовой строкой */
-  /* Те же числа, что HAR/HAR_NR из api_har.h прошивки */
+  /* Те же числа, что HAR/HAR_NR из poe_cmd.h прошивки */
   assert.equal(m.makeHar(1, 36), 0x4049)
   assert.equal(m.makeHar(2, 37, false), 0x804a)
   assert.equal(m.makeHar(3, 8191), 0xffff)
@@ -414,15 +414,15 @@ test("RS485: пакеты из сырого потока, мусор, пауза
 })
 
 test("словарь, поле Value xPOE-Debug, команды slcan-адаптера", () => {
-  /* DEFAULT_ARGUMENT_CODES - ровно мастер-словарь команд dictionaries/commands.yaml (сгенерирован npm run Generate, файл поставляется в пакете) */
-  const commandsYaml = readFileSync(new URL("../dist/dictionaries/commands.yaml", import.meta.url), "utf8")
+  /* DEFAULT_ARGUMENT_CODES - ровно мастер-словарь команд dictionaries/poe_cmd.yaml (сгенерирован npm run Generate, файл поставляется в пакете) */
+  const commandsYaml = readFileSync(new URL("../dist/dictionaries/poe_cmd.yaml", import.meta.url), "utf8")
   assert.deepEqual(
     m.DEFAULT_ARGUMENT_CODES,
     Object.fromEntries([...commandsYaml.matchAll(/^- \[\s*([^,\]]+?)\s*,\s*[^,\]]+?\s*,\s*(\d+)\s*\]/gm)].map(([, name, code]) => [name, Number(code)])),
   )
   assert.equal(
     Object.keys(m.DEFAULT_ARGUMENT_CODES).length,
-    Number(readFileSync(new URL("../dist/dictionaries/commands.yaml", import.meta.url), "utf8").match(/^- \[/gm).length),
+    Number(readFileSync(new URL("../dist/dictionaries/poe_cmd.yaml", import.meta.url), "utf8").match(/^- \[/gm).length),
   )
   assert.equal(m.DEFAULT_ARGUMENT_CODES.DebugLog, 11)
   assert.equal(m.DEFAULT_ARGUMENT_CODES.DebugPlot, 12)
