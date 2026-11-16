@@ -18,7 +18,7 @@
   import { T } from "../locales/i18n"
   import { twMerge } from "tailwind-merge"
   import { accentStyle } from "../accent"
-  import type { IPeriodChartProps } from "../types"
+  import type { IChartScale, IPeriodChartProps } from "../types"
   import ScaleControls from "../ScaleControls.svelte"
 
   let {
@@ -30,6 +30,8 @@
     levels: levelsProp,
     unit = "",
     onLevelChange = () => {},
+    settings,
+    onSettingsChange,
   }: IPeriodChartProps = $props()
 
   let currentLevelIndex = $state(0)
@@ -48,21 +50,27 @@
   const currentLevel = $derived<IPeriodChartLevel | undefined>(levels[currentLevelIndex])
   const values = $derived(currentLevel?.data ?? [])
 
-  /* Пределы шкалы у каждой вкладки свои, их задаёт пользователь в окне кнопки настроек; без них шкала подстраивается под данные.
-     Заданы оба (min < max) - шкала фиксируется на них, кнопка-замок отпускает её и возвращает */
-  type Limits = { min?: number; max?: number }
-  let userLimits = $state<Record<number, Limits>>({})
-  const limits = $derived<Limits>(userLimits[currentLevelIndex] ?? {})
+  /* Пределы шкалы у каждой вкладки свои: сохранённые приложением (settings), иначе по умолчанию из конструктора (level.min/max); пользователь меняет их
+     в окне настроек; без них шкала подстраивается под данные. Заданы оба (min < max) - шкала фиксируется, кнопка-замок отпускает её и возвращает.
+     Каждое изменение уходит в onSettingsChange - так настройки переживают пересоздание графика */
+  let levelSettings = $state<IChartScale[]>([])
+  $effect(() => {
+    levelSettings = (settings ?? []).map((s) => ({ ...s }))
+  })
+  const limits = $derived<IChartScale>(levelSettings[currentLevelIndex] ?? { min: currentLevel?.min, max: currentLevel?.max })
   const bounds = $derived(limits.min !== undefined && limits.max !== undefined && limits.max > limits.min ? { min: limits.min, max: limits.max } : null)
-  let unlocked = $state(false)
-  const locked = $derived(!!bounds && !unlocked)
-  const setLimits = (next: Limits) => {
-    userLimits[currentLevelIndex] = next
-    unlocked = false
+  const locked = $derived(!!bounds && !limits.unlocked)
+  const updateLevel = (next: IChartScale) => {
+    const all = [...levelSettings]
+    for (let i = 0; i < currentLevelIndex; i++) all[i] ??= {}
+    all[currentLevelIndex] = next
+    levelSettings = all
+    onSettingsChange?.($state.snapshot(all))
   }
+  const setLimits = (next: IChartScale) => updateLevel({ min: next.min, max: next.max })
   /* Диапазон данных всегда включает 0: столбики растут от нуля вверх или вниз */
   const dataRange = $derived(values.reduce((r, v) => (Number.isFinite(v) ? { min: Math.min(r.min, v), max: Math.max(r.max, v) } : r), { min: 0, max: 0 }))
-  const toggleLock = () => (unlocked = !unlocked)
+  const toggleLock = () => updateLevel({ ...limits, unlocked: !limits.unlocked })
 
   /* Шкала Y: шаг 1/2/2.5/5·10ⁿ, ~4 деления, верх и низ округляются наружу до шага, 0 всегда на шкале */
   const AXIS_DIVISIONS = 4

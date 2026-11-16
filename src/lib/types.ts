@@ -279,6 +279,22 @@ export interface IGraphProps {
   refreshRate?: number
   /* Если задан (непустой) - статический режим, весь массив разом по реальным timestamp, streamingData/refreshRate игнорируются */
   historyData?: IGraphHistorySeries[]
+  /* Настройки графика: пределы шкалы, замок и развёртка; в конструкторе - пределы по умолчанию, приложение передаёт сохранённые */
+  settings?: IGraphSettings
+  /* Пользователь изменил настройки на графике - приложение их сохраняет и передаёт обратно в settings */
+  onSettingsChange?: (settings: IGraphSettings) => void
+}
+
+/* Пределы шкалы графика: заданы оба (min < max) - шкала фиксируется на них; unlocked - пользователь отпустил её замком */
+export interface IChartScale {
+  min?: number
+  max?: number
+  unlocked?: boolean
+}
+
+/* Настройки Graph: пределы шкалы и развёртка (refreshRate, мс; иначе - проп refreshRate) */
+export interface IGraphSettings extends IChartScale {
+  refreshRate?: number
 }
 
 /* ********************************************************** */
@@ -288,6 +304,8 @@ export interface IPeriodChartLevel {
   variable?: string /* Имя переменной устройства, откуда берутся data этого уровня, напр. "PWR.EHour" */
   data: number[] /* Значения - длина массива = число столбиков, ничем не ограничена */
   labels?: string[] /* Подписи столбиков по X; если не заданы - используется индекс+1 */
+  min?: number /* Низ шкалы по умолчанию (конструктор); заданы min и max - вкладка открывается с зафиксированной шкалой */
+  max?: number /* Верх шкалы по умолчанию (конструктор) */
 }
 
 export interface IPeriodChartProps {
@@ -301,6 +319,10 @@ export interface IPeriodChartProps {
   unit?: string /* Единицы для тултипа/подписи, напр. "Вт·ч" */
   /* Только уведомление о смене вкладки - сам компонент ничего не запрашивает, консьюмер сам решает, догружать ли данные */
   onLevelChange?: (index: number, level: IPeriodChartLevel) => void
+  /* Пределы шкалы и замок по вкладкам (индекс - номер уровня), сохранённые приложением; вкладка без них берёт level.min/max */
+  settings?: IChartScale[]
+  /* Пользователь изменил пределы или замок - приложение их сохраняет и передаёт обратно в settings */
+  onSettingsChange?: (settings: IChartScale[]) => void
 }
 
 /* ********************************************************** */

@@ -107,6 +107,8 @@ const constructorTranslations = {
   "library.gui_sample_relay": { ru: "Реле", en: "Relay", zh: "继电器" },
   "library.gui_sample_level": { ru: "Уровень", en: "Level", zh: "级别" },
   "library.gui_sample_restart": { ru: "Перезагрузить", en: "Restart", zh: "重启" },
+  "library.gui_sample_graph": { ru: "График (имитация)", en: "Graph (simulation)", zh: "图表（模拟）" },
+  "library.gui_sample_bars": { ru: "Столбики", en: "Bars", zh: "柱状图" },
   "library.misc_modal": { ru: "Открыть окно", en: "Open window", zh: "打开窗口" },
   "library.misc_modal_text": {
     ru: "Окно закрывается крестиком, кликом мимо окна или клавишей Escape.",
@@ -426,6 +428,14 @@ const constructorTranslations = {
   "constructor.props.disabled": { ru: "Отключить", en: "Disable", zh: "禁用" },
   "constructor.props.readonly": { ru: "Только чтение", en: "Read only", zh: "只读" },
   "constructor.props.simulation": { ru: "Режим имитации", en: "Simulation mode", zh: "模拟模式" },
+  "constructor.props.scale": { ru: "Шкала по умолчанию", en: "Default scale", zh: "默认刻度" },
+  "constructor.props.scale.info": {
+    ru: "Пределы шкалы Y, например 0 и 360. Заданы оба - график открывается с зафиксированной шкалой. Пользователь меняет их в настройках на графике, его выбор запоминается в браузере",
+    en: "Y scale limits, for example 0 and 360. With both set the chart opens with a locked scale. The user changes them in the chart settings, the choice is remembered in the browser",
+    zh: "Y 刻度范围，例如 0 和 360。两者都设置时图表以固定刻度打开。用户可在图表设置中修改，选择保存在浏览器中",
+  },
+  "constructor.props.scale.min": { ru: "Мин", en: "Min", zh: "最小" },
+  "constructor.props.scale.max": { ru: "Макс", en: "Max", zh: "最大" },
   "constructor.props.refreshrate": { ru: "Скорость обновления", en: "Refresh rate", zh: "刷新速率" },
   "constructor.props.variable": { ru: "Имя переменной", en: "Variable name", zh: "变量名" },
   "constructor.props.widthMode": { ru: "Ширина кнопок", en: "Button width", zh: "按钮宽度" },

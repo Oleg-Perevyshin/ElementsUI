@@ -14,6 +14,8 @@
     let row = 1
     const add = <K extends UIType>(type: K, col: number, patch: Record<string, unknown>, newRow = false, width = 7) => {
       const c = createComponent(type, { col, row })
+      /* Постоянный id, как у компонента настоящего GUI: по нему запоминаются настройки графиков */
+      c.id = `sample-${type}-${row}-${col}`
       Object.assign(c.properties as Record<string, unknown>, patch)
       c.position.width = width
       /* Команда как из конструктора: SET ModCfg со своей переменной */
@@ -34,6 +36,15 @@
     add("Slider", 1, { id: "APP.Level", label: { name: $T("library.gui_sample_level") }, number: { minNum: 0, maxNum: 100, step: 5 } }, false, 15)
     add("Button", 17, { content: { name: $T("library.gui_sample_restart") } }, true)
     list[list.length - 1].eventHandler = { Header: "SET", Argument: "Restart", Variables: [] }
+    /* Графики: настройки (пределы шкалы, замок, развёртка) запоминаются в браузере по persistKey */
+    add("Graph", 1, { label: { name: $T("library.gui_sample_graph") }, isTest: true }, true, 23)
+    add(
+      "PeriodChart",
+      1,
+      { label: { name: $T("library.gui_sample_bars") }, levels: [{ name: "", data: [12, -5, 30, 18, 42, 7, -12, 25, 33, 9, 15, 28] }] },
+      true,
+      23,
+    )
     add("WidgetDeviceInfo", 1, { collapsed: false }, true, 23)
     return list
   }
@@ -126,7 +137,8 @@
   <div class="grid gap-4 lg:grid-cols-[1fr_18rem]">
     <div class="rounded-2xl border border-(--hairline-color) p-3">
       {#key components}
-        <GUIRenderer {components} {link} views={GUI_VIEWS} onError={(text) => (error = text)} />
+        <!-- persistKey - настройки графиков и план карты запоминаются в браузере, как в облаке -->
+        <GUIRenderer {components} {link} views={GUI_VIEWS} persistKey="showcase" onError={(text) => (error = text)} />
       {/key}
     </div>
     <div class="flex flex-col gap-2 rounded-2xl border border-(--hairline-color) p-3">

@@ -24,8 +24,10 @@
   const VARIABLE_OPTIONS = getContext<{ id: string; value: string; name: string }[] | undefined>("DeviceVariables") ?? []
 
   let itemsContainer: HTMLDivElement | null = $state(null)
-  /* Колонки строки уровня: ручка, номер и текст, переменная, данные, подписи, удаление */
-  const LEVEL_GRID = "grid-cols-[2rem_minmax(6rem,auto)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_2rem]"
+  /* Колонки строки уровня: ручка, номер и текст, переменная, данные, подписи, пределы шкалы по умолчанию, удаление */
+  const LEVEL_GRID = "grid-cols-[2rem_minmax(6rem,auto)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_6rem_6rem_2rem]"
+  /* Пустое поле - предел не задан */
+  const toBound = (value: unknown) => (value === "" || value == null || !Number.isFinite(Number(value)) ? undefined : Number(value))
   const levels = $derived(component.properties.levels ?? [])
 
   /* levels[].data/labels - массивы, редактируются одной строкой через запятую */
@@ -67,6 +69,8 @@
                 $T("constructor.props.variable"),
                 $T("constructor.props.periodchart.data"),
                 $T("constructor.props.periodchart.labels"),
+                $T("constructor.props.scale.min"),
+                $T("constructor.props.scale.max"),
                 "",
               ]}
             />
@@ -84,6 +88,8 @@
               <UI.Select type="input" options={VARIABLE_OPTIONS} value={level.variable} onUpdate={(variable) => updateLevel(index, { variable })} />
               <UI.Input value={level.data.join(", ")} onUpdate={(value) => updateLevel(index, { data: parseNumbers(String(value)) })} />
               <UI.Input value={(level.labels ?? []).join(", ")} onUpdate={(value) => updateLevel(index, { labels: parseList(String(value)) })} />
+              <UI.Input type="number" value={level.min ?? ""} onUpdate={(value) => updateLevel(index, { min: toBound(value) })} />
+              <UI.Input type="number" value={level.max ?? ""} onUpdate={(value) => updateLevel(index, { max: toBound(value) })} />
               {#if levels.length > 1}
                 <UI.Button
                   wrapperClass="w-8"

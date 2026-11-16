@@ -20,6 +20,8 @@
 
   const edit = $derived(createPropsEditor(component, onPropertyChange))
   const VARIABLE_OPTIONS = getContext<{ id: string; value: string; name: string }[] | undefined>("DeviceVariables") ?? []
+  /* Пустое поле - предел не задан */
+  const toBound = (value: unknown) => (value === "" || value == null || !Number.isFinite(Number(value)) ? undefined : Number(value))
 </script>
 
 <div class="flex flex-col gap-2">
@@ -49,6 +51,24 @@
         value={component.properties.refreshRate ?? 0}
         onUpdate={(refreshRate) => edit.set("refreshRate", refreshRate)}
       />
+    </PropsGroup>
+    <!-- Пределы шкалы по умолчанию: заданы оба - график открывается с зафиксированной шкалой; пользователь меняет их в настройках на графике -->
+    <PropsGroup label={$T("constructor.props.scale")}>
+      <div class="grid grid-cols-2 gap-2">
+        <UI.Input
+          label={{ name: $T("constructor.props.scale.min") }}
+          help={{ info: $T("constructor.props.scale.info") }}
+          type="number"
+          value={component.properties.settings?.min ?? ""}
+          onUpdate={(value) => edit.set("settings", { ...component.properties.settings, min: toBound(value) })}
+        />
+        <UI.Input
+          label={{ name: $T("constructor.props.scale.max") }}
+          type="number"
+          value={component.properties.settings?.max ?? ""}
+          onUpdate={(value) => edit.set("settings", { ...component.properties.settings, max: toBound(value) })}
+        />
+      </div>
     </PropsGroup>
   </div>
 </div>

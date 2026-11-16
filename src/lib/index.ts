@@ -171,6 +171,8 @@ export {
   type IGraphDataObject,
   type IGraphHistoryPoint,
   type IGraphHistorySeries,
+  type IGraphSettings,
+  type IChartScale,
   type ITableHeader,
   type ITableText,
   type ITableSelect,

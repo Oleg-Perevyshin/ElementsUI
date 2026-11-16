@@ -31,6 +31,8 @@
     isTest = false,
     refreshRate = 0,
     historyData = [],
+    settings,
+    onSettingsChange,
   }: IGraphProps = $props()
 
   /* Статический режим: historyData передан целиком с реальными timestamp (Unix-эпоха в мс) */
@@ -48,7 +50,8 @@
   let ctx: CanvasRenderingContext2D
   let width = $state(600)
   let height = $state(125)
-  let selectedRefreshRate = $derived(isTest ? 50 : (refreshRate ?? 0))
+  /* Развёртка: в имитации 50 мс, иначе из сохранённых настроек или пропа; пользователь меняет её в окне настроек */
+  let selectedRefreshRate = $derived(isTest ? 50 : (settings?.refreshRate ?? refreshRate ?? 0))
   const maxDataPoints = $derived(selectedRefreshRate == 0 ? 20 : 100)
 
   /* Живой режим: точки линий в кольцевых буферах вне реактивности, наружу - только последние значения для легенды */
@@ -130,23 +133,36 @@
       : target
   }
 
-  /* Пределы шкалы задаёт пользователь в окне кнопки настроек на графике; без них шкала подстраивается под данные.
-     Заданы оба (min < max) - шкала фиксируется на них, кнопка-замок отпускает её и возвращает */
+  /* Пределы шкалы: из settings (по умолчанию из конструктора или сохранённые приложением), пользователь меняет их в окне настроек;
+     без них шкала подстраивается под данные. Заданы оба (min < max) - шкала фиксируется, кнопка-замок отпускает её и возвращает.
+     Каждое изменение уходит в onSettingsChange - так настройки переживают пересоздание графика */
   let limits = $state<{ min?: number; max?: number }>({})
-  const bounds = $derived(limits.min !== undefined && limits.max !== undefined && limits.max > limits.min ? { min: limits.min, max: limits.max } : null)
   let unlocked = $state(false)
+  $effect(() => {
+    limits = { min: settings?.min, max: settings?.max }
+    unlocked = !!settings?.unlocked
+  })
+  const bounds = $derived(limits.min !== undefined && limits.max !== undefined && limits.max > limits.min ? { min: limits.min, max: limits.max } : null)
   const locked = $derived(!!bounds && !unlocked)
   $effect(() => {
+    void locked
     void bounds
-    untrack(() => {
-      unlocked = false
-      scheduleDraw()
-    })
+    untrack(scheduleDraw)
   })
-  const setLimits = (next: { min?: number; max?: number }) => (limits = next)
+  const emitSettings = () =>
+    onSettingsChange?.({ min: limits.min, max: limits.max, unlocked, refreshRate: isTest ? settings?.refreshRate : selectedRefreshRate })
+  const setLimits = (next: { min?: number; max?: number }) => {
+    limits = next
+    unlocked = false
+    emitSettings()
+  }
   const toggleLock = () => {
     unlocked = !unlocked
-    scheduleDraw()
+    emitSettings()
+  }
+  const setRefreshRate = (value: number) => {
+    selectedRefreshRate = value
+    emitSettings()
   }
 
   /* Последние значения вне зафиксированной шкалы - подсвечиваются в списке значений */
@@ -462,12 +478,7 @@
       <ScaleControls {limits} {locked} hasBounds={!!bounds} onChange={setLimits} onToggle={toggleLock} class="absolute top-2 right-2 z-10">
         {#snippet settings()}
           {#if !isHistoryMode}
-            <Select
-              label={{ name: $T("ui.graph.refresh"), class: "" }}
-              options={REFRESH_OPTIONS}
-              value={selectedRefreshRate}
-              onUpdate={(value) => (selectedRefreshRate = value)}
-            />
+            <Select label={{ name: $T("ui.graph.refresh"), class: "" }} options={REFRESH_OPTIONS} value={selectedRefreshRate} onUpdate={setRefreshRate} />
           {/if}
         {/snippet}
       </ScaleControls>

@@ -154,6 +154,26 @@
     setTimeout(() => URL.revokeObjectURL(url), 1000)
   }
 
+  /* Настройки графиков (пределы шкалы, замок, развёртка), заданные пользователем, - в браузере оператора, свои для модуля и компонента;
+     пока их нет, график берёт настройки по умолчанию из конструктора (properties.settings) */
+  const chartKey = (id: string) => `Chart.settings|${persistKey}|${id}`
+  const loadChart = <T,>(id: string, fallback: T | undefined): T | undefined => {
+    if (!persistKey) return fallback
+    try {
+      return JSON.parse(localStorage.getItem(chartKey(id)) ?? "null") ?? fallback
+    } catch {
+      return fallback
+    }
+  }
+  const saveChart = (id: string, value: unknown) => {
+    if (!persistKey) return
+    try {
+      localStorage.setItem(chartKey(id), JSON.stringify(value))
+    } catch {
+      /* хранилище недоступно - настройки живут, пока график на экране */
+    }
+  }
+
   /* План миссии карты - в браузере оператора, свой для модуля и компонента */
   const missionKey = (id: string, kind: "plan" | "route") => `WidgetMap.${kind}|${persistKey}|${id}`
   const loadMission = <T,>(id: string, kind: "plan" | "route"): T | undefined => {
@@ -369,6 +389,8 @@
         <Graph
           {...component.properties}
           streamingData={{ data: component.properties.isTest ? (component.properties.streamingData?.data ?? null) : (link.get(id) as never) }}
+          settings={loadChart(component.id, component.properties.settings)}
+          onSettingsChange={(settings) => saveChart(component.id, settings)}
         />
       {:else if component.type === "PeriodChart" && views.PeriodChart}
         {@const PeriodChart = views.PeriodChart}
@@ -378,6 +400,8 @@
             ...level,
             data: ((level.variable && link.get(level.variable)) as number[] | undefined) ?? level.data ?? [],
           }))}
+          settings={loadChart(component.id, component.properties.settings)}
+          onSettingsChange={(settings) => saveChart(component.id, settings)}
         />
       {:else if component.type === "Table" && views.Table}
         <DeviceTable
