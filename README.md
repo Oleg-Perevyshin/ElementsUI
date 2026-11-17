@@ -43,7 +43,7 @@
 
 **📡 Ядро протоколов** (`poe-svelte-ui-lib/protocols`). Кодирование и разбор пакетов для всех каналов связи с устройством. Работает без Svelte, в том числе под Node.
 
-**🛩️ DroneCAN** (`poe-svelte-ui-lib/dronecan`). Протокол CAN ArduPilot: все типы официального набора DSDL, разбор и сборка передач так же, как в libcanard. Подробно - [README](src/lib/protocols/dronecan/README.md).
+**🛩️ DroneCAN** (`poe-svelte-ui-lib/dronecan`). Протокол CAN ArduPilot: все типы официального набора DSDL, разбор и сборка передач так же, как в libcanard, свой узел на шине (назначение номеров, параметры узлов, их данные) и автографики. Подробно - [README](src/lib/protocols/dronecan/README.md).
 
 **📚 Словари** (`poe-svelte-ui-lib/dictionaries/*`). Мастер-словари команд и сообщений устройств и заголовки для прошивок, см. [src/lib/dictionaries/README.md](src/lib/dictionaries/README.md).
 

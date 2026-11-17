@@ -7,10 +7,13 @@ export * from "./types.js"
 export * from "./codec.js"
 export * from "./transfer.js"
 export { encodeScalar, decodeScalar, floatToFloat16, float16ToFloat } from "./bits.js"
+export * from "./node.js"
+export * from "./plot.js"
 
 /* Тип передачи по её ID: сообщение - по ID сообщения, запрос и ответ - по ID сервиса */
+/* Анонимное сообщение (узел без номера) несёт 2 младших бита ID типа - на практике это dynamic_node_id.Allocation (ID 1) */
 export const droneCanTypeOf = (id: Pick<DroneCanId, "type" | "dataTypeId" | "source">): DroneCanTypeDef | undefined =>
-  id.type === "msg" ? (id.source === 0 ? undefined : droneCanMessage(id.dataTypeId)) : droneCanService(id.dataTypeId)
+  id.type === "msg" ? droneCanMessage(id.dataTypeId) : droneCanService(id.dataTypeId)
 
 /* Сборщик передач с сигнатурами известных типов - для CRC многокадровых передач */
 export const createDroneCanTransferReceiver = (timeoutMs = 2000) => createDroneCanReceiver({ timeoutMs, signatureOf: (id) => droneCanTypeOf(id)?.signature })

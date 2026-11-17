@@ -132,3 +132,119 @@ test("slcan: расширенный кадр туда и обратно", () => 
   assert.equal(frame.ext, true)
   assert.equal(hex(frame.data), "010203c0")
 })
+
+/* Имитация устройства узла 100: NodeStatus, ответы на GetNodeInfo, param.GetSet (2 параметра), ExecuteOpcode; RestartNode - без ответа */
+const makeBus = () => {
+  const params = [
+    { name: "battery.id", value: { integer_value: 1 } },
+    { name: "GPS_RATE", value: { real_value: 5 } },
+  ]
+  const devRx = m.createDroneCanTransferReceiver()
+  const meRx = m.createDroneCanTransferReceiver()
+  const sent = []
+  let me
+  const deliver = (out) => {
+    let t
+    for (const f of out.frames) t = meRx.push(out.canId, f) ?? t
+    me.handle(t)
+  }
+  const device = (canId, frames) => {
+    let t
+    for (const f of frames) t = devRx.push(canId, f) ?? t
+    sent.push(m.decodeDroneCanTransfer(t))
+    if (!t || t.type !== "req" || t.destination !== 100) return
+    const d = m.decodeDroneCanTransfer(t)
+    let value
+    if (d.typeName === "uavcan.protocol.GetNodeInfo")
+      value = { status: {}, software_version: { major: 4, minor: 1 }, hardware_version: {}, name: "com.cubepilot.here3" }
+    if (d.typeName === "uavcan.protocol.param.GetSet") {
+      const p = d.value.name ? params.find((x) => x.name === d.value.name) : params[d.value.index]
+      if (p && d.value.name && !("empty" in d.value.value)) p.value = d.value.value
+      const empty = { empty: {} }
+      value = p
+        ? { value: p.value, default_value: p.value, max_value: empty, min_value: empty, name: p.name }
+        : { value: empty, default_value: empty, max_value: empty, min_value: empty, name: "" }
+    }
+    if (d.typeName === "uavcan.protocol.param.ExecuteOpcode") value = { argument: 0, ok: 1 }
+    if (!value) return
+    const out = m.encodeDroneCanTransfer({ typeName: d.typeName, type: "res", value, source: 100, destination: t.source, transferId: t.transferId })
+    setTimeout(() => deliver(out), 2)
+  }
+  return {
+    sent,
+    deliver,
+    create: (options = {}) => (me = m.createDroneCanNode({ nodeId: 127, write: async (id, frames) => device(id, frames), ...options })),
+  }
+}
+
+test("узел: опрос нового узла, параметры, запись, сохранение, тайм-аут", async () => {
+  const bus = makeBus()
+  let nodes = []
+  const me = bus.create({ onNodes: (list) => (nodes = list), requestTimeoutMs: 100 })
+  try {
+    bus.deliver(m.encodeDroneCanTransfer({ typeName: "uavcan.protocol.NodeStatus", type: "msg", value: { uptime_sec: 50 }, source: 100, transferId: 0 }))
+    await new Promise((r) => setTimeout(r, 50))
+    assert.equal(nodes[0]?.id, 100)
+    assert.equal(nodes[0]?.info?.name, "com.cubepilot.here3")
+    assert.deepEqual(
+      me.messages(100).map((x) => x.typeName),
+      ["uavcan.protocol.NodeStatus"],
+    )
+    const list = await me.listParams(100)
+    assert.deepEqual(
+      list.map((p) => [p.name, p.kind, p.value]),
+      [
+        ["battery.id", "integer", 1],
+        ["GPS_RATE", "real", 5],
+      ],
+    )
+    assert.equal((await me.setParam(100, "GPS_RATE", "real", 10)).value, 10)
+    assert.equal(await me.executeOpcode(100, m.DRONECAN_OPCODE_SAVE), true)
+    await assert.rejects(
+      me.request("uavcan.protocol.RestartNode", 100, { magic_number: m.DRONECAN_RESTART_MAGIC }, { timeoutMs: 30, retries: 1 }),
+      /не ответил/,
+    )
+  } finally {
+    me.dispose()
+  }
+})
+
+test("сервер DNA: номер по уникальному ID из трёх частей, тот же номер при повторе", async () => {
+  const bus = makeBus()
+  const assigned = []
+  const me = bus.create({ onAllocate: (id) => assigned.push(id) })
+  const uid = Array.from({ length: 16 }, (_, i) => i + 1)
+  const anon = (value) => {
+    const payload = m.encodeDroneCan(m.droneCanStruct(m.droneCanType("uavcan.protocol.dynamic_node_id.Allocation")), value)
+    const canId = m.makeDroneCanId({ priority: 30, type: "msg", dataTypeId: 1, source: 0, destination: 0 })
+    me.handle({ ...m.parseDroneCanId(canId), transferId: 0, payload, timestamp: 0, crcOk: true, frames: 1 })
+  }
+  try {
+    for (let round = 0; round < 2; round++) {
+      anon({ node_id: 0, first_part_of_unique_id: 1, unique_id: uid.slice(0, 6) })
+      anon({ node_id: 0, first_part_of_unique_id: 0, unique_id: uid.slice(6, 12) })
+      anon({ node_id: 0, first_part_of_unique_id: 0, unique_id: uid.slice(12) })
+    }
+    await new Promise((r) => setTimeout(r, 10))
+    assert.deepEqual(assigned, [125, 125])
+    const last = bus.sent.filter((d) => d.typeName === "uavcan.protocol.dynamic_node_id.Allocation").at(-1)
+    assert.equal(last.value.node_id, 125)
+    assert.deepEqual(last.value.unique_id, uid)
+  } finally {
+    me.dispose()
+  }
+})
+
+test("автографики: числа и векторы, без состояний, меток времени и счётчиков", () => {
+  assert.deepEqual(m.droneCanPlotFields("uavcan.equipment.ahrs.MagneticFieldStrength", { magnetic_field_ga: [0.1, 0.2, 0.3], magnetic_field_covariance: [] }), [
+    ["magnetic_field_ga[0]", 0.1],
+    ["magnetic_field_ga[1]", 0.2],
+    ["magnetic_field_ga[2]", 0.3],
+  ])
+  assert.deepEqual(m.droneCanPlotFields("uavcan.protocol.NodeStatus", { uptime_sec: 5, health: 0, mode: 0, sub_mode: 0, vendor_specific_status_code: 1 }), [])
+  assert.deepEqual(m.droneCanNumericFields({ a: 1, b: [2, { c: 3 }] }), [
+    ["a", 1],
+    ["b[0]", 2],
+    ["b[1].c", 3],
+  ])
+})

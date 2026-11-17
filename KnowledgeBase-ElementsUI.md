@@ -202,7 +202,7 @@ ElementsUI/
 | `poe-svelte-ui-lib`                | `index.js`                    | Компоненты, виджеты, `GUIRenderer`, правила `gui.ts`, реестр `COMPONENTS`, `createFsTransfer`, i18n, `sanitizeHtml`, иконки, все типы                                                                            | да                     |
 | `poe-svelte-ui-lib/constructor`    | `constructor.js`              | Панели свойств `*Props`, `PANELS`, `COMPONENT_DEFAULTS`, `COMPONENT_SIZES`, `createComponent`, `createPropsEditor`, `applyPropertyChange`, `optionsStore`, `TextsEditor`, `CommonSnippets`, словарь конструктора | да                     |
 | `poe-svelte-ui-lib/protocols`      | `protocols/index.js`          | CBOR, пакет `poe_cbor_pkt`, HAR, CRC, словарь, xPOE-Debug, CAN/slcan (и сырые кадры с расширенным ID), графики отладки                                                                                           | нет, работает под Node |
-| `poe-svelte-ui-lib/dronecan`       | `protocols/dronecan/index.js` | DroneCAN (CAN ArduPilot): типы из официальных DSDL, кодек и передачи по алгоритмам libcanard - [README](src/lib/protocols/dronecan/README.md)                                                                    | нет, работает под Node |
+| `poe-svelte-ui-lib/dronecan`       | `protocols/dronecan/index.js` | DroneCAN (CAN ArduPilot): типы из официальных DSDL, кодек и передачи по алгоритмам libcanard, свой узел (сервер DNA, узлы, параметры, сообщения), автографики - [README](src/lib/protocols/dronecan/README.md)   | нет, работает под Node |
 | `poe-svelte-ui-lib/dictionaries/*` | файлы словарей                | `poe_cmd.yaml`, `poe_msg.yaml`, `poe_gui.yaml`, `firmware/poe_cmd.h`, `firmware/poe_msg.h` как файлы                                                                                                             | -                      |
 | `poe-svelte-ui-lib/locales`        | `locales/index.js`            | `LANGUAGES`, переводчик, `localizeDeep` без компонентов                                                                                                                                                          | нет, для Node          |
 | `poe-svelte-ui-lib/theme.css`      | `theme.css`                   | Палитра `.light`/`.dark`, типографика, роли `bg-*`/`border-*`                                                                                                                                                    | -                      |
@@ -786,7 +786,7 @@ interface DeviceReply {
 
 **📡 Ядро протоколов** (`poe-svelte-ui-lib/protocols`). Кодирование и разбор пакетов для всех каналов связи с устройством. Работает без Svelte, в том числе под Node.
 
-**🛩️ DroneCAN** (`poe-svelte-ui-lib/dronecan`). Протокол CAN ArduPilot: все типы официального набора DSDL, разбор и сборка передач так же, как в libcanard. Подробно - [README](src/lib/protocols/dronecan/README.md).
+**🛩️ DroneCAN** (`poe-svelte-ui-lib/dronecan`). Протокол CAN ArduPilot: все типы официального набора DSDL, разбор и сборка передач так же, как в libcanard, свой узел на шине (назначение номеров, параметры узлов, их данные) и автографики. Подробно - [README](src/lib/protocols/dronecan/README.md).
 
 **📚 Словари** (`poe-svelte-ui-lib/dictionaries/*`). Мастер-словари команд и сообщений устройств и заголовки для прошивок, см. [src/lib/dictionaries/README.md](src/lib/dictionaries/README.md).
 
@@ -1540,7 +1540,7 @@ npm pack               # сборка пакета в dist/: проверка т
 - Кнопка с иконкой и без текста круглая, размером с поле ввода: 32px (`size-8`). Если `wrapperClass` задаёт ширину (`w-10`, `size-12`), кругом заполняется обёртка; `componentClass` (например `size-7`) важнее обоих. `w-auto`, `w-fit`, `w-max`, `w-min`, `w-full` ширину не задают.
 - Значок всегда размера `--icon-size` из темы (18px) и не зависит от размера кнопки: отступами его не подгоняют. В кнопке меньше значка он сжимается до её размера.
 - Горячая клавиша (`keyBind`) слушается на всём окне.
-- Подсказка `content.info` показывает только текст, без разметки. Она всплывает при наведении мышью и при фокусе с клавиатуры (`:focus-visible`), на телефоне от касания не всплывает. Когда фокус возвращается на кнопку сам, после закрытия окна или меню, подсказка не появляется и не висит поверх соседних элементов.
+- Подсказка `content.info` показывает только текст, без разметки. Она всплывает при наведении мышью и при фокусе с клавиатуры (`:focus-visible`), на телефоне от касания не всплывает. Когда фокус возвращается на кнопку сам, после закрытия окна или меню, подсказка не появляется и не висит поверх соседних элементов. Подсказка позиционируется от окна, поэтому её не обрезают блоки с прокруткой или `overflow: hidden` (вкладки, таблицы, окна). У края окна она сдвигается внутрь, стрелка остаётся над кнопкой, а если со стороны `side` места нет - уходит на противоположную сторону. Так же ведут себя подсказки `Switch`, вариантов `Select` и `IconsMatrix`.
 - `pressed` - кнопка-переключатель: `true` - залита цветом `accent`, как выбранный вариант `Select type="buttons"` (у `primary` ещё внутренняя рамка), у кнопки `aria-pressed`. Без пропа кнопка обычная.
 - `loading` - крутилка `Loader` на месте значка (у кнопки без значка - перед подписью). Кнопка не нажимается и не реагирует на горячую клавишу, но не серая, у неё `aria-busy`.
 - `aria` - для кнопки, открывающей панель: `haspopup`, `expanded`, `controls` ставятся на саму кнопку. Так делает `Dropdown`.
@@ -3051,6 +3051,37 @@ const text = frames.map((data) => encodeSlcanExtFrame(canId, data)).join("")
 
 Канал slcan-адаптера открывают командами `slcanOpenCommands("S8")`: классический CAN 1 Мбит/с, на нём работает ArduPilot.
 
+##### 🛰️ Свой узел на шине
+
+`createDroneCanNode` - узел приложения на шине. С ним терминал или облако видят узлы, читают их данные и настраивают параметры.
+
+```ts
+import { createDroneCanNode, DRONECAN_OPCODE_SAVE } from "poe-svelte-ui-lib/dronecan"
+
+const node = createDroneCanNode({
+  nodeId: 127,
+  write: (canId, frames) => port.write(frames.map((data) => encodeSlcanExtFrame(canId, data)).join("")),
+  onNodes: (nodes) => console.log(nodes), // узлы шины: номер, состояние, имя, версии
+})
+/* Каждая принятая передача - в узел */
+node.handle(transfer)
+
+const params = await node.listParams(125) // все параметры узла 125
+await node.setParam(125, "GPS_RATE_MS", "integer", 100)
+await node.executeOpcode(125, DRONECAN_OPCODE_SAVE) // записать в память узла
+node.messages(125) // последние сообщения узла с частотой
+```
+
+- 💓 Раз в секунду шлёт свой `NodeStatus` и отвечает на `GetNodeInfo` своим именем.
+- 🆔 Сервер назначения номеров (DNA), как у ArduPilot: узел без номера (например, GNSS без автопилота на шине) получает свободный номер сверху от 125, при повторном запросе - тот же.
+- 🔎 Новый узел по `NodeStatus` сам опрашивается `GetNodeInfo`: имя, версии прошивки и железа, уникальный ID. Перезагрузку узла видно по сбросу времени работы.
+- ⏳ Запросы одному узлу уходят по одному, следующий - после ответа или тайм-аута: простые устройства теряют запросы, идущие вплотную. Нет ответа - повтор, потом ошибка.
+- ⚠️ Узел с нашим номером на шине - `onConflict`.
+
+##### 📈 Автографики
+
+`droneCanPlotFields(typeName, value)` - поля сообщения для графика по описанию типа, без настройки под модуль: `float`, целые со знаком, короткие (до 4) массивы `float` - векторы. Не попадают поля с именованными значениями DSDL (`health`, `mode`, `status`), метки времени, идентификаторы, счётчики, флаги и строки. `droneCanNumericFields` - все числа сообщения, для ручного выбора.
+
 #### 💡 Полезно знать
 
 - 🔢 Числа шире 53 бит приходят как `bigint`, остальные - `number`.
@@ -3059,6 +3090,7 @@ const text = frames.map((data) => encodeSlcanExtFrame(canId, data)).join("")
 - 🧯 Значение вне диапазона поля прижимается к краю (`saturated`), у полей `truncated` лишние старшие биты отбрасываются.
 - ⚠️ Неизвестный тип, неверный CRC или длина, не сошедшаяся с описанием, - `error` в результате разбора, байты передачи остаются в `payload`.
 - 🚌 Сборщик принимает передачи всем узлам, а не только своему: терминал видит всю шину.
+- 👻 Анонимное сообщение (узел ещё без номера) разбирается как `dynamic_node_id.Allocation`.
 
 <details>
 <summary>🔧 Как это устроено</summary>
@@ -3070,6 +3102,8 @@ const text = frames.map((data) => encodeSlcanExtFrame(canId, data)).join("")
 | `codec.ts`           | Поля структур, union с тегом, массивы и оптимизация хвостового массива (TAO) - как кодеки `dronecan_dsdlc`                       |
 | `transfer.ts`        | 29-битный ID, хвостовой байт, CRC-16 с сигнатурой типа, нарезка и сборка кадров - как `canardHandleRxFrame` и `enqueueTxFrames`  |
 | `index.ts`           | Разбор и сборка передачи целиком                                                                                                 |
+| `node.ts`            | Свой узел: NodeStatus, ответ GetNodeInfo, сервер DNA, узлы шины, запросы с ожиданием ответа, параметры, последние сообщения      |
+| `plot.ts`            | Поля сообщения для автографиков по описанию типа                                                                                 |
 
 - Описания DSDL лежат в `vendor/dronecan-dsdl` как есть, из официального репозитория github.com/dronecan/DSDL (MIT). Генератор разбирает их и считает сигнатуры так же, как официальный парсер pydronecan: CRC-64-WE по нормализованному описанию, затем вложенные типы.
 - Сигнатуры сверены с официальными значениями libcanard и ArduPilot в `tests/dronecan.test.mjs`: NodeStatus `0x0F0868D0C1A7C6F1`, GetNodeInfo, param.GetSet и другие.
