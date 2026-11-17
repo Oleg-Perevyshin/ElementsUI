@@ -45,8 +45,11 @@ export {
   encodeCanPacket,
   createCanParser,
   slcanOpenCommands,
+  createSlcanReader,
+  encodeSlcanExtFrame,
   type CanFrame,
   type CanMessage,
+  type SlcanFrame,
 } from "./can.js"
 /* Словарь заголовков и аргументов HAR - по умолчанию из мастер-словаря команд dictionaries/poe_cmd.yaml библиотеки (устройства и облако), разбор файла словаря, словарь устройства с обратным поиском; HAR из слов и обратно */
 export {

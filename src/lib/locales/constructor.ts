@@ -13,7 +13,7 @@ const constructorTranslations = {
   "library.icons_hint": { ru: "Клик по иконке копирует её SVG", en: "Click an icon to copy its SVG", zh: "点击图标复制 SVG" },
   "library.section_library": { ru: "Библиотека", en: "Library", zh: "库" },
   "library.section_components": { ru: "Компоненты", en: "Components", zh: "组件" },
-  "library.protocol": { ru: "Протокол", en: "Protocol", zh: "协议" },
+  "library.protocols": { ru: "Протоколы", en: "Protocols", zh: "协议" },
   "library.dictionaries": { ru: "Словари", en: "Dictionaries", zh: "字典" },
   "library.gui": { ru: "GUI устройства", en: "Device GUI", zh: "设备界面" },
   "library.misc": { ru: "Окна и уведомления", en: "Windows and notices", zh: "窗口和通知" },

@@ -1,4 +1,4 @@
-<!-- Файл собирает node .knowledgebase/build.mjs из .knowledgebase/Overview.md и документации проекта (35 файлов). Вручную не править: правь источники и пересобери -->
+<!-- Файл собирает node .knowledgebase/build.mjs из .knowledgebase/Overview.md и документации проекта (37 файлов). Вручную не править: правь источники и пересобери -->
 
 # База знаний ElementsUI
 
@@ -122,6 +122,8 @@ ElementsUI/
 │  ├─ npm_publish.yaml     [publish]: публикация в npm + автообновление DevCloud
 │  └─ ghpages_deploy.yaml  [deploy]: витрина на GitHub Pages
 ├─ scripts/GenerateDictionary.mjs   src/lib/dictionaries: poe_cmd.yaml -> generated/poe_cmd.ts, poe_msg.yaml -> generated/poe_msg.ts, poe_gui.yaml -> generated/poe_gui.ts; заголовки прошивок firmware/poe_cmd.h, poe_msg.h (перечисление выровнено целиком, в clang-format off)
+├─ scripts/GenerateDroneCAN.mjs    vendor/dronecan-dsdl (официальные DSDL, MIT) -> src/lib/protocols/dronecan/generated/types.ts: типы, ID, сигнатуры (npm run Generate)
+├─ vendor/dronecan-dsdl/           Официальные описания типов DroneCAN без изменений
 ├─ scripts/UpdateIconsLib.ts       assets/IconsCatalog -> src/lib/icons.ts (npm run Generate)
 ├─ assets/IconsCatalog/    SVG каталога (категория.имя.svg), наборы battery/bulb/propeller; в npm-пакет не входит
 ├─ tests/                  node:test против собранного dist/ (+ dist-types.tsconfig.json)
@@ -195,14 +197,15 @@ ElementsUI/
 <details>
 <summary>🚪 Точки входа пакета</summary>
 
-| Импорт                             | Файл в dist          | Что даёт                                                                                                                                                                                                         | Svelte нужен           |
-| ---------------------------------- | -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------- |
-| `poe-svelte-ui-lib`                | `index.js`           | Компоненты, виджеты, `GUIRenderer`, правила `gui.ts`, реестр `COMPONENTS`, `createFsTransfer`, i18n, `sanitizeHtml`, иконки, все типы                                                                            | да                     |
-| `poe-svelte-ui-lib/constructor`    | `constructor.js`     | Панели свойств `*Props`, `PANELS`, `COMPONENT_DEFAULTS`, `COMPONENT_SIZES`, `createComponent`, `createPropsEditor`, `applyPropertyChange`, `optionsStore`, `TextsEditor`, `CommonSnippets`, словарь конструктора | да                     |
-| `poe-svelte-ui-lib/protocols`      | `protocols/index.js` | CBOR, пакет `poe_cbor_pkt`, HAR, CRC, словарь, xPOE-Debug, CAN/slcan, графики отладки                                                                                                                            | нет, работает под Node |
-| `poe-svelte-ui-lib/dictionaries/*` | файлы словарей       | `poe_cmd.yaml`, `poe_msg.yaml`, `poe_gui.yaml`, `firmware/poe_cmd.h`, `firmware/poe_msg.h` как файлы                                                                                                             | -                      |
-| `poe-svelte-ui-lib/locales`        | `locales/index.js`   | `LANGUAGES`, переводчик, `localizeDeep` без компонентов                                                                                                                                                          | нет, для Node          |
-| `poe-svelte-ui-lib/theme.css`      | `theme.css`          | Палитра `.light`/`.dark`, типографика, роли `bg-*`/`border-*`                                                                                                                                                    | -                      |
+| Импорт                             | Файл в dist                   | Что даёт                                                                                                                                                                                                         | Svelte нужен           |
+| ---------------------------------- | ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------- |
+| `poe-svelte-ui-lib`                | `index.js`                    | Компоненты, виджеты, `GUIRenderer`, правила `gui.ts`, реестр `COMPONENTS`, `createFsTransfer`, i18n, `sanitizeHtml`, иконки, все типы                                                                            | да                     |
+| `poe-svelte-ui-lib/constructor`    | `constructor.js`              | Панели свойств `*Props`, `PANELS`, `COMPONENT_DEFAULTS`, `COMPONENT_SIZES`, `createComponent`, `createPropsEditor`, `applyPropertyChange`, `optionsStore`, `TextsEditor`, `CommonSnippets`, словарь конструктора | да                     |
+| `poe-svelte-ui-lib/protocols`      | `protocols/index.js`          | CBOR, пакет `poe_cbor_pkt`, HAR, CRC, словарь, xPOE-Debug, CAN/slcan (и сырые кадры с расширенным ID), графики отладки                                                                                           | нет, работает под Node |
+| `poe-svelte-ui-lib/dronecan`       | `protocols/dronecan/index.js` | DroneCAN (CAN ArduPilot): типы из официальных DSDL, кодек и передачи по алгоритмам libcanard - [README](src/lib/protocols/dronecan/README.md)                                                                    | нет, работает под Node |
+| `poe-svelte-ui-lib/dictionaries/*` | файлы словарей                | `poe_cmd.yaml`, `poe_msg.yaml`, `poe_gui.yaml`, `firmware/poe_cmd.h`, `firmware/poe_msg.h` как файлы                                                                                                             | -                      |
+| `poe-svelte-ui-lib/locales`        | `locales/index.js`            | `LANGUAGES`, переводчик, `localizeDeep` без компонентов                                                                                                                                                          | нет, для Node          |
+| `poe-svelte-ui-lib/theme.css`      | `theme.css`                   | Палитра `.light`/`.dark`, типографика, роли `bg-*`/`border-*`                                                                                                                                                    | -                      |
 
 Импорт `/constructor` один раз до отрисовки подключает словарь конструктора к `$T` библиотеки (`extendTranslations`). Ядро протоколов и `locales` используют импорты с расширением `.js`, чтобы их разрешал сам Node без бандлера.
 
@@ -714,6 +717,7 @@ interface DeviceReply {
 - `src/lib/Modal.README.md`
 - `src/lib/PeriodChart/README.md`
 - `src/lib/ProgressBar/README.md`
+- `src/lib/protocols/dronecan/README.md`
 - `src/lib/protocols/PROTOCOL.md`
 - `src/lib/Select/README.md`
 - `src/lib/Slider/README.md`
@@ -733,6 +737,7 @@ interface DeviceReply {
 - `src/lib/WidgetStackInfo/README.md`
 - `src/lib/WidgetWiFi/README.md`
 - `src/routes/RegExp.md`
+- `vendor/dronecan-dsdl/README.md`
 
 ## Файл `README.md`
 
@@ -780,6 +785,8 @@ interface DeviceReply {
 **🔣 Значки и мелочи.** Крутилка `Loader`, значок раскрытия `ExpandIcon` (вниз или вбок), подпись поля `FieldLabel` с пояснением `InfoHint` (открывается сверху, если там помещается целиком, иначе снизу), разделитель панелей `Splitter` (ширина панели мышью) и значки библиотеки: `IconArrow`, `IconCross`, `IconClear`, `IconDelete`, `IconAdd`, `IconDownload`, `IconCopy`, `IconColumns` (выбор колонок, как у `TableColumns`), `IconInfo`, `IconError`, `IconLibrary`, `IconMoveVertical`, `IconGripVerticalDual`, `IconGripVerticalLeft`, `IconGripVerticalRight`, а для отладочных экранов - `IconCommandList` (список команд), `IconRestart` (перезагрузка), `IconTheme` (тема), `IconEye` и `IconEyeSlash` (показать и скрыть), `IconPlug` и `IconUnplug` (подключить и отключить), `IconSend` (отправить), `IconGraph` (графики). Значки рисуются цветом текста (`currentColor`), своя ширина значка - `1em` или `1.5em` от размера текста, точный размер задаёт родитель, например `[&_svg]:size-5`. Держать их копии в приложении не нужно.
 
 **📡 Ядро протоколов** (`poe-svelte-ui-lib/protocols`). Кодирование и разбор пакетов для всех каналов связи с устройством. Работает без Svelte, в том числе под Node.
+
+**🛩️ DroneCAN** (`poe-svelte-ui-lib/dronecan`). Протокол CAN ArduPilot: все типы официального набора DSDL, разбор и сборка передач так же, как в libcanard. Подробно - [README](src/lib/protocols/dronecan/README.md).
 
 **📚 Словари** (`poe-svelte-ui-lib/dictionaries/*`). Мастер-словари команд и сообщений устройств и заголовки для прошивок, см. [src/lib/dictionaries/README.md](src/lib/dictionaries/README.md).
 
@@ -1100,7 +1107,7 @@ const bridge = UI.createBusBridge(channel, {
 - 📖 Коды команд 0-4095 - команды устройств, 7000-7999 - команды самого облака DevCloud (чаты, журнал, состояние устройств).
 - 💬 Устройство шлёт только код сообщения и параметры, текст на языке пользователя собирает `formatDeviceMessage(code, args?, lang?)` из `poe-svelte-ui-lib/protocols`. Сообщения разбиты на группы со своими диапазонами кодов: `SYS` 1-99, `CFG` 100-199, `FS` 200-299, `FW` 300-399, `WIFI` 400-499, `API` 500-599, `BUS` 600-699, `NET` 700-799, `LORA` 800-899, `DEV` 1000-1999, `DRV` 2000-2999 (900-999 и 3000+ - резерв).
 - 🧯 Те же коды прошивки возвращают при ошибках и пишут в свой журнал, текст на языке пользователя показывает отладочная консоль.
-- 🔎 На витрине библиотеки раздел «Словари» показывает все события, команды и компоненты GUI с поиском, «Протокол» собирает пакет из нескольких записей (кнопки + и корзина, Payload в YAML с подсказкой по форматам), показывает его в YAML и hex и разбирает hex обратно, «GUI устройства» рисует файл GUI из каталога DevCloud.
+- 🔎 На витрине библиотеки раздел «Словари» показывает все события, команды и компоненты GUI с поиском, «Протоколы» описывает каждый поддерживаемый протокол на своей вкладке (xPOE Protocol, DroneCAN); у xPOE в сворачиваемых примерах собирается пакет из нескольких записей (кнопки + и корзина, Payload в YAML с подсказкой по форматам), показывается в YAML и hex и разбирается hex обратно, «GUI устройства» рисует файл GUI из каталога DevCloud.
 - ⚙️ `npm run Generate` (перед публикацией запускается сам) генерирует код для JS и заголовки прошивок `poe_cmd.h`, `poe_msg.h`.
 
 Как добавить команду или сообщение, что генерируется и куда копировать - в [src/lib/dictionaries/README.md](src/lib/dictionaries/README.md). Формат на проводе - в [PROTOCOL.md](src/lib/protocols/PROTOCOL.md).
@@ -2995,6 +3002,79 @@ ModalStack.close(id) // убрать
 | ------------------ | ---------------------------------- | ----------------------------------------------------- |
 | `component`        | `UIComponent<"ProgressBar">`       | Компонент и его свойства                              |
 | `onPropertyChange` | `(change: PropertyChange) => void` | Сообщает об изменении: свойства, имя, доступ, событие |
+
+</details>
+
+## Файл `src/lib/protocols/dronecan/README.md`
+
+### 🛩️ DroneCAN
+
+Протокол CAN, на котором говорит ArduPilot: автопилот, GPS, компасы, ESC, сервоприводы, датчики питания. Здесь он разбирается и собирается тем же способом, что официальная библиотека libcanard.
+
+#### ✨ Что умеет
+
+- 📚 Знает все 147 типов из официального набора DSDL: стандартные `uavcan.*`, `dronecan.*`, `ardupilot.*` и типы производителей.
+- 🔍 Разбирает передачу в значение по полям, например `uavcan.protocol.NodeStatus` в `{ uptime_sec, health, mode, sub_mode, vendor_specific_status_code }`.
+- 🧱 Собирает передачу из значения и режет её на кадры CAN для отправки.
+- 🧩 Собирает многокадровые передачи из кадров и проверяет их CRC.
+- 🔌 Кадры читает и пишет slcan-адаптер (CANable, WeAct USB2CANFD и подобные), функции для этого есть в `poe-svelte-ui-lib/protocols`.
+
+#### 🧩 Как пользоваться
+
+Отдельная точка входа: таблица типов большая, и вебу прошивок она не нужна.
+
+```ts
+import { createDroneCanTransferReceiver, decodeDroneCanTransfer, encodeDroneCanTransfer } from "poe-svelte-ui-lib/dronecan"
+import { createSlcanReader, encodeSlcanExtFrame } from "poe-svelte-ui-lib/protocols"
+
+const slcan = createSlcanReader()
+const transfers = createDroneCanTransferReceiver()
+
+/* Приём: байты порта -> кадры -> передачи -> значения */
+for (const frame of slcan.push(bytes)) {
+  if (!frame.ext) continue
+  const t = transfers.push(frame.canId, frame.data, frame.timestamp)
+  if (t) console.log(t.source, decodeDroneCanTransfer(t))
+}
+
+/* Отправка: запрос параметра узлу 10 от нашего узла 100 */
+const { canId, frames } = encodeDroneCanTransfer({
+  typeName: "uavcan.protocol.param.GetSet",
+  type: "req",
+  value: { index: 0, value: { empty: {} }, name: "COMPASS_ENABLE" },
+  source: 100,
+  destination: 10,
+  transferId: 0,
+})
+const text = frames.map((data) => encodeSlcanExtFrame(canId, data)).join("")
+```
+
+Канал slcan-адаптера открывают командами `slcanOpenCommands("S8")`: классический CAN 1 Мбит/с, на нём работает ArduPilot.
+
+#### 💡 Полезно знать
+
+- 🔢 Числа шире 53 бит приходят как `bigint`, остальные - `number`.
+- 🔤 Массив байт из печатных символов ASCII приходит строкой (имена узлов и параметров). При сборке поле массива байт принимает строку, массив чисел или `Uint8Array`.
+- 🔀 Поле-union - объект с одним ключом выбранного варианта, например `{ integer_value: 5 }`, пустой вариант - `{ empty: {} }`.
+- 🧯 Значение вне диапазона поля прижимается к краю (`saturated`), у полей `truncated` лишние старшие биты отбрасываются.
+- ⚠️ Неизвестный тип, неверный CRC или длина, не сошедшаяся с описанием, - `error` в результате разбора, байты передачи остаются в `payload`.
+- 🚌 Сборщик принимает передачи всем узлам, а не только своему: терминал видит всю шину.
+
+<details>
+<summary>🔧 Как это устроено</summary>
+
+| Файл                 | Что внутри                                                                                                                       |
+| -------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `generated/types.ts` | Таблица типов: имя, ID по умолчанию, сигнатура, поля. Генерирует `scripts/GenerateDroneCAN.mjs` (`npm run Generate`), не править |
+| `bits.ts`            | Побитовая упаковка чисел и float16 - перенос `canardEncodeScalar`, `canardDecodeScalar`, `copyBitArray` из libcanard             |
+| `codec.ts`           | Поля структур, union с тегом, массивы и оптимизация хвостового массива (TAO) - как кодеки `dronecan_dsdlc`                       |
+| `transfer.ts`        | 29-битный ID, хвостовой байт, CRC-16 с сигнатурой типа, нарезка и сборка кадров - как `canardHandleRxFrame` и `enqueueTxFrames`  |
+| `index.ts`           | Разбор и сборка передачи целиком                                                                                                 |
+
+- Описания DSDL лежат в `vendor/dronecan-dsdl` как есть, из официального репозитория github.com/dronecan/DSDL (MIT). Генератор разбирает их и считает сигнатуры так же, как официальный парсер pydronecan: CRC-64-WE по нормализованному описанию, затем вложенные типы.
+- Сигнатуры сверены с официальными значениями libcanard и ArduPilot в `tests/dronecan.test.mjs`: NodeStatus `0x0F0868D0C1A7C6F1`, GetNodeInfo, param.GetSet и другие.
+- Классический CAN: хвостовой динамический массив с элементами не короче байта передаётся без поля длины (TAO). CAN FD пока не поддержан.
+- Многокадровая передача: первые два байта первого кадра - CRC-16-CCITT (начальное 0xFFFF) по сигнатуре типа и данным, по 7 байт данных в кадре, последний байт кадра - хвостовой (начало, конец, toggle, transfer_id).
 
 </details>
 
@@ -6457,3 +6537,11 @@ StackInfo:
 - Ещё один сайт для проверки регулярных выражений - https://regex101.com/ (выберите ECMAScript (JavaScript) в настройках)
 
 </details>
+
+## Файл `vendor/dronecan-dsdl/README.md`
+
+### 📜 DroneCAN DSDL
+
+Официальные описания типов DroneCAN (протокол CAN ArduPilot) без изменений, из github.com/dronecan/DSDL, коммит `b4653c7` от 2026-02-05. Лицензия MIT - файл `LICENSE` рядом.
+
+Из этих файлов `scripts/GenerateDroneCAN.mjs` строит таблицу типов `src/lib/protocols/dronecan/generated/types.ts` (`npm run Generate`). Чтобы обновить набор, замените папки пространств имён новыми из официального репозитория, удалите в них `README.md` и запустите генерацию.

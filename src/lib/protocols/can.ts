@@ -134,6 +134,53 @@ export const createCanParser = ({ sessionTimeoutMs = 2000, maxPacketBytes = 8192
   }
 }
 
+/* Сырой кадр slcan без сборки пакетов: ext - расширенный 29-битный ID (DroneCAN), fd - кадр CAN FD */
+export interface SlcanFrame {
+  canId: number
+  ext: boolean
+  fd: boolean
+  data: Uint8Array
+  remote: boolean
+  timestamp: number
+}
+
+/* Кадр slcan с расширенным ID: CAN - «T», 8 hex ID, длина, данные до 8 байт */
+export const encodeSlcanExtFrame = (canId: number, data: Uint8Array): string =>
+  `T${(canId & 0x1fffffff).toString(16).toUpperCase().padStart(8, "0")}${Math.min(data.length, 8).toString(16).toUpperCase()}${bytesToHex(data.subarray(0, 8))}\r`
+
+/* Потоковый разбор ответа slcan-адаптера по кадрам: каждая строка кадра - SlcanFrame как есть; ответы на команды (\r, \x07) и мусор пропускаются */
+export const createSlcanReader = ({ gapMs = 2000 } = {}) => {
+  const framer = createFramer({ gapMs })
+  return {
+    push(chunk: Uint8Array, now = Date.now()): SlcanFrame[] {
+      const frames: SlcanFrame[] = []
+      framer.push(chunk, now, (bytes) => {
+        const end = bytes.indexOf(CR)
+        if (end < 0) return bytes.length > framer.maxBytes ? bytes.length : 0
+        const match = SLCAN_FRAME.exec(decoder.decode(bytes.subarray(0, end)))
+        if (!match) return end + 1
+        const [type, idHex, dlcHex, dataHex] = match[1] ? match.slice(1, 5) : match.slice(5, 9)
+        const lower = type.toLowerCase()
+        const dlc = parseInt(dlcHex, 16)
+        const size = lower === "r" ? 0 : Math.min(lower === "t" ? Math.min(dlc, 8) : fdLength(dlc), dataHex.length >> 1)
+        frames.push({
+          canId: parseInt(idHex, 16),
+          ext: !match[1],
+          fd: lower === "d" || lower === "b",
+          data: hexToBytes(dataHex.slice(0, size * 2)) ?? new Uint8Array(),
+          remote: lower === "r",
+          timestamp: now,
+        })
+        return end + 1
+      })
+      return frames
+    },
+    reset() {
+      framer.reset()
+    },
+  }
+}
+
 /* Команды открытия slcan-адаптера (CANable и совместимые): закрыть канал, скорость арбитража (S0..S8, SA..SD), для CAN FD - скорость данных (Y1..Y5), нормальный режим, без автоповтора, открыть канал - каждая строка заканчивается \r */
 export const slcanOpenCommands = (bitrate: string, dataBitrate?: string): string[] =>
   ["C", bitrate, ...(dataBitrate ? [dataBitrate] : []), "M0", "A0", "O"].map((command) => `${command}\r`)

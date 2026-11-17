@@ -20,9 +20,9 @@
   let activePage = $derived(page.url.pathname.split("/").filter(Boolean)[2] ?? "")
 
   const T = UI.T
-  /* Разделы о библиотеке целиком: протокол, словари, GUI устройства, окна и уведомления */
+  /* Разделы о библиотеке целиком: протоколы, словари, GUI устройства, окна и уведомления */
   const guideItems = $derived([
-    { page: "protocol", name: $T("library.protocol") },
+    { page: "protocols", name: $T("library.protocols") },
     { page: "dictionaries", name: $T("library.dictionaries") },
     { page: "gui", name: $T("library.gui") },
     { page: "misc", name: $T("library.misc") },

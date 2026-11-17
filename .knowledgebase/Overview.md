@@ -118,6 +118,8 @@ ElementsUI/
 │  ├─ npm_publish.yaml     [publish]: публикация в npm + автообновление DevCloud
 │  └─ ghpages_deploy.yaml  [deploy]: витрина на GitHub Pages
 ├─ scripts/GenerateDictionary.mjs   src/lib/dictionaries: poe_cmd.yaml -> generated/poe_cmd.ts, poe_msg.yaml -> generated/poe_msg.ts, poe_gui.yaml -> generated/poe_gui.ts; заголовки прошивок firmware/poe_cmd.h, poe_msg.h (перечисление выровнено целиком, в clang-format off)
+├─ scripts/GenerateDroneCAN.mjs    vendor/dronecan-dsdl (официальные DSDL, MIT) -> src/lib/protocols/dronecan/generated/types.ts: типы, ID, сигнатуры (npm run Generate)
+├─ vendor/dronecan-dsdl/           Официальные описания типов DroneCAN без изменений
 ├─ scripts/UpdateIconsLib.ts       assets/IconsCatalog -> src/lib/icons.ts (npm run Generate)
 ├─ assets/IconsCatalog/    SVG каталога (категория.имя.svg), наборы battery/bulb/propeller; в npm-пакет не входит
 ├─ tests/                  node:test против собранного dist/ (+ dist-types.tsconfig.json)
@@ -191,14 +193,15 @@ ElementsUI/
 <details>
 <summary>🚪 Точки входа пакета</summary>
 
-| Импорт                             | Файл в dist          | Что даёт                                                                                                                                                                                                         | Svelte нужен           |
-| ---------------------------------- | -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------- |
-| `poe-svelte-ui-lib`                | `index.js`           | Компоненты, виджеты, `GUIRenderer`, правила `gui.ts`, реестр `COMPONENTS`, `createFsTransfer`, i18n, `sanitizeHtml`, иконки, все типы                                                                            | да                     |
-| `poe-svelte-ui-lib/constructor`    | `constructor.js`     | Панели свойств `*Props`, `PANELS`, `COMPONENT_DEFAULTS`, `COMPONENT_SIZES`, `createComponent`, `createPropsEditor`, `applyPropertyChange`, `optionsStore`, `TextsEditor`, `CommonSnippets`, словарь конструктора | да                     |
-| `poe-svelte-ui-lib/protocols`      | `protocols/index.js` | CBOR, пакет `poe_cbor_pkt`, HAR, CRC, словарь, xPOE-Debug, CAN/slcan, графики отладки                                                                                                                            | нет, работает под Node |
-| `poe-svelte-ui-lib/dictionaries/*` | файлы словарей       | `poe_cmd.yaml`, `poe_msg.yaml`, `poe_gui.yaml`, `firmware/poe_cmd.h`, `firmware/poe_msg.h` как файлы                                                                                                             | -                      |
-| `poe-svelte-ui-lib/locales`        | `locales/index.js`   | `LANGUAGES`, переводчик, `localizeDeep` без компонентов                                                                                                                                                          | нет, для Node          |
-| `poe-svelte-ui-lib/theme.css`      | `theme.css`          | Палитра `.light`/`.dark`, типографика, роли `bg-*`/`border-*`                                                                                                                                                    | -                      |
+| Импорт                             | Файл в dist                   | Что даёт                                                                                                                                                                                                         | Svelte нужен           |
+| ---------------------------------- | ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------- |
+| `poe-svelte-ui-lib`                | `index.js`                    | Компоненты, виджеты, `GUIRenderer`, правила `gui.ts`, реестр `COMPONENTS`, `createFsTransfer`, i18n, `sanitizeHtml`, иконки, все типы                                                                            | да                     |
+| `poe-svelte-ui-lib/constructor`    | `constructor.js`              | Панели свойств `*Props`, `PANELS`, `COMPONENT_DEFAULTS`, `COMPONENT_SIZES`, `createComponent`, `createPropsEditor`, `applyPropertyChange`, `optionsStore`, `TextsEditor`, `CommonSnippets`, словарь конструктора | да                     |
+| `poe-svelte-ui-lib/protocols`      | `protocols/index.js`          | CBOR, пакет `poe_cbor_pkt`, HAR, CRC, словарь, xPOE-Debug, CAN/slcan (и сырые кадры с расширенным ID), графики отладки                                                                                           | нет, работает под Node |
+| `poe-svelte-ui-lib/dronecan`       | `protocols/dronecan/index.js` | DroneCAN (CAN ArduPilot): типы из официальных DSDL, кодек и передачи по алгоритмам libcanard - [README](src/lib/protocols/dronecan/README.md)                                                                    | нет, работает под Node |
+| `poe-svelte-ui-lib/dictionaries/*` | файлы словарей                | `poe_cmd.yaml`, `poe_msg.yaml`, `poe_gui.yaml`, `firmware/poe_cmd.h`, `firmware/poe_msg.h` как файлы                                                                                                             | -                      |
+| `poe-svelte-ui-lib/locales`        | `locales/index.js`            | `LANGUAGES`, переводчик, `localizeDeep` без компонентов                                                                                                                                                          | нет, для Node          |
+| `poe-svelte-ui-lib/theme.css`      | `theme.css`                   | Палитра `.light`/`.dark`, типографика, роли `bg-*`/`border-*`                                                                                                                                                    | -                      |
 
 Импорт `/constructor` один раз до отрисовки подключает словарь конструктора к `$T` библиотеки (`extendTranslations`). Ядро протоколов и `locales` используют импорты с расширением `.js`, чтобы их разрешал сам Node без бандлера.
 

@@ -1,6 +1,6 @@
 {
   "name": "poe-svelte-ui-lib",
-  "version": "2.29.2",
+  "version": "2.30.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Oleg-Perevyshin/ElementsUI.git"
@@ -21,7 +21,7 @@
     "build": "vite build",
     "prepare": "node -e \"try{require('child_process').execSync('git config core.hooksPath .githooks',{stdio:'ignore'})}catch{}\"",
     "prepack": "npm run Generate && svelte-kit sync && svelte-check --tsconfig ./tsconfig.json && svelte-package && tsc -p tests/dist-types.tsconfig.json && node --test tests/*.test.mjs && publint",
-    "Generate": "node scripts/GenerateDictionary.mjs && tsx scripts/UpdateIconsLib.ts && prettier --write --log-level warn src/lib/icons.ts",
+    "Generate": "node scripts/GenerateDictionary.mjs && node scripts/GenerateDroneCAN.mjs && tsx scripts/UpdateIconsLib.ts && prettier --write --log-level warn src/lib/icons.ts src/lib/protocols/dronecan/generated/types.ts",
     "Test": "npm run Generate && svelte-package && node --test tests/*.test.mjs",
     "Formatting": "prettier --write .",
     "CheckUpdate": "npx npm-check-updates -u && npm install"
@@ -36,6 +36,10 @@
     "./protocols": {
       "types": "./dist/protocols/index.d.ts",
       "default": "./dist/protocols/index.js"
+    },
+    "./dronecan": {
+      "types": "./dist/protocols/dronecan/index.d.ts",
+      "default": "./dist/protocols/dronecan/index.js"
     },
     "./dictionaries/*": "./dist/dictionaries/*",
     "./constructor": {
