@@ -1,4 +1,4 @@
-/* poe_msg.h - СГЕНЕРИРОВАНО из poe_msg.yaml библиотеки poe-svelte-ui-lib (npm run Generate), вручную не править */
+/* poe_msg.h - СГЕНЕРИРОВАНО из poe_msg.yaml библиотеки xPOE-Stack Lib (npm run Generate), вручную не править */
 /* Код сообщения - поле Message в VAL ответа и push и в Payload ER! модуля (0 - сообщения нет), параметры шаблона {0}, {1}... - массив Args */
 /* Группы: SYS 1-99, CFG 100-199, FS 200-299, FW 300-399, WIFI 400-499, API 500-599, BUS 600-699, NET 700-799, LORA 800-899, DEV 1000-1999, DRV 2000-2999; резерв: 900-999, 3000-65535 */
 #pragma once

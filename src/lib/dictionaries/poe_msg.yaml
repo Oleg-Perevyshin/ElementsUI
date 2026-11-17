@@ -3,7 +3,7 @@
 # messages: { code: код из диапазона группы, group: группа, name: <группа>_<ИМЯ> (MSG_<name> в poe_msg.h), level: info|warn|error, ru, en, zh: шаблоны текста }
 # Код 0 (или нет поля Message) - сообщения нет. {0}, {1}... - параметры из массива Args по порядку, только где без них теряется смысл; что значат - комментарий после строки
 # Резерв: 900..999 - новые группы ядра, 3000..65535 - на будущее. Новое сообщение - в свою группу, новая группа ядра - диапазон из 900..999
-# Источник - poe-svelte-ui-lib (src/lib/dictionaries/poe_msg.yaml); .framework/poe_msg.yaml и poe_msg.h фреймворков - копии, не править
+# Источник - xPOE-Stack Lib (src/lib/dictionaries/poe_msg.yaml); .framework/poe_msg.yaml и poe_msg.h фреймворков - копии, не править
 # После правки - npm run Generate (generated/poe_msg.ts и firmware/poe_msg.h), затем копии во фреймворки
 
 groups:

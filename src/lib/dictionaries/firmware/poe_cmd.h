@@ -1,4 +1,4 @@
-/* poe_cmd.h - СГЕНЕРИРОВАНО из poe_cmd.yaml библиотеки poe-svelte-ui-lib (npm run Generate), вручную не править */
+/* poe_cmd.h - СГЕНЕРИРОВАНО из poe_cmd.yaml библиотеки xPOE-Stack Lib (npm run Generate), вручную не править */
 #pragma once
 #include <stdint.h>
 

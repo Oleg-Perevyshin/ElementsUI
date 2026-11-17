@@ -2,7 +2,7 @@
 # Строка: Строковое представление аргумента | Название в перечислении | Числовой код
 # Имя - полными словами, сначала группа (System, Debug, Network, Cloud, Module, Firmware, Motion, Orientation, Chat, Device), затем действие; перечисление - A_ и то же имя заглавными через подчёркивание (у команд облака A_CLOUD_)
 # Диапазоны: 0..4095 - устройства (команды прошивок), 4096..6999 - резерв, 7000..7999 - облако DevCloud (команды самого облака, не устройств), 8000..8191 - резерв
-# Источник - poe-svelte-ui-lib (src/lib/dictionaries/poe_cmd.yaml); .framework/poe_cmd.yaml фреймворков - копии, не править
+# Источник - xPOE-Stack Lib (src/lib/dictionaries/poe_cmd.yaml); .framework/poe_cmd.yaml фреймворков - копии, не править
 
 # 0 - отсутствие аргумента
 - [Unknown, A_UNKNOWN, 0] # Аргумент отсутствует

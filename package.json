@@ -1,6 +1,6 @@
 {
   "name": "poe-svelte-ui-lib",
-  "version": "2.29.1",
+  "version": "2.29.2",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Oleg-Perevyshin/ElementsUI.git"
@@ -74,7 +74,7 @@
     "dompurify": "^3.4.18",
     "js-yaml": "^5.5.0",
     "maplibre-gl": "^6.18.0",
-    "marked": "^18.2.0",
+    "marked": "^18.2.1",
     "prettier": "^3.10.1",
     "prettier-plugin-svelte": "^4.1.1",
     "prettier-plugin-tailwindcss": "^0.8.1",

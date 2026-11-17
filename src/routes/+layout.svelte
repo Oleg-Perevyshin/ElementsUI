@@ -113,7 +113,12 @@
   <!-- Верхняя панель -->
   <header class={"sticky top-0 z-50 m-1 mt-2 flex h-14 items-center justify-between rounded-2xl border border-(--hairline-color) bg-(--back-color) p-4"}>
     <div class="flex items-center gap-2">
-      <a href="/ElementsUI/" class="ml-2 no-underline! transition hover:scale-101"><h1>POE-Svelte-UI-Lib</h1></a>
+      <a href="/ElementsUI/" class="ml-2 flex items-center no-underline! transition hover:scale-101">
+        <!-- Название в одну строку; на телефоне подпись автора скрыта, иначе шапка не помещается -->
+        <h1 class="leading-none whitespace-nowrap">
+          xPOE-Stack Lib <span class="text-[0.5em] font-normal text-(--muted-color) max-sm:hidden">by Oleg Perevyshin</span>
+        </h1>
+      </a>
       <!-- Версия из package.json (define __LIB_VERSION__), ссылка - на эту версию в npm -->
       <a
         href={`https://www.npmjs.com/package/poe-svelte-ui-lib/v/${__LIB_VERSION__}`}

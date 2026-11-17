@@ -83,7 +83,7 @@ const harItems = enumItems(commandsYaml, (line) => {
 })
 writeFileSync(
   new URL("poe_cmd.h", firmware),
-  `/* poe_cmd.h - СГЕНЕРИРОВАНО из poe_cmd.yaml библиотеки poe-svelte-ui-lib (npm run Generate), вручную не править */\n` +
+  `/* poe_cmd.h - СГЕНЕРИРОВАНО из poe_cmd.yaml библиотеки xPOE-Stack Lib (npm run Generate), вручную не править */\n` +
     `#pragma once\n#include <stdint.h>\n\n` +
     `/* ********************************************************** */\n` +
     `/* Команда пакета: заголовок, аргумент и признак «нужен ответ» в одном 16-битном слове */\n` +
@@ -225,7 +225,7 @@ for (const { group, list } of byGroup) {
 }
 writeFileSync(
   new URL("poe_msg.h", firmware),
-  `/* poe_msg.h - СГЕНЕРИРОВАНО из poe_msg.yaml библиотеки poe-svelte-ui-lib (npm run Generate), вручную не править */\n` +
+  `/* poe_msg.h - СГЕНЕРИРОВАНО из poe_msg.yaml библиотеки xPOE-Stack Lib (npm run Generate), вручную не править */\n` +
     `/* Код сообщения - поле Message в VAL ответа и push и в Payload ER! модуля (0 - сообщения нет), параметры шаблона {0}, {1}... - массив Args */\n` +
     `/* Группы: ${groups.map(({ name, from, to }) => `${name} ${from}-${to}`).join(", ")}; резерв: ${reserve.join(", ")} */\n` +
     `#pragma once\n\n#include <stdint.h>\n\n${formatEnum(msgItems, "api_msg_t")}\n`,
