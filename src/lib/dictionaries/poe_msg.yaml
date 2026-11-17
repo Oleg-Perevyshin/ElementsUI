@@ -256,8 +256,8 @@ messages:
   - { code: 2037, group: DRV, name: DRV_FOC_MOTOR_PARAMS, level: error, ru: "Проверьте параметры двигателя: R {0}, L {1}", en: "Check motor parameters: R {0}, L {1}", zh: "检查电机参数：R {0}，L {1}" }
   - { code: 2038, group: DRV, name: DRV_FOC_CURRENT_LOOP, level: info, ru: "Контур тока: полоса {0} Гц, Kp {1}, Ki {2}, Tf {3} мс", en: "Current loop: bandwidth {0} Hz, Kp {1}, Ki {2}, Tf {3} ms", zh: "电流环：带宽 {0} Hz，Kp {1}，Ki {2}，Tf {3} ms" }
   - { code: 2039, group: DRV, name: DRV_FOC_DISABLED, level: info, ru: "Двигатель {0} выключен", en: "Motor {0} disabled", zh: "电机 {0} 已关闭" }
-  - { code: 2040, group: DRV, name: DRV_FOC_TUNE_RESULT, level: info, ru: "Ku {0}, Pu {1} с, Kp {2}", en: "Ku {0}, Pu {1} s, Kp {2}", zh: "Ku {0}，Pu {1} s，Kp {2}" }
-  - { code: 2041, group: DRV, name: DRV_FOC_TUNE_INVALID, level: error, ru: "Автонастройка: неверные Ku {0}, Pu {1}", en: "Auto-tuning: invalid Ku {0}, Pu {1}", zh: "自动整定：Ku {0}、Pu {1} 无效" }
+  - { code: 2040, group: DRV, name: DRV_FOC_TUNE_RESULT, level: info, ru: "Автонастройка: разгон {0} рад/с² на 1 В, V_Kp {1}, V_Ki {2}, A_Kp {3}", en: "Auto-tuning: acceleration {0} rad/s² per 1 V, V_Kp {1}, V_Ki {2}, A_Kp {3}", zh: "自动整定：每 1 V 加速度 {0} rad/s²，V_Kp {1}，V_Ki {2}，A_Kp {3}" }
+  - { code: 2041, group: DRV, name: DRV_FOC_TUNE_INVALID, level: error, ru: "Автонастройка: разгон {0} рад/с² на 1 В не измерен, разброс {1}%", en: "Auto-tuning: acceleration {0} rad/s² per 1 V not measured, spread {1}%", zh: "自动整定：未测得每 1 V 加速度 {0} rad/s²，离散度 {1}%" }
   - { code: 2042, group: DRV, name: DRV_ECC_ERROR, level: error, ru: "Ошибка памяти контроллера, ECC {0}", en: "Controller memory error, ECC {0}", zh: "控制器存储器错误，ECC {0}" }
   - { code: 2043, group: DRV, name: DRV_CANFD_MODE_LOST, level: warn, ru: "Контроллер CAN FD вышел из рабочего режима", en: "CAN FD controller left operating mode", zh: "CAN FD 控制器退出工作模式" }
   - { code: 2044, group: DRV, name: DRV_CANFD_MODE_INVALID, level: error, ru: "Сохранён неверный режим {0}, взят заводской {1}", en: "Invalid stored mode {0}, factory mode {1} used", zh: "已存储的模式 {0} 无效，使用出厂模式 {1}" }
