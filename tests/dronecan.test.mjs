@@ -61,7 +61,7 @@ test("многокадровая передача: CRC с сигнатурой, 
   const value = {
     status: { uptime_sec: 77, health: 0, mode: 0, sub_mode: 0, vendor_specific_status_code: 0 },
     software_version: { major: 4, minor: 5, optional_field_flags: 0, vcs_commit: 0, image_crc: 0 },
-    hardware_version: { major: 1, minor: 0, unique_id: Array.from({ length: 16 }, (_, i) => i), certificate_of_authenticity: [] },
+    hardware_version: { major: 1, minor: 0, unique_id: Array.from({ length: 16 }, (_, i) => i), certificate_of_authenticity: "" },
     name: "org.ardupilot.test",
   }
   const out = m.encodeDroneCanTransfer({
@@ -91,6 +91,20 @@ test("многокадровая передача: CRC с сигнатурой, 
   let bad
   for (const frame of broken) bad = rx.push(out.canId, frame, 2000) ?? bad
   assert.equal(bad?.crcOk, false)
+})
+
+test("реальная передача батареи ArduPilot: BatteryInfo, пустое имя модели - пустая строка", () => {
+  const bytes = Uint8Array.from(
+    "A95C4252004DD263845F84630000011FFF8001000000 00"
+      .replace(/\s/g, "")
+      .match(/../g)
+      .map((h) => parseInt(h, 16)),
+  )
+  const value = m.decodeDroneCan(m.droneCanStruct(m.droneCanType("uavcan.equipment.power.BatteryInfo")), bytes)
+  assert.equal(value.voltage, 50.0625)
+  assert.equal(value.current, 20)
+  assert.equal(value.battery_id, 1)
+  assert.equal(value.model_name, "")
 })
 
 test("одиночный кадр: ID сообщения, хвостовой байт", () => {

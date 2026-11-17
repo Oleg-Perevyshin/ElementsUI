@@ -44,9 +44,9 @@ const unionTagBits = (s: DroneCanStruct) => bitLength(Math.max(s.fields.length -
 /* Хвостовой динамический массив без поля длины: последний в структуре и элемент не короче байта */
 const isTaoArray = (t: DroneCanField, isLast: boolean) => t.k === "a" && !!t.dyn && isLast && minBits(t.of) >= 8
 
-/* Массив байт из 8-битных чисел печатных ASCII - строка (имена, единицы); иначе список чисел */
+/* Массив байт из 8-битных чисел печатных ASCII - строка (имена, единицы), пустой - пустая строка; иначе список чисел */
 const isText = (t: DroneCanField) => t.k === "a" && !!t.dyn && t.of.k === "p" && t.of.kind === "u" && t.of.bits === 8
-const toText = (bytes: number[]): DroneCanValue => (bytes.length && bytes.every((b) => b >= 0x20 && b <= 0x7e) ? String.fromCharCode(...bytes) : bytes)
+const toText = (bytes: number[]): DroneCanValue => (bytes.every((b) => b >= 0x20 && b <= 0x7e) ? String.fromCharCode(...bytes) : bytes)
 
 /* ---------- Разбор ---------- */
 
