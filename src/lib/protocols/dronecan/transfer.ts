@@ -83,6 +83,8 @@ export interface DroneCanTransfer extends DroneCanId {
   timestamp: number
   /* Многокадровая передача: CRC совпала */
   crcOk: boolean
+  /* Пришла кадрами CAN FD: хвостовой массив с длиной (без TAO), последний кадр дополнен нулями до длины по DLC */
+  fd?: boolean
   frames: number
 }
 
@@ -102,7 +104,7 @@ export const createDroneCanReceiver = ({ timeoutMs = 2000, signatureOf }: { time
   }
   const states = new Map<string, State>()
   return {
-    push(canId: number, data: Uint8Array, now = Date.now()): DroneCanTransfer | undefined {
+    push(canId: number, data: Uint8Array, now = Date.now(), fd = false): DroneCanTransfer | undefined {
       if (data.length < 1) return undefined
       const id = parseDroneCanId(canId)
       const tail = data[data.length - 1]
@@ -110,7 +112,7 @@ export const createDroneCanReceiver = ({ timeoutMs = 2000, signatureOf }: { time
       const start = !!(tail & TAIL_START)
       const end = !!(tail & TAIL_END)
       const body = data.subarray(0, data.length - 1)
-      if (start && end) return { ...id, transferId: tid, payload: body.slice(), timestamp: now, crcOk: true, frames: 1 }
+      if (start && end) return { ...id, transferId: tid, payload: body.slice(), timestamp: now, crcOk: true, frames: 1, fd }
       const key = `${id.type}:${id.dataTypeId}:${id.source}:${id.destination}`
       for (const [k, s] of states) if (now - s.last > timeoutMs) states.delete(k)
       if (start) {
@@ -148,7 +150,7 @@ export const createDroneCanReceiver = ({ timeoutMs = 2000, signatureOf }: { time
         payload.set(part, offset)
         offset += part.length
       }
-      return { ...id, transferId: tid, payload, timestamp: state.timestamp, crcOk: state.crc === state.expected, frames: state.frames }
+      return { ...id, transferId: tid, payload, timestamp: state.timestamp, crcOk: state.crc === state.expected, frames: state.frames, fd }
     },
     reset() {
       states.clear()

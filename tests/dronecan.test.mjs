@@ -134,6 +134,9 @@ test("slcan: расширенный кадр туда и обратно", () => 
 })
 
 /* Имитация устройства узла 100: NodeStatus, ответы на GetNodeInfo, param.GetSet (2 параметра), ExecuteOpcode; RestartNode - без ответа */
+/* Уникальный ID тестового узла 100 в ответе GetNodeInfo */
+const DEVICE_UID = Array.from({ length: 16 }, (_, i) => 0xa0 + i)
+
 const makeBus = () => {
   const params = [
     { name: "battery.id", value: { integer_value: 1 } },
@@ -156,7 +159,7 @@ const makeBus = () => {
     const d = m.decodeDroneCanTransfer(t)
     let value
     if (d.typeName === "uavcan.protocol.GetNodeInfo")
-      value = { status: {}, software_version: { major: 4, minor: 1 }, hardware_version: {}, name: "com.cubepilot.here3" }
+      value = { status: {}, software_version: { major: 4, minor: 1 }, hardware_version: { unique_id: DEVICE_UID }, name: "com.cubepilot.here3" }
     if (d.typeName === "uavcan.protocol.param.GetSet") {
       const p = d.value.name ? params.find((x) => x.name === d.value.name) : params[d.value.index]
       if (p && d.value.name && !("empty" in d.value.value)) p.value = d.value.value
@@ -235,6 +238,28 @@ test("сервер DNA: номер по уникальному ID из трёх 
   }
 })
 
+test("сервер DNA: узел после перезагрузки получает прежний номер по уникальному ID из GetNodeInfo", async () => {
+  const bus = makeBus()
+  const assigned = []
+  const me = bus.create({ onAllocate: (id) => assigned.push(id) })
+  const anon = (value) => {
+    const payload = m.encodeDroneCan(m.droneCanStruct(m.droneCanType("uavcan.protocol.dynamic_node_id.Allocation")), value)
+    const canId = m.makeDroneCanId({ priority: 30, type: "msg", dataTypeId: 1, source: 0, destination: 0 })
+    me.handle({ ...m.parseDroneCanId(canId), transferId: 0, payload, timestamp: 0, crcOk: true, frames: 1 })
+  }
+  try {
+    bus.deliver(m.encodeDroneCanTransfer({ typeName: "uavcan.protocol.NodeStatus", type: "msg", value: { uptime_sec: 50 }, source: 100, transferId: 0 }))
+    await new Promise((r) => setTimeout(r, 50))
+    anon({ node_id: 0, first_part_of_unique_id: 1, unique_id: DEVICE_UID.slice(0, 6) })
+    anon({ node_id: 0, first_part_of_unique_id: 0, unique_id: DEVICE_UID.slice(6, 12) })
+    anon({ node_id: 0, first_part_of_unique_id: 0, unique_id: DEVICE_UID.slice(12) })
+    await new Promise((r) => setTimeout(r, 10))
+    assert.deepEqual(assigned, [100])
+  } finally {
+    me.dispose()
+  }
+})
+
 test("автографики: числа и векторы, без состояний, меток времени и счётчиков", () => {
   assert.deepEqual(m.droneCanPlotFields("uavcan.equipment.ahrs.MagneticFieldStrength", { magnetic_field_ga: [0.1, 0.2, 0.3], magnetic_field_covariance: [] }), [
     ["magnetic_field_ga[0]", 0.1],
@@ -247,4 +272,119 @@ test("автографики: числа и векторы, без состоя�
     ["b[0]", 2],
     ["b[1].c", 3],
   ])
+})
+
+test("обновление прошивки: узел читает файл с нашего узла по 256 байт и возвращается в работу", async () => {
+  const image = Uint8Array.from({ length: 1000 }, (_, i) => (i * 7) & 0xff)
+  const meRx = m.createDroneCanTransferReceiver()
+  const devRx = m.createDroneCanTransferReceiver()
+  const got = []
+  let me
+  let tid = 0
+  const toMe = (out) => {
+    let t
+    for (const f of out.frames) t = meRx.push(out.canId, f) ?? t
+    me.handle(t)
+  }
+  /* Загрузчик узла 100: после BeginFirmwareUpdate читает файл, в конце - NodeStatus в рабочем режиме */
+  const readNext = (offset, source, path) =>
+    toMe(
+      m.encodeDroneCanTransfer({
+        typeName: "uavcan.protocol.file.Read",
+        type: "req",
+        value: { offset, path: { path } },
+        source: 100,
+        destination: source,
+        transferId: tid++ & 31,
+      }),
+    )
+  const device = (canId, frames) => {
+    let t
+    for (const f of frames) t = devRx.push(canId, f) ?? t
+    if (!t || t.destination !== 100) return
+    const d = m.decodeDroneCanTransfer(t)
+    if (d.typeName === "uavcan.protocol.file.BeginFirmwareUpdate" && t.type === "req") {
+      const path = d.value.image_file_remote_path.path
+      const ok = m.encodeDroneCanTransfer({
+        typeName: d.typeName,
+        type: "res",
+        value: { error: 0 },
+        source: 100,
+        destination: t.source,
+        transferId: t.transferId,
+      })
+      setTimeout(() => {
+        toMe(ok)
+        readNext(0, d.value.source_node_id, path)
+      }, 2)
+    }
+    if (d.typeName === "uavcan.protocol.file.Read" && t.type === "res") {
+      const chunk = typeof d.value.data === "string" ? Array.from(d.value.data, (c) => c.charCodeAt(0)) : d.value.data
+      got.push(...chunk)
+      if (chunk.length === 256) setTimeout(() => readNext(got.length, 127, "fw/100.bin"), 1)
+      else
+        setTimeout(
+          () =>
+            toMe(
+              m.encodeDroneCanTransfer({ typeName: "uavcan.protocol.NodeStatus", type: "msg", value: { uptime_sec: 1, mode: 0 }, source: 100, transferId: 1 }),
+            ),
+          5,
+        )
+    }
+  }
+  me = m.createDroneCanNode({ nodeId: 127, write: async (id, frames) => device(id, frames) })
+  const phases = []
+  try {
+    await me.updateFirmware(100, image, { onProgress: (p) => phases.push(p.phase) })
+    assert.deepEqual(Uint8Array.from(got), image)
+    assert.equal(phases[0], "start")
+    assert.ok(phases.includes("read"))
+    assert.equal(phases.at(-1), "done")
+  } finally {
+    me.dispose()
+  }
+})
+
+test("обновление прошивки: отказ узла - ошибка с кодом и текстом", async () => {
+  const rx = m.createDroneCanTransferReceiver()
+  let me
+  const device = (canId, frames) => {
+    let t
+    for (const f of frames) t = rx.push(canId, f) ?? t
+    if (!t || t.type !== "req") return
+    const out = m.encodeDroneCanTransfer({
+      typeName: "uavcan.protocol.file.BeginFirmwareUpdate",
+      type: "res",
+      value: { error: 1, optional_error_message: "armed" },
+      source: 100,
+      destination: 127,
+      transferId: t.transferId,
+    })
+    const meRx = m.createDroneCanTransferReceiver()
+    setTimeout(() => {
+      let r
+      for (const f of out.frames) r = meRx.push(out.canId, f) ?? r
+      me.handle(r)
+    }, 2)
+  }
+  me = m.createDroneCanNode({ nodeId: 127, write: async (id, frames) => device(id, frames) })
+  try {
+    await assert.rejects(me.updateFirmware(100, new Uint8Array(10)), /отказал.*код 1, armed/)
+  } finally {
+    me.dispose()
+  }
+})
+
+test("CAN FD: одиночный кадр с дополнением нулями, хвостовой массив с длиной", () => {
+  /* GetSet запрос {index: 0, name: "GPS"} без TAO: 13 бит index, 3 бита тега, 7 бит длины имени, имя */
+  const s = m.droneCanStruct(m.droneCanType("uavcan.protocol.param.GetSet"), "req")
+  const body = m.encodeDroneCan(s, { index: 0, value: { empty: {} }, name: "GPS" }, false)
+  const padded = new Uint8Array(12)
+  padded.set(body)
+  padded[11] = 0xc0
+  const rx = m.createDroneCanTransferReceiver()
+  const canId = m.makeDroneCanId({ priority: 24, type: "req", dataTypeId: 11, source: 125, destination: 127 })
+  const t = rx.push(canId, padded, 0, true)
+  assert.equal(t.fd, true)
+  assert.deepEqual(m.decodeDroneCanTransfer(t).value, { index: 0, value: { empty: {} }, name: "GPS" })
 })

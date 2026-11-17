@@ -1,6 +1,6 @@
 /* src/lib/protocols/dronecan/node.ts - свой узел на шине DroneCAN: NodeStatus раз в секунду, ответ на GetNodeInfo, сервер динамического назначения Node ID (DNA, как у ArduPilot),
    узлы шины (NodeStatus, GetNodeInfo по первому появлению), последние сообщения узлов с частотой, запросы сервисов с ожиданием ответа (по одному на узел - простые устройства теряют запросы вплотную),
-   параметры узла: список, чтение, запись, сохранение, сброс, перезагрузка */
+   параметры узла: список, чтение, запись, сохранение, сброс, перезагрузка; файловый сервер (file.Read, file.GetInfo) и обновление прошивки узла (BeginFirmwareUpdate) */
 import { droneCanType } from "./codec.js"
 import { decodeDroneCanTransfer, encodeDroneCanTransfer } from "./index.js"
 import type { DroneCanTransfer, DroneCanTransferType } from "./transfer.js"
@@ -15,6 +15,14 @@ export const DRONECAN_OPCODE_SAVE = 0
 export const DRONECAN_OPCODE_ERASE = 1
 /* Магическое число RestartNode */
 export const DRONECAN_RESTART_MAGIC = 0xacce551b1e
+/* file.Read отдаёт до 256 байт; ответ короче - конец файла */
+export const DRONECAN_FILE_CHUNK = 256
+/* Коды uavcan.protocol.file.Error */
+const FILE_OK = 0
+const FILE_NOT_FOUND = 2
+/* Ответы BeginFirmwareUpdate: 0 - начал, 2 - уже обновляется (тоже годится: загрузчик продолжит читать) */
+const FW_OK = 0
+const FW_IN_PROGRESS = 2
 
 export type DroneCanParamKind = "empty" | "integer" | "real" | "boolean" | "string"
 export type DroneCanParamScalar = number | bigint | boolean | string | null
@@ -102,6 +110,13 @@ const toEntry = (index: number, res: Record<string, unknown>): DroneCanParam => 
   max: droneCanParamValue(res.max_value).value,
 })
 
+/* Ход обновления прошивки: start - запрос отправлен, read - узел читает файл (bytes из size), done - файл прочитан целиком и узел снова в рабочем режиме */
+export interface DroneCanFirmwareProgress {
+  phase: "start" | "read" | "reboot" | "done"
+  bytes: number
+  size: number
+}
+
 export interface DroneCanNodeOptions {
   /* Свой Node ID 1..127 */
   nodeId: number
@@ -142,6 +157,14 @@ export interface DroneCanNode {
   nodes(): DroneCanBusNode[]
   messages(id: number): DroneCanMessage[]
   allocations(): Map<string, number>
+  /* Файл на нашем узле для file.Read других узлов; null - убрать */
+  serveFile(path: string, data: Uint8Array | null): void
+  /* Обновление прошивки узла файлом data: BeginFirmwareUpdate, узел (его загрузчик) читает файл с нас, ждём его возвращения в рабочий режим */
+  updateFirmware(
+    node: number,
+    data: Uint8Array,
+    options?: { path?: string; onProgress?: (p: DroneCanFirmwareProgress) => void; idleTimeoutMs?: number; rebootTimeoutMs?: number },
+  ): Promise<void>
   dispose(): void
 }
 
@@ -245,6 +268,9 @@ export const createDroneCanNode = ({
           software: info.software_version as DroneCanNodeInfo["software"],
           hardware: info.hardware_version as DroneCanNodeInfo["hardware"],
         }
+        /* Уникальный ID узла - его номер для DNA: тот же модуль после перезагрузки получит прежний номер */
+        const uid = uidBytes(entry.info.hardware?.unique_id)
+        if (uid.length === 16) allocations.set(uidKey(uid), id)
       })
       .catch(() => {})
       .finally(() => {
@@ -254,10 +280,12 @@ export const createDroneCanNode = ({
   }
 
   /* Сервер DNA: узел без номера шлёт анонимно Allocation с уникальным ID частями (6+6+4 байта), сервер после каждой части повторяет собранное;
-     собрано 16 байт - номер: тот же, что раньше этому ID, желаемый, если свободен, иначе свободный сверху от 125 */
+     собрано 16 байт - номер: тот же, что раньше этому ID (выданный нами или из GetNodeInfo узла), желаемый, если свободен, иначе свободный сверху от 125 */
   const allocations = new Map<string, number>()
   let uidBuffer: number[] = []
   const uidKey = (uid: number[]) => uid.map((b) => b.toString(16).padStart(2, "0")).join("")
+  /* Уникальный ID из кодека: массив байт или строка, если байты печатные */
+  const uidBytes = (raw: unknown) => Array.from(typeof raw === "string" ? new TextEncoder().encode(raw) : Array.isArray(raw) ? (raw as number[]) : [])
   const freeId = (preferred: number) => {
     const busy = new Set([nodeId, ...nodes.keys(), ...allocations.values()])
     if (preferred >= 1 && preferred <= 125 && !busy.has(preferred)) return preferred
@@ -265,8 +293,7 @@ export const createDroneCanNode = ({
     return 0
   }
   const allocate = (msg: Record<string, unknown>) => {
-    const raw = msg.unique_id
-    const part = Array.from(typeof raw === "string" ? new TextEncoder().encode(raw) : Array.isArray(raw) ? (raw as number[]) : [])
+    const part = uidBytes(msg.unique_id)
     if (msg.first_part_of_unique_id) uidBuffer = part
     else if (uidBuffer.length) uidBuffer = [...uidBuffer, ...part].slice(0, 16)
     else return
@@ -290,6 +317,34 @@ export const createDroneCanNode = ({
       true,
     ).catch(() => {})
     if (uidBuffer.length >= 16) uidBuffer = []
+  }
+
+  /* Файловый сервер: путь -> данные; чтения - чтобы обновление прошивки видело ход */
+  const files = new Map<string, Uint8Array>()
+  const readWatchers = new Set<(path: string, offset: number, client: number) => void>()
+  const pathText = (path: unknown) => {
+    const raw = (path as Record<string, unknown> | undefined)?.path
+    return typeof raw === "string" ? raw : Array.isArray(raw) ? String.fromCharCode(...(raw as number[])) : ""
+  }
+  const respond = (t: DroneCanTransfer, typeName: string, value: Record<string, unknown>) =>
+    void transmit({ typeName, type: "res", destination: t.source, transferId: t.transferId, priority: t.priority, value }, true).catch(() => {})
+  const serveFileRequest = (t: DroneCanTransfer, typeName: string, value: Record<string, unknown>) => {
+    const path = pathText(value.path)
+    const data = files.get(path)
+    if (typeName === "uavcan.protocol.file.GetInfo") {
+      respond(
+        t,
+        typeName,
+        data
+          ? { size: data.length, error: { value: FILE_OK }, entry_type: { flags: 1 | 8 } }
+          : { size: 0, error: { value: FILE_NOT_FOUND }, entry_type: { flags: 0 } },
+      )
+      return
+    }
+    const offset = Number(value.offset ?? 0)
+    if (!data) return respond(t, typeName, { error: { value: FILE_NOT_FOUND }, data: [] })
+    respond(t, typeName, { error: { value: FILE_OK }, data: data.subarray(offset, offset + DRONECAN_FILE_CHUNK) })
+    for (const watch of readWatchers) watch(path, offset, t.source)
   }
 
   let conflict = false
@@ -324,6 +379,15 @@ export const createDroneCanNode = ({
           pending.delete(key)
           wait.resolve(decoded?.value ?? {})
         }
+        return
+      }
+      if (
+        t.type === "req" &&
+        t.destination === nodeId &&
+        decoded?.value &&
+        (decoded.typeName === "uavcan.protocol.file.Read" || decoded.typeName === "uavcan.protocol.file.GetInfo")
+      ) {
+        serveFileRequest(t, decoded.typeName, decoded.value)
         return
       }
       if (t.type === "req" && t.destination === nodeId && decoded?.typeName === "uavcan.protocol.GetNodeInfo") {
@@ -401,6 +465,66 @@ export const createDroneCanNode = ({
         })
         .sort((a, b) => a.typeName.localeCompare(b.typeName)),
     allocations: () => new Map(allocations),
+    serveFile(path, data) {
+      if (data) files.set(path, data)
+      else files.delete(path)
+    },
+    /* Узел перезагружается в загрузчик и читает файл с нас; номер у загрузчика может смениться (DNA) - ход считается по чтениям нашего файла от любого узла */
+    async updateFirmware(node, data, { path = `fw/${node}.bin`, onProgress, idleTimeoutMs = 20000, rebootTimeoutMs = 60000 } = {}) {
+      files.set(path, data)
+      onProgress?.({ phase: "start", bytes: 0, size: data.length })
+      try {
+        let bytes = 0
+        let lastRead = now()
+        let done = false
+        /* Время чтения последнего куска: NodeStatus в рабочем режиме после него - прошивка встала */
+        let doneAt = 0
+        const watch = (readPath: string, offset: number) => {
+          if (readPath !== path) return
+          lastRead = now()
+          bytes = Math.max(bytes, Math.min(offset + DRONECAN_FILE_CHUNK, data.length))
+          if (offset + DRONECAN_FILE_CHUNK >= data.length && !done) {
+            done = true
+            doneAt = now()
+          }
+          onProgress?.({ phase: "read", bytes, size: data.length })
+        }
+        readWatchers.add(watch)
+        try {
+          const res = await request(
+            "uavcan.protocol.file.BeginFirmwareUpdate",
+            node,
+            { source_node_id: nodeId, image_file_remote_path: { path } },
+            { timeoutMs: 3000, retries: 1 },
+          )
+          const code = Number(res.error ?? 0)
+          if (code !== FW_OK && code !== FW_IN_PROGRESS) {
+            const message = typeof res.optional_error_message === "string" ? res.optional_error_message : ""
+            throw new Error(`DroneCAN: узел ${node} отказал в обновлении прошивки (код ${code}${message ? `, ${message}` : ""})`)
+          }
+          lastRead = now()
+          while (!done) {
+            await new Promise((resolve) => setTimeout(resolve, 200))
+            if (now() - lastRead > idleTimeoutMs) throw new Error(`DroneCAN: узел ${node} перестал читать прошивку (${bytes} из ${data.length} байт)`)
+          }
+        } finally {
+          readWatchers.delete(watch)
+        }
+        /* Файл прочитан: ждём, что узел снова пришлёт NodeStatus в рабочем режиме */
+        onProgress?.({ phase: "reboot", bytes: data.length, size: data.length })
+        while (now() - doneAt < rebootTimeoutMs) {
+          const entry = nodes.get(node)
+          if (entry && entry.lastSeen >= doneAt && entry.mode === 0) {
+            onProgress?.({ phase: "done", bytes: data.length, size: data.length })
+            return
+          }
+          await new Promise((resolve) => setTimeout(resolve, 250))
+        }
+        throw new Error(`DroneCAN: узел ${node} не вернулся в рабочий режим после прошивки`)
+      } finally {
+        files.delete(path)
+      }
+    },
     dispose() {
       clearInterval(statusTimer)
       clearInterval(offlineTimer)

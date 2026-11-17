@@ -31,7 +31,8 @@ export const decodeDroneCanTransfer = (t: DroneCanTransfer): DroneCanDecoded => 
   if (!def) return { typeName: "", error: t.source === 0 && t.type === "msg" ? "anonymous" : `unknown ${t.type} ${t.dataTypeId}` }
   if (!t.crcOk) return { typeName: def.name, error: "CRC" }
   try {
-    return { typeName: def.name, value: decodeDroneCan(droneCanStruct(def, t.type), t.payload) }
+    /* CAN FD - без TAO: хвостовой массив передаётся с длиной, нули дополнения в конце не мешают */
+    return { typeName: def.name, value: decodeDroneCan(droneCanStruct(def, t.type), t.payload, !t.fd) }
   } catch (error) {
     return { typeName: def.name, error: error instanceof Error ? error.message : String(error) }
   }
