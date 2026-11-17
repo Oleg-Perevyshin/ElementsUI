@@ -50,6 +50,9 @@ test("param.GetSet: union с тегом и хвостовой массив бе�
   const bytes = m.encodeDroneCan(req, { index: 0, value: { empty: {} }, name: "FOO" })
   assert.equal(hex(bytes), "0000464f4f")
   assert.deepEqual(m.decodeDroneCan(req, bytes), { index: 0, value: { empty: {} }, name: "FOO" })
+  /* Union не задан - первый вариант (empty): запрос параметра по номеру одним полем index */
+  assert.equal(hex(m.encodeDroneCan(req, { index: 2 })), "0200")
+  assert.throws(() => m.encodeDroneCan(req, { value: { wrong: 1 } }), /union/)
   const withInt = m.encodeDroneCan(req, { index: 3, value: { integer_value: -1 }, name: "X" })
   assert.deepEqual(m.decodeDroneCan(req, withInt), { index: 3, value: { integer_value: -1 }, name: "X" })
   const res = m.droneCanStruct(def, "res")

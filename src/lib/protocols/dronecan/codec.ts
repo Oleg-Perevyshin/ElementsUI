@@ -208,7 +208,9 @@ const writeField = (w: Writer, t: DroneCanField, value: unknown, name: string, t
 
 const writeStruct = (w: Writer, s: DroneCanStruct, value: Record<string, unknown>, tao: boolean): void => {
   if (s.union) {
-    const tag = s.fields.findIndex((f) => f.name !== null && f.name in value)
+    /* Union не задан (нет ключей) - первый вариант по умолчанию, как недостающие поля; ключи есть, но ни одного варианта - ошибка */
+    const found = s.fields.findIndex((f) => f.name !== null && f.name in value)
+    const tag = found < 0 && !Object.keys(value).length ? 0 : found
     if (tag < 0) throw new Error(`DroneCAN: в union нужно одно из полей: ${s.fields.map((f) => f.name).join(", ")}`)
     w.write(unionTagBits(s), BigInt(tag))
     return writeField(w, s.fields[tag].type, value[s.fields[tag].name!], s.fields[tag].name!, tao, tag === s.fields.length - 1)
