@@ -23,6 +23,7 @@ import WidgetDeviceInfo from "./WidgetDeviceInfo/WidgetDeviceInfo.svelte"
 import WidgetLoRa from "./WidgetLoRa/WidgetLoRa.svelte"
 import WidgetFileSystem from "./WidgetFileSystem/WidgetFileSystem.svelte"
 import WidgetStackInfo from "./WidgetStackInfo/WidgetStackInfo.svelte"
+import WidgetFirmware from "./WidgetFirmware/WidgetFirmware.svelte"
 import WidgetRGBStrip from "./WidgetRGBStrip/WidgetRGBStrip.svelte"
 import WidgetPFD from "./WidgetPFD/WidgetPFD.svelte"
 import WidgetMap from "./WidgetMap/WidgetMap.svelte"
@@ -51,6 +52,7 @@ export interface GuiViewsAll {
   WidgetLoRa: typeof WidgetLoRa
   WidgetFileSystem: typeof WidgetFileSystem
   WidgetStackInfo: typeof WidgetStackInfo
+  WidgetFirmware: typeof WidgetFirmware
   WidgetRGBStrip: typeof WidgetRGBStrip
   WidgetPFD: typeof WidgetPFD
   WidgetMap: typeof WidgetMap
@@ -80,6 +82,7 @@ export const GUI_VIEWS: GuiViewsAll = {
   WidgetLoRa,
   WidgetFileSystem,
   WidgetStackInfo,
+  WidgetFirmware,
   WidgetRGBStrip,
   WidgetPFD,
   WidgetMap,

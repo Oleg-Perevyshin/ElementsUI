@@ -35,6 +35,7 @@
     { page: "widget-lora", name: "WidgetLoRa" },
     { page: "widget-file-system", name: "WidgetFileSystem" },
     { page: "widget-stack-info", name: "WidgetStackInfo" },
+    { page: "widget-firmware", name: "WidgetFirmware" },
     { page: "widget-rgb-strip", name: "WidgetRGBStrip" },
     { page: "widget-pfd", name: "WidgetPFD" },
     { page: "widget-map", name: "WidgetMap" },

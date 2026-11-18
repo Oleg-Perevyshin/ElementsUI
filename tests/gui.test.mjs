@@ -25,6 +25,7 @@ test("поля виджета: ключи с префиксом и переоп�
   assert.deepEqual(gui.widgetPrefixes("WidgetMap", {}), ["MAV"])
   assert.deepEqual(gui.widgetPrefixes("WidgetRGBStrip", { id: "" }), ["LST"])
   assert.deepEqual(gui.widgetPrefixes("WidgetStackInfo", { id: "CFG" }), [""])
+  assert.deepEqual(gui.widgetPrefixes("WidgetFirmware", {}), ["CFG"])
 })
 
 test("битовые поля: Input bitMode и Select bitMode читают и пишут диапазон слова", () => {

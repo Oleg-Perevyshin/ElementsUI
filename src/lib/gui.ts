@@ -52,6 +52,8 @@ export const WIDGET_FIELDS = {
   WidgetFileSystem: { FS: {} as IWidgetFileSystemInfo },
   /* Объект StackInfo лежит в Payload без префикса группы (API_GetStackInfo) */
   WidgetStackInfo: { StackInfo: {} as IWidgetStackInfo },
+  /* Текущая версия модуля; список версий VerFW-S подставляет приложение */
+  WidgetFirmware: { DevFW: num },
   /* Группа LST драйвера RGB_Strip */
   WidgetRGBStrip: {
     Color: [] as number[] /* [R, G, B, W] 0..255; W - только SK6812 */,
@@ -149,6 +151,7 @@ export const WIDGET_PREFIX: Record<WidgetFieldsType, string> = {
   WidgetDeviceInfo: "CFG",
   WidgetFileSystem: "CFG",
   WidgetStackInfo: "",
+  WidgetFirmware: "CFG",
   WidgetRGBStrip: "LST",
   WidgetPFD: "MAV",
   WidgetMap: "MAV",

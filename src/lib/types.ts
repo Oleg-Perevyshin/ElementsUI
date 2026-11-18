@@ -37,6 +37,7 @@ export interface UIComponentPropsMap {
   WidgetLoRa: IWidgetLoRaProps
   WidgetFileSystem: IWidgetFileSystemProps
   WidgetStackInfo: IWidgetStackInfoProps
+  WidgetFirmware: IWidgetFirmwareProps
   WidgetRGBStrip: IWidgetRGBStripProps
   WidgetPFD: IWidgetPFDProps
   WidgetMap: IWidgetMapProps
@@ -872,6 +873,32 @@ export interface IWidgetStackInfoProps {
   collapsed?: boolean
   persistKey?: string
   onRefresh?: () => void
+}
+
+/* Этап обновления прошивки для строки состояния: start - команда ушла, bootloader/erase/write/verify - прямое обновление (updateModuleFirmware), hub - через хаб (updateViaHub) */
+export type WidgetFirmwareStage = "start" | "bootloader" | "erase" | "write" | "verify" | "hub"
+
+/* Что обновлять: версия из каталога или выбранный файл */
+export type WidgetFirmwareSource = { VerFW: number } | { file: Blob }
+
+export interface IWidgetFirmwareProps {
+  /* Группа поля текущей версии DevFW, по умолчанию "CFG" */
+  id?: string
+  wrapperClass?: string
+  accent?: AccentColor
+  label?: { name?: string }
+  /* Текущая версия модуля (CFG.DevFW) */
+  value?: { DevFW?: number }
+  /* Версии из каталога (VerFW-S): value - номер версии, name - подпись */
+  versions?: IOption<number>[]
+  /* Какие файлы можно выбрать, по умолчанию ".bin" */
+  accept?: string
+  /* Что умеет приложение: version - обновление версией из каталога (кнопка «Обновить»), file - выбранным файлом (поле файла) */
+  sources?: { version?: boolean; file?: boolean }
+  collapsed?: boolean
+  persistKey?: string
+  /* Запуск обновления: onProgress - этап и ход 0..100 для полосы, промис завершается вместе с обновлением, отказ - ошибка в строке состояния. Без него виджет неактивен */
+  onUpdate?: (source: WidgetFirmwareSource, onProgress: (stage: WidgetFirmwareStage, percent: number) => void) => Promise<void>
 }
 
 export interface IWidgetRGBStripProps {

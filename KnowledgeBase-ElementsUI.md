@@ -1,4 +1,4 @@
-<!-- Файл собирает node .knowledgebase/build.mjs из .knowledgebase/Overview.md и документации проекта (37 файлов). Вручную не править: правь источники и пересобери -->
+<!-- Файл собирает node .knowledgebase/build.mjs из .knowledgebase/Overview.md и документации проекта (38 файлов). Вручную не править: правь источники и пересобери -->
 
 # База знаний ElementsUI
 
@@ -170,7 +170,7 @@ ElementsUI/
 
 - Компоненты: `Input`, `Select`, `Switch`, `Slider`, `Button`, `Joystick`, `ProgressBar`, `Graph`, `PeriodChart`, `Table`, `FileAttach`, `VideoViewer`, `TextField`, `Widget`.
 - Раскладка: `Accordion`, `Tabs`, `Divider`, `Carousel`, `Dropdown` (меню у кнопки, без панели свойств); в корне `lib` - `Modal.svelte`, `Dragging.svelte` (свои README рядом: `Modal.README.md`, `Dragging.README.md`).
-- Смарт-виджеты: `WidgetWiFi`, `WidgetDeviceInfo`, `WidgetLoRa`, `WidgetFileSystem`, `WidgetStackInfo`, `WidgetRGBStrip`, `WidgetPFD`, `WidgetMap`.
+- Смарт-виджеты: `WidgetWiFi`, `WidgetDeviceInfo`, `WidgetLoRa`, `WidgetFileSystem`, `WidgetStackInfo`, `WidgetFirmware`, `WidgetRGBStrip`, `WidgetPFD`, `WidgetMap`.
 - `WidgetMap` - самый большой модуль: обёртка MapLibre (`mapWrapper/`), миссии (`mission/`: режимы «Маршрут» и «Агро», расчёт покрытия поля, прогресс, выгрузка QGC WPL 110, имитация).
 
 Общие части интерфейса в корне `lib`: `WidgetHeader` (шапка виджета), `SectionHead` и `ExpandIcon` (сворачиваемые разделы), `FieldLabel` (подпись поля, с `info` - значок ⓘ с пояснением), `InfoHint` (сам значок ⓘ, пояснение позиционируется от окна и не обрезается), `Tooltip`, `CopiedChip`, `Icon`, `IconsMatrix` (выбор иконки), `Loader/` (крутилка, без панели свойств), значки `libIcons/` (экспорт под именами `IconArrow`, `IconCross` и другими), `TextsEditor` (окно «Тексты и переводы»), `CommonSnippets`, `PropsGroup`, `PropsListHeader`, `PropsListModal` (части панелей свойств).
@@ -215,14 +215,14 @@ ElementsUI/
 <summary>🖥️ Поток GUI устройства (DevCloud, WebApp)</summary>
 
 1. Автор собирает GUI в конструкторе DevCloud: холст 23 колонки, компоненты создаёт `createComponent`, свойства правят панели `PANELS[type]` через `PropertyChange`. Результат - массив `UIComponent[]`, его хранит приложение.
-2. Приложение загружает GUI модуля и рисует `<GUIRenderer components link persistKey viewer render onError />`.
+2. Приложение загружает GUI модуля и рисует `<GUIRenderer components link persistKey viewer render onError firmware />` (`firmware` - как обновлять прошивку модуля для `WidgetFirmware`).
 3. Рендерер переводит тексты (`localizeDeep`, кэш по ссылке и языку), строит дерево вложенности по `parentId` (дети `Accordion` и `Tabs`), раскладывает сетку и для каждого компонента берёт значение через `link.get(key)`.
 4. Пользователь меняет значение. Компонент вызывает `onUpdate`, рендерер собирает пакет `commandPacket(eventHandler, get, [key, value])`: если в `eventHandler.Value` готовый JSON - он и есть Payload, иначе Payload собирается из `Variables` (ключ `группа-поле` становится вложенным объектом). Битовые поля пишутся через `writeBits`.
 5. Рендерер записывает значение заранее (`link.set`, оптимистичное обновление) и отправляет `link.send(header, argument, payload)`. При `Argument: "NoSend"` значение только записывается, пакет не уходит.
 6. Рендерер переводит имена команды в число `HAR` по словарю (`sendCommand`) и отдаёт его в `link.send(har, payload)`. Приложение заворачивает его в WebSocket-конверт `{HAR, VAL: {DevSN, ModSN, Payload}}`, устройство отвечает `OK!`/`ER!`. Входящий конверт приложение разбирает `decodeWsEnvelope` в `{ header, argument, code, reply, VAL }`.
 7. Приложение кладёт ответ в реактивное хранилище (`SvelteMap`) функцией `mergeDevicePayload(values, "<ModSN>|", argument, Payload)` (`argument` - имя из разобранного конверта). `get` читает это хранилище, рендерер обновляется сам.
 
-Смарт-виджеты работают с группой полей по префиксу (`CFG`, `LST`, `MAV`): читают `readWidgetFields`, сохраняют одним `SET ModuleConfig` из `widgetPacket` (только поля из `WIDGET_SAVE_FIELDS`). Поиск сетей - `GET NetworkAccessPoints` с ожиданием ответа 3000 мс, перезагрузка - `SET SystemRestart`, сброс - `SET SystemResetStorage`, обновление снимков - `GET SystemFileSystem` и `GET SystemStackInfo`. Файлы `WidgetFileSystem` и `FileAttach` рендерер ведёт сам через `createFsTransfer(link)`.
+Смарт-виджеты работают с группой полей по префиксу (`CFG`, `LST`, `MAV`): читают `readWidgetFields`, сохраняют одним `SET ModuleConfig` из `widgetPacket` (только поля из `WIDGET_SAVE_FIELDS`). Поиск сетей - `GET NetworkAccessPoints` с ожиданием ответа 3000 мс, перезагрузка - `SET SystemRestart`, сброс - `SET SystemResetStorage`, обновление снимков - `GET SystemFileSystem` и `GET SystemStackInfo`. Файлы `WidgetFileSystem` и `FileAttach` рендерер ведёт сам через `createFsTransfer(link)`. Прошивку `WidgetFirmware` - по `firmware`: через хаб `updateViaHub` (`SET FirmwareUpgradeStart {ModSN, VerFW}`, ход - `Progress` в `CFG.ModList` хаба) или напрямую `updateModuleFirmware(link, образ)`.
 
 </details>
 
@@ -312,6 +312,7 @@ ElementsUI/
 | `WidgetLoRa`       | `LORA`               | ключи из `params` (шаблон HT_CT62 - одно слово `Cfg`)                                                                        | те же ключи, свои биты поверх текущего слова |
 | `WidgetFileSystem` | `CFG`                | объект `FS` (Total/Used/Free/List, Upload во время закачки)                                                                  | -                                            |
 | `WidgetStackInfo`  | без группы           | объект `SystemStackInfo` (кучи и стеки задач)                                                                                | -                                            |
+| `WidgetFirmware`   | `CFG`                | `DevFW` (текущая версия); список версий `VerFW-S` подставляет приложение                                                     | -                                            |
 | `WidgetRGBStrip`   | `LST`                | `Color` [R,G,B,W], `Effect` 0-7, `Speed` 0-10, `Count`, `Model` (WS2812/SK6812/WS2811), `Order`, `MaxCount`                  | `Count`, `Model`, `Order`                    |
 | `WidgetPFD`        | `MAV`                | телеметрия MAVLink: ориентация, скорости, высоты, GPS, батарея, режим, маршрут, связь, сообщения (`Msg`, `MsgSev`, `MsgSeq`) | -                                            |
 | `WidgetMap`        | `groups: ["MAV"]`    | на каждый борт: `Lat`, `Lon`, `Alt`, `Heading`, `Sat`, `DevName`, `DevSN`, `WPNum`                                           | -                                            |
@@ -449,22 +450,22 @@ interface DeviceReply {
 <details>
 <summary>📋 Настройки и значения по умолчанию</summary>
 
-| Что                                   | Где                                                                       | Значение                                                                                                                                                                                                     |
-| ------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Сетка GUI                             | `GUI_GRID` в `gui.ts`                                                     | 23 колонки, высота строки 6rem                                                                                                                                                                               |
-| Узкий рендерер                        | `NARROW_MAX_PX` в `GUIRenderer.svelte`                                    | 640 px                                                                                                                                                                                                       |
-| Минимальная ширина смарт-виджета      | `minComponentWidth`                                                       | 7 клеток (треть сетки)                                                                                                                                                                                       |
-| Минимальные ширины блоков на телефоне | `MIN_PX` в `gui.ts`                                                       | `Switch` 90, `Input` 120, `Select` 130, `Slider` 120, `Button` 110, `TextField` 100, `ProgressBar` 140, `Widget` 120, `Joystick` 200 px                                                                      |
-| Базовый кегль темы                    | `theme.css`                                                               | 15px; уже 768px - 14px; на сенсорном экране поля ввода не мельче 16px                                                                                                                                        |
-| Язык по умолчанию                     | `DEFAULT_LANGUAGE`                                                        | `ru`; список `LANGUAGES`: `ru`, `en`, `zh`                                                                                                                                                                   |
-| Хранение языка                        | `localStorage` `AppLanguage`                                              | `setLanguage`, `restoreLanguage`                                                                                                                                                                             |
-| Хранение темы (витрина, приложения)   | `localStorage` `AppTheme`, классы `.light`/`.dark`, событие `ThemeChange` | следит `themeWatch.ts`                                                                                                                                                                                       |
-| Данные в браузере у рендерера         | ключи по `persistKey` (обычно `ModSN`)                                    | свёрнутость виджетов, подсказки, планы карты `WidgetMap.plan                                                                                                                                                 | ...`, `WidgetMap.route | ...` |
-| Значения по умолчанию виджетов        | `COMPONENT_DEFAULTS`                                                      | `WidgetFileSystem.maxNameLength` 31, `WidgetStackInfo.warnBytes` 512, `WidgetPFD.limits.staleMs` 2000, `WidgetMap.height` 400, `trackLength` 1000, `Table.dataBuffer` `{ bufferSize: 100, visibleRows: 10 }` |
-| Карта без интернета                   | `configureMapLibre({ module, css, styles })`                              | вызвать до первой отрисовки карты; без сети через 10 с - «нет подключения»                                                                                                                                   |
-| Сборка витрины                        | `vite.config.ts`                                                          | `adapter-static` в `docs/`, `paths.base = "/ElementsUI"`, `__LIB_VERSION__` из `package.json`, `maplibre-gl` внешний                                                                                         |
-| npm                                   | `.npmrc`                                                                  | `engine-strict=true`                                                                                                                                                                                         |
-| Скрипты зависимостей                  | `allowScripts` в `package.json`                                           | версии должны совпадать с установленными (сейчас `esbuild@0.28.2`)                                                                                                                                           |
+| Что                                   | Где                                                                       | Значение                                                                                                                                                                                                                                     |
+| ------------------------------------- | ------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Сетка GUI                             | `GUI_GRID` в `gui.ts`                                                     | 23 колонки, высота строки 6rem                                                                                                                                                                                                               |
+| Узкий рендерер                        | `NARROW_MAX_PX` в `GUIRenderer.svelte`                                    | 640 px                                                                                                                                                                                                                                       |
+| Минимальная ширина смарт-виджета      | `minComponentWidth`                                                       | 7 клеток (треть сетки)                                                                                                                                                                                                                       |
+| Минимальные ширины блоков на телефоне | `MIN_PX` в `gui.ts`                                                       | `Switch` 90, `Input` 120, `Select` 130, `Slider` 120, `Button` 110, `TextField` 100, `ProgressBar` 140, `Widget` 120, `Joystick` 200 px                                                                                                      |
+| Базовый кегль темы                    | `theme.css`                                                               | 15px; уже 768px - 14px; на сенсорном экране поля ввода не мельче 16px                                                                                                                                                                        |
+| Язык по умолчанию                     | `DEFAULT_LANGUAGE`                                                        | `ru`; список `LANGUAGES`: `ru`, `en`, `zh`                                                                                                                                                                                                   |
+| Хранение языка                        | `localStorage` `AppLanguage`                                              | `setLanguage`, `restoreLanguage`                                                                                                                                                                                                             |
+| Хранение темы (витрина, приложения)   | `localStorage` `AppTheme`, классы `.light`/`.dark`, событие `ThemeChange` | следит `themeWatch.ts`                                                                                                                                                                                                                       |
+| Данные в браузере у рендерера         | ключи по `persistKey` (обычно `ModSN`)                                    | свёрнутость виджетов, подсказки, планы карты `WidgetMap.plan                                                                                                                                                                                 | ...`, `WidgetMap.route | ...` |
+| Значения по умолчанию виджетов        | `COMPONENT_DEFAULTS`                                                      | `WidgetFileSystem.maxNameLength` 31, `WidgetStackInfo.warnBytes` 512, `WidgetFirmware.accept` `.bin`, `WidgetPFD.limits.staleMs` 2000, `WidgetMap.height` 400, `trackLength` 1000, `Table.dataBuffer` `{ bufferSize: 100, visibleRows: 10 }` |
+| Карта без интернета                   | `configureMapLibre({ module, css, styles })`                              | вызвать до первой отрисовки карты; без сети через 10 с - «нет подключения»                                                                                                                                                                   |
+| Сборка витрины                        | `vite.config.ts`                                                          | `adapter-static` в `docs/`, `paths.base = "/ElementsUI"`, `__LIB_VERSION__` из `package.json`, `maplibre-gl` внешний                                                                                                                         |
+| npm                                   | `.npmrc`                                                                  | `engine-strict=true`                                                                                                                                                                                                                         |
+| Скрипты зависимостей                  | `allowScripts` в `package.json`                                           | версии должны совпадать с установленными (сейчас `esbuild@0.28.2`)                                                                                                                                                                           |
 
 </details>
 
@@ -643,6 +644,7 @@ interface DeviceReply {
 | `src/lib/WidgetLoRa/README.md`       | Настройки радио LoRa: параметры, их место в прошивке и шаблоны драйверов                                                                                                                                                                                                                        |
 | `src/lib/WidgetFileSystem/README.md` | Файловая система устройства, закачка и удаление                                                                                                                                                                                                                                                 |
 | `src/lib/WidgetStackInfo/README.md`  | Память и стеки задач                                                                                                                                                                                                                                                                            |
+| `src/lib/WidgetFirmware/README.md`   | Обновление прошивки модуля: через хаб и напрямую через загрузчик                                                                                                                                                                                                                                |
 | `src/lib/WidgetRGBStrip/README.md`   | Адресная светодиодная лента                                                                                                                                                                                                                                                                     |
 | `src/lib/WidgetPFD/README.md`        | Пилотажный дисплей по телеметрии MAVLink                                                                                                                                                                                                                                                        |
 | `src/lib/WidgetMap/README.md`        | Карта: борта, треки, миссии «Маршрут» и «Агро», имитация, офлайн-карта (самый большой README)                                                                                                                                                                                                   |
@@ -730,6 +732,7 @@ interface DeviceReply {
 - `src/lib/Widget/README.md`
 - `src/lib/WidgetDeviceInfo/README.md`
 - `src/lib/WidgetFileSystem/README.md`
+- `src/lib/WidgetFirmware/README.md`
 - `src/lib/WidgetLoRa/README.md`
 - `src/lib/WidgetMap/README.md`
 - `src/lib/WidgetPFD/README.md`
@@ -774,6 +777,7 @@ interface DeviceReply {
 - 📡 `WidgetLoRa` - настройки радио LoRa любой микросхемы: где лежит каждый параметр, задаётся в конструкторе.
 - 🗂️ `WidgetFileSystem` - занятая память, список файлов, загрузка и удаление.
 - 🧠 `WidgetStackInfo` - свободная память и запас стека задач, для отладки.
+- 💾 `WidgetFirmware` - обновление прошивки модуля из каталога или файлом, с ходом и этапами.
 - 🌈 `WidgetRGBStrip` - адресная светодиодная лента: цвет, эффекты, параметры.
 - ✈️ `WidgetPFD` - пилотажный дисплей: авиагоризонт, шкалы скорости и высоты, маршрут, сообщения автопилота.
 - 🗺️ `WidgetMap` - карта с объектами и их траекториями.
@@ -907,16 +911,17 @@ interface DeviceReply {
 <details>
 <summary>⚙️ Пропсы GUIRenderer и DeviceLink</summary>
 
-| Пропс        | Что это                                                                                                                                                         |
-| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `components` | `UIComponent[]` из конструктора                                                                                                                                 |
-| `link`       | `DeviceLink` выбранного модуля, см. ниже                                                                                                                        |
-| `language`   | язык текстов GUI, по умолчанию язык библиотеки                                                                                                                  |
-| `viewer`     | наблюдатель: видны только `access` `full` и `viewOnly`, управление отключено; `WidgetWiFi` и `WidgetDeviceInfo` без `onSave` - только для чтения, пароли маской |
-| `persistKey` | ключ хранения в браузере (обычно `ModSN`): свёрнутость виджетов, планы `WidgetMap`                                                                              |
-| `render`     | своя отрисовка типа: `{ VideoViewer: snippet }`, сниппет получает компонент                                                                                     |
-| `views`      | компоненты отрисовки по типу: `GUI_VIEWS` или только нужные; тип без компонента рисуется заглушкой                                                              |
-| `onError`    | готовый текст ошибки на языке библиотеки: команда не собрана, ошибка передачи файла, сбой поиска сетей WiFi (ER! или нет ответа)                                |
+| Пропс        | Что это                                                                                                                                                           |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `components` | `UIComponent[]` из конструктора                                                                                                                                   |
+| `link`       | `DeviceLink` выбранного модуля, см. ниже                                                                                                                          |
+| `language`   | язык текстов GUI, по умолчанию язык библиотеки                                                                                                                    |
+| `viewer`     | наблюдатель: видны только `access` `full` и `viewOnly`, управление отключено; `WidgetWiFi` и `WidgetDeviceInfo` без `onSave` - только для чтения, пароли маской   |
+| `persistKey` | ключ хранения в браузере (обычно `ModSN`): свёрнутость виджетов, планы `WidgetMap`                                                                                |
+| `render`     | своя отрисовка типа: `{ VideoViewer: snippet }`, сниппет получает компонент                                                                                       |
+| `views`      | компоненты отрисовки по типу: `GUI_VIEWS` или только нужные; тип без компонента рисуется заглушкой                                                                |
+| `onError`    | готовый текст ошибки на языке библиотеки: команда не собрана, ошибка передачи файла или обновления прошивки, сбой поиска сетей WiFi (ER! или нет ответа)          |
+| `firmware`   | как обновлять прошивку модуля (`FirmwareTarget` для `WidgetFirmware`): `hub` - через хаб ESP, `catalog`/`file` - напрямую через загрузчик; нет - виджет неактивен |
 
 ```ts
 interface DeviceLink {
@@ -5117,6 +5122,149 @@ CFG.FS:
 | Пропс              | Тип                                | Описание                                              |
 | ------------------ | ---------------------------------- | ----------------------------------------------------- |
 | `component`        | `UIComponent<"WidgetFileSystem">`  | Компонент и его свойства                              |
+| `onPropertyChange` | `(change: PropertyChange) => void` | Сообщает об изменении: свойства, имя, доступ, событие |
+
+</details>
+
+## Файл `src/lib/WidgetFirmware/README.md`
+
+### 💾 WidgetFirmware
+
+Карточка обновления прошивки модуля, чей GUI открыт. Видна текущая версия, можно выбрать новую из каталога или файл и следить за ходом обновления. Работает и в облаке, и в терминале.
+
+#### ✨ Что умеет
+
+- 🏷️ Показывает текущую версию модуля в шапке.
+- 📋 Даёт выбрать версию из каталога облака и запустить обновление кнопкой «Обновить».
+- 📁 В терминале ещё и обновляет выбранным файлом `.bin`.
+- 📊 Показывает ход полосой от 0 до 100% и строкой этапа: перезагрузка в загрузчик, стирание, запись, проверка, готово.
+- ⚠️ Ошибку пишет в строке состояния и отправляет уведомлением.
+- 🔒 Обновление идёт одно за раз, пока оно идёт, кнопки неактивны.
+- 🔽 Сворачивается по клику на заголовок.
+- ❓ Кнопка «?» в шапке включает подсказки.
+
+#### 🧩 Как настроить в конструкторе
+
+1. Перетащите виджет на макет. Привязывать переменные не нужно.
+2. Если нужно, задайте заголовок. Без него карточка называется «Прошивка» на языке пользователя.
+3. Выберите мастер-цвет.
+4. Если нужно, поменяйте допустимые файлы. По умолчанию `.bin`.
+
+#### 💡 Полезно знать
+
+- 🧭 Как обновлять, решает приложение, а не виджет: облако обновляет через хаб ESP, терминал - напрямую через загрузчик модуля.
+- 🚫 В конструкторе и там, где приложение не умеет обновлять, виджет неактивен и пишет, что обновление доступно в облаке и терминале.
+- 📁 Поле файла видно, только когда приложение разрешает обновление файлом. Выбор файла сразу запускает обновление.
+- ⏳ Через хаб модулю нужно до 25 секунд, чтобы перейти в загрузчик, всё это время полоса стоит на нуле.
+- 👁️ В режиме только для просмотра виджет неактивен.
+- 📐 Виджет занимает всю ширину своей ячейки, а высота подстраивается под содержимое.
+
+<details>
+<summary>📦 Данные устройства</summary>
+
+- Текущая версия - поле `CFG.DevFW` модуля. Группа меняется свойством `id`, по умолчанию `CFG`.
+- Список версий - переменная `VerFW-S` модуля: массив `[{name, value}]` (бывает и `id`), где `value` - номер версии. Его подставляет приложение из каталога облака.
+- Сам виджет команд не шлёт: он зовёт `onUpdate` и показывает ход, который сообщает приложение.
+
+</details>
+
+<details>
+<summary>📡 Как обновляет GUIRenderer</summary>
+
+Приложение передаёт в `GUIRenderer` свойство `firmware` (`FirmwareTarget`):
+
+```ts
+interface FirmwareTarget {
+  ModSN: string /* серийный номер модуля */
+  hub?: DeviceLink /* связь хаба ESP: обновление через хаб */
+  catalog?: (VerFW: number) => Promise<Uint8Array> /* образ версии из каталога: прямое обновление */
+  file?: boolean /* прямое обновление выбранным файлом */
+}
+```
+
+| Источник | Что делает рендерер                                                                                        |
+| -------- | ---------------------------------------------------------------------------------------------------------- |
+| версия   | есть `hub` - `updateViaHub(hub, ModSN, VerFW)`; иначе есть `catalog` - `updateModuleFirmware(link, образ)` |
+| файл     | `updateModuleFirmware(link, байты файла)`                                                                  |
+
+- Кнопка «Обновить» активна, когда выбрана версия, есть `hub` или `catalog` и ничего не идёт.
+- Без `firmware` или в режиме наблюдателя виджет получает `onUpdate` пустым и неактивен.
+- Второе обновление, пока идёт первое (другой виджет в том же GUI), отклоняется с ошибкой «Уже идёт обновление прошивки».
+- Ошибка уходит в `onError` рендерера (текст `$T(error.key, error.params)` для `FirmwareUpdateError`) и в строку состояния виджета.
+
+</details>
+
+<details>
+<summary>🔌 Обновление через хаб (updateViaHub)</summary>
+
+`updateViaHub(hub, ModSN, VerFW, onProgress?, { timeoutMs?, pollMs? })` из `WidgetFirmware/firmware.ts`, хаб - ProdFactory-ESP, `upgrade_service`.
+
+1. В связь хаба уходит `SET FirmwareUpgradeStart` с `Payload` `{ModSN, VerFW}` без флага ответа: `OK!`/`ER!` хаб на неё не шлёт, образ берёт из каталога сам.
+2. Ход хаб рассылает в `OK! SystemDataUpdate` полем `CFG.ModList` - массивом строк `{ModSN, ModName, VerFW, Progress}`. Приложение кладёт его в хранилище, функция раз в `pollMs` (500 мс) читает `hub.get("CFG.ModList")` и берёт `Progress` строки модуля (0-100).
+3. Успех: ход был и дошёл до 100, или ход был и версия строки стала `VerFW`. Последний `Progress: 0` после успеха не учитывается.
+4. Отказ: ход был и упал в 0 до 100 - `FirmwareUpdateError("hub", {percent})`, хаб при этом шлёт приложению `Message 306`.
+5. Нет результата за `timeoutMs` (180000 мс) - `FirmwareUpdateError("timeout", {step: "hub"})`.
+6. Ход, который был в строке до команды (остаток прошлого обновления), за начало нового не принимается, пока не изменится.
+
+</details>
+
+<details>
+<summary>🔬 Прямое обновление (updateModuleFirmware)</summary>
+
+Терминал обновляет модуль сам по консоли или CAN через его загрузчик: `updateModuleFirmware(link, image, {onProgress})` из `firmwareUpdate.ts`, порядок команд - раздел «Обновление модуля по шине» в `PROTOCOL.md`.
+
+| Этап `updateModuleFirmware` | Полоса               | Строка состояния         |
+| --------------------------- | -------------------- | ------------------------ |
+| `bootloader`                | 0                    | Перезагрузка в загрузчик |
+| `erase`                     | 0                    | Стирание                 |
+| `write`                     | `done / total * 100` | Запись N%                |
+| `verify`                    | 100                  | Проверка                 |
+
+</details>
+
+<details>
+<summary>⚙️ Пропсы</summary>
+
+| Название       | Тип                                                                                  | По умолчанию | Описание                                                                      |
+| -------------- | ------------------------------------------------------------------------------------ | ------------ | ----------------------------------------------------------------------------- |
+| `id`           | `string`                                                                             | `"CFG"`      | Группа поля `DevFW`                                                           |
+| `value`        | `{ DevFW?: number }`                                                                 |              | Текущая версия                                                                |
+| `versions`     | `IOption<number>[]`                                                                  | `[]`         | Версии из каталога (`VerFW-S`)                                                |
+| `accept`       | `string`                                                                             | `".bin"`     | Какие файлы можно выбрать                                                     |
+| `sources`      | `{ version?: boolean; file?: boolean }`                                              | `{}`         | Что умеет приложение: версия из каталога, файл                                |
+| `label.name`   | `string`                                                                             |              | Заголовок. Пусто - «Прошивка» на языке пользователя                           |
+| `wrapperClass` | `string`                                                                             | `""`         | Классы обёртки                                                                |
+| `accent`       | `AccentColor`                                                                        |              | Мастер-цвет                                                                   |
+| `collapsed`    | `boolean`                                                                            | `false`      | Свёрнут ли. Можно связать через `bind:collapsed`                              |
+| `persistKey`   | `string`                                                                             |              | Ключ для запоминания свёрнутости и подсказок                                  |
+| `onUpdate`     | `(source: {VerFW} \| {file}, onProgress: (stage, percent) => void) => Promise<void>` |              | Запуск обновления; промис завершается вместе с ним. Без него виджет неактивен |
+
+`stage` - `"start" | "bootloader" | "erase" | "write" | "verify" | "hub"` (`WidgetFirmwareStage`).
+
+</details>
+
+<details>
+<summary>💻 Примеры кода</summary>
+
+```svelte
+<!-- Облако: через хаб -->
+<UI.GUIRenderer components={gui} {link} views={UI.GUI_VIEWS} firmware={{ ModSN, hub: hubLink }} onError={addMessage} />
+
+<!-- Терминал: напрямую, версия из каталога или файл -->
+<UI.GUIRenderer components={gui} {link} views={UI.GUI_VIEWS} firmware={{ ModSN, catalog: loadImage, file: true }} onError={addMessage} />
+```
+
+</details>
+
+<details>
+<summary>🛠️ Панель свойств (WidgetFirmwareProps.svelte)</summary>
+
+- **Общие:** заголовок и переводы, мастер-цвет.
+- **Обновление файлом:** допустимые файлы (`accept`).
+
+| Пропс              | Тип                                | Описание                                              |
+| ------------------ | ---------------------------------- | ----------------------------------------------------- |
+| `component`        | `UIComponent<"WidgetFirmware">`    | Компонент и его свойства                              |
 | `onPropertyChange` | `(change: PropertyChange) => void` | Сообщает об изменении: свойства, имя, доступ, событие |
 
 </details>

@@ -25,6 +25,7 @@ import WidgetDeviceInfoProps from "./WidgetDeviceInfo/WidgetDeviceInfoProps.svel
 import WidgetLoRaProps from "./WidgetLoRa/WidgetLoRaProps.svelte"
 import WidgetFileSystemProps from "./WidgetFileSystem/WidgetFileSystemProps.svelte"
 import WidgetStackInfoProps from "./WidgetStackInfo/WidgetStackInfoProps.svelte"
+import WidgetFirmwareProps from "./WidgetFirmware/WidgetFirmwareProps.svelte"
 import WidgetRGBStripProps from "./WidgetRGBStrip/WidgetRGBStripProps.svelte"
 import WidgetPFDProps from "./WidgetPFD/WidgetPFDProps.svelte"
 import WidgetMapProps from "./WidgetMap/WidgetMapProps.svelte"
@@ -59,6 +60,7 @@ export {
   WidgetLoRaProps,
   WidgetFileSystemProps,
   WidgetStackInfoProps,
+  WidgetFirmwareProps,
   WidgetRGBStripProps,
   WidgetPFDProps,
   WidgetMapProps,
@@ -88,6 +90,7 @@ export const PANELS: Record<UIType, Component<any>> = {
   WidgetLoRa: WidgetLoRaProps,
   WidgetFileSystem: WidgetFileSystemProps,
   WidgetStackInfo: WidgetStackInfoProps,
+  WidgetFirmware: WidgetFirmwareProps,
   WidgetRGBStrip: WidgetRGBStripProps,
   WidgetPFD: WidgetPFDProps,
   WidgetMap: WidgetMapProps,

@@ -22,6 +22,7 @@ import WidgetDeviceInfo from "./WidgetDeviceInfo/WidgetDeviceInfo.svelte"
 import WidgetLoRa from "./WidgetLoRa/WidgetLoRa.svelte"
 import WidgetFileSystem from "./WidgetFileSystem/WidgetFileSystem.svelte"
 import WidgetStackInfo from "./WidgetStackInfo/WidgetStackInfo.svelte"
+import WidgetFirmware from "./WidgetFirmware/WidgetFirmware.svelte"
 import WidgetRGBStrip from "./WidgetRGBStrip/WidgetRGBStrip.svelte"
 import WidgetPFD from "./WidgetPFD/WidgetPFD.svelte"
 import WidgetMap from "./WidgetMap/WidgetMap.svelte"
@@ -56,6 +57,7 @@ const VIEWS: Record<UIType, Component<any, any, any>> = {
   WidgetLoRa,
   WidgetFileSystem,
   WidgetStackInfo,
+  WidgetFirmware,
   WidgetRGBStrip,
   WidgetPFD,
   WidgetMap,

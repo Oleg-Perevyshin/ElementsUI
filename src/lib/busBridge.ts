@@ -1,6 +1,6 @@
 /* $lib/busBridge.ts - мост GUI к устройству через шину (консоль xPOE-Debug, CAN, RS485): та же связь DeviceLink, что у веба и облака, - модули по ModSN, значения "<ModSN>|ключ", сообщения устройства в ответах */
 import { formatDeviceMessage, isNeighborModule, splitHar, type DeviceMessageLevel, type Dictionary } from "./protocols"
-import type { DeviceReply } from "./fsTransfer"
+import type { DevicePayload, DeviceReply } from "./fsTransfer"
 import { mergeDevicePayload, type DeviceLink } from "./gui"
 import { DEFAULT_LANGUAGE, type LanguageCode } from "./locales/languages"
 
@@ -16,7 +16,7 @@ export interface BusPacket {
 
 /* Канал к порту: send - пакет адресату trgId от клиента (SourceID 0000), listen - подписка на принятые пакеты, возвращает отписку */
 export interface BusChannel {
-  send(trgId: number, har: number, payload: Record<string, unknown>): unknown
+  send(trgId: number, har: number, payload: DevicePayload): unknown
   listen(handler: (packet: BusPacket) => void): () => void
 }
 
@@ -179,7 +179,8 @@ export const createBusBridge = (channel: BusChannel, options: BusBridgeOptions) 
               (packet.header !== "OK!" && packet.header !== "ER!")
             )
               return
-            const reply: DeviceReply = { ok: packet.header === "OK!", payload: isRecord(packet.payload) ? packet.payload : {}, message }
+            const raw = packet.payload instanceof Uint8Array ? packet.payload : undefined
+            const reply: DeviceReply = { ok: packet.header === "OK!", payload: isRecord(packet.payload) ? packet.payload : {}, raw, message }
             if (match(reply)) done(reply)
           }
           handlers.add(handler)

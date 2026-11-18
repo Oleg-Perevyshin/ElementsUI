@@ -38,6 +38,8 @@ export { default as WidgetLoRa } from "./WidgetLoRa/WidgetLoRa.svelte"
 export { LORA_PARAMS, LORA_PRESETS, loraDecode, loraEncode, loraKeys } from "./WidgetLoRa/lora"
 export { default as WidgetFileSystem } from "./WidgetFileSystem/WidgetFileSystem.svelte"
 export { default as WidgetStackInfo } from "./WidgetStackInfo/WidgetStackInfo.svelte"
+export { default as WidgetFirmware } from "./WidgetFirmware/WidgetFirmware.svelte"
+export { updateViaHub, type FirmwareTarget, type HubUpdateOptions } from "./WidgetFirmware/firmware"
 export { default as WidgetRGBStrip } from "./WidgetRGBStrip/WidgetRGBStrip.svelte"
 export { default as WidgetPFD } from "./WidgetPFD/WidgetPFD.svelte"
 export { default as WidgetMap } from "./WidgetMap/WidgetMap.svelte"
@@ -90,10 +92,19 @@ export {
   type FsErrorCode,
   type DeviceReply,
   type DeviceTransport,
+  type DevicePayload,
   type FsTransfer,
   type FsTransferOptions,
   type FsProgress,
 } from "./fsTransfer"
+export {
+  updateModuleFirmware,
+  FirmwareUpdateError,
+  type FirmwareErrorCode,
+  type FirmwareStage,
+  type FirmwareProgress,
+  type FirmwareUpdateOptions,
+} from "./firmwareUpdate"
 export { copyText } from "./clipboard"
 export { default as Icon } from "./Icon.svelte"
 /* Значки библиотеки: контур currentColor, размер задаёт родитель ([&_svg]:size-*) */
@@ -157,6 +168,9 @@ export {
   type IWidgetFileSystemFile,
   type IWidgetFileSystemUpload,
   type IWidgetStackInfoProps,
+  type IWidgetFirmwareProps,
+  type WidgetFirmwareStage,
+  type WidgetFirmwareSource,
   type IWidgetStackInfo,
   type IWidgetStackInfoHeap,
   type IWidgetStackInfoTask,

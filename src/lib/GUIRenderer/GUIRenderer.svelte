@@ -3,8 +3,9 @@
   import type { Snippet } from "svelte"
   import { Language, T } from "../locales/i18n"
   import { localizeDeep } from "../locales/localize"
-  import type { ITableButton, ITableContent, IOption, UIComponent, UIType } from "../types"
+  import type { ITableButton, ITableContent, IOption, UIComponent, UIType, WidgetFirmwareSource, WidgetFirmwareStage } from "../types"
   import { argumentCode, createFsTransfer, FsTransferError, sendCommand } from "../fsTransfer"
+  import { FirmwareUpdateError, updateModuleFirmware } from "../firmwareUpdate"
   import {
     GUI_GRID,
     WIDGET_FIELDS,
@@ -28,6 +29,7 @@
     type DevicePacket,
   } from "../gui"
   import { loraKeys } from "../WidgetLoRa/lora"
+  import { updateViaHub, type FirmwareTarget } from "../WidgetFirmware/firmware"
   import { COMPONENT_META } from "../componentMeta"
   import DeviceTable from "./DeviceTable.svelte"
   import type { GuiViews } from "../guiViews"
@@ -47,9 +49,11 @@
     views: GuiViews
     /* Ошибка команды или передачи файла, для уведомления */
     onError?: (message: string) => void
+    /* Как обновлять прошивку модуля (WidgetFirmware): через хаб (облако) или напрямую через загрузчик (терминал); нет - виджет неактивен */
+    firmware?: FirmwareTarget
   }
 
-  let { components, link, language, viewer = false, persistKey, render, views, onError }: Props = $props()
+  let { components, link, language, viewer = false, persistKey, render, views, onError, firmware }: Props = $props()
 
   /* Кэш по ссылке и языку: localizeDeep создаёт новые объекты, без кэша обновление значений сбрасывало бы раскрытые аккордеоны и вкладки */
   let localized: { src?: UIComponent[]; lang?: string; out: UIComponent[] } = { out: [] }
@@ -72,9 +76,15 @@
   const childrenOf = (parent: UIComponent) => tree.get((parent.parentId ?? "") + parent.id) ?? []
   const visible = (c: UIComponent) => !viewer || c.access === "full" || c.access === "viewOnly"
 
-  /* Текст для уведомления: коды FsTransferError переводятся словарём библиотеки, текст устройства (ER!) остаётся как есть */
+  /* Текст для уведомления: коды FsTransferError и FirmwareUpdateError переводятся словарём библиотеки, текст устройства (ER!) остаётся как есть */
   const report = (error: unknown) =>
-    onError?.(error instanceof FsTransferError ? $T(error.key, error.params) : error instanceof Error ? error.message : String(error))
+    onError?.(
+      error instanceof FsTransferError || error instanceof FirmwareUpdateError
+        ? $T(error.key, error.params)
+        : error instanceof Error
+          ? error.message
+          : String(error),
+    )
   /* Ошибка для виджета: уведомление и отказ промиса - виджет показывает её у поля */
   const fail = (error: unknown): never => {
     report(error)
@@ -148,6 +158,26 @@
     const key = `${argument}:${maxNameLength}`
     return transfers.get(key) ?? transfers.set(key, createFsTransfer(link, { argument, maxNameLength })).get(key)!
   }
+  /* Обновление прошивки модуля (WidgetFirmware): версия - через хаб, иначе образ из каталога напрямую через загрузчик; файл - напрямую; одно обновление за раз */
+  let flashing = false
+  const updateFirmware = async (target: FirmwareTarget, source: WidgetFirmwareSource, onProgress: (stage: WidgetFirmwareStage, percent: number) => void) => {
+    if (flashing) return fail(new Error($T("widget.firmware.busy")))
+    flashing = true
+    const direct = (image: Uint8Array) =>
+      updateModuleFirmware(link, image, {
+        onProgress: (stage, done, total) => onProgress(stage, stage === "write" ? (total ? (done / total) * 100 : 0) : stage === "verify" ? 100 : 0),
+      })
+    try {
+      if ("file" in source) await direct(new Uint8Array(await source.file.arrayBuffer()))
+      else if (target.hub) await updateViaHub(target.hub, target.ModSN, source.VerFW, (percent) => onProgress("hub", percent))
+      else if (target.catalog) await direct(await target.catalog(source.VerFW))
+    } catch (error) {
+      fail(error)
+    } finally {
+      flashing = false
+    }
+  }
+
   const saveFile = (name: string, bytes: Uint8Array) => {
     const url = URL.createObjectURL(new Blob([bytes as BlobPart], { type: "application/octet-stream" }))
     Object.assign(document.createElement("a"), { href: url, download: name.split("/").pop() || "file" }).click()
@@ -489,6 +519,17 @@
           value={fields(component, "", WIDGET_FIELDS.WidgetStackInfo).StackInfo}
           persistKey={persist(component)}
           onRefresh={() => send("GET", props.argument || "SystemStackInfo", {})}
+        />
+      {:else if component.type === "WidgetFirmware" && views.WidgetFirmware}
+        {@const WidgetFirmware = views.WidgetFirmware}
+        {@const target = locked ? undefined : firmware}
+        <WidgetFirmware
+          {...component.properties}
+          value={fields(component, widgetPrefixes(component.type, component.properties)[0], WIDGET_FIELDS.WidgetFirmware)}
+          versions={(link.get("VerFW-S") as IOption<number>[] | undefined) ?? []}
+          sources={{ version: !!(target?.hub || target?.catalog), file: !!target?.file }}
+          persistKey={persist(component)}
+          onUpdate={target ? (source, onProgress) => updateFirmware(target, source, onProgress) : undefined}
         />
       {:else if component.type === "WidgetRGBStrip" && views.WidgetRGBStrip}
         {@const WidgetRGBStrip = views.WidgetRGBStrip}

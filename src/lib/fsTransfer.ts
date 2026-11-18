@@ -3,17 +3,21 @@ import { crc32 } from "./protocols/crc.js"
 import { DEFAULT_DICTIONARY, encodeHar, type Dictionary } from "./protocols/dictionary.js"
 import type { IWidgetFileSystemInfo } from "./types"
 
-/* Ответ устройства на команду: ok - OK!, иначе ER!; payload - Payload ответа, message - Message */
+/* Ответ устройства на команду: ok - OK!, иначе ER!; payload - Payload-карта ответа, raw - Payload сырыми полями (байтовая строка: ModuleFind, загрузчики), message - Message */
 export interface DeviceReply {
   ok: boolean
   payload: Record<string, unknown>
+  raw?: Uint8Array
   message?: string
 }
+
+/* Тело команды: карта, сырые поля байтовой строкой (загрузчики, ModuleFind) или null - без тела */
+export type DevicePayload = Record<string, unknown> | Uint8Array | null
 
 /* Транспорт к выбранному модулю: send - команда с готовым HAR (заголовок, код аргумента, флаг ответа), приложение кладёт её в конверт {HAR, VAL: {DevSN, ModSN, Payload}}; waitFor - первый ответ OK! или ER! с кодом аргумента code, для которого match вернул true, null - таймаут. waitFor вызывается до send. dictionary - словарь для перевода имён в коды, по умолчанию встроенный */
 export interface DeviceTransport {
   dictionary?: Dictionary
-  send(har: number, payload: Record<string, unknown>): unknown
+  send(har: number, payload: DevicePayload): unknown
   waitFor(code: number, match: (reply: DeviceReply) => boolean, timeoutMs: number): Promise<DeviceReply | null>
 }
 

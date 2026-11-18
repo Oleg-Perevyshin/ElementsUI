@@ -77,6 +77,7 @@ const WIDGET_TITLE_KEYS: Record<string, string> = {
   WidgetLoRa: "widget.lora.title",
   WidgetFileSystem: "widget.fs.title",
   WidgetStackInfo: "widget.stack.title",
+  WidgetFirmware: "widget.firmware.title",
   WidgetRGBStrip: "widget.rgb.title",
   WidgetPFD: "pfd.title",
   WidgetMap: "widget.map.title",
