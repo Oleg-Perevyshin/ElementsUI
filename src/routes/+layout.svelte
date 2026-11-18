@@ -117,7 +117,8 @@
       <a href="/ElementsUI/" class="ml-2 flex items-center no-underline! transition hover:scale-101">
         <!-- Название в одну строку; на телефоне подпись автора скрыта, иначе шапка не помещается -->
         <h1 class="leading-none whitespace-nowrap">
-          xPOE-Stack Lib <span class="text-[0.5em] font-normal text-(--muted-color) max-sm:hidden">by Oleg Perevyshin</span>
+          Lib <span class="font-normal opacity-60">|</span> xPOE-Stack
+          <span class="text-[0.5em] font-normal text-(--muted-color) max-sm:hidden">by Oleg Perevyshin</span>
         </h1>
       </a>
       <!-- Версия из package.json (define __LIB_VERSION__), ссылка - на эту версию в npm -->

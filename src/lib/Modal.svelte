@@ -1,4 +1,4 @@
-<!-- $lib/Modal.svelte - модальное окно: радиус 20, шапка и подвал через линии, подложка 40% с размытием, стек окон, закрытие по Escape и клику вне окна, фокус не выходит из окна -->
+<!-- $lib/Modal.svelte - модальное окно (вынесено в body): радиус 20, шапка и подвал через линии, подложка 40% с размытием, стек окон, закрытие по Escape и клику вне окна, фокус не выходит из окна -->
 <script lang="ts">
   import { T } from "./locales/i18n"
   import { type Snippet } from "svelte"
@@ -28,6 +28,12 @@
   } = $props()
 
   const modalId = $props.id()
+
+  /* Окно выносится в body: родитель с display: none (скрытая вкладка терминала), overflow или transform не прячет и не обрезает его */
+  const portal = (node: HTMLElement) => {
+    document.body.appendChild(node)
+    return { destroy: () => node.remove() }
+  }
 
   let zIndex = $derived.by(() => {
     const stack = $ModalStack
@@ -105,6 +111,7 @@
 
 {#if isOpen}
   <div
+    use:portal
     class="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-[2px]"
     data-modal-backdrop
     transition:fade={{ duration: 150 }}
