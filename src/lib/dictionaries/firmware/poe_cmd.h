@@ -79,9 +79,10 @@ typedef enum {
   A_MOTION_PID                      = 114,  /* SET: коэффициенты PID (13 байт: selector + Kp + Ki + Kd) */
   A_MOTION_INFO                     = 115,  /* GET: телеметрия (32 байта: angle+vel+Iq+Id+target+flags) */
   A_MOTION_CONFIG                   = 116,  /* GET/SET: конфигурация мотора (28 байт: лимиты+параметры) */
-  A_MOTION_CALIBRATE                = 117,  /* SET: запуск калибровки нулевого угла (0 байт) */
+  A_MOTION_CALIBRATE                = 117,  /* SET: калибровка нуля и направления мотора без рывков, результат сохраняется (тело {}) */
   A_MOTION_VELOCITY                 = 118,  /* SET: уставка скорости оси, рад/с (float); с флагом ответа - OK! с состоянием оси (angle, vel, iq, flags) */
   A_MOTION_ANGLE                    = 119,  /* SET: уставка угла оси, рад (float); с флагом ответа - OK! с состоянием оси (angle, vel, iq, flags) */
+  A_MOTION_HOME                     = 120,  /* SET: плавный выход оси в начальное положение устройства с обратной связью (тело {}) */
 
   /* Работа с модулями ориентации (IMU, магнетометры, GNSS и подобные) */
   A_ORIENTATION_DATA                = 141,  /* SET: углы ориентации от модуля */

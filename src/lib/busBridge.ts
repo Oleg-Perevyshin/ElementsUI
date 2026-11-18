@@ -41,7 +41,7 @@ export interface BusBridgeOptions {
   onMessage?: (text: string, level: DeviceMessageLevel, module: BusModule | undefined) => void
   /* Список модулей изменился */
   onModules?: (modules: BusModule[]) => void
-  /* Адрес команд модулю порта: 0000 - консоль xPOE-Debug (по умолчанию), FFFF - шины CAN и RS485, где терминал сам ведущий */
+  /* Адрес команд модулю порта: FFFF (по умолчанию) - модуль консоли xPOE-Debug или все на шине CAN и RS485, где терминал сам ведущий */
   selfTarget?: number
 }
 
@@ -79,7 +79,7 @@ const parseConsoleMessage = (payload: unknown): { har: number; code: number; arg
 
 /** Мост: связь DeviceLink для каждого модуля изделия поверх канала шины */
 export const createBusBridge = (channel: BusChannel, options: BusBridgeOptions) => {
-  const { values, dictionary, language = () => DEFAULT_LANGUAGE, onMessage, onModules, selfTarget = 0 } = options
+  const { values, dictionary, language = () => DEFAULT_LANGUAGE, onMessage, onModules, selfTarget = 0xffff } = options
   let selfSN = ""
   let modules: BusModule[] = []
   /* Сообщение, ждущее свой ответ: по адресу отправителя */

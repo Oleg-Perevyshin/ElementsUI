@@ -609,7 +609,7 @@ test("Набор команд: адреса и флаг ответа по умо
     "xPOE-Debug": [{ name: "x", header: "GET", argument: "ModuleConfig", value: "{}" }],
     POECanable: [{ name: "c", header: "0", argument: "6", data: "", TrgBusID: "1234", Reply: false }],
   })
-  assert.equal(set["xPOE-Debug"][0].TrgBusID, "0000")
+  assert.equal(set["xPOE-Debug"][0].TrgBusID, "FFFF")
   assert.equal(set["xPOE-Debug"][0].SrcBusID, "0000")
   assert.equal(set["xPOE-Debug"][0].Reply, true)
   assert.equal(set.POECanable[0].TrgBusID, "1234")

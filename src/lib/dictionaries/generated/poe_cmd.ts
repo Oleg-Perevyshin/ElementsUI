@@ -49,6 +49,7 @@ export const DEFAULT_ARGUMENT_CODES: Record<string, number> = {
   MotionCalibrate: 117,
   MotionVelocity: 118,
   MotionAngle: 119,
+  MotionHome: 120,
   OrientationData: 141,
   OrientationOffset: 142,
   OrientationAccelCalibrate: 143,

@@ -46,7 +46,7 @@ export interface ISavedCommands {
 export const COMMAND_SET_PROTOCOLS = ["SimpleSerial", "xPOE-Debug", "POECanable"] as const
 
 /* Адреса по умолчанию: консоль - модуль консоли (0000), шины - всем (FFFF); отправитель 0000 - внешний клиент */
-const DEFAULT_TRG: Record<string, string> = { "xPOE-Debug": "0000", POECanable: "FFFF" }
+const DEFAULT_TRG: Record<string, string> = { "xPOE-Debug": "FFFF", POECanable: "FFFF" }
 
 const isRecord = (value: unknown): value is Record<string, unknown> => !!value && typeof value === "object" && !Array.isArray(value)
 

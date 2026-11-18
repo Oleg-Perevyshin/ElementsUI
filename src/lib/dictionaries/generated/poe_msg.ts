@@ -260,6 +260,8 @@ export const DEVICE_MESSAGES: Record<number, DeviceMessageEntry> = {
   2051: { group: "DRV", name: "DRV_ENC_CAL_DONE", level: "info", ru: "Калибровка энкодера завершена", en: "Encoder calibration done", zh: "编码器校准完成" },
   2052: { group: "DRV", name: "DRV_CALIB_FAILED", level: "error", ru: "Заводская калибровка не прочитана", en: "Factory calibration not read", zh: "未读取出厂校准" },
   2053: { group: "DRV", name: "DRV_SENSOR_NOT_READY", level: "warn", ru: "Датчик не готов", en: "Sensor not ready", zh: "传感器未就绪" },
+  2054: { group: "DRV", name: "DRV_FOC_ZERO_DONE", level: "info", ru: "Ноль двигателя {0} рад, направление {1}", en: "Motor zero {0} rad, direction {1}", zh: "电机零位 {0} rad，方向 {1}" },
+  2055: { group: "DRV", name: "DRV_FOC_ZERO_FAILED", level: "error", ru: "Ноль двигателя не найден: вал повернулся на {0}° вместо {1}°, проверьте фазы, энкодер и M_PP", en: "Motor zero not found: shaft turned {0}° instead of {1}°, check phases, encoder and M_PP", zh: "未找到电机零位：转轴转动 {0}° 而非 {1}°，请检查相线、编码器和 M_PP" },
 }
 
 export const MESSAGE_CODES: Record<string, number> = {
@@ -503,4 +505,6 @@ export const MESSAGE_CODES: Record<string, number> = {
   DRV_ENC_CAL_DONE: 2051,
   DRV_CALIB_FAILED: 2052,
   DRV_SENSOR_NOT_READY: 2053,
+  DRV_FOC_ZERO_DONE: 2054,
+  DRV_FOC_ZERO_FAILED: 2055,
 }
