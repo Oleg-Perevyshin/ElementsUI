@@ -71,3 +71,33 @@ export const DEFAULT_ARGUMENT_CODES: Record<string, number> = {
   DeviceLeaveGroups: 7103,
   DeviceResetToken: 7104,
 }
+
+/* Важность команды на CAN по коду: 0 - самый важный, 3 - фон; команды без своей важности - PRIORITY_DEFAULT */
+export const PRIORITY_DEFAULT = 2
+export const ARGUMENT_PRIORITIES: Record<number, number> = {
+  4: 3,
+  7: 1,
+  11: 3,
+  12: 3,
+  13: 3,
+  15: 1,
+  37: 1,
+  38: 1,
+  39: 1,
+  40: 1,
+  41: 1,
+  42: 1,
+  43: 1,
+  44: 1,
+  45: 1,
+  46: 1,
+  51: 3,
+  52: 3,
+  53: 3,
+  54: 3,
+  111: 0,
+  113: 0,
+  118: 0,
+  119: 0,
+  141: 1,
+}

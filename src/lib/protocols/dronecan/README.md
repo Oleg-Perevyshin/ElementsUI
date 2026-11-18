@@ -16,7 +16,7 @@
 
 ```ts
 import { createDroneCanTransferReceiver, decodeDroneCanTransfer, encodeDroneCanTransfer } from "poe-svelte-ui-lib/dronecan"
-import { createSlcanReader, encodeSlcanExtFrame } from "poe-svelte-ui-lib/protocols"
+import { createSlcanReader, encodeSlcanFrame } from "poe-svelte-ui-lib/protocols"
 
 const slcan = createSlcanReader()
 const transfers = createDroneCanTransferReceiver()
@@ -37,7 +37,7 @@ const { canId, frames } = encodeDroneCanTransfer({
   destination: 10,
   transferId: 0,
 })
-const text = frames.map((data) => encodeSlcanExtFrame(canId, data)).join("")
+const text = frames.map((data) => encodeSlcanFrame({ canId, data }, false)).join("")
 ```
 
 Канал slcan-адаптера открывают командами `slcanOpenCommands("S8")`: классический CAN 1 Мбит/с, на нём работает ArduPilot.
@@ -51,7 +51,7 @@ import { createDroneCanNode, DRONECAN_OPCODE_SAVE } from "poe-svelte-ui-lib/dron
 
 const node = createDroneCanNode({
   nodeId: 127,
-  write: (canId, frames) => port.write(frames.map((data) => encodeSlcanExtFrame(canId, data)).join("")),
+  write: (canId, frames) => port.write(frames.map((data) => encodeSlcanFrame({ canId, data }, false)).join("")),
   onNodes: (nodes) => console.log(nodes), // узлы шины: номер, состояние, имя, версии
 })
 /* Каждая принятая передача - в узел */

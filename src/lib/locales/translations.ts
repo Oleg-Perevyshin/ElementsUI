@@ -52,7 +52,6 @@ const translations = {
   "common.table.xpoe.value": { ru: "Значение", en: "Value", zh: "值" },
   "common.table.xpoe.reply": { ru: "ждёт ответа", en: "reply requested", zh: "需要应答" },
   "common.table.xpoe.no_reply": { ru: "без ответа", en: "no reply", zh: "无需应答" },
-  "common.table.xpoe.crc": { ru: "Неверная CRC, заголовок не показан", en: "CRC mismatch, header not shown", zh: "CRC 错误，未显示报头" },
   "widget.common.save": { ru: "Сохранить", en: "Save", zh: "保存" },
   "widget.common.cancel": { ru: "Отмена", en: "Cancel", zh: "取消" },
   "widget.common.refresh": { ru: "Обновить", en: "Refresh", zh: "刷新" },

@@ -1,4 +1,4 @@
-/* xPOE-Debug - UART-консоль как ещё одна шина: пакеты poe_cbor_pkt [[TrgBusID, SrcBusID, HAR, Payload, CRC16], …] вперемешку с текстом загрузчика. Логи - OK! DebugLog, Payload [уровень, тег, текст|байты, FHS]; графики - OK! DebugPlot, Payload {"Группа.Имя": float32} */
+/* xPOE-Debug - UART-консоль как ещё одна шина: рамки [SrcBusID, записи [TrgBusID, HAR, Payload], CRC16] вперемешку с текстом загрузчика. Логи - OK! DebugLog, Payload [уровень, тег, текст|байты, FHS]; графики - OK! DebugPlot, Payload {"Группа.Имя": float32} */
 import { cborToValue } from "./cbor/value.js"
 import { DEFAULT_DICTIONARY, type Dictionary } from "./dictionary.js"
 import { DEFAULT_LANGUAGE, type LanguageCode } from "../locales/languages.js"
@@ -7,7 +7,7 @@ import { hexToBytes } from "./hex.js"
 import { formatXPoeDebugValue, xPoeDebugMessage } from "./xPoeDebugView.js"
 import { yamlFlowToCbor } from "./xPoeYaml.js"
 import type { DeviceMessageLevel } from "./messages.js"
-import { decodePacket, encodePacket, formatBusId, packetStart, type DecodedPacketObject } from "./packet.js"
+import { decodeFrame, encodeFrame, formatBusId, FRAME_HEAD, frameStart, laterFrame, type DecodedPacketRecord } from "./packet.js"
 
 export const DEBUG_LOG_ARGUMENT = "DebugLog"
 const MAX_TEXT_TAIL = 4096
@@ -24,13 +24,11 @@ export type XPoeDebugItem =
       reply: boolean
       valueBytes: Uint8Array /* Payload - CBOR item, пустой - нет байт */
       payload: unknown /* Payload, декодированный при разборе; пустой или не CBOR - undefined */
-      crc: string
-      crcOk: boolean
       freeHeap: string /* FHS из DebugLog, у остальных пакетов - "" */
     }
   | { type: "raw"; text: string }
 
-/* Команда терминала - пакет из одной записи; value - CBOR item Payload, пустой - null */
+/* Команда терминала - рамка из одной записи; value - CBOR item Payload, пустой - null */
 export const encodeXPoeDebugFrame = (
   header: string,
   argument: string,
@@ -39,7 +37,7 @@ export const encodeXPoeDebugFrame = (
   trgId = 0,
   reply = true,
   dictionary: Dictionary = DEFAULT_DICTIONARY,
-): Uint8Array => encodePacket([{ trgBusID: trgId, srcBusID: srcId, har: dictionary.har(header, argument, reply), payload: value }])
+): Uint8Array => encodeFrame(srcId, [{ trgBusID: trgId, har: dictionary.har(header, argument, reply), payload: value }])
 
 const textItems = (bytes: Uint8Array) =>
   decoder
@@ -58,27 +56,25 @@ const decodePayload = (bytes: Uint8Array): unknown => {
   }
 }
 
-const frameItem = (object: DecodedPacketObject, dictionary: Dictionary): XPoeDebugItem => {
-  const argument = dictionary.name(object.argument)
-  const payload = decodePayload(object.payload)
+const frameItem = (record: DecodedPacketRecord, srcId: number, dictionary: Dictionary): XPoeDebugItem => {
+  const argument = dictionary.name(record.argument)
+  const payload = decodePayload(record.payload)
   return {
     type: "frame",
-    trgId: object.trgBusID,
-    srcId: object.srcBusID,
-    har: object.har,
-    header: dictionary.header(object.header),
+    trgId: record.trgBusID,
+    srcId,
+    har: record.har,
+    header: dictionary.header(record.header),
     argument,
-    reply: object.reply,
-    valueBytes: object.payload.slice(),
+    reply: record.reply,
+    valueBytes: record.payload.slice(),
     payload,
-    crc: object.crc.toString(16).toUpperCase().padStart(4, "0"),
-    crcOk: object.crcOk,
     /* FHS - четвёртый элемент Payload DebugLog */
     freeHeap: argument === DEBUG_LOG_ARGUMENT && Array.isArray(payload) && typeof payload[3] === "number" ? String(payload[3]) : "",
   }
 }
 
-/* Строка таблицы xPOE-Debug - общая для облака и терминала: пакет с неверным CRC - ⚠️ вместо заголовка (аргумент и значение обычно целы), текст вне пакетов - RAW */
+/* Строка таблицы xPOE-Debug - общая для облака и терминала, текст вне рамок - RAW */
 export interface XPoeDebugRow {
   trgId: string
   srcId: string
@@ -89,7 +85,6 @@ export interface XPoeDebugRow {
   value: string /* Payload кратко, как пришёл: DebugLog - уровень · тег · текст, CBOR - поток YAML (вставляется в поле Value как есть), не CBOR - HEX, RAW - сам текст */
   valueBytes: Uint8Array /* Исходные байты Payload, у RAW - пусто */
   payload: unknown /* Payload, декодированный при разборе */
-  crc: string
   freeHeap: string
   message?: string /* Сообщение устройства на языке: карта {Message, Args} в Payload (ER!) или DebugLog "MSG <код> ..."; приложение может дописать свои пояснения. В value не входит */
   level?: DeviceMessageLevel /* Уровень сообщения - цвет его текста */
@@ -110,7 +105,6 @@ export const xPoeDebugRow = (item: XPoeDebugItem, lang: LanguageCode = DEFAULT_L
       value: item.text,
       valueBytes: new Uint8Array(),
       payload: undefined,
-      crc: "",
       freeHeap: "",
     }
   const message = xPoeDebugMessage(item.payload, lang)
@@ -118,19 +112,18 @@ export const xPoeDebugRow = (item: XPoeDebugItem, lang: LanguageCode = DEFAULT_L
     trgId: formatBusId(item.trgId),
     srcId: formatBusId(item.srcId),
     har: item.har.toString(16).toUpperCase().padStart(4, "0"),
-    header: item.crcOk ? item.header : "⚠️",
+    header: item.header,
     argument: item.argument,
     reply: item.reply,
     value: formatXPoeDebugValue(item.payload, item.valueBytes),
     valueBytes: item.valueBytes,
     payload: item.payload,
-    crc: item.crc,
     freeHeap: item.freeHeap,
     ...(message && { message: message.text, level: message.level }),
   }
 }
 
-/* Потоковый разбор: пакеты в любом месте разреза, текст - построчно, мусор сдвигается по байту; пауза дольше gapMs обрывает недособранный пакет, а недописанную строку текста выдаёт как есть. Имена аргументов - из dictionary (по умолчанию встроенного) */
+/* Потоковый разбор: рамки в любом месте разреза, текст - построчно, мусор и рамка с неверной CRC сдвигаются по байту; пауза дольше gapMs обрывает недособранную рамку, а недописанную строку текста выдаёт как есть. Имена аргументов - из dictionary (по умолчанию встроенного) */
 export const createXPoeDebugParser = ({ dictionary = DEFAULT_DICTIONARY, ...options }: FramerOptions & { dictionary?: Dictionary } = {}) => {
   const framer = createFramer(options)
   return {
@@ -140,22 +133,23 @@ export const createXPoeDebugParser = ({ dictionary = DEFAULT_DICTIONARY, ...opti
         chunk,
         now,
         (bytes) => {
-          const start = packetStart(bytes)
-          if (start === bytes.length - 1) return 0
+          const start = frameStart(bytes)
+          /* Возможное начало рамки в хвосте куска - ждать продолжения: 0x83 бывает и вторым байтом буквы UTF-8 */
+          if (start > 0 && bytes.length - start <= FRAME_HEAD) return 0
           if (start !== 0) {
             const cut = start > 0 ? start : bytes.length > MAX_TEXT_TAIL ? bytes.length : bytes.lastIndexOf(0x0a) + 1
             items.push(...textItems(bytes.subarray(0, cut)))
             return cut
           }
-          const parsed = decodePacket(bytes, framer.maxBytes)
-          if (parsed.status === "incomplete") return 0
-          if (parsed.status === "garbage" || !parsed.objects.length) return 1
-          items.push(...parsed.objects.map((object) => frameItem(object, dictionary)))
+          const parsed = decodeFrame(bytes, framer.maxBytes)
+          if (parsed.status === "incomplete") return Math.max(laterFrame(bytes, framer.maxBytes), 0)
+          if (parsed.status === "garbage" || !parsed.frame.records.length) return 1
+          items.push(...parsed.frame.records.map((record) => frameItem(record, parsed.frame.srcBusID, dictionary)))
           return parsed.length
         },
         (bytes) => {
-          /* Текст до начала пакета выдаётся строкой, обрывок самого пакета отбрасывается */
-          const start = packetStart(bytes)
+          /* Текст до начала рамки выдаётся строкой, обрывок самой рамки отбрасывается */
+          const start = frameStart(bytes)
           items.push(...textItems(start < 0 ? bytes : bytes.subarray(0, start)))
         },
       )

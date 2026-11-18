@@ -137,7 +137,10 @@ test("poe_msg.yaml: коды 1..65535 без повторов, у каждого
 test("poe_cmd.h: те же коды, что poe_cmd.yaml (DEFAULT_ARGUMENT_CODES), плюс har_t и макросы", () => {
   const header = dictionaryFile("firmware/poe_cmd.h")
   const yamlEnums = Object.fromEntries(
-    [...dictionaryFile("poe_cmd.yaml").matchAll(/^- \[\s*[^,\]]+?\s*,\s*(\w+)\s*,\s*(\d+)\s*\]/gm)].map(([, name, code]) => [name, Number(code)]),
+    [...dictionaryFile("poe_cmd.yaml").matchAll(/^- \[\s*[^,\]]+?\s*,\s*(\w+)\s*,\s*(\d+)\s*(?:,\s*\d+\s*)?\]/gm)].map(([, name, code]) => [
+      name,
+      Number(code),
+    ]),
   )
   const headerEnums = Object.fromEntries([...header.matchAll(/^\s*(A_\w+)\s*=\s*(\d+),/gm)].map(([, name, code]) => [name, Number(code)]))
   assert.deepEqual(headerEnums, yamlEnums)

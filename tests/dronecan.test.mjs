@@ -2,7 +2,7 @@
 import { test } from "node:test"
 import assert from "node:assert/strict"
 import * as m from "../dist/protocols/dronecan/index.js"
-import { createSlcanReader, encodeSlcanExtFrame } from "../dist/protocols/index.js"
+import { createSlcanReader, encodeSlcanFrame } from "../dist/protocols/index.js"
 
 const hex = (bytes) => Buffer.from(bytes).toString("hex")
 const sig = (name) => m.droneCanType(name)?.signature
@@ -124,7 +124,7 @@ test("одиночный кадр: ID сообщения, хвостовой б�
 })
 
 test("slcan: расширенный кадр туда и обратно", () => {
-  const text = encodeSlcanExtFrame(0x1015557f, Uint8Array.from([1, 2, 3, 0xc0]))
+  const text = encodeSlcanFrame({ canId: 0x1015557f, data: Uint8Array.from([1, 2, 3, 0xc0]) }, false)
   assert.equal(text, "T1015557F401020 3C0\r".replace(" ", ""))
   const reader = createSlcanReader()
   const [frame] = reader.push(new TextEncoder().encode(`\r${text}`), 5)

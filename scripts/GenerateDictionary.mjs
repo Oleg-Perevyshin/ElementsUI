@@ -56,31 +56,48 @@ const enumItems = (yaml, parse, items = []) => {
 }
 
 /* ********************************************************** */
-/* Словарь команд poe_cmd.yaml -> DEFAULT_ARGUMENT_CODES и poe_cmd.h */
+/* Словарь команд poe_cmd.yaml -> DEFAULT_ARGUMENT_CODES, ARGUMENT_PRIORITIES и poe_cmd.h */
 const commandsYaml = readFileSync(new URL("poe_cmd.yaml", root), "utf8")
-const commands = [...commandsYaml.matchAll(/^\s*-\s*\[\s*([^,\]]+?)\s*,\s*[^,\]]+?\s*,\s*(\d+)\s*\]/gm)].map(([, name, code]) => [name, Number(code)])
+/* Строка «- [Строка, Enum, Число]» или «- [Строка, Enum, Число, Важность]»: важность на CAN 0..3, без неё - PRIORITY_DEFAULT */
+const PRIORITY_DEFAULT = 2
+const COMMAND_LINE = /^\s*-\s*\[\s*([^,\]]+?)\s*,\s*([^,\]]+?)\s*,\s*(\d+)\s*(?:,\s*(\d+)\s*)?\](?:\s*#\s*(.*))?/
+const commands = commandsYaml
+  .split(/\r?\n/)
+  .map((line) => line.match(COMMAND_LINE))
+  .filter(Boolean)
+  .map(([, name, enumName, code, priority]) => ({ name, enumName, code: Number(code), priority: priority === undefined ? PRIORITY_DEFAULT : Number(priority) }))
 
 const names = new Set()
 const codes = new Set()
-for (const [name, code] of commands) {
+for (const { name, code, priority } of commands) {
   if (names.has(name) || codes.has(code)) throw new Error(`poe_cmd.yaml: повтор имени или кода - ${name} = ${code}`)
   if (code > 0x1fff) throw new Error(`poe_cmd.yaml: код ${name} = ${code} не помещается в 13 бит аргумента Cmd`)
+  if (priority > 3) throw new Error(`poe_cmd.yaml: важность ${name} = ${priority} вне 0..3`)
   names.add(name)
   codes.add(code)
 }
+const PRIORITY_LEVELS = [0, 1, 3]
 
 writeFileSync(
   new URL("poe_cmd.ts", generated),
   `/* $lib/dictionaries/generated/poe_cmd.ts - СГЕНЕРИРОВАНО из poe_cmd.yaml (npm run Generate), руками не править */\n\nexport const DEFAULT_ARGUMENT_CODES: Record<string, number> = {\n${commands
-    .map(([name, code]) => `  ${/^[A-Za-z_$][\w$]*$/.test(name) ? name : JSON.stringify(name)}: ${code},`)
+    .map(({ name, code }) => `  ${/^[A-Za-z_$][\w$]*$/.test(name) ? name : JSON.stringify(name)}: ${code},`)
+    .join(
+      "\n",
+    )}\n}\n\n/* Важность команды на CAN по коду: 0 - самый важный, 3 - фон; команды без своей важности - PRIORITY_DEFAULT */\nexport const PRIORITY_DEFAULT = ${PRIORITY_DEFAULT}\nexport const ARGUMENT_PRIORITIES: Record<number, number> = {\n${commands
+    .filter(({ priority }) => priority !== PRIORITY_DEFAULT)
+    .map(({ code, priority }) => `  ${code}: ${priority},`)
     .join("\n")}\n}\n`,
 )
 
-/* poe_cmd.h: har_t, макросы HAR/HAR_NR, api_header_t и enum api_argument_t (A_* = код) с комментариями разделов и строк */
+/* poe_cmd.h: har_t, макросы HAR/HAR_NR, api_header_t, enum api_argument_t (A_* = код) с комментариями разделов и строк, важность CMD_Priority */
 const harItems = enumItems(commandsYaml, (line) => {
-  const entry = line.match(/^\s*-\s*\[\s*[^,\]]+?\s*,\s*([^,\]]+?)\s*,\s*(\d+)\s*\](?:\s*#\s*(.*))?/)
-  return entry && { name: entry[1], value: Number(entry[2]), comment: entry[3] && cComment(entry[3]) }
+  const entry = line.match(COMMAND_LINE)
+  return entry && { name: entry[2], value: Number(entry[3]), comment: entry[5] && cComment(entry[5]) }
 })
+const priorityCases = PRIORITY_LEVELS.map((level) =>
+  [...commands.filter(({ priority }) => priority === level).map(({ enumName }) => `    case ${enumName}:`), `      return ${level};`].join("\n"),
+).join("\n")
 writeFileSync(
   new URL("poe_cmd.h", firmware),
   `/* poe_cmd.h - СГЕНЕРИРОВАНО из poe_cmd.yaml библиотеки xPOE-Stack Lib (npm run Generate), вручную не править */\n` +
@@ -93,7 +110,10 @@ writeFileSync(
     `#define HAR_NR(_h, _a) (((har_t) {.hdr = (_h), .arg = (_a), .reply = 0}).word)\n\n` +
     `/* Коды заголовков */\ntypedef enum { H_GET = 0, H_SET = 1, H_OK = 2, H_ER = 3 } api_header_t;\n\n` +
     `/* Словарь аргументов - единый для всех устройств и обоих фреймворков (.framework/poe_cmd.yaml), 0 = отсутствие аргумента; имён в прошивке нет, только коды */\n` +
-    `${formatEnum(harItems, "api_argument_t")}\n`,
+    `${formatEnum(harItems, "api_argument_t")}\n\n` +
+    `/* Важность команды на CAN по коду аргумента: 0 - самый важный, 3 - фон; команды без своей важности - CMD_PRIORITY_DEFAULT */\n` +
+    `#define CMD_PRIORITY_DEFAULT ${PRIORITY_DEFAULT}\n` +
+    `static inline uint8_t CMD_Priority(uint16_t arg) {\n  switch(arg) {\n${priorityCases}\n    default:\n      return CMD_PRIORITY_DEFAULT;\n  }\n}\n`,
 )
 console.log(`generated/poe_cmd.ts, firmware/poe_cmd.h: ${commands.length} аргументов`)
 

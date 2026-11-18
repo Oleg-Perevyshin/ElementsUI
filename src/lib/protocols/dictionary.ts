@@ -1,8 +1,8 @@
 /* Словарь заголовков и аргументов протокола - заголовок и аргумент поля HAR (makeHar/splitHar) на шине и в WebSocket-конверте {HAR, VAL}. Аргументы по умолчанию - из мастер-словаря команд src/lib/dictionaries/poe_cmd.yaml (единственный источник; .framework/poe_cmd.yaml прошивок - его справочные копии), DEFAULT_ARGUMENT_CODES генерируется из него (dictionaries/generated/poe_cmd.ts, npm run Generate): прошивки собираются с его копией, поэтому приложения берут только встроенный словарь; аргумент, которого в словаре нет, задаётся числом (кодом) */
-import { DEFAULT_ARGUMENT_CODES } from "../dictionaries/generated/poe_cmd.js"
+import { ARGUMENT_PRIORITIES, DEFAULT_ARGUMENT_CODES, PRIORITY_DEFAULT } from "../dictionaries/generated/poe_cmd.js"
 import { makeHar, splitHar } from "./packet.js"
 
-export { DEFAULT_ARGUMENT_CODES }
+export { ARGUMENT_PRIORITIES, DEFAULT_ARGUMENT_CODES, PRIORITY_DEFAULT }
 
 export const HEADER_CODES: Record<string, number> = {
   GET: 0,
@@ -25,10 +25,12 @@ export interface Dictionary {
   header(code: number): string
   /* HAR из имени заголовка и аргумента (имя, код 0..8191 или его запись строкой «4097»/«0x1001»); неизвестные заголовок или имя аргумента, код вне диапазона - ошибка */
   har(header: string, argument: string | number, reply?: boolean): number
+  /* Важность команды на CAN по коду: 0 - самый важный, 3 - фон; без своей важности - PRIORITY_DEFAULT */
+  priority(code: number): number
 }
 
-/* Словарь аргументов устройства с обратным поиском; при повторе кода имя берётся первое */
-export const createDictionary = (codes: Record<string, number>): Dictionary => {
+/* Словарь аргументов устройства с обратным поиском; при повторе кода имя берётся первое; важность команд - из priorities (по умолчанию из мастер-словаря) */
+export const createDictionary = (codes: Record<string, number>, priorities: Record<number, number> = ARGUMENT_PRIORITIES): Dictionary => {
   const byName = new Map(Object.entries(codes))
   const byCode = new Map<number, string>()
   for (const [name, code] of byName) if (!byCode.has(code)) byCode.set(code, name)
@@ -42,11 +44,16 @@ export const createDictionary = (codes: Record<string, number>): Dictionary => {
       if (hdr < 0 || arg === undefined) throw new Error(`Hdr/Arg отсутствует в словаре: ${header} ${argument}`)
       return makeHar(hdr, arg, reply)
     },
+    priority: (code) => priorities[code] ?? PRIORITY_DEFAULT,
   }
 }
 
 /* Встроенный словарь - по умолчанию для шины, xPOE-Debug и WebSocket */
 export const DEFAULT_DICTIONARY = createDictionary(DEFAULT_ARGUMENT_CODES)
+
+/* Важность пакета на CAN - самая важная из его записей (0 - самый важный); пустой список - PRIORITY_DEFAULT */
+export const packetPriority = (hars: number[], dictionary: Dictionary = DEFAULT_DICTIONARY): number =>
+  hars.reduce((level, har) => Math.min(level, dictionary.priority(splitHar(har).argument)), hars.length ? 3 : PRIORITY_DEFAULT)
 
 /* Части HAR словами: header - "GET"/"SET"/"OK!"/"ER!", argument - имя по словарю (неизвестный код - строкой из числа), code - код аргумента, reply - флаг ответа */
 export interface HarParts {

@@ -3,7 +3,7 @@ export * from "./cbor/types.js"
 export { bytesToBase64, base64ToBytes } from "./cbor/base64.js"
 /* Значение ↔ CBOR: двоичные данные - Uint8Array как есть (WebSocket, хранилище, телеметрия) */
 export { cborToValue, valueToCbor } from "./cbor/value.js"
-/* Контрольная сумма и пакет poe_cbor_pkt [[TrgBusID, SrcBusID, HAR, Payload, CRC16], …] - все шины и консоль */
+/* Контрольная сумма; пакет - записи [TrgBusID, HAR, Payload] на всех проводах, рамка [SrcBusID, записи, CRC16] - RS485, UART-консоль и LoRa */
 export { crc16Kermit, crc32 } from "./crc.js"
 /* Список модулей изделия: соседи по SSDP в состав не входят */
 export { MOD_IFACE_NEIGHBOR, isNeighborModule } from "./modList.js"
@@ -13,14 +13,21 @@ export {
   formatBusId,
   makeHar,
   splitHar,
-  packetObjectCrc,
   encodePacketBytesPayload,
-  encodePacket,
-  decodePacket,
-  createPacketStreamParser,
-  type PacketObject,
-  type DecodedPacketObject,
-  type PacketParse,
+  encodeRecords,
+  decodeRecords,
+  encodeFrame,
+  decodeFrame,
+  frameStart,
+  laterFrame,
+  createFrameStreamParser,
+  FRAME_HEAD,
+  FRAME_TAIL,
+  type PacketRecord,
+  type DecodedPacketRecord,
+  type PacketFrame,
+  type RecordsParse,
+  type FrameParse,
 } from "./packet.js"
 /* Графики отладки: пакет OK! DebugPlot (LOG_PLOT прошивки) - значения из CBOR-карты, график на группу, серии в порядке устройства */
 export { createPlotGroups, debugPlotValues, DEBUG_PLOT_ARGUMENT, type PlotPoint } from "./plotGroups.js"
@@ -36,17 +43,18 @@ export {
 } from "./xPoeDebug.js"
 /* Вид Payload xPOE-Debug: кратко для строки таблицы и развёрнуто для окна */
 export { formatXPoeDebugValue, formatXPoeDebugPretty, xPoeDebugMessage } from "./xPoeDebugView.js"
-/* CAN/CAN FD через slcan-адаптер: нарезка пакета на кадры как в can_service прошивки, кадры slcan, потоковый разбор со сборкой фрагментов */
+/* CAN/CAN FD через slcan-адаптер: 29-битный ID (важность, отправитель, номер кадра), нарезка записей на кадры как в can_service прошивки, кадры slcan, потоковый разбор со сборкой */
 export {
-  CAN_FINAL_BIT,
-  CAN_PACKET_ID_MASK,
+  makeCanId,
+  splitCanId,
   canFragments,
   encodeSlcanFrame,
   encodeCanPacket,
   createCanParser,
   slcanOpenCommands,
   createSlcanReader,
-  encodeSlcanExtFrame,
+  type CanIdFields,
+  type CanSender,
   type CanFrame,
   type CanMessage,
   type SlcanFrame,
@@ -55,6 +63,9 @@ export {
 export {
   HEADER_CODES,
   DEFAULT_ARGUMENT_CODES,
+  ARGUMENT_PRIORITIES,
+  PRIORITY_DEFAULT,
+  packetPriority,
   DEFAULT_DICTIONARY,
   createDictionary,
   encodeHar,

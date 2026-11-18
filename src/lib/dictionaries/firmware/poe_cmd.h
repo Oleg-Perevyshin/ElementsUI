@@ -112,3 +112,40 @@ typedef enum {
   A_CLOUD_DEVICE_RESET_TOKEN        = 7104, /* SET/OK!: сброс токена устройства (TOFU) */
 } api_argument_t;
 /* clang-format on */
+
+/* Важность команды на CAN по коду аргумента: 0 - самый важный, 3 - фон; команды без своей важности - CMD_PRIORITY_DEFAULT */
+#define CMD_PRIORITY_DEFAULT 2
+static inline uint8_t CMD_Priority(uint16_t arg) {
+  switch(arg) {
+    case A_MOTION_ENABLE:
+    case A_MOTION_TARGET:
+    case A_MOTION_VELOCITY:
+    case A_MOTION_ANGLE:
+      return 0;
+    case A_SYSTEM_DATA_UPDATE:
+    case A_SYSTEM_DATA_STREAM:
+    case A_MODULE_TELEMETRY_1:
+    case A_MODULE_TELEMETRY_2:
+    case A_MODULE_TELEMETRY_3:
+    case A_MODULE_TELEMETRY_4:
+    case A_MODULE_TELEMETRY_5:
+    case A_MODULE_STREAM_1:
+    case A_MODULE_STREAM_2:
+    case A_MODULE_STREAM_3:
+    case A_MODULE_STREAM_4:
+    case A_MODULE_STREAM_5:
+    case A_ORIENTATION_DATA:
+      return 1;
+    case A_SYSTEM_FILE_SYSTEM:
+    case A_DEBUG_LOG:
+    case A_DEBUG_PLOT:
+    case A_DEBUG_MIRROR:
+    case A_FIRMWARE_UPGRADE_START:
+    case A_FIRMWARE_UPGRADE_CHUNK:
+    case A_FIRMWARE_UPGRADE_DONE:
+    case A_FIRMWARE_UPGRADE_ERROR:
+      return 3;
+    default:
+      return CMD_PRIORITY_DEFAULT;
+  }
+}

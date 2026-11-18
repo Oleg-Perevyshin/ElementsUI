@@ -6,10 +6,11 @@
     DEFAULT_ARGUMENT_CODES,
     HEADER_CODES,
     cborToValue,
+    decodeFrame,
     decodeHar,
-    decodePacket,
+    decodeRecords,
+    encodeFrame,
     encodeHar,
-    encodePacket,
     formatBusId,
     formatXPoeDebugValue,
     parseBusId,
@@ -21,12 +22,13 @@
 
   const headers: IOption<string>[] = Object.keys(HEADER_CODES).map((name) => ({ id: name, value: name, name }))
 
-  /* Запись пакета: получатель, отправитель, команда и Payload в YAML, как поле Value консоли */
-  type Draft = { id: number; header: string; argument: string; reply: boolean; trg: string; src: string; payload: string }
+  /* Запись пакета: получатель, команда и Payload в YAML, как поле Value консоли; отправитель - один на рамку */
+  type Draft = { id: number; header: string; argument: string; reply: boolean; trg: string; payload: string }
   let nextId = 3
+  let frameSrc = $state("0000")
   let drafts = $state<Draft[]>([
-    { id: 1, header: "GET", argument: "ModuleConfig", reply: true, trg: "0001", src: "0000", payload: "CfgGroup: CFG" },
-    { id: 2, header: "SET", argument: "ModuleConfig", reply: false, trg: "0002", src: "0000", payload: 'CFG.DevName: "Pump-2", CFG.Power: [255, 0, 0]' },
+    { id: 1, header: "GET", argument: "ModuleConfig", reply: true, trg: "0001", payload: "CfgGroup: CFG" },
+    { id: 2, header: "SET", argument: "ModuleConfig", reply: false, trg: "0002", payload: 'CFG.DevName: "Pump-2", CFG.Power: [255, 0, 0]' },
   ])
   /* Примеры Payload для подсказки: текст поля и ключ пояснения */
   const PAYLOAD_FORMATS = [
@@ -50,14 +52,13 @@
       argument: last?.argument ?? "ModuleInfo",
       reply: true,
       trg: last?.trg ?? "0001",
-      src: last?.src ?? "0000",
       payload: "",
     })
   }
   const removeDraft = (id: number) => (drafts = drafts.filter((d) => d.id !== id))
 
-  /* Колонки строки записи: номер, заголовок, аргумент, ответ, получатель, отправитель, Payload, кнопка */
-  const ROW_GRID = "grid-cols-[1.5rem_6rem_17rem_3rem_5.5rem_5.5rem_minmax(0,1fr)_2rem]"
+  /* Колонки строки записи: номер, заголовок, аргумент, ответ, получатель, Payload, кнопка */
+  const ROW_GRID = "grid-cols-[1.5rem_6rem_17rem_3rem_5.5rem_minmax(0,1fr)_2rem]"
   /* Аргумент: выбор из словаря команд устройств (1..4095) с поиском, можно вписать и число кода */
   const argumentOptions = Object.entries(DEFAULT_ARGUMENT_CODES)
     .filter(([, code]) => code > 0 && code < 4096)
@@ -79,26 +80,25 @@
     return /^[^"'[{].*: /.test(text) ? `{${text}}` : text
   }
   /* Одна запись пакета в YAML - элемент списка */
-  const recordYaml = (o: { trgBusID: number; srcBusID: number; har: number; payload: Uint8Array }, extra = "") => {
+  type RecordView = { trgBusID: number; har: number; payload: Uint8Array }
+  const recordYaml = (o: RecordView) => {
     const har = decodeHar(o.har)
     return [
       `- TrgBusID: ${formatBusId(o.trgBusID)}`,
-      `  SrcBusID: ${formatBusId(o.srcBusID)}`,
       `  HAR: ${har.header} ${har.argument}${har.reply ? "" : " (NR)"}`,
       `  Payload: ${payloadYaml(o.payload)}`,
-      extra,
-    ]
-      .filter(Boolean)
-      .join("\n")
+    ].join("\n")
   }
+  /* Рамка в YAML: отправитель и записи */
+  const frameYaml = (src: number, list: RecordView[]) => [`SrcBusID: ${formatBusId(src)}`, "Records:", ...list.map(recordYaml)].join("\n")
 
   /* Сборка: каждая запись отдельно (ошибка - у своей записи), пакет - из всех записей без ошибок */
   const records = $derived(
     drafts.map((d) => {
       try {
-        if (!BUS_ID_REGEXP.test(d.trg) || !BUS_ID_REGEXP.test(d.src)) throw new Error($T("library.proto_bad_busid"))
+        if (!BUS_ID_REGEXP.test(d.trg)) throw new Error($T("library.proto_bad_busid"))
         const har = encodeHar(d.header, /^\d+$/.test(d.argument.trim()) ? Number(d.argument) : d.argument.trim(), d.reply)
-        return { id: d.id, object: { trgBusID: parseBusId(d.trg), srcBusID: parseBusId(d.src), har, payload: xPoeDebugValueFromText(d.payload) } }
+        return { id: d.id, object: { trgBusID: parseBusId(d.trg), har, payload: xPoeDebugValueFromText(d.payload) } }
       } catch (error) {
         return { id: d.id, error: message(error) }
       }
@@ -106,15 +106,16 @@
   )
   const built = $derived.by(() => {
     if (records.some((r) => r.error)) return null
+    if (!BUS_ID_REGEXP.test(frameSrc)) return { error: $T("library.proto_bad_busid") }
     try {
       const objects = records.map((r) => r.object!)
-      return { packet: encodePacket(objects), yaml: objects.map((o) => recordYaml(o)).join("\n") }
+      return { packet: encodeFrame(parseBusId(frameSrc), objects), yaml: frameYaml(parseBusId(frameSrc), objects) }
     } catch (error) {
       return { error: message(error) }
     }
   })
 
-  /* Разбор: hex пакета - записи в YAML с проверкой CRC16 */
+  /* Разбор: hex рамки (с проверкой CRC16) или записей CAN - в YAML */
   let parseText = $state("")
   let parseTouched = false
   $effect(() => {
@@ -123,21 +124,20 @@
   const parsed = $derived.by(() => {
     try {
       const bytes = fromHex(parseText)
-      const result = decodePacket(bytes)
-      /* Нет начала пакета 0x9F - возможно, это отдельный Payload (например, из столбца консоли): показать его значение */
+      const result = decodeFrame(bytes)
+      if (result.status === "complete") return { count: result.frame.records.length, yaml: frameYaml(result.frame.srcBusID, result.frame.records) }
+      /* Не рамка - возможно, записи из данных пакета CAN или отдельный Payload (например, из столбца консоли) */
+      const list = bytes[0] === 0x9f ? decodeRecords(bytes) : null
+      if (list?.status === "complete")
+        return { title: $T("library.proto_records_can", { n: list.records.length }), yaml: list.records.map(recordYaml).join("\n") }
       if (result.status === "garbage" && bytes.length) {
         try {
-          return { title: $T("library.proto_payload_only"), yaml: `Payload: ${payloadYaml(bytes)}`, bad: false }
+          return { title: $T("library.proto_payload_only"), yaml: `Payload: ${payloadYaml(bytes)}` }
         } catch {
           return { error: $T("library.proto_status_garbage") }
         }
       }
-      if (result.status !== "complete") return { error: $T(`library.proto_status_${result.status}`) }
-      return {
-        count: result.objects.length,
-        yaml: result.objects.map((o) => recordYaml(o, `  CRC16: ${formatBusId(o.crc)}  # ${o.crcOk ? "✓" : $T("library.proto_crc_bad")}`)).join("\n"),
-        bad: result.objects.some((o) => !o.crcOk),
-      }
+      return { error: $T(`library.proto_status_${result.status}`) }
     } catch (error) {
       return { error: message(error) }
     }
@@ -164,15 +164,20 @@
         <span class="ml-3 text-[13px] text-(--muted-color)">{$T("library.proto_records_hint")}</span>
       </summary>
       <div class="mt-3 flex flex-col gap-3">
+        <!-- Отправитель рамки: один на все записи -->
+        <div class="flex items-center gap-2">
+          <span class="text-[11px] font-semibold text-(--muted-color)">SrcBusID</span>
+          <Input wrapperClass="w-24" bind:value={frameSrc} maxlength={6} />
+          <span class="text-[12px] text-(--muted-color)">{$T("library.proto_src")}</span>
+        </div>
         <!-- Записи таблицей: одна запись - одна строка, подписи колонок один раз; + добавляет запись, корзина убирает -->
         <div class="overflow-x-auto">
-          <div class="grid min-w-[59rem] {ROW_GRID} items-center gap-x-2 gap-y-1.5">
+          <div class="grid min-w-[53rem] {ROW_GRID} items-center gap-x-2 gap-y-1.5">
             <span class="text-[11px] font-semibold text-(--muted-color)">#</span>
             <span class="text-[11px] font-semibold text-(--muted-color)">{$T("library.proto_header")}</span>
             <span class="text-[11px] font-semibold text-(--muted-color)">{$T("library.proto_argument")}</span>
             <span class="text-center text-[11px] font-semibold text-(--muted-color)" title={$T("library.proto_reply")}>R</span>
             <span class="text-[11px] font-semibold text-(--muted-color)">TrgBusID</span>
-            <span class="text-[11px] font-semibold text-(--muted-color)">SrcBusID</span>
             <span class="text-[11px] font-semibold text-(--muted-color)" title={$T("library.proto_payload_hint")}>Payload (YAML)</span>
             <Button wrapperClass="w-8" content={{ icon: IconAdd, info: { text: $T("library.proto_add"), side: "left" } }} onClick={addDraft} />
 
@@ -183,7 +188,6 @@
               <Select type="input" options={argumentOptions} value={draft.argument} onUpdate={(v) => (draft.argument = String(v ?? ""))} />
               <Switch wrapperClass="w-fit justify-self-center" value={draft.reply ? 1 : 0} onUpdate={(v) => (draft.reply = !!v)} />
               <Input bind:value={draft.trg} maxlength={6} />
-              <Input bind:value={draft.src} maxlength={6} />
               <Input bind:value={draft.payload} maxlength={8192} />
               {#if drafts.length > 1}
                 <Button
@@ -258,9 +262,7 @@
             {:else}
               <span class="text-[12px] font-semibold text-(--muted-color)">{parsed.title ?? $T("library.proto_parsed", { n: parsed.count ?? 0 })}</span>
               <pre
-                class="overflow-x-auto rounded-xl border border-(--hairline-color) bg-(--back-color) p-3 font-mono text-[13px] whitespace-pre {parsed.bad
-                  ? 'text-(--red-text)'
-                  : ''}">{parsed.yaml}</pre>
+                class="overflow-x-auto rounded-xl border border-(--hairline-color) bg-(--back-color) p-3 font-mono text-[13px] whitespace-pre">{parsed.yaml}</pre>
             {/if}
           </div>
         </div>

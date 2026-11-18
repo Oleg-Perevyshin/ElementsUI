@@ -24,16 +24,10 @@ const commandHtml = (row: XPoeDebugRow): string => {
   return `${badge}${row.argument ? ` ${escapeHtml(row.argument)}` : ""}${message}`
 }
 
-/* Подсказка КОМАНДЫ: HAR и флаг ответа, неверная CRC, сообщение целиком */
+/* Подсказка КОМАНДЫ: HAR и флаг ответа, сообщение целиком */
 const commandTooltip = (row: XPoeDebugRow): string => {
   const $T = get(T)
-  return [
-    row.har && `HAR 0x${row.har} · ${$T(row.reply ? "common.table.xpoe.reply" : "common.table.xpoe.no_reply")}`,
-    row.header === "⚠️" && `${$T("common.table.xpoe.crc")} (CRC ${row.crc})`,
-    row.message,
-  ]
-    .filter(Boolean)
-    .join("\n")
+  return [row.har && `HAR 0x${row.har} · ${$T(row.reply ? "common.table.xpoe.reply" : "common.table.xpoe.no_reply")}`, row.message].filter(Boolean).join("\n")
 }
 
 /* Ячейка SRC → TRG: отправитель и адресат одной строкой, HEX без 0x (пояснение - в справке таблицы); у RAW адресов нет - пусто */
@@ -86,7 +80,6 @@ export const xPoeDebugTableColumns: ITableHeader<XPoeDebugRow>[] = [
     align: "left",
   },
   { id: "har", label: { name: "HAR" }, hidden: true, content: [{ type: "text", data: { key: "har" } }], width: tableMonoWidth(4, 3), align: "center" },
-  { id: "crc", label: { name: "CRC" }, hidden: true, content: [{ type: "text", data: { key: "crc" } }], width: tableMonoWidth(4, 3), align: "center" },
   /* Свободная куча устройства из DebugLog */
   { label: { name: "FHS" }, content: [{ type: "text", data: { key: "freeHeap" } }], width: tableMonoWidth(7, 3), align: "center" },
 ]
