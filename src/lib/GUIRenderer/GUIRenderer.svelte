@@ -30,6 +30,7 @@
   } from "../gui"
   import { loraKeys } from "../WidgetLoRa/lora"
   import { updateViaHub, type FirmwareTarget } from "../WidgetFirmware/firmware"
+  import { flashingModules } from "../WidgetFirmware/progress"
   import { COMPONENT_META } from "../componentMeta"
   import DeviceTable from "./DeviceTable.svelte"
   import type { GuiViews } from "../guiViews"
@@ -158,11 +159,10 @@
     const key = `${argument}:${maxNameLength}`
     return transfers.get(key) ?? transfers.set(key, createFsTransfer(link, { argument, maxNameLength })).get(key)!
   }
-  /* Обновление прошивки модуля (WidgetFirmware): версия - через хаб, иначе образ из каталога напрямую через загрузчик; файл - напрямую; одно обновление за раз */
-  let flashing = false
+  /* Обновление прошивки модуля (WidgetFirmware): версия - через хаб, иначе образ из каталога напрямую через загрузчик; файл - напрямую; одно обновление за раз на всё приложение (не на экземпляр рендерера: GUI мог пересоздаться посреди обновления) */
   const updateFirmware = async (target: FirmwareTarget, source: WidgetFirmwareSource, onProgress: (stage: WidgetFirmwareStage, percent: number) => void) => {
-    if (flashing) return fail(new Error($T("widget.firmware.busy")))
-    flashing = true
+    if (flashingModules.size) return fail(new Error($T("widget.firmware.busy")))
+    flashingModules.add(target.ModSN)
     const direct = (image: Uint8Array) =>
       updateModuleFirmware(link, image, {
         onProgress: (stage, done, total) => onProgress(stage, stage === "write" ? (total ? (done / total) * 100 : 0) : stage === "verify" ? 100 : 0),
@@ -174,7 +174,7 @@
     } catch (error) {
       fail(error)
     } finally {
-      flashing = false
+      flashingModules.delete(target.ModSN)
     }
   }
 
@@ -535,6 +535,7 @@
           versions={(link.get("VerFW-S") as IOption<number>[] | undefined) ?? []}
           sources={{ version: !!(target?.hub || target?.catalog), file: !!target?.file }}
           persistKey={persist(component)}
+          progressKey={firmware?.ModSN}
           onUpdate={target ? (source, onProgress) => updateFirmware(target, source, onProgress) : undefined}
         />
       {:else if component.type === "WidgetRGBStrip" && views.WidgetRGBStrip}

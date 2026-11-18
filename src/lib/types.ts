@@ -897,6 +897,8 @@ export interface IWidgetFirmwareProps {
   sources?: { version?: boolean; file?: boolean }
   collapsed?: boolean
   persistKey?: string
+  /* Ключ хода обновления вне виджета (серийный номер модуля): пересозданный виджет показывает идущее обновление; без него ход свой у каждого экземпляра */
+  progressKey?: string
   /* Запуск обновления: onProgress - этап и ход 0..100 для полосы, промис завершается вместе с обновлением, отказ - ошибка в строке состояния. Без него виджет неактивен */
   onUpdate?: (source: WidgetFirmwareSource, onProgress: (stage: WidgetFirmwareStage, percent: number) => void) => Promise<void>
 }

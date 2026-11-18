@@ -12,6 +12,7 @@
   import { accentStyle } from "../accent"
   import { readPersistedCollapsed, writePersistedCollapsed } from "../widgetCollapse"
   import { FirmwareUpdateError } from "../firmwareUpdate"
+  import { FIRMWARE_PROGRESS_IDLE, firmwareProgress, patchFirmwareProgress } from "./progress"
 
   let {
     wrapperClass = "",
@@ -23,6 +24,7 @@
     sources = {},
     collapsed = $bindable(false),
     persistKey,
+    progressKey,
     onUpdate,
   }: IWidgetFirmwareProps = $props()
 
@@ -51,10 +53,15 @@
   const enabled = $derived(!!onUpdate && (!!sources.version || !!sources.file))
 
   let selected: number | null = $state(null)
-  let running = $state(false)
-  let stage: WidgetFirmwareStage | "done" | "error" | null = $state(null)
-  let percent = $state(0)
-  let errorText = $state("")
+
+  /* Ход - в общем хранилище по progressKey (серийный номер модуля): обновление идёт дальше, даже если GUI пересоздан, новый виджет его показывает; без ключа - свой у экземпляра */
+  const ownKey = `local:${Math.random().toString(36).slice(2)}`
+  const key = $derived(progressKey ?? ownKey)
+  const progress = $derived(firmwareProgress.get(key) ?? FIRMWARE_PROGRESS_IDLE)
+  const running = $derived(progress.running)
+  const stage = $derived(progress.stage)
+  const percent = $derived(progress.percent)
+  const errorText = $derived(progress.errorText)
 
   const canUpdate = $derived(enabled && !!sources.version && selected !== null && !running)
 
@@ -72,23 +79,19 @@
   /* Одно обновление за раз: ход приходит от приложения через onProgress */
   const start = async (source: WidgetFirmwareSource) => {
     if (!onUpdate || running) return
-    running = true
-    errorText = ""
-    percent = 0
-    stage = "start"
+    /* Ключ запоминается на всё обновление: ход пишется туда же, даже если виджет за это время пересоздан */
+    const at = key
+    patchFirmwareProgress(at, { running: true, errorText: "", percent: 0, stage: "start" })
     try {
       await onUpdate(source, (next, value) => {
-        stage = next
         /* Целые проценты: полоса показывает 1, 2, 3 без дробей */
-        percent = Math.floor(Math.min(100, Math.max(0, Number.isFinite(value) ? value : 0)))
+        patchFirmwareProgress(at, { stage: next, percent: Math.floor(Math.min(100, Math.max(0, Number.isFinite(value) ? value : 0))) })
       })
-      percent = 100
-      stage = "done"
+      patchFirmwareProgress(at, { percent: 100, stage: "done" })
     } catch (error) {
-      errorText = describe(error)
-      stage = "error"
+      patchFirmwareProgress(at, { errorText: describe(error), stage: "error" })
     } finally {
-      running = false
+      patchFirmwareProgress(at, { running: false })
     }
   }
 
