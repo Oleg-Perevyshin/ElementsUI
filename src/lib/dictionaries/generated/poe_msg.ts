@@ -262,6 +262,7 @@ export const DEVICE_MESSAGES: Record<number, DeviceMessageEntry> = {
   2053: { group: "DRV", name: "DRV_SENSOR_NOT_READY", level: "warn", ru: "Датчик не готов", en: "Sensor not ready", zh: "传感器未就绪" },
   2054: { group: "DRV", name: "DRV_FOC_ZERO_DONE", level: "info", ru: "Ноль двигателя {0} рад, направление {1}", en: "Motor zero {0} rad, direction {1}", zh: "电机零位 {0} rad，方向 {1}" },
   2055: { group: "DRV", name: "DRV_FOC_ZERO_FAILED", level: "error", ru: "Ноль двигателя не найден: вал повернулся на {0}° вместо {1}°, проверьте фазы, энкодер и M_PP", en: "Motor zero not found: shaft turned {0}° instead of {1}°, check phases, encoder and M_PP", zh: "未找到电机零位：转轴转动 {0}° 而非 {1}°，请检查相线、编码器和 M_PP" },
+  2056: { group: "DRV", name: "DRV_FOC_CMD_TIMEOUT", level: "warn", ru: "Нет команд управления дольше {0} мс, привод держит угол", en: "No control commands for over {0} ms, drive holds angle", zh: "超过 {0} ms 未收到控制命令，驱动器保持角度" },
 }
 
 export const MESSAGE_CODES: Record<string, number> = {
@@ -507,4 +508,5 @@ export const MESSAGE_CODES: Record<string, number> = {
   DRV_SENSOR_NOT_READY: 2053,
   DRV_FOC_ZERO_DONE: 2054,
   DRV_FOC_ZERO_FAILED: 2055,
+  DRV_FOC_CMD_TIMEOUT: 2056,
 }

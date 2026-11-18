@@ -567,6 +567,7 @@ export const T = createTranslator(translations)
 npm run dev            # витрина на локальном сервере
 npm run prepack        # всё перед публикацией: словари, типы, сборка, тесты, publint
 npm run Test           # тесты: протоколы, словари, битовые поля, очистка HTML, облёт поля
+npm run Sync           # словари в ProdFactory-STM и ProdFactory-ESP, библиотека в node_modules DevTerminal и DevCloud без выпуска в npm
 npm run Formatting     # prettier
 npm run build          # сборка витрины в docs/
 npm pack               # сборка пакета в dist/: проверка типов, тесты, publint

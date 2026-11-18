@@ -54,16 +54,14 @@
 - [FirmwareUpgradeError, A_FIRMWARE_UPGRADE_ERROR, 54] # Ошибка обновления прошивки по шине
 
 # Работа с модулями перемещения (оси подвесов, линейные перемещения, серво приводы и подобные)
-- [MotionInit, A_MOTION_INIT, 111]           # SET: включение/калибровка (1 байт: команда)
-- [MotionMode, A_MOTION_MODE, 112]           # SET: режим управления (2 байта: ctrl_mode + torque_mode)
-- [MotionTarget, A_MOTION_TARGET, 113]       # GET/SET: целевое значение (4 байта: float)
-- [MotionPID, A_MOTION_PID, 114]             # SET: коэффициенты PID (13 байт: selector + Kp + Ki + Kd)
-- [MotionInfo, A_MOTION_INFO, 115]           # GET: телеметрия (32 байта: angle+vel+Iq+Id+target+flags)
-- [MotionConfig, A_MOTION_CONFIG, 116]       # GET/SET: конфигурация мотора (28 байт: лимиты+параметры)
+- [MotionEnable, A_MOTION_ENABLE, 111]       # SET: привод - число 1 (включить, держит текущий угол) или 0 (фазы без напряжения, драйвер спит)
+- [MotionMode, A_MOTION_MODE, 112]           # SET: режим управления - число: 0 момент, 1 скорость, 2 угол, 3 скорость без обратной связи, 4 угол без обратной связи; продолжает с текущего состояния
+- [MotionTarget, A_MOTION_TARGET, 113]       # SET: цель в единицах текущего режима (число: В или А, рад/с, рад); с флагом ответа - OK! с состоянием оси (angle, vel, iq, flags)
+- [MotionInfo, A_MOTION_INFO, 115]           # GET: состояние оси - карта Angle, Vel, Target (рад, рад/с), Iq, Id (А), Uq, Ud (В), Mode, Torq, Flags
 - [MotionCalibrate, A_MOTION_CALIBRATE, 117] # SET: калибровка нуля и направления мотора без рывков, результат сохраняется (тело {})
-- [MotionVelocity, A_MOTION_VELOCITY, 118]   # SET: уставка скорости оси, рад/с (float); с флагом ответа - OK! с состоянием оси (angle, vel, iq, flags)
-- [MotionAngle, A_MOTION_ANGLE, 119]         # SET: уставка угла оси, рад (float); с флагом ответа - OK! с состоянием оси (angle, vel, iq, flags)
-- [MotionHome, A_MOTION_HOME, 120]           # SET: плавный выход оси в начальное положение устройства с обратной связью (тело {})
+- [MotionVelocity, A_MOTION_VELOCITY, 118]   # SET: уставка скорости оси, рад/с (число); с флагом ответа - OK! с состоянием оси (angle, vel, iq, flags)
+- [MotionAngle, A_MOTION_ANGLE, 119]         # SET: уставка угла оси, рад (число); с флагом ответа - OK! с состоянием оси (angle, vel, iq, flags)
+- [MotionHome, A_MOTION_HOME, 120]           # SET: плавный выход оси в начальное положение (MOT.M_Home со скоростью MOT.M_HSpd) с обратной связью (тело {})
 
 # Работа с модулями ориентации (IMU, магнетометры, GNSS и подобные)
 - [OrientationData, A_ORIENTATION_DATA, 141]                              # SET: углы ориентации от модуля

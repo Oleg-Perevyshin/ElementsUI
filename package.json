@@ -1,6 +1,6 @@
 {
   "name": "poe-svelte-ui-lib",
-  "version": "2.33.0",
+  "version": "2.34.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Oleg-Perevyshin/ElementsUI.git"
@@ -23,6 +23,7 @@
     "prepack": "npm run Generate && svelte-kit sync && svelte-check --tsconfig ./tsconfig.json && svelte-package && tsc -p tests/dist-types.tsconfig.json && node --test tests/*.test.mjs && publint",
     "Generate": "node scripts/GenerateDictionary.mjs && node scripts/GenerateDroneCAN.mjs && tsx scripts/UpdateIconsLib.ts && prettier --write --log-level warn src/lib/icons.ts src/lib/protocols/dronecan/generated/types.ts",
     "Test": "npm run Generate && svelte-package && node --test tests/*.test.mjs",
+    "Sync": "node scripts/SyncStack.mjs",
     "Formatting": "prettier --write .",
     "CheckUpdate": "npx npm-check-updates -u && npm install"
   },
