@@ -1,8 +1,8 @@
 /* $lib/busBridge.ts - мост GUI к устройству через шину (консоль xPOE-Debug, CAN, RS485): та же связь DeviceLink, что у веба и облака, - модули по ModSN, значения "<ModSN>|ключ", сообщения устройства в ответах */
-import { formatDeviceMessage, isNeighborModule, splitHar, type DeviceMessageLevel, type Dictionary } from "./protocols"
-import type { DevicePayload, DeviceReply } from "./fsTransfer"
-import { mergeDevicePayload, type DeviceLink } from "./gui"
-import { DEFAULT_LANGUAGE, type LanguageCode } from "./locales/languages"
+import { formatDeviceMessage, isNeighborModule, splitHar, type DeviceMessageLevel, type Dictionary } from "./protocols/index.js"
+import type { DevicePayload, DeviceReply } from "./fsTransfer.js"
+import { mergeDevicePayload, type DeviceLink } from "./gui.js"
+import { DEFAULT_LANGUAGE, type LanguageCode } from "./locales/languages.js"
 
 /* Принятый пакет шины: адреса, заголовок и аргумент именами словаря, code - код аргумента, payload - декодированный CBOR */
 export interface BusPacket {
@@ -20,7 +20,7 @@ export interface BusChannel {
   listen(handler: (packet: BusPacket) => void): () => void
 }
 
-/* Модуль изделия из CFG.ModList головного модуля (или сам модуль консоли, если списка нет) */
+/* Модуль изделия из CFG.ModList головного модуля (или сам модуль консоли, если списка нет); в режиме шины (discover) - модуль, ответивший на GET ModuleInfo */
 export interface BusModule {
   ModSN: string
   ModName: string
@@ -29,6 +29,10 @@ export interface BusModule {
   Progress?: number
   /* Модуль, к которому подключён порт: команды ему - на адрес 0000 */
   self: boolean
+  /* Режим шины: адрес модуля, ключ привязки из ModuleInfo и время последнего пакета от него, мс */
+  BusID?: number
+  ModBindKey?: string
+  seen?: number
 }
 
 export interface BusBridgeOptions {
@@ -43,6 +47,8 @@ export interface BusBridgeOptions {
   onModules?: (modules: BusModule[]) => void
   /* Адрес команд модулю порта: FFFF (по умолчанию) - модуль консоли xPOE-Debug или все на шине CAN и RS485, где терминал сам ведущий */
   selfTarget?: number
+  /* Режим шины (CAN, RS485): модули - все, кто ответил OK! ModuleInfo, каждый напрямую по своему BusID; модуля порта и CFG.ModList нет. Опрос GET ModuleInfo всем шлёт приложение */
+  discover?: boolean
 }
 
 /* Аргументы, чей Payload ложится в значения - как в вебе (README протокола: Update, SystemDataStream и др.) */
@@ -79,7 +85,7 @@ const parseConsoleMessage = (payload: unknown): { har: number; code: number; arg
 
 /** Мост: связь DeviceLink для каждого модуля изделия поверх канала шины */
 export const createBusBridge = (channel: BusChannel, options: BusBridgeOptions) => {
-  const { values, dictionary, language = () => DEFAULT_LANGUAGE, onMessage, onModules, selfTarget = 0xffff } = options
+  const { values, dictionary, language = () => DEFAULT_LANGUAGE, onMessage, onModules, selfTarget = 0xffff, discover = false } = options
   let selfSN = ""
   let modules: BusModule[] = []
   /* Сообщение, ждущее свой ответ: по адресу отправителя */
@@ -101,7 +107,7 @@ export const createBusBridge = (channel: BusChannel, options: BusBridgeOptions) 
 
   /* Свой серийный номер из ответа модуля консоли: CFG.DevSN или ModSN в ModuleInfo */
   const learnSelf = (packet: BusPacket) => {
-    if (!isRecord(packet.payload)) return
+    if (discover || !isRecord(packet.payload)) return
     const sn = packet.payload["CFG.DevSN"] ?? (packet.argument === "ModuleInfo" ? packet.payload.ModSN : undefined)
     if (selfSN || typeof sn !== "string" || busIdFromSN(sn) !== packet.srcId) return
     selfSN = sn
@@ -112,6 +118,7 @@ export const createBusBridge = (channel: BusChannel, options: BusBridgeOptions) 
   }
 
   const learnModules = (packet: BusPacket) => {
+    if (discover) return
     const list = isRecord(packet.payload) ? packet.payload["CFG.ModList"] : undefined
     /* Список модулей - только от модуля порта: у модулей за ним свой ModList из одного себя */
     if (!Array.isArray(list) || !list.length || packet.srcId !== busIdFromSN(String(list[0]?.ModSN ?? "")) || (selfSN && list[0].ModSN !== selfSN)) return
@@ -131,6 +138,28 @@ export const createBusBridge = (channel: BusChannel, options: BusBridgeOptions) 
     )
   }
 
+  /* Режим шины: ответ OK! ModuleInfo добавляет модуль или обновляет его имя и версию; любой пакет известного модуля - отметка, что он на шине (без onModules) */
+  const learnBus = (packet: BusPacket) => {
+    if (!discover) return
+    const known = modules.find((m) => m.BusID === packet.srcId)
+    if (known) known.seen = Date.now()
+    if (packet.header !== "OK!" || packet.argument !== "ModuleInfo" || !isRecord(packet.payload)) return
+    const sn = packet.payload.ModSN
+    if (typeof sn !== "string" || busIdFromSN(sn) !== packet.srcId) return
+    const next: BusModule = {
+      ModSN: sn,
+      ModName: String(packet.payload.ModName ?? sn),
+      VerFW: Number(packet.payload.VerFW) || 0,
+      ModBindKey: typeof packet.payload.ModBindKey === "string" && packet.payload.ModBindKey ? packet.payload.ModBindKey : undefined,
+      BusID: packet.srcId,
+      seen: Date.now(),
+      self: false,
+    }
+    if (known && known.ModSN === next.ModSN && known.ModName === next.ModName && known.VerFW === next.VerFW && known.ModBindKey === next.ModBindKey) return
+    /* Новый модуль или сменились имя, версия, серийный номер (другой модуль с тем же BusID) - список по адресу */
+    setModules([...modules.filter((m) => m.BusID !== packet.srcId), next].sort((a, b) => (a.BusID ?? 0) - (b.BusID ?? 0)))
+  }
+
   const unlisten = channel.listen((packet) => {
     /* DebugLog с сообщением - ждёт свой ответ, в значения не идёт */
     const consoleMessage = packet.argument === "DebugLog" ? parseConsoleMessage(packet.payload) : null
@@ -141,6 +170,7 @@ export const createBusBridge = (channel: BusChannel, options: BusBridgeOptions) 
     }
     learnSelf(packet)
     learnModules(packet)
+    learnBus(packet)
     const ModSN = snOf(packet.srcId)
     if (DATA_ARGUMENTS.has(packet.argument) && packet.header !== "ER!") mergeDevicePayload(values, `${ModSN}|`, packet.argument, packet.payload)
 
@@ -194,7 +224,7 @@ export const createBusBridge = (channel: BusChannel, options: BusBridgeOptions) 
   return {
     /** Связь с модулем; "" - модуль консоли, пока его серийный номер не известен */
     link,
-    /** Модули изделия: из CFG.ModList головного модуля или сам модуль консоли */
+    /** Модули изделия: из CFG.ModList головного модуля или сам модуль консоли; в режиме шины - ответившие на ModuleInfo, seen обновляется без onModules */
     modules: () => modules,
     /** Серийный номер модуля консоли ("" - ещё не ответил) */
     self: () => selfSN,

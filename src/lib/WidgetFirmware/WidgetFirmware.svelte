@@ -58,11 +58,10 @@
 
   const canUpdate = $derived(enabled && !!sources.version && selected !== null && !running)
 
-  /* Строка состояния по этапу */
+  /* Строка состояния по этапу: проценты только в полосе хода */
   const statusText = $derived.by(() => {
     if (stage === "done") return $T("widget.firmware.done")
     if (stage === "error") return $T("widget.firmware.failed", { error: errorText })
-    if (stage === "write" || stage === "hub") return $T(`widget.firmware.stage.${stage}`, { n: Math.round(percent) })
     return stage ? $T(`widget.firmware.stage.${stage}`) : ""
   })
 
@@ -80,7 +79,8 @@
     try {
       await onUpdate(source, (next, value) => {
         stage = next
-        percent = Math.min(100, Math.max(0, Number.isFinite(value) ? value : 0))
+        /* Целые проценты: полоса показывает 1, 2, 3 без дробей */
+        percent = Math.floor(Math.min(100, Math.max(0, Number.isFinite(value) ? value : 0)))
       })
       percent = 100
       stage = "done"
