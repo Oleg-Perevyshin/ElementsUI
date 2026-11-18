@@ -202,9 +202,9 @@
               <div class="flex items-start justify-between gap-2 text-[13px]">
                 <div class="flex min-w-0 flex-col">
                   <span class="truncate font-semibold">{heapText("name", heap.Name)}</span>
-                  <span class="text-[12px] text-(--muted-color)"
-                    >{$T("widget.stack.used", { used: formatBytes(heap.used), total: formatBytes(heap.Total) })}</span
-                  >
+                  <span class="text-[12px] text-(--muted-color)">
+                    {$T("widget.stack.used", { used: formatBytes(heap.used), total: formatBytes(heap.Total) })}
+                  </span>
                 </div>
                 <span class="font-semibold tabular-nums" style="color: {percentColor(heap.usedPercent)}">{heap.usedPercent}%</span>
               </div>
@@ -228,9 +228,9 @@
           <div class="flex items-baseline justify-between gap-2 text-[12px] text-(--muted-color)">
             <span use:hint={{ text: $T("widget.stack.hint.tasks"), enabled: $hints }}>{$T("widget.stack.tasks", { n: tasks.length })}</span>
             {#if lowCount}
-              <span class="font-semibold text-(--red-text)" use:hint={{ text: $T("widget.stack.hint.low"), enabled: $hints }}
-                >{$T("widget.stack.low", { warn: warnBytes, n: lowCount })}</span
-              >
+              <span class="font-semibold text-(--red-text)" use:hint={{ text: $T("widget.stack.hint.low"), enabled: $hints }}>
+                {$T("widget.stack.low", { warn: warnBytes, n: lowCount })}
+              </span>
             {/if}
           </div>
           <div class="flex max-h-80 min-h-0 flex-col">

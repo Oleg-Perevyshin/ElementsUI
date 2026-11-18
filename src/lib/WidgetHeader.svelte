@@ -66,8 +66,10 @@
           : 'border-(--hairline-color) bg-transparent text-(--faint-color) hover:text-(--muted-color)'}"
         title={$hints ? $T("widget.hints.on") : $T("widget.hints.off")}
         aria-pressed={$hints}
-        onclick={() => hints.update((on) => !on)}>?</button
+        onclick={() => hints.update((on) => !on)}
       >
+        ?
+      </button>
     {/if}
   </div>
   {#if right && wrapped}

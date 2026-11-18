@@ -682,8 +682,10 @@
               onclick={(e) => {
                 e.stopPropagation()
                 text.onClick?.(row)
-              }}>{value}</button
+              }}
             >
+              {value}
+            </button>
           {:else if text.href}
             <a class="underline" href={text.href(row)}>{value}</a>
           {:else if text.html}

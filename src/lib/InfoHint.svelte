@@ -70,7 +70,8 @@
   >
     <span
       class="w-max max-w-full rounded-lg border border-(--hairline-color) bg-(--back-color) px-2.5 py-1.5 text-left text-[12px] font-medium whitespace-pre-line text-(--font-color) normal-case shadow-(--elevation-2)"
-      >{#each hintParts(text) as part}{#if part.bold}<b class="font-bold">{part.text}</b>{:else}{part.text}{/if}{/each}</span
     >
+      {#each hintParts(text) as part}{#if part.bold}<b class="font-bold">{part.text}</b>{:else}{part.text}{/if}{/each}
+    </span>
   </div>
 {/if}

@@ -19,13 +19,13 @@
 
 {#if label?.name}
   {#if htmlFor}
-    <label for={htmlFor} {id} class={base}
-      >{label.name}{#if info}<InfoHint text={info} />{/if}</label
-    >
+    <label for={htmlFor} {id} class={base}>
+      {label.name}{#if info}<InfoHint text={info} />{/if}
+    </label>
   {:else}
-    <span {id} class={base}
-      >{label.name}{#if info}<InfoHint text={info} />{/if}</span
-    >
+    <span {id} class={base}>
+      {label.name}{#if info}<InfoHint text={info} />{/if}
+    </span>
   {/if}
 {:else if info}
   <span class={twMerge(base, "min-h-4")}><InfoHint text={info} /></span>

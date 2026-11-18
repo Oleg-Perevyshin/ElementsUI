@@ -488,9 +488,9 @@
       >
         <div class="flex min-w-0 items-center gap-2" data-tip="system">
           <span class="shrink-0 text-[11px] tracking-wide whitespace-nowrap text-(--faint-color) uppercase">{$T("pfd.system")}</span>
-          <span class="rounded-md px-1.5 py-0.5 {armed ? 'bg-(--red-color) text-white' : 'bg-(--container-color) text-(--muted-color)'}" data-tip="armed"
-            >{armed ? "ARMED" : "DISARMED"}</span
-          >
+          <span class="rounded-md px-1.5 py-0.5 {armed ? 'bg-(--red-color) text-white' : 'bg-(--container-color) text-(--muted-color)'}" data-tip="armed">
+            {armed ? "ARMED" : "DISARMED"}
+          </span>
           <span data-tip="mode">{modeName}</span>
           <span class="flex items-center gap-1" style="color: {NAV_COLOR[navState]}" data-tip="nav">
             <span class="size-2 rounded-full" style="background: {NAV_COLOR[navState]}"></span>{$T("pfd.nav")}{sensErr > 0
@@ -506,9 +506,9 @@
         {#if rssi >= 0 || remRssi >= 0 || drop >= 0}
           <div class="flex min-w-0 items-center gap-2" data-tip="link">
             <span class="shrink-0 text-[11px] tracking-wide whitespace-nowrap text-(--faint-color) uppercase">{$T("pfd.link")}</span>
-            <span class={Math.min(rssi, remRssi) >= 0 && Math.min(rssi, remRssi) < 30 ? "text-(--red-text)" : ""}
-              >{rssi >= 0 ? Math.round(rssi) : "-"} / {remRssi >= 0 ? Math.round(remRssi) : "-"} %</span
-            >
+            <span class={Math.min(rssi, remRssi) >= 0 && Math.min(rssi, remRssi) < 30 ? "text-(--red-text)" : ""}>
+              {rssi >= 0 ? Math.round(rssi) : "-"} / {remRssi >= 0 ? Math.round(remRssi) : "-"} %
+            </span>
             {#if drop >= 0}<span class={drop > 5 ? "text-(--orange-text)" : ""}>{$T("pfd.link.drop", { v: fmt(drop) })}</span>{/if}
           </div>
         {/if}
@@ -583,9 +583,9 @@
             {#if load !== null}
               <g data-tip="load">
                 <rect x={HX + 8} y="8" width="64" height="22" rx="6" fill="#000" fill-opacity="0.55" />
-                <text x={HX + 16} y="24" font-size="13" font-weight="600"
-                  ><tspan fill="#fff" fill-opacity="0.7" font-size="10">G</tspan><tspan dx="5" fill={loadBad ? "#ef4444" : "#fff"}>{fmt(load)}</tspan></text
-                >
+                <text x={HX + 16} y="24" font-size="13" font-weight="600">
+                  <tspan fill="#fff" fill-opacity="0.7" font-size="10">G</tspan><tspan dx="5" fill={loadBad ? "#ef4444" : "#fff"}>{fmt(load)}</tspan>
+                </text>
               </g>
             {/if}
             {#if wind}
@@ -595,17 +595,17 @@
                   <line x1={HX + 20} y1={load !== null ? 39 : 13} x2={HX + 20} y2={load !== null ? 51 : 25} stroke="#fff" stroke-width="2" />
                   <polygon points="{HX + 16},{load !== null ? 47 : 21} {HX + 24},{load !== null ? 47 : 21} {HX + 20},{load !== null ? 52 : 26}" fill="#fff" />
                 </g>
-                <text x={HX + 32} y={load !== null ? 50 : 24} fill="#fff" font-size="13" font-weight="600"
-                  >{fmt(wind.spd)}<tspan dx="3" fill-opacity="0.7" font-size="10">m/s</tspan></text
-                >
+                <text x={HX + 32} y={load !== null ? 50 : 24} fill="#fff" font-size="13" font-weight="600">
+                  {fmt(wind.spd)}<tspan dx="3" fill-opacity="0.7" font-size="10">m/s</tspan>
+                </text>
               </g>
             {/if}
             {#if thr !== null}
               <g data-tip="thr">
                 <rect x={HX + HW - 84} y="8" width="76" height="22" rx="6" fill="#000" fill-opacity="0.55" />
-                <text x={HX + HW - 76} y="24" font-size="13" font-weight="600"
-                  ><tspan fill="#fff" fill-opacity="0.7" font-size="10">THR</tspan><tspan dx="5" fill="#fff">{Math.round(thr)} %</tspan></text
-                >
+                <text x={HX + HW - 76} y="24" font-size="13" font-weight="600">
+                  <tspan fill="#fff" fill-opacity="0.7" font-size="10">THR</tspan><tspan dx="5" fill="#fff">{Math.round(thr)} %</tspan>
+                </text>
               </g>
             {/if}
 
@@ -709,8 +709,10 @@
                 fill={climb > 0.2 ? "#22c55e" : climb < -0.2 ? "#f97316" : "#fff"}
                 font-size="14"
                 font-weight="600"
-                text-anchor="middle">{signed(climb)}</text
+                text-anchor="middle"
               >
+                {signed(climb)}
+              </text>
             </g>
           {/if}
 
@@ -737,9 +739,9 @@
           </g>
           <g data-tip="heading">
             <rect x={CX - 26} y={HH + 20} width="52" height="24" rx="4" fill="#000" stroke="var(--accent-color)" stroke-width="1.5" />
-            <text x={CX} y={HH + 37} fill="#fff" font-size="14" font-weight="600" text-anchor="middle"
-              >{String(Math.round(wrap360(heading.current)) % 360).padStart(3, "0")}</text
-            >
+            <text x={CX} y={HH + 37} fill="#fff" font-size="14" font-weight="600" text-anchor="middle">
+              {String(Math.round(wrap360(heading.current)) % 360).padStart(3, "0")}
+            </text>
           </g>
 
           <!-- Нет данных: флаг поверх прибора -->
@@ -778,10 +780,10 @@
         {#if wp}
           <div class="flex min-w-0 items-center gap-2" data-tip="route">
             <span class="shrink-0 text-[11px] font-semibold tracking-wide whitespace-nowrap text-(--faint-color) uppercase">{$T("pfd.route")}</span>
-            <span
-              ><span class="rounded-[3px] bg-black px-[3px]" style="color:#22d3ee">◆</span>
-              {$T("pfd.route.line", { n: wp.num, d: fmtDistance(wp.dist), x: fmtDistance(Math.abs(wp.xte)) })}{eta ? ` · ${eta}` : ""}</span
-            >
+            <span>
+              <span class="rounded-[3px] bg-black px-[3px]" style="color:#22d3ee">◆</span>
+              {$T("pfd.route.line", { n: wp.num, d: fmtDistance(wp.dist), x: fmtDistance(Math.abs(wp.xte)) })}{eta ? ` · ${eta}` : ""}
+            </span>
           </div>
         {/if}
         {#if home}

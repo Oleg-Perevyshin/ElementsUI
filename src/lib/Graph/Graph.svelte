@@ -511,8 +511,10 @@
             <span class="truncate font-semibold" title={item.name}>{item.name}</span>
             <span
               class="min-w-[10ch] text-right whitespace-nowrap tabular-nums {outOfScale[i] ? 'text-(--red-text)' : ''}"
-              title={outOfScale[i] ? $T("ui.scale.out") : undefined}>{item.value?.toFixed(2)}</span
+              title={outOfScale[i] ? $T("ui.scale.out") : undefined}
             >
+              {item.value?.toFixed(2)}
+            </span>
           {/each}
         </div>
       </div>

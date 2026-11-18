@@ -182,9 +182,9 @@
           </div>
         {/if}
         {#if downloading}
-          <span class="mt-2 truncate text-[12px] text-(--muted-color)" transition:slide={{ duration: 100 }}
-            >{$T("widget.fs.downloading", { name: downloading })}</span
-          >
+          <span class="mt-2 truncate text-[12px] text-(--muted-color)" transition:slide={{ duration: 100 }}>
+            {$T("widget.fs.downloading", { name: downloading })}
+          </span>
         {/if}
         {#if downloadError}
           <span class="mt-2 text-[12px] text-(--red-text)" transition:slide={{ duration: 100 }}>{downloadError}</span>

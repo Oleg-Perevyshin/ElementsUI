@@ -233,9 +233,9 @@
       <!-- Невидимые подписи вариантов: по их ширине решается, помещается ли группа кнопок -->
       <div bind:this={measureElement} class="pointer-events-none invisible absolute top-0 left-0 flex h-0 w-max overflow-hidden" aria-hidden="true">
         {#each options as option, index (option.id ?? index)}
-          <span class="flex gap-1.5 text-[13px] font-semibold whitespace-nowrap"
-            >{#if option.icon}<span class="w-(--icon-size)"></span>{/if}{option.icon && !showNames ? "" : option.name}</span
-          >
+          <span class="flex gap-1.5 text-[13px] font-semibold whitespace-nowrap">
+            {#if option.icon}<span class="w-(--icon-size)"></span>{/if}{option.icon && !showNames ? "" : option.name}
+          </span>
         {/each}
       </div>
     {/if}
@@ -265,8 +265,10 @@
           stroke="currentColor"
           stroke-width="2"
           stroke-linecap="round"
-          stroke-linejoin="round"><path d="M6 9l6 6 6-6" /></svg
+          stroke-linejoin="round"
         >
+          <path d="M6 9l6 6 6-6" />
+        </svg>
       </button>
     {:else if shownType === "input"}
       <input

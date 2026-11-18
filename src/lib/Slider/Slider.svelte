@@ -91,8 +91,10 @@
             : target === "upper" || !isRange
               ? v >= number.maxNum
               : v >= upper - number.step)}
-        aria-label={direction === 1 ? $T("ui.increase") : $T("ui.decrease")}>{direction === 1 ? "+" : "−"}</button
+        aria-label={direction === 1 ? $T("ui.increase") : $T("ui.decrease")}
       >
+        {direction === 1 ? "+" : "−"}
+      </button>
     {/each}
     <span class="inline-block text-center text-[13px] font-semibold tabular-nums" style="width: {valueWidth}">{v}</span>
   </div>

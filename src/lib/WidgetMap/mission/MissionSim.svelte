@@ -107,13 +107,13 @@
           aria-label={clock.playing ? $T("widget.sim.pause") : $T("widget.sim.play")}
         >
           {#if clock.playing}
-            <svg viewBox="0 0 24 24" width="18" height="18"
-              ><rect x="6" y="5" width="4" height="14" rx="1" fill="currentColor" /><rect x="14" y="5" width="4" height="14" rx="1" fill="currentColor" /></svg
-            >
+            <svg viewBox="0 0 24 24" width="18" height="18">
+              <rect x="6" y="5" width="4" height="14" rx="1" fill="currentColor" /><rect x="14" y="5" width="4" height="14" rx="1" fill="currentColor" />
+            </svg>
           {:else}
-            <svg viewBox="0 0 24 24" width="18" height="18"
-              ><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z" fill="currentColor" /></svg
-            >
+            <svg viewBox="0 0 24 24" width="18" height="18">
+              <path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z" fill="currentColor" />
+            </svg>
           {/if}
         </button>
         <select class="rounded border border-(--border-color) bg-(--field-color) px-1 py-0.5 text-(--font-color)" bind:value={clock.rate}>
@@ -124,9 +124,9 @@
         <span>{clockText(clock.t)} / {clockText(clock.duration)} · {Math.round((clock.t / Math.max(1, clock.duration)) * 100)}%</span>
         {#if !compact}<span>{pos.alt.toFixed(0)} {$T("widget.mission.m")} · {pos.speed.toFixed(1)} {$T("widget.mission.ms")}</span>{/if}
         {#if showSpray}
-          <span class="{compact ? '' : 'min-w-[7.5rem]'} font-semibold {pos.spray ? 'text-(--green-text)' : 'text-(--muted-color)'}"
-            >{pos.spray ? $T("widget.sim.sprayOn") : $T("widget.sim.sprayOff")}</span
-          >
+          <span class="{compact ? '' : 'min-w-[7.5rem]'} font-semibold {pos.spray ? 'text-(--green-text)' : 'text-(--muted-color)'}">
+            {pos.spray ? $T("widget.sim.sprayOn") : $T("widget.sim.sprayOff")}
+          </span>
         {/if}
       </div>
       <!-- Прокрутка пути: перетаскивание ставит полёт на паузу, чтобы рассмотреть любое место траектории -->

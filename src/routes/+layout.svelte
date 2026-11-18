@@ -162,12 +162,12 @@
         <div class="flex w-full">
           <UI.Button content={{ name: item.name }} variant="secondary" componentClass="h-10 text-left" onClick={() => goto(`/ElementsUI/guide/${item.page}`)} />
           {#if activePage === item.page}
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
-              ><path
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
+              <path
                 fill="currentColor"
                 d="M12.6 12L8.7 8.1q-.275-.275-.275-.7t.275-.7t.7-.275t.7.275l4.6 4.6q.15.15.213.325t.062.375t-.062.375t-.213.325l-4.6 4.6q-.275.275-.7.275t-.7-.275t-.275-.7t.275-.7z"
-              /></svg
-            >
+              />
+            </svg>
           {/if}
         </div>
       {/each}
@@ -181,12 +181,12 @@
             onClick={() => goto(`/ElementsUI/components/${item.page}`)}
           />
           {#if activePage === item.page}
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
-              ><path
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
+              <path
                 fill="currentColor"
                 d="M12.6 12L8.7 8.1q-.275-.275-.275-.7t.275-.7t.7-.275t.7.275l4.6 4.6q.15.15.213.325t.062.375t-.062.375t-.213.325l-4.6 4.6q-.275.275-.7.275t-.7-.275t-.275-.7t.275-.7z"
-              /></svg
-            >
+              />
+            </svg>
           {/if}
         </div>
       {/each}

@@ -218,9 +218,9 @@
         <span class="flex items-center gap-3 text-[12px] font-semibold text-(--muted-color) tabular-nums">
           {#if headerProgress !== null}
             <span class="flex items-center gap-1.5" title={simulate ? $T("widget.sim.title") : $T("widget.mission.progressHint")}>
-              <span class="h-1.5 w-14 overflow-hidden rounded-full bg-(--hairline-color) {narrow ? 'hidden' : ''}"
-                ><span class="block h-full rounded-full bg-(--accent-color)" style="width: {Math.round(headerProgress * 100)}%"></span></span
-              >
+              <span class="h-1.5 w-14 overflow-hidden rounded-full bg-(--hairline-color) {narrow ? 'hidden' : ''}">
+                <span class="block h-full rounded-full bg-(--accent-color)" style="width: {Math.round(headerProgress * 100)}%"></span>
+              </span>
               {Math.round(headerProgress * 100)}%{#if live && !narrow}
                 · {live.finished
                   ? $T("widget.route.finished")
@@ -307,9 +307,10 @@
             <div class="grid grid-cols-2 divide-x divide-(--border-color) rounded-lg bg-(--container-color) py-3 text-[13px] tabular-nums">
               <div class="grid grid-cols-[1fr_auto] gap-x-4 gap-y-1.5 px-3">
                 <span class="text-(--muted-color)">{$T("widget.route.points")}</span><span class="text-right font-semibold">{stats.points}</span>
-                <span class="text-(--muted-color)">{$T("widget.route.maxAlt")}</span><span class="text-right font-semibold"
-                  >{stats.maxAlt} {$T("widget.mission.m")}</span
-                >
+                <span class="text-(--muted-color)">{$T("widget.route.maxAlt")}</span><span class="text-right font-semibold">
+                  {stats.maxAlt}
+                  {$T("widget.mission.m")}
+                </span>
               </div>
               <div class="grid grid-cols-[1fr_auto] gap-x-4 gap-y-1.5 px-3">
                 <span class="text-(--muted-color)">{$T("widget.mission.totalLen")}</span><span class="text-right font-semibold">{km(stats.length)}</span>
@@ -352,8 +353,10 @@
                       onclick={() => {
                         selected = i
                         mapInstance?.easeTo({ center: p.point, duration: 300 })
-                      }}>{i + 1}</button
+                      }}
                     >
+                      {i + 1}
+                    </button>
                     <Input
                       type="number"
                       value={p.alt}
@@ -367,8 +370,9 @@
                       onUpdate={(v) => Number.isFinite(Number(v)) && setPoint(i, { speed: Math.min(40, Math.max(0.5, Number(v))) })}
                     />
                     <span class="text-right text-(--muted-color)">{leg ? `${fmt(leg.length, 0)} ${$T("widget.mission.m")}` : "-"}</span>
-                    <button class="cursor-pointer border-none bg-transparent p-0 text-(--red-text)" onclick={() => removePoint(i)} aria-label="Delete">✕</button
-                    >
+                    <button class="cursor-pointer border-none bg-transparent p-0 text-(--red-text)" onclick={() => removePoint(i)} aria-label="Delete">
+                      ✕
+                    </button>
                   </div>
                 {/each}
               </div>
@@ -380,9 +384,9 @@
               {$T("widget.route.returnHome")}
             </label>
             {#if route.points.length}
-              <button class="w-max cursor-pointer border-none bg-transparent p-0 text-[12px] text-(--red-text) underline" onclick={clearAll}
-                >{$T("widget.mission.clear")}</button
-              >
+              <button class="w-max cursor-pointer border-none bg-transparent p-0 text-[12px] text-(--red-text) underline" onclick={clearAll}>
+                {$T("widget.mission.clear")}
+              </button>
             {/if}
           </div>
         {/if}

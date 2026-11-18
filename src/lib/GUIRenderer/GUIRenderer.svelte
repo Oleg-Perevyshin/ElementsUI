@@ -246,6 +246,9 @@
   /* Уже NARROW_MAX_PX (телефон, узкая панель) - раскладка по группам автора (layoutFlow в gui.ts), иначе его сетка */
   const NARROW_MAX_PX = 640
   let width = $state(0)
+
+  /* Раскрытие аккордеонов по id: смена раскладки (ширина около NARROW_MAX_PX, полоса прокрутки появилась от раскрытия) пересоздаёт их, без этой памяти раздел закрывался сразу после открытия */
+  const opened = $state<Record<string, boolean>>({})
   const narrow = $derived(width > 0 && width < NARROW_MAX_PX)
 
   /* Группа из мелких блоков (канал, мотор) - в рамке; виджеты и графики - уже карточки */
@@ -333,7 +336,10 @@
         {@render render[component.type]?.(component)}
       {:else if component.type === "Accordion" && views.Accordion}
         {@const Accordion = views.Accordion}
-        <Accordion {...component.properties}>
+        <Accordion
+          {...component.properties}
+          bind:isOpen={() => opened[component.id] ?? !!component.properties.isOpen, (open: boolean) => (opened[component.id] = open)}
+        >
           <!-- Своя сетка содержимого во всю ширину аккордеона: колонок не меньше, чем у самого дальнего блока -->
           <div class="min-w-0" style="grid-column: 1 / -1; grid-row: 1 / -1">
             {@render Layout(childrenOf(component).filter(visible), component.properties.size?.width ?? 1, !!component.properties.image)}

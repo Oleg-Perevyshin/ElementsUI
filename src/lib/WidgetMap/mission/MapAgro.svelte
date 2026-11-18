@@ -428,17 +428,19 @@
         <span class="flex items-center gap-3 text-[12px] font-semibold text-(--muted-color) tabular-nums">
           {#if headerProgress !== null}
             <span class="flex items-center gap-1.5" title={simulate ? $T("widget.sim.title") : $T("widget.mission.progressHint")}>
-              <span class="h-1.5 w-14 overflow-hidden rounded-full bg-(--hairline-color) {narrow ? 'hidden' : ''}"
-                ><span class="block h-full rounded-full bg-(--accent-color)" style="width: {Math.round(headerProgress * 100)}%"></span></span
-              >
+              <span class="h-1.5 w-14 overflow-hidden rounded-full bg-(--hairline-color) {narrow ? 'hidden' : ''}">
+                <span class="block h-full rounded-full bg-(--accent-color)" style="width: {Math.round(headerProgress * 100)}%"></span>
+              </span>
               {Math.round(headerProgress * 100)}%{#if live && !narrow}
                 · {$T("widget.mission.treated")} {fmt(treatedHa, 2)} {$T("widget.mission.ha")}{/if}
             </span>
           {/if}
           {#if stats && (!narrow || headerProgress === null)}
-            <span class="text-[12px] font-semibold text-(--muted-color) tabular-nums"
-              >{fmt(stats.ha, 2)} {$T("widget.mission.ha")} · {fmt(stats.total, 2)} {$T("widget.mission.km")}</span
-            >
+            <span class="text-[12px] font-semibold text-(--muted-color) tabular-nums">
+              {fmt(stats.ha, 2)}
+              {$T("widget.mission.ha")} · {fmt(stats.total, 2)}
+              {$T("widget.mission.km")}
+            </span>
           {/if}
         </span>
       </div>
@@ -510,10 +512,9 @@
                 <div class="flex min-w-48 flex-col gap-1.5">
                   <span class="text-[13px] font-semibold">{$T("widget.mission.searching")}</span>
                   <div class="flex items-center gap-2 text-[12px] tabular-nums">
-                    <span class="h-1.5 flex-1 overflow-hidden rounded-full bg-(--container-color)"
-                      ><span class="block h-full rounded-full bg-(--accent-color) transition-[width]" style="width: {Math.round(searching * 100)}%"
-                      ></span></span
-                    >
+                    <span class="h-1.5 flex-1 overflow-hidden rounded-full bg-(--container-color)">
+                      <span class="block h-full rounded-full bg-(--accent-color) transition-[width]" style="width: {Math.round(searching * 100)}%"></span>
+                    </span>
                     <span class="w-9 text-right">{Math.round(searching * 100)}%</span>
                   </div>
                 </div>
@@ -590,9 +591,9 @@
                   <Input type="number" label={{ name: $T("widget.mission.tank") }} {...numField("tank", 1, 1000, 1)} />
                 </div>
                 <div class="flex flex-col gap-1.5 text-[13px]">
-                  <span class="w-max text-(--muted-color)" use:hint={{ text: $T("widget.mission.hint.sprayControl"), enabled: $hints }}
-                    >{$T("widget.mission.sprayControl")}</span
-                  >
+                  <span class="w-max text-(--muted-color)" use:hint={{ text: $T("widget.mission.hint.sprayControl"), enabled: $hints }}>
+                    {$T("widget.mission.sprayControl")}
+                  </span>
                   {#each sprayModes as m}
                     <label class="flex cursor-pointer items-start gap-2">
                       <input type="radio" class="mt-0.5" name="sprayControl" checked={plan.sprayControl === m} onchange={() => update({ sprayControl: m })} />
@@ -649,8 +650,10 @@
                         class="flex cursor-pointer items-center gap-2 border-none bg-transparent p-0 text-left text-(--font-color)"
                         title={$T("widget.mission.showOnMap")}
                         onclick={() => fitMapTo(mapInstance, field)}
-                        ><span class="size-2.5 rounded-sm bg-(--green-mark)"></span>{$T("widget.mission.field")} {i + 1}</button
                       >
+                        <span class="size-2.5 rounded-sm bg-(--green-mark)"></span>{$T("widget.mission.field")}
+                        {i + 1}
+                      </button>
                       <span class="flex items-center gap-3">
                         <span class="flex items-center gap-1" use:hint={{ text: $T("widget.mission.hint.fieldAngle"), enabled: $hints }}>
                           <Input
@@ -662,9 +665,9 @@
                           />°
                         </span>
                         <span class="w-16 text-right font-semibold">{areaText(fieldArea(field, []))}</span>
-                        <button class="cursor-pointer border-none bg-transparent p-0 text-(--red-text)" onclick={() => removeField(i)} aria-label="Delete"
-                          >✕</button
-                        >
+                        <button class="cursor-pointer border-none bg-transparent p-0 text-(--red-text)" onclick={() => removeField(i)} aria-label="Delete">
+                          ✕
+                        </button>
                       </span>
                     </div>
                   {:else}
@@ -681,13 +684,15 @@
                         class="flex cursor-pointer items-center gap-2 border-none bg-transparent p-0 text-left text-(--font-color)"
                         title={$T("widget.mission.showOnMap")}
                         onclick={() => fitMapTo(mapInstance, hole)}
-                        ><span class="size-2.5 rounded-sm bg-(--red-mark)"></span>{$T("widget.mission.hole")} {i + 1}</button
                       >
+                        <span class="size-2.5 rounded-sm bg-(--red-mark)"></span>{$T("widget.mission.hole")}
+                        {i + 1}
+                      </button>
                       <span class="flex items-center gap-2">
                         <span class="font-semibold">{areaText(fieldArea(hole, []))}</span>
-                        <button class="cursor-pointer border-none bg-transparent p-0 text-(--red-text)" onclick={() => removeHole(i)} aria-label="Delete"
-                          >✕</button
-                        >
+                        <button class="cursor-pointer border-none bg-transparent p-0 text-(--red-text)" onclick={() => removeHole(i)} aria-label="Delete">
+                          ✕
+                        </button>
                       </span>
                     </div>
                   {/each}
@@ -700,12 +705,13 @@
                 {#if stats}
                   <!-- Что из контуров получается к обработке -->
                   <div class="grid grid-cols-2 gap-x-4 gap-y-1.5 rounded-lg bg-(--container-color) p-3 text-[13px] tabular-nums">
-                    <span class="text-(--muted-color)">{$T("widget.mission.area")}</span><span class="text-right font-semibold"
-                      >{fmt(stats.ha, 2)} {$T("widget.mission.ha")}</span
-                    >
-                    <span class="text-(--muted-color)" use:hint={{ text: $T("widget.mission.hint.coverage"), enabled: $hints }}
-                      >{$T("widget.mission.coverage")}</span
-                    ><span class="text-right font-semibold">{fmt(stats.coverage, 0)} %</span>
+                    <span class="text-(--muted-color)">{$T("widget.mission.area")}</span><span class="text-right font-semibold">
+                      {fmt(stats.ha, 2)}
+                      {$T("widget.mission.ha")}
+                    </span>
+                    <span class="text-(--muted-color)" use:hint={{ text: $T("widget.mission.hint.coverage"), enabled: $hints }}>
+                      {$T("widget.mission.coverage")}
+                    </span><span class="text-right font-semibold">{fmt(stats.coverage, 0)} %</span>
                   </div>
                 {/if}
                 {#if fields.length || plan.holes.length}
@@ -719,32 +725,36 @@
                 <span class="text-[11px] font-semibold tracking-wide text-(--faint-color) uppercase">{$T("widget.mission.calc")}</span>
                 {#if stats}
                   <div class="grid grid-cols-2 gap-x-4 gap-y-1.5 rounded-lg bg-(--container-color) p-3 text-[13px] tabular-nums">
-                    <span class="text-(--muted-color)" use:hint={{ text: $T("widget.mission.hint.passes"), enabled: $hints }}
-                      >{$T("widget.mission.passesCount")}</span
-                    ><span class="text-right font-semibold">{stats.passes} / {stats.cells}</span>
+                    <span class="text-(--muted-color)" use:hint={{ text: $T("widget.mission.hint.passes"), enabled: $hints }}>
+                      {$T("widget.mission.passesCount")}
+                    </span><span class="text-right font-semibold">{stats.passes} / {stats.cells}</span>
                     <span class="text-(--muted-color)">{$T("widget.mission.turns")}</span><span class="text-right font-semibold">{stats.turns}</span>
-                    <span class="text-(--muted-color)">{$T("widget.mission.sprayLen")}</span><span class="text-right font-semibold"
-                      >{fmt(stats.spray, 2)} {$T("widget.mission.km")}</span
-                    >
-                    <span class="text-(--muted-color)">{$T("widget.mission.totalLen")}</span><span class="text-right font-semibold"
-                      >{fmt(stats.total, 2)} {$T("widget.mission.km")}</span
-                    >
-                    <span class="text-(--muted-color)" use:hint={{ text: $T("widget.mission.hint.time"), enabled: $hints }}>{$T("widget.mission.time")}</span
-                    ><span class="text-right font-semibold">{fmt(stats.timeMin, 0)} {$T("widget.mission.min")}</span>
-                    <span class="text-(--muted-color)">{$T("widget.mission.liquid")}</span><span class="text-right font-semibold"
-                      >{fmt(stats.liquid, 0)} {$T("widget.mission.l")}</span
-                    >
-                    <span class="text-(--muted-color)" use:hint={{ text: $T("widget.mission.hint.refills"), enabled: $hints }}
-                      >{$T("widget.mission.refills")}</span
-                    ><span class="text-right font-semibold">{stats.refills}</span>
+                    <span class="text-(--muted-color)">{$T("widget.mission.sprayLen")}</span><span class="text-right font-semibold">
+                      {fmt(stats.spray, 2)}
+                      {$T("widget.mission.km")}
+                    </span>
+                    <span class="text-(--muted-color)">{$T("widget.mission.totalLen")}</span><span class="text-right font-semibold">
+                      {fmt(stats.total, 2)}
+                      {$T("widget.mission.km")}
+                    </span>
+                    <span class="text-(--muted-color)" use:hint={{ text: $T("widget.mission.hint.time"), enabled: $hints }}>
+                      {$T("widget.mission.time")}
+                    </span><span class="text-right font-semibold">{fmt(stats.timeMin, 0)} {$T("widget.mission.min")}</span>
+                    <span class="text-(--muted-color)">{$T("widget.mission.liquid")}</span><span class="text-right font-semibold">
+                      {fmt(stats.liquid, 0)}
+                      {$T("widget.mission.l")}
+                    </span>
+                    <span class="text-(--muted-color)" use:hint={{ text: $T("widget.mission.hint.refills"), enabled: $hints }}>
+                      {$T("widget.mission.refills")}
+                    </span><span class="text-right font-semibold">{stats.refills}</span>
                     <span class="text-(--muted-color)">{$T("widget.mission.waypoints")}</span><span class="text-right font-semibold">{stats.waypoints}</span>
                   </div>
                   <div class="flex flex-wrap gap-3 text-[11px] text-(--muted-color)">
                     <span class="flex items-center gap-1"><span class="h-0.5 w-4 bg-(--green-mark)"></span>{$T("widget.mission.legendSpray")}</span>
                     <span class="flex items-center gap-1"><span class="h-0.5 w-4 bg-(--orange-mark)"></span>{$T("widget.mission.legendTurn")}</span>
-                    <span class="flex items-center gap-1"
-                      ><span class="h-0.5 w-4 border-t-2 border-dashed border-(--accent-text)"></span>{$T("widget.mission.legendTransit")}</span
-                    >
+                    <span class="flex items-center gap-1">
+                      <span class="h-0.5 w-4 border-t-2 border-dashed border-(--accent-text)"></span>{$T("widget.mission.legendTransit")}
+                    </span>
                   </div>
                 {:else}
                   <p class="m-0 text-[13px] text-(--muted-color)">{$T("widget.mission.empty")}</p>

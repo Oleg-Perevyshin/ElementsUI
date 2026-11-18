@@ -87,8 +87,10 @@
         : 'text-(--muted-color)'}"
       style="width: {maxCaptionWidth}; text-align: {align};"
       disabled={readonly}
-      onclick={() => handleCaptionClick(next)}>{text}</button
+      onclick={() => handleCaptionClick(next)}
     >
+      {text}
+    </button>
   {/if}
 {/snippet}
 
@@ -97,8 +99,10 @@
     class={stepBtn}
     onclick={() => commit(clamp(current + direction * step))}
     disabled={readonly || (direction === 1 ? current >= maxNumber : current <= minNumber)}
-    aria-label={direction === 1 ? $T("ui.increase") : $T("ui.decrease")}>{direction === 1 ? "+" : "−"}</button
+    aria-label={direction === 1 ? $T("ui.increase") : $T("ui.decrease")}
   >
+    {direction === 1 ? "+" : "−"}
+  </button>
 {/snippet}
 
 <div class={twMerge("h-full w-full", wrapperClass)} style={accentStyle(accent)}>

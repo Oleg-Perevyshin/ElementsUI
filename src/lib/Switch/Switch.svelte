@@ -79,8 +79,10 @@
                     ? 'cursor-pointer text-(--muted-color)'
                     : 'cursor-pointer text-(--font-color)'}"
                 style="width: {maxCaptionWidth}; text-align: end;"
-                onclick={() => handleCaptionClick(0)}>{label.captionLeft}</button
+                onclick={() => handleCaptionClick(0)}
               >
+                {label.captionLeft}
+              </button>
             {/if}
 
             <label class="relative flex items-center justify-between {option.disabled ? 'cursor-not-allowed' : ''}">
@@ -120,8 +122,10 @@
                     ? 'cursor-pointer text-(--font-color)'
                     : 'cursor-pointer text-(--muted-color)'}"
                 style="width: {maxCaptionWidth}; text-align: start;"
-                onclick={() => handleCaptionClick(1)}>{label.captionRight}</button
+                onclick={() => handleCaptionClick(1)}
               >
+                {label.captionRight}
+              </button>
               {#if infoAfterCaption && help?.info}<span class="ml-1 flex"><InfoHint text={help.info} /></span>{/if}
             {/if}
           </div>
