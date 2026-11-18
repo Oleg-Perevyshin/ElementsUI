@@ -36,6 +36,9 @@ export const updateViaHub = async (hub: DeviceLink, ModSN: string, VerFW: number
   const { timeoutMs = 180000, pollMs = 500 } = options
   /* Ход до команды (остаток прошлого обновления) за начало нового не принимается, пока не изменится */
   const before = Number(moduleRow(hub, ModSN)?.Progress)
+  /* Повторная прошивка той же версии: версия строки уже равна новой, конец узнаём только по ходу */
+  const sameVersion = Number(moduleRow(hub, ModSN)?.VerFW) === VerFW
+  const updated = (row: ModRow | undefined) => !sameVersion && Number(row?.VerFW) === VerFW
   sendCommand(hub, "SET", "FirmwareUpgradeStart", { ModSN, VerFW }, false)
   const started = Date.now()
   return new Promise<void>((resolve, reject) => {
@@ -53,11 +56,11 @@ export const updateViaHub = async (hub: DeviceLink, ModSN: string, VerFW: number
         }
         if (seen && progress >= 100) return resolve()
         if (seen && progress <= 0) {
-          if (Number(row?.VerFW) === VerFW) return resolve()
+          if (updated(row)) return resolve()
           return reject(new FirmwareUpdateError("hub", { percent: Math.round(last) }, `Hub aborted module update at ${last}%`))
         }
       }
-      if (seen && Number(row?.VerFW) === VerFW) {
+      if (seen && updated(row)) {
         onProgress?.(100)
         return resolve()
       }

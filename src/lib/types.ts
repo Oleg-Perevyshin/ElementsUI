@@ -876,7 +876,7 @@ export interface IWidgetStackInfoProps {
 }
 
 /* Этап обновления прошивки для строки состояния: start - команда ушла, bootloader/erase/write/verify - прямое обновление (updateModuleFirmware), hub - через хаб (updateViaHub) */
-export type WidgetFirmwareStage = "start" | "bootloader" | "erase" | "write" | "verify" | "hub"
+export type WidgetFirmwareStage = "start" | "bootloader" | "download" | "update" | "erase" | "write" | "verify"
 
 /* Что обновлять: версия из каталога или выбранный файл */
 export type WidgetFirmwareSource = { VerFW: number } | { file: Blob }

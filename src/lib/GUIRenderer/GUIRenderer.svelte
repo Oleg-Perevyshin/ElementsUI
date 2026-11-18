@@ -159,6 +159,8 @@
     const key = `${argument}:${maxNameLength}`
     return transfers.get(key) ?? transfers.set(key, createFsTransfer(link, { argument, maxNameLength })).get(key)!
   }
+  /* Хаб ведёт обновление одной полосой: скачивание из каталога - до половины, обновление (запись в себя или передача модулю) - вторая половина */
+  const HUB_DOWNLOAD_END = 50
   /* Обновление прошивки модуля (WidgetFirmware): версия - через хаб, иначе образ из каталога напрямую через загрузчик; файл - напрямую; одно обновление за раз на всё приложение (не на экземпляр рендерера: GUI мог пересоздаться посреди обновления) */
   const updateFirmware = async (target: FirmwareTarget, source: WidgetFirmwareSource, onProgress: (stage: WidgetFirmwareStage, percent: number) => void) => {
     if (flashingModules.size) return fail(new Error($T("widget.firmware.busy")))
@@ -169,7 +171,8 @@
       })
     try {
       if ("file" in source) await direct(new Uint8Array(await source.file.arrayBuffer()))
-      else if (target.hub) await updateViaHub(target.hub, target.ModSN, source.VerFW, (percent) => onProgress("hub", percent))
+      else if (target.hub)
+        await updateViaHub(target.hub, target.ModSN, source.VerFW, (percent) => onProgress(percent < HUB_DOWNLOAD_END ? "download" : "update", percent))
       else if (target.catalog) await direct(await target.catalog(source.VerFW))
     } catch (error) {
       fail(error)

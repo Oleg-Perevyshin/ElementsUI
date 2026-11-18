@@ -112,9 +112,9 @@ test("Прошивка: загрузчик не отозвался - noBootloade
 })
 
 /* Хаб ESP: шаги steps - Progress строки модуля после команды, по одному на тик; VerFW строки становится новой на шаге verAt */
-const fakeHub = (steps, { verAt = -1, VerFW = 7, ModSN = "M1", initial = 0 } = {}) => {
+const fakeHub = (steps, { verAt = -1, VerFW = 7, ModSN = "M1", initial = 0, oldVerFW = 3 } = {}) => {
   const sent = []
-  let row = { ModSN, ModName: "Привод", VerFW: 3, Progress: initial }
+  let row = { ModSN, ModName: "Привод", VerFW: oldVerFW, Progress: initial }
   let step = -1
   let timer
   const hub = {
@@ -149,6 +149,15 @@ test("Хаб: 100 пропущен, но версия модуля стала н
   const { hub, stop } = fakeHub([10, 60, 0], { verAt: 2 })
   await updateViaHub(hub, "M1", 7, undefined, { pollMs: 1, timeoutMs: 2000 })
   stop()
+})
+
+test("Хаб: повторная прошивка той же версии - успех только на 100, не на первом ходе", async () => {
+  const { hub, stop } = fakeHub([0, 10, 50, 75, 100], { oldVerFW: 7 })
+  const seen = []
+  await updateViaHub(hub, "M1", 7, (p) => seen.push(p), { pollMs: 1, timeoutMs: 2000 })
+  stop()
+  assert.equal(seen.at(-1), 100)
+  assert.ok(seen.includes(50))
 })
 
 test("Хаб: ход упал в 0 до 100 - ошибка hub с процентом; нет хода - timeout", async () => {
