@@ -333,17 +333,20 @@ const translations = {
     en: "Module bootloader did not answer: the module did not restart or has no bootloader",
     zh: "模块引导程序无响应：模块未重启或没有引导程序",
   },
-  "firmware.error.timeout": { ru: "Загрузчик не ответил ({step})", en: "Bootloader did not respond ({step})", zh: "引导程序无响应（{step}）" },
+  "firmware.error.timeout": {
+    ru: "Загрузчик перестал читать прошивку ({step})",
+    en: "Bootloader stopped reading the firmware ({step})",
+    zh: "引导程序停止读取固件（{step}）",
+  },
   "firmware.error.device": {
     ru: "Загрузчик ответил ошибкой ({step}): {message}",
     en: "Bootloader returned an error ({step}): {message}",
     zh: "引导程序返回错误（{step}）：{message}",
   },
-  "firmware.error.badStart": { ru: "Загрузчик не сообщил размер части", en: "Bootloader did not report the chunk size", zh: "引导程序未报告块大小" },
-  "firmware.error.resync": {
-    ru: "Части прошивки не сходятся (часть {frame})",
-    en: "Firmware chunks out of sync (chunk {frame})",
-    zh: "固件块不同步（第 {frame} 块）",
+  "firmware.error.transport": {
+    ru: "Эта связь не может раздавать прошивку модулю",
+    en: "This link cannot serve firmware to the module",
+    zh: "此连接无法向模块提供固件",
   },
   "firmware.error.image": { ru: "Неверный размер прошивки: {size} байт", en: "Invalid firmware size: {size} bytes", zh: "固件大小无效：{size} 字节" },
   "firmware.error.hub": {

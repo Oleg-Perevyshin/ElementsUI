@@ -81,14 +81,14 @@ interface FirmwareTarget {
 <details>
 <summary>🔬 Прямое обновление (updateModuleFirmware)</summary>
 
-Терминал обновляет модуль сам по консоли или CAN через его загрузчик: `updateModuleFirmware(link, image, {onProgress})` из `firmwareUpdate.ts`, порядок команд - раздел «Обновление модуля по шине» в `PROTOCOL.md`.
+Терминал обновляет модуль сам по CAN, RS485 или консоли через его загрузчик: `updateModuleFirmware(link, image, {onProgress})` из `firmwareUpdate.ts`. Терминал здесь файловый сервер: шлёт `FirmwareUpgradeStart` с размером и CRC32, а загрузчик сам читает образ кусками (`FirmwareUpgradeRead`) и в конце сообщает итог (`FirmwareUpgradeDone`). Поэтому связи нужен `serve` - ответ на запросы модуля (у моста шины `createBusBridge` он есть); без него обновление сразу заканчивается ошибкой `transport`. Порядок команд - раздел «Обновление модуля по шине» в `PROTOCOL.md`.
 
-| Этап `updateModuleFirmware` | Полоса               | Строка состояния         |
-| --------------------------- | -------------------- | ------------------------ |
-| `bootloader`                | 0                    | Перезагрузка в загрузчик |
-| `erase`                     | 0                    | Стирание                 |
-| `write`                     | `done / total * 100` | Запись                   |
-| `verify`                    | 100                  | Проверка                 |
+| Этап `updateModuleFirmware` | Полоса               | Строка состояния                    |
+| --------------------------- | -------------------- | ----------------------------------- |
+| `bootloader`                | 0                    | Перезагрузка в загрузчик            |
+| `erase`                     | 0                    | Стирание                            |
+| `write`                     | `done / total * 100` | Запись (сколько прочитал загрузчик) |
+| `verify`                    | 100                  | Проверка                            |
 
 </details>
 

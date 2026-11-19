@@ -466,7 +466,7 @@ test("важность пакета на CAN: из словаря команд, 
   assert.equal(m.DEFAULT_DICTIONARY.priority(m.DEFAULT_ARGUMENT_CODES.MotionVelocity), 0)
   assert.equal(m.DEFAULT_DICTIONARY.priority(m.DEFAULT_ARGUMENT_CODES.OrientationData), 1)
   assert.equal(m.DEFAULT_DICTIONARY.priority(m.DEFAULT_ARGUMENT_CODES.ModuleConfig), m.PRIORITY_DEFAULT)
-  assert.equal(m.DEFAULT_DICTIONARY.priority(m.DEFAULT_ARGUMENT_CODES.FirmwareUpgradeChunk), 3)
+  assert.equal(m.DEFAULT_DICTIONARY.priority(m.DEFAULT_ARGUMENT_CODES.FirmwareUpgradeRead), 3)
   assert.equal(m.packetPriority([har("SET", "MotionVelocity"), har("GET", "ModuleConfig")]), 0)
   assert.equal(m.packetPriority([har("OK!", "DebugLog")]), 3)
   assert.equal(m.packetPriority([]), m.PRIORITY_DEFAULT)

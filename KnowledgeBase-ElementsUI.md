@@ -395,7 +395,7 @@ interface DeviceReply {
 | 1-15      | служебные                   | `SystemRestart` 1, `SystemDefaultConfig` 2, `FirmwareDownload` 3, `SystemFileSystem` 4, `SystemResetStorage` 5, `SystemLocalTime` 6, `SystemDataUpdate` 7, `SystemStackInfo` 8, `SystemBackup` 9, `ModuleBindKey` 10, `DebugLog` 11, `DebugPlot` 12, `DebugMirror` 13, `SystemDataStream` 15 |
 | 21-25     | локальная сеть              | `NetworkAccessPoints` 21, `CloudJoinDevice` 23, `CloudJoinUser` 24, `CloudLeaveUser` 25                                                                                                                                                                                                      |
 | 31-46     | модули изделия              | `ModuleFind` 31, `ModuleList` 32, `ModuleCapture` 33, `ModuleInfo` 34, `ModuleMode` 35, `ModuleConfig` 36, телеметрия `ModuleTelemetry1-5` 37-41, потоки `ModuleStream1-5` 42-46                                                                                                             |
-| 51-54     | обновление прошивки по шине | `FirmwareUpgradeStart`, `FirmwareUpgradeChunk`, `FirmwareUpgradeDone`, `FirmwareUpgradeError`                                                                                                                                                                                                |
+| 51-53     | обновление прошивки по шине | `FirmwareUpgradeStart`, `FirmwareUpgradeRead`, `FirmwareUpgradeDone`                                                                                                                                                                                                                         |
 | 111-119   | модули перемещения          | `MotionInit`, `MotionMode`, `MotionTarget`, `MotionPID`, `MotionInfo`, `MotionConfig`, `MotionCalibrate`, `MotionVelocity` 118, `MotionAngle` 119                                                                                                                                            |
 | 141-145   | модули ориентации           | `OrientationData`, `OrientationOffset`, `OrientationAccelCalibrate`, `OrientationMagCalibrate`, `OrientationGyroscopeCalibrate`                                                                                                                                                              |
 | 7000-7011 | облако: чаты                | `ChatMessage` 7000, `ChatMessages`, `ChatSystemMessage`, `ChatEditMessage`, `ChatDeleteMessage`, `ChatLastRead`, `ChatJoin`, `ChatUserConnected`, `ChatUnread`, `ChatPins`, `ChatEditGroup`, `ChatRemoveUser` 7011                                                                           |
@@ -3178,7 +3178,7 @@ node.messages(125) // последние сообщения узла с част
 | 0       | Авария и управление в реальном времени | аварийный стоп, `MotionVelocity`, `MotionAngle`           |
 | 1       | Телеметрия                             | `OrientationData`, `SystemDataStream`, `ModuleTelemetry*` |
 | 2       | Обычные команды и настройки            | `ModuleConfig`, `ModuleInfo`, поиск модулей               |
-| 3       | Фон                                    | `FirmwareUpgradeChunk`, `DebugLog`, `DebugPlot`           |
+| 3       | Фон                                    | `FirmwareUpgradeRead`, `DebugLog`, `DebugPlot`            |
 
 <details>
 <summary>⚙️ Как выбирается уровень</summary>
@@ -3349,23 +3349,41 @@ const shown = formatDeviceMessage(VAL.Message, VAL.Args, getLanguage())
 
 #### 🔄 Обновление модуля по шине
 
-Хаб ESP передаёт прошивку загрузчику модуля STM тремя командами: `FirmwareUpgradeStart` (51) - размер и CRC32 образа, `FirmwareUpgradeChunk` (52) - части образа по порядку, `FirmwareUpgradeDone` (53) - проверка CRC32 и запуск приложения. Загрузчик отвечает тем же пакетом, что и все модули.
+Загрузчик модуля STM сам читает новую прошивку у сервера, как файл. Сервер - тот, кто начал обновление: хаб ESP (прошивку он скачал из каталога облака) или терминал (файл с диска). Сервер только отвечает на запросы и ничего не помнит о ходе, поэтому повторы, порядок и проверку ведёт загрузчик.
+
+```
+сервер → модуль      SET FirmwareUpgradeStart   размер и CRC32 образа        (повтор раз в секунду, пока нет ответа)
+загрузчик → сервер   OK! FirmwareUpgradeStart   место стёрто
+загрузчик → сервер   GET FirmwareUpgradeRead    смещение, сколько байт       (по порядку, до конца образа)
+сервер → загрузчик   OK! FirmwareUpgradeRead    смещение, данные
+загрузчик → сервер   OK! FirmwareUpgradeDone    CRC32 сошлась, приложение запускается
+```
 
 <details>
-<summary>⚙️ Ответы загрузчика</summary>
+<summary>⚙️ Команды и ответы</summary>
 
-| Команда                | `OK!` (`Payload` - байтовая строка, поля подряд, little-endian) | `ER!` (`Payload` - карта)                                                                   |
-| ---------------------- | --------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| `FirmwareUpgradeStart` | размер части, `u8`                                              | `{Message: 3}` неверный размер, `{Message: 5}` Flash не стёрлась                            |
-| `FirmwareUpgradeChunk` | номер принятой части, `u32`                                     | `{Message: 307, Args: [номер]}` - передать заново с этой части; `{Message: 3}` - нет сеанса |
-| `FirmwareUpgradeDone`  | ничего (`null`)                                                 | `{Message: 3}` пришло не всё, `{Message: 306}` CRC32 не совпала                             |
+Поля сырые: `Payload` - байтовая строка, поля подряд, little-endian.
+
+| Команда                    | Кто кому           | Поля                                        | Ответ                                                                                                                              |
+| -------------------------- | ------------------ | ------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `SET FirmwareUpgradeStart` | сервер → модуль    | размер `u32`, CRC32 образа `u32`            | `OK!` без данных - место стёрто, загрузчик начинает читать; `ER!` `{Message: 3}` неверный размер, `{Message: 5}` Flash не стёрлась |
+| `GET FirmwareUpgradeRead`  | загрузчик → сервер | смещение `u32`, сколько байт `u8`           | `OK!` - то же смещение `u32` и данные с него; `ER!` `{Message: 320}` - у сервера нет файла для модуля                              |
+| `FirmwareUpgradeDone`      | загрузчик → сервер | `OK!` без данных или `ER!` `{Message: код}` | ответа нет                                                                                                                         |
+
+- **Старт.** Приложение модуля на `FirmwareUpgradeStart` перезагружается в загрузчик и не отвечает. Сервер повторяет команду раз в секунду, пока загрузчик не ответит `OK!` или не начнёт читать. Загрузчик ждёт команду 5 секунд после сброса. Тот же старт от того же сервера посреди сеанса загрузчик не начинает заново, а снова отвечает `OK!`.
+- **Сервер** - отправитель `FirmwareUpgradeStart` (`SrcBusID`). Чтение уходит ему, ответ на чтение принимается только от него.
+- **Кусок** выбирает загрузчик: 40 байт на CAN FD (ответ в одном кадре), 224 на LoRa, 240 по консоли. Смещение в ответе нужно, чтобы запоздалый ответ на прошлое чтение не записался не туда. Ответ короче запрошенного бывает только в конце образа.
+- **Повторы.** Нет ответа на чтение - загрузчик читает то же смещение ещё раз: на CAN и консоли через 300 мс, на LoRa через 1.5 с, до 5 раз подряд. Не вышло - сеанс бросается, загрузчик сообщает `ER! FirmwareUpgradeDone {Message: 302}` и ждёт новый старт: начало области приложения уже стёрто, запускать нечего.
+- **Конец.** Прочитано столько байт, сколько в старте, - загрузчик сверяет CRC32 образа. Сошлась - пишет начало образа (адрес стека и точку входа) последним, сообщает `OK! FirmwareUpgradeDone` и запускает приложение. Не сошлась - `ER! FirmwareUpgradeDone {Message: 306}`, приложение не запускается.
+- **Ход** сервер считает сам по смещению чтений.
+- **Несколько модулей.** Сеанс загрузчика - один и только со своим сервером, а сервер может раздавать файлы нескольким модулям сразу: каждому по его `SrcBusID`.
 
 ```
-шина, ER! FirmwareUpgradeChunk   [TrgBusID, HAR (ER! FirmwareUpgradeChunk), {Message: 307, Args: [17]}]
+шина, чтение   [TrgBusID сервера, HAR (GET FirmwareUpgradeRead), h'00a00000 28']    смещение 40960, 40 байт
+шина, ответ    [TrgBusID модуля, HAR (OK! FirmwareUpgradeRead), h'00a00000 ...']   то же смещение и 40 байт
 ```
 
-- `FW_RESYNC` (307): номер в `Args[0]` - число CBOR, а не строка. Пришёл не тот номер части - загрузчик ждёт свой следующий, часть с неверной CRC16 или не записалась - тот же номер. Хаб продолжает передачу с этой части; иной код `Message` - отказ обновления (`MSG_FW_UPGRADE_FAILED` клиенту).
-- Карту `ER!` загрузчик пишет вручную, без `api_service` (ProdFactory-STM, `catalog/00.00.491-01` CAN FD и `catalog/25.00.000-01` LoRa), разбирает хаб в `upgrade_service` (ProdFactory-ESP). Загрузчики прошлых версий отвечали `ER!` сырыми 4 байтами номера - с новым хабом не работают, перепрошиваются кабелем.
+Код загрузчиков - ProdFactory-STM (`catalog/00.00.491-01` CAN FD, `catalog/25.00.000-01` LoRa), сервер - `upgrade_service` ProdFactory-ESP и `updateModuleFirmware` библиотеки.
 
 </details>
 
@@ -5263,14 +5281,14 @@ interface FirmwareTarget {
 <details>
 <summary>🔬 Прямое обновление (updateModuleFirmware)</summary>
 
-Терминал обновляет модуль сам по консоли или CAN через его загрузчик: `updateModuleFirmware(link, image, {onProgress})` из `firmwareUpdate.ts`, порядок команд - раздел «Обновление модуля по шине» в `PROTOCOL.md`.
+Терминал обновляет модуль сам по CAN, RS485 или консоли через его загрузчик: `updateModuleFirmware(link, image, {onProgress})` из `firmwareUpdate.ts`. Терминал здесь файловый сервер: шлёт `FirmwareUpgradeStart` с размером и CRC32, а загрузчик сам читает образ кусками (`FirmwareUpgradeRead`) и в конце сообщает итог (`FirmwareUpgradeDone`). Поэтому связи нужен `serve` - ответ на запросы модуля (у моста шины `createBusBridge` он есть); без него обновление сразу заканчивается ошибкой `transport`. Порядок команд - раздел «Обновление модуля по шине» в `PROTOCOL.md`.
 
-| Этап `updateModuleFirmware` | Полоса               | Строка состояния         |
-| --------------------------- | -------------------- | ------------------------ |
-| `bootloader`                | 0                    | Перезагрузка в загрузчик |
-| `erase`                     | 0                    | Стирание                 |
-| `write`                     | `done / total * 100` | Запись                   |
-| `verify`                    | 100                  | Проверка                 |
+| Этап `updateModuleFirmware` | Полоса               | Строка состояния                    |
+| --------------------------- | -------------------- | ----------------------------------- |
+| `bootloader`                | 0                    | Перезагрузка в загрузчик            |
+| `erase`                     | 0                    | Стирание                            |
+| `write`                     | `done / total * 100` | Запись (сколько прочитал загрузчик) |
+| `verify`                    | 100                  | Проверка                            |
 
 </details>
 

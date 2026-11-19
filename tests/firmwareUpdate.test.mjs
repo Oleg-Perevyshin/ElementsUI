@@ -1,24 +1,51 @@
-/* tests/firmwareUpdate.test.mjs - обновление прошивки модуля STM против модели загрузчика 00.00.491-01: переход приложения в загрузчик, части с CRC16, RESYNC, CRC32 образа; обновление через хаб ESP (updateViaHub) по ходу в CFG.ModList */
+/* tests/firmwareUpdate.test.mjs - обновление прошивки модуля STM против модели загрузчика 00.00.491-01: переход приложения в загрузчик повтором FirmwareUpgradeStart, загрузчик сам читает образ (FirmwareUpgradeRead) с повтором потерянного ответа, CRC32 образа и FirmwareUpgradeDone; обновление через хаб ESP (updateViaHub) по ходу в CFG.ModList */
 import { test } from "node:test"
 import assert from "node:assert/strict"
 import { updateModuleFirmware, FirmwareUpdateError } from "../dist/firmwareUpdate.js"
-import { crc16Kermit, crc32 } from "../dist/protocols/crc.js"
+import { crc32 } from "../dist/protocols/crc.js"
 import { decodeHar } from "../dist/protocols/dictionary.js"
 import { updateViaHub } from "../dist/WidgetFirmware/firmware.js"
 
 const u32 = (bytes, at) => new DataView(bytes.buffer, bytes.byteOffset + at, 4).getUint32(0, true)
+const readRequest = (offset, size) => {
+  const raw = new Uint8Array(5)
+  new DataView(raw.buffer).setUint32(0, offset, true)
+  raw[4] = size
+  return raw
+}
 
-/* Модуль: приложение (ModuleFind - версия 1) и загрузчик (версия 0, части по block байт); resyncAt - на какой части один раз попросить повтор с resyncTo; noBoot - загрузчика нет */
-const fakeModule = ({ block = 40, resyncAt = -1, resyncTo = 0, noBoot = false, dropEnter = 0 } = {}) => {
+/* Модуль: приложение молча уходит в загрузчик по FirmwareUpgradeStart (dropEnter первых команд теряются), загрузчик отвечает OK! на старт и читает образ кусками block; dropRead - номер чтения, ответ на которое теряется (загрузчик повторяет), noBoot - загрузчика нет, stopAt - загрузчик замолкает с этого смещения */
+const fakeModule = ({ block = 40, noBoot = false, dropEnter = 0, dropRead = -1, stopAt = -1 } = {}) => {
   const waiters = []
-  const state = { boot: false, image: null, size: 0, crc: 0, next: 0, written: [], done: false, resynced: false }
-  const answer = (code, ok, payload, raw) => {
-    const reply = { ok, payload: payload ?? {}, raw, message: "" }
+  let served
+  const state = { boot: false, image: null, starts: 0, reads: 0 }
+  const answer = (code, ok, payload) => {
+    const reply = { ok, payload: payload ?? {}, message: "" }
     const index = waiters.findIndex((w) => w.code === code && w.match(reply))
     if (index < 0) return
     const [w] = waiters.splice(index, 1)
     clearTimeout(w.timer)
     w.resolve(reply)
+  }
+  /* Загрузчик: читает подряд, потерянный ответ - то же смещение ещё раз */
+  const bootloader = async (code, size, crc, DONE) => {
+    const parts = []
+    let offset = 0
+    while (offset < size) {
+      if (offset === stopAt) return
+      const reply = served.answer({ header: "GET", payload: {}, raw: readRequest(offset, block) })
+      if (state.reads++ === dropRead) continue
+      assert.equal(reply.ok, true)
+      assert.equal(u32(reply.payload, 0), offset)
+      const data = reply.payload.subarray(4)
+      parts.push(data.slice())
+      offset += data.length
+      await new Promise((r) => setTimeout(r, 0))
+    }
+    const image = new Uint8Array(parts.flatMap((d) => [...d]))
+    if (image.length !== size || crc32(image) !== crc) return answer(DONE, false, { Message: 306 })
+    state.image = image
+    answer(DONE, true, {})
   }
   const transport = {
     waitFor: (code, match, timeoutMs) =>
@@ -30,51 +57,25 @@ const fakeModule = ({ block = 40, resyncAt = -1, resyncTo = 0, noBoot = false, d
         }, timeoutMs)
         waiters.push(w)
       }),
+    serve: (code, handler) => {
+      served = { code, answer: handler }
+      return () => (served = undefined)
+    },
     send: (har, payload) => {
       const { header, argument, code, reply } = decodeHar(har)
+      assert.equal(`${header} ${argument}`, "SET FirmwareUpgradeStart")
+      assert.equal(reply, true)
+      state.starts++
       setTimeout(() => {
-        if (argument === "ModuleFind") {
-          const raw = new Uint8Array(state.boot ? 47 : 60)
-          if (!state.boot) raw[raw.length - 4] = 1
-          return answer(code, true, {}, raw)
-        }
-        if (argument === "FirmwareUpgradeStart" && !state.boot) {
-          assert.equal(reply, false)
+        if (!state.boot) {
           if (dropEnter-- > 0) return /* модуль как раз перезапускался - команда потерялась */
           if (!noBoot) setTimeout(() => (state.boot = true), 30)
           return
         }
-        if (argument === "FirmwareUpgradeStart") {
-          state.size = u32(payload, 0)
-          state.crc = u32(payload, 4)
-          state.next = 0
-          state.written = []
-          return answer(code, true, {}, Uint8Array.of(block))
-        }
-        if (argument === "FirmwareUpgradeChunk") {
-          const index = u32(payload, 0)
-          const crc = new DataView(payload.buffer, payload.byteOffset + 4, 2).getUint16(0, true)
-          const data = payload.subarray(6)
-          if (index === resyncAt && !state.resynced) {
-            state.resynced = true
-            state.next = resyncTo
-            state.written.length = resyncTo
-            return answer(code, false, { Message: 307, Args: [resyncTo] })
-          }
-          if (index !== state.next || crc16Kermit(0, data) !== crc) return answer(code, false, { Message: 307, Args: [state.next] })
-          state.written[index] = data.slice()
-          state.next++
-          return answer(code, true, {}, payload.subarray(0, 4))
-        }
-        if (argument === "FirmwareUpgradeDone") {
-          assert.equal(payload, null)
-          const image = new Uint8Array(state.written.flatMap((d) => [...d]))
-          if (image.length !== state.size || crc32(image) !== state.crc) return answer(code, false, { Message: 306 })
-          state.image = image
-          state.done = true
-          return answer(code, true, {}, undefined)
-        }
-        assert.fail(`${header} ${argument}`)
+        if (state.reading) return
+        state.reading = true
+        answer(code, true, {})
+        bootloader(code, u32(payload, 0), u32(payload, 4), code + 2)
       }, 1)
     },
   }
@@ -83,32 +84,45 @@ const fakeModule = ({ block = 40, resyncAt = -1, resyncTo = 0, noBoot = false, d
 
 const image = (n) => Uint8Array.from({ length: n }, (_, i) => (i * 7 + 3) & 0xff)
 
-test("Прошивка: переход в загрузчик, части по ответу Start, CRC32 и запуск", async () => {
+test("Прошивка: переход в загрузчик, загрузчик читает образ сам, CRC32 и FirmwareUpgradeDone", async () => {
   const { transport, state } = fakeModule({ block: 40 })
   const bin = image(1000)
   const stages = []
-  await updateModuleFirmware(transport, bin, { onProgress: (stage, done) => stages.push(`${stage}:${done}`) })
-  assert.equal(state.done, true)
+  await updateModuleFirmware(transport, bin, { startRepeatMs: 50, onProgress: (stage, done) => stages.push(`${stage}:${done}`) })
   assert.deepEqual(state.image, bin)
+  assert.ok(stages.includes("erase:0"))
+  assert.ok(stages.includes("write:40"))
   assert.equal(stages.at(-1), "verify:1000")
-  assert.ok(stages.includes("write:1000"))
 })
 
-test("Прошивка: RESYNC с номером части - передача продолжается с неё", async () => {
-  const { transport, state } = fakeModule({ block: 240, resyncAt: 3, resyncTo: 1 })
+test("Прошивка: ответ на чтение потерялся - загрузчик читает то же смещение ещё раз", async () => {
+  const { transport, state } = fakeModule({ block: 224, dropRead: 3 })
   const bin = image(2000)
-  await updateModuleFirmware(transport, bin)
-  assert.equal(state.resynced, true)
+  await updateModuleFirmware(transport, bin, { startRepeatMs: 50 })
   assert.deepEqual(state.image, bin)
 })
 
-test("Прошивка: загрузчик не отозвался - noBootloader, пустой образ - image", async () => {
-  const { transport } = fakeModule({ noBoot: true })
+test("Прошивка: первые команды перехода в загрузчик потерялись - старт повторяется", async () => {
+  const { transport, state } = fakeModule({ dropEnter: 2 })
+  const bin = image(500)
+  await updateModuleFirmware(transport, bin, { startRepeatMs: 50 })
+  assert.deepEqual(state.image, bin)
+  assert.ok(state.starts >= 4)
+})
+
+test("Прошивка: загрузчик не отозвался - noBootloader, замолчал - timeout, пустой образ - image, связь без serve - transport", async () => {
   await assert.rejects(
-    updateModuleFirmware(transport, image(100), { bootTimeoutMs: 700 }),
+    updateModuleFirmware(fakeModule({ noBoot: true }).transport, image(100), { bootTimeoutMs: 300, startRepeatMs: 50 }),
     (e) => e instanceof FirmwareUpdateError && e.code === "noBootloader",
   )
+  await assert.rejects(
+    updateModuleFirmware(fakeModule({ stopAt: 80 }).transport, image(400), { startRepeatMs: 50, idleTimeoutMs: 200 }),
+    (e) => e instanceof FirmwareUpdateError && e.code === "timeout",
+  )
+  const { transport } = fakeModule()
   await assert.rejects(updateModuleFirmware(transport, new Uint8Array()), (e) => e instanceof FirmwareUpdateError && e.code === "image")
+  const { serve: _serve, ...plain } = transport
+  await assert.rejects(updateModuleFirmware(plain, image(10)), (e) => e instanceof FirmwareUpdateError && e.code === "transport")
 })
 
 /* Хаб ESP: шаги steps - Progress строки модуля после команды, по одному на тик; VerFW строки становится новой на шаге verAt */
@@ -174,11 +188,4 @@ test("Хаб: ход упал в 0 до 100 - ошибка hub с процент
     (e) => e instanceof FirmwareUpdateError && e.code === "timeout" && e.params.step === "hub",
   )
   silent.stop()
-})
-
-test("Прошивка: первая команда перехода в загрузчик потерялась - повтор, пока отвечает приложение", async () => {
-  const { transport, state } = fakeModule({ dropEnter: 2 })
-  const bin = image(500)
-  await updateModuleFirmware(transport, bin)
-  assert.deepEqual(state.image, bin)
 })

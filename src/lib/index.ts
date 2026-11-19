@@ -92,6 +92,8 @@ export {
   type FsErrorCode,
   type DeviceReply,
   type DeviceTransport,
+  type DeviceRequest,
+  type DeviceAnswer,
   type DevicePayload,
   type FsTransfer,
   type FsTransferOptions,

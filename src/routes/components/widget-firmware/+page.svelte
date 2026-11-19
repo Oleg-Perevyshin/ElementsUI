@@ -30,7 +30,7 @@
     onProgress("erase", 0)
     await wait(600)
     for (let p = 0; p <= 100; p += 10) {
-      if ("VerFW" in source && source.VerFW === 106 && p === 60) throw new Error("Загрузчик ответил ошибкой (FirmwareUpgradeChunk): ER!")
+      if ("VerFW" in source && source.VerFW === 106 && p === 60) throw new Error("Загрузчик ответил ошибкой (FirmwareUpgradeRead): ER!")
       onProgress("write", p)
       await wait(150)
     }

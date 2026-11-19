@@ -49,10 +49,9 @@
 - [ModuleStream5, A_MODULE_STREAM_5, 46, 1]       # Поток данных модуля, канал 5
 
 # Обновление прошивки
-- [FirmwareUpgradeStart, A_FIRMWARE_UPGRADE_START, 51, 3] # Старт обновления прошивки модуля по шине
-- [FirmwareUpgradeChunk, A_FIRMWARE_UPGRADE_CHUNK, 52, 3] # Блок прошивки при обновлении по шине
-- [FirmwareUpgradeDone, A_FIRMWARE_UPGRADE_DONE, 53, 3]   # Завершение обновления прошивки по шине
-- [FirmwareUpgradeError, A_FIRMWARE_UPGRADE_ERROR, 54, 3] # Ошибка обновления прошивки по шине
+- [FirmwareUpgradeStart, A_FIRMWARE_UPGRADE_START, 51, 3] # Старт обновления: размер и CRC32 образа; приложение уходит в загрузчик, загрузчик стирает место и читает образ сам
+- [FirmwareUpgradeRead, A_FIRMWARE_UPGRADE_READ, 52, 3]   # Загрузчик читает кусок образа у сервера (хаб, терминал): смещение и длина, ответ - смещение и данные
+- [FirmwareUpgradeDone, A_FIRMWARE_UPGRADE_DONE, 53, 3]   # Итог обновления от загрузчика серверу: OK! - CRC32 сошлась, приложение запущено
 
 # Работа с модулями перемещения (оси подвесов, линейные перемещения, серво приводы и подобные)
 - [MotionEnable, A_MOTION_ENABLE, 111, 0]     # SET: привод - число 1 (включить, держит текущий угол) или 0 (фазы без напряжения, драйвер спит)

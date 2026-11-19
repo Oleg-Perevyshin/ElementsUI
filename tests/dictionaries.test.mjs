@@ -48,7 +48,7 @@ test("параметры шаблона по порядку, нехватка - 
     "Не удалось подключиться к Wi-Fi Home 5G, восстановлена прежняя сеть",
   )
   assert.equal(formatDeviceMessage(MESSAGE_CODES.DEV_POWER_LIMIT, [3], "en").text, "Channel 3 power limit exceeded, channel turned off")
-  assert.equal(formatDeviceMessage(MESSAGE_CODES.FW_RESYNC, [17], "en").text, "Resending firmware from part 17")
+  assert.equal(formatDeviceMessage(MESSAGE_CODES.FW_FILE_SIZE_INVALID, [600000, 503808], "en").text, "Firmware size 600000 exceeds 503808")
   assert.equal(formatDeviceMessage(MESSAGE_CODES.CFG_NOT_APPLIED, [], "en").text, "Settings not applied: ?")
 })
 

@@ -14,11 +14,25 @@ export interface DeviceReply {
 /* Тело команды: карта, сырые поля байтовой строкой (загрузчики, ModuleFind) или null - без тела */
 export type DevicePayload = Record<string, unknown> | Uint8Array | null
 
-/* Транспорт к выбранному модулю: send - команда с готовым HAR (заголовок, код аргумента, флаг ответа), приложение кладёт её в конверт {HAR, VAL: {DevSN, ModSN, Payload}}; waitFor - первый ответ OK! или ER! с кодом аргумента code, для которого match вернул true, null - таймаут. waitFor вызывается до send. dictionary - словарь для перевода имён в коды, по умолчанию встроенный */
+/* Запрос модуля к приложению (GET или SET с флагом ответа): payload - Payload-карта, raw - Payload сырыми полями */
+export interface DeviceRequest {
+  header: string
+  payload: Record<string, unknown>
+  raw?: Uint8Array
+}
+
+/* Ответ приложения на запрос модуля: ok - OK!, иначе ER! (payload - карта {Message}) */
+export interface DeviceAnswer {
+  ok: boolean
+  payload: DevicePayload
+}
+
+/* Транспорт к выбранному модулю: send - команда с готовым HAR (заголовок, код аргумента, флаг ответа), приложение кладёт её в конверт {HAR, VAL: {DevSN, ModSN, Payload}}; waitFor - первый ответ OK! или ER! с кодом аргумента code, для которого match вернул true, null - таймаут. waitFor вызывается до send. serve - ответы на запросы модуля с кодом аргумента code (загрузчик читает образ прошивки), возвращает отписку; нет - связь только спрашивает (через хаб). dictionary - словарь для перевода имён в коды, по умолчанию встроенный */
 export interface DeviceTransport {
   dictionary?: Dictionary
   send(har: number, payload: DevicePayload): unknown
   waitFor(code: number, match: (reply: DeviceReply) => boolean, timeoutMs: number): Promise<DeviceReply | null>
+  serve?(code: number, answer: (request: DeviceRequest) => DeviceAnswer | undefined): () => void
 }
 
 /* Код аргумента (имя или код) по словарю транспорта; неизвестное имя - ошибка */

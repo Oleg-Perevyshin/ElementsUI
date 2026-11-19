@@ -1,16 +1,17 @@
 /* $lib/busBridge.ts - мост GUI к устройству через шину (консоль xPOE-Debug, CAN, RS485): та же связь DeviceLink, что у веба и облака, - модули по ModSN, значения "<ModSN>|ключ", сообщения устройства в ответах */
-import { formatDeviceMessage, isNeighborModule, splitHar, type DeviceMessageLevel, type Dictionary } from "./protocols/index.js"
-import type { DevicePayload, DeviceReply } from "./fsTransfer.js"
+import { encodeHar, formatDeviceMessage, isNeighborModule, splitHar, type DeviceMessageLevel, type Dictionary } from "./protocols/index.js"
+import type { DevicePayload, DeviceReply, DeviceRequest } from "./fsTransfer.js"
 import { mergeDevicePayload, type DeviceLink } from "./gui.js"
 import { DEFAULT_LANGUAGE, type LanguageCode } from "./locales/languages.js"
 
-/* Принятый пакет шины: адреса, заголовок и аргумент именами словаря, code - код аргумента, payload - декодированный CBOR */
+/* Принятый пакет шины: адреса, заголовок и аргумент именами словаря, code - код аргумента, reply - флаг ответа, payload - декодированный CBOR */
 export interface BusPacket {
   trgId: number
   srcId: number
   header: string
   argument: string
   code: number
+  reply?: boolean
   payload: unknown
 }
 
@@ -216,6 +217,21 @@ export const createBusBridge = (channel: BusChannel, options: BusBridgeOptions) 
           handlers.add(handler)
           const timer = setTimeout(() => done(null), timeoutMs)
         }),
+      /* Запрос модуля - ответ ему по адресу отправителя, без флага ответа */
+      serve: (code, answer) => {
+        const handler = (packet: BusPacket, from: string) => {
+          if (packet.code !== code || from !== ModSN || (packet.header !== "GET" && packet.header !== "SET")) return
+          const request: DeviceRequest = {
+            header: packet.header,
+            payload: isRecord(packet.payload) ? packet.payload : {},
+            raw: packet.payload instanceof Uint8Array ? packet.payload : undefined,
+          }
+          const reply = answer(request)
+          if (reply && packet.reply !== false) channel.send(packet.srcId, encodeHar(reply.ok ? "OK!" : "ER!", code, false, dictionary), reply.payload)
+        }
+        handlers.add(handler)
+        return () => handlers.delete(handler)
+      },
     }
     links.set(ModSN, created)
     return created

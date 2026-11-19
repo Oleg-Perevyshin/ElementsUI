@@ -67,10 +67,9 @@ typedef enum {
   A_MODULE_STREAM_5                 = 46,   /* Поток данных модуля, канал 5 */
 
   /* Обновление прошивки */
-  A_FIRMWARE_UPGRADE_START          = 51,   /* Старт обновления прошивки модуля по шине */
-  A_FIRMWARE_UPGRADE_CHUNK          = 52,   /* Блок прошивки при обновлении по шине */
-  A_FIRMWARE_UPGRADE_DONE           = 53,   /* Завершение обновления прошивки по шине */
-  A_FIRMWARE_UPGRADE_ERROR          = 54,   /* Ошибка обновления прошивки по шине */
+  A_FIRMWARE_UPGRADE_START          = 51,   /* Старт обновления: размер и CRC32 образа; приложение уходит в загрузчик, загрузчик стирает место и читает образ сам */
+  A_FIRMWARE_UPGRADE_READ           = 52,   /* Загрузчик читает кусок образа у сервера (хаб, терминал): смещение и длина, ответ - смещение и данные */
+  A_FIRMWARE_UPGRADE_DONE           = 53,   /* Итог обновления от загрузчика серверу: OK! - CRC32 сошлась, приложение запущено */
 
   /* Работа с модулями перемещения (оси подвесов, линейные перемещения, серво приводы и подобные) */
   A_MOTION_ENABLE                   = 111,  /* SET: привод - число 1 (включить, держит текущий угол) или 0 (фазы без напряжения, драйвер спит) */
@@ -141,9 +140,8 @@ static inline uint8_t CMD_Priority(uint16_t arg) {
     case A_DEBUG_PLOT:
     case A_DEBUG_MIRROR:
     case A_FIRMWARE_UPGRADE_START:
-    case A_FIRMWARE_UPGRADE_CHUNK:
+    case A_FIRMWARE_UPGRADE_READ:
     case A_FIRMWARE_UPGRADE_DONE:
-    case A_FIRMWARE_UPGRADE_ERROR:
       return 3;
     default:
       return CMD_PRIORITY_DEFAULT;
