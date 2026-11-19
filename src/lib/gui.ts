@@ -433,7 +433,8 @@ export const guiMetadataError = (metadata: unknown): "metadata" | "DevID" | "Ver
   if (!metadata || typeof metadata !== "object") return "metadata"
   const { DevID, VerFW, Author, Date } = metadata as Record<string, unknown>
   if (typeof DevID !== "string" || !DevID.trim()) return "DevID"
-  if (typeof VerFW !== "number" || VerFW <= 0) return "VerFW"
+  /* Версия - целое от 0: 0 - GUI модуля в загрузчике */
+  if (typeof VerFW !== "number" || !Number.isInteger(VerFW) || VerFW < 0) return "VerFW"
   if (typeof Author !== "string" || !Author.trim()) return "Author"
   if (typeof Date !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(Date)) return "Date"
   return null
