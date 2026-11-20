@@ -133,15 +133,15 @@ static inline uint8_t CMD_Priority(uint16_t arg) {
     case A_MODULE_STREAM_3:
     case A_MODULE_STREAM_4:
     case A_MODULE_STREAM_5:
+    case A_FIRMWARE_UPGRADE_START:
+    case A_FIRMWARE_UPGRADE_READ:
+    case A_FIRMWARE_UPGRADE_DONE:
     case A_ORIENTATION_DATA:
       return 1;
     case A_SYSTEM_FILE_SYSTEM:
     case A_DEBUG_LOG:
     case A_DEBUG_PLOT:
     case A_DEBUG_MIRROR:
-    case A_FIRMWARE_UPGRADE_START:
-    case A_FIRMWARE_UPGRADE_READ:
-    case A_FIRMWARE_UPGRADE_DONE:
       return 3;
     default:
       return CMD_PRIORITY_DEFAULT;
