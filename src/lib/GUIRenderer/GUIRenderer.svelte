@@ -583,14 +583,17 @@
           persistKey={persist(component)}
           onSave={locked ? undefined : (values) => saveFields(prefix, Object.keys(values) as (keyof typeof values)[], values, props.keys)}
         />
-      {:else if (component.type === "WidgetIMU" && views.WidgetIMU) || (component.type === "WidgetMag" && views.WidgetMag)}
-        {@const Sensor = component.type === "WidgetIMU" ? views.WidgetIMU! : views.WidgetMag!}
+      {:else if (component.type === "WidgetIMU" && views.WidgetIMU) || (component.type === "WidgetMag" && views.WidgetMag) || (component.type === "WidgetEncoder" && views.WidgetEncoder)}
+        {@const sensorType = component.type as "WidgetIMU" | "WidgetMag" | "WidgetEncoder"}
+        {@const Sensor = (
+          sensorType === "WidgetIMU" ? views.WidgetIMU : sensorType === "WidgetMag" ? views.WidgetMag : views.WidgetEncoder
+        ) as typeof views.WidgetIMU & {}}
         {@const props = component.properties as UIComponent<"WidgetIMU">["properties"]}
-        {@const prefix = widgetPrefixes(component.type as "WidgetIMU" | "WidgetMag", props)[0]}
-        <!-- Калибровка - новое слово Cfg с режимом 2; после неё перечитывается только группа датчика -->
+        {@const prefix = widgetPrefixes(sensorType, props)[0]}
+        <!-- Калибровка - новое слово Cfg с режимом калибровки; после неё перечитывается только группа датчика -->
         <Sensor
           {...props}
-          value={fields(component, prefix, component.type === "WidgetIMU" ? WIDGET_FIELDS.WidgetIMU : WIDGET_FIELDS.WidgetMag) as never}
+          value={fields(component, prefix, WIDGET_FIELDS[sensorType]) as never}
           persistKey={persist(component)}
           onCalibrate={locked ? undefined : (cfg: number) => saveFields(prefix, ["Cfg"], { Cfg: cfg }, props.keys)}
           onSaveCfg={locked ? undefined : (cfg: number) => saveFields(prefix, ["Cfg"], { Cfg: cfg }, props.keys)}

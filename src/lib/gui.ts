@@ -156,6 +156,14 @@ export const WIDGET_FIELDS = {
     CZ: num,
     CQ: num /* качество калибровки, 0..100% */,
   },
+  /* Энкодер любого драйвера (группа ENC): Cfg биты 0-1 - режим (0 стоп, 1 измерять, 2 автокалибровка, 3 ноль здесь), ноль - биты 15-26 Cfg; показания - только чтение */
+  WidgetEncoder: {
+    Cfg: num,
+    A: num /* угол, ° */,
+    Vel: num /* скорость, рад/с */,
+    ST: num /* флаги чипа: бит 0 превышение скорости, 1 слабое поле, 2 низкое напряжение */,
+    CS: num /* итог автокалибровки: 0 нет, 1 идёт, 2 ошибка, 3 успешно */,
+  },
   /* Поля одного борта карты, групп может быть несколько (groups) */
   WidgetMap: {
     Lat: num /* 0 вместе с Lon - нет фикса */,
@@ -178,6 +186,7 @@ export type IWidgetMapData = typeof WIDGET_FIELDS.WidgetMap
 export type IWidgetAHRSData = typeof WIDGET_FIELDS.WidgetAHRS
 export type IWidgetIMUData = typeof WIDGET_FIELDS.WidgetIMU
 export type IWidgetMagData = typeof WIDGET_FIELDS.WidgetMag
+export type IWidgetEncoderData = typeof WIDGET_FIELDS.WidgetEncoder
 
 /* Ключ переменной устройства «ГРУППА.Поле» - до 15 символов: буфер прошивки 16 с \0, это и предел ключа NVS в ESP-IDF */
 export const KEY_MAX_LEN = 15
@@ -206,6 +215,7 @@ export const WIDGET_PREFIX: Record<WidgetFieldsType, string> = {
   WidgetAHRS: "AHRF",
   WidgetIMU: "IMUF",
   WidgetMag: "MAGF",
+  WidgetEncoder: "ENC",
 }
 
 export const widgetPrefixes = (type: WidgetFieldsType, props: { id?: string; groups?: string[] }): string[] =>

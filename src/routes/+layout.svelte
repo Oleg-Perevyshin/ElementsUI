@@ -42,6 +42,7 @@
     { page: "widget-ahrs", name: "WidgetAHRS" },
     { page: "widget-imu", name: "WidgetIMU" },
     { page: "widget-mag", name: "WidgetMag" },
+    { page: "widget-encoder", name: "WidgetEncoder" },
     { page: "accordion", name: "Accordion" },
     { page: "button", name: "Button" },
     { page: "carousel", name: "Carousel" },

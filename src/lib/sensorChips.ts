@@ -1,4 +1,4 @@
-/* $lib/sensorChips.ts - справочник микросхем датчиков для WidgetIMU и WidgetMag: битовые поля слова Cfg драйвера ровно как в прошивке (ProdFactory, components/drivers/<чип>/<чип>.h), заводское слово и ограничения даташита. Биты 0-1 (режим: стоп, измерение, калибровка, по запросу) - общие у всех, их ведёт блок калибровки. Новая микросхема - новая запись SENSOR_CHIPS, виджет не меняется */
+/* $lib/sensorChips.ts - справочник микросхем датчиков для WidgetIMU, WidgetMag и WidgetEncoder: битовые поля слова Cfg драйвера ровно как в прошивке (ProdFactory, components/drivers/<чип>/<чип>.h), заводское слово и ограничения даташита. Биты 0-1 (режим: стоп, измерение, калибровка, по запросу) - общие у всех, их ведёт блок калибровки. Новая микросхема - новая запись SENSOR_CHIPS, виджет не меняется */
 
 /* Значение другого поля той же части Cfg: сначала свой раздел, потом остальные */
 export type SensorChipRead = (key: string) => number | undefined
@@ -38,12 +38,16 @@ export interface SensorChipPart {
   busyModes: number[]
 }
 
-/* Микросхема: у 9-осевого IMU есть обе части */
+/* Класс датчика: виджет берёт свою часть микросхемы */
+export type SensorKind = "imu" | "mag" | "enc"
+
+/* Микросхема: у 9-осевого IMU есть обе части imu и mag, у энкодера - enc */
 export interface SensorChip {
   id: string
   name: string
   imu?: SensorChipPart
   mag?: SensorChipPart
+  enc?: SensorChipPart
 }
 
 /* Режим работы (биты 0-1 Cfg, общие у всех драйверов): выбираются только run, режимы калибровки busy видны, пока драйвер в них */
@@ -64,6 +68,15 @@ const opts = (pairs: [number, string][]) => pairs.map(([value, name]) => ({ valu
 const words = (pairs: [number, string][]) => pairs.map(([value, name]) => ({ value, name: `@${name}` }))
 /* Частота в Гц подписью: от 1 кГц - в кГц */
 const hz = (value: number) => (value >= 1000 ? `${Number((value / 1000).toFixed(2))} kHz` : `${Number(value.toFixed(4))} Hz`)
+
+/* MT6835: период опроса по коду rate, мс (100, 250, 500, 1000 Гц) */
+const MT6835_PERIOD_MS = [10, 4, 2, 1]
+/* Сглаживание скорости EMA vel = (raw + k*vel) / (k+1): подпись - постоянная времени при текущей частоте опроса */
+const mt6835VelFilter = (k: number, read: SensorChipRead) => {
+  if (k === 0) return "@none"
+  const period = MT6835_PERIOD_MS[read("poll") ?? 3] ?? 1
+  return `${Number((-period / Math.log(k / (k + 1))).toFixed(1))} ms`
+}
 
 /* ICM42688: ODR по коду регистра ACCEL_ODR/GYRO_ODR, Гц; варианты от быстрых к медленным */
 const ICM42688_ODR_HZ: Record<number, number> = {
@@ -334,10 +347,108 @@ export const SENSOR_CHIPS: SensorChip[] = [
       ],
     },
   },
+  {
+    id: "MT6835",
+    name: "MT6835",
+    enc: {
+      /* Измерять 1 кГц, полоса базовая, против часовой, гистерезис 0.022°, без сглаживания, ноль 0 (CB_ResetConfig драйвера) */
+      factory: 13,
+      busyModes: [2, 3],
+      sections: [
+        {
+          name: "common",
+          fields: [
+            runField(
+              [
+                [0, "stop"],
+                [1, "measure"],
+              ],
+              [
+                [2, "calibrate"],
+                [3, "zero"],
+              ],
+            ),
+            {
+              key: "direction",
+              start: 7,
+              end: 7,
+              type: "select",
+              buttons: true,
+              brief: true,
+              options: words([
+                [0, "ccw"],
+                [1, "cw"],
+              ]),
+            },
+          ],
+        },
+        {
+          name: "common",
+          fields: [
+            {
+              key: "poll",
+              start: 2,
+              end: 3,
+              type: "select",
+              brief: true,
+              options: opts([
+                [3, "1 kHz"],
+                [2, "500 Hz"],
+                [1, "250 Hz"],
+                [0, "100 Hz"],
+              ]),
+            },
+            {
+              /* BW[2:0] (0x011): базовая полоса - меньше шум, ×128 - быстрее отклик */
+              key: "bandwidth",
+              start: 4,
+              end: 6,
+              type: "select",
+              options: opts([
+                [0, "×1"],
+                [1, "×2"],
+                [2, "×4"],
+                [3, "×8"],
+                [4, "×16"],
+                [5, "×32"],
+                [6, "×64"],
+                [7, "×128"],
+              ]),
+            },
+            {
+              /* HYST[2:0] (0x00D): варианты по возрастанию окна, коды не по порядку */
+              key: "hyst",
+              start: 8,
+              end: 10,
+              type: "select",
+              options: opts([
+                [4, "0°"],
+                [5, "0.003°"],
+                [6, "0.006°"],
+                [7, "0.011°"],
+                [0, "0.022°"],
+                [1, "0.044°"],
+                [2, "0.088°"],
+                [3, "0.176°"],
+              ]),
+            },
+            {
+              key: "velFilter",
+              start: 11,
+              end: 14,
+              type: "select",
+              format: mt6835VelFilter,
+              options: [0, 1, 2, 4, 8, 15].map((value) => ({ value, name: String(value) })),
+            },
+          ],
+        },
+      ],
+    },
+  },
 ]
 
 /* Микросхема по id из пропса chip; нет или не того класса - undefined (виджет без настроек датчика) */
-export const sensorChipPart = (id: string | undefined, kind: "imu" | "mag"): SensorChipPart | undefined => SENSOR_CHIPS.find((chip) => chip.id === id)?.[kind]
+export const sensorChipPart = (id: string | undefined, kind: SensorKind): SensorChipPart | undefined => SENSOR_CHIPS.find((chip) => chip.id === id)?.[kind]
 
 /* Варианты выбора микросхемы для панели конструктора */
-export const sensorChipOptions = (kind: "imu" | "mag") => SENSOR_CHIPS.filter((chip) => chip[kind]).map((chip) => ({ value: chip.id, name: chip.name }))
+export const sensorChipOptions = (kind: SensorKind) => SENSOR_CHIPS.filter((chip) => chip[kind]).map((chip) => ({ value: chip.id, name: chip.name }))

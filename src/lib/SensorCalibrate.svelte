@@ -1,4 +1,4 @@
-<!-- $lib/SensorCalibrate.svelte - режим датчика и калибровка для WidgetIMU и WidgetMag: значок режима (биты 0-1 Cfg), кнопка «Калибровать», подсказка, что делать с датчиком, и полоса времени калибровки; по её окончании - onRefresh. Калибровать нельзя, пока датчик остановлен, драйвер занят (busyModes) или виджет занят другим делом (locked); busy - идёт ли калибровка -->
+<!-- $lib/SensorCalibrate.svelte - режим датчика и калибровка для WidgetIMU, WidgetMag и WidgetEncoder: значок режима (биты 0-1 Cfg), кнопка «Калибровать», подсказка, что делать с датчиком, и полоса времени калибровки; по её окончании - onRefresh. Калибровать нельзя, пока датчик остановлен, драйвер занят (busyModes) или виджет занят другим делом (locked); busy - идёт ли калибровка -->
 <script lang="ts">
   import { onDestroy } from "svelte"
   import { slide } from "svelte/transition"

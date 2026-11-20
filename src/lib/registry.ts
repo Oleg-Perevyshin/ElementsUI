@@ -29,6 +29,7 @@ import WidgetMap from "./WidgetMap/WidgetMap.svelte"
 import WidgetAHRS from "./WidgetAHRS/WidgetAHRS.svelte"
 import WidgetIMU from "./WidgetIMU/WidgetIMU.svelte"
 import WidgetMag from "./WidgetMag/WidgetMag.svelte"
+import WidgetEncoder from "./WidgetEncoder/WidgetEncoder.svelte"
 import { COMPONENT_META, type ComponentMeta } from "./componentMeta"
 import type { UIType } from "./types"
 
@@ -67,6 +68,7 @@ const VIEWS: Record<UIType, Component<any, any, any>> = {
   WidgetAHRS,
   WidgetIMU,
   WidgetMag,
+  WidgetEncoder,
 }
 
 export const COMPONENTS = Object.fromEntries(

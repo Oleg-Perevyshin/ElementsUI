@@ -11,6 +11,7 @@ import type {
   IWidgetAHRSData,
   IWidgetIMUData,
   IWidgetMagData,
+  IWidgetEncoderData,
 } from "./gui"
 import type { LoRaParams } from "./WidgetLoRa/lora"
 
@@ -25,6 +26,7 @@ export type {
   IWidgetAHRSData,
   IWidgetIMUData,
   IWidgetMagData,
+  IWidgetEncoderData,
 } from "./gui"
 export type { AHRSParam, IAHRSAlgorithm } from "./WidgetAHRS/ahrs"
 export type { LoRaParams, LoRaParam, LoRaValues, ILoRaParamConfig, ILoRaOption } from "./WidgetLoRa/lora"
@@ -63,6 +65,7 @@ export interface UIComponentPropsMap {
   WidgetAHRS: IWidgetAHRSProps
   WidgetIMU: IWidgetIMUProps
   WidgetMag: IWidgetMagProps
+  WidgetEncoder: IWidgetEncoderProps
 }
 
 export type UIType = keyof UIComponentPropsMap
@@ -1027,6 +1030,29 @@ export interface IWidgetMagProps {
   /* Новое слово Cfg с режимом «калибровать»; без колбэка кнопки нет */
   onCalibrate?: (cfg: number) => void
   /* Перечитать настройки устройства после калибровки */
+  onRefresh?: () => void
+}
+
+/* Угол и скорость энкодера, ноль и автокалибровка; группа ENC по умолчанию, режим - биты 0-1 Cfg, ноль - биты 15-26 */
+export interface IWidgetEncoderProps {
+  /* Префикс группы энкодера, по умолчанию "ENC" */
+  id?: string
+  wrapperClass?: string
+  accent?: AccentColor
+  label?: { name?: string }
+  value?: Partial<IWidgetEncoderData>
+  keys?: Partial<Record<keyof IWidgetEncoderData, string>>
+  /* Сколько длится автокалибровка, мс: потом виджет перечитывает настройки (onRefresh) */
+  calibrateMs?: number
+  collapsed?: boolean
+  persistKey?: string
+  /* Микросхема из справочника sensorChips.ts (SENSOR_CHIPS): её поля Cfg - блок «Настройки датчика»; нет - только показания, ноль и калибровка */
+  chip?: string
+  /* Новое слово Cfg из настроек датчика; без колбэка настройки только для просмотра */
+  onSaveCfg?: (cfg: number) => void
+  /* Новое слово Cfg с режимом 2 (автокалибровка) или 3 (ноль здесь); без колбэка кнопок нет */
+  onCalibrate?: (cfg: number) => void
+  /* Перечитать настройки устройства после калибровки или установки нуля */
   onRefresh?: () => void
 }
 

@@ -265,6 +265,7 @@ export const DEVICE_MESSAGES: Record<number, DeviceMessageEntry> = {
   2060: { group: "DRV", name: "DRV_MAG_CALIB_COVERAGE", level: "warn", ru: "Калибровка не сохранена: мало поворотов, вращайте устройство во все стороны", en: "Calibration not saved: too little rotation, turn the device in all directions", zh: "校准未保存：旋转不足，请向各个方向转动设备" },
   2061: { group: "DRV", name: "DRV_MAG_CALIB_FIELD", level: "warn", ru: "Калибровка не сохранена: поле {0} мкТл вне 20-100, рядом сильное железо или магнит", en: "Calibration not saved: field {0} uT outside 20-100, strong metal or a magnet nearby", zh: "校准未保存：磁场 {0} uT 超出 20-100，附近有强铁磁物或磁铁" },
   2062: { group: "DRV", name: "DRV_MAG_CALIB_QUALITY", level: "warn", ru: "Калибровка не сохранена: качество {0}% ниже {1}%", en: "Calibration not saved: quality {0}% below {1}%", zh: "校准未保存：质量 {0}% 低于 {1}%" },
+  2063: { group: "DRV", name: "DRV_ENC_POWER_CYCLE", level: "warn", ru: "Калибровка энкодера записана в датчик: выключите и включите питание модуля", en: "Encoder calibration saved to the sensor: power the module off and on", zh: "编码器校准已写入传感器：请断电后重新上电" },
 }
 
 export const MESSAGE_CODES: Record<string, number> = {
@@ -513,4 +514,5 @@ export const MESSAGE_CODES: Record<string, number> = {
   DRV_MAG_CALIB_COVERAGE: 2060,
   DRV_MAG_CALIB_FIELD: 2061,
   DRV_MAG_CALIB_QUALITY: 2062,
+  DRV_ENC_POWER_CYCLE: 2063,
 }
