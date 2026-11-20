@@ -528,6 +528,7 @@ const translations = {
   "widget.firmware.stage.download": { ru: "Загрузка прошивки", en: "Downloading firmware", zh: "正在下载固件" },
   "widget.firmware.stage.update": { ru: "Обновление", en: "Updating", zh: "正在更新" },
   "widget.firmware.done": { ru: "Готово", en: "Done", zh: "完成" },
+  "widget.firmware.header_error": { ru: "Ошибка", en: "Error", zh: "错误" },
   "widget.firmware.failed": { ru: "Ошибка: {error}", en: "Error: {error}", zh: "错误：{error}" },
   "widget.firmware.busy": { ru: "Уже идёт обновление прошивки", en: "A firmware update is already running", zh: "固件更新已在进行中" },
   "widget.firmware.hint.version": {

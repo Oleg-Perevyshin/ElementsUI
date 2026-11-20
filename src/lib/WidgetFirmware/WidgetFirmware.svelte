@@ -1,4 +1,4 @@
-<!-- $lib/WidgetFirmware/WidgetFirmware.svelte - смарт-виджет обновления прошивки модуля: текущая версия (CFG.DevFW), выбор версии из каталога (VerFW-S) или файла, полоса хода и строка этапа. Как обновлять (через хаб или напрямую через загрузчик), решает приложение: виджет только зовёт onUpdate и показывает ход, который тот сообщает -->
+<!-- $lib/WidgetFirmware/WidgetFirmware.svelte - смарт-виджет обновления прошивки модуля: текущая версия (CFG.DevFW), выбор версии из каталога (VerFW-S) или файла, полоса хода и строка этапа, проценты хода и ошибка ещё и в шапке (видно в свёрнутом виджете). Как обновлять (через хаб или напрямую через загрузчик), решает приложение: виджет только зовёт onUpdate и показывает ход, который тот сообщает -->
 <script lang="ts">
   import { untrack } from "svelte"
   import { T } from "../locales/i18n"
@@ -104,12 +104,19 @@
   class={twMerge("@container relative flex w-full flex-col gap-4 rounded-2xl border border-(--hairline-color) bg-(--container-color) p-4", wrapperClass)}
   style={rootStyle}
 >
-  <!-- Заголовок: текущая версия справа -->
+  <!-- Заголовок: ход обновления (видно и в свёрнутом виджете) и текущая версия справа -->
   <WidgetHeader icon={FirmwareIcon} label={label?.name || $T("widget.firmware.title")} bind:collapsed {hints}>
     {#snippet right()}
-      {#if current}
-        <span class="truncate text-[13px] text-(--muted-color) tabular-nums">{$T("widget.firmware.current", { version: current })}</span>
-      {/if}
+      <span class="flex min-w-0 items-center gap-2">
+        {#if running}
+          <span class="shrink-0 text-[13px] font-semibold text-(--accent-text) tabular-nums">{percent}%</span>
+        {:else if stage === "error"}
+          <span class="shrink-0 text-[13px] font-semibold text-(--red-text)">{$T("widget.firmware.header_error")}</span>
+        {/if}
+        {#if current}
+          <span class="truncate text-[13px] text-(--muted-color) tabular-nums">{$T("widget.firmware.current", { version: current })}</span>
+        {/if}
+      </span>
     {/snippet}
   </WidgetHeader>
 
