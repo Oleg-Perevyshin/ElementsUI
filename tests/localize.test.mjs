@@ -24,6 +24,12 @@ test("данные колонки и картинки не принимаютс�
   assert.equal(localizeDeep({ name: { ru: "Привет" } }, "zh").name, "Привет")
 })
 
+test("текст подтверждения кнопки переводится в строку языка", () => {
+  const out = localizeDeep({ content: { name: { ru: "Пуск", en: "Run" } }, confirm: { ru: "Выполнить?", en: "Run it?" } }, "en")
+  assert.equal(out.confirm, "Run it?")
+  assert.equal(localizeDeep({ confirm: "Выполнить?" }, "en").confirm, "Выполнить?")
+})
+
 test("словари библиотеки переведены на все языки", async () => {
   const { findMissingTranslations } = await import("../dist/locales/languages.js")
   for (const file of ["translations", "constructor"]) {

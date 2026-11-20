@@ -22,6 +22,7 @@ const TEXT_KEYS = new Set([
   "footer",
   "hiddenInfo",
   "alt",
+  "confirm",
 ])
 
 const isPlainObject = (value: unknown): value is Record<string, unknown> =>
