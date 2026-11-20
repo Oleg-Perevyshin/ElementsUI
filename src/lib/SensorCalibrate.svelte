@@ -17,6 +17,7 @@
     locked = false,
     busy = $bindable(false),
     pollMs = 1000,
+    confirm,
   }: {
     /* Режим из Cfg; undefined - Cfg ещё не прочитан */
     mode: number | undefined
@@ -35,6 +36,8 @@
     busy?: boolean
     /* Как часто перечитывать настройки во время калибровки, мс; 0 - только по окончании calibrateMs */
     pollMs?: number
+    /* Калибровка с движением (вращение вала): текст окна подтверждения перед запуском */
+    confirm?: string
   } = $props()
 
   const COLORS = ["var(--faint-color)", "var(--green-text)", "var(--purple-text)", "var(--blue-text)"]
@@ -106,6 +109,7 @@
         accent="purple"
         content={{ name: $T("widget.sensor.calibrate") }}
         disabled={running || !!blocked}
+        {confirm}
         onClick={start}
       />
     {/if}

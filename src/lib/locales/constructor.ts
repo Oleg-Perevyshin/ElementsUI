@@ -685,6 +685,7 @@ const constructorTranslations = {
   "constructor.texts.name": { ru: "Текст", en: "Text", zh: "文本" },
   "constructor.texts.text": { ru: "Текст", en: "Text", zh: "文本" },
   "constructor.texts.content": { ru: "Содержимое", en: "Content", zh: "内容" },
+  "constructor.texts.confirm": { ru: "Подтверждение", en: "Confirmation", zh: "确认" },
   "constructor.texts.placeholder": { ru: "Подсказка в поле", en: "Placeholder", zh: "占位提示" },
   "constructor.texts.info": { ru: "Подсказка", en: "Hint", zh: "提示" },
   "constructor.texts.help": { ru: "Справка", en: "Help", zh: "帮助" },
@@ -868,6 +869,12 @@ const constructorTranslations = {
     ru: "На сколько меняется значение за один шаг: стрелками, колесом мыши или ползунком.",
     en: "How much the value changes per step: with the arrows, the mouse wheel or the slider.",
     zh: "每步的变化量：使用箭头、鼠标滚轮或滑块。",
+  },
+  "constructor.props.button.confirm": { ru: "Подтверждение", en: "Confirmation", zh: "确认" },
+  "constructor.props.button.confirm.info": {
+    ru: "Перед командой кнопка спрашивает подтверждение в окне. Нужно для действий с движением и необратимых действий: калибровка, автонастройка, сброс. Текст окна - в «Текстах и переводах».",
+    en: "Before the command the button asks for confirmation in a dialog. Use it for actions with motion and irreversible actions: calibration, auto-tuning, reset. The dialog text is in «Texts and translations».",
+    zh: "发送命令前按钮会弹窗请求确认。用于带运动或不可撤销的操作：校准、自动整定、复位。弹窗文字在「文字与翻译」中修改。",
   },
   "constructor.props.button.header.info": {
     ru: "**Что команда делает с устройством:**\n**GET** - запросить данные.\n**SET** - изменить или выполнить.\n**OK! и ER!** - ответы устройства, кнопке обычно не нужны.",

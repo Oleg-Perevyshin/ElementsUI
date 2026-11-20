@@ -53,6 +53,12 @@
         ...(icon || !hasName ? { componentClass: twMerge(properties.componentClass, icon && !hasName ? "w-fit p-2" : "w-full px-1 py-1") } : {}),
       },
     })
+  /* Текст окна подтверждения по умолчанию, на всех языках */
+  const CONFIRM_DEFAULT = {
+    ru: "Выполнить действие?",
+    en: "Run the action?",
+    zh: "执行此操作？",
+  } as unknown as string /* в GUI текст хранится по языкам, кнопка получает строку языка интерфейса */
 </script>
 
 <div class="flex flex-col gap-2">
@@ -67,6 +73,15 @@
       onUpdate={(Header) => onPropertyChange({ eventHandler: { Header } })}
     />
     <ArgumentSelect value={component.eventHandler?.Argument || "ModuleConfig"} onUpdate={(Argument) => onPropertyChange({ eventHandler: { Argument } })} />
+    <!-- Подтверждение перед командой: текст окна правится в «Текстах и переводах» -->
+    <UI.Switch
+      wrapperClass="h-8"
+      type="checkbox"
+      label={{ name: $T("constructor.props.button.confirm") }}
+      help={{ info: $T("constructor.props.button.confirm.info") }}
+      value={properties.confirm ? 1 : 0}
+      onUpdate={(on) => onPropertyChange({ properties: { confirm: on ? CONFIRM_DEFAULT : undefined } })}
+    />
   </PropsGroup>
   <PropsGroup label={$T("constructor.props.group.value")}>
     {#if component.eventHandler?.Argument !== "ModuleConfig" || component.eventHandler?.Header === "SET"}

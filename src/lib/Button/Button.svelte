@@ -7,6 +7,9 @@
   import Icon from "../Icon.svelte"
   import Loader from "../Loader/Loader.svelte"
   import { isHoverPointer, isKeyboardFocus } from "../popup"
+  import Modal from "../Modal.svelte"
+  import Self from "./Button.svelte"
+  import { T } from "../locales/i18n"
 
   let {
     id,
@@ -20,8 +23,17 @@
     aria,
     content = { name: "", info: { text: "", side: "top" }, icon: null },
     keyBind = { showHint: true },
+    confirm,
     onClick,
   }: IButtonProps = $props()
+
+  /* Окно подтверждения: действие - только после «Подтвердить» */
+  let asking = $state(false)
+  const act = () => (confirm?.trim() ? (asking = true) : onClick?.())
+  const accept = () => {
+    asking = false
+    onClick?.()
+  }
 
   let showInfo = $state(false)
   const isIconOnly = $derived(!!content?.icon && !content.name?.trim())
@@ -46,7 +58,7 @@
   const handleClick = (event: Event) => {
     if (blocked || !onClick) return
     event.stopPropagation()
-    onClick()
+    act()
   }
 
   const handleKeyDown = (event: KeyboardEvent) => {
@@ -58,7 +70,7 @@
     const isMetaMatch = keyBind.metaKey === undefined || event.metaKey === keyBind.metaKey
     if (isKeyMatch && isCtrlMatch && isShiftMatch && isAltMatch && isMetaMatch) {
       event.preventDefault()
-      onClick()
+      act()
     }
   }
 </script>
@@ -113,3 +125,15 @@
 
   <Tooltip show={showInfo} text={content.info?.text ?? ""} side={content.info?.side ?? "top"} />
 </div>
+
+{#if confirm?.trim()}
+  <Modal title={content.name || content.info?.text || $T("widget.common.confirm")} bind:isOpen={asking} wrapperClass="w-md max-w-[95vw]">
+    {#snippet main()}
+      <p class="text-left whitespace-pre-line">{confirm}</p>
+    {/snippet}
+    {#snippet footer()}
+      <Self variant="primary" {accent} content={{ name: $T("widget.common.confirm") }} onClick={accept} />
+      <Self variant="secondary" content={{ name: $T("widget.common.cancel") }} onClick={() => (asking = false)} />
+    {/snippet}
+  </Modal>
+{/if}

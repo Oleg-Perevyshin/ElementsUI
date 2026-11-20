@@ -197,6 +197,7 @@ const translations = {
   "sensor.opt.lowPower": { ru: "Экономичный", en: "Low power", zh: "低功耗" },
   "sensor.opt.lowNoise": { ru: "Малошумный", en: "Low noise", zh: "低噪声" },
   "widget.common.cancel": { ru: "Отмена", en: "Cancel", zh: "取消" },
+  "widget.common.confirm": { ru: "Подтвердить", en: "Confirm", zh: "确认" },
   "widget.common.refresh": { ru: "Обновить", en: "Refresh", zh: "刷新" },
   "widget.common.delete": { ru: "Удалить", en: "Delete", zh: "删除" },
   "widget.common.unsaved": { ru: "Есть несохранённые изменения", en: "There are unsaved changes", zh: "有未保存的更改" },
@@ -694,6 +695,12 @@ const translations = {
   "widget.sensor.mode.calibrate": { ru: "калибровка", en: "calibrating", zh: "校准中" },
   "widget.sensor.mode.on_demand": { ru: "по запросу", en: "on demand", zh: "按需" },
   "widget.sensor.calibrate": { ru: "Калибровать", en: "Calibrate", zh: "校准" },
+  "widget.enc.calibrate.confirm": {
+    ru: "Для калибровки устройство само вращает вал с датчиком, несколько десятков оборотов.\nВал должен вращаться свободно: снимите нагрузку и проверьте, что ничего не намотается и не упрётся.",
+    en: "To calibrate, the device spins the shaft with the sensor for several dozen turns.\nThe shaft must turn freely: remove the load and make sure nothing can wind up or hit a stop.",
+    zh: "校准时设备会自行转动带传感器的轴，约几十圈。\n轴必须能自由转动：请卸下负载，并确认没有东西会缠绕或卡住。",
+  },
+
   "widget.imu.title": { ru: "IMU", en: "IMU", zh: "IMU" },
   "widget.imu.accel": { ru: "Акселерометр", en: "Accelerometer", zh: "加速度计" },
   "widget.imu.gyro": { ru: "Гироскоп", en: "Gyroscope", zh: "陀螺仪" },

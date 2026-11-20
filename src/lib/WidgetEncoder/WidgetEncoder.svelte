@@ -103,6 +103,7 @@
         <SensorCalibrate
           {mode}
           instruction={$T("widget.enc.calibrating")}
+          confirm={$T("widget.enc.calibrate.confirm")}
           {calibrateMs}
           onCalibrate={onCalibrate && cfg !== undefined ? () => onCalibrate(bitFieldSet(cfg, 0, 1, SENSOR_MODE.calibrate)) : undefined}
           {onRefresh}

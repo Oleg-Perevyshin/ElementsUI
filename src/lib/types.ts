@@ -170,6 +170,8 @@ export interface IButtonProps {
     altKey?: boolean
     metaKey?: boolean /* Поддержка Meta (Cmd на Mac) */
   }
+  /* Подтверждение: текст есть - нажатие сначала открывает окно с ним, onClick - только после «Подтвердить» (действие с движением, необратимое) */
+  confirm?: string
   onClick?: () => void
 }
 
