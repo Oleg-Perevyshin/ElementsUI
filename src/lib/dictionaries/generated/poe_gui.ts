@@ -1,6 +1,6 @@
 /* $lib/dictionaries/generated/poe_gui.ts - СГЕНЕРИРОВАНО из poe_gui.yaml (npm run Generate), руками не править */
 
-export const COMPONENT_TYPES = ["Accordion", "Tabs", "TextField", "Divider", "Button", "FileAttach", "Input", "Select", "Switch", "Slider", "Joystick", "Widget", "ProgressBar", "Graph", "PeriodChart", "Table", "VideoViewer", "WidgetWiFi", "WidgetDeviceInfo", "WidgetLoRa", "WidgetFileSystem", "WidgetStackInfo", "WidgetFirmware", "WidgetRGBStrip", "WidgetPFD", "WidgetMap"] as const
+export const COMPONENT_TYPES = ["Accordion", "Tabs", "TextField", "Divider", "Button", "FileAttach", "Input", "Select", "Switch", "Slider", "Joystick", "Widget", "ProgressBar", "Graph", "PeriodChart", "Table", "VideoViewer", "WidgetWiFi", "WidgetDeviceInfo", "WidgetLoRa", "WidgetFileSystem", "WidgetStackInfo", "WidgetFirmware", "WidgetRGBStrip", "WidgetPFD", "WidgetMap", "WidgetAHRS", "WidgetIMU", "WidgetMag"] as const
 
 export const COMPONENT_IO = {
   Accordion: "none",
@@ -29,4 +29,7 @@ export const COMPONENT_IO = {
   WidgetRGBStrip: "widget",
   WidgetPFD: "widget",
   WidgetMap: "widget",
+  WidgetAHRS: "widget",
+  WidgetIMU: "widget",
+  WidgetMag: "widget",
 } as const

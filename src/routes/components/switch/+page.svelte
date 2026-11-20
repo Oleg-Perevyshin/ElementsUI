@@ -110,5 +110,21 @@ ${formatObjectToString(switchComponent.properties as ISwitchProps)}
       />
     </div>
     <span> Выбранное значение (биты 29-31): {highBitValue} </span>
+
+    <!-- Битовый режим галочками: строка галочек с подписями, те же биты 29-31 -->
+    <div class="mt-4 flex justify-center">
+      <Switch
+        wrapperClass="w-1/2"
+        label={{ name: "Галочки в битовом режиме (биты 29/30/31)" }}
+        type="checkbox"
+        bitMode
+        bind:value={highBitValue}
+        options={[
+          { id: crypto.randomUUID(), value: 29, name: "Acc", accent: "blue" },
+          { id: crypto.randomUUID(), value: 31, name: "Temp", accent: "red" },
+          { id: crypto.randomUUID(), value: 30, name: "Gyro", accent: "blue" },
+        ]}
+      />
+    </div>
   {/snippet}
 </ComponentExample>

@@ -1,0 +1,81 @@
+<!-- $lib/SensorCalibrate.svelte - режим датчика и калибровка для WidgetIMU и WidgetMag: значок режима (биты 0-1 Cfg), кнопка «Калибровать», подсказка, что делать с датчиком, и полоса времени калибровки; по её окончании - onRefresh -->
+<script lang="ts">
+  import { onDestroy } from "svelte"
+  import { slide } from "svelte/transition"
+  import * as UI from "./index"
+  import { T } from "./locales/i18n"
+  import { SENSOR_MODE } from "./gui"
+
+  let {
+    mode,
+    instruction,
+    calibrateMs,
+    onCalibrate,
+    onRefresh,
+  }: {
+    /* Режим из Cfg; undefined - Cfg ещё не прочитан */
+    mode: number | undefined
+    /* Что делать с датчиком во время калибровки */
+    instruction: string
+    calibrateMs: number
+    onCalibrate?: () => void
+    onRefresh?: () => void
+  } = $props()
+
+  const MODES = [
+    { key: "stop", color: "var(--faint-color)" },
+    { key: "measure", color: "var(--green-text)" },
+    { key: "calibrate", color: "var(--purple-text)" },
+    { key: "on_demand", color: "var(--blue-text)" },
+  ]
+  const shown = $derived(mode === undefined ? undefined : MODES[mode])
+
+  /* Отсчёт калибровки ведёт виджет: прошивка сама возвращается в измерение, а Cfg без запроса не присылает */
+  let started = $state(0)
+  let now = $state(0)
+  let timer: ReturnType<typeof setInterval> | undefined
+  const running = $derived(started > 0)
+  const progress = $derived(running ? Math.min(100, ((now - started) / calibrateMs) * 100) : 0)
+
+  const stop = () => {
+    clearInterval(timer)
+    timer = undefined
+    started = 0
+  }
+  const start = () => {
+    if (!onCalibrate || running) return
+    onCalibrate()
+    started = now = Date.now()
+    timer = setInterval(() => {
+      now = Date.now()
+      if (now - started < calibrateMs) return
+      stop()
+      onRefresh?.()
+    }, 200)
+  }
+  onDestroy(stop)
+</script>
+
+<div class="flex flex-col gap-2">
+  <div class="flex flex-wrap items-center justify-between gap-2">
+    <span class="flex items-center gap-2 text-[13px]">
+      <span
+        class="size-2 rounded-full {running || mode === SENSOR_MODE.calibrate ? 'animate-pulse' : ''}"
+        style="background: {running ? 'var(--purple-text)' : (shown?.color ?? 'var(--faint-color)')}"
+      ></span>
+      <span class="text-(--muted-color)">{$T("widget.sensor.mode")}:</span>
+      <span class="font-semibold">{running ? $T("widget.sensor.mode.calibrate") : shown ? $T(`widget.sensor.mode.${shown.key}`) : "-"}</span>
+    </span>
+    {#if onCalibrate}
+      <UI.Button wrapperClass="w-40" variant="primary" accent="purple" content={{ name: $T("widget.sensor.calibrate") }} disabled={running} onClick={start} />
+    {/if}
+  </div>
+  {#if running}
+    <div class="flex flex-col gap-1.5" transition:slide={{ duration: 150 }}>
+      <span class="text-center text-[12px] text-(--muted-color)">{instruction}</span>
+      <div class="h-1.5 w-full overflow-hidden rounded-full bg-(--back-color)">
+        <div class="h-full rounded-full bg-(--purple-text) transition-[width] duration-200" style="width: {progress}%"></div>
+      </div>
+    </div>
+  {/if}
+</div>

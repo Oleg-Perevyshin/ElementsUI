@@ -35,3 +35,6 @@ components:
   - [WidgetRGBStrip, widget]   # светодиодная лента
   - [WidgetPFD, widget]        # пилотажный прибор
   - [WidgetMap, widget]        # карта
+  - [WidgetAHRS, widget]       # фильтр ориентации
+  - [WidgetIMU, widget]        # показания и калибровка IMU
+  - [WidgetMag, widget]        # магнитометр и его калибровка

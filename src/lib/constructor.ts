@@ -29,6 +29,9 @@ import WidgetFirmwareProps from "./WidgetFirmware/WidgetFirmwareProps.svelte"
 import WidgetRGBStripProps from "./WidgetRGBStrip/WidgetRGBStripProps.svelte"
 import WidgetPFDProps from "./WidgetPFD/WidgetPFDProps.svelte"
 import WidgetMapProps from "./WidgetMap/WidgetMapProps.svelte"
+import WidgetAHRSProps from "./WidgetAHRS/WidgetAHRSProps.svelte"
+import WidgetIMUProps from "./WidgetIMU/WidgetIMUProps.svelte"
+import WidgetMagProps from "./WidgetMag/WidgetMagProps.svelte"
 
 extendTranslations(constructorTranslations)
 
@@ -64,6 +67,9 @@ export {
   WidgetRGBStripProps,
   WidgetPFDProps,
   WidgetMapProps,
+  WidgetAHRSProps,
+  WidgetIMUProps,
+  WidgetMagProps,
 }
 
 /* Панель свойств по типу: <Panel component={c} onPropertyChange={...} /> вместо ветвления по типам */
@@ -94,5 +100,8 @@ export const PANELS: Record<UIType, Component<any>> = {
   WidgetRGBStrip: WidgetRGBStripProps,
   WidgetPFD: WidgetPFDProps,
   WidgetMap: WidgetMapProps,
+  WidgetAHRS: WidgetAHRSProps,
+  WidgetIMU: WidgetIMUProps,
+  WidgetMag: WidgetMagProps,
 }
 export { default as TextsEditor } from "./TextsEditor.svelte"

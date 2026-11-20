@@ -81,6 +81,9 @@ const WIDGET_TITLE_KEYS: Record<string, string> = {
   WidgetRGBStrip: "widget.rgb.title",
   WidgetPFD: "pfd.title",
   WidgetMap: "widget.map.title",
+  WidgetAHRS: "widget.ahrs.title",
+  WidgetIMU: "widget.imu.title",
+  WidgetMag: "widget.mag.title",
 }
 
 /* Название виджета сразу на всех языках { ru, en, zh, ... } - конструктор заполняет им заголовок нового виджета, переводы видны и правятся в «Тексты и переводы»; для неизвестного типа - пустой объект */

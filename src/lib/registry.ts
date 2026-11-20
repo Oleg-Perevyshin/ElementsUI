@@ -26,6 +26,9 @@ import WidgetFirmware from "./WidgetFirmware/WidgetFirmware.svelte"
 import WidgetRGBStrip from "./WidgetRGBStrip/WidgetRGBStrip.svelte"
 import WidgetPFD from "./WidgetPFD/WidgetPFD.svelte"
 import WidgetMap from "./WidgetMap/WidgetMap.svelte"
+import WidgetAHRS from "./WidgetAHRS/WidgetAHRS.svelte"
+import WidgetIMU from "./WidgetIMU/WidgetIMU.svelte"
+import WidgetMag from "./WidgetMag/WidgetMag.svelte"
 import { COMPONENT_META, type ComponentMeta } from "./componentMeta"
 import type { UIType } from "./types"
 
@@ -61,6 +64,9 @@ const VIEWS: Record<UIType, Component<any, any, any>> = {
   WidgetRGBStrip,
   WidgetPFD,
   WidgetMap,
+  WidgetAHRS,
+  WidgetIMU,
+  WidgetMag,
 }
 
 export const COMPONENTS = Object.fromEntries(

@@ -2,12 +2,31 @@ import type { Component, Snippet } from "svelte"
 import type { AccentColor } from "./accent"
 import type { IMissionPlan } from "./WidgetMap/mission/plan"
 import type { IRoutePlan } from "./WidgetMap/mission/route"
-import type { IWidgetWiFiConfig, IWidgetDeviceInfoConfig, IWidgetRGBStripConfig, IWidgetPFDData, IWidgetMapData } from "./gui"
+import type {
+  IWidgetWiFiConfig,
+  IWidgetDeviceInfoConfig,
+  IWidgetRGBStripConfig,
+  IWidgetPFDData,
+  IWidgetMapData,
+  IWidgetAHRSData,
+  IWidgetIMUData,
+  IWidgetMagData,
+} from "./gui"
 import type { LoRaParams } from "./WidgetLoRa/lora"
 
 export type { AccentColor } from "./accent"
 export type { PropertyChange } from "./propsEditor"
-export type { IWidgetWiFiConfig, IWidgetDeviceInfoConfig, IWidgetRGBStripConfig, IWidgetPFDData, IWidgetMapData } from "./gui"
+export type {
+  IWidgetWiFiConfig,
+  IWidgetDeviceInfoConfig,
+  IWidgetRGBStripConfig,
+  IWidgetPFDData,
+  IWidgetMapData,
+  IWidgetAHRSData,
+  IWidgetIMUData,
+  IWidgetMagData,
+} from "./gui"
+export type { AHRSParam, IAHRSAlgorithm } from "./WidgetAHRS/ahrs"
 export type { LoRaParams, LoRaParam, LoRaValues, ILoRaParamConfig, ILoRaOption } from "./WidgetLoRa/lora"
 
 /* Иконка: SVG-разметка или компонент */
@@ -41,6 +60,9 @@ export interface UIComponentPropsMap {
   WidgetRGBStrip: IWidgetRGBStripProps
   WidgetPFD: IWidgetPFDProps
   WidgetMap: IWidgetMapProps
+  WidgetAHRS: IWidgetAHRSProps
+  WidgetIMU: IWidgetIMUProps
+  WidgetMag: IWidgetMagProps
 }
 
 export type UIType = keyof UIComponentPropsMap
@@ -945,6 +967,59 @@ export interface IWidgetPFDProps {
   isTest?: boolean
   collapsed?: boolean
   persistKey?: string
+}
+
+/* Фильтр ориентации: алгоритм и только его параметры, углы и ноль гироскопа; группа AHRF по умолчанию */
+export interface IWidgetAHRSProps {
+  /* Префикс группы фильтра, по умолчанию "AHRF" */
+  id?: string
+  wrapperClass?: string
+  accent?: AccentColor
+  label?: { name?: string }
+  value?: Partial<IWidgetAHRSData>
+  keys?: Partial<Record<keyof IWidgetAHRSData, string>>
+  collapsed?: boolean
+  persistKey?: string
+  /* Алгоритм, курс по магнитометру и параметры выбранного алгоритма одним SET ModuleConfig; без колбэка - только просмотр */
+  onSave?: (values: Partial<IWidgetAHRSData>) => void
+}
+
+/* Показания IMU и калибровка; группа IMUF по умолчанию, режим - биты 0-1 Cfg */
+export interface IWidgetIMUProps {
+  /* Префикс группы IMU, по умолчанию "IMUF" */
+  id?: string
+  wrapperClass?: string
+  accent?: AccentColor
+  label?: { name?: string }
+  value?: Partial<IWidgetIMUData>
+  keys?: Partial<Record<keyof IWidgetIMUData, string>>
+  /* Сколько длится калибровка, мс: потом виджет перечитывает настройки (onRefresh) */
+  calibrateMs?: number
+  collapsed?: boolean
+  persistKey?: string
+  /* Новое слово Cfg с режимом «калибровать»; без колбэка кнопки нет */
+  onCalibrate?: (cfg: number) => void
+  /* Перечитать настройки устройства после калибровки */
+  onRefresh?: () => void
+}
+
+/* Поле магнитометра, качество калибровки и калибровка; группа MAGF по умолчанию, режим - биты 0-1 Cfg */
+export interface IWidgetMagProps {
+  /* Префикс группы магнитометра, по умолчанию "MAGF" */
+  id?: string
+  wrapperClass?: string
+  accent?: AccentColor
+  label?: { name?: string }
+  value?: Partial<IWidgetMagData>
+  keys?: Partial<Record<keyof IWidgetMagData, string>>
+  /* Сколько длится калибровка, мс: потом виджет перечитывает настройки (onRefresh) */
+  calibrateMs?: number
+  collapsed?: boolean
+  persistKey?: string
+  /* Новое слово Cfg с режимом «калибровать»; без колбэка кнопки нет */
+  onCalibrate?: (cfg: number) => void
+  /* Перечитать настройки устройства после калибровки */
+  onRefresh?: () => void
 }
 
 export interface IWidgetMapProps {

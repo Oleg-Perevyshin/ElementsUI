@@ -41,7 +41,7 @@
       label={{ name: $T("constructor.props.type") }}
       help={{ info: $T("constructor.props.switch.type.info") }}
       type="buttons"
-      options={$optionsStore.SWITCH_OPTIONS.map((option) => ({ ...option, disabled: bitMode && option.value == "checkbox" }))}
+      options={$optionsStore.SWITCH_OPTIONS}
       value={component.properties.type}
       onUpdate={(type) => edit.set("type", type)}
     />
@@ -55,14 +55,12 @@
     {#if !bitMode}
       <CommonSnippets snippet="Accent" initialValue={{ exclude: ["gray"] }} {component} {onPropertyChange} />
     {/if}
-    {#if component.properties.type != "checkbox"}
-      <UI.Switch
-        label={{ name: $T("constructor.props.bitMode") }}
-        help={{ info: $T("constructor.props.switch.bitMode.info") }}
-        value={bitMode ? 1 : 0}
-        onUpdate={(value) => onPropertyChange({ properties: { bitMode: value === 1, value: 0 } })}
-      />
-    {/if}
+    <UI.Switch
+      label={{ name: $T("constructor.props.bitMode") }}
+      help={{ info: $T("constructor.props.switch.bitMode.info") }}
+      value={bitMode ? 1 : 0}
+      onUpdate={(value) => onPropertyChange({ properties: { bitMode: value === 1, value: 0 } })}
+    />
   </PropsGroup>
 </div>
 

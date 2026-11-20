@@ -573,6 +573,28 @@
           route={loadMission(component.id, "route")}
           onRouteChange={(route) => saveMission(component.id, "route", route)}
         />
+      {:else if component.type === "WidgetAHRS" && views.WidgetAHRS}
+        {@const WidgetAHRS = views.WidgetAHRS}
+        {@const props = component.properties}
+        {@const prefix = widgetPrefixes(component.type, props)[0]}
+        <WidgetAHRS
+          {...props}
+          value={fields(component, prefix, WIDGET_FIELDS.WidgetAHRS)}
+          persistKey={persist(component)}
+          onSave={locked ? undefined : (values) => saveFields(prefix, Object.keys(values) as (keyof typeof values)[], values, props.keys)}
+        />
+      {:else if (component.type === "WidgetIMU" && views.WidgetIMU) || (component.type === "WidgetMag" && views.WidgetMag)}
+        {@const Sensor = component.type === "WidgetIMU" ? views.WidgetIMU! : views.WidgetMag!}
+        {@const props = component.properties as UIComponent<"WidgetIMU">["properties"]}
+        {@const prefix = widgetPrefixes(component.type as "WidgetIMU" | "WidgetMag", props)[0]}
+        <!-- Калибровка - новое слово Cfg с режимом 2; после неё перечитывается только группа датчика -->
+        <Sensor
+          {...props}
+          value={fields(component, prefix, component.type === "WidgetIMU" ? WIDGET_FIELDS.WidgetIMU : WIDGET_FIELDS.WidgetMag) as never}
+          persistKey={persist(component)}
+          onCalibrate={locked ? undefined : (cfg: number) => saveFields(prefix, ["Cfg"], { Cfg: cfg }, props.keys)}
+          onRefresh={() => send("GET", "ModuleConfig", { CfgGroup: prefix })}
+        />
       {/if}
     </div>
   {/if}

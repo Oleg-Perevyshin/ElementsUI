@@ -54,6 +54,30 @@
   )
 </script>
 
+{#snippet box(index: number)}
+  <input
+    id={`${uid}-${index}`}
+    type="checkbox"
+    checked={isOn(bits[index].value)}
+    disabled={bits[index].disabled}
+    class="
+      relative size-5 shrink-0 cursor-pointer appearance-none rounded-[6px] border border-(--border-color)
+      bg-(--field-color) transition-colors duration-150 after:origin-center after:opacity-0
+      checked:border-(--accent-color) checked:bg-(--accent-color)
+      checked:after:absolute checked:after:top-[1px] checked:after:left-[6px]
+      checked:after:h-[10px] checked:after:w-[5px] checked:after:rotate-45
+      checked:after:border-2 checked:after:border-t-0 checked:after:border-l-0
+      checked:after:border-solid checked:after:border-(--on-accent) checked:after:opacity-100
+      checked:after:content-['']
+      focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent-text)
+      disabled:cursor-not-allowed disabled:border-(--hairline-color) disabled:bg-(--container-color)
+    "
+    onchange={() => toggle(index)}
+    onpointerenter={(event) => (showInfo = !!hiddenInfo && isHoverPointer(event))}
+    onpointerleave={() => (showInfo = false)}
+  />
+{/snippet}
+
 {#if type !== "checkbox"}
   <div class={twMerge(`relative flex w-full flex-col items-center justify-center gap-1.5`, wrapperClass)} style={accentStyle(accent)}>
     {#if label.name || (help?.info && !infoAfterCaption)}
@@ -133,32 +157,31 @@
       {/each}
     </div>
   </div>
+{:else if bitMode}
+  <!-- Чекбоксы по биту: подпись группы сверху, у каждого бита своя подпись справа; переносятся, если не помещаются -->
+  <div class={twMerge("relative flex w-full flex-col items-center justify-center gap-1.5", wrapperClass)} style={accentStyle(accent)}>
+    {#if label.name || help?.info}
+      <h5 class={twMerge(`flex w-full items-center justify-center gap-1 text-center text-[12px] font-semibold text-(--muted-color)`, label.class)}>
+        {label.name}{#if help?.info}<InfoHint text={help.info} />{/if}
+      </h5>
+    {/if}
+    <div class="flex w-full flex-wrap items-center justify-around gap-x-4 gap-y-2">
+      {#each bits as option, index (index)}
+        <div class="flex items-center gap-2" style={accentStyle(option.accent)}>
+          {@render box(index)}
+          {#if option.name}
+            <label for={`${uid}-${index}`} class="text-[13px] select-none {option.disabled ? 'text-(--faint-color)' : 'cursor-pointer'}">{option.name}</label>
+          {/if}
+        </div>
+      {/each}
+    </div>
+  </div>
 {:else}
   <div class={twMerge("relative flex items-center justify-center gap-2", wrapperClass)} style={accentStyle(accent)}>
-    <input
-      id={uid}
-      type="checkbox"
-      checked={isOn(0)}
-      disabled={bits[0].disabled}
-      class="
-        relative size-5 shrink-0 cursor-pointer appearance-none rounded-[6px] border border-(--border-color)
-        bg-(--field-color) transition-colors duration-150 after:origin-center after:opacity-0
-        checked:border-(--accent-color) checked:bg-(--accent-color)
-        checked:after:absolute checked:after:top-[1px] checked:after:left-[6px]
-        checked:after:h-[10px] checked:after:w-[5px] checked:after:rotate-45
-        checked:after:border-2 checked:after:border-t-0 checked:after:border-l-0
-        checked:after:border-solid checked:after:border-(--on-accent) checked:after:opacity-100
-        checked:after:content-['']
-        focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent-text)
-        disabled:cursor-not-allowed disabled:border-(--hairline-color) disabled:bg-(--container-color)
-      "
-      onchange={() => toggle(0)}
-      onpointerenter={(event) => (showInfo = !!hiddenInfo && isHoverPointer(event))}
-      onpointerleave={() => (showInfo = false)}
-    />
+    {@render box(0)}
     <Tooltip show={showInfo} text={hiddenInfo} side="top" />
     {#if label.name}
-      <label for={uid} class={twMerge(`text-[13px] select-none ${bits[0].disabled ? "text-(--faint-color)" : "cursor-pointer"}`, label.class)}>
+      <label for={`${uid}-0`} class={twMerge(`text-[13px] select-none ${bits[0].disabled ? "text-(--faint-color)" : "cursor-pointer"}`, label.class)}>
         {label.name}
       </label>
     {/if}

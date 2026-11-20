@@ -111,6 +111,50 @@ export const WIDGET_FIELDS = {
     MsgSev: num /* 0-3 ошибка, 4 предупреждение, 5-7 информация */,
     MsgSeq: num /* номер сообщения - новое даже с тем же текстом */,
   },
+  /* Фильтр ориентации ahrs_gimbal (группа AHRF): алгоритм и его параметры - настройки, углы, ноль гироскопа и ошибка оценки - только чтение */
+  WidgetAHRS: {
+    Mode: num /* 0 VQF, 1 ESKF, 2 Махони, 3 Маджвик */,
+    MU: num /* 1 - магнитометр поправляет курс */,
+    TA: num /* VQF: постоянная поправки наклона, с */,
+    TM: num /* VQF: постоянная поправки курса, с */,
+    GN: num /* ESKF: шум гироскопа, °/с/√Гц */,
+    GB: num /* ESKF: уход нуля гироскопа, °/с/√с */,
+    AN: num /* шум акселерометра, g */,
+    AG: num /* порог отклонения модуля ускорения от 1 g */,
+    MN: num /* ESKF: шум курса, ° */,
+    KP: num /* Махони: пропорциональный коэффициент */,
+    KI: num /* Махони: интегральный коэффициент */,
+    KB: num /* Маджвик: шаг по тяжести */,
+    KM: num /* Махони и Маджвик: поправка курса */,
+    R: num /* крен, ° */,
+    P: num /* тангаж, ° */,
+    Y: num /* рыскание, 0..360° */,
+    BX: num /* ноль гироскопа, °/с */,
+    BY: num,
+    BZ: num,
+    SR: num /* ESKF: ошибка оценки крена (1 сигма), ° */,
+    SP: num,
+    SY: num,
+  },
+  /* IMU любого драйвера (группа IMUF): Cfg биты 0-1 - режим (0 стоп, 1 измерять, 2 калибровать), показания - только чтение */
+  WidgetIMU: {
+    Cfg: num,
+    AX: num /* ускорение, g */,
+    AY: num,
+    AZ: num,
+    GX: num /* угловая скорость, °/с */,
+    GY: num,
+    GZ: num,
+    T: num /* температура, °C */,
+  },
+  /* Магнитометр любого драйвера (группа MAGF): Cfg биты 0-1 - режим (0 стоп, 1 измерять, 2 калибровать, 3 по запросу), поле и качество калибровки - только чтение */
+  WidgetMag: {
+    Cfg: num,
+    CX: num /* поле, мкТл */,
+    CY: num,
+    CZ: num,
+    CQ: num /* качество калибровки, 0..100% */,
+  },
   /* Поля одного борта карты, групп может быть несколько (groups) */
   WidgetMap: {
     Lat: num /* 0 вместе с Lon - нет фикса */,
@@ -130,6 +174,9 @@ export type IWidgetDeviceInfoConfig = typeof WIDGET_FIELDS.WidgetDeviceInfo
 export type IWidgetRGBStripConfig = typeof WIDGET_FIELDS.WidgetRGBStrip
 export type IWidgetPFDData = typeof WIDGET_FIELDS.WidgetPFD
 export type IWidgetMapData = typeof WIDGET_FIELDS.WidgetMap
+export type IWidgetAHRSData = typeof WIDGET_FIELDS.WidgetAHRS
+export type IWidgetIMUData = typeof WIDGET_FIELDS.WidgetIMU
+export type IWidgetMagData = typeof WIDGET_FIELDS.WidgetMag
 
 /* Ключ переменной устройства «ГРУППА.Поле» - до 15 символов: буфер прошивки 16 с \0, это и предел ключа NVS в ESP-IDF */
 export const KEY_MAX_LEN = 15
@@ -155,6 +202,9 @@ export const WIDGET_PREFIX: Record<WidgetFieldsType, string> = {
   WidgetRGBStrip: "LST",
   WidgetPFD: "MAV",
   WidgetMap: "MAV",
+  WidgetAHRS: "AHRF",
+  WidgetIMU: "IMUF",
+  WidgetMag: "MAGF",
 }
 
 export const widgetPrefixes = (type: WidgetFieldsType, props: { id?: string; groups?: string[] }): string[] =>
@@ -204,6 +254,13 @@ export const readWidgetFields = <F extends object>(
 /* Payload SET ModuleConfig из значений виджета: только перечисленные поля, ключи устройства */
 export const widgetPacket = <K extends string>(prefix: string, fields: readonly K[], values: Partial<Record<K, unknown>>, keys?: Partial<Record<K, string>>) =>
   Object.fromEntries(fields.map((field) => [widgetKey(prefix, field, keys), values[field]])) as Record<string, unknown>
+
+/* ********************************************************** */
+/* Режим датчика - биты 0-1 слова Cfg, общий договор драйверов IMU и магнитометра: 0 стоп, 1 измерять, 2 калибровать, 3 по запросу */
+export const SENSOR_MODE = { stop: 0, measure: 1, calibrate: 2, onDemand: 3 } as const
+export const sensorMode = (cfg: unknown): number => bitFieldGet(Number(cfg) || 0, 0, 1)
+/* Cfg для запуска калибровки: режим 2, остальные биты как были */
+export const sensorCalibrateCfg = (cfg: unknown): number => bitFieldSet(Number(cfg) || 0, 0, 1, SENSOR_MODE.calibrate)
 
 /* ********************************************************** */
 /* Битовое поле: Input type "bitMode" и Select с bitMode читают и пишут биты range слова переменной */

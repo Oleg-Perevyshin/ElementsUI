@@ -43,6 +43,10 @@ export { updateViaHub, type FirmwareTarget, type HubUpdateOptions } from "./Widg
 export { default as WidgetRGBStrip } from "./WidgetRGBStrip/WidgetRGBStrip.svelte"
 export { default as WidgetPFD } from "./WidgetPFD/WidgetPFD.svelte"
 export { default as WidgetMap } from "./WidgetMap/WidgetMap.svelte"
+export { default as WidgetAHRS } from "./WidgetAHRS/WidgetAHRS.svelte"
+export { default as WidgetIMU } from "./WidgetIMU/WidgetIMU.svelte"
+export { default as WidgetMag } from "./WidgetMag/WidgetMag.svelte"
+export { AHRS_ALGORITHMS, AHRS_PARAM_RANGES, ahrsAlgorithm } from "./WidgetAHRS/ahrs"
 export { DEFAULT_MISSION_PLAN, type IMissionPlan, type IMissionField } from "./WidgetMap/mission/plan"
 export { DEFAULT_ROUTE_PLAN, type IRoutePlan, type IRouteWaypoint } from "./WidgetMap/mission/route"
 export { type LngLat, type SprayControl } from "./WidgetMap/mission/coverage"
@@ -183,6 +187,14 @@ export {
   type IWidgetPFDLimits,
   type IWidgetMapProps,
   type IWidgetMapData,
+  type IWidgetAHRSProps,
+  type IWidgetAHRSData,
+  type IWidgetIMUProps,
+  type IWidgetIMUData,
+  type IWidgetMagProps,
+  type IWidgetMagData,
+  type AHRSParam,
+  type IAHRSAlgorithm,
   type IGraphProps,
   type IGraphDataObject,
   type IGraphHistoryPoint,

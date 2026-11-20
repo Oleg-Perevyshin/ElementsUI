@@ -28,6 +28,29 @@ test("поля виджета: ключи с префиксом и переоп�
   assert.deepEqual(gui.widgetPrefixes("WidgetFirmware", {}), ["CFG"])
 })
 
+test("датчики и фильтр: группы по умолчанию, режим в битах 0-1 Cfg, калибровка меняет только режим, параметры по алгоритму", async () => {
+  assert.deepEqual(gui.widgetPrefixes("WidgetAHRS", {}), ["AHRF"])
+  assert.deepEqual(gui.widgetPrefixes("WidgetIMU", { id: "" }), ["IMUF"])
+  assert.deepEqual(gui.widgetPrefixes("WidgetMag", { id: "MAG2" }), ["MAG2"])
+  /* Заводские слова драйверов: ICM42688 4056124985, RM3100 60553 - режим 1 (измерять) */
+  assert.equal(gui.sensorMode(4056124985), 1)
+  assert.equal(gui.sensorMode(60553), 1)
+  assert.equal(gui.sensorCalibrateCfg(4056124985), 4056124986)
+  assert.equal(gui.sensorCalibrateCfg(60553), 60554)
+  assert.equal(gui.sensorMode(gui.sensorCalibrateCfg(60555)), 2)
+  assert.equal(gui.sensorCalibrateCfg(undefined), 2)
+  const { ahrsAlgorithm, AHRS_ALGORITHMS, AHRS_PARAM_RANGES } = await import("../dist/WidgetAHRS/ahrs.js")
+  assert.deepEqual(ahrsAlgorithm(0).params, ["TA", "TM"])
+  assert.equal(ahrsAlgorithm("1").sigma, true)
+  assert.equal(ahrsAlgorithm(9), undefined)
+  /* Каждый параметр алгоритма - поле WidgetAHRS с диапазоном */
+  for (const algorithm of AHRS_ALGORITHMS)
+    for (const param of algorithm.params) {
+      assert.ok(param in gui.WIDGET_FIELDS.WidgetAHRS, param)
+      assert.ok(AHRS_PARAM_RANGES[param].min < AHRS_PARAM_RANGES[param].max, param)
+    }
+})
+
 test("битовые поля: Input bitMode и Select bitMode читают и пишут диапазон слова", () => {
   const input = { type: "Input", properties: { type: "bitMode", range: { start: 6, end: 7 } } }
   const select = { type: "Select", properties: { bitMode: true, range: { start: 31, end: 31 } } }
