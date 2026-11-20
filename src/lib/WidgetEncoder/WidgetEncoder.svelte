@@ -77,6 +77,8 @@
     { key: "success", color: "var(--green-text)" },
   ]
   const calState = $derived(finite(value.CS) === undefined ? undefined : CAL_STATES[finite(value.CS)!])
+  /* Скорость вала при калибровке по замеру датчика: видно, сколько на самом деле давал вращающий вал */
+  const calRpm = $derived(finite(value.CR) || undefined)
 
   /* «Ноль здесь» - только когда датчик измеряет и ничем не занят */
   const zeroBlocked = $derived(!onCalibrate || mode !== SENSOR_MODE.measure || calibrating || zeroing)
@@ -135,6 +137,7 @@
             <span class="rounded-full border border-(--hairline-color) px-2 py-0.5 whitespace-nowrap">
               <span class="text-(--muted-color)">{$T("widget.enc.cal")}:</span>
               <span style="color: {calState.color}">{$T(`widget.enc.cal.${calState.key}`)}</span>
+              {#if calRpm}<span class="text-(--muted-color)">· {calRpm} {$T("widget.enc.rpm")}</span>{/if}
             </span>
           {/if}
         </div>
