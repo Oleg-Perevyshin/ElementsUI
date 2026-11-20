@@ -211,6 +211,9 @@ messages:
   - { code: 1011, group: DEV, name: DEV_NO_BASE, level: warn, ru: "База не отвечает, отправка раз в 5 с", en: "Base not responding, sending every 5 s", zh: "基站无响应，每 5 秒发送一次" }
   - { code: 1012, group: DEV, name: DEV_ADC_FAILED, level: error, ru: "АЦП не запущен", en: "ADC not started", zh: "ADC 未启动" }
   - { code: 1013, group: DEV, name: DEV_FOC_TUNE_FAILED, level: error, ru: "Автонастройка {0} не удалась", en: "Auto-tuning {0} failed", zh: "自动整定 {0} 失败" }
+  - { code: 1014, group: DEV, name: DEV_SETUP_REQUIRED, level: warn, ru: "Только в режиме наладки (CFG.Mode 2): команда не выполнена", en: "Setup mode only (CFG.Mode 2): the command is not run", zh: "仅限调试模式（CFG.Mode 2）：命令未执行" }
+  - { code: 1015, group: DEV, name: DEV_ENC_CAL_MOTOR_OFF, level: warn, ru: "Автокалибровка энкодера не запущена: мотор выключен", en: "Encoder auto calibration not started: the motor is off", zh: "编码器自动校准未启动：电机已关闭" }
+  - { code: 1016, group: DEV, name: DEV_MODE_OFF, level: warn, ru: "Модуль выключен (CFG.Mode 0): команда не выполнена", en: "The module is off (CFG.Mode 0): the command is not run", zh: "模块已关闭（CFG.Mode 0）：命令未执行" }
 
   - { code: 2000, group: DRV, name: DRV_SELFTEST_FAILED, level: error, ru: "Самопроверка не пройдена", en: "Self-test failed", zh: "自检失败" }
   - { code: 2001, group: DRV, name: DRV_BUS_REG_FAILED, level: error, ru: "Не удалось подключить устройство к шине", en: "Could not attach device to bus", zh: "无法将设备连接到总线" }
