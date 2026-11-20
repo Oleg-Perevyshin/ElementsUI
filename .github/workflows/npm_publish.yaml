@@ -53,12 +53,13 @@ jobs:
         with:
           node-version: "24"
 
+      # Ждём сам архив пакета: метаданные (npm view) появляются раньше, чем реестр начинает отдавать .tgz
       - name: Ожидание версии в реестре npm
         run: |
           VERSION=$(node -p "require('./package.json').version")
           echo "VERSION=$VERSION" >> "$GITHUB_ENV"
           for i in $(seq 1 40); do
-            [ "$(npm view poe-svelte-ui-lib@$VERSION version 2>/dev/null)" = "$VERSION" ] && exit 0
+            npm pack "poe-svelte-ui-lib@$VERSION" --dry-run > /dev/null 2>&1 && exit 0
             sleep 15
           done
           echo "Версия $VERSION не появилась в npm за 10 минут" && exit 1
@@ -73,7 +74,8 @@ jobs:
         env:
           DATABASE_URL: "postgresql://placeholder:placeholder@localhost:5432/placeholder"
         run: |
-          npm install "poe-svelte-ui-lib@$VERSION"
+          # Повтор установки: зеркала реестра раздают новый архив не сразу
+          for i in 1 2 3 4 5; do npm install "poe-svelte-ui-lib@$VERSION" && break; [ $i = 5 ] && exit 1; sleep 30; done
           npx svelte-kit sync
           npx prisma generate
           npx svelte-check --threshold error
