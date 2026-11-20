@@ -46,23 +46,32 @@
   const bufferSize = $derived(dataBuffer.bufferSize ?? 10)
 
   /* ********************************************************** */
-  /* Журнал: кольцевой буфер вне реактивности, наружу - снимок строк не чаще кадра: пакеты приходят каждый своей задачей, перерисовка на каждый была бы лишней */
+  /* Журнал: кольцевой буфер вне реактивности, наружу - снимок строк в кадре отрисовки и не чаще FLUSH_MS: каждый снимок - раскладка всех строк таблицы, и при сотнях строк в секунду перерисовка на каждом кадре занимала главный поток целиком */
+  const FLUSH_MS = 100
   type Entry = { key: number; row: Row }
   const ring = createRing<Entry>(untrack(() => bufferSize))
   let seq = 0
   let stream = $state.raw<Entry[]>([])
   let frame = 0
+  let timer: ReturnType<typeof setTimeout> | undefined
+  let flushedAt = 0
   const flush = () => {
     if (frame) cancelAnimationFrame(frame)
+    clearTimeout(timer)
     frame = 0
+    timer = undefined
+    flushedAt = performance.now()
     const entries = ring.toArray()
     stream = dataBuffer.logger ? entries.reverse() : entries
   }
 
-  /* Добавляет строки в журнал (dataBuffer.stashData); старые вытесняются за bufferSize */
+  /* Добавляет строки в журнал (dataBuffer.stashData); старые вытесняются за bufferSize; одиночная строка видна в ближайшем кадре, поток - снимками раз в FLUSH_MS */
   export const push = (rows: Row | Row[]) => {
     for (const row of Array.isArray(rows) ? rows : [rows]) ring.push({ key: ++seq, row })
-    frame ||= requestAnimationFrame(flush)
+    if (frame || timer) return
+    const wait = flushedAt + FLUSH_MS - performance.now()
+    if (wait <= 0) frame = requestAnimationFrame(flush)
+    else timer = setTimeout(() => (frame = requestAnimationFrame(flush)), wait)
   }
 
   /* Очищает журнал */
@@ -70,6 +79,7 @@
     ring.clear()
     stream = []
     tableHeight = 0
+    resetFit()
   }
 
   $effect(() => {
@@ -238,11 +248,24 @@
   }
 
   /* Ширина колонки по содержимому: от левого края первого до правого края последнего элемента ячейки плюс отступы и рамка ячейки; берётся наибольшая по шапке и строкам */
+  /* Журнал (stashData) меряет только новые ячейки и держит наибольшую ширину: полный замер всех строк на каждом кадре пересчитывал раскладку всей таблицы и при сотнях строк в секунду занимал главный поток */
   let tableEl: HTMLElement | null = $state(null)
+  let fitMeasured = new WeakSet<HTMLElement>()
+  const resetFit = () => {
+    fitMeasured = new WeakSet()
+    fitWidths = {}
+  }
+  $effect(() => {
+    void header
+    void hiddenColumns
+    untrack(resetFit)
+  })
   const measureFit = () => {
     if (!tableEl || !hasFit) return
-    const widths: Record<number, number> = {}
+    const widths: Record<number, number> = stash ? { ...fitWidths } : {}
     for (const cell of tableEl.querySelectorAll<HTMLElement>("[data-fit]")) {
+      if (stash && fitMeasured.has(cell)) continue
+      if (stash) fitMeasured.add(cell)
       const items = [...cell.children] as HTMLElement[]
       if (!items.length) continue
       /* Текст в колонке по содержимому не переносится: его ширина - по самому тексту, а не по блоку ячейки */
@@ -395,6 +418,7 @@
       window.removeEventListener("scroll", closeDropdown, true)
       window.removeEventListener("resize", closeDropdown, true)
       cancelAnimationFrame(frame)
+      clearTimeout(timer)
     }
   })
 </script>
