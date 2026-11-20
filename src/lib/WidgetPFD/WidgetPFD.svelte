@@ -1,5 +1,6 @@
 <!-- $lib/WidgetPFD/WidgetPFD.svelte - смарт-виджет «Пилотажный дисплей» (Primary Flight Display). Поля группы (по умолчанию MAV) - телеметрия автопилота MAVLink (см. IWidgetPFDData): авиагоризонт, ленты скорости/высоты/курса, строка состояния, цветовые зоны по границам (limits). Только отображение: ничего не отправляет и не знает про DeviceStore/WebSocket. Между пакетами ориентация сглаживается (Tween), устаревшие данные закрываются флагом «нет данных». В узкой ячейке ленты заменяются числами. -->
 <script lang="ts">
+  import { PFD_COLORS } from "./pfdColors"
   import { T } from "../locales/i18n"
   import { untrack } from "svelte"
   import { slide } from "svelte/transition"
@@ -531,8 +532,8 @@
           <!-- Авиагоризонт -->
           <g clip-path="url(#pfd-horizon-{uid})" data-tip="horizon">
             <g transform="rotate({-roll.current} {CX} {CY}) translate(0 {pitch.current * PPD})">
-              <rect x={CX - 600} y={CY - 1000} width="1200" height="1000" fill="#3a86c8" />
-              <rect x={CX - 600} y={CY} width="1200" height="1000" fill="#8a5a2b" />
+              <rect x={CX - 600} y={CY - 1000} width="1200" height="1000" fill={PFD_COLORS.sky} />
+              <rect x={CX - 600} y={CY} width="1200" height="1000" fill={PFD_COLORS.ground} />
               <line x1={CX - 600} y1={CY} x2={CX + 600} y2={CY} stroke="#fff" stroke-width="2" />
               {#each pitchLadder as d (d)}
                 {@const y = CY - d * PPD}
@@ -573,11 +574,11 @@
             {/if}
 
             <!-- Символ самолёта -->
-            <g stroke="#facc15" stroke-width="4" fill="none" stroke-linecap="round">
+            <g stroke={PFD_COLORS.symbol} stroke-width="4" fill="none" stroke-linecap="round">
               <polyline points="{CX - 70},{CY} {CX - 25},{CY} {CX - 15},{CY + 10}" />
               <polyline points="{CX + 70},{CY} {CX + 25},{CY} {CX + 15},{CY + 10}" />
             </g>
-            <circle cx={CX} cy={CY} r="3" fill="#facc15" />
+            <circle cx={CX} cy={CY} r="3" fill={PFD_COLORS.symbol} />
 
             <!-- Перегрузка (вне gMin/gMax - красная) и газ: одной строкой в верхних углах горизонта -->
             {#if load !== null}

@@ -997,6 +997,10 @@ export interface IWidgetIMUProps {
   calibrateMs?: number
   collapsed?: boolean
   persistKey?: string
+  /* Микросхема из справочника sensorChips.ts (SENSOR_CHIPS): её поля Cfg - блок «Настройки датчика»; нет - только показания и калибровка */
+  chip?: string
+  /* Новое слово Cfg из настроек датчика; без колбэка настройки только для просмотра */
+  onSaveCfg?: (cfg: number) => void
   /* Новое слово Cfg с режимом «калибровать»; без колбэка кнопки нет */
   onCalibrate?: (cfg: number) => void
   /* Перечитать настройки устройства после калибровки */
@@ -1016,6 +1020,10 @@ export interface IWidgetMagProps {
   calibrateMs?: number
   collapsed?: boolean
   persistKey?: string
+  /* Микросхема из справочника sensorChips.ts (SENSOR_CHIPS): её поля Cfg - блок «Настройки датчика»; нет - только показания и калибровка */
+  chip?: string
+  /* Новое слово Cfg из настроек датчика; без колбэка настройки только для просмотра */
+  onSaveCfg?: (cfg: number) => void
   /* Новое слово Cfg с режимом «калибровать»; без колбэка кнопки нет */
   onCalibrate?: (cfg: number) => void
   /* Перечитать настройки устройства после калибровки */

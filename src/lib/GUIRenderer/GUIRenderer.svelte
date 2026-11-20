@@ -593,6 +593,7 @@
           value={fields(component, prefix, component.type === "WidgetIMU" ? WIDGET_FIELDS.WidgetIMU : WIDGET_FIELDS.WidgetMag) as never}
           persistKey={persist(component)}
           onCalibrate={locked ? undefined : (cfg: number) => saveFields(prefix, ["Cfg"], { Cfg: cfg }, props.keys)}
+          onSaveCfg={locked ? undefined : (cfg: number) => saveFields(prefix, ["Cfg"], { Cfg: cfg }, props.keys)}
           onRefresh={() => send("GET", "ModuleConfig", { CfgGroup: prefix })}
         />
       {/if}

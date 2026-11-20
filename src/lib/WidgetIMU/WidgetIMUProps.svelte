@@ -8,6 +8,7 @@
   import PropsGroup from "../PropsGroup.svelte"
   import CommonSnippets from "../CommonSnippets.svelte"
   import { WIDGET_FIELDS, groupRegExp, prefixMaxLen } from "../gui"
+  import { sensorChipOptions } from "../sensorChips"
 
   const {
     component,
@@ -31,6 +32,14 @@
       help={{ info: $T("widget.imu.group.info"), regExp: groupRegExp(PREFIX_MAX) }}
       value={component.properties.id ?? "IMUF"}
       onUpdate={(value) => edit.set("id", value as string)}
+    />
+    <!-- Микросхема: по ней виджет показывает настройки датчика (поля Cfg); «Нет» - только показания и калибровка -->
+    <UI.Select
+      label={{ name: $T("sensor.chip") }}
+      help={{ info: $T("sensor.chip.info") }}
+      options={[{ id: "chip-none", name: $T("sensor.chip.none"), value: "" }, ...sensorChipOptions("imu").map((o) => ({ id: `chip-${o.value}`, ...o }))]}
+      value={component.properties.chip ?? ""}
+      onUpdate={(value) => edit.set("chip", (value as string) || undefined)}
     />
     <CommonSnippets snippet="Accent" {component} {onPropertyChange} />
   </PropsGroup>

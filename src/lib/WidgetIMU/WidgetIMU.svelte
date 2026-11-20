@@ -9,6 +9,8 @@
   import WidgetHeader from "../WidgetHeader.svelte"
   import SensorReadout from "../SensorReadout.svelte"
   import SensorCalibrate from "../SensorCalibrate.svelte"
+  import SensorSettings from "../SensorSettings.svelte"
+  import { sensorChipPart } from "../sensorChips"
   import ImuIcon from "./ImuIcon.svelte"
   import { hint, hintsSetting } from "../hints"
   import { accentStyle } from "../accent"
@@ -19,9 +21,11 @@
     accent,
     label = {},
     value = {},
+    chip,
     calibrateMs = 4000,
     collapsed = $bindable(false),
     persistKey,
+    onSaveCfg,
     onCalibrate,
     onRefresh,
   }: IWidgetIMUProps = $props()
@@ -37,6 +41,8 @@
   )
   $effect(() => writePersistedCollapsed(persistKey, collapsed, guiCollapsed))
 
+  /* Описание микросхемы: блок «Настройки датчика» */
+  const chipPart = $derived(sensorChipPart(chip, "imu"))
   const mode = $derived(value.Cfg === undefined ? undefined : sensorMode(value.Cfg))
   /* Модуль ускорения: в покое около 1 g - быстрая проверка калибровки акселерометра */
   const norm = $derived(
@@ -84,6 +90,10 @@
           </div>
         </div>
       </div>
+
+      {#if chipPart}
+        <SensorSettings part={chipPart} cfg={value.Cfg} onSave={onSaveCfg} />
+      {/if}
     </div>
   {/if}
 </div>

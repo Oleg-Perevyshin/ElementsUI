@@ -24,8 +24,8 @@
   const valueClass = $derived(size === "lg" ? "text-[22px]" : size === "sm" ? "text-[13px]" : "text-[16px]")
 </script>
 
-<div class="flex min-w-0 flex-col items-center gap-0.5 rounded-[10px] border border-(--hairline-color) bg-(--back-color) px-2 py-1.5">
-  <span class="w-full truncate text-center text-[11px] text-(--muted-color)">{label}</span>
+<div class="flex flex-col items-center gap-0.5 rounded-[10px] border border-(--hairline-color) bg-(--back-color) px-2 py-1.5">
+  <span class="w-full text-center text-[11px] whitespace-nowrap text-(--muted-color)">{label}</span>
   <span class="flex items-baseline gap-1 leading-tight">
     <span class="font-semibold tabular-nums {valueClass}" style={color ? `color: ${color}` : undefined}>{text}</span>
     {#if unit}<span class="text-[11px] text-(--muted-color)">{unit}</span>{/if}

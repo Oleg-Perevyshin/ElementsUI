@@ -17,7 +17,7 @@
   })
 
   /* Имитация ICM42688 в покое: Cfg заводской (режим 1), шум отсчётов */
-  const FACTORY_CFG = 4056124985
+  const FACTORY_CFG = 2384345337
   let imu: Partial<IWidgetIMUData> = $state({ Cfg: FACTORY_CFG })
   const noise = (scale: number) => (Math.random() - 0.5) * scale
   const timer = setInterval(() => {
@@ -38,7 +38,7 @@
     id: crypto.randomUUID(),
     type: "WidgetIMU",
     access: "full",
-    properties: { id: "IMUF", label: { name: "" } },
+    properties: { id: "IMUF", label: { name: "" }, chip: "ICM42688" },
     eventHandler: { Header: "SET", Argument: "ModuleConfig", Variables: [] },
     position: { row: 0, col: 0, width: 0, height: 0 },
     parentId: "",
@@ -60,6 +60,7 @@ onRefresh={() => send("GET", "ModuleConfig", { CfgGroup: "IMUF" })}
         {...localizeDeep(imuComponent.properties, $Language) as IWidgetIMUProps}
         value={imu}
         onCalibrate={(cfg) => (imu = { ...imu, Cfg: cfg })}
+        onSaveCfg={(cfg) => (imu = { ...imu, Cfg: cfg })}
         onRefresh={() => (imu = { ...imu, Cfg: FACTORY_CFG })}
       />
     </div>

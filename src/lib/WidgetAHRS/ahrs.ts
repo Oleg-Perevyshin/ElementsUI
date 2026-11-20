@@ -19,19 +19,25 @@ export const AHRS_ALGORITHMS: IAHRSAlgorithm[] = [
   { mode: 3, name: "Madgwick", params: ["KB", "AN", "AG", "KM"] },
 ]
 
-/* Диапазоны как в прошивке: значение вне них устройство отклоняет */
-export const AHRS_PARAM_RANGES: Record<AHRSParam, { min: number; max: number; step: number }> = {
-  TA: { min: 0.1, max: 30, step: 0.1 },
-  TM: { min: 0.1, max: 120, step: 0.1 },
-  GN: { min: 0.0001, max: 1, step: 0.0001 },
-  GB: { min: 0.00001, max: 1, step: 0.00001 },
-  AN: { min: 0.001, max: 1, step: 0.001 },
-  AG: { min: 0.01, max: 2, step: 0.01 },
-  MN: { min: 0.1, max: 180, step: 0.1 },
-  KP: { min: 0, max: 10, step: 0.01 },
-  KI: { min: 0, max: 1, step: 0.0001 },
-  KB: { min: 0, max: 1, step: 0.001 },
-  KM: { min: 0, max: 1, step: 0.0001 },
+/* Диапазоны как в прошивке (значение вне них устройство отклоняет) и единица - мелко рядом с подписью поля */
+export const AHRS_PARAM_RANGES: Record<AHRSParam, { min: number; max: number; step: number; unit: string }> = {
+  TA: { min: 0.1, max: 30, step: 0.1, unit: "s" },
+  TM: { min: 0.1, max: 120, step: 0.1, unit: "s" },
+  GN: { min: 0.0001, max: 1, step: 0.0001, unit: "°/s/√Hz" },
+  GB: { min: 0.00001, max: 1, step: 0.00001, unit: "°/s/√s" },
+  AN: { min: 0.001, max: 1, step: 0.001, unit: "g" },
+  AG: { min: 0.01, max: 2, step: 0.01, unit: "g" },
+  MN: { min: 0.1, max: 180, step: 0.1, unit: "°" },
+  KP: { min: 0, max: 10, step: 0.01, unit: "" },
+  KI: { min: 0, max: 1, step: 0.0001, unit: "" },
+  KB: { min: 0, max: 1, step: 0.001, unit: "" },
+  KM: { min: 0, max: 1, step: 0.0001, unit: "" },
+}
+
+/* Значение с устройства (float32) с точностью шага поля: 0.004999999888 - 0.005 */
+export const roundToStep = (value: number, step: number) => {
+  const decimals = Math.max(0, Math.ceil(-Math.log10(step) - 1e-9))
+  return Number(value.toFixed(decimals))
 }
 
 /* Алгоритм по Mode; неизвестный - undefined (виджет показывает только выбор и углы) */

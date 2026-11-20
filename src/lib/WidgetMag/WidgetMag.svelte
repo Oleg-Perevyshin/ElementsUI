@@ -9,6 +9,8 @@
   import WidgetHeader from "../WidgetHeader.svelte"
   import SensorReadout from "../SensorReadout.svelte"
   import SensorCalibrate from "../SensorCalibrate.svelte"
+  import SensorSettings from "../SensorSettings.svelte"
+  import { sensorChipPart } from "../sensorChips"
   import MagIcon from "./MagIcon.svelte"
   import { hint, hintsSetting } from "../hints"
   import { accentStyle } from "../accent"
@@ -19,9 +21,11 @@
     accent,
     label = {},
     value = {},
+    chip,
     calibrateMs = 30000,
     collapsed = $bindable(false),
     persistKey,
+    onSaveCfg,
     onCalibrate,
     onRefresh,
   }: IWidgetMagProps = $props()
@@ -37,6 +41,8 @@
   )
   $effect(() => writePersistedCollapsed(persistKey, collapsed, guiCollapsed))
 
+  /* Описание микросхемы: блок «Настройки датчика» */
+  const chipPart = $derived(sensorChipPart(chip, "mag"))
   const mode = $derived(value.Cfg === undefined ? undefined : sensorMode(value.Cfg))
   /* Модуль поля: у Земли 25-65 мкТл, сильно больше - рядом железо или магнит */
   const norm = $derived(
@@ -93,6 +99,10 @@
           </div>
         </div>
       </div>
+
+      {#if chipPart}
+        <SensorSettings part={chipPart} cfg={value.Cfg} onSave={onSaveCfg} />
+      {/if}
     </div>
   {/if}
 </div>

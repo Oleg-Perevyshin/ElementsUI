@@ -10,7 +10,7 @@
   import SensorReadout from "../SensorReadout.svelte"
   import AhrsIcon from "./AhrsIcon.svelte"
   import Horizon from "./Horizon.svelte"
-  import { AHRS_ALGORITHMS, AHRS_PARAM_RANGES, ahrsAlgorithm, type AHRSParam } from "./ahrs"
+  import { AHRS_ALGORITHMS, AHRS_PARAM_RANGES, ahrsAlgorithm, roundToStep, type AHRSParam } from "./ahrs"
   import { hint, hintsSetting } from "../hints"
   import { accentStyle } from "../accent"
   import { readPersistedCollapsed, writePersistedCollapsed } from "../widgetCollapse"
@@ -30,8 +30,15 @@
 
   type Settings = Partial<Record<"Mode" | "MU" | AHRSParam, number>>
   const SETTING_KEYS = ["Mode", "MU", ...(Object.keys(AHRS_PARAM_RANGES) as AHRSParam[])] as const
+  /* Параметры - с точностью шага поля: прошивка шлёт float32 */
   const pickSettings = (data: Partial<IWidgetAHRSData>): Settings =>
-    Object.fromEntries(SETTING_KEYS.filter((key) => data[key] !== undefined).map((key) => [key, Number(data[key])]))
+    Object.fromEntries(
+      SETTING_KEYS.filter((key) => data[key] !== undefined).map((key) => {
+        const number = Number(data[key])
+        const range = AHRS_PARAM_RANGES[key as AHRSParam]
+        return [key, range && Number.isFinite(number) ? roundToStep(number, range.step) : number]
+      }),
+    )
 
   /* Правки локальные до «Сохранить»; новые значения с устройства подхватываются, только пока правок нет (углы идут потоком и не мешают) */
   const incoming = $derived(pickSettings(value))
@@ -52,8 +59,8 @@
   const num = (v: unknown) => (v === undefined || v === null || v === "" ? undefined : Number(v))
   const roll = $derived(num(value.R))
   const pitch = $derived(num(value.P))
-  /* Оценка ошибки есть только у ESKF и только когда прошивка её прислала */
-  const showSigma = $derived(!!algorithm?.sigma && [value.SR, value.SP, value.SY].some((v) => v !== undefined))
+  /* Оценка ошибки есть только у ESKF: у остальных алгоритмов в ряду дефисы (прошивка шлёт нули), ряд не пропадает и блок не прыгает */
+  const sigma = (v: unknown) => (algorithm?.sigma ? v : undefined)
 
   const set = (key: keyof Settings, input: unknown) => {
     const number = Number(input)
@@ -91,13 +98,11 @@
             <SensorReadout label={$T("widget.ahrs.bias", { axis: "Y" })} value={value.BY} digits={3} unit="°/s" size="sm" />
             <SensorReadout label={$T("widget.ahrs.bias", { axis: "Z" })} value={value.BZ} digits={3} unit="°/s" size="sm" />
           </div>
-          {#if showSigma}
-            <div class="grid grid-cols-3 gap-1.5" use:hint={{ text: $T("widget.ahrs.hint.sigma"), enabled: $hints }} transition:slide={{ duration: 150 }}>
-              <SensorReadout label={$T("widget.ahrs.sigma", { angle: $T("widget.ahrs.roll") })} value={value.SR} digits={2} unit="°" size="sm" />
-              <SensorReadout label={$T("widget.ahrs.sigma", { angle: $T("widget.ahrs.pitch") })} value={value.SP} digits={2} unit="°" size="sm" />
-              <SensorReadout label={$T("widget.ahrs.sigma", { angle: $T("widget.ahrs.yaw") })} value={value.SY} digits={2} unit="°" size="sm" />
-            </div>
-          {/if}
+          <div class="grid grid-cols-3 gap-1.5" use:hint={{ text: $T("widget.ahrs.hint.sigma"), enabled: $hints }}>
+            <SensorReadout label={$T("widget.ahrs.sigma", { angle: $T("widget.ahrs.roll") })} value={sigma(value.SR)} digits={2} unit="°" size="sm" />
+            <SensorReadout label={$T("widget.ahrs.sigma", { angle: $T("widget.ahrs.pitch") })} value={sigma(value.SP)} digits={2} unit="°" size="sm" />
+            <SensorReadout label={$T("widget.ahrs.sigma", { angle: $T("widget.ahrs.yaw") })} value={sigma(value.SY)} digits={2} unit="°" size="sm" />
+          </div>
         </div>
       </div>
 
@@ -126,23 +131,25 @@
         </div>
 
         {#if algorithm}
-          {#key algorithm.mode}
-            <div class="grid grid-cols-2 gap-2 @md:grid-cols-3 @2xl:grid-cols-5" transition:slide={{ duration: 150 }}>
-              {#each algorithm.params as param (param)}
-                {@const range = AHRS_PARAM_RANGES[param]}
-                <div use:hint={{ text: $T(`widget.ahrs.hint.${param}`), enabled: $hints }}>
-                  <UI.Input
-                    type="number"
-                    label={{ name: $T(`widget.ahrs.${param}`) }}
-                    value={settings[param] ?? ""}
-                    readonly={readOnly}
-                    number={{ minNum: range.min, maxNum: range.max, step: range.step }}
-                    onUpdate={(input) => set(param, input)}
-                  />
-                </div>
-              {/each}
-            </div>
-          {/key}
+          <!-- Подпись поля - одна строка целиком (имя и единица мелко справа, пояснение - в подсказке): колонка не уже подписи, лишние поля уходят в следующий ряд, поля в ряду на одной высоте -->
+          <div class="grid grid-cols-[repeat(auto-fill,minmax(11rem,1fr))] gap-2">
+            {#each algorithm.params as param (param)}
+              {@const range = AHRS_PARAM_RANGES[param]}
+              <div class="flex min-w-0 flex-col gap-1" use:hint={{ text: $T(`widget.ahrs.hint.${param}`), enabled: $hints }}>
+                <span class="flex min-w-0 items-baseline justify-center gap-1 px-1 text-[12px] leading-4 font-semibold">
+                  <span class="whitespace-nowrap">{$T(`widget.ahrs.${param}`)}</span>
+                  {#if range.unit}<span class="shrink-0 text-[11px] font-normal text-(--muted-color)">{range.unit}</span>{/if}
+                </span>
+                <UI.Input
+                  type="number"
+                  value={settings[param] ?? ""}
+                  readonly={readOnly}
+                  number={{ minNum: range.min, maxNum: range.max, step: range.step }}
+                  onUpdate={(input) => set(param, input)}
+                />
+              </div>
+            {/each}
+          </div>
         {:else if settings.Mode !== undefined}
           <span class="text-center text-[13px] text-(--muted-color)">{$T("widget.ahrs.unknown_mode", { mode: settings.Mode })}</span>
         {/if}
@@ -150,9 +157,8 @@
 
       {#if !readOnly}
         <div class="flex flex-col items-center gap-2">
-          {#if isDirty}
-            <span class="text-[12px] text-(--muted-color)" transition:slide={{ duration: 100 }}>{$T("widget.common.unsaved")}</span>
-          {/if}
+          <!-- Место под строку есть всегда: без правок она невидима, кнопка не прыгает -->
+          <span class="text-[12px] text-(--muted-color) {isDirty ? '' : 'invisible'}">{$T("widget.common.unsaved")}</span>
           <UI.Button wrapperClass="w-40" variant="primary" content={{ name: $T("widget.common.save") }} disabled={!isDirty} onClick={save} />
         </div>
       {/if}
