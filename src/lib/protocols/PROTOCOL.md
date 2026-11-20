@@ -51,7 +51,7 @@
 | Уровень | Что идёт                                                         | Примеры                                                                                                        |
 | ------- | ---------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
 | 0       | Самое важное: перезагрузка, сброс, обновление, включение привода | `SystemRestart`, `SystemDefaultConfig`, `SystemResetStorage`, `FirmwareUpgrade*`, `MotionEnable`               |
-| 1       | Служебные команды, настройки и основная работа                   | `ModuleConfig`, `ModuleInfo`, `ModuleFind`, `MotionTarget`, `MotionVelocity`, `MotionAngle`, `OrientationData` |
+| 1       | Служебные команды, настройки и основная работа                   | `ModuleConfig`, `ModuleInfo`, `ModuleFind`, `MotionAngle`, `MotionVelocity`, `MotionTorque`, `OrientationData` |
 | 2       | Вспомогательные потоки и данные                                  | `ModuleStream*`, `ModuleTelemetry*`, `SystemFileSystem`                                                        |
 | 3       | Графики, отладка и поток данных интерфейса                       | `DebugPlot`, `DebugLog`, `SystemDataStream`                                                                    |
 

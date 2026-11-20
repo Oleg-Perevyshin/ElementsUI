@@ -31,6 +31,8 @@ import WidgetAHRS from "./WidgetAHRS/WidgetAHRS.svelte"
 import WidgetIMU from "./WidgetIMU/WidgetIMU.svelte"
 import WidgetMag from "./WidgetMag/WidgetMag.svelte"
 import WidgetEncoder from "./WidgetEncoder/WidgetEncoder.svelte"
+import WidgetHoming from "./WidgetHoming/WidgetHoming.svelte"
+import WidgetFOC from "./WidgetFOC/WidgetFOC.svelte"
 
 /* Тип записан явно: выведенный тип объекта со Svelte-компонентами svelte-package не выпускает в .d.ts */
 export interface GuiViewsAll {
@@ -64,6 +66,8 @@ export interface GuiViewsAll {
   WidgetIMU: typeof WidgetIMU
   WidgetMag: typeof WidgetMag
   WidgetEncoder: typeof WidgetEncoder
+  WidgetHoming: typeof WidgetHoming
+  WidgetFOC: typeof WidgetFOC
 }
 
 /* Все типы - для облака, терминала и конструктора; приложению с ограниченной памятью - свой набор из отдельных компонентов */
@@ -98,6 +102,8 @@ export const GUI_VIEWS: GuiViewsAll = {
   WidgetIMU,
   WidgetMag,
   WidgetEncoder,
+  WidgetHoming,
+  WidgetFOC,
 }
 
 export type GuiViews = Partial<GuiViewsAll>

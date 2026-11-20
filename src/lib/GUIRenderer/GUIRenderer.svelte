@@ -599,6 +599,36 @@
           onSaveCfg={locked ? undefined : (cfg: number) => saveFields(prefix, ["Cfg"], { Cfg: cfg }, props.keys)}
           onRefresh={() => send("GET", "ModuleConfig", { CfgGroup: prefix })}
         />
+      {:else if component.type === "WidgetHoming" && views.WidgetHoming}
+        {@const Homing = views.WidgetHoming}
+        {@const props = component.properties as UIComponent<"WidgetHoming">["properties"]}
+        {@const prefix = widgetPrefixes("WidgetHoming", props)[0]}
+        <!-- База оси: поиск и выход домой - команда MotionHome модулю, настройки - SET ModuleConfig группы -->
+        <Homing
+          {...props}
+          value={fields(component, prefix, WIDGET_FIELDS.WidgetHoming) as never}
+          persistKey={persist(component)}
+          onSearch={locked ? undefined : () => send("SET", "MotionHome", { Search: 1 })}
+          onHome={locked ? undefined : () => send("SET", "MotionHome", {})}
+          onSave={locked ? undefined : (values) => saveFields(prefix, Object.keys(values) as (keyof typeof values)[], values, props.keys)}
+          onRefresh={() => send("GET", "ModuleConfig", { CfgGroup: prefix })}
+        />
+      {:else if component.type === "WidgetFOC" && views.WidgetFOC}
+        {@const FOC = views.WidgetFOC}
+        {@const props = component.properties as UIComponent<"WidgetFOC">["properties"]}
+        {@const prefix = widgetPrefixes("WidgetFOC", props)[0]}
+        <!-- FOC: включение и калибровка нуля - команды Motion* модулю, автонастройка и настройки - SET ModuleConfig группы -->
+        <FOC
+          {...props}
+          value={fields(component, prefix, WIDGET_FIELDS.WidgetFOC) as never}
+          persistKey={persist(component)}
+          onEnable={locked ? undefined : (on: boolean) => send("SET", "MotionEnable", { On: on ? 1 : 0 })}
+          onZero={locked ? undefined : () => send("SET", "MotionCalibrate", {})}
+          onTune={locked ? undefined : (hz: number) => saveFields(prefix, ["TuneHz", "Run"], { TuneHz: hz, Run: 1 }, props.keys)}
+          onSave={locked ? undefined : (values) => saveFields(prefix, Object.keys(values) as (keyof typeof values)[], values, props.keys)}
+          onDefaults={locked ? undefined : () => send("SET", "SystemDefaultConfig", { CfgGroup: prefix })}
+          onRefresh={() => send("GET", "ModuleConfig", { CfgGroup: prefix })}
+        />
       {/if}
     </div>
   {/if}

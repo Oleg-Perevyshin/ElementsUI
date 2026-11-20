@@ -43,6 +43,8 @@
     { page: "widget-imu", name: "WidgetIMU" },
     { page: "widget-mag", name: "WidgetMag" },
     { page: "widget-encoder", name: "WidgetEncoder" },
+    { page: "widget-homing", name: "WidgetHoming" },
+    { page: "widget-foc", name: "WidgetFOC" },
     { page: "accordion", name: "Accordion" },
     { page: "button", name: "Button" },
     { page: "carousel", name: "Carousel" },

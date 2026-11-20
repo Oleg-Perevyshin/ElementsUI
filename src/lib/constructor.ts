@@ -33,6 +33,8 @@ import WidgetAHRSProps from "./WidgetAHRS/WidgetAHRSProps.svelte"
 import WidgetIMUProps from "./WidgetIMU/WidgetIMUProps.svelte"
 import WidgetMagProps from "./WidgetMag/WidgetMagProps.svelte"
 import WidgetEncoderProps from "./WidgetEncoder/WidgetEncoderProps.svelte"
+import WidgetHomingProps from "./WidgetHoming/WidgetHomingProps.svelte"
+import WidgetFOCProps from "./WidgetFOC/WidgetFOCProps.svelte"
 
 extendTranslations(constructorTranslations)
 
@@ -72,6 +74,8 @@ export {
   WidgetIMUProps,
   WidgetMagProps,
   WidgetEncoderProps,
+  WidgetHomingProps,
+  WidgetFOCProps,
 }
 
 /* Панель свойств по типу: <Panel component={c} onPropertyChange={...} /> вместо ветвления по типам */
@@ -106,5 +110,7 @@ export const PANELS: Record<UIType, Component<any>> = {
   WidgetIMU: WidgetIMUProps,
   WidgetMag: WidgetMagProps,
   WidgetEncoder: WidgetEncoderProps,
+  WidgetHoming: WidgetHomingProps,
+  WidgetFOC: WidgetFOCProps,
 }
 export { default as TextsEditor } from "./TextsEditor.svelte"

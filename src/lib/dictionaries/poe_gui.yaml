@@ -39,3 +39,5 @@ components:
   - [WidgetIMU, widget]        # показания и калибровка IMU
   - [WidgetMag, widget]        # магнитометр и его калибровка
   - [WidgetEncoder, widget]    # энкодер угла, ноль и автокалибровка
+  - [WidgetHoming, widget]     # база оси привода: поиск, края, дом
+  - [WidgetFOC, widget]        # векторное управление мотором: состояние, процедуры, настройки

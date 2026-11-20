@@ -23,6 +23,8 @@ export const COMPONENT_DEFAULTS: { [K in UIType]: Partial<UIComponentPropsMap[K]
   WidgetIMU: { ...widget("WidgetIMU"), id: "IMUF", calibrateMs: 4000 },
   WidgetMag: { ...widget("WidgetMag"), id: "MAGF", calibrateMs: 30000 },
   WidgetEncoder: { ...widget("WidgetEncoder"), id: "ENC", calibrateMs: 60000 },
+  WidgetHoming: { ...widget("WidgetHoming"), id: "HOME", searchMs: 120000 },
+  WidgetFOC: { ...widget("WidgetFOC"), id: "FOC", refreshMs: 1000 },
   Accordion: { label: { name: "", class: "text-left", icon: null }, isOpen: true, image: "", stripe: false, outline: true },
   Tabs: {
     activeTab: 0,
@@ -93,6 +95,8 @@ export const COMPONENT_SIZES: Record<UIType, { width: number; height: number }> 
   WidgetIMU: { width: 6, height: 1 },
   WidgetMag: { width: 6, height: 1 },
   WidgetEncoder: { width: 6, height: 1 },
+  WidgetHoming: { width: 6, height: 1 },
+  WidgetFOC: { width: 12, height: 1 },
   Accordion: { width: GUI_GRID.columns, height: 1 },
   Tabs: { width: GUI_GRID.columns, height: 4 },
   Input: { width: 3, height: 1 },

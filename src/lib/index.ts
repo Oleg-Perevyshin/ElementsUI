@@ -47,6 +47,8 @@ export { default as WidgetAHRS } from "./WidgetAHRS/WidgetAHRS.svelte"
 export { default as WidgetIMU } from "./WidgetIMU/WidgetIMU.svelte"
 export { default as WidgetMag } from "./WidgetMag/WidgetMag.svelte"
 export { default as WidgetEncoder } from "./WidgetEncoder/WidgetEncoder.svelte"
+export { default as WidgetHoming } from "./WidgetHoming/WidgetHoming.svelte"
+export { default as WidgetFOC } from "./WidgetFOC/WidgetFOC.svelte"
 export { AHRS_ALGORITHMS, AHRS_PARAM_RANGES, ahrsAlgorithm } from "./WidgetAHRS/ahrs"
 export { DEFAULT_MISSION_PLAN, type IMissionPlan, type IMissionField } from "./WidgetMap/mission/plan"
 export { DEFAULT_ROUTE_PLAN, type IRoutePlan, type IRouteWaypoint } from "./WidgetMap/mission/route"
@@ -196,6 +198,10 @@ export {
   type IWidgetMagData,
   type IWidgetEncoderProps,
   type IWidgetEncoderData,
+  type IWidgetHomingProps,
+  type IWidgetHomingData,
+  type IWidgetFOCProps,
+  type IWidgetFOCData,
   type AHRSParam,
   type IAHRSAlgorithm,
   type IGraphProps,

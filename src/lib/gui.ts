@@ -165,6 +165,63 @@ export const WIDGET_FIELDS = {
     CS: num /* итог автокалибровки: 0 нет, 1 идёт, 2 ошибка, 3 успешно */,
     CR: num /* скорость вала при последней автокалибровке по замеру датчика, об/мин; 0 - не было */,
   },
+  /* Векторное управление мотором (группа FOC, компонент foc_control прошивки): состояние оси Ang (°), Vel (°/с), Iq (А), Uq (В), Flg (флаги) - только чтение; настройки в градусах */
+  WidgetFOC: {
+    Ang: num,
+    Vel: num,
+    Iq: num,
+    Uq: num,
+    Flg: num,
+    M_Type: num,
+    M_PP: num,
+    M_R: num,
+    M_L: num,
+    M_KV: num,
+    M_Dir: num,
+    ZEA: num,
+    M_VL: num,
+    M_CL: num,
+    M_VLL: num,
+    M_CTO: num,
+    M_Torq: num,
+    M_Mod: num,
+    C_Kp: num,
+    C_Ki: num,
+    C_Kd: num,
+    C_Lim: num,
+    C_Ramp: num,
+    V_Kp: num,
+    V_Ki: num,
+    V_Kd: num,
+    V_Lim: num,
+    V_Ramp: num,
+    A_Kp: num,
+    A_Lim: num,
+    A_Ramp: num,
+    S_Gain: num,
+    S_OffA: num,
+    S_OffB: num,
+    S_OffC: num,
+    S_VTf: num,
+    S_CTf: num,
+    TuneHz: num,
+    Run: num,
+  },
+  /* База оси любого привода (группа HOME, компонент homing прошивки): способ, состояние и края - только чтение; Off, Speed, Marg и ключи способа сохраняются */
+  WidgetHoming: {
+    Type: num /* способ поиска: 0 базы нет, 1 механические упоры */,
+    St: num /* состояние: 0 не искали, 1 идёт, 2 найдена, 3 отказ */,
+    Err: num /* код отказа последнего поиска (словарь сообщений), 0 - нет */,
+    Found: num /* база найдена */,
+    Lo: num /* край, от которого разрешённый ход идёт в плюс, ° датчика */,
+    Hi: num /* второй край, ° датчика */,
+    Pos: num /* угол вала сейчас, ° датчика */,
+    Off: num /* дом от центра между краями, °; без базы - угол дома */,
+    Speed: num /* скорость поиска и выхода домой, °/с */,
+    Marg: num /* отступ от краёв в работе, ° */,
+    Force: num /* способ «упоры»: усилие мотора при поиске, % от полного */,
+    Lag: num /* способ «упоры»: цель ушла от вала на столько, а вал стоит - упор, ° */,
+  },
   /* Поля одного борта карты, групп может быть несколько (groups) */
   WidgetMap: {
     Lat: num /* 0 вместе с Lon - нет фикса */,
@@ -188,6 +245,8 @@ export type IWidgetAHRSData = typeof WIDGET_FIELDS.WidgetAHRS
 export type IWidgetIMUData = typeof WIDGET_FIELDS.WidgetIMU
 export type IWidgetMagData = typeof WIDGET_FIELDS.WidgetMag
 export type IWidgetEncoderData = typeof WIDGET_FIELDS.WidgetEncoder
+export type IWidgetHomingData = typeof WIDGET_FIELDS.WidgetHoming
+export type IWidgetFOCData = typeof WIDGET_FIELDS.WidgetFOC
 
 /* Ключ переменной устройства «ГРУППА.Поле» - до 15 символов: буфер прошивки 16 с \0, это и предел ключа NVS в ESP-IDF */
 export const KEY_MAX_LEN = 15
@@ -217,6 +276,8 @@ export const WIDGET_PREFIX: Record<WidgetFieldsType, string> = {
   WidgetIMU: "IMUF",
   WidgetMag: "MAGF",
   WidgetEncoder: "ENC",
+  WidgetHoming: "HOME",
+  WidgetFOC: "FOC",
 }
 
 export const widgetPrefixes = (type: WidgetFieldsType, props: { id?: string; groups?: string[] }): string[] =>

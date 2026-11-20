@@ -73,12 +73,11 @@ typedef enum {
 
   /* Работа с модулями перемещения (оси подвесов, линейные перемещения, серво приводы и подобные) */
   A_MOTION_ENABLE                   = 111,  /* SET: привод - число 1 (включить, держит текущий угол) или 0 (фазы без напряжения, драйвер спит) */
-  A_MOTION_MODE                     = 112,  /* SET: режим управления - число: 0 момент, 1 скорость, 2 угол, 3 скорость без обратной связи, 4 угол без обратной связи; продолжает с текущего состояния */
-  A_MOTION_TARGET                   = 113,  /* SET: цель в единицах текущего режима (число: В или А, рад/с, рад); с флагом ответа - OK! с состоянием оси (angle, vel, iq, flags) */
-  A_MOTION_INFO                     = 115,  /* GET: состояние оси - карта Angle, Vel, Target (рад, рад/с), Iq, Id (А), Uq, Ud (В), Mode, Torq, Flags */
+  A_MOTION_TORQUE                   = 114,  /* SET: уставка момента оси (число): А при управлении по току, В - по напряжению (MOT.M_Torq), включает режим момента; с флагом ответа - OK! с состоянием оси (angle, vel, iq, flags) */
+  A_MOTION_INFO                     = 115,  /* GET: состояние оси - карта Angle, Vel, Target (°, °/с), Iq, Id (А), Uq, Ud (В), Mode, Torq, Flags */
   A_MOTION_CALIBRATE                = 117,  /* SET: калибровка нуля и направления мотора без рывков, результат сохраняется (тело {}) */
-  A_MOTION_VELOCITY                 = 118,  /* SET: уставка скорости оси, рад/с (число); с флагом ответа - OK! с состоянием оси (angle, vel, iq, flags) */
-  A_MOTION_ANGLE                    = 119,  /* SET: уставка угла оси, рад (число); с флагом ответа - OK! с состоянием оси (angle, vel, iq, flags) */
+  A_MOTION_VELOCITY                 = 118,  /* SET: уставка скорости оси, °/с (число), включает режим скорости; с флагом ответа - OK! с состоянием оси (angle °, vel °/с, iq А, flags) */
+  A_MOTION_ANGLE                    = 119,  /* SET: уставка угла оси, ° (число), включает режим угла; с флагом ответа - OK! с состоянием оси (angle °, vel °/с, iq А, flags) */
   A_MOTION_HOME                     = 120,  /* SET: плавный выход оси домой с обратной связью (тело {}); {Search: 1} - сначала найти упоры (как - решает устройство), дом - центр между ними плюс смещение */
 
   /* Работа с модулями ориентации (IMU, магнетометры, GNSS и подобные) */
@@ -137,8 +136,7 @@ static inline uint8_t CMD_Priority(uint16_t arg) {
     case A_MODULE_INFO:
     case A_MODULE_MODE:
     case A_MODULE_CONFIG:
-    case A_MOTION_MODE:
-    case A_MOTION_TARGET:
+    case A_MOTION_TORQUE:
     case A_MOTION_INFO:
     case A_MOTION_CALIBRATE:
     case A_MOTION_VELOCITY:

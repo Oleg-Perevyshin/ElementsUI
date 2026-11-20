@@ -30,6 +30,8 @@ import WidgetAHRS from "./WidgetAHRS/WidgetAHRS.svelte"
 import WidgetIMU from "./WidgetIMU/WidgetIMU.svelte"
 import WidgetMag from "./WidgetMag/WidgetMag.svelte"
 import WidgetEncoder from "./WidgetEncoder/WidgetEncoder.svelte"
+import WidgetHoming from "./WidgetHoming/WidgetHoming.svelte"
+import WidgetFOC from "./WidgetFOC/WidgetFOC.svelte"
 import { COMPONENT_META, type ComponentMeta } from "./componentMeta"
 import type { UIType } from "./types"
 
@@ -69,6 +71,8 @@ const VIEWS: Record<UIType, Component<any, any, any>> = {
   WidgetIMU,
   WidgetMag,
   WidgetEncoder,
+  WidgetHoming,
+  WidgetFOC,
 }
 
 export const COMPONENTS = Object.fromEntries(

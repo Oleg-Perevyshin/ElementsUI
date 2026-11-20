@@ -12,6 +12,8 @@ import type {
   IWidgetIMUData,
   IWidgetMagData,
   IWidgetEncoderData,
+  IWidgetHomingData,
+  IWidgetFOCData,
 } from "./gui"
 import type { LoRaParams } from "./WidgetLoRa/lora"
 
@@ -27,6 +29,8 @@ export type {
   IWidgetIMUData,
   IWidgetMagData,
   IWidgetEncoderData,
+  IWidgetHomingData,
+  IWidgetFOCData,
 } from "./gui"
 export type { AHRSParam, IAHRSAlgorithm } from "./WidgetAHRS/ahrs"
 export type { LoRaParams, LoRaParam, LoRaValues, ILoRaParamConfig, ILoRaOption } from "./WidgetLoRa/lora"
@@ -66,6 +70,8 @@ export interface UIComponentPropsMap {
   WidgetIMU: IWidgetIMUProps
   WidgetMag: IWidgetMagProps
   WidgetEncoder: IWidgetEncoderProps
+  WidgetHoming: IWidgetHomingProps
+  WidgetFOC: IWidgetFOCProps
 }
 
 export type UIType = keyof UIComponentPropsMap
@@ -1055,6 +1061,56 @@ export interface IWidgetEncoderProps {
   /* Новое слово Cfg с режимом 2 (автокалибровка) или 3 (ноль здесь); без колбэка кнопок нет */
   onCalibrate?: (cfg: number) => void
   /* Перечитать настройки устройства: во время калибровки и после неё */
+  onRefresh?: () => void
+}
+
+/* База оси привода: способ, состояние, края и положение вала, «Найти базу» и «Домой», настройки способа; группа HOME по умолчанию */
+export interface IWidgetHomingProps {
+  /* Префикс группы базы, по умолчанию "HOME" */
+  id?: string
+  wrapperClass?: string
+  accent?: AccentColor
+  label?: { name?: string }
+  value?: Partial<IWidgetHomingData>
+  keys?: Partial<Record<keyof IWidgetHomingData, string>>
+  /* Предел ожидания поиска, мс: во время него виджет раз в секунду перечитывает настройки (onRefresh) и кончает его по ответу прошивки */
+  searchMs?: number
+  collapsed?: boolean
+  persistKey?: string
+  /* Найти базу: MotionHome {Search: 1}; без колбэка кнопки нет */
+  onSearch?: () => void
+  /* Домой: MotionHome {}; без колбэка кнопки нет */
+  onHome?: () => void
+  /* Сохранить настройки (Off, Speed, Marg и ключи способа); без колбэка только просмотр */
+  onSave?: (values: Partial<Record<keyof IWidgetHomingData, number>>) => void
+  /* Перечитать настройки устройства: во время поиска */
+  onRefresh?: () => void
+}
+
+/* Векторное управление мотором: состояние оси, включение, калибровка нуля, автонастройка, настройки; группа FOC по умолчанию */
+export interface IWidgetFOCProps {
+  /* Префикс группы FOC, по умолчанию "FOC" */
+  id?: string
+  wrapperClass?: string
+  accent?: AccentColor
+  label?: { name?: string }
+  value?: Partial<IWidgetFOCData>
+  keys?: Partial<Record<keyof IWidgetFOCData, string>>
+  /* Как часто перечитывать группу, пока виджет раскрыт, мс; 0 - не перечитывать */
+  refreshMs?: number
+  collapsed?: boolean
+  persistKey?: string
+  /* Включить или выключить мотор: MotionEnable; без колбэка кнопки нет */
+  onEnable?: (on: boolean) => void
+  /* Калибровка нуля: MotionCalibrate; без колбэка кнопки нет */
+  onZero?: () => void
+  /* Автонастройка на полосу hz: Run 1 и TuneHz; без колбэка кнопки нет */
+  onTune?: (hz: number) => void
+  /* Сохранить изменённые настройки; без колбэка только просмотр */
+  onSave?: (values: Partial<Record<keyof IWidgetFOCData, number>>) => void
+  /* Заводские настройки группы: SystemDefaultConfig; без колбэка кнопки нет */
+  onDefaults?: () => void
+  /* Перечитать группу устройства: состояние оси и настройки */
   onRefresh?: () => void
 }
 
