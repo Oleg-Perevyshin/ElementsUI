@@ -3,7 +3,7 @@
 /* Значение другого поля той же части Cfg: сначала свой раздел, потом остальные */
 export type SensorChipRead = (key: string) => number | undefined
 
-/* Поле Cfg: start..end - биты включительно; select - варианты кодами (available - допустим ли вариант при значениях других полей, недопустимые не показываются, а выбранный недопустимый заменяется ближайшим; format - подпись варианта по другим полям вместо name, @имя - перевод sensor.opt.<имя>; wide - широкий список; buttons - кнопками в строку; locked - показывается, но не выбирается (значение определяет другое поле); gate - режим узла: значение 0 (выключен) скрывает остальные поля раздела, в сводке - «выкл.»; unit - в сводке числом с единицей sensor.unit.<key>); switch - один бит (short - подпись кнопки, когда раздел из одних переключателей); visible - показывать ли поле; brief - в сводке шапки (есть хоть одно brief - в сводке только они, иначе все) */
+/* Поле Cfg: start..end - биты включительно; select - варианты кодами (available - допустим ли вариант при значениях других полей, недопустимые не показываются, а выбранный недопустимый заменяется ближайшим; format - подпись варианта по другим полям вместо name, @имя - перевод sensor.opt.<имя>; wide - широкий список; buttons - кнопками в строку; locked - показывается, но не выбирается (значение определяет другое поле); gate - режим узла: значение 0 (выключен) скрывает остальные поля раздела, в сводке - «выкл.»; unit - в сводке числом с единицей sensor.unit.<key>; noSummary - не в сводке); switch - один бит (short - подпись кнопки, когда раздел из одних переключателей); visible - показывать ли поле; brief - в сводке шапки (есть хоть одно brief - в сводке только они, иначе все) */
 export type SensorChipField =
   | {
       key: string
@@ -17,6 +17,7 @@ export type SensorChipField =
       available?: (value: number, read: SensorChipRead) => boolean
       format?: (value: number, read: SensorChipRead) => string
       unit?: boolean
+      noSummary?: boolean
       buttons?: boolean
       locked?: (read: SensorChipRead) => boolean
       gate?: boolean
@@ -30,9 +31,11 @@ export interface SensorChipSection {
 }
 
 /* Часть микросхемы одного класса: поля и заводское слово Cfg (CB_ResetConfig драйвера) */
+/* busyModes - режимы (биты 0-1 Cfg), в которых драйвер занят калибровкой: настройки недоступны */
 export interface SensorChipPart {
   sections: SensorChipSection[]
   factory: number
+  busyModes: number[]
 }
 
 /* Микросхема: у 9-осевого IMU есть обе части */
@@ -42,6 +45,18 @@ export interface SensorChip {
   imu?: SensorChipPart
   mag?: SensorChipPart
 }
+
+/* Режим работы (биты 0-1 Cfg, общие у всех драйверов): выбираются только run, режимы калибровки busy видны, пока драйвер в них */
+const runField = (run: [number, string][], busy: [number, string][]): SensorChipField => ({
+  key: "run",
+  start: 0,
+  end: 1,
+  type: "select",
+  wide: true,
+  noSummary: true,
+  options: [...run, ...busy].map(([value, name]) => ({ value, name: `@${name}` })),
+  available: (value, read) => run.some(([v]) => v === value) || read("run") === value,
+})
 
 /* Варианты числами с единицей: подписи одинаковые на всех языках */
 const opts = (pairs: [number, string][]) => pairs.map(([value, name]) => ({ value, name }))
@@ -137,8 +152,24 @@ export const SENSOR_CHIPS: SensorChip[] = [
     name: "ICM-42688-P",
     imu: {
       factory: 291605261,
+      busyModes: [2, 3],
       sections: [
-        { name: "common", fields: [{ key: "temp", start: 2, end: 2, type: "switch" }] },
+        {
+          name: "common",
+          fields: [
+            runField(
+              [
+                [0, "stop"],
+                [1, "measure"],
+              ],
+              [
+                [2, "calibrate"],
+                [3, "pose"],
+              ],
+            ),
+            { key: "temp", start: 2, end: 2, type: "switch" },
+          ],
+        },
         {
           name: "accel",
           fields: [
@@ -244,7 +275,21 @@ export const SENSOR_CHIPS: SensorChip[] = [
     name: "RM3100",
     mag: {
       factory: 238997,
+      busyModes: [2],
       sections: [
+        {
+          name: "common",
+          fields: [
+            runField(
+              [
+                [0, "stop"],
+                [1, "measure"],
+                [3, "onDemand"],
+              ],
+              [[2, "calibrate"]],
+            ),
+          ],
+        },
         {
           name: "axes",
           fields: [

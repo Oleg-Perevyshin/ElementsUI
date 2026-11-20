@@ -45,6 +45,9 @@
   /* Описание микросхемы: блок «Настройки датчика» */
   const chipPart = $derived(sensorChipPart(chip, "imu"))
   const mode = $derived(value.Cfg === undefined ? undefined : sensorMode(value.Cfg))
+  /* Заняты калибровкой нуля или записью положения: остальное ждёт */
+  let calibrating = $state(false)
+  let recording = $state(false)
   /* Модуль ускорения: в покое около 1 g - быстрая проверка калибровки акселерометра */
   const norm = $derived(
     [value.AX, value.AY, value.AZ].every((v) => v !== undefined && Number.isFinite(Number(v)))
@@ -68,6 +71,10 @@
           {calibrateMs}
           onCalibrate={onCalibrate ? () => onCalibrate(sensorCalibrateCfg(value.Cfg)) : undefined}
           {onRefresh}
+          modeKeys={["stop", "measure", "calibrate", "pose"]}
+          busyModes={[2, 3]}
+          locked={recording}
+          bind:busy={calibrating}
         />
       </div>
 
@@ -93,11 +100,19 @@
       </div>
 
       {#if value.ACP !== undefined}
-        <AccelPoses poses={value.ACP} cfg={value.Cfg} onRecord={onCalibrate} {onRefresh} hints={$hints} />
+        <AccelPoses
+          poses={value.ACP}
+          cfg={value.Cfg}
+          onRecord={onCalibrate}
+          {onRefresh}
+          hints={$hints}
+          locked={calibrating || mode === undefined || mode !== 1}
+          bind:busy={recording}
+        />
       {/if}
 
       {#if chipPart}
-        <SensorSettings part={chipPart} cfg={value.Cfg} onSave={onSaveCfg} hints={$hints} />
+        <SensorSettings part={chipPart} cfg={value.Cfg} onSave={onSaveCfg} hints={$hints} locked={calibrating || recording} />
       {/if}
     </div>
   {/if}

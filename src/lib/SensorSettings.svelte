@@ -1,4 +1,4 @@
-<!-- $lib/SensorSettings.svelte - настройки микросхемы датчика в WidgetIMU и WidgetMag: поля слова Cfg по описанию из sensorChips.ts (списки и переключатели), сворачиваемый раздел со сводкой в шапке. Раздел common идёт без заголовка, режим узла (gate) - первым полем строки узла, выключен - остальные поля скрыты; раздел из одних переключателей (оси) - одна группа кнопок рядом с полями предыдущего раздела. Правки локальные до «Сохранить»; биты, которых нет в описании, и режим (биты 0-1) не меняются. «По умолчанию» - заводское слово микросхемы с текущим режимом -->
+<!-- $lib/SensorSettings.svelte - настройки микросхемы датчика в WidgetIMU и WidgetMag: поля слова Cfg по описанию из sensorChips.ts (списки и переключатели), сворачиваемый раздел со сводкой в шапке. Раздел common идёт без заголовка, режим узла (gate) - первым полем строки узла, выключен - остальные поля скрыты; раздел из одних переключателей (оси) - одна группа кнопок рядом с полями предыдущего раздела. Правки локальные до «Сохранить»; биты, которых нет в описании, не меняются. Режим работы (биты 0-1) - поле run: калибровку оно не запускает, а пока драйвер калибрует (busyModes) или виджет занят калибровкой (locked), всё недоступно. «По умолчанию» - заводское слово микросхемы с текущим режимом -->
 <script lang="ts">
   import { untrack } from "svelte"
   import * as UI from "."
@@ -18,6 +18,7 @@
     cfg,
     onSave,
     hints = false,
+    locked = false,
   }: {
     part: SensorChipPart
     cfg: unknown
@@ -25,6 +26,8 @@
     onSave?: (cfg: number) => void
     /* Подсказки виджета включены кнопкой «?» */
     hints?: boolean
+    /* Виджет занят калибровкой или записью положения: настройки только для просмотра */
+    locked?: boolean
   } = $props()
 
   let open = $state(false)
@@ -40,7 +43,10 @@
     saved = next
   })
 
-  const readOnly = $derived(!onSave || word === undefined)
+  /* Драйвер сейчас в режиме калибровки (по слову с устройства) */
+  const deviceBusy = $derived(incoming !== undefined && part.busyModes.includes(bitFieldGet(incoming, 0, 1)))
+  const busy = $derived(locked || deviceBusy)
+  const readOnly = $derived(!onSave || word === undefined || busy)
   const get = (field: SensorChipField) => (word === undefined ? undefined : bitFieldGet(word, field.start, field.end))
   const set = (field: SensorChipField, value: unknown) => {
     const number = Number(value)
@@ -145,7 +151,7 @@
     }
     const { field } = item
     const value = get(field)
-    if (value === undefined || field.type === "switch" || (anyBrief && !field.brief)) return undefined
+    if (value === undefined || field.type === "switch" || field.noSummary || (anyBrief && !field.brief)) return undefined
     return field.unit ? `${value} ${$T(`sensor.unit.${field.key}`)}` : choiceName(field, item.section, value)
   }
   const summary = $derived(
@@ -225,13 +231,13 @@
 
       {#if onSave}
         <div class="flex flex-col items-center gap-2">
-          <span class="text-[12px] text-(--muted-color) {isDirty ? '' : 'invisible'}">{$T("widget.common.unsaved")}</span>
+          <span class="text-[12px] text-(--muted-color) {busy || isDirty ? '' : 'invisible'}">{$T(busy ? "sensor.busy" : "widget.common.unsaved")}</span>
           <div class="flex w-full max-w-80 flex-wrap gap-2">
             <UI.Button
               wrapperClass="min-w-fit flex-1"
               componentClass="px-2 whitespace-nowrap"
               content={{ name: $T("sensor.default") }}
-              disabled={word === undefined}
+              disabled={readOnly}
               onClick={reset}
             />
             <UI.Button
@@ -239,7 +245,7 @@
               componentClass="px-2 whitespace-nowrap"
               variant="primary"
               content={{ name: $T("widget.common.save") }}
-              disabled={!isDirty}
+              disabled={readOnly || !isDirty}
               onClick={save}
             />
           </div>

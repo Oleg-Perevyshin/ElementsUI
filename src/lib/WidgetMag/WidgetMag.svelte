@@ -43,6 +43,8 @@
 
   /* Описание микросхемы: блок «Настройки датчика» */
   const chipPart = $derived(sensorChipPart(chip, "mag"))
+  /* Идёт калибровка: настройки ждут */
+  let calibrating = $state(false)
   const mode = $derived(value.Cfg === undefined ? undefined : sensorMode(value.Cfg))
   /* Модуль поля: у Земли 25-65 мкТл, сильно больше - рядом железо или магнит */
   const norm = $derived(
@@ -71,6 +73,7 @@
           {calibrateMs}
           onCalibrate={onCalibrate ? () => onCalibrate(sensorCalibrateCfg(value.Cfg)) : undefined}
           {onRefresh}
+          bind:busy={calibrating}
         />
       </div>
 
@@ -101,7 +104,7 @@
       </div>
 
       {#if chipPart}
-        <SensorSettings part={chipPart} cfg={value.Cfg} onSave={onSaveCfg} hints={$hints} />
+        <SensorSettings part={chipPart} cfg={value.Cfg} onSave={onSaveCfg} hints={$hints} locked={calibrating} />
       {/if}
     </div>
   {/if}

@@ -1,4 +1,4 @@
-<!-- $lib/WidgetIMU/AccelPoses.svelte - калибровка акселерометра по 6 положениям в WidgetIMU: какие положения записаны (биты ACP: +X, -X, +Y, -Y, +Z, -Z), кнопка «Записать положение» - слово Cfg с режимом 3; ось вверх или вниз прошивка определяет сама, после шестого положения сохраняет смещения и масштаб и сбрасывает ACP. Сворачиваемый раздел -->
+<!-- $lib/WidgetIMU/AccelPoses.svelte - калибровка акселерометра по 6 положениям в WidgetIMU: какие положения записаны (биты ACP: +X, -X, +Y, -Y, +Z, -Z), кнопка «Записать положение» - слово Cfg с режимом 3; ось вверх или вниз прошивка определяет сама, после шестого положения сохраняет смещения и масштаб и сбрасывает ACP. Записывать нельзя, пока датчик остановлен или калибруется (locked); busy - идёт запись. Сворачиваемый раздел -->
 <script lang="ts">
   import * as UI from ".."
   import { T } from "../locales/i18n"
@@ -12,6 +12,8 @@
     onRecord,
     onRefresh,
     hints = false,
+    locked = false,
+    busy = $bindable(false),
   }: {
     /* Биты записанных положений из прошивки (ACP) */
     poses: unknown
@@ -21,6 +23,10 @@
     /* Перечитать настройки: прошивка присылает ACP только по запросу */
     onRefresh?: () => void
     hints?: boolean
+    /* Датчик остановлен или калибруется: записывать нельзя */
+    locked?: boolean
+    /* Идёт запись положения */
+    busy?: boolean
   } = $props()
 
   /* Режим задачи драйвера «записать положение» (биты 0-1 Cfg) */
@@ -30,12 +36,11 @@
   const NAMES = ["+X", "-X", "+Y", "-Y", "+Z", "-Z"]
 
   let open = $state(false)
-  let busy = $state(false)
   const bits = $derived(Number(poses) || 0)
   const done = $derived(NAMES.filter((_, i) => (bits >> i) & 1).length)
 
   const record = () => {
-    if (!onRecord || busy || cfg === undefined || cfg === null || cfg === "") return
+    if (!onRecord || busy || locked || cfg === undefined || cfg === null || cfg === "") return
     onRecord(bitFieldSet(Number(cfg) >>> 0, 0, 1, POSE_MODE))
     busy = true
     setTimeout(() => {
@@ -71,7 +76,7 @@
           componentClass="whitespace-nowrap"
           variant="primary"
           content={{ name: $T(busy ? "widget.imu.pose.recording" : "widget.imu.pose.record") }}
-          disabled={busy}
+          disabled={busy || locked}
           onClick={record}
         />
       {/if}
