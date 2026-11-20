@@ -58,21 +58,29 @@ const enumItems = (yaml, parse, items = []) => {
 /* ********************************************************** */
 /* Словарь команд poe_cmd.yaml -> DEFAULT_ARGUMENT_CODES, ARGUMENT_PRIORITIES и poe_cmd.h */
 const commandsYaml = readFileSync(new URL("poe_cmd.yaml", root), "utf8")
-/* Строка «- [Строка, Enum, Число]» или «- [Строка, Enum, Число, Важность]»: важность на CAN 0..3, без неё - PRIORITY_DEFAULT */
+/* Строка «- [Строка, Enum, Число, Важность]»: важность на CAN 0..3 обязательна у команд устройств (коды до DEVICE_CODES_END), у команд облака её нет - PRIORITY_DEFAULT */
 const PRIORITY_DEFAULT = 2
+const DEVICE_CODES_END = 4096
 const COMMAND_LINE = /^\s*-\s*\[\s*([^,\]]+?)\s*,\s*([^,\]]+?)\s*,\s*(\d+)\s*(?:,\s*(\d+)\s*)?\](?:\s*#\s*(.*))?/
 const commands = commandsYaml
   .split(/\r?\n/)
   .map((line) => line.match(COMMAND_LINE))
   .filter(Boolean)
-  .map(([, name, enumName, code, priority]) => ({ name, enumName, code: Number(code), priority: priority === undefined ? PRIORITY_DEFAULT : Number(priority) }))
+  .map(([, name, enumName, code, priority]) => ({
+    name,
+    enumName,
+    code: Number(code),
+    explicit: priority !== undefined,
+    priority: priority === undefined ? PRIORITY_DEFAULT : Number(priority),
+  }))
 
 const names = new Set()
 const codes = new Set()
-for (const { name, code, priority } of commands) {
+for (const { name, code, priority, explicit } of commands) {
   if (names.has(name) || codes.has(code)) throw new Error(`poe_cmd.yaml: повтор имени или кода - ${name} = ${code}`)
   if (code > 0x1fff) throw new Error(`poe_cmd.yaml: код ${name} = ${code} не помещается в 13 бит аргумента Cmd`)
   if (priority > 3) throw new Error(`poe_cmd.yaml: важность ${name} = ${priority} вне 0..3`)
+  if (code < DEVICE_CODES_END && !explicit) throw new Error(`poe_cmd.yaml: у команды устройства ${name} нет важности`)
   names.add(name)
   codes.add(code)
 }

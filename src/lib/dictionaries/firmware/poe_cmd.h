@@ -116,32 +116,45 @@ typedef enum {
 #define CMD_PRIORITY_DEFAULT 2
 static inline uint8_t CMD_Priority(uint16_t arg) {
   switch(arg) {
-    case A_MOTION_ENABLE:
-    case A_MOTION_TARGET:
-    case A_MOTION_VELOCITY:
-    case A_MOTION_ANGLE:
-      return 0;
-    case A_SYSTEM_DATA_UPDATE:
-    case A_SYSTEM_DATA_STREAM:
-    case A_MODULE_TELEMETRY_1:
-    case A_MODULE_TELEMETRY_2:
-    case A_MODULE_TELEMETRY_3:
-    case A_MODULE_TELEMETRY_4:
-    case A_MODULE_TELEMETRY_5:
-    case A_MODULE_STREAM_1:
-    case A_MODULE_STREAM_2:
-    case A_MODULE_STREAM_3:
-    case A_MODULE_STREAM_4:
-    case A_MODULE_STREAM_5:
+    case A_SYSTEM_RESTART:
+    case A_SYSTEM_DEFAULT_CONFIG:
+    case A_SYSTEM_RESET_STORAGE:
     case A_FIRMWARE_UPGRADE_START:
     case A_FIRMWARE_UPGRADE_READ:
     case A_FIRMWARE_UPGRADE_DONE:
+    case A_MOTION_ENABLE:
+      return 0;
+    case A_SYSTEM_LOCAL_TIME:
+    case A_SYSTEM_STACK_INFO:
+    case A_SYSTEM_BACKUP:
+    case A_MODULE_BIND_KEY:
+    case A_CLOUD_JOIN_DEVICE:
+    case A_CLOUD_JOIN_USER:
+    case A_CLOUD_LEAVE_USER:
+    case A_MODULE_FIND:
+    case A_MODULE_LIST:
+    case A_MODULE_CAPTURE:
+    case A_MODULE_INFO:
+    case A_MODULE_MODE:
+    case A_MODULE_CONFIG:
+    case A_MOTION_MODE:
+    case A_MOTION_TARGET:
+    case A_MOTION_INFO:
+    case A_MOTION_CALIBRATE:
+    case A_MOTION_VELOCITY:
+    case A_MOTION_ANGLE:
+    case A_MOTION_HOME:
     case A_ORIENTATION_DATA:
+    case A_ORIENTATION_OFFSET:
+    case A_ORIENTATION_ACCEL_CALIBRATE:
+    case A_ORIENTATION_MAG_CALIBRATE:
+    case A_ORIENTATION_GYROSCOPE_CALIBRATE:
       return 1;
-    case A_SYSTEM_FILE_SYSTEM:
+    case A_SYSTEM_DATA_UPDATE:
     case A_DEBUG_LOG:
     case A_DEBUG_PLOT:
     case A_DEBUG_MIRROR:
+    case A_SYSTEM_DATA_STREAM:
       return 3;
     default:
       return CMD_PRIORITY_DEFAULT;
