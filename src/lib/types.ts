@@ -996,7 +996,7 @@ export interface IWidgetIMUProps {
   label?: { name?: string }
   value?: Partial<IWidgetIMUData>
   keys?: Partial<Record<keyof IWidgetIMUData, string>>
-  /* Сколько длится калибровка, мс: потом виджет перечитывает настройки (onRefresh) */
+  /* Предел ожидания калибровки, мс: во время неё виджет раз в секунду перечитывает настройки (onRefresh) и кончает её по ответу прошивки */
   calibrateMs?: number
   collapsed?: boolean
   persistKey?: string
@@ -1006,7 +1006,7 @@ export interface IWidgetIMUProps {
   onSaveCfg?: (cfg: number) => void
   /* Новое слово Cfg с режимом «калибровать»; без колбэка кнопки нет */
   onCalibrate?: (cfg: number) => void
-  /* Перечитать настройки устройства после калибровки */
+  /* Перечитать настройки устройства: во время калибровки и после неё */
   onRefresh?: () => void
 }
 
@@ -1019,7 +1019,7 @@ export interface IWidgetMagProps {
   label?: { name?: string }
   value?: Partial<IWidgetMagData>
   keys?: Partial<Record<keyof IWidgetMagData, string>>
-  /* Сколько длится калибровка, мс: потом виджет перечитывает настройки (onRefresh) */
+  /* Предел ожидания калибровки, мс: во время неё виджет раз в секунду перечитывает настройки (onRefresh) и кончает её по ответу прошивки */
   calibrateMs?: number
   collapsed?: boolean
   persistKey?: string
@@ -1029,7 +1029,7 @@ export interface IWidgetMagProps {
   onSaveCfg?: (cfg: number) => void
   /* Новое слово Cfg с режимом «калибровать»; без колбэка кнопки нет */
   onCalibrate?: (cfg: number) => void
-  /* Перечитать настройки устройства после калибровки */
+  /* Перечитать настройки устройства: во время калибровки и после неё */
   onRefresh?: () => void
 }
 
@@ -1042,7 +1042,7 @@ export interface IWidgetEncoderProps {
   label?: { name?: string }
   value?: Partial<IWidgetEncoderData>
   keys?: Partial<Record<keyof IWidgetEncoderData, string>>
-  /* Сколько длится автокалибровка, мс: потом виджет перечитывает настройки (onRefresh) */
+  /* Предел ожидания калибровки, мс: во время неё виджет раз в секунду перечитывает настройки (onRefresh) и кончает её по ответу прошивки */
   calibrateMs?: number
   collapsed?: boolean
   persistKey?: string
@@ -1052,7 +1052,7 @@ export interface IWidgetEncoderProps {
   onSaveCfg?: (cfg: number) => void
   /* Новое слово Cfg с режимом 2 (автокалибровка) или 3 (ноль здесь); без колбэка кнопок нет */
   onCalibrate?: (cfg: number) => void
-  /* Перечитать настройки устройства после калибровки или установки нуля */
+  /* Перечитать настройки устройства: во время калибровки и после неё */
   onRefresh?: () => void
 }
 

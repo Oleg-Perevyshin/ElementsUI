@@ -24,7 +24,7 @@
     label = {},
     value = {},
     chip,
-    calibrateMs = 40000,
+    calibrateMs = 60000,
     collapsed = $bindable(false),
     persistKey,
     onSaveCfg,

@@ -1,4 +1,4 @@
-<!-- $lib/SensorCalibrate.svelte - режим датчика и калибровка для WidgetIMU, WidgetMag и WidgetEncoder: значок режима (биты 0-1 Cfg), кнопка «Калибровать», подсказка, что делать с датчиком, и полоса времени калибровки; по её окончании - onRefresh. Калибровать нельзя, пока датчик остановлен, драйвер занят (busyModes) или виджет занят другим делом (locked); busy - идёт ли калибровка -->
+<!-- $lib/SensorCalibrate.svelte - режим датчика и калибровка для WidgetIMU, WidgetMag и WidgetEncoder: значок режима (биты 0-1 Cfg), кнопка «Калибровать», подсказка, что делать с датчиком, и полоса времени калибровки. Пока калибровка идёт, виджет раз в pollMs зовёт onRefresh: калибровка кончилась, когда драйвер побывал в режиме busyModes и вышел из него; calibrateMs - предел ожидания, потом ещё один onRefresh. Калибровать нельзя, пока датчик остановлен, драйвер занят (busyModes) или виджет занят другим делом (locked); busy - идёт ли калибровка -->
 <script lang="ts">
   import { onDestroy } from "svelte"
   import { slide } from "svelte/transition"
@@ -16,6 +16,7 @@
     busyModes = [2],
     locked = false,
     busy = $bindable(false),
+    pollMs = 1000,
   }: {
     /* Режим из Cfg; undefined - Cfg ещё не прочитан */
     mode: number | undefined
@@ -32,16 +33,26 @@
     locked?: boolean
     /* Идёт калибровка, начатая этой кнопкой */
     busy?: boolean
+    /* Как часто перечитывать настройки во время калибровки, мс; 0 - только по окончании calibrateMs */
+    pollMs?: number
   } = $props()
 
   const COLORS = ["var(--faint-color)", "var(--green-text)", "var(--purple-text)", "var(--blue-text)"]
   const shown = $derived(mode === undefined ? undefined : { key: modeKeys[mode], color: busyModes.includes(mode) ? COLORS[2] : COLORS[mode] })
 
-  /* Отсчёт калибровки ведёт виджет: прошивка сама возвращается в измерение, а Cfg без запроса не присылает */
+  /* Прошивка сама возвращается в измерение, но Cfg без запроса не присылает: виджет перечитывает его, пока идёт калибровка */
   let started = $state(0)
   let now = $state(0)
+  let polled = 0
+  /* Драйвер уже ответил режимом калибровки: выход из него - конец */
+  let seenBusy = false
   let timer: ReturnType<typeof setInterval> | undefined
   const running = $derived(started > 0)
+  $effect(() => {
+    if (!running || mode === undefined) return
+    if (busyModes.includes(mode)) seenBusy = true
+    else if (seenBusy) stop()
+  })
   $effect(() => {
     busy = running
   })
@@ -49,6 +60,7 @@
   const blocked = $derived(
     running ? "" : mode === undefined ? "unknown" : mode === SENSOR_MODE.stop ? "stopped" : busyModes.includes(mode) || locked ? "busy" : "",
   )
+  /* Полоса по времени до предела calibrateMs; конец по ответу прошивки может прийти раньше */
   const progress = $derived(running ? Math.min(100, ((now - started) / calibrateMs) * 100) : 0)
 
   const stop = () => {
@@ -59,12 +71,19 @@
   const start = () => {
     if (!onCalibrate || running || blocked) return
     onCalibrate()
-    started = now = Date.now()
+    seenBusy = false
+    started = now = polled = Date.now()
     timer = setInterval(() => {
       now = Date.now()
-      if (now - started < calibrateMs) return
-      stop()
-      onRefresh?.()
+      if (now - started >= calibrateMs) {
+        stop()
+        onRefresh?.()
+        return
+      }
+      if (pollMs > 0 && now - polled >= pollMs) {
+        polled = now
+        onRefresh?.()
+      }
     }, 200)
   }
   onDestroy(stop)

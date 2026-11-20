@@ -168,9 +168,9 @@ const translations = {
     zh: "设备读取角度的频率，**100-1000 Hz**。\n越快 - 速度越准、控制环响应越快\n越慢 - 处理器负载越小",
   },
   "sensor.hint.bandwidth": {
-    ru: "Полоса фильтра внутри чипа.\n**×1** - базовая: меньше шум, медленнее отклик\n**×128** - быстрее отклик, больше шум\nДля FOC на высоких оборотах - шире, для точного положения - уже",
-    en: "Bandwidth of the filter inside the chip.\n**×1** - baseline: less noise, slower response\n**×128** - faster response, more noise\nWider for FOC at high speed, narrower for accurate position",
-    zh: "芯片内部滤波器带宽。\n**×1** - 基准：噪声小，响应慢\n**×128** - 响应快，噪声大\n高速 FOC 用较宽，精确定位用较窄",
+    ru: "Как быстро угол успевает за валом. Чип сглаживает угол внутри себя, полоса - насколько сильно.\n**×1** - сглаживание сильнее всего: угол самый ровный, но при резком разгоне немного отстаёт от вала\n**×2 ... ×128** - во столько раз быстрее угол догоняет вал, но тем сильнее дрожит последний знак\nМедленный вал и точное положение - **×1**\nБыстрые разгоны и высокие обороты, контур регулятора по углу или скорости - **×8** и выше",
+    en: "How fast the angle keeps up with the shaft. The chip smooths the angle inside, the bandwidth sets how much.\n**×1** - strongest smoothing: the steadiest angle, but it lags the shaft a little on sharp acceleration\n**×2 ... ×128** - the angle catches up with the shaft that many times faster, but the last digit jitters more\nSlow shaft and accurate position - **×1**\nFast acceleration and high speed, a control loop on angle or speed - **×8** and above",
+    zh: "角度跟上轴的速度。芯片内部对角度做平滑，带宽决定平滑程度。\n**×1** - 平滑最强：角度最稳定，但急加速时略滞后于轴\n**×2 ... ×128** - 角度跟上轴的速度快相应倍数，但末位抖动越大\n慢速轴和精确定位 - **×1**\n快速加速和高转速、基于角度或速度的控制环 - **×8** 及以上",
   },
   "sensor.hint.direction": {
     ru: "В какую сторону вращения растёт угол.\n**Против часовой** - заводское\nПоменяйте, если угол и скорость идут в обратную сторону",
@@ -183,9 +183,9 @@ const translations = {
     zh: "迟滞窗口：转动小于窗口时角度不变。消除静止时的角度抖动。\n**0°** - 无迟滞\n**0.022°** - 出厂设置",
   },
   "sensor.hint.velFilter": {
-    ru: "Сглаживание скорости в прошивке, подпись - постоянная времени при текущей частоте опроса.\n**Нет** - без задержки, для контура скорости FOC\nБольше - ровнее показания, но скорость запаздывает",
-    en: "Speed smoothing in the firmware, the label is the time constant at the current poll rate.\n**None** - no delay, for the FOC speed loop\nMore - steadier readings, but the speed lags",
-    zh: "固件中的速度平滑，标签为当前轮询频率下的时间常数。\n**无** - 无延迟，用于 FOC 速度环\n越大 - 读数越平稳，但速度滞后",
+    ru: "Сглаживание скорости в прошивке, подпись - постоянная времени при текущей частоте опроса.\n**Нет** - без задержки, если скорость идёт в контур регулятора\nБольше - ровнее показания, но скорость запаздывает",
+    en: "Speed smoothing in the firmware, the label is the time constant at the current poll rate.\n**None** - no delay, when the speed feeds a control loop\nMore - steadier readings, but the speed lags",
+    zh: "固件中的速度平滑，标签为当前轮询频率下的时间常数。\n**无** - 无延迟，用于速度进入控制环时\n越大 - 读数越平稳，但速度滞后",
   },
   "sensor.unit.cycles": { ru: "цикл.", en: "cycles", zh: "周期" },
   "sensor.opt.avg1": { ru: "Нет", en: "None", zh: "无" },
