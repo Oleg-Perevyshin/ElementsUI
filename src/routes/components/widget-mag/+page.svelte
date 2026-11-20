@@ -17,7 +17,7 @@
   })
 
   /* Имитация RM3100: Cfg заводской (режим 1), поле Земли около 50 мкТл */
-  const FACTORY_CFG = 242197
+  const FACTORY_CFG = 238997
   let mag: Partial<IWidgetMagData> = $state({ Cfg: FACTORY_CFG, CQ: 84 })
   const noise = (scale: number) => (Math.random() - 0.5) * scale
   const timer = setInterval(() => {
@@ -61,7 +61,7 @@ onRefresh={() => send("GET", "ModuleConfig", { CfgGroup: "MAGF" })}
   {/snippet}
   {#snippet examples()}
     <div class="m-auto flex w-full max-w-md flex-col gap-6 p-2">
-      <WidgetMag accent="orange" label={{ name: "Плохая калибровка (только просмотр)" }} value={{ Cfg: 242197, CX: 80, CY: -12, CZ: 95, CQ: 52 }} />
+      <WidgetMag accent="orange" label={{ name: "Плохая калибровка (только просмотр)" }} value={{ Cfg: 238997, CX: 80, CY: -12, CZ: 95, CQ: 52 }} />
     </div>
   {/snippet}
 </ComponentExample>

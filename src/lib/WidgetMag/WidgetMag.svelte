@@ -76,12 +76,12 @@
 
       <div class="grid grid-cols-1 gap-3 @2xl:grid-cols-[3fr_1fr]">
         <div class="flex flex-col gap-1.5" use:hint={{ text: $T("widget.mag.hint.field"), enabled: $hints }}>
-          <span class="text-[12px] font-semibold text-(--muted-color)">{$T("widget.mag.field")}</span>
-          <div class="grid grid-cols-4 gap-1.5">
-            <SensorReadout label="X" value={value.CX} digits={1} unit="µT" />
-            <SensorReadout label="Y" value={value.CY} digits={1} unit="µT" />
-            <SensorReadout label="Z" value={value.CZ} digits={1} unit="µT" />
-            <SensorReadout label="|B|" value={norm} digits={1} unit="µT" />
+          <span class="text-[12px] font-semibold text-(--muted-color)">{$T("widget.mag.field")}, µT</span>
+          <div class="grid grid-cols-2 gap-1.5 @[16.5rem]:grid-cols-4">
+            <SensorReadout label="X" value={value.CX} digits={1} />
+            <SensorReadout label="Y" value={value.CY} digits={1} />
+            <SensorReadout label="Z" value={value.CZ} digits={1} />
+            <SensorReadout label="|B|" value={norm} digits={1} />
           </div>
         </div>
         <div class="flex flex-col gap-1.5" use:hint={{ text: $T("widget.mag.hint.quality"), enabled: $hints }}>
@@ -101,7 +101,7 @@
       </div>
 
       {#if chipPart}
-        <SensorSettings part={chipPart} cfg={value.Cfg} onSave={onSaveCfg} />
+        <SensorSettings part={chipPart} cfg={value.Cfg} onSave={onSaveCfg} hints={$hints} />
       {/if}
     </div>
   {/if}

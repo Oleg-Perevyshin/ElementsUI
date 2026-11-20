@@ -16,9 +16,16 @@
     RenderMarkdown(readmeRaw).then((html) => (readmeHtml = html))
   })
 
-  /* Имитация ICM42688 в покое: Cfg заводской (режим 1), шум отсчётов */
-  const FACTORY_CFG = 2384345337
-  let imu: Partial<IWidgetIMUData> = $state({ Cfg: FACTORY_CFG })
+  /* Имитация ICM42688 в покое: Cfg заводской (режим 1), шум отсчётов; запись положения (режим 3) отмечает очередное из 6, после шестого ACP сбрасывается */
+  const FACTORY_CFG = 291605261
+  let imu: Partial<IWidgetIMUData> = $state({ Cfg: FACTORY_CFG, ACP: 0 })
+  const calibrate = (cfg: number) => {
+    if ((cfg & 3) !== 3) return void (imu = { ...imu, Cfg: cfg })
+    const poses = Number(imu.ACP) || 0
+    const next = [0, 1, 2, 3, 4, 5].find((i) => !((poses >> i) & 1))
+    const acp = next === undefined ? 0 : poses | (1 << next)
+    imu = { ...imu, ACP: acp === 63 ? 0 : acp }
+  }
   const noise = (scale: number) => (Math.random() - 0.5) * scale
   const timer = setInterval(() => {
     imu = {
@@ -59,7 +66,7 @@ onRefresh={() => send("GET", "ModuleConfig", { CfgGroup: "IMUF" })}
       <WidgetIMU
         {...localizeDeep(imuComponent.properties, $Language) as IWidgetIMUProps}
         value={imu}
-        onCalibrate={(cfg) => (imu = { ...imu, Cfg: cfg })}
+        onCalibrate={calibrate}
         onSaveCfg={(cfg) => (imu = { ...imu, Cfg: cfg })}
         onRefresh={() => (imu = { ...imu, Cfg: FACTORY_CFG })}
       />

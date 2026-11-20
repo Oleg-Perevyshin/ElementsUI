@@ -1,4 +1,4 @@
-<!-- $lib/SensorReadout.svelte - показание датчика надписью: подпись мелко, число крупно моноширинными цифрами, единица рядом. Нет числа - дефис. Общее для WidgetAHRS, WidgetIMU, WidgetMag -->
+<!-- $lib/SensorReadout.svelte - показание датчика надписью: подпись мелко, число крупно моноширинными цифрами, единица рядом. Нет числа - дефис. Общее для WidgetAHRS, WidgetIMU, WidgetMag; в виджете уже 384 px (контейнер) обычное число мельче и отступы меньше, чтобы длинные значения помещались -->
 <script lang="ts">
   let {
     label,
@@ -21,10 +21,10 @@
 
   const number = $derived(value === undefined || value === null || value === "" ? NaN : Number(value))
   const text = $derived(Number.isFinite(number) ? number.toFixed(digits) : "-")
-  const valueClass = $derived(size === "lg" ? "text-[22px]" : size === "sm" ? "text-[13px]" : "text-[16px]")
+  const valueClass = $derived(size === "lg" ? "text-[22px]" : size === "sm" ? "text-[13px]" : "text-[16px] @max-sm:text-[14px]")
 </script>
 
-<div class="flex flex-col items-center gap-0.5 rounded-[10px] border border-(--hairline-color) bg-(--back-color) px-2 py-1.5">
+<div class="flex flex-col items-center gap-0.5 rounded-[10px] border border-(--hairline-color) bg-(--back-color) px-2 py-1.5 @max-sm:px-1">
   <span class="w-full text-center text-[11px] whitespace-nowrap text-(--muted-color)">{label}</span>
   <span class="flex items-baseline gap-1 leading-tight">
     <span class="font-semibold tabular-nums {valueClass}" style={color ? `color: ${color}` : undefined}>{text}</span>

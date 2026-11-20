@@ -1,4 +1,4 @@
-<!-- $lib/WidgetIMU/WidgetIMU.svelte - смарт-виджет IMU любого драйвера: ускорения, угловые скорости и температура надписями, режим датчика и калибровка. Договор с прошивкой - ключи группы (IMUF): AX..AZ, GX..GZ, T и биты 0-1 Cfg (0 стоп, 1 измерять, 2 калибровать). Настройки конкретного чипа виджет не трогает. Ничего не знает про транспорт - value/onCalibrate/onRefresh -->
+<!-- $lib/WidgetIMU/WidgetIMU.svelte - смарт-виджет IMU любого драйвера: ускорения, угловые скорости и температура надписями, режим датчика и калибровка. Договор с прошивкой - ключи группы (IMUF): AX..AZ, GX..GZ, T ACP и биты 0-1 Cfg (0 стоп, 1 измерять, 2 ноль гироскопа, 3 записать положение акселерометра). «Калибровать» - ноль гироскопа; есть ACP - блок калибровки акселерометра по 6 положениям; выбрана микросхема - блок «Настройки датчика». Ничего не знает про транспорт - value/onCalibrate/onRefresh -->
 <script lang="ts">
   import { untrack } from "svelte"
   import { slide } from "svelte/transition"
@@ -10,6 +10,7 @@
   import SensorReadout from "../SensorReadout.svelte"
   import SensorCalibrate from "../SensorCalibrate.svelte"
   import SensorSettings from "../SensorSettings.svelte"
+  import AccelPoses from "./AccelPoses.svelte"
   import { sensorChipPart } from "../sensorChips"
   import ImuIcon from "./ImuIcon.svelte"
   import { hint, hintsSetting } from "../hints"
@@ -72,27 +73,31 @@
 
       <div class="grid grid-cols-1 gap-3 @2xl:grid-cols-2">
         <div class="flex flex-col gap-1.5" use:hint={{ text: $T("widget.imu.hint.accel"), enabled: $hints }}>
-          <span class="text-[12px] font-semibold text-(--muted-color)">{$T("widget.imu.accel")}</span>
-          <div class="grid grid-cols-4 gap-1.5">
-            <SensorReadout label="X" value={value.AX} digits={3} unit="g" />
-            <SensorReadout label="Y" value={value.AY} digits={3} unit="g" />
-            <SensorReadout label="Z" value={value.AZ} digits={3} unit="g" />
-            <SensorReadout label="|a|" value={norm} digits={3} unit="g" />
+          <span class="text-[12px] font-semibold text-(--muted-color)">{$T("widget.imu.accel")}, g</span>
+          <div class="grid grid-cols-2 gap-1.5 @[16.5rem]:grid-cols-4">
+            <SensorReadout label="X" value={value.AX} digits={3} />
+            <SensorReadout label="Y" value={value.AY} digits={3} />
+            <SensorReadout label="Z" value={value.AZ} digits={3} />
+            <SensorReadout label="|a|" value={norm} digits={3} />
           </div>
         </div>
         <div class="flex flex-col gap-1.5" use:hint={{ text: $T("widget.imu.hint.gyro"), enabled: $hints }}>
-          <span class="text-[12px] font-semibold text-(--muted-color)">{$T("widget.imu.gyro")}</span>
-          <div class="grid grid-cols-4 gap-1.5">
-            <SensorReadout label="X" value={value.GX} digits={2} unit="°/s" />
-            <SensorReadout label="Y" value={value.GY} digits={2} unit="°/s" />
-            <SensorReadout label="Z" value={value.GZ} digits={2} unit="°/s" />
+          <span class="text-[12px] font-semibold text-(--muted-color)">{$T("widget.imu.gyro")}, °/s</span>
+          <div class="grid grid-cols-2 gap-1.5 @[16.5rem]:grid-cols-4">
+            <SensorReadout label="X" value={value.GX} digits={1} />
+            <SensorReadout label="Y" value={value.GY} digits={1} />
+            <SensorReadout label="Z" value={value.GZ} digits={1} />
             <SensorReadout label="T" value={value.T} digits={1} unit="°C" />
           </div>
         </div>
       </div>
 
+      {#if value.ACP !== undefined}
+        <AccelPoses poses={value.ACP} cfg={value.Cfg} onRecord={onCalibrate} {onRefresh} hints={$hints} />
+      {/if}
+
       {#if chipPart}
-        <SensorSettings part={chipPart} cfg={value.Cfg} onSave={onSaveCfg} />
+        <SensorSettings part={chipPart} cfg={value.Cfg} onSave={onSaveCfg} hints={$hints} />
       {/if}
     </div>
   {/if}

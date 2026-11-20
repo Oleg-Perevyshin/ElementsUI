@@ -218,8 +218,8 @@ export const DEVICE_MESSAGES: Record<number, DeviceMessageEntry> = {
   2013: { group: "DRV", name: "DRV_FRAME_DROPPED", level: "warn", ru: "Кадр пропущен", en: "Frame dropped", zh: "丢帧" },
   2014: { group: "DRV", name: "DRV_CONFIG_RANGE", level: "error", ru: "Частота {0} МГц вне диапазона 150-960", en: "Frequency {0} MHz out of range 150-960", zh: "频率 {0} MHz 超出 150-960 范围" },
   2015: { group: "DRV", name: "DRV_APPLY_FAILED", level: "error", ru: "Настройки не применены", en: "Settings not applied", zh: "设置未应用" },
-  2016: { group: "DRV", name: "DRV_IMU_CALIB_START", level: "info", ru: "Калибровка: держите датчик неподвижно, ось Z вверх", en: "Calibration: keep sensor still, Z axis up", zh: "校准：保持传感器静止，Z 轴向上" },
-  2017: { group: "DRV", name: "DRV_IMU_ACCEL_CALIB", level: "info", ru: "Акселерометр: [{0}, {1}, {2}], смещение [{3}, {4}, {5}] g", en: "Accelerometer: [{0}, {1}, {2}], offset [{3}, {4}, {5}] g", zh: "加速度计：[{0}, {1}, {2}]，偏移 [{3}, {4}, {5}] g" },
+  2016: { group: "DRV", name: "DRV_IMU_CALIB_START", level: "info", ru: "Калибровка нуля гироскопа: держите датчик неподвижно", en: "Gyro zero calibration: keep sensor still", zh: "陀螺仪零点校准：保持传感器静止" },
+  2017: { group: "DRV", name: "DRV_IMU_ACCEL_CALIB", level: "info", ru: "Акселерометр: смещение [{0}, {1}, {2}] g, масштаб [{3}, {4}, {5}]", en: "Accelerometer: offset [{0}, {1}, {2}] g, scale [{3}, {4}, {5}]", zh: "加速度计：偏移 [{0}, {1}, {2}] g，比例 [{3}, {4}, {5}]" },
   2018: { group: "DRV", name: "DRV_IMU_GYRO_CALIB", level: "info", ru: "Гироскоп: [{0}, {1}, {2}], смещение [{3}, {4}, {5}] °/с", en: "Gyroscope: [{0}, {1}, {2}], offset [{3}, {4}, {5}] dps", zh: "陀螺仪：[{0}, {1}, {2}]，偏移 [{3}, {4}, {5}] °/s" },
   2019: { group: "DRV", name: "DRV_FIFO_TIMEOUT", level: "warn", ru: "Нет данных в буфере датчика", en: "No data in sensor buffer", zh: "传感器缓冲区无数据" },
   2020: { group: "DRV", name: "DRV_DRDY_TIMEOUT", level: "error", ru: "Нет сигнала готовности данных", en: "No data ready signal", zh: "无数据就绪信号" },
@@ -259,6 +259,12 @@ export const DEVICE_MESSAGES: Record<number, DeviceMessageEntry> = {
   2054: { group: "DRV", name: "DRV_FOC_ZERO_DONE", level: "info", ru: "Ноль двигателя {0} рад, направление {1}", en: "Motor zero {0} rad, direction {1}", zh: "电机零位 {0} rad，方向 {1}" },
   2055: { group: "DRV", name: "DRV_FOC_ZERO_FAILED", level: "error", ru: "Ноль двигателя не найден: вал повернулся на {0}° вместо {1}°, проверьте фазы, энкодер и M_PP", en: "Motor zero not found: shaft turned {0}° instead of {1}°, check phases, encoder and M_PP", zh: "未找到电机零位：转轴转动 {0}° 而非 {1}°，请检查相线、编码器和 M_PP" },
   2056: { group: "DRV", name: "DRV_FOC_CMD_TIMEOUT", level: "warn", ru: "Нет команд управления дольше {0} мс, привод держит угол", en: "No control commands for over {0} ms, drive holds angle", zh: "超过 {0} ms 未收到控制命令，驱动器保持角度" },
+  2057: { group: "DRV", name: "DRV_CALIB_MOVED", level: "warn", ru: "Калибровка не сохранена: датчик двигали, повторите неподвижно", en: "Calibration not saved: the sensor moved, repeat while still", zh: "校准未保存：传感器被移动，请静止后重试" },
+  2058: { group: "DRV", name: "DRV_ACCEL_POSE_DONE", level: "info", ru: "Положение {0} записано, осталось {1}", en: "Position {0} saved, {1} left", zh: "位置 {0} 已记录，剩余 {1}" },
+  2059: { group: "DRV", name: "DRV_ACCEL_POSE_BAD", level: "warn", ru: "Положение не записано: поставьте датчик одной осью строго вверх или вниз", en: "Position not saved: put the sensor with one axis straight up or down", zh: "位置未记录：请将传感器的某一轴竖直朝上或朝下" },
+  2060: { group: "DRV", name: "DRV_MAG_CALIB_COVERAGE", level: "warn", ru: "Калибровка не сохранена: мало поворотов, вращайте устройство во все стороны", en: "Calibration not saved: too little rotation, turn the device in all directions", zh: "校准未保存：旋转不足，请向各个方向转动设备" },
+  2061: { group: "DRV", name: "DRV_MAG_CALIB_FIELD", level: "warn", ru: "Калибровка не сохранена: поле {0} мкТл вне 20-100, рядом сильное железо или магнит", en: "Calibration not saved: field {0} uT outside 20-100, strong metal or a magnet nearby", zh: "校准未保存：磁场 {0} uT 超出 20-100，附近有强铁磁物或磁铁" },
+  2062: { group: "DRV", name: "DRV_MAG_CALIB_QUALITY", level: "warn", ru: "Калибровка не сохранена: качество {0}% ниже {1}%", en: "Calibration not saved: quality {0}% below {1}%", zh: "校准未保存：质量 {0}% 低于 {1}%" },
 }
 
 export const MESSAGE_CODES: Record<string, number> = {
@@ -501,4 +507,10 @@ export const MESSAGE_CODES: Record<string, number> = {
   DRV_FOC_ZERO_DONE: 2054,
   DRV_FOC_ZERO_FAILED: 2055,
   DRV_FOC_CMD_TIMEOUT: 2056,
+  DRV_CALIB_MOVED: 2057,
+  DRV_ACCEL_POSE_DONE: 2058,
+  DRV_ACCEL_POSE_BAD: 2059,
+  DRV_MAG_CALIB_COVERAGE: 2060,
+  DRV_MAG_CALIB_FIELD: 2061,
+  DRV_MAG_CALIB_QUALITY: 2062,
 }

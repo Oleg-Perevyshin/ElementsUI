@@ -56,14 +56,18 @@
     const measure = () => {
       if (!alive) return
       const widest = Math.max(0, ...[...element.children].map((child) => child.getBoundingClientRect().width))
-      /* сегменты равной ширины: самый широкий текст + отступы 2×12 (сжатые - 2×4), разделители и рамка */
-      buttonsNeed = options.length * (widest + 24) + options.length + 1
-      compactNeed = options.length * (widest + 8) + options.length + 1
+      /* сегменты равной ширины: самый широкий текст + отступы 2×12 (сжатые - 2×4), разделители и рамка; +2 на сегмент - запас на дробные пиксели (ширина места округляется до целых) */
+      buttonsNeed = options.length * (Math.ceil(widest) + 26) + options.length + 1
+      compactNeed = options.length * (Math.ceil(widest) + 10) + options.length + 1
     }
     measure()
-    /* Шрифты могут догрузиться после замера; к тому времени компонент может быть уже убран */
-    void document.fonts?.ready.then(measure)
-    return () => (alive = false)
+    /* Шрифт подписей (полужирный) может догрузиться уже после замера, и document.fonts.ready к тому времени давно выполнен: перемер по изменению ширины блока замера */
+    const observer = typeof ResizeObserver === "undefined" ? undefined : new ResizeObserver(measure)
+    observer?.observe(element)
+    return () => {
+      alive = false
+      observer?.disconnect()
+    }
   })
   /* fitContent: ширину задают сами кнопки, сворачивать нечего */
   const shownType = $derived(type === "buttons" && !fitContent && anchorWidth < compactNeed ? "select" : type)
