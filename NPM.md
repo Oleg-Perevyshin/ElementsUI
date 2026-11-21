@@ -24,7 +24,7 @@
 <details>
 <summary>🏗️ Инфраструктура, из которой выбираем (K8S-DevCluster)</summary>
 
-Подробно - `D:/Projects/K8S-DevCluster/README.md`.
+Подробно - `D:/xPOE-Stack/K8S-DevCluster/README.md`.
 
 - Три сервера Proxmox. На них Kubernetes на Talos: 3 узла управления и 3 рабочих узла, подсеть `192.168.20.0/24`.
 - Вне кластера:
