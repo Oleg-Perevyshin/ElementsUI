@@ -46,7 +46,15 @@
   const frame = $derived(phone ? "mx-auto w-[375px] max-w-full rounded-[1.75rem] border-4 border-(--border-color) p-2" : "")
 
   /* Справка (i) - тот же текст component.info.<Тип>, что открывает конструктор DevCloud; тип - из адреса страницы */
-  const TYPE_OVERRIDES: Record<string, string> = { WidgetWifi: "WidgetWiFi", WidgetRgbStrip: "WidgetRGBStrip", WidgetPfd: "WidgetPFD" }
+  const TYPE_OVERRIDES: Record<string, string> = {
+    WidgetWifi: "WidgetWiFi",
+    WidgetRgbStrip: "WidgetRGBStrip",
+    WidgetPfd: "WidgetPFD",
+    WidgetFoc: "WidgetFOC",
+    WidgetAhrs: "WidgetAHRS",
+    WidgetImu: "WidgetIMU",
+    WidgetLora: "WidgetLoRa",
+  }
   let componentType = $derived.by(() => {
     const slug = page.url.pathname.split("/").filter(Boolean).pop() ?? ""
     const pascal = slug.replace(/(^|-)(\w)/g, (_m, _d, c: string) => c.toUpperCase())
