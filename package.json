@@ -24,8 +24,7 @@
     "Generate": "node scripts/GenerateDictionary.mjs && node scripts/GenerateDroneCAN.mjs && tsx scripts/UpdateIconsLib.ts && prettier --write --log-level warn src/lib/icons.ts src/lib/protocols/dronecan/generated/types.ts",
     "Test": "npm run Generate && svelte-package && node --test tests/*.test.mjs",
     "Sync": "node scripts/SyncStack.mjs",
-    "Formatting": "prettier --write .",
-    "CheckUpdate": "npx npm-check-updates -u && npm install"
+    "Formatting": "prettier --write ."
   },
   "svelte": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -63,7 +62,7 @@
     "runes"
   ],
   "peerDependencies": {
-    "svelte": "^5.9.0",
+    "svelte": "^5.59.1",
     "tailwindcss": "^4.0.0"
   },
   "dependencies": {
@@ -76,7 +75,7 @@
     "@sveltejs/vite-plugin-svelte": "^7.3.1",
     "@tailwindcss/vite": "^4.3.5",
     "@types/node": "^26.6.6",
-    "dompurify": "^3.4.18",
+    "dompurify": "^3.5.0",
     "js-yaml": "^5.5.0",
     "maplibre-gl": "^6.19.0",
     "marked": "^18.2.1",
