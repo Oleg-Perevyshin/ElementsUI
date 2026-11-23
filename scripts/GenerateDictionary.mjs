@@ -23,8 +23,8 @@ const isWide = (c) =>
   (c >= 0x20000 && c <= 0x3fffd)
 const columns = (text) => [...text].reduce((width, ch) => width + (isWide(ch.codePointAt(0)) ? 2 : 1), 0)
 
-/* typedef enum с именем type; строки тела: { section } - комментарий на своей строке, { blank } - пустая строка, { name, value, comment? } - элемент */
-const formatEnum = (items, type) => {
+/* typedef enum с именем type; строки тела: { section } - комментарий на своей строке, { blank } - пустая строка, { name, value, comment? } - элемент; closed = false - маркер clang-format on ставит вызывающий, когда после перечисления идёт ещё код */
+const formatEnum = (items, type, closed = true) => {
   const entries = items.filter((item) => item.name)
   const eq = Math.max(...entries.map((entry) => columns(`${INDENT}${entry.name} `)))
   const code = (entry) => `${INDENT}${entry.name}${" ".repeat(eq - columns(`${INDENT}${entry.name}`))}= ${entry.value},`
@@ -35,7 +35,7 @@ const formatEnum = (items, type) => {
     const line = code(item)
     return item.comment ? `${line}${" ".repeat(commentColumn - columns(line))}/* ${item.comment} */` : line
   })
-  return ["/* clang-format off */", "typedef enum {", ...body, `} ${type};`, "/* clang-format on */"].join("\n")
+  return ["/* clang-format off */", "typedef enum {", ...body, `} ${type};`, ...(closed ? ["/* clang-format on */"] : [])].join("\n")
 }
 
 /* Элементы enum из yaml: комментарии разделов («# ...» перед строками) - строки-комментарии, пустая строка перед разделом; шапка файла (комментарии до первой пустой строки) не идёт */
@@ -103,9 +103,11 @@ const harItems = enumItems(commandsYaml, (line) => {
   const entry = line.match(COMMAND_LINE)
   return entry && { name: entry[2], value: Number(entry[3]), comment: entry[5] && cComment(entry[5]) }
 })
-const priorityCases = PRIORITY_LEVELS.map((level) =>
-  [...commands.filter(({ priority }) => priority === level).map(({ enumName }) => `    case ${enumName}:`), `      return ${level};`].join("\n"),
-).join("\n")
+const priorityCases = PRIORITY_LEVELS.map((level) => {
+  const cases = commands.filter(({ priority }) => priority === level).map(({ enumName }) => `    case ${enumName}:`)
+  cases[cases.length - 1] += ` return ${level};`
+  return cases.join("\n")
+}).join("\n")
 writeFileSync(
   new URL("poe_cmd.h", firmware),
   `/* poe_cmd.h - СГЕНЕРИРОВАНО из poe_cmd.yaml библиотеки xPOE-Stack Lib (npm run Generate), вручную не править */\n` +
@@ -118,10 +120,11 @@ writeFileSync(
     `#define HAR_NR(_h, _a) (((har_t) {.hdr = (_h), .arg = (_a), .reply = 0}).word)\n\n` +
     `/* Коды заголовков */\ntypedef enum { H_GET = 0, H_SET = 1, H_OK = 2, H_ER = 3 } api_header_t;\n\n` +
     `/* Словарь аргументов - единый для всех устройств и обоих фреймворков (.framework/poe_cmd.yaml), 0 = отсутствие аргумента; имён в прошивке нет, только коды */\n` +
-    `${formatEnum(harItems, "api_argument_t")}\n\n` +
+    `${formatEnum(harItems, "api_argument_t", false)}\n\n` +
     `/* Важность команды на CAN по коду аргумента: 0 - самый важный, 3 - фон; команды без своей важности - CMD_PRIORITY_DEFAULT */\n` +
     `#define CMD_PRIORITY_DEFAULT ${PRIORITY_DEFAULT}\n` +
-    `static inline uint8_t CMD_Priority(uint16_t arg) {\n  switch(arg) {\n${priorityCases}\n    default:\n      return CMD_PRIORITY_DEFAULT;\n  }\n}\n`,
+    `static inline uint8_t CMD_Priority(uint16_t arg) {\n  switch(arg) {\n${priorityCases}\n    default: return CMD_PRIORITY_DEFAULT;\n  }\n}\n` +
+    `/* clang-format on */\n`,
 )
 console.log(`generated/poe_cmd.ts, firmware/poe_cmd.h: ${commands.length} аргументов`)
 

@@ -109,7 +109,6 @@ typedef enum {
   A_CLOUD_DEVICE_LEAVE_GROUPS       = 7103, /* SET: выход из групп всех устройств */
   A_CLOUD_DEVICE_RESET_TOKEN        = 7104, /* SET/OK!: сброс токена устройства (TOFU) */
 } api_argument_t;
-/* clang-format on */
 
 /* Важность команды на CAN по коду аргумента: 0 - самый важный, 3 - фон; команды без своей важности - CMD_PRIORITY_DEFAULT */
 #define CMD_PRIORITY_DEFAULT 2
@@ -121,8 +120,7 @@ static inline uint8_t CMD_Priority(uint16_t arg) {
     case A_FIRMWARE_UPGRADE_START:
     case A_FIRMWARE_UPGRADE_READ:
     case A_FIRMWARE_UPGRADE_DONE:
-    case A_MOTION_ENABLE:
-      return 0;
+    case A_MOTION_ENABLE: return 0;
     case A_SYSTEM_LOCAL_TIME:
     case A_SYSTEM_STACK_INFO:
     case A_SYSTEM_BACKUP:
@@ -146,15 +144,13 @@ static inline uint8_t CMD_Priority(uint16_t arg) {
     case A_ORIENTATION_OFFSET:
     case A_ORIENTATION_ACCEL_CALIBRATE:
     case A_ORIENTATION_MAG_CALIBRATE:
-    case A_ORIENTATION_GYROSCOPE_CALIBRATE:
-      return 1;
+    case A_ORIENTATION_GYROSCOPE_CALIBRATE: return 1;
     case A_SYSTEM_DATA_UPDATE:
     case A_DEBUG_LOG:
     case A_DEBUG_PLOT:
     case A_DEBUG_MIRROR:
-    case A_SYSTEM_DATA_STREAM:
-      return 3;
-    default:
-      return CMD_PRIORITY_DEFAULT;
+    case A_SYSTEM_DATA_STREAM: return 3;
+    default: return CMD_PRIORITY_DEFAULT;
   }
 }
+/* clang-format on */
