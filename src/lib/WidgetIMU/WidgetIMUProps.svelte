@@ -1,4 +1,4 @@
-<!-- $lib/WidgetIMU/WidgetIMUProps.svelte - панель пропсов конструктора для WidgetIMU (IMU): заголовок, префикс группы (по умолчанию IMUF), мастер-цвет. -->
+<!-- $lib/WidgetIMU/WidgetIMUProps.svelte - настройки конструктора для WidgetIMU: заголовок, группа данных, тип микросхемы и мастер-цвет -->
 <script lang="ts">
   import TextsEditor from "../TextsEditor.svelte"
   import { T } from "../locales/i18n"

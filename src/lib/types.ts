@@ -1012,6 +1012,8 @@ export interface IWidgetIMUProps {
   chip?: string
   /* Новое слово Cfg из настроек датчика; без колбэка настройки только для просмотра */
   onSaveCfg?: (cfg: number) => void
+  /* Новые углы привязки осей датчика к корпусу, градусы */
+  onSaveMount?: (mount: Pick<IWidgetIMUData, "MR" | "MP" | "MY">) => void
   /* Новое слово Cfg с режимом «калибровать»; без колбэка кнопки нет */
   onCalibrate?: (cfg: number) => void
   /* Перечитать настройки устройства: во время калибровки и после неё */
@@ -1035,6 +1037,8 @@ export interface IWidgetMagProps {
   chip?: string
   /* Новое слово Cfg из настроек датчика; без колбэка настройки только для просмотра */
   onSaveCfg?: (cfg: number) => void
+  /* Новые углы привязки осей магнитометра к корпусу, градусы */
+  onSaveMount?: (mount: Pick<IWidgetMagData, "MR" | "MP" | "MY">) => void
   /* Новое слово Cfg с режимом «калибровать»; без колбэка кнопки нет */
   onCalibrate?: (cfg: number) => void
   /* Перечитать настройки устройства: во время калибровки и после неё */

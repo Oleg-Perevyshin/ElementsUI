@@ -1,5 +1,6 @@
 <!-- $lib/SensorSettings.svelte - настройки микросхемы датчика в WidgetIMU, WidgetMag и WidgetEncoder: поля слова Cfg по описанию из sensorChips.ts (списки и переключатели), сворачиваемый раздел со сводкой в шапке. Раздел common идёт без заголовка, режим узла (gate) - первым полем строки узла, выключен - остальные поля скрыты; раздел из одних переключателей (оси) - одна группа кнопок рядом с полями предыдущего раздела. Правки локальные до «Сохранить»; биты, которых нет в описании, не меняются. Режим работы (биты 0-1) - поле run: калибровку оно не запускает, а пока драйвер калибрует (busyModes) или виджет занят калибровкой (locked), всё недоступно. «По умолчанию» - заводское слово микросхемы с текущим режимом -->
 <script lang="ts">
+  import type { Snippet } from "svelte"
   import { untrack } from "svelte"
   import * as UI from "."
   import { T } from "./locales/i18n"
@@ -19,6 +20,7 @@
     onSave,
     hints = false,
     locked = false,
+    children,
   }: {
     part: SensorChipPart
     cfg: unknown
@@ -28,6 +30,7 @@
     hints?: boolean
     /* Виджет занят калибровкой или записью положения: настройки только для просмотра */
     locked?: boolean
+    children?: Snippet
   } = $props()
 
   let open = $state(false)
@@ -228,6 +231,8 @@
           </div>
         </div>
       {/each}
+
+      {@render children?.()}
 
       {#if onSave}
         <div class="flex flex-col items-center gap-2">

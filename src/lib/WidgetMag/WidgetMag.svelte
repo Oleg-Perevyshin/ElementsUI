@@ -10,6 +10,7 @@
   import SensorReadout from "../SensorReadout.svelte"
   import SensorCalibrate from "../SensorCalibrate.svelte"
   import SensorSettings from "../SensorSettings.svelte"
+  import SensorMountSettings from "../SensorMountSettings.svelte"
   import { sensorChipPart } from "../sensorChips"
   import MagIcon from "./MagIcon.svelte"
   import { hint, hintsSetting } from "../hints"
@@ -26,6 +27,7 @@
     collapsed = $bindable(false),
     persistKey,
     onSaveCfg,
+    onSaveMount,
     onCalibrate,
     onRefresh,
   }: IWidgetMagProps = $props()
@@ -104,7 +106,18 @@
       </div>
 
       {#if chipPart}
-        <SensorSettings part={chipPart} cfg={value.Cfg} onSave={onSaveCfg} hints={$hints} locked={calibrating} />
+        <SensorSettings part={chipPart} cfg={value.Cfg} onSave={onSaveCfg} hints={$hints} locked={calibrating}>
+          {#snippet children()}
+            {#if value.MR !== undefined && value.MP !== undefined && value.MY !== undefined}
+              <SensorMountSettings
+                title={$T("widget.mag.mount.title")}
+                mount={{ MR: Number(value.MR), MP: Number(value.MP), MY: Number(value.MY) }}
+                onSave={onSaveMount}
+                locked={calibrating}
+              />
+            {/if}
+          {/snippet}
+        </SensorSettings>
       {/if}
     </div>
   {/if}

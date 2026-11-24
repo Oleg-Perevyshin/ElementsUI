@@ -18,7 +18,7 @@
 
   /* Имитация RM3100: Cfg заводской (режим 1), поле Земли около 50 мкТл */
   const FACTORY_CFG = 238997
-  let mag: Partial<IWidgetMagData> = $state({ Cfg: FACTORY_CFG, CQ: 84 })
+  let mag: Partial<IWidgetMagData> = $state({ Cfg: FACTORY_CFG, CQ: 84, MR: 0, MP: 0, MY: 0 })
   const noise = (scale: number) => (Math.random() - 0.5) * scale
   const timer = setInterval(() => {
     mag = { ...mag, CX: 18.2 + noise(0.4), CY: -4.1 + noise(0.4), CZ: 46.7 + noise(0.4) }
@@ -40,6 +40,7 @@
 ${formatObjectToString(magComponent.properties as IWidgetMagProps)}
 value={mag}
 onCalibrate={(cfg) => send({ "MAGF.Cfg": cfg })}
+onSaveMount={(mount) => send(mount)}
 onRefresh={() => send("GET", "ModuleConfig", { CfgGroup: "MAGF" })}
 />`)
 </script>
@@ -52,6 +53,7 @@ onRefresh={() => send("GET", "ModuleConfig", { CfgGroup: "MAGF" })}
         value={mag}
         onCalibrate={(cfg) => (mag = { ...mag, Cfg: cfg })}
         onSaveCfg={(cfg) => (mag = { ...mag, Cfg: cfg })}
+        onSaveMount={(mount) => (mag = { ...mag, ...mount })}
         onRefresh={() => (mag = { ...mag, Cfg: FACTORY_CFG, CQ: 96 })}
       />
     </div>

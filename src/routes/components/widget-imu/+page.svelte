@@ -18,7 +18,7 @@
 
   /* Имитация ICM42688 в покое: Cfg заводской (режим 1), шум отсчётов; запись положения (режим 3) отмечает очередное из 6, после шестого ACP сбрасывается */
   const FACTORY_CFG = 291605261
-  let imu: Partial<IWidgetIMUData> = $state({ Cfg: FACTORY_CFG, ACP: 0 })
+  let imu: Partial<IWidgetIMUData> = $state({ Cfg: FACTORY_CFG, ACP: 0, MR: 0, MP: 0, MY: 0 })
   const calibrate = (cfg: number) => {
     if ((cfg & 3) !== 3) return void (imu = { ...imu, Cfg: cfg })
     const poses = Number(imu.ACP) || 0
@@ -56,6 +56,7 @@
 ${formatObjectToString(imuComponent.properties as IWidgetIMUProps)}
 value={imu}
 onCalibrate={(cfg) => send({ "IMUF.Cfg": cfg })}
+onSaveMount={(mount) => send(mount)}
 onRefresh={() => send("GET", "ModuleConfig", { CfgGroup: "IMUF" })}
 />`)
 </script>
@@ -68,6 +69,7 @@ onRefresh={() => send("GET", "ModuleConfig", { CfgGroup: "IMUF" })}
         value={imu}
         onCalibrate={calibrate}
         onSaveCfg={(cfg) => (imu = { ...imu, Cfg: cfg })}
+        onSaveMount={(mount) => (imu = { ...imu, ...mount })}
         onRefresh={() => (imu = { ...imu, Cfg: FACTORY_CFG })}
       />
     </div>

@@ -597,6 +597,7 @@
           persistKey={persist(component)}
           onCalibrate={locked ? undefined : (cfg: number) => saveFields(prefix, ["Cfg"], { Cfg: cfg }, props.keys)}
           onSaveCfg={locked ? undefined : (cfg: number) => saveFields(prefix, ["Cfg"], { Cfg: cfg }, props.keys)}
+          onSaveMount={locked ? undefined : (mount) => saveFields(prefix, Object.keys(mount), mount, props.keys)}
           onRefresh={() => send("GET", "ModuleConfig", { CfgGroup: prefix })}
         />
       {:else if component.type === "WidgetHoming" && views.WidgetHoming}

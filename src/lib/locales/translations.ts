@@ -695,6 +695,15 @@ const translations = {
   "widget.sensor.mode.calibrate": { ru: "калибровка", en: "calibrating", zh: "校准中" },
   "widget.sensor.mode.on_demand": { ru: "по запросу", en: "on demand", zh: "按需" },
   "widget.sensor.calibrate": { ru: "Калибровать", en: "Calibrate", zh: "校准" },
+  "widget.sensor.mount.roll": { ru: "Roll · X", en: "Roll · X", zh: "Roll · X" },
+  "widget.sensor.mount.pitch": { ru: "Pitch · Y", en: "Pitch · Y", zh: "Pitch · Y" },
+  "widget.sensor.mount.yaw": { ru: "Yaw · Z", en: "Yaw · Z", zh: "Yaw · Z" },
+  "widget.sensor.mount.info": {
+    ru: "Выберите один из 12 стандартных вариантов монтажа или задайте угол вручную. Поворот идёт вокруг X, затем Y, затем Z; положительное направление - по правилу правой руки.",
+    en: "Choose one of 12 standard mount orientations or enter angles. Rotation is around X, then Y, then Z; positive angles follow the right-hand rule.",
+    zh: "选择 12 种标准安装方向之一，或手动输入角度。旋转顺序为 X、Y、Z 轴；正方向遵循右手定则。",
+  },
+  "widget.sensor.mount.reset": { ru: "Сбросить", en: "Reset", zh: "重置" },
   "widget.enc.calibrate.confirm": {
     ru: "Для калибровки устройство само вращает вал с датчиком, несколько десятков оборотов.\nВал должен вращаться свободно: снимите нагрузку и проверьте, что ничего не намотается и не упрётся.",
     en: "To calibrate, the device spins the shaft with the sensor for several dozen turns.\nThe shaft must turn freely: remove the load and make sure nothing can wind up or hit a stop.",
@@ -704,6 +713,7 @@ const translations = {
   "widget.imu.title": { ru: "IMU", en: "IMU", zh: "IMU" },
   "widget.imu.accel": { ru: "Акселерометр", en: "Accelerometer", zh: "加速度计" },
   "widget.imu.gyro": { ru: "Гироскоп", en: "Gyroscope", zh: "陀螺仪" },
+  "widget.imu.mount.title": { ru: "Ориентация IMU", en: "IMU orientation", zh: "IMU 方向" },
   "widget.imu.calibrating": {
     ru: "Держите датчик неподвижно, пока идёт калибровка нуля гироскопа",
     en: "Keep the sensor still while the gyro zero is calibrated",
@@ -1009,6 +1019,7 @@ const translations = {
   "widget.mag.title": { ru: "Магнитометр", en: "Magnetometer", zh: "磁力计" },
   "widget.mag.field": { ru: "Магнитное поле", en: "Magnetic field", zh: "磁场" },
   "widget.mag.quality": { ru: "Калибровка", en: "Calibration", zh: "校准" },
+  "widget.mag.mount.title": { ru: "Ориентация магнитометра", en: "Magnetometer orientation", zh: "磁力计方向" },
   "widget.mag.calibrating": {
     ru: "Медленно вращайте устройство во все стороны, пока идёт калибровка",
     en: "Slowly rotate the device in all directions while calibrating",

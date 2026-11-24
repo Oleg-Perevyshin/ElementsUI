@@ -10,6 +10,7 @@
   import SensorReadout from "../SensorReadout.svelte"
   import SensorCalibrate from "../SensorCalibrate.svelte"
   import SensorSettings from "../SensorSettings.svelte"
+  import SensorMountSettings from "../SensorMountSettings.svelte"
   import AccelPoses from "./AccelPoses.svelte"
   import { sensorChipPart } from "../sensorChips"
   import ImuIcon from "./ImuIcon.svelte"
@@ -27,6 +28,7 @@
     collapsed = $bindable(false),
     persistKey,
     onSaveCfg,
+    onSaveMount,
     onCalibrate,
     onRefresh,
   }: IWidgetIMUProps = $props()
@@ -99,20 +101,30 @@
         </div>
       </div>
 
-      {#if value.ACP !== undefined}
-        <AccelPoses
-          poses={value.ACP}
-          cfg={value.Cfg}
-          onRecord={onCalibrate}
-          {onRefresh}
-          hints={$hints}
-          locked={calibrating || mode === undefined || mode !== 1}
-          bind:busy={recording}
-        />
-      {/if}
-
       {#if chipPart}
-        <SensorSettings part={chipPart} cfg={value.Cfg} onSave={onSaveCfg} hints={$hints} locked={calibrating || recording} />
+        <SensorSettings part={chipPart} cfg={value.Cfg} onSave={onSaveCfg} hints={$hints} locked={calibrating || recording}>
+          {#snippet children()}
+            {#if value.ACP !== undefined}
+              <AccelPoses
+                poses={value.ACP}
+                cfg={value.Cfg}
+                onRecord={onCalibrate}
+                {onRefresh}
+                hints={$hints}
+                locked={calibrating || mode === undefined || mode !== 1}
+                bind:busy={recording}
+              />
+            {/if}
+            {#if value.MR !== undefined && value.MP !== undefined && value.MY !== undefined}
+              <SensorMountSettings
+                title={$T("widget.imu.mount.title")}
+                mount={{ MR: Number(value.MR), MP: Number(value.MP), MY: Number(value.MY) }}
+                onSave={onSaveMount}
+                locked={calibrating || recording}
+              />
+            {/if}
+          {/snippet}
+        </SensorSettings>
       {/if}
     </div>
   {/if}
