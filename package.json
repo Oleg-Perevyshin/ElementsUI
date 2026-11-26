@@ -1,11 +1,11 @@
 {
   "name": "poe-svelte-ui-lib",
-  "version": "3.11.0",
+  "version": "3.11.1",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Oleg-Perevyshin/ElementsUI.git"
   },
-  "license": "MIT",
+  "license": "SEE LICENSE IN LICENSE.md",
   "type": "module",
   "sideEffects": [
     "**/*.css",
@@ -70,11 +70,11 @@
   },
   "devDependencies": {
     "@sveltejs/adapter-static": "^4.0.1",
-    "@sveltejs/kit": "^3.4.0",
+    "@sveltejs/kit": "^3.4.1",
     "@sveltejs/package": "^3.0.3",
     "@sveltejs/vite-plugin-svelte": "^7.3.2",
     "@tailwindcss/vite": "^4.3.5",
-    "@types/node": "^26.6.6",
+    "@types/node": "^26.6.11",
     "dompurify": "^3.5.0",
     "js-yaml": "^5.5.0",
     "maplibre-gl": "^6.19.0",
@@ -83,13 +83,13 @@
     "prettier-plugin-svelte": "^4.2.0",
     "prettier-plugin-tailwindcss": "^0.8.1",
     "publint": "^0.3.25",
-    "svelte": "^5.58.1",
+    "svelte": "^5.59.2",
     "svelte-check": "^4.7.8",
     "svelte2tsx": "^0.7.63",
     "tailwindcss": "^4.3.5",
     "tsx": "^4.23.15",
     "typescript": "^6.0.3",
-    "vite": "^8.3.8",
+    "vite": "^8.4.0",
     "vite-plugin-compression": "^0.5.1"
   },
   "allowScripts": {

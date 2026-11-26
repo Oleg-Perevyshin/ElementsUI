@@ -1400,13 +1400,13 @@ npm pack               # сборка пакета в dist/: проверка т
 
 #### 🧭 Как сейчас
 
-| Что                       | Где                                 | Как обновляется                                                                                                                                             |
-| ------------------------- | ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Исходники ElementsUI      | GitHub `Oleg-Perevyshin/ElementsUI` | Зеркало на Forgejo отстаёт и не используется                                                                                                                |
-| Пакет `poe-svelte-ui-lib` | npmjs, публичный, MIT               | Коммит с `[publish]`, job `publish` в `.github/workflows/npm_publish.yaml`, публикация по OIDC                                                              |
-| Облако DevCloud           | git.xpoe.pro, образ в Harbor        | Job `update-devcloud` того же workflow ставит новую версию в DevCloud и коммитит `X.Y [deploy] Обновление ElementsUI до X.Y.Z`, дальше CI облака на Forgejo |
-| Витрина                   | GitHub Pages, путь `/ElementsUI`    | Коммит с `[deploy]`, `.github/workflows/ghpages_deploy.yaml`, сборка в `docs/`                                                                              |
-| DevTerminal, WebApp ESP   | Локально у разработчика             | `npm install poe-svelte-ui-lib@^X.Y.Z` вручную в том же выпуске                                                                                             |
+| Что                       | Где                                                               | Как обновляется                                                                                                                                             |
+| ------------------------- | ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Исходники ElementsUI      | GitHub `Oleg-Perevyshin/ElementsUI`                               | Зеркало на Forgejo отстаёт и не используется                                                                                                                |
+| Пакет `poe-svelte-ui-lib` | npmjs, публичный, закрытая лицензия (`SEE LICENSE IN LICENSE.md`) | Коммит с `[publish]`, job `publish` в `.github/workflows/npm_publish.yaml`, публикация по OIDC                                                              |
+| Облако DevCloud           | git.xpoe.pro, образ в Harbor                                      | Job `update-devcloud` того же workflow ставит новую версию в DevCloud и коммитит `X.Y [deploy] Обновление ElementsUI до X.Y.Z`, дальше CI облака на Forgejo |
+| Витрина                   | GitHub Pages, путь `/ElementsUI`                                  | Коммит с `[deploy]`, `.github/workflows/ghpages_deploy.yaml`, сборка в `docs/`                                                                              |
+| DevTerminal, WebApp ESP   | Локально у разработчика                                           | `npm install poe-svelte-ui-lib@^X.Y.Z` вручную в том же выпуске                                                                                             |
 
 **Что уже случалось.** Метаданные новой версии в npm (`npm view`) появляются раньше, чем реестр начинает отдавать сам архив `.tgz`. Из-за этого обновление облака до 3.3.1 упало с `404`. Теперь `update-devcloud` ждёт сам архив (`npm pack --dry-run`) и повторяет установку до 5 раз.
 

@@ -2,7 +2,7 @@
 
 Создатель и владелец проекта - Олег Перевышин. Контакты - oleg.perevyshin@gmail.com, +375 (29) 352-18-40.
 
-ElementsUI - xPOE-Stack Lib (`poe-svelte-ui-lib`, MIT). Начни с [правил стека](../AGENTS.md), [README](README.md), [протокола](src/lib/protocols/PROTOCOL.md) и [правил словарей](src/lib/dictionaries/README.md).
+ElementsUI - xPOE-Stack Lib (`poe-svelte-ui-lib`) с закрытой лицензией. Начни с [правил стека](../AGENTS.md), [README](README.md), [протокола](src/lib/protocols/PROTOCOL.md) и [правил словарей](src/lib/dictionaries/README.md).
 
 ## Где менять контракт
 
