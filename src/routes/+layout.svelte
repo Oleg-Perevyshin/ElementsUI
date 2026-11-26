@@ -5,6 +5,20 @@
   import * as UI from "#lib/index.ts"
   import "#lib/constructor.ts"
   import GitHub from "../appIcons/GitHub.svelte"
+  import WifiIcon from "#lib/WidgetWiFi/WifiIcon.svelte"
+  import DeviceInfoIcon from "#lib/WidgetDeviceInfo/DeviceInfoIcon.svelte"
+  import RadioIcon from "#lib/WidgetLoRa/RadioIcon.svelte"
+  import StorageIcon from "#lib/WidgetFileSystem/StorageIcon.svelte"
+  import MemoryIcon from "#lib/WidgetStackInfo/MemoryIcon.svelte"
+  import LightIcon from "#lib/WidgetRGBStrip/LightIcon.svelte"
+  import PlaneIcon from "#lib/WidgetPFD/PlaneIcon.svelte"
+  import MapIcon from "#lib/WidgetMap/MapIcon.svelte"
+  import AhrsIcon from "#lib/WidgetAHRS/AhrsIcon.svelte"
+  import ImuIcon from "#lib/WidgetIMU/ImuIcon.svelte"
+  import MagIcon from "#lib/WidgetMag/MagIcon.svelte"
+  import EncoderIcon from "#lib/WidgetEncoder/EncoderIcon.svelte"
+  import HomingIcon from "#lib/WidgetHoming/HomingIcon.svelte"
+  import FOCIcon from "#lib/WidgetFOC/FOCIcon.svelte"
   import { goto } from "$app/navigation"
   import { page } from "$app/state"
   import { fade } from "svelte/transition"
@@ -30,40 +44,40 @@
 
   /* Список всех компонентов - смарт-виджеты идут первыми (тот же принцип, что и в DevCloud'овской палитре конструктора) */
   const menuItems = [
-    { page: "widget-wifi", name: "WidgetWiFi" },
-    { page: "widget-device-info", name: "WidgetDeviceInfo" },
-    { page: "widget-lora", name: "WidgetLoRa" },
-    { page: "widget-file-system", name: "WidgetFileSystem" },
-    { page: "widget-stack-info", name: "WidgetStackInfo" },
-    { page: "widget-firmware", name: "WidgetFirmware" },
-    { page: "widget-rgb-strip", name: "WidgetRGBStrip" },
-    { page: "widget-pfd", name: "WidgetPFD" },
-    { page: "widget-map", name: "WidgetMap" },
-    { page: "widget-ahrs", name: "WidgetAHRS" },
-    { page: "widget-imu", name: "WidgetIMU" },
-    { page: "widget-mag", name: "WidgetMag" },
-    { page: "widget-encoder", name: "WidgetEncoder" },
-    { page: "widget-homing", name: "WidgetHoming" },
-    { page: "widget-foc", name: "WidgetFOC" },
-    { page: "accordion", name: "Accordion" },
-    { page: "button", name: "Button" },
-    { page: "carousel", name: "Carousel" },
-    { page: "divider", name: "Divider" },
-    { page: "dropdown", name: "Dropdown" },
-    { page: "file-attach", name: "FileAttach" },
-    { page: "graph", name: "Graph" },
-    { page: "input", name: "Input" },
-    { page: "joystick", name: "Joystick" },
-    { page: "period-chart", name: "PeriodChart" },
-    { page: "progress-bar", name: "ProgressBar" },
-    { page: "select", name: "Select" },
-    { page: "slider", name: "Slider" },
-    { page: "switch", name: "Switch" },
-    { page: "table", name: "Table" },
-    { page: "tabs", name: "Tabs" },
-    { page: "text-field", name: "TextField" },
-    { page: "video-viewer", name: "VideoViewer" },
-    { page: "widget", name: "Widget" },
+    { page: "widget-wifi", name: "WidgetWiFi", icon: WifiIcon },
+    { page: "widget-device-info", name: "WidgetDeviceInfo", icon: DeviceInfoIcon },
+    { page: "widget-lora", name: "WidgetLoRa", icon: RadioIcon },
+    { page: "widget-file-system", name: "WidgetFileSystem", icon: StorageIcon },
+    { page: "widget-stack-info", name: "WidgetStackInfo", icon: MemoryIcon },
+    { page: "widget-firmware", name: "WidgetFirmware", icon: UI.IconCloudDownload },
+    { page: "widget-rgb-strip", name: "WidgetRGBStrip", icon: LightIcon },
+    { page: "widget-pfd", name: "WidgetPFD", icon: PlaneIcon },
+    { page: "widget-map", name: "WidgetMap", icon: MapIcon },
+    { page: "widget-ahrs", name: "WidgetAHRS", icon: AhrsIcon },
+    { page: "widget-imu", name: "WidgetIMU", icon: ImuIcon },
+    { page: "widget-mag", name: "WidgetMag", icon: MagIcon },
+    { page: "widget-encoder", name: "WidgetEncoder", icon: EncoderIcon },
+    { page: "widget-homing", name: "WidgetHoming", icon: HomingIcon },
+    { page: "widget-foc", name: "WidgetFOC", icon: FOCIcon },
+    { page: "accordion", name: "Accordion", icon: undefined },
+    { page: "button", name: "Button", icon: undefined },
+    { page: "carousel", name: "Carousel", icon: undefined },
+    { page: "divider", name: "Divider", icon: undefined },
+    { page: "dropdown", name: "Dropdown", icon: undefined },
+    { page: "file-attach", name: "FileAttach", icon: undefined },
+    { page: "graph", name: "Graph", icon: undefined },
+    { page: "input", name: "Input", icon: undefined },
+    { page: "joystick", name: "Joystick", icon: undefined },
+    { page: "period-chart", name: "PeriodChart", icon: undefined },
+    { page: "progress-bar", name: "ProgressBar", icon: undefined },
+    { page: "select", name: "Select", icon: undefined },
+    { page: "slider", name: "Slider", icon: undefined },
+    { page: "switch", name: "Switch", icon: undefined },
+    { page: "table", name: "Table", icon: undefined },
+    { page: "tabs", name: "Tabs", icon: undefined },
+    { page: "text-field", name: "TextField", icon: undefined },
+    { page: "video-viewer", name: "VideoViewer", icon: undefined },
+    { page: "widget", name: "Widget", icon: undefined },
   ]
 
   /* Переключение темы */
@@ -180,11 +194,11 @@
       {/each}
       <span class="mt-2 px-1 text-xs font-semibold tracking-wide text-(--muted-color) uppercase">{$T("library.section_components")}</span>
       {#each menuItems as item}
-        <div class="flex w-full">
+        <div class="flex w-full [--icon-size:var(--widget-icon-size)]">
           <UI.Button
-            content={{ name: item.name }}
+            content={{ name: item.name, icon: item.icon }}
             variant="secondary"
-            componentClass="h-10 text-left"
+            componentClass="h-10 justify-start text-left"
             onClick={() => goto(`/ElementsUI/components/${item.page}`)}
           />
           {#if activePage === item.page}

@@ -1,4 +1,4 @@
-<!-- $lib/WidgetHeader.svelte - шапка смарт-виджетов: значок 18px и заголовок сворачивают тело по клику, справа сниппет виджета (клик по нему не сворачивает), своего фона и отступов нет -->
+<!-- $lib/WidgetHeader.svelte - шапка смарт-виджетов: значок 24px и заголовок сворачивают тело по клику, справа сниппет виджета (клик по нему не сворачивает), своего фона и отступов нет -->
 <script lang="ts">
   import type { Component, Snippet } from "svelte"
   import type { Writable } from "svelte/store"
@@ -41,7 +41,7 @@
       onclick={() => (collapsed = !collapsed)}
       aria-expanded={!collapsed}
     >
-      <span class="flex size-(--icon-size) shrink-0 items-center justify-center text-(--accent-text) [&_svg]:h-full [&_svg]:w-full">
+      <span class="flex size-(--widget-icon-size) shrink-0 items-center justify-center text-(--accent-text) [&_svg]:h-full [&_svg]:w-full">
         <Icon />
       </span>
       <span class="min-w-0 truncate text-[14px] font-semibold">{label}</span>

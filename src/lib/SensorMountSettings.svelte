@@ -44,6 +44,9 @@
   let saved = $state<Mount>({ MR: 0, MP: 0, MY: 0 })
   const dirty = $derived(fields.some(({ key }) => values[key] !== saved[key]))
   const summary = $derived(`${values.MR}° · ${values.MP}° · ${values.MY}°`)
+  const angleDistance = (a: number, b: number) => Math.abs(((((a - b + 180) % 360) + 360) % 360) - 180)
+  const isSelected = (preset: (typeof presets)[number], current: Mount) =>
+    angleDistance(current.MR, preset.roll) < 0.1 && angleDistance(current.MP, preset.pitch) < 0.1 && angleDistance(current.MY, preset.yaw) < 0.1
 
   $effect(() => {
     if (dirty) return
@@ -74,13 +77,27 @@
       <p class="text-[12px] leading-snug text-(--muted-color)">{$T("widget.sensor.mount.info")}</p>
       <div class="grid grid-cols-2 gap-2 @[30rem]:grid-cols-4">
         {#each presets as preset (preset.label)}
+          {@const selected = isSelected(preset, values)}
           <button
             type="button"
-            class="flex min-h-22 min-w-0 flex-col items-center justify-center gap-1 rounded-[10px] border border-(--border-color) bg-(--container-color) px-2 py-2 text-[13px] font-semibold text-(--font-color) transition-colors hover:border-(--accent-text) hover:bg-(--field-color) disabled:cursor-not-allowed disabled:opacity-50"
+            class="relative flex min-h-22 min-w-0 cursor-pointer flex-col items-center justify-center gap-1 rounded-[10px] border px-2 py-2 text-[13px] font-semibold transition-[border-color,transform] active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent-text) disabled:cursor-not-allowed disabled:opacity-50 {selected
+              ? 'border-(--accent-color) bg-(--container-color) text-(--font-color)'
+              : 'border-(--border-color) bg-(--container-color) text-(--font-color) hover:border-(--accent-text) hover:bg-(--field-color)'}"
             disabled={locked || !onSave}
             aria-label={preset.label}
+            aria-pressed={selected}
             onclick={() => applyPreset(preset)}
           >
+            {#if selected}
+              <span
+                class="absolute top-2 right-2 flex size-5 items-center justify-center rounded-full bg-(--accent-color) text-(--on-accent)"
+                aria-hidden="true"
+              >
+                <svg viewBox="0 0 16 16" class="size-3" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m3 8 3.2 3.2L13 4.5" />
+                </svg>
+              </span>
+            {/if}
             <MountAxesIcon roll={preset.roll} pitch={preset.pitch} yaw={preset.yaw} />
             <span>{preset.label}</span>
           </button>

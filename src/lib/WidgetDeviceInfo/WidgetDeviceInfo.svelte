@@ -7,7 +7,7 @@
   import * as UI from ".."
   import type { IWidgetDeviceInfoConfig, IWidgetDeviceInfoProps } from "../types"
   import { DEVICE_INFO_DEFAULT_FIELDS, VARIABLE_KEY_REGEXP } from "../gui"
-  import CpuIcon from "./CpuIcon.svelte"
+  import DeviceInfoIcon from "./DeviceInfoIcon.svelte"
   import RestartIcon from "./RestartIcon.svelte"
   import WidgetHeader from "../WidgetHeader.svelte"
   import { hint, hintsSetting } from "../hints"
@@ -120,7 +120,7 @@
   style={rootStyle}
 >
   <!-- Заголовок -->
-  <WidgetHeader icon={CpuIcon} label={label?.name || $T("widget.info.title")} bind:collapsed {hints}>
+  <WidgetHeader icon={DeviceInfoIcon} label={label?.name || $T("widget.info.title")} bind:collapsed {hints}>
     {#snippet right(narrow: boolean)}
       <div use:hint={{ text: $T("widget.info.hint.restart"), enabled: $hints }}>
         <UI.Button

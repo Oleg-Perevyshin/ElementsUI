@@ -1,12 +1,12 @@
 <script lang="ts"></script>
 
-<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
-  <path
-    fill="none"
-    stroke="currentColor"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-    stroke-width="2"
-    d="M22 12H2m20 0v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-6m20 0-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11L2 12m4 4h.01M10 16h.01"
-  />
+<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 32 32">
+  <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8">
+    <rect x="3" y="3.5" width="26" height="25" rx="3" />
+    <path d="M4 13h24M4 21h24" />
+    <circle cx="8" cy="8.5" r="1.2" fill="currentColor" stroke="none" />
+    <circle cx="8" cy="17" r="1.2" fill="currentColor" stroke="none" />
+    <circle cx="8" cy="25" r="1.2" fill="currentColor" stroke="none" />
+    <path d="M13 8.5h11M13 17h11M13 25h11" />
+  </g>
 </svg>

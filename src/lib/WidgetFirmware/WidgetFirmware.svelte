@@ -6,7 +6,6 @@
   import { twMerge } from "tailwind-merge"
   import * as UI from ".."
   import type { IWidgetFirmwareProps, WidgetFirmwareSource, WidgetFirmwareStage } from "../types"
-  import FirmwareIcon from "./FirmwareIcon.svelte"
   import WidgetHeader from "../WidgetHeader.svelte"
   import { hint, hintsSetting } from "../hints"
   import { accentStyle } from "../accent"
@@ -105,7 +104,7 @@
   style={rootStyle}
 >
   <!-- Заголовок: ход обновления (видно и в свёрнутом виджете) и текущая версия справа -->
-  <WidgetHeader icon={FirmwareIcon} label={label?.name || $T("widget.firmware.title")} bind:collapsed {hints}>
+  <WidgetHeader icon={UI.IconCloudDownload} label={label?.name || $T("widget.firmware.title")} bind:collapsed {hints}>
     {#snippet right()}
       <span class="flex min-w-0 items-center gap-2">
         {#if running}

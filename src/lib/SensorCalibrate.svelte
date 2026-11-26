@@ -106,7 +106,6 @@
       <UI.Button
         wrapperClass="w-40"
         variant="primary"
-        accent="purple"
         content={{ name: $T("widget.sensor.calibrate") }}
         disabled={running || !!blocked}
         {confirm}

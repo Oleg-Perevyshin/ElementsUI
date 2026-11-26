@@ -171,7 +171,6 @@
               <UI.Button
                 wrapperClass="w-40"
                 variant="primary"
-                accent="purple"
                 content={{ name: $T("widget.home.search") }}
                 disabled={busy}
                 confirm={$T(`widget.home.search.confirm.${method?.key === "stall" ? "stall" : "other"}`)}

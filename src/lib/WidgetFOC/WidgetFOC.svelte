@@ -176,7 +176,6 @@
             <UI.Button
               wrapperClass="w-32"
               variant="primary"
-              accent={enabled ? "red" : "green"}
               content={{ name: $T(enabled ? "widget.foc.disable" : "widget.foc.enable") }}
               disabled={flags === undefined || (busy && !enabled)}
               onClick={() => onEnable(!enabled)}
@@ -199,7 +198,6 @@
               <UI.Button
                 wrapperClass="w-44"
                 variant="primary"
-                accent="yellow"
                 content={{ name: $T("widget.foc.zero") }}
                 disabled={!enabled || busy}
                 confirm={$T("widget.foc.zero.confirm")}
@@ -222,7 +220,6 @@
               <UI.Button
                 wrapperClass="w-44"
                 variant="primary"
-                accent="orange"
                 content={{ name: $T("widget.foc.tune") }}
                 disabled={!enabled || busy || tuneWait}
                 confirm={$T("widget.foc.tune.confirm")}

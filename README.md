@@ -1,5 +1,7 @@
 # 🧱 xPOE-Stack Lib
 
+Создатель и владелец проекта - Олег Перевышин. Контакты - oleg.perevyshin@gmail.com, +375 (29) 352-18-40.
+
 Библиотека готовых блоков интерфейса для устройств: кнопки, поля, графики, карта и целые виджеты на Svelte 5. Её используют три приложения, и компонент в каждом выглядит и работает одинаково:
 
 - ☁️ **DevCloud** - облако: конструктор интерфейса устройства, панель управления, отладка.
@@ -46,7 +48,7 @@
 
 **🗂️ Раскладка.** `Accordion`, `Tabs`, `Divider`, `Carousel`, `Modal`, `Dropdown`. У `Accordion` есть необязательный слот `actions` - кнопки справа в заголовке, нажатие на них блок не сворачивает. `Dropdown` - выпадающее меню или всплывающая панель у кнопки.
 
-**🔣 Значки и мелочи.** Крутилка `Loader`, значок раскрытия `ExpandIcon` (вниз или вбок), подпись поля `FieldLabel` с пояснением `InfoHint` (открывается сверху, если там помещается целиком, иначе снизу), разделитель панелей `Splitter` (ширина панели мышью) и значки библиотеки: `IconArrow`, `IconCross`, `IconClear`, `IconDelete`, `IconAdd`, `IconDownload`, `IconCopy`, `IconColumns` (выбор колонок, как у `TableColumns`), `IconInfo`, `IconError`, `IconLibrary`, `IconMoveVertical`, `IconGripVerticalDual`, `IconGripVerticalLeft`, `IconGripVerticalRight`, а для отладочных экранов - `IconCommandList` (список команд), `IconRestart` (перезагрузка), `IconTheme` (тема), `IconEye` и `IconEyeSlash` (показать и скрыть), `IconPlug` и `IconUnplug` (подключить и отключить), `IconSend` (отправить), `IconGraph` (графики). Значки рисуются цветом текста (`currentColor`), своя ширина значка - `1em` или `1.5em` от размера текста, точный размер задаёт родитель, например `[&_svg]:size-5`. Держать их копии в приложении не нужно.
+**🔣 Значки и мелочи.** Крутилка `Loader`, значок раскрытия `ExpandIcon` (вниз или вбок), подпись поля `FieldLabel` с пояснением `InfoHint` (открывается сверху, если там помещается целиком, иначе снизу), разделитель панелей `Splitter` (ширина панели мышью) и значки библиотеки: `IconArrow`, `IconCross`, `IconClear`, `IconDelete`, `IconAdd`, `IconDownload`, `IconCloudDownload`, `IconCloudUpload`, `IconCopy`, `IconColumns` (выбор колонок, как у `TableColumns`), `IconInfo`, `IconError`, `IconLibrary`, `IconMoveVertical`, `IconGripVerticalDual`, `IconGripVerticalLeft`, `IconGripVerticalRight`, а для отладочных экранов - `IconCommandList` (список команд), `IconRestart` (перезагрузка), `IconTheme` (тема), `IconEye` и `IconEyeSlash` (показать и скрыть), `IconPlug` и `IconUnplug` (подключить и отключить), `IconSend` (отправить), `IconGraph` (графики). Значки рисуются цветом текста (`currentColor`), своя ширина значка - `1em` или `1.5em` от размера текста, точный размер задаёт родитель, например `[&_svg]:size-5`. Держать их копии в приложении не нужно.
 
 **📡 Ядро протоколов** (`poe-svelte-ui-lib/protocols`). Кодирование и разбор пакетов для всех каналов связи с устройством. Работает без Svelte, в том числе под Node.
 
