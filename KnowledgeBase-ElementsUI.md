@@ -541,7 +541,7 @@ interface DeviceReply {
 | `[publish]` | тот же workflow, задачи `wait-for-package` и `update-devcloud` | Ждёт версию в реестре npm (до 40 попыток по 15 с, 10 минут), клонирует DevCloud с `git.xpoe.pro/xPOE-Studio/DevCloud.git` по секрету `DEVCLOUD_ACCESS_TOKEN`, ставит `poe-svelte-ui-lib@VERSION`, `svelte-kit sync`, `prisma generate` (с фиктивным `DATABASE_URL`), `svelte-check --threshold error`. Если всё прошло и `package.json` изменился - `npm version minor` в DevCloud и коммит `X.Y [deploy] Обновление ElementsUI до X.Y.Z` в `main` облака, что запускает развёртывание облака |
 | `[deploy]`  | `.github/workflows/ghpages_deploy.yaml`                        | Node 24, `npm install`, `npm run build`, выгрузка `./docs` в GitHub Pages                                                                                                                                                                                                                                                                                                                                                                                                                     |
 
-Оба workflow можно запустить и вручную (`workflow_dispatch`). Версию библиотеки в DevCloud вручную не поднимают; если проверка типов облака упала, облако остаётся на старой версии, причина - в логе job `update-devcloud`. После выкатки подтяни обновления потребителей, выполни `npm i` и проверь версии по разделу выпуска README.
+Оба workflow можно запустить вручную (`workflow_dispatch`). Если пакет уже опубликован, перезапускай только упавшие задачи актуального выпуска. В конце проверь npm и витрину, коммиты потребителей в Forgejo, версию рабочего DevCloud и `/healthcheck`. Затем подтяни локальные репозитории, выполни `npm i` и проверки по разделу «Выпуск» в `README.md`.
 
 </details>
 
@@ -1346,7 +1346,9 @@ npm pack               # сборка пакета в dist/: проверка т
 - 📦 `[publish]` публикует пакет в npm;
 - 🌐 `[deploy]` обновляет витрину на GitHub Pages.
 
-Перед выпуском поднимите версию в `package.json`. Версия на витрине берётся оттуда же. После публикации облако обновляется само, вручную версию библиотеки в облаке не поднимают.
+1. Сверьте рабочее дерево с `origin/main` и последнюю версию пакета в npm. Поднимите версию библиотеки командой `npm version X.Y.Z --no-git-tag-version`, которая обновляет `package.json` и `package-lock.json`. Витрина берёт версию из манифеста.
+2. Выполните `npm run Formatting`, `npm run prepack`, `npm run build` и проверьте diff. Покажите diff владельцу и дождитесь «коммить».
+3. Для полного выпуска используйте коммит `X.Y.Z [deploy] [publish] описание`. После «выкатывай» отправьте его в `main` и следите за обоими workflow по SHA этого коммита.
 
 <details>
 <summary>🔐 Публикация и обновление облака</summary>
@@ -1361,7 +1363,7 @@ npm pack               # сборка пакета в dist/: проверка т
 
 ##### Обновление потребителей после публикации
 
-После появления архива в npm workflow `npm_publish.yaml` запускает обновления в Forgejo:
+После публикации задача `wait-for-package` ждёт до 10 минут, пока npm начнёт отдавать архив новой версии. Успех задачи `publish` подтверждает загрузку в реестр. Готовность архива может задержаться из-за кэша npm, как при выпуске 3.11.2. После проверки архива запускаются три независимые задачи:
 
 | Репозиторий     | Задача               | Что делает workflow                                                                                                     |
 | --------------- | -------------------- | ----------------------------------------------------------------------------------------------------------------------- |
@@ -1369,14 +1371,14 @@ npm pack               # сборка пакета в dist/: проверка т
 | DevTerminal     | `update-devterminal` | Обновляет `package.json` и `package-lock.json`, запускает `npm run check` и отправляет коммит в `main`                  |
 | ProdFactory-ESP | `update-webapp`      | Обновляет `WebApp/package.json` и `WebApp/package-lock.json`, запускает `npm run CheckApp` и отправляет коммит в `main` |
 
-Для GitHub Actions в ElementsUI нужны секреты `DEVCLOUD_ACCESS_TOKEN`, `DEVTERMINAL_ACCESS_TOKEN` и `PRODFACTORY_ESP_ACCESS_TOKEN`. Каждый содержит токен Forgejo с доступом к записи в `main` соответствующего репозитория. При сбое посмотрите логи конкретной задачи и перезапустите упавшие задачи актуального выпуска.
+Для GitHub Actions в ElementsUI нужны секреты `DEVCLOUD_ACCESS_TOKEN`, `DEVTERMINAL_ACCESS_TOKEN` и `PRODFACTORY_ESP_ACCESS_TOKEN`. Каждый содержит токен Forgejo с доступом к записи в `main` соответствующего репозитория. Если `publish` уже прошёл, исправьте причину сбоя и перезапустите только упавшие задачи актуального выпуска.
 
 Для ESP выпуск библиотеки обновляет только зависимость. Пересборка веба устройств выполняется отдельно, с учётом версии GUI и прошивки.
 
 После выкатки:
 
-1. Проверьте, что задачи обновления завершились и коммиты появились в Forgejo.
-2. В DevCloud, DevTerminal и ProdFactory-ESP проверьте локальные изменения и подтяните `main` через `git pull --ff-only`. Если есть локальные коммиты и ветки разошлись, сначала сравните их с `origin/main` и сохраните свои изменения.
+1. Проверьте версию в npm и на витрине. Дождитесь завершения всех трёх задач обновления, проверьте SHA коммитов в Forgejo. Для DevCloud дождитесь успешной выкатки Forgejo и ArgoCD, сверьте версию на главной странице и ответ `/healthcheck`.
+2. В DevCloud, DevTerminal и ProdFactory-ESP проверьте рабочие деревья и подтяните `main` через `git pull --ff-only`. Если локальная ветка разошлась с `origin/main`, сначала сравните изменения. Когда локальный коммит содержит только заменённое обновление ElementsUI, сохраните его в резервной ветке перед выравниванием `main`. Сохраните и проверьте локальные правки после синхронизации.
 3. Выполните `npm i` в DevCloud, DevTerminal и `ProdFactory-ESP/WebApp`. Сверьте установленную версию командой `npm ls poe-svelte-ui-lib` в каждом приложении.
 4. Для DevCloud запустите `npm run Prisma:Generate` и `npm run Check:App`, для DevTerminal - `npm run check`, для WebApp - `npm run CheckApp`.
 

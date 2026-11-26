@@ -43,11 +43,11 @@ ElementsUI - xPOE-Stack Lib (`poe-svelte-ui-lib`) с закрытой лицен
 
 ## Выпуск
 
-- Версия в `package.json`, выпуск сообщением коммита в `main`: `[publish]` - npm, `[deploy]` - витрина на GitHub Pages. Обычно оба: `X.Y.Z [deploy] [publish] ...`.
+- Подними версию в манифесте и lock-файле через `npm version X.Y.Z --no-git-tag-version`, выполни `Formatting`, `prepack` и `build`. После показа diff и подтверждений выпусти коммит `X.Y.Z [deploy] [publish] ...` в `main`. `[publish]` запускает npm и обновление потребителей, `[deploy]` - витрину.
 - После публикации CI сам ставит версию в DevCloud и выкатывает облако коммитом `X.Y [deploy] Обновление ElementsUI до X.Y.Z`. Вручную версию библиотеки в облаке не поднимать.
 - Где публиковать пакет и витрину (npmjs, реестр Forgejo, витрина в кластере) - варианты, рекомендация и план перехода в `NPM.md`. Без решения владельца реестр и витрину не переносить.
 - После публикации задачи `update-devterminal` и `update-webapp` обновляют зависимости в DevTerminal и WebApp ProdFactory-ESP. Коммиты содержат только манифесты и lock-файлы после `npm run check` для DevTerminal и `npm run CheckApp` для WebApp. Веб устройств собирается отдельно по версии GUI и прошивки. Токены и порядок сверки - в [README](README.md#release-consumers).
-- После выкатки дождись коммитов CI и подтяни их локально в DevCloud, DevTerminal и ProdFactory-ESP. Выполни `npm i` в DevCloud, DevTerminal и `ProdFactory-ESP/WebApp`, запусти проверки из README. Если локальная ветка разошлась с `origin/main`, сначала сравни коммиты и сохрани локальные правки.
+- Проследи за выпуском по SHA коммита до появления версии в npm и на витрине, коммитов CI в Forgejo и новой версии рабочего DevCloud с успешным `/healthcheck`. После коммитов CI подтяни локальные DevCloud, DevTerminal и ProdFactory-ESP, выполни `npm i` в DevCloud, DevTerminal и `ProdFactory-ESP/WebApp`, сверки версий и проверки из README. При расхождении веток сначала сравни коммиты и сохрани локальные правки.
 - После обновления зависимостей проверь `allowScripts` в `package.json`: версии там должны совпадать с установленными.
 - После обновления `maplibre-gl` подними `MAPLIBRE_VERSION` в `src/lib/WidgetMap/mapWrapper/utils.ts` до установленной (сверяет `tests/maplibre.test.mjs`). Версия npm в `npm_publish.yaml` закреплена, поднимать вручную.
 
