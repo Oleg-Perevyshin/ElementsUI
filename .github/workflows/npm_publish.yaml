@@ -37,12 +37,13 @@ jobs:
       - name: Сборка и публикация в NPM
         run: npm publish --access public --provenance=false
 
-  # Обновление библиотеки в DevCloud, подъём версии облака и переразвёртывание
-  update-devcloud:
+  wait-for-package:
     needs: publish
     runs-on: ubuntu-24.04
     permissions:
       contents: read
+    outputs:
+      version: ${{ steps.registry.outputs.version }}
 
     steps:
       - name: Клонирование библиотеки
@@ -55,14 +56,32 @@ jobs:
 
       # Ждём сам архив пакета: метаданные (npm view) появляются раньше, чем реестр начинает отдавать .tgz
       - name: Ожидание версии в реестре npm
+        id: registry
         run: |
           VERSION=$(node -p "require('./package.json').version")
-          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
           for i in $(seq 1 40); do
-            npm pack "poe-svelte-ui-lib@$VERSION" --dry-run > /dev/null 2>&1 && exit 0
+            if npm pack "poe-svelte-ui-lib@$VERSION" --dry-run > /dev/null 2>&1; then
+              echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
             sleep 15
           done
           echo "Версия $VERSION не появилась в npm за 10 минут" && exit 1
+
+  # Обновление библиотеки в DevCloud, подъём версии облака и переразвёртывание
+  update-devcloud:
+    needs: wait-for-package
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    env:
+      VERSION: ${{ needs.wait-for-package.outputs.version }}
+
+    steps:
+      - name: Установка Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: "24"
 
       - name: Клонирование DevCloud
         env:
@@ -82,13 +101,138 @@ jobs:
 
       - name: Коммит с развёртыванием облака
         working-directory: devcloud
+        env:
+          COMMIT_AUTHOR_NAME: ${{ github.event.head_commit.author.name || github.actor }}
+          COMMIT_AUTHOR_EMAIL: ${{ github.event.head_commit.author.email || format('{0}@users.noreply.github.com', github.actor) }}
         run: |
           git diff --quiet package.json package-lock.json && echo "Версия уже актуальна" && exit 0
           # Новая библиотека - новая версия облака: вторая цифра +1, третья всегда 0
           npm version minor --no-git-tag-version
           DEVCLOUD_VERSION=$(node -p "require('./package.json').version.split('.').slice(0, 2).join('.')")
-          git config user.name "${{ github.event.head_commit.author.name || github.actor }}"
-          git config user.email "${{ github.event.head_commit.author.email || format('{0}@users.noreply.github.com', github.actor) }}"
+          git config user.name "$COMMIT_AUTHOR_NAME"
+          git config user.email "$COMMIT_AUTHOR_EMAIL"
           git add package.json package-lock.json
           git commit -m "$DEVCLOUD_VERSION [deploy] Обновление ElementsUI до $VERSION"
+          git push origin HEAD:main
+
+  update-devterminal:
+    needs: wait-for-package
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    env:
+      VERSION: ${{ needs.wait-for-package.outputs.version }}
+      GIT_TERMINAL_PROMPT: "0"
+
+    steps:
+      - name: Установка Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+
+      - name: Установка npm
+        run: npm install -g npm@11.20.0
+
+      - name: Клонирование DevTerminal
+        env:
+          FORGEJO_TOKEN: ${{ secrets.DEVTERMINAL_ACCESS_TOKEN }}
+        run: |
+          if [ -z "$FORGEJO_TOKEN" ]; then
+            echo "::error::Настройте секрет DEVTERMINAL_ACCESS_TOKEN с правом записи в DevTerminal"
+            exit 1
+          fi
+          export GIT_ASKPASS="$RUNNER_TEMP/forgejo-askpass"
+          printf '%s\n' '#!/bin/sh' 'printf "%s\n" "$FORGEJO_TOKEN"' > "$GIT_ASKPASS"
+          chmod 700 "$GIT_ASKPASS"
+          echo "GIT_ASKPASS=$GIT_ASKPASS" >> "$GITHUB_ENV"
+          git clone --depth 1 --branch main https://oauth2@git.xpoe.pro/xPOE-Studio/DevTerminal.git devterminal
+
+      - name: Обновление библиотеки и проверка типов
+        working-directory: devterminal
+        run: |
+          for i in 1 2 3 4 5; do
+            npm install "poe-svelte-ui-lib@$VERSION" && break
+            [ "$i" != 5 ] || exit 1
+            sleep 30
+          done
+          npm run check
+
+      - name: Коммит и отправка обновления
+        working-directory: devterminal
+        env:
+          FORGEJO_TOKEN: ${{ secrets.DEVTERMINAL_ACCESS_TOKEN }}
+        run: |
+          git add -- package.json package-lock.json
+          if git diff --cached --quiet; then
+            echo "Зависимость уже актуальна"
+            exit 0
+          fi
+          latest=$(npm view poe-svelte-ui-lib dist-tags.latest --prefer-online)
+          if [ "$latest" != "$VERSION" ]; then
+            echo "::error::Версия $VERSION больше не latest в npm ($latest). Запустите обновление из актуального выпуска."
+            exit 1
+          fi
+          # Коммит зависимостей без генерации справочника pre-commit-хуком.
+          git -c core.hooksPath=/dev/null -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m "deps: обновить ElementsUI до $VERSION"
+          git push origin HEAD:main
+
+  update-webapp:
+    needs: wait-for-package
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    env:
+      VERSION: ${{ needs.wait-for-package.outputs.version }}
+      GIT_TERMINAL_PROMPT: "0"
+
+    steps:
+      - name: Установка Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+
+      - name: Установка npm
+        run: npm install -g npm@11.20.0
+
+      - name: Клонирование ProdFactory-ESP
+        env:
+          FORGEJO_TOKEN: ${{ secrets.PRODFACTORY_ESP_ACCESS_TOKEN }}
+        run: |
+          if [ -z "$FORGEJO_TOKEN" ]; then
+            echo "::error::Настройте секрет PRODFACTORY_ESP_ACCESS_TOKEN с правом записи в ProdFactory-ESP"
+            exit 1
+          fi
+          export GIT_ASKPASS="$RUNNER_TEMP/forgejo-askpass"
+          printf '%s\n' '#!/bin/sh' 'printf "%s\n" "$FORGEJO_TOKEN"' > "$GIT_ASKPASS"
+          chmod 700 "$GIT_ASKPASS"
+          echo "GIT_ASKPASS=$GIT_ASKPASS" >> "$GITHUB_ENV"
+          git clone --depth 1 --branch main https://oauth2@git.xpoe.pro/xPOE-Studio/ProdFactory-ESP.git prod-factory-esp
+
+      - name: Обновление библиотеки и проверка типов
+        working-directory: prod-factory-esp/WebApp
+        run: |
+          for i in 1 2 3 4 5; do
+            npm install "poe-svelte-ui-lib@$VERSION" && break
+            [ "$i" != 5 ] || exit 1
+            sleep 30
+          done
+          npm run CheckApp
+
+      - name: Коммит и отправка обновления
+        working-directory: prod-factory-esp/WebApp
+        env:
+          FORGEJO_TOKEN: ${{ secrets.PRODFACTORY_ESP_ACCESS_TOKEN }}
+        run: |
+          git add -- package.json package-lock.json
+          if git diff --cached --quiet; then
+            echo "Зависимость уже актуальна"
+            exit 0
+          fi
+          latest=$(npm view poe-svelte-ui-lib dist-tags.latest --prefer-online)
+          if [ "$latest" != "$VERSION" ]; then
+            echo "::error::Версия $VERSION больше не latest в npm ($latest). Запустите обновление из актуального выпуска."
+            exit 1
+          fi
+          # Коммит зависимостей без генерации справочника pre-commit-хуком.
+          git -c core.hooksPath=/dev/null -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m "deps: обновить ElementsUI до $VERSION"
           git push origin HEAD:main

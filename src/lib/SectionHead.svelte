@@ -1,4 +1,4 @@
-<!-- $lib/SectionHead.svelte - заголовок сворачиваемого раздела внутри виджета: название, под ним сводка, справа значок раскрытия; вся строка кликабельна и подсвечивается при наведении. onToggle - если открытость считает родитель -->
+<!-- $lib/SectionHead.svelte - шапка сворачиваемого раздела: наведение на строку подчёркивает заголовок и выделяет стрелку цветом текста. onToggle - если открытость считает родитель -->
 <script lang="ts">
   import ExpandIcon from "./ExpandIcon.svelte"
 
@@ -7,15 +7,20 @@
 
 <button
   type="button"
-  class="group -m-1.5 flex w-[calc(100%+0.75rem)] cursor-pointer items-center gap-3 rounded-lg border-none bg-transparent p-1.5 text-left transition-colors duration-150 hover:bg-(--container-color)"
+  class="group -m-1.5 flex w-[calc(100%+0.75rem)] cursor-pointer items-center gap-3 rounded-lg border-none bg-transparent p-1.5 text-left"
   aria-expanded={open}
   onclick={() => (onToggle ? onToggle() : (open = !open))}
 >
   <span class="flex min-w-0 flex-1 flex-col gap-0.5">
-    <span class="text-[13px] font-semibold text-(--font-color)">{title}</span>
+    <span class="text-[13px] font-semibold text-(--font-color) underline-offset-4 group-hover:underline group-focus-visible:underline">
+      {title}
+    </span>
     {#if summary}
       <span class="text-[12px] text-(--muted-color) tabular-nums {open ? '' : 'line-clamp-2'}">{summary}</span>
     {/if}
   </span>
-  <ExpandIcon {open} />
+  <ExpandIcon
+    {open}
+    class="text-(--muted-color) group-hover:border-(--font-color) group-hover:text-(--font-color) group-focus-visible:border-(--font-color) group-focus-visible:text-(--font-color)"
+  />
 </button>

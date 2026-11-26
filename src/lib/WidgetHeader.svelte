@@ -41,7 +41,7 @@
       onclick={() => (collapsed = !collapsed)}
       aria-expanded={!collapsed}
     >
-      <span class="flex size-(--widget-icon-size) shrink-0 items-center justify-center text-(--accent-text) [&_svg]:h-full [&_svg]:w-full">
+      <span class="flex size-(--widget-icon-size) shrink-0 items-center justify-center [&_svg]:h-full [&_svg]:w-full" style:color="var(--accent-color)">
         <Icon />
       </span>
       <span class="min-w-0 truncate text-[14px] font-semibold">{label}</span>

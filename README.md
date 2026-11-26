@@ -602,6 +602,29 @@ npm pack               # сборка пакета в dist/: проверка т
 
 </details>
 
+<a id="release-consumers"></a>
+
+### Обновление потребителей после публикации
+
+После появления архива в npm workflow `npm_publish.yaml` запускает обновления в Forgejo:
+
+| Репозиторий     | Задача               | Что делает workflow                                                                                                     |
+| --------------- | -------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| DevCloud        | `update-devcloud`    | Устанавливает опубликованную версию, проверяет типы, повышает версию DevCloud и отправляет коммит с `[deploy]`          |
+| DevTerminal     | `update-devterminal` | Обновляет `package.json` и `package-lock.json`, запускает `npm run check` и отправляет коммит в `main`                  |
+| ProdFactory-ESP | `update-webapp`      | Обновляет `WebApp/package.json` и `WebApp/package-lock.json`, запускает `npm run CheckApp` и отправляет коммит в `main` |
+
+Для GitHub Actions в ElementsUI нужны секреты `DEVCLOUD_ACCESS_TOKEN`, `DEVTERMINAL_ACCESS_TOKEN` и `PRODFACTORY_ESP_ACCESS_TOKEN`. Каждый содержит токен Forgejo с доступом к записи в `main` соответствующего репозитория. При сбое посмотрите логи конкретной задачи и перезапустите упавшие задачи актуального выпуска.
+
+Для ESP выпуск библиотеки обновляет только зависимость. Пересборка веба устройств выполняется отдельно, с учётом версии GUI и прошивки.
+
+После выкатки:
+
+1. Проверьте, что задачи обновления завершились и коммиты появились в Forgejo.
+2. В DevCloud, DevTerminal и ProdFactory-ESP проверьте локальные изменения и подтяните `main` через `git pull --ff-only`. Если есть локальные коммиты и ветки разошлись, сначала сравните их с `origin/main` и сохраните свои изменения.
+3. Выполните `npm i` в DevCloud, DevTerminal и `ProdFactory-ESP/WebApp`. Сверьте установленную версию командой `npm ls poe-svelte-ui-lib` в каждом приложении.
+4. Для DevCloud запустите `npm run Prisma:Generate` и `npm run Check:App`, для DevTerminal - `npm run check`, для WebApp - `npm run CheckApp`.
+
 <details>
 <summary>🌐 Витрина на GitHub Pages</summary>
 

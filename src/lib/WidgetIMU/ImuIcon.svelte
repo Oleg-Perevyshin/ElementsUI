@@ -1,8 +1,9 @@
 <script lang="ts"></script>
 
-<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 32 32">
-  <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8">
-    <rect x="6" y="6" width="20" height="20" rx="3" />
-    <path d="M10 2v4m6-4v4m6-4v4M10 26v4m6-4v4m6-4v4M2 10h4m-4 6h4m-4 6h4m20-12h4m-4 6h4m-4 6h4M16 21v-9m0 0-3 3m3-3 3 3m-3 6 4-4" />
+<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+  <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7">
+    <circle cx="12" cy="12" r="10" />
+    <path d="M8 16.75V9m5.2-1.7c5.6.5 6.1 8.1 1 9.5" stroke-width="1.9" />
   </g>
+  <path d="m8 6 3 4.25H5Zm4.3 11.2 3.1-3.1.85 4.7Z" fill="currentColor" />
 </svg>

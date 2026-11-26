@@ -1,9 +1,12 @@
 <script lang="ts"></script>
 
-<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 32 32">
-  <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8">
-    <circle cx="16" cy="16" r="13" />
-    <circle cx="16" cy="16" r="4.5" />
-    <path d="M16 3v8m11.3 2.5-7.6 2.5m-7.4 0-7.6-2.5M8.4 26l5-6.9m5.2 0 5 6.9M16 20.5V29" />
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+  <path
+    d="M5 5a10 10 0 0 1 14 0m2.6 4.5a10 10 0 0 1-7 12.1m-5.2 0a10 10 0 0 1-7-12.1"
+    fill="none"
+    stroke="currentColor"
+    stroke-linecap="round"
+    stroke-width="1.8"
+  />
+  <path d="M10.6 18.8v-7H8.1L12 5.2l3.9 6.6h-2.5v7Z" fill="currentColor" transform="rotate(45 12 12)" />
 </svg>
