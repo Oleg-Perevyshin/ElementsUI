@@ -33,7 +33,6 @@
   const hints = $derived(hintsSetting("WidgetFOC", persistKey))
   const rootStyle = $derived(accentStyle(accent))
 
-  /* Свёрнутость: выбор пользователя переживает перезагрузку (persistKey) */
   const guiCollapsed = untrack(() => collapsed)
   collapsed = readPersistedCollapsed(
     untrack(() => persistKey),
@@ -41,7 +40,6 @@
   )
   $effect(() => writePersistedCollapsed(persistKey, collapsed, guiCollapsed))
 
-  /* Живое состояние: пока виджет раскрыт, раз в refreshMs он просит перечитать группу */
   $effect(() => {
     if (collapsed || !refreshMs || !onRefresh) return
     const timer = setInterval(() => onRefresh?.(), refreshMs)
@@ -50,7 +48,6 @@
 
   const finite = (v: unknown) => (v === undefined || v === null || v === "" || !Number.isFinite(Number(v)) ? undefined : Number(v))
 
-  /* Флаги оси (Flg): 0x01 включён, 0x02 выход в угол, 0x04 калибровка нуля, 0x08 поток уставок прервался, 0x10 ноль известен, 0x20 занят процедурой */
   const flags = $derived(finite(value.Flg))
   const flag = (bit: number) => flags !== undefined && (flags & bit) !== 0
   const enabled = $derived(flag(0x01))
@@ -67,85 +64,77 @@
         ],
   )
 
-  /* Настройки по разделам: ключ, единица (ключ перевода widget.foc.unit.*), выбор - варианты 0..n-1, только чтение */
   type Field = { key: string; unit?: string; options?: string[]; readonly?: boolean; step?: number; torqueModes?: number[] }
-  const SECTIONS: { key: string; fields: Field[] }[] = [
-    {
-      key: "motor",
-      fields: [
-        { key: "M_Type", options: ["bldc", "stepper"] },
-        { key: "M_PP", step: 1 },
-        { key: "M_R", unit: "ohm", step: 0.01 },
-        { key: "M_L", unit: "h", step: 0.0001 },
-        { key: "M_KV", unit: "kv", step: 1 },
-        { key: "M_Dir", readonly: true },
-      ],
-    },
-    {
-      key: "limits",
-      fields: [
-        { key: "M_VL", unit: "volt", step: 0.1 },
-        { key: "M_CL", unit: "amp", step: 0.01, torqueModes: [1, 2, 3] },
-        { key: "M_VLL", unit: "dps", step: 1 },
-        { key: "M_CTO", unit: "ms", step: 10 },
-        { key: "M_Torq", options: ["voltage", "estCurrent", "dcCurrent", "focCurrent"] },
-        { key: "M_Mod", options: ["spwm", "svm", "trap120", "trap150"] },
-      ],
-    },
-    {
-      key: "current",
-      fields: [
-        ...["C_Kp", "C_Ki", "C_Kd"].map((key) => ({ key, step: 0.001, torqueModes: [2, 3] })),
-        { key: "C_Lim", unit: "volt", readonly: true },
-        { key: "C_Ramp", unit: "vps", step: 0.001, torqueModes: [2, 3] },
-      ],
-    },
-    {
-      key: "velocity",
-      fields: [...["V_Kp", "V_Ki", "V_Kd"].map((key) => ({ key, step: 0.0001 })), { key: "V_Lim", readonly: true }, { key: "V_Ramp", step: 0.0001 }],
-    },
-    {
-      key: "angle",
-      fields: [
-        { key: "A_Kp", step: 0.1 },
-        { key: "A_Lim", unit: "dps", step: 1 },
-      ],
-    },
-    {
-      key: "sensor",
-      fields: [
-        { key: "S_Gain", unit: "vpa", step: 0.001 },
-        { key: "S_OffA", unit: "volt", readonly: true },
-        { key: "S_OffB", unit: "volt", readonly: true },
-        { key: "S_OffC", unit: "volt", readonly: true },
-        { key: "S_VTf", unit: "sec", step: 0.001 },
-        { key: "S_CTf", unit: "sec", step: 0.0001 },
-      ],
-    },
+
+  const motorFields: Field[] = [
+    { key: "M_Type", options: ["bldc", "stepper"] },
+    { key: "M_PP", step: 1 },
+    { key: "M_R", unit: "ohm", step: 0.01 },
+    { key: "M_L", unit: "h", step: 0.0001 },
+    { key: "M_KV", unit: "kv", step: 1 },
+    { key: "M_Dir", readonly: true },
   ]
+
+  const limitsFields: Field[] = [
+    { key: "M_VL", unit: "volt", step: 0.1 },
+    { key: "M_CL", unit: "amp", step: 0.01, torqueModes: [1, 2, 3] },
+    { key: "M_VLL", unit: "dps", step: 1 },
+    { key: "M_CTO", unit: "ms", step: 10 },
+    { key: "M_Torq", options: ["voltage", "estCurrent", "dcCurrent", "focCurrent"] },
+    { key: "M_Mod", options: ["spwm", "svm", "trap120", "trap150"] },
+  ]
+
+  const currentFields: Field[] = [
+    { key: "C_Kp", step: 0.001, torqueModes: [2, 3] },
+    { key: "C_Ki", step: 0.001, torqueModes: [2, 3] },
+    { key: "C_Kd", step: 0.001, torqueModes: [2, 3] },
+    { key: "C_Lim", unit: "volt", step: 0.1, torqueModes: [2, 3] },
+    { key: "C_Ramp", unit: "vps", step: 0.001, torqueModes: [2, 3] },
+  ]
+
+  const velocityFields: Field[] = [
+    { key: "V_Kp", step: 0.0001 },
+    { key: "V_Ki", step: 0.0001 },
+    { key: "V_Kd", step: 0.0001 },
+    { key: "V_Lim", readonly: true },
+    { key: "V_Ramp", step: 0.0001 },
+  ]
+
+  const angleFields: Field[] = [
+    { key: "A_Kp", step: 0.1 },
+    { key: "A_Lim", unit: "dps", step: 1 },
+    { key: "A_Ramp", unit: "dps2", step: 1 },
+  ]
+
+  const sensorFields: Field[] = [
+    { key: "S_Gain", unit: "vpa", step: 0.001 },
+    { key: "S_OffA", unit: "volt", readonly: true },
+    { key: "S_OffB", unit: "volt", readonly: true },
+    { key: "S_OffC", unit: "volt", readonly: true },
+    { key: "S_VTf", unit: "sec", step: 0.001 },
+    { key: "S_CTf", unit: "sec", step: 0.0001 },
+  ]
+
+  const allFields = [...motorFields, ...limitsFields, ...currentFields, ...velocityFields, ...angleFields, ...sensorFields]
+
   let open = $state<Record<string, boolean>>({})
   let edits = $state<Record<string, number>>({})
   const read = (key: string) => finite(value[key as keyof typeof value])
+
   const polePairs = $derived(read("M_PP") ?? 0)
   const zeroTravel = $derived(
     Number.isInteger(polePairs) && polePairs > 0
       ? $T("widget.foc.zero.travel", { degrees: (270 / polePairs).toLocaleString($Language, { maximumFractionDigits: 1 }) })
       : $T("widget.foc.zero.travel.unknown"),
   )
+
   const torqueMode = $derived(edits.M_Torq ?? read("M_Torq"))
   const motorType = $derived(edits.M_Type ?? read("M_Type"))
   const usesCurrentLoop = $derived(torqueMode === undefined || torqueMode === 2 || torqueMode === 3)
+
   const available = (f: Field) => (f.key === "M_Mod" ? motorType !== 1 : !f.torqueModes || torqueMode === undefined || f.torqueModes.includes(torqueMode))
   const shown = (f: Field) => (available(f) ? edits[f.key] : undefined) ?? read(f.key)
-  const changedFields = $derived(
-    SECTIONS.flatMap(({ fields }) => fields).filter((f) => !f.readonly && available(f) && edits[f.key] !== undefined && edits[f.key] !== read(f.key)),
-  )
-  const dirty = $derived(Object.keys(edits).some((key) => edits[key] !== read(key)))
-  const save = () => {
-    if (!onSave || busy || !changedFields.length) return
-    onSave(Object.fromEntries(changedFields.map(({ key }) => [key, edits[key]])))
-    edits = {}
-  }
+
   const fieldName = (f: Field) => {
     const reportedMode = read("M_Torq")
     const unit =
@@ -161,14 +150,29 @@
     return `${$T(`widget.foc.field.${f.key}`)}${unit ? `, ${$T(`widget.foc.unit.${unit}`)}` : ""}`
   }
   const optionText = (f: Field, v: number | undefined) => (v === undefined ? "-" : f.options ? $T(`widget.foc.opt.${f.options[v] ?? v}`) : String(v))
-  const sectionSummary = (s: { fields: Field[] }) =>
-    s.fields
+
+  const summaryOf = (fields: Field[]) =>
+    fields
       .filter(available)
       .slice(0, 4)
       .map((f) => `${f.key} ${optionText(f, shown(f))}`)
       .join(" · ")
 
-  /* Автонастройка: полоса TuneHz правится рядом с кнопкой */
+  const dirty = $derived(Object.keys(edits).some((key) => edits[key] !== read(key)))
+  const changedEntries = $derived(
+    Object.entries(edits)
+      .filter(([k, v]) => v !== read(k))
+      .filter(([k]) => {
+        const f = allFields.find((x) => x.key === k)
+        return !!f && !f.readonly && available(f)
+      }),
+  )
+  const save = () => {
+    if (!onSave || busy || !changedEntries.length) return
+    onSave(Object.fromEntries(changedEntries))
+    edits = {}
+  }
+
   let tuneHz = $state<number | undefined>(undefined)
   const tuneShown = $derived(tuneHz ?? read("TuneHz") ?? 40)
   let tuneWait = $state(false)
@@ -184,18 +188,19 @@
       onRefresh?.()
     }, 2500)
   }
+
+  const hasCurrentSensor = $derived(value.IA !== undefined && value.IB !== undefined && value.IC !== undefined)
 </script>
 
 {#snippet fieldCell(title: string, samples: string[], inset: string, content: Snippet)}
   <div class="max-w-full min-w-0 flex-[1_1_max-content]">
-    <!-- Ширина строки зависит от подписи и текста поля, без стандартной ширины input браузера -->
     <div class="pointer-events-none invisible h-0 overflow-hidden whitespace-nowrap" aria-hidden="true">
       <div class="text-[12px] font-semibold">{title}</div>
       {#each samples as sample (sample)}
         <div class="text-[14px]" style:padding-inline={inset}>{sample}</div>
       {/each}
     </div>
-    <div class="[contain:inline-size]">
+    <div class="contain-[inline-size]">
       {@render content()}
     </div>
   </div>
@@ -214,6 +219,59 @@
       onUpdate={(v) => (edits = { ...edits, [f.key]: Number(v) })}
     />
   {/snippet}
+{/snippet}
+
+{#snippet selectField(f: Field)}
+  {@const options = f.options!.map((o, i) => ({ id: `${f.key}-${o}`, name: $T(`widget.foc.opt.${o}`), value: i }))}
+  {@render fieldCell(
+    fieldName(f),
+    options.map(({ name }) => name),
+    "1.5rem",
+    select,
+  )}
+  {#snippet select()}
+    <UI.Select
+      type="buttons"
+      label={{ name: fieldName(f) }}
+      {options}
+      value={shown(f)}
+      disabled={!onSave || busy}
+      onUpdate={(v) => (edits = { ...edits, [f.key]: Number(v) })}
+    />
+  {/snippet}
+{/snippet}
+
+{#snippet field(f: Field)}
+  {#if available(f)}
+    {#if f.options}
+      {@render selectField(f)}
+    {:else}
+      {@render numberField(f)}
+    {/if}
+  {/if}
+{/snippet}
+
+{#snippet section(key: string, fields: Field[], children?: Snippet)}
+  <div class="flex flex-col rounded-[10px] border border-(--hairline-color) bg-(--back-color)">
+    <div class="px-3 py-2" use:hint={{ text: $T(`widget.foc.hint.${key}`), enabled: $hints }}>
+      <SectionHead
+        title={$T(`widget.foc.section.${key}`)}
+        summary={summaryOf(fields)}
+        open={!!open[key]}
+        onToggle={() => (open = { ...open, [key]: !open[key] })}
+      />
+    </div>
+    {#if open[key]}
+      <div class="flex flex-wrap items-end gap-x-3 gap-y-2 border-t border-(--hairline-color) p-3">
+        {#each fields as f (f.key)}
+          {@render field(f)}
+        {/each}
+        {#if children}
+          {@render children()}
+        {/if}
+      </div>
+    {/if}
+  </div>
 {/snippet}
 
 <div
@@ -236,6 +294,33 @@
             </span>
           {/each}
         </div>
+        {#if onTune}
+          {@const tuneLabel = `${$T("widget.foc.field.TuneHz")}, ${$T("widget.foc.unit.hz")}`}
+          <div class="flex flex-wrap items-center gap-2" use:hint={{ text: $T("widget.foc.hint.tune"), enabled: $hints }}>
+            <div class="flex-shrink-0">
+              {@render fieldCell(tuneLabel, [String(tuneShown)], "1.5rem", bandwidth)}
+            </div>
+            {#snippet bandwidth()}
+              <UI.Input
+                wrapperClass="w-24"
+                type="number"
+                label={{ name: tuneLabel }}
+                value={tuneShown}
+                number={{ minNum: 5, maxNum: 60, step: 1 }}
+                disabled={busy || tuneWait}
+                onUpdate={(v) => (tuneHz = Number(v))}
+              />
+            {/snippet}
+            <UI.Button
+              wrapperClass="w-40"
+              variant="primary"
+              content={{ name: $T("widget.foc.tune") }}
+              disabled={!enabled || busy || tuneWait}
+              confirm={$T("widget.foc.tune.confirm")}
+              onClick={tune}
+            />
+          </div>
+        {/if}
         {#if onEnable}
           <div use:hint={{ text: $T("widget.foc.hint.enable"), enabled: $hints }}>
             <UI.Button
@@ -256,90 +341,41 @@
         <SensorReadout label="Uq" value={value.Uq} digits={2} unit={$T("widget.foc.unit.volt")} />
       </div>
 
-      {#if onTune}
-        {@const tuneLabel = `${$T("widget.foc.field.TuneHz")}, ${$T("widget.foc.unit.hz")}`}
-        <div class="flex flex-wrap items-end justify-end gap-2">
-          <div class="flex max-w-full flex-wrap items-end gap-2" use:hint={{ text: $T("widget.foc.hint.tune"), enabled: $hints }}>
-            {@render fieldCell(tuneLabel, [String(tuneShown)], "1.5rem", bandwidth)}
-            {#snippet bandwidth()}
-              <UI.Input
-                type="number"
-                label={{ name: tuneLabel }}
-                value={tuneShown}
-                number={{ minNum: 5, maxNum: 60, step: 1 }}
-                disabled={busy || tuneWait}
-                onUpdate={(v) => (tuneHz = Number(v))}
-              />
-            {/snippet}
-            <UI.Button
-              wrapperClass="w-44"
-              variant="primary"
-              content={{ name: $T("widget.foc.tune") }}
-              disabled={!enabled || busy || tuneWait}
-              confirm={$T("widget.foc.tune.confirm")}
-              onClick={tune}
-            />
-          </div>
+      {#if hasCurrentSensor}
+        <div class="grid grid-cols-3 gap-1.5" use:hint={{ text: $T("widget.foc.hint.phaseCurrents"), enabled: $hints }}>
+          <SensorReadout label="IA" value={value.IA} digits={3} unit={$T("widget.foc.unit.amp")} />
+          <SensorReadout label="IB" value={value.IB} digits={3} unit={$T("widget.foc.unit.amp")} />
+          <SensorReadout label="IC" value={value.IC} digits={3} unit={$T("widget.foc.unit.amp")} />
         </div>
       {/if}
 
-      {#each SECTIONS.filter(({ key }) => key !== "current" || usesCurrentLoop) as section (section.key)}
-        <div class="flex flex-col rounded-[10px] border border-(--hairline-color) bg-(--back-color)">
-          <div class="px-3 py-2" use:hint={{ text: $T(`widget.foc.hint.${section.key}`), enabled: $hints }}>
-            <SectionHead
-              title={$T(`widget.foc.section.${section.key}`)}
-              summary={sectionSummary(section)}
-              open={!!open[section.key]}
-              onToggle={() => (open = { ...open, [section.key]: !open[section.key] })}
-            />
-          </div>
-          {#if open[section.key]}
-            <div class="flex flex-wrap items-end gap-x-3 gap-y-2 border-t border-(--hairline-color) p-3">
-              {#each section.fields.filter(available) as f (f.key)}
-                {#if f.options}
-                  {@const options = f.options.map((o, i) => ({ id: `${f.key}-${o}`, name: $T(`widget.foc.opt.${o}`), value: i }))}
-                  {@render fieldCell(
-                    fieldName(f),
-                    options.map(({ name }) => name),
-                    "1.5rem",
-                    select,
-                  )}
-                  {#snippet select()}
-                    <UI.Select
-                      type="buttons"
-                      label={{ name: fieldName(f) }}
-                      {options}
-                      value={shown(f)}
-                      disabled={!onSave || busy}
-                      onUpdate={(v) => (edits = { ...edits, [f.key]: Number(v) })}
-                    />
-                  {/snippet}
-                {:else}
-                  {@render numberField(f)}
-                {/if}
-              {/each}
-              {#if section.key === "motor"}
-                <div class="flex max-w-full min-w-0 flex-[0_1_max-content] flex-wrap items-end gap-x-3 gap-y-2">
-                  {@render numberField({ key: "ZEA", unit: "edeg", readonly: true })}
-                  {#if onZero}
-                    <div use:hint={{ text: $T("widget.foc.hint.zero"), enabled: $hints }}>
-                      <UI.Button
-                        wrapperClass="w-auto"
-                        componentClass="px-3 whitespace-nowrap"
-                        variant="primary"
-                        content={{ name: $T("widget.foc.zero") }}
-                        disabled={!enabled || busy}
-                        confirm={`${$T("widget.foc.zero.confirm")}\n\n${zeroTravel}`}
-                        onClick={onZero}
-                      />
-                    </div>
-                  {/if}
-                </div>
-              {/if}
+      {#snippet motorExtra()}
+        <div class="flex max-w-full min-w-0 flex-[0_1_max-content] flex-wrap items-end gap-x-3 gap-y-2">
+          {@render numberField({ key: "ZEA", unit: "edeg", readonly: true })}
+          {#if onZero}
+            <div use:hint={{ text: $T("widget.foc.hint.zero"), enabled: $hints }}>
+              <UI.Button
+                wrapperClass="w-auto"
+                componentClass="px-3 whitespace-nowrap"
+                variant="primary"
+                content={{ name: $T("widget.foc.zero") }}
+                disabled={!enabled || busy}
+                confirm={`${$T("widget.foc.zero.confirm")}\n\n${zeroTravel}`}
+                onClick={onZero}
+              />
             </div>
           {/if}
         </div>
-      {/each}
+      {/snippet}
+
+      {@render section("motor", motorFields, motorExtra)}
+      {@render section("limits", limitsFields)}
+      {#if usesCurrentLoop}
+        {@render section("current", currentFields)}
+      {/if}
+      {@render section("velocity", velocityFields)}
+      {@render section("angle", angleFields)}
+      {@render section("sensor", sensorFields)}
 
       {#if onSave}
         <div class="flex flex-col items-center gap-2">
@@ -372,7 +408,7 @@
               componentClass="px-2 whitespace-nowrap"
               variant="primary"
               content={{ name: $T("widget.common.save") }}
-              disabled={!changedFields.length || busy}
+              disabled={!changedEntries.length || busy}
               onClick={save}
             />
           </div>
