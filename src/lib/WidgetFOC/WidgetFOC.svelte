@@ -88,7 +88,7 @@
     { key: "C_Kp", step: 0.001, torqueModes: [2, 3] },
     { key: "C_Ki", step: 0.001, torqueModes: [2, 3] },
     { key: "C_Kd", step: 0.001, torqueModes: [2, 3] },
-    { key: "C_Lim", unit: "volt", step: 0.1, torqueModes: [2, 3] },
+    { key: "C_Lim", unit: "volt", readonly: true },
     { key: "C_Ramp", unit: "vps", step: 0.001, torqueModes: [2, 3] },
   ]
 
@@ -158,7 +158,6 @@
       .map((f) => `${f.key} ${optionText(f, shown(f))}`)
       .join(" · ")
 
-  const dirty = $derived(Object.keys(edits).some((key) => edits[key] !== read(key)))
   const changedEntries = $derived(
     Object.entries(edits)
       .filter(([k, v]) => v !== read(k))
@@ -167,6 +166,7 @@
         return !!f && !f.readonly && available(f)
       }),
   )
+  const dirty = $derived(changedEntries.length > 0)
   const save = () => {
     if (!onSave || busy || !changedEntries.length) return
     onSave(Object.fromEntries(changedEntries))
@@ -176,12 +176,30 @@
   let tuneHz = $state<number | undefined>(undefined)
   const tuneShown = $derived(tuneHz ?? read("TuneHz") ?? 40)
   let tuneWait = $state(false)
+  let tuneSeen = false
   let tuneTimer: ReturnType<typeof setTimeout> | undefined
   onDestroy(() => clearTimeout(tuneTimer))
+  /* Пока BUSY стоит - замер идёт, страховка перезапускается; снялся - результат готов */
+  $effect(() => {
+    if (!tuneWait) return
+    if (busy) {
+      tuneSeen = true
+      clearTimeout(tuneTimer)
+      tuneTimer = setTimeout(() => (tuneWait = false), 2500)
+      return
+    }
+    if (tuneSeen) {
+      tuneWait = false
+      tuneSeen = false
+      clearTimeout(tuneTimer)
+      onRefresh?.()
+    }
+  })
   const tune = () => {
     if (!onTune) return
     onTune(tuneShown)
     tuneWait = true
+    tuneSeen = false
     clearTimeout(tuneTimer)
     tuneTimer = setTimeout(() => {
       tuneWait = false
@@ -194,6 +212,7 @@
 
 {#snippet fieldCell(title: string, samples: string[], inset: string, content: Snippet)}
   <div class="max-w-full min-w-0 flex-[1_1_max-content]">
+    <!-- Ширина строки зависит от подписи и текста поля, без стандартной ширины input браузера -->
     <div class="pointer-events-none invisible h-0 overflow-hidden whitespace-nowrap" aria-hidden="true">
       <div class="text-[12px] font-semibold">{title}</div>
       {#each samples as sample (sample)}
@@ -297,7 +316,7 @@
         {#if onTune}
           {@const tuneLabel = `${$T("widget.foc.field.TuneHz")}, ${$T("widget.foc.unit.hz")}`}
           <div class="flex flex-wrap items-center gap-2" use:hint={{ text: $T("widget.foc.hint.tune"), enabled: $hints }}>
-            <div class="flex-shrink-0">
+            <div class="w-24 shrink-0">
               {@render fieldCell(tuneLabel, [String(tuneShown)], "1.5rem", bandwidth)}
             </div>
             {#snippet bandwidth()}

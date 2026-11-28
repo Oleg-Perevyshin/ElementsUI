@@ -812,6 +812,7 @@ const translations = {
   "widget.foc.section.velocity": { ru: "Контур скорости", en: "Velocity loop", zh: "速度环" },
   "widget.foc.section.angle": { ru: "Контур угла", en: "Angle loop", zh: "角度环" },
   "widget.foc.section.sensor": { ru: "Датчик тока и фильтры", en: "Current sensor and filters", zh: "电流传感器与滤波" },
+  "widget.foc.field.A_Ramp": { ru: "Нарастание", en: "Ramp", zh: "斜坡" },
   "widget.foc.field.M_Type": { ru: "Тип", en: "Type", zh: "类型" },
   "widget.foc.field.M_PP": { ru: "Пары полюсов", en: "Pole pairs", zh: "极对数" },
   "widget.foc.field.M_R": { ru: "R фазы", en: "Phase R", zh: "相电阻" },
@@ -854,6 +855,7 @@ const translations = {
   "widget.foc.opt.svm": { ru: "SVM", en: "SVM", zh: "SVM" },
   "widget.foc.opt.trap120": { ru: "Trap 120", en: "Trap 120", zh: "Trap 120" },
   "widget.foc.opt.trap150": { ru: "Trap 150", en: "Trap 150", zh: "Trap 150" },
+  "widget.foc.unit.dps2": { ru: "°/с²", en: "°/s²", zh: "°/s²" },
   "widget.foc.unit.ohm": { ru: "Ом", en: "Ω", zh: "Ω" },
   "widget.foc.unit.h": { ru: "Гн", en: "H", zh: "H" },
   "widget.foc.unit.kv": { ru: "об/мин/В", en: "rpm/V", zh: "rpm/V" },
@@ -907,6 +909,7 @@ const translations = {
     en: "**Angle** - shaft angle, 0-360°\n**Speed** - shaft speed, °/s\n**Iq** - torque current, A\n**Uq** - q-axis voltage, V\n**Update** - once a second while the widget is open",
     zh: "**角度** - 轴角度，0-360°\n**速度** - 轴速度，°/s\n**Iq** - 力矩电流，A\n**Uq** - q 轴电压，V\n**更新** - 组件展开时每秒一次",
   },
+  "widget.foc.hint.phaseCurrents": { ru: "Токи фаз, А. Плюс — ток в мотор.", en: "Phase currents, A. Positive — current into the motor.", zh: "相电流，A。正值为流入电机的电流。" },
   "widget.foc.hint.zero": {
     ru: "**Поиск электрического нуля** совмещает ротор с полем, затем поворачивает поле на 90 эл. ° для определения направления датчика. После успеха сохраняет `ZEA` и `M_Dir`.\nПовторите поиск после замены мотора, энкодера или магнита. Ось должна свободно поворачиваться в обе стороны.",
     en: "**Electrical zero search** aligns the rotor with the electrical field, then rotates the field by 90 electrical degrees to determine sensor direction. On success it saves `ZEA` and `M_Dir`.\nRepeat after replacing the motor, encoder, or magnet. The axis needs free travel in both directions.",
