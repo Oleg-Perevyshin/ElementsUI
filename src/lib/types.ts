@@ -1070,6 +1070,7 @@ export interface IWidgetEncoderProps {
 
 /* База оси привода: способ, состояние, края и положение вала, «Найти базу» и «Домой», настройки способа; группа HOME по умолчанию */
 export interface IWidgetHomingProps {
+  mode?: "rotary" | "linear" | "rotarySensor" | "linearSensors"
   /* Префикс группы базы, по умолчанию "HOME" */
   id?: string
   wrapperClass?: string

@@ -24,6 +24,17 @@
 
 <div class="flex flex-col gap-2">
   <PropsGroup label={$T("constructor.props.group.general")}>
+    <UI.Select
+      type="buttons"
+      label={{ name: $T("widget.home.mode") }}
+      options={(["rotary", "rotarySensor", "linear", "linearSensors"] as const).map((mode) => ({
+        id: mode,
+        value: mode,
+        name: $T(`widget.home.mode.${mode}`),
+      }))}
+      value={component.properties.mode ?? "rotary"}
+      onUpdate={(mode) => edit.set("mode", mode)}
+    />
     <TextsEditor {component} {onPropertyChange} />
     <UI.Input
       label={{ name: $T("widget.home.group") }}

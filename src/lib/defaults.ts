@@ -23,7 +23,7 @@ export const COMPONENT_DEFAULTS: { [K in UIType]: Partial<UIComponentPropsMap[K]
   WidgetIMU: { ...widget("WidgetIMU"), id: "IMUF", calibrateMs: 4000 },
   WidgetMag: { ...widget("WidgetMag"), id: "MAGF", calibrateMs: 30000 },
   WidgetEncoder: { ...widget("WidgetEncoder"), id: "ENC", calibrateMs: 60000 },
-  WidgetHoming: { ...widget("WidgetHoming"), id: "HOME", searchMs: 120000 },
+  WidgetHoming: { ...widget("WidgetHoming"), mode: "rotary", id: "HOME", searchMs: 120000 },
   WidgetFOC: { ...widget("WidgetFOC"), id: "FOC", refreshMs: 1000 },
   Accordion: { label: { name: "", class: "text-left", icon: null }, isOpen: true, image: "", stripe: false, outline: true },
   Tabs: {

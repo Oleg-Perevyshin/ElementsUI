@@ -4,6 +4,7 @@
     label,
     value,
     digits = 2,
+    signed = false,
     unit = "",
     size = "md",
     color,
@@ -12,6 +13,7 @@
     value: unknown
     /* Знаков после запятой */
     digits?: number
+    signed?: boolean
     unit?: string
     /* lg - главные величины (углы), md - обычные, sm - второстепенные */
     size?: "sm" | "md" | "lg"
@@ -20,7 +22,8 @@
   } = $props()
 
   const number = $derived(value === undefined || value === null || value === "" ? NaN : Number(value))
-  const text = $derived(Number.isFinite(number) ? number.toFixed(digits) : "-")
+  const rounded = $derived(number.toFixed(digits))
+  const text = $derived(Number.isFinite(number) ? (signed && Number(rounded) > 0 ? "+" : "") + rounded : "-")
   const valueClass = $derived(size === "lg" ? "text-[22px]" : size === "sm" ? "text-[13px]" : "text-[16px] @max-sm:text-[14px]")
 </script>
 
