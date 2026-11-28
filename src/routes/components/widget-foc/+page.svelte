@@ -105,7 +105,10 @@ onRefresh={() => send("GET", "ModuleConfig", { CfgGroup: "FOC" })}
           foc = { ...foc, TuneHz: hz }
           pulse(0x20, 1000)
         }}
-        onSave={(values) => (foc = { ...foc, ...values })}
+        onSave={(values) => {
+          const next = { ...foc, ...values }
+          foc = { ...next, C_Lim: next.M_VL, V_Lim: next.M_Torq === 0 ? next.M_VL : next.M_CL }
+        }}
         onDefaults={() => (foc = { ...foc, ...FACTORY })}
         onRefresh={() => {}}
       />
